@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.0.xsd">
+	
+	<osgi:service interface="com.eviware.loadui.api.messaging.BroadcastMessageEndpoint" ref="broadcastMessageEndpoint" />
+	
+	<osgi:reference interface="com.eviware.loadui.api.messaging.MessageEndpointProvider" id="messageEndpointProvider" />
+	
+	<osgi:service interface="com.eviware.loadui.api.upload.FormUploader" ref="formUploader" />
+	
+	<osgi:service interface="com.eviware.loadui.api.model.WorkspaceProvider" ref="workspaceProvider" />
+	
+	<osgi:service interface="com.eviware.loadui.api.component.ComponentRegistry" ref="componentRegistry" />
+	
+	<osgi:service interface="com.eviware.loadui.api.addressable.AddressableRegistry" ref="addressableRegistry" />
+	
+	<osgi:service interface="java.util.concurrent.ScheduledExecutorService" ref="scheduledExecutorService" />
+	
+	<osgi:service interface="com.eviware.loadui.api.deferrable.DeferrableManager" ref="deferrableManager" />
+	
+	<osgi:service interface="com.eviware.loadui.api.property.PropertySynchronizer" ref="propertySynchronizer" />
+	
+	<osgi:service interface="com.eviware.loadui.api.terminal.TerminalProxy" ref="terminalProxy" />
+	
+	<osgi:service interface="org.springframework.core.convert.ConversionService" ref="conversionService" />
+	
+	<osgi:service interface="java.util.concurrent.ExecutorService" ref="executorService" />
+	
+	<osgi:service interface="com.eviware.loadui.api.dispatch.ExecutorManager" ref="executorManager" />
+	
+</beans>

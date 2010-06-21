@@ -1,0 +1,169 @@
+.knob *.text-box {
+	-fx-background-color: #000000, #000000, #ff0000;
+	-fx-background-radius: 0, 0, 0;
+	-fx-background-insets: 0, 1, 1;
+	-fx-border-fill: #000000;
+	-fx-caret-fill: #ffffff;
+	-fx-focus-fill: #00000000;
+	-fx-selected-text-fill: #ffffff;
+	-fx-text-fill: #ffffff;
+	-fx-shadow-fill: rgba(0,0,0,0.3);
+	-fx-font: bold 14 "Monospaced";
+}
+
+.knob *.text-box *.viewport {
+	-fx-padding: 0 2 0 2;
+}
+
+.toolbar-item-frame {
+	-fx-font: 10pt "Arial";
+}
+
+.display-label {
+	-fx-text-fill: #0EFF0F;
+}
+
+.display-value {
+	-fx-text-fill: #C9C9C9;
+}
+
+.display-container *.label {
+	-fx-text-fill: #0EFF0F;
+}
+
+.run-controller *.label {
+	-fx-text-fill: #2D2D2D;
+	-fx-font: 9pt Arial;
+}
+
+.project-run-controller *.label {
+	-fx-text-fill: #2D2D2D;
+	-fx-font: 9pt Arial;
+}
+
+.expander-button {
+	-fx-background-color: transparent;
+	-fx-background-radius: 4 0 0 4;
+}
+
+.expander-button:hover {
+	-fx-background-color: #606060;
+}
+
+.run-controller-button {
+	-fx-background-radius: 3;
+	-fx-background-insets: 0, 1;
+	-fx-background-color: #4e4e4e, linear (0%,0%) to (0%,100%) stops (0%, #dbdbdb) (100%, #606060);
+	-fx-padding: 5;
+}
+
+.run-controller-button:armed, .run-controller-button:selected {
+	-fx-background-color: #373737, linear (0%,0%) to (100%,0%) stops (0%, #373737) (100%, #484848);
+}
+
+.project-run-controller-button {
+	-fx-background-radius: 3;
+	-fx-background-insets: 0, 1;
+	-fx-background-color: #4e4e4e, linear (0%,0%) to (0%,100%) stops (0%, #dbdbdb) (100%, #606060);
+	-fx-padding: 5;
+}
+
+.project-run-controller-button:armed, .run-controller-button:selected {
+	-fx-background-color: #373737, linear (0%,0%) to (100%,0%) stops (0%, #373737) (100%, #484848);
+}
+
+.tooltip {
+    -fx-background-color:
+        #000000,
+        #ffffff;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0 0 0 0;
+    -fx-padding: 2 6 2 6;
+    -fx-effect: null;
+}
+
+.page-corner {
+    -fx-shape: null;
+    -fx-effect: null;
+}
+
+.hyperlink:focused {
+	-fx-border-color: transparent;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color: #000000, linear (0%,0%) to (100%,0%) stops (0%, #0d0d0d) (30%, #202020) (100%, #333333);
+    -fx-background-insets: 0, 2;
+}
+
+.scroll-bar:vertical *.track {
+    -fx-background-color: #000000, linear (0%,0%) to (100%,0%) stops (0%, #0d0d0d) (30%, #202020) (100%, #333333);
+    -fx-background-insets: 0, 2;
+	-fx-background-radius: 0;
+}
+
+.scroll-bar:vertical *.thumb {
+    -fx-background-color: #00000000, #66666699, linear (0%,0%) to (100%,0%) stops (0%, #999999) (30%, #b2b2b2) (100%, #666666);
+    -fx-background-insets: 0, 1, 2;
+	-fx-background-radius: 0;
+}
+
+.scroll-bar *.increment-button {
+    -fx-background-color: #000000, linear (0%,0%) to (100%,0%) stops (0%, #999999) (30%, #b2b2b2) (100%, #666666);
+    -fx-background-insets: 0, 0 2 2 2;
+	-fx-background-radius: 0;
+    -fx-padding: 5 3;
+}
+
+.scroll-bar *.decrement-button {
+    -fx-background-color: #000000, linear (0%,0%) to (100%,0%) stops (0%, #999999) (30%, #b2b2b2) (100%, #666666);
+    -fx-background-insets: 0, 2 2 0 2;
+	-fx-background-radius: 0;
+    -fx-padding: 5 3;
+}
+
+.scroll-bar:vertical *.increment-arrow {
+    -fx-padding: 8 12 0 0;
+    -fx-background-color: #000000;
+    -fx-background-insets: 0;
+    -fx-shape: "M -6 0 L 0 5 L 6 0 L 5 -1 L 0 3 L -5 -1 z"
+}
+
+.scroll-bar:vertical *.decrement-arrow {
+    -fx-padding: 8 12 0 0;
+    -fx-background-color: #000000;
+    -fx-background-insets: 0;
+    -fx-shape: "M -6 0 L 0 -5 L 6 0 L 5 1 L 0 -3 L -5 1 z"
+}
+
+.feed-scroll-view {
+    -fx-padding: 0 0 0 0;
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-background-insets: 0, 0;
+}
+
+.summary-scroll-view {
+    -fx-padding: 0 0 0 0;
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-background-insets: 0, 0;
+} 
+
+.runner-inspector-node-button {
+	-fx-background-radius: 1;
+	-fx-background-insets: 0, 1;
+	-fx-background-color: #b3b3b3, linear (0%,0%) to (0%,100%) stops (0%, #e3e3e3) (100%, #bababa);
+	-fx-padding: 5;
+}
+
+.menubar-button {
+	-fx-background-radius: 3;
+	-fx-background-color: transparent;
+}
+
+.menubar-button:hover {
+	-fx-background-color: #8c8c8c;
+}
+
+.menubar-button:armed {
+	-fx-background-color: #666666;
+}

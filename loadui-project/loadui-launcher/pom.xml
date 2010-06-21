@@ -1,0 +1,113 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>loadui-project</artifactId>
+		<groupId>com.eviware.loadui</groupId>
+		<version>1.0-beta1</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>loadui-launcher</artifactId>
+	<name>loadUI Launcher</name>
+	<description>Launcher for the loadUI Controller</description>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>ant-process-classes</id>
+						<phase>compile</phase>
+						<configuration>
+							<tasks>
+								<property name="compile.classpath" refid="maven.compile.classpath" />
+								<echo>Compiling JavaFX sources </echo>
+								<path id="javafxc.classpath">
+									<fileset dir="${env.JAVAFX_HOME}">
+										<include name="**/javafxrt.jar" />
+										<include name="**/javafxc.jar" />
+										<include name="**/toolchain.jar" />
+									</fileset>
+								</path>
+								<path id="javafx.classpath">
+									<fileset dir="${env.JAVAFX_HOME}">
+										<include name="lib/shared/**.jar" />
+										<include name="lib/desktop/**.jar" />
+									</fileset>
+									<pathelement path="${compile.classpath}" />
+								</path>
+								<taskdef classname="com.sun.tools.javafx.ant.JavaFxAntTask"
+									classpathref="javafxc.classpath" name="javafxc" />
+								<mkdir dir="${project.build.outputDirectory}" />
+								<javafxc destdir="${project.build.outputDirectory}"
+									compilerclasspathref="javafxc.classpath" debug="true" verbose="true">
+									<src path="src/main/fx" />
+									<classpath refid="javafx.classpath" />
+								</javafxc>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>com.eviware.loadui.launcher.LoadUI</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			
+		</plugins>
+	</build>
+	<profiles>
+  	<profile>
+    	<id>install</id>
+    	<build>
+    	<plugins>
+    	<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>sign</id>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<keystore>"${maven.jnlp.signjar.store}"</keystore>
+					<alias>"${maven.jnlp.signjar.alias}"</alias>
+					<storepass>"${maven.jnlp.signjar.storepass}"</storepass>
+					<keypass>"${maven.jnlp.signjar.storepass}"</keypass>
+				</configuration>
+			</plugin>
+			</plugins>
+			</build>
+    </profile>
+    </profiles>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.main</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+	</dependencies>
+</project>

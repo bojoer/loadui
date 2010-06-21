@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<bean id="counterSynchronizer" class="com.eviware.loadui.impl.runner.RunnerCounterSynchronizer" />
+	
+	<bean id="controller" class="com.eviware.loadui.impl.runner.ControllerImpl">
+		<constructor-arg ref="executorManager" />
+		<constructor-arg ref="conversionService" />
+		<constructor-arg ref="messageEndpointProvider" />
+		<constructor-arg ref="broadcastMessageEndpoint" />
+		<constructor-arg ref="terminalProxy" />
+		<constructor-arg ref="addressableRegistry" />
+		<constructor-arg ref="propertySynchronizer" />
+		<constructor-arg ref="counterSynchronizer" />
+	</bean>
+	
+	<bean class="com.eviware.loadui.util.SystemPropertyInitializer">
+		<property name="properties">
+			<map>
+				<entry key="loadui.instance" value="runner" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean class="com.eviware.loadui.impl.discovery.DiscoveryResponder" destroy-method="release" />
+	
+	<!--<bean id="serializationRegistry"
+		class="com.eviware.loadui.util.serialization.SerializationRegistry">
+		<constructor-arg ref="typeSerializers" />
+	</bean>-->
+</beans>
