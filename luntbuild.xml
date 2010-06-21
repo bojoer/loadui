@@ -9,4 +9,10 @@
 			<fileset dir="${source}" />
 		</copy>
 	</target>
+	
+	<target name="ftp">
+		<ftp server="${server}" port="${port}" userid="${userid}" password="${password}" remotedir="${destination}">
+			<fileset dir="${source}" />
+		</ftp>
+	</target>
 </project>
