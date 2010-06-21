@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<bean class="com.eviware.loadui.impl.SystemPropertyConfiguration" init-method="init" />
+
+	<bean id="beanInjector" class="com.eviware.loadui.util.BeanInjector" />
+
+	<bean id="addressableRegistry"
+		class="com.eviware.loadui.impl.addressable.AddressableRegistryImpl" />
+
+	<bean id="scheduledExecutorService" class="java.util.concurrent.Executors"
+		factory-method="newSingleThreadScheduledExecutor" destroy-method="shutdown" />
+
+	<bean id="formUploader" class="com.eviware.loadui.impl.upload.FormUploaderImpl" />
+	
+	<bean id="executorManager" class="com.eviware.loadui.impl.dispatch.ExecutorManagerImpl" />
+	
+	<bean id="executorService" factory-bean="executorManager" factory-method="getExecutor" />
+
+	<bean id="deferrableManager"
+		class="com.eviware.loadui.impl.deferrable.DeferrableManagerImpl"
+		destroy-method="destroy">
+		<constructor-arg ref="scheduledExecutorService" />
+		<constructor-arg type="long" value="5" />
+		<constructor-arg value="SECONDS" />
+	</bean>
+
+	<bean id="propertySynchronizer"
+		class="com.eviware.loadui.impl.property.PropertySynchronizerImpl">
+		<constructor-arg ref="addressableRegistry" />
+		<constructor-arg ref="executorService" />
+		<constructor-arg ref="conversionService" />
+	</bean>
+	
+	<bean id="counterSynchronizer"
+		class="com.eviware.loadui.impl.counter.CounterSynchronizerImpl" />
+
+	<bean id="terminalProxy" class="com.eviware.loadui.impl.terminal.TerminalProxyImpl">
+		<constructor-arg ref="conversionService" />
+		<constructor-arg ref="addressableRegistry" />
+		<constructor-arg ref="broadcastMessageEndpoint" />
+	</bean>
+
+	<bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+	    <property name="converters">
+	        <list>
+	            <bean class="com.eviware.loadui.impl.conversion.SceneItemImplToStringConverter" />
+	            <bean class="com.eviware.loadui.impl.conversion.StringToSceneItemConverter" />
+	            <bean class="com.eviware.loadui.impl.conversion.ComponentItemImplToStringConverter" />
+	            <bean class="com.eviware.loadui.impl.conversion.StringToComponentItemConverter">
+	            	<constructor-arg ref="addressableRegistry" />
+	            </bean>
+	            <bean class="com.eviware.loadui.impl.conversion.FileToReferenceConverter">
+	            	<constructor-arg ref="broadcastMessageEndpoint" />
+	            	<constructor-arg ref="executorService" />
+	            </bean>
+	            <bean class="com.eviware.loadui.impl.conversion.ReferenceToFileConverter" />
+	        </list>
+	    </property>
+	</bean>
+	
+	<bean id="broadcastMessageEndpoint"
+		class="com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl" />
+
+	<bean id="workspaceProvider" class="com.eviware.loadui.impl.model.WorkspaceProviderImpl" />
+
+	<bean id="componentRegistry" name="behaviorProvider"
+		class="com.eviware.loadui.impl.component.ComponentRegistryImpl" />
+</beans>

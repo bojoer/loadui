@@ -1,0 +1,213 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>loadui-project</artifactId>
+		<groupId>com.eviware.loadui</groupId>
+		<version>1.0-beta1</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>loadui-fx-interface</artifactId>
+	<packaging>bundle</packaging>
+	<name>loadUI JavaFX Interface</name>
+	<description>loadUI Graphical User Interface implemented in JavaFX</description>
+	<properties>
+		<maven.build.timestamp.format>yyyy/MM/dd HH\:mm</maven.build.timestamp.format>
+		<loadui.build.date>${maven.build.timestamp}</loadui.build.date>
+		<jide.company></jide.company>
+		<jide.product></jide.product>
+		<jide.license></jide.license>
+	</properties>
+	<build>
+		<filters>
+			<filter>src/main/filters/default.properties</filter>
+		</filters>
+		<resources>
+			<resource>
+				<directory>src/main/processResources</directory>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${mavenBundlePluginVersion}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<_include>src/main/filters/default.properties</_include>
+						<Bundle-Activator>com.eviware.loadui.fx.JavaFXActivator</Bundle-Activator>
+						<Private-Package>com.eviware.loadui.fx*</Private-Package>
+						<Embed-Dependency>*;scope=provided</Embed-Dependency>
+						<Import-Package>!org.apache.batik.*;!com.sun.javaws.jnl;!com.sun.image.codec.*;!javax.jnlp;!com.sun.deploy.*;!org.jdesktop*;!org.jvnet*;!org.eclipse.swt*;!apple.laf.*;!com.sun.java.swing.plaf.*;!com.sun.org.apache.*;!org.apache.xml.*;!sun.*;*</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>ant-process-classes</id>
+						<phase>compile</phase>
+						<configuration>
+							<tasks>
+								<property name="compile.classpath" refid="maven.compile.classpath" />
+								<echo>Compiling JavaFX sources</echo>
+								<path id="javafxc.classpath">
+									<fileset dir="${env.JAVAFX_HOME}">
+										<include name="**/javafxrt.jar" />
+										<include name="**/javafxc.jar" />
+										<include name="**/toolchain.jar" />
+									</fileset>
+								</path>
+								<path id="javafx.classpath">
+									<fileset dir="${env.JAVAFX_HOME}">
+										<include name="lib/shared/**.jar" />
+										<include name="lib/desktop/**.jar" />
+									</fileset>
+									<pathelement path="${compile.classpath}" />
+								</path>
+								<taskdef classname="com.sun.tools.javafx.ant.JavaFxAntTask"
+									classpathref="javafxc.classpath" name="javafxc" />
+								<mkdir dir="${project.build.outputDirectory}" />
+								<javafxc destdir="${project.build.outputDirectory}"
+									compilerclasspathref="javafxc.classpath" debug="true" verbose="true">
+									<src path="src/main/fx" />
+									<classpath refid="javafx.classpath" />
+								</javafxc>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>ant-generate-javafxdoc</id>
+						<phase>site</phase>
+						<configuration>
+							<tasks>
+								<property name="compile.classpath" refid="maven.compile.classpath" />
+								<condition else="" property="binary.extension" value=".exe">
+									<os family="windows" />
+								</condition>
+
+								<javadoc author="true" version="false" destdir="target/apidocsfx"
+									executable="${env.JAVAFX_HOME}/bin/javafxdoc${binary.extension}"
+									useexternalfile="true">
+									<fileset dir="src/main/fx" includes="**/*.fx" />
+								</javadoc>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-api</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-layout</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-util</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>4.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.codec</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>jide</groupId>
+			<artifactId>jide-common</artifactId>
+			<version>2.8.7</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>jide</groupId>
+			<artifactId>jide-charts</artifactId>
+			<version>2.8.7</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-client</artifactId>
+			<version>7.1.0.RC0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.batik</groupId>
+			<artifactId>batik-awt-util</artifactId>
+			<version>1.7-beta1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-math</groupId>
+			<artifactId>commons-math</artifactId>
+			<version>1.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-discovery</groupId>
+			<artifactId>commons-discovery</artifactId>
+			<version>0.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jfxtras</groupId>
+			<artifactId>commons</artifactId>
+			<version>0.7-beta-2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.miglayout</groupId>
+			<artifactId>miglayout</artifactId>
+			<version>3.7.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.log4j</groupId>
+			<artifactId>com.springsource.org.apache.log4j</artifactId>
+			<version>1.2.15</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>com.springsource.slf4j.log4j</artifactId>
+			<version>1.5.10</version>
+		</dependency>
+		<dependency>
+			<groupId>swingx</groupId>
+			<artifactId>swingx</artifactId>
+			<version>soapui</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+</project>

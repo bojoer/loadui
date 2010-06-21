@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+Insert copyright/license information here.
+-->
+</head>
+<body bgcolor="white">
+
+	<p>
+		The InspectorPanel in LoadUI is the panel at the bottom of the screen which acts as a container 
+		for various other panels (Inspectors).
+	</p>
+		
+	<p>
+		New Inspectors should be published as OSGi Services and will automatically be picked up by 
+		loadUI and displayed in the InspectorPanel. Customizing where the Inspector should be visible 
+		is done by setting the OSGi Service Property "loadui.inspector.visibility" (defaults to always 
+		visible). The format for this is a semi-colon (;) separated list of context names, using an 
+		asterisk (*) as a wildcard.
+	</p>
+		
+	<p>
+		For example, setting the value to "workspace;project" causes the Inspector to only be visible 
+		when in the workspace context and the project context.
+	</p>
+
+</body>
+</html>

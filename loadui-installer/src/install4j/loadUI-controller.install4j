@@ -1,0 +1,852 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install4j version="4.2.6" transformSequenceNumber="2">
+  <directoryPresets config="../../target/controller" />
+  <application name="loadUI" distributionSourceDir="" applicationId="3648-6792-9261-9102" mediaDir="../../target" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" missingFilesStrategy="warn" shortName="loadUI" publisher="eviware ab" publisherWeb="http://www.eviware.com" version="preAlpha" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
+    <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
+      <principalLanguage id="en" customLocalizationFile="" />
+      <additionalLanguages />
+    </languages>
+    <searchSequence>
+      <registry />
+      <envVar name="JAVA_HOME" />
+      <envVar name="JDK_HOME" />
+    </searchSequence>
+    <variables>
+      <variable name="version" value="" />
+    </variables>
+  </application>
+  <files>
+    <filesets />
+    <roots />
+    <mountPoints>
+      <mountPoint id="143" root="" location="felix-cache" mode="755" />
+      <mountPoint id="20" root="" location="" mode="755" />
+    </mountPoints>
+    <entries>
+      <dirEntry mountPoint="20" file="../../target/controller" overwrite="5" shared="true" mode="644" uninstallMode="0" excludeSuffixes="" dirMode="755">
+        <exclude>
+          <entry location="felix-cache" fileType="regular" />
+        </exclude>
+      </dirEntry>
+    </entries>
+    <components />
+  </files>
+  <launchers>
+    <launcher name="loadUI.sh" id="23" external="true" excludeFromMenu="false" menuName="" externalFile="loadUI.sh" />
+    <launcher name="loadUI.bat" id="24" external="true" excludeFromMenu="false" menuName="" externalFile="loadUI.bat" />
+    <launcher name="loadUI.command" id="225" external="true" excludeFromMenu="false" menuName="" externalFile="loadUI.command" />
+  </launchers>
+  <installerGui installerType="1" suggestPreviousProgramGroup="false" addOnAppId="" suggestPreviousLocations="true">
+    <customCode useInstalledFiles="false" />
+    <applications>
+      <application name="" id="installer" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" customIcnsFile="" customIcoFile="">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.applications.InstallerApplication">
+              <void property="resizable">
+                <boolean>false</boolean>
+              </void>
+            </object>
+          </java>
+        </serializedBean>
+        <startup>
+          <screen name="" id="1" beanClass="com.install4j.runtime.beans.screens.StartupScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.StartupScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+        </startup>
+        <screens>
+          <screen name="" id="2" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.WelcomeScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="376" beanClass="com.install4j.runtime.beans.screens.LicenseScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.LicenseScreen">
+                  <void property="displayedText">
+                    <string>European Union Public Licence
+
+V. 1.1
+EUPL © the European Community 2007
+This European Union Public Licence (the “EUPL”) applies to the Work or Software
+(as defined below) which is provided under the terms of this Licence. Any use of the
+Work, other than as authorised under this Licence is prohibited (to the extent such use
+is covered by a right of the copyright holder of the Work).
+The Original Work is provided under the terms of this Licence when the Licensor (as
+defined below) has placed the following notice immediately following the copyright
+notice for the Original Work:
+Licensed under the EUPL V.1.1
+or has expressed by any other mean his willingness to license under the EUPL.
+1. Definitions
+In this Licence, the following terms have the following meaning:
+- The Licence: this Licence.
+- The Original Work or the Software: the software distributed and/or communicated
+by the Licensor under this Licence, available as Source Code and also as Executable
+Code as the case may be.
+- Derivative Works: the works or software that could be created by the Licensee,
+based upon the Original Work or modifications thereof. This Licence does not define
+the extent of modification or dependence on the Original Work required in order to
+classify a work as a Derivative Work; this extent is determined by copyright law
+applicable in the country mentioned in Article 15.
+- The Work: the Original Work and/or its Derivative Works.
+- The Source Code: the human-readable form of the Work which is the most
+convenient for people to study and modify.
+- The Executable Code: any code which has generally been compiled and which is
+meant to be interpreted by a computer as a program.
+- The Licensor: the natural or legal person that distributes and/or communicates the
+Work under the Licence.
+- Contributor(s): any natural or legal person who modifies the Work under the
+Licence, or otherwise contributes to the creation of a Derivative Work.
+- The Licensee or “You”: any natural or legal person who makes any usage of the
+Software under the terms of the Licence.
+- Distribution and/or Communication: any act of selling, giving, lending, renting,
+distributing, communicating, transmitting, or otherwise making available, on-line or
+off-line, copies of the Work or providing access to its essential functionalities at the
+disposal of any other natural or legal person.
+2. Scope of the rights granted by the Licence
+The Licensor hereby grants You a world-wide, royalty-free, non-exclusive, sublicensable
+licence to do the following, for the duration of copyright vested in the
+Original Work:
+- use the Work in any circumstance and for all usage,
+- reproduce the Work,
+- modify the Original Work, and make Derivative Works based upon the Work,
+- communicate to the public, including the right to make available or display the
+Work or copies thereof to the public and perform publicly, as the case may be,
+the Work,
+- distribute the Work or copies thereof,
+- lend and rent the Work or copies thereof,
+- sub-license rights in the Work or copies thereof.
+Those rights can be exercised on any media, supports and formats, whether now
+known or later invented, as far as the applicable law permits so.
+In the countries where moral rights apply, the Licensor waives his right to exercise his
+moral right to the extent allowed by law in order to make effective the licence of the
+economic rights here above listed.
+The Licensor grants to the Licensee royalty-free, non exclusive usage rights to any
+patents held by the Licensor, to the extent necessary to make use of the rights granted
+on the Work under this Licence.
+3. Communication of the Source Code
+The Licensor may provide the Work either in its Source Code form, or as Executable
+Code. If the Work is provided as Executable Code, the Licensor provides in addition a
+machine-readable copy of the Source Code of the Work along with each copy of the
+Work that the Licensor distributes or indicates, in a notice following the copyright
+notice attached to the Work, a repository where the Source Code is easily and freely
+accessible for as long as the Licensor continues to distribute and/or communicate the
+Work.
+4. Limitations on copyright
+Nothing in this Licence is intended to deprive the Licensee of the benefits from any
+exception or limitation to the exclusive rights of the rights owners in the Original
+Work or Software, of the exhaustion of those rights or of other applicable limitations
+thereto.
+5. Obligations of the Licensee
+The grant of the rights mentioned above is subject to some restrictions and obligations
+imposed on the Licensee. Those obligations are the following:
+Attribution right: the Licensee shall keep intact all copyright, patent or trademarks
+notices and all notices that refer to the Licence and to the disclaimer of warranties.
+The Licensee must include a copy of such notices and a copy of the Licence with
+every copy of the Work he/she distributes and/or communicates. The Licensee must
+cause any Derivative Work to carry prominent notices stating that the Work has been
+modified and the date of modification.
+Copyleft clause: If the Licensee distributes and/or communicates copies of the
+Original Works or Derivative Works based upon the Original Work, this Distribution
+and/or Communication will be done under the terms of this Licence or of a later
+version of this Licence unless the Original Work is expressly distributed only under
+this version of the Licence. The Licensee (becoming Licensor) cannot offer or impose
+any additional terms or conditions on the Work or Derivative Work that alter or
+restrict the terms of the Licence.
+Compatibility clause: If the Licensee Distributes and/or Communicates Derivative
+Works or copies thereof based upon both the Original Work and another work
+licensed under a Compatible Licence, this Distribution and/or Communication can be
+done under the terms of this Compatible Licence. For the sake of this clause,
+“Compatible Licence” refers to the licences listed in the appendix attached to this
+Licence. Should the Licensee’s obligations under the Compatible Licence conflict
+with his/her obligations under this Licence, the obligations of the Compatible Licence
+shall prevail.
+Provision of Source Code: When distributing and/or communicating copies of the
+Work, the Licensee will provide a machine-readable copy of the Source Code or
+indicate a repository where this Source will be easily and freely available for as long
+as the Licensee continues to distribute and/or communicate the Work.
+Legal Protection: This Licence does not grant permission to use the trade names,
+trademarks, service marks, or names of the Licensor, except as required for
+reasonable and customary use in describing the origin of the Work and reproducing
+the content of the copyright notice.
+6. Chain of Authorship
+The original Licensor warrants that the copyright in the Original Work granted
+hereunder is owned by him/her or licensed to him/her and that he/she has the power
+and authority to grant the Licence.
+Each Contributor warrants that the copyright in the modifications he/she brings to the
+Work are owned by him/her or licensed to him/her and that he/she has the power and
+authority to grant the Licence.
+Each time You accept the Licence, the original Licensor and subsequent Contributors
+grant You a licence to their contributions to the Work, under the terms of this
+Licence.
+7. Disclaimer of Warranty
+The Work is a work in progress, which is continuously improved by numerous
+contributors. It is not a finished work and may therefore contain defects or “bugs”
+inherent to this type of software development.
+For the above reason, the Work is provided under the Licence on an “as is” basis and
+without warranties of any kind concerning the Work, including without limitation
+merchantability, fitness for a particular purpose, absence of defects or errors,
+accuracy, non-infringement of intellectual property rights other than copyright as
+stated in Article 6 of this Licence.
+This disclaimer of warranty is an essential part of the Licence and a condition for the
+grant of any rights to the Work.
+8. Disclaimer of Liability
+Except in the cases of wilful misconduct or damages directly caused to natural
+persons, the Licensor will in no event be liable for any direct or indirect, material or
+moral, damages of any kind, arising out of the Licence or of the use of the Work,
+including without limitation, damages for loss of goodwill, work stoppage, computer
+failure or malfunction, loss of data or any commercial damage, even if the Licensor
+has been advised of the possibility of such damage. However, the Licensor will be
+liable under statutory product liability laws as far such laws apply to the Work.
+9. Additional agreements
+While distributing the Original Work or Derivative Works, You may choose to
+conclude an additional agreement to offer, and charge a fee for, acceptance of support,
+warranty, indemnity, or other liability obligations and/or services consistent with this
+Licence. However, in accepting such obligations, You may act only on your own
+behalf and on your sole responsibility, not on behalf of the original Licensor or any
+other Contributor, and only if You agree to indemnify, defend, and hold each
+Contributor harmless for any liability incurred by, or claims asserted against such
+Contributor by the fact You have accepted any such warranty or additional liability.
+10. Acceptance of the Licence
+The provisions of this Licence can be accepted by clicking on an icon “I agree”
+placed under the bottom of a window displaying the text of this Licence or by
+affirming consent in any other similar way, in accordance with the rules of applicable
+law. Clicking on that icon indicates your clear and irrevocable acceptance of this
+Licence and all of its terms and conditions.
+Similarly, you irrevocably accept this Licence and all of its terms and conditions by
+exercising any rights granted to You by Article 2 of this Licence, such as the use of
+the Work, the creation by You of a Derivative Work or the Distribution and/or
+Communication by You of the Work or copies thereof.
+11. Information to the public
+In case of any Distribution and/or Communication of the Work by means of electronic
+communication by You (for example, by offering to download the Work from a
+remote location) the distribution channel or media (for example, a website) must at
+least provide to the public the information requested by the applicable law regarding
+the Licensor, the Licence and the way it may be accessible, concluded, stored and
+reproduced by the Licensee.
+12. Termination of the Licence
+The Licence and the rights granted hereunder will terminate automatically upon any
+breach by the Licensee of the terms of the Licence.
+Such a termination will not terminate the licences of any person who has received the
+Work from the Licensee under the Licence, provided such persons remain in full
+compliance with the Licence.
+13. Miscellaneous
+Without prejudice of Article 9 above, the Licence represents the complete agreement
+between the Parties as to the Work licensed hereunder.
+If any provision of the Licence is invalid or unenforceable under applicable law, this
+will not affect the validity or enforceability of the Licence as a whole. Such provision
+will be construed and/or reformed so as necessary to make it valid and enforceable.
+The European Commission may publish other linguistic versions and/or new versions
+of this Licence, so far this is required and reasonable, without reducing the scope of
+the rights granted by the Licence. New versions of the Licence will be published with
+a unique version number.
+All linguistic versions of this Licence, approved by the European Commission, have
+identical value. Parties can take advantage of the linguistic version of their choice.
+14. Jurisdiction
+Any litigation resulting from the interpretation of this License, arising between the
+European Commission, as a Licensor, and any Licensee, will be subject to the
+jurisdiction of the Court of Justice of the European Communities, as laid down in
+article 238 of the Treaty establishing the European Community.
+Any litigation arising between Parties, other than the European Commission, and
+resulting from the interpretation of this License, will be subject to the exclusive
+jurisdiction of the competent court where the Licensor resides or conducts its primary
+business.
+15. Applicable Law
+This Licence shall be governed by the law of the European Union country where the
+Licensor resides or has his registered office.
+This licence shall be governed by the Belgian law if:
+- a litigation arises between the European Commission, as a Licensor, and any
+Licensee;
+- the Licensor, other than the European Commission, has no residence or
+registered office inside a European Union country.
+===
+Appendix
+“Compatible Licences” according to article 5 EUPL are:
+- GNU General Public License (GNU GPL) v. 2
+- Open Software License (OSL) v. 2.1, v. 3.0
+- Common Public License v. 1.0
+- Eclipse Public License v. 1.0
+- Cecill v. 2.0</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="3" beanClass="com.install4j.runtime.beans.screens.InstallationDirectoryScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.InstallationDirectoryScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="4" beanClass="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="true" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction">
+                      <void property="excludedVariables">
+                        <array class="java.lang.String" length="1">
+                          <void index="0">
+                            <string>sys.installationDir</string>
+                          </void>
+                        </array>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getVariable("sys.responseFile") == null</condition>
+              </action>
+            </actions>
+            <formComponents />
+          </screen>
+          <screen name="" id="5" beanClass="com.install4j.runtime.beans.screens.ComponentsScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.ComponentsScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="6" beanClass="com.install4j.runtime.beans.screens.StandardProgramGroupScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.StandardProgramGroupScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="7" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="true" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.InstallationScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="8" beanClass="com.install4j.runtime.beans.actions.InstallFilesAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.InstallFilesAction" />
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="9" beanClass="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction">
+                      <void property="programGroupName">
+                        <string>${compiler:sys.fullName}</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="10" beanClass="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction">
+                      <void property="itemName">
+                        <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="193" beanClass="com.install4j.runtime.beans.actions.files.SetModeAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.SetModeAction">
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>loadUI.command</string>
+                        </object>
+                      </void>
+                      <void property="mode">
+                        <string>+x</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="228" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>loadUI.command</string>
+                        </object>
+                      </void>
+                      <void property="name">
+                        <string>${compiler:sys.fullName}</string>
+                      </void>
+                      <void property="winIconFile">
+                        <object class="com.install4j.api.beans.ExternalFile">
+                          <string>${installer:sys.installationDir}/loadUI_icon_mac.icns</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="271" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>loadUI.bat</string>
+                        </object>
+                      </void>
+                      <void property="name">
+                        <string>${compiler:sys.fullName}</string>
+                      </void>
+                      <void property="winIconFile">
+                        <object class="com.install4j.api.beans.ExternalFile">
+                          <string>${installer:sys.installationDir}/loadUI_icon_win.ico</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="274" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>loadUI.sh</string>
+                        </object>
+                      </void>
+                      <void property="name">
+                        <string>${compiler:sys.fullName}</string>
+                      </void>
+                      <void property="winIconFile">
+                        <object class="com.install4j.api.beans.ExternalFile">
+                          <string>${installer:sys.installationDir}/loadUI_icon_win.ico</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="306" beanClass="com.install4j.runtime.beans.actions.text.ModifyTextFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.text.ModifyTextFileAction">
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>loadUI.jnlp</string>
+                        </object>
+                      </void>
+                      <void property="replaceValue">
+                        <string>${installer:sys.installationDir}</string>
+                      </void>
+                      <void property="searchValue">
+                        <string>{{installdir}}</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="344" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="3" errorMessage="Unable to create keystore. Continue with installation?">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.MoveFileAction">
+                      <void property="destinationFile">
+                        <object class="java.io.File">
+                          <string>${installer:sys.userHome}/.loadui/keystore.jks</string>
+                        </object>
+                      </void>
+                      <void property="overwriteMode">
+                        <object class="com.install4j.api.context.OverwriteMode" field="IF_NEWER" />
+                      </void>
+                      <void property="sourceFile">
+                        <object class="java.io.File">
+                          <string>keystore.jks</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="533" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.MoveFileAction">
+                      <void property="destinationFile">
+                        <object class="java.io.File">
+                          <string>${installer:sys.userHome}/.loadui/.groovy</string>
+                        </object>
+                      </void>
+                      <void property="sourceFile">
+                        <object class="java.io.File">
+                          <string>.groovy</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+            </actions>
+            <formComponents />
+          </screen>
+          <screen name="" id="605" beanClass="com.install4j.runtime.beans.screens.CustomizableInfoScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.CustomizableInfoScreen">
+                  <void property="displayedText">
+                    <string>LoadUI installer will install JavaFX, the installer will continue when the JavaFX install is complete.</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="606" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
+                      <void property="executable">
+                        <object class="java.io.File">
+                          <string>updateJavaFx.bat</string>
+                        </object>
+                      </void>
+                      <void property="wait">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>"${compiler:sys.platform}" == "windows" &amp;&amp; (!context.isUnattended())</condition>
+              </action>
+              <action name="" id="607" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
+                      <void property="executable">
+                        <object class="java.io.File">
+                          <string>updateJavaFx.command</string>
+                        </object>
+                      </void>
+                      <void property="wait">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>"${compiler:sys.platform}" == "mac" &amp;&amp; (!context.isUnattended())</condition>
+              </action>
+              <action name="" id="608" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
+                      <void property="executable">
+                        <object class="java.io.File">
+                          <string>updateJavaFx.sh</string>
+                        </object>
+                      </void>
+                      <void property="wait">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>"${compiler:sys.platform}" == "linux" &amp;&amp; (!context.isUnattended())</condition>
+              </action>
+            </actions>
+            <formComponents />
+          </screen>
+          <screen name="" id="11" beanClass="com.install4j.runtime.beans.screens.FinishedScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="true">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.FinishedScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents>
+              <formComponent name="" id="573" beanClass="com.install4j.runtime.beans.formcomponents.HyperlinkLabelComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.formcomponents.HyperlinkLabelComponent">
+                      <void property="hyperlinkText">
+                        <string>Read about how to get started with LoadUI</string>
+                      </void>
+                      <void property="url">
+                        <string>http://loadui.org/loadui/index.php?/Getting-Started-with-loadUI/your-first-loadui-project.html</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <initScript />
+                <visibiltyScript />
+              </formComponent>
+            </formComponents>
+          </screen>
+        </screens>
+      </application>
+      <application name="" id="uninstaller" beanClass="com.install4j.runtime.beans.applications.UninstallerApplication" enabled="true" commentSet="false" comment="" customIcnsFile="" customIcoFile="">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.applications.UninstallerApplication" />
+          </java>
+        </serializedBean>
+        <startup>
+          <screen name="" id="12" beanClass="com.install4j.runtime.beans.screens.StartupScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.StartupScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="18" beanClass="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" />
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+            </actions>
+            <formComponents />
+          </screen>
+        </startup>
+        <screens>
+          <screen name="" id="13" beanClass="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="14" beanClass="com.install4j.runtime.beans.screens.UninstallationScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.UninstallationScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="142" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="true" failureStrategy="3" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
+                      <void property="backupForRollback">
+                        <boolean>false</boolean>
+                      </void>
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>felix-cache</string>
+                        </object>
+                      </void>
+                      <void property="recurse">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="15" beanClass="com.install4j.runtime.beans.actions.UninstallFilesAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.UninstallFilesAction" />
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="641" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>lib</string>
+                        </object>
+                      </void>
+                      <void property="recurse">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="642" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>loadUI.jnlp</string>
+                        </object>
+                      </void>
+                      <void property="recurse">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+            </actions>
+            <formComponents />
+          </screen>
+          <screen name="" id="17" beanClass="com.install4j.runtime.beans.screens.UninstallFailureScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="true">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.UninstallFailureScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="16" beanClass="com.install4j.runtime.beans.screens.UninstallSuccessScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="true">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.UninstallSuccessScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+        </screens>
+      </application>
+    </applications>
+  </installerGui>
+  <mediaSets>
+    <unixInstaller name="Unix Installer" id="25" mediaFileName="loadUI-${compiler:version}" installDir="eviware/loadUI-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-i386-1.6-linux-jre-bundle" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+      <excludedLaunchers>
+        <launcher id="24" />
+      </excludedLaunchers>
+      <excludedComponents />
+      <excludedBeans>
+        <bean refId="228" />
+        <bean refId="271" />
+      </excludedBeans>
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location="loadUI.bat" fileType="regular" />
+      </exclude>
+      <variables />
+      <installerScript mode="1" file="">
+        <scriptLines />
+      </installerScript>
+    </unixInstaller>
+    <win32 name="Windows" id="26" mediaFileName="loadUI-${compiler:version}" installDir="eviware/loadUI-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="windows-x86-1.6_jre6" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+      <excludedLaunchers>
+        <launcher id="23" />
+      </excludedLaunchers>
+      <excludedComponents />
+      <excludedBeans>
+        <bean refId="193" />
+        <bean refId="228" />
+        <bean refId="274" />
+      </excludedBeans>
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude />
+      <variables />
+    </win32>
+    <macosFolder name="Mac OS X Folder" id="188" mediaFileName="" installDir="loadUI" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+      <excludedLaunchers>
+        <launcher id="23" />
+        <launcher id="24" />
+      </excludedLaunchers>
+      <excludedComponents />
+      <excludedBeans>
+        <bean refId="271" />
+        <bean refId="274" />
+      </excludedBeans>
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location="loadUI.bat" fileType="regular" />
+        <entry location="loadUI.sh" fileType="regular" />
+      </exclude>
+      <variables />
+    </macosFolder>
+  </mediaSets>
+  <buildIds buildAll="false">
+    <mediaSet refId="26" />
+  </buildIds>
+</install4j>
+

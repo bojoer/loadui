@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                      http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.0.xsd">
+
+	<!--<osgi:service interface="javafx.scene.Scene" ref="scene" />-->
+
+	<osgi:reference interface="com.eviware.loadui.util.http.HttpClientProvider" id="httpClientProvider" />
+
+	<osgi:reference interface="com.eviware.loadui.api.model.WorkspaceProvider"
+		id="workspaceProvider" />
+
+	<osgi:service interface="com.eviware.loadui.api.ui.ApplicationState" ref="applicationState" />
+
+	<osgi:service interface="com.eviware.loadui.api.ui.WindowController" ref="windowController" />
+	
+	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
+		ref="systemLogInspector" />
+	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
+		ref="runnerInspector" />
+
+	<osgi:set id="inspectors" interface="com.eviware.loadui.api.ui.inspector.Inspector"
+		cardinality="0..N">
+		<osgi:listener bind-method="onBind" unbind-method="onUnbind"
+			ref="inspectorManager" />
+	</osgi:set>
+
+	<osgi:set id="widgetFactories" interface="com.eviware.loadui.api.layout.WidgetFactory"
+		cardinality="0..N">
+		<osgi:listener bind-method="registerFactory"
+			unbind-method="unregisterFactory" ref="widgetRegistry" />
+	</osgi:set>
+
+	<osgi:reference id="componentRegistry"
+		interface="com.eviware.loadui.api.component.ComponentRegistry">
+		<osgi:listener bind-method="onBind" unbind-method="onUnbind"
+			ref="componentManager" />
+	</osgi:reference>
+	 <!-- 
+	<osgi:reference id="executorService" interface="java.util.concurrent.ThreadPoolExecutor"></osgi:reference>
+	 -->
+	<osgi:reference id="runnerDiscovery" interface="com.eviware.loadui.api.discovery.RunnerDiscovery" />
+	
+	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
+		ref="tableWidget" />
+	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
+		ref="selectorWidget" />
+	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
+		ref="chartWidget" />
+	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
+		ref="onOffSwitchFactory" />
+	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
+		ref="selectFactory" />
+	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
+		ref="displayContainerFactory" />
+    <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
+        ref="counterWidget" />
+    <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
+        ref="sliderWidget" />
+    <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
+        ref="intervalWidget" />
+</beans>
