@@ -40,8 +40,9 @@ public interface WorkspaceItem extends ModelItem
 	public final static String SOAPUI_SYNC_PROPERTY = WorkspaceItem.class.getSimpleName() + ".soapUISync";
 	public final static String SOAPUI_CAJO_PORT_PROPERTY = WorkspaceItem.class.getSimpleName() + ".soapUICajoPort";
 	public final static String LOADUI_CAJO_PORT_PROPERTY = WorkspaceItem.class.getSimpleName() + ".loadUICajoPort";
-	public final static String AUTO_GARBAGE_COLLECTION_INTERVAL = WorkspaceItem.class.getSimpleName() + ".saveAllProjectsOnClose";
-	
+	public final static String AUTO_GARBAGE_COLLECTION_INTERVAL = WorkspaceItem.class.getSimpleName()
+			+ ".garbageCollectionInterval";
+
 	/**
 	 * Gets the version of loadUI which was used to create the workspace.
 	 * 

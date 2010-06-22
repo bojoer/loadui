@@ -22,7 +22,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Timer;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
@@ -45,7 +47,7 @@ import com.eviware.loadui.config.LoaduiWorkspaceDocumentConfig;
 import com.eviware.loadui.config.ProjectReferenceConfig;
 import com.eviware.loadui.config.RunnerItemConfig;
 import com.eviware.loadui.config.WorkspaceItemConfig;
-import com.eviware.loadui.util.timers.LouadUIGarbageCollectorTimer;
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.impl.XmlBeansUtils;
 
 public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implements WorkspaceItem
@@ -53,16 +55,16 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	public static final Logger log = LoggerFactory.getLogger( WorkspaceItemImpl.class );
 
 	private File workspaceFile;
+	private final ScheduledExecutorService executor;
 	private final LoaduiWorkspaceDocumentConfig doc;
 	private final Set<ProjectRefImpl> projects = new HashSet<ProjectRefImpl>();
 	private final Set<RunnerItem> runners = new HashSet<RunnerItem>();
 	private final ProjectListener projectListener = new ProjectListener();
 	private final RunnerListener runnerListener = new RunnerListener();
 	private final Property<Boolean> localMode;
+	private final Property<Long> garbageCollectionInterval;
 
-	private LouadUIGarbageCollectorTimer gcTimerTask;
-
-	private Timer backgroundTimer;
+	private ScheduledFuture<?> gcTask = null;
 
 	public static WorkspaceItemImpl loadWorkspace( File workspaceFile ) throws XmlException, IOException
 	{
@@ -77,6 +79,9 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	private WorkspaceItemImpl( File workspaceFile, LoaduiWorkspaceDocumentConfig doc )
 	{
 		super( doc.getLoaduiWorkspace() == null ? doc.addNewLoaduiWorkspace() : doc.getLoaduiWorkspace() );
+
+		executor = BeanInjector.getBean( ScheduledExecutorService.class );
+
 		this.doc = doc;
 		this.workspaceFile = workspaceFile;
 
@@ -87,7 +92,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		createProperty( SOAPUI_SYNC_PROPERTY, Boolean.class );
 		createProperty( SOAPUI_CAJO_PORT_PROPERTY, Integer.class, 1198 );
 		createProperty( LOADUI_CAJO_PORT_PROPERTY, Integer.class, 1199 );
-		createProperty( AUTO_GARBAGE_COLLECTION_INTERVAL, Long.class, 60 ); // using
+		garbageCollectionInterval = createProperty( AUTO_GARBAGE_COLLECTION_INTERVAL, Long.class, 60 ); // using
 		// seconds
 	}
 
@@ -118,44 +123,41 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 
 		log.info( "Workspace '{}' loaded successfully", this );
 
-		initGCTimer();
+		runGCTimer();
 
-		this.addEventListener( PropertyEvent.class, new EventHandler<PropertyEvent>()
+		addEventListener( PropertyEvent.class, new EventHandler<PropertyEvent>()
 		{
 			@Override
 			public void handleEvent( PropertyEvent event )
 			{
 				if( AUTO_GARBAGE_COLLECTION_INTERVAL.equals( event.getKey() ) )
-					initGCTimer();
+				{
+					if( gcTask != null )
+					{
+						gcTask.cancel( true );
+						gcTask = null;
+					}
+					runGCTimer();
+				}
 			}
 		} );
 	}
 
 	// run internal GCT
-	public void initGCTimer()
+	private void runGCTimer()
 	{
-		long interval = getProperty( AUTO_GARBAGE_COLLECTION_INTERVAL ).getValue() == null ? 0 : ( Long )getProperty(
-				AUTO_GARBAGE_COLLECTION_INTERVAL ).getValue();
+		Long interval = garbageCollectionInterval.getValue();
 
-		if( gcTimerTask != null )
+		if( interval != null && interval > 0 )
 		{
-			if( interval == 0 )
-				log.info( "Cancelling GC Timer" );
-
-			gcTimerTask.cancel();
-			gcTimerTask = null;
-		}
-
-		if( interval > 0 )
-		{
-			gcTimerTask = new LouadUIGarbageCollectorTimer();
-
-			log.info( "Scheduling garbage collection every " + interval + " seconds" );
-
-			if( backgroundTimer == null )
-				backgroundTimer = new Timer( "LoadUI GC Timer" );
-
-			backgroundTimer.schedule( gcTimerTask, interval * 1000, interval * 1000 );
+			gcTask = executor.scheduleWithFixedDelay( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					System.gc();
+				}
+			}, interval, interval, TimeUnit.SECONDS );
 		}
 	}
 
