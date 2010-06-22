@@ -17,6 +17,8 @@ package com.eviware.loadui.impl.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +46,8 @@ public class WorkspaceProviderImplTest
 		when( ctx.getBean( anyString(), eq( AddressableRegistry.class ) ) ).thenReturn( new AddressableRegistryImpl() );
 		ConversionService csrv = mock( ConversionService.class );
 		when( ctx.getBean( anyString(), eq( ConversionService.class ) ) ).thenReturn( csrv );
+		when( ctx.getBean( anyString(), eq( ScheduledExecutorService.class ) ) ).thenReturn(
+				Executors.newSingleThreadScheduledExecutor() );
 		new BeanInjector().setApplicationContext( ctx );
 	}
 
