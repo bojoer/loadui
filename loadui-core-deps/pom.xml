@@ -90,5 +90,10 @@
 			<artifactId>loadui-groovy-components</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.eviware.soapui</groupId>
+			<artifactId>loadui-soapui-sampler</artifactId>
+			<version>3.6</version>
+		</dependency>
 	</dependencies>
 </project>
