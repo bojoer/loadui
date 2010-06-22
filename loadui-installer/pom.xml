@@ -51,6 +51,9 @@
 								<copy todir="${basedir}/target/runner/bundle">
 									<fileset dir="${basedir}/../loadui-runner-deps/target/bundle" />
 								</copy>
+								<copy todir="${basedir}/target/runner/bundle" failonerror="false">
+									<fileset file="e:/maven2/repository/com/eviware/soapui/loadui-soapui-sampler/3.6/*.jar"/>
+								</copy>
 							</tasks>
 						</configuration>
 						<goals>
