@@ -9,6 +9,7 @@
 	<url>http://www.eviware.com</url>
 	<properties>
 		<mavenBundlePluginVersion>2.1.0</mavenBundlePluginVersion>
+		<changelog.start.date>2010-06-21</changelog.start.date>
 	</properties>
 	<modules>
 		<module>loadui-http-server</module>
@@ -32,7 +33,7 @@
 		<!-- <module>loadui-integration-tests</module> -->
 		<module>loadui-component</module>
 	</modules>
-	
+
 
 	<repositories>
 		<repository>
@@ -56,6 +57,9 @@
 			<url>http://repository.springsource.com/maven/bundles/external</url>
 		</repository>
 	</repositories>
+	<scm>
+		<connection>scm:svn:svn://svn.eviware.com/loadui/trunk/loadui-project</connection>
+	</scm>
 	<reporting>
 		<plugins>
 			<plugin>
@@ -108,6 +112,27 @@
 				<configuration>
 					<aggregate>true</aggregate>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changelog-plugin</artifactId>
+				<version>2.2</version>
+				<reportSets>
+					<reportSet>
+						<id>dual-report</id>
+						<configuration>
+							<type>date</type>
+							<dates>
+								<date implementation="java.lang.String">${changelog.start.date}</date>
+							</dates>
+							<dateFormat>yyyy-MM-dd</dateFormat>
+						</configuration>
+						<reports>
+							<report>changelog</report>
+							<report>file-activity</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
 		</plugins>
 	</reporting>
