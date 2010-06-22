@@ -20,7 +20,7 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<build>
-    <plugins>
+		<plugins>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
@@ -39,9 +39,6 @@
 								<copy todir="${basedir}/target/controller/bundle">
 									<fileset dir="${basedir}/../loadui-controller-deps/target/bundle" />
 								</copy>
-								<copy todir="${basedir}/target/controller/bundle" failonerror="false">
-									<fileset file="e:/maven2/repository/com/eviware/soapui/loadui-soapui-sampler/3.6/*.jar"/>
-								</copy>
 								<copy todir="${basedir}/target/controller/script-components">
 									<fileset
 										dir="${basedir}/../loadui-groovy-components/src/main/groovy" />
@@ -54,96 +51,93 @@
 								<copy todir="${basedir}/target/runner/bundle">
 									<fileset dir="${basedir}/../loadui-runner-deps/target/bundle" />
 								</copy>
-								<copy todir="${basedir}/target/runner/bundle" failonerror="false">
-									<fileset file="e:/maven2/repository/com/eviware/soapui/loadui-soapui-sampler/3.5-SNAPSHOT/*.jar"/>
-								</copy>
 							</tasks>
 						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
 					</execution>
-					</executions>
-					</plugin>
-					</plugins>
- </build>
-  <profiles>
-  	<profile>
-    	<id>install</id>
-    	
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					
-					<execution>
-                        <id>install-publish files</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <copy todir="${publish.dir}">
-                                    <fileset dir="${basedir}/target/install4j/" />
-                                </copy>
-                            </tasks>
-                        </configuration>
-                    </execution>
 				</executions>
 			</plugin>
-			<plugin>
-                <groupId>com.google.code.maven-install4j</groupId>
-                <artifactId>maven-install4j-plugin</artifactId>
-                <version>0.1.1</version>
-                <executions>
-                    <execution>
-                        <id>install-controller</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <configFile>"${basedir}/src/install4j/loadUI-controller.install4j"</configFile>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>install-runner</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <configFile>"${basedir}/src/install4j/loadUI-runner.install4j"</configFile>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>${devenv.install4jc}</executable>
-                    <releaseId>${project.version}</releaseId>
-                    <attach>true</attach>
-                    <skipOnMissingExecutable>true</skipOnMissingExecutable>
-                    <compilerVariables>
-                        <property>
-                            <name>version</name>
-                            <value>${project.parent.version}</value>
-                        </property>
-                        <property>
-                            <name>SIGNTOOL_PATH</name>
-                            <value>${maven.install4j.signtool}</value>
-                        </property>
-                        <property>
-                            <name>CERT_PATH</name>
-                            <value>${maven.install4j.cert}</value>
-                        </property>
-                    </compilerVariables>
-                </configuration>
-            </plugin>
 		</plugins>
 	</build>
-	 </profile>
-  </profiles>
+	<profiles>
+		<profile>
+			<id>install</id>
+
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+
+							<execution>
+								<id>install-publish files</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<copy todir="${publish.dir}">
+											<fileset dir="${basedir}/target/install4j/" />
+										</copy>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.google.code.maven-install4j</groupId>
+						<artifactId>maven-install4j-plugin</artifactId>
+						<version>0.1.1</version>
+						<executions>
+							<execution>
+								<id>install-controller</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+								<configuration>
+									<configFile>"${basedir}/src/install4j/loadUI-controller.install4j"</configFile>
+								</configuration>
+							</execution>
+							<execution>
+								<id>install-runner</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+								<configuration>
+									<configFile>"${basedir}/src/install4j/loadUI-runner.install4j"</configFile>
+								</configuration>
+							</execution>
+						</executions>
+						<configuration>
+							<executable>${devenv.install4jc}</executable>
+							<releaseId>${project.version}</releaseId>
+							<attach>true</attach>
+							<skipOnMissingExecutable>true</skipOnMissingExecutable>
+							<compilerVariables>
+								<property>
+									<name>version</name>
+									<value>${project.parent.version}</value>
+								</property>
+								<property>
+									<name>SIGNTOOL_PATH</name>
+									<value>${maven.install4j.signtool}</value>
+								</property>
+								<property>
+									<name>CERT_PATH</name>
+									<value>${maven.install4j.cert}</value>
+								</property>
+							</compilerVariables>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<dependencies>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
