@@ -13,9 +13,6 @@
 	<properties>
 		<maven.build.timestamp.format>yyyy/MM/dd HH\:mm</maven.build.timestamp.format>
 		<loadui.build.date>${maven.build.timestamp}</loadui.build.date>
-		<jide.company></jide.company>
-		<jide.product></jide.product>
-		<jide.license></jide.license>
 	</properties>
 	<build>
 		<filters>
