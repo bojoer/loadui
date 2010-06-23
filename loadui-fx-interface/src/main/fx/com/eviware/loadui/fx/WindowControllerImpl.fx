@@ -27,8 +27,10 @@ import java.awt.event.ContainerEvent;
 import javafx.lang.FX;
 import javax.swing.JFrame;
 
-public var instance:WindowController;
+public var instance:WindowControllerImpl;
 public function getInstance():WindowController { instance }
+
+public-read var doClose = false; 
 
 public class WindowControllerImpl extends WindowController {
 	public var stage:Stage;
@@ -48,7 +50,12 @@ public class WindowControllerImpl extends WindowController {
 	}
 	
 	override function close():Void {
-		stage.close()
+		stage.close();
+	}
+	
+	public function forceClose():Void {
+		doClose = true;
+		stage.close();
 	}
 	
 	override function bringToFront():Void {

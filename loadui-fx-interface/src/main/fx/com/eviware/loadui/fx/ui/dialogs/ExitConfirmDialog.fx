@@ -26,6 +26,7 @@ import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.dialogs.*;
 import com.eviware.loadui.fx.MainWindow;
+import com.eviware.loadui.fx.WindowControllerImpl;
 import com.eviware.loadui.api.model.ProjectItem;
 
 import java.lang.RuntimeException;
@@ -53,11 +54,11 @@ public class ExitConfirmDialog {
 						def project = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
 						project.save();
 						dialog2.close();
-						FX.exit();
+						WindowControllerImpl.instance.forceClose();
 					}
 					onCancel: function() {
-						FX.exit();
 						dialog2.close();
+						WindowControllerImpl.instance.forceClose();
 					}
 				
 					width : 250

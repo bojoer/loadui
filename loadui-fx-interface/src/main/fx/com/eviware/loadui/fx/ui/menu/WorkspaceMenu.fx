@@ -56,6 +56,7 @@ import com.eviware.loadui.fx.ui.popup.PopupMenu;
 import com.eviware.loadui.fx.ui.popup.SubMenuItem;
 import com.eviware.loadui.fx.ui.resources.Paints;
 import com.eviware.loadui.fx.ui.resources.MenuArrow;
+import com.eviware.loadui.fx.WindowControllerImpl;
 
 import com.eviware.loadui.api.model.ProjectRef;
 
@@ -200,7 +201,7 @@ public class WorkspaceMenu extends HBox {
                 SeparatorMenuItem{}
                 ActionMenuItem {
                     text: "Exit"
-                    action: function() { FX.exit(); }
+                    action: function() { WindowControllerImpl.instance.close() }
                 }
                 ]
             }

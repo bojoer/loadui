@@ -25,6 +25,7 @@ import javafx.scene.text.Text;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.dialogs.*;
+import com.eviware.loadui.fx.WindowControllerImpl;
 
 public class ExitConfirmDialogWorkspace {
     postinit {
@@ -38,7 +39,7 @@ public class ExitConfirmDialogWorkspace {
             cancelText: "No"
             onOk: function() {
                 dialog.close();
-                FX.exit();
+                WindowControllerImpl.instance.forceClose();
             }
             
             width : 250
