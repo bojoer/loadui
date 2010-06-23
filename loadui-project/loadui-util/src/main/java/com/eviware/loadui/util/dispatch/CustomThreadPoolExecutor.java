@@ -50,7 +50,7 @@ public class CustomThreadPoolExecutor extends AbstractExecutorService
 		for( int i = 0; i < MIN_POOL_SIZE; i++ )
 			threadFactory.newThread( new Worker() ).start();
 
-		new Thread( new Runnable()
+		Thread thread = new Thread( new Runnable()
 		{
 			@Override
 			public void run()
@@ -72,7 +72,10 @@ public class CustomThreadPoolExecutor extends AbstractExecutorService
 							+ sleeping + " Queue size: " + workQueue.size() + " Max pool size: " + getMaxPoolSize() );
 				}
 			}
-		} ).start();
+		} );
+
+		thread.setDaemon( true );
+		thread.start();
 	}
 
 	@Override

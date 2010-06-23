@@ -109,6 +109,7 @@ public class JavaFXActivator extends BundleActivator {
 			}
 			
 			override function close() {
+				if( not WindowControllerImpl.instance.doClose ) {
 					if( AppState.instance.state == AppState.TESTCASE_FRONT 
 											or AppState.instance.state == AppState.PROJECT_FRONT ) {
 						ExitConfirmDialog{};
@@ -116,6 +117,10 @@ public class JavaFXActivator extends BundleActivator {
 						ExitConfirmDialogWorkspace{};
 					}
 					throw new com.eviware.loadui.util.hacks.PreventClosingStageException(); // this a hack to keep stage open
+				} else {
+					bc.getBundle( 0 ).stop();
+					super.close();
+				}
 			}
 			
 			
