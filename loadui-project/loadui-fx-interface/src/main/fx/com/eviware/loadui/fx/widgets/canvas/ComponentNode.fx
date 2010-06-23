@@ -39,6 +39,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 import javafx.fxd.FXDNode;
 import javafx.util.Math;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.StylesheetAware;
@@ -67,6 +69,7 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.component.categories.TriggerCategory;
+import com.eviware.loadui.api.model.CanvasObjectItem;
 
 import java.util.EventObject;
 import java.lang.RuntimeException;
@@ -95,7 +98,7 @@ public class ComponentNode extends CanvasNode {
 	 */
 	public-init var component:ComponentItem on replace { color = Color.web( component.getColor() ); }
 	
-	override var modelItem = bind component;
+	override var modelItem = bind lazy component;
 	
 	override var settingsAction = function():Void {
 		DefaultComponentSettingsPanel {
@@ -151,6 +154,8 @@ public class ComponentNode extends CanvasNode {
 	
 	protected var roundedFrame:Node;
 	
+	var active: Boolean = component.isActive();
+	
 	var menuContent:HBox;
 	var face:LayoutComponentNode;
 	def faceGroup = Group { content: bind face, layoutX: 15, layoutY: 20 };
@@ -202,17 +207,36 @@ public class ComponentNode extends CanvasNode {
 							]
 							titlebarColor: color
 							//titlebarEffect: bind if( selected ) Selectable.effect else null
-							titlebarContent: Label {
-								text: bind label.toUpperCase()
-								opacity: 0.5
-								textFill: Color.BLACK
-								font: Font {
-								    size: 9
+							titlebarContent: [
+								ImageView {
+									layoutX: 14
+									layoutY: 14
+									image: Image {
+						            	url: "{__ROOT__}images/png/led-active.png"
+						        	}
+						        	visible: bind active 
 								}
-								layoutX: 15
-								width: bind width - 30
-								height: bind 30
-							}
+								ImageView {
+									layoutX: 14
+									layoutY: 14
+									image: Image {
+						            	url: "{__ROOT__}images/png/led-inactive.png"
+						        	}
+						        	visible: bind not active
+								}
+								Label {
+									text: bind label.toUpperCase()
+									opacity: 0.5
+									textFill: Color.BLACK
+									font: Font {
+									    size: 9
+									}
+									layoutX: 26
+									layoutY: 2
+									width: bind width - 30
+									height: bind 30
+								}
+							]
 						}
 					},
 					TerminalContainer { width: bind width, layoutY: -8, content: bind inputs },
@@ -224,7 +248,6 @@ public class ComponentNode extends CanvasNode {
 	
 	override function handleEvent( e:EventObject ) {
 		super.handleEvent( e );
-		
 		if( e instanceof CollectionEvent ) {
 			def event = e as CollectionEvent;
 			if( ComponentItem.TERMINALS.equals( event.getKey() ) ) {
@@ -235,6 +258,16 @@ public class ComponentNode extends CanvasNode {
 				}
 			}
 		}
+		if(e instanceof BaseEvent) {
+			def event = e as BaseEvent;
+			if(CanvasObjectItem.ACTIVITY.equals(event.getKey())) {
+				runInFxThread( function() { setActive(component.isActive()) } );
+			}
+		}
+	}
+	
+	function setActive(a: Boolean): Void {
+		active = a;
 	}
 	
 	override function onReloaded():Void {

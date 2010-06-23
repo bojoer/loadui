@@ -33,6 +33,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Line;
@@ -58,6 +59,7 @@ import com.eviware.loadui.api.model.CanvasItem;
 import java.util.EventObject;
 import java.lang.RuntimeException;
 import org.slf4j.LoggerFactory;
+import com.eviware.loadui.fx.AppState;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.TestCaseIcon" );
 
@@ -184,9 +186,14 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 			]
 			opacity: bind if(dragging) 0.8 else 1
 			onMouseClicked: function(e: MouseEvent){
-				if(not isPlaceholder){
-					selected = not selected;
-					fireTestCaseIconSelected();
+				if(e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
+					AppState.instance.setActiveCanvas(sceneItem);
+				}
+				else if(e.button == MouseButton.PRIMARY and e.clickCount == 1) {
+					if(not isPlaceholder){
+						selected = not selected;
+						fireTestCaseIconSelected();
+					}
 				}
 			}
 			onKeyPressed: function(e: KeyEvent) { 
