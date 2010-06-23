@@ -77,8 +77,8 @@ validateUrl = {
 	
 	if( url.value != null && eviPattern.matcher(url.value).matches() ) url.value = dummyUrl
 	
-	invalid = url.value == null || url.value == dummyUrl
-	runAction?.enabled = !invalid
+	setInvalid( url.value == null || url.value == dummyUrl )
+	runAction?.enabled = !getInvalid()
 }
 
 updateProxy = {
