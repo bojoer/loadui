@@ -287,6 +287,14 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	public void setInvalid( boolean state );
 
 	/**
+	 * Sets the activity strategy for the ComponentItem, which is used by the GUI
+	 * to display information about the activity of the component.
+	 * 
+	 * @param strategy
+	 */
+	public void setActivityStrategy( ActivityStrategy strategy );
+
+	/**
 	 * True if running on the Controller, false if on a Runner.
 	 * 
 	 * @return

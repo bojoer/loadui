@@ -21,10 +21,20 @@ public interface CanvasObjectItem extends ModelItem, TerminalHolder
 {
 	public static String RELOADED = ModelItem.class.getSimpleName() + "@reloaded";
 
+	public static String ACTIVITY = CanvasObjectItem.class.getSimpleName() + "@activity";
+
 	/**
 	 * Get the base color for this CanvasObjectItem.
 	 * 
 	 * @return The color, as a hex String (eg. '#ff0000').
 	 */
 	public String getColor();
+
+	/**
+	 * Gets the activity status of the CanvasObjectItem, which is then visualized
+	 * in the GUI.
+	 * 
+	 * @return
+	 */
+	public boolean isActive();
 }

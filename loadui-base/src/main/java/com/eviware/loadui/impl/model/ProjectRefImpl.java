@@ -28,8 +28,8 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.config.ProjectReferenceConfig;
-import com.eviware.loadui.impl.events.EventSupport;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
+import com.eviware.loadui.util.events.EventSupport;
 
 public class ProjectRefImpl implements ProjectRef
 {

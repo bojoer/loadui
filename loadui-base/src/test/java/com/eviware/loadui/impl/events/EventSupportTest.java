@@ -27,6 +27,7 @@ import java.util.EventObject;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.util.events.EventSupport;
 
 public class EventSupportTest
 {

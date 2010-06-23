@@ -33,10 +33,10 @@ import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.property.PropertyMap;
 import com.eviware.loadui.config.ModelItemConfig;
-import com.eviware.loadui.impl.events.EventSupport;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
 import com.eviware.loadui.impl.property.PropertyMapImpl;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.events.EventSupport;
 
 public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 {
