@@ -406,6 +406,11 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		} );
 	}
 
+	protected void setRunning( boolean running )
+	{
+		this.running = running;
+	}
+
 	private class ComponentListener implements EventHandler<BaseEvent>
 	{
 		@Override
@@ -453,7 +458,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 			{
 				if( !running && START_ACTION.equals( event.getKey() ) )
 				{
-					running = true;
+					setRunning( true );
 					timerFuture = scheduler.scheduleAtFixedRate( new TimeUpdateTask(), 1, 1, TimeUnit.SECONDS );
 					fixTimeLimit();
 					if( startTime == null )
@@ -462,7 +467,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 				}
 				else if( running && ( STOP_ACTION.equals( event.getKey() ) || COMPLETE_ACTION.equals( event.getKey() ) ) )
 				{
-					running = false;
+					setRunning( false );
 					if( timerFuture != null )
 						timerFuture.cancel( true );
 					if( timeLimitFuture != null )

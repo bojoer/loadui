@@ -333,6 +333,20 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		this.messageEndpoint = messageEndpoint;
 	}
 
+	@Override
+	protected void setRunning( boolean running )
+	{
+		super.setRunning( running );
+
+		fireBaseEvent( ACTIVITY );
+	}
+
+	@Override
+	public boolean isActive()
+	{
+		return isRunning();
+	}
+
 	private class SelfListener implements EventHandler<BaseEvent>
 	{
 		@Override

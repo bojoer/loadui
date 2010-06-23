@@ -22,8 +22,8 @@ import com.eviware.loadui.api.addressable.AddressableRegistry.DuplicateAddressEx
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalHolder;
-import com.eviware.loadui.impl.events.EventSupport;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.events.EventSupport;
 
 public abstract class TerminalImpl implements Terminal
 {

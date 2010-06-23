@@ -28,7 +28,7 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
-import com.eviware.loadui.impl.events.EventSupport;
+import com.eviware.loadui.util.events.EventSupport;
 
 public class OutputTerminalStub implements OutputTerminal
 {

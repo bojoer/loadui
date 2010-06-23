@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.events;
+package com.eviware.loadui.util.events;
 
 import java.util.EventObject;
 import java.util.HashSet;

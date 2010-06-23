@@ -29,11 +29,13 @@ import java.util.concurrent.ExecutorService;
 
 import org.springframework.core.convert.ConversionService;
 
+import com.eviware.loadui.api.component.ActivityStrategy;
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.counter.Counter;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.api.events.ActivityEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
@@ -91,6 +93,9 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private final DualTerminal remoteTerminal = new RemoteTerminal();
 	private final DualTerminal controllerTerminal = new ControllerTerminal();
 	private final Map<RunnerItem, RunnerTerminal> runnerTerminals = new HashMap<RunnerItem, RunnerTerminal>();
+
+	private ActivityStrategy activityStrategy;
+	private final ActivityListener activityListener = new ActivityListener();
 
 	public ComponentItemImpl( CanvasItem canvas, ComponentItemConfig config )
 	{
@@ -310,6 +315,12 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	}
 
 	@Override
+	public boolean isActive()
+	{
+		return activityStrategy == null ? false : activityStrategy.isActive();
+	}
+
+	@Override
 	public void generateSummary( MutableChapter summary )
 	{
 		// TODO Auto-generated method stub
@@ -407,6 +418,15 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 					fireCollectionEvent( ComponentContext.RUNNER_TERMINALS, event.getEvent(), runnerTerminal );
 				}
 			}
+		}
+	}
+
+	private class ActivityListener implements EventHandler<ActivityEvent>
+	{
+		@Override
+		public void handleEvent( ActivityEvent event )
+		{
+			fireBaseEvent( ACTIVITY );
 		}
 	}
 
@@ -730,6 +750,22 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		public ComponentItem getComponent()
 		{
 			return ComponentItemImpl.this;
+		}
+
+		@Override
+		public void setActivityStrategy( ActivityStrategy strategy )
+		{
+			if( activityStrategy != null )
+				activityStrategy.removeEventListener( ActivityEvent.class, activityListener );
+
+			boolean active = isActive();
+
+			activityStrategy = strategy;
+			if( activityStrategy != null )
+				activityStrategy.addEventListener( ActivityEvent.class, activityListener );
+
+			if( active != isActive() )
+				fireBaseEvent( ACTIVITY );
 		}
 	}
 
