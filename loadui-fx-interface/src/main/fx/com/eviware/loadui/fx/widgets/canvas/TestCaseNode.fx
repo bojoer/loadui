@@ -40,6 +40,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 import javafx.fxd.FXDNode;
 import javafx.util.Math;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.StylesheetAware;
@@ -65,6 +67,7 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.model.CanvasObjectItem;
 
 import java.util.EventObject;
 import java.lang.RuntimeException;
@@ -173,59 +176,78 @@ public class TestCaseNode extends CanvasNode {
 
 	}
 	
+	var active: Boolean = testCase.isActive();
+	
 	override function create() {
 
 		refreshMinis();
 
-RoundedRectBorder {
-    arc: 30
-    accent: Color.TRANSPARENT
-    borderColor: bind if ( selected ) Color.web("#535353", .6) else Color.TRANSPARENT
-    borderWidth: 0
-    backgroundFill: bind if ( selected ) Color.web("#535353", .6) else Color.TRANSPARENT
-    borderBottomWidth: 10
-    borderLeftWidth: 10
-    borderRightWidth: 10
-    base: Color.TRANSPARENT
-		node: Group {
-			content: [
-				handle = BaseNode {
-					contentNode: TitlebarPanel {
-						backgroundFill: bind backgroundFill
-						content: bind [
-							baseRect,
-							toolbarBoxLeft,
-							toolbarBoxRight,
-							vbox,
-							miniatures,
-							Rectangle {
-								layoutY: bind height - 20
-								height: 20
-								width: bind width
-								fill: bind footerFill
-							}
-						]
-						titlebarColor: color
-						//titlebarEffect: bind if( selected ) Selectable.effect else null
-						titlebarContent: Label {
-							text: bind label
-							layoutX: 15
-							width: bind width - 30
-							height: bind 30
+		RoundedRectBorder {
+		    arc: 30
+		    accent: Color.TRANSPARENT
+		    borderColor: bind if ( selected ) Color.web("#535353", .6) else Color.TRANSPARENT
+		    borderWidth: 0
+		    backgroundFill: bind if ( selected ) Color.web("#535353", .6) else Color.TRANSPARENT
+		    borderBottomWidth: 10
+		    borderLeftWidth: 10
+		    borderRightWidth: 10
+		    base: Color.TRANSPARENT
+			node: Group {
+				content: [
+					handle = BaseNode {
+						contentNode: TitlebarPanel {
+							backgroundFill: bind backgroundFill
+							content: bind [
+								baseRect,
+								toolbarBoxLeft,
+								toolbarBoxRight,
+								vbox,
+								miniatures,
+								Rectangle {
+									layoutY: bind height - 20
+									height: 20
+									width: bind width
+									fill: bind footerFill
+								}
+							]
+							titlebarColor: color
+							//titlebarEffect: bind if( selected ) Selectable.effect else null
+							titlebarContent: [
+								ImageView {
+									layoutX: 10
+									layoutY: 14
+									image: Image {
+						            	url: "{__ROOT__}images/png/led-active.png"
+						        	}
+						        	visible: bind active 
+								}
+								ImageView {
+									layoutX: 10
+									layoutY: 14
+									image: Image {
+						            	url: "{__ROOT__}images/png/led-inactive.png"
+						        	}
+						        	visible: bind not active
+								}
+								Label {
+									text: bind label
+									layoutX: 22
+									layoutY: 3
+									width: bind width - 30
+									height: bind 30
+								}
+							]
 						}
+					},
+					tNode
+				]
+				onMouseClicked: function( e:MouseEvent ) {
+					if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
+						AppState.instance.setActiveCanvas( testCase );
 					}
-				},
-				tNode
-			]
-			onMouseClicked: function( e:MouseEvent ) {
-				if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
-					AppState.instance.setActiveCanvas( testCase );
 				}
 			}
 		}
-		
-}
-		
 	}
 	
 	public function getStateTerminalNode():TerminalNode {
@@ -249,6 +271,20 @@ RoundedRectBorder {
 		SettingsDialog{}.show(testCase);
 	}
 	
+	override function handleEvent(e:EventObject) {
+		super.handleEvent(e);
+		
+		if(e instanceof BaseEvent) {
+			def event = e as BaseEvent;
+			if(CanvasObjectItem.ACTIVITY.equals(event.getKey())) {
+				runInFxThread( function() { setActive(testCase.isActive()) } );
+			}
+		}
+	}
+	
+	function setActive(a: Boolean): Void {
+		active = a;
+	}
 }
 
 class Miniature extends CustomNode {

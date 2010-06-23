@@ -48,12 +48,12 @@ def context = FXLocal.getContext();
 def nodeClass = context.findClass("javafx.scene.Node");
 def getFXNode = nodeClass.getFunction("impl_getPGNode");
 
-public function nodeToImage(node : Node) : BufferedImage {
+public function nodeToImage(node: Node) : BufferedImage {
 	def nodeBounds = node.layoutBounds;
 	nodeToImage(node, nodeBounds.width, nodeBounds.height);
 }
 
-public function nodeToImage(node : Node, width: Number, height: Number) : BufferedImage {
+public function nodeToImage(node: Node, width: Number, height: Number) : BufferedImage {
 
     var g2:Graphics2D;
 
