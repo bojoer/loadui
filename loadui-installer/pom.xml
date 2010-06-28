@@ -35,6 +35,7 @@
 								</copy>
 								<copy todir="${basedir}/target/controller/lib">
 									<fileset file="${basedir}/../loadui-launcher/target/*.jar" />
+									<fileset file="${basedir}/../loadui-launcher/target/lib/*.jar" />
 								</copy>
 								<copy todir="${basedir}/target/controller/bundle">
 									<fileset dir="${basedir}/../loadui-controller-deps/target/bundle" />
@@ -48,11 +49,12 @@
 									<fileset dir="${basedir}/src/main/resources" />
 									<fileset dir="${basedir}/src/runner/resources" />
 								</copy>
+								<copy todir="${basedir}/target/runner/lib">
+									<fileset file="${basedir}/../loadui-launcher/target/*.jar" />
+									<fileset file="${basedir}/../loadui-launcher/target/lib/*.jar" />
+								</copy>
 								<copy todir="${basedir}/target/runner/bundle">
 									<fileset dir="${basedir}/../loadui-runner-deps/target/bundle" />
-								</copy>
-								<copy todir="${basedir}/target/runner/bundle" failonerror="false">
-									<fileset file="e:/maven2/repository/com/eviware/soapui/loadui-soapui-sampler/3.6/*.jar"/>
 								</copy>
 							</tasks>
 						</configuration>

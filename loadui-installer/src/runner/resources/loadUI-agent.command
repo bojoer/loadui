@@ -36,4 +36,4 @@ fi
 
 JAVA_OPTS="-Xms128m -Xmx1024m -XX:MaxPermSize=256m"
 
-java $JAVA_OPTS -cp "$LOADUI_RUNNER_CLASSPATH" org.apache.felix.main.Main "$@"
+java $JAVA_OPTS -cp "$LOADUI_RUNNER_CLASSPATH" com.eviware.loadui.launcher.LoadUILauncher "$@"

@@ -34,10 +34,8 @@ then
     LOADUI_CLASSPATH=`cygpath --path -w "$LOADUI_CLASSPATH"`
 fi 
 
-JAVA_OPTS="-Xms128m -Xmx1024m -XX:MaxPermSize=256m"
-
 cd $LOADUI_HOME
 
 JAVAWS="jre/bin/javaws"
 
-$JAVAWS "$JAVA_OPTS"  loadUI.jnlp
+$JAVAWS loadUI.jnlp

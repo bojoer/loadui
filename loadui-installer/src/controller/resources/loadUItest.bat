@@ -25,5 +25,5 @@ set JAVA_OPTS=-Xms128m -Xmx1024m -XX:MaxPermSize=256m
 
 rem ********* run loadui ***********
 
-"%JAVAFX%" %JAVA_OPTS% -cp "%CLASSPATH%" %* com.eviware.loadui.launcher.LoadUI
+"%JAVAFX%" %JAVA_OPTS% -cp "%CLASSPATH%" com.eviware.loadui.launcher.LoadUILauncher %*
 

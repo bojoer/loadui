@@ -25,5 +25,5 @@ set JAVA_OPTS=-Xms128m -Xmx1024m -XX:MaxPermSize=256m
 
 rem ********* run loadui ***********
 
-"%JAVAFX%" -agentpath:C:\PROGRA~1\JPROFI~1\bin\WINDOW~1\jprofilerti.dll=port=8849 %JAVA_OPTS% -cp "%CLASSPATH%" %* com.eviware.loadui.launcher.LoadUI
+"%JAVAFX%" -agentpath:C:\PROGRA~1\JPROFI~1\bin\WINDOW~1\jprofilerti.dll=port=8849 %JAVA_OPTS% -cp "%CLASSPATH%" com.eviware.loadui.launcher.LoadUILauncher %*
 

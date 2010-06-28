@@ -21,13 +21,6 @@ public class HttpClientFactory
 {
 	public static HttpClient createHttpsClient()
 	{
-		// System.setProperty( "javax.net.debug", "ssl" );
-
-		System.setProperty( "javax.net.ssl.keyStore", System.getProperty( "user.home" ) + "/.loadui/keystore.jks" );
-		System.setProperty( "javax.net.ssl.trustStore", System.getProperty( "user.home" ) + "/.loadui/keystore.jks" );
-		System.setProperty( "javax.net.ssl.keyStorePassword", "password" );
-		System.setProperty( "javax.net.ssl.trustStorePassword", "password" );
-
 		HttpClient httpClient = new HttpClient();
 
 		httpClient.setKeyManagerPassword( System.getProperty( "javax.net.ssl.keyStorePassword" ) );
@@ -49,7 +42,7 @@ public class HttpClientFactory
 
 		return httpClient;
 	}
-	
+
 	public static HttpClient createHttpClient()
 	{
 		HttpClient httpClient = new HttpClient();
@@ -66,5 +59,4 @@ public class HttpClientFactory
 		return httpClient;
 	}
 
-	
 }
