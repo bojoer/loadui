@@ -16,6 +16,6 @@
 	<security>
 		<all-permissions/>
 	</security>
-    <application-desc main-class="com.eviware.loadui.launcher.OSGiLauncher" />
+    <application-desc main-class="com.eviware.loadui.launcher.LoadUILauncher" />
     <update check="timeout" policy="always">
 </jnlp>

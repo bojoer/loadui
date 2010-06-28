@@ -47,11 +47,6 @@ public class HttpActivator implements BundleActivator
 
 		sslServer = new Server();
 
-		System.setProperty( "javax.net.ssl.keyStore", System.getProperty( "user.home" ) + "/.loadui/keystore.jks" );
-		System.setProperty( "javax.net.ssl.trustStore", System.getProperty( "user.home" ) + "/.loadui/keystore.jks" );
-		System.setProperty( "javax.net.ssl.keyStorePassword", "password" );
-		System.setProperty( "javax.net.ssl.trustStorePassword", "password" );
-
 		SslSelectChannelConnector sslConnector = new SslSelectChannelConnector();
 		sslConnector.setKeystore( System.getProperty( "javax.net.ssl.keyStore" ) );
 		sslConnector.setKeyPassword( System.getProperty( "javax.net.ssl.keyStorePassword" ) );
