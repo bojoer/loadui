@@ -34,6 +34,6 @@ then
     LOADUI_RUNNER_CLASSPATH=`cygpath --path -w "$LOADUI_RUNNER_CLASSPATH"`
 fi 
 
-JAVA_OPTS="-Xms128m -Xmx1024m -XX:MaxPermSize=256m"
+JAVA_OPTS="-Xms128m -Xmx768m -XX:MaxPermSize=128m"
 
 java $JAVA_OPTS -cp "$LOADUI_RUNNER_CLASSPATH" com.eviware.loadui.launcher.LoadUILauncher "$@"

@@ -13,7 +13,7 @@
 
 	<bean id="formUploader" class="com.eviware.loadui.impl.upload.FormUploaderImpl" />
 	
-	<bean id="executorManager" class="com.eviware.loadui.impl.dispatch.ExecutorManagerImpl" />
+	<bean id="executorManager" class="com.eviware.loadui.impl.dispatch.ExecutorManagerImpl" destroy-method="shutdown" />
 	
 	<bean id="executorService" factory-bean="executorManager" factory-method="getExecutor" />
 

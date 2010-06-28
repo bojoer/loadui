@@ -16,6 +16,7 @@
 
 package com.eviware.loadui.util.dispatch;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.BlockingQueue;
@@ -34,12 +35,22 @@ public class CustomThreadPoolExecutor extends AbstractExecutorService
 	private static final int IDLE_TIME = 30;
 	private static final int MIN_POOL_SIZE = 30;
 
-	private final BlockingQueue<Runnable> workQueue;
 	private final ThreadFactory threadFactory;
 	private final AtomicInteger nWorkers = new AtomicInteger();
 	private final AtomicInteger nSleeping = new AtomicInteger();
+	private final BlockingQueue<Runnable> workQueue;
 
 	private int maxPoolSize = Integer.MAX_VALUE;
+
+	private boolean isShutdown = false;
+
+	private final static Runnable EXIT_RUNNER = new Runnable()
+	{
+		public void run()
+		{
+			throw new RuntimeException();
+		}
+	};
 
 	public CustomThreadPoolExecutor( int maxPoolSize, BlockingQueue<Runnable> queue, ThreadFactory factory )
 	{
@@ -50,12 +61,12 @@ public class CustomThreadPoolExecutor extends AbstractExecutorService
 		for( int i = 0; i < MIN_POOL_SIZE; i++ )
 			threadFactory.newThread( new Worker() ).start();
 
-		Thread thread = new Thread( new Runnable()
+		Thread statusThread = new Thread( new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				while( true )
+				while( !isShutdown )
 				{
 					try
 					{
@@ -74,8 +85,8 @@ public class CustomThreadPoolExecutor extends AbstractExecutorService
 			}
 		} );
 
-		thread.setDaemon( true );
-		thread.start();
+		statusThread.setDaemon( true );
+		statusThread.start();
 	}
 
 	@Override
@@ -87,7 +98,7 @@ public class CustomThreadPoolExecutor extends AbstractExecutorService
 	@Override
 	public boolean isShutdown()
 	{
-		return false;
+		return isShutdown;
 	}
 
 	@Override
@@ -99,18 +110,31 @@ public class CustomThreadPoolExecutor extends AbstractExecutorService
 	@Override
 	public void shutdown()
 	{
-		throw new UnsupportedOperationException( "This Executor may not be shutdown!" );
+		// throw new UnsupportedOperationException(
+		// "This Executor may not be shutdown!" );
+		isShutdown = true;
 	}
 
 	@Override
 	public List<Runnable> shutdownNow()
 	{
-		throw new UnsupportedOperationException( "This Executor may not be shutdown!" );
+		// throw new UnsupportedOperationException(
+		// "This Executor may not be shutdown!" );
+		shutdown();
+		List<Runnable> remaining = new ArrayList<Runnable>();
+		workQueue.drainTo( remaining );
+		for( int i = nWorkers.get(); i >= 0; i-- )
+			workQueue.offer( EXIT_RUNNER );
+
+		return remaining;
 	}
 
 	@Override
 	public void execute( Runnable command )
 	{
+		if( isShutdown )
+			return;
+
 		// This may fail. If so, we ignore it...
 		workQueue.offer( command );
 
@@ -139,14 +163,15 @@ public class CustomThreadPoolExecutor extends AbstractExecutorService
 			nWorkers.incrementAndGet();
 			while( !exit )
 			{
+				Runnable r = null;
 				try
 				{
 					nSleeping.incrementAndGet();
-					Runnable r = workQueue.poll( IDLE_TIME, TimeUnit.SECONDS );
+					r = workQueue.poll( isShutdown ? 0 : IDLE_TIME, TimeUnit.SECONDS );
 					nSleeping.decrementAndGet();
 					if( r == null )
 					{
-						if( nWorkers.get() > MIN_POOL_SIZE )
+						if( nWorkers.get() > MIN_POOL_SIZE || ( isShutdown && workQueue.isEmpty() ) )
 							exit = true;
 					}
 					else
@@ -157,6 +182,15 @@ public class CustomThreadPoolExecutor extends AbstractExecutorService
 				catch( InterruptedException e )
 				{
 					// Ignore
+				}
+				catch( RuntimeException e )
+				{
+					if( r == EXIT_RUNNER )
+					{
+						exit = true;
+					}
+					else
+						e.printStackTrace();
 				}
 			}
 			nWorkers.decrementAndGet();
