@@ -82,7 +82,7 @@ public class ExecutorManagerImpl implements ExecutorManager
 			}
 		} );
 
-		new Thread( new Runnable()
+		Thread thread = new Thread( new Runnable()
 		{
 			@Override
 			public void run()
@@ -132,7 +132,10 @@ public class ExecutorManagerImpl implements ExecutorManager
 							.intValue() );
 				}
 			}
-		} ).start();
+		}, "Awaiting Initialization" );
+
+		thread.setDaemon( true );
+		thread.start();
 	}
 
 	@Override
@@ -166,5 +169,10 @@ public class ExecutorManagerImpl implements ExecutorManager
 	{
 		log.info( "Global Threadpool queue max size set to {}", size );
 		queue.setCapacity( size );
+	}
+
+	public void shutdown()
+	{
+		executor.shutdownNow();
 	}
 }

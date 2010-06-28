@@ -47,7 +47,8 @@ public class LoadUILauncher
 	{
 		System.setSecurityManager( null );
 
-		new LoadUILauncher( args );
+		LoadUILauncher launcher = new LoadUILauncher( args );
+		launcher.start();
 	}
 
 	/**
@@ -62,10 +63,11 @@ public class LoadUILauncher
 
 		initSystemProperties();
 
+		CommandLineParser parser = new PosixParser();
+		Options options = createOptions();
+
 		try
 		{
-			CommandLineParser parser = new PosixParser();
-			Options options = createOptions();
 			CommandLine cmd = parser.parse( options, args );
 
 			if( cmd.hasOption( "h" ) )
@@ -80,8 +82,11 @@ public class LoadUILauncher
 		}
 		catch( ParseException e )
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.print( "Error parsing commandline args: " + e.getMessage() + "\n" );
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp( "loadUILauncher", options );
+
+			System.exit( -1 );
 		}
 
 		framework = new FrameworkFactory().newFramework( configProps );
@@ -89,12 +94,24 @@ public class LoadUILauncher
 		{
 			framework.init();
 			AutoProcessor.process( configProps, framework.getBundleContext() );
-			framework.start();
-			System.out.println( "Framework started!" );
+
 		}
 		catch( BundleException ex )
 		{
 			ex.printStackTrace();
+		}
+	}
+
+	protected void start()
+	{
+		try
+		{
+			framework.start();
+			System.out.println( "Framework started!" );
+		}
+		catch( BundleException e )
+		{
+			e.printStackTrace();
 		}
 	}
 
@@ -125,11 +142,6 @@ public class LoadUILauncher
 		{
 			addJavaFxPackages();
 		}
-
-		if( cmd.hasOption( "E" ) )
-		{
-			System.out.println( "Echo " + cmd.getOptionValue( "E" ) );
-		}
 	}
 
 	protected void initSystemProperties()
@@ -137,13 +149,15 @@ public class LoadUILauncher
 		System.setProperty( "loadui.home", System.getProperty( "user.home", "." ) + File.separator + ".loadui" );
 		System.setProperty( "groovy.root", System.getProperty( "loadui.home" ) + File.separator + ".groovy" );
 
-		System.setProperty( "javax.net.ssl.keyStore", System.getProperty( "loadui.home" ) + "/keystore.jks" );
-		System.setProperty( "javax.net.ssl.trustStore", System.getProperty( "loadui.home" ) + "/keystore.jks" );
+		System.setProperty( "javax.net.ssl.keyStore", System.getProperty( "loadui.home" ) + File.separator
+				+ "keystore.jks" );
+		System.setProperty( "javax.net.ssl.trustStore", System.getProperty( "loadui.home" ) + File.separator
+				+ "keystore.jks" );
 		System.setProperty( "javax.net.ssl.keyStorePassword", "password" );
 		System.setProperty( "javax.net.ssl.trustStorePassword", "password" );
 	}
 
-	private void addJavaFxPackages()
+	protected void addJavaFxPackages()
 	{
 		InputStream is = getClass().getResourceAsStream( "/packages-extra.txt" );
 		if( is != null )
