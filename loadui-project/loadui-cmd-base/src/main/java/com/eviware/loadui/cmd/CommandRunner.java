@@ -13,28 +13,17 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.util;
+package com.eviware.loadui.cmd;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
-/**
- * Utility class for setting System properties in a Spring configuration file.
- * 
- * @author dain.nilsson
- */
-public class SystemPropertyInitializer
+public class CommandRunner
 {
-	public void setProperties( Map<String, String> properties )
-	{
-		for( Entry<String, String> entry : properties.entrySet() )
-			System.setProperty( entry.getKey(), entry.getValue() );
-	}
 
-	public void setDefaultProperties( Map<String, String> properties )
+	public void execute( Object command, Map<String, String> properties )
 	{
-		for( Entry<String, String> entry : properties.entrySet() )
-			if( System.getProperty( entry.getKey() ) == null )
-				System.setProperty( entry.getKey(), entry.getValue() );
+		String commandString = command.toString();
+
+		System.out.println( commandString );
 	}
 }

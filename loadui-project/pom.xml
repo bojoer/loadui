@@ -32,6 +32,7 @@
 		<module>loadui-installer</module>
 		<!-- <module>loadui-integration-tests</module> -->
 		<module>loadui-component</module>
+		<module>loadui-cmd-base</module>
 	</modules>
 
 

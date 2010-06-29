@@ -16,18 +16,5 @@
 		<constructor-arg ref="counterSynchronizer" />
 	</bean>
 	
-	<bean class="com.eviware.loadui.util.SystemPropertyInitializer">
-		<property name="properties">
-			<map>
-				<entry key="loadui.instance" value="runner" />
-			</map>
-		</property>
-	</bean>
-	
 	<bean class="com.eviware.loadui.impl.discovery.DiscoveryResponder" destroy-method="release" />
-	
-	<!--<bean id="serializationRegistry"
-		class="com.eviware.loadui.util.serialization.SerializationRegistry">
-		<constructor-arg ref="typeSerializers" />
-	</bean>-->
 </beans>
