@@ -26,14 +26,7 @@ public class ValueStatistics
 {
 	private final List<DataPoint> dataPoints = new ArrayList<DataPoint>();
 	private long period;
-	private int snapshotSize = 10;
 	private int snapshotLength = 1000;
-
-	public ValueStatistics( long period, int snapshotSize )
-	{
-		this.period = period;
-		this.snapshotSize = snapshotSize;
-	}
 
 	public ValueStatistics( long period )
 	{
@@ -76,7 +69,7 @@ public class ValueStatistics
 		for( Iterator<DataPoint> it = dataPoints.iterator(); it.hasNext(); )
 		{
 			DataPoint dataPoint = it.next();
-			if( dataPoint.timestamp < timestamp - period && period > 0)
+			if( dataPoint.timestamp < timestamp - period && period > 0 )
 				it.remove();
 			else
 			{

@@ -15,14 +15,18 @@
  */
 package com.eviware.loadui.launcher;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
-import com.eviware.loadui.launcher.api.Command;
-import com.eviware.loadui.launcher.impl.StringCommand;
+import com.eviware.loadui.launcher.api.GroovyCommand;
+import com.eviware.loadui.launcher.impl.FileGroovyCommand;
+import com.eviware.loadui.launcher.impl.ResourceGroovyCommand;
 
 public class LoadUICommandLineLauncher extends LoadUILauncher
 {
@@ -35,7 +39,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 		launcher.start();
 	}
 
-	private final List<Command> commands = new ArrayList<Command>();
+	private final List<GroovyCommand> commands = new ArrayList<GroovyCommand>();
 
 	public LoadUICommandLineLauncher( String[] args )
 	{
@@ -46,9 +50,11 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	protected Options createOptions()
 	{
 		Options options = super.createOptions();
+		options.addOption( "W", "workspace", true, "Sets the Workspace file to load" );
 		options.addOption( "P", "project", true, "Sets the Project file to run" );
 		options.addOption( "T", "testcase", true, "Sets which TestCase to run (leave blank to run the entire Project)" );
 		options.addOption( "L", "limits", true, "Sets the limits for the execution (e.g. -L 60;0;200 )" );
+		options.addOption( "F", "file", true, "Executes the specified Groovy script file" );
 
 		return options;
 	}
@@ -58,11 +64,21 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	{
 		super.processCommandLine( cmd );
 
-		if( cmd.hasOption( "T" ) )
-			commands.add( new StringCommand( "println \"The workspace is ${workspace}\"" ) );
+		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		for( int i = 0; i < 10; i++ )
-			commands.add( new StringCommand( "println " + i ) );
+		if( cmd.hasOption( "P" ) )
+		{
+			attributes.put( "workspaceFile", cmd.hasOption( "W" ) ? new File( cmd.getOptionValue( "W" ) ) : null );
+			attributes.put( "projectFile", cmd.hasOption( "P" ) ? new File( cmd.getOptionValue( "P" ) ) : null );
+			attributes.put( "testCase", cmd.getOptionValue( "T" ) );
+			attributes.put( "testCase", cmd.getOptionValue( "L" ) );
+
+			commands.add( new ResourceGroovyCommand( "/RunTest.groovy", attributes ) );
+		}
+		else if( cmd.hasOption( "F" ) )
+		{
+			commands.add( new FileGroovyCommand( new File( cmd.getOptionValue( "F" ) ), attributes ) );
+		}
 	}
 
 	@Override
@@ -70,7 +86,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	{
 		super.start();
 
-		for( Command c : commands )
-			framework.getBundleContext().registerService( Command.class.getName(), c, null );
+		for( GroovyCommand c : commands )
+			framework.getBundleContext().registerService( GroovyCommand.class.getName(), c, null );
 	}
 }
