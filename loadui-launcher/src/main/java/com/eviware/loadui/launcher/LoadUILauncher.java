@@ -32,6 +32,8 @@ import org.apache.felix.framework.FrameworkFactory;
 import org.apache.felix.main.AutoProcessor;
 import org.apache.felix.main.Main;
 
+import com.eviware.loadui.launcher.api.OSGiUtils;
+
 /**
  * Starts an embedded OSGi Runtime (Felix) with all the required JavaFX packages
  * exposed, enabling JavaFX bundles to run.
@@ -104,7 +106,6 @@ public class LoadUILauncher
 		{
 			framework.init();
 			AutoProcessor.process( configProps, framework.getBundleContext() );
-
 		}
 		catch( BundleException ex )
 		{
@@ -117,6 +118,7 @@ public class LoadUILauncher
 		try
 		{
 			framework.start();
+			OSGiUtils.setFramework( framework );
 			System.out.println( "Framework started!" );
 		}
 		catch( BundleException e )
@@ -201,23 +203,6 @@ public class LoadUILauncher
 			{
 				e.printStackTrace();
 			}
-		}
-	}
-
-	/**
-	 * Stops the OSGi runtime.
-	 */
-	public void stop()
-	{
-		System.out.println( "Stopping Framework..." );
-		try
-		{
-			framework.stop();
-			System.out.println( "Framework stopped!" );
-		}
-		catch( BundleException ex )
-		{
-			ex.printStackTrace();
 		}
 	}
 }

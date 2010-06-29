@@ -61,4 +61,10 @@ public class WorkspaceProviderImpl implements WorkspaceProvider
 	{
 		return workspace != null;
 	}
+
+	@Override
+	public WorkspaceItem loadDefaultWorkspace()
+	{
+		return loadWorkspace( new File( System.getProperty( "loadui.home" ), "workspace.xml" ) );
+	}
 }

@@ -35,6 +35,13 @@ public interface WorkspaceProvider
 	public WorkspaceItem loadWorkspace( File workspaceFile );
 
 	/**
+	 * Loads the default workspace from file.
+	 * 
+	 * @return
+	 */
+	public WorkspaceItem loadDefaultWorkspace();
+
+	/**
 	 * Gets the current workspace, if one has been loaded.
 	 * 
 	 * @return The currently loaded WorkspaceItem.

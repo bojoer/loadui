@@ -28,7 +28,6 @@
 				<configuration>
 					<instructions>
 						<Import-Package>!com.eviware.loadui.cmd;*</Import-Package>
-						<Embed-Dependency>*;scope=provided</Embed-Dependency>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -44,6 +43,12 @@
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
 			<version>1.7.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-launcher</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

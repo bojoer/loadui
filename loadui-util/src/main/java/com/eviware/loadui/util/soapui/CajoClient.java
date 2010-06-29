@@ -38,7 +38,7 @@ public class CajoClient
 			return instance;
 	}
 
-	Logger logger = LoggerFactory.getLogger( "com.eviware.loadui.integration.CajoClient" );
+	Logger logger = LoggerFactory.getLogger( CajoClient.class );
 
 	private CajoClient()
 	{
@@ -57,7 +57,8 @@ public class CajoClient
 		}
 		catch( Exception e )
 		{
-			logger.warn( "Could not connect to SoapUI cajo server on " + getConnectionString()+ " , method name:"+method );
+			logger.warn( "Could not connect to SoapUI cajo server on " + getConnectionString() + " , method name:"
+					+ method );
 			return null;
 		}
 	}
@@ -129,8 +130,9 @@ public class CajoClient
 		this.workspaceProviderRegistry = workspaceProviderRegistry;
 	}
 
-	public  void startSoapUI(){
+	public void startSoapUI()
+	{
 		SoapUIStarter.start( workspaceProviderRegistry.getWorkspace().getProperty( WorkspaceItem.SOAPUI_PATH_PROPERTY )
-				.getStringValue()   );
+				.getStringValue() );
 	}
 }

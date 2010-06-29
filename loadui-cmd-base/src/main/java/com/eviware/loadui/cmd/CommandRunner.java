@@ -17,31 +17,69 @@ package com.eviware.loadui.cmd;
 
 import groovy.ui.Console;
 
-import java.io.File;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import com.eviware.loadui.api.model.WorkspaceItem;
+import org.codehaus.groovy.control.CompilationFailedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.model.WorkspaceProvider;
+import com.eviware.loadui.launcher.api.GroovyCommand;
+import com.eviware.loadui.launcher.api.OSGiUtils;
 
 public class CommandRunner
 {
+	public static final Logger log = LoggerFactory.getLogger( CommandRunner.class );
+
+	private final ExecutorService executor;
 	private final WorkspaceProvider workspaceProvider;
 	private final Console console;
 
 	public CommandRunner( WorkspaceProvider workspaceProvider )
 	{
+		this.executor = Executors.newSingleThreadScheduledExecutor();
 		this.workspaceProvider = workspaceProvider;
 
 		console = new Console();
 	}
 
-	public void execute( Object command, Map<String, String> properties )
+	public void execute( GroovyCommand command, Map<String, String> properties )
 	{
-		WorkspaceItem workspace = workspaceProvider.isWorkspaceLoaded() ? workspaceProvider.getWorkspace()
-				: workspaceProvider.loadWorkspace( new File( System.getProperty( "loadui.home" ) + File.separator
-						+ "workspace.xml" ) );
-		console.setVariable( "workspace", workspace );
+		executor.execute( new CommandRunnable( command ) );
+	}
 
-		console.getShell().evaluate( command.toString() );
+	private class CommandRunnable implements Runnable
+	{
+		private final GroovyCommand command;
+
+		public CommandRunnable( GroovyCommand command )
+		{
+			this.command = command;
+		}
+
+		public void run()
+		{
+			console.setVariable( "log", log );
+			console.setVariable( "workspaceProvider", workspaceProvider );
+			console.setVariable( "workspace", workspaceProvider.getWorkspace() );
+			for( Entry<String, Object> entry : command.getAttributes().entrySet() )
+				console.setVariable( entry.getKey(), entry.getValue() );
+
+			try
+			{
+				console.getShell().evaluate( command.getScript() );
+			}
+			catch( CompilationFailedException e )
+			{
+				log.error( "An error occured when executing the command", e );
+			}
+			console.clearContext();
+
+			if( command.exitOnCompletion() )
+				OSGiUtils.shutdown();
+		}
 	}
 }

@@ -6,7 +6,7 @@
 	
 	<osgi:reference interface="com.eviware.loadui.api.model.WorkspaceProvider" id="workspaceProvider" />
 	
-	<osgi:list interface="com.eviware.loadui.launcher.api.Command" id="commands" cardinality="0..N">
+	<osgi:list interface="com.eviware.loadui.launcher.api.GroovyCommand" id="commands" cardinality="0..N">
 		<osgi:listener bind-method="execute" ref="commandRunner" />
 	</osgi:list>
 </beans>
