@@ -174,7 +174,7 @@ public class LoadUILauncher
 	{
 		try
 		{
-			Class.forName( "javafx.lang" );
+			Class.forName( "javafx.lang.FX" );
 		}
 		catch( ClassNotFoundException e )
 		{

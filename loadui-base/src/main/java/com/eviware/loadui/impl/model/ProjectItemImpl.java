@@ -473,7 +473,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				{
 					XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
 					// Create an XML stream writer
-					File outputDir = new File( System.getProperty( "user.home" ), ".loadui" );
+					File outputDir = new File( System.getProperty( "loadui.home" ) );
 
 					String fileName = getLabel() + "-summary-" + System.currentTimeMillis() + ".xml";
 					File out = new File( outputDir, fileName );
@@ -491,16 +491,18 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 						for( String valKey : chapter.getValues().keySet() )
 						{
 							xmlw.writeCharacters( "\n" );
-							xmlw.writeStartElement( valKey.replace(" ","_").replace("(%)", "").toLowerCase() );
+							xmlw.writeStartElement( valKey.replace( " ", "_" ).replace( "(%)", "" ).toLowerCase() );
 							xmlw.writeCharacters( chapter.getValues().get( valKey ) );
 							xmlw.writeEndElement();
 							xmlw.writeCharacters( "\n" );
-							/*xmlw.writeCharacters( "\n" );
-							xmlw.writeStartElement( "value-value" );
-							xmlw.writeCharacters( chapter.getValues().get( valKey ) );
-							xmlw.writeEndElement(); // value-value
-							xmlw.writeCharacters( "\n" );
-							xmlw.writeEndElement(); // value */
+							/*
+							 * xmlw.writeCharacters( "\n" ); xmlw.writeStartElement(
+							 * "value-value" ); xmlw.writeCharacters(
+							 * chapter.getValues().get( valKey ) );
+							 * xmlw.writeEndElement(); // value-value
+							 * xmlw.writeCharacters( "\n" ); xmlw.writeEndElement(); //
+							 * value
+							 */
 						}
 						for( Section section : chapter.getSections() )
 						{
@@ -510,40 +512,45 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 							for( String valKey : section.getValues().keySet() )
 							{
 								xmlw.writeCharacters( "\n" );
-								xmlw.writeStartElement( valKey.replace(" ","_").replace("(%)", "").toLowerCase() );
+								xmlw.writeStartElement( valKey.replace( " ", "_" ).replace( "(%)", "" ).toLowerCase() );
 								xmlw.writeCharacters( section.getValues().get( valKey ) );
 								xmlw.writeEndElement(); // value-name
 								xmlw.writeCharacters( "\n" );
 							}
 							for( String tablekey : section.getTables().keySet() )
 							{
-								xmlw.writeStartElement( tablekey.replace(" ","_").toLowerCase() );
-								//xmlw.writeAttribute( "name", tablekey );
+								xmlw.writeStartElement( tablekey.replace( " ", "_" ).toLowerCase() );
+								// xmlw.writeAttribute( "name", tablekey );
 								TableModel table = section.getTables().get( tablekey );
 								xmlw.writeCharacters( "\n" );
-								//xmlw.writeStartElement( "columns" );
-								//xmlw.writeAttribute( "size", String.valueOf( table.getColumnCount() ) );
-								//xmlw.writeCharacters( "\n" );
-								//StringBuffer columns = new StringBuffer();
-							//	String columns = new String [table.getColumnCount()]
-							//	for( int i = 0; i < table.getColumnCount(); i++ ) {
-							//		columns.append( table.getColumnName( i ) ).append( "," );
-							//	columns.deleteCharAt( columns.length() - 1 );
-							//	xmlw.writeCharacters( columns.toString() );
-							//	xmlw.writeEndElement();// columns
-							//	xmlw.writeCharacters( "\n" );
+								// xmlw.writeStartElement( "columns" );
+								// xmlw.writeAttribute( "size", String.valueOf(
+								// table.getColumnCount() ) );
+								// xmlw.writeCharacters( "\n" );
+								// StringBuffer columns = new StringBuffer();
+								// String columns = new String [table.getColumnCount()]
+								// for( int i = 0; i < table.getColumnCount(); i++ ) {
+								// columns.append( table.getColumnName( i ) ).append(
+								// "," );
+								// columns.deleteCharAt( columns.length() - 1 );
+								// xmlw.writeCharacters( columns.toString() );
+								// xmlw.writeEndElement();// columns
+								// xmlw.writeCharacters( "\n" );
 								//
-							//	xmlw.writeStartElement( "rows" );
-							//	xmlw.writeAttribute( "size", String.valueOf( table.getRowCount() ) );
-							//	xmlw.writeCharacters( "\n" );
+								// xmlw.writeStartElement( "rows" );
+								// xmlw.writeAttribute( "size", String.valueOf(
+								// table.getRowCount() ) );
+								// xmlw.writeCharacters( "\n" );
 								for( int j = 0; j < table.getRowCount(); j++ )
 								{
 									xmlw.writeStartElement( "row" );
 									StringBuffer row = new StringBuffer();
-									for( int i = 0; i < table.getColumnCount(); i++ ) {
-										xmlw.writeStartElement(table.getColumnName( i ).replace(" ","_").replace("/","_").toLowerCase());
-										if (table.getValueAt(j, i) != null)
-											xmlw.writeCharacters(table.getValueAt(j, i).toString());
+									for( int i = 0; i < table.getColumnCount(); i++ )
+									{
+										xmlw.writeStartElement( table.getColumnName( i ).replace( " ", "_" ).replace( "/", "_" )
+												.toLowerCase() );
+										if( table.getValueAt( j, i ) != null )
+											xmlw.writeCharacters( table.getValueAt( j, i ).toString() );
 										xmlw.writeEndElement();
 										xmlw.writeCharacters( "\n" );
 									}

@@ -22,11 +22,25 @@ import org.springframework.context.ApplicationContextAware;
 public class BeanInjector implements ApplicationContextAware
 {
 	private static ApplicationContext context;
+	private static Object waiter = new Object();
 
 	public static <T> T getBean( Class<T> cls )
 	{
 		if( context == null )
-			throw new RuntimeException( " ApplicationContext is missing, has BeanInjector been configured?" );
+		{
+			synchronized( waiter )
+			{
+				try
+				{
+					waiter.wait( 5000 );
+				}
+				catch( InterruptedException e )
+				{
+				}
+				if( context == null )
+					throw new RuntimeException( "ApplicationContext is missing, has BeanInjector been configured?" );
+			}
+		}
 
 		String camelCase = cls.getSimpleName().substring( 0, 1 ).toLowerCase() + cls.getSimpleName().substring( 1 );
 		Object obj = context.getBean( camelCase, cls );
@@ -39,5 +53,9 @@ public class BeanInjector implements ApplicationContextAware
 	public void setApplicationContext( ApplicationContext arg0 ) throws BeansException
 	{
 		context = arg0;
+		synchronized( waiter )
+		{
+			waiter.notifyAll();
+		}
 	}
 }

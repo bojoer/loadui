@@ -27,8 +27,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>
 
 	public final static String CHANNEL = "/" + ReferenceToFileConverter.class.getName();
 
-	private final File storage = new File( System.getProperty( "user.home" ) + File.separator + ".loadui"
-			+ File.separator + "fileStorage" );
+	private final File storage = new File( System.getProperty( "loadui.home" ) + File.separator + "fileStorage" );
 
 	private final Map<String, File> files = new HashMap<String, File>();
 	private final Map<String, OutputStream> writers = Collections.synchronizedMap( new HashMap<String, OutputStream>() );
