@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -61,6 +62,8 @@ import com.eviware.loadui.util.BeanInjector;
 public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends ModelItemImpl<Config> implements
 		CanvasItem
 {
+	private static final String LIMITS_ATTRIBUTE = "limits";
+
 	protected final CounterSupport counterSupport;
 	private final Set<ComponentItem> components = new HashSet<ComponentItem>();
 	protected final Set<Connection> connections = new HashSet<Connection>();
@@ -134,6 +137,21 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		}
 
 		addEventListener( BaseEvent.class, new ActionListener() );
+
+		String[] limitStrings = getAttribute( LIMITS_ATTRIBUTE, "" ).split( ";" );
+		for( String limit : limitStrings )
+		{
+			String[] parts = limit.split( "=", 2 );
+			try
+			{
+				if( parts.length == 2 )
+					setLimit( parts[0], Long.parseLong( parts[1] ) );
+			}
+			catch( NumberFormatException e )
+			{
+				// Ignore
+			}
+		}
 
 		// timer.scheduleAtFixedRate( timerTask, 1000, 1000 );
 	}
@@ -322,6 +340,11 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 			limits.put( counterName, counterValue );
 		else
 			limits.remove( counterName );
+
+		StringBuilder s = new StringBuilder();
+		for( Entry<String, Long> e : limits.entrySet() )
+			s.append( e.getKey() ).append( "=" ).append( e.getValue().toString() ).append( ";" );
+		setAttribute( LIMITS_ATTRIBUTE, s.toString() );
 
 		if( TIMER_COUNTER.equals( counterName ) )
 			fixTimeLimit();
