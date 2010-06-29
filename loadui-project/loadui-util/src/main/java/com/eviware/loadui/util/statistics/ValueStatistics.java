@@ -76,7 +76,7 @@ public class ValueStatistics
 		for( Iterator<DataPoint> it = dataPoints.iterator(); it.hasNext(); )
 		{
 			DataPoint dataPoint = it.next();
-			if( dataPoint.timestamp < timestamp - period )
+			if( dataPoint.timestamp < timestamp - period && period > 0)
 				it.remove();
 			else
 			{
