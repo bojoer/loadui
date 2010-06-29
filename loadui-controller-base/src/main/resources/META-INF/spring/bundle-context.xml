@@ -9,12 +9,4 @@
 	</bean>
 	
 	<bean id="runnerDiscovery" class="com.eviware.loadui.impl.discovery.RunnerDiscoveryImpl" destroy-method="release" />
-	
-	<bean class="com.eviware.loadui.util.SystemPropertyInitializer">
-		<property name="properties">
-			<map>
-				<entry key="loadui.instance" value="controller" />
-			</map>
-		</property>
-	</bean>
 </beans>

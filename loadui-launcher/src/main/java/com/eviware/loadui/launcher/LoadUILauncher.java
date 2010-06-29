@@ -40,35 +40,45 @@ import org.apache.felix.main.Main;
  */
 public class LoadUILauncher
 {
-	private final Framework framework;
-	private final Properties configProps;
-
 	public static void main( String[] args )
 	{
 		System.setSecurityManager( null );
 
 		LoadUILauncher launcher = new LoadUILauncher( args );
+		launcher.init();
 		launcher.start();
 	}
+
+	protected Framework framework;
+	protected final Properties configProps;
+	protected final String[] argv;
 
 	/**
 	 * Initiates and starts the OSGi runtime.
 	 */
 	public LoadUILauncher( String[] args )
 	{
+		argv = args;
 		System.out.println( "Starting OSGi Framework..." );
 		Main.loadSystemProperties();
 		configProps = Main.loadConfigProperties();
 		Main.copySystemProperties( configProps );
+	}
 
+	protected void init()
+	{
 		initSystemProperties();
+
+		String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
+		configProps.put( "org.osgi.framework.system.packages.extra",
+				extra.equals( "" ) ? "com.eviware.loadui.launcher.api" : "com.eviware.loadui.launcher.api," + extra );
 
 		CommandLineParser parser = new PosixParser();
 		Options options = createOptions();
 
 		try
 		{
-			CommandLine cmd = parser.parse( options, args );
+			CommandLine cmd = parser.parse( options, argv );
 
 			if( cmd.hasOption( "h" ) )
 			{
@@ -155,10 +165,22 @@ public class LoadUILauncher
 				+ "keystore.jks" );
 		System.setProperty( "javax.net.ssl.keyStorePassword", "password" );
 		System.setProperty( "javax.net.ssl.trustStorePassword", "password" );
+
+		if( System.getProperty( "loadui.instance" ) == null )
+			System.setProperty( "loadui.instance", "controller" );
 	}
 
 	protected void addJavaFxPackages()
 	{
+		try
+		{
+			Class.forName( "javafx.lang" );
+		}
+		catch( ClassNotFoundException e )
+		{
+			return;
+		}
+
 		InputStream is = getClass().getResourceAsStream( "/packages-extra.txt" );
 		if( is != null )
 		{
