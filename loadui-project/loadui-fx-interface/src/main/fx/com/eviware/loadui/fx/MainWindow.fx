@@ -133,7 +133,7 @@ public class MainWindow {
 		workspace = if( workspaceProvider.isWorkspaceLoaded() )
 			workspaceProvider.getWorkspace()
 		else //TODO: Use a global configuration file to select workspace.
-			workspaceProvider.loadWorkspace( new File( "{FX.getProperty('javafx.user.home')}{File.separator}.loadui{File.separator}workspace.xml" ) );
+			workspaceProvider.loadWorkspace( new File( java.lang.System.getProperty("loadui.home"), "workspace.xml" ) );
 		
 		//InspectorPanel
 		log.debug( "Initializing InspectorPanel" );

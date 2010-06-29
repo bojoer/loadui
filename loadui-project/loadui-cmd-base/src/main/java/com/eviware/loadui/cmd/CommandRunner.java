@@ -15,15 +15,33 @@
  */
 package com.eviware.loadui.cmd;
 
+import groovy.ui.Console;
+
+import java.io.File;
 import java.util.Map;
+
+import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.model.WorkspaceProvider;
 
 public class CommandRunner
 {
+	private final WorkspaceProvider workspaceProvider;
+	private final Console console;
+
+	public CommandRunner( WorkspaceProvider workspaceProvider )
+	{
+		this.workspaceProvider = workspaceProvider;
+
+		console = new Console();
+	}
 
 	public void execute( Object command, Map<String, String> properties )
 	{
-		String commandString = command.toString();
+		WorkspaceItem workspace = workspaceProvider.isWorkspaceLoaded() ? workspaceProvider.getWorkspace()
+				: workspaceProvider.loadWorkspace( new File( System.getProperty( "loadui.home" ) + File.separator
+						+ "workspace.xml" ) );
+		console.setVariable( "workspace", workspace );
 
-		System.out.println( commandString );
+		console.getShell().evaluate( command.toString() );
 	}
 }

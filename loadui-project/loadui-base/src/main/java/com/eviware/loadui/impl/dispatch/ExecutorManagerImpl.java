@@ -87,18 +87,6 @@ public class ExecutorManagerImpl implements ExecutorManager
 			@Override
 			public void run()
 			{
-				while( System.getProperty( "loadui.instance" ) == null )
-				{
-					try
-					{
-						Thread.sleep( 500 );
-					}
-					catch( InterruptedException e )
-					{
-						// Ignore
-					}
-				}
-
 				if( "controller".equals( System.getProperty( "loadui.instance" ) ) )
 				{
 					WorkspaceProvider wp = BeanInjector.getBean( WorkspaceProvider.class );

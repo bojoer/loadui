@@ -59,7 +59,10 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 		super.processCommandLine( cmd );
 
 		if( cmd.hasOption( "T" ) )
-			commands.add( new StringCommand( cmd.getOptionValue( "T" ) ) );
+			commands.add( new StringCommand( "println \"The workspace is ${workspace}\"" ) );
+
+		for( int i = 0; i < 10; i++ )
+			commands.add( new StringCommand( "println " + i ) );
 	}
 
 	@Override

@@ -48,7 +48,7 @@ public class ControllerTest
 			@Override
 			public void run()
 			{
-				File home = new File( System.getProperty( "user.home" ) + File.separator + ".loadui" );
+				File home = new File( System.getProperty( "loadui.home" ) );
 				Console console = new Console();
 				console.setVariable( "workspaceProvider", workspaceProvider );
 				console.setVariable( "componentRegistry", componentRegistry );
