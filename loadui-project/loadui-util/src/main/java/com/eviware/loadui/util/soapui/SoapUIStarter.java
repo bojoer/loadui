@@ -16,48 +16,60 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SoapUIStarter {
-	private static Logger logger = LoggerFactory.getLogger("com.eviware.loadui.integration.StartSoapUI");
+public class SoapUIStarter
+{
+	private static Logger logger = LoggerFactory.getLogger( SoapUIStarter.class );
 	private static Boolean isWindows;
-	
-	public static void start(String soapUIbatPath) {
-		if ( CajoClient.getInstance().testConnection()) {
-			logger.info("Cajo online!Test passed!");
-			try {
-				//try to give it a focus
-				CajoClient.getInstance().invoke("bringToFront", null);
+
+	public static void start( String soapUIbatPath )
+	{
+		if( CajoClient.getInstance().testConnection() )
+		{
+			logger.info( "Cajo online!Test passed!" );
+			try
+			{
+				// try to give it a focus
+				CajoClient.getInstance().invoke( "bringToFront", null );
 			}
-			catch (Exception e) {
-				logger.info("SoapUI is running but can't move it to the front.");
+			catch( Exception e )
+			{
+				logger.info( "SoapUI is running but can't move it to the front." );
 			}
 			return;
 		}
 
-		logger.info("Cajo offline!Test not passed!");
+		logger.info( "Cajo offline!Test not passed!" );
 		String extension = isWindows() ? ".bat" : ".sh";
-		if (extension.equals(".sh")) {
-			soapUIbatPath = soapUIbatPath.replace(".bat", ".sh");
+		if( extension.equals( ".sh" ) )
+		{
+			soapUIbatPath = soapUIbatPath.replace( ".bat", ".sh" );
 		}
-		try {
-			File file = new File(soapUIbatPath);
-			if (!file.exists()) {
+		try
+		{
+			File file = new File( soapUIbatPath );
+			if( !file.exists() )
+			{
 				return;
 			}
 			String[] commandsWin = new String[] { "cmd.exe", "/c", soapUIbatPath };
 			String[] commandsLinux = new String[] { "sh", soapUIbatPath };
-			logger.info("SoapUI statring .....");
-			ProcessBuilder pb = new ProcessBuilder(isWindows() ? commandsWin : commandsLinux);
-			pb.start();
-			logger.info("SoapUI started!");
+			logger.info( "Launching soapUI..." );
+			ProcessBuilder pb = new ProcessBuilder( isWindows() ? commandsWin : commandsLinux );
+			Process p = pb.start();
+			// Not closing the input stream may prevent the process from starting
+			// immediately.
+			p.getInputStream().close();
 		}
-		catch (Exception e) {
-			logger.error("Error while start soapui ", e);
+		catch( Exception e )
+		{
+			logger.error( "Error while start soapui ", e );
 		}
 	}
 
-	public static boolean isWindows() {
-		if (isWindows == null)
-			isWindows = new Boolean(System.getProperty("os.name").indexOf("Windows") >= 0);
+	public static boolean isWindows()
+	{
+		if( isWindows == null )
+			isWindows = new Boolean( System.getProperty( "os.name" ).indexOf( "Windows" ) >= 0 );
 
 		return isWindows.booleanValue();
 	}
