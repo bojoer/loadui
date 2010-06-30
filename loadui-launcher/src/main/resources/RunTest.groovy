@@ -61,6 +61,7 @@ LIMITS Time: ${target.getLimit(CanvasItem.TIMER_COUNTER)} Samples: ${target.getL
 ------------------------------------
 """
 target.triggerAction( CanvasItem.START_ACTION )
+
 def time = target.getCounter( CanvasItem.TIMER_COUNTER )
 def samples = target.getCounter( CanvasItem.SAMPLE_COUNTER )
 def failures = target.getCounter( CanvasItem.FAILURE_COUNTER )
