@@ -94,6 +94,7 @@ import com.eviware.loadui.impl.terminal.RoutedConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
+import com.eviware.loadui.api.property.Property;
 
 public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implements ProjectItem
 {
@@ -113,8 +114,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final TerminalProxy proxy;
 	private final Set<SceneItem> scenes = new HashSet<SceneItem>();
 	private final Set<SceneItem> awaitingScenes = new HashSet<SceneItem>();
-	private boolean saveReport;
-	private String reportFolder;
+	private final Property<Boolean>  saveReport;
+	private final Property<String> reportFolder;
 	private File projectFile;
 
 	public static ProjectItemImpl loadProject( WorkspaceItem workspace, File projectFile ) throws XmlException,
@@ -137,6 +138,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		conversionService = BeanInjector.getBean( ConversionService.class );
 		propertySynchronizer = BeanInjector.getBean( PropertySynchronizer.class );
 		counterSynchronizer = BeanInjector.getBean( CounterSynchronizer.class );
+		saveReport = createProperty( SAVE_REPORT_PROPERTY, Boolean.class, false );
+		reportFolder = createProperty( REPORT_FOLDER_PROPERTY, String.class, "" );
 		proxy = BeanInjector.getBean( TerminalProxy.class );
 
 		// addEventListener( ActionEvent.class, new SelfListener() );
@@ -463,7 +466,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		projectChapter.setDescription( getDescription() );
 
 		// We decided to wait a bit with this...
-		if (saveReport)
+		if (saveReport.getValue())
 			saveSummary( summary );
 	}
 
@@ -487,10 +490,10 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
 					// Create an XML stream writer
 					File outputDir;
-					if (reportFolder == null || reportFolder.length() < 1)
+					if (reportFolder == null || reportFolder.getValue().length() < 1)
 						outputDir = new File( System.getProperty( "loadui.home" ) );
 					else 
-						outputDir = new File( reportFolder );
+						outputDir = new File( reportFolder.getValue() );
 
 					String fileName = getLabel() + "-summary-" + System.currentTimeMillis() + ".xml";
 					File out = new File( outputDir, fileName );
@@ -919,20 +922,24 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		}
 	}
 	
+	@Override
 	public boolean isSaveReport() {
-		return saveReport;
+		return saveReport.getValue();
 	}
 	
+	@Override
 	public void setSaveReport(boolean save) {
-		saveReport = save;
+		saveReport.setValue(save);
 	}
 	
-	public String getFolderPath() {
-		return reportFolder;
+	@Override
+	public String getReportFolder() {
+		return reportFolder.getValue();
 	}
 	
-	public void setFolderPath(String path) {
-		reportFolder = path;
+	@Override
+	public void setReportFolder(String path) {
+		reportFolder.setValue(path);
 	}
 
 	// private class SelfListener implements EventHandler<ActionEvent>
