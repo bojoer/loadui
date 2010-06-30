@@ -257,6 +257,16 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	}
 
 	@Override
+	public ComponentItem getComponentByLabel( String label )
+	{
+		for( ComponentItem component : components )
+			if( component.getLabel().equals( label ) )
+				return component;
+
+		return null;
+	}
+
+	@Override
 	public Collection<Connection> getConnections()
 	{
 		return Collections.unmodifiableSet( connections );

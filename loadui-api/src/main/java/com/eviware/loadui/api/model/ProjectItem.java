@@ -55,6 +55,15 @@ public interface ProjectItem extends CanvasItem
 	public Collection<SceneItem> getScenes();
 
 	/**
+	 * Convenience method for finding a child SceneItem with the given label.
+	 * Returns null if no such SceneItem exists.
+	 * 
+	 * @param label
+	 * @return
+	 */
+	public SceneItem getSceneByLabel( String label );
+
+	/**
 	 * Creates a new scene in the project.
 	 * 
 	 * @param label

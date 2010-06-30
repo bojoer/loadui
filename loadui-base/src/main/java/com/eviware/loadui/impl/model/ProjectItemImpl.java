@@ -238,6 +238,16 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
+	public SceneItem getSceneByLabel( String label )
+	{
+		for( SceneItem scene : scenes )
+			if( scene.getLabel().equals( label ) )
+				return scene;
+
+		return null;
+	}
+
+	@Override
 	public SceneItem createScene( String label )
 	{
 		SceneItemConfig sceneConfig = getConfig().addNewScene();

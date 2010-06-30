@@ -22,8 +22,7 @@ public class OSGiUtils
 				e.printStackTrace();
 			}
 		}
-		else
-			System.exit( 0 );
+		System.exit( 0 );
 	}
 
 	public static void setFramework( Framework framework )

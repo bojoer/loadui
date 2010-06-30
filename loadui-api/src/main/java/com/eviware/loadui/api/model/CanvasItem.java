@@ -81,6 +81,15 @@ public interface CanvasItem extends ModelItem, CounterHolder
 	public Collection<ComponentItem> getComponents();
 
 	/**
+	 * Convenience method for finding a child ComponentItem with the given label.
+	 * Returns null if no such ComponentItem exists.
+	 * 
+	 * @param label
+	 * @return
+	 */
+	public ComponentItem getComponentByLabel( String label );
+
+	/**
 	 * Gets the connections in this canvas.
 	 * 
 	 * @return A Collection of the Connections in this CanvasItem.
@@ -156,7 +165,7 @@ public interface CanvasItem extends ModelItem, CounterHolder
 	 * @return The new copy of the given object.
 	 */
 	public CanvasObjectItem duplicate( CanvasObjectItem obj );
-	
+
 	/**
 	 * USed for checking if there were any errors when loading the component
 	 * 
