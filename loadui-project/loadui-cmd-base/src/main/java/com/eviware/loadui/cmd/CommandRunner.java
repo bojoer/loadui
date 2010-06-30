@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.slf4j.Logger;
@@ -40,7 +41,14 @@ public class CommandRunner
 
 	public CommandRunner( WorkspaceProvider workspaceProvider )
 	{
-		this.executor = Executors.newSingleThreadScheduledExecutor();
+		this.executor = Executors.newSingleThreadScheduledExecutor( new ThreadFactory()
+		{
+			@Override
+			public Thread newThread( Runnable r )
+			{
+				return new Thread( r, "CommandRunner" );
+			}
+		} );
 		this.workspaceProvider = workspaceProvider;
 
 		console = new Console();
@@ -49,6 +57,11 @@ public class CommandRunner
 	public void execute( GroovyCommand command, Map<String, String> properties )
 	{
 		executor.execute( new CommandRunnable( command ) );
+	}
+
+	public void destroy()
+	{
+		executor.shutdown();
 	}
 
 	private class CommandRunnable implements Runnable

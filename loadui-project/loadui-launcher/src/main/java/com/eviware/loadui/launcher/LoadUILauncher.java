@@ -54,6 +54,7 @@ public class LoadUILauncher
 	protected Framework framework;
 	protected final Properties configProps;
 	protected final String[] argv;
+	private Options options;
 
 	/**
 	 * Initiates and starts the OSGi runtime.
@@ -76,19 +77,14 @@ public class LoadUILauncher
 				extra.equals( "" ) ? "com.eviware.loadui.launcher.api" : "com.eviware.loadui.launcher.api," + extra );
 
 		CommandLineParser parser = new PosixParser();
-		Options options = createOptions();
+		options = createOptions();
 
 		try
 		{
 			CommandLine cmd = parser.parse( options, argv );
 
 			if( cmd.hasOption( "h" ) )
-			{
-				HelpFormatter formatter = new HelpFormatter();
-				formatter.printHelp( "loadUILauncher", options );
-
-				System.exit( 0 );
-			}
+				printUsageAndQuit();
 
 			processCommandLine( cmd );
 		}
@@ -111,6 +107,14 @@ public class LoadUILauncher
 		{
 			ex.printStackTrace();
 		}
+	}
+
+	protected void printUsageAndQuit()
+	{
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp( "loadUILauncher", options );
+
+		OSGiUtils.shutdown();
 	}
 
 	protected void start()

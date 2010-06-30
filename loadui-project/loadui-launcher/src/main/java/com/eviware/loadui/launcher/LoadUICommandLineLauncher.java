@@ -71,13 +71,17 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 			attributes.put( "workspaceFile", cmd.hasOption( "W" ) ? new File( cmd.getOptionValue( "W" ) ) : null );
 			attributes.put( "projectFile", cmd.hasOption( "P" ) ? new File( cmd.getOptionValue( "P" ) ) : null );
 			attributes.put( "testCase", cmd.getOptionValue( "T" ) );
-			attributes.put( "testCase", cmd.getOptionValue( "L" ) );
+			attributes.put( "limits", cmd.getOptionValue( "L" ) );
 
 			commands.add( new ResourceGroovyCommand( "/RunTest.groovy", attributes ) );
 		}
 		else if( cmd.hasOption( "F" ) )
 		{
 			commands.add( new FileGroovyCommand( new File( cmd.getOptionValue( "F" ) ), attributes ) );
+		}
+		else
+		{
+			printUsageAndQuit();
 		}
 	}
 
