@@ -66,7 +66,7 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl implement
 		long failed = project.getCounter( CanvasItem.FAILURE_COUNTER ).get();
 		long total = project.getCounter( CanvasItem.SAMPLE_COUNTER ).get();
 		int perc = ( int )( total > 0 ? failed * 100 / total : 0 );
-		return failed + " / " + total + " (" + perc + " %)";
+		return perc + "%"; //failed + " / " + total + " (" + perc + " %)";
 	}
 
 	@Override

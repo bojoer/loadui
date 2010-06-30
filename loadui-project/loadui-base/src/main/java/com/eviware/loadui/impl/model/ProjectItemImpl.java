@@ -488,6 +488,9 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 						xmlw.writeStartElement( "chapter" );
 						xmlw.writeAttribute( "title", chapter.getTitle() );
 						xmlw.writeAttribute( "date", chapter.getDate().toString() );
+						xmlw.writeStartElement( "description" );
+						xmlw.writeCharacters( chapter.getDescription() );
+						xmlw.writeEndElement();
 						for( String valKey : chapter.getValues().keySet() )
 						{
 							xmlw.writeCharacters( "\n" );
