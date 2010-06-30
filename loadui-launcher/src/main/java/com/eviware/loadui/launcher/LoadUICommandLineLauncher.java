@@ -16,12 +16,11 @@
 package com.eviware.loadui.launcher;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 import com.eviware.loadui.launcher.api.GroovyCommand;
@@ -30,6 +29,14 @@ import com.eviware.loadui.launcher.impl.ResourceGroovyCommand;
 
 public class LoadUICommandLineLauncher extends LoadUILauncher
 {
+	private static final String LOCAL_OPTION = "l";
+	private static final String FILE_OPTION = "f";
+	private static final String AGENT_OPTION = "a";
+	private static final String LIMITS_OPTION = "L";
+	private static final String TESTCASE_OPTION = "t";
+	private static final String PROJECT_OPTION = "p";
+	private static final String WORKSPACE_OPTION = "w";
+
 	public static void main( String[] args )
 	{
 		System.setSecurityManager( null );
@@ -39,7 +46,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 		launcher.start();
 	}
 
-	private final List<GroovyCommand> commands = new ArrayList<GroovyCommand>();
+	private GroovyCommand command;
 
 	public LoadUICommandLineLauncher( String[] args )
 	{
@@ -47,14 +54,20 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	}
 
 	@Override
+	@SuppressWarnings( "static-access" )
 	protected Options createOptions()
 	{
 		Options options = super.createOptions();
-		options.addOption( "W", "workspace", true, "Sets the Workspace file to load" );
-		options.addOption( "P", "project", true, "Sets the Project file to run" );
-		options.addOption( "T", "testcase", true, "Sets which TestCase to run (leave blank to run the entire Project)" );
-		options.addOption( "L", "limits", true, "Sets the limits for the execution (e.g. -L 60;0;200 )" );
-		options.addOption( "F", "file", true, "Executes the specified Groovy script file" );
+		options.addOption( WORKSPACE_OPTION, "workspace", true, "Sets the Workspace file to load" );
+		options.addOption( PROJECT_OPTION, "project", true, "Sets the Project file to run" );
+		options.addOption( TESTCASE_OPTION, "testcase", true,
+				"Sets which TestCase to run (leave blank to run the entire Project)" );
+		options.addOption( LIMITS_OPTION, "limits", true, "Sets the limits for the execution (e.g. -L 60:0:200 )" );
+		options.addOption( OptionBuilder.withLongOpt( "agents" ).withDescription(
+				"Sets the agents to use for the test ( usage -" + AGENT_OPTION
+						+ " <ip>[:<port>][=<testCase>[,<testCase>] ...] )" ).hasArgs().create( AGENT_OPTION ) );
+		options.addOption( FILE_OPTION, "file", true, "Executes the specified Groovy script file" );
+		options.addOption( LOCAL_OPTION, "local", false, "Executes TestCases in local mode" );
 
 		return options;
 	}
@@ -66,18 +79,36 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		if( cmd.hasOption( "P" ) )
+		if( cmd.hasOption( PROJECT_OPTION ) )
 		{
-			attributes.put( "workspaceFile", cmd.hasOption( "W" ) ? new File( cmd.getOptionValue( "W" ) ) : null );
-			attributes.put( "projectFile", cmd.hasOption( "P" ) ? new File( cmd.getOptionValue( "P" ) ) : null );
-			attributes.put( "testCase", cmd.getOptionValue( "T" ) );
-			attributes.put( "limits", cmd.getOptionValue( "L" ) );
+			attributes.put( "workspaceFile", cmd.hasOption( WORKSPACE_OPTION ) ? new File( cmd
+					.getOptionValue( WORKSPACE_OPTION ) ) : null );
+			attributes.put( "projectFile",
+					cmd.hasOption( PROJECT_OPTION ) ? new File( cmd.getOptionValue( PROJECT_OPTION ) ) : null );
+			attributes.put( "testCase", cmd.getOptionValue( TESTCASE_OPTION ) );
+			attributes.put( "limits", cmd.hasOption( LIMITS_OPTION ) ? cmd.getOptionValue( LIMITS_OPTION ).split( ":" )
+					: null );
+			attributes.put( "localMode", cmd.hasOption( LOCAL_OPTION ) );
+			Map<String, String[]> agents = null;
+			if( cmd.hasOption( AGENT_OPTION ) )
+			{
+				agents = new HashMap<String, String[]>();
+				for( String option : cmd.getOptionValues( AGENT_OPTION ) )
+				{
+					int ix = option.indexOf( "=" );
+					if( ix != -1 )
+						agents.put( option.substring( 0, ix ), option.substring( ix + 1 ).split( "," ) );
+					else
+						agents.put( option, null );
+				}
+			}
+			attributes.put( "agents", agents );
 
-			commands.add( new ResourceGroovyCommand( "/RunTest.groovy", attributes ) );
+			command = new ResourceGroovyCommand( "/RunTest.groovy", attributes );
 		}
-		else if( cmd.hasOption( "F" ) )
+		else if( cmd.hasOption( FILE_OPTION ) )
 		{
-			commands.add( new FileGroovyCommand( new File( cmd.getOptionValue( "F" ) ), attributes ) );
+			command = new FileGroovyCommand( new File( cmd.getOptionValue( FILE_OPTION ) ), attributes );
 		}
 		else
 		{
@@ -90,7 +121,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	{
 		super.start();
 
-		for( GroovyCommand c : commands )
-			framework.getBundleContext().registerService( GroovyCommand.class.getName(), c, null );
+		if( command != null )
+			framework.getBundleContext().registerService( GroovyCommand.class.getName(), command, null );
 	}
 }

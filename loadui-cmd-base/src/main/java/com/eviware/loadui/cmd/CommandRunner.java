@@ -87,7 +87,11 @@ public class CommandRunner
 			}
 			catch( CompilationFailedException e )
 			{
-				log.error( "An error occured when executing the command", e );
+				log.error( "An error occured when compiling the script", e );
+			}
+			catch( RuntimeException e )
+			{
+				log.error( "An error occured when executing the script", e );
 			}
 			console.clearContext();
 

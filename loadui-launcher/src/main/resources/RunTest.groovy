@@ -14,10 +14,23 @@
 // under the Licence.
 //
 
+import com.eviware.loadui.api.model.WorkspaceItem
 import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.events.EventHandler
 import com.eviware.loadui.api.events.ActionEvent
-import java.util.concurrent.Semaphore
+
+def formatSeconds( total ) {
+	if( total < 0 )
+		return "--:--:--" 
+	
+	int seconds = total;
+	int hours = seconds / 3600;
+	seconds -= hours*3600;
+	int minutes = seconds / 60;
+	seconds -= minutes*60;
+	
+	String.format( "%02d:%02d:%02d", hours, minutes, seconds )
+}
 
 //Load the proper workspace
 if( workspaceFile != null ) {
@@ -25,6 +38,18 @@ if( workspaceFile != null ) {
 	workspace = workspaceProvider.loadWorkspace( workspaceFile )
 } else if( workspace == null ) {
 	workspace = workspaceProvider.loadDefaultWorkspace()
+}
+
+def importRunners = workspace.getProperty( WorkspaceItem.IMPORT_MISSING_RUNNERS_PROPERTY )
+workspace.localMode = localMode
+
+//If custom agents are provided, remove saved ones.
+if( agents != null ) {
+	for( runner in new ArrayList( workspace.runners ) )
+		runner.delete()
+	importRunners.value = false
+} else {
+	importRunners.value = true
 }
 
 //Get the project. Import it if needed.
@@ -41,25 +66,59 @@ def project = projectRef.getProject()
 //Get the target
 def target = testCase ? project.getSceneByLabel( testCase ) : project
 if( target == null ) {
-	log.error "TestCase '${testCase}' doesn't exist in Project '${project}'"
+	log.error "TestCase '${testCase}' doesn't exist in Project '${project.label}'"
 	return
 }
+
+log.info "Limits: ${limits}"
+
 
 //Set limits
 if( limits != null ) {
 	def names = [ CanvasItem.TIMER_COUNTER, CanvasItem.SAMPLE_COUNTER, CanvasItem.FAILURE_COUNTER ]
-	for( limit in limits.split(";") ) {
-		target.setLimit( names.remove( 0 ), Integer.parseInt( limit ) )
+	for( limit in limits ) {
+		try {
+			target.setLimit( names.remove( 0 ), Integer.parseInt( limit ) )
+		} catch( e ) {
+			log.error( "Error setting limits:", e )
+			return
+		}
 	}
+}
+
+//Assign Runners
+if( agents != null ) {
+	for( agentUrl in agents.keySet() ) {
+		def tcs = agents[agentUrl]
+		def agent = workspace.createRunner( agentUrl, agentUrl )
+		if( tcs == null )
+		{
+			for( tc in project.scenes ) {
+				project.assignScene( tc, agent )
+			}
+		} else {
+			for( tcLabel in tcs ) {
+				def tc = project.getSceneByLabel( tcLabel )
+				if( tc == null ) {
+					log.error "TestCase '${tcLabel}' doesn't exist in Project '${project.label}'"
+					return
+				}
+				project.assignScene( tc, agent )
+			}
+		}
+	}
+	//TODO: Instead of waiting for 5 seconds here, it should be possible to find out from the agent that it is ready.
+	sleep 5000
 }
 
 //Run the test
 log.info """
 ------------------------------------
 TARGET ${target.label}
-LIMITS Time: ${target.getLimit(CanvasItem.TIMER_COUNTER)} Samples: ${target.getLimit(CanvasItem.SAMPLE_COUNTER)} Failures: ${target.getLimit(CanvasItem.FAILURE_COUNTER)}
+LIMITS Time: ${formatSeconds(target.getLimit(CanvasItem.TIMER_COUNTER))} Samples: ${target.getLimit(CanvasItem.SAMPLE_COUNTER)} Failures: ${target.getLimit(CanvasItem.FAILURE_COUNTER)}
 ------------------------------------
 """
+
 target.triggerAction( CanvasItem.START_ACTION )
 
 def time = target.getCounter( CanvasItem.TIMER_COUNTER )
@@ -68,7 +127,7 @@ def failures = target.getCounter( CanvasItem.FAILURE_COUNTER )
 
 //Monitor
 while( target.summary == null ) {
-	log.info "Time: ${time.value} Samples: ${samples.value} Failures: ${failures.value}"
+	log.info "Time: ${formatSeconds(time.value)} Samples: ${samples.value} Failures: ${failures.value}"
 	sleep 1000
 }
 
@@ -76,7 +135,7 @@ while( target.summary == null ) {
 log.info """
 ------------------------------------
 TEST EXECUTION COMPLETED
-FINAL RESULTS: ${time.value} Samples: ${samples.value} Failures: ${failures.value}
+FINAL RESULTS: ${formatSeconds(time.value)} Samples: ${samples.value} Failures: ${failures.value}
 ------------------------------------
 """
 

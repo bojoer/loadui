@@ -36,6 +36,9 @@ public interface WorkspaceItem extends ModelItem
 	public final static String MAX_THREADS_PROPERTY = WorkspaceItem.class.getSimpleName() + ".maxThreads";
 	public final static String MAX_THREAD_QUEUE_PROPERTY = WorkspaceItem.class.getSimpleName() + ".maxThreadQueue";
 
+	public final static String IMPORT_MISSING_RUNNERS_PROPERTY = WorkspaceItem.class.getSimpleName()
+			+ ".importMissingRunners";
+
 	public final static String SOAPUI_PATH_PROPERTY = WorkspaceItem.class.getSimpleName() + ".soapUIPath";
 	public final static String SOAPUI_SYNC_PROPERTY = WorkspaceItem.class.getSimpleName() + ".soapUISync";
 	public final static String SOAPUI_CAJO_PORT_PROPERTY = WorkspaceItem.class.getSimpleName() + ".soapUICajoPort";
