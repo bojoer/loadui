@@ -90,7 +90,7 @@ public class ProjectSettingsDialog  {
 								FileInputField {
 								    id: "savePath"
 								    label:"Folder for exported reports"
-								    value: if (not (item.getFolderPath() == null)) new File(item.getFolderPath()) else null
+								    value: if (not (item.getReportFolder() == null)) new File(item.getReportFolder()) else null
 								    disable: bind not (cb.value as Boolean)
 								    directoryOnly: true
 								}
@@ -102,7 +102,7 @@ public class ProjectSettingsDialog  {
          onOk: function() {
 				item.setDescription(descriptionForm.getField('description').value as String);
 				item.setSaveReport(form.getField('saveReport').value as Boolean);
-				item.setFolderPath((form.getField('savePath').value as File).getAbsolutePath());
+				item.setReportFolder((form.getField('savePath').value as File).getAbsolutePath());
 				dialogRef.close();
          }
 		}

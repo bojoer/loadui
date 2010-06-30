@@ -27,6 +27,9 @@ public interface ProjectItem extends CanvasItem
 {
 	public static final String SCENES = ProjectItem.class.getName() + "@scenes";
 	public static final String ASSIGNMENTS = ProjectItem.class.getName() + "@assignments";
+	
+	public final String SAVE_REPORT_PROPERTY = ModelItem.class.getSimpleName() + ".saveReport";
+	public final String REPORT_FOLDER_PROPERTY = ModelItem.class.getSimpleName() + ".reportFolder";
 
 	/**
 	 * Gets the File for this ProjectItem.
@@ -130,11 +133,33 @@ public interface ProjectItem extends CanvasItem
 	 */
 	public void unassignScene( SceneItem scene, RunnerItem runner );
 	
+	/**
+	 * Checks if summaries are saved at the end of each run
+	 * 
+	 * @return true if the summaries are saved.
+	 */
 	public boolean isSaveReport();
 	
+	/**
+	 * Used to set whether the summary should be saved at the end of each run
+	 * 
+	 * @param save
+	 * 			true if the reports should be saved
+	 */
 	public void setSaveReport(boolean save);
 	
-	public String getFolderPath();
+	/**
+	 * The folder for saving summaries
+	 * 
+	 * @return the path to the folder
+	 */
+	public String getReportFolder();
 	
-	public void setFolderPath(String path);
+	/**
+	 * Used to set the foldr for saving the summaries
+	 * 
+	 * @param path
+	 * 			The path to the folder
+	 */
+	public void setReportFolder(String path);
 }
