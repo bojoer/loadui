@@ -563,7 +563,7 @@ public abstract class SamplerBase extends BaseCategory implements SamplerCategor
 		if( sampleCount > 0 )
 		{
 			long perc = failureCount * 100 / sampleCount;
-			String errorRatio = failureCount + "/" + sampleCount + " (" + perc + "%)";
+			String errorRatio = perc + "%"; //failureCount + "/" + sampleCount + " (" + perc + "%)";
 
 			statistics.put( "cnt", String.valueOf( sampleCount ) );
 			statistics.put( "min", String.valueOf( minTime ) );

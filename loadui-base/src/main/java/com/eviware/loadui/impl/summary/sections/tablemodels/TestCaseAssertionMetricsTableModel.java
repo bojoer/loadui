@@ -77,7 +77,7 @@ public class TestCaseAssertionMetricsTableModel extends AbstractTableModel {
 			int perc = 0;
 			if (count > 0)
 				perc = (failedCount * 100/count);
-			failRatio = failed + " / " + cnt + " (" + perc + "%)";
+			failRatio = perc + "%"; //failed + " / " + cnt + " (" + perc + "%)";
 		}
 
 		public String getName() {
