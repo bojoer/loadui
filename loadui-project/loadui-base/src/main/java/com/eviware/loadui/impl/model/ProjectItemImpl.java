@@ -30,6 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.SwingWorker;
 import javax.swing.table.TableModel;
@@ -117,6 +121,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final Property<Boolean> saveReport;
 	private final Property<String> reportFolder;
 	private File projectFile;
+
+	private ScheduledFuture<?> awaitingSummaryTimeout;
 
 	public static ProjectItemImpl loadProject( WorkspaceItem workspace, File projectFile ) throws XmlException,
 			IOException
@@ -448,6 +454,20 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	protected void onComplete( EventFirer source )
 	{
+		if( awaitingSummaryTimeout != null )
+			awaitingSummaryTimeout.cancel( true );
+
+		awaitingSummaryTimeout = scheduler.schedule( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				log.error( "Failed to get statistics from all expected Agents within timeout period!" );
+				awaitingScenes.clear();
+				doGenerateSummary();
+			}
+		}, 5, TimeUnit.SECONDS );
+
 		for( SceneItem scene : getScenes() )
 			if( getRunnersAssignedTo( scene ).size() > 0 && scene.isFollowProject() && !getWorkspace().isLocalMode() )
 				awaitingScenes.add( scene );
@@ -904,7 +924,14 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				{
 					( ( SceneItemImpl )scene ).handleStatisticsData( ( RunnerItem )endpoint, map );
 					if( awaitingScenes.remove( scene ) && awaitingScenes.isEmpty() )
+					{
+						if( awaitingSummaryTimeout != null )
+						{
+							awaitingSummaryTimeout.cancel( true );
+							awaitingSummaryTimeout = null;
+						}
 						doGenerateSummary();
+					}
 				}
 			}
 		}
