@@ -133,4 +133,8 @@ public interface ProjectItem extends CanvasItem
 	public boolean isSaveReport();
 	
 	public void setSaveReport(boolean save);
+	
+	public String getFolderPath();
+	
+	public void setFolderPath(String path);
 }
