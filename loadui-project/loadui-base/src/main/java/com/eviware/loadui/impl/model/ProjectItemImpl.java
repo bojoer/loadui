@@ -114,6 +114,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final Set<SceneItem> scenes = new HashSet<SceneItem>();
 	private final Set<SceneItem> awaitingScenes = new HashSet<SceneItem>();
 	private boolean saveReport;
+	private String reportFolder;
 	private File projectFile;
 
 	public static ProjectItemImpl loadProject( WorkspaceItem workspace, File projectFile ) throws XmlException,
@@ -485,7 +486,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				{
 					XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
 					// Create an XML stream writer
-					File outputDir = new File( System.getProperty( "loadui.home" ) );
+					File outputDir;
+					if (reportFolder == null)
+						outputDir = new File( System.getProperty( "loadui.home" ) );
+					else 
+						outputDir = new File( reportFolder );
 
 					String fileName = getLabel() + "-summary-" + System.currentTimeMillis() + ".xml";
 					File out = new File( outputDir, fileName );
@@ -919,6 +924,14 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	
 	public void setSaveReport(boolean save) {
 		saveReport = save;
+	}
+	
+	public String getFolderPath() {
+		return reportFolder;
+	}
+	
+	public void setFolderPath(String path) {
+		reportFolder = path;
 	}
 
 	// private class SelfListener implements EventHandler<ActionEvent>

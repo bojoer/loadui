@@ -37,6 +37,8 @@ import org.jfxtras.scene.layout.XMigLayout;
 import org.jfxtras.scene.layout.XMigLayout.*;
 import net.miginfocom.layout.*;
 
+import java.io.File;
+
 /**
  * SettingsDialog, basic modal dialog with ok, help and cancel button.
  */
@@ -45,6 +47,7 @@ public class ProjectSettingsDialog  {
 	public function show(item:ProjectItem) {
 	
 		var form:Form;
+		var cb:CheckBoxField;
 		
 		def dialogRef: Dialog = Dialog {
 		 width: 500
@@ -78,10 +81,17 @@ public class ProjectSettingsDialog  {
 							content: form = Form {
 							singleColumn: true
 							formContent: [
-								CheckBoxField { 
+								cb = CheckBoxField { 
 									id: "saveReport"
 									label: "Export summary reports to file system"
 									value: item.isSaveReport();
+								},
+								FileInputField {
+								    id: "savePath"
+								    label:"Folder for exported reports"
+								    value: if (not (item.getFolderPath() == null)) new File(item.getFolderPath()) else null
+								    disable: bind not (cb.value as Boolean)
+								    directoryOnly: true
 								}
 							]
 							}
@@ -91,6 +101,7 @@ public class ProjectSettingsDialog  {
          onOk: function() {
 				item.setDescription(form.getField('description').value as String);
 				item.setSaveReport(form.getField('saveReport').value as Boolean);
+				item.setFolderPath((form.getField('savePath').value as File).getAbsolutePath());
 				dialogRef.close();
          }
 		}

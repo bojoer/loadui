@@ -37,15 +37,27 @@ public function build( id:String, label:String, value:Object ) {
  * @author dain.nilsson
  */
 public class FileInputField extends Button, FormField {	
+    
+    public-init var directoryOnly = false;
+    
 	override var value on replace {
 		if( value != null and not ( value instanceof File ) )
 			throw new IllegalArgumentException( "Value must be of type File!" );
 	}
 
-	override var text = bind if(value == null) "Choose file" else (value as File).getName();
+	override var text = bind if(value == null) {
+		if (directoryOnly)
+			"Choose folder"
+		else
+			"Choose file"
+	} else (value as File).getName();
 	
 	override var action = function() {
 		def chooser = new JFileChooser( value as File );
+		if (directoryOnly) {
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			chooser.setAcceptAllFileFilterUsed(false);
+		}
 		chooser.setSelectedFile( value as File );
 		if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog( null )) {
 			value = chooser.getSelectedFile();
