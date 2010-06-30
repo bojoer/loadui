@@ -177,6 +177,16 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	}
 
 	@Override
+	public void release()
+	{
+		for( ProjectRef ref : projects )
+			if( ref.isEnabled() )
+				ref.getProject().release();
+
+		super.release();
+	}
+
+	@Override
 	public String getLoaduiVersion()
 	{
 		return getConfig().getLoaduiVersion();

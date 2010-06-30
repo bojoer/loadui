@@ -32,6 +32,10 @@ def formatSeconds( total ) {
 	String.format( "%02d:%02d:%02d", hours, minutes, seconds )
 }
 
+def displayLimit( limit ) {
+	limit <= 0 ? "-" : limit
+}
+
 //Load the proper workspace
 if( workspaceFile != null ) {
 	workspace?.release()
@@ -67,11 +71,9 @@ def project = projectRef.getProject()
 def target = testCase ? project.getSceneByLabel( testCase ) : project
 if( target == null ) {
 	log.error "TestCase '${testCase}' doesn't exist in Project '${project.label}'"
+	workspace?.release()
 	return
 }
-
-log.info "Limits: ${limits}"
-
 
 //Set limits
 if( limits != null ) {
@@ -81,6 +83,7 @@ if( limits != null ) {
 			target.setLimit( names.remove( 0 ), Integer.parseInt( limit ) )
 		} catch( e ) {
 			log.error( "Error setting limits:", e )
+			workspace?.release()
 			return
 		}
 	}
@@ -101,22 +104,52 @@ if( agents != null ) {
 				def tc = project.getSceneByLabel( tcLabel )
 				if( tc == null ) {
 					log.error "TestCase '${tcLabel}' doesn't exist in Project '${project.label}'"
+					workspace?.release()
 					return
 				}
 				project.assignScene( tc, agent )
 			}
 		}
 	}
+}
+
+//Make sure all agents are ready
+if( testCase != null ) {
+	def notReady = new HashSet()
+	for( tc in project.scenes )
+		for( agent in project.getRunnersAssignedTo( tc ) )
+			notReady << agent
+	def ready = false
+	def timeout = System.currentTimeMillis() + 5000
+	while( !ready ) {
+		def stillNotReady = []
+		for( agent in notReady )
+			if( !agent.ready )
+				stillNotReady << agent
+		if( !stillNotReady.empty ) {
+			notReady = stillNotReady
+			if( System.currentTimeMillis() > timeout ) {
+				log.error "Agents not connectable: ${notReady}"
+				workspace?.release()
+				return
+			}
+		} else {
+			ready = true
+		}
+	}
+	
 	//TODO: Instead of waiting for 5 seconds here, it should be possible to find out from the agent that it is ready.
 	sleep 5000
 }
 
 //Run the test
 log.info """
+
 ------------------------------------
-TARGET ${target.label}
-LIMITS Time: ${formatSeconds(target.getLimit(CanvasItem.TIMER_COUNTER))} Samples: ${target.getLimit(CanvasItem.SAMPLE_COUNTER)} Failures: ${target.getLimit(CanvasItem.FAILURE_COUNTER)}
+ TARGET ${target.label}
+ LIMITS Time: ${formatSeconds(target.getLimit(CanvasItem.TIMER_COUNTER))} Samples: ${displayLimit(target.getLimit(CanvasItem.SAMPLE_COUNTER))} Failures: ${displayLimit(target.getLimit(CanvasItem.FAILURE_COUNTER))}
 ------------------------------------
+
 """
 
 target.triggerAction( CanvasItem.START_ACTION )
@@ -133,10 +166,12 @@ while( target.summary == null ) {
 
 //Shutdown
 log.info """
+
 ------------------------------------
-TEST EXECUTION COMPLETED
-FINAL RESULTS: ${formatSeconds(time.value)} Samples: ${samples.value} Failures: ${failures.value}
+ TEST EXECUTION COMPLETED
+ FINAL RESULTS: ${formatSeconds(time.value)} Samples: ${samples.value} Failures: ${failures.value}
 ------------------------------------
+
 """
 
 log.info "Shutting down..."

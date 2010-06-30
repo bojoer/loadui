@@ -70,7 +70,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	private final ComponentListener componentListener = new ComponentListener();
 	private final ConnectionListener connectionListener = new ConnectionListener();
 	private final BehaviorProvider behaviorProvider;
-	private final ScheduledExecutorService scheduler;
+	protected final ScheduledExecutorService scheduler;
 	protected final Counter timerCounter = new TimerCounter();
 	private ScheduledFuture<?> timerFuture;
 	private ScheduledFuture<?> timeLimitFuture;
