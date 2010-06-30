@@ -114,7 +114,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final TerminalProxy proxy;
 	private final Set<SceneItem> scenes = new HashSet<SceneItem>();
 	private final Set<SceneItem> awaitingScenes = new HashSet<SceneItem>();
-	private final Property<Boolean>  saveReport;
+	private final Property<Boolean> saveReport;
 	private final Property<String> reportFolder;
 	private File projectFile;
 
@@ -141,8 +141,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		saveReport = createProperty( SAVE_REPORT_PROPERTY, Boolean.class, false );
 		reportFolder = createProperty( REPORT_FOLDER_PROPERTY, String.class, "" );
 		proxy = BeanInjector.getBean( TerminalProxy.class );
-
-		// addEventListener( ActionEvent.class, new SelfListener() );
 	}
 
 	@Override
@@ -169,15 +167,30 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		{
 			SceneItem scene = ( SceneItem )addressableRegistry.lookup( conf.getSceneRef() );
 			RunnerItem runner = ( RunnerItem )addressableRegistry.lookup( conf.getRunnerRef() );
+			if( runner == null && conf.isSetRunnerAddress() )
+			{
+				for( RunnerItem r : workspace.getRunners() )
+				{
+					if( r.getUrl().equals( conf.getRunnerAddress() ) )
+					{
+						runner = r;
+						break;
+					}
+				}
+				if( runner == null && conf.isSetRunnerLabel()
+						&& ( Boolean )workspace.getProperty( WorkspaceItem.IMPORT_MISSING_RUNNERS_PROPERTY ).getValue() )
+				{
+					runner = workspace.createRunner( conf.getRunnerAddress(), conf.getRunnerLabel() );
+				}
+			}
+
 			if( runner != null )
 			{
 				sceneEndpoints.get( scene ).registerEndpoint( runner );
 				AssignmentImpl assignment = new AssignmentImpl( scene, runner );
 				if( assignments.add( assignment ) && runner.isReady() )
-				{
 					runner.sendMessage( RunnerItem.RUNNER_CHANNEL, Collections.singletonMap( RunnerItem.ASSIGN, scene
 							.getId() ) );
-				}
 			}
 		}
 	}
@@ -328,6 +341,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			String sceneId = scene.getId();
 			conf.setSceneRef( sceneId );
 			conf.setRunnerRef( runner.getId() );
+			conf.setRunnerLabel( runner.getLabel() );
+			conf.setRunnerAddress( runner.getUrl() );
 			runner.sendMessage( RunnerItem.RUNNER_CHANNEL, Collections.singletonMap( RunnerItem.ASSIGN, sceneId ) );
 			if( scene.isRunning() )
 				runner.sendMessage( SceneCommunication.CHANNEL, Arrays.asList( sceneId,
@@ -466,7 +481,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		projectChapter.setDescription( getDescription() );
 
 		// We decided to wait a bit with this...
-		if (saveReport.getValue())
+		if( saveReport.getValue() )
 			saveSummary( summary );
 	}
 
@@ -490,9 +505,9 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
 					// Create an XML stream writer
 					File outputDir;
-					if (reportFolder == null || reportFolder.getValue().length() < 1)
+					if( reportFolder == null || reportFolder.getValue().length() < 1 )
 						outputDir = new File( System.getProperty( "loadui.home" ) );
-					else 
+					else
 						outputDir = new File( reportFolder.getValue() );
 
 					String fileName = getLabel() + "-summary-" + System.currentTimeMillis() + ".xml";
@@ -667,6 +682,30 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			fireCollectionEvent( SCENES, CollectionEvent.Event.ADDED, scene );
 
 		return scene;
+	}
+
+	@Override
+	public boolean isSaveReport()
+	{
+		return saveReport.getValue();
+	}
+
+	@Override
+	public void setSaveReport( boolean save )
+	{
+		saveReport.setValue( save );
+	}
+
+	@Override
+	public String getReportFolder()
+	{
+		return reportFolder.getValue();
+	}
+
+	@Override
+	public void setReportFolder( String path )
+	{
+		reportFolder.setValue( path );
 	}
 
 	private class AssignmentImpl implements Assignment
@@ -921,38 +960,4 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					component.getId() );
 		}
 	}
-	
-	@Override
-	public boolean isSaveReport() {
-		return saveReport.getValue();
-	}
-	
-	@Override
-	public void setSaveReport(boolean save) {
-		saveReport.setValue(save);
-	}
-	
-	@Override
-	public String getReportFolder() {
-		return reportFolder.getValue();
-	}
-	
-	@Override
-	public void setReportFolder(String path) {
-		reportFolder.setValue(path);
-	}
-
-	// private class SelfListener implements EventHandler<ActionEvent>
-	// {
-	// @Override
-	// public void handleEvent( ActionEvent event )
-	// {
-	// for( SceneItem scene : scenes )
-	// if( scene.isFollowProject()
-	// || !( START_ACTION.equals( event.getKey() ) || STOP_ACTION.equals(
-	// event.getKey() ) ) )
-	// sendSceneCommand( scene, SceneCommunication.ACTION_EVENT, event.getKey(),
-	// scene.getId() );
-	// }
-	// }
 }

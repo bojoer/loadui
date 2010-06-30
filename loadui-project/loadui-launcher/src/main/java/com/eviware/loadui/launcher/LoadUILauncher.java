@@ -42,6 +42,10 @@ import com.eviware.loadui.launcher.api.OSGiUtils;
  */
 public class LoadUILauncher
 {
+	private static final String NOFX_OPTION = "nofx";
+	private static final String SYSTEM_PROPERTY_OPTION = "D";
+	private static final String HELP_OPTION = "h";
+
 	public static void main( String[] args )
 	{
 		System.setSecurityManager( null );
@@ -83,7 +87,7 @@ public class LoadUILauncher
 		{
 			CommandLine cmd = parser.parse( options, argv );
 
-			if( cmd.hasOption( "h" ) )
+			if( cmd.hasOption( HELP_OPTION ) )
 				printUsageAndQuit();
 
 			processCommandLine( cmd );
@@ -134,27 +138,27 @@ public class LoadUILauncher
 	protected Options createOptions()
 	{
 		Options options = new Options();
-		options.addOption( "D", true, "Sets system property with name=value" );
-		options.addOption( "nofx", false, "Do not include or require the JavaFX runtime" );
-		options.addOption( "h", "help", false, "Prints this message" );
+		options.addOption( SYSTEM_PROPERTY_OPTION, true, "Sets system property with name=value" );
+		options.addOption( NOFX_OPTION, false, "Do not include or require the JavaFX runtime" );
+		options.addOption( HELP_OPTION, "help", false, "Prints this message" );
 
 		return options;
 	}
 
 	protected void processCommandLine( CommandLine cmd )
 	{
-		if( cmd.hasOption( "D" ) )
+		if( cmd.hasOption( SYSTEM_PROPERTY_OPTION ) )
 		{
-			for( String option : cmd.getOptionValues( "D" ) )
+			for( String option : cmd.getOptionValues( SYSTEM_PROPERTY_OPTION ) )
 			{
 				int ix = option.indexOf( '=' );
 				if( ix != -1 )
-				{
 					System.setProperty( option.substring( 0, ix ), option.substring( ix + 1 ) );
-				}
+				else
+					System.setProperty( option, "true" );
 			}
 		}
-		if( !cmd.hasOption( "nofx" ) )
+		if( !cmd.hasOption( NOFX_OPTION ) )
 		{
 			addJavaFxPackages();
 		}

@@ -149,6 +149,8 @@
     <complexType name="SceneAssignment">
     	<attribute name="sceneRef" type="string" use="required"></attribute>
     	<attribute name="runnerRef" type="string" use="required"></attribute>
+    	<attribute name="runnerLabel" type="string"></attribute>
+    	<attribute name="runnerAddress" type="string"></attribute>
     </complexType>
 
     <element name="loadui-scene" type="lui:SceneItem"></element>

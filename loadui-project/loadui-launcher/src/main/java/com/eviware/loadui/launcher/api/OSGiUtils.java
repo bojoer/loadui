@@ -1,5 +1,6 @@
 package com.eviware.loadui.launcher.api;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 
@@ -14,11 +15,30 @@ public class OSGiUtils
 			try
 			{
 				System.out.println( "Stopping Framework..." );
+				boolean wait = true;
+				long start = System.currentTimeMillis();
+				while( wait )
+				{
+					wait = false;
+					for( Bundle bundle : framework.getBundleContext().getBundles() )
+					{
+						if( bundle.getState() == Bundle.STARTING && System.currentTimeMillis() - start < 5000 )
+						{
+							wait = true;
+							Thread.sleep( 250 );
+							break;
+						}
+					}
+				}
+
 				framework.stop();
 			}
 			catch( BundleException e )
 			{
-				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch( InterruptedException e )
+			{
 				e.printStackTrace();
 			}
 		}

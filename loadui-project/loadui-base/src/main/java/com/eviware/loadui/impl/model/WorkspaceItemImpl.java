@@ -88,6 +88,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		localMode = createProperty( LOCAL_MODE_PROPERTY, Boolean.class, false );
 		createProperty( MAX_THREADS_PROPERTY, Long.class, 200 );
 		createProperty( MAX_THREAD_QUEUE_PROPERTY, Long.class, 10000 );
+		createProperty( IMPORT_MISSING_RUNNERS_PROPERTY, Boolean.class, false );
 		createProperty( SOAPUI_PATH_PROPERTY, File.class );
 		createProperty( SOAPUI_SYNC_PROPERTY, Boolean.class );
 		createProperty( SOAPUI_CAJO_PORT_PROPERTY, Integer.class, 1198 );
@@ -229,6 +230,10 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	@Override
 	public RunnerItem createRunner( String url, String label )
 	{
+		if( !url.startsWith( "http" ) )
+			url = "https://" + url;
+		if( !url.substring( 6 ).contains( ":" ) )
+			url += ":8443";
 		if( !url.endsWith( "/" ) )
 			url += "/";
 		RunnerItemConfig runnerConfig = getConfig().addNewRunner();
