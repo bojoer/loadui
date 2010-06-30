@@ -47,6 +47,7 @@ public class ProjectSettingsDialog  {
 	public function show(item:ProjectItem) {
 	
 		var form:Form;
+		var descriptionForm:Form;
 		var cb:CheckBoxField;
 		
 		def dialogRef: Dialog = Dialog {
@@ -62,7 +63,7 @@ public class ProjectSettingsDialog  {
 		         	tabs: [
 		         		Tab {
 		         			label: "Description",
-		         			content: form = Form {
+		         			content: descriptionForm = Form {
 		         				singleColumn: true
 									formContent: [
 										TextField { 
@@ -72,7 +73,7 @@ public class ProjectSettingsDialog  {
 											label: "Description"
 											description: "This is a description of the description field."
 											multiline: true
-											value: item.getDescription() },
+											value: item.getDescription() }
 									]
 								}
 							},
@@ -99,7 +100,7 @@ public class ProjectSettingsDialog  {
 						]
 					}
          onOk: function() {
-				item.setDescription(form.getField('description').value as String);
+				item.setDescription(descriptionForm.getField('description').value as String);
 				item.setSaveReport(form.getField('saveReport').value as Boolean);
 				item.setFolderPath((form.getField('savePath').value as File).getAbsolutePath());
 				dialogRef.close();

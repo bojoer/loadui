@@ -487,7 +487,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
 					// Create an XML stream writer
 					File outputDir;
-					if (reportFolder == null)
+					if (reportFolder == null || reportFolder.length() < 1)
 						outputDir = new File( System.getProperty( "loadui.home" ) );
 					else 
 						outputDir = new File( reportFolder );
@@ -572,6 +572,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 								{
 									xmlw.writeCharacters( "\t\t\t" );
 									xmlw.writeStartElement( "row" );
+									xmlw.writeCharacters( "\n" );
 									StringBuffer row = new StringBuffer();
 									for( int i = 0; i < table.getColumnCount(); i++ )
 									{
