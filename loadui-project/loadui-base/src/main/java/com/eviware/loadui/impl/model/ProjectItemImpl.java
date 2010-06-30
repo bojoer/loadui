@@ -485,17 +485,22 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					for( String chapKey : summary.getChapters().keySet() )
 					{
 						Chapter chapter = summary.getChapters().get( chapKey );
+						xmlw.writeCharacters( "\t" );
 						xmlw.writeStartElement( "chapter" );
 						xmlw.writeAttribute( "title", chapter.getTitle() );
 						xmlw.writeAttribute( "date", chapter.getDate().toString() );
+						xmlw.writeCharacters( "\n" );
+						xmlw.writeCharacters( "\t\t" );
 						xmlw.writeStartElement( "description" );
 						xmlw.writeCharacters( chapter.getDescription() );
 						xmlw.writeEndElement();
+						xmlw.writeCharacters( "\n" );
 						for( String valKey : chapter.getValues().keySet() )
 						{
-							xmlw.writeCharacters( "\n" );
+							xmlw.writeCharacters( "\t\t" );
 							xmlw.writeStartElement( valKey.replace( " ", "_" ).replace( "(%)", "" ).toLowerCase() );
 							xmlw.writeCharacters( chapter.getValues().get( valKey ) );
+							xmlw.writeCharacters( "\t\t" );
 							xmlw.writeEndElement();
 							xmlw.writeCharacters( "\n" );
 							/*
@@ -509,12 +514,13 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 						}
 						for( Section section : chapter.getSections() )
 						{
+							xmlw.writeCharacters( "\t\t" );
 							xmlw.writeStartElement( "section" );
 							xmlw.writeAttribute( "title", section.getTitle() );
 							xmlw.writeCharacters( "\n" );
 							for( String valKey : section.getValues().keySet() )
 							{
-								xmlw.writeCharacters( "\n" );
+								xmlw.writeCharacters( "\t\t\t" );
 								xmlw.writeStartElement( valKey.replace( " ", "_" ).replace( "(%)", "" ).toLowerCase() );
 								xmlw.writeCharacters( section.getValues().get( valKey ) );
 								xmlw.writeEndElement(); // value-name
@@ -522,6 +528,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 							}
 							for( String tablekey : section.getTables().keySet() )
 							{
+								xmlw.writeCharacters( "\t\t\t" );
 								xmlw.writeStartElement( tablekey.replace( " ", "_" ).toLowerCase() );
 								// xmlw.writeAttribute( "name", tablekey );
 								TableModel table = section.getTables().get( tablekey );
@@ -546,10 +553,12 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 								// xmlw.writeCharacters( "\n" );
 								for( int j = 0; j < table.getRowCount(); j++ )
 								{
+									xmlw.writeCharacters( "\t\t\t" );
 									xmlw.writeStartElement( "row" );
 									StringBuffer row = new StringBuffer();
 									for( int i = 0; i < table.getColumnCount(); i++ )
 									{
+										xmlw.writeCharacters( "\t\t\t\t" );
 										xmlw.writeStartElement( table.getColumnName( i ).replace( " ", "_" ).replace( "/", "_" )
 												.toLowerCase() );
 										if( table.getValueAt( j, i ) != null )
@@ -557,16 +566,19 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 										xmlw.writeEndElement();
 										xmlw.writeCharacters( "\n" );
 									}
+									xmlw.writeCharacters( "\t\t\t" );
 									xmlw.writeEndElement();// row
 									xmlw.writeCharacters( "\n" );
 								}
-
+								xmlw.writeCharacters( "\t\t\t" );
 								xmlw.writeEndElement(); // table
 								xmlw.writeCharacters( "\n" );
 							}
+							xmlw.writeCharacters( "\t\t" );
 							xmlw.writeEndElement();// section
 							xmlw.writeCharacters( "\n" );
 						}
+						xmlw.writeCharacters( "\t" );
 						xmlw.writeEndElement(); // chapter
 						xmlw.writeCharacters( "\n" );
 					}
