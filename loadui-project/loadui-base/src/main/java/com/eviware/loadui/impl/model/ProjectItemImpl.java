@@ -113,6 +113,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final TerminalProxy proxy;
 	private final Set<SceneItem> scenes = new HashSet<SceneItem>();
 	private final Set<SceneItem> awaitingScenes = new HashSet<SceneItem>();
+	private boolean saveReport;
 	private File projectFile;
 
 	public static ProjectItemImpl loadProject( WorkspaceItem workspace, File projectFile ) throws XmlException,
@@ -451,7 +452,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		projectChapter.setDescription( getDescription() );
 
 		// We decided to wait a bit with this...
-		saveSummary( summary );
+		if (saveReport)
+			saveSummary( summary );
 	}
 
 	/**
@@ -899,6 +901,14 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			sendSceneCommand( ( SceneItem )component.getCanvas(), SceneCommunication.ACTION_EVENT, event.getKey(),
 					component.getId() );
 		}
+	}
+	
+	public boolean isSaveReport() {
+		return saveReport;
+	}
+	
+	public void setSaveReport(boolean save) {
+		saveReport = save;
 	}
 
 	// private class SelfListener implements EventHandler<ActionEvent>

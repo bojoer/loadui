@@ -120,4 +120,8 @@ public interface ProjectItem extends CanvasItem
 	 *           The RunnerItem to unassign.
 	 */
 	public void unassignScene( SceneItem scene, RunnerItem runner );
+	
+	public boolean isSaveReport();
+	
+	public void setSaveReport(boolean save);
 }
