@@ -61,32 +61,35 @@ public class CustomThreadPoolExecutor extends AbstractExecutorService
 		for( int i = 0; i < MIN_POOL_SIZE; i++ )
 			threadFactory.newThread( new Worker() ).start();
 
-		Thread statusThread = new Thread( new Runnable()
+		if( System.getProperty( "loadui.threadpool.status" ) != null )
 		{
-			@Override
-			public void run()
+			Thread statusThread = new Thread( new Runnable()
 			{
-				while( !isShutdown )
+				@Override
+				public void run()
 				{
-					try
+					while( !isShutdown )
 					{
-						Thread.sleep( 5000 );
+						try
+						{
+							Thread.sleep( 5000 );
+						}
+						catch( InterruptedException e )
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						int workers = nWorkers.get();
+						int sleeping = nSleeping.get();
+						System.out.println( "Active: " + ( workers - sleeping ) + " Workers: " + workers + " Sleeping: "
+								+ sleeping + " Queue size: " + workQueue.size() + " Max pool size: " + getMaxPoolSize() );
 					}
-					catch( InterruptedException e )
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					int workers = nWorkers.get();
-					int sleeping = nSleeping.get();
-					System.out.println( "Active: " + ( workers - sleeping ) + " Workers: " + workers + " Sleeping: "
-							+ sleeping + " Queue size: " + workQueue.size() + " Max pool size: " + getMaxPoolSize() );
 				}
-			}
-		} );
+			} );
 
-		statusThread.setDaemon( true );
-		statusThread.start();
+			statusThread.setDaemon( true );
+			statusThread.start();
+		}
 	}
 
 	@Override
