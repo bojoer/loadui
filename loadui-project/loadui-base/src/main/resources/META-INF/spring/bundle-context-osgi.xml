@@ -6,7 +6,7 @@
 	
 	<osgi:service interface="com.eviware.loadui.api.messaging.BroadcastMessageEndpoint" ref="broadcastMessageEndpoint" />
 	
-	<osgi:reference interface="com.eviware.loadui.api.messaging.MessageEndpointProvider" id="messageEndpointProvider" />
+	<osgi:reference interface="com.eviware.loadui.api.messaging.MessageEndpointProvider" id="messageEndpointProvider" cardinality="0..1" />
 	
 	<osgi:service interface="com.eviware.loadui.api.upload.FormUploader" ref="formUploader" />
 	

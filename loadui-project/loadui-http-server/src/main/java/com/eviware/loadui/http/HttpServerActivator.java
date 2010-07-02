@@ -16,7 +16,8 @@
 package com.eviware.loadui.http;
 
 import org.apache.felix.http.proxy.ProxyServlet;
-import org.cometd.server.continuation.ContinuationCometdServlet;
+import org.cometd.server.CometdServlet;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
@@ -25,10 +26,10 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import com.eviware.loadui.api.messaging.MessageEndpointProvider;
-import com.eviware.loadui.impl.messaging.BayeuxServiceMessagingProvider;
+import com.eviware.loadui.api.messaging.ServerEndpoint;
+import com.eviware.loadui.impl.messaging.BayeuxServiceServerEndpoint;
 
-public class HttpActivator implements BundleActivator
+public class HttpServerActivator implements BundleActivator
 {
 	private Server sslServer;
 	private Server server;
@@ -61,7 +62,7 @@ public class HttpActivator implements BundleActivator
 		sslContext.setAttribute( BundleContext.class.getName(), bc );
 		sslContext.addServlet( new ServletHolder( new ProxyServlet() ), "/*" );
 
-		ContinuationCometdServlet cometd = new ContinuationCometdServlet();
+		CometdServlet cometd = new CometdServlet();
 
 		ServletHolder cometd_holder = new ServletHolder( cometd );
 		cometd_holder.setInitParameter( "timeout", "10000" );
@@ -76,8 +77,7 @@ public class HttpActivator implements BundleActivator
 		server.start();
 		sslServer.start();
 
-		bc.registerService( MessageEndpointProvider.class.getName(), new BayeuxServiceMessagingProvider( cometd
-				.getBayeux() ), null );
+		bc.registerService( ServerEndpoint.class.getName(), new BayeuxServiceServerEndpoint( cometd.getBayeux() ), null );
 	}
 
 	@Override
