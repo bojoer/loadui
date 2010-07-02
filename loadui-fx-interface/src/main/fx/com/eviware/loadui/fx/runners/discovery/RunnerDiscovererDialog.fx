@@ -82,7 +82,7 @@ public class RunnerDiscovererDialog  {
 	        showPostInit: true
 	        stripeVisible: false
 	        closable: true
-	        helpUrl: if(runnersDiscovered) "http://www.eviware.com" else null
+	        helpUrl: if(runnersDiscovered) "http://www.loadui.org/Working-with-loadUI/agents-and-testcases.html" else null
 	        content: [
         		Form {
         			layoutInfo: LayoutInfo { 

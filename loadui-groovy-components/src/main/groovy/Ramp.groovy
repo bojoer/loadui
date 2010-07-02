@@ -17,6 +17,7 @@
 /**
  * Sends signals at a decreasing or increasing rate until it gets to a prespecified level
  * 
+ * @help http://www.loadui.org/Triggers/ramp-updown.html
  * @category generators
  * @nonBlocking true
  */

@@ -18,6 +18,7 @@
  * Sends a HTTP request. Either set the URL via the 'url' property, or trigger 
  * the Sampler with a message containing the parameter 'url'.
  * 
+ * @help http://www.loadui.org/Samplers/web-page-runner.html
  * @name Web Page Runner
  * @category runners
  * @dependency org.apache.httpcomponents:httpclient:4.1-alpha2

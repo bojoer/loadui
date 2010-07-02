@@ -17,6 +17,7 @@
 /**
  * Simulates the behaviour of a set of users on the system
  * 
+ * @help http://www.loadui.org/Triggers/virtual-user.html
  * @name Virtual Users
  * @category generators
  * @nonBlocking true

@@ -18,6 +18,7 @@
  * Delays incoming messages for a period of time. Delay can be fixed or random. Random delay could be determined by
  * uniform or gaussian distribution. Number of random delay could be also set.
  * 
+ * @help http://www.loadui.org/Flow-Control/delay.html
  * @category flow
  * @nonBlocking true
  * @dependency commons-math:commons-math:1.2

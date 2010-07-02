@@ -240,6 +240,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 		private final File script;
 		private final long changed;
 		private final String digest;
+		private final String helpUrl;
 		private final static Pattern pattern = Pattern.compile( "(?s)\\s*/\\*+\\s?(.*?)\\*/" );
 
 		public static ScriptDescriptor parseFile( File script )
@@ -300,7 +301,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 			}
 
 			return new ScriptDescriptor( script, params.get( "category" ), params.get( "name" ), params
-					.get( "description" ), icon.exists() ? icon : null, params.get( "digest" ) );
+					.get( "description" ), icon.exists() ? icon : null, params.get( "digest" ), params.get("help") );
 		}
 
 		private static String getFileContent( File file )
@@ -330,11 +331,12 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 			return "";
 		}
 
-		private ScriptDescriptor( File script, String category, String label, String description, File icon, String digest )
+		private ScriptDescriptor( File script, String category, String label, String description, File icon, String digest, String helpUrl )
 		{
-			super( TYPE, category, label, description, icon.toURI() );
+			super( TYPE, category, label, description, icon.toURI(), null );
 			this.script = script;
 			this.digest = digest;
+			this.helpUrl = helpUrl;
 			changed = script.lastModified();
 		}
 
@@ -356,6 +358,11 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 		public String getDigest()
 		{
 			return digest;
+		}
+		
+		public String getHelpUrl()
+		{
+			return helpUrl;
 		}
 	}
 

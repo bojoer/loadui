@@ -122,7 +122,7 @@ public class RunnerInspector extends Inspector {
 	}
 	
 	override function getHelpUrl(): String {
-		"http://www.eviware.com";
+		"http://www.loadui.org/interface/project-view.html";
 	}
 	
 	override function toString(): String {

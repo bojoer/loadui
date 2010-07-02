@@ -17,6 +17,7 @@
 /**
  * Sends an empty message periodically, at a set rate
  * 
+ * @help http://www.loadui.org/Triggers/fixed-rate.html
  * @name Fixed Rate
  * @category generators
  * @nonBlocking true

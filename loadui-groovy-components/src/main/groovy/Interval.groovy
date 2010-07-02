@@ -24,6 +24,7 @@
  *
  * On Reset it just reset timer and stops it.
  *
+ * @help http://www.loadui.org/Schedulers/interval.html
  * @category scheduler
  * @nonBlocking true
  */

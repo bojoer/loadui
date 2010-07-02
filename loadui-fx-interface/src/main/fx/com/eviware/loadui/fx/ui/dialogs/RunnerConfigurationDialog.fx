@@ -62,7 +62,7 @@ public class RunnerConfigurationDialog {
          showPostInit: true
          stripeVisible: true
          closable: true
-         helpUrl: "http://www.eviware.com"
+         helpUrl: "http://www.loadui.org/Working-with-loadUI/agents-and-testcases.html"
          content: TabPanel {
          	tabs: [
          		Tab {

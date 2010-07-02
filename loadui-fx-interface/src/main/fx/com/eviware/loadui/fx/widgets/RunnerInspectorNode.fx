@@ -316,7 +316,7 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 								url: "{__ROOT__}images/component_help_icon.fxz"
 							}
 							action: function() {
-								openURL( if(ghostRunner) "http://www.eviware.com" else modelItem.getHelpUrl() );
+								openURL( if(ghostRunner) "http://www.loadui.org/interface/project-view.html" else modelItem.getHelpUrl() );
 							}
 						}
 					]

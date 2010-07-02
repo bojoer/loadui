@@ -17,6 +17,7 @@
 /**
  * Sends and empty message at random intervals around a base rate
  * 
+ * @help http://www.loadui.org/Triggers/random.html
  * @category generators
  * @nonBlocking true
  */
