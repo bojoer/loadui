@@ -26,11 +26,11 @@ import com.eviware.loadui.util.messaging.ChannelRoutingSupport;
 public class BayeuxServiceMessagingEndpoint implements MessageEndpoint
 {
 	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport( this );
-	private final BayeuxServiceMessagingProvider provider;
+	private final BayeuxServiceServerEndpoint provider;
 	private final Set<ConnectionListener> connectionListeners = new HashSet<ConnectionListener>();
 	private boolean open = true;
 
-	public BayeuxServiceMessagingEndpoint( BayeuxServiceMessagingProvider provider )
+	public BayeuxServiceMessagingEndpoint( BayeuxServiceServerEndpoint provider )
 	{
 		this.provider = provider;
 	}
@@ -50,7 +50,7 @@ public class BayeuxServiceMessagingEndpoint implements MessageEndpoint
 	@Override
 	public void sendMessage( String channel, Object data )
 	{
-		provider.sendMessage( BASE_CHANNEL + channel, data );
+		// provider.sendMessage( BASE_CHANNEL + channel, data );
 	}
 
 	public void fireMessage( String channel, Object data )

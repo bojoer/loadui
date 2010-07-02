@@ -4,8 +4,6 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.0.xsd">
 	
-	<osgi:service interface="org.eclipse.jetty.client.HttpClient" ref="httpClient" />
-	
 	<osgi:service interface="com.eviware.loadui.util.http.HttpClientProvider" ref="httpClientProvider" />
 	
 	<osgi:service interface="com.eviware.loadui.api.messaging.MessageEndpointProvider" ref="messageEndpointProvider" />

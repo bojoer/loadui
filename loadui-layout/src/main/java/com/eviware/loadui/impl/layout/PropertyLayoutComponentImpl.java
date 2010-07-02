@@ -44,8 +44,8 @@ public class PropertyLayoutComponentImpl<T> extends LayoutComponentImpl implemen
 				.getImmutable() );
 	}
 
-	@SuppressWarnings( "unchecked" )
 	@Override
+	@SuppressWarnings( "unchecked" )
 	public Property<T> getProperty()
 	{
 		return ( Property<T> )properties.get( PROPERTY );

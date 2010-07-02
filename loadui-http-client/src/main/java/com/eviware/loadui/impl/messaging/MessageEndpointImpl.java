@@ -15,12 +15,15 @@
  */
 package com.eviware.loadui.impl.messaging;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.cometd.Client;
-import org.cometd.Message;
+import org.cometd.bayeux.Message;
+import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
+import org.cometd.client.transport.LongPollingTransport;
 import org.eclipse.jetty.client.HttpClient;
 
 import com.eviware.loadui.api.messaging.ConnectionListener;
@@ -28,50 +31,46 @@ import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.util.messaging.ChannelRoutingSupport;
 
-public class MessageEndpointImpl implements MessageEndpoint
+public class MessageEndpointImpl extends BayeuxClient implements MessageEndpoint
 {
-	private final BayeuxClient client;
 	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport( this );
 	private final Set<ConnectionListener> connectionListeners = new HashSet<ConnectionListener>();
 	private boolean connected = false;
 
 	public MessageEndpointImpl( String url, HttpClient httpClient )
 	{
-		try
+		super( url, new LongPollingTransport( new HashMap<String, Object>(), httpClient ) );
+	}
+
+	@Override
+	protected void processConnect( Message connect )
+	{
+		super.processConnect( connect );
+		if( connected != connect.isSuccessful() )
 		{
-			client = new BayeuxClient( httpClient, url )
-			{
-				@Override
-				protected void metaConnect( boolean success, Message message )
+			connected = !connected;
+			for( ConnectionListener listener : connectionListeners )
+				listener.handleConnectionChange( MessageEndpointImpl.this, connected );
+			if( connected )
+				newChannel( newChannelId( BASE_CHANNEL + "/**" ) ).subscribe( new ClientSessionChannel.MessageListener()
 				{
-					super.metaConnect( success, message );
-					if( connected != success )
+					@Override
+					public void onMessage( ClientSessionChannel arg0, Message message )
 					{
-						connected = success;
-						for( ConnectionListener listener : connectionListeners )
-							listener.handleConnectionChange( MessageEndpointImpl.this, connected );
-						if( connected )
-							client.subscribe( BASE_CHANNEL + "/**" );
-						sendMessage( "", "" );
+						System.out.println( "MessageListener: " + arg0 + ", " + message );
+						String channel = message.getChannel();
+						if( channel.startsWith( BASE_CHANNEL ) && message.getData() != null )
+							routingSupport.fireMessage( channel.substring( BASE_CHANNEL.length() ), message.getData() );
 					}
-				}
-			};
-			client.addListener( new org.cometd.MessageListener()
-			{
-				@Override
-				public void deliver( Client sender, Client receiver, Message message )
-				{
-					String channel = message.getChannel();
-					if( channel.startsWith( BASE_CHANNEL ) && message.getData() != null )
-						routingSupport.fireMessage( channel.substring( BASE_CHANNEL.length() ), message.getData() );
-				}
-			} );
-			// client.start();
+				} );
 		}
-		catch( Exception e )
-		{
-			throw new RuntimeException( e );
-		}
+	}
+
+	@Override
+	public void onMessages( List<Message.Mutable> messages )
+	{
+		for( Message.Mutable message : messages )
+			routingSupport.fireMessage( message.getChannel(), message.getData() );
 	}
 
 	@Override
@@ -89,7 +88,10 @@ public class MessageEndpointImpl implements MessageEndpoint
 	@Override
 	public void sendMessage( String channel, Object data )
 	{
-		client.publish( "/service" + BASE_CHANNEL + channel, data, null );
+		Message.Mutable message = newMessage();
+		message.setChannel( "/service" + BASE_CHANNEL + channel );
+		message.setData( data );
+		send( message );
 	}
 
 	@Override
@@ -109,7 +111,7 @@ public class MessageEndpointImpl implements MessageEndpoint
 	{
 		try
 		{
-			client.stop();
+			disconnect();
 		}
 		catch( Exception e )
 		{
@@ -122,11 +124,11 @@ public class MessageEndpointImpl implements MessageEndpoint
 	{
 		try
 		{
-			client.start();
+			handshake();
 		}
 		catch( Exception e )
 		{
-			// e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 }

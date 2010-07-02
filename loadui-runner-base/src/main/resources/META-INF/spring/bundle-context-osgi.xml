@@ -8,9 +8,7 @@
 	
 	<osgi:reference interface="org.springframework.core.convert.ConversionService" id="conversionService" />
 	
-	<osgi:reference interface="com.eviware.loadui.api.messaging.MessageEndpointProvider" id="messageEndpointProvider" />
-	
-	<osgi:reference interface="com.eviware.loadui.api.messaging.BroadcastMessageEndpoint" id="broadcastMessageEndpoint" />
+	<osgi:reference interface="com.eviware.loadui.api.messaging.ServerEndpoint" id="serverEndpoint" />
 	
 	<osgi:reference interface="com.eviware.loadui.api.property.PropertySynchronizer" id="propertySynchronizer" />
 	

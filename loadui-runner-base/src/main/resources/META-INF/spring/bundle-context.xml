@@ -8,13 +8,16 @@
 	<bean id="controller" class="com.eviware.loadui.impl.runner.ControllerImpl">
 		<constructor-arg ref="executorManager" />
 		<constructor-arg ref="conversionService" />
-		<constructor-arg ref="messageEndpointProvider" />
-		<constructor-arg ref="broadcastMessageEndpoint" />
+		<constructor-arg ref="serverEndpoint" />
 		<constructor-arg ref="terminalProxy" />
 		<constructor-arg ref="addressableRegistry" />
 		<constructor-arg ref="propertySynchronizer" />
 		<constructor-arg ref="counterSynchronizer" />
 	</bean>
 	
-	<bean class="com.eviware.loadui.impl.discovery.DiscoveryResponder" destroy-method="release" />
+	<!--<bean id="runnerServer" class="com.eviware.loadui.impl.runner.RunnerServer">
+		<constructor-arg ref="serverEndpoint" />
+	</bean>
+	
+	--><bean class="com.eviware.loadui.impl.discovery.DiscoveryResponder" destroy-method="release" />
 </beans>

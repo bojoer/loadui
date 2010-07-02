@@ -33,26 +33,23 @@ import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.dispatch.ExecutorManager;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
-import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
-import com.eviware.loadui.api.messaging.MessageEndpointProvider;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.SceneCommunication;
+import com.eviware.loadui.api.messaging.ServerEndpoint;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.RunnerItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.property.PropertySynchronizer;
-import com.eviware.loadui.api.runner.Controller;
 import com.eviware.loadui.api.terminal.DualTerminal;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.api.terminal.TerminalProxy;
-import com.eviware.loadui.util.messaging.MessageEndpointSupport;
 
-public class ControllerImpl implements Controller
+public class ControllerImpl
 {
 	public static final Logger log = LoggerFactory.getLogger( ControllerImpl.class );
 
@@ -61,7 +58,6 @@ public class ControllerImpl implements Controller
 	private final ExecutorService executorService;
 	private final ExecutorManager executorManager;
 	private final ConversionService conversionService;
-	private final MessageEndpointSupport messageEndpointSupport;
 	private final TerminalProxy terminalProxy;
 	private final AddressableRegistry addressableRegistry;
 	private final PropertySynchronizer propertySynchronizer;
@@ -70,9 +66,8 @@ public class ControllerImpl implements Controller
 	private Map<String, SceneRunner> sceneRunners = Collections.synchronizedMap( new HashMap<String, SceneRunner>() );
 
 	public ControllerImpl( ExecutorManager executorManager, ConversionService conversionService,
-			MessageEndpointProvider endpointProvider, BroadcastMessageEndpoint broadcast, TerminalProxy terminalProxy,
-			AddressableRegistry addressableRegistry, PropertySynchronizer propertySynchronizer,
-			CounterSynchronizer counterSynchronizer )
+			ServerEndpoint serverEndpoint, TerminalProxy terminalProxy, AddressableRegistry addressableRegistry,
+			PropertySynchronizer propertySynchronizer, CounterSynchronizer counterSynchronizer )
 	{
 		this.executorManager = executorManager;
 		this.executorService = executorManager.getExecutor();
@@ -82,64 +77,21 @@ public class ControllerImpl implements Controller
 		this.propertySynchronizer = propertySynchronizer;
 		this.counterSynchronizer = counterSynchronizer;
 
-		MessageEndpoint endpoint = endpointProvider.createEndpoint( "http://localhost:8080/cometd" );
-		endpoint.addMessageListener( RunnerItem.RUNNER_CHANNEL, new RunnerListener() );
-		endpoint.addMessageListener( SceneCommunication.CHANNEL, new SceneListener() );
-		endpoint.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL, new ComponentContextListener() );
-
-		messageEndpointSupport = new MessageEndpointSupport( this, endpoint );
-
-		broadcast.registerEndpoint( this );
+		serverEndpoint.addConnectionListener( new ConnectionListener()
+		{
+			@Override
+			public void handleConnectionChange( MessageEndpoint endpoint, boolean connected )
+			{
+				if( connected )
+				{
+					endpoint.addMessageListener( RunnerItem.RUNNER_CHANNEL, new RunnerListener() );
+					endpoint.addMessageListener( SceneCommunication.CHANNEL, new SceneListener() );
+					endpoint.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL, new ComponentContextListener() );
+				}
+			}
+		} );
 
 		log.info( "Runner started and listening on cometd!" );
-	}
-
-	@Override
-	public SceneItem getScene( String id )
-	{
-		return ( SceneItem )addressableRegistry.lookup( id );
-	}
-
-	@Override
-	public void addMessageListener( String channel, MessageListener listener )
-	{
-		messageEndpointSupport.addMessageListener( channel, listener );
-	}
-
-	@Override
-	public void removeMessageListener( MessageListener listener )
-	{
-		messageEndpointSupport.removeMessageListener( listener );
-	}
-
-	@Override
-	public void sendMessage( String channel, Object data )
-	{
-		messageEndpointSupport.sendMessage( channel, data );
-	}
-
-	@Override
-	public void addConnectionListener( ConnectionListener listener )
-	{
-		messageEndpointSupport.addConnectionListener( listener );
-	}
-
-	@Override
-	public void close()
-	{
-		messageEndpointSupport.close();
-	}
-
-	@Override
-	public void open()
-	{
-		messageEndpointSupport.open();
-	}
-
-	@Override
-	public void removeConnectionListener( ConnectionListener listener )
-	{
-		messageEndpointSupport.removeConnectionListener( listener );
 	}
 
 	private class RunnerListener implements MessageListener
