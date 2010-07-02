@@ -29,7 +29,33 @@ public class ComponentDescriptor
 	private final String label;
 	private final String description;
 	private final URI icon;
-
+	private final String helpUrl;
+	
+	/**
+	 * Constructs a new ComponentDescriptor using the given values.
+	 * 
+	 * @param type
+	 *           The type of the Component.
+	 * @param category
+	 *           The Category of the ComponentDescriptor.
+	 * @param label
+	 *           The label for the ComponentDescriptor.
+	 * @param description
+	 *           A description of the Component.
+	 * @param icon
+	 *           A File containing an icon image to display for the
+	 *           ComponentDescriptor.
+	 */
+	public ComponentDescriptor( String type, String category, String label, String description, URI icon, String helpUrl )
+	{
+		this.type = type;
+		this.category = category;
+		this.label = label;
+		this.description = description;
+		this.icon = icon;
+		this.helpUrl = helpUrl;
+	}
+	
 	/**
 	 * Constructs a new ComponentDescriptor using the given values.
 	 * 
@@ -52,7 +78,9 @@ public class ComponentDescriptor
 		this.label = label;
 		this.description = description;
 		this.icon = icon;
+		this.helpUrl = null;
 	}
+	
 
 	public String getType()
 	{
@@ -77,5 +105,10 @@ public class ComponentDescriptor
 	public URI getIcon()
 	{
 		return icon;
+	}
+	
+	public String getHelpUrl()
+	{
+		return helpUrl;
 	}
 }

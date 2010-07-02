@@ -54,7 +54,7 @@ public class SettingsDialog  {
          showPostInit: true
          stripeVisible: true
          closable: true
-         helpUrl: "http://www.eviware.com"
+         helpUrl: "http://www.loadui.org/Working-with-loadUI/project-view.html"
          content: TabPanel {
 		         	tabs: [
 		         		Tab {

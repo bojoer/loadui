@@ -180,7 +180,7 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 			showPostInit: true
 			closable: true
 			stripeVisible: true
-			helpUrl: "http://www.eviware.com"
+			helpUrl: "http://www.loadui.org/interface/workspace-view.html"
 			backgroundFill: bind backgroundFill
 			stripeFill: bind stripeFill
 			okText: "Save"

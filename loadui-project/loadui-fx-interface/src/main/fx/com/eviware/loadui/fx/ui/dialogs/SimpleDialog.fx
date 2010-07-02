@@ -67,7 +67,7 @@ public class SimpleDialog  {
          showPostInit: true
          stripeVisible: true
          closable: true
-         helpUrl: "http://www.eviware.com"
+         helpUrl: "http://www.loadui.org"
          content: TabPanel {
 		         	tabs: [
 		         		Tab {

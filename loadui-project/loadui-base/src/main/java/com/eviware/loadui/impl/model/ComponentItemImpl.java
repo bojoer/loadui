@@ -86,7 +86,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private LayoutComponent layout;
 	private Set<SettingsLayoutContainer> settingsTabs = new LinkedHashSet<SettingsLayoutContainer>();
 	private boolean nonBlocking = false;
-	private String helpUrl = "http://www.eviware.com";
+	private String helpUrl = "http://www.loadui.org";
 	private boolean invalid = false;
 
 	private boolean propagate = true;

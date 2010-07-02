@@ -72,7 +72,7 @@ public class WorkspaceWrenchDialog  {
          showPostInit: true
          stripeVisible: true
          closable: true
-         helpUrl: "http://www.eviware.com"
+         helpUrl: "http://www.loadui.org/interface/workspace-view.html"
          content: TabPanel {
          	tabs: [
          		Tab {
