@@ -65,7 +65,7 @@ public class TerminalHolderSupport
 		if( terminals.containsKey( label ) )
 		{
 			Terminal existing = terminals.get( label );
-			if( existing instanceof InputTerminal )
+			if( existing instanceof OutputTerminal )
 				return ( OutputTerminal )existing;
 			throw new IllegalArgumentException( "TerminalHolder already has a Terminal with label '" + label
 					+ "' which is of different type than the requested." );

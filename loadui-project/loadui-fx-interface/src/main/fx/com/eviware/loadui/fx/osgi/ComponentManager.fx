@@ -91,7 +91,7 @@ public class ComponentManager extends ComponentRegistry.DescriptorListener {
 	}
 	
 	override function descriptorAdded( descriptor:ComponentDescriptor ):Void {
-		log.debug( "Added ComponentDescriptor: \{\}", descriptor );
+		log.debug( "Added ComponentDescriptor: \{\}", descriptor.getLabel() );
 		FxUtils.runInFxThread( function():Void {
 			def toolbarItem = ComponentToolbarItem { descriptor: descriptor };
 			def tctoolbarItem = ComponentToolbarItem { descriptor: descriptor };
