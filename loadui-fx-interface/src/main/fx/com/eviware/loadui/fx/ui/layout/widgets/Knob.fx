@@ -82,15 +82,15 @@ public class Knob extends NumericWidgetBase, StylesheetAware {
 		height: 15
 		width: bind 10 + 6 * Math.max( 3, textValue.length() )
 		text: bind textValue with inverse
-		visible: false
+		opacity: 0
 		onKeyReleased: function( e:KeyEvent ):Void {
 			if( e.code == KeyCode.VK_ENTER )
-				textBox.visible = false;
+				textBox.opacity = 0;
 		}
 	}
 	
 	def tbf = bind textBox.focused on replace {
-		textBox.visible = tbf;
+		textBox.opacity = if( tbf ) 1 else 0;
 	}
 	
 	var startX:Number;
