@@ -6,7 +6,7 @@
 
 	<!--<osgi:service interface="javafx.scene.Scene" ref="scene" />-->
 
-	<osgi:reference interface="com.eviware.loadui.util.http.HttpClientProvider" id="httpClientProvider" />
+	<osgi:reference interface="com.eviware.loadui.api.http.HttpClientProvider" id="httpClientProvider" />
 
 	<osgi:reference interface="com.eviware.loadui.api.model.WorkspaceProvider"
 		id="workspaceProvider" />

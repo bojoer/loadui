@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.fx.http;
 
-import com.eviware.loadui.util.http.HttpClientProvider;
+import com.eviware.loadui.api.http.HttpClientProvider;
 import org.eclipse.jetty.client.HttpClient;
 
 public-read var instance: HttpClientHolder;

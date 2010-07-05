@@ -28,6 +28,8 @@
 				<configuration>
 					<instructions>
 						<Embed-Dependency>*;scope=provided</Embed-Dependency>
+						<Export-Package>com.eviware.loadui.api.http,org.eclipse.jetty.client*</Export-Package>
+						<Import-Package>!com.eviware.loadui.api.http,!org.eclipse.jetty.client*,*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -53,15 +55,11 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-client</artifactId>
 			<version>${jettyVersion}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-websocket</artifactId>
-			<version>${jettyVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-security</artifactId>
 			<version>${jettyVersion}</version>
 		</dependency>
 		<dependency>

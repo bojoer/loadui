@@ -58,10 +58,5 @@
 			<version>1.142</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-client</artifactId>
-			<version>${jettyVersion}</version>
-		</dependency>
 	</dependencies>
 </project>
