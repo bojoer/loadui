@@ -147,7 +147,7 @@ class HandleNode extends BaseNode, TooltipHolder {
 				startX = e.sceneX;
 				startY = e.sceneY;
 				startValue = knob.numberValue;
-				knob.textBox.visible = true;
+				knob.textBox.opacity = 1;
 				dragging = true;
 			}
 		} );
@@ -163,7 +163,7 @@ class HandleNode extends BaseNode, TooltipHolder {
 				if( e.clickCount > 1 ) {
 					knob.textBox.requestFocus();
 				} else {
-					knob.textBox.visible = false;
+					knob.textBox.opacity = 0;
 				}
 				dragging = false;
 			}
