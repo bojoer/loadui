@@ -42,7 +42,7 @@ import org.eclipse.jetty.client.HttpExchange;
 import org.eclipse.jetty.io.Buffer;
 import java.lang.Exception;
 import org.eclipse.jetty.http.HttpSchemes;
-import com.eviware.loadui.util.http.HttpClientProvider;
+import com.eviware.loadui.api.http.HttpClientProvider;
 import com.eviware.loadui.fx.http.HttpClientHolder;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.CreateNewRunnerDialog" );
