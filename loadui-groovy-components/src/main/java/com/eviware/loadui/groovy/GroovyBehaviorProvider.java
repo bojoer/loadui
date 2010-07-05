@@ -301,7 +301,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 			}
 
 			return new ScriptDescriptor( script, params.get( "category" ), params.get( "name" ), params
-					.get( "description" ), icon.exists() ? icon : null, params.get( "digest" ), params.get("help") );
+					.get( "description" ), icon.exists() ? icon : null, params.get( "digest" ), params.get( "help" ) );
 		}
 
 		private static String getFileContent( File file )
@@ -331,9 +331,10 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 			return "";
 		}
 
-		private ScriptDescriptor( File script, String category, String label, String description, File icon, String digest, String helpUrl )
+		private ScriptDescriptor( File script, String category, String label, String description, File icon,
+				String digest, String helpUrl )
 		{
-			super( TYPE, category, label, description, icon.toURI(), null );
+			super( TYPE, category, label, description, icon == null ? null : icon.toURI(), null );
 			this.script = script;
 			this.digest = digest;
 			this.helpUrl = helpUrl;
@@ -359,7 +360,8 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 		{
 			return digest;
 		}
-		
+
+		@Override
 		public String getHelpUrl()
 		{
 			return helpUrl;
@@ -396,40 +398,48 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 		@Override
 		public void run()
 		{
-			if( !scriptDir.isDirectory() )
-				return;
-
-			List<File> files = Arrays.asList( scriptDir.listFiles() );
-			for( Iterator<Entry<File, ScriptDescriptor>> it = scripts.entrySet().iterator(); it.hasNext(); )
+			try
 			{
-				Entry<File, ScriptDescriptor> entry = it.next();
-				if( !entry.getKey().exists() || entry.getValue().isModified() )
-				{
-					registry.unregisterDescriptor( entry.getValue() );
-					it.remove();
-				}
-			}
+				if( !scriptDir.isDirectory() )
+					return;
 
-			for( File file : files )
-			{
-				if( file.getName().endsWith( ".groovy" ) && !scripts.containsKey( file ) )
+				List<File> files = Arrays.asList( scriptDir.listFiles() );
+				for( Iterator<Entry<File, ScriptDescriptor>> it = scripts.entrySet().iterator(); it.hasNext(); )
 				{
-					ScriptDescriptor descriptor = ScriptDescriptor.parseFile( file );
-					scripts.put( file, descriptor );
-					registry.registerDescriptor( descriptor, GroovyBehaviorProvider.this );
-					// Check for existing components using an older version of this
-					// script.
-					for( ComponentContext c : activeComponents )
+					Entry<File, ScriptDescriptor> entry = it.next();
+					if( !entry.getKey().exists() || entry.getValue().isModified() )
 					{
-						if( file.getAbsolutePath().equals( c.getAttribute( SCRIPT_FILE_ATTRIBUTE, null ) )
-								&& !descriptor.getDigest().equals( c.getAttribute( DIGEST_ATTRIBUTE, null ) ) )
+						registry.unregisterDescriptor( entry.getValue() );
+						it.remove();
+					}
+				}
+
+				for( File file : files )
+				{
+					if( file.getName().endsWith( ".groovy" ) && !scripts.containsKey( file ) )
+					{
+						ScriptDescriptor descriptor = ScriptDescriptor.parseFile( file );
+						scripts.put( file, descriptor );
+						registry.registerDescriptor( descriptor, GroovyBehaviorProvider.this );
+						// Check for existing components using an older version of
+						// this
+						// script.
+						for( ComponentContext c : activeComponents )
 						{
-							System.out.println( "Script changed, updating component: " + c.getLabel() );
-							c.setAttribute( DIGEST_ATTRIBUTE, descriptor.getDigest() );
-							c.getProperty( SCRIPT_PROPERTY ).setValue( descriptor.getScript() );
+							if( file.getAbsolutePath().equals( c.getAttribute( SCRIPT_FILE_ATTRIBUTE, null ) )
+									&& !descriptor.getDigest().equals( c.getAttribute( DIGEST_ATTRIBUTE, null ) ) )
+							{
+								System.out.println( "Script changed, updating component: " + c.getLabel() );
+								c.setAttribute( DIGEST_ATTRIBUTE, descriptor.getDigest() );
+								c.getProperty( SCRIPT_PROPERTY ).setValue( descriptor.getScript() );
+							}
 						}
 					}
 				}
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
 			}
 		}
 	}

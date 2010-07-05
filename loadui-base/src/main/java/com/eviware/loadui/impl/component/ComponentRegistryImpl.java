@@ -50,6 +50,7 @@ public class ComponentRegistryImpl implements ComponentRegistry
 					"Cannot register ComponentDescriptor with null provider, or null descriptor!" );
 		descriptors.put( descriptor, provider );
 		types.put( descriptor.getType(), provider );
+		System.out.println( "Registered descriptor: " + descriptor.getLabel() );
 		fireDescriptorAdded( descriptor );
 	}
 
