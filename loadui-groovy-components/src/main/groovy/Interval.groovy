@@ -92,7 +92,7 @@ calculateTime = { time ->
 }
 
 startTimer = { start, duration, current ->
-	if ( start > current ) {
+	if ( start >= current ) {
 		if ( (unit.value == 'Percent').and(  (start + duration) >  100 ) ) {
 			println "[interval] error setting percents (start + duration) > 100!"
 			return
