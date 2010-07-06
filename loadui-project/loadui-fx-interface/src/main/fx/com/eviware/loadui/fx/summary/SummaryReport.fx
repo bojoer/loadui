@@ -347,6 +347,12 @@ public class SummaryReport extends StylesheetAware {
 					layoutY: 15
 					spacing: 10
 					content: [
+					    Button {
+					        text: "Print"
+					        onMouseReleased:function(event) {
+					            com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport(summary);
+					        }
+					    }
 						Label {
 							layoutY: 3
 							text: bind date
