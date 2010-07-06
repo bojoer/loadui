@@ -5,33 +5,42 @@
 	<property name="ireport.y" value="0"/>
 	<field name="title" class="java.lang.String"/>
 	<field name="values" class="net.sf.jasperreports.engine.JRDataSource"/>
-    <field name="tables" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<field name="tables" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<title>
 		<band height="30" splitType="Stretch"/>
 	</title>
 	<detail>
-		<band height="149">
+		<band height="123">
 			<textField>
-				<reportElement x="0" y="0" width="102" height="30"/>
+				<reportElement x="100" y="0" width="102" height="20"/>
 				<textElement>
-					<font size="10"/>
+					<font size="15"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{title}]]></textFieldExpression>
 			</textField>
-            <line>
-				<reportElement x="0" y="31" width="500" height="2"/>
+			<line>
+				<reportElement x="0" y="21" width="500" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Double"/>
+				</graphicElement>
 			</line>
 			<subreport>
-				<reportElement x="0" y="43" width="496" height="43"/>
+				<reportElement positionType="Float" x="0" y="22" width="496" height="43"/>
 				<dataSourceExpression><![CDATA[$F{values}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:ValuesReport"]]></subreportExpression>
-			</subreport><subreport>
-				<reportElement x="0" y="43" width="496" height="43"/>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="65" width="496" height="43"/>
 				<dataSourceExpression><![CDATA[$F{tables}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:TablesReport"]]></subreportExpression>
 			</subreport>
-
-			
+			<staticText>
+				<reportElement x="0" y="1" width="100" height="20"/>
+				<textElement>
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[Section:]]></text>
+			</staticText>
 		</band>
 	</detail>
 	<noData>

@@ -59,12 +59,12 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement x="0" y="58" width="496" height="67"/>
+				<reportElement positionType="Float" x="0" y="58" width="496" height="67"/>
 				<dataSourceExpression><![CDATA[$F{values}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:ValuesReport"]]></subreportExpression>
 			</subreport>
 			<subreport>
-				<reportElement x="0" y="125" width="496" height="67"/>
+				<reportElement positionType="Float" x="0" y="125" width="496" height="67"/>
 				<dataSourceExpression><![CDATA[$F{sections}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:SectionReport"]]></subreportExpression>
 			</subreport>

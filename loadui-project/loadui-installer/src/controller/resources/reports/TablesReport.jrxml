@@ -4,28 +4,28 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<field name="title" class="java.lang.String"/>
-    <field name="table" class="net.sf.jasperreports.engine.data.JRTableModelDataSource"/>
+	<field name="table" class="net.sf.jasperreports.engine.data.JRTableModelDataSource"/>
 	<detail>
-		<band height="72">
+		<band height="60">
 			<textField>
-				<reportElement x="0" y="2" width="100" height="20"/>
-				<textElement/>
+				<reportElement x="100" y="0" width="100" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{title}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement x="0" y="29" width="496" height="43"/>
+				<reportElement x="0" y="23" width="496" height="37"/>
 				<dataSourceExpression><![CDATA[$F{table}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:TableReport"]]></subreportExpression>
 			</subreport>
-		</band>
-	</detail>
-	<noData>
-		<band height="15">
 			<staticText>
-				<reportElement x="0" y="0" width="100" height="13"/>
-				<textElement/>
-				<text><![CDATA[Missing Properties]]></text>
+				<reportElement x="0" y="0" width="100" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Table:]]></text>
 			</staticText>
 		</band>
-	</noData>
+	</detail>
 </jasperReport>
