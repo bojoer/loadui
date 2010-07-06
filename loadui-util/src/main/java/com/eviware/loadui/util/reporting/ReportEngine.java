@@ -40,16 +40,15 @@ import com.eviware.loadui.util.reporting.datasources.ChapterDataSource;
 
 public class ReportEngine
 {
-   
+
 	static Logger log = LoggerFactory.getLogger(ReportEngine.class);
-	
-	public static String generateJasperReport(Summary sumary, LReportTemplate selectedReport)
-			throws JRException
+
+	public static String generateJasperReport(Chapter chapter, LReportTemplate selectedReport) throws JRException
 	{
 		// // fill report with data
 		if (selectedReport != null)
 		{
-			ReportFillWorker reportWorker = new ReportFillWorker(sumary, selectedReport);
+			ReportFillWorker reportWorker = new ReportFillWorker(chapter, selectedReport);
 
 			JasperPrint jp = reportWorker.getJasperReport();
 
@@ -60,68 +59,65 @@ public class ReportEngine
 				jv.setTitle("Report for []");
 				jv.setVisible(true);
 				jv.setFitPageZoomRatio();
-			} else {
+			}
+			else
+			{
 				log.error("Errors in ReportTemplate!");
 			}
-		} else {
+		}
+		else
+		{
 			log.error("Report do not exists!");
 		}
 
 		return null;
 	}
-	
+
 	private static class ReportFillWorker
 	{
 
 		private JasperPrint jp;
 		private LReportTemplate report;
-		private Summary summary;
+		private Chapter chapter;
 
-		public ReportFillWorker( Summary summary, LReportTemplate selectedReport )
+		public ReportFillWorker(Chapter chapter, LReportTemplate selectedReport)
 		{
 			report = selectedReport;
-			this.summary = summary;
+			this.chapter = chapter;
 		}
 
 		public JasperPrint getJasperReport()
 		{
 			try
 			{
-				jp = createReport( summary, report );
+				jp = createReport(chapter, report);
 			}
-			catch( Throwable e )
+			catch (Throwable e)
 			{
 				e.printStackTrace();
 				jp = null;
 			}
-			
+
 			return jp;
 		}
 	}
-	
-	protected static JasperPrint createReport( Summary summary, LReportTemplate selectedReport ) throws JRException
+
+	protected static JasperPrint createReport(Chapter chapter, LReportTemplate selectedReport) throws JRException
 	{
 		log.debug("Creating report!");
-		updateReport( selectedReport );
+		updateReport(selectedReport);
 
-		LReportTemplate report = new LReportTemplate( selectedReport );
-		
-		JasperReport jr = compileReport( report );
+		LReportTemplate report = new LReportTemplate(selectedReport);
+
+		JasperReport jr = compileReport(report);
 		ReportProtocolFactory factory = new ReportProtocolFactory();
-		
+
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put( JRParameter.REPORT_URL_HANDLER_FACTORY, factory );
-		 
-		for( String chapterTitle: summary.getChapters().keySet()) {
-			Chapter chapter = summary.getChapters().get(chapterTitle);
-			log.info("Chapter title: " + chapterTitle);
-			if ( chapter.getTitle().equals("Project 1")) {
-				log.info("Setting parameter : " + chapterTitle);
-				map.put("SectionSummary", new ChapterDataSource(chapter));
-			}
-		}
-		
-		return JasperFillManager.fillReport( jr, map, new JRBeanCollectionDataSource( Arrays.asList( summary ) ) );
+		map.put(JRParameter.REPORT_URL_HANDLER_FACTORY, factory);
+
+		map.put("ChapterDataSource", new ChapterDataSource(chapter));
+
+		return JasperFillManager.fillReport(jr, map, new JRBeanCollectionDataSource(Arrays.asList(chapter)));
 	}
 
 	private static JasperReport compileReport(LReportTemplate report)
@@ -130,17 +126,17 @@ public class ReportEngine
 		JasperReport jr = null;
 		try
 		{
-			ByteArrayInputStream in = new ByteArrayInputStream( report.getData().getBytes() );
-			JasperDesign design = JRXmlLoader.load( in );
-			
+			ByteArrayInputStream in = new ByteArrayInputStream(report.getData().getBytes());
+			JasperDesign design = JRXmlLoader.load(in);
+
 			JRDesignParameter param = new JRDesignParameter();
-			
+
 			param = new JRDesignParameter();
-			param.setName("SectionSummary");
+			param.setName("ChapterDataSource");
 			param.setValueClass(ChapterDataSource.class);
 			design.addParameter(param);
-			
-			jr = JasperCompileManager.compileReport( design );
+
+			jr = JasperCompileManager.compileReport(design);
 		}
 		catch (JRException e)
 		{
@@ -151,7 +147,7 @@ public class ReportEngine
 	}
 
 	/*
-	 * check if report template is changed and if it is reload it. 
+	 * check if report template is changed and if it is reload it.
 	 */
 	private static void updateReport(LReportTemplate report)
 	{
