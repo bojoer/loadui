@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TableReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -14,81 +14,81 @@
 	<field name="COLUMN_8" class="java.lang.String"/>
 	<field name="COLUMN_9" class="java.lang.String"/>
 	<columnHeader>
-		<band height="46">
-			<staticText>
-				<reportElement x="0" y="26" width="100" height="20"/>
+		<band height="20">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[NAME]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="100" y="26" width="50" height="20"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_5}==null)? "TEST CASE":"NAME")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="50" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[CNT]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="200" y="26" width="50" height="20"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_5}==null)? "EXEC TIME":"CNT")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="150" y="0" width="50" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[MAX]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="150" y="26" width="50" height="20"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_5}==null)? "SAMPLES":"MIN")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="50" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[MIN]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="300" y="26" width="50" height="20"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_5}==null)? "ASSERTIONS":"MAX")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="250" y="0" width="50" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[STD-DEV]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="250" y="26" width="50" height="20"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_5}==null)? "FAILED ASSERTIONS":"AVG")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="0" width="50" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[AVG]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="350" y="26" width="50" height="20"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_5}==null)? "":"STD_DEV")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="350" y="0" width="50" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[MIN/AVG]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="400" y="26" width="50" height="20"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_5}==null)? "":"MIN/AVG")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="400" y="0" width="50" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[MAX/AVG]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="450" y="26" width="50" height="20"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_5}==null)? "":"MAX/AVG")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="450" y="0" width="50" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[ERR]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="500" y="26" width="50" height="20"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_5}==null)? "":"ERR")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="500" y="0" width="50" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[RATIO]]></text>
-			</staticText>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_5}==null)? "":"RATIO")]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="72">
+		<band height="20">
 			<textField>
 				<reportElement x="150" y="0" width="50" height="20"/>
 				<textElement/>
@@ -102,7 +102,7 @@
 			<textField>
 				<reportElement x="0" y="0" width="100" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{COLUMN_0}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_0}==null)? "":$F{COLUMN_0}.toString())]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="200" y="0" width="50" height="20"/>
@@ -117,31 +117,28 @@
 			<textField>
 				<reportElement x="300" y="0" width="50" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{COLUMN_5}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_5}==null)? "":$F{COLUMN_5}.toString())]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="350" y="0" width="50" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{COLUMN_6}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_6}==null)? "":$F{COLUMN_6}.toString())]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="400" y="0" width="50" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{COLUMN_7}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_7}==null)? "":$F{COLUMN_7}.toString())]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="450" y="0" width="50" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{COLUMN_8}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_8}==null)? "":$F{COLUMN_8}.toString())]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="500" y="0" width="50" height="20"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{COLUMN_9}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(($F{COLUMN_9}==null)? "":$F{COLUMN_9}.toString())]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
-	<noData>
-		<band height="15"/>
-	</noData>
 </jasperReport>

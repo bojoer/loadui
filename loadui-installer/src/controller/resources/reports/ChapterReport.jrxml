@@ -36,9 +36,6 @@
 			</textField>
 		</band>
 	</title>
-	<pageHeader>
-		<band height="11" splitType="Stretch"/>
-	</pageHeader>
 	<columnHeader>
 		<band splitType="Stretch"/>
 	</columnHeader>
@@ -64,7 +61,7 @@
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:ValuesReport"]]></subreportExpression>
 			</subreport>
 			<subreport>
-				<reportElement positionType="Float" x="0" y="125" width="496" height="67"/>
+				<reportElement positionType="Float" x="0" y="125" width="496" height="67" isPrintWhenDetailOverflows="true"/>
 				<dataSourceExpression><![CDATA[$F{sections}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:SectionReport"]]></subreportExpression>
 			</subreport>
