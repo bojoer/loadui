@@ -29,22 +29,12 @@
 				<reportElement positionType="FixRelativeToBottom" x="2" y="0" width="551" height="1"/>
 			</line>
 			<subreport>
-				<reportElement x="19" y="11" width="496" height="66"/>
+				<reportElement positionType="Float" x="0" y="0" width="496" height="66"/>
 				<dataSourceExpression><![CDATA[$P{SectionSummary}]]></dataSourceExpression>
-				<subreportExpression class="java.lang.String"><![CDATA["subreport:SectionOverview"]]></subreportExpression>
+				<subreportExpression class="java.lang.String"><![CDATA["subreport:ChapterReport"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="7" splitType="Stretch">
-			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1"/>
-				<graphicElement>
-					<pen lineWidth="0.5" lineColor="#999999"/>
-				</graphicElement>
-			</line>
-		</band>
-	</columnFooter>
 	<pageFooter>
 		<band height="13" splitType="Stretch">
 			<frame>
