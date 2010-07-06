@@ -162,9 +162,9 @@ layout  {
 	property( property:start, label:'Start', min:0 ) 
 	property( property:end, label:'End', min:0 ) 
 	separator( vertical:true )
-	property( property:period, label:'Period\n(Sec)', min:1 ) 
-	separator( vertical:true )
 	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
+	separator( vertical:true )
+	property( property:period, label:'Period\n(Sec)', min:1 ) 
 	separator( vertical:true )
 	box ( constraints:"wrap" ) {
 		box( widget:'display' ) {
