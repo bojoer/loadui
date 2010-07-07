@@ -54,9 +54,9 @@ public class ReportEngine
 
 			if (jp != null)
 			{
-				jp.setName("Report for []");
+				jp.setName("Report for " + chapter.getTitle());
 				JasperViewer jv = new JasperViewer(jp, false);
-				jv.setTitle("Report for []");
+				jv.setTitle("Report for " + chapter.getTitle());
 				jv.setVisible(true);
 				jv.setFitPageZoomRatio();
 			}
