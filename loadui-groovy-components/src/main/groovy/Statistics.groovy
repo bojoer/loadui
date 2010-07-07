@@ -54,6 +54,8 @@ import com.eviware.loadui.api.events.CollectionEvent
 import com.eviware.loadui.api.events.ActionEvent
 
 import com.eviware.loadui.util.statistics.ValueStatistics
+import com.eviware.loadui.api.ui.table.LTableModel
+import com.eviware.loadui.api.summary.MutableSection
 
 AGGREGATE = "Aggregate"
 
@@ -75,6 +77,7 @@ createProperty( 'enableBPS', Boolean, true )
 createProperty( 'enableAvgTPS', Boolean, true )
 createProperty( 'enableAvgBPS', Boolean, true )
 createProperty( 'sourceID', String, "" )
+createProperty( 'addtoSummary', Boolean, false )
 
 createProperty( 'selectedRunner', String, AGGREGATE )
 
@@ -360,6 +363,7 @@ layout(constraints:'fillx, wrap 1') {
 }
 
 settings( label: 'Properties', constraints: 'wrap 2' ) {
+	property(property: addtoSummary, label: "Add last result to summary?")
 	box(constraints:'growx, wrap 1') {
 		property(property: enableAverage, label: 'Enable Average' )
 		property(property: enableMin, label: 'Enable Min' )
@@ -380,6 +384,51 @@ settings( label: "Periods", constraints: 'wrap 2' ) {
 		property(property: period, label: 'History (min)' )
 	}
 } 
+
+generateSummary = { chapter ->
+	if (addtoSummary.value) {
+		LTableModel table = new LTableModel(1, false);
+		ArrayList values = new ArrayList();
+		if(enableAverage.value) {
+			table.addColumn("Avg");
+			values.add(data['Avg'].round(2));
+		}
+		if(enableMin.value) {
+			table.addColumn("Min");
+			values.add(data['Min']);
+		}
+		if(enableMax.value) {
+			table.addColumn("Max");
+			values.add(data['Max']);
+		}
+		if(enableTPS.value) {
+			table.addColumn("TPS");
+			values.add(data['Tps'].round(2));
+		}
+		if(enableBPS.value) {
+			table.addColumn("BPS");
+			values.add(data['Bps']?.round(2));
+		}
+		if(enableAvgTPS.value) {
+			table.addColumn("Avg TPS");
+			values.add(data['Avg-Tps']);
+		}
+		if(enableAvgBPS.value) {
+			table.addColumn("Avg BPS");
+			values.add(data['Avg-Bps']);
+		}
+		if(enableStdDev.value) {
+			table.addColumn("Std-Dev");
+			values.add(data['Std-Dev'].round(2));
+		}
+		
+		table.addRow(values);
+		
+		MutableSection sect = chapter.addSection(getLabel());
+		sect.addTable(getLabel(), table)
+   	}
+
+}
 
 buildSignature()
 fixOptions()
