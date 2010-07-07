@@ -499,6 +499,12 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		projectChapter.addSection( new ProjectExecutionNotablesSection( this ) );
 		projectChapter.addSection( new ProjectDataSection( this ) );
 		projectChapter.setDescription( getDescription() );
+		
+		for( ComponentItem component : getComponents() )
+		{
+			component.generateSummary( projectChapter );
+			
+		}
 
 		// We decided to wait a bit with this...
 		if( saveReport.getValue() )

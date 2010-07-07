@@ -23,6 +23,8 @@ import com.eviware.loadui.api.model.RunnerItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
+import com.eviware.loadui.api.summary.MutableChapter;
+
 
 /**
  * Base class for component Categories which defines default implementations of
@@ -31,7 +33,7 @@ import com.eviware.loadui.api.terminal.TerminalMessage;
  * @author dain.nilsson
  */
 public abstract class BaseCategory implements ComponentBehavior
-{
+{	
 	private final ComponentContext context;
 
 	/**
@@ -90,4 +92,10 @@ public abstract class BaseCategory implements ComponentBehavior
 	public void handleStatisticsData( Map<RunnerItem, Object> statisticsData )
 	{
 	}
+	
+	@Override
+	 public void generateSummary( MutableChapter summary )
+	 {
+
+	 }
 }

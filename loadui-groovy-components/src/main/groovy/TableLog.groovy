@@ -33,10 +33,13 @@ import com.eviware.loadui.api.events.ActionEvent
 import javax.swing.event.TableModelListener
 import javax.swing.event.TableModelEvent
 
+import com.eviware.loadui.api.summary.MutableSection
+
 createProperty 'maxRows', Long, 1000
 createProperty 'fileName', File 
 createProperty 'saveFile', Boolean, false
 createProperty 'follow', Boolean, false
+createProperty 'summaryRows', Long, 0
 
 myTableModel = new LTableModel(1000, follow.value as Boolean)
 myTableModel.addTableModelListener(new TableModelListener() {
@@ -91,11 +94,23 @@ layout
 }
 
 // settings
-settings( label: "General", constraints: 'wrap 2' ) {
-	property(property: maxRows, label: 'What is maximum size of table(rows)?' )
+settings( label: "General", constraints: 'wrap 1' ) {
+	box() {
+		property(property: maxRows, label: 'What is maximum size of table(rows)?' )
+	}
+	box() {
+		property(property: summaryRows, label: 'How many rows to include in the summary?' )
+	}
 	label( "Logging" )
 	box(constraints:"growx, wrap 1") {
 		property(property: saveFile, label: 'Should be output saved?' )
 		property(property: fileName, label: 'Where should be output saved?' )
 	}
 } 
+
+generateSummary = { chapter ->
+	if (summaryRows.value > 0) {
+   		MutableSection sect = chapter.addSection(getLabel())
+   		sect.addTable(getLabel(), myTableModel.getLastRows(summaryRows.value))
+   	}
+}

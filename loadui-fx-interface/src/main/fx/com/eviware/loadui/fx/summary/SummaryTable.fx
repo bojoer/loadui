@@ -105,10 +105,10 @@ public class SummaryTable extends Grid {
 						hgrow: Priority.ALWAYS vgrow: Priority.ALWAYS
 						hfill: true vfill: true
 						height: 15
-						minWidth: ((table.getColumnName(i) as String).length() + 1) * 7
+						minWidth: ((table.getColumnName(i).toString()).length() + 1) * 7
 					}
 					tooltip: Tooltip { text: (table.getColumnName(i) as String).toUpperCase() }
-					text: (table.getColumnName(i) as String).toUpperCase()
+					text: (table.getColumnName(i).toString()).toUpperCase()
 					textFill: Color.web("#000000")
 					font: Font.font("Arial", FontWeight.BOLD, 10)
 					vpos: VPos.CENTER 
@@ -134,10 +134,10 @@ public class SummaryTable extends Grid {
 							layoutInfo: LayoutInfo {
 								hgrow: Priority.ALWAYS vgrow: Priority.ALWAYS
 								hfill: true vfill: true
-								minWidth: if ( j == 0 ) 130 else ((table.getValueAt(i, j) as String).length() +1)* 5//if ( table.getColumnCount() > 7) 60 else 100 
+								minWidth: if ( j == 0 ) 130 else ((table.getValueAt(i, j).toString()).length() +1)* 5//if ( table.getColumnCount() > 7) 60 else 100 
 							}
-							tooltip: Tooltip { text:table.getValueAt(i, j) as String }
-							text: table.getValueAt(i, j) as String
+							tooltip: Tooltip { text:table.getValueAt(i, j).toString() }
+							text: table.getValueAt(i, j).toString()
 							textFill: Color.web("#000000")
 							font: if(j == 0) Font.font("Arial", FontWeight.BOLD, 10) else Font { name:"Arial" size: 10 }
 							vpos: VPos.BOTTOM

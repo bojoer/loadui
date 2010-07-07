@@ -28,6 +28,7 @@ import com.eviware.loadui.api.terminal.TerminalMessage;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyObjectSupport;
 import groovy.lang.MissingMethodException;
+import com.eviware.loadui.api.summary.MutableChapter;
 
 public class GroovyBaseCategory<C extends ComponentBehavior> extends GroovyObjectSupport implements ComponentBehavior
 {
@@ -111,4 +112,11 @@ public class GroovyBaseCategory<C extends ComponentBehavior> extends GroovyObjec
 	{
 		base.handleStatisticsData( statisticsData );
 	}
+	
+	@Override
+	 public void generateSummary( MutableChapter summary )
+	 {
+	  // TODO Auto-generated method stub
+
+	 }
 }
