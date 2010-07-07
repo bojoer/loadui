@@ -20,9 +20,14 @@ import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 public class LTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 5947811194397913150L;
+	
+	private static Logger log = LoggerFactory.getLogger( "com.eviware.loadui.api.ui.table.LTableModel" );
 
 	private ArrayList<String> header = new ArrayList<String>();
 	private ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
@@ -50,10 +55,11 @@ public class LTableModel extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		try
 		{
-		return data.get(rowIndex).get(columnIndex);
+			return data.get(rowIndex).get(columnIndex);
 		}
 		catch( Throwable t )
 		{
+			t.printStackTrace();
 			return null;
 		}
 	}
@@ -148,6 +154,18 @@ public class LTableModel extends AbstractTableModel {
 	public void setFollow(boolean follow) {
 		this.follow = follow;
 		fireTableDataChanged();
+	}
+	
+	public LTableModel getLastRows(long numRows) {
+		if (numRows >= data.size())
+			return this;
+		LTableModel result = new LTableModel((int)numRows, false);
+		for (String col: header)
+			result.addColumn(col);
+		for ( int cnt = data.size() - (int)numRows; cnt <= data.size() - 1; cnt++ ) {
+			result.addRow(data.get(cnt));
+		}
+		return result;
 	}
 	
 }

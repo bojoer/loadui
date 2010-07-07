@@ -323,7 +323,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	@Override
 	public void generateSummary( MutableChapter summary )
 	{
-		// TODO Auto-generated method stub
+		behavior.generateSummary(summary);
 
 	}
 

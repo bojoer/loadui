@@ -21,6 +21,7 @@ import com.eviware.loadui.api.model.RunnerItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
+import com.eviware.loadui.api.summary.MutableChapter;
 
 /**
  * Defines the appearance and behavior of a Component. Each instance of
@@ -110,4 +111,11 @@ public interface ComponentBehavior
 	 * controller.
 	 */
 	public void handleStatisticsData( Map<RunnerItem, Object> statisticsData );
+	
+	/**
+	 * Called on a ComponentItem to generate a summary of its run.
+	 * 
+	 * @param summary
+	 */
+	public void generateSummary( MutableChapter summary );
 }
