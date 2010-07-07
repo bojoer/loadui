@@ -3,31 +3,29 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-
-   <field name="key" class="java.lang.String"/>
-   <field name="value" class="java.lang.String"/>
- 
-   <detail>
-      <band height="22">
-         <textField isStretchWithOverflow="true">
-            <reportElement x="175" y="5" width="360" height="14"/>
-            <textElement/>
-            <textFieldExpression class="java.lang.String">$F{value}</textFieldExpression>
-         </textField>
-         <textField>
-            <reportElement x="0" y="5" width="162" height="14"/>
-            <textElement/>
-            <textFieldExpression class="java.lang.String">$F{key}</textFieldExpression>
-         </textField>
-      </band>
-   </detail>
-   <noData>
-      <band height="15">
-         <staticText>
-            <reportElement x="0" y="0" width="100" height="13"/>
-            <textElement/>
-            <text>Missing Properties</text>
-         </staticText>
-      </band>
-   </noData>
+	<field name="key" class="java.lang.String"/>
+	<field name="value" class="java.lang.String"/>
+	<detail>
+		<band height="16">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="142" y="0" width="360" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{value}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="-20" y="0" width="162" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{key}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<noData>
+		<band height="15">
+			<staticText>
+				<reportElement x="-20" y="0" width="100" height="13"/>
+				<textElement/>
+				<text><![CDATA[Missing Properties]]></text>
+			</staticText>
+		</band>
+	</noData>
 </jasperReport>

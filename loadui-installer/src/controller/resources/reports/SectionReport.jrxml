@@ -7,46 +7,36 @@
 	<field name="values" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<field name="tables" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<detail>
-		<band height="109">
+		<band height="120">
 			<textField>
-				<reportElement x="100" y="0" width="102" height="20"/>
+				<reportElement x="-18" y="10" width="281" height="20"/>
 				<textElement>
 					<font size="15"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{title}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="0" y="21" width="500" height="1"/>
+				<reportElement x="-18" y="30" width="546" height="1"/>
 				<graphicElement>
-					<pen lineStyle="Double"/>
+					<pen lineStyle="Solid"/>
 				</graphicElement>
 			</line>
 			<subreport>
-				<reportElement positionType="Float" x="0" y="22" width="496" height="43"/>
+				<reportElement positionType="Float" x="-18" y="31" width="496" height="43" isRemoveLineWhenBlank="true"/>
 				<dataSourceExpression><![CDATA[$F{values}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:ValuesReport"]]></subreportExpression>
 			</subreport>
 			<subreport>
-				<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="65" width="496" height="43"/>
+				<reportElement positionType="Float" x="-18" y="74" width="496" height="43" isRemoveLineWhenBlank="true"/>
 				<dataSourceExpression><![CDATA[$F{tables}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:TablesReport"]]></subreportExpression>
 			</subreport>
-			<staticText>
-				<reportElement x="0" y="1" width="100" height="20"/>
-				<textElement>
-					<font size="15"/>
-				</textElement>
-				<text><![CDATA[Section:]]></text>
-			</staticText>
+			<line>
+				<reportElement x="-18" y="0" width="546" height="1"/>
+				<graphicElement>
+					<pen lineWidth="3.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+				</graphicElement>
+			</line>
 		</band>
 	</detail>
-	<noData>
-		<band height="18">
-			<staticText>
-				<reportElement x="0" y="0" width="100" height="13"/>
-				<textElement/>
-				<text><![CDATA[No Data]]></text>
-			</staticText>
-		</band>
-	</noData>
 </jasperReport>
