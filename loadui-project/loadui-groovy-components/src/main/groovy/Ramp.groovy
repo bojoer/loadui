@@ -128,11 +128,13 @@ addEventListener( PropertyEvent ) { event ->
 		future?.cancel()
 		
 		started = false
+		if (end.value > start.value)
+			direction = "up"
+		
 		if (start.value > end.value)
 			direction = "down"
 		
-		if (start.value > end.value)
-			direction = "up"
+		display.setArgs( currentRate.longValue(), direction )
 		
 		if (start.value == end.value)
 			direction = "none"
