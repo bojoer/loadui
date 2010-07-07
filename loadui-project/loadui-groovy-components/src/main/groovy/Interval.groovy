@@ -109,6 +109,7 @@ startTimer = { start, duration, current ->
 stopTimer = { 
 	sendStop()
 	task?.cancel(true)
+	task = null
 	executor.shutdownNow()
 	executor = Executors.newSingleThreadScheduledExecutor()
  }
@@ -125,18 +126,25 @@ addEventListener( ActionEvent ) { event ->
 	
 	if ( event.key == "START" ) {
 	  if ( canvas.isRunning() ) {
-		startTimer(startAt.value, duration.value, timerCounter.get())
-		intervalModel.start()
-		setModelInterval()
+                if ( task != null ) {
+			startTimer(startAt.value, duration.value, timerCounter.get())
+			intervalModel.start()
+			setModelInterval()
+		}
 	  }
 	}
 	
 	if ( event.key == "RESET" ) {
-		task?.cancel(true)
-		executor.shutdownNow()
-		executor = Executors.newSingleThreadScheduledExecutor()
-				
+                stopTimer()
+		
+		intervalModel.stop()
 		setModelInterval()
+		intervalModel.update()
+                if ( canvas.isRunning() ) {
+			startTimer(startAt.value, duration.value, timerCounter.get())
+			intervalModel.start()
+			setModelInterval()
+	        }
 	}
 }
 
