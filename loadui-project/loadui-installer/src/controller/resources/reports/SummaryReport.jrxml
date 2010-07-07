@@ -24,12 +24,12 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="68" splitType="Stretch">
+		<band height="46" splitType="Stretch">
 			<line>
 				<reportElement positionType="FixRelativeToBottom" x="2" y="0" width="551" height="1"/>
 			</line>
 			<subreport>
-				<reportElement positionType="Float" x="0" y="0" width="496" height="66"/>
+				<reportElement positionType="Float" x="0" y="0" width="496" height="45"/>
 				<dataSourceExpression><![CDATA[$P{ChapterDataSource}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:ChapterReport"]]></subreportExpression>
 			</subreport>
