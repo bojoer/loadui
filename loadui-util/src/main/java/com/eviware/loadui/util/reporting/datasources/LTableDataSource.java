@@ -29,6 +29,12 @@ public class LTableDataSource extends JRTableModelDataSource
 			}
 			return result;
 		}
-		return super.getFieldValue(jrField);
+		if (jrField.getName().startsWith("COLUMN_"))
+		{
+			int index = Integer.parseInt(jrField.getName().substring(7));
+			if ( index < model.getColumnCount() )
+				return super.getFieldValue(jrField);
+		}
+		return null;
 	}
 }
