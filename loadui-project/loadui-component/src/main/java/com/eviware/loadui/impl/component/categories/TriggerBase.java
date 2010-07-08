@@ -25,6 +25,11 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.impl.component.ActivityStrategies;
+
 /**
  * Base class for trigger components which defines base behavior which can be
  * extended to fully implement a trigger ComponentBehavior.
@@ -51,6 +56,16 @@ public abstract class TriggerBase extends BaseCategory implements TriggerCategor
 		stateProperty = context.createProperty( STATE_PROPERTY, Boolean.class, true );
 		triggerTerminal = context.createOutput( TRIGGER_TERMINAL, "Trigger Signal" );
 		stateTerminal = context.createInput( STATE_TERMINAL, "Activation Terminal");
+		context.addEventListener(PropertyEvent.class, new PropertyListener() );
+		context.addEventListener(ActionEvent.class, new ActionListener() );
+		if( stateProperty.getValue() ) {
+			if (getContext().isRunning())
+				getContext().setActivityStrategy(ActivityStrategies.BLINKING);
+			else
+				getContext().setActivityStrategy(ActivityStrategies.ON);
+		} else {
+			getContext().setActivityStrategy(ActivityStrategies.OFF);
+		}
 
 		triggerMessage = context.newMessage();
 
@@ -63,8 +78,11 @@ public abstract class TriggerBase extends BaseCategory implements TriggerCategor
 	 */
 	final public void trigger()
 	{
-		if( stateProperty.getValue() )
+		if( stateProperty.getValue() ) {
 			getContext().send( triggerTerminal, triggerMessage );
+		} else {
+			getContext().send( triggerTerminal, triggerMessage );
+		}
 	}
 
 	@Override
@@ -100,7 +118,41 @@ public abstract class TriggerBase extends BaseCategory implements TriggerCategor
 	@Override
 	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
 	{
-		if( input == stateTerminal && message.containsKey( ENABLED_MESSAGE_PARAM ) )
+		if( input == stateTerminal && message.containsKey( ENABLED_MESSAGE_PARAM ) ) {
 			stateProperty.setValue( message.get( ENABLED_MESSAGE_PARAM ) );
+		}
+	}
+	
+	private class PropertyListener implements EventHandler<PropertyEvent>
+	{
+		@Override
+		public void handleEvent( PropertyEvent event )
+		{
+			if( PropertyEvent.Event.VALUE == event.getEvent() )
+			{
+				if( stateProperty.getValue() ) {
+					if (getContext().isRunning())
+						getContext().setActivityStrategy(ActivityStrategies.BLINKING);
+					else
+						getContext().setActivityStrategy(ActivityStrategies.ON);
+				} else {
+					getContext().setActivityStrategy(ActivityStrategies.OFF);
+				}
+			}
+		}
+	}
+	
+	private class ActionListener implements EventHandler<ActionEvent>
+	{
+		@Override
+		public void handleEvent( ActionEvent event )
+		{
+			if( stateProperty.getValue() ) {
+				if (event.getKey() == "START")
+					getContext().setActivityStrategy(ActivityStrategies.BLINKING);
+				else
+					getContext().setActivityStrategy(ActivityStrategies.ON);
+			}
+		}
 	}
 }
