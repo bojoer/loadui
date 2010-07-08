@@ -10,24 +10,24 @@ import org.slf4j.LoggerFactory;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
-import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 
 public class TablesDataSource extends JRAbstractBeanDataSource
 {
 
 	Logger logger = LoggerFactory.getLogger(TablesDataSource.class);
-	
+
 	private Map<String, TableModel> map;
 	private int cnt = -1;
 	private String[] keys;
 	private TableModel[] tables;
-	
+
 	public TablesDataSource(Map<String, TableModel> map)
 	{
 		super(true);
 		this.map = map;
 		this.keys = map.keySet().toArray(new String[0]);
 		this.tables = map.values().toArray(new TableModel[0]);
+		
 	}
 
 	@Override
@@ -40,10 +40,14 @@ public class TablesDataSource extends JRAbstractBeanDataSource
 	public Object getFieldValue(JRField field) throws JRException
 	{
 		logger.debug("Looking for field: " + field.getName());
-		if (field.getName().equals("title")) 
+		if (field.getName().equals("title"))
 			return keys[cnt];
-		if (field.getName().equals("table") )
-			return new JRTableModelDataSource(tables[cnt]);
+		if (field.getName().equals("table"))
+			return new LTableDataSource(tables[cnt]);
+		if (field.getName().equals("print_tables")) {
+			logger.debug("pt: " + (tables[cnt].getRowCount() > 0));
+			return tables[cnt].getRowCount() > 0;
+		}
 		return null;
 	}
 
@@ -53,4 +57,5 @@ public class TablesDataSource extends JRAbstractBeanDataSource
 		return ++cnt < map.size();
 	}
 
+	
 }
