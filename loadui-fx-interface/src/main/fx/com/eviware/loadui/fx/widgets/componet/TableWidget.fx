@@ -67,7 +67,6 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 	def workspace: WorkspaceItem = bind MainWindow.instance.workspace on replace oldVal {
 			oldVal.removeEventListener( BaseEvent.class, this );
 			workspace.addEventListener( BaseEvent.class, this );
-			println ("table ws {workspace}");
 		}
 	var distributeMode:Boolean = not workspace.isLocalMode();
 	
