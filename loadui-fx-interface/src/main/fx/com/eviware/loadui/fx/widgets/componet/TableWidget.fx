@@ -51,6 +51,8 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.fx.MainWindow;
 
+import com.eviware.loadui.fx.AppState;
+
 /**
 * @author robert
 */
@@ -65,6 +67,7 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 	def workspace: WorkspaceItem = bind MainWindow.instance.workspace on replace oldVal {
 			oldVal.removeEventListener( BaseEvent.class, this );
 			workspace.addEventListener( BaseEvent.class, this );
+			println ("table ws {workspace}");
 		}
 	var distributeMode:Boolean = not workspace.isLocalMode();
 	
@@ -135,7 +138,8 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 			if( e instanceof PropertyEvent ) {
 				def event = e as PropertyEvent;
 				if( WorkspaceItem.LOCAL_MODE_PROPERTY == event.getProperty().getKey() ) {
-					distributeMode = not workspace.isLocalMode();
+				    if ( AppState.instance.state == AppState.TESTCASE_FRONT )
+					   distributeMode = not workspace.isLocalMode();
 				} 
 			}
 		} 
