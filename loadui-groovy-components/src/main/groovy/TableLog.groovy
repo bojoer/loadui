@@ -53,7 +53,9 @@ updateFollow = {
 }
 
 onMessage = { incoming, outgoing, message ->
+	super.onTerminalMessage(incoming, outgoing, message)
 	message.keySet().each { k -> myTableModel.addColumn k }
+	lastMsgDate = new Date();
 	
 	result = myTableModel.addRow(message) 
 	if( result && saveFile.value ) {
