@@ -270,6 +270,7 @@ layout( constraints: 'gap 10 0') {
 			sampleResetValue = sampleCounter.get()
 			discardResetValue = discardCounter.get()
 			failedResetValue = failureCounter.get()
+			triggerAction('CANCEL')
 		}, constraints:'align right' )
 	}
 }
