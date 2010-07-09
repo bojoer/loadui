@@ -42,6 +42,13 @@ import com.eviware.loadui.impl.component.categories.SamplerBase.SampleCancelledE
 
 import java.util.HashSet
 import java.util.Collections
+import com.eviware.loadui.impl.component.ActivityStrategies
+
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+
+executor = Executors.newSingleThreadScheduledExecutor()
+future = executor.scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
 
 sr = new SchemeRegistry()
 sr.register( new Scheme( "http", PlainSocketFactory.socketFactory, 80 ) )
@@ -80,6 +87,16 @@ validateUrl = {
 	
 	setInvalid( url.value == null || url.value == dummyUrl )
 	runAction?.enabled = !isInvalid()
+}
+
+updateLed = {
+	if (runAction?.enabled)
+		if (currentlyRunning > 0)
+			setActivityStrategy(ActivityStrategies.BLINKING)
+		else
+			setActivityStrategy(ActivityStrategies.ON)
+	else 
+		setActivityStrategy(ActivityStrategies.OFF)
 }
 
 updateProxy = {
@@ -183,6 +200,7 @@ sample = { message, sampleId ->
 	} else {
 		throw new SampleCancelledException()
 	}
+
 }
 
 onCancel = {
@@ -198,6 +216,7 @@ onCancel = {
 }
 
 onRelease = {
+	executor.shutdownNow()
 	displayRunning.release()
 	displayTotal.release()
 	displayQueue.release()
