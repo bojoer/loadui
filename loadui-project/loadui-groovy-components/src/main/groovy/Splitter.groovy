@@ -63,6 +63,7 @@
  future = executor.scheduleWithFixedDelay( { outputStats.update() }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
 
  onMessage = { incoming, outgoing, message ->
+ 	super.onTerminalMessage(incoming, outgoing, message)
    try {
     def next = 0;
     switch( selected.value ) {

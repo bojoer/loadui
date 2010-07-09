@@ -28,6 +28,19 @@ import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Date;
+import com.eviware.loadui.api.terminal.TerminalMessage;
+
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.impl.component.ActivityStrategies;
+
+
+
+
 /**
  * Base class for flow components which defines base behavior which can be
  * extended to fully implement a flow ComponentBehavior.
@@ -39,7 +52,11 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 	private final InputTerminal incomingTerminal;
 	private final List<OutputTerminal> outgoingTerminals = new ArrayList<OutputTerminal>();
 	private Map<String, Class<?>> inputSignature = Collections.emptyMap();
-
+	private Date lastMsgDate = new Date();
+	
+	private static Timer timer = new Timer();
+	private BlinkTask blinkTask = new BlinkTask();
+	
 	/**
 	 * Constructs a FlowBase.
 	 * 
@@ -49,8 +66,9 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 	public FlowBase( ComponentContext context )
 	{
 		super( context );
-
+		getContext().setActivityStrategy(ActivityStrategies.ON);
 		incomingTerminal = context.createInput( INCOMING_TERMINAL, "Incoming Data" );
+		context.addEventListener(ActionEvent.class, new ActionListener() );
 	}
 
 	/**
@@ -137,5 +155,46 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 
 		for( OutputTerminal output : getOutgoingTerminalList() )
 			getContext().setSignature( output, inputSignature );
+	}
+	
+	@Override
+	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
+	{
+		if (input == incomingTerminal) {
+			lastMsgDate = new Date();
+
+		}
+	}
+	
+	private class BlinkTask extends TimerTask {
+		@Override
+		public void run()
+		{
+			if (lastMsgDate != null) {
+				if ((lastMsgDate.getTime() + 1000) > (new Date()).getTime()) {
+					getContext().setActivityStrategy(ActivityStrategies.BLINKING);
+				} else {
+					getContext().setActivityStrategy(ActivityStrategies.ON);
+				}
+			} else {
+				getContext().setActivityStrategy(ActivityStrategies.ON);
+			}
+		}
+	}
+	
+	private class ActionListener implements EventHandler<ActionEvent>
+	{
+		@Override
+		public void handleEvent( ActionEvent event )
+		{
+			blinkTask.cancel();
+				if (event.getKey() == "START") {
+					getContext().setActivityStrategy(ActivityStrategies.BLINKING);
+					blinkTask = new BlinkTask();
+					timer.schedule(blinkTask, 500, 500);
+				} else {
+					getContext().setActivityStrategy(ActivityStrategies.ON);
+				}
+		}
 	}
 }

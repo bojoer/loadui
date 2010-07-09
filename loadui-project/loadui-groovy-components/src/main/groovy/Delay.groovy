@@ -48,7 +48,7 @@ uniformRandom = new UniformRandomGenerator(random)
 executor = Executors.newSingleThreadScheduledExecutor()
  
  onMessage = { incoming, outgoing, message ->
-    
+    super.onTerminalMessage(incoming, outgoing, message)
     delayIsRandom = random.nextInt(101) > randomDelay.value
     
     if ( selected.value == 'none'  ) {
