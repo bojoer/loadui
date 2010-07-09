@@ -38,4 +38,4 @@ JAVA_OPTS="-Xms128m -Xmx1024m -XX:MaxPermSize=256m"
 
 cd $LOADUI_HOME
 
-javaws $JAVA_OPTS -cp "$LOADUI_CLASSPATH" com.eviware.loadui.launcher.LoadUI "$@"
+javaws "$JAVA_OPTS" loadUI.jnlp
