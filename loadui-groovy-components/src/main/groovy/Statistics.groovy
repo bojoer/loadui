@@ -389,6 +389,8 @@ generateSummary = { chapter ->
 	if (addtoSummary.value) {
 		LTableModel table = new LTableModel(1, false);
 		ArrayList values = new ArrayList();
+		table.addColumn("SourceID");
+		values.add(sourceID.value);
 		if(enableAverage.value) {
 			table.addColumn("Avg");
 			values.add(data['Avg'].round(2));
