@@ -73,6 +73,9 @@ public class SliderSelectWidget extends BaseNode, Widget, TooltipHolder, SelectS
 	
 	def selectorHeight = bind height - labelNode.height;
 	
+	var initSelected:Integer;
+	var tmpCnt = 0;
+	
 	def labels = VBox {
 		height: bind selectorHeight
 		width: bind width - 20
@@ -103,7 +106,7 @@ public class SliderSelectWidget extends BaseNode, Widget, TooltipHolder, SelectS
 		]
 	}
 	
-	def switchHandle = SliderNode {
+	def switchHandle:SliderNode = SliderNode {
 		height: bind selectorHeight - 2
 		width: 12
 		numOptions: bind sizeof options
@@ -142,16 +145,29 @@ public class SliderSelectWidget extends BaseNode, Widget, TooltipHolder, SelectS
 		plc.getProperty().setValue( value );
 		
 		var index = 0;
+		
 		for( option in options ) {
 			if(option == value)
 				break;
 			index++;
 		}
-		switchHandle.selectedIndex = if(sizeof options == 0) 0 else index mod sizeof options;
+		initSelected = if(sizeof options == 0) 0 else index mod sizeof options;
+		/*
+		 * for some reason this is not working for the first time( when this node is initializing )
+		 * value for switchHandle.selectedIndex is always 0. So, this hack is to fix this.
+		 * robert
+		 */
+		switchHandle.selectedIndex = initSelected;//if(sizeof options == 0) 0 else index mod sizeof options;
+	//	println("!!!strange thing {switchHandle.selectedIndex} {initSelected}");
 	}
 	
 	def selectedIndex = bind switchHandle.selectedIndex on replace {
-		value = options[selectedIndex];
+	    if ( tmpCnt > 0) {
+			value = options[selectedIndex];
+	    } else {
+	        value = options[initSelected];
+	        tmpCnt++;
+	    }
 	}
 	
 	override var layoutBounds = bind lazy BoundingBox {
