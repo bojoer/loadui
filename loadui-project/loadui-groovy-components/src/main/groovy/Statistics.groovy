@@ -144,9 +144,9 @@ analyze = { message ->
 }
 
 onMessage = { o, i, m ->
-	if( i == inputTerminal )
-		analyze( m )
-	else if( i == remoteTerminal ) {
+	
+	super.onTerminalMessage(o, i, m)
+	if(i == remoteTerminal ) {
 		runnerData[o.label] = new HashMap(m)
 	}
 }
