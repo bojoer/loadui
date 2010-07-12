@@ -315,6 +315,22 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			log.error( "Unable to save project: " + getLabel(), e );
 		}
 	}
+	
+	public void saveAs(File saveAsFile) {
+		try
+		{
+			log.info( "Saving Project {}...", getLabel() );
+
+			if( !saveAsFile.exists() )
+				saveAsFile.createNewFile();
+
+			XmlBeansUtils.saveToFile( doc, saveAsFile );
+		}
+		catch( IOException e )
+		{
+			log.error( "Unable to save project: " + getLabel() + " to " + saveAsFile.getName(), e );
+		}
+	}
 
 	@Override
 	public void release()
