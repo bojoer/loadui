@@ -149,6 +149,14 @@ public interface ProjectItem extends CanvasItem
 	public void setSaveReport(boolean save);
 	
 	/**
+	 * Used to save project to some file.
+	 * 
+	 * @param dest
+	 * 	file where to save project
+	 */
+	public void saveAs(File dest);
+	
+	/**
 	 * The folder for saving summaries
 	 * 
 	 * @return the path to the folder
