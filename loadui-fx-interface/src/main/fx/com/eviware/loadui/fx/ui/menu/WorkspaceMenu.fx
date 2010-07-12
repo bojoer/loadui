@@ -161,6 +161,8 @@ public class WorkspaceMenu extends HBox {
                     action: function() {
                         var pro:ProjectRef; 
                         def chooser = new JFileChooser();
+                        chooser.addChoosableFileFilter(new XMLFileFilter());
+                        chooser.setAcceptAllFileFilterUsed(false);
                         var source:File;
                         if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(null)) {
                             source = chooser.getSelectedFile();
@@ -251,4 +253,16 @@ public class WorkspaceMenu extends HBox {
         }
         result
     }
+    
+     
 }
+
+class  XMLFileFilter extends javax.swing.filechooser.FileFilter {
+        override public function accept(f:File):Boolean {
+            f.getName().toLowerCase().endsWith(".xml");
+        }
+        
+        override public function getDescription():String {
+            ".xml files";
+        }
+    }
