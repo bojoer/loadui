@@ -69,6 +69,11 @@ import com.eviware.loadui.api.events.BaseEvent;
 
 import com.eviware.loadui.api.counter.CounterHolder;
 
+import javax.swing.JFileChooser;
+import java.io.File;
+import java.lang.Exception;
+import java.io.IOException;
+
 import java.util.EventObject;
 
 public class ProjectMenu extends HBox {
@@ -222,6 +227,34 @@ public class ProjectMenu extends HBox {
 				                    text: "Save"
 				                    action: function() {
 				                    	MainWindow.instance.projectCanvas.generateMiniatures(); 
+										project.save();
+				                    }
+				                }
+				                ActionMenuItem {
+				                    text: "Save As"
+				                    action: function() {
+				                        def chooser = new JFileChooser();
+				                        var destination:File;
+				                        if (JFileChooser.APPROVE_OPTION == chooser.showSaveDialog(null)) {
+				                                destination = chooser.getSelectedFile();
+				                        }
+                                        try {
+                                            project.saveAs(destination);						
+                                        } catch(e:IOException) {
+                                         	var warning:Dialog = Dialog {
+                	                             title: "Warning!"
+                	                             content: Text {
+                	                                 content: "Failed to Import Project, see log for more details!"
+                	                             }
+                	                             okText: "Ok"
+                	                             onOk: function() {
+                	                                 warning.close();
+                	                             }
+                	                             noCancel: true
+                	                             width: 300
+                	                             height: 150
+                	                         	};
+                                        }
 										project.save();
 				                    }
 				                }
