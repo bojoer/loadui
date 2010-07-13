@@ -19,6 +19,7 @@
  * On Start starts timer and when StartAt reached send one START message to 
  * attached component. When Duration expires one STOP message is send to each 
  * attached component.
+ * Repeat option repeats whole process if counter limit not set.
  * 
  * On Stop it sends STOP message to attached components and stops timer.
  *
@@ -44,6 +45,7 @@ import com.eviware.loadui.impl.layout.IntervalObservableModel
 createProperty('startAt', Long, 0)
 createProperty('duration', Long, 0)
 createProperty('unit', String, 'Sec')
+createProperty('repeat', Boolean, false)
 
 def timerCounter = getCounter( CanvasItem.TIMER_COUNTER )
 def canvas = getCanvas()
@@ -101,7 +103,21 @@ startTimer = { start, duration, current ->
 		if ( startTaskDelay != -1 )
 			executor.schedule( { 
 				sendStart()
-				task = executor.schedule ({sendStop()}, calculateTime(duration), TimeUnit.MILLISECONDS)
+				task = executor.schedule (
+					{
+					  sendStop()
+					  if ( duration.value ) {
+                                            // reset timer
+                                            stopTimer()
+					    intervalModel.stop()
+					    setModelInterval()
+					    intervalModel.update()
+					    // start it again
+					    startTimer(start, duration, 0)
+					    intervalModel.start()
+					    setModelInterval()
+					  }
+				}, calculateTime(duration), TimeUnit.MILLISECONDS)
 			}, startTaskDelay, TimeUnit.MILLISECONDS )
 	} 
 }
@@ -213,10 +229,12 @@ onRelease = {
 }
 
 layout() {
-    node( widget:'intervalWidget', model:intervalModel, constraints:'span 4' )
-	separator( vertical: false )
-	property( property: startAt, label:'Start At', min:0 )
-	property( property: duration, label: 'Duration', min:0 )
-	separator( vertical:true )
-	property( property:unit, label:'Unit', options:['Sec','Min','Percent'] )
+    node( widget:'intervalWidget', model:intervalModel, constraints:'span 6' )
+    separator( vertical: false )
+    property( property: startAt, label:'Start At', min:0 )
+    property( property: duration, label: 'Duration', min:0 )
+    separator( vertical:true )
+    property( property:unit, label:'Unit', options:['Sec','Min','Percent'] )
+    separator( vertical:true )
+    property( property:repeat, label:'Repeat')
 }
