@@ -68,6 +68,18 @@ public class MainButton extends Group {
 							}
 						},
 						ActionMenuItem {
+							text: ##[UPDATES]"Get Updates"
+							action: function() {
+								openURL("http://www.eviware.com/nightly-builds/loadui/")
+							}
+						},
+						ActionMenuItem {
+							text: ##[FORUM]"Give Feedback"
+							action: function() {
+								openURL("http://www.eviware.com/forum/viewforum.php?f=9")
+							}
+						},						
+						ActionMenuItem {
 							text: ##[EXIT]"Exit"
 							action: function() {
 								if( AppState.instance.state == AppState.TESTCASE_FRONT 
