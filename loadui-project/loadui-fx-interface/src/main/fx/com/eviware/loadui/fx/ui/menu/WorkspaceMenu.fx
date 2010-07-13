@@ -167,22 +167,26 @@ public class WorkspaceMenu extends HBox {
                         if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(null)) {
                             source = chooser.getSelectedFile();
                         }
-                        try {
-                            pro = workspace.importProject( source, true );							
-                        } catch(e:IOException) {
-                         	var warning:Dialog = Dialog {
-	                             title: "Warning!"
-	                             content: Text {
-	                                 content: "Failed to Import Project, see log for more details!"
-	                             }
-	                             okText: "Ok"
-	                             onOk: function() {
-	                                 warning.close();
-	                             }
-	                             noCancel: true
-	                             width: 300
-	                             height: 150
-	                         	};
+                        if ( source != null ) {
+                           
+	                        try {
+	                            pro = workspace.importProject( source, true );							
+	                        } catch(e:IOException) {
+	                         	var warning:Dialog = Dialog {
+		                             title: "Warning!"
+		                             content: Text {
+		                                 content: "Failed to Import Project, see log for more details!"
+		                             }
+		                             okText: "Ok"
+		                             onOk: function() {
+		                                 warning.close();
+		                             }
+		                             noCancel: true
+		                             width: 300
+		                             height: 150
+		                         	};
+	                        }
+                        
                         }
                     }
                 }
@@ -259,7 +263,7 @@ public class WorkspaceMenu extends HBox {
 
 class  XMLFileFilter extends javax.swing.filechooser.FileFilter {
         override public function accept(f:File):Boolean {
-            f.getName().toLowerCase().endsWith(".xml");
+            f.getName().toLowerCase().endsWith(".xml") or f.isDirectory()
         }
         
         override public function getDescription():String {
