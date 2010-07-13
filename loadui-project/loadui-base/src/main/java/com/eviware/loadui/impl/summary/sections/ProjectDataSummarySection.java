@@ -59,7 +59,7 @@ public class ProjectDataSummarySection extends MutableSectionImpl implements
 	@Override
 	public String getTime() {
 		if (project.getStartTime() != null) {
-			Date time = new Date(new Date().getTime()
+			Date time = new Date(project.getEndTime().getTime()
 					- project.getStartTime().getTime());
 			if (new Date().getTime() - project.getStartTime().getTime() < HOUR)
 				dateFormat = new SimpleDateFormat("00:mm:ss");
