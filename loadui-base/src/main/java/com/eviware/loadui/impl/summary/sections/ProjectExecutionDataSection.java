@@ -73,8 +73,8 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 		SimpleDateFormat dateFormat;
 		if( project.getStartTime() != null )
 		{
-			Date dd = new Date( ( long )( new Date().getTime() - project.getStartTime().getTime() ) );
-			if( new Date().getTime() - project.getStartTime().getTime() < HOUR )
+			Date dd = new Date( ( long )( project.getEndTime().getTime() - project.getStartTime().getTime() ) );
+			if( project.getEndTime().getTime() - project.getStartTime().getTime() < HOUR )
 				dateFormat = new SimpleDateFormat( "00:mm:ss" );
 			else
 				dateFormat = new SimpleDateFormat( "hh:mm:ss" );
