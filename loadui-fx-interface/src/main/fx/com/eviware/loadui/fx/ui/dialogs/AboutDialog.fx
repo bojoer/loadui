@@ -65,7 +65,7 @@ public class AboutDialog {
 						arcWidth: 20
 						arcHeight: 20
 						fill: Color.rgb( 0, 0, 0, 0.65 )
-						blocksMouse: true
+					//	blocksMouse: true ( allow closing if you click in about area ( luco-786 )
 						effect: DropShadow {
 							radius: 35
 							color: Color.rgb( 0, 0, 0 )
