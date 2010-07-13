@@ -76,12 +76,14 @@ createProperty( 'enableTPS', Boolean, true )
 createProperty( 'enableBPS', Boolean, true )
 createProperty( 'enableAvgTPS', Boolean, true )
 createProperty( 'enableAvgBPS', Boolean, true )
-createProperty( 'sourceID', String, "" )
+createProperty( 'currentSourceID', String, "none" )
 createProperty( 'addtoSummary', Boolean, false )
 
 createProperty( 'selectedRunner', String, AGGREGATE )
 
 OptionsProvider availableRunners = new OptionsProviderImpl( AGGREGATE );
+OptionsProvider availableSourceIDs = new OptionsProviderImpl( "none" );
+String sourceIDs = ["none"]
 
 double timeScaleFactor = 1 //seconds
 double bytesScaleFactor = 1/(1024D) //KBytes
@@ -130,14 +132,23 @@ analyze = { message ->
 	try {
 		long timestamp = System.currentTimeMillis()
 		
-		long timeTaken = message['TimeTaken']
-		timeStats.addValue( timestamp, timeTaken )
+		String sourceID = message['id']
 		
-		long bytesCount = message['Bytes'] 
-		if(bytesCount < 0 && message.containsKey('Response'))
-			bytesCount = message['Response'].length
-		if(bytesCount <= 0) bytesCount = 0
-		byteStats.addValue( timestamp, bytesCount )
+		if (!(sourceID == null) && !sourceIDs.contains(sourceID)) {
+			sourceIDs.add(sourceID)
+			availableSourceIDs.options = sourceIDs
+		}
+		
+		if (currentSourceID.value == "none" || currentSourceID.value == sourceID) {
+				long timeTaken = message['TimeTaken']
+			timeStats.addValue( timestamp, timeTaken )
+		
+			long bytesCount = message['Bytes'] 
+			if(bytesCount < 0 && message.containsKey('Response'))
+				bytesCount = message['Response'].length
+			if(bytesCount <= 0) bytesCount = 0
+			byteStats.addValue( timestamp, bytesCount )
+		}
 	} catch(Exception e) {
 		ex(e, 'Statistics -> analyze')
 	}
@@ -184,7 +195,7 @@ calculate = {
 			message['Avg-Bps'] = bdata['Avg-Vps']
 			
 			message['Timestamp'] = currentTime
-			message['ID'] = sourceID.value
+			message['ID'] = currentSourceID.value
 			
 			send(controllerTerminal, message)
 			send(output, message)
@@ -360,6 +371,7 @@ addEventListener( CollectionEvent ) { event ->
 layout(constraints:'fillx, wrap 1') {
 	node( widget: 'chartWidget', model: chartModel )
 	property( property: selectedRunner, label: 'View statistics from', options: availableRunners, widget:'comboBox' )
+	property( property: currentSourceID, label: 'Source ID', options: availableSourceIDs, widget:'comboBox' )
 }
 
 settings( label: 'Properties', constraints: 'wrap 2' ) {
@@ -373,7 +385,7 @@ settings( label: 'Properties', constraints: 'wrap 2' ) {
 		property(property: enableBPS, label: 'Enable BPS' )
 		property(property: enableAvgTPS, label: 'Enable Average TPS' )
 		property(property: enableAvgBPS, label: 'Enable Average BPS' )
-		property(property: sourceID, label: 'Source ID' )
+		property(property: currentSourceID, label: 'Source ID' )
 	}
 } 
 
@@ -390,7 +402,7 @@ generateSummary = { chapter ->
 		LTableModel table = new LTableModel(1, false);
 		ArrayList values = new ArrayList();
 		table.addColumn("SourceID");
-		values.add(sourceID.value);
+		values.add(currentSourceID.value);
 		if(enableAverage.value) {
 			table.addColumn("Avg");
 			values.add(data['Avg'].round(2));
