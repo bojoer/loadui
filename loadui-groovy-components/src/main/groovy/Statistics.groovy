@@ -84,7 +84,7 @@ createProperty( 'selectedRunner', String, AGGREGATE )
 
 OptionsProvider availableRunners = new OptionsProviderImpl( AGGREGATE );
 OptionsProvider availableSourceIDs = new OptionsProviderImpl( "none" );
-String sourceIDs = ["none"]
+sourceIDs = ["none"]
 
 double timeScaleFactor = 1 //seconds
 double bytesScaleFactor = 1/(1024D) //KBytes
@@ -196,6 +196,7 @@ calculate = {
 			bdata = byteStats.getData( currentTime )
 			message['Bps'] = bdata['Vps']
 			message['Avg-Bps'] = bdata['Avg-Vps']
+			message['id'] = "test"
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
