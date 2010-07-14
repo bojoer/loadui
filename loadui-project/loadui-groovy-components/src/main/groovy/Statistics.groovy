@@ -76,6 +76,7 @@ createProperty( 'enableTPS', Boolean, true )
 createProperty( 'enableBPS', Boolean, true )
 createProperty( 'enableAvgTPS', Boolean, true )
 createProperty( 'enableAvgBPS', Boolean, true )
+createProperty( 'enablePercentile', Boolean, true )
 createProperty( 'currentSourceID', String, "none" )
 createProperty( 'addtoSummary', Boolean, false )
 
@@ -115,6 +116,7 @@ chartModel.addSerie('TPS', enableTPS.value)
 chartModel.addSerie('BPS', enableBPS.value)
 chartModel.addSerie('AvgTPS', enableAvgTPS.value)
 chartModel.addSerie('AvgBPS', enableAvgBPS.value)
+chartModel.addSerie('Percentile', enablePercentile.value)
 chartModel.legendColumns = 4
 
 timeStats = new ValueStatistics( period.value * 60000 )
@@ -189,6 +191,7 @@ calculate = {
 			message['Std-Dev'] = data['Std-Dev']
 			message['Tps'] = data['Tps']
 			message['Avg-Tps'] = data['Avg-Tps']
+			message['Percentile'] = data['Percentile']
 			
 			bdata = byteStats.getData( currentTime )
 			message['Bps'] = bdata['Vps']
@@ -223,6 +226,7 @@ updateChart = { currentTime ->
 					data['Avg-Tps'] = (data['Avg-Tps'] ?: 0) + d['Avg-Tps']
 					data['Bps'] = (data['Bps'] ?: 0) + (d['Bps'] ?: 0)
 					data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
+					data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
 					count++
 				}
 			}
@@ -246,6 +250,7 @@ updateChart = { currentTime ->
 		if(enableBPS.value) chartModel.addPoint(5, currentTime, data['Bps'] * bytesScaleFactor)
 		if(enableAvgTPS.value) chartModel.addPoint(6, currentTime, data['Avg-Tps'])
 		if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
+		if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 	} catch( e ) {
 	}
 }
@@ -314,6 +319,10 @@ addEventListener(PropertyEvent) { event ->
 				chartModel.enableSerie('AvgBPS', enableAvgBPS.value)
 				buildSignature()
 			}
+			else if(event.property == enablePercentile) {
+				chartModel.enableSerie('Percentile', enablePercentile.value)
+				buildSignature()
+			}
 		}
 	}
 	catch(Throwable e2){
@@ -331,6 +340,7 @@ buildSignature = {
 	if(enableAvgTPS.value) signature['Avg-Tps'] = Double
 	if(enableAvgBPS.value) signature['Avg-Bps'] = Long
 	if(enableStdDev.value) signature['Std-Dev'] = Long
+	if(enablePercentile.value) signature['Percentile'] = Long
 	setSignature(output, signature)
 }
 
@@ -385,6 +395,7 @@ settings( label: 'Properties', constraints: 'wrap 2' ) {
 		property(property: enableBPS, label: 'Enable BPS' )
 		property(property: enableAvgTPS, label: 'Enable Average TPS' )
 		property(property: enableAvgBPS, label: 'Enable Average BPS' )
+		property(property: enablePercentile, label: '90% Percentile' )
 		property(property: currentSourceID, label: 'Source ID' )
 	}
 } 
@@ -434,6 +445,10 @@ generateSummary = { chapter ->
 		if(enableStdDev.value) {
 			table.addColumn("Std-Dev");
 			values.add(data['Std-Dev'].round(2));
+		}
+		if(enablePercentile.value) {
+			table.addColumn("Percentile");
+			values.add(data['Percentile'].round(2));
 		}
 		
 		table.addRow(values);
