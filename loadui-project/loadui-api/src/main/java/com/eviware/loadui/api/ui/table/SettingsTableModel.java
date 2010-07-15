@@ -119,6 +119,20 @@ public class SettingsTableModel extends AbstractTableModel
 		hashCode();
 		fireTableDataChanged();
 	}
+	
+	public void addRow(String name, Object value, Class type)
+	{
+		data.add(new PropertyProxy(name, value, type));
+		hashCode();
+		fireTableDataChanged();
+	}
+
+	public void addRow(String name, Object value)
+	{
+		data.add(new PropertyProxy(name, value, String.class));
+		hashCode();
+		fireTableDataChanged();
+	}
 
 	public static class PropertyProxy
 	{
@@ -131,6 +145,13 @@ public class SettingsTableModel extends AbstractTableModel
 			this.name = p.getKey();
 			this.value = p.getValue();
 			this.pClass = p.getType();
+		}
+		
+		public PropertyProxy(String name, Object value, Class type)
+		{
+			this.name = name;
+			this.value = value;
+			this.pClass = type;
 		}
 
 		public Class getType()

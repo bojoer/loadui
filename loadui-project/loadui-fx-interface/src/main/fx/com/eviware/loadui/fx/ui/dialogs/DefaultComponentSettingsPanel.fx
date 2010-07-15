@@ -60,6 +60,9 @@ import org.jfxtras.scene.layout.XMigLayout;
 import org.jfxtras.scene.layout.XMigLayout.*;
 import javafx.geometry.VPos;
 
+import com.eviware.loadui.api.layout.TableLayoutComponent;
+import javax.swing.table.TableModel;
+
 /**
  * @author robert
  * 
@@ -150,6 +153,9 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 				});
 				
 				formField;
+			} else if(c instanceof TableLayoutComponent) {
+				var p: TableLayoutComponent = c as TableLayoutComponent;
+				Form.fieldForType(TableModel.class, p.getLabel(), p.getLabel(), p.getTableModel());
 			} else if(c instanceof LayoutContainer) {
 				buildSettingsTabComponents((c as LayoutContainer).toArray(), level + 1);
 			} else null
