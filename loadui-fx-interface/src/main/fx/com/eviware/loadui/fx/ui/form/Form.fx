@@ -40,6 +40,8 @@ import java.io.File;
 
 import com.eviware.loadui.fx.ui.form.fields.*;
 
+import javax.swing.table.TableModel;
+
 function buildFieldTypeMap() {
 	def fieldTypeMap = new HashMap();
 	fieldTypeMap.put( String.class, TextField.build );
@@ -48,6 +50,7 @@ function buildFieldTypeMap() {
 	fieldTypeMap.put( Long.class, LongInputField.build );
 	fieldTypeMap.put( File.class, FileInputField.build );
 	fieldTypeMap.put( Boolean.class, CheckBoxField.build );
+	fieldTypeMap.put( TableModel.class, TableField.build );
 	
 	fieldTypeMap
 }
