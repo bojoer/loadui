@@ -38,7 +38,7 @@ import com.eviware.loadui.fx.ui.pagination.Pagination;
 import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
 
 import com.eviware.loadui.api.model.ModelItem;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.model.ProjectItem;
@@ -87,20 +87,20 @@ import javafx.scene.control.ScrollBarPolicy;
 
 import com.eviware.loadui.fx.ui.dialogs.*;
 
-public def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.RunnerInspectorNode" );
+public def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentInspectorNode" );
 
 /**
- * Node to display in the RunnerList representing a RunnerItem.
+ * Node to display in the AgentList representing a AgentItem.
  */
-public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, EventHandler, TestCaseIconListener, Pagination {
+public class AgentInspectorNode extends BaseNode, ModelItemHolder, Droppable, EventHandler, TestCaseIconListener, Pagination {
 	/**
-	 * The RunnerItem to represent.
+	 * The AgentItem to represent.
 	 */ 
-	public var runner: RunnerItem;
+	public var agent: AgentItem;
 	
-	public-init var ghostRunner = false;
+	public-init var ghostAgent = false;
 	
-	override var modelItem = bind lazy runner;
+	override var modelItem = bind lazy agent;
 	
 	override var itemsPerPage = 4;
 	override var fluid = true;
@@ -116,10 +116,10 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 	public var separatorStroke: Paint = Color.web("#c6c6c6");
 	
 	var created = false;
-	var ready: Boolean = runner.isReady();
+	var ready: Boolean = agent.isReady();
 	var enabled: Boolean on replace oldVal = newVal {
 		if(created and oldVal != newVal) {
-			runner.setEnabled( enabled );
+			agent.setEnabled( enabled );
 		}
 	}
 	
@@ -137,7 +137,7 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 	}
 	
 	override function testCaseRemoved(tc: TestCaseIcon): Void {
-		if(ghostRunner){
+		if(ghostAgent){
 			return;
 		}
 		undeployTestCase(tc.sceneItem);
@@ -174,13 +174,13 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 	}
 	
 	postinit {
-		if(not ghostRunner){
-			if(not FX.isInitialized( runner ) )
+		if(not ghostAgent){
+			if(not FX.isInitialized( agent ) )
 				throw new RuntimeException( "agent must not be null!" );
 			
-			runner.addEventListener( BaseEvent.class, this );
-			label = runner.getLabel();
-			enabled = runner.isEnabled();
+			agent.addEventListener( BaseEvent.class, this );
+			label = agent.getLabel();
+			enabled = agent.isEnabled();
 		}
 		else{
 			label = "GHOST AGENT";
@@ -188,7 +188,7 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 	}
 
 	override var accept = function( d: Draggable ) {
-		if(not ghostRunner and d.node instanceof TestCaseIcon){
+		if(not ghostAgent and d.node instanceof TestCaseIcon){
 			var tcNode: TestCaseIcon = d.node as TestCaseIcon;
 			for(tc in content[x|x instanceof DraggableFrame]){
 				if(((tc as DraggableFrame).draggable as TestCaseIcon).label == tcNode.label){
@@ -197,7 +197,7 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 			}
 			return true;
 		}
-		else if(ghostRunner and d.node instanceof TestCaseIcon){
+		else if(ghostAgent and d.node instanceof TestCaseIcon){
 			return true;
 		}
 		else{
@@ -208,24 +208,24 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 	override var onDrop = function( d: Draggable ) {
 		(d.node as TestCaseIcon).remove();
 		
-		if(not ghostRunner) addTestCase((d.node as TestCaseIcon).copy());
+		if(not ghostAgent) addTestCase((d.node as TestCaseIcon).copy());
 	}
 			
 	override function handleEvent(e:EventObject) {
 		def event = e as BaseEvent;
 		if(event.getKey().equals(ModelItem.LABEL)) {
-			runInFxThread( function():Void { label = runner.getLabel() } );
+			runInFxThread( function():Void { label = agent.getLabel() } );
 		}
-		else if(event.getKey().equals(RunnerItem.ENABLED)) {
+		else if(event.getKey().equals(AgentItem.ENABLED)) {
 			runInFxThread( function():Void { 
-				ready = runner.isReady();
-				enabled = runner.isEnabled();
+				ready = agent.isReady();
+				enabled = agent.isEnabled();
 			});
 		}
-		else if(event.getKey().equals(RunnerItem.READY)) {
+		else if(event.getKey().equals(AgentItem.READY)) {
 			runInFxThread( function():Void { 
-				ready = runner.isReady();
-				enabled = runner.isEnabled();
+				ready = agent.isReady();
+				enabled = agent.isEnabled();
 			});
 		}
 	}
@@ -234,9 +234,9 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 		var toolbarBoxRight: HBox;
 		var menuNode:Menu;
 		def titleBarPanel = TitlebarPanel {
-			backgroundFill: if(ghostRunner) Color.web("#b8b8b8") else Color.web("#d6d6d6")
+			backgroundFill: if(ghostAgent) Color.web("#b8b8b8") else Color.web("#d6d6d6")
 			content: [
-				if(not ghostRunner) OnOffSwitch {
+				if(not ghostAgent) OnOffSwitch {
 					layoutX: 12
 					layoutY: 7
 					state: bind enabled with inverse
@@ -245,7 +245,7 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 					endY: 10
 					stroke: bind separatorStroke
 				},
-				if( ghostRunner ) null else menuNode = Menu {
+				if( ghostAgent ) null else menuNode = Menu {
 					layoutX: 45
 					layoutY: 7
 					tooltip: bind label
@@ -296,14 +296,14 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 							endY: 10
 							stroke: bind separatorStroke
 						}, 
-						if(not ghostRunner) [ GlowButton {
+						if(not ghostAgent) [ GlowButton {
 							padding: 3
 							tooltip: "Settings"
 							contentNode: FXDNode {
 								url: "{__ROOT__}images/component_wrench_icon.fxz"
 							}
 							action: function() { 
-								RunnerConfigurationDialog { runner: runner }.show();
+								AgentConfigurationDialog { agent: agent }.show();
 							 }
 						}, Line {
 							endY: 10
@@ -316,7 +316,7 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 								url: "{__ROOT__}images/component_help_icon.fxz"
 							}
 							action: function() {
-								openURL( if(ghostRunner) "http://www.loadui.org/interface/project-view.html" else modelItem.getHelpUrl() );
+								openURL( if(ghostAgent) "http://www.loadui.org/interface/project-view.html" else modelItem.getHelpUrl() );
 							}
 						}
 					]
@@ -331,7 +331,7 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 					layoutX: 8
 					layoutY: 25
 					image: Image {
-                    	url: if(ghostRunner) "{__ROOT__}images/png/ghostrunner_insp_node_background.png" else "{__ROOT__}images/png/runner_insp_node_background.png"
+                    	url: if(ghostAgent) "{__ROOT__}images/png/ghostagent_insp_node_background.png" else "{__ROOT__}images/png/agent_insp_node_background.png"
                 	}
 				}
 				Button {
@@ -341,7 +341,7 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 						width: 95
 						height: 22
 					}
-					styleClass: "runner-inspector-node-button"
+					styleClass: "agent-inspector-node-button"
 					action: function() { if( page > 0) page--; }
 				}
 				Button {
@@ -351,7 +351,7 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 						width: 95
 						height: 22
 					}
-					styleClass: "runner-inspector-node-button"
+					styleClass: "agent-inspector-node-button"
 					action: function() { if( page < numPages - 1) page++; }
 				}
 				VBox {
@@ -366,7 +366,7 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 					content: bind displayedContent
 				}
 			]
-			titlebarColor: if(ghostRunner) Color.web("#9c9c9c") else Color.web("#b2b2b2")
+			titlebarColor: if(ghostAgent) Color.web("#9c9c9c") else Color.web("#b2b2b2")
 			titlebarContent: [
 				ImageView {
 					layoutX: 15
@@ -374,7 +374,7 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 					image: Image {
 		            	url: "{__ROOT__}images/png/led-active.png"
 		        	}
-		        	visible: bind not ghostRunner and enabled and ready 
+		        	visible: bind not ghostAgent and enabled and ready 
 				}
 				ImageView {
 					layoutX: 15
@@ -382,7 +382,7 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 					image: Image {
 		            	url: "{__ROOT__}images/png/led-inactive.png"
 		        	}
-		        	visible: bind not ghostRunner and enabled and not ready
+		        	visible: bind not ghostAgent and enabled and not ready
 				}
 				ImageView {
 					layoutX: 15
@@ -390,11 +390,11 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 					image: Image {
 		            	url: "{__ROOT__}images/png/led-disabled.png"
 		        	}
-		        	visible: bind not ghostRunner and not enabled
+		        	visible: bind not ghostAgent and not enabled
 				}
 				Label {
 					text: bind label.toUpperCase()
-					layoutX: bind if(ghostRunner) 15 else 27
+					layoutX: bind if(ghostAgent) 15 else 27
 					layoutY: 3
 					width: bind width - 30
 					height: bind 30
@@ -424,9 +424,9 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 			}
 		}
 		var projectItem: ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
-		if(not ghostRunner and projectItem != null and runner != null){
+		if(not ghostAgent and projectItem != null and agent != null){
 			try{
-				projectItem.assignScene( tcNode.sceneItem, runner );
+				projectItem.assignScene( tcNode.sceneItem, agent );
 			}
 			catch(e: Exception){
 				e.printStackTrace();
@@ -444,9 +444,9 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 		var projectItem: ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
 		for(df in content[x|x instanceof DraggableFrame]){
 			if(((df as DraggableFrame).draggable as TestCaseIcon).label == sceneItem.getLabel()){
-				if(not ghostRunner and projectItem != null and runner != null){
+				if(not ghostAgent and projectItem != null and agent != null){
 					try{
-						projectItem.unassignScene( sceneItem, runner );
+						projectItem.unassignScene( sceneItem, agent );
 					}
 					catch(e: Exception) {
 						//do nothing, already unassigned
@@ -461,9 +461,9 @@ public class RunnerInspectorNode extends BaseNode, ModelItemHolder, Droppable, E
 	public function clearTestCases(unassign: Boolean){
 		var projectItem: ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
 		for(df in content[x|x instanceof DraggableFrame]){
-			if(not ghostRunner and unassign and projectItem != null and runner != null){
+			if(not ghostAgent and unassign and projectItem != null and agent != null){
 				try{
-					projectItem.unassignScene( ((df as DraggableFrame).draggable as TestCaseIcon).sceneItem, runner );
+					projectItem.unassignScene( ((df as DraggableFrame).draggable as TestCaseIcon).sceneItem, agent );
 				}
 				catch(e: Exception) {
  					//do nothing, already unassigned

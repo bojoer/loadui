@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.counter.CounterHolder;
-import com.eviware.loadui.api.discovery.RunnerDiscovery.RunnerReference;
+import com.eviware.loadui.api.discovery.AgentDiscovery.AgentReference;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
@@ -39,13 +39,13 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.config.LoaduiProjectDocumentConfig;
 import com.eviware.loadui.config.LoaduiWorkspaceDocumentConfig;
 import com.eviware.loadui.config.ProjectReferenceConfig;
-import com.eviware.loadui.config.RunnerItemConfig;
+import com.eviware.loadui.config.AgentItemConfig;
 import com.eviware.loadui.config.WorkspaceItemConfig;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.impl.XmlBeansUtils;
@@ -58,9 +58,9 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	private final ScheduledExecutorService executor;
 	private final LoaduiWorkspaceDocumentConfig doc;
 	private final Set<ProjectRefImpl> projects = new HashSet<ProjectRefImpl>();
-	private final Set<RunnerItem> runners = new HashSet<RunnerItem>();
+	private final Set<AgentItem> agents = new HashSet<AgentItem>();
 	private final ProjectListener projectListener = new ProjectListener();
-	private final RunnerListener runnerListener = new RunnerListener();
+	private final AgentListener agentListener = new AgentListener();
 	private final Property<Boolean> localMode;
 	private final Property<Long> garbageCollectionInterval;
 
@@ -88,7 +88,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		localMode = createProperty( LOCAL_MODE_PROPERTY, Boolean.class, false );
 		createProperty( MAX_THREADS_PROPERTY, Long.class, 200 );
 		createProperty( MAX_THREAD_QUEUE_PROPERTY, Long.class, 10000 );
-		createProperty( IMPORT_MISSING_RUNNERS_PROPERTY, Boolean.class, false );
+		createProperty( IMPORT_MISSING_AGENTS_PROPERTY, Boolean.class, false );
 		createProperty( SOAPUI_PATH_PROPERTY, File.class );
 		createProperty( SOAPUI_SYNC_PROPERTY, Boolean.class );
 		createProperty( SOAPUI_CAJO_PORT_PROPERTY, Integer.class, 1198 );
@@ -102,12 +102,12 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	{
 		super.init();
 
-		for( RunnerItemConfig runnerConfig : getConfig().getRunnerArray() )
+		for( AgentItemConfig agentConfig : getConfig().getAgentArray() )
 		{
-			RunnerItemImpl runner = new RunnerItemImpl( this, runnerConfig );
-			runner.init();
-			runner.addEventListener( BaseEvent.class, runnerListener );
-			runners.add( runner );
+			AgentItemImpl agent = new AgentItemImpl( this, agentConfig );
+			agent.init();
+			agent.addEventListener( BaseEvent.class, agentListener );
+			agents.add( agent );
 		}
 
 		for( ProjectReferenceConfig projectRefConfig : getConfig().getProjectArray() )
@@ -238,7 +238,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	}
 
 	@Override
-	public RunnerItem createRunner( String url, String label )
+	public AgentItem createAgent( String url, String label )
 	{
 		if( !url.startsWith( "http" ) )
 			url = "https://" + url;
@@ -246,30 +246,30 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			url += ":8443";
 		if( !url.endsWith( "/" ) )
 			url += "/";
-		RunnerItemConfig runnerConfig = getConfig().addNewRunner();
-		runnerConfig.setUrl( url );
-		runnerConfig.setLabel( label );
-		RunnerItemImpl runner = new RunnerItemImpl( this, runnerConfig );
-		runner.init();
-		runner.addEventListener( BaseEvent.class, runnerListener );
-		runners.add( runner );
-		fireCollectionEvent( RUNNERS, CollectionEvent.Event.ADDED, runner );
-		return runner;
+		AgentItemConfig agentConfig = getConfig().addNewAgent();
+		agentConfig.setUrl( url );
+		agentConfig.setLabel( label );
+		AgentItemImpl agent = new AgentItemImpl( this, agentConfig );
+		agent.init();
+		agent.addEventListener( BaseEvent.class, agentListener );
+		agents.add( agent );
+		fireCollectionEvent( AGENTS, CollectionEvent.Event.ADDED, agent );
+		return agent;
 	}
 
 	@Override
-	public RunnerItem createRunner( RunnerReference ref, String label )
+	public AgentItem createAgent( AgentReference ref, String label )
 	{
-		RunnerItemConfig runnerConfig = getConfig().addNewRunner();
-		runnerConfig.setUrl( ref.getUrl() );
-		runnerConfig.setId( ref.getId() );
-		runnerConfig.setLabel( label );
-		RunnerItemImpl runner = new RunnerItemImpl( this, runnerConfig );
-		runner.init();
-		runner.addEventListener( BaseEvent.class, runnerListener );
-		runners.add( runner );
-		fireCollectionEvent( RUNNERS, CollectionEvent.Event.ADDED, runner );
-		return runner;
+		AgentItemConfig agentConfig = getConfig().addNewAgent();
+		agentConfig.setUrl( ref.getUrl() );
+		agentConfig.setId( ref.getId() );
+		agentConfig.setLabel( label );
+		AgentItemImpl agent = new AgentItemImpl( this, agentConfig );
+		agent.init();
+		agent.addEventListener( BaseEvent.class, agentListener );
+		agents.add( agent );
+		fireCollectionEvent( AGENTS, CollectionEvent.Event.ADDED, agent );
+		return agent;
 	}
 
 	@Override
@@ -292,9 +292,9 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	}
 
 	@Override
-	public Collection<RunnerItem> getRunners()
+	public Collection<AgentItem> getAgents()
 	{
-		return Collections.unmodifiableSet( runners );
+		return Collections.unmodifiableSet( agents );
 	}
 
 	@Override
@@ -339,25 +339,25 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	}
 
 	@Override
-	public void removeRunner( RunnerItem runner )
+	public void removeAgent( AgentItem agent )
 	{
-		if( runner == null )
-			throw new IllegalArgumentException( "Runner is null" );
+		if( agent == null )
+			throw new IllegalArgumentException( "Agent is null" );
 
-		if( runners.remove( runner ) )
+		if( agents.remove( agent ) )
 		{
-			for( int i = 0; i < getConfig().sizeOfRunnerArray(); i++ )
+			for( int i = 0; i < getConfig().sizeOfAgentArray(); i++ )
 			{
-				if( getConfig().getRunnerArray( i ) == ( ( RunnerItemImpl )runner ).getConfig() )
+				if( getConfig().getAgentArray( i ) == ( ( AgentItemImpl )agent ).getConfig() )
 				{
-					fireCollectionEvent( RUNNERS, CollectionEvent.Event.REMOVED, runner );
-					getConfig().removeRunner( i );
+					fireCollectionEvent( AGENTS, CollectionEvent.Event.REMOVED, agent );
+					getConfig().removeAgent( i );
 					return;
 				}
 			}
 		}
 		else
-			throw new IllegalArgumentException( "Runner does not belong to this Workspace" );
+			throw new IllegalArgumentException( "Agent does not belong to this Workspace" );
 	}
 
 	public void projectLoaded( ProjectItem project )
@@ -414,19 +414,19 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		}
 	}
 
-	private class RunnerListener implements EventHandler<BaseEvent>
+	private class AgentListener implements EventHandler<BaseEvent>
 	{
 		@Override
 		public void handleEvent( BaseEvent event )
 		{
 			if( event.getKey().equals( DELETED ) )
 			{
-				removeRunner( ( RunnerItem )event.getSource() );
+				removeAgent( ( AgentItem )event.getSource() );
 			}
-			else if( event instanceof PropertyEvent && RunnerItem.MAX_THREADS_PROPERTY.equals( event.getKey() ) )
+			else if( event instanceof PropertyEvent && AgentItem.MAX_THREADS_PROPERTY.equals( event.getKey() ) )
 			{
-				( ( RunnerItem )event.getSource() ).sendMessage( RunnerItem.RUNNER_CHANNEL, Collections.singletonMap(
-						RunnerItem.SET_MAX_THREADS, ( ( PropertyEvent )event ).getProperty().getStringValue() ) );
+				( ( AgentItem )event.getSource() ).sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap(
+						AgentItem.SET_MAX_THREADS, ( ( PropertyEvent )event ).getProperty().getStringValue() ) );
 			}
 		}
 	}

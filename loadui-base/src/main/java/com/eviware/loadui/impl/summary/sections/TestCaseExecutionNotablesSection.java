@@ -17,7 +17,7 @@ package com.eviware.loadui.impl.summary.sections;
 
 import javax.swing.table.TableModel;
 
-import com.eviware.loadui.api.component.categories.SamplerCategory;
+import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.summary.SampleStats;
@@ -49,9 +49,9 @@ public class TestCaseExecutionNotablesSection extends MutableSectionImpl impleme
 		TestCaseTopSamplesTable table = new TestCaseTopSamplesTable();
 
 		for( ComponentItem component : testcase.getComponents() )
-			if( component.getBehavior() instanceof SamplerCategory )
+			if( component.getBehavior() instanceof RunnerCategory )
 			{
-				for( SampleStats stat : ( ( SamplerCategory )component.getBehavior() ).getBottomSamples() )
+				for( SampleStats stat : ( ( RunnerCategory )component.getBehavior() ).getBottomSamples() )
 					table.addBottom( component.getLabel(), stat );
 			}
 
@@ -70,9 +70,9 @@ public class TestCaseExecutionNotablesSection extends MutableSectionImpl impleme
 		TestCaseTopSamplesTable table = new TestCaseTopSamplesTable();
 
 		for( ComponentItem component : testcase.getComponents() )
-			if( component.getBehavior() instanceof SamplerCategory )
+			if( component.getBehavior() instanceof RunnerCategory )
 			{
-				for( SampleStats stat : ( ( SamplerCategory )component.getBehavior() ).getTopSamples() )
+				for( SampleStats stat : ( ( RunnerCategory )component.getBehavior() ).getTopSamples() )
 					table.addTop( component.getLabel(), stat );
 			}
 

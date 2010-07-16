@@ -35,7 +35,7 @@
 		</complexContent>
 	</complexType>
 
-	<complexType name="RunnerItem">
+	<complexType name="AgentItem">
 		<complexContent>
 			<extension base="lui:ModelItem">
 				<attribute name="url" type="string"></attribute>
@@ -52,7 +52,7 @@
 		<complexContent>
 			<extension base="lui:ModelItem">
 				<sequence>
-					<element name="runner" type="lui:RunnerItem"
+					<element name="agent" type="lui:AgentItem"
 						maxOccurs="unbounded" minOccurs="0">
 					</element>
 					<element name="project" type="lui:ProjectReference" maxOccurs="unbounded" minOccurs="0"></element>
@@ -148,9 +148,9 @@
 
     <complexType name="SceneAssignment">
     	<attribute name="sceneRef" type="string" use="required"></attribute>
-    	<attribute name="runnerRef" type="string" use="required"></attribute>
-    	<attribute name="runnerLabel" type="string"></attribute>
-    	<attribute name="runnerAddress" type="string"></attribute>
+    	<attribute name="agentRef" type="string" use="required"></attribute>
+    	<attribute name="agentLabel" type="string"></attribute>
+    	<attribute name="agentAddress" type="string"></attribute>
     </complexType>
 
     <element name="loadui-scene" type="lui:SceneItem"></element>

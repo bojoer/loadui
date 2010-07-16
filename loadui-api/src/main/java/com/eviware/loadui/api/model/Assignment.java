@@ -19,5 +19,5 @@ public interface Assignment
 {
 	public SceneItem getScene();
 
-	public RunnerItem getRunner();
+	public AgentItem getAgent();
 }

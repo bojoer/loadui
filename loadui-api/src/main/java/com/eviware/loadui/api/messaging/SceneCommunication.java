@@ -73,7 +73,7 @@ public final class SceneCommunication
 	public final static String ACTION_EVENT = "actionEvent";
 
 	/**
-	 * Command for gathering Runner statistics for a completed SceneItem.
+	 * Command for gathering Agent statistics for a completed SceneItem.
 	 */
 	public final static String COLLECT_STATISTICS = "collectStatistics";
 }

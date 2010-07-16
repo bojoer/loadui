@@ -59,7 +59,7 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.counter.CounterHolder;
-import com.eviware.loadui.api.component.categories.SamplerCategory;
+import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.fx.FxUtils.*;
 
 import java.util.EventObject;

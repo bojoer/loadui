@@ -13,8 +13,8 @@
 	
 	<bean id="applicationState" factory-bean="mainWindow" factory-method="getAppState" />
 
-	<bean id="runnerDiscoverer" class="com.eviware.loadui.fx.runners.discovery.RunnerDiscoverer" init-method="initialize" destroy-method="destroy">
-		<property name="runnerDiscovery" ref="runnerDiscovery" />
+	<bean id="AgentDiscoverer" class="com.eviware.loadui.fx.agents.discovery.AgentDiscoverer" init-method="initialize" destroy-method="destroy">
+		<property name="AgentDiscovery" ref="AgentDiscovery" />
 	</bean>
 
 	<bean id="httpClientHolder" class="com.eviware.loadui.fx.http.HttpClientHolder" init-method="initialize" destroy-method="destroy">
@@ -45,7 +45,7 @@
 		<constructor-arg value="System Log" />
 	</bean>
 	
-	<bean id="runnerInspector" class="com.eviware.loadui.fx.widgets.RunnerInspector" factory-method="createInstance">
+	<bean id="AgentInspector" class="com.eviware.loadui.fx.widgets.AgentInspector" factory-method="createInstance">
 		<constructor-arg value="Agents" />
 	</bean>
 	

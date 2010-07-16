@@ -62,10 +62,10 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	public static final String REMOTE_TERMINAL = "remoteTerminal";
 
 	/**
-	 * CollectionEvent key for listening for changes to the runnerTerminals
+	 * CollectionEvent key for listening for changes to the agentTerminals
 	 * collection.
 	 */
-	public static final String RUNNER_TERMINALS = ComponentContext.class.getName() + "@runnerTerminals";
+	public static final String AGENT_TERMINALS = ComponentContext.class.getName() + "@agentTerminals";
 
 	/**
 	 * The base channel for all Component communication.
@@ -144,8 +144,8 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	/**
 	 * Gets a special DualTerminal which can be used to send messages to remote
 	 * instances of the ComponentItem itself. If used by a Component on the
-	 * Controller then the sent message is broadcast to all assigned Runners. If
-	 * used by a Component on a Runner then the message is sent to the
+	 * Controller then the sent message is broadcast to all assigned Agents. If
+	 * used by a Component on a Agent then the message is sent to the
 	 * Controller.
 	 * 
 	 * @return
@@ -155,7 +155,7 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	/**
 	 * Gets a special OutputTerminal which and can be used to send messages to
 	 * remote instances of the ComponentItem itself. Regardless of if a
-	 * TerminalMessage is sent to this Terminal from a Component on a Runner or
+	 * TerminalMessage is sent to this Terminal from a Component on a Agent or
 	 * on the Controller, the Component instance on the Controller will receive
 	 * the event.
 	 * 
@@ -164,14 +164,14 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	public OutputTerminal getControllerTerminal();
 
 	/**
-	 * Gets a Collection of Terminals, one corresponding to each assigned Runner.
-	 * These terminals can be used to target individual runners from the
-	 * Controller. When invoked on a Runner, this will return an empty
+	 * Gets a Collection of Terminals, one corresponding to each assigned Agent.
+	 * These terminals can be used to target individual agents from the
+	 * Controller. When invoked on an Agent, this will return an empty
 	 * Collection.
 	 * 
 	 * @return
 	 */
-	public Collection<DualTerminal> getRunnerTerminals();
+	public Collection<DualTerminal> getAgentTerminals();
 
 	/**
 	 * Creates a new empty message which can be modified and sent using the send
@@ -295,7 +295,7 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	public void setActivityStrategy( ActivityStrategy strategy );
 
 	/**
-	 * True if running on the Controller, false if on a Runner.
+	 * True if running on the Controller, false if on an Agent.
 	 * 
 	 * @return
 	 */

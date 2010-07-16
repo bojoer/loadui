@@ -19,7 +19,7 @@ import java.util.Map;
 
 import javax.swing.table.TableModel;
 
-import com.eviware.loadui.api.component.categories.SamplerCategory;
+import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.SceneItem;
@@ -38,7 +38,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 		super( "Execution Metrics" );
 		testcase = ( SceneItemImpl )sceneItem;
 		addValue( "Failed Assertions(%)", getFailedAssertions() );
-		addTable( "Runners", getSamplersMetrics() );
+		addTable( "Runners", getRunnersMetrics() );
 		addTable( "Assertions", getAssertionsMetrics() );
 	}
 
@@ -77,16 +77,16 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 	 * (non-Javadoc)
 	 * 
 	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionMetricsSection#
-	 * getSamplersMetrics(com.eviware.loadui.api.model.SceneItem)
+	 * getRunnersMetrics(com.eviware.loadui.api.model.SceneItem)
 	 */
-	public TableModel getSamplersMetrics()
+	public TableModel getRunnersMetrics()
 	{
 		TestCaseSapmlerStatisticsTable table = new TestCaseSapmlerStatisticsTable();
 		for( ComponentItem component : testcase.getComponents() )
 			// if( component.getType().equals("HttpSampler")) {
-			if( component.getBehavior() instanceof SamplerCategory )
+			if( component.getBehavior() instanceof RunnerCategory )
 			{
-				Map<String, String> stats = ( ( SamplerCategory )component.getBehavior() ).getStatistics();
+				Map<String, String> stats = ( ( RunnerCategory )component.getBehavior() ).getStatistics();
 				table.add( table.new TestCaseSamplerStatisticsModel( component.getLabel(), stats ) );
 			}
 		return table;

@@ -67,8 +67,8 @@ import java.lang.Exception;
 import java.io.IOException;
 
 import com.eviware.loadui.fx.dialogs.CorruptProjectDialog;
-import com.eviware.loadui.fx.runners.discovery.RunnerDiscovererDialog;
-import com.eviware.loadui.fx.dialogs.CreateNewRunnerDialog;
+import com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog;
+import com.eviware.loadui.fx.dialogs.CreateNewAgentDialog;
 
 public class WorkspaceMenu extends HBox {
     public-init var workspace: WorkspaceItem;
@@ -193,11 +193,11 @@ public class WorkspaceMenu extends HBox {
                 SeparatorMenuItem{}
                 ActionMenuItem {
                     text: "New Agent"
-                    action: function() { CreateNewRunnerDialog{ workspace: workspace }; }
+                    action: function() { CreateNewAgentDialog{ workspace: workspace }; }
                 }
                 ActionMenuItem {
                     text: "Detect Agent"
-                    action: function() { RunnerDiscovererDialog{}.show();; }
+                    action: function() { AgentDiscovererDialog{}.show();; }
                 }
                 SeparatorMenuItem{}
                 ActionMenuItem {

@@ -44,7 +44,7 @@ if( workspaceFile != null ) {
 	workspace = workspaceProvider.loadDefaultWorkspace()
 }
 
-def importRunners = workspace.getProperty( WorkspaceItem.IMPORT_MISSING_RUNNERS_PROPERTY )
+def importRunners = workspace.getProperty( WorkspaceItem.IMPORT_MISSING_AGENTS_PROPERTY )
 workspace.localMode = localMode
 
 //If custom agents are provided, remove saved ones.
@@ -93,7 +93,7 @@ if( limits != null ) {
 if( agents != null ) {
 	for( agentUrl in agents.keySet() ) {
 		def tcs = agents[agentUrl]
-		def agent = workspace.createRunner( agentUrl, agentUrl )
+		def agent = workspace.createAgent( agentUrl, agentUrl )
 		if( tcs == null )
 		{
 			for( tc in project.scenes ) {
@@ -117,7 +117,7 @@ if( agents != null ) {
 if( testCase != null ) {
 	def notReady = new HashSet()
 	for( tc in project.scenes )
-		for( agent in project.getRunnersAssignedTo( tc ) )
+		for( agent in project.getAgentsAssignedTo( tc ) )
 			notReady << agent
 	def ready = false
 	def timeout = System.currentTimeMillis() + 5000

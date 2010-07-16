@@ -22,13 +22,13 @@ import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageEndpointProvider;
 import com.eviware.loadui.api.messaging.MessageListener;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
-import com.eviware.loadui.config.RunnerItemConfig;
+import com.eviware.loadui.config.AgentItemConfig;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.messaging.MessageEndpointSupport;
 
-public class RunnerItemImpl extends ModelItemImpl<RunnerItemConfig> implements RunnerItem
+public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements AgentItem
 {
 	private final WorkspaceItem workspace;
 	private final MessageEndpointProvider provider;
@@ -36,7 +36,7 @@ public class RunnerItemImpl extends ModelItemImpl<RunnerItemConfig> implements R
 	private MessageEndpointSupport endpointSupport;
 	private boolean connected = false;
 
-	public RunnerItemImpl( WorkspaceItem workspace, RunnerItemConfig config )
+	public AgentItemImpl( WorkspaceItem workspace, AgentItemConfig config )
 	{
 		super( config );
 		this.workspace = workspace;
@@ -70,13 +70,13 @@ public class RunnerItemImpl extends ModelItemImpl<RunnerItemConfig> implements R
 			public void handleConnectionChange( MessageEndpoint endpoint, boolean connected )
 			{
 				if( connected )
-					broadcastEndpoint.registerEndpoint( RunnerItemImpl.this );
+					broadcastEndpoint.registerEndpoint( AgentItemImpl.this );
 				else
-					broadcastEndpoint.deregisterEndpoint( RunnerItemImpl.this );
-				RunnerItemImpl.this.connected = connected;
-				log.debug( "Runner connected, setting max threads: {}", getProperty( MAX_THREADS_PROPERTY )
+					broadcastEndpoint.deregisterEndpoint( AgentItemImpl.this );
+				AgentItemImpl.this.connected = connected;
+				log.debug( "Agent connected, setting max threads: {}", getProperty( MAX_THREADS_PROPERTY )
 						.getStringValue() );
-				sendMessage( RunnerItem.RUNNER_CHANNEL, Collections.singletonMap( RunnerItem.SET_MAX_THREADS, getProperty(
+				sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.SET_MAX_THREADS, getProperty(
 						MAX_THREADS_PROPERTY ).getStringValue() ) );
 
 				fireBaseEvent( READY );
@@ -156,7 +156,7 @@ public class RunnerItemImpl extends ModelItemImpl<RunnerItemConfig> implements R
 	{
 		// if( !isReady() )
 		// throw new RuntimeException(
-		// "Message can't be sent unless Runner is ready." );
+		// "Message can't be sent unless Agent is ready." );
 		if( isReady() )
 			endpointSupport.sendMessage( channel, data );
 	}

@@ -17,13 +17,13 @@ package com.eviware.loadui.api.discovery;
 
 import java.util.Collection;
 
-public interface RunnerDiscovery
+public interface AgentDiscovery
 {
 	public static final int BROADCAST_PORT = 13572;
 
-	public Collection<RunnerReference> getDiscoveredRunners();
+	public Collection<AgentReference> getDiscoveredAgents();
 
-	public interface RunnerReference
+	public interface AgentReference
 	{
 		public String getDefaultLabel();
 

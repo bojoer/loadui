@@ -80,9 +80,9 @@ createProperty( 'enablePercentile', Boolean, true )
 createProperty( 'currentSourceID', String, "none" )
 createProperty( 'addtoSummary', Boolean, false )
 
-createProperty( 'selectedRunner', String, AGGREGATE )
+createProperty( 'selectedAgent', String, AGGREGATE )
 
-OptionsProvider availableRunners = new OptionsProviderImpl( AGGREGATE );
+OptionsProvider availableAgents = new OptionsProviderImpl( AGGREGATE );
 OptionsProvider availableSourceIDs = new OptionsProviderImpl( "none" );
 sourceIDs = ["none"]
 
@@ -125,7 +125,7 @@ byteStats = new ValueStatistics( period.value * 60000 )
 long max = 0
 long min = Long.MAX_VALUE
 
-runnerData = [:]
+agentData = [:]
 
 future = null
 boolean connected = false
@@ -160,7 +160,7 @@ onMessage = { o, i, m ->
 	
 	super.onTerminalMessage(o, i, m)
 	if(i == remoteTerminal ) {
-		runnerData[o.label] = new HashMap(m)
+		agentData[o.label] = new HashMap(m)
 	}
 }
 
@@ -214,10 +214,10 @@ calculate = {
 
 updateChart = { currentTime ->
 	def data = [:]
-	if( selectedRunner.value == AGGREGATE ) {
+	if( selectedAgent.value == AGGREGATE ) {
 		try {
 			int count = 0
-			for( d in runnerData.values() ) {
+			for( d in agentData.values() ) {
 				if( !d.isEmpty() ) {
 					data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
 					data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
@@ -238,7 +238,7 @@ updateChart = { currentTime ->
 		} catch( e ) { ex(e, 'Aggregating')
 		}
 	} else
-		data = runnerData[selectedRunner.value]
+		data = agentData[selectedAgent.value]
 	if(data == null || data.isEmpty())
 		return
 	
@@ -352,19 +352,19 @@ resetComponent = {
 resetBuffers = {
 	timeStats.reset()
 	byteStats.reset()
-	runnerData = [:]
+	agentData = [:]
 }
 
 fixOptions = {
 	def options = [ AGGREGATE ]
-	options.addAll( runnerTerminals.collect { it.label }.sort() )
-	availableRunners.options = options
+	options.addAll( agentTerminals.collect { it.label }.sort() )
+	availableAgents.options = options
 }
 
 addEventListener( ActionEvent ) { event ->
 	if( event.key == 'RESET' ) resetComponent()
 	else if( event.key == 'STOP' ) {
-		runnerData.clear()
+		agentData.clear()
 		if( !controller )
 			send( controllerTerminal, newMessage() )
 	}
@@ -381,7 +381,7 @@ addEventListener( CollectionEvent ) { event ->
 //Layout
 layout(constraints:'fillx, wrap 1') {
 	node( widget: 'chartWidget', model: chartModel )
-	property( property: selectedRunner, label: 'View statistics from', options: availableRunners, widget:'comboBox' )
+	property( property: selectedAgent, label: 'View statistics from', options: availableAgents, widget:'comboBox' )
 	property( property: currentSourceID, label: 'Source ID', options: availableSourceIDs, widget:'comboBox' )
 }
 

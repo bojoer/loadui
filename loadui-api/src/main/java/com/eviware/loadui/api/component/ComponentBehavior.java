@@ -17,7 +17,7 @@ package com.eviware.loadui.api.component;
 
 import java.util.Map;
 
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
@@ -100,17 +100,17 @@ public interface ComponentBehavior
 
 	/**
 	 * Collects data to be used for statistics calculations. Invoked at the end
-	 * of a test run on each assigned Runner.
+	 * of a test run on each assigned Agent.
 	 * 
 	 * @return Statistics data to be sent to the Controller.
 	 */
 	public Object collectStatisticsData();
 
 	/**
-	 * Handle remotely collected statistics data gathered for Runners on the
+	 * Handle remotely collected statistics data gathered for Agents on the
 	 * controller.
 	 */
-	public void handleStatisticsData( Map<RunnerItem, Object> statisticsData );
+	public void handleStatisticsData( Map<AgentItem, Object> statisticsData );
 	
 	/**
 	 * Called on a ComponentItem to generate a summary of its run.

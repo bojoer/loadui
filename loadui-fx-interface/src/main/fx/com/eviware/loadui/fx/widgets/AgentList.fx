@@ -14,7 +14,7 @@
  * under the Licence.
  */
 /*
-*RunnerList.fx
+*AgentList.fx
 *
 *Created on feb 10, 2010, 09:32:42 fm
 */
@@ -31,13 +31,13 @@ import com.eviware.loadui.fx.ui.pagelist.PagelistControl;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.DroppableNode;
-import com.eviware.loadui.fx.dialogs.CreateNewRunnerDialog;
-import com.eviware.loadui.fx.widgets.toolbar.RunnerToolbarItem;
+import com.eviware.loadui.fx.dialogs.CreateNewAgentDialog;
+import com.eviware.loadui.fx.widgets.toolbar.AgentToolbarItem;
 
 import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
 import com.eviware.loadui.fx.ui.popup.PopupMenu;
-import com.eviware.loadui.fx.runners.discovery.RunnerDiscoverer;
-import com.eviware.loadui.fx.runners.discovery.RunnerDiscovererDialog;
+import com.eviware.loadui.fx.agents.discovery.AgentDiscoverer;
+import com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog;
 import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
 
 import javafx.scene.input.MouseEvent;
@@ -49,14 +49,14 @@ import java.lang.RuntimeException;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.model.WorkspaceItem;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import org.slf4j.LoggerFactory;
-public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.RunnerList" );
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentList" );
 
 /**
- * A list of all the Runners in the current Workspace.
+ * A list of all the Agents in the current Workspace.
  */
-public class RunnerList extends CustomNode, Resizable, EventHandler {
+public class AgentList extends CustomNode, Resizable, EventHandler {
 
 	/**
 	 * A reference to the current Workspace.
@@ -75,11 +75,11 @@ public class RunnerList extends CustomNode, Resizable, EventHandler {
 	
 	override function handleEvent( e:EventObject ) {
 		def event = e as CollectionEvent;
-		if( event.getKey().equals( WorkspaceItem.RUNNERS ) ) {
+		if( event.getKey().equals( WorkspaceItem.AGENTS ) ) {
 			if( event.getEvent() == CollectionEvent.Event.ADDED ) {
-				runInFxThread( function() { addRunner( event.getElement() as RunnerItem ) } );
+				runInFxThread( function() { addAgent( event.getElement() as AgentItem ) } );
 			} else {
-				runInFxThread( function() { removeRunner( event.getElement() as RunnerItem ) } );
+				runInFxThread( function() { removeAgent( event.getElement() as AgentItem ) } );
 			}
 		}
 	}
@@ -90,18 +90,18 @@ public class RunnerList extends CustomNode, Resizable, EventHandler {
 		
 		workspace.addEventListener( CollectionEvent.class, this );
 		
-		for( runner in workspace.getRunners() )
-			addRunner( runner );
+		for( agent in workspace.getAgents() )
+			addAgent( agent );
 	}
 	
-	function addRunner( runner:RunnerItem ):Void {
-		pagelist.content = Sequences.sort( [ pagelist.content, DraggableFrame { draggable:RunnerNode { runner: runner } } ], COMPARE_BY_TOSTRING ) as Node[];
+	function addAgent( agent:AgentItem ):Void {
+		pagelist.content = Sequences.sort( [ pagelist.content, DraggableFrame { draggable:AgentNode { agent: agent } } ], COMPARE_BY_TOSTRING ) as Node[];
 	}
 	
-	function removeRunner( runner:RunnerItem ):Void {
+	function removeAgent( agent:AgentItem ):Void {
 		for( node in pagelist.content[f|f instanceof DraggableFrame] ) {
 			def draggable = (node as DraggableFrame).draggable;
-			if( (draggable as RunnerNode).runner == runner )
+			if( (draggable as AgentNode).agent == agent )
 				delete node from pagelist.content;
 		}
 	}
@@ -112,14 +112,14 @@ public class RunnerList extends CustomNode, Resizable, EventHandler {
 			ActionMenuItem {
 				text: "Detect Agents"
 				action: function() {
-					RunnerDiscovererDialog{}.show();
+					AgentDiscovererDialog{}.show();
 				}
 			}
 			SeparatorMenuItem{}
 			ActionMenuItem {
 				text: "New Agent"
 				action: function() {
-					CreateNewRunnerDialog{ workspace: workspace };
+					CreateNewAgentDialog{ workspace: workspace };
 				}
 			}
 		];
@@ -146,12 +146,12 @@ public class RunnerList extends CustomNode, Resizable, EventHandler {
 		DroppableNode {
 			contentNode: pagelist
 			accept: function( d:Draggable ) {
-				d.node instanceof RunnerToolbarItem
+				d.node instanceof AgentToolbarItem
 			}
 			onDrop: function( d:Draggable ) {
-				if ( d.node instanceof RunnerToolbarItem ) {
-					log.debug( "Opening CreateNewRunnerDialog..." );
-					CreateNewRunnerDialog { workspace: workspace };
+				if ( d.node instanceof AgentToolbarItem ) {
+					log.debug( "Opening CreateNewAgentDialog..." );
+					CreateNewAgentDialog { workspace: workspace };
 				}
 			}
 		}

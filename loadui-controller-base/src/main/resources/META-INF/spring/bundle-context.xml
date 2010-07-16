@@ -8,5 +8,5 @@
 		<constructor-arg ref="componentRegistry" />
 	</bean>
 	
-	<bean id="runnerDiscovery" class="com.eviware.loadui.impl.discovery.RunnerDiscoveryImpl" destroy-method="release" />
+	<bean id="AgentDiscovery" class="com.eviware.loadui.impl.discovery.AgentDiscoveryImpl" destroy-method="release" />
 </beans>

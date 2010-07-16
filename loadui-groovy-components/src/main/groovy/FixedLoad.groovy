@@ -23,7 +23,7 @@
  * @nonBlocking true
  */
 
-import com.eviware.loadui.api.component.categories.SamplerCategory
+import com.eviware.loadui.api.component.categories.RunnerCategory
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
@@ -66,7 +66,7 @@ schedule = {
 
 onMessage = { outgoing, incoming, message ->
 	if ( incoming == sampleCount ) {
-		def currentCount = message.get( SamplerCategory.CURRENTLY_RUNNING_MESSAGE_PARAM )
+		def currentCount = message.get( RunnerCategory.CURRENTLY_RUNNING_MESSAGE_PARAM )
 		count = currentCount
 		
 		if (currentCount < load.value && !running) {

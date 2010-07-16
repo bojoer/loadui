@@ -47,7 +47,7 @@ import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
 import com.eviware.loadui.api.model.SceneItem;
 
 import com.eviware.loadui.api.model.ModelItem;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 
@@ -64,15 +64,15 @@ import com.eviware.loadui.fx.AppState;
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.TestCaseIcon" );
 
 /**
- * Node to display in the RunnerList representing a RunnerItem.
+ * Node to display in the AgentList representing a AgentItem.
  */
 public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHandler {
 	/**
-	 * The RunnerItem to represent.
+	 * The AgentItem to represent.
 	 */
-	public-init var runner: RunnerItem;
+	public-init var agent: AgentItem;
 	
-	override var modelItem = bind lazy runner;
+	override var modelItem = bind lazy agent;
 	
 	public var sceneItem: SceneItem on replace oldScene {
 		oldScene.removeEventListener(ActionEvent.class, this);

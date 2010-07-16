@@ -1,21 +1,21 @@
-package com.eviware.loadui.impl.runner;
+package com.eviware.loadui.impl.agent;
 
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.SceneCommunication;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 
-public class RunnerWorker implements ConnectionListener, MessageListener
+public class AgentWorker implements ConnectionListener, MessageListener
 {
 	private final MessageEndpoint endpoint;
 
-	public RunnerWorker( MessageEndpoint endpoint )
+	public AgentWorker( MessageEndpoint endpoint )
 	{
 		this.endpoint = endpoint;
 
 		endpoint.addConnectionListener( this );
-		endpoint.addMessageListener( RunnerItem.RUNNER_CHANNEL, this );
+		endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, this );
 		endpoint.addMessageListener( SceneCommunication.CHANNEL, this );
 	}
 
@@ -24,7 +24,7 @@ public class RunnerWorker implements ConnectionListener, MessageListener
 	{
 		if( !connected )
 		{
-			System.out.println( "Stopping RunnerWorker..." );
+			System.out.println( "Stopping AgentWorker..." );
 		}
 	}
 

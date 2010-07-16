@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright 2010 eviware software ab
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -13,12 +13,27 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.runner;
+/*
+*AgentItem.fx
+*
+*Created on mar 11, 2010, 15:37:53 em
+*/
 
-import com.eviware.loadui.api.messaging.MessageEndpoint;
-import com.eviware.loadui.api.model.SceneItem;
+package com.eviware.loadui.fx.widgets.toolbar;
 
-public interface Controller extends MessageEndpoint
-{
-	public SceneItem getScene( String id );
+import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
+import com.eviware.loadui.fx.FxUtils.*;
+
+import javafx.scene.image.Image;
+
+def iconImage = Image { url: "{__ROOT__}images/png/agent-icon.png" };
+
+public class AgentToolbarItem extends ToolbarItem {
+	override var icon = iconImage;
+	
+	override var tooltip = "Creates a new Agent in the Workspace";
+	
+	override var label = "New Agent";
+	
+	override var category = "agents";
 }

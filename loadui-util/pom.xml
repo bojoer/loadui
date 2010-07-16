@@ -88,5 +88,17 @@
 			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+        	<groupId>commons-discovery</groupId>
+        	<artifactId>commons-discovery</artifactId>
+        	<version>0.4</version>
+        	<scope>provided</scope>
+   	 	</dependency>	
+		<dependency>
+        	<groupId>commons-math</groupId>
+        	<artifactId>commons-math</artifactId>
+        	<version>1.2</version>
+        	<scope>provided</scope>
+   	 	</dependency>
 	</dependencies>
 </project>

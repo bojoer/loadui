@@ -64,6 +64,7 @@ public class JavaFXActivator extends BundleActivator {
 			jidedata.load( com.eviware.loadui.fx.Dummy.class.getResourceAsStream("/properties/jide.properties") );
 			com.jidesoft.utils.Lm.verifyLicense(jidedata.get("company"), jidedata.get("product"), jidedata.get("license"));
 		} catch( e:Exception ) {
+		    e.printStackTrace();
 		}
 		
 		runInFxThread( function():Void {

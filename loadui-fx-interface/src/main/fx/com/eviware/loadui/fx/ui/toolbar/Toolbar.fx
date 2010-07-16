@@ -95,7 +95,7 @@ class GroupOrder extends Comparator {
 		SchedulerCategory.CATEGORY.toUpperCase(),
 		FlowCategory.CATEGORY.toUpperCase(),
 		AnalysisCategory.CATEGORY.toUpperCase(),
-		SamplerCategory.CATEGORY.toUpperCase(),
+		RunnerCategory.CATEGORY.toUpperCase(),
 		TriggerCategory.CATEGORY.toUpperCase(),
 		"TESTCASES"
 	];

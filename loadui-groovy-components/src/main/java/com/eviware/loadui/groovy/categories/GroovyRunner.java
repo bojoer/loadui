@@ -22,13 +22,13 @@ import org.codehaus.groovy.runtime.InvokerInvocationException;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.terminal.TerminalMessage;
-import com.eviware.loadui.impl.component.categories.SamplerBase;
+import com.eviware.loadui.impl.component.categories.RunnerBase;
 
-public class GroovySampler extends SamplerBase
+public class GroovyRunner extends RunnerBase
 {
 	final Object delegate;
 
-	public GroovySampler( ComponentContext context, Object delegate )
+	public GroovyRunner( ComponentContext context, Object delegate )
 	{
 		super( context );
 		this.delegate = delegate;

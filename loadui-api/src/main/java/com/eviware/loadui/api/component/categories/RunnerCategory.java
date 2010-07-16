@@ -25,18 +25,18 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 
 /**
- * Sampler components take some type of sample, which takes some time and has
+ * Runner components take some type of sample, which takes some time and has
  * some result. Each sample results in a TerminalMessage which includes a
  * timestamp of when the sample was initiated, the time the sample took, and a
  * status boolean to indicate whether the sample succeeded or failed.
  * 
- * Each sampler should be able to run multiple samples in parallel, and should
+ * Each runner should be able to run multiple samples in parallel, and should
  * make the number of currently running samples available through the designated
  * OutputTerminal
  * 
  * @author dain.nilsson
  */
-public interface SamplerCategory extends ComponentBehavior
+public interface RunnerCategory extends ComponentBehavior
 {
 	/**
 	 * The String identifier of the category.
@@ -168,7 +168,7 @@ public interface SamplerCategory extends ComponentBehavior
 	public long getQueueSize();
 
 	/**
-	 * Gets a Map containing statistics collected by the Sampler since the last
+	 * Gets a Map containing statistics collected by the Runner since the last
 	 * RESET action.
 	 * 
 	 * @return

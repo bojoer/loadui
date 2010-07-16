@@ -47,14 +47,14 @@ import com.eviware.loadui.api.component.categories.AnalysisCategory;
 import com.eviware.loadui.api.component.categories.FlowCategory;
 import com.eviware.loadui.api.component.categories.MiscCategory;
 import com.eviware.loadui.api.component.categories.OutputCategory;
-import com.eviware.loadui.api.component.categories.SamplerCategory;
+import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.component.categories.SchedulerCategory;
 import com.eviware.loadui.api.component.categories.TriggerCategory;
 import com.eviware.loadui.groovy.categories.GroovyAnalysis;
 import com.eviware.loadui.groovy.categories.GroovyFlow;
 import com.eviware.loadui.groovy.categories.GroovyMisc;
 import com.eviware.loadui.groovy.categories.GroovyOutput;
-import com.eviware.loadui.groovy.categories.GroovySampler;
+import com.eviware.loadui.groovy.categories.GroovyRunner;
 import com.eviware.loadui.groovy.categories.GroovyScheduler;
 import com.eviware.loadui.groovy.categories.GroovyTrigger;
 
@@ -163,9 +163,9 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 		{
 			return new GroovyTrigger( context, handler );
 		}
-		else if( SamplerCategory.class == category )
+		else if( RunnerCategory.class == category )
 		{
-			return new GroovySampler( context, handler );
+			return new GroovyRunner( context, handler );
 		}
 		else if( FlowCategory.class == category )
 		{
@@ -200,9 +200,9 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 		{
 			return TriggerCategory.class;
 		}
-		else if( SamplerCategory.CATEGORY.equalsIgnoreCase( category ) )
+		else if( RunnerCategory.CATEGORY.equalsIgnoreCase( category ) )
 		{
-			return SamplerCategory.class;
+			return RunnerCategory.class;
 		}
 		else if( FlowCategory.CATEGORY.equalsIgnoreCase( category ) )
 		{

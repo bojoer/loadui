@@ -17,7 +17,7 @@
 package com.eviware.loadui.fx.ui.dialogs;
 
 import org.slf4j.LoggerFactory;
-public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.dialogs.RunnerConfigurationDialog" );
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.dialogs.AgentConfigurationDialog" );
 
 import com.eviware.loadui.api.ui.tabbedpane.SelectMode;
 import javafx.scene.paint.Color;
@@ -35,12 +35,12 @@ import net.miginfocom.layout.*;
 import com.eviware.loadui.fx.MainWindow;
 import java.io.File;
 
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 
-public class RunnerConfigurationDialog {
+public class AgentConfigurationDialog {
 
-	public var title:String = "Runner Config";
-	public var runner:RunnerItem;
+	public var title:String = "Agent Config";
+	public var agent:AgentItem;
 	
 	public function show() {
 	
@@ -48,7 +48,7 @@ public class RunnerConfigurationDialog {
 		var formT2: Form;
 		var formT3: Form;
 		
-		var maxThreads: Long = runner.getProperty(runner.MAX_THREADS_PROPERTY).getValue() as Long;
+		var maxThreads: Long = agent.getProperty(agent.MAX_THREADS_PROPERTY).getValue() as Long;
 		// support for this need to be added in api
 		var soapUIExt: String = "ext folder";
 		var soapUIHermes:String = "hermes folder";
@@ -77,7 +77,7 @@ public class RunnerConfigurationDialog {
 								label: "Description"
 								description: "This is a description of the description field."
 								multiline: true
-								value: runner.getDescription() 
+								value: agent.getDescription() 
 							}							
 						]
 					}
@@ -103,8 +103,8 @@ public class RunnerConfigurationDialog {
 			]
 		}
          onOk: function() {
-				runner.setDescription(formT1.getField('description').value as String);
-				runner.getProperty(runner.MAX_THREADS_PROPERTY).setValue(formT3.getField('maxThreads').value as Long);
+				agent.setDescription(formT1.getField('description').value as String);
+				agent.getProperty(agent.MAX_THREADS_PROPERTY).setValue(formT3.getField('maxThreads').value as Long);
 				
 				// add here seting a soapUI ext folder, hermes folder and soapUI settings file to properties.
 				

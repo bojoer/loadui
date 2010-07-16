@@ -34,7 +34,7 @@ import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
 
 import com.eviware.loadui.api.model.ModelItem;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 
@@ -50,27 +50,27 @@ import javafx.scene.text.Font;
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.ProjectNode" );
 
 /**
- * Node to display in the RunnerList representing a RunnerItem.
+ * Node to display in the AgentList representing a AgentItem.
  */
-public class RunnerNode extends BaseNode, Draggable, ModelItemHolder, EventHandler {
+public class AgentNode extends BaseNode, Draggable, ModelItemHolder, EventHandler {
 	/**
-	 * The RunnerItem to represent.
+	 * The AgentItem to represent.
 	 */
-	public-init var runner: RunnerItem;
+	public-init var agent: AgentItem;
 	
-	override var modelItem = bind lazy runner;
+	override var modelItem = bind lazy agent;
 	
-	var enabled: Boolean = runner.isEnabled();
-	var ready: Boolean = runner.isReady();
+	var enabled: Boolean = agent.isEnabled();
+	var ready: Boolean = agent.isReady();
 	
 	var label:String;
 	
 	postinit {
-		if( not FX.isInitialized( runner ) )
-			throw new RuntimeException( "runner must not be null!" );
+		if( not FX.isInitialized( agent ) )
+			throw new RuntimeException( "agent must not be null!" );
 		
-		runner.addEventListener( BaseEvent.class, this );
-		label = runner.getLabel();
+		agent.addEventListener( BaseEvent.class, this );
+		label = agent.getLabel();
 	}
 	
 	override function create() {
@@ -120,18 +120,18 @@ public class RunnerNode extends BaseNode, Draggable, ModelItemHolder, EventHandl
 	override function handleEvent( e:EventObject ) {
 		def event = e as BaseEvent;
 		if( event.getKey().equals( ModelItem.LABEL ) ) {
-			runInFxThread( function():Void { label = runner.getLabel() } );
+			runInFxThread( function():Void { label = agent.getLabel() } );
 		}
-		else if(event.getKey().equals(RunnerItem.ENABLED)) {
+		else if(event.getKey().equals(AgentItem.ENABLED)) {
 			runInFxThread( function():Void { 
-				ready = runner.isReady();
-				enabled = runner.isEnabled();
+				ready = agent.isReady();
+				enabled = agent.isEnabled();
 			});
 		}
-		else if(event.getKey().equals(RunnerItem.READY)) {
+		else if(event.getKey().equals(AgentItem.READY)) {
 			runInFxThread( function():Void { 
-				ready = runner.isReady();
-				enabled = runner.isEnabled();
+				ready = agent.isReady();
+				enabled = agent.isEnabled();
 			});
 		}
 	}

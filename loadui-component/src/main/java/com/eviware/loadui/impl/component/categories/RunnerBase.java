@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.eviware.loadui.api.component.ComponentContext;
-import com.eviware.loadui.api.component.categories.SamplerCategory;
+import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.counter.Counter;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.ActionEvent;
@@ -45,7 +45,7 @@ import com.eviware.loadui.api.model.Assignment;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.summary.SampleStats;
@@ -56,12 +56,12 @@ import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.util.BeanInjector;
 
 /**
- * Base class for sampler components which defines base behavior which can be
- * extended to fully implement a sampler ComponentBehavior.
+ * Base class for runner components which defines base behavior which can be
+ * extended to fully implement a runner ComponentBehavior.
  * 
  * @author dain.nilsson
  */
-public abstract class SamplerBase extends BaseCategory implements SamplerCategory, EventHandler<BaseEvent>
+public abstract class RunnerBase extends BaseCategory implements RunnerCategory, EventHandler<BaseEvent>
 {
 	private final static int NUM_TOP_BOTTOM_SAMPLES = 5;
 
@@ -108,12 +108,12 @@ public abstract class SamplerBase extends BaseCategory implements SamplerCategor
 	private final OutputTerminal controllerTerminal;
 
 	/**
-	 * Constructs an SamplerBase.
+	 * Constructs an RunnerBase.
 	 * 
 	 * @param context
-	 *           A ComponentContext to bind the SamplerBase to.
+	 *           A ComponentContext to bind the RunnerBase to.
 	 */
-	public SamplerBase( ComponentContext context )
+	public RunnerBase( ComponentContext context )
 	{
 		super( context );
 
@@ -139,7 +139,7 @@ public abstract class SamplerBase extends BaseCategory implements SamplerCategor
 
 		sampleCounter = context.getCounter( CanvasItem.SAMPLE_COUNTER );
 		failureCounter = context.getCounter( CanvasItem.FAILURE_COUNTER );
-		discardsCounter = context.getCounter( SamplerCategory.DISCARDED_SAMPLES_COUNTER );
+		discardsCounter = context.getCounter( RunnerCategory.DISCARDED_SAMPLES_COUNTER );
 
 		concurrentSamplesProperty = context.createProperty( CONCURRENT_SAMPLES_PROPERTY, Long.class, 100 );
 		concurrentSamples = concurrentSamplesProperty.getValue();
@@ -179,10 +179,10 @@ public abstract class SamplerBase extends BaseCategory implements SamplerCategor
 	 * 
 	 * @param triggerMessage
 	 *           The triggering TerminalMessage. It may optionally contain
-	 *           arguments which are used by the sampler.
+	 *           arguments which are used by the runner.
 	 * @param sampleId
 	 *           An ID which is used to identify the sample, and should be used
-	 *           if the sampler is executed asynchronously.
+	 *           if the runner is executed asynchronously.
 	 * @return The result of the sample as a TerminalMessage, or null if the
 	 *         sample is executed asynchronously.
 	 */
@@ -191,7 +191,7 @@ public abstract class SamplerBase extends BaseCategory implements SamplerCategor
 
 	/**
 	 * Invoked when a request is made to cancel the running samples. The
-	 * SamplerBase will take care of clearing the queue. This method can be
+	 * RunnerBase will take care of clearing the queue. This method can be
 	 * implemented to cancel running samples.
 	 */
 	protected abstract void onCancel();
@@ -389,7 +389,7 @@ public abstract class SamplerBase extends BaseCategory implements SamplerCategor
 			Long startTime = System.nanoTime();
 			updateCurrentlyRunning( currentlyRunning.incrementAndGet() );
 
-			// remove leftovers from previous sampler
+			// remove leftovers from previous runner
 			message.remove( TIMESTAMP_MESSAGE_PARAM );
 			message.remove( TIME_TAKEN_MESSAGE_PARAM );
 
@@ -406,8 +406,8 @@ public abstract class SamplerBase extends BaseCategory implements SamplerCategor
 			}
 			if( result != null )
 			{
-				// DON'T REMOVE THIS! Returning null means that the sampler will
-				// manually call sampleCompleted (for asynchronous samplers).
+				// DON'T REMOVE THIS! Returning null means that the runner will
+				// manually call sampleCompleted (for asynchronous runners).
 				sampleCompleted( result, startTime );
 			}
 		}
@@ -445,10 +445,10 @@ public abstract class SamplerBase extends BaseCategory implements SamplerCategor
 	{
 		try
 		{
-			String runnerId = id.split( "/" )[1];
+			String agentId = id.split( "/" )[1];
 			CanvasItem canvasItem = getContext().getCanvas();
-			for( RunnerItem runner : canvasItem.getProject().getRunnersAssignedTo( ( SceneItem )canvasItem ) )
-				if( runner.getId().equals( runnerId ) )
+			for( AgentItem agent : canvasItem.getProject().getAgentsAssignedTo( ( SceneItem )canvasItem ) )
+				if( agent.getId().equals( agentId ) )
 					return true;
 		}
 		catch( Exception e )
@@ -481,6 +481,7 @@ public abstract class SamplerBase extends BaseCategory implements SamplerCategor
 			else if( CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
 			{
 				queue.clear();
+				queued.set( 0 );
 			}
 		}
 		else if( event instanceof PropertyEvent )
@@ -527,7 +528,7 @@ public abstract class SamplerBase extends BaseCategory implements SamplerCategor
 
 	@Override
 	@SuppressWarnings( "unchecked" )
-	public void handleStatisticsData( Map<RunnerItem, Object> statisticsData )
+	public void handleStatisticsData( Map<AgentItem, Object> statisticsData )
 	{
 		long avgSum = 0;
 		for( Object data : statisticsData.values() )
@@ -714,7 +715,7 @@ public abstract class SamplerBase extends BaseCategory implements SamplerCategor
 			if( ProjectItem.ASSIGNMENTS.equals( event.getKey() ) && event.getEvent().equals( Event.REMOVED ) )
 			{
 				Assignment assignment = ( Assignment )event.getElement();
-				remoteValues.remove( getContext().getId() + "/" + assignment.getRunner().getId() );
+				remoteValues.remove( getContext().getId() + "/" + assignment.getAgent().getId() );
 			}
 		}
 	}
