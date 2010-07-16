@@ -113,6 +113,16 @@ public class SettingsTableModel extends AbstractTableModel
 		return hashCode;
 	}
 
+	public void update(SettingsTableModel model){
+		for (int i = 0; i < model.getRowCount(); i++) {
+			PropertyProxy p = data.get(i);
+			p.setValue(model.getValueAt(i, 1));
+		}
+		hashCode();
+		fireTableDataChanged();
+		observer.startNotification();
+	}
+	
 	public void addRow( PropertyProxy p )
 	{
 		data.add( p );

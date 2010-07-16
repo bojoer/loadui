@@ -48,6 +48,7 @@ import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.ui.table.SettingsTableModel.PropertyProxy;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.LayoutContainer;
@@ -62,6 +63,7 @@ import javafx.geometry.VPos;
 
 import com.eviware.loadui.api.layout.TableLayoutComponent;
 import javax.swing.table.TableModel;
+import com.eviware.loadui.api.ui.table.*;
 
 /**
  * @author robert
@@ -75,6 +77,8 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.dialogs
 public class DefaultComponentSettingsPanel extends StylesheetAware {
 	
 	var propertyBuffer:HashMap= new HashMap();
+	
+	var tableModelBuffer: HashMap= new HashMap();
 	
 	/*
 	 * Component for which is this dialog.
@@ -155,10 +159,35 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 				formField;
 			} else if(c instanceof TableLayoutComponent) {
 				var p: TableLayoutComponent = c as TableLayoutComponent;
-				Form.fieldForType(TableModel.class, p.getLabel(), p.getLabel(), p.getTableModel());
+				var model: TableModel;
+				if(p.getTableModel() instanceof SettingsTableModel){
+					model = cloneSettingsTableModel(p.getTableModel() as SettingsTableModel);
+					tableModelBuffer.put(p.getTableModel(), model);	
+				}
+				else{
+					model = p.getTableModel();
+				}
+				Form.fieldForType(TableModel.class, p.getLabel(), p.getLabel(), model);
 			} else if(c instanceof LayoutContainer) {
 				buildSettingsTabComponents((c as LayoutContainer).toArray(), level + 1);
 			} else null
+		}
+	}
+	
+	function cloneSettingsTableModel(fromModel: SettingsTableModel): SettingsTableModel{
+		var cloneModel = new SettingsTableModel();
+		for(i in [0..fromModel.getRowCount()-1]){
+			cloneModel.addRow(fromModel.getValueAt(i, 0) as String, fromModel.getValueAt(i, 1), fromModel.getValueAt(i, 1).getClass());
+		}
+		cloneModel;
+	}
+	
+	function updateTableModels(): Void {
+		var keys: Iterator = tableModelBuffer.keySet().iterator();
+		while(keys.hasNext()){
+			var orig: SettingsTableModel = keys.next() as SettingsTableModel;
+			var clone: SettingsTableModel = tableModelBuffer.get(orig) as SettingsTableModel;
+			orig.update(clone);
 		}
 	}
 	
@@ -200,6 +229,7 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 				]
 			}
 			onOk: function() {
+				updateTableModels();
 				for( property in component.getProperties()[p|not p.getKey().startsWith("_")] ) {
 					var pp:PropertyProxy = propertyBuffer.get(property.getKey()) as PropertyProxy;
 					if ( pp != null ) {
