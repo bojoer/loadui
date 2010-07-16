@@ -59,8 +59,8 @@ import com.eviware.loadui.fx.ui.pagelist.PagelistControl;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.DroppableNode;
-import com.eviware.loadui.fx.dialogs.CreateNewRunnerDialog;
-import com.eviware.loadui.fx.widgets.toolbar.RunnerToolbarItem;
+import com.eviware.loadui.fx.dialogs.CreateNewAgentDialog;
+import com.eviware.loadui.fx.widgets.toolbar.AgentToolbarItem;
 import com.eviware.loadui.fx.widgets.TestCaseIconListener;
 import com.eviware.loadui.fx.widgets.canvas.ProjectCanvas;
 import com.eviware.loadui.api.model.CanvasItem;
@@ -73,8 +73,8 @@ import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
 import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
 import com.eviware.loadui.fx.ui.popup.PopupMenu;
 
-import com.eviware.loadui.fx.runners.discovery.RunnerDiscoverer;
-import com.eviware.loadui.fx.runners.discovery.RunnerDiscovererDialog;
+import com.eviware.loadui.fx.agents.discovery.AgentDiscoverer;
+import com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog;
 
 import java.util.EventObject;
 import java.util.Comparator;
@@ -85,25 +85,25 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.WorkspaceItem;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import org.slf4j.LoggerFactory;
 
-public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.RunnerInspector" );
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentInspector" );
 
 /**
  * Static factory method easily invocable from Java Code.
  */
 public function createInstance(name: String) {
-	def runnerInspector = RunnerInspector {name: name};
-	runnerInspector;
+	def AgentInspector = AgentInspector {name: name};
+	AgentInspector;
 }
 
 /**
- * A RunnerInspector.
+ * A AgentInspector.
  *
  * @author predrag
  */
-public class RunnerInspector extends Inspector {
+public class AgentInspector extends Inspector {
 	
 	public-init var name: String;
 	
@@ -114,7 +114,7 @@ public class RunnerInspector extends Inspector {
 	}
 	
 	override function getPanel(): Object {
-		RunnerInspectorPanel {}
+		AgentInspectorPanel {}
 	}
 
 	override function getName(): String {
@@ -131,7 +131,7 @@ public class RunnerInspector extends Inspector {
 	
 }
 
-public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resizable, EventHandler {
+public class AgentInspectorPanel extends CustomNode, TestCaseIconListener, Resizable, EventHandler {
 
 	//refernce to a workspace
 	def workspace: WorkspaceItem = bind MainWindow.instance.workspace on replace oldVal {
@@ -151,10 +151,10 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 		}
 	}
 
-	//determines if test cases will be executed localy or on runners
-	var onRunners: Boolean = not workspace.isLocalMode();
+	//determines if test cases will be executed localy or on agents
+	var onAgents: Boolean = not workspace.isLocalMode();
 	
-	//pagelist that holds runners
+	//pagelist that holds agents
 	var pagelist: PagelistControl;
 	
 	//component paddings
@@ -163,15 +163,15 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 	def paddingBottom: Number = 16;
 	def paddingRight: Number = 35;
 	
-	//width of panel that holds ghost runner
+	//width of panel that holds ghost agent
 	def leftPanelWidth: Number = 210;
 	//components in left panel are moved to right from the center by this offset
 	def leftPanelContentOffset: Number = 40;
 	
-	//ghost runner instance
-	var ghostRunner: RunnerInspectorNode;
+	//ghost agent instance
+	var ghostAgent: AgentInspectorNode;
 	
-	//fill of inactive panel (can be local or onRunners)
+	//fill of inactive panel (can be local or onAgents)
 	def inactivePanelFill = LinearGradient {
 		endX: 0
 		stops: [
@@ -181,7 +181,7 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 		]
 	}
 	
-	//fill of active panel (can be local or onRunners)
+	//fill of active panel (can be local or onAgents)
 	def activePanelFill = LinearGradient {
 		endX: 0
 		stops: [
@@ -197,7 +197,7 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 				def event = e as PropertyEvent;
 				if( WorkspaceItem.LOCAL_MODE_PROPERTY == event.getProperty().getKey() ) {
 					runInFxThread( function():Void {
-						onRunners = not ( event.getProperty().getValue() as Boolean );
+						onAgents = not ( event.getProperty().getValue() as Boolean );
 					} );
 				}
 			} else if( e instanceof CollectionEvent ) {
@@ -215,15 +215,15 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 						});
 					}
 				}
-				else if( WorkspaceItem.RUNNERS == event.getKey() ) {
+				else if( WorkspaceItem.AGENTS == event.getKey() ) {
 					if( event.getEvent() == CollectionEvent.Event.ADDED ) {
 						runInFxThread( function():Void {
-							addRunner(event.getElement() as RunnerItem);
+							addAgent(event.getElement() as AgentItem);
 						});
 					} else {
 						runInFxThread( function():Void {
-							clearTestCases(event.getElement() as RunnerItem);
-							removeRunner(event.getElement() as RunnerItem);
+							clearTestCases(event.getElement() as AgentItem);
+							removeAgent(event.getElement() as AgentItem);
 						});
 					}
 				}
@@ -235,7 +235,7 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 				if( ProjectItem.SCENES == event.getKey() ) {
 					if( event.getEvent() == CollectionEvent.Event.ADDED ) {
 						runInFxThread( function():Void {
-							ghostRunner.addTestCase(TestCaseIcon{
+							ghostAgent.addTestCase(TestCaseIcon{
 									stateListeners: [this]
 									sceneItem: (event.getElement() as SceneItem)
 								}
@@ -251,11 +251,11 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 					def a: Assignment = event.getElement() as Assignment;
 					if( event.getEvent() == CollectionEvent.Event.ADDED ) {
 						runInFxThread( function():Void {
-							deployTestCase(a.getScene(), a.getRunner())
+							deployTestCase(a.getScene(), a.getAgent())
 						});
 					} else {
 						runInFxThread( function():Void {
-							undeployTestCase(a.getScene(), a.getRunner())
+							undeployTestCase(a.getScene(), a.getAgent())
 						});
 					}
 				}
@@ -273,15 +273,15 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 
 	override function selectionChanged(tc: TestCaseIcon): Void {
 		for(rin in pagelist.content){
-			(rin as RunnerInspectorNode).selectTestCaseIcon(tc);
+			(rin as AgentInspectorNode).selectTestCaseIcon(tc);
 		}
-		ghostRunner.selectTestCaseIcon(tc);
+		ghostAgent.selectTestCaseIcon(tc);
 	}
 	
 	override function testCaseRemoved(tc: TestCaseIcon): Void {}
 	
 	var localButton: ToggleActionButton;
-	var onRunnersButton: ToggleActionButton;
+	var onAgentsButton: ToggleActionButton;
 	
 	override function create() {
 		var text: Text;
@@ -294,14 +294,14 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 			ActionMenuItem {
 				text: "Detect Agents"
 				action: function() {
-					RunnerDiscovererDialog{}.show();
+					AgentDiscovererDialog{}.show();
 				}
 			}
 			SeparatorMenuItem{}
 			ActionMenuItem {
 				text: "New Agent"
 				action: function() {
-					CreateNewRunnerDialog{ workspace: workspace };
+					CreateNewAgentDialog{ workspace: workspace };
 				}
 			}
 		];
@@ -319,7 +319,7 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 					height: bind panelHeight
 					width: bind width - paddingLeft - paddingRight - leftPanelWidth
 					itemSpacing: 18
-					fill: bind if(onRunners) activePanelFill else inactivePanelFill
+					fill: bind if(onAgents) activePanelFill else inactivePanelFill
 					fillOpacity: 1.0
 					leftArrowActive: "{__ROOT__}images/leftarrow_active_nontransparent.fxz";
 					leftArrowInactive: "{__ROOT__}images/leftarrow_inactive_nontransparent.fxz";
@@ -351,7 +351,7 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 					layoutX: leftPanelWidth - 15
 				    width: 30  
 				    height: bind panelHeight
-				    fill: bind if(onRunners) activePanelFill else inactivePanelFill
+				    fill: bind if(onAgents) activePanelFill else inactivePanelFill
 				}
 				Rectangle {
 					layoutX: leftPanelWidth
@@ -367,16 +367,16 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 				    height: bind panelHeight
 				    arcWidth: 15  
 				    arcHeight: 15
-				    fill: bind if(onRunners) inactivePanelFill else activePanelFill
+				    fill: bind if(onAgents) inactivePanelFill else activePanelFill
 				}
 				Rectangle { //left panel, main part
 					layoutX: 15
 					layoutY: 0
 				    width: bind leftPanelWidth - 15  
 				    height: bind panelHeight
-				    fill: bind if(onRunners) inactivePanelFill else activePanelFill
+				    fill: bind if(onAgents) inactivePanelFill else activePanelFill
 				}
-				Line { //bright line under the runner component on left panel 
+				Line { //bright line under the agent component on left panel 
 					startX: leftPanelContentOffset - 10
 					endX: bind leftPanelWidth - 20
 					startY: bind panelHeight - 50
@@ -402,25 +402,25 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 			        toggleGroup: buttonGroup
 			        layoutX: bind leftPanelWidth - 15 - localButton.layoutBounds.width
 					layoutY: 15
-					selected: not onRunners
+					selected: not onAgents
 			        action: function(): Void {
 						workspace.setLocalMode( true );
 					}
 			    }
-				onRunnersButton	= ToggleActionButton {
+				onAgentsButton	= ToggleActionButton {
 			        text: "On agents"
 			        toggleGroup: buttonGroup
 			        layoutX: bind leftPanelWidth + 15
 					layoutY: 15
-					selected: onRunners
+					selected: onAgents
 			        action: function(): Void {
 						workspace.setLocalMode( false );
 					}
 			    }
-			    ghostRunner = RunnerInspectorNode { 
+			    ghostAgent = AgentInspectorNode { 
 			    	layoutX: leftPanelContentOffset
-					layoutY: bind panelHeight - 50 - ghostRunner.layoutBounds.height
-			    	ghostRunner: true
+					layoutY: bind panelHeight - 50 - ghostAgent.layoutBounds.height
+			    	ghostAgent: true
 			    }
 			]
 		}
@@ -436,26 +436,26 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 		}
 	}
 
-	/** Adds runner node to list */
-	function addRunner( runner: RunnerItem ):Void {
-		pagelist.content = Sequences.sort( [ pagelist.content, RunnerInspectorNode { runner: runner } ], COMPARE_BY_TOSTRING ) as Node[];
+	/** Adds agent node to list */
+	function addAgent( agent: AgentItem ):Void {
+		pagelist.content = Sequences.sort( [ pagelist.content, AgentInspectorNode { agent: agent } ], COMPARE_BY_TOSTRING ) as Node[];
 	}
 	
-	/** Removes runner from the list */
-	function removeRunner( runner:RunnerItem ):Void {
-		for( node in pagelist.content[p|p instanceof RunnerNode] )
-			if( (node as RunnerNode).runner == runner )
+	/** Removes agent from the list */
+	function removeAgent( agent:AgentItem ):Void {
+		for( node in pagelist.content[p|p instanceof AgentNode] )
+			if( (node as AgentNode).agent == agent )
 				delete node from pagelist.content;
-		for( node in pagelist.content[p|p instanceof RunnerInspectorNode] )
-			if( (node as RunnerInspectorNode).runner == runner )
+		for( node in pagelist.content[p|p instanceof AgentInspectorNode] )
+			if( (node as AgentInspectorNode).agent == agent )
 				delete node from pagelist.content;
 	}
 	
-	/** Assign testcase to a specified runner */
-	function deployTestCase(scene: SceneItem, runner: RunnerItem): Void {
+	/** Assign testcase to a specified agent */
+	function deployTestCase(scene: SceneItem, agent: AgentItem): Void {
 		for(rin in pagelist.content){
-			if((rin as RunnerInspectorNode).runner == runner){
-				(rin as RunnerInspectorNode).addTestCase(TestCaseIcon{
+			if((rin as AgentInspectorNode).agent == agent){
+				(rin as AgentInspectorNode).addTestCase(TestCaseIcon{
 						stateListeners: [this]
 						sceneItem: scene
 					}
@@ -465,10 +465,10 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 		}
 	}
 	
-	/** Assign testcase to all runners */
+	/** Assign testcase to all agents */
 	function deployTestCase(scene: SceneItem): Void {
 		for(rin in pagelist.content){
-			(rin as RunnerInspectorNode).addTestCase(TestCaseIcon{
+			(rin as AgentInspectorNode).addTestCase(TestCaseIcon{
 					stateListeners: [this]
 					sceneItem: scene
 				}
@@ -476,25 +476,25 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 		}
 	}
 	
-	/** Unassign testcas from specified runner */
-	function undeployTestCase(scene: SceneItem, runner: RunnerItem): Void {
+	/** Unassign testcas from specified agent */
+	function undeployTestCase(scene: SceneItem, agent: AgentItem): Void {
 		for(rin in pagelist.content){
-			if((rin as RunnerInspectorNode).runner == runner){
-				(rin as RunnerInspectorNode).undeployTestCase(scene);
+			if((rin as AgentInspectorNode).agent == agent){
+				(rin as AgentInspectorNode).undeployTestCase(scene);
 				return;
 			}
 		}
 	}
 	
-	/** Unassign testcas from all runners it is assigned to */
+	/** Unassign testcas from all agents it is assigned to */
 	function undeployTestCase(sceneItem: SceneItem): Void{
-		ghostRunner.undeployTestCase(sceneItem);
+		ghostAgent.undeployTestCase(sceneItem);
 		for(rin in pagelist.content){
-			(rin as RunnerInspectorNode).undeployTestCase(sceneItem);
+			(rin as AgentInspectorNode).undeployTestCase(sceneItem);
 		}
 	}
 	
-	/** Re-populates test cases to ghost runner and all other runners they are assigned to */
+	/** Re-populates test cases to ghost agent and all other agents they are assigned to */
 	function populateTestCases(): Void{
 		clearTestCases();
 		var projectItem: ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
@@ -505,13 +505,13 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 						stateListeners: [this]
 						sceneItem: s as SceneItem
 				} 
-				ghostRunner.addTestCase(tc);
+				ghostAgent.addTestCase(tc);
 				
-				var rin: RunnerInspectorNode;
-				var runners = projectItem.getRunnersAssignedTo(s as SceneItem);
-				if(runners != null){
-					for(r in runners){
-						rin = findRunnerNode(r as RunnerItem);
+				var rin: AgentInspectorNode;
+				var agents = projectItem.getAgentsAssignedTo(s as SceneItem);
+				if(agents != null){
+					for(r in agents){
+						rin = findAgentNode(r as AgentItem);
 						if(rin != null){
 							rin.addTestCase(tc.copy());
 						}
@@ -521,29 +521,29 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 		}
 	}
 	
-	/** Find runner node by it's runner */
-	function findRunnerNode(runner: RunnerItem): RunnerInspectorNode {
+	/** Find agent node by it's agent */
+	function findAgentNode(agent: AgentItem): AgentInspectorNode {
 		for(rin in pagelist.content){
-			if((rin as RunnerInspectorNode).runner == runner){
-				return rin as RunnerInspectorNode;
+			if((rin as AgentInspectorNode).agent == agent){
+				return rin as AgentInspectorNode;
 			}
 		}
-		return null as RunnerInspectorNode;
+		return null as AgentInspectorNode;
 	}
 	
-	/** Clear test cases from all runner nodes wiothout unassigning them */
+	/** Clear test cases from all agent nodes wiothout unassigning them */
 	function clearTestCases(): Void{
-		ghostRunner.clearTestCases(false);
+		ghostAgent.clearTestCases(false);
 		for(rin in pagelist.content){
-			(rin as RunnerInspectorNode).clearTestCases(false);
+			(rin as AgentInspectorNode).clearTestCases(false);
 		}
 	}
 	
-	/** Clear test cases from the runner node specified by it's runner with unassigning them */
-	function clearTestCases(runner: RunnerItem): Void{
+	/** Clear test cases from the agent node specified by it's agent with unassigning them */
+	function clearTestCases(agent: AgentItem): Void{
 		for(rin in pagelist.content){
-			if((rin as RunnerInspectorNode).runner == runner){
-				(rin as RunnerInspectorNode).clearTestCases(true);
+			if((rin as AgentInspectorNode).agent == agent){
+				(rin as AgentInspectorNode).clearTestCases(true);
 				return;
 			}
 		}
@@ -553,26 +553,26 @@ public class RunnerInspectorPanel extends CustomNode, TestCaseIconListener, Resi
 	 *  on value of the other argument. 
 	 */
 	function selectTestCaseIcon(sceneItem: SceneItem, selected: Boolean): Void {
-		ghostRunner.selectTestCaseIcon(sceneItem, selected);
+		ghostAgent.selectTestCaseIcon(sceneItem, selected);
 		for(rin in pagelist.content){
-			(rin as RunnerInspectorNode).selectTestCaseIcon(sceneItem, selected);
+			(rin as AgentInspectorNode).selectTestCaseIcon(sceneItem, selected);
 		}
 	}
 	
 	/** Deselects all testcase icons */
 	function deselectTestCaseIcons(): Void {
-		ghostRunner.deselectTestCaseIcons();
+		ghostAgent.deselectTestCaseIcons();
 		for(rin in pagelist.content){
-			(rin as RunnerInspectorNode).deselectTestCaseIcons();
+			(rin as AgentInspectorNode).deselectTestCaseIcons();
 		}
 	}
 	
 	postinit {
-		//add runners on workspace replace
+		//add agents on workspace replace
 		var tmp = MainWindow.instance.workspace on replace {
 			if(tmp != null){
-				for(runner in tmp.getRunners()){
-					addRunner(runner);
+				for(agent in tmp.getAgents()){
+					addAgent(agent);
 				}
 			}
 		};
@@ -630,7 +630,7 @@ public class ToggleActionButton extends CustomNode {
                 layoutX: 0
                 layoutY: 0
                 image: Image {
-                    url: "{__ROOT__}images/png/inspector-runners-left-default.png"
+                    url: "{__ROOT__}images/png/inspector-agents-left-default.png"
                 }
             },
             middle = ImageView {
@@ -639,14 +639,14 @@ public class ToggleActionButton extends CustomNode {
                 scaleX: bind if(width > -1) width - 12 else label.layoutBounds.width + 14
                 translateX: bind if(width > -1) (width - 12) / 2 else (label.layoutBounds.width + 14) / 2 - .5
                 image: Image {
-                    url: "{__ROOT__}images/png/inspector-runners-mid-default.png"
+                    url: "{__ROOT__}images/png/inspector-agents-mid-default.png"
                 }
             },
             right = ImageView {
                 layoutY: 0
                 layoutX: bind middle.boundsInParent.width + left.layoutBounds.width - 1
                 image: Image {
-                    url: "{__ROOT__}images/png/inspector-runners-right-default.png"
+                    url: "{__ROOT__}images/png/inspector-agents-right-default.png"
                 }
             },
 			label = Text {
@@ -665,7 +665,7 @@ public class ToggleActionButton extends CustomNode {
                 layoutX: 0
                 layoutY: 0
                 image: Image {
-                    url: "{__ROOT__}images/png/inspector-runners-left-active.png"
+                    url: "{__ROOT__}images/png/inspector-agents-left-active.png"
                 }
             },
             middle = ImageView {
@@ -674,14 +674,14 @@ public class ToggleActionButton extends CustomNode {
                 scaleX: bind if(width > -1) width - 12 else label.layoutBounds.width + 14
                 translateX: bind if(width > -1) (width - 12) / 2 else (label.layoutBounds.width + 14) / 2 - .5
                 image: Image {
-                    url: "{__ROOT__}images/png/inspector-runners-mid-active.png"
+                    url: "{__ROOT__}images/png/inspector-agents-mid-active.png"
                 }
             },
             right = ImageView {
                 layoutY:0
                 layoutX: bind middle.boundsInParent.width + left.layoutBounds.width - 1
                 image: Image {
-                    url: "{__ROOT__}images/png/inspector-runners-right-active.png"
+                    url: "{__ROOT__}images/png/inspector-agents-right-active.png"
                 }
             },
             label = Text {

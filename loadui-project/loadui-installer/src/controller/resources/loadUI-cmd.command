@@ -1,7 +1,7 @@
 #!/bin/sh
 ### ====================================================================== ###
 ##                                                                          ##
-##  loadUI Runner Bootstrap Script                                          ##
+##  loadUI Agent Bootstrap Script                                          ##
 ##                                                                          ##
 ### ====================================================================== ###
 
@@ -18,22 +18,22 @@ case "`uname`" in
 esac
 
 # Setup LOADUI_HOME
-if [ "x$LOADUI_RUNNER_HOME" = "x" ]
+if [ "x$LOADUI_AGENT_HOME" = "x" ]
 then
     # get the full path (without any relative bits)
-    LOADUI_RUNNER_HOME=`cd $DIRNAME/; pwd`
+    LOADUI_AGENT_HOME=`cd $DIRNAME/; pwd`
 fi
-export LOADUI_RUNNER_HOME
+export LOADUI_AGENT_HOME
 
-LOADUI_RUNNER_CLASSPATH="$LOADUI_RUNNER_HOME:$LOADUI_RUNNER_HOME/lib/*"
+LOADUI_AGENT_CLASSPATH="$LOADUI_AGENT_HOME:$LOADUI_AGENT_HOME/lib/*"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin
 then
-    LOADUI_RUNNER_HOME=`cygpath --path -w "$LOADUI_RUNNER_HOME"`
-    LOADUI_RUNNER_CLASSPATH=`cygpath --path -w "$LOADUI_RUNNER_CLASSPATH"`
+    LOADUI_AGENT_HOME=`cygpath --path -w "$LOADUI_AGENT_HOME"`
+    LOADUI_AGENT_CLASSPATH=`cygpath --path -w "$LOADUI_AGENT_CLASSPATH"`
 fi 
 
 JAVA_OPTS="-Xms128m -Xmx768m -XX:MaxPermSize=128m"
 
-java $JAVA_OPTS -cp "$LOADUI_RUNNER_CLASSPATH" com.eviware.loadui.launcher.LoadUICommandLineLauncher "$@"
+java $JAVA_OPTS -cp "$LOADUI_AGENT_CLASSPATH" com.eviware.loadui.launcher.LoadUICommandLineLauncher "$@"

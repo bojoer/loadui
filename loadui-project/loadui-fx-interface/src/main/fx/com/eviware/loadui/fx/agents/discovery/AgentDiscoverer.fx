@@ -13,25 +13,25 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.fx.runners.discovery;
+package com.eviware.loadui.fx.agents.discovery;
 
-import com.eviware.loadui.api.discovery.RunnerDiscovery;
-import com.eviware.loadui.api.discovery.RunnerDiscovery.*;
+import com.eviware.loadui.api.discovery.AgentDiscovery;
+import com.eviware.loadui.api.discovery.AgentDiscovery.*;
 import com.eviware.loadui.api.model.WorkspaceItem;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.MainWindow;
 
 import java.util.HashSet;
 import java.util.Collection;
 
-public-read var instance: RunnerDiscoverer;
+public-read var instance: AgentDiscoverer;
 
-public class RunnerDiscoverer {
+public class AgentDiscoverer {
 
-	var runnerDiscovery: RunnerDiscovery;
-	public function setRunnerDiscovery(runnerDiscovery: RunnerDiscovery):Void { 
-		this.runnerDiscovery = runnerDiscovery; 
+	var AgentDiscovery: AgentDiscovery;
+	public function setAgentDiscovery(AgentDiscovery: AgentDiscovery):Void { 
+		this.AgentDiscovery = AgentDiscovery; 
 	}
 
 	function initialize(): Void {
@@ -42,25 +42,25 @@ public class RunnerDiscoverer {
 		instance = this;
 	}
 	
-	public function getNewRunners(): RunnerReference[] {
-		var result: RunnerReference[] = [];
-		if(runnerDiscovery != null){
+	public function getNewAgents(): AgentReference[] {
+		var result: AgentReference[] = [];
+		if(AgentDiscovery != null){
 			var ids = new HashSet();
 			var urls = new HashSet();
 			var workspace: WorkspaceItem = MainWindow.instance.workspace;
 			if(workspace != null){
-				for(r in workspace.getRunners()){
+				for(r in workspace.getAgents()){
 					ids.add(r.getId());
 					urls.add(r.getUrl());
 				}
 			}
 	
-			var discovered: Collection = runnerDiscovery.getDiscoveredRunners();
+			var discovered: Collection = AgentDiscovery.getDiscoveredAgents();
 			for(d in discovered){
-				def id = (d as RunnerReference).getId();
-				def url = (d as RunnerReference).getUrl();
+				def id = (d as AgentReference).getId();
+				def url = (d as AgentReference).getUrl();
 				if(not ids.contains(id) and not urls.contains(url)){
-					insert d as RunnerReference into result;
+					insert d as AgentReference into result;
 				}
 			}
 		}

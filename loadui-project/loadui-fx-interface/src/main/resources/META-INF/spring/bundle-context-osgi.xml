@@ -18,7 +18,7 @@
 	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
 		ref="systemLogInspector" />
 	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
-		ref="runnerInspector" />
+		ref="AgentInspector" />
 
 	<osgi:set id="inspectors" interface="com.eviware.loadui.api.ui.inspector.Inspector"
 		cardinality="0..N">
@@ -40,7 +40,7 @@
 	 <!-- 
 	<osgi:reference id="executorService" interface="java.util.concurrent.ThreadPoolExecutor"></osgi:reference>
 	 -->
-	<osgi:reference id="runnerDiscovery" interface="com.eviware.loadui.api.discovery.RunnerDiscovery" />
+	<osgi:reference id="AgentDiscovery" interface="com.eviware.loadui.api.discovery.AgentDiscovery" />
 	
 	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
 		ref="tableWidget" />

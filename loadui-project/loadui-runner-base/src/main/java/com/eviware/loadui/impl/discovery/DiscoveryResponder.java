@@ -21,7 +21,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.UUID;
 
-import com.eviware.loadui.api.discovery.RunnerDiscovery;
+import com.eviware.loadui.api.discovery.AgentDiscovery;
 
 public class DiscoveryResponder
 {
@@ -38,7 +38,7 @@ public class DiscoveryResponder
 		try
 		{
 			label = InetAddress.getLocalHost().getHostName();
-			socket = new DatagramSocket( RunnerDiscovery.BROADCAST_PORT );
+			socket = new DatagramSocket( AgentDiscovery.BROADCAST_PORT );
 		}
 		catch( Exception e )
 		{
@@ -63,7 +63,7 @@ public class DiscoveryResponder
 						String received = new String( packet.getData(), 0, packet.getLength() );
 						if( "DISCOVER".equals( received ) )
 						{
-							buf = ( "RUNNER https://" + ip + ":" + System.getProperty( "loadui.https.port", "8443" ) + "/ "
+							buf = ( "AGENT https://" + ip + ":" + System.getProperty( "loadui.https.port", "8443" ) + "/ "
 									+ label + " " + id ).getBytes();
 							packet = new DatagramPacket( buf, buf.length, packet.getAddress(), packet.getPort() );
 							socket.send( packet );
@@ -76,7 +76,7 @@ public class DiscoveryResponder
 				}
 
 			}
-		}, "loadUI Runner discovery" );
+		}, "loadUI Agent discovery" );
 
 		responderThread.setDaemon( true );
 		responderThread.start();

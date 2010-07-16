@@ -50,7 +50,7 @@ import com.eviware.loadui.api.model.Assignment;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
@@ -92,7 +92,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private boolean propagate = true;
 	private final DualTerminal remoteTerminal = new RemoteTerminal();
 	private final DualTerminal controllerTerminal = new ControllerTerminal();
-	private final Map<RunnerItem, RunnerTerminal> runnerTerminals = new HashMap<RunnerItem, RunnerTerminal>();
+	private final Map<AgentItem, AgentTerminal> agentTerminals = new HashMap<AgentItem, AgentTerminal>();
 
 	private ActivityStrategy activityStrategy;
 	private final ActivityListener activityListener = new ActivityListener();
@@ -327,17 +327,17 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 	}
 
-	public void sendRunnerMessage( RunnerItem runner, TerminalMessage message )
+	public void sendAgentMessage( AgentItem agent, TerminalMessage message )
 	{
-		doHandleTerminalEvent( remoteTerminal, new TerminalMessageEvent( getRunnerTerminal( runner ), message ) );
+		doHandleTerminalEvent( remoteTerminal, new TerminalMessageEvent( getAgentTerminal( agent ), message ) );
 	}
 
-	private RunnerTerminal getRunnerTerminal( RunnerItem runner )
+	private AgentTerminal getAgentTerminal( AgentItem agent )
 	{
-		if( !runnerTerminals.containsKey( runner ) )
-			runnerTerminals.put( runner, new RunnerTerminal( runner ) );
+		if( !agentTerminals.containsKey( agent ) )
+			agentTerminals.put( agent, new AgentTerminal( agent ) );
 
-		return runnerTerminals.get( runner );
+		return agentTerminals.get( agent );
 	}
 
 	private class TerminalEventHandler implements Runnable
@@ -404,18 +404,18 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 				SceneItem scene = assignment.getScene();
 				if( scene == getCanvas() )
 				{
-					RunnerItem runner = assignment.getRunner();
-					RunnerTerminal runnerTerminal;
+					AgentItem agent = assignment.getAgent();
+					AgentTerminal agentTerminal;
 					if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
 					{
-						runnerTerminal = new RunnerTerminal( runner );
-						runnerTerminals.put( runner, runnerTerminal );
+						agentTerminal = new AgentTerminal( agent );
+						agentTerminals.put( agent, agentTerminal );
 					}
 					else
 					{
-						runnerTerminal = runnerTerminals.remove( runner );
+						agentTerminal = agentTerminals.remove( agent );
 					}
-					fireCollectionEvent( ComponentContext.RUNNER_TERMINALS, event.getEvent(), runnerTerminal );
+					fireCollectionEvent( ComponentContext.AGENT_TERMINALS, event.getEvent(), agentTerminal );
 				}
 			}
 		}
@@ -492,10 +492,10 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 						( ( SceneItem )canvas ).broadcastMessage( ComponentContext.COMPONENT_CONTEXT_CHANNEL, data );
 					}
 				}
-				else if( terminal instanceof RunnerTerminal )
+				else if( terminal instanceof AgentTerminal )
 				{
 					List<Object> data = Arrays.asList( getId(), message.serialize() );
-					( ( RunnerTerminal )terminal ).runner.sendMessage( ComponentContext.COMPONENT_CONTEXT_CHANNEL, data );
+					( ( AgentTerminal )terminal ).agent.sendMessage( ComponentContext.COMPONENT_CONTEXT_CHANNEL, data );
 				}
 			}
 		}
@@ -710,12 +710,12 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		}
 
 		@Override
-		public Collection<DualTerminal> getRunnerTerminals()
+		public Collection<DualTerminal> getAgentTerminals()
 		{
 			List<DualTerminal> terminals = new ArrayList<DualTerminal>();
 			if( "controller".equals( System.getProperty( "loadui.instance" ) ) && getCanvas() instanceof SceneItem )
-				for( RunnerItem runner : getCanvas().getProject().getRunnersAssignedTo( ( SceneItem )getCanvas() ) )
-					terminals.add( getRunnerTerminal( runner ) );
+				for( AgentItem agent : getCanvas().getProject().getAgentsAssignedTo( ( SceneItem )getCanvas() ) )
+					terminals.add( getAgentTerminal( agent ) );
 
 			return terminals;
 		}
@@ -842,25 +842,25 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		}
 	}
 
-	private class RunnerTerminal extends DummyTerminal
+	private class AgentTerminal extends DummyTerminal
 	{
-		private final RunnerItem runner;
+		private final AgentItem agent;
 
-		public RunnerTerminal( RunnerItem runner )
+		public AgentTerminal( AgentItem agent )
 		{
-			this.runner = runner;
+			this.agent = agent;
 		}
 
 		@Override
 		public String getLabel()
 		{
-			return runner.getLabel();
+			return agent.getLabel();
 		}
 
 		@Override
 		public String getId()
 		{
-			return ComponentItemImpl.this.getId() + "/" + runner.getId();
+			return ComponentItemImpl.this.getId() + "/" + agent.getId();
 		}
 	}
 

@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.eviware.loadui.util.MapUtils;
+import org.apache.commons.math.stat.descriptive.rank.Percentile;
+
 
 public class ValueStatistics
 {
@@ -112,6 +114,17 @@ public class ValueStatistics
 		}
 
 		long duration = dataPoints.get( dataPoints.size() - 1 ).timestamp - dataPoints.get( 0 ).timestamp;
+		
+		Percentile perc = new Percentile(90);
+		
+		double [] dataSet = new double [dataPoints.size()];
+		int i = 0;
+		for (DataPoint point:dataPoints ) {
+			dataSet[i] = point.value;
+			i++;
+		}
+		
+		double percentile = perc.evaluate(dataSet, 90);
 
 		return MapUtils.build( String.class, Number.class ) //
 				.put( "Max", max ) //
@@ -123,6 +136,7 @@ public class ValueStatistics
 				.put( "Avg-Tps", duration > 0 ? 1000 * count / duration : 0 ) //
 				.put( "Vps", vps ) //
 				.put( "Avg-Vps", duration > 0 ? 1000 * sum / duration : 0 ) //
+				.put( "Percentile", percentile ) //
 				.get();
 	}
 

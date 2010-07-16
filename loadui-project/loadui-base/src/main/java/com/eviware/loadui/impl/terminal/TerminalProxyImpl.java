@@ -31,7 +31,7 @@ import com.eviware.loadui.api.events.TerminalRemoteMessageEvent;
 import com.eviware.loadui.api.events.TerminalSignatureEvent;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.Terminal;
@@ -184,7 +184,7 @@ public class TerminalProxyImpl implements TerminalProxy
 				OutputTerminalImpl source = ( OutputTerminalImpl )target;
 				TerminalMessage content = new TerminalMessageImpl( conversionService );
 				content.load( message.get( CONTENT ) );
-				source.fireEvent( new TerminalRemoteMessageEvent( source, content, ( RunnerItem )endpoint ) );
+				source.fireEvent( new TerminalRemoteMessageEvent( source, content, ( AgentItem )endpoint ) );
 			}
 		}
 	}

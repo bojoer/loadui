@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.api.events;
 
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 
@@ -28,7 +28,7 @@ public class TerminalRemoteMessageEvent extends TerminalMessageEvent
 {
 	private static final long serialVersionUID = -7549002891636662868L;
 
-	private final RunnerItem runner;
+	private final AgentItem agent;
 
 	/**
 	 * Constructs a TerminalRemoteMessageEvent to be fired.
@@ -37,22 +37,22 @@ public class TerminalRemoteMessageEvent extends TerminalMessageEvent
 	 *           The OutputTerminal sending the TerminalMessage.
 	 * @param message
 	 *           The message to send.
-	 * @param runner
-	 *           The remote runner from which the TerminalMessage was sent.
+	 * @param Agent
+	 *           The remote Agent from which the TerminalMessage was sent.
 	 */
-	public TerminalRemoteMessageEvent( OutputTerminal output, TerminalMessage message, RunnerItem runner )
+	public TerminalRemoteMessageEvent( OutputTerminal output, TerminalMessage message, AgentItem agent )
 	{
 		super( output, message );
-		this.runner = runner;
+		this.agent = agent;
 	}
 
 	/**
-	 * Returns the RunnerItem associated with the event.
+	 * Returns the AgentItem associated with the event.
 	 * 
-	 * @return The runner
+	 * @return The Agent
 	 */
-	public RunnerItem getRunner()
+	public AgentItem getAgent()
 	{
-		return runner;
+		return agent;
 	}
 }

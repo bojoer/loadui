@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.fx.runners.discovery;
+package com.eviware.loadui.fx.agents.discovery;
 
 import javafx.scene.*;
 import javafx.scene.control.Button;
@@ -31,12 +31,12 @@ import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
 import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.dummy.*;
-import com.eviware.loadui.api.discovery.RunnerDiscovery.*;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.discovery.AgentDiscovery.*;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 
 import com.eviware.loadui.api.model.WorkspaceItem;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.MainWindow;
 
@@ -47,19 +47,19 @@ import javafx.scene.layout.Priority;
 
 import org.slf4j.LoggerFactory;
 
-public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.runners.discovery.RunnerDiscovererDialog" );
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog" );
 
-public class RunnerDiscovererDialog  {
+public class AgentDiscovererDialog  {
 	
-	var runnersDiscovered: Boolean = false;
+	var agentsDiscovered: Boolean = false;
 	
 	public function show() {
-		var runners: RunnerReference[] = RunnerDiscoverer.instance.getNewRunners();
+		var agents: AgentReference[] = AgentDiscoverer.instance.getNewAgents();
 		
-		runnersDiscovered = runners.size() > 0;
+		agentsDiscovered = agents.size() > 0;
 		
 		var checkBoxes: CheckBoxField[] = [];
-		for(r in runners){
+		for(r in agents){
 			insert CheckBoxField { 
 				id: r.getUrl()
 				label: "{r.getDefaultLabel()} ({r.getUrl()})"
@@ -74,15 +74,15 @@ public class RunnerDiscovererDialog  {
 		}
 		
 		def dialogRef: Dialog = Dialog {
-			width: if(runnersDiscovered) 500 else 300
-			height: if(runnersDiscovered) 400 else 100
-			noCancel: not runnersDiscovered
+			width: if(agentsDiscovered) 500 else 300
+			height: if(agentsDiscovered) 400 else 100
+			noCancel: not agentsDiscovered
 	        modal: true
 	        title: "Auto detect agents in network"
 	        showPostInit: true
 	        stripeVisible: false
 	        closable: true
-	        helpUrl: if(runnersDiscovered) "http://www.loadui.org/Working-with-loadUI/agents-and-testcases.html" else null
+	        helpUrl: if(agentsDiscovered) "http://www.loadui.org/Working-with-loadUI/agents-and-testcases.html" else null
 	        content: [
         		Form {
         			layoutInfo: LayoutInfo { 
@@ -91,22 +91,22 @@ public class RunnerDiscovererDialog  {
 					}
 					formContent: [
 						LabelField {
-							value: if(runnersDiscovered) "Following agents were detected:" else "No new agents detected!"
+							value: if(agentsDiscovered) "Following agents were detected:" else "No new agents detected!"
 							layoutInfo: LayoutInfo { 
 								hgrow: Priority.ALWAYS vgrow: Priority.NEVER
         						hfill: true vfill: false 
 							}
-							vpos: bind if(runnersDiscovered) VPos.CENTER else VPos.TOP 
+							vpos: bind if(agentsDiscovered) VPos.CENTER else VPos.TOP 
 						}
 						checkBoxes
 					]
 				}
 			]
 			onOk: function() {
-				if(runnersDiscovered){
+				if(agentsDiscovered){
 		        	for(i in [0..checkBoxes.size()-1]){
 		        		if(checkBoxes[i].selected){
-		        			MainWindow.instance.workspace.createRunner(runners[i], getValidName(runners[i].getDefaultLabel()));
+		        			MainWindow.instance.workspace.createAgent(agents[i], getValidName(agents[i].getDefaultLabel()));
 		        		}
 		        	}
 	        	}
@@ -128,8 +128,8 @@ public class RunnerDiscovererDialog  {
 	
 	function validateName(name: String): Boolean {
 		var workspace: WorkspaceItem = MainWindow.instance.workspace;
-		for(runner in workspace.getRunners()){
-			if(runner.getLabel().equals(name)){
+		for(agent in workspace.getAgents()){
+			if(agent.getLabel().equals(name)){
 				return false;
 			}
 		}

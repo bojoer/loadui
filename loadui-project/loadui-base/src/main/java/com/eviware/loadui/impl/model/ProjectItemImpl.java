@@ -65,7 +65,7 @@ import com.eviware.loadui.api.model.Assignment;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.PropertySynchronizer;
@@ -107,7 +107,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final WorkspaceItem workspace;
 	private final LoaduiProjectDocumentConfig doc;
 	private final Set<Assignment> assignments = new HashSet<Assignment>();
-	private final RunnerListener runnerListener = new RunnerListener();
+	private final AgentListener agentListener = new AgentListener();
 	private final SceneListener sceneListener = new SceneListener();
 	private final WorkspaceListener workspaceListener = new WorkspaceListener();
 	private final SceneComponentListener sceneComponentListener = new SceneComponentListener();
@@ -166,36 +166,36 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 		workspace.addEventListener( BaseEvent.class, workspaceListener );
 
-		for( RunnerItem runner : workspace.getRunners() )
-			runnerListener.attach( runner );
+		for( AgentItem agent : workspace.getAgents() )
+			agentListener.attach( agent );
 
 		for( SceneAssignmentConfig conf : getConfig().getSceneAssignmentArray() )
 		{
 			SceneItem scene = ( SceneItem )addressableRegistry.lookup( conf.getSceneRef() );
-			RunnerItem runner = ( RunnerItem )addressableRegistry.lookup( conf.getRunnerRef() );
-			if( runner == null && conf.isSetRunnerAddress() )
+			AgentItem agent = ( AgentItem )addressableRegistry.lookup( conf.getAgentRef() );
+			if( agent == null && conf.isSetAgentAddress() )
 			{
-				for( RunnerItem r : workspace.getRunners() )
+				for( AgentItem r : workspace.getAgents() )
 				{
-					if( r.getUrl().equals( conf.getRunnerAddress() ) )
+					if( r.getUrl().equals( conf.getAgentAddress() ) )
 					{
-						runner = r;
+						agent = r;
 						break;
 					}
 				}
-				if( runner == null && conf.isSetRunnerLabel()
-						&& ( Boolean )workspace.getProperty( WorkspaceItem.IMPORT_MISSING_RUNNERS_PROPERTY ).getValue() )
+				if( agent == null && conf.isSetAgentLabel()
+						&& ( Boolean )workspace.getProperty( WorkspaceItem.IMPORT_MISSING_AGENTS_PROPERTY ).getValue() )
 				{
-					runner = workspace.createRunner( conf.getRunnerAddress(), conf.getRunnerLabel() );
+					agent = workspace.createAgent( conf.getAgentAddress(), conf.getAgentLabel() );
 				}
 			}
 
-			if( runner != null )
+			if( agent != null )
 			{
-				sceneEndpoints.get( scene ).registerEndpoint( runner );
-				AssignmentImpl assignment = new AssignmentImpl( scene, runner );
-				if( assignments.add( assignment ) && runner.isReady() )
-					runner.sendMessage( RunnerItem.RUNNER_CHANNEL, Collections.singletonMap( RunnerItem.ASSIGN, scene
+				sceneEndpoints.get( scene ).registerEndpoint( agent );
+				AssignmentImpl assignment = new AssignmentImpl( scene, agent );
+				if( assignments.add( assignment ) && agent.isReady() )
+					agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, scene
 							.getId() ) );
 			}
 		}
@@ -228,11 +228,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		{
 			log.debug( "Detaching {}", scene );
 			( ( AggregatedCounterSupport )counterSupport ).removeChild( scene );
-			for( RunnerItem runner : getRunnersAssignedTo( scene ) )
+			for( AgentItem agent : getAgentsAssignedTo( scene ) )
 			{
-				log.debug( "Telling {} to stop scene {}", runner, scene );
-				runner.sendMessage( RunnerItem.RUNNER_CHANNEL, Collections
-						.singletonMap( RunnerItem.UNASSIGN, scene.getId() ) );
+				log.debug( "Telling {} to stop scene {}", agent, scene );
+				agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections
+						.singletonMap( AgentItem.UNASSIGN, scene.getId() ) );
 			}
 
 			scene.removeEventListener( BaseEvent.class, sceneListener );
@@ -336,7 +336,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	public void release()
 	{
 		getWorkspace().removeEventListener( BaseEvent.class, workspaceListener );
-		runnerListener.release();
+		agentListener.release();
 
 		for( SceneItem scene : new ArrayList<SceneItem>( getScenes() ) )
 			scene.release();
@@ -353,42 +353,42 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
-	public void assignScene( SceneItem scene, RunnerItem runner )
+	public void assignScene( SceneItem scene, AgentItem agent )
 	{
-		AssignmentImpl assignment = new AssignmentImpl( scene, runner );
+		AssignmentImpl assignment = new AssignmentImpl( scene, agent );
 		if( assignments.add( assignment ) )
 		{
-			sceneEndpoints.get( scene ).registerEndpoint( runner );
+			sceneEndpoints.get( scene ).registerEndpoint( agent );
 			SceneAssignmentConfig conf = getConfig().addNewSceneAssignment();
 			String sceneId = scene.getId();
 			conf.setSceneRef( sceneId );
-			conf.setRunnerRef( runner.getId() );
-			conf.setRunnerLabel( runner.getLabel() );
-			conf.setRunnerAddress( runner.getUrl() );
-			runner.sendMessage( RunnerItem.RUNNER_CHANNEL, Collections.singletonMap( RunnerItem.ASSIGN, sceneId ) );
+			conf.setAgentRef( agent.getId() );
+			conf.setAgentLabel( agent.getLabel() );
+			conf.setAgentAddress( agent.getUrl() );
+			agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, sceneId ) );
 			if( scene.isRunning() )
-				runner.sendMessage( SceneCommunication.CHANNEL, Arrays.asList( sceneId,
+				agent.sendMessage( SceneCommunication.CHANNEL, Arrays.asList( sceneId,
 						Long.toString( scene.getVersion() ), SceneCommunication.ACTION_EVENT, START_ACTION, sceneId ) );
 			fireCollectionEvent( ASSIGNMENTS, Event.ADDED, assignment );
 		}
 	}
 
 	@Override
-	public Collection<RunnerItem> getRunnersAssignedTo( SceneItem scene )
+	public Collection<AgentItem> getAgentsAssignedTo( SceneItem scene )
 	{
-		Set<RunnerItem> runners = new HashSet<RunnerItem>();
+		Set<AgentItem> agents = new HashSet<AgentItem>();
 		for( Assignment assignment : assignments )
 			if( scene.equals( assignment.getScene() ) )
-				runners.add( assignment.getRunner() );
-		return runners;
+				agents.add( assignment.getAgent() );
+		return agents;
 	}
 
 	@Override
-	public Collection<SceneItem> getScenesAssignedTo( RunnerItem runner )
+	public Collection<SceneItem> getScenesAssignedTo( AgentItem agent )
 	{
 		Set<SceneItem> scenes = new HashSet<SceneItem>();
 		for( Assignment assignment : assignments )
-			if( runner.equals( assignment.getRunner() ) )
+			if( agent.equals( assignment.getAgent() ) )
 				scenes.add( assignment.getScene() );
 		return scenes;
 	}
@@ -400,24 +400,24 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
-	public void unassignScene( SceneItem scene, RunnerItem runner )
+	public void unassignScene( SceneItem scene, AgentItem agent )
 	{
-		AssignmentImpl assignment = new AssignmentImpl( scene, runner );
+		AssignmentImpl assignment = new AssignmentImpl( scene, agent );
 		if( assignments.remove( assignment ) )
 		{
 			BroadcastMessageEndpoint bme = sceneEndpoints.get( scene );
 			if( bme != null )
 			{
-				bme.deregisterEndpoint( runner );
-				runner.sendMessage( RunnerItem.RUNNER_CHANNEL, Collections
-						.singletonMap( RunnerItem.UNASSIGN, scene.getId() ) );
+				bme.deregisterEndpoint( agent );
+				agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections
+						.singletonMap( AgentItem.UNASSIGN, scene.getId() ) );
 			}
 
 			int size = getConfig().sizeOfSceneAssignmentArray();
 			for( int i = 0; i < size; i++ )
 			{
 				SceneAssignmentConfig conf = getConfig().getSceneAssignmentArray()[i];
-				if( scene.getId().equals( conf.getSceneRef() ) && runner.getId().equals( conf.getRunnerRef() ) )
+				if( scene.getId().equals( conf.getSceneRef() ) && agent.getId().equals( conf.getAgentRef() ) )
 				{
 					getConfig().removeSceneAssignment( i );
 					break;
@@ -485,7 +485,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		}, 5, TimeUnit.SECONDS );
 
 		for( SceneItem scene : getScenes() )
-			if( getRunnersAssignedTo( scene ).size() > 0 && scene.isFollowProject() && !getWorkspace().isLocalMode() )
+			if( getAgentsAssignedTo( scene ).size() > 0 && scene.isFollowProject() && !getWorkspace().isLocalMode() )
 				awaitingScenes.add( scene );
 		if( awaitingScenes.isEmpty() )
 			doGenerateSummary();
@@ -753,18 +753,18 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private class AssignmentImpl implements Assignment
 	{
 		private final SceneItem scene;
-		private final RunnerItem runner;
+		private final AgentItem agent;
 
-		public AssignmentImpl( SceneItem scene, RunnerItem runner )
+		public AssignmentImpl( SceneItem scene, AgentItem agent )
 		{
 			this.scene = scene;
-			this.runner = runner;
+			this.agent = agent;
 		}
 
 		@Override
-		public RunnerItem getRunner()
+		public AgentItem getAgent()
 		{
-			return runner;
+			return agent;
 		}
 
 		@Override
@@ -778,7 +778,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		{
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ( ( runner == null ) ? 0 : runner.getId().hashCode() );
+			result = prime * result + ( ( agent == null ) ? 0 : agent.getId().hashCode() );
 			result = prime * result + ( ( scene == null ) ? 0 : scene.getId().hashCode() );
 			return result;
 		}
@@ -794,7 +794,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				return false;
 			AssignmentImpl other = ( AssignmentImpl )obj;
 
-			return( runner.getId().equals( other.runner.getId() ) && scene.getId().equals( other.scene.getId() ) );
+			return( agent.getId().equals( other.agent.getId() ) && scene.getId().equals( other.scene.getId() ) );
 		}
 	}
 
@@ -817,8 +817,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					{
 						if( scene.getId().equals( getConfig().getSceneArray( i ).getId() ) )
 						{
-							for( RunnerItem runner : getRunnersAssignedTo( scene ) )
-								unassignScene( scene, runner );
+							for( AgentItem agent : getAgentsAssignedTo( scene ) )
+								unassignScene( scene, agent );
 							getConfig().removeScene( i );
 							break;
 						}
@@ -865,53 +865,53 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		}
 	}
 
-	private class RunnerListener implements EventHandler<BaseEvent>, MessageListener
+	private class AgentListener implements EventHandler<BaseEvent>, MessageListener
 	{
-		private final Set<RunnerItem> runners = new HashSet<RunnerItem>();
-		private final RunnerContextListener subListener = new RunnerContextListener();
+		private final Set<AgentItem> agents = new HashSet<AgentItem>();
+		private final AgentContextListener subListener = new AgentContextListener();
 
-		public void attach( RunnerItem runner )
+		public void attach( AgentItem agent )
 		{
-			if( runners.add( runner ) )
+			if( agents.add( agent ) )
 			{
-				runner.addEventListener( BaseEvent.class, this );
-				runner.addMessageListener( RunnerItem.RUNNER_CHANNEL, this );
-				runner.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL, subListener );
+				agent.addEventListener( BaseEvent.class, this );
+				agent.addMessageListener( AgentItem.AGENT_CHANNEL, this );
+				agent.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL, subListener );
 			}
 		}
 
-		public void detach( RunnerItem runner )
+		public void detach( AgentItem agent )
 		{
-			if( runners.remove( runner ) )
+			if( agents.remove( agent ) )
 			{
-				runner.removeEventListener( BaseEvent.class, this );
-				runner.removeMessageListener( this );
-				runner.removeMessageListener( subListener );
+				agent.removeEventListener( BaseEvent.class, this );
+				agent.removeMessageListener( this );
+				agent.removeMessageListener( subListener );
 			}
 		}
 
 		public void release()
 		{
-			for( RunnerItem runner : runners )
+			for( AgentItem agent : agents )
 			{
-				runner.removeEventListener( BaseEvent.class, this );
-				runner.removeMessageListener( this );
-				runner.removeMessageListener( subListener );
+				agent.removeEventListener( BaseEvent.class, this );
+				agent.removeMessageListener( this );
+				agent.removeMessageListener( subListener );
 			}
-			runners.clear();
+			agents.clear();
 		}
 
 		@Override
 		public void handleEvent( BaseEvent event )
 		{
-			RunnerItem runner = ( RunnerItem )event.getSource();
-			if( RunnerItem.READY.equals( event.getKey() ) && runner.isReady() )
+			AgentItem agent = ( AgentItem )event.getSource();
+			if( AgentItem.READY.equals( event.getKey() ) && agent.isReady() )
 			{
-				log.debug( "Runner is ready!" );
-				for( SceneItem scene : getScenesAssignedTo( runner ) )
+				log.debug( "Agent is ready!" );
+				for( SceneItem scene : getScenesAssignedTo( agent ) )
 				{
 					log.debug( "Send message assign: {}", scene.getLabel() );
-					runner.sendMessage( RunnerItem.RUNNER_CHANNEL, Collections.singletonMap( RunnerItem.ASSIGN, scene
+					agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, scene
 							.getId() ) );
 				}
 			}
@@ -922,29 +922,29 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
 			Map<String, String> message = ( Map<String, String> )data;
-			if( message.containsKey( RunnerItem.DEFINE_SCENE ) )
+			if( message.containsKey( AgentItem.DEFINE_SCENE ) )
 			{
-				SceneItem scene = ( SceneItem )addressableRegistry.lookup( message.get( RunnerItem.DEFINE_SCENE ) );
+				SceneItem scene = ( SceneItem )addressableRegistry.lookup( message.get( AgentItem.DEFINE_SCENE ) );
 				if( scene != null )
 				{
-					endpoint.sendMessage( channel, MapUtils.build( String.class, String.class ).put( RunnerItem.SCENE_ID,
+					endpoint.sendMessage( channel, MapUtils.build( String.class, String.class ).put( AgentItem.SCENE_ID,
 							scene.getId() )
-							.put( RunnerItem.SCENE_DEFINITION, conversionService.convert( scene, String.class ) )
+							.put( AgentItem.SCENE_DEFINITION, conversionService.convert( scene, String.class ) )
 							.getImmutable() );
 				}
 				else
 				{
 					log.info( "An Agent {} has requested a nonexistant TestCase: {}", endpoint, message
-							.get( RunnerItem.DEFINE_SCENE ) );
+							.get( AgentItem.DEFINE_SCENE ) );
 				}
 			}
-			else if( message.containsKey( RunnerItem.SCENE_ID ) )
+			else if( message.containsKey( AgentItem.SCENE_ID ) )
 			{
 				Map<Object, Object> map = ( Map<Object, Object> )data;
-				SceneItem scene = ( SceneItem )addressableRegistry.lookup( ( String )map.remove( RunnerItem.SCENE_ID ) );
+				SceneItem scene = ( SceneItem )addressableRegistry.lookup( ( String )map.remove( AgentItem.SCENE_ID ) );
 				if( scene instanceof SceneItemImpl )
 				{
-					( ( SceneItemImpl )scene ).handleStatisticsData( ( RunnerItem )endpoint, map );
+					( ( SceneItemImpl )scene ).handleStatisticsData( ( AgentItem )endpoint, map );
 					if( awaitingScenes.remove( scene ) && awaitingScenes.isEmpty() )
 					{
 						if( awaitingSummaryTimeout != null )
@@ -959,7 +959,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		}
 	}
 
-	private class RunnerContextListener implements MessageListener
+	private class AgentContextListener implements MessageListener
 	{
 		@Override
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
@@ -970,7 +970,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			{
 				TerminalMessage message = target.getContext().newMessage();
 				message.load( args[1] );
-				target.sendRunnerMessage( ( RunnerItem )endpoint, message );
+				target.sendAgentMessage( ( AgentItem )endpoint, message );
 			}
 		}
 	}
@@ -983,13 +983,13 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			if( event instanceof CollectionEvent )
 			{
 				CollectionEvent cEvent = ( CollectionEvent )event;
-				if( WorkspaceItem.RUNNERS.equals( event.getKey() ) )
+				if( WorkspaceItem.AGENTS.equals( event.getKey() ) )
 				{
-					RunnerItem runner = ( RunnerItem )cEvent.getElement();
+					AgentItem agent = ( AgentItem )cEvent.getElement();
 					if( CollectionEvent.Event.ADDED.equals( cEvent.getEvent() ) )
-						runnerListener.attach( runner );
+						agentListener.attach( agent );
 					else
-						runnerListener.detach( runner );
+						agentListener.detach( agent );
 				}
 			}
 			else if( event instanceof ActionEvent )

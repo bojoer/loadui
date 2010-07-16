@@ -19,16 +19,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
-import com.eviware.loadui.api.discovery.RunnerDiscovery.RunnerReference;
+import com.eviware.loadui.api.discovery.AgentDiscovery.AgentReference;
 
 /**
- * A loadUI workspace. It holds references to projects and runners.
+ * A loadUI workspace. It holds references to projects and agents.
  * 
  * @author dain.nilsson
  */
 public interface WorkspaceItem extends ModelItem
 {
-	public final static String RUNNERS = WorkspaceItem.class.getName() + "@runners";
+	public final static String AGENTS = WorkspaceItem.class.getName() + "@agents";
 	public final static String PROJECTS = WorkspaceItem.class.getName() + "@projects";
 	public final static String PROJECT_REFS = WorkspaceItem.class.getName() + "@projectRefs";
 
@@ -36,8 +36,8 @@ public interface WorkspaceItem extends ModelItem
 	public final static String MAX_THREADS_PROPERTY = WorkspaceItem.class.getSimpleName() + ".maxThreads";
 	public final static String MAX_THREAD_QUEUE_PROPERTY = WorkspaceItem.class.getSimpleName() + ".maxThreadQueue";
 
-	public final static String IMPORT_MISSING_RUNNERS_PROPERTY = WorkspaceItem.class.getSimpleName()
-			+ ".importMissingRunners";
+	public final static String IMPORT_MISSING_AGENTS_PROPERTY = WorkspaceItem.class.getSimpleName()
+			+ ".importMissingAgents";
 
 	public final static String SOAPUI_PATH_PROPERTY = WorkspaceItem.class.getSimpleName() + ".soapUIPath";
 	public final static String SOAPUI_SYNC_PROPERTY = WorkspaceItem.class.getSimpleName() + ".soapUISync";
@@ -123,41 +123,41 @@ public interface WorkspaceItem extends ModelItem
 	public void removeProject( ProjectItem project );
 
 	/**
-	 * Gets all the contained RunnerItems.
+	 * Gets all the contained AgentItems.
 	 * 
-	 * @return A Collection of contained RunnerItems.
+	 * @return A Collection of contained AgentItems.
 	 */
-	public Collection<RunnerItem> getRunners();
+	public Collection<AgentItem> getAgents();
 
 	/**
-	 * Creates a new RunnerItem in the workspace.
+	 * Creates a new AgentItem in the workspace.
 	 * 
 	 * @param url
-	 *           The target URL of the remote loadUI runner.
+	 *           The target URL of the remote loadUI agent.
 	 * @param label
-	 *           The name to give the local RunnerItem.
-	 * @return The newly created RunnerItem.
+	 *           The name to give the local AgentItem.
+	 * @return The newly created AgentItem.
 	 */
-	public RunnerItem createRunner( String url, String label );
+	public AgentItem createAgent( String url, String label );
 
 	/**
-	 * Creates a new RunnerItem in the workspace.
+	 * Creates a new AgentItem in the workspace.
 	 * 
 	 * @param ref
-	 *           The RunnerReference to create a runner from.
+	 *           The AgentReference to create a agent from.
 	 * @param label
-	 *           The name to give the local RunnerItem.
-	 * @return The newly created RunnerItem.
+	 *           The name to give the local AgentItem.
+	 * @return The newly created AgentItem.
 	 */
-	public RunnerItem createRunner( RunnerReference ref, String label );
+	public AgentItem createAgent( AgentReference ref, String label );
 
 	/**
-	 * Removes a RunnerItem from the workspace.
+	 * Removes a AgentItem from the workspace.
 	 * 
-	 * @param runner
-	 *           The RunnerItem to remove.
+	 * @param agent
+	 *           The AgentItem to remove.
 	 */
-	public void removeRunner( RunnerItem runner );
+	public void removeAgent( AgentItem agent );
 
 	/**
 	 * Gets the localMode property value.
@@ -170,8 +170,8 @@ public interface WorkspaceItem extends ModelItem
 	 * Sets the localMode property value.
 	 * 
 	 * When in local mode, any SceneItems on the controller will act as if they
-	 * were deployed on a local RunnerItem. TerminalMessages and ActionEvents
-	 * will not be propagated to any remote Runners when in this state.
+	 * were deployed on a local AgentItem. TerminalMessages and ActionEvents
+	 * will not be propagated to any remote Agents when in this state.
 	 * 
 	 * @param localMode
 	 */

@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Used to verify that a loadUI Runner is currently running. Contains a Server
- * header string identifying the HTTP server as a loadUI Runner and the time
+ * Used to verify that a loadUI Agent is currently running. Contains a Server
+ * header string identifying the HTTP server as a loadUI Agent and the time
  * that it was started.
  * 
  * @author dain.nilsson

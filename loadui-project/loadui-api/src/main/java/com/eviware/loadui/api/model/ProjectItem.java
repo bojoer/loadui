@@ -76,16 +76,16 @@ public interface ProjectItem extends CanvasItem
 	public SceneItem createScene( String label );
 
 	/**
-	 * Gets all the runners which are currently assigned to a given scene.
+	 * Gets all the agents which are currently assigned to a given scene.
 	 * 
 	 * @param scene
 	 *           The SceneItem.
-	 * @return A Collection of RunnerItems.
+	 * @return A Collection of AgentItems.
 	 */
-	public Collection<RunnerItem> getRunnersAssignedTo( SceneItem scene );
+	public Collection<AgentItem> getAgentsAssignedTo( SceneItem scene );
 
 	/**
-	 * Broadcasts a message to all RunnerItems currently assigned to the given
+	 * Broadcasts a message to all AgentItems currently assigned to the given
 	 * SceneItem.
 	 * 
 	 * @param scene
@@ -98,40 +98,40 @@ public interface ProjectItem extends CanvasItem
 	public void broadcastMessage( SceneItem scene, String channel, Object data );
 
 	/**
-	 * Gets all the scenes to which a given runner is assigned to.
+	 * Gets all the scenes to which a given agent is assigned to.
 	 * 
-	 * @param runner
-	 *           The RunnerItem.
+	 * @param agent
+	 *           The AgentItem.
 	 * @return A Collection of SceneItems.
 	 */
-	public Collection<SceneItem> getScenesAssignedTo( RunnerItem runner );
+	public Collection<SceneItem> getScenesAssignedTo( AgentItem agent );
 
 	/**
-	 * Gets all the scene-runner assignments.
+	 * Gets all the scene-agent assignments.
 	 * 
 	 * @return A Collection of Assigments.
 	 */
 	public Collection<Assignment> getAssignments();
 
 	/**
-	 * Assigns a given runner to a given scene.
+	 * Assigns a given agent to a given scene.
 	 * 
 	 * @param scene
-	 *           The SceneItem to assign the RunnerItem to.
-	 * @param runner
-	 *           The RunnerItem to assign to the SceneItem.
+	 *           The SceneItem to assign the AgentItem to.
+	 * @param agent
+	 *           The AgentItem to assign to the SceneItem.
 	 */
-	public void assignScene( SceneItem scene, RunnerItem runner );
+	public void assignScene( SceneItem scene, AgentItem agent );
 
 	/**
-	 * Unassigns a previously assigned runner to a scene.
+	 * Unassigns a previously assigned agent to a scene.
 	 * 
 	 * @param scene
-	 *           The SceneItem to unassign from the RunnerItem.
-	 * @param runner
-	 *           The RunnerItem to unassign.
+	 *           The SceneItem to unassign from the AgentItem.
+	 * @param agent
+	 *           The AgentItem to unassign.
 	 */
-	public void unassignScene( SceneItem scene, RunnerItem runner );
+	public void unassignScene( SceneItem scene, AgentItem agent );
 	
 	/**
 	 * Checks if summaries are saved at the end of each run

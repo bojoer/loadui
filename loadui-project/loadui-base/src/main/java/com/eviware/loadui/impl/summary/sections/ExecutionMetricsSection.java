@@ -23,6 +23,6 @@ public interface ExecutionMetricsSection {
 
 	public abstract TableModel getAssertionsMetrics();
 
-	public abstract TableModel getSamplersMetrics();
+	public abstract TableModel getRunnersMetrics();
 
 }

@@ -19,7 +19,7 @@ import java.util.Map;
 
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
@@ -89,7 +89,7 @@ public abstract class BaseCategory implements ComponentBehavior
 	}
 
 	@Override
-	public void handleStatisticsData( Map<RunnerItem, Object> statisticsData )
+	public void handleStatisticsData( Map<AgentItem, Object> statisticsData )
 	{
 	}
 	

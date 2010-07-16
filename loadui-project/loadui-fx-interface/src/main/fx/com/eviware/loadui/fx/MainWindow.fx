@@ -17,7 +17,7 @@ package com.eviware.loadui.fx;
 
 import com.eviware.loadui.fx.ui.inspector.InspectorPanelControl;
 import com.eviware.loadui.fx.widgets.ProjectList;
-import com.eviware.loadui.fx.widgets.RunnerList;
+import com.eviware.loadui.fx.widgets.AgentList;
 import com.eviware.loadui.fx.widgets.canvas.Canvas;
 import com.eviware.loadui.fx.widgets.canvas.ProjectCanvas;
 import com.eviware.loadui.fx.widgets.canvas.NavigationPanel;
@@ -42,7 +42,7 @@ import com.eviware.loadui.fx.FxUtils.*;
 
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.widgets.toolbar.ProjectToolbarItem;
-import com.eviware.loadui.fx.widgets.toolbar.RunnerToolbarItem;
+import com.eviware.loadui.fx.widgets.toolbar.AgentToolbarItem;
 import com.eviware.loadui.fx.widgets.toolbar.TestCaseToolbarItem;
 
 import com.eviware.loadui.api.model.WorkspaceProvider;
@@ -89,8 +89,8 @@ public class MainWindow {
 	var projectList:ProjectList;
 	public function getProjectList() { projectList }
 	
-	var runnerList:RunnerList;
-	public function getRunnerList() { runnerList }
+	var agentList:AgentList;
+	public function getAgentList() { agentList }
 	
 	var toolbar:Toolbar;
 	public function getToolbar() { toolbar }
@@ -157,8 +157,8 @@ public class MainWindow {
 		}
 		appState.insertInto( projectList, AppState.WORKSPACE_FRONT );
 		
-		//Pagelist - Runners
-		appState.insertInto( runnerList = RunnerList {
+		//Pagelist - Agents
+		appState.insertInto( agentList = AgentList {
 			workspace: workspace
 			layoutX: 137
 			layoutY: 349
@@ -173,7 +173,7 @@ public class MainWindow {
 		};
 		
 		toolbar.addItem( ProjectToolbarItem {} );
-		toolbar.addItem( RunnerToolbarItem {} );
+		toolbar.addItem( AgentToolbarItem {} );
 		
 		def feed:FeedDisplay = FeedDisplay {
 			layoutX: bind scene.width - 356

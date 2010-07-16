@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.runner;
+package com.eviware.loadui.impl.agent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +40,7 @@ import com.eviware.loadui.api.messaging.SceneCommunication;
 import com.eviware.loadui.api.messaging.ServerEndpoint;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ModelItem;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.property.PropertySynchronizer;
 import com.eviware.loadui.api.terminal.DualTerminal;
@@ -63,7 +63,7 @@ public class ControllerImpl
 	private final PropertySynchronizer propertySynchronizer;
 	private final CounterSynchronizer counterSynchronizer;
 
-	private Map<String, SceneRunner> sceneRunners = Collections.synchronizedMap( new HashMap<String, SceneRunner>() );
+	private Map<String, SceneAgent> sceneAgents = Collections.synchronizedMap( new HashMap<String, SceneAgent>() );
 
 	public ControllerImpl( ExecutorManager executorManager, ConversionService conversionService,
 			ServerEndpoint serverEndpoint, TerminalProxy terminalProxy, AddressableRegistry addressableRegistry,
@@ -84,17 +84,17 @@ public class ControllerImpl
 			{
 				if( connected )
 				{
-					endpoint.addMessageListener( RunnerItem.RUNNER_CHANNEL, new RunnerListener() );
+					endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, new AgentListener() );
 					endpoint.addMessageListener( SceneCommunication.CHANNEL, new SceneListener() );
 					endpoint.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL, new ComponentContextListener() );
 				}
 			}
 		} );
 
-		log.info( "Runner started and listening on cometd!" );
+		log.info( "Agent started and listening on cometd!" );
 	}
 
-	private class RunnerListener implements MessageListener
+	private class AgentListener implements MessageListener
 	{
 
 		@Override
@@ -104,37 +104,37 @@ public class ControllerImpl
 			// log.debug( "handleMessage got data: {} on channel {}", data, channel
 			// );
 			Map<String, String> message = ( Map<String, String> )data;
-			if( message.containsKey( RunnerItem.SET_MAX_THREADS ) )
+			if( message.containsKey( AgentItem.SET_MAX_THREADS ) )
 			{
-				executorManager.setMaxPoolSize( Integer.parseInt( message.get( RunnerItem.SET_MAX_THREADS ) ) );
+				executorManager.setMaxPoolSize( Integer.parseInt( message.get( AgentItem.SET_MAX_THREADS ) ) );
 			}
-			else if( message.containsKey( RunnerItem.ASSIGN ) )
+			else if( message.containsKey( AgentItem.ASSIGN ) )
 			{
-				String sceneId = message.get( RunnerItem.ASSIGN );
-				if( !sceneRunners.containsKey( sceneId ) )
+				String sceneId = message.get( AgentItem.ASSIGN );
+				if( !sceneAgents.containsKey( sceneId ) )
 				{
 					log.info( "Loading SceneItem {}", sceneId );
-					executorService.execute( new SceneRunner( sceneId, endpoint ) );
+					executorService.execute( new SceneAgent( sceneId, endpoint ) );
 				}
 			}
-			else if( message.containsKey( RunnerItem.UNASSIGN ) )
+			else if( message.containsKey( AgentItem.UNASSIGN ) )
 			{
-				SceneRunner sceneRunner = sceneRunners.get( message.get( RunnerItem.UNASSIGN ) );
-				if( sceneRunner != null )
+				SceneAgent sceneAgent = sceneAgents.get( message.get( AgentItem.UNASSIGN ) );
+				if( sceneAgent != null )
 				{
-					sceneRunner.addCommand( Collections.singletonList( ( String )null ) );
+					sceneAgent.addCommand( Collections.singletonList( ( String )null ) );
 				}
 			}
-			else if( message.containsKey( RunnerItem.SCENE_DEFINITION ) )
+			else if( message.containsKey( AgentItem.SCENE_DEFINITION ) )
 			{
-				if( addressableRegistry.lookup( message.get( RunnerItem.SCENE_ID ) ) == null )
-					sceneRunners.get( message.get( RunnerItem.SCENE_ID ) ).sceneDef = message
-							.get( RunnerItem.SCENE_DEFINITION );
+				if( addressableRegistry.lookup( message.get( AgentItem.SCENE_ID ) ) == null )
+					sceneAgents.get( message.get( AgentItem.SCENE_ID ) ).sceneDef = message
+							.get( AgentItem.SCENE_DEFINITION );
 			}
 		}
 	}
 
-	private class SceneRunner implements Runnable
+	private class SceneAgent implements Runnable
 	{
 		private final String sceneId;
 		private final MessageEndpoint endpoint;
@@ -142,11 +142,11 @@ public class ControllerImpl
 		private String sceneDef;
 		private SceneItem scene;
 
-		public SceneRunner( String sceneId, MessageEndpoint endpoint )
+		public SceneAgent( String sceneId, MessageEndpoint endpoint )
 		{
 			this.sceneId = sceneId;
 			this.endpoint = endpoint;
-			sceneRunners.put( sceneId, this );
+			sceneAgents.put( sceneId, this );
 		}
 
 		public void addCommand( List<String> args )
@@ -169,8 +169,8 @@ public class ControllerImpl
 			while( sceneDef == null && tries > 0 )
 			{
 				log.debug( "REQUESTING DEFINITION: {} from: {}", sceneId, endpoint );
-				endpoint.sendMessage( RunnerItem.RUNNER_CHANNEL, Collections
-						.singletonMap( RunnerItem.DEFINE_SCENE, sceneId ) );
+				endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections
+						.singletonMap( AgentItem.DEFINE_SCENE, sceneId ) );
 				try
 				{
 					Thread.sleep( 1000 );
@@ -185,9 +185,9 @@ public class ControllerImpl
 			if( sceneDef == null )
 			{
 				log.error( "Unable to get TestCase definition: {} from endpoint: {}", sceneId, endpoint );
-				synchronized( sceneRunners )
+				synchronized( sceneAgents )
 				{
-					sceneRunners.remove( sceneId );
+					sceneAgents.remove( sceneId );
 				}
 				return;
 			}
@@ -212,7 +212,7 @@ public class ControllerImpl
 				counterSynchronizer.syncCounters( component, endpoint );
 			}
 
-			endpoint.sendMessage( RunnerItem.RUNNER_CHANNEL, Collections.singletonMap( RunnerItem.STARTED, sceneId ) );
+			endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.STARTED, sceneId ) );
 			log.info( "Started scene: {}", scene.getLabel() );
 
 			while( true )
@@ -224,9 +224,9 @@ public class ControllerImpl
 					{
 						log.info( "Stopping scene: {}", scene.getLabel() );
 						scene.release();
-						synchronized( sceneRunners )
+						synchronized( sceneAgents )
 						{
-							sceneRunners.remove( sceneId );
+							sceneAgents.remove( sceneId );
 						}
 						return;
 					}
@@ -234,11 +234,11 @@ public class ControllerImpl
 					{
 						log.debug( "SceneItem out of sync with controller, restarting..." );
 						scene.release();
-						synchronized( sceneRunners )
+						synchronized( sceneAgents )
 						{
-							sceneRunners.remove( sceneId );
+							sceneAgents.remove( sceneId );
 						}
-						executorService.execute( new SceneRunner( sceneId, endpoint ) );
+						executorService.execute( new SceneAgent( sceneId, endpoint ) );
 						return;
 					}
 					else if( SceneCommunication.LABEL.equals( args.get( 2 ) ) )
@@ -304,9 +304,9 @@ public class ControllerImpl
 
 			log.debug( "Got command: {}", args.get( 2 ) );
 
-			SceneRunner sceneRunner = sceneRunners.get( args.get( 0 ) );
-			if( sceneRunner != null )
-				sceneRunner.addCommand( args );
+			SceneAgent sceneAgent = sceneAgents.get( args.get( 0 ) );
+			if( sceneAgent != null )
+				sceneAgent.addCommand( args );
 		}
 	}
 

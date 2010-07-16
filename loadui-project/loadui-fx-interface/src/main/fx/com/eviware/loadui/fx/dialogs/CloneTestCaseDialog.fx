@@ -45,7 +45,7 @@ public class CloneTestCaseDialog {
 		var label = canvasObject.getLabel();
 		def name = TextField { label: "Name of clone", value: "copy-of-{label}", columns: 30 };
 		def open = CheckBoxField { label: "Open the new TestCase?", value: true };
-		def distribute = CheckBoxField { label: "Distibute to same runners?", value: true };
+		def distribute = CheckBoxField { label: "Distibute to same agents?", value: true };
 		
 		def dialog:Dialog = Dialog {
 			title: "Clone {canvasObject.getLabel()}"
@@ -67,8 +67,8 @@ public class CloneTestCaseDialog {
 					dialog.close();
 					if( distribute.value as Boolean ) {
 						def project = (MainWindow.instance.projectCanvas.canvasItem as ProjectItem);
-						for( runner in project.getRunnersAssignedTo(canvasObject as SceneItem) )
-							project.assignScene(canvasObject as SceneItem, runner);
+						for( agent in project.getAgentsAssignedTo(canvasObject as SceneItem) )
+							project.assignScene(canvasObject as SceneItem, agent);
 					}
 					if( open.value as Boolean ) {
 						AppState.instance.setActiveCanvas( copy.getCanvas() );

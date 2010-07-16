@@ -45,12 +45,12 @@ import org.eclipse.jetty.http.HttpSchemes;
 import com.eviware.loadui.api.http.HttpClientProvider;
 import com.eviware.loadui.fx.http.HttpClientHolder;
 
-public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.CreateNewRunnerDialog" );
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.CreateNewAgentDialog" );
 
 /**
- * Asks the user for a name and file for a new RunnerItem to be created.
+ * Asks the user for a name and file for a new AgentItem to be created.
  */
-public class CreateNewRunnerDialog {
+public class CreateNewAgentDialog {
 	/**
 	 * The currently loaded WorkspaceItem. This needs to be set during initialization.
 	 *
@@ -137,7 +137,7 @@ public class CreateNewRunnerDialog {
 		}
 		onOk: function(){
 			log.debug( "Creating new Agent: '\{\}'  with URL: '\{\}'", agentName.value, agentUrl.value );
-			workspace.createRunner(agentUrl.value as String, agentName.value as String);
+			workspace.createAgent(agentUrl.value as String, agentName.value as String);
 			confirmDialog.close();
 			dialog.close();
 		}
@@ -213,7 +213,7 @@ public class CreateNewRunnerDialog {
 			var exchangeState: Integer = exchange.waitForDone();
 			if (exchangeState == HttpExchange.STATUS_COMPLETED and agentValid){
 				log.debug( "Creating new Agent: '\{\}'  with URL: '\{\}'", agentName.value, agentUrl.value );
-				workspace.createRunner(agentUrl.value as String, agentName.value as String);
+				workspace.createAgent(agentUrl.value as String, agentName.value as String);
 				dialog.close();
 			}
 			else{
@@ -229,8 +229,8 @@ public class CreateNewRunnerDialog {
 		if(name == null or name.length() == 0){
 			return false;
 		}
-		for( runner in workspace.getRunners() ) {
-			if( runner.getLabel().equals( name ) )
+		for( agent in workspace.getAgents() ) {
+			if( agent.getLabel().equals( name ) )
 				return false;
 		}
 		true;
@@ -238,12 +238,12 @@ public class CreateNewRunnerDialog {
 	
 	function validateAgentAlreadyExist(): Boolean {
 		var url: String = agentUrl.value as String;
-		for(runner in workspace.getRunners()) {
-			var runnerUrl: String = runner.getUrl(); 
-			if(runnerUrl.endsWith("/")){
-				runnerUrl = runnerUrl.substring(0, runnerUrl.length() - 1);
+		for(agent in workspace.getAgents()) {
+			var agentUrl: String = agent.getUrl(); 
+			if(agentUrl.endsWith("/")){
+				agentUrl = agentUrl.substring(0, agentUrl.length() - 1);
 			}
-			if(runnerUrl.equals(url)){
+			if(agentUrl.equals(url)){
 				return false;
 			}
 		}

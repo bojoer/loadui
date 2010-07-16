@@ -48,7 +48,7 @@ public interface CanvasItem extends ModelItem, CounterHolder
 	/**
 	 * Get the ProjectItem which this CanvasItem belongs to. If this CanvasItem
 	 * is a ProjectItem itself, then it will return itself. Note that if this
-	 * CanvasItem is a SceneItem deployed on a Runner, then it will not have a
+	 * CanvasItem is a SceneItem deployed on an Agent, then it will not have a
 	 * ProjectItem and will return null.
 	 * 
 	 * @return The ProjectItem which this CanvasItem belongs to.

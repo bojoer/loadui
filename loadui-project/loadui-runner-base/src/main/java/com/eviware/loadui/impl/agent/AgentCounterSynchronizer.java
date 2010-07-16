@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.runner;
+package com.eviware.loadui.impl.agent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,17 +32,17 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.model.ModelItem;
 
-public class RunnerCounterSynchronizer implements CounterSynchronizer
+public class AgentCounterSynchronizer implements CounterSynchronizer
 {
 	private final static long DELAY = 1000;
 
-	public final static Logger log = LoggerFactory.getLogger( RunnerCounterSynchronizer.class );
+	public final static Logger log = LoggerFactory.getLogger( AgentCounterSynchronizer.class );
 
 	private final Timer timer = new Timer();
 	private final BaseEventListener listener = new BaseEventListener();
 	private final Map<CounterHolder, HolderData> holders = new HashMap<CounterHolder, HolderData>();
 
-	public RunnerCounterSynchronizer()
+	public AgentCounterSynchronizer()
 	{
 		timer.schedule( new TimerTask()
 		{
@@ -113,7 +113,7 @@ public class RunnerCounterSynchronizer implements CounterSynchronizer
 	@Override
 	public void syncAggregator( String ownerId, Aggregator aggregator )
 	{
-		throw new UnsupportedOperationException( RunnerCounterSynchronizer.class.getName()
+		throw new UnsupportedOperationException( AgentCounterSynchronizer.class.getName()
 				+ " does not support this method (syncAggregator)." );
 	}
 

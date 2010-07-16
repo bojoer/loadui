@@ -38,7 +38,7 @@ import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.api.model.CanvasItem
-import com.eviware.loadui.impl.component.categories.SamplerBase.SampleCancelledException
+import com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledException
 
 import java.util.HashSet
 import java.util.Collections
@@ -176,6 +176,7 @@ sample = { message, sampleId ->
 				if (!runningSamples.remove(get)) {
 					throw new SampleCancelledException()
 				}
+				message['id'] = "test"
 				
 				return message
 			}

@@ -34,28 +34,28 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.discovery.RunnerDiscovery;
+import com.eviware.loadui.api.discovery.AgentDiscovery;
 
-public class RunnerDiscoveryImpl implements RunnerDiscovery
+public class AgentDiscoveryImpl implements AgentDiscovery
 {
 	private final static int DELAY = 30;
-	private final static Logger log = LoggerFactory.getLogger( RunnerDiscoveryImpl.class );
+	private final static Logger log = LoggerFactory.getLogger( AgentDiscoveryImpl.class );
 
 	private final DatagramSocket socket;
 	private final DatagramPacket packet;
 	private final Thread listenerThread;
-	private final Set<RunnerReference> runners = Collections.synchronizedSet( new HashSet<RunnerReference>() );
+	private final Set<AgentReference> agents = Collections.synchronizedSet( new HashSet<AgentReference>() );
 
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor( new ThreadFactory()
 	{
 		@Override
 		public Thread newThread( Runnable r )
 		{
-			return new Thread( r, "loadUI Runner discovery" );
+			return new Thread( r, "loadUI Agent discovery" );
 		}
 	} );
 
-	public RunnerDiscoveryImpl()
+	public AgentDiscoveryImpl()
 	{
 		byte[] buf = "DISCOVER".getBytes();
 
@@ -83,9 +83,9 @@ public class RunnerDiscoveryImpl implements RunnerDiscovery
 							String received = new String( packet.getData(), 0, packet.getLength() ).replaceAll( "127.0.0.1",
 									packet.getAddress().getHostAddress() );
 							String[] parts = received.split( " " );
-							if( parts.length == 4 && parts[0].equals( "RUNNER" ) )
-								if( runners.add( new RunnerRefImpl( parts[1], parts[2], parts[3] ) ) )
-									log.debug("Discovered Runner: " + parts[2]);
+							if( parts.length == 4 && parts[0].equals( "AGENT" ) )
+								if( agents.add( new AgentRefImpl( parts[1], parts[2], parts[3] ) ) )
+									log.debug("Discovered Agent: " + parts[2]);
 						}
 					}
 					catch( Exception e )
@@ -93,7 +93,7 @@ public class RunnerDiscoveryImpl implements RunnerDiscovery
 						// ignore
 					}
 				}
-			}, "loadUI Runner discovery 2" );
+			}, "loadUI Agent discovery 2" );
 			listenerThread.start();
 
 			executor.scheduleAtFixedRate( new Runnable()
@@ -122,7 +122,7 @@ public class RunnerDiscoveryImpl implements RunnerDiscovery
 			throw new RuntimeException( e );
 		}
 
-		log.debug( "RunnerDiscovery started, searching on UDP port: {}", BROADCAST_PORT );
+		log.debug( "AgentDiscovery started, searching on UDP port: {}", BROADCAST_PORT );
 	}
 
 	public void release()
@@ -140,30 +140,30 @@ public class RunnerDiscoveryImpl implements RunnerDiscovery
 	}
 
 	@Override
-	public Collection<RunnerReference> getDiscoveredRunners()
+	public Collection<AgentReference> getDiscoveredAgents()
 	{
-		Iterator<RunnerReference> it = runners.iterator();
+		Iterator<AgentReference> it = agents.iterator();
 		long now = System.currentTimeMillis();
 		while( it.hasNext() )
 		{
-			RunnerRefImpl ref = ( RunnerRefImpl )it.next();
+			AgentRefImpl ref = ( AgentRefImpl )it.next();
 			if( ref.discoveryTime + 2000 * DELAY < now )
 			{
 				log.debug( "Removing stale entry: {}", ref );
 				it.remove();
 			}
 		}
-		return Collections.unmodifiableSet( runners );
+		return Collections.unmodifiableSet( agents );
 	}
 
-	private class RunnerRefImpl implements RunnerReference
+	private class AgentRefImpl implements AgentReference
 	{
 		private final String label;
 		private final String url;
 		private final String id;
 		private long discoveryTime;
 
-		public RunnerRefImpl( String url, String label, String id )
+		public AgentRefImpl( String url, String label, String id )
 		{
 			this.url = url;
 			this.label = label;
@@ -202,7 +202,7 @@ public class RunnerDiscoveryImpl implements RunnerDiscovery
 				return false;
 			if( getClass() != obj.getClass() )
 				return false;
-			RunnerRefImpl other = ( RunnerRefImpl )obj;
+			AgentRefImpl other = ( AgentRefImpl )obj;
 
 			if( label == null )
 			{

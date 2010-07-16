@@ -41,7 +41,7 @@ import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
@@ -74,7 +74,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	private final WorkspaceListener workspaceListener;
 	private final TerminalHolderSupport terminalHolderSupport;
 	private final InputTerminal stateTerminal;
-	private final Map<RunnerItem, Map<Object, Object>> remoteStatistics = new HashMap<RunnerItem, Map<Object, Object>>();
+	private final Map<AgentItem, Map<Object, Object>> remoteStatistics = new HashMap<AgentItem, Map<Object, Object>>();
 	private long version;
 	private boolean propagate = true;
 	private boolean awaitingSummary = false;
@@ -265,17 +265,17 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	protected void onComplete( EventFirer source )
 	{
-		if( "runner".equals( System.getProperty( "loadui.instance" ) ) )
+		if( "agent".equals( System.getProperty( "loadui.instance" ) ) )
 		{
 			Map<String, Object> data = new HashMap<String, Object>();
-			data.put( RunnerItem.SCENE_ID, getId() );
+			data.put( AgentItem.SCENE_ID, getId() );
 			for( ComponentItem component : getComponents() )
 				data.put( component.getId(), component.getBehavior().collectStatisticsData() );
-			messageEndpoint.sendMessage( RunnerItem.RUNNER_CHANNEL, data );
+			messageEndpoint.sendMessage( AgentItem.AGENT_CHANNEL, data );
 			log.debug( "Sending statistics data from {}", this );
 		}
 		else if( source == this )
-			if( getProject().getRunnersAssignedTo( this ).size() > 0 && !getProject().getWorkspace().isLocalMode() )
+			if( getProject().getAgentsAssignedTo( this ).size() > 0 && !getProject().getWorkspace().isLocalMode() )
 				awaitingSummary = true;
 			else
 				doGenerateSummary();
@@ -283,13 +283,13 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	public boolean statisticsReady()
 	{
-		for( RunnerItem runner : getProject().getRunnersAssignedTo( this ) )
-			if( !remoteStatistics.containsKey( runner ) )
+		for( AgentItem agent : getProject().getAgentsAssignedTo( this ) )
+			if( !remoteStatistics.containsKey( agent ) )
 				return false;
 		return true;
 	}
 
-	public void handleStatisticsData( RunnerItem source, Map<Object, Object> data )
+	public void handleStatisticsData( AgentItem source, Map<Object, Object> data )
 	{
 		remoteStatistics.put( source, data );
 		log.debug( "{} got statistics data from {}", this, source );
@@ -299,8 +299,8 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		for( ComponentItem component : getComponents() )
 		{
 			String cId = component.getId();
-			Map<RunnerItem, Object> cData = new HashMap<RunnerItem, Object>();
-			for( Entry<RunnerItem, Map<Object, Object>> e : remoteStatistics.entrySet() )
+			Map<AgentItem, Object> cData = new HashMap<AgentItem, Object>();
+			for( Entry<AgentItem, Map<Object, Object>> e : remoteStatistics.entrySet() )
 				cData.put( e.getKey(), e.getValue().get( cId ) );
 			component.getBehavior().handleStatisticsData( cData );
 		}

@@ -148,7 +148,7 @@
     -fx-background-insets: 0, 0;
 } 
 
-.runner-inspector-node-button {
+.agent-inspector-node-button {
 	-fx-background-radius: 1;
 	-fx-background-insets: 0, 1;
 	-fx-background-color: #b3b3b3, linear (0%,0%) to (0%,100%) stops (0%, #e3e3e3) (100%, #bababa);

@@ -21,7 +21,7 @@ import java.util.Map;
 import com.eviware.loadui.api.events.TerminalEvent;
 import com.eviware.loadui.api.events.TerminalRemoteMessageEvent;
 import com.eviware.loadui.api.model.CanvasItem;
-import com.eviware.loadui.api.model.RunnerItem;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
@@ -128,8 +128,8 @@ public class RoutedConnectionImpl extends ConnectionImpl implements RoutedConnec
 				if( canvas instanceof SceneItem )
 				{
 					SceneItem scene = ( SceneItem )input.getTerminalHolder().getCanvas();
-					for( RunnerItem runner : input.getTerminalHolder().getCanvas().getProject().getRunnersAssignedTo( scene ) )
-						proxy.sendTerminalEvent( event, runner, input );
+					for( AgentItem agent : input.getTerminalHolder().getCanvas().getProject().getAgentsAssignedTo( scene ) )
+						proxy.sendTerminalEvent( event, agent, input );
 				}
 			}
 		}

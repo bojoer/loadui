@@ -22,8 +22,8 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 
 /**
  * A SceneItem is a CanvasItem, so it holds loadUI components. A SceneItem can
- * be assigned to one or several RunnerItems, allowing it to run on a remote
- * loadUI runner. ComponentItems in the parent Project may be connected to
+ * be assigned to one or several AgentItems, allowing it to run on a remote
+ * loadUI agent. ComponentItems in the parent Project may be connected to
  * ComponentItems in the SceneItem through a RoutedConnection.
  * 
  * @author dain.nilsson
@@ -91,7 +91,7 @@ public interface SceneItem extends CanvasItem, CanvasObjectItem
 	public void setFollowProject( boolean followProject );
 
 	/**
-	 * Broadcasts a message to all RunnerItems currently assigned to this
+	 * Broadcasts a message to all AgentItems currently assigned to this
 	 * SceneItem.
 	 * 
 	 * @param channel
