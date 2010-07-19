@@ -234,9 +234,15 @@ public class ProjectMenu extends HBox {
 				                    text: "Save As"
 				                    action: function() {
 				                        def chooser = new JFileChooser();
+				                        chooser.addChoosableFileFilter(new XMLFileFilter());
+				                        chooser.setAcceptAllFileFilterUsed(false);
 				                        var destination:File;
 				                        if (JFileChooser.APPROVE_OPTION == chooser.showSaveDialog(null)) {
 				                                destination = chooser.getSelectedFile();
+				                                if( not destination.getName().endsWith(".xml") ) {
+				                                   def newname = "{destination.getAbsolutePath()}.xml";
+				                                   destination = new File(newname); 
+				                                }
 				                        }
                                         try {
                                             project.saveAs(destination);						
@@ -344,3 +350,13 @@ class SummaryListener extends EventHandler {
 		} 
 	}
 }
+
+class  XMLFileFilter extends javax.swing.filechooser.FileFilter {
+        override public function accept(f:File):Boolean {
+            f.getName().toLowerCase().endsWith(".xml") or f.isDirectory()
+        }
+        
+        override public function getDescription():String {
+            ".xml files";
+        }
+    }
