@@ -14,6 +14,7 @@
 			<style mode="Opaque" backcolor="#F0EFEF"/>
 		</conditionalStyle>
 	</style>
+	<field name="chapter" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -30,7 +31,7 @@
 			</line>
 			<subreport>
 				<reportElement positionType="Float" x="0" y="0" width="496" height="45"/>
-				<dataSourceExpression><![CDATA[$P{ChapterDataSource}]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[$F{chapter}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:ChapterReport"]]></subreportExpression>
 			</subreport>
 		</band>
