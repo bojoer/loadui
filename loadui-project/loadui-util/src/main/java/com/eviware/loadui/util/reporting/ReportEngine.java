@@ -37,26 +37,58 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.summary.Chapter;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.util.reporting.datasources.ChapterDataSource;
+import com.eviware.loadui.util.reporting.datasources.SummaryDataSource;
 
 public class ReportEngine
 {
 
 	static Logger log = LoggerFactory.getLogger(ReportEngine.class);
 
-	public static String generateJasperReport(Chapter chapter, LReportTemplate selectedReport) throws JRException
+//	public static String generateJasperReport(Chapter chapter, LReportTemplate selectedReport) throws JRException
+//	{
+//		// // fill report with data
+//		if (selectedReport != null)
+//		{
+//			ReportFillWorker reportWorker = new ReportFillWorker(chapter, selectedReport);
+//
+//			JasperPrint jp = reportWorker.getJasperReport();
+//
+//			if (jp != null)
+//			{
+//				jp.setName("Report for " + chapter.getTitle());
+//				JasperViewer jv = new JasperViewer(jp, false);
+//				jv.setTitle("Report for " + chapter.getTitle());
+//				jv.setVisible(true);
+//				jv.setFitPageZoomRatio();
+//			}
+//			else
+//			{
+//				log.error("Errors in ReportTemplate!");
+//			}
+//		}
+//		else
+//		{
+//			log.error("Report do not exists!");
+//		}
+//
+//		return null;
+//	}
+	
+	public static String generateJasperReport(Summary summary, LReportTemplate selectedReport) throws JRException
 	{
 		// // fill report with data
 		if (selectedReport != null)
 		{
-			ReportFillWorker reportWorker = new ReportFillWorker(chapter, selectedReport);
+			ReportFillWorker reportWorker = new ReportFillWorker(summary, selectedReport);
 
 			JasperPrint jp = reportWorker.getJasperReport();
 
 			if (jp != null)
 			{
-				jp.setName("Report for " + chapter.getTitle());
+				String title = summary.getChapters().keySet().iterator().next(); // get first
+				jp.setName("Report for " + title);
 				JasperViewer jv = new JasperViewer(jp, false);
-				jv.setTitle("Report for " + chapter.getTitle());
+				jv.setTitle("Report for " + title);
 				jv.setVisible(true);
 				jv.setFitPageZoomRatio();
 			}
@@ -78,19 +110,27 @@ public class ReportEngine
 
 		private JasperPrint jp;
 		private LReportTemplate report;
-		private Chapter chapter;
+//		private Chapter chapter;
+		private Summary summary;
 
-		public ReportFillWorker(Chapter chapter, LReportTemplate selectedReport)
+//		public ReportFillWorker(Chapter chapter, LReportTemplate selectedReport)
+//		{
+//			report = selectedReport;
+//			this.chapter = chapter;
+//		}
+		
+		public ReportFillWorker(Summary summary, LReportTemplate selectedReport)
 		{
 			report = selectedReport;
-			this.chapter = chapter;
+			this.summary = summary;
 		}
 
 		public JasperPrint getJasperReport()
 		{
 			try
 			{
-				jp = createReport(chapter, report);
+//				jp = createReport(chapter, report);
+				jp = createReport(summary, report);
 			}
 			catch (Throwable e)
 			{
@@ -102,7 +142,25 @@ public class ReportEngine
 		}
 	}
 
-	protected static JasperPrint createReport(Chapter chapter, LReportTemplate selectedReport) throws JRException
+//	protected static JasperPrint createReport(Chapter chapter, LReportTemplate selectedReport) throws JRException
+//	{
+//		log.debug("Creating report!");
+//		updateReport(selectedReport);
+//
+//		LReportTemplate report = new LReportTemplate(selectedReport);
+//
+//		JasperReport jr = compileReport(report);
+//		ReportProtocolFactory factory = new ReportProtocolFactory();
+//
+//		HashMap<String, Object> map = new HashMap<String, Object>();
+//		map.put(JRParameter.REPORT_URL_HANDLER_FACTORY, factory);
+//
+//		map.put("ChapterDataSource", new ChapterDataSource(chapter));
+//
+//		return JasperFillManager.fillReport(jr, map, new JRBeanCollectionDataSource(Arrays.asList(chapter)));
+//	}
+	
+	protected static JasperPrint createReport(Summary summary, LReportTemplate selectedReport) throws JRException
 	{
 		log.debug("Creating report!");
 		updateReport(selectedReport);
@@ -115,9 +173,9 @@ public class ReportEngine
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put(JRParameter.REPORT_URL_HANDLER_FACTORY, factory);
 
-		map.put("ChapterDataSource", new ChapterDataSource(chapter));
+//		map.put("ChapterDataSource", new ChapterDataSource(chapter));
 
-		return JasperFillManager.fillReport(jr, map, new JRBeanCollectionDataSource(Arrays.asList(chapter)));
+		return JasperFillManager.fillReport(jr, map, new SummaryDataSource(summary));
 	}
 
 	private static JasperReport compileReport(LReportTemplate report)
@@ -129,12 +187,12 @@ public class ReportEngine
 			ByteArrayInputStream in = new ByteArrayInputStream(report.getData().getBytes());
 			JasperDesign design = JRXmlLoader.load(in);
 
-			JRDesignParameter param = new JRDesignParameter();
+//			JRDesignParameter param = new JRDesignParameter();
 
-			param = new JRDesignParameter();
-			param.setName("ChapterDataSource");
-			param.setValueClass(ChapterDataSource.class);
-			design.addParameter(param);
+//			param = new JRDesignParameter();
+//			param.setName("ChapterDataSource");
+//			param.setValueClass(ChapterDataSource.class);
+//			design.addParameter(param);
 
 			jr = JasperCompileManager.compileReport(design);
 		}
