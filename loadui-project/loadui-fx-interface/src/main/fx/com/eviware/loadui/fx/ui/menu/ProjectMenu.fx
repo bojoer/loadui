@@ -255,6 +255,7 @@ public class ProjectMenu extends HBox {
                 	                             height: 150
                 	                         	};
                                         }
+                                        MainWindow.instance.projectCanvas.generateMiniatures();
 										project.save();
 				                    }
 				                }

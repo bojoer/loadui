@@ -51,6 +51,7 @@ public class ExitConfirmDialog {
 					okText: "Yes"
 					cancelText: "No"
 					onOk: function() {
+						MainWindow.instance.projectCanvas.generateMiniatures();
 						def project = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
 						project.save();
 						dialog2.close();
