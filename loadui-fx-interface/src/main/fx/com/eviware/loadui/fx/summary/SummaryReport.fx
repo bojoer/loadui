@@ -350,7 +350,7 @@ public class SummaryReport extends StylesheetAware {
 					    Button {
 					        text: "Print"
 					        onMouseReleased:function(event) {
-					            com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport(chapter);
+					            com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport(summary);
 					        }
 					    }
 						Label {
