@@ -29,16 +29,44 @@ import com.eviware.loadui.fx.ui.form.FormField;
 import com.eviware.loadui.fx.ui.form.fields.*;
 
 import com.eviware.loadui.fx.widgets.TimerController;
+import com.eviware.loadui.api.model.CanvasItem;
 
 import java.lang.RuntimeException;
 
 public class SetCanvasLimitsDialog {
 	public-init var runController:TimerController;
 	
+	var form:Form;
+	
+	var warnDialog: Dialog;
+	var warnMsg: String;
+	var warnMsgPlural: String;
+	
 	postinit {
 		if( not FX.isInitialized( runController ) )
 			throw new RuntimeException( "RunController needs to be set" );
-		var form:Form;
+		
+		warnDialog = Dialog {
+			title: "Limit already reached"
+			showPostInit: false
+			content: [
+				Text { content: bind "You've entered a {warnMsg} limit{warnMsgPlural} below what you've been running.\n\rWould you like to reset the counters?" },
+			]
+			okText: "Yes"
+			cancelText: "No"
+			onOk: function() {
+				reset();
+				warnDialog.close();
+			}
+			onCancel: function() {
+				warnDialog.close();
+			}
+		
+			width : 450
+			height : 150
+		}
+  
+		
 		def dialog:Dialog = Dialog {
 			title: "Set run limits"
 			content: [
@@ -54,18 +82,15 @@ public class SetCanvasLimitsDialog {
 			]
 			okText: "Set"
 			onOk: function() {
-				def tl = form.getValue( "timeLimit" );
-				runController.timeLimit = if(tl != null) tl as Long else -1;
-				def sl = form.getValue( "sampleLimit" );
-				runController.sampleLimit = if(sl != null) sl as Long else -1;
-				def fl = form.getValue( "failureLimit" );
-				runController.failureLimit = if(fl != null) fl as Long else -1;
-				
-				//runController.canvas.triggerAction( "STOP" );
-				if( form.getValue("reset") as Boolean )
-					runController.canvas.triggerAction( "RESET" );
-					
-				dialog.close();
+				setLimits();
+				if( form.getValue("reset") as Boolean ){
+					reset();
+					dialog.close();
+				}
+				else{
+					dialog.close();
+					validateLimits();
+				}
 			}
 			onCancel: function() {
 				dialog.close();
@@ -75,7 +100,61 @@ public class SetCanvasLimitsDialog {
 			height : 180
 		}
 	}
+
+	function setLimits(): Void {
+		def tl = form.getValue( "timeLimit" );
+		runController.timeLimit = if(tl != null) tl as Long else -1;
+		def sl = form.getValue( "sampleLimit" );
+		runController.sampleLimit = if(sl != null) sl as Long else -1;
+		def fl = form.getValue( "failureLimit" );
+		runController.failureLimit = if(fl != null) fl as Long else -1;
+	}
+	
+	function reset(): Void {
+		runController.canvas.triggerAction( "RESET" );
+	}
+
+	function validateLimits(): Void {
+		var result: String[] = [];
+
+		var time: Integer = runController.canvas.getCounter( CanvasItem.TIMER_COUNTER ).get();
+		def tl = form.getValue("timeLimit");
+		if(tl < time){
+			insert "time" into result;
+		}	
+		
+		var sampleCount: Integer = runController.canvas.getCounter( CanvasItem.SAMPLE_COUNTER ).get();
+		def sl = form.getValue( "sampleLimit" );
+		if(sl < sampleCount){
+			insert "sample" into result;
+		}
+		
+		var failureCount: Integer = runController.canvas.getCounter( CanvasItem.FAILURE_COUNTER ).get();
+		def fl = form.getValue( "failureLimit" );
+		if(fl < failureCount){
+			insert "failure" into result;
+		}
+		
+		warnMsgPlural = if(result.size() > 1) "s" else "";
+
+		warnMsg = "";
+		for(i in [0..result.size()-1]){
+			if(i > 0 and i < result.size()-1){
+				warnMsg = "{warnMsg}, ";
+			}
+			else if(i > 0 and i == result.size()-1){
+				warnMsg = "{warnMsg} and ";
+			}
+			warnMsg = "{warnMsg}{result[i]}";
+		}
+		
+		if(warnMsg.length()>0){
+			warnDialog.show();
+		}
+	}
+	
 }
+
 
 function valueOf( val:Object ) {
 	if( val == null ) return null;
