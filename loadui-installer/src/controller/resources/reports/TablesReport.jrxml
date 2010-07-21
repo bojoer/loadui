@@ -6,6 +6,7 @@
 	<field name="title" class="java.lang.String"/>
 	<field name="table" class="net.sf.jasperreports.engine.data.JRTableModelDataSource"/>
 	<field name="print_tables" class="java.lang.Boolean"/>
+	<field name="column_count" class="java.lang.Integer"/>
 	<detail>
 		<band height="57">
 			<textField>
@@ -19,10 +20,24 @@
 			</textField>
 			<subreport>
 				<reportElement x="-19" y="20" width="496" height="37" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
-					<printWhenExpression><![CDATA[$F{print_tables}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{print_tables}.booleanValue() && ($F{column_count}.intValue() == 10))]]></printWhenExpression>
 				</reportElement>
 				<dataSourceExpression><![CDATA[$F{table}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:TableReport"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="-19" y="20" width="496" height="37" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[new Boolean($F{print_tables}.booleanValue() && ($F{column_count}.intValue() == 4))]]></printWhenExpression>
+				</reportElement>
+				<dataSourceExpression><![CDATA[$F{table}]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA["subreport:TableReport2"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="-19" y="20" width="496" height="37" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[new Boolean($F{print_tables}.booleanValue() & ($F{column_count}.intValue() == 5))]]></printWhenExpression>
+				</reportElement>
+				<dataSourceExpression><![CDATA[$F{table}]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA["subreport:TableReport3"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
