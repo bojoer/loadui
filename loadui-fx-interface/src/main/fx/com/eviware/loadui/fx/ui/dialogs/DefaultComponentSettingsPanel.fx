@@ -160,8 +160,8 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 			} else if(c instanceof TableLayoutComponent) {
 				var p: TableLayoutComponent = c as TableLayoutComponent;
 				var model: TableModel;
-				if(p.getTableModel() instanceof SettingsTableModel){
-					model = cloneSettingsTableModel(p.getTableModel() as SettingsTableModel);
+				if(p.getTableModel() instanceof StringToStringTableModel){
+					model = cloneStringToStringTableModel(p.getTableModel() as StringToStringTableModel);
 					tableModelBuffer.put(p.getTableModel(), model);	
 				}
 				else{
@@ -174,10 +174,10 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 		}
 	}
 	
-	function cloneSettingsTableModel(fromModel: SettingsTableModel): SettingsTableModel{
-		var cloneModel = new SettingsTableModel();
+	function cloneStringToStringTableModel(fromModel: StringToStringTableModel): StringToStringTableModel {
+		var cloneModel = new StringToStringTableModel();
 		for(i in [0..fromModel.getRowCount()-1]){
-			cloneModel.addRow(fromModel.getValueAt(i, 0) as String, fromModel.getValueAt(i, 1), fromModel.getValueAt(i, 1).getClass());
+			cloneModel.addRow(fromModel.getValueAt(i, 0) as String, fromModel.getValueAt(i, 1) as String);
 		}
 		cloneModel;
 	}
@@ -185,8 +185,8 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 	function updateTableModels(): Void {
 		var keys: Iterator = tableModelBuffer.keySet().iterator();
 		while(keys.hasNext()){
-			var orig: SettingsTableModel = keys.next() as SettingsTableModel;
-			var clone: SettingsTableModel = tableModelBuffer.get(orig) as SettingsTableModel;
+			var orig: StringToStringTableModel = keys.next() as StringToStringTableModel;
+			var clone: StringToStringTableModel = tableModelBuffer.get(orig) as StringToStringTableModel;
 			orig.update(clone);
 		}
 	}
