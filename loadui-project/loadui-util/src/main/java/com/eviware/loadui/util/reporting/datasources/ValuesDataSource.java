@@ -37,7 +37,7 @@ public class ValuesDataSource extends JRAbstractBeanDataSource
 	@Override
 	public Object getFieldValue(JRField field) throws JRException
 	{
-		logger.debug("Looking for " + field.getName());
+//		logger.debug("Looking for " + field.getName());
 		if( field.getName().equals("key"))
 			return keys[cnt];
 		if( field.getName().equals("value"))

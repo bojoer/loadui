@@ -21,7 +21,6 @@ import java.util.TreeMap;
 
 import net.sf.jasperreports.engine.JRException;
 
-import com.eviware.loadui.api.summary.Chapter;
 import com.eviware.loadui.api.summary.Summary;
 
 public class JasperReportManager {
@@ -61,23 +60,28 @@ public class JasperReportManager {
 			this.reports.put(reportTemplate.getName().replace(".jrxml", ""), new LReportTemplate(reportTemplate.getName(), reportTemplate));
 		}
 	}
-	
-//	public void createReport( Chapter chapter) {
-//		try
-//		{
-//			ReportEngine.generateJasperReport(chapter, reports.get("SummaryReport"));
-//		}
-//		catch (JRException e)
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-	
+	/*
+	 * This will create a report and open JasperViewer
+	 */
 	public void createReport( Summary summary) {
 		try
 		{
 			ReportEngine.generateJasperReport(summary, reports.get("SummaryReport"));
+		}
+		catch (JRException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/*
+	 * this will create report and save it in given file and given format
+	 */
+	public void createReport( Summary summary, File file, String format) {
+		try
+		{
+			ReportEngine.generateJasperReport(summary, reports.get("SummaryReport"), file, format);
 		}
 		catch (JRException e)
 		{
