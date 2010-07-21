@@ -55,6 +55,8 @@
 	            	<constructor-arg ref="executorService" />
 	            </bean>
 	            <bean class="com.eviware.loadui.impl.conversion.ReferenceToFileConverter" />
+	            <bean class="com.eviware.loadui.impl.conversion.StringToStringTableModelToStringConverter" />
+	            <bean class="com.eviware.loadui.impl.conversion.StringToStringToStringTableModelConverter" />
 	        </list>
 	    </property>
 	</bean>
