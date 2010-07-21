@@ -44,8 +44,10 @@ public class TablesDataSource extends JRAbstractBeanDataSource
 			return keys[cnt];
 		if (field.getName().equals("table"))
 			return new LTableDataSource(tables[cnt]);
+		if (field.getName().equals("column_count"))
+			return new Integer(tables[cnt].getColumnCount());
 		if (field.getName().equals("print_tables")) {
-			logger.debug("pt: " + (tables[cnt].getRowCount() > 0));
+//			logger.debug("pt: " + (tables[cnt].getRowCount() > 0));
 			return tables[cnt].getRowCount() > 0;
 		}
 		return null;
