@@ -236,33 +236,32 @@ public class ProjectMenu extends HBox {
 				                        def chooser = new JFileChooser();
 				                        chooser.addChoosableFileFilter(new XMLFileFilter());
 				                        chooser.setAcceptAllFileFilterUsed(false);
-				                        var destination:File;
 				                        if (JFileChooser.APPROVE_OPTION == chooser.showSaveDialog(null)) {
-				                                destination = chooser.getSelectedFile();
-				                                if( not destination.getName().endsWith(".xml") ) {
-				                                   def newname = "{destination.getAbsolutePath()}.xml";
-				                                   destination = new File(newname); 
-				                                }
+				                            var destination = chooser.getSelectedFile();
+				                            if( not destination.getName().endsWith(".xml") ) {
+				                                def newname = "{destination.getAbsolutePath()}.xml";
+				                                destination = new File(newname); 
+				                            }
+				                            try {
+		                                      project.saveAs(destination);
+		                                      MainWindow.instance.projectCanvas.generateMiniatures();
+													     project.save();					
+		                                  } catch(e:IOException) {
+		                                      def warning:Dialog = Dialog {
+		             	                           title: "Warning!"
+		             	                           content: Text {
+		             	                               content: "Failed to Import Project, see log for more details!"
+		             	                           }
+		             	                           okText: "Ok"
+		             	                           onOk: function() {
+		             	                               warning.close();
+		             	                           }
+		             	                           noCancel: true
+		             	                           width: 300
+		             	                           height: 150
+		             	                        };
+		                                   }
 				                        }
-                                        try {
-                                            project.saveAs(destination);						
-                                        } catch(e:IOException) {
-                                         	var warning:Dialog = Dialog {
-                	                             title: "Warning!"
-                	                             content: Text {
-                	                                 content: "Failed to Import Project, see log for more details!"
-                	                             }
-                	                             okText: "Ok"
-                	                             onOk: function() {
-                	                                 warning.close();
-                	                             }
-                	                             noCancel: true
-                	                             width: 300
-                	                             height: 150
-                	                         	};
-                                        }
-                                        MainWindow.instance.projectCanvas.generateMiniatures();
-										project.save();
 				                    }
 				                }
 				                ActionMenuItem {

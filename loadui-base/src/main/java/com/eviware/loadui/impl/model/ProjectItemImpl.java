@@ -195,8 +195,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				sceneEndpoints.get( scene ).registerEndpoint( agent );
 				AssignmentImpl assignment = new AssignmentImpl( scene, agent );
 				if( assignments.add( assignment ) && agent.isReady() )
-					agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, scene
-							.getId() ) );
+					agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, scene.getId() ) );
 			}
 		}
 	}
@@ -231,8 +230,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			for( AgentItem agent : getAgentsAssignedTo( scene ) )
 			{
 				log.debug( "Telling {} to stop scene {}", agent, scene );
-				agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections
-						.singletonMap( AgentItem.UNASSIGN, scene.getId() ) );
+				agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.UNASSIGN, scene.getId() ) );
 			}
 
 			scene.removeEventListener( BaseEvent.class, sceneListener );
@@ -315,8 +313,9 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			log.error( "Unable to save project: " + getLabel(), e );
 		}
 	}
-	
-	public void saveAs(File saveAsFile) {
+
+	public void saveAs( File saveAsFile )
+	{
 		try
 		{
 			log.info( "Saving Project {}...", getLabel() );
@@ -367,8 +366,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			conf.setAgentAddress( agent.getUrl() );
 			agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, sceneId ) );
 			if( scene.isRunning() )
-				agent.sendMessage( SceneCommunication.CHANNEL, Arrays.asList( sceneId,
-						Long.toString( scene.getVersion() ), SceneCommunication.ACTION_EVENT, START_ACTION, sceneId ) );
+				agent.sendMessage( SceneCommunication.CHANNEL, Arrays.asList( sceneId, Long.toString( scene.getVersion() ),
+						SceneCommunication.ACTION_EVENT, START_ACTION, sceneId ) );
 			fireCollectionEvent( ASSIGNMENTS, Event.ADDED, assignment );
 		}
 	}
@@ -409,8 +408,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			if( bme != null )
 			{
 				bme.deregisterEndpoint( agent );
-				agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections
-						.singletonMap( AgentItem.UNASSIGN, scene.getId() ) );
+				agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.UNASSIGN, scene.getId() ) );
 			}
 
 			int size = getConfig().sizeOfSceneAssignmentArray();
@@ -473,22 +471,23 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		if( awaitingSummaryTimeout != null )
 			awaitingSummaryTimeout.cancel( true );
 
-		awaitingSummaryTimeout = scheduler.schedule( new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				log.error( "Failed to get statistics from all expected Agents within timeout period!" );
-				awaitingScenes.clear();
-				doGenerateSummary();
-			}
-		}, 5, TimeUnit.SECONDS );
-
 		for( SceneItem scene : getScenes() )
 			if( getAgentsAssignedTo( scene ).size() > 0 && scene.isFollowProject() && !getWorkspace().isLocalMode() )
 				awaitingScenes.add( scene );
+
 		if( awaitingScenes.isEmpty() )
 			doGenerateSummary();
+		else
+			awaitingSummaryTimeout = scheduler.schedule( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					log.error( "Failed to get statistics from all expected Agents within timeout period!" );
+					awaitingScenes.clear();
+					doGenerateSummary();
+				}
+			}, 5, TimeUnit.SECONDS );
 	}
 
 	@Override
@@ -515,11 +514,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		projectChapter.addSection( new ProjectExecutionNotablesSection( this ) );
 		projectChapter.addSection( new ProjectDataSection( this ) );
 		projectChapter.setDescription( getDescription() );
-		
+
 		for( ComponentItem component : getComponents() )
 		{
 			component.generateSummary( projectChapter );
-			
+
 		}
 
 		// We decided to wait a bit with this...
@@ -911,8 +910,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				for( SceneItem scene : getScenesAssignedTo( agent ) )
 				{
 					log.debug( "Send message assign: {}", scene.getLabel() );
-					agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, scene
-							.getId() ) );
+					agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, scene.getId() ) );
 				}
 			}
 		}
@@ -928,8 +926,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				if( scene != null )
 				{
 					endpoint.sendMessage( channel, MapUtils.build( String.class, String.class ).put( AgentItem.SCENE_ID,
-							scene.getId() )
-							.put( AgentItem.SCENE_DEFINITION, conversionService.convert( scene, String.class ) )
+							scene.getId() ).put( AgentItem.SCENE_DEFINITION, conversionService.convert( scene, String.class ) )
 							.getImmutable() );
 				}
 				else

@@ -323,8 +323,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	@Override
 	public void generateSummary( MutableChapter summary )
 	{
-		behavior.generateSummary(summary);
-
+		behavior.generateSummary( summary );
 	}
 
 	public void sendAgentMessage( AgentItem agent, TerminalMessage message )
