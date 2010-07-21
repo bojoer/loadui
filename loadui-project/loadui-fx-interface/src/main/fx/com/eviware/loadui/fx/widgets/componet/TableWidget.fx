@@ -68,7 +68,8 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 			oldVal.removeEventListener( BaseEvent.class, this );
 			workspace.addEventListener( BaseEvent.class, this );
 		}
-	var distributeMode:Boolean = not workspace.isLocalMode();
+	var distributedMode:Boolean = not workspace.isLocalMode();
+	def componentDisabled = bind distributedMode and AppState.instance.state.startsWith( "testcase." );
 	
 	init {
 	    model.addTableModelListener(this);
@@ -105,24 +106,24 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 						action: function() {
 							(model as LTableModel).reset();
 						}
-						disable: bind distributeMode
+						disable: bind componentDisabled
 					}, Button {
 						text: "Clear"
 						action: function() {
 							(model as LTableModel).clear();
 						}
-						disable: bind distributeMode
+						disable: bind componentDisabled
 					}, cb = CheckBox {
 						text: "Follow"
 						onMouseClicked: function(e) {
 							model.setFollow(cb.selected);   
 						}
-						disable: bind distributeMode
+						disable: bind componentDisabled
 					},
 					Rectangle { width: 250, height:1, fill:Color.TRANSPARENT, stroke:Color.TRANSPARENT },
 					Label {
 					    text: "disabled in distributed mode"
-					    visible: bind distributeMode
+					    visible: bind componentDisabled
 					}
 				] 
 			}
@@ -137,8 +138,7 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 			if( e instanceof PropertyEvent ) {
 				def event = e as PropertyEvent;
 				if( WorkspaceItem.LOCAL_MODE_PROPERTY == event.getProperty().getKey() ) {
-				    if ( AppState.instance.state == AppState.TESTCASE_FRONT )
-					   distributeMode = not workspace.isLocalMode();
+					distributedMode = not workspace.isLocalMode();
 				} 
 			}
 		} 
