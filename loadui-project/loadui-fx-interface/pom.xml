@@ -210,7 +210,7 @@
         <groupId>javafx</groupId>
         <artifactId>javafx-common</artifactId>
         <version>RELEASE</version>
-        <systemPath>C:\Program Files (x86)\JavaFX\javafx-sdk1.3\lib\desktop\javafx-common.jar</systemPath>
+        <systemPath>${env.JAVAFX_HOME}\lib\desktop\javafx-common.jar</systemPath>
         <scope>system</scope>
     </dependency>
    
