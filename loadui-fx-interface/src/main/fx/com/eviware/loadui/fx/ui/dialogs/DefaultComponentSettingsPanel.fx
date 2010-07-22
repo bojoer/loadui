@@ -25,6 +25,7 @@ import javafx.scene.layout.Panel;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 import com.eviware.loadui.api.model.*;
 import com.eviware.loadui.api.property.Property;
@@ -136,7 +137,7 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 			if(c instanceof LabelLayoutComponent){
 				LabelField {
 					value: (c as LabelLayoutComponent).getLabel()
-					styleClass: if(level == 0) "settingsTabGroup" else "settingsTabLabel"
+					font: if(level == 0) Font.font("Arial", FontWeight.BOLD, 10) else Font { name:"Arial" size: 10 }
 					layoutInfo: LayoutInfo { 
 						height: if(level == 0) 0 else 22
 					}
