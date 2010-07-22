@@ -206,5 +206,14 @@
 			<version>soapui</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+        <groupId>javafx</groupId>
+        <artifactId>javafx-common</artifactId>
+        <version>RELEASE</version>
+        <systemPath>C:\Program Files (x86)\JavaFX\javafx-sdk1.3\lib\desktop\javafx-common.jar</systemPath>
+        <scope>system</scope>
+    </dependency>
+   
+		
 	</dependencies>
 </project>
