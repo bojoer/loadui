@@ -35,7 +35,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.geometry.VPos;
-
+import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.AppState;
@@ -108,18 +108,23 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 		
 		addMouseHandler( MOUSE_CLICKED, function( e:MouseEvent ) {
 			if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
-			    try {
-					projectRef.setEnabled( true );
-					AppState.instance.setActiveCanvas( projectRef.getProject() );
-			    }
-			    catch( ex:IOException )
-			    {
-			    	CorruptProjectDialog{ project:projectRef };
-			    }
+				MainWindow.instance.waitingCursor.startWait("Openning Project");
+
+				
+			    	try {
+			         
+						projectRef.setEnabled( true );
+						AppState.instance.setActiveCanvas( projectRef.getProject() );
+			   	 	}
+			    	catch( ex:IOException )
+			    	{
+			    		CorruptProjectDialog{ project:projectRef };
+			    	}
+				MainWindow.instance.waitingCursor.stopWait();
 			}
 		} );
-		
-	}
+	}	
+
 	
 	var menu:PopupMenu;
 	var menuContent:Node;
