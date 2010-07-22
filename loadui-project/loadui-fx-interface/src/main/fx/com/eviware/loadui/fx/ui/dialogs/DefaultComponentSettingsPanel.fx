@@ -26,14 +26,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
-import com.eviware.loadui.api.ui.tabbedpane.SelectMode;
 import com.eviware.loadui.api.model.*;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.fx.ui.tabs.*;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
 import com.eviware.loadui.fx.ui.form.fields.*;
-import com.eviware.loadui.fx.dummy.*;
 import com.eviware.loadui.fx.ui.layout.widgets.support.SelectSupport;
 
 import org.jfxtras.scene.layout.XMigLayout;

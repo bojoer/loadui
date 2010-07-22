@@ -30,7 +30,6 @@ import com.eviware.loadui.fx.ui.tabs.*;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
 import com.eviware.loadui.fx.ui.form.fields.*;
-import com.eviware.loadui.fx.dummy.*;
 import com.eviware.loadui.api.discovery.AgentDiscovery.*;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;

@@ -122,6 +122,11 @@ public function openURL(url:String) {
 	java.awt.Desktop.getDesktop().browse(new URI(url));
 }
 
+//Whenever a Mac specific fix is needed, use this static method to figure out if we're running on a Mac or not.
+public function shouldApplyMacFix():Boolean {
+	FX.getProperty("os.name").toLowerCase().contains("mac")
+}
+
 class CompareByString extends Comparator {
 	override function compare( a:Object, b:Object ) {
 		a.toString().compareTo( b.toString() )
