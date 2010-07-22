@@ -16,6 +16,13 @@
 package com.eviware.loadui.api.ui.table;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
+import com.eviware.loadui.api.property.Property;
 
 public class StringToStringTableModel extends KeyValueTableModel {
 
@@ -23,8 +30,27 @@ public class StringToStringTableModel extends KeyValueTableModel {
 
 	private ArrayList<StringProperty> data = new ArrayList<StringProperty>();
 
+	private Property<String> property;
+
 	public StringToStringTableModel() {
+		initialize();
+	}
+
+	public StringToStringTableModel(Property<String> property) {
+		this.property = property;
+		initialize();
+	}
+
+	private void initialize() {
+		restore();
+
 		header = new String[] { "Property", "Value" };
+		addTableModelListener(new TableModelListener() {
+			@Override
+			public void tableChanged(TableModelEvent arg0) {
+				store();
+			}
+		});
 	}
 
 	@Override
@@ -47,7 +73,7 @@ public class StringToStringTableModel extends KeyValueTableModel {
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		StringProperty p = data.get(rowIndex);
-		p.setValue((String)aValue);
+		p.setValue((String) aValue);
 		hashCode();
 		fireTableDataChanged();
 		observer.startNotification();
@@ -65,7 +91,7 @@ public class StringToStringTableModel extends KeyValueTableModel {
 	public void update(StringToStringTableModel model) {
 		for (int i = 0; i < model.getRowCount(); i++) {
 			StringProperty p = data.get(i);
-			p.setValue((String)model.getValueAt(i, 1));
+			p.setValue((String) model.getValueAt(i, 1));
 		}
 		hashCode();
 		fireTableDataChanged();
@@ -87,7 +113,45 @@ public class StringToStringTableModel extends KeyValueTableModel {
 	public ArrayList<StringProperty> getData() {
 		return data;
 	}
-	
+
+	private void store() {
+		if (property != null) {
+			String result = "";
+			for (StringProperty sp : data) {
+				result += escape(sp.getName()) + "=" + escape(sp.getValue()) + "|";
+			}
+			if (result.endsWith("|")) {
+				result = result.substring(0, result.length() - 1);
+			}
+			property.setValue(result);
+		}
+	}
+
+	private void restore() {
+		data.clear();
+		if (property == null || property.getValue() == null) {
+			return;
+		}
+		String[] pairs = property.getValue().split("\\|");
+		for (int i = 0; i < pairs.length; i++) {
+			String[] p = pairs[i].split("=");
+			if (p.length == 2) {
+				data.add(new StringProperty(unescape(p[0]), unescape(p[1])));
+			}
+			else if (p.length == 1) {
+				data.add(new StringProperty(unescape(p[0]), ""));
+			}
+		}
+	}
+
+	private String unescape(String string) {
+		return string.replaceAll("&#124;", "|").replaceAll("&#061;", "=");
+	}
+
+	private String escape(String string) {
+		return string.replaceAll("\\|", "&#124;").replaceAll("=", "&#061;");
+	}
+
 	public static class StringProperty {
 		private String name;
 		private String value;

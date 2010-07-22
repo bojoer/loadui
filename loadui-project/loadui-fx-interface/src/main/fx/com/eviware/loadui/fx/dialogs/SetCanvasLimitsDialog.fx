@@ -73,7 +73,8 @@ public class SetCanvasLimitsDialog {
 				form = Form {
 					width: bind 200
 					formContent: [
-						LongInputField { id: "timeLimit", label: "Time limit (sec):", value: valueOf(runController.timeLimit) },
+						//LongInputField { id: "timeLimit", label: "Time limit (sec):", value: valueOf(runController.timeLimit) },
+						TimeField { id: "timeLimit", label: "Time limit:", value: valueOf(runController.timeLimit) },
 						LongInputField { id: "sampleLimit", label: "Sample limit:", value: valueOf(runController.sampleLimit) },
 						LongInputField { id: "failureLimit", label: "Failure limit:", value: valueOf(runController.failureLimit) },
 						CheckBoxField { id: "reset", label: "Reset counters?", value: false, translateY: 20 } as FormField
