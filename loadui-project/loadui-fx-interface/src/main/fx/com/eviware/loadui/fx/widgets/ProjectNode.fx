@@ -72,6 +72,8 @@ import javax.imageio.ImageIO;
 import javafx.ext.swing.SwingUtils;
 import com.eviware.loadui.fx.util.ImageUtil.*;
 
+import com.eviware.loadui.fx.async.ProjectRefSetEnabledTaskFX;
+
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.ProjectNode" );
 
 def projectGrid = Image { url:"{__ROOT__}images/project-grid.png" };
@@ -112,15 +114,23 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 
 				
 			    	try {
-			         
-						projectRef.setEnabled( true );
-						AppState.instance.setActiveCanvas( projectRef.getProject() );
+
+						var task = ProjectRefSetEnabledTaskFX { ref:projectRef 
+						onDone: function() {
+							AppState.instance.setActiveCanvas( projectRef.getProject() );
+							MainWindow.instance.waitingCursor.stopWait();	
+						}
+						
+						}
+						task.start();
+
 			   	 	}
 			    	catch( ex:IOException )
 			    	{
+			    	    
+			    		MainWindow.instance.waitingCursor.stopWait();
 			    		CorruptProjectDialog{ project:projectRef };
 			    	}
-				MainWindow.instance.waitingCursor.stopWait();
 			}
 		} );
 	}	
