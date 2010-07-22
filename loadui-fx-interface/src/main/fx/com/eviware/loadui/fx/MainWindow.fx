@@ -60,6 +60,7 @@ import com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 
 import com.eviware.loadui.fx.widgets.FeedDisplay;
+import com.eviware.loadui.fx.ui.WaitingCursor;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.MainWindow" );
 
@@ -107,6 +108,7 @@ public class MainWindow {
 	public-read def canvas:Canvas = bind if(AppState.instance.state == AppState.TESTCASE_FRONT ) testcaseCanvas else projectCanvas;
 	public-read var navigator:NavigationPanel;
 	
+	public var waitingCursor:WaitingCursor = WaitingCursor{};
 	
 	/**
 	 * Called once the bean is fully initialized (all the properties defined in the Spring
@@ -124,6 +126,7 @@ public class MainWindow {
 		appState = AppState {};
 		
 		//Set the layer to place items being dragged into.
+		WaitingCursor.overlay = appState.overlayLayer;
 		BaseNode.overlay = appState.overlayLayer;
 		Dialog.overlay = appState.overlayLayer;
 		PopupMenu.overlay = appState.overlayLayer;
@@ -157,6 +160,8 @@ public class MainWindow {
 		}
 		appState.insertInto( projectList, AppState.WORKSPACE_FRONT );
 		
+		
+		
 		//Pagelist - Agents
 		appState.insertInto( agentList = AgentList {
 			workspace: workspace
@@ -184,7 +189,6 @@ public class MainWindow {
 
 		appState.insertInto( toolbar, AppState.WORKSPACE_FRONT );
 		appState.insertInto( feed, AppState.WORKSPACE_FRONT );
-
 		
 		//Set up the Project view
 		appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/grid.png" }, clip: Rectangle{ width: bind scene.width, height: bind scene.height } }, AppState.PROJECT_FRONT );
