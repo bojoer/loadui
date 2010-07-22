@@ -49,9 +49,8 @@ public class WaitingCursor extends CustomNode {
         		Rectangle {
         					width: bind overlay.scene.width
         					height: bind overlay.scene.height
-        					fill: Color.WHITE
-        					opacity: 0.3
         					blocksMouse: bind waiting
+        					opacity: 0.1
         					onMouseMoved:function(me:MouseEvent) {
         					        	      	           innerGroup.layoutX = me.sceneX + 15;
         					        	      	                   		   	innerGroup.layoutY = me.sceneY - 15;
