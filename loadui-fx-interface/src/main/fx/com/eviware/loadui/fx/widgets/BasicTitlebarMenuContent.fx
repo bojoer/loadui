@@ -49,6 +49,7 @@ public class BasicTitlebarMenuContent extends Container {
 	public var enabled = false;
 	
 	public var label:String;
+	public var tooltip:String;
 	
 	public var menuItems:MenuItem[];
 	
@@ -73,7 +74,7 @@ public class BasicTitlebarMenuContent extends Container {
 				strokeWidth: 2
 				stroke: Color.BLACK
 			} else null, menuNode = Menu {
-				tooltip: bind label
+				tooltip: bind if(FX.isInitialized(tooltip)) tooltip else label
 				layoutX: if( hasLed ) 22 else 12
 				contentNode: Group {
 					content: [
