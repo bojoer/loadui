@@ -201,7 +201,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 			titlebarContent: BasicTitlebarMenuContent {
 				width: 155
 				hasLed: false
-				label: bind "{label}  " // trying to solve cluttered text on mac
+				label: bind "{label}"
 				menuItems: bind if( enabled ) enabledMenu else disabledMenu
 			}
 			content: bind [

@@ -26,7 +26,6 @@ import javafx.scene.paint.Color;
 import org.slf4j.LoggerFactory;
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.dialogs.SimpleModalDialog" );
 
-import com.eviware.loadui.api.ui.tabbedpane.SelectMode;
 import com.eviware.loadui.fx.ui.tabs.*;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;

@@ -25,14 +25,11 @@ import javafx.scene.layout.Panel;
 import org.slf4j.LoggerFactory;
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.dialogs.WorkspaceWrenchDialog" );
 
-import com.eviware.loadui.api.ui.tabbedpane.SelectMode;
 import javafx.scene.paint.Color;
 import com.eviware.loadui.fx.ui.tabs.*;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
 import com.eviware.loadui.fx.ui.form.fields.*;
-import com.eviware.loadui.fx.dummy.*;
-import com.eviware.loadui.api.ui.dialogs.DialogModel;
 
 import org.jfxtras.scene.layout.XMigLayout;
 import org.jfxtras.scene.layout.XMigLayout.*;

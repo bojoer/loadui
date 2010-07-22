@@ -40,6 +40,8 @@ import com.eviware.loadui.fx.ui.popup.MenuItem;
 import com.eviware.loadui.fx.ui.popup.PopupMenu;
 import com.eviware.loadui.fx.ui.resources.MenuArrow;
 
+import com.eviware.loadui.fx.FxUtils;
+
 public class BasicTitlebarMenuContent extends Container {
 
 	public-init var hasLed = true;
@@ -84,7 +86,7 @@ public class BasicTitlebarMenuContent extends Container {
 							fill: bind if( menu.isOpen ) Color.WHITE else Color.web("#303030")
 							rotate: 90
 							layoutY: bind labelNode.height / 2
-							layoutX: bind labelNode.width + 5
+							layoutX: bind if( FxUtils.shouldApplyMacFix() ) labelNode.width + 15 else labelNode.width + 5
 						}, Rectangle {
 							width: bind labelNode.width + arrowNode.layoutBounds.width + 11
 							height: bind labelNode.height + 6
