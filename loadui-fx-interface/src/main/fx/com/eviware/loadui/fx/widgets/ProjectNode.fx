@@ -110,7 +110,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 		
 		addMouseHandler( MOUSE_CLICKED, function( e:MouseEvent ) {
 			if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
-				MainWindow.instance.waitingCursor.startWait("Openning Project");
+				MainWindow.instance.waitingCursor.startWait("Openning Project", e.sceneX, e.sceneY);
 
 				
 			    	try {
