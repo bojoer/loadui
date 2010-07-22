@@ -34,8 +34,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 
-import java.awt.MouseInfo;
-import java.awt.PointerInfo;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+
+import javafx.scene.transform.Rotate;
+
 
 
 public var overlay: Group = null;
@@ -46,24 +49,41 @@ public class WaitingCursor extends CustomNode {
     var mainGroup:Group;
     var txt = "";
     var waiting = false;
+    var rotation: Number = 0;
+    var timeline: Timeline = Timeline {
+    	repeatCount: Timeline.INDEFINITE
+        keyFrames: [
+          	KeyFrame {
+            	time: 50ms
+            	action: tick
+          	}
+        ]
+    };
+      
+      
     override function create() {
         mainGroup = Group {
             visible: bind waiting
         	content: [
         		Rectangle {
-        					width: bind overlay.scene.width
-        					height: bind overlay.scene.height
-        					blocksMouse: bind waiting
-        					opacity: 0.1
-        					onMouseMoved:function(me:MouseEvent) {
-        					        	      	           innerGroup.layoutX = me.sceneX + 15;
-        					        	      	                   		   	innerGroup.layoutY = me.sceneY - 15;
-        					        	        	   		}
-        				},
+        			width: bind overlay.scene.width
+        			height: bind overlay.scene.height
+        			blocksMouse: bind waiting
+        			opacity: 0.1
+        			onMouseMoved:function(me:MouseEvent) {
+        				innerGroup.layoutX = me.sceneX + 15;
+        				innerGroup.layoutY = me.sceneY - 15;
+        			}
+        		},
         		innerGroup = Group {
         			content: [ 
         				ImageView {
-        					image: Image { url: "{__ROOT__}images/png/hour-glass-cursor.png" }	 
+        					image: Image { url: "{__ROOT__}images/png/hour-glass-cursor.png" }	
+        					transforms: Rotate {
+        						pivotX: 10
+        						pivotY: 10
+        						angle: bind this.rotation
+        					} 
         				},
         				Label {
         				    translateX: 20
@@ -80,11 +100,11 @@ public class WaitingCursor extends CustomNode {
         if (not waiting) {
        		waiting = true;
        		insert mainGroup into overlay.content;
-       		var point:PointerInfo = MouseInfo.getPointerInfo();
-       		              
        		              innerGroup.layoutX = x + 15;
        		              innerGroup.layoutY = y - 15;
+       		              start();
         }
+        
         txt = waitText;
     }
     
@@ -92,7 +112,23 @@ public class WaitingCursor extends CustomNode {
          if (waiting) {
             waiting = false;
             txt = "";
+            stop();
             delete mainGroup from overlay.content;
          }
      }
+     
+     function start() {
+     	this.timeline.play();
+     }
+     
+	function stop() {
+    	this.timeline.stop();
+    }
+     
+    function tick() {
+        this.rotation += 20;
+        if (this.rotation == 360) {
+        	this.rotation = 0;
+        }
+    }
 }
