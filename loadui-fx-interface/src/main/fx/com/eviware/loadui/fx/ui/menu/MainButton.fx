@@ -67,12 +67,12 @@ public class MainButton extends Group {
 								new AboutDialog();
 							}
 						},
-						ActionMenuItem {
+			/*			ActionMenuItem {
 							text: ##[UPDATES]"Get Updates"
 							action: function() {
 								openURL("http://www.eviware.com/nightly-builds/loadui/")
 							}
-						},
+						}, */
 						ActionMenuItem {
 							text: ##[FORUM]"Give Feedback"
 							action: function() {
