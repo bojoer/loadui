@@ -181,7 +181,7 @@ sample = { message, sampleId ->
 				return message
 			}
 		} catch( e ) {
-			if( e instanceof SampleCancelledException )
+			if( e instanceof SampleCancelledException || e instanceof IllegalStateException)
 				throw e;
 			
 			e.printStackTrace()
