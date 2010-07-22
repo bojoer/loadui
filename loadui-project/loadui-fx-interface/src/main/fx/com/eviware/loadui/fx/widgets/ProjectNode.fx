@@ -212,6 +212,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 				width: 155
 				hasLed: false
 				label: bind "{label}"
+				tooltip: bind "{label} ({projectRef.getProjectFile().getAbsolutePath()})"
 				menuItems: bind if( enabled ) enabledMenu else disabledMenu
 			}
 			content: bind [
