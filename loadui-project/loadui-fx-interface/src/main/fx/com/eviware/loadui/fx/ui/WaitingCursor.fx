@@ -34,6 +34,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 
+import java.awt.MouseInfo;
+import java.awt.PointerInfo;
+
+
 public var overlay: Group = null;
 
 public class WaitingCursor extends CustomNode {
@@ -72,10 +76,14 @@ public class WaitingCursor extends CustomNode {
         }
     }
     
-    public function startWait(waitText:String) {
+    public function startWait(waitText:String, x, y) {
         if (not waiting) {
        		waiting = true;
        		insert mainGroup into overlay.content;
+       		var point:PointerInfo = MouseInfo.getPointerInfo();
+       		              
+       		              innerGroup.layoutX = x + 15;
+       		              innerGroup.layoutY = y - 15;
         }
         txt = waitText;
     }
