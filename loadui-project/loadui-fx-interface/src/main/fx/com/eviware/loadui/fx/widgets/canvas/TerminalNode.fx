@@ -217,8 +217,8 @@ class TerminalDraggable extends BaseNode, Draggable, TooltipHolder {
 	override var onGrab = function():Void {
 		var startNode:Node;
 		
-		if( Selectable.current instanceof ConnectionNode ) {
-			def conn = Selectable.current as ConnectionNode;
+		if( sizeof Selectable.selects == 1 and Selectable.selects[0] instanceof ConnectionNode ) {
+			def conn = Selectable.selects[0] as ConnectionNode;
 			if( terminal == conn.connection.getInputTerminal() or terminal == conn.connection.getOutputTerminal() ) {
 				def other = if( terminal instanceof InputTerminal ) conn.connection.getOutputTerminal()
 					else conn.connection.getInputTerminal();
@@ -234,6 +234,8 @@ class TerminalDraggable extends BaseNode, Draggable, TooltipHolder {
 				prev = conn;
 				prev.visible = false;
 			}
+		} else {
+			Selectable.selectNone();
 		}
 		
 		if( startNode == null ) {

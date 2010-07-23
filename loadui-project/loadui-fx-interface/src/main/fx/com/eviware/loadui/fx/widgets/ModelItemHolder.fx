@@ -21,6 +21,7 @@
 
 package com.eviware.loadui.fx.widgets;
 
+import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.FxUtils;
 
 import com.eviware.loadui.api.model.ModelItem;
@@ -32,7 +33,7 @@ import java.util.EventObject;
 /**
  * Mixin class for any object that wraps a ModelItem.
  */
-public mixin class ModelItemHolder {
+public mixin class ModelItemHolder extends Deletable {
 
 	def listener = new ReleaseListener();
 	
@@ -46,6 +47,10 @@ public mixin class ModelItemHolder {
 			newVal.addEventListener( BaseEvent.class, listener );		
 	}
 	
+	override function doDelete() {
+		modelItem.delete();	
+	}
+	
 	/**
 	 * The user presentable name of the type of the ModelItem.
 	 */
@@ -55,6 +60,8 @@ public mixin class ModelItemHolder {
 	 * This function is called when the ModelItem specified by the 'modelItem' variable is released. 
 	 */
 	protected function release():Void {}
+	
+	//override function toString():String { "{getTypeName()}: {modelItem.getLabel()}" }
 }
 
 public class ReleaseListener extends EventHandler {

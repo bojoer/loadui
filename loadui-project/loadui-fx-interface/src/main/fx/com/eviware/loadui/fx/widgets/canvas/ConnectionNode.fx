@@ -32,6 +32,7 @@ import com.eviware.loadui.fx.ui.resources.Wire;
 
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.BaseNode.*;
+import com.eviware.loadui.fx.ui.node.Deletable;
 
 import com.eviware.loadui.api.terminal.Connection;
 import java.lang.RuntimeException;
@@ -42,7 +43,7 @@ import java.lang.RuntimeException;
  *
  * @author dain.nilsson
  */
-public class ConnectionNode extends Selectable, BaseNode {
+public class ConnectionNode extends Selectable, Deletable, BaseNode {
 	/**
 	 * The Canvas in which the ConnectionNode lives.
 	 */
@@ -71,19 +72,19 @@ public class ConnectionNode extends Selectable, BaseNode {
 	override var blocksMouse = true;
 	override var onMouseClicked = function( e:MouseEvent ) {
 		if( e.button == MouseButton.PRIMARY ) {
-			select();
+			if( e.controlDown ) { if( selected ) deselect() else select() } else if( not selected ) selectOnly();
 			toFront();
 		}
+	}
+	
+	override var confirmDelete = false;
+	override function doDelete():Void {
+		connection.disconnect();
 	}
 	
 	init {
 		if( not FX.isInitialized( connection ) )
 			throw new RuntimeException( "connection is not initialized!" );
-		
-		addKeyHandler( KEY_PRESSED, function( e:KeyEvent ) {
-			if( selected and e.code == KeyCode.VK_DELETE )
-				connection.disconnect();
-		} );
 		
 		terminalsChanged();
 	}
@@ -145,7 +146,7 @@ public class ConnectionNode extends Selectable, BaseNode {
 			endX: bind endX
 			endY: bind endY
 			fill: Color.GRAY
-			effect: bind if(selected) Selectable.effect else null
+			effect: bind if( selected ) Selectable.effect else null
 		}
 	}
 }

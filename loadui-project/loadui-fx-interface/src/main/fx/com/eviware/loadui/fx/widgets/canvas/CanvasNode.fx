@@ -158,23 +158,22 @@ public abstract class CanvasNode extends BaseNode, StylesheetAware, Selectable, 
 					    	CloneComponentDialog { canvasObject: modelItem as CanvasObjectItem }
 					    };
 					}
-				} 
+				},
 				ActionMenuItem {
 					text: ##[DELETE]"Delete"
 					action: function() { DeleteModelItemDialog { modelItem: modelItem } }
+				},
+				SeparatorMenuItem {},
+				ActionMenuItem {
+					text: "Settings"
+					action: function() { 
+						if(this instanceof TestCaseNode){
+							SettingsDialog{}.show(MainWindow.instance.testcaseCanvas.canvasItem);
+						} else {
+							settingsAction();
+						}
+					}
 				}
-				SeparatorMenuItem{}
-                ActionMenuItem {
-                    text: "Settings"
-                    action: function() { 
-                    	if(this instanceof TestCaseNode){
-                    		SettingsDialog{}.show(MainWindow.instance.testcaseCanvas.canvasItem);
-                    	} 
-                    	else{
-                    		settingsAction();
-                    	}
-                    }
-                }
 			]
 		}
 	}
@@ -235,10 +234,10 @@ public abstract class CanvasNode extends BaseNode, StylesheetAware, Selectable, 
 		if( not FX.isInitialized( modelItem ) )
 			throw new RuntimeException( "CanvasNode cannot be initialized without setting modelItem!" );
 		
-		addKeyHandler( KEY_PRESSED, function( e:KeyEvent ) {
+		/*addKeyHandler( KEY_PRESSED, function( e:KeyEvent ) {
 			if( selected and e.code == KeyCode.VK_DELETE )
 				DeleteModelItemDialog { modelItem: modelItem }
-		} );
+		} );*/
 		
 		modelItem.addEventListener( BaseEvent.class, this );
 		label = modelItem.getLabel();
@@ -273,7 +272,7 @@ public abstract class CanvasNode extends BaseNode, StylesheetAware, Selectable, 
 	override var blocksMouse = true;
 	override var onGrab = function():Void {
 		toFront();
-		select();
+		if( mouseEvent.controlDown ) { if( selected ) deselect() else select() } else if( not selected ) selectOnly();
 	}
 	
 	override var onMove = function() { canvas.refreshComponents() };
