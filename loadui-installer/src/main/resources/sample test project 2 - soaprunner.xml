@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:loadui-project label="Project 13" id="2d53b1bf-95db-4fd8-8e4c-2e41fa8b470a" xmlns:con="http://eviware.com/loadui/config"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="ModelItem.saveReport" type="java.lang.Boolean">false</con:property><con:property key="ModelItem.reportFolder" type="java.lang.String"/></con:properties><con:attributes><con:property key="limits"/></con:attributes><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Fixed Rate" id="59c925a7-a44c-43cc-a332-4d86a1dc8f47" category="generators"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
+// Copyright 2010 eviware software ab
+// 
+// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the Licence.
+// You may obtain a copy of the Licence at:
+// 
+// http://ec.europa.eu/idabc/eupl5
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the Licence for the specific language governing permissions and limitations
+// under the Licence.
+// 
+
+/**
+ * Sends an empty message periodically, at a set rate
+ * 
+ * @help http://www.loadui.org/Triggers/fixed-rate.html
+ * @name Fixed Rate
+ * @category generators
+ * @nonBlocking true
+ */
+
+import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.ActionEvent
+import com.eviware.loadui.util.layout.DelayedFormattedString
+
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+
+executor = Executors.newSingleThreadScheduledExecutor()
+
+//Properties
+createProperty( 'rate', Long, 10 )
+createProperty( 'unit', String, 'Sec' )
+
+
+milisecondsPerUnit = 1000000				
+delay = milisecondsPerUnit/rate.value
+
+display = new DelayedFormattedString( '%d / %s', 200, rate.value, unit.value )
+
+onRelease = { 
+	executor.shutdownNow() 
+	display.release()
+}
+future = null
+schedule = {
+	if (stateProperty.value) {
+		future?.cancel(true);
+		future = executor.scheduleAtFixedRate( { trigger() }, delay.longValue(), delay.longValue(), TimeUnit.MICROSECONDS )
+	}
+}
+
+addEventListener( PropertyEvent ) { event ->
+	if ( event.event == PropertyEvent.Event.VALUE ) {
+		if( event.property == unit ) {
+			if ( unit.value == "Sec" )
+				milisecondsPerUnit = 1000000
+			if ( unit.value == "Min" )
+				milisecondsPerUnit = 60000000
+			if ( unit.value == "Hour" )
+				milisecondsPerUnit = 3600000000
+		}
+		if (event.property == stateProperty &amp;&amp; !stateProperty.value)
+			future?.cancel(true)
+		if (stateProperty.value)
+			future?.cancel(true)
+		if( rate.value != null &amp;&amp; rate.value > 0 ) {
+			delay = milisecondsPerUnit/rate.value
+			if ( delay &lt; 1 )
+				delay = 1
+			display.setArgs( rate.value, unit.value )
+			schedule()
+		}
+	}
+}
+
+addEventListener( ActionEvent ) { event ->
+	if ( event.key == "STOP" ) {
+		future?.cancel(true)
+	}
+	
+	if ( event.key == "START" ) {
+		schedule()
+	}
+	
+	//RESET in this case would not really do anything
+}
+
+//Layout
+layout { 
+	property( property:rate, label:'Rate', min:0 ) 
+	separator( vertical:true )
+	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
+	separator( vertical:true )
+	box( widget:'display' ) {
+		node( label:'Rate', fString:display, constraints:'w 75!' )
+	}
+}
+
+//Settings
+//settings( label: "Settings", constraints: 'wrap 2' ) {
+//	box(constraints:"growx, wrap 1") {
+//		property( property:rate, label:'Rate', min:0 ) 
+//		property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
+//	}
+//} 
+
+//Start scheduler
+if ( unit.value == "Sec" )
+	milisecondsPerUnit = 1000000
+if ( unit.value == "Min" )
+	milisecondsPerUnit = 60000000
+if ( unit.value == "Hour" )
+	milisecondsPerUnit = 3600000000
+
+delay = milisecondsPerUnit/rate.value
+
+if (running)
+	schedule();
+
+
+</con:property><con:property key="stateProperty" type="java.lang.Boolean">true</con:property><con:property key="rate" type="java.lang.Long">10</con:property><con:property key="unit" type="java.lang.String">Sec</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Fixed Rate</con:property><con:property key="_scriptFile">C:\Program Files\eviware\loadUI-1.0-beta1\script-components\FixedRate.groovy</con:property><con:property key="_digest">ae04fd9740d8132e31d1d1988ba8b519</con:property><con:property key="gui.layoutX">357</con:property><con:property key="gui.layoutY">200</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="soapUI Runner" id="7c1b14af-ff79-49ee-8084-abfea3455ccc"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="projectFile" type="java.io.File">D:\eviware\soapUI-Pro-3.6-dev\Tutorials\sample-soapui-project.xml</con:property><con:property key="testSuite" type="java.lang.String">Sample Simple TestSuite</con:property><con:property key="testCase" type="java.lang.String">Simple Login and Logout w. Properties Steps</con:property><con:property key="raiseError" type="java.lang.Boolean">true</con:property><con:property key="OutputLevel" type="java.lang.String">TestCase only</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">200</con:property><con:property key="gui.layoutY">435</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics" id="542d5be8-59b6-4d0a-be43-43d0eb9c381b" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[import com.eviware.loadui.api.chart.ChartSerie;
+import com.eviware.loadui.api.chart.Point;
+
+// 
+// Copyright 2010 eviware software ab
+// 
+// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the Licence.
+// You may obtain a copy of the Licence at:
+// 
+// http://ec.europa.eu/idabc/eupl5
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the Licence for the specific language governing permissions and limitations
+// under the Licence.
+// 
+
+/**
+ * A statistics diagram that is interactively updated and scrolls 
+ * sideways over time. 
+ * 
+ * @help http://www.loadui.org/Analysis/statistics.html
+ * @category analysis
+ * @nonBlocking true
+ */
+
+import java.util.Calendar
+import java.util.Date
+import java.util.List
+import java.util.HashMap
+import java.util.Map
+import java.util.ArrayList
+
+import com.eviware.loadui.api.component.ComponentContext
+
+import com.eviware.loadui.api.chart.CustomTimeRange
+import com.eviware.loadui.api.chart.CustomNumericRange
+import com.eviware.loadui.api.chart.ChartModel
+import com.eviware.loadui.api.chart.ChartAdapter;
+
+import com.eviware.loadui.api.terminal.InputTerminal
+import com.eviware.loadui.api.terminal.OutputTerminal
+import com.eviware.loadui.api.terminal.TerminalMessage
+
+import com.eviware.loadui.api.layout.OptionsProvider
+import com.eviware.loadui.impl.layout.OptionsProviderImpl
+
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.CollectionEvent
+import com.eviware.loadui.api.events.ActionEvent
+
+import com.eviware.loadui.util.statistics.ValueStatistics
+import com.eviware.loadui.api.ui.table.LTableModel
+import com.eviware.loadui.api.summary.MutableSection
+
+AGGREGATE = "Aggregate"
+
+executor = Executors.newSingleThreadScheduledExecutor()
+
+createOutput( 'output', 'Statistics Output')
+
+//Properties
+createProperty( 'period', Long, 1 )
+createProperty( 'rate', Long, 500 )
+createProperty( 'chartPeriod', Long, 1 )
+
+createProperty( 'enableAverage', Boolean, true )
+createProperty( 'enableMin', Boolean, true )
+createProperty( 'enableMax', Boolean, true )
+createProperty( 'enableStdDev', Boolean, true )
+createProperty( 'enableTPS', Boolean, true )
+createProperty( 'enableBPS', Boolean, true )
+createProperty( 'enableAvgTPS', Boolean, true )
+createProperty( 'enableAvgBPS', Boolean, true )
+createProperty( 'enablePercentile', Boolean, true )
+createProperty( 'currentSourceID', String, "none" )
+createProperty( 'addtoSummary', Boolean, false )
+
+createProperty( 'selectedAgent', String, AGGREGATE )
+
+OptionsProvider availableAgents = new OptionsProviderImpl( AGGREGATE );
+OptionsProvider availableSourceIDs = new OptionsProviderImpl( "none" );
+sourceIDs = ["none"]
+
+double timeScaleFactor = 1 //seconds
+double bytesScaleFactor = 1/(1024D) //KBytes
+
+xRange = new CustomTimeRange(chartPeriod.value * 60000, rate.value)
+xRange.visible = true
+
+yRange = new CustomNumericRange(0, 10, 20)
+yRange.visible = true
+yRange.title = 'ms KB'
+
+ChartModel chartModel = new ChartModel(xRange, yRange, 420, 180)
+chartModel.addChartListener(new ChartAdapter(){
+	public void chartCleared(){
+		try{
+			resetBuffers()
+		}
+		catch(Throwable e2){
+			ex(e2, 'chartCleared')
+		}
+	}
+});
+
+chartModel.addSerie('Max', enableMax.value)
+chartModel.addSerie('Min', enableMin.value)
+chartModel.addSerie('Avg', enableAverage.value)
+chartModel.addSerie('StdDev', enableStdDev.value)
+chartModel.addSerie('TPS', enableTPS.value)
+chartModel.addSerie('BPS', enableBPS.value)
+chartModel.addSerie('AvgTPS', enableAvgTPS.value)
+chartModel.addSerie('AvgBPS', enableAvgBPS.value)
+chartModel.addSerie('Percentile', enablePercentile.value)
+chartModel.legendColumns = 4
+
+timeStats = new ValueStatistics( period.value * 60000 )
+byteStats = new ValueStatistics( period.value * 60000 )
+
+long max = 0
+long min = Long.MAX_VALUE
+
+agentData = [:]
+
+future = null
+boolean connected = false
+
+analyze = { message ->
+	try {
+		long timestamp = System.currentTimeMillis()
+		
+		String sourceID = message['id']
+		
+		if (!(sourceID == null) && !sourceIDs.contains(sourceID)) {
+			sourceIDs.add(sourceID)
+			availableSourceIDs.options = sourceIDs
+		}
+		
+		if (currentSourceID.value == "none" || currentSourceID.value == sourceID) {
+				long timeTaken = message['TimeTaken']
+			timeStats.addValue( timestamp, timeTaken )
+		
+			long bytesCount = message['Bytes'] 
+			if(bytesCount < 0 && message.containsKey('Response'))
+				bytesCount = message['Response'].length
+			if(bytesCount <= 0) bytesCount = 0
+			byteStats.addValue( timestamp, bytesCount )
+		}
+	} catch(Exception e) {
+		ex(e, 'Statistics -> analyze')
+	}
+}
+
+onMessage = { o, i, m ->
+	
+	super.onTerminalMessage(o, i, m)
+	if(i == remoteTerminal ) {
+		agentData[o.label] = new HashMap(m)
+	}
+}
+
+onRelease = { executor.shutdownNow() }
+
+onConnect = { outgoing, incoming ->
+	connected = inputTerminal.connections.size() > 0
+}
+
+onDisconnect = { outgoing, incoming ->
+	connected = inputTerminal.connections.size() > 0
+}
+
+calculate = {
+	if( !connected || !running )
+		return
+	
+	long currentTime = System.currentTimeMillis()
+	
+	try {
+		if( timeStats.size() > 0 ) {
+			def message = newMessage()
+			data = timeStats.getData( currentTime )
+			
+			message['Max'] = data['Max']
+			message['Min'] = data['Min']
+			message['Avg'] = data['Avg']
+			message['Std-Dev'] = data['Std-Dev']
+			message['Tps'] = data['Tps']
+			message['Avg-Tps'] = data['Avg-Tps']
+			message['Percentile'] = data['Percentile']
+			
+			bdata = byteStats.getData( currentTime )
+			message['Bps'] = bdata['Vps']
+			message['Avg-Bps'] = bdata['Avg-Vps']
+			message['id'] = "test"
+			
+			message['Timestamp'] = currentTime
+			message['ID'] = currentSourceID.value
+			
+			send(controllerTerminal, message)
+			send(output, message)
+		}
+	} catch(Throwable e1) {
+		ex(e1, 'calculate')
+	}
+	
+	if( controller )
+		updateChart( currentTime )
+}
+
+updateChart = { currentTime ->
+	def data = [:]
+	if( selectedAgent.value == AGGREGATE ) {
+		try {
+			int count = 0
+			for( d in agentData.values() ) {
+				if( !d.isEmpty() ) {
+					data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
+					data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
+					data['Avg'] = (data['Avg'] ?: 0) + d['Avg']
+					data['Std-Dev'] = (data['Std-Dev'] ?: 0) + d['Std-Dev']
+					data['Tps'] = (data['Tps'] ?: 0) + d['Tps']
+					data['Avg-Tps'] = (data['Avg-Tps'] ?: 0) + d['Avg-Tps']
+					data['Bps'] = (data['Bps'] ?: 0) + (d['Bps'] ?: 0)
+					data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
+					data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
+					count++
+				}
+			}
+			if( count == 0 )
+				return
+			data['Avg'] /= count
+			data['Std-Dev'] /= count
+		} catch( e ) { ex(e, 'Aggregating')
+		}
+	} else
+		data = agentData[selectedAgent.value]
+	if(data == null || data.isEmpty())
+		return
+	
+	try {
+		if(enableMax.value) chartModel.addPoint(0, currentTime, data['Max'] * timeScaleFactor)
+		if(enableMin.value) chartModel.addPoint(1, currentTime, data['Min'] * timeScaleFactor)
+		if(enableAverage.value) chartModel.addPoint(2, currentTime, data['Avg'] * timeScaleFactor)
+		if(enableStdDev.value) chartModel.addPoint(3, currentTime, data['Std-Dev'] * timeScaleFactor)
+		if(enableTPS.value) chartModel.addPoint(4, currentTime, data['Tps'])
+		if(enableBPS.value) chartModel.addPoint(5, currentTime, data['Bps'] * bytesScaleFactor)
+		if(enableAvgTPS.value) chartModel.addPoint(6, currentTime, data['Avg-Tps'])
+		if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
+		if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
+	} catch( e ) {
+	}
+}
+
+ex = {t, m ->
+	println('-------------------------------')
+	println("exception in $m method in groovy")
+	println("type: $t")
+	println('stacktrace:')
+	boolean first = true
+	for(item in t.stackTrace){
+		if(first) {
+			println(item)
+			first = false
+		} else {
+			println("\t$item")
+		}
+	}
+	println('-------------------------------')
+}
+
+schedule = {
+	future?.cancel( true )
+	future = executor.scheduleAtFixedRate( calculate, rate.value, rate.value, TimeUnit.MILLISECONDS )
+}
+
+addEventListener(PropertyEvent) { event ->
+	try {
+		if (event.event == PropertyEvent.Event.VALUE) {
+			if(event.property == rate) {
+				xRange.setRate(rate.value)
+				schedule()
+			}
+			else if(event.property == chartPeriod) {
+				xRange.setPeriod(chartPeriod.value * 60000)
+			}
+			else if(event.property == enableMin) {
+				chartModel.enableSerie('Min', enableMin.value)
+				buildSignature()
+			}
+			else if(event.property == enableMax) {
+				chartModel.enableSerie('Max', enableMax.value)
+				buildSignature()
+			}
+			else if(event.property == enableAverage) {
+				chartModel.enableSerie('Avg', enableAverage.value)
+				buildSignature()
+			}
+			else if(event.property == enableStdDev) {
+				chartModel.enableSerie('StdDev', enableStdDev.value)
+				buildSignature()
+			}
+			else if(event.property == enableTPS) {
+				chartModel.enableSerie('TPS', enableTPS.value)
+				buildSignature()
+			}
+			else if(event.property == enableBPS) {
+				chartModel.enableSerie('BPS', enableBPS.value)
+				buildSignature()
+			}
+			else if(event.property == enableAvgTPS) {
+				chartModel.enableSerie('AvgTPS', enableAvgTPS.value)
+				buildSignature()
+			}
+			else if(event.property == enableAvgBPS) {
+				chartModel.enableSerie('AvgBPS', enableAvgBPS.value)
+				buildSignature()
+			}
+			else if(event.property == enablePercentile) {
+				chartModel.enableSerie('Percentile', enablePercentile.value)
+				buildSignature()
+			}
+		}
+	}
+	catch(Throwable e2){
+		ex(e2, 'addEventListener')
+	}
+}
+
+buildSignature = {
+	def signature = [:]
+	if(enableAverage.value) signature['Avg'] = Long
+	if(enableMin.value) signature['Min'] = Long
+	if(enableMax.value) signature['Max'] = Long
+	if(enableTPS.value) signature['Tps'] = Double
+	if(enableBPS.value) signature['Bps'] = Double
+	if(enableAvgTPS.value) signature['Avg-Tps'] = Double
+	if(enableAvgBPS.value) signature['Avg-Bps'] = Long
+	if(enableStdDev.value) signature['Std-Dev'] = Long
+	if(enablePercentile.value) signature['Percentile'] = Long
+	setSignature(output, signature)
+}
+
+resetComponent = {
+	chartModel.clear()
+}
+
+resetBuffers = {
+	timeStats.reset()
+	byteStats.reset()
+	agentData = [:]
+}
+
+fixOptions = {
+	def options = [ AGGREGATE ]
+	options.addAll( agentTerminals.collect { it.label }.sort() )
+	availableAgents.options = options
+}
+
+addEventListener( ActionEvent ) { event ->
+	if( event.key == 'RESET' ) resetComponent()
+	else if( event.key == 'STOP' ) {
+		agentData.clear()
+		if( !controller )
+			send( controllerTerminal, newMessage() )
+	}
+	//else if ( event.key == 'START' ) schedule()
+}
+
+addEventListener( CollectionEvent ) { event ->
+	if( event.key == ComponentContext.RUNNER_TERMINALS ) {
+		resetComponent()
+		fixOptions()
+	}
+}
+
+//Layout
+layout(constraints:'fillx, wrap 1') {
+	node( widget: 'chartWidget', model: chartModel )
+	property( property: selectedAgent, label: 'View statistics from', options: availableAgents, widget:'comboBox' )
+	property( property: currentSourceID, label: 'Source ID', options: availableSourceIDs, widget:'comboBox' )
+}
+
+settings( label: 'Properties', constraints: 'wrap 2' ) {
+	property(property: addtoSummary, label: "Add last result to summary?")
+	box(constraints:'growx, wrap 1') {
+		property(property: enableAverage, label: 'Enable Average' )
+		property(property: enableMin, label: 'Enable Min' )
+		property(property: enableMax, label: 'Enable Max' )
+		property(property: enableStdDev, label: 'Enable Std Dev' )
+		property(property: enableTPS, label: 'Enable TPS' )
+		property(property: enableBPS, label: 'Enable BPS' )
+		property(property: enableAvgTPS, label: 'Enable Average TPS' )
+		property(property: enableAvgBPS, label: 'Enable Average BPS' )
+		property(property: enablePercentile, label: '90% Percentile' )
+		property(property: currentSourceID, label: 'Source ID' )
+	}
+} 
+
+settings( label: "Periods", constraints: 'wrap 2' ) {
+	box(constraints:"growx, wrap 1") {
+		property(property: rate, label: 'Refresh rate (ms)' )
+		property(property: chartPeriod, label: 'Chart period (min)' )
+		property(property: period, label: 'History (min)' )
+	}
+} 
+
+generateSummary = { chapter ->
+	if (addtoSummary.value) {
+		LTableModel table = new LTableModel(1, false);
+		ArrayList values = new ArrayList();
+		table.addColumn("SourceID");
+		values.add(currentSourceID.value);
+		if(enableAverage.value) {
+			table.addColumn("Avg");
+			values.add(data['Avg'].round(2));
+		}
+		if(enableMin.value) {
+			table.addColumn("Min");
+			values.add(data['Min']);
+		}
+		if(enableMax.value) {
+			table.addColumn("Max");
+			values.add(data['Max']);
+		}
+		if(enableTPS.value) {
+			table.addColumn("TPS");
+			values.add(data['Tps'].round(2));
+		}
+		if(enableBPS.value) {
+			table.addColumn("BPS");
+			values.add(data['Bps']?.round(2));
+		}
+		if(enableAvgTPS.value) {
+			table.addColumn("Avg TPS");
+			values.add(data['Avg-Tps']);
+		}
+		if(enableAvgBPS.value) {
+			table.addColumn("Avg BPS");
+			values.add(data['Avg-Bps']);
+		}
+		if(enableStdDev.value) {
+			table.addColumn("Std-Dev");
+			values.add(data['Std-Dev'].round(2));
+		}
+		if(enablePercentile.value) {
+			table.addColumn("Percentile");
+			values.add(data['Percentile'].round(2));
+		}
+		
+		table.addRow(values);
+		
+		MutableSection sect = chapter.addSection(getLabel());
+		sect.addTable(getLabel(), table)
+   	}
+
+}
+
+buildSignature()
+fixOptions()
+schedule()
+]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">true</con:property><con:property key="enableMax" type="java.lang.Boolean">true</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">true</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">true</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">true</con:property><con:property key="enablePercentile" type="java.lang.Boolean">true</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">C:\Program Files\eviware\loadUI-1.0-beta1\script-components\Statistics.groovy</con:property><con:property key="_digest">ca3339ee52422a1b389701418e63ec76</con:property><con:property key="gui.layoutX">741</con:property><con:property key="gui.layoutY">246</con:property></con:attributes></con:component><con:connection outputTerminalId="59c925a7-a44c-43cc-a332-4d86a1dc8f47/triggerTerminal" inputTerminalId="7c1b14af-ff79-49ee-8084-abfea3455ccc/triggerTerminal"/><con:connection outputTerminalId="7c1b14af-ff79-49ee-8084-abfea3455ccc/resultTerminal" inputTerminalId="542d5be8-59b6-4d0a-be43-43d0eb9c381b/inputTerminal"/></con:loadui-project>
