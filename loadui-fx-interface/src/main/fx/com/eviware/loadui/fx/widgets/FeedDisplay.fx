@@ -60,7 +60,7 @@ public class FeedDisplay extends BaseNode, Resizable {
 	        interval: 60s
 	        
 	        onException: function(e) {
-	            e.printStackTrace();
+	            log.error( "An error occured when parsing the news RSS feed.", e );
 	        }
 	        
 	       onItem: function(item:Item):Void {

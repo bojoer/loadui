@@ -72,8 +72,9 @@ public class ConnectionNode extends Selectable, Deletable, BaseNode {
 	override var blocksMouse = true;
 	override var onMouseClicked = function( e:MouseEvent ) {
 		if( e.button == MouseButton.PRIMARY ) {
-			if( e.controlDown ) { if( selected ) deselect() else select() } else if( not selected ) selectOnly();
 			toFront();
+			requestFocus();
+			if( e.controlDown ) { if( selected ) deselect() else select() } else if( not selected ) selectOnly();
 		}
 	}
 	
