@@ -59,76 +59,74 @@ public class JavaFXActivator extends BundleActivator {
 	 * Creates a JavaFX Stage and Scene.
 	 */
 	override function start( bc: BundleContext ) {
-		try {
-			def jidedata = new Properties();
-			jidedata.load( com.eviware.loadui.fx.Dummy.class.getResourceAsStream("/properties/jide.properties") );
-			com.jidesoft.utils.Lm.verifyLicense(jidedata.get("company"), jidedata.get("product"), jidedata.get("license"));
-		} catch( e:Exception ) {
-		    e.printStackTrace();
-		}
-		
 		runInFxThread( function():Void {
+			
+			try {
+				def jidedata = new Properties();
+				jidedata.load( com.eviware.loadui.fx.Dummy.class.getResourceAsStream("/properties/jide.properties") );
+				com.jidesoft.utils.Lm.verifyLicense(jidedata.get("company"), jidedata.get("product"), jidedata.get("license"));
+			} catch( e:Exception ) {
+			    e.printStackTrace();
+			}
 		
-		def wcSplash = SplashWindowController {
-		   splash: true
-			stage : Stage {
+			def wcSplash = SplashWindowController {
+			   splash: true
+				stage : Stage {
 					title: "Splash"
 					style: StageStyle.TRANSPARENT
 					icons: icons
 					scene: Scene {
-				  		content: [
-				    	ImageView {
-				      		image: Image {
-				        		url:"{__ROOT__}images/Splash-loadUI-beta_1.png"
-				        		preserveRatio: true
-				          	}
-				        }
-				        ]
-				      }
-				    }
-	    }
-		log.debug("JavaFX Bundle started!");
-
-		//trigger is to reload css when theme changes
-		var stylesheets: String[] on replace {
-			//FxUtils.loadStyles(stylesheets);	
-		};
-		
-		//not working: stylesheets = "{__ROOT__}themes/default/style.css";
-		stylesheets = "file:style.css";
-		
-		def wc = new WindowControllerImpl();
-		wc.stage = Stage {
-			title: "loadUI"
-			visible: false
-			icons: icons
-			scene: scene = Scene {
-				width: 1024.0
-				height: 768.0
-				stylesheets: bind stylesheets
-				//stylesheets: "{__ROOT__}themes/default/style.css";//bind stylesheets
-			}
-			
-			override function close() {
-				if( not WindowControllerImpl.instance.doClose ) {
-					if( AppState.instance.state == AppState.TESTCASE_FRONT 
-											or AppState.instance.state == AppState.PROJECT_FRONT ) {
-						ExitConfirmDialog{};
-					} else {
-						ExitConfirmDialogWorkspace{};
+						content: [
+							ImageView {
+								image: Image {
+									url:"{__ROOT__}images/Splash-loadUI-beta_1.png"
+									preserveRatio: true
+								}
+							}
+						]
 					}
-					throw new com.eviware.loadui.util.hacks.PreventClosingStageException(); // this a hack to keep stage open
-				} else {
-					bc.getBundle( 0 ).stop();
-					super.close();
 				}
+		   }
+			log.debug("JavaFX Bundle started!");
+	
+			//trigger is to reload css when theme changes
+			var stylesheets: String[] on replace {
+				//FxUtils.loadStyles(stylesheets);	
+			};
+			
+			//not working: stylesheets = "{__ROOT__}themes/default/style.css";
+			stylesheets = "file:style.css";
+			
+			def wc = new WindowControllerImpl();
+			wc.stage = Stage {
+				title: "loadUI"
+				visible: false
+				icons: icons
+				scene: scene = Scene {
+					width: 1024.0
+					height: 768.0
+					stylesheets: bind stylesheets
+					//stylesheets: "{__ROOT__}themes/default/style.css";//bind stylesheets
+				}
+				
+				override function close() {
+					if( not WindowControllerImpl.instance.doClose ) {
+						if( AppState.instance.state == AppState.TESTCASE_FRONT 
+												or AppState.instance.state == AppState.PROJECT_FRONT ) {
+							ExitConfirmDialog{};
+						} else {
+							ExitConfirmDialogWorkspace{};
+						}
+						throw new com.eviware.loadui.util.hacks.PreventClosingStageException(); // this a hack to keep stage open
+					} else {
+						bc.getBundle( 0 ).stop();
+						super.close();
+					}
+				}
+				
+				
 			}
-			
-			
-		}
 		});
-		
-		
 	}
 
 	/**

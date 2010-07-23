@@ -110,6 +110,11 @@ public mixin class Draggable extends BaseMixin {
 	 */
 	public var useOverlay = true;
 	
+	/**
+	 * The last MouseEvent to activate one of the onGrab, onRelease or onDragging functions.
+	 */
+	public-read protected var mouseEvent: MouseEvent;
+	
 	postinit {
 		if( not FX.isInitialized( handle ) )
 			handle = myNode;
@@ -159,6 +164,7 @@ public mixin class Draggable extends BaseMixin {
 			insert myNode into overlay.content;
 		}
 		
+		mouseEvent = e;
 		onGrab();
 	}
 	
@@ -191,6 +197,7 @@ public mixin class Draggable extends BaseMixin {
 		myNode.translateX = tx;
 		myNode.translateY = ty;
 		
+		mouseEvent = e;
 		onDragging();
 	}
 	
@@ -212,6 +219,7 @@ public mixin class Draggable extends BaseMixin {
 				insert myNode into (realParent as Container).content;
 		}
 		
+		mouseEvent = e;
 		onRelease();
 		
 		currentDraggable = null;

@@ -48,6 +48,7 @@ public mixin class Movable extends Draggable {
 			
 		Draggable.onReleased( e );
 		
+		mouseEvent = e;
 		onMove();
 	}
 }
