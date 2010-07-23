@@ -114,6 +114,8 @@ public class StringToStringTableModel extends KeyValueTableModel {
 		for (int i = 0; i < data.size(); i++) {
 			if(data.get(i).getName().equals(name)){
 				data.remove(i);
+				hashCode();
+				fireTableDataChanged();
 				return;
 			}
 		}
