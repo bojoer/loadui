@@ -79,7 +79,7 @@ createProperty( 'outputBody', Boolean, false )
 
 createProperty( 'propagateSession', Boolean, false )
 createProperty( 'readResponse', Boolean, false )
-createProperty( 'raiseAssertion', Boolean, false )
+createProperty( 'raiseAssertion', Boolean, true )
 createProperty( 'errorCodeList', String )
 
 createProperty( 'proxyHost', String)
@@ -193,7 +193,7 @@ sample = { message, sampleId ->
 				return message
 			}
 		} catch( e ) {
-			if( e instanceof SampleCancelledException || e instanceof IllegalStateException)
+			if( e instanceof SampleCancelledException)
 				throw e;
 			
 			e.printStackTrace()
