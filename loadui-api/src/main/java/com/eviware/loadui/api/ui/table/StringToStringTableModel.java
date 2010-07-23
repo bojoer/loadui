@@ -109,6 +109,15 @@ public class StringToStringTableModel extends KeyValueTableModel {
 		hashCode();
 		fireTableDataChanged();
 	}
+	
+	public void removeRow(String name){
+		for (int i = 0; i < data.size(); i++) {
+			if(data.get(i).getName().equals(name)){
+				data.remove(i);
+				return;
+			}
+		}
+	}
 
 	public ArrayList<StringProperty> getData() {
 		return data;
