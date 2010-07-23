@@ -272,6 +272,7 @@ public abstract class CanvasNode extends BaseNode, StylesheetAware, Selectable, 
 	override var blocksMouse = true;
 	override var onGrab = function():Void {
 		toFront();
+		requestFocus();
 		if( mouseEvent.controlDown ) { if( selected ) deselect() else select() } else if( not selected ) selectOnly();
 	}
 	

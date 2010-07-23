@@ -36,7 +36,7 @@ import javafx.util.Sequences;
 /**
  * The currently selected Selectables.
  */
-public-read var selects:Selectable[] on replace { println("Selection changed: {selects}") };
+public-read var selects:Selectable[];
 
 /**
  * De-selects any selected Selectable;
@@ -60,8 +60,8 @@ public mixin class Selectable {
 			def basenode = this as BaseNode;
 			
 			basenode.addKeyHandler( KEY_PRESSED, function( e:KeyEvent ) {
-				if( selected and e.code == KeyCode.VK_DELETE ) {
-					Deletable.deleteObjects( for( deletable in selects[s|s instanceof Deletable] ) deletable as Deletable );
+				if( e.code == KeyCode.VK_DELETE ) {
+					Deletable.deleteObjects( for( deletable in selects[s|s instanceof Deletable] ) deletable as Deletable, function():Void { selectNone(); } );
 				}
 			} );
 			

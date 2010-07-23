@@ -8,14 +8,19 @@ package com.eviware.loadui.fx.ui.node;
 
 import com.eviware.loadui.fx.dialogs.DeleteDeletablesDialog;
 
-public function deleteObjects( deletables:Deletable[] ):Void {
+public function deleteObjects( deletables:Deletable[], onOk: function():Void ):Void {
 	if( sizeof deletables[d|d.confirmDelete] > 0 ) {
-		DeleteDeletablesDialog { deletables: deletables };
+		DeleteDeletablesDialog { deletables: deletables, onOk: onOk };
 	} else {
 		for( deletable in deletables ) {
 			deletable.doDelete();
 		}
+		onOk();
 	}
+}
+
+public function deleteObjects( deletables:Deletable[] ):Void {
+	deleteObjects( deletables, null );
 }
 
 /**
