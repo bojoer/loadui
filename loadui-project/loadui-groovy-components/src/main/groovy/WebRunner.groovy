@@ -47,6 +47,12 @@ import com.eviware.loadui.impl.component.ActivityStrategies
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+
+
+
+
 executor = Executors.newSingleThreadScheduledExecutor()
 future = executor.scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
 
@@ -57,6 +63,12 @@ cm = new ThreadSafeClientConnManager( sr )
 cm.maxTotalConnections = 50000
 cm.defaultMaxPerRoute = 50000
 http = new DefaultHttpClient( cm )
+
+SSLSocketFactory socketFactory = new SSLSocketFactory()
+Scheme sch = new Scheme("https", socketFactory, 443)
+http.getConnectionManager().getSchemeRegistry().register(sch)
+
+
 
 def runningSamples = Collections.synchronizedSet( new HashSet() )
 runAction = null
