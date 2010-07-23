@@ -36,7 +36,7 @@ import javafx.scene.text.TextOrigin;
  */
 public class ActionMenuItem extends MenuItem {
 	/**
-	 * The test to display in the PopupMenu.
+	 * The text to display in the PopupMenu.
 	 */
 	public var text:String;
 	
@@ -49,14 +49,16 @@ public class ActionMenuItem extends MenuItem {
 	 * Activate the action.
 	 */
 	public function activate():Void {
-		PopupMenu.closeAll();
-		action();
+		if( not disabled ) {
+			PopupMenu.closeAll();
+			action();
+		}
 	}
 	
 	def label = Text {
 		content: bind text
 		textOrigin: TextOrigin.TOP
-		fill: bind if( selected ) Color.WHITE else Color.BLACK
+		fill: bind if( disabled ) Color.GRAY else if( selected ) Color.WHITE else Color.BLACK
 		x: 5
 		y: 3
 	}
