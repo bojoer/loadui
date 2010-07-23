@@ -19,83 +19,54 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Observable;
 
-import javax.swing.table.AbstractTableModel;
-
 import com.eviware.loadui.api.property.Property;
 
-public class SettingsTableModel extends AbstractTableModel
-{
+public class SettingsTableModel extends KeyValueTableModel {
 
 	private static final long serialVersionUID = 3644028575932424988L;
-	private static final String[] header = { "Property Name", "Property Value" };
+	
 	private ArrayList<PropertyProxy> data = new ArrayList<PropertyProxy>();
-	// public int hashCode = 0;
-	public SettingsTableModelObserver observer = new SettingsTableModelObserver( this );
 
-	@Override
-	public String getColumnName( int column )
-	{
-		return header[column];
+	public SettingsTableModelObserver observer = new SettingsTableModelObserver(this);
+
+	public SettingsTableModel() {
+		header = new String[] { "Property Name", "Property Value" };
 	}
 
 	@Override
-	public int getColumnCount()
-	{
-		return 2;
-	}
-
-	@Override
-	public boolean isCellEditable( int rowIndex, int columnIndex )
-	{
-		if( columnIndex == 1 )
-			return true;
-		else
-			return false;
-	}
-
-	@Override
-	public int getRowCount()
-	{
+	public int getRowCount() {
 		return data.size();
 	}
 
 	@Override
-	public Object getValueAt( int rowIndex, int columnIndex )
-	{
-		switch( columnIndex )
-		{
-		case 0 :
-			return data.get( rowIndex ).getName();
-		case 1 :
-			return data.get( rowIndex ).getValue();
-		default :
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		switch (columnIndex) {
+		case 0:
+			return data.get(rowIndex).getName();
+		case 1:
+			return data.get(rowIndex).getValue();
+		default:
 			return null;
 		}
 	}
 
 	@Override
-	public void setValueAt( Object aValue, int rowIndex, int columnIndex )
-	{
-		PropertyProxy p = data.get( rowIndex );
-		if( p.getType().getSimpleName().equals( File.class.getSimpleName() ) )
-		{
-			p.setValue( new File( ( String )aValue ) );
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		PropertyProxy p = data.get(rowIndex);
+		if (p.getType().getSimpleName().equals(File.class.getSimpleName())) {
+			p.setValue(new File((String) aValue));
 		}
-		else if( p.getType().getSimpleName().equals( Double.class.getSimpleName() ) )
-		{
-			p.setValue( Double.valueOf( ( String )aValue ) );
+		else if (p.getType().getSimpleName().equals(Double.class.getSimpleName())) {
+			p.setValue(Double.valueOf((String) aValue));
 		}
-		else if( p.getType().getSimpleName().equals( Boolean.class.getSimpleName() ) )
-		{
-			p.setValue( Boolean.valueOf( ( String )aValue ) );
+		else if (p.getType().getSimpleName().equals(Boolean.class.getSimpleName())) {
+			p.setValue(Boolean.valueOf((String) aValue));
 		}
-		else if( p.getType().getSimpleName().equals( Long.class.getSimpleName() ) )
-		{
-			p.setValue( Long.valueOf( ( String )aValue ) );
+		else if (p.getType().getSimpleName().equals(Long.class.getSimpleName())) {
+			p.setValue(Long.valueOf((String) aValue));
 		}
-		else
-		{
-			p.setValue( aValue );
+		else {
+			p.setValue(aValue);
 		}
 		hashCode();
 		fireTableDataChanged();
@@ -103,106 +74,68 @@ public class SettingsTableModel extends AbstractTableModel
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		int hashCode = 0;
-		for( PropertyProxy v : data )
-		{
+		for (PropertyProxy v : data) {
 			hashCode += v.getValue() == null ? 0 : v.getValue().hashCode();
 		}
 		return hashCode;
 	}
 
-	public void update(SettingsTableModel model){
-		for (int i = 0; i < model.getRowCount(); i++) {
-			PropertyProxy p = data.get(i);
-			p.setValue(model.getValueAt(i, 1));
-		}
-		hashCode();
-		fireTableDataChanged();
-		observer.startNotification();
-	}
-	
-	public void addRow( PropertyProxy p )
-	{
-		data.add( p );
-		hashCode();
-		fireTableDataChanged();
-	}
-	
-	public void addRow(String name, Object value, Class type)
-	{
-		data.add(new PropertyProxy(name, value, type));
+	public void addRow(PropertyProxy p) {
+		data.add(p);
 		hashCode();
 		fireTableDataChanged();
 	}
 
-	public void addRow(String name, Object value)
-	{
-		data.add(new PropertyProxy(name, value, String.class));
-		hashCode();
-		fireTableDataChanged();
-	}
-
-	public static class PropertyProxy
-	{
+	public static class PropertyProxy {
 		private String name;
 		private Object value;
 		private Class pClass;
 
-		public PropertyProxy( Property p )
-		{
+		public PropertyProxy(Property p) {
 			this.name = p.getKey();
 			this.value = p.getValue();
 			this.pClass = p.getType();
 		}
-		
-		public PropertyProxy(String name, Object value, Class type)
-		{
+
+		public PropertyProxy(String name, Object value, Class type) {
 			this.name = name;
 			this.value = value;
 			this.pClass = type;
 		}
 
-		public Class getType()
-		{
+		public Class getType() {
 			return pClass;
 		}
 
-		public String getName()
-		{
+		public String getName() {
 			return name;
 		}
 
-		public Object getValue()
-		{
+		public Object getValue() {
 			return value;
 		}
 
-		public void setValue( Object v )
-		{
+		public void setValue(Object v) {
 			this.value = v;
 		}
 
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			return name == null ? "name null" : name + " " + value == null ? "null" : "" + value;
 		}
 	}
 
-	public static class SettingsTableModelObserver extends Observable
-	{
+	public static class SettingsTableModelObserver extends Observable {
 
 		public SettingsTableModel model;
 
-		public SettingsTableModelObserver( SettingsTableModel model )
-		{
+		public SettingsTableModelObserver(SettingsTableModel model) {
 			this.model = model;
 		}
 
-		public void startNotification()
-		{
+		public void startNotification() {
 			setChanged();
 			notifyObservers();
 		}
