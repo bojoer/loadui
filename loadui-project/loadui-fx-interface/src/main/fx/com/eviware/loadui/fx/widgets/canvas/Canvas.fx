@@ -40,6 +40,11 @@ import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
 
+import com.eviware.loadui.fx.ui.popup.PopupMenu;
+import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
+import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
+import com.eviware.loadui.fx.ui.popup.SubMenuItem;
+
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.model.ModelItem;
@@ -47,17 +52,21 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.terminal.OutputTerminal;
+import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 
 import java.util.EventObject;
+import java.util.HashMap;
 import java.lang.RuntimeException;
 import org.slf4j.LoggerFactory;
 
 import javafx.scene.Cursor;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Sequences;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Canvas" );
 
@@ -127,10 +136,65 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		canvasItem.createComponent( name, descriptor );
 	}
 	
+	def moveSubmenu:SubMenuItem = SubMenuItem {
+		text: "Move to"
+		submenu: PopupMenu {
+			onOpen: function() {
+				def selection = for( cn in Selectable.selects[s|s instanceof CanvasNode] ) cn as CanvasNode;
+				def project = if( canvasItem instanceof ProjectItem ) canvasItem as ProjectItem else canvasItem.getProject();
+				if( sizeof selection > 0 and sizeof selection[s|s instanceof TestCaseNode] == 0 ) {
+					moveSubmenu.submenu.items = [
+						if( not ( canvasItem instanceof ProjectItem ) ) [ ActionMenuItem {
+							text: "Parent Project"
+							action: function():Void {
+								moveComponents( project, for( cNode in selection ) cNode.modelItem as ComponentItem );
+							}
+						}, SeparatorMenuItem {} ] else null,
+						for( tc in project.getScenes()[t|t != canvasItem] ) ActionMenuItem {
+							text: tc.getLabel()
+							action: function():Void {
+								moveComponents( tc, for( cNode in selection ) cNode.modelItem as ComponentItem );
+							}
+						},
+						SeparatorMenuItem {},
+						ActionMenuItem { text: "New TestCase..." }
+					];
+				} else {
+					moveSubmenu.submenu.items = ActionMenuItem {
+						text: if( sizeof selection == 0 ) "Nothing selected" else "Cannot move selection containing TestCase"
+						disable: true
+					};
+				}
+			}
+		}
+	}
+	
+	function moveComponents( target:CanvasItem, components:ComponentItem[] ) {
+		def clones = new HashMap();
+		for( component in components ) clones.put( component, target.duplicate( component ) );
+		for( connection in canvasItem.getConnections() ) {
+			def inputComponent = connection.getInputTerminal().getTerminalHolder() as ComponentItem;
+			def outputComponent = connection.getOutputTerminal().getTerminalHolder() as ComponentItem;
+			if( Sequences.indexOf( components, inputComponent ) >= 0 and Sequences.indexOf( components, outputComponent ) >= 0 ) {
+				def outputTerminal = (clones.get( outputComponent ) as ComponentItem).getTerminalByLabel( connection.getOutputTerminal().getLabel() ) as OutputTerminal;
+				def inputTerminal = (clones.get( inputComponent ) as ComponentItem).getTerminalByLabel( connection.getInputTerminal().getLabel() ) as InputTerminal;
+				target.connect( outputTerminal, inputTerminal );
+			}
+		}
+		for( component in components ) component.delete();
+	}
+	
+	protected def contextMenu = PopupMenu {
+		items: [
+			moveSubmenu
+		]
+	}
+	
 	init {
 		addMouseHandler( MOUSE_DRAGGED, onMouseDragged );
 		addMouseHandler( MOUSE_PRESSED, onMouseDown );
 		addMouseHandler( MOUSE_RELEASED, onMouseUp );
+		addMouseHandler( MOUSE_CLICKED, onMouseClicked );
 	}
 	
 	override function create() {
@@ -141,7 +205,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 					width: bind width
 					height: bind height
 					onMouseClicked: function( e:MouseEvent ) {
-						if( e.button == MouseButton.PRIMARY ) {
+						if( e.button == MouseButton.PRIMARY and not e.controlDown ) {
 							Selectable.selectNone();
 						}
 					}
@@ -250,6 +314,15 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		componentLayer.lookup( id ) as CanvasNode;
 	}
 	
+	/**
+	 * Opens the context menu at the given location.
+	 */
+	public function openContextMenu( x:Number, y:Number ):Void {
+		contextMenu.layoutX = Math.min( x, scene.width - contextMenu.layoutBounds.width );
+		contextMenu.layoutY = Math.min( y, scene.height - contextMenu.layoutBounds.height );
+		contextMenu.open();
+	}
+	
 	function addComponent( component:ComponentItem ):Void {
 		log.debug( "Adding ComponentItem \{\}", component );
 		//def cmp = ComponentNode { id: component.getId(), canvas: this, component: component };
@@ -340,6 +413,12 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	
 			cStartX = e.sceneX;
 			cStartY = e.sceneY;
+		}
+	}
+	
+	function onMouseClicked(e:MouseEvent):Void {
+		if( e.button == MouseButton.SECONDARY ) {
+			openContextMenu( e.sceneX, e.sceneY );
 		}
 	}
 }

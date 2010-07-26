@@ -96,6 +96,11 @@ public class TerminalHolderSupport
 		return Collections.unmodifiableCollection( terminals.values() );
 	}
 
+	public Terminal getTerminalByLabel( String label )
+	{
+		return terminals.get( label );
+	}
+
 	public boolean containsTerminal( Terminal terminal )
 	{
 		return terminals.get( terminal.getLabel() ) == terminal;
