@@ -15,13 +15,17 @@
  */
 package com.eviware.loadui.api.addressable;
 
+import com.eviware.loadui.api.events.EventFirer;
+
 /**
  * A registry for keeping track of Addressables.
  * 
  * @author dain.nilsson
  */
-public interface AddressableRegistry
+public interface AddressableRegistry extends EventFirer
 {
+	public static final String ADDRESSABLES = AddressableRegistry.class.getName() + "@addressables";
+
 	/**
 	 * Generates a unique String which can be used by an Addressable as an ID.
 	 * 
