@@ -120,7 +120,7 @@ public class CloneProjectDialog {
         
         var line: Integer;
         while ((line = input.read()) != -1) {
-        	sb.append(Character.toChars(line));
+        	sb.append(Character.toChars(line)); 
         }
         input.close();
         
@@ -135,6 +135,8 @@ public class CloneProjectDialog {
 				
 		var clone: ProjectRef = MainWindow.instance.workspace.importProject(cloneFile, true);
 		clone.setEnabled(false);
+		
+		clone.setAttribute("miniature", pRef.getAttribute("miniature", ""));
 		
 		return clone;
     }
