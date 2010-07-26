@@ -84,6 +84,11 @@ public class PopupMenu extends CustomNode {
 	 */
 	public-read var isOpen = false;
 	
+	/**
+	 * Invoked whenever the PopupMenu is opened, before it is displayed.
+	 */
+	public var onOpen: function():Void;
+	
 	public var minWidth: Number = 0;
 	
 	def rvbox = ResizingVBox {
@@ -128,6 +133,7 @@ public class PopupMenu extends CustomNode {
 	 */
 	public function open() {
 		if( not isOpen ) {
+			onOpen();
 			isOpen = true;
 			insert this into openMenus;
 			requestFocus();

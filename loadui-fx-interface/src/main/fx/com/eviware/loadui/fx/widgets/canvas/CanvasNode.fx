@@ -38,6 +38,7 @@ import javafx.scene.layout.Stack;
 import javafx.scene.layout.LayoutInfo;
 import javafx.geometry.VPos;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 import javafx.fxd.FXDNode;
@@ -111,7 +112,7 @@ public abstract class CanvasNode extends BaseNode, StylesheetAware, Selectable, 
 	
 	public-read protected var color:Color = Color.web( "#26a8f9" );
 	
-	protected var label:String;
+	public-read protected var label:String;
 	
 	protected var settingsAction: function(): Void;
 	
@@ -238,6 +239,13 @@ public abstract class CanvasNode extends BaseNode, StylesheetAware, Selectable, 
 			if( selected and e.code == KeyCode.VK_DELETE )
 				DeleteModelItemDialog { modelItem: modelItem }
 		} );*/
+		addMouseHandler( MOUSE_PRESSED, function( e:MouseEvent ) {
+			if( e.button == MouseButton.SECONDARY ) {
+				if( not selected )
+					selectOnly();
+				MainWindow.instance.canvas.openContextMenu( e.sceneX, e.sceneY );
+			}
+		} );
 		
 		modelItem.addEventListener( BaseEvent.class, this );
 		label = modelItem.getLabel();

@@ -194,6 +194,12 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	}
 
 	@Override
+	public Terminal getTerminalByLabel( String label )
+	{
+		return terminalHolderSupport.getTerminalByLabel( label );
+	}
+
+	@Override
 	public String getType()
 	{
 		return getAttribute( TYPE, "" );
@@ -510,6 +516,12 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		public Collection<Terminal> getTerminals()
 		{
 			return ComponentItemImpl.this.getTerminals();
+		}
+
+		@Override
+		public Terminal getTerminalByLabel( String label )
+		{
+			return ComponentItemImpl.this.getTerminalByLabel( label );
 		}
 
 		@Override

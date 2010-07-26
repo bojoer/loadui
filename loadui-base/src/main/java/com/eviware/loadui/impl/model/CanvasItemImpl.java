@@ -185,7 +185,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		ComponentItemImpl component = new ComponentItemImpl( this, config );
 		component.init();
 		component.setAttribute( ComponentItem.TYPE, descriptor.getLabel() );
-		component.getContext().setHelpUrl(descriptor.getHelpUrl());
+		component.getContext().setHelpUrl( descriptor.getHelpUrl() );
 
 		try
 		{
@@ -378,7 +378,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 		ComponentItemConfig config = getConfig().addNewComponent();
 		config.set( ( ( ComponentItemImpl )obj ).getConfig() );
-		config.setLabel( "Copy of " + config.getLabel() );
+		if( obj.getCanvas().equals( this ) )
+			config.setLabel( "Copy of " + config.getLabel() );
 		config.setId( addressableRegistry.generateId() );
 		ComponentItemImpl copy;
 		try
@@ -396,7 +397,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	protected void onComplete( EventFirer source )
 	{
-			doGenerateSummary();
+		doGenerateSummary();
 	}
 
 	protected void doGenerateSummary()

@@ -84,7 +84,7 @@ public class SubMenuItem extends MenuItem {
 	def label = Text {
 		content: bind text
 		textOrigin: TextOrigin.TOP
-		fill: bind if( selected or submenu.isOpen ) Color.WHITE else Color.BLACK
+		fill: bind if( disabled ) Color.GRAY else if( selected or submenu.isOpen ) Color.WHITE else Color.BLACK
 		x: 5
 		y: 4
 	}

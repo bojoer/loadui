@@ -227,6 +227,12 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	}
 
 	@Override
+	public Terminal getTerminalByLabel( String label )
+	{
+		return terminalHolderSupport.getTerminalByLabel( label );
+	}
+
+	@Override
 	public void handleTerminalEvent( InputTerminal input, TerminalEvent event )
 	{
 		if( event instanceof TerminalMessageEvent && input == stateTerminal )

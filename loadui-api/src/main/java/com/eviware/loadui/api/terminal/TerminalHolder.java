@@ -34,6 +34,15 @@ public interface TerminalHolder extends EventFirer, Addressable
 	public Collection<Terminal> getTerminals();
 
 	/**
+	 * Gets a specific Terminal by its label, or null if no such Terminal exists.
+	 * 
+	 * @param label
+	 *           The label of the desired Terminal.
+	 * @return The Terminal with the given label, or null.
+	 */
+	public Terminal getTerminalByLabel( String label );
+
+	/**
 	 * Causes the TerminalHolder to react to a TerminalEvent.
 	 * 
 	 * @param input
