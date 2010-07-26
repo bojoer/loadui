@@ -25,6 +25,11 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<version>${mavenBundlePluginVersion}</version>
 				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Export-Package>com.eviware.loadui.api*</Export-Package>
+					</instructions>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

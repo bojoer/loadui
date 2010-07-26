@@ -3,9 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 	
-	<bean id="counterSynchronizer" class="com.eviware.loadui.impl.runner.RunnerCounterSynchronizer" />
+	<bean id="counterSynchronizer" class="com.eviware.loadui.impl.agent.AgentCounterSynchronizer" />
 	
-	<bean id="controller" class="com.eviware.loadui.impl.runner.ControllerImpl">
+	<bean id="controller" class="com.eviware.loadui.impl.agent.ControllerImpl">
 		<constructor-arg ref="executorManager" />
 		<constructor-arg ref="conversionService" />
 		<constructor-arg ref="serverEndpoint" />
@@ -15,7 +15,7 @@
 		<constructor-arg ref="counterSynchronizer" />
 	</bean>
 	
-	<!--<bean id="runnerServer" class="com.eviware.loadui.impl.runner.RunnerServer">
+	<!--<bean id="runnerServer" class="com.eviware.loadui.impl.agent.RunnerServer">
 		<constructor-arg ref="serverEndpoint" />
 	</bean>
 	
