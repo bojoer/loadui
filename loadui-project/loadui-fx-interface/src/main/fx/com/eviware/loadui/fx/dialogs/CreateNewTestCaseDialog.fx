@@ -38,7 +38,9 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.Cr
 
 public class CreateNewTestCaseDialog {
 
-    public-init var project:ProjectItem;
+	public-init var project:ProjectItem;
+	
+	public var onOk: function( testCase:SceneItem ):Void;
 	
 	postinit {
 		if( not FX.isInitialized( project ) )
@@ -56,14 +58,11 @@ public class CreateNewTestCaseDialog {
 			okText: "Ok"
 			onOk: function() {
 				def tc:SceneItem = project.createScene( form.getValue( "newTC" ) as String );
-				
-				def obj = tc as CanvasObjectItem;
-				def layoutX = Integer.parseInt( tc.getAttribute( "gui.layoutX", "0" ) ) + 200;
-				def layoutY = Integer.parseInt( tc.getAttribute( "gui.layoutY", "0" ) ) + 200;
-				obj.setAttribute( "gui.layoutX", "{ layoutX as Integer }" );
-				obj.setAttribute( "gui.layoutY", "{ layoutY as Integer }" );
+				tc.setAttribute( "gui.layoutX", "200" );
+				tc.setAttribute( "gui.layoutY", "200" );
 				
 				dialog.close();
+				onOk( tc );
 			}
 			
 			width : 250
