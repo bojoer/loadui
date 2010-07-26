@@ -32,7 +32,7 @@
 		<module>loadui-fx-interface</module>
 		<module>loadui-launcher</module>
 		<module>loadui-installer</module>
-		<!-- <module>loadui-integration-tests</module> -->
+		<module>loadui-integration-tests</module>
 		<module>loadui-component</module>
 		<module>loadui-cmd-base</module>
 	</modules>
@@ -154,7 +154,13 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.6</version>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>1.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

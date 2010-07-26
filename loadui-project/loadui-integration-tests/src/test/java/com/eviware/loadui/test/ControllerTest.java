@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.test;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
@@ -55,7 +55,7 @@ public class ControllerTest
 	public void shouldHaveNoFailedBundles()
 	{
 		Bundle[] bundles = controller.getBundleContext().getBundles();
-		assertThat( bundles.length, is( 40 ) );
+		assertThat( bundles.length, greaterThanOrEqualTo( 44 ) );
 		for( Bundle bundle : bundles )
 			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(), anyOf(
 					is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );

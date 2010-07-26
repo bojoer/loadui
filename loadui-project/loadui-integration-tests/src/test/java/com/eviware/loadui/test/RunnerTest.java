@@ -22,7 +22,7 @@ import org.junit.*;
 import org.osgi.framework.Bundle;
 
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 
 /**
  * Integration tests for testing the loadUI runner through its API.
@@ -53,7 +53,7 @@ public class RunnerTest
 	public void shouldHaveNoFailedBundles()
 	{
 		Bundle[] bundles = runner.getBundleContext().getBundles();
-		assertThat( bundles.length, is( 47 ) );
+		assertThat( bundles.length, greaterThanOrEqualTo( 51 ) );
 		for( Bundle bundle : bundles )
 			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(), anyOf(
 					is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );

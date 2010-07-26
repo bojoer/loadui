@@ -29,30 +29,34 @@ import org.osgi.framework.BundleException;
 public class RunnerWrapper
 {
 	private final File baseDir = new File( "target/runnerTest" );
-	private final OSGiWrapper osgi;
+	private final OSGiLauncher launcher;
 	private final BundleContext context;
 
 	public RunnerWrapper() throws BundleException
 	{
 		if( baseDir.exists() )
-			throw new RuntimeException( "Test directory already exists!" );
+			Utilities.deleteRecursive( baseDir );
 
 		if( !baseDir.mkdir() )
 			throw new RuntimeException( "Could not create test directory!" );
 
-		osgi = new OSGiWrapper();
-		Properties config = osgi.getConfig();
+		baseDir.deleteOnExit();
+
+		launcher = new OSGiLauncher( new String[] {} );
+		Properties config = launcher.getConfig();
 		config.setProperty( "felix.cache.rootdir", baseDir.getAbsolutePath() );
 		config.setProperty( "felix.auto.deploy.dir", new File( "../loadui-runner-deps/target/bundle" ).getAbsolutePath() );
+		launcher.init();
+		launcher.start();
+		context = launcher.getBundleContext();
 
-		context = osgi.start();
 	}
 
 	public void stop() throws BundleException
 	{
 		try
 		{
-			osgi.stop();
+			launcher.stop();
 		}
 		catch( BundleException e )
 		{

@@ -37,7 +37,7 @@ import org.osgi.framework.BundleException;
 public class ControllerWrapper
 {
 	private final File baseDir = new File( "target/controllerTest" );
-	private final OSGiWrapper osgi;
+	private final OSGiLauncher launcher;
 	private final BundleContext context;
 
 	public ControllerWrapper() throws Exception
@@ -48,11 +48,18 @@ public class ControllerWrapper
 		if( !baseDir.mkdir() )
 			throw new RuntimeException( "Could not create test directory!" );
 
-		osgi = new OSGiWrapper();
-		Properties config = osgi.getConfig();
+		launcher = new OSGiLauncher( new String[] {} );
+		Properties config = launcher.getConfig();
 		config.setProperty( "felix.cache.rootdir", baseDir.getAbsolutePath() );
 		File bundleDir = new File( baseDir, "bundle" );
 		Utilities.copyDirectory( new File( "../loadui-controller-deps/target/bundle" ), bundleDir );
+
+		// osgi = new OSGiWrapper();
+		// Properties config = osgi.getConfig();
+		// config.setProperty( "felix.cache.rootdir", baseDir.getAbsolutePath() );
+		// File bundleDir = new File( baseDir, "bundle" );
+		// Utilities.copyDirectory( new File(
+		// "../loadui-controller-deps/target/bundle" ), bundleDir );
 
 		// Remove bundles depending on JavaFX and the API bundle.
 		for( File bundle : bundleDir.listFiles() )
@@ -85,14 +92,16 @@ public class ControllerWrapper
 
 		config.setProperty( "felix.auto.deploy.dir", bundleDir.getAbsolutePath() );
 
-		context = osgi.start();
+		launcher.init();
+		launcher.start();
+		context = launcher.getBundleContext();
 	}
 
 	public void stop() throws BundleException
 	{
 		try
 		{
-			osgi.stop();
+			launcher.stop();
 		}
 		catch( BundleException e )
 		{
