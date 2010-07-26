@@ -25,12 +25,11 @@ public class MutableValueImpl<T> implements MutableValue<T>
 	private final Class<T> type;
 	private T value;
 
-	@SuppressWarnings( "unchecked" )
 	public MutableValueImpl( Class<T> type, Object value, ConversionService conversionService )
 	{
 		this.conversionService = conversionService;
 		this.type = type;
-		this.value = type.isInstance( value ) ? ( T )value : conversionService.convert( value, type );
+		this.value = type.isInstance( value ) ? type.cast( value ) : conversionService.convert( value, type );
 	}
 
 	@Override
@@ -48,6 +47,6 @@ public class MutableValueImpl<T> implements MutableValue<T>
 	@Override
 	public void setValue( Object value )
 	{
-		this.value = conversionService.convert( value, type );
+		this.value = type.isInstance( value ) ? type.cast( value ) : conversionService.convert( value, type );
 	}
 }
