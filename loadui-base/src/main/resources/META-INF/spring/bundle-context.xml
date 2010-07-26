@@ -52,6 +52,7 @@
 	            </bean>
 	            <bean class="com.eviware.loadui.impl.conversion.FileToReferenceConverter">
 	            	<constructor-arg ref="broadcastMessageEndpoint" />
+	            	<constructor-arg ref="executorService" />
 	            </bean>
 	            <bean class="com.eviware.loadui.impl.conversion.ReferenceToFileConverter">
 	            	<constructor-arg ref="addressableRegistry" />
