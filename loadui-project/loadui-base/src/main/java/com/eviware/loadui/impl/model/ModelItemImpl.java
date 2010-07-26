@@ -244,6 +244,7 @@ public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 		fireEvent( new ActionEvent( this, actionName ) );
 	}
 
+	@Override
 	public void fireEvent( EventObject event )
 	{
 		if( !released )

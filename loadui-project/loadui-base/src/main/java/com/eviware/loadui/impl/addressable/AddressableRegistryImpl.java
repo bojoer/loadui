@@ -15,16 +15,21 @@
  */
 package com.eviware.loadui.impl.addressable;
 
+import java.util.EventObject;
 import java.util.Map;
 import java.util.UUID;
 
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.util.CacheMap;
+import com.eviware.loadui.util.events.EventSupport;
 
 public class AddressableRegistryImpl implements AddressableRegistry
 {
 	private final Map<String, Addressable> lookupTable = new CacheMap<String, Addressable>();
+	private final EventSupport eventSupport = new EventSupport();
 
 	@Override
 	public String generateId()
@@ -45,11 +50,37 @@ public class AddressableRegistryImpl implements AddressableRegistry
 			throw new DuplicateAddressException( addressable.getId() );
 
 		lookupTable.put( addressable.getId(), addressable );
+		fireEvent( new CollectionEvent( this, ADDRESSABLES, CollectionEvent.Event.ADDED, addressable ) );
 	}
 
 	@Override
 	public void unregister( Addressable addressable )
 	{
-		lookupTable.remove( addressable.getId() );
+		if( lookupTable.remove( addressable.getId() ) != null )
+			fireEvent( new CollectionEvent( this, ADDRESSABLES, CollectionEvent.Event.REMOVED, addressable ) );
+	}
+
+	@Override
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.addEventListener( type, listener );
+	}
+
+	@Override
+	public void clearEventListeners()
+	{
+		eventSupport.clearEventListeners();
+	}
+
+	@Override
+	public void fireEvent( EventObject event )
+	{
+		eventSupport.fireEvent( event );
+	}
+
+	@Override
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.removeEventListener( type, listener );
 	}
 }

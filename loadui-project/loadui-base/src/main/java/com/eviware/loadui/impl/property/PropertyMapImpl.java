@@ -107,7 +107,7 @@ public class PropertyMapImpl extends HashMap<String, Property<?>> implements Pro
 	{
 		Property<?> property = super.remove( key );
 		if( property != null )
-			owner.firePropertyEvent( property, PropertyEvent.Event.DELETED, null );
+			owner.firePropertyEvent( property, PropertyEvent.Event.DELETED, property.getValue() );
 		return property;
 	}
 
