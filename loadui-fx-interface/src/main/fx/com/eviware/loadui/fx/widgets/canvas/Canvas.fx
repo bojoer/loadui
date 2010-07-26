@@ -39,6 +39,7 @@ import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
+import com.eviware.loadui.fx.dialogs.CreateNewTestCaseDialog;
 
 import com.eviware.loadui.fx.ui.popup.PopupMenu;
 import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
@@ -143,21 +144,29 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 				def selection = for( cn in Selectable.selects[s|s instanceof CanvasNode] ) cn as CanvasNode;
 				def project = if( canvasItem instanceof ProjectItem ) canvasItem as ProjectItem else canvasItem.getProject();
 				if( sizeof selection > 0 and sizeof selection[s|s instanceof TestCaseNode] == 0 ) {
+					def components = for( cNode in selection ) cNode.modelItem as ComponentItem;
 					moveSubmenu.submenu.items = [
 						if( not ( canvasItem instanceof ProjectItem ) ) [ ActionMenuItem {
 							text: "Parent Project"
 							action: function():Void {
-								moveComponents( project, for( cNode in selection ) cNode.modelItem as ComponentItem );
+								moveComponents( project, components );
 							}
 						}, SeparatorMenuItem {} ] else null,
 						for( tc in project.getScenes()[t|t != canvasItem] ) ActionMenuItem {
 							text: tc.getLabel()
 							action: function():Void {
-								moveComponents( tc, for( cNode in selection ) cNode.modelItem as ComponentItem );
+								moveComponents( tc, components );
 							}
 						},
 						SeparatorMenuItem {},
-						ActionMenuItem { text: "New TestCase..." }
+						ActionMenuItem {
+							text: "New TestCase..."
+							action: function():Void {
+								CreateNewTestCaseDialog { project: project, onOk: function( testCase: SceneItem ):Void {
+									moveComponents( testCase, components );
+								} }
+							}
+						}
 					];
 				} else {
 					moveSubmenu.submenu.items = ActionMenuItem {
