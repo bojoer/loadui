@@ -30,6 +30,7 @@ import org.jfxtras.scene.layout.XMigLayout.*;
 import net.miginfocom.layout.*;
 import java.lang.RuntimeException;
 import org.slf4j.LoggerFactory;
+import com.eviware.loadui.fx.MainWindow;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.SaveProjectDialog" );
 
@@ -62,6 +63,7 @@ public class SaveProjectDialog {
 					text: "Save"
 					width: 59
 					action: function() {
+						MainWindow.instance.projectCanvas.generateMiniatures(); 
 						project.save();
 						dialog.close();
 						onDone();
