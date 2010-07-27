@@ -21,7 +21,7 @@
  * @help http://www.loadui.org/Output/table-log.html
  * @name Table Log
  * @category output
- * @dependency net.sf.opencsv:opencsv:2.0
+ * @jar net.sf.opencsv:opencsv:2.0
  * @nonBlocking true
  */
 
