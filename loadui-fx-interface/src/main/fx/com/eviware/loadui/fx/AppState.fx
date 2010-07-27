@@ -127,6 +127,8 @@ public class AppState extends ApplicationState {
 	
 	/**
 	 * Runs a task in the background, blocking user input until completed.
+	 * The task function will not be run in the JavaFx thread, and must thus not modify the scenegraph.
+	 * The onDone function will be called when the task completes, successful or not, with the Task object, which can be used to verify completion status. This will be called in the JavaFX thread.
 	 */
 	public function blockingTask( task:function():Void, onDone:function(task:Task):Void ):Void {
 		insert blocked into overlayLayer.content;
