@@ -45,7 +45,7 @@ import com.eviware.loadui.impl.layout.IntervalObservableModel
 createProperty('startAt', Long, 0)
 createProperty('duration', Long, 0)
 createProperty('unit', String, 'Sec')
-createProperty('repeat', Boolean, false)
+createProperty('mode', String, 'Single')
 
 def timerCounter = getCounter( CanvasItem.TIMER_COUNTER )
 def canvas = getCanvas()
@@ -236,5 +236,5 @@ layout() {
     separator( vertical:true )
     property( property:unit, label:'Unit', options:['Sec','Min','Percent'] )
     separator( vertical:true )
-    property( property:repeat, label:'Repeat')
+    property( property:mode, label:'Mode', options:['Single','Repeat'])
 }
