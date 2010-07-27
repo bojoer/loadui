@@ -67,7 +67,7 @@ public class NewsItem extends BaseNode, Resizable, StylesheetAware {
 	var tb: Label;
 	var enc: Image;
 	
-	def df = new SimpleDateFormat("yyyy-mm-dd");
+	def df = new SimpleDateFormat("yyyy-MM-dd");
 	 def vbox:VBox = VBox {
 	     	width: bind 270
 			height: bind hl.height + enc.height + tb.height + 100

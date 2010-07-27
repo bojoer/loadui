@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
+import java.net.SocketException;
 
 /**
  * A collection of static utility methods for simplifying some tasks.
@@ -66,6 +67,39 @@ public class Utilities
 			in.close();
 			out.close();
 		}
+	}
+
+	public static int getAvailablePort()
+	{
+		ServerSocket ss = null;
+		try
+		{
+			ss = new ServerSocket( 0 );
+			ss.setReuseAddress( true );
+			return ss.getLocalPort();
+		}
+		catch( SocketException e )
+		{
+		}
+		catch( IOException e )
+		{
+		}
+		finally
+		{
+			if( ss != null )
+			{
+				try
+				{
+					ss.close();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return -1;
 	}
 
 	public static int getAvailablePort( int start )

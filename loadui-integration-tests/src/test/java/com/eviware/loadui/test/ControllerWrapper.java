@@ -48,7 +48,7 @@ public class ControllerWrapper
 		if( !baseDir.mkdir() )
 			throw new RuntimeException( "Could not create test directory!" );
 
-		launcher = new OSGiLauncher( new String[] {} );
+		launcher = new OSGiLauncher( new String[] { "-nolock" } );
 		Properties config = launcher.getConfig();
 		config.setProperty( "felix.cache.rootdir", baseDir.getAbsolutePath() );
 		File bundleDir = new File( baseDir, "bundle" );

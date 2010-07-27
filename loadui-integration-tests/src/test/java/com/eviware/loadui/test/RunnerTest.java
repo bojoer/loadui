@@ -36,7 +36,7 @@ public class RunnerTest
 	@BeforeClass
 	public static void startRunner() throws Exception
 	{
-		int port = Utilities.getAvailablePort( 8080 );
+		int port = Utilities.getAvailablePort();
 		System.out.println( "Starting Runner on port " + port );
 		System.setProperty( "loadui.http.port", Integer.toString( port ) );
 		runner = new RunnerWrapper();
