@@ -23,6 +23,8 @@
 						<configuration>
 							<includeScope>compile</includeScope>
 							<excludeTypes>pom</excludeTypes>
+							<!-- There seems to be a bug in the plugin which doesn't exclude artifacts in the system scope, so we manually exclude any javafx bundles. -->
+							<excludeGroupIds>javafx</excludeGroupIds>
 							<outputDirectory>${basedir}/target/bundle</outputDirectory>
 						</configuration>
 					</execution>
