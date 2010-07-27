@@ -15,20 +15,20 @@
  */
 package com.eviware.loadui.fx.async;
 
-import javafx.async.JavaTaskBase;
 import javafx.async.RunnableFuture;
-import com.eviware.loadui.api.model.ProjectRef;
-import com.eviware.loadui.fx.async.ProjectRefSetEnabledTask;
 
-
-//This class is only here because the maven-bundle-plugin fails if there are no Java classes...
-public class ProjectRefSetEnabledTaskFX extends JavaTaskBase
+public class RunnableRunnableFuture implements RunnableFuture
 {
-	public-init var ref:ProjectRef = null;
-	
+	private final Runnable runnable;
 
-	
-	public override function create() : RunnableFuture {
-	     new ProjectRefSetEnabledTask(ref);
+	public RunnableRunnableFuture( Runnable task )
+	{
+		runnable = task;
+	}
+
+	@Override
+	public void run() throws Exception
+	{
+		runnable.run();
 	}
 }

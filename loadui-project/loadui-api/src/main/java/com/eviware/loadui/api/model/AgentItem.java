@@ -34,6 +34,7 @@ public interface AgentItem extends ModelItem, MessageEndpoint
 	public final static String AGENT_CHANNEL = "/" + AgentItem.class.getName();
 
 	// Commands
+	public final static String CONNECTED = "connected";
 	public final static String ASSIGN = "assign";
 	public final static String UNASSIGN = "unassign";
 	public final static String STARTED = "started";

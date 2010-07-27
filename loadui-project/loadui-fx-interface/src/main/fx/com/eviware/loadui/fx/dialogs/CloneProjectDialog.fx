@@ -21,29 +21,21 @@
 
 package com.eviware.loadui.fx.dialogs;
 
-import javafx.scene.text.Text;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
-import javafx.geometry.HPos;
+import com.eviware.loadui.api.model.ProjectRef;
+import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.Form;
-import com.eviware.loadui.fx.ui.form.fields.*;
-import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.form.FormField;
+import com.eviware.loadui.fx.ui.form.fields.*;
 
-import javax.swing.JFileChooser;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import com.eviware.loadui.fx.MainWindow;
-import com.eviware.loadui.api.model.ProjectRef;
-import java.lang.StringBuffer;
 import java.lang.Character;
-import java.io.BufferedWriter;
-
 import java.lang.RuntimeException;
+import java.lang.StringBuffer;
 import org.slf4j.LoggerFactory;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.CloneProjectDialog" );

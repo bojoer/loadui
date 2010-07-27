@@ -84,15 +84,13 @@ public class ControllerImpl
 			{
 				if( connected )
 				{
-					log.info( "Client connected: {}", endpoint );
-
 					endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, new AgentListener() );
 					endpoint.addMessageListener( SceneCommunication.CHANNEL, new SceneListener() );
 					endpoint.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL, new ComponentContextListener() );
 				}
 				else
 				{
-					log.info( "Client disconnected: {}", endpoint );
+					log.info( "Client disconnected" );
 				}
 			}
 		} );
@@ -109,6 +107,10 @@ public class ControllerImpl
 			// log.debug( "handleMessage got data: {} on channel {}", data, channel
 			// );
 			Map<String, String> message = ( Map<String, String> )data;
+			if( message.containsKey( AgentItem.CONNECTED ) )
+			{
+				log.info( "Client connected: {}", message.get( AgentItem.CONNECTED ) );
+			}
 			if( message.containsKey( AgentItem.SET_MAX_THREADS ) )
 			{
 				executorManager.setMaxPoolSize( Integer.parseInt( message.get( AgentItem.SET_MAX_THREADS ) ) );
