@@ -36,6 +36,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	private static final String TESTCASE_OPTION = "t";
 	private static final String PROJECT_OPTION = "p";
 	private static final String WORKSPACE_OPTION = "w";
+	private static final String REPORTING_OPTION = "r";
 
 	public static void main( String[] args )
 	{
@@ -68,6 +69,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 						+ " <ip>[:<port>][=<testCase>[,<testCase>] ...] )" ).hasArgs().create( AGENT_OPTION ) );
 		options.addOption( FILE_OPTION, "file", true, "Executes the specified Groovy script file" );
 		options.addOption( LOCAL_OPTION, "local", false, "Executes TestCases in local mode" );
+		options.addOption( REPORTING_OPTION, "reports", true, "Generates reports and saves them in specified folder" );
 
 		return options;
 	}
@@ -104,6 +106,8 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 			}
 			attributes.put( "agents", agents );
 
+			attributes.put( "reports", cmd.hasOption( REPORTING_OPTION ) ? cmd.getOptionValue( REPORTING_OPTION ) : null );
+			
 			command = new ResourceGroovyCommand( "/RunTest.groovy", attributes );
 		}
 		else if( cmd.hasOption( FILE_OPTION ) )
