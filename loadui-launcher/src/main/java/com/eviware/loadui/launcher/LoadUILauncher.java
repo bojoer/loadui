@@ -18,6 +18,9 @@ package com.eviware.loadui.launcher;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.OverlappingFileLockException;
 import java.util.Properties;
 
 import org.osgi.framework.BundleException;
@@ -66,7 +69,7 @@ public class LoadUILauncher
 	public LoadUILauncher( String[] args )
 	{
 		argv = args;
-		System.out.println( "Starting OSGi Framework..." );
+		System.out.println( "Launching loadUI..." );
 		Main.loadSystemProperties();
 		configProps = Main.loadConfigProperties();
 		Main.copySystemProperties( configProps );
@@ -75,6 +78,29 @@ public class LoadUILauncher
 	protected void init()
 	{
 		initSystemProperties();
+
+		try
+		{
+			File lock = new File( configProps.getProperty( "org.osgi.framework.storage" ), "loadui.lock" );
+			if( !lock.exists() )
+				lock.createNewFile();
+			FileChannel channel = new RandomAccessFile( lock, "rw" ).getChannel();
+			if( channel.tryLock() == null )
+			{
+				System.err.println( "An instance of loadUI is already running!" );
+				System.exit( -1 );
+			}
+		}
+		catch( OverlappingFileLockException e )
+		{
+			System.err.println( "An instance of loadUI is already running!" );
+			System.exit( -1 );
+		}
+		catch( IOException e )
+		{
+			e.printStackTrace();
+			System.exit( -1 );
+		}
 
 		String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
 		configProps.put( "org.osgi.framework.system.packages.extra",
