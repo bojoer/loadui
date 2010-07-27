@@ -21,33 +21,28 @@
  * @help http://www.loadui.org/Flow-Control/delay.html
  * @category flow
  * @nonBlocking true
- * @dependency commons-math:commons-math:1.2
  */
  
- import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.PropertyEvent
  
- import java.util.concurrent.Executors
- import java.util.concurrent.TimeUnit
- import com.eviware.loadui.api.events.ActionEvent
- import org.apache.commons.math.random.UniformRandomGenerator
- import org.apache.commons.math.random.RandomAdaptor
- import org.apache.commons.math.random.JDKRandomGenerator
- import com.eviware.loadui.util.layout.DelayedFormattedString
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import com.eviware.loadui.api.events.ActionEvent
+import com.eviware.loadui.util.layout.DelayedFormattedString
+
+random = new Random()
  
- display = new DelayedFormattedString( ' %d /ms ', 500, 0 )
+display = new DelayedFormattedString( ' %d /ms ', 500, 0 )
  
- output = createOutput( 'output', "Message Output" )
+output = createOutput( 'output', "Message Output" )
  
- createProperty('delay', Long, 0)
- createProperty('selected', String, 'none')
- createProperty('randomDelay', Integer, 0)
- 
-random = new RandomAdaptor(new JDKRandomGenerator())
-uniformRandom = new UniformRandomGenerator(random)
+createProperty('delay', Long, 0)
+createProperty('selected', String, 'none')
+createProperty('randomDelay', Integer, 0)
 
 executor = Executors.newSingleThreadScheduledExecutor()
  
- onMessage = { incoming, outgoing, message ->
+onMessage = { incoming, outgoing, message ->
     super.onTerminalMessage(incoming, outgoing, message)
     delayIsRandom = random.nextInt(101) > randomDelay.value
     
@@ -64,7 +59,7 @@ executor = Executors.newSingleThreadScheduledExecutor()
                              display.setArgs( message.get("actualDelay") )  }, tmpDelay, TimeUnit.MILLISECONDS )
     }
     if ( selected.value == 'Uniform' && delayIsRandom ) {
-        tmpDelay = Math.abs( (int)(uniformRandom.nextNormalizedDouble()/Math.sqrt(3)) * delay.value )
+        tmpDelay = Math.abs( (int)(random.random() * delay.value) )
         message.put("actualDelay", tmpDelay )
         executor.schedule( { send( output, message);
                              display.setArgs( message.get("actualDelay") ) }, tmpDelay, TimeUnit.MILLISECONDS ) 

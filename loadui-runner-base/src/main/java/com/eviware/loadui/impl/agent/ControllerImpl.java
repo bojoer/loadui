@@ -84,9 +84,15 @@ public class ControllerImpl
 			{
 				if( connected )
 				{
+					log.info( "Client connected: {}", endpoint );
+
 					endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, new AgentListener() );
 					endpoint.addMessageListener( SceneCommunication.CHANNEL, new SceneListener() );
 					endpoint.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL, new ComponentContextListener() );
+				}
+				else
+				{
+					log.info( "Client disconnected: {}", endpoint );
 				}
 			}
 		} );
@@ -96,7 +102,6 @@ public class ControllerImpl
 
 	private class AgentListener implements MessageListener
 	{
-
 		@Override
 		@SuppressWarnings( "unchecked" )
 		public void handleMessage( String channel, final MessageEndpoint endpoint, Object data )
@@ -128,8 +133,7 @@ public class ControllerImpl
 			else if( message.containsKey( AgentItem.SCENE_DEFINITION ) )
 			{
 				if( addressableRegistry.lookup( message.get( AgentItem.SCENE_ID ) ) == null )
-					sceneAgents.get( message.get( AgentItem.SCENE_ID ) ).sceneDef = message
-							.get( AgentItem.SCENE_DEFINITION );
+					sceneAgents.get( message.get( AgentItem.SCENE_ID ) ).sceneDef = message.get( AgentItem.SCENE_DEFINITION );
 			}
 		}
 	}
@@ -169,8 +173,7 @@ public class ControllerImpl
 			while( sceneDef == null && tries > 0 )
 			{
 				log.debug( "REQUESTING DEFINITION: {} from: {}", sceneId, endpoint );
-				endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections
-						.singletonMap( AgentItem.DEFINE_SCENE, sceneId ) );
+				endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.DEFINE_SCENE, sceneId ) );
 				try
 				{
 					Thread.sleep( 1000 );

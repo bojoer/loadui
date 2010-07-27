@@ -35,6 +35,7 @@ import javafx.geometry.BoundingBox;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.widgets.ModelItemHolder;
 import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem;
@@ -51,6 +52,7 @@ import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.OutputTerminal;
@@ -137,6 +139,25 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		canvasItem.createComponent( name, descriptor );
 	}
 	
+	def deleteAction = ActionMenuItem {
+		text: "Delete"
+		action: function():Void {
+			Deletable.deleteObjects( for( deletable in Selectable.selects[s|s instanceof Deletable] ) deletable as Deletable, Selectable.selectNone );
+		}
+	}
+	
+	def cloneAction = ActionMenuItem {
+		text: "Clone"
+		action: function():Void {
+			for( clone in moveComponents( canvasItem, for( cNode in Selectable.selects[s|s instanceof CanvasNode] ) (cNode as CanvasNode).modelItem as CanvasObjectItem, false ) ) {
+				def layoutX = Integer.parseInt( clone.getAttribute( "gui.layoutX", "0" ) ) + 50;
+				def layoutY = Integer.parseInt( clone.getAttribute( "gui.layoutY", "0" ) ) + 50;
+				clone.setAttribute( "gui.layoutX", "{ layoutX as Integer }" );
+				clone.setAttribute( "gui.layoutY", "{ layoutY as Integer }" );
+			}
+		}
+	}
+	
 	def moveSubmenu:SubMenuItem = SubMenuItem {
 		text: "Move to"
 		submenu: PopupMenu {
@@ -149,13 +170,13 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 						if( not ( canvasItem instanceof ProjectItem ) ) [ ActionMenuItem {
 							text: "Parent Project"
 							action: function():Void {
-								moveComponents( project, components );
+								moveComponents( project, components, true );
 							}
 						}, SeparatorMenuItem {} ] else null,
 						for( tc in project.getScenes()[t|t != canvasItem] ) ActionMenuItem {
 							text: tc.getLabel()
 							action: function():Void {
-								moveComponents( tc, components );
+								moveComponents( tc, components, true );
 							}
 						},
 						SeparatorMenuItem {},
@@ -163,7 +184,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 							text: "New TestCase..."
 							action: function():Void {
 								CreateNewTestCaseDialog { project: project, onOk: function( testCase: SceneItem ):Void {
-									moveComponents( testCase, components );
+									moveComponents( testCase, components, true );
 								} }
 							}
 						}
@@ -178,25 +199,33 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		}
 	}
 	
-	function moveComponents( target:CanvasItem, components:ComponentItem[] ) {
+	function moveComponents( target:CanvasItem, objects:CanvasObjectItem[], deleteInitial:Boolean ):CanvasObjectItem[] {
 		def clones = new HashMap();
-		for( component in components ) clones.put( component, target.duplicate( component ) );
+		for( object in objects ) clones.put( object, target.duplicate( object ) );
 		for( connection in canvasItem.getConnections() ) {
 			def inputComponent = connection.getInputTerminal().getTerminalHolder() as ComponentItem;
 			def outputComponent = connection.getOutputTerminal().getTerminalHolder() as ComponentItem;
-			if( Sequences.indexOf( components, inputComponent ) >= 0 and Sequences.indexOf( components, outputComponent ) >= 0 ) {
-				def outputTerminal = (clones.get( outputComponent ) as ComponentItem).getTerminalByLabel( connection.getOutputTerminal().getLabel() ) as OutputTerminal;
-				def inputTerminal = (clones.get( inputComponent ) as ComponentItem).getTerminalByLabel( connection.getInputTerminal().getLabel() ) as InputTerminal;
+			if( Sequences.indexOf( objects, inputComponent ) >= 0 and Sequences.indexOf( objects, outputComponent ) >= 0 ) {
+				def outputTerminal = (clones.get( outputComponent ) as CanvasObjectItem).getTerminalByLabel( connection.getOutputTerminal().getLabel() ) as OutputTerminal;
+				def inputTerminal = (clones.get( inputComponent ) as CanvasObjectItem).getTerminalByLabel( connection.getInputTerminal().getLabel() ) as InputTerminal;
 				target.connect( outputTerminal, inputTerminal );
 			}
 		}
-		for( component in components ) component.delete();
+		if( deleteInitial )
+			for( object in objects ) object.delete();
+		
+		for( clone in clones.values() ) clone as CanvasObjectItem;
 	}
 	
 	protected def contextMenu = PopupMenu {
 		items: [
+			cloneAction,
+			deleteAction,
 			moveSubmenu
 		]
+		onOpen: function():Void {
+			deleteAction.disable = sizeof Selectable.selects[d|d instanceof Deletable] == 0;
+		}
 	}
 	
 	init {
