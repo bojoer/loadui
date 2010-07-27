@@ -21,58 +21,36 @@
 
 package com.eviware.loadui.fx.widgets;
 
-import javafx.scene.Node;
-import javafx.scene.CustomNode;
-import javafx.scene.Group;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Circle;
-import javafx.scene.paint.Color;
-import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
-import javafx.scene.text.Font;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.geometry.VPos;
-import com.eviware.loadui.fx.FxUtils;
-import com.eviware.loadui.fx.FxUtils.*;
-import com.eviware.loadui.fx.MainWindow;
-import com.eviware.loadui.fx.AppState;
-import com.eviware.loadui.fx.ui.dnd.Draggable;
-import com.eviware.loadui.fx.ui.node.BaseNode;
-import com.eviware.loadui.fx.ui.node.BaseNode.*;
-import com.eviware.loadui.fx.ui.popup.Menu;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
-import com.eviware.loadui.fx.ui.popup.MenuItem;
-import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
-import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
-import com.eviware.loadui.fx.ui.resources.MenuArrow;
-import com.eviware.loadui.fx.dialogs.DeleteProjectDialog;
-import com.eviware.loadui.fx.dialogs.CloneProjectDialog;
-import com.eviware.loadui.fx.dialogs.CorruptProjectDialog;
-import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
-import com.eviware.loadui.fx.widgets.canvas.ProjectCanvas;
-
-import com.eviware.loadui.api.model.ProjectRef;
-import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
-import javafx.util.Math;
-
-import java.util.EventObject;
-import java.io.File;
-import java.lang.RuntimeException;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import com.eviware.loadui.api.component.BehaviorProvider.ComponentCreationException;
-
-import javax.imageio.ImageIO;
-import javafx.ext.swing.SwingUtils;
+import com.eviware.loadui.api.model.ModelItem;
+import com.eviware.loadui.api.model.ProjectRef;
+import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.MainWindow;
+import com.eviware.loadui.fx.dialogs.CloneProjectDialog;
+import com.eviware.loadui.fx.dialogs.CorruptProjectDialog;
+import com.eviware.loadui.fx.dialogs.DeleteProjectDialog;
+import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.dnd.Draggable;
+import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
+import com.eviware.loadui.fx.ui.popup.MenuItem;
+import com.eviware.loadui.fx.ui.popup.PopupMenu;
+import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
+import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
+import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.util.ImageUtil.*;
-
-import com.eviware.loadui.fx.async.ProjectRefSetEnabledTaskFX;
+import java.io.IOException;
+import java.lang.RuntimeException;
+import java.util.EventObject;
+import javafx.async.Task;
+import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import org.slf4j.LoggerFactory;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.ProjectNode" );
 
@@ -110,27 +88,17 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 		
 		addMouseHandler( MOUSE_CLICKED, function( e:MouseEvent ) {
 			if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
-				MainWindow.instance.waitingCursor.startWait("Openning Project", e.sceneX, e.sceneY);
-
-				
-			    	try {
-
-						var task = ProjectRefSetEnabledTaskFX { ref:projectRef 
-						onDone: function() {
+				AppState.instance.blockingTask(
+					function():Void {
+						projectRef.setEnabled( true );
+					}, function( task:Task ):Void {
+						if( task.failed ) {
+							CorruptProjectDialog{ project:projectRef };
+						} else {
 							AppState.instance.setActiveCanvas( projectRef.getProject() );
-							MainWindow.instance.waitingCursor.stopWait();	
 						}
-						
-						}
-						task.start();
-
-			   	 	}
-			    	catch( ex:IOException )
-			    	{
-			    	    
-			    		MainWindow.instance.waitingCursor.stopWait();
-			    		CorruptProjectDialog{ project:projectRef };
-			    	}
+					}
+				);
 			}
 		} );
 	}	

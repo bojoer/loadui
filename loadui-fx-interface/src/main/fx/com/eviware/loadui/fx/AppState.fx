@@ -21,32 +21,32 @@
 
 package com.eviware.loadui.fx;
 
-import javafx.scene.Scene;
-import javafx.scene.Node;
-import javafx.scene.Group;
-//import org.jfxtras.animation.wipe.XWipePanel;
+import com.eviware.loadui.api.ui.ApplicationState;
+import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.SceneItem;
+import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.fx.MainWindow;
+import com.eviware.loadui.fx.async.BlockingTask;
+import com.eviware.loadui.fx.dialogs.SaveProjectDialog;
 import com.eviware.loadui.fx.ui.XWipePanel;
-import org.jfxtras.animation.wipe.Wipe;
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
+import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
+import java.lang.IllegalArgumentException;
+import java.util.HashMap;
+import java.util.Map;
+import javafx.async.Task;
+import javafx.scene.Cursor;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.*;
 import org.jfxtras.animation.wipe.FadeWipe;
 import org.jfxtras.animation.wipe.FadeZoomWipe;
 import org.jfxtras.animation.wipe.Flip180Wipe;
-
+import org.jfxtras.animation.wipe.Wipe;
 import org.slf4j.LoggerFactory;
-import java.util.Map;
-import java.util.HashMap;
-import java.lang.IllegalArgumentException;
-
-import com.eviware.loadui.fx.MainWindow;
-import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
-import com.eviware.loadui.fx.dialogs.SaveProjectDialog;
-import com.eviware.loadui.api.model.WorkspaceItem;
-import com.eviware.loadui.api.model.CanvasItem;
-import com.eviware.loadui.api.model.SceneItem;
-import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.ui.ApplicationState;
-
-import com.eviware.loadui.fx.ui.dialogs.Dialog;
-import javafx.scene.text.*;
 
 public def WORKSPACE_FRONT = "workspace.front";
 public def PROJECT_FRONT = "project.front";
@@ -105,6 +105,14 @@ public class AppState extends ApplicationState {
 		scene.content = layers;
 	}
 	
+	def blocked = Rectangle {
+		width: bind scene.width
+		height: bind scene.height
+		opacity: 0.3
+		blocksMouse: true
+		cursor: Cursor.WAIT
+	}
+	
 	postinit {
 		instance = this;
 		for( s in [ WORKSPACE_FRONT, PROJECT_FRONT, PROJECT_BACK, TESTCASE_FRONT ] )
@@ -115,6 +123,21 @@ public class AppState extends ApplicationState {
 			globalLayer,
 			overlayLayer
 		];
+	}
+	
+	/**
+	 * Runs a task in the background, blocking user input until completed.
+	 */
+	public function blockingTask( task:function():Void, onDone:function(task:Task):Void ):Void {
+		insert blocked into overlayLayer.content;
+		def blockingTask:BlockingTask = BlockingTask {
+			task:task
+			onDone:function() {
+				delete blocked from overlayLayer.content;
+				onDone( blockingTask );
+			}
+		};
+		blockingTask.start();
 	}
 	
 	override function getLoadedWorkspace():WorkspaceItem {

@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.impl.model;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collections;
 
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
@@ -74,8 +76,19 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 				else
 					broadcastEndpoint.deregisterEndpoint( AgentItemImpl.this );
 				AgentItemImpl.this.connected = connected;
-				log.debug( "Agent connected, setting max threads: {}", getProperty( MAX_THREADS_PROPERTY )
-						.getStringValue() );
+				String hostName;
+				try
+				{
+					hostName = InetAddress.getLocalHost().getHostName();
+				}
+				catch( UnknownHostException e )
+				{
+					hostName = "Unknown Host";
+				}
+				sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.CONNECTED, hostName ) );
+				log
+						.debug( "Agent connected, setting max threads: {}", getProperty( MAX_THREADS_PROPERTY )
+								.getStringValue() );
 				sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.SET_MAX_THREADS, getProperty(
 						MAX_THREADS_PROPERTY ).getStringValue() ) );
 

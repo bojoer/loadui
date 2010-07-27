@@ -15,52 +15,40 @@
  */
 package com.eviware.loadui.fx;
 
-import com.eviware.loadui.fx.ui.inspector.InspectorPanelControl;
-import com.eviware.loadui.fx.widgets.ProjectList;
-import com.eviware.loadui.fx.widgets.AgentList;
-import com.eviware.loadui.fx.widgets.canvas.Canvas;
-import com.eviware.loadui.fx.widgets.canvas.ProjectCanvas;
-import com.eviware.loadui.fx.widgets.canvas.NavigationPanel;
-import com.eviware.loadui.fx.ui.node.BaseNode;
-import com.eviware.loadui.fx.ui.dialogs.Dialog;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
-import javafx.scene.Scene;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-
-import com.eviware.loadui.fx.ui.menu.WorkspaceMenu;
-import com.eviware.loadui.fx.ui.menu.ProjectMenu;
-import com.eviware.loadui.fx.ui.menu.TestCaseMenu;
-import com.eviware.loadui.fx.ui.menu.MainButton;
-import com.eviware.loadui.fx.ui.menu.SoapUIButton;
-import javafx.scene.Node;
-import javafx.scene.Group;
-
-import com.eviware.loadui.fx.FxUtils.*;
-
-import com.eviware.loadui.fx.ui.toolbar.Toolbar;
-import com.eviware.loadui.fx.widgets.toolbar.ProjectToolbarItem;
-import com.eviware.loadui.fx.widgets.toolbar.AgentToolbarItem;
-import com.eviware.loadui.fx.widgets.toolbar.TestCaseToolbarItem;
-
-import com.eviware.loadui.api.model.WorkspaceProvider;
-import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
-
+import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.fx.summary.SummaryReport;
-
-import org.slf4j.LoggerFactory;
-import java.io.File;
-import java.lang.Thread;
-
-import com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem;
-import com.eviware.loadui.api.component.ComponentDescriptor;
-
-import com.eviware.loadui.fx.widgets.FeedDisplay;
 import com.eviware.loadui.fx.ui.WaitingCursor;
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
+import com.eviware.loadui.fx.ui.inspector.InspectorPanelControl;
+import com.eviware.loadui.fx.ui.menu.MainButton;
+import com.eviware.loadui.fx.ui.menu.ProjectMenu;
+import com.eviware.loadui.fx.ui.menu.SoapUIButton;
+import com.eviware.loadui.fx.ui.menu.TestCaseMenu;
+import com.eviware.loadui.fx.ui.menu.WorkspaceMenu;
+import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.popup.PopupMenu;
+import com.eviware.loadui.fx.ui.toolbar.Toolbar;
+import com.eviware.loadui.fx.widgets.AgentList;
+import com.eviware.loadui.fx.widgets.FeedDisplay;
+import com.eviware.loadui.fx.widgets.ProjectList;
+import com.eviware.loadui.fx.widgets.canvas.Canvas;
+import com.eviware.loadui.fx.widgets.canvas.NavigationPanel;
+import com.eviware.loadui.fx.widgets.canvas.ProjectCanvas;
+import com.eviware.loadui.fx.widgets.toolbar.AgentToolbarItem;
+import com.eviware.loadui.fx.widgets.toolbar.ProjectToolbarItem;
+import com.eviware.loadui.fx.widgets.toolbar.TestCaseToolbarItem;
+import com.eviware.loadui.fx.FxUtils.*;
+import java.lang.Thread;
+import javafx.scene.Cursor;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import org.slf4j.LoggerFactory;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.MainWindow" );
 

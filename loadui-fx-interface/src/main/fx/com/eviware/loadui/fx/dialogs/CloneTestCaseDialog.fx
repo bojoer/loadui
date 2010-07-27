@@ -16,17 +16,16 @@
 
 package com.eviware.loadui.fx.dialogs;
 
+import com.eviware.loadui.api.model.CanvasObjectItem;
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.SceneItem;
+
+import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
 import com.eviware.loadui.fx.ui.form.fields.*;
-import com.eviware.loadui.fx.MainWindow;
-import com.eviware.loadui.fx.AppState;
-
-import com.eviware.loadui.api.model.CanvasObjectItem;
-import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.SceneItem;
-import com.eviware.loadui.api.model.ModelItem;
 
 import javafx.scene.text.*;
 
