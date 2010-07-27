@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.groovy;
 
+import groovy.grape.Grape;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
@@ -24,9 +25,11 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 
+import java.io.File;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -64,6 +67,7 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 
 	private final Pattern m2Pattern = java.util.regex.Pattern.compile( ".*@m2repo (.*)\\s*" );
 	private final Pattern depPattern = java.util.regex.Pattern.compile( ".*@dependency (.*)\\s*" );
+	private final Pattern jarPattern = java.util.regex.Pattern.compile( ".*@jar (.*)\\s*" );
 
 	private GroovyShell shell;
 	private Binding binding;
@@ -80,7 +84,7 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 	{
 		this.activeContexts = activeContexts;
 		this.context = context;
-		this.shell = new GroovyShell(); // shell;
+		this.shell = new GroovyShell();
 		delegates = new Object[] { context };
 
 		Class<?>[] interfaces = extraInterface == null ? new Class<?>[] { ComponentContext.class,
@@ -389,35 +393,68 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 	{
 		Matcher m2Matcher = m2Pattern.matcher( scriptContent );
 		Matcher depMatcher = depPattern.matcher( scriptContent );
-		StringBuilder sb = new StringBuilder( "import groovy.grape.Grape\n" );
+		Matcher jarMatcher = jarPattern.matcher( scriptContent );
 
-		boolean deps = false;
+		// StringBuilder sb = new StringBuilder( "import groovy.grape.Grape\n" );
+
+		// boolean deps = false;
+		// boolean grapes = false;
 		int repos = 0;
 		while( m2Matcher.find() )
 		{
-			deps = true;
+			// deps = true;
+			// grapes = true;
 			String url = m2Matcher.group( 1 );
-			sb.append( "Grape.addResolver(name:'repo_" + repos++ + "', root:'" + url + "', m2compatible:true)\n" );
+			// sb.append( "Grape.addResolver(name:'repo_" + repos++ + "', root:'" +
+			// url + "', m2compatible:true)\n" );
+			Grape.addResolver( MapUtils.build( String.class, Object.class ).put( "name", "repo_" + repos++ ).put( "root",
+					url ).put( "m2compatible", true ).get() );
 		}
 
 		while( depMatcher.find() )
 		{
-			deps = true;
 			String[] parts = depMatcher.group( 1 ).split( ":" );
 			if( parts.length >= 3 )
-				sb.append( "Grape.grab(group:'" + parts[0] + "', module:'" + parts[1] + "', version:'" + parts[2]
-						+ "', classLoader:classloader)\n" );
+			{
+				log.debug( "Loading dependency using Grape: " + depMatcher.group( 1 ) );
+				Grape.grab( MapUtils.build( String.class, Object.class ).put( "group", parts[0] ).put( "module", parts[1] )
+						.put( "version", parts[2] ).put( "classLoader", shell.getClassLoader() ).get() );
+			}
 		}
 
-		if( !deps )
-			return;
+		while( jarMatcher.find() )
+		{
+			String[] parts = jarMatcher.group( 1 ).split( ":" );
 
-		Binding binding = new Binding();
-		binding.setVariable( "classloader", shell.getClassLoader() );
-		Script s = shell.parse( sb.toString() );
-		s.setBinding( binding );
-		log.debug( "Loading dependencies..." );
-		s.run();
+			if( parts.length >= 3 )
+			{
+				File depFile = new File( System.getProperty( "groovy.root" ), "grapes" + File.separator + parts[0]
+						+ File.separator + parts[1] + File.separator + "jars" + File.separator + parts[1] + "-" + parts[2]
+						+ ".jar" );
+				if( depFile.exists() )
+				{
+					try
+					{
+						log.debug( "Manually loading jar: " + jarMatcher.group( 1 ) );
+						shell.getClassLoader().addURL( depFile.toURI().toURL() );
+					}
+					catch( MalformedURLException e )
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+
+		// if( deps )
+		// {
+		// Binding binding = new Binding();
+		// binding.setVariable( "classloader", shell.getClassLoader() );
+		// Script s = shell.parse( sb.toString() );
+		// s.setBinding( binding );
+		// log.debug( "Loading dependencies..." );
+		// s.run();
+		// }
 		log.debug( "Done loading dependencies!" );
 	}
 

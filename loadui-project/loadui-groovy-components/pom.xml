@@ -50,6 +50,8 @@
 				<configuration>
 					<instructions>
 						<Export-Package>com.eviware.loadui.groovy.*</Export-Package>
+						<Import-Package>!com.eviware.loadui.groovy.*;!org.apache.http.*;*</Import-Package>
+						<Embed-Dependency>*;scope=provided</Embed-Dependency>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -78,12 +80,19 @@
 		</dependency>
 		<!--
 			The following are added to the test scope since they are not required
-			in the final bundle, only to remove errors from the IDE
+			in the final bundle, only to remove errors from the IDE.
+			UPDATE: These are now included in the bundle due to Mac having problems with Grape under JNLP! 
 		-->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.1-alpha2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>2.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

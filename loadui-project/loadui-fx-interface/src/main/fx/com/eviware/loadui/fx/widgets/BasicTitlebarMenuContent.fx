@@ -87,7 +87,7 @@ public class BasicTitlebarMenuContent extends Container {
 							fill: bind if( menu.isOpen ) Color.WHITE else Color.web("#303030")
 							rotate: 90
 							layoutY: bind labelNode.height / 2
-							layoutX: bind if( FxUtils.shouldApplyMacFix() ) labelNode.width + 15 else labelNode.width + 5
+							layoutX: bind if( FxUtils.shouldApplyMacFix() ) labelNode.width + 25 else labelNode.width + 5
 						}, Rectangle {
 							width: bind labelNode.width + arrowNode.layoutBounds.width + 11
 							height: bind labelNode.height + 6
