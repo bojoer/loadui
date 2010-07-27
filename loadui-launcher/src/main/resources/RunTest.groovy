@@ -113,6 +113,21 @@ if( agents != null ) {
 	}
 }
 
+//Define reports generation 
+if( reports != null ) {
+	def repDir = new File(reports);
+	if(repDir.isFile()){
+		log.error "Reports path points to a file instead of directory! Reports won't be saved!"
+	}
+	else{
+		if(!repDir.isDirectory()){
+			repDir.mkdirs();
+		}
+		project.setReportFolder(repDir.getAbsolutePath());
+		project.setSaveReport(true);
+	}
+}
+
 //Make sure all agents are ready
 if( testCase != null ) {
 	def notReady = new HashSet()
