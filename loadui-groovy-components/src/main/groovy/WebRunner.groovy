@@ -21,7 +21,8 @@
  * @help http://www.loadui.org/Samplers/web-page-runner.html
  * @name Web Page Runner
  * @category runners
- * @dependency org.apache.httpcomponents:httpclient:4.1-alpha2
+ * @jar org.apache.httpcomponents:httpcore:4.1-beta1
+ * @jar org.apache.httpcomponents:httpclient:4.1-alpha2
  */
 
 import org.apache.http.* 
