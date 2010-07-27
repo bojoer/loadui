@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.util.Properties;
 
@@ -48,6 +48,7 @@ public class LoadUILauncher
 	private static final String NOFX_OPTION = "nofx";
 	private static final String SYSTEM_PROPERTY_OPTION = "D";
 	private static final String HELP_OPTION = "h";
+	private static final String IGNORE_CURRENTLY_RUNNING_OPTION = "nolock";
 
 	public static void main( String[] args )
 	{
@@ -79,29 +80,6 @@ public class LoadUILauncher
 	{
 		initSystemProperties();
 
-		try
-		{
-			File lock = new File( configProps.getProperty( "org.osgi.framework.storage" ), "loadui.lock" );
-			if( !lock.exists() )
-				lock.createNewFile();
-			FileChannel channel = new RandomAccessFile( lock, "rw" ).getChannel();
-			if( channel.tryLock() == null )
-			{
-				System.err.println( "An instance of loadUI is already running!" );
-				System.exit( -1 );
-			}
-		}
-		catch( OverlappingFileLockException e )
-		{
-			System.err.println( "An instance of loadUI is already running!" );
-			System.exit( -1 );
-		}
-		catch( IOException e )
-		{
-			e.printStackTrace();
-			System.exit( -1 );
-		}
-
 		String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
 		configProps.put( "org.osgi.framework.system.packages.extra",
 				extra.equals( "" ) ? "com.eviware.loadui.launcher.api" : "com.eviware.loadui.launcher.api," + extra );
@@ -115,6 +93,32 @@ public class LoadUILauncher
 
 			if( cmd.hasOption( HELP_OPTION ) )
 				printUsageAndQuit();
+
+			if( !cmd.hasOption( IGNORE_CURRENTLY_RUNNING_OPTION ) )
+			{
+				try
+				{
+					File lockFile = new File( configProps.getProperty( "org.osgi.framework.storage" ), "loadui.lock" );
+					if( !lockFile.exists() )
+						lockFile.createNewFile();
+					FileLock lock = new RandomAccessFile( lockFile, "rw" ).getChannel().tryLock();
+					if( lock == null )
+					{
+						System.err.println( "An instance of loadUI is already running!" );
+						System.exit( -1 );
+					}
+				}
+				catch( OverlappingFileLockException e )
+				{
+					System.err.println( "An instance of loadUI is already running!" );
+					System.exit( -1 );
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+					System.exit( -1 );
+				}
+			}
 
 			processCommandLine( cmd );
 		}
@@ -167,6 +171,7 @@ public class LoadUILauncher
 		options.addOption( SYSTEM_PROPERTY_OPTION, true, "Sets system property with name=value" );
 		options.addOption( NOFX_OPTION, false, "Do not include or require the JavaFX runtime" );
 		options.addOption( HELP_OPTION, "help", false, "Prints this message" );
+		options.addOption( IGNORE_CURRENTLY_RUNNING_OPTION, false, "Disable file locking" );
 
 		return options;
 	}
