@@ -33,6 +33,7 @@ import javafx.scene.input.MouseButton;
 import javafx.geometry.BoundingBox;
 
 import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.widgets.ModelItemHolder;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
@@ -122,9 +123,11 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		def x = sb.minX;
 		def y = sb.minY;
 		log.debug( "Component dropped at: (\{\}, \{\})", x, y );
-		def component = createComponent( (d.node as ComponentToolbarItem).descriptor );
-		component.setAttribute( "gui.layoutX", "{offsetX + x as Integer}" );
-		component.setAttribute( "gui.layoutY", "{offsetY + y as Integer}" );
+		AppState.instance.blockingTask( function():Void {
+			def component = createComponent( (d.node as ComponentToolbarItem).descriptor );
+			component.setAttribute( "gui.layoutX", "{offsetX + x as Integer}" );
+			component.setAttribute( "gui.layoutY", "{offsetY + y as Integer}" );
+		}, null );
 	}
 	override var onDrop = onDropFunction;
 	
