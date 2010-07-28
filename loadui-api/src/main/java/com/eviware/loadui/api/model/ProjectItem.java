@@ -30,6 +30,7 @@ public interface ProjectItem extends CanvasItem
 	
 	public final String SAVE_REPORT_PROPERTY = ModelItem.class.getSimpleName() + ".saveReport";
 	public final String REPORT_FOLDER_PROPERTY = ModelItem.class.getSimpleName() + ".reportFolder";
+	public final String REPORT_FORMAT_PROPERTY = ModelItem.class.getSimpleName() + ".reportFormat";
 
 	/**
 	 * Gets the File for this ProjectItem.
@@ -170,4 +171,19 @@ public interface ProjectItem extends CanvasItem
 	 * 			The path to the folder
 	 */
 	public void setReportFolder(String path);
+	
+	/**
+	 * The format for saving summaries (pdf, doc, rtf, xml etc.)
+	 * 
+	 * @return the format in which the report will be saved
+	 */
+	public String getReportFormat();
+	
+	/**
+	 * Used to set the format for saving the summaries
+	 * 
+	 * @param format
+	 * 			The format in which the report will be saved
+	 */
+	public void setReportFormat(String format);
 }

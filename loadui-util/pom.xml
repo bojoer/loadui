@@ -29,7 +29,7 @@
 					<instructions>
 						<Export-Package>com.eviware.loadui.util.*</Export-Package>
 						<Embed-Dependency>*;scope=provided</Embed-Dependency>
-						<Import-Package>!org.eclipse.text.edits;!org.eclipse.osgi.util;!org.eclipse.jface.text;!org.eclipse.core.runtime.*;!org.eclipse.core.resources;!org.apache.commons.collections.*;!org.apache.commons.javaflow;!org.w3c.dom.svg;!org.mozilla.*;!org.krysalis.*;!org.jfree.*;!org.jaxen.*;!org.hibernate.*;!org.eclipse.jdt.*;!org.apache.xpath.*;!org.apache.tools.ant.*;!org.apache.poi.*;!org.apache.batik.*;!net.sourceforge.barbecue.*;!mondrian.olap;!jxl.*;!bsh;!com.keypoint;!com.lowagie.text;!com.lowagie.text.pdf;!com.sun.image.codec.jpeg;!javax.persistence;!antlr;!antlr.collections.impl;!com.eviware.loadui.util.*;!org.apache.batik.ext.awt;*</Import-Package>
+						<Import-Package>!org.bouncycastle.*;!com.apple.mrj;!org.eclipse.text.edits;!org.eclipse.osgi.util;!org.eclipse.jface.text;!org.eclipse.core.runtime.*;!org.eclipse.core.resources;!org.apache.commons.collections.*;!org.apache.commons.javaflow;!org.w3c.dom.svg;!org.mozilla.*;!org.krysalis.*;!org.jfree.*;!org.jaxen.*;!org.hibernate.*;!org.eclipse.jdt.*;!org.apache.xpath.*;!org.apache.tools.ant.*;!org.apache.poi.*;!org.apache.batik.*;!net.sourceforge.barbecue.*;!mondrian.olap;!jxl.*;!bsh;!com.keypoint;!com.lowagie.text;!com.lowagie.text.pdf;!com.sun.image.codec.jpeg;!javax.persistence;!antlr;!antlr.collections.impl;!com.eviware.loadui.util.*;!org.apache.batik.ext.awt;*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -100,5 +100,17 @@
         	<version>1.2</version>
         	<scope>provided</scope>
    	 	</dependency>
+   	 	<dependency>
+		    <groupId>com.lowagie</groupId>
+		    <artifactId>itext</artifactId>
+		    <version>2.1.7</version>
+		    <scope>provided</scope>
+		</dependency>
+		<dependency>
+		    <groupId>net.sourceforge.jexcelapi</groupId>
+		    <artifactId>jxl</artifactId>
+		    <version>2.6.10</version>
+		    <scope>provided</scope>
+		</dependency>
 	</dependencies>
 </project>

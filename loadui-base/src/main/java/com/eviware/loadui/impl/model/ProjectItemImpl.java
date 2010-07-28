@@ -99,6 +99,9 @@ import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.util.reporting.JasperReportManager;
+import com.eviware.loadui.util.reporting.ReportEngine;
+import com.eviware.loadui.util.reporting.ReportEngine.ReportFormats;
 
 public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implements ProjectItem
 {
@@ -120,6 +123,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final Set<SceneItem> awaitingScenes = new HashSet<SceneItem>();
 	private final Property<Boolean> saveReport;
 	private final Property<String> reportFolder;
+	private final Property<String> reportFormat;
 	private File projectFile;
 
 	private ScheduledFuture<?> awaitingSummaryTimeout;
@@ -146,6 +150,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		counterSynchronizer = BeanInjector.getBean( CounterSynchronizer.class );
 		saveReport = createProperty( SAVE_REPORT_PROPERTY, Boolean.class, false );
 		reportFolder = createProperty( REPORT_FOLDER_PROPERTY, String.class, "" );
+		reportFormat = createProperty( REPORT_FORMAT_PROPERTY, String.class, "" );
 		proxy = BeanInjector.getBean( TerminalProxy.class );
 	}
 
@@ -531,28 +536,51 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	 * 
 	 * @param summary
 	 */
-	private void saveSummary( final MutableSummary summary )
+	private void saveSummary(MutableSummary summary )
 	{
+		File outputDir;
+		if( reportFolder == null || reportFolder.getValue().length() < 1 )
+			outputDir = new File( System.getProperty( "loadui.home" ) );
+		else
+			outputDir = new File( reportFolder.getValue() );
 
+		String format = reportFormat.getValue();
+		if(format == null){
+			saveSummaryAsXML(summary, createOutputFile(outputDir, "xml"));
+		}
+		else{
+			format = format.toUpperCase();
+			boolean formatSupported = false;
+			for (ReportFormats rf : ReportFormats.values()) {
+				if(rf.toString().equals(format)){
+					formatSupported = true;
+					File out =  createOutputFile(outputDir, format);
+					JasperReportManager.getInstance().createReport(summary,  out, format);
+					break;
+				}
+			}
+			if(!formatSupported){
+				log.warn( "Format '" + format + "' is not supported. Report will be saved in plain xml.");
+				saveSummaryAsXML(summary, createOutputFile(outputDir, "xml"));
+			}
+		}
+	}
+
+	private File createOutputFile(File outputDir, String format){
+		String fileName = getLabel() + "-summary-" + System.currentTimeMillis() + "." + format.toLowerCase();
+		return new File( outputDir, fileName );
+	}
+	
+	private void saveSummaryAsXML(final MutableSummary summary, final File out ){
 		SwingWorker worker = new SwingWorker()
 		{
-
 			@Override
 			protected Object doInBackground() throws Exception
 			{
-
 				try
 				{
 					XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
 					// Create an XML stream writer
-					File outputDir;
-					if( reportFolder == null || reportFolder.getValue().length() < 1 )
-						outputDir = new File( System.getProperty( "loadui.home" ) );
-					else
-						outputDir = new File( reportFolder.getValue() );
-
-					String fileName = getLabel() + "-summary-" + System.currentTimeMillis() + ".xml";
-					File out = new File( outputDir, fileName );
 					XMLStreamWriter xmlw = xmlof.createXMLStreamWriter( new BufferedWriter( new FileWriter( out ) ) );
 					xmlw.writeStartDocument();
 					xmlw.writeCharacters( "\n" );
@@ -680,14 +708,12 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 				return null;
 			}
-
 		};
 		worker.execute();
 	}
-
+	
 	@Override
 	public CanvasObjectItem duplicate( CanvasObjectItem obj )
 	{
@@ -747,6 +773,18 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	public void setReportFolder( String path )
 	{
 		reportFolder.setValue( path );
+	}
+
+	@Override
+	public String getReportFormat()
+	{
+		return reportFormat.getValue();
+	}
+
+	@Override
+	public void setReportFormat( String format )
+	{
+		reportFormat.setValue( format );
 	}
 
 	private class AssignmentImpl implements Assignment
