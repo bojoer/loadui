@@ -70,7 +70,7 @@ public class LoadUILauncher
 	public LoadUILauncher( String[] args )
 	{
 		argv = args;
-		System.out.println( "Launching loadUI..." );
+		System.out.println( "Launching loadUI Build: TODO" );
 		Main.loadSystemProperties();
 		configProps = Main.loadConfigProperties();
 		Main.copySystemProperties( configProps );
