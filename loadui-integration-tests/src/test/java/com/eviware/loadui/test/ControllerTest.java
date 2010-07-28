@@ -55,7 +55,7 @@ public class ControllerTest
 	public void shouldHaveNoFailedBundles()
 	{
 		Bundle[] bundles = controller.getBundleContext().getBundles();
-		assertThat( bundles.length, greaterThanOrEqualTo( 44 ) );
+		assertThat( bundles.length, greaterThanOrEqualTo( 43 ) );
 		for( Bundle bundle : bundles )
 			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(), anyOf(
 					is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );
