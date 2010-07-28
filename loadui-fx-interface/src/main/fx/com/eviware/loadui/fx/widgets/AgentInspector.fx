@@ -107,6 +107,8 @@ public class AgentInspector extends Inspector {
 	
 	public-init var name: String;
 	
+	def panel = AgentInspectorPanel {};
+	
 	override function onShow(): Void {
 	}
 	
@@ -114,7 +116,7 @@ public class AgentInspector extends Inspector {
 	}
 	
 	override function getPanel(): Object {
-		AgentInspectorPanel {}
+		panel
 	}
 
 	override function getName(): String {
