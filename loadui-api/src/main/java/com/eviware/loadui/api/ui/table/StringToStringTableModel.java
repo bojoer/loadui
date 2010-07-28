@@ -98,16 +98,23 @@ public class StringToStringTableModel extends KeyValueTableModel {
 		observer.startNotification();
 	}
 
+	public void clear()
+	{
+		data.clear();
+		hashCode();
+		fireTableDataChanged();
+	}
+	
 	public void addRow(StringProperty p) {
 		data.add(p);
 		hashCode();
-		fireTableDataChanged();
+		fireTableRowsInserted( data.size()-1, data.size()-1  );
 	}
 
 	public void addRow(String name, String value) {
 		data.add(new StringProperty(name, value));
 		hashCode();
-		fireTableDataChanged();
+		fireTableRowsInserted( data.size()-1, data.size()-1  );
 	}
 	
 	public void removeRow(String name){
