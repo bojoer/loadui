@@ -91,8 +91,13 @@ public class Utilities
 				try
 				{
 					ss.close();
+					Thread.sleep( 1000 );
 				}
 				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+				catch( InterruptedException e )
 				{
 					e.printStackTrace();
 				}
