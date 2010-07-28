@@ -6,6 +6,7 @@
 	<bean id="counterSynchronizer" class="com.eviware.loadui.impl.agent.AgentCounterSynchronizer" />
 	
 	<bean id="controller" class="com.eviware.loadui.impl.agent.ControllerImpl">
+		<constructor-arg ref="scheduledExecutorService" />
 		<constructor-arg ref="executorManager" />
 		<constructor-arg ref="conversionService" />
 		<constructor-arg ref="serverEndpoint" />

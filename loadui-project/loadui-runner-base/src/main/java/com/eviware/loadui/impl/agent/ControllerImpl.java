@@ -18,11 +18,15 @@ package com.eviware.loadui.impl.agent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +52,7 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.api.terminal.TerminalProxy;
+import com.eviware.loadui.util.dispatch.CustomThreadPoolExecutor;
 
 public class ControllerImpl
 {
@@ -63,11 +68,13 @@ public class ControllerImpl
 	private final PropertySynchronizer propertySynchronizer;
 	private final CounterSynchronizer counterSynchronizer;
 
-	private Map<String, SceneAgent> sceneAgents = Collections.synchronizedMap( new HashMap<String, SceneAgent>() );
+	private final Map<String, SceneAgent> sceneAgents = Collections.synchronizedMap( new HashMap<String, SceneAgent>() );
+	private final Set<MessageEndpoint> clients = new HashSet<MessageEndpoint>();
 
-	public ControllerImpl( ExecutorManager executorManager, ConversionService conversionService,
-			ServerEndpoint serverEndpoint, TerminalProxy terminalProxy, AddressableRegistry addressableRegistry,
-			PropertySynchronizer propertySynchronizer, CounterSynchronizer counterSynchronizer )
+	public ControllerImpl( ScheduledExecutorService scheduledExecutorService, ExecutorManager executorManager,
+			ConversionService conversionService, ServerEndpoint serverEndpoint, TerminalProxy terminalProxy,
+			AddressableRegistry addressableRegistry, PropertySynchronizer propertySynchronizer,
+			CounterSynchronizer counterSynchronizer )
 	{
 		this.executorManager = executorManager;
 		this.executorService = executorManager.getExecutor();
@@ -84,16 +91,34 @@ public class ControllerImpl
 			{
 				if( connected )
 				{
+					clients.add( endpoint );
 					endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, new AgentListener() );
 					endpoint.addMessageListener( SceneCommunication.CHANNEL, new SceneListener() );
 					endpoint.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL, new ComponentContextListener() );
 				}
 				else
 				{
+					clients.remove( endpoint );
 					log.info( "Client disconnected" );
 				}
 			}
 		} );
+
+		scheduledExecutorService.scheduleAtFixedRate( new Runnable()
+		{
+
+			@Override
+			public void run()
+			{
+				if( executorService instanceof CustomThreadPoolExecutor )
+				{
+					int utilization = ( ( CustomThreadPoolExecutor )executorService ).getUtilization();
+					for( MessageEndpoint endpoint : clients )
+						endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.SET_UTILIZATION,
+								utilization ) );
+				}
+			}
+		}, 1, 1, TimeUnit.SECONDS );
 
 		log.info( "Agent started and listening on cometd!" );
 	}

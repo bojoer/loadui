@@ -9,7 +9,24 @@
 	<artifactId>loadui-launcher</artifactId>
 	<name>loadUI Launcher</name>
 	<description>Launcher for the loadUI Controller</description>
+	<properties>
+		<maven.build.timestamp.format>yyyy/MM/dd HH\:mm</maven.build.timestamp.format>
+		<loadui.build.date>${maven.build.timestamp}</loadui.build.date>
+	</properties>
 	<build>
+		<filters>
+			<filter>src/main/filters/default.properties</filter>
+		</filters>
+		<resources>
+			<resource>
+				<directory>src/main/processResources</directory>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

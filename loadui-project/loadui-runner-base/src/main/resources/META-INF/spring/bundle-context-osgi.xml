@@ -6,6 +6,8 @@
 	
 	<osgi:reference interface="com.eviware.loadui.api.dispatch.ExecutorManager" id="executorManager" />
 	
+	<osgi:reference interface="java.util.concurrent.ScheduledExecutorService" id="scheduledExecutorService" />
+	
 	<osgi:reference interface="org.springframework.core.convert.ConversionService" id="conversionService" />
 	
 	<osgi:reference interface="com.eviware.loadui.api.messaging.ServerEndpoint" id="serverEndpoint" />

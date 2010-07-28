@@ -30,18 +30,14 @@ import javafx.util.Properties;
 import com.eviware.loadui.fx.FxUtils.*;
 
 import java.lang.Exception;
+import java.lang.System;
 
 public class AboutDialog {
 	var group:Group;
 	var modalLayer:Node;
 	postinit {
-		def buildinfo = new Properties();
-		try {
-			buildinfo.load( getClass().getResourceAsStream("/properties/buildinfo.txt") );
-		} catch( e:Exception ) {
-		}
-		def version = buildinfo.get("build.number");
-		def date = buildinfo.get("build.date");
+		def version = System.getProperty("loadui.build.number");
+		def date = System.getProperty("loadui.build.date");
 	
 		def scene = Dialog.overlay.scene;
 		def items:Node[] = [

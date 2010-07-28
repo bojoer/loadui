@@ -92,6 +92,12 @@ public class CustomThreadPoolExecutor extends AbstractExecutorService
 		}
 	}
 
+	public int getUtilization()
+	{
+		int workers = nWorkers.get();
+		return workers == 0 ? 0 : 100 * ( workers - nSleeping.get() ) / getMaxPoolSize();
+	}
+
 	@Override
 	public boolean awaitTermination( long timeout, TimeUnit unit ) throws InterruptedException
 	{
