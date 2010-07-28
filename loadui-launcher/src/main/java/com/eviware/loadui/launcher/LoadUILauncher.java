@@ -80,9 +80,13 @@ public class LoadUILauncher
 	{
 		initSystemProperties();
 
+		if( configProps == null )
+			throw new NullPointerException( "configProps is null!" );
+
 		String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
 		configProps.put( "org.osgi.framework.system.packages.extra",
-				extra.equals( "" ) ? "com.eviware.loadui.launcher.api" : "com.eviware.loadui.launcher.api," + extra );
+				( extra == null || extra.equals( "" ) ) ? "com.eviware.loadui.launcher.api"
+						: "com.eviware.loadui.launcher.api," + extra );
 
 		CommandLineParser parser = new PosixParser();
 		options = createOptions();
