@@ -20,7 +20,6 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.fx.summary.SummaryReport;
-import com.eviware.loadui.fx.ui.WaitingCursor;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.inspector.InspectorPanelControl;
 import com.eviware.loadui.fx.ui.menu.MainButton;
@@ -96,8 +95,6 @@ public class MainWindow {
 	public-read def canvas:Canvas = bind if(AppState.instance.state == AppState.TESTCASE_FRONT ) testcaseCanvas else projectCanvas;
 	public-read var navigator:NavigationPanel;
 	
-	public var waitingCursor:WaitingCursor = WaitingCursor{};
-	
 	/**
 	 * Called once the bean is fully initialized (all the properties defined in the Spring
 	 * configuration set through the setters). It sets up the main window.
@@ -114,7 +111,6 @@ public class MainWindow {
 		appState = AppState {};
 		
 		//Set the layer to place items being dragged into.
-		WaitingCursor.overlay = appState.overlayLayer;
 		BaseNode.overlay = appState.overlayLayer;
 		Dialog.overlay = appState.overlayLayer;
 		PopupMenu.overlay = appState.overlayLayer;

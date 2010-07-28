@@ -18,6 +18,7 @@ package com.eviware.loadui.impl.model;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collections;
+import java.util.Map;
 
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.ConnectionListener;
@@ -37,6 +38,7 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	private final BroadcastMessageEndpoint broadcastEndpoint;
 	private MessageEndpointSupport endpointSupport;
 	private boolean connected = false;
+	private int utilization = 0;
 
 	public AgentItemImpl( WorkspaceItem workspace, AgentItemConfig config )
 	{
@@ -93,6 +95,22 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 						MAX_THREADS_PROPERTY ).getStringValue() ) );
 
 				fireBaseEvent( READY );
+				fireBaseEvent( UTILIZATION );
+			}
+		} );
+
+		addMessageListener( AgentItem.AGENT_CHANNEL, new MessageListener()
+		{
+			@Override
+			@SuppressWarnings( "unchecked" )
+			public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
+			{
+				Map<String, Object> map = ( Map<String, Object> )data;
+				if( map.containsKey( SET_UTILIZATION ) )
+				{
+					utilization = ( ( Number )map.get( SET_UTILIZATION ) ).intValue();
+					fireBaseEvent( UTILIZATION );
+				}
 			}
 		} );
 	}
@@ -119,6 +137,12 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	public boolean isReady()
 	{
 		return connected;
+	}
+
+	@Override
+	public int getUtilization()
+	{
+		return isReady() ? utilization : 0;
 	}
 
 	@Override

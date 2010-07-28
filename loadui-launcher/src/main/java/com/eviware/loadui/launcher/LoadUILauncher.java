@@ -60,7 +60,7 @@ public class LoadUILauncher
 	}
 
 	protected Framework framework;
-	protected final Properties configProps;
+	protected Properties configProps;
 	protected final String[] argv;
 	private Options options;
 
@@ -70,18 +70,31 @@ public class LoadUILauncher
 	public LoadUILauncher( String[] args )
 	{
 		argv = args;
-		System.out.println( "Launching loadUI Build: TODO" );
+
+		try
+		{
+			Properties buildinfo = new Properties();
+			buildinfo.load( getClass().getResourceAsStream( "/properties/buildinfo.txt" ) );
+			System.setProperty( "loadui.build.number", buildinfo.getProperty( "build.number" ) );
+			System.setProperty( "loadui.build.date", buildinfo.getProperty( "build.date" ) );
+		}
+		catch( IOException e )
+		{
+			e.printStackTrace();
+		}
+
+		System.out.println( "Launching loadUI Build: " + System.getProperty( "loadui.build.number", "[internal]" ) + " "
+				+ System.getProperty( "loadui.build.date", "" ) );
 		Main.loadSystemProperties();
 		configProps = Main.loadConfigProperties();
+		if( configProps == null )
+			configProps = new Properties();
 		Main.copySystemProperties( configProps );
 	}
 
 	protected void init()
 	{
 		initSystemProperties();
-
-		if( configProps == null )
-			throw new NullPointerException( "configProps is null!" );
 
 		String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
 		configProps.put( "org.osgi.framework.system.packages.extra",

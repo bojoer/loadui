@@ -29,6 +29,7 @@ public interface AgentItem extends ModelItem, MessageEndpoint
 	public final static String ENABLED = AgentItem.class.getName() + "@enabled";
 	public final static String READY = AgentItem.class.getName() + "@ready";
 	public final static String URL = AgentItem.class.getName() + "@url";
+	public final static String UTILIZATION = AgentItem.class.getName() + "@utilization";
 
 	// Channels
 	public final static String AGENT_CHANNEL = "/" + AgentItem.class.getName();
@@ -42,6 +43,7 @@ public interface AgentItem extends ModelItem, MessageEndpoint
 	public final static String SCENE_DEFINITION = "sceneDefinition";
 	public final static String SCENE_ID = "sceneId";
 	public final static String SET_MAX_THREADS = "setMaxThreads";
+	public final static String SET_UTILIZATION = "setUtilization";
 
 	public final static String MAX_THREADS_PROPERTY = AgentItem.class.getSimpleName() + ".maxThreads";
 
@@ -89,4 +91,12 @@ public interface AgentItem extends ModelItem, MessageEndpoint
 	 * @return True if the AgentItem is connected, false if not.
 	 */
 	public boolean isReady();
+
+	/**
+	 * Gets a numeric value 0-100 representing the current utilization of the
+	 * Agent, 0 meaning idle and 100 meaning running at full capacity.
+	 * 
+	 * @return
+	 */
+	public int getUtilization();
 }

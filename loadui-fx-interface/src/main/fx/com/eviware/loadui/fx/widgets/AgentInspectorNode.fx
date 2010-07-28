@@ -50,7 +50,9 @@ import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
 import javafx.scene.Group; 
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.LayoutInfo;
@@ -110,8 +112,9 @@ public class AgentInspectorNode extends BaseNode, ModelItemHolder, Droppable, Ev
 	var menuFill: Paint = Color.web("#777777");
 	
 	protected var width: Number = 135;
-	
 	protected var height: Number = 195;
+	
+	var utilization:Integer = 0;
 	
 	public var separatorStroke: Paint = Color.web("#c6c6c6");
 	
@@ -181,6 +184,7 @@ public class AgentInspectorNode extends BaseNode, ModelItemHolder, Droppable, Ev
 			agent.addEventListener( BaseEvent.class, this );
 			label = agent.getLabel();
 			enabled = agent.isEnabled();
+			itemsPerPage = 3;
 		}
 		else{
 			label = "GHOST AGENT";
@@ -215,17 +219,19 @@ public class AgentInspectorNode extends BaseNode, ModelItemHolder, Droppable, Ev
 		def event = e as BaseEvent;
 		if(event.getKey().equals(ModelItem.LABEL)) {
 			runInFxThread( function():Void { label = agent.getLabel() } );
-		}
-		else if(event.getKey().equals(AgentItem.ENABLED)) {
+		} else if(event.getKey().equals(AgentItem.ENABLED)) {
 			runInFxThread( function():Void { 
 				ready = agent.isReady();
 				enabled = agent.isEnabled();
 			});
-		}
-		else if(event.getKey().equals(AgentItem.READY)) {
+		} else if(event.getKey().equals(AgentItem.READY)) {
 			runInFxThread( function():Void { 
 				ready = agent.isReady();
 				enabled = agent.isEnabled();
+			});
+		} else if(event.getKey().equals(AgentItem.UTILIZATION)) {
+			runInFxThread( function():Void { 
+				utilization = agent.getUtilization();
 			});
 		}
 	}
@@ -346,7 +352,7 @@ public class AgentInspectorNode extends BaseNode, ModelItemHolder, Droppable, Ev
 				}
 				Button {
 					layoutX: 21
-					layoutY: 151
+					layoutY: if( ghostAgent ) 151 else 130
 					layoutInfo: LayoutInfo {
 						width: 95
 						height: 22
@@ -360,10 +366,62 @@ public class AgentInspectorNode extends BaseNode, ModelItemHolder, Droppable, Ev
 					spacing: 2
 					layoutInfo: LayoutInfo {
 						width: 96
-						height: 86
+						height: if( ghostAgent ) 86 else 65
 					}
 					vpos: VPos.BOTTOM
 					content: bind displayedContent
+				}
+				if( ghostAgent ) null else HBox {
+					layoutX: 23
+					layoutY: 162
+					spacing: 2
+					vpos: VPos.CENTER
+					nodeVPos: VPos.CENTER
+					layoutInfo: LayoutInfo {
+						width: 96
+						height: 15
+					}
+					content: [
+						Label {
+							text: "CPU"
+							font: Font { size: 10 }
+						},
+						Group {
+							content: [
+								Rectangle {
+									width: 44
+									height: 11
+								}, ImageView {
+									layoutX: 2
+									layoutY: 2
+									image: Image { url: "{__ROOT__}images/png/agent-cpu-inactive.png" }
+								}, ImageView {
+									layoutX: 2
+									layoutY: 2
+									image: Image { url: "{__ROOT__}images/png/agent-cpu-active.png" }
+									viewport: bind Rectangle2D {
+										width: 4*utilization/10 as Integer
+										height: 8
+									}
+									visible: bind utilization > 0
+								}
+							]
+						},
+						Group {
+							content: [
+								Rectangle {
+									width: 24
+									height: 11
+								}, Label {
+									text: bind "{utilization}%"
+									textFill: Color.rgb( 0x0, 0xce, 0x16 )
+									font: Font { size: 10 }
+									hpos: HPos.CENTER
+									layoutInfo: LayoutInfo { width: 24, height: 11 }
+								}
+							]
+						}
+					]
 				}
 			]
 			titlebarColor: if(ghostAgent) Color.web("#9c9c9c") else Color.web("#b2b2b2")
