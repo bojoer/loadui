@@ -171,7 +171,7 @@ public class LoadUILauncher
 		options.addOption( SYSTEM_PROPERTY_OPTION, true, "Sets system property with name=value" );
 		options.addOption( NOFX_OPTION, false, "Do not include or require the JavaFX runtime" );
 		options.addOption( HELP_OPTION, "help", false, "Prints this message" );
-		options.addOption( IGNORE_CURRENTLY_RUNNING_OPTION, false, "Disable file locking" );
+		options.addOption( IGNORE_CURRENTLY_RUNNING_OPTION, false, "Disable lock file" );
 
 		return options;
 	}
