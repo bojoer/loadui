@@ -140,11 +140,11 @@ public mixin class Draggable extends BaseMixin {
 		if( currentDraggable != null or not e.primaryButtonDown or revertAnim.running )
 			return;
 		
+		def location = MouseInfo.getPointerInfo().getLocation();
+		
 		revertAnim.stop();
 		currentDraggable = this;
 		dragging = true;
-		
-		def location = MouseInfo.getPointerInfo().getLocation();
 		
 		startX = location.x;
 		startY = location.y;
