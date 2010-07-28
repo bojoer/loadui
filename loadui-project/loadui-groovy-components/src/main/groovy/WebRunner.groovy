@@ -140,6 +140,7 @@ discardResetValue = 0
 failedResetValue = 0
 aborting = false
 
+displayRequests = new DelayedFormattedString( '%d', 500, value { (sampleCounter.get() - sampleResetValue) + currentlyRunning } )
 displayRunning = new DelayedFormattedString( '%d', 500, value { currentlyRunning } )
 displayTotal = new DelayedFormattedString( '%d', 500,  value { sampleCounter.get() - sampleResetValue } )
 displayQueue = new DelayedFormattedString( '%d', 500, value { queueSize } )
@@ -236,6 +237,7 @@ onRelease = {
 	displayQueue.release()
 	displayDiscarded.release()
 	displayFailed.release()
+	displayRequests.release()
 }
 
 addEventListener( ActionEvent ) { event ->
@@ -274,11 +276,12 @@ layout( constraints: 'gap 10 0') {
 	separator(vertical:true)
 	box( constraints:'wrap 1'){
 		box( widget:'display', constraints:'wrap 3, w 180!, align right' ) {
+			node( label:'Requests', fString:displayRequests, constraints:'w 50!' )
 			node( label:'Running', fString:displayRunning, constraints:'w 50!' )
 			node( label:'Samples', fString:displayTotal, constraints:'w 60!' )
-			node( label:'Failed', fString:displayFailed, constraints:'w 50!' )
-			node( label:'Queue', fString:displayQueue, constraints:'w 50!' )
-			node( label:'Discarded', fString:displayDiscarded, constraints:'w 60!' )
+			node( label:'Queued', fString:displayQueue, constraints:'w 50!' )
+			node( label:'Discarded', fString:displayDiscarded, constraints:'w 50!' )
+			node( label:'Failed', fString:displayFailed, constraints:'w 60!' )
 		}
 		action( label:'Reset', action: {
 			sampleResetValue = sampleCounter.get()

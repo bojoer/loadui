@@ -379,10 +379,11 @@ addEventListener( CollectionEvent ) { event ->
 }
 
 //Layout
-layout(constraints:'fillx, wrap 1') {
-	node( widget: 'chartWidget', model: chartModel )
+layout(constraints:'fillx, wrap 2') {
+	node( widget: 'chartWidget', constraints: "spanx 2, wrap", model: chartModel )
 	property( property: selectedAgent, label: 'View statistics from', options: availableAgents, widget:'comboBox' )
-	property( property: currentSourceID, label: 'Source ID', options: availableSourceIDs, widget:'comboBox' )
+	property( property: currentSourceID, label: 'Source ID', options: availableSourceIDs, widget:'comboBox', 
+		contstraints: "w 100!" )
 }
 
 settings( label: 'Properties', constraints: 'wrap 2' ) {
