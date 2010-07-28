@@ -82,8 +82,6 @@ public class ReportEngine
 					break;
 				case RTF:
 					jrExporter = new JRRtfExporter();
-					jrExporter.setParameter(JRTextExporterParameter.CHARACTER_WIDTH, new Integer(10));
-					jrExporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Integer(10));
 					break;
 				case CSV:
 					jrExporter = new JRCsvExporter();
@@ -94,11 +92,11 @@ public class ReportEngine
 				default:
 					// TXT
 					jrExporter = new JRTextExporter();
-					jrExporter.setParameter(JRTextExporterParameter.CHARACTER_WIDTH, new Integer(10));
-					jrExporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Integer(10));
+					jrExporter.setParameter(JRTextExporterParameter.CHARACTER_WIDTH, new Float(10));
+					jrExporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Float(10));
 					break;
 				}
-				jrExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outfile.getAbsoluteFile());
+				jrExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outfile.getAbsolutePath());
 				jrExporter.setParameter(JRExporterParameter.JASPER_PRINT, jp);
 				jrExporter.exportReport();
 			}

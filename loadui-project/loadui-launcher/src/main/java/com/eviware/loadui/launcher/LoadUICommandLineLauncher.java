@@ -36,7 +36,8 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	private static final String TESTCASE_OPTION = "t";
 	private static final String PROJECT_OPTION = "p";
 	private static final String WORKSPACE_OPTION = "w";
-	private static final String REPORTING_OPTION = "r";
+	private static final String REPORT_DIR_OPTION = "r";
+	private static final String REPORT_FORMAT_OPTION = "F";
 
 	public static void main( String[] args )
 	{
@@ -69,7 +70,8 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 						+ " <ip>[:<port>][=<testCase>[,<testCase>] ...] )" ).hasArgs().create( AGENT_OPTION ) );
 		options.addOption( FILE_OPTION, "file", true, "Executes the specified Groovy script file" );
 		options.addOption( LOCAL_OPTION, "local", false, "Executes TestCases in local mode" );
-		options.addOption( REPORTING_OPTION, "reports", true, "Generates reports and saves them in specified folder" );
+		options.addOption( REPORT_DIR_OPTION, "reports", true, "Generates reports and saves them in specified folder" );
+		options.addOption( REPORT_FORMAT_OPTION, "format", true, "Specify output format for the exported reports (supported formats are: PDF, XLS, HTML, RTF, CSV, TXT and XML)" );
 
 		return options;
 	}
@@ -106,7 +108,8 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 			}
 			attributes.put( "agents", agents );
 
-			attributes.put( "reports", cmd.hasOption( REPORTING_OPTION ) ? cmd.getOptionValue( REPORTING_OPTION ) : null );
+			attributes.put( "reportFolder", cmd.getOptionValue( REPORT_DIR_OPTION ));
+			attributes.put( "reportFormat", cmd.getOptionValue( REPORT_FORMAT_OPTION ));
 			
 			command = new ResourceGroovyCommand( "/RunTest.groovy", attributes );
 		}

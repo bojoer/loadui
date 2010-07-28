@@ -113,18 +113,19 @@ if( agents != null ) {
 	}
 }
 
-//Define reports generation 
-if( reports != null ) {
-	def repDir = new File(reports);
-	if(repDir.isFile()){
-		log.error "Reports path points to a file instead of directory! Reports won't be saved!"
+//Define where report should be generated  
+if( reportFolder != null ) {
+	project.setSaveReport(true)
+	project.setReportFormat(reportFormat)
+	def repFolder = new File(reportFolder)
+	if(repFolder.isFile()){
+		project.setReportFolder(repFolder.getParentFile().getAbsolutePath())
 	}
 	else{
-		if(!repDir.isDirectory()){
-			repDir.mkdirs();
+		if(!repFolder.isDirectory()){
+			repFolder.mkdirs()
 		}
-		project.setReportFolder(repDir.getAbsolutePath());
-		project.setSaveReport(true);
+		project.setReportFolder(repFolder.getAbsolutePath())
 	}
 }
 
