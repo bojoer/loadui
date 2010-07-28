@@ -427,6 +427,16 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		layers.layoutBounds.width
 	}
 	
+	var sStartX:Number;
+	var sStartY:Number;
+	var sOffsetX:Number;
+	var sOffsetY:Number;
+	var sDragging = false;
+	def selectionRect = Rectangle {
+		fill: Color.rgb( 0x2c, 0x57, 0xfe, 0.3 )
+		stroke: Color.rgb( 0x2c, 0x57, 0xfe )
+	}
+	
 	var cStartX:Number;
 	var cStartY:Number;
 	var cDragging = false;
@@ -436,12 +446,32 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			cursor = Cursor.MOVE;
 			cStartX = e.sceneX;
 			cStartY = e.sceneY;
+		} else {
+			sDragging = true;
+			sStartX = e.sceneX;
+			sStartY = e.sceneY;
+			
+			//Due to Swing related bug, use this instead of e.sceneX, e.sceneY:
+			def location = java.awt.MouseInfo.getPointerInfo().getLocation();
+			sOffsetX = location.x - e.sceneX;
+			sOffsetY = location.y - e.sceneY;
+			
+			selectionRect.x = sStartX;
+			selectionRect.y = sStartY;
+			selectionRect.width = 0;
+			selectionRect.height = 0;
+			insert selectionRect into AppState.instance.overlayLayer.content;
 		}
 	}
 	
 	function onMouseUp(e:MouseEvent):Void {
-		cDragging = false;
-		cursor = Cursor.DEFAULT;
+		if( cDragging ) {
+			cDragging = false;
+			cursor = Cursor.DEFAULT;
+		} else if( sDragging ) {
+			sDragging = false;
+			delete selectionRect from AppState.instance.overlayLayer.content;
+		}
 	}
 	
 	function onMouseDragged(e:MouseEvent):Void {
@@ -454,6 +484,20 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	
 			cStartX = e.sceneX;
 			cStartY = e.sceneY;
+		} else if( sDragging ) {
+			//Due to Swing related bug, use this instead of e.sceneX, e.sceneY:
+			def location = java.awt.MouseInfo.getPointerInfo().getLocation();
+			def deltaX = location.x - sOffsetX;
+			def deltaY = location.y - sOffsetY;
+			
+			selectionRect.x = Math.min( deltaX, sStartX );
+			selectionRect.y = Math.min( deltaY, sStartY );
+			selectionRect.width = Math.abs( deltaX - sStartX );
+			selectionRect.height = Math.abs( deltaY - sStartY );
+			Selectable.selectNone();
+			for( node in [componentLayer.content, connectionLayer.content][n|n instanceof Selectable] )
+				if( node.localToScene( node.boundsInLocal ).intersects( selectionRect.layoutBounds ) )
+					(node as Selectable).select();
 		}
 	}
 	
