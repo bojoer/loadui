@@ -140,6 +140,9 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 	public void setBehavior( ComponentBehavior behavior )
 	{
+		if( isReleased() )
+			return;
+
 		this.behavior = behavior;
 	}
 
@@ -214,7 +217,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	@Override
 	public String getColor()
 	{
-		return behavior.getColor();
+		return behavior == null ? "#000000" : behavior.getColor();
 	}
 
 	public void setCategory( String category )
@@ -234,8 +237,6 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 			getCanvas().getProject().getWorkspace().removeEventListener( PropertyEvent.class, workspaceListener );
 		if( projectListener != null )
 			getCanvas().getProject().removeEventListener( CollectionEvent.class, projectListener );
-		if( activityStrategy != null )
-			activityStrategy.removeEventListener( ActivityEvent.class, activityListener );
 		if( getCanvas().isRunning() )
 			triggerAction( CanvasItem.STOP_ACTION );
 		if( behavior != null )
@@ -245,6 +246,10 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		layout = null;
 
 		super.release();
+
+		behavior = null;
+		if( activityStrategy != null )
+			activityStrategy.removeEventListener( ActivityEvent.class, activityListener );
 	}
 
 	@Override
@@ -331,7 +336,8 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	@Override
 	public void generateSummary( MutableChapter summary )
 	{
-		behavior.generateSummary( summary );
+		if( behavior != null )
+			behavior.generateSummary( summary );
 	}
 
 	public void sendAgentMessage( AgentItem agent, TerminalMessage message )
@@ -768,6 +774,9 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		@Override
 		public void setActivityStrategy( ActivityStrategy strategy )
 		{
+			if( isReleased() )
+				return;
+
 			if( activityStrategy != null )
 				activityStrategy.removeEventListener( ActivityEvent.class, activityListener );
 
