@@ -61,7 +61,7 @@ import java.security.SecureRandom
 executor = Executors.newSingleThreadScheduledExecutor()
 future = executor.scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
 
-//SSL support, trust all certificates.
+//SSL support, trust all certificates and hostnames.
 class NaiveTrustManager implements X509TrustManager {
 	void checkClientTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
 	void checkServerTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
@@ -70,10 +70,12 @@ class NaiveTrustManager implements X509TrustManager {
 def sslContext = SSLContext.getInstance("SSL")
 TrustManager[] tms = [ new NaiveTrustManager() ]
 sslContext.init( new KeyManager[0], tms, new SecureRandom() )
+def sslSocketFactory = new SSLSocketFactory( sslContext );
+sslSocketFactory.hostnameVerifier = SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER
 
 def sr = new SchemeRegistry()
 sr.register( new Scheme( "http", PlainSocketFactory.socketFactory, 80 ) )
-sr.register( new Scheme( "https", new SSLSocketFactory( sslContext ), 443 ) )
+sr.register( new Scheme( "https", sslSocketFactory, 443 ) )
 
 def cm = new ThreadSafeClientConnManager( sr )
 cm.maxTotalConnections = 50000
