@@ -234,6 +234,8 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 			getCanvas().getProject().getWorkspace().removeEventListener( PropertyEvent.class, workspaceListener );
 		if( projectListener != null )
 			getCanvas().getProject().removeEventListener( CollectionEvent.class, projectListener );
+		if( activityStrategy != null )
+			activityStrategy.removeEventListener( ActivityEvent.class, activityListener );
 		if( getCanvas().isRunning() )
 			triggerAction( CanvasItem.STOP_ACTION );
 		if( behavior != null )
