@@ -124,7 +124,7 @@ public function openURL(url:String) {
 
 //Whenever a Mac specific fix is needed, use this static method to figure out if we're running on a Mac or not.
 public function shouldApplyMacFix():Boolean {
-	FX.getProperty("os.name").toLowerCase().contains("mac")
+	FX.getProperty("javafx.os.name").toLowerCase().contains("mac")
 }
 
 class CompareByString extends Comparator {
