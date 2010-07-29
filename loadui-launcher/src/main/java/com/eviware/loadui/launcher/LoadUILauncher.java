@@ -60,7 +60,7 @@ public class LoadUILauncher
 	}
 
 	protected Framework framework;
-	protected Properties configProps;
+	protected final Properties configProps;
 	protected final String[] argv;
 	private Options options;
 
@@ -88,7 +88,10 @@ public class LoadUILauncher
 		Main.loadSystemProperties();
 		configProps = Main.loadConfigProperties();
 		if( configProps == null )
-			configProps = new Properties();
+		{
+			System.err.println( "There was an error loading the OSGi configuration!" );
+			System.exit( -1 );
+		}
 		Main.copySystemProperties( configProps );
 	}
 
