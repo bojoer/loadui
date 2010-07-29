@@ -48,28 +48,38 @@ import com.eviware.loadui.impl.component.ActivityStrategies
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-
-
-
+import org.apache.http.conn.scheme.Scheme
+import org.apache.http.conn.ssl.SSLSocketFactory
+import javax.net.ssl.SSLContext
+import javax.net.ssl.KeyManager
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
+import java.security.cert.X509Certificate
+import java.security.cert.CertificateException
+import java.security.SecureRandom
 
 executor = Executors.newSingleThreadScheduledExecutor()
 future = executor.scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
 
-sr = new SchemeRegistry()
-sr.register( new Scheme( "http", PlainSocketFactory.socketFactory, 80 ) )
+//SSL support, trust all certificates.
+class NaiveTrustManager implements X509TrustManager {
+	void checkClientTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
+	void checkServerTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
+	X509Certificate[] getAcceptedIssuers () { null }
+}
+def sslContext = SSLContext.getInstance("SSL")
+TrustManager[] tms = [ new NaiveTrustManager() ]
+sslContext.init( new KeyManager[0], tms, new SecureRandom() )
 
-cm = new ThreadSafeClientConnManager( sr )
+def sr = new SchemeRegistry()
+sr.register( new Scheme( "http", PlainSocketFactory.socketFactory, 80 ) )
+sr.register( new Scheme( "https", new SSLSocketFactory( sslContext ), 443 ) )
+
+def cm = new ThreadSafeClientConnManager( sr )
 cm.maxTotalConnections = 50000
 cm.defaultMaxPerRoute = 50000
+
 http = new DefaultHttpClient( cm )
-
-SSLSocketFactory socketFactory = new SSLSocketFactory()
-Scheme sch = new Scheme("https", socketFactory, 443)
-http.getConnectionManager().getSchemeRegistry().register(sch)
-
-
 
 def runningSamples = Collections.synchronizedSet( new HashSet() )
 runAction = null
