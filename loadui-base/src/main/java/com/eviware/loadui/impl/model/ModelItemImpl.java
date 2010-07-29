@@ -102,6 +102,11 @@ public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 		initialized = true;
 	}
 
+	public boolean isReleased()
+	{
+		return released;
+	}
+
 	public Config getConfig()
 	{
 		return config;
