@@ -15,14 +15,18 @@
  */
 package com.eviware.loadui.util.layout;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class DelayedFormattedString extends FormattedString
 {
-	private int delay;
-	private static Timer timer = new Timer();
+	private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
 	private UpdateTask updateTask = new UpdateTask();
+
+	private ScheduledFuture<?> future;
 
 	public DelayedFormattedString( String pattern, Object... args )
 	{
@@ -32,21 +36,20 @@ public class DelayedFormattedString extends FormattedString
 	public DelayedFormattedString( String pattern, int delay, Object... args )
 	{
 		super( pattern, args );
-		this.delay = delay;
 
 		update();
 
-		timer.schedule( updateTask, delay, delay );
+		future = scheduler.scheduleAtFixedRate( updateTask, delay, delay, TimeUnit.MILLISECONDS );
 	}
 
 	@Override
 	public void release()
 	{
 		super.release();
-		updateTask.cancel();
+		future.cancel( true );
 	}
 
-	private class UpdateTask extends TimerTask
+	private class UpdateTask implements Runnable
 	{
 		@Override
 		public void run()

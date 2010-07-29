@@ -22,7 +22,7 @@ import com.eviware.loadui.api.serialization.Value;
 public class FormattedString extends Observable
 {
 	private String format;
-	private Object[] args;
+	private Object[] args = new Object[0];
 	private String value;
 
 	public FormattedString( String pattern, Object... args )
@@ -55,17 +55,17 @@ public class FormattedString extends Observable
 				values[i] = arg;
 		}
 
-		setValue( String.format( format, values ));
+		setValue( String.format( format, values ) );
 	}
-	
+
 	public void setValue( String newValue )
 	{
-		if( value != null && value.equals( newValue ))
+		if( value != null && value.equals( newValue ) )
 			return;
-		
+
 		if( value == null && newValue == null )
 			return;
-		
+
 		value = newValue;
 		setChanged();
 		notifyObservers( value );
