@@ -15,15 +15,13 @@
  */
 package com.eviware.loadui.util.layout;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import com.eviware.loadui.util.ScheduledExecutor;
+
 public class DelayedFormattedString extends FormattedString
 {
-	private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-
 	private UpdateTask updateTask = new UpdateTask();
 
 	private ScheduledFuture<?> future;
@@ -39,7 +37,7 @@ public class DelayedFormattedString extends FormattedString
 
 		update();
 
-		future = scheduler.scheduleAtFixedRate( updateTask, delay, delay, TimeUnit.MILLISECONDS );
+		future = ScheduledExecutor.instance.scheduleAtFixedRate( updateTask, delay, delay, TimeUnit.MILLISECONDS );
 	}
 
 	@Override

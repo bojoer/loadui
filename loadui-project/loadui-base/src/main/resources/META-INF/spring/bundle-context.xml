@@ -8,8 +8,8 @@
 	<bean id="addressableRegistry"
 		class="com.eviware.loadui.impl.addressable.AddressableRegistryImpl" />
 
-	<bean id="scheduledExecutorService" class="java.util.concurrent.Executors"
-		factory-method="newSingleThreadScheduledExecutor" destroy-method="shutdown" />
+	<bean id="scheduledExecutorService" class="com.eviware.loadui.util.ScheduledExecutor"
+		factory-method="getInstance" />
 
 	<bean id="formUploader" class="com.eviware.loadui.impl.upload.FormUploaderImpl" />
 	
