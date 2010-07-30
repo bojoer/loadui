@@ -134,7 +134,7 @@ analyze = { message ->
 	try {
 		long timestamp = System.currentTimeMillis()
 		
-		if( !message.containsKey('TimeTake') )
+		if( !message.containsKey('TimeTaken') )
 			return
 		
 		String sourceID = message['id']
