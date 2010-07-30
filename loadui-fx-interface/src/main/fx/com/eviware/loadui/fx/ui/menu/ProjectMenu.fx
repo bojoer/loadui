@@ -243,9 +243,9 @@ public class ProjectMenu extends HBox {
 				                                destination = new File(newname); 
 				                            }
 				                            try {
+				                              MainWindow.instance.projectCanvas.generateMiniatures();
 		                                      project.saveAs(destination);
-		                                      MainWindow.instance.projectCanvas.generateMiniatures();
-													     project.save();					
+											  project.save();					
 		                                  } catch(e:IOException) {
 		                                      def warning:Dialog = Dialog {
 		             	                           title: "Warning!"

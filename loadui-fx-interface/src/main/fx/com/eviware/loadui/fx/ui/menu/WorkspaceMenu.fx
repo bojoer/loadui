@@ -170,7 +170,7 @@ public class WorkspaceMenu extends HBox {
                         if ( source != null ) {
                            
 	                        try {
-	                            pro = workspace.importProject( source, true );							
+	                            pro = workspace.importProject( source, true );
 	                        } catch(e:IOException) {
 	                         	var warning:Dialog = Dialog {
 		                             title: "Warning!"

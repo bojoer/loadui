@@ -16,7 +16,9 @@
 package com.eviware.loadui.impl.summary.sections;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import javax.swing.table.TableModel;
 
@@ -63,7 +65,7 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 
 	@Override
 	public String getEndTime()
-	{
+	{	
 		return project.getEndTime() != null ? dateFormat.format( project.getEndTime() ) : "N/A";
 	}
 
@@ -73,7 +75,21 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 		SimpleDateFormat dateFormat;
 		if( project.getStartTime() != null )
 		{
-			Date dd = new Date( ( long )( project.getEndTime().getTime() - project.getStartTime().getTime() ) );
+			Calendar end = Calendar.getInstance();
+			end.setTime(project.getEndTime());
+			
+			Calendar start = Calendar.getInstance();
+			start.setTime(project.getStartTime());
+			
+			end.add(Calendar.YEAR, -start.get(Calendar.YEAR));
+			end.add(Calendar.MONTH, -start.get(Calendar.MONTH));
+			end.add(Calendar.DATE, -start.get(Calendar.DATE));
+			end.add(Calendar.HOUR, -start.get(Calendar.HOUR));
+			end.add(Calendar.MINUTE, -start.get(Calendar.MINUTE));
+			end.add(Calendar.SECOND, -start.get(Calendar.SECOND));
+			end.set(Calendar.MILLISECOND, 0);
+			
+			Date dd = end.getTime();
 			if( project.getEndTime().getTime() - project.getStartTime().getTime() < HOUR )
 				dateFormat = new SimpleDateFormat( "00:mm:ss" );
 			else
@@ -88,7 +104,7 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 
 	@Override
 	public String getStartTime()
-	{
+	{	
 		return project.getStartTime() != null ? dateFormat.format( project.getStartTime() ) : "N/A";
 	}
 

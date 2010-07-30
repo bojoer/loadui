@@ -205,7 +205,7 @@ public class SummaryReport extends StylesheetAware {
 			}
 		
 			var descSection: SummaryText = SummaryText{
-				title: "DESCRIPTION" 
+				title: "Description" 
 				text: descr
 			}
 			insert descSection into summarySections.content;

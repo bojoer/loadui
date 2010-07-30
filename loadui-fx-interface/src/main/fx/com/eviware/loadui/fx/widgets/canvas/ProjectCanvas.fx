@@ -120,6 +120,7 @@ public class ProjectCanvas extends Canvas {
 	    img = clipImage(img, 0, 0, Math.min(155 - 18 - 4, img.getWidth()), Math.min(100 - 37 - 4, img.getHeight()));
 
 		var base64: String = bufferedImageToBase64(img);
+		projectRef.getProject().setAttribute("miniature", base64);
 	    projectRef.setAttribute("miniature", base64);
 	    
 	}
