@@ -114,6 +114,10 @@ public class LoadUILauncher
 			if( cmd.hasOption( HELP_OPTION ) )
 				printUsageAndQuit();
 
+			File bundleCache = new File( configProps.getProperty( "org.osgi.framework.storage" ) );
+			if( !bundleCache.isDirectory() )
+				bundleCache.mkdirs();
+
 			if( !cmd.hasOption( IGNORE_CURRENTLY_RUNNING_OPTION ) )
 			{
 				try
