@@ -219,7 +219,7 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 			stripeFill: bind stripeFill
 			okText: "Save"
 			width: 500
-			height: 400
+			height: 420
 			content: javafx.scene.layout.Stack {
 				content: [ 
 					tabPanel = TabPanel {

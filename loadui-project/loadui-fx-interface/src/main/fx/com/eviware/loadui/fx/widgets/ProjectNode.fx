@@ -168,6 +168,10 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 	var miniature: Image; 
 	function refreshMiniature(){
 		var base64: String = projectRef.getAttribute("miniature", "");
+		if(base64.length() == 0){
+			base64 = projectRef.getProject().getAttribute("miniature", "");
+			projectRef.setAttribute("miniature", base64);
+		}
 		if(base64.length() > 0){
 			miniature = base64ToFXImage(base64);
 		}

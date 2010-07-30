@@ -82,16 +82,16 @@ public class TabPanel extends Container {
 	}
 	
 	var innerFrame = Rectangle {
-                           arcWidth: 5
-                           arcHeight: 5
-                           height: 280
-                           width: 500 - 18 - 18// + 4
-                           fill: Color.web("#e4e4e4")
-                           effect: InnerShadow {
-	                           radius: 5
-										color: Color.web("#999999")
-									}
-                       };
+        arcWidth: 5
+        arcHeight: 5
+        height: 303
+        width: 500 - 18 - 18// + 4
+        fill: Color.web("#e4e4e4")
+		effect: InnerShadow {
+			radius: 5
+			color: Color.web("#999999")
+		}
+	}
                        
 	override var content = bind [ tabGroup, 
 						           innerFrame,

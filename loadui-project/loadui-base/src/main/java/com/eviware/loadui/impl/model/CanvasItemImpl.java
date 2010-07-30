@@ -16,6 +16,7 @@
 package com.eviware.loadui.impl.model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -508,7 +509,11 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 						timerFuture.cancel( true );
 					if( timeLimitFuture != null )
 						timeLimitFuture.cancel( true );
-					endTime = new Date();
+					
+					Calendar endTimeCal = Calendar.getInstance();
+					endTimeCal.setTime(startTime);
+					endTimeCal.add(Calendar.SECOND, (int)time);
+					endTime = endTimeCal.getTime();
 				}
 				else if( CounterHolder.COUNTER_RESET_ACTION.equals( event.getKey() ) )
 					reset();
