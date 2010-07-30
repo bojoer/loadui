@@ -114,15 +114,15 @@ public class LoadUILauncher
 			if( cmd.hasOption( HELP_OPTION ) )
 				printUsageAndQuit();
 
-			File bundleCache = new File( configProps.getProperty( "org.osgi.framework.storage" ) );
-			if( !bundleCache.isDirectory() )
-				bundleCache.mkdirs();
-
 			if( !cmd.hasOption( IGNORE_CURRENTLY_RUNNING_OPTION ) )
 			{
 				try
 				{
-					File lockFile = new File( configProps.getProperty( "org.osgi.framework.storage" ), "loadui.lock" );
+					File bundleCache = new File( configProps.getProperty( "org.osgi.framework.storage" ) );
+					if( !bundleCache.isDirectory() )
+						bundleCache.mkdirs();
+
+					File lockFile = new File( bundleCache, "loadui.lock" );
 					if( !lockFile.exists() )
 						lockFile.createNewFile();
 					FileLock lock = new RandomAccessFile( lockFile, "rw" ).getChannel().tryLock();
