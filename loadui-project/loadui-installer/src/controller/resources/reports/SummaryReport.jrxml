@@ -30,7 +30,7 @@
 				<reportElement positionType="FixRelativeToBottom" x="2" y="0" width="551" height="1"/>
 			</line>
 			<subreport>
-				<reportElement positionType="Float" x="0" y="0" width="496" height="45"/>
+				<reportElement positionType="Float" x="0" y="0" width="553" height="45"/>
 				<dataSourceExpression><![CDATA[$F{chapter}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:ChapterReport"]]></subreportExpression>
 			</subreport>
@@ -41,14 +41,14 @@
 			<frame>
 				<reportElement mode="Opaque" x="2" y="0" width="555" height="13" forecolor="#D0B48E" backcolor="#9DB1B8"/>
 				<textField evaluationTime="Report">
-					<reportElement style="Column header" x="513" y="-1" width="40" height="13" forecolor="#FFFFFF"/>
+					<reportElement style="Column header" x="513" y="0" width="40" height="13" forecolor="#FFFFFF"/>
 					<textElement verticalAlignment="Middle">
 						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="Column header" x="433" y="-1" width="80" height="13" forecolor="#FFFFFF"/>
+					<reportElement style="Column header" x="433" y="0" width="80" height="13" forecolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="10" isBold="false"/>
 					</textElement>
