@@ -28,7 +28,7 @@ import com.eviware.loadui.api.layout.WidgetFactory;
 import com.eviware.loadui.api.property.Property;
 
 import com.eviware.loadui.fx.widgets.componet.IntervalLCDWidget;
-import com.eviware.loadui.impl.layout.IntervalObservableModel;
+import com.eviware.loadui.util.layout.IntervalModel;
 
 public class IntervalWidgetFactory extends WidgetFactory {
 
@@ -38,7 +38,7 @@ public class IntervalWidgetFactory extends WidgetFactory {
         
     override public function buildWidget( layoutComponent:LayoutComponent  ) {
         IntervalLCDWidget {
-       		model: layoutComponent.get("model") as IntervalObservableModel
+       		model: layoutComponent.get("model") as IntervalModel
         }
     }
 };

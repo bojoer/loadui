@@ -30,7 +30,7 @@ import javafx.scene.paint.Color;
 import com.eviware.loadui.fx.ui.layout.Widget;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.popup.TooltipHolder;
-import com.eviware.loadui.impl.layout.IntervalObservableModel;
+import com.eviware.loadui.util.layout.IntervalModel;
 
 //import com.eviware.loadui.fx.FxUtils;
 
@@ -40,7 +40,7 @@ public class IntervalLCDWidget extends Widget, BaseNode, Resizable, TooltipHolde
         url:"{com.eviware.loadui.fx.FxUtils.__ROOT__}images/LCD_display_320x80.fxz";
     } 
     
-    public-init var model:IntervalObservableModel;
+    public-init var model:IntervalModel;
     
     public override function create() {
         Stack {
