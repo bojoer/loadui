@@ -79,7 +79,7 @@ public class JavaFXActivator extends BundleActivator {
 						content: [
 							ImageView {
 								image: Image {
-									url:"{__ROOT__}images/Splash-loadUI-beta_1.png"
+									url:"{__ROOT__}images/Splash-loadUI-beta_2.png"
 									preserveRatio: true
 								}
 							}

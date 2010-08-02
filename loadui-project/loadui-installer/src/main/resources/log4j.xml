@@ -9,7 +9,7 @@
 	<!-- =================== -->
 
 	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-		<errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />
+<!--		<errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />-->
 		<param name="Target" value="System.out" />
 		<param name="Threshold" value="DEBUG" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -18,8 +18,8 @@
 		</layout>
 	</appender>
 
-	<appender name="FILE" class="org.apache.log4j.RollingFileAppender">
-		<errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />
+	<appender name="FILE" class="org.apache.log4j.123.RollingFileAppender">
+<!--		<errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />-->
 		<param name="File" value="loadui.log" />
 		<param name="Threshold" value="INFO" />
 		<param name="Append" value="false" />
@@ -30,8 +30,8 @@
 		</layout>
 	</appender>
 
-	<appender name="ERRORFILE" class="org.apache.log4j.RollingFileAppender">
-		<errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />
+	<appender name="ERRORFILE" class="org.apache.log4j.123.RollingFileAppender">
+<!--		<errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />-->
 		<param name="File" value="loadui-errors.log" />
 		<param name="Threshold" value="INFO" />
 		<param name="Append" value="true" />
