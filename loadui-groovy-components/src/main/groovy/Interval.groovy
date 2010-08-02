@@ -113,9 +113,10 @@ updateState = {
 		if( currentTime < startTime ) {
 			startFuture?.cancel( true )
 			startFuture = executor.schedule( sendStart, startTime - currentTime, TimeUnit.MILLISECONDS )
-		}
-		if( currentTime < stopTime && currentTime >= startTime )
+			sendStop()
+		} else if( currentTime < stopTime ) {
 			sendStart()
+		}
 	} else {
 		sendStop()
 	}
@@ -170,3 +171,5 @@ layout() {
     separator( vertical:true )
     property( property:mode, label:'Mode', options:['Single','Repeat'])
 }
+
+updateState()
