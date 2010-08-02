@@ -37,8 +37,10 @@ public class RunnerTest
 	public static void startRunner() throws Exception
 	{
 		int port = Utilities.getAvailablePort();
-		System.out.println( "Starting Runner on port " + port );
+		int sslPort = Utilities.getAvailablePort();
+		System.out.println( "Starting Runner on ports " + port + " and " + sslPort );
 		System.setProperty( "loadui.http.port", Integer.toString( port ) );
+		System.setProperty( "loadui.https.port", Integer.toString( sslPort ) );
 		runner = new RunnerWrapper();
 	}
 
