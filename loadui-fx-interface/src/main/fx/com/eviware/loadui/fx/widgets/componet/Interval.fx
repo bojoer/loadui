@@ -38,11 +38,13 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.lang.Duration;
 
-import com.eviware.loadui.impl.layout.IntervalObservableModel;
+import com.eviware.loadui.util.layout.IntervalModel;
 
 public class Interval extends Panel, Resizable, Observer {
 
-    public-init var model:IntervalObservableModel;
+    public-init var model:IntervalModel on replace {
+    	update( model, null );
+    }
 
     def startPeriodText:String = "Start at";
     var startPeriodText2:String = "0:00";
@@ -51,7 +53,6 @@ public class Interval extends Panel, Resizable, Observer {
     var endLimitText:String ="... min";
     def startY = 40;
     def endY = 63;
-    var periodWidth = 0;
     var progresWidth = 0;
     var progressSpeed:Duration = 1s;
     var mainLength = 210;
@@ -60,10 +61,11 @@ public class Interval extends Panel, Resizable, Observer {
         repeatCount: Timeline.INDEFINITE
         keyFrames: [
         KeyFrame {
-            time: bind progressSpeed
+            time: 0.01s //bind progressSpeed
             action: function() {
-                progresWidth += 1;
+                progresWidth = if(model.getEnd() > 0 ) model.getPosition() * mainLength / model.getEnd() else 0;
             }
+            canSkip: true
         }
         ]
     };
@@ -74,14 +76,6 @@ public class Interval extends Panel, Resizable, Observer {
         height: 3
         width: bind progresWidth
         fill: Color.web("#62bd06")
-    }
-    
-    var period:Rectangle = Rectangle {
-        x: 100
-        y: 45
-        height: 15
-        width: bind periodWidth
-        fill: Color.web("#113659", .5)
     }
     
     var mainRec:Rectangle = Rectangle {
@@ -178,6 +172,14 @@ public class Interval extends Panel, Resizable, Observer {
         stroke: Color.GRAY
     }
     
+    var period:Rectangle = Rectangle {
+        x: 30
+        y: 45
+        height: 15
+        width: 0
+        fill: Color.web("#113659", .5)
+    }
+    
     init {
         model.addObserver(this);
         
@@ -198,51 +200,38 @@ public class Interval extends Panel, Resizable, Observer {
     
     override var onLayout = function():Void {
         resizeContent(); // will set all content to preferred sizes
-        startPeriodText2 = "{Math.round(model.getStart()/60)}:{model.getStart() mod 60} min";
-        endPeriodText2 = "{Math.round(model.getDuration()/60)}:{model.getDuration() mod 60} min";
-        if (model.getInterval() > -1 ) {
-            endLimitText = "{Math.round(model.getInterval()/60)}:{model.getInterval() mod 60} min";
-        }
+        def startTime = model.getStart() / 1000;
+        def duration = ( model.getStop() - model.getStart() ) / 1000;
+        def endTime = model.getEnd() / 1000;
+        startPeriodText2 = "{Math.round(startTime/60)}:{startTime mod 60} min";
+        endPeriodText2 = "{Math.round(duration/60)}:{duration mod 60} min";
+        endLimitText = "{Math.round(endTime/60)}:{endTime mod 60} min";
         
-        if( model.getStart() == 0) {
-            positionNode(startPeriodLine, 30, startPeriodLine.boundsInParent.minY );
-            } else {
-            var moveX = 0;
-            if ( model.getInterval() > -1 ) {
-                moveX = (model.getStart() * mainLength)/model.getInterval() + 30;
-                } else {
-                moveX = (model.getStart() * mainLength)/10000 + 30;
-            }
-            if ( moveX <= 240 )
-            positionNode(startPeriodLine, moveX, startPeriodLine.boundsInParent.minY );
-        }
-        
-        if( model.getDuration() == 0) {
-            positionNode(endPeriodLine, 30, endPeriodLine.boundsInParent.minY );
-            periodWidth = 0;
+        if( model.getEnd() > 0 ) {
+        		positionNode( startPeriodLine, 30 + model.getStart() * mainLength / model.getEnd(), startPeriodLine.boundsInParent.minY );
+        		positionNode( endPeriodLine, 30 + model.getStop() * mainLength / model.getEnd(), endPeriodLine.boundsInParent.minY );
         } else {
-            var moveX = 0;
-                periodWidth = (model.getDuration() * mainLength)/model.getInterval();
-                moveX = ((model.getStart() + model.getDuration())* mainLength)/model.getInterval() + 30;
-            if ( moveX <= 240 )
-            positionNode(endPeriodLine, moveX, endPeriodLine.boundsInParent.minY );
+        		positionNode( startPeriodLine, 30, startPeriodLine.boundsInParent.minY );
+        		positionNode( endPeriodLine, 30, endPeriodLine.boundsInParent.minY );
         }
-        if ( periodWidth + startPeriodLine.boundsInParent.maxX < endLine.boundsInParent.minX ) {
-        	resizeNode(period, periodWidth, 15);
-        }
+        period.width = endPeriodLine.boundsInParent.minX - startPeriodLine.boundsInParent.maxX;
         positionNode( period, startPeriodLine.boundsInParent.maxX, period.boundsInParent.minY );
         
-        positionNode(startPeriod, startPeriodLine.boundsInParent.minX - 40, startPeriod.boundsInParent.minY );
-        positionNode(startPeriod2, startPeriodLine.boundsInParent.minX - 40, startPeriod2.boundsInParent.minY );
-        if( endPeriodLine.boundsInParent.maxX + 1 < mainLength) {
-        	positionNode(endPeriod, endPeriodLine.boundsInParent.maxX + 1, endPeriod.boundsInParent.minY );
-        	positionNode(endPeriod2, endPeriodLine.boundsInParent.maxX + 1, endPeriod2.boundsInParent.minY )
-        	}
-        else {
-        	positionNode(endPeriod, mainLength, endPeriod.boundsInParent.minY );
-        	positionNode(endPeriod2, mainLength, endPeriod2.boundsInParent.minY );
-        	}
+        if( model.getStart() < model.getStop() ) {
+        		positionNode( startPeriod, startPeriodLine.boundsInParent.minX - 40, startPeriod.boundsInParent.minY );
+        		positionNode( startPeriod2, startPeriodLine.boundsInParent.minX - 40, startPeriod2.boundsInParent.minY );
+        } else {
+        		positionNode( startPeriod, -10, startPeriod.boundsInParent.minY );
+        		positionNode( startPeriod2, -10, startPeriod2.boundsInParent.minY );
+        }
         
+        if( endPeriodLine.boundsInParent.maxX + 1 < mainLength) {
+				positionNode( endPeriod, endPeriodLine.boundsInParent.maxX + 1, endPeriod.boundsInParent.minY );
+				positionNode( endPeriod2, endPeriodLine.boundsInParent.maxX + 1, endPeriod2.boundsInParent.minY );
+        } else {
+				positionNode( endPeriod, mainLength, endPeriod.boundsInParent.minY );
+				positionNode( endPeriod2, mainLength, endPeriod2.boundsInParent.minY );
+        }
     }
     
     override function getPrefWidth (height:Number) {
@@ -254,19 +243,15 @@ public class Interval extends Panel, Resizable, Observer {
     }
     
     override function update(observable: Observable, arg: Object) {
-        FX.deferAction(
-        function(): Void {
+        FX.deferAction(function(): Void {
+            progresWidth = if(model.getEnd() > 0 ) model.getPosition() * mainLength / model.getEnd() else 0;
             
-            if( model.isRunning() ) {
-                if ( not timeline.running ) {
-                		timeline.repeatCount = mainLength;
-                		progressSpeed = Duration.valueOf((model.getInterval() * 1000)/mainLength );
-                		timeline.playFromStart();
-                } 
-            } else {
-                timeline.stop();
-                progresWidth = 0;
+            if( model.isRunning() and not timeline.running ) {
+            	timeline.playFromStart();
+            } else if( not model.isRunning() and timeline.running ) {
+            	timeline.stop();
             }
+            
             onLayout();
         });
     }

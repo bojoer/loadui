@@ -32,204 +32,136 @@
 
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.api.model.CanvasItem
+import com.eviware.loadui.api.counter.CounterHolder
 
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 import com.eviware.loadui.api.component.categories.TriggerCategory
-
 import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.util.layout.IntervalModel
+import com.eviware.loadui.util.ScheduledExecutor
 
-import com.eviware.loadui.impl.layout.IntervalObservableModel
-
-createProperty('startAt', Long, 0)
-createProperty('duration', Long, 0)
-createProperty('unit', String, 'Sec')
-createProperty('mode', String, 'Single')
+createProperty( 'startAt', Long, 0 )
+createProperty( 'duration', Long, 0 )
+createProperty( 'unit', String, 'Sec' )
+createProperty( 'mode', String, 'Single' )
 
 def timerCounter = getCounter( CanvasItem.TIMER_COUNTER )
 def canvas = getCanvas()
+def runCount = 0
+def running = canvas.running;
 
-executor = Executors.newSingleThreadScheduledExecutor()
+def startFuture = null
+def startMessage = newMessage()
+startMessage[TriggerCategory.ENABLED_MESSAGE_PARAM] = true
+sendStart = { send( outputTerminal, startMessage ) }
 
-def task
+def stopFuture = null
+def stopMessage = newMessage()
+stopMessage[TriggerCategory.ENABLED_MESSAGE_PARAM] = false
+sendStop = { send( outputTerminal, stopMessage ) }
 
-def intervalModel = new IntervalObservableModel()
+def endFuture = null
 
-intervalModel.setStart(startAt.value)
-intervalModel.setDuration(duration.value)
-if ( canvas.getLimit(CanvasItem.TIMER_COUNTER) > -1 ) {
-  intervalModel.setInterval(canvas.getLimit(CanvasItem.TIMER_COUNTER))
-} else {
-  intervalModel.setInterval(duration.value + startAt.value)
-}
+def executor = ScheduledExecutor.instance
+def interval = new IntervalModel()
 
-sendStart = {
-	def message = newMessage()
-	message[TriggerCategory.ENABLED_MESSAGE_PARAM] = true
-	send( outgoingTerminal, message )
-}
-
-sendStop = {
-	def message = newMessage()
-	message[TriggerCategory.ENABLED_MESSAGE_PARAM] = false
-	send( outgoingTerminal, message )
-}
-
-calculateTime = { time ->
-    multiplier = 1000
-    if ( unit.value == 'Min' )
-	multiplier *= 60
-    if ( unit.value == 'Percent' ) {
-	limit = canvas.getLimit(CanvasItem.TIMER_COUNTER)
-        if ( limit > 0 ) {
-            // in this case time is percent of limit
-            return (limit * (time/100) * 1000) as Long 
-        } else {
-	   println "[interval] limit not set. change unit!"
-	   return -1
+updateState = {
+	long limit = canvas.getLimit( CanvasItem.TIMER_COUNTER ) * 1000
+	
+	long mult = 1000
+	if( unit.value == 'Min' ) mult *= 60
+	else if( unit.value == 'Percent' && limit > 0 ) mult = limit / 100
+	
+	long startTime = startAt.value * mult
+	if( limit >= 0 && startTime > limit ) {
+		startAt.value = limit / mult
+		return
 	}
-    }
-    time * multiplier
+	interval.start = startTime
+	
+	long stopTime = startTime + duration.value * mult
+	if( limit >= 0 && stopTime > limit ) {
+		duration.value = limit / mult - startAt.value
+		return
+	}
+	interval.stop = stopTime
+	interval.end = ( limit > stopTime && mode.value == 'Single' ) ? limit : stopTime
+	
+	long currentTime = timerCounter.get() * 1000 - runCount * stopTime
+	interval.position = currentTime
+	
+	if( running ) {
+		if( currentTime < stopTime ) {
+			stopFuture?.cancel( true )
+			stopFuture = executor.schedule( sendStop, stopTime - currentTime, TimeUnit.MILLISECONDS )
+		}
+		if( currentTime < interval.end ) {
+			endFuture?.cancel( true )
+			endFuture = executor.schedule( {
+				if( mode.value == 'Single' ) {
+					intervalModel.stop()
+					intervalModel.update()
+				} else {
+					runCount++
+					interval.position = 0
+					updateState()
+				}
+			}, interval.end - currentTime, TimeUnit.MILLISECONDS )
+		}
+		if( currentTime < startTime ) {
+			startFuture?.cancel( true )
+			startFuture = executor.schedule( sendStart, startTime - currentTime, TimeUnit.MILLISECONDS )
+		}
+		if( currentTime < stopTime && currentTime >= startTime )
+			sendStart()
+	} else {
+		sendStop()
+	}
+	
+	interval.running = running
+	interval.notifyObservers()
 }
-
-startTimer = { start, duration, current ->
-	if ( start >= current ) {
-		if ( (unit.value == 'Percent').and(  (start + duration) >  100 ) ) {
-			println "[interval] error setting percents (start + duration) > 100!"
-			return
-                }
-		startTaskDelay = calculateTime(start) //seconds
-		if ( startTaskDelay != -1 )
-			executor.schedule( { 
-				sendStart()
-				task = executor.schedule (
-					{
-					  sendStop()
-					  if ( duration.value ) {
-                                            // reset timer
-                                            stopTimer()
-					    intervalModel.stop()
-					    setModelInterval()
-					    intervalModel.update()
-					    // start it again
-					    startTimer(start, duration, 0)
-					    intervalModel.start()
-					    setModelInterval()
-					  }
-				}, calculateTime(duration), TimeUnit.MILLISECONDS)
-			}, startTaskDelay, TimeUnit.MILLISECONDS )
-	} 
-}
-
-stopTimer = { 
-	sendStop()
-	task?.cancel(true)
-	task = null
-	executor.shutdownNow()
-	executor = Executors.newSingleThreadScheduledExecutor()
- }
 
 addEventListener( ActionEvent ) { event ->
-
-	if ( event.key == "STOP" ) {
-		stopTimer()
-		
-		intervalModel.stop()
-		setModelInterval()
-		intervalModel.update()
+	if( event.key == CanvasItem.START_ACTION ) {
+		running = true
+	} else if( event.key == CanvasItem.STOP_ACTION ) {
+		running = false
+	} else if( event.key == CounterHolder.COUNTER_RESET_ACTION ) {
+		running = canvas.running
+		interval.position = 0
+		runCount = 0
+	} else {
+		return
 	}
 	
-	if ( event.key == "START" ) {
-	  if ( canvas.isRunning() ) {
-                if ( task != null ) {
-			startTimer(startAt.value, duration.value, timerCounter.get())
-			intervalModel.start()
-			setModelInterval()
-		}
-	  }
-	}
-	
-	if ( event.key == "RESET" ) {
-                stopTimer()
-		
-		intervalModel.stop()
-		setModelInterval()
-		intervalModel.update()
-                if ( canvas.isRunning() ) {
-			startTimer(startAt.value, duration.value, timerCounter.get())
-			intervalModel.start()
-			setModelInterval()
-	        }
-	}
+	cancelAll()
+	updateState()
 }
 
 addEventListener( PropertyEvent ) { event ->
-  if( event.event == PropertyEvent.Event.VALUE ) {
-
-	if ( !canvas.isRunning() ) {
-		setModelInterval()
+	if( event.property in [ startAt, duration, unit, mode ] ) {
+		if( !canvas.running ) updateState()
 	}
-  }
-}
-
-setModelInterval = {
-	multiplier = 1
-	if ( unit.value == 'Percent' ) {
-		if ( canvas.getLimit(CanvasItem.TIMER_COUNTER) > -1 ) {
-		  if ( startAt.value > 100 ) {
-			startAt.value = 100
-                        duration.value = 0
-                  } 
-                  if ( startAt.value + duration.value > 100 ) 
-			duration.value = 100 - startAt.value
-		
-		  intervalModel.setInterval(canvas.getLimit(CanvasItem.TIMER_COUNTER))
-		  intervalModel.setStart( (canvas.getLimit(CanvasItem.TIMER_COUNTER)*startAt.value/100) as Long )
-	          intervalModel.setDuration( (canvas.getLimit(CanvasItem.TIMER_COUNTER)*duration.value/100) as Long)
-		  intervalModel.update()
-		} else {
-		   println("Percent is not working if limit is not set.")
-		}
-	} else {
-	
-	if( unit.value == 'Min' )
-           multiplier = 60
-      
-	  startTime = startAt.value * multiplier
-	  durationTime = duration.value * multiplier
-
-          if ( canvas.getLimit(CanvasItem.TIMER_COUNTER) > -1 ) {
-	      if ( startTime > canvas.getLimit(CanvasItem.TIMER_COUNTER) ) {
-	  	startAt.value = 0
-		startTime = 0
-	      }
-	      if ( durationTime + startTime > canvas.getLimit(CanvasItem.TIMER_COUNTER)) {
-	  	durationTime = canvas.getLimit(CanvasItem.TIMER_COUNTER) - startTime;
-	        duration.value = durationTime/multiplier
-	      }
-	      
-              intervalModel.setInterval(canvas.getLimit(CanvasItem.TIMER_COUNTER))
-	    
-          } else {
-	     intervalModel.setInterval(durationTime + startTime)
-	  }
-        
-	  intervalModel.setStart(startTime)
-	  intervalModel.setDuration(durationTime)
-	}
-	intervalModel.update()
 }
 
 onRelease = {
+	cancelAll()
+}
 
-	task?.cancel(true)
-	executor?.shutdownNow()
-	
+cancelAll = {
+	startFuture?.cancel( true )
+	startFuture = null
+	stopFuture?.cancel( true )
+	stopFuture = null
+	endFuture?.cancel( true )
+	endFuture = null
 }
 
 layout() {
-    node( widget:'intervalWidget', model:intervalModel, constraints:'span 6' )
+    node( widget:'intervalWidget', model:interval, constraints:'span 6' )
     separator( vertical: false )
     property( property: startAt, label:'Start At', min:0 )
     property( property: duration, label: 'Duration', min:0 )
