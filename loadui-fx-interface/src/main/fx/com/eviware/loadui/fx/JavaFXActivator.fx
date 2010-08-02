@@ -99,7 +99,7 @@ public class JavaFXActivator extends BundleActivator {
 			
 			def wc = new WindowControllerImpl();
 			wc.stage = Stage {
-				title: "loadUI"
+				title: "loadUI 1.0 beta2"
 				visible: false
 				icons: icons
 				scene: scene = Scene {
