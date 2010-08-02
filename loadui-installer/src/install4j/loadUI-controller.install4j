@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="4.2.6" transformSequenceNumber="2">
+<install4j version="4.2.8" transformSequenceNumber="2">
   <directoryPresets config="../../target/controller" />
   <application name="loadUI" distributionSourceDir="" applicationId="3648-6792-9261-9102" mediaDir="../../target" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" missingFilesStrategy="warn" shortName="loadUI" publisher="eviware ab" publisherWeb="http://www.eviware.com" version="preAlpha" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
@@ -565,7 +565,7 @@ Appendix
                     </object>
                   </java>
                 </serializedBean>
-                <condition>${compiler:sys.platform}" == "mac" || ${compiler:sys.platform}" == "linux"</condition>
+                <condition>"${compiler:sys.platform}" == "mac" || "${compiler:sys.platform}" == "linux"</condition>
               </action>
               <action name="" id="670" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
@@ -579,7 +579,7 @@ Appendix
                     </object>
                   </java>
                 </serializedBean>
-                <condition>${compiler:sys.platform}" == "mac" || ${compiler:sys.platform}" == "windows"</condition>
+                <condition>"${compiler:sys.platform}" == "mac" || "${compiler:sys.platform}" == "windows"</condition>
               </action>
               <action name="" id="671" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
@@ -593,7 +593,7 @@ Appendix
                     </object>
                   </java>
                 </serializedBean>
-                <condition>${compiler:sys.platform}" == "windows" || ${compiler:sys.platform}" == "linux"</condition>
+                <condition>"${compiler:sys.platform}" == "windows" || "${compiler:sys.platform}" == "linux"</condition>
               </action>
             </actions>
             <formComponents />
