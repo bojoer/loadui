@@ -77,7 +77,7 @@ public class AboutDialog {
 						layoutX: 20
 						layoutY: 230
 						textFill: Color.WHITE
-						text: "loadUI Version 1.0 beta 1\r\n\r\nBuild version: {if(version != null) version else '[internal]'}\r\nBuild date: {if(date != null) date else '0000-00-00 00:00'}\r\n\r\nCopyright 2010 Eviware Software AB\r\neviware and loadUI are trademarks of Eviware Software AB"
+						text: "loadUI Version 1.0 beta 2\r\n\r\nBuild version: {if(version != null) version else '[internal]'}\r\nBuild date: {if(date != null) date else '0000-00-00 00:00'}\r\n\r\nCopyright 2010 Eviware Software AB\r\neviware and loadUI are trademarks of Eviware Software AB"
 					}, Hyperlink {
 						layoutX: 20
 						layoutY: 340
