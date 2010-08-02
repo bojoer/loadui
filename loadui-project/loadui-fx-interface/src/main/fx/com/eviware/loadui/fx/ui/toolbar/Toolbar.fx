@@ -121,7 +121,7 @@ class ItemOrder extends Comparator {
 	    def t1:ToolbarItem = o1 as ToolbarItem;
 	    def t2:ToolbarItem = o2 as ToolbarItem;
 	    
-	    if (t1.category.equalsIgnoreCase("Load Generators") and t2.category.equalsIgnoreCase("Load Generators")) {
+	    if (t1.category.equalsIgnoreCase("Generators") and t2.category.equalsIgnoreCase("Generators")) {
 			var index1 = Sequences.indexOf(loadGeneratorOrder, t1.label.toUpperCase());
 	    	var index2 = Sequences.indexOf(loadGeneratorOrder, t2.label.toUpperCase());
 	        
