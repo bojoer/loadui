@@ -41,83 +41,88 @@ public-init var canvasObject:CanvasObjectItem;
 	def component = bind canvasObject instanceof ComponentItem;
 	var copy:CanvasObjectItem;
 	var level:SelectField;
-	
+	var dialog:Dialog;
+	var name:TextField;
+	def copyIn = CheckBoxField { 
+				disable: bind level.value == "PROJECT"
+				label: "Clone incomming connections?"
+				value: true
+			 };
+			def copyOut = CheckBoxField { 	
+				disable: bind level.value == "PROJECT"
+				label: "Clone outgoing connections?"
+				value: true
+			 };
+	function ok():Void {
+			    				if( validateLabel( name.value as String ) ) {
+			    					log.debug( "Cloning: '\{\}''", canvasObject );
+			    					if( AppState.instance.state == AppState.TESTCASE_FRONT and level.value == "PROJECT" ) 
+			    						copy = (MainWindow.instance.projectCanvas.canvasItem as ProjectItem).duplicate(canvasObject)
+			    					else
+			    						copy = canvasObject.getCanvas().duplicate( canvasObject );
+			    					copy.setLabel(name.value as String);
+			    					def layoutX = Integer.parseInt( canvasObject.getAttribute( "gui.layoutX", "0" ) ) + 50;
+			    					def layoutY = Integer.parseInt( canvasObject.getAttribute( "gui.layoutY", "0" ) ) + 50;
+			    					copy.setAttribute( "gui.layoutX", "{ layoutX as Integer }" );
+			    					copy.setAttribute( "gui.layoutY", "{ layoutY as Integer }" );
+			    					if ( copyIn.value as Boolean and not copyIn.disabled) {
+			    						for( terminal in canvasObject.getTerminals()[p|p instanceof InputTerminal] ) {
+			    							for(connection in terminal.getConnections()) {
+			    								var inputName = connection.getInputTerminal().getLabel();
+			    								for( input in copy.getTerminals()[k|k.getLabel() == inputName] ) {
+			    									copy.getCanvas().connect(connection.getOutputTerminal(), input as InputTerminal);
+			    								}
+			    							}
+			    						}
+			    					}
+			    					if ( copyOut.value as Boolean and not copyOut.disabled) {
+			    						for( terminal in canvasObject.getTerminals()[p|p instanceof OutputTerminal] ) {
+			    							for(connection in terminal.getConnections()) {
+			    								var outputName = connection.getOutputTerminal().getLabel();
+			    								for( output in copy.getTerminals()[k|k.getLabel() == outputName] ) {
+			    									copy.getCanvas().connect(output as OutputTerminal, connection.getInputTerminal());
+			    								}	
+			    							}
+			    						}
+			    					}
+			    					dialog.close();
+			    				} else {
+			    				    def warning:Dialog = Dialog {
+			    				    	title: "Warning!"
+			    				    	content: Text {
+			    				    		content: "Item already exists with label: '{name.value}'!"
+			    				    	}
+			    				    	okText: "Ok"
+			    				    	onOk: function() {
+			    				    		warning.close();
+			    				    	}
+			    				    	noCancel: true
+			    				    	width: 300
+			    				    	height: 150
+			    				    
+			    				    }
+			    					log.error( "Item already exists with label: '{name.value}'!" );
+			    				}
+			    		}		
 	postinit {
 		var form:Form;
-		def name = TextField { label: "Name of clone", value: "copy-of-{canvasObject.getLabel()}", columns: 30 };
+		//name = TextField { label: "Name of clone", value: "copy-of-{canvasObject.getLabel()}", columns: 30, action:ok};
 		level = SelectField { label: "Level to clone", options: ["TEST CASE", "PROJECT"], value: "TEST CASE"};
-		def copyIn = CheckBoxField { 
-			disable: bind level.value == "PROJECT"
-			label: "Clone incomming connections?"
-			value: true
-		 };
-		def copyOut = CheckBoxField { 	
-			disable: bind level.value == "PROJECT"
-			label: "Clone outgoing connections?"
-			value: true
-		 };
 		
-		def dialog:Dialog = Dialog {
+		
+		
+		dialog = Dialog {
 			title: "Clone {canvasObject.getLabel()}"
 			content: form = Form {
 				formContent: [
-					name, if( AppState.instance.state == AppState.TESTCASE_FRONT)
+					name = TextField { label: "Name of clone", value: "copy-of-{canvasObject.getLabel()}", columns: 30, action:ok}, if( AppState.instance.state == AppState.TESTCASE_FRONT)
 							 level as FormField
 						  else [], copyIn as FormField, copyOut as FormField
 				]
 			}
 			okText: "Clone"
-			onOk: function() {
-				if( validateLabel( name.value as String ) ) {
-					log.debug( "Cloning: '\{\}''", canvasObject );
-					if( AppState.instance.state == AppState.TESTCASE_FRONT and level.value == "PROJECT" ) 
-						copy = (MainWindow.instance.projectCanvas.canvasItem as ProjectItem).duplicate(canvasObject)
-					else
-						copy = canvasObject.getCanvas().duplicate( canvasObject );
-					copy.setLabel(name.value as String);
-					def layoutX = Integer.parseInt( canvasObject.getAttribute( "gui.layoutX", "0" ) ) + 50;
-					def layoutY = Integer.parseInt( canvasObject.getAttribute( "gui.layoutY", "0" ) ) + 50;
-					copy.setAttribute( "gui.layoutX", "{ layoutX as Integer }" );
-					copy.setAttribute( "gui.layoutY", "{ layoutY as Integer }" );
-					if ( copyIn.value as Boolean and not copyIn.disabled) {
-						for( terminal in canvasObject.getTerminals()[p|p instanceof InputTerminal] ) {
-							for(connection in terminal.getConnections()) {
-								var inputName = connection.getInputTerminal().getLabel();
-								for( input in copy.getTerminals()[k|k.getLabel() == inputName] ) {
-									copy.getCanvas().connect(connection.getOutputTerminal(), input as InputTerminal);
-								}
-							}
-						}
-					}
-					if ( copyOut.value as Boolean and not copyOut.disabled) {
-						for( terminal in canvasObject.getTerminals()[p|p instanceof OutputTerminal] ) {
-							for(connection in terminal.getConnections()) {
-								var outputName = connection.getOutputTerminal().getLabel();
-								for( output in copy.getTerminals()[k|k.getLabel() == outputName] ) {
-									copy.getCanvas().connect(output as OutputTerminal, connection.getInputTerminal());
-								}	
-							}
-						}
-					}
-					dialog.close();
-				} else {
-				    def warning:Dialog = Dialog {
-				    	title: "Warning!"
-				    	content: Text {
-				    		content: "Item already exists with label: '{name.value}'!"
-				    	}
-				    	okText: "Ok"
-				    	onOk: function() {
-				    		warning.close();
-				    	}
-				    	noCancel: true
-				    	width: 300
-				    	height: 150
-				    
-				    }
-					log.error( "Item already exists with label: '{name.value}'!" );
-				}
-			}
+			onOk: ok
+			
 			width: 400
 			height: 150
 			
