@@ -137,6 +137,7 @@ public class ValueStatistics
 				.put( "Vps", vps ) //
 				.put( "Avg-Vps", duration > 0 ? 1000 * sum / duration : 0 ) //
 				.put( "Percentile", percentile ) //
+				.put( "AvgResponseSize", 1000 * sum / dataPoints.size() ) //
 				.get();
 	}
 
