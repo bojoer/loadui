@@ -41,29 +41,33 @@ public class CreateNewTestCaseDialog {
 	public-init var project:ProjectItem;
 	
 	public var onOk: function( testCase:SceneItem ):Void;
+	var dialog:Dialog;
+	var form:Form;
+	
+	function ok():Void {
+					def tc:SceneItem = project.createScene( form.getValue( "newTC" ) as String );
+					tc.setAttribute( "gui.layoutX", "200" );
+					tc.setAttribute( "gui.layoutY", "200" );
+					
+					dialog.close();
+					onOk( tc );
+				}
 	
 	postinit {
 		if( not FX.isInitialized( project ) )
 			throw new RuntimeException( "project must not be null!" );
 		
-		var form:Form;
-		def dialog:Dialog = Dialog {
+		
+		dialog = Dialog {
 			title: "New TestCase for: {project.getLabel()}"
 			content: [
 				Text { content: "Enter name for new test case:" },
 				form = Form {
-					formContent: TextField { id: "newTC", columns: 20 }
+					formContent: TextField { id: "newTC", columns: 20, action: ok }
 				}
 			]
 			okText: "Ok"
-			onOk: function() {
-				def tc:SceneItem = project.createScene( form.getValue( "newTC" ) as String );
-				tc.setAttribute( "gui.layoutX", "200" );
-				tc.setAttribute( "gui.layoutY", "200" );
-				
-				dialog.close();
-				onOk( tc );
-			}
+			onOk: ok
 			
 			width : 250
 			height : 150

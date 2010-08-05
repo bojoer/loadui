@@ -38,13 +38,54 @@ public class CloneTestCaseDialog {
 	public-init var canvasObject:CanvasObjectItem;
 	
 	def testCase = bind canvasObject instanceof SceneItem;
+	var name:TextField;
+	var dialog:Dialog;
+	var open:CheckBoxField;
+	var distribute:CheckBoxField;
+	
+	function ok():Void {
+					if( validateLabel( name.value as String ) ) {
+						log.debug( "Cloning: '\{\}''", canvasObject );
+						def copy = canvasObject.getCanvas().duplicate( canvasObject );
+						copy.setLabel(name.value as String);
+						def layoutX = Integer.parseInt( canvasObject.getAttribute( "gui.layoutX", "0" ) ) + 50;
+						def layoutY = Integer.parseInt( canvasObject.getAttribute( "gui.layoutY", "0" ) ) + 50;
+						copy.setAttribute( "gui.layoutX", "{ layoutX as Integer }" );
+						copy.setAttribute( "gui.layoutY", "{ layoutY as Integer }" );
+						dialog.close();
+						if( distribute.value as Boolean ) {
+							def project = (MainWindow.instance.projectCanvas.canvasItem as ProjectItem);
+							for( agent in project.getAgentsAssignedTo(canvasObject as SceneItem) )
+								project.assignScene(canvasObject as SceneItem, agent);
+						}
+						if( open.value as Boolean ) {
+							AppState.instance.setActiveCanvas( copy.getCanvas() );
+						}
+					} else {
+						def warning:Dialog = Dialog {
+					    	title: "Warning!"
+					    	content: Text {
+					    		content: "Item already exists with label: '{name.value}'!"
+					    	}
+					    	okText: "Ok"
+					    	onOk: function() {
+					    		warning.close();
+					    	}
+					    	noCancel: true
+					    	width: 300
+					    	height: 150
+					    
+					    }
+						log.error( "Item already exists with label: '{name.value}'!" );
+					}
+				}
 	
 	postinit {
 		var form:Form;
 		var label = canvasObject.getLabel();
-		def name = TextField { label: "Name of clone", value: "copy-of-{label}", columns: 30 };
-		def open = CheckBoxField { label: "Open the new TestCase?", value: true };
-		def distribute = CheckBoxField { label: "Distibute to same agents?", value: true };
+		name = TextField { label: "Name of clone", value: "copy-of-{label}", columns: 30, action:ok};
+		 open = CheckBoxField { label: "Open the new TestCase?", value: true };
+		distribute = CheckBoxField { label: "Distibute to same agents?", value: true };
 		
 		def dialog:Dialog = Dialog {
 			title: "Clone {canvasObject.getLabel()}"
@@ -54,42 +95,7 @@ public class CloneTestCaseDialog {
 				]
 			}
 			okText: "Clone"
-			onOk: function() {
-				if( validateLabel( name.value as String ) ) {
-					log.debug( "Cloning: '\{\}''", canvasObject );
-					def copy = canvasObject.getCanvas().duplicate( canvasObject );
-					copy.setLabel(name.value as String);
-					def layoutX = Integer.parseInt( canvasObject.getAttribute( "gui.layoutX", "0" ) ) + 50;
-					def layoutY = Integer.parseInt( canvasObject.getAttribute( "gui.layoutY", "0" ) ) + 50;
-					copy.setAttribute( "gui.layoutX", "{ layoutX as Integer }" );
-					copy.setAttribute( "gui.layoutY", "{ layoutY as Integer }" );
-					dialog.close();
-					if( distribute.value as Boolean ) {
-						def project = (MainWindow.instance.projectCanvas.canvasItem as ProjectItem);
-						for( agent in project.getAgentsAssignedTo(canvasObject as SceneItem) )
-							project.assignScene(canvasObject as SceneItem, agent);
-					}
-					if( open.value as Boolean ) {
-						AppState.instance.setActiveCanvas( copy.getCanvas() );
-					}
-				} else {
-					def warning:Dialog = Dialog {
-				    	title: "Warning!"
-				    	content: Text {
-				    		content: "Item already exists with label: '{name.value}'!"
-				    	}
-				    	okText: "Ok"
-				    	onOk: function() {
-				    		warning.close();
-				    	}
-				    	noCancel: true
-				    	width: 300
-				    	height: 150
-				    
-				    }
-					log.error( "Item already exists with label: '{name.value}'!" );
-				}
-			}
+			onOk: ok
 			width: 400
 			height: 150
 			

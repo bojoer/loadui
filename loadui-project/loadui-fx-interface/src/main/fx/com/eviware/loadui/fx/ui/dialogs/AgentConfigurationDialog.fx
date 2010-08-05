@@ -38,12 +38,21 @@ public class AgentConfigurationDialog {
 
 	public var title:String = "Agent Config";
 	public var agent:AgentItem;
+	var formT1: Form;
+			var formT2: Form;
+			var formT3: Form;
+	var dialogRef:Dialog;
+			
+	function ok():Void {
+					agent.setDescription(formT1.getField('description').value as String);
+					agent.getProperty(agent.MAX_THREADS_PROPERTY).setValue(formT3.getField('maxThreads').value as Long);
+					
+					// add here seting a soapUI ext folder, hermes folder and soapUI settings file to properties.
+					
+					dialogRef.close();
+	         }
 	
 	public function show() {
-	
-		var formT1: Form;
-		var formT2: Form;
-		var formT3: Form;
 		
 		var maxThreads: Long = agent.getProperty(agent.MAX_THREADS_PROPERTY).getValue() as Long;
 		// support for this need to be added in api
@@ -51,7 +60,7 @@ public class AgentConfigurationDialog {
 		var soapUIHermes:String = "hermes folder";
 		var soapUISettings: String = "settings folder";
 		
-		def dialogRef: Dialog = Dialog {
+		dialogRef = Dialog {
 		 width: 500
 		 height: 400
          modal: true
@@ -75,6 +84,7 @@ public class AgentConfigurationDialog {
 								description: "This is a description of the description field."
 								multiline: true
 								value: agent.getDescription() 
+								action: ok
 							}							
 						]
 					}
@@ -89,9 +99,9 @@ public class AgentConfigurationDialog {
 				Tab {
          			label: "soapUI", content: formT2 = Form {
 						formContent: [
-							TextField { id: "soapUIExt", label: "soapUI ext folder", description: "Path to soapUI ext folder", value: soapUIExt, width: bind 200 } as FormField,
-							TextField { id: "soapUIHermes", label: "Hermes folder", description: "Path to Hermes folder", value: soapUIHermes, width: bind 200 } as FormField,
-							TextField { id: "soapUISettings", label: "soapUI settings file", description: "Path to soapUI settings file", value: soapUISettings, width: bind 200 } as FormField,
+							TextField { id: "soapUIExt", label: "soapUI ext folder", description: "Path to soapUI ext folder", value: soapUIExt, width: bind 200, action: ok } as FormField,
+							TextField { id: "soapUIHermes", label: "Hermes folder", description: "Path to Hermes folder", value: soapUIHermes, width: bind 200, action: ok } as FormField,
+							TextField { id: "soapUISettings", label: "soapUI settings file", description: "Path to soapUI settings file", value: soapUISettings, width: bind 200, action: ok } as FormField,
 						]
 					}
 				}
@@ -99,14 +109,7 @@ public class AgentConfigurationDialog {
 				
 			]
 		}
-         onOk: function() {
-				agent.setDescription(formT1.getField('description').value as String);
-				agent.getProperty(agent.MAX_THREADS_PROPERTY).setValue(formT3.getField('maxThreads').value as Long);
-				
-				// add here seting a soapUI ext folder, hermes folder and soapUI settings file to properties.
-				
-				dialogRef.close();
-         }
+         onOk: ok
 		}
 	}
 	

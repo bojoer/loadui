@@ -64,6 +64,29 @@ public class CreateNewAgentDialog {
 	var agentName: TextField;
 	var agentUrl: TextField;
 	
+	function ok():Void  {
+					if(not validateName(agentName.value as String)){
+						msgDialog.title = "Agent name invalid";
+						msgDialog.content = [Text{content: "Agent name '{agentName.value}' is not valid! Must be unique non zero length string."}];
+						msgDialog.show();
+						return;
+					}
+					if(not validateURL()){
+						msgDialog.title = "Agent URL invalid";
+						msgDialog.content = [Text{content: "URL '{agentUrl.value}' is invalid!"}];
+						msgDialog.show();
+						return;
+					}
+					if(not validateAgentAlreadyExist()){
+						msgDialog.title = "Agent already in workspace";
+						msgDialog.content = [Text{content: "Agent at address '{agentUrl.value}' already exists in workspace!"}];
+						msgDialog.show();
+						return;
+					}
+					
+					validateAgent(); 
+				}
+	
 	postinit {
 		if( not FX.isInitialized( workspace ) )
 			throw new RuntimeException( "Workspace is null!" );
@@ -73,33 +96,12 @@ public class CreateNewAgentDialog {
 			content: form = Form {
 				width: bind 210
 				formContent: [
-					agentName = TextField {label: "Agent Name"},
-					agentUrl = TextField {label: "Agent URL"}
+					agentName = TextField {label: "Agent Name", action: ok},
+					agentUrl = TextField {label: "Agent URL", action: ok}
 				]
 			}
 			okText: "Add"
-			onOk: function() {
-				if(not validateName(agentName.value as String)){
-					msgDialog.title = "Agent name invalid";
-					msgDialog.content = [Text{content: "Agent name '{agentName.value}' is not valid! Must be unique non zero length string."}];
-					msgDialog.show();
-					return;
-				}
-				if(not validateURL()){
-					msgDialog.title = "Agent URL invalid";
-					msgDialog.content = [Text{content: "URL '{agentUrl.value}' is invalid!"}];
-					msgDialog.show();
-					return;
-				}
-				if(not validateAgentAlreadyExist()){
-					msgDialog.title = "Agent already in workspace";
-					msgDialog.content = [Text{content: "Agent at address '{agentUrl.value}' already exists in workspace!"}];
-					msgDialog.show();
-					return;
-				}
-				
-				validateAgent(); 
-			}
+			onOk: ok
 			width : 250
 			height : 150
 		}

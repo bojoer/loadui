@@ -40,10 +40,17 @@ import net.miginfocom.layout.*;
  * SettingsDialog, basic modal dialog with ok, help and cancel button.
  */
 public class SettingsDialog  {
+    var dialogRef: Dialog;
+    var form:Form;
+    var theItem:ModelItem;
+    
+    function ok():Void {
+    				theItem.setDescription(form.getField('description').value as String);
+    				dialogRef.close();
+             }
 	
 	public function show(item:ModelItem) {
-	
-		var form:Form;
+		theItem = item;
 		
 		def dialogRef: Dialog = Dialog {
 		 width: 500
@@ -68,17 +75,17 @@ public class SettingsDialog  {
 											label: "Description"
 											description: "This is a description of the description field."
 											multiline: true
-											value: item.getDescription() },
+											value: item.getDescription() 
+											action: ok
+											},
+											
 									]
 								}
 								//onSelect: function() { log.debug( "Selected tab 1" ) }
 							}
 						]
 					}
-         onOk: function() {
-				item.setDescription(form.getField('description').value as String);
-				dialogRef.close();
-         }
+         onOk: ok
 		}
 	}
 }

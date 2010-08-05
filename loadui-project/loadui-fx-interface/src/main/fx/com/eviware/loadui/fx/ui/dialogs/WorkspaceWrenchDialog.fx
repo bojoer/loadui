@@ -44,14 +44,30 @@ import com.eviware.loadui.fx.ui.menu.SoapUIButton;
 public class WorkspaceWrenchDialog  {
 	
 	public var title:String = "Workspace";
+	var workspace: WorkspaceItem = MainWindow.instance.workspace;
+	var formT1: Form;
+	var formT2: Form;
+	var formT3: Form;
+	var dialogRef: Dialog;
 	
+	function ok():Void {
+					workspace.getProperty(WorkspaceItem.SOAPUI_PATH_PROPERTY).setValue(formT2.getField('soapUIPath').value as File);
+					workspace.getProperty(WorkspaceItem.SOAPUI_SYNC_PROPERTY).setValue(formT2.getField('soapUISync').value as Boolean);
+					workspace.getProperty(WorkspaceItem.SOAPUI_CAJO_PORT_PROPERTY).setValue(formT2.getField('soapUICajoPort').value as Integer);
+					workspace.getProperty(WorkspaceItem.LOADUI_CAJO_PORT_PROPERTY).setValue(formT2.getField('loadUICajoPort').value as Integer);
+					workspace.getProperty(WorkspaceItem.MAX_THREADS_PROPERTY).setValue(formT3.getField('maxThreads').value as Long);
+					workspace.getProperty(WorkspaceItem.MAX_THREAD_QUEUE_PROPERTY).setValue(formT3.getField('maxQueue').value as Long);
+					workspace.setDescription(formT1.getField('description').value as String); 
+					workspace.getProperty(WorkspaceItem.AUTO_GARBAGE_COLLECTION_INTERVAL).setValue(formT3.getField('gcInterval').value as Long);
+	
+					if( workspace.getProperty(WorkspaceItem.SOAPUI_PATH_PROPERTY).getValue != null)
+						SoapUIButton.instance.image.opacity = 1;
+					dialogRef.close();
+	         }
+	         
 	public function show() {
-	
-		var formT1: Form;
-		var formT2: Form;
-		var formT3: Form;
+
 		
-		var workspace: WorkspaceItem = MainWindow.instance.workspace;
 		
 		var soapUIPath: File = workspace.getProperty(WorkspaceItem.SOAPUI_PATH_PROPERTY).getValue() as File;
 		var soapUISync: Boolean = workspace.getProperty(WorkspaceItem.SOAPUI_SYNC_PROPERTY).getValue() as Boolean;
@@ -61,7 +77,7 @@ public class WorkspaceWrenchDialog  {
 		var maxQueue: Long = workspace.getProperty(WorkspaceItem.MAX_THREAD_QUEUE_PROPERTY).getValue() as Long;
 		var gcInterval: Long = workspace.getProperty(WorkspaceItem.AUTO_GARBAGE_COLLECTION_INTERVAL).getValue() as Long;
 		
-		def dialogRef: Dialog = Dialog {
+		dialogRef = Dialog {
 		 width: 500
 		 height: 400
          modal: true
@@ -85,6 +101,7 @@ public class WorkspaceWrenchDialog  {
 								description: "This is a description of the description field."
 								multiline: true
 								value: workspace.getDescription() 
+								action: ok
 							}							
 						]
 					}
@@ -111,20 +128,7 @@ public class WorkspaceWrenchDialog  {
 				
 			]
 		}
-         onOk: function() {
-				workspace.getProperty(WorkspaceItem.SOAPUI_PATH_PROPERTY).setValue(formT2.getField('soapUIPath').value as File);
-				workspace.getProperty(WorkspaceItem.SOAPUI_SYNC_PROPERTY).setValue(formT2.getField('soapUISync').value as Boolean);
-				workspace.getProperty(WorkspaceItem.SOAPUI_CAJO_PORT_PROPERTY).setValue(formT2.getField('soapUICajoPort').value as Integer);
-				workspace.getProperty(WorkspaceItem.LOADUI_CAJO_PORT_PROPERTY).setValue(formT2.getField('loadUICajoPort').value as Integer);
-				workspace.getProperty(WorkspaceItem.MAX_THREADS_PROPERTY).setValue(formT3.getField('maxThreads').value as Long);
-				workspace.getProperty(WorkspaceItem.MAX_THREAD_QUEUE_PROPERTY).setValue(formT3.getField('maxQueue').value as Long);
-				workspace.setDescription(formT1.getField('description').value as String); 
-				workspace.getProperty(WorkspaceItem.AUTO_GARBAGE_COLLECTION_INTERVAL).setValue(formT3.getField('gcInterval').value as Long);
-
-				if( workspace.getProperty(WorkspaceItem.SOAPUI_PATH_PROPERTY).getValue != null)
-					SoapUIButton.instance.image.opacity = 1;
-				dialogRef.close();
-         }
+         onOk: ok
 		}
 	}
 }

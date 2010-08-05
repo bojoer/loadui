@@ -42,14 +42,24 @@ import java.io.File;
  * SettingsDialog, basic modal dialog with ok, help and cancel button.
  */
 public class ProjectSettingsDialog  {
+    var theItem:ProjectItem;
+    function ok():Void {
+    				theItem.setDescription(descriptionForm.getField('description').value as String);
+    				theItem.setSaveReport(form.getField('saveReport').value as Boolean);
+    				theItem.setReportFolder((form.getField('savePath').value as File).getAbsolutePath());
+    				dialogRef.close();
+             }
+             
+    var form:Form;
+    var descriptionForm:Form;
+    var dialogRef: Dialog;
 	
 	public function show(item:ProjectItem) {
 	
-		var form:Form;
-		var descriptionForm:Form;
 		var cb:CheckBoxField;
+		theItem = item;
 		
-		def dialogRef: Dialog = Dialog {
+		dialogRef = Dialog {
 		 width: 500
 		 height: 400
          modal: true
@@ -72,7 +82,10 @@ public class ProjectSettingsDialog  {
 											label: "Description"
 											description: "This is a description of the description field."
 											multiline: true
-											value: item.getDescription() }
+											value: item.getDescription()
+											action: ok
+											 }
+				
 									]
 								}
 							},
@@ -98,12 +111,7 @@ public class ProjectSettingsDialog  {
 						}
 						]
 					}
-         onOk: function() {
-				item.setDescription(descriptionForm.getField('description').value as String);
-				item.setSaveReport(form.getField('saveReport').value as Boolean);
-				item.setReportFolder((form.getField('savePath').value as File).getAbsolutePath());
-				dialogRef.close();
-         }
+         onOk: ok
 		}
 	}
 }

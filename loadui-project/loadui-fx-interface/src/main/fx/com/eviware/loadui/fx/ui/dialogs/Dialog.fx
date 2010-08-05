@@ -235,6 +235,7 @@ public class Dialog extends FocusChangeListener{
 		    layoutY: y
 			useOverlay: false
 			containment: sceneBounds
+			
 			contentNode: Group {
 				content: [
 					titlebarPanel = TitlebarPanel {

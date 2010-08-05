@@ -47,34 +47,36 @@ public class CloneProjectDialog {
 	 * @author predrag
 	 */
 	public-init var projectRef:ProjectRef;
+	var dialog:Dialog;
 	
 	var form:Form;
+	function ok():Void {
+					var clone: ProjectRef = cloneProject(projectRef);
+					if(form.getField('open').value as Boolean){
+						clone.setEnabled(true);
+						AppState.instance.setActiveCanvas( clone.getProject() );
+					}
+					dialog.close();
+				}
 	
 	postinit {
 		if( not FX.isInitialized( projectRef ) )
 			throw new RuntimeException( "projectRef must not be null!" );
 		
-		def dialog:Dialog = Dialog {
+		dialog = Dialog {
 			title: "Clone project: {projectRef.getLabel()}"
 			content: [
 				form = Form {
 					width: bind 260
 					formContent: [
-						TextField { id: "name", label: "Name of cloned project", description: "Name of cloned project" } as FormField,
-						FileInputField { id: "file", label: "File of cloned project", description: "File of cloned project" } as FormField,
+						TextField { id: "name", label: "Name of cloned project", description: "Name of cloned project", action: ok } as FormField,
+						FileInputField { id: "file", label: "File of cloned project", description: "File of cloned project", action: ok } as FormField,
 						CheckBoxField { id: "open", label: "Open cloned project for editing", value: true, translateY: 20 }
 					]
 				}
 			]
 			okText: "Clone"
-			onOk: function() {
-				var clone: ProjectRef = cloneProject(projectRef);
-				if(form.getField('open').value as Boolean){
-					clone.setEnabled(true);
-					AppState.instance.setActiveCanvas( clone.getProject() );
-				}
-				dialog.close();
-			}
+			onOk: ok
 			
 			width : 300
 			height : 150
