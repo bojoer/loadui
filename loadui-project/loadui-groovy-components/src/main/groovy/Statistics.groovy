@@ -77,6 +77,7 @@ createProperty( 'enableBPS', Boolean, true )
 createProperty( 'enableAvgTPS', Boolean, true )
 createProperty( 'enableAvgBPS', Boolean, true )
 createProperty( 'enablePercentile', Boolean, true )
+createProperty( 'enableAvgResponseSize', Boolean, true )
 createProperty( 'currentSourceID', String, "none" )
 createProperty( 'addtoSummary', Boolean, false )
 
@@ -117,6 +118,7 @@ chartModel.addSerie('BPS', enableBPS.value)
 chartModel.addSerie('AvgTPS', enableAvgTPS.value)
 chartModel.addSerie('AvgBPS', enableAvgBPS.value)
 chartModel.addSerie('Percentile', enablePercentile.value)
+chartModel.addSerie('AvgResponseSize', enableAvgResponseSize.value)
 chartModel.legendColumns = 4
 
 timeStats = new ValueStatistics( period.value * 60000 )
@@ -199,6 +201,7 @@ calculate = {
 			bdata = byteStats.getData( currentTime )
 			message['Bps'] = bdata['Vps']
 			message['Avg-Bps'] = bdata['Avg-Vps']
+			message['AvgResponseSize'] = bdata['AvgResponseSize']
 			message['id'] = "test"
 			
 			message['Timestamp'] = currentTime
@@ -231,6 +234,7 @@ updateChart = { currentTime ->
 					data['Bps'] = (data['Bps'] ?: 0) + (d['Bps'] ?: 0)
 					data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
 					data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
+					data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
 					count++
 				}
 			}
@@ -255,6 +259,7 @@ updateChart = { currentTime ->
 		if(enableAvgTPS.value) chartModel.addPoint(6, currentTime, data['Avg-Tps'])
 		if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
 		if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
+		if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
 	} catch( e ) {
 	}
 }
@@ -327,6 +332,10 @@ addEventListener(PropertyEvent) { event ->
 				chartModel.enableSerie('Percentile', enablePercentile.value)
 				buildSignature()
 			}
+			else if(event.property == enableAvgResponseSize) {
+				chartModel.enableSerie('AvgResponseSize', enableAvgResponseSize.value)
+				buildSignature()
+			}
 		}
 	}
 	catch(Throwable e2){
@@ -345,6 +354,7 @@ buildSignature = {
 	if(enableAvgBPS.value) signature['Avg-Bps'] = Long
 	if(enableStdDev.value) signature['Std-Dev'] = Long
 	if(enablePercentile.value) signature['Percentile'] = Long
+	if(enablePercentile.value) signature['AvgResponseSize'] = Long
 	setSignature(output, signature)
 }
 
@@ -401,6 +411,7 @@ settings( label: 'Properties', constraints: 'wrap 2' ) {
 		property(property: enableAvgTPS, label: 'Enable Average TPS' )
 		property(property: enableAvgBPS, label: 'Enable Average BPS' )
 		property(property: enablePercentile, label: '90% Percentile' )
+		property(property: enableAvgResponseSize, label: 'Average Response Size' )
 		property(property: currentSourceID, label: 'Source ID' )
 	}
 } 
@@ -454,6 +465,10 @@ generateSummary = { chapter ->
 		if(enablePercentile.value) {
 			table.addColumn("Percentile");
 			values.add(data['Percentile'].round(2));
+		}
+		if(enableAvgResponseSize.value) {
+			table.addColumn("AvgResponseSize");
+			values.add(data['AvgResponseSize']);
 		}
 		
 		table.addRow(values);
