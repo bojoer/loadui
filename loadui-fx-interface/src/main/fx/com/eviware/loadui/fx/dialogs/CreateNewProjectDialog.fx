@@ -50,46 +50,52 @@ public class CreateNewProjectDialog {
 	
 	def projectDir = new File("{FX.getProperty('javafx.user.home')}{File.separator}.loadui");
 	
+	var form:Form;
+			var name:TextField;
+			var file:TextField;
+			var open:CheckBoxField;
+			
+			function ok():Void  {
+							if( validateFile( file.value as String ) ) {
+								log.debug( "Creating new project: '\{\}'  with path: '\{\}'", name.value, file.value );
+								def p = workspace.createProject( new File( projectDir, file.value as String ), name.value as String, true );
+								dialog.close();
+								if( open.value as Boolean ) {
+									AppState.instance.setActiveCanvas( p );
+								} else {
+									for( ref in workspace.getProjectRefs() ) {
+										if( ref.isEnabled() and ref.getProject() == p ) {
+											ref.setEnabled( false );
+											break;
+										}
+									}
+								}
+							} else {
+								log.error( "Unable to create project with filename: '{file.value}'!" );
+							}
+						}
+						
+	var dialog:Dialog;
+	
 	postinit {
 		if( not FX.isInitialized( workspace ) )
 			throw new RuntimeException( "Workspace is null!" );
 		
-		var form:Form;
-		var name:TextField;
-		var file:TextField;
-		var open:CheckBoxField;
-		def dialog:Dialog = Dialog {
+		
+		dialog = Dialog {
 			title: "Create new project"
 			x:layoutX
 			y:layoutY
 			content: form = Form {
 				width: bind 210
 				formContent: [
-					name = TextField { label: "Project Name" },
-					file = TextField { label: "Filename" },
+					name = TextField { label: "Project Name", action: ok },
+					file = TextField { label: "Filename", action: ok },
 					(open = CheckBoxField { label: "Open the new Project?", value: false, translateY: 15}) as FormField
 				]
 			}
 			okText: "Create"
-			onOk: function() {
-				if( validateFile( file.value as String ) ) {
-					log.debug( "Creating new project: '\{\}'  with path: '\{\}'", name.value, file.value );
-					def p = workspace.createProject( new File( projectDir, file.value as String ), name.value as String, true );
-					dialog.close();
-					if( open.value as Boolean ) {
-						AppState.instance.setActiveCanvas( p );
-					} else {
-						for( ref in workspace.getProjectRefs() ) {
-							if( ref.isEnabled() and ref.getProject() == p ) {
-								ref.setEnabled( false );
-								break;
-							}
-						}
-					}
-				} else {
-					log.error( "Unable to create project with filename: '{file.value}'!" );
-				}
-			}
+			onOk: ok
 			width : 250
 			height : 150
 			
