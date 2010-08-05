@@ -52,7 +52,7 @@ var openMenus:PopupMenu[] = [] on replace oldVal {
 		insert menuGroup into overlay.content;
 	}
 };
-def menuGroup = Group { content: bind [ modalLayer, openMenus ] };
+def menuGroup = Group { id: "popupMenuGroup", content: bind [ modalLayer, openMenus ] };
 package def topMenu = bind openMenus[ sizeof openMenus - 1];
 
 def modalLayer = Rectangle {
@@ -135,7 +135,9 @@ public class PopupMenu extends CustomNode {
 		if( not isOpen ) {
 			onOpen();
 			isOpen = true;
+			def dummyNode = Rectangle {};
 			insert this into openMenus;
+			insert dummyNode into overlay.content;
 			requestFocus();
 		}
 	}
