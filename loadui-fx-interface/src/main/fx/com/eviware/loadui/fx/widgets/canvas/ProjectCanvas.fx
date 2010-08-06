@@ -67,62 +67,20 @@ public class ProjectCanvas extends Canvas {
 		}
 	}
 	
-	public function generateMiniatures() {
+	override function generateMiniatures() {
+		canvasItem.setAttribute("miniature", createMiniatures(155 - 18 - 4, 100 - 37 - 4, 0.1));
+	    
 	    var projectRef;
 	    for(pRef in MainWindow.instance.workspace.getProjectRefs()){
 			if(pRef.isEnabled() and pRef.getProject() == canvasItem){
-				projectRef= pRef;
+				projectRef = pRef;
 				break;
 			}
 		}
-		
-		var minX: Number = java.lang.Long.MAX_VALUE;
-		var maxX: Number = 0;
-		var minY: Number = java.lang.Long.MAX_VALUE;
-		var maxY: Number = 0;
-		for(c in components){
-			if(c.layoutX + c.width > maxX){
-				maxX = c.layoutX + c.width;
-			}
-			if(c.layoutY + c.height > maxY){
-				maxY = c.layoutY + c.height;
-			}
-			if(c.layoutX < minX){
-				minX = c.layoutX;
-			}
-			if(c.layoutY < minY){
-				minY = c.layoutY;
-			}
-		}
-		
-		if(maxX == 0){
-			maxX = 10;
-		}
-		
-		if(maxY == 0){
-			maxY = 10;
-		}
-		
-		if(minX == java.lang.Long.MAX_VALUE){
-			minX = 0;
-		}
-		
-		if(minY == java.lang.Long.MAX_VALUE){
-			minY = 0;
-		}
-		
-		var connImg = nodeToImage(connectionLayer, maxX + 100, maxY + 100);
-		var compImg = nodeToImage(componentLayer, maxX + 100, maxY + 100);
-	    var img = combineImages(connImg, compImg);
-	    img = clipImage(img, minX, minY, maxX + 100 - minX, maxY + 100 - minY);
-	    var scale = Math.max(155/img.getWidth(), 0.1);
-	    img = scaleImage(img, scale);
-	    img = clipImage(img, 0, 0, Math.min(155 - 18 - 4, img.getWidth()), Math.min(100 - 37 - 4, img.getHeight()));
-
-		var base64: String = bufferedImageToBase64(img);
-		projectRef.getProject().setAttribute("miniature", base64);
-	    projectRef.setAttribute("miniature", base64);
-	    
+		if(projectRef != null){
+			var base64: String = canvasItem.getAttribute("miniature", "");
+		    projectRef.setAttribute("miniature", base64);
+	    }
 	}
 	
 	override function acceptFunction( d:Draggable ) {

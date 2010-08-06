@@ -61,6 +61,7 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.fx.util.ImageUtil.*;
 
 import java.util.EventObject;
 import java.util.HashMap;
@@ -104,6 +105,57 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	public-read var areaHeight:Integer = 0;
 	
 	public-read var components:CanvasNode[] = bind componentLayer.content[c|c instanceof CanvasNode] as CanvasNode[];
+	
+	public function createMiniatures(maxWidth: Number, maxHeight: Number, minScaleFactor: Number): String {
+		var minX: Number = java.lang.Long.MAX_VALUE;
+		var maxX: Number = 0;
+		var minY: Number = java.lang.Long.MAX_VALUE;
+		var maxY: Number = 0;
+		for(c in components){
+			if(c.layoutX + c.width > maxX){
+				maxX = c.layoutX + c.width;
+			}
+			if(c.layoutY + c.height > maxY){
+				maxY = c.layoutY + c.height;
+			}
+			if(c.layoutX < minX){
+				minX = c.layoutX;
+			}
+			if(c.layoutY < minY){
+				minY = c.layoutY;
+			}
+		}
+		
+		if(maxX == 0){
+			maxX = 10;
+		}
+		
+		if(maxY == 0){
+			maxY = 10;
+		}
+		
+		if(minX == java.lang.Long.MAX_VALUE){
+			minX = 0;
+		}
+		
+		if(minY == java.lang.Long.MAX_VALUE){
+			minY = 0;
+		}
+		
+		var connImg = nodeToImage(connectionLayer, maxX + 100, maxY + 100);
+		var compImg = nodeToImage(componentLayer, maxX + 100, maxY + 100);
+	    var img = combineImages(connImg, compImg);
+	    img = clipImage(img, minX, minY, maxX + 100 - minX, maxY + 100 - minY);
+	    var scale = Math.max(Math.min(maxWidth/img.getWidth(), maxHeight/img.getHeight()), minScaleFactor);
+	    img = scaleImage(img, scale);
+	    img = clipImage(img, 0, 0, Math.min(maxWidth, img.getWidth()), Math.min(maxHeight, img.getHeight()));
+
+		bufferedImageToBase64(img);
+	}
+	
+	public function generateMiniatures() {
+		canvasItem.setAttribute("miniature", createMiniatures(368, 188, 0.1));
+	}
 	
 	override var height on replace {
 		refreshComponents();

@@ -87,6 +87,8 @@ import com.eviware.loadui.fx.widgets.RunController;
 import com.eviware.loadui.api.events.ActionEvent;
 
 import com.eviware.loadui.fx.ui.border.*;
+import com.eviware.loadui.fx.util.ImageUtil.*;
+import com.eviware.loadui.fx.util.ImageUtil;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.TestCaseNode" );
 
@@ -128,8 +130,19 @@ public class TestCaseNode extends CanvasNode {
 	      small: true
 	}
 	
-	protected var roundedFrame:Node = ImageView { 
-		image: testCaseGrid
+	var miniature: Image = null;
+		
+	protected var roundedFrame: Node = Group {
+		content: bind [	
+			ImageView { 
+				image: testCaseGrid
+			}
+			ImageView { 
+				image: miniature, 
+				x: 12, 
+				y: 12 
+			}
+		]
 	} 
 	
 	def tNode:TerminalNode = TerminalNode { 
@@ -140,48 +153,26 @@ public class TestCaseNode extends CanvasNode {
 		layoutX: bind runControl.width/2 + 10
 	};
 	
-	var miniatures:Group;
-	
 	def vbox:VBox = VBox {
 		layoutX: 10
 	    layoutY: 20
 	    spacing: 5
 		content: [runControl, roundedFrame]
-
 	}
 								
 	override var width = bind vbox.width + 20;
 	override var height = 295;
 	
-	public function refreshMinis() {
-	    def currentTestCase = MainWindow.instance.testcaseCanvas.canvasItem;
-	    MainWindow.instance.testcaseCanvas.canvasItem = testCase;
-	    def scale = bind Math.min( ( width - 30 ) / MainWindow.instance.testcaseCanvas.areaWidth, ( height - (50 + runControl.height) ) / MainWindow.instance.testcaseCanvas.areaHeight );
-	    var components = bind MainWindow.instance.testcaseCanvas.components;
-	    miniatures = Group {
-	    	content: for( component in components ) {
-	    		Miniature {
-	    			layoutX: bind 10 + component.layoutX * scale
-	    			layoutY: bind 20 + runControl.height + component.layoutY * scale
-	    			width: bind component.layoutBounds.width * scale
-	    			height: bind component.layoutBounds.height * scale
-	    			fill: bind component.color
-	    		} 
-	    	}
-	    }
-	    runControl.playButton.selected = testCase.isRunning();
-	    MainWindow.instance.testcaseCanvas.canvasItem = currentTestCase;
-	    
-	    runControl.refreshRunner();
-
+	public function loadMiniature(): Void {
+		var base64: String = testCase.getAttribute("miniature", "");
+		if(base64.length() > 0){
+			miniature = ImageUtil.base64ToFXImage(base64);
+		}
 	}
 	
 	var active: Boolean = testCase.isActive();
 	
 	override function create() {
-
-		refreshMinis();
-
 		RoundedRectBorder {
 		    arc: 30
 		    accent: Color.TRANSPARENT
@@ -202,7 +193,6 @@ public class TestCaseNode extends CanvasNode {
 								toolbarBoxLeft,
 								toolbarBoxRight,
 								vbox,
-								miniatures,
 								Rectangle {
 									layoutY: bind height - 20
 									height: 20
@@ -250,6 +240,10 @@ public class TestCaseNode extends CanvasNode {
 		}
 	}
 	
+	postinit{
+		loadMiniature();
+	}
+	
 	public function getStateTerminalNode():TerminalNode {
 	    return tNode;
 	}
@@ -273,7 +267,6 @@ public class TestCaseNode extends CanvasNode {
 	
 	override function handleEvent(e:EventObject) {
 		super.handleEvent(e);
-		
 		if(e instanceof BaseEvent) {
 			def event = e as BaseEvent;
 			if(CanvasObjectItem.ACTIVITY.equals(event.getKey())) {
@@ -287,25 +280,4 @@ public class TestCaseNode extends CanvasNode {
 	}
 }
 
-class Miniature extends CustomNode {
-	public var fill:Paint;
-	public var width:Number;
-	public var height:Number;
-	
-	override function create() {
-		Group {
-			content: [
-				Rectangle {
-					fill: bind fill
-					width: bind width
-					height: 10
-				}, Rectangle {
-					fill: Color.web("#DBDBDB")
-					width: bind width
-					height: bind Math.max( 0, height - 10 )
-					y: 10
-				}
-			]
-		}
-	}
-}
+

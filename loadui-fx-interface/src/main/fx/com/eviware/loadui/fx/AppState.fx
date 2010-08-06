@@ -262,7 +262,7 @@ public class AppState extends ApplicationState {
 		    var tc:SceneItem = MainWindow.instance.testcaseCanvas.canvasItem as SceneItem;
 		    if( tc != null ) {
 		    	var tcn:TestCaseNode = MainWindow.instance.projectCanvas.lookupCanvasNode(tc.getId()) as TestCaseNode;
-		    	tcn.refreshMinis();
+		    	tcn.loadMiniature();
 		    }
 		}
 		
