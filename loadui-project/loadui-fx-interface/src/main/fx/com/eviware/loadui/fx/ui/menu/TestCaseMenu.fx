@@ -354,6 +354,7 @@ public class TestCaseMenu extends HBox {
 										ActionMenuItem {
 											text: "Close"
 											action: function() {
+												MainWindow.instance.testcaseCanvas.generateMiniatures();
 												AppState.instance.setActiveCanvas( testCase.getProject() );
 											}
 										}
@@ -397,8 +398,11 @@ public class TestCaseMenu extends HBox {
 								action: function():Void { openURL("http://www.loadui.org/interface/project-view.html") }
 							}, MenubarButton {
 								shape: "M14.00,2.00 L12.00,0.00 7.00,5.00 2.00,0.00 0.00,2.00 5.00,7.00 0.00,12.00 2.00,14.00 7.00,9.00 12.00,14.00 14.00,12.00 9.00,7.00 Z"
-								tooltip: Tooltip { text: ##[CLOSE_PROJECT]"Close Project" }
-								action: function():Void { AppState.instance.setActiveCanvas( testCase.getProject() ) }
+								tooltip: Tooltip { text: ##[CLOSE_TESTCASE]"Close TestCase" }
+								action: function():Void { 
+									MainWindow.instance.testcaseCanvas.generateMiniatures();
+									AppState.instance.setActiveCanvas( testCase.getProject() ) 
+								}
 				         }, Label {
 								layoutInfo: LayoutInfo {
 									width: 10
