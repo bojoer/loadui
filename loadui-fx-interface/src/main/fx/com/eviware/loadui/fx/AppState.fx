@@ -258,7 +258,7 @@ public class AppState extends ApplicationState {
 		
 		log.debug( "Transitioning from state \{\} to state \{\}.", this.state, state );
 		
-		if ( this.state == TESTCASE_FRONT and state == PROJECT_FRONT ) {
+		if ( this.state == TESTCASE_FRONT ) {
 		    var tc:SceneItem = MainWindow.instance.testcaseCanvas.canvasItem as SceneItem;
 		    if( tc != null ) {
 		    	var tcn:TestCaseNode = MainWindow.instance.projectCanvas.lookupCanvasNode(tc.getId()) as TestCaseNode;
