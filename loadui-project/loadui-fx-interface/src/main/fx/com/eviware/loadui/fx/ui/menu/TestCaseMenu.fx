@@ -399,7 +399,7 @@ public class TestCaseMenu extends HBox {
 							}, MenubarButton {
 								shape: "M14.00,2.00 L12.00,0.00 7.00,5.00 2.00,0.00 0.00,2.00 5.00,7.00 0.00,12.00 2.00,14.00 7.00,9.00 12.00,14.00 14.00,12.00 9.00,7.00 Z"
 								tooltip: Tooltip { text: ##[CLOSE_TESTCASE]"Close TestCase" }
-								action: function():Void { 
+								action: function():Void {
 									MainWindow.instance.testcaseCanvas.generateMiniatures();
 									AppState.instance.setActiveCanvas( testCase.getProject() ) 
 								}
