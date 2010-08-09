@@ -22,6 +22,7 @@
 package com.eviware.loadui.fx.dialogs;
 
 import javafx.scene.text.Text;
+import javafx.scene.control.Button;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 
 import com.eviware.loadui.api.model.ProjectRef;
@@ -57,28 +58,26 @@ public class SaveProjectDialog {
 				dialog.close();
 			}
 			extraButtons: [
-				Dialog.ActionButton {
+				Button {
 					translateX: - 19
 					translateY: - 38
 					text: "Save"
-					width: 59
 					action: function() {
 						MainWindow.instance.projectCanvas.generateMiniatures(); 
 						project.save();
 						dialog.close();
 						onDone();
 					}
-					layoutInfo: nodeConstraints(new CC().tag( "yes" ))
-				}, Dialog.ActionButton {
+					layoutInfo: nodeConstraints(new CC().tag( "yes" ).width("60!"))
+				}, Button {
 					translateX: - 19
 					translateY: - 38
 					text: "Don't Save"
-					width: 59
 					action: function() {
 						dialog.close();
 						onDone();
 					}
-					layoutInfo: nodeConstraints(new CC().tag( "no" ))
+					layoutInfo: nodeConstraints(new CC().tag( "no" ).width("60!"))
 				}
 			]
 			

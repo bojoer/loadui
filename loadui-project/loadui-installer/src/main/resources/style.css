@@ -167,3 +167,26 @@
 .menubar-button:armed {
 	-fx-background-color: #666666;
 }
+
+.dialog-button {
+	-fx-outer-border: #d7d7d7;
+	-fx-inner-border: linear (0%,0%) to (0%,100%) stops (0%, #ffffff) (100%, #e7e7e7);
+	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, rgba(0,0,0,0)) (46%, rgba(0,0,0,0)) (54%, rgba(0,0,0,0.1)) (100%, rgba(0,0,0,0.3));
+	
+	-fx-padding: 4 3 3 3;
+    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 6, 6, 5;
+    -fx-background-insets: 0, 1, 1 0 0 2;
+	-fx-font: 10pt "Amble Cn";
+	-fx-text-fill: #707070;
+}
+
+.dialog-button:focused {
+    -fx-background-color: #1d9dfc, -fx-inner-border, -fx-body-color;
+	-fx-background-radius: 8, 6, 5;
+    -fx-background-insets: -0.8, 1, 1 0 0 2;
+}
+
+.dialog-button:armed  {
+	-fx-inner-border: linear (0%,0%) to (0%,100%) stops (0%, #23a8fa) (100%, #038adf);
+}

@@ -116,11 +116,7 @@ public class CreateNewAgentDialog {
 	
 	def msgDialog: Dialog = Dialog {
 		title: ""
-		okText: "Ok"	
-		onOk: function() {
-			msgDialog.close();
-			dialog.requestDefaultFocus();
-		}
+		okText: "Ok"
 		noCancel: true
 		width : 410
 		height : 150
@@ -133,10 +129,6 @@ public class CreateNewAgentDialog {
 			Text { content: "No Agent detected at specified address, add anyway?" }
 		]
 		okText: "Ok"	
-		onCancel: function(){
-			confirmDialog.close();
-			dialog.requestDefaultFocus();
-		}
 		onOk: function(){
 			log.debug( "Creating new Agent: '\{\}'  with URL: '\{\}'", agentName.value, agentUrl.value );
 			workspace.createAgent(agentUrl.value as String, agentName.value as String);
