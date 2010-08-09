@@ -47,17 +47,21 @@ public mixin class TooltipHolder extends BaseMixin {
 	
 	init {
 		(this as BaseNode).addMouseHandler( MOUSE_ENTERED, function( e:MouseEvent ):Void {
-			def bounds = (this as BaseNode).localToScene((this as BaseNode).boundsInLocal);
-			label.layoutX = bounds.minX;
-			label.layoutY = bounds.minY;
-			label.width = bounds.width;
-			label.height = bounds.height;
-			insert label into BaseNode.overlay.content;
-			label.tooltip.activate();
+			if( tooltip != null ) {
+				def bounds = (this as BaseNode).localToScene((this as BaseNode).boundsInLocal);
+				label.layoutX = bounds.minX;
+				label.layoutY = bounds.minY;
+				label.width = bounds.width;
+				label.height = bounds.height;
+				insert label into BaseNode.overlay.content;
+				label.tooltip.activate();
+			}
 		} );
 		(this as BaseNode).addMouseHandler( MOUSE_EXITED, function( e:MouseEvent ):Void {
-			label.tooltip.deactivate();
-			delete label from BaseNode.overlay.content;
+			if( label.tooltip.activated ) {
+				label.tooltip.deactivate();
+				delete label from BaseNode.overlay.content;
+			}
 		} );
 	}
 }
