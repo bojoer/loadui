@@ -25,55 +25,9 @@ import com.eviware.loadui.fx.ui.node.BaseMixin;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.BaseNode.*;
 
-import javafx.scene.Group;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextOrigin;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.paint.Color;
 import javafx.scene.control.Label;
-import javafx.animation.Timeline;
-import javafx.animation.KeyFrame;
-import javafx.util.Math;
-
-function getTextNode( label:String ) {
-	Label {
-		layoutX: 4
-		layoutY: 4
-		textWrap: true
-		text: label
-	}
-}
-
-def rectNode = Rectangle {
-	fill: Color.WHITE
-	stroke: Color.BLACK
-	layoutX: 0.5
-	layoutY: 0.5
-}
-def tooltipNode = Group {
-	content: rectNode
-}
-
-var x:Number;
-var y:Number;
-
-def appear = Timeline {
-	keyFrames: [
-		KeyFrame { time: 0s, values: tooltipNode.opacity => 0 },
-		KeyFrame { time: 0.5s, values: tooltipNode.opacity => 0, action: function() {
-			tooltipNode.layoutX = Math.min( tooltipNode.scene.width - rectNode.width, x );
-			tooltipNode.layoutY = Math.min( tooltipNode.scene.height - rectNode.height, y + 18 );
-			tooltipNode.toFront();
-		} },
-		KeyFrame { time: 1s, values: tooltipNode.opacity => 1 }
-	]
-}
-
-/**
- * The currently displayed tooltip belongs to this TooltipHolder.
- */
-public-read var currentHolder:TooltipHolder;
+import javafx.scene.control.Tooltip;
 
 /**
  * Mixin class for giving BaseNodes a tooltip which is displayed when the user hovers the mouse cursor over the node.
@@ -86,48 +40,24 @@ public mixin class TooltipHolder extends BaseMixin {
 	 */
 	public var tooltip:String;
 	
+	def label:Label = Label {
+		tooltip: Tooltip { text: bind tooltip }
+		managed: false
+	};
+	
 	init {
-		(this as BaseNode).addMouseHandler( MOUSE_ENTERED, function( e:MouseEvent ) {
-			if( not e.primaryButtonDown )
-				showTooltip( e );
+		(this as BaseNode).addMouseHandler( MOUSE_ENTERED, function( e:MouseEvent ):Void {
+			def bounds = (this as BaseNode).localToScene((this as BaseNode).boundsInLocal);
+			label.layoutX = bounds.minX;
+			label.layoutY = bounds.minY;
+			label.width = bounds.width;
+			label.height = bounds.height;
+			insert label into BaseNode.overlay.content;
+			label.tooltip.activate();
 		} );
-		(this as BaseNode).addMouseHandler( MOUSE_EXITED, hideTooltip );
-		(this as BaseNode).addMouseHandler( MOUSE_PRESSED, hideTooltip );
-		(this as BaseNode).addMouseHandler( MOUSE_MOVED, function( e:MouseEvent ):Void {
-			x = e.sceneX;
-			y = e.sceneY;
+		(this as BaseNode).addMouseHandler( MOUSE_EXITED, function( e:MouseEvent ):Void {
+			label.tooltip.deactivate();
+			delete label from BaseNode.overlay.content;
 		} );
-	}
-	
-	function hideTooltip( e:MouseEvent ) {
-		if( currentHolder == this ) {
-			currentHolder = null;
-			delete tooltipNode from BaseNode.overlay.content;
-		}
-	}
-	
-	function showTooltip( e:MouseEvent ) {
-		if( tooltip == null or tooltip == "" or currentHolder == this )
-			return;
-		
-		if( currentHolder != null ) {
-			delete tooltipNode from BaseNode.overlay.content;
-		} else {
-			appear.playFromStart();
-		}
-		
-		def textNode = getTextNode( tooltip );
-		rectNode.width = textNode.getPrefWidth(-1) + 6;
-		rectNode.height = textNode.getPrefHeight(-1) + 6;
-		tooltipNode.content = [ rectNode, textNode ];
-		
-		currentHolder = this;
-		
-		insert tooltipNode into BaseNode.overlay.content;
-		
-		//FX.deferAction( function():Void {
-			//rectNode.width = textNode.getPrefWidth(-1) + 6;
-			//rectNode.height = textNode.getPrefHeight(-1) + 6;
-		//} );
 	}
 }
