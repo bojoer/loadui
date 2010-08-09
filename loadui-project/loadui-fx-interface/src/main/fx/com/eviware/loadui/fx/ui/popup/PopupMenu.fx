@@ -50,7 +50,7 @@ var openMenus:PopupMenu[] = [] on replace oldVal {
 	if( sizeof openMenus == 0 ) {
 		delete menuGroup from overlay.content;
 	} else if( sizeof oldVal == 0 ) {
-		insert menuGroup into overlay.content;
+		insert menuGroup into overlay.content;;
 	}
 };
 
@@ -66,7 +66,7 @@ def modalLayer = Rectangle {
 	}
 }
 
-def menuGroup = Group { content: modalLayer };
+def menuGroup = Group { id:"popupMenuGroup", content: modalLayer };
 
 /**
  * Closes all open PopupMenus.
@@ -93,6 +93,8 @@ public class PopupMenu extends CustomNode {
 	public var onOpen: function():Void;
 	
 	public var minWidth: Number = 0;
+	
+	def dummy = Group{};
 	
 	def rvbox = ResizingVBox {
 		layoutX: 5
@@ -136,6 +138,7 @@ public class PopupMenu extends CustomNode {
 	 */
 	public function open() {
 		if( not isOpen ) {
+			insert dummy into overlay.content;
 			onOpen();
 			isOpen = true;
 			insert this into openMenus;
@@ -151,6 +154,7 @@ public class PopupMenu extends CustomNode {
 			while( topMenu != this )
 				topMenu.close();
 			delete this from openMenus;
+			delete dummy from overlay.content;
 			isOpen = false;
 			if( MenuItem.selectedMenuItem.menu == this )
 				MenuItem.selectedMenuItem = null;
