@@ -34,6 +34,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
@@ -72,7 +73,7 @@ public var overlay: Group = null;
  * 
  * @author dain.nilsson
 */
-public class Dialog extends FocusChangeListener{
+public class Dialog {
 	 /**
 	 * Whether to make the dialog modal or not.
 	 */ 
@@ -146,13 +147,13 @@ public class Dialog extends FocusChangeListener{
 	
 	public-init var height: Integer = -1;
 	
-	public-init var extraButtons:ActionButton[];
+	public-init var extraButtons:Button[];
 	
 	var modalLayer:Node;
 	var panel:Node;
 	
-	var okButton: ActionButton;
-	var cancelButton: ActionButton;
+	var okButton: Button;
+	var cancelButton: Button;
 
 	def target: XMigLayout = XMigLayout {
 		layoutX: 20
@@ -196,33 +197,28 @@ public class Dialog extends FocusChangeListener{
 			blocksMouse: bind modal
 		}
 		
-		var dialogButtons: ActionButton[] = [];
+		var dialogButtons: Node[] = [] on replace {
+			for( button in dialogButtons ) button.styleClass = "dialog-button";			
+		}
 
 		if( not noCancel ) {
-			cancelButton = ActionButton {
+			cancelButton = Button {
 				translateX: - 19
 				translateY: bind if(stripeVisible == true) - 43 else - 38
 				text: cancelText
 				action: function() { onCancel() }
 				width: 59
-				layoutInfo: nodeConstraints(new CC().tag( "cancel" ))
-				focusChangeListener: this
-				prevFocus: if(not noOk) okButton else lastFocusable()
-				nextFocus: firstFocusable()
+				layoutInfo: nodeConstraints(new CC().tag( "cancel" ).width("60!"))
 			}
 			insert cancelButton into dialogButtons;
 		}	
 		if( not noOk ) {
-			okButton = ActionButton {
+			okButton = Button {
 				translateX: - 19
 				translateY: bind if(stripeVisible == true) - 43 else - 38
 				text: okText
-				width: 59
 				action: function() { onOk() }
-				layoutInfo: nodeConstraints(new CC().tag( "ok" ))
-				focusChangeListener: this
-				prevFocus: lastFocusable()
-				nextFocus: if(not noCancel) cancelButton else firstFocusable()
+				layoutInfo: nodeConstraints(new CC().tag( "ok" ).width("60!"))
 			}
 			insert okButton into dialogButtons;
 		}
@@ -231,8 +227,9 @@ public class Dialog extends FocusChangeListener{
 		
 		var titlebarPanel:TitlebarPanel;
 		panel = MovableNode {
-		    layoutX: x
-		    layoutY: y
+			//styleClass: "dialog"
+			layoutX: x
+			layoutY: y
 			useOverlay: false
 			containment: sceneBounds
 			
@@ -267,7 +264,7 @@ public class Dialog extends FocusChangeListener{
 									}
 									dialogButtons
 								]
-							}							
+							}
 						]
 						titlebarContent: [
 							titleText = Text {
@@ -340,7 +337,7 @@ public class Dialog extends FocusChangeListener{
 		insert panel into overlay.content;
 		
 		if( okButton != null )
-		okButton.requestFocus();
+			okButton.requestFocus();
 	}
 	
 	 /**
@@ -351,283 +348,4 @@ public class Dialog extends FocusChangeListener{
 		delete modalLayer from overlay.content;
 		onClose();
 	}
-	
-	override function focusGained(node: Node){
-		if(node == okButton){
-			okButton.prevFocus = lastFocusable();
-			if(not noCancel){
-				okButton.nextFocus = cancelButton;
-			}
-			else{
-				okButton.nextFocus = firstFocusable();
-			}
-		}
-		else if(node == cancelButton){
-			cancelButton.nextFocus = firstFocusable();
-			if(not noOk){
-				cancelButton.prevFocus = okButton;
-			}
-			else{
-				cancelButton.prevFocus = lastFocusable();
-			}		
-		} 
-	}
-	
-	function firstFocusable(): Node {
-		for(n in content){
-			def node: Node = n as Node;
-			if(node instanceof TabPanel){
-				var tabContent: Node = (node as TabPanel).selected.content;
-				if(tabContent instanceof Form){
-					for(item in (tabContent as Form).formContent){
-						if(item.fields.size()>0){
-							return item.fields.get(0) as Node; 
-						}
-					}
-				}
-			}
-			else if(node.visible){
-				if(node instanceof Form){
-					return findFirstInForm(node as Form);
-				}
-			}
-		}
-		if(not noOk){
-			return okButton;
-		}
-		else{
-			return null;
-		}
-	}
-	
-	function lastFocusable(): Node {
-		for(i in [content.size()-1..0 step -1]){
-			def node: Node = content.get(i) as Node;
-			if(node instanceof TabPanel){
-				var tabContent: Node = (node as TabPanel).selected.content;
-				if(tabContent instanceof Form){
-					for(j in [(tabContent as Form).formContent.size()-1..0 step -1]){
-						def item = (tabContent as Form).formContent.get(j);
-						if(item.fields.size() > 0){
-							return item.fields.get(item.fields.size() - 1) as Node; 
-						}
-					}
-				}
-			}
-			else if(node.visible){
-				if(node instanceof Form){
-					return findLastInForm(node as Form);
-				}
-			}
-		}
-		if(not noCancel){
-			return cancelButton;
-		}
-		else{
-			return null;
-		}
-	}
-	
-	function findFirstInForm(form: Form): Node {
-		for(item in form.formContent){
-			if(item.fields.size()>0){
-				return item.fields.get(0) as Node; 
-			}
-		}
-		return null;
-	}
-	
-	function findLastInForm(form: Form): Node {
-		for(j in [form.formContent.size()-1..0 step -1]){
-			def item = form.formContent.get(j);
-			if(item.fields.size() > 0){
-				return item.fields.get(item.fields.size() - 1) as Node; 
-			}
-		}
-		return null;
-	}
-	
-	public function requestDefaultFocus(){
-		if(not noOk and okButton != null){
-			okButton.requestFocus();
-		}
-		else if(not noCancel and cancelButton != null){
-			cancelButton.requestFocus();
-		}
-	}
 }
-
-public class ActionButton extends CustomNode {
-	
-	public var text: String;
-	public var action: function();
-	public var width: Integer = -1;
-	
-	public var selected: Boolean = false;
-	var left: ImageView;
-	var middle: ImageView;
-	var right: ImageView;
-	var content: Group;
-	var label: Text;
-	
-	public var prevFocus: Node;
-	public var nextFocus: Node;
-	
-	public var focusChangeListener: FocusChangeListener;
-	
-	init{
-		focusTraversable = true;
-	}
-	
-	var contentNormal = Group {
-		content: [
-			left = ImageView {
-				layoutX: 0
-				layoutY: 0
-				image: Image {
-					url: "{__ROOT__}images/png/dialog-button-left.png"
-				}
-			}, 
-			middle = ImageView {
-				layoutY:0
-				layoutX: left.layoutBounds.width
-				scaleX: bind if(width > - 1) width - 12 else label.layoutBounds.width + 14
-				translateX: bind if(width > - 1) (width - 12) / 2 else (label.layoutBounds.width + 14) / 2 - .5
-				image: Image {
-					url: "{__ROOT__}images/png/dialog-button-middle-1px.png"
-				}
-			}, 
-			right = ImageView {
-				layoutY: 0
-				layoutX: bind middle.boundsInParent.width + left.layoutBounds.width - 1
-				image: Image {
-					url: "{__ROOT__}images/png/dialog-button-right.png"
-				}
-			}, 
-			label = Text {
-				layoutX: bind if(width > - 1) (width - label.layoutBounds.width) / 2 + 1 else middle.boundsInParent.minX + 8
-				layoutY: 14
-				content: text
-				font: Font.font("Arial", 9)
-				fill: Color.web("#707070")
-			}
-			Rectangle{
-				layoutX: 1
-				layoutY: 1
-				width: bind width - 2
-				height: bind middle.layoutBounds.height - 2
-				fill: Color.TRANSPARENT
-				strokeWidth: 2.0
-				stroke: Color.web("#1d9dfc")
-				arcHeight: 12
-				arcWidth: 12
-				visible: bind focused
-			}
-		]
-	}
-	
-	var contentActive = Group {
-		content: [
-			left = ImageView {
-				layoutX: 0
-				layoutY: 0
-				image: Image {
-					url: "{__ROOT__}images/png/dialog-button-active-left.png"
-				}
-			}, 
-			middle = ImageView {
-				layoutY:0
-				layoutX: left.layoutBounds.width
-				scaleX: bind if(width > - 1) width - 12 else label.layoutBounds.width + 14
-				translateX: bind if(width > - 1) (width - 12) / 2 else (label.layoutBounds.width + 14) / 2 - .5
-				image: Image {
-					url: "{__ROOT__}images/png/dialog-button-active-middle-1px.png"
-				}
-			}, 
-			right = ImageView {
-				layoutY:0
-				layoutX: bind middle.boundsInParent.width + left.layoutBounds.width - 1
-				image: Image {
-					url: "{__ROOT__}images/png/dialog-button-active-right.png"
-				}
-			}, 
-			label = Text {
-				layoutX: bind if(width > - 1) (width - label.layoutBounds.width) / 2 + 1 else middle.boundsInParent.minX + 8
-				layoutY: 14
-				content: text
-				font: Font.font("Arial", 9)
-				fill: Color.web("#707070")
-			}
-			Rectangle{
-				layoutX: 1
-				layoutY: 1
-				width: bind width - 2
-				height: bind middle.layoutBounds.height - 2
-				fill: Color.TRANSPARENT
-				strokeWidth: 2.0
-				stroke: Color.web("#1d9dfc")
-				arcHeight: 12
-				arcWidth: 12
-				visible: bind focused
-			}
-		]
-	}
-	
-	override public function create():Node {
-		Group {
-			content: bind if (selected) contentActive else contentNormal
-		}
-	}
-	
-	override public var onMousePressed = function(e) {
-		 //action(); 
-		selected = true;
-		requestFocus();
-	}
-	
-	override public var onMouseReleased = function(e) {
-		if( hover ) {
-			action();
-			//selected = true;
-		} 
-		else {
-			//selected = false;
-		}
-		selected = false;
-	}
-	
-	override public var onKeyPressed = function(e: KeyEvent) {
-		if( e.code == KeyCode.VK_SPACE) {
-			selected = true;
-		}
-		else if(not e.shiftDown and e.code == KeyCode.VK_TAB) {
-			if(nextFocus != null){
-				nextFocus.requestFocus();
-			}
-		}
-		else if( e.shiftDown and e.code == KeyCode.VK_TAB) {
-			if(prevFocus != null){
-				prevFocus.requestFocus();
-			}
-		}  
-	}
-	
-	override public var onKeyReleased = function(e: KeyEvent) {
-		if( e.code == KeyCode.VK_ENTER) {
-			action();
-		}
-	}
-	
-	var f: Boolean = bind focused on replace {
-		if(focusChangeListener != null){
-			if(focused){
-				focusChangeListener.focusGained(this);
-			}
-			else{
-				focusChangeListener.focusLost(this);
-			}
-		}
-	}
-}
-
-
