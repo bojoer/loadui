@@ -46,13 +46,14 @@ import java.lang.RuntimeException;
 public var overlay:Group;
 
 var openMenus:PopupMenu[] = [] on replace oldVal {
+	menuGroup.content = [ modalLayer, openMenus ];
 	if( sizeof openMenus == 0 ) {
 		delete menuGroup from overlay.content;
 	} else if( sizeof oldVal == 0 ) {
 		insert menuGroup into overlay.content;
 	}
 };
-def menuGroup = Group { id: "popupMenuGroup", content: bind [ modalLayer, openMenus ] };
+
 package def topMenu = bind openMenus[ sizeof openMenus - 1];
 
 def modalLayer = Rectangle {
@@ -64,6 +65,8 @@ def modalLayer = Rectangle {
 		closeAll();
 	}
 }
+
+def menuGroup = Group { content: modalLayer };
 
 /**
  * Closes all open PopupMenus.
@@ -135,9 +138,7 @@ public class PopupMenu extends CustomNode {
 		if( not isOpen ) {
 			onOpen();
 			isOpen = true;
-			def dummyNode = Rectangle {};
 			insert this into openMenus;
-			insert dummyNode into overlay.content;
 			requestFocus();
 		}
 	}
