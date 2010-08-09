@@ -119,7 +119,7 @@ chartModel.addSerie('AvgTPS', enableAvgTPS.value)
 chartModel.addSerie('AvgBPS', enableAvgBPS.value)
 chartModel.addSerie('Percentile', enablePercentile.value)
 chartModel.addSerie('AvgResponseSize', enableAvgResponseSize.value)
-chartModel.legendColumns = 4
+chartModel.legendColumns = 3
 
 timeStats = new ValueStatistics( period.value * 60000 )
 byteStats = new ValueStatistics( period.value * 60000 )
