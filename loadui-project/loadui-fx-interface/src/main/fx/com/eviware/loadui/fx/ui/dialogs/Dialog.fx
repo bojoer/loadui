@@ -227,7 +227,6 @@ public class Dialog {
 		
 		var titlebarPanel:TitlebarPanel;
 		panel = MovableNode {
-			//styleClass: "dialog"
 			layoutX: x
 			layoutY: y
 			useOverlay: false
@@ -329,12 +328,15 @@ public class Dialog {
 		show();
 	}
 	
+	def dummy = Group {};
+	
 	 /**
 	 * Displays the Dialog.
 	 */ 
 	public function show() {
 		insert modalLayer into overlay.content;
 		insert panel into overlay.content;
+		insert dummy into overlay.content;
 		
 		if( okButton != null )
 			okButton.requestFocus();
@@ -346,6 +348,7 @@ public class Dialog {
 	public function close():Void {
 		delete panel from overlay.content;
 		delete modalLayer from overlay.content;
+		delete dummy from overlay.content;
 		onClose();
 	}
 }
