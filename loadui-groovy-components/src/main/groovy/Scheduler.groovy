@@ -1,3 +1,8 @@
+import java.util.Calendar;
+
+import java.util.Calendar;
+import java.util.Date;
+
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -70,9 +75,6 @@ def stopMessage = newMessage()
 stopMessage[TriggerCategory.ENABLED_MESSAGE_PARAM] = false
 sendStop = { send( outputTerminal, stopMessage ) }
 
-def endFuture = null
-def executor = ScheduledExecutor.instance
-
 def counter = 0
 def durationHolder = 0
 def repeatHolder = 0
@@ -81,124 +83,152 @@ def scheduler = new StdSchedulerFactory().getScheduler()
 scheduler.addJobListener(new JobListenerSupport()
 {
 	String getName(){
-		"jobListener"
+		"startJobListener"
 	}
 	void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
 		sendStart()
-		setDuration()
+		scheduleEndTrigger()
 		counter++
-		println("------ counter ${counter}")
 		if(repeatHolder > -1 && counter >= repeatHolder){
-			unschedule()
+			unscheduleStartTrigger()
 		}
 	}
 })
-
-setDuration = {
-	endFuture?.cancel( true )
-	if(durationHolder > -1){
-		endFuture = executor.schedule( sendStop, durationHolder, TimeUnit.MILLISECONDS )
-		println("-----duration (seconds) ${durationHolder/1000}")
+scheduler.addJobListener(new JobListenerSupport()
+{
+	String getName(){
+		"endJobListener"
 	}
-	else{
-		println("-----duration INFINITE")
+	void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
+		sendStop()
+		unscheduleEndTrigger()
 	}
-}
+})
 
 def paused = false
 
-def trigger = null
 class SchedulerJob implements Job {
 	void execute(JobExecutionContext context) throws JobExecutionException {}
 }
-def job = new JobDetail("job1", "group1", SchedulerJob.class)
-job.addJobListener("jobListener")
+
+def startTrigger = null
+def startJob = new JobDetail("startJob", "group", SchedulerJob.class)
+startJob.addJobListener("startJobListener")
+
+def endTrigger = null
+def endJob = new JobDetail("endJob", "group", SchedulerJob.class)
+endJob.addJobListener("endJobListener")
 
 addEventListener( ActionEvent ) { event ->
 	if( event.key == CanvasItem.START_ACTION) {
-		if(paused) 
-			scheduler?.resumeJob("job1", "group1")
-		else{
-			setScheduler()
-			scheduler?.start()
+		if(!paused){ 
+			scheduleStartTrigger()
 		}
+		scheduler?.start()
 		paused = false
-		println("-----START")
 	}
 	else if( event.key == CanvasItem.STOP_ACTION) {
-		scheduler?.pauseJob("job1", "group1")
+		scheduler?.standby()
 		paused = true
-		println("-----STOP")
 	}
 	else if( event.key == CanvasItem.COMPLETE_ACTION) {
 		counter = 0
 		paused = false
-		unschedule()
-		println("-----COMPLETE")
+		unscheduleStartTrigger()
+		unscheduleEndTrigger()
 	}
 	else if(event.key == CounterHolder.COUNTER_RESET_ACTION){
-		println("-----RESET")
 		paused = false
-		unschedule()
+		unscheduleStartTrigger()
+		unscheduleEndTrigger()
+		scheduleStartTrigger()
+		scheduler?.start()
 		counter = 0
 	}
 }
 
-addEventListener( PropertyEvent ) { event ->
-	if( event.property in [ day, hour, minute, second, duration, unit, repeatCount ] ) {
-		//if( !canvas.running ) setScheduler()
-	}
-}
+//addEventListener( PropertyEvent ) { event ->
+//	if( event.property in [ day, hour, minute, second, duration, unit, repeatCount ] ) {
+		//if( !canvas.running ) scheduleStartTrigger()
+//	}
+//}
 
-setScheduler = {
-	def triggerPattern = ""
+scheduleStartTrigger = {
+	def startTriggerPattern = ""
 	if(second.value == -1){
-		triggerPattern += "* "
+		startTriggerPattern += "* "
 	}
 	else{
-		triggerPattern += "${second.value} "
+		startTriggerPattern += "${second.value} "
 	}
 	if(minute.value == -1){
-		triggerPattern += "* "
+		startTriggerPattern += "* "
 	}
 	else{
-		triggerPattern += "${minute.value} "
+		startTriggerPattern += "${minute.value} "
 	}
 	if(hour.value == -1){
-		triggerPattern += "* "
+		startTriggerPattern += "* "
 	}
 	else{
-		triggerPattern += "${hour.value} "
+		startTriggerPattern += "${hour.value} "
 	}
-	triggerPattern += "? * "
+	startTriggerPattern += "? * "
 	if(day.value.equals("Every day")){
-		triggerPattern += "* "
+		startTriggerPattern += "* "
 	}
 	else{
-		triggerPattern += "${day.value.substring(0,3).toUpperCase()} "
+		startTriggerPattern += "${day.value.substring(0,3).toUpperCase()} "
 	}
 	
-	println("------ quartz pattern ${triggerPattern}")
-	
-	unschedule()
-	scheduler.addJob(job, true)
-	trigger = new CronTrigger("trigger1", "group1", "job1", "group1", triggerPattern)
-	scheduler.scheduleJob(trigger)
+	unscheduleStartTrigger()
+	scheduler.addJob(startJob, true)
+	startTrigger = new CronTrigger("startTrigger", "group", "startJob", "group", startTriggerPattern)
+	scheduler.scheduleJob(startTrigger)
 	
 	repeatHolder = repeatCount.value
-	def mul = 1000
-	if(unit.value.equals("Min")){
-		mul *= 60
-	}
-	else if(unit.value.equals("Hour")){
-		mul *= 3600
-	}
-	durationHolder = duration.value * mul
+	durationHolder = duration.value
 }
 
-unschedule = {
+unscheduleStartTrigger = {
 	try{
-		scheduler.unscheduleJob("trigger1", "group1")
+		scheduler.unscheduleJob("startTrigger", "group")
+	}
+	catch(Exception e){}
+}
+
+scheduleEndTrigger = {
+	if(durationHolder > -1){
+		def calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		if(unit.value.equals("Sec")){
+			calendar.add(Calendar.SECOND, (int)durationHolder)
+		}
+		else if(unit.value.equals("Min")){
+			calendar.add(Calendar.MINUTE, (int)durationHolder)
+		}
+		else if(unit.value.equals("Hour")){
+			calendar.add(Calendar.HOUR, (int)durationHolder)
+		}
+		def endTriggerPattern = ""
+		endTriggerPattern += "${calendar.get(Calendar.SECOND)} "
+		endTriggerPattern += "${calendar.get(Calendar.MINUTE)} "
+		endTriggerPattern += "${calendar.get(Calendar.HOUR_OF_DAY)} "
+		endTriggerPattern += "${calendar.get(Calendar.DAY_OF_MONTH)} "
+		endTriggerPattern += "${calendar.get(Calendar.MONTH) + 1} "
+		endTriggerPattern += "? "
+		endTriggerPattern += "${calendar.get(Calendar.YEAR)} "
+		
+		unscheduleEndTrigger()
+		scheduler.addJob(endJob, true)
+		endTrigger = new CronTrigger("endTrigger", "group", "endJob", "group", endTriggerPattern)
+		scheduler.scheduleJob(endTrigger)
+	}
+}
+
+unscheduleEndTrigger = {
+	try{
+		scheduler.unscheduleJob("endTrigger", "group")
 	}
 	catch(Exception e){}
 }
@@ -209,8 +239,6 @@ onRelease = {
 
 cancelAll = {
 	scheduler.shutdown()
-	endFuture?.cancel( true )
-	endFuture = null
 }
 
 layout() {
@@ -225,5 +253,3 @@ layout() {
 	separator( vertical: true )
     property( property: repeatCount, label: 'Repeat', min: -1)
 }
-
-//setScheduler()
