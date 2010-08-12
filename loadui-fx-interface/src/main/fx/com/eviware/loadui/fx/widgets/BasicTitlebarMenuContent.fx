@@ -27,13 +27,17 @@ import javafx.scene.Group;
 import javafx.scene.layout.Resizable;
 import javafx.scene.layout.Container;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Panel;
+import javafx.scene.layout.LayoutInfo;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
-import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.geometry.Insets;
 import javafx.util.Math;
+
+import com.javafx.preview.control.MenuButton;
 
 import com.eviware.loadui.fx.ui.popup.Menu;
 import com.eviware.loadui.fx.ui.popup.MenuItem;
@@ -42,30 +46,31 @@ import com.eviware.loadui.fx.ui.resources.MenuArrow;
 
 import com.eviware.loadui.fx.FxUtils;
 
-public class BasicTitlebarMenuContent extends Container {
+public class BasicTitlebarMenuContent extends HBox {
 
 	public-init var hasLed = true;
-
 	public var enabled = false;
 	
 	public var label:String;
 	public var tooltip:String;
 	
-	public var menuItems:MenuItem[];
+	public var menuItems:Node[] on replace {
+		menuNode.items = menuItems;
+	}
 	
 	public var buttons:Node[];
 	
-	var menuNode:Node;
+	override var layoutInfo = LayoutInfo { height: 30 };
+	override var padding = Insets { left: 5 };
+	override var nodeVPos = VPos.CENTER;
+	override var spacing = 3;
+	
+	var menuNode:MenuButton;
 	var buttonsNode:Container;
 	var menuContent:Node;
-	var menu:PopupMenu;
 	var led:Circle;
-	var labelNode:Label;
-	var arrowNode:Node;
-	
-	override var height = 30;
 
-	postinit {
+	init {
 		content = [
 			led = if( hasLed ) Circle {
 				radius: 4
@@ -73,55 +78,15 @@ public class BasicTitlebarMenuContent extends Container {
 				fill: bind if( enabled ) Color.RED else Color.GRAY
 				strokeWidth: 2
 				stroke: Color.BLACK
-			} else null, menuNode = Menu {
-				tooltip: bind if(FX.isInitialized(tooltip)) tooltip else label
-				layoutX: if( hasLed ) 22 else 12
-				contentNode: Group {
-					content: [
-						labelNode = Label {
-							textFill: bind if( menu.isOpen ) Color.WHITE else Color.web("#303030")
-							text: bind label.toUpperCase()
-							vpos: VPos.CENTER
-							textWrap: false
-						}, arrowNode = MenuArrow {
-							fill: bind if( menu.isOpen ) Color.WHITE else Color.web("#303030")
-							rotate: 90
-							layoutY: bind labelNode.height / 2
-							layoutX: bind if( FxUtils.shouldApplyMacFix() ) labelNode.width + 15 else labelNode.width + 5
-						}, Rectangle {
-							width: bind labelNode.width + arrowNode.layoutBounds.width + 11
-							height: bind labelNode.height + 6
-							layoutX: -3
-							layoutY: -3
-							fill: Color.TRANSPARENT
-						}
-					]
-				}
-				menu: menu = PopupMenu {
-					items: bind menuItems
-				}
+			} else null, menuNode = MenuButton {
+				styleClass: bind if( menuNode.showing ) "menu-button-showing" else "menu-button"
+				text: bind label.toUpperCase();
+				items: menuItems
+				tooltip: Tooltip { text: bind if(FX.isInitialized(tooltip)) tooltip else label }
 			}, buttonsNode = HBox {
 				content: bind buttons
 			}
 		];
 		requestLayout();
-	}
-
-	override function doLayout():Void {
-		buttonsNode.width = buttonsNode.getPrefWidth( -1 );
-		buttonsNode.height = buttonsNode.getPrefHeight( -1 );
-		buttonsNode.layoutX = width - buttonsNode.width;
-		buttonsNode.layoutY = ( height - buttonsNode.height ) / 2;
-		led.layoutY = height / 2;
-		labelNode.width = Math.min( labelNode.getPrefWidth( labelNode.height ), width - ( buttonsNode.width + 40 ) );
-		menuNode.layoutY = ( height - labelNode.height ) / 2;
-	}
-	
-	override function getPrefHeight( width:Float ) {
-		Math.max(Math.max( menuNode.layoutBounds.height, buttonsNode.getPrefHeight( width ) ), 30)
-	}
-	
-	override function getPrefWidth( height:Float ) {
-		30 + labelNode.getPrefWidth( height ) + buttonsNode.getPrefWidth( height )
 	}
 }

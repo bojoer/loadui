@@ -35,6 +35,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Separator;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -53,6 +54,9 @@ import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 
+import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.PopupMenu;
+
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.ui.pagelist.PagelistControl;
@@ -69,9 +73,6 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.Assignment;
 import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
-
-import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
 
 import com.eviware.loadui.fx.agents.discovery.AgentDiscoverer;
 import com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog;
@@ -291,23 +292,24 @@ public class AgentInspectorPanel extends CustomNode, TestCaseIconListener, Resiz
 		
 		def panelHeight = 325;
 		
-		def popup = PopupMenu {};
-		popup.items = [
-			ActionMenuItem {
-				text: "Detect Agents"
-				action: function() {
-					AgentDiscovererDialog{}.show();
+		def popup = PopupMenu {
+			items: [
+				MenuItem {
+					text: "Detect Agents"
+					action: function() {
+						AgentDiscovererDialog{}.show();
+					}
 				}
-			}
-			SeparatorMenuItem{}
-			ActionMenuItem {
-				text: "New Agent"
-				action: function() {
-					CreateNewAgentDialog{ workspace: workspace };
+				Separator{}
+				MenuItem {
+					text: "New Agent"
+					action: function() {
+						CreateNewAgentDialog{ workspace: workspace };
+					}
 				}
-			}
-		];
-							
+			]
+		};
+		
 		var panel: Group = Group {
 			layoutX: 0
 			layoutY: 0
@@ -329,16 +331,12 @@ public class AgentInspectorPanel extends CustomNode, TestCaseIconListener, Resiz
 					rightArrowInactive: "{__ROOT__}images/rightarrow_inactive_nontransparent.fxz";
 					onMousePressed: function(e: MouseEvent){
 						if(e.popupTrigger){
-							popup.layoutX = e.sceneX;
-							popup.layoutY = e.sceneY;
-							popup.open();
+							popup.show( pagelist, e.screenX, e.screenY );
 						}
 					}
 					onMouseReleased: function(e: MouseEvent){
 						if(e.popupTrigger){
-							popup.layoutX = e.sceneX;
-							popup.layoutY = e.sceneY;
-							popup.open();
+							popup.show( pagelist, e.screenX, e.screenY );
 						}
 					}
 				}
@@ -424,6 +422,7 @@ public class AgentInspectorPanel extends CustomNode, TestCaseIconListener, Resiz
 					layoutY: bind panelHeight - 50 - ghostAgent.layoutBounds.height
 			    	ghostAgent: true
 			    }
+			    popup
 			]
 		}
 		VBox {

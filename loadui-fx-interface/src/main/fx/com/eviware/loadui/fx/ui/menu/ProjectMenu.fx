@@ -42,7 +42,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.Separator;
 import javafx.scene.input.MouseEvent;
+
+import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.MenuButton;
 
 import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.AppState;
@@ -51,11 +55,6 @@ import com.eviware.loadui.fx.dialogs.*;
 import com.eviware.loadui.fx.ui.menu.button.*;
 import com.eviware.loadui.fx.widgets.TrashHole;
 import com.eviware.loadui.fx.FxUtils.*;
-import com.eviware.loadui.fx.ui.popup.Menu;
-import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
-import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
-import com.eviware.loadui.fx.ui.popup.SubMenuItem;
 import com.eviware.loadui.fx.ui.resources.Paints;
 import com.eviware.loadui.fx.ui.resources.MenuArrow;
 import com.eviware.loadui.fx.widgets.RunController;
@@ -115,11 +114,11 @@ public class ProjectMenu extends HBox {
 		height: 70
 	}
 	
-	var popup:PopupMenu;
 	var summaryEnabled = false;
 	
 	init {
-		var menuContent:Node; 
+		var menuContent:Node;
+		var menuButton:MenuButton;
 		
 		content = [
 			ImageView {
@@ -169,36 +168,12 @@ public class ProjectMenu extends HBox {
 						spacing: 3
 						nodeVPos: VPos.CENTER
 						content: [
-							Menu {
-				            contentNode: Group {
-				                content: [
-				                Rectangle {
-				                    width: bind menuContent.boundsInLocal.width + 6
-				                    height: bind menuContent.boundsInLocal.height + 6
-				                    fill: bind projectMenuFill
-				                    blocksMouse: false 
-				                    }, menuContent = HBox {
-				                    layoutX: 3
-				                    layoutY: 3
-				                    nodeVPos: VPos.CENTER
-				                    spacing: 5
-				                    content: [
-					                    Label {
-					                        textFill: bind if( popup.isOpen ) projectMenuOpenedTextFill else projectMenuClosedTextFill
-					                        text: bind projectLabel                        
-					                        font: bind projectMenuOpenedFont
-					                    }
-					                    MenuArrow { 
-					                        fill: bind if( popup.isOpen ) projectMenuOpenedArrowFill else projectMenuClosedArrowFill
-					                        rotate: 90
-					                    }
-				                    ]
-				                }
-				                ]
-				            }
-				            menu: popup = PopupMenu {
-				                items: [
-				                ActionMenuItem {
+							menuButton = MenuButton {
+								styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
+								text: bind projectLabel
+								font: bind projectMenuOpenedFont
+								items: [
+									MenuItem {
 				                    text: "New TestCase"
 				                    action: function() { 
 				                    	if ( MainWindow.instance.projectCanvas.canvasItem instanceof ProjectItem ) {
@@ -206,8 +181,8 @@ public class ProjectMenu extends HBox {
 				                        }
 				                    }
 				                }
-				                SeparatorMenuItem{}
-				                ActionMenuItem {
+				                Separator{}
+				                MenuItem {
 				                    text: "Rename"
 				                    action: function() { 
 				                    	RenameModelItemDialog { 
@@ -217,20 +192,20 @@ public class ProjectMenu extends HBox {
 				                    	projectLabel = project.getLabel();
 				                    }
 				                }
-				                SeparatorMenuItem{}
-				                ActionMenuItem {
+				                Separator{}
+				                MenuItem {
 				                    text: "Settings"
 				                    action: function() {ProjectSettingsDialog{}.show(MainWindow.instance.projectCanvas.canvasItem as ProjectItem); }
 				                }
-				                SeparatorMenuItem{}
-				                ActionMenuItem {
+				                Separator{}
+				                MenuItem {
 				                    text: "Save"
 				                    action: function() {
 				                    	MainWindow.instance.projectCanvas.generateMiniatures(); 
 										project.save();
 				                    }
 				                }
-				                ActionMenuItem {
+				                MenuItem {
 				                    text: "Save As"
 				                    action: function() {
 				                        def chooser = new JFileChooser();
@@ -262,7 +237,7 @@ public class ProjectMenu extends HBox {
 				                        }
 				                    }
 				                }
-				                ActionMenuItem {
+				                MenuItem {
 				                	text: "Save and Close"
 				                	action: function() {
 				                		MainWindow.instance.projectCanvas.generateMiniatures(); 
@@ -270,14 +245,13 @@ public class ProjectMenu extends HBox {
 				                		AppState.instance.displayWorkspace();
 				                	}
 				                }
-				                ActionMenuItem {
+				                MenuItem {
 				                    text: "Close"
 				                    action: function() { 
 				                        AppState.instance.displayWorkspace();
 				                    }
 				                }
-				                ]
-				            }
+								]
 							}, RunController {
 								canvas: bind project
 							}, Label {

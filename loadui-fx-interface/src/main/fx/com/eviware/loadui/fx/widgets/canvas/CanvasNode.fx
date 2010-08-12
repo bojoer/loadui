@@ -31,6 +31,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.Separator;
 import javafx.scene.text.Font;
 import javafx.scene.layout.Container;
 import javafx.scene.layout.HBox;
@@ -44,13 +46,13 @@ import javafx.scene.input.KeyCode;
 import javafx.fxd.FXDNode;
 import javafx.util.Math;
 
+import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.MenuButton;
+
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.StylesheetAware;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Movable;
-import com.eviware.loadui.fx.ui.popup.Menu;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
-import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
 import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
 import com.eviware.loadui.fx.ui.resources.MenuArrow;
 import com.eviware.loadui.fx.ui.resources.Paints;
@@ -119,37 +121,18 @@ public abstract class CanvasNode extends BaseNode, StylesheetAware, Selectable, 
 	protected var width:Number;
 	protected var height:Number;
 	
-	def menuNode:Menu = Menu {
-		tooltip: bind label
-		contentNode: Group {
-			content: [
-				Label {
-					textFill: bind if( menuNode.menu.isOpen ) Color.WHITE else menuFill
-					text: "Menu"
-					height: 15
-					vpos: VPos.CENTER
-					textWrap: false
-				}, MenuArrow {
-					fill: bind if( menuNode.menu.isOpen ) Color.WHITE else menuFill
-					rotate: 90
-					layoutY: 7.5
-					layoutX: 40
-				}, Rectangle {
-					width: 50
-					height: 15
-					layoutX: -3
-					layoutY: -3
-					fill: Color.TRANSPARENT
-				}
-			]
-		}
-		menu: PopupMenu {
+	var menuButton:MenuButton;
+	public var toolbarItemsLeft:Node[] = [
+		menuButton = MenuButton {
+			styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
+			text: "Menu"
+			tooltip: Tooltip { text: bind label }
 			items: [
-				ActionMenuItem {
-					text: ##[DELETE]"Rename"
+				MenuItem {
+					text: ##[RENAME]"Rename"
 					action: function() { RenameModelItemDialog { modelItem: modelItem } }
 				},
-				ActionMenuItem {
+				MenuItem {
 					text: ##[CLONE]"Clone"
 					action: function() {
 					    if( modelItem instanceof SceneItem ) { // handle TestCase
@@ -160,13 +143,13 @@ public abstract class CanvasNode extends BaseNode, StylesheetAware, Selectable, 
 					    };
 					}
 				},
-				ActionMenuItem {
+				MenuItem {
 					text: ##[DELETE]"Delete"
 					action: function() { DeleteModelItemDialog { modelItem: modelItem } }
 				},
-				SeparatorMenuItem {},
-				ActionMenuItem {
-					text: "Settings"
+				Separator {},
+				MenuItem {
+					text: ##[SETTINGS]"Settings"
 					action: function() { 
 						if(this instanceof TestCaseNode){
 							SettingsDialog{}.show(MainWindow.instance.testcaseCanvas.canvasItem);
@@ -177,10 +160,6 @@ public abstract class CanvasNode extends BaseNode, StylesheetAware, Selectable, 
 				}
 			]
 		}
-	}
-	
-	public var toolbarItemsLeft:Node[] = [
-		menuNode
 	] on replace {
 		toolbarBoxLeft.width = toolbarBoxLeft.getPrefWidth(-1)
 	}
@@ -243,7 +222,7 @@ public abstract class CanvasNode extends BaseNode, StylesheetAware, Selectable, 
 			if( e.button == MouseButton.SECONDARY ) {
 				if( not selected )
 					selectOnly();
-				MainWindow.instance.canvas.openContextMenu( e.sceneX, e.sceneY );
+				MainWindow.instance.canvas.openContextMenu( e.screenX, e.screenY );
 			}
 		} );
 		

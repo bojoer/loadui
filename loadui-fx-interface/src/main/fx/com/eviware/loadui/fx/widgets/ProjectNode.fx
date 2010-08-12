@@ -32,13 +32,10 @@ import com.eviware.loadui.fx.dialogs.CorruptProjectDialog;
 import com.eviware.loadui.fx.dialogs.DeleteProjectDialog;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
-import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
-import com.eviware.loadui.fx.ui.popup.MenuItem;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
-import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
 import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.util.ImageUtil.*;
+
 import java.io.IOException;
 import java.lang.RuntimeException;
 import java.util.EventObject;
@@ -50,6 +47,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.control.Separator;
+
+import com.javafx.preview.control.MenuItem;
+
 import org.slf4j.LoggerFactory;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.ProjectNode" );
@@ -102,43 +103,39 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 			}
 		} );
 	}	
-
 	
-	var menu:PopupMenu;
-	var menuContent:Node;
-	
-	def enabledMenu:MenuItem[] = [
-		ActionMenuItem {
+	def enabledMenu:Node[] = [
+		MenuItem {
 			text: ##[OPEN]"Open"
 			action: function() {
 				AppState.instance.setActiveCanvas( projectRef.getProject() );
 			}
-		}, ActionMenuItem {
+		}, MenuItem {
 			text: ##[DISABLE]"Disable"
 			action: function() {
 				if( MainWindow.instance.projectCanvas.canvasItem == projectRef.getProject() )
 					MainWindow.instance.projectCanvas.canvasItem = null;
 				projectRef.setEnabled( false );
 			}
-		}, ActionMenuItem {
+		}, MenuItem {
 			text: ##[SAVE]"Save"
 			action: function() {
 				projectRef.getProject().save();
 			}
-		}, ActionMenuItem {
+		}, MenuItem {
 			text: ##[DELETE]"Delete"
 			action: function() { DeleteProjectDialog { projectRef: projectRef } }
 		}
 	];
 	
-	def disabledMenu:MenuItem[] = [
+	def disabledMenu:Node[] = [
 		//ActionMenuItem {
 		//	text: ##[ENABLE]"Enable"
 		//	action: function() {
 		//		projectRef.setEnabled( true );
 		//	}
 		//
-		ActionMenuItem {
+		MenuItem {
 			text: ##[OPEN]"Open"
 			action: function() {
 			    try {
@@ -151,12 +148,12 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 			    }
 			}
 		} 
-		SeparatorMenuItem{}
-		ActionMenuItem {
+		Separator{}
+		MenuItem {
 			text: ##[DELETE]"Clone"
 			action: function() { CloneProjectDialog { projectRef: projectRef } }
 		}
-		ActionMenuItem {
+		MenuItem {
 			text: ##[DELETE]"Delete"
 			action: function() { DeleteProjectDialog { projectRef: projectRef } }
 		}

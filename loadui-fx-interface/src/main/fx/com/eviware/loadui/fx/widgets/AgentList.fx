@@ -23,8 +23,13 @@ package com.eviware.loadui.fx.widgets;
 
 import javafx.util.Sequences;
 import javafx.scene.Node;
+import javafx.scene.Group;
 import javafx.scene.CustomNode;
 import javafx.scene.layout.Resizable;
+import javafx.scene.control.Separator;
+
+import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.PopupMenu;
 
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.pagelist.PagelistControl;
@@ -34,8 +39,6 @@ import com.eviware.loadui.fx.ui.dnd.DroppableNode;
 import com.eviware.loadui.fx.dialogs.CreateNewAgentDialog;
 import com.eviware.loadui.fx.widgets.toolbar.AgentToolbarItem;
 
-import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
 import com.eviware.loadui.fx.agents.discovery.AgentDiscoverer;
 import com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog;
 import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
@@ -107,22 +110,23 @@ public class AgentList extends CustomNode, Resizable, EventHandler {
 	}
 
 	override function create() {
-		def popup = PopupMenu {};
-		popup.items = [
-			ActionMenuItem {
-				text: "Detect Agents"
-				action: function() {
-					AgentDiscovererDialog{}.show();
+		def popup = PopupMenu {
+			items: [
+				MenuItem {
+					text: "Detect Agents"
+					action: function() {
+						AgentDiscovererDialog{}.show();
+					}
 				}
-			}
-			SeparatorMenuItem{}
-			ActionMenuItem {
-				text: "New Agent"
-				action: function() {
-					CreateNewAgentDialog{ workspace: workspace };
+				Separator{}
+				MenuItem {
+					text: "New Agent"
+					action: function() {
+						CreateNewAgentDialog{ workspace: workspace };
+					}
 				}
-			}
-		];
+			]
+		};
 		
 		pagelist = PagelistControl {
 			text: ##[AGENTS]"AGENTS"
@@ -130,21 +134,17 @@ public class AgentList extends CustomNode, Resizable, EventHandler {
 			width: bind width
 			onMousePressed: function(e: MouseEvent){
 				if(e.popupTrigger){
-					popup.layoutX = e.sceneX;
-					popup.layoutY = e.sceneY;
-					popup.open();
+					popup.show( pagelist, e.screenX, e.screenY );
 				}
 			}
 			onMouseReleased: function(e: MouseEvent){
 				if(e.popupTrigger){
-					popup.layoutX = e.sceneX;
-					popup.layoutY = e.sceneY;
-					popup.open();
+					popup.show( pagelist, e.screenX, e.screenY );
 				}
 			}
 		}
 		DroppableNode {
-			contentNode: pagelist
+			contentNode: Group { content: [ pagelist, popup ] }
 			accept: function( d:Draggable ) {
 				d.node instanceof AgentToolbarItem
 			}

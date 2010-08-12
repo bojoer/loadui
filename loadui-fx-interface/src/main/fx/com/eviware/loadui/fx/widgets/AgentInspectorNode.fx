@@ -44,9 +44,7 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.model.ProjectItem;
 
 import com.eviware.loadui.fx.ui.resources.MenuArrow;
-import com.eviware.loadui.fx.ui.popup.Menu;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
-import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
+
 import javafx.scene.Group; 
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -60,6 +58,9 @@ import javafx.scene.layout.LayoutInfo;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.util.Math;
+
+import com.javafx.preview.control.MenuButton;
+import com.javafx.preview.control.MenuItem;
 
 import com.eviware.loadui.fx.dialogs.DeleteModelItemDialog;
 import com.eviware.loadui.fx.dialogs.RenameModelItemDialog;
@@ -239,8 +240,9 @@ public class AgentInspectorNode extends BaseNode, ModelItemHolder, Droppable, Ev
 	
 	override function create() {
 		var toolbarBoxRight: HBox;
-		var menuNode:Menu;
+		var menuNode:MenuButton;
 		def titleBarPanel = TitlebarPanel {
+			styleClass: "agent-node"
 			backgroundFill: if(ghostAgent) Color.web("#b8b8b8") else Color.web("#d6d6d6")
 			content: [
 				if(not ghostAgent) OnOffSwitch {
@@ -252,48 +254,26 @@ public class AgentInspectorNode extends BaseNode, ModelItemHolder, Droppable, Ev
 					endY: 10
 					stroke: bind separatorStroke
 				},
-				if( ghostAgent ) null else menuNode = Menu {
+				if( ghostAgent ) null else menuNode = MenuButton {
+					styleClass: bind if( menuNode.showing ) "menu-button-showing" else "menu-button"
 					layoutX: 45
-					layoutY: 7
-					tooltip: bind label
-					contentNode: Group {
-						content: [
-							Label {
-								textFill: bind if( menuNode.menu.isOpen ) Color.WHITE else menuFill
-								text: "Menu"
-								height: 15
-								vpos: VPos.CENTER
-								textWrap: false
-								font: Font.font("Arial", 9)
-							}, MenuArrow {
-								fill: bind if( menuNode.menu.isOpen ) Color.WHITE else menuFill
-								rotate: 90
-								layoutY: 6
-								layoutX: 27
-							}, Rectangle {
-								width: 35
-								height: 15
-								layoutX: - 3
-								layoutY: - 1
-								fill: Color.TRANSPARENT
-							}
-						]
-					}
-					menu: PopupMenu {
-						items: [
-							ActionMenuItem {
-								text: ##[DELETE]"Rename"
-								action: function() { RenameModelItemDialog { modelItem: modelItem } }
-							}, ActionMenuItem {
-								text: ##[DELETE]"Delete"
-								action: function() { DeleteModelItemDialog { modelItem: modelItem } }
-							}
-						]
-					}
+					layoutY: 4
+					tooltip: Tooltip { text: bind label }
+					text: "Menu"
+					items: [
+						MenuItem {
+							text: ##[DELETE]"Rename"
+							action: function() { RenameModelItemDialog { modelItem: modelItem } }
+						}, MenuItem {
+							text: ##[DELETE]"Delete"
+							action: function() { DeleteModelItemDialog { modelItem: modelItem } }
+						}
+					]
 				}
+				
 				toolbarBoxRight = HBox {
 					height: 20
-					spacing: 5
+					spacing: 3
 					nodeVPos: VPos.CENTER
 					vpos: VPos.CENTER
 					layoutX: bind ( width - 10 ) - toolbarBoxRight.width

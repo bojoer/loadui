@@ -23,6 +23,7 @@ package com.eviware.loadui.fx.widgets;
 
 import javafx.util.Sequences;
 import javafx.scene.Node;
+import javafx.scene.Group;
 import javafx.scene.CustomNode;
 import javafx.scene.layout.Resizable;
 
@@ -44,9 +45,8 @@ import com.eviware.loadui.fx.dialogs.CreateNewProjectDialog;
 import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.events.BaseEvent;
 
-import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
-import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
+import com.javafx.preview.control.PopupMenu;
+import com.javafx.preview.control.MenuItem;
 
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
@@ -117,38 +117,44 @@ public class ProjectList extends CustomNode, Resizable, EventHandler {
 	var y:Number;
 	
 	override function create() {
-		def popup = PopupMenu {};
-		popup.items = [
-			ActionMenuItem {
-				text: "New Project"
-				action: function() {
-					CreateNewProjectDialog { 
-						workspace: workspace
-					};
+		def popup = PopupMenu {
+			items: [
+				MenuItem {
+					text: "New Project"
+					action: function() {
+						CreateNewProjectDialog { 
+							workspace: workspace
+						};
+					}
+				},
+				javafx.scene.control.Separator {},
+				com.javafx.preview.control.Menu {
+					text: "Submenu"
+					items: [
+						MenuItem { text: "Dummy 1" },
+						MenuItem { text: "A Long Dummy 2" }
+					]
 				}
-			}
-		];
+			]
+		};
+		
 	   	pagelist = PagelistControl {
 			text: ##[PROJECTS]"PROJECTS"
 			height: bind height
 			width: bind width
 			onMousePressed: function(e: MouseEvent){
 				if(e.popupTrigger){
-					popup.layoutX = e.sceneX;
-					popup.layoutY = e.sceneY;
-					popup.open();
+					popup.show( this, e.screenX, e.screenY );
 				}
 			}
 			onMouseReleased: function(e: MouseEvent){
 				if(e.popupTrigger){
-					popup.layoutX = e.sceneX;
-					popup.layoutY = e.sceneY;
-					popup.open();
+					popup.show( this, e.screenX, e.screenY );
 				}
 			}
 		}
 		DroppableNode {
-			contentNode: pagelist
+			contentNode: Group { content: [ pagelist, popup ] }
 			accept: function( d:Draggable ) {
 			    d.node instanceof ProjectToolbarItem
 			}

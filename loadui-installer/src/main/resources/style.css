@@ -127,6 +127,11 @@
 	-fx-background-radius: 0;
 }
 
+.agent-node *.menu-button *.label, .agent-node *.menu-button-showing *.label {
+	-fx-padding: 2 3;
+	-fx-font-size: 10pt;
+}
+
 .hyperlink:focused {
 	-fx-border-color: transparent;
 }
