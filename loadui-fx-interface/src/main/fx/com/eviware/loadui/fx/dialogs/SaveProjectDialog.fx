@@ -45,7 +45,8 @@ public class SaveProjectDialog {
 		if( not ( FX.isInitialized( projectRef ) and projectRef.isEnabled() ) )
 			throw new RuntimeException( "ProjectRef needs to be set and enabled!" );
 			
-		def project = projectRef.getProject(); 
+		def project = projectRef.getProject();
+		var yesButton:Button;
 		
 		def dialog:Dialog = Dialog {
 			title: "Close Project: {project.getLabel()}"
@@ -58,9 +59,7 @@ public class SaveProjectDialog {
 				dialog.close();
 			}
 			extraButtons: [
-				Button {
-					translateX: - 19
-					translateY: - 38
+				yesButton = Button {
 					text: "Save"
 					action: function() {
 						MainWindow.instance.projectCanvas.generateMiniatures(); 
@@ -70,8 +69,6 @@ public class SaveProjectDialog {
 					}
 					layoutInfo: nodeConstraints(new CC().tag( "yes" ).width("60!"))
 				}, Button {
-					translateX: - 19
-					translateY: - 38
 					text: "Don't Save"
 					action: function() {
 						dialog.close();
@@ -80,10 +77,7 @@ public class SaveProjectDialog {
 					layoutInfo: nodeConstraints(new CC().tag( "no" ).width("60!"))
 				}
 			]
-			
-			width : 250
-			height : 150
 		}
+		yesButton.requestFocus();
 	}
-
 };

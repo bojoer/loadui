@@ -21,6 +21,8 @@
 
 package com.eviware.loadui.fx.dialogs;
 
+import javafx.scene.layout.LayoutInfo;
+
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
@@ -81,25 +83,31 @@ public class CreateNewProjectDialog {
 		if( not FX.isInitialized( workspace ) )
 			throw new RuntimeException( "Workspace is null!" );
 		
+		form = Form {
+			layoutInfo: LayoutInfo { width: 250 }
+			formContent: [
+				name = TextField { label: "Project Name", action: ok },
+				file = TextField { label: "Filename", action: ok },
+				open = CheckBoxField { label: "Open the new Project?", value: false }
+			]
+		};
 		
-		dialog = Dialog {
-			title: "Create new project"
-			x:layoutX
-			y:layoutY
-			content: form = Form {
-				width: bind 210
-				formContent: [
-					name = TextField { label: "Project Name", action: ok },
-					file = TextField { label: "Filename", action: ok },
-					(open = CheckBoxField { label: "Open the new Project?", value: false, translateY: 15}) as FormField
-				]
-			}
-			okText: "Create"
-			onOk: ok
-			width : 250
-			height : 150
-			
-		}
+		dialog = if( FX.isInitialized( layoutX ) and FX.isInitialized( layoutY ) )
+			Dialog {
+				title: "Create new project"
+				x:layoutX
+				y:layoutY
+				content: form
+				okText: "Create"
+				onOk: ok
+			} 
+		else
+			Dialog {
+				title: "Create new project"
+				content: form
+				okText: "Create"
+				onOk: ok
+			};
 		
 		var c = 0;
 		while( true ) {

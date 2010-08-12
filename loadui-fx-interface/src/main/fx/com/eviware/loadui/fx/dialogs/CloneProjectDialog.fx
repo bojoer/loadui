@@ -67,19 +67,15 @@ public class CloneProjectDialog {
 			title: "Clone project: {projectRef.getLabel()}"
 			content: [
 				form = Form {
-					width: bind 260
 					formContent: [
 						TextField { id: "name", label: "Name of cloned project", description: "Name of cloned project", action: ok } as FormField,
 						FileInputField { id: "file", label: "File of cloned project", description: "File of cloned project", action: ok } as FormField,
-						CheckBoxField { id: "open", label: "Open cloned project for editing", value: true, translateY: 20 }
+						CheckBoxField { id: "open", label: "Open cloned project for editing", value: true }
 					]
 				}
 			]
 			okText: "Clone"
 			onOk: ok
-			
-			width : 300
-			height : 150
 		}
 		
 		setDefaults(projectRef);

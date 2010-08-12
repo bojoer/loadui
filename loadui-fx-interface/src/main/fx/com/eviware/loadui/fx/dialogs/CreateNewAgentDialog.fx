@@ -94,16 +94,14 @@ public class CreateNewAgentDialog {
 		dialog = Dialog {
 			title: "Add new agent"
 			content: form = Form {
-				width: bind 210
+				layoutInfo: LayoutInfo { width: 250 }
 				formContent: [
-					agentName = TextField {label: "Agent Name", action: ok},
-					agentUrl = TextField {label: "Agent URL", action: ok}
+					agentName = TextField { label: "Agent Name", action: ok },
+					agentUrl = TextField { label: "Agent URL", action: ok }
 				]
 			}
 			okText: "Add"
 			onOk: ok
-			width : 250
-			height : 150
 		}
 		
 		var c = 1;
@@ -118,8 +116,6 @@ public class CreateNewAgentDialog {
 		title: ""
 		okText: "Ok"
 		noCancel: true
-		width : 410
-		height : 150
 		showPostInit: false
 	}
 	
@@ -135,8 +131,6 @@ public class CreateNewAgentDialog {
 			confirmDialog.close();
 			dialog.close();
 		}
-		width: 300
-		height: 150
 		showPostInit: false
 	}
 		

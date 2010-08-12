@@ -29,6 +29,7 @@ import javafx.scene.layout.Stack;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.LayoutInfo;
+import javafx.scene.layout.Priority;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.Color;
@@ -39,16 +40,23 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Insets;
+import javafx.geometry.VPos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.Label;
 import javafx.fxd.FXDNode;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.MovableNode;
 import com.eviware.loadui.fx.ui.button.GlowButton;
 import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
+import com.eviware.loadui.fx.ui.resources.DialogPanel;
 import com.eviware.loadui.fx.ui.resources.Paints;
+import com.eviware.loadui.fx.ui.menu.MenubarButton;
 
 import org.jfxtras.scene.layout.XMigLayout;
 import org.jfxtras.scene.layout.XMigLayout.*;
@@ -82,20 +90,22 @@ public class Dialog {
 	 /**
 	 * The contents to display in the dialog.
 	 */ 
-	public var content: Node[];
+	public var content: Node[] on replace {
+		dialogContent.content = content;
+	}
 	
 	 /**
 	 * Allows manual control over the dialogs X coordinate.
 	 */ 
 	public var x:Number on replace {
-		panel.layoutX = x;
+		panel.layoutX = x - panel.layoutBounds.width / 2;
 	}
 	
 	 /**
 	 * Allows manual control over the dialogs Y coordinate.
 	 */ 
 	public var y:Number on replace {
-		panel.layoutY = y;
+		panel.layoutY = y - panel.layoutBounds.height / 2;
 	}
 	
 	 /**
@@ -126,11 +136,6 @@ public class Dialog {
 	 /**
 	 * Defines the Paint for the background.
 	 */ 
-	public var backgroundFill: Paint = Color.web("#EDEDED");
-	
-	public var stripeFill: Paint = Color.web("#B2B2B2", .2);
-	public var stripeVisible:Boolean = false;
-	
 	public-init var okText:String = ##[OK]"OK";
 	
 	public-init var noOk = false;
@@ -143,42 +148,18 @@ public class Dialog {
 	
 	public var onCancel:function():Void = close;
 	
-	public-init var width: Integer = -1;
-	
-	public-init var height: Integer = -1;
-	
 	public-init var extraButtons:Button[];
 	
 	var modalLayer:Node;
 	var panel:Node;
+	protected var dialogPanel:DialogPanel;
 	
 	var okButton: Button;
 	var cancelButton: Button;
 
-	def target: XMigLayout = XMigLayout {
-		layoutX: 20
-		layoutY: 20
-		layoutInfo: LayoutInfo { hfill: true, vfill: true }
-		constraints: new LC().fill().wrapAfter(1).insets( "0" )
-		rows: new AC().gap( "20px" ).noGrid()
-		content: [
-			VBox {
-				layoutInfo: LayoutInfo { hfill: true, vfill: true } 	
-				spacing: 10, 
-				content: bind content
-			}
-		]
-	}
-
-	var buttons: Container;
-	var titleText: Text;
-	
-	postinit {
-		if ( sizeof buttons.content == 1 )
-		buttons.layoutX = panel.layoutBounds.width - 45 
-		else 
-		buttons.layoutX = panel.layoutBounds.width - 87;
-	}
+	protected var dialogContent:VBox;
+	var handle:BaseNode;
+	var titlebarContent:HBox;
 	
 	init {
 		def scene = overlay.scene;
@@ -203,19 +184,14 @@ public class Dialog {
 
 		if( not noCancel ) {
 			cancelButton = Button {
-				translateX: - 19
-				translateY: bind if(stripeVisible == true) - 43 else - 38
 				text: cancelText
 				action: function() { onCancel() }
-				width: 59
 				layoutInfo: nodeConstraints(new CC().tag( "cancel" ).width("60!"))
 			}
 			insert cancelButton into dialogButtons;
 		}	
 		if( not noOk ) {
 			okButton = Button {
-				translateX: - 19
-				translateY: bind if(stripeVisible == true) - 43 else - 38
 				text: okText
 				action: function() { onOk() }
 				layoutInfo: nodeConstraints(new CC().tag( "ok" ).width("60!"))
@@ -225,103 +201,78 @@ public class Dialog {
 		
 		insert extraButtons into dialogButtons;
 		
+		if( not FX.isInitialized( x ) ) {
+			x = scene.width / 2;
+		}
+		if( not FX.isInitialized( y ) ) {
+			y = scene.height / 2;
+		}
+		
 		var titlebarPanel:TitlebarPanel;
 		panel = MovableNode {
 			layoutX: x
 			layoutY: y
 			useOverlay: false
 			containment: sceneBounds
-			
-			contentNode: Group {
-				content: [
-					titlebarPanel = TitlebarPanel {
-						backgroundFill: backgroundFill
-						content: [
-							XMigLayout {
-								constraints: new LC().fill().wrapAfter(1).insets( "0" )
-								rows: new AC().gap( "0px" ).noGrid()
-								content: [
-									Group {
-										content: [
-											Rectangle {
-												x:0
-												y:0
-												fill: Color.TRANSPARENT
-												width: bind if(width > - 1) width else target.boundsInLocal.width + 10
-												height: bind if(height > - 1) height else target.boundsInLocal.height + 10
-											}, 
-											Rectangle {
-												x:0
-												y:0
-												height: 40
-												width: bind if(width > - 1) width else target.boundsInLocal.width + 10
-												fill: bind stripeFill
-												visible: stripeVisible
-											}, 
-											target
-										]
+			contentNode: dialogPanel = DialogPanel {
+				body: VBox {
+					padding: Insets { left: 10, right: 10, bottom: 15, top: 3 }
+					layoutInfo: LayoutInfo { hfill: true }
+					content: [
+						handle = BaseNode {
+							managed: false
+							contentNode: Rectangle { width: bind dialogPanel.width, height: 30, fill: Color.TRANSPARENT }
+						},
+						titlebarContent = HBox {
+							layoutInfo: LayoutInfo { margin: Insets { right: -5 } }
+							nodeVPos: VPos.CENTER
+							content: [
+								Label {
+									textFill: Color.rgb(0, 0, 0, 0.5)
+									text: bind title
+									font: Font { size: 10 }
+									layoutInfo: LayoutInfo {
+										hfill: true
+										hgrow: Priority.ALWAYS
+										height: 26
 									}
-									dialogButtons
-								]
-							}
-						]
-						titlebarContent: [
-							titleText = Text {
-								x: 20
-								y: 20
-								fill: Color.rgb(0, 0, 0, 0.5)
-								content: bind title
-								font: Font {
-									size: 10
 								}
-							}, 
-							buttons = HBox {
-								 spacing: 9 
-							}
-						]
-					}
-				]
+							]
+						},
+						dialogContent = VBox {
+							padding: Insets { left: 10, top: 10, right: 10, bottom: 10 }
+							content: content
+						},
+						XMigLayout {
+							constraints: new LC().fillX()
+							rows: new AC().noGrid()
+							content: dialogButtons
+						}
+					]
+				}
 			}
-			handle: titlebarPanel.titlebar
+			handle: handle
 		}
 		
 		if( helpUrl != null ) {
-			insert GlowButton {
-				contentNode: FXDNode {
-					translateY: 2
-					url: "{__ROOT__}images/help_btn.fxz"
-				}
-				tooltip: "Help"
+			insert MenubarButton {
+				shape: "M2.46,10.21 C2.46,9.69 2.49,9.23 2.54,8.83 C2.59,8.43 2.69,8.07 2.82,7.75 C2.95,7.43 3.12,7.15 3.34,6.89 C3.55,6.63 3.82,6.39 4.15,6.15 C4.44,5.93 4.70,5.73 4.92,5.55 C5.14,5.36 5.32,5.18 5.47,4.99 C5.62,4.81 5.73,4.62 5.80,4.43 C5.87,4.25 5.91,4.03 5.91,3.80 C5.91,3.57 5.86,3.37 5.77,3.18 C5.67,2.99 5.54,2.82 5.36,2.68 C5.19,2.55 4.98,2.44 4.73,2.36 C4.48,2.29 4.21,2.25 3.90,2.25 C3.57,2.25 3.26,2.28 2.96,2.32 C2.67,2.37 2.39,2.44 2.12,2.52 C1.84,2.60 1.58,2.69 1.33,2.80 C1.08,2.90 0.83,3.01 0.58,3.13 L-0.00,1.18 C0.22,1.05 0.49,0.91 0.79,0.77 C1.10,0.63 1.45,0.50 1.83,0.39 C2.22,0.28 2.64,0.19 3.09,0.11 C3.55,0.04 4.04,0.00 4.56,0.00 C5.21,0.00 5.80,0.08 6.33,0.25 C6.86,0.42 7.32,0.65 7.70,0.96 C8.08,1.27 8.38,1.64 8.59,2.08 C8.80,2.52 8.90,3.02 8.90,3.57 C8.90,4.07 8.82,4.52 8.66,4.91 C8.50,5.30 8.29,5.66 8.03,5.99 C7.77,6.31 7.49,6.61 7.17,6.88 C6.85,7.15 6.53,7.41 6.21,7.67 C6.04,7.83 5.90,7.98 5.77,8.13 C5.64,8.28 5.53,8.46 5.45,8.65 C5.37,8.84 5.30,9.06 5.26,9.31 C5.22,9.56 5.20,9.86 5.20,10.21 Z M2.48,11.85 L5.25,11.85 L5.25,14.00 L2.48,14.00 Z"
+				tooltip: Tooltip { text:"Help" }
 				action: function() { openURL( helpUrl ); }
-			//	width: bind 28
-				height: bind 30
-			} into buttons.content;
+			} into titlebarContent.content;
 			insert FXDNode {
-				translateY: 2
 				scaleY: .6
 				url: "{__ROOT__}images/delimiter.fxz"
-			} into buttons.content;
+			} into titlebarContent.content;
 		}
 		
 		
 		if( closable ) {
-			insert GlowButton {
-				contentNode: FXDNode {
-					translateY: 2
-					url: "{__ROOT__}images/close_btn.fxz"
-				}
-				tooltip: "Close"
+			insert MenubarButton {
+				shape: "M14.00,2.00 L12.00,0.00 7.00,5.00 2.00,0.00 0.00,2.00 5.00,7.00 0.00,12.00 2.00,14.00 7.00,9.00 12.00,14.00 14.00,12.00 9.00,7.00 Z"
+				tooltip: Tooltip { text:"Close" }
 				action: close
-				//width: bind 28
-				height: bind 30
-			} into buttons.content;
-		}
-		
-		if( not FX.isInitialized( x ) ) {
-			x = ( scene.width - panel.boundsInLocal.width ) / 2;
-		}
-		if( not FX.isInitialized( y ) ) {
-			y = ( scene.height - panel.boundsInLocal.height ) / 2;
+			} into titlebarContent.content;
 		}
 		
 		if( showPostInit )
@@ -340,6 +291,9 @@ public class Dialog {
 		
 		if( okButton != null )
 			okButton.requestFocus();
+		overlay.layout();
+		panel.layoutY = y - panel.layoutBounds.height / 2;
+		panel.layoutX = x - panel.layoutBounds.width / 2;
 	}
 	
 	 /**

@@ -61,9 +61,6 @@ public class SetCanvasLimitsDialog {
 			onCancel: function() {
 				warnDialog.close();
 			}
-		
-			width : 450
-			height : 150
 		}
   
 		
@@ -71,13 +68,12 @@ public class SetCanvasLimitsDialog {
 			title: "Set run limits"
 			content: [
 				form = Form {
-					width: bind 200
 					formContent: [
 						//LongInputField { id: "timeLimit", label: "Time limit (sec):", value: valueOf(runController.timeLimit) },
 						TimeField { id: "timeLimit", label: "Time limit:", value: valueOf(runController.timeLimit) },
 						LongInputField { id: "sampleLimit", label: "Sample limit:", value: valueOf(runController.sampleLimit) },
 						LongInputField { id: "failureLimit", label: "Failure limit:", value: valueOf(runController.failureLimit) },
-						CheckBoxField { id: "reset", label: "Reset counters?", value: false, translateY: 20 } as FormField
+						CheckBoxField { id: "reset", label: "Reset counters?", value: false } as FormField
 					]
 				}
 			]
@@ -96,9 +92,6 @@ public class SetCanvasLimitsDialog {
 			onCancel: function() {
 				dialog.close();
 			}
-			
-			width : 235
-			height : 180
 		}
 	}
 

@@ -21,6 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Panel;
+import javafx.scene.layout.LayoutInfo;
 
 import org.slf4j.LoggerFactory;
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.dialogs.WorkspaceWrenchDialog" );
@@ -77,57 +78,49 @@ public class WorkspaceWrenchDialog  {
 		var maxQueue: Long = workspace.getProperty(WorkspaceItem.MAX_THREAD_QUEUE_PROPERTY).getValue() as Long;
 		var gcInterval: Long = workspace.getProperty(WorkspaceItem.AUTO_GARBAGE_COLLECTION_INTERVAL).getValue() as Long;
 		
-		dialogRef = Dialog {
-		 width: 500
-		 height: 400
-         modal: true
+		dialogRef = TabDialog {
          title: title
-         showPostInit: true
-         stripeVisible: true
-         closable: true
+         subtitle: "Settings"
+         height: 150
          helpUrl: "http://www.loadui.org/interface/workspace-view.html"
-         content: TabPanel {
-         	tabs: [
-         		Tab {
-         			label: "Description",
-         			content: formT1 = Form {
-         				singleColumn: true
+         tabs: [
+      		Tab {
+      			label: "Description",
+      			content: formT1 = Form {
+      				singleColumn: true
 						formContent: [
 							TextField { 
-								width: bind 430
-								height: bind 200
 								id: "description"
 								label: "Description"
 								description: "This is a description of the description field."
 								multiline: true
 								value: workspace.getDescription() 
 								action: ok
+								layoutInfo: LayoutInfo { width: 300, height: 150, vfill: true, hfill: true }
 							}							
 						]
 					}
-				}
+				},
 				Tab {
          			label: "soapUI", content: formT2 = Form {
 						formContent: [
-							FileInputField { id: "soapUIPath", label: "Path to soapUI", description: "Path to soapUI", value: soapUIPath } as FormField,
-							LongInputField { id: "loadUICajoPort", label: "Integration Port", description: "Integration Port", value: loadUICajoPort } as FormField,
-							LongInputField { id: "soapUICajoPort", label: "soapUI Port", description: "soapUI Port", value: soapUICajoPort } as FormField,
-							CheckBoxField{ id: "soapUISync", label: "Automatically reload updated Projects", description: "Automatically detects and reloads updated soapUI Projects", value: soapUISync } as FormField
+							FileInputField { id: "soapUIPath", label: "Path to soapUI", description: "Path to soapUI", value: soapUIPath },
+							LongInputField { id: "loadUICajoPort", label: "Integration Port", description: "Integration Port", value: loadUICajoPort },
+							LongInputField { id: "soapUICajoPort", label: "soapUI Port", description: "soapUI Port", value: soapUICajoPort },
+							CheckBoxField{ id: "soapUISync", label: "Automatically reload updated Projects", description: "Automatically detects and reloads updated soapUI Projects", value: soapUISync }
 						]
 					}
-				}
+				},
 				Tab {
          			label: "Execution", content: formT3 = Form {
 						formContent: [
-							LongInputField { id: "maxThreads", label: "Max internal threads", description: "Max internal threads", value: maxThreads } as FormField,
-							LongInputField { id: "maxQueue", label: "Max internal thread queue size", description: "Max internal thread queue size", value: maxQueue } as FormField,
-						   	LongInputField { id: "gcInterval", label: "Schedule garbage collection interval", description: "Time interval after which garbage collection will be done.", value: gcInterval } as FormField
+							LongInputField { id: "maxThreads", label: "Max internal threads", description: "Max internal threads", value: maxThreads },
+							LongInputField { id: "maxQueue", label: "Max internal thread queue size", description: "Max internal thread queue size", value: maxQueue },
+						   	LongInputField { id: "gcInterval", label: "Schedule garbage collection interval", description: "Time interval after which garbage collection will be done.", value: gcInterval }
 						]
 					}
 				}
-				
 			]
-		}
          onOk: ok
 		}
 	}

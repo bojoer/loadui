@@ -22,15 +22,11 @@
 package com.eviware.loadui.fx.ui.form;
 
 import javafx.scene.Node;
-import javafx.scene.CustomNode;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Container;
 import javafx.scene.layout.Resizable;
 import javafx.scene.layout.LayoutInfo;
-import javafx.scene.layout.Priority;
-
-import org.jfxtras.scene.layout.XMigLayout;
-import org.jfxtras.scene.layout.XMigLayout.*;
-import net.miginfocom.layout.*;
+import javafx.util.Math;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,34 +65,24 @@ public function fieldForType( type:Class, id:String, label:String, value:Object 
  * 
  * @author dain.nilsson
  */
-public class Form extends XMigLayout {
+public class Form extends Container {
 
 	public-init var singleColumn = false;
 	
+	public var margin = 3.0;
+	
 	def fieldMap = new HashMap();
+	def labelMap = new HashMap();
 	var fields: FormField[];
-	def skippedLabelCC = new CC().span( 2 );
-	
-	init {
-		layoutInfo = LayoutInfo { 
-			vfill: true, 
-			hfill: true, 
-			width: bind width, 
-			height: bind height
-			hgrow: Priority.SOMETIMES 
-			vgrow: Priority.NEVER 
-		};
-		constraints = new LC().fillX().wrapAfter( if(singleColumn) 1 else 2 ).insets( "0" ).gridGapY("8");
-		columns = new AC().index( 1 ).grow().fill();
-	}
-	
+
 	/**
 	 * The content to display in the form.
 	 */
 	public var formContent: FormItem[] on replace {
-		var newContent: Node[] = [];
 		fieldMap.clear();
+		labelMap.clear();
 		fields = null;
+		content = [];
 		
 		for( item in formContent ) {
 			for( field in item.fields ) {
@@ -105,18 +91,69 @@ public class Form extends XMigLayout {
 					throw new RuntimeException( "A Field with that ID already exists!" );
 				
 				insert field into fields;
-				if( field.skipLabel ) {
-					insert migNode( node, skippedLabelCC ) into newContent;
-				} else {
-					def label = Label { 
-						text: field.label
-					}
-					insert [ migNode( label, new CC().minWidth("{label.getPrefWidth(-1)+5}") ), node ] into newContent;
+				if( not field.skipLabel ) {
+					def label = Label { text: bind field.label }
+					labelMap.put( field, label );
+					insert label into content;
 				}
+				insert node into content;
 			}
 		}
 		
-		content = newContent;
+		requestLayout();
+	}
+	
+	var prefWidth:Number = -1 on replace {
+		requestLayout();
+	}
+	var prefHeight:Number = -1 on replace {
+		requestLayout();
+	}
+	
+	override function doLayout():Void {
+		var labelWidth = 0.0;
+		for( label in labelMap.values() ) {
+			labelWidth = Math.max( labelWidth, getNodePrefWidth( label as Node ) )
+		}
+		
+		var offsetY = margin;
+		var fieldWidth = 0.0;
+		var doubleWidth = 0.0;
+		var managed = getManaged( content );
+		while( sizeof managed > 0 ) {
+			def one = managed[0];
+			delete managed[0];
+			var rowHeight:Number;
+			if( labelMap.containsValue( one ) and not singleColumn ) {
+				def two = managed[0];
+				delete managed[0];
+				fieldWidth = Math.max( fieldWidth, getNodePrefWidth( two ) );
+				rowHeight = Math.max( getNodePrefHeight( one ), getNodePrefHeight( two ) );
+				layoutNode( one, 0, offsetY, labelWidth, rowHeight );
+				layoutNode( two, labelWidth, offsetY, width - labelWidth - margin, rowHeight );
+			} else {
+				rowHeight = getNodePrefHeight( one );
+				doubleWidth = Math.max( doubleWidth, getNodePrefWidth( one ) );
+				layoutNode( one, 0, offsetY, width, rowHeight );
+			}
+			offsetY += rowHeight + margin;
+		}
+		prefHeight = offsetY;
+		prefWidth = Math.max( labelWidth + fieldWidth + margin, doubleWidth );
+	}
+	
+	override function getPrefHeight( width:Number ) {
+		if( prefHeight == -1 )
+			doLayout();
+			
+		prefHeight;
+	}
+	
+	override function getPrefWidth( height:Number ) {
+		if( prefWidth == -1 )
+			doLayout();
+			
+		prefWidth;
 	}
 	
 	/**
@@ -132,8 +169,5 @@ public class Form extends XMigLayout {
 	public function getValue( id:String ):Object {
 		getField( id ).value;
 	}
-	
-	postinit {
-	    layout();
-	}
+
 }

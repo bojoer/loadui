@@ -21,6 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Panel;
+import javafx.scene.layout.LayoutInfo;
 import javafx.scene.paint.Color;
 
 import org.slf4j.LoggerFactory;
@@ -59,58 +60,52 @@ public class ProjectSettingsDialog  {
 		var cb:CheckBoxField;
 		theItem = item;
 		
-		dialogRef = Dialog {
-		 width: 500
-		 height: 400
+		dialogRef = TabDialog {
          modal: true
          title: item.getLabel()
+         subtitle: "Settings"
          showPostInit: true
-         stripeVisible: true
          closable: true
          helpUrl: "http://www.loadui.org/interface/project-view.html"
-         content: TabPanel {
-		         	tabs: [
-		         		Tab {
-		         			label: "Description",
-		         			content: descriptionForm = Form {
-		         				singleColumn: true
-									formContent: [
-										TextField { 
-											width: bind 430
-											height: bind 200
-											id: "description"
-											label: "Description"
-											description: "This is a description of the description field."
-											multiline: true
-											value: item.getDescription()
-											action: ok
-											 }
-				
-									]
-								}
-							},
-						Tab {
-							label: "Reports",
-							content: form = Form {
-							singleColumn: true
-							formContent: [
-								cb = CheckBoxField { 
-									id: "saveReport"
-									label: "Export summary reports to file system"
-									value: item.isSaveReport();
-								},
-								FileInputField {
-								    id: "savePath"
-								    label:"Folder for exported reports"
-								    value: if (not (item.getReportFolder() == null)) new File(item.getReportFolder()) else null
-								    disable: bind not (cb.value as Boolean)
-								    directoryOnly: true
-								}
-							]
+			tabs: [
+      		Tab {
+      			label: "Description",
+      			content: descriptionForm = Form {
+      				singleColumn: true
+						formContent: [
+							TextField { 
+								id: "description"
+								label: "Description"
+								description: "This is a description of the description field."
+								multiline: true
+								value: item.getDescription()
+								action: ok
+								layoutInfo: LayoutInfo { width: 300, height: 150, vfill: true, hfill: true }
 							}
-						}
 						]
 					}
+				},
+				Tab {
+					label: "Reports",
+					content: form = Form {
+						singleColumn: true
+						formContent: [
+							cb = CheckBoxField { 
+								id: "saveReport"
+								label: "Export summary reports to file system"
+								value: item.isSaveReport();
+							},
+							FileInputField {
+							    id: "savePath"
+							    label:"Folder for exported reports"
+							    value: if (not (item.getReportFolder() == null)) new File(item.getReportFolder()) else null
+							    disable: bind not (cb.value as Boolean)
+							    directoryOnly: true
+							}
+						]
+					}
+				}
+			]
          onOk: ok
 		}
 	}

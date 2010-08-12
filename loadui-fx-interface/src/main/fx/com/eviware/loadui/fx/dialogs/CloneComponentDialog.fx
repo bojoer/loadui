@@ -97,9 +97,6 @@ public-init var canvasObject:CanvasObjectItem;
 			    				    		warning.close();
 			    				    	}
 			    				    	noCancel: true
-			    				    	width: 300
-			    				    	height: 150
-			    				    
 			    				    }
 			    					log.error( "Item already exists with label: '{name.value}'!" );
 			    				}
@@ -115,17 +112,13 @@ public-init var canvasObject:CanvasObjectItem;
 			title: "Clone {canvasObject.getLabel()}"
 			content: form = Form {
 				formContent: [
-					name = TextField { label: "Name of clone", value: "copy-of-{canvasObject.getLabel()}", columns: 30, action:ok}, if( AppState.instance.state == AppState.TESTCASE_FRONT)
+					name = TextField { label: "Name of clone", value: "copy-of-{canvasObject.getLabel()}", action:ok}, if( AppState.instance.state == AppState.TESTCASE_FRONT)
 							 level as FormField
 						  else [], copyIn as FormField, copyOut as FormField
 				]
 			}
 			okText: "Clone"
 			onOk: ok
-			
-			width: 400
-			height: 150
-			
 		}
 	}
 	

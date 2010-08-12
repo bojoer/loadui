@@ -21,7 +21,6 @@
 
 package com.eviware.loadui.fx.dialogs;
 
-import javafx.scene.text.Text;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.geometry.HPos;
@@ -61,16 +60,12 @@ public class CreateNewTestCaseDialog {
 		dialog = Dialog {
 			title: "New TestCase for: {project.getLabel()}"
 			content: [
-				Text { content: "Enter name for new test case:" },
 				form = Form {
-					formContent: TextField { id: "newTC", columns: 20, action: ok }
+					formContent: TextField { id: "newTC", label: "TestCase Name", action: ok }
 				}
 			]
 			okText: "Ok"
 			onOk: ok
-			
-			width : 250
-			height : 150
 		}
 	}
 };

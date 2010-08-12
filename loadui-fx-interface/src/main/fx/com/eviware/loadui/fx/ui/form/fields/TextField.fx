@@ -50,7 +50,4 @@ public class TextField extends TextBox, FormField {
 	override var text on replace {
 		value = text;
 	}
-	
-	override var layoutInfo = LayoutInfo { hfill:true vfill:true hgrow: Priority.ALWAYS vgrow: Priority.ALWAYS}
-	override var columns = 60
 }

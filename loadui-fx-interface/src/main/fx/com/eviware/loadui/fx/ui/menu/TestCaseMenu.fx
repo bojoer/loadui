@@ -375,7 +375,7 @@ public class TestCaseMenu extends HBox {
 								height: bind height;
 							}, MenubarButton {
 								shape: "M0,0 L0,12 10,12, 10,0 0,0 M4,13 L4,16 14,16 14,4 11,4 11,13 4,13"
-								tooltip: Tooltip { text: ##[WRENCH]"Summary Report" }
+								tooltip: Tooltip { text: ##[SUMMARY]"Summary Report" }
 								action: function() {
 									if( testCase.getSummary() != null ) {
 										println("Viewing TestCase summary");

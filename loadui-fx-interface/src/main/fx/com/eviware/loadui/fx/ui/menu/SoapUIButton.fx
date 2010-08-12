@@ -83,17 +83,12 @@ public class SoapUIButton extends Group {
 							    		warning.close();
 							    	}
 							    	noCancel: true
-							    	width: 300
-							    	height: 150
-							    
 							    }
 				    		} else {
 				    			SoapUIStarter.start(( soapUIHome.getValue() as File).getAbsolutePath());
 				    		}
 			    		    dialog.close();
 				    	}
-				    	width: 250
-				    	height: 150
 				    }
 				}
 			}
