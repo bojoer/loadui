@@ -87,6 +87,46 @@
     -fx-effect: null;
 }
 
+.popup-menu {
+	-fx-background-radius: 0;
+	-fx-padding: 5;
+}
+
+.menu, .menu-item {
+	-fx-padding: 2;
+}
+
+.menu:focused, .menu:showing, .menu-item:focused {
+	-fx-background-insets: 0;
+	-fx-background-color: #3e5fc3;
+}
+
+*.separator:horizontal *.line {
+	-fx-border-style: solid;
+}
+
+.menu-button *.arrow {
+	-fx-mark-highlight-color: rgba(100,100,100,0.5);
+	-fx-mark-color: #4d4d4d;
+}
+
+.menu-button, .menu-button:focused {
+	-fx-background-color: transparent;
+	-fx-background-radius: 0;
+	-fx-background-insets: 0;
+	-fx-text-fill: #4d4d4d;
+}
+
+.menu-button:hover {
+    -fx-background-color: linear (0%,0%) to (0%,100%) stops (0%, rgba(255,255,255,0.2)) (30%, rgba(255,255,255,0.5)) (80%, rgba(255,255,255,0.1)) (100%, rgba(255,255,255,0));
+	-fx-background-radius: 5;
+}
+
+.menu-button-showing {
+    -fx-background-color: #3e5fc3;
+	-fx-background-radius: 0;
+}
+
 .hyperlink:focused {
 	-fx-border-color: transparent;
 }
@@ -166,6 +206,26 @@
 
 .menubar-button:armed {
 	-fx-background-color: #666666;
+}
+
+.dialog-panel {
+	-fx-background-radius: 10, 8, 8;
+	-fx-background-color: #000000, #a5a5a5, #ededed;
+	-fx-background-insets: 0, 2, 3;
+}
+
+.dialog-panel-title {
+	-fx-titlebar-color: #999999;
+	
+	-fx-background-radius: 8 8 0 0;
+	-fx-background-color: -fx-titlebar-color, linear (0%,0%) to (0%,100%) stops (0%, rgba(255,255,255,0.5)) (8%, rgba(255,255,255,0.7)) (50%, rgba(255,255,255,0.25)) (55%, rgba(255,255,255,0.15)) (100%, rgba(255,255,255,0));
+	-fx-background-insets: 2;
+}
+
+.dialog-panel-highlight {
+	-fx-background-radius: 15;
+	-fx-background-color: rgba(83,83,83,0.6);
+	-fx-background-insets: -10;
 }
 
 .dialog-button {
