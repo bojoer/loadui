@@ -53,14 +53,14 @@ public class RenameModelItemDialog {
 	 */
 	public-init var modelItemHolder:ModelItemHolder;
 	var form:Form;
-			var txt:TextField;
-			var dialog:Dialog;
+	var txt:TextField;
+	var dialog:Dialog;
 			
 	function ok():Void {
-				    txt.commit();
-					modelItem.setLabel( form.getValue("name") as String );
-					dialog.close();
-				}
+		txt.commit();
+		modelItem.setLabel( form.getValue("name") as String );
+		dialog.close();
+	}
 	
 	postinit {
 		if( not ( FX.isInitialized( modelItem ) or FX.isInitialized( modelItemHolder ) ) )
@@ -72,13 +72,9 @@ public class RenameModelItemDialog {
 		dialog = Dialog {
 			title: "Rename {modelItem.getLabel()}"
 			content: form = Form {
-				width: bind 300
 				formContent: txt = TextField { id:"name", label: "Name", value: modelItem.getLabel(), action:ok }
 			}
 			onOk: ok
-			
-			width : 350
-			height : 150
 		}
 	}
 }

@@ -88,7 +88,8 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 		}
 	};
 	
-	var tabPanel:TabPanel;
+	var dialogRef:TabDialog;
+	
 	var settings:SettingsTableField;
 	var title:String = component.getLabel();
 	var dialogContent:Node = Label {
@@ -101,7 +102,7 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
     
     function update():Void {
         for( p in propertyBuffer.keySet() ) {
-            for( tab in tabPanel.tabs ) {
+            for( tab in dialogRef.tabs ) {
                 var form:Form = tab.content as Form;
                 var field = form.getField(p as String);
                 if ( field != null ) {
@@ -190,10 +191,6 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 		}
 	}
 	
-	public var backgroundFill: Paint = Color.web("#dbdbdb");
-	
-	public var stripeFill: Paint = Color.rgb(178,178,178,0.2);
-	
 	public function show() {
 	
 		var sTable:Form = Form {
@@ -208,25 +205,12 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 		var sTab: Tab = Tab { label: "Advanced", content: sTable};
 		insert sTab into tabArray;
 				
-		def dialogRef: Dialog = Dialog {
-			modal: true
+		dialogRef = TabDialog {
 			title: title
-			showPostInit: true
-			closable: true
-			stripeVisible: true
+			subtitle: "Settings"
 			helpUrl: "http://www.loadui.org/interface/workspace-view.html"
-			backgroundFill: bind backgroundFill
-			stripeFill: bind stripeFill
 			okText: "Save"
-			width: 500
-			height: 420
-			content: javafx.scene.layout.Stack {
-				content: [ 
-					tabPanel = TabPanel {
-						tabs: tabArray
-					} 
-				]
-			}
+			tabs: tabArray
 			onOk: function() {
 				updateTableModels();
 				for( property in component.getProperties()[p|not p.getKey().startsWith("_")] ) {

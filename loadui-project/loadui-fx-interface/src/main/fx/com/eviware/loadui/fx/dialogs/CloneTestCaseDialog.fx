@@ -72,8 +72,6 @@ public class CloneTestCaseDialog {
 					    		warning.close();
 					    	}
 					    	noCancel: true
-					    	width: 300
-					    	height: 150
 					    
 					    }
 						log.error( "Item already exists with label: '{name.value}'!" );
@@ -83,22 +81,17 @@ public class CloneTestCaseDialog {
 	postinit {
 		var form:Form;
 		var label = canvasObject.getLabel();
-		name = TextField { label: "Name of clone", value: "copy-of-{label}", columns: 30, action:ok};
-		 open = CheckBoxField { label: "Open the new TestCase?", value: true };
+		name = TextField { label: "Name of clone", value: "copy-of-{label}", action:ok };
+		open = CheckBoxField { label: "Open the new TestCase?", value: true };
 		distribute = CheckBoxField { label: "Distibute to same agents?", value: true };
 		
 		def dialog:Dialog = Dialog {
 			title: "Clone {canvasObject.getLabel()}"
 			content: form = Form {
-				formContent: [
-					name, distribute as FormField, open
-				]
+				formContent: [ name, distribute, open ]
 			}
 			okText: "Clone"
 			onOk: ok
-			width: 400
-			height: 150
-			
 		}
 	}
 	

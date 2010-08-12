@@ -60,20 +60,16 @@ public class AgentConfigurationDialog {
 		var soapUIHermes:String = "hermes folder";
 		var soapUISettings: String = "settings folder";
 		
-		dialogRef = Dialog {
-		 width: 500
-		 height: 400
+		dialogRef = TabDialog {
          modal: true
          title: title
          showPostInit: true
-         stripeVisible: true
          closable: true
          helpUrl: "http://www.loadui.org/Working-with-loadUI/agents-and-testcases.html"
-         content: TabPanel {
-         	tabs: [
-         		Tab {
-         			label: "Description",
-         			content: formT1 = Form {
+         tabs: [
+      		Tab {
+      			label: "Description",
+      			content: formT1 = Form {
          			singleColumn: true
 						formContent: [
 							TextField { 
@@ -105,12 +101,8 @@ public class AgentConfigurationDialog {
 						]
 					}
 				}
-				
-				
 			]
-		}
          onOk: ok
 		}
 	}
-	
 };

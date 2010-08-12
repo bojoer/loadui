@@ -43,33 +43,27 @@ public class ExitConfirmDialog {
             okText: "Yes"
             cancelText: "No"
             onOk: function() {
-                def dialog2:Dialog = Dialog {
-					title: "Save Project"
-					content: [
-						Text { content: "Save the Project?" },
-					]
-					okText: "Yes"
-					cancelText: "No"
-					onOk: function() {
-						MainWindow.instance.projectCanvas.generateMiniatures();
-						def project = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
-						project.save();
-						dialog2.close();
-						WindowControllerImpl.instance.forceClose();
+					def dialog2:Dialog = Dialog {
+						title: "Save Project"
+						content: [
+							Text { content: "Save the Project?" },
+						]
+						okText: "Yes"
+						cancelText: "No"
+						onOk: function() {
+							MainWindow.instance.projectCanvas.generateMiniatures();
+							def project = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
+							project.save();
+							dialog2.close();
+							WindowControllerImpl.instance.forceClose();
+						}
+						onCancel: function() {
+							dialog2.close();
+							WindowControllerImpl.instance.forceClose();
+						}
 					}
-					onCancel: function() {
-						dialog2.close();
-						WindowControllerImpl.instance.forceClose();
-					}
-				
-					width : 250
-					height : 150
-				}
-                dialog.close();
+					dialog.close();
             }
-            
-            width : 250
-            height : 150
         }
     }
 };

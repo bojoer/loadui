@@ -24,7 +24,7 @@ package com.eviware.loadui.fx.ui.tabs;
 import javafx.scene.Node;
 
 /**
- * A tab in a TabPanel.
+ * A tab in a TabDialog.
  *
  * @author dain.nilsson
  */
@@ -47,12 +47,12 @@ public class Tab {
 	/**
 	 * Whether the tab is currently selected or not.
 	 */
-	public-read def selected = bind lazy panel.selected == this;
+	public-read package var selected = false;
 	
 	/**
-	 * The parent TabPanel containing this tab.
+	 * The parent TabDialog containing this tab.
 	 */
-	public-read package var panel:TabPanel;
+	public-read package var panel:TabDialog;
 	
 	/**
 	 * Callback when tab lost focus.

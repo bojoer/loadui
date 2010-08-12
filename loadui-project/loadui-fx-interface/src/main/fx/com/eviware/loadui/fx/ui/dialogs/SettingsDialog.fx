@@ -21,6 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Panel;
+import javafx.scene.layout.LayoutInfo;
 import javafx.scene.paint.Color;
 
 import org.slf4j.LoggerFactory;
@@ -40,51 +41,42 @@ import net.miginfocom.layout.*;
  * SettingsDialog, basic modal dialog with ok, help and cancel button.
  */
 public class SettingsDialog  {
-    var dialogRef: Dialog;
-    var form:Form;
-    var theItem:ModelItem;
-    
-    function ok():Void {
-    				theItem.setDescription(form.getField('description').value as String);
-    				dialogRef.close();
-             }
+	var dialogRef: Dialog;
+	var form:Form;
+	var theItem:ModelItem;
+
+	function ok():Void {
+		theItem.setDescription(form.getField('description').value as String);
+		dialogRef.close();
+	}
 	
 	public function show(item:ModelItem) {
 		theItem = item;
 		
-		def dialogRef: Dialog = Dialog {
-		 width: 500
-		 height: 400
-         modal: true
+		def dialogRef: Dialog = TabDialog {
          title: item.getLabel()
-         showPostInit: true
-         stripeVisible: true
-         closable: true
+         subtitle: "Settings"
          helpUrl: "http://www.loadui.org/Working-with-loadUI/project-view.html"
-         content: TabPanel {
-		         	tabs: [
-		         		Tab {
-		         			label: "Description",
-		         			content: form = Form {
-		         				singleColumn: true
-									formContent: [
-										TextField { 
-											width: bind 430
-											height: bind 200
-											id: "description"
-											label: "Description"
-											description: "This is a description of the description field."
-											multiline: true
-											value: item.getDescription() 
-											action: ok
-											},
-											
-									]
-								}
-								//onSelect: function() { log.debug( "Selected tab 1" ) }
+      	tabs: [
+      		Tab {
+      			label: "Description",
+      			content: form = Form {
+      				singleColumn: true
+						formContent: [
+							TextField { 
+								id: "description"
+								label: "Description"
+								description: "This is a description of the description field."
+								multiline: true
+								value: item.getDescription() 
+								action: ok
+								layoutInfo: LayoutInfo { width: 300, height: 150, vfill: true, hfill: true }
 							}
 						]
 					}
+					//onSelect: function() { log.debug( "Selected tab 1" ) }
+				}
+			]
          onOk: ok
 		}
 	}

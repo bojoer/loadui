@@ -123,8 +123,6 @@ public class ProjectCanvas extends Canvas {
 		    		warning.close();
 		    	}
 		    	noCancel: true
-		    	width: 400
-		    	height: 150
 		    }
 		}
 

@@ -190,3 +190,20 @@
 .dialog-button:armed  {
 	-fx-inner-border: linear (0%,0%) to (0%,100%) stops (0%, #23a8fa) (100%, #038adf);
 }
+
+.tab-dialog *.toggle-button {
+	-fx-outer-border: #8c8c8c;
+	-fx-inner-border: #f1f1f1;
+	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #e5e6e7) (100%, #d6d7d8);
+	
+	-fx-padding: 2 10 1 10;
+	-fx-background-radius: 4;
+	-fx-background-insets: 1 -1 -1 1, -1 1 1 -1, 0;
+	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+}
+
+.tab-dialog *.toggle-button :selected {
+	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #c8c8c8) (100%, #cbcbcb);
+	-fx-background-color: -fx-inner-border, -fx-outer-border, -fx-body-color;
+	-fx-text-fill: -fx-text-base-color;
+}

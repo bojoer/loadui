@@ -56,10 +56,9 @@ public class DeleteProjectDialog {
 			title: "Remove project: {projectRef.getLabel()}"
 			content: [
 				form = Form {
-					width: bind 300
 					formContent: [
-						LabelField { value: "Are you sure you want to delete '{projectRef.getLabel()}'?", translateY: -4, translateX: -11 },
-						CheckBoxField { id: "deleteFile", label: "Delete project file on disk \n (cannot be undone!)", translateY: 20 }
+						LabelField { value: "Are you sure you want to delete '{projectRef.getLabel()}'?" },
+						CheckBoxField { id: "deleteFile", label: "Delete project file on disk \n (cannot be undone!)" }
 					]
 				}
 			]
@@ -68,9 +67,6 @@ public class DeleteProjectDialog {
 				projectRef.delete( form.getValue( "deleteFile" ) as Boolean );
 				dialog.close();
 			}
-			
-			width : 300
-			height : 100
 		}
 	}
 }

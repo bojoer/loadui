@@ -49,6 +49,7 @@ import com.eviware.loadui.fx.ui.popup.PopupMenu;
 import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
 import javafx.scene.Group; 
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.Button;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
@@ -383,8 +384,9 @@ public class AgentInspectorNode extends BaseNode, ModelItemHolder, Droppable, Ev
 					}
 					content: [
 						Label {
-							text: "CPU"
+							text: "ACT"
 							font: Font { size: 10 }
+							tooltip: Tooltip { text: "Activity" }
 						},
 						Group {
 							content: [

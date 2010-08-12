@@ -64,38 +64,22 @@ public class AgentDiscovererDialog  {
 				label: "{r.getDefaultLabel()} ({r.getUrl()})"
 				description: r.getUrl()
 				value: false
-				layoutInfo: LayoutInfo { 
-					width: 400  
-				} 
-				width: 400
-				layoutX: 20
 			} into checkBoxes; 
 		}
 		
 		def dialogRef: Dialog = Dialog {
-			width: if(agentsDiscovered) 500 else 300
-			height: if(agentsDiscovered) 400 else 100
 			noCancel: not agentsDiscovered
 	        modal: true
 	        title: "Auto detect agents in network"
 	        showPostInit: true
-	        stripeVisible: false
 	        closable: true
 	        helpUrl: if(agentsDiscovered) "http://www.loadui.org/Working-with-loadUI/agents-and-testcases.html" else null
 	        content: [
         		Form {
-        			layoutInfo: LayoutInfo { 
-        				hgrow: Priority.ALWAYS vgrow: Priority.ALWAYS
-        				hfill: true vfill: true
-					}
+        			layoutInfo: LayoutInfo { width: 300 }
 					formContent: [
 						LabelField {
-							value: if(agentsDiscovered) "Following agents were detected:" else "No new agents detected!"
-							layoutInfo: LayoutInfo { 
-								hgrow: Priority.ALWAYS vgrow: Priority.NEVER
-        						hfill: true vfill: false 
-							}
-							vpos: bind if(agentsDiscovered) VPos.CENTER else VPos.TOP 
+							value: if(agentsDiscovered) "The following agents were detected:" else "No new agents detected!"
 						}
 						checkBoxes
 					]

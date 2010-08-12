@@ -69,9 +69,6 @@ public class DeleteModelItemDialog {
 				dialog.close();
 				onOk();
 			}
-			
-			width : 450
-			height : 150
 		}
 	}
 }

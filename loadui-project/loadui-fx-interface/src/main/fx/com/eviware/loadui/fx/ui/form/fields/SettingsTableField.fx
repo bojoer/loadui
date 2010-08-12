@@ -17,11 +17,11 @@ package com.eviware.loadui.fx.ui.form.fields;
 
 /**
  * @author robert
-
  */
  
 import javafx.scene.CustomNode;
 import javafx.scene.Node;
+import javafx.util.Math;
 import javafx.ext.swing.SwingComponent;
 
 import com.eviware.loadui.fx.ui.form.FormField;
@@ -54,6 +54,8 @@ public class SettingsTableField extends CustomNode, FormField, Observer{
     }
     public var dataHashCode = model.hashCode();
     
+    var pane:JScrollPane;
+    
     override public function create():Node {
         for( p in data.values() ) 
             model.addRow(p as PropertyProxy);
@@ -63,7 +65,8 @@ public class SettingsTableField extends CustomNode, FormField, Observer{
         table.setVisibleRowCount(2);
         table.setHorizontalScrollEnabled(true);
         table.setPreferredScrollableViewportSize(new Dimension(400, 220));
-        var node = SwingComponent.wrap( new JScrollPane(table));
+        
+        SwingComponent.wrap( pane = new JScrollPane(table));
     }
     
  /*   function apply() {
@@ -90,11 +93,11 @@ public class SettingsTableField extends CustomNode, FormField, Observer{
     }*/
     
     override public function getPrefHeight(width) {
-        220
+    	Math.max( pane.getPreferredSize().getHeight(), 220 )
     }
             
     override public function getPrefWidth(height) {
-        400
+    	Math.max( pane.getPreferredSize().getWidth(), 400 )
     }
     
     override function update(observable: Observable, arg: Object) {

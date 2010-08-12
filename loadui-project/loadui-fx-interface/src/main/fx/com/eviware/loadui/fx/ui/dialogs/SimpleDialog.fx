@@ -54,40 +54,35 @@ public class SimpleDialog  {
 	
 		var form:Form;
 		
-		def dialogRef: Dialog = Dialog {
-		 width: 500
-		 height: 400
+		def dialogRef: Dialog = TabDialog {
          modal: true
          title: title
          showPostInit: true
-         stripeVisible: true
          closable: true
          helpUrl: "http://www.loadui.org"
-         content: TabPanel {
-		         	tabs: [
-		         		Tab {
-		         			label: "A form",
-		         			content: form = Form {
-									formContent: [
-										TextField { id: "name", label: "Full name", description: "Your full name, stupid!", value: "John Doe" },
-										TextField { id: "description", label: "Describe yourself", description: "This is a description of the description field." },
-										CheckBoxField { id: "agree", label: "I agree", description: "Do you agree?", value: true } as FormField //The cast is here because of a compiler bug.
-									]
-								}
-								onSelect: function() { log.debug( "Selected tab 1" ) }
-							}, Tab {
-		         			label: "Another form", content: Form {
-									formContent: [
-										CheckBoxField { id: "agree", label: "I agree", description: "Do you agree?", value: true },
-										CheckBoxField { id: "agree2", label: "My previsous statement was true, I swear it was!", description: "Do you agree?", value: true },
-										CheckBoxField { id: "agree3", label: "I do not agree", description: "Do you agree?", value: false },
-										TextField { id: "first name", label: "First name", description: "Your first name." } as FormField,
-										TextField { id: "last name", label: "Last name", description: "Your last name." } as FormField,
-									]
-								}
-							}
+      	tabs: [
+      		Tab {
+      			label: "A form",
+      			content: form = Form {
+						formContent: [
+							TextField { id: "name", label: "Full name", description: "Your full name, stupid!", value: "John Doe" },
+							TextField { id: "description", label: "Describe yourself", description: "This is a description of the description field." },
+							CheckBoxField { id: "agree", label: "I agree", description: "Do you agree?", value: true }
 						]
 					}
+					onSelect: function() { log.debug( "Selected tab 1" ) }
+				}, Tab {
+      			label: "Another form", content: Form {
+						formContent: [
+							CheckBoxField { id: "agree", label: "I agree", description: "Do you agree?", value: true },
+							CheckBoxField { id: "agree2", label: "My previsous statement was true, I swear it was!", description: "Do you agree?", value: true },
+							CheckBoxField { id: "agree3", label: "I do not agree", description: "Do you agree?", value: false },
+							TextField { id: "first name", label: "First name", description: "Your first name." },
+							TextField { id: "last name", label: "Last name", description: "Your last name." },
+						]
+					}
+				}
+			]
          onOk: function() {
 				log.debug( "Values: {form.getField('name').value}, {form.getField('description').value}, {form.getField('agree').value}" );
 				dialogRef.close();

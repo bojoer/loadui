@@ -21,7 +21,7 @@
 
 package com.eviware.loadui.fx.dialogs;
 
-import javafx.scene.text.Text;
+import javafx.scene.control.Label;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 
 import com.eviware.loadui.api.model.ProjectRef;
@@ -43,16 +43,13 @@ public class CorruptProjectDialog {
 		def dialog:Dialog = Dialog {
 			title: "{project.getLabel()} is corrupted"
 			content: [
-				Text { content: "The file is corrupted. Would you like to remove  '{project.getLabel()}' from the Workspace?" },
+				Label { text: "The file is corrupted. Would you like to remove  '{project.getLabel()}' from the Workspace?" },
 			]
 			okText: "Remove"
 			onOk: function() {
 				project.delete(false);
 				dialog.close();
 			}
-			
-			width : 450
-			height : 150
 		}
 	}
 }

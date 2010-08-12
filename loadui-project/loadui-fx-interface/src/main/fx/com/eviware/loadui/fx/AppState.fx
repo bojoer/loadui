@@ -159,8 +159,6 @@ public class AppState extends ApplicationState {
 				            content: "Some of the components could not be loaded"
 				        }
 				        onOk: function() { dialog.close(); }
-				        width: 350
-				        height: 50
 				    }
 				}
 					

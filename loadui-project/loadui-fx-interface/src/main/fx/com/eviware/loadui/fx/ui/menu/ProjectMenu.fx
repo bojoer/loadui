@@ -257,8 +257,6 @@ public class ProjectMenu extends HBox {
 		             	                               warning.close();
 		             	                           }
 		             	                           noCancel: true
-		             	                           width: 300
-		             	                           height: 150
 		             	                        };
 		                                   }
 				                        }

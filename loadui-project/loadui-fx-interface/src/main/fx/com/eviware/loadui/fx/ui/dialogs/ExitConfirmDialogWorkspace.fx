@@ -41,9 +41,6 @@ public class ExitConfirmDialogWorkspace {
                 dialog.close();
                 WindowControllerImpl.instance.forceClose();
             }
-            
-            width : 250
-            height : 150
         }
     }
 };
