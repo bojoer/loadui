@@ -89,11 +89,11 @@ public class AppState extends ApplicationState {
 	 * Should be used for Nodes which must be positioned on top of everything else,
 	 * such as dialog boxes or popup menus.
 	 */
-	public def overlayLayer = Group {};
+	public def overlayLayer = Group { autoSizeChildren: false };
 	
 	def localLayer = bind lazy wipePanel.content[0] as Group;
 	var wipePanel:XWipePanel;
-	def layers = Group {};
+	def layers = Group { autoSizeChildren: false };
 	
 	def localNodes:Map = new HashMap();
 

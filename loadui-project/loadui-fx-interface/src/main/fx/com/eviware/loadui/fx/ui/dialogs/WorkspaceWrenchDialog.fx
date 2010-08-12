@@ -81,7 +81,6 @@ public class WorkspaceWrenchDialog  {
 		dialogRef = TabDialog {
          title: title
          subtitle: "Settings"
-         height: 150
          helpUrl: "http://www.loadui.org/interface/workspace-view.html"
          tabs: [
       		Tab {

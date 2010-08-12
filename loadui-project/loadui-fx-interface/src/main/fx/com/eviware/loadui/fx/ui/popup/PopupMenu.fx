@@ -50,7 +50,7 @@ var openMenus:PopupMenu[] = [] on replace oldVal {
 	if( sizeof openMenus == 0 ) {
 		delete menuGroup from overlay.content;
 	} else if( sizeof oldVal == 0 ) {
-		insert menuGroup into overlay.content;;
+		insert menuGroup into overlay.content;
 	}
 };
 
@@ -66,7 +66,7 @@ def modalLayer = Rectangle {
 	}
 }
 
-def menuGroup = Group { id:"popupMenuGroup", content: modalLayer };
+def menuGroup = Group { id:"popupMenuGroup", autoSizeChildren: false, content: modalLayer };
 
 /**
  * Closes all open PopupMenus.
