@@ -690,7 +690,7 @@ Appendix
                     </object>
                   </java>
                 </serializedBean>
-                <condition>(${compiler:proxy} != "" &amp;&amp; ${compiler:proxy} != null);</condition>
+                <condition>"${compiler:proxy}" != "" </condition>
               </action>
               <action name="" id="772" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
