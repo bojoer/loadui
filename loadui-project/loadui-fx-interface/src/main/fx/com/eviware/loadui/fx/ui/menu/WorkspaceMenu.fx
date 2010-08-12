@@ -40,6 +40,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.Separator;
 import javafx.scene.input.MouseEvent;
 
 import com.eviware.loadui.fx.MainWindow;
@@ -49,11 +50,6 @@ import com.eviware.loadui.fx.dialogs.*;
 import com.eviware.loadui.fx.ui.menu.button.*;
 import com.eviware.loadui.fx.widgets.TrashHole;
 import com.eviware.loadui.fx.FxUtils.*;
-import com.eviware.loadui.fx.ui.popup.Menu;
-import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
-import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
-import com.eviware.loadui.fx.ui.popup.SubMenuItem;
 import com.eviware.loadui.fx.ui.resources.Paints;
 import com.eviware.loadui.fx.ui.resources.MenuArrow;
 import com.eviware.loadui.fx.WindowControllerImpl;
@@ -69,6 +65,9 @@ import java.io.IOException;
 import com.eviware.loadui.fx.dialogs.CorruptProjectDialog;
 import com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog;
 import com.eviware.loadui.fx.dialogs.CreateNewAgentDialog;
+
+import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.MenuButton;
 
 public class WorkspaceMenu extends HBox {
     public-init var workspace: WorkspaceItem;
@@ -92,16 +91,16 @@ public class WorkspaceMenu extends HBox {
     public var workspaceMenuClosedFont: Font = Font{name:"Arial", size:10};
     public var workspaceMenuOpenedFont: Font = Font{name:"Arial", size:18};
     
-    var popup:PopupMenu;
-    var projectList: ActionMenuItem[];
-    def popupOpen = bind popup.isOpen on replace {
+    var projectList: Node[];
+    var menuButton:MenuButton;
+    def popupOpen = bind menuButton.showing on replace {
         if( popupOpen ) {
             projectList = getProjectsForSubMenu();
         }
     }
     
     init {
-		var menuContent:Node; 
+		var menuContent:Node;
 		content = [
 		ImageView {
 			image: Image {
@@ -117,99 +116,73 @@ public class WorkspaceMenu extends HBox {
 			fill: Color.rgb( 0, 0, 0, 0.1 )
 			managed: false
 		}, Label {
-            layoutInfo: LayoutInfo {
-                width: 95
-            }
-            }, Menu {
-            contentNode: Group {
-                content: [
-                Rectangle {
-                    width: bind menuContent.boundsInLocal.width + 6
-                    height: bind menuContent.boundsInLocal.height + 6
-                    fill: bind workspaceMenuFill
-                    blocksMouse: false
-                    }, menuContent = HBox {
-                    layoutX: 3
-                    layoutY: 3
-                    nodeVPos: VPos.CENTER
-                    spacing: 5
-                    content: [
-                    Label {
-                        textFill: bind if( popup.isOpen ) workspaceMenuOpenedTextFill else workspaceMenuClosedTextFill
-                        text: "Workspace"
-                        font: bind workspaceMenuOpenedFont
-                        }, MenuArrow { 
-                        fill: bind if( popup.isOpen ) workspaceMenuOpenedArrowFill else workspaceMenuClosedArrowFill
-                        rotate: 90
-                    }
-                    ]
-                }
-                ]
-            }
-            menu: popup = PopupMenu {
-                items: [
-                ActionMenuItem {
-                    text: "New Project"
-                    action: function() {
-                        var dialog = CreateNewProjectDialog { 
-                            workspace: workspace
-                        };
-                    }
-                }
-                ActionMenuItem {
-                    text: "Import Project"
-                    action: function() {
-                        var pro:ProjectRef; 
-                        def chooser = new JFileChooser();
-                        chooser.addChoosableFileFilter(new XMLFileFilter());
-                        chooser.setAcceptAllFileFilterUsed(false);
-                        var source:File;
-                        if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(null)) {
-                            source = chooser.getSelectedFile();
-                        }
-                        if ( source != null ) {
-                           
-	                        try {
-	                            pro = workspace.importProject( source, true );
-	                        } catch(e:IOException) {
-	                         	var warning:Dialog = Dialog {
-		                             title: "Warning!"
-		                             content: Text {
-		                                 content: "Failed to Import Project, see log for more details!"
-		                             }
-		                             okText: "Ok"
-		                             onOk: function() {
-		                                 warning.close();
-		                             }
-		                             noCancel: true
-		                         	};
-	                        }
-                        
-                        }
-                    }
-                }
-                SeparatorMenuItem{}
-                ActionMenuItem {
-                    text: "New Agent"
-                    action: function() { CreateNewAgentDialog{ workspace: workspace }; }
-                }
-                ActionMenuItem {
-                    text: "Detect Agent"
-                    action: function() { AgentDiscovererDialog{}.show();; }
-                }
-                SeparatorMenuItem{}
-                ActionMenuItem {
-                    text: "Settings"
-                    action: function() { WorkspaceWrenchDialog{}.show(); }
-                }
-                SeparatorMenuItem{}
-                ActionMenuItem {
-                    text: "Exit"
-                    action: function() { WindowControllerImpl.instance.close() }
-                }
-                ]
-            }
-            }, Label {
+			layoutInfo: LayoutInfo { width: 95 }
+		}, menuButton = MenuButton {
+			styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
+			text: "Workspace"
+			font: bind workspaceMenuOpenedFont
+			items: [
+				MenuItem {
+	              text: "New Project"
+	              action: function() {
+	                  var dialog = CreateNewProjectDialog { 
+	                      workspace: workspace
+	                  };
+	              }
+	          }
+	          MenuItem {
+	              text: "Import Project"
+	              action: function() {
+	                  var pro:ProjectRef; 
+	                  def chooser = new JFileChooser();
+	                  chooser.addChoosableFileFilter(new XMLFileFilter());
+	                  chooser.setAcceptAllFileFilterUsed(false);
+	                  var source:File;
+	                  if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(null)) {
+	                      source = chooser.getSelectedFile();
+	                  }
+	                  if ( source != null ) {
+	                     
+	                     try {
+	                         pro = workspace.importProject( source, true );
+	                     } catch(e:IOException) {
+	                      	var warning:Dialog = Dialog {
+	                             title: "Warning!"
+	                             content: Text {
+	                                 content: "Failed to Import Project, see log for more details!"
+	                             }
+	                             okText: "Ok"
+	                             onOk: function() {
+	                                 warning.close();
+	                             }
+	                             noCancel: true
+	                         	};
+	                     }
+	                  
+	                  }
+	              }
+	          }
+	          Separator{}
+	          MenuItem {
+	              text: "New Agent"
+	              action: function() { CreateNewAgentDialog{ workspace: workspace }; }
+	          }
+	          MenuItem {
+	              text: "Detect Agent"
+	              action: function() { AgentDiscovererDialog{}.show();; }
+	          }
+	          Separator{}
+	          MenuItem {
+	              text: "Settings"
+	              action: function() { WorkspaceWrenchDialog{}.show(); }
+	          }
+	          Separator{}
+	          MenuItem {
+	              text: "Exit"
+	              action: function() { WindowControllerImpl.instance.close() }
+	          }
+			]
+		}, Label {
             layoutInfo: LayoutInfo {
                 hgrow: Priority.ALWAYS
                 hfill: true 
@@ -236,10 +209,10 @@ public class WorkspaceMenu extends HBox {
         ];
     }
 
-    function getProjectsForSubMenu():ActionMenuItem[] {
-        var result:ActionMenuItem[];
+    function getProjectsForSubMenu():MenuItem[] {
+        var result:MenuItem[];
         for( ref in workspace.getProjectRefs() ) {
-            insert ActionMenuItem {
+            insert MenuItem {
                 text: ref.getLabel()
                 action: function() {
                     try {

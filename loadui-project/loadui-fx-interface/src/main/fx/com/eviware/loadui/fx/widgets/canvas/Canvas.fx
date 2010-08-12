@@ -30,7 +30,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.control.Separator;
 import javafx.geometry.BoundingBox;
+
+import com.javafx.preview.control.PopupMenu;
+import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.Menu;
 
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.AppState;
@@ -42,11 +47,6 @@ import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
 import com.eviware.loadui.fx.dialogs.CreateNewTestCaseDialog;
-
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
-import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
-import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
-import com.eviware.loadui.fx.ui.popup.SubMenuItem;
 
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.terminal.Connection;
@@ -194,14 +194,14 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		canvasItem.createComponent( name, descriptor );
 	}
 	
-	def deleteAction = ActionMenuItem {
+	def deleteAction = MenuItem {
 		text: "Delete"
 		action: function():Void {
 			Deletable.deleteObjects( for( deletable in Selectable.selects[s|s instanceof Deletable] ) deletable as Deletable, Selectable.selectNone );
 		}
 	}
 	
-	def cloneAction = ActionMenuItem {
+	def cloneAction = MenuItem {
 		text: "Clone"
 		action: function():Void {
 			for( clone in moveComponents( canvasItem, for( cNode in Selectable.selects[s|s instanceof CanvasNode] ) (cNode as CanvasNode).modelItem as CanvasObjectItem, false ) ) {
@@ -213,43 +213,41 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		}
 	}
 	
-	def moveSubmenu:SubMenuItem = SubMenuItem {
+	def moveSubmenu:Menu = Menu {
 		text: "Move to"
-		submenu: PopupMenu {
-			onOpen: function() {
-				def selection = for( cn in Selectable.selects[s|s instanceof CanvasNode] ) cn as CanvasNode;
-				def project = if( canvasItem instanceof ProjectItem ) canvasItem as ProjectItem else canvasItem.getProject();
-				if( sizeof selection > 0 and sizeof selection[s|s instanceof TestCaseNode] == 0 ) {
-					def components = for( cNode in selection ) cNode.modelItem as ComponentItem;
-					moveSubmenu.submenu.items = [
-						if( not ( canvasItem instanceof ProjectItem ) ) [ ActionMenuItem {
-							text: "Parent Project"
-							action: function():Void {
-								moveComponents( project, components, true );
-							}
-						}, SeparatorMenuItem {} ] else null,
-						for( tc in project.getScenes()[t|t != canvasItem] ) ActionMenuItem {
-							text: tc.getLabel()
-							action: function():Void {
-								moveComponents( tc, components, true );
-							}
-						},
-						SeparatorMenuItem {},
-						ActionMenuItem {
-							text: "New TestCase..."
-							action: function():Void {
-								CreateNewTestCaseDialog { project: project, onOk: function( testCase: SceneItem ):Void {
-									moveComponents( testCase, components, true );
-								} }
-							}
+		onShowing: function() {
+			def selection = for( cn in Selectable.selects[s|s instanceof CanvasNode] ) cn as CanvasNode;
+			def project = if( canvasItem instanceof ProjectItem ) canvasItem as ProjectItem else canvasItem.getProject();
+			if( sizeof selection > 0 and sizeof selection[s|s instanceof TestCaseNode] == 0 ) {
+				def components = for( cNode in selection ) cNode.modelItem as ComponentItem;
+				moveSubmenu.items = [
+					if( not ( canvasItem instanceof ProjectItem ) ) [ MenuItem {
+						text: "Parent Project"
+						action: function():Void {
+							moveComponents( project, components, true );
 						}
-					];
-				} else {
-					moveSubmenu.submenu.items = ActionMenuItem {
-						text: if( sizeof selection == 0 ) "Nothing selected" else "Cannot move selection containing TestCase"
-						disable: true
-					};
-				}
+					}, Separator {} ] else null,
+					for( tc in project.getScenes()[t|t != canvasItem] ) MenuItem {
+						text: tc.getLabel()
+						action: function():Void {
+							moveComponents( tc, components, true );
+						}
+					},
+					Separator {},
+					MenuItem {
+						text: "New TestCase..."
+						action: function():Void {
+							CreateNewTestCaseDialog { project: project, onOk: function( testCase: SceneItem ):Void {
+								moveComponents( testCase, components, true );
+							} }
+						}
+					}
+				];
+			} else {
+				moveSubmenu.items = MenuItem {
+					text: if( sizeof selection == 0 ) "Nothing selected" else "Cannot move selection containing TestCase"
+					disable: true
+				};
 			}
 		}
 	}
@@ -278,7 +276,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			deleteAction,
 			moveSubmenu
 		]
-		onOpen: function():Void {
+		onShowing: function():Void {
 			deleteAction.disable = sizeof Selectable.selects[d|d instanceof Deletable] == 0;
 		}
 	}
@@ -311,7 +309,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 						def newOffsetY = offsetY + 100 * e.wheelRotation as Integer;
 						offsetY = Math.max( Math.min( newOffsetY, areaHeight-height as Integer), 0 );
 					}
-				}
+				}, contextMenu
 			]
 			clip: Rectangle { width: bind width, height: bind height }
 		}
@@ -408,12 +406,10 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	}
 	
 	/**
-	 * Opens the context menu at the given location.
+	 * Opens the context menu at the given location relative to the screen.
 	 */
 	public function openContextMenu( x:Number, y:Number ):Void {
-		contextMenu.layoutX = Math.min( x, scene.width - contextMenu.layoutBounds.width );
-		contextMenu.layoutY = Math.min( y, scene.height - contextMenu.layoutBounds.height );
-		contextMenu.open();
+		contextMenu.show( this, x, y );
 	}
 	
 	function addComponent( component:ComponentItem ):Void {
@@ -555,7 +551,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	
 	function onMouseClicked(e:MouseEvent):Void {
 		if( e.button == MouseButton.SECONDARY ) {
-			openContextMenu( e.sceneX, e.sceneY );
+			openContextMenu( e.screenX, e.screenY );
 		}
 	}
 }

@@ -88,7 +88,7 @@ public class WorkspaceWrenchDialog  {
       			content: formT1 = Form {
       				singleColumn: true
 						formContent: [
-							TextField { 
+							TextField {
 								id: "description"
 								label: "Description"
 								description: "This is a description of the description field."

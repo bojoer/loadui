@@ -40,11 +40,15 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+
+import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.MenuButton;
 
 import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.AppState;
@@ -53,11 +57,6 @@ import com.eviware.loadui.fx.dialogs.*;
 import com.eviware.loadui.fx.ui.menu.button.*;
 import com.eviware.loadui.fx.widgets.TrashHole;
 import com.eviware.loadui.fx.FxUtils.*;
-import com.eviware.loadui.fx.ui.popup.Menu;
-import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
-import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
-import com.eviware.loadui.fx.ui.popup.SubMenuItem;
 import com.eviware.loadui.fx.ui.resources.Paints;
 import com.eviware.loadui.fx.ui.resources.MenuArrow;
 import com.eviware.loadui.fx.widgets.MiniRunController;
@@ -121,7 +120,6 @@ public class TestCaseMenu extends HBox {
 		height: 90
 	}
 	
-	var popup:PopupMenu;
 	var summaryEnabled = false;
 	
 	var testCaseLabelTruncated: Boolean = false on replace {
@@ -209,10 +207,9 @@ public class TestCaseMenu extends HBox {
 		}
 	}
 	
-	var menu:Menu;
 	
 	init {
-		var menuContent:Node;
+		var menuButton:MenuButton;
 		
 		content = [
 			ImageView {
@@ -270,7 +267,7 @@ public class TestCaseMenu extends HBox {
 								layoutInfo: LayoutInfo {
 									height: 20
 									margin: Insets { left: 3 }
-									width: bind menu.layoutBounds.width
+									width: bind menuButton.width
 								}
 							}, MiniRunController {
 								canvas: bind testCase.getProject()
@@ -287,79 +284,55 @@ public class TestCaseMenu extends HBox {
 						spacing: 3
 						nodeVPos: VPos.CENTER
 						content: [
-							menu = Menu {
-								contentNode: Group {
-									content: [
-										Rectangle {
-											width: bind menuContent.boundsInLocal.width + 6
-											height: bind menuContent.boundsInLocal.height + 6
-											fill: bind tcMenuFill
-										}, menuContent = HBox {
-											layoutX: 3
-											layoutY: 3
-											nodeVPos: VPos.CENTER
-											spacing: 5 
-											content: [
-												Label {
-													textFill: bind if( popup.isOpen ) tcMenuOpenedTextFill else tcMenuClosedTextFill
-													text: bind truncTestCaseLabel                      
-													font: bind tcMenuOpenedFont
+							menuButton = MenuButton {
+								styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
+								text: bind truncTestCaseLabel
+								font: bind tcMenuOpenedFont
+								items: [
+									MenuItem {
+										text: "Rename"
+										action: function() { 
+											RenameModelItemDialog { modelItem: MainWindow.instance.testcaseCanvas.canvasItem as SceneItem }
+										}
+									}
+									MenuItem {
+										text: "Clone"
+										action: function() {
+											def copy = testCase.getCanvas().duplicate( testCase ) as SceneItem;
+											def layoutX = Integer.parseInt( testCase.getAttribute( "gui.layoutX", "0" ) ) + 50;
+											def layoutY = Integer.parseInt( testCase.getAttribute( "gui.layoutY", "0" ) ) + 50;
+											copy.setAttribute( "gui.layoutX", "{ layoutX as Integer }" );
+											copy.setAttribute( "gui.layoutY", "{ layoutY as Integer }" );
+											AppState.instance.setActiveCanvas( copy );
+										}
+									}
+									MenuItem {
+										text: "Delete"
+										action: function() { 
+											DeleteModelItemDialog { 
+												modelItem: MainWindow.instance.testcaseCanvas.canvasItem as SceneItem
+												onOk: function(): Void {
+													AppState.instance.setActiveCanvas( testCase.getProject() );
 												} 
-												MenuArrow { 
-													fill: bind if( popup.isOpen ) tcMenuOpenedArrowFill else tcMenuClosedArrowFill
-													rotate: 90
-												}
-											]
+											} 
 										}
-									]
-								}
-								menu: popup = PopupMenu {
-									items: [
-										ActionMenuItem {
-											text: "Rename"
-											action: function() { 
-												RenameModelItemDialog { modelItem: MainWindow.instance.testcaseCanvas.canvasItem as SceneItem }
-											}
+									}
+									Separator{}
+									MenuItem {
+										text: "Settings"
+										action: function() { 
+											new SettingsDialog().show(testCase); 
 										}
-										ActionMenuItem {
-											text: "Clone"
-											action: function() {
-												def copy = testCase.getCanvas().duplicate( testCase ) as SceneItem;
-												def layoutX = Integer.parseInt( testCase.getAttribute( "gui.layoutX", "0" ) ) + 50;
-												def layoutY = Integer.parseInt( testCase.getAttribute( "gui.layoutY", "0" ) ) + 50;
-												copy.setAttribute( "gui.layoutX", "{ layoutX as Integer }" );
-												copy.setAttribute( "gui.layoutY", "{ layoutY as Integer }" );
-												AppState.instance.setActiveCanvas( copy );
-											}
+									}
+									Separator{}
+									MenuItem {
+										text: "Close"
+										action: function() {
+											MainWindow.instance.testcaseCanvas.generateMiniatures();
+											AppState.instance.setActiveCanvas( testCase.getProject() );
 										}
-										ActionMenuItem {
-											text: "Delete"
-											action: function() { 
-												DeleteModelItemDialog { 
-													modelItem: MainWindow.instance.testcaseCanvas.canvasItem as SceneItem
-													onOk: function(): Void {
-														AppState.instance.setActiveCanvas( testCase.getProject() );
-													} 
-												} 
-											}
-										}
-										SeparatorMenuItem{}
-										ActionMenuItem {
-											text: "Settings"
-											action: function() { 
-												new SettingsDialog().show(testCase); 
-											}
-										}
-										SeparatorMenuItem{}
-										ActionMenuItem {
-											text: "Close"
-											action: function() {
-												MainWindow.instance.testcaseCanvas.generateMiniatures();
-												AppState.instance.setActiveCanvas( testCase.getProject() );
-											}
-										}
-									]
-								}
+									}
+								]
 							}, RunController {
 								testcase: true
 								canvas: bind testCase
