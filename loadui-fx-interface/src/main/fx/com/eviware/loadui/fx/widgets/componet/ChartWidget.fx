@@ -88,6 +88,8 @@ import javafx.geometry.VPos;
 import javafx.geometry.HPos;
 import javafx.scene.layout.LayoutInfo;
 
+import com.jidesoft.chart.axis.AxisPlacement;
+
 
 /**
  * @author predrag
@@ -99,6 +101,7 @@ public class ChartWidget extends VBox, ChartListener {
     var chart: Chart;
     var xAxis: Axis;
     var yAxis: Axis;
+    var y2Axis: Axis;
     var legend: Legend;
     var legendPanel: JPanel;
     var models: HashMap;
@@ -106,6 +109,7 @@ public class ChartWidget extends VBox, ChartListener {
     
     var customXRange: CustomAbstractRange;
     var customYRange: CustomAbstractRange;
+    var customY2Range: CustomAbstractRange;
     
     var seriesColors: Color[];
     
@@ -164,6 +168,7 @@ public class ChartWidget extends VBox, ChartListener {
 		customXRange = chartModel.getXRange();
 	    customYRange = chartModel.getYRange();
 	    
+	    
     	chart = new Chart();
 		
 		insert Color.orange into seriesColors;
@@ -181,7 +186,12 @@ public class ChartWidget extends VBox, ChartListener {
 			def model: DefaultChartModel = new DefaultChartModel(cs.getName());
     		models.put(cs.getName(), model);
 			if(cs.isEnabled()){
-	    		chart.addModel(model);
+			    if (cs.isDefaultAxis()) {
+	    			chart.addModel(model);
+			    } else {
+	    			chart.addModel(model, y2Axis);
+	    			
+			    }
 	    		chart.setStyle(model, createStyleForSerie(cs.getIndex(), chartModel.getStyle()));
 			}
 		}
@@ -190,7 +200,7 @@ public class ChartWidget extends VBox, ChartListener {
     	legend.setBorder(BorderFactory.createEmptyBorder());
     	legend.setOpaque(false);
     	
-    	var xRange: AbstractRange = convertRange(customXRange);;
+    	var xRange: AbstractRange = convertRange(customXRange);
     	var yRange: AbstractRange = convertRange(customYRange);
     	
     	xAxis = createAxis(xRange);
@@ -226,6 +236,16 @@ public class ChartWidget extends VBox, ChartListener {
         
     	chart.setXAxis(xAxis);
         chart.setYAxis(yAxis);
+        customY2Range = chartModel.getY2Range();
+        if (customY2Range != null) {
+        	var y2Range: AbstractRange = convertRange(customY2Range);
+            y2Axis = createAxis(y2Range);
+            y2Axis.setVisible(customY2Range.isVisible());
+            y2Axis.setAxisColor(new Color(255, 255, 255));
+            y2Axis.setLabel(new AutoPositionedLabel(customY2Range.getTitle(), new Color(0,255,0)));
+            y2Axis.setPlacement(AxisPlacement.TRAILING);
+       		chart.addYAxis(y2Axis);
+        }
         chart.setTitle(new AutoPositionedLabel(chartModel.getTitle(), Color.yellow.brighter()));
     	chart.setChartBackground(new Color(0, 0, 0, 0));
     	chart.setPanelBackground(new Color(0, 0, 0, 0));
@@ -339,7 +359,10 @@ public class ChartWidget extends VBox, ChartListener {
 	    		model = new DefaultChartModel(chartSerie.getName());
 	    		models.put(chartSerie.getName(), model);
 	    		
-	    		chart.addModel(model);
+	    		if (chartSerie.isDefaultAxis())
+	    			chart.addModel(model)
+	    		else
+	    			chart.addModel(model, y2Axis);
 	    		chart.setStyle(model, createStyleForSerie(chartModel.getSerieIndex(chartSerie.getName()), chartModel.getStyle()));
 	    	}
 	    	else{

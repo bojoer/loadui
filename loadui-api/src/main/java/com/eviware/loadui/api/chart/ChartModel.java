@@ -30,6 +30,8 @@ public class ChartModel {
 	private CustomAbstractRange xRange;
 
 	private CustomAbstractRange yRange;
+	
+	private CustomAbstractRange y2Range;
 
 	private String title = "";
 
@@ -47,6 +49,15 @@ public class ChartModel {
 			int width, int height) {
 		this.xRange = xRange;
 		this.yRange = yRange;
+		this.width = width;
+		this.height = height;
+	}
+	
+	public ChartModel(CustomAbstractRange xRange, CustomAbstractRange yRange, CustomAbstractRange y2Range,
+			int width, int height) {
+		this.xRange = xRange;
+		this.yRange = yRange;
+		this.y2Range = y2Range;
 		this.width = width;
 		this.height = height;
 	}
@@ -104,6 +115,10 @@ public class ChartModel {
 	public CustomAbstractRange getYRange() {
 		return yRange;
 	}
+	
+	public CustomAbstractRange getY2Range() {
+		return y2Range;
+	}
 
 	public String getTitle() {
 		return title;
@@ -133,11 +148,11 @@ public class ChartModel {
 		return series;
 	}
 
-	public void addSerie(String name, boolean enabled) {
+	public void addSerie(String name, boolean enabled, boolean defaultAxis) {
 		if (series == null) {
 			series = new ArrayList<ChartSerie>();
 		}
-		ChartSerie cs = new ChartSerie(name, enabled);
+		ChartSerie cs = new ChartSerie(name, enabled, defaultAxis);
 		series.add(cs);
 		cs.setIndex(series.size() - 1);
 	}
