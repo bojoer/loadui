@@ -182,19 +182,7 @@ public class ChartWidget extends VBox, ChartListener {
 		insert Color.gray into seriesColors;
 				
     	models = new HashMap();
-		for(cs in chartModel.getSeries()){
-			def model: DefaultChartModel = new DefaultChartModel(cs.getName());
-    		models.put(cs.getName(), model);
-			if(cs.isEnabled()){
-			    if (cs.isDefaultAxis()) {
-	    			chart.addModel(model);
-			    } else {
-	    			chart.addModel(model, y2Axis);
-	    			
-			    }
-	    		chart.setStyle(model, createStyleForSerie(cs.getIndex(), chartModel.getStyle()));
-			}
-		}
+		
     	
     	legend = new Legend(chart, chartModel.getLegendColumns());
     	legend.setBorder(BorderFactory.createEmptyBorder());
@@ -246,6 +234,20 @@ public class ChartWidget extends VBox, ChartListener {
             y2Axis.setPlacement(AxisPlacement.TRAILING);
        		chart.addYAxis(y2Axis);
         }
+        
+        for(cs in chartModel.getSeries()){
+        			def model: DefaultChartModel = new DefaultChartModel(cs.getName());
+            		models.put(cs.getName(), model);
+        			if(cs.isEnabled()){
+        			    if (cs.isDefaultAxis()) {
+        	    			chart.addModel(model);
+        			    } else {
+        	    			chart.addModel(model, y2Axis);
+        	    			
+        			    }
+        	    		chart.setStyle(model, createStyleForSerie(cs.getIndex(), chartModel.getStyle()));
+        			}
+        		}
         chart.setTitle(new AutoPositionedLabel(chartModel.getTitle(), Color.yellow.brighter()));
     	chart.setChartBackground(new Color(0, 0, 0, 0));
     	chart.setPanelBackground(new Color(0, 0, 0, 0));
@@ -425,11 +427,14 @@ public class ChartWidget extends VBox, ChartListener {
 			var period: Long = (customYRange as CustomTimeRange).getPeriod();
 			var rate: Long = (customYRange as CustomTimeRange).getRate();
     		adjustTimeAxisPoints(period, true);
-    		autoTimeAxis(yAxis, findMinimumY() + rate, period - rate);
+    		autoTimeAxis(yAxis, findMinimumY(true) + rate, period - rate);
     	}
     	else if(yAxis.getRange() instanceof NumericRange){
-    		autoNumericAxis(yAxis, findMaximumY(), findMinimumY(), (customYRange as CustomNumericRange).getExtraSpace());
+    		autoNumericAxis(yAxis, findMaximumY(true), findMinimumY(true), (customYRange as CustomNumericRange).getExtraSpace());
     	} 
+    	if(y2Axis.getRange() instanceof NumericRange){
+    	    		autoNumericAxis(y2Axis, findMaximumY(false), findMinimumY(false), (customY2Range as CustomNumericRange).getExtraSpace());
+    	    	} 
     }
     
     function autoTimeAxis(axis: Axis, min: Double, period: Long): Void {
@@ -447,7 +452,7 @@ public class ChartWidget extends VBox, ChartListener {
     }
     
     function findMaximumX(): Double {
-    	var max: Double = getFirstModel().getXRange().maximum();
+    	var max: Double = getFirstModel(true).getXRange().maximum();
 		var tmp: Double;
 		var keys: Iterator = models.keySet().iterator();
 		while(keys.hasNext()){
@@ -463,7 +468,7 @@ public class ChartWidget extends VBox, ChartListener {
     }
     
     function findMinimumX(): Double {
-    	var min: Double = getFirstModel().getXRange().minimum();
+    	var min: Double = getFirstModel(true).getXRange().minimum();
 		var tmp: Double;
 		var keys: Iterator = models.keySet().iterator();
 		while(keys.hasNext()){
@@ -478,13 +483,14 @@ public class ChartWidget extends VBox, ChartListener {
 		min;    	
     }
     
-    function findMaximumY(): Double {
-    	var max: Double = getFirstModel().getYRange().maximum();
+    function findMaximumY(default:Boolean): Double {
+       
+    	var max: Double = getFirstModel(default).getYRange().maximum();
 		var tmp: Double;
 		var keys: Iterator = models.keySet().iterator();
 		while(keys.hasNext()){
 			var cs: ChartSerie = chartModel.getSerie(keys.next() as String);
-			if(cs != null and cs.isEnabled()){
+			if(cs != null and cs.isEnabled() and (cs.isDefaultAxis() == default)){
 				tmp = (models.get(cs.getName()) as DefaultChartModel).getYRange().maximum();
 				if(tmp > max){
 					max = tmp;
@@ -494,13 +500,13 @@ public class ChartWidget extends VBox, ChartListener {
 		max;    	
     }
     
-    function findMinimumY(): Double {
-    	var min: Double = getFirstModel().getYRange().minimum();
+    function findMinimumY(default: Boolean): Double {
+    	var min: Double = getFirstModel(default).getYRange().minimum();
 		var tmp: Double;
 		var keys: Iterator = models.keySet().iterator();
 		while(keys.hasNext()){
 			var cs: ChartSerie = chartModel.getSerie(keys.next() as String);
-			if(cs != null and cs.isEnabled()){
+			if(cs != null and cs.isEnabled() and (cs.isDefaultAxis() == default)){
 				tmp = (models.get(cs.getName()) as DefaultChartModel).getYRange().minimum();
 				if(tmp < min){
 					min = tmp;
@@ -510,11 +516,11 @@ public class ChartWidget extends VBox, ChartListener {
 		min;    	
     }
     
-    function getFirstModel(): DefaultChartModel {
+    function getFirstModel(default:Boolean): DefaultChartModel {
 		var keys: Iterator = models.keySet().iterator();
 		while(keys.hasNext()){
 			var cs: ChartSerie = chartModel.getSerie(keys.next() as String);
-			if(cs != null and cs.isEnabled()){
+			if(cs != null and cs.isEnabled() and (cs.isDefaultAxis() == default)){
 				return models.get(cs.getName()) as DefaultChartModel;
 			}
 		}
