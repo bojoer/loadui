@@ -1,8 +1,3 @@
-import java.util.Calendar;
-
-import java.util.Calendar;
-import java.util.Date;
-
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -55,14 +50,16 @@ import org.quartz.JobExecutionException
 import org.quartz.Job
 import org.quartz.JobDetail
 import java.util.Calendar
+import java.util.Date
 import org.quartz.listeners.JobListenerSupport
+import com.eviware.loadui.util.layout.DelayedFormattedString
+import java.text.SimpleDateFormat;
 
 createProperty( 'day', String, "Every day" )
 createProperty( 'hour', Long, -1 )
 createProperty( 'minute', Long, -1 )
 createProperty( 'second', Long, 0 )
 def duration = createProperty( 'duration', Long, -1 )
-def unit = createProperty( 'unit', String, 'Sec' )
 def repeatCount = createProperty( 'repeatCount', Long, -1 )
 
 def canvas = getCanvas()
@@ -76,8 +73,9 @@ stopMessage[TriggerCategory.ENABLED_MESSAGE_PARAM] = false
 sendStop = { send( outputTerminal, stopMessage ) }
 
 def counter = 0
-def durationHolder = 0
-def repeatHolder = 0
+def durationHolder = -1
+def repeatHolder = -1
+def startSent = false
 
 def scheduler = new StdSchedulerFactory().getScheduler()
 scheduler.addJobListener(new JobListenerSupport()
@@ -87,6 +85,7 @@ scheduler.addJobListener(new JobListenerSupport()
 	}
 	void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
 		sendStart()
+		startSent = true
 		scheduleEndTrigger()
 		counter++
 		if(repeatHolder > -1 && counter >= repeatHolder){
@@ -119,6 +118,51 @@ def endTrigger = null
 def endJob = new JobDetail("endJob", "group", SchedulerJob.class)
 endJob.addJobListener("endJobListener")
 
+displayNextRun = new DelayedFormattedString( '%s', 1000, value { 
+	if(startTrigger){
+		def sdf = SimpleDateFormat.getInstance()
+		sdf.setLenient(false)
+		sdf.applyPattern("E HH:mm:ss")
+		sdf.format(startTrigger.getFireTimeAfter(new Date()))
+	}
+	else{
+		'Not running'
+	}
+})
+
+displayTimeLeft = new DelayedFormattedString( '%s', 1000, value {
+	if(startSent && durationHolder == -1){
+		'Infinite'
+	}
+	else if(endTrigger){
+		def current = new Date()
+		def next = endTrigger.getFireTimeAfter(current)
+		def diff = 0
+		if(next != null){
+			diff = next.getTime() - current.getTime()
+		}
+		if(diff > 0){
+			def sdf = SimpleDateFormat.getInstance()
+			sdf.setLenient(false)
+			if(diff < 3600000){
+				sdf.applyPattern("00:mm:ss")
+			}
+			else{
+				sdf.applyPattern("HH:mm:ss")
+			}
+			def calendar = Calendar.getInstance()
+			calendar.setTimeInMillis(diff)
+			sdf.format(calendar.getTime())
+		}
+		else{
+			'00:00:00'
+		}
+	}
+	else{
+		'Not running'
+	}
+})
+
 addEventListener( ActionEvent ) { event ->
 	if( event.key == CanvasItem.START_ACTION) {
 		if(!paused){ 
@@ -132,23 +176,28 @@ addEventListener( ActionEvent ) { event ->
 		paused = true
 	}
 	else if( event.key == CanvasItem.COMPLETE_ACTION) {
-		counter = 0
-		paused = false
-		unscheduleStartTrigger()
-		unscheduleEndTrigger()
+		reset()
 	}
 	else if(event.key == CounterHolder.COUNTER_RESET_ACTION){
-		paused = false
-		unscheduleStartTrigger()
-		unscheduleEndTrigger()
+		reset()
 		scheduleStartTrigger()
 		scheduler?.start()
-		counter = 0
 	}
 }
 
+reset = {
+	counter = 0
+	durationHolder = -1
+	repeatHolder = -1
+	paused = false
+	unscheduleStartTrigger()
+	unscheduleEndTrigger()
+	startTrigger = null
+	endTrigger = null
+	startSent = false
+}
 //addEventListener( PropertyEvent ) { event ->
-//	if( event.property in [ day, hour, minute, second, duration, unit, repeatCount ] ) {
+//	if( event.property in [ day, hour, minute, second, duration, repeatCount ] ) {
 		//if( !canvas.running ) scheduleStartTrigger()
 //	}
 //}
@@ -201,15 +250,8 @@ scheduleEndTrigger = {
 	if(durationHolder > -1){
 		def calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
-		if(unit.value.equals("Sec")){
-			calendar.add(Calendar.SECOND, (int)durationHolder)
-		}
-		else if(unit.value.equals("Min")){
-			calendar.add(Calendar.MINUTE, (int)durationHolder)
-		}
-		else if(unit.value.equals("Hour")){
-			calendar.add(Calendar.HOUR, (int)durationHolder)
-		}
+		calendar.add(Calendar.SECOND, (int)durationHolder)
+
 		def endTriggerPattern = ""
 		endTriggerPattern += "${calendar.get(Calendar.SECOND)} "
 		endTriggerPattern += "${calendar.get(Calendar.MINUTE)} "
@@ -234,22 +276,26 @@ unscheduleEndTrigger = {
 }
 
 onRelease = {
-	cancelAll()
-}
-
-cancelAll = {
 	scheduler.shutdown()
+	displayNextRun.release()
+	displayTimeLeft.release()
 }
 
 layout() {
-    property( property: day, widget: 'comboBox', label: 'Day', options: ['Every day', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], constraints: 'w 100!' )
-    separator( vertical: true )
-    property( property: hour, label: 'Hour', min: -1, max: 23)
-    property( property: minute, label: 'Min', min: -1, max: 59 )
-	property( property: second, label: 'Sec', min: -1, max: 59 )
-    separator( vertical: true )
-    property( property: duration, label: 'Duration', min: -1 )
-	property( property:unit, label: 'Unit', options: ['Sec','Min','Hour'] )
-	separator( vertical: true )
-    property( property: repeatCount, label: 'Repeat', min: -1)
+	box(constraints:'wrap'){
+		box( widget:'display', constraints:'w 280!' ) {
+			node( label: 'Next Run', fString: displayNextRun, constraints: 'w 140!' )
+			node( label: 'Time Left', fString: displayTimeLeft, constraints: 'w 140!' )
+		}
+	}
+	box{
+		property(property: day, widget: 'comboBox', label: 'Day', options: ['Every day', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], constraints: 'w 100!' )
+		property( property: duration, widget: 'timeInput', label: 'Duration', constraints: 'w 100!, align right, wrap' )
+		box{
+			property( property: hour, label: 'Hour', min: -1, max: 23, constraints: 'h 200!')
+			property( property: minute, label: 'Min', min: -1, max: 59, constraints: 'h 150!' )
+			property( property: second, label: 'Sec', min: 0, max: 59, constraints: 'h 150!' )
+		}
+		property( property: repeatCount, label: 'Repeat', min: -1, constraints: 'h 150!, align right')
+	}
 }
