@@ -27,7 +27,7 @@
  * @help http://www.loadui.org/Schedulers/interval.html
  * @category scheduler
  * @nonBlocking true
- * @dependency org.quartz-scheduler:quartz:1.8.3
+ * @jar org.quartz-scheduler:quartz:1.8.3
  * 
  */
 
@@ -53,7 +53,8 @@ import java.util.Calendar
 import java.util.Date
 import org.quartz.listeners.JobListenerSupport
 import com.eviware.loadui.util.layout.DelayedFormattedString
-import java.text.SimpleDateFormat;
+import java.text.SimpleDateFormat
+import com.eviware.loadui.impl.component.ActivityStrategies
 
 createProperty( 'day', String, "Every day" )
 createProperty( 'hour', Long, -1 )
@@ -85,6 +86,7 @@ scheduler.addJobListener(new JobListenerSupport()
 	}
 	void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
 		sendStart()
+		setActivityStrategy(ActivityStrategies.BLINKING)
 		startSent = true
 		scheduleEndTrigger()
 		counter++
@@ -100,6 +102,7 @@ scheduler.addJobListener(new JobListenerSupport()
 	}
 	void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
 		sendStop()
+		setActivityStrategy(ActivityStrategies.OFF)
 		unscheduleEndTrigger()
 	}
 })
@@ -195,6 +198,7 @@ reset = {
 	startTrigger = null
 	endTrigger = null
 	startSent = false
+	setActivityStrategy(ActivityStrategies.OFF)
 }
 //addEventListener( PropertyEvent ) { event ->
 //	if( event.property in [ day, hour, minute, second, duration, repeatCount ] ) {
