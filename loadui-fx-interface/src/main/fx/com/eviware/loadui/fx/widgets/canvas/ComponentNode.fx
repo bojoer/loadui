@@ -59,7 +59,6 @@ import com.eviware.loadui.fx.widgets.ModelItemHolder;
 import com.eviware.loadui.fx.ui.menu.button.MenuBarButton;
 import com.eviware.loadui.fx.ui.dialogs.*;
 import com.eviware.loadui.fx.ui.layout.LayoutComponentNode;
-import com.eviware.loadui.fx.widgets.BasicTitlebarMenuContent;
 
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.ComponentItem;
