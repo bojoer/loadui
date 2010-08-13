@@ -31,7 +31,7 @@ import javafx.scene.text.Font;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
-import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
+import com.eviware.loadui.fx.ui.resources.DialogPanel;
 
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.AgentItem;
@@ -44,97 +44,21 @@ import org.slf4j.LoggerFactory;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
-import javafx.scene.control.Label;
 import javafx.scene.text.Font;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.LayoutInfo;
+import javafx.geometry.Insets;
 
-public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.ProjectNode" );
+import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.MenuButton;
+
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentNode" );
 
 /**
  * Node to display in the AgentList representing a AgentItem.
  */
-public class AgentNode extends BaseNode, Draggable, ModelItemHolder, EventHandler {
-	/**
-	 * The AgentItem to represent.
-	 */
-	public-init var agent: AgentItem;
-	
-	override var modelItem = bind lazy agent;
-	
-	var enabled: Boolean = agent.isEnabled();
-	var ready: Boolean = agent.isReady();
-	
-	var label:String;
-	
-	postinit {
-		if( not FX.isInitialized( agent ) )
-			throw new RuntimeException( "agent must not be null!" );
-		
-		agent.addEventListener( BaseEvent.class, this );
-		label = agent.getLabel();
-	}
-	
-	override function create() {
-		TitlebarPanel {
-			content: [
-				Rectangle { fill: Color.web("#c9c9c9"), width: 115, height: 163 },
-			]
-			titlebarContent: [
-				ImageView {
-					layoutX: 15
-					layoutY: 14
-					image: Image {
-		            	url: "{__ROOT__}images/png/led-active.png"
-		        	}
-		        	visible: bind enabled and ready 
-				}
-				ImageView {
-					layoutX: 15
-					layoutY: 14
-					image: Image {
-		            	url: "{__ROOT__}images/png/led-inactive.png"
-		        	}
-		        	visible: bind enabled and not ready
-				}
-				ImageView {
-					layoutX: 15
-					layoutY: 14
-					image: Image {
-		            	url: "{__ROOT__}images/png/led-disabled.png"
-		        	}
-		        	visible: bind not enabled
-				}
-				Label {
-					text: bind label.toUpperCase()
-					layoutX: 27
-					layoutY: 3
-					//width: bind width - 30
-					height: bind 30
-					textFill: Color.web("#606060")
-					font: Font.font("Arial", 9)
-				}
-			]
-			opacity: bind if( dragging ) 0.8 else 1
-		}
-	}
-	
-	override function handleEvent( e:EventObject ) {
-		def event = e as BaseEvent;
-		if( event.getKey().equals( ModelItem.LABEL ) ) {
-			runInFxThread( function():Void { label = agent.getLabel() } );
-		}
-		else if(event.getKey().equals(AgentItem.ENABLED)) {
-			runInFxThread( function():Void { 
-				ready = agent.isReady();
-				enabled = agent.isEnabled();
-			});
-		}
-		else if(event.getKey().equals(AgentItem.READY)) {
-			runInFxThread( function():Void { 
-				ready = agent.isReady();
-				enabled = agent.isEnabled();
-			});
-		}
-	}
-	
-	override function toString() { label }
+public class AgentNode extends AgentNodeBase, Draggable {
+	override var opacity = bind if( dragging ) 0.8 else 1;
 }

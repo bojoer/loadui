@@ -19,6 +19,16 @@
 	-fx-font: 10pt "Arial";
 }
 
+.separator {
+	-fx-padding: 0;
+}
+
+.separator:vertical *.line {
+	-fx-border-style: solid;
+	-fx-border-color: #999999;
+	-fx-padding: 0 1 0 0;
+}
+
 .display-label {
 	-fx-text-fill: #0EFF0F;
 }
@@ -260,7 +270,11 @@
 	-fx-inner-border: linear (0%,0%) to (0%,100%) stops (0%, #23a8fa) (100%, #038adf);
 }
 
-.project-node *.dialog-panel {
+.model-item-node {
+	-fx-text-fill: #4d4d4d;
+}
+
+.model-item-node *.dialog-panel {
 	-fx-body-color: #c9c9c9;
 }
 

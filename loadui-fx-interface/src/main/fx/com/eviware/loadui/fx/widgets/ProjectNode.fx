@@ -49,6 +49,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.LayoutInfo;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
 import javafx.geometry.Insets;
@@ -85,7 +86,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 	
 	def modelItem = bind lazy projectRef.getProject();
 	
-	override var styleClass = "project-node";
+	override var styleClass = "model-item-node";
 	
 	postinit {
 		if( not FX.isInitialized( projectRef ) )
@@ -166,9 +167,6 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 		}
 	];
 	
-	var width: Number = 155;
-	var height: Number = 100;
-	
 	var miniature: Image; 
 	function refreshMiniature(){
 		var base64: String = projectRef.getAttribute("miniature", "");
@@ -185,9 +183,10 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 		refreshMiniature();
 		var menuButton:MenuButton;
 		DialogPanel {
+			layoutInfo: LayoutInfo { width: 155, height: 130 }
 			body: VBox {
-				padding: Insets { left: 9, right: 8, top: 8, bottom: 28 }
-				spacing: 8
+				padding: Insets { left: 8, right: 8, top: 5 }
+				spacing: 10
 				content: [
 					menuButton = MenuButton {
 						styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
@@ -197,7 +196,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 					}, Group {
 						content: [
 							ImageView { image: projectGrid, x: 7, y: 7 },
-							ImageView { image: miniature, x: 12, y: 12 }
+							ImageView { image: bind miniature, x: 12, y: 12 }
 						]
 					}
 				]

@@ -20,14 +20,11 @@ import org.slf4j.LoggerFactory;
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.dialogs.AgentConfigurationDialog" );
 
 import javafx.scene.paint.Color;
+import javafx.scene.layout.LayoutInfo;
 import com.eviware.loadui.fx.ui.tabs.*;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
 import com.eviware.loadui.fx.ui.form.fields.*;
-
-import org.jfxtras.scene.layout.XMigLayout;
-import org.jfxtras.scene.layout.XMigLayout.*;
-import net.miginfocom.layout.*;
 
 import com.eviware.loadui.fx.MainWindow;
 import java.io.File;
@@ -73,14 +70,13 @@ public class AgentConfigurationDialog {
          			singleColumn: true
 						formContent: [
 							TextField { 
-								width: bind 430
-								height: bind 200
 								id: "description"
 								label: "Description"
 								description: "This is a description of the description field."
 								multiline: true
 								value: agent.getDescription() 
 								action: ok
+								layoutInfo: LayoutInfo { width: 300, height: 150, vfill: true, hfill: true }
 							}							
 						]
 					}

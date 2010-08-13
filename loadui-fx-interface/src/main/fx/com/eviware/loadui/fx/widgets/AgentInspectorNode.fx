@@ -35,7 +35,7 @@ import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.pagination.Pagination;
-import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
+import com.eviware.loadui.fx.ui.resources.DialogPanel;
 
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.AgentItem;
@@ -49,13 +49,16 @@ import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Button;
+import javafx.scene.control.Separator;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.Insets;
+import javafx.scene.layout.Container;
+import javafx.scene.layout.Stack;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.LayoutInfo;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.util.Math;
 
@@ -83,7 +86,6 @@ import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.layout.widgets.OnOffSwitch;
 import java.lang.Exception;
 
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
 import javafx.scene.control.ScrollView;
@@ -96,37 +98,19 @@ public def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentIn
 /**
  * Node to display in the AgentList representing a AgentItem.
  */
-public class AgentInspectorNode extends BaseNode, ModelItemHolder, Droppable, EventHandler, TestCaseIconListener, Pagination {
+public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconListener, Pagination {
 	/**
 	 * The AgentItem to represent.
 	 */ 
-	public var agent: AgentItem;
 	
-	public-init var ghostAgent = false;
+	public-init var ghostAgent = false on replace {
+		itemsPerPage = if( ghostAgent ) 4 else 3;
+	}
 	
-	override var modelItem = bind lazy agent;
-	
-	override var itemsPerPage = 4;
 	override var fluid = true;
 	
-	var label:String;
 	
 	var menuFill: Paint = Color.web("#777777");
-	
-	protected var width: Number = 135;
-	protected var height: Number = 195;
-	
-	var utilization:Integer = 0;
-	
-	public var separatorStroke: Paint = Color.web("#c6c6c6");
-	
-	var created = false;
-	var ready: Boolean = agent.isReady();
-	var enabled: Boolean on replace oldVal = newVal {
-		if(created and oldVal != newVal) {
-			agent.setEnabled( enabled );
-		}
-	}
 	
 	var contentChanging = false;
 	override var content on replace {
@@ -177,21 +161,6 @@ public class AgentInspectorNode extends BaseNode, ModelItemHolder, Droppable, Ev
 			}
 		}
 	}
-	
-	postinit {
-		if(not ghostAgent){
-			if(not FX.isInitialized( agent ) )
-				throw new RuntimeException( "agent must not be null!" );
-			
-			agent.addEventListener( BaseEvent.class, this );
-			label = agent.getLabel();
-			enabled = agent.isEnabled();
-			itemsPerPage = 3;
-		}
-		else{
-			label = "GHOST AGENT";
-		}
-	}
 
 	override var accept = function( d: Draggable ) {
 		if(not ghostAgent and d.node instanceof TestCaseIcon){
@@ -216,74 +185,55 @@ public class AgentInspectorNode extends BaseNode, ModelItemHolder, Droppable, Ev
 		
 		if(not ghostAgent) addTestCase((d.node as TestCaseIcon).copy());
 	}
-			
-	override function handleEvent(e:EventObject) {
-		def event = e as BaseEvent;
-		if(event.getKey().equals(ModelItem.LABEL)) {
-			runInFxThread( function():Void { label = agent.getLabel() } );
-		} else if(event.getKey().equals(AgentItem.ENABLED)) {
-			runInFxThread( function():Void { 
-				ready = agent.isReady();
-				enabled = agent.isEnabled();
-			});
-		} else if(event.getKey().equals(AgentItem.READY)) {
-			runInFxThread( function():Void { 
-				ready = agent.isReady();
-				enabled = agent.isEnabled();
-			});
-		} else if(event.getKey().equals(AgentItem.UTILIZATION)) {
-			runInFxThread( function():Void { 
-				utilization = agent.getUtilization();
-			});
-		}
-	}
 	
+	
+	def readEnabled = bind enabled on replace {
+		enable = enabled;
+	}
+	var enable:Boolean = enabled on replace {
+		if( enabled != enable )
+			agent.setEnabled( enable );
+	}
+
 	override function create() {
+		def base = super.create() as DialogPanel;
+		(base.layoutInfo as LayoutInfo).width = 138;
+		(base.layoutInfo as LayoutInfo).height = 222;
+		
 		var toolbarBoxRight: HBox;
 		var menuNode:MenuButton;
-		def titleBarPanel = TitlebarPanel {
-			styleClass: "agent-node"
-			backgroundFill: if(ghostAgent) Color.web("#b8b8b8") else Color.web("#d6d6d6")
-			content: [
-				if(not ghostAgent) OnOffSwitch {
-					layoutX: 12
-					layoutY: 7
-					state: bind enabled with inverse
-					managed: false
-				} else null, Line {
-					endY: 10
-					stroke: bind separatorStroke
-				},
-				if( ghostAgent ) null else menuNode = MenuButton {
-					styleClass: bind if( menuNode.showing ) "menu-button-showing" else "menu-button"
-					layoutX: 45
-					layoutY: 4
-					tooltip: Tooltip { text: bind label }
-					text: "Menu"
-					items: [
-						MenuItem {
-							text: ##[DELETE]"Rename"
-							action: function() { RenameModelItemDialog { modelItem: modelItem } }
-						}, MenuItem {
-							text: ##[DELETE]"Delete"
-							action: function() { DeleteModelItemDialog { modelItem: modelItem } }
-						}
-					]
-				}
-				
-				toolbarBoxRight = HBox {
-					height: 20
-					spacing: 3
-					nodeVPos: VPos.CENTER
-					vpos: VPos.CENTER
-					layoutX: bind ( width - 10 ) - toolbarBoxRight.width
-					layoutY: 5
-					content: bind [
-						Line {
-							endY: 10
-							stroke: bind separatorStroke
-						}, 
-						if(not ghostAgent) [ GlowButton {
+		if( ghostAgent ) {
+			(base.body as Container).content = Label { text: "GHOST AGENT", layoutInfo: LayoutInfo { margin: Insets { left: 6 } } };
+		}
+		
+		insert [
+			HBox {
+				hpos: HPos.RIGHT
+				nodeHPos: HPos.RIGHT
+				layoutInfo: LayoutInfo { height: 10, maxHeight: 10 }
+				content: [
+					if(not ghostAgent) [
+						OnOffSwitch {
+							managed: false
+							state: bind enable with inverse
+						}, Separator {
+							vertical: true
+						}, menuNode = MenuButton {
+							styleClass: bind if( menuNode.showing ) "menu-button-showing" else "menu-button"
+							tooltip: Tooltip { text: bind label }
+							text: "Menu"
+							items: [
+								MenuItem {
+									text: ##[RENAME]"Rename"
+									action: function() { RenameModelItemDialog { modelItem: modelItem } }
+								}, MenuItem {
+									text: ##[DELETE]"Delete"
+									action: function() { DeleteModelItemDialog { modelItem: modelItem } }
+								}
+							]
+						}, Separator {
+							vertical: true
+						} GlowButton {
 							padding: 3
 							tooltip: "Settings"
 							contentNode: FXDNode {
@@ -292,168 +242,107 @@ public class AgentInspectorNode extends BaseNode, ModelItemHolder, Droppable, Ev
 							action: function() { 
 								AgentConfigurationDialog { agent: agent }.show();
 							 }
-						}, Line {
-							endY: 10
-							stroke: bind separatorStroke
-						} ] else null, 
-						GlowButton {
-							padding: 3
-							tooltip: "Open Help page"
-							contentNode: FXDNode {
-								url: "{__ROOT__}images/component_help_icon.fxz"
-							}
-							action: function() {
-								openURL( if(ghostAgent) "http://www.loadui.org/interface/project-view.html" else modelItem.getHelpUrl() );
-							}
 						}
-					]
-				}
-				Rectangle {
-					layoutY: 20
-					height: bind height - 20
-					width: bind width
-					fill: Color.TRANSPARENT
-				}
-				ImageView {
-					layoutX: 8
-					layoutY: 25
-					image: Image {
-                    	url: if(ghostAgent) "{__ROOT__}images/png/ghostagent_insp_node_background.png" else "{__ROOT__}images/png/agent_insp_node_background.png"
-                	}
-				}
-				Button {
-					layoutX: 21
-					layoutY: 39
-					layoutInfo: LayoutInfo {
-						width: 95
-						height: 22
+					] else null, Separator {
+						vertical: true
+					} GlowButton {
+						padding: 3
+						tooltip: "Open Help page"
+						contentNode: FXDNode {
+							url: "{__ROOT__}images/component_help_icon.fxz"
+						}
+						action: function() {
+							openURL( if(ghostAgent) "http://www.loadui.org/interface/project-view.html" else modelItem.getHelpUrl() );
+						}
 					}
-					styleClass: "agent-inspector-node-button"
-					action: function() { if( page > 0) page--; }
-				}
-				Button {
-					layoutX: 21
-					layoutY: if( ghostAgent ) 151 else 130
-					layoutInfo: LayoutInfo {
-						width: 95
-						height: 22
-					}
-					styleClass: "agent-inspector-node-button"
-					action: function() { if( page < numPages - 1) page++; }
-				}
-				VBox {
-					layoutX: 21
-					layoutY: 63
-					spacing: 2
-					layoutInfo: LayoutInfo {
-						width: 96
-						height: if( ghostAgent ) 86 else 65
-					}
-					vpos: VPos.BOTTOM
-					content: bind displayedContent
-				}
-				if( ghostAgent ) null else HBox {
-					layoutX: 23
-					layoutY: 162
-					spacing: 2
-					vpos: VPos.CENTER
-					nodeVPos: VPos.CENTER
-					layoutInfo: LayoutInfo {
-						width: 96
-						height: 15
-					}
-					content: [
-						Label {
-							text: "ACT"
-							font: Font { size: 10 }
-							tooltip: Tooltip { text: "Activity" }
-						},
-						Group {
-							content: [
-								Rectangle {
-									width: 44
-									height: 11
-								}, ImageView {
-									layoutX: 2
-									layoutY: 2
-									image: Image { url: "{__ROOT__}images/png/agent-cpu-inactive.png" }
-								}, ImageView {
-									layoutX: 2
-									layoutY: 2
-									image: Image { url: "{__ROOT__}images/png/agent-cpu-active.png" }
-									viewport: bind Rectangle2D {
-										width: 4*utilization/10 as Integer
-										height: 8
+				]
+			}, VBox {
+				padding: Insets { left: 13, top: 14, right: 13, bottom: 18 }
+				content: [
+					ImageView {
+						managed: false
+						image: Image {
+	                 	url: if(ghostAgent) "{__ROOT__}images/png/ghostagent_insp_node_background.png" else "{__ROOT__}images/png/agent_insp_node_background.png"
+	             	}
+					}, Button {
+						layoutInfo: LayoutInfo {
+							width: 95
+							height: 22
+						}
+						styleClass: "agent-inspector-node-button"
+						action: function() { if( page > 0) page--; }
+					}, VBox {
+						padding: Insets { top: 2, bottom: 2 }
+						spacing: 2
+						layoutInfo: LayoutInfo {
+							height: if( ghostAgent ) 90 else 69
+							maxHeight: if( ghostAgent ) 90 else 69
+						}
+						vpos: VPos.BOTTOM
+						content: bind displayedContent
+					}, Button {
+						layoutInfo: LayoutInfo {
+							width: 95
+							height: 22
+						}
+						styleClass: "agent-inspector-node-button"
+						action: function() { if( page < numPages - 1) page++; }
+					}, if( ghostAgent ) null else HBox {
+						padding: Insets { top: 8, left: 2 }
+						spacing: 2
+						vpos: VPos.CENTER
+						nodeVPos: VPos.CENTER
+						layoutInfo: LayoutInfo {
+							width: 96
+							height: 15
+						}
+						content: [
+							Label {
+								text: "ACT"
+								font: Font { size: 10 }
+								tooltip: Tooltip { text: "Activity" }
+							}, Group {
+								content: [
+									Rectangle {
+										width: 44
+										height: 11
+									}, ImageView {
+										layoutX: 2
+										layoutY: 2
+										image: Image { url: "{__ROOT__}images/png/agent-cpu-inactive.png" }
+									}, ImageView {
+										layoutX: 2
+										layoutY: 2
+										image: Image { url: "{__ROOT__}images/png/agent-cpu-active.png" }
+										viewport: bind Rectangle2D {
+											width: 4*utilization/10 as Integer
+											height: 8
+										}
+										visible: bind utilization > 0
 									}
-									visible: bind utilization > 0
-								}
-							]
-						},
-						Group {
-							content: [
-								Rectangle {
-									width: 24
-									height: 11
-								}, Label {
-									text: bind "{utilization}%"
-									textFill: Color.rgb( 0x0, 0xce, 0x16 )
-									font: Font { size: 10 }
-									hpos: HPos.CENTER
-									layoutInfo: LayoutInfo { width: 24, height: 11 }
-								}
-							]
-						}
-					]
-				}
-			]
-			titlebarColor: if(ghostAgent) Color.web("#9c9c9c") else Color.web("#b2b2b2")
-			titlebarContent: [
-				ImageView {
-					layoutX: 15
-					layoutY: 14
-					image: Image {
-		            	url: "{__ROOT__}images/png/led-active.png"
-		        	}
-		        	visible: bind not ghostAgent and enabled and ready 
-				}
-				ImageView {
-					layoutX: 15
-					layoutY: 14
-					image: Image {
-		            	url: "{__ROOT__}images/png/led-inactive.png"
-		        	}
-		        	visible: bind not ghostAgent and enabled and not ready
-				}
-				ImageView {
-					layoutX: 15
-					layoutY: 14
-					image: Image {
-		            	url: "{__ROOT__}images/png/led-disabled.png"
-		        	}
-		        	visible: bind not ghostAgent and not enabled
-				}
-				Label {
-					text: bind label.toUpperCase()
-					layoutX: bind if(ghostAgent) 15 else 27
-					layoutY: 3
-					width: bind width - 30
-					height: bind 30
-					textFill: Color.web("#606060")
-					font: Font.font("Arial", 9)
-				}
-			]
-			onMouseWheelMoved: function( e:MouseEvent ) {
-				if( e.wheelRotation > 0 and page < numPages - 1 ) {
-					page++;
-				} else if( e.wheelRotation < 0 and page > 0 ) {
-					page--;
-				}
+								]
+							}, Group {
+								content: [
+									Rectangle {
+										width: 24
+										height: 11
+									}, Label {
+										text: bind "{utilization}%"
+										tooltip: Tooltip { text: "Agenty Activity: {utilization}%" }
+										textFill: Color.rgb( 0x0, 0xce, 0x16 )
+										font: Font { size: 10 }
+										hpos: HPos.CENTER
+										layoutInfo: LayoutInfo { width: 24, height: 11 }
+									}
+								]
+							}
+						]
+					}
+				]
 			}
-		}
+		] into (base.body as Container).content;
 		
-		created = true;
-		
-		titleBarPanel;
+		base;
 	}
 	
 	public function addTestCase(tcNode: TestCaseIcon){
