@@ -60,4 +60,6 @@
         ref="sliderWidget" />
     <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
         ref="intervalWidget" />
+    <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
+        ref="timeInputWidget" />
 </beans>

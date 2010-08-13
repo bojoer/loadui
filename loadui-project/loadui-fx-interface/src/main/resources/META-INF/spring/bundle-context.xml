@@ -54,6 +54,7 @@
 	<bean id="chartWidget" class="com.eviware.loadui.fx.widgets.factories.ChartWidgetFactory" />
 	<bean id="onOffSwitchFactory" class="com.eviware.loadui.fx.ui.layout.widgets.factories.OnOffSwitchFactory" />
 	<bean id="selectFactory" class="com.eviware.loadui.fx.ui.layout.widgets.factories.SelectFactory" />
+	<bean id="timeInputWidget" class="com.eviware.loadui.fx.ui.layout.widgets.factories.TimeInputFactory" />
 	<bean id="counterWidget" class="com.eviware.loadui.fx.widgets.factories.CounterWidgetFactory" />
 	<bean id="intervalWidget" class="com.eviware.loadui.fx.widgets.factories.IntervalWidgetFactory" />
 	<bean id="sliderWidget" class="com.eviware.loadui.fx.widgets.factories.SliderWidgetFactory" />

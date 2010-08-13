@@ -74,7 +74,7 @@ public class TimeField extends HBox, FormField {
 			buildValue();
 		}
 	}
-		
+	
 	override var value on replace {
 		if( value != null and not ( value instanceof Long ) )
 			throw new IllegalArgumentException( "Value must be of type Long!" );
@@ -117,7 +117,7 @@ public class TimeField extends HBox, FormField {
     
     function buildValue(): Void {
      	try {
-			var h: Long = if(hTextBox.text.length() > 0) Long.valueOf(hTextBox.text) else 0;
+			var h: Long = if(hTextBox.text.length() > 0) Long.valueOf(hTextBox.text) else 0; 
 			var m: Long = if(mTextBox.text.length() > 0) Long.valueOf(mTextBox.text) else 0;
 			var s: Long = if(sTextBox.text.length() > 0) Long.valueOf(sTextBox.text) else 0;
 			value = h * 3600 + m * 60 + s;
@@ -126,6 +126,11 @@ public class TimeField extends HBox, FormField {
 			value = null;
 		}
     }
+    
+    override function getPrefHeight( width:Float ) {
+		hTextBox.getPrefHeight( width ) + 3
+	}
+	
 }
 
 public class CustomTextBox extends TextBox {
