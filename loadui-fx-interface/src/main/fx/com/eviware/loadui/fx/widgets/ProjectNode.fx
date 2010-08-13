@@ -27,12 +27,12 @@ import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.MainWindow;
+import com.eviware.loadui.fx.ui.resources.DialogPanel;
 import com.eviware.loadui.fx.dialogs.CloneProjectDialog;
 import com.eviware.loadui.fx.dialogs.CorruptProjectDialog;
 import com.eviware.loadui.fx.dialogs.DeleteProjectDialog;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
-import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.util.ImageUtil.*;
 
@@ -41,15 +41,20 @@ import java.lang.RuntimeException;
 import java.util.EventObject;
 import javafx.async.Task;
 import javafx.scene.Node;
+import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.VBox;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tooltip;
+import javafx.geometry.Insets;
 
 import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.MenuButton;
 
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +84,8 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 	}
 	
 	def modelItem = bind lazy projectRef.getProject();
+	
+	override var styleClass = "project-node";
 	
 	postinit {
 		if( not FX.isInitialized( projectRef ) )
@@ -150,7 +157,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 		} 
 		Separator{}
 		MenuItem {
-			text: ##[DELETE]"Clone"
+			text: ##[CLONE]"Clone"
 			action: function() { CloneProjectDialog { projectRef: projectRef } }
 		}
 		MenuItem {
@@ -176,19 +183,25 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 	
 	override function create() {
 		refreshMiniature();
-		TitlebarPanel {
-			titlebarContent: BasicTitlebarMenuContent {
-				width: 155
-				hasLed: false
-				label: bind "{label}"
-				tooltip: bind "{label} ({projectRef.getProjectFile().getAbsolutePath()})"
-				menuItems: bind if( enabled ) enabledMenu else disabledMenu
+		var menuButton:MenuButton;
+		DialogPanel {
+			body: VBox {
+				padding: Insets { left: 9, right: 8, top: 8, bottom: 28 }
+				spacing: 8
+				content: [
+					menuButton = MenuButton {
+						styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
+						text: bind label.toUpperCase();
+						tooltip: Tooltip { text: bind "{label} ({projectRef.getProjectFile().getAbsolutePath()})" }
+						items: bind if( enabled ) enabledMenu else disabledMenu
+					}, Group {
+						content: [
+							ImageView { image: projectGrid, x: 7, y: 7 },
+							ImageView { image: miniature, x: 12, y: 12 }
+						]
+					}
+				]
 			}
-			content: bind [
-				Rectangle { fill: Color.web("#c9c9c9"), width: bind width, height: bind height },
-				ImageView { image: projectGrid, x: 7, y: 7 },
-				ImageView { image: miniature, x: 12, y: 12 }
-			]
 			opacity: bind if( dragging ) 0.8 else 1
 		}
 	}
