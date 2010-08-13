@@ -36,6 +36,9 @@ import com.eviware.loadui.fx.ui.popup.*;
 import com.eviware.loadui.fx.ui.dialogs.*;
 import com.eviware.loadui.fx.ui.menu.button.*;
 
+import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.MenuButton;
+
 public class MainButton extends Group {
 	init {
 		content = [
@@ -54,44 +57,42 @@ public class MainButton extends Group {
 						Stop { offset: 0.45, color: Color.TRANSPARENT }
 					]
 				}
-			}, Menu {
-				noHighlight: true
-				contentNode: ImageView {
+			}, MenuButton {
+				styleClass: "loadui-menu-button"
+				graphic: ImageView {
 					image: Image { url: "{__ROOT__}images/png/main-button-no-shadow.png" }
 				}
-				menu: PopupMenu {
-					items: [
-						ActionMenuItem {
-							text: ##[ABOUT]"About"
-							action: function() {
-								new AboutDialog();
-							}
-						},
-			/*			ActionMenuItem {
-							text: ##[UPDATES]"Get Updates"
-							action: function() {
-								openURL("http://www.eviware.com/nightly-builds/loadui/")
-							}
-						}, */
-						ActionMenuItem {
-							text: ##[FORUM]"Give Feedback"
-							action: function() {
-								openURL("http://www.eviware.com/forum/viewforum.php?f=9")
-							}
-						},						
-						ActionMenuItem {
-							text: ##[EXIT]"Exit"
-							action: function() {
-								if( AppState.instance.state == AppState.TESTCASE_FRONT 
-										or AppState.instance.state == AppState.PROJECT_FRONT ) {
-									ExitConfirmDialog{};
-								} else {
-									ExitConfirmDialogWorkspace{};
-								}
+				items: [
+					MenuItem {
+						text: ##[ABOUT]"About"
+						action: function() {
+							new AboutDialog();
+						}
+					},
+		/*			MenuItem {
+						text: ##[UPDATES]"Get Updates"
+						action: function() {
+							openURL("http://www.eviware.com/nightly-builds/loadui/")
+						}
+					}, */
+					MenuItem {
+						text: ##[FORUM]"Give Feedback"
+						action: function() {
+							openURL("http://www.eviware.com/forum/viewforum.php?f=9")
+						}
+					},						
+					MenuItem {
+						text: ##[EXIT]"Exit"
+						action: function() {
+							if( AppState.instance.state == AppState.TESTCASE_FRONT 
+									or AppState.instance.state == AppState.PROJECT_FRONT ) {
+								ExitConfirmDialog{};
+							} else {
+								ExitConfirmDialogWorkspace{};
 							}
 						}
-					]
-				}
+					}
+				]
 			}
 		]
 	}
