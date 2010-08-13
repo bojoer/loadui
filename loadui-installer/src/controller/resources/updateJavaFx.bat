@@ -1,1 +1,1 @@
-jre\bin\javaws -import http://dl.javafx.com/javafx-cache.jnlp
+jre\bin\javaws -import http://dl.javafx.com/1.3/javafx-rt.jnlp
