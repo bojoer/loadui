@@ -214,8 +214,12 @@
 }
 
 .dialog-panel {
+	-fx-outer-border: #000000;
+	-fx-inner-border: #a5a5a5;
+	-fx-body-color: #ededed;
+	
 	-fx-background-radius: 10, 8, 8;
-	-fx-background-color: #000000, #a5a5a5, #ededed;
+	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
 	-fx-background-insets: 0, 2, 3;
 }
 
@@ -254,6 +258,10 @@
 
 .dialog-button:armed  {
 	-fx-inner-border: linear (0%,0%) to (0%,100%) stops (0%, #23a8fa) (100%, #038adf);
+}
+
+.project-node *.dialog-panel {
+	-fx-body-color: #c9c9c9;
 }
 
 .tab-dialog *.toggle-button {
