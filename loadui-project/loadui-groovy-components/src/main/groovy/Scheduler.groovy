@@ -252,8 +252,8 @@ unscheduleStartTrigger = {
 
 scheduleEndTrigger = {
 	if(durationHolder > -1){
-		def calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
+		def calendar = Calendar.getInstance()
+		calendar.setTime(new Date())
 		calendar.add(Calendar.SECOND, (int)durationHolder)
 
 		def endTriggerPattern = ""
@@ -285,21 +285,21 @@ onRelease = {
 	displayTimeLeft.release()
 }
 
-layout() {
-	box(constraints:'wrap'){
-		box( widget:'display', constraints:'w 280!' ) {
-			node( label: 'Next Run', fString: displayNextRun, constraints: 'w 140!' )
-			node( label: 'Time Left', fString: displayTimeLeft, constraints: 'w 140!' )
-		}
-	}
+layout( constraints: 'gap 10 0') {
 	box{
-		property(property: day, widget: 'comboBox', label: 'Day', options: ['Every day', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], constraints: 'w 100!' )
-		property( property: duration, widget: 'timeInput', label: 'Duration', constraints: 'w 100!, align right, wrap' )
-		box{
-			property( property: hour, label: 'Hour', min: -1, max: 23, constraints: 'h 200!')
-			property( property: minute, label: 'Min', min: -1, max: 59, constraints: 'h 150!' )
-			property( property: second, label: 'Sec', min: 0, max: 59, constraints: 'h 150!' )
-		}
-		property( property: repeatCount, label: 'Repeat', min: -1, constraints: 'h 150!, align right')
+		property(property: day, widget: 'comboBox', label: 'Day', options: ['Every day', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], constraints: 'w 100!, h 60!, wrap' )
+		property( property: duration, widget: 'timeInput', label: 'Duration', constraints: 'w 103!' )
+	}
+	separator(vertical: true)
+	box{
+		property( property: hour, label: 'Hour', min: -1, max: 23)
+		property( property: minute, label: 'Min', min: -1, max: 59)
+		property( property: second, label: 'Sec', min: 0, max: 59, constraints: 'wrap')
+		property( property: repeatCount, label: 'Repeat', min: -1)
+	}
+	separator(vertical: true)
+	box( widget:'display', constraints:'wrap' ) {
+		node( label: 'Next Run', fString: displayNextRun, constraints: 'w 120!' )
+		node( label: 'Time Left', fString: displayTimeLeft, constraints: 'w 120!' )
 	}
 }
