@@ -207,6 +207,8 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 				
 		dialogRef = TabDialog {
 			title: title
+			width: 470
+			height: 300
 			subtitle: "Settings"
 			helpUrl: "http://www.loadui.org/interface/workspace-view.html"
 			okText: "Save"
