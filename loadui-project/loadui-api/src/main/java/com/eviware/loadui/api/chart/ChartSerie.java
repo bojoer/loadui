@@ -22,10 +22,18 @@ public class ChartSerie {
 	private String name;
 	
 	private boolean enabled = true;
+	
+	private boolean defaultAxis = true;
 
 	public ChartSerie(String name, boolean enabled) {
 		this.name = name;
 		this.enabled = enabled;
+	}
+	
+	public ChartSerie(String name, boolean enabled, boolean defaultAxis) {
+		this.name = name;
+		this.enabled = enabled;
+		this.defaultAxis = defaultAxis;
 	}
 
 	public String getName() {
@@ -50,6 +58,10 @@ public class ChartSerie {
 
 	public void setIndex(int index) {
 		this.index = index;
+	}
+	
+	public boolean isDefaultAxis() {
+		return defaultAxis;
 	}
 	
 }

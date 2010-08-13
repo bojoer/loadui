@@ -97,7 +97,11 @@ yRange = new CustomNumericRange(0, 10, 20)
 yRange.visible = true
 yRange.title = 'ms KB'
 
-ChartModel chartModel = new ChartModel(xRange, yRange, 420, 180)
+y2Range = new CustomNumericRange(0, 10, 20)
+y2Range.visible = true
+y2Range.title = 'requests'
+
+ChartModel chartModel = new ChartModel(xRange, yRange, y2Range, 420, 180)
 chartModel.addChartListener(new ChartAdapter(){
 	public void chartCleared(){
 		try{
@@ -109,16 +113,16 @@ chartModel.addChartListener(new ChartAdapter(){
 	}
 });
 
-chartModel.addSerie('Max', enableMax.value)
-chartModel.addSerie('Min', enableMin.value)
-chartModel.addSerie('Avg', enableAverage.value)
-chartModel.addSerie('StdDev', enableStdDev.value)
-chartModel.addSerie('TPS', enableTPS.value)
-chartModel.addSerie('BPS', enableBPS.value)
-chartModel.addSerie('AvgTPS', enableAvgTPS.value)
-chartModel.addSerie('AvgBPS', enableAvgBPS.value)
-chartModel.addSerie('Percentile', enablePercentile.value)
-chartModel.addSerie('AvgResponseSize', enableAvgResponseSize.value)
+chartModel.addSerie('Max', enableMax.value, true)
+chartModel.addSerie('Min', enableMin.value, true)
+chartModel.addSerie('Avg', enableAverage.value, true)
+chartModel.addSerie('StdDev', enableStdDev.value, true)
+chartModel.addSerie('TPS', enableTPS.value, false)
+chartModel.addSerie('BPS', enableBPS.value, true)
+chartModel.addSerie('AvgTPS', enableAvgTPS.value, true)
+chartModel.addSerie('AvgBPS', enableAvgBPS.value, true)
+chartModel.addSerie('Percentile', enablePercentile.value, true)
+chartModel.addSerie('AvgResponseSize', enableAvgResponseSize.value, true)
 chartModel.legendColumns = 3
 
 timeStats = new ValueStatistics( period.value * 60000 )
