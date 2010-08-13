@@ -250,6 +250,9 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 				};
 			}
 		}
+		onHidden: function() { //This shouldn't be needed, but is required for now due to a bug in the JavaFX PopupMenu.
+			contextMenu.hide();
+		}
 	}
 	
 	function moveComponents( target:CanvasItem, objects:CanvasObjectItem[], deleteInitial:Boolean ):CanvasObjectItem[] {
@@ -278,6 +281,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		]
 		onShowing: function():Void {
 			deleteAction.disable = sizeof Selectable.selects[d|d instanceof Deletable] == 0;
+			cloneAction.disable = sizeof Selectable.selects[c|c instanceof CanvasNode] == 0;
 		}
 	}
 	
