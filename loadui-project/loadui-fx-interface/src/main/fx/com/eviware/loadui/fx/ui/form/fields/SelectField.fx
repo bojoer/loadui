@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.fx.ui.form.fields;
 
-import javafx.scene.CustomNode;
 import javafx.scene.Group;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.control.Label;
@@ -24,11 +23,10 @@ import javafx.scene.paint.Color;
 import javafx.geometry.VPos;
 import javafx.util.Math;
 
+import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.MenuButton;
+
 import com.eviware.loadui.fx.ui.form.FormField;
-import com.eviware.loadui.fx.ui.popup.Menu;
-import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
-import com.eviware.loadui.fx.ui.resources.MenuArrow;
 
 /**
  * Constructs a new SelectField using the supplied arguments.
@@ -42,11 +40,7 @@ public function build( id:String, label:String, value:Object ) {
  * 
  * @author dain.nilsson
  */
-public class SelectField extends CustomNode, FormField {
-
-	def popup = PopupMenu {
-		minWidth: bind width
-	};
+public class SelectField extends MenuButton, FormField {
 
 	/**
 	 * The available options to choose from.
@@ -65,64 +59,14 @@ public class SelectField extends CustomNode, FormField {
 		resetItems()
 	}
 	
+	override var styleClass = "select-field";
+	
+	override var text = bind labelProvider( value );
+	
 	function resetItems():Void {
-		popup.items = for( option in options ) ActionMenuItem {
+		items = for( option in options ) MenuItem {
 			text: labelProvider( option )
 			action: function() { value = option }
 		}
-	}
-	
-	override var layoutBounds = bind rectNode.layoutBounds;
-	
-	var menuNode:Menu;
-	var labelNode:Label;
-	var rectNode:Rectangle;
-	override function create() {
-		Group {
-			content: [
-				rectNode = Rectangle {
-					width: bind width
-					height: bind height
-					fill: Color.WHITE
-					stroke: Color.rgb( 0x90, 0x90, 0x90 )
-					strokeWidth: 2
-					arcWidth: 5
-					arcHeight: 5
-				}, menuNode = Menu {
-					noHighlight: true
-					contentNode: Group {
-						content: [
-							Rectangle {
-								width: bind width
-								height: bind height
-								fill: Color.TRANSPARENT
-							}, MenuArrow {
-								fill: Color.rgb( 0x90, 0x90, 0x90 )
-								rotate: 90
-								layoutY: bind height / 2
-								layoutX: bind width - height / 2
-							}, labelNode = Label {
-								text: bind labelProvider( value )
-								vpos: VPos.CENTER
-								textWrap: false
-								layoutX: 3
-								layoutY: 3
-								width: bind width - height
-								height: bind height - 6
-							}
-						]
-					}
-					menu: bind if(sizeof options > 0) popup else null
-				}
-			]
-		}
-	}
-	
-	override function getPrefWidth( height:Float ) {
-		Math.max( popup.layoutBounds.width, labelNode.getPrefWidth( height ) + height )
-	}
-	
-	override function getPrefHeight( width:Float ) {
-		labelNode.getPrefHeight( width ) + 6
 	}
 } 
