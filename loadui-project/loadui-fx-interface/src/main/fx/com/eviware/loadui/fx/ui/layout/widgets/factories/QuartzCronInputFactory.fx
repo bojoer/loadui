@@ -22,7 +22,7 @@
 package com.eviware.loadui.fx.ui.layout.widgets.factories;
 
 import com.eviware.loadui.fx.ui.layout.PropertyLayoutComponentNode;
-import com.eviware.loadui.fx.ui.layout.widgets.TimeInputWidget;
+import com.eviware.loadui.fx.ui.layout.widgets.QuartzCronInputWidget;
 
 import com.eviware.loadui.api.layout.WidgetCreationException;
 import com.eviware.loadui.api.layout.WidgetFactory;
@@ -30,19 +30,19 @@ import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 import com.eviware.loadui.api.events.PropertyEvent;
 
-public class TimeInputFactory extends WidgetFactory {
+public class QuartzCronInputFactory extends WidgetFactory {
 	override function getId() {
-		"timeInput"
+		"quartzCronInput"
 	}
 	
-	override function buildWidget( lc:LayoutComponent ) {
+	override function buildWidget(lc: LayoutComponent) {
 		if( lc instanceof PropertyLayoutComponent ) {
 			def plc = lc as PropertyLayoutComponent;
 			return PropertyLayoutComponentNode {
 				layoutComponent: plc
-				widget: TimeInputWidget { plc: plc }
+				widget: QuartzCronInputWidget { plc: plc }
 			}
 		}
-		throw new WidgetCreationException("Failed to create TimeInputWidget!");
+		throw new WidgetCreationException("Failed to create QuartzCroneInputWidget!");
 	}
 }
