@@ -57,11 +57,9 @@ import java.text.SimpleDateFormat
 import com.eviware.loadui.impl.component.ActivityStrategies
 
 createProperty( 'day', String, "Every day" )
-createProperty( 'hour', Long, -1 )
-createProperty( 'minute', Long, -1 )
-createProperty( 'second', Long, 0 )
-def duration = createProperty( 'duration', Long, -1 )
-def repeatCount = createProperty( 'repeatCount', Long, -1 )
+createProperty( 'time', String, "0 * *" )
+def duration = createProperty( 'duration', Long, 0 )
+def runsCount = createProperty( 'runsCount', Long, 0 )
 
 def canvas = getCanvas()
 
@@ -74,8 +72,8 @@ stopMessage[TriggerCategory.ENABLED_MESSAGE_PARAM] = false
 sendStop = { send( outputTerminal, stopMessage ) }
 
 def counter = 0
-def durationHolder = -1
-def repeatHolder = -1
+def durationHolder = 0
+def runsHolder = 0
 def startSent = false
 
 def scheduler = new StdSchedulerFactory().getScheduler()
@@ -90,7 +88,7 @@ scheduler.addJobListener(new JobListenerSupport()
 		startSent = true
 		scheduleEndTrigger()
 		counter++
-		if(repeatHolder > -1 && counter >= repeatHolder){
+		if(runsHolder > 0 && counter >= runsHolder){
 			unscheduleStartTrigger()
 		}
 	}
@@ -134,7 +132,7 @@ displayNextRun = new DelayedFormattedString( '%s', 1000, value {
 })
 
 displayTimeLeft = new DelayedFormattedString( '%s', 1000, value {
-	if(startSent && durationHolder == -1){
+	if(startSent && durationHolder == 0){
 		'Infinite'
 	}
 	else if(endTrigger){
@@ -190,8 +188,8 @@ addEventListener( ActionEvent ) { event ->
 
 reset = {
 	counter = 0
-	durationHolder = -1
-	repeatHolder = -1
+	durationHolder = 0
+	runsHolder = 0
 	paused = false
 	unscheduleStartTrigger()
 	unscheduleEndTrigger()
@@ -200,32 +198,9 @@ reset = {
 	startSent = false
 	setActivityStrategy(ActivityStrategies.OFF)
 }
-//addEventListener( PropertyEvent ) { event ->
-//	if( event.property in [ day, hour, minute, second, duration, repeatCount ] ) {
-		//if( !canvas.running ) scheduleStartTrigger()
-//	}
-//}
 
 scheduleStartTrigger = {
-	def startTriggerPattern = ""
-	if(second.value == -1){
-		startTriggerPattern += "* "
-	}
-	else{
-		startTriggerPattern += "${second.value} "
-	}
-	if(minute.value == -1){
-		startTriggerPattern += "* "
-	}
-	else{
-		startTriggerPattern += "${minute.value} "
-	}
-	if(hour.value == -1){
-		startTriggerPattern += "* "
-	}
-	else{
-		startTriggerPattern += "${hour.value} "
-	}
+	def startTriggerPattern = "${time.value} "
 	startTriggerPattern += "? * "
 	if(day.value.equals("Every day")){
 		startTriggerPattern += "* "
@@ -239,7 +214,7 @@ scheduleStartTrigger = {
 	startTrigger = new CronTrigger("startTrigger", "group", "startJob", "group", startTriggerPattern)
 	scheduler.scheduleJob(startTrigger)
 	
-	repeatHolder = repeatCount.value
+	runsHolder = runsCount.value
 	durationHolder = duration.value
 }
 
@@ -251,7 +226,7 @@ unscheduleStartTrigger = {
 }
 
 scheduleEndTrigger = {
-	if(durationHolder > -1){
+	if(durationHolder > 0){
 		def calendar = Calendar.getInstance()
 		calendar.setTime(new Date())
 		calendar.add(Calendar.SECOND, (int)durationHolder)
@@ -287,15 +262,13 @@ onRelease = {
 
 layout( constraints: 'gap 10 0') {
 	box{
-		property(property: day, widget: 'comboBox', label: 'Day', options: ['Every day', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], constraints: 'w 100!, h 60!, wrap' )
-		property( property: duration, widget: 'timeInput', label: 'Duration', constraints: 'w 103!' )
+		property(property: day, widget: 'comboBox', label: 'Day', options: ['Every day', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], constraints: 'w 100!, wrap' )
+		property( property: runsCount, label: 'Runs', min: 0, constraints: 'align right')
 	}
 	separator(vertical: true)
 	box{
-		property( property: hour, label: 'Hour', min: -1, max: 23)
-		property( property: minute, label: 'Min', min: -1, max: 59)
-		property( property: second, label: 'Sec', min: 0, max: 59, constraints: 'wrap')
-		property( property: repeatCount, label: 'Repeat', min: -1)
+		property( property: time, widget: 'quartzCronInput', label: 'Time', constraints: 'w 100!, wrap' )
+		property( property: duration, widget: 'timeInput', label: 'Duration', constraints: 'w 100!' )
 	}
 	separator(vertical: true)
 	box( widget:'display', constraints:'wrap' ) {
