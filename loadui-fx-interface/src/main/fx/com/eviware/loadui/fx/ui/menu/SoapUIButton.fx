@@ -76,13 +76,14 @@ public class SoapUIButton extends Group {
 				    			def warning:Dialog = Dialog {
 				    				title: "Warning!"
 							    	content: Text {
-							    		content: "Please set a soapUI home first!"
+							    		content: "You need to set a soapUI home first! Do it now or later?"
 							    	}
-							    	okText: "Ok"
+							    	okText: "Now"
 							    	onOk: function() {
 							    		warning.close();
+							    	    WorkspaceWrenchDialog{}.show();
 							    	}
-							    	noCancel: true
+							    	cancelText: "Later"
 							    }
 				    		} else {
 				    			SoapUIStarter.start(( soapUIHome.getValue() as File).getAbsolutePath());
