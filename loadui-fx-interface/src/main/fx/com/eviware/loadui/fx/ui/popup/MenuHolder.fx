@@ -21,9 +21,11 @@
 
 package com.eviware.loadui.fx.ui.popup;
 
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.node.BaseMixin;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.BaseNode.*;
+
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Rectangle;
@@ -51,9 +53,9 @@ public mixin class MenuHolder extends BaseMixin {
 			closer.layoutY = sb.minY;
 			closer.width = sb.width;
 			closer.height = sb.height;
-			insert closer into BaseNode.overlay.content;
+			insert closer into AppState.overlay.content;
 		} else {
-			delete closer from BaseNode.overlay.content;
+			delete closer from AppState.overlay.content;
 		}
 	}
 	

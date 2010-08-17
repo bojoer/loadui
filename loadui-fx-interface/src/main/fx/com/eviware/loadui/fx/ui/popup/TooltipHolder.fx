@@ -21,6 +21,7 @@
 
 package com.eviware.loadui.fx.ui.popup;
 
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.node.BaseMixin;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.BaseNode.*;
@@ -53,14 +54,14 @@ public mixin class TooltipHolder extends BaseMixin {
 				label.layoutY = bounds.minY;
 				label.width = bounds.width;
 				label.height = bounds.height;
-				insert label into BaseNode.overlay.content;
+				insert label into AppState.overlay.content;
 				label.tooltip.activate();
 			}
 		} );
 		(this as BaseNode).addMouseHandler( MOUSE_EXITED, function( e:MouseEvent ):Void {
 			if( label.tooltip.activated ) {
 				label.tooltip.deactivate();
-				delete label from BaseNode.overlay.content;
+				delete label from AppState.overlay.content;
 			}
 		} );
 	}

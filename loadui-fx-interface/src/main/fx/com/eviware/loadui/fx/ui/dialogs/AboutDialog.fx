@@ -28,6 +28,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.util.Properties;
 
 import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.AppState;
 
 import java.lang.Exception;
 import java.lang.System;
@@ -39,7 +40,7 @@ public class AboutDialog {
 		def version = System.getProperty("loadui.build.number");
 		def date = System.getProperty("loadui.build.date");
 	
-		def scene = Dialog.overlay.scene;
+		def scene = AppState.overlay.scene;
 		def items:Node[] = [
 			modalLayer = Rectangle {
 				width: bind scene.width
@@ -47,8 +48,8 @@ public class AboutDialog {
 				fill: Color.TRANSPARENT
 				blocksMouse: true
 				onMousePressed: function( e:MouseEvent ) {
-					delete group from Dialog.overlay.content;
-					delete modalLayer from Dialog.overlay.content;
+					delete group from AppState.overlay.content;
+					delete modalLayer from AppState.overlay.content;
 				}
 			}, group = Group {
 				layoutX: bind ((scene.width - group.layoutBounds.width) / 2) as Integer
@@ -95,6 +96,6 @@ public class AboutDialog {
 			}
 		];
 
-		insert items into Dialog.overlay.content;
+		insert items into AppState.overlay.content;
 	}
 }

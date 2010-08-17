@@ -82,6 +82,7 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
@@ -92,12 +93,6 @@ import javax.swing.table.TableModel;
 
 import java.lang.Exception;
 import java.text.SimpleDateFormat;
-
-/**
- * A Group which is used as an overlay to place nodes which are being dragged into to avoid z - index issues.
- * The Group should be positioned at 0, 0 in the scene.
-*/
-public var overlay: Group = null;
 
 public class SummaryReport extends StylesheetAware {
 
@@ -232,7 +227,7 @@ public class SummaryReport extends StylesheetAware {
 	var summaryHeader: SummaryHeader;
 	var centerPanel: Node;
 	var sceneBounds: BoundingBox;
-	var scene = overlay.scene;
+	var scene = AppState.overlay.scene;
 	
 	public var title: String = "";
 	public var date: String = "";
@@ -557,16 +552,16 @@ public class SummaryReport extends StylesheetAware {
 	 * Displays the Dialog.
 	 */ 
 	public function show() {
-		insert modalLayer into overlay.content;
-		insert panel into overlay.content;
+		insert modalLayer into AppState.overlay.content;
+		insert panel into AppState.overlay.content;
 	}
 	
 	 /**
 	 * Closes the Dialog.
 	 */ 
 	public function close():Void {
-		delete panel from overlay.content;
-		delete modalLayer from overlay.content;
+		delete panel from AppState.overlay.content;
+		delete modalLayer from AppState.overlay.content;
 	}
 	
 

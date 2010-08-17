@@ -50,6 +50,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.MovableNode;
 import com.eviware.loadui.fx.ui.button.GlowButton;
@@ -68,12 +69,6 @@ import com.eviware.loadui.fx.ui.tabs.*;
 import com.eviware.loadui.fx.ui.form.Form;
 
 import java.lang.IllegalArgumentException;
-
-/**
- * A Group which is used as an overlay to place nodes which are being dragged into to avoid z - index issues.
- * The Group should be positioned at 0, 0 in the scene.
-*/
-public var overlay: Group = null;
 
 /**
  * A Dialog is a panel which is displayed on top of other content in a movable window.
@@ -162,7 +157,7 @@ public class Dialog {
 	var titlebarContent:HBox;
 	
 	init {
-		def scene = overlay.scene;
+		def scene = AppState.overlay.scene;
 		
 		def sceneBounds = BoundingBox {
 			width: scene.width;
@@ -285,13 +280,13 @@ public class Dialog {
 	 * Displays the Dialog.
 	 */ 
 	public function show() {
-		insert modalLayer into overlay.content;
-		insert panel into overlay.content;
-		insert dummy into overlay.content;
+		insert modalLayer into AppState.overlay.content;
+		insert panel into AppState.overlay.content;
+		insert dummy into AppState.overlay.content;
 		
 		if( okButton != null )
 			okButton.requestFocus();
-		overlay.layout();
+		//AppState.overlay.layout();
 		panel.layoutY = y - panel.layoutBounds.height / 2;
 		panel.layoutX = x - panel.layoutBounds.width / 2;
 	}
@@ -300,9 +295,9 @@ public class Dialog {
 	 * Closes the Dialog.
 	 */ 
 	public function close():Void {
-		delete panel from overlay.content;
-		delete modalLayer from overlay.content;
-		delete dummy from overlay.content;
+		delete panel from AppState.overlay.content;
+		delete modalLayer from AppState.overlay.content;
+		delete dummy from AppState.overlay.content;
 		onClose();
 	}
 }

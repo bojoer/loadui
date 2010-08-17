@@ -44,12 +44,6 @@ public def KEY_PRESSED = 11;
 public def KEY_RELEASED = 12;
 
 /**
- * A Group which is used as an overlay to place nodes which are being dragged into to avoid z-index issues.
- * The Group should be positioned at 0,0 in the scene. 
- */
-public var overlay: Group = null;
-
-/**
  *	Replacement class for CustomNode which adds general functionality.
  *
  * @author dain.nilsson
