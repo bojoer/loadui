@@ -21,7 +21,9 @@
 
 package com.eviware.loadui.fx.widgets.canvas;
 
+import javafx.scene.Node;
 import javafx.scene.Group;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -32,6 +34,7 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.ArcTo;
 
 import com.eviware.loadui.fx.ui.layout.widgets.OnOffSwitch;
+import com.eviware.loadui.fx.ui.resources.ResizablePath;
 
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.events.PropertyEvent;
@@ -42,37 +45,32 @@ import java.util.EventObject;
 public class TriggerComponentNode extends ComponentNode {
 	
 	override var roundedFrame = TriggerFrame {
-		layoutX: 15
-		layoutY: 20
-		width: bind width - 30
-		height: bind height - 50
-		stroke: bind roundedFrameStroke
-		fill: bind roundedFrameFill
+		fill: roundedFrameFill
+		stroke: roundedFrameStroke
+		layoutInfo: LayoutInfo { vfill: true, hfill: true }
 	}
 	
 	var stateProperty:Property;
 	var onState:Boolean on replace oldVal {
 		stateProperty.setValue( onState );
 	}
-
-	init {
-		insert [
-			OnOffSwitch {
-				layoutX: 5
-				layoutY: 6
-				state: bind onState with inverse
-				managed: false
-			}, Rectangle {
-				width: 40
-				height: 20
-				fill: Color.TRANSPARENT
-			}, Line {
-				endY: 10
-				stroke: bind separatorStroke
-			}
-		] before toolbarItemsLeft[0];
+	
+	override var component on replace {
 		stateProperty = (component.getBehavior() as TriggerCategory).getStateProperty();
 		onState = stateProperty.getValue() as Boolean;
+	}
+	
+	override function create():Node {
+		def dialog = super.create();
+		insert [
+			OnOffSwitch {
+				state: bind onState with inverse
+			}, Separator {
+				vertical: true
+			}
+		] before toolbar.content[0];
+		
+		dialog;
 	}
 	
 	override function handleEvent( e:EventObject ) {
@@ -86,13 +84,9 @@ public class TriggerComponentNode extends ComponentNode {
 	}
 }
 
-class TriggerFrame extends Path {
-	init {
-		recalculateShape();
-	}
-
-	function recalculateShape() {
-		elements = [
+class TriggerFrame extends ResizablePath {
+	override function calculatePath() {
+		[
 			MoveTo { y: 17 },
 			LineTo { y: height - 7 },
 			ArcTo { x: 7, y: height, radiusX: 7, radiusY: 7 },
@@ -106,13 +100,5 @@ class TriggerFrame extends Path {
 			LineTo { x: 7, y: 10 },
 			ArcTo { x: 0, y: 17, radiusX: 7, radiusY: 7 }
 		];
-	}
-
-	public var width:Number on replace {
-		recalculateShape();
-	}
-
-	public var height:Number on replace {
-		recalculateShape();
 	}
 }

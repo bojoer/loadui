@@ -150,11 +150,7 @@ public abstract class CanvasNode extends BaseNode, StylesheetAware, Selectable, 
 				MenuItem {
 					text: ##[SETTINGS]"Settings"
 					action: function() { 
-						if(this instanceof TestCaseNode){
-							SettingsDialog{}.show(MainWindow.instance.testcaseCanvas.canvasItem);
-						} else {
-							settingsAction();
-						}
+						settingsAction();
 					}
 				}
 			]

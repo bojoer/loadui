@@ -33,7 +33,7 @@ public abstract class ResizablePath extends Resizable, Path {
 		elements = calculatePath();
 	}
 	
-	abstract function calculatePath():PathElement[];
+	protected function calculatePath():PathElement[] { [] }; //This should be abstract, but due to a compiler bug, sometimes subclasses refuse to compile.
 	
 	override var width on replace {
 		elements = calculatePath();

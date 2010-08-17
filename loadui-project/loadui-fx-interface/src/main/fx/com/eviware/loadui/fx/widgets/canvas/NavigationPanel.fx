@@ -252,6 +252,7 @@ public class NavigationPanel extends CustomNode, Resizable {
 									onDragging: function() {
 										canvas.offsetX = ( handle.layoutX + handle.translateX ) / scale as Integer;
 										canvas.offsetY = ( handle.layoutY + handle.translateY ) / scale as Integer;
+										canvas.refreshTerminals();
 									}
 								}
 							]

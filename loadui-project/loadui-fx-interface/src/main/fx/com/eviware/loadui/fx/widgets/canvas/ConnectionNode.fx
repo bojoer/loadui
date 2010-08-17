@@ -54,22 +54,16 @@ public class ConnectionNode extends Selectable, Deletable, BaseNode {
 	 */
 	public-init var connection: Connection;
 	
-	var startComponentNode:CanvasNode;
-	var endComponentNode:CanvasNode;
-	var scnOffsetX:Number;
-	var scnOffsetY:Number;
-	var ecnOffsetX:Number;
-	var ecnOffsetY:Number;
+	var startNode:TerminalNode;
+	var endNode:TerminalNode;
 	
-	var startNode:Node;
-	var endNode:Node;
-	
-	def startX = bind startComponentNode.layoutX + startComponentNode.translateX + scnOffsetX;
-	def startY = bind startComponentNode.layoutY + startComponentNode.translateY + scnOffsetY;
-	def endX = bind endComponentNode.layoutX + endComponentNode.translateX + ecnOffsetX;
-	def endY = bind endComponentNode.layoutY + endComponentNode.translateY + ecnOffsetY;
+	var startX:Number;
+	var startY:Number;
+	var endX:Number;
+	var endY:Number;
 	
 	override var blocksMouse = true;
+	
 	override var onMouseClicked = function( e:MouseEvent ) {
 		if( e.button == MouseButton.PRIMARY ) {
 			toFront();
@@ -79,6 +73,7 @@ public class ConnectionNode extends Selectable, Deletable, BaseNode {
 	}
 	
 	override var confirmDelete = false;
+	
 	override function doDelete():Void {
 		connection.disconnect();
 	}
@@ -86,6 +81,10 @@ public class ConnectionNode extends Selectable, Deletable, BaseNode {
 	init {
 		if( not FX.isInitialized( connection ) )
 			throw new RuntimeException( "connection is not initialized!" );
+		def outTerminal = connection.getOutputTerminal();
+		def inTerminal = connection.getInputTerminal();
+		startNode = canvas.lookupCanvasNode( outTerminal.getTerminalHolder().getId() ).lookupTerminalNode( outTerminal.getId() );
+		endNode = canvas.lookupCanvasNode( inTerminal.getTerminalHolder().getId() ).lookupTerminalNode( inTerminal.getId() );
 		
 		terminalsChanged();
 	}
@@ -94,51 +93,14 @@ public class ConnectionNode extends Selectable, Deletable, BaseNode {
 	 * This needs to be called whenever the terminals move around inside their Container.
 	 */
 	public function terminalsChanged():Void {
-		def inTerminal = connection.getInputTerminal();
-		def outTerminal = connection.getOutputTerminal();
+		def sceneBoundsStart = startNode.localToScene( startNode.layoutBounds );
+		startX = (sceneBoundsStart.maxX + sceneBoundsStart.minX) / 2;
+		startY = (sceneBoundsStart.maxY + sceneBoundsStart.minY) / 2;
 		
-		startComponentNode = canvas.lookupCanvasNode( outTerminal.getTerminalHolder().getId() );
-		if (startComponentNode instanceof ComponentNode) {
-			startNode = (startComponentNode as ComponentNode).lookupTerminalNode( outTerminal.getId() );
-			scnOffsetX = startNode.localToScene( startNode.layoutBounds ).minX
-				- startComponentNode.localToScene( startComponentNode.layoutBounds ).minX + startNode.layoutBounds.width / 2 - 2;
-			scnOffsetY = startNode.localToScene( startNode.layoutBounds ).minY
-				- startComponentNode.localToScene( startComponentNode.layoutBounds ).minY + 20;//+ startNode.layoutBounds.height / 2;
-		}
-		
-		endComponentNode = canvas.lookupCanvasNode( inTerminal.getTerminalHolder().getId() );
-		if (endComponentNode instanceof ComponentNode) {
-			endNode = (endComponentNode as ComponentNode).lookupTerminalNode( inTerminal.getId() );
-		} else {
-		    endNode = (endComponentNode as TestCaseNode).getStateTerminalNode();
-		}
-		ecnOffsetX = endNode.localToScene( endNode.layoutBounds ).minX
-			- endComponentNode.localToScene( endComponentNode.layoutBounds ).minX + endNode.layoutBounds.width / 2 - 2;
-		ecnOffsetY = endNode.localToScene( endNode.layoutBounds ).minY
-			- endComponentNode.localToScene( endComponentNode.layoutBounds ).minY + 25;// + endNode.layoutBounds.height / 2;
-
+		def sceneBoundsEnd = endNode.localToScene( endNode.layoutBounds );
+		endX = (sceneBoundsEnd.maxX + sceneBoundsEnd.minX) / 2;
+		endY = (sceneBoundsEnd.maxY + sceneBoundsEnd.minY) / 2;
 	}
-	
-	//Terminal node in TestCaseNode changes layoutX position during TestCaseNode component creation (it is bounded
-	//to width of RunController which obviously changes). This can cause TestCaseConmponent's connection to be displaced
-	//a bit from its position. This is fix for that. It should occure only on component creation. 
-	var endNodeLayoutX: Number = bind endNode.layoutX on replace {
-	//	if (endComponentNode instanceof TestCaseNode) {
-			terminalsChanged();
-	//	}
-	}
-	
-	var startNodeLayoutY:Number = bind startNode.layoutY on replace {
-	    terminalsChanged();
-	}
-	
-	var endNodeLayoutY:Number = bind endNode.layoutY on replace {
-		    terminalsChanged();
-		}
-		
-	var startNodeLayoutX:Number = bind startNode.layoutX on replace {
-		    terminalsChanged();
-		}
 		
 	override function create() {
 		Wire {

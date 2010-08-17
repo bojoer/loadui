@@ -210,7 +210,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 			HBox {
 				hpos: HPos.RIGHT
 				nodeHPos: HPos.RIGHT
-				layoutInfo: LayoutInfo { height: 10, maxHeight: 10 }
+				layoutInfo: LayoutInfo { height: 14, maxHeight: 14, margin: Insets { bottom: -4 } }
 				content: [
 					if(not ghostAgent) [
 						OnOffSwitch {
