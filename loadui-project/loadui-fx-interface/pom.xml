@@ -120,6 +120,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-launcher</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>

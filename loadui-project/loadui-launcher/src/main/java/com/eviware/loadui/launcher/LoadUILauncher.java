@@ -36,6 +36,7 @@ import org.apache.felix.main.AutoProcessor;
 import org.apache.felix.main.Main;
 
 import com.eviware.loadui.launcher.api.OSGiUtils;
+import com.eviware.loadui.launcher.api.SplashController;
 
 /**
  * Starts an embedded OSGi Runtime (Felix) with all the required JavaFX packages
@@ -215,6 +216,7 @@ public class LoadUILauncher
 		}
 		if( !cmd.hasOption( NOFX_OPTION ) )
 		{
+			SplashController.openSplash();
 			addJavaFxPackages();
 		}
 	}

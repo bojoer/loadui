@@ -68,34 +68,10 @@ public class JavaFXActivator extends BundleActivator {
 			} catch( e:Exception ) {
 			    e.printStackTrace();
 			}
-		
-			def wcSplash = SplashWindowController {
-			   splash: true
-				stage : Stage {
-					title: "Splash"
-					style: StageStyle.TRANSPARENT
-					icons: icons
-					scene: Scene {
-						content: [
-							ImageView {
-								image: Image {
-									url:"{__ROOT__}images/Splash-loadUI-beta_2.png"
-									preserveRatio: true
-								}
-							}
-						]
-					}
-				}
-		   }
+
 			log.debug("JavaFX Bundle started!");
 	
-			//trigger is to reload css when theme changes
-			var stylesheets: String[] on replace {
-				//FxUtils.loadStyles(stylesheets);	
-			};
-			
-			//not working: stylesheets = "{__ROOT__}themes/default/style.css";
-			stylesheets = "file:style.css";
+			def stylesheets = "file:style.css";
 			
 			def wc = new WindowControllerImpl();
 			wc.stage = Stage {

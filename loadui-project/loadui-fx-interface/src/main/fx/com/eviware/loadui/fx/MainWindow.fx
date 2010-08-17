@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.fx;
 
+import com.eviware.loadui.launcher.api.SplashController;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
@@ -205,7 +206,7 @@ public class MainWindow {
 			scene.stage.visible = true;
 			appState.transitionTo( AppState.WORKSPACE_FRONT, AppState.FADE_WIPE );
 			appState.scene = scene;
-			SplashWindowController.getInstance().close();
+			SplashController.closeSplash();
 		});	
 	}
 	
