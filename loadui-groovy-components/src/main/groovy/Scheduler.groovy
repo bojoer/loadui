@@ -71,42 +71,6 @@ def stopMessage = newMessage()
 stopMessage[TriggerCategory.ENABLED_MESSAGE_PARAM] = false
 sendStop = { send( outputTerminal, stopMessage ) }
 
-def counter = 0
-def durationHolder = 0
-def runsHolder = 0
-def startSent = false
-
-def scheduler = new StdSchedulerFactory().getScheduler()
-scheduler.addJobListener(new JobListenerSupport()
-{
-	String getName(){
-		"startJobListener"
-	}
-	void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
-		sendStart()
-		setActivityStrategy(ActivityStrategies.BLINKING)
-		startSent = true
-		scheduleEndTrigger()
-		counter++
-		if(runsHolder > 0 && counter >= runsHolder){
-			unscheduleStartTrigger()
-		}
-	}
-})
-scheduler.addJobListener(new JobListenerSupport()
-{
-	String getName(){
-		"endJobListener"
-	}
-	void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
-		sendStop()
-		setActivityStrategy(ActivityStrategies.OFF)
-		unscheduleEndTrigger()
-	}
-})
-
-def paused = false
-
 class SchedulerJob implements Job {
 	void execute(JobExecutionContext context) throws JobExecutionException {}
 }
@@ -119,7 +83,166 @@ def endTrigger = null
 def endJob = new JobDetail("endJob", "group", SchedulerJob.class)
 endJob.addJobListener("endJobListener")
 
-displayNextRun = new DelayedFormattedString( '%s', 1000, value { 
+def counter = 0
+def durationHolder = 0
+def runsHolder = 0
+def startSent = false
+
+def paused = false
+def pauseStart = -1
+def pauseTotal = 0
+def endTriggerStart = null //this is the time when latest enable event was sent
+def rescheduleAfterPause = false
+def endTriggerTimeLeft = null
+
+def scheduler = new StdSchedulerFactory().getScheduler()
+scheduler.addJobListener(new JobListenerSupport()
+{
+	String getName(){
+		"startJobListener"
+	}
+	void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
+		sendStart()
+		startSent = true
+		endTriggerStart = new Date()
+		scheduleEndTrigger(endTriggerStart, durationHolder)
+		counter++
+		if(runsHolder > 0 && counter >= runsHolder){
+			unscheduleStartTrigger()
+		}
+		setActivityStrategy(ActivityStrategies.BLINKING)
+		pauseTotal = 0
+	}
+})
+
+scheduler.addJobListener(new JobListenerSupport()
+{
+	String getName(){
+		"endJobListener"
+	}
+	void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
+		sendStop()
+		setActivityStrategy(ActivityStrategies.OFF)
+		unscheduleEndTrigger()
+		endTrigger = null
+		pauseTotal = 0
+	}
+})
+
+addEventListener( ActionEvent ) { event ->
+	if( event.key == CanvasItem.START_ACTION) {
+		if(!paused){ 
+			scheduleStartTrigger()
+		}
+		else if (rescheduleAfterPause){
+			def now = new Date()
+			pauseTotal += now.getTime() - pauseStart.getTime()
+			scheduleEndTrigger(now, endTriggerStart.getTime() + durationHolder + pauseTotal - now.getTime())
+			rescheduleAfterPause = false
+		}
+		scheduler?.start()
+		paused = false
+	}
+	else if( event.key == CanvasItem.STOP_ACTION) {
+		scheduler?.standby()
+		paused = true
+		pauseStart = new Date()
+		if(endTrigger != null){
+			unscheduleEndTrigger()
+			endTrigger = null
+			rescheduleAfterPause = true
+		}
+	}
+	else if( event.key == CanvasItem.COMPLETE_ACTION) {
+		reset()
+	}
+	else if(event.key == CounterHolder.COUNTER_RESET_ACTION){
+		reset()
+		scheduleStartTrigger()
+		scheduler?.start()
+	}
+}
+
+scheduleStartTrigger = {
+	def startTriggerPattern = "${time.value} "
+	startTriggerPattern += "? * "
+	if(day.value.equals("Every day")){
+		startTriggerPattern += "* "
+	}
+	else{
+		startTriggerPattern += "${day.value.substring(0,3).toUpperCase()} "
+	}
+	
+	unscheduleStartTrigger()
+	scheduler.addJob(startJob, true)
+	startTrigger = new CronTrigger("startTrigger", "group", "startJob", "group", startTriggerPattern)
+	scheduler.scheduleJob(startTrigger)
+	
+	runsHolder = runsCount.value
+	durationHolder = duration.value * 1000
+}
+
+scheduleEndTrigger = {startTime, durationInMillis ->
+	if(durationHolder > 0){
+		def calendar = Calendar.getInstance()
+		calendar.setTime(startTime)
+		calendar.add(Calendar.MILLISECOND, (int)durationInMillis)
+
+		def endTriggerPattern = ""
+		endTriggerPattern += "${calendar.get(Calendar.SECOND)} "
+		endTriggerPattern += "${calendar.get(Calendar.MINUTE)} "
+		endTriggerPattern += "${calendar.get(Calendar.HOUR_OF_DAY)} "
+		endTriggerPattern += "${calendar.get(Calendar.DAY_OF_MONTH)} "
+		endTriggerPattern += "${calendar.get(Calendar.MONTH) + 1} "
+		endTriggerPattern += "? "
+		endTriggerPattern += "${calendar.get(Calendar.YEAR)} "
+		
+		unscheduleEndTrigger()
+		scheduler.addJob(endJob, true)
+		endTrigger = new CronTrigger("endTrigger", "group", "endJob", "group", endTriggerPattern)
+		scheduler.scheduleJob(endTrigger)
+	}
+}
+
+reset = {
+	counter = 0
+	durationHolder = 0
+	runsHolder = 0
+	paused = false
+	pauseStart = -1
+	pauseTotal = 0
+	endTriggerStart = null
+	rescheduleAfterPause = false
+	endTriggerTimeLeft = null
+	unscheduleStartTrigger()
+	unscheduleEndTrigger()
+	startTrigger = null
+	endTrigger = null
+	startSent = false
+	setActivityStrategy(ActivityStrategies.OFF)
+}
+
+unscheduleStartTrigger = {
+	try{
+		scheduler.unscheduleJob("startTrigger", "group")
+	}
+	catch(Exception e){}
+}
+
+unscheduleEndTrigger = {
+	try{
+		scheduler.unscheduleJob("endTrigger", "group")
+	}
+	catch(Exception e){}
+}
+
+onRelease = {
+	scheduler.shutdown()
+	displayNextRun.release()
+	displayTimeLeft.release()
+}
+
+displayNextRun = new DelayedFormattedString( '%s', 1000, value {
 	if(startTrigger){
 		def sdf = SimpleDateFormat.getInstance()
 		sdf.setLenient(false)
@@ -131,7 +254,7 @@ displayNextRun = new DelayedFormattedString( '%s', 1000, value {
 	}
 })
 
-displayTimeLeft = new DelayedFormattedString( '%s', 1000, value {
+displayTimeLeft = new DelayedFormattedString( '%s', 480, value {
 	if(startSent && durationHolder == 0){
 		'Infinite'
 	}
@@ -153,112 +276,17 @@ displayTimeLeft = new DelayedFormattedString( '%s', 1000, value {
 			}
 			def calendar = Calendar.getInstance()
 			calendar.setTimeInMillis(diff)
-			sdf.format(calendar.getTime())
+			endTriggerTimeLeft = sdf.format(calendar.getTime())
+			endTriggerTimeLeft
 		}
 		else{
 			'00:00:00'
 		}
 	}
 	else{
-		'Not running'
+		endTriggerTimeLeft ?: 'Not running'
 	}
 })
-
-addEventListener( ActionEvent ) { event ->
-	if( event.key == CanvasItem.START_ACTION) {
-		if(!paused){ 
-			scheduleStartTrigger()
-		}
-		scheduler?.start()
-		paused = false
-	}
-	else if( event.key == CanvasItem.STOP_ACTION) {
-		scheduler?.standby()
-		paused = true
-	}
-	else if( event.key == CanvasItem.COMPLETE_ACTION) {
-		reset()
-	}
-	else if(event.key == CounterHolder.COUNTER_RESET_ACTION){
-		reset()
-		scheduleStartTrigger()
-		scheduler?.start()
-	}
-}
-
-reset = {
-	counter = 0
-	durationHolder = 0
-	runsHolder = 0
-	paused = false
-	unscheduleStartTrigger()
-	unscheduleEndTrigger()
-	startTrigger = null
-	endTrigger = null
-	startSent = false
-	setActivityStrategy(ActivityStrategies.OFF)
-}
-
-scheduleStartTrigger = {
-	def startTriggerPattern = "${time.value} "
-	startTriggerPattern += "? * "
-	if(day.value.equals("Every day")){
-		startTriggerPattern += "* "
-	}
-	else{
-		startTriggerPattern += "${day.value.substring(0,3).toUpperCase()} "
-	}
-	
-	unscheduleStartTrigger()
-	scheduler.addJob(startJob, true)
-	startTrigger = new CronTrigger("startTrigger", "group", "startJob", "group", startTriggerPattern)
-	scheduler.scheduleJob(startTrigger)
-	
-	runsHolder = runsCount.value
-	durationHolder = duration.value
-}
-
-unscheduleStartTrigger = {
-	try{
-		scheduler.unscheduleJob("startTrigger", "group")
-	}
-	catch(Exception e){}
-}
-
-scheduleEndTrigger = {
-	if(durationHolder > 0){
-		def calendar = Calendar.getInstance()
-		calendar.setTime(new Date())
-		calendar.add(Calendar.SECOND, (int)durationHolder)
-
-		def endTriggerPattern = ""
-		endTriggerPattern += "${calendar.get(Calendar.SECOND)} "
-		endTriggerPattern += "${calendar.get(Calendar.MINUTE)} "
-		endTriggerPattern += "${calendar.get(Calendar.HOUR_OF_DAY)} "
-		endTriggerPattern += "${calendar.get(Calendar.DAY_OF_MONTH)} "
-		endTriggerPattern += "${calendar.get(Calendar.MONTH) + 1} "
-		endTriggerPattern += "? "
-		endTriggerPattern += "${calendar.get(Calendar.YEAR)} "
-		
-		unscheduleEndTrigger()
-		scheduler.addJob(endJob, true)
-		endTrigger = new CronTrigger("endTrigger", "group", "endJob", "group", endTriggerPattern)
-		scheduler.scheduleJob(endTrigger)
-	}
-}
-
-unscheduleEndTrigger = {
-	try{
-		scheduler.unscheduleJob("endTrigger", "group")
-	}
-	catch(Exception e){}
-}
-
-onRelease = {
-	scheduler.shutdown()
-	displayNextRun.release()
-	displayTimeLeft.release()
-}
 
 layout( constraints: 'gap 10 0') {
 	box{
