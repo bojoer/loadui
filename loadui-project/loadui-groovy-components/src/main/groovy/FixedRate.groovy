@@ -92,7 +92,7 @@ addEventListener( ActionEvent ) { event ->
 
 //Layout
 layout { 
-	property( property:rate, label:'Rate', min:0 ) 
+	property( property:rate, label:'Rate', min:1 ) 
 	separator( vertical:true )
 	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
 	separator( vertical:true )
