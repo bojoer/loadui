@@ -33,6 +33,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
@@ -150,6 +152,12 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	protected function onReloaded():Void {};
 	
 	override function create():Node {
+		addMouseHandler( MOUSE_CLICKED, function( e:MouseEvent ) {
+			if( e.button == MouseButton.SECONDARY ) {
+				canvas.openContextMenu( e.screenX, e.screenY );
+			}
+		} );
+		
 		var menuButton:MenuButton;
 		
 		DialogPanel {

@@ -67,7 +67,6 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 
 	private final Pattern m2Pattern = java.util.regex.Pattern.compile( ".*@m2repo (.*)\\s*" );
 	private final Pattern depPattern = java.util.regex.Pattern.compile( ".*@dependency (.*)\\s*" );
-	private final Pattern jarPattern = java.util.regex.Pattern.compile( ".*@jar (.*)\\s*" );
 
 	private GroovyShell shell;
 	private Binding binding;
@@ -393,7 +392,6 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 	{
 		Matcher m2Matcher = m2Pattern.matcher( scriptContent );
 		Matcher depMatcher = depPattern.matcher( scriptContent );
-		Matcher jarMatcher = jarPattern.matcher( scriptContent );
 
 		// StringBuilder sb = new StringBuilder( "import groovy.grape.Grape\n" );
 
@@ -407,8 +405,8 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 			String url = m2Matcher.group( 1 );
 			// sb.append( "Grape.addResolver(name:'repo_" + repos++ + "', root:'" +
 			// url + "', m2compatible:true)\n" );
-			Grape.addResolver( MapUtils.build( String.class, Object.class ).put( "name", "repo_" + repos++ ).put( "root",
-					url ).put( "m2compatible", true ).get() );
+			Grape.addResolver( MapUtils.build( String.class, Object.class ).put( "name", "repo_" + repos++ )
+					.put( "root", url ).put( "m2compatible", true ).get() );
 		}
 
 		while( depMatcher.find() )
@@ -416,45 +414,34 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 			String[] parts = depMatcher.group( 1 ).split( ":" );
 			if( parts.length >= 3 )
 			{
-				log.debug( "Loading dependency using Grape: " + depMatcher.group( 1 ) );
-				Grape.grab( MapUtils.build( String.class, Object.class ).put( "group", parts[0] ).put( "module", parts[1] )
-						.put( "version", parts[2] ).put( "classLoader", shell.getClassLoader() ).get() );
-			}
-		}
-
-		while( jarMatcher.find() )
-		{
-			String[] parts = jarMatcher.group( 1 ).split( ":" );
-
-			if( parts.length >= 3 )
-			{
-				File depFile = new File( System.getProperty( "groovy.root" ), "grapes" + File.separator + parts[0]
-						+ File.separator + parts[1] + File.separator + "jars" + File.separator + parts[1] + "-" + parts[2]
-						+ ".jar" );
-				if( depFile.exists() )
+				if( System.getProperty( "os.name" ).toLowerCase().contains( "mac" ) )
 				{
-					try
+					File depFile = new File( System.getProperty( "groovy.root" ), "grapes" + File.separator + parts[0]
+							+ File.separator + parts[1] + File.separator + "jars" + File.separator + parts[1] + "-" + parts[2]
+							+ ".jar" );
+					if( depFile.exists() )
 					{
-						log.debug( "Manually loading jar: " + jarMatcher.group( 1 ) );
-						shell.getClassLoader().addURL( depFile.toURI().toURL() );
+						try
+						{
+							log.debug( "Manually loading jar: " + depMatcher.group( 1 ) );
+							shell.getClassLoader().addURL( depFile.toURI().toURL() );
+						}
+						catch( MalformedURLException e )
+						{
+							e.printStackTrace();
+						}
 					}
-					catch( MalformedURLException e )
-					{
-						e.printStackTrace();
-					}
+				}
+				else
+				{
+					log.debug( "Loading dependency using Grape: " + depMatcher.group( 1 ) );
+					Grape.grab( MapUtils.build( String.class, Object.class ).put( "group", parts[0] )
+							.put( "module", parts[1] ).put( "version", parts[2] ).put( "classLoader", shell.getClassLoader() )
+							.get() );
 				}
 			}
 		}
 
-		// if( deps )
-		// {
-		// Binding binding = new Binding();
-		// binding.setVariable( "classloader", shell.getClassLoader() );
-		// Script s = shell.parse( sb.toString() );
-		// s.setBinding( binding );
-		// log.debug( "Loading dependencies..." );
-		// s.run();
-		// }
 		log.debug( "Done loading dependencies!" );
 	}
 

@@ -273,7 +273,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		for( clone in clones.values() ) clone as CanvasObjectItem;
 	}
 	
-	protected def contextMenu = PopupMenu {
+	protected def contextMenu:PopupMenu = PopupMenu {
 		items: [
 			cloneAction,
 			deleteAction,

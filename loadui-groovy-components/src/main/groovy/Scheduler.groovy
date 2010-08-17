@@ -27,7 +27,7 @@
  * @help http://www.loadui.org/Schedulers/interval.html
  * @category scheduler
  * @nonBlocking true
- * @jar org.quartz-scheduler:quartz:1.8.3
+ * @dependency org.quartz-scheduler:quartz:1.8.3
  * 
  */
 
