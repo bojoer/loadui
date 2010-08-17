@@ -70,13 +70,11 @@ public-read var instance:AppState;
 
 def dummyNode = Group {};
 public var overlay:Node[] on replace {
+	delete dummyNode from instance.overlayLayer.content;
+	instance.overlayLayer.content = overlay;
 	FX.deferAction( function():Void {
-		delete dummyNode from instance.overlayLayer.content;
-		instance.overlayLayer.content = overlay;
-		FX.deferAction( function():Void {
-			if( dummyNode.parent == null )
-				insert dummyNode into instance.overlayLayer.content;
-		} );
+		if( dummyNode.parent == null )
+			insert dummyNode into instance.overlayLayer.content;
 	} );
 }
 
