@@ -199,16 +199,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	}
 	
 	override function handleEvent( e:EventObject ) {
-		if( e instanceof BaseEvent ) {
-			def event = e as BaseEvent;
-			if( event.getKey() == CanvasObjectItem.LABEL ) {
-				runInFxThread( function():Void { label = canvasObject.getLabel() } );
-			} else if( event.getKey() == CanvasObjectItem.ACTIVITY ) {
-				runInFxThread( function():Void { active = canvasObject.isActive() } );
-			} else if( event.getKey() == CanvasObjectItem.RELOADED ) {
-				runInFxThread( function():Void { onReloaded() } );
-			}
-		} else if( e instanceof CollectionEvent ) {
+		if( e instanceof CollectionEvent ) {
 			def event = e as CollectionEvent;
 			if( CanvasObjectItem.TERMINALS.equals( event.getKey() ) ) {
 				if( event.getEvent() == CollectionEvent.Event.ADDED ) {
@@ -216,6 +207,15 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 				} else {
 					runInFxThread( function() { removeTerminal( event.getElement() as Terminal ) } );
 				}
+			}
+		} else if( e instanceof BaseEvent ) {
+			def event = e as BaseEvent;
+			if( event.getKey() == CanvasObjectItem.LABEL ) {
+				runInFxThread( function():Void { label = canvasObject.getLabel() } );
+			} else if( event.getKey() == CanvasObjectItem.ACTIVITY ) {
+				runInFxThread( function():Void { active = canvasObject.isActive() } );
+			} else if( event.getKey() == CanvasObjectItem.RELOADED ) {
+				runInFxThread( function():Void { onReloaded() } );
 			}
 		}
 	}
