@@ -41,7 +41,6 @@ import com.eviware.loadui.fx.widgets.toolbar.AgentToolbarItem;
 
 import com.eviware.loadui.fx.agents.discovery.AgentDiscoverer;
 import com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog;
-import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
 
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;

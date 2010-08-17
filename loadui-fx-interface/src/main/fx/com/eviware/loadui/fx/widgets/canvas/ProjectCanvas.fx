@@ -32,11 +32,6 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.events.CollectionEvent;
 
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
-import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
-import com.eviware.loadui.fx.ui.popup.ActionMenuItem;
-import com.eviware.loadui.fx.ui.popup.SubMenuItem;
-
 import java.util.EventObject;
 import java.lang.RuntimeException;
 

@@ -51,7 +51,13 @@ public class PropertyLayoutComponentNode extends LayoutComponentNode, EventHandl
 	
 	override var layoutBounds = bind lazy (widget as Node).layoutBounds;
 	
-	override var layoutInfo = bind (widget as Node).layoutInfo with inverse;
+	def widgetLayoutInfo = bind (widget as Node).layoutInfo on replace {
+		layoutInfo = widgetLayoutInfo;
+	}
+	
+	override var layoutInfo on replace {
+		(widget as Node).layoutInfo = layoutInfo;
+	}
 	
 	override var width on replace {
 		widget.width = width;

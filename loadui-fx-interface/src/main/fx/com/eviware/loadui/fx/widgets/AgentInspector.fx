@@ -72,7 +72,6 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.Assignment;
-import com.eviware.loadui.fx.ui.popup.SeparatorMenuItem;
 
 import com.eviware.loadui.fx.agents.discovery.AgentDiscoverer;
 import com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog;

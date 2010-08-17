@@ -31,7 +31,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.popup.TooltipHolder;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
 import com.eviware.loadui.fx.StylesheetAware;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 

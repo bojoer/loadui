@@ -28,7 +28,6 @@ import com.eviware.loadui.fx.ui.menu.SoapUIButton;
 import com.eviware.loadui.fx.ui.menu.TestCaseMenu;
 import com.eviware.loadui.fx.ui.menu.WorkspaceMenu;
 import com.eviware.loadui.fx.ui.node.BaseNode;
-import com.eviware.loadui.fx.ui.popup.PopupMenu;
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.widgets.AgentList;
 import com.eviware.loadui.fx.widgets.FeedDisplay;
