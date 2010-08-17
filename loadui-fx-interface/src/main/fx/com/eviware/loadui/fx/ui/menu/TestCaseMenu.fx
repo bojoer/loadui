@@ -122,92 +122,6 @@ public class TestCaseMenu extends HBox {
 	
 	var summaryEnabled = false;
 	
-	var testCaseLabelTruncated: Boolean = false on replace {
-		if(not testCaseLabelTruncated){
-			tcMenuClosedTextFill = Color.web("#666666");
-			tcMenuOpenedTextFill = Color.web("#4d4d4d");
-		}
-		else{
-			tcMenuClosedTextFill = LinearGradient {
-				endY: 0
-				stops: [
-					Stop { offset: 0, color: Color.rgb( 0x66, 0x66, 0x66, 1.0 ) },
-					Stop { offset: 0.8, color: Color.rgb( 0x66, 0x66, 0x66, 1.0 ) },
-					Stop { offset: 0.9, color: Color.rgb( 0x66, 0x66, 0x66, 0.7 ) },
-					Stop { offset: 1.0, color: Color.rgb( 0x66, 0x66, 0x66, 0.0 ) },
-				]
-			}
-			tcMenuOpenedTextFill = LinearGradient {
-				endY: 0
-				stops: [
-					Stop { offset: 0, color: Color.rgb( 0x4d, 0x4d, 0x4d, 1.0 ) },
-					Stop { offset: 0.8, color: Color.rgb( 0x4d, 0x4d, 0x4d, 1.0 ) },
-					Stop { offset: 0.9, color: Color.rgb( 0x66, 0x66, 0x66, 0.7 ) },
-					Stop { offset: 1.0, color: Color.rgb( 0x4d, 0x4d, 0x4d, 0.0 ) },
-				]
-			};
-		}
-	};
-	
-	var projectLabelTruncated: Boolean = false on replace {
-		if(not projectLabelTruncated){
-			projectMenuClosedTextFill = Color.web("#666666");
-		}
-		else{
-			projectMenuClosedTextFill = LinearGradient {
-				endY: 0
-				stops: [
-					Stop { offset: 0, color: Color.rgb( 0x66, 0x66, 0x66, 1.0 ) },
-					Stop { offset: 0.75, color: Color.rgb( 0x66, 0x66, 0x66, 1.0 ) },
-					Stop { offset: 0.85, color: Color.rgb( 0x66, 0x66, 0x66, 0.75 ) },
-					Stop { offset: 1.0, color: Color.rgb( 0x66, 0x66, 0x66, 0.0 ) },
-				]
-			}
-		}
-	}
-	
-	var truncTestCaseLabel: String;
-	var truncProjectLabel: String;
-	var t: String = bind testCaseLabel on replace {
-		var tcWidth: Number = 0;
-		testCaseLabelTruncated = false;
-		var tmp: String = "";
-		for(i in [0..testCaseLabel.length()-1]){
-			tmp = "{tmp}{testCaseLabel.substring(i, i + 1)}";
-			var tmpText: Text = Text {
-				content: tmp
-			}
-			def tcPrevWidth: Number = tcWidth;
-			tcWidth = tmpText.boundsInLocal.width * 18/12;
-			if(tcWidth > 120){
-				truncTestCaseLabel = tmp.substring(0, tmp.length() - 1);
-				testCaseLabelTruncated = true;
-				tcWidth = tcPrevWidth;
-				break;
-			}
-		}
-		if(not testCaseLabelTruncated){
-			truncTestCaseLabel = testCaseLabel;
-		}
-		
-		tmp = "";
-		for(i in [0..projectLabel.length()-1]){
-			tmp = "{tmp}{projectLabel.substring(i, i + 1)}";
-			var tmpText: Text = Text {
-				content: tmp
-			}
-			if(tmpText.boundsInLocal.width > 10 + tcWidth * 12 / 10){
-				truncProjectLabel = tmp.substring(0, tmp.length() - 1);
-				projectLabelTruncated = true;
-				break;
-			}
-		}
-		if(not projectLabelTruncated){
-			truncProjectLabel = projectLabel;
-		}
-	}
-	
-	
 	init {
 		var menuButton:MenuButton;
 		
@@ -261,7 +175,7 @@ public class TestCaseMenu extends HBox {
 						nodeVPos: VPos.CENTER;
 						content: [
 							Label {
-								text: bind truncProjectLabel
+								text: bind projectLabel
 								textFill: bind projectMenuClosedTextFill
 								font: bind projectMenuClosedFont
 								layoutInfo: LayoutInfo {
@@ -286,7 +200,8 @@ public class TestCaseMenu extends HBox {
 						content: [
 							menuButton = MenuButton {
 								styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
-								text: bind truncTestCaseLabel
+								layoutInfo: LayoutInfo { hshrink: Priority.SOMETIMES, minWidth: 100 }
+								text: bind testCaseLabel
 								font: bind tcMenuOpenedFont
 								items: [
 									MenuItem {

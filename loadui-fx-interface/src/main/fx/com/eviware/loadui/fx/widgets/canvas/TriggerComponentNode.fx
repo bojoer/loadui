@@ -32,6 +32,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.ArcTo;
+import javafx.scene.shape.ClosePath;
 import javafx.geometry.Insets;
 
 import com.eviware.loadui.fx.ui.layout.widgets.OnOffSwitch;
@@ -89,8 +90,7 @@ public class TriggerComponentNode extends ComponentNode {
 class TriggerFrame extends ResizablePath {
 	override function calculatePath() {
 		[
-			MoveTo { y: 17 },
-			LineTo { y: height - 7 },
+			MoveTo { y: height - 7 },
 			ArcTo { x: 7, y: height, radiusX: 7, radiusY: 7 },
 			LineTo { x: width - 7, y: height },
 			ArcTo { x: width, y: height - 7, radiusX: 7, radiusY: 7 },
@@ -100,7 +100,8 @@ class TriggerFrame extends ResizablePath {
 			ArcTo { x: 45, y: 5, radiusX: 5, radiusY: 5 },
 			ArcTo { x: 40, y: 10, radiusX: 5, radiusY: 5, sweepFlag: true },
 			LineTo { x: 7, y: 10 },
-			ArcTo { x: 0, y: 17, radiusX: 7, radiusY: 7 }
+			ArcTo { x: 0, y: 17, radiusX: 7, radiusY: 7 },
+			ClosePath {}
 		];
 	}
 }

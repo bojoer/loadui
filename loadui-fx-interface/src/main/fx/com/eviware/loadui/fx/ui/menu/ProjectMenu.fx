@@ -170,6 +170,7 @@ public class ProjectMenu extends HBox {
 						content: [
 							menuButton = MenuButton {
 								styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
+								layoutInfo: LayoutInfo { hshrink: Priority.SOMETIMES, minWidth: 100 }
 								text: bind projectLabel
 								font: bind projectMenuOpenedFont
 								items: [

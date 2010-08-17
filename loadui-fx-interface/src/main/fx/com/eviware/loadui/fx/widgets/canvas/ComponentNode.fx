@@ -110,17 +110,17 @@ public class ComponentNode extends CanvasObjectNode {
 }
 
 class RoundedBorder extends ResizablePath {
-	override function calculatePath():PathElement[] {
+	override function calculatePath() {
 		[
-			MoveTo { x: width - 7, y: 0 },
-			LineTo { x: 7, y: 0 },
+			MoveTo { x: 7, y: 0 },
 			ArcTo { x: 0, y: 7, radiusX: 7, radiusY: 7 },
 			LineTo { x: 0, y: height - 7 },
 			ArcTo { x: 7, y: height, radiusX: 7, radiusY: 7 },
 			LineTo { x: width - 7, y: height },
 			ArcTo { x: width, y: height - 7, radiusX: 7, radiusY: 7 },
 			LineTo { x: width, y: 7 },
-			ArcTo { x: width - 7, y: 0, radiusX: 7, radiusY: 7 }
+			ArcTo { x: width - 7, y: 0, radiusX: 7, radiusY: 7 },
+			ClosePath {}
 		]
 	}
 }
