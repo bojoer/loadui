@@ -29,6 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.scene.control.Label;
+import javafx.scene.layout.LayoutInfo;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.effect.Glow;
@@ -62,6 +63,10 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.fx.AppState;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.TestCaseIcon" );
+
+def ledActive = Image { url: "{__ROOT__}images/png/led-active.png" }
+def ledInactive = Image { url: "{__ROOT__}images/png/led-inactive.png" }
+
 
 /**
  * Node to display in the AgentList representing a AgentItem.
@@ -158,24 +163,10 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 					arcWidth: 3  
 					arcHeight: 3
 				}
-				ImageView {
-					layoutX: 5
-					layoutY: height / 2 - 4
-					image: Image {
-		            	url: "{__ROOT__}images/png/led-active.png"
-		        	}
-		        	visible: bind running
-				}
-				ImageView {
-					layoutX: 5
-					layoutY: height / 2 - 4
-					image: Image {
-		            	url: "{__ROOT__}images/png/led-inactive.png"
-		        	}
-		        	visible: bind not running
-				}
 				Label {
-					layoutX: 20
+					layoutX: 3
+					layoutInfo: LayoutInfo { width: 90 }
+					graphic: ImageView { image: bind if( running ) ledActive else ledInactive }
 					textFill: Color.rgb(0, 0, 0, 0.5)
 					text: bind label
 					height: bind height
