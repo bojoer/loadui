@@ -54,14 +54,14 @@ public mixin class TooltipHolder extends BaseMixin {
 				label.layoutY = bounds.minY;
 				label.width = bounds.width;
 				label.height = bounds.height;
-				insert label into AppState.overlay.content;
+				insert label into AppState.overlay;
 				label.tooltip.activate();
 			}
 		} );
 		(this as BaseNode).addMouseHandler( MOUSE_EXITED, function( e:MouseEvent ):Void {
 			if( label.tooltip.activated ) {
 				label.tooltip.deactivate();
-				delete label from AppState.overlay.content;
+				delete label from AppState.overlay;
 			}
 		} );
 	}

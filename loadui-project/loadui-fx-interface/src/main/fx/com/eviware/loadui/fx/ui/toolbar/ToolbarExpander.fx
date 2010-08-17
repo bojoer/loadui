@@ -155,7 +155,7 @@ public class ToolbarExpander extends CustomNode, Pagination, StylesheetAware {
 	 * The currently expanded ToolbarItemGroup.
 	 */
 	public var group:ToolbarItemGroup on replace oldGroup {
-		delete modalLayer from AppState.overlay.content;
+		delete modalLayer from AppState.overlay;
 		delete this from expandedHolder.content;
 		
 		if( oldGroup != null ) {
@@ -170,7 +170,7 @@ public class ToolbarExpander extends CustomNode, Pagination, StylesheetAware {
 				ToolbarItemFrame { item:item };
 			layoutY = group.layoutY - 12;
 			insert this into expandedHolder.content;
-			insert modalLayer into AppState.overlay.content;
+			insert modalLayer into AppState.overlay;
 		}
 	}
 	

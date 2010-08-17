@@ -53,7 +53,7 @@ mixin public class TimerController {
 		canvas.setLimit( CanvasItem.SAMPLE_COUNTER, sampleLimit );
 	}
 	
-	public var canvas:CanvasItem = bind MainWindow.instance.canvas.canvasItem on replace oldCanvas = newCanvas {
+	public var canvas:CanvasItem on replace oldCanvas = newCanvas {
 		timeLimit = canvas.getLimit( CanvasItem.TIMER_COUNTER );
 		sampleLimit = canvas.getLimit( CanvasItem.SAMPLE_COUNTER );
 		failureLimit = canvas.getLimit( CanvasItem.FAILURE_COUNTER );

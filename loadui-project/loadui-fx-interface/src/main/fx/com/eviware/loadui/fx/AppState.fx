@@ -67,7 +67,18 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.AppState" 
  */
 public-read var instance:AppState;
 
-public-read var overlay:Group;
+
+def dummyNode = Group {};
+public var overlay:Node[] on replace {
+	FX.deferAction( function():Void {
+		delete dummyNode from instance.overlayLayer.content;
+		instance.overlayLayer.content = overlay;
+		FX.deferAction( function():Void {
+			if( dummyNode.parent == null )
+				insert dummyNode into instance.overlayLayer.content;
+		} );
+	} );
+}
 
 /**
  * Keeps the state of the application and makes it available through the state var.
@@ -93,7 +104,7 @@ public class AppState extends ApplicationState {
 	 * Should be used for Nodes which must be positioned on top of everything else,
 	 * such as dialog boxes or popup menus.
 	 */
-	public def overlayLayer = Group {};
+	def overlayLayer = Group { content: dummyNode };
 	
 	def localLayer = bind lazy wipePanel.content[0] as Group;
 	var wipePanel:XWipePanel;
@@ -119,7 +130,6 @@ public class AppState extends ApplicationState {
 	
 	postinit {
 		instance = this;
-		overlay = overlayLayer;
 		for( s in [ WORKSPACE_FRONT, PROJECT_FRONT, PROJECT_BACK, TESTCASE_FRONT ] )
 			localNodes.put( s, NodeSequenceWrapper { nodes: [] } );
 		
@@ -136,11 +146,11 @@ public class AppState extends ApplicationState {
 	 * The onDone function will be called when the task completes, successful or not, with the Task object, which can be used to verify completion status. This will be called in the JavaFX thread.
 	 */
 	public function blockingTask( task:function():Void, onDone:function(task:Task):Void ):Void {
-		insert blocked into overlayLayer.content;
+		insert blocked into overlay;
 		def blockingTask:BlockingTask = BlockingTask {
 			task:task
 			onDone:function() {
-				delete blocked from overlayLayer.content;
+				delete blocked from overlay;
 				onDone( blockingTask );
 			}
 		};

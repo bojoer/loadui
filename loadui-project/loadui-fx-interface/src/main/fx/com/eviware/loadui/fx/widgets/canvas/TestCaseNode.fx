@@ -55,7 +55,7 @@ public class TestCaseNode extends CanvasObjectNode {
 	 */
 	public-init protected var testCase:SceneItem on replace {
 		canvasObject = testCase;
-		runController.canvas = testCase;
+		//runController.canvas = testCase;
 	}
 	
 	override function release() {
