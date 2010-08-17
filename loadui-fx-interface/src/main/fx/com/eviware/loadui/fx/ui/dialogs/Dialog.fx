@@ -157,7 +157,7 @@ public class Dialog {
 	var titlebarContent:HBox;
 	
 	init {
-		def scene = AppState.overlay.scene;
+		def scene = AppState.instance.scene;
 		
 		def sceneBounds = BoundingBox {
 			width: scene.width;
@@ -274,15 +274,12 @@ public class Dialog {
 		show();
 	}
 	
-	def dummy = Group {};
-	
-	 /**
+	/**
 	 * Displays the Dialog.
 	 */ 
 	public function show() {
-		insert modalLayer into AppState.overlay.content;
-		insert panel into AppState.overlay.content;
-		insert dummy into AppState.overlay.content;
+		insert modalLayer into AppState.overlay;
+		insert panel into AppState.overlay;
 		
 		if( okButton != null )
 			okButton.requestFocus();
@@ -295,9 +292,8 @@ public class Dialog {
 	 * Closes the Dialog.
 	 */ 
 	public function close():Void {
-		delete panel from AppState.overlay.content;
-		delete modalLayer from AppState.overlay.content;
-		delete dummy from AppState.overlay.content;
+		delete panel from AppState.overlay;
+		delete modalLayer from AppState.overlay;
 		onClose();
 	}
 }

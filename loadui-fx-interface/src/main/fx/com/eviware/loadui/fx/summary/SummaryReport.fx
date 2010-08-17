@@ -227,7 +227,7 @@ public class SummaryReport extends StylesheetAware {
 	var summaryHeader: SummaryHeader;
 	var centerPanel: Node;
 	var sceneBounds: BoundingBox;
-	var scene = AppState.overlay.scene;
+	var scene = AppState.instance.scene;
 	
 	public var title: String = "";
 	public var date: String = "";
@@ -552,16 +552,16 @@ public class SummaryReport extends StylesheetAware {
 	 * Displays the Dialog.
 	 */ 
 	public function show() {
-		insert modalLayer into AppState.overlay.content;
-		insert panel into AppState.overlay.content;
+		insert modalLayer into AppState.overlay;
+		insert panel into AppState.overlay;
 	}
 	
 	 /**
 	 * Closes the Dialog.
 	 */ 
 	public function close():Void {
-		delete panel from AppState.overlay.content;
-		delete modalLayer from AppState.overlay.content;
+		delete panel from AppState.overlay;
+		delete modalLayer from AppState.overlay;
 	}
 	
 

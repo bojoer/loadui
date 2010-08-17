@@ -126,14 +126,6 @@ public class ProjectList extends CustomNode, Resizable, EventHandler {
 							workspace: workspace
 						};
 					}
-				},
-				javafx.scene.control.Separator {},
-				com.javafx.preview.control.Menu {
-					text: "Submenu"
-					items: [
-						MenuItem { text: "Dummy 1" },
-						MenuItem { text: "A Long Dummy 2" }
-					]
 				}
 			]
 		};
