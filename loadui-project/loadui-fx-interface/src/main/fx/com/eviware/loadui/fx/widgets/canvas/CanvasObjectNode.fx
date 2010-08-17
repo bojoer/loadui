@@ -79,6 +79,8 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			def terminals = for( terminal in canvasObject.getTerminals() ) TerminalNode { id: terminal.getId(), canvas: canvas, terminal: terminal, fill: bind color };
 			inputs = terminals[t|t.terminal instanceof InputTerminal];
 			outputs = terminals[t|not (t.terminal instanceof InputTerminal)];
+			layoutX = Integer.parseInt( canvasObject.getAttribute( "gui.layoutX", "0" ) );
+			layoutY = Integer.parseInt( canvasObject.getAttribute( "gui.layoutY", "0" ) );
 			canvas.refreshTerminals();
 		}
 	}
@@ -125,6 +127,14 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	
 	override var styleClass = "canvas-object-node";
 	
+	override var layoutX on replace {
+		modelItem.setAttribute( "gui.layoutX", "{layoutX as Integer}" );
+	}
+	
+	override var layoutY on replace {
+		modelItem.setAttribute( "gui.layoutY", "{layoutY as Integer}" );
+	}
+	
 	override var blocksMouse = true;
 	
 	override var onGrab = function():Void {
@@ -146,7 +156,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			titlebarColor: bind "{colorStr}";
 			highlight: bind selected
 			body: VBox {
-				padding: Insets { left: 10, right: 10 }
+				padding: Insets { left: 13, right: 13 }
 				content: [
 					HBox {
 						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, height: 31, maxHeight: 31, margin: Insets { top: -14, bottom: -7 } }

@@ -41,6 +41,7 @@ import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.pagination.Pagination;
 import com.eviware.loadui.fx.StylesheetAware;
+import com.eviware.loadui.fx.AppState;
 
 //import org.jfxtras.animation.wipe.XWipePanel;
 import com.eviware.loadui.fx.ui.XWipePanel;
@@ -154,7 +155,7 @@ public class ToolbarExpander extends CustomNode, Pagination, StylesheetAware {
 	 * The currently expanded ToolbarItemGroup.
 	 */
 	public var group:ToolbarItemGroup on replace oldGroup {
-		delete modalLayer from BaseNode.overlay.content;
+		delete modalLayer from AppState.overlay.content;
 		delete this from expandedHolder.content;
 		
 		if( oldGroup != null ) {
@@ -169,7 +170,7 @@ public class ToolbarExpander extends CustomNode, Pagination, StylesheetAware {
 				ToolbarItemFrame { item:item };
 			layoutY = group.layoutY - 12;
 			insert this into expandedHolder.content;
-			insert modalLayer into BaseNode.overlay.content;
+			insert modalLayer into AppState.overlay.content;
 		}
 	}
 	

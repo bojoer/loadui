@@ -111,10 +111,6 @@ public class MainWindow {
 		appState = AppState {};
 		
 		//Set the layer to place items being dragged into.
-		BaseNode.overlay = appState.overlayLayer;
-		Dialog.overlay = appState.overlayLayer;
-		PopupMenu.overlay = appState.overlayLayer;
-		SummaryReport.overlay = appState.overlayLayer;
 		
 		//Load workspace
 		workspace = if( workspaceProvider.isWorkspaceLoaded() )

@@ -40,6 +40,8 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.Panel;
+import javafx.scene.layout.Container;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.*;
 import org.jfxtras.animation.wipe.FadeWipe;
@@ -65,6 +67,8 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.AppState" 
  */
 public-read var instance:AppState;
 
+public-read var overlay:Group;
+
 /**
  * Keeps the state of the application and makes it available through the state var.
  * Allows access to the application layers globalLayer and overlayLayer directly, 
@@ -89,7 +93,7 @@ public class AppState extends ApplicationState {
 	 * Should be used for Nodes which must be positioned on top of everything else,
 	 * such as dialog boxes or popup menus.
 	 */
-	public def overlayLayer = Group { autoSizeChildren: false };
+	public def overlayLayer = Group {};
 	
 	def localLayer = bind lazy wipePanel.content[0] as Group;
 	var wipePanel:XWipePanel;
@@ -115,6 +119,7 @@ public class AppState extends ApplicationState {
 	
 	postinit {
 		instance = this;
+		overlay = overlayLayer;
 		for( s in [ WORKSPACE_FRONT, PROJECT_FRONT, PROJECT_BACK, TESTCASE_FRONT ] )
 			localNodes.put( s, NodeSequenceWrapper { nodes: [] } );
 		

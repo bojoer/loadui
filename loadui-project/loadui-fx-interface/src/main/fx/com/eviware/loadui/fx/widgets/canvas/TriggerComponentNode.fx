@@ -32,6 +32,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.ArcTo;
+import javafx.geometry.Insets;
 
 import com.eviware.loadui.fx.ui.layout.widgets.OnOffSwitch;
 import com.eviware.loadui.fx.ui.resources.ResizablePath;
@@ -65,6 +66,7 @@ public class TriggerComponentNode extends ComponentNode {
 		insert [
 			OnOffSwitch {
 				state: bind onState with inverse
+				layoutInfo: LayoutInfo { margin: Insets { bottom: -8, left: -5, right: -2 } }
 			}, Separator {
 				vertical: true
 			}

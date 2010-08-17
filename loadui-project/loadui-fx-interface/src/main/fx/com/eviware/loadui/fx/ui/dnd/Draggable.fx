@@ -21,6 +21,7 @@
 
 package com.eviware.loadui.fx.ui.dnd;
 
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.node.BaseMixin;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.BaseNode.*;
@@ -154,14 +155,14 @@ public mixin class Draggable extends BaseMixin {
 		initX = myNode.layoutX;
 		initY = myNode.layoutY;
 		
-		if( useOverlay and overlay != null ) {
+		if( useOverlay ) {
 			if( realParent instanceof Group )
 				delete myNode from (realParent as Group).content
 			else if( realParent instanceof Container )
 				delete myNode from (realParent as Container).content;
 			node.layoutX = startBounds.minX - myNode.layoutBounds.minX;
 			node.layoutY = startBounds.minY - myNode.layoutBounds.minY;
-			insert myNode into overlay.content;
+			insert myNode into AppState.overlay.content;
 		}
 		
 		mouseEvent = e;
@@ -209,8 +210,8 @@ public mixin class Draggable extends BaseMixin {
 		if( e.button == MouseButton.PRIMARY and droppable.isAcceptable( this ) )
 			droppable.drop( this );
 		
-		if( useOverlay and overlay != null) {
-			delete myNode from overlay.content;
+		if( useOverlay ) {
+			delete myNode from AppState.overlay.content;
 			myNode.layoutX = initX;
 			myNode.layoutY = initY;
 			if( realParent instanceof Group )
