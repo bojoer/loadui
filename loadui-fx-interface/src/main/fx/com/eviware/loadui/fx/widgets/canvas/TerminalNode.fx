@@ -23,6 +23,9 @@ package com.eviware.loadui.fx.widgets.canvas;
 
 import javafx.scene.Node;
 import javafx.scene.Group;
+import javafx.scene.layout.LayoutInfo;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Resizable;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -90,7 +93,7 @@ def sphere = RadialGradient {
  *
  * @author dain.nilsson
  */
-public class TerminalNode extends BaseNode, Droppable {
+public class TerminalNode extends BaseNode, Resizable, Droppable {
 	/**
 	 * The Terminal to represent.
 	 */
@@ -102,10 +105,13 @@ public class TerminalNode extends BaseNode, Droppable {
 	public-init var canvas:Canvas;
 	
 	public var fill:Paint = Color.GRAY;
+	
+	override var layoutInfo = LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES };
 
 	override function create() {
 		def flip = terminal instanceof OutputTerminal;
 		Group {
+			layoutX: bind width / 2
 			layoutY: if( flip ) -5 else 5
 			content: [
 				Circle {
@@ -146,7 +152,7 @@ public class TerminalNode extends BaseNode, Droppable {
 					}
 				}, Circle {
 					radius: 10
-					fill: if( flip ) Color.rgb( 0xc9, 0xc9, 0xc9 ) else fill
+					fill: bind if( flip ) Color.rgb( 0xc9, 0xc9, 0xc9 ) else fill
 				}, DraggableFrame {
 					draggable: TerminalDraggable { tNode: this }
 					placeholder: Group {
@@ -185,6 +191,10 @@ public class TerminalNode extends BaseNode, Droppable {
 			other.getTerminalHolder().getCanvas().connect( other as OutputTerminal, terminal as InputTerminal );
 		}
 	}
+	
+	override function getPrefHeight( width:Number ) { 30 }
+	
+	override function getPrefWidth( height:Number ) { 30 }
 }
 
 class TerminalDraggable extends BaseNode, Draggable, TooltipHolder {
@@ -223,13 +233,8 @@ class TerminalDraggable extends BaseNode, Draggable, TooltipHolder {
 				def other = if( terminal instanceof InputTerminal ) conn.connection.getOutputTerminal()
 					else conn.connection.getInputTerminal();
 				
-				var canvasNode: CanvasNode = canvas.lookupCanvasNode(other.getTerminalHolder().getId());
-				if(canvasNode instanceof ComponentNode){ 
-					startNode = (canvasNode as ComponentNode).lookupTerminalNode(other.getId());
-				}
-				else if(canvasNode instanceof TestCaseNode){
-					startNode = (canvasNode as TestCaseNode).lookupTerminalNode(other.getId());
-				}
+				var canvasNode: CanvasObjectNode = canvas.lookupCanvasNode(other.getTerminalHolder().getId());
+				startNode = canvasNode.lookupTerminalNode( other.getId() );
 				currentTerminal = (startNode as TerminalNode).terminal;
 				prev = conn;
 				prev.visible = false;

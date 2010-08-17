@@ -56,6 +56,10 @@ import com.javafx.preview.control.MenuButton;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentNodeBase" );
 
+def ledActive = Image { url: "{__ROOT__}images/png/led-active.png" };
+def ledInactive = Image { url: "{__ROOT__}images/png/led-inactive.png" };
+def ledDisabled = Image { url: "{__ROOT__}images/png/led-disabled.png" };
+
 /**
  * Node to display in the AgentList representing a AgentItem.
  */
@@ -90,10 +94,6 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 	override var styleClass = "model-item-node";
 	
 	override function create() {
-		def ledActive = Image { url: "{__ROOT__}images/png/led-active.png" };
-		def ledInactive = Image { url: "{__ROOT__}images/png/led-inactive.png" };
-		def ledDisabled = Image { url: "{__ROOT__}images/png/led-disabled.png" };
-		
 		DialogPanel {
 			layoutInfo: LayoutInfo { width: 115, height: 190 }
 			body: VBox {

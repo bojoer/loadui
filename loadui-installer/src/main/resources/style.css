@@ -20,12 +20,12 @@
 }
 
 .separator {
-	-fx-padding: 0;
+	-fx-padding: 2 0;
 }
 
 .separator:vertical *.line {
 	-fx-border-style: solid;
-	-fx-border-color: #999999;
+	-fx-border-color: rgba(0,0,0,0.1);
 	-fx-padding: 0 1 0 0;
 }
 
@@ -137,9 +137,10 @@
 	-fx-background-radius: 0;
 }
 
-.agent-node *.menu-button *.label, .agent-node *.menu-button-showing *.label {
-	-fx-padding: 2 3;
-	-fx-font-size: 10pt;
+.agent-node *.menu-button *.label, .agent-node *.menu-button-showing *.label,
+.canvas-object-node *.menu-button *.label, .canvas-object-node *.menu-button-showing *.label {
+	-fx-padding: 2;
+	-fx-font: 12pt "Amble Cn";
 }
 
 .hyperlink:focused {
@@ -227,10 +228,11 @@
 	-fx-outer-border: #000000;
 	-fx-inner-border: #a5a5a5;
 	-fx-body-color: #ededed;
+	-fx-control-inner-background: transparent;
 	
-	-fx-background-radius: 10, 8, 8;
-	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
-	-fx-background-insets: 0, 2, 3;
+	-fx-background-radius: 10, 8, 8, 0;
+	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color, -fx-control-inner-background;
+	-fx-background-insets: 0, 2, 3, 20 4;
 }
 
 .dialog-panel-title {
@@ -276,6 +278,22 @@
 
 .model-item-node *.dialog-panel {
 	-fx-body-color: #c9c9c9;
+}
+
+.canvas-object-node *.dialog-panel {
+	-fx-body-color: #d3d3d3;
+	-fx-control-inner-background: #dbdbdb;
+}
+
+.canvas-object-toolbar *.button {
+	-fx-background-color: transparent;
+	-fx-background-insets: 0;
+	-fx-background-radius: 3;
+	-fx-padding: 0 3;
+}
+
+.canvas-object-toolbar *.button:hover {
+	-fx-background-color: #c0c0c0;
 }
 
 .tab-dialog *.toggle-button {

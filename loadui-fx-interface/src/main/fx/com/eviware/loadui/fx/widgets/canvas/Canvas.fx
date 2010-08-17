@@ -95,16 +95,16 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	public var padding:Integer = 200;
 	
 	public var offsetX:Integer = 0 on replace {
-		layers.layoutX = -offsetX;
+		componentLayer.layoutX = -offsetX;
 	}
 	public var offsetY:Integer = 0 on replace {
-		layers.layoutY = -offsetY;
+		componentLayer.layoutY = -offsetY;
 	}
 	
 	public-read var areaWidth:Integer = 0;
 	public-read var areaHeight:Integer = 0;
 	
-	public-read var components:CanvasNode[] = bind componentLayer.content[c|c instanceof CanvasNode] as CanvasNode[];
+	public-read var components:CanvasObjectNode[] = bind componentLayer.content[c|c instanceof CanvasObjectNode] as CanvasObjectNode[];
 	
 	public function createMiniatures(maxWidth: Number, maxHeight: Number, minScaleFactor: Number): String {
 		var minX: Number = java.lang.Long.MAX_VALUE;
@@ -112,11 +112,11 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		var minY: Number = java.lang.Long.MAX_VALUE;
 		var maxY: Number = 0;
 		for(c in components){
-			if(c.layoutX + c.width > maxX){
-				maxX = c.layoutX + c.width;
+			if(c.layoutX + c.layoutBounds.width > maxX){
+				maxX = c.layoutX + c.layoutBounds.width;
 			}
-			if(c.layoutY + c.height > maxY){
-				maxY = c.layoutY + c.height;
+			if(c.layoutY + c.layoutBounds.height > maxY){
+				maxY = c.layoutY + c.layoutBounds.height;
 			}
 			if(c.layoutX < minX){
 				minX = c.layoutX;
@@ -204,7 +204,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	def cloneAction = MenuItem {
 		text: "Clone"
 		action: function():Void {
-			for( clone in moveComponents( canvasItem, for( cNode in Selectable.selects[s|s instanceof CanvasNode] ) (cNode as CanvasNode).modelItem as CanvasObjectItem, false ) ) {
+			for( clone in moveComponents( canvasItem, for( cNode in Selectable.selects[s|s instanceof CanvasObjectNode] ) (cNode as CanvasObjectNode).modelItem as CanvasObjectItem, false ) ) {
 				def layoutX = Integer.parseInt( clone.getAttribute( "gui.layoutX", "0" ) ) + 50;
 				def layoutY = Integer.parseInt( clone.getAttribute( "gui.layoutY", "0" ) ) + 50;
 				clone.setAttribute( "gui.layoutX", "{ layoutX as Integer }" );
@@ -216,7 +216,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	def moveSubmenu:Menu = Menu {
 		text: "Move to"
 		onShowing: function() {
-			def selection = for( cn in Selectable.selects[s|s instanceof CanvasNode] ) cn as CanvasNode;
+			def selection = for( cn in Selectable.selects[s|s instanceof CanvasObjectNode] ) cn as CanvasObjectNode;
 			def project = if( canvasItem instanceof ProjectItem ) canvasItem as ProjectItem else canvasItem.getProject();
 			if( sizeof selection > 0 and sizeof selection[s|s instanceof TestCaseNode] == 0 ) {
 				def components = for( cNode in selection ) cNode.modelItem as ComponentItem;
@@ -281,7 +281,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		]
 		onShowing: function():Void {
 			deleteAction.disable = sizeof Selectable.selects[d|d instanceof Deletable] == 0;
-			cloneAction.disable = sizeof Selectable.selects[c|c instanceof CanvasNode] == 0;
+			cloneAction.disable = sizeof Selectable.selects[c|c instanceof CanvasObjectNode] == 0;
 		}
 	}
 	
@@ -399,14 +399,16 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		offsetX = Math.max( 0, Math.min( offsetX + shiftX, areaWidth - width as Integer ) );
 		offsetY = Math.max( 0, Math.min( offsetY + shiftY, areaHeight - height as Integer ) );
 		
+		refreshTerminals();
+		
 		//log.debug( "Done recalculating Canvas area! New width, height = (\{\}, \{\})", areaWidth, areaHeight );
 	}
 	
 	/**
-	 * Locates and returns the CanvasNode for the ModelItem with the given id.
+	 * Locates and returns the CanvasObjectNode for the ModelItem with the given id.
 	 */
-	public function lookupCanvasNode( id:String ):CanvasNode {
-		componentLayer.lookup( id ) as CanvasNode;
+	public function lookupCanvasNode( id:String ):CanvasObjectNode {
+		componentLayer.lookup( id ) as CanvasObjectNode;
 	}
 	
 	/**
@@ -536,6 +538,8 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	
 			cStartX = e.sceneX;
 			cStartY = e.sceneY;
+			
+			refreshTerminals();
 		} else if( sDragging ) {
 			//Due to Swing related bug, use this instead of e.sceneX, e.sceneY:
 			def location = java.awt.MouseInfo.getPointerInfo().getLocation();
