@@ -13,16 +13,11 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-/*
-*SliderSelectFactory.fx
-*
-*Created on apr 26, 2010, 14:29:44 em
-*/
 
 package com.eviware.loadui.fx.ui.layout.widgets.factories;
 
 import com.eviware.loadui.fx.ui.layout.PropertyLayoutComponentNode;
-import com.eviware.loadui.fx.ui.layout.widgets.QuartzCronInputWidget;
+import com.eviware.loadui.fx.ui.layout.widgets.PasswordInputWidget;
 
 import com.eviware.loadui.api.layout.WidgetCreationException;
 import com.eviware.loadui.api.layout.WidgetFactory;
@@ -30,19 +25,19 @@ import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 import com.eviware.loadui.api.events.PropertyEvent;
 
-public class QuartzCronInputFactory extends WidgetFactory {
+public class PasswordInputFactory extends WidgetFactory {
 	override function getId() {
-		"quartzCron"
+		"password"
 	}
 	
-	override function buildWidget(lc: LayoutComponent) {
+	override function buildWidget( lc:LayoutComponent ) {
 		if( lc instanceof PropertyLayoutComponent ) {
 			def plc = lc as PropertyLayoutComponent;
 			return PropertyLayoutComponentNode {
 				layoutComponent: plc
-				widget: QuartzCronInputWidget { plc: plc }
+				widget: PasswordInputWidget { plc: plc }
 			}
 		}
-		throw new WidgetCreationException("Failed to create QuartzCroneInputWidget!");
+		throw new WidgetCreationException("Failed to create PasswordInputWidget!");
 	}
 }

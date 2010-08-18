@@ -56,6 +56,7 @@
 	<bean id="selectFactory" class="com.eviware.loadui.fx.ui.layout.widgets.factories.SelectFactory" />
 	<bean id="timeInputWidget" class="com.eviware.loadui.fx.ui.layout.widgets.factories.TimeInputFactory" />
 	<bean id="quartzCronInputWidget" class="com.eviware.loadui.fx.ui.layout.widgets.factories.QuartzCronInputFactory" />
+	<bean id="passwordInputWidget" class="com.eviware.loadui.fx.ui.layout.widgets.factories.PasswordInputFactory" />
 	<bean id="counterWidget" class="com.eviware.loadui.fx.widgets.factories.CounterWidgetFactory" />
 	<bean id="intervalWidget" class="com.eviware.loadui.fx.widgets.factories.IntervalWidgetFactory" />
 	<bean id="sliderWidget" class="com.eviware.loadui.fx.widgets.factories.SliderWidgetFactory" />
