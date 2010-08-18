@@ -47,6 +47,7 @@ import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
 import com.eviware.loadui.fx.dialogs.CreateNewTestCaseDialog;
+import com.eviware.loadui.fx.dialogs.CloneCanvasObjectsDialog;
 
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.terminal.Connection;
@@ -214,7 +215,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	}
 	
 	def moveSubmenu:Menu = Menu {
-		text: "Move to"
+		text: "Clone/Move to"
 		onShowing: function() {
 			def selection = for( cn in Selectable.selects[s|s instanceof CanvasObjectNode] ) cn as CanvasObjectNode;
 			def project = if( canvasItem instanceof ProjectItem ) canvasItem as ProjectItem else canvasItem.getProject();
@@ -224,13 +225,15 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 					if( not ( canvasItem instanceof ProjectItem ) ) [ MenuItem {
 						text: "Parent Project"
 						action: function():Void {
-							moveComponents( project, components, true );
+							//moveComponents( project, components, true );
+							CloneCanvasObjectsDialog { target: project, objects: components };
 						}
 					}, Separator {} ] else null,
 					for( tc in project.getScenes()[t|t != canvasItem] ) MenuItem {
 						text: tc.getLabel()
 						action: function():Void {
-							moveComponents( tc, components, true );
+							CloneCanvasObjectsDialog { target: tc, objects: components };
+							//moveComponents( tc, components, true );
 						}
 					},
 					Separator {},
@@ -238,7 +241,8 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 						text: "New TestCase..."
 						action: function():Void {
 							CreateNewTestCaseDialog { project: project, onOk: function( testCase: SceneItem ):Void {
-								moveComponents( testCase, components, true );
+								CloneCanvasObjectsDialog { target: testCase, objects: components };
+								//moveComponents( testCase, components, true );
 							} }
 						}
 					}

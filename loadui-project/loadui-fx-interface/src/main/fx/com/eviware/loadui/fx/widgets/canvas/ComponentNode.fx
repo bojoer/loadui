@@ -33,6 +33,7 @@ import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.layout.LayoutComponentNode;
 import com.eviware.loadui.fx.ui.resources.ResizablePath;
 import com.eviware.loadui.fx.ui.dialogs.DefaultComponentSettingsPanel;
+import com.eviware.loadui.fx.dialogs.CloneComponentDialog;
 
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.component.categories.TriggerCategory;
@@ -90,6 +91,10 @@ public class ComponentNode extends CanvasObjectNode {
 	
 	override var onSettings = function():Void {
 		DefaultComponentSettingsPanel { component: component }.show();
+	}
+	
+	override var onClone = function():Void {
+		CloneComponentDialog { canvasObject: canvasObject };
 	}
 	
 	override function create():Node {
