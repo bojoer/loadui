@@ -32,7 +32,7 @@ import com.eviware.loadui.api.events.PropertyEvent;
 
 public class TimeInputFactory extends WidgetFactory {
 	override function getId() {
-		"timeInput"
+		"time"
 	}
 	
 	override function buildWidget( lc:LayoutComponent ) {

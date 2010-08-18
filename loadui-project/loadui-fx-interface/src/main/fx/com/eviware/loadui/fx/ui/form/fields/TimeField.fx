@@ -128,7 +128,7 @@ public class TimeField extends HBox, FormField {
     }
     
     override function getPrefHeight( width:Float ) {
-		hTextBox.getPrefHeight( width ) + 3
+		hTextBox.getPrefHeight( width )
 	}
 	
 }
