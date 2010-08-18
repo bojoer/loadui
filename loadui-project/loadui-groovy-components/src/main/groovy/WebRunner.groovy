@@ -320,5 +320,5 @@ settings( label: "Proxy" ) {
 	property( property: proxyHost, label: 'Proxy Host' )
 	property( property: proxyPort, label: 'Proxy Port' )
 	property( property: proxyUsername, label: 'Proxy Username' )
-	property( property: proxyPassword, label: 'Proxy Password' )
+	property( property: proxyPassword, widget: 'password', label: 'Proxy Password' )
 }
