@@ -149,8 +149,15 @@ public class DefaultComponentSettingsPanel extends StylesheetAware {
 				var key: String = p.getProperty().getKey();
 				var pp = propertyBuffer.get(key) as PropertyProxy;
 				def formField = if( p.has( OptionsProvider.OPTIONS ) ) {
-					def combo = ComboBox { id: key, label: p.getLabel(), value: pp.getValue(), plc: p }
-				} else Form.fieldForType( pp.getType(), key, p.getLabel(), pp.getValue() );
+					ComboBox { id: key, label: p.getLabel(), value: pp.getValue(), plc: p }
+				}
+				else if(p.has("widget") and p.get("widget").equals("password")){
+					PasswordField { id: key, label: p.getLabel(), value: pp.getValue() }
+				} 
+				else{ 
+					Form.fieldForType( pp.getType(), key, p.getLabel(), pp.getValue() );
+				}
+
 				formField.setOnValueChangedHandler(function (value: Object){
 					pp.setValue(value);
 					update();
