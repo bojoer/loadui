@@ -70,12 +70,16 @@ public class ComponentNode extends CanvasObjectNode {
 	protected var roundedFrame:Node = RoundedBorder {
 		fill: roundedFrameFill
 		stroke: roundedFrameStroke
-		layoutInfo: LayoutInfo { vfill: true, hfill: true }
+		layoutInfo: LayoutInfo { height: 50, vfill: true, hfill: true }
 	};
 	
 	var face:LayoutComponentNode on replace oldFace {
 		oldFace.release();
 		faceHolder.content = [ roundedFrame, face ];
+	}
+	
+	override var compact on replace {
+		rebuildFace();
 	}
 	
 	/**
@@ -85,7 +89,7 @@ public class ComponentNode extends CanvasObjectNode {
 		canvasObject = component;
 		if( component != null ) {
 			colorStr = component.getBehavior().getColor();
-			face = LayoutComponentNode.buildLayoutComponentNode( component.getLayout() );
+			rebuildFace();
 		}
 	}
 	
@@ -105,12 +109,16 @@ public class ComponentNode extends CanvasObjectNode {
 	}
 	
 	override function onReloaded():Void {
-		face = LayoutComponentNode.buildLayoutComponentNode( component.getLayout() );
+		rebuildFace();
 	}
 	
 	override function release() {
 		component = null;
 		face = null;
+	}
+	
+	function rebuildFace():Void {
+		face = LayoutComponentNode.buildLayoutComponentNode( if( compact ) component.getCompactLayout() else component.getLayout() );
 	}
 }
 

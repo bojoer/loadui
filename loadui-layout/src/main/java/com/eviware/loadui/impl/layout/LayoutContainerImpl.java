@@ -29,8 +29,9 @@ import com.eviware.loadui.util.MapUtils;
 
 public class LayoutContainerImpl extends LayoutComponentImpl implements LayoutContainer
 {
-	public final static String COLUMN_CONSTRAINTS = "colConstraints";
-	public final static String ROW_CONSTRAINTS = "rowConstraints";
+	public final static String LAYOUT_CONSTRAINTS = "layout";
+	public final static String COLUMN_CONSTRAINTS = "column";
+	public final static String ROW_CONSTRAINTS = "row";
 
 	private boolean frozen;
 	private List<LayoutComponent> components = new ArrayList<LayoutComponent>();
@@ -40,10 +41,18 @@ public class LayoutContainerImpl extends LayoutComponentImpl implements LayoutCo
 		super( args );
 	}
 
-	public LayoutContainerImpl( String layoutConstraints, String colConstraints, String rowConstraints )
+	public LayoutContainerImpl( String layoutConstraints, String colConstraints, String rowConstraints,
+			String constraints )
 	{
-		this( MapUtils.build( String.class, Object.class ).put( CONSTRAINTS, layoutConstraints ).put( COLUMN_CONSTRAINTS,
-				colConstraints ).put( ROW_CONSTRAINTS, rowConstraints ).getImmutable() );
+		this( MapUtils.build( String.class, Object.class ).put( LAYOUT_CONSTRAINTS, layoutConstraints )
+				.put( COLUMN_CONSTRAINTS, colConstraints ).put( ROW_CONSTRAINTS, rowConstraints )
+				.put( CONSTRAINTS, constraints ).getImmutable() );
+	}
+
+	@Override
+	public String getLayoutConstraints()
+	{
+		return MapUtils.getOr( properties, LAYOUT_CONSTRAINTS, "gap 10 0" );
 	}
 
 	@Override
@@ -57,11 +66,11 @@ public class LayoutContainerImpl extends LayoutComponentImpl implements LayoutCo
 	{
 		return MapUtils.getOr( properties, ROW_CONSTRAINTS, "align top" );
 	}
-	
+
 	@Override
 	public String getConstraints()
 	{
-		return MapUtils.getOr( properties, CONSTRAINTS, "gap 10 0" );
+		return MapUtils.getOr( properties, CONSTRAINTS, "" );
 	}
 
 	@Override

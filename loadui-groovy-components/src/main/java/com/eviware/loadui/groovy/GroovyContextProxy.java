@@ -20,6 +20,7 @@ import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyObjectSupport;
+import groovy.lang.GroovyRuntimeException;
 import groovy.lang.GroovyShell;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
@@ -350,6 +351,10 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 				last = e;
 			}
 			catch( MissingMethodException e )
+			{
+				last = e;
+			}
+			catch( GroovyRuntimeException e )
 			{
 				last = e;
 			}

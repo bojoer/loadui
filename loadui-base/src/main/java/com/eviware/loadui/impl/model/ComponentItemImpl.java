@@ -84,6 +84,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 	private ComponentBehavior behavior;
 	private LayoutComponent layout;
+	private LayoutComponent compactLayout;
 	private Set<SettingsLayoutContainer> settingsTabs = new LinkedHashSet<SettingsLayoutContainer>();
 	private boolean nonBlocking = false;
 	private String helpUrl = "http://www.loadui.org";
@@ -106,8 +107,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		conversionService = BeanInjector.getBean( ConversionService.class );
 
 		counterSupport = "controller".equals( System.getProperty( "loadui.instance" ) ) ? new RemoteAggregatedCounterSupport(
-				BeanInjector.getBean( CounterSynchronizer.class ) )
-				: new CounterSupport();
+				BeanInjector.getBean( CounterSynchronizer.class ) ) : new CounterSupport();
 
 		workspaceListener = "controller".equals( System.getProperty( "loadui.instance" ) ) && canvas instanceof SceneItem ? new WorkspaceListener()
 				: null;
@@ -269,19 +269,16 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		return helpUrl;
 	}
 
-	public void setLayout( LayoutComponent layout )
-	{
-		this.layout = layout;
-	}
-
+	@Override
 	public LayoutComponent getLayout()
 	{
 		return layout;
 	}
 
-	public void addSettingsTab( SettingsLayoutContainer tab )
+	@Override
+	public LayoutComponent getCompactLayout()
 	{
-		settingsTabs.add( tab );
+		return compactLayout;
 	}
 
 	@Override
@@ -619,15 +616,15 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		}
 
 		@Override
-		public LayoutComponent getLayout()
+		public void setLayout( LayoutComponent layout )
 		{
-			return ComponentItemImpl.this.getLayout();
+			ComponentItemImpl.this.layout = layout;
 		}
 
 		@Override
-		public void setLayout( LayoutComponent layout )
+		public void setCompactLayout( LayoutComponent layout )
 		{
-			ComponentItemImpl.this.setLayout( layout );
+			ComponentItemImpl.this.compactLayout = layout;
 		}
 
 		@Override
@@ -645,7 +642,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		@Override
 		public void addSettingsTab( SettingsLayoutContainer tab )
 		{
-			ComponentItemImpl.this.addSettingsTab( tab );
+			ComponentItemImpl.this.settingsTabs.add( tab );
 		}
 
 		@Override

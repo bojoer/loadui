@@ -21,9 +21,10 @@
 
 package com.eviware.loadui.fx.ui.layout.widgets;
 
-import javafx.scene.Group;
+import javafx.scene.layout.Stack;
+import javafx.scene.layout.LayoutInfo;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Path;
+import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.ArcTo;
@@ -35,19 +36,20 @@ import javafx.scene.paint.Stop;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.Insets;
 import javafx.util.Math;
 
 import com.eviware.loadui.fx.FxUtils.*;
-import com.eviware.loadui.fx.StylesheetAware;
+import com.eviware.loadui.fx.ui.resources.ResizablePath;
 import com.eviware.loadui.fx.ui.layout.LayoutContainerNode;
 
 def gridImage = Image { url:"{__ROOT__}images/displayGrid.png" };
 
-public class DisplayContainer extends LayoutContainerNode, StylesheetAware {
+public class DisplayContainer extends LayoutContainerNode {
 
-	public var fill:Paint = Color.web("#000000");
-	public var stroke:Paint = Color.web("#909090");
-	public var glareFill:Paint = LinearGradient {
+	def fill:Paint = Color.web("#000000");
+	def stroke:Paint = Color.web("#909090");
+	def glareFill:Paint = LinearGradient {
 		endX: 0
 		stops: [
 			Stop { offset: 0, color: Color.rgb( 0xff, 0xff, 0xff, 0.4 ) },
@@ -58,17 +60,15 @@ public class DisplayContainer extends LayoutContainerNode, StylesheetAware {
 	override var styleClass = "display-container";
 
 	override function create() {
-		Group {
+		Stack {
 			content: [
 				Rectangle {
 					width: bind width
 					height: bind height
-					fill: bind fill
-					stroke: bind stroke
+					fill: fill
+					stroke: stroke
 				}, ImageView {
 					image: gridImage
-					x: 2
-					y: 2
 					viewport: bind Rectangle2D {
 						width: Math.max( width - 4, 0 )
 						height: Math.max( height - 4, 0 )
@@ -77,7 +77,7 @@ public class DisplayContainer extends LayoutContainerNode, StylesheetAware {
 				Glare {
 					width: bind width
 					height: bind height
-					fill: bind glareFill
+					fill: glareFill
 					stroke: null
 				}
 			]
@@ -85,26 +85,14 @@ public class DisplayContainer extends LayoutContainerNode, StylesheetAware {
 	}
 }
 
-class Glare extends Path {
-	init {
-		recalculateShape();
-	}
-
-	function recalculateShape() {
-		elements = [
+class Glare extends ResizablePath {
+	override function calculatePath() {
+		[
 			MoveTo { x: 5, y: 2 },
 			ArcTo { x: 2, y: 5, radiusX: 3, radiusY: 3 },
 			LineTo { x: 2, y: height - 10 },
 			QuadCurveTo { x: width - 3, y: 2, controlX: 5, controlY: 10 },
-			LineTo { x: 5, y: 2 }
+			ClosePath {}
 		];
-	}
-
-	public var width:Number on replace {
-		recalculateShape();
-	}
-
-	public var height:Number on replace {
-		recalculateShape();
 	}
 }

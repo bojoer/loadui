@@ -168,7 +168,7 @@ layout  {
 	separator( vertical:true )
 	property( property:period, label:'Period\n(Sec)', min:1 ) 
 	separator( vertical:true )
-	box ( constraints:"wrap" ) {
+	box ( layout:"wrap, ins 0" ) {
 		box( widget:'display' ) {
 			node( label:'Rate', fString:display, constraints:"w 60!" )
 		}
@@ -177,8 +177,8 @@ layout  {
 }
 
 //Settings
-//settings( label: "Properties", constraints: 'wrap 2' ) {
-//	box(constraints:"growx, wrap 1") {
+//settings( label: "Properties", layout: 'wrap 2' ) {
+//	box(layout:"growx, wrap 1") {
 //		property( property:start, label:'Start', min:0 ) 
 //		property( property:end, label:'End', min:0 ) 
 //		property( property:period, label:'Period', min:1 ) 

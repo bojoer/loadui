@@ -198,7 +198,7 @@ layout  {
 	separator( vertical:true )
 	property( property:period, label:'Period\n(seconds)', min: 1 )
 	separator( vertical:true )
-	box ( constraints:"wrap" ) {
+	box ( layout:"wrap, ins 0" ) {
 		box( widget:'display' ) {
 			node( label:'Rate', fString:rateDisplay, constraints:"w 60!" )
 		}
@@ -211,8 +211,8 @@ if (running)
 	start();
 
 //Settings
-//settings( label: "Settings", constraints: 'wrap 2' ) {
-//	box(constraints:"growx, wrap 1") {
+//settings( label: "Settings", layout: 'wrap 2' ) {
+//	box(layout:"growx, wrap 1") {
 //		property( property:rate, label:'Rate', min:0 ) 
 //		property( property:shape, label:'Shape', options:['Saw-tooth', 'Sine-wave', 'Square'] )
 //		property( property:amplitude, label:'Amplitude', min: 0 )

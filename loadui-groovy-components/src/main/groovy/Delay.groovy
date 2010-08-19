@@ -85,7 +85,7 @@ onMessage = { incoming, outgoing, message ->
 	}
  }
 
- layout (constraints:'center') { 
+ layout (layout:'center') { 
     property( property:delay, label:"Delay(ms)", min:0, step:100, span:60000 ) 
     separator( vertical:true )
     node(widget: 'selectorWidget', labels:["none", "Gauss", "Uniform"], default: selected.value, selected: selected)

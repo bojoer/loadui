@@ -277,17 +277,17 @@ addEventListener( PropertyEvent ) { event ->
 }
 
 //Layout
-layout( constraints: 'gap 10 0') {
-	box (  ){
-		property( property:url, label:'Web Page Address', constraints: 'w 300!, spanx 2, wrap', style: '-fx-font-size: 17pt' )
-		action( label:'Open in Browser', constraints:'spanx 2,wrap', action: { triggerAction('BROWSE') } )
+layout {
+	box( layout:'wrap 2, ins 0' ) {
+		property( property:url, label:'Web Page Address', constraints: 'w 300!, spanx 2', style: '-fx-font-size: 17pt' )
+		action( label:'Open in Browser', constraints:'spanx 2', action: { triggerAction('BROWSE') } )
 		runAction = action( label:'Run Once', action: { triggerAction('SAMPLE') } )
 		action( label:'Abort Running Pages', action: { triggerAction('CANCEL') } )
 	}
 	
 	separator(vertical:true)
-	box( constraints:'wrap 1'){
-		box( widget:'display', constraints:'wrap 3, w 180!, align right' ) {
+	box( layout:'wrap, ins 0' ){
+		box( widget:'display', layout:'wrap 3, align right', constraints: 'w 180!' ) {
 			node( label:'Requests', fString:displayRequests, constraints:'w 50!' )
 			node( label:'Running', fString:displayRunning, constraints:'w 50!' )
 			node( label:'Samples', fString:displayTotal, constraints:'w 60!' )

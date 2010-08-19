@@ -145,8 +145,7 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	 * Gets a special DualTerminal which can be used to send messages to remote
 	 * instances of the ComponentItem itself. If used by a Component on the
 	 * Controller then the sent message is broadcast to all assigned Agents. If
-	 * used by a Component on a Agent then the message is sent to the
-	 * Controller.
+	 * used by a Component on a Agent then the message is sent to the Controller.
 	 * 
 	 * @return
 	 */
@@ -155,9 +154,9 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	/**
 	 * Gets a special OutputTerminal which and can be used to send messages to
 	 * remote instances of the ComponentItem itself. Regardless of if a
-	 * TerminalMessage is sent to this Terminal from a Component on a Agent or
-	 * on the Controller, the Component instance on the Controller will receive
-	 * the event.
+	 * TerminalMessage is sent to this Terminal from a Component on a Agent or on
+	 * the Controller, the Component instance on the Controller will receive the
+	 * event.
 	 * 
 	 * @return The Controller OutputTerminal.
 	 */
@@ -212,14 +211,14 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	public String getId();
 
 	/**
-	 * Get the Layout for the Component.
-	 */
-	public LayoutComponent getLayout();
-
-	/**
 	 * Set the Layout for the Component.
 	 */
 	public void setLayout( LayoutComponent layout );
+
+	/**
+	 * Set the Layout for the Component to be used in compact mode.
+	 */
+	public void setCompactLayout( LayoutComponent layout );
 
 	/**
 	 * If set to true, then calls to the "onTerminal..."-methods on the

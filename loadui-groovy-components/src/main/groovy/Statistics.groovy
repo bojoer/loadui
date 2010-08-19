@@ -396,16 +396,16 @@ addEventListener( CollectionEvent ) { event ->
 }
 
 //Layout
-layout(constraints:'fillx, wrap 2') {
+layout(layout:'fillx, wrap 2') {
 	node( widget: 'chartWidget', constraints: "spanx 2, wrap", model: chartModel )
 	property( property: selectedAgent, label: 'View statistics from', options: availableAgents, widget:'comboBox' )
 	property( property: currentSourceID, label: 'Source ID', options: availableSourceIDs, widget:'comboBox', 
 		contstraints: "w 100!" )
 }
 
-settings( label: 'Properties', constraints: 'wrap 2' ) {
+settings( label: 'Properties' ) {
 	property(property: addtoSummary, label: "Add last result to summary?")
-	box(constraints:'growx, wrap 1') {
+	box {
 		property(property: enableAverage, label: 'Enable Average' )
 		property(property: enableMin, label: 'Enable Min' )
 		property(property: enableMax, label: 'Enable Max' )
@@ -420,12 +420,10 @@ settings( label: 'Properties', constraints: 'wrap 2' ) {
 	}
 } 
 
-settings( label: "Periods", constraints: 'wrap 2' ) {
-	box(constraints:"growx, wrap 1") {
-		property(property: rate, label: 'Refresh rate (ms)' )
-		property(property: chartPeriod, label: 'Chart period (min)' )
-		property(property: period, label: 'History (min)' )
-	}
+settings( label: "Periods" ) {
+	property(property: rate, label: 'Refresh rate (ms)' )
+	property(property: chartPeriod, label: 'Chart period (min)' )
+	property(property: period, label: 'History (min)' )
 } 
 
 generateSummary = { chapter ->
