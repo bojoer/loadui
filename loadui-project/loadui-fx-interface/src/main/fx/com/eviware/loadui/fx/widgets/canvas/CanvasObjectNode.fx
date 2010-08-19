@@ -33,6 +33,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 import javafx.geometry.Insets;
@@ -83,6 +84,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			outputs = terminals[t|not (t.terminal instanceof InputTerminal)];
 			layoutX = Integer.parseInt( canvasObject.getAttribute( "gui.layoutX", "0" ) );
 			layoutY = Integer.parseInt( canvasObject.getAttribute( "gui.layoutY", "0" ) );
+			compact = canvasObject.getAttribute( "gui.compact", "false" ) == "true";
 			canvas.refreshTerminals();
 		}
 	}
@@ -110,7 +112,10 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	
 	public var onClone: function():Void;
 	
-	public var compact = false on replace { FX.deferAction(canvas.refreshTerminals) };
+	public var compact = false on replace {
+		canvasObject.setAttribute( "gui.compact", "{compact}" );
+		FX.deferAction(canvas.refreshTerminals);
+	}
 	
 	override function layout():Void {
 		super.layout();
@@ -160,8 +165,10 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	protected function onReloaded():Void {};
 	
 	override function create():Node {
-		var menuButton:MenuButton;
+		def plusShape = SVGPath { content: "M0,3 L0,5 3,5 3,8 5,8 5,5 8,5 8,3 5,3 5,0 3,0 3,3 Z" };
+		def minusShape = SVGPath { content: "M0,0 L8,0 8,2 0,2 Z" };
 		
+		var menuButton:MenuButton;
 		DialogPanel {
 			titlebarColor: bind "{colorStr}";
 			highlight: bind selected
@@ -188,7 +195,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 								layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.SOMETIMES }
 							}, Button {
 								tooltip: Tooltip { text: ##[COMPACT]"Toggle compact mode" }
-								graphic: javafx.scene.shape.Rectangle { width: 8, height: 2 }
+								graphic: bind if( compact ) plusShape else minusShape;
 								action: function() { compact = not compact }
 							}
 						]
@@ -223,11 +230,11 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 							}
 						]
 					}, body = VBox {
-						layoutInfo: LayoutInfo { hfill: true, vfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.ALWAYS, margin: Insets { top: 10 } }
+						layoutInfo: LayoutInfo { hfill: true, vfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.ALWAYS, margin: Insets { top: 10, bottom: 10 } }
 						nodeHPos: HPos.CENTER
 						nodeVPos: VPos.CENTER
 					}, HBox {
-						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, height: 31, maxHeight: 31, margin: Insets { top: 14, bottom: -14 } }
+						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, height: 31, maxHeight: 31, margin: Insets { top: 4, bottom: -14 } }
 						nodeHPos: HPos.CENTER
 						content: bind outputs
 					}
