@@ -287,9 +287,9 @@
 
 .canvas-object-toolbar *.button {
 	-fx-background-color: transparent;
-	-fx-background-insets: 0;
+	-fx-background-insets: 0 -3;
 	-fx-background-radius: 3;
-	-fx-padding: 0 3;
+	-fx-padding: 0;
 }
 
 .canvas-object-toolbar *.button:hover {
@@ -326,4 +326,29 @@
     -fx-background-insets: 1 0 -1 0, 0;
     -fx-padding: 2 3.5 2 3.5;
     -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+}
+
+.compact-button {
+	-fx-background-color: transparent;
+	-fx-background-insets: 0 -3;
+	-fx-background-radius: 3;
+	-fx-padding: 0 -2;
+}
+
+.compact-button:hover {
+	-fx-background-color: rgba(0,0,0,0.3);
+}
+
+.compact-button *.button-icon {
+	-fx-padding: 5 7;
+	-fx-border-insets: 0;
+	-fx-border-style: solid;
+	-fx-border-color: rgba(0,0,0,0.5);
+	-fx-border-width: 1;
+	-fx-background-color: rgba(0,0,0,0.3);
+	-fx-background-insets: 1 1 7 1;
+}
+
+.compact-button:selected *.button-icon {
+	-fx-border-insets: 0 0 6 0;
 }

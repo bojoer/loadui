@@ -97,14 +97,14 @@ layout {
 	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
 	separator( vertical:true )
 	box( widget:'display' ) {
-		node( label:'Rate', fString:display, constraints:'w 75!' )
+		node( label:'Rate', fString:display, constraints:'wmin 75' )
 	}
 }
 
 //Compact Layout
 compactLayout {
 	box( widget:'display' ) {
-		node( label:'Rate', fString:display, constraints:'w 75!' )
+		node( label:'Rate', fString:display )
 	}
 }
 

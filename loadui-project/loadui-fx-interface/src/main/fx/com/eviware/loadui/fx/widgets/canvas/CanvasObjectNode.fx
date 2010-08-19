@@ -29,11 +29,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
-import javafx.scene.shape.SVGPath;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 import javafx.geometry.Insets;
@@ -41,6 +41,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.fxd.FXDNode;
 
+import com.sun.javafx.scene.layout.Region;
 import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.MenuButton;
 
@@ -71,6 +72,11 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	
 	var inputs:TerminalNode[];
 	var outputs:TerminalNode[];
+	
+	var compactToggle:ToggleButton;
+	def compactToggleSelected = bind compactToggle.selected on replace {
+		compact = compactToggleSelected;
+	}
 	
 	public-init protected var canvasObject:CanvasObjectItem on replace oldCanvasObject {
 		modelItem = canvasObject;
@@ -114,7 +120,8 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	
 	public var compact = false on replace {
 		canvasObject.setAttribute( "gui.compact", "{compact}" );
-		FX.deferAction(canvas.refreshTerminals);
+		compactToggle.selected = compact;
+		FX.deferAction( function() { canvas.refreshTerminals() } );
 	}
 	
 	override function layout():Void {
@@ -165,10 +172,8 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	protected function onReloaded():Void {};
 	
 	override function create():Node {
-		def plusShape = SVGPath { content: "M0,3 L0,5 3,5 3,8 5,8 5,5 8,5 8,3 5,3 5,0 3,0 3,3 Z" };
-		def minusShape = SVGPath { content: "M0,0 L8,0 8,2 0,2 Z" };
-		
 		var menuButton:MenuButton;
+		
 		DialogPanel {
 			titlebarColor: bind "{colorStr}";
 			highlight: bind selected
@@ -188,15 +193,17 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 									image: bind if( active ) ledActive else ledInactive
 								}
 								text: bind label
+								tooltip: Tooltip { text: bind label }
 								layoutInfo: LayoutInfo { width: 50, hfill: true, hgrow: Priority.ALWAYS }
 							}, Separator { //Gap
 								styleClass: ""
 								vertical: true
 								layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.SOMETIMES }
-							}, Button {
+							}, compactToggle = ToggleButton {
+								styleClass: "compact-button"
 								tooltip: Tooltip { text: ##[COMPACT]"Toggle compact mode" }
-								graphic: bind if( compact ) plusShape else minusShape;
-								action: function() { compact = not compact }
+								graphic: Region { styleClass: "button-icon" }
+								selected: compact
 							}
 						]
 					}, toolbar = HBox {
@@ -204,6 +211,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 						visible: bind not compact
 						managed: bind not compact
 						nodeVPos: VPos.CENTER
+						spacing: 3
 						layoutInfo: LayoutInfo { height: 19, maxHeight: 19, margin: Insets { left: 10, bottom: -9 } }
 						content: [
 							menuButton = MenuButton {
