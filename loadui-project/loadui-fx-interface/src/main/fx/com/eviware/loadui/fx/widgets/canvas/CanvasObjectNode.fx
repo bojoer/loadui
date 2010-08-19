@@ -107,7 +107,15 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	];
 	
 	public var onSettings: function():Void;
+	
 	public var onClone: function():Void;
+	
+	public var compact = false on replace { FX.deferAction(canvas.refreshTerminals) };
+	
+	override function layout():Void {
+		super.layout();
+		FX.deferAction(canvas.refreshTerminals);
+	}
 	
 	public-read protected var colorStr:String = "#26a8f9" on replace {
 		color = Color.web( colorStr );
@@ -152,12 +160,6 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	protected function onReloaded():Void {};
 	
 	override function create():Node {
-		addMouseHandler( MOUSE_CLICKED, function( e:MouseEvent ) {
-			if( e.button == MouseButton.SECONDARY ) {
-				canvas.openContextMenu( e.screenX, e.screenY );
-			}
-		} );
-		
 		var menuButton:MenuButton;
 		
 		DialogPanel {
@@ -170,40 +172,58 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, height: 31, maxHeight: 31, margin: Insets { top: -14, bottom: -7 } }
 						nodeHPos: HPos.CENTER
 						content: bind inputs
-					}, Label {
-						graphic: ImageView {
-							image: bind if( active ) ledActive else ledInactive
-						}
-						text: bind label
+					}, HBox {
+						styleClass: "canvas-object-toolbar"
+						layoutInfo: LayoutInfo { margin: Insets { bottom: 3 } }
+						content: [
+							Label {
+								graphic: ImageView {
+									image: bind if( active ) ledActive else ledInactive
+								}
+								text: bind label
+								layoutInfo: LayoutInfo { width: 50, hfill: true, hgrow: Priority.ALWAYS }
+							}, Separator { //Gap
+								styleClass: ""
+								vertical: true
+								layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.SOMETIMES }
+							}, Button {
+								tooltip: Tooltip { text: ##[COMPACT]"Toggle compact mode" }
+								graphic: javafx.scene.shape.Rectangle { width: 8, height: 2 }
+								action: function() { compact = not compact }
+							}
+						]
 					}, toolbar = HBox {
 						styleClass: "canvas-object-toolbar"
+						visible: bind not compact
+						managed: bind not compact
 						nodeVPos: VPos.CENTER
-						layoutInfo: LayoutInfo { height: 19, maxHeight: 19, margin: Insets { top: 3, left: 10 } }
+						layoutInfo: LayoutInfo { height: 19, maxHeight: 19, margin: Insets { left: 10, bottom: -9 } }
 						content: [
 							menuButton = MenuButton {
 								styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
-								text: "Menu"
+								text: ##[MENU]"Menu"
 								tooltip: Tooltip { text: bind label }
 								items: bind menuItems
 							}, Separator { //Gap
+								vertical: true
 								styleClass: ""
-								layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
+								layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.ALWAYS }
 							}, Separator {
 								vertical: true
 							}, Button {
 								graphic: FXDNode { url: "{__ROOT__}images/component_wrench_icon.fxz" }
-								tooltip: Tooltip { text: "Settings" }
+								tooltip: Tooltip { text: ##[SETTINGS]"Settings" }
 								action: function() { onSettings() }
 							}, Separator {
 								vertical: true
 							}, Button {
 								graphic: FXDNode { url: "{__ROOT__}images/component_help_icon.fxz" }
-								tooltip: Tooltip { text: "Open Help page" }
+								tooltip: Tooltip { text: ##[HELP]"Open Help page" }
 								action: function() { openURL( modelItem.getHelpUrl() ) }
 							}
 						]
 					}, body = VBox {
-						layoutInfo: LayoutInfo { hfill: true, vfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.ALWAYS }
+						layoutInfo: LayoutInfo { hfill: true, vfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.ALWAYS, margin: Insets { top: 10 } }
 						nodeHPos: HPos.CENTER
 						nodeVPos: VPos.CENTER
 					}, HBox {

@@ -24,6 +24,8 @@ import java.util.List;
  */
 public interface LayoutContainer extends LayoutComponent, List<LayoutComponent>
 {
+	public String getLayoutConstraints();
+
 	public String getColumnConstraints();
 
 	public String getRowConstraints();

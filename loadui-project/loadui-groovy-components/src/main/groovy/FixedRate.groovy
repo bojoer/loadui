@@ -101,9 +101,16 @@ layout {
 	}
 }
 
+//Compact Layout
+compactLayout {
+	box( widget:'display' ) {
+		node( label:'Rate', fString:display, constraints:'w 75!' )
+	}
+}
+
 //Settings
-//settings( label: "Settings", constraints: 'wrap 2' ) {
-//	box(constraints:"growx, wrap 1") {
+//settings( label: "Settings", layout: 'wrap 2' ) {
+//	box(layout:"growx, wrap 1") {
 //		property( property:rate, label:'Rate', min:0 ) 
 //		property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
 //	}

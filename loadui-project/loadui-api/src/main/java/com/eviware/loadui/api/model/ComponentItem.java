@@ -74,6 +74,14 @@ public interface ComponentItem extends CanvasObjectItem, CounterHolder
 	public LayoutComponent getLayout();
 
 	/**
+	 * Get the layout for displaying the component in compact mode.
+	 * 
+	 * @return The LayoutComponent describing the layout for this CompontentItem
+	 *         in compact mode.
+	 */
+	public LayoutComponent getCompactLayout();
+
+	/**
 	 * Get the SettingsLayoutContainers which should be displayed as tabs in the
 	 * Settings Panel for the ComponentItem.
 	 * 

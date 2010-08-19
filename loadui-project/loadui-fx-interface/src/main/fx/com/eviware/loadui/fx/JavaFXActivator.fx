@@ -28,7 +28,7 @@ import javafx.util.Properties;
 import java.lang.Exception;
 import java.io.File;
 import java.io.InputStreamReader;
-import org.jfxtras.stage.XStage;
+import net.miginfocom.layout.PlatformDefaults;
 
 //import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.api.model.WorkspaceItem;
@@ -68,6 +68,10 @@ public class JavaFXActivator extends BundleActivator {
 			} catch( e:Exception ) {
 			    e.printStackTrace();
 			}
+			
+			def buttonOrder = PlatformDefaults.getButtonOrder();
+			PlatformDefaults.setPlatform( PlatformDefaults.WINDOWS_XP ); //Always use Windows margins.
+			PlatformDefaults.setButtonOrder( buttonOrder ); //Preserve platform button order.
 
 			log.debug("JavaFX Bundle started!");
 	

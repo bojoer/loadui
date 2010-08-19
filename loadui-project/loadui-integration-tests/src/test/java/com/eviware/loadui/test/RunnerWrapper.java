@@ -42,7 +42,7 @@ public class RunnerWrapper
 
 		baseDir.deleteOnExit();
 
-		launcher = new OSGiLauncher( new String[] { "-nolock" } );
+		launcher = new OSGiLauncher( new String[] { "-nolock", "-nofx" } );
 		Properties config = launcher.getConfig();
 		config.setProperty( "felix.cache.rootdir", baseDir.getAbsolutePath() );
 		config.setProperty( "felix.auto.deploy.dir", new File( "../loadui-runner-deps/target/bundle" ).getAbsolutePath() );

@@ -46,7 +46,7 @@ public class LayoutContainerNode extends LayoutComponentNode {
 	override function create() {
 		def layoutContainer = layoutComponent as LayoutContainer;
 		node = XMigLayout {
-			constraints: layoutContainer.getConstraints()
+			constraints: layoutContainer.getLayoutConstraints()
 			columns: layoutContainer.getColumnConstraints()
 			rows: layoutContainer.getRowConstraints()
 			content: for( layoutComponent in layoutContainer ) {

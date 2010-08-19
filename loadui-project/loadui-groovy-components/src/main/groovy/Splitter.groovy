@@ -148,32 +148,31 @@
  }
 
  
- settings( label: "Counter Settings", constraints: 'wrap 2' ) {
-	box(constraints:"growx, wrap 1") {
+ settings( label: "Counter Settings", layout: 'wrap 2' ) {
+	box( layout:"wrap 1", constraints:"growx" ) {
 		property(property: counterUse, label: 'Enable Counters' )
 		property(property: updateCounterDelay, label: 'Time interval for refreshing counters(ms)' )
 	}
  }
  
- layout (constraints:'center, gap 10') { 
+ layout ( layout:'center' ) { 
     node(widget: 'selectorWidget', label:"Type", labels:["Round-Robin", "Random"], default: "Round-Robin", selected: selected)
     separator( vertical: true )
     node( widget: 'sliderWidget', property: outputs, constraints:'center, w 270!' )
     separator( vertical: true ) 
-    box( constraints: 'wrap 1' ) {
-    box( widget:'display',  constraints:'w 100!' ) {
-        node( label:'Count ', fString:display, constraints:'wrap' )
-       }
-    action( label:'Clear', action: {  
-            total.value = 0
-	    display.setArgs( 0 )
-		    for( i in 0..9 ) {
-		     if( outputStats.get(i) > -1 )
-		          outputStats.set(i as Integer,0)
-		     }
-		    outputStats.update()
-    },constraints:'right')
-}
+    box( layout: 'wrap, ins 0' ) {
+	    box( widget:'display',  constraints:'w 100!' ) {
+			 node( label:'Count ', fString:display, constraints:'wrap' )
+	    }
+	    action( label:'Clear', action: {  
+	       total.value = 0
+		    display.setArgs( 0 )
+			 for( i in 0..9 ) {
+			     if( outputStats.get(i) > -1 ) outputStats.set(i as Integer,0)
+			 }
+			 outputStats.update()
+	    }, constraints:'right' )
+	}
     separator( vertical: false )
     node( widget: 'counterWidget', counters: outputStats , onOff: counterUse, constraints:'span 5,center')
   }

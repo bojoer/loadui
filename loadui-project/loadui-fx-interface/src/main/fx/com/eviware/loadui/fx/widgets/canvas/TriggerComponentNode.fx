@@ -49,7 +49,7 @@ public class TriggerComponentNode extends ComponentNode {
 	override var roundedFrame = TriggerFrame {
 		fill: roundedFrameFill
 		stroke: roundedFrameStroke
-		layoutInfo: LayoutInfo { vfill: true, hfill: true }
+		layoutInfo: LayoutInfo { height: 50, vfill: true, hfill: true }
 	}
 	
 	var stateProperty:Property;
@@ -89,19 +89,33 @@ public class TriggerComponentNode extends ComponentNode {
 
 class TriggerFrame extends ResizablePath {
 	override function calculatePath() {
-		[
-			MoveTo { y: height - 7 },
-			ArcTo { x: 7, y: height, radiusX: 7, radiusY: 7 },
-			LineTo { x: width - 7, y: height },
-			ArcTo { x: width, y: height - 7, radiusX: 7, radiusY: 7 },
-			LineTo { x: width, y: 7 },
-			ArcTo { x: width - 7, radiusX: 7, radiusY: 7 },
-			LineTo { x: 50 },
-			ArcTo { x: 45, y: 5, radiusX: 5, radiusY: 5 },
-			ArcTo { x: 40, y: 10, radiusX: 5, radiusY: 5, sweepFlag: true },
-			LineTo { x: 7, y: 10 },
-			ArcTo { x: 0, y: 17, radiusX: 7, radiusY: 7 },
-			ClosePath {}
-		];
+		if( compact ) {
+			[
+				MoveTo { x: 7, y: 0 },
+				ArcTo { x: 0, y: 7, radiusX: 7, radiusY: 7 },
+				LineTo { x: 0, y: height - 7 },
+				ArcTo { x: 7, y: height, radiusX: 7, radiusY: 7 },
+				LineTo { x: width - 7, y: height },
+				ArcTo { x: width, y: height - 7, radiusX: 7, radiusY: 7 },
+				LineTo { x: width, y: 7 },
+				ArcTo { x: width - 7, y: 0, radiusX: 7, radiusY: 7 },
+				ClosePath {}
+			]
+		} else {
+			[
+				MoveTo { y: height - 7 },
+				ArcTo { x: 7, y: height, radiusX: 7, radiusY: 7 },
+				LineTo { x: width - 7, y: height },
+				ArcTo { x: width, y: height - 7, radiusX: 7, radiusY: 7 },
+				LineTo { x: width, y: 7 },
+				ArcTo { x: width - 7, radiusX: 7, radiusY: 7 },
+				LineTo { x: 50 },
+				ArcTo { x: 45, y: 5, radiusX: 5, radiusY: 5 },
+				ArcTo { x: 40, y: 10, radiusX: 5, radiusY: 5, sweepFlag: true },
+				LineTo { x: 7, y: 10 },
+				ArcTo { x: 0, y: 17, radiusX: 7, radiusY: 7 },
+				ClosePath {}
+			]
+		}
 	}
 }

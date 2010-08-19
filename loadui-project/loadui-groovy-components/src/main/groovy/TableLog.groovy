@@ -96,15 +96,15 @@ layout
 }
 
 // settings
-settings( label: "General", constraints: 'wrap 1' ) {
-	box() {
+settings( label: "General" ) {
+	box {
 		property(property: maxRows, label: 'Max Rows in Table' )
 	}
-	box() {
+	box {
 		property(property: summaryRows, label: 'Max Rows in Summary' )
 	}
 	label( "Logging" )
-	box(constraints:"growx, wrap 1") {
+	box {
 		property(property: saveFile, label: 'Save Logs?' )
 		property(property: fileName, label: 'Log File (Comma Separated) ' )
 	}

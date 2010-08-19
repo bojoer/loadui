@@ -71,8 +71,15 @@ public class LayoutBuilder
 	@Deprecated
 	public void box( String layoutConstraints, String colConstraints, String rowConstraints, Closure closure )
 	{
+		box( layoutConstraints, colConstraints, rowConstraints, "", closure );
+	}
+
+	@Deprecated
+	public void box( String layoutConstraints, String colConstraints, String rowConstraints, String constraints,
+			Closure closure )
+	{
 		LayoutContainer parent = current;
-		current = new LayoutContainerImpl( layoutConstraints, colConstraints, rowConstraints );
+		current = new LayoutContainerImpl( layoutConstraints, colConstraints, rowConstraints, constraints );
 		parent.add( current );
 		closure.setDelegate( this );
 		closure.call();
@@ -171,6 +178,7 @@ public class LayoutBuilder
 		current.add( new SeparatorLayoutComponentImpl( args ) );
 	}
 
+	@SuppressWarnings( "rawtypes" )
 	public void node( Map<String, ?> args )
 	{
 		if( args.containsKey( "property" ) )

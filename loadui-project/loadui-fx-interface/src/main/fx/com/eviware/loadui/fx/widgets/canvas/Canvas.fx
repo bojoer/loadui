@@ -293,7 +293,6 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		addMouseHandler( MOUSE_DRAGGED, onMouseDragged );
 		addMouseHandler( MOUSE_PRESSED, onMouseDown );
 		addMouseHandler( MOUSE_RELEASED, onMouseUp );
-		addMouseHandler( MOUSE_CLICKED, onMouseClicked );
 	}
 	
 	override function create() {
@@ -316,6 +315,12 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 					onMouseWheelMoved: function( e:MouseEvent ) {
 						def newOffsetY = offsetY + 100 * e.wheelRotation as Integer;
 						offsetY = Math.max( Math.min( newOffsetY, areaHeight-height as Integer), 0 );
+						refreshTerminals();
+					}
+					onMouseClicked: function( e:MouseEvent ) {
+						if( e.button == MouseButton.SECONDARY ) {
+							openContextMenu( e.screenX, e.screenY );
+						}
 					}
 				}, contextMenu
 			]
@@ -418,7 +423,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	/**
 	 * Opens the context menu at the given location relative to the screen.
 	 */
-	public function openContextMenu( x:Number, y:Number ):Void {
+	function openContextMenu( x:Number, y:Number ):Void {
 		contextMenu.show( this, x, y );
 	}
 	
@@ -558,12 +563,6 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			for( node in [componentLayer.content, connectionLayer.content][n|n instanceof Selectable] )
 				if( node.localToScene( node.boundsInLocal ).intersects( selectionRect.layoutBounds ) )
 					(node as Selectable).select();
-		}
-	}
-	
-	function onMouseClicked(e:MouseEvent):Void {
-		if( e.button == MouseButton.SECONDARY ) {
-			openContextMenu( e.screenX, e.screenY );
 		}
 	}
 }

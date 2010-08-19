@@ -32,22 +32,25 @@ public class SettingsLayoutContainerImpl extends LayoutContainerImpl implements 
 			throw new IllegalArgumentException( "Illegal arguments: " + args );
 	}
 
-	public SettingsLayoutContainerImpl( String label, String layoutConstraints, String colConstraints, String rowConstraints )
+	public SettingsLayoutContainerImpl( String label, String layoutConstraints, String colConstraints,
+			String rowConstraints, String constraints )
 	{
-		super( MapUtils.build( String.class, Object.class ).put( CONSTRAINTS, layoutConstraints ).put( COLUMN_CONSTRAINTS,
-				colConstraints ).put( ROW_CONSTRAINTS, rowConstraints ).put( LABEL, label ).getImmutable() );
-		
+		super( MapUtils.build( String.class, Object.class ).put( LAYOUT_CONSTRAINTS, layoutConstraints )
+				.put( COLUMN_CONSTRAINTS, colConstraints ).put( ROW_CONSTRAINTS, rowConstraints )
+				.put( CONSTRAINTS, constraints ).put( LABEL, label ).getImmutable() );
+
 		if( !( properties.get( LABEL ) instanceof String ) )
-			throw new IllegalArgumentException( "Illegal label: " + properties.get( LABEL )  );
+			throw new IllegalArgumentException( "Illegal label: " + properties.get( LABEL ) );
 	}
-	
+
 	@Override
 	public String getLabel()
 	{
 		return ( String )properties.get( LABEL );
 	}
-	
-	public Map<String, ?> getProperties(){
+
+	public Map<String, ?> getProperties()
+	{
 		return properties;
 	}
 

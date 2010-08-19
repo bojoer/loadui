@@ -105,8 +105,8 @@ if (running)
 	schedule()
 
 //Settings
-//settings( label: "Settings", constraints: 'wrap 2' ) {
-//	box(constraints:"growx, wrap 1") {
+//settings( label: "Settings", layout: 'wrap 2' ) {
+//	box(layout:"growx, wrap 1") {
 //		property( property:numUsers, label:'Number of Users', min:0 ) 
 //		property( property:interval, label:'Request Interval (ms)', min:1 ) 
 //		property( property:variance, label:'Variance', min: 0, max: 100, step: 1 )

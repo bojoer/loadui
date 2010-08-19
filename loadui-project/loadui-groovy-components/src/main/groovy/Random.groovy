@@ -125,15 +125,15 @@ layout {
 	separator( vertical:true )
 	property( property:factor, label:'Random\nFactor', min: 0, max: 100, step: 1 )
 	separator( vertical:true )
-	box( widget:'display', constraints:'align center') {
+	box( widget:'display', layout:'align center') {
 		node( label:'current rate', fString:display )
 		node( label:'random', fString:randomDisplay )
 	}
 }
 
 //Settings
-//settings( label: "Settings", constraints: 'wrap 2' ) {
-//	box(constraints:"growx, wrap 1") {
+//settings( label: "Settings", layout: 'wrap 2' ) {
+//	box(layout:"growx, wrap 1") {
 //		property( property:rate, label:'Base Rate', min:0 ) 
 //		property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
 //		property( property:type, label:'Distribution', options:['Uniform','Exponential','Gaussian'] )

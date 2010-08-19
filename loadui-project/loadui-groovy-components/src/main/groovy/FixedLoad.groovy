@@ -123,8 +123,8 @@ layout  {
 schedule()
 
 //Settings
-//settings( label: "Settings", constraints: 'wrap 2' ) {
-//	box(constraints:"growx, wrap 1") {
+//settings( label: "Settings", layout: 'wrap 2' ) {
+//	box(layout:"growx, wrap 1") {
 //		property( property:load, label:'Load', min:0, constraints:"w 60!") 
 //		property( property:interval, label:'Interval', min:0, constraints:"w 60!" ) 
 //	}

@@ -53,6 +53,20 @@ public class GroovyContextSupport extends GroovyObjectSupport
 		context.setLayout( layoutBuilder.build() );
 	}
 
+	public void compactLayout( Closure closure )
+	{
+		Map<String, ?> map = Collections.emptyMap();
+		compactLayout( map, closure );
+	}
+
+	public void compactLayout( Map<String, ?> args, Closure closure )
+	{
+		LayoutBuilder layoutBuilder = new LayoutBuilder( new LayoutContainerImpl( args ) );
+		closure.setDelegate( layoutBuilder );
+		closure.call();
+		context.setCompactLayout( layoutBuilder.build() );
+	}
+
 	public void settings( Closure closure )
 	{
 		Map<String, ?> map = Collections.emptyMap();

@@ -288,7 +288,7 @@ displayTimeLeft = new DelayedFormattedString( '%s', 480, value {
 	}
 })
 
-layout( constraints: 'gap 10 0') {
+layout {
 	box{
 		property(property: day, widget: 'comboBox', label: 'Day', options: ['Every day', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], constraints: 'w 100!, wrap' )
 		property( property: runsCount, label: 'Runs', min: 0, constraints: 'align right')
@@ -299,7 +299,7 @@ layout( constraints: 'gap 10 0') {
 		property( property: duration, widget: 'timeInput', label: 'Duration', constraints: 'w 100!' )
 	}
 	separator(vertical: true)
-	box( widget:'display', constraints:'wrap' ) {
+	box( widget:'display', layout:'wrap' ) {
 		node( label: 'Next Run', fString: displayNextRun, constraints: 'w 120!' )
 		node( label: 'Time Left', fString: displayTimeLeft, constraints: 'w 120!' )
 	}

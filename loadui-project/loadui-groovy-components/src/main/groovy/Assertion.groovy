@@ -226,27 +226,27 @@ layout {
 //		property( property: period, label: 'Period', min: 0 )
 //	}
 //	separator( vertical: true )
-	box(constraints:'wrap 1') {
+	box(layout:'wrap, ins 0') {
 		box( widget:'display' ) {
 			node( label:'Asserted', fString: assertedDisplay, constraints:'w 60!' )
 			node( label:'Failed', fString: failedDisplay, constraints:'w 60!' )
 		}
 		action( 
-				label: 'Reset', 
-				action: {
-					buffer.clear()
-					assertedResetValue = totalCounter.get()
-					failedResetValue = failureCounter.get()
-				}, 
-				constraints:'align right'
-				)
+			label: 'Reset', 
+			action: {
+				buffer.clear()
+				assertedResetValue = totalCounter.get()
+				failedResetValue = failureCounter.get()
+			}, 
+			constraints:'align right'
+		)
 	}
 }
 
 settings( label: "General" ) {
-		property( property: tolerance, label: 'Tolerance', min: 1)
-		property( property: period, label: 'Period' )
-		property(property: failOnMissingValue, label: 'Fail on missing value' )
-		property(property: sampleId, label: 'Sample ID' )
-		property(property: failOnMissingID, label: 'Fail on mismatching ID' )
+	property( property: tolerance, label: 'Tolerance', min: 1)
+	property( property: period, label: 'Period' )
+	property(property: failOnMissingValue, label: 'Fail on missing value' )
+	property(property: sampleId, label: 'Sample ID' )
+	property(property: failOnMissingID, label: 'Fail on mismatching ID' )
 }
