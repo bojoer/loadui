@@ -44,6 +44,7 @@ import com.eviware.loadui.util.layout.IntervalModel
 import com.eviware.loadui.util.ScheduledExecutor
 import org.quartz.Scheduler
 import org.quartz.CronTrigger
+import org.quartz.CronExpression
 import org.quartz.impl.StdSchedulerFactory
 import org.quartz.JobExecutionContext
 import org.quartz.JobExecutionException
@@ -55,8 +56,11 @@ import org.quartz.listeners.JobListenerSupport
 import com.eviware.loadui.util.layout.DelayedFormattedString
 import java.text.SimpleDateFormat
 import com.eviware.loadui.impl.component.ActivityStrategies
+import com.eviware.loadui.util.layout.SchedulerModel
 
-createProperty( 'day', String, "Every day" )
+def schedulerModel = new SchedulerModel()
+
+createProperty( 'day', String, "* (All)" )
 createProperty( 'time', String, "0 * *" )
 def duration = createProperty( 'duration', Long, 0 )
 def runsCount = createProperty( 'runsCount', Long, 0 )
@@ -163,16 +167,44 @@ addEventListener( ActionEvent ) { event ->
 	}
 }
 
-scheduleStartTrigger = {
+addEventListener( PropertyEvent ) { event ->
+	if( event.property in [ day, time, runsCount, duration ] ) {
+		if( !canvas.running ){
+			updateState()
+		} 
+	}
+}
+
+updateState = {
+	def expr = new CronExpression(createStartTriggerPattern())
+	schedulerModel.setTime(expr.getNextValidTimeAfter(new Date()).getTime())
+	schedulerModel.setDuration(duration.value * 1000)
+	schedulerModel.setRunsCount(runsCount.value)
+	if(day.value.equals('* (All)')){
+		schedulerModel.setAllDays()
+	}
+	else{
+		schedulerModel.setOneDay(SchedulerModel.Day.valueOf(day.value.toUpperCase()))
+	}
+	schedulerModel.notifyObservers()
+}
+
+createStartTriggerPattern = {
 	def startTriggerPattern = "${time.value} "
 	startTriggerPattern += "? * "
-	if(day.value.equals("Every day")){
+	if(day.value.equals("* (All)")){
 		startTriggerPattern += "* "
 	}
 	else{
 		startTriggerPattern += "${day.value.substring(0,3).toUpperCase()} "
 	}
-	
+	startTriggerPattern
+}
+
+scheduleStartTrigger = {
+
+	def startTriggerPattern = createStartTriggerPattern()
+		
 	unscheduleStartTrigger()
 	scheduler.addJob(startJob, true)
 	startTrigger = new CronTrigger("startTrigger", "group", "startJob", "group", startTriggerPattern)
@@ -289,18 +321,17 @@ displayTimeLeft = new DelayedFormattedString( '%s', 480, value {
 })
 
 layout {
-	box{
-		property(property: day, widget: 'comboBox', label: 'Day', options: ['Every day', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], constraints: 'w 100!, wrap' )
-		property( property: runsCount, label: 'Runs', min: 0, constraints: 'align right')
-	}
+	node( widget: 'schedulerWidget', model: schedulerModel, constraints: 'span 5' )
+	separator( vertical: false )
+	property(property: day, widget: 'comboBox', label: 'Day', options: ['* (All)', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], constraints: 'w 100!' )
 	separator(vertical: true)
-	box{
-		property( property: time, widget: 'quartzCronInput', label: 'Time', constraints: 'w 100!, wrap' )
-		property( property: duration, widget: 'timeInput', label: 'Duration', constraints: 'w 100!' )
-	}
+	property( property: time, widget: 'quartzCron', label: 'Time', constraints: 'w 100!' )
 	separator(vertical: true)
-	box( widget:'display', layout:'wrap' ) {
-		node( label: 'Next Run', fString: displayNextRun, constraints: 'w 120!' )
-		node( label: 'Time Left', fString: displayTimeLeft, constraints: 'w 120!' )
-	}
+	property( property: duration, widget: 'time', label: 'Duration', constraints: 'w 100!' )
 }
+
+settings( label: "Basic" ) {
+	property( property: runsCount, label: 'Runs')
+}
+
+updateState()

@@ -61,6 +61,8 @@
     <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
         ref="intervalWidget" />
     <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
+        ref="schedulerWidget" />
+    <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
         ref="timeInputWidget" />
     <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
         ref="quartzCronInputWidget" />
