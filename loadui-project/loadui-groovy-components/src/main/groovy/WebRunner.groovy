@@ -284,16 +284,15 @@ layout {
 		runAction = action( label:'Run Once', action: { triggerAction('SAMPLE') } )
 		action( label:'Abort Running Pages', action: { triggerAction('CANCEL') } )
 	}
-	
 	separator(vertical:true)
 	box( layout:'wrap, ins 0' ){
-		box( widget:'display', layout:'wrap 3, align right', constraints: 'w 180!' ) {
+		box( widget:'display', layout:'wrap 3, align right' ) {
 			node( label:'Requests', fString:displayRequests, constraints:'w 50!' )
 			node( label:'Running', fString:displayRunning, constraints:'w 50!' )
-			node( label:'Samples', fString:displayTotal, constraints:'w 60!' )
+			node( label:'Samples', fString:displayTotal, constraints:'w 50!' )
 			node( label:'Queued', fString:displayQueue, constraints:'w 50!' )
 			node( label:'Discarded', fString:displayDiscarded, constraints:'w 50!' )
-			node( label:'Failed', fString:displayFailed, constraints:'w 60!' )
+			node( label:'Failed', fString:displayFailed, constraints:'w 50!' )
 		}
 		action( label:'Reset', action: {
 			sampleResetValue = sampleCounter.get()

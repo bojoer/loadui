@@ -29,6 +29,7 @@ import java.lang.Exception;
 import java.io.File;
 import java.io.InputStreamReader;
 import net.miginfocom.layout.PlatformDefaults;
+import net.miginfocom.layout.UnitValue;
 
 //import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.api.model.WorkspaceItem;
@@ -72,6 +73,9 @@ public class JavaFXActivator extends BundleActivator {
 			def buttonOrder = PlatformDefaults.getButtonOrder();
 			PlatformDefaults.setPlatform( PlatformDefaults.WINDOWS_XP ); //Always use Windows margins.
 			PlatformDefaults.setButtonOrder( buttonOrder ); //Preserve platform button order.
+			def lpy = new UnitValue( 10, UnitValue.LPY, null );
+			def lpx = new UnitValue( 10, UnitValue.LPX, null );
+			PlatformDefaults.setPanelInsets( lpy, lpx, lpy, lpx );
 
 			log.debug("JavaFX Bundle started!");
 	
