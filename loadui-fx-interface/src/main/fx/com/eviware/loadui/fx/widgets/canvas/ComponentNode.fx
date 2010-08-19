@@ -76,6 +76,8 @@ public class ComponentNode extends CanvasObjectNode {
 	var face:LayoutComponentNode on replace oldFace {
 		oldFace.release();
 		faceHolder.content = [ roundedFrame, face ];
+		body.visible = face != null;
+		body.managed = face != null;
 	}
 	
 	override var compact on replace {
