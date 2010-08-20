@@ -352,3 +352,31 @@
 .compact-button:selected *.button-icon {
 	-fx-border-insets: 0 0 6 0;
 }
+
+.spinner *.up-button {
+    -fx-padding: -3 5 -2 5;
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 1;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+}
+
+.spinner *.up-button *.arrow {
+	-fx-padding: 0;
+	-fx-shape: "M0 3 L4 0 L8 3 Z";
+	-fx-scale-shape: false;
+	-fx-background-color: "000000"
+}
+
+.spinner *.down-button {
+    -fx-padding: -2 5 -3 5;
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 1;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+}
+
+.spinner *.down-button *.arrow {
+	-fx-padding: 0;
+	-fx-shape: "M0 0 L4 3 L8 0 Z";
+	-fx-scale-shape: false;
+	-fx-background-color: "000000"
+}
