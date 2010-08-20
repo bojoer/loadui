@@ -174,7 +174,7 @@ public class Dialog {
 		}
 		
 		var dialogButtons: Node[] = [] on replace {
-			for( button in dialogButtons ) button.styleClass = "dialog-button";			
+			//for( button in dialogButtons ) button.styleClass = "dialog-button";
 		}
 
 		if( not noCancel ) {
