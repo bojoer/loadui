@@ -293,6 +293,28 @@
 	-fx-background-insets: -1, 0, 1;
 }
 
+.canvas-object-node *.button {
+	-fx-shadow-highlight-color: transparent;
+	-fx-focus-color: #009bf9;
+	-fx-outer-border: #666666;
+	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #dedede) (90%, #b5b5b5);
+	-fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-body-color;
+	-fx-background-radius: 2;
+    -fx-background-insets: -1, 0, 1;
+}
+
+.canvas-object-node *.button:focused {
+	-fx-background-color: -fx-focus-color, -fx-outer-border, -fx-body-color;
+}
+
+.canvas-object-node *.button:hover {
+	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #ededed) (90%, #d7d7d7);
+}
+
+.canvas-object-node *.button:armed {
+	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #33ccff) (90%, #0398f9);
+}
+
 .canvas-object-node *.select-field {
 	-fx-focus-color: #009bf9;
 	-fx-text-box-border: #666666;
