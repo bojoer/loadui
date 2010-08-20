@@ -49,6 +49,7 @@ public abstract class SpinnerBase extends HBox {
 	
 	def textBox:TextBox = TextBox {
 		layoutInfo: LayoutInfo { vfill: true, hfill: true, width: 30 }
+		text: textFromValue( value );
 	}
 	def textBoxText = bind textBox.text on replace {
 		value = valueFromText( textBoxText )
