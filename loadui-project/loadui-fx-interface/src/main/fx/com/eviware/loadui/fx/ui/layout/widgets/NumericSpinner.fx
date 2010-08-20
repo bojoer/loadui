@@ -18,52 +18,46 @@ package com.eviware.loadui.fx.ui.layout.widgets;
 
 import com.eviware.loadui.fx.ui.layout.widgets.support.SpinnerBase;
 
-public def ANY_TIME = "*";
-
-public class TimeSpinner extends SpinnerBase {
-	public var range:Integer = 60;
+public class NumericSpinner extends SpinnerBase {
+	public var minimum:Integer;
+	public var maximum:Integer;
 	
 	override var value = 0 on replace oldVal {
 		if( value instanceof Integer ) {
 			def intVal = value as Integer;
-			if( intVal >= range and range > 0 ) {
-				value = range -1;
-			} else if( intVal < 0 ) {
-				value = 0;
+			if( FX.isInitialized( minimum ) and intVal < minimum ) {
+				value = minimum;
+			} else if( FX.isInitialized( maximum ) and intVal > maximum ) {
+				value = maximum;
 			}
-		} else if( value != ANY_TIME ) {
+		} else {
 			value = oldVal;
 		}
 	}
 	
 	override function valueFromText( string:String ):Object {
-		if( string == ANY_TIME )
-			return ANY_TIME;
-		
 		try {
 			return Integer.parseInt( string );
 		} catch( e ) {
-			return null;
 		}
+		return value;
 	}
 	
 	override function textFromValue( value:Object ):String {
-		if( value == ANY_TIME ) ANY_TIME else "{%02d value}";
+		"{value}"
 	}
 	
 	override function nextValue():Object {
 		if( value instanceof Integer ) {
-			def newVal = (value as Integer) + 1;
-			return if( newVal >= range ) ANY_TIME else newVal;
+			return (value as Integer) + 1;
 		}
-		return 0;
+		return value;
 	}
 	
 	override function prevValue():Object {
 		if( value instanceof Integer ) {
-			def newVal = (value as Integer) - 1;
-			return if( newVal < 0 ) ANY_TIME else newVal;
+			return (value as Integer) - 1;
 		}
-		return range - 1;
+		return value;
 	}
 }

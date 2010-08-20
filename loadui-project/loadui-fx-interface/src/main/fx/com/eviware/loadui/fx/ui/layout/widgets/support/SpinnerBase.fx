@@ -63,6 +63,7 @@ public abstract class SpinnerBase extends HBox {
 						focusTraversable: false
 						graphic: Region { styleClass: "arrow" }
 						action: function():Void {
+							textBox.commit();
 							textBox.requestFocus();
 							value = nextValue()
 						}
@@ -71,6 +72,7 @@ public abstract class SpinnerBase extends HBox {
 						focusTraversable: false
 						graphic: Region { styleClass: "arrow" }
 						action: function():Void {
+							textBox.commit();
 							textBox.requestFocus();
 							value = prevValue()
 						}
