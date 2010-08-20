@@ -285,6 +285,27 @@
 	-fx-control-inner-background: #dbdbdb;
 }
 
+.canvas-object-node *.text-box {
+	-fx-shadow-highlight-color: transparent;
+	-fx-focus-color: #009bf9;
+	-fx-text-box-border: #666666;
+	-fx-background-radius: 0;
+	-fx-background-insets: -1, 0, 1;
+}
+
+.canvas-object-node *.select-field {
+	-fx-focus-color: #009bf9;
+	-fx-text-box-border: #666666;
+	
+	-fx-background-color: transparent, -fx-text-box-border, #ebebeb, -fx-text-box-border, -fx-control-inner-background;
+	-fx-background-radius: 0;
+	-fx-background-insets: -1, 0, 1, 1 16 1 1, 1 17 1 1;
+}
+
+.canvas-object-node *.select-field:focused {
+	-fx-background-color: -fx-focus-color, -fx-text-box-border, #ebebeb, -fx-text-box-border, -fx-control-inner-background;
+}
+
 .canvas-object-toolbar *.button {
 	-fx-background-color: transparent;
 	-fx-background-insets: 0 -3;
@@ -321,6 +342,12 @@
     -fx-text-fill: -fx-text-inner-color;
 }
 
+.select-field:focused {
+	-fx-background-color: -fx-focus-color, -fx-text-box-border, -fx-control-inner-background;
+	-fx-background-radius: 3.4, 2, 2;
+    -fx-background-insets: -0.4, 1, 2;
+}
+
 .select-field *.arrow {
     -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
     -fx-background-insets: 1 0 -1 0, 0;
@@ -353,30 +380,34 @@
 	-fx-border-insets: 0 0 6 0;
 }
 
-.spinner *.up-button {
-    -fx-padding: -3 5 -2 5;
-    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
-    -fx-background-radius: 1;
-    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+.spinner *.text-box {
+	-fx-background-insets: -1 -16 -1 -1, 0 -15 0 0, 1 -14 1 1;
 }
 
-.spinner *.up-button *.arrow {
-	-fx-padding: 0;
-	-fx-shape: "M0 3 L4 0 L8 3 Z";
-	-fx-scale-shape: false;
-	-fx-background-color: "000000"
+.spinner *.up-button {
+	-fx-text-box-border: #666666;
+    -fx-padding: -2 5 -3 5;
+    -fx-background-color: -fx-text-box-border, #ffffff;
+    -fx-background-insets: 0, 1 0 0 1;
 }
 
 .spinner *.down-button {
-    -fx-padding: -2 5 -3 5;
-    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
-    -fx-background-radius: 1;
-    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+	-fx-text-box-border: #666666;
+    -fx-padding: -1 5 -4 5;
+    -fx-background-color: -fx-text-box-border, #ffffff;
+    -fx-background-insets: 0, 1 0 0 1;
+}
+
+.spinner *.arrow {
+	-fx-padding: 0;
+	-fx-scale-shape: false;
+	-fx-background-color: "000000"
+}
+
+.spinner *.up-button *.arrow {
+	-fx-shape: "M0 3 L4 0 L8 3 Z";
 }
 
 .spinner *.down-button *.arrow {
-	-fx-padding: 0;
 	-fx-shape: "M0 0 L4 3 L8 0 Z";
-	-fx-scale-shape: false;
-	-fx-background-color: "000000"
 }
