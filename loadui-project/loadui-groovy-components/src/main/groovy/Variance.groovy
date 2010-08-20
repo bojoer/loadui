@@ -206,6 +206,13 @@ layout  {
 	}
 }
 
+//Compact Layout
+compactLayout  {
+	box( widget:'display' ) {
+		node( label:'Rate', fString:rateDisplay )
+	}
+}
+
 reset();
 if (running)
 	start();

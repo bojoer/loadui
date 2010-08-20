@@ -303,6 +303,17 @@ layout {
 	}
 }
 
+//Compact Layout
+compactLayout {
+	box( widget:'display', layout:'wrap 3, align right' ) {
+		node( label:'Requests', fString:displayRequests )
+		node( label:'Running', fString:displayRunning )
+		node( label:'Samples', fString:displayTotal )
+		node( label:'Queued', fString:displayQueue )
+		node( label:'Discarded', fString:displayDiscarded )
+		node( label:'Failed', fString:displayFailed )
+	}
+}
 
 settings( label: "Basic" ) {
 	property( property: outputBody, label: 'Output Response Body' )

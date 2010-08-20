@@ -243,6 +243,14 @@ layout {
 	}
 }
 
+//Compact Layout
+compactLayout {
+	box( widget:'display' ) {
+		node( label:'Asserted', fString: assertedDisplay )
+		node( label:'Failed', fString: failedDisplay )
+	}
+}
+
 settings( label: "General" ) {
 	property( property: tolerance, label: 'Tolerance', min: 1)
 	property( property: period, label: 'Period' )
