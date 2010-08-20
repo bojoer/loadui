@@ -29,6 +29,10 @@ public abstract class SpinnerBase extends HBox {
 		textBox.columns = columns;
 	}
 	
+	public var selectOnFocus:Boolean on replace {
+		textBox.selectOnFocus = selectOnFocus;
+	}
+	
 	public var value:Object on replace {
 		textBox.text = textFromValue( value );
 	}
@@ -54,14 +58,18 @@ public abstract class SpinnerBase extends HBox {
 			content: [
 				Button {
 					styleClass: "up-button"
+					focusTraversable: false
 					graphic: Region { styleClass: "arrow" }
 					action: function():Void {
+						textBox.requestFocus();
 						value = nextValue()
 					}
 				}, Button {
 					styleClass: "down-button"
+					focusTraversable: false
 					graphic: Region { styleClass: "arrow" }
 					action: function():Void {
+						textBox.requestFocus();
 						value = prevValue()
 					}
 				}
