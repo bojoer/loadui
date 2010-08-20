@@ -130,7 +130,7 @@ public class Form extends Container {
 				fieldWidth = Math.max( fieldWidth, getNodePrefWidth( two ) );
 				rowHeight = Math.max( getNodePrefHeight( one ), getNodePrefHeight( two ) );
 				layoutNode( one, 0, offsetY, labelWidth, rowHeight );
-				layoutNode( two, labelWidth, offsetY, width - labelWidth - margin, rowHeight );
+				layoutNode( two, labelWidth + margin, offsetY, width - labelWidth - margin, rowHeight );
 			} else {
 				rowHeight = getNodePrefHeight( one );
 				doubleWidth = Math.max( doubleWidth, getNodePrefWidth( one ) );
