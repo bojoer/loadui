@@ -86,6 +86,8 @@ public class TestCaseNode extends CanvasObjectNode {
 		      canvas: testCase
 		      small: true
 			}, Stack {
+				visible: bind not compact
+				managed: bind not compact
 				layoutInfo: LayoutInfo { margin: Insets { top: 5 } }
 				content: [
 					ImageView { 
