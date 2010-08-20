@@ -47,33 +47,36 @@ public abstract class SpinnerBase extends HBox {
 	
 	protected function prevValue():Object { null }
 	
-	var textBox:TextBox;
-	override var content = [
-		textBox = TextBox {
-			layoutInfo: LayoutInfo { vfill: true, hfill: true, width: 30 }
-			action: function():Void {
-				value = valueFromText( textBox.text )
+	def textBox:TextBox = TextBox {
+		layoutInfo: LayoutInfo { vfill: true, hfill: true, width: 30 }
+	}
+	def textBoxText = bind textBox.text on replace {
+		value = valueFromText( textBoxText )
+	}
+	
+	init {
+		content = [
+			textBox, VBox {
+				content: [
+					Button {
+						styleClass: "up-button"
+						focusTraversable: false
+						graphic: Region { styleClass: "arrow" }
+						action: function():Void {
+							textBox.requestFocus();
+							value = nextValue()
+						}
+					}, Button {
+						styleClass: "down-button"
+						focusTraversable: false
+						graphic: Region { styleClass: "arrow" }
+						action: function():Void {
+							textBox.requestFocus();
+							value = prevValue()
+						}
+					}
+				]
 			}
-		}, VBox {
-			content: [
-				Button {
-					styleClass: "up-button"
-					focusTraversable: false
-					graphic: Region { styleClass: "arrow" }
-					action: function():Void {
-						textBox.requestFocus();
-						value = nextValue()
-					}
-				}, Button {
-					styleClass: "down-button"
-					focusTraversable: false
-					graphic: Region { styleClass: "arrow" }
-					action: function():Void {
-						textBox.requestFocus();
-						value = prevValue()
-					}
-				}
-			]
-		}
-	];
+		];
+	}
 }
