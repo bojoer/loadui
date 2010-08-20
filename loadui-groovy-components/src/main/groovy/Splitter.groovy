@@ -57,7 +57,8 @@
         cnt++
  }
     
- display = new DelayedFormattedString( ' %d  ', 500, 0 )
+ display = new DelayedFormattedString( '%d', 500, 0 )
+ outputDisplay = new DelayedFormattedString( '%s', 500, value({ outputStats.findAll({ it >= 0 }).join('          ') }) )
 
  executor = Executors.newSingleThreadScheduledExecutor()
  future = executor.scheduleWithFixedDelay( { outputStats.update() }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
@@ -143,6 +144,7 @@
 
  onRelease = {
    display.release()
+	outputDisplay.release()
    future.cancel(true)
    executor.shutdownNow()
  }
@@ -162,7 +164,7 @@
     separator( vertical: true ) 
     box( layout: 'wrap, ins 0' ) {
 	    box( widget:'display',  constraints:'w 100!' ) {
-			 node( label:'Count ', fString:display, constraints:'wrap' )
+			 node( label:'Count', fString:display, constraints:'wrap' )
 	    }
 	    action( label:'Clear', action: {  
 	       total.value = 0
@@ -176,3 +178,10 @@
     separator( vertical: false )
     node( widget: 'counterWidget', counters: outputStats , onOff: counterUse, constraints:'span 5,center')
   }
+ 
+compactLayout() {
+	box( widget: 'display', layout: 'wrap, fillx', constraints: 'growx' ) {
+		node( label: 'Count', fString: display )
+		node( label: 'Distribution', fString: outputDisplay )
+	}
+}

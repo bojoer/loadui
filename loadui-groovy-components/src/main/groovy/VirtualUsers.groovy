@@ -101,6 +101,13 @@ layout  {
 	}
 }
 
+//CompactLayout
+compactLayout  {
+	box( widget:'display' ) {
+		node( label:'Rate', fString:display )
+	}
+}
+
 if (running)
 	schedule()
 

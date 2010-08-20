@@ -176,6 +176,13 @@ layout  {
 	}
 }
 
+//Compact Layout
+compactLayout  {
+	box( widget:'display' ) {
+		node( label:'Rate', fString:display )
+	}
+}
+
 //Settings
 //settings( label: "Properties", layout: 'wrap 2' ) {
 //	box(layout:"growx, wrap 1") {

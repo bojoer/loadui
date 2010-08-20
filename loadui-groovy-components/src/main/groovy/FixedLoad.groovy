@@ -120,6 +120,14 @@ layout  {
 	}
 }
 
+//Compact Layout
+compactLayout  {
+	box( widget:'display' ) {
+		node( label:'Load', fString:loadDisplay )
+		node( label:'Interval', fString:intervalDisplay )
+	}
+}
+
 schedule()
 
 //Settings

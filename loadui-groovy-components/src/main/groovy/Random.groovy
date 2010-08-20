@@ -131,6 +131,14 @@ layout {
 	}
 }
 
+//Compact Layout
+compactLayout {
+	box( widget: 'display', layout: 'align center' ) {
+		node( label: 'current rate', fString: display )
+		node( label: 'random', fString: randomDisplay )
+	}
+}
+
 //Settings
 //settings( label: "Settings", layout: 'wrap 2' ) {
 //	box(layout:"growx, wrap 1") {

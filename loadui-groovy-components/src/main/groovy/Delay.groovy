@@ -95,3 +95,9 @@ onMessage = { incoming, outgoing, message ->
         node( label:'delay ', fString:display, constraints:'wrap' )
     }
  }
+ 
+compactLayout {
+	box( widget:'display' ) {
+		node( label:'delay ', fString:display )
+	}
+}
