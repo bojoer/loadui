@@ -46,7 +46,7 @@ public abstract class SpinnerBase extends HBox {
 	var textBox:TextBox;
 	override var content = [
 		textBox = TextBox {
-			layoutInfo: LayoutInfo { vfill: true, hfill: true }
+			layoutInfo: LayoutInfo { vfill: true, hfill: true, width: 30 }
 			action: function():Void {
 				value = valueFromText( textBox.text )
 			}
