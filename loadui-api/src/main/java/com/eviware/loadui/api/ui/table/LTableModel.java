@@ -136,6 +136,10 @@ public class LTableModel extends AbstractTableModel {
 		return data.get(data.size() -1);
 	}
 	
+	public ArrayList getRowAt(int rowIndex) {
+		return data.get(rowIndex);
+	}
+	
 	public void reset() {
 		header.clear();
 		data.clear();
