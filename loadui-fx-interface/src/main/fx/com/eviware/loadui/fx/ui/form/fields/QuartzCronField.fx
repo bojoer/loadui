@@ -36,8 +36,10 @@ import javafx.scene.layout.Priority;
 import javafx.geometry.Insets;
 import javafx.animation.Timeline;
 import java.lang.NumberFormatException;
+import java.lang.Exception;
 
 import com.eviware.loadui.fx.ui.form.FormField;
+import com.eviware.loadui.fx.ui.layout.widgets.TimeSpinner;
 
 public function build( id:String, label:String, value:Object ) {
 	QuartzCronField { id:id, label:label, value: value }
@@ -50,145 +52,121 @@ public function build( id:String, label:String, value:Object ) {
  */
 public class QuartzCronField extends HBox, FormField {
 
-	var hTextBox: CustomTextBox = CustomTextBox {
-		columns: 2
-		selectOnFocus: true
-		focusLost: function(): Void {
-			parseHours();
-			buildValue();
-		}
+	var hSpinner: TimeSpinner = TimeSpinner {
+		range: 24
+		layoutInfo: LayoutInfo { hfill: true vfill: false hgrow: Priority.ALWAYS vgrow: Priority.NEVER}
 	}
 	
-	var mTextBox: CustomTextBox = CustomTextBox {
-		columns: 2
-		selectOnFocus: true
-		focusLost: function(): Void {
-			parseMinutes();
-			buildValue();
-		}
+	var mSpinner: TimeSpinner = TimeSpinner {
+		range: 60
+		layoutInfo: LayoutInfo { hfill: true vfill: false hgrow: Priority.ALWAYS vgrow: Priority.NEVER}
 	}
 	
-	var sTextBox: CustomTextBox = CustomTextBox {
-		columns: 2
-		selectOnFocus: true
-		focusLost: function(): Void {
-			parseSeconds();
-			buildValue();
-		}
+	var sSpinner: TimeSpinner = TimeSpinner {
+		range: 60
+		layoutInfo: LayoutInfo { hfill: true vfill: false hgrow: Priority.ALWAYS vgrow: Priority.NEVER}
+		allowAnyTime: false
 	}
 	
-	function parseHours(): Void {
-		try {
-			var h: Long = Long.valueOf(hTextBox.text);
-			if(h>=0 and h<=23){
-				hTextBox.text = "{%02d h}";
-			} 
-			else{
-				hTextBox.text = "*";
-			}
-		} 
-		catch(e: NumberFormatException) {
-			hTextBox.text = "*";
-		}
+	var hValue = bind hSpinner.value on replace {
+		buildValue();
 	}
 
-	function parseMinutes(): Void {
-		try {
-			var m: Long = Long.valueOf(mTextBox.text);
-			if(m>=0 and m<=59){
-				mTextBox.text = "{%02d m}";
-			} 
-			else{
-				mTextBox.text = "*";
-			}
-		} 
-		catch(e: NumberFormatException) {
-			mTextBox.text = "*";
-		}
+	var mValue = bind mSpinner.value on replace {
+		buildValue();
 	}
-
-	function parseSeconds(): Void {
-		try {
-			var s: Long = Long.valueOf(sTextBox.text);
-			if(s>=0 and s<=59){
-				sTextBox.text = "{%02d s}";
-			} 
-			else{
-				sTextBox.text = "00";
-			}
-		} 
-		catch(e: NumberFormatException) {
-			sTextBox.text = "00";
-		}
+	
+	var sValue = bind sSpinner.value on replace {
+		buildValue();
 	}
+	
+	var initialValue: String = null;
+	var initialized: Boolean = false;
 	
 	override var value on replace {
 		if( value != null and not ( value instanceof String ) )
 			throw new IllegalArgumentException( "Value must be of type String!" );
-		
+		if(not initialized){
+			initialValue = value as String;
+			initialized = true;
+		}
 		parseValue(value as String);
 	}
 	
-	override var layoutInfo = LayoutInfo { hfill: true vfill: true hgrow: Priority.ALWAYS vgrow: Priority.ALWAYS}
+	override var layoutInfo = LayoutInfo { hfill: true vfill: false hgrow: Priority.ALWAYS vgrow: Priority.NEVER}
 	
 	init {
     	padding = Insets { top: 0 right: 0 bottom: 0 left: 0}
     	spacing = 2;
     	nodeVPos = VPos.CENTER;
     	content = [
-    		hTextBox,
+    		hSpinner,
 	    	Label { 
 				text: ":"
 			}
-	    	mTextBox,
+	    	mSpinner,
 	    	Label { 
 				text: ":"
 			}
-	    	sTextBox
+	    	sSpinner
     	];
-    	
-    	parseValue(value as String);
+    }
+    
+    postinit {
+    	parseValue(initialValue);
     }
     
     function parseValue(total: String): Void {
     	def ssmmhh: String[] = total.split(" ");
     	if(ssmmhh.size() == 3){
-    		hTextBox.text = ssmmhh[2];
-			mTextBox.text = ssmmhh[1];
-			sTextBox.text = ssmmhh[0];
-			parseHours();
-			parseMinutes();
-			parseSeconds();
+    		if(ssmmhh[2].equals(TimeSpinner.ANY_TIME)) {
+				hSpinner.value = ssmmhh[2];
+			} 
+			else {
+				try{
+					println("-----ssmmhh[2] >{ssmmhh[2]}<");
+					println("-----hSpinner.value >{hSpinner.value}<");
+					hSpinner.value = Integer.valueOf(ssmmhh[2]);
+					println("-----ssmmhh[2] >{ssmmhh[2]}<");
+					println("-----hSpinner.value >{hSpinner.value}<");
+				}
+				catch(e: Exception){
+					hSpinner.value = 0;
+				}
+			}
+    		if(ssmmhh[1].equals(TimeSpinner.ANY_TIME)) {
+				mSpinner.value = ssmmhh[1];
+			} 
+			else {
+				try{
+					mSpinner.value = Integer.valueOf(ssmmhh[1]);
+				}
+				catch(e: Exception){
+					mSpinner.value = 0;
+				}
+			}
+			try{
+				sSpinner.value = Integer.valueOf(ssmmhh[0]);
+			}
+			catch(e: Exception){
+				sSpinner.value = 0;
+			}
     	}
     	else{
-    		hTextBox.text = "*";
-			mTextBox.text = "*";
-			sTextBox.text = "00";
+    		hSpinner.value = 0;
+			mSpinner.value = 0;
+			sSpinner.value = 0;
     	}
     }
     
     function buildValue(): Void {
-		value = "{sTextBox.text} {mTextBox.text} {hTextBox.text}";
+    	if(not value.equals("{sSpinner.value} {mSpinner.value} {hSpinner.value}")){
+			value = "{sSpinner.value} {mSpinner.value} {hSpinner.value}";
+		}
     }
     
-    override function getPrefHeight( width:Float ) {
-		hTextBox.getPrefHeight( width )
-	}
+    //override function getPrefHeight( width:Float ) {
+	//	mSpinner.getPrefHeight( width )
+	//}
 	
-}
-
-public class CustomTextBox extends TextBox {
-
-	public var focusLost: function();
-	
-	public var focusGained: function();
-	
-	override var focused on replace oldVal {
-		if(oldVal and not focused){
-			focusLost();
-		}
-		else{
-			focusGained();
-		}
-	}
 }

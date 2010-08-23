@@ -16,7 +16,9 @@
 package com.eviware.loadui.util.layout;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Observable;
+import java.util.TreeSet;
 
 /**
  * @author predrag.vucetic
@@ -24,44 +26,126 @@ import java.util.Observable;
 public class SchedulerModel extends Observable {
 
 	private ArrayList<Day> days = new ArrayList<Day>();
+	
+	private ArrayList<Integer> seconds = new ArrayList<Integer>();
+	private ArrayList<Integer> minutes = new ArrayList<Integer>();
+	private ArrayList<Integer> hours = new ArrayList<Integer>();
 
-	private long time = 0;
 	private long duration = 0;
 	private long runsCount = 0;
+	
+	public ArrayList<Integer> getSeconds() {
+		return seconds;
+	}
+
+	public void setSeconds(TreeSet<Integer> seconds) {
+		this.seconds.clear();
+		Iterator<Integer> i = seconds.iterator();
+		while(i.hasNext()){
+			Integer second = i.next();
+			if(second>=0 && second <= 59){
+				this.seconds.add(second);
+			}
+
+		}
+		setChanged();
+	}
+
+	public ArrayList<Integer> getMinutes() {
+		return minutes;
+	}
+
+	public void setMinutes(TreeSet<Integer> minutes) {
+		this.minutes.clear();
+		Iterator<Integer> i = minutes.iterator();
+		while(i.hasNext()){
+			Integer minute = i.next();
+			if(minute>=0 && minute <= 59){
+				this.minutes.add(minute);
+			}
+		}
+		setChanged();
+	}
+
+	public ArrayList<Integer> getHours() {
+		return hours;
+	}
+
+	public void setHours(TreeSet<Integer> hours) {
+		this.hours.clear();
+		Iterator<Integer> i = hours.iterator();
+		while(i.hasNext()){
+			Integer hour = i.next();
+			if(hour>=0 && hour <= 59){
+				this.hours.add(hour);
+			}
+		}
+		setChanged();
+	}
 
 	public ArrayList<Day> getDays() {
 		return days;
 	}
+	
+	public Boolean[] getDaysAsBoolean(){
+		Boolean[] d = new Boolean[7];
+		d[0] = days.contains(Day.MON);
+		d[1] = days.contains(Day.TUE);
+		d[2] = days.contains(Day.WED);
+		d[3] = days.contains(Day.THU);
+		d[4] = days.contains(Day.FRI);
+		d[5] = days.contains(Day.SAT);
+		d[6] = days.contains(Day.SUN);
+		return d;
+	}
 
-	public void setOneDay(Day day) {
+	public void setDays(TreeSet<Integer> daysInWeek) {
 		days.clear();
-		days.add(day);
+		Iterator<Integer> dayIterator = daysInWeek.iterator();
+		while(dayIterator.hasNext()){
+			switch (dayIterator.next()) {
+			case 1:
+				days.add(Day.SUN);				
+				break;
+			case 2:
+				days.add(Day.MON);
+				break;
+			case 3:
+				days.add(Day.TUE);
+				break;
+			case 4:
+				days.add(Day.WED);
+				break;
+			case 5:
+				days.add(Day.THU);
+				break;
+			case 6:
+				days.add(Day.FRI);
+				break;
+			case 7:
+				days.add(Day.SAT);
+				break;
+			default:
+				break;
+			}
+		}
 		setChanged();
 	}
 
 	public void setAllDays() {
 		days.clear();
-		days.add(Day.MONDAY);
-		days.add(Day.TUESDAY);
-		days.add(Day.WEDNESDAY);
-		days.add(Day.THURSDAY);
-		days.add(Day.FRIDAY);
-		days.add(Day.SATURDAY);
-		days.add(Day.SUNDAY);
+		days.add(Day.MON);
+		days.add(Day.TUE);
+		days.add(Day.WED);
+		days.add(Day.THU);
+		days.add(Day.FRI);
+		days.add(Day.SAT);
+		days.add(Day.SUN);
 		setChanged();
 	}
 	
 	public void setDays(ArrayList<Day> days) {
 		this.days = days;
-		setChanged();
-	}
-
-	public long getTime() {
-		return time;
-	}
-
-	public void setTime(long scheduleTime) {
-		this.time = scheduleTime;
 		setChanged();
 	}
 
@@ -83,20 +167,8 @@ public class SchedulerModel extends Observable {
 		setChanged();
 	}
 
-	public Boolean[] getDaysAsBoolean(){
-		Boolean[] d = new Boolean[7];
-		d[0] = days.contains(Day.MONDAY);
-		d[1] = days.contains(Day.TUESDAY);
-		d[2] = days.contains(Day.WEDNESDAY);
-		d[3] = days.contains(Day.THURSDAY);
-		d[4] = days.contains(Day.FRIDAY);
-		d[5] = days.contains(Day.SATURDAY);
-		d[6] = days.contains(Day.SUNDAY);
-		return d;
-	}
-	
 	public enum Day {
-		SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY
+		SUN, MON, TUE, WED, THU, FRI, SAT
 	}
 
 }
