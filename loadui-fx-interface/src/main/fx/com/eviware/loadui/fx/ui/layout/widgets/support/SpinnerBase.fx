@@ -23,6 +23,8 @@ import javafx.scene.control.TextBox;
 
 import com.sun.javafx.scene.layout.Region;
 
+import java.lang.RuntimeException;
+
 public abstract class SpinnerBase extends HBox {
 	
 	public var columns:Integer = 4 on replace {
@@ -34,6 +36,10 @@ public abstract class SpinnerBase extends HBox {
 	}
 	
 	public var value:Object on replace {
+		def newValue = clean( value );
+		if( value != newValue )
+			throw new RuntimeException( "Illegal value for Spinner set: {newValue}" );
+		
 		textBox.text = textFromValue( value );
 	}
 	
@@ -47,12 +53,14 @@ public abstract class SpinnerBase extends HBox {
 	
 	protected function prevValue():Object { null }
 	
+	protected function clean( newValue:Object ):Object { newValue }
+	
 	def textBox:TextBox = TextBox {
 		layoutInfo: LayoutInfo { vfill: true, hfill: true, width: 30 }
 		text: textFromValue( value );
 	}
 	def textBoxText = bind textBox.text on replace {
-		value = valueFromText( textBoxText )
+		value = clean( valueFromText( textBoxText ) )
 	}
 	
 	init {
@@ -66,7 +74,7 @@ public abstract class SpinnerBase extends HBox {
 						action: function():Void {
 							textBox.commit();
 							textBox.requestFocus();
-							value = nextValue()
+							value = clean( nextValue() )
 						}
 					}, Button {
 						styleClass: "down-button"
@@ -75,7 +83,7 @@ public abstract class SpinnerBase extends HBox {
 						action: function():Void {
 							textBox.commit();
 							textBox.requestFocus();
-							value = prevValue()
+							value = clean( prevValue() )
 						}
 					}
 				]

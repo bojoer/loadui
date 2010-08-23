@@ -25,16 +25,20 @@ public class TimeSpinner extends SpinnerBase {
 	
 	public var allowAnyTime = true;
 	
-	override var value = 0 on replace oldVal {
-		if( value instanceof Integer ) {
-			def intVal = value as Integer;
+	override function clean( newValue:Object ):Object {
+		if( newValue instanceof Integer ) {
+			def intVal = newValue as Integer;
 			if( intVal >= range and range > 0 ) {
-				value = range -1;
+				return range - 1;
 			} else if( intVal < 0 ) {
-				value = 0;
+				return 0;
+			} else {
+				return intVal;
 			}
-		} else if( value != ANY_TIME or not allowAnyTime ) {
-			value = oldVal;
+		} else if( newValue != ANY_TIME or not allowAnyTime ) {
+			return value;
+		} else {
+			return newValue;
 		}
 	}
 	
