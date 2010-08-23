@@ -48,7 +48,7 @@ public class CloneCanvasObjectsDialog {
 					LabelField { value: if( sizeof objects == 1 ) "Clone this item?" else "Clone these { sizeof objects } items?" },
 					LabelField { value: "Target canvas: {target.getLabel()}" },
 					moveField = CheckBoxField { label: "Move instead? (removes the objects from the current canvas)" },
-					gotoTarget = CheckBoxField { label: "Open target canvas?", value: true }
+					gotoTarget = CheckBoxField { label: "Open Testcase?", value: true }
 				]
 			}
 			onOk: function() {
