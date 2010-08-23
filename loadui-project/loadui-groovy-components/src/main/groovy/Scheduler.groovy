@@ -169,23 +169,34 @@ addEventListener( ActionEvent ) { event ->
 
 addEventListener( PropertyEvent ) { event ->
 	if( event.property in [ day, time, runsCount, duration ] ) {
+		validateDuration()
 		if( !canvas.running ){
 			updateState()
 		} 
 	}
 }
 
+validateDuration = {
+	def expr = new CronExpression(createStartTriggerPattern())
+	def calendar = Calendar.getInstance()
+	def nextDate = expr.getNextValidTimeAfter(calendar.getTime())
+	calendar.setTime(nextDate)
+	calendar.add(Calendar.SECOND, 1)
+	def dateAfterNext = expr.getNextValidTimeAfter(calendar.getTime())
+	def diff = (dateAfterNext.getTime() - nextDate.getTime()) / 1000
+	if(diff < duration.value){
+		duration.value = diff
+	}
+}
+
 updateState = {
 	def expr = new CronExpression(createStartTriggerPattern())
-	schedulerModel.setTime(expr.getNextValidTimeAfter(new Date()).getTime())
+	schedulerModel.setSeconds(expr.seconds)
+	schedulerModel.setMinutes(expr.minutes)
+	schedulerModel.setHours(expr.hours)
+	schedulerModel.setDays(expr.daysOfWeek)
 	schedulerModel.setDuration(duration.value * 1000)
 	schedulerModel.setRunsCount(runsCount.value)
-	if(day.value.equals('* (All)')){
-		schedulerModel.setAllDays()
-	}
-	else{
-		schedulerModel.setOneDay(SchedulerModel.Day.valueOf(day.value.toUpperCase()))
-	}
 	schedulerModel.notifyObservers()
 }
 
@@ -325,9 +336,9 @@ layout {
 	separator( vertical: false )
 	property(property: day, widget: 'comboBox', label: 'Day', options: ['* (All)', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], constraints: 'w 100!' )
 	separator(vertical: true)
-	property( property: time, widget: 'quartzCron', label: 'Time', constraints: 'w 100!' )
+	property( property: time, widget: 'quartzCron', label: 'Time', constraints: 'w 130!' )
 	separator(vertical: true)
-	property( property: duration, widget: 'time', label: 'Duration', constraints: 'w 100!' )
+	property( property: duration, widget: 'time', label: 'Duration', constraints: 'w 130!' )
 }
 
 settings( label: "Basic" ) {

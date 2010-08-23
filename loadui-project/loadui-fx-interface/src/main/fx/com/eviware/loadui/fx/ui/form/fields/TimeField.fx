@@ -38,6 +38,7 @@ import javafx.animation.Timeline;
 import java.lang.NumberFormatException;
 
 import com.eviware.loadui.fx.ui.form.FormField;
+import com.eviware.loadui.fx.ui.layout.widgets.NumericSpinner;
 
 /**
  * Constructs a new TimeFile using the supplied arguments. Input is Long time in seconds.
@@ -53,32 +54,41 @@ public function build( id:String, label:String, value:Object ) {
  */
 public class TimeField extends HBox, FormField {
 
-	var hTextBox: CustomTextBox = CustomTextBox {
-		columns: 2
-		selectOnFocus: true
-		focusLost: function(): Void {
-			buildValue();
-		}
+	var hSpinner: NumericSpinner = NumericSpinner {
+		minimum: 0
+		maximum: 1000
+		//value: 0
 	}
-	var mTextBox: CustomTextBox = CustomTextBox {
-		columns: 2
-		selectOnFocus: true
-		focusLost: function(): Void {
-			buildValue();
-		}
+	var mSpinner: NumericSpinner = NumericSpinner {
+		minimum: 0
+		maximum: 59
+		//value: 0
 	}
-	var sTextBox: CustomTextBox = CustomTextBox {
-		columns: 2
-		selectOnFocus: true
-		focusLost: function(): Void {
-			buildValue();
-		}
+	var sSpinner: NumericSpinner = NumericSpinner {
+		minimum: 0
+		maximum: 59
+		//value: 0
+	}
+	
+	var hValue = bind hSpinner.value on replace {
+		buildValue();	
+	}
+
+	var mValue = bind mSpinner.value on replace {
+		buildValue();	
+	}
+
+	var sValue = bind sSpinner.value on replace {
+		buildValue();	
 	}
 	
 	override var value on replace {
 		if( value != null and not ( value instanceof Long ) )
 			throw new IllegalArgumentException( "Value must be of type Long!" );
-		
+
+		if(value == null){
+			value = 0;
+		}
 		parseValue(value as Long);
 	}
 	
@@ -89,15 +99,15 @@ public class TimeField extends HBox, FormField {
     	spacing = 2;
     	nodeVPos = VPos.CENTER;
     	content = [
-    		hTextBox,
+    		hSpinner,
 	    	Label { 
 				text: ":"
 			}
-	    	mTextBox,
+	    	mSpinner,
 	    	Label { 
 				text: ":"
 			}
-	    	sTextBox
+	    	sSpinner
     	];
     	
     	parseValue(value as Long);
@@ -110,16 +120,16 @@ public class TimeField extends HBox, FormField {
         def minutes = seconds / 60;
         seconds -= minutes * 60;
         
-		hTextBox.text = "{%02d hours}";
-		mTextBox.text = "{%02d minutes}";
-		sTextBox.text = "{%02d seconds}";
+		hSpinner.value = hours;
+		mSpinner.value = minutes;
+		sSpinner.value = seconds;
     }
     
     function buildValue(): Void {
      	try {
-			var h: Long = if(hTextBox.text.length() > 0) Long.valueOf(hTextBox.text) else 0; 
-			var m: Long = if(mTextBox.text.length() > 0) Long.valueOf(mTextBox.text) else 0;
-			var s: Long = if(sTextBox.text.length() > 0) Long.valueOf(sTextBox.text) else 0;
+			var h: Long = hSpinner.value as Long; 
+			var m: Long = mSpinner.value as Long;
+			var s: Long = sSpinner.value as Long;
 			value = h * 3600 + m * 60 + s;
 		} 
 		catch(e: NumberFormatException) {
@@ -128,23 +138,8 @@ public class TimeField extends HBox, FormField {
     }
     
     override function getPrefHeight( width:Float ) {
-		hTextBox.getPrefHeight( width )
+		hSpinner.getPrefHeight( width )
 	}
 	
 }
 
-public class CustomTextBox extends TextBox {
-
-	public var focusLost: function();
-	
-	public var focusGained: function();
-	
-	override var focused on replace oldVal {
-		if(oldVal and not focused){
-			focusLost();
-		}
-		else{
-			focusGained();
-		}
-	}
-}

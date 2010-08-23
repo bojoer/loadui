@@ -23,6 +23,9 @@ import javafx.scene.text.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.util.Math;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.lang.Duration;
 
 import com.eviware.loadui.fx.ui.layout.Widget;
 import com.eviware.loadui.fx.ui.node.BaseNode;
@@ -32,6 +35,8 @@ import com.eviware.loadui.util.layout.SchedulerModel;
 import java.util.Calendar;
 import java.util.Observer;
 import java.util.Observable;
+import java.util.Iterator;
+import java.util.List;
 
 public class SchedulerLCDWidget extends Widget, BaseNode, Resizable, TooltipHolder, Observer {
 
@@ -44,20 +49,17 @@ public class SchedulerLCDWidget extends Widget, BaseNode, Resizable, TooltipHold
     	update(model, null);
     }
     
-    var scheduleTime: Number = 0;
-    
     var duration: Number = 0;
     
-    var dailyLines: Rectangle[] = [];
+    var dailyLines: DailySchedule[] = [];
     var daysVisible: Boolean[] = [];
     
     public override function create() {
     	
     	for(i in [1..7]){
     		insert false into daysVisible;
-    		insert SchedulePosition{
+    		insert DailySchedule {
     			dayIndex: i
-    			time: bind scheduleTime
     			duration: bind duration
     			visible: bind daysVisible[i-1]
     		} into dailyLines;
@@ -122,7 +124,8 @@ public class SchedulerLCDWidget extends Widget, BaseNode, Resizable, TooltipHold
 							    createVLine(300, 0, 17),
 							    createVLine(325, 0, 7, false),
 							    createVLine(350, 0, 17),
-							    dailyLines                    	
+							    dailyLines,
+							    CurrentPosition{}                    	
 	                    	]
 	                    }
                     ]	
@@ -171,11 +174,48 @@ public class SchedulerLCDWidget extends Widget, BaseNode, Resizable, TooltipHold
     
     override function update(observable: Observable, arg: Object) {
         FX.deferAction(function(): Void {
-            scheduleTime = model.getTime();
             duration = model.getDuration();
             daysVisible = model.getDaysAsBoolean();
+            for(d in dailyLines){
+            	d.hours = model.getHours();
+            	d.minutes = model.getMinutes();
+            	d.generate();
+            }
         });
     }
+}
+
+public class DailySchedule extends Group {
+
+	public-init var dayIndex: Number = 1;
+	
+	public-init var dayWidth: Number = 50;
+	
+	public var hours: List;
+	
+	public var minutes: List;
+
+	public var duration: Number = 0;
+	
+	public function generate() {
+		delete content;
+		for(h in hours){
+			for(m in minutes){
+				create(h as Integer, m as Integer);
+			}
+		}
+	}
+
+	function create(h: Integer, m: Integer): Void {
+		insert SchedulePosition{
+			dayIndex: dayIndex
+			time: h * 60 + m
+			duration: bind duration
+			visible: bind visible
+			minWidth: bind 0.56 * dayWidth / (hours.size() * minutes.size())
+    	} into content;
+	}
+	
 }
 
 public class SchedulePosition extends Rectangle {
@@ -184,8 +224,10 @@ public class SchedulePosition extends Rectangle {
 	
 	public-init var dayWidth: Number = 50;
 	
+	public-init var minWidth: Number = 1;
+	
 	public var time: Number = 0 on replace {
-		setPosition();	
+		x = time * dayWidth / 1440 + dayWidth * (dayIndex - 1);	
 	}
 
 	public var duration: Number = 0;
@@ -197,13 +239,44 @@ public class SchedulePosition extends Rectangle {
         managed = false;
 	}
 	
-	override var width = bind Math.max((duration / 60000) * (dayWidth / 1440), 1);
-	
-	function setPosition(): Void {
-		var calendar: Calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(time);
-		var mins = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
-		x = mins * dayWidth / 1440 + dayWidth * (dayIndex - 1);
-	}
+	override var width = bind Math.max((duration / 60000) * (dayWidth / 1440), minWidth);
 	
 }
+
+public class CurrentPosition extends Rectangle {
+
+	public-init var dayWidth: Number = 50;
+	
+	init{
+	    y = -13;
+        height = 26;
+        width = 1;
+        fill = Color.web("#FF7F00");
+        managed = false;
+        
+        timeline.playFromStart();
+        updatePosition();
+	}
+	
+	var timeline: Timeline = Timeline {
+        repeatCount: Timeline.INDEFINITE
+        keyFrames: [
+	        KeyFrame {
+	            time: 60s
+	            action: function() {
+	            	updatePosition();
+	            }
+	            canSkip: true
+	        }
+        ]
+    }
+    
+    function updatePosition(){
+		var calendar: Calendar = Calendar.getInstance();
+		var day = if(calendar.get(Calendar.DAY_OF_WEEK) == 0) 6 else calendar.get(Calendar.DAY_OF_WEEK) - 2;
+		var mins = day * 24 * 60 + calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
+	    x = mins * dayWidth / 1440;
+    }
+	
+}
+
