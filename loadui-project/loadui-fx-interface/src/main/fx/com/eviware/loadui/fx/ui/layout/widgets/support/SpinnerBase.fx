@@ -35,7 +35,8 @@ public abstract class SpinnerBase extends HBox {
 		textBox.selectOnFocus = selectOnFocus;
 	}
 	
-	public var value:Object on replace {
+	public var value:Object on replace oldVal {
+		println("value changed to {value} from {oldVal}");
 		def newValue = clean( value );
 		if( value != newValue )
 			throw new RuntimeException( "Illegal value for Spinner set: {newValue}" );
@@ -60,7 +61,12 @@ public abstract class SpinnerBase extends HBox {
 		text: textFromValue( value );
 	}
 	def textBoxText = bind textBox.text on replace {
-		value = clean( valueFromText( textBoxText ) )
+		def newVal = clean( valueFromText( textBoxText ) )
+		if( value != newVal ) {
+			value = newVal;
+		} else {
+			textBox.text = textFromValue( value );
+		}
 	}
 	
 	init {

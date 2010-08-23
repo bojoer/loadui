@@ -22,6 +22,8 @@ public class NumericSpinner extends SpinnerBase {
 	public var minimum:Integer;
 	public var maximum:Integer;
 	
+	override var value = 0;
+	
 	override function clean( newValue:Object ):Object {
 		if( newValue instanceof Integer ) {
 			def intVal = newValue as Integer;
