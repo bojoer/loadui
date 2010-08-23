@@ -342,18 +342,18 @@ public class SummaryReport extends StylesheetAware {
 					layoutY: 15
 					spacing: 10
 					content: [
-					    Button {
-					        text: "Print"
-					        onMouseReleased:function(event) {
-					            com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport(summary);
-					        }
-					    }
 						Label {
 							layoutY: 3
 							text: bind date
 							textFill: Color.web("#000000")
 							font: Font { name:"Arial" size: 10 }
 						}
+					    Button {
+					        text: "Print"
+					        onMouseReleased:function(event) {
+					            com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport(summary);
+					        }
+					    }
 						GlowButton {
 							contentNode: FXDNode {
 								translateY: 2
