@@ -40,6 +40,7 @@ createProperty 'fileName', File
 createProperty 'saveFile', Boolean, false
 createProperty 'follow', Boolean, false
 createProperty 'summaryRows', Long, 0
+createProperty 'appendSaveFile', Boolean, false
 
 myTableModel = new LTableModel(1000, follow.value as Boolean)
 myTableModel.addTableModelListener(new TableModelListener() {
@@ -48,9 +49,12 @@ myTableModel.addTableModelListener(new TableModelListener() {
 	}
 });
 
+saveFileName = (fileName.value as File).getName()
+
 updateFollow = {
 	follow.value = myTableModel.isFollow()
 }
+
 
 onMessage = { incoming, outgoing, message ->
 	super.onTerminalMessage(incoming, outgoing, message)
@@ -61,7 +65,8 @@ onMessage = { incoming, outgoing, message ->
 	if( result && saveFile.value ) {
 		try {
 			char sep = ','
-			writer = new CSVWriter(new FileWriter(fileName.value, true), sep);
+			
+			writer = new CSVWriter(new FileWriter(saveFileName, true), sep);
 			String[] entries = myTableModel.getLastRow()
 			writer.writeNext(entries)
 			writer.flush()
@@ -85,6 +90,19 @@ addEventListener( PropertyEvent ) { event ->
 }
 
 addEventListener( ActionEvent ) { event ->
+	if ( event.key == "START" ) {
+		if( appendSaveFile.value )
+			saveFileName = (fileName.value as File).getName()
+		else {
+			saveFileName = (fileName.value as File).getName()
+			def ext = saveFileName.substring(saveFileName.lastIndexOf("."), saveFileName.length())
+			def name = saveFileName.substring(0, saveFileName.lastIndexOf("."))
+			def timestamp = new Date().getTime()
+			saveFileName = "${(fileName.value as File).getParent()}${File.separator}$name-$timestamp$ext"
+			println saveFileName
+		}
+	}
+
 	if ( event.key == "RESET" ) {
 		myTableModel.reset()
 	}
@@ -103,12 +121,17 @@ settings( label: "General" ) {
 	box {
 		property(property: summaryRows, label: 'Max Rows in Summary' )
 	}
-	label( "Logging" )
+	
+}
+
+settings(label:'Logging') {
 	box {
 		property(property: saveFile, label: 'Save Logs?' )
 		property(property: fileName, label: 'Log File (Comma Separated) ' )
+		label('If not appending file, its name will be used to generate new log files each time test is run.')
+		property(property: appendSaveFile, label: 'Check to append selected file', )
 	}
-} 
+}
 
 generateSummary = { chapter ->
 	if (summaryRows.value > 0) {
