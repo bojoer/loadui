@@ -52,6 +52,9 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.fx.MainWindow;
 
 import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.ui.form.fields.*;
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
+import java.io.File;
 
 /**
 * @author robert
@@ -60,6 +63,7 @@ import com.eviware.loadui.fx.AppState;
 public class TableWidget extends VBox, EventHandler, TableModelListener {
 	
 	var table:LTable;
+	var saveFile:FileInputField = FileInputField{};
 	public var model: LTableModel;
 	
 	var cb:CheckBox;
@@ -111,6 +115,24 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 						text: "Clear"
 						action: function() {
 							(model as LTableModel).clear();
+						}
+						disable: bind componentDisabled
+					}, Button {
+						text: "Save"
+						action: function() {
+							def dialog:Dialog = Dialog {
+							            title: "Save Table!"
+							            content: [
+							                Label { text: 'Choose where to save table log:'},
+							            	saveFile
+							            ]
+							            okText: "Yes"
+							            cancelText: "Cancel"
+							            onOk: function() {
+											table.save(saveFile.value as File);
+											dialog.close();
+							            }
+							        }
 						}
 						disable: bind componentDisabled
 					}, cb = CheckBox {
