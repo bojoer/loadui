@@ -61,7 +61,7 @@ public abstract class SpinnerBase extends HBox {
 		text: textFromValue( value );
 	}
 	def textBoxText = bind textBox.text on replace {
-		def newVal = clean( valueFromText( textBoxText ) )
+		def newVal = clean( valueFromText( textBoxText ) );
 		if( value != newVal ) {
 			value = newVal;
 		} else {
@@ -80,7 +80,7 @@ public abstract class SpinnerBase extends HBox {
 						action: function():Void {
 							textBox.commit();
 							textBox.requestFocus();
-							value = clean( nextValue() )
+							value = clean( nextValue() );
 						}
 					}, Button {
 						styleClass: "down-button"
@@ -89,7 +89,7 @@ public abstract class SpinnerBase extends HBox {
 						action: function():Void {
 							textBox.commit();
 							textBox.requestFocus();
-							value = clean( prevValue() )
+							value = clean( prevValue() );
 						}
 					}
 				]
