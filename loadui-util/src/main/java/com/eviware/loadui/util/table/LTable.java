@@ -18,11 +18,19 @@ package com.eviware.loadui.util.table;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 
 import org.jdesktop.swingx.JXTable;
+
+import com.eviware.loadui.api.ui.table.LTableModel;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 import javax.swing.table.TableModel;
 
@@ -65,5 +73,46 @@ public class LTable extends JXTable {
 
 	public void setAutoscroll(boolean autoscroll) {
 		this.autoscroll = autoscroll;
+	}
+	
+	public boolean save ( File saveFile ) {
+		boolean result = true;
+		CSVWriter writer = null;
+		LTableModel model = (LTableModel) getModel();
+		try {
+			writer = new CSVWriter(new FileWriter(saveFile, true), ',');
+			for( int cnt = 0; cnt < model.getRowCount(); cnt++ ) 
+				writer.writeNext( convertToStringArray(model.getRowAt(cnt)));
+			writer.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = false;
+		} finally {
+			if ( writer != null )
+				try
+				{
+					writer.close();
+				}
+				catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param arraylist
+	 * @return
+	 */
+	private String[] convertToStringArray(ArrayList arraylist)
+	{
+		String[] result = new String[arraylist.size()];
+		for( int cnt= 0; cnt < arraylist.size(); cnt++ ) {
+			result[cnt] = (arraylist.get(cnt)).toString();
+		}
+		return result;
 	}
 }
