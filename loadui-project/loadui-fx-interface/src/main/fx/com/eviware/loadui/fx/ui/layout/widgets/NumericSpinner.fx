@@ -22,16 +22,18 @@ public class NumericSpinner extends SpinnerBase {
 	public var minimum:Integer;
 	public var maximum:Integer;
 	
-	override var value = 0 on replace oldVal {
-		if( value instanceof Integer ) {
-			def intVal = value as Integer;
+	override function clean( newValue:Object ):Object {
+		if( newValue instanceof Integer ) {
+			def intVal = newValue as Integer;
 			if( FX.isInitialized( minimum ) and intVal < minimum ) {
-				value = minimum;
+				return minimum;
 			} else if( FX.isInitialized( maximum ) and intVal > maximum ) {
-				value = maximum;
+				return maximum;
+			} else {
+				return intVal;
 			}
 		} else {
-			value = oldVal;
+			return value;
 		}
 	}
 	
