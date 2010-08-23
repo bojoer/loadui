@@ -25,6 +25,8 @@ public class TimeSpinner extends SpinnerBase {
 	
 	public var allowAnyTime = true;
 	
+	override var value = 0;
+	
 	override function clean( newValue:Object ):Object {
 		if( newValue instanceof Integer ) {
 			def intVal = newValue as Integer;
