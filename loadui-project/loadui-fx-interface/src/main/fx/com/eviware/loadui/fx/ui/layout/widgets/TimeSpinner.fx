@@ -23,6 +23,8 @@ public def ANY_TIME = "*";
 public class TimeSpinner extends SpinnerBase {
 	public var range:Integer = 60;
 	
+	public var allowAnyTime = true;
+	
 	override var value = 0 on replace oldVal {
 		if( value instanceof Integer ) {
 			def intVal = value as Integer;
@@ -31,7 +33,7 @@ public class TimeSpinner extends SpinnerBase {
 			} else if( intVal < 0 ) {
 				value = 0;
 			}
-		} else if( value != ANY_TIME ) {
+		} else if( value != ANY_TIME or not allowAnyTime ) {
 			value = oldVal;
 		}
 	}
@@ -54,7 +56,7 @@ public class TimeSpinner extends SpinnerBase {
 	override function nextValue():Object {
 		if( value instanceof Integer ) {
 			def newVal = (value as Integer) + 1;
-			return if( newVal >= range ) ANY_TIME else newVal;
+			return if( newVal < range ) newVal else if( allowAnyTime ) ANY_TIME else 0;
 		}
 		return 0;
 	}
@@ -62,7 +64,7 @@ public class TimeSpinner extends SpinnerBase {
 	override function prevValue():Object {
 		if( value instanceof Integer ) {
 			def newVal = (value as Integer) - 1;
-			return if( newVal < 0 ) ANY_TIME else newVal;
+			return if( newVal >= 0 ) newVal else if( allowAnyTime ) ANY_TIME else range - 1;
 		}
 		return range - 1;
 	}
