@@ -36,7 +36,6 @@ public abstract class SpinnerBase extends HBox {
 	}
 	
 	public var value:Object on replace oldVal {
-		println("value changed to {value} from {oldVal}");
 		def newValue = clean( value );
 		if( value != newValue )
 			throw new RuntimeException( "Illegal value for Spinner set: {newValue}" );
