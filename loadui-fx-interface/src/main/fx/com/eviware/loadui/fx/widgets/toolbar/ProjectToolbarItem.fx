@@ -23,12 +23,18 @@ package com.eviware.loadui.fx.widgets.toolbar;
 
 import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
 import com.eviware.loadui.fx.FxUtils.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
 
 import javafx.scene.image.Image;
+import com.eviware.loadui.fx.dialogs.CreateNewProjectDialog;
+import com.eviware.loadui.api.model.WorkspaceItem;
 
 def iconImage = Image { url: "{__ROOT__}images/png/project-icon.png" };
 
 public class ProjectToolbarItem extends ToolbarItem {
+    
+    public-init var workspace:WorkspaceItem;
 	override var icon = iconImage;
 	
 	override var tooltip = "Creates a new Project in the Workspace";
@@ -36,4 +42,12 @@ public class ProjectToolbarItem extends ToolbarItem {
 	override var label = "New Project";
 	
 	override var category = "projects";
+	
+	override def onMouseClicked = function (me:MouseEvent) {
+		  if( me.button == MouseButton.PRIMARY and me.clickCount == 2) {
+		      CreateNewProjectDialog { 
+		      	workspace: workspace 
+		     };
+		  }  
+	}
 }

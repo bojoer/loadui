@@ -157,7 +157,7 @@ public class MainWindow {
 			height: bind scene.height - inspectors.height - 100
 		};
 		
-		toolbar.addItem( ProjectToolbarItem {} );
+		toolbar.addItem( ProjectToolbarItem { workspace: workspace } );
 		toolbar.addItem( AgentToolbarItem {} );
 		
 		def feed:FeedDisplay = FeedDisplay {
