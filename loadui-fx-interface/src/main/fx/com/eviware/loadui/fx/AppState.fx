@@ -43,12 +43,16 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Panel;
 import javafx.scene.layout.Container;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import org.jfxtras.animation.wipe.FadeWipe;
 import org.jfxtras.animation.wipe.FadeZoomWipe;
 import org.jfxtras.animation.wipe.Flip180Wipe;
 import org.jfxtras.animation.wipe.Wipe;
 import org.slf4j.LoggerFactory;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.util.Math;
 
 public def WORKSPACE_FRONT = "workspace.front";
 public def PROJECT_FRONT = "project.front";
@@ -68,14 +72,25 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.AppState" 
 public-read var instance:AppState;
 
 
-def dummyNode = Group {};
-public var overlay:Node[] on replace {
-	delete dummyNode from instance.overlayLayer.content;
-	instance.overlayLayer.content = overlay;
-	FX.deferAction( function():Void {
-		if( dummyNode.parent == null )
+def workaround = Timeline {
+	keyFrames: KeyFrame { time: 250ms, action: function() {
+		if( dummyNode.parent == null ) {
 			insert dummyNode into instance.overlayLayer.content;
-	} );
+		} else {
+			delete dummyNode from instance.overlayLayer.content;
+		}
+		dummyNode.layoutX = 100*Math.random();
+	} }
+	repeatCount: Timeline.INDEFINITE
+};
+def dummyNode = Rectangle { fill: Color.TRANSPARENT };
+public var overlay:Node[] on replace {
+	//delete dummyNode from instance.overlayLayer.content;
+	instance.overlayLayer.content = overlay;
+	//FX.deferAction( function():Void {
+	//	if( dummyNode.parent == null )
+	//		insert dummyNode into instance.overlayLayer.content;
+	//} );
 }
 
 /**
@@ -136,6 +151,8 @@ public class AppState extends ApplicationState {
 			globalLayer,
 			overlayLayer
 		];
+		
+		workaround.play();
 	}
 	
 	/**
