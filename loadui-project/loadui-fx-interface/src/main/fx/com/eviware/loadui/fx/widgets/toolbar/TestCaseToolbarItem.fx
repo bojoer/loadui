@@ -25,6 +25,15 @@ import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
 import com.eviware.loadui.fx.FxUtils.*;
 
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
+
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.fx.AppState;
+
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
+import com.eviware.loadui.fx.MainWindow;
+import javafx.scene.text.Text;
 
 def iconImage = Image { url: "{__ROOT__}images/png/testcase-icon.png" };
 
@@ -36,4 +45,29 @@ public class TestCaseToolbarItem extends ToolbarItem {
 	override var label = "TestCase";
 	
 	override var category = "TestCases";
+	
+	override def onMouseClicked = function (me:MouseEvent) {
+					  if( me.button == MouseButton.PRIMARY and me.clickCount == 2) {
+					     var project:ProjectItem = AppState.instance.getActiveCanvas() as ProjectItem;
+					     var name = "TestCase";
+					     var i=0;
+					     while( sizeof project.getScenes()[c|c.getLabel() == name] > 0 )
+					     	name = "TestCase ({++i})";
+					     			
+					     if (not MainWindow.instance.workspace.isLocalMode()) {
+					     	def warning:Dialog = Dialog {
+					     		title: "Warning!"
+					     		content: Text {
+					     		    content: "Switch to local mode, or place {name} on an agent in order to run it"
+					     		}
+					     		okText: "Ok"
+					     		onOk: function() {
+					     		    warning.close();
+					     		}
+					     		noCancel: true
+					     	}
+					     }
+					    project.createScene( name );
+					  }  
+				}
 }

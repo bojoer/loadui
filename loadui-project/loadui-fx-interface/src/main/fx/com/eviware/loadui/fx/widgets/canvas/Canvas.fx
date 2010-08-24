@@ -184,7 +184,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	}
 	override var onDrop = onDropFunction;
 	
-	protected function createComponent( descriptor:ComponentDescriptor ):ComponentItem {
+	public function createComponent( descriptor:ComponentDescriptor ):ComponentItem {
 		var name = "{descriptor.getLabel()}";
 		var i=0;
 		while( sizeof canvasItem.getComponents()[c|c.getLabel() == name] > 0 )

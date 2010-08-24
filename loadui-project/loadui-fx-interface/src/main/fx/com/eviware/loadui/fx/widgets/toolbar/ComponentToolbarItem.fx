@@ -26,6 +26,12 @@ import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import javafx.scene.image.Image;
 
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
+
+import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.fx.AppState;
+
 def defaultImage = Image { url: "{__ROOT__}images/png/default-component-icon.png" };
 
 public class ComponentToolbarItem extends ToolbarItem {
@@ -38,4 +44,16 @@ public class ComponentToolbarItem extends ToolbarItem {
 		label = descriptor.getLabel();
 		category = descriptor.getCategory();
 	}
+	
+	override def onMouseClicked = function (me:MouseEvent) {
+				  if( me.button == MouseButton.PRIMARY and me.clickCount == 2) {
+				     var canvas:CanvasItem = AppState.instance.getActiveCanvas();
+				     var name = "{descriptor.getLabel()}";
+				     var i=0;
+				     while( sizeof canvas.getComponents()[c|c.getLabel() == name] > 0 )
+				     		name = "{descriptor.getLabel()} ({++i})";
+				     		
+				     canvas.createComponent( name, descriptor );
+				  }  
+			}
 }

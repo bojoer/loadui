@@ -23,12 +23,17 @@ package com.eviware.loadui.fx.widgets.toolbar;
 
 import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
 import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.dialogs.CreateNewAgentDialog;
+import com.eviware.loadui.api.model.WorkspaceItem;
 
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
 
 def iconImage = Image { url: "{__ROOT__}images/png/agent-icon.png" };
 
 public class AgentToolbarItem extends ToolbarItem {
+    public-init var workspace:WorkspaceItem;
 	override var icon = iconImage;
 	
 	override var tooltip = "Creates a new Agent in the Workspace";
@@ -36,4 +41,10 @@ public class AgentToolbarItem extends ToolbarItem {
 	override var label = "New Agent";
 	
 	override var category = "agents";
+	
+	override def onMouseClicked = function (me:MouseEvent) {
+			  if( me.button == MouseButton.PRIMARY and me.clickCount == 2) {
+			      CreateNewAgentDialog { workspace: workspace };
+			  }  
+		}
 }
