@@ -1,11 +1,13 @@
 package com.eviware.loadui.impl.property;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.config.PropertyConfig;
 import com.eviware.loadui.config.PropertyListConfig;
+import com.eviware.loadui.util.StringUtils;
 
 public class AttributeHolderSupport implements AttributeHolder
 {
@@ -35,18 +37,38 @@ public class AttributeHolderSupport implements AttributeHolder
 			{
 				if( key.equals( config.getPropertyArray( i ).getKey() ) )
 				{
-					config.getPropertyArray( i ).setStringValue( value );
+					if( StringUtils.isNullOrEmpty( value ) )
+					{
+						config.removeProperty( i );
+						attributes.remove( key );
+					}
+					else
+					{
+						config.getPropertyArray( i ).setStringValue( value );
+						attributes.put( key, value );
+					}
 					break;
 				}
 			}
 		}
-		else
+		else if( !StringUtils.isNullOrEmpty( value ) )
 		{
 			PropertyConfig attr = config.addNewProperty();
 			attr.setKey( key );
 			attr.setStringValue( value );
+			attributes.put( key, value );
 		}
-		attributes.put( key, value );
 	}
 
+	@Override
+	public void removeAttribute( String key )
+	{
+		setAttribute( key, null );
+	}
+
+	@Override
+	public Collection<String> getAttributes()
+	{
+		return attributes.keySet();
+	}
 }

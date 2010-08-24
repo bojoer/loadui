@@ -1,5 +1,7 @@
 package com.eviware.loadui.api.model;
 
+import java.util.Collection;
+
 public interface AttributeHolder
 {
 	/**
@@ -25,4 +27,20 @@ public interface AttributeHolder
 	 *         does not exist.
 	 */
 	public String getAttribute( String key, String defaultValue );
+
+	/**
+	 * Removes a String attribute previously stored for the AttributeHolder, if
+	 * it exists.
+	 * 
+	 * @param key
+	 *           The name of the attribute to remove.
+	 */
+	public void removeAttribute( String key );
+
+	/**
+	 * Gets a list of all attributes stored for the AttributeHolder.
+	 * 
+	 * @return a Collection<String> of all the attribute keys.
+	 */
+	public Collection<String> getAttributes();
 }
