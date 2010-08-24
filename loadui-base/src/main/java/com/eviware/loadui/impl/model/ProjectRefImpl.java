@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.EventObject;
 
 import org.apache.xmlbeans.XmlException;
@@ -195,5 +196,17 @@ public class ProjectRefImpl implements ProjectRef
 	public void setAttribute( String key, String value )
 	{
 		attributeHolderSupport.setAttribute( key, value );
+	}
+
+	@Override
+	public void removeAttribute( String key )
+	{
+		attributeHolderSupport.removeAttribute( key );
+	}
+
+	@Override
+	public Collection<String> getAttributes()
+	{
+		return attributeHolderSupport.getAttributes();
 	}
 }

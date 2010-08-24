@@ -194,6 +194,18 @@ public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 	}
 
 	@Override
+	public void removeAttribute( String key )
+	{
+		attributeHolderSupport.removeAttribute( key );
+	}
+
+	@Override
+	public Collection<String> getAttributes()
+	{
+		return attributeHolderSupport.getAttributes();
+	}
+
+	@Override
 	public Collection<Property<?>> getProperties()
 	{
 		return properties.values();

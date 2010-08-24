@@ -86,20 +86,23 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	
 	protected def connectionLayer = Group {};
 	protected def componentLayer = Group {};
+	protected def noteLayer = Group {};
 	
 	public def testcaseItem = modelItem as SceneItem;
 	
 	protected def layers = Group {
-		content: [ connectionLayer, componentLayer ]
+		content: [ noteLayer, connectionLayer, componentLayer ]
 	}
 	
 	public var padding:Integer = 200;
 	
 	public var offsetX:Integer = 0 on replace {
 		componentLayer.layoutX = -offsetX;
+		noteLayer.layoutX = -offsetX;
 	}
 	public var offsetY:Integer = 0 on replace {
 		componentLayer.layoutY = -offsetY;
+		noteLayer.layoutY = -offsetY;
 	}
 	
 	public-read var areaWidth:Integer = 0;
@@ -184,6 +187,18 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	}
 	override var onDrop = onDropFunction;
 	
+	public function createNote():Void {
+		def x = if( contextMouseEvent != null ) contextMouseEvent.sceneX else scene.width / 2;
+		def y = if( contextMouseEvent != null ) contextMouseEvent.sceneY else scene.height / 2;
+		contextMouseEvent = null;
+		
+		insert Note.createNote( this, x, y ) into noteLayer.content;
+	}
+	
+	public function removeNote( note:Note ):Void {
+		delete note from noteLayer.content; 
+	}
+	
 	public function createComponent( descriptor:ComponentDescriptor ):ComponentItem {
 		var name = "{descriptor.getLabel()}";
 		var i=0;
@@ -211,6 +226,13 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 				clone.setAttribute( "gui.layoutX", "{ layoutX as Integer }" );
 				clone.setAttribute( "gui.layoutY", "{ layoutY as Integer }" );
 			}
+		}
+	}
+	
+	def addNoteAction = MenuItem {
+		text: "Add note"
+		action: function():Void {
+			createNote();
 		}
 	}
 	
@@ -281,7 +303,8 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		items: [
 			cloneAction,
 			deleteAction,
-			moveSubmenu
+			moveSubmenu,
+			addNoteAction
 		]
 		onShowing: function():Void {
 			deleteAction.disable = sizeof Selectable.selects[d|d instanceof Deletable] == 0;
@@ -294,6 +317,8 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		addMouseHandler( MOUSE_PRESSED, onMouseDown );
 		addMouseHandler( MOUSE_RELEASED, onMouseUp );
 	}
+	
+	var contextMouseEvent:MouseEvent;
 	
 	override function create() {
 		Group {
@@ -319,7 +344,8 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 					}
 					onMouseClicked: function( e:MouseEvent ) {
 						if( e.button == MouseButton.SECONDARY ) {
-							openContextMenu( e.screenX, e.screenY );
+							contextMouseEvent = e;
+							contextMenu.show( this, e.screenX, e.screenY );
 						}
 					}
 				}, contextMenu
@@ -350,6 +376,8 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			
 			for( connection in canvasItem.getConnections() )
 				addConnection(connection);
+			
+			noteLayer.content = Note.loadNotes( this );
 				
 			refreshComponents();
 		}
@@ -397,9 +425,9 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			Math.min( Math.max( padding - minY, (height as Integer) - ( maxY + padding ) ), 0 )
 		else padding - minY;
 		
-		for( cmp in componentLayer.content ) {
-			cmp.layoutX += shiftX;
-			cmp.layoutY += shiftY;
+		for( obj in [ componentLayer.content, noteLayer.content ] ) {
+			obj.layoutX += shiftX;
+			obj.layoutY += shiftY;
 		}
 		
 		areaWidth = Math.max( width as Integer, maxX + shiftX + padding );
@@ -418,13 +446,6 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	 */
 	public function lookupCanvasNode( id:String ):CanvasObjectNode {
 		componentLayer.lookup( id ) as CanvasObjectNode;
-	}
-	
-	/**
-	 * Opens the context menu at the given location relative to the screen.
-	 */
-	function openContextMenu( x:Number, y:Number ):Void {
-		contextMenu.show( this, x, y );
 	}
 	
 	function addComponent( component:ComponentItem ):Void {
