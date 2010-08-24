@@ -56,18 +56,17 @@ public class TimeField extends HBox, FormField {
 
 	var hSpinner: NumericSpinner = NumericSpinner {
 		minimum: 0
-		maximum: 1000
-		//value: 0
+		layoutInfo: LayoutInfo { hfill: true vfill: false hgrow: Priority.ALWAYS vgrow: Priority.NEVER}
 	}
 	var mSpinner: NumericSpinner = NumericSpinner {
 		minimum: 0
 		maximum: 59
-		//value: 0
+		layoutInfo: LayoutInfo { hfill: true vfill: false hgrow: Priority.ALWAYS vgrow: Priority.NEVER}
 	}
 	var sSpinner: NumericSpinner = NumericSpinner {
 		minimum: 0
 		maximum: 59
-		//value: 0
+		layoutInfo: LayoutInfo { hfill: true vfill: false hgrow: Priority.ALWAYS vgrow: Priority.NEVER}
 	}
 	
 	var hValue = bind hSpinner.value on replace {
@@ -82,17 +81,21 @@ public class TimeField extends HBox, FormField {
 		buildValue();	
 	}
 	
+	var initialValue: Long;
+	var initialized: Boolean = false;
+	
 	override var value on replace {
 		if( value != null and not ( value instanceof Long ) )
 			throw new IllegalArgumentException( "Value must be of type Long!" );
 
-		if(value == null){
-			value = 0;
+		if(not initialized){
+			initialValue = value as Long;
+			initialized = true;
 		}
 		parseValue(value as Long);
 	}
 	
-	override var layoutInfo = LayoutInfo { hfill:true vfill:true hgrow: Priority.ALWAYS vgrow: Priority.ALWAYS}
+	override var layoutInfo = LayoutInfo { hfill: true vfill: false hgrow: Priority.ALWAYS vgrow: Priority.NEVER}
 	
 	init {
     	padding = Insets { top: 0 right: 0 bottom: 0 left: 0}
@@ -109,8 +112,10 @@ public class TimeField extends HBox, FormField {
 			}
 	    	sSpinner
     	];
-    	
-    	parseValue(value as Long);
+    }
+    
+    postinit{
+   		parseValue(initialValue);
     }
     
     function parseValue(total: Long): Void {
@@ -120,9 +125,9 @@ public class TimeField extends HBox, FormField {
         def minutes = seconds / 60;
         seconds -= minutes * 60;
         
-		hSpinner.value = hours;
-		mSpinner.value = minutes;
-		sSpinner.value = seconds;
+		hSpinner.value = hours as Integer;
+		mSpinner.value = minutes as Integer;
+		sSpinner.value = seconds as Integer;
     }
     
     function buildValue(): Void {
@@ -137,9 +142,5 @@ public class TimeField extends HBox, FormField {
 		}
     }
     
-    override function getPrefHeight( width:Float ) {
-		hSpinner.getPrefHeight( width )
-	}
-	
 }
 

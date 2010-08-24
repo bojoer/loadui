@@ -16,7 +16,9 @@
 package com.eviware.loadui.util.layout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Observable;
 import java.util.TreeSet;
 
@@ -26,14 +28,15 @@ import java.util.TreeSet;
 public class SchedulerModel extends Observable {
 
 	private ArrayList<Day> days = new ArrayList<Day>();
-	
+
 	private ArrayList<Integer> seconds = new ArrayList<Integer>();
 	private ArrayList<Integer> minutes = new ArrayList<Integer>();
 	private ArrayList<Integer> hours = new ArrayList<Integer>();
 
 	private long duration = 0;
-	private long runsCount = 0;
-	
+	private long maxDuration = 0;
+	private int runsCount = 0;
+
 	public ArrayList<Integer> getSeconds() {
 		return seconds;
 	}
@@ -41,9 +44,9 @@ public class SchedulerModel extends Observable {
 	public void setSeconds(TreeSet<Integer> seconds) {
 		this.seconds.clear();
 		Iterator<Integer> i = seconds.iterator();
-		while(i.hasNext()){
+		while (i.hasNext()) {
 			Integer second = i.next();
-			if(second>=0 && second <= 59){
+			if (second >= 0 && second <= 59) {
 				this.seconds.add(second);
 			}
 
@@ -58,9 +61,9 @@ public class SchedulerModel extends Observable {
 	public void setMinutes(TreeSet<Integer> minutes) {
 		this.minutes.clear();
 		Iterator<Integer> i = minutes.iterator();
-		while(i.hasNext()){
+		while (i.hasNext()) {
 			Integer minute = i.next();
-			if(minute>=0 && minute <= 59){
+			if (minute >= 0 && minute <= 59) {
 				this.minutes.add(minute);
 			}
 		}
@@ -74,9 +77,9 @@ public class SchedulerModel extends Observable {
 	public void setHours(TreeSet<Integer> hours) {
 		this.hours.clear();
 		Iterator<Integer> i = hours.iterator();
-		while(i.hasNext()){
+		while (i.hasNext()) {
 			Integer hour = i.next();
-			if(hour>=0 && hour <= 59){
+			if (hour >= 0 && hour <= 59) {
 				this.hours.add(hour);
 			}
 		}
@@ -86,8 +89,8 @@ public class SchedulerModel extends Observable {
 	public ArrayList<Day> getDays() {
 		return days;
 	}
-	
-	public Boolean[] getDaysAsBoolean(){
+
+	public Boolean[] getDaysAsBoolean() {
 		Boolean[] d = new Boolean[7];
 		d[0] = days.contains(Day.MON);
 		d[1] = days.contains(Day.TUE);
@@ -102,10 +105,10 @@ public class SchedulerModel extends Observable {
 	public void setDays(TreeSet<Integer> daysInWeek) {
 		days.clear();
 		Iterator<Integer> dayIterator = daysInWeek.iterator();
-		while(dayIterator.hasNext()){
+		while (dayIterator.hasNext()) {
 			switch (dayIterator.next()) {
 			case 1:
-				days.add(Day.SUN);				
+				days.add(Day.SUN);
 				break;
 			case 2:
 				days.add(Day.MON);
@@ -143,7 +146,7 @@ public class SchedulerModel extends Observable {
 		days.add(Day.SUN);
 		setChanged();
 	}
-	
+
 	public void setDays(ArrayList<Day> days) {
 		this.days = days;
 		setChanged();
@@ -158,17 +161,65 @@ public class SchedulerModel extends Observable {
 		setChanged();
 	}
 
-	public long getRunsCount() {
+	public int getRunsCount() {
 		return runsCount;
 	}
 
-	public void setRunsCount(long runsCount) {
+	public void setRunsCount(int runsCount) {
 		this.runsCount = runsCount;
+	}
+
+	public long getMaxDuration() {
+		return maxDuration;
+	}
+
+	public void setMaxDuration(long maxDuration) {
+		this.maxDuration = maxDuration;
 		setChanged();
 	}
 
 	public enum Day {
 		SUN, MON, TUE, WED, THU, FRI, SAT
+	}
+
+	public HashMap<Integer, List<ExecutionTime>> getExecutionTimeMap() {
+		List<ExecutionTime> prevList = new ArrayList<ExecutionTime>();
+		List<ExecutionTime> nextList = new ArrayList<ExecutionTime>();
+
+		int current = new ExecutionTime().getTime();
+
+		Boolean[] daysAsBoolean = getDaysAsBoolean();
+		for (int i = 0; i < daysAsBoolean.length; i++) {
+			int dayIndex = i + 1;
+			if (daysAsBoolean[i]) {
+				for (Integer h : hours) {
+					for (Integer m : minutes) {
+						int time = ((dayIndex * 24 + h) * 60 + m) * 60 * 1000;
+						if (time + duration < current) {
+							prevList.add(new ExecutionTime(dayIndex, h, m));
+						}
+						else {
+							nextList.add(new ExecutionTime(dayIndex, h, m));
+						}
+					}
+				}
+			}
+		}
+		nextList.addAll(prevList);
+
+		while (runsCount > 0 && nextList.size() > runsCount) {
+			nextList.remove(nextList.size() - 1);
+		}
+
+		HashMap<Integer, List<ExecutionTime>> result = new HashMap<Integer, List<ExecutionTime>>();
+		for (int i = 1; i < 8; i++) {
+			result.put(i, new ArrayList<ExecutionTime>());
+		}
+		for (int i = 0; i < nextList.size(); i++) {
+			int day = nextList.get(i).getDay();
+			result.get(day).add(nextList.get(i));
+		}
+		return result;
 	}
 
 }

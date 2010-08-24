@@ -56,7 +56,7 @@ public abstract class SpinnerBase extends HBox {
 	protected function clean( newValue:Object ):Object { newValue }
 	
 	def textBox:TextBox = TextBox {
-		layoutInfo: LayoutInfo { vfill: true, hfill: true, width: 30 }
+		layoutInfo: LayoutInfo { vfill: false, hfill: true, width: 30 }
 		text: textFromValue( value );
 	}
 	def textBoxText = bind textBox.text on replace {

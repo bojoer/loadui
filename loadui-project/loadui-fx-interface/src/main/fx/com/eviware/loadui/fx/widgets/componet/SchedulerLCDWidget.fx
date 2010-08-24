@@ -31,12 +31,15 @@ import com.eviware.loadui.fx.ui.layout.Widget;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.popup.TooltipHolder;
 import com.eviware.loadui.util.layout.SchedulerModel;
+import com.eviware.loadui.util.layout.ExecutionTime;
 
 import java.util.Calendar;
 import java.util.Observer;
 import java.util.Observable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Date;
 
 public class SchedulerLCDWidget extends Widget, BaseNode, Resizable, TooltipHolder, Observer {
 
@@ -53,6 +56,12 @@ public class SchedulerLCDWidget extends Widget, BaseNode, Resizable, TooltipHold
     
     var dailyLines: DailySchedule[] = [];
     var daysVisible: Boolean[] = [];
+    
+    var currentPosition: CurrentPosition = CurrentPosition{
+    	onRefresh: function(): Void {
+    		update(model, null);	
+    	}
+    }
     
     public override function create() {
     	
@@ -125,7 +134,7 @@ public class SchedulerLCDWidget extends Widget, BaseNode, Resizable, TooltipHold
 							    createVLine(325, 0, 7, false),
 							    createVLine(350, 0, 17),
 							    dailyLines,
-							    CurrentPosition{}                    	
+							    currentPosition                    	
 	                    	]
 	                    }
                     ]	
@@ -174,13 +183,22 @@ public class SchedulerLCDWidget extends Widget, BaseNode, Resizable, TooltipHold
     
     override function update(observable: Observable, arg: Object) {
         FX.deferAction(function(): Void {
-            duration = model.getDuration();
+        	def dur = model.getDuration();
+        	if(dur == 0){
+        		duration = model.getMaxDuration();	
+        	}
+        	else{
+        		duration = dur;
+        	}
             daysVisible = model.getDaysAsBoolean();
-            for(d in dailyLines){
-            	d.hours = model.getHours();
-            	d.minutes = model.getMinutes();
-            	d.generate();
-            }
+            
+            var timeMap = model.getExecutionTimeMap();
+            var keys: Iterator = timeMap.keySet().iterator();
+			while(keys.hasNext()){
+				var day: Integer = keys.next() as Integer;
+				dailyLines[day - 1].timeList = timeMap.get(day);
+				dailyLines[day - 1].generate();
+			}
         });
     }
 }
@@ -191,29 +209,29 @@ public class DailySchedule extends Group {
 	
 	public-init var dayWidth: Number = 50;
 	
-	public var hours: List;
+	public var timeList: List;
 	
-	public var minutes: List;
-
 	public var duration: Number = 0;
 	
 	public function generate() {
 		delete content;
-		for(h in hours){
-			for(m in minutes){
-				create(h as Integer, m as Integer);
-			}
+		if(not visible){
+			return;
+		}
+		for(t in timeList){
+			create((t as ExecutionTime).getHour(), (t as ExecutionTime).getMinute());
 		}
 	}
 
 	function create(h: Integer, m: Integer): Void {
-		insert SchedulePosition{
+		var pos = SchedulePosition{
 			dayIndex: dayIndex
 			time: h * 60 + m
 			duration: bind duration
-			visible: bind visible
-			minWidth: bind 0.56 * dayWidth / (hours.size() * minutes.size())
-    	} into content;
+			minWidth: bind Math.min(0.56 * dayWidth / timeList.size(), 1)
+    	}
+		insert pos into content;
+		insert pos.wrap() into content;
 	}
 	
 }
@@ -225,6 +243,10 @@ public class SchedulePosition extends Rectangle {
 	public-init var dayWidth: Number = 50;
 	
 	public-init var minWidth: Number = 1;
+	
+	public-init var maxWidth: Number = bind 7 * dayWidth - x;
+	
+	public var naturalWidth = bind (duration / 60000) * (dayWidth / 1440);
 	
 	public var time: Number = 0 on replace {
 		x = time * dayWidth / 1440 + dayWidth * (dayIndex - 1);	
@@ -239,13 +261,27 @@ public class SchedulePosition extends Rectangle {
         managed = false;
 	}
 	
-	override var width = bind Math.max((duration / 60000) * (dayWidth / 1440), minWidth);
+	override var width = bind Math.min(Math.max(naturalWidth, minWidth), maxWidth);
+	
+	public function wrap(): SchedulePosition {
+		if(naturalWidth > maxWidth){
+			return SchedulePosition{
+				dayIndex: 1
+				time: 0
+				duration: bind (naturalWidth - maxWidth) * 60000 * 1440 / dayWidth
+				minWidth: bind minWidth
+	    	}
+	    }
+	    null;
+	}
 	
 }
 
 public class CurrentPosition extends Rectangle {
 
 	public-init var dayWidth: Number = 50;
+	
+	public var onRefresh: function(): Void;
 	
 	init{
 	    y = -13;
@@ -276,6 +312,7 @@ public class CurrentPosition extends Rectangle {
 		var day = if(calendar.get(Calendar.DAY_OF_WEEK) == 0) 6 else calendar.get(Calendar.DAY_OF_WEEK) - 2;
 		var mins = day * 24 * 60 + calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
 	    x = mins * dayWidth / 1440;
+		onRefresh();	    
     }
 	
 }

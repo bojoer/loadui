@@ -61,7 +61,7 @@ import com.eviware.loadui.util.layout.SchedulerModel
 def schedulerModel = new SchedulerModel()
 
 createProperty( 'day', String, "* (All)" )
-createProperty( 'time', String, "0 * *" )
+createProperty( 'time', String, "0 0 0" )
 def duration = createProperty( 'duration', Long, 0 )
 def runsCount = createProperty( 'runsCount', Long, 0 )
 
@@ -183,10 +183,11 @@ validateDuration = {
 	calendar.setTime(nextDate)
 	calendar.add(Calendar.SECOND, 1)
 	def dateAfterNext = expr.getNextValidTimeAfter(calendar.getTime())
-	def diff = (dateAfterNext.getTime() - nextDate.getTime()) / 1000
-	if(diff < duration.value){
-		duration.value = diff
+	def diff = dateAfterNext.getTime() - nextDate.getTime()
+	if(diff/1000 < duration.value){
+		duration.value = diff/1000
 	}
+	schedulerModel.setMaxDuration(diff)
 }
 
 updateState = {
@@ -196,7 +197,7 @@ updateState = {
 	schedulerModel.setHours(expr.hours)
 	schedulerModel.setDays(expr.daysOfWeek)
 	schedulerModel.setDuration(duration.value * 1000)
-	schedulerModel.setRunsCount(runsCount.value)
+	schedulerModel.setRunsCount((int)runsCount.value)
 	schedulerModel.notifyObservers()
 }
 
@@ -345,4 +346,5 @@ settings( label: "Basic" ) {
 	property( property: runsCount, label: 'Runs')
 }
 
+validateDuration()
 updateState()
