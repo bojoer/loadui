@@ -20,7 +20,6 @@
 */
 package com.eviware.loadui.fx.ui.form.fields;
 
-import javafx.scene.control.TextBox;
 import javafx.scene.control.Label;
 import java.lang.IllegalArgumentException;
 import javafx.scene.layout.LayoutInfo;
@@ -28,15 +27,11 @@ import javafx.scene.layout.Priority;
 
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import javafx.scene.control.Button;
 import javafx.geometry.VPos;
 import javafx.geometry.HPos;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
 import javafx.geometry.Insets;
-import javafx.animation.Timeline;
-import java.lang.NumberFormatException;
-import java.lang.Exception;
 
 import com.eviware.loadui.fx.ui.form.FormField;
 import com.eviware.loadui.fx.ui.layout.widgets.TimeSpinner;
@@ -51,122 +46,79 @@ public function build( id:String, label:String, value:Object ) {
  * @author predrag
  */
 public class QuartzCronField extends HBox, FormField {
+	
+	override var layoutInfo = LayoutInfo { hfill: true vfill: false hgrow: Priority.ALWAYS vgrow: Priority.NEVER };
+	override var padding = Insets { top: 0 right: 0 bottom: 0 left: 0 };
+	override var spacing = 2;
+	override var nodeVPos = VPos.CENTER;
 
-	var hSpinner: TimeSpinner = TimeSpinner {
+	def hSpinner:TimeSpinner = TimeSpinner {
 		range: 24
 		layoutInfo: LayoutInfo { hfill: true vfill: false hgrow: Priority.ALWAYS vgrow: Priority.NEVER}
 	}
 	
-	var mSpinner: TimeSpinner = TimeSpinner {
+	def mSpinner:TimeSpinner = TimeSpinner {
 		range: 60
 		layoutInfo: LayoutInfo { hfill: true vfill: false hgrow: Priority.ALWAYS vgrow: Priority.NEVER}
 	}
 	
-	var sSpinner: TimeSpinner = TimeSpinner {
+	def sSpinner:TimeSpinner = TimeSpinner {
 		range: 60
 		layoutInfo: LayoutInfo { hfill: true vfill: false hgrow: Priority.ALWAYS vgrow: Priority.NEVER}
 		allowAnyTime: false
 	}
 	
-	var hValue = bind hSpinner.value on replace {
+	def hValue = bind hSpinner.value on replace {
 		buildValue();
 	}
 
-	var mValue = bind mSpinner.value on replace {
+	def mValue = bind mSpinner.value on replace {
 		buildValue();
 	}
 	
-	var sValue = bind sSpinner.value on replace {
+	def sValue = bind sSpinner.value on replace {
 		buildValue();
 	}
 	
-	var initialValue: String = null;
-	var initialized: Boolean = false;
+	var shouldBuild = true;
 	
 	override var value on replace {
 		if( value != null and not ( value instanceof String ) )
 			throw new IllegalArgumentException( "Value must be of type String!" );
-		if(not initialized){
-			initialValue = value as String;
-			initialized = true;
-		}
-		parseValue(value as String);
+
+		parseValue( value as String );
 	}
 	
-	override var layoutInfo = LayoutInfo { hfill: true vfill: false hgrow: Priority.ALWAYS vgrow: Priority.NEVER}
-	
 	init {
-    	padding = Insets { top: 0 right: 0 bottom: 0 left: 0}
-    	spacing = 2;
-    	nodeVPos = VPos.CENTER;
-    	content = [
-    		hSpinner,
-	    	Label { 
-				text: ":"
-			}
-	    	mSpinner,
-	    	Label { 
-				text: ":"
-			}
-	    	sSpinner
-    	];
-    }
-    
-    postinit {
-    	parseValue(initialValue);
-    }
-    
-    function parseValue(total: String): Void {
-    	def ssmmhh: String[] = total.split(" ");
-    	if(ssmmhh.size() == 3){
-    		if(ssmmhh[2].equals(TimeSpinner.ANY_TIME)) {
-				hSpinner.value = ssmmhh[2];
-			} 
-			else {
-				try{
-					println("-----ssmmhh[2] >{ssmmhh[2]}<");
-					println("-----hSpinner.value >{hSpinner.value}<");
-					hSpinner.value = Integer.valueOf(ssmmhh[2]);
-					println("-----ssmmhh[2] >{ssmmhh[2]}<");
-					println("-----hSpinner.value >{hSpinner.value}<");
-				}
-				catch(e: Exception){
-					hSpinner.value = 0;
-				}
-			}
-    		if(ssmmhh[1].equals(TimeSpinner.ANY_TIME)) {
-				mSpinner.value = ssmmhh[1];
-			} 
-			else {
-				try{
-					mSpinner.value = Integer.valueOf(ssmmhh[1]);
-				}
-				catch(e: Exception){
-					mSpinner.value = 0;
-				}
-			}
-			try{
-				sSpinner.value = Integer.valueOf(ssmmhh[0]);
-			}
-			catch(e: Exception){
-				sSpinner.value = 0;
-			}
-    	}
-    	else{
-    		hSpinner.value = 0;
-			mSpinner.value = 0;
-			sSpinner.value = 0;
-    	}
-    }
-    
-    function buildValue(): Void {
-    	if(not value.equals("{sSpinner.value} {mSpinner.value} {hSpinner.value}")){
-			value = "{sSpinner.value} {mSpinner.value} {hSpinner.value}";
-		}
-    }
-    
-    //override function getPrefHeight( width:Float ) {
-	//	mSpinner.getPrefHeight( width )
-	//}
+		content = [
+			hSpinner,
+			Label { text: ":" },
+			mSpinner,
+			Label { text: ":" },
+			sSpinner
+		];
+	}
 	
+	function parseValue(total: String):Void {
+		def ssmmhh: String[] = total.split(" ");
+		shouldBuild = false;
+		if(ssmmhh.size() == 3) {
+			try {
+				hSpinner.value = if( ssmmhh[2] == TimeSpinner.ANY_TIME ) TimeSpinner.ANY_TIME else Integer.valueOf( ssmmhh[2] );
+				mSpinner.value = if( ssmmhh[1] == TimeSpinner.ANY_TIME ) TimeSpinner.ANY_TIME else Integer.valueOf( ssmmhh[1] );
+				sSpinner.value = if( ssmmhh[0] == TimeSpinner.ANY_TIME ) TimeSpinner.ANY_TIME else Integer.valueOf( ssmmhh[0] );
+				shouldBuild = true;
+				return;
+			} catch( e ) {
+			}
+		}
+		hSpinner.value = 0;
+		mSpinner.value = 0;
+		sSpinner.value = 0;
+		shouldBuild = true;
+	}
+	
+	function buildValue():Void {
+		if( shouldBuild ) value = "{sSpinner.value} {mSpinner.value} {hSpinner.value}";
+	}
 }
