@@ -35,8 +35,20 @@ public class SchedulerModel extends Observable {
 
 	private long duration = 0;
 	private long maxDuration = 0;
-	private int runsCount = 0;
-
+	private int runsLimit = 0;
+	private int runsCounter = 0;
+	
+	public void incrementRunsCounter(){
+		runsCounter++;
+		setChanged();
+		notifyObservers();
+	}
+	
+	public void resetRunsCounter(){
+		runsCounter = 0;
+		setChanged();
+	}
+	
 	public ArrayList<Integer> getSeconds() {
 		return seconds;
 	}
@@ -49,7 +61,6 @@ public class SchedulerModel extends Observable {
 			if (second >= 0 && second <= 59) {
 				this.seconds.add(second);
 			}
-
 		}
 		setChanged();
 	}
@@ -161,12 +172,13 @@ public class SchedulerModel extends Observable {
 		setChanged();
 	}
 
-	public int getRunsCount() {
-		return runsCount;
+	public int getRunsLimit() {
+		return runsLimit;
 	}
 
-	public void setRunsCount(int runsCount) {
-		this.runsCount = runsCount;
+	public void setRunsLimit(int runsCount) {
+		this.runsLimit = runsCount;
+		setChanged();
 	}
 
 	public long getMaxDuration() {
@@ -182,11 +194,19 @@ public class SchedulerModel extends Observable {
 		SUN, MON, TUE, WED, THU, FRI, SAT
 	}
 
+	public int getTotalCountPerDay() {
+		return hours.size() * minutes.size() * seconds.size();
+	}
+
 	public HashMap<Integer, List<ExecutionTime>> getExecutionTimeMap() {
 		List<ExecutionTime> prevList = new ArrayList<ExecutionTime>();
 		List<ExecutionTime> nextList = new ArrayList<ExecutionTime>();
 
 		int current = new ExecutionTime().getTime();
+		//move 10 seconds in future to be sure 
+		//that last executed job won't be included 
+		//in nextList. 
+		current += 10000; 
 
 		Boolean[] daysAsBoolean = getDaysAsBoolean();
 		for (int i = 0; i < daysAsBoolean.length; i++) {
@@ -194,12 +214,14 @@ public class SchedulerModel extends Observable {
 			if (daysAsBoolean[i]) {
 				for (Integer h : hours) {
 					for (Integer m : minutes) {
-						int time = ((dayIndex * 24 + h) * 60 + m) * 60 * 1000;
-						if (time + duration < current) {
-							prevList.add(new ExecutionTime(dayIndex, h, m));
-						}
-						else {
-							nextList.add(new ExecutionTime(dayIndex, h, m));
+						for (Integer s : seconds) {
+							int time = (((dayIndex * 24 + h) * 60 + m) * 60 + s) * 1000;
+							if (time + duration < current) {
+								prevList.add(new ExecutionTime(dayIndex, h, m, s));
+							}
+							else {
+								nextList.add(new ExecutionTime(dayIndex, h, m, s));
+							}
 						}
 					}
 				}
@@ -207,7 +229,7 @@ public class SchedulerModel extends Observable {
 		}
 		nextList.addAll(prevList);
 
-		while (runsCount > 0 && nextList.size() > runsCount) {
+		while (runsLimit > 0 && nextList.size() > (runsLimit - runsCounter)) {
 			nextList.remove(nextList.size() - 1);
 		}
 

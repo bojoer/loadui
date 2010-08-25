@@ -37,11 +37,12 @@ public class ExecutionTime {
 		this.second = c.get(Calendar.SECOND);
 	}
 
-	public ExecutionTime(int day, int hour, int minute) {
+	public ExecutionTime(int day, int hour, int minute, int second) {
 		super();
 		this.day = day;
 		this.hour = hour;
 		this.minute = minute;
+		this.second = second;
 	}
 
 	public int getDay() {

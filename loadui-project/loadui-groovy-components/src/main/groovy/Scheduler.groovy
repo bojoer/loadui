@@ -58,22 +58,42 @@ import java.text.SimpleDateFormat
 import com.eviware.loadui.impl.component.ActivityStrategies
 import com.eviware.loadui.util.layout.SchedulerModel
 
+def counter = 0
+def durationHolder = 0
+def runsHolder = 0
+def startSent = false
+
 def schedulerModel = new SchedulerModel()
 
 createProperty( 'day', String, "* (All)" )
 createProperty( 'time', String, "0 0 0" )
 def duration = createProperty( 'duration', Long, 0 )
-def runsCount = createProperty( 'runsCount', Long, 0 )
+def runsLimit = createProperty( 'runsLimit', Long, 0 )
 
 def canvas = getCanvas()
 
 def startMessage = newMessage()
 startMessage[TriggerCategory.ENABLED_MESSAGE_PARAM] = true
-sendStart = { send( outputTerminal, startMessage ) }
+sendStart = { 
+	send( outputTerminal, startMessage ) 
+	startSent = true
+	counter++
+	if(runsHolder > 0 && counter >= runsHolder){
+		unscheduleStartTrigger()
+	}
+	setActivityStrategy(ActivityStrategies.BLINKING)
+	pauseTotal = 0
+}
 
 def stopMessage = newMessage()
 stopMessage[TriggerCategory.ENABLED_MESSAGE_PARAM] = false
-sendStop = { send( outputTerminal, stopMessage ) }
+sendStop = { 
+	send( outputTerminal, stopMessage ) 
+	setActivityStrategy(ActivityStrategies.OFF)
+	unscheduleEndTrigger()
+	endTrigger = null
+	pauseTotal = 0
+}
 
 class SchedulerJob implements Job {
 	void execute(JobExecutionContext context) throws JobExecutionException {}
@@ -87,17 +107,14 @@ def endTrigger = null
 def endJob = new JobDetail("endJob", "group", SchedulerJob.class)
 endJob.addJobListener("endJobListener")
 
-def counter = 0
-def durationHolder = 0
-def runsHolder = 0
-def startSent = false
-
 def paused = false
 def pauseStart = -1
 def pauseTotal = 0
 def endTriggerStart = null //this is the time when latest enable event was sent
 def rescheduleAfterPause = false
 def endTriggerTimeLeft = null
+
+def maxDuration = 0;
 
 def scheduler = new StdSchedulerFactory().getScheduler()
 scheduler.addJobListener(new JobListenerSupport()
@@ -107,15 +124,7 @@ scheduler.addJobListener(new JobListenerSupport()
 	}
 	void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
 		sendStart()
-		startSent = true
-		endTriggerStart = new Date()
-		scheduleEndTrigger(endTriggerStart, durationHolder)
-		counter++
-		if(runsHolder > 0 && counter >= runsHolder){
-			unscheduleStartTrigger()
-		}
-		setActivityStrategy(ActivityStrategies.BLINKING)
-		pauseTotal = 0
+		scheduleEndTrigger(new Date(), durationHolder)
 	}
 })
 
@@ -126,10 +135,7 @@ scheduler.addJobListener(new JobListenerSupport()
 	}
 	void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
 		sendStop()
-		setActivityStrategy(ActivityStrategies.OFF)
-		unscheduleEndTrigger()
-		endTrigger = null
-		pauseTotal = 0
+		schedulerModel.incrementRunsCounter()
 	}
 })
 
@@ -168,7 +174,7 @@ addEventListener( ActionEvent ) { event ->
 }
 
 addEventListener( PropertyEvent ) { event ->
-	if( event.property in [ day, time, runsCount, duration ] ) {
+	if( event.property in [ day, time, runsLimit, duration ] ) {
 		validateDuration()
 		if( !canvas.running ){
 			updateState()
@@ -187,7 +193,7 @@ validateDuration = {
 	if(diff/1000 < duration.value){
 		duration.value = diff/1000
 	}
-	schedulerModel.setMaxDuration(diff)
+	maxDuration = diff
 }
 
 updateState = {
@@ -197,7 +203,8 @@ updateState = {
 	schedulerModel.setHours(expr.hours)
 	schedulerModel.setDays(expr.daysOfWeek)
 	schedulerModel.setDuration(duration.value * 1000)
-	schedulerModel.setRunsCount((int)runsCount.value)
+	schedulerModel.setMaxDuration(maxDuration)
+	schedulerModel.setRunsLimit((int)runsLimit.value)
 	schedulerModel.notifyObservers()
 }
 
@@ -214,16 +221,24 @@ createStartTriggerPattern = {
 }
 
 scheduleStartTrigger = {
-
+	runsHolder = runsLimit.value
+	durationHolder = duration.value * 1000
+	
 	def startTriggerPattern = createStartTriggerPattern()
-		
 	unscheduleStartTrigger()
 	scheduler.addJob(startJob, true)
 	startTrigger = new CronTrigger("startTrigger", "group", "startJob", "group", startTriggerPattern)
 	scheduler.scheduleJob(startTrigger)
 	
-	runsHolder = runsCount.value
-	durationHolder = duration.value * 1000
+	def now = new Date()
+	def next = startTrigger.getFireTimeAfter(now)
+	if(now.getTime() <= next.getTime() - maxDuration + durationHolder){
+		sendStart()
+		scheduleEndTrigger(now, next.getTime() - maxDuration + durationHolder - now.getTime())
+	}
+	else{
+		sendStop()
+	}
 }
 
 scheduleEndTrigger = {startTime, durationInMillis ->
@@ -264,6 +279,7 @@ reset = {
 	endTrigger = null
 	startSent = false
 	setActivityStrategy(ActivityStrategies.OFF)
+	schedulerModel.resetRunsCounter()
 }
 
 unscheduleStartTrigger = {
@@ -282,55 +298,7 @@ unscheduleEndTrigger = {
 
 onRelease = {
 	scheduler.shutdown()
-	displayNextRun.release()
-	displayTimeLeft.release()
 }
-
-displayNextRun = new DelayedFormattedString( '%s', 1000, value {
-	if(startTrigger){
-		def sdf = SimpleDateFormat.getInstance()
-		sdf.setLenient(false)
-		sdf.applyPattern("E HH:mm:ss")
-		sdf.format(startTrigger.getFireTimeAfter(new Date()))
-	}
-	else{
-		'Not running'
-	}
-})
-
-displayTimeLeft = new DelayedFormattedString( '%s', 480, value {
-	if(startSent && durationHolder == 0){
-		'Infinite'
-	}
-	else if(endTrigger){
-		def current = new Date()
-		def next = endTrigger.getFireTimeAfter(current)
-		def diff = 0
-		if(next != null){
-			diff = next.getTime() - current.getTime()
-		}
-		if(diff > 0){
-			def sdf = SimpleDateFormat.getInstance()
-			sdf.setLenient(false)
-			if(diff < 3600000){
-				sdf.applyPattern("00:mm:ss")
-			}
-			else{
-				sdf.applyPattern("HH:mm:ss")
-			}
-			def calendar = Calendar.getInstance()
-			calendar.setTimeInMillis(diff)
-			endTriggerTimeLeft = sdf.format(calendar.getTime())
-			endTriggerTimeLeft
-		}
-		else{
-			'00:00:00'
-		}
-	}
-	else{
-		endTriggerTimeLeft ?: 'Not running'
-	}
-})
 
 layout {
 	node( widget: 'schedulerWidget', model: schedulerModel, constraints: 'span 5' )
@@ -343,7 +311,7 @@ layout {
 }
 
 settings( label: "Basic" ) {
-	property( property: runsCount, label: 'Runs')
+	property( property: runsLimit, label: 'Runs')
 }
 
 validateDuration()
