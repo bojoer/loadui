@@ -207,7 +207,13 @@ public class MainWindow {
 			appState.transitionTo( AppState.WORKSPACE_FRONT, AppState.FADE_WIPE );
 			appState.scene = scene;
 			SplashController.closeSplash();
-		});	
+		});
+		
+		if( workspace.isShowGettingStarted() )
+			com.eviware.loadui.fx.wizards.GettingStartedWizard{
+				x: scene.width/3
+			    y: scene.height/4
+			}.show();
 	}
 	
 	/**

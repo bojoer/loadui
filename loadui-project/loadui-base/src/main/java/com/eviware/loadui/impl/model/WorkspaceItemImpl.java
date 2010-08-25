@@ -66,6 +66,8 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 
 	private ScheduledFuture<?> gcTask = null;
 
+	private Property<Boolean> showStartWizard;
+
 	public static WorkspaceItemImpl loadWorkspace( File workspaceFile ) throws XmlException, IOException
 	{
 		WorkspaceItemImpl workspace = new WorkspaceItemImpl( workspaceFile,
@@ -93,6 +95,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		createProperty( SOAPUI_SYNC_PROPERTY, Boolean.class );
 		createProperty( SOAPUI_CAJO_PORT_PROPERTY, Integer.class, 1198 );
 		createProperty( LOADUI_CAJO_PORT_PROPERTY, Integer.class, 1199 );
+		showStartWizard = createProperty( SHOW_GETTINGSTARTED, Boolean.class, true);
 		garbageCollectionInterval = createProperty( AUTO_GARBAGE_COLLECTION_INTERVAL, Long.class, 60 ); // using
 		// seconds
 	}
@@ -218,6 +221,13 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	{
 		if( !projectFile.exists() )
 			throw new IllegalArgumentException( "File does not exist: " + projectFile );
+		
+		// if project is already in workspace do not import it again.
+	   for( ProjectRefImpl projectRef: projects ) {
+	   	if ( projectRef.getProjectFile().getAbsolutePath().equals(projectFile.getAbsolutePath()) ) {
+	   		return projectRef;
+	   	}
+	   }
 
 		ProjectReferenceConfig projectRefConfig = getConfig().addNewProject();
 		projectRefConfig.setProjectFile( projectFile.getAbsolutePath() );
@@ -429,5 +439,17 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 						AgentItem.SET_MAX_THREADS, ( ( PropertyEvent )event ).getProperty().getStringValue() ) );
 			}
 		}
+	}
+
+	@Override
+	public boolean isShowGettingStarted()
+	{
+		return showStartWizard.getValue();
+	}
+
+	@Override
+	public void setShowGettingStarted(boolean showGettingStarted)
+	{
+		this.showStartWizard.setValue(showGettingStarted);
 	}
 }
