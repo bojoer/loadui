@@ -96,6 +96,18 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		content: [ noteLayer, connectionLayer, componentLayer ]
 	}
 	
+	def _showNotes = bind showNotes on replace {
+		if( showNotes )
+			setNoteLayer( true );
+	}
+	
+	public function setNoteLayer( front:Boolean ) {
+		layers.content = if( front )
+			[ connectionLayer, componentLayer, noteLayer ]
+		else
+			[ noteLayer, connectionLayer, componentLayer ];
+	}
+	
 	public var padding:Integer = 200;
 	
 	public var offsetX:Integer = 0 on replace {
@@ -199,6 +211,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	
 	public function createNote( x:Number, y:Number ):Void {		
 		insert Note.createNote( this, x, y ) into noteLayer.content;
+		showNotes = true;
 	}
 	
 	public function removeNote( note:Note ):Void {

@@ -195,6 +195,7 @@ public class Note extends BaseNode, Movable, Selectable, Deletable {
 	
 	override var onGrab = function():Void {
 		toFront();
+		canvas.setNoteLayer( true );
 		requestFocus();
 		if( mouseEvent.controlDown ) { if( selected ) deselect() else select() } else if( not selected ) selectOnly();
 	}
