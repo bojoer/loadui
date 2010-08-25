@@ -178,6 +178,14 @@ public class WorkspaceMenu extends HBox {
 	          }
 	          Separator{}
 	          MenuItem {
+	              text: "Getting Started Wizard"
+	              action: function() { com.eviware.loadui.fx.wizards.GettingStartedWizard{
+	              	x: scene.width/3
+	              	y: scene.height/4
+	              }.show() }
+	          }
+	          Separator{}
+	          MenuItem {
 	              text: "Exit"
 	              action: function() { WindowControllerImpl.instance.close() }
 	          }
