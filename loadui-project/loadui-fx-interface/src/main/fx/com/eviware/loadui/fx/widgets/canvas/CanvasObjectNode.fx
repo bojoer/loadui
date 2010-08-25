@@ -161,6 +161,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	
 	override var onGrab = function():Void {
 		toFront();
+		canvas.setNoteLayer( false );
 		requestFocus();
 		if( mouseEvent.controlDown ) { if( selected ) deselect() else select() } else if( not selected ) selectOnly();
 	}
