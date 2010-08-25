@@ -146,7 +146,7 @@ public class MainWindow {
 		appState.insertInto( agentList = AgentList {
 			workspace: workspace
 			layoutX: 137
-			layoutY: 349
+			layoutY: 327
 			width: bind scene.width - 529
 		} , AppState.WORKSPACE_FRONT );
 		

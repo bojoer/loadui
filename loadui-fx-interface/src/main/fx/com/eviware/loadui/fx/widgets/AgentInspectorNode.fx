@@ -301,27 +301,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 								text: "ACT"
 								font: Font { size: 10 }
 								tooltip: Tooltip { text: "Activity" }
-							}, Group {
-								content: [
-									Rectangle {
-										width: 44
-										height: 11
-									}, ImageView {
-										layoutX: 2
-										layoutY: 2
-										image: Image { url: "{__ROOT__}images/png/agent-cpu-inactive.png" }
-									}, ImageView {
-										layoutX: 2
-										layoutY: 2
-										image: Image { url: "{__ROOT__}images/png/agent-cpu-active.png" }
-										viewport: bind Rectangle2D {
-											width: 4*utilization/10 as Integer
-											height: 8
-										}
-										visible: bind utilization > 0
-									}
-								]
-							}, Group {
+							}, activityNode, Group {
 								content: [
 									Rectangle {
 										width: 24

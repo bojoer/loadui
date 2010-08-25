@@ -68,7 +68,7 @@ public class AgentList extends CustomNode, Resizable, EventHandler {
 	var pagelist:PagelistControl;
 
 	override function getPrefHeight( width:Float ) {
-		295
+		248
 	}
 	
 	override function getPrefWidth( height:Float ) {
