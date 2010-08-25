@@ -10,19 +10,24 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Stack;
 import javafx.scene.layout.LayoutInfo;
+import javafx.scene.layout.Priority;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextBox;
+import javafx.scene.control.Separator;
+import javafx.scene.control.Button;
 import javafx.scene.Node;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.paint.Color;
 import javafx.util.Math;
 
 import com.javafx.preview.control.MenuButton;
+import com.javafx.preview.control.MenuItem;
 import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.ui.node.BaseNode;
@@ -79,6 +84,10 @@ public class Note extends BaseNode, Movable, Selectable, Deletable {
 	public var canvas:Canvas;
 	public var noteHolder:AttributeHolder;
 	
+	def _selected = bind selected on replace {
+		highlightRegion.visible = selected;
+	}
+	
 	var startWidth:Integer;
 	var startHeight:Integer;
 	
@@ -89,6 +98,15 @@ public class Note extends BaseNode, Movable, Selectable, Deletable {
 			vfill: true
 		}
 	}
+	
+	def highlightRegion = Region {
+		styleClass: "dialog-panel-highlight";
+		visible: selected
+		layoutInfo: LayoutInfo {
+			hfill: true
+			vfill: true
+		}
+	};
 	
 	def cornerRegion = Region {
 		styleClass: "note-corner"
@@ -142,7 +160,25 @@ public class Note extends BaseNode, Movable, Selectable, Deletable {
 		content: [
 			Label { text: "NOTE", layoutInfo: LayoutInfo { height: 30, hfill: true } },
 			HBox {
-				content: [ MenuButton { text: "Menu" } ]
+				styleClass: "canvas-object-toolbar"
+				layoutInfo: LayoutInfo { hfill: true }
+				nodeVPos: VPos.CENTER
+				content: [
+					MenuButton {
+						text: "Menu"
+						items: [
+							MenuItem { text: "Delete", action: function() { Deletable.deleteObjects( this ) } }
+						]
+					},
+					Separator { styleClass: "", vertical: true, layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.ALWAYS } },
+					Button {
+						graphic: SVGPath {
+							content: "M 3 0 L 3 3, 0 3, 0 5, 3 5, 3 8, 5 8, 5 5, 8 5, 8 3, 5 3, 5 0 Z"
+							fill: Color.rgb( 0x66, 0x66, 0x66 )
+						}
+						action: function():Void { canvas.createNote( layoutX + textWidth + 50, layoutY ) }
+					}
+				]
 			}, textBox
 		]
 	}
@@ -153,7 +189,7 @@ public class Note extends BaseNode, Movable, Selectable, Deletable {
 	
 	override function create():Node {
 		Stack {
-			content: [ baseRegion, cornerRegion, body, cornerResize ]
+			content: [ highlightRegion, baseRegion, cornerRegion, body, cornerResize ]
 		}
 	}
 	

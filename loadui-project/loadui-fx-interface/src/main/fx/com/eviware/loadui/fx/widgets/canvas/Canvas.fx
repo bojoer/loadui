@@ -76,6 +76,8 @@ import javafx.util.Sequences;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Canvas" );
 
+public var showNotes = true;
+
 /**
  * The work area of a CanvasItem. Displays contained ComponentItems and listens for changes.
  * 
@@ -86,7 +88,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	
 	protected def connectionLayer = Group {};
 	protected def componentLayer = Group {};
-	protected def noteLayer = Group {};
+	protected def noteLayer = Group { visible: bind showNotes };
 	
 	public def testcaseItem = modelItem as SceneItem;
 	
@@ -192,6 +194,10 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		def y = if( contextMouseEvent != null ) contextMouseEvent.sceneY else scene.height / 2;
 		contextMouseEvent = null;
 		
+		createNote( x, y );
+	}
+	
+	public function createNote( x:Number, y:Number ):Void {		
 		insert Note.createNote( this, x, y ) into noteLayer.content;
 	}
 	
