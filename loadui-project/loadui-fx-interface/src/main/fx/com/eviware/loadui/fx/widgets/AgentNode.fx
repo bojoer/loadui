@@ -47,7 +47,9 @@ import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.Container;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.Stack;
 import javafx.scene.layout.LayoutInfo;
 import javafx.geometry.Insets;
 
@@ -61,4 +63,19 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Ag
  */
 public class AgentNode extends AgentNodeBase, Draggable {
 	override var opacity = bind if( dragging ) 0.8 else 1;
+	
+	override function create() {
+		def base = super.create() as DialogPanel;
+		activityNode.layoutInfo = LayoutInfo { margin: Insets { top: 70 } };
+		
+		insert Stack {
+			content: [
+				ImageView {
+					image: Image { url: "{__ROOT__}images/png/agent_node_background.png" }
+				}, activityNode
+			]
+		} into (base.body as Container).content;
+		
+		base;
+	}
 }

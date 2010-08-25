@@ -22,6 +22,7 @@
 package com.eviware.loadui.fx.widgets;
 
 import javafx.scene.Node;
+import javafx.scene.Group;
 import javafx.scene.CustomNode;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
@@ -48,8 +49,10 @@ import javafx.scene.text.Font;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.LayoutInfo;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 
 import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.MenuButton;
@@ -82,6 +85,28 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 		utilization = agent.getUtilization();
 	}
 	
+	protected def activityNode = Group {
+		content: [
+			Rectangle {
+				width: 44
+				height: 11
+			}, ImageView {
+				layoutX: 2
+				layoutY: 2
+				image: Image { url: "{__ROOT__}images/png/agent-cpu-inactive.png" }
+			}, ImageView {
+				layoutX: 2
+				layoutY: 2
+				image: Image { url: "{__ROOT__}images/png/agent-cpu-active.png" }
+				viewport: bind Rectangle2D {
+					width: 4*utilization/10 as Integer
+					height: 8
+				}
+				visible: bind utilization > 0
+			}
+		]
+	};
+	
 	override var modelItem on replace {
 		agent = modelItem as AgentItem;
 	}
@@ -95,7 +120,7 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 	
 	override function create() {
 		DialogPanel {
-			layoutInfo: LayoutInfo { width: 115, height: 190 }
+			layoutInfo: LayoutInfo { width: 93, height: 146 }
 			body: VBox {
 				padding: Insets { left: 8, right: 8, top: 8 }
 				spacing: 8

@@ -67,7 +67,7 @@ public class ProjectList extends CustomNode, Resizable, EventHandler {
 	var pagelist:PagelistControl;
 
 	override function getPrefHeight( width:Float ) {
-		232
+		210
 	}
 	
 	override function getPrefWidth( height:Float ) {

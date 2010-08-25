@@ -183,7 +183,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 		refreshMiniature();
 		var menuButton:MenuButton;
 		DialogPanel {
-			layoutInfo: LayoutInfo { width: 155, height: 130 }
+			layoutInfo: LayoutInfo { width: 155, height: 108 }
 			body: VBox {
 				padding: Insets { left: 8, right: 8, top: 5 }
 				spacing: 10
