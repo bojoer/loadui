@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Date;
 
+var dayWidth: Number = 50;
+
 public class SchedulerLCDWidget extends Widget, BaseNode, Resizable, TooltipHolder, Observer {
 
     def background:FXDNode = FXDNode {
@@ -192,11 +194,14 @@ public class SchedulerLCDWidget extends Widget, BaseNode, Resizable, TooltipHold
         	}
             daysVisible = model.getDaysAsBoolean();
             
+            var minWidth = Math.min(0.56 * dayWidth / model.getTotalCountPerDay(), 1);
+            
             var timeMap = model.getExecutionTimeMap();
             var keys: Iterator = timeMap.keySet().iterator();
 			while(keys.hasNext()){
 				var day: Integer = keys.next() as Integer;
 				dailyLines[day - 1].timeList = timeMap.get(day);
+				dailyLines[day - 1].minWidth = minWidth;
 				dailyLines[day - 1].generate();
 			}
         });
@@ -207,7 +212,7 @@ public class DailySchedule extends Group {
 
 	public-init var dayIndex: Number = 1;
 	
-	public-init var dayWidth: Number = 50;
+	public-init var minWidth: Number = 1;
 	
 	public var timeList: List;
 	
@@ -228,7 +233,7 @@ public class DailySchedule extends Group {
 			dayIndex: dayIndex
 			time: h * 60 + m
 			duration: bind duration
-			minWidth: bind Math.min(0.56 * dayWidth / timeList.size(), 1)
+			minWidth: minWidth
     	}
 		insert pos into content;
 		insert pos.wrap() into content;
@@ -239,8 +244,6 @@ public class DailySchedule extends Group {
 public class SchedulePosition extends Rectangle {
 
 	public-init var dayIndex: Number = 1;
-	
-	public-init var dayWidth: Number = 50;
 	
 	public-init var minWidth: Number = 1;
 	
@@ -279,8 +282,6 @@ public class SchedulePosition extends Rectangle {
 
 public class CurrentPosition extends Rectangle {
 
-	public-init var dayWidth: Number = 50;
-	
 	public var onRefresh: function(): Void;
 	
 	init{
