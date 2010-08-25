@@ -62,6 +62,7 @@ import com.eviware.loadui.fx.ui.resources.MenuArrow;
 import com.eviware.loadui.fx.widgets.MiniRunController;
 import com.eviware.loadui.fx.widgets.RunController;
 import com.eviware.loadui.fx.summary.SummaryReport;
+import com.eviware.loadui.fx.widgets.canvas.Canvas;
 
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.CanvasItem;
@@ -121,6 +122,15 @@ public class TestCaseMenu extends HBox {
 	}
 	
 	var summaryEnabled = false;
+	
+	def showNotes = bind Canvas.showNotes on replace {
+		showNotesButton.selected = showNotes;
+	}
+	var showNotesButton:MenubarToggleButton;
+	def showNotesButtonState = bind showNotesButton.selected on replace {
+		if( showNotesButton.armed )
+		Canvas.showNotes = showNotesButtonState;
+	}
 	
 	init {
 		var menuButton:MenuButton;
@@ -261,6 +271,10 @@ public class TestCaseMenu extends HBox {
 							}, TrashHole {
 							}, SeparatorButton {
 								height: bind height;
+							}, showNotesButton = MenubarToggleButton {
+								shape: "M 0,0 L 0,8 5,8 11,12 9,8 13,8 13,0 Z"
+								tooltip: Tooltip { text: ##[TOGGLE_NOTES]"Toggle note visibility" }
+								selected: showNotes
 							}, MenubarButton {
 								shape: "M0,0 L0,12 10,12, 10,0 0,0 M4,13 L4,16 14,16 14,4 11,4 11,13 4,13"
 								tooltip: Tooltip { text: ##[SUMMARY]"Summary Report" }

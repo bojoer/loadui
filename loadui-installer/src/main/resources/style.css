@@ -67,6 +67,11 @@
 .popup-menu {
 	-fx-background-radius: 0;
 	-fx-padding: 5;
+	-fx-border-image-source: null;
+    -fx-border-image-slice: 0;
+    -fx-border-image-width: 0;
+    -fx-border-image-repeat: null;
+    -fx-border-image-insets: 0;
 }
 
 .menu, .menu-item {
@@ -286,7 +291,7 @@
 	-fx-background-color: #8c8c8c;
 }
 
-.menubar-button:armed {
+.menubar-button:armed, .menubar-button:selected {
 	-fx-background-color: #666666;
 }
 
