@@ -43,7 +43,7 @@
 			</line>
 			<image>
 				<reportElement x="514" y="0" width="32" height="32"/>
-				<imageExpression class="java.lang.String"><![CDATA["D:\\workspace\\loadui-project\\loadui-installer\\src\\controller\\resources\\reports\\loadui-logo-icon-32.png"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA["reports/loadui-logo-icon-32.png"]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>
