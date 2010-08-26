@@ -45,7 +45,6 @@ public interface WorkspaceItem extends ModelItem
 	public final static String LOADUI_CAJO_PORT_PROPERTY = WorkspaceItem.class.getSimpleName() + ".loadUICajoPort";
 	public final static String AUTO_GARBAGE_COLLECTION_INTERVAL = WorkspaceItem.class.getSimpleName()
 			+ ".garbageCollectionInterval";
-	public final static String SHOW_GETTINGSTARTED = WorkspaceItem.class.getSimpleName() + ".showGettingStarted";
 
 	/**
 	 * Gets the version of loadUI which was used to create the workspace.
@@ -177,18 +176,4 @@ public interface WorkspaceItem extends ModelItem
 	 * @param localMode
 	 */
 	public void setLocalMode( boolean localMode );
-	
-	/**
-	 * Sets a property showGettingStarted property. When installed for a first time or after clean install
-	 * loadUI will start "Getting Started" wizard after each run untill user checks "Don't show again" option.
-	 * 
-	 * @param showGettingStarted
-	 * @return
-	 */
-	public void setShowGettingStarted(boolean showGettingStarted);
-	
-	/**
-	 * returns should "Getting Started" wizard should be showen or not.
-	 */
-	public boolean isShowGettingStarted();
 }

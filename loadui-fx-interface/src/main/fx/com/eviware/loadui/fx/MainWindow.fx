@@ -39,6 +39,7 @@ import com.eviware.loadui.fx.widgets.canvas.ProjectCanvas;
 import com.eviware.loadui.fx.widgets.toolbar.AgentToolbarItem;
 import com.eviware.loadui.fx.widgets.toolbar.ProjectToolbarItem;
 import com.eviware.loadui.fx.widgets.toolbar.TestCaseToolbarItem;
+import com.eviware.loadui.fx.wizards.GettingStartedWizard;
 import com.eviware.loadui.fx.FxUtils.*;
 import java.lang.Thread;
 import javafx.scene.Cursor;
@@ -209,8 +210,8 @@ public class MainWindow {
 			SplashController.closeSplash();
 		});
 		
-		if( workspace.isShowGettingStarted() )
-			com.eviware.loadui.fx.wizards.GettingStartedWizard{
+		if( workspace.getAttribute( GettingStartedWizard.SHOW_GETTING_STARTED, "true" ) == "true" )
+			GettingStartedWizard {
 				x: scene.width/3
 			    y: scene.height/4
 			}.show();
