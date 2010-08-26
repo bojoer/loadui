@@ -74,6 +74,9 @@ public class Note extends BaseNode, Movable, Selectable, Deletable {
 	override var styleClass = "note";
 	override var blocksMouse = true;
 	
+	override var layoutX on replace { save() }
+	override var layoutY on replace { save() }
+	
 	public var textWidth:Integer = 200;
 	public var textHeight:Integer = 150;
 	
