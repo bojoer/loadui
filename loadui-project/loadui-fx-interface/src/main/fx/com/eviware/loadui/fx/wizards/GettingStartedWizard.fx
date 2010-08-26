@@ -51,6 +51,8 @@ import java.util.HashMap;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.wizards.GettingStartedWizard" );
 
+public def SHOW_GETTING_STARTED = "gui.getting_started_wizard";
+
 public class GettingStartedWizard {
     
     	public var title:String = "WELCOME TO LOADUI";
@@ -60,12 +62,12 @@ public class GettingStartedWizard {
     	var dialogRef: Dialog;
     	var stackLayoutInfo:LayoutInfo;
     	var cb:CheckBox = CheckBox {
-             selected: not workspace.isShowGettingStarted()
+             selected: workspace.getAttribute( SHOW_GETTING_STARTED, "true" ) != "true"
              text: "Don't show again"
          };
     	
     	var tmpX = bind cb.selected on replace {
-    	    workspace.setShowGettingStarted(not cb.selected)
+    		workspace.setAttribute( SHOW_GETTING_STARTED, "{not cb.selected}" );
     	}
     	
     	public function show() {
