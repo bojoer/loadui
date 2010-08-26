@@ -65,21 +65,30 @@ public class NavigationPanel extends CustomNode, Resizable {
 	
 	def scale = bind Math.min( ( width - 32 ) / canvas.areaWidth, ( height - 58 ) / canvas.areaHeight );
 	
-	def components = bind canvas.components on replace {
-		refreshMinis();
+	def objects = bind [ canvas.components, canvas.notes ] on replace {
+		FX.deferAction( function():Void { refreshMinis() } );
 	}
 	
 	def miniatures = Group {};
 	function refreshMinis() {
 		miniatures.content = null;
-		for( component in components ) {
-			insert Miniature {
-				layoutX: bind component.layoutX * scale
-				layoutY: bind component.layoutY * scale
-				width: bind component.layoutBounds.width * scale
-				height: bind component.layoutBounds.height * scale
-				fill: bind component.color
-			} into miniatures.content;
+		for( object in objects ) {
+			insert if( object instanceof CanvasObjectNode )
+				Miniature {
+					layoutX: bind object.layoutX * scale
+					layoutY: bind object.layoutY * scale
+					width: bind object.layoutBounds.width * scale
+					height: bind object.layoutBounds.height * scale
+					fill: bind (object as CanvasObjectNode).color
+				}
+			else
+				NoteMiniature {
+					layoutX: bind object.layoutX * scale
+					layoutY: bind object.layoutY * scale
+					width: bind object.layoutBounds.width * scale
+					height: bind object.layoutBounds.height * scale
+				}
+			into miniatures.content;
 		}
 	}
 	
@@ -293,6 +302,23 @@ class Miniature extends CustomNode {
 					width: bind width
 					height: bind Math.max( 0, height - 10 )
 					y: 10
+				}
+			]
+		}
+	}
+}
+
+class NoteMiniature extends CustomNode {
+	public var width:Number;
+	public var height:Number;
+	
+	override function create() {
+		Group {
+			content: [
+				Rectangle {
+					fill: Color.rgb( 0xf9, 0xf2, 0xb7 )
+					width: bind width
+					height: bind height
 				}
 			]
 		}

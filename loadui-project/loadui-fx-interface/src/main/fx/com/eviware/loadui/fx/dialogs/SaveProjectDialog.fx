@@ -67,14 +67,14 @@ public class SaveProjectDialog {
 						dialog.close();
 						onDone();
 					}
-					layoutInfo: nodeConstraints(new CC().tag( "yes" ).width("60!"))
+					layoutInfo: nodeConstraints(new CC().tag( "yes" ))
 				}, Button {
 					text: "Don't Save"
 					action: function() {
 						dialog.close();
 						onDone();
 					}
-					layoutInfo: nodeConstraints(new CC().tag( "no" ).width("60!"))
+					layoutInfo: nodeConstraints(new CC().tag( "no" ))
 				}
 			]
 		}

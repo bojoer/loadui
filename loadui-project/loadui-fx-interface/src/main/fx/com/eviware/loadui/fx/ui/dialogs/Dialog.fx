@@ -181,7 +181,7 @@ public class Dialog {
 			cancelButton = Button {
 				text: cancelText
 				action: function() { onCancel() }
-				layoutInfo: nodeConstraints(new CC().tag( "cancel" ).width("60!"))
+				layoutInfo: nodeConstraints( new CC().tag( "cancel" ) )
 			}
 			insert cancelButton into dialogButtons;
 		}	
@@ -189,7 +189,7 @@ public class Dialog {
 			okButton = Button {
 				text: okText
 				action: function() { onOk() }
-				layoutInfo: nodeConstraints(new CC().tag( "ok" ).width("60!"))
+				layoutInfo: nodeConstraints( new CC().tag( "ok" ) )
 			}
 			insert okButton into dialogButtons;
 		}

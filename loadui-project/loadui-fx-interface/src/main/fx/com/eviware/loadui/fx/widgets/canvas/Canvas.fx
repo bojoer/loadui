@@ -122,7 +122,13 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	public-read var areaWidth:Integer = 0;
 	public-read var areaHeight:Integer = 0;
 	
-	public-read var components:CanvasObjectNode[] = bind componentLayer.content[c|c instanceof CanvasObjectNode] as CanvasObjectNode[];
+	public-read var components:CanvasObjectNode[] = bind componentLayer.content[c|c instanceof CanvasObjectNode] as CanvasObjectNode[] on replace {
+		FX.deferAction( function():Void { refreshComponents() } );
+	}
+	
+	public-read var notes:Note[] = bind noteLayer.content[c|c instanceof Note] as Note[] on replace {
+		FX.deferAction( function():Void { refreshComponents() } );
+	}
 	
 	public function createMiniatures(maxWidth: Number, maxHeight: Number, minScaleFactor: Number): String {
 		var minX: Number = java.lang.Long.MAX_VALUE;
@@ -160,9 +166,11 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			minY = 0;
 		}
 		
-		var connImg = nodeToImage(connectionLayer, maxX + 100, maxY + 100);
-		var compImg = nodeToImage(componentLayer, maxX + 100, maxY + 100);
+		def noteImg = nodeToImage(noteLayer, maxX + 100, maxY + 100);
+		def connImg = nodeToImage(connectionLayer, maxX + 100, maxY + 100);
+		def compImg = nodeToImage(componentLayer, maxX + 100, maxY + 100);
 	    var img = combineImages(connImg, compImg);
+	    img = combineImages(noteImg, img);
 	    img = clipImage(img, minX, minY, maxX + 100 - minX, maxY + 100 - minY);
 	    var scale = Math.max(Math.min(maxWidth/img.getWidth(), maxHeight/img.getHeight()), minScaleFactor);
 	    img = scaleImage(img, scale);
@@ -417,7 +425,8 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	 * Update the Canvas size when a component has been added/moved.
 	 */
 	public function refreshComponents():Void {
-		if( sizeof componentLayer.content == 0 ) {
+		def objects = [ componentLayer.content, noteLayer.content ];
+		if( sizeof objects == 0 ) {
 			areaWidth = width as Integer;
 			areaHeight = height as Integer;
 			return;
@@ -429,11 +438,11 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		var maxX = 0;
 		var maxY = 0;
 		
-		for( cmp in componentLayer.content ) {
-			minX = Math.min( minX, cmp.layoutX as Integer );
-			minY = Math.min( minY, cmp.layoutY as Integer );
-			maxX = Math.max( maxX, cmp.layoutX + cmp.layoutBounds.width as Integer );
-			maxY = Math.max( maxY, cmp.layoutY + cmp.layoutBounds.height as Integer );
+		for( obj in objects ) {
+			minX = Math.min( minX, obj.layoutX as Integer );
+			minY = Math.min( minY, obj.layoutY as Integer );
+			maxX = Math.max( maxX, obj.layoutX + obj.layoutBounds.width as Integer );
+			maxY = Math.max( maxY, obj.layoutY + obj.layoutBounds.height as Integer );
 		}
 		
 		def shiftX = if( padding - minX < 0 )
@@ -444,7 +453,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			Math.min( Math.max( padding - minY, (height as Integer) - ( maxY + padding ) ), 0 )
 		else padding - minY;
 		
-		for( obj in [ componentLayer.content, noteLayer.content ] ) {
+		for( obj in objects ) {
 			obj.layoutX += shiftX;
 			obj.layoutY += shiftY;
 		}
@@ -508,9 +517,9 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			def event = e as CollectionEvent;
 			if( CanvasItem.COMPONENTS.equals( event.getKey() ) ) {
 				if( event.getEvent() == CollectionEvent.Event.ADDED ) {
-					runInFxThread( function() { addComponent( event.getElement() as ComponentItem ); refreshComponents(); } );
+					runInFxThread( function() { addComponent( event.getElement() as ComponentItem ) } );
 				} else {
-					runInFxThread( function() { removeModelItem( event.getElement() as ComponentItem ); refreshComponents(); } );
+					runInFxThread( function() { removeModelItem( event.getElement() as ComponentItem ) } );
 				}
 			} else if( CanvasItem.CONNECTIONS.equals( event.getKey() ) ) {
 				if( event.getEvent() == CollectionEvent.Event.ADDED ) {
