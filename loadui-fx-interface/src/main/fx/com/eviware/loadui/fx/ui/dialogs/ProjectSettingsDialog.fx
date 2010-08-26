@@ -97,7 +97,6 @@ public class ProjectSettingsDialog  {
 							},
 							FileInputField {
 							    id: "savePath"
-							    label:"Folder for exported reports"
 							    value: if (not (item.getReportFolder() == null)) new File(item.getReportFolder()) else null
 							    disable: bind not (cb.value as Boolean)
 							    directoryOnly: true
