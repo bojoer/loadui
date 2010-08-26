@@ -89,7 +89,7 @@ public class TestCaseNode extends CanvasObjectNode {
 				visible: bind not compact
 				managed: bind not compact
 				layoutInfo: LayoutInfo { margin: Insets { top: 5 } }
-				content: [
+				content: bind [
 					ImageView { 
 						image: testCaseGrid
 						onMouseClicked: function( e:MouseEvent ) {
