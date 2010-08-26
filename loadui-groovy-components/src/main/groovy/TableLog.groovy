@@ -49,7 +49,7 @@ myTableModel.addTableModelListener(new TableModelListener() {
 	}
 });
 
-saveFileName = (fileName.value as File).getName()
+saveFileName = (fileName?.value as File)?.getName()
 
 updateFollow = {
 	follow.value = myTableModel.isFollow()
