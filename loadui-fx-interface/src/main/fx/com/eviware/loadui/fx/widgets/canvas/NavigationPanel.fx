@@ -311,6 +311,7 @@ class Miniature extends CustomNode {
 class NoteMiniature extends CustomNode {
 	public var width:Number;
 	public var height:Number;
+	override var visible = bind Canvas.showNotes;
 	
 	override function create() {
 		Group {

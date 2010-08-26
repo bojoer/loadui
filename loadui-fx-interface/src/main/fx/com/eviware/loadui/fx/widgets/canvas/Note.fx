@@ -205,6 +205,7 @@ public class Note extends BaseNode, Movable, Selectable, Deletable {
 	
 	override var onMove = function():Void {
 		save();
+		canvas.refreshComponents();
 	}
 	
 	override function doDelete():Void {
