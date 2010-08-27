@@ -135,15 +135,34 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	}
 	
 	public function createMiniatures(maxWidth: Number, maxHeight: Number, minScaleFactor: Number): String {
-		def noteImg = nodeToImage(noteLayer, areaWidth, areaHeight);
-		def connImg = nodeToImage(connectionLayer, areaWidth, areaHeight);
-		def compImg = nodeToImage(componentLayer, areaWidth, areaHeight);
-		var img = combineImages(connImg, compImg);
+		var minX: Number = java.lang.Long.MAX_VALUE;
+		var maxX: Number = 0;
+		var minY: Number = java.lang.Long.MAX_VALUE;
+		var maxY: Number = 0;
+		
+		def objects = [componentLayer.content, noteLayer.content];
+		for(obj in objects) {
+			minX = Math.min(minX, obj.layoutX);
+			minY = Math.min(minY, obj.layoutY);
+			maxX = Math.max(maxX, obj.layoutX + obj.layoutBounds.width);
+			maxY = Math.max(maxY, obj.layoutY + obj.layoutBounds.height);
+		}
+		
+		if(maxX == 0) maxX = 10;
+		if(maxY == 0) maxY = 10;
+		if(minX == java.lang.Long.MAX_VALUE) minX = 0;
+		if(minY == java.lang.Long.MAX_VALUE) minY = 0;
+		
+		def noteImg = nodeToImage(noteLayer, maxX + 100, maxY + 100);
+		def connImg = nodeToImage(connectionLayer, maxX + 100, maxY + 100);
+		def compImg = nodeToImage(componentLayer, maxX + 100, maxY + 100);
+
+	    var img = combineImages(connImg, compImg);
 		img = combineImages(noteImg, img);
-		img = clipImage(img, 0, 0, areaWidth, areaHeight);
-		def scale = Math.max(Math.min(maxWidth / areaWidth, maxHeight / areaHeight), minScaleFactor);
-		img = scaleImage(img, scale);
-		img = clipImage(img, 0, 0, Math.min(maxWidth, img.getWidth()), Math.min(maxHeight, img.getHeight()));
+	    img = clipImage(img, minX, minY, maxX + 100 - minX, maxY + 100 - minY);
+	    var scale = Math.max(Math.min(maxWidth/img.getWidth(), maxHeight/img.getHeight()), minScaleFactor);
+	    img = scaleImage(img, scale);
+	    img = clipImage(img, 0, 0, Math.min(maxWidth, img.getWidth()), Math.min(maxHeight, img.getHeight()));
 
 		bufferedImageToBase64(img);
 	}
