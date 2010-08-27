@@ -296,7 +296,7 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 	{
 		String scriptContent = scriptProperty.getValue();
 		binding = new Binding();
-		binding.setProperty( "log", log );
+		binding.setProperty( "log", GroovyComponent.log );
 
 		if( scriptContent != null )
 		{
