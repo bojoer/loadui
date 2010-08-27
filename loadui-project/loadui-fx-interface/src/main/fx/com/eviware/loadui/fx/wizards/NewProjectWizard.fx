@@ -38,6 +38,8 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.NewProjectWizard" );
 
+public def SHOW_PROJECT_WIZARD = "gui.new_project_wizard";
+
 /**
  * The Wizard displayed when a new project is created
  * 
@@ -88,7 +90,7 @@ public class NewProjectWizard {
 	             	},
 	             	alwaysShow = CheckBox {
 	                 	text: "Show this every time a new project is created"
-	                 	selected: workspace.isShowProjectWizard()
+	                 	selected: workspace.getAttribute( SHOW_PROJECT_WIZARD, "true" ) == "true"
 	             	}
 	        	]
 	         
@@ -97,8 +99,8 @@ public class NewProjectWizard {
 	}
 	
 	function close() {
-	    workspace.getProperty(WorkspaceItem.SHOW_PROJECT_WIZARD_PROPERTY).setValue(alwaysShow.selected);
-	    log.debug(">>>>>>>>>>>>>>>>>>>> {workspace.getProperty(WorkspaceItem.SHOW_PROJECT_WIZARD_PROPERTY).getValue()}");
+	    workspace.setAttribute( SHOW_PROJECT_WIZARD, "{alwaysShow.selected}" );
+	    log.debug(">>>>>>>>>>>>>>>>>>>> {workspace.getAttribute(SHOW_PROJECT_WIZARD, 'true')}");
 	    dialog.close();
 	}
 }

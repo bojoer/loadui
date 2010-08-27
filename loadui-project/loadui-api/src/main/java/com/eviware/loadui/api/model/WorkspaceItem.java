@@ -45,8 +45,6 @@ public interface WorkspaceItem extends ModelItem
 	public final static String LOADUI_CAJO_PORT_PROPERTY = WorkspaceItem.class.getSimpleName() + ".loadUICajoPort";
 	public final static String AUTO_GARBAGE_COLLECTION_INTERVAL = WorkspaceItem.class.getSimpleName()
 			+ ".garbageCollectionInterval";
-	
-	public final static String SHOW_PROJECT_WIZARD_PROPERTY = WorkspaceItem.class.getSimpleName() + ".showProjectWizard";
 
 	/**
 	 * Gets the version of loadUI which was used to create the workspace.
@@ -178,18 +176,4 @@ public interface WorkspaceItem extends ModelItem
 	 * @param localMode
 	 */
 	public void setLocalMode( boolean localMode );
-	
-	/**
-	 * Returns the show project wizard property value
-	 * 
-	 * @return showProjectWizard
-	 */
-	public boolean isShowProjectWizard();
-	
-	/**
-	 * Used to determine whether the New Pro0ject Wizard should be displayed or not
-	 * 
-	 * @param show
-	 */
-	public void setShowProjectWizard( boolean show );
 }
