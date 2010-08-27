@@ -62,6 +62,15 @@ public interface ComponentRegistry extends BehaviorProvider
 	 *           The ComponentDescriptor to unregister.
 	 */
 	public void unregisterDescriptor( ComponentDescriptor descriptor );
+	
+	/**
+	 * Finds a descriptor.
+	 * 
+	 * @param label
+	 *           The label of the descriptor to find.
+	 * @return The Descriptor with the label, or null if it cannot be found
+	 */
+	public ComponentDescriptor findDescriptor( String label );
 
 	/**
 	 * Unregisters any descriptor with the given type.

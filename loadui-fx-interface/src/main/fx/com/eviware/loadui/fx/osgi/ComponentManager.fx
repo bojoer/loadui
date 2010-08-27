@@ -123,4 +123,8 @@ public class ComponentManager extends ComponentRegistry.DescriptorListener {
 			}
 		} );
 	}
+	
+	public function findDescriptor(label:String) {
+	    componentRegistry.findDescriptor(label);
+	}
 }

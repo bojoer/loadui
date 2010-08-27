@@ -30,6 +30,8 @@ import javafx.scene.image.Image;
 import com.eviware.loadui.fx.dialogs.CreateNewProjectDialog;
 import com.eviware.loadui.api.model.WorkspaceItem;
 
+import com.eviware.loadui.fx.wizards.NewProjectWizard;
+
 def iconImage = Image { url: "{__ROOT__}images/png/project-icon.png" };
 
 public class ProjectToolbarItem extends ToolbarItem {
@@ -45,7 +47,8 @@ public class ProjectToolbarItem extends ToolbarItem {
 	
 	override def onMouseClicked = function (me:MouseEvent) {
 		  if( me.button == MouseButton.PRIMARY and me.clickCount == 2) {
-		      CreateNewProjectDialog { 
+		      
+		     CreateNewProjectDialog { 
 		      	workspace: workspace 
 		     };
 		  }  
