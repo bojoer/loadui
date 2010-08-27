@@ -169,4 +169,15 @@ public function combineImages(firstImage: BufferedImage, secondImage: BufferedIm
  
 	combined;
 }
+
+public function createTransparentImage(width: Number, height: Number): BufferedImage {
+	new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+} 
+
+public function addLayerToImage(baseImage: BufferedImage, layerImage: BufferedImage, offsetX: Number, offsetY: Number): BufferedImage {
+	var g: Graphics2D = baseImage.createGraphics();
+	g.drawImage(layerImage, offsetX, offsetY, layerImage.getWidth(), layerImage.getHeight(), null);
+	g.dispose();
+	baseImage;
+}
 	
