@@ -111,12 +111,16 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	public var padding:Integer = 200;
 	
 	public var offsetX:Integer = 0 on replace {
-		componentLayer.layoutX = -offsetX;
-		noteLayer.layoutX = -offsetX;
+		//componentLayer.layoutX = -offsetX;
+		//noteLayer.layoutX = -offsetX;
+		layers.layoutX = -offsetX;
+		connectionLayer.layoutX = offsetX;
 	}
 	public var offsetY:Integer = 0 on replace {
-		componentLayer.layoutY = -offsetY;
-		noteLayer.layoutY = -offsetY;
+		//componentLayer.layoutY = -offsetY;
+		//noteLayer.layoutY = -offsetY;
+		layers.layoutY = -offsetY;
+		connectionLayer.layoutY = offsetY;
 	}
 	
 	public-read var areaWidth:Integer = 0;
@@ -131,50 +135,15 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	}
 	
 	public function createMiniatures(maxWidth: Number, maxHeight: Number, minScaleFactor: Number): String {
-		var minX: Number = java.lang.Long.MAX_VALUE;
-		var maxX: Number = 0;
-		var minY: Number = java.lang.Long.MAX_VALUE;
-		var maxY: Number = 0;
-		for(c in components){
-			if(c.layoutX + c.layoutBounds.width > maxX){
-				maxX = c.layoutX + c.layoutBounds.width;
-			}
-			if(c.layoutY + c.layoutBounds.height > maxY){
-				maxY = c.layoutY + c.layoutBounds.height;
-			}
-			if(c.layoutX < minX){
-				minX = c.layoutX;
-			}
-			if(c.layoutY < minY){
-				minY = c.layoutY;
-			}
-		}
-		
-		if(maxX == 0){
-			maxX = 10;
-		}
-		
-		if(maxY == 0){
-			maxY = 10;
-		}
-		
-		if(minX == java.lang.Long.MAX_VALUE){
-			minX = 0;
-		}
-		
-		if(minY == java.lang.Long.MAX_VALUE){
-			minY = 0;
-		}
-		
-		def noteImg = nodeToImage(noteLayer, maxX + 100, maxY + 100);
-		def connImg = nodeToImage(connectionLayer, maxX + 100, maxY + 100);
-		def compImg = nodeToImage(componentLayer, maxX + 100, maxY + 100);
-	    var img = combineImages(connImg, compImg);
-	    img = combineImages(noteImg, img);
-	    img = clipImage(img, minX, minY, maxX + 100 - minX, maxY + 100 - minY);
-	    var scale = Math.max(Math.min(maxWidth/img.getWidth(), maxHeight/img.getHeight()), minScaleFactor);
-	    img = scaleImage(img, scale);
-	    img = clipImage(img, 0, 0, Math.min(maxWidth, img.getWidth()), Math.min(maxHeight, img.getHeight()));
+		def noteImg = nodeToImage(noteLayer, areaWidth, areaHeight);
+		def connImg = nodeToImage(connectionLayer, areaWidth, areaHeight);
+		def compImg = nodeToImage(componentLayer, areaWidth, areaHeight);
+		var img = combineImages(connImg, compImg);
+		img = combineImages(noteImg, img);
+		img = clipImage(img, 0, 0, areaWidth, areaHeight);
+		def scale = Math.max(Math.min(maxWidth / areaWidth, maxHeight / areaHeight), minScaleFactor);
+		img = scaleImage(img, scale);
+		img = clipImage(img, 0, 0, Math.min(maxWidth, img.getWidth()), Math.min(maxHeight, img.getHeight()));
 
 		bufferedImageToBase64(img);
 	}
