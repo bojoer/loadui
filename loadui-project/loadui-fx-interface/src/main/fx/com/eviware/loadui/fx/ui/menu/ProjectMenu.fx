@@ -68,6 +68,7 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 
 import com.eviware.loadui.api.counter.CounterHolder;
+import com.eviware.loadui.fx.wizards.NewProjectWizard;
 
 import javax.swing.JFileChooser;
 import java.io.File;
@@ -191,6 +192,15 @@ public class ProjectMenu extends HBox {
 				                            CreateNewTestCaseDialog { project: MainWindow.instance.projectCanvas.canvasItem as ProjectItem };
 				                        }
 				                    }
+				                }
+				               MenuItem {
+				                	text: "New Project Wizard"
+				                	action: function() { 
+				                	    if ( MainWindow.instance.projectCanvas.canvasItem instanceof ProjectItem ) {
+				                			var newWizard:NewProjectWizard = NewProjectWizard{workspace: (MainWindow.instance.projectCanvas.canvasItem as ProjectItem).getWorkspace()};
+				                			newWizard.show();
+				                	    }
+				                	}
 				                }
 				                Separator{}
 				                MenuItem {

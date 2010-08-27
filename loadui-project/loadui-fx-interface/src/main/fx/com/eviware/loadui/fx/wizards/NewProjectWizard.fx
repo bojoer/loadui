@@ -53,6 +53,7 @@ public class NewProjectWizard {
 	    dialog = Dialog {
 	        noCancel: true
 	        noOk: true
+	        closable:false
 	        title: "New Project Wizard"
 	         content: VBox {
 	         	spacing: 10;
@@ -87,7 +88,7 @@ public class NewProjectWizard {
 	             	},
 	             	alwaysShow = CheckBox {
 	                 	text: "Show this every time a new project is created"
-	                 	selected: bind workspace.isShowProjectWizard()
+	                 	selected: workspace.isShowProjectWizard()
 	             	}
 	        	]
 	         
@@ -96,7 +97,8 @@ public class NewProjectWizard {
 	}
 	
 	function close() {
-	    workspace.setShowProjectWizard(alwaysShow.selected);
+	    workspace.getProperty(WorkspaceItem.SHOW_PROJECT_WIZARD_PROPERTY).setValue(alwaysShow.selected);
+	    log.debug(">>>>>>>>>>>>>>>>>>>> {workspace.getProperty(WorkspaceItem.SHOW_PROJECT_WIZARD_PROPERTY).getValue()}");
 	    dialog.close();
 	}
 }
