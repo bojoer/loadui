@@ -68,14 +68,11 @@ public class CreateNewSoapUIProjectDialog {
 	
 	
 	var form:Form;
-			var file:FileInputField;
-			var testsuite:SelectField;
-			var testcase:SelectField;
+			
 			var numRequests:LongInputField;
 			var addStatisticsDiagram:CheckBoxField;
 			var autoStart:CheckBoxField;
-			var testcases:String[] = ["--Select Project--"];
-			var testsuites:String[] = ["--Select Project--"];
+
 			
 		//	var soapuiProject:WsdlProject;
 			
@@ -84,11 +81,7 @@ public class CreateNewSoapUIProjectDialog {
 				var manager:ComponentRegistry = BeanInjector.getBean(ComponentRegistry.class);
 								 
 				var soapuiItem:ComponentItem = project.createComponent( "soapui Runner", manager.findDescriptor("soapUI Runner") );
-				var soapuiContext:ComponentContext = soapuiItem.getContext();
-				soapuiContext.getProperty("projectFile").setValue(file.text);
-				soapuiContext.getProperty("testSuite").setValue(testsuite.text);
-				soapuiContext.getProperty("testCase").setValue(testcase.text);
-							
+				
 								 var fixedRateItem:ComponentItem = project.createComponent( "Fixed Rate", manager.findDescriptor("Fixed Rate") ); 
 								var fixedRateContext:ComponentContext = fixedRateItem.getContext();
 								fixedRateContext.getProperty("rate").setValue(numRequests.text);
@@ -142,29 +135,9 @@ public class CreateNewSoapUIProjectDialog {
 		form = Form {
 			layoutInfo: LayoutInfo { width: 250 }
 			formContent: [
-				file = FileInputField { label: "Project", 
-					onOpen: function(): Void {
-					 //   var cl:ClassLoader  = Thread.currentThread().getContextClassLoader();
-					 //   try
-					 //   			{
-					    //				Thread.currentThread().setContextClassLoader( SoapUI.class.getClassLoader() );
-					   // 
-					    //				project = SoapUIProjectLoader.getInstance().getProject( projectFile.getAbsolutePath() );
-					    //
-					    				
-					    	//		}
-					    	//		catch(  t )
-					    		//	{
-					    		//		t.printStackTrace();
-					    		//	}
-					    		//	finally
-					    		//	{
-					    		//		Thread.currentThread().setContextClassLoader( cl );
-					    		//	}
-					}
-				  },
-				testsuite = SelectField{ label: "TestSuite", options: testsuites, value: "--Select Project--" },
-				testcase = SelectField{ label: "TestCase", options: testcases, value: "--Select Project--" },
+				
+				//testsuite = SelectField{ label: "TestSuite", options: testsuites, value: "--Select Project--" },
+				//testcase = SelectField{ label: "TestCase", options: testcases, value: "--Select Project--" },
 				numRequests = LongInputField { label: "Number of Requests per second", action: ok },
 				addStatisticsDiagram = CheckBoxField { label: "Add Statistics Component", value: false },
 				autoStart = CheckBoxField { label: "Start when created?", value: false }

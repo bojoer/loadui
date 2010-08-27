@@ -65,13 +65,13 @@ public class NewProjectWizard {
 	                 	   close();
 	                 	}
 	             	},
-	             /*	Button {
+	             	Button {
 	             		text:"Create a soapUI LoadTest "
 	             		action: function (): Void {
 	             			                 	   var dial = CreateNewSoapUIProjectDialog {};
 	             			                 	   close();
 	             			                 	}
-	             	},*/
+	             	},
 	             	Button {
 	             		text:"Show me a \"Getting Started\" tutorial video"
 	             		action: function():Void {
