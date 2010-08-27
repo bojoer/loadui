@@ -40,6 +40,8 @@ public class FileInputField extends Button, FormField {
     
     public-init var directoryOnly = false;
     
+    public-init var onOpen = function():Void {};
+    
 	override var value on replace {
 		if( value != null and not ( value instanceof File ) )
 			throw new IllegalArgumentException( "Value must be of type File!" );
@@ -62,6 +64,7 @@ public class FileInputField extends Button, FormField {
 		if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog( null )) {
 			value = chooser.getSelectedFile();
 		}
+		onOpen();
 	}
 	
 	override function getPrefWidth( height:Float ) {

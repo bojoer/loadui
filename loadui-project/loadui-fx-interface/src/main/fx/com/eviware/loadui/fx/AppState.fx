@@ -54,6 +54,8 @@ import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
 import javafx.util.Math;
 
+import com.eviware.loadui.fx.wizards.NewProjectWizard;
+
 public def WORKSPACE_FRONT = "workspace.front";
 public def PROJECT_FRONT = "project.front";
 public def PROJECT_BACK = "project.back";
@@ -191,7 +193,13 @@ public class AppState extends ApplicationState {
 				        onOk: function() { dialog.close(); }
 				    }
 				}
+				var project:ProjectItem = canvas as ProjectItem;
+				
+				if (project.getScenes().size() == 0 and project.getComponents().size() == 0 and project.getAttributes().size() == 0) {
+					var newWizard:NewProjectWizard = NewProjectWizard{workspace: (canvas as ProjectItem).getWorkspace()};
+					newWizard.show();
 					
+				}
 			} else if( canvas instanceof SceneItem ) {
 				MainWindow.instance.testcaseCanvas.canvasItem = canvas;
 				transitionTo( AppState.TESTCASE_FRONT, AppState.ZOOM_WIPE );

@@ -63,6 +63,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	private final AgentListener agentListener = new AgentListener();
 	private final Property<Boolean> localMode;
 	private final Property<Long> garbageCollectionInterval;
+	private final Property<Boolean> showProjectWizard;
 
 	private ScheduledFuture<?> gcTask = null;
 
@@ -95,6 +96,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		createProperty( LOADUI_CAJO_PORT_PROPERTY, Integer.class, 1199 );
 		garbageCollectionInterval = createProperty( AUTO_GARBAGE_COLLECTION_INTERVAL, Long.class, 60 ); // using
 		// seconds
+		showProjectWizard = createProperty( SHOW_PROJECT_WIZARD_PROPERTY, Boolean.class, true );
 	}
 
 	@Override
@@ -398,6 +400,20 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			triggerAction( CounterHolder.COUNTER_RESET_ACTION );
 			this.localMode.setValue( localMode );
 		}
+	}
+	
+
+	@Override
+	public boolean isShowProjectWizard()
+	{
+		return showProjectWizard.getValue();
+	}
+
+	@Override
+	public void setShowProjectWizard( boolean show )
+	{
+		this.showProjectWizard.setValue( show );
+		
 	}
 
 	private class ProjectListener implements EventHandler<BaseEvent>

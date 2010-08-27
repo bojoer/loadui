@@ -26,6 +26,7 @@ import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
 
 import com.eviware.loadui.fx.ui.form.FormField;
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
 
 /**
  * Constructs a new TextFile using the supplied arguments.

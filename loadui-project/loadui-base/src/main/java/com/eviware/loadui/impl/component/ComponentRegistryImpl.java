@@ -73,7 +73,17 @@ public class ComponentRegistryImpl implements ComponentRegistry
 				return;
 		types.remove( descriptor.getType() );
 	}
-
+	
+	@Override
+	public ComponentDescriptor findDescriptor( String label )
+	{
+		for( ComponentDescriptor cd : getDescriptors() )
+		{
+			if( cd.getLabel().equals( label ) )
+				return cd;
+		}
+		return null;
+	}
 	@Override
 	public void unregisterProvider( BehaviorProvider provider )
 	{
