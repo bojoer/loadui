@@ -43,13 +43,15 @@ public-init var canvasObject:CanvasObjectItem;
 	var level:SelectField;
 	var dialog:Dialog;
 	var name:TextField;
+	var inTerminals:Boolean = false;
+	var outTerminals:Boolean = false;
 	def copyIn = CheckBoxField { 
-				disable: bind level.value == "PROJECT"
+				disable: bind level.value == "PROJECT" or not inTerminals
 				label: "Clone incomming connections?"
 				value: true
 			 };
 			def copyOut = CheckBoxField { 	
-				disable: bind level.value == "PROJECT"
+				disable: bind level.value == "PROJECT" or not outTerminals
 				label: "Clone outgoing connections?"
 				value: true
 			 };
@@ -106,6 +108,14 @@ public-init var canvasObject:CanvasObjectItem;
 		//name = TextField { label: "Name of clone", value: "copy-of-{canvasObject.getLabel()}", columns: 30, action:ok};
 		level = SelectField { label: "Level to clone", options: ["TEST CASE", "PROJECT"], value: "TEST CASE"};
 		
+		for( terminal in canvasObject.getTerminals() ) {
+		    if ( terminal instanceof InputTerminal ) {
+		        inTerminals = true;
+		    }
+		    if ( terminal instanceof OutputTerminal ) {
+		    	outTerminals = true;
+		    }
+		}
 		
 		
 		dialog = Dialog {
