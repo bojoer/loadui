@@ -17,7 +17,7 @@
 /**
  * Sends an empty message in a variance pattern depending on the settings.
  * 
- * @help http://www.loadui.org/Triggers/variance.html
+ * @help http://www.loadui.org/Generators/variance-component.html
  * @category generators
  * @nonBlocking true
  */

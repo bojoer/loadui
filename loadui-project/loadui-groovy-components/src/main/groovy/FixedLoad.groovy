@@ -17,7 +17,7 @@
 /**
  * Simulates a "classic" fixed load situation
  * 
- * @help http://www.loadui.org/Triggers/fixed-load.html
+ * @help http://www.loadui.org/Generators/fixed-load-component.html
  * @name Fixed Load
  * @category generators
  * @nonBlocking true
