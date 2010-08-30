@@ -24,7 +24,7 @@
  *
  * On Reset it just reset timer and stops it.
  *
- * @help http://www.loadui.org/Schedulers/interval.html
+ * @help http://www.loadui.org/Schedulers/scheduler-component.html
  * @category scheduler
  * @nonBlocking true
  * @dependency org.quartz-scheduler:quartz:1.8.3

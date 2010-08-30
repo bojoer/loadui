@@ -18,7 +18,7 @@
  * An assertion checks for errors; if an assertion fails it increases the 
  * global assertion count (depends on the tolerance).
  * 
- * @help http://www.loadui.org/Analysis/assertion.html
+ * @help http://www.loadui.org/Analysis/assertion-component.html
  * @category analysis
  * @nonBlocking true
  */

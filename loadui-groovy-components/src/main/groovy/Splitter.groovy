@@ -19,7 +19,7 @@
  * - Random ( choose random output )
  * - Round-Robin method ( going sequential trough all outputs )
  * 
- * @help http://www.loadui.org/Flow-Control/splitter.html
+ * @help http://www.loadui.org/Flow-Control/splitter-component.html
  * @category flow
  * @nonBlocking true
  */
