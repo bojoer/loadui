@@ -42,7 +42,7 @@ public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 {
 	public static final Logger log = LoggerFactory.getLogger( ModelItemImpl.class );
 
-	public static final String helpUrl = "http://www.eviware.com";
+	public static final String helpUrl = "http://www.loadui.org";
 
 	private final Config config;
 	private final EventSupport eventSupport = new EventSupport();
