@@ -15,8 +15,7 @@
 // 
 
 /**
- * Component that shows incoming messages in table format. Size of table row numbers can be changed.
- * Whole output is saved in file in csv format. 
+ * Tabulates incoming messages and creates a csv output 
  * 
  * @help http://www.loadui.org/Output/table-log-component.html
  * @name Table Log

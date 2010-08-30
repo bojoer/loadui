@@ -18,8 +18,7 @@ import com.eviware.loadui.api.chart.Point;
 // 
 
 /**
- * A statistics diagram that is interactively updated and scrolls 
- * sideways over time. 
+ * Displays statistical information  
  * 
  * @help http://www.loadui.org/Analysis/statistics.html
  * @category analysis

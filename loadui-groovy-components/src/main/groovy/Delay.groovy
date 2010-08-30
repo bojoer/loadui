@@ -15,8 +15,7 @@
 // 
 
 /**
- * Delays incoming messages for a period of time. Delay can be fixed or random. Random delay could be determined by
- * uniform or gaussian distribution. Number of random delay could be also set.
+ * Delays incoming messages for a period of time
  * 
  * @help http://www.loadui.org/Flow-Control/delay-component.html
  * @category flow

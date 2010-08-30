@@ -15,9 +15,7 @@
 // 
 
 /**
- * Non blocking component which sends incoming messages to several outputs. Two modes:
- * - Random ( choose random output )
- * - Round-Robin method ( going sequential trough all outputs )
+ * Splits input to specified number of outputs
  * 
  * @help http://www.loadui.org/Flow-Control/splitter-component.html
  * @category flow
