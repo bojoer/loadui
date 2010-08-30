@@ -79,7 +79,7 @@ public class LogInspector extends AppenderSkeleton, Inspector {
 	}
 	
 	override function getHelpUrl():String {
-		return "http://www.eviware.com";
+		return "http://www.loadui.org/interface/workspace-view.html";
 	}
 	
 	override function toString() {
