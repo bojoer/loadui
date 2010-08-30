@@ -15,20 +15,23 @@
 // 
 
 /**
- * Schedule the start and stop of a trigger component.
- * On Start starts timer and when StartAt reached send one START message to 
- * attached component. When Duration expires one STOP message is send to each 
- * attached component.
- * Repeat option repeats whole process if counter limit not set.
- * 
- * On Stop it sends STOP message to attached components and stops timer.
- *
- * On Reset it just reset timer and stops it.
+ * Schedules the start and stop of connected components 
  *
  * @help http://www.loadui.org/Schedulers/interval-component.html
  * @category scheduler
  * @nonBlocking true
  */
+ 
+// Schedule the start and stop of a trigger component.
+// On Start starts timer and when StartAt reached send one START message to 
+// attached component. When Duration expires one STOP message is send to each 
+// attached component.
+// Repeat option repeats whole process if counter limit not set.
+// 
+// On Stop it sends a STOP message to attached components and stops timer.
+//
+// On Reset it just resets the timer and stops it.
+
 
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.api.model.CanvasItem
