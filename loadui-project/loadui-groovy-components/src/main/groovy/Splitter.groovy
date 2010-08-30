@@ -15,7 +15,7 @@
 // 
 
 /**
- * Non blocking component which sends incoming messages to several outputs. Two mode:
+ * Non blocking component which sends incoming messages to several outputs. Two modes:
  * - Random ( choose random output )
  * - Round-Robin method ( going sequential trough all outputs )
  * 
