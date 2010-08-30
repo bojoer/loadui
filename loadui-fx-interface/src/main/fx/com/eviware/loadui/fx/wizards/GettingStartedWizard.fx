@@ -152,12 +152,7 @@ public class GettingStartedWizard {
                      	                  }
 					                 }
 					             },
-					             Button {
-					                 text: "Leave me be, I know what I'm doing!"
-					                 action: function() {
-					                     dialogRef.close()
-					                 }
-					             },
+					            
 					             cb
 			             	]
 		 	 			 }
