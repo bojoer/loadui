@@ -124,7 +124,7 @@ public class AgentInspector extends Inspector {
 	}
 	
 	override function getHelpUrl(): String {
-		"http://www.loadui.org/interface/project-view.html";
+		"http://www.loadui.org/interface/workspace-view.html";
 	}
 	
 	override function toString(): String {
