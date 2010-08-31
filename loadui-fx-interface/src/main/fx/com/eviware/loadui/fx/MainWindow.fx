@@ -41,6 +41,8 @@ import com.eviware.loadui.fx.widgets.toolbar.ProjectToolbarItem;
 import com.eviware.loadui.fx.widgets.toolbar.TestCaseToolbarItem;
 import com.eviware.loadui.fx.wizards.GettingStartedWizard;
 import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.widgets.TutorialList;
+
 import java.lang.Thread;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -49,6 +51,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.slf4j.LoggerFactory;
+
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.MainWindow" );
 
@@ -83,6 +86,9 @@ public class MainWindow {
 	
 	var toolbar:Toolbar;
 	public function getToolbar() { toolbar }
+	
+	var tutorialList:TutorialList;
+	public function getTutorialList() { tutorialList }
 	
 	var projectToolbar:Toolbar = Toolbar{layoutY: 110
 		height: bind scene.height - inspectors.height - 100};
@@ -141,8 +147,6 @@ public class MainWindow {
 		}
 		appState.insertInto( projectList, AppState.WORKSPACE_FRONT );
 		
-		
-		
 		//Pagelist - Agents
 		appState.insertInto( agentList = AgentList {
 			workspace: workspace
@@ -150,6 +154,15 @@ public class MainWindow {
 			layoutY: 327
 			width: bind scene.width - 529
 		} , AppState.WORKSPACE_FRONT );
+		
+		// Tutorials
+		def tutorialList = TutorialList {
+		    workspace: workspace
+			layoutX: 137
+			layoutY: 605
+			width: bind scene.width - 529
+		}
+		appState.insertInto( tutorialList, AppState.WORKSPACE_FRONT );
 		
 		//Toolbar
 

@@ -1,0 +1,102 @@
+/* 
+ * Copyright 2010 eviware software ab
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl5
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
+/*
+*TutorialList.fx
+*
+*Created on feb 10, 2010, 09:32:42 fm
+*/
+
+package com.eviware.loadui.fx.widgets;
+
+import javafx.util.Sequences;
+import javafx.scene.Node;
+import javafx.scene.Group;
+import javafx.scene.CustomNode;
+import javafx.scene.layout.Resizable;
+import javafx.scene.control.Separator;
+
+import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.PopupMenu;
+
+import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.ui.pagelist.PagelistControl;
+
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
+
+import java.util.EventObject;
+import java.util.Comparator;
+import java.lang.RuntimeException;
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.model.WorkspaceItem;
+import org.slf4j.LoggerFactory;
+
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.TutorialList" );
+
+/**
+ * A list of all the Tutorials available.
+ */
+public class TutorialList extends CustomNode, Resizable {
+
+	/**
+	 * A reference to the current Workspace.
+	 */
+	public-init var workspace: WorkspaceItem;
+	
+	var pagelist:PagelistControl;
+
+	override function getPrefHeight( width:Float ) {
+		200
+	}
+	
+	override function getPrefWidth( height:Float ) {
+		pagelist.getPrefWidth( height );
+	}
+	
+	postinit {
+		if( workspace == null )
+			throw new RuntimeException( "Workspace must not be null!" );
+		// check for tutorials
+		
+	}
+	
+	override function create() {
+		
+		pagelist = PagelistControl {
+			text: ##[TUTORIALS]"TUTORIALS"
+			height: bind height
+			width: bind width
+			content: [
+				TutorialNode {
+					url:"http://www.loadui.org/Getting-Started-with-loadUI/your-first-load-test.html"
+					label:"First LoadUI Test"
+				},
+				TutorialNode {
+				    url:"http://www.loadui.org/loadUI-Demo-Movies.html"
+				    label:"Demo Movies"
+				}
+			]
+		};
+		
+		Group {
+		     content: [
+		         pagelist
+		         ]
+		 }
+		
+	}
+}
