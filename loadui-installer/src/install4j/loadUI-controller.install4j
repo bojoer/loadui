@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="4.2.7" transformSequenceNumber="2">
+<install4j version="4.2.6" transformSequenceNumber="2">
   <directoryPresets config="../../target/controller" />
   <application name="loadUI" distributionSourceDir="" applicationId="3648-6792-9261-9102" mediaDir="../../target" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" missingFilesStrategy="warn" shortName="loadUI" publisher="eviware ab" publisherWeb="http://www.eviware.com" version="preAlpha" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
@@ -950,6 +950,24 @@ Appendix
               </java>
             </serializedBean>
             <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="828" beanClass="com.install4j.runtime.beans.screens.CustomizableInfoScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="true">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.CustomizableInfoScreen">
+                  <void property="displayedText">
+                    <string>A version of LoadUI is running, please close it before starting the uninstallation again.</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>File f = new File("${installer:sys.userHome}/.loadui/controller-cache/loadui.lock");
+return f.exists();</condition>
             <validation />
             <preActivation />
             <postActivation />
