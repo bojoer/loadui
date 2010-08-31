@@ -56,6 +56,8 @@ import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.dialogs.SetCanvasLimitsDialog;
 
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.counter.CounterHolder;
@@ -67,6 +69,14 @@ import javafx.fxd.FXDNode;
 import com.eviware.loadui.api.model.SceneItem;
 
 import javafx.scene.control.Tooltip;
+
+import com.eviware.loadui.api.component.categories.RunnerCategory;
+import com.eviware.loadui.api.component.categories.TriggerCategory;
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
+
+import org.slf4j.LoggerFactory;
+
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.RunController" );
 
 public class RunController extends BaseNode, Resizable, StylesheetAware, TimerController {
 
@@ -166,18 +176,58 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 	public-read var stopButton:Button;
 	var resetButton:Button;
 	var limitButton:Button;
+	var cancelling = false;
 	
 	def playButtonState = bind playButton.selected on replace {
-		if( playButton.armed ) {
+		if( playButton.armed and not cancelling) {
 			if( playButtonState ) {
 				if( stopped or not canvas.isStarted() ) {
 					canvas.triggerAction( CounterHolder.COUNTER_RESET_ACTION );
 					stopped = false;
 				}
 				
-				canvas.triggerAction( CanvasItem.START_ACTION );
+				
+				var valid:Boolean = checkForTriggerAndRunner(canvas);
+				
+				if (not valid and canvas instanceof ProjectItem) {
+				    var project:ProjectItem = canvas as ProjectItem;
+				    for (testcase in project.getScenes()) {
+				        if (checkForTriggerAndRunner(testcase)) {
+				            valid = true;
+				            break;
+				        }
+				    }
+				}
+				
+				if (not valid) {
+				    var dlg:Dialog = Dialog {
+				        title: "Start Project"
+				        content: [
+				        				Label { text: "The object is missing a runner or a trigger. Start anyway?" }
+				        ]
+				        onOk: function():Void {
+				           
+				            canvas.triggerAction( CanvasItem.START_ACTION );
+				            dlg.close();
+				        }
+				        
+				        onClose: function():Void {
+				           
+							//cancelling = true;
+							playButton.selected = false;
+							
+							//cancelling = false;
+				        }
+				    }
+				} else {
+				   
+				
+					canvas.triggerAction( CanvasItem.START_ACTION );
+					
+				}
 				
 			} else {
+			    
 				canvas.triggerAction( CanvasItem.STOP_ACTION );
 			}
 		}
@@ -338,6 +388,25 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 		counterUpdater.play();
 	}
 	
+	function checkForTriggerAndRunner(canvas:CanvasItem):Boolean {
+	    var foundTrigger:Boolean = false;
+	    var foundRunner:Boolean = false;
+	    for (comp in canvas.getComponents()) {
+	        
+	        var component:ComponentItem = comp as ComponentItem;
+	    	if (component.getCategory().equalsIgnoreCase(RunnerCategory.CATEGORY)) {
+	    		foundRunner = true;
+			}
+	    	else if (component.getCategory().equalsIgnoreCase(TriggerCategory.CATEGORY))
+	    		foundTrigger = true;
+	    	if (foundTrigger and foundRunner)
+	    		break;
+	    }
+	    foundTrigger and foundRunner;
+	}
+	
+	
+					
 	function formatSeconds( total:Integer ) {
 		var seconds = total;
 		def hours = seconds / 3600;
