@@ -178,7 +178,7 @@ public class MainWindow {
 			layoutX: bind scene.width - 356
 			layoutY: 90
 			//width: 300
-			height: bind scene.height - 150
+			height: bind scene.height - 135
 		}
 
 		appState.insertInto( toolbar, AppState.WORKSPACE_FRONT );
