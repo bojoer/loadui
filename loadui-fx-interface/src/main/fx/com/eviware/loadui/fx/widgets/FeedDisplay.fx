@@ -65,15 +65,13 @@ public class FeedDisplay extends BaseNode, Resizable {
 	        
 	       onItem: function(item:Item):Void {
 	           FX.deferAction( function() {
-	           	   
-	           insert NewsItem {
-	               title: item.title;
-	               text: item.description
-	               image: item.enclosure.url
-	               url: item.link
-	               date: item.pubDate
-	           } into items;
-	           
+		           insert NewsItem {
+		               title: item.title;
+		               text: item.description
+		               image: item.enclosure.url
+		               url: item.link
+		               date: item.pubDate
+		           } into items;
 	             } );
 	       }
 	       
@@ -108,85 +106,83 @@ public class FeedDisplay extends BaseNode, Resizable {
 	     var lb: Label;
 	     Group {
 	    	content:[  
-	    		     	     	 	 	         		           	     Rectangle {
-	    		     	     	 	 	         		           	         height: bind height
-	    		     	     	 	 	         		           	         width: 320
-	    		     	     	 	 	         		           	         arcWidth: 24
-	    		     	     	 	 	         		           	         arcHeight: 24
-	    		     	     	 	 	         		           	         fill: Color.web("#313030")
-	    		     	     	 	 	         		           	     }, VBox {
-	    		     	     	 	 	         		           	         layoutY: 20
-	    		     	     	 	 	         		           	         layoutX: 10
-
-	      content: [
-	      HBox {
-	      	spacing: 100
-	      	content: [
-		      	lb = Label {
-		      	    text: "NEWS"
-		      	    font: Font.font("Amble", 12)
-		      	    textFill: Color.GREY
-		      	},
-		      	Hyperlink {
-		     	     	font: Font.font("Amble", 12)
-		     	 	 	text: "www.eviware.com/loadui/news"
-		     	 	 	style: "-fx-text-fill: #006b33; -fx-border-color: #313030"
-		     	 	 	visited: false
-		                action: function() {
-		                             FxUtils.openURL("http://www.eviware.com/loadui/news");
-		                       }
-			 	 	 }
-			 ]
-		 	},
-	      	Rectangle {
-           		width: bind width
-           		height: 10
-           		fill: Color.TRANSPARENT
-           	},
-	      	Rectangle {
-           		width: bind width + 20
-           		height: bind 2
-           		fill: Color.web("#232323")
-           	},
-           	Rectangle {
-           		width: bind width
-           		height: 10
-           		fill: Color.TRANSPARENT
-           	},
-	      	sc = ScrollView {
-	     	        height: bind height - 70
-	     	        styleClass:"feed-scroll-view"
-	     	        width: bind 300
-	     	     	node: mainFeed
-	     	     	hbarPolicy: ScrollBarPolicy.NEVER
-	     	     
+ 	     		Rectangle {
+ 	     	 		height: bind height
+ 	     	 	 	width: 320
+ 	     	 	 	arcWidth: 24
+ 	     	 	 	arcHeight: 24
+ 	     	 	 	fill: Color.web("#313030")
+ 	     	 	}, VBox {
+ 	     	 		layoutY: 20
+ 	     	 	 	layoutX: 10
+	      			content: [
+	      				HBox {
+	      					spacing: 100
+	      					content: [
+		      					lb = Label {
+					      	    text: "NEWS"
+					      	    font: Font.font("Amble", 12)
+					      	    textFill: Color.GREY
+					      	},
+					      	Hyperlink {
+					     	     	font: Font.font("Amble", 12)
+					     	 	 	text: "www.eviware.com/loadui/news"
+					     	 	 	style: "-fx-text-fill: #006b33; -fx-border-color: #313030"
+					     	 	 	visited: false
+					                action: function() {
+		                             	FxUtils.openURL("http://www.eviware.com/loadui/news");
+		                       		}
+			 	 	 		}		
+			 		]
+		 		},
+		      	Rectangle {
+	           		width: bind width
+	           		height: 10
+	           		fill: Color.TRANSPARENT
+	           	},
+		      	Rectangle {
+	           		width: bind width + 20
+	           		height: bind 2
+	           		fill: Color.web("#232323")
+	           	},
+	           	Rectangle {
+	           		width: bind width
+	           		height: 10
+	           		fill: Color.TRANSPARENT
+	           	},
+		      	sc = ScrollView {
+		     	        height: bind height - 70
+		     	        styleClass:"feed-scroll-view"
+		     	        width: bind 300
+		     	     	node: mainFeed
+		     	     	hbarPolicy: ScrollBarPolicy.NEVER
 	     	     }
 	     	]
 	     },
-	     		Rectangle {
-	     		   layoutY: bind 20 + sc.height + lb.height
-	     		   layoutX: bind 10 
-	     		   width: bind sc.width - 20
-	     		   height: bind 35
-	     		   fill: Color.web("#313030")
-	     		},
-			     javafx.scene.control.Label {
-			        text: "More news on:"
-			        font: Font.font("Amble", 12)
-			        style: "-fx-text-fill: #c7c7c7" 
-			     	layoutY: bind 20 + sc.height + lb.height
-				    layoutX: 10
-			     },
-		     	 Hyperlink {
-		     	     	layoutY: bind 17 + sc.height + lb.height
-		     	     	layoutX: 85
-		     	     	font: Font.font("Amble", 12)
-		     	 	 	text: "www.eviware.com/loadui/news"
-		     	 	 	 style: "-fx-text-fill: #006b33"
-		                 action: function() {
-		                             FxUtils.openURL("http://www.eviware.com/loadui/news");
-		                       }
-		 	 	 }
+ 		 Rectangle {
+ 		   layoutY: bind 20 + sc.height + lb.height
+ 		   layoutX: bind 10 
+ 		   width: bind sc.width - 20
+ 		   height: bind 35
+ 		   fill: Color.web("#313030")
+ 		 },
+	     javafx.scene.control.Label {
+	        text: "More news on:"
+	        font: Font.font("Amble", 12)
+	        style: "-fx-text-fill: #c7c7c7" 
+	     	layoutY: bind 20 + sc.height + lb.height
+		    layoutX: 10
+	     },
+     	 Hyperlink {
+     	     	layoutY: bind 17 + sc.height + lb.height
+     	     	layoutX: 85
+     	     	font: Font.font("Amble", 12)
+     	 	 	text: "www.eviware.com/loadui/news"
+     	 	 	 style: "-fx-text-fill: #006b33"
+                 action: function() {
+                             FxUtils.openURL("http://www.eviware.com/loadui/news");
+                       }
+ 	 	 }
              ]
 	     }
 	 }	

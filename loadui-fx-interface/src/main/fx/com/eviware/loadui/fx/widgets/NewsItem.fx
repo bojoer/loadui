@@ -72,21 +72,17 @@ public class NewsItem extends BaseNode, Resizable, StylesheetAware {
 	     	width: bind 270
 			height: bind hl.height + enc.height + tb.height + 100
 			spacing: 5
-			
-	 	         content:  [
-	 	         	
-	 	         		Label {
-	 	         	    width: bind 280
-	 	         	    textWrap: true
-	 	         		               text: title;
-	 	         		               textFill: Color.LIGHTGREY
-	 	         		               font: Font.font("Amble", FontWeight.BOLD, 14)
-	 	         		               layoutInfo: LayoutInfo {
-	 	         		               	 	         	        hpos:HPos.LEFT
-	 	         		               	 	         	    }
-	 	         		           },
-	 	         		           
-	 	         		 
+			content: [
+	 	         	Label {
+		 	         	    width: bind 280
+		 	         	    textWrap: true
+	 	         		    text: title;
+	 	         		    textFill: Color.web("#FFFF00")
+	 	         		    font: Font.font("Amble", FontWeight.BOLD, 16)
+	 	         		    layoutInfo: LayoutInfo {
+	 	         		    	hpos:HPos.LEFT
+	 	         		        }
+ 	         		},
 	 	         	ImageView {
 	 	         	    image: enc = Image {
 	 	         	        url: image
@@ -115,16 +111,12 @@ public class NewsItem extends BaseNode, Resizable, StylesheetAware {
 	 	         		 text: df.format(date.instant)
 	 	       		     textFill: Color.GREY
 	 	            },
- 	         	    
-	 	         		 	         		           Rectangle {
-	 	         		 	         		               		width: bind width -10
-	 	         		 	         		               		height: bind 2
-	 	         		 	         		               		fill: Color.web("#232323")
-	 	         		 	         		               	}
-	 	         		 	         		
+ 	         		Rectangle {
+ 	         			width: bind width -10
+ 	         		 	height: bind 2
+ 	         		 	fill: Color.web("#232323")
+ 	         		 }
 	 	         ]
-	 	         
-	 	         
 	 	     }
 	 
 	 override function create() {
