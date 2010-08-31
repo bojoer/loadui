@@ -52,6 +52,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.MainWindow" );
 
@@ -124,6 +125,15 @@ public class MainWindow {
 			workspaceProvider.getWorkspace()
 		else //TODO: Use a global configuration file to select workspace.
 			workspaceProvider.loadDefaultWorkspace();
+		
+		//if workspace file does not exists it must be after clean install, so add a sample project
+		if( not workspace.getWorkspaceFile().exists() ) {
+		    def samplesDir = new File("samples");
+            def sampleFile = new File(samplesDir,"getting-started-project.xml");
+             if( sampleFile.exists() ) {
+                 workspace.importProject(sampleFile, true);
+			 }
+		}
 		
 		//InspectorPanel
 		log.debug( "Initializing InspectorPanel" );
