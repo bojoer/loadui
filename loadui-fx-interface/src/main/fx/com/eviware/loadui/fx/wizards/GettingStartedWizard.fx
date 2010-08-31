@@ -63,7 +63,7 @@ public class GettingStartedWizard {
     	var stackLayoutInfo:LayoutInfo;
     	var cb:CheckBox = CheckBox {
              selected: workspace.getAttribute( SHOW_GETTING_STARTED, "true" ) != "true"
-             text: "Don't show again"
+             text: "Don't show this dialog again"
          };
     	
     	var tmpX = bind cb.selected on replace {
