@@ -841,6 +841,24 @@ Appendix
           </screen>
         </startup>
         <screens>
+          <screen name="" id="828" beanClass="com.install4j.runtime.beans.screens.CustomizableInfoScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="true">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.CustomizableInfoScreen">
+                  <void property="displayedText">
+                    <string>A version of LoadUI is running, please close it before starting the uninstallation again.</string>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>File f = new File("${installer:sys.userHome}/.loadui/controller-cache/loadui.lock");
+return f.exists();</condition>
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
           <screen name="" id="13" beanClass="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
@@ -950,24 +968,6 @@ Appendix
               </java>
             </serializedBean>
             <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
-          </screen>
-          <screen name="" id="828" beanClass="com.install4j.runtime.beans.screens.CustomizableInfoScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="true">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.CustomizableInfoScreen">
-                  <void property="displayedText">
-                    <string>A version of LoadUI is running, please close it before starting the uninstallation again.</string>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition>File f = new File("${installer:sys.userHome}/.loadui/controller-cache/loadui.lock");
-return f.exists();</condition>
             <validation />
             <preActivation />
             <postActivation />
