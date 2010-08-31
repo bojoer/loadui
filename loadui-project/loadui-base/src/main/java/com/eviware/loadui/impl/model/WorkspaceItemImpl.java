@@ -219,6 +219,14 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		if( !projectFile.exists() )
 			throw new IllegalArgumentException( "File does not exist: " + projectFile );
 
+		
+		// if project is already in workspace do not import it again.
+	   for( ProjectRefImpl projectRef: projects ) {
+	   	if ( projectRef.getProjectFile().getAbsolutePath().equals(projectFile.getAbsolutePath()) ) {
+	   		return projectRef;
+	   	}
+	   }
+
 		ProjectReferenceConfig projectRefConfig = getConfig().addNewProject();
 		projectRefConfig.setProjectFile( projectFile.getAbsolutePath() );
 		projectRefConfig.setEnabled( enabled );
