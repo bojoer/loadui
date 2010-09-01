@@ -178,6 +178,14 @@
 	-fx-text-fill: #727058;
 }
 
+.system-properties-box {
+	-fx-text-fill: white;
+	-fx-font: bold 14 "Monospaced";
+	-fx-border-color: black;
+	-fx-border-style: solid;
+	-fx-border-width: 1px;
+}
+
 .knob *.text-box {
 	-fx-background-color: #000000, #000000, #ff0000;
 	-fx-background-radius: 0, 0, 0;
