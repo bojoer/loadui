@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextBox;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.Node;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
@@ -175,6 +176,7 @@ public class Note extends BaseNode, Movable, Selectable, Deletable {
 					},
 					Separator { styleClass: "", vertical: true, layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.ALWAYS } },
 					Button {
+						tooltip: Tooltip { text: "Add another note" }
 						graphic: SVGPath {
 							content: "M 3 0 L 3 3, 0 3, 0 5, 3 5, 3 8, 5 8, 5 5, 8 5, 8 3, 5 3, 5 0 Z"
 							fill: Color.rgb( 0x66, 0x66, 0x66 )
