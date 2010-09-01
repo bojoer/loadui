@@ -73,7 +73,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	var inputs:TerminalNode[];
 	var outputs:TerminalNode[];
 	
-	var compactToggle:ToggleButton;
+	protected var compactToggle:ToggleButton;
 	def compactToggleSelected = bind compactToggle.selected on replace {
 		compact = compactToggleSelected;
 	}
