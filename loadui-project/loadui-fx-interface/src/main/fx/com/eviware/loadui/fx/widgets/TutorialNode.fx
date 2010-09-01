@@ -16,7 +16,6 @@
 /*
 *TutorialNode.fx
 *
-*Created on feb 10, 2010, 11:47:11 fm
 */
 
 package com.eviware.loadui.fx.widgets;
@@ -61,7 +60,6 @@ public class TutorialNode extends CustomNode {
 			var start:Integer = text.indexOf("src=\"", text.indexOf("<img"));
 			var end:Integer = text.indexOf("\"", start+5);
 		    url = text.substring(start + 5, end);
-		    println ("url {url}");
 		}
 		var exists:Boolean = true;
 		if ( not (url == null) )
