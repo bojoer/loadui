@@ -34,6 +34,8 @@ import com.eviware.loadui.api.component.categories.TriggerCategory
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.util.layout.IntervalModel
 import com.eviware.loadui.util.ScheduledExecutor
+import com.eviware.loadui.util.FormattingUtils
+import com.eviware.loadui.util.layout.DelayedFormattedString
 import org.quartz.Scheduler
 import org.quartz.CronTrigger
 import org.quartz.CronExpression
@@ -300,6 +302,14 @@ layout {
 	property( property: time, widget: 'quartzCron', label: 'Time', constraints: 'w 130!' )
 	separator(vertical: true)
 	property( property: duration, widget: 'time', label: 'Duration', constraints: 'w 130!' )
+}
+
+compactLayout {
+	box( widget:'display' ) {
+		node( label:'Day', fString:new DelayedFormattedString( '%s', 1000, day ) )
+		node( label:'Time', fString:new DelayedFormattedString( '%s', 1000, value { time.value.replace(' ',':') } ) )
+		node( label:'Duration', fString:new DelayedFormattedString( '%d', 1000, value { FormattingUtils.formatTime( duration ) } ) )
+	}
 }
 
 settings( label: "Basic" ) {

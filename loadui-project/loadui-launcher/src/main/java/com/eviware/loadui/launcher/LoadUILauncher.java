@@ -46,10 +46,10 @@ import com.eviware.loadui.launcher.api.SplashController;
  */
 public class LoadUILauncher
 {
-	private static final String NOFX_OPTION = "nofx";
-	private static final String SYSTEM_PROPERTY_OPTION = "D";
-	private static final String HELP_OPTION = "h";
-	private static final String IGNORE_CURRENTLY_RUNNING_OPTION = "nolock";
+	protected static final String NOFX_OPTION = "nofx";
+	protected static final String SYSTEM_PROPERTY_OPTION = "D";
+	protected static final String HELP_OPTION = "h";
+	protected static final String IGNORE_CURRENTLY_RUNNING_OPTION = "nolock";
 
 	public static void main( String[] args )
 	{
