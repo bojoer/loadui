@@ -112,19 +112,19 @@ public class SetCanvasLimitsDialog {
 		var result: String[] = [];
 
 		var time: Integer = runController.canvas.getCounter( CanvasItem.TIMER_COUNTER ).get();
-		def tl = form.getValue("timeLimit");
+		def tl = form.getValue("timeLimit") as Integer;
 		if(tl < time){
 			insert "time" into result;
 		}	
 		
 		var sampleCount: Integer = runController.canvas.getCounter( CanvasItem.SAMPLE_COUNTER ).get();
-		def sl = form.getValue( "sampleLimit" );
+		def sl = form.getValue( "sampleLimit" ) as Integer;
 		if(sl < sampleCount){
 			insert "sample" into result;
 		}
 		
 		var failureCount: Integer = runController.canvas.getCounter( CanvasItem.FAILURE_COUNTER ).get();
-		def fl = form.getValue( "failureLimit" );
+		def fl = form.getValue( "failureLimit" ) as Integer;
 		if(fl < failureCount){
 			insert "failure" into result;
 		}

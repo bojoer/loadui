@@ -161,20 +161,13 @@ public class Note extends BaseNode, Movable, Selectable, Deletable {
 	
 	def body = VBox {
 		padding: Insets { left: 11, right: 11, bottom: 11 }
+		spacing: 10
 		content: [
-			Label { text: "NOTE", layoutInfo: LayoutInfo { height: 30, hfill: true } },
 			HBox {
 				styleClass: "canvas-object-toolbar"
-				layoutInfo: LayoutInfo { hfill: true }
+				layoutInfo: LayoutInfo { hfill: true, height: 30 }
 				nodeVPos: VPos.CENTER
 				content: [
-					MenuButton {
-						text: "Menu"
-						items: [
-							MenuItem { text: "Delete", action: function() { Deletable.deleteObjects( this ) } }
-						]
-					},
-					Separator { styleClass: "", vertical: true, layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.ALWAYS } },
 					Button {
 						tooltip: Tooltip { text: "Add another note" }
 						graphic: SVGPath {
@@ -182,6 +175,10 @@ public class Note extends BaseNode, Movable, Selectable, Deletable {
 							fill: Color.rgb( 0x66, 0x66, 0x66 )
 						}
 						action: function():Void { canvas.createNote( layoutX + textWidth + 50, layoutY ) }
+					}, Separator {
+						styleClass: "", layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.ALWAYS }
+					}, Label {
+						text: "NOTE"
 					}
 				]
 			}, textBox
