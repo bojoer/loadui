@@ -17,12 +17,14 @@ package com.eviware.loadui.fx.widgets;
 
 import com.eviware.loadui.fx.ui.menu.button.MenuBarButton;
 import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.widgets.ModelItemHolder;
 import com.eviware.loadui.fx.dialogs.DeleteProjectDialog;
 import com.eviware.loadui.fx.dialogs.DeleteModelItemDialog;
+import com.eviware.loadui.fx.dialogs.DeleteDeletablesDialog;
 import com.eviware.loadui.fx.ui.popup.TooltipHolder;
 
 import javafx.scene.Node;
@@ -52,7 +54,7 @@ public class TrashHole extends BaseNode, Droppable{
 	}
 	
 	override var accept = function( d:Draggable ) {
-		d instanceof ModelItemHolder or d instanceof ProjectNode
+		d instanceof Deletable or d instanceof ProjectNode
 	}
 	
 	override var onDrop = function( d:Draggable ) {
@@ -68,8 +70,10 @@ public class TrashHole extends BaseNode, Droppable{
 		if( d instanceof ProjectNode ) {
 			//We need to treat ProjectNode a bit differenty.
 			DeleteProjectDialog { projectRef: ( d as ProjectNode ).projectRef }
-		} else {
+		} else if( d instanceof ModelItemHolder ) {
 			DeleteModelItemDialog { modelItemHolder: d as ModelItemHolder }
+		} else {
+			DeleteDeletablesDialog { deletables: d as Deletable }
 		}
 	}
 }

@@ -234,5 +234,4 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 	}
 	
 	override function toString() { label }
-	
 }
