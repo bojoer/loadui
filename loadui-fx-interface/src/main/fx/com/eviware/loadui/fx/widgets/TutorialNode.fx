@@ -52,6 +52,14 @@ public class TutorialNode extends CustomNode {
 		 openURL(url)
 	}	
 	
+	override var onMouseEntered = function(e:MouseEvent) {
+	    this.cursor = javafx.scene.Cursor.HAND;
+	}
+	
+	override var onMouseExited = function(e:MouseEvent) {
+		this.cursor = javafx.scene.Cursor.DEFAULT;
+	}
+	
 	override function create() {
 		
 		var url:String = null;	
