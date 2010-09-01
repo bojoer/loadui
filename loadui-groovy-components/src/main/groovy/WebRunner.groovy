@@ -319,7 +319,7 @@ settings( label: "Basic" ) {
 	property( property: propagateSession, label: 'Propagate Session' )
 	property( property: readResponse, label: 'Read Response' )
 	property( property: raiseAssertion, label: 'Raise Assertion on Error' )
-	property( property: concurrentSamples, label: 'Max Concurrent Samples' )
+	property( property: concurrentSamples, label: 'Max Concurrent Requests' )
 	property( property: maxQueueSize, label: 'Max Queue' )
 	property( property: assertOnOverflow, label: 'Raise Assertion on Overflow' )
 	property( property: errorCodeList, label: 'Error Codes that Raise an Assertion', constraints:'w 200!')

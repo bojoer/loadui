@@ -29,8 +29,8 @@ public class SummarySectionDataSource extends JRAbstractBeanDataSource
 	{
 		if (field.getName().equals("time"))
 			return section.getValues().get("time");
-		if (field.getName().equals("samples"))
-			return section.getValues().get("samples");
+		if (field.getName().equals("requests"))
+			return section.getValues().get("requests");
 		if (field.getName().equals("afailures"))
 			return section.getValues().get("assertion failures");
 		if (field.getName().equals("status"))

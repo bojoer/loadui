@@ -46,7 +46,7 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 		addValue( "Execution Time", getExecutionTime() );
 		addValue( "Start Time", getStartTime() );
 		addValue( "End Time", getEndTime() );
-		addValue( "Total number of samples", getTotalNumberOfSamples() );
+		addValue( "Total number of requests", getTotalNumberOfSamples() );
 		addValue( "Total number of assertions", getTotalNumberOfAssertions() );
 		addValue( "Total number of failed assertions", getTotalNumberOfFailedAssertions() );
 

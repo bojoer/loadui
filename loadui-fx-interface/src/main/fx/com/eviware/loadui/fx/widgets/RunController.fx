@@ -316,7 +316,7 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 						styleClass: "displayLabel"
 						layoutX: 5
 						width: 200
-						text: "Time             Samples          Failures"
+						text: "Time             Requests          Failures"
 					}, Label {
 						styleClass: "displayValue"
 						layoutX: 5
@@ -338,7 +338,7 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 				}
 			}, Limiter {
 			    small: small
-				text: "Samples"
+				text: "Requests"
 				width: if (not small) 105 else 55
 				progress: bind if(sampleLimit > 0) Math.min( (sampleCount as Number) / sampleLimit, 1.0) else 0
 				value: bind "{sampleCount}"

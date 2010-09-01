@@ -35,7 +35,7 @@ public class ProjectDataSummarySection extends MutableSectionImpl implements
 		project = projectItemImpl;
 
 		addValue("time", getTime());
-		addValue("samples", getNumberOfSamples());
+		addValue("requests", getNumberOfSamples());
 		addValue("assertion failures", getNumberOfFailures());
 		addValue("status", getStatus());
 	}

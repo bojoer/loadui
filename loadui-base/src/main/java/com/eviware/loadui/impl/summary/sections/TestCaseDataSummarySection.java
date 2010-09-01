@@ -35,7 +35,7 @@ public class TestCaseDataSummarySection extends MutableSectionImpl implements Da
 		super( testcase.getLabel() );
 		this.testcase = ( SceneItemImpl )testcase;
 		addValue( "time", getTime() );
-		addValue( "samples", getNumberOfSamples() );
+		addValue( "requests", getNumberOfSamples() );
 		addValue( "assertion failures", getNumberOfFailures() );
 		addValue( "status", getStatus() );
 	}

@@ -4,7 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<field name="time" class="java.lang.String"/>
-	<field name="samples" class="java.lang.String"/>
+	<field name="requests" class="java.lang.String"/>
 	<field name="afailures" class="java.lang.String"/>
 	<field name="status" class="java.lang.String"/>
 	<detail>
@@ -27,7 +27,7 @@
 				<textElement>
 					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[SAMPLES]]></text>
+				<text><![CDATA[REQUESTS]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="216" y="28" width="163" height="20"/>
@@ -55,7 +55,7 @@
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{samples}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{requests}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="216" y="48" width="163" height="20"/>

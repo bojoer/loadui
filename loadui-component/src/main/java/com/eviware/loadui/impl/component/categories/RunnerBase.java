@@ -217,7 +217,6 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		if( !message.containsKey( TIME_TAKEN_MESSAGE_PARAM ) )
 			message.put( TIME_TAKEN_MESSAGE_PARAM, ( System.nanoTime() - startTime ) / 1000000 );
 		getContext().send( resultTerminal, message );
-		sampleCounter.increment();
 
 		// Gather statistics from the completed sample.
 		long timeTaken = ( Long )message.get( TIME_TAKEN_MESSAGE_PARAM );
@@ -386,13 +385,14 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		if( !getContext().isInvalid() )
 		{
+			sampleCounter.increment();
 			Long startTime = System.nanoTime();
 			updateCurrentlyRunning( currentlyRunning.incrementAndGet() );
-
+			
 			// remove leftovers from previous runner
 			message.remove( TIMESTAMP_MESSAGE_PARAM );
 			message.remove( TIME_TAKEN_MESSAGE_PARAM );
-
+			
 			TerminalMessage result = null;
 			try
 			{
@@ -521,7 +521,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			StringBuilder s = new StringBuilder();
 			for( SampleStats stat : stats )
 				s.append( stat.getTime() + ":" + stat.getTimeTaken() + ":" + stat.getSize() + ";" );
-			data.put( "samples", s.toString() );
+			data.put( "requests", s.toString() );
 		}
 		return data;
 	}
@@ -540,9 +540,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			sumTotalSquare += ( ( Number )map.get( "sumTotalSquare" ) ).longValue();
 			avgSum += ( ( Number )map.get( "avg" ) ).longValue();
 
-			if( map.containsKey( "samples" ) )
+			if( map.containsKey( "requests" ) )
 			{
-				String[] entries = ( ( String )map.get( "samples" ) ).split( ";" );
+				String[] entries = ( ( String )map.get( "requests" ) ).split( ";" );
 				for( String entry : entries )
 				{
 					String[] vals = entry.split( ":" );

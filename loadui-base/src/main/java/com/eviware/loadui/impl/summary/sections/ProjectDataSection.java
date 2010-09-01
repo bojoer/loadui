@@ -40,7 +40,7 @@ public class ProjectDataSection extends MutableSectionImpl implements
 		addValue("Number of project connection", String.valueOf(project
 				.getConnections().size()));
 		addValue("Time Limit", getLimit());
-		addValue("Sample Limit", getSampleLimit());
+		addValue("Request Limit", getSampleLimit());
 		addValue("Assertion Limit", getAssertionLimit());
 	}
 
