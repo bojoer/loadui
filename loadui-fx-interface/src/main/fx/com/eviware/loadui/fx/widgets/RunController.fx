@@ -62,6 +62,7 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
+import com.eviware.loadui.util.FormattingUtils;
 import com.eviware.loadui.fx.FxUtils.*;
 
 import java.util.EventObject;
@@ -321,7 +322,7 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 						layoutX: 5
 						width: 200
 						layoutY: 15
-						text: bind "{formatSeconds(time)}        {%-20d sampleCount} {failureCount}"
+						text: bind "{FormattingUtils.formatTime(time)}        {%-20d sampleCount} {failureCount}"
 					}
 				]*/
 			}, if (testcase) linkButton else null, 
@@ -330,8 +331,8 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 				text: "Time"
 				width: if (not small) 105 else 55
 				progress: bind if(timeLimit > 0) Math.min( (time as Number) / timeLimit, 1.0) else 0
-				value: bind formatSeconds(time)
-				limit: bind if(timeLimit > 0) formatSeconds(timeLimit) else null
+				value: bind FormattingUtils.formatTime(time)
+				limit: bind if(timeLimit > 0) FormattingUtils.formatTime(timeLimit) else null
 				layoutInfo: LayoutInfo {
 				    hpos:HPos.CENTER
 				}
@@ -403,18 +404,6 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 	    		break;
 	    }
 	    foundTrigger and foundRunner;
-	}
-	
-	
-					
-	function formatSeconds( total:Integer ) {
-		var seconds = total;
-		def hours = seconds / 3600;
-		seconds -= hours*3600;
-		def minutes = seconds / 60;
-		seconds -= minutes*60;
-		
-		"{%02d hours}:{%02d minutes}:{%02d seconds}"
 	}
 	
 	override var blocksMouse = true;

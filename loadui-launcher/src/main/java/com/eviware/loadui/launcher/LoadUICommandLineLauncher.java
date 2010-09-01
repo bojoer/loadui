@@ -29,21 +29,25 @@ import com.eviware.loadui.launcher.impl.ResourceGroovyCommand;
 
 public class LoadUICommandLineLauncher extends LoadUILauncher
 {
-	private static final String LOCAL_OPTION = "l";
-	private static final String FILE_OPTION = "f";
-	private static final String AGENT_OPTION = "a";
-	private static final String LIMITS_OPTION = "L";
-	private static final String TESTCASE_OPTION = "t";
-	private static final String PROJECT_OPTION = "p";
-	private static final String WORKSPACE_OPTION = "w";
-	private static final String REPORT_DIR_OPTION = "r";
-	private static final String REPORT_FORMAT_OPTION = "F";
+	protected static final String LOCAL_OPTION = "l";
+	protected static final String FILE_OPTION = "f";
+	protected static final String AGENT_OPTION = "a";
+	protected static final String LIMITS_OPTION = "L";
+	protected static final String TESTCASE_OPTION = "t";
+	protected static final String PROJECT_OPTION = "p";
+	protected static final String WORKSPACE_OPTION = "w";
+	protected static final String REPORT_DIR_OPTION = "r";
+	protected static final String REPORT_FORMAT_OPTION = "F";
 
 	public static void main( String[] args )
 	{
 		System.setSecurityManager( null );
 
-		LoadUICommandLineLauncher launcher = new LoadUICommandLineLauncher( args );
+		String[] newArgs = new String[args.length + 1];
+		System.arraycopy( args, 0, newArgs, 0, args.length );
+		newArgs[args.length] = "-" + NOFX_OPTION;
+		
+		LoadUICommandLineLauncher launcher = new LoadUICommandLineLauncher( newArgs );
 		launcher.init();
 		launcher.start();
 	}

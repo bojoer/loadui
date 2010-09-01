@@ -44,6 +44,7 @@ import com.eviware.loadui.api.component.categories.TriggerCategory
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.util.layout.IntervalModel
 import com.eviware.loadui.util.ScheduledExecutor
+import com.eviware.loadui.util.layout.DelayedFormattedString
 
 createProperty( 'startAt', Long, 0 )
 createProperty( 'duration', Long, 0 )
@@ -164,7 +165,7 @@ cancelAll = {
 	endFuture = null
 }
 
-layout() {
+layout {
     node( widget:'intervalWidget', model:interval, constraints:'span 6' )
     separator( vertical: false )
     property( property: startAt, label:'Start At', min:0 )
@@ -173,6 +174,13 @@ layout() {
     property( property:unit, label:'Unit', options:['Sec','Min','Percent'] )
     separator( vertical:true )
     property( property:mode, label:'Mode', options:['Single','Repeat'])
+}
+
+compactLayout {
+	box( widget:'display' ) {
+		node( label:'Start At', fString:new DelayedFormattedString( '%d %s', 1000, startAt, unit ) )
+		node( label:'Duration', fString:new DelayedFormattedString( '%d %s', 1000, duration, unit ) )
+	}
 }
 
 updateState()

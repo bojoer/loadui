@@ -18,19 +18,7 @@ import com.eviware.loadui.api.model.WorkspaceItem
 import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.events.EventHandler
 import com.eviware.loadui.api.events.ActionEvent
-
-def formatSeconds( total ) {
-	if( total < 0 )
-		return "--:--:--" 
-	
-	int seconds = total;
-	int hours = seconds / 3600;
-	seconds -= hours*3600;
-	int minutes = seconds / 60;
-	seconds -= minutes*60;
-	
-	String.format( "%02d:%02d:%02d", hours, minutes, seconds )
-}
+import com.eviware.loadui.util.FormattingUtils;
 
 def displayLimit( limit ) {
 	limit <= 0 ? "-" : limit
@@ -65,7 +53,8 @@ for( ref in workspace.projectRefs ) {
 	}
 }
 if( projectRef == null ) projectRef = workspace.importProject( projectFile, true )
-def project = projectRef.getProject()
+projectRef.enabled = true
+def project = projectRef.project
 
 //Get the target
 def target = testCase ? project.getSceneByLabel( testCase ) : project
@@ -163,7 +152,7 @@ log.info """
 
 ------------------------------------
  TARGET ${target.label}
- LIMITS Time: ${formatSeconds(target.getLimit(CanvasItem.TIMER_COUNTER))} Samples: ${displayLimit(target.getLimit(CanvasItem.SAMPLE_COUNTER))} Failures: ${displayLimit(target.getLimit(CanvasItem.FAILURE_COUNTER))}
+ LIMITS Time: ${FormattingUtils.formatTime(target.getLimit(CanvasItem.TIMER_COUNTER))} Samples: ${displayLimit(target.getLimit(CanvasItem.SAMPLE_COUNTER))} Failures: ${displayLimit(target.getLimit(CanvasItem.FAILURE_COUNTER))}
 ------------------------------------
 
 """
@@ -176,7 +165,7 @@ def failures = target.getCounter( CanvasItem.FAILURE_COUNTER )
 
 //Monitor
 while( target.summary == null ) {
-	log.info "Time: ${formatSeconds(time.value)} Samples: ${samples.value} Failures: ${failures.value}"
+	log.info "Time: ${FormattingUtils.formatTime(time.value)} Samples: ${samples.value} Failures: ${failures.value}"
 	sleep 1000
 }
 
@@ -185,7 +174,7 @@ log.info """
 
 ------------------------------------
  TEST EXECUTION COMPLETED
- FINAL RESULTS: ${formatSeconds(time.value)} Samples: ${samples.value} Failures: ${failures.value}
+ FINAL RESULTS: ${FormattingUtils.formatTime(time.value)} Samples: ${samples.value} Failures: ${failures.value}
 ------------------------------------
 
 """
