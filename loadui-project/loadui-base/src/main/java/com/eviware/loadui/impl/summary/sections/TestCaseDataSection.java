@@ -34,7 +34,7 @@ public class TestCaseDataSection extends MutableSectionImpl implements
 		addValue("Number of components", getNumberOfComponents());
 		addValue("Number of connections", getNumberOfConnections());
 		addValue("Time Limit", getLimit());
-		addValue("Sample Limit", getSampleLimit());
+		addValue("Request Limit", getSampleLimit());
 		addValue("Assertion Limit", getAssertionLimit());
 	}
 

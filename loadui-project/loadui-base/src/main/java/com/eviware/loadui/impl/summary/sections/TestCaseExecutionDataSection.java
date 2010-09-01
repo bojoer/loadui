@@ -38,7 +38,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements
 		addValue("Execution Time", getExecutionTime());// hh:mm:ss
 		addValue("Start Time", getStartTime());
 		addValue("End Time", getEndTime());
-		addValue("Total number of samples", getTotalNumberOfSamples());
+		addValue("Total number of requests", getTotalNumberOfSamples());
 		addValue("Total number of assertions", getTotalNumberOfAssertions());
 		addValue("Total number of failed assertions",
 				getTotalNumberOfFailedAssertions());

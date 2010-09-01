@@ -27,7 +27,7 @@ import com.eviware.loadui.impl.model.SceneItemImpl;
 
 public class TestCaseDataTableModel extends AbstractTableModel {
 
-	String columnNames[] = { "Test Case", "exec time", "samples", "assertions",
+	String columnNames[] = { "Test Case", "exec time", "requests", "assertions",
 			"failed assertions" };
 	ArrayList<TestCaseDataModel> data = new ArrayList<TestCaseDataModel>();
 

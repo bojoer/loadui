@@ -41,7 +41,7 @@ public interface CanvasItem extends ModelItem, CounterHolder
 	public static final String COMPLETE_ACTION = "COMPLETE";
 
 	public static final String TIMER_COUNTER = "Time";
-	public static final String SAMPLE_COUNTER = "Samples";
+	public static final String SAMPLE_COUNTER = "Requests";
 	public static final String FAILURE_COUNTER = "Failures";
 	public static final String ASSERTION_COUNTER = "Assertions";
 
