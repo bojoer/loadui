@@ -249,6 +249,11 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 					}
 				]
 			}
+			
+			onMouseClicked: function (e:MouseEvent) {
+			    if (compact and e.clickCount == 2)
+			    	compact = false;
+			}
 		}
 	}
 	
