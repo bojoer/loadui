@@ -27,23 +27,24 @@ import javafx.scene.Group;
 import javafx.scene.CustomNode;
 import javafx.scene.layout.Resizable;
 import javafx.scene.control.Separator;
-
-import com.javafx.preview.control.MenuItem;
-import com.javafx.preview.control.PopupMenu;
-
-import com.eviware.loadui.fx.FxUtils.*;
-import com.eviware.loadui.fx.ui.pagelist.PagelistControl;
-
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
+import javafx.data.feed.rss.RssTask;
+import javafx.data.feed.rss.Item;
+import javafx.data.feed.rss.Channel;
+import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.PopupMenu;
 
 import java.util.EventObject;
 import java.util.Comparator;
 import java.lang.RuntimeException;
+import org.slf4j.LoggerFactory;
+
+import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.ui.pagelist.PagelistControl;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.model.WorkspaceItem;
-import org.slf4j.LoggerFactory;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.TutorialList" );
 
@@ -70,25 +71,50 @@ public class TutorialList extends CustomNode, Resizable {
 	postinit {
 		if( workspace == null )
 			throw new RuntimeException( "Workspace must not be null!" );
-		// check for tutorials
+		
+		RssTask{
+	        location: "http://www.loadui.com/component/option,com_ninjarsssyndicator/feed_id,1/format,raw/lang,en/"
+	        interval: 300s
+	        
+	        onException: function(e) {
+	            log.error( "An error occured when parsing the news RSS feed.", e );
+	        }
+	        
+	       onItem: function(item:Item):Void {
+	           FX.deferAction( function() {
+		           insert TutorialNode {
+		               label: item.title;
+		               text: item.description
+		               url: item.link
+		           } into pagelist.content;
+	             } );
+	       }
+	       
+	       onChannel: function(channel:Channel):Void {
+	           delete pagelist.content;
+	       }
+	
+		}.start();
 		
 	}
 	
+	
 	override function create() {
+		
 		
 		pagelist = PagelistControl {
 			text: ##[TUTORIALS]"TUTORIALS"
 			height: bind height
 			width: bind width
 			content: [
-				TutorialNode {
+	/*			TutorialNode {
 					url:"http://www.loadui.org/Getting-Started-with-loadUI/your-first-load-test.html"
 					label:"First LoadUI Test"
 				},
 				TutorialNode {
 				    url:"http://www.loadui.org/loadUI-Demo-Movies.html"
 				    label:"Demo Movies"
-				}
+				} */
 			]
 		};
 		

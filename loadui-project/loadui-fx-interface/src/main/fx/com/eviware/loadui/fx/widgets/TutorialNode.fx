@@ -32,9 +32,11 @@ import javafx.scene.image.Image;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Stack;
 import javafx.scene.input.MouseEvent;
-import org.slf4j.LoggerFactory;
 import javafx.scene.media.*;
 
+import org.slf4j.LoggerFactory;
+
+import java.net.*;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.TutorialNode" );
 
@@ -45,44 +47,55 @@ public class TutorialNode extends CustomNode {
     
 	public var url:String;
 	public var label:String;
-	public var isMedia:Boolean = false;
+	public var text:String;
 	
 	override var onMouseClicked = function(e:MouseEvent) {
-	    if ( isMedia ) {
-			var media = Media{
-		    	source:url
-		    }
-		    	 
-	    	var player = MediaPlayer{
-	    		media:media,
-	    		autoPlay:true
-	    	}
-		    def dialog:Dialog = Dialog {
-    	        noCancel: true
-    	        noOk: true
-    	        onClose: function():Void {
-    	            dialog.close();
-    	        }
-    	        title: label
-    	        content: 
-				    MediaView {
-				    	mediaPlayer:player
-				    }
-    	    }
-			
-	    }
-		else 
-		    openURL(url)
+		 openURL(url)
 	}	
 	
 	override function create() {
 		
+		var url:String = null;	
+	
+		if ( text.indexOf("<img")> 0 ) {
+			var start:Integer = text.indexOf("src=\"", text.indexOf("<img"));
+			var end:Integer = text.indexOf("\"", start+5);
+		    url = text.substring(start + 5, end);
+		    println ("url {url}");
+		}
+		var exists:Boolean = true;
+		if ( not (url == null) )
+			exists = (new URL(url).openConnection() as HttpURLConnection).getResponseCode() == 200
+		else
+			exists = false;
+		
 		Stack {
 			content: [
-				javafx.scene.shape.Rectangle {
-				    width: 115
-				    height: 98
-				}
+			   if ( not exists )
+					ImageView {
+					    image: Image {
+							url: "{__ROOT__}images/png/tutorial-holder.png"
+							backgroundLoading: true
+					    }
+					    fitWidth: 130
+						fitHeight: 98					    
+					    smooth: true
+					    cache: true
+					}
+				else 
+					ImageView {
+					    image: Image {
+							url: url	
+							backgroundLoading: true
+							placeholder: Image {
+					            url: "{__ROOT__}agent-icon.png"
+					        }		    
+					    }
+					    fitWidth: 130
+						fitHeight: 98					    
+					    smooth: true
+					    cache: true
+					}
 			]
 		} 
 		
