@@ -35,8 +35,6 @@ import java.io.File;
 import java.lang.RuntimeException;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.fx.wizards.NewProjectWizard;
-
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.CreateNewProjectDialog" );
 
 /**

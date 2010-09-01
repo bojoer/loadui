@@ -69,6 +69,10 @@ public class MainWindow {
 	var scene:Scene;
 	public function setScene( scene:Scene ):Void { this.scene = scene }
 	
+	// need this to position dialogs in center of window
+	public function getWidth():Number {this.scene.width}
+	public function getHeight():Number {this.scene.height}
+	
 	var appState:AppState;
 	public function getAppState():AppState { appState }
 	
