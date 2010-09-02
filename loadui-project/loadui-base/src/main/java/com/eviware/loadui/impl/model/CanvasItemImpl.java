@@ -417,7 +417,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		if( timeLimitFuture != null )
 			timeLimitFuture.cancel( true );
 
-		if( limits.containsKey( TIMER_COUNTER ) )
+		if( running && limits.containsKey( TIMER_COUNTER ) )
 		{
 			long delay = limits.get( TIMER_COUNTER ) - time;
 			if( delay > 0 )
