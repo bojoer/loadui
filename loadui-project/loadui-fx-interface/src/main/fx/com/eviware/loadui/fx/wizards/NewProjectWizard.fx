@@ -80,11 +80,11 @@ public class NewProjectWizard {
  				   	 text: "Get started with one of the following options          "
  				},
 	        	Stack {
- 	 				 layoutInfo: LayoutInfo { margin: Insets { left: 10, top: 15, right: 10, bottom: 10 } }
- 	 				 padding: Insets { left: 18, top: 20, right: 68, bottom: 8 }
+ 	 				 layoutInfo: LayoutInfo { margin: Insets { left: 10, top: 15, right: 10, bottom: 0 } }
+ 	 				 padding: Insets { left: 18, top: 20, right: 68, bottom: 0 }
  	 				 content: [ 
 			         	 DialogBorder {
-			             	layoutInfo: LayoutInfo { vfill: true hfill: true, margin: Insets { left: -30, top: -20, right: -80, bottom: -42 } }
+			             	layoutInfo: LayoutInfo { vfill: true hfill: true, margin: Insets { left: -30, top: -20, right: -80, bottom: -20 } }
 			         	 },
 				         VBox {
 				         	spacing: 12;
@@ -111,7 +111,7 @@ public class NewProjectWizard {
 				             		}
 				             	},
 				             	alwaysShow = CheckBox {
-				                 	text: "Show this every time a new project is created"
+				                 	text: "Show this every time an empty Project is opened"
 				                 	selected: workspace.getAttribute( SHOW_PROJECT_WIZARD, "true" ) == "true"
 				             	}
 				        	]
