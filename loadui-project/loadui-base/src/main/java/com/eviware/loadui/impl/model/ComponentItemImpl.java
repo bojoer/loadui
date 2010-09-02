@@ -89,6 +89,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private boolean nonBlocking = false;
 	private String helpUrl = "http://www.loadui.org";
 	private boolean invalid = false;
+	private boolean busy = false;
 
 	private boolean propagate = true;
 	private final DualTerminal remoteTerminal = new RemoteTerminal();
@@ -321,6 +322,22 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		{
 			invalid = state;
 			fireBaseEvent( INVALID );
+		}
+	}
+	
+	@Override
+	public boolean isBusy()
+	{
+		return busy;
+	}
+
+	@Override
+	public void setBusy( boolean state )
+	{
+		if( busy != state )
+		{
+			busy = state;
+			fireBaseEvent( BUSY );
 		}
 	}
 
@@ -693,6 +710,18 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		public void setInvalid( boolean state )
 		{
 			ComponentItemImpl.this.setInvalid( state );
+		}
+		
+		@Override
+		public boolean isBusy()
+		{
+			return ComponentItemImpl.this.isBusy();
+		}
+
+		@Override
+		public void setBusy( boolean state )
+		{
+			ComponentItemImpl.this.setBusy( state );
 		}
 
 		@Override

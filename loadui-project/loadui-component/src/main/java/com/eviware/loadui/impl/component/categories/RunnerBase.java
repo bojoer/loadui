@@ -76,6 +76,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final AtomicInteger currentlyRunning = new AtomicInteger();
 	private final AtomicInteger sleeping = new AtomicInteger();
 
+	private final Counter requestCounter;
 	private final Counter sampleCounter;
 	private final Counter failureCounter;
 	private final Counter discardsCounter;
@@ -137,6 +138,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		currentlyRunningSignature.put( CURRENTLY_RUNNING_MESSAGE_PARAM, Integer.class );
 		context.setSignature( currentlyRunningTerminal, currentlyRunningSignature );
 
+		requestCounter = context.getCounter( CanvasItem.REQUEST_COUNTER );
 		sampleCounter = context.getCounter( CanvasItem.SAMPLE_COUNTER );
 		failureCounter = context.getCounter( CanvasItem.FAILURE_COUNTER );
 		discardsCounter = context.getCounter( RunnerCategory.DISCARDED_SAMPLES_COUNTER );
@@ -209,7 +211,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		long startTime = ( Long )sampleId;
 
-		updateCurrentlyRunning( currentlyRunning.decrementAndGet() );
+		int cRunning = currentlyRunning.decrementAndGet();
+		updateCurrentlyRunning( cRunning );
 
 		if( !message.containsKey( TIMESTAMP_MESSAGE_PARAM ) )
 			message.put( TIMESTAMP_MESSAGE_PARAM, startTime / 1000000 );
@@ -217,6 +220,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		if( !message.containsKey( TIME_TAKEN_MESSAGE_PARAM ) )
 			message.put( TIME_TAKEN_MESSAGE_PARAM, ( System.nanoTime() - startTime ) / 1000000 );
 		getContext().send( resultTerminal, message );
+		sampleCounter.increment();
 
 		// Gather statistics from the completed sample.
 		long timeTaken = ( Long )message.get( TIME_TAKEN_MESSAGE_PARAM );
@@ -231,6 +235,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 				.containsKey( "Response" ) ? ( ( String )message.get( "Response" ) ).length() : 0 );
 
 		addTopBottomSample( startTime / 1000000, timeTaken, size );
+		
+		if( cRunning == 0 )
+			getContext().setBusy( false );
 	}
 
 	private synchronized void addTopBottomSample( long time, long timeTaken, long size )
@@ -341,6 +348,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		queue.clear();
 		queued.set( 0 );
+		getContext().setBusy( false );
 
 		onCancel();
 	}
@@ -385,14 +393,15 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		if( !getContext().isInvalid() )
 		{
-			sampleCounter.increment();
+			requestCounter.increment();
+			getContext().setBusy( true );
 			Long startTime = System.nanoTime();
 			updateCurrentlyRunning( currentlyRunning.incrementAndGet() );
-			
+
 			// remove leftovers from previous runner
 			message.remove( TIMESTAMP_MESSAGE_PARAM );
 			message.remove( TIME_TAKEN_MESSAGE_PARAM );
-			
+
 			TerminalMessage result = null;
 			try
 			{
@@ -521,7 +530,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			StringBuilder s = new StringBuilder();
 			for( SampleStats stat : stats )
 				s.append( stat.getTime() + ":" + stat.getTimeTaken() + ":" + stat.getSize() + ";" );
-			data.put( "requests", s.toString() );
+			data.put( "samples", s.toString() );
 		}
 		return data;
 	}
@@ -540,9 +549,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			sumTotalSquare += ( ( Number )map.get( "sumTotalSquare" ) ).longValue();
 			avgSum += ( ( Number )map.get( "avg" ) ).longValue();
 
-			if( map.containsKey( "requests" ) )
+			if( map.containsKey( "samples" ) )
 			{
-				String[] entries = ( ( String )map.get( "requests" ) ).split( ";" );
+				String[] entries = ( ( String )map.get( "samples" ) ).split( ";" );
 				for( String entry : entries )
 				{
 					String[] vals = entry.split( ":" );

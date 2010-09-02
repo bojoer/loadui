@@ -288,7 +288,7 @@ layout {
 		box( widget:'display', layout:'wrap 3, align right' ) {
 			node( label:'Requests', fString:displayRequests, constraints:'w 50!' )
 			node( label:'Running', fString:displayRunning, constraints:'w 50!' )
-			node( label:'Samples', fString:displayTotal, constraints:'w 50!' )
+			node( label:'Completed', fString:displayTotal, constraints:'w 50!' )
 			node( label:'Queued', fString:displayQueue, constraints:'w 50!' )
 			node( label:'Discarded', fString:displayDiscarded, constraints:'w 50!' )
 			node( label:'Failed', fString:displayFailed, constraints:'w 50!' )
@@ -307,7 +307,7 @@ compactLayout {
 	box( widget:'display', layout:'wrap 3, align right' ) {
 		node( label:'Requests', fString:displayRequests )
 		node( label:'Running', fString:displayRunning )
-		node( label:'Samples', fString:displayTotal )
+		node( label:'Completed', fString:displayTotal )
 		node( label:'Queued', fString:displayQueue )
 		node( label:'Discarded', fString:displayDiscarded )
 		node( label:'Failed', fString:displayFailed )

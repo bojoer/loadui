@@ -36,6 +36,8 @@ public interface ComponentItem extends CanvasObjectItem, CounterHolder
 	public static final String INVALID = ComponentItem.class.getName() + "@invalid";
 
 	public static final String TYPE = ComponentItem.class.getName() + "@type";
+	
+	public static final String BUSY = ComponentItem.class.getName() + "@busy";
 
 	/**
 	 * Gets the type of the component. This corresponds to the label of the
@@ -104,7 +106,22 @@ public interface ComponentItem extends CanvasObjectItem, CounterHolder
 	 * @param state
 	 */
 	public void setInvalid( boolean state );
-
+	
+	/**
+	 * Checks to see if the ComponentItem is in a busy (working) state.
+	 * Once a COMPLETE or STOP action is triggered, a ComponentItem should move into a non-busy state as soon as possible.
+	 * A ComponentItem doesn't need to ever be in a busy state.  
+	 * @return
+	 */
+	public boolean isBusy();
+	
+	/**
+	 * Sets the busy state of the ComponentItem.
+	 * 
+	 * @param state
+	 */
+	public void setBusy( boolean state );
+	
 	/**
 	 * Called on a ComponentItem to generate a summary of its run.
 	 * 

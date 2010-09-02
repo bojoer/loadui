@@ -159,7 +159,7 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 	
 	
 	var time:Integer = 0;
-	var sampleCount:Integer = 0;
+	var requestCount:Integer = 0;
 	var failureCount:Integer = 0;
 	
 	def counterUpdater = Timeline {
@@ -168,7 +168,7 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 			time: 500ms
 			action: function() {
 				time = canvas.getCounter( CanvasItem.TIMER_COUNTER ).get();
-				sampleCount = canvas.getCounter( CanvasItem.SAMPLE_COUNTER ).get();
+				requestCount = canvas.getCounter( CanvasItem.REQUEST_COUNTER ).get();
 				failureCount = canvas.getCounter( CanvasItem.FAILURE_COUNTER ).get();
 			}
 		}
@@ -322,7 +322,7 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 						layoutX: 5
 						width: 200
 						layoutY: 15
-						text: bind "{FormattingUtils.formatTime(time)}        {%-20d sampleCount} {failureCount}"
+						text: bind "{FormattingUtils.formatTime(time)}        {%-20d requestCount} {failureCount}"
 					}
 				]*/
 			}, if (testcase) linkButton else null, 
@@ -340,9 +340,9 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 			    small: small
 				text: "Requests"
 				width: if (not small) 105 else 55
-				progress: bind if(sampleLimit > 0) Math.min( (sampleCount as Number) / sampleLimit, 1.0) else 0
-				value: bind "{sampleCount}"
-				limit: bind if(sampleLimit>0) "{sampleLimit}" else null
+				progress: bind if(requestLimit > 0) Math.min( (requestCount as Number) / requestLimit, 1.0) else 0
+				value: bind "{requestCount}"
+				limit: bind if(requestLimit>0) "{requestLimit}" else null
 				layoutInfo: LayoutInfo {
 					hpos:HPos.CENTER
 				}
@@ -431,7 +431,7 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 	
 	public function refreshRunner() {
 	    timeLimit = canvas.getLimit( CanvasItem.TIMER_COUNTER );
-	    		sampleLimit = canvas.getLimit( CanvasItem.SAMPLE_COUNTER );
+	    		requestLimit = canvas.getLimit( CanvasItem.REQUEST_COUNTER );
 	    		failureLimit = canvas.getLimit( CanvasItem.FAILURE_COUNTER );
 	    		
 	    		playButton.selected = canvas.isRunning();

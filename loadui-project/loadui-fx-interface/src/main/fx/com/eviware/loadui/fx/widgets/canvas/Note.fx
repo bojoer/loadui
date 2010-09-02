@@ -176,7 +176,7 @@ public class Note extends BaseNode, Movable, Selectable, Deletable {
 						}
 						action: function():Void { canvas.createNote( layoutX + textWidth + 50, layoutY ) }
 					}, Separator {
-						styleClass: "", layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.ALWAYS }
+						styleClass: "", layoutInfo: LayoutInfo { height: 0, minWidth: 0, hfill: true, hgrow: Priority.ALWAYS }
 					}, Label {
 						text: "NOTE"
 					}
