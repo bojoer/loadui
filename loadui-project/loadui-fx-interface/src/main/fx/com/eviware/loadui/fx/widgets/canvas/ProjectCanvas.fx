@@ -140,7 +140,7 @@ public class ProjectCanvas extends Canvas {
 			def event = e as CollectionEvent;
 			if( ProjectItem.SCENES.equals( event.getKey() ) ) {
 				if( event.getEvent() == CollectionEvent.Event.ADDED ) {
-					runInFxThread( function() { addTestCase( event.getElement() as SceneItem ); refreshComponents(); } );
+					runInFxThread( function() { addTestCase( event.getElement() as SceneItem ) } );
 				} else {
 					runInFxThread( function() { removeModelItem( event.getElement() as SceneItem ); refreshComponents(); } );
 				}
