@@ -284,6 +284,20 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	 * @param state
 	 */
 	public void setInvalid( boolean state );
+	
+	/**
+	 * Checks to see if the ComponentItem is busy.
+	 * 
+	 * @return
+	 */
+	public boolean isBusy();
+
+	/**
+	 * Set the busy state of the ComponentItem.
+	 * 
+	 * @param state
+	 */
+	public void setBusy( boolean state );
 
 	/**
 	 * Sets the activity strategy for the ComponentItem, which is used by the GUI

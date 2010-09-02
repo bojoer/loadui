@@ -163,16 +163,20 @@ public class AppState extends ApplicationState {
 	 * The onDone function will be called when the task completes, successful or not, with the Task object, which can be used to verify completion status. This will be called in the JavaFX thread.
 	 */
 	public function blockingTask( task:function():Void, onDone:function(task:Task):Void ):Void {
-		insert blocked into overlay;
+		block();
 		def blockingTask:BlockingTask = BlockingTask {
 			task:task
 			onDone:function() {
-				delete blocked from overlay;
+				unblock();
 				onDone( blockingTask );
 			}
 		};
 		blockingTask.start();
 	}
+	var blockCount = 0;
+	public function block():Void { if( blockCount == 0 ) insert blocked into overlay; blockCount++; }
+	
+	public function unblock():Void { blockCount = Math.max( 0, blockCount-1 ); if( blockCount == 0 ) delete blocked from overlay; }
 	
 	override function getLoadedWorkspace():WorkspaceItem {
 		MainWindow.instance.workspace;

@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -408,6 +409,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		generateSummary( summary );
 		CanvasItemImpl.this.summary = summary;
 		fireBaseEvent( SUMMARY );
+		triggerAction( READY_ACTION );
 	}
 
 	private void fixTimeLimit()
@@ -446,6 +448,34 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	protected void setRunning( boolean running )
 	{
 		this.running = running;
+	}
+	
+	public Date getStartTime()
+	{
+		return startTime;
+	}
+
+	public Date getEndTime()
+	{
+		return endTime;
+	}
+
+	@Override
+	public boolean isDirty()
+	{
+		return !DigestUtils.md5Hex( getConfig().xmlText() ).equals( lastSavedHash );
+	}
+
+	@Override
+	public boolean isStarted()
+	{
+		return hasStarted;
+	}
+
+	@Override
+	public boolean isLoadingError()
+	{
+		return loadingErrors;
 	}
 
 	private class ComponentListener implements EventHandler<BaseEvent>
@@ -518,10 +548,16 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 				else if( CounterHolder.COUNTER_RESET_ACTION.equals( event.getKey() ) )
 					reset();
 
-				if( COMPLETE_ACTION.equals( event.getKey() ) && hasStarted )
+				if( COMPLETE_ACTION.equals( event.getKey() ) )
 				{
-					hasStarted = false;
-					onComplete( event.getSource() );
+					if( hasStarted )
+					{
+						hasStarted = false;
+						new ComponentBusyAwaiter( event.getSource() );
+						//onComplete( event.getSource() );
+					}
+					else
+						triggerAction( READY_ACTION );
 				}
 			}
 			else if( event instanceof CounterEvent && isRunning() )
@@ -583,29 +619,44 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 			return time;
 		}
 	}
-
-	public Date getStartTime()
+	
+	private class ComponentBusyAwaiter implements EventHandler<BaseEvent>
 	{
-		return startTime;
-	}
+		private final EventFirer source;
+		private final AtomicInteger awaiting = new AtomicInteger();
+		
+		public ComponentBusyAwaiter( EventFirer source )
+		{
+			this.source = source;
+			tryReady();
+		}
+		
+		private void tryReady()
+		{
+			awaiting.set( 0 );
+			for( ComponentItem component : getComponents() )
+			{
+				if( component.isBusy() )
+				{
+					component.addEventListener( BaseEvent.class, this );
+					awaiting.incrementAndGet();
+				}
+			}
+			if( awaiting.get() == 0 )
+				onComplete( source );
+			else
+				log.debug( "Waiting for {} components to finish...", awaiting.get() );
+		}
 
-	public Date getEndTime()
-	{
-		return endTime;
-	}
-
-	public boolean isDirty()
-	{
-		return !DigestUtils.md5Hex( getConfig().xmlText() ).equals( lastSavedHash );
-	}
-
-	public boolean isStarted()
-	{
-		return hasStarted;
-	}
-
-	public boolean isLoadingError()
-	{
-		return loadingErrors;
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( event.getKey().equals( ComponentItem.BUSY ) )
+			{
+				event.getSource().removeEventListener( BaseEvent.class, this );
+				if( awaiting.decrementAndGet() == 0 )
+					tryReady();
+			}
+		}
 	}
 }

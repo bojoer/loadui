@@ -71,7 +71,7 @@ public class SetCanvasLimitsDialog {
 					formContent: [
 						//LongInputField { id: "timeLimit", label: "Time limit (sec):", value: valueOf(runController.timeLimit) },
 						TimeField { id: "timeLimit", label: "Time limit:", value: valueOf(runController.timeLimit) },
-						LongInputField { id: "sampleLimit", label: "Request limit:", value: valueOf(runController.sampleLimit) },
+						LongInputField { id: "requestLimit", label: "Request limit:", value: valueOf(runController.requestLimit) },
 						LongInputField { id: "failureLimit", label: "Failure limit:", value: valueOf(runController.failureLimit) },
 						CheckBoxField { id: "reset", label: "Reset counters?", value: false } as FormField
 					]
@@ -98,8 +98,8 @@ public class SetCanvasLimitsDialog {
 	function setLimits(): Void {
 		def tl = form.getValue( "timeLimit" );
 		runController.timeLimit = if(tl != null) tl as Long else -1;
-		def sl = form.getValue( "sampleLimit" );
-		runController.sampleLimit = if(sl != null) sl as Long else -1;
+		def sl = form.getValue( "requestLimit" );
+		runController.requestLimit = if(sl != null) sl as Long else -1;
 		def fl = form.getValue( "failureLimit" );
 		runController.failureLimit = if(fl != null) fl as Long else -1;
 	}
@@ -111,19 +111,19 @@ public class SetCanvasLimitsDialog {
 	function validateLimits(): Void {
 		var result: String[] = [];
 
-		var time: Integer = runController.canvas.getCounter( CanvasItem.TIMER_COUNTER ).get();
+		def time = runController.canvas.getCounter( CanvasItem.TIMER_COUNTER ).get();
 		def tl = form.getValue("timeLimit") as Integer;
 		if(tl < time){
 			insert "time" into result;
 		}	
 		
-		var sampleCount: Integer = runController.canvas.getCounter( CanvasItem.SAMPLE_COUNTER ).get();
-		def sl = form.getValue( "sampleLimit" ) as Integer;
-		if(sl < sampleCount){
-			insert "sample" into result;
+		def requestCount = runController.canvas.getCounter( CanvasItem.REQUEST_COUNTER ).get();
+		def sl = form.getValue( "requestLimit" ) as Integer;
+		if(sl < requestCount){
+			insert "request" into result;
 		}
 		
-		var failureCount: Integer = runController.canvas.getCounter( CanvasItem.FAILURE_COUNTER ).get();
+		def failureCount = runController.canvas.getCounter( CanvasItem.FAILURE_COUNTER ).get();
 		def fl = form.getValue( "failureLimit" ) as Integer;
 		if(fl < failureCount){
 			insert "failure" into result;

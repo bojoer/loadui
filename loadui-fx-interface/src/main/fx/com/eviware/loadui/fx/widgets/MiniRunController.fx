@@ -83,7 +83,7 @@ public class MiniRunController extends BaseNode, Resizable, StylesheetAware, Tim
 	
 	override public var canvas = bind MainWindow.instance.projectCanvas.canvasItem on replace oldCanvas = newCanvas {
 		timeLimit = canvas.getLimit( CanvasItem.TIMER_COUNTER );
-		sampleLimit = canvas.getLimit( CanvasItem.SAMPLE_COUNTER );
+		requestLimit = canvas.getLimit( CanvasItem.REQUEST_COUNTER );
 		failureLimit = canvas.getLimit( CanvasItem.FAILURE_COUNTER );
 		
 		playButton.selected = canvas.isRunning();
@@ -135,7 +135,7 @@ public class MiniRunController extends BaseNode, Resizable, StylesheetAware, Tim
     public var itemsInactive:Node[]; 
     
     var time:Integer = 0;
-    var sampleCount:Integer = 0;
+    var requestCount:Integer = 0;
     var failureCount:Integer = 0;
     
     def counterUpdater = Timeline {
@@ -144,7 +144,7 @@ public class MiniRunController extends BaseNode, Resizable, StylesheetAware, Tim
             time: 500ms
             action: function() {
                 time = canvas.getCounter( CanvasItem.TIMER_COUNTER ).get();
-                sampleCount = canvas.getCounter( CanvasItem.SAMPLE_COUNTER ).get();
+                requestCount = canvas.getCounter( CanvasItem.REQUEST_COUNTER ).get();
                 failureCount = canvas.getCounter( CanvasItem.FAILURE_COUNTER ).get();
             }
         }
@@ -283,9 +283,9 @@ public class MiniRunController extends BaseNode, Resizable, StylesheetAware, Tim
 					hpos:HPos.CENTER
 				}
 				width: 105 
-				progress: bind if(sampleLimit > 0) Math.min( (sampleCount as Number) / sampleLimit, 1.0) else 0
-				value: bind "{sampleCount}"
-				limit: bind if(sampleLimit>0) "{sampleLimit}" else null
+				progress: bind if(requestLimit > 0) Math.min( (requestCount as Number) / requestLimit, 1.0) else 0
+				value: bind "{requestCount}"
+				limit: bind if(requestLimit>0) "{requestLimit}" else null
 			}, CompactLimiter {
 				layoutInfo: LayoutInfo {
 					hpos:HPos.CENTER

@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -100,7 +98,6 @@ import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.util.reporting.JasperReportManager;
-import com.eviware.loadui.util.reporting.ReportEngine;
 import com.eviware.loadui.util.reporting.ReportEngine.ReportFormats;
 
 public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implements ProjectItem
@@ -492,7 +489,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					awaitingScenes.clear();
 					doGenerateSummary();
 				}
-			}, 5, TimeUnit.SECONDS );
+			}, 15, TimeUnit.SECONDS );
 	}
 
 	@Override

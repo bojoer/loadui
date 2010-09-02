@@ -94,8 +94,7 @@ public abstract class BaseCategory implements ComponentBehavior
 	}
 	
 	@Override
-	 public void generateSummary( MutableChapter summary )
-	 {
-
-	 }
+	public void generateSummary( MutableChapter summary )
+	{
+	}
 }

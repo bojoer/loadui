@@ -25,6 +25,7 @@ import javafx.scene.control.ToggleButton;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.MainWindow;
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.EventHandler;
@@ -49,13 +50,13 @@ mixin public class TimerController {
 		canvas.setLimit( CanvasItem.FAILURE_COUNTER, failureLimit );
 	}
 	
-	public var sampleLimit:Integer on replace {
-		canvas.setLimit( CanvasItem.SAMPLE_COUNTER, sampleLimit );
+	public var requestLimit:Integer on replace {
+		canvas.setLimit( CanvasItem.REQUEST_COUNTER, requestLimit );
 	}
 	
 	public var canvas:CanvasItem on replace oldCanvas = newCanvas {
 		timeLimit = canvas.getLimit( CanvasItem.TIMER_COUNTER );
-		sampleLimit = canvas.getLimit( CanvasItem.SAMPLE_COUNTER );
+		requestLimit = canvas.getLimit( CanvasItem.REQUEST_COUNTER );
 		failureLimit = canvas.getLimit( CanvasItem.FAILURE_COUNTER );
 		
 		playButton.selected = canvas.isRunning();
@@ -74,15 +75,30 @@ mixin public class TimerController {
 	public-read var state = STOPPED;
 };
 
+var busy = false;
+
 class CanvasListener extends EventHandler {
 	override function handleEvent( e:EventObject ) {
 		def event = e as ActionEvent;
-		if( event.getKey() == "STOP" )
+		if( event.getKey() == CanvasItem.STOP_ACTION )
 			FxUtils.runInFxThread( function():Void { playButton.selected = false; state = PAUSED; } )
-		else if( event.getKey() == "START" )
+		else if( event.getKey() == CanvasItem.START_ACTION )
 			FxUtils.runInFxThread( function():Void { playButton.selected = true; state = RUNNING; } )
-		else if( event.getKey() == "COMPLETE" )
-			FxUtils.runInFxThread( function():Void { playButton.selected = false; state = STOPPED; } );
-		
+		else if( event.getKey() == CanvasItem.COMPLETE_ACTION )
+			FxUtils.runInFxThread( function():Void {
+				playButton.selected = false;
+				state = STOPPED;
+				if( not busy ) {
+					busy = true;
+					AppState.instance.block();
+				}
+			} )
+		else if( event.getKey() == CanvasItem.READY_ACTION )
+			FxUtils.runInFxThread( function():Void {
+				if( busy ) {
+					busy = false;
+					AppState.instance.unblock();
+				}
+			} );
 	}
 }
