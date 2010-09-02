@@ -560,7 +560,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 						triggerAction( READY_ACTION );
 				}
 			}
-			else if( event instanceof CounterEvent && isRunning() )
+			else if( "controller".equals( System.getProperty( "loadui.instance" ) ) && event instanceof CounterEvent && isRunning() )
 			{
 				CounterEvent cEvent = ( CounterEvent )event;
 				long limit = getLimit( cEvent.getKey() );
