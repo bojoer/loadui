@@ -400,14 +400,14 @@ public class ChartWidget extends VBox, ChartListener {
 	   		legend.doLayout();
 	   		legendPanel.doLayout();
 	   		demoPanel.doLayout();
-	   		legendPanel.doLayout();
 	   		legend.doLayout();
+	   		legendPanel.doLayout();
 	   		
 	   		legend.repaint();
 	   		legendPanel.repaint();
 	   		demoPanel.repaint();
-	   		legendPanel.repaint();
 	   		legend.repaint();
+	   		legendPanel.repaint();
 	   		
 		}
 		catch(t: Throwable){
