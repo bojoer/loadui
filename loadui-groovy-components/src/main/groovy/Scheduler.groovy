@@ -308,7 +308,7 @@ compactLayout {
 	box( widget:'display' ) {
 		node( label:'Day', fString:new DelayedFormattedString( '%s', 1000, day ) )
 		node( label:'Time', fString:new DelayedFormattedString( '%s', 1000, value { time.value.replace(' ',':') } ) )
-		node( label:'Duration', fString:new DelayedFormattedString( '%d', 1000, value { FormattingUtils.formatTime( duration ) } ) )
+		node( label:'Duration', fString:new DelayedFormattedString( '%s', 1000, value { FormattingUtils.formatTime( duration.value ) } ) )
 	}
 }
 
