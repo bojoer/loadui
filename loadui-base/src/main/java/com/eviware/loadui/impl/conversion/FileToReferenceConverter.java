@@ -40,7 +40,7 @@ public class FileToReferenceConverter implements Converter<File, Reference>
 	@Override
 	public Reference convert( File source )
 	{
-		return new Reference( source.exists() ? getHash( source ) : ":" + source.getAbsolutePath(), null );
+		return new Reference( ( source.exists() && source.isFile() ) ? getHash( source ) : ":" + source.getAbsolutePath(), null );
 	}
 
 	private synchronized String getHash( File file )
