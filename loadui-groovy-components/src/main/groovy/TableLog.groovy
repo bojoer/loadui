@@ -29,6 +29,7 @@ import com.eviware.loadui.api.events.PropertyEvent
 import au.com.bytecode.opencsv.CSVWriter
 import java.io.FileWriter
 import com.eviware.loadui.api.events.ActionEvent
+import com.eviware.loadui.util.layout.DelayedFormattedString
 import javax.swing.event.TableModelListener
 import javax.swing.event.TableModelEvent
 
@@ -48,12 +49,14 @@ myTableModel.addTableModelListener(new TableModelListener() {
 	}
 });
 
-saveFileName = (fileName?.value as File)?.getName()
+saveFileName = fileName.value?.name
 
 updateFollow = {
-	follow.value = myTableModel.isFollow()
+	follow.value = myTableModel.follow
 }
 
+rowsDisplay = new DelayedFormattedString( '%d', 500, value { myTableModel.rowCount } )
+fileDisplay = new DelayedFormattedString( '%s', 500, value { saveFileName ?: '-' } )
 
 onMessage = { incoming, outgoing, message ->
 	super.onTerminalMessage(incoming, outgoing, message)
@@ -66,7 +69,7 @@ onMessage = { incoming, outgoing, message ->
 			char sep = ','
 			
 			writer = new CSVWriter(new FileWriter(saveFileName, true), sep);
-			String[] entries = myTableModel.getLastRow()
+			String[] entries = myTableModel.lastRow
 			writer.writeNext(entries)
 			writer.flush()
 		} catch (Exception e) {
@@ -77,27 +80,32 @@ onMessage = { incoming, outgoing, message ->
 	}
 }
 
+onRelease = {
+	rowsDisplay.release()
+	fileDisplay.release()
+}
+
 addEventListener( PropertyEvent ) { event ->
 	if( event.event == PropertyEvent.Event.VALUE ) {
 		if( event.property.key == 'maxRows' ) {
-			myTableModel.setMaxRow(maxRows.value as Integer)
+			myTableModel.maxRow = maxRows.value
 		}
-		else if( event.property.key == 'follow' && myTableModel.isFollow() != follow.value as Boolean) {
-			myTableModel.setFollow(follow.value as Boolean)
+		else if( event.property.key == 'follow' && myTableModel.follow != follow.value as Boolean) {
+			myTableModel.follow = follow.value
+		} else if( event.property == fileName ) {
+			saveFileName = fileName.value?.name
 		}
 	}
 }
 
 addEventListener( ActionEvent ) { event ->
 	if ( event.key == "START" ) {
-		if( appendSaveFile.value )
-			saveFileName = (fileName.value as File).getName()
-		else {
-			saveFileName = (fileName.value as File).getName()
+		saveFileName = fileName.value?.name
+		if( !appendSaveFile.value ) {
 			def ext = saveFileName.substring(saveFileName.lastIndexOf("."), saveFileName.length())
 			def name = saveFileName.substring(0, saveFileName.lastIndexOf("."))
-			def timestamp = new Date().getTime()
-			saveFileName = "${(fileName.value as File).getParent()}${File.separator}$name-$timestamp$ext"
+			def timestamp = new Date().time
+			saveFileName = "${fileName.value.parent}${File.separator}$name-$timestamp$ext"
 			println saveFileName
 		}
 	}
@@ -106,10 +114,16 @@ addEventListener( ActionEvent ) { event ->
 		myTableModel.reset()
 	}
 }
-// layout
-layout 
-{ 
-	node( widget:"tableWidget", model:myTableModel ) 
+
+layout { 
+	node( widget:'tableWidget', model:myTableModel ) 
+}
+
+compactLayout {
+	box( widget:'display' ) {
+		node( label: 'Rows', fString:rowsDisplay )
+		node( label: 'Output File', fString:fileDisplay )
+	}
 }
 
 // settings
@@ -119,8 +133,7 @@ settings( label: "General" ) {
 	}
 	box {
 		property(property: summaryRows, label: 'Max Rows in Summary' )
-	}
-	
+	}	
 }
 
 settings(label:'Logging') {

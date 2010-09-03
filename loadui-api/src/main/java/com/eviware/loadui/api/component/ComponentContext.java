@@ -250,6 +250,11 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	 * @param tab
 	 */
 	public void addSettingsTab( SettingsLayoutContainer tab );
+	
+	/**
+	 * Clears any added settings tabs.
+	 */
+	public void clearSettingsTabs();
 
 	/**
 	 * Triggers the given action upon the proper ModelItem as defined by the

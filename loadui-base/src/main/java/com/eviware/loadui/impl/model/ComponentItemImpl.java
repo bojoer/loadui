@@ -661,6 +661,12 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		{
 			ComponentItemImpl.this.settingsTabs.add( tab );
 		}
+		
+		@Override
+		public void clearSettingsTabs()
+		{
+			ComponentItemImpl.this.settingsTabs.clear();
+		}
 
 		@Override
 		public void triggerAction( String actionName, Scope scope )

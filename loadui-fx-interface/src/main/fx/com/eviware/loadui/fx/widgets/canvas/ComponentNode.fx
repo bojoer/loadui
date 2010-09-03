@@ -105,9 +105,6 @@ public class ComponentNode extends CanvasObjectNode {
 	
 	override function create():Node {
 		def dialog = super.create();
-		if (component.getCompactLayout() == null) {
-		    compactToggle.visible = false;
-		}
 		body.content = faceHolder;
 		
 		dialog;

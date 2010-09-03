@@ -461,6 +461,7 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 				{
 					log.debug( "Invoking onRelease since script changed for {}", event.getSource() );
 					invokeMethod( "onRelease", new Object[] {} );
+					context.clearSettingsTabs();
 					context.clearEventListeners();
 				}
 
