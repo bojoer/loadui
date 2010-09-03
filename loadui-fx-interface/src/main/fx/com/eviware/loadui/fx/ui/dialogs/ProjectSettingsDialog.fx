@@ -99,7 +99,7 @@ public class ProjectSettingsDialog  {
 							    id: "savePath"
 							    value: if (not (item.getReportFolder() == null)) new File(item.getReportFolder()) else null
 							    disable: bind not (cb.value as Boolean)
-							    directoryOnly: true
+							    selectMode: FileInputField.DIRECTORIES_ONLY
 							}
 						]
 					}
