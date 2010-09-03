@@ -87,7 +87,7 @@ import javafx.scene.Group;
 import javafx.geometry.VPos;
 import javafx.geometry.HPos;
 import javafx.scene.layout.LayoutInfo;
-
+import com.eviware.loadui.fx.FxUtils;
 import com.jidesoft.chart.axis.AxisPlacement;
 
 
@@ -340,8 +340,13 @@ public class ChartWidget extends VBox, ChartListener {
     	def x: Double = p.getX() * scaleX;
     	def y: Double = p.getY() * scaleY;
     	
-        (models.get(cs.getName()) as DefaultChartModel).addPoint(new ChartPoint(x, y));
-        autoAxis();
+
+    	FxUtils.runInFxThread( function():Void {
+        	(models.get(cs.getName()) as DefaultChartModel).addPoint(new ChartPoint(x, y));
+        
+       	 	autoAxis();
+       	 	
+        })
     }
     
     override function serieCleared(cs: ChartSerie): Void {
