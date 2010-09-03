@@ -174,7 +174,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			def component = createComponent( (d.node as ComponentToolbarItem).descriptor );
 			component.setAttribute( "gui.layoutX", "{offsetX + x as Integer}" );
 			component.setAttribute( "gui.layoutY", "{offsetY + y as Integer}" );
-		}, null );
+		}, null, "Creating component." );
 	}
 	override var onDrop = onDropFunction;
 	

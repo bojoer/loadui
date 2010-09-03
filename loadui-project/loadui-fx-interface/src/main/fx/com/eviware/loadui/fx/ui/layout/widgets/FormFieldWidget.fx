@@ -37,7 +37,6 @@ import com.eviware.loadui.fx.ui.popup.TooltipHolder;
 import com.eviware.loadui.fx.ui.layout.Widget;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
-import com.eviware.loadui.fx.ui.form.fields.SelectField;
 
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 

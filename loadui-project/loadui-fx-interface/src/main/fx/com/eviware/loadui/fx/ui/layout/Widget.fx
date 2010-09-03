@@ -25,19 +25,28 @@ import javafx.scene.Node;
 import javafx.scene.layout.Resizable;
 
 import com.eviware.loadui.fx.ui.layout.widgets.*;
+import com.eviware.loadui.fx.ui.form.fields.FileInputField;
 
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 
 public function buildWidgetFor( plc:PropertyLayoutComponent ):Widget {
-	//Casting to Widget due to compiler bug.
 	if( plc.isReadOnly() )
-		ReadOnlyWidget { plc:plc } as Widget
+		ReadOnlyWidget { plc:plc }
 	else if( plc.has("options") )
-		SliderSelectWidget { plc: plc } as Widget
+		SliderSelectWidget { plc: plc }
 	else if( java.lang.Number.class.isAssignableFrom( plc.getProperty().getType() ) )
-		Knob { plc: plc } as Widget
+		Knob { plc: plc }
+	else if( java.io.File.class.isAssignableFrom( plc.getProperty().getType() ) and plc.has("mode") )
+		FormFieldWidget {
+			plc: plc
+			field: FileInputField {
+				label: plc.getLabel()
+				value: plc.getProperty().getValue()
+				selectMode : if( plc.get("mode") == "files" ) FileInputField.FILES_ONLY else if( plc.get("mode") == "directories" ) FileInputField.DIRECTORIES_ONLY else FileInputField.FILES_AND_DIRECTORIES
+			}
+		}
 	else
-		FormFieldWidget { plc: plc } as Widget
+		FormFieldWidget { plc: plc }
 }
 
 public mixin class Widget extends Resizable {

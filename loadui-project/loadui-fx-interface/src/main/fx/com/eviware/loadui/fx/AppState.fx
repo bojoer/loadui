@@ -30,6 +30,7 @@ import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.async.BlockingTask;
 import com.eviware.loadui.fx.dialogs.SaveProjectDialog;
 import com.eviware.loadui.fx.ui.XWipePanel;
+import com.eviware.loadui.fx.ui.WaitingScreen;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
 import java.lang.IllegalArgumentException;
@@ -135,12 +136,9 @@ public class AppState extends ApplicationState {
 		scene.content = layers;
 	}
 	
-	def blocked = Rectangle {
+	def blocked = WaitingScreen {
 		width: bind scene.width
 		height: bind scene.height
-		opacity: 0.3
-		blocksMouse: true
-		cursor: Cursor.WAIT
 	}
 	
 	postinit {
@@ -162,7 +160,8 @@ public class AppState extends ApplicationState {
 	 * The task function will not be run in the JavaFx thread, and must thus not modify the scenegraph.
 	 * The onDone function will be called when the task completes, successful or not, with the Task object, which can be used to verify completion status. This will be called in the JavaFX thread.
 	 */
-	public function blockingTask( task:function():Void, onDone:function(task:Task):Void ):Void {
+	public function blockingTask( task:function():Void, onDone:function(task:Task):Void, text:String ):Void {
+		setBlockedText( text );
 		block();
 		def blockingTask:BlockingTask = BlockingTask {
 			task:task
@@ -177,6 +176,8 @@ public class AppState extends ApplicationState {
 	public function block():Void { if( blockCount == 0 ) insert blocked into overlay; blockCount++; }
 	
 	public function unblock():Void { blockCount = Math.max( 0, blockCount-1 ); if( blockCount == 0 ) delete blocked from overlay; }
+	
+	public function setBlockedText( text:String ):Void { blocked.text = text; }
 	
 	override function getLoadedWorkspace():WorkspaceItem {
 		MainWindow.instance.workspace;

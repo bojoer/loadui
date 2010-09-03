@@ -30,6 +30,10 @@ public function build( id:String, label:String, value:Object ) {
 	FileInputField { id:id, label:label, value:value }
 }
 
+public def FILES_ONLY = JFileChooser.FILES_ONLY;
+public def DIRECTORIES_ONLY = JFileChooser.DIRECTORIES_ONLY;
+public def FILES_AND_DIRECTORIES = JFileChooser.FILES_AND_DIRECTORIES;
+
 /**
  * A File FormField.
  *
@@ -38,7 +42,7 @@ public function build( id:String, label:String, value:Object ) {
  */
 public class FileInputField extends Button, FormField {	
     
-    public-init var directoryOnly = false;
+    public-init var selectMode = FILES_ONLY;
     
     public-init var onOpen = function():Void {};
     
@@ -48,16 +52,18 @@ public class FileInputField extends Button, FormField {
 	}
 
 	override var text = bind if(value == null) {
-		if (directoryOnly)
+		if( selectMode == DIRECTORIES_ONLY )
 			"Choose folder"
-		else
+		else if( selectMode == DIRECTORIES_ONLY )
 			"Choose file"
+		else
+			"Choose file or folder"
 	} else (value as File).getName();
 	
 	override var action = function() {
 		def chooser = new JFileChooser( value as File );
-		if (directoryOnly) {
-			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setFileSelectionMode( selectMode );
+		if (selectMode == DIRECTORIES_ONLY) {
 			chooser.setAcceptAllFileFilterUsed(false);
 		}
 		chooser.setSelectedFile( value as File );
