@@ -23,12 +23,14 @@ package com.eviware.loadui.fx.widgets;
 
 import javafx.scene.Group;
 import javafx.scene.layout.Resizable;
+import javafx.scene.layout.LayoutInfo;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 
 import com.eviware.loadui.fx.ui.node.BaseNode;
 
@@ -70,16 +72,16 @@ public class Limiter extends BaseNode, Resizable {
 					strokeWidth: 0.5
 				}, Label {
 					layoutX: 5
-					text: bind if( limit == null or small) value else "{%-6s value}/{%6s limit}"
+					text: bind if( limit == null or small) value else "{%-9s value}/{%9s limit}"
 					textFill: bind displayTextFill
 					font: bind displayFont
-					height: 15
-					width: bind width - 10
+					layoutInfo: LayoutInfo { height: 15 }
 					hpos: HPos.LEFT
+					vpos: VPos.CENTER
 				}, labelNode = Label {
 					layoutY: 15
 					text: bind text
-					font: bind if (small) Font.font( "monospaced", 8 ) else Font.font( "monospaced", 9 );
+					font: bind if( small ) Font.font( "Monospaced", 8 ) else Font.font( "Monospaced", 9 );
 				}, Rectangle {
 					layoutY: 22
 					layoutX: bind labelNode.layoutBounds.width
