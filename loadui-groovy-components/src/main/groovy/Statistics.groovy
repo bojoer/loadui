@@ -56,6 +56,9 @@ import com.eviware.loadui.util.statistics.ValueStatistics
 import com.eviware.loadui.api.ui.table.LTableModel
 import com.eviware.loadui.api.summary.MutableSection
 
+import com.eviware.loadui.util.layout.DelayedFormattedString
+
+
 AGGREGATE = "Aggregate"
 
 executor = Executors.newSingleThreadScheduledExecutor()
@@ -80,6 +83,18 @@ createProperty( 'enableAvgResponseSize', Boolean, true )
 createProperty( 'currentSourceID', String, "none" )
 createProperty( 'addtoSummary', Boolean, false )
 
+avgDisplay = new DelayedFormattedString( '%d', 500, 0 )
+minDisplay = new DelayedFormattedString( '%d', 500, 0 )
+maxDisplay = new DelayedFormattedString( '%d', 500, 0 )
+stdDevDisplay = new DelayedFormattedString( '%d', 500, 0 )
+tpsDisplay = new DelayedFormattedString( '%d', 500, 0 )
+bpsDisplay = new DelayedFormattedString( '%d', 500, 0 )
+avgTpsDisplay = new DelayedFormattedString( '%d', 500, 0 )
+avgBpsDisplay = new DelayedFormattedString( '%d', 500, 0 )
+percentileDisplay = new DelayedFormattedString( '%d', 500, 0 )
+avgRespSizeDisplay = new DelayedFormattedString( '%d', 500, 0 )
+
+
 createProperty( 'selectedAgent', String, AGGREGATE )
 
 OptionsProvider availableAgents = new OptionsProviderImpl( AGGREGATE );
@@ -99,6 +114,8 @@ yRange.title = 'ms KB'
 y2Range = new CustomNumericRange(0, 10, 20)
 y2Range.visible = true
 y2Range.title = 'requests'
+
+
 
 ChartModel chartModel = new ChartModel(xRange, yRange, y2Range, 420, 180)
 chartModel.addChartListener(new ChartAdapter(){
@@ -172,7 +189,19 @@ onMessage = { o, i, m ->
 	}
 }
 
-onRelease = { executor.shutdownNow() }
+onRelease = { 
+	executor.shutdownNow()
+	avgDisplay.release()
+	minDisplay.release()
+	maxDisplay.release()
+	stdDevDisplay.release()
+	tpsDisplay.release()
+	bpsDisplay.release()
+	avgTpsDisplay.release()
+	avgBpsDisplay.release()
+	percentileDisplay.release()
+	avgRespSizeDisplay.release()
+}
 
 onConnect = { outgoing, incoming ->
 	connected = inputTerminal.connections.size() > 0
@@ -263,8 +292,20 @@ updateChart = { currentTime ->
 		if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
 		if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 		if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
+		avgDisplay.setArgs(data['Avg'] )
+		minDisplay.setArgs(data['Min'])
+		maxDisplay.setArgs(data['Max'])
+		stdDevDisplay.setArgs(data['Std-Dev'])
+		tpsDisplay.setArgs(data['Tps'])
+		bpsDisplay.setArgs(data['Bps'])
+		avgTpsDisplay.setArgs(data['Avg-Tps'])
+		avgBpsDisplay.setArgs(data['Avg-Bps'])
+		percentileBpsDisplay.setArgs(data['Percentile'])
+		avgRespSizeDisplay.setArgs(data['AvgResponseSize'])
 	} catch( e ) {
+		e.printStackTrace()
 	}
+
 }
 
 ex = {t, m ->
@@ -400,6 +441,21 @@ layout(layout:'fillx, wrap 2') {
 	property( property: selectedAgent, label: 'View statistics from', options: availableAgents, widget:'comboBox' )
 	property( property: currentSourceID, label: 'Source ID', options: availableSourceIDs, widget:'comboBox', 
 		contstraints: "w 100!" )
+}
+
+compactLayout {
+	box( widget:'display', layout:'wrap 5, align right' ) {
+		node( label:'Average', fString:avgDisplay )
+		node( label:'Minimum', fString:minDisplay )
+		node( label:'Maximum', fString:maxDisplay )
+		node( label:'Standard Deviation', fString:stdDevDisplay )
+		node( label:'TPS', fString:tpsDisplay )
+		node( label:'BPS', fString:bpsDisplay )
+		node( label:'Average TPS', fString:avgTpsDisplay )
+		node( label:'Average BPS', fString:avgBpsDisplay )
+		node( label:'Percentile', fString:percentileDisplay )
+		node( label:'Average Response Size', fString:avgRespSizeDisplay )
+	}
 }
 
 settings( label: 'Properties' ) {
