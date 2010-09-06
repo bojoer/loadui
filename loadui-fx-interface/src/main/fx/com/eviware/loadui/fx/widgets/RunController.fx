@@ -201,10 +201,11 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 				}
 				
 				if (not valid) {
+				    var type = if (canvas instanceof ProjectItem) "Project" else "TestCase";
 				    var dlg:Dialog = Dialog {
-				        title: "Start Project"
+				        title: "Start {type}";
 				        content: [
-				        				Label { text: "The object is missing a runner or a trigger. Start anyway?" }
+				        				Label { text: "The {type} is missing a runner or a generator. Start anyway?" }
 				        ]
 				        onOk: function():Void {
 				           
@@ -395,6 +396,7 @@ public class RunController extends BaseNode, Resizable, StylesheetAware, TimerCo
 	    for (comp in canvas.getComponents()) {
 	        
 	        var component:ComponentItem = comp as ComponentItem;
+
 	    	if (component.getCategory().equalsIgnoreCase(RunnerCategory.CATEGORY)) {
 	    		foundRunner = true;
 			}
