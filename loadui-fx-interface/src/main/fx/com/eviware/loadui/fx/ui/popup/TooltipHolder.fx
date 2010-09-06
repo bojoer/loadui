@@ -41,14 +41,25 @@ public mixin class TooltipHolder extends BaseMixin {
 	 */
 	public var tooltip:String;
 	
+	var showing:Boolean;
+	
 	def label:Label = Label {
 		tooltip: Tooltip { text: bind tooltip }
 		managed: false
 	};
 	
+	public function showLabel(show:Boolean) {
+	    if ( not show ) {
+	        label.tooltip.deactivate();
+	        delete label from AppState.overlay;
+	    }
+	    showing = show;
+	    println("showing {showing}");
+	}
+	
 	init {
 		(this as BaseNode).addMouseHandler( MOUSE_ENTERED, function( e:MouseEvent ):Void {
-			if( tooltip != null ) {
+			if( tooltip != null and showing) {
 				def bounds = (this as BaseNode).localToScene((this as BaseNode).boundsInLocal);
 				label.layoutX = bounds.minX;
 				label.layoutY = bounds.minY;
