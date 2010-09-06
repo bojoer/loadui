@@ -40,7 +40,6 @@ import javafx.util.Math;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.pagination.Pagination;
-import com.eviware.loadui.fx.StylesheetAware;
 import com.eviware.loadui.fx.AppState;
 
 //import org.jfxtras.animation.wipe.XWipePanel;
@@ -56,7 +55,7 @@ import com.eviware.loadui.fx.ui.menu.button.MenuBarButton;
  *
  * @author dain.nilsson
  */
-public class ToolbarExpander extends CustomNode, Pagination, StylesheetAware {
+public class ToolbarExpander extends CustomNode, Pagination {
 
    var closeBtnIconUrl: String = "images/close_btn.fxz";
 	/**

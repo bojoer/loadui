@@ -31,7 +31,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.popup.TooltipHolder;
-import com.eviware.loadui.fx.StylesheetAware;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 
 import org.slf4j.LoggerFactory;
@@ -44,7 +43,7 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.menu.bu
  * @param widht 
  * @param height
  */
-public class MenuBarButton extends BaseNode, TooltipHolder, StylesheetAware {
+public class MenuBarButton extends BaseNode, TooltipHolder {
 	
 	/**
 	 * path to the button graphics

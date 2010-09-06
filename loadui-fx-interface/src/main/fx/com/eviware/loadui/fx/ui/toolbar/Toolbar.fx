@@ -58,7 +58,6 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.resources.Paints;
 import com.eviware.loadui.fx.ui.pagination.Pagination;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
-import com.eviware.loadui.fx.StylesheetAware;
 
 //import org.jfxtras.animation.wipe.XWipePanel;
 import com.eviware.loadui.fx.ui.XWipePanel;
@@ -161,7 +160,7 @@ class ItemOrder extends Comparator {
  * @author nenad.ristic
  * @author dain.nilsson
  */
-public class Toolbar extends CustomNode, Resizable, Pagination, StylesheetAware {
+public class Toolbar extends CustomNode, Resizable, Pagination {
 
 	/** Url of active up arrow (CSS property: up-arrow-active-url) */
 	public var upArrowActiveUrl: String = "images/small_arrow_up.fxz";

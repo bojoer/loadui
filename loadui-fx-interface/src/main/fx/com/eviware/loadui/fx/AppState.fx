@@ -41,7 +41,9 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Panel;
+import javafx.scene.layout.Stack;
 import javafx.scene.layout.Container;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
@@ -79,19 +81,19 @@ def workaround = Timeline {
 	keyFrames: KeyFrame { time: 250ms, action: function() {
 		if( dummyNode.parent == null ) {
 			insert dummyNode into instance.overlayLayer.content;
-			instance.overlayLayer.layout();
 		} else {
 			delete dummyNode from instance.overlayLayer.content;
-			instance.overlayLayer.layout();
 		}
 		dummyNode.layoutX = 100*Math.random();
 	} }
 	repeatCount: Timeline.INDEFINITE
 };
 def dummyNode = Rectangle { fill: Color.TRANSPARENT };
+
 public var overlay:Node[] on replace {
 	//delete dummyNode from instance.overlayLayer.content;
 	instance.overlayLayer.content = overlay;
+	//instance.overlayLayer.layout();
 	//FX.deferAction( function():Void {
 	//	if( dummyNode.parent == null )
 	//		insert dummyNode into instance.overlayLayer.content;
@@ -122,7 +124,7 @@ public class AppState extends ApplicationState {
 	 * Should be used for Nodes which must be positioned on top of everything else,
 	 * such as dialog boxes or popup menus.
 	 */
-	def overlayLayer = Panel { content: dummyNode };
+	def overlayLayer = Panel { };
 	
 	def localLayer = bind lazy wipePanel.content[0] as Group;
 	var wipePanel:XWipePanel;
@@ -154,7 +156,7 @@ public class AppState extends ApplicationState {
 			overlayLayer
 		];
 		
-		workaround.play();
+		//workaround.play();
 	}
 	
 	/**

@@ -33,7 +33,6 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.geometry.BoundingBox;
 
-import com.eviware.loadui.fx.StylesheetAware;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.popup.TooltipHolder;
 import com.eviware.loadui.fx.ui.dnd.SliderNode;
@@ -46,7 +45,7 @@ import com.eviware.loadui.fx.ui.layout.widgets.support.SelectSupport;
  *
  * @author dain.nilsson
  */
-public class SliderSelectWidget extends BaseNode, Widget, TooltipHolder, SelectSupport, StylesheetAware {
+public class SliderSelectWidget extends BaseNode, Widget, TooltipHolder, SelectSupport {
 
 	public var backgroundStroke:Paint = Color.rgb( 0xe5, 0xe5, 0xe5 );
 	public var backgroundFill:Paint = LinearGradient {

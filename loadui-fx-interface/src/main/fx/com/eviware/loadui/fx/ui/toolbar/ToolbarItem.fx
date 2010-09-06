@@ -31,14 +31,13 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.popup.TooltipHolder;
-import com.eviware.loadui.fx.StylesheetAware;
 
 /**
  * An item displayed in a Toolbar.
  *
  * @author dain.nilsson
  */
-public class ToolbarItem extends BaseNode, Draggable, TooltipHolder, StylesheetAware {
+public class ToolbarItem extends BaseNode, Draggable, TooltipHolder {
 	
 	/**
 	 * The icon to show in the Toolbar for this ToolbarItem.

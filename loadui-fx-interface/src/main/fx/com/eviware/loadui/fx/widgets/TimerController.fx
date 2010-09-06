@@ -90,6 +90,7 @@ class CanvasListener extends EventHandler {
 				state = STOPPED;
 				if( not busy ) {
 					busy = true;
+					AppState.instance.setBlockedText( "Waiting for components to finish." );
 					AppState.instance.block();
 				}
 			} )

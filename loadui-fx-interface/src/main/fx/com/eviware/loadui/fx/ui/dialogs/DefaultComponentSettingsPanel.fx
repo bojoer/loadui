@@ -55,7 +55,6 @@ import com.eviware.loadui.fx.ui.form.FormItem;
 import com.eviware.loadui.api.layout.LabelLayoutComponent;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 import com.eviware.loadui.api.layout.OptionsProvider;
-import com.eviware.loadui.fx.StylesheetAware;
 import org.jfxtras.scene.layout.XMigLayout;
 import org.jfxtras.scene.layout.XMigLayout.*;
 import javafx.geometry.VPos;
@@ -73,7 +72,7 @@ import com.eviware.loadui.api.ui.table.*;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.dialogs.DefaultComponentSettingsPanel" );
 
-public class DefaultComponentSettingsPanel extends StylesheetAware {
+public class DefaultComponentSettingsPanel {
 	
 	var propertyBuffer:HashMap= new HashMap();
 	

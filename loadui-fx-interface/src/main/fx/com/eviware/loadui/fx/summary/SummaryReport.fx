@@ -50,6 +50,7 @@ import javafx.geometry.HPos;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Stack;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.FontWeight;
 import com.javafx.preview.layout.Grid;
@@ -61,7 +62,6 @@ import com.eviware.loadui.fx.ui.dnd.MovableNode;
 import com.eviware.loadui.fx.ui.button.GlowButton;
 import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
 import com.eviware.loadui.fx.ui.resources.Paints;
-import com.eviware.loadui.fx.StylesheetAware;
 
 import org.jfxtras.scene.layout.XMigLayout;
 import org.jfxtras.scene.layout.XMigLayout.*;
@@ -73,7 +73,7 @@ import com.javafx.preview.layout.GridLayoutInfo;
 
 import javafx.scene.layout.ClipView;
 import javafx.scene.control.ScrollBar;
-
+import javafx.scene.control.Separator;
 import javafx.scene.control.ScrollView;
 import javafx.scene.control.ScrollBarPolicy;
 
@@ -94,17 +94,23 @@ import javax.swing.table.TableModel;
 import java.lang.Exception;
 import java.text.SimpleDateFormat;
 
-public class SummaryReport extends StylesheetAware {
+public class SummaryReport extends Stack {
+	
+	def sdf: SimpleDateFormat = new SimpleDateFormat("d MMM yyyy hh:mm a", Locale.ENGLISH);
+	
+	var navigator:VBox;
+	var main:VBox;
+	var headerStack:Stack;
+	var vScroller:VScroller;
+	
+	override var layoutInfo = LayoutInfo { width: bind scene.width, height: bind scene.height };
+	override var styleClass = "summary-report";
 
 	/**
 	 * Whether to make the dialog modal or not.
 	 */ 
 	public var modal = true;
 	
-	 /**
-	 * The contents to display in the dialog.
-	 */ 
-	public var content: Node[];
 	
 	/**
 	 * Allows manual control over the dialogs X coordinate.
@@ -123,7 +129,7 @@ public class SummaryReport extends StylesheetAware {
     /**
 	 * Set to false to prevent the dialog from automatically showing after being created.
 	 */ 
-	public-init var showPostInit = true;
+	public-init var showPostInit = false;
 	
 	public-init var summary:Summary;
 	
@@ -135,10 +141,6 @@ public class SummaryReport extends StylesheetAware {
 	
 	public var leftBackgroundFill: Paint = Color.web("#F9F2B7");
 	public var indexFill: Paint = Color.web("#F2E25E");
-	
-	public-init var width: Number = 670;
-	
-	public-init var height: Number = 900;
 	
 	var modalLayer: Node;
 	
@@ -152,7 +154,7 @@ public class SummaryReport extends StylesheetAware {
 		if(chapter != null){
 			title = chapter.getTitle();
 			
-			var sdf: SimpleDateFormat = new SimpleDateFormat("d MMM yyyy hh:mm a", Locale.ENGLISH);
+			//var sdf: SimpleDateFormat = new SimpleDateFormat("d MMM yyyy hh:mm a", Locale.ENGLISH);
 			date = sdf.format(chapter.getDate()).toLowerCase();
 			descr = chapter.getDescription();
 			
@@ -227,7 +229,6 @@ public class SummaryReport extends StylesheetAware {
 	var summaryHeader: SummaryHeader;
 	var centerPanel: Node;
 	var sceneBounds: BoundingBox;
-	var scene = AppState.instance.scene;
 	
 	public var title: String = "";
 	public var date: String = "";
@@ -261,56 +262,7 @@ public class SummaryReport extends StylesheetAware {
 	public var leftPanelWidth: Number = 125;
 	
 	init {
-		
-		sceneBounds = BoundingBox {
-			width: scene.width
-			height: scene.height
-		}
-		
-		modalLayer = Rectangle {
-			width: bind scene.width
-			height: bind scene.height
-			fill: Color.BLACK
-			opacity: 0.3
-			visible: bind modal
-			blocksMouse: bind modal
-		}
-		
-		var header: HBox = HBox {
-			layoutInfo: LayoutInfo {
-				hgrow: Priority.ALWAYS vgrow: Priority.NEVER
-				hfill: true vfill: false
-				height: 55
-			}
-			nodeVPos: VPos.CENTER
-			spacing: 0
-			content: [
-				Label {
-					layoutInfo: LayoutInfo {
-						hgrow: Priority.NEVER
-						hfill: false	
-				   }
-					text: "Summary for "
-					textFill: Color.web("#000000")
-					textWrap: false
-					font: Font { name:"Arial" size: 18 }
-					vpos: VPos.CENTER
-				}
-				Label {
-					layoutInfo: LayoutInfo {
-						hgrow: Priority.ALWAYS
-						hfill: true
-				    }
-					text: bind "{title}"
-					textFill: Color.web("#666666")
-					textWrap: false
-					font: Font { name:"Arial" size: 18 }
-					vpos: VPos.CENTER
-				}
-			]
-		}	
-		
-		summaryHeader = SummaryHeader{width: bind width - paddingLeft - paddingRight};
+		summaryHeader = SummaryHeader{ layoutInfo: LayoutInfo { hgrow: Priority.ALWAYS, hfill: true } };
 		
 		summarySections = VBox {
 			layoutInfo: LayoutInfo {
@@ -321,149 +273,35 @@ public class SummaryReport extends StylesheetAware {
 			content: []
 		}
 		
-		var headerButtons: HBox;
-		
-		centerPanel = Group {
-			content: [
-				Rectangle {
-					x:0
-					y:0
-					fill: bind backgroundFill
-					width: bind width
-					height: bind height
-					arcWidth: 24
-					arcHeight: 24
-					stroke: bind strokeFill
-					strokeWidth: 1.0
-					effect: DropShadow { width: 40.0 height: 40.0 }
-				}
-				headerButtons = HBox {
-					layoutX: bind width - 45 - headerButtons.layoutBounds.width + 28
-					layoutY: 15
-					spacing: 10
-					content: [
-						Label {
-							layoutY: 3
-							text: bind date
-							textFill: Color.web("#000000")
-							font: Font { name:"Arial" size: 10 }
-						}
-					    Button {
-					        text: "Print"
-					        onMouseReleased:function(event) {
-					            com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport(summary);
-					        }
-					    }
-						GlowButton {
-							contentNode: FXDNode {
-								translateY: 2
-								url: "{__ROOT__}images/close_btn.fxz"
-							}
-							tooltip: "Close"
-							action: close
-							width: 28
-							height: 30
-						}
-					]
-				}
-				VBox {
-					layoutInfo: LayoutInfo {
-						height: bind height
-						width: bind width	
-					}
-					padding: Insets { top: paddingTop right: paddingRight bottom: 17 left: paddingLeft}
-					spacing: 0
-					content: [
-						header,
-						createWideLine(),
-						summaryHeader.get(),
-						createWideLine(),
-						createSpacer(15),
-						ScrollView {
-							styleClass: "summary-scroll-view"
-							layoutInfo: LayoutInfo {
-								hgrow: Priority.ALWAYS vgrow: Priority.ALWAYS
-								hfill: true vfill: true
-							}
-				     	    node: summarySections
-				     	    hbarPolicy: ScrollBarPolicy.NEVER
-				     	    vbarPolicy: ScrollBarPolicy.ALWAYS //AS_NEEDED
-			     	    }
-					]
-				}
-			]
-		}
-		
-		panel = MovableNode {
-			useOverlay: false
-			containment: bind sceneBounds
-			contentNode: Group {
+		content = [
+			Rectangle {
+				width: bind scene.width
+				height: bind scene.height
+				opacity: 0.3
+				blocksMouse: true
+			}, HBox {
+				layoutInfo: LayoutInfo { width: 800, maxWidth: 800, margin: Insets { top: 30, bottom: 30 } }
 				content: [
-					Group {
+					navigator = VBox {
+						layoutInfo: LayoutInfo { height: 460, maxHeight: 460, margin: Insets { top: 30 } }
+						spacing: 10
 						content: [
 							Rectangle {
-								x: bind -leftPanelWidth
-								y: bind leftPanelYOffset
-								fill: bind leftBackgroundFill
-								width: 150
-								height: bind leftPanelHeight
+								width: bind navigator.width + 14
+								height: bind navigator.height
+								managed: false
 								arcWidth: 14
 								arcHeight: 14
+								fill: bind leftBackgroundFill
 								stroke: bind strokeFill
 								strokeWidth: 1.0
 								effect: DropShadow { width: 40.0 height: 40.0 }
-							}
-							Rectangle {
-								x: bind -leftPanelWidth
-								y: bind leftPanelYOffset
-								fill: bind indexFill
-								width: 150
-								height: 35
-								arcWidth: 14
-								arcHeight: 14
-								stroke: bind strokeFill
-								strokeWidth: 1.0
-							}
-							Rectangle {
-								x: bind -leftPanelWidth
-								y: bind leftPanelYOffset + leftPanelHeaderHeight
-								fill: bind leftBackgroundFill
-								width: 150
-								height: 35
-							}
-							Line {
-								stroke: Color.rgb(0, 0, 0, 0.2)
-								strokeWidth: 1.0
-								startX: bind -leftPanelWidth
-								endX: 0
-								startY: bind leftPanelYOffset + leftPanelHeaderHeight - 1
-								endY: bind leftPanelYOffset + leftPanelHeaderHeight - 1
-							}
-							Line {
-								stroke: Color.rgb(0, 0, 0, 0.2)
-								strokeWidth: 1.0
-								startX: bind -leftPanelWidth
-								endX: 0
-								startY: bind leftPanelYOffset + leftPanelHeaderHeight - 1 + 36
-								endY: bind leftPanelYOffset + leftPanelHeaderHeight - 1 + 36
-							}
-							Label {
-								layoutX: bind -leftPanelWidth + 13
-								layoutY: bind leftPanelYOffset
-								layoutInfo: LayoutInfo{
-									height: leftPanelHeaderHeight
-								}
+							}, Label {
+								styleClass: "summary-index-label"
 								text: "Summary Index"
-								textFill: Color.rgb(51, 51, 51, 0.6)
-								font: Font.font("Arial", FontWeight.BOLD, 10)
-								vpos: VPos.CENTER
-								hpos: HPos.LEFT
-							}
-							VScroller {
-								layoutX: bind -leftPanelWidth
-								layoutY: bind leftPanelYOffset + leftPanelHeaderHeight
-								height: bind leftPanelHeight - leftPanelHeaderHeight
-								width: bind leftPanelWidth
+								layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, height: 22 }
+							}, vScroller = VScroller {
+								layoutInfo: LayoutInfo { width: 125, height: 440 }
 								itemSpacing: 0
 								arrowVSpace: 36
 								topArrowActive: "{__ROOT__}images/summary-index-top-arrow-active.fxz";
@@ -472,27 +310,82 @@ public class SummaryReport extends StylesheetAware {
 								bottomArrowInactive: "{__ROOT__}images/summary-index-bottom-arrow-inactive.fxz";
 								content: getChapters()
 							}
+						]
+					}, main = VBox {
+						layoutInfo: LayoutInfo { width: 675, vfill: true }
+						padding: Insets { left: 30, top: 15, right: 15, bottom: 15 }
+						spacing: 12
+						content: [
 							Rectangle {
-								x: bind -leftPanelWidth + 1
-								y: bind leftPanelYOffset + 1
-								fill: Color.TRANSPARENT
-								width: 150 - 2
-								height: bind leftPanelHeight - 2
-								arcWidth: 13
-								arcHeight: 13
-								stroke: Color.rgb(255, 255, 255, 0.25)
-								strokeWidth: 2.0
+								width: bind main.width
+								height: bind main.height
+								managed: false
+								fill: bind leftBackgroundFill
+								arcWidth: 24
+								arcHeight: 24
+								stroke: bind strokeFill
+								strokeWidth: 1.0
+								effect: DropShadow { width: 40.0 height: 40.0 }
+							}, HBox {
+								nodeVPos: VPos.CENTER
+								spacing: 10
+								content: [
+									Label { layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
+									Label { text: bind date },
+									Button {
+										text: "Print"
+										action:function() {
+											com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport(summary);
+										}
+									}, GlowButton {
+										contentNode: FXDNode {
+											translateY: 2
+											url: "{__ROOT__}images/close_btn.fxz"
+										}
+										tooltip: "Close"
+										action: close
+										width: 28
+										height: 30
+									}
+								]
+							}, HBox {
+								layoutInfo: LayoutInfo { margin: Insets { top: -15 } }
+								styleClass: "summary-header"
+								content: [
+									Label { text: "Summary for " }
+									Label { text: bind title, textFill: Color.rgb( 0x66, 0x66, 0x66 ) }
+								]
+							}, Separator {
+							}, headerStack = Stack {
+								layoutInfo: LayoutInfo { hfill: true hgrow: Priority.ALWAYS, height: 56 }
+								padding: Insets { left: 15 }
+								nodeHPos: HPos.LEFT
+								content: [
+									Rectangle {
+										height: bind headerStack.height
+										width: bind headerStack.width
+										fill: Color.web("#d9d39f");
+										arcWidth: 14
+										arcHeight: 14
+										managed: false
+									}, summaryHeader.get()
+								]
+							}, Separator {
+							}, ScrollView {
+								styleClass: "summary-scroll-view"
+								layoutInfo: LayoutInfo {
+									hgrow: Priority.ALWAYS vgrow: Priority.ALWAYS
+									hfill: true vfill: true
+								}
+								node: summarySections
+								hbarPolicy: ScrollBarPolicy.NEVER
+								vbarPolicy: ScrollBarPolicy.ALWAYS //AS_NEEDED
 							}
-							centerPanel
 						]
 					}
 				]
 			}
-		}
-		
-		x = ( scene.width - centerPanel.boundsInLocal.width ) / 2;
-		//y = ( scene.height - centerPanel.boundsInLocal.height ) / 2;
-		y = 30;
+		];
 		
 		setDefault();
 		
@@ -552,16 +445,14 @@ public class SummaryReport extends StylesheetAware {
 	 * Displays the Dialog.
 	 */ 
 	public function show() {
-		insert modalLayer into AppState.overlay;
-		insert panel into AppState.overlay;
+		insert this into AppState.overlay;
 	}
 	
 	 /**
 	 * Closes the Dialog.
 	 */ 
 	public function close():Void {
-		delete panel from AppState.overlay;
-		delete modalLayer from AppState.overlay;
+		delete this from AppState.overlay;
 	}
 	
 

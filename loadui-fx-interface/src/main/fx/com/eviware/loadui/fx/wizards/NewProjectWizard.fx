@@ -21,7 +21,6 @@
 
 package com.eviware.loadui.fx.wizards;
 
-import com.eviware.loadui.fx.StylesheetAware;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.dialogs.CreateNewWebProjectDialog;
 import com.eviware.loadui.fx.dialogs.CreateNewSoapUIProjectDialog;

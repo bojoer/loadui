@@ -42,7 +42,6 @@ public class TrashHole extends BaseNode, Droppable{
 	public var iconUrl: String = "images/trash_hole.fxz";
 	
 	override function create() {
-		applyStyleTo(this);
 		
 		MenuBarButton {
 			//text: ##[TRASH]"Trash"

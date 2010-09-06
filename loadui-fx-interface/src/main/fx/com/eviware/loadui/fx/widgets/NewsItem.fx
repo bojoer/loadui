@@ -47,14 +47,13 @@ import javafx.date.DateTime;
 import java.text.SimpleDateFormat;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import com.eviware.loadui.fx.StylesheetAware;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.NewsItem" );
 
 /**
  * A component to display items from the Eviware feed
  */
-public class NewsItem extends BaseNode, Resizable, StylesheetAware {
+public class NewsItem extends BaseNode, Resizable {
 	def titleColor:Color = Color.web("#C9F601");
 
 	public var title:String;

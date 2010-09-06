@@ -48,7 +48,6 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.BaseNode.*;
 import com.eviware.loadui.fx.ui.popup.TooltipHolder;
 import com.eviware.loadui.fx.ui.layout.Widget;
-import com.eviware.loadui.fx.StylesheetAware;
 import com.eviware.loadui.fx.FxUtils;
 
 import java.lang.NumberFormatException;
@@ -58,7 +57,7 @@ import java.lang.NumberFormatException;
  *
  * @author dain.nilsson
  */
-public class Knob extends NumericWidgetBase, StylesheetAware {
+public class Knob extends NumericWidgetBase {
 	
 	public-init var skin:Node = if( bounded ) KnobBoundSkin {
 		knob: this
@@ -116,8 +115,6 @@ public class Knob extends NumericWidgetBase, StylesheetAware {
 				}, textBox
 			]
 		}
-		
-		FxUtils.applyStyleTo(skin);
 		
 		group
 	}
