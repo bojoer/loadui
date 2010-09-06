@@ -356,7 +356,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	@Override
 	final public String getCategory()
 	{
-		return CATEGORY;
+		return RunnerCategory.CATEGORY;
 	}
 
 	@Override
