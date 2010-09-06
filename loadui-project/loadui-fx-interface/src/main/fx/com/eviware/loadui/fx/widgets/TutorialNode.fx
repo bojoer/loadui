@@ -48,7 +48,7 @@ public class TutorialNode extends CustomNode {
 	public var label:String;
 	public var text:String;
 	
-	override var onMouseClicked = function(e:MouseEvent) {
+	override var onMousePressed = function(e:MouseEvent) {
 		 openURL(url)
 	}	
 	
