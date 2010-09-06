@@ -300,7 +300,7 @@ updateChart = { currentTime ->
 		bpsDisplay.setArgs(data['Bps'])
 		avgTpsDisplay.setArgs(data['Avg-Tps'])
 		avgBpsDisplay.setArgs(data['Avg-Bps'])
-		percentileBpsDisplay.setArgs(data['Percentile'])
+		percentileDisplay.setArgs(data['Percentile'])
 		avgRespSizeDisplay.setArgs(data['AvgResponseSize'])
 	} catch( e ) {
 		e.printStackTrace()
