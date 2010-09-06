@@ -34,8 +34,8 @@ public class TestCaseExecutionNotablesSection extends MutableSectionImpl impleme
 	{
 		super( "Execution Notables" );
 		testcase = ( SceneItemImpl )sceneItem;
-		addTable( "Top 5 Samples", getTop5Samples() );
-		addTable( "Bottom 5 Samples", getBottom5Samples() );
+		addTable( "Top 5 Requests", getTop5Samples() );
+		addTable( "Bottom 5 Requests", getBottom5Samples() );
 	}
 
 	/*
