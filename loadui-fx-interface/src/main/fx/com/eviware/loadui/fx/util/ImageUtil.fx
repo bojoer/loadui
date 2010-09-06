@@ -111,10 +111,14 @@ public function base64ToBufferedImage(base64: String): BufferedImage {
 	}
 }
 
+public function bufferedToFXImage(buffered: BufferedImage): Image {
+	SwingUtils.toFXImage(buffered);
+}
+
 public function base64ToFXImage(base64: String): Image {
 	var img = base64ToBufferedImage(base64);
 	if(img != null){
-		return SwingUtils.toFXImage(img);
+		return bufferedToFXImage(img);
 	}
 	else{
 		return null;
