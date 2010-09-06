@@ -101,7 +101,7 @@ addEventListener( PropertyEvent ) { event ->
 addEventListener( ActionEvent ) { event ->
 	if ( event.key == "START" ) {
 		saveFileName = fileName.value?.name
-		if( !appendSaveFile.value ) {
+		if( !appendSaveFile.value && saveFileName != null) {
 			def ext = saveFileName.substring(saveFileName.lastIndexOf("."), saveFileName.length())
 			def name = saveFileName.substring(0, saveFileName.lastIndexOf("."))
 			def timestamp = new Date().time
