@@ -21,7 +21,6 @@
 
 package com.eviware.loadui.fx.ui.toolbar;
 
-import com.eviware.loadui.fx.StylesheetAware;
 
 import javafx.scene.CustomNode;
 import javafx.scene.Group;
@@ -43,7 +42,7 @@ import org.jfxtras.scene.shape.MultiRoundRectangle;
  *
  * @author dain.nilsson
  */
-public class ToolbarItemGroup extends CustomNode, StylesheetAware {
+public class ToolbarItemGroup extends CustomNode {
 
 	override var styleClass = "toolbar-item-group";
 	

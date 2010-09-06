@@ -294,7 +294,8 @@ public class ProjectMenu extends HBox {
 								tooltip: Tooltip { text: ##[SUMMARY]"Summary Report" }
 								action: function() {
 									if(summaryEnabled) {
-										SummaryReport{ select: project.getLabel(), summary:project.getSummary() }
+										def summary = SummaryReport{ select: project.getLabel(), summary:project.getSummary() };
+										summary.show();
 									} else {
 										println("No summary exists!");
 									}

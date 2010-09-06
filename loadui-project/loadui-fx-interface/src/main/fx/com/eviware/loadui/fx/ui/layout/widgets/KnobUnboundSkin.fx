@@ -41,7 +41,6 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.BaseNode.*;
 import com.eviware.loadui.fx.ui.popup.TooltipHolder;
 import com.eviware.loadui.fx.ui.layout.Widget;
-import com.eviware.loadui.fx.StylesheetAware;
 import com.eviware.loadui.fx.FxUtils;
 
 public class KnobUnboundSkin extends BaseNode, TooltipHolder {

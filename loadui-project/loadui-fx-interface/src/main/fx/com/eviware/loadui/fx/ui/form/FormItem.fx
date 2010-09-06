@@ -21,14 +21,13 @@
 
 package com.eviware.loadui.fx.ui.form;
 
-import com.eviware.loadui.fx.StylesheetAware;
 
 /**
  * Content item which is placed in a form such as a FieldGroup or FormField.
  *
  * @author dain.nilsson
  */
-public mixin class FormItem extends StylesheetAware {
+public mixin class FormItem {
 
 	/**
 	 * Any contained FormFields which should be added to the Form.

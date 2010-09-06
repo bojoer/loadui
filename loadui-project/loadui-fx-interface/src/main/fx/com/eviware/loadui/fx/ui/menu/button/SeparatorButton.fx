@@ -39,8 +39,6 @@ public class SeparatorButton extends CustomNode {
 	public var iconUrl: String = "images/delimiter.fxz";
 
 	override function create():Node {
-		applyStyleTo(this);
-		
 		return Group {
 					transforms: Scale {
 								y: 0.9

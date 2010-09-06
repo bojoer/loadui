@@ -61,7 +61,6 @@ import com.eviware.loadui.fx.ui.dnd.MovableNode;
 import com.eviware.loadui.fx.ui.button.GlowButton;
 import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
 import com.eviware.loadui.fx.ui.resources.Paints;
-import com.eviware.loadui.fx.StylesheetAware;
 
 import org.jfxtras.scene.layout.XMigLayout;
 import org.jfxtras.scene.layout.XMigLayout.*;
@@ -124,12 +123,6 @@ import com.eviware.loadui.fx.ui.pagination.Pagination;
 import com.eviware.loadui.fx.ui.XWipePanel;
 import org.jfxtras.animation.wipe.SlideWipe;
 
-/**
- * A Panel which holds other nodes, paginating and displaying a number of them.
- * Using the two arrow controls, the user can flip through the different pages.
- *
- * @author dain.nilsson
- */
 public class VScroller extends CustomNode, Resizable, Pagination {
 	
 	var itemHeight: Number = bind Math.max(tiles[0].tileHeight, 10);

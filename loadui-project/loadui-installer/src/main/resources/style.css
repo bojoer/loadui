@@ -277,11 +277,31 @@
     -fx-background-insets: 0, 0;
 }
 
+.summary-report *.separator:horizontal *.line {
+    -fx-background-color: #c7c292;
+    -fx-border-color: null;
+    -fx-border-style: null;
+    -fx-padding: 2;
+}
+
 .summary-scroll-view {
     -fx-padding: 0 0 0 0;
     -fx-background-color: rgba(0, 0, 0, 0);
     -fx-background-insets: 0, 0;
-} 
+}
+
+.summary-index-label {
+	-fx-background-radius: 7 0 0 0;
+	-fx-background-insets: 0, 0 0 2 0;
+	-fx-background-color: #dacc55, #f2e25e;
+	-fx-text-fill: rgba(51,51,51, 0.6);
+	-fx-font: 14 Arial;
+	-fx-padding: 0 0 0 15;
+}
+
+.summary-header *.label {
+	-fx-font: 24 Arial;
+}
 
 .agent-inspector-node-button {
 	-fx-background-radius: 1;

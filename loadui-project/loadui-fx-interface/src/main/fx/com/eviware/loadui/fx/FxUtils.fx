@@ -23,8 +23,6 @@ import java.lang.ClassLoader;
 import java.util.Comparator;
 import java.lang.Exception;
 
-import com.sun.stylesheet.Stylesheet;
-import com.sun.stylesheet.css.parser.CSSParser;
 import java.net.URL;
 
 /**
@@ -39,33 +37,6 @@ public class FxUtils {} //This class exists only so that the above javafxdoc wil
  * Useful for accessing resources which are not in the current package.
  */
 public def __ROOT__ = "{__DIR__}".replaceAll("/com/eviware/loadui/fx/$", "/");
-
-public var stylesheets: Stylesheet[];
-
-public function loadStyles(sUrls: String[]): Void {
-	//delete all items from stylesheets
-	delete stylesheets;
-	
-	//load new items
-	for(sUrl: String in sUrls){
-		var url: URL = new URL(sUrl);
-		//TODO: Fix
-		//var stylesheet: Stylesheet = CSSParser.parse(url);
-		//insert stylesheet into stylesheets;
-	}
-}
-
-public function applyStyleTo(obj: Object): Void {
-	for(stylesheet: Stylesheet in stylesheets) {
-		try {
-			//TODO: Fix?
-			//stylesheet.applyTo(obj);
-		} 
-		catch( e:Exception ) {
-			e.printStackTrace();
-		}
-	}
-}
 
 var jfxThread: Thread;
 

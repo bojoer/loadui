@@ -29,7 +29,6 @@ import javafx.scene.text.TextOrigin;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
-import com.eviware.loadui.fx.StylesheetAware;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 
 /**
@@ -37,7 +36,7 @@ import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
  *
  * @author dain.nilsson
  */
-public class ToolbarItemFrame extends CustomNode, StylesheetAware {
+public class ToolbarItemFrame extends CustomNode {
 	/**
 	 * A ToolbarItem to place inside the ToolbarItemFrame.
 	 */

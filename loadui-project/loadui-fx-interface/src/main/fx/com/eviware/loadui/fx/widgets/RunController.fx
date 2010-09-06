@@ -46,7 +46,6 @@ import javafx.util.Math;
 import javafx.scene.text.Font;
 
 import com.eviware.loadui.fx.FxUtils;
-import com.eviware.loadui.fx.StylesheetAware;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 //import com.eviware.loadui.fx.ui.button.ToggleButton;
 import com.eviware.loadui.fx.ui.resources.PlayShape;
@@ -79,7 +78,7 @@ import org.slf4j.LoggerFactory;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.RunController" );
 
-public class RunController extends BaseNode, Resizable, StylesheetAware, TimerController {
+public class RunController extends BaseNode, Resizable, TimerController {
 
 	override var styleClass = "run-controller";
 
