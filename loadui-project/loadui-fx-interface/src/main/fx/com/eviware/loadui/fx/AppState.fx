@@ -79,8 +79,10 @@ def workaround = Timeline {
 	keyFrames: KeyFrame { time: 250ms, action: function() {
 		if( dummyNode.parent == null ) {
 			insert dummyNode into instance.overlayLayer.content;
+			instance.overlayLayer.layout();
 		} else {
 			delete dummyNode from instance.overlayLayer.content;
+			instance.overlayLayer.layout();
 		}
 		dummyNode.layoutX = 100*Math.random();
 	} }
@@ -120,7 +122,7 @@ public class AppState extends ApplicationState {
 	 * Should be used for Nodes which must be positioned on top of everything else,
 	 * such as dialog boxes or popup menus.
 	 */
-	def overlayLayer = Group { content: dummyNode };
+	def overlayLayer = Panel { content: dummyNode };
 	
 	def localLayer = bind lazy wipePanel.content[0] as Group;
 	var wipePanel:XWipePanel;
