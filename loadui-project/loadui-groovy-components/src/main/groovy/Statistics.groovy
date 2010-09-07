@@ -443,20 +443,18 @@ layout(layout:'fillx, wrap 2') {
 		contstraints: "w 100!" )
 }
 
-//
-
 compactLayout {
 	box( widget:'display', layout:'wrap 5, align right' ) {
-		node( label:'Avg ', fString:avgDisplay )
-		node( label:'Min ', fString:minDisplay )
-		node( label:'Max ', fString:maxDisplay )
+		node( label:'Average ', fString:avgDisplay )
+		node( label:'Minimum ', fString:minDisplay )
+		node( label:'Maximum ', fString:maxDisplay )
 		node( label:'Std Dev ', fString:stdDevDisplay )
-		node( label:'TPS ', fString:tpsDisplay )
-		node( label:'BPS ', fString:bpsDisplay )
+		node( label:'TPS     ', fString:tpsDisplay )
+		node( label:'BPS     ', fString:bpsDisplay )
 		node( label:'Avg TPS ', fString:avgTpsDisplay )
 		node( label:'Avg BPS ', fString:avgBpsDisplay )
-		node( label:'Perc ', fString:percentileDisplay )
-		node( label:'Avg Size ', fString:avgRespSizeDisplay )
+		node( label:'Perc    ', fString:percentileDisplay )
+		node( label:'Avg Size', fString:avgRespSizeDisplay )
 	}
 }
 
@@ -522,11 +520,11 @@ generateSummary = { chapter ->
 			values.add(data['Std-Dev'].round(2));
 		}
 		if(enablePercentile.value) {
-			table.addColumn("Percentile");
+			table.addColumn("Perc");
 			values.add(data['Percentile'].round(2));
 		}
 		if(enableAvgResponseSize.value) {
-			table.addColumn("AvgResponseSize");
+			table.addColumn("Avg Size");
 			values.add(data['AvgResponseSize']);
 		}
 		
