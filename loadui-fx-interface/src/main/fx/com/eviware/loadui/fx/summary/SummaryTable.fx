@@ -137,7 +137,11 @@ public class SummaryTable extends Grid {
 								minWidth: if ( j == 0 ) 130 else ((table.getValueAt(i, j).toString()).length() +1)* 5//if ( table.getColumnCount() > 7) 60 else 100 
 							}
 							tooltip: Tooltip { text:table.getValueAt(i, j).toString() }
-							text: table.getValueAt(i, j).toString()
+							text: { if( table.getValueAt(i, j).toString().length() == 0  )
+										"N/A"
+									else
+										table.getValueAt(i, j).toString() 
+							}
 							textFill: Color.web("#000000")
 							font: if(j == 0) Font.font("Arial", FontWeight.BOLD, 10) else Font { name:"Arial" size: 10 }
 							vpos: VPos.BOTTOM
