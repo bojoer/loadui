@@ -324,12 +324,12 @@ class Holder {
 		onChange();
 	}
 	public var w on replace oldW {
-		if(Math.abs(oldW - w) > 30){
+		if(Math.abs(oldW - w) > 10){
 			onChange();
 		}
 	}
 	public var h on replace oldH {
-		if(Math.abs(oldH - h) > 30){
+		if(Math.abs(oldH - h) > 10){
 			onChange();
 		}
 	}

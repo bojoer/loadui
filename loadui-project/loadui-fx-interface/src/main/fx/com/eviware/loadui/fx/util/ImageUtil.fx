@@ -37,6 +37,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import javafx.scene.image.Image;
 import javafx.ext.swing.SwingUtils;
+import com.sun.scenario.scenegraph.SGNode;
 
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -88,6 +89,10 @@ public function nodeToImage(node: Node, width: Number, height: Number) : Buffere
     g2.dispose();
 
     return bufferedImage;
+}
+
+public function saveImage(image: BufferedImage, path: String) : Void {
+	saveImage(image, new File(path));
 }
 
 public function saveImage(image: BufferedImage, file : File) : Void {
