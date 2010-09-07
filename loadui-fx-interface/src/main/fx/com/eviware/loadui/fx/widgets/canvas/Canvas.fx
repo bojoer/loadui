@@ -73,6 +73,7 @@ import javafx.scene.Cursor;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Sequences;
+import javafx.scene.image.Image;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Canvas" );
 
@@ -134,6 +135,17 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		FX.deferAction( function():Void { refreshComponents() } );
 	}
 	
+	public function createMiniatures(maxWidth: Number, maxHeight: Number): Image {
+		def noteImg = nodeToImage(noteLayer, areaWidth, areaHeight);
+		def connImg = nodeToImage(connectionLayer, areaWidth, areaHeight);
+		def compImg = nodeToImage(componentLayer, areaWidth, areaHeight);
+		var img = combineImages(connImg, compImg);
+		img = combineImages(noteImg, img);
+		def scale = Math.min(maxWidth / img.getWidth(), maxHeight / img.getHeight());
+		img = scaleImage(img, scale);
+		bufferedToFXImage(img);
+	}
+	
 	public function createMiniatures(maxWidth: Number, maxHeight: Number, minScaleFactor: Number): String {
 		def noteImg = nodeToImage(noteLayer, areaWidth, areaHeight);
 		def connImg = nodeToImage(connectionLayer, areaWidth, areaHeight);
@@ -144,7 +156,6 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		def scale = Math.max(Math.min(maxWidth / img.getWidth(), maxHeight / img.getHeight()), minScaleFactor);
 		img = scaleImage(img, scale);
 		img = clipImage(img, 0, 0, Math.min(maxWidth, img.getWidth()), Math.min(maxHeight, img.getHeight()));
-
 		bufferedImageToBase64(img);
 	}
 	
