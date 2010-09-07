@@ -29,7 +29,14 @@ public class SplashController
 			window.setAlwaysOnTop( true );
 
 			if( WindowUtils.isWindowAlphaSupported() )
-				WindowUtils.setWindowTransparent( window, true );
+				try
+				{
+					WindowUtils.setWindowTransparent( window, true );
+				}
+				catch( Exception e )
+				{
+					contentPane.setBackground( new Color( 255, 255, 255, 255 ) );
+				}
 			else
 				contentPane.setBackground( new Color( 255, 255, 255, 255 ) );
 
