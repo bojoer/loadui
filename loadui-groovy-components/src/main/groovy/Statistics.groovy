@@ -83,16 +83,16 @@ createProperty( 'enableAvgResponseSize', Boolean, true )
 createProperty( 'currentSourceID', String, "none" )
 createProperty( 'addtoSummary', Boolean, false )
 
-avgDisplay = new DelayedFormattedString( '%10.2f', 500, 0f )
-minDisplay = new DelayedFormattedString( '%10.0f', 500, 0f )
-maxDisplay = new DelayedFormattedString( '%10.0f', 500, 0f )
-stdDevDisplay = new DelayedFormattedString( '%10.2f', 500, 0f )
-tpsDisplay = new DelayedFormattedString( '%10.2f', 500, 0f )
-bpsDisplay = new DelayedFormattedString( '%10.0f', 500, 0f )
-avgTpsDisplay = new DelayedFormattedString( '%10.0f', 500, 0f )
-avgBpsDisplay = new DelayedFormattedString( '%10.0f', 500, 0f )
-percentileDisplay = new DelayedFormattedString( '%10.2f', 500, 0f )
-avgRespSizeDisplay = new DelayedFormattedString( '%10.0f', 500, 0f )
+avgDisplay = new DelayedFormattedString( '%.2f', 500, 0f )
+minDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
+maxDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
+stdDevDisplay = new DelayedFormattedString( '%.2f', 500, 0f )
+tpsDisplay = new DelayedFormattedString( '%.2f', 500, 0f )
+bpsDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
+avgTpsDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
+avgBpsDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
+percentileDisplay = new DelayedFormattedString( '%.2f', 500, 0f )
+avgRespSizeDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
 
 
 createProperty( 'selectedAgent', String, AGGREGATE )
@@ -445,16 +445,16 @@ layout(layout:'fillx, wrap 2') {
 
 compactLayout {
 	box( widget:'display', layout:'align left, wrap 5' ) {
-		node( label:'Average ', fString:avgDisplay, constraints:'w 50!' )
-		node( label:'Minimum ', fString:minDisplay, constraints:'w 50!' )
-		node( label:'Maximum ', fString:maxDisplay, constraints:'w 50!' )
-		node( label:'Std Dev ', fString:stdDevDisplay, constraints:'w 50!' )
-		node( label:'TPS     ', fString:tpsDisplay, constraints:'w 50!' )
-		node( label:'BPS     ', fString:bpsDisplay, constraints:'w 50!' )
-		node( label:'Avg TPS ', fString:avgTpsDisplay, constraints:'w 50!' )
-		node( label:'Avg BPS ', fString:avgBpsDisplay, constraints:'w 50!' )
-		node( label:'Perc    ', fString:percentileDisplay, constraints:'w 50!' )
-		node( label:'Avg Size', fString:avgRespSizeDisplay, constraints:'w 50!' )
+		node( label:'Average ', fString:avgDisplay, constraints:'w 60!' )
+		node( label:'Minimum ', fString:minDisplay, constraints:'w 60!' )
+		node( label:'Maximum ', fString:maxDisplay, constraints:'w 60!' )
+		node( label:'Std Dev ', fString:stdDevDisplay, constraints:'w 60!' )
+		node( label:'TPS     ', fString:tpsDisplay, constraints:'w 60!' )
+		node( label:'BPS     ', fString:bpsDisplay, constraints:'w 60!' )
+		node( label:'Avg TPS ', fString:avgTpsDisplay, constraints:'w 60!' )
+		node( label:'Avg BPS ', fString:avgBpsDisplay, constraints:'w 60!' )
+		node( label:'Perc    ', fString:percentileDisplay, constraints:'w 60!' )
+		node( label:'Avg Size', fString:avgRespSizeDisplay, constraints:'w 60!' )
 	}
 }
 
