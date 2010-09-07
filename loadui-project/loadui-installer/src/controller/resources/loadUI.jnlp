@@ -13,6 +13,8 @@
         <jar href="lib/loadui-launcher-1.0-beta2.jar" main="true"/>
         <jar href="lib/org.apache.felix.main-3.0.1.jar"/>
         <jar href="lib/commons-cli-1.2.jar"/>
+        <jar href="lib/jna-3.2.7.jar"/>
+        <jar href="lib/platform-3.2.7.jar"/>
     </resources>
 	<security>
 		<all-permissions/>
