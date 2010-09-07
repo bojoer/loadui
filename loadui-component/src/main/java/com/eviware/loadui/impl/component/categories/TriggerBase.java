@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.TriggerCategory;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
@@ -126,19 +127,11 @@ public abstract class TriggerBase extends BaseCategory implements TriggerCategor
 		@Override
 		public void handleEvent( PropertyEvent event )
 		{
-			if( PropertyEvent.Event.VALUE == event.getEvent() )
+			if( event.getProperty() == stateProperty && PropertyEvent.Event.VALUE == event.getEvent() )
 			{
-				if( stateProperty.getValue() )
-				{
-					if( getContext().isRunning() )
-						getContext().setActivityStrategy( ActivityStrategies.BLINKING );
-					else
-						getContext().setActivityStrategy( ActivityStrategies.ON );
-				}
-				else
-				{
-					getContext().setActivityStrategy( ActivityStrategies.OFF );
-				}
+				getContext().setActivityStrategy(
+						stateProperty.getValue() ? ( getContext().isRunning() ? ActivityStrategies.BLINKING
+								: ActivityStrategies.ON ) : ActivityStrategies.OFF );
 			}
 		}
 	}
@@ -148,13 +141,9 @@ public abstract class TriggerBase extends BaseCategory implements TriggerCategor
 		@Override
 		public void handleEvent( ActionEvent event )
 		{
-			if( stateProperty.getValue() )
-			{
-				if( event.getKey() == "START" )
-					getContext().setActivityStrategy( ActivityStrategies.BLINKING );
-				else
-					getContext().setActivityStrategy( ActivityStrategies.ON );
-			}
+			if( event.getKey() == CanvasItem.START_ACTION )
+				getContext().setActivityStrategy(
+						stateProperty.getValue() ? ActivityStrategies.BLINKING : ActivityStrategies.ON );
 		}
 	}
 }
