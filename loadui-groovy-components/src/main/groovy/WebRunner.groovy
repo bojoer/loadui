@@ -288,10 +288,10 @@ layout {
 		box( widget:'display', layout:'wrap 3, align right' ) {
 			node( label:'Requests', fString:displayRequests, constraints:'w 50!' )
 			node( label:'Running', fString:displayRunning, constraints:'w 50!' )
-			node( label:'Completed', fString:displayTotal, constraints:'w 50!' )
+			node( label:'Completed', fString:displayTotal, constraints:'w 60!' )
 			node( label:'Queued', fString:displayQueue, constraints:'w 50!' )
 			node( label:'Discarded', fString:displayDiscarded, constraints:'w 50!' )
-			node( label:'Failed', fString:displayFailed, constraints:'w 50!' )
+			node( label:'Failed', fString:displayFailed, constraints:'w 60!' )
 		}
 		action( label:'Reset', action: {
 			sampleResetValue = sampleCounter.get()
@@ -305,12 +305,12 @@ layout {
 //Compact Layout
 compactLayout {
 	box( widget:'display', layout:'wrap 3, align right' ) {
-		node( label:'Requests', fString:displayRequests )
-		node( label:'Running', fString:displayRunning )
-		node( label:'Completed', fString:displayTotal )
-		node( label:'Queued', fString:displayQueue )
-		node( label:'Discarded', fString:displayDiscarded )
-		node( label:'Failed', fString:displayFailed )
+		node( label:'Requests', fString:displayRequests, constraints:'w 50!' )
+		node( label:'Running', fString:displayRunning, constraints:'w 50!' )
+		node( label:'Completed', fString:displayTotal, constraints:'w 60!' )
+		node( label:'Queued', fString:displayQueue, constraints:'w 50!' )
+		node( label:'Discarded', fString:displayDiscarded, constraints:'w 50!' )
+		node( label:'Failed', fString:displayFailed, constraints:'w 60!' )
 	}
 }
 
