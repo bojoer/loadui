@@ -1,5 +1,6 @@
 package com.eviware.loadui.launcher.api;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -27,7 +28,10 @@ public class SplashController
 
 			window.setAlwaysOnTop( true );
 
-			WindowUtils.setWindowTransparent( window, true );
+			if( WindowUtils.isWindowAlphaSupported() )
+				WindowUtils.setWindowTransparent( window, true );
+			else
+				contentPane.setBackground( new Color( 255, 255, 255, 255 ) );
 
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			Dimension labelSize = label.getPreferredSize();
