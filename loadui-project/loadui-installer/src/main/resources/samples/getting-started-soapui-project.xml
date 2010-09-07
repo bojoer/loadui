@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project name="loadUI Mock" resourceRoot="" soapui-version="3.6-beta2" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:mockService port="8081" path="/" host="Ole-PC" name="MockService 1" bindToHostOnly="false" docroot=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockService@require-soap-action">false</con:setting></con:settings><con:properties/><con:onRequestScript>def response = mockRequest.httpResponse
+response.status = javax.servlet.http.HttpServletResponse.SC_OK
+response.getWriter().print( "Hello World!" );
+
+return new com.eviware.soapui.impl.wsdl.mock.WsdlMockResult( mockRequest )</con:onRequestScript></con:mockService><con:requirements/><con:properties/><con:wssContainer/><con:databaseConnectionContainer/><con:reporting><con:xmlTemplates/><con:parameters/></con:reporting></con:soapui-project>
