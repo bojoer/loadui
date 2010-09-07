@@ -281,10 +281,12 @@ public class TestCaseMenu extends HBox {
 								action: function() {
 									if( testCase.getSummary() != null ) {
 										println("Viewing TestCase summary");
-										SummaryReport{ select: testCase.getLabel(), summary: testCase.getSummary() }
+										def summary = SummaryReport{ select: testCase.getLabel(), summary: testCase.getSummary() }
+										summary.show();
 									} else if( testCase.getProject().getSummary() != null ) {
 										println("Viewing Project summary");
-										SummaryReport{ select: testCase.getProject().getLabel(), summary: testCase.getProject().getSummary() }
+										def summary = SummaryReport{ select: testCase.getProject().getLabel(), summary: testCase.getProject().getSummary() };
+										summary.show();
 									} else {
 										println("No summary available");
 									}
