@@ -56,6 +56,11 @@ import javax.net.ssl.X509TrustManager
 import java.security.cert.X509Certificate
 import java.security.cert.CertificateException
 import java.security.SecureRandom
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import com.eviware.loadui.api.terminal.TerminalMessage;
 
 executor = Executors.newSingleThreadScheduledExecutor()
 future = executor.scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
@@ -331,3 +336,26 @@ settings( label: "Proxy" ) {
 	property( property: proxyUsername, label: 'Proxy Username' )
 	property( property: proxyPassword, widget: 'password', label: 'Proxy Password' )
 }
+
+executor.scheduleAtFixedRate( 
+{
+	def message = newMessage();
+	message["Requests"] = Integer.parseInt( displayRequests.getCurrentValue() ) 
+	message["Running"] = Integer.parseInt( displayRunning.getCurrentValue() ) 
+	message["Discarded"] = Integer.parseInt( displayDiscarded.getCurrentValue() ) 
+	message["Failed"]= Integer.parseInt( displayFailed.getCurrentValue() ) 
+	message["Queued"]= Integer.parseInt( displayQueue.getCurrentValue() ) 
+	message["Completed"]= Integer.parseInt( displayTotal.getCurrentValue() ) 
+	send( currentlyRunningTerminal, message );
+}, 1000, 1000, TimeUnit.MILLISECONDS );
+
+def currentlyRunningSignature = [
+		"Requests" : Integer.class,
+		"Running" : Integer.class,
+		"Discarded" : Integer.class,
+		"Failed" : Integer.class,
+		"Queued" : Integer.class,
+		"Completed" : Integer.class,
+		]
+
+setSignature(currentlyRunningTerminal, currentlyRunningSignature)
