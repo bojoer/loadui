@@ -152,7 +152,10 @@ public class GettingStartedWizard {
                      	                  }
 					                 }
 					             },
-					            
+					             Label {
+  					                 text: "             "
+  					                 font: Font.font("Ariel", 2 )
+  					             },
 					             cb
 			             	]
 		 	 			 }
