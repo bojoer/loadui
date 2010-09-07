@@ -72,10 +72,14 @@ public class CreateNewWebProjectDialog {
 				 var manager:ComponentRegistry = BeanInjector.getBean(ComponentRegistry.class);
 				 
 				 var webItem:ComponentItem = project.createComponent( "Web Page Runner", manager.findDescriptor("Web Page Runner") );
+				 webItem.setAttribute( "gui.layoutX", "0" );
+				 webItem.setAttribute( "gui.layoutY", "200" );
 				 var webContext:ComponentContext = webItem.getContext();
 				 webContext.getProperty("url").setValue(url.text);
 			
 				 var fixedRateItem:ComponentItem = project.createComponent( "Fixed Rate", manager.findDescriptor("Fixed Rate") ); 
+				 fixedRateItem.setAttribute( "gui.layoutX", "50" );
+				 fixedRateItem.setAttribute( "gui.layoutY", "0" );
 				var fixedRateContext:ComponentContext = fixedRateItem.getContext();
 				fixedRateContext.getProperty("rate").setValue(numRequests.text);
 				 
@@ -99,6 +103,8 @@ public class CreateNewWebProjectDialog {
 				 
 				 if (addStatisticsDiagram.selected) {
 				 	var statisticsItem:ComponentItem = project.createComponent( "Statistics", manager.findDescriptor("Statistics") );
+				 	statisticsItem.setAttribute( "gui.layoutX", "50" );
+				 	statisticsItem.setAttribute( "gui.layoutY", "500" );
 				 	var outputTerminal:OutputTerminal;
 				 	for (terminal in webItem.getTerminals()) {
 				 		if (terminal.getLabel() == RunnerCategory.RESULT_TERMINAL) {
