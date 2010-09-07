@@ -40,9 +40,16 @@ import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.fxd.FXDNode;
 import javafx.animation.transition.TranslateTransition;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import com.eviware.loadui.fx.util.ImageUtil.*;
 
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.dnd.MovableNode;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.lang.Duration;
 
 /**
  * Displays a minimap for a Canvas, which allows the user to navigate the full Canvas area.
@@ -66,30 +73,54 @@ public class NavigationPanel extends CustomNode, Resizable {
 	def scale = bind Math.min( ( width - 32 ) / canvas.areaWidth, ( height - 58 ) / canvas.areaHeight );
 	
 	def objects = bind [ canvas.components, canvas.notes ] on replace {
-		FX.deferAction( function():Void { refreshMinis() } );
+		FX.deferAction( function():Void { createHolders(); refreshMinis(); } );
 	}
 	
-	def miniatures = Group {};
-	function refreshMinis() {
-		miniatures.content = null;
+	def miniatures = Group {
+		content: [ImageView { image: bind miniature, x: 0, y: 0 }]};
+	
+	var holders: Holder[] = [];
+	function createHolders(): Void {
+		delete holders;
 		for( object in objects ) {
-			insert if( object instanceof CanvasObjectNode )
-				Miniature {
-					layoutX: bind object.layoutX * scale
-					layoutY: bind object.layoutY * scale
-					width: bind object.layoutBounds.width * scale
-					height: bind object.layoutBounds.height * scale
-					fill: bind (object as CanvasObjectNode).color
+			insert 
+				Holder {
+					x: bind object.layoutX
+					y: bind object.layoutY
+					w: bind object.layoutBounds.width
+					h: bind object.layoutBounds.height
+					onChange: function(){
+						FX.deferAction( function():Void { shouldRefreshMinis = true; } );
+					}
 				}
-			else
-				NoteMiniature {
-					layoutX: bind object.layoutX * scale
-					layoutY: bind object.layoutY * scale
-					width: bind object.layoutBounds.width * scale
-					height: bind object.layoutBounds.height * scale
-				}
-			into miniatures.content;
+			into holders;
 		}
+	}
+	
+	postinit {
+		timeline.playFromStart();
+	}
+	
+	var timeline: Timeline = Timeline {
+        repeatCount: Timeline.INDEFINITE
+        keyFrames: [
+	        KeyFrame {
+	            time: 300ms
+	            action: function() {
+	            	if(shouldRefreshMinis){
+	            		FX.deferAction( function():Void { refreshMinis(); shouldRefreshMinis = false; } );
+	            	}
+	            }
+	            canSkip: true
+	        }
+        ]
+    }
+    
+	var shouldRefreshMinis: Boolean = false;
+	
+	var miniature: Image;
+	function refreshMinis(): Void {
+		miniature = canvas.createMiniatures(width - 32, height - 58);
 	}
 	
 	var realHeight = height;
@@ -285,43 +316,23 @@ public class NavigationPanel extends CustomNode, Resizable {
 	}
 }
 
-class Miniature extends CustomNode {
-	public var fill:Paint;
-	public var width:Number;
-	public var height:Number;
-	
-	override function create() {
-		Group {
-			content: [
-				Rectangle {
-					fill: bind fill
-					width: bind width
-					height: 10
-				}, Rectangle {
-					fill: Color.web("#DBDBDB")
-					width: bind width
-					height: bind Math.max( 0, height - 10 )
-					y: 10
-				}
-			]
+class Holder {
+	public var x on replace {
+		onChange();
+	}
+	public var y on replace {
+		onChange();
+	}
+	public var w on replace oldW {
+		if(Math.abs(oldW - w) > 30){
+			onChange();
 		}
 	}
+	public var h on replace oldH {
+		if(Math.abs(oldH - h) > 30){
+			onChange();
+		}
+	}
+	public var onChange: function();
 }
 
-class NoteMiniature extends CustomNode {
-	public var width:Number;
-	public var height:Number;
-	override var visible = bind Canvas.showNotes;
-	
-	override function create() {
-		Group {
-			content: [
-				Rectangle {
-					fill: Color.rgb( 0xf9, 0xf2, 0xb7 )
-					width: bind width
-					height: bind height
-				}
-			]
-		}
-	}
-}
