@@ -74,6 +74,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Sequences;
 import javafx.scene.image.Image;
+import javafx.geometry.BoundingBox;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Canvas" );
 
@@ -84,7 +85,7 @@ public var showNotes = true;
  * 
  * @author dain.nilsson
  */
-public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, EventHandler {
+public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, EventHandler { 
 	override var layoutBounds = bind lazy BoundingBox { minX:0 minY:0 width:width height:height }
 	
 	protected def connectionLayer = Group {};
@@ -136,26 +137,35 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	}
 	
 	public function createMiniatures(maxWidth: Number, maxHeight: Number): Image {
-		def noteImg = nodeToImage(noteLayer, areaWidth, areaHeight);
-		def connImg = nodeToImage(connectionLayer, areaWidth, areaHeight);
-		def compImg = nodeToImage(componentLayer, areaWidth, areaHeight);
+		def scale = Math.min(maxWidth / areaWidth, maxHeight / areaHeight);
+		
+		var noteImg = nodeToImage(noteLayer, areaWidth, areaHeight);
+		noteImg = scaleImage(noteImg, scale);
+		var connImg = nodeToImage(connectionLayer, areaWidth, areaHeight);
+		connImg = scaleImage(connImg, scale);
+		var compImg = nodeToImage(componentLayer, areaWidth, areaHeight);
+		compImg = scaleImage(compImg, scale);
 		var img = combineImages(connImg, compImg);
 		img = combineImages(noteImg, img);
-		def scale = Math.min(maxWidth / img.getWidth(), maxHeight / img.getHeight());
-		img = scaleImage(img, scale);
+		
 		bufferedToFXImage(img);
 	}
 	
 	public function createMiniatures(maxWidth: Number, maxHeight: Number, minScaleFactor: Number): String {
-		def noteImg = nodeToImage(noteLayer, areaWidth, areaHeight);
-		def connImg = nodeToImage(connectionLayer, areaWidth, areaHeight);
-		def compImg = nodeToImage(componentLayer, areaWidth, areaHeight);
+		def scale = Math.max(Math.min(maxWidth / areaWidth, maxHeight / areaHeight), minScaleFactor);
+
+		var noteImg = nodeToImage(noteLayer, areaWidth, areaHeight);
+		noteImg = scaleImage(noteImg, scale);
+		var connImg = nodeToImage(connectionLayer, areaWidth, areaHeight);
+		connImg = scaleImage(connImg, scale);
+		var compImg = nodeToImage(componentLayer, areaWidth, areaHeight);
+		compImg = scaleImage(compImg, scale);
 		var img = combineImages(connImg, compImg);
 		img = combineImages(noteImg, img);
-		img = clipImage(img, padding - 10, padding - 10, areaWidth - 2*padding + 20, areaHeight - 2*padding + 20);
-		def scale = Math.max(Math.min(maxWidth / img.getWidth(), maxHeight / img.getHeight()), minScaleFactor);
-		img = scaleImage(img, scale);
+		
+		img = clipImage(img, (padding - 10) * scale, (padding - 10) * scale, (areaWidth - 2*padding + 20) * scale, (areaHeight - 2*padding + 20) * scale);
 		img = clipImage(img, 0, 0, Math.min(maxWidth, img.getWidth()), Math.min(maxHeight, img.getHeight()));
+
 		bufferedImageToBase64(img);
 	}
 	
