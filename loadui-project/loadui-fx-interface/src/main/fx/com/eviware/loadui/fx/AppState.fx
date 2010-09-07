@@ -124,7 +124,7 @@ public class AppState extends ApplicationState {
 	 * Should be used for Nodes which must be positioned on top of everything else,
 	 * such as dialog boxes or popup menus.
 	 */
-	def overlayLayer = Panel { };
+	def overlayLayer:Panel = Panel { onLayout: function() { overlayLayer.resizeContent(); } };
 	
 	def localLayer = bind lazy wipePanel.content[0] as Group;
 	var wipePanel:XWipePanel;
