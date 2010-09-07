@@ -17,6 +17,7 @@
 package com.eviware.loadui.fx.dialogs;
 
 import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
@@ -24,8 +25,12 @@ import com.eviware.loadui.fx.ui.form.fields.*;
 
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.InputTerminal;
+
+import com.eviware.loadui.fx.widgets.canvas.Canvas;
+import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
 
 import javafx.util.Sequences;
 
@@ -38,6 +43,7 @@ public class CloneCanvasObjectsDialog {
 	public-init var objects:CanvasObjectItem[];
 	
 	postinit {
+		var gotoTargetLabel: String = if(target instanceof SceneItem) "Open Testcase?" else "Open Project?"; 
 		var moveField:CheckBoxField;
 		var gotoTarget:CheckBoxField;
 		def dialog:Dialog = Dialog {
@@ -48,7 +54,7 @@ public class CloneCanvasObjectsDialog {
 					LabelField { value: if( sizeof objects == 1 ) "Clone this item?" else "Clone these { sizeof objects } items?" },
 					LabelField { value: "Target canvas: {target.getLabel()}" },
 					moveField = CheckBoxField { label: "Move instead? (removes the objects from the current canvas)" },
-					gotoTarget = CheckBoxField { label: "Open Testcase?", value: true }
+					gotoTarget = CheckBoxField { label: gotoTargetLabel, value: true }
 				]
 			}
 			onOk: function() {

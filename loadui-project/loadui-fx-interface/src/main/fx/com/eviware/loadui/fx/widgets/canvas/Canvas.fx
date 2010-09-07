@@ -152,7 +152,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		def compImg = nodeToImage(componentLayer, areaWidth, areaHeight);
 		var img = combineImages(connImg, compImg);
 		img = combineImages(noteImg, img);
-		img = clipImage(img, padding, padding, areaWidth - 2*padding, areaHeight - 2*padding);
+		img = clipImage(img, padding - 10, padding - 10, areaWidth - 2*padding + 20, areaHeight - 2*padding + 20);
 		def scale = Math.max(Math.min(maxWidth / img.getWidth(), maxHeight / img.getHeight()), minScaleFactor);
 		img = scaleImage(img, scale);
 		img = clipImage(img, 0, 0, Math.min(maxWidth, img.getWidth()), Math.min(maxHeight, img.getHeight()));
