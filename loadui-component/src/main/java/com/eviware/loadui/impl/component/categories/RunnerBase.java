@@ -132,11 +132,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		resultSignature.put( STATUS_MESSAGE_PARAM, Boolean.class );
 		context.setSignature( resultTerminal, resultSignature );
 
-		currentlyRunningTerminal = context
-				.createOutput( CURRENLY_RUNNING_TERMINAL, "Number of Samples Currently Running" );
-		Map<String, Class<?>> currentlyRunningSignature = new HashMap<String, Class<?>>();
-		currentlyRunningSignature.put( CURRENTLY_RUNNING_MESSAGE_PARAM, Integer.class );
-		context.setSignature( currentlyRunningTerminal, currentlyRunningSignature );
+		currentlyRunningTerminal = context.createOutput( CURRENLY_RUNNING_TERMINAL, "Run Statistics" );
 
 		requestCounter = context.getCounter( CanvasItem.REQUEST_COUNTER );
 		sampleCounter = context.getCounter( CanvasItem.SAMPLE_COUNTER );
@@ -292,9 +288,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		if( hasCurrentlyRunning )
 		{
-			TerminalMessage message = getContext().newMessage();
-			message.put( CURRENTLY_RUNNING_MESSAGE_PARAM, running );
-			getContext().send( currentlyRunningTerminal, message );
+//			TerminalMessage message = getContext().newMessage();
+//			message.put( CURRENTLY_RUNNING_MESSAGE_PARAM, running );
+//			getContext().send( currentlyRunningTerminal, message );
 		}
 	}
 
@@ -732,5 +728,15 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	public static class SampleCancelledException extends Exception
 	{
 		private static final long serialVersionUID = 1442916589020990178L;
+	}
+	
+	protected ScheduledExecutorService getScheduler()
+	{
+		return scheduler;
+	}
+	
+	protected ExecutorService getExecutor()
+	{
+		return executor;
 	}
 }
