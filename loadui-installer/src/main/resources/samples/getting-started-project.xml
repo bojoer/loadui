@@ -1,53 +1,330 @@
-<con:loadui-project label="Sample Test Project 1" id="ff26e680-888f-47cc-ad1b-fd6f976c34b0" xmlns:con="http://eviware.com/loadui/config"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="ModelItem.saveReport" type="java.lang.Boolean">false</con:property><con:property key="ModelItem.reportFolder" type="java.lang.String"/><con:property key="ModelItem.reportFormat" type="java.lang.String"/></con:properties><con:attributes><con:property key="limits"/><con:property key="miniature">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
-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
-</con:property></con:attributes><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Fixed Rate" id="75273cfd-4cf7-419e-ad40-37058de594bd" category="generators"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
+<?xml version="1.0" encoding="UTF-8"?>
+<con:loadui-project label="SampleProject" id="d119b449-df9e-4d99-97c7-a8164d9230db" xmlns:con="http://eviware.com/loadui/config"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="ModelItem.saveReport" type="java.lang.Boolean">false</con:property><con:property key="ModelItem.reportFolder" type="java.lang.String"/><con:property key="ModelItem.reportFormat" type="java.lang.String"/></con:properties><con:attributes><con:property key="gui.note.0">205;218;220;278;1. GETTING STARTED
+------------------------------------------------
+This is a simple Web LoadTest that uses a soapUI MockService as its target. It illustrates the basic Generator -> Runner -> Analysis concept of loadUI components
+
+Double-click the TestCase and run it to see what we're talking about!</con:property><con:property key="miniature">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
+TAAAAABJRU5ErkJggg==
+</con:property><con:property key="gui.note.1">200;633;200;150;2. Assertions and Logging
+-------------------------------------
+This TestCase extends the first by adding a couple of assertions and a TableLog to catch failed responses. </con:property><con:property key="gui.note.2">1053;633;200;150;4. Controlling Flow 
+-------------------------------------
+This TestCase shows how flow-control components can be used to combine multiple runners for creating complex Load Scenarios</con:property><con:property key="gui.note.3">1039;205;200;150;3. Schedulers and Generators
+---------------------------------------
+This TestCase shows how multiple generators can be combined within a LoadTest to generate varying load over time. Schedulers are used to add bursts of simulated Load</con:property></con:attributes><con:scene label="Simple Web LoadTest" id="f53a7146-d347-4f03-81d7-bfff0caa41a0" version="11"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="gui.layoutX">499</con:property><con:property key="gui.layoutY">218</con:property><con:property key="gui.note.0">202;416;229;98;2. This FixedRate runner is configued to issue 10 requests per second</con:property><con:property key="gui.note.1">203;637;224;150;3. The WebPage Runner issues a request to the specified web page address each time the FixedRate generator sends a trigger to it. 
+
+The displays to the right show ongoing statistics</con:property><con:property key="gui.note.2">200;875;222;305;4. The statistics component is connected to the output of the Web Page Runner which outputs the response-time for each issues request. 
+
+Some thing to try:
+- openthe settings dialog and select which values you want to show
+- try minimizing the component (with the top-right [-] button)
+- try increasing or decreasing the load generated by the FixedRate trigger (by turning the knob) to see how the statistics change
+
+</con:property><con:property key="gui.note.3">1293;617;350;100;5. The MockService is used to have something to test against . It is started when the LoadTest starts and the number of Requests will be the same as the Requests sent byt the WebPage Runner</con:property><con:property key="miniature">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
+</con:property><con:property key="gui.note.4">398;200;876;81;1. This is a simple Web LoadTest showing you how to connect a basic Generator -> Runner -> Analysis LoadTest. 
+
+Make sure you are in "Local Mode" in the System toolbar at the bottom of this window, then the LoadTest by pressing the Run button on the top left toolbar (Next to the "TestCase" menu). You will see the WebPage Runner starting to send requests and statistics being displayed in the Statistics Component. </con:property></con:attributes><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Web Page Runner" id="0b1546d7-feeb-4d93-b3c9-f6ac151594fc" category="runners"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -62,711 +339,116 @@ sYR/OItdgm7v6U7dqTtpK/0P9beRKSPtAPYAAAAASUVORK5CYII=
 // express or implied. See the Licence for the specific language governing permissions and limitations
 // under the Licence.
 // 
- 
+
 /**
- * Sends an empty message periodically, at a set rate
+ * Sends a HTTP request
  * 
- * @help http://www.loadui.org/Triggers/fixed-rate.html
- * @name Fixed Rate
- * @category generators
- * @nonBlocking true
+ * @help http://www.loadui.org/Runners/web-page-runner-component.html
+ * @name Web Page Runner
+ * @category runners
+ * @dependency org.apache.httpcomponents:httpcore:4.1-beta1
+ * @dependency org.apache.httpcomponents:httpclient:4.1-alpha2
  */
- 
-import com.eviware.loadui.api.events.PropertyEvent
+
+import org.apache.http.* 
+import org.apache.http.client.*
+import org.apache.http.auth.*
+import org.apache.http.conn.params.*
+import org.apache.http.conn.scheme.*
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.conn.ClientConnectionManager
+import org.apache.http.util.EntityUtils
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
 import com.eviware.loadui.api.events.ActionEvent
+import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
- 
+import com.eviware.loadui.api.model.CanvasItem
+import com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledException
+
+import java.util.HashSet
+import java.util.Collections
+import com.eviware.loadui.impl.component.ActivityStrategies
+
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
- 
+
+import org.apache.http.conn.scheme.Scheme
+import org.apache.http.conn.ssl.SSLSocketFactory
+import javax.net.ssl.SSLContext
+import javax.net.ssl.KeyManager
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
+import java.security.cert.X509Certificate
+import java.security.cert.CertificateException
+import java.security.SecureRandom
+
 executor = Executors.newSingleThreadScheduledExecutor()
- 
+future = executor.scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
+
+//SSL support, trust all certificates and hostnames.
+class NaiveTrustManager implements X509TrustManager {
+	void checkClientTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
+	void checkServerTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
+	X509Certificate[] getAcceptedIssuers () { null }
+}
+def sslContext = SSLContext.getInstance("SSL")
+TrustManager[] tms = [ new NaiveTrustManager() ]
+sslContext.init( new KeyManager[0], tms, new SecureRandom() )
+def sslSocketFactory = new SSLSocketFactory( sslContext );
+sslSocketFactory.hostnameVerifier = SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER
+
+def sr = new SchemeRegistry()
+sr.register( new Scheme( "http", PlainSocketFactory.socketFactory, 80 ) )
+sr.register( new Scheme( "https", sslSocketFactory, 443 ) )
+
+def cm = new ThreadSafeClientConnManager( sr )
+cm.maxTotalConnections = 50000
+cm.defaultMaxPerRoute = 50000
+
+http = new DefaultHttpClient( cm )
+
+def runningSamples = Collections.synchronizedSet( new HashSet() )
+runAction = null
+
 //Properties
-createProperty( 'rate', Long, 10 )
-createProperty( 'unit', String, 'Sec' )
- 
- 
-milisecondsPerUnit = 1000000				
-delay = milisecondsPerUnit/rate.value
- 
-display = new DelayedFormattedString( '%d / %s', 200, rate.value, unit.value )
- 
-onRelease = { 
-	executor.shutdownNow() 
-	display.release()
-}
-future = null
-schedule = {
-	if (stateProperty.value) {
-		future?.cancel(true);
-		future = executor.scheduleAtFixedRate( { trigger() }, delay.longValue(), delay.longValue(), TimeUnit.MICROSECONDS )
-	}
-}
- 
-addEventListener( PropertyEvent ) { event ->
-	if ( event.event == PropertyEvent.Event.VALUE ) {
-		if( event.property == unit ) {
-			if ( unit.value == "Sec" )
-				milisecondsPerUnit = 1000000
-			if ( unit.value == "Min" )
-				milisecondsPerUnit = 60000000
-			if ( unit.value == "Hour" )
-				milisecondsPerUnit = 3600000000
-		}
-		if (event.property == stateProperty &amp;&amp; !stateProperty.value)
-			future?.cancel(true)
-		if (stateProperty.value)
-			future?.cancel(true)
-		if( rate.value != null &amp;&amp; rate.value > 0 ) {
-			delay = milisecondsPerUnit/rate.value
-			if ( delay &lt; 1 )
-				delay = 1
-			display.setArgs( rate.value, unit.value )
-			schedule()
-		}
-	}
-}
- 
-addEventListener( ActionEvent ) { event ->
-	if ( event.key == "STOP" ) {
-		future?.cancel(true)
+createProperty( 'url', String )
+createProperty( 'outputBody', Boolean, false )
+
+createProperty( 'propagateSession', Boolean, false )
+createProperty( 'readResponse', Boolean, false )
+createProperty( 'raiseAssertion', Boolean, true )
+createProperty( 'errorCodeList', String )
+
+createProperty( 'proxyHost', String)
+createProperty( 'proxyPort', Long)
+createProperty( 'proxyUsername', String)
+createProperty( 'proxyPassword', String)
+
+eviPattern = ~/https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/
+dummyUrl = "http://GoSpamYourself.com"
+
+validateUrl = {  
+	if ((url.value != null) && !(url.value.toLowerCase().startsWith( "http://" ) || url.value.toLowerCase().startsWith( "https://" ))) {
+		url.value = "http://" + url.value;
 	}
 	
-	if ( event.key == "START" ) {
-		schedule()
-	}
+	if( url.value != null && eviPattern.matcher(url.value).matches() ) url.value = dummyUrl
 	
-	//RESET in this case would not really do anything
+	setInvalid( url.value == null || url.value == dummyUrl )
+	runAction?.enabled = !isInvalid()
 }
- 
-//Layout
-layout { 
-	property( property:rate, label:'Rate', min:0 ) 
-	separator( vertical:true )
-	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
-	separator( vertical:true )
-	box( widget:'display' ) {
-		node( label:'Rate', fString:display, constraints:'w 75!' )
-	}
-}
- 
-//Settings
-//settings( label: "Settings", constraints: 'wrap 2' ) {
-//	box(constraints:"growx, wrap 1") {
-//		property( property:rate, label:'Rate', min:0 ) 
-//		property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
-//	}
-//} 
- 
-//Start scheduler
-if ( unit.value == "Sec" )
-	milisecondsPerUnit = 1000000
-if ( unit.value == "Min" )
-	milisecondsPerUnit = 60000000
-if ( unit.value == "Hour" )
-	milisecondsPerUnit = 3600000000
- 
-delay = milisecondsPerUnit/rate.value
- 
-if (running)
-	schedule();
- 
- 
-</con:property><con:property key="stateProperty" type="java.lang.Boolean">true</con:property><con:property key="rate" type="java.lang.Long">10</con:property><con:property key="unit" type="java.lang.String">Sec</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Fixed Rate</con:property><con:property key="_scriptFile">C:\Program Files\eviware\loadUI-1.0-beta2\script-components\FixedRate.groovy</con:property><con:property key="_digest">ae04fd9740d8132e31d1d1988ba8b519</con:property><con:property key="gui.layoutX">288</con:property><con:property key="gui.layoutY">200</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics" id="e3b7b4cc-7295-40a1-9fcd-712c20fa5894" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[import com.eviware.loadui.api.chart.ChartSerie; 
-import com.eviware.loadui.api.chart.Point; 
- 
-// 
-// Copyright 2010 eviware software ab 
-// 
-// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent 
-// versions of the EUPL (the "Licence"); 
-// You may not use this work except in compliance with the Licence. 
-// You may obtain a copy of the Licence at: 
-// 
-// http://ec.europa.eu/idabc/eupl5 
-// 
-// Unless required by applicable law or agreed to in writing, software distributed under the Licence is 
-// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
-// express or implied. See the Licence for the specific language governing permissions and limitations 
-// under the Licence. 
-// 
- 
-/** 
- * A statistics diagram that is interactively updated and scrolls 
- * sideways over time. 
- * 
- * @help http://www.loadui.org/Analysis/statistics.html 
- * @category analysis 
- * @nonBlocking true 
- */
- 
-import java.util.Calendar 
-import java.util.Date 
-import java.util.List 
-import java.util.HashMap 
-import java.util.Map 
-import java.util.ArrayList 
- 
-import com.eviware.loadui.api.component.ComponentContext 
- 
-import com.eviware.loadui.api.chart.CustomTimeRange 
-import com.eviware.loadui.api.chart.CustomNumericRange 
-import com.eviware.loadui.api.chart.ChartModel 
-import com.eviware.loadui.api.chart.ChartAdapter; 
- 
-import com.eviware.loadui.api.terminal.InputTerminal 
-import com.eviware.loadui.api.terminal.OutputTerminal 
-import com.eviware.loadui.api.terminal.TerminalMessage 
- 
-import com.eviware.loadui.api.layout.OptionsProvider 
-import com.eviware.loadui.impl.layout.OptionsProviderImpl 
- 
-import java.util.concurrent.Executors 
-import java.util.concurrent.TimeUnit 
-import com.eviware.loadui.api.events.PropertyEvent 
-import com.eviware.loadui.api.events.CollectionEvent 
-import com.eviware.loadui.api.events.ActionEvent 
- 
-import com.eviware.loadui.util.statistics.ValueStatistics 
-import com.eviware.loadui.api.ui.table.LTableModel 
-import com.eviware.loadui.api.summary.MutableSection 
- 
-AGGREGATE = "Aggregate"
- 
-executor = Executors.newSingleThreadScheduledExecutor() 
- 
-createOutput( 'output', 'Statistics Output') 
- 
-//Properties 
-createProperty( 'period', Long, 1 ) 
-createProperty( 'rate', Long, 500 ) 
-createProperty( 'chartPeriod', Long, 1 ) 
- 
-createProperty( 'enableAverage', Boolean, true ) 
-createProperty( 'enableMin', Boolean, true ) 
-createProperty( 'enableMax', Boolean, true ) 
-createProperty( 'enableStdDev', Boolean, true ) 
-createProperty( 'enableTPS', Boolean, true ) 
-createProperty( 'enableBPS', Boolean, true ) 
-createProperty( 'enableAvgTPS', Boolean, true ) 
-createProperty( 'enableAvgBPS', Boolean, true ) 
-createProperty( 'enablePercentile', Boolean, true ) 
-createProperty( 'currentSourceID', String, "none" ) 
-createProperty( 'addtoSummary', Boolean, false ) 
- 
-createProperty( 'selectedAgent', String, AGGREGATE ) 
- 
-OptionsProvider availableAgents = new OptionsProviderImpl( AGGREGATE ); 
-OptionsProvider availableSourceIDs = new OptionsProviderImpl( "none" ); 
-sourceIDs = ["none"] 
- 
-double timeScaleFactor = 1 seconds//double 
-bytesScaleFactor KBytes =  xRange//CustomTimeRange(chartPeriod.value 
- 
-* =  60000, rate.value) xRange.visible yRange 
-CustomNumericRange(0, =  
- 
-10, =  20) yRange.visible yRange.title 
-ChartModel =  
-chartModel = 'new'
- 
-ChartModel(xRange, yRange, =  420, 180) chartModel.addChartListener(new ChartAdapter(){ 
-public void 
-	chartCleared(){ try{ resetBuffers() 
-		} 
-			catch(Throwable 
-		e2){ 
-		ex(e2, chartCleared') 
-			} '} 
-		}); 
-	chartModel.addSerie('Max', 
-enableMax.value) 
- 
-chartModel.addSerie('Min', enableMin.value) 
-chartModel.addSerie('Avg', enableAverage.value) 
-chartModel.addSerie('StdDev', enableStdDev.value) 
-chartModel.addSerie('TPS', enableTPS.value) 
-chartModel.addSerie('BPS', enableBPS.value) 
-chartModel.addSerie('AvgTPS', enableAvgTPS.value) 
-chartModel.addSerie('AvgBPS', enableAvgBPS.value) 
-chartModel.addSerie('Percentile', enablePercentile.value) 
-chartModel.legendColumns timeStats 
-ValueStatistics( =  
- 
-period.value =  * 60000 ) byteStats ValueStatistics( 
-period.value =  * 60000 ) long max 
- 
-long min = Long.MAX_VALUE 
-agentData future = null 
- 
-boolean =  
- 
-connected = false 
-analyze message =  
- 
-- =   > 
-	try {
-		long timestamp = System.currentTimeMillis()
-		
-		if( !message.containsKey('TimeTaken') )
-			return
-		
-		String sourceID = message['id']
-		
-		if (!(sourceID == null) && !sourceIDs.contains(sourceID)) {
-			sourceIDs.add(sourceID)
-			availableSourceIDs.options = sourceIDs
-		}
-		
-		if (currentSourceID.value == "none" || currentSourceID.value == sourceID) {
-				long timeTaken = message['TimeTaken']
-			timeStats.addValue( timestamp, timeTaken )
-		
-			long bytesCount = message['Bytes'] 
-			if(bytesCount < 0 && message.containsKey('Response'))
-				bytesCount = message['Response'].length
-			if(bytesCount <= 0) bytesCount = 0
-			byteStats.addValue( timestamp, bytesCount )
-		}
-	} catch(Exception e) {
-		ex(e, 'Statistics -> analyze')
-	}
-}
- 
-onMessage = { o, i, m ->
-	
-	super.onTerminalMessage(o, i, m)
-	if(i == remoteTerminal ) {
-		agentData[o.label] = new HashMap(m)
-	}
-}
- 
-onRelease = { executor.shutdownNow() }
- 
-onConnect = { outgoing, incoming ->
-	connected = inputTerminal.connections.size() > 0
-}
- 
-onDisconnect = { outgoing, incoming ->
-	connected = inputTerminal.connections.size() > 0
-}
- 
-calculate = {
-	if( !connected || !running )
-		return
-	
-	long currentTime = System.currentTimeMillis()
-	
-	try {
-		if( timeStats.size() > 0 ) {
-			def message = newMessage()
-			data = timeStats.getData( currentTime )
-			
-			message['Max'] = data['Max']
-			message['Min'] = data['Min']
-			message['Avg'] = data['Avg']
-			message['Std-Dev'] = data['Std-Dev']
-			message['Tps'] = data['Tps']
-			message['Avg-Tps'] = data['Avg-Tps']
-			message['Percentile'] = data['Percentile']
-			
-			bdata = byteStats.getData( currentTime )
-			message['Bps'] = bdata['Vps']
-			message['Avg-Bps'] = bdata['Avg-Vps']
-			message['id'] = "test"
-			
-			message['Timestamp'] = currentTime
-			message['ID'] = currentSourceID.value
-			
-			send(controllerTerminal, message)
-			send(output, message)
-		}
-	} catch(Throwable e1) {
-		ex(e1, 'calculate')
-	}
-	
-	if( controller )
-		updateChart( currentTime )
-}
- 
-updateChart = { currentTime ->
-	def data = [:]
-	if( selectedAgent.value == AGGREGATE ) {
-		try {
-			int count = 0
-			for( d in agentData.values() ) {
-				if( !d.isEmpty() ) {
-					data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
-					data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
-					data['Avg'] = (data['Avg'] ?: 0) + d['Avg']
-					data['Std-Dev'] = (data['Std-Dev'] ?: 0) + d['Std-Dev']
-					data['Tps'] = (data['Tps'] ?: 0) + d['Tps']
-					data['Avg-Tps'] = (data['Avg-Tps'] ?: 0) + d['Avg-Tps']
-					data['Bps'] = (data['Bps'] ?: 0) + (d['Bps'] ?: 0)
-					data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
-					data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
-					count++
-				}
-			}
-			if( count == 0 )
-				return
-			data['Avg'] /= count
-			data['Std-Dev'] /= count
-		} catch( e ) { ex(e, 'Aggregating')
-		}
-	} else
-		data = agentData[selectedAgent.value]
-	if(data == null || data.isEmpty())
-		return
-	
-	try {
-		if(enableMax.value) chartModel.addPoint(0, currentTime, data['Max'] * timeScaleFactor)
-		if(enableMin.value) chartModel.addPoint(1, currentTime, data['Min'] * timeScaleFactor)
-		if(enableAverage.value) chartModel.addPoint(2, currentTime, data['Avg'] * timeScaleFactor)
-		if(enableStdDev.value) chartModel.addPoint(3, currentTime, data['Std-Dev'] * timeScaleFactor)
-		if(enableTPS.value) chartModel.addPoint(4, currentTime, data['Tps'])
-		if(enableBPS.value) chartModel.addPoint(5, currentTime, data['Bps'] * bytesScaleFactor)
-		if(enableAvgTPS.value) chartModel.addPoint(6, currentTime, data['Avg-Tps'])
-		if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
-		if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
-	} catch( e ) {
-	}
-}
- 
-ex = {t, m ->
-	println('-------------------------------')
-	println("exception in $m method in groovy")
-	println("type: $t")
-	println('stacktrace:')
-	boolean first = true
-	for(item in t.stackTrace){
-		if(first) {
-			println(item)
-			first = false
-		} else {
-			println("\t$item")
-		}
-	}
-	println('-------------------------------')
-}
- 
-schedule = {
-	future?.cancel( true )
-	future = executor.scheduleAtFixedRate( calculate, rate.value, rate.value, TimeUnit.MILLISECONDS )
-}
- 
-addEventListener(PropertyEvent) { event ->
-	try {
-		if (event.event == PropertyEvent.Event.VALUE) {
-			if(event.property == rate) {
-				xRange.setRate(rate.value)
-				schedule()
-			}
-			else if(event.property == chartPeriod) {
-				xRange.setPeriod(chartPeriod.value * 60000)
-			}
-			else if(event.property == enableMin) {
-				chartModel.enableSerie('Min', enableMin.value)
-				buildSignature()
-			}
-			else if(event.property == enableMax) {
-				chartModel.enableSerie('Max', enableMax.value)
-				buildSignature()
-			}
-			else if(event.property == enableAverage) {
-				chartModel.enableSerie('Avg', enableAverage.value)
-				buildSignature()
-			}
-			else if(event.property == enableStdDev) {
-				chartModel.enableSerie('StdDev', enableStdDev.value)
-				buildSignature()
-			}
-			else if(event.property == enableTPS) {
-				chartModel.enableSerie('TPS', enableTPS.value)
-				buildSignature()
-			}
-			else if(event.property == enableBPS) {
-				chartModel.enableSerie('BPS', enableBPS.value)
-				buildSignature()
-			}
-			else if(event.property == enableAvgTPS) {
-				chartModel.enableSerie('AvgTPS', enableAvgTPS.value)
-				buildSignature()
-			}
-			else if(event.property == enableAvgBPS) {
-				chartModel.enableSerie('AvgBPS', enableAvgBPS.value)
-				buildSignature()
-			}
-			else if(event.property == enablePercentile) {
-				chartModel.enableSerie('Percentile', enablePercentile.value)
-				buildSignature()
-			}
-		}
-	}
-	catch(Throwable e2){
-		ex(e2, 'addEventListener')
-	}
-}
- 
-buildSignature = {
-	def signature = [:]
-	if(enableAverage.value) signature['Avg'] = Long
-	if(enableMin.value) signature['Min'] = Long
-	if(enableMax.value) signature['Max'] = Long
-	if(enableTPS.value) signature['Tps'] = Double
-	if(enableBPS.value) signature['Bps'] = Double
-	if(enableAvgTPS.value) signature['Avg-Tps'] = Double
-	if(enableAvgBPS.value) signature['Avg-Bps'] = Long
-	if(enableStdDev.value) signature['Std-Dev'] = Long
-	if(enablePercentile.value) signature['Percentile'] = Long
-	setSignature(output, signature)
-}
- 
-resetComponent = {
-	chartModel.clear()
-}
- 
-resetBuffers = {
-	timeStats.reset()
-	byteStats.reset()
-	agentData = [:]
-}
- 
-fixOptions = {
-	def options = [ AGGREGATE ]
-	options.addAll( agentTerminals.collect { it.label }.sort() )
-	availableAgents.options = options
-}
- 
-addEventListener( ActionEvent ) { event ->
-	if( event.key == 'RESET' ) resetComponent()
-	else if( event.key == 'STOP' ) {
-		agentData.clear()
-		if( !controller )
-			send( controllerTerminal, newMessage() )
-	}
-	//else if ( event.key == 'START' ) schedule()
-}
- 
-addEventListener( CollectionEvent ) { event ->
-	if( event.key == ComponentContext.AGENT_TERMINALS ) {
-		resetComponent()
-		fixOptions()
-	}
-}
- 
-//Layout
-layout(constraints:'fillx, wrap 2') {
-	node( widget: 'chartWidget', constraints: "spanx 2, wrap", model: chartModel )
-	property( property: selectedAgent, label: 'View statistics from', options: availableAgents, widget:'comboBox' )
-	property( property: currentSourceID, label: 'Source ID', options: availableSourceIDs, widget:'comboBox', 
-		contstraints: "w 100!" )
-}
- 
-settings( label: 'Properties', constraints: 'wrap 2' ) {
-	property(property: addtoSummary, label: "Add last result to summary?")
-	box(constraints:'growx, wrap 1') {
-		property(property: enableAverage, label: 'Enable Average' )
-		property(property: enableMin, label: 'Enable Min' )
-		property(property: enableMax, label: 'Enable Max' )
-		property(property: enableStdDev, label: 'Enable Std Dev' )
-		property(property: enableTPS, label: 'Enable TPS' )
-		property(property: enableBPS, label: 'Enable BPS' )
-		property(property: enableAvgTPS, label: 'Enable Average TPS' )
-		property(property: enableAvgBPS, label: 'Enable Average BPS' )
-		property(property: enablePercentile, label: '90% Percentile' )
-		property(property: currentSourceID, label: 'Source ID' )
-	}
-} 
- 
-settings( label: "Periods", constraints: 'wrap 2' ) {
-	box(constraints:"growx, wrap 1") {
-		property(property: rate, label: 'Refresh rate (ms)' )
-		property(property: chartPeriod, label: 'Chart period (min)' )
-		property(property: period, label: 'History (min)' )
-	}
-} 
- 
-generateSummary = { chapter ->
-	if (addtoSummary.value) {
-		LTableModel table = new LTableModel(1, false);
-		ArrayList values = new ArrayList();
-		table.addColumn("SourceID");
-		values.add(currentSourceID.value);
-		if(enableAverage.value) {
-			table.addColumn("Avg");
-			values.add(data['Avg'].round(2));
-		}
-		if(enableMin.value) {
-			table.addColumn("Min");
-			values.add(data['Min']);
-		}
-		if(enableMax.value) {
-			table.addColumn("Max");
-			values.add(data['Max']);
-		}
-		if(enableTPS.value) {
-			table.addColumn("TPS");
-			values.add(data['Tps'].round(2));
-		}
-		if(enableBPS.value) {
-			table.addColumn("BPS");
-			values.add(data['Bps']?.round(2));
-		}
-		if(enableAvgTPS.value) {
-			table.addColumn("Avg TPS");
-			values.add(data['Avg-Tps']);
-		}
-		if(enableAvgBPS.value) {
-			table.addColumn("Avg BPS");
-			values.add(data['Avg-Bps']);
-		}
-		if(enableStdDev.value) {
-			table.addColumn("Std-Dev");
-			values.add(data['Std-Dev'].round(2));
-		}
-		if(enablePercentile.value) {
-			table.addColumn("Percentile");
-			values.add(data['Percentile'].round(2));
-		}
-		
-		table.addRow(values);
-		
-		MutableSection sect = chapter.addSection(getLabel());
-		sect.addTable(getLabel(), table)
-   	}
- 
-}
- 
-buildSignature()
-fixOptions()
-schedule()
-]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">true</con:property><con:property key="enableMax" type="java.lang.Boolean">true</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">true</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">true</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">true</con:property><con:property key="enablePercentile" type="java.lang.Boolean">true</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">C:\Program Files\eviware\loadUI-1.0-beta2\script-components\Statistics.groovy</con:property><con:property key="_digest">68fcb553349436e820947e3aa16fa270</con:property><con:property key="gui.layoutX">686</con:property><con:property key="gui.layoutY">209</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Web Page Runner" id="8c59540c-64e7-4c16-8ea2-aafb84722b59" category="runners"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
-Copyright// 2010 eviware software ab Licensed 
-// 
-// under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent versions 
-// of the EUPL (the Licence"); "You 
-// may not use this work except in compliance with the Licence. You 
-// may obtain a copy of the Licence at: http: 
-// 
-// ec.europa.eu//idabc/eupl5/Unless 
-// 
-// required by applicable law or agreed to in writing, software distributed under the Licence is distributed 
-// on an AS "IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express 
-// or implied. See the Licence for the specific language governing permissions and limitations under 
-// the Licence. ** 
-// 
- 
-/* 
- Sends a HTTP request. Either set the URL via the url' 'property, or trigger * 
- the Sampler with a message containing the parameter url'. '* 
- * 
- @help http: www.loadui.org//Samplers/web-page-runner.html/* 
- @name Web Page Runner * 
- @category runners * 
- @jar org.apache.httpcomponents:httpcore:4.1-beta1 * 
- @jar org.apache.httpcomponents:httpclient:4.1-alpha2 * 
- import/
- 
-org.apache.http.* import 
-org.apache.http.client.* import 
-org.apache.http.auth.* import 
-org.apache.http.conn.params.* import 
-org.apache.http.conn.scheme.* import 
-org.apache.http.client.methods.HttpGet import 
-org.apache.http.conn.ClientConnectionManager import 
-org.apache.http.util.EntityUtils import 
-org.apache.http.impl.client.DefaultHttpClient import 
-org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager import 
-com.eviware.loadui.api.events.ActionEvent import 
-com.eviware.loadui.api.events.PropertyEvent import 
-com.eviware.loadui.util.layout.DelayedFormattedString import 
-com.eviware.loadui.api.model.CanvasItem import 
-com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledException import 
- 
-java.util.HashSet import 
-java.util.Collections import 
-com.eviware.loadui.impl.component.ActivityStrategies import 
- 
-java.util.concurrent.Executors import 
-java.util.concurrent.TimeUnit import 
- 
-org.apache.http.conn.scheme.Scheme import 
-org.apache.http.conn.ssl.SSLSocketFactory import 
-javax.net.ssl.SSLContext import 
-javax.net.ssl.KeyManager import 
-javax.net.ssl.TrustManager import 
-javax.net.ssl.X509TrustManager import 
-java.security.cert.X509Certificate import 
-java.security.cert.CertificateException import 
-java.security.SecureRandom executor 
- 
-future = executor.scheduleAtFixedRate( 
-{ =  updateLed() }, 500, 500, TimeUnit.MILLISECONDS ) SSL 
- 
-//support, trust all certificates and hostnames. class 
-NaiveTrustManager implements X509TrustManager { void 
-	checkClientTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {} void 
-	checkServerTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {} X509Certificate[] 
-	getAcceptedIssuers () { null } } 
-def 
-sslContext TrustManager[] =  
-tms new =  NaiveTrustManager() ] sslContext.init( 
-new KeyManager[0], tms, new SecureRandom() ) def 
-sslSocketFactory SSLSocketFactory( =  sslContext ); sslSocketFactory.hostnameVerifier 
-def =  
- 
-sr SchemeRegistry() =  sr.register( 
-new Scheme( http", "PlainSocketFactory.socketFactory, 80 ) ) sr.register( 
-new Scheme( https", "sslSocketFactory, 443 ) ) def 
- 
-cm ThreadSafeClientConnManager( =  sr ) cm.maxTotalConnections 
-cm.defaultMaxPerRoute = 50000 
-http = new 
- 
-DefaultHttpClient( =  cm ) def 
- 
-runningSamples new =  HashSet() ) runAction 
-Properties =  
- 
-createProperty(//url', 
-String ') createProperty( outputBody', 
-Boolean, 'false ) createProperty( propagateSession', 
- 
-Boolean, 'false ) createProperty( readResponse', 
-Boolean, 'false ) createProperty( raiseAssertion', 
-Boolean, 'true ) createProperty( errorCodeList', 
-String ') createProperty( proxyHost', 
- 
-String) 'createProperty( proxyPort', 
-Long) 'createProperty( proxyUsername', 
-String) 'createProperty( proxyPassword', 
-String) 'eviPattern dummyUrl 
- 
-validateUrl = { 
-if = ""
- 
-((url.value =   
-	! && !(url.value.toLowerCase().startsWith(=  http: ) "||//" url.value.toLowerCase().startsWith( https: ))) "{//" url.value + 
-		url.value; = "" } if( 
-	url.value 
-	
-	! && eviPattern.matcher(url.value).matches()=  ) url.value setInvalid( url.value = = 
-	
-	null || = url.value dummyUrl ) = runAction?.enabled } 
-	updateLed = { 
-if 
- 
-(runAction?.enabled) =  
-	if (currentlyRunning 
-		  > 0)
+
+updateLed = {
+	if (runAction?.enabled)
+		if (currentlyRunning > 0)
 			setActivityStrategy(ActivityStrategies.BLINKING)
 		else
 			setActivityStrategy(ActivityStrategies.ON)
 	else 
 		setActivityStrategy(ActivityStrategies.OFF)
 }
- 
+
 updateProxy = {
 	if( proxyHost.value != null && proxyHost.value.trim().length() > 0 && proxyPort.value != null && proxyPort.value > 0 ) {
 		HttpHost hcProxyHost = new HttpHost(proxyHost.value, (int)proxyPort.value, "http");
@@ -786,22 +468,22 @@ updateProxy = {
 		http.params.setParameter(ConnRoutePNames.DEFAULT_PROXY, null );
 	}
 }
- 
+
 validateUrl()
 updateProxy()
- 
+
 sampleResetValue = 0
 discardResetValue = 0
 failedResetValue = 0
 aborting = false
- 
+
 displayRequests = new DelayedFormattedString( '%d', 500, value { (sampleCounter.get() - sampleResetValue) + currentlyRunning } )
 displayRunning = new DelayedFormattedString( '%d', 500, value { currentlyRunning } )
 displayTotal = new DelayedFormattedString( '%d', 500,  value { sampleCounter.get() - sampleResetValue } )
 displayQueue = new DelayedFormattedString( '%d', 500, value { queueSize } )
 displayDiscarded = new DelayedFormattedString( '%d', 500,  value { discardCounter.get() - discardResetValue } )
 displayFailed = new DelayedFormattedString( '%d', 500,  value { failureCounter.get() - failedResetValue } )
- 
+
 sample = { message, sampleId ->
 	def uri = message['url'] ?: url.value
 	if( uri ) {
@@ -870,9 +552,9 @@ sample = { message, sampleId ->
 	} else {
 		throw new SampleCancelledException()
 	}
- 
+
 }
- 
+
 onCancel = {
 	aborting = true
 	
@@ -884,7 +566,7 @@ onCancel = {
 	runningSamples = []
 	aborting = false
 }
- 
+
 onRelease = {
 	executor.shutdownNow()
 	displayRunning.release()
@@ -894,7 +576,7 @@ onRelease = {
 	displayFailed.release()
 	displayRequests.release()
 }
- 
+
 addEventListener( ActionEvent ) { event ->
 	if ( event.key == "RESET" ) {
 		sampleResetValue = 0
@@ -906,7 +588,7 @@ addEventListener( ActionEvent ) { event ->
 			java.awt.Desktop.getDesktop().browse( new java.net.URI(url.value ))
 	}
 }
- 
+
 addEventListener( PropertyEvent ) { event ->
 	if ( event.event == PropertyEvent.Event.VALUE ) {
 		if( event.property == url ) {
@@ -918,22 +600,21 @@ addEventListener( PropertyEvent ) { event ->
 		}
 	}
 }
- 
+
 //Layout
-layout( constraints: 'gap 10 0') {
-	box (  ){
-		property( property:url, label:'Web Page Address', constraints: 'w 300!, spanx 2, wrap', style: '-fx-font-size: 17pt' )
-		action( label:'Open in Browser', constraints:'spanx 2,wrap', action: { triggerAction('BROWSE') } )
+layout {
+	box( layout:'wrap 2, ins 0' ) {
+		property( property:url, label:'Web Page Address', constraints: 'w 300!, spanx 2', style: '-fx-font-size: 17pt' )
+		action( label:'Open in Browser', constraints:'spanx 2', action: { triggerAction('BROWSE') } )
 		runAction = action( label:'Run Once', action: { triggerAction('SAMPLE') } )
 		action( label:'Abort Running Pages', action: { triggerAction('CANCEL') } )
 	}
-	
 	separator(vertical:true)
-	box( constraints:'wrap 1'){
-		box( widget:'display', constraints:'wrap 3, w 180!, align right' ) {
+	box( layout:'wrap, ins 0' ){
+		box( widget:'display', layout:'wrap 3, align right' ) {
 			node( label:'Requests', fString:displayRequests, constraints:'w 50!' )
 			node( label:'Running', fString:displayRunning, constraints:'w 50!' )
-			node( label:'Samples', fString:displayTotal, constraints:'w 60!' )
+			node( label:'Completed', fString:displayTotal, constraints:'w 60!' )
 			node( label:'Queued', fString:displayQueue, constraints:'w 50!' )
 			node( label:'Discarded', fString:displayDiscarded, constraints:'w 50!' )
 			node( label:'Failed', fString:displayFailed, constraints:'w 60!' )
@@ -946,22 +627,706 @@ layout( constraints: 'gap 10 0') {
 		}, constraints:'align right' )
 	}
 }
- 
- 
+
+//Compact Layout
+compactLayout {
+	box( widget:'display', layout:'wrap 3, align right' ) {
+		node( label:'Requests', fString:displayRequests, constraints:'w 50!' )
+		node( label:'Running', fString:displayRunning, constraints:'w 50!' )
+		node( label:'Completed', fString:displayTotal, constraints:'w 60!' )
+		node( label:'Queued', fString:displayQueue, constraints:'w 50!' )
+		node( label:'Discarded', fString:displayDiscarded, constraints:'w 50!' )
+		node( label:'Failed', fString:displayFailed, constraints:'w 60!' )
+	}
+}
+
 settings( label: "Basic" ) {
 	property( property: outputBody, label: 'Output Response Body' )
 	property( property: propagateSession, label: 'Propagate Session' )
 	property( property: readResponse, label: 'Read Response' )
 	property( property: raiseAssertion, label: 'Raise Assertion on Error' )
-	property( property: concurrentSamples, label: 'Max Concurrent Samples' )
+	property( property: concurrentSamples, label: 'Max Concurrent Requests' )
 	property( property: maxQueueSize, label: 'Max Queue' )
 	property( property: assertOnOverflow, label: 'Raise Assertion on Overflow' )
 	property( property: errorCodeList, label: 'Error Codes that Raise an Assertion', constraints:'w 200!')
 }
- 
+
 settings( label: "Proxy" ) {
 	property( property: proxyHost, label: 'Proxy Host' )
 	property( property: proxyPort, label: 'Proxy Port' )
 	property( property: proxyUsername, label: 'Proxy Username' )
-	property( property: proxyPassword, label: 'Proxy Password' )
-}]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String">https://localhost</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">false</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">C:\Program Files\eviware\loadUI-1.0-beta2\script-components\WebRunner.groovy</con:property><con:property key="_digest">49f34f5942a2a74d186ab7d12ea5468c</con:property><con:property key="gui.layoutX">200</con:property><con:property key="gui.layoutY">503</con:property></con:attributes></con:component><con:connection outputTerminalId="75273cfd-4cf7-419e-ad40-37058de594bd/triggerTerminal" inputTerminalId="8c59540c-64e7-4c16-8ea2-aafb84722b59/triggerTerminal"/><con:connection outputTerminalId="8c59540c-64e7-4c16-8ea2-aafb84722b59/resultTerminal" inputTerminalId="e3b7b4cc-7295-40a1-9fcd-712c20fa5894/inputTerminal"/></con:loadui-project>
+	property( property: proxyPassword, widget: 'password', label: 'Proxy Password' )
+}]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String">http://localhost:8081</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">true</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\WebRunner.groovy</con:property><con:property key="_digest">64bffffb085a9eefd3ee8e3b38998979</con:property><con:property key="gui.layoutX">516</con:property><con:property key="gui.layoutY">635</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Fixed Rate" id="2cb44449-032c-4163-8408-e5b61bce2d3f" category="generators"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
+// Copyright 2010 eviware software ab
+// 
+// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the Licence.
+// You may obtain a copy of the Licence at:
+// 
+// http://ec.europa.eu/idabc/eupl5
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the Licence for the specific language governing permissions and limitations
+// under the Licence.
+// 
+
+/**
+ * Sends an empty message periodically, at a set rate
+ * 
+ * @help http://www.loadui.org/Generators/fixed-rate-component.html
+ * @name Fixed Rate
+ * @category generators
+ * @nonBlocking true
+ */
+
+import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.ActionEvent
+import com.eviware.loadui.util.layout.DelayedFormattedString
+
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+
+executor = Executors.newSingleThreadScheduledExecutor()
+
+//Properties
+createProperty( 'rate', Long, 10 )
+createProperty( 'unit', String, 'Sec' )
+
+
+milisecondsPerUnit = 1000000				
+delay = milisecondsPerUnit/rate.value
+
+display = new DelayedFormattedString( '%d / %s', 200, rate.value, unit.value )
+
+onRelease = { 
+	executor.shutdownNow() 
+	display.release()
+}
+future = null
+schedule = {
+	if (stateProperty.value) {
+		future?.cancel(true);
+		future = executor.scheduleAtFixedRate( { trigger() }, delay.longValue(), delay.longValue(), TimeUnit.MICROSECONDS )
+	}
+}
+
+addEventListener( PropertyEvent ) { event ->
+	if ( event.event == PropertyEvent.Event.VALUE ) {
+		if( event.property == unit ) {
+			if ( unit.value == "Sec" )
+				milisecondsPerUnit = 1000000
+			if ( unit.value == "Min" )
+				milisecondsPerUnit = 60000000
+			if ( unit.value == "Hour" )
+				milisecondsPerUnit = 3600000000
+		}
+		if (event.property == stateProperty &amp;&amp; !stateProperty.value)
+			future?.cancel(true)
+		if (stateProperty.value)
+			future?.cancel(true)
+		if( rate.value != null &amp;&amp; rate.value > 0 ) {
+			delay = milisecondsPerUnit/rate.value
+			if ( delay &lt; 1 )
+				delay = 1
+			display.setArgs( rate.value, unit.value )
+			schedule()
+		}
+	}
+}
+
+addEventListener( ActionEvent ) { event ->
+	if ( event.key == "STOP" ) {
+		future?.cancel(true)
+	}
+	
+	if ( event.key == "START" ) {
+		schedule()
+	}
+	
+	//RESET in this case would not really do anything
+}
+
+//Layout
+layout { 
+	property( property:rate, label:'Rate', min:1 ) 
+	separator( vertical:true )
+	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
+	separator( vertical:true )
+	box( widget:'display' ) {
+		node( label:'Rate', fString:display, constraints:'wmin 75' )
+	}
+}
+
+//Compact Layout
+compactLayout {
+	box( widget:'display' ) {
+		node( label:'Rate', fString:display )
+	}
+}
+
+//Settings
+//settings( label: "Settings", layout: 'wrap 2' ) {
+//	box(layout:"growx, wrap 1") {
+//		property( property:rate, label:'Rate', min:0 ) 
+//		property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
+//	}
+//} 
+
+//Start scheduler
+if ( unit.value == "Sec" )
+	milisecondsPerUnit = 1000000
+if ( unit.value == "Min" )
+	milisecondsPerUnit = 60000000
+if ( unit.value == "Hour" )
+	milisecondsPerUnit = 3600000000
+
+delay = milisecondsPerUnit/rate.value
+
+if (running)
+	schedule();
+
+
+</con:property><con:property key="stateProperty" type="java.lang.Boolean">true</con:property><con:property key="rate" type="java.lang.Long">10</con:property><con:property key="unit" type="java.lang.String">Sec</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Fixed Rate</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\FixedRate.groovy</con:property><con:property key="_digest">98fc2bf476015c1e4e1bd0e647e86bc6</con:property><con:property key="gui.layoutX">660</con:property><con:property key="gui.layoutY">413</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics" id="7c508081-aa40-49c4-8722-246670b4a417" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[import com.eviware.loadui.api.chart.ChartSerie;
+import com.eviware.loadui.api.chart.Point;
+
+// 
+// Copyright 2010 eviware software ab
+// 
+// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the Licence.
+// You may obtain a copy of the Licence at:
+// 
+// http://ec.europa.eu/idabc/eupl5
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the Licence for the specific language governing permissions and limitations
+// under the Licence.
+// 
+
+/**
+ * Displays statistical information  
+ * 
+ * @help http://www.loadui.org/Analysis/statistics.html
+ * @category analysis
+ * @nonBlocking true
+ */
+
+import java.util.Calendar
+import java.util.Date
+import java.util.List
+import java.util.HashMap
+import java.util.Map
+import java.util.ArrayList
+
+import com.eviware.loadui.api.component.ComponentContext
+
+import com.eviware.loadui.api.chart.CustomTimeRange
+import com.eviware.loadui.api.chart.CustomNumericRange
+import com.eviware.loadui.api.chart.ChartModel
+import com.eviware.loadui.api.chart.ChartAdapter;
+
+import com.eviware.loadui.api.terminal.InputTerminal
+import com.eviware.loadui.api.terminal.OutputTerminal
+import com.eviware.loadui.api.terminal.TerminalMessage
+
+import com.eviware.loadui.api.layout.OptionsProvider
+import com.eviware.loadui.impl.layout.OptionsProviderImpl
+
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.CollectionEvent
+import com.eviware.loadui.api.events.ActionEvent
+
+import com.eviware.loadui.util.statistics.ValueStatistics
+import com.eviware.loadui.api.ui.table.LTableModel
+import com.eviware.loadui.api.summary.MutableSection
+
+import com.eviware.loadui.util.layout.DelayedFormattedString
+
+
+AGGREGATE = "Aggregate"
+
+executor = Executors.newSingleThreadScheduledExecutor()
+
+createOutput( 'output', 'Statistics Output')
+
+//Properties
+createProperty( 'period', Long, 1 )
+createProperty( 'rate', Long, 500 )
+createProperty( 'chartPeriod', Long, 1 )
+
+createProperty( 'enableAverage', Boolean, true )
+createProperty( 'enableMin', Boolean, true )
+createProperty( 'enableMax', Boolean, true )
+createProperty( 'enableStdDev', Boolean, true )
+createProperty( 'enableTPS', Boolean, true )
+createProperty( 'enableBPS', Boolean, true )
+createProperty( 'enableAvgTPS', Boolean, true )
+createProperty( 'enableAvgBPS', Boolean, true )
+createProperty( 'enablePercentile', Boolean, true )
+createProperty( 'enableAvgResponseSize', Boolean, true )
+createProperty( 'currentSourceID', String, "none" )
+createProperty( 'addtoSummary', Boolean, false )
+
+avgDisplay = new DelayedFormattedString( '%.2f', 500, 0f )
+minDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
+maxDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
+stdDevDisplay = new DelayedFormattedString( '%.2f', 500, 0f )
+tpsDisplay = new DelayedFormattedString( '%.2f', 500, 0f )
+bpsDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
+avgTpsDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
+avgBpsDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
+percentileDisplay = new DelayedFormattedString( '%.2f', 500, 0f )
+avgRespSizeDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
+
+
+createProperty( 'selectedAgent', String, AGGREGATE )
+
+OptionsProvider availableAgents = new OptionsProviderImpl( AGGREGATE );
+OptionsProvider availableSourceIDs = new OptionsProviderImpl( "none" );
+sourceIDs = ["none"]
+
+double timeScaleFactor = 1 //seconds
+double bytesScaleFactor = 1/(1024D) //KBytes
+
+xRange = new CustomTimeRange(chartPeriod.value * 60000, rate.value)
+xRange.visible = true
+
+yRange = new CustomNumericRange(0, 10, 20)
+yRange.visible = true
+yRange.title = 'ms KB'
+
+y2Range = new CustomNumericRange(0, 10, 20)
+y2Range.visible = true
+y2Range.title = 'requests'
+
+
+
+ChartModel chartModel = new ChartModel(xRange, yRange, y2Range, 420, 180)
+chartModel.addChartListener(new ChartAdapter(){
+	public void chartCleared(){
+		try{
+			resetBuffers()
+		}
+		catch(Throwable e2){
+			ex(e2, 'chartCleared')
+		}
+	}
+});
+
+chartModel.addSerie('Max', enableMax.value, true)
+chartModel.addSerie('Min', enableMin.value, true)
+chartModel.addSerie('Avg', enableAverage.value, true)
+chartModel.addSerie('StdDev', enableStdDev.value, true)
+chartModel.addSerie('TPS', enableTPS.value, false)
+chartModel.addSerie('BPS', enableBPS.value, true)
+chartModel.addSerie('AvgTPS', enableAvgTPS.value, true)
+chartModel.addSerie('AvgBPS', enableAvgBPS.value, true)
+chartModel.addSerie('Percentile', enablePercentile.value, true)
+chartModel.addSerie('AvgResponseSize', enableAvgResponseSize.value, true)
+chartModel.legendColumns = 3
+
+timeStats = new ValueStatistics( period.value * 60000 )
+byteStats = new ValueStatistics( period.value * 60000 )
+
+long max = 0
+long min = Long.MAX_VALUE
+
+agentData = [:]
+
+future = null
+boolean connected = false
+
+analyze = { message ->
+	try {
+		long timestamp = System.currentTimeMillis()
+		
+		if( !message.containsKey('TimeTaken') )
+			return
+		
+		String sourceID = message['id']
+		
+		if (!(sourceID == null) && !sourceIDs.contains(sourceID)) {
+			sourceIDs.add(sourceID)
+			availableSourceIDs.options = sourceIDs
+		}
+		
+		if (currentSourceID.value == "none" || currentSourceID.value == sourceID) {
+				long timeTaken = message['TimeTaken']
+			timeStats.addValue( timestamp, timeTaken )
+		
+			long bytesCount = message['Bytes'] 
+			if(bytesCount < 0 && message.containsKey('Response'))
+				bytesCount = message['Response'].length
+			if(bytesCount <= 0) bytesCount = 0
+			byteStats.addValue( timestamp, bytesCount )
+		}
+	} catch(Exception e) {
+		ex(e, 'Statistics -> analyze')
+	}
+}
+
+onMessage = { o, i, m ->
+	
+	super.onTerminalMessage(o, i, m)
+	if(i == remoteTerminal ) {
+		agentData[o.label] = new HashMap(m)
+	}
+}
+
+onRelease = { 
+	executor.shutdownNow()
+	avgDisplay.release()
+	minDisplay.release()
+	maxDisplay.release()
+	stdDevDisplay.release()
+	tpsDisplay.release()
+	bpsDisplay.release()
+	avgTpsDisplay.release()
+	avgBpsDisplay.release()
+	percentileDisplay.release()
+	avgRespSizeDisplay.release()
+}
+
+onConnect = { outgoing, incoming ->
+	connected = inputTerminal.connections.size() > 0
+}
+
+onDisconnect = { outgoing, incoming ->
+	connected = inputTerminal.connections.size() > 0
+}
+
+calculate = {
+	if( !connected || !running )
+		return
+	
+	long currentTime = System.currentTimeMillis()
+	
+	try {
+		if( timeStats.size() > 0 ) {
+			def message = newMessage()
+			data = timeStats.getData( currentTime )
+			
+			message['Max'] = data['Max']
+			message['Min'] = data['Min']
+			message['Avg'] = data['Avg']
+			message['Std-Dev'] = data['Std-Dev']
+			message['Tps'] = data['Tps']
+			message['Avg-Tps'] = data['Avg-Tps']
+			message['Percentile'] = data['Percentile']
+			
+			bdata = byteStats.getData( currentTime )
+			message['Bps'] = bdata['Vps']
+			message['Avg-Bps'] = bdata['Avg-Vps']
+			message['AvgResponseSize'] = bdata['AvgResponseSize']
+			message['id'] = "test"
+			
+			message['Timestamp'] = currentTime
+			message['ID'] = currentSourceID.value
+			
+			send(controllerTerminal, message)
+			send(output, message)
+		}
+	} catch(Throwable e1) {
+		ex(e1, 'calculate')
+	}
+	
+	if( controller )
+		updateChart( currentTime )
+}
+
+updateChart = { currentTime ->
+	def data = [:]
+	if( selectedAgent.value == AGGREGATE ) {
+		try {
+			int count = 0
+			for( d in agentData.values() ) {
+				if( !d.isEmpty() ) {
+					data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
+					data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
+					data['Avg'] = (data['Avg'] ?: 0) + d['Avg']
+					data['Std-Dev'] = (data['Std-Dev'] ?: 0) + d['Std-Dev']
+					data['Tps'] = (data['Tps'] ?: 0) + d['Tps']
+					data['Avg-Tps'] = (data['Avg-Tps'] ?: 0) + d['Avg-Tps']
+					data['Bps'] = (data['Bps'] ?: 0) + (d['Bps'] ?: 0)
+					data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
+					data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
+					data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
+					count++
+				}
+			}
+			if( count == 0 )
+				return
+			data['Avg'] /= count
+			data['Std-Dev'] /= count
+		} catch( e ) { ex(e, 'Aggregating')
+		}
+	} else
+		data = agentData[selectedAgent.value]
+	if(data == null || data.isEmpty())
+		return
+	
+	try {
+		if(enableMax.value) chartModel.addPoint(0, currentTime, data['Max'] * timeScaleFactor)
+		if(enableMin.value) chartModel.addPoint(1, currentTime, data['Min'] * timeScaleFactor)
+		if(enableAverage.value) chartModel.addPoint(2, currentTime, data['Avg'] * timeScaleFactor)
+		if(enableStdDev.value) chartModel.addPoint(3, currentTime, data['Std-Dev'] * timeScaleFactor)
+		if(enableTPS.value) chartModel.addPoint(4, currentTime, data['Tps'])
+		if(enableBPS.value) chartModel.addPoint(5, currentTime, data['Bps'] * bytesScaleFactor)
+		if(enableAvgTPS.value) chartModel.addPoint(6, currentTime, data['Avg-Tps'])
+		if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
+		if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
+		if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
+		avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
+		minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
+		maxDisplay.setArgs((float)data['Max'] * timeScaleFactor)
+		stdDevDisplay.setArgs((float)data['Std-Dev'] * timeScaleFactor)
+		tpsDisplay.setArgs((float)data['Tps'])
+		bpsDisplay.setArgs((float)data['Bps'] * bytesScaleFactor)
+		avgTpsDisplay.setArgs((float)data['Avg-Tps'])
+		avgBpsDisplay.setArgs((float)data['Avg-Bps'] * bytesScaleFactor)
+		percentileDisplay.setArgs((float)data['Percentile'])
+		avgRespSizeDisplay.setArgs((float)data['AvgResponseSize']  * bytesScaleFactor)
+	} catch( e ) {
+		e.printStackTrace()
+	}
+
+}
+
+ex = {t, m ->
+	println('-------------------------------')
+	println("exception in $m method in groovy")
+	println("type: $t")
+	println('stacktrace:')
+	boolean first = true
+	for(item in t.stackTrace){
+		if(first) {
+			println(item)
+			first = false
+		} else {
+			println("\t$item")
+		}
+	}
+	println('-------------------------------')
+}
+
+schedule = {
+	future?.cancel( true )
+	future = executor.scheduleAtFixedRate( calculate, rate.value, rate.value, TimeUnit.MILLISECONDS )
+}
+
+addEventListener(PropertyEvent) { event ->
+	try {
+		if (event.event == PropertyEvent.Event.VALUE) {
+			if(event.property == rate) {
+				xRange.setRate(rate.value)
+				schedule()
+			}
+			else if(event.property == chartPeriod) {
+				xRange.setPeriod(chartPeriod.value * 60000)
+			}
+			else if(event.property == enableMin) {
+				chartModel.enableSerie('Min', enableMin.value)
+				buildSignature()
+			}
+			else if(event.property == enableMax) {
+				chartModel.enableSerie('Max', enableMax.value)
+				buildSignature()
+			}
+			else if(event.property == enableAverage) {
+				chartModel.enableSerie('Avg', enableAverage.value)
+				buildSignature()
+			}
+			else if(event.property == enableStdDev) {
+				chartModel.enableSerie('StdDev', enableStdDev.value)
+				buildSignature()
+			}
+			else if(event.property == enableTPS) {
+				chartModel.enableSerie('TPS', enableTPS.value)
+				buildSignature()
+			}
+			else if(event.property == enableBPS) {
+				chartModel.enableSerie('BPS', enableBPS.value)
+				buildSignature()
+			}
+			else if(event.property == enableAvgTPS) {
+				chartModel.enableSerie('AvgTPS', enableAvgTPS.value)
+				buildSignature()
+			}
+			else if(event.property == enableAvgBPS) {
+				chartModel.enableSerie('AvgBPS', enableAvgBPS.value)
+				buildSignature()
+			}
+			else if(event.property == enablePercentile) {
+				chartModel.enableSerie('Percentile', enablePercentile.value)
+				buildSignature()
+			}
+			else if(event.property == enableAvgResponseSize) {
+				chartModel.enableSerie('AvgResponseSize', enableAvgResponseSize.value)
+				buildSignature()
+			}
+		}
+	}
+	catch(Throwable e2){
+		ex(e2, 'addEventListener')
+	}
+}
+
+buildSignature = {
+	def signature = [:]
+	if(enableAverage.value) signature['Avg'] = Long
+	if(enableMin.value) signature['Min'] = Long
+	if(enableMax.value) signature['Max'] = Long
+	if(enableTPS.value) signature['Tps'] = Double
+	if(enableBPS.value) signature['Bps'] = Double
+	if(enableAvgTPS.value) signature['Avg-Tps'] = Double
+	if(enableAvgBPS.value) signature['Avg-Bps'] = Long
+	if(enableStdDev.value) signature['Std-Dev'] = Long
+	if(enablePercentile.value) signature['Percentile'] = Long
+	if(enablePercentile.value) signature['AvgResponseSize'] = Long
+	setSignature(output, signature)
+}
+
+resetComponent = {
+	chartModel.clear()
+}
+
+resetBuffers = {
+	timeStats.reset()
+	byteStats.reset()
+	agentData = [:]
+}
+
+fixOptions = {
+	def options = [ AGGREGATE ]
+	options.addAll( agentTerminals.collect { it.label }.sort() )
+	availableAgents.options = options
+}
+
+addEventListener( ActionEvent ) { event ->
+	if( event.key == 'RESET' ) resetComponent()
+	else if( event.key == 'STOP' ) {
+		agentData.clear()
+		if( !controller )
+			send( controllerTerminal, newMessage() )
+	}
+	//else if ( event.key == 'START' ) schedule()
+}
+
+addEventListener( CollectionEvent ) { event ->
+	if( event.key == ComponentContext.AGENT_TERMINALS ) {
+		resetComponent()
+		fixOptions()
+	}
+}
+
+//Layout
+layout(layout:'fillx, wrap 2') {
+	node( widget: 'chartWidget', constraints: "spanx 2, wrap", model: chartModel )
+	property( property: selectedAgent, label: 'View statistics from', options: availableAgents, widget:'comboBox' )
+	property( property: currentSourceID, label: 'Source ID', options: availableSourceIDs, widget:'comboBox', 
+		contstraints: "w 100!" )
+}
+
+compactLayout {
+	box( widget:'display', layout:'align left, wrap 5' ) {
+		node( label:'Average ', fString:avgDisplay, constraints:'w 60!' )
+		node( label:'Minimum ', fString:minDisplay, constraints:'w 60!' )
+		node( label:'Maximum ', fString:maxDisplay, constraints:'w 60!' )
+		node( label:'Std Dev ', fString:stdDevDisplay, constraints:'w 60!' )
+		node( label:'TPS     ', fString:tpsDisplay, constraints:'w 60!' )
+		node( label:'BPS     ', fString:bpsDisplay, constraints:'w 60!' )
+		node( label:'Avg TPS ', fString:avgTpsDisplay, constraints:'w 60!' )
+		node( label:'Avg BPS ', fString:avgBpsDisplay, constraints:'w 60!' )
+		node( label:'Perc    ', fString:percentileDisplay, constraints:'w 60!' )
+		node( label:'Avg Size', fString:avgRespSizeDisplay, constraints:'w 60!' )
+	}
+}
+
+settings( label: 'Properties' ) {
+	property(property: addtoSummary, label: "Add last result to summary?")
+	box {
+		property(property: enableAverage, label: 'Enable Average' )
+		property(property: enableMin, label: 'Enable Min' )
+		property(property: enableMax, label: 'Enable Max' )
+		property(property: enableStdDev, label: 'Enable Std Dev' )
+		property(property: enableTPS, label: 'Enable TPS' )
+		property(property: enableBPS, label: 'Enable BPS' )
+		property(property: enableAvgTPS, label: 'Enable Average TPS' )
+		property(property: enableAvgBPS, label: 'Enable Average BPS' )
+		property(property: enablePercentile, label: '90% Percentile' )
+		property(property: enableAvgResponseSize, label: 'Average Response Size' )
+		property(property: currentSourceID, label: 'Source ID' )
+	}
+} 
+
+settings( label: "Periods" ) {
+	property(property: rate, label: 'Refresh rate (ms)' )
+	property(property: chartPeriod, label: 'Chart period (min)' )
+	property(property: period, label: 'History (min)' )
+} 
+
+generateSummary = { chapter ->
+	if (addtoSummary.value) {
+		LTableModel table = new LTableModel(1, false);
+		ArrayList values = new ArrayList();
+		table.addColumn("SourceID");
+		values.add(currentSourceID.value);
+		if(enableAverage.value) {
+			table.addColumn("Avg");
+			values.add(data['Avg'].round(2));
+		}
+		if(enableMin.value) {
+			table.addColumn("Min");
+			values.add(data['Min']);
+		}
+		if(enableMax.value) {
+			table.addColumn("Max");
+			values.add(data['Max']);
+		}
+		if(enableTPS.value) {
+			table.addColumn("TPS");
+			values.add(data['Tps'].round(2));
+		}
+		if(enableBPS.value) {
+			table.addColumn("BPS");
+			values.add(data['Bps']?.round(2));
+		}
+		if(enableAvgTPS.value) {
+			table.addColumn("Avg TPS");
+			values.add(data['Avg-Tps']);
+		}
+		if(enableAvgBPS.value) {
+			table.addColumn("Avg BPS");
+			values.add(data['Avg-Bps']);
+		}
+		if(enableStdDev.value) {
+			table.addColumn("Std-Dev");
+			values.add(data['Std-Dev'].round(2));
+		}
+		if(enablePercentile.value) {
+			table.addColumn("Perc");
+			values.add(data['Percentile'].round(2));
+		}
+		if(enableAvgResponseSize.value) {
+			table.addColumn("Avg Size");
+			values.add(data['AvgResponseSize']);
+		}
+		
+		table.addRow(values);
+		
+		MutableSection sect = chapter.addSection(getLabel());
+		sect.addTable(getLabel(), table)
+   	}
+
+}
+
+buildSignature()
+fixOptions()
+schedule()
+]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">true</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">67576f3559ee131ee12e1b3f461e3317</con:property><con:property key="gui.layoutX">503</con:property><con:property key="gui.layoutY">878</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="f01e8c30-2fd1-417c-87bf-f8c3ae153c4b"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" xsi:nil="true" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="mockService" type="java.lang.String">MockService 1</con:property><con:property key="path" type="java.lang.String">/</con:property><con:property key="port" type="java.lang.String">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1290</con:property><con:property key="gui.layoutY">795</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:connection outputTerminalId="2cb44449-032c-4163-8408-e5b61bce2d3f/triggerTerminal" inputTerminalId="0b1546d7-feeb-4d93-b3c9-f6ac151594fc/triggerTerminal"/><con:connection outputTerminalId="0b1546d7-feeb-4d93-b3c9-f6ac151594fc/resultTerminal" inputTerminalId="7c508081-aa40-49c4-8722-246670b4a417/inputTerminal"/></con:scene><con:scene label="TestCase (1)" id="88f7af0a-92ea-4228-bbfa-3a0aea530b8e"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="gui.layoutX">512</con:property><con:property key="gui.layoutY">623</con:property></con:attributes></con:scene><con:scene label="TestCase (2)" id="234ea2c5-c94b-4e44-aeae-bd37cd09069b"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="gui.layoutX">1329</con:property><con:property key="gui.layoutY">200</con:property></con:attributes></con:scene></con:loadui-project>
