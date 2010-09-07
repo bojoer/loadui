@@ -19,7 +19,7 @@ set CLASSPATH=.;lib/*;
 
 rem JVM parameters, modify as appropriate
 
-set JAVA_OPTS=-Xms128m -Xmx1024m -XX:MaxPermSize=256m
+set JAVA_OPTS=-Xms128m -Xmx1024m -XX:MaxPermSize=256m -Dsun.java2d.noddraw=true
 
 :START
 
