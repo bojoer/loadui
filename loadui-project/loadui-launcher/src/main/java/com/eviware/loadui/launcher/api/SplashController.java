@@ -1,6 +1,5 @@
 package com.eviware.loadui.launcher.api;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -20,25 +19,24 @@ public class SplashController
 		if( window == null )
 		{
 			window = new JWindow();
-
-			JLabel label = new JLabel( new ImageIcon( SplashController.class.getResource( "/loadui-splash.png" ) ) );
 			Container contentPane = window.getContentPane();
-			contentPane.add( label );
-			window.pack();
 
 			window.setAlwaysOnTop( true );
 
-			if( WindowUtils.isWindowAlphaSupported() )
-				try
-				{
-					WindowUtils.setWindowTransparent( window, true );
-				}
-				catch( Exception e )
-				{
-					contentPane.setBackground( new Color( 255, 255, 255, 255 ) );
-				}
-			else
-				contentPane.setBackground( new Color( 255, 255, 255, 255 ) );
+			ImageIcon image;
+			try
+			{
+				WindowUtils.setWindowTransparent( window, true );
+				image = new ImageIcon( SplashController.class.getResource( "/loadui-splash.png" ) );
+			}
+			catch( Exception e )
+			{
+				image = new ImageIcon( SplashController.class.getResource( "/loadui-splash-no-transparency.png" ) );
+			}
+
+			JLabel label = new JLabel( image );
+			contentPane.add( label );
+			window.pack();
 
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			Dimension labelSize = label.getPreferredSize();
