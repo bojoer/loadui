@@ -84,15 +84,15 @@ createProperty( 'currentSourceID', String, "none" )
 createProperty( 'addtoSummary', Boolean, false )
 
 avgDisplay = new DelayedFormattedString( '%10.2f', 500, 0f )
-minDisplay = new DelayedFormattedString( '%d', 500, 0 )
-maxDisplay = new DelayedFormattedString( '%d', 500, 0 )
+minDisplay = new DelayedFormattedString( '%10.0f', 500, 0f )
+maxDisplay = new DelayedFormattedString( '%10.0f', 500, 0f )
 stdDevDisplay = new DelayedFormattedString( '%10.2f', 500, 0f )
 tpsDisplay = new DelayedFormattedString( '%10.2f', 500, 0f )
-bpsDisplay = new DelayedFormattedString( '%d', 500, 0 )
-avgTpsDisplay = new DelayedFormattedString( '%d', 500, 0 )
-avgBpsDisplay = new DelayedFormattedString( '%d', 500, 0 )
+bpsDisplay = new DelayedFormattedString( '%10.0f', 500, 0f )
+avgTpsDisplay = new DelayedFormattedString( '%10.0f', 500, 0f )
+avgBpsDisplay = new DelayedFormattedString( '%10.0f', 500, 0f )
 percentileDisplay = new DelayedFormattedString( '%10.2f', 500, 0f )
-avgRespSizeDisplay = new DelayedFormattedString( '%d', 500, 0 )
+avgRespSizeDisplay = new DelayedFormattedString( '%10.0f', 500, 0f )
 
 
 createProperty( 'selectedAgent', String, AGGREGATE )
@@ -292,16 +292,16 @@ updateChart = { currentTime ->
 		if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
 		if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 		if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
-		avgDisplay.setArgs(data['Avg'] )
-		minDisplay.setArgs(data['Min'])
-		maxDisplay.setArgs(data['Max'])
-		stdDevDisplay.setArgs(data['Std-Dev'])
-		tpsDisplay.setArgs(data['Tps'])
-		bpsDisplay.setArgs(data['Bps'])
-		avgTpsDisplay.setArgs(data['Avg-Tps'])
-		avgBpsDisplay.setArgs(data['Avg-Bps'])
-		percentileDisplay.setArgs(data['Percentile'])
-		avgRespSizeDisplay.setArgs(data['AvgResponseSize'])
+		avgDisplay.setArgs((float)data['Avg'] )
+		minDisplay.setArgs((float)data['Min'])
+		maxDisplay.setArgs((float)data['Max'])
+		stdDevDisplay.setArgs((float)data['Std-Dev'])
+		tpsDisplay.setArgs((float)data['Tps'])
+		bpsDisplay.setArgs((float)data['Bps'])
+		avgTpsDisplay.setArgs((float)data['Avg-Tps'])
+		avgBpsDisplay.setArgs((float)data['Avg-Bps'])
+		percentileDisplay.setArgs((float)data['Percentile'])
+		avgRespSizeDisplay.setArgs((float)data['AvgResponseSize'])
 	} catch( e ) {
 		e.printStackTrace()
 	}
@@ -444,7 +444,7 @@ layout(layout:'fillx, wrap 2') {
 }
 
 compactLayout {
-	box( widget:'display', layout:'wrap 5, align right' ) {
+	box( widget:'display', layout:'wrap 5' ) {
 		node( label:'Average ', fString:avgDisplay )
 		node( label:'Minimum ', fString:minDisplay )
 		node( label:'Maximum ', fString:maxDisplay )
