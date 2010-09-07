@@ -292,16 +292,16 @@ updateChart = { currentTime ->
 		if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
 		if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 		if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
-		avgDisplay.setArgs((float)data['Avg'] )
-		minDisplay.setArgs((float)data['Min'])
-		maxDisplay.setArgs((float)data['Max'])
-		stdDevDisplay.setArgs((float)data['Std-Dev'])
+		avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
+		minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
+		maxDisplay.setArgs((float)data['Max'] * timeScaleFactor)
+		stdDevDisplay.setArgs((float)data['Std-Dev'] * timeScaleFactor)
 		tpsDisplay.setArgs((float)data['Tps'])
-		bpsDisplay.setArgs((float)data['Bps'])
+		bpsDisplay.setArgs((float)data['Bps'] * bytesScaleFactor)
 		avgTpsDisplay.setArgs((float)data['Avg-Tps'])
-		avgBpsDisplay.setArgs((float)data['Avg-Bps'])
+		avgBpsDisplay.setArgs((float)data['Avg-Bps'] * bytesScaleFactor)
 		percentileDisplay.setArgs((float)data['Percentile'])
-		avgRespSizeDisplay.setArgs((float)data['AvgResponseSize'])
+		avgRespSizeDisplay.setArgs((float)data['AvgResponseSize']  * bytesScaleFactor)
 	} catch( e ) {
 		e.printStackTrace()
 	}
@@ -444,17 +444,17 @@ layout(layout:'fillx, wrap 2') {
 }
 
 compactLayout {
-	box( widget:'display', layout:'wrap 5' ) {
-		node( label:'Average ', fString:avgDisplay )
-		node( label:'Minimum ', fString:minDisplay )
-		node( label:'Maximum ', fString:maxDisplay )
-		node( label:'Std Dev ', fString:stdDevDisplay )
-		node( label:'TPS     ', fString:tpsDisplay )
-		node( label:'BPS     ', fString:bpsDisplay )
-		node( label:'Avg TPS ', fString:avgTpsDisplay )
-		node( label:'Avg BPS ', fString:avgBpsDisplay )
-		node( label:'Perc    ', fString:percentileDisplay )
-		node( label:'Avg Size', fString:avgRespSizeDisplay )
+	box( widget:'display', layout:'align left, wrap 5' ) {
+		node( label:'Average ', fString:avgDisplay, constraints:'w 50!' )
+		node( label:'Minimum ', fString:minDisplay, constraints:'w 50!' )
+		node( label:'Maximum ', fString:maxDisplay, constraints:'w 50!' )
+		node( label:'Std Dev ', fString:stdDevDisplay, constraints:'w 50!' )
+		node( label:'TPS     ', fString:tpsDisplay, constraints:'w 50!' )
+		node( label:'BPS     ', fString:bpsDisplay, constraints:'w 50!' )
+		node( label:'Avg TPS ', fString:avgTpsDisplay, constraints:'w 50!' )
+		node( label:'Avg BPS ', fString:avgBpsDisplay, constraints:'w 50!' )
+		node( label:'Perc    ', fString:percentileDisplay, constraints:'w 50!' )
+		node( label:'Avg Size', fString:avgRespSizeDisplay, constraints:'w 50!' )
 	}
 }
 
