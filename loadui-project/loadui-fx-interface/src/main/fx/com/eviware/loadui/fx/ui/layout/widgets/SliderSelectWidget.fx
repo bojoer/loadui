@@ -164,7 +164,9 @@ public class SliderSelectWidget extends BaseNode, Widget, TooltipHolder, SelectS
 	    if ( tmpCnt > 0) {
 			value = options[selectedIndex];
 	    } else {
+	        switchHandle.selectedIndex = initSelected;
 	        value = options[initSelected];
+	        
 	        tmpCnt++;
 	    }
 	}
