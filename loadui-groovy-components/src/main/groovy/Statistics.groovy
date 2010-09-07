@@ -505,7 +505,7 @@ generateSummary = { chapter ->
 		}
 		if(enableBPS.value) {
 			table.addColumn("BPS");
-			values.add(data['Bps']?.round(2));
+			values.add(bpsDisplay.toString());
 		}
 		if(enableAvgTPS.value) {
 			table.addColumn("Avg TPS");
@@ -513,7 +513,7 @@ generateSummary = { chapter ->
 		}
 		if(enableAvgBPS.value) {
 			table.addColumn("Avg BPS");
-			values.add(data['Avg-Bps']);
+			values.add(avgBpsDisplay.toString());
 		}
 		if(enableStdDev.value) {
 			table.addColumn("Std-Dev");
