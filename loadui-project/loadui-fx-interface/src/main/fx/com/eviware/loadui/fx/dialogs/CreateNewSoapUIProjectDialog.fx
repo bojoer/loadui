@@ -81,8 +81,12 @@ public class CreateNewSoapUIProjectDialog {
 				var manager:ComponentRegistry = BeanInjector.getBean(ComponentRegistry.class);
 								 
 				var soapuiItem:ComponentItem = project.createComponent( "soapui Runner", manager.findDescriptor("soapUI Runner") );
+				soapuiItem.setAttribute( "gui.layoutX", "0" );
+				soapuiItem.setAttribute( "gui.layoutY", "200" );
 				
 								 var fixedRateItem:ComponentItem = project.createComponent( "Fixed Rate", manager.findDescriptor("Fixed Rate") ); 
+								 fixedRateItem.setAttribute( "gui.layoutX", "50" );
+								 fixedRateItem.setAttribute( "gui.layoutY", "0" );
 								var fixedRateContext:ComponentContext = fixedRateItem.getContext();
 								fixedRateContext.getProperty("rate").setValue(numRequests.text);
 								 
@@ -106,6 +110,8 @@ public class CreateNewSoapUIProjectDialog {
 								 
 								 if (addStatisticsDiagram.selected) {
 								 	var statisticsItem:ComponentItem = project.createComponent( "Statistics", manager.findDescriptor("Statistics") );
+								 	statisticsItem.setAttribute( "gui.layoutX", "50" );
+								 	statisticsItem.setAttribute( "gui.layoutY", "500" );
 								 	var outputTerminal:OutputTerminal;
 								 	for (terminal in soapuiItem.getTerminals()) {
 								 		if (terminal.getLabel() == RunnerCategory.RESULT_TERMINAL) {
