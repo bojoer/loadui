@@ -443,18 +443,20 @@ layout(layout:'fillx, wrap 2') {
 		contstraints: "w 100!" )
 }
 
+//
+
 compactLayout {
 	box( widget:'display', layout:'wrap 5, align right' ) {
-		node( label:'Average', fString:avgDisplay )
-		node( label:'Minimum', fString:minDisplay )
-		node( label:'Maximum', fString:maxDisplay )
-		node( label:'Standard Deviation', fString:stdDevDisplay )
-		node( label:'TPS', fString:tpsDisplay )
-		node( label:'BPS', fString:bpsDisplay )
-		node( label:'Average TPS', fString:avgTpsDisplay )
-		node( label:'Average BPS', fString:avgBpsDisplay )
-		node( label:'Percentile', fString:percentileDisplay )
-		node( label:'Average Response Size', fString:avgRespSizeDisplay )
+		node( label:'Avg ', fString:avgDisplay )
+		node( label:'Min ', fString:minDisplay )
+		node( label:'Max ', fString:maxDisplay )
+		node( label:'Std Dev ', fString:stdDevDisplay )
+		node( label:'TPS ', fString:tpsDisplay )
+		node( label:'BPS ', fString:bpsDisplay )
+		node( label:'Avg TPS ', fString:avgTpsDisplay )
+		node( label:'Avg BPS ', fString:avgBpsDisplay )
+		node( label:'Perc ', fString:percentileDisplay )
+		node( label:'Avg Size ', fString:avgRespSizeDisplay )
 	}
 }
 
