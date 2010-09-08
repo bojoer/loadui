@@ -15,10 +15,9 @@
  */
 package com.eviware.loadui.api.component.categories;
 
-import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 
-public interface SchedulerCategory extends ComponentBehavior
+public interface SchedulerCategory extends OnOffCategory
 {
 
 	/**

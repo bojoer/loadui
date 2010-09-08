@@ -36,13 +36,13 @@ import com.eviware.loadui.fx.ui.dialogs.DefaultComponentSettingsPanel;
 import com.eviware.loadui.fx.dialogs.CloneComponentDialog;
 
 import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.api.component.categories.TriggerCategory;
+import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 
 
 public function create( component:ComponentItem, canvas:Canvas ):ComponentNode {
-	if( TriggerCategory.CATEGORY.equalsIgnoreCase( component.getCategory() ) )
-		TriggerComponentNode { component: component, canvas: canvas, id: component.getId() }
+	if( component.getBehavior() instanceof OnOffCategory )
+		OnOffComponentNode { component: component, canvas: canvas, id: component.getId() }
 	else
 		ComponentNode { component: component, canvas: canvas, id: component.getId() }
 }

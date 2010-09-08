@@ -22,11 +22,12 @@ public class SystemPropertiesDialog {
 		Collections.sort( propertyNames );
 		def stringBuilder = new StringBuilder();
 		for( name in propertyNames )
-			stringBuilder.append( "{%-30s name} {System.getProperty(name as String)}\r\n" );
+			stringBuilder.append( "{name}={System.getProperty(name as String)}\r\n" );
 		
 		def dialog:Dialog = Dialog {
 			title: "System Properties"
 			content: TextBox {
+				style:"-fx-font-family: 'monospace';"
 				text: stringBuilder.toString()
 				multiline: true
 				editable: false

@@ -40,13 +40,13 @@ import com.eviware.loadui.fx.ui.resources.ResizablePath;
 
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.events.PropertyEvent;
-import com.eviware.loadui.api.component.categories.TriggerCategory;
+import com.eviware.loadui.api.component.categories.OnOffCategory;
 
 import java.util.EventObject;
 
-public class TriggerComponentNode extends ComponentNode {
+public class OnOffComponentNode extends ComponentNode {
 	
-	override var roundedFrame = TriggerFrame {
+	override var roundedFrame = OnOffFrame {
 		fill: roundedFrameFill
 		stroke: roundedFrameStroke
 		layoutInfo: LayoutInfo { height: 50, vfill: true, hfill: true }
@@ -58,7 +58,7 @@ public class TriggerComponentNode extends ComponentNode {
 	}
 	
 	override var component on replace {
-		stateProperty = (component.getBehavior() as TriggerCategory).getStateProperty();
+		stateProperty = (component.getBehavior() as OnOffCategory).getStateProperty();
 		onState = stateProperty.getValue() as Boolean;
 	}
 	
@@ -87,7 +87,7 @@ public class TriggerComponentNode extends ComponentNode {
 	}
 }
 
-class TriggerFrame extends ResizablePath {
+class OnOffFrame extends ResizablePath {
 	override function calculatePath() {
 		if( compact ) {
 			[
