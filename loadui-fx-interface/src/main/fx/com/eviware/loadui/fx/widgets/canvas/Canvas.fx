@@ -88,9 +88,13 @@ public var showNotes = true;
 public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, EventHandler { 
 	override var layoutBounds = bind lazy BoundingBox { minX:0 minY:0 width:width height:height }
 	
-	protected def connectionLayer = Group {};
-	protected def componentLayer = Group {};
-	protected def noteLayer = Group { visible: bind showNotes };
+	def dummyNodeConnections = Rectangle { fill: Color.rgb(0,0,0,0.0001), width: 1, height: 1 };
+	def dummyNodeComponents = Rectangle { fill: Color.rgb(0,0,0,0.0001), width: 1, height: 1 };
+	def dummyNodeNotes = Rectangle { fill: Color.rgb(0,0,0,0.0001), width: 1, height: 1 };
+	
+	protected def connectionLayer = Group { content: dummyNodeConnections };
+	protected def componentLayer = Group { content: dummyNodeComponents };
+	protected def noteLayer = Group { visible: bind showNotes, content: dummyNodeNotes };
 	
 	public def testcaseItem = modelItem as SceneItem;
 	
@@ -377,8 +381,8 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	public var canvasItem:CanvasItem on replace oldItem {
 		if( oldItem != null ) {
 			oldItem.removeEventListener( BaseEvent.class, this );
-			componentLayer.content = null;
-			connectionLayer.content = null;
+			componentLayer.content = dummyNodeComponents;
+			connectionLayer.content = dummyNodeConnections;
 		}
 		
 		if( canvasItem != null ) {
@@ -394,7 +398,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			for( connection in canvasItem.getConnections() )
 				addConnection(connection);
 			
-			noteLayer.content = Note.loadNotes( this );
+			noteLayer.content = [ dummyNodeNotes, Note.loadNotes( this ) ];
 				
 			refreshComponents();
 		}
@@ -415,7 +419,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	 * Update the Canvas size when a component has been added/moved.
 	 */
 	public function refreshComponents():Void {
-		def objects = [ componentLayer.content, noteLayer.content ];
+		def objects = [ componentLayer.content[o|o instanceof CanvasObjectNode], noteLayer.content[o|o instanceof Note] ];
 		if( sizeof objects == 0 ) {
 			areaWidth = width as Integer;
 			areaHeight = height as Integer;
