@@ -26,6 +26,7 @@ import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.SceneItem;
+import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.InputTerminal;
 
@@ -33,6 +34,10 @@ import com.eviware.loadui.fx.widgets.canvas.Canvas;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
 
 import javafx.util.Sequences;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.lang.Duration;
+import javafx.async.Task;
 
 import java.util.HashMap;
 
@@ -43,9 +48,21 @@ public class CloneCanvasObjectsDialog {
 	public-init var objects:CanvasObjectItem[];
 	
 	postinit {
-		var gotoTargetLabel: String = if(target instanceof SceneItem) "Open Testcase?" else "Open Project?"; 
+		
+		var timeline: Timeline = Timeline {
+	        repeatCount: 1
+	        keyFrames: [
+		        KeyFrame {
+		            time: 500ms
+		            action: function() {
+						updateAndGo();
+		            }
+		            canSkip: true
+		        }
+	        ]
+	    }
+		
 		var moveField:CheckBoxField;
-		var gotoTarget:CheckBoxField;
 		def dialog:Dialog = Dialog {
 			title: "Clone objects"
 			content: Form {
@@ -54,15 +71,19 @@ public class CloneCanvasObjectsDialog {
 					LabelField { value: if( sizeof objects == 1 ) "Clone this item?" else "Clone these { sizeof objects } items?" },
 					LabelField { value: "Target canvas: {target.getLabel()}" },
 					moveField = CheckBoxField { label: "Move instead? (removes the objects from the current canvas)" },
-					gotoTarget = CheckBoxField { label: gotoTargetLabel, value: true }
 				]
 			}
 			onOk: function() {
 				moveComponents( moveField.value as Boolean );
-				if( gotoTarget.value as Boolean ) {
-					AppState.instance.setActiveCanvas( target );
+				def canvasItem = objects[0].getCanvas();
+				if(canvasItem instanceof SceneItem){
+					//wait until current testcase is updated 
+					//so the result miniature is correct
+					timeline.playFromStart();	
 				}
-				
+				else if(canvasItem instanceof ProjectItem){
+					AppState.instance.setActiveCanvas(target);
+				}
 				dialog.close();
 			}
 		}
@@ -85,5 +106,13 @@ public class CloneCanvasObjectsDialog {
 			for( object in objects ) object.delete();
 		
 		for( clone in clones.values() ) clone as CanvasObjectItem;
+	}
+	
+	function updateAndGo(){
+		MainWindow.instance.testcaseCanvas.refreshComponents();
+		MainWindow.instance.testcaseCanvas.generateMiniatures();
+		var tcn: TestCaseNode = MainWindow.instance.projectCanvas.lookupCanvasNode(objects[0].getCanvas().getId()) as TestCaseNode;
+		tcn.loadMiniature();
+		AppState.instance.setActiveCanvas( target );
 	}
 }
