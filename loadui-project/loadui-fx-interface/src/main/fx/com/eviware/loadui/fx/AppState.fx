@@ -76,7 +76,7 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.AppState" 
  */
 public-read var instance:AppState;
 
-def dummyNode = Rectangle { fill: Color.RED, width: 11, height: 11 };
+def dummyNode = Rectangle { fill: Color.rgb(0,0,0,0.0001), width: 1, height: 1 };
 
 public var overlay:Node[] on replace {
 	instance.overlayLayer.content = [dummyNode, overlay];
