@@ -93,21 +93,21 @@ onMessage = { incoming, outgoing, message ->
 	}
  }
 
- layout (layout:'center') { 
+ layout { 
     property( property:delay, label:"Delay(ms)", min:0, step:100, span:60000 ) 
     separator( vertical:true )
     node(widget: 'selectorWidget', labels:["none", "Gauss", "Uniform"], default: selected.value, selected: selected)
     property( property: randomDelay, label:'Random(%)', min:0, max: 100 )
     separator( vertical:true )
-    box( widget:'display',  constraints:'w 100!' ) {
-        node( label:'delay ', fString:display )
-        node( label:'waiting ', fString:waitingDisplay )
+    box( widget:'display' ) {
+        node( label:'delay ', fString:display, constraints:'w 60!' )
+        node( label:'waiting ', fString:waitingDisplay, constraints:'w 50!' )
     }
  }
  
 compactLayout {
 	box( widget:'display' ) {
-		node( label:'delay ', fString:display )
-		node( label:'waiting ', fString:waitingDisplay )
+		node( label:'delay ', fString:display, constraints:'w 60!' )
+		node( label:'waiting ', fString:waitingDisplay, constraints:'w 50!' )
 	}
 }
