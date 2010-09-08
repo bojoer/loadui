@@ -52,14 +52,14 @@ public class OnOffSwitch extends BaseNode, Resizable, TooltipHolder {
 	override var height = 20;
 	
 	var noUpdate = false;
+	def selectedIndex = bind switchHandle.selectedIndex on replace {
+		if( switchHandle != null and not noUpdate )
+			state = selectedIndex == 0;
+	}
 	public var state:Boolean = false on replace {
 		noUpdate = true;
 		switchHandle.selectedIndex = if( state ) 0 else 1;
 		noUpdate = false;
-	}
-	def selectedIndex = bind switchHandle.selectedIndex on replace {
-		if( not noUpdate )
-			state = selectedIndex == 0;
 	}
 	
 	def switchBase = Group {
@@ -92,6 +92,7 @@ public class OnOffSwitch extends BaseNode, Resizable, TooltipHolder {
 	
 	def switchHandle = SliderNode {
 		layoutInfo: LayoutInfo { height: 18 }
+		selectedIndex: if( state ) 0 else 1
 		numOptions: 2
 		contentNode: Group {
 			content:[
