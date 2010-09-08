@@ -338,7 +338,9 @@ public class SummaryReport extends Stack {
 									Button {
 										text: "Print"
 										action:function() {
-											com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport(summary);
+										    AppState.instance.blockingTask( function():Void {
+		    									com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport(summary);
+		    								}, null, "Generating Printable Report..." );
 										}
 									}, GlowButton {
 										contentNode: FXDNode {
