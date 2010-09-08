@@ -76,28 +76,10 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.AppState" 
  */
 public-read var instance:AppState;
 
-
-def workaround = Timeline {
-	keyFrames: KeyFrame { time: 250ms, action: function() {
-		if( dummyNode.parent == null ) {
-			insert dummyNode into instance.overlayLayer.content;
-		} else {
-			delete dummyNode from instance.overlayLayer.content;
-		}
-		dummyNode.layoutX = 100*Math.random();
-	} }
-	repeatCount: Timeline.INDEFINITE
-};
-def dummyNode = Rectangle { fill: Color.TRANSPARENT };
+def dummyNode = Rectangle { fill: Color.RED, width: 11, height: 11 };
 
 public var overlay:Node[] on replace {
-	//delete dummyNode from instance.overlayLayer.content;
-	instance.overlayLayer.content = overlay;
-	//instance.overlayLayer.layout();
-	//FX.deferAction( function():Void {
-	//	if( dummyNode.parent == null )
-	//		insert dummyNode into instance.overlayLayer.content;
-	//} );
+	instance.overlayLayer.content = [dummyNode, overlay];
 }
 
 /**
@@ -124,7 +106,8 @@ public class AppState extends ApplicationState {
 	 * Should be used for Nodes which must be positioned on top of everything else,
 	 * such as dialog boxes or popup menus.
 	 */
-	def overlayLayer:Panel = Panel { onLayout: function() { overlayLayer.resizeContent(); } };
+	def overlayLayer = Group { content: dummyNode };
+	//def overlayLayer:Panel = Panel { content: dummyNode, onLayout: function() { overlayLayer.resizeContent(); } };
 	
 	def localLayer = bind lazy wipePanel.content[0] as Group;
 	var wipePanel:XWipePanel;
