@@ -57,14 +57,7 @@ def runCount = 0
 def running = canvas.running;
 
 def startFuture = null
-def startMessage = newMessage()
-startMessage[TriggerCategory.ENABLED_MESSAGE_PARAM] = true
-sendStart = { send( outputTerminal, startMessage ) }
-
 def stopFuture = null
-def stopMessage = newMessage()
-stopMessage[TriggerCategory.ENABLED_MESSAGE_PARAM] = false
-sendStop = { send( outputTerminal, stopMessage ) }
 
 def endFuture = null
 
@@ -99,7 +92,7 @@ updateState = {
 	if( running ) {
 		if( currentTime < stopTime ) {
 			stopFuture?.cancel( true )
-			stopFuture = executor.schedule( sendStop, stopTime - currentTime, TimeUnit.MILLISECONDS )
+			stopFuture = executor.schedule( { sendEnabled( false ) }, stopTime - currentTime, TimeUnit.MILLISECONDS )
 		}
 		if( currentTime < interval.end ) {
 			endFuture?.cancel( true )
@@ -116,13 +109,13 @@ updateState = {
 		}
 		if( currentTime < startTime ) {
 			startFuture?.cancel( true )
-			startFuture = executor.schedule( sendStart, startTime - currentTime, TimeUnit.MILLISECONDS )
-			sendStop()
+			startFuture = executor.schedule( { sendEnabled( true ) }, startTime - currentTime, TimeUnit.MILLISECONDS )
+			sendEnabled( false )
 		} else if( currentTime < stopTime ) {
-			sendStart()
+			sendEnabled( true )
 		}
 	} else {
-		sendStop()
+		sendEnabled( false )
 	}
 	
 	interval.running = running

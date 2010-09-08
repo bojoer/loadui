@@ -17,15 +17,10 @@ package com.eviware.loadui.impl.component.categories;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.OnOffCategory;
-import com.eviware.loadui.api.events.ActionEvent;
-import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.api.events.PropertyEvent;
-import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
-import com.eviware.loadui.impl.component.ActivityStrategies;
 
 public abstract class OnOffBase extends BaseCategory implements OnOffCategory
 {
@@ -38,11 +33,6 @@ public abstract class OnOffBase extends BaseCategory implements OnOffCategory
 
 		stateProperty = context.createProperty( STATE_PROPERTY, Boolean.class, true );
 		stateTerminal = context.createInput( STATE_TERMINAL, "Activation Terminal" );
-
-		context.addEventListener( PropertyEvent.class, new PropertyListener() );
-		context.addEventListener( ActionEvent.class, new ActionListener() );
-		context.setActivityStrategy( stateProperty.getValue() ? ( context.isRunning() ? ActivityStrategies.BLINKING
-				: ActivityStrategies.ON ) : ActivityStrategies.OFF );
 	}
 
 	@Override
@@ -60,34 +50,9 @@ public abstract class OnOffBase extends BaseCategory implements OnOffCategory
 	@Override
 	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
 	{
-		if( input == stateProperty && message.containsKey( ENABLED_MESSAGE_PARAM ) )
+		if( input == stateTerminal && message.containsKey( ENABLED_MESSAGE_PARAM ) )
 		{
 			stateProperty.setValue( message.get( ENABLED_MESSAGE_PARAM ) );
-		}
-	}
-
-	private class PropertyListener implements EventHandler<PropertyEvent>
-	{
-		@Override
-		public void handleEvent( PropertyEvent event )
-		{
-			if( event.getProperty() == stateProperty && PropertyEvent.Event.VALUE == event.getEvent() )
-			{
-				getContext().setActivityStrategy(
-						stateProperty.getValue() ? ( getContext().isRunning() ? ActivityStrategies.BLINKING
-								: ActivityStrategies.ON ) : ActivityStrategies.OFF );
-			}
-		}
-	}
-
-	private class ActionListener implements EventHandler<ActionEvent>
-	{
-		@Override
-		public void handleEvent( ActionEvent event )
-		{
-			if( event.getKey() == CanvasItem.START_ACTION )
-				getContext().setActivityStrategy(
-						stateProperty.getValue() ? ActivityStrategies.BLINKING : ActivityStrategies.ON );
 		}
 	}
 }

@@ -20,8 +20,14 @@ import java.util.Map;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.TriggerCategory;
+import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
+import com.eviware.loadui.impl.component.ActivityStrategies;
 
 /**
  * Base class for trigger components which defines base behavior which can be
@@ -33,6 +39,8 @@ public abstract class TriggerBase extends OnOffBase implements TriggerCategory
 {
 	private final OutputTerminal triggerTerminal;
 	private final TerminalMessage triggerMessage;
+
+	private final ActivityListener listener = new ActivityListener();
 
 	/**
 	 * Constructs an TriggerBase.
@@ -49,6 +57,8 @@ public abstract class TriggerBase extends OnOffBase implements TriggerCategory
 
 		Map<String, Class<?>> signature = Collections.emptyMap();
 		context.setSignature( triggerTerminal, signature );
+
+		context.addEventListener( BaseEvent.class, listener );
 	}
 
 	/**
@@ -57,13 +67,7 @@ public abstract class TriggerBase extends OnOffBase implements TriggerCategory
 	final public void trigger()
 	{
 		if( getStateProperty().getValue() )
-		{
 			getContext().send( triggerTerminal, triggerMessage );
-		}
-		else
-		{
-			getContext().send( triggerTerminal, triggerMessage );
-		}
 	}
 
 	@Override
@@ -82,5 +86,26 @@ public abstract class TriggerBase extends OnOffBase implements TriggerCategory
 	final public String getColor()
 	{
 		return COLOR;
+	}
+
+	@Override
+	public void onRelease()
+	{
+		super.onRelease();
+
+		getContext().removeEventListener( BaseEvent.class, listener );
+	}
+
+	private class ActivityListener implements EventHandler<BaseEvent>
+	{
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( event instanceof ActionEvent && event.getKey() == CanvasItem.START_ACTION
+					|| event instanceof PropertyEvent && ( ( PropertyEvent )event ).getProperty() == getStateProperty() )
+				getContext().setActivityStrategy(
+						getStateProperty().getValue() ? ( getContext().isRunning() ? ActivityStrategies.BLINKING
+								: ActivityStrategies.ON ) : ActivityStrategies.OFF );
+		}
 	}
 }
