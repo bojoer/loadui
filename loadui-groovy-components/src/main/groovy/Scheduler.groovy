@@ -66,24 +66,20 @@ def runsLimit = createProperty( 'runsLimit', Long, 0 )
 
 def canvas = getCanvas()
 
-def startMessage = newMessage()
-startMessage[TriggerCategory.ENABLED_MESSAGE_PARAM] = true
 sendStart = { 
-	send( outputTerminal, startMessage ) 
+	sendEnabled( true ) 
 	startSent = true
 	counter++
 	if(runsHolder > 0 && counter >= runsHolder){
 		unscheduleStartTrigger()
 	}
-	setActivityStrategy(ActivityStrategies.BLINKING)
+	//setActivityStrategy(ActivityStrategies.BLINKING)
 	pauseTotal = 0
 }
 
-def stopMessage = newMessage()
-stopMessage[TriggerCategory.ENABLED_MESSAGE_PARAM] = false
 sendStop = { 
-	send( outputTerminal, stopMessage ) 
-	setActivityStrategy(ActivityStrategies.OFF)
+	sendEnabled( false ) 
+	//setActivityStrategy(ActivityStrategies.OFF)
 	unscheduleEndTrigger()
 	endTrigger = null
 	pauseTotal = 0
@@ -272,7 +268,7 @@ reset = {
 	startTrigger = null
 	endTrigger = null
 	startSent = false
-	setActivityStrategy(ActivityStrategies.OFF)
+	//setActivityStrategy(ActivityStrategies.OFF)
 	schedulerModel.resetRunsCounter()
 }
 
