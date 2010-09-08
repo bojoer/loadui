@@ -108,49 +108,64 @@
 	-fx-border-color: transparent;
 }
 
+.scroll-bar {
+	-fx-outer-border: #000000;
+	-fx-inner-border: linear (0%,0%) to (100%,0%) stops (0%, #0d0d0d) (30%, #202020) (100%, #333333);
+	-fx-body-color: linear (0%,0%) to (100%,0%) stops (0%, #999999) (30%, #b2b2b2) (100%, #666666);
+	-fx-shadow-highlight-color: rgba(102,102,102,0.6);
+}
+
 .scroll-bar:vertical {
-    -fx-background-color: #000000, linear (0%,0%) to (100%,0%) stops (0%, #0d0d0d) (30%, #202020) (100%, #333333);
+    -fx-background-color: -fx-outer-border, -fx-inner-border;
     -fx-background-insets: 0, 2;
 }
 
 .scroll-bar:vertical *.track {
-    -fx-background-color: #000000, linear (0%,0%) to (100%,0%) stops (0%, #0d0d0d) (30%, #202020) (100%, #333333);
+    -fx-background-color: -fx-outer-border, -fx-inner-border;
     -fx-background-insets: 0, 2;
 	-fx-background-radius: 0;
 }
 
 .scroll-bar:vertical *.thumb {
-    -fx-background-color: #00000000, #66666699, linear (0%,0%) to (100%,0%) stops (0%, #999999) (30%, #b2b2b2) (100%, #666666);
-    -fx-background-insets: 0, 1, 2;
+    -fx-background-color: -fx-shadow-highlight-color, -fx-body-color;
+    -fx-background-insets: 1, 2;
 	-fx-background-radius: 0;
 }
 
 .scroll-bar *.increment-button {
-    -fx-background-color: #000000, linear (0%,0%) to (100%,0%) stops (0%, #999999) (30%, #b2b2b2) (100%, #666666);
-    -fx-background-insets: 0, 0 2 2 2;
-	-fx-background-radius: 0;
+    -fx-background-color: -fx-outer-border, -fx-body-color;
+    -fx-background-insets: 0 0 -1 0, 0 2 1 2;
+	-fx-background-radius: 0 0 3 3, 1;
     -fx-padding: 5 3;
 }
 
 .scroll-bar *.decrement-button {
-    -fx-background-color: #000000, linear (0%,0%) to (100%,0%) stops (0%, #999999) (30%, #b2b2b2) (100%, #666666);
-    -fx-background-insets: 0, 2 2 0 2;
-	-fx-background-radius: 0;
+    -fx-background-color: -fx-outer-border, -fx-body-color;
+    -fx-background-insets: -1 0 0 0, 1 2 0 2;
+	-fx-background-radius: 3 3 0 0, 1;
     -fx-padding: 5 3;
 }
 
 .scroll-bar:vertical *.increment-arrow {
-    -fx-padding: 8 12 0 0;
-    -fx-background-color: #000000;
+    -fx-padding: 7 12 0 0;
+    -fx-background-color: -fx-outer-border;
     -fx-background-insets: 0;
     -fx-shape: "M -6 0 L 0 5 L 6 0 L 5 -1 L 0 3 L -5 -1 z"
 }
 
 .scroll-bar:vertical *.decrement-arrow {
-    -fx-padding: 8 12 0 0;
-    -fx-background-color: #000000;
+    -fx-padding: 7 12 0 0;
+    -fx-background-color: -fx-outer-border;
     -fx-background-insets: 0;
     -fx-shape: "M -6 0 L 0 -5 L 6 0 L 5 1 L 0 -3 L -5 1 z";
+}
+
+/* Alternative Scrollbar skin */
+.note *.scroll-bar, .summary-scroll-view *.scroll-bar {
+	-fx-outer-border: #b8b588;
+	-fx-inner-border: linear (0,0) to (100,0) stops (0.0, #d1cd99) (1.0, #e4ddab);
+	-fx-body-color: linear (0,0) to (100,0) stops (0.0, #ede7b0) (1.0, #d1cc96);
+	-fx-shadow-highlight-color: rgba(102,102,102,0.3);
 }
 
 /** Note */
