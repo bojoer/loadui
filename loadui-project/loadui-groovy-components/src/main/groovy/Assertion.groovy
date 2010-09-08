@@ -71,6 +71,9 @@ failedResetValue = 0
 
 assertedDisplay = new DelayedFormattedString( '%d', 500, value { totalCounter.get()-assertedResetValue } )
 failedDisplay = new DelayedFormattedString( '%d', 500, value { failureCounter.get()-failedResetValue } )
+valueDisplay = new DelayedFormattedString( '%s', 500, value { value.value } )
+minDisplay = new DelayedFormattedString( '%d', 500, value { min.value } )
+maxDisplay = new DelayedFormattedString( '%d', 500, value { max.value } )
 
 onConnect = { outgoing, incoming ->
 	if( incoming == inputTerminal ){
@@ -245,6 +248,9 @@ layout {
 //Compact Layout
 compactLayout {
 	box( widget:'display' ) {
+		node( label:'Value', fString: valueDisplay, constraints:'w 60!' )
+		node( label:'Min', fString: minDisplay, constraints:'w 60!' )
+		node( label:'Max', fString: maxDisplay, constraints:'w 60!' )
 		node( label:'Asserted', fString: assertedDisplay )
 		node( label:'Failed', fString: failedDisplay )
 	}
