@@ -141,7 +141,7 @@ public class Note extends BaseNode, Movable, Selectable, Deletable {
 		}
 		onMouseDragged: function( e:MouseEvent ) {
 			textWidth = Math.max( 100, startWidth + e.dragX as Integer );
-			textHeight = Math.max( 75, startHeight + e.dragY as Integer );
+			textHeight = Math.max( 38, startHeight + e.dragY as Integer );
 		}
 		onMouseReleased: function( e:MouseEvent ) {
 			save();
@@ -176,7 +176,10 @@ public class Note extends BaseNode, Movable, Selectable, Deletable {
 						}
 						action: function():Void { canvas.createNote( layoutX + textWidth + 50, layoutY ) }
 					}, Separator {
-						styleClass: "", layoutInfo: LayoutInfo { height: 0, minWidth: 0, hfill: true, hgrow: Priority.ALWAYS }
+						styleClass: ""
+						vertical: true
+						layoutInfo: LayoutInfo { height: 0, minWidth: 1, width: 1, hfill: true, hgrow: Priority.ALWAYS }
+						blocksMouse: false
 					}, Label {
 						text: "NOTE"
 					}

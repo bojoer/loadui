@@ -69,6 +69,12 @@ public class MainButton extends Group {
 							new AboutDialog();
 						}
 					},
+					MenuItem {
+						text: ##[SYSTEM_PROPERTIES]"System Properties"
+						action: function() {
+							new SystemPropertiesDialog();
+						}
+					},
 		/*			MenuItem {
 						text: ##[UPDATES]"Get Updates"
 						action: function() {
