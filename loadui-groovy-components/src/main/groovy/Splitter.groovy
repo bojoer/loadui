@@ -155,7 +155,7 @@
 	}
  }
  
- layout ( layout:'center' ) { 
+ layout ( layout:'gap 10 5' ) { 
     node(widget: 'selectorWidget', label:"Type", labels:["Round-Robin", "Random"], default: "Round-Robin", selected: selected)
     separator( vertical: true )
     node( widget: 'sliderWidget', property: outputs, constraints:'center, w 270!' )
