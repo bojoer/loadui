@@ -251,6 +251,13 @@ public class TestCaseMenu extends HBox {
 									}
 									Separator{}
 									MenuItem {
+										text: "Save Project"
+										action: function() {
+											MainWindow.instance.testcaseCanvas.canvasItem.getProject().save(); 
+										}
+									}
+									
+									MenuItem {
 										text: "Close"
 										action: function() {
 											MainWindow.instance.testcaseCanvas.generateMiniatures();
