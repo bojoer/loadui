@@ -798,7 +798,7 @@ Appendix
                         <string>Read about how to get started with LoadUI</string>
                       </void>
                       <void property="url">
-                        <string>http://loadui.org/loadui/index.php?/Getting-Started-with-loadUI/your-first-loadui-project.html</string>
+                        <string>http://loadui.org/Getting-Started-with-loadUI/your-first-load-test.html</string>
                       </void>
                     </object>
                   </java>
