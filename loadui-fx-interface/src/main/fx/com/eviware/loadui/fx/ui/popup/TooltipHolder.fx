@@ -54,7 +54,6 @@ public mixin class TooltipHolder extends BaseMixin {
 	        delete label from AppState.overlay;
 	    }
 	    showing = show;
-	    println("showing {showing}");
 	}
 	
 	init {
