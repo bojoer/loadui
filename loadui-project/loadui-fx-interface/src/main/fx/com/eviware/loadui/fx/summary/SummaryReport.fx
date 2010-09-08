@@ -156,7 +156,10 @@ public class SummaryReport extends Stack {
 			
 			//var sdf: SimpleDateFormat = new SimpleDateFormat("d MMM yyyy hh:mm a", Locale.ENGLISH);
 			date = sdf.format(chapter.getDate()).toLowerCase();
-			descr = chapter.getDescription();
+			if ( chapter.getDescription() == null or chapter.getDescription().trim().length() == 0 )
+		    	descr = "N/A"
+		    else
+				descr = chapter.getDescription();
 			
 			delete summarySections.content;
 			
