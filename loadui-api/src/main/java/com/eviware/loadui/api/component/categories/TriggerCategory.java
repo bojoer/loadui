@@ -15,9 +15,6 @@
  */
 package com.eviware.loadui.api.component.categories;
 
-import com.eviware.loadui.api.component.ComponentBehavior;
-import com.eviware.loadui.api.property.Property;
-import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 
 /**
@@ -28,7 +25,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
  * 
  * @author dain.nilsson
  */
-public interface TriggerCategory extends ComponentBehavior
+public interface TriggerCategory extends OnOffCategory
 {
 	/**
 	 * The String identifier of the category.
@@ -41,33 +38,9 @@ public interface TriggerCategory extends ComponentBehavior
 	public static final String COLOR = "#ec420b";
 
 	/**
-	 * The label of the Property<Boolean> which is returned by
-	 * getStateProperty().
-	 */
-	public static final String STATE_PROPERTY = "stateProperty";
-
-	/**
-	 * The label of the InputTerminal which is returned by getStateTerminal().
-	 */
-	public static final String STATE_TERMINAL = "stateTerminal";
-
-	/**
 	 * The label of the OutputTerminal which is returned by getTriggerTerminal().
 	 */
 	public static final String TRIGGER_TERMINAL = "triggerTerminal";
-
-	/**
-	 * The key to be used to set the stateProperty for incomming messages.
-	 */
-	public static final String ENABLED_MESSAGE_PARAM = "Enabled";
-
-	/**
-	 * Returns the State Property which controls if the component is enabled or
-	 * disabled.
-	 * 
-	 * @return
-	 */
-	public Property<Boolean> getStateProperty();
 
 	/**
 	 * Returns the OutputTerminal which outputs the trigger message.
@@ -75,12 +48,4 @@ public interface TriggerCategory extends ComponentBehavior
 	 * @return
 	 */
 	public OutputTerminal getTriggerTerminal();
-
-	/**
-	 * Returns the state InputTerminal which can control the state of the
-	 * component.
-	 * 
-	 * @return
-	 */
-	public InputTerminal getStateTerminal();
 }

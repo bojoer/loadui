@@ -19,9 +19,8 @@ import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.SchedulerCategory;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 
-public abstract class SchedulerBase extends BaseCategory implements SchedulerCategory
+public abstract class SchedulerBase extends OnOffBase implements SchedulerCategory
 {
-
 	private final OutputTerminal output;
 
 	public SchedulerBase( ComponentContext context )
@@ -29,7 +28,6 @@ public abstract class SchedulerBase extends BaseCategory implements SchedulerCat
 		super( context );
 
 		output = context.createOutput( OUTGOING_TERMINAL, "Scheduling Terminal" );
-
 	}
 
 	@Override
