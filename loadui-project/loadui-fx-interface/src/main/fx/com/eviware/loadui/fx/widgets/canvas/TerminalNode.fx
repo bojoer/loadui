@@ -201,12 +201,11 @@ class TerminalDraggable extends BaseNode, Draggable, TooltipHolder {
 	public-init var tNode:TerminalNode;
 	
 	override function create() {
-	    if (terminal.getDescription() != null) {
+		if (terminal.getDescription() != null) {
 			tooltip = StringUtils.capitalize( terminal.getDescription() );
-	    } else {
+		} else {
 			tooltip = StringUtils.capitalize( terminal.getLabel() );
-	    }
-		
+		}
 		Group {
 			content: [
 				Circle {
