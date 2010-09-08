@@ -106,7 +106,7 @@ public class GettingStartedWizard {
 					             Button {
 					                 text: "Read the Getting Started Tutorial"
 					                 action: function () {
-  					                     openURL("http://www.loadui.org/Getting-Started-with-loadUI/your-first-load-test.html")
+  					                     openURL("http://loadui.org/Getting-Started-with-loadUI/your-first-load-test.html")
   					                 }
 					             },
 					             Button {
