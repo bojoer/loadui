@@ -169,7 +169,7 @@ sample = { message, sampleId ->
 	def uri = message['url'] ?: url.value
 	if( uri ) {
 		def get = new HttpGet( uri )
-		
+		message['ID'] = uri
 		
 		runningSamples.add( get )
 		try {
@@ -208,7 +208,6 @@ sample = { message, sampleId ->
 				if (!runningSamples.remove(get)) {
 					throw new SampleCancelledException()
 				}
-				message['id'] = "test"
 				
 				return message
 			}
