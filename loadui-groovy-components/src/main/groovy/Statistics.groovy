@@ -94,7 +94,6 @@ avgBpsDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
 percentileDisplay = new DelayedFormattedString( '%.2f', 500, 0f )
 avgRespSizeDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
 
-
 createProperty( 'selectedAgent', String, AGGREGATE )
 
 OptionsProvider availableAgents = new OptionsProviderImpl( AGGREGATE );
@@ -114,8 +113,6 @@ yRange.title = 'ms KB'
 y2Range = new CustomNumericRange(0, 10, 20)
 y2Range.visible = true
 y2Range.title = 'requests'
-
-
 
 ChartModel chartModel = new ChartModel(xRange, yRange, y2Range, 420, 180)
 chartModel.addChartListener(new ChartAdapter(){

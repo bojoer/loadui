@@ -288,9 +288,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		if( hasCurrentlyRunning )
 		{
-//			TerminalMessage message = getContext().newMessage();
-//			message.put( CURRENTLY_RUNNING_MESSAGE_PARAM, running );
-//			getContext().send( currentlyRunningTerminal, message );
+			TerminalMessage message = getContext().newMessage();
+			message.put( CURRENTLY_RUNNING_MESSAGE_PARAM, running );
+			getContext().send( currentlyRunningTerminal, message );
 		}
 	}
 
