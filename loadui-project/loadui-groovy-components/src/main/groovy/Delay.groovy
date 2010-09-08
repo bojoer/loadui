@@ -32,9 +32,11 @@ import com.eviware.loadui.util.layout.DelayedFormattedString
 random = new Random()
  
 display = new DelayedFormattedString( ' %d /ms ', 500, 0 )
+waitingDisplay = new DelayedFormattedString( ' %d  ', 500, 0 )
  
 output = createOutput( 'output', "Message Output" )
  
+waitingCount = 0;
 createProperty('delay', Long, 0)
 createProperty('selected', String, 'none')
 createProperty('randomDelay', Integer, 0)
@@ -44,23 +46,30 @@ executor = Executors.newSingleThreadScheduledExecutor()
 onMessage = { incoming, outgoing, message ->
     super.onTerminalMessage(incoming, outgoing, message)
     delayIsRandom = random.nextInt(101) > randomDelay.value
-    
+    waitingCount++;
+    waitingDisplay.setArgs(waitingCount);
     if ( selected.value == 'none'  ) {
         message.put("actualDelay", delay.value )
         executor.schedule( { 
                  send( output, message);
+                 waitingCount--;
+    			waitingDisplay.setArgs(waitingCount);
                        display.setArgs( message.get("actualDelay") ) }, delay.value, TimeUnit.MILLISECONDS ) 
     }
     if ( selected.value == 'Gauss' && delayIsRandom ) {
         tmpDelay = Math.abs( (int)(random.nextGaussian() * delay.value) )
         message.put("actualDelay", tmpDelay )
         executor.schedule( { send( output, message);
+        					waitingCount--;
+    						waitingDisplay.setArgs(waitingCount);
                              display.setArgs( message.get("actualDelay") )  }, tmpDelay, TimeUnit.MILLISECONDS )
     }
     if ( selected.value == 'Uniform' && delayIsRandom ) {
         tmpDelay = Math.abs( (int)(random.random() * delay.value) )
         message.put("actualDelay", tmpDelay )
         executor.schedule( { send( output, message);
+        						waitingCount--;
+    							waitingDisplay.setArgs(waitingCount);
                              display.setArgs( message.get("actualDelay") ) }, tmpDelay, TimeUnit.MILLISECONDS ) 
     }
  }
@@ -91,12 +100,14 @@ onMessage = { incoming, outgoing, message ->
     property( property: randomDelay, label:'Random(%)', min:0, max: 100 )
     separator( vertical:true )
     box( widget:'display',  constraints:'w 100!' ) {
-        node( label:'delay ', fString:display, constraints:'wrap' )
+        node( label:'delay ', fString:display )
+        node( label:'waiting ', fString:waitingDisplay )
     }
  }
  
 compactLayout {
 	box( widget:'display' ) {
 		node( label:'delay ', fString:display )
+		node( label:'waiting ', fString:waitingDisplay )
 	}
 }
