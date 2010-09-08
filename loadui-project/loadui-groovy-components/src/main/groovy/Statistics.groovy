@@ -159,7 +159,7 @@ analyze = { message ->
 		if( !message.containsKey('TimeTaken') )
 			return
 		
-		String sourceID = message['id']
+		String sourceID = message['id'] == null ? message['ID']:message['id'] 
 		
 		if (!(sourceID == null) && !sourceIDs.contains(sourceID)) {
 			sourceIDs.add(sourceID)
