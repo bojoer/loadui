@@ -65,6 +65,8 @@ import com.eviware.loadui.api.terminal.TerminalMessage;
 executor = Executors.newSingleThreadScheduledExecutor()
 future = executor.scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
 
+createOutput( 'statisticsOutput', 'Runner Statistics' )
+
 //SSL support, trust all certificates and hostnames.
 class NaiveTrustManager implements X509TrustManager {
 	void checkClientTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
@@ -346,10 +348,10 @@ executor.scheduleAtFixedRate(
 	message["Failed"]= Integer.parseInt( displayFailed.getCurrentValue() ) 
 	message["Queued"]= Integer.parseInt( displayQueue.getCurrentValue() ) 
 	message["Completed"]= Integer.parseInt( displayTotal.getCurrentValue() ) 
-	send( currentlyRunningTerminal, message );
+	send( statisticsOutput, message );
 }, 1000, 1000, TimeUnit.MILLISECONDS );
 
-def currentlyRunningSignature = [
+def statisticsSignature = [
 		"Requests" : Integer.class,
 		"Running" : Integer.class,
 		"Discarded" : Integer.class,
@@ -358,4 +360,4 @@ def currentlyRunningSignature = [
 		"Completed" : Integer.class,
 		]
 
-setSignature(currentlyRunningTerminal, currentlyRunningSignature)
+setSignature(statisticsOutput, statisticsSignature)
