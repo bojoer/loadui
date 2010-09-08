@@ -397,6 +397,9 @@ Appendix
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.formcomponents.TextfieldComponent">
+                      <void property="columns">
+                        <int>30</int>
+                      </void>
                       <void property="labelText">
                         <string>Proxy:</string>
                       </void>
@@ -413,6 +416,9 @@ Appendix
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.formcomponents.IntegerTextfieldComponent">
+                      <void property="columns">
+                        <int>6</int>
+                      </void>
                       <void property="labelText">
                         <string>Port:</string>
                       </void>
