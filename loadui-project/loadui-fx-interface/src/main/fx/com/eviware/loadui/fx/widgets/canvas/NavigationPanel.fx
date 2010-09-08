@@ -73,7 +73,7 @@ public class NavigationPanel extends CustomNode, Resizable {
 	def scale = bind Math.min( ( width - 32 ) / canvas.areaWidth, ( height - 58 ) / canvas.areaHeight );
 	
 	def objects = bind [ canvas.components, canvas.notes ] on replace {
-		FX.deferAction( function():Void { createHolders(); refreshMinis(); } );
+		FX.deferAction( function():Void { createHolders(); shouldRefreshMinis = true; } );
 	}
 	
 	def miniatures = Group {

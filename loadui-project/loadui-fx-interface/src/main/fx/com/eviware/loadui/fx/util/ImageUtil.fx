@@ -38,6 +38,7 @@ import java.io.ByteArrayInputStream;
 import javafx.scene.image.Image;
 import javafx.ext.swing.SwingUtils;
 import com.sun.scenario.scenegraph.SGNode;
+import com.sun.javafx.geom.Bounds2D;
 
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -52,6 +53,49 @@ def getFXNode = nodeClass.getFunction("impl_getPGNode");
 public function nodeToImage(node: Node) : BufferedImage {
 	def nodeBounds = node.layoutBounds;
 	nodeToImage(node, nodeBounds.width, nodeBounds.height);
+}
+
+public function nodeToImage(node: Node, clipNode: Node) : BufferedImage {
+
+    var g2:Graphics2D;
+
+    def sgNode = (getFXNode.invoke(
+        context.mirrorOf(node)) as FXLocal.ObjectValue).asObject();
+    
+    def sgClipNode = (getFXNode.invoke(
+        context.mirrorOf(clipNode)) as FXLocal.ObjectValue).asObject();
+    
+    (sgNode as SGNode).setClipNode(sgClipNode as SGNode);
+    
+    def g2dClass = (context.findClass(
+        "java.awt.Graphics2D") as FXLocal.ClassType).getJavaImplementationClass();
+    def boundsClass = (context.findClass(
+        "com.sun.javafx.geom.Bounds2D")
+            as FXLocal.ClassType).getJavaImplementationClass();
+    def affineClass = (context.findClass(
+        "com.sun.javafx.geom.transform.BaseTransform")
+            as FXLocal.ClassType).getJavaImplementationClass();
+
+    def getBounds = sgNode.getClass().getMethod(
+        "getContentBounds", boundsClass, affineClass);
+    def bounds2D = getBounds.invoke(
+        sgNode, new com.sun.javafx.geom.Bounds2D(),
+            new com.sun.javafx.geom.transform.Affine2D());
+
+    var paintMethod = sgNode.getClass().getMethod(
+        "render", g2dClass, boundsClass, affineClass);
+
+    var ge: GraphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment(); 
+    var gs: GraphicsDevice = ge.getDefaultScreenDevice(); 
+    var gc: GraphicsConfiguration = gs.getDefaultConfiguration(); 
+    def bufferedImage = gc.createCompatibleImage(clipNode.layoutBounds.width, clipNode.layoutBounds.height, Transparency.BITMASK);
+
+    g2 = (bufferedImage.getGraphics() as Graphics2D);
+    paintMethod.invoke(sgNode, g2, bounds2D,
+        new com.sun.javafx.geom.transform.Affine2D());
+    g2.dispose();
+
+    return bufferedImage;
 }
 
 public function nodeToImage(node: Node, width: Number, height: Number) : BufferedImage {

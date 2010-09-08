@@ -39,11 +39,17 @@ public class CorruptProjectDialog {
 	public-init var project:ProjectRef;
 	
 	postinit {
-		
+		var msg: String;
+		if(project.getProjectFile().exists()){
+			msg = "The file is corrupted. Would you like to remove  '{project.getLabel()}' from the Workspace?";
+		}
+		else{
+			msg = "The project file was removed from the file system.\n\rWould you like to remove  '{project.getLabel()}' from the Workspace?";
+		}
 		def dialog:Dialog = Dialog {
 			title: "{project.getLabel()} is corrupted"
 			content: [
-				Label { text: "The file is corrupted. Would you like to remove  '{project.getLabel()}' from the Workspace?" },
+				Label { text: msg }
 			]
 			okText: "Remove"
 			onOk: function() {
