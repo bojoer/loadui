@@ -234,6 +234,7 @@ public class MainWindow {
 			appState.transitionTo( AppState.WORKSPACE_FRONT, AppState.FADE_WIPE );
 			appState.scene = scene;
 			SplashController.closeSplash();
+			projectList.checkExistingProjects();
 		});
 		
 		if( workspace.getAttribute( GettingStartedWizard.SHOW_GETTING_STARTED, "true" ) == "true" )

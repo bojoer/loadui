@@ -35,6 +35,7 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.util.ImageUtil.*;
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
 
 import java.io.IOException;
 import java.lang.RuntimeException;
@@ -147,8 +148,27 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 			text: ##[OPEN]"Open"
 			action: function() {
 			    try {
-					projectRef.setEnabled( true );
-					AppState.instance.setActiveCanvas( projectRef.getProject() );
+			        if ( projectRef.getProject() != null ) {
+						projectRef.setEnabled( true );
+						AppState.instance.setActiveCanvas( projectRef.getProject() );
+			        } else {
+			            var dialog:Dialog = Dialog {
+            	    			        		x: 300
+            	    			        		y: 300
+            	    			    			title: "Error loading project: {projectRef.getLabel()}"
+            	    			    			content: [
+            	    			    				javafx.scene.control.Label { text: "Project file does not exists, do you want to be removed from workspace?"}
+            	    			    			]
+            	    			    			okText: "Ok"
+            	    			    			onOk: function() {
+            	    			    				MainWindow.instance.workspace.removeProject( projectRef );
+            	    			    				dialog.close();
+            	    			    			}
+            	    			    			onCancel: function() {
+            	    			    			    dialog.close()
+            	    			    			}
+			            	    			   }
+			        }
 			     }
 			    catch( e:IOException )
 			    {
@@ -159,7 +179,28 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 		Separator{}
 		MenuItem {
 			text: ##[CLONE]"Clone"
-			action: function() { CloneProjectDialog { projectRef: projectRef } }
+			action: function() { 
+			    if( projectRef.getProjectFile().exists() )
+					CloneProjectDialog { projectRef: projectRef }
+				else {
+				    var dialog:Dialog = Dialog {
+            	    			        		x: 300
+            	    			        		y: 300
+            	    			    			title: "Error loading project: {projectRef.getLabel()}"
+            	    			    			content: [
+            	    			    				javafx.scene.control.Label { text: "Project file does not exists, do you want to be removed from workspace?"}
+            	    			    			]
+            	    			    			okText: "Ok"
+            	    			    			onOk: function() {
+            	    			    				MainWindow.instance.workspace.removeProject( projectRef );
+            	    			    				dialog.close();
+            	    			    			}
+            	    			    			onCancel: function() {
+            	    			    			    dialog.close()
+            	    			    			}
+			            	    		}
+				} 
+			}
 		}
 		MenuItem {
 			text: ##[DELETE]"Delete"
