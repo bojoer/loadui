@@ -96,7 +96,7 @@ public class TestCaseNode extends CanvasObjectNode {
 							if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
 							    AppState.instance.blockingTask( function():Void {
 									AppState.instance.setActiveCanvas( testCase );
-								}, null, "Initilaizing TestCase." );
+								}, null, "Initializing TestCase." );
 							}
 						}
 					}, ImageView {
