@@ -32,6 +32,7 @@ import com.eviware.loadui.fx.ui.pagelist.PagelistControl;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.DroppableNode;
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
 
@@ -97,12 +98,36 @@ public class ProjectList extends CustomNode, Resizable, EventHandler {
 		
 		workspace.addEventListener( CollectionEvent.class, this );
 		
-		for( ref in workspace.getProjectRefs() )
-			addProjectRef( ref );
+		for( ref in workspace.getProjectRefs() ) 
+				addProjectRef( ref )
 	}
 	
 	function addProjectRef( ref:ProjectRef ):Void {
 		pagelist.content = Sequences.sort( [ pagelist.content, DraggableFrame { draggable:ProjectNode { projectRef: ref } } ], COMPARE_BY_TOSTRING ) as Node[];
+	}
+	
+	public function checkExistingProjects() {
+	    for( ref in workspace.getProjectRefs() ) {
+    			if ( not ref.getProjectFile().exists() ) {
+	    			    var dialog:Dialog = Dialog {
+	    			        		x: 300
+	    			        		y: 300
+	    			    			title: "Error loading project: {ref.getLabel()}"
+	    			    			content: [
+	    			    				javafx.scene.control.Label { text: "Project file does not exists, do you want to be removed from workspace?"}
+	    			    			]
+	    			    			okText: "Ok"
+	    			    			onOk: function() {
+	    			    				workspace.removeProject( ref );
+	    			    				dialog.close();
+	    			    			}
+	    			    			onCancel: function() {
+	    			    			    dialog.close()
+	    			    			}
+	    			    		}
+	    		}
+	    		
+	    }
 	}
 	
 	function removeProjectRef( ref:ProjectRef ):Void {
