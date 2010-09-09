@@ -33,6 +33,7 @@ import com.eviware.loadui.fx.ui.XWipePanel;
 import com.eviware.loadui.fx.ui.WaitingScreen;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
+import com.eviware.loadui.fx.widgets.canvas.Selectable;
 import java.lang.IllegalArgumentException;
 import java.util.HashMap;
 import java.util.Map;
@@ -172,6 +173,7 @@ public class AppState extends ApplicationState {
 	
 	override function setActiveCanvas( canvas:CanvasItem ) {
 		FxUtils.runInFxThread(function():Void {
+			Selectable.selectNone();
 			if( canvas instanceof ProjectItem ) {
 				MainWindow.instance.projectCanvas.canvasItem = canvas;
 				transitionTo( AppState.PROJECT_FRONT, AppState.ZOOM_WIPE );
