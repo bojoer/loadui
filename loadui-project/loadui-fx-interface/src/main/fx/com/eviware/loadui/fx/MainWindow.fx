@@ -113,7 +113,7 @@ public class MainWindow {
 	function initialize():Void {
 	
 		//change classloader of JavaFX thread to this thread's (Spring's) classloader
-		FxUtils.setJavaFXThreadClassLoader(Thread.currentThread().getContextClassLoader());
+		//FxUtils.setJavaFXThreadClassLoader(Thread.currentThread().getContextClassLoader());
 		
 		//scene.stylesheets = "{__ROOT__}themes/default/style.css";
 		//scene.stylesheets = "{FX.getProperty('javafx.user.home')}{File.separator}.loadui{File.separator}style.css";
