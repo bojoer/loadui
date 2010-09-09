@@ -21,6 +21,7 @@ import java.util.Map;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.ComponentContext.Scope;
+import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.serialization.Value;
@@ -92,7 +93,8 @@ public class GroovyContextSupport extends GroovyObjectSupport
 		context.triggerAction( actionName, Scope.COMPONENT );
 	}
 
-	public <T extends EventObject> EventHandler<T> addEventListener( Class<T> type, final Closure closure )
+	public <T extends EventObject> EventHandler<T> addEventListener( EventFirer target, Class<T> type,
+			final Closure closure )
 	{
 		EventHandler<T> listener = new EventHandler<T>()
 		{
@@ -102,8 +104,13 @@ public class GroovyContextSupport extends GroovyObjectSupport
 				closure.call( event );
 			}
 		};
-		context.addEventListener( type, listener );
+		target.addEventListener( type, listener );
 		return listener;
+	}
+
+	public <T extends EventObject> EventHandler<T> addEventListener( Class<T> type, final Closure closure )
+	{
+		return addEventListener( context, type, closure );
 	}
 
 	public Value<?> value( Closure closure )
