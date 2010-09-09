@@ -361,6 +361,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 		if( TIMER_COUNTER.equals( counterName ) )
 			fixTimeLimit();
+		fireBaseEvent( LIMITS );
 	}
 
 	@Override
@@ -449,7 +450,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	{
 		this.running = running;
 	}
-	
+
 	public Date getStartTime()
 	{
 		return startTime;
@@ -539,10 +540,10 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 						timerFuture.cancel( true );
 					if( timeLimitFuture != null )
 						timeLimitFuture.cancel( true );
-					
+
 					Calendar endTimeCal = Calendar.getInstance();
-					endTimeCal.setTime(startTime);
-					endTimeCal.add(Calendar.SECOND, (int)time);
+					endTimeCal.setTime( startTime );
+					endTimeCal.add( Calendar.SECOND, ( int )time );
 					endTime = endTimeCal.getTime();
 				}
 				else if( CounterHolder.COUNTER_RESET_ACTION.equals( event.getKey() ) )
@@ -554,13 +555,14 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 					{
 						hasStarted = false;
 						new ComponentBusyAwaiter( event.getSource() );
-						//onComplete( event.getSource() );
+						// onComplete( event.getSource() );
 					}
 					else
 						triggerAction( READY_ACTION );
 				}
 			}
-			else if( "controller".equals( System.getProperty( "loadui.instance" ) ) && event instanceof CounterEvent && isRunning() )
+			else if( "controller".equals( System.getProperty( "loadui.instance" ) ) && event instanceof CounterEvent
+					&& isRunning() )
 			{
 				CounterEvent cEvent = ( CounterEvent )event;
 				long limit = getLimit( cEvent.getKey() );
@@ -619,18 +621,18 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 			return time;
 		}
 	}
-	
+
 	private class ComponentBusyAwaiter implements EventHandler<BaseEvent>
 	{
 		private final EventFirer source;
 		private final AtomicInteger awaiting = new AtomicInteger();
-		
+
 		public ComponentBusyAwaiter( EventFirer source )
 		{
 			this.source = source;
 			tryReady();
 		}
-		
+
 		private void tryReady()
 		{
 			awaiting.set( 0 );
