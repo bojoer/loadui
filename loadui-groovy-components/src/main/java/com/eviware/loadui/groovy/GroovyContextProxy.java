@@ -419,8 +419,7 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 			String[] parts = depMatcher.group( 1 ).split( ":" );
 			if( parts.length >= 3 )
 			{
-				if( System.getProperty( "os.name" ).toLowerCase().contains( "mac" )
-						|| "agent".equals( System.getProperty( "loadui.instance" ) ) )
+				if( Boolean.getBoolean( "loadui.grape.disable" ) )
 				{
 					File depFile = new File( System.getProperty( "groovy.root" ), "grapes" + File.separator + parts[0]
 							+ File.separator + parts[1] + File.separator + "jars" + File.separator + parts[1] + "-" + parts[2]
