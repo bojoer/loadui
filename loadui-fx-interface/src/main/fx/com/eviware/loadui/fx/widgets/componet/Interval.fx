@@ -204,8 +204,8 @@ public class Interval extends Panel, Resizable, Observer {
         def duration = ( model.getStop() - model.getStart() ) / 1000;
         def endTime = model.getEnd() / 1000;
         startPeriodText2 = "{Math.round(startTime/60)}:{startTime mod 60} min";
-        endPeriodText2 = "{Math.round(duration/60)}:{duration mod 60} min";
-        endLimitText = "{Math.round(endTime/60)}:{endTime mod 60} min";
+        endPeriodText2 = if(model.isInfinite()) "Infinite" else "{Math.round(duration/60)}:{duration mod 60} min";
+        endLimitText = if(model.isInfinite()) "Infinite" else "{Math.round(endTime/60)}:{endTime mod 60} min";
         
         if( model.getEnd() > 0 ) {
         		positionNode( startPeriodLine, 30 + model.getStart() * mainLength / model.getEnd(), startPeriodLine.boundsInParent.minY );
