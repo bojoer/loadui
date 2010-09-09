@@ -401,6 +401,9 @@ buildSignature = {
 
 resetComponent = {
 	chartModel.clear()
+	sourceIDs = ["none"]
+	currentSourceID.value = "none"
+	availableSourceIDs.options = sourceIDs 
 }
 
 resetBuffers = {
