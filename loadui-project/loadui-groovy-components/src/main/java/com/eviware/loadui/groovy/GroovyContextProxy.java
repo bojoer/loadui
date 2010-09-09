@@ -442,13 +442,23 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 					log.debug( "Loading dependency using Grape: " + depMatcher.group( 1 ) );
 					try
 					{
+						System.err.println( "ContextClassLoader: " + Thread.currentThread().getContextClassLoader() );
+						System.err.println( "getResource: "
+								+ Thread.currentThread().getContextClassLoader().getResource( "defaultGrapeConfig.xml" ) );
+						System.err.println( "Grape.class.getClassLoader: " + Grape.class.getClassLoader() );
+						System.err.println( "getResource: "
+								+ Grape.class.getClassLoader().getResource( "defaultGrapeConfig.xml" ) );
+
 						Grape.grab( MapUtils.build( String.class, Object.class ).put( "group", parts[0] )
 								.put( "module", parts[1] ).put( "version", parts[2] )
 								.put( "classLoader", shell.getClassLoader() ).get() );
+
+						System.err.println( "GrapeIvy.class.getClassLoader: "
+								+ Class.forName( "groovy.grape.GrapeIvy" ).getClassLoader() );
 					}
 					catch( Exception e )
 					{
-						log.debug( "Failed loading dependencies using Grape, fallback to manual jar loading." );
+						log.error( "Failed loading dependencies using Grape, fallback to manual jar loading." );
 						System.setProperty( "loadui.grape.disable", "true" );
 						loadDependencies( scriptContent );
 						return;
