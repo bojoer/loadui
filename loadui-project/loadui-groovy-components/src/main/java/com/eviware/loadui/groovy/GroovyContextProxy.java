@@ -440,6 +440,7 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 				else
 				{
 					log.debug( "Loading dependency using Grape: " + depMatcher.group( 1 ) );
+					final ClassLoader cl = Thread.currentThread().getContextClassLoader();
 					try
 					{
 						System.err.println( "shell.getClassloader(): " + shell.getClassLoader() );
@@ -447,6 +448,8 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 						System.err.println( "Grape.class.getClassLoader(): " + Grape.class.getClassLoader() );
 						System.err
 								.println( "Grape.class.getResource: " + Grape.class.getResource( "defaultGrapeConfig.xml" ) );
+
+						Thread.currentThread().setContextClassLoader( shell.getClassLoader() );
 
 						Grape.grab( MapUtils.build( String.class, Object.class ).put( "group", parts[0] )
 								.put( "module", parts[1] ).put( "version", parts[2] )
@@ -462,6 +465,10 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 						System.setProperty( "loadui.grape.disable", "true" );
 						loadDependencies( scriptContent );
 						return;
+					}
+					finally
+					{
+						Thread.currentThread().setContextClassLoader( cl );
 					}
 				}
 			}
