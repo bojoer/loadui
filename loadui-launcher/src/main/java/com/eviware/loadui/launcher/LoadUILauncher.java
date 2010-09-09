@@ -178,8 +178,9 @@ public class LoadUILauncher
 
 	protected void start()
 	{
-		// Always disable grape on mac for now.
-		if( System.getProperty( "loadui.grape.disable" ) == null && System.getProperty( "os.name" ).contains( "mac" ) )
+		// Always disable grape on the Mac controller for now.
+		if( System.getProperty( "loadui.grape.disable" ) == null && System.getProperty( "os.name" ).contains( "mac" )
+				&& System.getProperty( "loadui.instance" ).equals( "controller" ) )
 			System.setProperty( "loadui.grape.disable", "true" );
 
 		try
