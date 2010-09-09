@@ -21,8 +21,6 @@ public class SplashController
 			window = new JWindow();
 			Container contentPane = window.getContentPane();
 
-			window.setAlwaysOnTop( true );
-
 			ImageIcon image;
 			try
 			{

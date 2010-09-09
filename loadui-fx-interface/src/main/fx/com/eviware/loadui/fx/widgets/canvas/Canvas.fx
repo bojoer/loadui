@@ -38,6 +38,7 @@ import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.Menu;
 
 import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.widgets.ModelItemHolder;
 import com.eviware.loadui.fx.ui.node.BaseNode;
@@ -401,6 +402,14 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			noteLayer.content = [ dummyNodeNotes, Note.loadNotes( this ) ];
 				
 			refreshComponents();
+		} else {
+			if( AppState.instance.getActiveCanvas() == null ) {
+				if( MainWindow.instance.projectCanvas.canvasItem == null ) {
+					AppState.instance.displayWorkspace();
+				} else {
+					AppState.instance.transitionTo( AppState.PROJECT_FRONT, null );
+				}
+			}
 		}
 	}
 	
