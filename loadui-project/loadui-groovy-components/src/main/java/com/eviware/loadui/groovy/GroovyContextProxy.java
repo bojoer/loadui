@@ -442,6 +442,7 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 					log.debug( "Loading dependency using Grape: " + depMatcher.group( 1 ) );
 					try
 					{
+						System.err.println( "shell.getClassloader(): " + shell.getClassLoader() );
 						System.err.println( "ContextClassLoader: " + Thread.currentThread().getContextClassLoader() );
 						System.err.println( "Grape.class.getClassLoader(): " + Grape.class.getClassLoader() );
 						System.err
