@@ -148,7 +148,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 			text: ##[OPEN]"Open"
 			action: function() {
 			    try {
-			        if ( projectRef.getProject() != null ) {
+			        if ( projectRef.getProjectFile().exists() ) {
 						projectRef.setEnabled( true );
 						AppState.instance.setActiveCanvas( projectRef.getProject() );
 			        } else {
