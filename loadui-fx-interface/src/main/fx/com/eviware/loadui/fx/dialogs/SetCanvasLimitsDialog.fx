@@ -63,13 +63,11 @@ public class SetCanvasLimitsDialog {
 			}
 		}
   
-		
 		def dialog:Dialog = Dialog {
 			title: "Set run limits"
 			content: [
 				form = Form {
 					formContent: [
-						//LongInputField { id: "timeLimit", label: "Time limit (sec):", value: valueOf(runController.timeLimit) },
 						TimeField { id: "timeLimit", label: "Time limit:", value: valueOf(runController.timeLimit) },
 						LongInputField { id: "requestLimit", label: "Request limit:", value: valueOf(runController.requestLimit) },
 						LongInputField { id: "failureLimit", label: "Failure limit:", value: valueOf(runController.failureLimit) },
@@ -97,11 +95,11 @@ public class SetCanvasLimitsDialog {
 
 	function setLimits(): Void {
 		def tl = form.getValue( "timeLimit" );
-		runController.timeLimit = if(tl != null) tl as Long else -1;
+		runController.timeLimit = if(tl != null) tl as Long else 0;
 		def sl = form.getValue( "requestLimit" );
-		runController.requestLimit = if(sl != null) sl as Long else -1;
+		runController.requestLimit = if(sl != null) sl as Long else 0;
 		def fl = form.getValue( "failureLimit" );
-		runController.failureLimit = if(fl != null) fl as Long else -1;
+		runController.failureLimit = if(fl != null) fl as Long else 0;
 	}
 	
 	function reset(): Void {
