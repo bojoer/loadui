@@ -176,13 +176,14 @@ public class AppState extends ApplicationState {
 			Selectable.selectNone();
 			if( canvas instanceof ProjectItem ) {
 				MainWindow.instance.projectCanvas.canvasItem = canvas;
+				def lastStateWasTestCase = (AppState.TESTCASE_FRONT == state );
 				transitionTo( AppState.PROJECT_FRONT, AppState.ZOOM_WIPE );
-				if (canvas.isLoadingError()) {
+				if (canvas.isLoadingError() and not lastStateWasTestCase) {
 				    def dialog:Dialog = Dialog {
 				        noCancel: true
 				        title: "Component Errors"
 				        content: Text {
-				            content: "Some of the components could not be loaded"
+				            content: "Some of the components could not be loaded. They will be removed from project."
 				        }
 				        onOk: function() { dialog.close(); }
 				    }
