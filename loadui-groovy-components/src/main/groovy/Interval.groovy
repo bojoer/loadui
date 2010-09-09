@@ -159,7 +159,7 @@ cancelAll = {
 }
 
 layout {
-    node( widget:'intervalWidget', model:interval, constraints:'span 6' )
+    node( widget:'intervalWidget', model:interval, constraints:'span 6, gaptop 10' )
     separator( vertical: false )
     property( property: startAt, label:'Start At', min:0 )
     property( property: duration, label: 'Duration', min:0 )

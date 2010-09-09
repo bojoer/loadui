@@ -291,7 +291,7 @@ onRelease = {
 }
 
 layout {
-	node( widget: 'schedulerWidget', model: schedulerModel, constraints: 'span 5' )
+	node( widget: 'schedulerWidget', model: schedulerModel, constraints: 'span 5, gaptop 10' )
 	separator( vertical: false )
 	property(property: day, widget: 'comboBox', label: 'Day', options: ['* (All)', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], constraints: 'w 100!' )
 	separator(vertical: true)
