@@ -393,7 +393,7 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 		throw new MissingPropertyException( name, getClass() );
 	}
 
-	private void loadDependencies( String scriptContent )
+	private void loadDependencies( final String scriptContent )
 	{
 		Matcher m2Matcher = m2Pattern.matcher( scriptContent );
 		Matcher depMatcher = depPattern.matcher( scriptContent );
@@ -440,9 +440,19 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 				else
 				{
 					log.debug( "Loading dependency using Grape: " + depMatcher.group( 1 ) );
-					Grape.grab( MapUtils.build( String.class, Object.class ).put( "group", parts[0] )
-							.put( "module", parts[1] ).put( "version", parts[2] ).put( "classLoader", shell.getClassLoader() )
-							.get() );
+					try
+					{
+						Grape.grab( MapUtils.build( String.class, Object.class ).put( "group", parts[0] )
+								.put( "module", parts[1] ).put( "version", parts[2] )
+								.put( "classLoader", shell.getClassLoader() ).get() );
+					}
+					catch( Exception e )
+					{
+						log.debug( "Failed loading dependencies using Grape, fallback to manual jar loading." );
+						System.setProperty( "loadui.grape.disable", "true" );
+						loadDependencies( scriptContent );
+						return;
+					}
 				}
 			}
 		}
