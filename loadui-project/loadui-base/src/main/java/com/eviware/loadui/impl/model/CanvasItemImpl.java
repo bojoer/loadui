@@ -109,6 +109,21 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		counterSupport.init( this );
 
 		loadingErrors = false;
+		
+		String[] limitStrings = getAttribute( LIMITS_ATTRIBUTE, "" ).split( ";" );
+		for( String limit : limitStrings )
+		{
+			String[] parts = limit.split( "=", 2 );
+			try
+			{
+				if( parts.length == 2 )
+					setLimit( parts[0], Long.parseLong( parts[1] ) );
+			}
+			catch( NumberFormatException e )
+			{
+				// Ignore
+			}
+		}
 
 		for( ComponentItemConfig componentConfig : getConfig().getComponentArray() )
 		{
@@ -139,21 +154,6 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		}
 
 		addEventListener( BaseEvent.class, new ActionListener() );
-
-		String[] limitStrings = getAttribute( LIMITS_ATTRIBUTE, "" ).split( ";" );
-		for( String limit : limitStrings )
-		{
-			String[] parts = limit.split( "=", 2 );
-			try
-			{
-				if( parts.length == 2 )
-					setLimit( parts[0], Long.parseLong( parts[1] ) );
-			}
-			catch( NumberFormatException e )
-			{
-				// Ignore
-			}
-		}
 
 		// timer.scheduleAtFixedRate( timerTask, 1000, 1000 );
 	}
