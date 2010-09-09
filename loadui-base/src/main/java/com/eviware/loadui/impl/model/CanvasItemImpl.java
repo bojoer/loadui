@@ -16,6 +16,7 @@
 package com.eviware.loadui.impl.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -89,6 +90,10 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private boolean running = false;
 
+	// here keep all not loaded components and connections, remove them at the end of init
+	private ArrayList<ComponentItemConfig> badComponents = new ArrayList<ComponentItemConfig>();
+	private ArrayList<ConnectionConfig> badConnections = new ArrayList<ConnectionConfig>();
+
 	public CanvasItemImpl( Config config, CounterSupport counterSupport )
 	{
 		super( config );
@@ -148,11 +153,38 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 			}
 			catch( Exception e )
 			{
+				badConnections .add( connectionConfig );
 				log.error( "Unable to create connection between terminals " + connectionConfig.getInputTerminalId()
 						+ " and " + connectionConfig.getOutputTerminalId(), e );
 			}
 		}
+		
+		// now remove bad connections and components
 
+		for( ComponentItemConfig badComponent : badComponents ) {
+			int cnt = 0;
+			boolean found = false;
+			for( ; cnt < getConfig().getComponentArray().length ; cnt++ )
+				if( getConfig().getComponentArray()[cnt].equals(badComponent) ) {
+					found = true;
+					break;
+				}
+			if( found )
+				getConfig().removeComponent(cnt);
+		}
+		
+		for( ConnectionConfig badConnection : badConnections ) {
+			int cnt = 0;
+			boolean found = false;
+			for( ; cnt < getConfig().getConnectionArray().length ; cnt++ )
+				if( getConfig().getConnectionArray()[cnt].equals(badConnection) ) {
+					found = true;
+					break;
+				}
+			if( found )
+				getConfig().removeConnection(cnt);
+		}
+			
 		addEventListener( BaseEvent.class, new ActionListener() );
 
 		// timer.scheduleAtFixedRate( timerTask, 1000, 1000 );
@@ -227,6 +259,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		catch( ComponentCreationException e )
 		{
 			log.error( "Unable to load component: " + component, e );
+			badComponents .add(config);
 			component.release();
 			throw e;
 		}

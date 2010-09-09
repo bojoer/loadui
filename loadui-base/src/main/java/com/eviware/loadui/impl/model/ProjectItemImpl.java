@@ -1041,4 +1041,14 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					component.getId() );
 		}
 	}
+	
+	@Override
+	public boolean isLoadingError()
+	{
+		for( SceneItem scene: getScenes() ) {
+			if( scene.isLoadingError() )
+				return true;
+		}
+		return super.isLoadingError();
+	}
 }
