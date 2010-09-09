@@ -25,6 +25,7 @@ import javafx.scene.Node;
 import javafx.scene.CustomNode;
 import javafx.scene.Group;
 import javafx.scene.layout.Container;
+import javafx.scene.layout.Panel;
 import javafx.scene.layout.Stack;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -145,8 +146,17 @@ public class Dialog {
 	
 	public-init var extraButtons:Button[];
 	
+	var moved = false;
+	
 	var modalLayer:Node;
-	var panel:Node;
+	var panel:MovableNode;
+	def mainPanel:Panel = Panel {
+		onLayout: function() {
+			mainPanel.resizeContent();
+			if( not moved )
+				Container.positionNode( panel, (panel.scene.width - panel.layoutBounds.width) / 2, (panel.scene.height - panel.layoutBounds.height) / 2 );
+		}
+	}
 	protected var dialogPanel:DialogPanel;
 	
 	var okButton: Button;
@@ -196,11 +206,8 @@ public class Dialog {
 		
 		insert extraButtons into dialogButtons;
 		
-		if( not FX.isInitialized( x ) ) {
-			x = scene.width / 2;
-		}
-		if( not FX.isInitialized( y ) ) {
-			y = scene.height / 2;
+		if( FX.isInitialized( x ) and FX.isInitialized( y ) ) {
+			moved = true;
 		}
 		
 		var titlebarPanel:TitlebarPanel;
@@ -209,6 +216,10 @@ public class Dialog {
 			layoutY: y
 			useOverlay: false
 			containment: sceneBounds
+			onMove: function() {
+				moved = true;
+				panel.onMove = null;
+			}
 			contentNode: dialogPanel = DialogPanel {
 				body: VBox {
 					padding: Insets { left: 10, right: 10, bottom: 15, top: 3 }
@@ -270,6 +281,8 @@ public class Dialog {
 			} into titlebarContent.content;
 		}
 		
+		mainPanel.content = [ modalLayer, panel ];
+		
 		if( showPostInit )
 		show();
 	}
@@ -278,8 +291,7 @@ public class Dialog {
 	 * Displays the Dialog.
 	 */ 
 	public function show() {
-		insert modalLayer into AppState.overlay;
-		insert panel into AppState.overlay;
+		insert mainPanel into AppState.overlay;
 		
 		if( okButton != null )
 			okButton.requestFocus();
@@ -292,8 +304,7 @@ public class Dialog {
 	 * Closes the Dialog.
 	 */ 
 	public function close():Void {
-		delete panel from AppState.overlay;
-		delete modalLayer from AppState.overlay;
+		delete mainPanel from AppState.overlay;
 		onClose();
 	}
 }

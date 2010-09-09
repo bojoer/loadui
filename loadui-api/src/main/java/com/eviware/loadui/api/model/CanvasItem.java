@@ -59,7 +59,7 @@ public interface CanvasItem extends ModelItem, CounterHolder
 	public ProjectItem getProject();
 
 	/**
-	 * Check whether the item has been changes since the last save
+	 * Check whether the item has been changes since the last save.
 	 * 
 	 * @return True if it has been changed
 	 */
