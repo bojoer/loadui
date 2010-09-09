@@ -72,14 +72,21 @@ updateState = {
 	else if( unit.value == 'Percent' && limit > 0 ) mult = limit / 100
 	
 	long startTime = startAt.value * mult
-	if( limit >= 0 && startTime > limit ) {
+	if( limit > 0 && startTime > limit ) {
 		startAt.value = limit / mult
 		return
 	}
 	interval.start = startTime
 	
-	long stopTime = startTime + duration.value * mult
-	if( limit >= 0 && stopTime > limit ) {
+	long stopTime
+	if(duration.value == 0){
+		stopTime = (limit > 0) ? limit : IntervalModel.INFINITE
+	}
+	else{
+		stopTime = startTime + duration.value * mult
+	}
+	
+	if( limit > 0 && stopTime > limit ) {
 		duration.value = limit / mult - startAt.value
 		return
 	}
