@@ -178,6 +178,10 @@ public class LoadUILauncher
 
 	protected void start()
 	{
+		// Always disable grape on mac for now.
+		if( System.getProperty( "loadui.grape.disable" ) == null && System.getProperty( "os.name" ).contains( "mac" ) )
+			System.setProperty( "loadui.grape.disable", "true" );
+
 		try
 		{
 			framework.start();

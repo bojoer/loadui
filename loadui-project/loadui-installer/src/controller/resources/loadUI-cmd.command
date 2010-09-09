@@ -36,4 +36,4 @@ fi
 
 JAVA_OPTS="-Xms128m -Xmx768m -XX:MaxPermSize=128m"
 
-java $JAVA_OPTS -cp "$LOADUI_AGENT_CLASSPATH" com.eviware.loadui.launcher.LoadUICommandLineLauncher "$@"
+java $JAVA_OPTS -cp "$LOADUI_AGENT_CLASSPATH" com.eviware.loadui.launcher.LoadUICommandLineLauncher -Dloadui.grape.disable "$@"
