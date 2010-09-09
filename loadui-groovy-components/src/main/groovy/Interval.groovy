@@ -161,7 +161,7 @@ def limitsListener = addEventListener( canvas, BaseEvent ) { event ->
 
 onRelease = {
 	cancelAll()
-	canvas.removeListener(BaseEvent, limitsListener)
+	canvas.removeEventListener(BaseEvent, limitsListener)
 }
 
 cancelAll = {
