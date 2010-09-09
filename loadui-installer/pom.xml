@@ -49,6 +49,9 @@
 									<fileset dir="${basedir}/src/main/resources" />
 									<fileset dir="${basedir}/src/runner/resources" />
 								</copy>
+								<copy todir="${basedir}/target/runner/.groovy">
+									<fileset dir="${basedir}/src/controller/resources/.groovy" />
+								</copy>
 								<copy todir="${basedir}/target/runner/lib">
 									<fileset file="${basedir}/../loadui-launcher/target/*.jar" />
 									<fileset file="${basedir}/../loadui-launcher/target/lib/*.jar" />
@@ -56,6 +59,7 @@
 								<copy todir="${basedir}/target/runner/bundle">
 									<fileset dir="${basedir}/../loadui-runner-deps/target/bundle" />
 								</copy>
+								
 							</tasks>
 						</configuration>
 						<goals>
