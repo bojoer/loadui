@@ -75,10 +75,13 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.AppState" 
  */
 public-read var instance:AppState;
 
-def dummyNode = Rectangle { fill: Color.rgb(0,0,0,0.0001), width: 1, height: 1 };
+def dummyNode = Rectangle { fill: Color.rgb(0,0,0,0.01), width: 10, height: 10 };
 
 public var overlay:Node[] on replace {
-	instance.overlayLayer.content = [dummyNode, overlay];
+	if( sizeof instance.overlayLayer.content > 1 )
+		delete instance.overlayLayer.content[1..];
+	insert overlay into instance.overlayLayer.content;
+	//instance.overlayLayer.content = [dummyNode, overlay];
 }
 
 /**
