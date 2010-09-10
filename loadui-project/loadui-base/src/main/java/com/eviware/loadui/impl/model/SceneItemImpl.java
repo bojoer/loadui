@@ -352,9 +352,10 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	{
 		return isRunning();
 	}
-	
+
 	@Override
-	public String getHelpUrl() {
+	public String getHelpUrl()
+	{
 		return "http://www.loadui.org/Working-with-loadUI/agents-and-testcases.html";
 	}
 

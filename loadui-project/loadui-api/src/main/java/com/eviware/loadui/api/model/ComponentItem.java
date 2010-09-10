@@ -40,6 +40,13 @@ public interface ComponentItem extends CanvasObjectItem, CounterHolder
 	public static final String BUSY = ComponentItem.class.getName() + "@busy";
 
 	/**
+	 * Action which can be triggered on a busy component to indicate that the
+	 * current action should be aborted so that the Component may become non-busy
+	 * as soon as possible.
+	 */
+	public static final String CANCEL_ACTION = "CANCEL";
+
+	/**
 	 * Gets the type of the component. This corresponds to the label of the
 	 * ComponentDescriptor used when creating a component.
 	 * 

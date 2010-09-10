@@ -231,7 +231,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 				.containsKey( "Response" ) ? ( ( String )message.get( "Response" ) ).length() : 0 );
 
 		addTopBottomSample( startTime / 1000000, timeTaken, size );
-		
+
 		if( cRunning == 0 )
 			getContext().setBusy( false );
 	}
@@ -340,7 +340,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		return failureCounter;
 	}
 
-	private void doCancel()
+	@Override
+	protected void cancel()
 	{
 		queue.clear();
 		queued.set( 0 );
@@ -472,10 +473,6 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			{
 				enqueue( getContext().newMessage() );
 			}
-			else if( CANCEL_ACTION.equals( event.getKey() ) )
-			{
-				doCancel();
-			}
 			else if( CounterHolder.COUNTER_RESET_ACTION.equals( event.getKey() ) )
 			{
 				bottomStats.clear();
@@ -569,14 +566,15 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		if( sampleCount > 0 )
 		{
 			long perc = failureCount * 100 / sampleCount;
-			String errorRatio = perc + "%"; //failureCount + "/" + sampleCount + " (" + perc + "%)";
+			String errorRatio = perc + "%"; // failureCount + "/" + sampleCount +
+														// " (" + perc + "%)";
 
 			statistics.put( "cnt", String.valueOf( sampleCount ) );
 			statistics.put( "min", String.valueOf( minTime ) );
 			statistics.put( "max", String.valueOf( maxTime ) );
 			statistics.put( "avg", String.valueOf( avgTime ) );
-			statistics.put( "std-dev", String
-					.valueOf( Math.round( Math.sqrt( sumTotalSquare / sampleCount ) * 100d ) / 100d ) );
+			statistics.put( "std-dev",
+					String.valueOf( Math.round( Math.sqrt( sumTotalSquare / sampleCount ) * 100d ) / 100d ) );
 			if( avgTime > 0 )
 			{
 				statistics.put( "min/avg", String.valueOf( Math.round( ( minTime / avgTime ) * 100d ) / 100d ) );
@@ -729,12 +727,12 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		private static final long serialVersionUID = 1442916589020990178L;
 	}
-	
+
 	protected ScheduledExecutorService getScheduler()
 	{
 		return scheduler;
 	}
-	
+
 	protected ExecutorService getExecutor()
 	{
 		return executor;

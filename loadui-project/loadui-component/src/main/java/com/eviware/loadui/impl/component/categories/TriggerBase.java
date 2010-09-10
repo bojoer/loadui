@@ -59,6 +59,7 @@ public abstract class TriggerBase extends OnOffBase implements TriggerCategory
 		context.setSignature( triggerTerminal, signature );
 
 		context.addEventListener( BaseEvent.class, listener );
+		fixActivityStrategy();
 	}
 
 	/**
@@ -96,16 +97,22 @@ public abstract class TriggerBase extends OnOffBase implements TriggerCategory
 		getContext().removeEventListener( BaseEvent.class, listener );
 	}
 
+	private void fixActivityStrategy()
+	{
+		getContext().setActivityStrategy(
+				getStateProperty().getValue() ? ( getContext().isRunning() ? ActivityStrategies.BLINKING
+						: ActivityStrategies.ON ) : ActivityStrategies.OFF );
+	}
+
 	private class ActivityListener implements EventHandler<BaseEvent>
 	{
 		@Override
 		public void handleEvent( BaseEvent event )
 		{
-			if( event instanceof ActionEvent && event.getKey() == CanvasItem.START_ACTION
+			if( event instanceof ActionEvent
+					&& ( event.getKey() == CanvasItem.START_ACTION || event.getKey() == CanvasItem.STOP_ACTION )
 					|| event instanceof PropertyEvent && ( ( PropertyEvent )event ).getProperty() == getStateProperty() )
-				getContext().setActivityStrategy(
-						getStateProperty().getValue() ? ( getContext().isRunning() ? ActivityStrategies.BLINKING
-								: ActivityStrategies.ON ) : ActivityStrategies.OFF );
+				fixActivityStrategy();
 		}
 	}
 }
