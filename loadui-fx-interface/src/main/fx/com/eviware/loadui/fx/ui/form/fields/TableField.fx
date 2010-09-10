@@ -90,9 +90,10 @@ public class TableField extends CustomNode, FormField, Observer {
     override public function create(): Node {
         table = new JXTable(model);
         table.setEditable(true);
+        def ce = new DefaultCellEditor(new JTextField());
         for(i in [0..table.getColumnCount()-1]){
         	table.getColumnExt(i).setEditable(true);
-        	table.getColumnExt(i).setCellEditor(new DefaultCellEditor(new JTextField()));
+        	table.getColumnExt(i).setCellEditor(ce);
         }
         table.setIntercellSpacing(new Dimension( 10, 0 ));
         table.setAutoCreateColumnsFromModel(true);
