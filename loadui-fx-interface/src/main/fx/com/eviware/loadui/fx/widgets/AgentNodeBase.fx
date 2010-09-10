@@ -121,6 +121,7 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 	override var styleClass = "model-item-node";
 	
 	override function create() {
+		var labelTooltip:Tooltip;
 		DialogPanel {
 			layoutInfo: LayoutInfo { width: 93, height: 146 }
 			body: VBox {
@@ -129,10 +130,12 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 				content: [
 					Label {
 						text: bind label.toUpperCase()
-						tooltip: Tooltip { text: bind "{label} ({url})" }
+						tooltip: labelTooltip = Tooltip { text: bind "{label} ({url})" }
 						graphic: ImageView {
 							image: bind if( enabled and ready ) ledActive else if( enabled and not ready ) ledInactive else ledDisabled
 						}
+						onMouseEntered: function(e) { labelTooltip.activate() }
+						onMouseExited: function(e) { labelTooltip.deactivate() }
 					}
 				]
 			}
