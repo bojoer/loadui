@@ -416,6 +416,9 @@ Appendix
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.formcomponents.IntegerTextfieldComponent">
+                      <void property="allowsInvalid">
+                        <boolean>true</boolean>
+                      </void>
                       <void property="columns">
                         <int>6</int>
                       </void>
