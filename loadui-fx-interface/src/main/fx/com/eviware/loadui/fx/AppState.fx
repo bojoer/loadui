@@ -189,7 +189,7 @@ public class AppState extends ApplicationState {
 				        noCancel: true
 				        title: "Component Errors"
 				        content: Text {
-				            content: "Some of the components could not be loaded. They will be removed from project."
+				            content: "Some of the components could not be loaded. Either the components are missing, or they contain errors. \n They will be removed from project."
 				        }
 				        onOk: function() { dialog.close(); }
 				    }
