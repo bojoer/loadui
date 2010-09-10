@@ -55,6 +55,7 @@ import org.jfxtras.animation.wipe.Flip180Wipe;
 import org.jfxtras.animation.wipe.Wipe;
 import org.slf4j.LoggerFactory;
 import javafx.util.Math;
+import javafx.util.Sequences;
 
 import com.eviware.loadui.fx.wizards.NewProjectWizard;
 
@@ -75,13 +76,18 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.AppState" 
  */
 public-read var instance:AppState;
 
-def dummyNode = Rectangle { fill: Color.rgb(0,0,0,0.01), width: 10, height: 10 };
+def dummyNode = Rectangle { id: "dummy", fill: Color.rgb(0,0,0,0.01), width: 1, height: 1 };
 
 public var overlay:Node[] on replace {
-	if( sizeof instance.overlayLayer.content > 1 )
-		delete instance.overlayLayer.content[1..];
-	insert overlay into instance.overlayLayer.content;
-	//instance.overlayLayer.content = [dummyNode, overlay];
+	def dummyIndex = Sequences.indexOf( instance.overlayLayer.content, dummyNode );
+	if( dummyIndex == -1 ) {
+		instance.overlayLayer.content = [ dummyNode, overlay ];
+	} else {
+		for( i in Sequences.reverse([0..(sizeof instance.overlayLayer.content - 1)]) as Integer[] ) {
+			if( i != dummyIndex ) delete instance.overlayLayer.content[i];
+		}
+		insert overlay into instance.overlayLayer.content;
+	}
 }
 
 /**
@@ -108,8 +114,7 @@ public class AppState extends ApplicationState {
 	 * Should be used for Nodes which must be positioned on top of everything else,
 	 * such as dialog boxes or popup menus.
 	 */
-	def overlayLayer = Group { content: dummyNode };
-	//def overlayLayer:Panel = Panel { content: dummyNode, onLayout: function() { overlayLayer.resizeContent(); } };
+	def overlayLayer = Group { id: "Overlay Layer", content: dummyNode };
 	
 	def localLayer = bind lazy wipePanel.content[0] as Group;
 	var wipePanel:XWipePanel;
