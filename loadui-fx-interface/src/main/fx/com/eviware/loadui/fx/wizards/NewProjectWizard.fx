@@ -64,8 +64,6 @@ public class NewProjectWizard {
 	public function show() {
 
 	    dialog = Dialog {
-	        x: com.eviware.loadui.fx.MainWindow.instance.getWidth()/3
-	        y: com.eviware.loadui.fx.MainWindow.instance.getHeight()/3
 	        noCancel: true
 	        noOk: true
 	        onClose: function():Void {

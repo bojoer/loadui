@@ -17,14 +17,6 @@
 	
 	<bean id="executorService" factory-bean="executorManager" factory-method="getExecutor" />
 
-	<bean id="deferrableManager"
-		class="com.eviware.loadui.impl.deferrable.DeferrableManagerImpl"
-		destroy-method="destroy">
-		<constructor-arg ref="scheduledExecutorService" />
-		<constructor-arg type="long" value="5" />
-		<constructor-arg value="SECONDS" />
-	</bean>
-
 	<bean id="propertySynchronizer"
 		class="com.eviware.loadui.impl.property.PropertySynchronizerImpl">
 		<constructor-arg ref="addressableRegistry" />
