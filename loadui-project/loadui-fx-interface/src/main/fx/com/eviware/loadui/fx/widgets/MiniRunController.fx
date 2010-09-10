@@ -310,7 +310,7 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
     	    for (comp in canvas.getComponents()) {
     	        
     	        var component:ComponentItem = comp as ComponentItem;
-    	    	if (component.getCategory().equalsIgnoreCase(RunnerCategory.CATEGORY)) {
+    	    	if (component.getCategory().equalsIgnoreCase(RunnerCategory.CATEGORY) or component.getType().contains("Runner")) {
     	    		foundRunner = true;
     			}
     	    	else if (component.getCategory().equalsIgnoreCase(TriggerCategory.CATEGORY))

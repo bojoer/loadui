@@ -393,10 +393,8 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	    var foundTrigger:Boolean = false;
 	    var foundRunner:Boolean = false;
 	    for (comp in canvas.getComponents()) {
-	        
 	        var component:ComponentItem = comp as ComponentItem;
-
-	    	if (component.getCategory().equalsIgnoreCase(RunnerCategory.CATEGORY)) {
+	    	if (component.getCategory().equalsIgnoreCase(RunnerCategory.CATEGORY) or component.getType().contains("Runner")) {
 	    		foundRunner = true;
 			}
 	    	else if (component.getCategory().equalsIgnoreCase(TriggerCategory.CATEGORY))
