@@ -270,6 +270,7 @@ updateChart = { currentTime ->
 	if( selectedAgent.value == AGGREGATE ) {
 		try {
 			int count = 0
+			if (inputTerminal.connections.size() > 0) {
 			for( d in agentData.values() ) {
 				if( !d.isEmpty() ) {
 					data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
@@ -285,6 +286,8 @@ updateChart = { currentTime ->
 					count++
 				}
 			}
+			}
+			if (statisticsInput.connections.size() > 0) {
 			for ( m in agentStatistics.values() ) {
 				if( !m.isEmpty() ) {
 					data['Requests'] = data['Requests'] ?: 0 + m["Requests"]
@@ -294,6 +297,7 @@ updateChart = { currentTime ->
 					data['Discarded'] = data['Discarded'] ?: 0 + m["Discarded"]
 					data['Failed'] = data['Failed'] ?: 0 + m["Failed"]
 				}
+			}
 			}
 			if( count != 0 ) {
 				data['Avg'] /= count
@@ -307,22 +311,26 @@ updateChart = { currentTime ->
 		return
 	
 	try {
-		if(enableMax.value) chartModel.addPoint(0, currentTime, data['Max'] * timeScaleFactor)
-		if(enableMin.value) chartModel.addPoint(1, currentTime, data['Min'] * timeScaleFactor)
-		if(enableAverage.value) chartModel.addPoint(2, currentTime, data['Avg'] * timeScaleFactor)
-		if(enableStdDev.value) chartModel.addPoint(3, currentTime, data['Std-Dev'] * timeScaleFactor)
-		if(enableTPS.value) chartModel.addPoint(4, currentTime, data['Tps'])
-		if(enableBPS.value) chartModel.addPoint(5, currentTime, data['Bps'] * bytesScaleFactor)
-		if(enableAvgTPS.value) chartModel.addPoint(6, currentTime, data['Avg-Tps'])
-		if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
-		if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
-		if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
-		if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
-		if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
-		if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
-		if(enableQueued.value) chartModel.addPoint(13, currentTime, data['Queued'])
-		if(enableDiscarded.value) chartModel.addPoint(14, currentTime, data['Discarded'])
-		if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
+		if (inputTerminal.connections.size() > 0) {
+			if(enableMax.value) chartModel.addPoint(0, currentTime, data['Max'] * timeScaleFactor)
+			if(enableMin.value) chartModel.addPoint(1, currentTime, data['Min'] * timeScaleFactor)
+			if(enableAverage.value) chartModel.addPoint(2, currentTime, data['Avg'] * timeScaleFactor)
+			if(enableStdDev.value) chartModel.addPoint(3, currentTime, data['Std-Dev'] * timeScaleFactor)
+			if(enableTPS.value) chartModel.addPoint(4, currentTime, data['Tps'])
+			if(enableBPS.value) chartModel.addPoint(5, currentTime, data['Bps'] * bytesScaleFactor)
+			if(enableAvgTPS.value) chartModel.addPoint(6, currentTime, data['Avg-Tps'])
+			if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
+			if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
+			if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
+		}
+		if (statisticsInput.connections.size() > 0) {
+			if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
+			if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
+			if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
+			if(enableQueued.value) chartModel.addPoint(13, currentTime, data['Queued'])
+			if(enableDiscarded.value) chartModel.addPoint(14, currentTime, data['Discarded'])
+			if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
+		}
 		 if (inputTerminal.connections.size() > 0) {
 		avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
 		minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
