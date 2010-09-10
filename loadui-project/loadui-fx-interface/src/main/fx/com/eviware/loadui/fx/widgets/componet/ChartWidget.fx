@@ -487,7 +487,7 @@ public class ChartWidget extends VBox, ChartListener {
 			var cs: ChartSerie = chartModel.getSerie(keys.next() as String);
 			if(cs != null and cs.isEnabled()){
 				tmp = (models.get(cs.getName()) as DefaultChartModel).getXRange().minimum();
-				if(tmp < min){
+				if(tmp < min and tmp > 1){
 					min = tmp;
 				}
 			}
