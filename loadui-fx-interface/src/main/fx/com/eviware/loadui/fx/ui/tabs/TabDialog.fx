@@ -45,7 +45,13 @@ import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.fields.*;
 
 public class TabDialog extends Dialog {
-	var buttons:Container;
+	def buttons:Container = HBox {
+		styleClass: "tab-dialog"
+		spacing: 14
+		nodeVPos: VPos.CENTER
+		layoutInfo: LayoutInfo { margin: Insets { left: 10, right: 10 } }
+		content: Label { text: bind subtitle, layoutInfo: LayoutInfo { height: 40, width: 100 } }
+	}
 	var stack:Stack;
 	var stackLayoutInfo:LayoutInfo;
 	def toggleGroup = MyToggleGroup{};
@@ -59,6 +65,8 @@ public class TabDialog extends Dialog {
 		oldTab.onUnselect();
 		selectedTab.selected = true;
 		selectedTab.onSelect();
+		if( oldTab != null and selectedTab != null )
+			moved = true;
 	}
 	
 	public var tabs:Tab[] on replace {
@@ -67,7 +75,11 @@ public class TabDialog extends Dialog {
 		buttons.content = [
 			buttons.content[0],
 			for( tab in tabs ) {
-				ToggleButton { text: tab.label, toggleGroup: toggleGroup, value: tab }
+				ToggleButton {
+					text: tab.label
+					toggleGroup: toggleGroup
+					value: tab
+				}
 			}
 		];
 		toggleGroup.selectedToggle = null;
@@ -91,13 +103,7 @@ public class TabDialog extends Dialog {
 				x: -8
 				y: -2
 				fill: Color.rgb( 0, 0, 0, 0.3 )
-			}, buttons = HBox {
-				styleClass: "tab-dialog"
-				spacing: 14
-				nodeVPos: VPos.CENTER
-				layoutInfo: LayoutInfo { margin: Insets { left: 10, right: 10 } }
-				content: Label { text: bind subtitle, layoutInfo: LayoutInfo { height: 40, width: 100 } }
-			}, stack = Stack {
+			}, buttons, stack = Stack {
 				layoutInfo: stackLayoutInfo = LayoutInfo { margin: Insets { left: 10, top: 15, right: 10, bottom: 5 } }
 				padding: Insets { left: 20, top: 20, right: 20, bottom: 20 }
 				content: [
@@ -107,12 +113,6 @@ public class TabDialog extends Dialog {
 				]
 			}
 		];
-		
-		if( FX.isInitialized( tabs ) ) {
-			def theTabs = tabs;
-			tabs = null;
-			tabs = theTabs;
-		}
 		
 		if( FX.isInitialized( width ) ) {
 			stackLayoutInfo.width = width;

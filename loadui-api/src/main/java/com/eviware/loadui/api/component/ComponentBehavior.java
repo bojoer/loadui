@@ -111,7 +111,7 @@ public interface ComponentBehavior
 	 * controller.
 	 */
 	public void handleStatisticsData( Map<AgentItem, Object> statisticsData );
-	
+
 	/**
 	 * Called on a ComponentItem to generate a summary of its run.
 	 * 

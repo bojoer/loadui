@@ -146,15 +146,16 @@ public class Dialog {
 	
 	public-init var extraButtons:Button[];
 	
-	var moved = false;
+	protected var moved = false;
 	
 	var modalLayer:Node;
 	var panel:MovableNode;
 	def mainPanel:Panel = Panel {
 		onLayout: function() {
 			mainPanel.resizeContent();
-			if( not moved )
+			if( not moved ) {
 				Container.positionNode( panel, (panel.scene.width - panel.layoutBounds.width) / 2, (panel.scene.height - panel.layoutBounds.height) / 2 );
+			}
 		}
 	}
 	protected var dialogPanel:DialogPanel;
@@ -284,7 +285,7 @@ public class Dialog {
 		mainPanel.content = [ modalLayer, panel ];
 		
 		if( showPostInit )
-		show();
+			show();
 	}
 	
 	/**

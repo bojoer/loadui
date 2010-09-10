@@ -16,7 +16,6 @@
 package com.eviware.loadui.impl.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -90,7 +89,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private boolean running = false;
 
-	// here keep all not loaded components and connections, remove them at the end of init
+	// here keep all not loaded components and connections, remove them at the
+	// end of init
 	private ArrayList<ComponentItemConfig> badComponents = new ArrayList<ComponentItemConfig>();
 	private ArrayList<ConnectionConfig> badConnections = new ArrayList<ConnectionConfig>();
 
@@ -114,7 +114,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		counterSupport.init( this );
 
 		loadingErrors = false;
-		
+
 		String[] limitStrings = getAttribute( LIMITS_ATTRIBUTE, "" ).split( ";" );
 		for( String limit : limitStrings )
 		{
@@ -153,38 +153,42 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 			}
 			catch( Exception e )
 			{
-				badConnections .add( connectionConfig );
+				badConnections.add( connectionConfig );
 				log.error( "Unable to create connection between terminals " + connectionConfig.getInputTerminalId()
 						+ " and " + connectionConfig.getOutputTerminalId(), e );
 			}
 		}
-		
+
 		// now remove bad connections and components
 
-		for( ComponentItemConfig badComponent : badComponents ) {
+		for( ComponentItemConfig badComponent : badComponents )
+		{
 			int cnt = 0;
 			boolean found = false;
-			for( ; cnt < getConfig().getComponentArray().length ; cnt++ )
-				if( getConfig().getComponentArray()[cnt].equals(badComponent) ) {
+			for( ; cnt < getConfig().getComponentArray().length; cnt++ )
+				if( getConfig().getComponentArray()[cnt].equals( badComponent ) )
+				{
 					found = true;
 					break;
 				}
 			if( found )
-				getConfig().removeComponent(cnt);
+				getConfig().removeComponent( cnt );
 		}
-		
-		for( ConnectionConfig badConnection : badConnections ) {
+
+		for( ConnectionConfig badConnection : badConnections )
+		{
 			int cnt = 0;
 			boolean found = false;
-			for( ; cnt < getConfig().getConnectionArray().length ; cnt++ )
-				if( getConfig().getConnectionArray()[cnt].equals(badConnection) ) {
+			for( ; cnt < getConfig().getConnectionArray().length; cnt++ )
+				if( getConfig().getConnectionArray()[cnt].equals( badConnection ) )
+				{
 					found = true;
 					break;
 				}
 			if( found )
-				getConfig().removeConnection(cnt);
+				getConfig().removeConnection( cnt );
 		}
-			
+
 		addEventListener( BaseEvent.class, new ActionListener() );
 
 		// timer.scheduleAtFixedRate( timerTask, 1000, 1000 );
@@ -259,7 +263,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		catch( ComponentCreationException e )
 		{
 			log.error( "Unable to load component: " + component, e );
-			badComponents .add(config);
+			badComponents.add( config );
 			component.release();
 			throw e;
 		}
@@ -510,6 +514,14 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	public boolean isLoadingError()
 	{
 		return loadingErrors;
+	}
+
+	@Override
+	public void cancelComponents()
+	{
+		for( ComponentItem component : getComponents() )
+			if( component.isBusy() )
+				component.triggerAction( ComponentItem.CANCEL_ACTION );
 	}
 
 	private class ComponentListener implements EventHandler<BaseEvent>

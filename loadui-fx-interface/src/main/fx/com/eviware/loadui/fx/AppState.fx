@@ -54,8 +54,6 @@ import org.jfxtras.animation.wipe.FadeZoomWipe;
 import org.jfxtras.animation.wipe.Flip180Wipe;
 import org.jfxtras.animation.wipe.Wipe;
 import org.slf4j.LoggerFactory;
-import javafx.animation.Timeline;
-import javafx.animation.KeyFrame;
 import javafx.util.Math;
 
 import com.eviware.loadui.fx.wizards.NewProjectWizard;
@@ -139,8 +137,6 @@ public class AppState extends ApplicationState {
 			globalLayer,
 			overlayLayer
 		];
-		
-		//workaround.play();
 	}
 	
 	/**
@@ -149,7 +145,12 @@ public class AppState extends ApplicationState {
 	 * The onDone function will be called when the task completes, successful or not, with the Task object, which can be used to verify completion status. This will be called in the JavaFX thread.
 	 */
 	public function blockingTask( task:function():Void, onDone:function(task:Task):Void, text:String ):Void {
+		blockingTask( task, onDone, text, null );
+	}
+	
+	public function blockingTask( task:function():Void, onDone:function(task:Task):Void, text:String, onCancel:function():Void ):Void {
 		setBlockedText( text );
+		setCancelHandler( onCancel );
 		block();
 		def blockingTask:BlockingTask = BlockingTask {
 			task:task
@@ -166,6 +167,10 @@ public class AppState extends ApplicationState {
 	public function unblock():Void { blockCount = Math.max( 0, blockCount-1 ); if( blockCount == 0 ) delete blocked from overlay; }
 	
 	public function setBlockedText( text:String ):Void { blocked.text = text; }
+	
+	public function setCancelHandler( onCancel:function():Void ):Void {
+		blocked.onAbort = onCancel;
+	}
 	
 	override function getLoadedWorkspace():WorkspaceItem {
 		MainWindow.instance.workspace;

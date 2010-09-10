@@ -160,7 +160,7 @@ public interface CanvasItem extends ModelItem, CounterHolder
 
 	/**
 	 * Creates and returns a duplicate of the given CanvasObjectItem (which must
-	 * already be a child of the CanvasItem)
+	 * already be a child of the CanvasItem).
 	 * 
 	 * @param obj
 	 *           The child CanvasObjectItem to duplicate.
@@ -170,9 +170,15 @@ public interface CanvasItem extends ModelItem, CounterHolder
 	public CanvasObjectItem duplicate( CanvasObjectItem obj );
 
 	/**
-	 * USed for checking if there were any errors when loading the component
+	 * Used for checking if there were any errors when loading the component.
 	 * 
-	 * @return True if any errors occured
+	 * @return True if any errors occurred.
 	 */
 	public boolean isLoadingError();
+
+	/**
+	 * Triggers cancel messages for any Components within that are in a busy
+	 * state.
+	 */
+	public void cancelComponents();
 }

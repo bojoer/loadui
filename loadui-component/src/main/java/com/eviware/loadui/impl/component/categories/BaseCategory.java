@@ -19,12 +19,14 @@ import java.util.Map;
 
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
+import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.api.summary.MutableChapter;
-
 
 /**
  * Base class for component Categories which defines default implementations of
@@ -33,8 +35,9 @@ import com.eviware.loadui.api.summary.MutableChapter;
  * @author dain.nilsson
  */
 public abstract class BaseCategory implements ComponentBehavior
-{	
+{
 	private final ComponentContext context;
+	private final CancelActionListener listener = new CancelActionListener();
 
 	/**
 	 * Constructs a new BaseCategory.
@@ -45,6 +48,7 @@ public abstract class BaseCategory implements ComponentBehavior
 	public BaseCategory( ComponentContext context )
 	{
 		this.context = context;
+		context.addEventListener( ActionEvent.class, listener );
 	}
 
 	/**
@@ -57,9 +61,18 @@ public abstract class BaseCategory implements ComponentBehavior
 		return context;
 	}
 
+	/**
+	 * Invoked when a request is made to cancel the current action and bring the
+	 * Component into a non-busy state.
+	 */
+	protected void cancel()
+	{
+	}
+
 	@Override
 	public void onRelease()
 	{
+		context.removeEventListener( ActionEvent.class, listener );
 	}
 
 	@Override
@@ -92,9 +105,19 @@ public abstract class BaseCategory implements ComponentBehavior
 	public void handleStatisticsData( Map<AgentItem, Object> statisticsData )
 	{
 	}
-	
+
 	@Override
 	public void generateSummary( MutableChapter summary )
 	{
+	}
+
+	private class CancelActionListener implements EventHandler<ActionEvent>
+	{
+		@Override
+		public void handleEvent( ActionEvent event )
+		{
+			if( ComponentItem.CANCEL_ACTION.equals( event.getKey() ) )
+				cancel();
+		}
 	}
 }

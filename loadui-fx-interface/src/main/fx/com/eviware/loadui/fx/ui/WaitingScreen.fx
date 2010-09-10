@@ -23,6 +23,7 @@ import javafx.scene.control.Button;
 import javafx.scene.Cursor;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
+import javafx.geometry.HPos;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
 
@@ -72,6 +73,7 @@ public class WaitingScreen extends Stack {
 						visible: bind onAbort != null
 						managed: bind onAbort != null
 						action: function() { onAbort(); }
+						layoutInfo: LayoutInfo { hpos: HPos.RIGHT }
 					}
 				]
 			}
