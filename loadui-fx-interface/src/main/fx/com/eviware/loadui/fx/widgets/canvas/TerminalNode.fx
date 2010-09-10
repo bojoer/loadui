@@ -225,6 +225,7 @@ class TerminalDraggable extends BaseNode, Draggable, TooltipHolder {
 	var currentTerminal:Terminal;
 	override var onGrab = function():Void {
 		var startNode:Node;
+		enableTooltip( false );
 		
 		if( sizeof Selectable.selects == 1 and Selectable.selects[0] instanceof ConnectionNode ) {
 			def conn = Selectable.selects[0] as ConnectionNode;
@@ -275,6 +276,7 @@ class TerminalDraggable extends BaseNode, Draggable, TooltipHolder {
 	}
 	
 	override var onRelease = function():Void {
+		enableTooltip( false );
 		delete wire from AppState.overlay;
 		
 		inputAccept = false;
