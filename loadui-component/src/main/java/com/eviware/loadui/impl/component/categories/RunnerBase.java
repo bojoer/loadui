@@ -132,7 +132,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		resultSignature.put( STATUS_MESSAGE_PARAM, Boolean.class );
 		context.setSignature( resultTerminal, resultSignature );
 
-		currentlyRunningTerminal = context.createOutput( CURRENLY_RUNNING_TERMINAL, "Run Statistics" );
+		currentlyRunningTerminal = context.createOutput( CURRENLY_RUNNING_TERMINAL, "Requests Currently Running" );
 
 		requestCounter = context.getCounter( CanvasItem.REQUEST_COUNTER );
 		sampleCounter = context.getCounter( CanvasItem.SAMPLE_COUNTER );
