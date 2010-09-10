@@ -117,6 +117,7 @@ public class CreateNewAgentDialog {
 		okText: "Ok"
 		noCancel: true
 		showPostInit: false
+		onOk: function() { msgDialog.close() }
 	}
 	
 	def confirmDialog: Dialog = Dialog {
