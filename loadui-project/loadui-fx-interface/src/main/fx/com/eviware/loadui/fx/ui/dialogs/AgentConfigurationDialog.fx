@@ -42,6 +42,7 @@ public class AgentConfigurationDialog {
 			
 	function ok():Void {
 					agent.setDescription(formT1.getField('description').value as String);
+					agent.setUrl( formT1.getField('url').value as String );
 					agent.getProperty(agent.MAX_THREADS_PROPERTY).setValue(formT3.getField('maxThreads').value as Long);
 					
 					// add here seting a soapUI ext folder, hermes folder and soapUI settings file to properties.
@@ -69,7 +70,11 @@ public class AgentConfigurationDialog {
       			content: formT1 = Form {
          			singleColumn: true
 						formContent: [
-							TextField { 
+							TextField {
+								id: "url"
+								label: "URL"
+								value: agent.getUrl()
+							}, TextField { 
 								id: "description"
 								label: "Description"
 								description: "This is a description of the description field."
