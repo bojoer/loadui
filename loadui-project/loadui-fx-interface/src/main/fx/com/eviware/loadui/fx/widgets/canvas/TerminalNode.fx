@@ -276,7 +276,7 @@ class TerminalDraggable extends BaseNode, Draggable, TooltipHolder {
 	}
 	
 	override var onRelease = function():Void {
-		enableTooltip( false );
+		enableTooltip( true );
 		delete wire from AppState.overlay;
 		
 		inputAccept = false;
