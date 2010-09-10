@@ -180,6 +180,13 @@ public class ChartWidget extends VBox, ChartListener {
 		insert Color.pink into seriesColors;
 		insert Color.blue into seriesColors;
 		insert Color.gray into seriesColors;
+		insert Color.red into seriesColors;
+		insert new Color(150,150,150) into seriesColors;
+		insert new Color(156,0,12) into seriesColors;
+		insert new Color(156,12,156) into seriesColors;
+		insert new Color(100,0,0) into seriesColors;
+		insert new Color(0,0,150) into seriesColors;
+		insert new Color(16,100,12) into seriesColors;
 				
     	models = new HashMap();
 		

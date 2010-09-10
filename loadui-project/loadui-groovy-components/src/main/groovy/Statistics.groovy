@@ -64,6 +64,7 @@ AGGREGATE = "Aggregate"
 executor = Executors.newSingleThreadScheduledExecutor()
 
 createOutput( 'output', 'Statistics Output')
+statisticsInput = createInput( 'statistics', 'Runner Statistics')
 
 //Properties
 createProperty( 'period', Long, 1 )
@@ -80,6 +81,12 @@ createProperty( 'enableAvgTPS', Boolean, true )
 createProperty( 'enableAvgBPS', Boolean, true )
 createProperty( 'enablePercentile', Boolean, true )
 createProperty( 'enableAvgResponseSize', Boolean, true )
+createProperty( 'enableRequests', Boolean, true )
+createProperty( 'enableRunning', Boolean, true )
+createProperty( 'enableCompleted', Boolean, true )
+createProperty( 'enableQueued', Boolean, true )
+createProperty( 'enableDiscarded', Boolean, true )
+createProperty( 'enableFailed', Boolean, true )
 createProperty( 'currentSourceID', String, "none" )
 createProperty( 'addtoSummary', Boolean, false )
 
@@ -136,6 +143,12 @@ chartModel.addSerie('AvgTPS', enableAvgTPS.value, true)
 chartModel.addSerie('AvgBPS', enableAvgBPS.value, true)
 chartModel.addSerie('Percentile', enablePercentile.value, true)
 chartModel.addSerie('AvgResponseSize', enableAvgResponseSize.value, true)
+chartModel.addSerie('Requests', enableRequests.value, false)
+chartModel.addSerie('Running', enableRunning.value, false)
+chartModel.addSerie('Completed', enableCompleted.value, false)
+chartModel.addSerie('Queued', enableQueued.value, false)
+chartModel.addSerie('Discarded', enableDiscarded.value, false)
+chartModel.addSerie('Failed', enableFailed.value, false)
 chartModel.legendColumns = 3
 
 timeStats = new ValueStatistics( period.value * 60000 )
@@ -145,9 +158,10 @@ long max = 0
 long min = Long.MAX_VALUE
 
 agentData = [:]
+agentStatistics = [:]
 
 future = null
-boolean connected = false
+boolean connected = true
 
 analyze = { message ->
 	try {
@@ -184,6 +198,10 @@ onMessage = { o, i, m ->
 	if(i == remoteTerminal ) {
 		agentData[o.label] = new HashMap(m)
 	}
+	
+	if( i == statisticsInput ) {
+		agentStatistics[o.label] = new HashMap(m)
+	}
 }
 
 onRelease = { 
@@ -201,11 +219,11 @@ onRelease = {
 }
 
 onConnect = { outgoing, incoming ->
-	connected = inputTerminal.connections.size() > 0
+	connected = (inputTerminal.connections.size() > 0) || (statisticsInput.connections.size() > 0)
 }
 
 onDisconnect = { outgoing, incoming ->
-	connected = inputTerminal.connections.size() > 0
+	connected = (inputTerminal.connections.size() > 0) || (statisticsInput.connections.size() > 0)
 }
 
 calculate = {
@@ -267,14 +285,24 @@ updateChart = { currentTime ->
 					count++
 				}
 			}
-			if( count == 0 )
-				return
-			data['Avg'] /= count
-			data['Std-Dev'] /= count
+			for ( m in agentStatistics.values() ) {
+				if( !m.isEmpty() ) {
+					data['Requests'] = data['Requests'] ?: 0 + m["Requests"]
+					data['Running'] = data['Running'] ?: 0 + m["Running"]
+					data['Completed'] = data['Completed'] ?: 0 + m["Completed"]
+					data['Queued'] = data['Queued'] ?: 0 + m["Queued"]
+					data['Discarded'] = data['Discarded'] ?: 0 + m["Discarded"]
+					data['Failed'] = data['Failed'] ?: 0 + m["Failed"]
+				}
+			}
+			if( count != 0 ) {
+				data['Avg'] /= count
+				data['Std-Dev'] /= count
+			}
 		} catch( e ) { ex(e, 'Aggregating')
 		}
 	} else
-		data = agentData[selectedAgent.value]
+		data = agentData[selectedAgent.value] + agentStatistics[selectedAgent.value]
 	if(data == null || data.isEmpty())
 		return
 	
@@ -289,6 +317,13 @@ updateChart = { currentTime ->
 		if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
 		if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 		if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
+		if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
+		if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
+		if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
+		if(enableQueued.value) chartModel.addPoint(13, currentTime, data['Queued'])
+		if(enableDiscarded.value) chartModel.addPoint(14, currentTime, data['Discarded'])
+		if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
+		 if (inputTerminal.connections.size() > 0) {
 		avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
 		minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
 		maxDisplay.setArgs((float)data['Max'] * timeScaleFactor)
@@ -299,6 +334,7 @@ updateChart = { currentTime ->
 		avgBpsDisplay.setArgs((float)data['Avg-Bps'] * bytesScaleFactor)
 		percentileDisplay.setArgs((float)data['Percentile'])
 		avgRespSizeDisplay.setArgs((float)data['AvgResponseSize']  * bytesScaleFactor)
+		}
 	} catch( e ) {
 		e.printStackTrace()
 	}
@@ -377,6 +413,24 @@ addEventListener(PropertyEvent) { event ->
 				chartModel.enableSerie('AvgResponseSize', enableAvgResponseSize.value)
 				buildSignature()
 			}
+			else if(event.property == enableRequests) {
+				chartModel.enableSerie('Requests', enableRequests.value)
+			}
+			else if(event.property == enableRunning) {
+				chartModel.enableSerie('Running', enableRunning.value)
+			}
+			else if(event.property == enableCompleted) {
+				chartModel.enableSerie('Completed', enableCompleted.value)
+			}
+			else if(event.property == enableQueued) {
+				chartModel.enableSerie('Queued', enableQueued.value)
+			}
+			else if(event.property == enableDiscarded) {
+				chartModel.enableSerie('Discarded', enableDiscarded.value)
+			}
+			else if(event.property == enableFailed) {
+				chartModel.enableSerie('Failed', enableFailed.value)
+			}
 		}
 	}
 	catch(Throwable e2){
@@ -410,6 +464,7 @@ resetBuffers = {
 	timeStats.reset()
 	byteStats.reset()
 	agentData = [:]
+	agentStatistics = [:]
 }
 
 fixOptions = {
@@ -422,6 +477,7 @@ addEventListener( ActionEvent ) { event ->
 	if( event.key == 'RESET' ) resetComponent()
 	else if( event.key == 'STOP' ) {
 		agentData.clear()
+		agentStatistics.clear()
 		if( !controller )
 			send( controllerTerminal, newMessage() )
 	}
@@ -472,6 +528,17 @@ settings( label: 'Properties' ) {
 		property(property: enablePercentile, label: '90% Percentile' )
 		property(property: enableAvgResponseSize, label: 'Average Response Size' )
 		property(property: currentSourceID, label: 'Source ID' )
+	}
+} 
+
+settings( label: 'Statistics' ) {
+	box {
+		property(property: enableRequests, label: 'Enable Requests' )
+		property(property: enableRunning, label: 'Enable Running' )
+		property(property: enableCompleted, label: 'Enable Completed' )
+		property(property: enableQueued, label: 'Enable Queued' )
+		property(property: enableDiscarded, label: 'Enable Discarded' )
+		property(property: enableFailed, label: 'Enable Failed' )
 	}
 } 
 
