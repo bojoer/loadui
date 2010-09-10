@@ -180,7 +180,7 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
 								    var dlg:Dialog = Dialog {
 								        title: "Start Project"
 								        content: [
-								        				Label { text: "The object is missing a runner or a trigger. Start anyway?" }
+								        				Label { text: "Your {type} currently does not seem to generate any load, \n be sure to add a Generator and connect it to a Runner component to get going!" }
 								        ]
 								        onOk: function():Void {
 								           
