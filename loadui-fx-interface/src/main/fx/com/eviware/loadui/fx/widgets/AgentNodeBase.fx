@@ -70,6 +70,7 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 	public var enabled: Boolean;
 	public-read var ready: Boolean;
 	public-read var label:String;
+	public-read var url:String;
 	public-read var utilization:Integer;
 	
 	/**
@@ -80,6 +81,7 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 		oldAgent.removeEventListener( BaseEvent.class, this );
 		agent.addEventListener( BaseEvent.class, this );
 		label = agent.getLabel();
+		url = agent.getUrl();
 		enabled = agent.isEnabled();
 		ready = agent.isReady();
 		utilization = agent.getUtilization();
@@ -127,6 +129,7 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 				content: [
 					Label {
 						text: bind label.toUpperCase()
+						tooltip: Tooltip { text: bind "{label} ({url})" }
 						graphic: ImageView {
 							image: bind if( enabled and ready ) ledActive else if( enabled and not ready ) ledInactive else ledDisabled
 						}
@@ -140,8 +143,10 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 		def event = e as BaseEvent;
 		if( event.getKey().equals( ModelItem.LABEL ) ) {
 			runInFxThread( function():Void { label = agent.getLabel() } );
+		} else if( event.getKey().equals( AgentItem.URL ) ) {
+			runInFxThread( function():Void { url = agent.getUrl() } );
 		} else if(event.getKey().equals(AgentItem.ENABLED)) {
-			runInFxThread( function():Void { 
+			runInFxThread( function():Void {
 				ready = agent.isReady();
 				enabled = agent.isEnabled();
 			});

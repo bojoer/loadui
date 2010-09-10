@@ -88,11 +88,9 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 					hostName = "Unknown Host";
 				}
 				sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.CONNECTED, hostName ) );
-				log
-						.debug( "Agent connected, setting max threads: {}", getProperty( MAX_THREADS_PROPERTY )
-								.getStringValue() );
-				sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.SET_MAX_THREADS, getProperty(
-						MAX_THREADS_PROPERTY ).getStringValue() ) );
+				log.debug( "Agent connected, setting max threads: {}", getProperty( MAX_THREADS_PROPERTY ).getStringValue() );
+				sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.SET_MAX_THREADS,
+						getProperty( MAX_THREADS_PROPERTY ).getStringValue() ) );
 
 				fireBaseEvent( READY );
 				fireBaseEvent( UTILIZATION );
@@ -173,6 +171,7 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 		{
 			getConfig().setUrl( url );
 			setupClient();
+			fireBaseEvent( URL );
 		}
 	}
 
