@@ -40,6 +40,13 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.DefaultCellEditor;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.TableColumn;
+
+import org.jdesktop.swingx.table.TableColumnExt;
+
 public function build( id:String, label:String, value:Object ) {
     SettingsTableField { id:id, label:label, value:value }
 }
@@ -57,15 +64,20 @@ public class SettingsTableField extends CustomNode, FormField, Observer{
     var pane:JScrollPane;
     
     override public function create():Node {
-        for( p in data.values() ) 
+    	for( p in data.values() ) 
             model.addRow(p as PropertyProxy);
-        var table:JXTable = new JXTable(model);
+        var table: JXTable = new JXTable(model);
+        table.setEditable(true);
+        for(i in [0..table.getColumnCount()-1]){
+        	table.getColumnExt(i).setEditable(true);
+        	table.getColumnExt(i).setCellEditor(new DefaultCellEditor(new JTextField()));
+        }
         table.setIntercellSpacing(new Dimension( 10, 0 ));
         table.setAutoCreateColumnsFromModel(true);
         table.setVisibleRowCount(2);
         table.setHorizontalScrollEnabled(true);
         table.setPreferredScrollableViewportSize(new Dimension(400, 220));
-        
+
         SwingComponent.wrap( pane = new JScrollPane(table));
     }
     
@@ -101,10 +113,12 @@ public class SettingsTableField extends CustomNode, FormField, Observer{
     }
     
     override function update(observable: Observable, arg: Object) {
-             FX.deferAction(
-                 function(): Void {
-                     dataHashCode = model.hashCode();
-                 }
-             );
-         }
+         FX.deferAction(
+             function(): Void {
+                 dataHashCode = model.hashCode();
+             }
+         );
+    }
+         
 }
+

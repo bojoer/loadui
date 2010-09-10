@@ -39,6 +39,11 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.DefaultCellEditor;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.TableColumn;
+
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Button;
@@ -84,6 +89,11 @@ public class TableField extends CustomNode, FormField, Observer {
     
     override public function create(): Node {
         table = new JXTable(model);
+        table.setEditable(true);
+        for(i in [0..table.getColumnCount()-1]){
+        	table.getColumnExt(i).setEditable(true);
+        	table.getColumnExt(i).setCellEditor(new DefaultCellEditor(new JTextField()));
+        }
         table.setIntercellSpacing(new Dimension( 10, 0 ));
         table.setAutoCreateColumnsFromModel(true);
         table.setVisibleRowCount(2);
