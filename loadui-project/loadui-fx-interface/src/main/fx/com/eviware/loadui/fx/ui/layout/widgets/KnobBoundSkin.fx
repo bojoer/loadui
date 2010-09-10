@@ -112,10 +112,7 @@ class HandleNode extends BaseNode, TooltipHolder {
 	override var blocksMouse = true;
 	
 	var x = bind lazy knob.textBox.focused on replace {
-	    if ( knob.textBox.focused )
-	    	showLabel(false)
-	    else 
-	    	showLabel(true)
+		enableTooltip( not knob.textBox.focused );
 	}
 	
 	override function create() {
