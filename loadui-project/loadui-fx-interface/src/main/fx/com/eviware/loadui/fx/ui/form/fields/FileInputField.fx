@@ -61,6 +61,7 @@ public class FileInputField extends HBox, FormField {
 	
 	def textBox = TextBox {
 		layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true }
+		text: if( value == null) "" else (value as File).getPath();
 	}
 	def textBoxText = bind textBox.text on replace {
 		value = if( StringUtils.isNullOrEmpty( textBoxText ) ) null else new File( textBoxText );
