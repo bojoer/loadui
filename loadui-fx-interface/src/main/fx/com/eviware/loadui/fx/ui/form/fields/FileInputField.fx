@@ -47,7 +47,6 @@ public def FILES_AND_DIRECTORIES = JFileChooser.FILES_AND_DIRECTORIES;
  */
 public class FileInputField extends HBox, FormField {	
 	public-init var selectMode = FILES_ONLY;
-	public-init var onOpen = function():Void {};
 
 	override var value on replace {
 		if( value != null and not ( value instanceof File ) )
@@ -63,7 +62,6 @@ public class FileInputField extends HBox, FormField {
 	}
 	def textBoxText = bind textBox.text on replace {
 		value = if( StringUtils.isNullOrEmpty( textBoxText ) ) null else new File( textBoxText );
-		println("Value updated: {value}");
 	}
 	
 	def button = Button {
@@ -79,7 +77,6 @@ public class FileInputField extends HBox, FormField {
 			if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog( null )) {
 				value = chooser.getSelectedFile();
 			}
-			onOpen();
 		}
 	}
 	
