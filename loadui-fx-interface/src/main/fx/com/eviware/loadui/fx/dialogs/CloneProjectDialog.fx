@@ -68,8 +68,8 @@ public class CloneProjectDialog {
 			content: [
 				form = Form {
 					formContent: [
-						TextField { id: "name", label: "Name of cloned project", description: "Name of cloned project", action: ok } as FormField,
-						FileInputField { id: "file", label: "File of cloned project", description: "File of cloned project", action: ok } as FormField,
+						TextField { id: "name", label: "Name of cloned project", description: "Name of cloned project" } as FormField,
+						FileInputField { id: "file", label: "File of cloned project", description: "File of cloned project" } as FormField,
 						CheckBoxField { id: "open", label: "Open cloned project for editing", value: true }
 					]
 				}
