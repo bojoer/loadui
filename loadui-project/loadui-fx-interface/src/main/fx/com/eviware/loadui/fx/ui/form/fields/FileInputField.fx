@@ -15,6 +15,10 @@
  */
 package com.eviware.loadui.fx.ui.form.fields;
 
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.LayoutInfo;
+import javafx.scene.layout.Priority;
+import javafx.scene.control.TextBox;
 import javafx.scene.control.Button;
 
 import javax.swing.JFileChooser;
@@ -22,6 +26,7 @@ import java.io.File;
 import java.lang.IllegalArgumentException;
 
 import com.eviware.loadui.fx.ui.form.FormField;
+import com.eviware.loadui.util.StringUtils;
 
 /**
  * Constructs a new FileInputField using the supplied arguments.
@@ -40,40 +45,45 @@ public def FILES_AND_DIRECTORIES = JFileChooser.FILES_AND_DIRECTORIES;
  * @author robert
  * @author dain.nilsson
  */
-public class FileInputField extends Button, FormField {	
-    
-    public-init var selectMode = FILES_ONLY;
-    
-    public-init var onOpen = function():Void {};
-    
+public class FileInputField extends HBox, FormField {	
+	public-init var selectMode = FILES_ONLY;
+	public-init var onOpen = function():Void {};
+
 	override var value on replace {
 		if( value != null and not ( value instanceof File ) )
 			throw new IllegalArgumentException( "Value must be of type File!" );
-	}
-
-	override var text = bind if(value == null) {
-		if( selectMode == DIRECTORIES_ONLY )
-			"Choose folder"
-		else if( selectMode == DIRECTORIES_ONLY )
-			"Choose file"
-		else
-			"Choose file or folder"
-	} else (value as File).getName();
-	
-	override var action = function() {
-		def chooser = new JFileChooser( value as File );
-		chooser.setFileSelectionMode( selectMode );
-		if (selectMode == DIRECTORIES_ONLY) {
-			chooser.setAcceptAllFileFilterUsed(false);
-		}
-		chooser.setSelectedFile( value as File );
-		if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog( null )) {
-			value = chooser.getSelectedFile();
-		}
-		onOpen();
+		
+		textBox.text = if( value == null) "" else (value as File).getPath();
 	}
 	
-	override function getPrefWidth( height:Float ) {
-		100
+	override var spacing = 4; 
+	
+	def textBox = TextBox {
+		layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true }
+	}
+	def textBoxText = bind textBox.text on replace {
+		value = if( StringUtils.isNullOrEmpty( textBoxText ) ) null else new File( textBoxText );
+		println("Value updated: {value}");
+	}
+	
+	def button = Button {
+		layoutInfo: LayoutInfo { vfill: true }
+		text: "Browse..."
+		action: function() {
+			def chooser = new JFileChooser( value as File );
+			chooser.setFileSelectionMode( selectMode );
+			if (selectMode == DIRECTORIES_ONLY) {
+				chooser.setAcceptAllFileFilterUsed(false);
+			}
+			chooser.setSelectedFile( value as File );
+			if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog( null )) {
+				value = chooser.getSelectedFile();
+			}
+			onOpen();
+		}
+	}
+	
+	init {
+		content = [ textBox, button ];
 	}
 }
