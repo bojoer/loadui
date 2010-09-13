@@ -55,7 +55,9 @@ public class FileInputField extends HBox, FormField {
 		textBox.text = if( value == null) "" else (value as File).getPath();
 	}
 	
-	override var spacing = 4; 
+	override var spacing = 4;
+	
+	def chooser = new JFileChooser(); 
 	
 	def textBox = TextBox {
 		layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true }
@@ -68,19 +70,19 @@ public class FileInputField extends HBox, FormField {
 		layoutInfo: LayoutInfo { vfill: true }
 		text: "Browse..."
 		action: function() {
-			def chooser = new JFileChooser( value as File );
-			chooser.setFileSelectionMode( selectMode );
-			if (selectMode == DIRECTORIES_ONLY) {
-				chooser.setAcceptAllFileFilterUsed(false);
-			}
 			chooser.setSelectedFile( value as File );
-			if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog( null )) {
+			if ( JFileChooser.APPROVE_OPTION == chooser.showOpenDialog( null ) ) {
 				value = chooser.getSelectedFile();
 			}
 		}
 	}
 	
 	init {
+		chooser.setFileSelectionMode( selectMode );
+		if( selectMode == DIRECTORIES_ONLY ) {
+			chooser.setAcceptAllFileFilterUsed( false );
+		}
+		
 		content = [ textBox, button ];
 	}
 }
