@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
-import com.eviware.loadui.api.component.categories.TriggerCategory;
+import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.ActionEvent;
@@ -97,8 +97,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 		terminalHolderSupport = new TerminalHolderSupport( this );
 
-		stateTerminal = terminalHolderSupport
-				.createInput( TriggerCategory.STATE_TERMINAL, "Controls TestCase execution." );
+		stateTerminal = terminalHolderSupport.createInput( OnOffCategory.STATE_TERMINAL, "Controls TestCase execution." );
 
 		for( String exportId : getConfig().getExportedTerminalArray() )
 			exports.add( ( OutputTerminal )addressableRegistry.lookup( exportId ) );
@@ -238,9 +237,9 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		if( event instanceof TerminalMessageEvent && input == stateTerminal )
 		{
 			TerminalMessage message = ( ( TerminalMessageEvent )event ).getMessage();
-			if( message.containsKey( TriggerCategory.ENABLED_MESSAGE_PARAM ) )
+			if( message.containsKey( OnOffCategory.ENABLED_MESSAGE_PARAM ) )
 			{
-				Object enabled = message.get( TriggerCategory.ENABLED_MESSAGE_PARAM );
+				Object enabled = message.get( OnOffCategory.ENABLED_MESSAGE_PARAM );
 				if( enabled instanceof Boolean )
 					triggerAction( ( Boolean )enabled ? START_ACTION : STOP_ACTION );
 			}
