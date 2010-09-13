@@ -93,15 +93,15 @@ public class AgentConfigurationDialog {
 						]
 					}
 				}
-				Tab {
-         			label: "soapUI", content: formT2 = Form {
-						formContent: [
-							TextField { id: "soapUIExt", label: "soapUI ext folder", description: "Path to soapUI ext folder", value: soapUIExt, width: bind 200, action: ok } as FormField,
-							TextField { id: "soapUIHermes", label: "Hermes folder", description: "Path to Hermes folder", value: soapUIHermes, width: bind 200, action: ok } as FormField,
-							TextField { id: "soapUISettings", label: "soapUI settings file", description: "Path to soapUI settings file", value: soapUISettings, width: bind 200, action: ok } as FormField,
-						]
-					}
-				}
+				//Tab {
+         		//	label: "soapUI", content: formT2 = Form {
+				//		formContent: [
+				//			TextField { id: "soapUIExt", label: "soapUI ext folder", description: "Path to soapUI ext folder", value: soapUIExt, width: bind 200, action: ok } as FormField,
+				//			TextField { id: "soapUIHermes", label: "Hermes folder", description: "Path to Hermes folder", value: soapUIHermes, width: bind 200, action: ok } as FormField,
+				//			TextField { id: "soapUISettings", label: "soapUI settings file", description: "Path to soapUI settings file", value: soapUISettings, width: bind 200, action: ok } as FormField,
+				//		]
+				//	}
+				//}
 			]
          onOk: ok
 		}
