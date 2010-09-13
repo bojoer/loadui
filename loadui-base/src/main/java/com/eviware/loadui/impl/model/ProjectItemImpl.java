@@ -367,7 +367,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			conf.setAgentLabel( agent.getLabel() );
 			conf.setAgentAddress( agent.getUrl() );
 			agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, sceneId ) );
-			if( scene.isRunning() )
+			if( scene.isRunning() && !workspace.isLocalMode() )
 				agent.sendMessage( SceneCommunication.CHANNEL, Arrays.asList( sceneId, Long.toString( scene.getVersion() ),
 						SceneCommunication.ACTION_EVENT, START_ACTION, sceneId ) );
 			fireCollectionEvent( ASSIGNMENTS, Event.ADDED, assignment );
@@ -533,7 +533,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	 * 
 	 * @param summary
 	 */
-	private void saveSummary(MutableSummary summary )
+	private void saveSummary( MutableSummary summary )
 	{
 		File outputDir;
 		if( reportFolder == null || reportFolder.getValue().length() < 1 )
@@ -542,33 +542,40 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			outputDir = new File( reportFolder.getValue() );
 
 		String format = reportFormat.getValue();
-		if(format == null){
-			saveSummaryAsXML(summary, createOutputFile(outputDir, "xml"));
+		if( format == null )
+		{
+			saveSummaryAsXML( summary, createOutputFile( outputDir, "xml" ) );
 		}
-		else{
+		else
+		{
 			format = format.toUpperCase();
 			boolean formatSupported = false;
-			for (ReportFormats rf : ReportFormats.values()) {
-				if(rf.toString().equals(format)){
+			for( ReportFormats rf : ReportFormats.values() )
+			{
+				if( rf.toString().equals( format ) )
+				{
 					formatSupported = true;
-					File out =  createOutputFile(outputDir, format);
-					JasperReportManager.getInstance().createReport(summary,  out, format);
+					File out = createOutputFile( outputDir, format );
+					JasperReportManager.getInstance().createReport( summary, out, format );
 					break;
 				}
 			}
-			if(!formatSupported){
-				log.warn( "Format '" + format + "' is not supported. Report will be saved in plain xml.");
-				saveSummaryAsXML(summary, createOutputFile(outputDir, "xml"));
+			if( !formatSupported )
+			{
+				log.warn( "Format '" + format + "' is not supported. Report will be saved in plain xml." );
+				saveSummaryAsXML( summary, createOutputFile( outputDir, "xml" ) );
 			}
 		}
 	}
 
-	private File createOutputFile(File outputDir, String format){
+	private File createOutputFile( File outputDir, String format )
+	{
 		String fileName = getLabel() + "-summary-" + System.currentTimeMillis() + "." + format.toLowerCase();
 		return new File( outputDir, fileName );
 	}
-	
-	private void saveSummaryAsXML(final MutableSummary summary, final File out ){
+
+	private void saveSummaryAsXML( final MutableSummary summary, final File out )
+	{
 		SwingWorker worker = new SwingWorker()
 		{
 			@Override
@@ -710,7 +717,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		};
 		worker.execute();
 	}
-	
+
 	@Override
 	public CanvasObjectItem duplicate( CanvasObjectItem obj )
 	{
@@ -886,8 +893,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 						{
 							propertySynchronizer.syncProperties( component, sceneEndpoints.get( scene ) );
 							component.addEventListener( RemoteActionEvent.class, sceneComponentListener );
-							sendSceneCommand( scene, SceneCommunication.ADD_COMPONENT, conversionService.convert( component,
-									String.class ) );
+							sendSceneCommand( scene, SceneCommunication.ADD_COMPONENT,
+									conversionService.convert( component, String.class ) );
 						}
 						else
 						{
@@ -960,14 +967,16 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				SceneItem scene = ( SceneItem )addressableRegistry.lookup( message.get( AgentItem.DEFINE_SCENE ) );
 				if( scene != null )
 				{
-					endpoint.sendMessage( channel, MapUtils.build( String.class, String.class ).put( AgentItem.SCENE_ID,
-							scene.getId() ).put( AgentItem.SCENE_DEFINITION, conversionService.convert( scene, String.class ) )
-							.getImmutable() );
+					endpoint.sendMessage(
+							channel,
+							MapUtils.build( String.class, String.class ).put( AgentItem.SCENE_ID, scene.getId() )
+									.put( AgentItem.SCENE_DEFINITION, conversionService.convert( scene, String.class ) )
+									.getImmutable() );
 				}
 				else
 				{
-					log.info( "An Agent {} has requested a nonexistant TestCase: {}", endpoint, message
-							.get( AgentItem.DEFINE_SCENE ) );
+					log.info( "An Agent {} has requested a nonexistant TestCase: {}", endpoint,
+							message.get( AgentItem.DEFINE_SCENE ) );
 				}
 			}
 			else if( message.containsKey( AgentItem.SCENE_ID ) )
@@ -1041,11 +1050,12 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					component.getId() );
 		}
 	}
-	
+
 	@Override
 	public boolean isLoadingError()
 	{
-		for( SceneItem scene: getScenes() ) {
+		for( SceneItem scene : getScenes() )
+		{
 			if( scene.isLoadingError() )
 				return true;
 		}
