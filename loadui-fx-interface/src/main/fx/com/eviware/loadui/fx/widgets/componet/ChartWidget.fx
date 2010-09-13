@@ -509,7 +509,7 @@ public class ChartWidget extends VBox, ChartListener {
 				}
 			}
 		}
-		max;    	
+		max * 1.05;    	
     }
     
     function findMinimumY(default: Boolean): Double {
