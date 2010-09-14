@@ -96,7 +96,7 @@ addEventListener( ActionEvent ) { event ->
 layout { 
 	property( property:delay, label:"Delay(ms)", min:0, step:100, span:60000 ) 
 	separator( vertical:true )
-	node(widget: 'selectorWidget', labal: 'Distribution', labels:[ NONE, GAUSSIAN, UNIFORM ], default: selected.value, selected: selected)
+	node(widget: 'selectorWidget', label: 'Distribution', labels:[ NONE, GAUSSIAN, UNIFORM ], default: selected.value, selected: selected)
 	property( property: randomDelay, label:'Random(%)', min:0, max: 100 )
 	separator( vertical:true )
 	box( widget:'display' ) {
