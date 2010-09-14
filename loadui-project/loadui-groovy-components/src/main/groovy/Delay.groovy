@@ -29,81 +29,80 @@ import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
 
+final NONE = 'None'
+final GAUSSIAN = 'Gaussian'
+final UNIFORM = 'Uniform'
+
 random = new Random()
- 
+waitingCount = 0
+
 display = new DelayedFormattedString( ' %d /ms ', 500, 0 )
-waitingDisplay = new DelayedFormattedString( ' %d  ', 500, 0 )
+waitingDisplay = new DelayedFormattedString( ' %d  ', 500, value { waitingCount } )
  
 output = createOutput( 'output', "Message Output" )
  
-waitingCount = 0;
 createProperty('delay', Long, 0)
-createProperty('selected', String, 'none')
+createProperty('selected', String, NONE)
 createProperty('randomDelay', Integer, 0)
 
 executor = Executors.newSingleThreadScheduledExecutor()
  
 onMessage = { incoming, outgoing, message ->
-    super.onTerminalMessage(incoming, outgoing, message)
-    delayIsRandom = random.nextInt(101) > randomDelay.value
-    waitingCount++;
-    waitingDisplay.setArgs(waitingCount);
-    if ( selected.value == 'none'  ) {
-        message.put("actualDelay", delay.value )
-        executor.schedule( { 
-                 send( output, message);
-                 waitingCount--;
-    			waitingDisplay.setArgs(waitingCount);
-                       display.setArgs( message.get("actualDelay") ) }, delay.value, TimeUnit.MILLISECONDS ) 
-    }
-    if ( selected.value == 'Gauss' && delayIsRandom ) {
-        tmpDelay = Math.abs( (int)(random.nextGaussian() * delay.value) )
-        message.put("actualDelay", tmpDelay )
-        executor.schedule( { send( output, message);
-        					waitingCount--;
-    						waitingDisplay.setArgs(waitingCount);
-                             display.setArgs( message.get("actualDelay") )  }, tmpDelay, TimeUnit.MILLISECONDS )
-    }
-    if ( selected.value == 'Uniform' && delayIsRandom ) {
-        tmpDelay = Math.abs( (int)(random.random() * delay.value) )
-        message.put("actualDelay", tmpDelay )
-        executor.schedule( { send( output, message);
-        						waitingCount--;
-    							waitingDisplay.setArgs(waitingCount);
-                             display.setArgs( message.get("actualDelay") ) }, tmpDelay, TimeUnit.MILLISECONDS ) 
-    }
- }
- 
- onRelease = {
-   display.release()
-   executor.shutdownNow()
- }
-
- addEventListener( ActionEvent ) { event ->
-	if ( event.key == "STOP" ) {
-		executor.shutdownNow()
+	waitingCount++
+	
+	long delayTime = delay.value 
+	if( selected.value == GAUSSIAN ) {
+		delayTime += (random.nextGaussian() * (randomDelay.value / 100) * delayTime * 0.3)
+	} else if( selected.value == UNIFORM ) {
+		delayTime += 2*(random.nextDouble() - 0.5 ) * delayTime * (randomDelay.value / 100)
 	}
 	
-	if ( event.key == "START" ) {
+	message.put( 'actualDelay', delayTime )
+	log.info "Delaying: $delayTime ms"
+	executor.schedule( {
+		send( output, message )
+		waitingCount--
+		display.args = delayTime
+	}, delayTime, TimeUnit.MILLISECONDS )
+ }
+ 
+onRelease = {
+	display.release()
+	waitingDisplay.release()
+	executor.shutdownNow()
+}
+
+addEventListener( ActionEvent ) { event ->
+	if ( event.key == "STOP" && executor != null ) {
+		executor.shutdownNow()
+		executor = null
+	}
+	
+	if ( event.key == "START" && executor == null ) {
 		executor = Executors.newSingleThreadScheduledExecutor()
 	}
 	
 	if ( event.key == "RESET" ) {
-	    display.setArgs(0)
+		display.args = 0
+		waitingCount = 0;
+		if( executor != null ) {
+			executor.shutdownNow()
+			executor = Executors.newSingleThreadScheduledExecutor()
+		}
 	}
- }
+}
 
- layout { 
-    property( property:delay, label:"Delay(ms)", min:0, step:100, span:60000 ) 
-    separator( vertical:true )
-    node(widget: 'selectorWidget', labels:["none", "Gauss", "Uniform"], default: selected.value, selected: selected)
-    property( property: randomDelay, label:'Random(%)', min:0, max: 100 )
-    separator( vertical:true )
-    box( widget:'display' ) {
-        node( label:'delay ', fString:display, constraints:'w 60!' )
-        node( label:'waiting ', fString:waitingDisplay, constraints:'w 50!' )
-    }
- }
+layout { 
+	property( property:delay, label:"Delay(ms)", min:0, step:100, span:60000 ) 
+	separator( vertical:true )
+	node(widget: 'selectorWidget', labal: 'Distribution', labels:[ NONE, GAUSSIAN, UNIFORM ], default: selected.value, selected: selected)
+	property( property: randomDelay, label:'Random(%)', min:0, max: 100 )
+	separator( vertical:true )
+	box( widget:'display' ) {
+		node( label:'delay ', fString:display, constraints:'w 60!' )
+		node( label:'waiting ', fString:waitingDisplay, constraints:'w 50!' )
+	}
+}
  
 compactLayout {
 	box( widget:'display' ) {
