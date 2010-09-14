@@ -195,6 +195,7 @@ analyze = { message ->
 onMessage = { o, i, m ->
 	super.onTerminalMessage(o, i, m)
 	if(i == remoteTerminal) {
+		
 		agentData[o.label] = new HashMap(m)
 	}
 	
@@ -261,7 +262,7 @@ calculate = {
 		ex(e1, 'calculate')
 	}
 	
-	if( controller )
+	if( timeStats.size() > 0 && controller )
 		updateChart( currentTime )
 }
 
@@ -333,7 +334,7 @@ updateChart = { currentTime ->
 			if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 			if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
 		}
-		if (statisticsInput.connections.size() > 0) {
+		if (statisticsInput.connections.size() > 0  && data.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"])) {
 			if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
 			if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
 			if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
