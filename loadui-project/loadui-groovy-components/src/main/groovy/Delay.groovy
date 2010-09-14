@@ -76,6 +76,7 @@ addEventListener( ActionEvent ) { event ->
 	if ( event.key == "STOP" && executor != null ) {
 		executor.shutdownNow()
 		executor = null
+		waitingCount = 0;
 	}
 	
 	if ( event.key == "START" && executor == null ) {
