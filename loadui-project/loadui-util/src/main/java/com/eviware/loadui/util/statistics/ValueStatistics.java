@@ -108,6 +108,8 @@ public class ValueStatistics
 			}
 
 			long timeDelta = timestamp - point.timestamp;
+			
+			timeDelta = timeDelta==0?1000:timeDelta;
 
 			vps = vps * 1000 / timeDelta;
 			tps = ( samples - 1 ) * 1000.0 / timeDelta;
