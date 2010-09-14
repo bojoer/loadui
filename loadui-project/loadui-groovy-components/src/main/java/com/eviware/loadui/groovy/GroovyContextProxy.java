@@ -50,6 +50,7 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.CanvasObjectItem;
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.Terminal;
@@ -318,7 +319,8 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 				if( script != null )
 					InvokerHelper.removeClass( script.getClass() );
 
-				script = shell.parse( scriptContent, "GroovyComponent" );
+				script = shell.parse( scriptContent,
+						makeClassName( context.getAttribute( ComponentItem.TYPE, "Component" ) ) );
 				script.setBinding( binding );
 
 				HandleMetaClass hmc = new HandleMetaClass( script.getMetaClass() );
@@ -333,6 +335,11 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 			// log.error( "Error running component script", e );
 			// }
 		}
+	}
+
+	private String makeClassName( String type )
+	{
+		return "Groovy" + type.replaceAll( "[^a-zA-Z]", "" );
 	}
 
 	public Object methodIsMissing( String method, Object args )
