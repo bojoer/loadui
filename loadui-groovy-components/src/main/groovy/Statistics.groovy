@@ -194,7 +194,7 @@ analyze = { message ->
 
 onMessage = { o, i, m ->
 	super.onTerminalMessage(o, i, m)
-	if(i == remoteTerminal ) {
+	if(i == remoteTerminal) {
 		agentData[o.label] = new HashMap(m)
 	}
 	
@@ -305,13 +305,23 @@ updateChart = { currentTime ->
 			}
 		} catch( e ) { ex(e, 'Aggregating')
 		}
-	} else
-		data = agentData[selectedAgent.value] + agentStatistics[selectedAgent.value]
-	if(data == null || data.isEmpty())
+	} else {
+		
+		if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] == null) {
+			data = null
+		} else if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] != null) {
+			data = agentStatistics[selectedAgent.value]
+		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] == null) {
+			data = agentData[selectedAgent.value]
+		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] != null) {
+			data = agentData[selectedAgent.value] + agentStatistics[selectedAgent.value]
+		}
+	}
+	if(data == null || data.isEmpty()) {
 		return
-	
+	}
 	try {
-		if (inputTerminal.connections.size() > 0) {
+		if (inputTerminal.connections.size() > 0 || remoteTerminal.connections.size() > 0  ) {
 			if(enableMax.value) chartModel.addPoint(0, currentTime, data['Max'] * timeScaleFactor)
 			if(enableMin.value) chartModel.addPoint(1, currentTime, data['Min'] * timeScaleFactor)
 			if(enableAverage.value) chartModel.addPoint(2, currentTime, data['Avg'] * timeScaleFactor)
