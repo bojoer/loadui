@@ -96,7 +96,10 @@ import com.jidesoft.chart.axis.AxisPlacement;
  */
 public class ChartWidget extends VBox, ChartListener {
     
-    public-init var chartModel: ChartModel;
+    public-init var chartModel: ChartModel on replace oldModel {
+    	oldModel.removeChartListener(this);
+    	chartModel.addChartListener(this);
+    }
     
     var chart: Chart;
     var xAxis: Axis;
@@ -105,7 +108,7 @@ public class ChartWidget extends VBox, ChartListener {
     var legend: Legend;
     var legendPanel: JPanel;
     var models: HashMap;
-    var demoPanel: JPanel;
+    var chartPanel: JPanel;
     
     var customXRange: CustomAbstractRange;
     var customYRange: CustomAbstractRange;
@@ -113,9 +116,14 @@ public class ChartWidget extends VBox, ChartListener {
     
     var seriesColors: Color[];
     
+    var chartNode: Node;
+    var legendNode: Node;
+    
     init {
-    	def chartPanel: JPanel = buildChart(chartModel);
-    	def chartNode = SwingComponent.wrap(chartPanel);
+    	buildChartPanel();
+    	buildLegendPanel();
+    	chartNode = SwingComponent.wrap(chartPanel);
+    	legendNode = SwingComponent.wrap(legendPanel);
     	def backgroundImg: ImageView = ImageView {
             layoutX: 0
             layoutY: 0
@@ -151,8 +159,10 @@ public class ChartWidget extends VBox, ChartListener {
 		            	layoutX: 0
 		                layoutY: 0
 		                spacing: 0
-		            	content: [
-				    		chartNode
+		                nodeHPos: HPos.CENTER
+		            	content: bind [
+				    		chartNode,
+				    		legendNode
 						]
 					}
 				]
@@ -161,13 +171,9 @@ public class ChartWidget extends VBox, ChartListener {
     	spacing = 0;
     }
     	
-    function buildChart(chartModel: ChartModel): JPanel {
-    	this.chartModel = chartModel;
-    	chartModel.addChartListener(this);
-
+    function buildChartPanel(): Void {
 		customXRange = chartModel.getXRange();
 	    customYRange = chartModel.getYRange();
-	    
 	    
     	chart = new Chart();
 		
@@ -190,11 +196,6 @@ public class ChartWidget extends VBox, ChartListener {
 				
     	models = new HashMap();
 		
-    	
-    	legend = new Legend(chart, chartModel.getLegendColumns());
-    	legend.setBorder(BorderFactory.createEmptyBorder());
-    	legend.setOpaque(false);
-    	
     	var xRange: AbstractRange = convertRange(customXRange);
     	var yRange: AbstractRange = convertRange(customYRange);
     	
@@ -209,19 +210,14 @@ public class ChartWidget extends VBox, ChartListener {
     	xAxis.setLabel(new AutoPositionedLabel(customXRange.getTitle(), new Color(0,255,0)));
         yAxis.setLabel(new AutoPositionedLabel(customYRange.getTitle(), new Color(0,255,0)));
     	
-    	demoPanel = new JPanel();
-    	demoPanel.setLayout(new BorderLayout());
-    	demoPanel.setOpaque(false);
-
 		def xPadding: Integer = 15;
 		def yPadding: Integer = 15;
 		
     	//this is to make padding for a chart
-    	def chartPanel: JPanel = new JPanel();
+    	chartPanel = new JPanel();
     	chartPanel.setPreferredSize(new Dimension(chartModel.getWidth(), chartModel.getHeight()));
     	chartPanel.setLayout(new FlowLayout(FlowLayout.CENTER, xPadding, yPadding));//new GridLayout(1, 1, 55, 55));
     	chartPanel.setOpaque(false);
-        demoPanel.add(chartPanel, BorderLayout.CENTER);
         
         var cl: ChartMouseListener = ChartMouseListener {
         	models: models
@@ -243,18 +239,18 @@ public class ChartWidget extends VBox, ChartListener {
         }
         
         for(cs in chartModel.getSeries()){
-        			def model: DefaultChartModel = new DefaultChartModel(cs.getName());
-            		models.put(cs.getName(), model);
-        			if(cs.isEnabled()){
-        			    if (cs.isDefaultAxis()) {
-        	    			chart.addModel(model);
-        			    } else {
-        	    			chart.addModel(model, y2Axis);
-        	    			
-        			    }
-        	    		chart.setStyle(model, createStyleForSerie(cs.getIndex(), chartModel.getStyle()));
-        			}
-        		}
+			def model: DefaultChartModel = new DefaultChartModel(cs.getName());
+    		models.put(cs.getName(), model);
+			if(cs.isEnabled()){
+			    if (cs.isDefaultAxis()) {
+	    			chart.addModel(model);
+			    } else {
+	    			chart.addModel(model, y2Axis);
+	    			
+			    }
+	    		chart.setStyle(model, createStyleForSerie(cs.getIndex(), chartModel.getStyle()));
+			}
+		}
         chart.setTitle(new AutoPositionedLabel(chartModel.getTitle(), Color.yellow.brighter()));
     	chart.setChartBackground(new Color(0, 0, 0, 0));
     	chart.setPanelBackground(new Color(0, 0, 0, 0));
@@ -265,13 +261,15 @@ public class ChartWidget extends VBox, ChartListener {
     	chart.setPreferredSize(new Dimension(chartModel.getWidth() - 2 * xPadding, chartModel.getHeight() - 2 * yPadding));
     	chart.addMouseMotionListener(cl);
     	chartPanel.add(chart);
-    	
-        legendPanel = new JPanel();
+    }
+    
+    function buildLegendPanel(): Void {
+    	legend = new Legend(chart, chartModel.getLegendColumns());
+    	legend.setBorder(BorderFactory.createEmptyBorder());
+    	legend.setOpaque(false);
+    	legendPanel = new JPanel();
         legendPanel.setOpaque(false);
    		legendPanel.add(legend);
-        
-        demoPanel.add(legendPanel, BorderLayout.SOUTH);
-    	demoPanel;
     }
     
     function createAxis(range: AbstractRange): Axis {
@@ -383,39 +381,8 @@ public class ChartWidget extends VBox, ChartListener {
 	    		model = models.get(chartSerie.getName()) as DefaultChartModel;
 	    		chart.removeModel(model);
 	    	}
-	
-	    	//chart.removeModels();
-	    	//for(cs in chartModel.getSeries()){
-	    	//	if(cs.isEnabled()){
-	    	//		model = models.get(cs.getName()) as DefaultChartModel;
-	    	//		chart.addModel(model);
-	    	//		chart.setStyle(model, createStyleForSerie(chartModel.getSerieIndex(cs.getName()), chartModel.getStyle()));
-	    	//	}
-	    	//}
-	    	
-			//if it is enabled, clear all previous points
-			//if(chartSerie.isEnabled()){
-			//	(models.get(chartSerie.getName()) as DefaultChartModel).clearPoints();
-			//}
-			
-	    	legendPanel.remove(legend);
-	    	legend = new Legend(chart, chartModel.getLegendColumns());
-	    	legend.setBorder(BorderFactory.createEmptyBorder());
-	    	legend.setOpaque(false);
-	   		legendPanel.add(legend);
-	   		
-	   		legend.doLayout();
-	   		legendPanel.doLayout();
-	   		demoPanel.doLayout();
-	   		legend.doLayout();
-	   		legendPanel.doLayout();
-	   		
-	   		legend.repaint();
-	   		legendPanel.repaint();
-	   		demoPanel.repaint();
-	   		legend.repaint();
-	   		legendPanel.repaint();
-	   		
+	    	chartNode = SwingComponent.wrap(chartPanel);
+	   		legendNode = SwingComponent.wrap(legendPanel);
 		}
 		catch(t: Throwable){
 			println("------------");
@@ -445,8 +412,8 @@ public class ChartWidget extends VBox, ChartListener {
     		autoNumericAxis(yAxis, findMaximumY(true), findMinimumY(true), (customYRange as CustomNumericRange).getExtraSpace());
     	} 
     	if(y2Axis.getRange() instanceof NumericRange){
-    	    		autoNumericAxis(y2Axis, findMaximumY(false), findMinimumY(false), (customY2Range as CustomNumericRange).getExtraSpace());
-    	    	} 
+    		autoNumericAxis(y2Axis, findMaximumY(false), findMinimumY(false), (customY2Range as CustomNumericRange).getExtraSpace());
+    	} 
     }
     
     function autoTimeAxis(axis: Axis, min: Double, period: Long): Void {
