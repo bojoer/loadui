@@ -466,6 +466,16 @@ resetComponent = {
 	sourceIDs = ["none"]
 	currentSourceID.value = "none"
 	availableSourceIDs.options = sourceIDs 
+	avgDisplay.setArgs(0f)
+	minDisplay.setArgs(0f)
+	maxDisplay.setArgs(0f)
+	stdDevDisplay.setArgs(0f)
+	tpsDisplay.setArgs(0f)
+	bpsDisplay.setArgs(0f)
+	avgTpsDisplay.setArgs(0f)
+	avgBpsDisplay.setArgs(0f)
+	percentileDisplay.setArgs(0f)
+	avgRespSizeDisplay.setArgs(0f)
 }
 
 resetBuffers = {
