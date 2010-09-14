@@ -121,7 +121,7 @@ public class FileToReferenceConverter implements Converter<File, Reference>
 						{
 							// This needs to be here, or messages may be dropped.
 							// TODO: Better file transferring.
-							Thread.sleep( 5 );
+							Thread.sleep( 10 );
 						}
 						catch( InterruptedException e )
 						{
