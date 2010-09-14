@@ -151,11 +151,13 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 
 		if( interval != null && interval > 0 )
 		{
+			log.info("Scheduling a garbage collection, for "+ interval + " seconds.");
 			gcTask = executor.scheduleWithFixedDelay( new Runnable()
 			{
 				@Override
 				public void run()
 				{
+					log.info("Doing garbage collection!");
 					System.gc();
 				}
 			}, interval, interval, TimeUnit.SECONDS );
