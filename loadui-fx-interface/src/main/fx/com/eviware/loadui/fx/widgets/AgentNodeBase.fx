@@ -101,7 +101,7 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 				layoutY: 2
 				image: Image { url: "{__ROOT__}images/png/agent-cpu-active.png" }
 				viewport: bind Rectangle2D {
-					width: 4*utilization/10 as Integer
+					width: 1 + 4*utilization/10 as Integer
 					height: 8
 				}
 				visible: bind utilization > 0
