@@ -84,10 +84,16 @@ public class ValueStatistics
 		double avg = count > 0 ? ( double )sum / count : 0;
 
 		double stdDev = 0;
+		double[] dataSet = new double[count];
 		if( count > 0 )
 		{
+			int i = 0;
 			for( DataPoint dataPoint : dataPoints )
+			{
+				dataSet[i] = dataPoint.value;
+				i++ ;
 				stdDev += Math.pow( dataPoint.value - avg, 2 );
+			}
 			stdDev = Math.sqrt( stdDev / count );
 		}
 
@@ -117,14 +123,6 @@ public class ValueStatistics
 		}
 
 		Percentile perc = new Percentile( 90 );
-
-		double[] dataSet = new double[count];
-		int i = 0;
-		for( DataPoint point : dataPoints )
-		{
-			dataSet[i] = point.value;
-			i++ ;
-		}
 
 		double percentile = perc.evaluate( dataSet, 90 );
 
