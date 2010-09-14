@@ -182,6 +182,13 @@ public class ChartModel {
 		this.chartListenerList.add(chartListener);
 	}
 
+	public void removeChartListener(ChartListener chartListener) {
+		if(chartListenerList == null){
+			return;
+		}
+		this.chartListenerList.remove(chartListener);
+	}
+
 	private void firePointAddedToModel(ChartSerie cs, Point p) {
 		if (chartListenerList != null) {
 			for (Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext();) {
