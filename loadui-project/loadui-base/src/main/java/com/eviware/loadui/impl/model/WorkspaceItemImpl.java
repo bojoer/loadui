@@ -157,8 +157,12 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 				@Override
 				public void run()
 				{
+					long old = Runtime.getRuntime().freeMemory();
 					log.info("Doing garbage collection!");
 					System.gc();
+					long free = Runtime.getRuntime().freeMemory();
+					log.info("Ran Garbage Collection, Free Memory changed from " +
+							old +" to " + free + ", total memory = " + Runtime.getRuntime().totalMemory());
 				}
 			}, interval, interval, TimeUnit.SECONDS );
 		}
