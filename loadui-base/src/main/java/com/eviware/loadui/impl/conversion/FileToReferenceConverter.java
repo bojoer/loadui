@@ -40,7 +40,8 @@ public class FileToReferenceConverter implements Converter<File, Reference>
 	@Override
 	public Reference convert( File source )
 	{
-		return new Reference( ( source.exists() && source.isFile() ) ? getHash( source ) : ":" + source.getAbsolutePath(), null );
+		return new Reference(
+				( source.exists() && source.isFile() ) ? getHash( source ) : ":" + source.getAbsolutePath(), null );
 	}
 
 	private synchronized String getHash( File file )
@@ -100,9 +101,10 @@ public class FileToReferenceConverter implements Converter<File, Reference>
 		@Override
 		public void run()
 		{
+			FileInputStream fis = null;
 			try
 			{
-				FileInputStream fis = new FileInputStream( file );
+				fis = new FileInputStream( file );
 				byte[] buf = new byte[1024];
 				byte[] res;
 				try
@@ -113,8 +115,17 @@ public class FileToReferenceConverter implements Converter<File, Reference>
 					{
 						res = new byte[len];
 						System.arraycopy( buf, 0, res, 0, len );
-						endpoint.sendMessage( ReferenceToFileConverter.CHANNEL, Collections.singletonMap( hash, Base64
-								.encodeBase64String( res ) ) );
+						endpoint.sendMessage( ReferenceToFileConverter.CHANNEL,
+								Collections.singletonMap( hash, Base64.encodeBase64String( res ) ) );
+						try
+						{
+							// This needs to be here, or messages may be dropped.
+							// TODO: Better file transferring.
+							Thread.sleep( 5 );
+						}
+						catch( InterruptedException e )
+						{
+						}
 					}
 					endpoint.sendMessage( ReferenceToFileConverter.CHANNEL, Collections.singletonMap( hash, STOP ) );
 				}
@@ -126,6 +137,18 @@ public class FileToReferenceConverter implements Converter<File, Reference>
 			catch( FileNotFoundException e )
 			{
 				throw new RuntimeException( e );
+			}
+			finally
+			{
+				try
+				{
+					if( fis != null )
+						fis.close();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
