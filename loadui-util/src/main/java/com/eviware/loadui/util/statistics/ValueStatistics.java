@@ -23,7 +23,6 @@ import java.util.Map;
 import com.eviware.loadui.util.MapUtils;
 import org.apache.commons.math.stat.descriptive.rank.Percentile;
 
-
 public class ValueStatistics
 {
 	private final List<DataPoint> dataPoints = new ArrayList<DataPoint>();
@@ -94,6 +93,7 @@ public class ValueStatistics
 
 		double tps = 0;
 		long vps = 0;
+		long duration = 0;
 		if( count >= 2 )
 		{
 			int samples = 0;
@@ -108,25 +108,25 @@ public class ValueStatistics
 			}
 
 			long timeDelta = timestamp - point.timestamp;
-			
-			timeDelta = timeDelta==0?1000:timeDelta;
+
+			timeDelta = timeDelta == 0 ? 1000 : timeDelta;
 
 			vps = vps * 1000 / timeDelta;
 			tps = ( samples - 1 ) * 1000.0 / timeDelta;
+			duration = dataPoints.get( count - 1 ).timestamp - dataPoints.get( 0 ).timestamp;
 		}
 
-		long duration = dataPoints.get( dataPoints.size() - 1 ).timestamp - dataPoints.get( 0 ).timestamp;
-		
-		Percentile perc = new Percentile(90);
-		
-		double [] dataSet = new double [dataPoints.size()];
+		Percentile perc = new Percentile( 90 );
+
+		double[] dataSet = new double[count];
 		int i = 0;
-		for (DataPoint point:dataPoints ) {
+		for( DataPoint point : dataPoints )
+		{
 			dataSet[i] = point.value;
-			i++;
+			i++ ;
 		}
-		
-		double percentile = perc.evaluate(dataSet, 90);
+
+		double percentile = perc.evaluate( dataSet, 90 );
 
 		return MapUtils.build( String.class, Number.class ) //
 				.put( "Max", max ) //
