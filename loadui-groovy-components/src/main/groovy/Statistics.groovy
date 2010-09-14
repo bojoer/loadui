@@ -262,7 +262,7 @@ calculate = {
 		ex(e1, 'calculate')
 	}
 	
-	if( controller )
+	if( controller  && ( timeStats.size() > 0 || agentData.size() > 0 ))
 		updateChart( currentTime )
 }
 
