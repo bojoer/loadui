@@ -52,9 +52,9 @@ onMessage = { incoming, outgoing, message ->
 	
 	long delayTime = delay.value 
 	if( selected.value == GAUSSIAN ) {
-		delayTime += (random.nextGaussian() * (randomDelay.value / 100) * delayTime * 0.3)
+		delayTime += ( random.nextGaussian() * ( randomDelay.value / 100 ) * delayTime * 0.3)
 	} else if( selected.value == UNIFORM ) {
-		delayTime += 2*(random.nextDouble() - 0.5 ) * delayTime * (randomDelay.value / 100)
+		delayTime += 2*( random.nextDouble() - 0.5 ) * delayTime * ( randomDelay.value / 100 )
 	} else if( selected.value == EXPONENTIAL ) {
 		delayTime *= -Math.log( 1 - random.nextDouble() )
 	}
