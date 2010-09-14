@@ -102,14 +102,14 @@ layout {
 	property( property: randomDelay, label:'Random(%)', min:0, max: 100 )
 	separator( vertical:true )
 	box( widget:'display' ) {
-		node( label:'delay ', fString:display, constraints:'w 60!' )
-		node( label:'waiting ', fString:waitingDisplay, constraints:'w 50!' )
+		node( label:'Delay ', fString:display, constraints:'w 60!' )
+		node( label:'Waiting ', fString:waitingDisplay, constraints:'w 50!' )
 	}
 }
  
 compactLayout {
 	box( widget:'display' ) {
-		node( label:'delay ', fString:display, constraints:'w 60!' )
-		node( label:'waiting ', fString:waitingDisplay, constraints:'w 50!' )
+		node( label:'Delay ', fString:display, constraints:'w 60!' )
+		node( label:'Waiting ', fString:waitingDisplay, constraints:'w 50!' )
 	}
 }
