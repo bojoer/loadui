@@ -41,7 +41,7 @@ msPerUnit = 1000
 defaultDelay = msPerUnit/rate.value
 currentDelay = 0
 
-display = new DelayedFormattedString( '%d/%s', 200, rate.value, unit.value )
+display = new DelayedFormattedString( '%d / %s', 200, rate.value, unit.value )
 randomDisplay = new DelayedFormattedString( '%d %s', 200, factor.value, "%" )
 
 random = new Random()
@@ -126,16 +126,16 @@ layout {
 	property( property:factor, label:'Random\nFactor', min: 0, max: 100, step: 1 )
 	separator( vertical:true )
 	box( widget:'display', layout:'align center') {
-		node( label:'current rate', fString:display )
-		node( label:'random', fString:randomDisplay )
+		node( label:'Current rate', fString:display )
+		node( label:'Random', fString:randomDisplay )
 	}
 }
 
 //Compact Layout
 compactLayout {
 	box( widget: 'display', layout: 'align center' ) {
-		node( label: 'current rate', fString: display )
-		node( label: 'random', fString: randomDisplay )
+		node( label: 'Current rate', fString: display )
+		node( label: 'Random', fString: randomDisplay )
 	}
 }
 
