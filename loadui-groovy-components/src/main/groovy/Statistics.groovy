@@ -621,6 +621,20 @@ generateSummary = { chapter ->
 
 }
 
+//disable it here, because sometimes when you initialize chart
+//whithout enabling series it wasn't working correctly, so it is
+//safer to enable everythig first and then disable what is not needed
+enableMax.value = false
+enableMin.value = false
+enableBPS.value = false
+enableAvgTPS.value = false
+enableAvgBPS.value = false
+enablePercentile.value = false
+enableAvgResponseSize.value = false
+enableRequests.value = false
+enableCompleted.value = false
+enableDiscarded.value = false
+
 buildSignature()
 fixOptions()
 schedule()
