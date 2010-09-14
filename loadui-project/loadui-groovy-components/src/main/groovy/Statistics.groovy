@@ -262,7 +262,7 @@ calculate = {
 		ex(e1, 'calculate')
 	}
 	
-	if( timeStats.size() > 0 && controller )
+	if( controller )
 		updateChart( currentTime )
 }
 
@@ -272,33 +272,33 @@ updateChart = { currentTime ->
 		try {
 			int count = 0
 			if (inputTerminal.connections.size() > 0) {
-			for( d in agentData.values() ) {
-				if( !d.isEmpty() ) {
-					data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
-					data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
-					data['Avg'] = (data['Avg'] ?: 0) + d['Avg']
-					data['Std-Dev'] = (data['Std-Dev'] ?: 0) + d['Std-Dev']
-					data['Tps'] = (data['Tps'] ?: 0) + d['Tps']
-					data['Avg-Tps'] = (data['Avg-Tps'] ?: 0) + d['Avg-Tps']
-					data['Bps'] = (data['Bps'] ?: 0) + (d['Bps'] ?: 0)
-					data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
-					data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
-					data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
-					count++
+				for( d in agentData.values() ) {
+					if( !d.isEmpty() ) {
+						data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
+						data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
+						data['Avg'] = (data['Avg'] ?: 0) + d['Avg']
+						data['Std-Dev'] = (data['Std-Dev'] ?: 0) + d['Std-Dev']
+						data['Tps'] = (data['Tps'] ?: 0) + d['Tps']
+						data['Avg-Tps'] = (data['Avg-Tps'] ?: 0) + d['Avg-Tps']
+						data['Bps'] = (data['Bps'] ?: 0) + (d['Bps'] ?: 0)
+						data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
+						data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
+						data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
+						count++
+					}
 				}
-			}
 			}
 			if (statisticsInput.connections.size() > 0) {
-			for ( m in agentStatistics.values() ) {
-				if( !m.isEmpty() ) {
-					data['Requests'] = data['Requests'] ?: 0 + m["Requests"]
-					data['Running'] = data['Running'] ?: 0 + m["Running"]
-					data['Completed'] = data['Completed'] ?: 0 + m["Completed"]
-					data['Queued'] = data['Queued'] ?: 0 + m["Queued"]
-					data['Discarded'] = data['Discarded'] ?: 0 + m["Discarded"]
-					data['Failed'] = data['Failed'] ?: 0 + m["Failed"]
+				for ( m in agentStatistics.values() ) {
+					if( !m.isEmpty() ) {
+						data['Requests'] = data['Requests'] ?: 0 + m["Requests"]
+						data['Running'] = data['Running'] ?: 0 + m["Running"]
+						data['Completed'] = data['Completed'] ?: 0 + m["Completed"]
+						data['Queued'] = data['Queued'] ?: 0 + m["Queued"]
+						data['Discarded'] = data['Discarded'] ?: 0 + m["Discarded"]
+						data['Failed'] = data['Failed'] ?: 0 + m["Failed"]
+					}
 				}
-			}
 			}
 			if( count != 0 ) {
 				data['Avg'] /= count
