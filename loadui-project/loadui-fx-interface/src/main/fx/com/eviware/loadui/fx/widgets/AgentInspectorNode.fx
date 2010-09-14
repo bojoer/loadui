@@ -61,6 +61,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.text.Font;
 import javafx.util.Math;
+import javafx.util.Sequences;
 
 import com.javafx.preview.control.MenuButton;
 import com.javafx.preview.control.MenuItem;
@@ -194,6 +195,20 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 		if( enabled != enable )
 			agent.setEnabled( enable );
 	}
+	
+	def dummyNode = Rectangle { width: 1, height: 1, managed: false, fill: Color.rgb( 0, 0, 0, 0.001 ) }
+	var tcContent:Container;
+	def myDisplayedContent = bind displayedContent on replace {
+		def dummyIndex = Sequences.indexOf( tcContent.content, dummyNode );
+		if( dummyIndex == -1 ) {
+			tcContent.content = [ dummyNode, displayedContent ];
+		} else {
+			for( i in Sequences.reverse([0..(sizeof tcContent.content - 1)]) as Integer[] ) {
+				if( i != dummyIndex ) delete tcContent.content[i];
+			}
+			insert displayedContent into tcContent.content;
+		}
+	}
 
 	override function create() {
 		def base = super.create() as DialogPanel;
@@ -271,7 +286,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 						}
 						styleClass: "agent-inspector-node-button"
 						action: function() { if( page > 0) page--; }
-					}, VBox {
+					}, tcContent = VBox {
 						padding: Insets { top: 2, bottom: 2 }
 						spacing: 2
 						layoutInfo: LayoutInfo {
@@ -279,7 +294,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 							maxHeight: if( ghostAgent ) 90 else 69
 						}
 						vpos: VPos.BOTTOM
-						content: bind displayedContent
+						content: [ dummyNode, displayedContent ]
 					}, Button {
 						layoutInfo: LayoutInfo {
 							width: 95
