@@ -29,9 +29,9 @@ import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
 
-final NONE = 'None'
 final GAUSSIAN = 'Gaussian'
 final UNIFORM = 'Uniform'
+final EXPONENTIAL = 'Exponential'
 
 random = new Random()
 waitingCount = 0
@@ -42,7 +42,7 @@ waitingDisplay = new DelayedFormattedString( ' %d  ', 500, value { waitingCount 
 output = createOutput( 'output', "Message Output" )
  
 createProperty('delay', Long, 0)
-createProperty('selected', String, NONE)
+createProperty('selected', String, UNIFORM)
 createProperty('randomDelay', Integer, 0)
 
 executor = Executors.newSingleThreadScheduledExecutor()
@@ -55,10 +55,11 @@ onMessage = { incoming, outgoing, message ->
 		delayTime += (random.nextGaussian() * (randomDelay.value / 100) * delayTime * 0.3)
 	} else if( selected.value == UNIFORM ) {
 		delayTime += 2*(random.nextDouble() - 0.5 ) * delayTime * (randomDelay.value / 100)
+	} else if( selected.value == EXPONENTIAL ) {
+		delayTime *= -Math.log( 1 - random.nextDouble() )
 	}
 	
 	message.put( 'actualDelay', delayTime )
-	log.info "Delaying: $delayTime ms"
 	executor.schedule( {
 		send( output, message )
 		waitingCount--
@@ -96,7 +97,8 @@ addEventListener( ActionEvent ) { event ->
 layout { 
 	property( property:delay, label:"Delay(ms)", min:0, step:100, span:60000 ) 
 	separator( vertical:true )
-	node(widget: 'selectorWidget', label: 'Distribution', labels:[ NONE, GAUSSIAN, UNIFORM ], default: selected.value, selected: selected)
+	node(widget: 'selectorWidget', label:'Distribution', labels:[ UNIFORM, EXPONENTIAL, GAUSSIAN ],
+		images:['linear_shape.png', 'poisson_shape.png', 'gauss_shape.png'], default: selected.value, selected: selected)
 	property( property: randomDelay, label:'Random(%)', min:0, max: 100 )
 	separator( vertical:true )
 	box( widget:'display' ) {
