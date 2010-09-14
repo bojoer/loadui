@@ -193,14 +193,15 @@ analyze = { message ->
 }
 
 onMessage = { o, i, m ->
-	
 	super.onTerminalMessage(o, i, m)
 	if(i == remoteTerminal ) {
 		agentData[o.label] = new HashMap(m)
 	}
 	
 	if( i == statisticsInput ) {
-		agentStatistics[o.label] = new HashMap(m)
+		if (  m.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"]) ) {
+			agentStatistics[o.label] = new HashMap(m)
+		} 
 	}
 }
 
@@ -236,7 +237,6 @@ calculate = {
 		if( timeStats.size() > 0 ) {
 			def message = newMessage()
 			data = timeStats.getData( currentTime )
-			
 			message['Max'] = data['Max']
 			message['Min'] = data['Min']
 			message['Avg'] = data['Avg']
@@ -332,16 +332,16 @@ updateChart = { currentTime ->
 			if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
 		}
 		 if (inputTerminal.connections.size() > 0) {
-		avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
-		minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
-		maxDisplay.setArgs((float)data['Max'] * timeScaleFactor)
-		stdDevDisplay.setArgs((float)data['Std-Dev'] * timeScaleFactor)
-		tpsDisplay.setArgs((float)data['Tps'])
-		bpsDisplay.setArgs((float)data['Bps'] * bytesScaleFactor)
-		avgTpsDisplay.setArgs((float)data['Avg-Tps'])
-		avgBpsDisplay.setArgs((float)data['Avg-Bps'] * bytesScaleFactor)
-		percentileDisplay.setArgs((float)data['Percentile'])
-		avgRespSizeDisplay.setArgs((float)data['AvgResponseSize']  * bytesScaleFactor)
+			avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
+			minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
+			maxDisplay.setArgs((float)data['Max'] * timeScaleFactor)
+			stdDevDisplay.setArgs((float)data['Std-Dev'] * timeScaleFactor)
+			tpsDisplay.setArgs((float)data['Tps'])
+			bpsDisplay.setArgs((float)data['Bps'] * bytesScaleFactor)
+			avgTpsDisplay.setArgs((float)data['Avg-Tps'])
+			avgBpsDisplay.setArgs((float)data['Avg-Bps'] * bytesScaleFactor)
+			percentileDisplay.setArgs((float)data['Percentile'])
+			avgRespSizeDisplay.setArgs((float)data['AvgResponseSize']  * bytesScaleFactor)
 		}
 	} catch( e ) {
 		e.printStackTrace()
