@@ -92,7 +92,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.soapui</groupId>
-			<artifactId>loadui-soapui-sampler</artifactId>
+			<artifactId>loadui-soapui-plugin</artifactId>
 			<version>3.6.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
