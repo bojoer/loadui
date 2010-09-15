@@ -368,8 +368,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			conf.setAgentAddress( agent.getUrl() );
 			agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, sceneId ) );
 			if( scene.isRunning() && !workspace.isLocalMode() )
+			{
+				log.debug( "Starting remote TestCase: {} on Agent: {}", scene, agent );
 				agent.sendMessage( SceneCommunication.CHANNEL, Arrays.asList( sceneId, Long.toString( scene.getVersion() ),
 						SceneCommunication.ACTION_EVENT, START_ACTION, sceneId ) );
+			}
 			fireCollectionEvent( ASSIGNMENTS, Event.ADDED, assignment );
 		}
 	}
