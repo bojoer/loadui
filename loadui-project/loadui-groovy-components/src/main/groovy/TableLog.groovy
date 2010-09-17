@@ -58,8 +58,7 @@ updateFollow = {
 rowsDisplay = new DelayedFormattedString( '%d', 500, value { myTableModel.rowCount } )
 fileDisplay = new DelayedFormattedString( '%s', 500, value { saveFileName ?: '-' } )
 
-onMessage = { incoming, outgoing, message ->
-	super.onTerminalMessage(incoming, outgoing, message)
+output = { message ->
 	message.keySet().each { k -> myTableModel.addColumn k }
 	lastMsgDate = new Date();
 	
