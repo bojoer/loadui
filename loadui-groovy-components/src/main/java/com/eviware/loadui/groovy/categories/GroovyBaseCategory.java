@@ -112,11 +112,10 @@ public class GroovyBaseCategory<C extends ComponentBehavior> extends GroovyObjec
 	{
 		base.handleStatisticsData( statisticsData );
 	}
-	
-	@Override
-	 public void generateSummary( MutableChapter summary )
-	 {
-	  // TODO Auto-generated method stub
 
-	 }
+	@Override
+	public void generateSummary( MutableChapter summary )
+	{
+		base.generateSummary( summary );
+	}
 }

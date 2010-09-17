@@ -29,6 +29,7 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.impl.component.ActivityStrategies;
+
 /**
  * Base class for output components which defines base behavior which can be
  * extended to fully implement an output ComponentBehavior.
@@ -39,7 +40,7 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 {
 	private final InputTerminal inputTerminal;
 	private Date lastMsgDate = new Date();
-	
+
 	private static Timer timer = new Timer();
 	private BlinkTask blinkTask = new BlinkTask();
 
@@ -54,8 +55,8 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 		super( context );
 
 		inputTerminal = context.createInput( INPUT_TERMINAL, "Data for Display" );
-		getContext().setActivityStrategy(ActivityStrategies.ON);
-		context.addEventListener(ActionEvent.class, new ActionListener() );
+		getContext().setActivityStrategy( ActivityStrategies.ON );
+		context.addEventListener( ActionEvent.class, new ActionListener() );
 	}
 
 	/**
@@ -74,10 +75,10 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 	@Override
 	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
 	{
-		if( input == inputTerminal ) {
+		if( input == inputTerminal )
+		{
 			lastMsgDate = new Date();
-			//output( message );
-			//getContext().setActivityStrategy(ActivityStrategies.ON);
+			output( message );
 		}
 	}
 
@@ -92,36 +93,46 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 	{
 		return COLOR;
 	}
-	
-	private class BlinkTask extends TimerTask {
+
+	private class BlinkTask extends TimerTask
+	{
 		@Override
 		public void run()
 		{
-			if (lastMsgDate != null) {
-				if ((lastMsgDate.getTime() + 1000) > (new Date()).getTime()) {
-					getContext().setActivityStrategy(ActivityStrategies.BLINKING);
-				} else {
-					getContext().setActivityStrategy(ActivityStrategies.ON);
+			if( lastMsgDate != null )
+			{
+				if( ( lastMsgDate.getTime() + 1000 ) > ( new Date() ).getTime() )
+				{
+					getContext().setActivityStrategy( ActivityStrategies.BLINKING );
 				}
-			} else {
-				getContext().setActivityStrategy(ActivityStrategies.ON);
+				else
+				{
+					getContext().setActivityStrategy( ActivityStrategies.ON );
+				}
+			}
+			else
+			{
+				getContext().setActivityStrategy( ActivityStrategies.ON );
 			}
 		}
 	}
-	
+
 	private class ActionListener implements EventHandler<ActionEvent>
 	{
 		@Override
 		public void handleEvent( ActionEvent event )
 		{
 			blinkTask.cancel();
-				if (event.getKey() == "START") {
-					getContext().setActivityStrategy(ActivityStrategies.BLINKING);
-					blinkTask = new BlinkTask();
-					timer.schedule(blinkTask, 500, 500);
-				} else {
-					getContext().setActivityStrategy(ActivityStrategies.ON);
-				}
+			if( event.getKey() == "START" )
+			{
+				getContext().setActivityStrategy( ActivityStrategies.BLINKING );
+				blinkTask = new BlinkTask();
+				timer.schedule( blinkTask, 500, 500 );
+			}
+			else
+			{
+				getContext().setActivityStrategy( ActivityStrategies.ON );
+			}
 		}
 	}
 
