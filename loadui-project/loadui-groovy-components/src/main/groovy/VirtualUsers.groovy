@@ -36,7 +36,7 @@ baseRate = numUsers.value/interval.value
 
 defaultDelay = 1000/baseRate
 
-display = new DelayedFormattedString( '%d', 200, baseRate.longValue() )
+display = new DelayedFormattedString( '%d / Sec', 200, baseRate.longValue() )
 
 timer = new Timer(true)
 random = new Random()

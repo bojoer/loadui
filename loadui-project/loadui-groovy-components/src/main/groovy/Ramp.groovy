@@ -41,7 +41,7 @@ targetReached = false
 
 timer = new Timer(true)
 
-display = new DelayedFormattedString( '%d %s', 500, currentRate.longValue(), direction )
+display = new DelayedFormattedString( '%d / %s %s', 500, currentRate.longValue(), unit.value, direction )
 scheduled = false
 future = null
 
@@ -72,7 +72,7 @@ reset = {
 		targetReached = true
 		currentRate = end.value()
 	}
-	display.setArgs( currentRate.longValue(), direction )
+	display.setArgs( currentRate.longValue(), unit.value, direction )
 	scheduled = false
 }
 
@@ -104,7 +104,7 @@ schedule = {
 		
 		
 		future = timer.runAfter(currentDelay.intValue()) {
-			display.setArgs( currentRate.longValue(), direction )
+			display.setArgs( currentRate.longValue(), unit.value, direction )
 			trigger()
 			scheduled = false
 			schedule()
@@ -134,7 +134,7 @@ addEventListener( PropertyEvent ) { event ->
 		if (start.value > end.value)
 			direction = "down"
 		
-		display.setArgs( currentRate.longValue(), direction )
+		display.setArgs( currentRate.longValue(), unit.value, direction )
 		
 		if (start.value == end.value)
 			direction = "none"
