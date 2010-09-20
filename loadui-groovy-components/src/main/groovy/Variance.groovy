@@ -41,7 +41,7 @@ maxRate = rate.value + (amplitude.value/2)
 minRate = (rate.value - (amplitude.value/2) < 0)?0:rate.value - (amplitude.value/2)
 msPerUnit = 1000
 
-rateDisplay = new DelayedFormattedString( '%d', 500, currentRate.longValue() )
+rateDisplay = new DelayedFormattedString( '%d / %s', 500, currentRate.longValue(), unit.value )
 
 timer = new Timer(true)
 scheduled = false
@@ -133,7 +133,7 @@ schedule = {
 			
 			
 			future = timer.runAfter(currentDelay.intValue()) {
-				rateDisplay.setArgs( currentRate.longValue() )
+				rateDisplay.setArgs( currentRate.longValue(), unit.value )
 				trigger()
 				scheduled = false
 				schedule()
@@ -159,7 +159,7 @@ addEventListener( PropertyEvent ) { event ->
 		minRate = (rate.value - (amplitude.value/2) < 0)?0:rate.value - (amplitude.value/2)
 		currentRate = 0
 		
-		rateDisplay.setArgs( currentRate.longValue() )
+		rateDisplay.setArgs( currentRate.longValue(), unit.value )
 		if (event.property == stateProperty && !stateProperty.value)
 			future?.cancel()
 		if (stateProperty.value)
