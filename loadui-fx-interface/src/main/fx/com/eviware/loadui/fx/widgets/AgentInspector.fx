@@ -194,6 +194,7 @@ public class AgentInspectorPanel extends CustomNode, TestCaseIconListener, Resiz
 	}
 	
 	override function handleEvent( e:EventObject ) { 
+	    println (e);
 		if(e.getSource() == MainWindow.instance.workspace){
 			if( e instanceof PropertyEvent ) {
 				def event = e as PropertyEvent;
@@ -260,6 +261,22 @@ public class AgentInspectorPanel extends CustomNode, TestCaseIconListener, Resiz
 							undeployTestCase(a.getScene(), a.getAgent())
 						});
 					}
+				}
+			} else if (e instanceof BaseEvent){
+				/*
+				* When project is imported and opened for first time, controller is not aware does it have
+				* test cases or not. It becomes aware of them next time.
+				* So, here check if ghost agent have them and add if not.
+				*/
+				def project:ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
+				for( s in project.getScenes() ) {
+					runInFxThread( function():Void {
+							ghostAgent.addTestCase(TestCaseIcon{
+									stateListeners: [this]
+									sceneItem: s
+								}
+							);
+						});				
 				}
 			}
 		}
