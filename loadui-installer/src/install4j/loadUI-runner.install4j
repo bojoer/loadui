@@ -824,20 +824,6 @@ return f.exists();</condition>
       <exclude />
       <variables />
     </macosFolderArchive>
-    <unixInstaller name="Unix Installer 64bit" id="405" mediaFileName="loadUI-Agent-amd64-${compiler:version}" installDir="eviware/loadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-amd64-1.6.0_21" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
-      <excludedLaunchers>
-        <launcher id="43" />
-        <launcher id="196" />
-      </excludedLaunchers>
-      <excludedComponents />
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude />
-      <variables />
-      <installerScript mode="1" file="">
-        <scriptLines />
-      </installerScript>
-    </unixInstaller>
   </mediaSets>
   <buildIds buildAll="false" />
 </install4j>
