@@ -71,7 +71,7 @@ import com.eviware.loadui.api.model.SceneItem;
 import javafx.scene.control.Tooltip;
 
 import com.eviware.loadui.api.component.categories.RunnerCategory;
-import com.eviware.loadui.api.component.categories.TriggerCategory;
+import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 
 import org.slf4j.LoggerFactory;
@@ -397,7 +397,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	    	if (component.getCategory().equalsIgnoreCase(RunnerCategory.CATEGORY) or component.getType().contains("Runner")) {
 	    		foundRunner = true;
 			}
-	    	else if (component.getCategory().equalsIgnoreCase(TriggerCategory.CATEGORY))
+	    	else if (component.getCategory().equalsIgnoreCase(GeneratorCategory.CATEGORY))
 	    		foundTrigger = true;
 	    	if (foundTrigger and foundRunner)
 	    		break;

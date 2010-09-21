@@ -40,7 +40,6 @@ import com.eviware.loadui.api.counter.CounterHolder
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-import com.eviware.loadui.api.component.categories.TriggerCategory
 import com.eviware.loadui.api.events.BaseEvent
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.util.layout.IntervalModel

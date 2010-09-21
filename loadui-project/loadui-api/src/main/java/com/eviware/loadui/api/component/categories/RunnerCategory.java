@@ -42,7 +42,7 @@ public interface RunnerCategory extends ComponentBehavior
 	 * The String identifier of the category.
 	 */
 	public static final String CATEGORY = "Runners";
-	
+
 	/**
 	 * An optional identifier for a sample (for filtering, etc)
 	 */

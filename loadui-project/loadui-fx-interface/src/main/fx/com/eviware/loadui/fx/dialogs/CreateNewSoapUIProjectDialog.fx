@@ -43,7 +43,7 @@ import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.component.ComponentContext;
-import com.eviware.loadui.api.component.categories.TriggerCategory;
+import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.component.categories.AnalysisCategory;
 
@@ -92,7 +92,7 @@ public class CreateNewSoapUIProjectDialog {
 								 
 								 var triggerTerminal:OutputTerminal;
 								 for (terminal in fixedRateItem.getTerminals()) {
-								     if (terminal.getLabel() == TriggerCategory.TRIGGER_TERMINAL) {
+								     if (terminal.getLabel() == GeneratorCategory.TRIGGER_TERMINAL) {
 								     	triggerTerminal = terminal as OutputTerminal;
 								     	break;
 								     }
