@@ -53,7 +53,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-client-ssl</artifactId>
+			<artifactId>jetty-client</artifactId>
 			<version>${jettyVersion}</version>
 		</dependency>
 		<dependency>
