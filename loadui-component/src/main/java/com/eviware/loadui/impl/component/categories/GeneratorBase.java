@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import com.eviware.loadui.api.component.ComponentContext;
-import com.eviware.loadui.api.component.categories.TriggerCategory;
+import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
@@ -35,7 +35,7 @@ import com.eviware.loadui.impl.component.ActivityStrategies;
  * 
  * @author dain.nilsson
  */
-public abstract class TriggerBase extends OnOffBase implements TriggerCategory
+public abstract class GeneratorBase extends OnOffBase implements GeneratorCategory
 {
 	private final OutputTerminal triggerTerminal;
 	private final TerminalMessage triggerMessage;
@@ -48,7 +48,7 @@ public abstract class TriggerBase extends OnOffBase implements TriggerCategory
 	 * @param context
 	 *           A ComponentContext to bind the TriggerBase to.
 	 */
-	public TriggerBase( ComponentContext context )
+	public GeneratorBase( ComponentContext context )
 	{
 		super( context );
 

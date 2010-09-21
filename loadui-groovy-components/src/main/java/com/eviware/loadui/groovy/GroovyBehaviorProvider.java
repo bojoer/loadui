@@ -49,14 +49,14 @@ import com.eviware.loadui.api.component.categories.MiscCategory;
 import com.eviware.loadui.api.component.categories.OutputCategory;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.component.categories.SchedulerCategory;
-import com.eviware.loadui.api.component.categories.TriggerCategory;
+import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import com.eviware.loadui.groovy.categories.GroovyAnalysis;
 import com.eviware.loadui.groovy.categories.GroovyFlow;
 import com.eviware.loadui.groovy.categories.GroovyMisc;
 import com.eviware.loadui.groovy.categories.GroovyOutput;
 import com.eviware.loadui.groovy.categories.GroovyRunner;
 import com.eviware.loadui.groovy.categories.GroovyScheduler;
-import com.eviware.loadui.groovy.categories.GroovyTrigger;
+import com.eviware.loadui.groovy.categories.GroovyGenerator;
 
 public class GroovyBehaviorProvider implements BehaviorProvider
 {
@@ -159,9 +159,9 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 	private Object createBase( GroovyContextProxy handler, Class<? extends ComponentBehavior> category )
 	{
 		ComponentContext context = ( ComponentContext )handler.getProxy();
-		if( TriggerCategory.class == category )
+		if( GeneratorCategory.class == category )
 		{
-			return new GroovyTrigger( context, handler );
+			return new GroovyGenerator( context, handler );
 		}
 		else if( RunnerCategory.class == category )
 		{
@@ -196,11 +196,11 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 
 	private Class<? extends ComponentBehavior> getCategoryType( String category )
 	{
-		if( TriggerCategory.CATEGORY.equalsIgnoreCase( category ) )
+		if( GeneratorCategory.CATEGORY.equalsIgnoreCase( category ) || "generator".equalsIgnoreCase( category ) )
 		{
-			return TriggerCategory.class;
+			return GeneratorCategory.class;
 		}
-		else if( RunnerCategory.CATEGORY.equalsIgnoreCase( category ) )
+		else if( RunnerCategory.CATEGORY.equalsIgnoreCase( category ) || "runner".equalsIgnoreCase( category ) )
 		{
 			return RunnerCategory.class;
 		}
@@ -248,7 +248,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 			Map<String, String> params = new HashMap<String, String>();
 			String baseName = script.getName().substring( 0, script.getName().lastIndexOf( ".groovy" ) );
 			params.put( "name", baseName );
-			params.put( "category", "misc" );
+			params.put( "category", MiscCategory.CATEGORY );
 			params.put( "description", "" );
 			params.put( "icon", baseName + ".png" );
 
@@ -300,8 +300,8 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 				}
 			}
 
-			return new ScriptDescriptor( script, params.get( "category" ), params.get( "name" ), params
-					.get( "description" ), icon.exists() ? icon : null, params.get( "digest" ), params.get( "help" ) );
+			return new ScriptDescriptor( script, params.get( "category" ), params.get( "name" ),
+					params.get( "description" ), icon.exists() ? icon : null, params.get( "digest" ), params.get( "help" ) );
 		}
 
 		private static String getFileContent( File file )

@@ -17,29 +17,35 @@ package com.eviware.loadui.api.component.categories;
 
 import com.eviware.loadui.api.terminal.OutputTerminal;
 
-public interface SchedulerCategory extends OnOffCategory
+/**
+ * Trigger components drive other components by periodically outputting trigger
+ * messages through a designated OutputTerminal. They also have a state, which
+ * can be either enabled (true) or disabled (false). When the component is
+ * disabled, no trigger messages will be sent.
+ * 
+ * @author dain.nilsson
+ */
+public interface GeneratorCategory extends OnOffCategory
 {
-
 	/**
 	 * The String identifier of the category.
 	 */
-	public static final String CATEGORY = "Scheduler";
+	public static final String CATEGORY = "Generators";
 
 	/**
 	 * The color of the category.
 	 */
-	public static final String COLOR = "#ff6666";
+	public static final String COLOR = "#ec420b";
 
 	/**
-	 * The label of the outgoing terminal.
+	 * The label of the OutputTerminal which is returned by getTriggerTerminal().
 	 */
-	public static final String OUTGOING_TERMINAL = "outgoingTerminal";
+	public static final String TRIGGER_TERMINAL = "triggerTerminal";
 
 	/**
-	 * The OutputTerminal which is used to to direct TerminalMessages into the
-	 * connected Components.
+	 * Returns the OutputTerminal which outputs the trigger message.
 	 * 
 	 * @return
 	 */
-	public OutputTerminal getOutputTerminal();
+	public OutputTerminal getTriggerTerminal();
 }

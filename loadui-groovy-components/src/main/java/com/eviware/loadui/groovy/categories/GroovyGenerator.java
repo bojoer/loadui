@@ -18,11 +18,11 @@ package com.eviware.loadui.groovy.categories;
 import groovy.lang.GroovyObject;
 
 import com.eviware.loadui.api.component.ComponentContext;
-import com.eviware.loadui.impl.component.categories.TriggerBase;
+import com.eviware.loadui.impl.component.categories.GeneratorBase;
 
-public class GroovyTrigger extends TriggerBase
+public class GroovyGenerator extends GeneratorBase
 {
-	public GroovyTrigger( ComponentContext context, GroovyObject delegate )
+	public GroovyGenerator( ComponentContext context, GroovyObject delegate )
 	{
 		super( context );
 	}
