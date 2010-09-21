@@ -116,8 +116,10 @@ public class SelectorWidget extends VBox {
                           action: function() {
                               if (Sequences.indexOf(rbtng.toggles, rbtng.selectedToggle) == rbtng.toggles.size() - 1) {
                                   rbtng.selectedToggle = rbtng.toggles[0];
+                                  update();
                               } else {
                                   rbtng.selectedToggle = rbtng.toggles[Sequences.indexOf(rbtng.toggles, rbtng.selectedToggle)+ 1];
+                                  update();
                               }
                           }
                       }
