@@ -214,7 +214,7 @@ public class PagelistControl extends CustomNode, Resizable, Pagination {
 									visible: bind page <= 0
 								}
 							]
-							blocksMouse: true
+							blocksMouse: false
 							onMousePressed: function( e:MouseEvent ) { if( e.primaryButtonDown and not wiping and page > 0 ) page-- }
 						}, rightarrow = Group {
 							layoutX: bind realWidth - ( 30 + rightarrow.layoutBounds.width )
@@ -229,7 +229,7 @@ public class PagelistControl extends CustomNode, Resizable, Pagination {
 									visible: bind page >= numPages - 1
 								}
 							]
-							blocksMouse: true
+							blocksMouse: false
 							onMousePressed: function( e:MouseEvent ) { if( e.primaryButtonDown and not wiping and page < (numPages-1) ) page++ }
 						}
 					]
