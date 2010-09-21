@@ -127,7 +127,7 @@
 	    future?.cancel(true)
 	    executor?.shutdownNow()
 	    roundRobinNext = 0
-	    selected.value = "Round-Robin"
+
 	    total.value = 0
 	    display.setArgs( 0 )
             for( i in 0..9 ) {
