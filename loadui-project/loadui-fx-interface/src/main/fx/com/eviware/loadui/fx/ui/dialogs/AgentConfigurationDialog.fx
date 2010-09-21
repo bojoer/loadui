@@ -89,7 +89,7 @@ public class AgentConfigurationDialog {
 				Tab {
          			label: "Execution", content: formT3 = Form {
 						formContent: [
-							LongInputField { id: "maxThreads", label: "Max internal threads", description: "Max internal threads", value: maxThreads, width: bind 200 } as FormField,
+							LongInputField { id: "maxThreads", label: "Max internal threads", description: "Max internal threads", value: maxThreads} as FormField,
 						]
 					}
 				}
