@@ -112,8 +112,19 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 		def flip = terminal instanceof OutputTerminal;
 		Group {
 			layoutX: bind width / 2
-			layoutY: if( flip ) -5 else 5
+			layoutY: if( flip ) -50 else 5
 			content: [
+			Circle {
+							    				centerY: 12
+											    radius: 24
+											    fill: Color.TRANSPARENT
+											  //  clip: Rectangle {
+											    			//			y: if( flip ) -24 else 0
+											    			//			x: -24
+											    				//		width: 48
+											    				//		height: 48
+											    				//	}
+											},
 				Circle {
 					radius: 12
 					fill: LinearGradient {
