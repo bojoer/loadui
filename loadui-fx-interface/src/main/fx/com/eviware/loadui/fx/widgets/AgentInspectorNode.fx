@@ -1,4 +1,4 @@
- /* 
+/* 
  * Copyright 2010 eviware software ab
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -100,6 +100,7 @@ public def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentIn
  * Node to display in the AgentList representing a AgentItem.
  */
 public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconListener, Pagination {
+	
 	/**
 	 * The AgentItem to represent.
 	 */ 
@@ -130,6 +131,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 		if(ghostAgent){
 			return;
 		}
+		tc.removeTestCaseListener(this);
 		undeployTestCase(tc.sceneItem);
 	}
 	
@@ -285,6 +287,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 							height: 22
 						}
 						styleClass: "agent-inspector-node-button"
+						blocksMouse: false
 						action: function() { if( page > 0) page--; }
 					}, tcContent = VBox {
 						padding: Insets { top: 2, bottom: 2 }
@@ -301,6 +304,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 							height: 22
 						}
 						styleClass: "agent-inspector-node-button"
+						blocksMouse: false
 						action: function() { if( page < numPages - 1) page++; }
 					}, if( ghostAgent ) null else HBox {
 						padding: Insets { top: 8, left: 2 }
@@ -398,4 +402,9 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 	}
 					
 	override function toString() { label }
+	
+	postinit{
+		blocksMouse = true;		
+	}
+	
 }

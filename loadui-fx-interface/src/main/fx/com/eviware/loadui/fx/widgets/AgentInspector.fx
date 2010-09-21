@@ -88,6 +88,11 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.AgentItem;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.fx.ui.dnd.DroppableNode;
+import com.eviware.loadui.fx.ui.dnd.Droppable;
+import com.eviware.loadui.fx.ui.dnd.Draggable;
+import com.eviware.loadui.fx.ui.node.BaseNode;
+
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentInspector" );
 
 /**
@@ -133,7 +138,7 @@ public class AgentInspector extends Inspector {
 	
 }
 
-public class AgentInspectorPanel extends CustomNode, TestCaseIconListener, Resizable, EventHandler {
+public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizable, EventHandler, Droppable {
 
 	//refernce to a workspace
 	def workspace: WorkspaceItem = bind MainWindow.instance.workspace on replace oldVal {
@@ -194,7 +199,6 @@ public class AgentInspectorPanel extends CustomNode, TestCaseIconListener, Resiz
 	}
 	
 	override function handleEvent( e:EventObject ) { 
-	    println (e);
 		if(e.getSource() == MainWindow.instance.workspace){
 			if( e instanceof PropertyEvent ) {
 				def event = e as PropertyEvent;
@@ -301,6 +305,19 @@ public class AgentInspectorPanel extends CustomNode, TestCaseIconListener, Resiz
 	
 	var localButton: ToggleActionButton;
 	var onAgentsButton: ToggleActionButton;
+	
+	override var accept = function( d: Draggable ) {
+		if(d.node instanceof TestCaseIcon){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	override var onDrop = function( d: Draggable ) {
+		(d.node as TestCaseIcon).remove();
+	}
 	
 	override function create() {
 		var text: Text;
