@@ -139,8 +139,8 @@ settings(label:'Logging') {
 	box {
 		property(property: saveFile, label: 'Save Logs?' )
 		property(property: fileName, label: 'Log File (Comma Separated) ' )
-		label('If not appending file, its name will be used to generate new log files each time test is run.')
 		property(property: appendSaveFile, label: 'Check to append selected file', )
+		label('(If not appending file, its name will be used to generate new log files each time test is run.)')
 	}
 }
 

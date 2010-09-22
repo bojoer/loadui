@@ -138,10 +138,10 @@ public class DefaultComponentSettingsPanel {
 				LabelField {
 					value: (c as LabelLayoutComponent).getLabel()
 					font: if(level == 0) Font.font("Arial", FontWeight.BOLD, 10) else Font { name:"Arial" size: 10 }
-					layoutInfo: LayoutInfo { 
-						height: if(level == 0) 0 else 22
-					}
-					vpos: if(level == 0) VPos.TOP else VPos.BOTTOM 
+					//layoutInfo: LayoutInfo { 
+					//	height: if(level == 0) 0 else 22
+					//}
+					//vpos: if(level == 0) VPos.TOP else VPos.BOTTOM 
 				}
 			} else if(c instanceof PropertyLayoutComponent) {
 				var p: PropertyLayoutComponent = c as PropertyLayoutComponent;

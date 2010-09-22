@@ -27,4 +27,6 @@ public class LabelField extends Label, FormField {
 	override var value on replace {
 		text = if(value == null) "null" else value.toString();
 	}
+	
+	override var skipLabel = true;
 }
