@@ -25,11 +25,15 @@ import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
 import org.cometd.client.transport.LongPollingTransport;
 import org.eclipse.jetty.client.HttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.util.messaging.ChannelRoutingSupport;
+
+
 
 public class MessageEndpointImpl extends BayeuxClient implements MessageEndpoint
 {
@@ -37,6 +41,8 @@ public class MessageEndpointImpl extends BayeuxClient implements MessageEndpoint
 	private final Set<ConnectionListener> connectionListeners = new HashSet<ConnectionListener>();
 	private boolean connected = false;
 
+	private Logger log = LoggerFactory.getLogger(MessageEndpointImpl.class);
+	
 	public MessageEndpointImpl( String url, HttpClient httpClient )
 	{
 		super( url, new LongPollingTransport( new HashMap<String, Object>(), httpClient ) );
@@ -66,6 +72,24 @@ public class MessageEndpointImpl extends BayeuxClient implements MessageEndpoint
 		}
 	}
 
+	@Override
+	protected void processDisconnect(Message disconnect)
+	{
+		// TODO Auto-generated method stub
+		super.processDisconnect(disconnect);
+		log.debug("Disconected processed");
+		log.debug(disconnect.getChannel() + " --- " + disconnect.getData());
+		connected = false;
+	}
+	
+	@Override
+	protected void processHandshake(Message arg0)
+	{
+		// TODO Auto-generated method stub
+		super.processHandshake(arg0);
+		log.debug("Handshake processed");
+	}
+	
 	@Override
 	public void onMessages( List<Message.Mutable> messages )
 	{
@@ -118,6 +142,7 @@ public class MessageEndpointImpl extends BayeuxClient implements MessageEndpoint
 			e.printStackTrace();
 		}
 	}
+	
 
 	@Override
 	public void open()
@@ -125,6 +150,7 @@ public class MessageEndpointImpl extends BayeuxClient implements MessageEndpoint
 		try
 		{
 			handshake();
+			connected = isConnected();
 		}
 		catch( Exception e )
 		{
