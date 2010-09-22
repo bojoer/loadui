@@ -47,27 +47,8 @@ public class TestCaseToolbarItem extends ToolbarItem {
 	override var category = "TestCases";
 	
 	override def onMouseClicked = function (me:MouseEvent) {
-					  if( me.button == MouseButton.PRIMARY and me.clickCount == 2) {
-					     var project:ProjectItem = AppState.instance.getActiveCanvas() as ProjectItem;
-					     var name = "TestCase";
-					     var i=0;
-					     while( sizeof project.getScenes()[c|c.getLabel() == name] > 0 )
-					     	name = "TestCase ({++i})";
-					     			
-					     if (not MainWindow.instance.workspace.isLocalMode()) {
-					     	def warning:Dialog = Dialog {
-					     		title: "Warning!"
-					     		content: Text {
-					     		    content: "Switch to local mode, or place {name} on an agent in order to run it"
-					     		}
-					     		okText: "Ok"
-					     		onOk: function() {
-					     		    warning.close();
-					     		}
-					     		noCancel: true
-					     	}
-					     }
-					    project.createScene( name );
-					  }  
-				}
+		if( me.button == MouseButton.PRIMARY and me.clickCount == 2) {
+			MainWindow.instance.projectCanvas.createTestCase();
+		}  
+	}
 }

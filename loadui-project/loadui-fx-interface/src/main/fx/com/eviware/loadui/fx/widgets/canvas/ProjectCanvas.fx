@@ -36,6 +36,7 @@ import java.util.EventObject;
 import java.lang.RuntimeException;
 
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
+import com.eviware.loadui.fx.ui.dialogs.ProjectSettingsDialog;
 import com.eviware.loadui.fx.MainWindow;
 import javafx.scene.text.Text;
 
@@ -43,6 +44,7 @@ import com.eviware.loadui.fx.widgets.toolbar.TestCaseToolbarItem;
 import javafx.util.Math;
 import java.io.File;
 import javafx.scene.Group;
+import javafx.scene.control.CheckBox;
 
 import com.eviware.loadui.fx.util.ImageUtil.*;
 
@@ -101,20 +103,23 @@ public class ProjectCanvas extends Canvas {
 		}
 	}
 	
-	function createTestCase():SceneItem {
+	public function createTestCase():SceneItem {
 		var name = "TestCase";
 		var i=0;
 		while( sizeof projectItem.getScenes()[c|c.getLabel() == name] > 0 )
 			name = "TestCase ({++i})";
 			
-		if (not MainWindow.instance.workspace.isLocalMode()) {
+		if ( projectItem.getAttribute( ProjectSettingsDialog.IGNORE_UNASSIGNED_TESTCASES, "false" ) == "false" and not MainWindow.instance.workspace.isLocalMode()) {
+			var checkbox:CheckBox;
 		    def warning:Dialog = Dialog {
 		    	title: "Warning!"
-		    	content: Text {
-		    		content: "Switch to local mode, or place {name} on an agent in order to run it"
-		    	}
+		    	content: [
+		    		Text { content: "Switch to local mode, or place {name} on an agent in order to run it" },
+		    		checkbox = CheckBox { selected: false, text: "Don't show this dialog again" }
+		    	]
 		    	okText: "Ok"
 		    	onOk: function() {
+		    		if( checkbox.selected ) projectItem.setAttribute( ProjectSettingsDialog.IGNORE_UNASSIGNED_TESTCASES, "true" );
 		    		warning.close();
 		    	}
 		    	noCancel: true
