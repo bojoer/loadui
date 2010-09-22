@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
@@ -31,33 +34,37 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.messaging.ChannelRoutingSupport;
 
-
-
-public class MessageEndpointImpl extends BayeuxClient implements MessageEndpoint
+public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoint
 {
+	public final static Logger log = LoggerFactory.getLogger( BayeuxMessageEndpoint.class );
+
+	private final ScheduledExecutorService scheduledExecutor;
 	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport( this );
 	private final Set<ConnectionListener> connectionListeners = new HashSet<ConnectionListener>();
+	private final Runnable stateChecker = new StateChecker();
+	private ScheduledFuture<?> stateCheckerFuture;
 	private boolean connected = false;
 
-	private Logger log = LoggerFactory.getLogger(MessageEndpointImpl.class);
-	
-	public MessageEndpointImpl( String url, HttpClient httpClient )
+	public BayeuxMessageEndpoint( String url, HttpClient httpClient )
 	{
 		super( url, new LongPollingTransport( new HashMap<String, Object>(), httpClient ) );
+
+		scheduledExecutor = BeanInjector.getBean( ScheduledExecutorService.class );
 	}
 
-	@Override
-	protected void processConnect( Message connect )
+	private void setConnected( boolean connected )
 	{
-		super.processConnect( connect );
-		if( connected != connect.isSuccessful() )
+		if( this.connected != connected )
 		{
-			connected = !connected;
+			this.connected = connected;
 			for( ConnectionListener listener : connectionListeners )
-				listener.handleConnectionChange( MessageEndpointImpl.this, connected );
+				listener.handleConnectionChange( BayeuxMessageEndpoint.this, connected );
+
 			if( connected )
+			{
 				newChannel( newChannelId( BASE_CHANNEL + "/**" ) ).subscribe( new ClientSessionChannel.MessageListener()
 				{
 					@Override
@@ -69,27 +76,29 @@ public class MessageEndpointImpl extends BayeuxClient implements MessageEndpoint
 							routingSupport.fireMessage( channel.substring( BASE_CHANNEL.length() ), message.getData() );
 					}
 				} );
+				stateCheckerFuture = scheduledExecutor.scheduleAtFixedRate( stateChecker, 1, 1, TimeUnit.SECONDS );
+			}
+			else
+			{
+				stateCheckerFuture.cancel( true );
+			}
 		}
 	}
 
 	@Override
-	protected void processDisconnect(Message disconnect)
+	protected void processConnect( Message connect )
 	{
-		// TODO Auto-generated method stub
-		super.processDisconnect(disconnect);
-		log.debug("Disconected processed");
-		log.debug(disconnect.getChannel() + " --- " + disconnect.getData());
-		connected = false;
+		super.processConnect( connect );
+		setConnected( connect.isSuccessful() );
 	}
-	
+
 	@Override
-	protected void processHandshake(Message arg0)
+	protected void processDisconnect( Message disconnect )
 	{
-		// TODO Auto-generated method stub
-		super.processHandshake(arg0);
-		log.debug("Handshake processed");
+		super.processDisconnect( disconnect );
+		setConnected( false );
 	}
-	
+
 	@Override
 	public void onMessages( List<Message.Mutable> messages )
 	{
@@ -115,6 +124,7 @@ public class MessageEndpointImpl extends BayeuxClient implements MessageEndpoint
 		Message.Mutable message = newMessage();
 		message.setChannel( "/service" + BASE_CHANNEL + channel );
 		message.setData( data );
+		log.debug( "Sending message: {} on channel: {}", data, message );
 		send( message );
 	}
 
@@ -142,7 +152,6 @@ public class MessageEndpointImpl extends BayeuxClient implements MessageEndpoint
 			e.printStackTrace();
 		}
 	}
-	
 
 	@Override
 	public void open()
@@ -150,11 +159,24 @@ public class MessageEndpointImpl extends BayeuxClient implements MessageEndpoint
 		try
 		{
 			handshake();
-			connected = isConnected();
+			setConnected( isConnected() );
 		}
 		catch( Exception e )
 		{
 			e.printStackTrace();
+		}
+	}
+
+	private class StateChecker implements Runnable
+	{
+		@Override
+		public void run()
+		{
+			if( !isConnected() )
+			{
+				log.debug( "Connection failure detected!" );
+				setConnected( false );
+			}
 		}
 	}
 }

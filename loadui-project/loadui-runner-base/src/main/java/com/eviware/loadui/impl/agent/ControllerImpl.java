@@ -92,7 +92,9 @@ public class ControllerImpl
 				if( connected )
 				{
 					clients.add( endpoint );
-					endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, new AgentListener() );
+					AgentListener agentListener = new AgentListener();
+					endpoint.addConnectionListener( agentListener );
+					endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, agentListener );
 					endpoint.addMessageListener( SceneCommunication.CHANNEL, new SceneListener() );
 					endpoint.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL, new ComponentContextListener() );
 				}
@@ -114,8 +116,8 @@ public class ControllerImpl
 				{
 					int utilization = ( ( CustomThreadPoolExecutor )executorService ).getUtilization();
 					for( MessageEndpoint endpoint : clients )
-						endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.SET_UTILIZATION,
-								utilization ) );
+						endpoint.sendMessage( AgentItem.AGENT_CHANNEL,
+								Collections.singletonMap( AgentItem.SET_UTILIZATION, utilization ) );
 				}
 			}
 		}, 1, 1, TimeUnit.SECONDS );
@@ -123,7 +125,7 @@ public class ControllerImpl
 		log.info( "Agent started and listening on cometd!" );
 	}
 
-	private class AgentListener implements MessageListener
+	private class AgentListener implements MessageListener, ConnectionListener
 	{
 		@Override
 		@SuppressWarnings( "unchecked" )
@@ -163,6 +165,23 @@ public class ControllerImpl
 					sceneAgents.get( message.get( AgentItem.SCENE_ID ) ).sceneDef = message.get( AgentItem.SCENE_DEFINITION );
 			}
 		}
+
+		@Override
+		public void handleConnectionChange( MessageEndpoint endpoint, boolean connected )
+		{
+			if( !connected )
+			{
+				List<SceneAgent> stop = new ArrayList<SceneAgent>();
+				synchronized( sceneAgents )
+				{
+					for( SceneAgent sceneAgent : sceneAgents.values() )
+						if( endpoint == sceneAgent.getEndpoint() )
+							stop.add( sceneAgent );
+				}
+				for( SceneAgent sceneAgent : stop )
+					sceneAgent.addCommand( Collections.singletonList( ( String )null ) );
+			}
+		}
 	}
 
 	private class SceneAgent implements Runnable
@@ -178,6 +197,11 @@ public class ControllerImpl
 			this.sceneId = sceneId;
 			this.endpoint = endpoint;
 			sceneAgents.put( sceneId, this );
+		}
+
+		public MessageEndpoint getEndpoint()
+		{
+			return endpoint;
 		}
 
 		public void addCommand( List<String> args )

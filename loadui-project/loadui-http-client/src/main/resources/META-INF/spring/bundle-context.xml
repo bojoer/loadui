@@ -7,7 +7,7 @@
 	-->
 	<bean id="httpClient" class="com.eviware.loadui.http.HttpClientFactory" factory-method="createHttpsClient" destroy-method="stop" />
 	
-	<bean id="messageEndpointProvider" class="com.eviware.loadui.impl.messaging.MessageEndpointProviderImpl">
+	<bean id="messageEndpointProvider" class="com.eviware.loadui.impl.messaging.BayeuxMessageEndpointProvider">
 		<constructor-arg ref="httpClient" />
 	</bean>
 	
