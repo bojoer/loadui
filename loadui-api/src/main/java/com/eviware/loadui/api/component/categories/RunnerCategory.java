@@ -121,7 +121,7 @@ public interface RunnerCategory extends ComponentBehavior
 	 * The key to be used for the currently running parameter in the currently
 	 * running message.
 	 */
-	public static final String CURRENTLY_RUNNING_MESSAGE_PARAM = "No.RunningSamples";
+	public static final String CURRENTLY_RUNNING_MESSAGE_PARAM = "CurrentlyRunning";
 
 	/**
 	 * Returns the InputTerminal which is used to trigger a sample.
