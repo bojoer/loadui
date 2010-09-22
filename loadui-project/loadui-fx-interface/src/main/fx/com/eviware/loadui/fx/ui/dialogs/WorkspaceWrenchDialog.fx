@@ -103,7 +103,7 @@ public class WorkspaceWrenchDialog  {
 				Tab {
          			label: "soapUI", content: formT2 = Form {
 						formContent: [
-							FileInputField { id: "soapUIPath", label: "Path to soapUI", description: "Path to soapUI", value: soapUIPath },
+							FileInputField { id: "soapUIPath", label: "Path to soapUI", description: "Path to soapUI", value: soapUIPath, filter: FileInputField.FILE_FILTER_XML },
 							LongInputField { id: "loadUICajoPort", label: "Integration Port", description: "Integration Port", value: loadUICajoPort },
 							LongInputField { id: "soapUICajoPort", label: "soapUI Port", description: "soapUI Port", value: soapUICajoPort },
 							CheckBoxField{ id: "soapUISync", label: "Automatically reload updated Projects", description: "Automatically detects and reloads updated soapUI Projects", value: soapUISync }
