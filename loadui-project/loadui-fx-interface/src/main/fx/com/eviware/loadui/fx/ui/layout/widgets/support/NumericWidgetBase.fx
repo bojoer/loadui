@@ -65,15 +65,18 @@ public abstract class NumericWidgetBase extends BaseNode, Widget, TooltipHolder 
 	
 	public var textValue = String.format("%%.{decimals}f", value) on replace oldVal {
 		if( not noApply ) {
-			if( nullable and textValue == "" ) {
-				property.setValue( null );
-			} else if( textValue != null ) {
-				try {
-					numberValue = Double.parseDouble( textValue );
-				} catch( e:NumberFormatException ) {
-					textValue = oldVal;
+		    if (oldVal != textValue) {
+				if( nullable and textValue == "" ) {
+					property.setValue( null );
+				} else if( textValue != null ) {
+					try {
+						numberValue = Double.parseDouble( textValue );
+						textValue = String.format("%%.{decimals}f", numberValue);
+					} catch( e:NumberFormatException ) {
+						textValue = oldVal;
+					}
 				}
-			}
+		    }
 		}
 	}
 	
