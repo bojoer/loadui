@@ -49,6 +49,7 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 
 	public void fireMessage( ServerSession session, String channel, Object data, String messageId )
 	{
+		// what to do when session == null is true?
 		if( !sessions.containsKey( session ) )
 			sessions.put( session, new MessageEndpointImpl( session ) );
 
