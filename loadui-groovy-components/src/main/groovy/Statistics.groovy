@@ -158,7 +158,7 @@ long max = 0
 long min = Long.MAX_VALUE
 
 agentData = [:]
-agentStatistics = [:]
+agentStatistics = null
 
 future = null
 boolean connected = true
@@ -201,7 +201,7 @@ onMessage = { o, i, m ->
 	
 	if( i == statisticsInput ) {
 		if (  m.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"]) ) {
-			agentStatistics[o.label] = new HashMap(m)
+			agentStatistics = new HashMap(m)
 		} 
 	}
 }
@@ -254,9 +254,17 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			
-			send(controllerTerminal, message)
 			send(output, message)
+			
+			if (agentStatistics != null) {
+				message['Requests'] = agentStatistics['Requests']
+				message['Running'] = agentStatistics['Running']
+				message['Discarded'] = agentStatistics['Discarded']
+				message['Queued'] = agentStatistics['Queued']
+				message['Failed'] = agentStatistics['Failed']
+				message['Completed'] = agentStatistics['Completed']
+			}
+			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
 		ex(e1, 'calculate')
@@ -284,22 +292,17 @@ updateChart = { currentTime ->
 						data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
 						data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
 						data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
+						data['Requests'] = data['Requests'] ?: 0 + d["Requests"]
+						data['Running'] = data['Running'] ?: 0 + d["Running"]
+						data['Completed'] = data['Completed'] ?: 0 + d["Completed"]
+						data['Queued'] = data['Queued'] ?: 0 + d["Queued"]
+						data['Discarded'] = data['Discarded'] ?: 0 + d["Discarded"]
+						data['Failed'] = data['Failed'] ?: 0 + d["Failed"]
 						count++
 					}
 				}
 			}
-			if (statisticsInput.connections.size() > 0) {
-				for ( m in agentStatistics.values() ) {
-					if( !m.isEmpty() ) {
-						data['Requests'] = data['Requests'] ?: 0 + m["Requests"]
-						data['Running'] = data['Running'] ?: 0 + m["Running"]
-						data['Completed'] = data['Completed'] ?: 0 + m["Completed"]
-						data['Queued'] = data['Queued'] ?: 0 + m["Queued"]
-						data['Discarded'] = data['Discarded'] ?: 0 + m["Discarded"]
-						data['Failed'] = data['Failed'] ?: 0 + m["Failed"]
-					}
-				}
-			}
+			
 			if( count != 0 ) {
 				data['Avg'] /= count
 				data['Std-Dev'] /= count
@@ -308,15 +311,9 @@ updateChart = { currentTime ->
 		}
 	} else {
 		
-		if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] == null) {
-			data = null
-		} else if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] != null) {
-			data = agentStatistics[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] == null) {
+		
 			data = agentData[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] != null) {
-			data = agentData[selectedAgent.value] + agentStatistics[selectedAgent.value]
-		}
+	
 	}
 	if(data == null || data.isEmpty()) {
 		return
@@ -333,8 +330,6 @@ updateChart = { currentTime ->
 			if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
 			if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 			if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
-		}
-		if (statisticsInput.connections.size() > 0  && data.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"])) {
 			if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
 			if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
 			if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
@@ -342,6 +337,7 @@ updateChart = { currentTime ->
 			if(enableDiscarded.value) chartModel.addPoint(14, currentTime, data['Discarded'])
 			if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
 		}
+		
 		 if (inputTerminal.connections.size() > 0) {
 			avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
 			minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
