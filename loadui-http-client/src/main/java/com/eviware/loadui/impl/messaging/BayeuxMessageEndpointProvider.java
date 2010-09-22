@@ -20,11 +20,11 @@ import org.eclipse.jetty.client.HttpClient;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageEndpointProvider;
 
-public class MessageEndpointProviderImpl implements MessageEndpointProvider
+public class BayeuxMessageEndpointProvider implements MessageEndpointProvider
 {
 	private final HttpClient httpClient;
 
-	public MessageEndpointProviderImpl( HttpClient httpClient )
+	public BayeuxMessageEndpointProvider( HttpClient httpClient )
 	{
 		this.httpClient = httpClient;
 	}
@@ -32,6 +32,6 @@ public class MessageEndpointProviderImpl implements MessageEndpointProvider
 	@Override
 	public MessageEndpoint createEndpoint( String url )
 	{
-		return new MessageEndpointImpl( url, httpClient );
+		return new BayeuxMessageEndpoint( url, httpClient );
 	}
 }

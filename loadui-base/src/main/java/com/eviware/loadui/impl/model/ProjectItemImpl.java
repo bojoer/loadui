@@ -956,6 +956,10 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				{
 					log.debug( "Send message assign: {}", scene.getLabel() );
 					agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, scene.getId() ) );
+					if( scene.isRunning() && !workspace.isLocalMode() )
+						agent.sendMessage( SceneCommunication.CHANNEL, Arrays.asList( scene.getId(),
+								Long.toString( scene.getVersion() ), SceneCommunication.ACTION_EVENT, START_ACTION,
+								scene.getId() ) );
 				}
 			}
 		}
