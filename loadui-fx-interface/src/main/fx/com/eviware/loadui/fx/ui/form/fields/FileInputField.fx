@@ -38,6 +38,8 @@ public function build( id:String, label:String, value:Object ) {
 public def FILES_ONLY = JFileChooser.FILES_ONLY;
 public def DIRECTORIES_ONLY = JFileChooser.DIRECTORIES_ONLY;
 public def FILES_AND_DIRECTORIES = JFileChooser.FILES_AND_DIRECTORIES;
+public def FILE_FILTER_ALL = "all";
+public def FILE_FILTER_XML = "xml";
 
 /**
  * A File FormField.
@@ -47,6 +49,7 @@ public def FILES_AND_DIRECTORIES = JFileChooser.FILES_AND_DIRECTORIES;
  */
 public class FileInputField extends HBox, FormField {	
 	public-init var selectMode = FILES_ONLY;
+	public-init var filter:String = FILE_FILTER_ALL; 
 
 	override var value on replace {
 		if( value != null and not ( value instanceof File ) )
@@ -82,8 +85,24 @@ public class FileInputField extends HBox, FormField {
 		chooser.setFileSelectionMode( selectMode );
 		if( selectMode == DIRECTORIES_ONLY ) {
 			chooser.setAcceptAllFileFilterUsed( false );
+		} else if ( selectMode == FILES_ONLY ) {
+			if ( filter == FILE_FILTER_XML )
+				chooser.setFileFilter(new XmlFileFilter());
 		}
 		
 		content = [ textBox, button ];
+	}
+}
+
+class XmlFileFilter extends javax.swing.filechooser.FileFilter {
+
+	public override function accept(file:File):Boolean {
+		if( file.getName().endsWith(".xml") or file.isDirectory() )
+			return true;
+		return false;
+	}
+	
+	public override function getDescription():String {
+		return "";
 	}
 }
