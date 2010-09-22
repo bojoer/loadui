@@ -57,6 +57,7 @@ createProperty( 'period', Long, 0 )
 createProperty( 'sampleId', String, "" )
 createProperty( 'failOnMissingID', Boolean, false )
 createProperty( 'failOnMissingValue', Boolean, false )
+createProperty( 'includeAssertedMessage', Boolean, false )
 
 String valueToAssert = value.value
 
@@ -108,21 +109,21 @@ analyze = { message ->
 		
 		if(!message.containsKey(value.value)) {
 			if( failOnMissingValue.value ) {
-				raiseFailure(timestamp, val)
-				totalCounter.increment()
-			}
-			return
-		}
-		
-		if( sampleId.value ?: "" != "" && message[SampleCategory.SAMPLE_ID] != sampleId.value ) {
-			if( failOnMissingID.value ) {
-				raiseFailure(timestamp, val)
+				raiseFailure(message, timestamp, null)
 				totalCounter.increment()
 			}
 			return
 		}
 		
 		double val = message[value.value]
+		
+		if( sampleId.value ?: "" != "" && message[SampleCategory.SAMPLE_ID] != sampleId.value ) {
+			if( failOnMissingID.value ) {
+				raiseFailure(message, timestamp, val)
+				totalCounter.increment()
+			}
+			return
+		}
 		
 		if( val < min.value || val > max.value ) {
 			synchronized( buffer ) {
@@ -138,7 +139,7 @@ analyze = { message ->
 				}
 				
 				if( buffer.size() >= tolerance.value ) {
-					raiseFailure(timestamp, val)
+					raiseFailure(message, timestamp, val)
 					buffer.clear()
 				}
 			}
@@ -151,17 +152,19 @@ analyze = { message ->
 	}
 }
 
-raiseFailure = {timestamp, value ->
+raiseFailure = {message, timestamp, value ->
 	failureCounter.increment()
 	
-	outMsg["Assert"] = valueToAssert
-	outMsg["Min"] = min.value
-	outMsg["Value"] = value
-	outMsg["Max"] = max.value
-	outMsg["Period"] = period.value
-	outMsg["Tolerance"] = tolerance.value
-	outMsg["Timestamp"] = timestamp
-	send(output, outMsg)
+	m = includeAssertedMessage.value ? message : outMsg
+	
+	m["Assert"] = valueToAssert
+	m["Min"] = min.value
+	m["Value"] = value
+	m["Max"] = max.value
+	m["Period"] = period.value
+	m["Tolerance"] = tolerance.value
+	m["Timestamp"] = timestamp
+	send(output, m)
 }
 
 onRelease = { 
@@ -262,4 +265,5 @@ settings( label: "General" ) {
 	property(property: failOnMissingValue, label: 'Fail on missing value' )
 	property(property: sampleId, label: 'Sample ID' )
 	property(property: failOnMissingID, label: 'Fail on mismatching ID' )
+	property(property: includeAssertedMessage, label: 'Include original message in failure messages' )
 }
