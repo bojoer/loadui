@@ -31,6 +31,7 @@ import javafx.scene.layout.LayoutInfo;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.CheckBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.paint.Paint;
@@ -74,7 +75,7 @@ import javafx.scene.control.Tooltip;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
-
+import com.eviware.loadui.fx.ui.dialogs.ProjectSettingsDialog;
 
 public class MiniRunController extends BaseNode, Resizable, TimerController {
 
@@ -164,45 +165,49 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
 					stopped = false;
 				}
 				
-				var valid:Boolean = checkForTriggerAndRunner(canvas);
-								
-								if (not valid and canvas instanceof ProjectItem) {
-								    var project:ProjectItem = canvas as ProjectItem;
-								    for (testcase in project.getScenes()) {
-								        if (checkForTriggerAndRunner(testcase)) {
-								            valid = true;
-								            break;
-								        }
-								    }
-								}
-								
-								if (not valid) {
-								    var dlg:Dialog = Dialog {
-								        title: "Start Project"
-								        content: [
-								        				Label { text: "Your project currently does not seem to generate any load, \n be sure to add a Generator and connect it to a Runner component to get going!" }
-								        ]
-								        onOk: function():Void {
-								           
-								            canvas.triggerAction( CanvasItem.START_ACTION );
-								            dlg.close();
-								        }
-								        
-								        onClose: function():Void {
-								           
-											//cancelling = true;
-											playButton.selected = false;
-											
-											//cancelling = false;
-								        }
-								    }
-								} else {
-								   
-								
-									canvas.triggerAction( CanvasItem.START_ACTION );
-									
-								}
+				if( canvas.getProject().getAttribute( ProjectSettingsDialog.IGNORE_INVALID_CANVAS, "false" ) == "false" ) {
+					var valid:Boolean = checkForTriggerAndRunner(canvas);
 				
+					if (not valid and canvas instanceof ProjectItem) {
+					    var project:ProjectItem = canvas as ProjectItem;
+					    for (testcase in project.getScenes()) {
+					        if (checkForTriggerAndRunner(testcase)) {
+					            valid = true;
+					            break;
+					        }
+					    }
+					}
+					
+					if (not valid) {
+					    var type = if (canvas instanceof ProjectItem) "Project" else "TestCase";
+					    var checkbox:CheckBox;
+					    var dlg:Dialog = Dialog {
+					        title: "Start {type}";
+					        content: [
+					        				Label { text: "Your {type} currently does not seem to generate any load, \n be sure to add a Generator and connect it to a Runner component to get going!" }
+					        				checkbox = CheckBox {
+					        					selected: false
+             								text: "Don't show this dialog again"
+					        				}
+					        ]
+					        onOk: function():Void {
+					        		if( checkbox.selected ) canvas.getProject().setAttribute( ProjectSettingsDialog.IGNORE_INVALID_CANVAS, "true" );
+					            canvas.triggerAction( CanvasItem.START_ACTION );
+					            dlg.close();
+					        }
+					        
+					        onClose: function():Void {
+								//cancelling = true;
+								playButton.selected = false;
+								//cancelling = false;
+					        }
+					    }
+					} else {
+						canvas.triggerAction( CanvasItem.START_ACTION );
+					}
+				} else {
+					canvas.triggerAction( CanvasItem.START_ACTION );
+				}
 			} else {
 				canvas.triggerAction( CanvasItem.STOP_ACTION );
 			}

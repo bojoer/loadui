@@ -39,6 +39,9 @@ import net.miginfocom.layout.*;
 
 import java.io.File;
 
+public def IGNORE_INVALID_CANVAS = "gui.ignore_invalid_canvas";
+public def IGNORE_UNASSIGNED_TESTCASES = "gui.ignore_unassigned_testcases";
+
 /**
  * SettingsDialog, basic modal dialog with ok, help and cancel button.
  */
@@ -48,11 +51,14 @@ public class ProjectSettingsDialog  {
     				theItem.setDescription(descriptionForm.getField('description').value as String);
     				theItem.setSaveReport(form.getField('saveReport').value as Boolean);
     				theItem.setReportFolder((form.getField('savePath').value as File).getAbsolutePath());
+    				theItem.setAttribute( IGNORE_INVALID_CANVAS, "{miscForm.getField(IGNORE_INVALID_CANVAS).value as Boolean}" );
+    				theItem.setAttribute( IGNORE_UNASSIGNED_TESTCASES, "{miscForm.getField(IGNORE_UNASSIGNED_TESTCASES).value as Boolean}" );
     				dialogRef.close();
              }
              
     var form:Form;
     var descriptionForm:Form;
+    var miscForm:Form;
     var dialogRef: Dialog;
 	
 	public function show(item:ProjectItem) {
@@ -100,6 +106,23 @@ public class ProjectSettingsDialog  {
 							    value: if (not (item.getReportFolder() == null)) new File(item.getReportFolder()) else null
 							    disable: bind not (cb.value as Boolean)
 							    selectMode: FileInputField.DIRECTORIES_ONLY
+							}
+						]
+					}
+				},
+				Tab {
+					label: "Misc",
+					content: miscForm = Form {
+						singleColumn: true
+						formContent: [
+							CheckBoxField {
+								id: IGNORE_INVALID_CANVAS
+								value: item.getAttribute( IGNORE_INVALID_CANVAS, "false" ) != "false"
+								label: "Do not warn when starting a Canvas without both a Generator and a Runner."
+							}, CheckBoxField {
+								id: IGNORE_UNASSIGNED_TESTCASES
+								value: item.getAttribute( IGNORE_INVALID_CANVAS, "false" ) != "false"
+								label: "Do not warn when creating a TestCase in Distributed Mode."
 							}
 						]
 					}
