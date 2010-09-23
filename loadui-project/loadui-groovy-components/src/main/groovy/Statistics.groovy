@@ -500,8 +500,8 @@ fixOptions = {
 addEventListener( ActionEvent ) { event ->
 	if( event.key == 'RESET' ) resetComponent()
 	else if( event.key == 'STOP' ) {
-		agentData.clear()
-		agentStatistics.clear()
+		agentData?.clear() // this should never be null but just in case
+		agentStatistics?.clear() // this could be null, so it needs check
 		if( !controller )
 			send( controllerTerminal, newMessage() )
 	}
