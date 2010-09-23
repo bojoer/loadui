@@ -286,6 +286,13 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 							width: 95
 							height: 22
 						}
+						graphic: Group {
+							content: [
+								FXDNode { url: "{__ROOT__}images/agent-arrow-top-active.fxz", visible: bind page != 0 }
+								FXDNode { url: "{__ROOT__}images/agent-arrow-top-inactive.fxz", visible: bind page == 0 }
+							] 
+						}
+						vpos: VPos.BOTTOM
 						styleClass: "agent-inspector-node-button"
 						blocksMouse: false
 						action: function() { if( page > 0) page--; }
@@ -303,6 +310,13 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 							width: 95
 							height: 22
 						}
+						graphic: Group {
+							content: [
+								FXDNode { url: "{__ROOT__}images/agent-arrow-bottom-active.fxz", visible: bind page < numPages - 1 }
+								FXDNode { url: "{__ROOT__}images/agent-arrow-bottom-inactive.fxz", visible: bind page >= numPages - 1 }
+							] 
+						}
+						vpos: VPos.BOTTOM
 						styleClass: "agent-inspector-node-button"
 						blocksMouse: false
 						action: function() { if( page < numPages - 1) page++; }
