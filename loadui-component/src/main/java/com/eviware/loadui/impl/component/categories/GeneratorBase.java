@@ -55,8 +55,8 @@ public abstract class GeneratorBase extends OnOffBase implements GeneratorCatego
 		triggerTerminal = context.createOutput( TRIGGER_TERMINAL, "Trigger Signal" );
 		triggerMessage = context.newMessage();
 
-		Map<String, Class<?>> signature = Collections.emptyMap();
-		context.setSignature( triggerTerminal, signature );
+		context.setSignature( triggerTerminal,
+				Collections.<String, Class<?>> singletonMap( TRIGGER_TIMESTAMP_MESSAGE_PARAM, Long.class ) );
 
 		context.addEventListener( BaseEvent.class, listener );
 		fixActivityStrategy();
