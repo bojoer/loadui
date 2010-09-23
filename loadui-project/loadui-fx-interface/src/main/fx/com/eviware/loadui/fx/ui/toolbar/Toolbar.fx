@@ -89,7 +89,7 @@ class GroupOrder extends Comparator {
 		"AGENTS",
 		"PROJECTS",
 		
-		"MISC",
+		MiscCategory.CATEGORY.toUpperCase(),
 		OutputCategory.CATEGORY.toUpperCase(),
 		SchedulerCategory.CATEGORY.toUpperCase(),
 		FlowCategory.CATEGORY.toUpperCase(),
