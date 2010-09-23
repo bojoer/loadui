@@ -43,6 +43,12 @@ public interface GeneratorCategory extends OnOffCategory
 	public static final String TRIGGER_TERMINAL = "triggerTerminal";
 
 	/**
+	 * The key to be used for the trigger message timestamp parameter in the
+	 * result message.
+	 */
+	public static final String TRIGGER_TIMESTAMP_MESSAGE_PARAM = "TriggerTimestamp";
+
+	/**
 	 * Returns the OutputTerminal which outputs the trigger message.
 	 * 
 	 * @return
