@@ -68,7 +68,10 @@ public abstract class GeneratorBase extends OnOffBase implements GeneratorCatego
 	final public void trigger()
 	{
 		if( getStateProperty().getValue() )
+		{
+			triggerMessage.put( TRIGGER_TIMESTAMP_MESSAGE_PARAM, System.currentTimeMillis() );
 			getContext().send( triggerTerminal, triggerMessage );
+		}
 	}
 
 	@Override
