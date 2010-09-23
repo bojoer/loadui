@@ -282,6 +282,7 @@ updateChart = { currentTime ->
 			if (inputTerminal.connections.size() > 0) {
 				for( d in agentData.values() ) {
 					if( !d.isEmpty() ) {
+						//println d
 						data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
 						data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
 						data['Avg'] = (data['Avg'] ?: 0) + d['Avg']
@@ -292,12 +293,12 @@ updateChart = { currentTime ->
 						data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
 						data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
 						data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
-						data['Requests'] = data['Requests'] ?: 0 + d["Requests"]
-						data['Running'] = data['Running'] ?: 0 + d["Running"]
-						data['Completed'] = data['Completed'] ?: 0 + d["Completed"]
-						data['Queued'] = data['Queued'] ?: 0 + d["Queued"]
-						data['Discarded'] = data['Discarded'] ?: 0 + d["Discarded"]
-						data['Failed'] = data['Failed'] ?: 0 + d["Failed"]
+						data['Requests'] = (data['Requests'] ?:  0) + (d['Requests']?:0)
+						data['Running'] = (data['Running'] ?:  0) + (d['Running']?:0) 
+						data['Completed'] = (data['Completed'] ?: 0) + (d['Completed']?:0)
+						data['Queued'] = (data['Queued'] ?: 0) + (d['Queued']?:0)
+						data['Discarded'] = (data['Discarded'] ?: 0) + (d['Discarded']?:0)
+						data['Failed'] = (data['Failed'] ?: 0) + (d['Failed']?:0)
 						count++
 					}
 				}
@@ -310,9 +311,7 @@ updateChart = { currentTime ->
 		} catch( e ) { ex(e, 'Aggregating')
 		}
 	} else {
-		
-		
-			data = agentData[selectedAgent.value]
+		data = agentData[selectedAgent.value]
 	
 	}
 	if(data == null || data.isEmpty()) {
