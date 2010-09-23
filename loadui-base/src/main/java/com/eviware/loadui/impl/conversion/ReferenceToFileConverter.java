@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,7 +52,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 	{
 		addressableRegistry.addEventListener( CollectionEvent.class, this );
 		executorService.scheduleAtFixedRate( new RemoveOldFilesTask(), 5, 5, TimeUnit.MINUTES );
-
+		
 		if( !storage.isDirectory() )
 			storage.mkdirs();
 	}
@@ -91,10 +92,28 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 				source.getEndpoint().addMessageListener( CHANNEL, listener );
 				source.getEndpoint().sendMessage( FileToReferenceConverter.CHANNEL, hash );
 			}
+			else if (!isFileHashValid(hash)){
+				log.error( "File has been changed. Request file again...");
+				files.get(hash).delete();
+				source.getEndpoint().addMessageListener( CHANNEL, listener );
+				source.getEndpoint().sendMessage( FileToReferenceConverter.CHANNEL, hash );
+			}
 			return files.get( hash );
 		}
 	}
 
+	private boolean isFileHashValid(String hash){
+		try{
+			FileInputStream fis = new FileInputStream(files.get(hash));
+			String md5Hex = DigestUtils.md5Hex(fis);
+			fis.close();
+			return hash.equals(md5Hex);
+		}
+		catch(Exception e){
+			return false;
+		}
+	}
+	
 	@Override
 	public void handleEvent( CollectionEvent event )
 	{
