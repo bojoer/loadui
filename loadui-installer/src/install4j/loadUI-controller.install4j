@@ -83,7 +83,13 @@
           <screen name="" id="2" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.WelcomeScreen" />
+                <object class="com.install4j.runtime.beans.screens.WelcomeScreen">
+                  <void property="bannerImageFile">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>../../target/controller/Installer_pic_loadUI_PNG.png</string>
+                    </object>
+                  </void>
+                </object>
               </java>
             </serializedBean>
             <condition />
@@ -879,7 +885,13 @@ return f.exists();</condition>
           <screen name="" id="13" beanClass="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" />
+                <object class="com.install4j.runtime.beans.screens.UninstallWelcomeScreen">
+                  <void property="bannerImageFile">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>../../target/controller/Installer_pic_loadUI_PNG.png</string>
+                    </object>
+                  </void>
+                </object>
               </java>
             </serializedBean>
             <condition />
