@@ -39,7 +39,7 @@ public class TerminalMessageImpl implements TerminalMessage
 	}
 
 	@Override
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings( { "unchecked", "rawtypes" } )
 	public TerminalMessage copy()
 	{
 		TerminalMessageImpl cpy = new TerminalMessageImpl( conversionService );
@@ -57,10 +57,10 @@ public class TerminalMessageImpl implements TerminalMessage
 	}
 
 	@Override
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings( { "unchecked", "rawtypes" } )
 	public Object put( String key, Object value )
 	{
-		MutableValue oldVal = values.get( key );
+		MutableValue<?> oldVal = values.get( key );
 		Object old = oldVal == null ? null : oldVal.getValue();
 
 		if( oldVal != null && oldVal.getType().isInstance( value ) )
@@ -79,13 +79,12 @@ public class TerminalMessageImpl implements TerminalMessage
 	}
 
 	@Override
-	@SuppressWarnings( "unchecked" )
 	public Object serialize()
 	{
 		Map<String, String[]> serialized = new HashMap<String, String[]>();
 		for( Entry<String, MutableValue<?>> entry : values.entrySet() )
 		{
-			MutableValue value = entry.getValue();
+			MutableValue<?> value = entry.getValue();
 			String[] parts;
 			try
 			{
@@ -104,7 +103,7 @@ public class TerminalMessageImpl implements TerminalMessage
 	}
 
 	@Override
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings( { "unchecked", "rawtypes" } )
 	public void load( Object serialized )
 	{
 		if( !( serialized instanceof Map<?, ?> ) )
@@ -199,6 +198,12 @@ public class TerminalMessageImpl implements TerminalMessage
 			objects.add( value.getValue() );
 
 		return objects;
+	}
+
+	@Override
+	public String toString()
+	{
+		return getClass().getSimpleName() + values.toString();
 	}
 
 	private class InternalEntry implements Map.Entry<String, Object>

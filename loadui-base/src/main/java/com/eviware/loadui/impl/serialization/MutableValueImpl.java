@@ -49,4 +49,10 @@ public class MutableValueImpl<T> implements MutableValue<T>
 	{
 		this.value = type.isInstance( value ) ? type.cast( value ) : conversionService.convert( value, type );
 	}
+
+	@Override
+	public String toString()
+	{
+		return "MutableValue(" + value + ")";
+	}
 }
