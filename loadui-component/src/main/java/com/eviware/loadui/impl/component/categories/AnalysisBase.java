@@ -17,16 +17,15 @@ package com.eviware.loadui.impl.component.categories;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.AnalysisCategory;
+import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
-
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
 import com.eviware.loadui.impl.component.ActivityStrategies;
-import com.eviware.loadui.util.BeanInjector;
 
 /**
  * Base class for analysis components which defines base behavior which can be
@@ -36,44 +35,24 @@ import com.eviware.loadui.util.BeanInjector;
  */
 public abstract class AnalysisBase extends BaseCategory implements AnalysisCategory
 {
-	private static final int BLINK_TIME = 1000;
-
 	private final InputTerminal inputTerminal;
 
-	private final ScheduledExecutorService executor;
-	private final Runnable activityRunnable;
-	private long lastMsg;
-	private ScheduledFuture<?> activityFuture;
-
+	private final ActivityListener listener = new ActivityListener();
 	/**
 	 * Constructs an AnalysisBase.
 	 * 
 	 * @param context
 	 *           A ComponentContext to bind the AnalysisBase to.
 	 */
-	public AnalysisBase( ComponentContext context )
+	public AnalysisBase(ComponentContext context)
 	{
-		super( context );
-		executor = BeanInjector.getBean( ScheduledExecutorService.class );
+		super(context);
 
-		inputTerminal = context.createInput( INPUT_TERMINAL, "Input Data to be Analysed" );
+		inputTerminal = context.createInput(INPUT_TERMINAL, "Input Data to be Analysed");
 
-		getContext().setActivityStrategy( ActivityStrategies.ON );
-		activityRunnable = new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				long now = System.currentTimeMillis();
-				if( lastMsg + BLINK_TIME <= now )
-				{
-					getContext().setActivityStrategy( ActivityStrategies.ON );
-					activityFuture = null;
-				}
-				else
-					activityFuture = executor.schedule( activityRunnable, lastMsg + BLINK_TIME, TimeUnit.MILLISECONDS );
-			}
-		};
+		context.addEventListener( BaseEvent.class, listener );
+		fixActivityStrategy();
+		
 	}
 
 	/**
@@ -81,7 +60,7 @@ public abstract class AnalysisBase extends BaseCategory implements AnalysisCateg
 	 * 
 	 * @param message
 	 */
-	public abstract void analyze( TerminalMessage message );
+	public abstract void analyze(TerminalMessage message);
 
 	@Override
 	final public InputTerminal getInputTerminal()
@@ -90,18 +69,19 @@ public abstract class AnalysisBase extends BaseCategory implements AnalysisCateg
 	}
 
 	@Override
-	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
+	public void onRelease()
 	{
-		if( input == inputTerminal )
-		{
-			lastMsg = System.currentTimeMillis();
-			if( activityFuture == null )
-			{
-				getContext().setActivityStrategy( ActivityStrategies.BLINKING );
-				activityFuture = executor.schedule( activityRunnable, BLINK_TIME, TimeUnit.MILLISECONDS );
-			}
+		// TODO Auto-generated method stub
+		super.onRelease();
+		getContext().removeEventListener(BaseEvent.class, listener);
+	}
 
-			analyze( message );
+	@Override
+	public void onTerminalMessage(OutputTerminal output, InputTerminal input, TerminalMessage message)
+	{
+		if (input == inputTerminal)
+		{
+			analyze(message);
 		}
 	}
 
@@ -115,5 +95,22 @@ public abstract class AnalysisBase extends BaseCategory implements AnalysisCateg
 	final public String getColor()
 	{
 		return COLOR;
+	}
+
+	private void fixActivityStrategy()
+	{
+		getContext().setActivityStrategy(getContext().isRunning() ? ActivityStrategies.BLINKING : ActivityStrategies.ON);
+	}
+
+	private class ActivityListener implements EventHandler<BaseEvent>
+	{
+		@Override
+		public void handleEvent(BaseEvent event)
+		{
+			if (event instanceof ActionEvent
+					&& (event.getKey() == CanvasItem.START_ACTION || event.getKey() == CanvasItem.STOP_ACTION)
+					|| event instanceof PropertyEvent)
+				fixActivityStrategy();
+		}
 	}
 }
