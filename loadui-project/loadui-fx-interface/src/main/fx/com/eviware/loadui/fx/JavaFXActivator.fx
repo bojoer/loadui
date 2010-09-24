@@ -36,7 +36,7 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.fx.ui.dialogs.*;
 
 
-public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.JavaFXActivator" );
+//public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.JavaFXActivator" );
 
 public-read var scene:Scene;
 
@@ -77,7 +77,7 @@ public class JavaFXActivator extends BundleActivator {
 			def lpx = new UnitValue( 10, UnitValue.LPX, null );
 			PlatformDefaults.setPanelInsets( lpy, lpx, lpy, lpx );
 
-			log.debug("JavaFX Bundle started!");
+			//log.debug("JavaFX Bundle started!");
 	
 			def stylesheets = "file:style.css";
 			
@@ -119,6 +119,6 @@ public class JavaFXActivator extends BundleActivator {
 	 * Prints a message to stdout.
 	 */
 	override function stop( bc: BundleContext ) {
-		log.debug("JavaFX Bundle stopped!");
+		//log.debug("JavaFX Bundle stopped!");
 	}
 }
