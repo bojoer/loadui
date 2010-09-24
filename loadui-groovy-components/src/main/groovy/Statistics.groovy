@@ -60,6 +60,8 @@ import com.eviware.loadui.util.layout.DelayedFormattedString
 
 
 AGGREGATE = "Aggregate"
+AGENT_DATA_TIMESTAMP = "AgentDataTimestamp"
+AGENT_DATA_TTL = 5000
 
 executor = Executors.newSingleThreadScheduledExecutor()
 
@@ -195,8 +197,9 @@ analyze = { message ->
 onMessage = { o, i, m ->
 	super.onTerminalMessage(o, i, m)
 	if(i == remoteTerminal) {
-		
-		agentData[o.label] = new HashMap(m)
+		def data = new HashMap(m)
+		data[AGENT_DATA_TIMESTAMP] = System.currentTimeMillis();
+		agentData[o.label] = data
 	}
 	
 	if( i == statisticsInput ) {
@@ -269,7 +272,8 @@ calculate = {
 	} catch(Throwable e1) {
 		ex(e1, 'calculate')
 	}
-	
+	def oldKeys = agentData.keySet().findAll { agentData[it][AGENT_DATA_TIMESTAMP] < currentTime - AGENT_DATA_TTL }
+	oldKeys.each { agentData.remove( it ) }
 	if( controller  && ( timeStats.size() > 0 || agentData.size() > 0 ))
 		updateChart( currentTime )
 }
