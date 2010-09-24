@@ -226,12 +226,11 @@ public class LoadUILauncher
 		System.setProperty( "loadui.home", System.getProperty( "user.home", "." ) + File.separator + ".loadui" );
 		System.setProperty( "groovy.root", System.getProperty( "loadui.home" ) + File.separator + ".groovy" );
 
-		System.setProperty( "javax.net.ssl.keyStore", System.getProperty( "loadui.home" ) + File.separator
+		System.setProperty( "loadui.ssl.keyStore", System.getProperty( "loadui.home" ) + File.separator + "keystore.jks" );
+		System.setProperty( "loadui.ssl.trustStore", System.getProperty( "loadui.home" ) + File.separator
 				+ "keystore.jks" );
-		System.setProperty( "javax.net.ssl.trustStore", System.getProperty( "loadui.home" ) + File.separator
-				+ "keystore.jks" );
-		System.setProperty( "javax.net.ssl.keyStorePassword", "password" );
-		System.setProperty( "javax.net.ssl.trustStorePassword", "password" );
+		System.setProperty( "loadui.ssl.keyStorePassword", "password" );
+		System.setProperty( "loadui.ssl.trustStorePassword", "password" );
 
 		if( System.getProperty( "loadui.instance" ) == null )
 			System.setProperty( "loadui.instance", "controller" );

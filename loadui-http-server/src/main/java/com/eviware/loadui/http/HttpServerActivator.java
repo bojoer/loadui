@@ -49,10 +49,10 @@ public class HttpServerActivator implements BundleActivator
 		sslServer = new Server();
 
 		SslSelectChannelConnector sslConnector = new SslSelectChannelConnector();
-		sslConnector.setKeystore( System.getProperty( "javax.net.ssl.keyStore" ) );
-		sslConnector.setKeyPassword( System.getProperty( "javax.net.ssl.keyStorePassword" ) );
-		sslConnector.setTruststore( System.getProperty( "javax.net.ssl.trustStore" ) );
-		sslConnector.setTrustPassword( System.getProperty( "javax.net.ssl.trustStorePassword" ) );
+		sslConnector.setKeystore( System.getProperty( "loadui.ssl.keyStore" ) );
+		sslConnector.setKeyPassword( System.getProperty( "loadui.ssl.keyStorePassword" ) );
+		sslConnector.setTruststore( System.getProperty( "loadui.ssl.trustStore" ) );
+		sslConnector.setTrustPassword( System.getProperty( "loadui.ssl.trustStorePassword" ) );
 		sslConnector.setPort( Integer.parseInt( System.getProperty( "loadui.https.port", "8443" ) ) );
 
 		sslConnector.setNeedClientAuth( true );
