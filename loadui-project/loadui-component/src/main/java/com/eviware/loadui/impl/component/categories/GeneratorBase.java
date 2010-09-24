@@ -16,7 +16,6 @@
 package com.eviware.loadui.impl.component.categories;
 
 import java.util.Collections;
-import java.util.Map;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.GeneratorCategory;
@@ -38,10 +37,14 @@ import com.eviware.loadui.impl.component.ActivityStrategies;
  */
 public abstract class GeneratorBase extends OnOffBase implements GeneratorCategory
 {
+	private final static String ACTIVITY_MESSAGE_PARAM = "Activity";
+
 	private final OutputTerminal triggerTerminal;
 	private final TerminalMessage triggerMessage;
 
 	private final ActivityListener listener = new ActivityListener();
+	private final TerminalMessage ledOnMessage;
+	private final TerminalMessage ledOffMessage;
 
 	/**
 	 * Constructs an TriggerBase.
@@ -56,11 +59,16 @@ public abstract class GeneratorBase extends OnOffBase implements GeneratorCatego
 		triggerTerminal = context.createOutput( TRIGGER_TERMINAL, "Trigger Signal" );
 		triggerMessage = context.newMessage();
 
+		ledOnMessage = context.newMessage();
+		ledOnMessage.put( ACTIVITY_MESSAGE_PARAM, true );
+		ledOffMessage = context.newMessage();
+		ledOffMessage.put( ACTIVITY_MESSAGE_PARAM, false );
+
 		context.setSignature( triggerTerminal,
 				Collections.<String, Class<?>> singletonMap( TRIGGER_TIMESTAMP_MESSAGE_PARAM, Long.class ) );
 
 		context.addEventListener( BaseEvent.class, listener );
-		fixActivityStrategy();
+		fixActivityStrategy( false );
 	}
 
 	/**
@@ -93,29 +101,23 @@ public abstract class GeneratorBase extends OnOffBase implements GeneratorCatego
 		return COLOR;
 	}
 
-	@Override
-	public void onRelease()
+	private void fixActivityStrategy( boolean blinking )
 	{
-		super.onRelease();
-
-		getContext().removeEventListener( BaseEvent.class, listener );
-	}
-
-	private void fixActivityStrategy()
-	{
+		System.out.println( "fixActivityStrategy: " + blinking );
+		if( !blinking && getContext().isRunning() )
+			blinking = true;
 		getContext().setActivityStrategy(
-				getStateProperty().getValue() ? ( getContext().isRunning() ? ActivityStrategies.BLINKING
-						: ActivityStrategies.ON ) : ActivityStrategies.OFF );
+				getStateProperty().getValue() ? ( blinking ? ActivityStrategies.BLINKING : ActivityStrategies.ON )
+						: ActivityStrategies.OFF );
 	}
-	
+
 	@Override
 	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
 	{
-		if( message.containsKey( "activity" ) )
-		{
-			fixActivityStrategy();
-			
-		}
+		super.onTerminalMessage( output, input, message );
+
+		if( input == getContext().getRemoteTerminal() && message.containsKey( ACTIVITY_MESSAGE_PARAM ) )
+			fixActivityStrategy( ( Boolean )message.get( ACTIVITY_MESSAGE_PARAM ) );
 	}
 
 	private class ActivityListener implements EventHandler<BaseEvent>
@@ -123,19 +125,14 @@ public abstract class GeneratorBase extends OnOffBase implements GeneratorCatego
 		@Override
 		public void handleEvent( BaseEvent event )
 		{
-			if( event instanceof ActionEvent
-					&& ( event.getKey() == CanvasItem.START_ACTION || event.getKey() == CanvasItem.STOP_ACTION )
-					|| event instanceof PropertyEvent && ( ( PropertyEvent )event ).getProperty() == getStateProperty() ) {
-
-				TerminalMessage message = getContext().newMessage();
-				message.put( "activity", event.getKey() );
+			if( event instanceof PropertyEvent && ( ( PropertyEvent )event ).getProperty() == getStateProperty() )
+				fixActivityStrategy( false );
+			else if( event instanceof ActionEvent
+					&& ( CanvasItem.START_ACTION.equals( event.getKey() ) || CanvasItem.STOP_ACTION.equals( event.getKey() ) ) )
+			{
+				TerminalMessage message = CanvasItem.START_ACTION.equals( event.getKey() ) ? ledOnMessage : ledOffMessage;
 				getContext().send( getContext().getControllerTerminal(), message );
-				
-					
-
 			}
-			
-			
 		}
 	}
 }
