@@ -103,7 +103,6 @@ public abstract class GeneratorBase extends OnOffBase implements GeneratorCatego
 
 	private void fixActivityStrategy( boolean blinking )
 	{
-		System.out.println( "fixActivityStrategy: " + blinking );
 		if( !blinking && getContext().isRunning() )
 			blinking = true;
 		getContext().setActivityStrategy(
