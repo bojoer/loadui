@@ -25,6 +25,7 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.impl.component.ActivityStrategies;
@@ -106,6 +107,16 @@ public abstract class GeneratorBase extends OnOffBase implements GeneratorCatego
 				getStateProperty().getValue() ? ( getContext().isRunning() ? ActivityStrategies.BLINKING
 						: ActivityStrategies.ON ) : ActivityStrategies.OFF );
 	}
+	
+	@Override
+	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
+	{
+		if( message.containsKey( "activity" ) )
+		{
+			fixActivityStrategy();
+			
+		}
+	}
 
 	private class ActivityListener implements EventHandler<BaseEvent>
 	{
@@ -114,8 +125,17 @@ public abstract class GeneratorBase extends OnOffBase implements GeneratorCatego
 		{
 			if( event instanceof ActionEvent
 					&& ( event.getKey() == CanvasItem.START_ACTION || event.getKey() == CanvasItem.STOP_ACTION )
-					|| event instanceof PropertyEvent && ( ( PropertyEvent )event ).getProperty() == getStateProperty() )
-				fixActivityStrategy();
+					|| event instanceof PropertyEvent && ( ( PropertyEvent )event ).getProperty() == getStateProperty() ) {
+
+				TerminalMessage message = getContext().newMessage();
+				message.put( "activity", event.getKey() );
+				getContext().send( getContext().getControllerTerminal(), message );
+				
+					
+
+			}
+			
+			
 		}
 	}
 }
