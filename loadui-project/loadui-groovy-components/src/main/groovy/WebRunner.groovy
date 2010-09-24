@@ -104,7 +104,7 @@ createProperty( 'errorCodeList', String )
 createProperty( 'proxyHost', String)
 createProperty( 'proxyPort', Long)
 createProperty( 'proxyUsername', String)
-createProperty( 'proxyPassword', String)
+proxyPassword = createProperty( '_proxyPassword', String)
 
 eviPattern = ~/https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/
 dummyUrl = "http://GoSpamYourself.com"

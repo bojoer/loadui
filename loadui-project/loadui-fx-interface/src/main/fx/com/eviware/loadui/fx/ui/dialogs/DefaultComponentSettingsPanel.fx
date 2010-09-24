@@ -82,7 +82,7 @@ public class DefaultComponentSettingsPanel {
 	 * Component for which is this dialog.
 	*/
 	public-init var component:ComponentItem on replace {
-		for( property in component.getContext().getProperties()[p | not (p.getKey() as String).startsWith("_")]) {
+		for( property in component.getContext().getProperties()) {
 			propertyBuffer.put( property.getKey(), new PropertyProxy(property));
 		}
 	};
@@ -198,7 +198,7 @@ public class DefaultComponentSettingsPanel {
 	}
 	
 	public function show() {
-	
+		
 		var sTable:Form = Form {
 			formContent: settings = SettingsTableField {
 				id: "settings"
@@ -221,7 +221,7 @@ public class DefaultComponentSettingsPanel {
 			tabs: tabArray
 			onOk: function() {
 				updateTableModels();
-				for( property in component.getProperties()[p|not p.getKey().startsWith("_")] ) {
+				for( property in component.getProperties()) {
 					var pp:PropertyProxy = propertyBuffer.get(property.getKey()) as PropertyProxy;
 					if ( pp != null ) {
 						(property as com.eviware.loadui.api.serialization.MutableValue).setValue( pp.getValue() );
