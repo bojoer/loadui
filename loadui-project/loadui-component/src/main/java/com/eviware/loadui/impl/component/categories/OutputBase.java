@@ -17,16 +17,15 @@ package com.eviware.loadui.impl.component.categories;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.OutputCategory;
+import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
-
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
 import com.eviware.loadui.impl.component.ActivityStrategies;
-import com.eviware.loadui.util.BeanInjector;
 
 /**
  * Base class for output components which defines base behavior which can be
@@ -36,15 +35,9 @@ import com.eviware.loadui.util.BeanInjector;
  */
 public abstract class OutputBase extends BaseCategory implements OutputCategory
 {
-	private static final int BLINK_TIME = 1000;
-
 	private final InputTerminal inputTerminal;
 
-	private final ScheduledExecutorService executor;
-	private final Runnable activityRunnable;
-	private long lastMsg;
-	private ScheduledFuture<?> activityFuture;
-
+	private final ActivityListener listener = new ActivityListener();
 	/**
 	 * Constructs an OutputBase.
 	 * 
@@ -54,26 +47,11 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 	public OutputBase( ComponentContext context )
 	{
 		super( context );
-		executor = BeanInjector.getBean( ScheduledExecutorService.class );
 
 		inputTerminal = context.createInput( INPUT_TERMINAL, "Data for Display" );
 
-		getContext().setActivityStrategy( ActivityStrategies.ON );
-		activityRunnable = new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				long now = System.currentTimeMillis();
-				if( lastMsg + BLINK_TIME <= now )
-				{
-					getContext().setActivityStrategy( ActivityStrategies.ON );
-					activityFuture = null;
-				}
-				else
-					activityFuture = executor.schedule( activityRunnable, lastMsg + BLINK_TIME, TimeUnit.MILLISECONDS );
-			}
-		};
+		context.addEventListener( BaseEvent.class, listener );
+		fixActivityStrategy();
 	}
 
 	/**
@@ -94,13 +72,6 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 	{
 		if( input == inputTerminal )
 		{
-			lastMsg = System.currentTimeMillis();
-			if( activityFuture == null )
-			{
-				getContext().setActivityStrategy( ActivityStrategies.BLINKING );
-				activityFuture = executor.schedule( activityRunnable, BLINK_TIME, TimeUnit.MILLISECONDS );
-			}
-
 			output( message );
 		}
 	}
@@ -115,5 +86,31 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 	final public String getColor()
 	{
 		return COLOR;
+	}
+	
+	@Override
+	public void onRelease()
+	{
+		// TODO Auto-generated method stub
+		super.onRelease();
+		getContext().removeEventListener( BaseEvent.class, listener );
+	}
+	
+	private void fixActivityStrategy()
+	{
+		getContext().setActivityStrategy( getContext().isRunning() ? ActivityStrategies.BLINKING
+						: ActivityStrategies.ON );
+	}
+
+	private class ActivityListener implements EventHandler<BaseEvent>
+	{
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( event instanceof ActionEvent
+					&& ( event.getKey() == CanvasItem.START_ACTION || event.getKey() == CanvasItem.STOP_ACTION )
+					|| event instanceof PropertyEvent )
+				fixActivityStrategy();
+		}
 	}
 }
