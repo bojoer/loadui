@@ -23,13 +23,13 @@ public class HttpClientFactory
 	{
 		HttpClient httpClient = new HttpClient();
 
-		httpClient.setKeyManagerPassword( System.getProperty( "javax.net.ssl.keyStorePassword" ) );
+		httpClient.setKeyManagerPassword( System.getProperty( "loadui.ssl.keyStorePassword" ) );
 
-		httpClient.setKeyStoreLocation( System.getProperty( "javax.net.ssl.keyStore" ) );
-		httpClient.setKeyStorePassword( System.getProperty( "javax.net.ssl.keyStorePassword" ) );
+		httpClient.setKeyStoreLocation( System.getProperty( "loadui.ssl.keyStore" ) );
+		httpClient.setKeyStorePassword( System.getProperty( "loadui.ssl.keyStorePassword" ) );
 
-		httpClient.setTrustStoreLocation( System.getProperty( "javax.net.ssl.trustStore" ) );
-		httpClient.setTrustStorePassword( System.getProperty( "javax.net.ssl.trustStorePassword" ) );
+		httpClient.setTrustStoreLocation( System.getProperty( "loadui.ssl.trustStore" ) );
+		httpClient.setTrustStorePassword( System.getProperty( "loadui.ssl.trustStorePassword" ) );
 
 		try
 		{
