@@ -157,8 +157,15 @@ class HandleNode extends BaseNode, TooltipHolder {
 		
 		addMouseHandler( MOUSE_DRAGGED, function( e:MouseEvent ):Void {
 			if( dragging ) {
-				knob.numberValue = startValue + ( e.sceneX - startX+ startY - e.sceneY ) * knob.stepping;
-			}
+						    var tmpValue = startValue + ( e.sceneX - startX+ startY - e.sceneY ) * knob.stepping;
+						    if ( tmpValue >= knob.min and tmpValue <= knob.max )
+								knob.numberValue = tmpValue
+							else if ( tmpValue <= knob.min )
+								knob.numberValue = knob.min
+							else if ( tmpValue >= knob.max )
+								knob.numberValue = knob.max;
+						}
+			
 		} );
 		
 		addMouseHandler( MOUSE_RELEASED, function( e:MouseEvent ):Void {
