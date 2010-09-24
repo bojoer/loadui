@@ -39,6 +39,19 @@
 	-fx-background-insets: -1, 0, 1;
 }
 
+.password-box {
+	-fx-shadow-highlight-color: transparent;
+	-fx-focus-color: #009bf9;
+	-fx-text-box-border: #666666;
+	-fx-background-radius: 0;
+	-fx-background-insets: -1, 0, 1;
+}
+
+.password-box:focused {
+	-fx-background-radius: 0;
+	-fx-background-insets: -1, 0, 1;
+}
+
 .separator {
 	-fx-padding: 2 0;
 }

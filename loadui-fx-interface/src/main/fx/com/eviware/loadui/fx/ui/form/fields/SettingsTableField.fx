@@ -64,8 +64,10 @@ public class SettingsTableField extends CustomNode, FormField, Observer{
     var pane:JScrollPane;
     
     override public function create():Node {
-    	for( p in data.values() ) 
-            model.addRow(p as PropertyProxy);
+    	for( propertyProxy in data.values()[p | not ((p as PropertyProxy).getName() as String).startsWith("_")] ){ 
+           	model.addRow(propertyProxy as PropertyProxy);
+        }
+
         var table: JXTable = new JXTable(model);
         table.setEditable(true);
         def ce = new DefaultCellEditor(new JTextField());
