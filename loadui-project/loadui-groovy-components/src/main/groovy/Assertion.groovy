@@ -92,7 +92,8 @@ updateProviders = {
 	def options = []
 	for( conn in inputTerminal.connections ) {
 		for( key in conn.outputTerminal.messageSignature.keySet() )
-			options += key
+			if( !options.contains(key))
+				options += key
 	}
 	provider.options = options
 	if( !options.contains(value.value) )
