@@ -205,6 +205,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 				if( WorkspaceItem.LOCAL_MODE_PROPERTY == event.getProperty().getKey() ) {
 					runInFxThread( function():Void {
 						onAgents = not ( event.getProperty().getValue() as Boolean );
+						if( onAgents ) onAgentsButton.selected = true else localButton.selected = true;
 					} );
 				}
 			} else if( e instanceof CollectionEvent ) {
@@ -273,14 +274,14 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 				* So, here check if ghost agent have them and add if not.
 				*/
 				def project:ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
-				for( s in project.getScenes() ) {
-					runInFxThread( function():Void {
+				runInFxThread( function():Void {
+					for( s in project.getScenes() ) {
 						ghostAgent.addTestCase( TestCaseIcon {
 							stateListeners: [this]
 							sceneItem: s
 						} );
-					} );				
-				}
+					}				
+				} );
 			}
 		}
 	}
@@ -321,13 +322,6 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	override function create() {
 		var text: Text;
 		def buttonGroup = ToggleGroup {};
-		def selectedToggle = bind buttonGroup.selectedToggle on replace oldToggle {
-			if( selectedToggle == null ) {
-				FX.deferAction( function():Void { oldToggle.selected = true } );
-			} else {
-				workspace.setLocalMode( selectedToggle == localButton );
-			}
-		}
 		
 		def panelHeight = 325;
 		
@@ -444,7 +438,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 					selected: not onAgents
 			    }
 				onAgentsButton	= ToggleButton {
-					text: "On agents"
+					text: "Distributed"
 					toggleGroup: buttonGroup
 					layoutX: bind leftPanelWidth + 15
 					layoutY: 15
@@ -458,6 +452,15 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 			    popup
 			]
 		}
+		
+		def selectedToggle = bind buttonGroup.selectedToggle on replace oldToggle {
+			if( selectedToggle == null ) {
+				FX.deferAction( function():Void { oldToggle.selected = true } );
+			} else {
+				workspace.setLocalMode( selectedToggle == localButton );
+			}
+		}
+		
 		VBox {
 			styleClass: "agent-inspector"
 			padding: Insets { top: paddingTop right: paddingRight bottom: paddingBottom left: paddingLeft}

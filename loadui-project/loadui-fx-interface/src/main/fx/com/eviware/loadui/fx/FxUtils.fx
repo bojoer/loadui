@@ -77,6 +77,13 @@ public function runInFxThread( action: function():Void ) {
 }
 
 /**
+ * Checks to see if the current Thread is the JavaFX Thread.
+ */
+public function isFxThread():Boolean {
+	Thread.currentThread() == jfxThread
+}
+
+/**
  * Checks to see if a node is a descendant to another node.
  */
 public function isDescendant( ancestor:Node, descendant:Node ) {
