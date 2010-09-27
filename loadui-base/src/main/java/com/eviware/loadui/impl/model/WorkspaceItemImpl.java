@@ -151,18 +151,18 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 
 		if( interval != null && interval > 0 )
 		{
-			log.info("Scheduling a garbage collection, for "+ interval + " seconds.");
+			log.info( "Scheduling a garbage collection, for " + interval + " seconds." );
 			gcTask = executor.scheduleWithFixedDelay( new Runnable()
 			{
 				@Override
 				public void run()
 				{
 					long old = Runtime.getRuntime().freeMemory();
-					log.info("Doing garbage collection!");
+					log.info( "Doing garbage collection!" );
 					System.gc();
 					long free = Runtime.getRuntime().freeMemory();
-					log.info("Ran Garbage Collection, Free Memory changed from " +
-							old +" to " + free + ", total memory = " + Runtime.getRuntime().totalMemory());
+					log.info( "Ran Garbage Collection, Free Memory changed from " + old + " to " + free
+							+ ", total memory = " + Runtime.getRuntime().totalMemory() );
 				}
 			}, interval, interval, TimeUnit.SECONDS );
 		}
@@ -225,13 +225,14 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		if( !projectFile.exists() )
 			throw new IllegalArgumentException( "File does not exist: " + projectFile );
 
-		
 		// if project is already in workspace do not import it again.
-	   for( ProjectRefImpl projectRef: projects ) {
-	   	if ( projectRef.getProjectFile().getAbsolutePath().equals(projectFile.getAbsolutePath()) ) {
-	   		return projectRef;
-	   	}
-	   }
+		for( ProjectRefImpl projectRef : projects )
+		{
+			if( projectRef.getProjectFile().getAbsolutePath().equals( projectFile.getAbsolutePath() ) )
+			{
+				return projectRef;
+			}
+		}
 
 		ProjectReferenceConfig projectRefConfig = getConfig().addNewProject();
 		projectRefConfig.setProjectFile( projectFile.getAbsolutePath() );
@@ -409,7 +410,10 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		if( localMode != isLocalMode() )
 		{
 			triggerAction( CanvasItem.COMPLETE_ACTION );
-			triggerAction( CounterHolder.COUNTER_RESET_ACTION );
+			// For a yet unknown reason, this call sometimes locks up the GUI.
+			// Anyway, it isn't needed since the COMPLETE action ensures a reset on
+			// start.
+			// triggerAction( CounterHolder.COUNTER_RESET_ACTION );
 			this.localMode.setValue( localMode );
 		}
 	}
