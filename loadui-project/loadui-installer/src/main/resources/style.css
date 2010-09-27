@@ -413,6 +413,22 @@
 	-fx-text-fill: -fx-text-base-color;
 }
 
+.agent-inspector *.toggle-button {
+	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+	-fx-outer-border: #7d7d7d;
+	-fx-inner-border: linear (0%,0%) to (0%,100%)  stops (0%, #a0a0a0) (100%, #6e6f70);
+	-fx-body-color: linear (0%,0%) to (0%,100%)  stops (0%, #9b9b9b) (100%, #5f5f61);
+	-fx-background-insets: 0, 1, 2;
+	-fx-background-radius: 5, 4, 2;
+	-fx-font: 10pt "Amble Cn";
+}
+
+.agent-inspector *.toggle-button:selected {
+	-fx-outer-border: #545454;
+	-fx-inner-border: linear (0%,0%) to (0%,100%)  stops (0%, #272525) (100%, #3c3c3c);
+	-fx-body-color: linear (0%,0%) to (0%,100%)  stops (0%, #1a1718) (100%, #313131);
+}
+
 .select-field {
 	-fx-focus-color: #009bf9;
 	-fx-text-box-border: #666666;

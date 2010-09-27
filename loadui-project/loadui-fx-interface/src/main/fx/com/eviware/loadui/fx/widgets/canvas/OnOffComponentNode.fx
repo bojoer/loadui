@@ -35,6 +35,7 @@ import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.ClosePath;
 import javafx.geometry.Insets;
 
+import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.layout.widgets.OnOffSwitch;
 import com.eviware.loadui.fx.ui.resources.ResizablePath;
 
@@ -81,7 +82,7 @@ public class OnOffComponentNode extends ComponentNode {
 		if( e instanceof PropertyEvent ) {
 			def event = e as PropertyEvent;
 			if( event.getEvent() == PropertyEvent.Event.VALUE and event.getProperty() == stateProperty ) {
-				onState = stateProperty.getValue() as Boolean;
+				FxUtils.runInFxThread( function():Void { onState = stateProperty.getValue() as Boolean } );
 			}
 		}
 	}

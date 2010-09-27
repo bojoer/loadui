@@ -275,12 +275,11 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 				def project:ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
 				for( s in project.getScenes() ) {
 					runInFxThread( function():Void {
-							ghostAgent.addTestCase(TestCaseIcon{
-									stateListeners: [this]
-									sceneItem: s
-								}
-							);
-						});				
+						ghostAgent.addTestCase( TestCaseIcon {
+							stateListeners: [this]
+							sceneItem: s
+						} );
+					} );				
 				}
 			}
 		}
@@ -303,8 +302,8 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	
 	override function testCaseRemoved(tc: TestCaseIcon): Void {}
 	
-	var localButton: ToggleActionButton;
-	var onAgentsButton: ToggleActionButton;
+	var localButton: ToggleButton;
+	var onAgentsButton: ToggleButton;
 	
 	override var accept = function( d: Draggable ) {
 		if(d.node instanceof TestCaseIcon){
@@ -321,7 +320,14 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	
 	override function create() {
 		var text: Text;
-		var buttonGroup: ToggleActionGroup = new ToggleActionGroup;
+		def buttonGroup = ToggleGroup {};
+		def selectedToggle = bind buttonGroup.selectedToggle on replace oldToggle {
+			if( selectedToggle == null ) {
+				FX.deferAction( function():Void { oldToggle.selected = true } );
+			} else {
+				workspace.setLocalMode( selectedToggle == localButton );
+			}
+		}
 		
 		def panelHeight = 325;
 		
@@ -430,25 +436,19 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 					content: "Test case distribution"
 					font: Font.font("Arial", 10)
 				}
-				localButton = ToggleActionButton {
-			        text: "Local"
-			        toggleGroup: buttonGroup
-			        layoutX: bind leftPanelWidth - 15 - localButton.layoutBounds.width
+				localButton = ToggleButton {
+			   	text: "Local"
+					toggleGroup: buttonGroup
+					layoutX: bind leftPanelWidth - 15 - localButton.layoutBounds.width
 					layoutY: 15
 					selected: not onAgents
-			        action: function(): Void {
-						workspace.setLocalMode( true );
-					}
 			    }
-				onAgentsButton	= ToggleActionButton {
-			        text: "On agents"
-			        toggleGroup: buttonGroup
-			        layoutX: bind leftPanelWidth + 15
+				onAgentsButton	= ToggleButton {
+					text: "On agents"
+					toggleGroup: buttonGroup
+					layoutX: bind leftPanelWidth + 15
 					layoutY: 15
 					selected: onAgents
-			        action: function(): Void {
-						workspace.setLocalMode( false );
-					}
 			    }
 			    ghostAgent = AgentInspectorNode { 
 			    	layoutX: leftPanelContentOffset
@@ -459,6 +459,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 			]
 		}
 		VBox {
+			styleClass: "agent-inspector"
 			padding: Insets { top: paddingTop right: paddingRight bottom: paddingBottom left: paddingLeft}
 			layoutInfo: LayoutInfo {
 				height: bind if(height > panelHeight + paddingTop + paddingBottom) height else panelHeight + paddingTop + paddingBottom
@@ -615,144 +616,3 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	}
 	
 }
-
-public class ToggleActionGroup {
-	
-	var buttonList: ToggleActionButton[] = [];
-	
-	public function add(button: ToggleActionButton){
-		insert button into buttonList;
-	}
-	
-	public function remove(button: ToggleActionButton){
-		delete button from buttonList;
-	}
-	
-	public function unselect(){
-		for(button in buttonList){
-			button.selected = false;
-		}
-	}
-}
-
-public class ToggleActionButton extends CustomNode {
-    
-    public var text: String;
-    public var action: function();
-    public var width: Integer = -1;
-    
-    public var toggleGroup: ToggleActionGroup on replace oldToggleGroup {
-    	if(oldToggleGroup != null){
-    		oldToggleGroup.remove(this);
-    	}
-    	if(toggleGroup != null){
-    		toggleGroup.add(this);
-    	}
-    }
-    
-    public var selected: Boolean = false;
-    
-    var left: ImageView;
-    var middle: ImageView;
-    var right: ImageView;
-    var content: Group;
-    var label: Text;
-    
-    var contentNormal = Group {
-        content: [
-            left = ImageView {
-                layoutX: 0
-                layoutY: 0
-                image: Image {
-                    url: "{__ROOT__}images/png/inspector-agents-left-default.png"
-                }
-            },
-            middle = ImageView {
-                layoutY:0
-                layoutX: left.layoutBounds.width
-                scaleX: bind if(width > -1) width - 12 else label.layoutBounds.width + 14
-                translateX: bind if(width > -1) (width - 12) / 2 else (label.layoutBounds.width + 14) / 2 - .5
-                image: Image {
-                    url: "{__ROOT__}images/png/inspector-agents-mid-default.png"
-                }
-            },
-            right = ImageView {
-                layoutY: 0
-                layoutX: bind middle.boundsInParent.width + left.layoutBounds.width - 1
-                image: Image {
-                    url: "{__ROOT__}images/png/inspector-agents-right-default.png"
-                }
-            },
-			label = Text {
-		        layoutX: bind if(width > -1) (width - label.layoutBounds.width) / 2 + 1 else middle.boundsInParent.minX + 8
-		        layoutY: 12
-		        content: text
-		        font: Font.font("Arial", 9)
-		        fill: Color.web("#333333")
-		    }
-        ]
-    }
-                
-    var contentActive = Group {
-        content: [
-            left = ImageView {
-                layoutX: 0
-                layoutY: 0
-                image: Image {
-                    url: "{__ROOT__}images/png/inspector-agents-left-active.png"
-                }
-            },
-            middle = ImageView {
-                layoutY:0
-                layoutX: left.layoutBounds.width
-                scaleX: bind if(width > -1) width - 12 else label.layoutBounds.width + 14
-                translateX: bind if(width > -1) (width - 12) / 2 else (label.layoutBounds.width + 14) / 2 - .5
-                image: Image {
-                    url: "{__ROOT__}images/png/inspector-agents-mid-active.png"
-                }
-            },
-            right = ImageView {
-                layoutY:0
-                layoutX: bind middle.boundsInParent.width + left.layoutBounds.width - 1
-                image: Image {
-                    url: "{__ROOT__}images/png/inspector-agents-right-active.png"
-                }
-            },
-            label = Text {
-		        layoutX: bind if(width > -1) (width - label.layoutBounds.width) / 2 + 1 else middle.boundsInParent.minX + 8
-		        layoutY: 12
-		        content: text
-		        font: Font.font("Arial", 9)
-		        fill: Color.web("#d9d9d9")
-		    }
-        ]
-    }
-            
-    override public function create():Node {
-        Group {
-            content: bind if (selected) contentActive else contentNormal
-        }
-    }
-    
-    var oldSelected: Boolean = selected;
-    
-    override public var onMousePressed = function(e) {
-    	oldSelected = selected;
-        selected = true;
-    }
-    
-    override public var onMouseReleased = function(e) {
-        if( hover ) {
-        	requestFocus();
-            action();
-            if(toggleGroup != null){
-    			toggleGroup.unselect();
-    		}
-            selected = true;
-        } 
-        else {
-            selected = oldSelected;
-        }
-    }
-}
-
