@@ -51,6 +51,7 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.fx.MainWindow;
 
+import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
@@ -160,7 +161,9 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 			if( e instanceof PropertyEvent ) {
 				def event = e as PropertyEvent;
 				if( WorkspaceItem.LOCAL_MODE_PROPERTY == event.getProperty().getKey() ) {
-					distributedMode = not workspace.isLocalMode();
+					FxUtils.runInFxThread( function():Void {
+						distributedMode = not workspace.isLocalMode();
+					} );
 				} 
 			}
 		} 
