@@ -124,16 +124,16 @@ y2Range.visible = true
 y2Range.title = 'requests'
 
 ChartModel chartModel = new ChartModel(xRange, yRange, y2Range, 420, 180)
-chartModel.addChartListener(new ChartAdapter(){
-	public void chartCleared(){
-		try{
+chartModel.addChartListener( new ChartAdapter() {
+	public void chartCleared() {
+		try {
 			resetBuffers()
 		}
-		catch(Throwable e2){
+		catch(Throwable e2) {
 			ex(e2, 'chartCleared')
 		}
 	}
-});
+} )
 
 chartModel.addSerie('Max', enableMax.value, true)
 chartModel.addSerie('Min', enableMin.value, true)

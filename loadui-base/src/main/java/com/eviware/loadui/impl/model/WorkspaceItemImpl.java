@@ -410,10 +410,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		if( localMode != isLocalMode() )
 		{
 			triggerAction( CanvasItem.COMPLETE_ACTION );
-			// For a yet unknown reason, this call sometimes locks up the GUI.
-			// Anyway, it isn't needed since the COMPLETE action ensures a reset on
-			// start.
-			// triggerAction( CounterHolder.COUNTER_RESET_ACTION );
+			triggerAction( CounterHolder.COUNTER_RESET_ACTION );
 			this.localMode.setValue( localMode );
 		}
 	}
