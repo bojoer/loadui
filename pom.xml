@@ -68,48 +68,53 @@
 	<scm>
 		<connection>scm:svn:svn://svn.eviware.com/loadui/trunk/loadui-project</connection>
 	</scm>
-	<build>
-	<plugins>
-	<plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-5</version>
-        <configuration>
-          <descriptorRefs >
-            <descriptorRef>project</descriptorRef >
-          </descriptorRefs >
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id> <!-- this is used for inheritance merges -->
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>single</goal> <!-- goals == mojos -->
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>install</phase>
+	<profiles>
+		<profile>
+			<id>install</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.2-beta-5</version>
 						<configuration>
-							<tasks>
-								<!-- Controller resources -->
-								<copy todir="${publish.dir}">
-									<fileset file="${basedir}/target/loadui-project*.zip" />
-								</copy>
-								
-							</tasks>
+							<descriptorRefs>
+								<descriptorRef>project</descriptorRef>
+							</descriptorRefs>
 						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-</plugins>
-</build>
+						<executions>
+							<execution>
+								<id>make-assembly</id> <!-- this is used for inheritance merges -->
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>single</goal> <!-- goals == mojos -->
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<configuration>
+									<tasks>
+										<!-- Controller resources -->
+										<copy todir="${publish.dir}">
+											<fileset file="${basedir}/target/loadui-project*.zip" />
+										</copy>
+
+									</tasks>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<reporting>
 		<plugins>
 			<plugin>
