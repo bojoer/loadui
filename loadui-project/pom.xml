@@ -97,7 +97,7 @@
 							<tasks>
 								<!-- Controller resources -->
 								<copy todir="${publish.dir}">
-									<fileset dir="${basedir}/target/*.zip" />
+									<fileset dir="${basedir}/target/" />
 								</copy>
 								
 							</tasks>
