@@ -35,6 +35,7 @@ import com.eviware.loadui.fx.widgets.ProjectList;
 import com.eviware.loadui.fx.widgets.canvas.Canvas;
 import com.eviware.loadui.fx.widgets.canvas.NavigationPanel;
 import com.eviware.loadui.fx.widgets.canvas.ProjectCanvas;
+import com.eviware.loadui.fx.widgets.toolbar.NoteToolbarItem;
 import com.eviware.loadui.fx.widgets.toolbar.AgentToolbarItem;
 import com.eviware.loadui.fx.widgets.toolbar.ProjectToolbarItem;
 import com.eviware.loadui.fx.widgets.toolbar.TestCaseToolbarItem;
@@ -204,6 +205,7 @@ public class MainWindow {
 		
 		
 						projectToolbar.addItem( TestCaseToolbarItem {} );
+						projectToolbar.addItem( NoteToolbarItem {} );
 						
 		appState.insertInto( projectToolbar, AppState.PROJECT_FRONT );
 				
@@ -215,7 +217,7 @@ public class MainWindow {
 		appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/grid.png" }, clip: Rectangle{ width: bind scene.width, height: bind scene.height } }, AppState.TESTCASE_FRONT );
 	    appState.insertInto( testcaseCanvas = Canvas { width: bind scene.width, height: bind scene.height }, AppState.TESTCASE_FRONT );	
 		appState.insertInto( navigator = NavigationPanel { canvas: testcaseCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( inspectors.height + navigator.height ) }, AppState.TESTCASE_FRONT );
-		//Make sure any code which inserts stuff into the scene gets executed in the JavaFX Thread.
+		testcaseToolbar.addItem( NoteToolbarItem {} );
 		appState.insertInto( testcaseToolbar, AppState.TESTCASE_FRONT );
 		
 		insert MainButton { layoutX: 10, layoutY: 7 } into appState.globalLayer.content;
