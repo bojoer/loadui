@@ -97,7 +97,7 @@
 							<tasks>
 								<!-- Controller resources -->
 								<copy todir="${publish.dir}">
-									<fileset file="${basedir}/target/*.zip" />
+									<fileset file="${basedir}/target/loadui-project*.zip" />
 								</copy>
 								
 							</tasks>
