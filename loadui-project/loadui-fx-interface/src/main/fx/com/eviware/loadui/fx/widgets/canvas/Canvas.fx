@@ -45,6 +45,7 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
+import com.eviware.loadui.fx.widgets.toolbar.NoteToolbarItem;
 import com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
 import com.eviware.loadui.fx.dialogs.CreateNewTestCaseDialog;
@@ -187,7 +188,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	}
 	
 	protected function acceptFunction( d:Draggable ) {
-		d.node instanceof ComponentToolbarItem
+		d.node instanceof ComponentToolbarItem or d.node instanceof NoteToolbarItem
 	}
 	override var accept = acceptFunction;
 	
@@ -195,12 +196,16 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		def sb = d.node.localToScene(d.node.layoutBounds);
 		def x = sb.minX;
 		def y = sb.minY;
-		log.debug( "Component dropped at: (\{\}, \{\})", x, y );
-		AppState.instance.blockingTask( function():Void {
-			def component = createComponent( (d.node as ComponentToolbarItem).descriptor );
-			component.setAttribute( "gui.layoutX", "{offsetX + x as Integer}" );
-			component.setAttribute( "gui.layoutY", "{offsetY + y as Integer}" );
-		}, null, "Creating component." );
+		if( d.node instanceof ComponentToolbarItem ) {
+			log.debug( "Component dropped at: (\{\}, \{\})", x, y );
+			AppState.instance.blockingTask( function():Void {
+				def component = createComponent( (d.node as ComponentToolbarItem).descriptor );
+				component.setAttribute( "gui.layoutX", "{offsetX + x as Integer}" );
+				component.setAttribute( "gui.layoutY", "{offsetY + y as Integer}" );
+			}, null, "Creating component." );
+		} else if( d.node instanceof NoteToolbarItem ) {
+			createNote( offsetX + x, offsetY + y );
+		}
 	}
 	override var onDrop = onDropFunction;
 	
