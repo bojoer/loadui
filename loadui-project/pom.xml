@@ -92,12 +92,12 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>generate-resources</phase>
+						<phase>install</phase>
 						<configuration>
 							<tasks>
 								<!-- Controller resources -->
 								<copy todir="${publish.dir}">
-									<fileset dir="${basedir}/target/loadui-project-1.0.1-SNAPSHOT-project.zip" />
+									<fileset dir="${basedir}/target/*.zip" />
 								</copy>
 								
 							</tasks>
