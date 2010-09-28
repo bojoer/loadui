@@ -173,8 +173,8 @@ public class ChartWidget extends VBox, ChartListener {
     	
     function buildChartPanel(): Void {
 		customXRange = chartModel.getXRange();
-	    customYRange = chartModel.getYRange();
-	    
+	   customYRange = chartModel.getYRange();
+	   
     	chart = new Chart();
 		
 		insert Color.orange into seriesColors;
@@ -193,7 +193,7 @@ public class ChartWidget extends VBox, ChartListener {
 		insert new Color(100,0,0) into seriesColors;
 		insert new Color(0,0,150) into seriesColors;
 		insert new Color(16,100,12) into seriesColors;
-				
+		
     	models = new HashMap();
 		
     	var xRange: AbstractRange = convertRange(customXRange);
@@ -208,7 +208,7 @@ public class ChartWidget extends VBox, ChartListener {
     	yAxis.setAxisColor(new Color(255, 255, 255));
     	
     	xAxis.setLabel(new AutoPositionedLabel(customXRange.getTitle(), new Color(0,255,0)));
-        yAxis.setLabel(new AutoPositionedLabel(customYRange.getTitle(), new Color(0,255,0)));
+      yAxis.setLabel(new AutoPositionedLabel(customYRange.getTitle(), new Color(0,255,0)));
     	
 		def xPadding: Integer = 15;
 		def yPadding: Integer = 15;
@@ -219,11 +219,11 @@ public class ChartWidget extends VBox, ChartListener {
     	chartPanel.setLayout(new FlowLayout(FlowLayout.CENTER, xPadding, yPadding));//new GridLayout(1, 1, 55, 55));
     	chartPanel.setOpaque(false);
         
-        var cl: ChartMouseListener = ChartMouseListener {
+      var cl: ChartMouseListener = ChartMouseListener {
         	models: models
         	chartModel: chartModel
         	chart: chart
-        }
+      }
         
     	chart.setXAxis(xAxis);
         chart.setYAxis(yAxis);
@@ -251,7 +251,7 @@ public class ChartWidget extends VBox, ChartListener {
 	    		chart.setStyle(model, createStyleForSerie(cs.getIndex(), chartModel.getStyle()));
 			}
 		}
-        chart.setTitle(new AutoPositionedLabel(chartModel.getTitle(), Color.yellow.brighter()));
+      chart.setTitle(new AutoPositionedLabel(chartModel.getTitle(), Color.yellow.brighter()));
     	chart.setChartBackground(new Color(0, 0, 0, 0));
     	chart.setPanelBackground(new Color(0, 0, 0, 0));
     	chart.setOpaque(false);
@@ -268,8 +268,8 @@ public class ChartWidget extends VBox, ChartListener {
     	legend.setBorder(BorderFactory.createEmptyBorder());
     	legend.setOpaque(false);
     	legendPanel = new JPanel();
-        legendPanel.setOpaque(false);
-   		legendPanel.add(legend);
+      legendPanel.setOpaque(false);
+   	legendPanel.add(legend);
     }
     
     function createAxis(range: AbstractRange): Axis {
@@ -347,15 +347,13 @@ public class ChartWidget extends VBox, ChartListener {
     	
 
     	FxUtils.runInFxThread( function():Void {
-        	(models.get(cs.getName()) as DefaultChartModel).addPoint(new ChartPoint(x, y));
-        
-       	 	autoAxis();
-       	 	
-        })
+			(models.get(cs.getName()) as DefaultChartModel).addPoint(new ChartPoint(x, y));
+			autoAxis();
+      })
     }
     
     override function serieCleared(cs: ChartSerie): Void {
-   		(models.get(cs.getName()) as DefaultChartModel).clearPoints();
+   		FxUtils.runInFxThread( function():Void { (models.get(cs.getName()) as DefaultChartModel).clearPoints() } );
     }
     
     override function chartCleared(): Void {
@@ -363,33 +361,35 @@ public class ChartWidget extends VBox, ChartListener {
     }
     
     override function serieEnabled(chartSerie: ChartSerie): Void {
-    	var model: DefaultChartModel;
-    	
-    	try{
-	    	if(chartSerie.isEnabled()){
-	    		models.remove(chartSerie.getName());
-	    		model = new DefaultChartModel(chartSerie.getName());
-	    		models.put(chartSerie.getName(), model);
-	    		
-	    		if (chartSerie.isDefaultAxis())
-	    			chart.addModel(model)
-	    		else
-	    			chart.addModel(model, y2Axis);
-	    		chart.setStyle(model, createStyleForSerie(chartModel.getSerieIndex(chartSerie.getName()), chartModel.getStyle()));
-	    	}
-	    	else{
-	    		model = models.get(chartSerie.getName()) as DefaultChartModel;
-	    		chart.removeModel(model);
-	    	}
-	    	chartNode = SwingComponent.wrap(chartPanel);
-	   		legendNode = SwingComponent.wrap(legendPanel);
-		}
-		catch(t: Throwable){
-			println("------------");
-			println(t.getMessage());
-			t.printStackTrace();			
-			println("------------");
-		}
+    	FxUtils.runInFxThread( function():Void {
+	    	var model: DefaultChartModel;
+	    	
+	    	try{
+		    	if(chartSerie.isEnabled()){
+		    		models.remove(chartSerie.getName());
+		    		model = new DefaultChartModel(chartSerie.getName());
+		    		models.put(chartSerie.getName(), model);
+		    		
+		    		if (chartSerie.isDefaultAxis())
+		    			chart.addModel(model)
+		    		else
+		    			chart.addModel(model, y2Axis);
+		    		chart.setStyle(model, createStyleForSerie(chartModel.getSerieIndex(chartSerie.getName()), chartModel.getStyle()));
+		    	}
+		    	else {
+		    		model = models.get(chartSerie.getName()) as DefaultChartModel;
+		    		chart.removeModel(model);
+		    	}
+		    	chartNode = SwingComponent.wrap(chartPanel);
+		   	legendNode = SwingComponent.wrap(legendPanel);
+			}
+			catch(t: Throwable){
+				println("------------");
+				println(t.getMessage());
+				t.printStackTrace();			
+				println("------------");
+			}
+		} );
     }
     
     function autoAxis(): Void {

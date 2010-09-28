@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ChartModel {
+public class ChartModel
+{
 
 	public static final int STYLE_BAR = 0;
 
@@ -27,10 +28,10 @@ public class ChartModel {
 
 	private int style = STYLE_LINE;
 
-	private CustomAbstractRange xRange;
+	private final CustomAbstractRange xRange;
 
-	private CustomAbstractRange yRange;
-	
+	private final CustomAbstractRange yRange;
+
 	private CustomAbstractRange y2Range;
 
 	private String title = "";
@@ -39,22 +40,23 @@ public class ChartModel {
 
 	private int height = 100;
 
-	private List<ChartListener> chartListenerList;
+	private final List<ChartListener> chartListenerList = new ArrayList<ChartListener>();
 
-	private ArrayList<ChartSerie> series;
-	
+	private final List<ChartSerie> series = new ArrayList<ChartSerie>();
+
 	private int legendColumns = -1;
-	
-	public ChartModel(CustomAbstractRange xRange, CustomAbstractRange yRange,
-			int width, int height) {
+
+	public ChartModel( CustomAbstractRange xRange, CustomAbstractRange yRange, int width, int height )
+	{
 		this.xRange = xRange;
 		this.yRange = yRange;
 		this.width = width;
 		this.height = height;
 	}
-	
-	public ChartModel(CustomAbstractRange xRange, CustomAbstractRange yRange, CustomAbstractRange y2Range,
-			int width, int height) {
+
+	public ChartModel( CustomAbstractRange xRange, CustomAbstractRange yRange, CustomAbstractRange y2Range, int width,
+			int height )
+	{
 		this.xRange = xRange;
 		this.yRange = yRange;
 		this.y2Range = y2Range;
@@ -62,176 +64,181 @@ public class ChartModel {
 		this.height = height;
 	}
 
-	public ChartModel(CustomAbstractRange xRange, CustomAbstractRange yRange) {
+	public ChartModel( CustomAbstractRange xRange, CustomAbstractRange yRange )
+	{
 		this.xRange = xRange;
 		this.yRange = yRange;
 	}
 
-	public void addPoint(int serieIndex, double x, double y) {
-		Point p = new Point(x, y);
-		if (series != null && serieIndex >= 0 && serieIndex < series.size() && series.get(serieIndex).isEnabled()) {
-			firePointAddedToModel(series.get(serieIndex), p);
-		}
+	public void addPoint( int serieIndex, double x, double y )
+	{
+		Point p = new Point( x, y );
+		if( series != null && serieIndex >= 0 && serieIndex < series.size() && series.get( serieIndex ).isEnabled() )
+			firePointAddedToModel( series.get( serieIndex ), p );
 	}
 
-	public void clearSerie(String serieName) {
-		for (int i = 0; i < series.size(); i++) {
-			if(series.get(i).getName().equals(serieName)){
-				fireSerieCleared(series.get(i));
+	public void clearSerie( String serieName )
+	{
+		for( int i = 0; i < series.size(); i++ )
+		{
+			if( series.get( i ).getName().equals( serieName ) )
+			{
+				fireSerieCleared( series.get( i ) );
 				break;
 			}
 		}
 	}
 
-	public void clear() {
-		for (int i = 0; i < series.size(); i++) {
-			fireSerieCleared(series.get(i));
-		}
+	public void clear()
+	{
+		for( ChartSerie serie : series )
+			fireSerieCleared( serie );
+
 		fireChartCleared();
 	}
-	
-	public void enableSerie(String serieName, boolean enable) {
-		for (int i = 0; i < series.size(); i++) {
-			if(series.get(i).getName().equals(serieName)){
-				series.get(i).setEnabled(enable);
-				fireSerieEnabled(series.get(i));
+
+	public void enableSerie( String serieName, boolean enable )
+	{
+		for( ChartSerie serie : series )
+		{
+			if( serieName.equals( serie.getName() ) )
+			{
+				serie.setEnabled( enable );
+				fireSerieEnabled( serie );
 				break;
 			}
 		}
 	}
 
-	public int getStyle() {
+	public int getStyle()
+	{
 		return style;
 	}
 
-	public void setStyle(int style) {
+	public void setStyle( int style )
+	{
 		this.style = style;
 	}
 
-	public CustomAbstractRange getXRange() {
+	public CustomAbstractRange getXRange()
+	{
 		return xRange;
 	}
 
-	public CustomAbstractRange getYRange() {
+	public CustomAbstractRange getYRange()
+	{
 		return yRange;
 	}
-	
-	public CustomAbstractRange getY2Range() {
+
+	public CustomAbstractRange getY2Range()
+	{
 		return y2Range;
 	}
 
-	public String getTitle() {
+	public String getTitle()
+	{
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public void setTitle( String title )
+	{
 		this.title = title;
 	}
 
-	public int getWidth() {
+	public int getWidth()
+	{
 		return width;
 	}
 
-	public void setWidth(int width) {
+	public void setWidth( int width )
+	{
 		this.width = width;
 	}
 
-	public int getHeight() {
+	public int getHeight()
+	{
 		return height;
 	}
 
-	public void setHeight(int height) {
+	public void setHeight( int height )
+	{
 		this.height = height;
 	}
 
-	public ArrayList<ChartSerie> getSeries() {
+	public List<ChartSerie> getSeries()
+	{
 		return series;
 	}
 
-	public void addSerie(String name, boolean enabled, boolean defaultAxis) {
-		if (series == null) {
-			series = new ArrayList<ChartSerie>();
-		}
-		ChartSerie cs = new ChartSerie(name, enabled, defaultAxis);
-		series.add(cs);
-		cs.setIndex(series.size() - 1);
+	public void addSerie( String name, boolean enabled, boolean defaultAxis )
+	{
+		ChartSerie cs = new ChartSerie( name, enabled, defaultAxis );
+		series.add( cs );
+		cs.setIndex( series.size() - 1 );
 	}
 
-	public int getSerieIndex(String serieName) {
-		for (int i = 0; i < series.size(); i++) {
-			if(series.get(i).getName().equals(serieName)){
+	public int getSerieIndex( String serieName )
+	{
+		for( int i = 0; i < series.size(); i++ )
+			if( series.get( i ).getName().equals( serieName ) )
 				return i;
-			}
-		}
-		return 0;
+
+		return 0; // Shouldn't this be -1?
 	}
 
-	public ChartSerie getSerie(String serieName){
-		for (int i = 0; i < series.size(); i++) {
-			if(series.get(i).getName().equals(serieName)){
-				return series.get(i);
-			}
-		}
+	public ChartSerie getSerie( String serieName )
+	{
+		for( ChartSerie serie : series )
+			if( serieName.equals( serie.getName() ) )
+				return serie;
+
 		return null;
 	}
-	
-	public void addChartListener(ChartListener chartListener) {
-		if(chartListenerList == null){
-			chartListenerList = new ArrayList<ChartListener>();
-		}
-		this.chartListenerList.add(chartListener);
+
+	public void addChartListener( ChartListener chartListener )
+	{
+		chartListenerList.add( chartListener );
 	}
 
-	public void removeChartListener(ChartListener chartListener) {
-		if(chartListenerList == null){
-			return;
-		}
-		this.chartListenerList.remove(chartListener);
+	public void removeChartListener( ChartListener chartListener )
+	{
+		chartListenerList.remove( chartListener );
 	}
 
-	private void firePointAddedToModel(ChartSerie cs, Point p) {
-		if (chartListenerList != null) {
-			for (Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext();) {
-				iterator.next().pointAddedToModel(cs, p);
-			}
-		}
+	private void firePointAddedToModel( ChartSerie cs, Point p )
+	{
+		for( Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext(); )
+			iterator.next().pointAddedToModel( cs, p );
 	}
 
-	private void fireSerieCleared(ChartSerie cs) {
-		if (chartListenerList != null) {
-			for (Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext();) {
-				iterator.next().serieCleared(cs);
-			}
-		}
-	}
-	
-	private void fireChartCleared() {
-		if (chartListenerList != null) {
-			for (Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext();) {
-				iterator.next().chartCleared();
-			}
-		}
+	private void fireSerieCleared( ChartSerie cs )
+	{
+		for( Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext(); )
+			iterator.next().serieCleared( cs );
 	}
 
-	private void fireSerieEnabled(ChartSerie cs) {
-		if (chartListenerList != null) {
-			for (Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext();) {
-				iterator.next().serieEnabled(cs);
-			}
-		}
+	private void fireChartCleared()
+	{
+		for( Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext(); )
+			iterator.next().chartCleared();
 	}
 
-	public int getLegendColumns() {
-		if(legendColumns == -1){
+	private void fireSerieEnabled( ChartSerie cs )
+	{
+		for( Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext(); )
+			iterator.next().serieEnabled( cs );
+	}
+
+	public int getLegendColumns()
+	{
+		if( legendColumns == -1 )
 			return getSeries().size();
-		}
-		else{
+		else
 			return legendColumns;
-		}
 	}
 
-	public void setLegendColumns(int legendColumns) {
+	public void setLegendColumns( int legendColumns )
+	{
 		this.legendColumns = legendColumns;
 	}
-
 }
