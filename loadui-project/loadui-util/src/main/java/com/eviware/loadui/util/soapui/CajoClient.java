@@ -68,11 +68,38 @@ public class CajoClient
 		try
 		{
 			Remote.invoke( getItem(), "test", null );
+			setSoapUIPath();
 			return true;
 		}
 		catch( Exception e )
 		{
 			return false;
+		}
+	}
+
+	/**
+	 * If soapUI bat folder is not specified in loadUI and there is an running
+	 * instance of soapUI, takes the path of that instance and sets it to loadUI.
+	 */
+	private void setSoapUIPath()
+	{
+		String soapUIPath = workspaceProviderRegistry.getWorkspace().getProperty( WorkspaceItem.SOAPUI_PATH_PROPERTY )
+				.getStringValue();
+		if( soapUIPath == null || soapUIPath.trim().length() == 0 )
+		{
+			try
+			{
+				soapUIPath = ( String )invoke( "getSoapUIPath", null );
+				if( soapUIPath != null )
+				{
+					workspaceProviderRegistry.getWorkspace().getProperty( WorkspaceItem.SOAPUI_PATH_PROPERTY )
+							.setValue( soapUIPath );
+				}
+			}
+			catch( Exception e )
+			{
+				// do nothing
+			}
 		}
 	}
 
