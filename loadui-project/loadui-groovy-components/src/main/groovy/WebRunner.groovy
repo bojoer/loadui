@@ -96,7 +96,7 @@ runAction = null
 createProperty( 'url', String )
 createProperty( 'outputBody', Boolean, false )
 
-createProperty( 'propagateSession', Boolean, false )
+//createProperty( 'propagateSession', Boolean, false )
 createProperty( 'readResponse', Boolean, false )
 createProperty( 'raiseAssertion', Boolean, true )
 createProperty( 'errorCodeList', String )
@@ -322,7 +322,7 @@ compactLayout {
 
 settings( label: "Basic" ) {
 	property( property: outputBody, label: 'Output Response Body' )
-	property( property: propagateSession, label: 'Propagate Session' )
+	//property( property: propagateSession, label: 'Propagate Session' )
 	property( property: readResponse, label: 'Read Response' )
 	property( property: raiseAssertion, label: 'Raise Assertion on Error' )
 	property( property: concurrentSamples, label: 'Max Concurrent Requests' )
