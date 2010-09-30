@@ -81,7 +81,7 @@ public class CajoClient
 	 * If soapUI bat folder is not specified in loadUI and there is an running
 	 * instance of soapUI, takes the path of that instance and sets it to loadUI.
 	 */
-	private void setSoapUIPath()
+	public void setSoapUIPath()
 	{
 		String soapUIPath = workspaceProviderRegistry.getWorkspace().getProperty( WorkspaceItem.SOAPUI_PATH_PROPERTY )
 				.getStringValue();
