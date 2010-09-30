@@ -32,16 +32,16 @@ if( workspaceFile != null ) {
 	workspace = workspaceProvider.loadDefaultWorkspace()
 }
 
-def importRunners = workspace.getProperty( WorkspaceItem.IMPORT_MISSING_AGENTS_PROPERTY )
+def importAgents = workspace.getProperty( WorkspaceItem.IMPORT_MISSING_AGENTS_PROPERTY )
 workspace.localMode = localMode
 
 //If custom agents are provided, remove saved ones.
 if( agents != null ) {
-	for( runner in new ArrayList( workspace.runners ) )
-		runner.delete()
-	importRunners.value = false
+	for( agent in new ArrayList( workspace.agents ) )
+		agent.delete()
+	importAgents.value = false
 } else {
-	importRunners.value = true
+	importAgents.value = true
 }
 
 //Get the project. Import it if needed.
@@ -78,7 +78,7 @@ if( limits != null ) {
 	}
 }
 
-//Assign Runners
+//Assign Agents
 if( agents != null ) {
 	for( agentUrl in agents.keySet() ) {
 		def tcs = agents[agentUrl]
