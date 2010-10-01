@@ -393,7 +393,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 		StringBuilder s = new StringBuilder();
 		for( Entry<String, Long> e : limits.entrySet() )
-			s.append( e.getKey() ).append( "=" ).append( e.getValue().toString() ).append( ";" );
+			s.append( e.getKey() ).append( '=' ).append( e.getValue().toString() ).append( ';' );
 		setAttribute( LIMITS_ATTRIBUTE, s.toString() );
 
 		if( TIMER_COUNTER.equals( counterName ) )
@@ -457,10 +457,10 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 		if( running && limits.containsKey( TIMER_COUNTER ) )
 		{
-			long delay = limits.get( TIMER_COUNTER ) - time;
+			long delay = limits.get( TIMER_COUNTER ) * 1000 - time;
 			if( delay > 0 )
 			{
-				timeLimitFuture = scheduler.schedule( new TimeLimitTask(), delay, TimeUnit.SECONDS );
+				timeLimitFuture = scheduler.schedule( new TimeLimitTask(), delay, TimeUnit.MILLISECONDS );
 			}
 		}
 	}
@@ -572,7 +572,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 				if( !running && START_ACTION.equals( event.getKey() ) )
 				{
 					setRunning( true );
-					timerFuture = scheduler.scheduleAtFixedRate( new TimeUpdateTask(), 1, 1, TimeUnit.SECONDS );
+					timerFuture = scheduler.scheduleAtFixedRate( new TimeUpdateTask(), 250, 250, TimeUnit.MILLISECONDS );
 					fixTimeLimit();
 					if( startTime == null )
 						startTime = new Date();
@@ -588,7 +588,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 					Calendar endTimeCal = Calendar.getInstance();
 					endTimeCal.setTime( startTime );
-					endTimeCal.add( Calendar.SECOND, ( int )time );
+					endTimeCal.add( Calendar.SECOND, ( int )time / 1000 );
 					endTime = endTimeCal.getTime();
 				}
 				else if( CounterHolder.COUNTER_RESET_ACTION.equals( event.getKey() ) )
@@ -622,10 +622,20 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private class TimeUpdateTask implements Runnable
 	{
+		private final long startTime;
+		private final long initialTime;
+
+		public TimeUpdateTask()
+		{
+			startTime = System.currentTimeMillis();
+			initialTime = time;
+		}
+
 		@Override
 		public void run()
 		{
-			time++ ;
+			final long timePassed = ( System.currentTimeMillis() - startTime );
+			time = initialTime + timePassed;
 		}
 	}
 
@@ -634,7 +644,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		@Override
 		public void run()
 		{
-			time = getLimit( TIMER_COUNTER );
+			time = getLimit( TIMER_COUNTER ) * 1000;
 			triggerAction( STOP_ACTION );
 			triggerAction( COMPLETE_ACTION );
 		}
@@ -645,7 +655,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		@Override
 		public long get()
 		{
-			return time;
+			return time / 1000;
 		}
 
 		@Override
@@ -663,7 +673,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		@Override
 		public Long getValue()
 		{
-			return time;
+			return time / 1000;
 		}
 	}
 

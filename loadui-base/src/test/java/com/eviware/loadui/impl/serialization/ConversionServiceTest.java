@@ -50,7 +50,7 @@ public class ConversionServiceTest
 	{
 		assertEquals( "4711", conversionService.convert( 4711, String.class ) );
 
-		assertEquals( "4711", conversionService.convert( 4711l, String.class ) );
+		assertEquals( "4711", conversionService.convert( 4711L, String.class ) );
 
 		assertEquals( "47.11", conversionService.convert( 47.11, String.class ) );
 
