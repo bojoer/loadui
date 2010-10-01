@@ -423,9 +423,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			if( event.getKey().equals( RELEASED ) )
 				fireCollectionEvent( PROJECTS, CollectionEvent.Event.REMOVED, event.getSource() );
 			else if( event.getKey().equals( DELETED ) )
-			{
 				removeProject( ( ProjectItem )event.getSource() );
-			}
 		}
 	}
 
