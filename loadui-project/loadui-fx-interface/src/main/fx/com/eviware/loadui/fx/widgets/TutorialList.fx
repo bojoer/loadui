@@ -73,7 +73,7 @@ public class TutorialList extends CustomNode, Resizable {
 			throw new RuntimeException( "Workspace must not be null!" );
 		
 		RssTask{
-	        location: "http://www.loadui.com/component/option,com_ninjarsssyndicator/feed_id,1/format,raw/lang,en/"
+	        location: "http://www.loadui.org/component/option,com_ninjarsssyndicator/feed_id,1/format,raw/lang,en/"
 	        interval: 300s
 	        
 	        onException: function(e) {
