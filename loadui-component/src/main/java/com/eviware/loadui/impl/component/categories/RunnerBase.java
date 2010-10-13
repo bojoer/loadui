@@ -29,6 +29,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.eviware.loadui.api.component.ComponentContext;
@@ -74,7 +75,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final OutputTerminal currentlyRunningTerminal;
 
 	private final AtomicInteger currentlyRunning = new AtomicInteger();
-	private final AtomicInteger sleeping = new AtomicInteger();
+	private final AtomicBoolean isSleeping = new AtomicBoolean();
 
 	private final Counter requestCounter;
 	private final Counter sampleCounter;
@@ -376,7 +377,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			discardsCounter.increment();
 		}
 
-		if( workerCount.get() < concurrentSamples && sleeping.get() == 0 )
+		if( workerCount.get() < concurrentSamples && !isSleeping.get() )
 		{
 			long current = workerCount.incrementAndGet();
 			if( current <= concurrentSamples )
@@ -669,9 +670,12 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			{
 				try
 				{
-					sleeping.incrementAndGet();
-					message = queue.poll( 10, TimeUnit.SECONDS );
-					sleeping.decrementAndGet();
+					message = queue.poll();
+					if( message == null && isSleeping.compareAndSet( false, true ) )
+					{
+						message = queue.poll( 10, TimeUnit.SECONDS );
+						isSleeping.set( false );
+					}
 					if( message == null || released )
 					{
 						exit = true;
