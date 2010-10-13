@@ -33,94 +33,97 @@ public class TerminalMessageImpl implements TerminalMessage
 	private final Map<String, MutableValue<?>> values = new HashMap<String, MutableValue<?>>();
 	private final ConversionService conversionService;
 
-	public TerminalMessageImpl( ConversionService conversionService )
+	public TerminalMessageImpl(ConversionService conversionService)
 	{
 		this.conversionService = conversionService;
 	}
 
 	@Override
-	@SuppressWarnings( { "unchecked", "rawtypes" } )
+	@SuppressWarnings( { "unchecked", "rawtypes" })
 	public TerminalMessage copy()
 	{
-		TerminalMessageImpl cpy = new TerminalMessageImpl( conversionService );
-		for( Entry<String, MutableValue<?>> entry : values.entrySet() )
-			cpy.values.put( entry.getKey(), new MutableValueImpl( entry.getValue().getType(), entry.getValue().getValue(),
-					conversionService ) );
+		TerminalMessageImpl cpy = new TerminalMessageImpl(conversionService);
+		synchronized (values)
+		{
+			for (Entry<String, MutableValue<?>> entry : values.entrySet())
+				cpy.values.put(entry.getKey(), new MutableValueImpl(entry.getValue().getType(),
+						entry.getValue().getValue(), conversionService));
+		}
 
 		return cpy;
 	}
 
 	@Override
-	public Object get( Object key )
+	public Object get(Object key)
 	{
-		return values.containsKey( key ) ? values.get( key ).getValue() : null;
+		return values.containsKey(key) ? values.get(key).getValue() : null;
 	}
 
 	@Override
-	@SuppressWarnings( { "unchecked", "rawtypes" } )
-	public Object put( String key, Object value )
+	@SuppressWarnings( { "unchecked", "rawtypes" })
+	public Object put(String key, Object value)
 	{
-		MutableValue<?> oldVal = values.get( key );
+		MutableValue<?> oldVal = values.get(key);
 		Object old = oldVal == null ? null : oldVal.getValue();
 
-		if( oldVal != null && oldVal.getType().isInstance( value ) )
-			oldVal.setValue( value );
+		if (oldVal != null && oldVal.getType().isInstance(value))
+			oldVal.setValue(value);
 		else
-			values.put( key, new MutableValueImpl( value == null ? Object.class : value.getClass(), value,
-					conversionService ) );
-
+			put(key, new MutableValueImpl(value == null ? Object.class : value.getClass(), value, conversionService));
 		return old;
 	}
 
 	@Override
-	public <T> void put( String key, T value, Class<T> type )
+	public <T> void put(String key, T value, Class<T> type)
 	{
-		values.put( key, new MutableValueImpl<T>( type, value, conversionService ) );
+		synchronized (values)
+		{
+			values.put(key, new MutableValueImpl<T>(type, value, conversionService));
+		}
 	}
 
 	@Override
 	public Object serialize()
 	{
 		Map<String, String[]> serialized = new HashMap<String, String[]>();
-		for( Entry<String, MutableValue<?>> entry : values.entrySet() )
+		for (Entry<String, MutableValue<?>> entry : values.entrySet())
 		{
 			MutableValue<?> value = entry.getValue();
 			String[] parts;
 			try
 			{
-				parts = new String[] { conversionService.convert( value.getValue(), String.class ),
-						value.getType().getName() };
+				parts = new String[] { conversionService.convert(value.getValue(), String.class), value.getType().getName() };
 			}
-			catch( Exception e )
+			catch (Exception e)
 			{
 				parts = new String[] { value.getValue().toString(), String.class.getName() };
 			}
 
-			serialized.put( entry.getKey(), parts );
+			serialized.put(entry.getKey(), parts);
 		}
 
 		return serialized;
 	}
 
 	@Override
-	@SuppressWarnings( { "unchecked", "rawtypes" } )
-	public void load( Object serialized )
+	@SuppressWarnings( { "unchecked", "rawtypes" })
+	public void load(Object serialized)
 	{
-		if( !( serialized instanceof Map<?, ?> ) )
-			throw new IllegalArgumentException( "" );
+		if (!(serialized instanceof Map<?, ?>))
+			throw new IllegalArgumentException("");
 
-		Map<String, Object[]> data = ( Map<String, Object[]> )serialized;
-		for( Entry<String, Object[]> entry : data.entrySet() )
+		Map<String, Object[]> data = (Map<String, Object[]>) serialized;
+		for (Entry<String, Object[]> entry : data.entrySet())
 		{
 			Object[] args = entry.getValue();
 			try
 			{
-				Class<?> type = Class.forName( ( String )args[1] );
-				values.put( entry.getKey(), new MutableValueImpl( type, args[0], conversionService ) );
+				Class<?> type = Class.forName((String) args[1]);
+				put(entry.getKey(), new MutableValueImpl(type, args[0], conversionService));
 			}
-			catch( ClassNotFoundException e )
+			catch (ClassNotFoundException e)
 			{
-				throw new RuntimeException( e );
+				throw new RuntimeException(e);
 			}
 		}
 	}
@@ -129,8 +132,8 @@ public class TerminalMessageImpl implements TerminalMessage
 	public Set<Entry<String, Object>> entrySet()
 	{
 		Set<Entry<String, Object>> entrySet = new HashSet<Entry<String, Object>>();
-		for( String key : keySet() )
-			entrySet.add( new InternalEntry( key ) );
+		for (String key : keySet())
+			entrySet.add(new InternalEntry(key));
 
 		return entrySet;
 	}
@@ -138,21 +141,24 @@ public class TerminalMessageImpl implements TerminalMessage
 	@Override
 	public void clear()
 	{
-		values.clear();
+		synchronized (values)
+		{
+			values.clear();
+		}
 	}
 
 	@Override
-	public boolean containsKey( Object key )
+	public boolean containsKey(Object key)
 	{
-		return values.containsKey( key );
+		return values.containsKey(key);
 	}
 
 	@Override
-	public boolean containsValue( Object value )
+	public boolean containsValue(Object value)
 	{
-		if( value != null )
-			for( MutableValue<?> v : values.values() )
-				if( value.equals( v.getValue() ) )
+		if (value != null)
+			for (MutableValue<?> v : values.values())
+				if (value.equals(v.getValue()))
 					return true;
 
 		return false;
@@ -171,16 +177,16 @@ public class TerminalMessageImpl implements TerminalMessage
 	}
 
 	@Override
-	public void putAll( Map<? extends String, ? extends Object> m )
+	public void putAll(Map<? extends String, ? extends Object> m)
 	{
-		for( Entry<? extends String, ? extends Object> entry : m.entrySet() )
-			put( entry.getKey(), entry.getValue() );
+		for (Entry<? extends String, ? extends Object> entry : m.entrySet())
+			put(entry.getKey(), entry.getValue());
 	}
 
 	@Override
-	public Object remove( Object key )
+	public Object remove(Object key)
 	{
-		MutableValue<?> value = values.remove( key );
+		MutableValue<?> value = values.remove(key);
 		return value == null ? null : value.getValue();
 	}
 
@@ -194,8 +200,8 @@ public class TerminalMessageImpl implements TerminalMessage
 	public Collection<Object> values()
 	{
 		Collection<Object> objects = new ArrayList<Object>();
-		for( MutableValue<?> value : values.values() )
-			objects.add( value.getValue() );
+		for (MutableValue<?> value : values.values())
+			objects.add(value.getValue());
 
 		return objects;
 	}
@@ -210,7 +216,7 @@ public class TerminalMessageImpl implements TerminalMessage
 	{
 		private final String key;
 
-		private InternalEntry( String key )
+		private InternalEntry(String key)
 		{
 			this.key = key;
 		}
@@ -224,13 +230,13 @@ public class TerminalMessageImpl implements TerminalMessage
 		@Override
 		public Object getValue()
 		{
-			return get( key );
+			return get(key);
 		}
 
 		@Override
-		public Object setValue( Object value )
+		public Object setValue(Object value)
 		{
-			return put( getKey(), value );
+			return put(getKey(), value);
 		}
 	}
 }
