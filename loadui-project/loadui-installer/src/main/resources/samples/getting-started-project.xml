@@ -3,77 +3,74 @@
 ------------------------------------------------
 This is a simple Web LoadTest that uses a soapUI MockService as its target. It illustrates the basic Generator -> Runner -> Analysis concept of loadUI components
 
-Double-click the TestCase and run it to see what we're talking about!</con:property><con:property key="miniature">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
-SUVORK5CYII=
+Double-click the TestCase and run it to see what we're talking about!</con:property><con:property key="miniature">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
+lv4PJy/AYS5cek4AAAAASUVORK5CYII=
 </con:property><con:property key="gui.note.1">205;626;200;150;2. Assertions and Logging
 -------------------------------------
 This TestCase extends the first by adding a couple of assertions and a TableLog to catch failed responses. </con:property><con:property key="gui.note.2">997;621;263;153;4. Controlling Flow 
@@ -337,7 +334,7 @@ runAction = null
 createProperty( 'url', String )
 createProperty( 'outputBody', Boolean, false )
 
-createProperty( 'propagateSession', Boolean, false )
+//createProperty( 'propagateSession', Boolean, false )
 createProperty( 'readResponse', Boolean, false )
 createProperty( 'raiseAssertion', Boolean, true )
 createProperty( 'errorCodeList', String )
@@ -345,7 +342,7 @@ createProperty( 'errorCodeList', String )
 createProperty( 'proxyHost', String)
 createProperty( 'proxyPort', Long)
 createProperty( 'proxyUsername', String)
-createProperty( 'proxyPassword', String)
+proxyPassword = createProperty( '_proxyPassword', String)
 
 eviPattern = ~/https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/
 dummyUrl = "http://GoSpamYourself.com"
@@ -479,12 +476,13 @@ sample = { message, sampleId ->
 onCancel = {
 	aborting = true
 	
-	def methods = runningSamples.toArray()
-	methods.each{  method ->
-		if( !method.aborted ) 
-			method.abort()
+	synchronized( runningSamples ) {
+		def methods = runningSamples.toArray()
+		runningSamples.clear()
+		methods.each { method ->
+			if( !method.aborted ) method.abort()
+		}
 	}
-	runningSamples = []
 	aborting = false
 }
 
@@ -563,7 +561,7 @@ compactLayout {
 
 settings( label: "Basic" ) {
 	property( property: outputBody, label: 'Output Response Body' )
-	property( property: propagateSession, label: 'Propagate Session' )
+	//property( property: propagateSession, label: 'Propagate Session' )
 	property( property: readResponse, label: 'Read Response' )
 	property( property: raiseAssertion, label: 'Raise Assertion on Error' )
 	property( property: concurrentSamples, label: 'Max Concurrent Requests' )
@@ -600,8 +598,7 @@ def statisticsSignature = [
 		"Completed" : Integer.class,
 		]
 
-setSignature(statisticsOutput, statisticsSignature)
-]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String">http://localhost:8081</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">true</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\WebRunner.groovy</con:property><con:property key="_digest">2de883b82ad336b678de15dbe30b7622</con:property><con:property key="gui.layoutX">533</con:property><con:property key="gui.layoutY">626</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Fixed Rate" id="2cb44449-032c-4163-8408-e5b61bce2d3f" category="generators"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
+setSignature(statisticsOutput, statisticsSignature)]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String">http://localhost:8081</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">true</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\WebRunner.groovy</con:property><con:property key="_digest">2ae536cbe340efb99cd220cc94343216</con:property><con:property key="gui.layoutX">533</con:property><con:property key="gui.layoutY">626</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Fixed Rate" id="2cb44449-032c-4163-8408-e5b61bce2d3f" category="generators"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -795,6 +792,8 @@ import com.eviware.loadui.util.layout.DelayedFormattedString
 
 
 AGGREGATE = "Aggregate"
+AGENT_DATA_TIMESTAMP = "AgentDataTimestamp"
+AGENT_DATA_TTL = 5000
 
 executor = Executors.newSingleThreadScheduledExecutor()
 
@@ -857,16 +856,16 @@ y2Range.visible = true
 y2Range.title = 'requests'
 
 ChartModel chartModel = new ChartModel(xRange, yRange, y2Range, 420, 180)
-chartModel.addChartListener(new ChartAdapter(){
-	public void chartCleared(){
-		try{
+chartModel.addChartListener( new ChartAdapter() {
+	public void chartCleared() {
+		try {
 			resetBuffers()
 		}
-		catch(Throwable e2){
+		catch(Throwable e2) {
 			ex(e2, 'chartCleared')
 		}
 	}
-});
+} )
 
 chartModel.addSerie('Max', enableMax.value, true)
 chartModel.addSerie('Min', enableMin.value, true)
@@ -893,7 +892,7 @@ long max = 0
 long min = Long.MAX_VALUE
 
 agentData = [:]
-agentStatistics = [:]
+agentStatistics = null
 
 future = null
 boolean connected = true
@@ -930,13 +929,14 @@ analyze = { message ->
 onMessage = { o, i, m ->
 	super.onTerminalMessage(o, i, m)
 	if(i == remoteTerminal) {
-		
-		agentData[o.label] = new HashMap(m)
+		def data = new HashMap(m)
+		data[AGENT_DATA_TIMESTAMP] = System.currentTimeMillis();
+		agentData[o.label] = data
 	}
 	
 	if( i == statisticsInput ) {
 		if (  m.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"]) ) {
-			agentStatistics[o.label] = new HashMap(m)
+			agentStatistics = new HashMap(m)
 		} 
 	}
 }
@@ -989,14 +989,23 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			
-			send(controllerTerminal, message)
 			send(output, message)
+			
+			if (agentStatistics != null) {
+				message['Requests'] = agentStatistics['Requests']
+				message['Running'] = agentStatistics['Running']
+				message['Discarded'] = agentStatistics['Discarded']
+				message['Queued'] = agentStatistics['Queued']
+				message['Failed'] = agentStatistics['Failed']
+				message['Completed'] = agentStatistics['Completed']
+			}
+			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
 		ex(e1, 'calculate')
 	}
-	
+	def oldKeys = agentData.keySet().findAll { agentData[it][AGENT_DATA_TIMESTAMP] < currentTime - AGENT_DATA_TTL }
+	oldKeys.each { agentData.remove( it ) }
 	if( controller  && ( timeStats.size() > 0 || agentData.size() > 0 ))
 		updateChart( currentTime )
 }
@@ -1009,6 +1018,7 @@ updateChart = { currentTime ->
 			if (inputTerminal.connections.size() > 0) {
 				for( d in agentData.values() ) {
 					if( !d.isEmpty() ) {
+						//println d
 						data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
 						data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
 						data['Avg'] = (data['Avg'] ?: 0) + d['Avg']
@@ -1019,22 +1029,17 @@ updateChart = { currentTime ->
 						data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
 						data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
 						data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
+						data['Requests'] = (data['Requests'] ?:  0) + (d['Requests']?:0)
+						data['Running'] = (data['Running'] ?:  0) + (d['Running']?:0) 
+						data['Completed'] = (data['Completed'] ?: 0) + (d['Completed']?:0)
+						data['Queued'] = (data['Queued'] ?: 0) + (d['Queued']?:0)
+						data['Discarded'] = (data['Discarded'] ?: 0) + (d['Discarded']?:0)
+						data['Failed'] = (data['Failed'] ?: 0) + (d['Failed']?:0)
 						count++
 					}
 				}
 			}
-			if (statisticsInput.connections.size() > 0) {
-				for ( m in agentStatistics.values() ) {
-					if( !m.isEmpty() ) {
-						data['Requests'] = data['Requests'] ?: 0 + m["Requests"]
-						data['Running'] = data['Running'] ?: 0 + m["Running"]
-						data['Completed'] = data['Completed'] ?: 0 + m["Completed"]
-						data['Queued'] = data['Queued'] ?: 0 + m["Queued"]
-						data['Discarded'] = data['Discarded'] ?: 0 + m["Discarded"]
-						data['Failed'] = data['Failed'] ?: 0 + m["Failed"]
-					}
-				}
-			}
+			
 			if( count != 0 ) {
 				data['Avg'] /= count
 				data['Std-Dev'] /= count
@@ -1042,16 +1047,8 @@ updateChart = { currentTime ->
 		} catch( e ) { ex(e, 'Aggregating')
 		}
 	} else {
-		
-		if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] == null) {
-			data = null
-		} else if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] != null) {
-			data = agentStatistics[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] == null) {
-			data = agentData[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] != null) {
-			data = agentData[selectedAgent.value] + agentStatistics[selectedAgent.value]
-		}
+		data = agentData[selectedAgent.value]
+	
 	}
 	if(data == null || data.isEmpty()) {
 		return
@@ -1068,8 +1065,6 @@ updateChart = { currentTime ->
 			if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
 			if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 			if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
-		}
-		if (statisticsInput.connections.size() > 0  && data.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"])) {
 			if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
 			if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
 			if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
@@ -1077,6 +1072,7 @@ updateChart = { currentTime ->
 			if(enableDiscarded.value) chartModel.addPoint(14, currentTime, data['Discarded'])
 			if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
 		}
+		
 		 if (inputTerminal.connections.size() > 0) {
 			avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
 			minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
@@ -1240,8 +1236,8 @@ fixOptions = {
 addEventListener( ActionEvent ) { event ->
 	if( event.key == 'RESET' ) resetComponent()
 	else if( event.key == 'STOP' ) {
-		agentData.clear()
-		agentStatistics.clear()
+		agentData?.clear() // this should never be null but just in case
+		agentStatistics?.clear() // this could be null, so it needs check
 		if( !controller )
 			send( controllerTerminal, newMessage() )
 	}
@@ -1384,7 +1380,7 @@ enableDiscarded.value = false
 buildSignature()
 fixOptions()
 schedule()
-]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">2ffb1ad6e5378a503f2b4568e0fc952b</con:property><con:property key="gui.layoutX">583</con:property><con:property key="gui.layoutY">919</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="f01e8c30-2fd1-417c-87bf-f8c3ae153c4b"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" xsi:nil="true" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="mockService" type="java.lang.String">MockService 1</con:property><con:property key="path" type="java.lang.String">/</con:property><con:property key="port" type="java.lang.String">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1205</con:property><con:property key="gui.layoutY">809</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:connection outputTerminalId="2cb44449-032c-4163-8408-e5b61bce2d3f/triggerTerminal" inputTerminalId="0b1546d7-feeb-4d93-b3c9-f6ac151594fc/triggerTerminal"/><con:connection outputTerminalId="0b1546d7-feeb-4d93-b3c9-f6ac151594fc/resultTerminal" inputTerminalId="7c508081-aa40-49c4-8722-246670b4a417/inputTerminal"/></con:scene><con:scene label="Complex Load Generation" id="234ea2c5-c94b-4e44-aeae-bd37cd09069b" version="19"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="gui.layoutX">1325</con:property><con:property key="gui.layoutY">200</con:property><con:property key="miniature">iVBORw0KGgoAAAANSUhEUgAAAKgAAACuCAYAAACiEkapAAAhbElEQVR42u1dB3QV1dYGgpQkkJBK
+]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">31b7652d1771548fcfc36c7ba144fac3</con:property><con:property key="gui.layoutX">583</con:property><con:property key="gui.layoutY">919</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="f01e8c30-2fd1-417c-87bf-f8c3ae153c4b"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="mockService" type="java.lang.String">MockService 1</con:property><con:property key="path" type="java.lang.String">/</con:property><con:property key="port" type="java.lang.String">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1205</con:property><con:property key="gui.layoutY">809</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:connection outputTerminalId="2cb44449-032c-4163-8408-e5b61bce2d3f/triggerTerminal" inputTerminalId="0b1546d7-feeb-4d93-b3c9-f6ac151594fc/triggerTerminal"/><con:connection outputTerminalId="0b1546d7-feeb-4d93-b3c9-f6ac151594fc/resultTerminal" inputTerminalId="7c508081-aa40-49c4-8722-246670b4a417/inputTerminal"/></con:scene><con:scene label="Complex Load Generation" id="234ea2c5-c94b-4e44-aeae-bd37cd09069b" version="19"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="gui.layoutX">1325</con:property><con:property key="gui.layoutY">200</con:property><con:property key="miniature">iVBORw0KGgoAAAANSUhEUgAAAKgAAACuCAYAAACiEkapAAAhbElEQVR42u1dB3QV1dYGgpQkkJBK
 6CUkdFCBUEUDUkR6EwREUHk06U2qD6QTukKAAKGHEgiEJr2JIr1JEQFFURDLs6731r//+Xbuuc69
 uSEzuffOLTl7rW99M2dmzrRv9jlz5pw9OXJIkyYtY/v2XgpJ2AepIifa118l0/XLGwksoR17d8WZ
 p6WKnGj3bm8lCfsgVeRE+/vXPSRhH6SKpEClQLO7QP/4KZX55JGFzFMn97V5M359lPLUm3Xs4Hx6
@@ -1638,7 +1634,7 @@ runAction = null
 createProperty( 'url', String )
 createProperty( 'outputBody', Boolean, false )
 
-createProperty( 'propagateSession', Boolean, false )
+//createProperty( 'propagateSession', Boolean, false )
 createProperty( 'readResponse', Boolean, false )
 createProperty( 'raiseAssertion', Boolean, true )
 createProperty( 'errorCodeList', String )
@@ -1646,7 +1642,7 @@ createProperty( 'errorCodeList', String )
 createProperty( 'proxyHost', String)
 createProperty( 'proxyPort', Long)
 createProperty( 'proxyUsername', String)
-createProperty( 'proxyPassword', String)
+proxyPassword = createProperty( '_proxyPassword', String)
 
 eviPattern = ~/https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/
 dummyUrl = "http://GoSpamYourself.com"
@@ -1780,12 +1776,13 @@ sample = { message, sampleId ->
 onCancel = {
 	aborting = true
 	
-	def methods = runningSamples.toArray()
-	methods.each{  method ->
-		if( !method.aborted ) 
-			method.abort()
+	synchronized( runningSamples ) {
+		def methods = runningSamples.toArray()
+		runningSamples.clear()
+		methods.each { method ->
+			if( !method.aborted ) method.abort()
+		}
 	}
-	runningSamples = []
 	aborting = false
 }
 
@@ -1864,7 +1861,7 @@ compactLayout {
 
 settings( label: "Basic" ) {
 	property( property: outputBody, label: 'Output Response Body' )
-	property( property: propagateSession, label: 'Propagate Session' )
+	//property( property: propagateSession, label: 'Propagate Session' )
 	property( property: readResponse, label: 'Read Response' )
 	property( property: raiseAssertion, label: 'Raise Assertion on Error' )
 	property( property: concurrentSamples, label: 'Max Concurrent Requests' )
@@ -1901,8 +1898,7 @@ def statisticsSignature = [
 		"Completed" : Integer.class,
 		]
 
-setSignature(statisticsOutput, statisticsSignature)
-]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String">http://localhost:8081</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">true</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\WebRunner.groovy</con:property><con:property key="_digest">2de883b82ad336b678de15dbe30b7622</con:property><con:property key="gui.layoutX">642</con:property><con:property key="gui.layoutY">1244</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Fixed Rate" id="e6588efe-e0c8-463b-b604-398edb7881d5" category="generators"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
+setSignature(statisticsOutput, statisticsSignature)]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String">http://localhost:8081</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">true</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\WebRunner.groovy</con:property><con:property key="_digest">2ae536cbe340efb99cd220cc94343216</con:property><con:property key="gui.layoutX">642</con:property><con:property key="gui.layoutY">1244</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Fixed Rate" id="e6588efe-e0c8-463b-b604-398edb7881d5" category="generators"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -2077,7 +2073,7 @@ targetReached = false
 
 timer = new Timer(true)
 
-display = new DelayedFormattedString( '%d %s', 500, currentRate.longValue(), direction )
+display = new DelayedFormattedString( '%d / %s %s', 500, currentRate.longValue(), unit.value, direction )
 scheduled = false
 future = null
 
@@ -2108,7 +2104,7 @@ reset = {
 		targetReached = true
 		currentRate = end.value()
 	}
-	display.setArgs( currentRate.longValue(), direction )
+	display.setArgs( currentRate.longValue(), unit.value, direction )
 	scheduled = false
 }
 
@@ -2140,7 +2136,7 @@ schedule = {
 		
 		
 		future = timer.runAfter(currentDelay.intValue()) {
-			display.setArgs( currentRate.longValue(), direction )
+			display.setArgs( currentRate.longValue(), unit.value, direction )
 			trigger()
 			scheduled = false
 			schedule()
@@ -2170,7 +2166,7 @@ addEventListener( PropertyEvent ) { event ->
 		if (start.value > end.value)
 			direction = "down"
 		
-		display.setArgs( currentRate.longValue(), direction )
+		display.setArgs( currentRate.longValue(), unit.value, direction )
 		
 		if (start.value == end.value)
 			direction = "none"
@@ -2232,7 +2228,7 @@ compactLayout  {
 reset();
 if (running)
 	begin();
-</con:property><con:property key="stateProperty" type="java.lang.Boolean">false</con:property><con:property key="start" type="java.lang.Long">0</con:property><con:property key="end" type="java.lang.Long">100</con:property><con:property key="period" type="java.lang.Long">120</con:property><con:property key="unit" type="java.lang.String">Sec</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Ramp</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Ramp.groovy</con:property><con:property key="_digest">becdfee00487f8aa9960b15f779e4ef2</con:property><con:property key="gui.layoutX">229</con:property><con:property key="gui.layoutY">906</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Random" id="04fb6e5f-6328-4d61-8d66-1a7eb3c3965d" category="generators"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
+</con:property><con:property key="stateProperty" type="java.lang.Boolean">false</con:property><con:property key="start" type="java.lang.Long">0</con:property><con:property key="end" type="java.lang.Long">100</con:property><con:property key="period" type="java.lang.Long">120</con:property><con:property key="unit" type="java.lang.String">Sec</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Ramp</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Ramp.groovy</con:property><con:property key="_digest">b81f87cc369045d49f669a99df86c260</con:property><con:property key="gui.layoutX">229</con:property><con:property key="gui.layoutY">906</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Random" id="04fb6e5f-6328-4d61-8d66-1a7eb3c3965d" category="generators"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -2272,6 +2268,10 @@ createProperty( 'type', String, 'Uniform' )
 createProperty( 'factor', Long, 0 )
 
 msPerUnit = 1000
+if ( unit.value == "Min" )
+	msPerUnit = 60000
+if ( unit.value == "Hour" )
+	msPerUnit = 3600000
 defaultDelay = msPerUnit/rate.value
 currentDelay = 0
 
@@ -2385,7 +2385,7 @@ compactLayout {
 
 if (running)
 	schedule();
-</con:property><con:property key="stateProperty" type="java.lang.Boolean">true</con:property><con:property key="rate" type="java.lang.Long">100</con:property><con:property key="unit" type="java.lang.String">Sec</con:property><con:property key="type" type="java.lang.String">Gaussian</con:property><con:property key="factor" type="java.lang.Long">50</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Random</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Random.groovy</con:property><con:property key="_digest">6c4c142f8aa09ec05a3ee444ece6b6a5</con:property><con:property key="gui.layoutX">678</con:property><con:property key="gui.layoutY">915</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Interval" id="e36a65c3-b2e1-4db7-967b-bf70cb77182b" category="scheduler"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
+</con:property><con:property key="stateProperty" type="java.lang.Boolean">true</con:property><con:property key="rate" type="java.lang.Long">100</con:property><con:property key="unit" type="java.lang.String">Sec</con:property><con:property key="type" type="java.lang.String">Gaussian</con:property><con:property key="factor" type="java.lang.Long">50</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Random</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Random.groovy</con:property><con:property key="_digest">30700033e862d36c1e433391759e5402</con:property><con:property key="gui.layoutX">678</con:property><con:property key="gui.layoutY">915</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Interval" id="e36a65c3-b2e1-4db7-967b-bf70cb77182b" category="scheduler"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -2427,7 +2427,6 @@ import com.eviware.loadui.api.counter.CounterHolder
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-import com.eviware.loadui.api.component.categories.TriggerCategory
 import com.eviware.loadui.api.events.BaseEvent
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.util.layout.IntervalModel
@@ -2578,7 +2577,7 @@ compactLayout {
 	}
 }
 
-updateState()]]></con:property><con:property key="startAt" type="java.lang.Long">0</con:property><con:property key="duration" type="java.lang.Long">2</con:property><con:property key="unit" type="java.lang.String">Min</con:property><con:property key="mode" type="java.lang.String">Single</con:property><con:property key="stateProperty" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Interval</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Interval.groovy</con:property><con:property key="_digest">387f400ca1a8c62df8cd212db436e30f</con:property><con:property key="gui.layoutX">230</con:property><con:property key="gui.layoutY">570</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Interval (1)" id="f491d887-a1e7-4b12-8174-0b4a9f584525" category="scheduler"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
+updateState()]]></con:property><con:property key="startAt" type="java.lang.Long">0</con:property><con:property key="duration" type="java.lang.Long">2</con:property><con:property key="unit" type="java.lang.String">Min</con:property><con:property key="mode" type="java.lang.String">Single</con:property><con:property key="stateProperty" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Interval</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Interval.groovy</con:property><con:property key="_digest">1385693413b9b11cd098b2d141d4af8c</con:property><con:property key="gui.layoutX">230</con:property><con:property key="gui.layoutY">570</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Interval (1)" id="f491d887-a1e7-4b12-8174-0b4a9f584525" category="scheduler"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -2620,7 +2619,6 @@ import com.eviware.loadui.api.counter.CounterHolder
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-import com.eviware.loadui.api.component.categories.TriggerCategory
 import com.eviware.loadui.api.events.BaseEvent
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.util.layout.IntervalModel
@@ -2771,7 +2769,7 @@ compactLayout {
 	}
 }
 
-updateState()]]></con:property><con:property key="startAt" type="java.lang.Long">2</con:property><con:property key="duration" type="java.lang.Long">8</con:property><con:property key="unit" type="java.lang.String">Min</con:property><con:property key="mode" type="java.lang.String">Single</con:property><con:property key="stateProperty" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Interval</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Interval.groovy</con:property><con:property key="_digest">387f400ca1a8c62df8cd212db436e30f</con:property><con:property key="gui.layoutX">735</con:property><con:property key="gui.layoutY">576</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Scheduler" id="ee825185-22ab-42ed-852a-c87859ffbc47" category="scheduler"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// Copyright 2010 eviware software ab
+updateState()]]></con:property><con:property key="startAt" type="java.lang.Long">2</con:property><con:property key="duration" type="java.lang.Long">8</con:property><con:property key="unit" type="java.lang.String">Min</con:property><con:property key="mode" type="java.lang.String">Single</con:property><con:property key="stateProperty" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Interval</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Interval.groovy</con:property><con:property key="_digest">1385693413b9b11cd098b2d141d4af8c</con:property><con:property key="gui.layoutX">735</con:property><con:property key="gui.layoutY">576</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Scheduler" id="ee825185-22ab-42ed-852a-c87859ffbc47" category="scheduler"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
 // versions of the EUPL (the "Licence");
@@ -2803,7 +2801,6 @@ import com.eviware.loadui.api.counter.CounterHolder
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-import com.eviware.loadui.api.component.categories.TriggerCategory
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.util.layout.IntervalModel
 import com.eviware.loadui.util.ScheduledExecutor
@@ -3086,7 +3083,7 @@ settings( label: "Basic" ) {
 }
 
 validateDuration()
-updateState()</con:property><con:property key="day" type="java.lang.String">* (All)</con:property><con:property key="time" type="java.lang.String">0 * *</con:property><con:property key="duration" type="java.lang.Long">10</con:property><con:property key="runsLimit" type="java.lang.Long">0</con:property><con:property key="stateProperty" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Scheduler</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Scheduler.groovy</con:property><con:property key="_digest">9302c34b6e77db8f25c1126791029307</con:property><con:property key="gui.layoutX">1195</con:property><con:property key="gui.layoutY">585</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics" id="05458282-13f4-4c65-a2fe-0687b851e4cc" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[import com.eviware.loadui.api.chart.ChartSerie;
+updateState()</con:property><con:property key="day" type="java.lang.String">* (All)</con:property><con:property key="time" type="java.lang.String">0 * *</con:property><con:property key="duration" type="java.lang.Long">10</con:property><con:property key="runsLimit" type="java.lang.Long">0</con:property><con:property key="stateProperty" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Scheduler</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Scheduler.groovy</con:property><con:property key="_digest">af747cf10381439e257f3f23c57b91ef</con:property><con:property key="gui.layoutX">1195</con:property><con:property key="gui.layoutY">585</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics" id="05458282-13f4-4c65-a2fe-0687b851e4cc" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[import com.eviware.loadui.api.chart.ChartSerie;
 import com.eviware.loadui.api.chart.Point;
 
 // 
@@ -3148,6 +3145,8 @@ import com.eviware.loadui.util.layout.DelayedFormattedString
 
 
 AGGREGATE = "Aggregate"
+AGENT_DATA_TIMESTAMP = "AgentDataTimestamp"
+AGENT_DATA_TTL = 5000
 
 executor = Executors.newSingleThreadScheduledExecutor()
 
@@ -3210,16 +3209,16 @@ y2Range.visible = true
 y2Range.title = 'requests'
 
 ChartModel chartModel = new ChartModel(xRange, yRange, y2Range, 420, 180)
-chartModel.addChartListener(new ChartAdapter(){
-	public void chartCleared(){
-		try{
+chartModel.addChartListener( new ChartAdapter() {
+	public void chartCleared() {
+		try {
 			resetBuffers()
 		}
-		catch(Throwable e2){
+		catch(Throwable e2) {
 			ex(e2, 'chartCleared')
 		}
 	}
-});
+} )
 
 chartModel.addSerie('Max', enableMax.value, true)
 chartModel.addSerie('Min', enableMin.value, true)
@@ -3246,7 +3245,7 @@ long max = 0
 long min = Long.MAX_VALUE
 
 agentData = [:]
-agentStatistics = [:]
+agentStatistics = null
 
 future = null
 boolean connected = true
@@ -3283,13 +3282,14 @@ analyze = { message ->
 onMessage = { o, i, m ->
 	super.onTerminalMessage(o, i, m)
 	if(i == remoteTerminal) {
-		
-		agentData[o.label] = new HashMap(m)
+		def data = new HashMap(m)
+		data[AGENT_DATA_TIMESTAMP] = System.currentTimeMillis();
+		agentData[o.label] = data
 	}
 	
 	if( i == statisticsInput ) {
 		if (  m.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"]) ) {
-			agentStatistics[o.label] = new HashMap(m)
+			agentStatistics = new HashMap(m)
 		} 
 	}
 }
@@ -3342,14 +3342,23 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			
-			send(controllerTerminal, message)
 			send(output, message)
+			
+			if (agentStatistics != null) {
+				message['Requests'] = agentStatistics['Requests']
+				message['Running'] = agentStatistics['Running']
+				message['Discarded'] = agentStatistics['Discarded']
+				message['Queued'] = agentStatistics['Queued']
+				message['Failed'] = agentStatistics['Failed']
+				message['Completed'] = agentStatistics['Completed']
+			}
+			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
 		ex(e1, 'calculate')
 	}
-	
+	def oldKeys = agentData.keySet().findAll { agentData[it][AGENT_DATA_TIMESTAMP] < currentTime - AGENT_DATA_TTL }
+	oldKeys.each { agentData.remove( it ) }
 	if( controller  && ( timeStats.size() > 0 || agentData.size() > 0 ))
 		updateChart( currentTime )
 }
@@ -3362,6 +3371,7 @@ updateChart = { currentTime ->
 			if (inputTerminal.connections.size() > 0) {
 				for( d in agentData.values() ) {
 					if( !d.isEmpty() ) {
+						//println d
 						data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
 						data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
 						data['Avg'] = (data['Avg'] ?: 0) + d['Avg']
@@ -3372,22 +3382,17 @@ updateChart = { currentTime ->
 						data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
 						data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
 						data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
+						data['Requests'] = (data['Requests'] ?:  0) + (d['Requests']?:0)
+						data['Running'] = (data['Running'] ?:  0) + (d['Running']?:0) 
+						data['Completed'] = (data['Completed'] ?: 0) + (d['Completed']?:0)
+						data['Queued'] = (data['Queued'] ?: 0) + (d['Queued']?:0)
+						data['Discarded'] = (data['Discarded'] ?: 0) + (d['Discarded']?:0)
+						data['Failed'] = (data['Failed'] ?: 0) + (d['Failed']?:0)
 						count++
 					}
 				}
 			}
-			if (statisticsInput.connections.size() > 0) {
-				for ( m in agentStatistics.values() ) {
-					if( !m.isEmpty() ) {
-						data['Requests'] = data['Requests'] ?: 0 + m["Requests"]
-						data['Running'] = data['Running'] ?: 0 + m["Running"]
-						data['Completed'] = data['Completed'] ?: 0 + m["Completed"]
-						data['Queued'] = data['Queued'] ?: 0 + m["Queued"]
-						data['Discarded'] = data['Discarded'] ?: 0 + m["Discarded"]
-						data['Failed'] = data['Failed'] ?: 0 + m["Failed"]
-					}
-				}
-			}
+			
 			if( count != 0 ) {
 				data['Avg'] /= count
 				data['Std-Dev'] /= count
@@ -3395,16 +3400,8 @@ updateChart = { currentTime ->
 		} catch( e ) { ex(e, 'Aggregating')
 		}
 	} else {
-		
-		if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] == null) {
-			data = null
-		} else if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] != null) {
-			data = agentStatistics[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] == null) {
-			data = agentData[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] != null) {
-			data = agentData[selectedAgent.value] + agentStatistics[selectedAgent.value]
-		}
+		data = agentData[selectedAgent.value]
+	
 	}
 	if(data == null || data.isEmpty()) {
 		return
@@ -3421,8 +3418,6 @@ updateChart = { currentTime ->
 			if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
 			if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 			if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
-		}
-		if (statisticsInput.connections.size() > 0  && data.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"])) {
 			if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
 			if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
 			if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
@@ -3430,6 +3425,7 @@ updateChart = { currentTime ->
 			if(enableDiscarded.value) chartModel.addPoint(14, currentTime, data['Discarded'])
 			if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
 		}
+		
 		 if (inputTerminal.connections.size() > 0) {
 			avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
 			minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
@@ -3593,8 +3589,8 @@ fixOptions = {
 addEventListener( ActionEvent ) { event ->
 	if( event.key == 'RESET' ) resetComponent()
 	else if( event.key == 'STOP' ) {
-		agentData.clear()
-		agentStatistics.clear()
+		agentData?.clear() // this should never be null but just in case
+		agentStatistics?.clear() // this could be null, so it needs check
 		if( !controller )
 			send( controllerTerminal, newMessage() )
 	}
@@ -3737,7 +3733,7 @@ enableDiscarded.value = false
 buildSignature()
 fixOptions()
 schedule()
-]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">false</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">2ffb1ad6e5378a503f2b4568e0fc952b</con:property><con:property key="gui.layoutX">697</con:property><con:property key="gui.layoutY">1527</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="8a8cf6f5-e6f6-4421-9a9f-5ff5261affa5"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" xsi:nil="true" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="mockService" type="java.lang.String">MockService 1</con:property><con:property key="path" type="java.lang.String">/</con:property><con:property key="port" type="java.lang.String">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1418</con:property><con:property key="gui.layoutY">1432</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:connection outputTerminalId="d9d3b5d3-00e3-4654-b75f-4276c0135340/triggerTerminal" inputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/triggerTerminal"/><con:connection outputTerminalId="04fb6e5f-6328-4d61-8d66-1a7eb3c3965d/triggerTerminal" inputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/triggerTerminal"/><con:connection outputTerminalId="e6588efe-e0c8-463b-b604-398edb7881d5/triggerTerminal" inputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/triggerTerminal"/><con:connection outputTerminalId="e36a65c3-b2e1-4db7-967b-bf70cb77182b/outgoingTerminal" inputTerminalId="d9d3b5d3-00e3-4654-b75f-4276c0135340/stateTerminal"/><con:connection outputTerminalId="f491d887-a1e7-4b12-8174-0b4a9f584525/outgoingTerminal" inputTerminalId="04fb6e5f-6328-4d61-8d66-1a7eb3c3965d/stateTerminal"/><con:connection outputTerminalId="ee825185-22ab-42ed-852a-c87859ffbc47/outgoingTerminal" inputTerminalId="e6588efe-e0c8-463b-b604-398edb7881d5/stateTerminal"/><con:connection outputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/resultTerminal" inputTerminalId="05458282-13f4-4c65-a2fe-0687b851e4cc/inputTerminal"/><con:connection outputTerminalId="f491d887-a1e7-4b12-8174-0b4a9f584525/outgoingTerminal" inputTerminalId="ee825185-22ab-42ed-852a-c87859ffbc47/stateTerminal"/></con:scene><con:scene label="Complex Load Scenario" id="5dd7734e-f092-4152-b2e8-3663dac12bf0" version="41"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="gui.layoutX">1332</con:property><con:property key="gui.layoutY">619</con:property><con:property key="miniature">iVBORw0KGgoAAAANSUhEUgAAALAAAAC8CAYAAADYdSQlAAAu10lEQVR42u1dB5gUxdbdAAsb2JxY
+]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">false</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">31b7652d1771548fcfc36c7ba144fac3</con:property><con:property key="gui.layoutX">697</con:property><con:property key="gui.layoutY">1527</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="8a8cf6f5-e6f6-4421-9a9f-5ff5261affa5"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="mockService" type="java.lang.String">MockService 1</con:property><con:property key="path" type="java.lang.String">/</con:property><con:property key="port" type="java.lang.String">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1418</con:property><con:property key="gui.layoutY">1432</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:connection outputTerminalId="d9d3b5d3-00e3-4654-b75f-4276c0135340/triggerTerminal" inputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/triggerTerminal"/><con:connection outputTerminalId="04fb6e5f-6328-4d61-8d66-1a7eb3c3965d/triggerTerminal" inputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/triggerTerminal"/><con:connection outputTerminalId="e6588efe-e0c8-463b-b604-398edb7881d5/triggerTerminal" inputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/triggerTerminal"/><con:connection outputTerminalId="e36a65c3-b2e1-4db7-967b-bf70cb77182b/outgoingTerminal" inputTerminalId="d9d3b5d3-00e3-4654-b75f-4276c0135340/stateTerminal"/><con:connection outputTerminalId="f491d887-a1e7-4b12-8174-0b4a9f584525/outgoingTerminal" inputTerminalId="04fb6e5f-6328-4d61-8d66-1a7eb3c3965d/stateTerminal"/><con:connection outputTerminalId="ee825185-22ab-42ed-852a-c87859ffbc47/outgoingTerminal" inputTerminalId="e6588efe-e0c8-463b-b604-398edb7881d5/stateTerminal"/><con:connection outputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/resultTerminal" inputTerminalId="05458282-13f4-4c65-a2fe-0687b851e4cc/inputTerminal"/><con:connection outputTerminalId="f491d887-a1e7-4b12-8174-0b4a9f584525/outgoingTerminal" inputTerminalId="ee825185-22ab-42ed-852a-c87859ffbc47/stateTerminal"/></con:scene><con:scene label="Complex Load Scenario" id="5dd7734e-f092-4152-b2e8-3663dac12bf0" version="41"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="gui.layoutX">1332</con:property><con:property key="gui.layoutY">619</con:property><con:property key="miniature">iVBORw0KGgoAAAANSUhEUgAAALAAAAC8CAYAAADYdSQlAAAu10lEQVR42u1dB5gUxdbdAAsb2JxY
 2CWzLDmLZCQjrERZAxIEBEFAMBIEFQVBRAEDGQHJwrIgIFkQECWpgBEDov6CgPE9w+e7f587U2NN
 T8/uhJ6d1DXf/U5XVVdNdffp6or3hoQYzqNuZGZJUuAB40542H3/zba/v7+4jQJDCv7x1H3681A+
 OSOHDr9No++7z6k0fx7cTAYjnXSXvsonf5Zvvsyn52aPoa8+38R+D92mIT/f34VWdm9AG/Na0/Ru
@@ -4058,7 +4054,7 @@ runAction = null
 createProperty( 'url', String )
 createProperty( 'outputBody', Boolean, false )
 
-createProperty( 'propagateSession', Boolean, false )
+//createProperty( 'propagateSession', Boolean, false )
 createProperty( 'readResponse', Boolean, false )
 createProperty( 'raiseAssertion', Boolean, true )
 createProperty( 'errorCodeList', String )
@@ -4066,7 +4062,7 @@ createProperty( 'errorCodeList', String )
 createProperty( 'proxyHost', String)
 createProperty( 'proxyPort', Long)
 createProperty( 'proxyUsername', String)
-createProperty( 'proxyPassword', String)
+proxyPassword = createProperty( '_proxyPassword', String)
 
 eviPattern = ~/https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/
 dummyUrl = "http://GoSpamYourself.com"
@@ -4200,12 +4196,13 @@ sample = { message, sampleId ->
 onCancel = {
 	aborting = true
 	
-	def methods = runningSamples.toArray()
-	methods.each{  method ->
-		if( !method.aborted ) 
-			method.abort()
+	synchronized( runningSamples ) {
+		def methods = runningSamples.toArray()
+		runningSamples.clear()
+		methods.each { method ->
+			if( !method.aborted ) method.abort()
+		}
 	}
-	runningSamples = []
 	aborting = false
 }
 
@@ -4284,7 +4281,7 @@ compactLayout {
 
 settings( label: "Basic" ) {
 	property( property: outputBody, label: 'Output Response Body' )
-	property( property: propagateSession, label: 'Propagate Session' )
+	//property( property: propagateSession, label: 'Propagate Session' )
 	property( property: readResponse, label: 'Read Response' )
 	property( property: raiseAssertion, label: 'Raise Assertion on Error' )
 	property( property: concurrentSamples, label: 'Max Concurrent Requests' )
@@ -4321,8 +4318,7 @@ def statisticsSignature = [
 		"Completed" : Integer.class,
 		]
 
-setSignature(statisticsOutput, statisticsSignature)
-]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">http://localhost:8081/index.html</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">true</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\WebRunner.groovy</con:property><con:property key="_digest">2de883b82ad336b678de15dbe30b7622</con:property><con:property key="gui.layoutX">208</con:property><con:property key="gui.layoutY">729</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Web Page Runner (1)" id="326df2a4-1c3f-49a2-b54c-692b08aff9fa" category="runners"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
+setSignature(statisticsOutput, statisticsSignature)]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">http://localhost:8081/index.html</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">true</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\WebRunner.groovy</con:property><con:property key="_digest">2ae536cbe340efb99cd220cc94343216</con:property><con:property key="gui.layoutX">208</con:property><con:property key="gui.layoutY">729</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Web Page Runner (1)" id="326df2a4-1c3f-49a2-b54c-692b08aff9fa" category="runners"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -4420,7 +4416,7 @@ runAction = null
 createProperty( 'url', String )
 createProperty( 'outputBody', Boolean, false )
 
-createProperty( 'propagateSession', Boolean, false )
+//createProperty( 'propagateSession', Boolean, false )
 createProperty( 'readResponse', Boolean, false )
 createProperty( 'raiseAssertion', Boolean, true )
 createProperty( 'errorCodeList', String )
@@ -4428,7 +4424,7 @@ createProperty( 'errorCodeList', String )
 createProperty( 'proxyHost', String)
 createProperty( 'proxyPort', Long)
 createProperty( 'proxyUsername', String)
-createProperty( 'proxyPassword', String)
+proxyPassword = createProperty( '_proxyPassword', String)
 
 eviPattern = ~/https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/
 dummyUrl = "http://GoSpamYourself.com"
@@ -4562,12 +4558,13 @@ sample = { message, sampleId ->
 onCancel = {
 	aborting = true
 	
-	def methods = runningSamples.toArray()
-	methods.each{  method ->
-		if( !method.aborted ) 
-			method.abort()
+	synchronized( runningSamples ) {
+		def methods = runningSamples.toArray()
+		runningSamples.clear()
+		methods.each { method ->
+			if( !method.aborted ) method.abort()
+		}
 	}
-	runningSamples = []
 	aborting = false
 }
 
@@ -4646,7 +4643,7 @@ compactLayout {
 
 settings( label: "Basic" ) {
 	property( property: outputBody, label: 'Output Response Body' )
-	property( property: propagateSession, label: 'Propagate Session' )
+	//property( property: propagateSession, label: 'Propagate Session' )
 	property( property: readResponse, label: 'Read Response' )
 	property( property: raiseAssertion, label: 'Raise Assertion on Error' )
 	property( property: concurrentSamples, label: 'Max Concurrent Requests' )
@@ -4683,8 +4680,7 @@ def statisticsSignature = [
 		"Completed" : Integer.class,
 		]
 
-setSignature(statisticsOutput, statisticsSignature)
-]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">http://localhost:8081/search.html</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">true</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\WebRunner.groovy</con:property><con:property key="_digest">2de883b82ad336b678de15dbe30b7622</con:property><con:property key="gui.layoutX">200</con:property><con:property key="gui.layoutY">1492</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Delay" id="0ef58711-1bba-4b7d-8f61-3d1793b613c3" category="flow"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
+setSignature(statisticsOutput, statisticsSignature)]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">http://localhost:8081/search.html</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">true</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\WebRunner.groovy</con:property><con:property key="_digest">2ae536cbe340efb99cd220cc94343216</con:property><con:property key="gui.layoutX">200</con:property><con:property key="gui.layoutY">1492</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Delay" id="0ef58711-1bba-4b7d-8f61-3d1793b613c3" category="flow"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -5059,7 +5055,7 @@ if (running)
 	    future?.cancel(true)
 	    executor?.shutdownNow()
 	    roundRobinNext = 0
-	    selected.value = "Round-Robin"
+
 	    total.value = 0
 	    display.setArgs( 0 )
             for( i in 0..9 ) {
@@ -5114,7 +5110,7 @@ compactLayout() {
 		node( label: 'Count', fString: display )
 		node( label: 'Distribution', fString: outputDisplay )
 	}
-}</con:property><con:property key="selected" type="java.lang.String">Round-Robin</con:property><con:property key="outputs" type="java.lang.Integer">3</con:property><con:property key="total" type="java.lang.Integer">0</con:property><con:property key="counterUse" type="java.lang.Boolean">true</con:property><con:property key="updateCounterDelay" type="java.lang.Long">500</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Splitter</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Splitter.groovy</con:property><con:property key="_digest">b1f551a422f26b85a079314c971698fc</con:property><con:property key="gui.layoutX">806</con:property><con:property key="gui.layoutY">429</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="soapUI Runner" id="6002c29e-6cf9-4772-83cd-c862927e5aaa"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestSuite 1</con:property><con:property key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestCase 1</con:property><con:property key="raiseError" type="java.lang.Boolean">true</con:property><con:property key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property key="_testCasePropertiesTableModel" type="java.lang.String"/><con:property key="settingsFileRelativePath" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="useSettingsFileRelativePath" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="settingsFile" type="java.io.File">C:\Users\Ole\soapui-settings.xml</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">861</con:property><con:property key="gui.layoutY">1439</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="bbdf5140-9253-4ead-9782-cbb0a742264e"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" xsi:nil="true" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="mockService" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">MockService 1</con:property><con:property key="path" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/</con:property><con:property key="port" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">531</con:property><con:property key="gui.layoutY">2222</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Delay (1)" id="5bf761b9-8f2d-44ed-adc9-72d49eb32927" category="flow"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
+}</con:property><con:property key="selected" type="java.lang.String">Round-Robin</con:property><con:property key="outputs" type="java.lang.Integer">3</con:property><con:property key="total" type="java.lang.Integer">0</con:property><con:property key="counterUse" type="java.lang.Boolean">true</con:property><con:property key="updateCounterDelay" type="java.lang.Long">500</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Splitter</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Splitter.groovy</con:property><con:property key="_digest">67b976376d623353de1153d358f917a0</con:property><con:property key="gui.layoutX">806</con:property><con:property key="gui.layoutY">429</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="soapUI Runner" id="6002c29e-6cf9-4772-83cd-c862927e5aaa"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestSuite 1</con:property><con:property key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestCase 1</con:property><con:property key="raiseError" type="java.lang.Boolean">true</con:property><con:property key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property key="_testCasePropertiesTableModel" type="java.lang.String"/><con:property key="settingsFileRelativePath" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="useSettingsFileRelativePath" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="settingsFile" type="java.io.File">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">861</con:property><con:property key="gui.layoutY">1439</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="bbdf5140-9253-4ead-9782-cbb0a742264e"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="mockService" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">MockService 1</con:property><con:property key="path" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/</con:property><con:property key="port" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">531</con:property><con:property key="gui.layoutY">2222</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Delay (1)" id="5bf761b9-8f2d-44ed-adc9-72d49eb32927" category="flow"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -5228,7 +5224,7 @@ compactLayout {
 		node( label:'Delay ', fString:display, constraints:'w 60!' )
 		node( label:'Waiting ', fString:waitingDisplay, constraints:'w 50!' )
 	}
-}</con:property><con:property key="delay" type="java.lang.Long">600</con:property><con:property key="selected" type="java.lang.String">Uniform</con:property><con:property key="randomDelay" type="java.lang.Integer">0</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Delay</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Delay.groovy</con:property><con:property key="_digest">bc2f4203c273ad2e0349b2c33426523c</con:property><con:property key="gui.layoutX">877</con:property><con:property key="gui.layoutY">1137</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="soapUI Runner (1)" id="1bc8e660-d490-4a74-a86e-b54c476cf501"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestSuite 1</con:property><con:property key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestCase 1</con:property><con:property key="raiseError" type="java.lang.Boolean">true</con:property><con:property key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property key="_testCasePropertiesTableModel" type="java.lang.String"/><con:property key="settingsFileRelativePath" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="useSettingsFileRelativePath" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="settingsFile" type="java.io.File">C:\Users\Ole\soapui-settings.xml</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">1387</con:property><con:property key="gui.layoutY">774</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Web Page Runner (2)" id="4c20d4f4-9820-4ac8-986f-bb8d89fb7e56" category="runners"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
+}</con:property><con:property key="delay" type="java.lang.Long">600</con:property><con:property key="selected" type="java.lang.String">Uniform</con:property><con:property key="randomDelay" type="java.lang.Integer">0</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Delay</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Delay.groovy</con:property><con:property key="_digest">bc2f4203c273ad2e0349b2c33426523c</con:property><con:property key="gui.layoutX">877</con:property><con:property key="gui.layoutY">1137</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="soapUI Runner (1)" id="1bc8e660-d490-4a74-a86e-b54c476cf501"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestSuite 1</con:property><con:property key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestCase 1</con:property><con:property key="raiseError" type="java.lang.Boolean">true</con:property><con:property key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property key="_testCasePropertiesTableModel" type="java.lang.String"/><con:property key="settingsFileRelativePath" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="useSettingsFileRelativePath" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="settingsFile" type="java.io.File">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">1387</con:property><con:property key="gui.layoutY">774</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Web Page Runner (2)" id="4c20d4f4-9820-4ac8-986f-bb8d89fb7e56" category="runners"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -5326,7 +5322,7 @@ runAction = null
 createProperty( 'url', String )
 createProperty( 'outputBody', Boolean, false )
 
-createProperty( 'propagateSession', Boolean, false )
+//createProperty( 'propagateSession', Boolean, false )
 createProperty( 'readResponse', Boolean, false )
 createProperty( 'raiseAssertion', Boolean, true )
 createProperty( 'errorCodeList', String )
@@ -5334,7 +5330,7 @@ createProperty( 'errorCodeList', String )
 createProperty( 'proxyHost', String)
 createProperty( 'proxyPort', Long)
 createProperty( 'proxyUsername', String)
-createProperty( 'proxyPassword', String)
+proxyPassword = createProperty( '_proxyPassword', String)
 
 eviPattern = ~/https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/
 dummyUrl = "http://GoSpamYourself.com"
@@ -5468,12 +5464,13 @@ sample = { message, sampleId ->
 onCancel = {
 	aborting = true
 	
-	def methods = runningSamples.toArray()
-	methods.each{  method ->
-		if( !method.aborted ) 
-			method.abort()
+	synchronized( runningSamples ) {
+		def methods = runningSamples.toArray()
+		runningSamples.clear()
+		methods.each { method ->
+			if( !method.aborted ) method.abort()
+		}
 	}
-	runningSamples = []
 	aborting = false
 }
 
@@ -5552,7 +5549,7 @@ compactLayout {
 
 settings( label: "Basic" ) {
 	property( property: outputBody, label: 'Output Response Body' )
-	property( property: propagateSession, label: 'Propagate Session' )
+	//property( property: propagateSession, label: 'Propagate Session' )
 	property( property: readResponse, label: 'Read Response' )
 	property( property: raiseAssertion, label: 'Raise Assertion on Error' )
 	property( property: concurrentSamples, label: 'Max Concurrent Requests' )
@@ -5589,8 +5586,7 @@ def statisticsSignature = [
 		"Completed" : Integer.class,
 		]
 
-setSignature(statisticsOutput, statisticsSignature)
-]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">http://localhost:8081/userguide/index.html</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">true</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\WebRunner.groovy</con:property><con:property key="_digest">2de883b82ad336b678de15dbe30b7622</con:property><con:property key="gui.layoutX">213</con:property><con:property key="gui.layoutY">993</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics" id="e9541fa4-a45a-48d2-a964-fe7086dc2511" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[import com.eviware.loadui.api.chart.ChartSerie;
+setSignature(statisticsOutput, statisticsSignature)]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">http://localhost:8081/userguide/index.html</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">true</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\WebRunner.groovy</con:property><con:property key="_digest">2ae536cbe340efb99cd220cc94343216</con:property><con:property key="gui.layoutX">213</con:property><con:property key="gui.layoutY">993</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics" id="e9541fa4-a45a-48d2-a964-fe7086dc2511" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[import com.eviware.loadui.api.chart.ChartSerie;
 import com.eviware.loadui.api.chart.Point;
 
 // 
@@ -5652,6 +5648,8 @@ import com.eviware.loadui.util.layout.DelayedFormattedString
 
 
 AGGREGATE = "Aggregate"
+AGENT_DATA_TIMESTAMP = "AgentDataTimestamp"
+AGENT_DATA_TTL = 5000
 
 executor = Executors.newSingleThreadScheduledExecutor()
 
@@ -5714,16 +5712,16 @@ y2Range.visible = true
 y2Range.title = 'requests'
 
 ChartModel chartModel = new ChartModel(xRange, yRange, y2Range, 420, 180)
-chartModel.addChartListener(new ChartAdapter(){
-	public void chartCleared(){
-		try{
+chartModel.addChartListener( new ChartAdapter() {
+	public void chartCleared() {
+		try {
 			resetBuffers()
 		}
-		catch(Throwable e2){
+		catch(Throwable e2) {
 			ex(e2, 'chartCleared')
 		}
 	}
-});
+} )
 
 chartModel.addSerie('Max', enableMax.value, true)
 chartModel.addSerie('Min', enableMin.value, true)
@@ -5750,7 +5748,7 @@ long max = 0
 long min = Long.MAX_VALUE
 
 agentData = [:]
-agentStatistics = [:]
+agentStatistics = null
 
 future = null
 boolean connected = true
@@ -5787,13 +5785,14 @@ analyze = { message ->
 onMessage = { o, i, m ->
 	super.onTerminalMessage(o, i, m)
 	if(i == remoteTerminal) {
-		
-		agentData[o.label] = new HashMap(m)
+		def data = new HashMap(m)
+		data[AGENT_DATA_TIMESTAMP] = System.currentTimeMillis();
+		agentData[o.label] = data
 	}
 	
 	if( i == statisticsInput ) {
 		if (  m.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"]) ) {
-			agentStatistics[o.label] = new HashMap(m)
+			agentStatistics = new HashMap(m)
 		} 
 	}
 }
@@ -5846,14 +5845,23 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			
-			send(controllerTerminal, message)
 			send(output, message)
+			
+			if (agentStatistics != null) {
+				message['Requests'] = agentStatistics['Requests']
+				message['Running'] = agentStatistics['Running']
+				message['Discarded'] = agentStatistics['Discarded']
+				message['Queued'] = agentStatistics['Queued']
+				message['Failed'] = agentStatistics['Failed']
+				message['Completed'] = agentStatistics['Completed']
+			}
+			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
 		ex(e1, 'calculate')
 	}
-	
+	def oldKeys = agentData.keySet().findAll { agentData[it][AGENT_DATA_TIMESTAMP] < currentTime - AGENT_DATA_TTL }
+	oldKeys.each { agentData.remove( it ) }
 	if( controller  && ( timeStats.size() > 0 || agentData.size() > 0 ))
 		updateChart( currentTime )
 }
@@ -5866,6 +5874,7 @@ updateChart = { currentTime ->
 			if (inputTerminal.connections.size() > 0) {
 				for( d in agentData.values() ) {
 					if( !d.isEmpty() ) {
+						//println d
 						data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
 						data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
 						data['Avg'] = (data['Avg'] ?: 0) + d['Avg']
@@ -5876,22 +5885,17 @@ updateChart = { currentTime ->
 						data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
 						data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
 						data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
+						data['Requests'] = (data['Requests'] ?:  0) + (d['Requests']?:0)
+						data['Running'] = (data['Running'] ?:  0) + (d['Running']?:0) 
+						data['Completed'] = (data['Completed'] ?: 0) + (d['Completed']?:0)
+						data['Queued'] = (data['Queued'] ?: 0) + (d['Queued']?:0)
+						data['Discarded'] = (data['Discarded'] ?: 0) + (d['Discarded']?:0)
+						data['Failed'] = (data['Failed'] ?: 0) + (d['Failed']?:0)
 						count++
 					}
 				}
 			}
-			if (statisticsInput.connections.size() > 0) {
-				for ( m in agentStatistics.values() ) {
-					if( !m.isEmpty() ) {
-						data['Requests'] = data['Requests'] ?: 0 + m["Requests"]
-						data['Running'] = data['Running'] ?: 0 + m["Running"]
-						data['Completed'] = data['Completed'] ?: 0 + m["Completed"]
-						data['Queued'] = data['Queued'] ?: 0 + m["Queued"]
-						data['Discarded'] = data['Discarded'] ?: 0 + m["Discarded"]
-						data['Failed'] = data['Failed'] ?: 0 + m["Failed"]
-					}
-				}
-			}
+			
 			if( count != 0 ) {
 				data['Avg'] /= count
 				data['Std-Dev'] /= count
@@ -5899,16 +5903,8 @@ updateChart = { currentTime ->
 		} catch( e ) { ex(e, 'Aggregating')
 		}
 	} else {
-		
-		if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] == null) {
-			data = null
-		} else if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] != null) {
-			data = agentStatistics[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] == null) {
-			data = agentData[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] != null) {
-			data = agentData[selectedAgent.value] + agentStatistics[selectedAgent.value]
-		}
+		data = agentData[selectedAgent.value]
+	
 	}
 	if(data == null || data.isEmpty()) {
 		return
@@ -5925,8 +5921,6 @@ updateChart = { currentTime ->
 			if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
 			if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 			if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
-		}
-		if (statisticsInput.connections.size() > 0  && data.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"])) {
 			if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
 			if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
 			if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
@@ -5934,6 +5928,7 @@ updateChart = { currentTime ->
 			if(enableDiscarded.value) chartModel.addPoint(14, currentTime, data['Discarded'])
 			if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
 		}
+		
 		 if (inputTerminal.connections.size() > 0) {
 			avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
 			minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
@@ -6097,8 +6092,8 @@ fixOptions = {
 addEventListener( ActionEvent ) { event ->
 	if( event.key == 'RESET' ) resetComponent()
 	else if( event.key == 'STOP' ) {
-		agentData.clear()
-		agentStatistics.clear()
+		agentData?.clear() // this should never be null but just in case
+		agentStatistics?.clear() // this could be null, so it needs check
 		if( !controller )
 			send( controllerTerminal, newMessage() )
 	}
@@ -6241,7 +6236,7 @@ enableDiscarded.value = false
 buildSignature()
 fixOptions()
 schedule()
-]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">2ffb1ad6e5378a503f2b4568e0fc952b</con:property><con:property key="gui.layoutX">860</con:property><con:property key="gui.layoutY">1813</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics (1)" id="660696d8-1a52-40c2-9fdc-335d80d83bf4" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[import com.eviware.loadui.api.chart.ChartSerie;
+]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">31b7652d1771548fcfc36c7ba144fac3</con:property><con:property key="gui.layoutX">860</con:property><con:property key="gui.layoutY">1813</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics (1)" id="660696d8-1a52-40c2-9fdc-335d80d83bf4" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[import com.eviware.loadui.api.chart.ChartSerie;
 import com.eviware.loadui.api.chart.Point;
 
 // 
@@ -6303,6 +6298,8 @@ import com.eviware.loadui.util.layout.DelayedFormattedString
 
 
 AGGREGATE = "Aggregate"
+AGENT_DATA_TIMESTAMP = "AgentDataTimestamp"
+AGENT_DATA_TTL = 5000
 
 executor = Executors.newSingleThreadScheduledExecutor()
 
@@ -6365,16 +6362,16 @@ y2Range.visible = true
 y2Range.title = 'requests'
 
 ChartModel chartModel = new ChartModel(xRange, yRange, y2Range, 420, 180)
-chartModel.addChartListener(new ChartAdapter(){
-	public void chartCleared(){
-		try{
+chartModel.addChartListener( new ChartAdapter() {
+	public void chartCleared() {
+		try {
 			resetBuffers()
 		}
-		catch(Throwable e2){
+		catch(Throwable e2) {
 			ex(e2, 'chartCleared')
 		}
 	}
-});
+} )
 
 chartModel.addSerie('Max', enableMax.value, true)
 chartModel.addSerie('Min', enableMin.value, true)
@@ -6401,7 +6398,7 @@ long max = 0
 long min = Long.MAX_VALUE
 
 agentData = [:]
-agentStatistics = [:]
+agentStatistics = null
 
 future = null
 boolean connected = true
@@ -6438,13 +6435,14 @@ analyze = { message ->
 onMessage = { o, i, m ->
 	super.onTerminalMessage(o, i, m)
 	if(i == remoteTerminal) {
-		
-		agentData[o.label] = new HashMap(m)
+		def data = new HashMap(m)
+		data[AGENT_DATA_TIMESTAMP] = System.currentTimeMillis();
+		agentData[o.label] = data
 	}
 	
 	if( i == statisticsInput ) {
 		if (  m.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"]) ) {
-			agentStatistics[o.label] = new HashMap(m)
+			agentStatistics = new HashMap(m)
 		} 
 	}
 }
@@ -6497,14 +6495,23 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			
-			send(controllerTerminal, message)
 			send(output, message)
+			
+			if (agentStatistics != null) {
+				message['Requests'] = agentStatistics['Requests']
+				message['Running'] = agentStatistics['Running']
+				message['Discarded'] = agentStatistics['Discarded']
+				message['Queued'] = agentStatistics['Queued']
+				message['Failed'] = agentStatistics['Failed']
+				message['Completed'] = agentStatistics['Completed']
+			}
+			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
 		ex(e1, 'calculate')
 	}
-	
+	def oldKeys = agentData.keySet().findAll { agentData[it][AGENT_DATA_TIMESTAMP] < currentTime - AGENT_DATA_TTL }
+	oldKeys.each { agentData.remove( it ) }
 	if( controller  && ( timeStats.size() > 0 || agentData.size() > 0 ))
 		updateChart( currentTime )
 }
@@ -6517,6 +6524,7 @@ updateChart = { currentTime ->
 			if (inputTerminal.connections.size() > 0) {
 				for( d in agentData.values() ) {
 					if( !d.isEmpty() ) {
+						//println d
 						data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
 						data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
 						data['Avg'] = (data['Avg'] ?: 0) + d['Avg']
@@ -6527,22 +6535,17 @@ updateChart = { currentTime ->
 						data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
 						data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
 						data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
+						data['Requests'] = (data['Requests'] ?:  0) + (d['Requests']?:0)
+						data['Running'] = (data['Running'] ?:  0) + (d['Running']?:0) 
+						data['Completed'] = (data['Completed'] ?: 0) + (d['Completed']?:0)
+						data['Queued'] = (data['Queued'] ?: 0) + (d['Queued']?:0)
+						data['Discarded'] = (data['Discarded'] ?: 0) + (d['Discarded']?:0)
+						data['Failed'] = (data['Failed'] ?: 0) + (d['Failed']?:0)
 						count++
 					}
 				}
 			}
-			if (statisticsInput.connections.size() > 0) {
-				for ( m in agentStatistics.values() ) {
-					if( !m.isEmpty() ) {
-						data['Requests'] = data['Requests'] ?: 0 + m["Requests"]
-						data['Running'] = data['Running'] ?: 0 + m["Running"]
-						data['Completed'] = data['Completed'] ?: 0 + m["Completed"]
-						data['Queued'] = data['Queued'] ?: 0 + m["Queued"]
-						data['Discarded'] = data['Discarded'] ?: 0 + m["Discarded"]
-						data['Failed'] = data['Failed'] ?: 0 + m["Failed"]
-					}
-				}
-			}
+			
 			if( count != 0 ) {
 				data['Avg'] /= count
 				data['Std-Dev'] /= count
@@ -6550,16 +6553,8 @@ updateChart = { currentTime ->
 		} catch( e ) { ex(e, 'Aggregating')
 		}
 	} else {
-		
-		if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] == null) {
-			data = null
-		} else if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] != null) {
-			data = agentStatistics[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] == null) {
-			data = agentData[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] != null) {
-			data = agentData[selectedAgent.value] + agentStatistics[selectedAgent.value]
-		}
+		data = agentData[selectedAgent.value]
+	
 	}
 	if(data == null || data.isEmpty()) {
 		return
@@ -6576,8 +6571,6 @@ updateChart = { currentTime ->
 			if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
 			if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 			if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
-		}
-		if (statisticsInput.connections.size() > 0  && data.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"])) {
 			if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
 			if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
 			if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
@@ -6585,6 +6578,7 @@ updateChart = { currentTime ->
 			if(enableDiscarded.value) chartModel.addPoint(14, currentTime, data['Discarded'])
 			if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
 		}
+		
 		 if (inputTerminal.connections.size() > 0) {
 			avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
 			minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
@@ -6748,8 +6742,8 @@ fixOptions = {
 addEventListener( ActionEvent ) { event ->
 	if( event.key == 'RESET' ) resetComponent()
 	else if( event.key == 'STOP' ) {
-		agentData.clear()
-		agentStatistics.clear()
+		agentData?.clear() // this should never be null but just in case
+		agentStatistics?.clear() // this could be null, so it needs check
 		if( !controller )
 			send( controllerTerminal, newMessage() )
 	}
@@ -6892,7 +6886,7 @@ enableDiscarded.value = false
 buildSignature()
 fixOptions()
 schedule()
-]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">2ffb1ad6e5378a503f2b4568e0fc952b</con:property><con:property key="gui.layoutX">217</con:property><con:property key="gui.layoutY">1807</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics (2)" id="fd7c8cf3-894d-4297-8b24-fa3c3db378c1" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[import com.eviware.loadui.api.chart.ChartSerie;
+]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">31b7652d1771548fcfc36c7ba144fac3</con:property><con:property key="gui.layoutX">217</con:property><con:property key="gui.layoutY">1807</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics (2)" id="fd7c8cf3-894d-4297-8b24-fa3c3db378c1" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[import com.eviware.loadui.api.chart.ChartSerie;
 import com.eviware.loadui.api.chart.Point;
 
 // 
@@ -6954,6 +6948,8 @@ import com.eviware.loadui.util.layout.DelayedFormattedString
 
 
 AGGREGATE = "Aggregate"
+AGENT_DATA_TIMESTAMP = "AgentDataTimestamp"
+AGENT_DATA_TTL = 5000
 
 executor = Executors.newSingleThreadScheduledExecutor()
 
@@ -7016,16 +7012,16 @@ y2Range.visible = true
 y2Range.title = 'requests'
 
 ChartModel chartModel = new ChartModel(xRange, yRange, y2Range, 420, 180)
-chartModel.addChartListener(new ChartAdapter(){
-	public void chartCleared(){
-		try{
+chartModel.addChartListener( new ChartAdapter() {
+	public void chartCleared() {
+		try {
 			resetBuffers()
 		}
-		catch(Throwable e2){
+		catch(Throwable e2) {
 			ex(e2, 'chartCleared')
 		}
 	}
-});
+} )
 
 chartModel.addSerie('Max', enableMax.value, true)
 chartModel.addSerie('Min', enableMin.value, true)
@@ -7052,7 +7048,7 @@ long max = 0
 long min = Long.MAX_VALUE
 
 agentData = [:]
-agentStatistics = [:]
+agentStatistics = null
 
 future = null
 boolean connected = true
@@ -7089,13 +7085,14 @@ analyze = { message ->
 onMessage = { o, i, m ->
 	super.onTerminalMessage(o, i, m)
 	if(i == remoteTerminal) {
-		
-		agentData[o.label] = new HashMap(m)
+		def data = new HashMap(m)
+		data[AGENT_DATA_TIMESTAMP] = System.currentTimeMillis();
+		agentData[o.label] = data
 	}
 	
 	if( i == statisticsInput ) {
 		if (  m.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"]) ) {
-			agentStatistics[o.label] = new HashMap(m)
+			agentStatistics = new HashMap(m)
 		} 
 	}
 }
@@ -7148,14 +7145,23 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			
-			send(controllerTerminal, message)
 			send(output, message)
+			
+			if (agentStatistics != null) {
+				message['Requests'] = agentStatistics['Requests']
+				message['Running'] = agentStatistics['Running']
+				message['Discarded'] = agentStatistics['Discarded']
+				message['Queued'] = agentStatistics['Queued']
+				message['Failed'] = agentStatistics['Failed']
+				message['Completed'] = agentStatistics['Completed']
+			}
+			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
 		ex(e1, 'calculate')
 	}
-	
+	def oldKeys = agentData.keySet().findAll { agentData[it][AGENT_DATA_TIMESTAMP] < currentTime - AGENT_DATA_TTL }
+	oldKeys.each { agentData.remove( it ) }
 	if( controller  && ( timeStats.size() > 0 || agentData.size() > 0 ))
 		updateChart( currentTime )
 }
@@ -7168,6 +7174,7 @@ updateChart = { currentTime ->
 			if (inputTerminal.connections.size() > 0) {
 				for( d in agentData.values() ) {
 					if( !d.isEmpty() ) {
+						//println d
 						data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
 						data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
 						data['Avg'] = (data['Avg'] ?: 0) + d['Avg']
@@ -7178,22 +7185,17 @@ updateChart = { currentTime ->
 						data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
 						data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
 						data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
+						data['Requests'] = (data['Requests'] ?:  0) + (d['Requests']?:0)
+						data['Running'] = (data['Running'] ?:  0) + (d['Running']?:0) 
+						data['Completed'] = (data['Completed'] ?: 0) + (d['Completed']?:0)
+						data['Queued'] = (data['Queued'] ?: 0) + (d['Queued']?:0)
+						data['Discarded'] = (data['Discarded'] ?: 0) + (d['Discarded']?:0)
+						data['Failed'] = (data['Failed'] ?: 0) + (d['Failed']?:0)
 						count++
 					}
 				}
 			}
-			if (statisticsInput.connections.size() > 0) {
-				for ( m in agentStatistics.values() ) {
-					if( !m.isEmpty() ) {
-						data['Requests'] = data['Requests'] ?: 0 + m["Requests"]
-						data['Running'] = data['Running'] ?: 0 + m["Running"]
-						data['Completed'] = data['Completed'] ?: 0 + m["Completed"]
-						data['Queued'] = data['Queued'] ?: 0 + m["Queued"]
-						data['Discarded'] = data['Discarded'] ?: 0 + m["Discarded"]
-						data['Failed'] = data['Failed'] ?: 0 + m["Failed"]
-					}
-				}
-			}
+			
 			if( count != 0 ) {
 				data['Avg'] /= count
 				data['Std-Dev'] /= count
@@ -7201,16 +7203,8 @@ updateChart = { currentTime ->
 		} catch( e ) { ex(e, 'Aggregating')
 		}
 	} else {
-		
-		if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] == null) {
-			data = null
-		} else if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] != null) {
-			data = agentStatistics[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] == null) {
-			data = agentData[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] != null) {
-			data = agentData[selectedAgent.value] + agentStatistics[selectedAgent.value]
-		}
+		data = agentData[selectedAgent.value]
+	
 	}
 	if(data == null || data.isEmpty()) {
 		return
@@ -7227,8 +7221,6 @@ updateChart = { currentTime ->
 			if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
 			if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 			if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
-		}
-		if (statisticsInput.connections.size() > 0  && data.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"])) {
 			if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
 			if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
 			if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
@@ -7236,6 +7228,7 @@ updateChart = { currentTime ->
 			if(enableDiscarded.value) chartModel.addPoint(14, currentTime, data['Discarded'])
 			if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
 		}
+		
 		 if (inputTerminal.connections.size() > 0) {
 			avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
 			minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
@@ -7399,8 +7392,8 @@ fixOptions = {
 addEventListener( ActionEvent ) { event ->
 	if( event.key == 'RESET' ) resetComponent()
 	else if( event.key == 'STOP' ) {
-		agentData.clear()
-		agentStatistics.clear()
+		agentData?.clear() // this should never be null but just in case
+		agentStatistics?.clear() // this could be null, so it needs check
 		if( !controller )
 			send( controllerTerminal, newMessage() )
 	}
@@ -7543,7 +7536,7 @@ enableDiscarded.value = false
 buildSignature()
 fixOptions()
 schedule()
-]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">2ffb1ad6e5378a503f2b4568e0fc952b</con:property><con:property key="gui.layoutX">1473</con:property><con:property key="gui.layoutY">1813</con:property></con:attributes></con:component><con:connection outputTerminalId="0ef58711-1bba-4b7d-8f61-3d1793b613c3/output" inputTerminalId="326df2a4-1c3f-49a2-b54c-692b08aff9fa/triggerTerminal"/><con:connection outputTerminalId="04f2b993-146a-4b70-b022-94456e361e46/triggerTerminal" inputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/incomingTerminal"/><con:connection outputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/outgoingTerminal 1" inputTerminalId="551df37b-ca36-4721-a266-33d59cff8bd3/triggerTerminal"/><con:connection outputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/outgoingTerminal 2" inputTerminalId="5bf761b9-8f2d-44ed-adc9-72d49eb32927/incomingTerminal"/><con:connection outputTerminalId="5bf761b9-8f2d-44ed-adc9-72d49eb32927/output" inputTerminalId="6002c29e-6cf9-4772-83cd-c862927e5aaa/triggerTerminal"/><con:connection outputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/outgoingTerminal 3" inputTerminalId="1bc8e660-d490-4a74-a86e-b54c476cf501/triggerTerminal"/><con:connection outputTerminalId="1bc8e660-d490-4a74-a86e-b54c476cf501/resultTerminal" inputTerminalId="5bf761b9-8f2d-44ed-adc9-72d49eb32927/incomingTerminal"/><con:connection outputTerminalId="551df37b-ca36-4721-a266-33d59cff8bd3/resultTerminal" inputTerminalId="4c20d4f4-9820-4ac8-986f-bb8d89fb7e56/triggerTerminal"/><con:connection outputTerminalId="4c20d4f4-9820-4ac8-986f-bb8d89fb7e56/resultTerminal" inputTerminalId="0ef58711-1bba-4b7d-8f61-3d1793b613c3/incomingTerminal"/><con:connection outputTerminalId="6002c29e-6cf9-4772-83cd-c862927e5aaa/resultTerminal" inputTerminalId="e9541fa4-a45a-48d2-a964-fe7086dc2511/inputTerminal"/><con:connection outputTerminalId="326df2a4-1c3f-49a2-b54c-692b08aff9fa/resultTerminal" inputTerminalId="660696d8-1a52-40c2-9fdc-335d80d83bf4/inputTerminal"/><con:connection outputTerminalId="1bc8e660-d490-4a74-a86e-b54c476cf501/resultTerminal" inputTerminalId="fd7c8cf3-894d-4297-8b24-fa3c3db378c1/inputTerminal"/></con:scene><con:scene label="Web LoadTest with Assertions" id="e00b1ef7-ae48-48e1-972a-f8b8caefe44c" version="35"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="gui.layoutX">490</con:property><con:property key="gui.layoutY">624</con:property><con:property key="gui.note.0">200;452;282;93;Here the same Generator -> Runner -> Analysis setup as in the first example is set up, but the runner and statistics components have been minimized to make room for the assertions below</con:property><con:property key="miniature">iVBORw0KGgoAAAANSUhEUgAAAMoAAACSCAYAAAAEuFUyAAAgaElEQVR42u1dB1gVx9oOCGKJib3E
+]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">31b7652d1771548fcfc36c7ba144fac3</con:property><con:property key="gui.layoutX">1473</con:property><con:property key="gui.layoutY">1813</con:property></con:attributes></con:component><con:connection outputTerminalId="0ef58711-1bba-4b7d-8f61-3d1793b613c3/output" inputTerminalId="326df2a4-1c3f-49a2-b54c-692b08aff9fa/triggerTerminal"/><con:connection outputTerminalId="04f2b993-146a-4b70-b022-94456e361e46/triggerTerminal" inputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/incomingTerminal"/><con:connection outputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/outgoingTerminal 1" inputTerminalId="551df37b-ca36-4721-a266-33d59cff8bd3/triggerTerminal"/><con:connection outputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/outgoingTerminal 2" inputTerminalId="5bf761b9-8f2d-44ed-adc9-72d49eb32927/incomingTerminal"/><con:connection outputTerminalId="5bf761b9-8f2d-44ed-adc9-72d49eb32927/output" inputTerminalId="6002c29e-6cf9-4772-83cd-c862927e5aaa/triggerTerminal"/><con:connection outputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/outgoingTerminal 3" inputTerminalId="1bc8e660-d490-4a74-a86e-b54c476cf501/triggerTerminal"/><con:connection outputTerminalId="1bc8e660-d490-4a74-a86e-b54c476cf501/resultTerminal" inputTerminalId="5bf761b9-8f2d-44ed-adc9-72d49eb32927/incomingTerminal"/><con:connection outputTerminalId="551df37b-ca36-4721-a266-33d59cff8bd3/resultTerminal" inputTerminalId="4c20d4f4-9820-4ac8-986f-bb8d89fb7e56/triggerTerminal"/><con:connection outputTerminalId="4c20d4f4-9820-4ac8-986f-bb8d89fb7e56/resultTerminal" inputTerminalId="0ef58711-1bba-4b7d-8f61-3d1793b613c3/incomingTerminal"/><con:connection outputTerminalId="6002c29e-6cf9-4772-83cd-c862927e5aaa/resultTerminal" inputTerminalId="e9541fa4-a45a-48d2-a964-fe7086dc2511/inputTerminal"/><con:connection outputTerminalId="326df2a4-1c3f-49a2-b54c-692b08aff9fa/resultTerminal" inputTerminalId="660696d8-1a52-40c2-9fdc-335d80d83bf4/inputTerminal"/><con:connection outputTerminalId="1bc8e660-d490-4a74-a86e-b54c476cf501/resultTerminal" inputTerminalId="fd7c8cf3-894d-4297-8b24-fa3c3db378c1/inputTerminal"/></con:scene><con:scene label="Web LoadTest with Assertions" id="e00b1ef7-ae48-48e1-972a-f8b8caefe44c" version="35"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="gui.layoutX">490</con:property><con:property key="gui.layoutY">624</con:property><con:property key="gui.note.0">200;452;282;93;Here the same Generator -> Runner -> Analysis setup as in the first example is set up, but the runner and statistics components have been minimized to make room for the assertions below</con:property><con:property key="miniature">iVBORw0KGgoAAAANSUhEUgAAAMoAAACSCAYAAAAEuFUyAAAgaElEQVR42u1dB1gVx9oOCGKJib3E
 xI6J16CJMV5jEjW2GDXWKGAXLKjYUFGMEBtGsaIgglhQpPeuoiKIsSt2Y+8VhTS99/+f//v3Hdx1
 OSxwDpwD58B8z/M+Mzs7OzszO+98M7O737zzDhcuXLhw4VLu5OGdGOLQH/AWqady71YkxUVvJLgc
 JY9NHnMoJHApA455i9RTuXMjnDj0B7xF6qn8549E4tAf8Bapz0TJ5g2UE4UL1yicKFy0TZSUfesp
@@ -7792,7 +7785,7 @@ runAction = null
 createProperty( 'url', String )
 createProperty( 'outputBody', Boolean, false )
 
-createProperty( 'propagateSession', Boolean, false )
+//createProperty( 'propagateSession', Boolean, false )
 createProperty( 'readResponse', Boolean, false )
 createProperty( 'raiseAssertion', Boolean, true )
 createProperty( 'errorCodeList', String )
@@ -7800,7 +7793,7 @@ createProperty( 'errorCodeList', String )
 createProperty( 'proxyHost', String)
 createProperty( 'proxyPort', Long)
 createProperty( 'proxyUsername', String)
-createProperty( 'proxyPassword', String)
+proxyPassword = createProperty( '_proxyPassword', String)
 
 eviPattern = ~/https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/
 dummyUrl = "http://GoSpamYourself.com"
@@ -7934,12 +7927,13 @@ sample = { message, sampleId ->
 onCancel = {
 	aborting = true
 	
-	def methods = runningSamples.toArray()
-	methods.each{  method ->
-		if( !method.aborted ) 
-			method.abort()
+	synchronized( runningSamples ) {
+		def methods = runningSamples.toArray()
+		runningSamples.clear()
+		methods.each { method ->
+			if( !method.aborted ) method.abort()
+		}
 	}
-	runningSamples = []
 	aborting = false
 }
 
@@ -8018,7 +8012,7 @@ compactLayout {
 
 settings( label: "Basic" ) {
 	property( property: outputBody, label: 'Output Response Body' )
-	property( property: propagateSession, label: 'Propagate Session' )
+	//property( property: propagateSession, label: 'Propagate Session' )
 	property( property: readResponse, label: 'Read Response' )
 	property( property: raiseAssertion, label: 'Raise Assertion on Error' )
 	property( property: concurrentSamples, label: 'Max Concurrent Requests' )
@@ -8055,8 +8049,7 @@ def statisticsSignature = [
 		"Completed" : Integer.class,
 		]
 
-setSignature(statisticsOutput, statisticsSignature)
-]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String">http://localhost:8081</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">true</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\WebRunner.groovy</con:property><con:property key="_digest">2de883b82ad336b678de15dbe30b7622</con:property><con:property key="gui.layoutX">984</con:property><con:property key="gui.layoutY">442</con:property><con:property key="gui.compact">true</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Fixed Rate" id="d3bcc7bc-0cc5-4156-b35e-34b23d579654" category="generators"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
+setSignature(statisticsOutput, statisticsSignature)]]></con:property><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="url" type="java.lang.String">http://localhost:8081</con:property><con:property key="outputBody" type="java.lang.Boolean">false</con:property><con:property key="propagateSession" type="java.lang.Boolean">false</con:property><con:property key="readResponse" type="java.lang.Boolean">false</con:property><con:property key="raiseAssertion" type="java.lang.Boolean">true</con:property><con:property key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\WebRunner.groovy</con:property><con:property key="_digest">2ae536cbe340efb99cd220cc94343216</con:property><con:property key="gui.layoutX">984</con:property><con:property key="gui.layoutY">442</con:property><con:property key="gui.compact">true</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Fixed Rate" id="d3bcc7bc-0cc5-4156-b35e-34b23d579654" category="generators"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -8250,6 +8243,8 @@ import com.eviware.loadui.util.layout.DelayedFormattedString
 
 
 AGGREGATE = "Aggregate"
+AGENT_DATA_TIMESTAMP = "AgentDataTimestamp"
+AGENT_DATA_TTL = 5000
 
 executor = Executors.newSingleThreadScheduledExecutor()
 
@@ -8312,16 +8307,16 @@ y2Range.visible = true
 y2Range.title = 'requests'
 
 ChartModel chartModel = new ChartModel(xRange, yRange, y2Range, 420, 180)
-chartModel.addChartListener(new ChartAdapter(){
-	public void chartCleared(){
-		try{
+chartModel.addChartListener( new ChartAdapter() {
+	public void chartCleared() {
+		try {
 			resetBuffers()
 		}
-		catch(Throwable e2){
+		catch(Throwable e2) {
 			ex(e2, 'chartCleared')
 		}
 	}
-});
+} )
 
 chartModel.addSerie('Max', enableMax.value, true)
 chartModel.addSerie('Min', enableMin.value, true)
@@ -8348,7 +8343,7 @@ long max = 0
 long min = Long.MAX_VALUE
 
 agentData = [:]
-agentStatistics = [:]
+agentStatistics = null
 
 future = null
 boolean connected = true
@@ -8385,13 +8380,14 @@ analyze = { message ->
 onMessage = { o, i, m ->
 	super.onTerminalMessage(o, i, m)
 	if(i == remoteTerminal) {
-		
-		agentData[o.label] = new HashMap(m)
+		def data = new HashMap(m)
+		data[AGENT_DATA_TIMESTAMP] = System.currentTimeMillis();
+		agentData[o.label] = data
 	}
 	
 	if( i == statisticsInput ) {
 		if (  m.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"]) ) {
-			agentStatistics[o.label] = new HashMap(m)
+			agentStatistics = new HashMap(m)
 		} 
 	}
 }
@@ -8444,14 +8440,23 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			
-			send(controllerTerminal, message)
 			send(output, message)
+			
+			if (agentStatistics != null) {
+				message['Requests'] = agentStatistics['Requests']
+				message['Running'] = agentStatistics['Running']
+				message['Discarded'] = agentStatistics['Discarded']
+				message['Queued'] = agentStatistics['Queued']
+				message['Failed'] = agentStatistics['Failed']
+				message['Completed'] = agentStatistics['Completed']
+			}
+			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
 		ex(e1, 'calculate')
 	}
-	
+	def oldKeys = agentData.keySet().findAll { agentData[it][AGENT_DATA_TIMESTAMP] < currentTime - AGENT_DATA_TTL }
+	oldKeys.each { agentData.remove( it ) }
 	if( controller  && ( timeStats.size() > 0 || agentData.size() > 0 ))
 		updateChart( currentTime )
 }
@@ -8464,6 +8469,7 @@ updateChart = { currentTime ->
 			if (inputTerminal.connections.size() > 0) {
 				for( d in agentData.values() ) {
 					if( !d.isEmpty() ) {
+						//println d
 						data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
 						data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
 						data['Avg'] = (data['Avg'] ?: 0) + d['Avg']
@@ -8474,22 +8480,17 @@ updateChart = { currentTime ->
 						data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
 						data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
 						data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
+						data['Requests'] = (data['Requests'] ?:  0) + (d['Requests']?:0)
+						data['Running'] = (data['Running'] ?:  0) + (d['Running']?:0) 
+						data['Completed'] = (data['Completed'] ?: 0) + (d['Completed']?:0)
+						data['Queued'] = (data['Queued'] ?: 0) + (d['Queued']?:0)
+						data['Discarded'] = (data['Discarded'] ?: 0) + (d['Discarded']?:0)
+						data['Failed'] = (data['Failed'] ?: 0) + (d['Failed']?:0)
 						count++
 					}
 				}
 			}
-			if (statisticsInput.connections.size() > 0) {
-				for ( m in agentStatistics.values() ) {
-					if( !m.isEmpty() ) {
-						data['Requests'] = data['Requests'] ?: 0 + m["Requests"]
-						data['Running'] = data['Running'] ?: 0 + m["Running"]
-						data['Completed'] = data['Completed'] ?: 0 + m["Completed"]
-						data['Queued'] = data['Queued'] ?: 0 + m["Queued"]
-						data['Discarded'] = data['Discarded'] ?: 0 + m["Discarded"]
-						data['Failed'] = data['Failed'] ?: 0 + m["Failed"]
-					}
-				}
-			}
+			
 			if( count != 0 ) {
 				data['Avg'] /= count
 				data['Std-Dev'] /= count
@@ -8497,16 +8498,8 @@ updateChart = { currentTime ->
 		} catch( e ) { ex(e, 'Aggregating')
 		}
 	} else {
-		
-		if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] == null) {
-			data = null
-		} else if (agentData[selectedAgent.value] == null && agentStatistics[selectedAgent.value] != null) {
-			data = agentStatistics[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] == null) {
-			data = agentData[selectedAgent.value]
-		} else if (agentData[selectedAgent.value] != null && agentStatistics[selectedAgent.value] != null) {
-			data = agentData[selectedAgent.value] + agentStatistics[selectedAgent.value]
-		}
+		data = agentData[selectedAgent.value]
+	
 	}
 	if(data == null || data.isEmpty()) {
 		return
@@ -8523,8 +8516,6 @@ updateChart = { currentTime ->
 			if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
 			if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 			if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
-		}
-		if (statisticsInput.connections.size() > 0  && data.keySet().containsAll(["Requests", "Queued", "Running", "Completed", "Failed", "Discarded"])) {
 			if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
 			if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
 			if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
@@ -8532,6 +8523,7 @@ updateChart = { currentTime ->
 			if(enableDiscarded.value) chartModel.addPoint(14, currentTime, data['Discarded'])
 			if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
 		}
+		
 		 if (inputTerminal.connections.size() > 0) {
 			avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
 			minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
@@ -8695,8 +8687,8 @@ fixOptions = {
 addEventListener( ActionEvent ) { event ->
 	if( event.key == 'RESET' ) resetComponent()
 	else if( event.key == 'STOP' ) {
-		agentData.clear()
-		agentStatistics.clear()
+		agentData?.clear() // this should never be null but just in case
+		agentStatistics?.clear() // this could be null, so it needs check
 		if( !controller )
 			send( controllerTerminal, newMessage() )
 	}
@@ -8839,7 +8831,7 @@ enableDiscarded.value = false
 buildSignature()
 fixOptions()
 schedule()
-]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">2ffb1ad6e5378a503f2b4568e0fc952b</con:property><con:property key="gui.layoutX">1286</con:property><con:property key="gui.layoutY">445</con:property><con:property key="gui.compact">true</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="c1af622e-3b62-46db-b5ee-49dc008eaaa1"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" xsi:nil="true" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="mockService" type="java.lang.String">MockService 1</con:property><con:property key="path" type="java.lang.String">/</con:property><con:property key="port" type="java.lang.String">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1586</con:property><con:property key="gui.layoutY">1217</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Assertion" id="23dd344a-2b24-47e7-9ffb-1d467cd98bb8" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
+]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">31b7652d1771548fcfc36c7ba144fac3</con:property><con:property key="gui.layoutX">1286</con:property><con:property key="gui.layoutY">445</con:property><con:property key="gui.compact">true</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="c1af622e-3b62-46db-b5ee-49dc008eaaa1"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="mockService" type="java.lang.String">MockService 1</con:property><con:property key="path" type="java.lang.String">/</con:property><con:property key="port" type="java.lang.String">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1586</con:property><con:property key="gui.layoutY">1217</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Assertion" id="23dd344a-2b24-47e7-9ffb-1d467cd98bb8" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -8898,6 +8890,7 @@ createProperty( 'period', Long, 0 )
 createProperty( 'sampleId', String, "" )
 createProperty( 'failOnMissingID', Boolean, false )
 createProperty( 'failOnMissingValue', Boolean, false )
+createProperty( 'includeAssertedMessage', Boolean, false )
 
 String valueToAssert = value.value
 
@@ -8932,7 +8925,8 @@ updateProviders = {
 	def options = []
 	for( conn in inputTerminal.connections ) {
 		for( key in conn.outputTerminal.messageSignature.keySet() )
-			options += key
+			if( !options.contains(key))
+				options += key
 	}
 	provider.options = options
 	if( !options.contains(value.value) )
@@ -8949,21 +8943,21 @@ analyze = { message ->
 		
 		if(!message.containsKey(value.value)) {
 			if( failOnMissingValue.value ) {
-				raiseFailure(timestamp, val)
-				totalCounter.increment()
-			}
-			return
-		}
-		
-		if( sampleId.value ?: "" != "" &amp;&amp; message[SampleCategory.SAMPLE_ID] != sampleId.value ) {
-			if( failOnMissingID.value ) {
-				raiseFailure(timestamp, val)
+				raiseFailure(message, timestamp, null)
 				totalCounter.increment()
 			}
 			return
 		}
 		
 		double val = message[value.value]
+		
+		if( sampleId.value ?: "" != "" &amp;&amp; message[SampleCategory.SAMPLE_ID] != sampleId.value ) {
+			if( failOnMissingID.value ) {
+				raiseFailure(message, timestamp, val)
+				totalCounter.increment()
+			}
+			return
+		}
 		
 		if( val &lt; min.value || val > max.value ) {
 			synchronized( buffer ) {
@@ -8979,7 +8973,7 @@ analyze = { message ->
 				}
 				
 				if( buffer.size() >= tolerance.value ) {
-					raiseFailure(timestamp, val)
+					raiseFailure(message, timestamp, val)
 					buffer.clear()
 				}
 			}
@@ -8992,17 +8986,19 @@ analyze = { message ->
 	}
 }
 
-raiseFailure = {timestamp, value ->
+raiseFailure = {message, timestamp, value ->
 	failureCounter.increment()
 	
-	outMsg["Assert"] = valueToAssert
-	outMsg["Min"] = min.value
-	outMsg["Value"] = value
-	outMsg["Max"] = max.value
-	outMsg["Period"] = period.value
-	outMsg["Tolerance"] = tolerance.value
-	outMsg["Timestamp"] = timestamp
-	send(output, outMsg)
+	m = includeAssertedMessage.value ? message : outMsg
+	
+	m["Assert"] = valueToAssert
+	m["Min"] = min.value
+	m["Value"] = value
+	m["Max"] = max.value
+	m["Period"] = period.value
+	m["Tolerance"] = tolerance.value
+	m["Timestamp"] = timestamp
+	send(output, m)
 }
 
 onRelease = { 
@@ -9103,7 +9099,8 @@ settings( label: "General" ) {
 	property(property: failOnMissingValue, label: 'Fail on missing value' )
 	property(property: sampleId, label: 'Sample ID' )
 	property(property: failOnMissingID, label: 'Fail on mismatching ID' )
-}</con:property><con:property key="value" type="java.lang.String">TimeTaken</con:property><con:property key="min" type="java.lang.Long">0</con:property><con:property key="max" type="java.lang.Long">100</con:property><con:property key="tolerance" type="java.lang.Long">1</con:property><con:property key="period" type="java.lang.Long">0</con:property><con:property key="sampleId" type="java.lang.String"/><con:property key="failOnMissingID" type="java.lang.Boolean">false</con:property><con:property key="failOnMissingValue" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Assertion</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Assertion.groovy</con:property><con:property key="_digest">665720c8f81dd9ddd1c0544f4327a3f9</con:property><con:property key="gui.layoutX">390</con:property><con:property key="gui.layoutY">847</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Assertion (2)" id="a495e792-6895-451a-a483-1495eefdff1e" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
+	property(property: includeAssertedMessage, label: 'Include original message in failure messages' )
+}</con:property><con:property key="value" type="java.lang.String">TimeTaken</con:property><con:property key="min" type="java.lang.Long">0</con:property><con:property key="max" type="java.lang.Long">100</con:property><con:property key="tolerance" type="java.lang.Long">1</con:property><con:property key="period" type="java.lang.Long">0</con:property><con:property key="sampleId" type="java.lang.String"/><con:property key="failOnMissingID" type="java.lang.Boolean">false</con:property><con:property key="failOnMissingValue" type="java.lang.Boolean">false</con:property><con:property key="includeAssertedMessage" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Assertion</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Assertion.groovy</con:property><con:property key="_digest">ef0c272045af2bd2c959d2797ae6fd8f</con:property><con:property key="gui.layoutX">390</con:property><con:property key="gui.layoutY">847</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Assertion (2)" id="a495e792-6895-451a-a483-1495eefdff1e" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -9162,6 +9159,7 @@ createProperty( 'period', Long, 0 )
 createProperty( 'sampleId', String, "" )
 createProperty( 'failOnMissingID', Boolean, false )
 createProperty( 'failOnMissingValue', Boolean, false )
+createProperty( 'includeAssertedMessage', Boolean, false )
 
 String valueToAssert = value.value
 
@@ -9196,7 +9194,8 @@ updateProviders = {
 	def options = []
 	for( conn in inputTerminal.connections ) {
 		for( key in conn.outputTerminal.messageSignature.keySet() )
-			options += key
+			if( !options.contains(key))
+				options += key
 	}
 	provider.options = options
 	if( !options.contains(value.value) )
@@ -9213,21 +9212,21 @@ analyze = { message ->
 		
 		if(!message.containsKey(value.value)) {
 			if( failOnMissingValue.value ) {
-				raiseFailure(timestamp, val)
-				totalCounter.increment()
-			}
-			return
-		}
-		
-		if( sampleId.value ?: "" != "" &amp;&amp; message[SampleCategory.SAMPLE_ID] != sampleId.value ) {
-			if( failOnMissingID.value ) {
-				raiseFailure(timestamp, val)
+				raiseFailure(message, timestamp, null)
 				totalCounter.increment()
 			}
 			return
 		}
 		
 		double val = message[value.value]
+		
+		if( sampleId.value ?: "" != "" &amp;&amp; message[SampleCategory.SAMPLE_ID] != sampleId.value ) {
+			if( failOnMissingID.value ) {
+				raiseFailure(message, timestamp, val)
+				totalCounter.increment()
+			}
+			return
+		}
 		
 		if( val &lt; min.value || val > max.value ) {
 			synchronized( buffer ) {
@@ -9243,7 +9242,7 @@ analyze = { message ->
 				}
 				
 				if( buffer.size() >= tolerance.value ) {
-					raiseFailure(timestamp, val)
+					raiseFailure(message, timestamp, val)
 					buffer.clear()
 				}
 			}
@@ -9256,17 +9255,19 @@ analyze = { message ->
 	}
 }
 
-raiseFailure = {timestamp, value ->
+raiseFailure = {message, timestamp, value ->
 	failureCounter.increment()
 	
-	outMsg["Assert"] = valueToAssert
-	outMsg["Min"] = min.value
-	outMsg["Value"] = value
-	outMsg["Max"] = max.value
-	outMsg["Period"] = period.value
-	outMsg["Tolerance"] = tolerance.value
-	outMsg["Timestamp"] = timestamp
-	send(output, outMsg)
+	m = includeAssertedMessage.value ? message : outMsg
+	
+	m["Assert"] = valueToAssert
+	m["Min"] = min.value
+	m["Value"] = value
+	m["Max"] = max.value
+	m["Period"] = period.value
+	m["Tolerance"] = tolerance.value
+	m["Timestamp"] = timestamp
+	send(output, m)
 }
 
 onRelease = { 
@@ -9367,7 +9368,8 @@ settings( label: "General" ) {
 	property(property: failOnMissingValue, label: 'Fail on missing value' )
 	property(property: sampleId, label: 'Sample ID' )
 	property(property: failOnMissingID, label: 'Fail on mismatching ID' )
-}</con:property><con:property key="value" type="java.lang.String">Avg</con:property><con:property key="min" type="java.lang.Long">0</con:property><con:property key="max" type="java.lang.Long">50</con:property><con:property key="tolerance" type="java.lang.Long">1</con:property><con:property key="period" type="java.lang.Long">0</con:property><con:property key="sampleId" type="java.lang.String"/><con:property key="failOnMissingID" type="java.lang.Boolean">false</con:property><con:property key="failOnMissingValue" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Assertion</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Assertion.groovy</con:property><con:property key="_digest">665720c8f81dd9ddd1c0544f4327a3f9</con:property><con:property key="gui.layoutX">1413</con:property><con:property key="gui.layoutY">841</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Table Log" id="b8551838-14d3-4e55-8fc8-06616eecae8b" category="output"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
+	property(property: includeAssertedMessage, label: 'Include original message in failure messages' )
+}</con:property><con:property key="value" type="java.lang.String">Avg</con:property><con:property key="min" type="java.lang.Long">0</con:property><con:property key="max" type="java.lang.Long">50</con:property><con:property key="tolerance" type="java.lang.Long">1</con:property><con:property key="period" type="java.lang.Long">0</con:property><con:property key="sampleId" type="java.lang.String"/><con:property key="failOnMissingID" type="java.lang.Boolean">false</con:property><con:property key="failOnMissingValue" type="java.lang.Boolean">false</con:property><con:property key="includeAssertedMessage" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Assertion</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Assertion.groovy</con:property><con:property key="_digest">ef0c272045af2bd2c959d2797ae6fd8f</con:property><con:property key="gui.layoutX">1413</con:property><con:property key="gui.layoutY">841</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Table Log" id="b8551838-14d3-4e55-8fc8-06616eecae8b" category="output"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -9427,8 +9429,7 @@ updateFollow = {
 rowsDisplay = new DelayedFormattedString( '%d', 500, value { myTableModel.rowCount } )
 fileDisplay = new DelayedFormattedString( '%s', 500, value { saveFileName ?: '-' } )
 
-onMessage = { incoming, outgoing, message ->
-	super.onTerminalMessage(incoming, outgoing, message)
+output = { message ->
 	message.keySet().each { k -> myTableModel.addColumn k }
 	lastMsgDate = new Date();
 	
@@ -9509,8 +9510,8 @@ settings(label:'Logging') {
 	box {
 		property(property: saveFile, label: 'Save Logs?' )
 		property(property: fileName, label: 'Log File (Comma Separated) ' )
-		label('If not appending file, its name will be used to generate new log files each time test is run.')
 		property(property: appendSaveFile, label: 'Check to append selected file', )
+		label('(If not appending file, its name will be used to generate new log files each time test is run.)')
 	}
 }
 
@@ -9519,7 +9520,7 @@ generateSummary = { chapter ->
    		MutableSection sect = chapter.addSection(getLabel())
    		sect.addTable(getLabel(), myTableModel.getLastRows(summaryRows.value))
    	}
-}]]></con:property><con:property key="maxRows" type="java.lang.Long">1000</con:property><con:property key="fileName" xsi:nil="true" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="saveFile" type="java.lang.Boolean">false</con:property><con:property key="follow" type="java.lang.Boolean">false</con:property><con:property key="summaryRows" type="java.lang.Long">0</con:property><con:property key="appendSaveFile" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Table Log</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\TableLog.groovy</con:property><con:property key="_digest">562c50d74a0719706524bbc1298995a9</con:property><con:property key="gui.layoutX">782</con:property><con:property key="gui.layoutY">1114</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Assertion (1)" id="17f403d2-0707-4f26-8c0f-00fe25d5a1fd" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
+}]]></con:property><con:property key="maxRows" type="java.lang.Long">1000</con:property><con:property key="fileName" xsi:nil="true" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="saveFile" type="java.lang.Boolean">false</con:property><con:property key="follow" type="java.lang.Boolean">false</con:property><con:property key="summaryRows" type="java.lang.Long">0</con:property><con:property key="appendSaveFile" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Table Log</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\TableLog.groovy</con:property><con:property key="_digest">2301af2dfd07b34d11d95c6398e97de5</con:property><con:property key="gui.layoutX">782</con:property><con:property key="gui.layoutY">1114</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Assertion (1)" id="17f403d2-0707-4f26-8c0f-00fe25d5a1fd" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -9578,6 +9579,7 @@ createProperty( 'period', Long, 0 )
 createProperty( 'sampleId', String, "" )
 createProperty( 'failOnMissingID', Boolean, false )
 createProperty( 'failOnMissingValue', Boolean, false )
+createProperty( 'includeAssertedMessage', Boolean, false )
 
 String valueToAssert = value.value
 
@@ -9612,7 +9614,8 @@ updateProviders = {
 	def options = []
 	for( conn in inputTerminal.connections ) {
 		for( key in conn.outputTerminal.messageSignature.keySet() )
-			options += key
+			if( !options.contains(key))
+				options += key
 	}
 	provider.options = options
 	if( !options.contains(value.value) )
@@ -9629,21 +9632,21 @@ analyze = { message ->
 		
 		if(!message.containsKey(value.value)) {
 			if( failOnMissingValue.value ) {
-				raiseFailure(timestamp, val)
-				totalCounter.increment()
-			}
-			return
-		}
-		
-		if( sampleId.value ?: "" != "" &amp;&amp; message[SampleCategory.SAMPLE_ID] != sampleId.value ) {
-			if( failOnMissingID.value ) {
-				raiseFailure(timestamp, val)
+				raiseFailure(message, timestamp, null)
 				totalCounter.increment()
 			}
 			return
 		}
 		
 		double val = message[value.value]
+		
+		if( sampleId.value ?: "" != "" &amp;&amp; message[SampleCategory.SAMPLE_ID] != sampleId.value ) {
+			if( failOnMissingID.value ) {
+				raiseFailure(message, timestamp, val)
+				totalCounter.increment()
+			}
+			return
+		}
 		
 		if( val &lt; min.value || val > max.value ) {
 			synchronized( buffer ) {
@@ -9659,7 +9662,7 @@ analyze = { message ->
 				}
 				
 				if( buffer.size() >= tolerance.value ) {
-					raiseFailure(timestamp, val)
+					raiseFailure(message, timestamp, val)
 					buffer.clear()
 				}
 			}
@@ -9672,17 +9675,19 @@ analyze = { message ->
 	}
 }
 
-raiseFailure = {timestamp, value ->
+raiseFailure = {message, timestamp, value ->
 	failureCounter.increment()
 	
-	outMsg["Assert"] = valueToAssert
-	outMsg["Min"] = min.value
-	outMsg["Value"] = value
-	outMsg["Max"] = max.value
-	outMsg["Period"] = period.value
-	outMsg["Tolerance"] = tolerance.value
-	outMsg["Timestamp"] = timestamp
-	send(output, outMsg)
+	m = includeAssertedMessage.value ? message : outMsg
+	
+	m["Assert"] = valueToAssert
+	m["Min"] = min.value
+	m["Value"] = value
+	m["Max"] = max.value
+	m["Period"] = period.value
+	m["Tolerance"] = tolerance.value
+	m["Timestamp"] = timestamp
+	send(output, m)
 }
 
 onRelease = { 
@@ -9783,4 +9788,5 @@ settings( label: "General" ) {
 	property(property: failOnMissingValue, label: 'Fail on missing value' )
 	property(property: sampleId, label: 'Sample ID' )
 	property(property: failOnMissingID, label: 'Fail on mismatching ID' )
-}</con:property><con:property key="value" type="java.lang.String">Discarded</con:property><con:property key="min" type="java.lang.Long">0</con:property><con:property key="max" type="java.lang.Long">0</con:property><con:property key="tolerance" type="java.lang.Long">1</con:property><con:property key="period" type="java.lang.Long">0</con:property><con:property key="sampleId" type="java.lang.String"/><con:property key="failOnMissingID" type="java.lang.Boolean">false</con:property><con:property key="failOnMissingValue" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Assertion</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Assertion.groovy</con:property><con:property key="_digest">665720c8f81dd9ddd1c0544f4327a3f9</con:property><con:property key="gui.layoutX">901</con:property><con:property key="gui.layoutY">845</con:property></con:attributes></con:component><con:connection outputTerminalId="d3bcc7bc-0cc5-4156-b35e-34b23d579654/triggerTerminal" inputTerminalId="597e6093-d97f-4f73-ab9d-de68f912b974/triggerTerminal"/><con:connection outputTerminalId="597e6093-d97f-4f73-ab9d-de68f912b974/resultTerminal" inputTerminalId="b612904b-3546-4a11-919c-2ff7d2f974b5/inputTerminal"/><con:connection outputTerminalId="597e6093-d97f-4f73-ab9d-de68f912b974/resultTerminal" inputTerminalId="23dd344a-2b24-47e7-9ffb-1d467cd98bb8/inputTerminal"/><con:connection outputTerminalId="b612904b-3546-4a11-919c-2ff7d2f974b5/output" inputTerminalId="a495e792-6895-451a-a483-1495eefdff1e/inputTerminal"/><con:connection outputTerminalId="a495e792-6895-451a-a483-1495eefdff1e/output" inputTerminalId="b8551838-14d3-4e55-8fc8-06616eecae8b/inputTerminal"/><con:connection outputTerminalId="23dd344a-2b24-47e7-9ffb-1d467cd98bb8/output" inputTerminalId="b8551838-14d3-4e55-8fc8-06616eecae8b/inputTerminal"/><con:connection outputTerminalId="597e6093-d97f-4f73-ab9d-de68f912b974/statisticsOutput" inputTerminalId="17f403d2-0707-4f26-8c0f-00fe25d5a1fd/inputTerminal"/><con:connection outputTerminalId="17f403d2-0707-4f26-8c0f-00fe25d5a1fd/output" inputTerminalId="b8551838-14d3-4e55-8fc8-06616eecae8b/inputTerminal"/></con:scene></con:loadui-project>
+	property(property: includeAssertedMessage, label: 'Include original message in failure messages' )
+}</con:property><con:property key="value" type="java.lang.String">Discarded</con:property><con:property key="min" type="java.lang.Long">0</con:property><con:property key="max" type="java.lang.Long">0</con:property><con:property key="tolerance" type="java.lang.Long">1</con:property><con:property key="period" type="java.lang.Long">0</con:property><con:property key="sampleId" type="java.lang.String"/><con:property key="failOnMissingID" type="java.lang.Boolean">false</con:property><con:property key="failOnMissingValue" type="java.lang.Boolean">false</con:property><con:property key="includeAssertedMessage" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Assertion</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Assertion.groovy</con:property><con:property key="_digest">ef0c272045af2bd2c959d2797ae6fd8f</con:property><con:property key="gui.layoutX">901</con:property><con:property key="gui.layoutY">845</con:property></con:attributes></con:component><con:connection outputTerminalId="d3bcc7bc-0cc5-4156-b35e-34b23d579654/triggerTerminal" inputTerminalId="597e6093-d97f-4f73-ab9d-de68f912b974/triggerTerminal"/><con:connection outputTerminalId="597e6093-d97f-4f73-ab9d-de68f912b974/resultTerminal" inputTerminalId="b612904b-3546-4a11-919c-2ff7d2f974b5/inputTerminal"/><con:connection outputTerminalId="597e6093-d97f-4f73-ab9d-de68f912b974/resultTerminal" inputTerminalId="23dd344a-2b24-47e7-9ffb-1d467cd98bb8/inputTerminal"/><con:connection outputTerminalId="b612904b-3546-4a11-919c-2ff7d2f974b5/output" inputTerminalId="a495e792-6895-451a-a483-1495eefdff1e/inputTerminal"/><con:connection outputTerminalId="a495e792-6895-451a-a483-1495eefdff1e/output" inputTerminalId="b8551838-14d3-4e55-8fc8-06616eecae8b/inputTerminal"/><con:connection outputTerminalId="23dd344a-2b24-47e7-9ffb-1d467cd98bb8/output" inputTerminalId="b8551838-14d3-4e55-8fc8-06616eecae8b/inputTerminal"/><con:connection outputTerminalId="597e6093-d97f-4f73-ab9d-de68f912b974/statisticsOutput" inputTerminalId="17f403d2-0707-4f26-8c0f-00fe25d5a1fd/inputTerminal"/><con:connection outputTerminalId="17f403d2-0707-4f26-8c0f-00fe25d5a1fd/output" inputTerminalId="b8551838-14d3-4e55-8fc8-06616eecae8b/inputTerminal"/></con:scene></con:loadui-project>
