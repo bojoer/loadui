@@ -69,7 +69,13 @@ public class TerminalMessageImpl implements TerminalMessage
 		if( oldVal != null && oldVal.getType().isInstance( value ) )
 			oldVal.setValue( value );
 		else
-			put( key, new MutableValueImpl( value == null ? Object.class : value.getClass(), value, conversionService ) );
+		{
+			synchronized( values )
+			{
+				values.put( key, new MutableValueImpl( value == null ? Object.class : value.getClass(), value,
+						conversionService ) );
+			}
+		}
 		return old;
 	}
 
@@ -120,7 +126,10 @@ public class TerminalMessageImpl implements TerminalMessage
 			try
 			{
 				Class<?> type = Class.forName( ( String )args[1] );
-				put( entry.getKey(), new MutableValueImpl( type, args[0], conversionService ) );
+				synchronized( values )
+				{
+					values.put( entry.getKey(), new MutableValueImpl( type, args[0], conversionService ) );
+				}
 			}
 			catch( ClassNotFoundException e )
 			{
