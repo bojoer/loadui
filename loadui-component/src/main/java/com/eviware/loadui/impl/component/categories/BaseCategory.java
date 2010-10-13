@@ -17,6 +17,9 @@ package com.eviware.loadui.impl.component.categories;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.events.ActionEvent;
@@ -36,6 +39,8 @@ import com.eviware.loadui.api.summary.MutableChapter;
  */
 public abstract class BaseCategory implements ComponentBehavior
 {
+	public final static Logger log = LoggerFactory.getLogger( BaseCategory.class );
+
 	private final ComponentContext context;
 	private final CancelActionListener listener = new CancelActionListener();
 
