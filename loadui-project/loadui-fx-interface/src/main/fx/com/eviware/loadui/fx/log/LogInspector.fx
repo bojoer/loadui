@@ -29,6 +29,8 @@ import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.Logger;
 
+import com.eviware.loadui.fx.FxUtils;
+
 /**
  * Static factory method easily invocable from Java Code.
  */
