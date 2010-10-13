@@ -55,10 +55,12 @@ public class LogInspector extends AppenderSkeleton, Inspector {
 	}
 
 	override function append( event:LoggingEvent ):Void {
-		insert LoggingEventWrapper { loggingEvent: event } into panel.items;
-		while( sizeof panel.items > maxLines )
-			delete panel.items[0];
-		panel.selectLastRow();
+		FxUtils.runInFxThread( function():Void {
+			insert LoggingEventWrapper { loggingEvent: event } into panel.items;
+			while( sizeof panel.items > maxLines )
+				delete panel.items[0];
+			panel.selectLastRow();
+		} );
 	}
 	
 	override function requiresLayout() {
