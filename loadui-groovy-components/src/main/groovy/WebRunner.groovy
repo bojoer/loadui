@@ -238,12 +238,13 @@ sample = { message, sampleId ->
 onCancel = {
 	aborting = true
 	
-	def methods = runningSamples.toArray()
-	methods.each{  method ->
-		if( !method.aborted ) 
-			method.abort()
+	synchronized( runningSamples ) {
+		def methods = runningSamples.toArray()
+		runningSamples.clear()
+		methods.each { method ->
+			if( !method.aborted ) method.abort()
+		}
 	}
-	runningSamples = []
 	aborting = false
 }
 
