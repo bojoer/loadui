@@ -410,6 +410,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 				updateCurrentlyRunning( currentlyRunning.decrementAndGet() );
 				if( !( e instanceof SampleCancelledException ) )
 					e.printStackTrace();
+				else
+					System.err.println( "SAMPLE CANCELLED!!!" );
 			}
 			if( result != null )
 			{
