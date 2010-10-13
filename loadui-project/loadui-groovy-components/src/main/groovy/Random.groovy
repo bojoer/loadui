@@ -38,6 +38,10 @@ createProperty( 'type', String, 'Uniform' )
 createProperty( 'factor', Long, 0 )
 
 msPerUnit = 1000
+if ( unit.value == "Min" )
+	msPerUnit = 60000
+if ( unit.value == "Hour" )
+	msPerUnit = 3600000
 defaultDelay = msPerUnit/rate.value
 currentDelay = 0
 
