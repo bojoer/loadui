@@ -86,7 +86,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		this.workspaceFile = workspaceFile;
 
 		localMode = createProperty( LOCAL_MODE_PROPERTY, Boolean.class, false );
-		createProperty( MAX_THREADS_PROPERTY, Long.class, 200 );
+		createProperty( MAX_THREADS_PROPERTY, Long.class, 1000 );
 		createProperty( MAX_THREAD_QUEUE_PROPERTY, Long.class, 10000 );
 		createProperty( IMPORT_MISSING_AGENTS_PROPERTY, Boolean.class, false );
 		createProperty( SOAPUI_PATH_PROPERTY, File.class );
