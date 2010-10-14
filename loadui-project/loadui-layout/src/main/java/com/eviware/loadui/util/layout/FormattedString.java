@@ -58,7 +58,7 @@ public class FormattedString extends Observable
 		setValue( String.format( format, values ) );
 	}
 
-	private void setValue( String newValue )
+	protected void setValue( String newValue )
 	{
 		if( value != null && value.equals( newValue ) )
 			return;
