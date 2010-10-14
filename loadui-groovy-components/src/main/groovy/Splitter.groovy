@@ -29,6 +29,10 @@
  import com.eviware.loadui.util.collections.ObservableList
  import com.eviware.loadui.util.layout.DelayedFormattedString
  import com.eviware.loadui.api.events.ActionEvent
+
+ import com.eviware.loadui.api.terminal.InputTerminal
+ import com.eviware.loadui.api.terminal.OutputTerminal
+ import com.eviware.loadui.api.terminal.TerminalMessage
  
  // one output minimum
  
@@ -54,21 +58,28 @@
  	outputStats.set( cnt, 0 )
         cnt++
  }
+
+ counters = getCounters()
     
  display = new DelayedFormattedString( '%d', 500, 0 )
  outputDisplay = new DelayedFormattedString( '%s', 500, value({ outputStats.findAll({ it >= 0 }).join('          ') }) )
 
  executor = Executors.newSingleThreadScheduledExecutor()
- future = executor.scheduleWithFixedDelay( { outputStats.update() }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
+ future = null
+// future = executor.scheduleWithFixedDelay( { outputStats.update()
+//						println controller }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
 
  onMessage = { incoming, outgoing, message ->
- 	super.onTerminalMessage(incoming, outgoing, message)
+   super.onTerminalMessage(incoming, outgoing, message)
+	if(incoming == remoteTerminal) 
+   		println message
    try {
     def next = 0;
     switch( selected.value ) {
         case "Round-Robin": 
             next = roundRobinNext
-            outputStats.set(next, outputStats.get(next) + 1)
+	    counters.get(next).increment()
+            outputStats.set(next, counters.get(next).get())
             send ( getOutgoingTerminalList().get(next), message )
             if( roundRobinNext + 1 == getOutgoingTerminalList().size() )
                 roundRobinNext = 0
@@ -78,7 +89,8 @@
         case "Random" :
             random = new Random()
             next = random.nextInt(getOutgoingTerminalList().size())
-            outputStats.set(next, outputStats.get(next) + 1)
+	    counters.get(next).increment()
+            outputStats.set(next, counters.get(next).get())
             send ( getOutgoingTerminalList().get(next), message )
             break
     }
@@ -120,7 +132,8 @@
 	
 	if ( event.key == "START" ) {
            if ( future == null )
-	    future = executor.scheduleWithFixedDelay( { outputStats.update() }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
+	    future = executor.scheduleWithFixedDelay( { outputStats.update()
+								 }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
 	}
 	
 	if ( event.key == "RESET" ) {
@@ -136,14 +149,15 @@
 	    }
 	    outputStats.update()
 	    executor = Executors.newSingleThreadScheduledExecutor()
-	    future = executor.scheduleWithFixedDelay( { outputStats.update() }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
+	    future = executor.scheduleWithFixedDelay( { outputStats.update()
+							 }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
 	}
 }
 
  onRelease = {
    display.release()
-	outputDisplay.release()
-   future.cancel(true)
+   outputDisplay.release()
+   future?.cancel(true)
    executor.shutdownNow()
  }
 
@@ -174,7 +188,7 @@
 	    }, constraints:'right' )
 	}
     separator( vertical: false )
-    node( widget: 'counterWidget', counters: outputStats , onOff: counterUse, constraints:'span 5,center')
+    node( widget: 'counterWidget', counters: outputStats , counts:counters,onOff: counterUse, constraints:'span 5,center')
   }
  
 compactLayout() {

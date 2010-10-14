@@ -21,6 +21,7 @@ import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.WidgetCreationException;
 import com.eviware.loadui.api.layout.WidgetFactory;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.api.counter.*;
 
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -35,12 +36,15 @@ import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
 
 import com.eviware.loadui.api.property.Property;
 
 import com.eviware.loadui.util.collections.ObservableList;
 import java.util.Observer;
 import java.util.Observable;
+import java.util.ArrayList;
 
 //import com.eviware.loadui.fx.FxUtils;
 
@@ -53,6 +57,7 @@ public class CounterWidget extends Panel, Observer {
     
     public var component:ObservableList;
     public var work:Property;
+    public var ccounters:ArrayList;
     
     var counters:Node[] = [];
     override var content = bind counters;
@@ -91,7 +96,7 @@ public class CounterWidget extends Panel, Observer {
         	managed: false
         	fill: Color.TRANSPARENT
 		} before counters[0];
-		update(null, null);
+		
     }
     
     override function update(observable: Observable, arg: Object) {
@@ -101,7 +106,7 @@ public class CounterWidget extends Panel, Observer {
                 var newVisible = 0;
                 for( cnt in [0..20][p| counters[p as Integer] instanceof Stack] ) {
                         var field:Stack = counters[cnt as Integer] as Stack;
-                        (field.content[1] as Text).content = ((component.get(cnt/2) as Integer) mod 1000).toString();
+                        (field.content[1] as Text).content = ((ccounters.get(cnt/2) as Counter).get() mod 1000).toString();
                         if ( (component.get(cnt/2) as Integer) > -1 ) {
                             field.visible = true;
                             if( cnt > 0 )
@@ -117,6 +122,19 @@ public class CounterWidget extends Panel, Observer {
                 numVisible = newVisible;
             }
         });
+    }
+    
+    var timer:Timeline = null;
+
+    public function scheduleAction(timeout:Duration,action:function()) {
+        var timer: Timeline = Timeline {
+            repeatCount: 1
+            keyFrames: KeyFrame {
+                time: timeout
+                action: action
+            }
+        }
+        timer.play();
     }
     
     override var prefWidth = function(height:Number):Number {
