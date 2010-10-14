@@ -142,23 +142,30 @@ public class WorkspaceMenu extends HBox {
 	                      source = chooser.getSelectedFile();
 	                  }
 	                  if ( source != null ) {
-	                     
-	                     try {
-	                         pro = workspace.importProject( source, true );
-	                     } catch(e:IOException) {
-	                      	var warning:Dialog = Dialog {
-	                             title: "Warning!"
-	                             content: Text {
-	                                 content: "Failed to Import Project, see log for more details!"
-	                             }
-	                             okText: "Ok"
-	                             onOk: function() {
-	                                 warning.close();
-	                             }
-	                             noCancel: true
-	                         	};
-	                     }
-	                  
+	                  	var success = false;
+	                  	AppState.instance.blockingTask(
+	                  		function():Void {
+			                     try {
+			                         pro = workspace.importProject( source, true );
+			                         success = true;
+			                     } catch(e:IOException) {
+			                     }
+			                  }, function( task ):Void {
+			                  	if( not success ) {
+			                  		var warning:Dialog = Dialog {
+			                             title: "Warning!"
+			                             content: Text {
+			                                 content: "Failed to Import Project, see log for more details!"
+			                             }
+			                             okText: "Ok"
+			                             onOk: function() {
+			                                 warning.close();
+			                             }
+			                             noCancel: true
+											};
+			                  	}
+			                  }, "Importing Project."
+	                  	);
 	                  }
 	              }
 	          }
