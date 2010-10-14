@@ -172,6 +172,12 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	
 	protected function onReloaded():Void {};
 	
+	init {
+		addMouseHandler( MOUSE_PRESSED, function( e:MouseEvent ):Void {
+			if( e.secondaryButtonDown and not e.controlDown and not selected ) selectOnly(); 
+		} );
+	}
+	
 	override function create():Node {
 		var menuButton:MenuButton;
 		
@@ -221,7 +227,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 								tooltip: Tooltip { text: bind label }
 								items: bind menuItems
 							}, Separator { //Gap
-								vertical: true
+								vertical: false
 								styleClass: ""
 								layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.ALWAYS }
 							}, Separator {
