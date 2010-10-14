@@ -39,6 +39,7 @@ public class CounterWidgetFactory extends WidgetFactory {
         
     override public function buildWidget( layoutComponent:LayoutComponent  ) {
         CounterWidget {
+            ccounters: layoutComponent.get('counts') as ArrayList
             component: layoutComponent.get('counters') as ObservableList
             work: bind layoutComponent.get('onOff') as Property
         }

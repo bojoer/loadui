@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.FlowCategory;
+import com.eviware.loadui.api.counter.Counter;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
@@ -54,6 +55,7 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 	private final Runnable activityRunnable;
 	private long lastMsg;
 	private ScheduledFuture<?> activityFuture;
+	private ArrayList<Counter> counters = new ArrayList<Counter>();
 
 	/**
 	 * Constructs a FlowBase.
@@ -69,6 +71,9 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 		getContext().setActivityStrategy( ActivityStrategies.ON );
 		incomingTerminal = context.createInput( INCOMING_TERMINAL, "Incoming Data" );
 
+		for ( int i = 0; i < 10; i++ )
+			counters.add( getContext().getCounter( "out_" + i));
+		
 		activityRunnable = new Runnable()
 		{
 			@Override
@@ -100,10 +105,13 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 				"Output Terminal " + " " + ( outgoingTerminals.size() + 1 ) );
 		getContext().setSignature( output, inputSignature );
 		outgoingTerminals.add( output );
-
+		
 		return output;
 	}
 
+	final public ArrayList<Counter> getCounters() {
+		return counters;
+	}
 	/**
 	 * Deletes the OutputTerminal in the outgoingTerminals List with the highest
 	 * numbering (the last one to be added). If no OutputTerminals exist in this
