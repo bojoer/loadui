@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.fx.MainWindow;
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.api.model.ProjectRef;
@@ -112,13 +113,17 @@ public class GettingStartedWizard {
 					             Button {
 					                 text: "Open the included sample project"
 					                 action: function() {
-					                     def samplesDir = new File("samples");
+					                 		def samplesDir = new File("samples");
 					                     def sampleFile = new File(samplesDir,"getting-started-project.xml");
+					                     dialogRef.close();
 					                     if( sampleFile.exists() ) {
-					                         def projectRef:ProjectRef = workspace.importProject(sampleFile, true);
-					                         projectRef.setEnabled(true);
-					                         com.eviware.loadui.fx.AppState.instance.setActiveCanvas( projectRef.getProject() );
-			                     			
+						                 		AppState.instance.blockingTask(
+						                 			function():Void {
+						                 				def projectRef:ProjectRef = workspace.importProject(sampleFile, true);
+															projectRef.setEnabled(true);
+															AppState.instance.setActiveCanvas( projectRef.getProject() );
+						                 			}, null, "Loading Project."
+						                 		);
 					                     } else {
 					                        def dialog:Dialog = Dialog {
  				                     			title: "Warning"
@@ -133,7 +138,6 @@ public class GettingStartedWizard {
  				                     			}
  				                     		} 
 					                     }
-					                     dialogRef.close();
 					                 }
 					             },
 					             Label {
