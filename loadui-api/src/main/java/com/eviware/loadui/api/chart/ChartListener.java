@@ -46,5 +46,13 @@ public interface ChartListener {
 	 *            Chart serie that has been enabled or disabled
 	 */
 	public void serieEnabled(ChartSerie cs);
+	
+	/**
+	 * Fires when test starts or stops.
+	 * 
+	 * @param running
+	 *            true if test is running, false otherwise.
+	 */
+	public void testStateChanged(boolean running);
 
 }

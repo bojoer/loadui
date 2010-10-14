@@ -92,6 +92,11 @@ import javafx.scene.layout.LayoutInfo;
 import com.eviware.loadui.fx.FxUtils;
 import com.jidesoft.chart.axis.AxisPlacement;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.lang.Duration;
+
+import java.lang.System;
 
 /**
  * @author predrag
@@ -120,6 +125,26 @@ public class ChartWidget extends VBox, ChartListener {
     
     var chartNode: Node;
     var legendNode: Node;
+    
+    var timeline: Timeline = Timeline {
+	  repeatCount: Timeline.INDEFINITE
+	  keyFrames: [
+	     KeyFrame {
+	         time: 1000ms
+	         action: function() {
+	         	var current = System.currentTimeMillis();
+	         	var period: Long = (customXRange as CustomTimeRange).getPeriod();
+					var rate: Long = (customXRange as CustomTimeRange).getRate();
+			    	FxUtils.runInFxThread( function():Void {
+			    		autoTimeAxis(xAxis, current - period + rate, period - rate);
+    					adjustTimeAxisPoints(current - period, false);
+						autoAxis();
+			      })
+	         }
+	         canSkip: true
+	     }
+	  ]
+    }
     
     init {
     	buildChartPanel();
@@ -171,6 +196,12 @@ public class ChartWidget extends VBox, ChartListener {
 			}
 		];
     	spacing = 0;
+    }
+    
+    postinit{
+    	FxUtils.runInFxThread( function():Void {
+			autoAxis();
+		});
     }
     
     function buildChartPanel(): Void {
@@ -351,7 +382,7 @@ public class ChartWidget extends VBox, ChartListener {
 
     	FxUtils.runInFxThread( function():Void {
 			(models.get(cs.getName()) as DefaultChartModel).addPoint(new ChartPoint(x, y));
-			autoAxis();
+			//autoAxis();
       })
     }
     
@@ -361,6 +392,15 @@ public class ChartWidget extends VBox, ChartListener {
     
     override function chartCleared(): Void {
 
+    }
+    
+    override function testStateChanged(running: Boolean): Void {
+    	if(running){
+    		timeline.playFromStart();
+    	}
+    	else{
+    		timeline.stop();
+    	}
     }
     
     override function serieEnabled(chartSerie: ChartSerie): Void {
@@ -397,34 +437,29 @@ public class ChartWidget extends VBox, ChartListener {
     }
     
     function autoAxis(): Void {
-    	if(xAxis.getRange() instanceof TimeRange){
-			var period: Long = (customXRange as CustomTimeRange).getPeriod();
-			var rate: Long = (customXRange as CustomTimeRange).getRate();
-    		adjustTimeAxisPoints(period, false);
-    		autoTimeAxis(xAxis, findMinimumX() + rate, period - rate);
-    	}
-    	else if(xAxis.getRange() instanceof NumericRange){
-    		autoNumericAxis(xAxis, findMaximumX(), findMinimumX(), (customXRange as CustomNumericRange).getExtraSpace());
-    	}	
-    	if(yAxis.getRange() instanceof TimeRange){
-			var period: Long = (customYRange as CustomTimeRange).getPeriod();
-			var rate: Long = (customYRange as CustomTimeRange).getRate();
-    		adjustTimeAxisPoints(period, true);
-    		autoTimeAxis(yAxis, findMinimumY(true) + rate, period - rate);
-    	}
-    	else if(yAxis.getRange() instanceof NumericRange){
+    	if(yAxis.getRange() instanceof NumericRange){
     		var nr: CustomNumericRange = customYRange as CustomNumericRange;
-    		autoNumericAxis(yAxis, Math.max(findMaximumY(true), nr.getHigh()), Math.min(findMinimumY(true), nr.getLow()), nr.getExtraSpace());
+    		var max = findMaximumY(true);
+    		if (max > Double.MIN_VALUE and max < nr.getHigh()){
+    			max = nr.getHigh();
+    		}
+    		var min = findMinimumY(true);
+    		if (min < Double.MAX_VALUE and min > nr.getLow()){
+    			min = nr.getLow();
+    		}
+    		autoNumericAxis(yAxis, max, min, nr.getExtraSpace());
     	} 
-    	if(y2Axis.getRange() instanceof TimeRange){
-			var period: Long = (customY2Range as CustomTimeRange).getPeriod();
-			var rate: Long = (customY2Range as CustomTimeRange).getRate();
-    		adjustTimeAxisPoints(period, true);
-    		autoTimeAxis(y2Axis, findMinimumY(false) + rate, period - rate);
-    	}
-    	else if(y2Axis.getRange() instanceof NumericRange){
+		if(y2Axis.getRange() instanceof NumericRange){
     		var nr: CustomNumericRange = customY2Range as CustomNumericRange;
-    		autoNumericAxis(y2Axis, Math.max(findMaximumY(false), nr.getHigh()), Math.min(findMinimumY(false), nr.getLow()), nr.getExtraSpace());
+    		var max = findMaximumY(false);
+    		if (max > Double.MIN_VALUE and max < nr.getHigh()){
+    			max = nr.getHigh();
+    		}
+    		var min = findMinimumY(false);
+    		if (min < Double.MAX_VALUE and min > nr.getLow()){
+    			min = nr.getLow();
+    		}
+    		autoNumericAxis(y2Axis, max, min, nr.getExtraSpace());
     	} 
     }
     
@@ -522,24 +557,28 @@ public class ChartWidget extends VBox, ChartListener {
 		min;    	
     }
     
-    function adjustTimeAxisPoints(period: Long, y: Boolean){
+    function adjustTimeAxisPoints(min: Long, y: Boolean){
     	var keys: Iterator = models.keySet().iterator();
     	var model: DefaultChartModel;
 		while(keys.hasNext()){
 			model = models.get(keys.next()) as DefaultChartModel; 
-			var cnt: Long = model.getPointCount();
-			if(cnt > 0){
-				var pos: Double;
-				if(y){
-					pos = model.getPoint(cnt-1).getY().position();
-					while(pos - period > model.getPoint(0).getY().position()){
-						model.removePoint(0);
+			if(y){
+				while(model.getPointCount() > 0){
+					if(min > model.getPoint(0).getY().position()){
+						model.removePoint(0);	
+					}
+					else{
+						break;
 					}
 				}
-				else{
-					pos = model.getPoint(cnt-1).getX().position();
-					while(pos - period > model.getPoint(0).getX().position()){
-						model.removePoint(0);
+			}
+			else{
+				while(model.getPointCount() > 0){
+					if(min > model.getPoint(0).getX().position()){
+						model.removePoint(0);	
+					}
+					else{
+						break;
 					}
 				}
 			}
