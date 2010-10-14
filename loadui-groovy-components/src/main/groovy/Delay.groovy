@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.api.model.WorkspaceItem
+import com.eviware.loadui.api.model.SceneItem
 
 final GAUSSIAN = 'Gaussian'
 final UNIFORM = 'Uniform'
@@ -38,7 +39,7 @@ random = new Random()
 waitingCount = 0
 
 display = new DelayedFormattedString( '%d ms', 500, 0 )
-waitingDisplay = new DelayedFormattedString( '%d', 500, 0 )
+waitingDisplay = new DelayedFormattedString( '%d', 500, value { waitingCount } )
  
 output = createOutput( 'output', "Message Output" )
  
@@ -47,10 +48,29 @@ createProperty('selected', String, UNIFORM)
 createProperty('randomDelay', Integer, 0)
 
 executor = Executors.newSingleThreadScheduledExecutor()
+
+workspace = canvas.project?.workspace
+fixDisplay = {
+	if( canvas instanceof SceneItem && !workspace?.localMode ) {
+		display.format = 'n/a'
+		waitingDisplay.format = 'n/a'
+	} else {
+		display.format = '%d ms'
+		waitingDisplay.format = '%d'
+	}
+} 
+
+def workspaceListener = null
+if( workspace != null ) {
+	workspaceListener = addEventListener( workspace, PropertyEvent ) { event ->
+		fixDisplay()
+	}
+}
+fixDisplay()
  
 onMessage = { incoming, outgoing, message ->
 	waitingCount++
-
+	
 	long delayTime = delay.value 
 	if( selected.value == GAUSSIAN ) {
 		delayTime += ( random.nextGaussian() * ( randomDelay.value / 100 ) * delayTime * 0.3)
@@ -65,14 +85,14 @@ onMessage = { incoming, outgoing, message ->
 		send( output, message )
 		waitingCount--
 		display.args = delayTime
-		waitingDisplay.args = waitingCount
 	}, delayTime, TimeUnit.MILLISECONDS )
  }
  
 onRelease = {
 	display.release()
 	waitingDisplay.release()
-	executor.shutdownNow()
+	executor?.shutdownNow()
+	workspace?.removeEventListener( PropertyEvent, workspaceListener )
 }
 
 addEventListener( ActionEvent ) { event ->
@@ -92,24 +112,6 @@ addEventListener( ActionEvent ) { event ->
 		if( executor != null ) {
 			executor.shutdownNow()
 			executor = Executors.newSingleThreadScheduledExecutor()
-		}
-	}
-	
-	if ( event.getSource() instanceof WorkspaceItem ) {
-		if( event.getSource().isLocalMode() ) {
-			display.setFormat('%d ms')
-			display.args = 0
-			display.start()
-			waitingDisplay.setFormat('%s')
-			waitingDisplay.args = 0
-			waitingDisplay.start()
-		} else {
-			display.stop()
-			display.setFormat('%s')
-			display.setValue("n/a")
-			waitingDisplay.stop()
-			waitingDisplay.setFormat('%s')
-			waitingDisplay.setValue("n/a")
 		}
 	}
 }

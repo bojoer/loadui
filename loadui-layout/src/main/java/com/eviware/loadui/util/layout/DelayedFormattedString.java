@@ -26,8 +26,6 @@ public class DelayedFormattedString extends FormattedString
 
 	private ScheduledFuture<?> future;
 
-	private int delay;
-
 	public DelayedFormattedString( String pattern, Object... args )
 	{
 		this( pattern, 1000, args );
@@ -38,8 +36,7 @@ public class DelayedFormattedString extends FormattedString
 		super( pattern, args );
 
 		update();
-		this.delay = delay;
-		
+
 		future = ScheduledExecutor.instance.scheduleAtFixedRate( updateTask, delay, delay, TimeUnit.MILLISECONDS );
 	}
 
@@ -50,18 +47,6 @@ public class DelayedFormattedString extends FormattedString
 		future.cancel( true );
 	}
 
-	public void stop() {
-		future.cancel( true );
-	}
-	
-	public void start() {
-		future = ScheduledExecutor.instance.scheduleAtFixedRate( updateTask, delay, delay, TimeUnit.MILLISECONDS );
-	}
-	
-	public boolean isDone() {
-		return future.isDone();
-	}
-	
 	private class UpdateTask implements Runnable
 	{
 		@Override
