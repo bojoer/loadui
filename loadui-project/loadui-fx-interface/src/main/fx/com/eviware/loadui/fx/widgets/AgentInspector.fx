@@ -144,9 +144,22 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	def workspace: WorkspaceItem = bind MainWindow.instance.workspace on replace oldVal {
 		oldVal.removeEventListener( BaseEvent.class, this );
 		workspace.addEventListener( BaseEvent.class, this );
+		populateTestCases();
 	}
 	
 	def mainWindowInstance = bind MainWindow.instance;
+	def projectCanvas = bind mainWindowInstance.projectCanvas;
+	def currentProject = bind projectCanvas.canvasItem on replace oldProject = newProject {
+		if( oldProject != null ) {
+			oldProject.removeEventListener( BaseEvent.class, this );
+			clearTestCases();
+		}
+		if( newProject != null ) {
+			newProject.addEventListener( BaseEvent.class, this );
+			populateTestCases();
+		}
+	}
+	
 	def testCaseCanvas = bind mainWindowInstance.testcaseCanvas;
 	def currentTestCase = bind testCaseCanvas.canvasItem on replace {
 		if(currentTestCase == null){
@@ -210,20 +223,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 				}
 			} else if( e instanceof CollectionEvent ) {
 				def event = e as CollectionEvent;
-				if( WorkspaceItem.PROJECTS == event.getKey() ) {
-					if( event.getEvent() == CollectionEvent.Event.ADDED ) {
-						runInFxThread( function():Void {
-							(event.getElement() as ProjectItem).addEventListener( BaseEvent.class, this );
-							populateTestCases();
-						});
-					} else {
-						runInFxThread( function():Void {
-							(event.getElement() as ProjectItem).removeEventListener( BaseEvent.class, this );
-							clearTestCases();
-						});
-					}
-				}
-				else if( WorkspaceItem.AGENTS == event.getKey() ) {
+				if( WorkspaceItem.AGENTS == event.getKey() ) {
 					if( event.getEvent() == CollectionEvent.Event.ADDED ) {
 						runInFxThread( function():Void {
 							addAgent(event.getElement() as AgentItem);
@@ -267,13 +267,16 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 						});
 					}
 				}
-			} else if (e instanceof BaseEvent){
+			//} else if (e instanceof BaseEvent){
+				//THIS OCCURS MUCH TOO OFTEN! Each time any Event is generated, TestCaseIcons are created, blocking the UI thread until the memory runs out.
+				//Since we listen to the Workspace, we should be notified when a Project is created anyway. The only problem is if a Project is loaded before 
+
 				/*
 				* When project is imported and opened for first time, controller is not aware does it have
 				* test cases or not. It becomes aware of them next time.
 				* So, here check if ghost agent have them and add if not.
 				*/
-				def project:ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
+				/*def project:ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
 				runInFxThread( function():Void {
 					for( s in project.getScenes() ) {
 						ghostAgent.addTestCase( TestCaseIcon {
@@ -281,7 +284,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 							sceneItem: s
 						} );
 					}				
-				} );
+				} );*/
 			}
 		}
 	}
