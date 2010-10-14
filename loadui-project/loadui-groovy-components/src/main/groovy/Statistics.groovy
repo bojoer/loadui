@@ -117,7 +117,7 @@ yRange = new CustomNumericRange(0, 10, 20)
 yRange.visible = true
 yRange.title = 'ms KB'
 
-y2Range = new CustomNumericRange(0, 10, 20)
+y2Range = new CustomNumericRange(0, 5, 20)
 y2Range.visible = true
 y2Range.title = 'requests'
 
@@ -508,6 +508,7 @@ addEventListener( ActionEvent ) { event ->
 			send( controllerTerminal, newMessage() )
 	}
 	//else if ( event.key == 'START' ) schedule()
+	chartModel.setTestRunning( running )
 }
 
 addEventListener( CollectionEvent ) { event ->

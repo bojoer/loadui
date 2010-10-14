@@ -46,6 +46,8 @@ public class ChartModel
 
 	private int legendColumns = -1;
 
+	private boolean testRunning = false;
+
 	public ChartModel( CustomAbstractRange xRange, CustomAbstractRange yRange, int width, int height )
 	{
 		this.xRange = xRange;
@@ -229,6 +231,12 @@ public class ChartModel
 			iterator.next().serieEnabled( cs );
 	}
 
+	private void fireTestStateChanged( boolean running )
+	{
+		for( Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext(); )
+			iterator.next().testStateChanged( running );
+	}
+
 	public int getLegendColumns()
 	{
 		if( legendColumns == -1 )
@@ -241,4 +249,19 @@ public class ChartModel
 	{
 		this.legendColumns = legendColumns;
 	}
+
+	public boolean isTestRunning()
+	{
+		return testRunning;
+	}
+
+	public void setTestRunning( boolean testRunning )
+	{
+		if( this.testRunning != testRunning )
+		{
+			this.testRunning = testRunning;
+			fireTestStateChanged( testRunning );
+		}
+	}
+
 }
