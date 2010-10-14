@@ -28,6 +28,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
+import com.eviware.loadui.api.model.WorkspaceItem
 
 final GAUSSIAN = 'Gaussian'
 final UNIFORM = 'Uniform'
@@ -37,7 +38,7 @@ random = new Random()
 waitingCount = 0
 
 display = new DelayedFormattedString( '%d ms', 500, 0 )
-waitingDisplay = new DelayedFormattedString( '%d', 500, value { waitingCount } )
+waitingDisplay = new DelayedFormattedString( '%d', 500, 0 )
  
 output = createOutput( 'output', "Message Output" )
  
@@ -49,7 +50,7 @@ executor = Executors.newSingleThreadScheduledExecutor()
  
 onMessage = { incoming, outgoing, message ->
 	waitingCount++
-	
+
 	long delayTime = delay.value 
 	if( selected.value == GAUSSIAN ) {
 		delayTime += ( random.nextGaussian() * ( randomDelay.value / 100 ) * delayTime * 0.3)
@@ -64,6 +65,7 @@ onMessage = { incoming, outgoing, message ->
 		send( output, message )
 		waitingCount--
 		display.args = delayTime
+		waitingDisplay.args = waitingCount
 	}, delayTime, TimeUnit.MILLISECONDS )
  }
  
@@ -74,7 +76,7 @@ onRelease = {
 }
 
 addEventListener( ActionEvent ) { event ->
-	if ( event.key == "STOP" && executor != null ) {
+	if ( event.key == "COMPLETE" && executor != null ) {
 		executor.shutdownNow()
 		executor = null
 		waitingCount = 0;
@@ -90,6 +92,24 @@ addEventListener( ActionEvent ) { event ->
 		if( executor != null ) {
 			executor.shutdownNow()
 			executor = Executors.newSingleThreadScheduledExecutor()
+		}
+	}
+	
+	if ( event.getSource() instanceof WorkspaceItem ) {
+		if( event.getSource().isLocalMode() ) {
+			display.setFormat('%d ms')
+			display.args = 0
+			display.start()
+			waitingDisplay.setFormat('%s')
+			waitingDisplay.args = 0
+			waitingDisplay.start()
+		} else {
+			display.stop()
+			display.setFormat('%s')
+			display.setValue("n/a")
+			waitingDisplay.stop()
+			waitingDisplay.setFormat('%s')
+			waitingDisplay.setValue("n/a")
 		}
 	}
 }
