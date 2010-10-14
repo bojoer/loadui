@@ -1,6 +1,3 @@
-import com.eviware.loadui.api.chart.ChartSerie;
-import com.eviware.loadui.api.chart.Point;
-
 // 
 // Copyright 2010 eviware software ab
 // 
@@ -57,7 +54,8 @@ import com.eviware.loadui.api.ui.table.LTableModel
 import com.eviware.loadui.api.summary.MutableSection
 
 import com.eviware.loadui.util.layout.DelayedFormattedString
-
+import com.eviware.loadui.api.chart.ChartSerie
+import com.eviware.loadui.api.chart.Point
 
 AGGREGATE = "Aggregate"
 AGENT_DATA_TIMESTAMP = "AgentDataTimestamp"
@@ -198,7 +196,7 @@ onMessage = { o, i, m ->
 	super.onTerminalMessage(o, i, m)
 	if(i == remoteTerminal) {
 		def data = new HashMap(m)
-		data[AGENT_DATA_TIMESTAMP] = System.currentTimeMillis();
+		data[AGENT_DATA_TIMESTAMP] = System.currentTimeMillis()
 		agentData[o.label] = data
 	}
 	
@@ -238,7 +236,7 @@ calculate = {
 	long currentTime = System.currentTimeMillis()
 	
 	try {
-		if( timeStats.size() > 0 ) {
+		if( timeStats.size() > 0 || agentData.size() > 0 || agentStatistics?.size() > 0) {
 			def message = newMessage()
 			data = timeStats.getData( currentTime )
 			message['Max'] = data['Max']
@@ -283,16 +281,15 @@ updateChart = { currentTime ->
 	if( selectedAgent.value == AGGREGATE ) {
 		try {
 			int count = 0
-			if (inputTerminal.connections.size() > 0) {
+			if (inputTerminal.connections.size() > 0 || statisticsInput.connections.size() > 0) {
 				for( d in agentData.values() ) {
-					if( !d.isEmpty() ) {
-						//println d
-						data['Max'] = Math.max( d['Max'], data['Max'] ?: 0 )
-						data['Min'] = Math.min( d['Min'], data['Min'] ?: Long.MAX_VALUE )
-						data['Avg'] = (data['Avg'] ?: 0) + d['Avg']
-						data['Std-Dev'] = (data['Std-Dev'] ?: 0) + d['Std-Dev']
-						data['Tps'] = (data['Tps'] ?: 0) + d['Tps']
-						data['Avg-Tps'] = (data['Avg-Tps'] ?: 0) + d['Avg-Tps']
+					if( !d.isEmpty() ) {	
+						data['Max'] = Math.max( d['Max'] ?: 0, data['Max'] ?: 0 )
+						data['Min'] = Math.min( d['Min'] ?: Long.MAX_VALUE, data['Min'] ?: Long.MAX_VALUE )
+						data['Avg'] = (data['Avg'] ?: 0) + (d['Avg'] ?: 0)
+						data['Std-Dev'] = (data['Std-Dev'] ?: 0) + (d['Std-Dev'] ?: 0)
+						data['Tps'] = (data['Tps'] ?: 0) + (d['Tps'] ?: 0)
+						data['Avg-Tps'] = (data['Avg-Tps'] ?: 0) + (d['Avg-Tps'] ?: 0)
 						data['Bps'] = (data['Bps'] ?: 0) + (d['Bps'] ?: 0)
 						data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
 						data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
@@ -307,7 +304,6 @@ updateChart = { currentTime ->
 					}
 				}
 			}
-			
 			if( count != 0 ) {
 				data['Avg'] /= count
 				data['Std-Dev'] /= count
@@ -316,7 +312,6 @@ updateChart = { currentTime ->
 		}
 	} else {
 		data = agentData[selectedAgent.value]
-	
 	}
 	if(data == null || data.isEmpty()) {
 		return
@@ -333,6 +328,9 @@ updateChart = { currentTime ->
 			if(enableAvgBPS.value) chartModel.addPoint(7, currentTime, data['Avg-Bps'] * bytesScaleFactor)
 			if(enablePercentile.value) chartModel.addPoint(8, currentTime, data['Percentile'])
 			if(enableAvgResponseSize.value) chartModel.addPoint(9, currentTime, data['AvgResponseSize'] * bytesScaleFactor)
+		}
+		
+		if (statisticsInput.connections.size() > 0 || remoteTerminal.connections.size() > 0  ) {
 			if(enableRequests.value) chartModel.addPoint(10, currentTime, data['Requests'])
 			if(enableRunning.value) chartModel.addPoint(11, currentTime, data['Running'])
 			if(enableCompleted.value) chartModel.addPoint(12, currentTime, data['Completed'])
@@ -341,7 +339,7 @@ updateChart = { currentTime ->
 			if(enableFailed.value) chartModel.addPoint(15, currentTime, data['Failed'])
 		}
 		
-		 if (inputTerminal.connections.size() > 0) {
+		if (inputTerminal.connections.size() > 0) {
 			avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
 			minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
 			maxDisplay.setArgs((float)data['Max'] * timeScaleFactor)
