@@ -61,23 +61,21 @@
 
  counters = getCounters()
     
- display = new DelayedFormattedString( '%d', 500, 0 )
+ display = new DelayedFormattedString( '%d', 500, value { total.value } )
  outputDisplay = new DelayedFormattedString( '%s', 500, value({ outputStats.findAll({ it >= 0 }).join('          ') }) )
 
  executor = Executors.newSingleThreadScheduledExecutor()
  future = null
-// future = executor.scheduleWithFixedDelay( { outputStats.update()
-//						println controller }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
 
  onMessage = { incoming, outgoing, message ->
    super.onTerminalMessage(incoming, outgoing, message)
-	if(incoming == remoteTerminal) 
-   		println message
    try {
     def next = 0;
     switch( selected.value ) {
         case "Round-Robin": 
             next = roundRobinNext
+            if( next > getOutgoingTerminalList().size() )
+		next = 0;
 	    counters.get(next).increment()
             outputStats.set(next, counters.get(next).get())
             send ( getOutgoingTerminalList().get(next), message )
@@ -110,10 +108,13 @@
                         createOutgoing()
                         outputStats.set(getOutgoingTerminalList().size() -1, 0)
                     } else {
-                        total.value = total.value - outputStats.get(getOutgoingTerminalList().size() -1)
-                        display.setArgs( total.value )
                         outputStats.set(getOutgoingTerminalList().size() -1, -1)
                         deleteOutgoing()
+			def sum = 0
+			for(cnt in outputStats) 
+         			sum += cnt == -1?0:cnt
+                        total.value = sum
+                        display.setArgs( total.value )
                     }
                 }
     		outputStats.update()
@@ -124,16 +125,14 @@
  
  addEventListener( ActionEvent ) { event ->
 	if ( event.key == "STOP" ) {
-	  executor.schedule( { 
-		executor?.shutdownNow()
-	  	executor = Executors.newSingleThreadScheduledExecutor()
-	  }, updateCounterDelay.value, TimeUnit.MILLISECONDS)
+		
 	}
 	
 	if ( event.key == "START" ) {
-           if ( future == null )
+           if ( future == null || future?.isDone() || future?.isCancelled() )
 	    future = executor.scheduleWithFixedDelay( { outputStats.update()
 								 }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
+		
 	}
 	
 	if ( event.key == "RESET" ) {

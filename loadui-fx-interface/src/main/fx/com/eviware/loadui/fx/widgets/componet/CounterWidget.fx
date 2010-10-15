@@ -36,8 +36,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.animation.Timeline;
-import javafx.animation.KeyFrame;
 
 import com.eviware.loadui.api.property.Property;
 
@@ -60,6 +58,7 @@ public class CounterWidget extends Panel, Observer {
     public var ccounters:ArrayList;
     
     var counters:Node[] = [];
+    var resetCounters = [0,0,0,0,0,0,0,0,0,0];
     override var content = bind counters;
     var numVisible = 1 on replace {
         onLayout();
@@ -97,6 +96,7 @@ public class CounterWidget extends Panel, Observer {
         	fill: Color.TRANSPARENT
 		} before counters[0];
 		
+		update(null, null);
     }
     
     override function update(observable: Observable, arg: Object) {
@@ -106,13 +106,17 @@ public class CounterWidget extends Panel, Observer {
                 var newVisible = 0;
                 for( cnt in [0..20][p| counters[p as Integer] instanceof Stack] ) {
                         var field:Stack = counters[cnt as Integer] as Stack;
-                        (field.content[1] as Text).content = ((ccounters.get(cnt/2) as Counter).get() mod 1000).toString();
+                        if ( (ccounters.get(cnt/2) as Counter).get() < resetCounters[cnt/2] )
+                        	resetCounters[cnt/2] = 0;
+                        var valueToShow =  (ccounters.get(cnt/2) as Counter).get() - resetCounters[cnt/2] ;
+                        (field.content[1] as Text).content = (valueToShow  mod 1000).toString();
                         if ( (component.get(cnt/2) as Integer) > -1 ) {
                             field.visible = true;
                             if( cnt > 0 )
-                            counters[(cnt-1) as Integer].visible = true;
+                                counters[(cnt-1) as Integer].visible = true;
                             newVisible ++;
                             } else {
+                            resetCounters[cnt/2] = (ccounters.get(cnt/2) as Counter).get();
                             field.visible = false;
                             if( cnt > 0 )
                             counters[(cnt-1) as Integer].visible = false;
@@ -122,19 +126,6 @@ public class CounterWidget extends Panel, Observer {
                 numVisible = newVisible;
             }
         });
-    }
-    
-    var timer:Timeline = null;
-
-    public function scheduleAction(timeout:Duration,action:function()) {
-        var timer: Timeline = Timeline {
-            repeatCount: 1
-            keyFrames: KeyFrame {
-                time: timeout
-                action: action
-            }
-        }
-        timer.play();
     }
     
     override var prefWidth = function(height:Number):Number {
