@@ -125,7 +125,7 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 		message.setChannel( "/service" + BASE_CHANNEL + channel );
 		message.setData( data );
 		log.debug( "Sending message: {} on channel: {}", data, message );
-		send( message );
+		enqueueSend( message );
 	}
 
 	@Override
