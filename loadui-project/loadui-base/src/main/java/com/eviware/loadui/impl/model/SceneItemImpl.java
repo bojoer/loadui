@@ -16,6 +16,7 @@
 package com.eviware.loadui.impl.model;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -280,7 +281,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			log.debug( "Sending statistics data from {}", this );
 		}
 		else if( source == this )
-			if( getProject().getAgentsAssignedTo( this ).size() > 0 && !getProject().getWorkspace().isLocalMode() )
+			if( getActiveAgents().size() > 0 && !getProject().getWorkspace().isLocalMode() )
 				awaitingSummary = true;
 			else
 				doGenerateSummary();
@@ -288,7 +289,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	public boolean statisticsReady()
 	{
-		for( AgentItem agent : getProject().getAgentsAssignedTo( this ) )
+		for( AgentItem agent : getActiveAgents() )
 			if( !remoteStatistics.containsKey( agent ) )
 				return false;
 		return true;
@@ -356,6 +357,15 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	public String getHelpUrl()
 	{
 		return "http://www.loadui.org/Working-with-loadUI/agents-and-testcases.html";
+	}
+
+	private Collection<AgentItem> getActiveAgents()
+	{
+		ArrayList<AgentItem> agents = new ArrayList<AgentItem>();
+		for( AgentItem agent : getProject().getAgentsAssignedTo( this ) )
+			if( agent.isReady() )
+				agents.add( agent );
+		return agents;
 	}
 
 	private class SelfListener implements EventHandler<BaseEvent>
