@@ -324,7 +324,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 			fireBaseEvent( INVALID );
 		}
 	}
-	
+
 	@Override
 	public boolean isBusy()
 	{
@@ -636,6 +636,13 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		public void setLayout( LayoutComponent layout )
 		{
 			ComponentItemImpl.this.layout = layout;
+			refreshLayout();
+		}
+
+		@Override
+		public void refreshLayout()
+		{
+			fireBaseEvent( LAYOUT_RELOADED );
 		}
 
 		@Override
@@ -661,7 +668,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		{
 			ComponentItemImpl.this.settingsTabs.add( tab );
 		}
-		
+
 		@Override
 		public void clearSettingsTabs()
 		{
@@ -717,7 +724,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		{
 			ComponentItemImpl.this.setInvalid( state );
 		}
-		
+
 		@Override
 		public boolean isBusy()
 		{
