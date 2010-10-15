@@ -170,8 +170,6 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	
 	override var onDragging = function() { canvas.refreshTerminals() };
 	
-	protected function onReloaded():Void {};
-	
 	init {
 		addMouseHandler( MOUSE_PRESSED, function( e:MouseEvent ):Void {
 			if( e.secondaryButtonDown and not e.controlDown and not selected ) selectOnly(); 
@@ -279,8 +277,6 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 				runInFxThread( function():Void { label = canvasObject.getLabel() } );
 			} else if( event.getKey() == CanvasObjectItem.ACTIVITY ) {
 				runInFxThread( function():Void { active = canvasObject.isActive() } );
-			} else if( event.getKey() == CanvasObjectItem.RELOADED ) {
-				runInFxThread( function():Void { onReloaded() } );
 			}
 		}
 	}

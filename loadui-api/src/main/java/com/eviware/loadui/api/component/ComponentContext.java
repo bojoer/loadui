@@ -216,6 +216,12 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	public void setLayout( LayoutComponent layout );
 
 	/**
+	 * Explicitly tells the GUI to re-build the layout (this is also done
+	 * whenever setLayout is called).
+	 */
+	public void refreshLayout();
+
+	/**
 	 * Set the Layout for the Component to be used in compact mode.
 	 */
 	public void setCompactLayout( LayoutComponent layout );
@@ -250,7 +256,7 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	 * @param tab
 	 */
 	public void addSettingsTab( SettingsLayoutContainer tab );
-	
+
 	/**
 	 * Clears any added settings tabs.
 	 */
@@ -289,7 +295,7 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	 * @param state
 	 */
 	public void setInvalid( boolean state );
-	
+
 	/**
 	 * Checks to see if the ComponentItem is busy.
 	 * 

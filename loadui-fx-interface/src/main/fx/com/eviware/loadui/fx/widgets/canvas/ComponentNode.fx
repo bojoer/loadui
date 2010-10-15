@@ -35,10 +35,12 @@ import com.eviware.loadui.fx.ui.resources.ResizablePath;
 import com.eviware.loadui.fx.ui.dialogs.DefaultComponentSettingsPanel;
 import com.eviware.loadui.fx.dialogs.CloneComponentDialog;
 
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 
+import java.util.EventObject;
 
 public function create( component:ComponentItem, canvas:Canvas ):ComponentNode {
 	if( component.getBehavior() instanceof OnOffCategory )
@@ -110,8 +112,14 @@ public class ComponentNode extends CanvasObjectNode {
 		dialog;
 	}
 	
-	override function onReloaded():Void {
-		rebuildFace();
+	override function handleEvent( e:EventObject ) {
+		super.handleEvent( e );
+		if( e instanceof BaseEvent ) {
+			def event = e as BaseEvent;
+			if( event.getKey() == ComponentItem.LAYOUT_RELOADED ) {
+				runInFxThread( function():Void { rebuildFace(); } );
+			}
+		}
 	}
 	
 	override function release() {
