@@ -93,7 +93,7 @@
             break
     }
     total.value++
-    display.setArgs( total.value )
+  //  display.setArgs( total.value )
    } catch ( Exception e ) {
  	println e.printStackTrace   
    }
@@ -114,7 +114,7 @@
 			for(cnt in outputStats) 
          			sum += cnt == -1?0:cnt
                         total.value = sum
-                        display.setArgs( total.value )
+                      //  display.setArgs( total.value )
                     }
                 }
     		outputStats.update()
@@ -141,7 +141,7 @@
 	    roundRobinNext = 0
 
 	    total.value = 0
-	    display.setArgs( 0 )
+	 //   display.setArgs( 0 )
             for( i in 0..9 ) {
 	     if( outputStats.get(i) > -1 )
 	          outputStats.set(i as Integer,0)
@@ -179,7 +179,7 @@
 	    }
 	    action( label:'Clear', action: {  
 	       total.value = 0
-		    display.setArgs( 0 )
+		   // display.setArgs( 0 )
 			 for( i in 0..9 ) {
 			     if( outputStats.get(i) > -1 ) outputStats.set(i as Integer,0)
 			 }
