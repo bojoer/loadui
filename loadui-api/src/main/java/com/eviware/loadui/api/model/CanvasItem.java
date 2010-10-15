@@ -36,6 +36,7 @@ public interface CanvasItem extends ModelItem, CounterHolder
 	public static final String CONNECTIONS = CanvasItem.class.getName() + "@connections";
 	public static final String SUMMARY = CanvasItem.class.getName() + "@summary";
 	public static final String LIMITS = CanvasItem.class.getName() + "@limits";
+	public static final String RUNNING = CanvasItem.class.getName() + "@running";
 
 	public static final String START_ACTION = "START";
 	public static final String STOP_ACTION = "STOP";

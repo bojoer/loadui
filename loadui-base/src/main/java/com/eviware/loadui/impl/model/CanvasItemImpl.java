@@ -485,7 +485,11 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	protected void setRunning( boolean running )
 	{
-		this.running = running;
+		if( this.running != running )
+		{
+			this.running = running;
+			fireBaseEvent( RUNNING );
+		}
 	}
 
 	public Date getStartTime()
