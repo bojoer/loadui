@@ -449,6 +449,12 @@ public class ChartWidget extends VBox, ChartListener {
     		if (min < Double.MAX_VALUE and min > nr.getLow()){
     			min = nr.getLow();
     		}
+    		if(max == Double.MIN_VALUE){
+    			min = Double.MAX_VALUE;
+    		}
+    		else if(min == Double.MAX_VALUE){
+    			max = Double.MIN_VALUE;
+    		}
     		autoNumericAxis(yAxis, max, min, nr.getExtraSpace());
     	} 
 		if(y2Axis.getRange() instanceof NumericRange){
