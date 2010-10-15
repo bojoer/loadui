@@ -32,7 +32,7 @@ import java.net.URL;
  */
 public class FxUtils {} //This class exists only so that the above javafxdoc will be displayed.
 
-public def VERSION = "1.0";
+public def VERSION = "1.0.1";
 
 /**
  * Similar to the builtin __DIR__, __ROOT__ gives the absolute path to the root of the enveloping bundle.
