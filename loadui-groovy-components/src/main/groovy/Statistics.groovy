@@ -520,7 +520,6 @@ addEventListener( canvas, BaseEvent ) { event ->
 
 addEventListener( CollectionEvent ) { event ->
 	if( event.key == ComponentContext.AGENT_TERMINALS ) {
-		resetComponent()
 		fixOptions()
 	}
 }
