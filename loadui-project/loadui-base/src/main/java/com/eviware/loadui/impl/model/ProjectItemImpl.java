@@ -367,12 +367,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			conf.setAgentLabel( agent.getLabel() );
 			conf.setAgentAddress( agent.getUrl() );
 			agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, sceneId ) );
-			if( scene.isRunning() && !workspace.isLocalMode() )
-			{
-				log.debug( "Starting remote TestCase: {} on Agent: {}", scene, agent );
-				agent.sendMessage( SceneCommunication.CHANNEL, Arrays.asList( sceneId, Long.toString( scene.getVersion() ),
-						SceneCommunication.ACTION_EVENT, START_ACTION, sceneId ) );
-			}
 			fireCollectionEvent( ASSIGNMENTS, Event.ADDED, assignment );
 		}
 	}
@@ -956,10 +950,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				{
 					log.debug( "Send message assign: {}", scene.getLabel() );
 					agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, scene.getId() ) );
-					if( scene.isRunning() && !workspace.isLocalMode() )
-						agent.sendMessage( SceneCommunication.CHANNEL, Arrays.asList( scene.getId(),
-								Long.toString( scene.getVersion() ), SceneCommunication.ACTION_EVENT, START_ACTION,
-								scene.getId() ) );
 				}
 			}
 		}
@@ -1003,6 +993,15 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 						doGenerateSummary();
 					}
 				}
+			}
+			else if( message.containsKey( AgentItem.STARTED ) )
+			{
+				SceneItem scene = ( SceneItem )addressableRegistry.lookup( message.get( AgentItem.STARTED ) );
+				if( scene.isRunning() && !workspace.isLocalMode() )
+					endpoint
+							.sendMessage( SceneCommunication.CHANNEL, Arrays.asList( scene.getId(),
+									Long.toString( scene.getVersion() ), SceneCommunication.ACTION_EVENT, START_ACTION,
+									scene.getId() ) );
 			}
 		}
 	}
