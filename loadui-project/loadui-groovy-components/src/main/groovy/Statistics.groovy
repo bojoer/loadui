@@ -31,6 +31,7 @@ import java.util.ArrayList
 
 import com.eviware.loadui.api.component.ComponentContext
 
+import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.chart.CustomTimeRange
 import com.eviware.loadui.api.chart.CustomNumericRange
 import com.eviware.loadui.api.chart.ChartModel
@@ -46,6 +47,7 @@ import com.eviware.loadui.impl.layout.OptionsProviderImpl
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.BaseEvent
 import com.eviware.loadui.api.events.CollectionEvent
 import com.eviware.loadui.api.events.ActionEvent
 
@@ -508,7 +510,11 @@ addEventListener( ActionEvent ) { event ->
 			send( controllerTerminal, newMessage() )
 	}
 	//else if ( event.key == 'START' ) schedule()
-	chartModel.setTestRunning( running )
+	chartModel.setTestRunning( canvas.running )
+}
+
+addEventListener( canvas, BaseEvent ) { event ->
+	if( event.key == CanvasItem.RUNNING ) chartModel.setTestRunning( canvas.running )
 }
 
 addEventListener( CollectionEvent ) { event ->
@@ -647,3 +653,4 @@ enableDiscarded.value = false
 buildSignature()
 fixOptions()
 schedule()
+chartModel.setTestRunning( canvas.running )

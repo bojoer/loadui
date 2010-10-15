@@ -60,7 +60,6 @@ import java.awt.Dimension;
 import java.awt.BasicStroke;
 import java.awt.GradientPaint;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -202,6 +201,10 @@ public class ChartWidget extends VBox, ChartListener {
     	FxUtils.runInFxThread( function():Void {
 			autoAxis();
 		});
+		
+		if(chartModel.isTestRunning()){
+			timeline.playFromStart();
+		}
     }
     
     function buildChartPanel(): Void {
@@ -382,7 +385,6 @@ public class ChartWidget extends VBox, ChartListener {
 
     	FxUtils.runInFxThread( function():Void {
 			(models.get(cs.getName()) as DefaultChartModel).addPoint(new ChartPoint(x, y));
-			//autoAxis();
       })
     }
     
@@ -459,6 +461,12 @@ public class ChartWidget extends VBox, ChartListener {
     		if (min < Double.MAX_VALUE and min > nr.getLow()){
     			min = nr.getLow();
     		}
+    		if(max == Double.MIN_VALUE){
+    			min = Double.MAX_VALUE;
+    		}
+    		else if(min == Double.MAX_VALUE){
+    			max = Double.MIN_VALUE;
+    		}
     		autoNumericAxis(y2Axis, max, min, nr.getExtraSpace());
     	} 
     }
@@ -534,7 +542,10 @@ public class ChartWidget extends VBox, ChartListener {
 				}
 			}
 		}
-		max * 1.05;    	
+		if(max > Double.MIN_VALUE){
+			max *= 1.05;	
+		}
+		max;    	
     }
     
     function findMinimumY(default: Boolean): Double {
