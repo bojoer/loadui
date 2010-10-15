@@ -257,7 +257,6 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			send(output, message)
 			
 			if (agentStatistics != null) {
 				message['Requests'] = agentStatistics['Requests']
@@ -267,6 +266,8 @@ calculate = {
 				message['Failed'] = agentStatistics['Failed']
 				message['Completed'] = agentStatistics['Completed']
 			}
+
+			send(output, message)
 			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
