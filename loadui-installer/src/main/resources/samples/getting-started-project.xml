@@ -3,77 +3,74 @@
 ------------------------------------------------
 This is a simple Web LoadTest that uses a soapUI MockService as its target. It illustrates the basic Generator -> Runner -> Analysis concept of loadUI components
 
-Double-click the TestCase and run it to see what we're talking about!</con:property><con:property key="miniature">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
+Double-click the TestCase and run it to see what we're talking about!</con:property><con:property key="miniature">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
 </con:property><con:property key="gui.note.1">205;626;200;150;2. Assertions and Logging
 -------------------------------------
 This TestCase extends the first by adding a couple of assertions and a Table Log to catch failed responses. </con:property><con:property key="gui.note.2">997;621;263;153;4. Controlling Flow 
@@ -757,6 +754,7 @@ import java.util.ArrayList
 
 import com.eviware.loadui.api.component.ComponentContext
 
+import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.chart.CustomTimeRange
 import com.eviware.loadui.api.chart.CustomNumericRange
 import com.eviware.loadui.api.chart.ChartModel
@@ -772,6 +770,7 @@ import com.eviware.loadui.impl.layout.OptionsProviderImpl
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.BaseEvent
 import com.eviware.loadui.api.events.CollectionEvent
 import com.eviware.loadui.api.events.ActionEvent
 
@@ -981,7 +980,6 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			send(output, message)
 			
 			if (agentStatistics != null) {
 				message['Requests'] = agentStatistics['Requests']
@@ -991,6 +989,8 @@ calculate = {
 				message['Failed'] = agentStatistics['Failed']
 				message['Completed'] = agentStatistics['Completed']
 			}
+
+			send(output, message)
 			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
@@ -1234,12 +1234,15 @@ addEventListener( ActionEvent ) { event ->
 			send( controllerTerminal, newMessage() )
 	}
 	//else if ( event.key == 'START' ) schedule()
-	chartModel.setTestRunning( running )
+	chartModel.setTestRunning( canvas.running )
+}
+
+addEventListener( canvas, BaseEvent ) { event ->
+	if( event.key == CanvasItem.RUNNING ) chartModel.setTestRunning( canvas.running )
 }
 
 addEventListener( CollectionEvent ) { event ->
 	if( event.key == ComponentContext.AGENT_TERMINALS ) {
-		resetComponent()
 		fixOptions()
 	}
 }
@@ -1373,7 +1376,7 @@ enableDiscarded.value = false
 buildSignature()
 fixOptions()
 schedule()
-]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">1bb9588326ee735771fa719e20f0d6dd</con:property><con:property key="gui.layoutX">583</con:property><con:property key="gui.layoutY">961</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="f01e8c30-2fd1-417c-87bf-f8c3ae153c4b"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="mockService" type="java.lang.String">MockService 1</con:property><con:property key="path" type="java.lang.String">/</con:property><con:property key="port" type="java.lang.String">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1196</con:property><con:property key="gui.layoutY">793</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:connection outputTerminalId="2cb44449-032c-4163-8408-e5b61bce2d3f/triggerTerminal" inputTerminalId="0b1546d7-feeb-4d93-b3c9-f6ac151594fc/triggerTerminal"/><con:connection outputTerminalId="0b1546d7-feeb-4d93-b3c9-f6ac151594fc/resultTerminal" inputTerminalId="7c508081-aa40-49c4-8722-246670b4a417/inputTerminal"/></con:scene><con:scene label="Complex Load Generation" id="234ea2c5-c94b-4e44-aeae-bd37cd09069b" version="19"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="gui.layoutX">1325</con:property><con:property key="gui.layoutY">200</con:property><con:property key="miniature">iVBORw0KGgoAAAANSUhEUgAAAKgAAACwCAYAAACbziVCAAAisklEQVR42u1dB3gU1RYGEko6JCQQ
+chartModel.setTestRunning( canvas.running )]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">8332d56fdd4de041b88fcbfd04cd0865</con:property><con:property key="gui.layoutX">583</con:property><con:property key="gui.layoutY">961</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="f01e8c30-2fd1-417c-87bf-f8c3ae153c4b"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="mockService" type="java.lang.String">MockService 1</con:property><con:property key="path" type="java.lang.String">/</con:property><con:property key="port" type="java.lang.String">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1196</con:property><con:property key="gui.layoutY">793</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:connection outputTerminalId="2cb44449-032c-4163-8408-e5b61bce2d3f/triggerTerminal" inputTerminalId="0b1546d7-feeb-4d93-b3c9-f6ac151594fc/triggerTerminal"/><con:connection outputTerminalId="0b1546d7-feeb-4d93-b3c9-f6ac151594fc/resultTerminal" inputTerminalId="7c508081-aa40-49c4-8722-246670b4a417/inputTerminal"/></con:scene><con:scene label="Complex Load Generation" id="234ea2c5-c94b-4e44-aeae-bd37cd09069b" version="19"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="gui.layoutX">1325</con:property><con:property key="gui.layoutY">200</con:property><con:property key="miniature">iVBORw0KGgoAAAANSUhEUgAAAKgAAACwCAYAAACbziVCAAAisklEQVR42u1dB3gU1RYGEko6JCQQ
 qoYWqlQBKYKFIlVFikgQEJQuvYcoJfQWQUgCISFBWggJVaSpNEMRKQpIVxAMIvp8PN/33vO8+U/2
 rrObTbKTLdnd3PN9//fP3Dtz987MP+fOnb33TKFC0qRJy97u3U4jCcsgVWRD++FmCqWfWE9gCfPx
 6e4l+mWpIhva7WvJJGEZpIpsaP/+fS9JWAapIilQKdCCLtA71zbRvx7voZ0pkbwetXSMyYvxe0Za
@@ -3114,6 +3117,7 @@ import java.util.ArrayList
 
 import com.eviware.loadui.api.component.ComponentContext
 
+import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.chart.CustomTimeRange
 import com.eviware.loadui.api.chart.CustomNumericRange
 import com.eviware.loadui.api.chart.ChartModel
@@ -3129,6 +3133,7 @@ import com.eviware.loadui.impl.layout.OptionsProviderImpl
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.BaseEvent
 import com.eviware.loadui.api.events.CollectionEvent
 import com.eviware.loadui.api.events.ActionEvent
 
@@ -3338,7 +3343,6 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			send(output, message)
 			
 			if (agentStatistics != null) {
 				message['Requests'] = agentStatistics['Requests']
@@ -3348,6 +3352,8 @@ calculate = {
 				message['Failed'] = agentStatistics['Failed']
 				message['Completed'] = agentStatistics['Completed']
 			}
+
+			send(output, message)
 			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
@@ -3591,12 +3597,15 @@ addEventListener( ActionEvent ) { event ->
 			send( controllerTerminal, newMessage() )
 	}
 	//else if ( event.key == 'START' ) schedule()
-	chartModel.setTestRunning( running )
+	chartModel.setTestRunning( canvas.running )
+}
+
+addEventListener( canvas, BaseEvent ) { event ->
+	if( event.key == CanvasItem.RUNNING ) chartModel.setTestRunning( canvas.running )
 }
 
 addEventListener( CollectionEvent ) { event ->
 	if( event.key == ComponentContext.AGENT_TERMINALS ) {
-		resetComponent()
 		fixOptions()
 	}
 }
@@ -3730,7 +3739,7 @@ enableDiscarded.value = false
 buildSignature()
 fixOptions()
 schedule()
-]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">false</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">1bb9588326ee735771fa719e20f0d6dd</con:property><con:property key="gui.layoutX">697</con:property><con:property key="gui.layoutY">1527</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="8a8cf6f5-e6f6-4421-9a9f-5ff5261affa5"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="mockService" type="java.lang.String">MockService 1</con:property><con:property key="path" type="java.lang.String">/</con:property><con:property key="port" type="java.lang.String">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1418</con:property><con:property key="gui.layoutY">1432</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:connection outputTerminalId="d9d3b5d3-00e3-4654-b75f-4276c0135340/triggerTerminal" inputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/triggerTerminal"/><con:connection outputTerminalId="04fb6e5f-6328-4d61-8d66-1a7eb3c3965d/triggerTerminal" inputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/triggerTerminal"/><con:connection outputTerminalId="e6588efe-e0c8-463b-b604-398edb7881d5/triggerTerminal" inputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/triggerTerminal"/><con:connection outputTerminalId="e36a65c3-b2e1-4db7-967b-bf70cb77182b/outgoingTerminal" inputTerminalId="d9d3b5d3-00e3-4654-b75f-4276c0135340/stateTerminal"/><con:connection outputTerminalId="f491d887-a1e7-4b12-8174-0b4a9f584525/outgoingTerminal" inputTerminalId="04fb6e5f-6328-4d61-8d66-1a7eb3c3965d/stateTerminal"/><con:connection outputTerminalId="ee825185-22ab-42ed-852a-c87859ffbc47/outgoingTerminal" inputTerminalId="e6588efe-e0c8-463b-b604-398edb7881d5/stateTerminal"/><con:connection outputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/resultTerminal" inputTerminalId="05458282-13f4-4c65-a2fe-0687b851e4cc/inputTerminal"/><con:connection outputTerminalId="f491d887-a1e7-4b12-8174-0b4a9f584525/outgoingTerminal" inputTerminalId="ee825185-22ab-42ed-852a-c87859ffbc47/stateTerminal"/></con:scene><con:scene label="Complex Load Scenario" id="5dd7734e-f092-4152-b2e8-3663dac12bf0" version="41"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="gui.layoutX">1332</con:property><con:property key="gui.layoutY">619</con:property><con:property key="miniature">iVBORw0KGgoAAAANSUhEUgAAALAAAAC8CAYAAADYdSQlAAAuYklEQVR42u1dB5jVRNvdBtsLuyws
+chartModel.setTestRunning( canvas.running )]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">false</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">8332d56fdd4de041b88fcbfd04cd0865</con:property><con:property key="gui.layoutX">697</con:property><con:property key="gui.layoutY">1527</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="8a8cf6f5-e6f6-4421-9a9f-5ff5261affa5"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="mockService" type="java.lang.String">MockService 1</con:property><con:property key="path" type="java.lang.String">/</con:property><con:property key="port" type="java.lang.String">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1418</con:property><con:property key="gui.layoutY">1432</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:connection outputTerminalId="d9d3b5d3-00e3-4654-b75f-4276c0135340/triggerTerminal" inputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/triggerTerminal"/><con:connection outputTerminalId="04fb6e5f-6328-4d61-8d66-1a7eb3c3965d/triggerTerminal" inputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/triggerTerminal"/><con:connection outputTerminalId="e6588efe-e0c8-463b-b604-398edb7881d5/triggerTerminal" inputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/triggerTerminal"/><con:connection outputTerminalId="e36a65c3-b2e1-4db7-967b-bf70cb77182b/outgoingTerminal" inputTerminalId="d9d3b5d3-00e3-4654-b75f-4276c0135340/stateTerminal"/><con:connection outputTerminalId="f491d887-a1e7-4b12-8174-0b4a9f584525/outgoingTerminal" inputTerminalId="04fb6e5f-6328-4d61-8d66-1a7eb3c3965d/stateTerminal"/><con:connection outputTerminalId="ee825185-22ab-42ed-852a-c87859ffbc47/outgoingTerminal" inputTerminalId="e6588efe-e0c8-463b-b604-398edb7881d5/stateTerminal"/><con:connection outputTerminalId="133d26ad-1f1d-44b0-849c-c9dc31549d48/resultTerminal" inputTerminalId="05458282-13f4-4c65-a2fe-0687b851e4cc/inputTerminal"/><con:connection outputTerminalId="f491d887-a1e7-4b12-8174-0b4a9f584525/outgoingTerminal" inputTerminalId="ee825185-22ab-42ed-852a-c87859ffbc47/stateTerminal"/></con:scene><con:scene label="Complex Load Scenario" id="5dd7734e-f092-4152-b2e8-3663dac12bf0" version="41"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="gui.layoutX">1332</con:property><con:property key="gui.layoutY">619</con:property><con:property key="miniature">iVBORw0KGgoAAAANSUhEUgAAALAAAAC8CAYAAADYdSQlAAAuYklEQVR42u1dB5jVRNvdBtsLuyws
 TWBhgYWlN0F6R+qKVClLkd7bR5UiCCJSpC9dpC3SqwgiSFUQKWJBEVFB4cOO+ln+98+Zm7nOzc3d
 vSW3Z57nPCeZSSaZ5GQymcy8b0CAHpwaggMDKESCfiWcHO7d2X9fAvkatL5Of144SrZg7759tH7D
 BrJ1P+lQTXRV2hC+vr2HfAUfXdtCq1dOYMsaX6Y+P41pRYe61KLjGY1pfad6dL5fEzrTtwndHNKc
@@ -5006,23 +5015,21 @@ if (running)
 
  counters = getCounters()
     
- display = new DelayedFormattedString( '%d', 500, 0 )
+ display = new DelayedFormattedString( '%d', 500, value { total.value } )
  outputDisplay = new DelayedFormattedString( '%s', 500, value({ outputStats.findAll({ it >= 0 }).join('          ') }) )
 
  executor = Executors.newSingleThreadScheduledExecutor()
  future = null
-// future = executor.scheduleWithFixedDelay( { outputStats.update()
-//						println controller }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
 
  onMessage = { incoming, outgoing, message ->
    super.onTerminalMessage(incoming, outgoing, message)
-	if(incoming == remoteTerminal) 
-   		println message
    try {
     def next = 0;
     switch( selected.value ) {
         case "Round-Robin": 
             next = roundRobinNext
+            if( next > getOutgoingTerminalList().size() )
+		next = 0;
 	    counters.get(next).increment()
             outputStats.set(next, counters.get(next).get())
             send ( getOutgoingTerminalList().get(next), message )
@@ -5040,7 +5047,7 @@ if (running)
             break
     }
     total.value++
-    display.setArgs( total.value )
+  //  display.setArgs( total.value )
    } catch ( Exception e ) {
  	println e.printStackTrace   
    }
@@ -5055,10 +5062,13 @@ if (running)
                         createOutgoing()
                         outputStats.set(getOutgoingTerminalList().size() -1, 0)
                     } else {
-                        total.value = total.value - outputStats.get(getOutgoingTerminalList().size() -1)
-                        display.setArgs( total.value )
                         outputStats.set(getOutgoingTerminalList().size() -1, -1)
                         deleteOutgoing()
+			def sum = 0
+			for(cnt in outputStats) 
+         			sum += cnt == -1?0:cnt
+                        total.value = sum
+                      //  display.setArgs( total.value )
                     }
                 }
     		outputStats.update()
@@ -5069,16 +5079,14 @@ if (running)
  
  addEventListener( ActionEvent ) { event ->
 	if ( event.key == "STOP" ) {
-	  executor.schedule( { 
-		executor?.shutdownNow()
-	  	executor = Executors.newSingleThreadScheduledExecutor()
-	  }, updateCounterDelay.value, TimeUnit.MILLISECONDS)
+		
 	}
 	
 	if ( event.key == "START" ) {
-           if ( future == null )
+           if ( future == null || future?.isDone() || future?.isCancelled() )
 	    future = executor.scheduleWithFixedDelay( { outputStats.update()
 								 }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
+		
 	}
 	
 	if ( event.key == "RESET" ) {
@@ -5087,7 +5095,7 @@ if (running)
 	    roundRobinNext = 0
 
 	    total.value = 0
-	    display.setArgs( 0 )
+	 //   display.setArgs( 0 )
             for( i in 0..9 ) {
 	     if( outputStats.get(i) > -1 )
 	          outputStats.set(i as Integer,0)
@@ -5125,7 +5133,7 @@ if (running)
 	    }
 	    action( label:'Clear', action: {  
 	       total.value = 0
-		    display.setArgs( 0 )
+		   // display.setArgs( 0 )
 			 for( i in 0..9 ) {
 			     if( outputStats.get(i) > -1 ) outputStats.set(i as Integer,0)
 			 }
@@ -5141,7 +5149,7 @@ compactLayout() {
 		node( label: 'Count', fString: display )
 		node( label: 'Distribution', fString: outputDisplay )
 	}
-}</con:property><con:property key="selected" type="java.lang.String">Round-Robin</con:property><con:property key="outputs" type="java.lang.Integer">3</con:property><con:property key="total" type="java.lang.Integer">0</con:property><con:property key="counterUse" type="java.lang.Boolean">true</con:property><con:property key="updateCounterDelay" type="java.lang.Long">500</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Splitter</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Splitter.groovy</con:property><con:property key="_digest">747945402ba6a60b8baadc554d3933c3</con:property><con:property key="gui.layoutX">806</con:property><con:property key="gui.layoutY">429</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="soapUI Runner" id="6002c29e-6cf9-4772-83cd-c862927e5aaa"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestSuite 1</con:property><con:property key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestCase 1</con:property><con:property key="raiseError" type="java.lang.Boolean">true</con:property><con:property key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property key="_testCasePropertiesTableModel" type="java.lang.String"/><con:property key="settingsFileRelativePath" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="useSettingsFileRelativePath" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="settingsFile" type="java.io.File">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">861</con:property><con:property key="gui.layoutY">1439</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="bbdf5140-9253-4ead-9782-cbb0a742264e"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="mockService" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">MockService 1</con:property><con:property key="path" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/</con:property><con:property key="port" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">531</con:property><con:property key="gui.layoutY">2222</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Delay (1)" id="5bf761b9-8f2d-44ed-adc9-72d49eb32927" category="flow"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
+}</con:property><con:property key="selected" type="java.lang.String">Round-Robin</con:property><con:property key="outputs" type="java.lang.Integer">3</con:property><con:property key="total" type="java.lang.Integer">0</con:property><con:property key="counterUse" type="java.lang.Boolean">true</con:property><con:property key="updateCounterDelay" type="java.lang.Long">500</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Splitter</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Splitter.groovy</con:property><con:property key="_digest">80324d7de41d4f8959b98750ea1dedbf</con:property><con:property key="gui.layoutX">806</con:property><con:property key="gui.layoutY">429</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="soapUI Runner" id="6002c29e-6cf9-4772-83cd-c862927e5aaa"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestSuite 1</con:property><con:property key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestCase 1</con:property><con:property key="raiseError" type="java.lang.Boolean">true</con:property><con:property key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property key="_testCasePropertiesTableModel" type="java.lang.String"/><con:property key="settingsFileRelativePath" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="useSettingsFileRelativePath" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="settingsFile" type="java.io.File">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="outputTestCaseProperties" xsi:nil="true" type="java.lang.Boolean" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">861</con:property><con:property key="gui.layoutY">1439</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="bbdf5140-9253-4ead-9782-cbb0a742264e"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="mockService" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">MockService 1</con:property><con:property key="path" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/</con:property><con:property key="port" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">531</con:property><con:property key="gui.layoutY">2222</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Delay (1)" id="5bf761b9-8f2d-44ed-adc9-72d49eb32927" category="flow"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -5277,7 +5285,7 @@ compactLayout {
 		node( label:'Delay ', fString:display, constraints:'w 60!' )
 		node( label:'Waiting ', fString:waitingDisplay, constraints:'w 50!' )
 	}
-}]]></con:property><con:property key="delay" type="java.lang.Long">600</con:property><con:property key="selected" type="java.lang.String">Uniform</con:property><con:property key="randomDelay" type="java.lang.Integer">0</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Delay</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Delay.groovy</con:property><con:property key="_digest">a8532f6622e0e00d49b8cc930f40e207</con:property><con:property key="gui.layoutX">877</con:property><con:property key="gui.layoutY">1137</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="soapUI Runner (1)" id="1bc8e660-d490-4a74-a86e-b54c476cf501"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestSuite 1</con:property><con:property key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestCase 1</con:property><con:property key="raiseError" type="java.lang.Boolean">true</con:property><con:property key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property key="_testCasePropertiesTableModel" type="java.lang.String"/><con:property key="settingsFileRelativePath" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="useSettingsFileRelativePath" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="settingsFile" type="java.io.File">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">1387</con:property><con:property key="gui.layoutY">774</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Web Page Runner (2)" id="4c20d4f4-9820-4ac8-986f-bb8d89fb7e56" category="runners"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
+}]]></con:property><con:property key="delay" type="java.lang.Long">600</con:property><con:property key="selected" type="java.lang.String">Uniform</con:property><con:property key="randomDelay" type="java.lang.Integer">0</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Delay</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Delay.groovy</con:property><con:property key="_digest">a8532f6622e0e00d49b8cc930f40e207</con:property><con:property key="gui.layoutX">877</con:property><con:property key="gui.layoutY">1137</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="soapUI Runner (1)" id="1bc8e660-d490-4a74-a86e-b54c476cf501"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="concurrentSamples" type="java.lang.Long">100</con:property><con:property key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property key="assertOnOverflow" type="java.lang.Boolean">false</con:property><con:property key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestSuite 1</con:property><con:property key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">TestCase 1</con:property><con:property key="raiseError" type="java.lang.Boolean">true</con:property><con:property key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property key="_testCasePropertiesTableModel" type="java.lang.String"/><con:property key="settingsFileRelativePath" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="useSettingsFileRelativePath" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="settingsFile" type="java.io.File">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="outputTestCaseProperties" xsi:nil="true" type="java.lang.Boolean" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">1387</con:property><con:property key="gui.layoutY">774</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Web Page Runner (2)" id="4c20d4f4-9820-4ac8-986f-bb8d89fb7e56" category="runners"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -5672,6 +5680,7 @@ import java.util.ArrayList
 
 import com.eviware.loadui.api.component.ComponentContext
 
+import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.chart.CustomTimeRange
 import com.eviware.loadui.api.chart.CustomNumericRange
 import com.eviware.loadui.api.chart.ChartModel
@@ -5687,6 +5696,7 @@ import com.eviware.loadui.impl.layout.OptionsProviderImpl
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.BaseEvent
 import com.eviware.loadui.api.events.CollectionEvent
 import com.eviware.loadui.api.events.ActionEvent
 
@@ -5896,7 +5906,6 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			send(output, message)
 			
 			if (agentStatistics != null) {
 				message['Requests'] = agentStatistics['Requests']
@@ -5906,6 +5915,8 @@ calculate = {
 				message['Failed'] = agentStatistics['Failed']
 				message['Completed'] = agentStatistics['Completed']
 			}
+
+			send(output, message)
 			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
@@ -6149,12 +6160,15 @@ addEventListener( ActionEvent ) { event ->
 			send( controllerTerminal, newMessage() )
 	}
 	//else if ( event.key == 'START' ) schedule()
-	chartModel.setTestRunning( running )
+	chartModel.setTestRunning( canvas.running )
+}
+
+addEventListener( canvas, BaseEvent ) { event ->
+	if( event.key == CanvasItem.RUNNING ) chartModel.setTestRunning( canvas.running )
 }
 
 addEventListener( CollectionEvent ) { event ->
 	if( event.key == ComponentContext.AGENT_TERMINALS ) {
-		resetComponent()
 		fixOptions()
 	}
 }
@@ -6288,7 +6302,7 @@ enableDiscarded.value = false
 buildSignature()
 fixOptions()
 schedule()
-]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">1bb9588326ee735771fa719e20f0d6dd</con:property><con:property key="gui.layoutX">860</con:property><con:property key="gui.layoutY">1813</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics (1)" id="660696d8-1a52-40c2-9fdc-335d80d83bf4" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
+chartModel.setTestRunning( canvas.running )]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">8332d56fdd4de041b88fcbfd04cd0865</con:property><con:property key="gui.layoutX">860</con:property><con:property key="gui.layoutY">1813</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics (1)" id="660696d8-1a52-40c2-9fdc-335d80d83bf4" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -6321,6 +6335,7 @@ import java.util.ArrayList
 
 import com.eviware.loadui.api.component.ComponentContext
 
+import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.chart.CustomTimeRange
 import com.eviware.loadui.api.chart.CustomNumericRange
 import com.eviware.loadui.api.chart.ChartModel
@@ -6336,6 +6351,7 @@ import com.eviware.loadui.impl.layout.OptionsProviderImpl
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.BaseEvent
 import com.eviware.loadui.api.events.CollectionEvent
 import com.eviware.loadui.api.events.ActionEvent
 
@@ -6545,7 +6561,6 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			send(output, message)
 			
 			if (agentStatistics != null) {
 				message['Requests'] = agentStatistics['Requests']
@@ -6555,6 +6570,8 @@ calculate = {
 				message['Failed'] = agentStatistics['Failed']
 				message['Completed'] = agentStatistics['Completed']
 			}
+
+			send(output, message)
 			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
@@ -6798,12 +6815,15 @@ addEventListener( ActionEvent ) { event ->
 			send( controllerTerminal, newMessage() )
 	}
 	//else if ( event.key == 'START' ) schedule()
-	chartModel.setTestRunning( running )
+	chartModel.setTestRunning( canvas.running )
+}
+
+addEventListener( canvas, BaseEvent ) { event ->
+	if( event.key == CanvasItem.RUNNING ) chartModel.setTestRunning( canvas.running )
 }
 
 addEventListener( CollectionEvent ) { event ->
 	if( event.key == ComponentContext.AGENT_TERMINALS ) {
-		resetComponent()
 		fixOptions()
 	}
 }
@@ -6937,7 +6957,7 @@ enableDiscarded.value = false
 buildSignature()
 fixOptions()
 schedule()
-]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">1bb9588326ee735771fa719e20f0d6dd</con:property><con:property key="gui.layoutX">217</con:property><con:property key="gui.layoutY">1807</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics (2)" id="fd7c8cf3-894d-4297-8b24-fa3c3db378c1" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
+chartModel.setTestRunning( canvas.running )]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">8332d56fdd4de041b88fcbfd04cd0865</con:property><con:property key="gui.layoutX">217</con:property><con:property key="gui.layoutY">1807</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Statistics (2)" id="fd7c8cf3-894d-4297-8b24-fa3c3db378c1" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String"><![CDATA[// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -6970,6 +6990,7 @@ import java.util.ArrayList
 
 import com.eviware.loadui.api.component.ComponentContext
 
+import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.chart.CustomTimeRange
 import com.eviware.loadui.api.chart.CustomNumericRange
 import com.eviware.loadui.api.chart.ChartModel
@@ -6985,6 +7006,7 @@ import com.eviware.loadui.impl.layout.OptionsProviderImpl
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.BaseEvent
 import com.eviware.loadui.api.events.CollectionEvent
 import com.eviware.loadui.api.events.ActionEvent
 
@@ -7194,7 +7216,6 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			send(output, message)
 			
 			if (agentStatistics != null) {
 				message['Requests'] = agentStatistics['Requests']
@@ -7204,6 +7225,8 @@ calculate = {
 				message['Failed'] = agentStatistics['Failed']
 				message['Completed'] = agentStatistics['Completed']
 			}
+
+			send(output, message)
 			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
@@ -7447,12 +7470,15 @@ addEventListener( ActionEvent ) { event ->
 			send( controllerTerminal, newMessage() )
 	}
 	//else if ( event.key == 'START' ) schedule()
-	chartModel.setTestRunning( running )
+	chartModel.setTestRunning( canvas.running )
+}
+
+addEventListener( canvas, BaseEvent ) { event ->
+	if( event.key == CanvasItem.RUNNING ) chartModel.setTestRunning( canvas.running )
 }
 
 addEventListener( CollectionEvent ) { event ->
 	if( event.key == ComponentContext.AGENT_TERMINALS ) {
-		resetComponent()
 		fixOptions()
 	}
 }
@@ -7586,7 +7612,7 @@ enableDiscarded.value = false
 buildSignature()
 fixOptions()
 schedule()
-]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">1bb9588326ee735771fa719e20f0d6dd</con:property><con:property key="gui.layoutX">1473</con:property><con:property key="gui.layoutY">1813</con:property></con:attributes></con:component><con:connection outputTerminalId="0ef58711-1bba-4b7d-8f61-3d1793b613c3/output" inputTerminalId="326df2a4-1c3f-49a2-b54c-692b08aff9fa/triggerTerminal"/><con:connection outputTerminalId="04f2b993-146a-4b70-b022-94456e361e46/triggerTerminal" inputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/incomingTerminal"/><con:connection outputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/outgoingTerminal 1" inputTerminalId="551df37b-ca36-4721-a266-33d59cff8bd3/triggerTerminal"/><con:connection outputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/outgoingTerminal 2" inputTerminalId="5bf761b9-8f2d-44ed-adc9-72d49eb32927/incomingTerminal"/><con:connection outputTerminalId="5bf761b9-8f2d-44ed-adc9-72d49eb32927/output" inputTerminalId="6002c29e-6cf9-4772-83cd-c862927e5aaa/triggerTerminal"/><con:connection outputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/outgoingTerminal 3" inputTerminalId="1bc8e660-d490-4a74-a86e-b54c476cf501/triggerTerminal"/><con:connection outputTerminalId="1bc8e660-d490-4a74-a86e-b54c476cf501/resultTerminal" inputTerminalId="5bf761b9-8f2d-44ed-adc9-72d49eb32927/incomingTerminal"/><con:connection outputTerminalId="551df37b-ca36-4721-a266-33d59cff8bd3/resultTerminal" inputTerminalId="4c20d4f4-9820-4ac8-986f-bb8d89fb7e56/triggerTerminal"/><con:connection outputTerminalId="4c20d4f4-9820-4ac8-986f-bb8d89fb7e56/resultTerminal" inputTerminalId="0ef58711-1bba-4b7d-8f61-3d1793b613c3/incomingTerminal"/><con:connection outputTerminalId="6002c29e-6cf9-4772-83cd-c862927e5aaa/resultTerminal" inputTerminalId="e9541fa4-a45a-48d2-a964-fe7086dc2511/inputTerminal"/><con:connection outputTerminalId="326df2a4-1c3f-49a2-b54c-692b08aff9fa/resultTerminal" inputTerminalId="660696d8-1a52-40c2-9fdc-335d80d83bf4/inputTerminal"/><con:connection outputTerminalId="1bc8e660-d490-4a74-a86e-b54c476cf501/resultTerminal" inputTerminalId="fd7c8cf3-894d-4297-8b24-fa3c3db378c1/inputTerminal"/></con:scene><con:scene label="Web LoadTest with Assertions" id="e00b1ef7-ae48-48e1-972a-f8b8caefe44c" version="35"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="gui.layoutX">490</con:property><con:property key="gui.layoutY">624</con:property><con:property key="gui.note.0">200;452;282;93;Here the same Generator -> Runner -> Analysis setup as in the first example is set up, but the runner and statistics components have been minimized to make room for the assertions below</con:property><con:property key="miniature">iVBORw0KGgoAAAANSUhEUgAAAMgAAACSCAYAAAAATYUPAAAekklEQVR42u1dCVxUVfsWRVETUzO1
+chartModel.setTestRunning( canvas.running )]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">8332d56fdd4de041b88fcbfd04cd0865</con:property><con:property key="gui.layoutX">1473</con:property><con:property key="gui.layoutY">1813</con:property></con:attributes></con:component><con:connection outputTerminalId="0ef58711-1bba-4b7d-8f61-3d1793b613c3/output" inputTerminalId="326df2a4-1c3f-49a2-b54c-692b08aff9fa/triggerTerminal"/><con:connection outputTerminalId="04f2b993-146a-4b70-b022-94456e361e46/triggerTerminal" inputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/incomingTerminal"/><con:connection outputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/outgoingTerminal 1" inputTerminalId="551df37b-ca36-4721-a266-33d59cff8bd3/triggerTerminal"/><con:connection outputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/outgoingTerminal 2" inputTerminalId="5bf761b9-8f2d-44ed-adc9-72d49eb32927/incomingTerminal"/><con:connection outputTerminalId="5bf761b9-8f2d-44ed-adc9-72d49eb32927/output" inputTerminalId="6002c29e-6cf9-4772-83cd-c862927e5aaa/triggerTerminal"/><con:connection outputTerminalId="2bde326b-ab20-48e8-ab2b-5913ee042048/outgoingTerminal 3" inputTerminalId="1bc8e660-d490-4a74-a86e-b54c476cf501/triggerTerminal"/><con:connection outputTerminalId="1bc8e660-d490-4a74-a86e-b54c476cf501/resultTerminal" inputTerminalId="5bf761b9-8f2d-44ed-adc9-72d49eb32927/incomingTerminal"/><con:connection outputTerminalId="551df37b-ca36-4721-a266-33d59cff8bd3/resultTerminal" inputTerminalId="4c20d4f4-9820-4ac8-986f-bb8d89fb7e56/triggerTerminal"/><con:connection outputTerminalId="4c20d4f4-9820-4ac8-986f-bb8d89fb7e56/resultTerminal" inputTerminalId="0ef58711-1bba-4b7d-8f61-3d1793b613c3/incomingTerminal"/><con:connection outputTerminalId="6002c29e-6cf9-4772-83cd-c862927e5aaa/resultTerminal" inputTerminalId="e9541fa4-a45a-48d2-a964-fe7086dc2511/inputTerminal"/><con:connection outputTerminalId="326df2a4-1c3f-49a2-b54c-692b08aff9fa/resultTerminal" inputTerminalId="660696d8-1a52-40c2-9fdc-335d80d83bf4/inputTerminal"/><con:connection outputTerminalId="1bc8e660-d490-4a74-a86e-b54c476cf501/resultTerminal" inputTerminalId="fd7c8cf3-894d-4297-8b24-fa3c3db378c1/inputTerminal"/></con:scene><con:scene label="Web LoadTest with Assertions" id="e00b1ef7-ae48-48e1-972a-f8b8caefe44c" version="35"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="SceneItem.followProject" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="gui.layoutX">490</con:property><con:property key="gui.layoutY">624</con:property><con:property key="gui.note.0">200;452;282;93;Here the same Generator -> Runner -> Analysis setup as in the first example is set up, but the runner and statistics components have been minimized to make room for the assertions below</con:property><con:property key="miniature">iVBORw0KGgoAAAANSUhEUgAAAMgAAACSCAYAAAAATYUPAAAekklEQVR42u1dCVxUVfsWRVETUzO1
 XPIrl9Qst8rST7N/mpmZueSWC4FLrpi7ouS+r6AiKquCArKDKQooomma5b5AKu4aAmbql9X7n+fA
 vd25zMAMM3dmLpz393t+59wzZ84999zznP2+b6lSXLhw4cKFS7GWm1ejiMN2wGukjcn1XyOIw7o4
 czKQjqZuZn5eI21MrqaFEYftgNdIG5P/PdxNHLYDXiNtkCBPsuN55bQy7lwL4QSxdYIsWTiajh7a
@@ -8256,6 +8282,7 @@ import java.util.ArrayList
 
 import com.eviware.loadui.api.component.ComponentContext
 
+import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.chart.CustomTimeRange
 import com.eviware.loadui.api.chart.CustomNumericRange
 import com.eviware.loadui.api.chart.ChartModel
@@ -8271,6 +8298,7 @@ import com.eviware.loadui.impl.layout.OptionsProviderImpl
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.events.BaseEvent
 import com.eviware.loadui.api.events.CollectionEvent
 import com.eviware.loadui.api.events.ActionEvent
 
@@ -8480,7 +8508,6 @@ calculate = {
 			
 			message['Timestamp'] = currentTime
 			message['ID'] = currentSourceID.value
-			send(output, message)
 			
 			if (agentStatistics != null) {
 				message['Requests'] = agentStatistics['Requests']
@@ -8490,6 +8517,8 @@ calculate = {
 				message['Failed'] = agentStatistics['Failed']
 				message['Completed'] = agentStatistics['Completed']
 			}
+
+			send(output, message)
 			send(controllerTerminal, message)
 		}
 	} catch(Throwable e1) {
@@ -8733,12 +8762,15 @@ addEventListener( ActionEvent ) { event ->
 			send( controllerTerminal, newMessage() )
 	}
 	//else if ( event.key == 'START' ) schedule()
-	chartModel.setTestRunning( running )
+	chartModel.setTestRunning( canvas.running )
+}
+
+addEventListener( canvas, BaseEvent ) { event ->
+	if( event.key == CanvasItem.RUNNING ) chartModel.setTestRunning( canvas.running )
 }
 
 addEventListener( CollectionEvent ) { event ->
 	if( event.key == ComponentContext.AGENT_TERMINALS ) {
-		resetComponent()
 		fixOptions()
 	}
 }
@@ -8872,7 +8904,7 @@ enableDiscarded.value = false
 buildSignature()
 fixOptions()
 schedule()
-]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">1bb9588326ee735771fa719e20f0d6dd</con:property><con:property key="gui.layoutX">1286</con:property><con:property key="gui.layoutY">445</con:property><con:property key="gui.compact">true</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="c1af622e-3b62-46db-b5ee-49dc008eaaa1"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="mockService" type="java.lang.String">MockService 1</con:property><con:property key="path" type="java.lang.String">/</con:property><con:property key="port" type="java.lang.String">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1586</con:property><con:property key="gui.layoutY">1217</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Assertion" id="23dd344a-2b24-47e7-9ffb-1d467cd98bb8" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
+chartModel.setTestRunning( canvas.running )]]></con:property><con:property key="period" type="java.lang.Long">1</con:property><con:property key="rate" type="java.lang.Long">500</con:property><con:property key="chartPeriod" type="java.lang.Long">1</con:property><con:property key="enableAverage" type="java.lang.Boolean">true</con:property><con:property key="enableMin" type="java.lang.Boolean">false</con:property><con:property key="enableMax" type="java.lang.Boolean">false</con:property><con:property key="enableStdDev" type="java.lang.Boolean">true</con:property><con:property key="enableTPS" type="java.lang.Boolean">true</con:property><con:property key="enableBPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgTPS" type="java.lang.Boolean">false</con:property><con:property key="enableAvgBPS" type="java.lang.Boolean">false</con:property><con:property key="enablePercentile" type="java.lang.Boolean">false</con:property><con:property key="enableAvgResponseSize" type="java.lang.Boolean">false</con:property><con:property key="currentSourceID" type="java.lang.String">none</con:property><con:property key="addtoSummary" type="java.lang.Boolean">false</con:property><con:property key="selectedAgent" type="java.lang.String">Aggregate</con:property><con:property key="enableRequests" type="java.lang.Boolean">false</con:property><con:property key="enableRunning" type="java.lang.Boolean">true</con:property><con:property key="enableCompleted" type="java.lang.Boolean">false</con:property><con:property key="enableQueued" type="java.lang.Boolean">true</con:property><con:property key="enableDiscarded" type="java.lang.Boolean">false</con:property><con:property key="enableFailed" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Statistics</con:property><con:property key="_scriptFile">D:\workspace\loadui-project\loadui-installer\target\controller\script-components\Statistics.groovy</con:property><con:property key="_digest">8332d56fdd4de041b88fcbfd04cd0865</con:property><con:property key="gui.layoutX">1286</con:property><con:property key="gui.layoutY">445</con:property><con:property key="gui.compact">true</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="soapUI MockService" id="c1af622e-3b62-46db-b5ee-49dc008eaaa1"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="projectFile" type="java.io.File">D:\workspace\loadui-project\loadui-installer\src\main\resources\samples\getting-started-soapui-project.xml</con:property><con:property key="settingsFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Ole\soapui-settings.xml</con:property><con:property key="mockService" type="java.lang.String">MockService 1</con:property><con:property key="path" type="java.lang.String">/</con:property><con:property key="port" type="java.lang.String">8081</con:property><con:property key="addRequest" type="java.lang.Boolean">false</con:property><con:property key="addResponse" type="java.lang.Boolean">false</con:property><con:property key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">getting-started-soapui-project.xml</con:property><con:property key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property key="projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1586</con:property><con:property key="gui.layoutY">1217</con:property><con:property key="gui.compact">false</con:property></con:attributes></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Assertion" id="23dd344a-2b24-47e7-9ffb-1d467cd98bb8" category="analysis"><con:properties><con:property key="ModelItem.description" type="java.lang.String"/><con:property key="_script" type="java.lang.String">// 
 // Copyright 2010 eviware software ab
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
