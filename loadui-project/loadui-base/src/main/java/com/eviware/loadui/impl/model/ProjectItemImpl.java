@@ -196,8 +196,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			{
 				sceneEndpoints.get( scene ).registerEndpoint( agent );
 				AssignmentImpl assignment = new AssignmentImpl( scene, agent );
-				if( assignments.add( assignment ) && agent.isReady() )
+				if( assignments.add( assignment ) )
+				{
 					agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, scene.getId() ) );
+					fireCollectionEvent( ASSIGNMENTS, Event.ADDED, assignment );
+				}
 			}
 		}
 	}
