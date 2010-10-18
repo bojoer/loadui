@@ -37,6 +37,7 @@ import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.ActivityEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.CollectionEvent.Event;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.RemoteActionEvent;
@@ -136,6 +137,8 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		if( projectListener != null )
 		{
 			getCanvas().getProject().addEventListener( CollectionEvent.class, projectListener );
+			for( AgentItem agent : getCanvas().getProject().getAgentsAssignedTo( ( SceneItem )getCanvas() ) )
+				getAgentTerminal( agent );
 		}
 	}
 
@@ -356,13 +359,18 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 	public void sendAgentMessage( AgentItem agent, TerminalMessage message )
 	{
-		doHandleTerminalEvent( remoteTerminal, new TerminalMessageEvent( getAgentTerminal( agent ), message ) );
+		if( agent.isReady() )
+			doHandleTerminalEvent( remoteTerminal, new TerminalMessageEvent( getAgentTerminal( agent ), message ) );
 	}
 
 	private AgentTerminal getAgentTerminal( AgentItem agent )
 	{
 		if( !agentTerminals.containsKey( agent ) )
-			agentTerminals.put( agent, new AgentTerminal( agent ) );
+		{
+			AgentTerminal agentTerminal = new AgentTerminal( agent );
+			agentTerminals.put( agent, agentTerminal );
+			fireCollectionEvent( ComponentContext.AGENT_TERMINALS, Event.ADDED, agentTerminal );
+		}
 
 		return agentTerminals.get( agent );
 	}
@@ -433,16 +441,17 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 				{
 					AgentItem agent = assignment.getAgent();
 					AgentTerminal agentTerminal;
-					if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
+					if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) && !agentTerminals.containsKey( agent ) )
 					{
 						agentTerminal = new AgentTerminal( agent );
 						agentTerminals.put( agent, agentTerminal );
+						fireCollectionEvent( ComponentContext.AGENT_TERMINALS, event.getEvent(), agentTerminal );
 					}
-					else
+					else if( CollectionEvent.Event.REMOVED.equals( event.getEvent() ) && agentTerminals.containsKey( agent ) )
 					{
 						agentTerminal = agentTerminals.remove( agent );
+						fireCollectionEvent( ComponentContext.AGENT_TERMINALS, event.getEvent(), agentTerminal );
 					}
-					fireCollectionEvent( ComponentContext.AGENT_TERMINALS, event.getEvent(), agentTerminal );
 				}
 			}
 		}
