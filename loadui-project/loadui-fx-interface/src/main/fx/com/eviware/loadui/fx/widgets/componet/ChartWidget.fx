@@ -382,7 +382,6 @@ public class ChartWidget extends VBox, ChartListener {
     	def x: Double = p.getX() * scaleX;
     	def y: Double = p.getY() * scaleY;
     	
-
     	FxUtils.runInFxThread( function():Void {
 			(models.get(cs.getName()) as DefaultChartModel).addPoint(new ChartPoint(x, y));
       })
@@ -441,39 +440,13 @@ public class ChartWidget extends VBox, ChartListener {
     function autoAxis(): Void {
     	if(yAxis.getRange() instanceof NumericRange){
     		var nr: CustomNumericRange = customYRange as CustomNumericRange;
-    		var max = findMaximumY(true);
-    		if (max > Double.MIN_VALUE and max < nr.getHigh()){
-    			max = nr.getHigh();
-    		}
-    		var min = findMinimumY(true);
-    		if (min < Double.MAX_VALUE and min > nr.getLow()){
-    			min = nr.getLow();
-    		}
-    		if(max == Double.MIN_VALUE){
-    			min = Double.MAX_VALUE;
-    		}
-    		else if(min == Double.MAX_VALUE){
-    			max = Double.MIN_VALUE;
-    		}
-    		autoNumericAxis(yAxis, max, min, nr.getExtraSpace());
+    		var b: Bounds = findYBounds(true, nr.getLow(), nr.getHigh());
+    		autoNumericAxis(yAxis, b.max, b.min, nr.getExtraSpace());
     	} 
 		if(y2Axis.getRange() instanceof NumericRange){
     		var nr: CustomNumericRange = customY2Range as CustomNumericRange;
-    		var max = findMaximumY(false);
-    		if (max > Double.MIN_VALUE and max < nr.getHigh()){
-    			max = nr.getHigh();
-    		}
-    		var min = findMinimumY(false);
-    		if (min < Double.MAX_VALUE and min > nr.getLow()){
-    			min = nr.getLow();
-    		}
-    		if(max == Double.MIN_VALUE){
-    			min = Double.MAX_VALUE;
-    		}
-    		else if(min == Double.MAX_VALUE){
-    			max = Double.MIN_VALUE;
-    		}
-    		autoNumericAxis(y2Axis, max, min, nr.getExtraSpace());
+    		var b: Bounds = findYBounds(false, nr.getLow(), nr.getHigh());
+    		autoNumericAxis(y2Axis, b.max, b.min, nr.getExtraSpace());
     	} 
     }
     
@@ -487,52 +460,13 @@ public class ChartWidget extends VBox, ChartListener {
     function autoNumericAxis(axis: Axis, max: Double, min: Double, extraSpace: Double): Void {
         def range: Double = max - min;
         def axisRange: NumericRange = axis.getRange() as NumericRange;
-        axisRange.setMin(0);
+        axisRange.setMin(min as Long);
         axisRange.setMax(max + extraSpace * range / 100);
     }
-
-    function findMaximumX(): Double {
-    	var max: Double = Double.MIN_VALUE;
-		var model: DefaultChartModel;
-		var pos: Double;
-		var keys: Iterator = models.keySet().iterator();
-		while(keys.hasNext()){
-			var cs: ChartSerie = chartModel.getSerie(keys.next() as String);
-			if(cs != null and cs.isEnabled()){
-				model = models.get(cs.getName()) as DefaultChartModel;
-				if(model.getPointCount() > 0){
-					pos = model.getXRange().maximum();
-					if(pos > max){
-						max = pos;
-					}
-				}
-			}
-		}
-		max;    	
-    }
     
-    function findMinimumX(): Double {
+    function findYBounds(default: Boolean, defaultMin: Double, defaultMax: Double): Bounds {
+    	var max: Double = -Double.MAX_VALUE;
     	var min: Double = Double.MAX_VALUE;
-		var model: DefaultChartModel;
-		var pos: Double;
-		var keys: Iterator = models.keySet().iterator();
-		while(keys.hasNext()){
-			var cs: ChartSerie = chartModel.getSerie(keys.next() as String);
-			if(cs != null and cs.isEnabled()){
-				model = models.get(cs.getName()) as DefaultChartModel;
-				if(model.getPointCount() > 0){
-					pos = model.getXRange().minimum();
-					if(pos < min){
-						min = pos;
-					}
-				}
-			}
-		}
-		min;    	
-    }
-    
-    function findMaximumY(default: Boolean): Double {
-    	var max: Double = Double.MIN_VALUE;
 		var model: DefaultChartModel;
 		var pos: Double;
 		var keys: Iterator = models.keySet().iterator();
@@ -545,25 +479,6 @@ public class ChartWidget extends VBox, ChartListener {
 					if(pos > max){
 						max = pos;
 					}
-				}
-			}
-		}
-		if(max > Double.MIN_VALUE){
-			max *= 1.05;	
-		}
-		max;    	
-    }
-    
-    function findMinimumY(default: Boolean): Double {
-    	var min: Double = Double.MAX_VALUE;
-		var model: DefaultChartModel;
-		var pos: Double;
-		var keys: Iterator = models.keySet().iterator();
-		while(keys.hasNext()){
-			var cs: ChartSerie = chartModel.getSerie(keys.next() as String);
-			if(cs != null and cs.isEnabled() and cs.isDefaultAxis() == default){
-				model = models.get(cs.getName()) as DefaultChartModel;
-				if(model.getPointCount() > 0){
 					pos = model.getYRange().minimum();
 					if(pos < min){
 						min = pos;
@@ -571,7 +486,14 @@ public class ChartWidget extends VBox, ChartListener {
 				}
 			}
 		}
-		min;    	
+		var bounds: Bounds;
+		if(max == -Double.MAX_VALUE or min == Double.MAX_VALUE){
+			bounds = Bounds {	max: Double.MAX_VALUE, min: -Double.MAX_VALUE }  
+		}
+		else{
+			bounds = Bounds { max: Math.max(max, defaultMax), min: Math.min(min, defaultMin) }    
+		}
+		bounds;	
     }
     
     function adjustTimeAxisPoints(min: Long, y: Boolean){
@@ -605,7 +527,13 @@ public class ChartWidget extends VBox, ChartListener {
 }
 
 
-
+class Bounds {
+	
+	public var max: Double;
+	
+	public var min: Double;
+	
+}
 
 
 
