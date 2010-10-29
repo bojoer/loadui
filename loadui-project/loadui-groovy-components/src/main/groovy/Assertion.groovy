@@ -233,9 +233,11 @@ layout {
 //	}
 //	separator( vertical: true )
 	box(layout:'wrap, ins 0') {
-		box( widget:'display' ) {
-			node( label:'Asserted', fString: assertedDisplay, constraints:'w 60!' )
-			node( label:'Failed', fString: failedDisplay, constraints:'w 60!' )
+		box( widget:'display', layout:'wrap 2') {
+			node( label:'Asserted', fString: assertedDisplay, constraints:'w 50!' )
+			node( label:'Failed', fString: failedDisplay, constraints:'w 50!' )
+			node( label:'Min', fString: minDisplay, constraints:'w 50!' )
+			node( label:'Max', fString: maxDisplay, constraints:'w 50!' )
 		}
 		action( 
 			label: 'Reset', 
