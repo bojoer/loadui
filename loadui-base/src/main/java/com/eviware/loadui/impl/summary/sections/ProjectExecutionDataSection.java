@@ -18,7 +18,6 @@ package com.eviware.loadui.impl.summary.sections;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import javax.swing.table.TableModel;
 
@@ -115,16 +114,16 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 		for( ComponentItem component : project.getComponents() )
 		{
 			if( component.getType().equalsIgnoreCase( "assertion" ) & component.getBehavior() instanceof AnalysisCategory )
-				cnt++ ;
+				cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get() ;
 		}
 		for( SceneItem scene : project.getScenes() )
 			for( ComponentItem component : scene.getComponents() )
 			{
 				if( component.getType().equalsIgnoreCase( "assertion" )
 						& component.getBehavior() instanceof AnalysisCategory )
-					cnt++ ;
+					cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get() ;
 			}
-		return String.valueOf( cnt );
+		return String.valueOf( project.getCounter( CanvasItem.ASSERTION_COUNTER ).get() + cnt);
 	}
 
 	@Override

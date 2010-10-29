@@ -19,6 +19,7 @@ import java.util.Map;
 
 import javax.swing.table.TableModel;
 
+import com.eviware.loadui.api.component.categories.AnalysisCategory;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -51,11 +52,20 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 	public String getFailedAssertions()
 	{
 		long failed = testcase.getCounter( CanvasItem.FAILURE_COUNTER ).get();
-		long total = testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
+		long total = getTotalNumberOfAssertions();
 		int perc = ( int )( total > 0 ? failed * 100 / total : 0 );
 		return failed + " / " + total + " (" + perc + " %)";
 	}
 
+	private long getTotalNumberOfAssertions() {
+		int cnt = 0;
+		for( ComponentItem component : testcase.getComponents() )
+		{
+			if( component.getType().equalsIgnoreCase( "assertion" ) & component.getBehavior() instanceof AnalysisCategory )
+				cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get() ;
+		}
+		return  testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get() + cnt;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

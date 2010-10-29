@@ -113,9 +113,9 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements
 		for( ComponentItem component : testcase.getComponents() )
 		{
 			if( component.getType().equalsIgnoreCase( "assertion" ) & component.getBehavior() instanceof AnalysisCategory )
-				cnt++ ;
+				cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get() ;
 		}
-		return String.valueOf( cnt );
+		return String.valueOf( testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get() + cnt);
 	}
 
 	/*
