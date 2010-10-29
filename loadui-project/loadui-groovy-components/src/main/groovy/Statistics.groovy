@@ -238,7 +238,7 @@ calculate = {
 	long currentTime = System.currentTimeMillis()
 	
 	try {
-		if( timeStats.size() > 0 || agentData.size() > 0 || agentStatistics?.size() > 0) {
+		if( timeStats.size() > 0 || agentData.size() > 0 || agentStatistics?.size() > 0 ) {
 			def message = newMessage()
 			data = timeStats.getData( currentTime )
 			message['Max'] = data['Max']
@@ -284,26 +284,32 @@ updateChart = { currentTime ->
 	if( selectedAgent.value == AGGREGATE ) {
 		try {
 			int count = 0
+			def local = canvas.project?.workspace.localMode
 			if (inputTerminal.connections.size() > 0 || statisticsInput.connections.size() > 0) {
-				for( d in agentData.values() ) {
-					if( !d.isEmpty() ) {	
-						data['Max'] = Math.max( d['Max'] ?: 0, data['Max'] ?: 0 )
-						data['Min'] = Math.min( d['Min'] ?: Long.MAX_VALUE, data['Min'] ?: Long.MAX_VALUE )
-						data['Avg'] = (data['Avg'] ?: 0) + (d['Avg'] ?: 0)
-						data['Std-Dev'] = (data['Std-Dev'] ?: 0) + (d['Std-Dev'] ?: 0)
-						data['Tps'] = (data['Tps'] ?: 0) + (d['Tps'] ?: 0)
-						data['Avg-Tps'] = (data['Avg-Tps'] ?: 0) + (d['Avg-Tps'] ?: 0)
-						data['Bps'] = (data['Bps'] ?: 0) + (d['Bps'] ?: 0)
-						data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
-						data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
-						data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
-						data['Requests'] = (data['Requests'] ?:  0) + (d['Requests']?:0)
-						data['Running'] = (data['Running'] ?:  0) + (d['Running']?:0) 
-						data['Completed'] = (data['Completed'] ?: 0) + (d['Completed']?:0)
-						data['Queued'] = (data['Queued'] ?: 0) + (d['Queued']?:0)
-						data['Discarded'] = (data['Discarded'] ?: 0) + (d['Discarded']?:0)
-						data['Failed'] = (data['Failed'] ?: 0) + (d['Failed']?:0)
-						count++
+				for( k in agentData.keySet() ) {
+					//if in dist mode ignore data received on controllerTerminal, in local take only from data from it
+					if(!local && !k.equals("controllerTerminal") || local && k.equals("controllerTerminal")){
+						def d = agentData[k]
+						//size gt 1 because sometimes messages contain only timestamp but there is no actual data
+						if( !d.isEmpty() && d.size() > 1 ) {	
+							data['Max'] = Math.max( d['Max'] ?: 0, data['Max'] ?: 0 )
+							data['Min'] = Math.min( d['Min'] ?: Long.MAX_VALUE, data['Min'] ?: Long.MAX_VALUE )
+							data['Avg'] = (data['Avg'] ?: 0) + (d['Avg'] ?: 0)
+							data['Std-Dev'] = (data['Std-Dev'] ?: 0) + (d['Std-Dev'] ?: 0)
+							data['Tps'] = (data['Tps'] ?: 0) + (d['Tps'] ?: 0)
+							data['Avg-Tps'] = (data['Avg-Tps'] ?: 0) + (d['Avg-Tps'] ?: 0)
+							data['Bps'] = (data['Bps'] ?: 0) + (d['Bps'] ?: 0)
+							data['Avg-Bps'] = (data['Avg-Bps'] ?: 0) + (d['Avg-Bps'] ?: 0)
+							data['Percentile'] = (data['Percentile'] ?: 0) + (d['Percentile'] ?: 0)
+							data['AvgResponseSize'] = (data['AvgResponseSize'] ?: 0) + (d['AvgResponseSize'] ?: 0)
+							data['Requests'] = (data['Requests'] ?:  0) + (d['Requests']?:0)
+							data['Running'] = (data['Running'] ?:  0) + (d['Running']?:0) 
+							data['Completed'] = (data['Completed'] ?: 0) + (d['Completed']?:0)
+							data['Queued'] = (data['Queued'] ?: 0) + (d['Queued']?:0)
+							data['Discarded'] = (data['Discarded'] ?: 0) + (d['Discarded']?:0)
+							data['Failed'] = (data['Failed'] ?: 0) + (d['Failed']?:0)
+							count++
+						}
 					}
 				}
 			}
@@ -510,7 +516,9 @@ addEventListener( ActionEvent ) { event ->
 		if( !controller )
 			send( controllerTerminal, newMessage() )
 	}
-	//else if ( event.key == 'START' ) schedule()
+	//else if ( event.key == 'START' ) {
+	//	schedule()
+	//}
 	chartModel.setTestRunning( canvas.running )
 }
 
