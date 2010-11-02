@@ -77,14 +77,17 @@ import java.io.IOException;
 
 import java.util.EventObject;
 
+import com.eviware.loadui.fx.stats.StatisticsMonitorPanel;
+
 public class ProjectMenu extends HBox {
 	def listener = new SummaryListener();
-
+	var mon;
+	
 	public var project: ProjectItem on replace oldProject = newProject {
 		//workspaceLabel = project.getWorkspace().getLabel();
 		projectLabel = project.getLabel();
 		summaryEnabled = false;
-		
+		mon = new StatisticsMonitorPanel(newProject);
 		if( oldProject != null )
 			oldProject.removeEventListener( BaseEvent.class, listener );
 		if( newProject != null )
@@ -261,6 +264,8 @@ public class ProjectMenu extends HBox {
 				                MenuItem {
 				                	text: "Save and Close"
 				                	action: function() {
+				                		mon.setVisible(false);
+										mon.dispose();
 				                		MainWindow.instance.projectCanvas.generateMiniatures(); 
 				                		project.save();
 				                		AppState.instance.displayWorkspace();
@@ -269,6 +274,8 @@ public class ProjectMenu extends HBox {
 				                MenuItem {
 				                    text: "Close"
 				                    action: function() { 
+				                    	mon.setVisible(false);
+									    mon.dispose();
 				                        AppState.instance.displayWorkspace();
 				                    }
 				                }
@@ -310,10 +317,20 @@ public class ProjectMenu extends HBox {
 								tooltip: Tooltip { text: ##[HELP]"Help Page" }
 								action: function():Void { openURL("http://www.loadui.org/interface/project-view.html") }
 							}, MenubarButton {
+								shape: "M0,0 L0,12 10,12, 10,0 0,0 M4,13 L4,16 14,16 14,4 11,4 11,13 4,13"
+								tooltip: Tooltip { text: ##[STAT_MONITOR]"Statistics Monitor" }
+								action: function():Void { 
+									mon.pack();
+									mon.setVisible(true);
+								 }
+				         	}, MenubarButton {
 								shape: "M14.00,2.00 L12.00,0.00 7.00,5.00 2.00,0.00 0.00,2.00 5.00,7.00 0.00,12.00 2.00,14.00 7.00,9.00 12.00,14.00 14.00,12.00 9.00,7.00 Z"
 								tooltip: Tooltip { text: ##[CLOSE_PROJECT]"Close Project" }
-								action: function():Void { AppState.instance.displayWorkspace() }
-				         }, Label {
+								action: function():Void { 
+									mon.setVisible(false);
+									mon.dispose();
+									AppState.instance.displayWorkspace() }
+				         	}, Label {
 								layoutInfo: LayoutInfo {
 									width: 10
 								}
