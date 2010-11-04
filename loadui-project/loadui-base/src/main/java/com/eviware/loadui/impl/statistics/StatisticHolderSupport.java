@@ -89,10 +89,9 @@ public class StatisticHolderSupport implements StatisticHolder
 		return null;
 	}
 
-	@Override
-	public void addStatisticVariable( StatisticVariable statisticVariable )
+	public StatisticVariable addStatisticVariable( String statisticVariableName )
 	{
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 }
