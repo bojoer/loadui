@@ -38,7 +38,7 @@ public interface Statistic<T extends Number> extends Value<T>
 	 * 
 	 * @return
 	 */
-	public StatisticHolder getStatisticHolder();
+	public StatisticVariable getStatisticVariable();
 
 	/**
 	 * Returns the stored DataPoints for the given time span, in chronological
