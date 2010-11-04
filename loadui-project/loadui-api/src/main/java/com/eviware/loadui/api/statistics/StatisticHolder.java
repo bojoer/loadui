@@ -43,11 +43,4 @@ public interface StatisticHolder extends EventFirer
 	 * @return
 	 */
 	public Collection<String> getStatisticVariableNames();
-
-	/**
-	 * Adds a StatisticVariable to the StatisticHolder.
-	 * 
-	 * @param statisticVariable
-	 */
-	public void addStatisticVariable( StatisticVariable statisticVariable );
 }
