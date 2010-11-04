@@ -39,6 +39,13 @@ public interface StatisticVariable
 	public Collection<String> getStatisticNames();
 
 	/**
+	 * Adds a Statistic to the StatisticVariable.
+	 * 
+	 * @param statistic
+	 */
+	public void addStatistic( Statistic<?> statistic );
+
+	/**
 	 * Gets the Statistic corresponding to the given statistic name and instance.
 	 * 
 	 * @param statisticName
