@@ -16,9 +16,11 @@
 package com.eviware.loadui.impl.statistics;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EventObject;
+import java.util.HashMap;
 
-import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -31,11 +33,12 @@ import com.eviware.loadui.api.statistics.StatisticsWriter;
  * 
  * @author dain.nilsson
  */
-public class StatisticHolderSupport implements StatisticHolder
+public class StatisticHolderSupport
 {
-	private final EventFirer owner;
+	private final StatisticHolder owner;
+	private final HashMap<String, StatisticVariableImpl> variables = new HashMap<String, StatisticVariableImpl>();
 
-	public StatisticHolderSupport( EventFirer owner )
+	public StatisticHolderSupport( StatisticHolder owner )
 	{
 		this.owner = owner;
 	}
@@ -50,8 +53,14 @@ public class StatisticHolderSupport implements StatisticHolder
 	 */
 	public StatisticsWriter getStatisticsWriter( String type, StatisticVariable variable )
 	{
+		if( !variables.containsValue( variable ) )
+			throw new IllegalArgumentException(
+					"Attempt made to add a StatisticsWriter for a StatisticVariable not contained in the parent StatisticHolder." );
+
 		// TODO: Lookup factory using registry, instantiate StatisticsWriter.
 		// Fire CollectionEvent about Statistics exposed by the StatisticsWriter.
+		variables.get( variable );
+
 		return null;
 	}
 
@@ -75,23 +84,22 @@ public class StatisticHolderSupport implements StatisticHolder
 		owner.fireEvent( event );
 	}
 
-	@Override
 	public StatisticVariable getStatisticVariable( String statisticVariableName )
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return variables.get( statisticVariableName );
 	}
 
-	@Override
 	public Collection<String> getStatisticVariableNames()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.unmodifiableCollection( variables.keySet() );
 	}
 
 	public StatisticVariable addStatisticVariable( String statisticVariableName )
 	{
-		// TODO Auto-generated method stub
-		return null;
+		StatisticVariableImpl variable = null; // TODO
+		variables.put( statisticVariableName, variable );
+		fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.ADDED, variable ) );
+
+		return variable;
 	}
 }
