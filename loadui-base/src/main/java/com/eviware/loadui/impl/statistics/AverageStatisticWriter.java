@@ -15,6 +15,11 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.Collection;
+import java.util.Map;
+
+import com.eviware.loadui.api.statistics.DataPoint;
+import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
@@ -58,6 +63,28 @@ public class AverageStatisticWriter implements StatisticsWriter
 	{
 		// TODO Write to the proper Track of the current Execution.
 
+	}
+
+	@Override
+	public Map<String, Class<? extends Number>> getStatisticsNames()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends Number> T getStatisticValue( String statisticName, String instance )
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends Number> Iterable<DataPoint<T>> getStatisticRange( String statisticName, String instance,
+			long start, long end )
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**

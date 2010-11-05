@@ -15,6 +15,9 @@
  */
 package com.eviware.loadui.api.statistics;
 
+import java.util.Collection;
+import java.util.Map;
+
 /**
  * Writes statistics data to a Track. Each call to update allows the
  * StatisticsWriter to internally buffer data, which is aggregated and written
@@ -47,4 +50,37 @@ public interface StatisticsWriter
 	 * manually be called when ending a test Execution.
 	 */
 	public void flush();
+
+	/**
+	 * Gets a Map of the names of the Statistics that this StatisticsWriter
+	 * provides, paired with the Number subclass of the Statistic.
+	 * 
+	 * @return
+	 */
+	public Map<String, Class<? extends Number>> getStatisticsNames();
+
+	/**
+	 * Gets the current value of a particular Statistic instance that the
+	 * StatisticsWriter provides.
+	 * 
+	 * @param <T>
+	 * @param statisticName
+	 * @param instance
+	 * @return
+	 */
+	public <T extends Number> T getStatisticValue( String statisticName, String instance );
+
+	/**
+	 * Gets an Iterable of DataPoints for the given Statistic instance for the
+	 * given range.
+	 * 
+	 * @param <T>
+	 * @param statisticName
+	 * @param instance
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public <T extends Number> Iterable<DataPoint<T>> getStatisticRange( String statisticName, String instance,
+			long start, long end );
 }
