@@ -22,13 +22,16 @@ import com.eviware.loadui.api.statistics.StatisticsWriter;
 
 public class StatisticImpl<T extends Number> implements Statistic<T>
 {
+	private final Class<T> type;
 	private final StatisticsWriter writer;
 	private final StatisticVariable variable;
 	private final String name;
 	private final String instance;
 
-	public StatisticImpl( StatisticsWriter writer, StatisticVariable variable, String name, String instance )
+	public StatisticImpl( StatisticsWriter writer, StatisticVariable variable, String name, String instance,
+			Class<T> type )
 	{
+		this.type = type;
 		this.writer = writer;
 		this.variable = variable;
 		this.name = name;
@@ -38,7 +41,7 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	@Override
 	public Class<T> getType()
 	{
-		return null;
+		return type;
 	}
 
 	@Override

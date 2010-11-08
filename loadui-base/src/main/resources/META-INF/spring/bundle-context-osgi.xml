@@ -28,4 +28,6 @@
 	
 	<osgi:service interface="com.eviware.loadui.api.dispatch.ExecutorManager" ref="executorManager" />
 	
+	<osgi:service interface="com.eviware.loadui.api.statistics.StatisticsManager" ref="statisticsManager" />
+	
 </beans>

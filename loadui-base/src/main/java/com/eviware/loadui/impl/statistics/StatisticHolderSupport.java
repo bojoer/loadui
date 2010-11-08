@@ -96,7 +96,7 @@ public class StatisticHolderSupport
 
 	public StatisticVariable addStatisticVariable( String statisticVariableName )
 	{
-		StatisticVariableImpl variable = null; // TODO
+		StatisticVariableImpl variable = new StatisticVariableImpl( owner );
 		variables.put( statisticVariableName, variable );
 		fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.ADDED, variable ) );
 

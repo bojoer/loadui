@@ -51,5 +51,4 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }
