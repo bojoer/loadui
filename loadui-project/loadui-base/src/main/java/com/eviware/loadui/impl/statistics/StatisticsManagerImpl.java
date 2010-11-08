@@ -16,8 +16,12 @@
 package com.eviware.loadui.impl.statistics;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EventObject;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticsManager;
@@ -31,6 +35,7 @@ import com.eviware.loadui.util.events.EventSupport;
 public class StatisticsManagerImpl implements StatisticsManager
 {
 	private final EventSupport eventSupport = new EventSupport();
+	private Set<StatisticHolder> holders = new HashSet<StatisticHolder>();
 
 	@Override
 	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
@@ -59,22 +64,21 @@ public class StatisticsManagerImpl implements StatisticsManager
 	@Override
 	public void registerStatisticHolder( StatisticHolder statisticHolder )
 	{
-		// TODO Auto-generated method stub
-
+		if( holders.add( statisticHolder ) )
+			fireEvent( new CollectionEvent( this, STATISTIC_HOLDERS, CollectionEvent.Event.ADDED, statisticHolder ) );
 	}
 
 	@Override
 	public void deregisterStatisticHolder( StatisticHolder statisticHolder )
 	{
-		// TODO Auto-generated method stub
-
+		if( holders.remove( statisticHolder ) )
+			fireEvent( new CollectionEvent( this, STATISTIC_HOLDERS, CollectionEvent.Event.REMOVED, statisticHolder ) );
 	}
 
 	@Override
 	public Collection<StatisticHolder> getStatisticHolders()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.unmodifiableSet( holders );
 	}
 
 	@Override
