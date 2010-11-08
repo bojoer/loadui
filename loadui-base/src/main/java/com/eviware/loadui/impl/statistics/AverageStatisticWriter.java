@@ -17,6 +17,9 @@ package com.eviware.loadui.impl.statistics;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.TreeMap;
+
+import org.w3c.dom.views.AbstractView;
 
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.Statistic;
@@ -30,19 +33,68 @@ import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
  * 
  * @author dain.nilsson
  */
-public class AverageStatisticWriter implements StatisticsWriter
+public class AverageStatisticWriter extends AbstractStatisticsWriter
 {
 	public static final String TYPE = "AVERAGE";
 
 	// Statistics provided:
-	public static final String AVERAGE = "Average";
-	public static final String AVERAGE_COUNT = "Average_Count";
+//	public static final String AVERAGE = "Average";
+//	public static final String AVERAGE_COUNT = "Average_Count";
+//	public static final String AVERAGE_SUM = "Average_Sum";
+//	public static final String STD_DEV = "Standard_Deviation";
+	
+	public enum Stats {
+		AVERAGE("Average"), 
+		AVERAGE_COUNT("Average_Count"), 
+		AVERAGE_SUM("Average_Sum"), 
+		STD_DEV("Standard_Deviation");
+		
+		private final String name;
+		
+		Stats( String name ) {
+			this.name = name;
+		}
+		
+		public String getName()
+		{
+			return name;
+		}
+	}
 
-	public AverageStatisticWriter( StatisticsManager statisticsManager, StatisticVariable variable )
+	/**
+	 * Average = Average_Sum / Average_Count 
+	 * 
+	 * Where: 
+	 * * Average_Sum is sum of all requests times ( total or range ) 
+	 * * Average_Count is total number of requests ( total or range )
+	 * 
+	 * Standard_Deviation = Square_Sum / Average_Count 
+	 * Where : 
+	 * * Square_Sum =Math.pow( timeTaken - Average_Sum, 2 ) 
+	 * * timeTaken is last request time taken
+	 * 
+	 */
+
+	private StatisticVariableImpl statisticVariable;
+
+	private long avgSum = 0L;
+	private int avgCnt = 0;
+	private long average = 0L;
+	private double stdDev = 0.0;
+
+	public AverageStatisticWriter( StatisticVariable variable )
 	{
+		super( variable );
 		// TODO: Create statistics for average, average_count, etc. and add them
 		// to
 		// the StatisticVariable.
+		
+		// init statistics
+		statisticNames.put( Stats.AVERAGE.getName(), Long.class );
+		statisticNames.put( Stats.AVERAGE_SUM.getName(), Long.class );
+		statisticNames.put( Stats.AVERAGE_COUNT.getName(), Integer.class );
+		statisticNames.put( Stats.STD_DEV.getName(), Double.class );
+		
 	}
 
 	@Override
@@ -51,11 +103,35 @@ public class AverageStatisticWriter implements StatisticsWriter
 		return 1;
 	}
 
+	/**
+	 * values : [ value:long ]
+	 */
 	@Override
 	public void update( long timestamp, Number... values )
 	{
-		// TODO Auto-generated method stub
-
+		avgSum  += (Long)values[0];
+		avgCnt++;
+		average = avgSum / avgCnt;
+		stdDev = Math.pow( (Long)values[0] - avgSum, 2 ) / avgCnt;
+		flush();
+	}
+	
+	@Override
+	public Number getStatisticValue( String statisticName, String instance )
+	{
+		switch( Stats.valueOf( statisticName ) )
+		{
+		case AVERAGE :
+			return average;
+		case STD_DEV :
+			return stdDev;
+		case AVERAGE_COUNT:
+			return avgCnt;
+		case AVERAGE_SUM:
+			return avgSum;
+		default :
+			return null;
+		}
 	}
 
 	@Override
@@ -63,20 +139,6 @@ public class AverageStatisticWriter implements StatisticsWriter
 	{
 		// TODO Write to the proper Track of the current Execution.
 
-	}
-
-	@Override
-	public Map<String, Class<? extends Number>> getStatisticsNames()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T extends Number> T getStatisticValue( String statisticName, String instance )
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -103,7 +165,8 @@ public class AverageStatisticWriter implements StatisticsWriter
 		@Override
 		public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable )
 		{
-			return new AverageStatisticWriter( statisticsManager, variable );
+			return new AverageStatisticWriter( variable );
 		}
 	}
+
 }

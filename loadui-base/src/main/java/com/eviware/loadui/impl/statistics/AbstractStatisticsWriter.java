@@ -16,6 +16,7 @@
 package com.eviware.loadui.impl.statistics;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -24,6 +25,10 @@ import com.eviware.loadui.api.statistics.StatisticsWriter;
 public abstract class AbstractStatisticsWriter implements StatisticsWriter
 {
 	private final StatisticVariable variable;
+	
+	protected Map<String, Class<? extends Number>> statisticNames = new TreeMap<String, Class<? extends Number>>();
+
+	protected long delay;
 
 	public AbstractStatisticsWriter( StatisticVariable variable )
 	{
@@ -33,15 +38,13 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	@Override
 	public Map<String, Class<? extends Number>> getStatisticsNames()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return statisticNames;
 	}
 
 	@Override
 	public <T extends Number> T getStatisticValue( String statisticName, String instance )
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return ( T )variable.getStatistic( statisticName, instance ).getValue();
 	}
 
 	@Override
@@ -50,5 +53,11 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public void setMinimumWriteDelay( long delay )
+	{
+		this.delay = delay;
 	}
 }
