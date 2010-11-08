@@ -36,6 +36,15 @@ public interface StatisticsWriter
 	public int getValueCount();
 
 	/**
+	 * Sets the minimum write delay for a single instance of StatisticsWriter. No
+	 * matter how many calls are made to update(), the StatisticsWriter should
+	 * never store data to the underlying storage more often than this delay.
+	 * 
+	 * @param delay
+	 */
+	public void setMinimumWriteDelay( long delay );
+
+	/**
 	 * Updates the StatisticsWriter with new data, which may trigger data to be
 	 * flushed to the underlying Track, or may just buffer it in memory.
 	 * 
