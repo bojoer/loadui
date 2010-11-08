@@ -55,11 +55,11 @@ public class StatisticHolderSupport
 			throw new IllegalArgumentException(
 					"Attempt made to add a StatisticsWriter for a StatisticVariable not contained in the parent StatisticHolder." );
 
-		// TODO: Lookup factory using registry, instantiate StatisticsWriter.
-		// Fire CollectionEvent about Statistics exposed by the StatisticsWriter.
-		variables.get( variable );
+		// TODO: Fire CollectionEvent about Statistics exposed by the
+		// StatisticsWriter.
+		StatisticsWriter writer = StatisticsManagerImpl.getInstance().createStatisticsWriter( type, variable );
 
-		return null;
+		return writer;
 	}
 
 	/**

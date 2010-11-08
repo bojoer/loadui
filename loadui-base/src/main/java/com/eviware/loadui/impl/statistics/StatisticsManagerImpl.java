@@ -18,13 +18,18 @@ package com.eviware.loadui.impl.statistics;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticHolder;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
+import com.eviware.loadui.api.statistics.StatisticsWriter;
+import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.util.events.EventSupport;
 
 /**
@@ -34,8 +39,21 @@ import com.eviware.loadui.util.events.EventSupport;
  */
 public class StatisticsManagerImpl implements StatisticsManager
 {
+	private static StatisticsManagerImpl instance;
+
 	private final EventSupport eventSupport = new EventSupport();
 	private Set<StatisticHolder> holders = new HashSet<StatisticHolder>();
+	private Map<String, StatisticsWriterFactory> factories = new HashMap<String, StatisticsWriterFactory>();
+
+	static StatisticsManagerImpl getInstance()
+	{
+		return instance;
+	}
+
+	public StatisticsManagerImpl()
+	{
+		instance = this;
+	}
 
 	@Override
 	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
@@ -85,5 +103,24 @@ public class StatisticsManagerImpl implements StatisticsManager
 	public long getMinimumWriteDelay()
 	{
 		return 1000;
+	}
+
+	public void registerStatisticsWriterFactory( StatisticsWriterFactory factory, Map<String, String> properties )
+	{
+		factories.put( factory.getType(), factory );
+	}
+
+	public void unregisterStatisticsWriterFactory( StatisticsWriterFactory factory, Map<String, String> properties )
+	{
+		factories.remove( factory.getType() );
+	}
+
+	public StatisticsWriter createStatisticsWriter( String type, StatisticVariable variable )
+	{
+		StatisticsWriterFactory factory = factories.get( type );
+		if( factory != null )
+			return factory.createStatisticsWriter( this, variable );
+
+		return null;
 	}
 }

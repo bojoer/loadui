@@ -25,11 +25,11 @@ import java.util.Collection;
 public interface StatisticVariable
 {
 	/**
-	 * Gets the available instances of the StatisticVariable.
+	 * Gets the available sources of the StatisticVariable.
 	 * 
 	 * @return
 	 */
-	public Collection<String> getInstances();
+	public Collection<String> getSources();
 
 	/**
 	 * Gets the available Statistic names for the StatisticVariable.
@@ -39,11 +39,11 @@ public interface StatisticVariable
 	public Collection<String> getStatisticNames();
 
 	/**
-	 * Gets the Statistic corresponding to the given statistic name and instance.
+	 * Gets the Statistic corresponding to the given statistic name and source.
 	 * 
 	 * @param statisticName
-	 * @param instance
+	 * @param source
 	 * @return
 	 */
-	public Statistic<?> getStatistic( String statisticName, String instance );
+	public Statistic<?> getStatistic( String statisticName, String source );
 }
