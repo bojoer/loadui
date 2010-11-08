@@ -22,6 +22,7 @@ import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.SettingsLayoutContainer;
+import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.summary.MutableChapter;
 
 /**
@@ -29,7 +30,7 @@ import com.eviware.loadui.api.summary.MutableChapter;
  * 
  * @author dain.nilsson
  */
-public interface ComponentItem extends CanvasObjectItem, CounterHolder
+public interface ComponentItem extends CanvasObjectItem, CounterHolder, StatisticHolder
 {
 	public static final String CATEGORY = ComponentItem.class.getName() + "@category";
 

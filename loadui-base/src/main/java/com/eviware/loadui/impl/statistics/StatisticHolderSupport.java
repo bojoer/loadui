@@ -17,11 +17,9 @@ package com.eviware.loadui.impl.statistics;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.HashMap;
 
 import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
@@ -51,7 +49,7 @@ public class StatisticHolderSupport
 	 * @param variable
 	 * @return
 	 */
-	public StatisticsWriter getStatisticsWriter( String type, StatisticVariable variable )
+	public StatisticsWriter addStatisticsWriter( String type, StatisticVariable variable )
 	{
 		if( !variables.containsValue( variable ) )
 			throw new IllegalArgumentException(
@@ -64,24 +62,22 @@ public class StatisticHolderSupport
 		return null;
 	}
 
-	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	/**
+	 * Adds a StatisticVariable to the StatisticHolder, and returns it.
+	 * 
+	 * @param statisticVariableName
+	 * @return
+	 */
+	public StatisticVariable addStatisticVariable( String statisticVariableName )
 	{
-		owner.addEventListener( type, listener );
-	}
+		if( variables.containsKey( statisticVariableName ) )
+			return variables.get( statisticVariableName );
 
-	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
-	{
-		owner.removeEventListener( type, listener );
-	}
+		StatisticVariableImpl variable = new StatisticVariableImpl( owner );
+		variables.put( statisticVariableName, variable );
+		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.ADDED, variable ) );
 
-	public void clearEventListeners()
-	{
-		owner.clearEventListeners();
-	}
-
-	public void fireEvent( EventObject event )
-	{
-		owner.fireEvent( event );
+		return variable;
 	}
 
 	public StatisticVariable getStatisticVariable( String statisticVariableName )
@@ -92,14 +88,5 @@ public class StatisticHolderSupport
 	public Collection<String> getStatisticVariableNames()
 	{
 		return Collections.unmodifiableCollection( variables.keySet() );
-	}
-
-	public StatisticVariable addStatisticVariable( String statisticVariableName )
-	{
-		StatisticVariableImpl variable = new StatisticVariableImpl( owner );
-		variables.put( statisticVariableName, variable );
-		fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.ADDED, variable ) );
-
-		return variable;
 	}
 }
