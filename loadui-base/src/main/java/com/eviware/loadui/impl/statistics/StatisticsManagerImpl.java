@@ -33,7 +33,9 @@ import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.util.events.EventSupport;
 
 /**
- * Implementation for the StatisticsManager.
+ * Implementation for the StatisticsManager. Also used by the
+ * StatisticsHolderSupport to access the available StatisticsWriterFactories,
+ * which are imported using OSGi.
  * 
  * @author dain.nilsson
  */
@@ -115,7 +117,7 @@ public class StatisticsManagerImpl implements StatisticsManager
 		factories.remove( factory.getType() );
 	}
 
-	public StatisticsWriter createStatisticsWriter( String type, StatisticVariable variable )
+	StatisticsWriter createStatisticsWriter( String type, StatisticVariable variable )
 	{
 		StatisticsWriterFactory factory = factories.get( type );
 		if( factory != null )
