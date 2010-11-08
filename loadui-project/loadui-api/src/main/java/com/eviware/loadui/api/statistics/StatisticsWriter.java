@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.api.statistics;
 
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -65,10 +64,10 @@ public interface StatisticsWriter
 	 * 
 	 * @param <T>
 	 * @param statisticName
-	 * @param instance
+	 * @param source
 	 * @return
 	 */
-	public <T extends Number> T getStatisticValue( String statisticName, String instance );
+	public <T extends Number> T getStatisticValue( String statisticName, String source );
 
 	/**
 	 * Gets an Iterable of DataPoints for the given Statistic instance for the
@@ -76,11 +75,11 @@ public interface StatisticsWriter
 	 * 
 	 * @param <T>
 	 * @param statisticName
-	 * @param instance
+	 * @param source
 	 * @param start
 	 * @param end
 	 * @return
 	 */
-	public <T extends Number> Iterable<DataPoint<T>> getStatisticRange( String statisticName, String instance,
-			long start, long end );
+	public <T extends Number> Iterable<DataPoint<T>> getStatisticRange( String statisticName, String source, long start,
+			long end );
 }

@@ -36,7 +36,7 @@ import com.eviware.loadui.util.CacheMap;
 public class StatisticVariableImpl implements StatisticVariable
 {
 	private final Set<StatisticsWriter> writers = new HashSet<StatisticsWriter>();
-	private final Set<String> instances = new HashSet<String>();
+	private final Set<String> sources = new HashSet<String>();
 	private final Set<String> statisticNames = new HashSet<String>();
 	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<String, StatisticImpl<?>>();
 
@@ -52,9 +52,9 @@ public class StatisticVariableImpl implements StatisticVariable
 	}
 
 	@Override
-	public Collection<String> getInstances()
+	public Collection<String> getSources()
 	{
-		return Collections.unmodifiableSet( instances );
+		return Collections.unmodifiableSet( sources );
 	}
 
 	@Override
@@ -64,9 +64,9 @@ public class StatisticVariableImpl implements StatisticVariable
 	}
 
 	@Override
-	public Statistic<?> getStatistic( final String statisticName, final String instance )
+	public Statistic<?> getStatistic( final String statisticName, final String source )
 	{
-		return statisticCache.getOrCreate( statisticName.length() + ":" + statisticName + instance,
+		return statisticCache.getOrCreate( statisticName.length() + ":" + statisticName + source,
 				new Callable<StatisticImpl<?>>()
 				{
 					@Override
@@ -76,7 +76,7 @@ public class StatisticVariableImpl implements StatisticVariable
 						for( StatisticsWriter writer : writers )
 							for( Entry<String, Class<? extends Number>> entry : writer.getStatisticsNames().entrySet() )
 								if( statisticName.equals( entry.getKey() ) )
-									return new StatisticImpl( writer, StatisticVariableImpl.this, statisticName, instance, entry
+									return new StatisticImpl( writer, StatisticVariableImpl.this, statisticName, source, entry
 											.getValue() );
 						throw new NullPointerException();
 					}
