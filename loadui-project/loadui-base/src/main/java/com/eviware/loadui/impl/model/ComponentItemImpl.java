@@ -55,6 +55,8 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.summary.MutableChapter;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.DualTerminal;
@@ -66,6 +68,7 @@ import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.config.ComponentItemConfig;
 import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.counter.RemoteAggregatedCounterSupport;
+import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.terminal.OutputTerminalImpl;
 import com.eviware.loadui.impl.terminal.TerminalHolderSupport;
 import com.eviware.loadui.impl.terminal.TerminalMessageImpl;
@@ -77,6 +80,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private final ConversionService conversionService;
 	private final CanvasItem canvas;
 	private final TerminalHolderSupport terminalHolderSupport;
+	private final StatisticHolderSupport statisticHolderSupport;
 	private final Context context = new Context();
 	private final CanvasListener canvasListener = new CanvasListener();
 	private final WorkspaceListener workspaceListener;
@@ -118,6 +122,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 				: null;
 
 		terminalHolderSupport = new TerminalHolderSupport( this );
+		statisticHolderSupport = new StatisticHolderSupport( this );
 	}
 
 	@Override
@@ -355,6 +360,18 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	{
 		if( behavior != null )
 			behavior.generateSummary( summary );
+	}
+
+	@Override
+	public StatisticVariable getStatisticVariable( String statisticVariableName )
+	{
+		return statisticHolderSupport.getStatisticVariable( statisticVariableName );
+	}
+
+	@Override
+	public Collection<String> getStatisticVariableNames()
+	{
+		return statisticHolderSupport.getStatisticVariableNames();
 	}
 
 	public void sendAgentMessage( AgentItem agent, TerminalMessage message )
@@ -836,6 +853,18 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 			if( active != isActive() )
 				fireBaseEvent( ACTIVITY );
+		}
+
+		@Override
+		public StatisticVariable addStatisticVariable( String statisticVariableName )
+		{
+			return statisticHolderSupport.addStatisticVariable( statisticVariableName );
+		}
+
+		@Override
+		public StatisticsWriter addStatisticsWriter( String type, StatisticVariable variable )
+		{
+			return statisticHolderSupport.addStatisticsWriter( type, variable );
 		}
 	}
 

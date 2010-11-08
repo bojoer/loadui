@@ -24,6 +24,8 @@ import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.PropertyHolder;
+import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.terminal.DualTerminal;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.MutableTerminalHolder;
@@ -324,4 +326,23 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	 * @return
 	 */
 	public boolean isController();
+
+	/**
+	 * Adds (or gets existing) a StatisticVariable to the Component, with the
+	 * given name.
+	 * 
+	 * @param statisticVariableName
+	 * @return
+	 */
+	public StatisticVariable addStatisticVariable( String statisticVariableName );
+
+	/**
+	 * Adds (or gets existing) a StatisticsWriter of the given type, to the given
+	 * StatisticVariable.
+	 * 
+	 * @param type
+	 * @param variable
+	 * @return
+	 */
+	public StatisticsWriter addStatisticsWriter( String type, StatisticVariable variable );
 }

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 public class CacheMap<K, V> implements Map<K, V>
 {
@@ -122,6 +123,22 @@ public class CacheMap<K, V> implements Map<K, V>
 			if( valRef.get() != null )
 				values.add( valRef.get() );
 		return values;
+	}
+
+	public V getOrCreate( K key, Callable<V> create )
+	{
+		if( containsKey( key ) )
+			return get( key );
+		try
+		{
+			V value = create.call();
+			put( key, value );
+			return value;
+		}
+		catch( Exception e )
+		{
+			return null;
+		}
 	}
 
 	private class CacheEntry implements Entry<K, V>
