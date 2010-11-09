@@ -60,6 +60,13 @@ public interface StatisticsWriter
 	public void flush();
 
 	/**
+	 * Gets the associated StatisticVariable.
+	 * 
+	 * @return
+	 */
+	public StatisticVariable getStatisticVariable();
+
+	/**
 	 * Gets a Map of the names of the Statistics that this StatisticsWriter
 	 * provides, paired with the Number subclass of the Statistic.
 	 * 
