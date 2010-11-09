@@ -15,10 +15,14 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.ArrayList;
+
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
+
+import org.apache.commons.math.stat.descriptive.rank.Percentile;
 
 /**
  * StatisticsWriter for calculating the average of given values.
@@ -29,10 +33,12 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 {
 	public static final String TYPE = "AVERAGE";
 
+	private Percentile perc = new Percentile( 90 );
+
 	public enum Stats
 	{
 		AVERAGE( "Average" ), AVERAGE_COUNT( "Average_Count" ), AVERAGE_SUM( "Average_Sum" ), STD_DEV(
-				"Standard_Deviation" ), STD_DEV_SUM( "Standard_Deviation_Sum" );
+				"Standard_Deviation" ), STD_DEV_SUM( "Standard_Deviation_Sum" ), PERCENTILE( "Percentile" );
 
 		private final String name;
 
@@ -47,15 +53,23 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		}
 	}
 
-	/*
+	/**
 	 * Average = Average_Sum / Average_Count
 	 * 
-	 * Where: * Average_Sum is sum of all requests times ( total or range ) *
-	 * Average_Count is total number of requests ( total or range )
+	 * Where is:
+	 * * Average_Sum is sum of all requests times ( total or range )
+	 * * Average_Count is total number of requests ( total or range )
 	 * 
-	 * Standard_Deviation = Square_Sum / Average_Count Where : * Square_Sum
-	 * =Math.pow( timeTaken - Average_Sum, 2 ) * timeTaken is last request time
-	 * taken
+	 * Standard_Deviation = Square_Sum / Average_Count Where
+	 * 
+	 * Where is:
+	 * *Square_Sum =Math.pow( timeTaken - Average_Sum, 2 ) 
+	 * *timeTaken is last request time taken
+	 * 
+	 * For calculating 90 percentile it needed to remember data received.
+	 * To do this is defined buffer which hold last n values. Default value is 1000, but this 
+	 * can be changed by set/getPercentileBufferSize. Since percentile is expensive operation, specially
+	 * when buffer is large, it should be calculated just before it should be written to database.
 	 */
 
 	private long average = 0L;
@@ -64,13 +78,15 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	private double stdDev = 0.0;
 	private double sumTotalSquare = 0.0;
 	private long lastTimeFlashed;
+	private double percentile;
+
+	private int percentileBufferSize = 1000;
+
+	private ArrayList<Double> values = new ArrayList<Double>();
 
 	public AverageStatisticWriter( StatisticVariable variable )
 	{
 		super( variable );
-		// TODO: Create statistics for average, average_count, etc. and add them
-		// to
-		// the StatisticVariable.
 
 		// init statistics
 		statisticNames.put( Stats.AVERAGE.getName(), Long.class );
@@ -78,6 +94,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		statisticNames.put( Stats.AVERAGE_COUNT.getName(), Integer.class );
 		statisticNames.put( Stats.STD_DEV.getName(), Double.class );
 		statisticNames.put( Stats.STD_DEV_SUM.getName(), Double.class );
+		statisticNames.put( Stats.PERCENTILE.getName(), Double.class );
 
 	}
 
@@ -99,6 +116,11 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	@Override
 	public void update( long timestamp, Number... values )
 	{
+		if ( values.length < 1 ) 
+			return;
+		this.values.add( ( Double )values[0] );
+		if( this.values.size() >= percentileBufferSize )
+			this.values.remove( 0 );
 		avgSum += ( Long )values[0];
 		avgCnt++ ;
 		average = avgSum / avgCnt;
@@ -123,17 +145,38 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			return avgSum;
 		case STD_DEV_SUM :
 			return sumTotalSquare;
+		case PERCENTILE :
+			return percentile;
 		default :
 			return null;
 		}
 	}
 
+	/**
+	 * stores data in db. Also here calculate percentile since it is expensive calculation
+	 */
 	@Override
 	public void flush()
 	{
+		// calculate percentile here since it is expensive operation.
+		double[] pValues = new double[values.size()];
+		for( int cnt = 0; cnt < values.size(); cnt++ )
+			pValues[cnt] = values.get( cnt );
+		percentile = perc.evaluate( pValues );
 		lastTimeFlashed = System.currentTimeMillis();
+
 		// TODO Write to the proper Track of the current Execution.
 
+	}
+
+	public int getPercentileBufferSize()
+	{
+		return percentileBufferSize;
+	}
+
+	public void setPercentileBufferSize( int percentileBufferSize )
+	{
+		this.percentileBufferSize = percentileBufferSize;
 	}
 
 	/**
