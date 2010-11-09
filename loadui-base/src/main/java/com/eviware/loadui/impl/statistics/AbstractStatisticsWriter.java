@@ -25,7 +25,7 @@ import com.eviware.loadui.api.statistics.StatisticsWriter;
 public abstract class AbstractStatisticsWriter implements StatisticsWriter
 {
 	private final StatisticVariable variable;
-	
+
 	protected Map<String, Class<? extends Number>> statisticNames = new TreeMap<String, Class<? extends Number>>();
 
 	protected long delay;
@@ -33,6 +33,12 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	public AbstractStatisticsWriter( StatisticVariable variable )
 	{
 		this.variable = variable;
+	}
+
+	@Override
+	public StatisticVariable getStatisticVariable()
+	{
+		return variable;
 	}
 
 	@Override
@@ -54,7 +60,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public void setMinimumWriteDelay( long delay )
 	{
