@@ -47,7 +47,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		}
 	}
 
-	/**
+	/*
 	 * Average = Average_Sum / Average_Count
 	 * 
 	 * Where: * Average_Sum is sum of all requests times ( total or range ) *
@@ -56,7 +56,6 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	 * Standard_Deviation = Square_Sum / Average_Count Where : * Square_Sum
 	 * =Math.pow( timeTaken - Average_Sum, 2 ) * timeTaken is last request time
 	 * taken
-	 * 
 	 */
 
 	private long average = 0L;
