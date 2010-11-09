@@ -52,7 +52,7 @@ public interface Track
 	 *           milliseconds.
 	 * @param values
 	 */
-	public void storeEntry( int timestamp, Number... values );
+	public Entry storeEntry( int timestamp, Number... values );
 
 	/**
 	 * Gets the closest succeeding Entry in the Track to the given time, measured
