@@ -29,42 +29,33 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 {
 	public static final String TYPE = "AVERAGE";
 
-	// Statistics provided:
-//	public static final String AVERAGE = "Average";
-//	public static final String AVERAGE_COUNT = "Average_Count";
-//	public static final String AVERAGE_SUM = "Average_Sum";
-//	public static final String STD_DEV = "Standard_Deviation";
-	
-	public enum Stats {
-		AVERAGE("Average"), 
-		AVERAGE_COUNT("Average_Count"), 
-		AVERAGE_SUM("Average_Sum"), 
-		STD_DEV("Standard_Deviation"),
-		STD_DEV_SUM("Standard_Deviation_Sum");
-		
+	public enum Stats
+	{
+		AVERAGE( "Average" ), AVERAGE_COUNT( "Average_Count" ), AVERAGE_SUM( "Average_Sum" ), STD_DEV(
+				"Standard_Deviation" ), STD_DEV_SUM( "Standard_Deviation_Sum" );
+
 		private final String name;
-		
-		Stats( String name ) {
+
+		Stats( String name )
+		{
 			this.name = name;
 		}
-		
+
 		public String getName()
 		{
 			return name;
 		}
 	}
-	
+
 	/**
-	 * Average = Average_Sum / Average_Count 
+	 * Average = Average_Sum / Average_Count
 	 * 
-	 * Where: 
-	 * * Average_Sum is sum of all requests times ( total or range ) 
-	 * * Average_Count is total number of requests ( total or range )
+	 * Where: * Average_Sum is sum of all requests times ( total or range ) *
+	 * Average_Count is total number of requests ( total or range )
 	 * 
-	 * Standard_Deviation = Square_Sum / Average_Count 
-	 * Where : 
-	 * * Square_Sum =Math.pow( timeTaken - Average_Sum, 2 ) 
-	 * * timeTaken is last request time taken
+	 * Standard_Deviation = Square_Sum / Average_Count Where : * Square_Sum
+	 * =Math.pow( timeTaken - Average_Sum, 2 ) * timeTaken is last request time
+	 * taken
 	 * 
 	 */
 
@@ -73,8 +64,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	private int avgCnt = 0;
 	private double stdDev = 0.0;
 	private double sumTotalSquare = 0.0;
-	
-	
+	private long lastTimeFlashed;
 
 	public AverageStatisticWriter( StatisticVariable variable )
 	{
@@ -82,14 +72,14 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		// TODO: Create statistics for average, average_count, etc. and add them
 		// to
 		// the StatisticVariable.
-		
+
 		// init statistics
 		statisticNames.put( Stats.AVERAGE.getName(), Long.class );
 		statisticNames.put( Stats.AVERAGE_SUM.getName(), Long.class );
 		statisticNames.put( Stats.AVERAGE_COUNT.getName(), Integer.class );
 		statisticNames.put( Stats.STD_DEV.getName(), Double.class );
-		statisticNames.put( Stats.STD_DEV_SUM.getName(), Double.class);
-		
+		statisticNames.put( Stats.STD_DEV_SUM.getName(), Double.class );
+
 	}
 
 	@Override
@@ -104,15 +94,15 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	@Override
 	public void update( long timestamp, Number... values )
 	{
-		avgSum  += (Long)values[0];
-		avgCnt++;
+		avgSum += ( Long )values[0];
+		avgCnt++ ;
 		average = avgSum / avgCnt;
-		sumTotalSquare += Math.pow( (Long)values[0] - avgSum, 2 );
+		sumTotalSquare += Math.pow( ( Long )values[0] - avgSum, 2 );
 		stdDev = sumTotalSquare / avgCnt;
-		//TODO: check if data should be written and call flash
-//		flush();
+		if( lastTimeFlashed + delay >= System.currentTimeMillis() )
+			flush();
 	}
-	
+
 	@Override
 	public Number getStatisticValue( String statisticName, String instance )
 	{
@@ -122,11 +112,11 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			return average;
 		case STD_DEV :
 			return stdDev;
-		case AVERAGE_COUNT:
+		case AVERAGE_COUNT :
 			return avgCnt;
-		case AVERAGE_SUM:
+		case AVERAGE_SUM :
 			return avgSum;
-		case STD_DEV_SUM:
+		case STD_DEV_SUM :
 			return sumTotalSquare;
 		default :
 			return null;
@@ -136,11 +126,10 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	@Override
 	public void flush()
 	{
+		lastTimeFlashed = System.currentTimeMillis();
 		// TODO Write to the proper Track of the current Execution.
 
 	}
-
-	
 
 	/**
 	 * Factory for instantiating AverageStatisticWriters.
