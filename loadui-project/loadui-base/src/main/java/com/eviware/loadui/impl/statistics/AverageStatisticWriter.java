@@ -15,17 +15,6 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.xml.crypto.Data;
-
-import org.w3c.dom.views.AbstractView;
-
-import com.eviware.loadui.api.statistics.DataPoint;
-import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
@@ -50,7 +39,8 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		AVERAGE("Average"), 
 		AVERAGE_COUNT("Average_Count"), 
 		AVERAGE_SUM("Average_Sum"), 
-		STD_DEV("Standard_Deviation");
+		STD_DEV("Standard_Deviation"),
+		STD_DEV_SUM("Standard_Deviation_Sum");
 		
 		private final String name;
 		
@@ -64,11 +54,6 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		}
 	}
 	
-	private ArrayList<DataPoint<Long>> avgList = new ArrayList<DataPoint<Long>>();
-	private ArrayList<DataPoint<Long>> avgSumList= new ArrayList<DataPoint<Long>>();
-	private ArrayList<DataPoint<Integer>> avgCntList = new ArrayList<DataPoint<Integer>>();
-	private ArrayList<DataPoint<Double>> stdDevList = new ArrayList<DataPoint<Double>>();
-
 	/**
 	 * Average = Average_Sum / Average_Count 
 	 * 
@@ -87,6 +72,9 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	private long avgSum = 0L;
 	private int avgCnt = 0;
 	private double stdDev = 0.0;
+	private double sumTotalSquare = 0.0;
+	
+	
 
 	public AverageStatisticWriter( StatisticVariable variable )
 	{
@@ -100,6 +88,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		statisticNames.put( Stats.AVERAGE_SUM.getName(), Long.class );
 		statisticNames.put( Stats.AVERAGE_COUNT.getName(), Integer.class );
 		statisticNames.put( Stats.STD_DEV.getName(), Double.class );
+		statisticNames.put( Stats.STD_DEV_SUM.getName(), Double.class);
 		
 	}
 
@@ -116,14 +105,10 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	public void update( long timestamp, Number... values )
 	{
 		avgSum  += (Long)values[0];
-		avgSumList.add( new DataPointImpl<Long>(timestamp, avgSum));
 		avgCnt++;
-		avgCntList.add( new DataPointImpl<Integer>( timestamp, avgCnt ));
 		average = avgSum / avgCnt;
-		avgList.add( new DataPointImpl<Long>( timestamp, average ));
-		stdDev = Math.pow( (Long)values[0] - avgSum, 2 ) / avgCnt;
-		stdDevList.add( new DataPointImpl<Double>( timestamp, stdDev ) );
-		
+		sumTotalSquare += Math.pow( (Long)values[0] - avgSum, 2 );
+		stdDev = sumTotalSquare / avgCnt;
 		//TODO: check if data should be written and call flash
 //		flush();
 	}
@@ -141,6 +126,8 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			return avgCnt;
 		case AVERAGE_SUM:
 			return avgSum;
+		case STD_DEV_SUM:
+			return sumTotalSquare;
 		default :
 			return null;
 		}
@@ -153,13 +140,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 	}
 
-	@Override
-	public <T extends Number> Iterable<DataPoint<T>> getStatisticRange( String statisticName, String instance,
-			long start, long end )
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	/**
 	 * Factory for instantiating AverageStatisticWriters.
