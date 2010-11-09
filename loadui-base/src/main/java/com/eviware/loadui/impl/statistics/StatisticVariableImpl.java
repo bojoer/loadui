@@ -35,14 +35,29 @@ import com.eviware.loadui.util.CacheMap;
  */
 public class StatisticVariableImpl implements StatisticVariable
 {
+	private final String name;
+	private final StatisticHolder parent;
 	private final Set<StatisticsWriter> writers = new HashSet<StatisticsWriter>();
 	private final Set<String> sources = new HashSet<String>();
 	private final Set<String> statisticNames = new HashSet<String>();
 	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<String, StatisticImpl<?>>();
 
-	public StatisticVariableImpl( StatisticHolder parent )
+	public StatisticVariableImpl( StatisticHolder parent, String name )
 	{
+		this.name = name;
+		this.parent = parent;
+	}
 
+	@Override
+	public String getName()
+	{
+		return name;
+	}
+
+	@Override
+	public StatisticHolder getStatisticHolder()
+	{
+		return parent;
 	}
 
 	public void addStatisticsWriter( StatisticsWriter writer )

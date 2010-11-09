@@ -17,6 +17,7 @@ package com.eviware.loadui.api.statistics;
 
 import java.util.Collection;
 
+import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.events.EventFirer;
 
 /**
@@ -25,7 +26,7 @@ import com.eviware.loadui.api.events.EventFirer;
  * 
  * @author dain.nilsson
  */
-public interface StatisticHolder extends EventFirer
+public interface StatisticHolder extends EventFirer, Addressable
 {
 	public static final String STATISTICS = StatisticHolder.class.getName() + "@statistics";
 

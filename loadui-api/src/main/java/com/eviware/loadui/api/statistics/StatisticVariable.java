@@ -25,6 +25,20 @@ import java.util.Collection;
 public interface StatisticVariable
 {
 	/**
+	 * Gets the name of the StatisticVariable.
+	 * 
+	 * @return
+	 */
+	public String getName();
+
+	/**
+	 * Gets the StatisticHolder which this StatisticVariable belongs to.
+	 * 
+	 * @return
+	 */
+	public StatisticHolder getStatisticHolder();
+
+	/**
 	 * Gets the available sources of the StatisticVariable.
 	 * 
 	 * @return

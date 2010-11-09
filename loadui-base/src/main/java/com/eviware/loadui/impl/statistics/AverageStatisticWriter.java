@@ -82,6 +82,12 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
+	protected String getType()
+	{
+		return TYPE;
+	}
+
+	@Override
 	public int getValueCount()
 	{
 		return 1;
@@ -149,5 +155,4 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			return new AverageStatisticWriter( variable );
 		}
 	}
-
 }

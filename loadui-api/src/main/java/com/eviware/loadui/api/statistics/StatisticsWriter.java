@@ -17,6 +17,8 @@ package com.eviware.loadui.api.statistics;
 
 import java.util.Map;
 
+import com.eviware.loadui.api.addressable.Addressable;
+
 /**
  * Writes statistics data to a Track. Each call to update allows the
  * StatisticsWriter to internally buffer data, which is aggregated and written
@@ -25,7 +27,7 @@ import java.util.Map;
  * 
  * @author dain.nilsson
  */
-public interface StatisticsWriter
+public interface StatisticsWriter extends Addressable
 {
 	/**
 	 * Gets the number of values which are needed each update. This number does

@@ -73,7 +73,7 @@ public class StatisticHolderSupport
 		if( variables.containsKey( statisticVariableName ) )
 			return variables.get( statisticVariableName );
 
-		StatisticVariableImpl variable = new StatisticVariableImpl( owner );
+		StatisticVariableImpl variable = new StatisticVariableImpl( owner, statisticVariableName );
 		variables.put( statisticVariableName, variable );
 		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.ADDED, variable ) );
 
