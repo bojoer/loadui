@@ -15,9 +15,12 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
+
+import javax.xml.crypto.Data;
 
 import org.w3c.dom.views.AbstractView;
 
@@ -60,6 +63,11 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			return name;
 		}
 	}
+	
+	private ArrayList<DataPoint<Long>> avgList = new ArrayList<DataPoint<Long>>();
+	private ArrayList<DataPoint<Long>> avgSumList= new ArrayList<DataPoint<Long>>();
+	private ArrayList<DataPoint<Integer>> avgCntList = new ArrayList<DataPoint<Integer>>();
+	private ArrayList<DataPoint<Double>> stdDevList = new ArrayList<DataPoint<Double>>();
 
 	/**
 	 * Average = Average_Sum / Average_Count 
@@ -75,11 +83,9 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	 * 
 	 */
 
-	private StatisticVariableImpl statisticVariable;
-
+	private long average = 0L;
 	private long avgSum = 0L;
 	private int avgCnt = 0;
-	private long average = 0L;
 	private double stdDev = 0.0;
 
 	public AverageStatisticWriter( StatisticVariable variable )
@@ -110,10 +116,16 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	public void update( long timestamp, Number... values )
 	{
 		avgSum  += (Long)values[0];
+		avgSumList.add( new DataPointImpl<Long>(timestamp, avgSum));
 		avgCnt++;
+		avgCntList.add( new DataPointImpl<Integer>( timestamp, avgCnt ));
 		average = avgSum / avgCnt;
+		avgList.add( new DataPointImpl<Long>( timestamp, average ));
 		stdDev = Math.pow( (Long)values[0] - avgSum, 2 ) / avgCnt;
-		flush();
+		stdDevList.add( new DataPointImpl<Double>( timestamp, stdDev ) );
+		
+		//TODO: check if data should be written and call flash
+//		flush();
 	}
 	
 	@Override

@@ -44,7 +44,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	@Override
 	public <T extends Number> T getStatisticValue( String statisticName, String instance )
 	{
-		return ( T )variable.getStatistic( statisticName, instance ).getValue();
+		return null;
 	}
 
 	@Override
