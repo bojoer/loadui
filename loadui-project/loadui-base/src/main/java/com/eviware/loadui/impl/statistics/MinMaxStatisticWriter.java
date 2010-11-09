@@ -56,6 +56,12 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
+	protected String getType()
+	{
+		return TYPE;
+	}
+
+	@Override
 	public void flush()
 	{
 		lastTimeFlashed = System.currentTimeMillis();

@@ -18,6 +18,8 @@ package com.eviware.loadui.impl.statistics;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
@@ -25,6 +27,7 @@ import com.eviware.loadui.api.statistics.StatisticsWriter;
 public abstract class AbstractStatisticsWriter implements StatisticsWriter
 {
 	private final StatisticVariable variable;
+	private final String id;
 
 	protected Map<String, Class<? extends Number>> statisticNames = new TreeMap<String, Class<? extends Number>>();
 
@@ -33,6 +36,21 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	public AbstractStatisticsWriter( StatisticVariable variable )
 	{
 		this.variable = variable;
+		id = DigestUtils.md5Hex( variable.getStatisticHolder().getId() + variable.getName() + getType() );
+	}
+
+	/**
+	 * Gets the type of the StatisticsWriter, which should be unique. This can be
+	 * the same as the associated StatisticsWriterFactory.getType().
+	 * 
+	 * @return
+	 */
+	protected abstract String getType();
+
+	@Override
+	public String getId()
+	{
+		return id;
 	}
 
 	@Override
