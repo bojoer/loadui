@@ -20,14 +20,17 @@ import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 
-public class MinMaxStatisticWriter extends AbstractStatisticsWriter
+public class PSStatisticsWriter extends AbstractStatisticsWriter
 {
 
-	public static final String TYPE = "MINMAX";
-
+	private final static String TYPE = "PSWritter";
+	private long lastTimeFlashed;
+	private Double perSecond;
+	
+	//cound not find better name
 	public enum Stats
 	{
-		MIN( "Minimum" ), MAX( "Maximum" );
+		PS( "Per_Second" );
 
 		private final String name;
 
@@ -41,20 +44,14 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 			return name;
 		}
 	}
-
-	private long lastTimeFlashed;
-	private Double minimum;
-	private Double maximum;
-
-	public MinMaxStatisticWriter( StatisticVariable variable )
+	
+	public PSStatisticsWriter(StatisticVariable variable)
 	{
 		super( variable );
-
-		statisticNames.put( Stats.MIN.getName(), Double.class );
-		statisticNames.put( Stats.MAX.getName(), Double.class );
-
+		
+		statisticNames.put( Stats.PS.getName(), Double.class );
 	}
-
+	
 	@Override
 	protected String getType()
 	{
@@ -68,56 +65,37 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 		//TODO: write to DB
 	}
 
+	/**
+	 * this writer needs number of operations/transfers/bytes and length of time in which they happend.
+	 */
 	@Override
 	public int getValueCount()
 	{
-		return 1;
+		return 2;
 	}
 
-	/*
-	 * flash() will be called only when timeperiod is expired and min or max
-	 * value is changed. This is done so save space in database. (non-Javadoc)
-	 * 
-	 * @see com.eviware.loadui.api.statistics.StatisticsWriter#update(long,
-	 * java.lang.Number[])
-	 */
 	@Override
 	public void update( long timestamp, Number... values )
 	{
-		if ( values.length < 1 ) 
+		// ignore data if there is less than 2 or second one is 0
+		if ( values.length < 2 ) 
 			return;
-		boolean dirty = false;
-		if( minimum > ( Double )values[0] )
-		{
-			minimum = ( Double )values[0];
-			dirty = true;
-		}
-		if( maximum < ( Double )values[0] )
-		{
-			maximum = ( Double )values[0];
-			dirty = true;
-		}
-		if( lastTimeFlashed + delay >= System.currentTimeMillis() && dirty )
+		if ( (Double)values[1] == 0 )
+			return;
+		perSecond = (Double)values[0] / (Double)values[1];
+		
+		if( lastTimeFlashed + delay >= System.currentTimeMillis() )
 			flush();
 	}
-
-	@SuppressWarnings( "unchecked" )
+	
 	@Override
-	public Number getStatisticValue( String statisticName, String instance )
+	public Double getStatisticValue( String statisticName, String instance )
 	{
-		switch( Stats.valueOf( statisticName ) )
-		{
-		case MIN :
-			return minimum;
-		case MAX :
-			return maximum;
-		default :
-			return null;
-		}
+		return perSecond;
 	}
 
 	/**
-	 * Factory for instantiating MinMaxStatisticWriters.
+	 * Factory for instantiating PSStatisticWriters.
 	 * 
 	 */
 	public static class Factory implements StatisticsWriterFactory
@@ -131,8 +109,7 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 		@Override
 		public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable )
 		{
-			return new MinMaxStatisticWriter( variable );
+			return new PSStatisticsWriter( variable );
 		}
 	}
-
 }
