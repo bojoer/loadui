@@ -37,20 +37,13 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 	public enum Stats
 	{
-		AVERAGE( "Average" ), AVERAGE_COUNT( "Average_Count" ), AVERAGE_SUM( "Average_Sum" ), STD_DEV(
-				"Standard_Deviation" ), STD_DEV_SUM( "Standard_Deviation_Sum" ), PERCENTILE( "Percentile" );
+		AVERAGE,
+		AVERAGE_COUNT,
+		AVERAGE_SUM, 
+		STD_DEV ,
+		STD_DEV_SUM, 
+		PERCENTILE;
 
-		private final String name;
-
-		Stats( String name )
-		{
-			this.name = name;
-		}
-
-		public String getName()
-		{
-			return name;
-		}
 	}
 
 	/**
@@ -89,12 +82,12 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		super( variable );
 
 		// init statistics
-		statisticNames.put( Stats.AVERAGE.getName(), Long.class );
-		statisticNames.put( Stats.AVERAGE_SUM.getName(), Long.class );
-		statisticNames.put( Stats.AVERAGE_COUNT.getName(), Integer.class );
-		statisticNames.put( Stats.STD_DEV.getName(), Double.class );
-		statisticNames.put( Stats.STD_DEV_SUM.getName(), Double.class );
-		statisticNames.put( Stats.PERCENTILE.getName(), Double.class );
+		statisticNames.put( Stats.AVERAGE.name(), Long.class );
+		statisticNames.put( Stats.AVERAGE_SUM.name(), Long.class );
+		statisticNames.put( Stats.AVERAGE_COUNT.name(), Integer.class );
+		statisticNames.put( Stats.STD_DEV.name(), Double.class );
+		statisticNames.put( Stats.STD_DEV_SUM.name(), Double.class );
+		statisticNames.put( Stats.PERCENTILE.name(), Double.class );
 
 	}
 

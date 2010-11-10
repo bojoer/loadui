@@ -44,27 +44,16 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 	//cound not find better name
 	public enum Stats
 	{
-		PS( "Per_Second" ), VALUE( "Last_Second_Change");
+		PS, LAST_SECOND_CHANGE;
 
-		private final String name;
-
-		Stats( String name )
-		{
-			this.name = name;
-		}
-
-		public String getName()
-		{
-			return name;
-		}
 	}
 
 	public PSStatisticsWriter( StatisticVariable variable )
 	{
 		super( variable );
 
-		statisticNames.put( Stats.PS.getName(), Double.class );
-		statisticNames.put( Stats.VALUE.getName(), Double.class );
+		statisticNames.put( Stats.PS.name(), Double.class );
+		statisticNames.put( Stats.LAST_SECOND_CHANGE.name(), Double.class );
 	}
 
 	@Override
@@ -113,7 +102,7 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 		{
 		case PS :
 			return perSecond;
-		case VALUE:
+		case LAST_SECOND_CHANGE:
 			return lastSecondChange;
 		default :
 			return null;

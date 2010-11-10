@@ -27,19 +27,7 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 
 	public enum Stats
 	{
-		MIN( "Minimum" ), MAX( "Maximum" );
-
-		private final String name;
-
-		Stats( String name )
-		{
-			this.name = name;
-		}
-
-		public String getName()
-		{
-			return name;
-		}
+		MIN, MAX;
 	}
 
 	private long lastTimeFlashed;
@@ -50,8 +38,8 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	{
 		super( variable );
 
-		statisticNames.put( Stats.MIN.getName(), Double.class );
-		statisticNames.put( Stats.MAX.getName(), Double.class );
+		statisticNames.put( Stats.MIN.name(), Double.class );
+		statisticNames.put( Stats.MAX.name(), Double.class );
 
 	}
 
