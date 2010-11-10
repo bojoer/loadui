@@ -84,7 +84,7 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	/**
-	 * this writer needs number of operations/transfers/bytes and length of time in which they happend.
+	 * this writer needs number of operations/transfers/bytes 
 	 */
 	@Override
 	public int getValueCount()
