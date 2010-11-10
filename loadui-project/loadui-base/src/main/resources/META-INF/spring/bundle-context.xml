@@ -70,4 +70,12 @@
 
 	<bean id="statisticsManager"
 		class="com.eviware.loadui.impl.statistics.StatisticsManagerImpl" />
+		
+	<bean id="averageStatisticWriter" 
+		class="com.eviware.loadui.impl.statistics.AverageStatisticWriter$Factory"/>
+	<bean id="minmaxStatisticWriter"
+		class="com.eviware.loadui.impl.statistics.MinMaxStatisticWriter$Factory"/>
+	<bean id="psStatisticWriter"
+		class="com.eviware.loadui.impl.statistics.PSStatisticsWriter$Factory"/>
+	
 </beans>
