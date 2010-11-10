@@ -53,6 +53,7 @@ import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.util.MapUtils;
 
@@ -96,6 +97,9 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 		// UGLY HACK to make sure the Counter class is loaded by the classloader
 		// before creating the Proxy.
 		Counter c = null;
+		//Same as Counter, classloader issue.
+		StatisticVariable sv = null;
+		
 		proxy = Proxy.newProxyInstance( cl, interfaces, this );
 
 		scriptProperty = context.createProperty( GroovyBehaviorProvider.SCRIPT_PROPERTY, String.class );
