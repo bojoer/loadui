@@ -28,7 +28,7 @@
 				<configuration>
 					<instructions>
 						<Embed-Dependency>*;scope=provided</Embed-Dependency>
-						<Import-Package>!com.sun.javadoc;!com.sun.tools.javadoc;!org.apache.tools.ant*;!org.apache.xml.resolver*;org.w3c.dom;*</Import-Package>
+						<Import-Package>!org.apache.commons.discovery.tools;!com.sun.javadoc;!com.sun.tools.javadoc;!org.apache.tools.ant*;!org.apache.xml.resolver*;org.w3c.dom;*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
