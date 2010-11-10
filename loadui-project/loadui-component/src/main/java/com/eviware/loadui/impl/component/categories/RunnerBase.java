@@ -49,6 +49,7 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.SampleStats;
 import com.eviware.loadui.api.summary.SampleStatsImpl;
 import com.eviware.loadui.api.terminal.InputTerminal;
@@ -123,6 +124,11 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 		executor = BeanInjector.getBean( ExecutorService.class );
 		scheduler = BeanInjector.getBean( ScheduledExecutorService.class );
+
+		StatisticVariable variable = context.addStatisticVariable( "TimeTaken" );
+		context.addStatisticsWriter( "AVERAGE", variable );
+		variable = context.addStatisticVariable( "ResponseSize" );
+		context.addStatisticsWriter( "AVERAGE", variable );
 
 		triggerTerminal = context.createInput( TRIGGER_TERMINAL, "Trigger Input" );
 
@@ -568,14 +574,14 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		{
 			long perc = failureCount * 100 / sampleCount;
 			String errorRatio = perc + "%"; // failureCount + "/" + sampleCount +
-														// " (" + perc + "%)";
+			// " (" + perc + "%)";
 
 			statistics.put( "cnt", String.valueOf( sampleCount ) );
 			statistics.put( "min", String.valueOf( minTime ) );
 			statistics.put( "max", String.valueOf( maxTime ) );
 			statistics.put( "avg", String.valueOf( avgTime ) );
-			statistics.put( "std-dev",
-					String.valueOf( Math.round( Math.sqrt( sumTotalSquare / sampleCount ) * 100d ) / 100d ) );
+			statistics.put( "std-dev", String
+					.valueOf( Math.round( Math.sqrt( sumTotalSquare / sampleCount ) * 100d ) / 100d ) );
 			if( avgTime > 0 )
 			{
 				statistics.put( "min/avg", String.valueOf( Math.round( ( minTime / avgTime ) * 100d ) / 100d ) );
