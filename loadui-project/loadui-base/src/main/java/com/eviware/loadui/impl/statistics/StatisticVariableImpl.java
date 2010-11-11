@@ -61,9 +61,8 @@ public class StatisticVariableImpl implements StatisticVariable
 		return parent;
 	}
 
-	public void addStatisticsWriter( StatisticsWriter writer )
+	public void addTrack( Track track )
 	{
-		Track track = writer.getTrack();
 		if( tracks.add( track ) )
 			statisticNames.addAll( track.getValueNames().keySet() );
 	}

@@ -58,6 +58,7 @@ public class StatisticHolderSupport
 		// TODO: Fire CollectionEvent about Statistics exposed by the
 		// StatisticsWriter.
 		StatisticsWriter writer = StatisticsManagerImpl.getInstance().createStatisticsWriter( type, variable );
+		( ( StatisticVariableImpl )variable ).addTrack( writer.getTrack() );
 
 		return writer;
 	}
