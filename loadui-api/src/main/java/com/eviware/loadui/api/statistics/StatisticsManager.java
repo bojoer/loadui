@@ -18,6 +18,7 @@ package com.eviware.loadui.api.statistics;
 import java.util.Collection;
 
 import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.statistics.store.ExecutionManager;
 
 /**
  * A registry of available Statistics and StatisticHolders, and the settings
@@ -56,4 +57,11 @@ public interface StatisticsManager extends EventFirer
 	 * @return
 	 */
 	public long getMinimumWriteDelay();
+
+	/**
+	 * Gets the ExecutionManager.
+	 * 
+	 * @return
+	 */
+	public ExecutionManager getExecutionManager();
 }

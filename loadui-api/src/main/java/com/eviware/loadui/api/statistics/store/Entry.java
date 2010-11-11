@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.statistics.store;
 
+import java.util.Collection;
+
 /**
  * An entry of a Track, corresponds to a database record where the timestamp is
  * the key and the values are the data.
@@ -32,9 +34,17 @@ public interface Entry
 	public int getTimestamp();
 
 	/**
-	 * Gets the values as a Number[].
+	 * Gets the names of the values in the Entry.
 	 * 
 	 * @return
 	 */
-	public Number[] getValues();
+	public Collection<String> getNames();
+
+	/**
+	 * Gets the value for the given name.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Number getValue( String name );
 }

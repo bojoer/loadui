@@ -15,27 +15,31 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
-import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
+import com.eviware.loadui.api.statistics.store.Track;
 
 public abstract class AbstractStatisticsWriter implements StatisticsWriter
 {
+	private final StatisticsManager manager;
 	private final StatisticVariable variable;
+	private final Map<String, Class<? extends Number>> trackStructure;
 	private final String id;
-
-	protected Map<String, Class<? extends Number>> statisticNames = new TreeMap<String, Class<? extends Number>>();
 
 	protected long delay;
 
-	public AbstractStatisticsWriter( StatisticVariable variable )
+	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
+			Map<String, Class<? extends Number>> values )
 	{
+		this.manager = manager;
 		this.variable = variable;
+		trackStructure = values;
 		id = DigestUtils.md5Hex( variable.getStatisticHolder().getId() + variable.getName() + getType() );
 	}
 
@@ -60,28 +64,41 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	}
 
 	@Override
-	public Map<String, Class<? extends Number>> getStatisticsNames()
-	{
-		return statisticNames;
-	}
-
-	@Override
-	public <T extends Number> T getStatisticValue( String statisticName, String instance )
-	{
-		return null;
-	}
-
-	@Override
-	public <T extends Number> Iterable<DataPoint<T>> getStatisticRange( String statisticName, String instance,
-			long start, long end )
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void setMinimumWriteDelay( long delay )
 	{
 		this.delay = delay;
+	}
+
+	@Override
+	public Track getTrack()
+	{
+		return manager.getExecutionManager().createTrack( getId(), trackStructure );
+	}
+
+	protected EntryBuilder at( int timestamp )
+	{
+		return null;
+	}
+
+	/**
+	 * Builder for use in at( int timestamp ) to make writing data to the proper
+	 * Track easy.
+	 * 
+	 * @author dain.nilsson
+	 */
+	protected class EntryBuilder
+	{
+		private final Map<String, Number> values = new HashMap<String, Number>();
+
+		public <T extends Number> EntryBuilder put( String name, T value )
+		{
+			values.put( name, value );
+			return this;
+		}
+
+		public void write()
+		{
+			getTrack().write( null, "local" );
+		}
 	}
 }

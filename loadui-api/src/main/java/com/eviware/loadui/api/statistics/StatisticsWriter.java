@@ -15,9 +15,8 @@
  */
 package com.eviware.loadui.api.statistics;
 
-import java.util.Map;
-
 import com.eviware.loadui.api.addressable.Addressable;
+import com.eviware.loadui.api.statistics.store.Track;
 
 /**
  * Writes statistics data to a Track. Each call to update allows the
@@ -69,35 +68,9 @@ public interface StatisticsWriter extends Addressable
 	public StatisticVariable getStatisticVariable();
 
 	/**
-	 * Gets a Map of the names of the Statistics that this StatisticsWriter
-	 * provides, paired with the Number subclass of the Statistic.
+	 * Gets the Track for the StatisticsWriter, for the current Execution.
 	 * 
 	 * @return
 	 */
-	public Map<String, Class<? extends Number>> getStatisticsNames();
-
-	/**
-	 * Gets the current value of a particular Statistic instance that the
-	 * StatisticsWriter provides.
-	 * 
-	 * @param <T>
-	 * @param statisticName
-	 * @param source
-	 * @return
-	 */
-	public <T extends Number> T getStatisticValue( String statisticName, String source );
-
-	/**
-	 * Gets an Iterable of DataPoints for the given Statistic instance for the
-	 * given range.
-	 * 
-	 * @param <T>
-	 * @param statisticName
-	 * @param source
-	 * @param start
-	 * @param end
-	 * @return
-	 */
-	public <T extends Number> Iterable<DataPoint<T>> getStatisticRange( String statisticName, String source, long start,
-			long end );
+	public Track getTrack();
 }
