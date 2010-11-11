@@ -26,6 +26,7 @@ import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
+import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.util.CacheMap;
 
 /**
@@ -37,7 +38,7 @@ public class StatisticVariableImpl implements StatisticVariable
 {
 	private final String name;
 	private final StatisticHolder parent;
-	private final Set<StatisticsWriter> writers = new HashSet<StatisticsWriter>();
+	private final Set<Track> tracks = new HashSet<Track>();
 	private final Set<String> sources = new HashSet<String>();
 	private final Set<String> statisticNames = new HashSet<String>();
 	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<String, StatisticImpl<?>>();
@@ -62,8 +63,9 @@ public class StatisticVariableImpl implements StatisticVariable
 
 	public void addStatisticsWriter( StatisticsWriter writer )
 	{
-		if( writers.add( writer ) )
-			statisticNames.addAll( writer.getStatisticsNames().keySet() );
+		Track track = writer.getTrack();
+		if( tracks.add( track ) )
+			statisticNames.addAll( track.getValueNames().keySet() );
 	}
 
 	@Override
@@ -88,10 +90,10 @@ public class StatisticVariableImpl implements StatisticVariable
 					@SuppressWarnings( { "unchecked", "rawtypes" } )
 					public StatisticImpl<?> call() throws Exception
 					{
-						for( StatisticsWriter writer : writers )
-							for( Entry<String, Class<? extends Number>> entry : writer.getStatisticsNames().entrySet() )
+						for( Track track : tracks )
+							for( Entry<String, Class<? extends Number>> entry : track.getValueNames().entrySet() )
 								if( statisticName.equals( entry.getKey() ) )
-									return new StatisticImpl( writer, StatisticVariableImpl.this, statisticName, source, entry
+									return new StatisticImpl( track, StatisticVariableImpl.this, statisticName, source, entry
 											.getValue() );
 						throw new NullPointerException();
 					}

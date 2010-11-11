@@ -33,15 +33,6 @@ public interface Execution
 	public long getStartTime();
 
 	/**
-	 * Creates a new Track with the given ID.
-	 * 
-	 * @param trackId
-	 * @param valueCount
-	 * @return
-	 */
-	public Track createTrack( String trackId, int valueCount );
-
-	/**
 	 * Gets the Track with the specified ID.
 	 * 
 	 * @param trackId
