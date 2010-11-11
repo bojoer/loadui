@@ -77,7 +77,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 
 	protected EntryBuilder at( long timestamp )
 	{
-		return null;
+		return new EntryBuilder( timestamp );
 	}
 
 	/**
@@ -88,7 +88,13 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	 */
 	protected class EntryBuilder
 	{
+		private final int time;
 		private final Map<String, Number> values = new HashMap<String, Number>();
+
+		public EntryBuilder( long timestamp )
+		{
+			time = ( int )( timestamp - manager.getExecutionManager().getCurrentExecution().getStartTime() );
+		}
 
 		public <T extends Number> EntryBuilder put( String name, T value )
 		{
@@ -98,6 +104,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 
 		public void write()
 		{
+			// TODO: Create an Entry using time and values.
 			getTrack().write( null, "local" );
 		}
 	}
