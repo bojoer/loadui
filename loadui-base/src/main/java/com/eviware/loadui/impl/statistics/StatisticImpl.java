@@ -15,27 +15,29 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.Iterator;
+
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticsWriter;
+import com.eviware.loadui.api.statistics.store.Entry;
+import com.eviware.loadui.api.statistics.store.Track;
 
 public class StatisticImpl<T extends Number> implements Statistic<T>
 {
 	private final Class<T> type;
-	private final StatisticsWriter writer;
+	private final Track track;
 	private final StatisticVariable variable;
 	private final String name;
-	private final String instance;
+	private final String source;
 
-	public StatisticImpl( StatisticsWriter writer, StatisticVariable variable, String name, String instance,
-			Class<T> type )
+	public StatisticImpl( Track track, StatisticVariable variable, String name, String source, Class<T> type )
 	{
 		this.type = type;
-		this.writer = writer;
+		this.track = track;
 		this.variable = variable;
 		this.name = name;
-		this.instance = instance;
+		this.source = source;
 	}
 
 	@Override
@@ -48,7 +50,7 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	@SuppressWarnings( "unchecked" )
 	public T getValue()
 	{
-		return ( T )writer.getStatisticValue( name, instance );
+		return ( T )track.getLastEntry( source ).getValue( name );
 	}
 
 	@Override
@@ -66,6 +68,56 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	@Override
 	public Iterable<DataPoint<T>> getPeriod( long start, long end )
 	{
-		return writer.getStatisticRange( name, instance, start, end );
+		return new DataPointIterable( track.getRange( source, ( int )start, ( int )end ), name );
+	}
+
+	private class DataPointIterable implements Iterable<DataPoint<T>>
+	{
+		private final Iterable<Entry> iterable;
+		private final String key;
+
+		public DataPointIterable( Iterable<Entry> iterable, String key )
+		{
+			this.iterable = iterable;
+			this.key = key;
+		}
+
+		@Override
+		public Iterator<DataPoint<T>> iterator()
+		{
+			return new DataPointIterator( iterable.iterator(), key );
+		}
+	}
+
+	private class DataPointIterator implements Iterator<DataPoint<T>>
+	{
+		private final Iterator<Entry> iterator;
+		private final String key;
+
+		public DataPointIterator( Iterator<Entry> iterator, String key )
+		{
+			this.iterator = iterator;
+			this.key = key;
+		}
+
+		@Override
+		public boolean hasNext()
+		{
+			return iterator.hasNext();
+		}
+
+		@Override
+		@SuppressWarnings( "unchecked" )
+		public DataPoint<T> next()
+		{
+			Entry entry = iterator.next();
+			return new DataPointImpl<T>( entry.getTimestamp(), ( T )entry.getValue( key ) );
+		}
+
+		@Override
+		public void remove()
+		{
+			throw new UnsupportedOperationException();
+		}
 	}
 }
