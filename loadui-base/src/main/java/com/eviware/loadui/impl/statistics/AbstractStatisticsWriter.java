@@ -75,7 +75,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		return manager.getExecutionManager().createTrack( getId(), trackStructure );
 	}
 
-	protected EntryBuilder at( int timestamp )
+	protected EntryBuilder at( long timestamp )
 	{
 		return null;
 	}

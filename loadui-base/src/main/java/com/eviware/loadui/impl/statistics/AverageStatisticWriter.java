@@ -16,6 +16,8 @@
 package com.eviware.loadui.impl.statistics;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
@@ -75,20 +77,11 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 	private int percentileBufferSize = 1000;
 
-	private ArrayList<Double> values = new ArrayList<Double>();
+	private ArrayList<Long> values = new ArrayList<Long>();
 
-	public AverageStatisticWriter( StatisticVariable variable )
+	public AverageStatisticWriter( StatisticsManager statisticsManager, StatisticVariable variable, Map<String, Class<? extends Number>> trackStructure )
 	{
-		super( variable );
-
-		// init statistics
-		statisticNames.put( Stats.AVERAGE.name(), Long.class );
-		statisticNames.put( Stats.AVERAGE_SUM.name(), Long.class );
-		statisticNames.put( Stats.AVERAGE_COUNT.name(), Integer.class );
-		statisticNames.put( Stats.STD_DEV.name(), Double.class );
-		statisticNames.put( Stats.STD_DEV_SUM.name(), Double.class );
-		statisticNames.put( Stats.PERCENTILE.name(), Double.class );
-
+		super( statisticsManager, variable, trackStructure );
 	}
 
 	@Override
@@ -111,38 +104,15 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	{
 		if ( values.length < 1 ) 
 			return;
-		this.values.add( ( Double )values[0] );
+		this.values.add( ( Long )values[0] );
 		if( this.values.size() >= percentileBufferSize )
 			this.values.remove( 0 );
 		avgSum += ( Long )values[0];
 		avgCnt++ ;
-		average = avgSum / avgCnt;
 		sumTotalSquare += Math.pow( ( Long )values[0] - avgSum, 2 );
 		stdDev = sumTotalSquare / avgCnt;
 		if( lastTimeFlashed + delay >= System.currentTimeMillis() )
 			flush();
-	}
-
-	@Override
-	public Number getStatisticValue( String statisticName, String instance )
-	{
-		switch( Stats.valueOf( statisticName ) )
-		{
-		case AVERAGE :
-			return average;
-		case STD_DEV :
-			return stdDev;
-		case AVERAGE_COUNT :
-			return avgCnt;
-		case AVERAGE_SUM :
-			return avgSum;
-		case STD_DEV_SUM :
-			return sumTotalSquare;
-		case PERCENTILE :
-			return percentile;
-		default :
-			return null;
-		}
 	}
 
 	/**
@@ -154,12 +124,17 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		// calculate percentile here since it is expensive operation.
 		double[] pValues = new double[values.size()];
 		for( int cnt = 0; cnt < values.size(); cnt++ )
-			pValues[cnt] = values.get( cnt );
+			pValues[cnt] = values.get( cnt ).longValue();
 		percentile = perc.evaluate( pValues );
 		lastTimeFlashed = System.currentTimeMillis();
-
-		// TODO Write to the proper Track of the current Execution.
-
+		average = avgSum / avgCnt;
+		
+		at( lastTimeFlashed ).put( Stats.AVERAGE.name(), average )
+									.put( Stats.AVERAGE_COUNT.name(), avgCnt)
+									.put( Stats.AVERAGE_SUM.name(), avgSum )
+									.put( Stats.STD_DEV_SUM.name(), sumTotalSquare )
+									.put( Stats.STD_DEV.name(), stdDev )
+									.put( Stats.PERCENTILE.name(), percentile);
 	}
 
 	public int getPercentileBufferSize()
@@ -188,7 +163,17 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		@Override
 		public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable )
 		{
-			return new AverageStatisticWriter( variable );
+			Map<String, Class<? extends Number>> trackStructure = new TreeMap<String, Class<? extends Number>>();
+			
+			// init statistics
+			trackStructure.put( Stats.AVERAGE.name(), Long.class );
+			trackStructure.put( Stats.AVERAGE_SUM.name(), Long.class );
+			trackStructure.put( Stats.AVERAGE_COUNT.name(), Integer.class );
+			trackStructure.put( Stats.STD_DEV.name(), Double.class );
+			trackStructure.put( Stats.STD_DEV_SUM.name(), Double.class );
+			trackStructure.put( Stats.PERCENTILE.name(), Double.class );
+			
+			return new AverageStatisticWriter( statisticsManager, variable, trackStructure );
 		}
 	}
 }
