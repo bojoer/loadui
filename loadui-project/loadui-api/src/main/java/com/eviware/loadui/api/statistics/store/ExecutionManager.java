@@ -16,48 +16,54 @@
 package com.eviware.loadui.api.statistics.store;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
- * Represents statistical data gathered during a load test Execution.
+ * Manages existing Executions, creating new ones, etc.
  * 
  * @author dain.nilsson
  */
-public interface Execution
+public interface ExecutionManager
 {
 	/**
-	 * Gets the start time of the test execution, measured as a Unix Timestamp
-	 * given in milliseconds.
+	 * Gets the current Execution.
 	 * 
 	 * @return
 	 */
-	public long getStartTime();
+	public Execution getCurrentExecution();
 
 	/**
-	 * Creates a new Track with the given ID.
+	 * Creates and starts a new Execution, making it current.
+	 * 
+	 * @param executionId
+	 * @param startTime
+	 * @return
+	 */
+	public Execution startExecution( String executionId, long startTime );
+
+	/**
+	 * Creates a new track in the current Execution with the given id and
+	 * structure. If a Track with the given ID already exists, it will be
+	 * returned.
 	 * 
 	 * @param trackId
-	 * @param valueCount
+	 * @param trackStructure
 	 * @return
 	 */
-	public Track createTrack( String trackId, int valueCount );
+	public Track createTrack( String trackId, Map<String, Class<? extends Number>> trackStructure );
 
 	/**
-	 * Gets the Track with the specified ID.
-	 * 
-	 * @param trackId
-	 * @return
-	 */
-	public Track getTrack( String trackId );
-
-	/**
-	 * Gets a Collection of the IDs of the contained Tracks.
+	 * Gets a list of the names of all available Executions.
 	 * 
 	 * @return
 	 */
-	public Collection<String> getTrackIds();
+	public Collection<String> getExecutionNames();
 
 	/**
-	 * Deletes the Execution with all contained Track data.
+	 * Gets a reference to a specific Execution by its ID.
+	 * 
+	 * @param executionId
+	 * @return
 	 */
-	public void delete();
+	public Execution getExecution( String executionId );
 }

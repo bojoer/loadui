@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.statistics.store;
 
+import java.util.Map;
+
 /**
  * Represents a value set which changes over time, allowing sequential reading
  * and writing.
@@ -38,40 +40,48 @@ public interface Track
 	public Execution getExecution();
 
 	/**
-	 * Gets the size of the value set, i.e. how many values are stored per Entry.
+	 * Gets a Map of the names of the Statistics that this Track provides, paired
+	 * with the Number subclass of the Statistic.
 	 * 
 	 * @return
 	 */
-	public int getValueCount();
+	public Map<String, Class<? extends Number>> getValueNames();
 
 	/**
-	 * Stores a new Entry for the given timestamp using the given values.
+	 * Writes an Entry to the Track for the specified source. Instead of calling
+	 * this method directly, usually the at( int ) method is used.
 	 * 
-	 * @param timestamp
-	 *           The current time since the start of the Execution given in
-	 *           milliseconds.
-	 * @param values
+	 * @param entry
 	 */
-	public Entry storeEntry( int timestamp, Number... values );
+	public void write( Entry entry, String source );
 
 	/**
-	 * Gets the closest succeeding Entry in the Track to the given time, measured
-	 * in milliseconds since the start of the Execution.
+	 * Gets the last stored Entry for a particular source, which is cached in
+	 * memory.
+	 * 
+	 * @return
+	 */
+	public Entry getLastEntry( String source );
+
+	/**
+	 * Gets the closest succeeding Entry to the given time, for a source in the
+	 * Track, measured in milliseconds since the start of the Execution.
 	 * 
 	 * @param timestamp
 	 * @return
 	 */
-	public Entry getNextEntry( int timestamp );
+	public Entry getNextEntry( String source, int timestamp );
 
 	/**
 	 * Gets an Iterable over the specified range, including all Entries with a
-	 * startTime <= timestamp <= endTime.
+	 * startTime <= timestamp <= endTime for the given source.
 	 * 
+	 * @param source
 	 * @param startTime
 	 * @param endTime
 	 * @return
 	 */
-	public Iterable<Entry> getRange( int startTime, int endTime );
+	public Iterable<Entry> getRange( String source, int startTime, int endTime );
 
 	/**
 	 * Deletes the Track from the Execution, removing all data from the
