@@ -69,7 +69,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 	private long average = 0L;
 	private long avgSum = 0L;
-	private int avgCnt = 0;
+	private long avgCnt = 0;
 	private double stdDev = 0.0;
 	private double sumTotalSquare = 0.0;
 	private long lastTimeFlashed;
@@ -134,7 +134,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 									.put( Stats.AVERAGE_SUM.name(), avgSum )
 									.put( Stats.STD_DEV_SUM.name(), sumTotalSquare )
 									.put( Stats.STD_DEV.name(), stdDev )
-									.put( Stats.PERCENTILE.name(), percentile);
+									.put( Stats.PERCENTILE.name(), percentile).write();
 	}
 
 	public int getPercentileBufferSize()
@@ -168,7 +168,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			// init statistics
 			trackStructure.put( Stats.AVERAGE.name(), Long.class );
 			trackStructure.put( Stats.AVERAGE_SUM.name(), Long.class );
-			trackStructure.put( Stats.AVERAGE_COUNT.name(), Integer.class );
+			trackStructure.put( Stats.AVERAGE_COUNT.name(), Long.class );
 			trackStructure.put( Stats.STD_DEV.name(), Double.class );
 			trackStructure.put( Stats.STD_DEV_SUM.name(), Double.class );
 			trackStructure.put( Stats.PERCENTILE.name(), Double.class );
