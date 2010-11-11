@@ -35,6 +35,7 @@
 		<module>loadui-integration-tests</module>
 		<module>loadui-component</module>
 		<module>loadui-cmd-base</module>
+		<module>loadui-store-h2</module>
 	</modules>
 
 
