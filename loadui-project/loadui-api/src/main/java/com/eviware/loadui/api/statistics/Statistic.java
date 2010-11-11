@@ -45,8 +45,12 @@ public interface Statistic<T extends Number> extends Value<T>
 	 * order.
 	 * 
 	 * @param start
+	 *           The lower bound for the timestamps of the retrieved DataPoints,
+	 *           as milliseconds since the start of the Execution.
 	 * @param end
+	 *           The upper bound for the timestamps of the retrieved DataPoints,
+	 *           as milliseconds since the start of the Execution.
 	 * @return
 	 */
-	public Iterable<DataPoint<T>> getPeriod( long start, long end );
+	public Iterable<DataPoint<T>> getPeriod( int start, int end );
 }

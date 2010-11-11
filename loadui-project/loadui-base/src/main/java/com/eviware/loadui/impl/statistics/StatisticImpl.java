@@ -66,9 +66,9 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	}
 
 	@Override
-	public Iterable<DataPoint<T>> getPeriod( long start, long end )
+	public Iterable<DataPoint<T>> getPeriod( int start, int end )
 	{
-		return new DataPointIterable( track.getRange( source, ( int )start, ( int )end ), name );
+		return new DataPointIterable( track.getRange( source, start, end ), name );
 	}
 
 	private class DataPointIterable implements Iterable<DataPoint<T>>
