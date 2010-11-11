@@ -74,7 +74,8 @@ public interface Track
 
 	/**
 	 * Gets an Iterable over the specified range, including all Entries with a
-	 * startTime <= timestamp <= endTime for the given source.
+	 * startTime <= timestamp <= endTime for the given source, where the times
+	 * are given as milliseconds since the start of the Execution.
 	 * 
 	 * @param source
 	 * @param startTime
