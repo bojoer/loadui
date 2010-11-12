@@ -1,0 +1,68 @@
+package com.eviware.loadui.impl.statistics.store.util;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Map;
+
+public class PreparedStatementHolder
+{
+	private PreparedStatement preparedStatement;
+
+	private InsertStatementHolder statementHolder;
+
+	public PreparedStatementHolder( PreparedStatement preparedStatement, InsertStatementHolder statementHolder )
+	{
+		this.preparedStatement = preparedStatement;
+		this.statementHolder = statementHolder;
+	}
+
+	public PreparedStatement getPreparedStatement()
+	{
+		return preparedStatement;
+	}
+
+	public void setArguments( Number timestamp, Map<String, ? extends Object> data ) throws SQLException
+	{
+		setArgument( 1, timestamp );
+		for( int i = 0; i < statementHolder.getArgumentNameList().size(); i++ )
+		{
+			setArgument( i + 2, data.get( statementHolder.getArgumentNameList().get( i ) ) );
+		}
+	}
+
+	private void setArgument( int index, Object value ) throws SQLException
+	{
+		if( value instanceof Long )
+		{
+			preparedStatement.setLong( index, ( ( Long )value ).longValue() );
+		}
+		else if( value instanceof Integer )
+		{
+			preparedStatement.setInt( index, ( ( Integer )value ).intValue() );
+		}
+		else if( value instanceof Double )
+		{
+			preparedStatement.setDouble( index, ( ( Double )value ).doubleValue() );
+		}
+		else if( value instanceof String )
+		{
+			preparedStatement.setString( index, ( String )value );
+		}
+		else
+		{
+			preparedStatement.setObject( index, value );
+		}
+	}
+
+	public void executeUpdate() throws SQLException
+	{
+		preparedStatement.executeUpdate();
+	}
+
+	public void dispose()
+	{
+		JDBCUtil.close( preparedStatement );
+		preparedStatement = null;
+		statementHolder = null;
+	}
+}
