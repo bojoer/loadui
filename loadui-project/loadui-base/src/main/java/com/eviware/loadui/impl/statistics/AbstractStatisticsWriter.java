@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -105,7 +106,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 
 		public void write()
 		{
-			getTrack().write( new EntryImpl( time, values ), "local" );
+			getTrack().write( new EntryImpl( time, values, true ), "local" );
 		}
 	}
 }

@@ -20,8 +20,13 @@ public class EntryImpl implements Entry
 
 	public EntryImpl( int timestamp, Map<String, Number> values )
 	{
+		this( timestamp, values, false );
+	}
+
+	public EntryImpl( int timestamp, Map<String, Number> values, boolean dontCloneMap )
+	{
 		this.timestamp = timestamp;
-		this.values = Collections.unmodifiableMap( new HashMap<String, Number>( values ) );
+		this.values = Collections.unmodifiableMap( dontCloneMap ? values : new HashMap<String, Number>( values ) );
 	}
 
 	@Override
