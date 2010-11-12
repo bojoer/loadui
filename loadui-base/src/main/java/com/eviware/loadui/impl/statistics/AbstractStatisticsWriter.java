@@ -24,6 +24,7 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.util.statistics.store.EntryImpl;
 
 public abstract class AbstractStatisticsWriter implements StatisticsWriter
 {
@@ -104,8 +105,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 
 		public void write()
 		{
-			// TODO: Create an Entry using time and values.
-			getTrack().write( null, "local" );
+			getTrack().write( new EntryImpl( time, values ), "local" );
 		}
 	}
 }

@@ -26,7 +26,8 @@ import java.util.Map;
 public interface ExecutionManager
 {
 	/**
-	 * Gets the current Execution.
+	 * Gets the current Execution. Returns null if no Execution is currently
+	 * running.
 	 * 
 	 * @return
 	 */
