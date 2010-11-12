@@ -39,11 +39,10 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 
 	private final static String TYPE = "PSWritter";
 
-	private long lastTimeFlashed;
 	private Double perSecond;
 	private Double totalSum;
 
-	private long lastTimeUpdated;
+	private long lastTimeUpdated = System.currentTimeMillis();
 
 	private double lastSecondChange;
 
@@ -70,10 +69,10 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 	public void flush()
 	{
 		// it should be per second
-		perSecond = totalSum / ( ( System.currentTimeMillis() - lastTimeFlashed ) / 1000 );
+		perSecond = totalSum / ( ( System.currentTimeMillis() - lastTimeFlushed ) / 1000 );
 		totalSum = 0D;
-		lastTimeFlashed = System.currentTimeMillis();
-		at( lastTimeFlashed ).put( Stats.PS.name(), perSecond )
+		lastTimeFlushed = System.currentTimeMillis();
+		at( lastTimeFlushed ).put( Stats.PS.name(), perSecond )
 									.put( Stats.LAST_SECOND_CHANGE.name(), lastSecondChange )
 									.write();;
 	}
@@ -97,10 +96,20 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 		lastSecondChange = ( Double )values[0] / ( ( System.currentTimeMillis() - lastTimeUpdated ) / 1000 );
 		lastTimeUpdated = System.currentTimeMillis();
 
-		if( lastTimeFlashed + delay >= System.currentTimeMillis() )
+		if( lastTimeFlushed + delay >= System.currentTimeMillis() )
 			flush();
 	}
 
+	@Override
+	protected void reset()
+	{
+		perSecond = 0d;
+		totalSum = 0d;
+
+		lastTimeUpdated = System.currentTimeMillis();
+
+		lastSecondChange = 0d;
+	}
 	/**
 	 * Factory for instantiating PSStatisticWriters.
 	 * 

@@ -72,8 +72,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	protected long avgCnt = 0;
 	protected double stdDev = 0.0;
 	protected double sumTotalSquare = 0.0;
-	protected long lastTimeFlashed;
-	protected double percentile;
+	protected double percentile = 0;
 
 	private int percentileBufferSize = 1000;
 
@@ -111,7 +110,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		avgCnt++ ;
 		sumTotalSquare += Math.pow( ( Double )values[0] - avgSum, 2 );
 		stdDev = sumTotalSquare / avgCnt;
-		if( lastTimeFlashed + delay >= System.currentTimeMillis() )
+		if( lastTimeFlushed + delay >= System.currentTimeMillis() )
 			flush();
 	}
 
@@ -126,10 +125,10 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		for( int cnt = 0; cnt < values.size(); cnt++ )
 			pValues[cnt] = values.get( cnt ).longValue();
 		percentile = perc.evaluate( pValues );
-		lastTimeFlashed = System.currentTimeMillis();
+		lastTimeFlushed = System.currentTimeMillis();
 		average = avgSum / avgCnt;
 		
-		at( lastTimeFlashed ).put( Stats.AVERAGE.name(), average )
+		at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average )
 									.put( Stats.AVERAGE_COUNT.name(), avgCnt)
 									.put( Stats.AVERAGE_SUM.name(), avgSum )
 									.put( Stats.STD_DEV_SUM.name(), sumTotalSquare )
@@ -137,6 +136,17 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 									.put( Stats.PERCENTILE.name(), percentile).write();
 	}
 
+	@Override
+	protected void reset()
+	{
+		average = 0L;
+		avgSum = 0L;
+		avgCnt = 0;
+		stdDev = 0.0;
+		sumTotalSquare = 0.0;
+		percentile = 0;
+	}
+	
 	public int getPercentileBufferSize()
 	{
 		return percentileBufferSize;

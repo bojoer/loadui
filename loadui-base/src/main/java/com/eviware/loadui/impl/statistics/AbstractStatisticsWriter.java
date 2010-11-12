@@ -36,7 +36,8 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	private final String id;
 
 	protected long delay;
-
+	protected long lastTimeFlushed = System.currentTimeMillis();
+	
 	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values )
 	{
