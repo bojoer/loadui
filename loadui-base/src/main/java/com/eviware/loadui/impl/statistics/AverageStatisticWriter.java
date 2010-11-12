@@ -151,6 +151,9 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	 * Factory for instantiating AverageStatisticWriters.
 	 * 
 	 * @author dain.nilsson
+	 * 
+	 * Define what Statistics this writer should write in Track.
+	 * 
 	 */
 	public static class Factory implements StatisticsWriterFactory
 	{
@@ -164,8 +167,9 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable )
 		{
 			Map<String, Class<? extends Number>> trackStructure = new TreeMap<String, Class<? extends Number>>();
-			
+
 			// init statistics
+
 			trackStructure.put( Stats.AVERAGE.name(), Long.class );
 			trackStructure.put( Stats.AVERAGE_SUM.name(), Long.class );
 			trackStructure.put( Stats.AVERAGE_COUNT.name(), Long.class );
