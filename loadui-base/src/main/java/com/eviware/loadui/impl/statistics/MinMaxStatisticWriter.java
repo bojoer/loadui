@@ -41,8 +41,8 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	}
 
 	private long lastTimeFlashed;
-	private Double minimum;
-	private Double maximum;
+	protected Double minimum;
+	protected Double maximum;
 
 	public MinMaxStatisticWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values )
@@ -82,12 +82,12 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 		if( values.length < 1 )
 			return;
 		boolean dirty = false;
-		if( minimum > ( Double )values[0] )
+		if( minimum == null || minimum > ( Double )values[0] )
 		{
 			minimum = ( Double )values[0];
-			dirty = true;
+			dirty = true; 
 		}
-		if( maximum < ( Double )values[0] )
+		if( maximum == null || maximum < ( Double )values[0] )
 		{
 			maximum = ( Double )values[0];
 			dirty = true;

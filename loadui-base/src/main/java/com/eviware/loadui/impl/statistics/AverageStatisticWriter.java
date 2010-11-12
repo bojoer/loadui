@@ -67,17 +67,17 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	 * when buffer is large, it should be calculated just before it should be written to database.
 	 */
 
-	private long average = 0L;
-	private long avgSum = 0L;
-	private long avgCnt = 0;
-	private double stdDev = 0.0;
-	private double sumTotalSquare = 0.0;
-	private long lastTimeFlashed;
-	private double percentile;
+	protected double average = 0L;
+	protected long avgSum = 0L;
+	protected long avgCnt = 0;
+	protected double stdDev = 0.0;
+	protected double sumTotalSquare = 0.0;
+	protected long lastTimeFlashed;
+	protected double percentile;
 
 	private int percentileBufferSize = 1000;
 
-	private ArrayList<Long> values = new ArrayList<Long>();
+	private ArrayList<Double> values = new ArrayList<Double>();
 
 	public AverageStatisticWriter( StatisticsManager statisticsManager, StatisticVariable variable, Map<String, Class<? extends Number>> trackStructure )
 	{
@@ -104,12 +104,12 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	{
 		if ( values.length < 1 ) 
 			return;
-		this.values.add( ( Long )values[0] );
+		this.values.add( ( Double )values[0] );
 		if( this.values.size() >= percentileBufferSize )
 			this.values.remove( 0 );
-		avgSum += ( Long )values[0];
+		avgSum += ( Double )values[0];
 		avgCnt++ ;
-		sumTotalSquare += Math.pow( ( Long )values[0] - avgSum, 2 );
+		sumTotalSquare += Math.pow( ( Double )values[0] - avgSum, 2 );
 		stdDev = sumTotalSquare / avgCnt;
 		if( lastTimeFlashed + delay >= System.currentTimeMillis() )
 			flush();
@@ -170,7 +170,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 			// init statistics
 
-			trackStructure.put( Stats.AVERAGE.name(), Long.class );
+			trackStructure.put( Stats.AVERAGE.name(), Double.class );
 			trackStructure.put( Stats.AVERAGE_SUM.name(), Long.class );
 			trackStructure.put( Stats.AVERAGE_COUNT.name(), Long.class );
 			trackStructure.put( Stats.STD_DEV.name(), Double.class );
