@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.impl.statistics.store.util.MetaDatabaseManager;
 
 public abstract class ExecutionManagerImpl implements ExecutionManager
@@ -36,6 +37,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	private Execution currentExecution;
 
 	private Map<String, Execution> executionMap = new HashMap<String, Execution>();
+
+	private final Map<String, TrackDescriptor> trackDescriptors = new HashMap<String, TrackDescriptor>();
 
 	public static ExecutionManager getInstance()
 	{
@@ -89,7 +92,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	}
 
 	@Override
-	public Track createTrack( String trackId, Map<String, Class<? extends Number>> trackStructure )
+	public Track getTrack( String trackId )
 	{
 		// TODO create track in current execution, create table and meta table and
 		// construct track instance
@@ -136,6 +139,18 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 				throw new RuntimeException( "Error while trying to fetch execution data from the database!", e );
 			}
 		}
+	}
+
+	@Override
+	public void registerTrackDescriptor( TrackDescriptor trackDescriptor )
+	{
+		trackDescriptors.put( trackDescriptor.getId(), trackDescriptor );
+	}
+
+	@Override
+	public void unregisterTrackDescriptor( String trackId )
+	{
+		trackDescriptors.remove( trackId );
 	}
 
 	public void clearMetaDatabase()

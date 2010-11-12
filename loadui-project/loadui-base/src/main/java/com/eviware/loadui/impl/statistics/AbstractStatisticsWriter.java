@@ -26,26 +26,30 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
+import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 
 public abstract class AbstractStatisticsWriter implements StatisticsWriter
 {
 	private final StatisticsManager manager;
 	private final StatisticVariable variable;
-	private final Map<String, Class<? extends Number>> trackStructure;
 	private final String id;
+	private final TrackDescriptor descriptor;
 
 	protected long delay;
 	protected long lastTimeFlushed = System.currentTimeMillis();
-	
+
 	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values )
 	{
 		this.manager = manager;
 		this.variable = variable;
-		trackStructure = values;
 		id = DigestUtils.md5Hex( variable.getStatisticHolder().getId() + variable.getName() + getType() );
+		descriptor = new TrackDescriptorImpl( id, values );
 
+		// TODO
+		manager.getExecutionManager().registerTrackDescriptor( descriptor );
 		manager.addEventListener( CollectionEvent.class, new ExecutionListener() );
 	}
 
@@ -82,9 +86,9 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	}
 
 	@Override
-	public Track getTrack()
+	public TrackDescriptor getTrackDescriptor()
 	{
-		return manager.getExecutionManager().createTrack( getId(), trackStructure );
+		return descriptor;
 	}
 
 	protected EntryBuilder at( long timestamp )
@@ -116,7 +120,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 
 		public void write()
 		{
-			getTrack().write( new EntryImpl( time, values, true ), "local" );
+			manager.getExecutionManager().getTrack( getId() ).write( new EntryImpl( time, values, true ), "local" );
 		}
 	}
 

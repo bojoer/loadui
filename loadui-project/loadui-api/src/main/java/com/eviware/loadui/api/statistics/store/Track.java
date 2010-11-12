@@ -40,12 +40,11 @@ public interface Track
 	public Execution getExecution();
 
 	/**
-	 * Gets a Map of the names of the Statistics that this Track provides, paired
-	 * with the Number subclass of the Statistic.
+	 * Gets the TrackDescriptor describing the structure of this Track.
 	 * 
 	 * @return
 	 */
-	public Map<String, Class<? extends Number>> getValueNames();
+	public TrackDescriptor getTrackDescriptor();
 
 	/**
 	 * Writes an Entry to the Track for the specified source. Instead of calling
