@@ -20,6 +20,8 @@ import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
@@ -42,6 +44,8 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		this.variable = variable;
 		trackStructure = values;
 		id = DigestUtils.md5Hex( variable.getStatisticHolder().getId() + variable.getName() + getType() );
+
+		manager.addEventListener( CollectionEvent.class, new ExecutionListener() );
 	}
 
 	/**
@@ -112,6 +116,19 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		public void write()
 		{
 			getTrack().write( new EntryImpl( time, values, true ), "local" );
+		}
+	}
+
+	private class ExecutionListener implements EventHandler<CollectionEvent>
+	{
+		@Override
+		public void handleEvent( CollectionEvent event )
+		{
+			if( CollectionEvent.Event.ADDED.equals( event.getEvent() )
+					&& event.getElement().equals( manager.getExecutionManager().getCurrentExecution() ) )
+			{
+				reset();
+			}
 		}
 	}
 }
