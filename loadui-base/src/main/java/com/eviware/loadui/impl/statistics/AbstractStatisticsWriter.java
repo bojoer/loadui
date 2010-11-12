@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +51,12 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	 * @return
 	 */
 	protected abstract String getType();
+
+	/**
+	 * Called between Executions, letting the StatisticsWriter know that it
+	 * should clear any buffers and prepare for a new Execution.
+	 */
+	protected abstract void reset();
 
 	@Override
 	public String getId()
