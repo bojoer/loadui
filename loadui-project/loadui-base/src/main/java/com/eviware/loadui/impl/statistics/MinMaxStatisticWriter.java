@@ -40,7 +40,6 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 		MIN, MAX;
 	}
 
-	private long lastTimeFlashed;
 	protected Double minimum;
 	protected Double maximum;
 
@@ -59,8 +58,8 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	@Override
 	public void flush()
 	{
-		lastTimeFlashed = System.currentTimeMillis();
-		at( lastTimeFlashed ).put( Stats.MAX.name(), maximum ).put( Stats.MIN.name(), minimum ).write();
+		lastTimeFlushed = System.currentTimeMillis();
+		at( lastTimeFlushed ).put( Stats.MAX.name(), maximum ).put( Stats.MIN.name(), minimum ).write();
 	}
 
 	@Override
@@ -69,6 +68,12 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 		return 1;
 	}
 
+	@Override
+	protected void reset()
+	{
+		minimum = 0d;
+		maximum = 0d;
+	}
 	/*
 	 * flash() will be called only when timeperiod is expired and min or max
 	 * value is changed. This is done so save space in database. (non-Javadoc)
@@ -92,7 +97,7 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 			maximum = ( Double )values[0];
 			dirty = true;
 		}
-		if( lastTimeFlashed + delay >= System.currentTimeMillis() && dirty )
+		if( lastTimeFlushed + delay >= System.currentTimeMillis() && dirty )
 			flush();
 	}
 
