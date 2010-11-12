@@ -20,21 +20,26 @@ import java.util.Iterator;
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.Entry;
+import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
 
 public class StatisticImpl<T extends Number> implements Statistic<T>
 {
+	private final ExecutionManager manager;
 	private final Class<T> type;
-	private final Track track;
+	private final String trackId;
 	private final StatisticVariable variable;
 	private final String name;
 	private final String source;
 
-	public StatisticImpl( Track track, StatisticVariable variable, String name, String source, Class<T> type )
+	public StatisticImpl( ExecutionManager manager, String trackId, StatisticVariable variable, String name,
+			String source, Class<T> type )
 	{
+		this.manager = manager;
 		this.type = type;
-		this.track = track;
+		this.trackId = trackId;
 		this.variable = variable;
 		this.name = name;
 		this.source = source;
@@ -50,7 +55,7 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	@SuppressWarnings( "unchecked" )
 	public T getValue()
 	{
-		return ( T )track.getLastEntry( source ).getValue( name );
+		return ( T )manager.getTrack( trackId ).getLastEntry( source ).getValue( name );
 	}
 
 	@Override
@@ -68,7 +73,7 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	@Override
 	public Iterable<DataPoint<T>> getPeriod( int start, int end )
 	{
-		return new DataPointIterable( track.getRange( source, start, end ), name );
+		return new DataPointIterable( manager.getTrack( trackId ).getRange( source, start, end ), name );
 	}
 
 	private class DataPointIterable implements Iterable<DataPoint<T>>

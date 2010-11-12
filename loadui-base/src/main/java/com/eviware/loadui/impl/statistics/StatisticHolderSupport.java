@@ -63,7 +63,7 @@ public class StatisticHolderSupport
 		// TODO: Fire CollectionEvent about Statistics exposed by the
 		// StatisticsWriter.
 		StatisticsWriter writer = StatisticsManagerImpl.getInstance().createStatisticsWriter( type, variable );
-		( ( StatisticVariableImpl )variable ).addTrack( writer.getTrack() );
+		( ( StatisticVariableImpl )variable ).addTrackDescriptor( writer.getTrackDescriptor() );
 
 		return writer;
 	}
@@ -79,7 +79,8 @@ public class StatisticHolderSupport
 		if( variables.containsKey( statisticVariableName ) )
 			return variables.get( statisticVariableName );
 
-		StatisticVariableImpl variable = new StatisticVariableImpl( owner, statisticVariableName );
+		StatisticVariableImpl variable = new StatisticVariableImpl( manager.getExecutionManager(), owner,
+				statisticVariableName );
 		variables.put( statisticVariableName, variable );
 		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.ADDED, variable ) );
 

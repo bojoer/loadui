@@ -25,7 +25,9 @@ import java.util.concurrent.Callable;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.api.statistics.StatisticsManager;
+import com.eviware.loadui.api.statistics.store.ExecutionManager;
+import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.util.CacheMap;
 
 /**
@@ -35,15 +37,17 @@ import com.eviware.loadui.util.CacheMap;
  */
 public class StatisticVariableImpl implements StatisticVariable
 {
+	private final ExecutionManager manager;
 	private final String name;
 	private final StatisticHolder parent;
-	private final Set<Track> tracks = new HashSet<Track>();
+	private final Set<TrackDescriptor> descriptors = new HashSet<TrackDescriptor>();
 	private final Set<String> sources = new HashSet<String>();
 	private final Set<String> statisticNames = new HashSet<String>();
 	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<String, StatisticImpl<?>>();
 
-	public StatisticVariableImpl( StatisticHolder parent, String name )
+	public StatisticVariableImpl( ExecutionManager executionManager, StatisticHolder parent, String name )
 	{
+		this.manager = executionManager;
 		this.name = name;
 		this.parent = parent;
 	}
@@ -60,10 +64,10 @@ public class StatisticVariableImpl implements StatisticVariable
 		return parent;
 	}
 
-	public void addTrack( Track track )
+	public void addTrackDescriptor( TrackDescriptor trackDescriptor )
 	{
-		if( tracks.add( track ) )
-			statisticNames.addAll( track.getValueNames().keySet() );
+		if( descriptors.add( trackDescriptor ) )
+			statisticNames.addAll( trackDescriptor.getValueNames().keySet() );
 	}
 
 	@Override
@@ -88,11 +92,11 @@ public class StatisticVariableImpl implements StatisticVariable
 					@SuppressWarnings( { "unchecked", "rawtypes" } )
 					public StatisticImpl<?> call() throws Exception
 					{
-						for( Track track : tracks )
-							for( Entry<String, Class<? extends Number>> entry : track.getValueNames().entrySet() )
+						for( TrackDescriptor descriptor : descriptors )
+							for( Entry<String, Class<? extends Number>> entry : descriptor.getValueNames().entrySet() )
 								if( statisticName.equals( entry.getKey() ) )
-									return new StatisticImpl( track, StatisticVariableImpl.this, statisticName, source, entry
-											.getValue() );
+									return new StatisticImpl( manager, descriptor.getId(), StatisticVariableImpl.this,
+											statisticName, source, entry.getValue() );
 						throw new NullPointerException();
 					}
 				} );

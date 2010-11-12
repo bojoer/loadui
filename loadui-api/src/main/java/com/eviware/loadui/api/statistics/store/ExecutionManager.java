@@ -43,6 +43,21 @@ public interface ExecutionManager
 	public Execution startExecution( String executionId, long startTime );
 
 	/**
+	 * Registers a TrackDescriptor, providing the structure of a Track.
+	 * 
+	 * @param trackId
+	 * @param trackDescriptor
+	 */
+	public void registerTrackDescriptor( TrackDescriptor trackDescriptor );
+
+	/**
+	 * Unregisters a TrackDescriptor.
+	 * 
+	 * @param trackId
+	 */
+	public void unregisterTrackDescriptor( String trackId );
+
+	/**
 	 * Creates a new track in the current Execution with the given id and
 	 * structure. If a Track with the given ID already exists, it will be
 	 * returned.
@@ -51,7 +66,7 @@ public interface ExecutionManager
 	 * @param trackStructure
 	 * @return
 	 */
-	public Track createTrack( String trackId, Map<String, Class<? extends Number>> trackStructure );
+	public Track getTrack( String trackId );
 
 	/**
 	 * Gets a list of the names of all available Executions.

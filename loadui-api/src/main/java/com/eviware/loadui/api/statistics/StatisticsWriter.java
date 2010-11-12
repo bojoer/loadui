@@ -16,7 +16,7 @@
 package com.eviware.loadui.api.statistics;
 
 import com.eviware.loadui.api.addressable.Addressable;
-import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 
 /**
  * Writes statistics data to a Track. Each call to update allows the
@@ -72,5 +72,5 @@ public interface StatisticsWriter extends Addressable
 	 * 
 	 * @return
 	 */
-	public Track getTrack();
+	public TrackDescriptor getTrackDescriptor();
 }
