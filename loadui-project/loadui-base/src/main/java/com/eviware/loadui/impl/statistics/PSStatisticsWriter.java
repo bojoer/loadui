@@ -15,6 +15,9 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
@@ -27,6 +30,9 @@ import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
  * 
  * Also, provides Statistic Value which shows last second change. This values
  * is calculated when ever update occurs. 
+ * 
+ * PS Statistics is per second statistic during whole run of test.
+ * LAST_SECOND_CHANGE is a per second change in last second.
  */
 public class PSStatisticsWriter extends AbstractStatisticsWriter
 {
@@ -48,12 +54,10 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 
 	}
 
-	public PSStatisticsWriter( StatisticVariable variable )
+	public PSStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
+			Map<String, Class<? extends Number>> values )
 	{
-		super( variable );
-
-		statisticNames.put( Stats.PS.name(), Double.class );
-		statisticNames.put( Stats.LAST_SECOND_CHANGE.name(), Double.class );
+		super( manager, variable, values );
 	}
 
 	@Override
@@ -66,10 +70,12 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 	public void flush()
 	{
 		// it should be per second
-		perSecond = totalSum / ( (System.currentTimeMillis() - lastTimeFlashed) / 1000 );
+		perSecond = totalSum / ( ( System.currentTimeMillis() - lastTimeFlashed ) / 1000 );
 		totalSum = 0D;
 		lastTimeFlashed = System.currentTimeMillis();
-		//TODO: write to DB
+		at( lastTimeFlashed ).put( Stats.PS.name(), perSecond )
+									.put( Stats.LAST_SECOND_CHANGE.name(), lastSecondChange )
+									.write();;
 	}
 
 	/**
@@ -95,22 +101,9 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 			flush();
 	}
 
-	@Override
-	public Double getStatisticValue( String statisticName, String instance )
-	{
-		switch( Stats.valueOf( statisticName ) )
-		{
-		case PS :
-			return perSecond;
-		case LAST_SECOND_CHANGE:
-			return lastSecondChange;
-		default :
-			return null;
-		}
-	}
-
 	/**
 	 * Factory for instantiating PSStatisticWriters.
+	 * 
 	 * 
 	 */
 	public static class Factory implements StatisticsWriterFactory
@@ -124,7 +117,14 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 		@Override
 		public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable )
 		{
-			return new PSStatisticsWriter( variable );
+			Map<String, Class<? extends Number>> trackStructure = new TreeMap<String, Class<? extends Number>>();
+
+			// init statistics
+
+			trackStructure.put( Stats.PS.name(), Double.class );
+			trackStructure.put( Stats.LAST_SECOND_CHANGE.name(), Double.class);
+			
+			return new PSStatisticsWriter( statisticsManager, variable, trackStructure );
 		}
 	}
 }

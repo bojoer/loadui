@@ -15,11 +15,21 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 
+/**
+ * 
+ * @author robert
+ *
+ * MinMax Writer, keep minimum and maximum value of observed StatisticVariable.
+ *
+ */
 public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 {
 
@@ -34,13 +44,10 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	private Double minimum;
 	private Double maximum;
 
-	public MinMaxStatisticWriter( StatisticVariable variable )
+	public MinMaxStatisticWriter( StatisticsManager manager, StatisticVariable variable,
+			Map<String, Class<? extends Number>> values )
 	{
-		super( variable );
-
-		statisticNames.put( Stats.MIN.name(), Double.class );
-		statisticNames.put( Stats.MAX.name(), Double.class );
-
+		super( manager, variable, values );
 	}
 
 	@Override
@@ -53,7 +60,7 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	public void flush()
 	{
 		lastTimeFlashed = System.currentTimeMillis();
-		//TODO: write to DB
+		at( lastTimeFlashed ).put( Stats.MAX.name(), maximum ).put( Stats.MIN.name(), minimum ).write();
 	}
 
 	@Override
@@ -72,7 +79,7 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	@Override
 	public void update( long timestamp, Number... values )
 	{
-		if ( values.length < 1 ) 
+		if( values.length < 1 )
 			return;
 		boolean dirty = false;
 		if( minimum > ( Double )values[0] )
@@ -87,21 +94,6 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 		}
 		if( lastTimeFlashed + delay >= System.currentTimeMillis() && dirty )
 			flush();
-	}
-
-	@SuppressWarnings( "unchecked" )
-	@Override
-	public Number getStatisticValue( String statisticName, String instance )
-	{
-		switch( Stats.valueOf( statisticName ) )
-		{
-		case MIN :
-			return minimum;
-		case MAX :
-			return maximum;
-		default :
-			return null;
-		}
 	}
 
 	/**
@@ -119,7 +111,12 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 		@Override
 		public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable )
 		{
-			return new MinMaxStatisticWriter( variable );
+			Map<String, Class<? extends Number>> trackStructure = new TreeMap<String, Class<? extends Number>>();
+
+			trackStructure.put( Stats.MAX.name(), Long.class );
+			trackStructure.put( Stats.MIN.name(), Long.class);
+			
+			return new MinMaxStatisticWriter( statisticsManager, variable, trackStructure );
 		}
 	}
 
