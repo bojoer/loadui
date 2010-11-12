@@ -22,7 +22,9 @@ import java.util.HashMap;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
+import com.eviware.loadui.util.BeanInjector;
 
 /**
  * Support class for Objects implementing StatisticHolder. Handles creating and
@@ -33,12 +35,15 @@ import com.eviware.loadui.api.statistics.StatisticsWriter;
  */
 public class StatisticHolderSupport
 {
+	private final StatisticsManager manager;
 	private final StatisticHolder owner;
 	private final HashMap<String, StatisticVariableImpl> variables = new HashMap<String, StatisticVariableImpl>();
 
 	public StatisticHolderSupport( StatisticHolder owner )
 	{
 		this.owner = owner;
+		manager = BeanInjector.getBean( StatisticsManager.class );
+		manager.registerStatisticHolder( owner );
 	}
 
 	/**
@@ -89,5 +94,15 @@ public class StatisticHolderSupport
 	public Collection<String> getStatisticVariableNames()
 	{
 		return Collections.unmodifiableCollection( variables.keySet() );
+	}
+
+	/**
+	 * Removes any StatisticVariables and Statistics for the StatisticHolder, and
+	 * removes the StatisticHolder from the registry. Should be called when the
+	 * StatisticHolder is destroyed.
+	 */
+	public void release()
+	{
+		manager.deregisterStatisticHolder( owner );
 	}
 }

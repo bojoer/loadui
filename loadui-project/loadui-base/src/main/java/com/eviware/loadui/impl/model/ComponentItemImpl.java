@@ -251,6 +251,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		if( behavior != null )
 			behavior.onRelease();
 		terminalHolderSupport.release();
+		statisticHolderSupport.release();
 		settingsTabs.clear();
 		layout = null;
 
