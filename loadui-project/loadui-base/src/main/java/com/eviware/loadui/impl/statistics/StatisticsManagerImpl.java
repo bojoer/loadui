@@ -30,6 +30,7 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
+import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.util.events.EventSupport;
 
 /**
@@ -43,6 +44,7 @@ public class StatisticsManagerImpl implements StatisticsManager
 {
 	private static StatisticsManagerImpl instance;
 
+	private final ExecutionManager executionManager;
 	private final EventSupport eventSupport = new EventSupport();
 	private Set<StatisticHolder> holders = new HashSet<StatisticHolder>();
 	private Map<String, StatisticsWriterFactory> factories = new HashMap<String, StatisticsWriterFactory>();
@@ -52,9 +54,10 @@ public class StatisticsManagerImpl implements StatisticsManager
 		return instance;
 	}
 
-	public StatisticsManagerImpl()
+	public StatisticsManagerImpl( ExecutionManager executionManager )
 	{
 		instance = this;
+		this.executionManager = executionManager;
 	}
 
 	@Override
@@ -105,6 +108,12 @@ public class StatisticsManagerImpl implements StatisticsManager
 	public long getMinimumWriteDelay()
 	{
 		return 1000;
+	}
+
+	@Override
+	public ExecutionManager getExecutionManager()
+	{
+		return executionManager;
 	}
 
 	public void registerStatisticsWriterFactory( StatisticsWriterFactory factory, Map<String, String> properties )
