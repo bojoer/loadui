@@ -14,5 +14,7 @@
 	
 	<osgi:reference interface="com.eviware.loadui.api.terminal.TerminalProxy" id="terminalProxy" />
 	
-	<osgi:service interface="com.eviware.loadui.api.discovery.AgentDiscovery" ref="AgentDiscovery" />
+	<osgi:reference interface="com.eviware.loadui.api.statistics.store.ExecutionManager" id="executionManager" />
+	
+	<osgi:service interface="com.eviware.loadui.api.discovery.AgentDiscovery" ref="agentDiscovery" />
 </beans>
