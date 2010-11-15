@@ -27,8 +27,10 @@ def displayLimit( limit ) {
 //Load the proper workspace
 if( workspaceFile != null ) {
 	workspace?.release()
+	log.info "Loading Workspace file: {}", workspaceFile.absolutePath
 	workspace = workspaceProvider.loadWorkspace( workspaceFile )
 } else if( workspace == null ) {
+	log.info "Loading default Workspace"
 	workspace = workspaceProvider.loadDefaultWorkspace()
 }
 
@@ -53,6 +55,7 @@ for( ref in workspace.projectRefs ) {
 	}
 }
 if( projectRef == null ) projectRef = workspace.importProject( projectFile, true )
+log.info "Loading Project: {}", projectFile.absolutePath
 projectRef.enabled = true
 def project = projectRef.project
 
@@ -83,8 +86,7 @@ if( agents != null ) {
 	for( agentUrl in agents.keySet() ) {
 		def tcs = agents[agentUrl]
 		def agent = workspace.createAgent( agentUrl, agentUrl )
-		if( tcs == null )
-		{
+		if( tcs == null ) {
 			for( tc in project.scenes ) {
 				project.assignScene( tc, agent )
 			}
@@ -104,18 +106,19 @@ if( agents != null ) {
 
 //Define where report should be generated  
 if( reportFolder != null ) {
-	project.setSaveReport(true)
-	project.setReportFormat(reportFormat)
-	def repFolder = new File(reportFolder)
-	if(repFolder.isFile()){
-		project.setReportFolder(repFolder.getParentFile().getAbsolutePath())
-	}
-	else{
-		if(!repFolder.isDirectory()){
+	project.saveReport = true
+	project.reportFormat = reportFormat
+	def repFolder = new File( reportFolder )
+	if( repFolder.file ) {
+		project.reportFolder = repFolder.parentFile.absolutePath 
+	} else {
+		if( !repFolder.directory ) {
 			repFolder.mkdirs()
 		}
-		project.setReportFolder(repFolder.getAbsolutePath())
+		project.reportFolder = repFolder.absolutePath
 	}
+	
+	log.info "Saving '{}' reports to: {}", project.reportFormat, project.reportFolder
 }
 
 //Make sure all agents are ready
@@ -151,6 +154,7 @@ if( testCase != null ) {
 log.info """
 
 ------------------------------------
+ RUNNING TEST
  TARGET ${target.label}
  LIMITS Time: ${FormattingUtils.formatTime(target.getLimit(CanvasItem.TIMER_COUNTER))} Samples: ${displayLimit(target.getLimit(CanvasItem.SAMPLE_COUNTER))} Failures: ${displayLimit(target.getLimit(CanvasItem.FAILURE_COUNTER))}
 ------------------------------------
