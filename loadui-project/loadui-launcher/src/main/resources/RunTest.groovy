@@ -24,6 +24,14 @@ def displayLimit( limit ) {
 	limit <= 0 ? "-" : limit
 }
 
+log.info """
+
+------------------------------------
+ INITIALIZING COMMAND LINE RUNNER
+------------------------------------
+
+"""
+
 //Load the proper workspace
 if( workspaceFile != null ) {
 	workspace?.release()
