@@ -212,21 +212,22 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	 */
 	final public void sampleCompleted( TerminalMessage message, Object sampleId )
 	{
-		long startTime = ( Long )sampleId;
+		long timeTaken = ( System.nanoTime() - ( Long )sampleId ) / 1000000;
+		long startTime = System.currentTimeMillis() - timeTaken;
 
 		int cRunning = currentlyRunning.decrementAndGet();
 		updateCurrentlyRunning( cRunning );
 
 		if( !message.containsKey( TIMESTAMP_MESSAGE_PARAM ) )
-			message.put( TIMESTAMP_MESSAGE_PARAM, startTime / 1000000 );
+			message.put( TIMESTAMP_MESSAGE_PARAM, startTime );
 
 		if( !message.containsKey( TIME_TAKEN_MESSAGE_PARAM ) )
-			message.put( TIME_TAKEN_MESSAGE_PARAM, ( System.nanoTime() - startTime ) / 1000000 );
+			message.put( TIME_TAKEN_MESSAGE_PARAM, timeTaken );
 		getContext().send( resultTerminal, message );
 		sampleCounter.increment();
 
 		// Gather statistics from the completed sample.
-		long timeTaken = ( Long )message.get( TIME_TAKEN_MESSAGE_PARAM );
+		timeTaken = ( Long )message.get( TIME_TAKEN_MESSAGE_PARAM );
 		if( timeTaken > maxTime )
 			maxTime = timeTaken;
 		if( timeTaken < minTime || minTime == -1 )
@@ -237,7 +238,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		long size = message.containsKey( "Bytes" ) ? ( ( Number )message.get( "Bytes" ) ).longValue() : ( message
 				.containsKey( "Response" ) ? ( ( String )message.get( "Response" ) ).length() : 0 );
 
-		addTopBottomSample( startTime / 1000000, timeTaken, size );
+		addTopBottomSample( startTime, timeTaken, size );
 
 		if( cRunning == 0 )
 			getContext().setBusy( false );
@@ -580,8 +581,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			statistics.put( "min", String.valueOf( minTime ) );
 			statistics.put( "max", String.valueOf( maxTime ) );
 			statistics.put( "avg", String.valueOf( avgTime ) );
-			statistics.put( "std-dev", String
-					.valueOf( Math.round( Math.sqrt( sumTotalSquare / sampleCount ) * 100d ) / 100d ) );
+			statistics.put( "std-dev",
+					String.valueOf( Math.round( Math.sqrt( sumTotalSquare / sampleCount ) * 100d ) / 100d ) );
 			if( avgTime > 0 )
 			{
 				statistics.put( "min/avg", String.valueOf( Math.round( ( minTime / avgTime ) * 100d ) / 100d ) );

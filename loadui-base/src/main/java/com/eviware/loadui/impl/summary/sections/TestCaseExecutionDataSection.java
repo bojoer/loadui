@@ -25,23 +25,23 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.SceneItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 
-public class TestCaseExecutionDataSection extends MutableSectionImpl implements
-		ExecutionDataSection {
+public class TestCaseExecutionDataSection extends MutableSectionImpl implements ExecutionDataSection
+{
 
 	SceneItemImpl testcase;
-	SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
+	SimpleDateFormat format = new SimpleDateFormat( "HH:mm:ss" );
 	private static final long HOUR = 3600000L;
 
-	public TestCaseExecutionDataSection(SceneItem sceneItem) {
-		super("Execution Data");
-		testcase = (SceneItemImpl) sceneItem;
-		addValue("Execution Time", getExecutionTime());// hh:mm:ss
-		addValue("Start Time", getStartTime());
-		addValue("End Time", getEndTime());
-		addValue("Total number of requests", getTotalNumberOfSamples());
-		addValue("Total number of assertions", getTotalNumberOfAssertions());
-		addValue("Total number of failed assertions",
-				getTotalNumberOfFailedAssertions());
+	public TestCaseExecutionDataSection( SceneItem sceneItem )
+	{
+		super( "Execution Data" );
+		testcase = ( SceneItemImpl )sceneItem;
+		addValue( "Execution Time", getExecutionTime() );// hh:mm:ss
+		addValue( "Start Time", getStartTime() );
+		addValue( "End Time", getEndTime() );
+		addValue( "Total number of requests", getTotalNumberOfSamples() );
+		addValue( "Total number of assertions", getTotalNumberOfAssertions() );
+		addValue( "Total number of failed assertions", getTotalNumberOfFailedAssertions() );
 	}
 
 	/*
@@ -50,17 +50,20 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements
 	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionDataSection#
 	 * getExecutionTime()
 	 */
-	public String getExecutionTime() {
+	public String getExecutionTime()
+	{
 		SimpleDateFormat dateFormat;
-		if (testcase.getStartTime() != null) {
-			Date dd = new Date((long) (new Date().getTime() - testcase
-					.getStartTime().getTime()));
-			if (new Date().getTime() - testcase.getStartTime().getTime() < HOUR)
-				dateFormat = new SimpleDateFormat("00:mm:ss");
+		if( testcase.getStartTime() != null )
+		{
+			Date dd = new Date( ( new Date().getTime() - testcase.getStartTime().getTime() ) );
+			if( new Date().getTime() - testcase.getStartTime().getTime() < HOUR )
+				dateFormat = new SimpleDateFormat( "00:mm:ss" );
 			else
-				dateFormat = new SimpleDateFormat("hh:mm:ss");
-			return dateFormat.format(dd);
-		} else {
+				dateFormat = new SimpleDateFormat( "HH:mm:ss" );
+			return dateFormat.format( dd );
+		}
+		else
+		{
 			return "N/A";
 		}
 	}
@@ -72,10 +75,11 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements
 	 * com.eviware.loadui.impl.summary.sections.ExecutionDataSection#getStartTime
 	 * ()
 	 */
-	public String getStartTime() {
-		if (testcase.getStartTime() == null)
+	public String getStartTime()
+	{
+		if( testcase.getStartTime() == null )
 			return "N/A";
-		return format.format(testcase.getStartTime());
+		return format.format( testcase.getStartTime() );
 	}
 
 	/*
@@ -85,10 +89,11 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements
 	 * com.eviware.loadui.impl.summary.sections.ExecutionDataSection#getEndTime
 	 * ()
 	 */
-	public String getEndTime() {
-		if (testcase.getEndTime() == null)
+	public String getEndTime()
+	{
+		if( testcase.getEndTime() == null )
 			return "N/A";
-		return format.format(testcase.getEndTime());
+		return format.format( testcase.getEndTime() );
 	}
 
 	/*
@@ -97,9 +102,9 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements
 	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionDataSection#
 	 * getTotalNumberOfSamples()
 	 */
-	public String getTotalNumberOfSamples() {
-		return String.valueOf(testcase.getCounter(CanvasItem.SAMPLE_COUNTER)
-				.get());
+	public String getTotalNumberOfSamples()
+	{
+		return String.valueOf( testcase.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );
 	}
 
 	/*
@@ -108,14 +113,15 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements
 	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionDataSection#
 	 * getTotalNumberOfAssertions()
 	 */
-	public String getTotalNumberOfAssertions() {
+	public String getTotalNumberOfAssertions()
+	{
 		int cnt = 0;
 		for( ComponentItem component : testcase.getComponents() )
 		{
 			if( component.getType().equalsIgnoreCase( "assertion" ) & component.getBehavior() instanceof AnalysisCategory )
-				cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get() ;
+				cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
 		}
-		return String.valueOf( testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get() + cnt);
+		return String.valueOf( testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get() + cnt );
 	}
 
 	/*
@@ -124,8 +130,8 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements
 	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionDataSection#
 	 * getTotalNumberOfFailedAssertions()
 	 */
-	public String getTotalNumberOfFailedAssertions() {
-		return String.valueOf(testcase.getCounter(CanvasItem.FAILURE_COUNTER)
-				.get());
+	public String getTotalNumberOfFailedAssertions()
+	{
+		return String.valueOf( testcase.getCounter( CanvasItem.FAILURE_COUNTER ).get() );
 	}
 }

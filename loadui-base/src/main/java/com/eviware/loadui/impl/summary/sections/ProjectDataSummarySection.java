@@ -22,59 +22,65 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.impl.model.ProjectItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 
-public class ProjectDataSummarySection extends MutableSectionImpl implements
-		DataSummarySection {
+public class ProjectDataSummarySection extends MutableSectionImpl implements DataSummarySection
+{
 
 	private static final long HOUR = 3600000L;
 	private ProjectItemImpl project;
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+	private SimpleDateFormat dateFormat = new SimpleDateFormat( "HH:mm:ss" );
 
-	public ProjectDataSummarySection(ProjectItemImpl projectItemImpl) {
-		super(projectItemImpl.getLabel());
+	public ProjectDataSummarySection( ProjectItemImpl projectItemImpl )
+	{
+		super( projectItemImpl.getLabel() );
 
 		project = projectItemImpl;
 
-		addValue("time", getTime());
-		addValue("requests", getNumberOfSamples());
-		addValue("assertion failures", getNumberOfFailures());
-		addValue("status", getStatus());
+		addValue( "time", getTime() );
+		addValue( "requests", getNumberOfSamples() );
+		addValue( "assertion failures", getNumberOfFailures() );
+		addValue( "status", getStatus() );
 	}
 
 	@Override
-	public String getNumberOfFailures() {
-		return String.valueOf(project.getCounter(CanvasItem.FAILURE_COUNTER)
-				.get());
+	public String getNumberOfFailures()
+	{
+		return String.valueOf( project.getCounter( CanvasItem.FAILURE_COUNTER ).get() );
 	}
 
 	@Override
-	public String getStatus() {
-		if (project.getLimit(CanvasItem.FAILURE_COUNTER) == -1 || 
-			project.getCounter(CanvasItem.FAILURE_COUNTER).get() < project
-			.getLimit(CanvasItem.FAILURE_COUNTER)) {
+	public String getStatus()
+	{
+		if( project.getLimit( CanvasItem.FAILURE_COUNTER ) == -1
+				|| project.getCounter( CanvasItem.FAILURE_COUNTER ).get() < project.getLimit( CanvasItem.FAILURE_COUNTER ) )
+		{
 			return "Passed";
-		} else
+		}
+		else
 			return "Failed";
 	}
 
 	@Override
-	public String getTime() {
-		if (project.getStartTime() != null) {
-			Date time = new Date(project.getEndTime().getTime()
-					- project.getStartTime().getTime());
-			if (new Date().getTime() - project.getStartTime().getTime() < HOUR)
-				dateFormat = new SimpleDateFormat("00:mm:ss");
+	public String getTime()
+	{
+		if( project.getStartTime() != null )
+		{
+			Date time = new Date( project.getEndTime().getTime() - project.getStartTime().getTime() );
+			if( new Date().getTime() - project.getStartTime().getTime() < HOUR )
+				dateFormat = new SimpleDateFormat( "00:mm:ss" );
 			else
-				dateFormat = new SimpleDateFormat("hh:mm:ss");
-			return dateFormat.format(time);
-		} else {
+				dateFormat = new SimpleDateFormat( "HH:mm:ss" );
+			return dateFormat.format( time );
+		}
+		else
+		{
 			return "N/A";
 		}
 	}
 
 	@Override
-	public String getNumberOfSamples() {
-		return String.valueOf(project.getCounter(CanvasItem.SAMPLE_COUNTER)
-				.get());
+	public String getNumberOfSamples()
+	{
+		return String.valueOf( project.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );
 	}
 
 }
