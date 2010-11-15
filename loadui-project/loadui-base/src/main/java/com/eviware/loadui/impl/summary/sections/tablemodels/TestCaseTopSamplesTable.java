@@ -25,114 +25,132 @@ import javax.swing.table.AbstractTableModel;
 
 import com.eviware.loadui.api.summary.SampleStats;
 
-public class TestCaseTopSamplesTable extends AbstractTableModel {
+public class TestCaseTopSamplesTable extends AbstractTableModel
+{
 
 	String[] columnNames = { "name", "ms", "time", "size" };
 	ArrayList<TestCaseSampleModel> data = new ArrayList<TestCaseSampleModel>();
-	//SimpleDateFormat df = new SimpleDateFormat("hh:mm:ss");
+
+	// SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
 
 	@Override
-	public String getColumnName(int column) {
+	public String getColumnName( int column )
+	{
 		return columnNames[column];
 	}
 
-	public TestCaseTopSamplesTable() {
+	public TestCaseTopSamplesTable()
+	{
 	}
 
 	@Override
-	public int getColumnCount() {
+	public int getColumnCount()
+	{
 		return columnNames.length;
 	}
 
 	@Override
-	public int getRowCount() {
-		if (data.size() > 5)
+	public int getRowCount()
+	{
+		if( data.size() > 5 )
 			return 5;
 		else
 			return data.size();
 	}
 
 	@Override
-	public String getValueAt(int rowIndex, int columnIndex) {
-		switch (columnIndex) {
-		case 0:
-			return data.get(rowIndex).getName();
-		case 1:
-			return String.valueOf(data.get(rowIndex).getStats().getTimeTaken());
-		case 2:
+	public String getValueAt( int rowIndex, int columnIndex )
+	{
+		switch( columnIndex )
+		{
+		case 0 :
+			return data.get( rowIndex ).getName();
+		case 1 :
+			return String.valueOf( data.get( rowIndex ).getStats().getTimeTaken() );
+		case 2 :
 			SimpleDateFormat df;
-			long time = data.get(rowIndex).getStats().getTime();
-			if ( time < 3600000 ) 
-				df = new SimpleDateFormat("mm:ss");
+			long time = data.get( rowIndex ).getStats().getTime();
+			if( time < 3600000 )
+				df = new SimpleDateFormat( "mm:ss" );
 			else
-				df = new SimpleDateFormat("hh:mm:ss");
-			return df.format(new Date(time));
-		case 3:
-			return String.valueOf(data.get(rowIndex).getStats().getSize());
-		default:
+				df = new SimpleDateFormat( "HH:mm:ss" );
+			return df.format( new Date( time ) );
+		case 3 :
+			return String.valueOf( data.get( rowIndex ).getStats().getSize() );
+		default :
 			return null;
 		}
 	}
 
-	public class TestCaseSampleModel {
+	public class TestCaseSampleModel
+	{
 
 		String name;
 		SampleStats stats;
 
-		public TestCaseSampleModel(String label, SampleStats stats) {
+		public TestCaseSampleModel( String label, SampleStats stats )
+		{
 			name = label;
 			this.stats = stats;
 		}
 
-		public String getName() {
+		public String getName()
+		{
 			return name;
 		}
 
-		public SampleStats getStats() {
+		public SampleStats getStats()
+		{
 			return stats;
 		}
 	}
 
-	public void addTop(String label, SampleStats stat) {
-		synchronized (data) {
-			data.add(new TestCaseSampleModel(label, stat));
+	public void addTop( String label, SampleStats stat )
+	{
+		synchronized( data )
+		{
+			data.add( new TestCaseSampleModel( label, stat ) );
 			// System.out.println("add " + stat);
-			Collections.sort(data, new TestCaseSampleModelComparator());
-			if (data.size() > 11)
-				data.remove(11);
+			Collections.sort( data, new TestCaseSampleModelComparator() );
+			if( data.size() > 11 )
+				data.remove( 11 );
 		}
 	}
 
-	public void addBottom(String label, SampleStats stat) {
-		synchronized (data) {
+	public void addBottom( String label, SampleStats stat )
+	{
+		synchronized( data )
+		{
 			// System.out.println("badd " + stat);
-			data.add(new TestCaseSampleModel(label, stat));
-			Collections.sort(data, new TestCaseSampleModelComparator2());
-			if (data.size() > 11)
-				data.remove(11);
+			data.add( new TestCaseSampleModel( label, stat ) );
+			Collections.sort( data, new TestCaseSampleModelComparator2() );
+			if( data.size() > 11 )
+				data.remove( 11 );
 		}
 	}
 
-	private class TestCaseSampleModelComparator implements
-			Comparator<TestCaseSampleModel> {
+	private class TestCaseSampleModelComparator implements Comparator<TestCaseSampleModel>
+	{
 
 		@Override
-		public int compare(TestCaseSampleModel o1, TestCaseSampleModel o2) {
+		public int compare( TestCaseSampleModel o1, TestCaseSampleModel o2 )
+		{
 			long i1 = o1.getStats().getTimeTaken();
 			long i2 = o2.getStats().getTimeTaken();
-			return (int) (i2 - i1);
+			return ( int )( i2 - i1 );
 		}
 
 	}
 
-	private class TestCaseSampleModelComparator2 implements
-			Comparator<TestCaseSampleModel> {
+	private class TestCaseSampleModelComparator2 implements Comparator<TestCaseSampleModel>
+	{
 
 		@Override
-		public int compare(TestCaseSampleModel o1, TestCaseSampleModel o2) {
+		public int compare( TestCaseSampleModel o1, TestCaseSampleModel o2 )
+		{
 			long i1 = o1.getStats().getTimeTaken();
 			long i2 = o2.getStats().getTimeTaken();
-			return (int) (i1 - i2);
+			return ( int )( i1 - i2 );
 		}
 
 	}

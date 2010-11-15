@@ -35,7 +35,7 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 
 	private static final long HOUR = 3600000L;
 	ProjectItemImpl project;
-	private SimpleDateFormat dateFormat = new SimpleDateFormat( "hh:mm:ss" );
+	private SimpleDateFormat dateFormat = new SimpleDateFormat( "HH:mm:ss" );
 
 	public ProjectExecutionDataSection( ProjectItemImpl projectItemImpl )
 	{
@@ -64,7 +64,7 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 
 	@Override
 	public String getEndTime()
-	{	
+	{
 		return project.getEndTime() != null ? dateFormat.format( project.getEndTime() ) : "N/A";
 	}
 
@@ -75,24 +75,24 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 		if( project.getStartTime() != null )
 		{
 			Calendar end = Calendar.getInstance();
-			end.setTime(project.getEndTime());
-			
+			end.setTime( project.getEndTime() );
+
 			Calendar start = Calendar.getInstance();
-			start.setTime(project.getStartTime());
-			
-			end.add(Calendar.YEAR, -start.get(Calendar.YEAR));
-			end.add(Calendar.MONTH, -start.get(Calendar.MONTH));
-			end.add(Calendar.DATE, -start.get(Calendar.DATE));
-			end.add(Calendar.HOUR, -start.get(Calendar.HOUR));
-			end.add(Calendar.MINUTE, -start.get(Calendar.MINUTE));
-			end.add(Calendar.SECOND, -start.get(Calendar.SECOND));
-			end.set(Calendar.MILLISECOND, 0);
-			
+			start.setTime( project.getStartTime() );
+
+			end.add( Calendar.YEAR, -start.get( Calendar.YEAR ) );
+			end.add( Calendar.MONTH, -start.get( Calendar.MONTH ) );
+			end.add( Calendar.DATE, -start.get( Calendar.DATE ) );
+			end.add( Calendar.HOUR, -start.get( Calendar.HOUR ) );
+			end.add( Calendar.MINUTE, -start.get( Calendar.MINUTE ) );
+			end.add( Calendar.SECOND, -start.get( Calendar.SECOND ) );
+			end.set( Calendar.MILLISECOND, 0 );
+
 			Date dd = end.getTime();
 			if( project.getEndTime().getTime() - project.getStartTime().getTime() < HOUR )
 				dateFormat = new SimpleDateFormat( "00:mm:ss" );
 			else
-				dateFormat = new SimpleDateFormat( "hh:mm:ss" );
+				dateFormat = new SimpleDateFormat( "HH:mm:ss" );
 			return dateFormat.format( dd );
 		}
 		else
@@ -103,7 +103,7 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 
 	@Override
 	public String getStartTime()
-	{	
+	{
 		return project.getStartTime() != null ? dateFormat.format( project.getStartTime() ) : "N/A";
 	}
 
@@ -114,16 +114,16 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 		for( ComponentItem component : project.getComponents() )
 		{
 			if( component.getType().equalsIgnoreCase( "assertion" ) & component.getBehavior() instanceof AnalysisCategory )
-				cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get() ;
+				cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
 		}
 		for( SceneItem scene : project.getScenes() )
 			for( ComponentItem component : scene.getComponents() )
 			{
 				if( component.getType().equalsIgnoreCase( "assertion" )
 						& component.getBehavior() instanceof AnalysisCategory )
-					cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get() ;
+					cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
 			}
-		return String.valueOf( project.getCounter( CanvasItem.ASSERTION_COUNTER ).get() + cnt);
+		return String.valueOf( project.getCounter( CanvasItem.ASSERTION_COUNTER ).get() + cnt );
 	}
 
 	@Override

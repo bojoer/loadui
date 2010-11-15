@@ -49,12 +49,13 @@ public class TestCaseDataSummarySection extends MutableSectionImpl implements Da
 	@Override
 	public String getStatus()
 	{
-		if (testcase.getLimit(CanvasItem.FAILURE_COUNTER) == -1 || 
-				testcase.getCounter(CanvasItem.FAILURE_COUNTER).get() < testcase
-				.getLimit(CanvasItem.FAILURE_COUNTER)) {
-				return "Passed";
-			} else
-				return "Failed";
+		if( testcase.getLimit( CanvasItem.FAILURE_COUNTER ) == -1
+				|| testcase.getCounter( CanvasItem.FAILURE_COUNTER ).get() < testcase.getLimit( CanvasItem.FAILURE_COUNTER ) )
+		{
+			return "Passed";
+		}
+		else
+			return "Failed";
 	}
 
 	@Override
@@ -66,7 +67,7 @@ public class TestCaseDataSummarySection extends MutableSectionImpl implements Da
 		if( time.getTime() < HOUR )
 			dateFormat = new SimpleDateFormat( "00:mm:ss" );
 		else
-			dateFormat = new SimpleDateFormat( "hh:mm:ss" );
+			dateFormat = new SimpleDateFormat( "HH:mm:ss" );
 		return dateFormat.format( time );
 	}
 

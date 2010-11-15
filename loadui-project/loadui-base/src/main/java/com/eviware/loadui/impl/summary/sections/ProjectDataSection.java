@@ -23,69 +23,72 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.ProjectItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 
-public class ProjectDataSection extends MutableSectionImpl implements
-		DataSection {
+public class ProjectDataSection extends MutableSectionImpl implements DataSection
+{
 
 	ProjectItemImpl project;
 
-	public ProjectDataSection(ProjectItemImpl projectItemImpl) {
-		super("Project Data");
+	public ProjectDataSection( ProjectItemImpl projectItemImpl )
+	{
+		super( "Project Data" );
 		project = projectItemImpl;
 
-		addValue("Number of TestCases", getNumberOfTestCases());
-		addValue("Number of components", getNumberOfComponents());
-		addValue("Number of connections", getNumberOfConnections());
-		addValue("Number of project components", String.valueOf(project
-				.getComponents().size()));
-		addValue("Number of project connection", String.valueOf(project
-				.getConnections().size()));
-		addValue("Time Limit", getLimit());
-		addValue("Request Limit", getSampleLimit());
-		addValue("Assertion Limit", getAssertionLimit());
+		addValue( "Number of TestCases", getNumberOfTestCases() );
+		addValue( "Number of components", getNumberOfComponents() );
+		addValue( "Number of connections", getNumberOfConnections() );
+		addValue( "Number of project components", String.valueOf( project.getComponents().size() ) );
+		addValue( "Number of project connection", String.valueOf( project.getConnections().size() ) );
+		addValue( "Time Limit", getLimit() );
+		addValue( "Request Limit", getSampleLimit() );
+		addValue( "Assertion Limit", getAssertionLimit() );
 	}
 
-	public String getNumberOfTestCases() {
-		return String.valueOf(project.getScenes().size());
+	public String getNumberOfTestCases()
+	{
+		return String.valueOf( project.getScenes().size() );
 	}
 
 	@Override
-	public String getAssertionLimit() {
-		if (project.getLimit(CanvasItem.FAILURE_COUNTER) > -1)
-			return String.valueOf(project
-					.getLimit(CanvasItem.FAILURE_COUNTER));
+	public String getAssertionLimit()
+	{
+		if( project.getLimit( CanvasItem.FAILURE_COUNTER ) > -1 )
+			return String.valueOf( project.getLimit( CanvasItem.FAILURE_COUNTER ) );
 		else
 			return "N/A";
 	}
 
 	@Override
-	public String getLimit() {
-		if (project.getLimit(CanvasItem.TIMER_COUNTER) > -1)
-			return new SimpleDateFormat("hh:mm:ss").format(new Date(project
-					.getLimit(CanvasItem.TIMER_COUNTER)));
+	public String getLimit()
+	{
+		if( project.getLimit( CanvasItem.TIMER_COUNTER ) > -1 )
+			return new SimpleDateFormat( "HH:mm:ss" ).format( new Date( project.getLimit( CanvasItem.TIMER_COUNTER ) ) );
 		else
 			return "N/A";
 	}
 
 	@Override
-	public String getNumberOfComponents() {
+	public String getNumberOfComponents()
+	{
 		int total = project.getComponents().size();
-		for (SceneItem scene : project.getScenes())
+		for( SceneItem scene : project.getScenes() )
 			total += scene.getComponents().size();
-		return String.valueOf(total);
+		return String.valueOf( total );
 	}
 
 	@Override
-	public String getNumberOfConnections() {
+	public String getNumberOfConnections()
+	{
 		int total = project.getConnections().size();
-		for (SceneItem scene : project.getScenes())
+		for( SceneItem scene : project.getScenes() )
 			total += scene.getConnections().size();
-		return String.valueOf(total);
+		return String.valueOf( total );
 	}
 
 	@Override
-	public String getSampleLimit() {
-		if (project.getLimit(CanvasItem.SAMPLE_COUNTER) > -1)
-			return String.valueOf(project.getLimit(CanvasItem.SAMPLE_COUNTER));
+	public String getSampleLimit()
+	{
+		if( project.getLimit( CanvasItem.SAMPLE_COUNTER ) > -1 )
+			return String.valueOf( project.getLimit( CanvasItem.SAMPLE_COUNTER ) );
 		else
 			return "N/A";
 	}

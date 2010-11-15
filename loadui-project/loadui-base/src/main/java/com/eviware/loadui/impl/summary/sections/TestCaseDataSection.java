@@ -23,19 +23,20 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.SceneItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 
-public class TestCaseDataSection extends MutableSectionImpl implements
-		DataSection {
+public class TestCaseDataSection extends MutableSectionImpl implements DataSection
+{
 
 	SceneItemImpl testcase;
 
-	public TestCaseDataSection(SceneItem sceneItem) {
-		super("TestCase Data");
-		testcase = (SceneItemImpl) sceneItem;
-		addValue("Number of components", getNumberOfComponents());
-		addValue("Number of connections", getNumberOfConnections());
-		addValue("Time Limit", getLimit());
-		addValue("Request Limit", getSampleLimit());
-		addValue("Assertion Limit", getAssertionLimit());
+	public TestCaseDataSection( SceneItem sceneItem )
+	{
+		super( "TestCase Data" );
+		testcase = ( SceneItemImpl )sceneItem;
+		addValue( "Number of components", getNumberOfComponents() );
+		addValue( "Number of connections", getNumberOfConnections() );
+		addValue( "Time Limit", getLimit() );
+		addValue( "Request Limit", getSampleLimit() );
+		addValue( "Assertion Limit", getAssertionLimit() );
 	}
 
 	/*
@@ -45,8 +46,9 @@ public class TestCaseDataSection extends MutableSectionImpl implements
 	 * com.eviware.loadui.impl.summary.sections.DataSection#getNumberOfComponents
 	 * ()
 	 */
-	public String getNumberOfComponents() {
-		return String.valueOf(testcase.getComponents().size());
+	public String getNumberOfComponents()
+	{
+		return String.valueOf( testcase.getComponents().size() );
 	}
 
 	/*
@@ -56,8 +58,9 @@ public class TestCaseDataSection extends MutableSectionImpl implements
 	 * com.eviware.loadui.impl.summary.sections.DataSection#getNumberOfConnections
 	 * ()
 	 */
-	public String getNumberOfConnections() {
-		return String.valueOf(testcase.getConnections().size());
+	public String getNumberOfConnections()
+	{
+		return String.valueOf( testcase.getConnections().size() );
 	}
 
 	/*
@@ -65,23 +68,26 @@ public class TestCaseDataSection extends MutableSectionImpl implements
 	 * 
 	 * @see com.eviware.loadui.impl.summary.sections.DataSection#getLimit()
 	 */
-	public String getLimit() {
-		if (testcase.getLimit(CanvasItem.TIMER_COUNTER) > -1) {
-			Date time = new Date(testcase.getLimit(CanvasItem.TIMER_COUNTER));
-			return new SimpleDateFormat("hh:mm:ss").format(time);
-		} else
+	public String getLimit()
+	{
+		if( testcase.getLimit( CanvasItem.TIMER_COUNTER ) > -1 )
+		{
+			Date time = new Date( testcase.getLimit( CanvasItem.TIMER_COUNTER ) );
+			return new SimpleDateFormat( "HH:mm:ss" ).format( time );
+		}
+		else
 			return "N/A";
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.eviware.loadui.impl.summary.sections.DataSection#getSampleLimit()
+	 * @see com.eviware.loadui.impl.summary.sections.DataSection#getSampleLimit()
 	 */
-	public String getSampleLimit() {
-		if (testcase.getLimit(CanvasItem.SAMPLE_COUNTER) > -1)
-			return String.valueOf(testcase.getLimit(CanvasItem.SAMPLE_COUNTER));
+	public String getSampleLimit()
+	{
+		if( testcase.getLimit( CanvasItem.SAMPLE_COUNTER ) > -1 )
+			return String.valueOf( testcase.getLimit( CanvasItem.SAMPLE_COUNTER ) );
 		else
 			return "N/A";
 	}
@@ -92,10 +98,10 @@ public class TestCaseDataSection extends MutableSectionImpl implements
 	 * @see
 	 * com.eviware.loadui.impl.summary.sections.DataSection#getAssertionLimit()
 	 */
-	public String getAssertionLimit() {
-		if (testcase.getLimit(CanvasItem.FAILURE_COUNTER) > -1)
-			return String.valueOf(testcase
-					.getLimit(CanvasItem.FAILURE_COUNTER));
+	public String getAssertionLimit()
+	{
+		if( testcase.getLimit( CanvasItem.FAILURE_COUNTER ) > -1 )
+			return String.valueOf( testcase.getLimit( CanvasItem.FAILURE_COUNTER ) );
 		else
 			return "N/A";
 	}
