@@ -32,6 +32,7 @@ import java.util.ArrayList
 import com.eviware.loadui.api.component.ComponentContext
 
 import com.eviware.loadui.api.model.CanvasItem
+import com.eviware.loadui.api.model.ProjectItem
 import com.eviware.loadui.api.chart.CustomTimeRange
 import com.eviware.loadui.api.chart.CustomNumericRange
 import com.eviware.loadui.api.chart.ChartModel
@@ -284,7 +285,7 @@ updateChart = { currentTime ->
 	if( selectedAgent.value == AGGREGATE ) {
 		try {
 			int count = 0
-			def local = canvas.project?.workspace.localMode
+			def local = canvas instanceof ProjectItem || canvas.project?.workspace.localMode
 			if (inputTerminal.connections.size() > 0 || statisticsInput.connections.size() > 0) {
 				for( k in agentData.keySet() ) {
 					//if in dist mode ignore data received on controllerTerminal, in local take only from data from it
