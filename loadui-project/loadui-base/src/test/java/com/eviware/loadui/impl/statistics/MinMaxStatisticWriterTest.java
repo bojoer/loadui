@@ -1,14 +1,19 @@
 package com.eviware.loadui.impl.statistics;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationContext;
 
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
+import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.statistics.store.ExecutionManager;
+import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.util.BeanInjector;
 
 public class MinMaxStatisticWriterTest
 {
@@ -24,6 +29,18 @@ public class MinMaxStatisticWriterTest
 	{
 		holderMock = mock( StatisticHolder.class );
 		manager = mock( StatisticsManager.class );
+		ExecutionManager executionManagerMock = mock( ExecutionManager.class );
+		Execution executionMock = mock( Execution.class );
+		Track trackMock = mock( Track.class );
+		when( executionManagerMock.getCurrentExecution() ).thenReturn( executionMock );
+		when( executionManagerMock.getTrack( anyString() ) ).thenReturn( trackMock );
+		when( manager.getExecutionManager() ).thenReturn( executionManagerMock );
+
+		ApplicationContext appContext = mock( ApplicationContext.class );
+		when( appContext.getBean( "statisticsManager", StatisticsManager.class ) ).thenReturn( manager );
+
+		new BeanInjector().setApplicationContext( appContext );
+
 		holderSupport = new StatisticHolderSupport( holderMock );
 		StatisticVariable variable = holderSupport.addStatisticVariable( "Exteme" );
 		writer = ( MinMaxStatisticWriter )new MinMaxStatisticWriter.Factory().createStatisticsWriter( manager, variable );
@@ -31,14 +48,16 @@ public class MinMaxStatisticWriterTest
 		for( int cnt = 0; cnt < data.length; cnt++ )
 			writer.update( 1, data[cnt] );
 	}
-	
+
 	@Test
-	public void checkMax() {
+	public void checkMax()
+	{
 		assertEquals( 1044, writer.maximum, 0 );
 	}
-	
+
 	@Test
-	public void checkMin() {
+	public void checkMin()
+	{
 		assertEquals( 4, writer.minimum, 0 );
 	}
 

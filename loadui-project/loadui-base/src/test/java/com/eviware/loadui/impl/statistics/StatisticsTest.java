@@ -15,15 +15,15 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.Collection;
 import java.util.EventObject;
 
 import org.junit.*;
+import org.springframework.context.ApplicationContext;
 
-import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticsManager;
+import com.eviware.loadui.util.BeanInjector;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -39,6 +39,11 @@ public class StatisticsTest
 	@Before
 	public void setup()
 	{
+		StatisticsManager manager = mock( StatisticsManager.class );
+		ApplicationContext appContext = mock( ApplicationContext.class );
+		when( appContext.getBean( "statisticsManager", StatisticsManager.class ) ).thenReturn( manager );
+
+		new BeanInjector().setApplicationContext( appContext );
 		holderMock = mock( StatisticHolder.class );
 		holderSupport = new StatisticHolderSupport( holderMock );
 	}
