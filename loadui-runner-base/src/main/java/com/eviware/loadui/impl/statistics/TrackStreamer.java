@@ -16,7 +16,9 @@
 package com.eviware.loadui.impl.statistics;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +26,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.messaging.MessageEndpoint;
+import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
@@ -36,11 +40,13 @@ import com.eviware.loadui.api.statistics.store.ExecutionManager;
  */
 public class TrackStreamer
 {
+	private static final String CHANNEL = "/" + Statistic.class.getName();
 	private final static Logger log = LoggerFactory.getLogger( TrackStreamer.class );
 
 	private final ExecutionManager manager;
 	private final ScheduledExecutorService executor;
 	private final ScheduledFuture<?> future;
+	private final Set<MessageEndpoint> endpoints = new HashSet<MessageEndpoint>();
 	private Map<String, Map<String, Number>> lastSent;
 
 	public TrackStreamer( ScheduledExecutorService scheduledExecutorService, ExecutionManager executionManager )
@@ -56,8 +62,19 @@ public class TrackStreamer
 		future.cancel( true );
 	}
 
+	public void addEndpoint( MessageEndpoint endpoint )
+	{
+		endpoints.add( endpoint );
+	}
+
+	public void removeEndpoint( MessageEndpoint endpoint )
+	{
+		endpoints.remove( endpoint );
+	}
+
 	private class StreamTask implements Runnable
 	{
+
 		@Override
 		public void run()
 		{
@@ -88,6 +105,8 @@ public class TrackStreamer
 
 				// TODO: Send currentData
 				log.debug( "Sending Track data: {}", currentData );
+				for( MessageEndpoint endpoint : endpoints )
+					endpoint.sendMessage( CHANNEL, currentData );
 			}
 		}
 	}

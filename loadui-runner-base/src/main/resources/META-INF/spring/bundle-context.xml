@@ -4,6 +4,12 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
 	<bean id="counterSynchronizer" class="com.eviware.loadui.impl.agent.AgentCounterSynchronizer" />
+	
+	<bean id="trackStreamer" class="com.eviware.loadui.impl.statistics.TrackStreamer"
+		destroy-method="release">
+		<constructor-arg ref="scheduledExecutorService" />
+		<constructor-arg ref="executionManager" />
+	</bean>
 
 	<bean id="controller" class="com.eviware.loadui.impl.agent.ControllerImpl">
 		<constructor-arg ref="scheduledExecutorService" />
@@ -14,6 +20,7 @@
 		<constructor-arg ref="addressableRegistry" />
 		<constructor-arg ref="propertySynchronizer" />
 		<constructor-arg ref="counterSynchronizer" />
+		<constructor-arg ref="trackStreamer" />
 	</bean>
 
 	<!--<bean id="runnerServer" class="com.eviware.loadui.impl.agent.RunnerServer"> 
@@ -21,10 +28,4 @@
 
 	<bean class="com.eviware.loadui.impl.discovery.DiscoveryResponder"
 		destroy-method="release" />
-
-	<bean class="com.eviware.loadui.impl.statistics.TrackStreamer"
-		destroy-method="release">
-		<constructor-arg ref="scheduledExecutorService" />
-		<constructor-arg ref="executionManager" />
-	</bean>
 </beans>

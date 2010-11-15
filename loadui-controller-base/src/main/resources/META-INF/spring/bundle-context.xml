@@ -8,5 +8,10 @@
 		<constructor-arg ref="componentRegistry" />
 	</bean>
 	
-	<bean id="AgentDiscovery" class="com.eviware.loadui.impl.discovery.AgentDiscoveryImpl" destroy-method="release" />
+	<bean id="agentDiscovery" class="com.eviware.loadui.impl.discovery.AgentDiscoveryImpl" destroy-method="release" />
+	
+	<bean id="trackStreamReceiver" class="com.eviware.loadui.impl.statistics.TrackStreamReceiver">
+		<constructor-arg ref="executionManager" />
+		<constructor-arg ref="broadcastMessageEndpoint" />
+	</bean>
 </beans>
