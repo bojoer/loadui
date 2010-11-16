@@ -106,7 +106,6 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		avgCnt++ ;
 		sumTotalSquare += Math.pow( doubleValue - avgSum, 2 );
 		stdDev = sumTotalSquare / avgCnt;
-		log.debug( "update called, {} <= {}", lastTimeFlushed + delay, System.currentTimeMillis() );
 		if( lastTimeFlushed + delay <= System.currentTimeMillis() )
 			flush();
 	}
