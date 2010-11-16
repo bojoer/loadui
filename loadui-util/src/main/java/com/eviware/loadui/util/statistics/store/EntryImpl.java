@@ -46,4 +46,12 @@ public class EntryImpl implements Entry
 	{
 		return values.get( name );
 	}
+
+	@Override
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder( "Entry[" );
+		sb.append( values.toString() ).append( "]" );
+		return sb.toString();
+	}
 }

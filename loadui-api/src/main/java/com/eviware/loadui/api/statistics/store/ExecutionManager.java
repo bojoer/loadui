@@ -16,7 +16,6 @@
 package com.eviware.loadui.api.statistics.store;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Manages existing Executions, creating new ones, etc.

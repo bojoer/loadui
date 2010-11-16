@@ -39,32 +39,26 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 	public enum Stats
 	{
-		AVERAGE,
-		AVERAGE_COUNT,
-		AVERAGE_SUM, 
-		STD_DEV ,
-		STD_DEV_SUM, 
-		PERCENTILE;
+		AVERAGE, AVERAGE_COUNT, AVERAGE_SUM, STD_DEV, STD_DEV_SUM, PERCENTILE;
 
 	}
 
 	/**
 	 * Average = Average_Sum / Average_Count
 	 * 
-	 * Where is:
-	 * * Average_Sum is sum of all requests times ( total or range )
-	 * * Average_Count is total number of requests ( total or range )
+	 * Where is: * Average_Sum is sum of all requests times ( total or range ) *
+	 * Average_Count is total number of requests ( total or range )
 	 * 
 	 * Standard_Deviation = Square_Sum / Average_Count Where
 	 * 
-	 * Where is:
-	 * *Square_Sum =Math.pow( timeTaken - Average_Sum, 2 ) 
-	 * *timeTaken is last request time taken
+	 * Where is: *Square_Sum =Math.pow( timeTaken - Average_Sum, 2 ) *timeTaken
+	 * is last request time taken
 	 * 
-	 * For calculating 90 percentile it needed to remember data received.
-	 * To do this is defined buffer which hold last n values. Default value is 1000, but this 
-	 * can be changed by set/getPercentileBufferSize. Since percentile is expensive operation, specially
-	 * when buffer is large, it should be calculated just before it should be written to database.
+	 * For calculating 90 percentile it needed to remember data received. To do
+	 * this is defined buffer which hold last n values. Default value is 1000,
+	 * but this can be changed by set/getPercentileBufferSize. Since percentile
+	 * is expensive operation, specially when buffer is large, it should be
+	 * calculated just before it should be written to database.
 	 */
 
 	protected double average = 0L;
@@ -78,7 +72,8 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 	private ArrayList<Double> values = new ArrayList<Double>();
 
-	public AverageStatisticWriter( StatisticsManager statisticsManager, StatisticVariable variable, Map<String, Class<? extends Number>> trackStructure )
+	public AverageStatisticWriter( StatisticsManager statisticsManager, StatisticVariable variable,
+			Map<String, Class<? extends Number>> trackStructure )
 	{
 		super( statisticsManager, variable, trackStructure );
 	}
@@ -101,25 +96,29 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	@Override
 	public void update( long timestamp, Number... values )
 	{
-		if ( values.length < 1 ) 
+		if( values.length < 1 )
 			return;
-		this.values.add( ( Double )values[0] );
+		double doubleValue = values[0].doubleValue();
+		this.values.add( doubleValue );
 		if( this.values.size() >= percentileBufferSize )
 			this.values.remove( 0 );
-		avgSum += ( Double )values[0];
+		avgSum += doubleValue;
 		avgCnt++ ;
-		sumTotalSquare += Math.pow( ( Double )values[0] - avgSum, 2 );
+		sumTotalSquare += Math.pow( doubleValue - avgSum, 2 );
 		stdDev = sumTotalSquare / avgCnt;
-		if( lastTimeFlushed + delay >= System.currentTimeMillis() )
+		log.debug( "update called, {} <= {}", lastTimeFlushed + delay, System.currentTimeMillis() );
+		if( lastTimeFlushed + delay <= System.currentTimeMillis() )
 			flush();
 	}
 
 	/**
-	 * stores data in db. Also here calculate percentile since it is expensive calculation
+	 * stores data in db. Also here calculate percentile since it is expensive
+	 * calculation
 	 */
 	@Override
 	public void flush()
 	{
+		log.debug( "Flush called!" );
 		// calculate percentile here since it is expensive operation.
 		double[] pValues = new double[values.size()];
 		for( int cnt = 0; cnt < values.size(); cnt++ )
@@ -127,13 +126,10 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		percentile = perc.evaluate( pValues );
 		lastTimeFlushed = System.currentTimeMillis();
 		average = avgSum / avgCnt;
-		
-		at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average )
-									.put( Stats.AVERAGE_COUNT.name(), avgCnt)
-									.put( Stats.AVERAGE_SUM.name(), avgSum )
-									.put( Stats.STD_DEV_SUM.name(), sumTotalSquare )
-									.put( Stats.STD_DEV.name(), stdDev )
-									.put( Stats.PERCENTILE.name(), percentile).write();
+
+		at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_COUNT.name(), avgCnt )
+				.put( Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.STD_DEV_SUM.name(), sumTotalSquare )
+				.put( Stats.STD_DEV.name(), stdDev ).put( Stats.PERCENTILE.name(), percentile ).write();
 	}
 
 	@Override
@@ -146,7 +142,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		sumTotalSquare = 0.0;
 		percentile = 0;
 	}
-	
+
 	public int getPercentileBufferSize()
 	{
 		return percentileBufferSize;
@@ -162,7 +158,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	 * 
 	 * @author dain.nilsson
 	 * 
-	 * Define what Statistics this writer should write in Track.
+	 *         Define what Statistics this writer should write in Track.
 	 * 
 	 */
 	public static class Factory implements StatisticsWriterFactory
@@ -186,7 +182,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			trackStructure.put( Stats.STD_DEV.name(), Double.class );
 			trackStructure.put( Stats.STD_DEV_SUM.name(), Double.class );
 			trackStructure.put( Stats.PERCENTILE.name(), Double.class );
-			
+
 			return new AverageStatisticWriter( statisticsManager, variable, trackStructure );
 		}
 	}

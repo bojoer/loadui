@@ -6,7 +6,7 @@
 	
 	<osgi:reference interface="com.eviware.loadui.api.messaging.MessageEndpointProvider" id="messageEndpointProvider" cardinality="0..1" />
 	
-	<osgi:reference interface="com.eviware.loadui.api.statistics.store.ExecutionManager" id="executionManager" cardinality="0..1" />
+	<osgi:reference interface="com.eviware.loadui.api.statistics.store.ExecutionManager" id="executionManager" />
 	
 	<osgi:service interface="com.eviware.loadui.api.messaging.BroadcastMessageEndpoint" ref="broadcastMessageEndpoint" />
 	

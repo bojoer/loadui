@@ -15,8 +15,6 @@
  */
 package com.eviware.loadui.api.statistics.store;
 
-import java.util.Map;
-
 /**
  * Represents a value set which changes over time, allowing sequential reading
  * and writing.

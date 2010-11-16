@@ -33,11 +33,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	 * connection pool, some may not. Map key is the id of the execution
 	 * instance, and value is data source used to establish connection.
 	 */
-	private Map<String, DataSource> dataSourceMap;
-	
+	private Map<String, DataSource> dataSourceMap = new HashMap<String, DataSource>();
+
 	private MetaDatabaseManager metaDatabaseManager;
 
-	private Execution currentExecution;
+	private ExecutionImpl currentExecution;
 
 	private Map<String, Execution> executionMap = new HashMap<String, Execution>();
 
@@ -58,26 +58,29 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	@Override
 	public Execution startExecution( String id, long timestamp )
 	{
-		try
-		{
-			if( metaDatabaseManager.executionExist( id ) )
-			{
-				throw new IllegalArgumentException( "Execution with the specified id already exist!" );
-			}
-			Execution execution = new ExecutionImpl( id, timestamp );
-			executionMap.put( id, execution );
-			currentExecution = execution;
-
-			HashMap<String, Object> m = new HashMap<String, Object>();
-			m.put( MetaDatabaseManager.EXECUTION_COLUMN_NAME, id );
-			metaDatabaseManager.write( timestamp, m );
-
-			return execution;
-		}
-		catch( SQLException e )
-		{
-			throw new RuntimeException( "Error while writing execution data to the database!", e );
-		}
+		currentExecution = new ExecutionImpl( id, timestamp );
+		return currentExecution;
+		// try
+		// {
+		// if( metaDatabaseManager.executionExist( id ) )
+		// {
+		// throw new IllegalArgumentException(
+		// "Execution with the specified id already exist!" );
+		// }
+		// currentExecution = new ExecutionImpl( id, timestamp );
+		// executionMap.put( id, currentExecution );
+		//
+		// HashMap<String, Object> m = new HashMap<String, Object>();
+		// m.put( MetaDatabaseManager.EXECUTION_COLUMN_NAME, id );
+		// metaDatabaseManager.write( timestamp, m );
+		//
+		// return currentExecution;
+		// }
+		// catch( SQLException e )
+		// {
+		// throw new RuntimeException(
+		// "Error while writing execution data to the database!", e );
+		// }
 	}
 
 	/**
@@ -85,13 +88,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	 * 
 	 * @param e
 	 *           Execution in which metadata table should be created
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	private void createMetaTable( Execution e ) throws SQLException
 	{
 		Connection conn = getConnection( e.getId() );
-		
-		
+
 	}
 
 	public Connection getConnection( String executionId ) throws SQLException
@@ -119,14 +121,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 		{
 			throw new IllegalArgumentException( "Current execution is null!" );
 		}
-		
+
 		// return track if already exist, create new otherwise
-		Track t = currentExecution.getTrack( trackId );
-		if( t != null )
-		{
-			return t;
-		}
-		else
+		Track track = currentExecution.getTrack( trackId );
+		if( track == null )
 		{
 			// create track instance
 			// create corresponding table and metatable
@@ -136,36 +134,32 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 			{
 				throw new IllegalArgumentException( "No descriptor defined for specified trackId!" );
 			}
-			t = new TrackImpl( trackId, currentExecution, td );
+			track = currentExecution.createTrack( trackId, td );
 
-			//create table if necessary
-			
-			
-			
+			if( 1 != 2 ) // Remove this once the code below works.
+				return track;
+
+			// create table if necessary
+
 			String createSql = SQLUtil.createTimestampTableCreateScript( getCreateTableExpression(), trackId,
 					TIMESTAMP_COLUMN_NAME, Integer.class, getPrimaryKeyExpression(), td.getValueNames(),
 					getTypeConversionMap() );
-			
 
 			try
 			{
 				Connection connection = getConnection( currentExecution.getId() );
 				Statement stm = connection.createStatement();
-				ResultSet rs = stm.executeQuery( "select * from " + METATABLE_NAME + " where "  );
-				
-				
+				ResultSet rs = stm.executeQuery( "select * from " + METATABLE_NAME + " where " );
+
 			}
 			catch( SQLException e )
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
-			
 		}
 
-		return null;
+		return track;
 	}
 
 	@Override
