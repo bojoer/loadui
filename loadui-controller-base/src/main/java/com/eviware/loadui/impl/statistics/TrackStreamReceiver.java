@@ -15,14 +15,19 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
+import com.eviware.loadui.util.statistics.store.EntryImpl;
 
 /**
  * Receives Track data from agents and saves it to the current Execution.
@@ -36,9 +41,9 @@ public class TrackStreamReceiver
 	private final ExecutionManager manager;
 	private final MessageEndpoint endpoint;
 
-	public TrackStreamReceiver( ExecutionManager manager, BroadcastMessageEndpoint endpoint )
+	public TrackStreamReceiver( ExecutionManager executionManager, BroadcastMessageEndpoint endpoint )
 	{
-		this.manager = manager;
+		this.manager = executionManager;
 		this.endpoint = endpoint;
 
 		endpoint.addMessageListener( "/" + Statistic.class.getName(), new MessageListener()
@@ -46,7 +51,19 @@ public class TrackStreamReceiver
 			@Override
 			public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 			{
-				log.debug( "Recieved Track data from {}: {}", endpoint, data );
+				log.debug( "Received Track data from {}: {}", endpoint, data );
+				if( endpoint instanceof AgentItem )
+				{
+					AgentItem agent = ( AgentItem )endpoint;
+					@SuppressWarnings( "unchecked" )
+					Map<String, Map<String, Number>> currentData = ( Map<String, Map<String, Number>> )data;
+					for( Entry<String, Map<String, Number>> entry : currentData.entrySet() )
+					{
+						String[] parts = entry.getKey().split( ":", 2 );
+						int time = Integer.parseInt( parts[0] );
+						manager.getTrack( parts[1] ).write( new EntryImpl( time, entry.getValue(), true ), agent.getLabel() );
+					}
+				}
 			}
 		} );
 	}

@@ -52,6 +52,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		this.variable = variable;
 		id = DigestUtils.md5Hex( variable.getStatisticHolder().getId() + variable.getName() + getType() );
 		descriptor = new TrackDescriptorImpl( id, values );
+		delay = manager.getMinimumWriteDelay();
 
 		// TODO
 		manager.getExecutionManager().registerTrackDescriptor( descriptor );
