@@ -25,6 +25,13 @@ import java.util.Collection;
 public interface Execution
 {
 	/**
+	 * Gets the Executions ID.
+	 * 
+	 * @return
+	 */
+	public String getId();
+	
+	/**
 	 * Gets the start time of the test execution, measured as a Unix Timestamp
 	 * given in milliseconds.
 	 * 

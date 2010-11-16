@@ -29,6 +29,14 @@ public class PreparedStatementHolder
 			setArgument( i + 2, data.get( statementHolder.getArgumentNameList().get( i ) ) );
 		}
 	}
+	
+	public void setArguments( Map<String, ? extends Object> data ) throws SQLException
+	{
+		for( int i = 0; i < statementHolder.getArgumentNameList().size(); i++ )
+		{
+			setArgument( i + 1, data.get( statementHolder.getArgumentNameList().get( i ) ) );
+		}
+	}
 
 	private void setArgument( int index, Object value ) throws SQLException
 	{

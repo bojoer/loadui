@@ -1,7 +1,9 @@
 package com.eviware.loadui.impl.statistics.store;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +15,7 @@ import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.impl.statistics.store.util.MetaDatabaseManager;
+import com.eviware.loadui.impl.statistics.store.util.SQLUtil;
 
 public abstract class ExecutionManagerImpl implements ExecutionManager
 {
@@ -30,9 +33,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	 * connection pool, some may not. Map key is the id of the execution
 	 * instance, and value is data source used to establish connection.
 	 */
-	private HashMap<String, DataSource> dataSourceMap;
-
-	private MetaDatabaseManager metabase;
+	private Map<String, DataSource> dataSourceMap;
+	
+	private MetaDatabaseManager metaDatabaseManager;
 
 	private Execution currentExecution;
 
@@ -48,7 +51,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	public ExecutionManagerImpl()
 	{
 		instance = this;
-		metabase = new MetaDatabaseManager( createDataSource( METADATABASE_NAME ), getCreateTableExpression(),
+		metaDatabaseManager = new MetaDatabaseManager( createDataSource( METADATABASE_NAME ), getCreateTableExpression(),
 				getPrimaryKeyExpression(), getTypeConversionMap() );
 	}
 
@@ -57,7 +60,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	{
 		try
 		{
-			if( metabase.executionExist( id ) )
+			if( metaDatabaseManager.executionExist( id ) )
 			{
 				throw new IllegalArgumentException( "Execution with the specified id already exist!" );
 			}
@@ -67,13 +70,28 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 
 			HashMap<String, Object> m = new HashMap<String, Object>();
 			m.put( MetaDatabaseManager.EXECUTION_COLUMN_NAME, id );
-			metabase.write( timestamp, m );
+			metaDatabaseManager.write( timestamp, m );
+
 			return execution;
 		}
 		catch( SQLException e )
 		{
 			throw new RuntimeException( "Error while writing execution data to the database!", e );
 		}
+	}
+
+	/**
+	 * Creates metadata table for the given execution if it does not exist.
+	 * 
+	 * @param e
+	 *           Execution in which metadata table should be created
+	 * @throws SQLException 
+	 */
+	private void createMetaTable( Execution e ) throws SQLException
+	{
+		Connection conn = getConnection( e.getId() );
+		
+		
 	}
 
 	public Connection getConnection( String executionId ) throws SQLException
@@ -96,6 +114,57 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	{
 		// TODO create track in current execution, create table and meta table and
 		// construct track instance
+
+		if( currentExecution == null )
+		{
+			throw new IllegalArgumentException( "Current execution is null!" );
+		}
+		
+		// return track if already exist, create new otherwise
+		Track t = currentExecution.getTrack( trackId );
+		if( t != null )
+		{
+			return t;
+		}
+		else
+		{
+			// create track instance
+			// create corresponding table and metatable
+
+			TrackDescriptor td = trackDescriptors.get( trackId );
+			if( td == null )
+			{
+				throw new IllegalArgumentException( "No descriptor defined for specified trackId!" );
+			}
+			t = new TrackImpl( trackId, currentExecution, td );
+
+			//create table if necessary
+			
+			
+			
+			String createSql = SQLUtil.createTimestampTableCreateScript( getCreateTableExpression(), trackId,
+					TIMESTAMP_COLUMN_NAME, Integer.class, getPrimaryKeyExpression(), td.getValueNames(),
+					getTypeConversionMap() );
+			
+
+			try
+			{
+				Connection connection = getConnection( currentExecution.getId() );
+				Statement stm = connection.createStatement();
+				ResultSet rs = stm.executeQuery( "select * from " + METATABLE_NAME + " where "  );
+				
+				
+			}
+			catch( SQLException e )
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			
+		}
+
 		return null;
 	}
 
@@ -104,7 +173,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	{
 		try
 		{
-			return metabase.readExecutionNames();
+			return metaDatabaseManager.readExecutionNames();
 		}
 		catch( SQLException e )
 		{
@@ -123,7 +192,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 		{
 			try
 			{
-				Object[] o = metabase.readExecution( executionId, MetaDatabaseManager.TIMESTAMP_COLUMN_NAME,
+				Object[] o = metaDatabaseManager.readExecution( executionId, MetaDatabaseManager.TIMESTAMP_COLUMN_NAME,
 						MetaDatabaseManager.EXECUTION_COLUMN_NAME );
 				if( o == null )
 				{
@@ -157,11 +226,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	{
 		try
 		{
-			metabase.clear();
+			metaDatabaseManager.clear();
 		}
 		catch( SQLException e )
 		{
-			// Do nothing. this is temporary methid anyway
+			// Do nothing. this is temporary method anyway
 		}
 	}
 
