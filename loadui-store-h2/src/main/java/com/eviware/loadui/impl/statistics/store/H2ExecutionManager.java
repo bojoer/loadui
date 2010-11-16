@@ -32,7 +32,7 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	protected DataSource createDataSource( String db )
 	{
 		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:~/______data/" + db, "sa", "sa" );
-		cp.setMaxConnections( 1 );
+		cp.setMaxConnections( 5 );
 		return cp;
 	}
 

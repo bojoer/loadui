@@ -56,7 +56,7 @@ public class MetaDatabaseManager
 				// table already exist, do nothing
 			}
 
-			InsertStatementHolder inh = SQLUtil.createDataTableInsertScript( METATABLE_NAME, TIMESTAMP_COLUMN_NAME, m );
+			InsertStatementHolder inh = SQLUtil.createDataTableInsertScript( METATABLE_NAME, TIMESTAMP_COLUMN_NAME, m.keySet() );
 			PreparedStatement writerPstm = connection.prepareStatement( inh.getStatementSql() );
 			writeStatement = new PreparedStatementHolder( writerPstm, inh );
 			readAllStatement = connection.prepareStatement( "select * from " + METATABLE_NAME );
