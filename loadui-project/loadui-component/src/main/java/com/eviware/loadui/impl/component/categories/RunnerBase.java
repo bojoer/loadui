@@ -50,6 +50,7 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.summary.SampleStats;
 import com.eviware.loadui.api.summary.SampleStatsImpl;
 import com.eviware.loadui.api.terminal.InputTerminal;
@@ -110,6 +111,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final Map<String, String> remoteValues = new HashMap<String, String>();
 	private final OutputTerminal controllerTerminal;
 
+	private final StatisticsWriter timeTakenAverage;
+	private final StatisticsWriter responseSizeAverage;
+
 	/**
 	 * Constructs an RunnerBase.
 	 * 
@@ -126,9 +130,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		scheduler = BeanInjector.getBean( ScheduledExecutorService.class );
 
 		StatisticVariable variable = context.addStatisticVariable( "TimeTaken" );
-		context.addStatisticsWriter( "AVERAGE", variable );
+		timeTakenAverage = context.addStatisticsWriter( "AVERAGE", variable );
 		variable = context.addStatisticVariable( "ResponseSize" );
-		context.addStatisticsWriter( "AVERAGE", variable );
+		responseSizeAverage = context.addStatisticsWriter( "AVERAGE", variable );
 
 		triggerTerminal = context.createInput( TRIGGER_TERMINAL, "Trigger Input" );
 
@@ -242,6 +246,10 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 		if( cRunning == 0 )
 			getContext().setBusy( false );
+
+		// Update StatisticsWriters
+		timeTakenAverage.update( startTime, timeTaken );
+		responseSizeAverage.update( startTime, size );
 	}
 
 	private synchronized void addTopBottomSample( long time, long timeTaken, long size )

@@ -19,19 +19,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
-import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 
 public abstract class AbstractStatisticsWriter implements StatisticsWriter
 {
+	public final static Logger log = LoggerFactory.getLogger( AbstractStatisticsWriter.class );
+
 	private final StatisticsManager manager;
 	private final StatisticVariable variable;
 	private final String id;
@@ -104,12 +109,12 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	 */
 	protected class EntryBuilder
 	{
-		private final int time;
+		private final long timestamp;
 		private final Map<String, Number> values = new HashMap<String, Number>();
 
 		public EntryBuilder( long timestamp )
 		{
-			time = ( int )( timestamp - manager.getExecutionManager().getCurrentExecution().getStartTime() );
+			this.timestamp = timestamp;
 		}
 
 		public <T extends Number> EntryBuilder put( String name, T value )
@@ -120,7 +125,13 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 
 		public void write()
 		{
-			manager.getExecutionManager().getTrack( getId() ).write( new EntryImpl( time, values, true ), "local" );
+			ExecutionManager executionManager = manager.getExecutionManager();
+			Execution currentExecution = executionManager.getCurrentExecution();
+			if( currentExecution != null )
+			{
+				int time = ( int )( timestamp - currentExecution.getStartTime() );
+				executionManager.getTrack( getId() ).write( new EntryImpl( time, values, true ), "local" );
+			}
 		}
 	}
 

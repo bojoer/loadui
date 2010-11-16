@@ -36,7 +36,7 @@ public class AverageStatisticWriterTest
 	StatisticHolderSupport holderSupport;
 	AverageStatisticWriter writer;
 	StatisticsManager manager;
-	double[] data = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	long[] data = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
 	@Before
 	public void setUp() throws Exception

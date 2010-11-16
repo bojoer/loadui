@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 
 public class ExecutionImpl implements Execution
 {
@@ -13,9 +14,9 @@ public class ExecutionImpl implements Execution
 	private String id;
 
 	private long startTime;
-	
+
 	private Map<String, Track> trackMap;
-	
+
 	public ExecutionImpl( String id, long timestamp )
 	{
 		this.id = id;
@@ -28,7 +29,7 @@ public class ExecutionImpl implements Execution
 	{
 		return id;
 	}
-	
+
 	@Override
 	public long getStartTime()
 	{
@@ -54,6 +55,10 @@ public class ExecutionImpl implements Execution
 
 	}
 
-
-
+	public Track createTrack( String trackId, TrackDescriptor td )
+	{
+		TrackImpl track = new TrackImpl( trackId, this, td );
+		trackMap.put( trackId, track );
+		return track;
+	}
 }

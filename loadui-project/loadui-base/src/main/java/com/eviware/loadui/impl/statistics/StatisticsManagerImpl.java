@@ -113,6 +113,8 @@ public class StatisticsManagerImpl implements StatisticsManager
 	@Override
 	public ExecutionManager getExecutionManager()
 	{
+		if( executionManager.getCurrentExecution() == null )
+			executionManager.startExecution( "testExecution", System.currentTimeMillis() );
 		return executionManager;
 	}
 
