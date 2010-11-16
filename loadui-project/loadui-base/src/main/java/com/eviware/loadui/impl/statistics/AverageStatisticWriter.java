@@ -117,7 +117,6 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	@Override
 	public void flush()
 	{
-		log.debug( "Flush called!" );
 		// calculate percentile here since it is expensive operation.
 		double[] pValues = new double[values.size()];
 		for( int cnt = 0; cnt < values.size(); cnt++ )

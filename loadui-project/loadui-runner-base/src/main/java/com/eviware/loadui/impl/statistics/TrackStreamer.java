@@ -103,10 +103,12 @@ public class TrackStreamer
 					lastSent = currentData;
 				}
 
-				// TODO: Send currentData
-				log.debug( "Sending Track data: {}", currentData );
-				for( MessageEndpoint endpoint : endpoints )
-					endpoint.sendMessage( CHANNEL, currentData );
+				if( !currentData.isEmpty() )
+				{
+					log.debug( "Sending Track data: {}", currentData );
+					for( MessageEndpoint endpoint : endpoints )
+						endpoint.sendMessage( CHANNEL, currentData );
+				}
 			}
 		}
 	}

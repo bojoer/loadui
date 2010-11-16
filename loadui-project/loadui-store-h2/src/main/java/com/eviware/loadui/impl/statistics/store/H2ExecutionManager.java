@@ -1,5 +1,6 @@
 package com.eviware.loadui.impl.statistics.store;
 
+import java.io.File;
 import java.util.HashMap;
 
 import javax.sql.DataSource;
@@ -8,6 +9,8 @@ import org.h2.jdbcx.JdbcConnectionPool;
 
 public class H2ExecutionManager extends ExecutionManagerImpl
 {
+	public static final String DB_BASEDIR = new File( System.getProperty( "loadui.home" ), "controller".equals( System
+			.getProperty( "loadui.instance" ) ) ? "data_c" : "data_a" ).toURI().toString() + "/";
 
 	public static final String SQL_CREATE_TABLE_EXPRESSION = "CREATE TABLE";
 	public static final String SQL_PRIMARY_KEY_EXPRESSION = "PRIMARY KEY";
@@ -31,7 +34,7 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	@Override
 	protected DataSource createDataSource( String db )
 	{
-		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:~/______data/" + db, "sa", "sa" );
+		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" + DB_BASEDIR + db, "sa", "sa" );
 		cp.setMaxConnections( 5 );
 		return cp;
 	}
