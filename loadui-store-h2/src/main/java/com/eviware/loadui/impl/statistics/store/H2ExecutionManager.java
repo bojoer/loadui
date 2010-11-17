@@ -57,4 +57,12 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 		return typeConversionMap;
 	}
 
+	/**
+	 * Called before stopping the application. Closes any open connections to
+	 * databases.
+	 */
+	public void release()
+	{
+		// TODO: Release everything.
+	}
 }
