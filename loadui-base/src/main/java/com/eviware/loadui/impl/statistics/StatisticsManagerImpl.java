@@ -23,13 +23,23 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
+import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.util.events.EventSupport;
 
@@ -42,6 +52,8 @@ import com.eviware.loadui.util.events.EventSupport;
  */
 public class StatisticsManagerImpl implements StatisticsManager
 {
+	public static final Logger log = LoggerFactory.getLogger( StatisticsManagerImpl.class );
+
 	private static StatisticsManagerImpl instance;
 
 	private final ExecutionManager executionManager;
@@ -49,15 +61,31 @@ public class StatisticsManagerImpl implements StatisticsManager
 	private Set<StatisticHolder> holders = new HashSet<StatisticHolder>();
 	private Map<String, StatisticsWriterFactory> factories = new HashMap<String, StatisticsWriterFactory>();
 
+	private final CollectionListener collectionListener = new CollectionListener();
+	private final RunningListener runningListener = new RunningListener();
+
 	static StatisticsManagerImpl getInstance()
 	{
 		return instance;
 	}
 
-	public StatisticsManagerImpl( ExecutionManager executionManager )
+	public StatisticsManagerImpl( ExecutionManager executionManager, final WorkspaceProvider workspaceProvider )
 	{
 		instance = this;
 		this.executionManager = executionManager;
+
+		workspaceProvider.addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
+		{
+			@Override
+			public void handleEvent( BaseEvent event )
+			{
+				if( WorkspaceProvider.WORKSPACE_LOADED.equals( event.getKey() ) )
+					workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
+			}
+		} );
+
+		if( workspaceProvider.isWorkspaceLoaded() )
+			workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
 
 		String testExecution = "testExecution" + System.currentTimeMillis();
 		executionManager.startExecution( testExecution, System.currentTimeMillis() );
@@ -136,5 +164,38 @@ public class StatisticsManagerImpl implements StatisticsManager
 			return factory.createStatisticsWriter( this, variable );
 
 		return null;
+	}
+
+	private class CollectionListener implements EventHandler<CollectionEvent>
+	{
+		@Override
+		public void handleEvent( CollectionEvent event )
+		{
+			if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
+			{
+				if( WorkspaceItem.PROJECTS.equals( event.getKey() ) )
+					( ( ProjectItem )event.getElement() ).addEventListener( ActionEvent.class, runningListener );
+			}
+		}
+	}
+
+	private class RunningListener implements EventHandler<ActionEvent>
+	{
+		private boolean hasCurrent = false;
+
+		@Override
+		public void handleEvent( ActionEvent event )
+		{
+			if( !hasCurrent && CanvasItem.START_ACTION.equals( event.getKey() ) )
+			{
+				hasCurrent = true;
+				long timestamp = System.currentTimeMillis();
+				executionManager.startExecution( "execution_" + timestamp, timestamp );
+			}
+			else if( hasCurrent && CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
+			{
+				hasCurrent = false;
+			}
+		}
 	}
 }

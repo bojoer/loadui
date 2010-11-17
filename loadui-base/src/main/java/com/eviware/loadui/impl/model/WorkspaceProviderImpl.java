@@ -17,18 +17,23 @@ package com.eviware.loadui.impl.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.EventObject;
 
 import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
+import com.eviware.loadui.util.events.EventSupport;
 
 public class WorkspaceProviderImpl implements WorkspaceProvider
 {
 	public static final Logger log = LoggerFactory.getLogger( WorkspaceProviderImpl.class );
 
+	private final EventSupport eventSupport = new EventSupport();
 	private WorkspaceItem workspace;
 
 	@Override
@@ -38,6 +43,8 @@ public class WorkspaceProviderImpl implements WorkspaceProvider
 		{
 			log.info( "Loading workspace from file: {}", workspaceFile );
 			workspace = WorkspaceItemImpl.loadWorkspace( workspaceFile );
+			fireEvent( new BaseEvent( this, WORKSPACE_LOADED ) );
+
 			return workspace;
 		}
 		catch( XmlException e )
@@ -66,5 +73,29 @@ public class WorkspaceProviderImpl implements WorkspaceProvider
 	public WorkspaceItem loadDefaultWorkspace()
 	{
 		return loadWorkspace( new File( System.getProperty( "loadui.home" ), "workspace.xml" ) );
+	}
+
+	@Override
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.addEventListener( type, listener );
+	}
+
+	@Override
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.removeEventListener( type, listener );
+	}
+
+	@Override
+	public void clearEventListeners()
+	{
+		eventSupport.clearEventListeners();
+	}
+
+	@Override
+	public void fireEvent( EventObject event )
+	{
+		eventSupport.fireEvent( event );
 	}
 }
