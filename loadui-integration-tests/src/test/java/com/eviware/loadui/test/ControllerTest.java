@@ -57,8 +57,8 @@ public class ControllerTest
 		Bundle[] bundles = controller.getBundleContext().getBundles();
 		// assertThat( bundles.length, greaterThanOrEqualTo( 43 ) );
 		for( Bundle bundle : bundles )
-			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(), anyOf(
-					is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );
+			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(),
+					anyOf( is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );
 	}
 
 	@Test
