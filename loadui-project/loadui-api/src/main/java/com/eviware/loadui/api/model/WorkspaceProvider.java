@@ -17,14 +17,22 @@ package com.eviware.loadui.api.model;
 
 import java.io.File;
 
+import com.eviware.loadui.api.events.EventFirer;
+
 /**
  * Loads a WorkspaceItem from a File, and provides a reference to the loaded
  * workspace.
  * 
  * @author dain.nilsson
  */
-public interface WorkspaceProvider
+public interface WorkspaceProvider extends EventFirer
 {
+	/**
+	 * Event fired when a Workspace is loaded. The newly loaded Workspace can be
+	 * retrieved using getWorkspace();
+	 */
+	public static final String WORKSPACE_LOADED = WorkspaceProvider.class.getName() + "@workspaceLoaded";
+
 	/**
 	 * Loads a stored workspace from file.
 	 * 

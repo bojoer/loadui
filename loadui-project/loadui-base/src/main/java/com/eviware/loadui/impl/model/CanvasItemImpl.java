@@ -343,6 +343,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		return connection;
 	}
 
+	@Override
 	public boolean isRunning()
 	{
 		return running;
