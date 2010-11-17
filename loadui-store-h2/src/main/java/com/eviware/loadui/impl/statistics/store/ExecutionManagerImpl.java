@@ -58,32 +58,25 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	@Override
 	public Execution startExecution( String id, long timestamp )
 	{
-		// TODO Replace the following 2 lines with the commented out block of code
-		// below (when it works).
-		currentExecution = new ExecutionImpl( id, timestamp );
-		return currentExecution;
+		try
+		{
+			if( metaDatabaseManager.executionExist( id ) )
+			{
+				throw new IllegalArgumentException( "Execution with the specified id: '" + id + "' already exist!" );
+			}
+			currentExecution = new ExecutionImpl( id, timestamp );
+			executionMap.put( id, currentExecution );
 
-		// try
-		// {
-		// if( metaDatabaseManager.executionExist( id ) )
-		// {
-		// throw new IllegalArgumentException(
-		// "Execution with the specified id already exist!" );
-		// }
-		// currentExecution = new ExecutionImpl( id, timestamp );
-		// executionMap.put( id, currentExecution );
-		//
-		// HashMap<String, Object> m = new HashMap<String, Object>();
-		// m.put( MetaDatabaseManager.EXECUTION_COLUMN_NAME, id );
-		// metaDatabaseManager.write( timestamp, m );
-		//
-		// return currentExecution;
-		// }
-		// catch( SQLException e )
-		// {
-		// throw new RuntimeException(
-		// "Error while writing execution data to the database!", e );
-		// }
+			HashMap<String, Object> m = new HashMap<String, Object>();
+			m.put( MetaDatabaseManager.EXECUTION_COLUMN_NAME, id );
+			metaDatabaseManager.write( timestamp, m );
+
+			return currentExecution;
+		}
+		catch( SQLException e )
+		{
+			throw new RuntimeException( "Error while writing execution data to the database!", e );
+		}
 
 	}
 
