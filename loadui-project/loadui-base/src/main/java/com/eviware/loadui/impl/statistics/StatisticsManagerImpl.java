@@ -58,6 +58,9 @@ public class StatisticsManagerImpl implements StatisticsManager
 	{
 		instance = this;
 		this.executionManager = executionManager;
+
+		String testExecution = "testExecution" + System.currentTimeMillis();
+		executionManager.startExecution( testExecution, System.currentTimeMillis() );
 	}
 
 	@Override
@@ -113,8 +116,6 @@ public class StatisticsManagerImpl implements StatisticsManager
 	@Override
 	public ExecutionManager getExecutionManager()
 	{
-		if( executionManager.getCurrentExecution() == null )
-			executionManager.startExecution( "testExecution", System.currentTimeMillis() );
 		return executionManager;
 	}
 
