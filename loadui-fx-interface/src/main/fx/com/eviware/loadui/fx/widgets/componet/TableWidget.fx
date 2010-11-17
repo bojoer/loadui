@@ -53,6 +53,7 @@ import com.eviware.loadui.fx.MainWindow;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import java.io.File;
@@ -64,7 +65,7 @@ import java.io.File;
 public class TableWidget extends VBox, EventHandler, TableModelListener {
 	
 	var table:LTable;
-	var saveFile:FileInputField = FileInputField{};
+	var saveFile:FileInputField;
 	public var model: LTableModel;
 	
 	var cb:CheckBox;
@@ -78,7 +79,6 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 	
 	init {
 	    model.addTableModelListener(this);
-	    
 		table = new LTable(model); 
 		table.setAutoCreateColumnsFromModel(true);
 		table.setVisibleRowCount(5);
@@ -123,10 +123,12 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 						action: function() {
 							def dialog:Dialog = Dialog {
 							            title: "Save Table!"
-							            content: [
-							                Label { text: 'Choose where to save table log:'},
-							            	saveFile
-							            ]
+							            content: Form {
+								            formContent: [
+								                LabelField { value: 'Choose where to save table log:'},
+								            	saveFile = FileInputField{id: "saveLog", description: "Save TableLog"}
+								            ]
+							            }
 							            okText: "Yes"
 							            cancelText: "Cancel"
 							            onOk: function() {
