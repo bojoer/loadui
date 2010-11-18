@@ -81,13 +81,12 @@ import com.eviware.loadui.fx.stats.StatisticsMonitorPanel;
 
 public class ProjectMenu extends HBox {
 	def listener = new SummaryListener();
-	var mon;
+	var mon:StatisticsMonitorPanel;
 	
 	public var project: ProjectItem on replace oldProject = newProject {
 		//workspaceLabel = project.getWorkspace().getLabel();
 		projectLabel = project.getLabel();
 		summaryEnabled = false;
-		mon = new StatisticsMonitorPanel(newProject);
 		if( oldProject != null )
 			oldProject.removeEventListener( BaseEvent.class, listener );
 		if( newProject != null )
@@ -320,6 +319,7 @@ public class ProjectMenu extends HBox {
 								shape: "M0,0 L0,12 10,12, 10,0 0,0 M4,13 L4,16 14,16 14,4 11,4 11,13 4,13"
 								tooltip: Tooltip { text: ##[STAT_MONITOR]"Statistics Monitor" }
 								action: function():Void { 
+									mon = new StatisticsMonitorPanel(project);
 									mon.pack();
 									mon.setVisible(true);
 								 }

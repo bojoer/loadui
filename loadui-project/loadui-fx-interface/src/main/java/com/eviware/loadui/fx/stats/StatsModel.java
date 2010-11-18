@@ -8,7 +8,7 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.ui.table.LTableModel;
 import com.eviware.loadui.util.ScheduledExecutor;
 
-/*
+/**
  * This is model for showing collected data in table
  */
 public class StatsModel extends LTableModel

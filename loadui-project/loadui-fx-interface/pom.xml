@@ -49,7 +49,7 @@
 						<Bundle-Activator>com.eviware.loadui.fx.JavaFXActivator</Bundle-Activator>
 						<Private-Package>com.eviware.loadui.fx*</Private-Package>
 						<Embed-Dependency>*;scope=provided</Embed-Dependency>
-						<Import-Package>!org.apache.batik.*;!com.sun.javaws.jnl;!com.sun.image.codec.*;!javax.jnlp;!com.sun.deploy.*;!org.jdesktop*;!org.jvnet*;!org.eclipse.swt*;!apple.laf.*;!com.sun.java.swing.plaf.*;!com.sun.org.apache.*;!org.apache.xml.*;!sun.*;*</Import-Package>
+						<Import-Package>!com.eviware.loadui.impl.statistics.store;!org.apache.batik.*;!com.sun.javaws.jnl;!com.sun.image.codec.*;!javax.jnlp;!com.sun.deploy.*;!org.jdesktop*;!org.jvnet*;!org.eclipse.swt*;!apple.laf.*;!com.sun.java.swing.plaf.*;!com.sun.org.apache.*;!org.apache.xml.*;!sun.*;*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -126,6 +126,11 @@
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-api</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-store-h2</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

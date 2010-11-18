@@ -1,15 +1,16 @@
 package com.eviware.loadui.fx.stats;
 
 import java.awt.Color;
+import java.util.Map;
+import java.util.Random;
+import java.util.TreeMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.fx.stats.StatisticsModel.Statistics;
+import com.eviware.loadui.fx.stats.StatisticsModel.StatisticsInner;
 import com.eviware.loadui.util.ScheduledExecutor;
 import com.jidesoft.chart.Chart;
-import com.jidesoft.chart.annotation.AutoPositionedLabel;
+import com.jidesoft.chart.axis.Axis;
 import com.jidesoft.chart.axis.NumericAxis;
 import com.jidesoft.chart.axis.TimeAxis;
 import com.jidesoft.chart.model.DefaultChartModel;
@@ -22,12 +23,14 @@ import com.jidesoft.range.TimeRange;
  */
 public class StatsChart extends Chart
 {
+	static Random random = new Random();
 	private UpdateTask updateTask = new UpdateTask();
-	private TimeAxis timeAxis = new TimeAxis( new AutoPositionedLabel( "X" ) );
-	private NumericAxis numericAxis = new NumericAxis( new AutoPositionedLabel( "Y" ) );
+	private TimeAxis timeAxis = new TimeAxis();
+	private Map<String, NumericRange> ranges = new TreeMap<String, NumericRange>();
 
 	private ScheduledFuture<?> future;
 	private StatisticsModel model;
+	private TimeRange timerange;
 
 	public StatsChart( StatisticsModel model )
 	{
@@ -35,28 +38,34 @@ public class StatsChart extends Chart
 		this.model = model;
 
 		future = ScheduledExecutor.instance.scheduleAtFixedRate( updateTask, 1000, 1000, TimeUnit.MILLISECONDS );
-
+		if ( future != null ) {
+			System.out.println("Started ");
+		}
 		initStatsFromModel();
 
 	}
 
 	private void initStatsFromModel()
 	{
-		for( Statistics stat : model.getStatistics() )
+		for( StatisticsInner stat : model.getStatistics() )
 		{
-			addChartModel( stat.getName(), stat.getChartStyle() );
+			NumericRange numRange = new NumericRange();
+			NumericAxis numericAxis = new NumericAxis();
+			numRange.setMin( 0 );
+			numRange.setMax( 1000 );
+			ranges.put( stat.getName(), numRange );
+			numericAxis.setRange( numRange );
+			numericAxis.setVisible( false );
+			addChartModel( stat.getName(), numericAxis );
 		}
 
-		TimeRange range = new TimeRange();
-		range.setMin( System.currentTimeMillis() - 60000 );
-		range.setMax( System.currentTimeMillis() );
-		timeAxis.setRange( range );
+		getYAxis().setVisible( false );
+		timerange = new TimeRange();
+		timerange.setMin( System.currentTimeMillis() - 60000 );
+		timerange.setMax( System.currentTimeMillis() );
+		timeAxis.setRange( timerange );
+		timeAxis.setVisible( false );
 		setXAxis( timeAxis );
-		NumericRange numRange = new NumericRange();
-		numRange.setMin( 0 );
-		numRange.setMax( 100 );
-		numericAxis.setRange( numRange );
-		setYAxis( numericAxis );
 	}
 
 	private class UpdateTask implements Runnable
@@ -77,40 +86,50 @@ public class StatsChart extends Chart
 		 * 3. check if point is in range, than
 		 * increase range
 		 */
-
-		for( Statistics stat : model.getStatistics() )
+		for( StatisticsInner stat : model.getStatistics() )
 		{
+			try {
 			DefaultChartModel model = ( DefaultChartModel )getModel( stat.getName() );
-			model.addPoint( System.currentTimeMillis(), stat.getValue( System.currentTimeMillis() ) );
-			if( getYAxis().getRange().maximum() <= model.getYRange().maximum() )
+			if( model == null ) 
+				System.out.println( "model is null for " + stat.getName() );
+//			System.out.println( "updating "+ stat.getName() + " --- "+ stat.getValue().longValue()  );
+			if (stat.getValue()== null)
+				continue;
+			long val = stat.getValue().longValue();
+			model.addPoint( System.currentTimeMillis(), val, false );
+			if( val >= model.getYRange().maximum() )
 			{
-				NumericRange numRange = new NumericRange();
-				numRange.setMin( 0 );
-				numRange.setMax( 10 * model.getYRange().maximum() );
-				numericAxis.setRange( numRange );
-				setYAxis( numericAxis );
+				ranges.get( stat.getName() ).setMax( 1.5 * model.getYRange().maximum() );
+			}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 
-		TimeRange range = new TimeRange();
-		range.setMin( System.currentTimeMillis() - 60000 );
-		range.setMax( System.currentTimeMillis() );
-		timeAxis.setRange( range );
+		timerange.setMin( System.currentTimeMillis() - 30000 );
+		timerange.setMax( System.currentTimeMillis() + 30000 );
 	}
 
-	public DefaultChartModel addChartModel( String name, ChartStyle style )
+	public DefaultChartModel addChartModel( String name, Axis axis )
 	{
 		if( getModel( name ) != null )
 		{
-			return null;
+			return ( DefaultChartModel )getModel(name);
 		}
 		else
 		{
 			DefaultChartModel newChartModel = new DefaultChartModel( name );
-
-			addModel( newChartModel, style );
+			addYAxis( axis );
+			addModel( newChartModel, new ChartStyle( Color.getHSBColor( random.nextFloat(), 1.0F, 1.0F ), false, true ) );
+			setModelAxis( newChartModel, axis );
+			
 			return newChartModel;
 		}
+	}
+
+	public void release()
+	{
+		future.cancel( true );
 	}
 
 }
