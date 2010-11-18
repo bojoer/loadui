@@ -1,25 +1,30 @@
 package com.eviware.loadui.fx.stats;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
-import com.eviware.loadui.api.counter.CounterHolder;
+import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.statistics.Statistic;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.jidesoft.chart.style.ChartStyle;
 
 public class StatisticsModel
 {
+	static Random random = new Random();
+	private ProjectItem item;
+	private HashMap<String, StatisticsInner> stats = new HashMap<String, StatisticsInner>();
 
-	private CounterHolder item;
-	private HashMap<String, Statistics> stats = new HashMap<String, Statistics>();
-
-	public StatisticsModel( CounterHolder project )
+	public StatisticsModel( ProjectItem project )
 	{
 		this.item = project;
 	}
 
-	public ArrayList<Statistics> getStatistics()
+	public ArrayList<StatisticsInner> getStatistics()
 	{
-		return new ArrayList<Statistics>(stats.values());
+		return new ArrayList<StatisticsInner>( stats.values() );
 	}
 
 	/**
@@ -29,17 +34,16 @@ public class StatisticsModel
 	 * Statistics holder
 	 * Keeps counter name, chart style.
 	 */
-	public class Statistics {
+	public class StatisticsInner
+	{
 
-		private String counterName;
+		private Statistic statistic;
 		private String name;
-		private ChartStyle style;
 
-		public Statistics( String name, String counterName, ChartStyle chartStyle )
+		public StatisticsInner( String name, Statistic stat )
 		{
 			this.name = name;
-			this.counterName = counterName;
-			this.style = chartStyle;
+			this.statistic = stat;
 		}
 
 		public String getName()
@@ -47,20 +51,33 @@ public class StatisticsModel
 			return name;
 		}
 
-		public ChartStyle getChartStyle()
+		public Number getValue() 
 		{
-			return style;
+			return ( Number )statistic.getValue();
 		}
 
-		public long getValue( long currentTimeMillis )
-		{
-			return item.getCounter( counterName ).get();
-		}
-		
 	}
 
-	public void addStatistics( String name, String counterName, ChartStyle chartStyle )
+	public void addChartsForStats( String name, ChartStyle chartStyle )
 	{
-		stats.put( name, new Statistics(name, counterName, chartStyle));
+		
+		if( item == null )
+			return;
+		for( ComponentItem comp : item.getComponents() ) {
+//			System.out.println("stat names " + comp.getStatisticVariableNames());
+//			for( String sname: comp.getStatisticVariableNames())
+//			{
+				StatisticVariable sv = comp.getStatisticVariable( name );
+				//skip components without stats
+				if( sv == null )
+					continue;
+//				for( String stat : sv.getStatisticNames() ) {
+					stats.put( name+comp.getLabel()+"AVG", new StatisticsInner( name+comp.getLabel()+"AVG", sv.getStatistic( "AVERAGE", "local" ) ) );
+					stats.put( name+comp.getLabel()+"STD_DEV", new StatisticsInner( name+comp.getLabel()+"STD_DEV", sv.getStatistic( "STD_DEV", "local" ) ) );
+					stats.put( name+comp.getLabel()+"PERCENTILE", new StatisticsInner( name+comp.getLabel()+"PERCENTILE", sv.getStatistic( "PERCENTILE", "local" ) ) );
+//				}
+					
+//			}
+		}
 	}
 }

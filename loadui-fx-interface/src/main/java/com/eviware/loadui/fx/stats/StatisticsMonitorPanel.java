@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -23,11 +26,29 @@ public class StatisticsMonitorPanel extends JFrame
 		this.setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );
 		this.setPreferredSize( new Dimension( 400, 300 ) );
 		container = this.getContentPane();
-		StatisticsModel statModel = new StatisticsModel( project );
-		statModel.addStatistics( "assertion", ProjectItem.ASSERTION_COUNTER, new ChartStyle( Color.blue, false, true ) );
-		statModel.addStatistics( "failures", ProjectItem.FAILURE_COUNTER, new ChartStyle( Color.red, false, true ) );
-		model = new StatsChart( statModel );
-		init();
+		if( project == null )
+			System.out.println( "project is null" );
+		else
+		{
+			StatisticsModel statModel = new StatisticsModel( project );
+			statModel.addChartsForStats( "ResponseSize", new ChartStyle( Color.blue, false, true ) );
+			statModel.addChartsForStats( "TimeTaken", new ChartStyle( Color.red, false, true ) );
+			model = new StatsChart( statModel );
+			init();
+		}
+		
+		addWindowListener( new WindowAdapter()
+		{
+			
+			@Override
+			public void windowClosed( WindowEvent arg0 )
+			{
+				if (WindowEvent.WINDOW_CLOSING == arg0.getNewState()) {
+					model.release();
+				}
+				
+			}
+		});
 	}
 
 	private void init()
