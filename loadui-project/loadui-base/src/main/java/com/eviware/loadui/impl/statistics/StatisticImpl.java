@@ -55,7 +55,8 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	@SuppressWarnings( "unchecked" )
 	public T getValue()
 	{
-		return ( T )manager.getTrack( trackId ).getLastEntry( source ).getValue( name );
+		Entry lastEntry = manager.getTrack( trackId ).getLastEntry( source );
+		return lastEntry == null ? null : ( T )lastEntry.getValue( name );
 	}
 
 	@Override
