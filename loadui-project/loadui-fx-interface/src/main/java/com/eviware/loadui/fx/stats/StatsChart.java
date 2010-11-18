@@ -8,6 +8,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import com.eviware.loadui.fx.stats.StatisticsModel.StatisticsInner;
+import com.eviware.loadui.impl.statistics.store.ExecutionManagerImpl;
+import com.eviware.loadui.impl.statistics.store.H2ExecutionManager;
 import com.eviware.loadui.util.ScheduledExecutor;
 import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.axis.Axis;
@@ -86,13 +88,22 @@ public class StatsChart extends Chart
 		 * 3. check if point is in range, than
 		 * increase range
 		 */
+		//This is not working. Something works worng in getCurrentExecution
+//		System.out.println( "Updating chart" );
+//		if (ExecutionManagerImpl.getInstance().getCurrentExecution() == null ) {
+//			System.out.println( "No current execution" );
+//			return;
+//		} else {
+//			System.out.println( "there is execution" );
+//		}
 		for( StatisticsInner stat : model.getStatistics() )
 		{
 			try {
 			DefaultChartModel model = ( DefaultChartModel )getModel( stat.getName() );
-			if( model == null ) 
+			if( model == null ) {
 				System.out.println( "model is null for " + stat.getName() );
-//			System.out.println( "updating "+ stat.getName() + " --- "+ stat.getValue().longValue()  );
+				continue;
+			}
 			if (stat.getValue()== null)
 				continue;
 			long val = stat.getValue().longValue();
