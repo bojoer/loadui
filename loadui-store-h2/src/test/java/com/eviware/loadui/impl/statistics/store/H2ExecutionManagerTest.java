@@ -5,11 +5,16 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.util.statistics.store.EntryImpl;
+import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 
 public class H2ExecutionManagerTest
 {
@@ -17,8 +22,8 @@ public class H2ExecutionManagerTest
 	@Before
 	public void initialize()
 	{
-		new H2ExecutionManager();
-		( ( ExecutionManagerImpl )ExecutionManagerImpl.getInstance() ).clearMetaDatabase();
+		H2ExecutionManager h2 = new H2ExecutionManager();
+		h2.clearMetaDatabase();
 	}
 
 	@Test
@@ -82,5 +87,50 @@ public class H2ExecutionManagerTest
 		{
 
 		}
+	}
+	
+	@Test
+	public void testGetTrack(){
+		try
+		{
+			ExecutionManagerImpl.getInstance().getTrack( "t1" );
+			fail( "Should throw IllegalArgumentException when no execution is started." );
+		}
+		catch( IllegalArgumentException ex )
+		{
+
+		}
+		
+		ExecutionManagerImpl.getInstance().startExecution( "test1", 10 );
+		
+		try
+		{
+			ExecutionManagerImpl.getInstance().getTrack( "t1" );
+			fail( "Should throw IllegalArgumentException when track desriptor does not exist." );
+		}
+		catch( IllegalArgumentException ex )
+		{
+
+		}
+		
+		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
+		types.put( "a", Long.class );
+		types.put( "b", Long.class );
+		types.put( "c", Integer.class );
+		types.put( "d", Double.class );
+		
+		Map<String, Number> values = new HashMap<String, Number>();
+		values.put( "a", 1 );
+		values.put( "b", 2 );
+		values.put( "c", 3 );
+		values.put( "d", 4 );
+		
+		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types );
+		ExecutionManagerImpl.getInstance().registerTrackDescriptor( td );
+		Track t = ExecutionManagerImpl.getInstance().getTrack( "t1" );
+
+		EntryImpl entry = new EntryImpl( (int)(System.currentTimeMillis()/10000), values );
+		t.write( entry, "local1" );
+
 	}
 }

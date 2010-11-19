@@ -1,6 +1,7 @@
 package com.eviware.loadui.impl.statistics.store.util;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -8,9 +9,9 @@ public class PreparedStatementHolder
 {
 	private PreparedStatement preparedStatement;
 
-	private InsertStatementHolder statementHolder;
+	private StatementHolder statementHolder;
 
-	public PreparedStatementHolder( PreparedStatement preparedStatement, InsertStatementHolder statementHolder )
+	public PreparedStatementHolder( PreparedStatement preparedStatement, StatementHolder statementHolder )
 	{
 		this.preparedStatement = preparedStatement;
 		this.statementHolder = statementHolder;
@@ -38,7 +39,7 @@ public class PreparedStatementHolder
 		}
 	}
 
-	private void setArgument( int index, Object value ) throws SQLException
+	public void setArgument( int index, Object value ) throws SQLException
 	{
 		if( value instanceof Long )
 		{
@@ -65,6 +66,11 @@ public class PreparedStatementHolder
 	public void executeUpdate() throws SQLException
 	{
 		preparedStatement.executeUpdate();
+	}
+	
+	public ResultSet executeQuery() throws SQLException
+	{
+		return preparedStatement.executeQuery();
 	}
 
 	public void dispose()

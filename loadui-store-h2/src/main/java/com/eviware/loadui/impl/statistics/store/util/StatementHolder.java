@@ -3,7 +3,7 @@ package com.eviware.loadui.impl.statistics.store.util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InsertStatementHolder
+public class StatementHolder
 {
 
 	private String statementSql;
