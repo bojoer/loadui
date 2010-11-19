@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.eviware.loadui.api.model.ProjectItem;
+import com.jidesoft.chart.Legend;
 import com.jidesoft.chart.style.ChartStyle;
 
 public class StatisticsMonitorPanel extends JFrame
@@ -81,9 +82,11 @@ public class StatisticsMonitorPanel extends JFrame
 		JPanel panel = new JPanel( new BorderLayout() );
 		panel.setBorder( BorderFactory.createTitledBorder( "Stats Graph" ) );
 		panel.add( model, BorderLayout.CENTER );
-		panel.setSize( new Dimension( 600, 250 ) );
-		panel.setMaximumSize( new Dimension( 600, 250 ) );
-		panel.setPreferredSize( new Dimension( 600, 250 ) );
+		Legend legend = new Legend( model, 3 );
+		panel.add( legend, BorderLayout.SOUTH );
+		panel.setSize( new Dimension( 800, 450 ) );
+		panel.setMaximumSize( new Dimension( 800, 450 ) );
+		panel.setPreferredSize( new Dimension( 800, 450 ) );
 		container.add( panel );
 
 	}
