@@ -92,8 +92,8 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 		// ignore data if there is less than 1 
 		if( values.length < 1 )
 			return;
-		totalSum += ( Double )values[0];
-		lastSecondChange = ( Double )values[0] / ( ( System.currentTimeMillis() - lastTimeUpdated ) / 1000 );
+		totalSum += values[0].doubleValue();
+		lastSecondChange = values[0].doubleValue() / ( ( System.currentTimeMillis() - lastTimeUpdated ) / 1000 );
 		lastTimeUpdated = System.currentTimeMillis();
 
 		if( lastTimeFlushed + delay >= System.currentTimeMillis() )
