@@ -30,6 +30,7 @@ import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
@@ -39,7 +40,6 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
-import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.util.events.EventSupport;
 
@@ -53,6 +53,8 @@ import com.eviware.loadui.util.events.EventSupport;
 public class StatisticsManagerImpl implements StatisticsManager
 {
 	public static final Logger log = LoggerFactory.getLogger( StatisticsManagerImpl.class );
+
+	public static final String CHANNEL = "/" + StatisticsManager.class.getName() + "/execution";
 
 	private static StatisticsManagerImpl instance;
 
@@ -86,9 +88,6 @@ public class StatisticsManagerImpl implements StatisticsManager
 
 		if( workspaceProvider.isWorkspaceLoaded() )
 			workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
-
-		String testExecution = "execution" + System.currentTimeMillis();
-		executionManager.startExecution( testExecution, System.currentTimeMillis() );
 	}
 
 	@Override
@@ -190,7 +189,10 @@ public class StatisticsManagerImpl implements StatisticsManager
 			{
 				hasCurrent = true;
 				long timestamp = System.currentTimeMillis();
-				executionManager.startExecution( "execution_" + timestamp, timestamp );
+				String executionId = "execution_" + timestamp;
+				executionManager.startExecution( executionId, timestamp );
+				for( AgentItem agent : ( ( ProjectItem )event.getSource() ).getWorkspace().getAgents() )
+					agent.sendMessage( CHANNEL, executionId );
 			}
 			else if( hasCurrent && CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
 			{

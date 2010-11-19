@@ -3,12 +3,15 @@ package com.eviware.loadui.impl.statistics.store;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
+import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
@@ -41,8 +44,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	private Map<String, DataSource> dataSourceMap;
 
 	/**
-	 * Every execution uses one connection for all operations.
-	 * References to these are kept in this map.
+	 * Every execution uses one connection for all operations. References to
+	 * these are kept in this map.
 	 */
 	private Map<String, Connection> connectionMap = new HashMap<String, Connection>();;
 
@@ -53,6 +56,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	private Map<String, Execution> executionMap = new HashMap<String, Execution>();
 
 	private final Map<String, TrackDescriptor> trackDescriptors = new HashMap<String, TrackDescriptor>();
+
+	private final Map<String, Entry> latestEntries = new HashMap<String, Entry>();
 
 	private TableRegistry tableRegistry = new TableRegistry();
 
@@ -237,6 +242,48 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	public void unregisterTrackDescriptor( String trackId )
 	{
 		trackDescriptors.remove( trackId );
+	}
+
+	@Override
+	public Collection<String> getTrackIds()
+	{
+		return Collections.unmodifiableSet( trackDescriptors.keySet() );
+	}
+
+	@Override
+	public void writeEntry( String trackId, Entry entry, String source )
+	{
+		latestEntries.put( trackId + ":" + source, entry );
+
+		Execution execution = getCurrentExecution();
+		if( execution != null )
+		{
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put( DataTable.STATIC_FIELD_TIMESTAMP, entry.getTimestamp() );
+			Collection<String> nameCollection = entry.getNames();
+			for( Iterator<String> iterator = nameCollection.iterator(); iterator.hasNext(); )
+			{
+				String name = iterator.next();
+				data.put( name, entry.getValue( name ) );
+			}
+			try
+			{
+				getTrack( trackId ); // Not sure if this is needed, but the Track
+											// may not have been instantiated yet...
+				write( execution.getId(), trackId, source, data );
+			}
+			catch( SQLException e )
+			{
+				// TODO What to do here?
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public Entry getLastEntry( String trackId, String source )
+	{
+		return latestEntries.get( trackId + ":" + source );
 	}
 
 	public void clearMetaDatabase()

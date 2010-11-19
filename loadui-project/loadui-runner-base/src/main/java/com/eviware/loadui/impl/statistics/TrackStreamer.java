@@ -27,9 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.messaging.MessageEndpoint;
+import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.statistics.Statistic;
+import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.Entry;
-import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 
 /**
@@ -41,13 +42,14 @@ import com.eviware.loadui.api.statistics.store.ExecutionManager;
 public class TrackStreamer
 {
 	private static final String CHANNEL = "/" + Statistic.class.getName();
+	private static final String EXECUTION_CHANNEL = "/" + StatisticsManager.class.getName() + "/execution";
 	private final static Logger log = LoggerFactory.getLogger( TrackStreamer.class );
 
 	private final ExecutionManager manager;
 	private final ScheduledExecutorService executor;
 	private final ScheduledFuture<?> future;
 	private final Set<MessageEndpoint> endpoints = new HashSet<MessageEndpoint>();
-	private Map<String, Map<String, Number>> lastSent;
+	private final ExecutionListener executionListener = new ExecutionListener();
 
 	public TrackStreamer( ScheduledExecutorService scheduledExecutorService, ExecutionManager executionManager )
 	{
@@ -65,6 +67,7 @@ public class TrackStreamer
 	public void addEndpoint( MessageEndpoint endpoint )
 	{
 		endpoints.add( endpoint );
+		endpoint.addMessageListener( EXECUTION_CHANNEL, executionListener );
 	}
 
 	public void removeEndpoint( MessageEndpoint endpoint )
@@ -72,43 +75,47 @@ public class TrackStreamer
 		endpoints.remove( endpoint );
 	}
 
+	private class ExecutionListener implements MessageListener
+	{
+		@Override
+		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
+		{
+			manager.startExecution( data.toString(), System.currentTimeMillis() );
+		}
+	}
+
 	private class StreamTask implements Runnable
 	{
+		private Set<Entry> lastEntries;
 
 		@Override
 		public void run()
 		{
-			Execution execution = manager.getCurrentExecution();
-			if( execution != null )
+			Map<String, Map<String, Number>> currentData = new HashMap<String, Map<String, Number>>();
+			Set<Entry> currentEntries = new HashSet<Entry>();
+			for( String trackId : manager.getTrackIds() )
 			{
-				Map<String, Map<String, Number>> currentData = new HashMap<String, Map<String, Number>>();
-				for( String trackId : execution.getTrackIds() )
+				Entry entry = manager.getLastEntry( trackId, "local" );
+				if( entry != null )
 				{
-					Entry entry = execution.getTrack( trackId ).getLastEntry( "local" );
-					Map<String, Number> entryData = new HashMap<String, Number>();
-					for( String key : entry.getNames() )
-						entryData.put( key, entry.getValue( key ) );
-					currentData.put( entry.getTimestamp() + ":" + trackId, entryData );
+					currentEntries.add( entry );
+					if( !lastEntries.contains( entry ) )
+					{
+						Map<String, Number> entryData = new HashMap<String, Number>();
+						for( String key : entry.getNames() )
+							entryData.put( key, entry.getValue( key ) );
+						currentData.put( entry.getTimestamp() + ":" + trackId, entryData );
+					}
 				}
+			}
 
-				// Remove any entries that have already been sent.
-				if( lastSent != null )
-				{
-					Map<String, Map<String, Number>> nextLastSent = new HashMap<String, Map<String, Number>>( currentData );
-					currentData.keySet().removeAll( lastSent.keySet() );
-					lastSent = nextLastSent;
-				}
-				else
-				{
-					lastSent = currentData;
-				}
+			lastEntries = currentEntries;
 
-				if( !currentData.isEmpty() )
-				{
-					log.debug( "Sending Track data: {}", currentData );
-					for( MessageEndpoint endpoint : endpoints )
-						endpoint.sendMessage( CHANNEL, currentData );
-				}
+			if( !currentData.isEmpty() )
+			{
+				log.debug( "Sending Track data: {}", currentData );
+				for( MessageEndpoint endpoint : endpoints )
+					endpoint.sendMessage( CHANNEL, currentData );
 			}
 		}
 	}

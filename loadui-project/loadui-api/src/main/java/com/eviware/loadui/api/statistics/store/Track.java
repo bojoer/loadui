@@ -45,22 +45,6 @@ public interface Track
 	public TrackDescriptor getTrackDescriptor();
 
 	/**
-	 * Writes an Entry to the Track for the specified source. Instead of calling
-	 * this method directly, usually the at( int ) method is used.
-	 * 
-	 * @param entry
-	 */
-	public void write( Entry entry, String source );
-
-	/**
-	 * Gets the last stored Entry for a particular source, which is cached in
-	 * memory.
-	 * 
-	 * @return
-	 */
-	public Entry getLastEntry( String source );
-
-	/**
 	 * Gets the closest succeeding Entry to the given time, for a source in the
 	 * Track, measured in milliseconds since the start of the Execution.
 	 * 

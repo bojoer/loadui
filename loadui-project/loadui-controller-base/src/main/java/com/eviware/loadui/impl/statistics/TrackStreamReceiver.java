@@ -61,7 +61,7 @@ public class TrackStreamReceiver
 					{
 						String[] parts = entry.getKey().split( ":", 2 );
 						int time = Integer.parseInt( parts[0] );
-						manager.getTrack( parts[1] ).write( new EntryImpl( time, entry.getValue(), true ), agent.getLabel() );
+						manager.writeEntry( parts[1], new EntryImpl( time, entry.getValue(), true ), agent.getLabel() );
 					}
 				}
 			}
