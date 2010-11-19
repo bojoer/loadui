@@ -68,6 +68,29 @@ public interface ExecutionManager
 	public Track getTrack( String trackId );
 
 	/**
+	 * Gets a Collection of all registered TrackDescriptors.
+	 * 
+	 * @return
+	 */
+	public Collection<String> getTrackIds();
+
+	/**
+	 * Writes an Entry to the Track for the specified source. Instead of calling
+	 * this method directly, usually the at( int ) method is used.
+	 * 
+	 * @param entry
+	 */
+	public void writeEntry( String trackId, Entry entry, String source );
+
+	/**
+	 * Gets the last stored Entry for a particular source, which is cached in
+	 * memory.
+	 * 
+	 * @return
+	 */
+	public Entry getLastEntry( String trackId, String source );
+
+	/**
 	 * Gets a list of the names of all available Executions.
 	 * 
 	 * @return
