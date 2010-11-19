@@ -7,10 +7,10 @@ import java.util.Set;
 public class SQLUtil
 {
 
-	public static InsertStatementHolder createDataTableInsertScript( String tableName, String tstampColumn,
+	public static StatementHolder createDataTableInsertScript( String tableName, String tstampColumn,
 			Set<String> columns )
 	{
-		InsertStatementHolder sh = new InsertStatementHolder();
+		StatementHolder sh = new StatementHolder();
 		Iterator<String> keys = columns.iterator();
 		StringBuffer names = new StringBuffer();
 		names.append( tstampColumn + ", " );
@@ -34,9 +34,9 @@ public class SQLUtil
 		return sh;
 	}
 
-	public static InsertStatementHolder createTableInsertScript( String tableName, Set<String> columns )
+	public static StatementHolder createTableInsertScript( String tableName, Set<String> columns )
 	{
-		InsertStatementHolder sh = new InsertStatementHolder();
+		StatementHolder sh = new StatementHolder();
 		Iterator<String> keys = columns.iterator();
 		StringBuffer names = new StringBuffer();
 		StringBuffer values = new StringBuffer();

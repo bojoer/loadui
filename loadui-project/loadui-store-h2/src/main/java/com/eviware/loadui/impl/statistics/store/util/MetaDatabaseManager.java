@@ -45,18 +45,23 @@ public class MetaDatabaseManager
 			connection = dataSource.getConnection();
 			String sql = SQLUtil.createTimestampTableCreateScript( createTableExpr, METATABLE_NAME, TIMESTAMP_COLUMN_NAME,
 					Long.class, pkExpr, m, typeConversionMap );
+			Statement stm = null;
 			try
 			{
-				Statement stm = connection.createStatement();
+				stm = connection.createStatement();
 				stm.execute( sql );
-				stm.close();
 			}
 			catch( SQLException e )
 			{
 				// table already exist, do nothing
+				// e.printStackTrace();
+			}
+			finally
+			{
+				JDBCUtil.close( stm );
 			}
 
-			InsertStatementHolder inh = SQLUtil.createDataTableInsertScript( METATABLE_NAME, TIMESTAMP_COLUMN_NAME, m.keySet() );
+			StatementHolder inh = SQLUtil.createDataTableInsertScript( METATABLE_NAME, TIMESTAMP_COLUMN_NAME, m.keySet() );
 			PreparedStatement writerPstm = connection.prepareStatement( inh.getStatementSql() );
 			writeStatement = new PreparedStatementHolder( writerPstm, inh );
 			readAllStatement = connection.prepareStatement( "select * from " + METATABLE_NAME );
@@ -76,7 +81,6 @@ public class MetaDatabaseManager
 	{
 		writeStatement.setArguments( timestamp, data );
 		writeStatement.executeUpdate();
-		connection.commit();
 	}
 
 	public List<String> readExecutionNames() throws SQLException
@@ -120,7 +124,16 @@ public class MetaDatabaseManager
 	public void clear() throws SQLException
 	{
 		deleteAllStm.executeUpdate();
+	}
+
+	public void commit() throws SQLException
+	{
 		connection.commit();
+	}
+
+	public void rollback() throws SQLException
+	{
+		connection.rollback();
 	}
 
 	public void dispose()
