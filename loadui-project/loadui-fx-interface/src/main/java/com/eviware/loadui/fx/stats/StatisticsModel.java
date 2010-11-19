@@ -72,9 +72,9 @@ public class StatisticsModel
 				if( sv == null )
 					continue;
 //				for( String stat : sv.getStatisticNames() ) {
-					stats.put( name+comp.getLabel()+"AVG", new StatisticsInner( name+comp.getLabel()+"AVG", sv.getStatistic( "AVERAGE", "local" ) ) );
-					stats.put( name+comp.getLabel()+"STD_DEV", new StatisticsInner( name+comp.getLabel()+"STD_DEV", sv.getStatistic( "STD_DEV", "local" ) ) );
-					stats.put( name+comp.getLabel()+"PERCENTILE", new StatisticsInner( name+comp.getLabel()+"PERCENTILE", sv.getStatistic( "PERCENTILE", "local" ) ) );
+					stats.put( name+"-"+comp.getLabel()+"-"+"AVG", new StatisticsInner( name+"-"+comp.getLabel()+"-"+"AVG", sv.getStatistic( "AVERAGE", "local" ) ) );
+					stats.put( name+"-"+comp.getLabel()+"-"+"STD_DEV", new StatisticsInner( name+"-"+comp.getLabel()+"-"+"STD_DEV", sv.getStatistic( "STD_DEV", "local" ) ) );
+					stats.put( name+"-"+comp.getLabel()+"-"+"PERC", new StatisticsInner( name+"-"+comp.getLabel()+"-"+"PERC", sv.getStatistic( "PERCENTILE", "local" ) ) );
 //				}
 					
 //			}
