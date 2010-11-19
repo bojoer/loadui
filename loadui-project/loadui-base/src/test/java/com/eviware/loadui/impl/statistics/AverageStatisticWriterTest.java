@@ -78,13 +78,13 @@ public class AverageStatisticWriterTest
 	@Test
 	public void checkSquareSum()
 	{
-		assertEquals( 4917.0, writer.sumTotalSquare, 0 );
+		assertEquals( 24585, writer.sumTotalSquare, 0 );
 	}
 
 	@Test
 	public void checkStdDev()
 	{
-		assertEquals( 491.7, writer.stdDev, 0 );
+		assertEquals( 2458.5, writer.stdDev, 0 );
 	}
 
 }
