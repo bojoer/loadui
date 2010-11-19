@@ -25,7 +25,6 @@ import java.util.concurrent.Callable;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.util.CacheMap;
