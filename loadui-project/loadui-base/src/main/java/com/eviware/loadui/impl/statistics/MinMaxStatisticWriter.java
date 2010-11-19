@@ -87,14 +87,14 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 		if( values.length < 1 )
 			return;
 		boolean dirty = false;
-		if( minimum == null || minimum > ( Double )values[0] )
+		if( minimum == null || minimum > values[0].doubleValue() )
 		{
-			minimum = ( Double )values[0];
+			minimum = values[0].doubleValue();
 			dirty = true; 
 		}
-		if( maximum == null || maximum < ( Double )values[0] )
+		if( maximum == null || maximum < values[0].doubleValue() )
 		{
-			maximum = ( Double )values[0];
+			maximum = values[0].doubleValue();
 			dirty = true;
 		}
 		if( lastTimeFlushed + delay >= System.currentTimeMillis() && dirty )

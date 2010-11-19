@@ -124,7 +124,6 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		percentile = perc.evaluate( pValues );
 		lastTimeFlushed = System.currentTimeMillis();
 		average = avgSum / avgCnt;
-
 		at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_COUNT.name(), avgCnt )
 				.put( Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.STD_DEV_SUM.name(), sumTotalSquare )
 				.put( Stats.STD_DEV.name(), stdDev ).put( Stats.PERCENTILE.name(), percentile ).write();
