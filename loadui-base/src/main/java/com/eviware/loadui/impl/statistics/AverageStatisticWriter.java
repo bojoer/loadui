@@ -104,8 +104,8 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			this.values.remove( 0 );
 		avgSum += doubleValue;
 		avgCnt++ ;
-		sumTotalSquare += Math.pow( doubleValue - avgSum, 2 );
-		stdDev = sumTotalSquare / avgCnt;
+//		sumTotalSquare += Math.pow( doubleValue - avgSum, 2 );
+//		stdDev = sumTotalSquare / avgCnt;
 		if( lastTimeFlushed + delay <= System.currentTimeMillis() )
 			flush();
 	}
@@ -119,8 +119,12 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	{
 		// calculate percentile here since it is expensive operation.
 		double[] pValues = new double[values.size()];
-		for( int cnt = 0; cnt < values.size(); cnt++ )
+		sumTotalSquare = 0;
+		for( int cnt = 0; cnt < values.size(); cnt++ ) {
 			pValues[cnt] = values.get( cnt ).longValue();
+			sumTotalSquare += Math.pow( pValues[cnt] - avgSum,2 );
+		}
+		stdDev = sumTotalSquare / avgCnt;
 		percentile = perc.evaluate( pValues );
 		lastTimeFlushed = System.currentTimeMillis();
 		average = avgSum / avgCnt;
