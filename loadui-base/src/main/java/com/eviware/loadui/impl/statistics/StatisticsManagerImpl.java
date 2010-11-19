@@ -86,9 +86,6 @@ public class StatisticsManagerImpl implements StatisticsManager
 
 		if( workspaceProvider.isWorkspaceLoaded() )
 			workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
-
-		String testExecution = "testExecution" + System.currentTimeMillis();
-		executionManager.startExecution( testExecution, System.currentTimeMillis() );
 	}
 
 	@Override
