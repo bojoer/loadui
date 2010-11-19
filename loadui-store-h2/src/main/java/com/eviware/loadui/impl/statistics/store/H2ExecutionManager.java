@@ -36,8 +36,8 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	@Override
 	protected DataSource createDataSource( String db )
 	{
-		//JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" + DB_BASEDIR + db, "sa", "sa" );
-		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:~/_data/" + db, "sa", "sa" );
+		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" + DB_BASEDIR + db, "sa", "sa" );
+		//JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:~/_data/" + db, "sa", "sa" );
 		cp.setMaxConnections( 5 );
 		return cp;
 	}
