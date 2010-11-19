@@ -7,9 +7,9 @@ import java.util.TreeMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.fx.stats.StatisticsModel.StatisticsInner;
-import com.eviware.loadui.impl.statistics.store.ExecutionManagerImpl;
-import com.eviware.loadui.impl.statistics.store.H2ExecutionManager;
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ScheduledExecutor;
 import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.axis.Axis;
@@ -89,46 +89,19 @@ public class StatsChart extends Chart
 		 * 3. check if point is in range, than
 		 * increase range
 		 */
-		//This is not working.
-		/*
-		 * This is giving this:
-		  java.lang.NoClassDefFoundError: com/eviware/loadui/impl/statistics/store/H2ExecutionManager
-		  at com.eviware.loadui.fx.stats.StatsChart.updateChart(StatsChart.java:95)
-		  at com.eviware.loadui.fx.stats.StatsChart.access$100(StatsChart.java:26)
-			at com.eviware.loadui.fx.stats.StatsChart$UpdateTask.run(StatsChart.java:79)
-			at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
-			at java.util.concurrent.FutureTask$Sync.innerRunAndReset(FutureTask.java:317)
-			at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:150)
-			at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$101(ScheduledThreadPoolExecutor.java:98)
-			at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.runPeriodic(ScheduledThreadPoolExecutor.java:180)
-			at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:204)
-			at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-			at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-			at java.lang.Thread.run(Thread.java:662)
-		Caused by: java.lang.ClassNotFoundException: com.eviware.loadui.impl.statistics.store.H2ExecutionManager not found by com.eviware.loadui.fx-interface [25]
-			at org.apache.felix.framework.ModuleImpl.findClassOrResourceByDelegation(ModuleImpl.java:787)
-			at org.apache.felix.framework.ModuleImpl.access$400(ModuleImpl.java:71)
-			at org.apache.felix.framework.ModuleImpl$ModuleClassLoader.loadClass(ModuleImpl.java:1768)
-			at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
-			... 12 more
-		 */
-//		try
-//		{
-//			if( H2ExecutionManager.getInstance().getCurrentExecution() == null )
-//			{
-//				System.out.println( "No current execution" );
-//				return;
-//			}
-//			else
-//			{
-//				System.out.println( "there is execution" );
-//			}
-//		}
-//		catch( Throwable t )
-//		{
-//			t.printStackTrace();
-//			return;
-//		}
+		ExecutionManager manager = BeanInjector.getBean( ExecutionManager.class );
+		try
+		{
+			if( manager.getCurrentExecution() == null )
+			{
+				return;
+			}
+		}
+		catch( Throwable t )
+		{
+			t.printStackTrace();
+			return;
+		}
 		for( StatisticsInner stat : model.getStatistics() )
 		{
 			try
