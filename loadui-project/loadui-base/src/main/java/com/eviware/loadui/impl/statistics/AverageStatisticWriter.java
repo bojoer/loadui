@@ -25,6 +25,8 @@ import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 
 import org.apache.commons.math.stat.descriptive.rank.Percentile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * StatisticsWriter for calculating the average of given values.
@@ -37,6 +39,8 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 	private Percentile perc = new Percentile( 90 );
 
+	private Logger log = LoggerFactory.getLogger( AverageStatisticWriter.class );
+	
 	public enum Stats
 	{
 		AVERAGE, AVERAGE_COUNT, AVERAGE_SUM, STD_DEV, STD_DEV_SUM, PERCENTILE;
@@ -62,7 +66,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	 */
 
 	protected double average = 0L;
-	protected long avgSum = 0L;
+	protected double avgSum = 0L;
 	protected long avgCnt = 0;
 	protected double stdDev = 0.0;
 	protected double sumTotalSquare = 0.0;
@@ -70,7 +74,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 	private int percentileBufferSize = 1000;
 
-	private ArrayList<Double> values = new ArrayList<Double>();
+	protected ArrayList<Double> values = new ArrayList<Double>();
 
 	public AverageStatisticWriter( StatisticsManager statisticsManager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> trackStructure )
@@ -118,16 +122,16 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	public void flush()
 	{
 		// calculate percentile here since it is expensive operation.
+		average = avgSum / avgCnt;
 		double[] pValues = new double[values.size()];
 		sumTotalSquare = 0;
 		for( int cnt = 0; cnt < values.size(); cnt++ ) {
 			pValues[cnt] = values.get( cnt ).longValue();
-			sumTotalSquare += Math.pow( pValues[cnt] - avgSum,2 );
+			sumTotalSquare += Math.pow( pValues[cnt] - average,2 );
 		}
-		stdDev = sumTotalSquare / avgCnt;
+		stdDev = Math.sqrt( sumTotalSquare / avgCnt );
 		percentile = perc.evaluate( pValues );
 		lastTimeFlushed = System.currentTimeMillis();
-		average = avgSum / avgCnt;
 		at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_COUNT.name(), avgCnt )
 				.put( Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.STD_DEV_SUM.name(), sumTotalSquare )
 				.put( Stats.STD_DEV.name(), stdDev ).put( Stats.PERCENTILE.name(), percentile ).write();
@@ -178,7 +182,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			// init statistics
 
 			trackStructure.put( Stats.AVERAGE.name(), Double.class );
-			trackStructure.put( Stats.AVERAGE_SUM.name(), Long.class );
+			trackStructure.put( Stats.AVERAGE_SUM.name(), Double.class );
 			trackStructure.put( Stats.AVERAGE_COUNT.name(), Long.class );
 			trackStructure.put( Stats.STD_DEV.name(), Double.class );
 			trackStructure.put( Stats.STD_DEV_SUM.name(), Double.class );

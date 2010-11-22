@@ -20,6 +20,8 @@ import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import com.eviware.loadui.api.statistics.StatisticHolder;
@@ -36,7 +38,13 @@ public class AverageStatisticWriterTest
 	StatisticHolderSupport holderSupport;
 	AverageStatisticWriter writer;
 	StatisticsManager manager;
-	long[] data = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+	Double[] data = { 1.44, 2.56, 3.12, 4.44, 5.55, 6.6656, 7.6767, 8.567, 9.5675, 10.567 };
+	private int size;
+	private double avgSum;
+	private double sumTotalSquare;
+	private double stdDev;
+	final Logger logger = LoggerFactory.getLogger( AverageStatisticWriterTest.class );
+	private double average;
 
 	@Before
 	public void setUp() throws Exception
@@ -59,32 +67,56 @@ public class AverageStatisticWriterTest
 		writer = ( AverageStatisticWriter )new AverageStatisticWriter.Factory()
 				.createStatisticsWriter( manager, variable );
 
+		size = data.length;
 		for( int cnt = 0; cnt < data.length; cnt++ )
-			writer.update( 1, data[cnt] );
+		{
+			avgSum += data[cnt];
+			writer.update( System.currentTimeMillis(), data[cnt] );
+		}
+		sumTotalSquare = 0;
+		average = avgSum / size;
+		for( double val : data )
+		{
+			sumTotalSquare += Math.pow( val - average, 2 );
+		}
+		stdDev = Math.sqrt( sumTotalSquare / size );
 	}
 
 	@Test
 	public void checkCounter()
 	{
-		assertEquals( 10, writer.avgCnt );
+		assertEquals( size, writer.avgCnt );
 	}
 
 	@Test
 	public void checkAverageSum()
 	{
-		assertEquals( 55, writer.avgSum );
+		assertEquals( avgSum, writer.avgSum, .5 );
 	}
 
 	@Test
 	public void checkSquareSum()
 	{
-		assertEquals( 24585, writer.sumTotalSquare, 0 );
+		assertEquals( sumTotalSquare, writer.sumTotalSquare, 2.0 );
 	}
 
 	@Test
 	public void checkStdDev()
 	{
-		assertEquals( 2458.5, writer.stdDev, 0 );
+		assertEquals( stdDev, writer.stdDev, .5 );
+	}
+
+	@Test
+	public void checkGatheredData()
+	{
+		for( int cnt = 0; cnt < writer.values.size(); cnt++ )
+			assertEquals( data[cnt], writer.values.get( cnt ) );
+	}
+
+	@Test
+	public void checkAverage()
+	{
+		assertEquals( average, writer.average, .00 );
 	}
 
 }
