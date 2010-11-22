@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class DataTable extends TableBase
 {
-	public static final String STATIC_FIELD_TIMESTAMP = "__tstmap";
-	public static final String STATIC_FIELD_SOURCEID = "__source_id";
+	public static final String STATIC_FIELD_TIMESTAMP = "_TSTAMP";
+	public static final String STATIC_FIELD_SOURCEID = "_SOURCE_ID";
 
 	public DataTable( String dbName, String name, String createTableExpr, String pkExpr,
 			Map<String, ? extends Class<? extends Object>> dynamicFields,
@@ -31,6 +31,7 @@ public class DataTable extends TableBase
 	public void insert( Map<String, ? extends Object> data ) throws SQLException
 	{
 		super.insert( data );
+		//TODO commit here for now, maybe this will have to change
 		commit();
 	}
 

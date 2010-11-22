@@ -10,8 +10,8 @@ public class TableRegistry
 {
 	private Map<String, TableBase> tableMap = new HashMap<String, TableBase>();
 
-	private Map<String, TableBase> metaTableMap = new HashMap<String, TableBase>();
-
+	private Map<String, MetaTable> metaTableMap = new HashMap<String, MetaTable>();
+	
 	public void put( String executionId, TableBase table )
 	{
 		tableMap.put( executionId + "_" + table.getExternalName(), table );
@@ -43,21 +43,21 @@ public class TableRegistry
 		return result;
 	}
 
-	public void putMetaTable( String executionId, TableBase table )
+	public void putMetaTable( String executionId, MetaTable table )
 	{
 		metaTableMap.put( executionId, table );
 	}
 
-	public TableBase getMetaTable( String executionId )
+	public MetaTable getMetaTable( String executionId )
 	{
-		TableBase dtd = metaTableMap.get( executionId );
+		MetaTable dtd = metaTableMap.get( executionId );
 		if( dtd == null )
 		{
-			throw new IllegalArgumentException( "Meta table definition for execution: " + executionId + " does not exist!" );
+			throw new IllegalArgumentException( "Meta table for execution: " + executionId + " does not exist!" );
 		}
 		return dtd;
 	}
-
+	
 	public void dispose()
 	{
 		Iterator<String> keys = tableMap.keySet().iterator();

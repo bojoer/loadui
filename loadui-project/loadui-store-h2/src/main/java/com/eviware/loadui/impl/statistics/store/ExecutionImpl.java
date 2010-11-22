@@ -6,7 +6,6 @@ import java.util.Map;
 
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
-import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 
 public class ExecutionImpl implements Execution
 {
@@ -55,10 +54,8 @@ public class ExecutionImpl implements Execution
 
 	}
 
-	public Track createTrack( String trackId, TrackDescriptor td )
+	public void addTrack( Track track )
 	{
-		TrackImpl track = new TrackImpl( trackId, this, td );
-		trackMap.put( trackId, track );
-		return track;
+		trackMap.put( track.getId(), track );
 	}
 }

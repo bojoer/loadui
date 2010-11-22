@@ -42,6 +42,8 @@ public class SourceTable extends TableBase
 	public void insert( Map<String, ? extends Object> data ) throws SQLException
 	{
 		super.insert( data );
+		//TODO commit for now.
+		commit();
 		inMemoryTable.put( ( String )data.get( STATIC_FIELD_SOURCE_NAME ), ( Integer )data.get( STATIC_FIELD_SOURCEID ) );
 	}
 

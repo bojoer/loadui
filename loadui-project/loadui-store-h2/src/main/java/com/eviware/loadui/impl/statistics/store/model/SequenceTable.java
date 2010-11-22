@@ -8,7 +8,6 @@ import java.util.Map;
 
 public class SequenceTable extends TableBase
 {
-
 	private static Map<String, SequenceTable> instanceMap = new HashMap<String, SequenceTable>();
 	
 	public static SequenceTable getInstance(String dbName){

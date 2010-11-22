@@ -13,9 +13,7 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 			.getProperty( "loadui.instance" ) ) ? "data_c" : "data_a" ).toURI().toString() + "/";
 
 	public static final String SQL_CREATE_TABLE_EXPRESSION = "CREATE TABLE";
-	public static final String SQL_PRIMARY_KEY_EXPRESSION = "PRIMARY KEY";
 	public static final String SQL_ADD_PRIMARY_KEY_INDEX_EXPRESSION = "ALTER TABLE ? ADD CONSTRAINT ?_pk_index PRIMARY KEY(?)";
-	
 
 	public static final String TYPE_INTEGER = "INT";
 	public static final String TYPE_BIGINT = "BIGINT";
@@ -36,8 +34,9 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	@Override
 	protected DataSource createDataSource( String db )
 	{
-		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" + DB_BASEDIR + db, "sa", "sa" );
-		//JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:~/_data/" + db, "sa", "sa" );
+		// JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" +
+		// DB_BASEDIR + db, "sa", "sa" );
+		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:~/_data/" + db, "sa", "sa" );
 		cp.setMaxConnections( 5 );
 		return cp;
 	}
@@ -49,17 +48,11 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	}
 
 	@Override
-	public String getPrimaryKeyExpression()
-	{
-		return SQL_PRIMARY_KEY_EXPRESSION;
-	}
-
-	@Override
 	public String getAddPrimaryKeyIndexExpression()
 	{
 		return SQL_ADD_PRIMARY_KEY_INDEX_EXPRESSION;
 	}
-	
+
 	@Override
 	protected HashMap<Class<? extends Object>, String> getTypeConversionMap()
 	{
