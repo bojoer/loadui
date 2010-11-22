@@ -17,12 +17,12 @@ import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.impl.statistics.store.model.DataTable;
+import com.eviware.loadui.impl.statistics.store.model.MetaDatabaseMetaTable;
 import com.eviware.loadui.impl.statistics.store.model.MetaTable;
 import com.eviware.loadui.impl.statistics.store.model.SequenceTable;
 import com.eviware.loadui.impl.statistics.store.model.SourceTable;
 import com.eviware.loadui.impl.statistics.store.model.TableBase;
 import com.eviware.loadui.impl.statistics.store.model.TableRegistry;
-import com.eviware.loadui.impl.statistics.store.util.MetaDatabaseManager;
 
 public abstract class ExecutionManagerImpl implements ExecutionManager
 {
@@ -32,7 +32,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	private static final String SEQUENCE_TABLE_NAME = "sequence_table";
 	private static final String SOURCES_TABLE_NAME_POSTFIX = "_sources";
 
-	private static ExecutionManager instance;
+	private static ExecutionManagerImpl instance;
 
 	/**
 	 * Data sources used to communicate with database. This map contains data
@@ -47,9 +47,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	 * Every execution uses one connection for all operations. References to
 	 * these are kept in this map.
 	 */
-	private Map<String, Connection> connectionMap = new HashMap<String, Connection>();;
+	private Map<String, Connection> connectionMap;
 
-	private MetaDatabaseManager metaDatabaseManager;
+	private MetaDatabaseMetaTable metaDatabaseMetaTable;
 
 	private ExecutionImpl currentExecution;
 
@@ -61,7 +61,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 
 	private TableRegistry tableRegistry = new TableRegistry();
 
-	public static ExecutionManager getInstance()
+	public static ExecutionManagerImpl getInstance()
 	{
 		return instance;
 	}
@@ -69,9 +69,19 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	public ExecutionManagerImpl()
 	{
 		instance = this;
-		metaDatabaseManager = new MetaDatabaseManager( createDataSource( METADATABASE_NAME ), getCreateTableExpression(),
-				getPrimaryKeyExpression(), getTypeConversionMap() );
+		
 		dataSourceMap = new HashMap<String, DataSource>();
+		connectionMap = new HashMap<String, Connection>();
+		try
+		{
+			metaDatabaseMetaTable = new MetaDatabaseMetaTable( METADATABASE_NAME, METATABLE_NAME,
+					getCreateTableExpression(), getAddPrimaryKeyIndexExpression(), null, getTypeConversionMap(),
+					getConnection( METADATABASE_NAME ) );
+		}
+		catch( SQLException e )
+		{
+			throw new RuntimeException( "Unable to initialize metadatabase! ", e );
+		}
 	}
 
 	@Override
@@ -79,7 +89,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	{
 		try
 		{
-			if( metaDatabaseManager.executionExist( id ) )
+			if( metaDatabaseMetaTable.exist( id ) )
 			{
 				throw new IllegalArgumentException( "Execution with the specified id already exist!" );
 			}
@@ -92,20 +102,14 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 			new SequenceTable( id, SEQUENCE_TABLE_NAME, getCreateTableExpression(), getAddPrimaryKeyIndexExpression(),
 					null, getTypeConversionMap(), connection );
 
-			// TODO commit in finally block, after meta table was created and data
-			// was written to the database.
-			// create table can not be rolled back, so do what? if writing to the
-			// meta database fail, drop created meta table
-			// and if meta table creation fails roll back don't write to the meta
-			// database at all.
-
 			MetaTable metaTable = new MetaTable( id, METATABLE_NAME, getCreateTableExpression(),
 					getAddPrimaryKeyIndexExpression(), null, getTypeConversionMap(), connection );
 			tableRegistry.putMetaTable( id, metaTable );
 
 			HashMap<String, Object> m = new HashMap<String, Object>();
-			m.put( MetaDatabaseManager.EXECUTION_COLUMN_NAME, id );
-			metaDatabaseManager.write( timestamp, m );
+			m.put( MetaDatabaseMetaTable.STATIC_FIELD_EXECUTION_NAME, id );
+			m.put( MetaDatabaseMetaTable.STATIC_FIELD_TSTAMP, timestamp );
+			metaDatabaseMetaTable.insert( m );
 
 			return currentExecution;
 		}
@@ -155,7 +159,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 			{
 				throw new IllegalArgumentException( "No descriptor defined for specified trackId!" );
 			}
-			track = currentExecution.createTrack( trackId, td );
+			track = new TrackImpl( trackId, currentExecution, td );
+			currentExecution.addTrack( track );
 			try
 			{
 				String executionId = currentExecution.getId();
@@ -195,7 +200,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	{
 		try
 		{
-			return metaDatabaseManager.readExecutionNames();
+			return metaDatabaseMetaTable.list();
 		}
 		catch( SQLException e )
 		{
@@ -214,15 +219,17 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 		{
 			try
 			{
-				Object[] o = metaDatabaseManager.readExecution( executionId, MetaDatabaseManager.TIMESTAMP_COLUMN_NAME,
-						MetaDatabaseManager.EXECUTION_COLUMN_NAME );
-				if( o == null )
+				Map<String, Object> data = new HashMap<String, Object>();
+				data.put( MetaDatabaseMetaTable.STATIC_FIELD_EXECUTION_NAME, executionId );
+				data = metaDatabaseMetaTable.selectFirst( data );
+				if( data.size() == 0 )
 				{
 					throw new IllegalArgumentException( "Execution with the specified id does not exist!" );
 				}
 				else
 				{
-					return new ExecutionImpl( ( String )o[1], ( Long )o[0] );
+					return new ExecutionImpl( ( String )data.get( MetaDatabaseMetaTable.STATIC_FIELD_EXECUTION_NAME ),
+							( Long )data.get( MetaDatabaseMetaTable.STATIC_FIELD_TSTAMP ) );
 				}
 			}
 			catch( SQLException e )
@@ -290,8 +297,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	{
 		try
 		{
-			metaDatabaseManager.clear();
-			metaDatabaseManager.commit();
+			metaDatabaseMetaTable.delete();
 		}
 		catch( SQLException e )
 		{
@@ -355,8 +361,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 	protected abstract DataSource createDataSource( String db );
 
 	protected abstract String getCreateTableExpression();
-
-	protected abstract String getPrimaryKeyExpression();
 
 	protected abstract HashMap<Class<? extends Object>, String> getTypeConversionMap();
 

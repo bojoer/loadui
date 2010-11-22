@@ -1,11 +1,7 @@
 package com.eviware.loadui.impl.statistics.store;
 
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +10,6 @@ import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
-import com.eviware.loadui.impl.statistics.store.model.DataTable;
 
 public class TrackImpl implements Track
 {
@@ -23,7 +18,7 @@ public class TrackImpl implements Track
 	private final String id;
 	private final Execution execution;
 	private final TrackDescriptor trackDescriptor;
-	private final ExecutionManagerImpl manager = ( ExecutionManagerImpl )ExecutionManagerImpl.getInstance();
+	private final ExecutionManagerImpl manager = ExecutionManagerImpl.getInstance();
 
 	public TrackImpl( String trackId, Execution execution, TrackDescriptor trackDescriptor )
 	{

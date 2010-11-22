@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class MetaTable extends TableBase
 {
-	public static final String STATIC_FIELD_TRACK_NAME = "__track_id";
+	public static final String STATIC_FIELD_TRACK_NAME = "__TRACK_ID";
 
 	public MetaTable( String dbName, String name, String createTableExpr, String pkExpr,
 			Map<String, ? extends Class<? extends Object>> dynamicFields,
@@ -27,6 +27,8 @@ public class MetaTable extends TableBase
 		if( select( queryData ).size() == 0 )
 		{
 			super.insert( data );
+			//TODO commit for now, transaction management needs to be implemented
+			commit();
 		}
 	}
 }

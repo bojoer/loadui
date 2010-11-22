@@ -297,13 +297,38 @@ public class TableBase
 			}
 			result.add( row );
 		}
+		JDBCUtil.close( rs );
 		return result;
+	}
+
+	public Map<String, Object> selectFirst( Map<String, Object> data ) throws SQLException
+	{
+		selectStatement.setArguments( data );
+		ResultSet rs = selectStatement.executeQuery();
+		Map<String, Object> row = new HashMap<String, Object>();
+		if( rs.next() )
+		{
+			for( int i = 0; i < rs.getMetaData().getColumnCount(); i++ )
+			{
+				row.put( rs.getMetaData().getColumnName( i + 1 ), rs.getObject( i + 1 ) );
+			}
+		}
+		JDBCUtil.close( rs );
+		return row;
 	}
 
 	public void delete() throws SQLException
 	{
 		deleteStatement.execute();
+		// TODO Commit on every delete for now. Transaction management needs to be
+		// implemented
 		commit();
+	}
+
+	public void drop() throws SQLException
+	{
+		Statement stm = connection.createStatement();
+		stm.execute( "drop table " + tableName );
 	}
 
 	public void dispose()
@@ -358,6 +383,23 @@ public class TableBase
 			}
 			stm.execute();
 		}
+	}
+
+	protected ResultSet executeQuery( String statement, Object[] params ) throws SQLException
+	{
+		PreparedStatement stm = extraStatementMap.get( statement );
+		if( stm != null )
+		{
+			if( params != null && params.length > 0 )
+			{
+				for( int i = 0; i < params.length; i++ )
+				{
+					stm.setObject( i + 1, params[i] );
+				}
+			}
+			return stm.executeQuery();
+		}
+		return null;
 	}
 
 	protected void prepareStatement( String name, String sql )
