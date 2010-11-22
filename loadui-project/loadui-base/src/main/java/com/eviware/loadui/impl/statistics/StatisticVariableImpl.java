@@ -22,6 +22,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.CanvasObjectItem;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -40,7 +44,6 @@ public class StatisticVariableImpl implements StatisticVariable
 	private final String name;
 	private final StatisticHolder parent;
 	private final Set<TrackDescriptor> descriptors = new HashSet<TrackDescriptor>();
-	private final Set<String> sources = new HashSet<String>();
 	private final Set<String> statisticNames = new HashSet<String>();
 	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<String, StatisticImpl<?>>();
 
@@ -72,7 +75,22 @@ public class StatisticVariableImpl implements StatisticVariable
 	@Override
 	public Collection<String> getSources()
 	{
-		return Collections.unmodifiableSet( sources );
+		Set<String> sources = new HashSet<String>();
+		sources.add( "local" );
+
+		// Add labels of assigned agents.
+		// TODO: Share this information per SceneItem instead of recomputing it
+		// each time.
+		if( "controller".equals( System.getProperty( "loadui.instance" ) )
+				&& getStatisticHolder() instanceof CanvasObjectItem )
+		{
+			CanvasItem canvas = ( ( CanvasObjectItem )getStatisticHolder() ).getCanvas();
+			if( canvas instanceof SceneItem )
+				for( AgentItem agent : canvas.getProject().getAgentsAssignedTo( ( SceneItem )canvas ) )
+					sources.add( agent.getLabel() );
+		}
+
+		return sources;
 	}
 
 	@Override
