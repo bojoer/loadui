@@ -43,10 +43,10 @@ public class TrackImplTest
 		values.put( "d", 4 );
 
 		EntryImpl entry = new EntryImpl( ( int )( System.currentTimeMillis() / 10000 ), values );
-		track.write( entry, "local1" );
+		ExecutionManagerImpl.getInstance().writeEntry( track.getId(), entry, "local1" );
 
 		entry = new EntryImpl( ( int )( System.currentTimeMillis() / 10000 + 100 ), values );
-		track.write( entry, "local2" );
+		ExecutionManagerImpl.getInstance().writeEntry( track.getId(), entry, "local2" );
 	}
 
 	@Test

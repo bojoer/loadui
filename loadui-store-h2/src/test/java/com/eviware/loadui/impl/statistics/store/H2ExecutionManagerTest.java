@@ -32,7 +32,7 @@ public class H2ExecutionManagerTest
 		long time = System.currentTimeMillis();
 		Execution e = ExecutionManagerImpl.getInstance().startExecution( "test1", time );
 		assertEquals( time, e.getStartTime() );
-		
+
 		try
 		{
 			ExecutionManagerImpl.getInstance().startExecution( "test1", time );
@@ -88,9 +88,10 @@ public class H2ExecutionManagerTest
 
 		}
 	}
-	
+
 	@Test
-	public void testGetTrack(){
+	public void testGetTrack()
+	{
 		try
 		{
 			ExecutionManagerImpl.getInstance().getTrack( "t1" );
@@ -100,9 +101,9 @@ public class H2ExecutionManagerTest
 		{
 
 		}
-		
+
 		ExecutionManagerImpl.getInstance().startExecution( "test1", 10 );
-		
+
 		try
 		{
 			ExecutionManagerImpl.getInstance().getTrack( "t1" );
@@ -112,25 +113,25 @@ public class H2ExecutionManagerTest
 		{
 
 		}
-		
+
 		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
 		types.put( "a", Long.class );
 		types.put( "b", Long.class );
 		types.put( "c", Integer.class );
 		types.put( "d", Double.class );
-		
+
 		Map<String, Number> values = new HashMap<String, Number>();
 		values.put( "a", 1 );
 		values.put( "b", 2 );
 		values.put( "c", 3 );
 		values.put( "d", 4 );
-		
+
 		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types );
 		ExecutionManagerImpl.getInstance().registerTrackDescriptor( td );
 		Track t = ExecutionManagerImpl.getInstance().getTrack( "t1" );
 
-		EntryImpl entry = new EntryImpl( (int)(System.currentTimeMillis()/10000), values );
-		t.write( entry, "local1" );
+		EntryImpl entry = new EntryImpl( ( int )( System.currentTimeMillis() / 10000 ), values );
+		ExecutionManagerImpl.getInstance().writeEntry( t.getId(), entry, "local1" );
 
 	}
 }
