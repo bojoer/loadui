@@ -25,11 +25,11 @@ import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 
 /**
  * 
- * Calculate changes in time like BPS or TPS. These values are calculated 
- * at the end of period when writing to database occurs. 
+ * Calculate changes in time like BPS or TPS. These values are calculated at the
+ * end of period when writing to database occurs.
  * 
- * Also, provides Statistic Value which shows last second change. This values
- * is calculated when ever update occurs. 
+ * Also, provides Statistic Value which shows last second change. This values is
+ * calculated when ever update occurs.
  * 
  * PS Statistics is per second statistic during whole run of test.
  * LAST_SECOND_CHANGE is a per second change in last second.
@@ -46,7 +46,7 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 
 	private double lastSecondChange;
 
-	//cound not find better name
+	// cound not find better name
 	public enum Stats
 	{
 		PS, LAST_SECOND_CHANGE;
@@ -72,13 +72,13 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 		perSecond = totalSum / ( ( System.currentTimeMillis() - lastTimeFlushed ) / 1000 );
 		totalSum = 0D;
 		lastTimeFlushed = System.currentTimeMillis();
-		at( lastTimeFlushed ).put( Stats.PS.name(), perSecond )
-									.put( Stats.LAST_SECOND_CHANGE.name(), lastSecondChange )
-									.write();;
+		at( lastTimeFlushed ).put( Stats.PS.name(), perSecond ).put( Stats.LAST_SECOND_CHANGE.name(), lastSecondChange )
+				.write();
+		;
 	}
 
 	/**
-	 * this writer needs number of operations/transfers/bytes 
+	 * this writer needs number of operations/transfers/bytes
 	 */
 	@Override
 	public int getValueCount()
@@ -87,13 +87,11 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	public void update( long timestamp, Number... values )
+	public void update( long timestamp, Number value )
 	{
-		// ignore data if there is less than 1 
-		if( values.length < 1 )
-			return;
-		totalSum += values[0].doubleValue();
-		lastSecondChange = values[0].doubleValue() / ( ( System.currentTimeMillis() - lastTimeUpdated ) / 1000 );
+		double doubleValue = value.doubleValue();
+		totalSum += doubleValue;
+		lastSecondChange = doubleValue / ( ( System.currentTimeMillis() - lastTimeUpdated ) / 1000 );
 		lastTimeUpdated = System.currentTimeMillis();
 
 		if( lastTimeFlushed + delay >= System.currentTimeMillis() )
@@ -110,6 +108,7 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 
 		lastSecondChange = 0d;
 	}
+
 	/**
 	 * Factory for instantiating PSStatisticWriters.
 	 * 
@@ -131,8 +130,8 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 			// init statistics
 
 			trackStructure.put( Stats.PS.name(), Double.class );
-			trackStructure.put( Stats.LAST_SECOND_CHANGE.name(), Double.class);
-			
+			trackStructure.put( Stats.LAST_SECOND_CHANGE.name(), Double.class );
+
 			return new PSStatisticsWriter( statisticsManager, variable, trackStructure );
 		}
 	}

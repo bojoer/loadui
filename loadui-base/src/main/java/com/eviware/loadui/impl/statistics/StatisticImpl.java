@@ -20,10 +20,8 @@ import java.util.Iterator;
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
-import com.eviware.loadui.api.statistics.store.Track;
 
 public class StatisticImpl<T extends Number> implements Statistic<T>
 {

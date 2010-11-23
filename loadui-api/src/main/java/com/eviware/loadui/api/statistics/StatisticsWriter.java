@@ -50,9 +50,9 @@ public interface StatisticsWriter extends Addressable
 	 * flushed to the underlying Track, or may just buffer it in memory.
 	 * 
 	 * @param timestamp
-	 * @param values
+	 * @param value
 	 */
-	public void update( long timestamp, Number... values );
+	public void update( long timestamp, Number value );
 
 	/**
 	 * Forces any buffered but not yet written data to be stored. This should

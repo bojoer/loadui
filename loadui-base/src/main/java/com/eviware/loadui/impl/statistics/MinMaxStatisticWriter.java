@@ -26,9 +26,10 @@ import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 /**
  * 
  * @author robert
- *
- * MinMax Writer, keep minimum and maximum value of observed StatisticVariable.
- *
+ * 
+ *         MinMax Writer, keep minimum and maximum value of observed
+ *         StatisticVariable.
+ * 
  */
 public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 {
@@ -74,6 +75,7 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 		minimum = 0d;
 		maximum = 0d;
 	}
+
 	/*
 	 * flash() will be called only when timeperiod is expired and min or max
 	 * value is changed. This is done so save space in database. (non-Javadoc)
@@ -82,19 +84,18 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	 * java.lang.Number[])
 	 */
 	@Override
-	public void update( long timestamp, Number... values )
+	public void update( long timestamp, Number value )
 	{
-		if( values.length < 1 )
-			return;
 		boolean dirty = false;
-		if( minimum == null || minimum > values[0].doubleValue() )
+		double doubleValue = value.doubleValue();
+		if( minimum == null || minimum > doubleValue )
 		{
-			minimum = values[0].doubleValue();
-			dirty = true; 
+			minimum = doubleValue;
+			dirty = true;
 		}
-		if( maximum == null || maximum < values[0].doubleValue() )
+		if( maximum == null || maximum < doubleValue )
 		{
-			maximum = values[0].doubleValue();
+			maximum = doubleValue;
 			dirty = true;
 		}
 		if( lastTimeFlushed + delay >= System.currentTimeMillis() && dirty )
@@ -119,8 +120,8 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 			Map<String, Class<? extends Number>> trackStructure = new TreeMap<String, Class<? extends Number>>();
 
 			trackStructure.put( Stats.MAX.name(), Long.class );
-			trackStructure.put( Stats.MIN.name(), Long.class);
-			
+			trackStructure.put( Stats.MIN.name(), Long.class );
+
 			return new MinMaxStatisticWriter( statisticsManager, variable, trackStructure );
 		}
 	}

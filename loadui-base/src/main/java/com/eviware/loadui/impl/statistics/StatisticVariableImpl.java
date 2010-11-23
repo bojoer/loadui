@@ -26,9 +26,10 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.SceneItem;
+import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
-import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.util.CacheMap;
@@ -38,11 +39,12 @@ import com.eviware.loadui.util.CacheMap;
  * 
  * @author dain.nilsson
  */
-public class StatisticVariableImpl implements StatisticVariable
+public class StatisticVariableImpl implements MutableStatisticVariable
 {
 	private final ExecutionManager manager;
 	private final String name;
 	private final StatisticHolder parent;
+	private final Set<StatisticsWriter> writers = new HashSet<StatisticsWriter>();
 	private final Set<TrackDescriptor> descriptors = new HashSet<TrackDescriptor>();
 	private final Set<String> statisticNames = new HashSet<String>();
 	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<String, StatisticImpl<?>>();
@@ -66,10 +68,14 @@ public class StatisticVariableImpl implements StatisticVariable
 		return parent;
 	}
 
-	public void addTrackDescriptor( TrackDescriptor trackDescriptor )
+	public void addStatisticsWriter( StatisticsWriter writer )
 	{
-		if( descriptors.add( trackDescriptor ) )
-			statisticNames.addAll( trackDescriptor.getValueNames().keySet() );
+		if( writers.add( writer ) )
+		{
+			TrackDescriptor descriptor = writer.getTrackDescriptor();
+			descriptors.add( descriptor );
+			statisticNames.addAll( descriptor.getValueNames().keySet() );
+		}
 	}
 
 	@Override
@@ -117,5 +123,12 @@ public class StatisticVariableImpl implements StatisticVariable
 						throw new NullPointerException();
 					}
 				} );
+	}
+
+	@Override
+	public void update( long timestamp, Number value )
+	{
+		for( StatisticsWriter writer : writers )
+			writer.update( timestamp, value );
 	}
 }

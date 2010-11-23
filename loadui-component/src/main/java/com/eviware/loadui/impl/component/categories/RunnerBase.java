@@ -49,8 +49,7 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.property.Property;
-import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticsWriter;
+import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 import com.eviware.loadui.api.summary.SampleStats;
 import com.eviware.loadui.api.summary.SampleStatsImpl;
 import com.eviware.loadui.api.terminal.InputTerminal;
@@ -111,8 +110,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final Map<String, String> remoteValues = new HashMap<String, String>();
 	private final OutputTerminal controllerTerminal;
 
-	private final StatisticsWriter timeTakenAverage;
-	private final StatisticsWriter responseSizeAverage;
+	private final MutableStatisticVariable timeTakenVariable;
+	private final MutableStatisticVariable responseSizeVariable;
 
 	/**
 	 * Constructs an RunnerBase.
@@ -129,10 +128,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		executor = BeanInjector.getBean( ExecutorService.class );
 		scheduler = BeanInjector.getBean( ScheduledExecutorService.class );
 
-		StatisticVariable variable = context.addStatisticVariable( "TimeTaken" );
-		timeTakenAverage = context.addStatisticsWriter( "AVERAGE", variable );
-		variable = context.addStatisticVariable( "ResponseSize" );
-		responseSizeAverage = context.addStatisticsWriter( "AVERAGE", variable );
+		timeTakenVariable = context.addStatisticVariable( "TimeTaken", "AVERAGE" );
+		responseSizeVariable = context.addStatisticVariable( "ResponseSize", "AVERAGE" );
 
 		triggerTerminal = context.createInput( TRIGGER_TERMINAL, "Trigger Input" );
 
@@ -248,8 +245,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			getContext().setBusy( false );
 
 		// Update StatisticsWriters
-		timeTakenAverage.update( startTime, timeTaken );
-		responseSizeAverage.update( startTime, size );
+		timeTakenVariable.update( startTime, timeTaken );
+		responseSizeVariable.update( startTime, size );
 	}
 
 	private synchronized void addTopBottomSample( long time, long timeTaken, long size )
