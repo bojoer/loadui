@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
@@ -54,7 +55,7 @@ public class StatisticHolderSupport
 	 * @param variable
 	 * @return
 	 */
-	public StatisticsWriter addStatisticsWriter( String type, StatisticVariable variable )
+	public void addStatisticsWriter( String type, StatisticVariable variable )
 	{
 		if( !variables.containsValue( variable ) )
 			throw new IllegalArgumentException(
@@ -63,9 +64,7 @@ public class StatisticHolderSupport
 		// TODO: Fire CollectionEvent about Statistics exposed by the
 		// StatisticsWriter.
 		StatisticsWriter writer = StatisticsManagerImpl.getInstance().createStatisticsWriter( type, variable );
-		( ( StatisticVariableImpl )variable ).addTrackDescriptor( writer.getTrackDescriptor() );
-
-		return writer;
+		( ( StatisticVariableImpl )variable ).addStatisticsWriter( writer );
 	}
 
 	/**
@@ -74,7 +73,7 @@ public class StatisticHolderSupport
 	 * @param statisticVariableName
 	 * @return
 	 */
-	public StatisticVariable addStatisticVariable( String statisticVariableName )
+	public MutableStatisticVariable addStatisticVariable( String statisticVariableName )
 	{
 		if( variables.containsKey( statisticVariableName ) )
 			return variables.get( statisticVariableName );

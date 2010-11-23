@@ -40,7 +40,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	private Percentile perc = new Percentile( 90 );
 
 	private Logger log = LoggerFactory.getLogger( AverageStatisticWriter.class );
-	
+
 	public enum Stats
 	{
 		AVERAGE, AVERAGE_COUNT, AVERAGE_SUM, STD_DEV, STD_DEV_SUM, PERCENTILE;
@@ -98,18 +98,16 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	 * values : [ value:long ]
 	 */
 	@Override
-	public void update( long timestamp, Number... values )
+	public void update( long timestamp, Number value )
 	{
-		if( values.length < 1 )
-			return;
-		double doubleValue = values[0].doubleValue();
+		double doubleValue = value.doubleValue();
 		this.values.add( doubleValue );
 		if( this.values.size() >= percentileBufferSize )
 			this.values.remove( 0 );
 		avgSum += doubleValue;
 		avgCnt++ ;
-//		sumTotalSquare += Math.pow( doubleValue - avgSum, 2 );
-//		stdDev = sumTotalSquare / avgCnt;
+		// sumTotalSquare += Math.pow( doubleValue - avgSum, 2 );
+		// stdDev = sumTotalSquare / avgCnt;
 		if( lastTimeFlushed + delay <= System.currentTimeMillis() )
 			flush();
 	}
@@ -125,9 +123,10 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		average = avgSum / avgCnt;
 		double[] pValues = new double[values.size()];
 		sumTotalSquare = 0;
-		for( int cnt = 0; cnt < values.size(); cnt++ ) {
+		for( int cnt = 0; cnt < values.size(); cnt++ )
+		{
 			pValues[cnt] = values.get( cnt ).longValue();
-			sumTotalSquare += Math.pow( pValues[cnt] - average,2 );
+			sumTotalSquare += Math.pow( pValues[cnt] - average, 2 );
 		}
 		stdDev = Math.sqrt( sumTotalSquare / avgCnt );
 		percentile = perc.evaluate( pValues );
