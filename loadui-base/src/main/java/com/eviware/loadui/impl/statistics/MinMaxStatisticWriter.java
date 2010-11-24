@@ -86,17 +86,20 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	@Override
 	public void update( long timestamp, Number value )
 	{
-		boolean dirty = false;
-		double doubleValue = value.doubleValue();
-		if( minimum == null || minimum > doubleValue )
+		Boolean dirty = false;
+		synchronized( dirty )
 		{
-			minimum = doubleValue;
-			dirty = true;
-		}
-		if( maximum == null || maximum < doubleValue )
-		{
-			maximum = doubleValue;
-			dirty = true;
+			double doubleValue = value.doubleValue();
+			if( minimum == null || minimum > doubleValue )
+			{
+				minimum = doubleValue;
+				dirty = true;
+			}
+			if( maximum == null || maximum < doubleValue )
+			{
+				maximum = doubleValue;
+				dirty = true;
+			}
 		}
 		if( lastTimeFlushed + delay >= System.currentTimeMillis() && dirty )
 			flush();

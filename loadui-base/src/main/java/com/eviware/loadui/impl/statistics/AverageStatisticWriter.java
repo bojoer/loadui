@@ -100,14 +100,15 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	@Override
 	public void update( long timestamp, Number value )
 	{
-		double doubleValue = value.doubleValue();
-		this.values.add( doubleValue );
-		if( this.values.size() >= percentileBufferSize )
-			this.values.remove( 0 );
-		avgSum += doubleValue;
-		avgCnt++ ;
-		// sumTotalSquare += Math.pow( doubleValue - avgSum, 2 );
-		// stdDev = sumTotalSquare / avgCnt;
+		synchronized( this )
+		{
+			double doubleValue = value.doubleValue();
+			this.values.add( doubleValue );
+			if( this.values.size() >= percentileBufferSize )
+				this.values.remove( 0 );
+			avgSum += doubleValue;
+			avgCnt++ ;
+		}
 		if( lastTimeFlushed + delay <= System.currentTimeMillis() )
 			flush();
 	}
