@@ -89,10 +89,13 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 	@Override
 	public void update( long timestamp, Number value )
 	{
-		double doubleValue = value.doubleValue();
-		totalSum += doubleValue;
-		lastSecondChange = doubleValue / ( ( System.currentTimeMillis() - lastTimeUpdated ) / 1000 );
-		lastTimeUpdated = System.currentTimeMillis();
+		synchronized( this )
+		{
+			double doubleValue = value.doubleValue();
+			totalSum += doubleValue;
+			lastSecondChange = doubleValue / ( ( System.currentTimeMillis() - lastTimeUpdated ) / 1000 );
+			lastTimeUpdated = System.currentTimeMillis();
+		}
 
 		if( lastTimeFlushed + delay >= System.currentTimeMillis() )
 			flush();
