@@ -1,4 +1,4 @@
-package com.eviware.loadui.impl.statistics.store;
+package com.eviware.loadui.impl.statistics.store.table;
 
 import javax.sql.DataSource;
 
