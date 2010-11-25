@@ -27,7 +27,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private static final String METADATABASE_NAME = "__meta_database";
 
-	private static final String SOURCES_TABLE_NAME_POSTFIX = "_sources";
+	private static final String SOURCE_TABLE_NAME_POSTFIX = "_sources";
 
 	private MetaDatabaseMetaTable metaDatabaseMetaTable;
 
@@ -64,7 +64,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			{
 				throw new IllegalArgumentException( "Execution with the specified id already exist!" );
 			}
-			currentExecution = new ExecutionImpl( id, timestamp );
+			currentExecution = new ExecutionImpl( id, timestamp, this );
 			executionMap.put( id, currentExecution );
 
 			// create sequence table
@@ -129,7 +129,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 						connectionRegistry, metadata, tableRegistry );
 
 				// create sources table
-				SourceTable std = new SourceTable( currentExecution.getId(), td.getId() + SOURCES_TABLE_NAME_POSTFIX,
+				SourceTable std = new SourceTable( currentExecution.getId(), td.getId() + SOURCE_TABLE_NAME_POSTFIX,
 						connectionRegistry, metadata, tableRegistry );
 				dtd.setParentTable( std );
 
@@ -178,7 +178,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				else
 				{
 					return new ExecutionImpl( ( String )data.get( MetaDatabaseMetaTable.STATIC_FIELD_EXECUTION_NAME ),
-							( Long )data.get( MetaDatabaseMetaTable.STATIC_FIELD_TSTAMP ) );
+							( Long )data.get( MetaDatabaseMetaTable.STATIC_FIELD_TSTAMP ), this );
 				}
 			}
 			catch( SQLException e )
@@ -230,7 +230,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			}
 			catch( SQLException e )
 			{
-				throw new RuntimeException( "unable to write data to the database!", e );
+				throw new RuntimeException( "Unable to write data to the database!", e );
 			}
 		}
 	}
@@ -249,8 +249,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 		catch( SQLException e )
 		{
-			e.printStackTrace();
-			// Do nothing. this is temporary method anyway
+			throw new RuntimeException( "Unable to clear the meta database!", e );
 		}
 	}
 
@@ -299,27 +298,41 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		TableBase table = tableRegistry.getTable( executionId, trackId );
 		if( table != null )
 		{
-			table.delete();
-			table = tableRegistry.getTable( executionId, trackId + SOURCES_TABLE_NAME_POSTFIX );
+			table.drop();
+
+			// drop source table
+			table = tableRegistry.getTable( executionId, trackId + SOURCE_TABLE_NAME_POSTFIX );
 			if( table != null )
 			{
-				table.delete();
+				table.drop();
 			}
+
+			// dispose resources and remove from registry
+			tableRegistry.dispose( executionId, trackId );
 		}
 	}
 
 	public void delete( String executionId ) throws SQLException
 	{
 		List<TableBase> tableList = tableRegistry.getAllTables( executionId );
+		TableBase t;
 		for( int i = 0; i < tableList.size(); i++ )
 		{
-			tableList.get( i ).delete();
+			t = tableList.get( i );
+			t.drop();
 		}
+		for( int i = 0; i < tableList.size(); i++ )
+		{
+			tableRegistry.dispose( executionId, tableList.get( i ).getExternalName() );
+		}
+		// TODO delete from meta database, and remove from list of executions
+		// TODO drop database?
 	}
 
 	public void dispose()
 	{
 		tableRegistry.dispose();
+		connectionRegistry.dispose();
 	}
 
 	protected abstract void initializeDatabaseMetadata( DatabaseMetadata metadata );

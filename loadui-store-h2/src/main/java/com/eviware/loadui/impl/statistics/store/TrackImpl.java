@@ -133,8 +133,7 @@ public class TrackImpl implements Track
 		}
 		catch( SQLException e )
 		{
-			// TODO What to do here?
-			e.printStackTrace();
+			throw new RuntimeException( "Unable to delete track: " + id, e );
 		}
 	}
 }
