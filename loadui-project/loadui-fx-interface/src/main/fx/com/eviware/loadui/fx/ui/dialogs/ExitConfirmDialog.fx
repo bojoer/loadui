@@ -28,6 +28,7 @@ import com.eviware.loadui.fx.dialogs.*;
 import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.WindowControllerImpl;
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
 import java.lang.RuntimeException;
 
@@ -55,10 +56,12 @@ public class ExitConfirmDialog {
 							def project = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
 							project.save();
 							dialog2.close();
+							StatisticsWindow.getInstance().close();
 							WindowControllerImpl.instance.forceClose();
 						}
 						onCancel: function() {
 							dialog2.close();
+							StatisticsWindow.getInstance().close();
 							WindowControllerImpl.instance.forceClose();
 						}
 					}
