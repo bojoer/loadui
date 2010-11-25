@@ -42,7 +42,7 @@ public class CollectionEvent extends BaseEvent
 	 * Constructs a CollectionEvent to be fired.
 	 * 
 	 * @param source
-	 *           The PropertyHolder which is to fire the event.
+	 *           The EventFirer which is to fire the event.
 	 * @param collection
 	 *           The name of the collection property.
 	 * @param event

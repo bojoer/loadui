@@ -13,22 +13,38 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.statistics;
+package com.eviware.loadui.api.model;
 
 /**
- * Mutable version of a StatisticVariable which is used to provide data to its
- * writers.
+ * Mutable version of OrderedCollection, which allows adding, removing and
+ * reordering of children.
  * 
  * @author dain.nilsson
+ * 
+ * @param <ChildType>
  */
-public interface MutableStatisticVariable extends StatisticVariable
+public interface MutableOrderedCollection<ChildType> extends OrderedCollection<ChildType>
 {
 	/**
-	 * Updates the MutableStatisticVariable with new data, which will be passed
-	 * to the attached StatisticsWriters.
+	 * Moved a contained child to a new position, as defined by the given
+	 * positional index.
 	 * 
-	 * @param timestamp
-	 * @param value
+	 * @param child
+	 * @param index
 	 */
-	public void update( long timestamp, Number value );
+	public void moveChild( ChildType child, int index );
+
+	/**
+	 * Appends a new child to the end of the collection.
+	 * 
+	 * @param child
+	 */
+	public void addChild( ChildType child );
+
+	/**
+	 * Removes a child from the OrderedCollection.
+	 * 
+	 * @param child
+	 */
+	public void removeChild( ChildType child );
 }
