@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.eviware.loadui.impl.statistics.store.connection.JDBCUtil;
 import com.eviware.loadui.impl.statistics.store.table.ConnectionProvider;
 import com.eviware.loadui.impl.statistics.store.table.MetadataProvider;
 import com.eviware.loadui.impl.statistics.store.table.TableBase;
 import com.eviware.loadui.impl.statistics.store.table.TableDescriptor;
 import com.eviware.loadui.impl.statistics.store.table.TableProvider;
+import com.eviware.loadui.impl.statistics.store.util.JDBCUtil;
 
 public class MetaDatabaseMetaTable extends TableBase
 {
