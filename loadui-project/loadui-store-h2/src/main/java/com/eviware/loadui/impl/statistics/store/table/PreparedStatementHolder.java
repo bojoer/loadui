@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-import com.eviware.loadui.impl.statistics.store.util.JDBCUtil1;
+import com.eviware.loadui.impl.statistics.store.util.JdbcUtil;
 
 public class PreparedStatementHolder
 {
@@ -49,7 +49,7 @@ public class PreparedStatementHolder
 
 	public void dispose()
 	{
-		JDBCUtil1.close( preparedStatement );
+		JdbcUtil.close( preparedStatement );
 		preparedStatement = null;
 		statementHolder = null;
 	}
