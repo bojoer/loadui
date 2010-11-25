@@ -45,7 +45,7 @@ public abstract class TableBase
 	private TableDescriptor descriptor;
 
 	private TableProvider tableProvider;
-	
+
 	private MetadataProvider metadataProvider;
 
 	public TableBase( String dbName, String name, Map<String, ? extends Class<? extends Object>> dynamicFields,
@@ -173,7 +173,7 @@ public abstract class TableBase
 	protected String createTableCreateScript()
 	{
 		HashMap<Class<? extends Object>, String> typeConversionMap = metadataProvider.getTypeConversionMap();
-		
+
 		Map<String, ? extends Object> staticFields = descriptor.getStaticFields();
 		List<String> pkSequence = descriptor.getPkSequence();
 
@@ -236,8 +236,8 @@ public abstract class TableBase
 				b.append( ", " );
 			}
 		}
-		return metadataProvider.getAddPrimaryKeyIndexExpression().replaceFirst( "\\?", tableName ).replaceFirst( "\\?", tableName )
-				.replaceFirst( "\\?", b.toString() );
+		return metadataProvider.getAddPrimaryKeyIndexExpression().replaceFirst( "\\?", tableName )
+				.replaceFirst( "\\?", tableName ).replaceFirst( "\\?", b.toString() );
 	}
 
 	public void insert( Map<String, ? extends Object> data ) throws SQLException
@@ -329,7 +329,8 @@ public abstract class TableBase
 				JdbcUtil.close( iterator.next().getValue() );
 			}
 		}
-		JdbcUtil.close( connection );
+		// connection not closed here, since it may be shared between tables.
+		// connection registry should dispose connections.
 	}
 
 	public TableBase getParentTable()

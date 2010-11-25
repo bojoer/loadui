@@ -44,6 +44,16 @@ public class TableRegistry implements TableProvider
 		return result;
 	}
 
+	public void dispose( String dbName, String tableName )
+	{
+		TableBase dtd = tableMap.get( dbName + tableName );
+		if( dtd != null )
+		{
+			dtd.dispose();
+			tableMap.remove( dbName + tableName );
+		}
+	}
+
 	public void dispose()
 	{
 		Iterator<String> keys = tableMap.keySet().iterator();
@@ -51,5 +61,6 @@ public class TableRegistry implements TableProvider
 		{
 			tableMap.get( keys.next() ).dispose();
 		}
+		tableMap.clear();
 	}
 }

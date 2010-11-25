@@ -2,22 +2,23 @@ package com.eviware.loadui.impl.statistics.store.table;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
 import com.eviware.loadui.impl.statistics.store.table.model.MetaDatabaseMetaTable;
 import com.eviware.loadui.impl.statistics.store.table.model.MetaTable;
 import com.eviware.loadui.impl.statistics.store.table.model.SequenceTable;
+import com.eviware.loadui.impl.statistics.store.util.JdbcUtil;
 
 public class ConnectionRegistry implements ConnectionProvider
 {
 	private DataSourceProvider dsProvider;
 
-	private Map<String, DataSource> dataSourceMap = new HashMap<String, DataSource>();
+	private HashMap<String, DataSource> dataSourceMap = new HashMap<String, DataSource>();
 
-	private Map<String, Connection> connectionMap = new HashMap<String, Connection>();
+	private HashMap<String, Connection> connectionMap = new HashMap<String, Connection>();
 
 	public ConnectionRegistry( DataSourceProvider dsProvider )
 	{
@@ -66,6 +67,14 @@ public class ConnectionRegistry implements ConnectionProvider
 			}
 			return connectionMap.get( key );
 		}
+	}
+	
+	public void dispose(){
+		Collection<Connection> values = connectionMap.values(); 
+		for(Connection c : values){
+			JdbcUtil.close( c );
+		}
+		connectionMap.clear();
 	}
 
 }
