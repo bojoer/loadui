@@ -69,6 +69,7 @@ import com.eviware.loadui.api.events.BaseEvent;
 
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.fx.wizards.NewProjectWizard;
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
 import javax.swing.JFileChooser;
 import java.io.File;
@@ -77,21 +78,21 @@ import java.io.IOException;
 
 import java.util.EventObject;
 
-import com.eviware.loadui.fx.stats.StatisticsMonitorPanel;
-
 public class ProjectMenu extends HBox {
 	def listener = new SummaryListener();
-	var mon:StatisticsMonitorPanel;
+	var statMonitor = StatisticsWindow.getInstance();
 	
 	public var project: ProjectItem on replace oldProject = newProject {
 		//workspaceLabel = project.getWorkspace().getLabel();
 		projectLabel = project.getLabel();
+		statMonitor.project = project;
 		summaryEnabled = false;
 		if( oldProject != null )
 			oldProject.removeEventListener( BaseEvent.class, listener );
 		if( newProject != null )
 			newProject.addEventListener( BaseEvent.class, listener );
 	}
+
 	
 	var workspaceLabel:String = "Workspace";
 	var projectLabel:String;
@@ -263,8 +264,7 @@ public class ProjectMenu extends HBox {
 				                MenuItem {
 				                	text: "Save and Close"
 				                	action: function() {
-				                		mon.setVisible(false);
-										mon.dispose();
+				                		statMonitor.close();
 				                		MainWindow.instance.projectCanvas.generateMiniatures(); 
 				                		project.save();
 				                		AppState.instance.displayWorkspace();
@@ -273,8 +273,7 @@ public class ProjectMenu extends HBox {
 				                MenuItem {
 				                    text: "Close"
 				                    action: function() { 
-				                    	mon.setVisible(false);
-									    mon.dispose();
+				                    	statMonitor.close();
 				                        AppState.instance.displayWorkspace();
 				                    }
 				                }
@@ -319,16 +318,13 @@ public class ProjectMenu extends HBox {
 								shape: "M0,0 L0,12 10,12, 10,0 0,0 M4,13 L4,16 14,16 14,4 11,4 11,13 4,13"
 								tooltip: Tooltip { text: ##[STAT_MONITOR]"Statistics Monitor" }
 								action: function():Void { 
-									mon = new StatisticsMonitorPanel(project);
-									mon.pack();
-									mon.setVisible(true);
+									statMonitor.show();
 								 }
 				         	}, MenubarButton {
 								shape: "M14.00,2.00 L12.00,0.00 7.00,5.00 2.00,0.00 0.00,2.00 5.00,7.00 0.00,12.00 2.00,14.00 7.00,9.00 12.00,14.00 14.00,12.00 9.00,7.00 Z"
 								tooltip: Tooltip { text: ##[CLOSE_PROJECT]"Close Project" }
-								action: function():Void { 
-									mon.setVisible(false);
-									mon.dispose();
+								action: function():Void {
+									statMonitor.close();
 									AppState.instance.displayWorkspace() }
 				         	}, Label {
 								layoutInfo: LayoutInfo {

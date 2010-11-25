@@ -63,6 +63,7 @@ import com.eviware.loadui.fx.widgets.MiniRunController;
 import com.eviware.loadui.fx.widgets.RunController;
 import com.eviware.loadui.fx.summary.SummaryReport;
 import com.eviware.loadui.fx.widgets.canvas.Canvas;
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.CanvasItem;
@@ -84,13 +85,13 @@ public class TestCaseMenu extends HBox {
 		projectLabel = testCase.getProject().getLabel();
 		testCaseLabel = testCase.getLabel();
 		summaryEnabled = false;
-		
 		if( oldtestCase != null )
 			oldtestCase.removeEventListener( BaseEvent.class, listener );
 		if( newTestCase != null )
 			newTestCase.addEventListener( BaseEvent.class, listener );
 	}
 	
+		
 	var workspaceLabel:String = "Workspace";
 	var projectLabel:String;
 	var testCaseLabel:String;
@@ -308,6 +309,12 @@ public class TestCaseMenu extends HBox {
 								tooltip: Tooltip { text: ##[HELP]"Help Page" }
 								action: function():Void { openURL("http://www.loadui.org/interface/testcase-view.html") }
 							}, MenubarButton {
+								shape: "M0,0 L0,12 10,12, 10,0 0,0 M4,13 L4,16 14,16 14,4 11,4 11,13 4,13"
+								tooltip: Tooltip { text: ##[STAT_MONITOR]"Statistics Monitor" }
+								action: function():Void { 
+									StatisticsWindow.getInstance().show();
+								 }
+				         	}, MenubarButton {
 								shape: "M14.00,2.00 L12.00,0.00 7.00,5.00 2.00,0.00 0.00,2.00 5.00,7.00 0.00,12.00 2.00,14.00 7.00,9.00 12.00,14.00 14.00,12.00 9.00,7.00 Z"
 								tooltip: Tooltip { text: ##[CLOSE_TESTCASE]"Close TestCase" }
 								action: function():Void {
