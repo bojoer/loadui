@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import com.eviware.loadui.impl.statistics.store.DataSourceProvider;
 import com.eviware.loadui.impl.statistics.store.table.model.MetaDatabaseMetaTable;
 import com.eviware.loadui.impl.statistics.store.table.model.MetaTable;
 import com.eviware.loadui.impl.statistics.store.table.model.SequenceTable;
