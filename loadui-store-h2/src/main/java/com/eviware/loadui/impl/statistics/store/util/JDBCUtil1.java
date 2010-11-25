@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class JDBCUtil
+public class JDBCUtil1
 {
 
 	public static void close( ResultSet resultSet )

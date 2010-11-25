@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.eviware.loadui.impl.statistics.store.util.JDBCUtil;
+import com.eviware.loadui.impl.statistics.store.util.JDBCUtil1;
 
 public abstract class TableBase
 {
@@ -99,7 +99,7 @@ public abstract class TableBase
 		}
 		finally
 		{
-			JDBCUtil.close( stm );
+			JDBCUtil1.close( stm );
 		}
 	}
 
@@ -263,7 +263,7 @@ public abstract class TableBase
 		}
 		finally
 		{
-			JDBCUtil.close( stm );
+			JDBCUtil1.close( stm );
 		}
 	}
 
@@ -282,7 +282,7 @@ public abstract class TableBase
 			}
 			result.add( row );
 		}
-		JDBCUtil.close( rs );
+		JDBCUtil1.close( rs );
 		return result;
 	}
 
@@ -298,7 +298,7 @@ public abstract class TableBase
 				row.put( rs.getMetaData().getColumnName( i + 1 ), rs.getObject( i + 1 ) );
 			}
 		}
-		JDBCUtil.close( rs );
+		JDBCUtil1.close( rs );
 		return row;
 	}
 
@@ -320,16 +320,16 @@ public abstract class TableBase
 	{
 		selectStatement.dispose();
 		insertStatement.dispose();
-		JDBCUtil.close( deleteStatement );
+		JDBCUtil1.close( deleteStatement );
 		if( extraStatementMap != null )
 		{
 			Iterator<Entry<String, PreparedStatement>> iterator = extraStatementMap.entrySet().iterator();
 			while( iterator.hasNext() )
 			{
-				JDBCUtil.close( iterator.next().getValue() );
+				JDBCUtil1.close( iterator.next().getValue() );
 			}
 		}
-		JDBCUtil.close( connection );
+		JDBCUtil1.close( connection );
 	}
 
 	public TableBase getParentTable()
