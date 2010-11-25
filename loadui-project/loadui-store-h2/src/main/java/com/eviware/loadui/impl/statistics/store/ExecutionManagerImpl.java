@@ -1,6 +1,5 @@
 package com.eviware.loadui.impl.statistics.store;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,45 +8,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
-import com.eviware.loadui.impl.statistics.store.model.DataTable;
-import com.eviware.loadui.impl.statistics.store.model.MetaDatabaseMetaTable;
-import com.eviware.loadui.impl.statistics.store.model.MetaTable;
-import com.eviware.loadui.impl.statistics.store.model.SequenceTable;
-import com.eviware.loadui.impl.statistics.store.model.SourceTable;
-import com.eviware.loadui.impl.statistics.store.model.TableBase;
-import com.eviware.loadui.impl.statistics.store.model.TableRegistry;
+import com.eviware.loadui.impl.statistics.store.table.TableBase;
+import com.eviware.loadui.impl.statistics.store.table.model.DataTable;
+import com.eviware.loadui.impl.statistics.store.table.model.MetaDatabaseMetaTable;
+import com.eviware.loadui.impl.statistics.store.table.model.MetaTable;
+import com.eviware.loadui.impl.statistics.store.table.model.SequenceTable;
+import com.eviware.loadui.impl.statistics.store.table.model.SourceTable;
 
-public abstract class ExecutionManagerImpl implements ExecutionManager
+public abstract class ExecutionManagerImpl implements ExecutionManager, DataSourceProvider
 {
 
 	private static final String METADATABASE_NAME = "__meta_database";
-	private static final String METATABLE_NAME = "meta_table";
-	private static final String SEQUENCE_TABLE_NAME = "sequence_table";
+
 	private static final String SOURCES_TABLE_NAME_POSTFIX = "_sources";
-
-	private static ExecutionManagerImpl instance;
-
-	/**
-	 * Data sources used to communicate with database. This map contains data
-	 * sources for different database instances, and concrete implementation of
-	 * it depends on database that is used. Some implementations may provide
-	 * connection pool, some may not. Map key is the id of the execution
-	 * instance, and value is data source used to establish connection.
-	 */
-	private Map<String, DataSource> dataSourceMap;
-
-	/**
-	 * Every execution uses one connection for all operations. References to
-	 * these are kept in this map.
-	 */
-	private Map<String, Connection> connectionMap;
 
 	private MetaDatabaseMetaTable metaDatabaseMetaTable;
 
@@ -61,27 +39,18 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 
 	private TableRegistry tableRegistry = new TableRegistry();
 
-	public static ExecutionManagerImpl getInstance()
-	{
-		return instance;
-	}
+	private DatabaseMetadata metadata;
+
+	private ConnectionRegistry connectionRegistry;
 
 	public ExecutionManagerImpl()
 	{
-		instance = this;
-		
-		dataSourceMap = new HashMap<String, DataSource>();
-		connectionMap = new HashMap<String, Connection>();
-		try
-		{
-			metaDatabaseMetaTable = new MetaDatabaseMetaTable( METADATABASE_NAME, METATABLE_NAME,
-					getCreateTableExpression(), getAddPrimaryKeyIndexExpression(), null, getTypeConversionMap(),
-					getConnection( METADATABASE_NAME ) );
-		}
-		catch( SQLException e )
-		{
-			throw new RuntimeException( "Unable to initialize metadatabase! ", e );
-		}
+		connectionRegistry = new ConnectionRegistry( this );
+
+		metadata = new DatabaseMetadata();
+		initializeDatabaseMetadata( metadata );
+
+		metaDatabaseMetaTable = new MetaDatabaseMetaTable( METADATABASE_NAME, connectionRegistry, metadata, tableRegistry );
 	}
 
 	@Override
@@ -96,15 +65,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 			currentExecution = new ExecutionImpl( id, timestamp );
 			executionMap.put( id, currentExecution );
 
-			Connection connection = getConnection( id );
-
 			// create sequence table
-			new SequenceTable( id, SEQUENCE_TABLE_NAME, getCreateTableExpression(), getAddPrimaryKeyIndexExpression(),
-					null, getTypeConversionMap(), connection );
+			SequenceTable sequenceTable = new SequenceTable( id, connectionRegistry, metadata, tableRegistry );
+			tableRegistry.put( id, sequenceTable );
 
-			MetaTable metaTable = new MetaTable( id, METATABLE_NAME, getCreateTableExpression(),
-					getAddPrimaryKeyIndexExpression(), null, getTypeConversionMap(), connection );
-			tableRegistry.putMetaTable( id, metaTable );
+			MetaTable metaTable = new MetaTable( id, connectionRegistry, metadata, tableRegistry );
+			tableRegistry.put( id, metaTable );
 
 			HashMap<String, Object> m = new HashMap<String, Object>();
 			m.put( MetaDatabaseMetaTable.STATIC_FIELD_EXECUTION_NAME, id );
@@ -117,21 +83,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 		{
 			throw new RuntimeException( "Error while writing execution data to the database!", e );
 		}
-	}
-
-	public Connection getConnection( String executionId ) throws SQLException
-	{
-		if( !dataSourceMap.containsKey( executionId ) )
-		{
-			dataSourceMap.put( executionId, createDataSource( executionId ) );
-		}
-		if( !connectionMap.containsKey( executionId ) )
-		{
-			Connection conn = dataSourceMap.get( executionId ).getConnection();
-			conn.setAutoCommit( false );
-			connectionMap.put( executionId, conn );
-		}
-		return connectionMap.get( executionId );
 	}
 
 	@Override
@@ -159,7 +110,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 			{
 				throw new IllegalArgumentException( "No descriptor defined for specified trackId!" );
 			}
-			track = new TrackImpl( trackId, currentExecution, td );
+			track = new TrackImpl( trackId, currentExecution, td, this );
 			currentExecution.addTrack( track );
 			try
 			{
@@ -168,20 +119,16 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 				// insert into meta-table
 				Map<String, Object> data = new HashMap<String, Object>();
 				data.put( MetaTable.STATIC_FIELD_TRACK_NAME, trackId );
-				TableBase metaTable = tableRegistry.getMetaTable( executionId );
+				TableBase metaTable = tableRegistry.getTable( executionId, MetaTable.METATABLE_NAME );
 				metaTable.insert( data );
 
-				// create actual tables
-				Connection connection = getConnection( currentExecution.getId() );
-
 				// create data table
-				DataTable dtd = new DataTable( currentExecution.getId(), td.getId(), getCreateTableExpression(),
-						getAddPrimaryKeyIndexExpression(), td.getValueNames(), getTypeConversionMap(), connection );
+				DataTable dtd = new DataTable( currentExecution.getId(), td.getId(), td.getValueNames(),
+						connectionRegistry, metadata, tableRegistry );
 
 				// create sources table
 				SourceTable std = new SourceTable( currentExecution.getId(), td.getId() + SOURCES_TABLE_NAME_POSTFIX,
-						getCreateTableExpression(), getAddPrimaryKeyIndexExpression(), null, getTypeConversionMap(),
-						connection );
+						connectionRegistry, metadata, tableRegistry );
 				dtd.setParentTable( std );
 
 				tableRegistry.put( executionId, dtd );
@@ -220,7 +167,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 			try
 			{
 				Map<String, Object> data = new HashMap<String, Object>();
-				data.put( MetaDatabaseMetaTable.STATIC_FIELD_EXECUTION_NAME, executionId );
+				data.put( MetaDatabaseMetaTable.SELECT_ARG_EXECUTION_NAME_EQ, executionId );
 				data = metaDatabaseMetaTable.selectFirst( data );
 				if( data.size() == 0 )
 				{
@@ -281,8 +228,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 			}
 			catch( SQLException e )
 			{
-				// TODO What to do here?
-				e.printStackTrace();
+				throw new RuntimeException( "unable to write data to the database!", e );
 			}
 		}
 	}
@@ -301,13 +247,14 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 		}
 		catch( SQLException e )
 		{
+			e.printStackTrace();
 			// Do nothing. this is temporary method anyway
 		}
 	}
 
 	public void write( String executionId, String trackId, String source, Map<String, Object> data ) throws SQLException
 	{
-		TableBase dtd = tableRegistry.get( executionId, trackId );
+		TableBase dtd = tableRegistry.getTable( executionId, trackId );
 
 		Integer sourceId = ( ( SourceTable )dtd.getParentTable() ).getSourceId( source );
 		data.put( DataTable.STATIC_FIELD_SOURCEID, sourceId );
@@ -315,28 +262,43 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 		dtd.insert( data );
 	}
 
-	public List<Map<String, ? extends Object>> read( String executionId, String trackId, String source, int startTime,
-			int endTime ) throws SQLException
+	public Map<String, Object> readNext( String executionId, String trackId, String source, int startTime )
+			throws SQLException
 	{
-		TableBase dtd = tableRegistry.get( executionId, trackId );
+		TableBase dtd = tableRegistry.getTable( executionId, trackId );
 
 		Map<String, Object> data = new HashMap<String, Object>();
-		data.put( DataTable.STATIC_FIELD_TIMESTAMP, startTime );
-		data.put( DataTable.STATIC_FIELD_TIMESTAMP, endTime );
+		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
+		data.put( DataTable.SELECT_ARG_TIMESTAMP_LTE, System.currentTimeMillis() );
 
 		Integer sourceId = ( ( SourceTable )dtd.getParentTable() ).getSourceId( source );
-		data.put( DataTable.STATIC_FIELD_SOURCEID, sourceId );
+		data.put( DataTable.SELECT_ARG_SOURCEID_EQ, sourceId );
+
+		return dtd.selectFirst( data );
+	}
+
+	public List<Map<String, Object>> read( String executionId, String trackId, String source, int startTime, int endTime )
+			throws SQLException
+	{
+		TableBase dtd = tableRegistry.getTable( executionId, trackId );
+
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
+		data.put( DataTable.SELECT_ARG_TIMESTAMP_LTE, endTime );
+
+		Integer sourceId = ( ( SourceTable )dtd.getParentTable() ).getSourceId( source );
+		data.put( DataTable.SELECT_ARG_SOURCEID_EQ, sourceId );
 
 		return dtd.select( data );
 	}
 
 	public void deleteTrack( String executionId, String trackId ) throws SQLException
 	{
-		TableBase table = tableRegistry.get( executionId, trackId );
+		TableBase table = tableRegistry.getTable( executionId, trackId );
 		if( table != null )
 		{
 			table.delete();
-			table = tableRegistry.get( executionId, trackId + SOURCES_TABLE_NAME_POSTFIX );
+			table = tableRegistry.getTable( executionId, trackId + SOURCES_TABLE_NAME_POSTFIX );
 			if( table != null )
 			{
 				table.delete();
@@ -346,7 +308,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 
 	public void delete( String executionId ) throws SQLException
 	{
-		List<TableBase> tableList = tableRegistry.get( executionId );
+		List<TableBase> tableList = tableRegistry.getAllTables( executionId );
 		for( int i = 0; i < tableList.size(); i++ )
 		{
 			tableList.get( i ).delete();
@@ -358,11 +320,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager
 		tableRegistry.dispose();
 	}
 
-	protected abstract DataSource createDataSource( String db );
+	protected abstract void initializeDatabaseMetadata( DatabaseMetadata metadata );
 
-	protected abstract String getCreateTableExpression();
-
-	protected abstract HashMap<Class<? extends Object>, String> getTypeConversionMap();
-
-	protected abstract String getAddPrimaryKeyIndexExpression();
 }

@@ -32,31 +32,13 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	}
 
 	@Override
-	protected DataSource createDataSource( String db )
+	public DataSource createDataSource( String db )
 	{
 		// JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" +
 		// DB_BASEDIR + db, "sa", "sa" );
 		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:~/_data/" + db, "sa", "sa" );
 		cp.setMaxConnections( 5 );
 		return cp;
-	}
-
-	@Override
-	public String getCreateTableExpression()
-	{
-		return SQL_CREATE_TABLE_EXPRESSION;
-	}
-
-	@Override
-	public String getAddPrimaryKeyIndexExpression()
-	{
-		return SQL_ADD_PRIMARY_KEY_INDEX_EXPRESSION;
-	}
-
-	@Override
-	protected HashMap<Class<? extends Object>, String> getTypeConversionMap()
-	{
-		return typeConversionMap;
 	}
 
 	/**
@@ -67,4 +49,17 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	{
 		super.dispose();
 	}
+
+	@Override
+	protected void initializeDatabaseMetadata( DatabaseMetadata metadata )
+	{
+		metadata.setAddPrimaryKeyIndexExpression( SQL_ADD_PRIMARY_KEY_INDEX_EXPRESSION );
+		metadata.setCreateTableExpression( SQL_CREATE_TABLE_EXPRESSION );
+
+		metadata.addTypeConversionPair( Integer.class, TYPE_INTEGER );
+		metadata.addTypeConversionPair( Long.class, TYPE_BIGINT );
+		metadata.addTypeConversionPair( Double.class, TYPE_DOUBLE );
+		metadata.addTypeConversionPair( String.class, TYPE_STRING );
+	}
+
 }
