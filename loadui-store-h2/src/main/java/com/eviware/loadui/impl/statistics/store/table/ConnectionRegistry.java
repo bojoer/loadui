@@ -1,4 +1,4 @@
-package com.eviware.loadui.impl.statistics.store;
+package com.eviware.loadui.impl.statistics.store.table;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -7,8 +7,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import com.eviware.loadui.impl.statistics.store.table.ConnectionProvider;
-import com.eviware.loadui.impl.statistics.store.table.TableBase;
+import com.eviware.loadui.impl.statistics.store.DataSourceProvider;
 import com.eviware.loadui.impl.statistics.store.table.model.MetaDatabaseMetaTable;
 import com.eviware.loadui.impl.statistics.store.table.model.MetaTable;
 import com.eviware.loadui.impl.statistics.store.table.model.SequenceTable;
