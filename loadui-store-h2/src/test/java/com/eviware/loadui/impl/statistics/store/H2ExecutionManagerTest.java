@@ -18,11 +18,12 @@ import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 
 public class H2ExecutionManagerTest
 {
+	H2ExecutionManager h2;
 
 	@Before
 	public void initialize()
 	{
-		H2ExecutionManager h2 = new H2ExecutionManager();
+		h2 = new H2ExecutionManager();
 		h2.clearMetaDatabase();
 	}
 
@@ -30,12 +31,12 @@ public class H2ExecutionManagerTest
 	public void testStartExecution()
 	{
 		long time = System.currentTimeMillis();
-		Execution e = ExecutionManagerImpl.getInstance().startExecution( "test1", time );
+		Execution e = h2.startExecution( "test1", time );
 		assertEquals( time, e.getStartTime() );
 
 		try
 		{
-			ExecutionManagerImpl.getInstance().startExecution( "test1", time );
+			h2.startExecution( "test1", time );
 			fail( "Should throw IllegalArgumentException when execution was already started." );
 		}
 		catch( IllegalArgumentException ex )
@@ -48,20 +49,20 @@ public class H2ExecutionManagerTest
 	public void testGetCurrentExecution()
 	{
 		long time = System.currentTimeMillis();
-		Execution e = ExecutionManagerImpl.getInstance().startExecution( "test2", time );
-		assertEquals( e, ExecutionManagerImpl.getInstance().getCurrentExecution() );
+		Execution e = h2.startExecution( "test2", time );
+		assertEquals( e, h2.getCurrentExecution() );
 	}
 
 	@Test
 	public void testGetExecutionNames()
 	{
-		( ( ExecutionManagerImpl )ExecutionManagerImpl.getInstance() ).clearMetaDatabase();
-		ExecutionManagerImpl.getInstance().startExecution( "test1", 10 );
-		ExecutionManagerImpl.getInstance().startExecution( "test2", 20 );
-		ExecutionManagerImpl.getInstance().startExecution( "test3", 30 );
-		ExecutionManagerImpl.getInstance().startExecution( "test4", 40 );
-		ExecutionManagerImpl.getInstance().startExecution( "test5", 50 );
-		Collection<String> l = ExecutionManagerImpl.getInstance().getExecutionNames();
+		( ( ExecutionManagerImpl )h2 ).clearMetaDatabase();
+		h2.startExecution( "test1", 10 );
+		h2.startExecution( "test2", 20 );
+		h2.startExecution( "test3", 30 );
+		h2.startExecution( "test4", 40 );
+		h2.startExecution( "test5", 50 );
+		Collection<String> l = h2.getExecutionNames();
 		assertTrue( l.contains( "test1" ) );
 		assertTrue( l.contains( "test2" ) );
 		assertTrue( l.contains( "test3" ) );
@@ -72,15 +73,15 @@ public class H2ExecutionManagerTest
 	@Test
 	public void testGetExecution()
 	{
-		( ( ExecutionManagerImpl )ExecutionManagerImpl.getInstance() ).clearMetaDatabase();
-		ExecutionManagerImpl.getInstance().startExecution( "test1", 10 );
+		( ( ExecutionManagerImpl )h2 ).clearMetaDatabase();
+		h2.startExecution( "test1", 10 );
 
-		ExecutionManagerImpl.getInstance().getExecution( "test1" );
-		assertTrue( ExecutionManagerImpl.getInstance().getExecution( "test1" ).getStartTime() == 10 );
+		h2.getExecution( "test1" );
+		assertTrue( h2.getExecution( "test1" ).getStartTime() == 10 );
 
 		try
 		{
-			ExecutionManagerImpl.getInstance().getExecution( "testX" );
+			h2.getExecution( "testX" );
 			fail( "Should throw IllegalArgumentException when non existing execution is requested." );
 		}
 		catch( IllegalArgumentException e )
@@ -94,7 +95,7 @@ public class H2ExecutionManagerTest
 	{
 		try
 		{
-			ExecutionManagerImpl.getInstance().getTrack( "t1" );
+			h2.getTrack( "t1" );
 			fail( "Should throw IllegalArgumentException when no execution is started." );
 		}
 		catch( IllegalArgumentException ex )
@@ -102,11 +103,11 @@ public class H2ExecutionManagerTest
 
 		}
 
-		ExecutionManagerImpl.getInstance().startExecution( "test1", 10 );
+		h2.startExecution( "test1", 10 );
 
 		try
 		{
-			ExecutionManagerImpl.getInstance().getTrack( "t1" );
+			h2.getTrack( "t1" );
 			fail( "Should throw IllegalArgumentException when track desriptor does not exist." );
 		}
 		catch( IllegalArgumentException ex )
@@ -127,11 +128,11 @@ public class H2ExecutionManagerTest
 		values.put( "d", 4 );
 
 		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types );
-		ExecutionManagerImpl.getInstance().registerTrackDescriptor( td );
-		Track t = ExecutionManagerImpl.getInstance().getTrack( "t1" );
+		h2.registerTrackDescriptor( td );
+		Track t = h2.getTrack( "t1" );
 
 		EntryImpl entry = new EntryImpl( ( int )( System.currentTimeMillis() / 10000 ), values );
-		ExecutionManagerImpl.getInstance().writeEntry( t.getId(), entry, "local1" );
+		h2.writeEntry( t.getId(), entry, "local1" );
 
 	}
 }
