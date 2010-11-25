@@ -12,7 +12,7 @@ import com.eviware.loadui.impl.statistics.store.table.MetadataProvider;
 import com.eviware.loadui.impl.statistics.store.table.TableBase;
 import com.eviware.loadui.impl.statistics.store.table.TableDescriptor;
 import com.eviware.loadui.impl.statistics.store.table.TableProvider;
-import com.eviware.loadui.impl.statistics.store.util.JDBCUtil1;
+import com.eviware.loadui.impl.statistics.store.util.JdbcUtil;
 
 public class MetaDatabaseMetaTable extends TableBase
 {
@@ -59,7 +59,7 @@ public class MetaDatabaseMetaTable extends TableBase
 				result.add( rs.getString( STATIC_FIELD_EXECUTION_NAME ) );
 			}
 		}
-		JDBCUtil1.close( rs );
+		JdbcUtil.close( rs );
 		return result;
 	}
 
