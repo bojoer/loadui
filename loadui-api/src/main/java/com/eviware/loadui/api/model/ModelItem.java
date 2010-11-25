@@ -24,7 +24,7 @@ import com.eviware.loadui.api.addressable.Addressable;
  */
 public interface ModelItem extends PropertyHolder, AttributeHolder, Addressable
 {
-	// ModelItemEvents
+	// BaseEvents
 	public final String LABEL = ModelItem.class.getSimpleName() + "@label";
 	public final String RELEASED = ModelItem.class.getSimpleName() + "@released";
 	public final String DELETED = ModelItem.class.getSimpleName() + "@deleted";

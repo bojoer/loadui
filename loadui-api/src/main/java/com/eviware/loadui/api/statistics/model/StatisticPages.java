@@ -13,22 +13,32 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.statistics;
+package com.eviware.loadui.api.statistics.model;
+
+import com.eviware.loadui.api.model.OrderedCollection;
 
 /**
- * Mutable version of a StatisticVariable which is used to provide data to its
- * writers.
+ * Holds a number of StatisticPages, and allows creation, and reordering of
+ * these.
  * 
  * @author dain.nilsson
  */
-public interface MutableStatisticVariable extends StatisticVariable
+public interface StatisticPages extends OrderedCollection<StatisticPage>
 {
 	/**
-	 * Updates the MutableStatisticVariable with new data, which will be passed
-	 * to the attached StatisticsWriters.
+	 * Creates and returns a new StatisticPage with the given title, placing it
+	 * at the end of the existing StatisticPages.
 	 * 
-	 * @param timestamp
-	 * @param value
+	 * @param title
+	 * @return
 	 */
-	public void update( long timestamp, Number value );
+	public StatisticPage createPage( String title );
+
+	/**
+	 * Moved a contained StatisticPage to the given index.
+	 * 
+	 * @param page
+	 * @param index
+	 */
+	public void movePage( StatisticPage page, int index );
 }

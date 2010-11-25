@@ -18,6 +18,8 @@ package com.eviware.loadui.api.model;
 import java.io.File;
 import java.util.Collection;
 
+import com.eviware.loadui.api.statistics.model.StatisticPages;
+
 /**
  * A loadUI Project. It is stored as a file on the disk.
  * 
@@ -27,7 +29,7 @@ public interface ProjectItem extends CanvasItem
 {
 	public static final String SCENES = ProjectItem.class.getName() + "@scenes";
 	public static final String ASSIGNMENTS = ProjectItem.class.getName() + "@assignments";
-	
+
 	public final String SAVE_REPORT_PROPERTY = ModelItem.class.getSimpleName() + ".saveReport";
 	public final String REPORT_FOLDER_PROPERTY = ModelItem.class.getSimpleName() + ".reportFolder";
 	public final String REPORT_FORMAT_PROPERTY = ModelItem.class.getSimpleName() + ".reportFormat";
@@ -133,57 +135,64 @@ public interface ProjectItem extends CanvasItem
 	 *           The AgentItem to unassign.
 	 */
 	public void unassignScene( SceneItem scene, AgentItem agent );
-	
+
 	/**
 	 * Checks if summaries are saved at the end of each run
 	 * 
 	 * @return true if the summaries are saved.
 	 */
 	public boolean isSaveReport();
-	
+
 	/**
 	 * Used to set whether the summary should be saved at the end of each run
 	 * 
 	 * @param save
-	 * 			true if the reports should be saved
+	 *           true if the reports should be saved
 	 */
-	public void setSaveReport(boolean save);
-	
+	public void setSaveReport( boolean save );
+
 	/**
 	 * Used to save project to some file.
 	 * 
 	 * @param dest
-	 * 	file where to save project
+	 *           file where to save project
 	 */
-	public void saveAs(File dest);
-	
+	public void saveAs( File dest );
+
 	/**
 	 * The folder for saving summaries
 	 * 
 	 * @return the path to the folder
 	 */
 	public String getReportFolder();
-	
+
 	/**
 	 * Used to set the foldr for saving the summaries
 	 * 
 	 * @param path
-	 * 			The path to the folder
+	 *           The path to the folder
 	 */
-	public void setReportFolder(String path);
-	
+	public void setReportFolder( String path );
+
 	/**
 	 * The format for saving summaries (pdf, doc, rtf, xml etc.)
 	 * 
 	 * @return the format in which the report will be saved
 	 */
 	public String getReportFormat();
-	
+
 	/**
 	 * Used to set the format for saving the summaries
 	 * 
 	 * @param format
-	 * 			The format in which the report will be saved
+	 *           The format in which the report will be saved
 	 */
-	public void setReportFormat(String format);
+	public void setReportFormat( String format );
+
+	/**
+	 * Gets the StatisticPages associated with the Project.
+	 * 
+	 * @return
+	 */
+	public StatisticPages getStatisticPages();
 }

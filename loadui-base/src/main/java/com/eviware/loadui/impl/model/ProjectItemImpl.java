@@ -67,6 +67,7 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.PropertySynchronizer;
+import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.summary.Chapter;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Section;
@@ -85,6 +86,7 @@ import com.eviware.loadui.config.SceneAssignmentConfig;
 import com.eviware.loadui.config.SceneItemConfig;
 import com.eviware.loadui.impl.XmlBeansUtils;
 import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
+import com.eviware.loadui.impl.statistics.model.StatisticPagesImpl;
 import com.eviware.loadui.impl.summary.MutableChapterImpl;
 import com.eviware.loadui.impl.summary.sections.ProjectDataSection;
 import com.eviware.loadui.impl.summary.sections.ProjectDataSummarySection;
@@ -118,6 +120,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final TerminalProxy proxy;
 	private final Set<SceneItem> scenes = new HashSet<SceneItem>();
 	private final Set<SceneItem> awaitingScenes = new HashSet<SceneItem>();
+	private final StatisticPages statisticPages;
 	private final Property<Boolean> saveReport;
 	private final Property<String> reportFolder;
 	private final Property<String> reportFormat;
@@ -149,6 +152,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		reportFolder = createProperty( REPORT_FOLDER_PROPERTY, String.class, "" );
 		reportFormat = createProperty( REPORT_FORMAT_PROPERTY, String.class, "" );
 		proxy = BeanInjector.getBean( TerminalProxy.class );
+		statisticPages = new StatisticPagesImpl( getConfig().getStatistics() == null ? getConfig().addNewStatistics()
+				: getConfig().getStatistics() );
 	}
 
 	@Override
@@ -789,6 +794,12 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	public void setReportFormat( String format )
 	{
 		reportFormat.setValue( format );
+	}
+
+	@Override
+	public StatisticPages getStatisticPages()
+	{
+		return statisticPages;
 	}
 
 	private class AssignmentImpl implements Assignment
