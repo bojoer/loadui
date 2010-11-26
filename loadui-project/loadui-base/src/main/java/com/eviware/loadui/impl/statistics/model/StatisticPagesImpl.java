@@ -21,7 +21,6 @@ import java.util.EventObject;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
-import com.eviware.loadui.config.ChartGroupConfig;
 import com.eviware.loadui.config.StatisticsConfig;
 import com.eviware.loadui.config.StatisticsPageConfig;
 import com.eviware.loadui.impl.XmlBeansUtils;
