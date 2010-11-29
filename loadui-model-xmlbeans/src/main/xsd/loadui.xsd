@@ -164,16 +164,18 @@
     		<element name="chart" type="lui:Chart" maxOccurs="unbounded"
     			minOccurs="0">
     		</element>
-    		<element name="attributes" type="lui:PropertyList" maxOccurs="1" minOccurs="1"></element>
+    		<element name="attributes" type="lui:PropertyList"
+    			maxOccurs="1" minOccurs="1">
+    		</element>
     	</sequence>
     	<attribute name="title" type="string"></attribute>
+    	<attribute name="type" type="string" default="LINE"></attribute>
     </complexType>
 
     <complexType name="Chart">
     	<sequence>
     		<element name="attributes" type="lui:PropertyList" maxOccurs="1" minOccurs="1"></element>
     	</sequence>
-    	<attribute name="type" type="string" default="LINE"></attribute>
     	<attribute name="statisticHolder" type="string"></attribute>
     </complexType>
 

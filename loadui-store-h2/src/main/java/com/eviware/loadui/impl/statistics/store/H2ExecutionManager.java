@@ -10,7 +10,8 @@ import org.h2.jdbcx.JdbcConnectionPool;
 public class H2ExecutionManager extends ExecutionManagerImpl
 {
 	public static final String DB_BASEDIR = new File( System.getProperty( "loadui.home" ), "controller".equals( System
-			.getProperty( "loadui.instance" ) ) ? "data_c" : "data_a" ).toURI().toString() + "/";
+			.getProperty( "loadui.instance" ) ) ? "data_c" : "data_a" ).toURI().toString().replaceAll( "%20", " " )
+			+ File.separator;
 
 	public static final String SQL_CREATE_TABLE_EXPRESSION = "CREATE TABLE";
 	public static final String SQL_ADD_PRIMARY_KEY_INDEX_EXPRESSION = "ALTER TABLE ? ADD CONSTRAINT ?_pk_index PRIMARY KEY(?)";
