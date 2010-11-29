@@ -57,6 +57,10 @@ public mixin class TooltipHolder extends BaseMixin {
 	}
 	
 	init {
+	    initalizeTooltipHandlers();
+	}
+	
+	protected function initalizeTooltipHandlers(): Void {
 		(this as BaseNode).addMouseHandler( MOUSE_ENTERED, function( e:MouseEvent ):Void {
 			if( tooltip != null and tooltipEnabled ) {
 				def bounds = (this as BaseNode).localToScene((this as BaseNode).boundsInLocal);

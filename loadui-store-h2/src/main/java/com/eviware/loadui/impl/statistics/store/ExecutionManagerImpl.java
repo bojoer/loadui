@@ -22,15 +22,34 @@ import com.eviware.loadui.impl.statistics.store.table.model.MetaTable;
 import com.eviware.loadui.impl.statistics.store.table.model.SequenceTable;
 import com.eviware.loadui.impl.statistics.store.table.model.SourceTable;
 
+/**
+ * Implementation of execution manager. Basically main class for data handling.
+ * Handles tables, database data sources etc.
+ * 
+ * @author predrag.vucetic
+ * 
+ */
 public abstract class ExecutionManagerImpl implements ExecutionManager, DataSourceProvider
 {
 
+	/**
+	 * The name of the meta-database
+	 */
 	private static final String METADATABASE_NAME = "__meta_database";
 
+	/**
+	 * Postfix added to data table name when creating source table 
+	 */
 	private static final String SOURCE_TABLE_NAME_POSTFIX = "_sources";
 
+	/**
+	 * Meta table in meta database. Keeps common information: execution names, start times etc.
+	 */
 	private MetaDatabaseMetaTable metaDatabaseMetaTable;
 
+	/**
+	 * Current execution
+	 */
 	private ExecutionImpl currentExecution;
 
 	private Map<String, Execution> executionMap = new HashMap<String, Execution>();

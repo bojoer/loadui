@@ -25,6 +25,8 @@ public class TrackImplTest
 	@Before
 	public void initialize()
 	{
+		System.setProperty( "loadui.home", "target" );
+
 		h2 = new H2ExecutionManager();
 		h2.clearMetaDatabase();
 
@@ -40,7 +42,7 @@ public class TrackImplTest
 		h2.registerTrackDescriptor( td );
 		track = h2.getTrack( "testTrack" );
 	}
-
+	
 	@Test
 	public void testWrite()
 	{

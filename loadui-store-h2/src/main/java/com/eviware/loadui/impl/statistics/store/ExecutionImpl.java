@@ -8,14 +8,31 @@ import java.util.Map;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
 
+/**
+ * Execution implementation
+ * 
+ * @author predrag.vucetic
+ */
 public class ExecutionImpl implements Execution
 {
+	/**
+	 * Execution id
+	 */
 	private final String id;
 
+	/**
+	 * Execution start time (in milliseconds since January 1st, 1970)
+	 */
 	private final long startTime;
 
+	/**
+	 * Reference to execution manager implementation
+	 */
 	private final ExecutionManagerImpl manager;
 
+	/**
+	 * Map that holds references to all tracks that belongs to this execution
+	 */
 	private Map<String, Track> trackMap;
 
 	public ExecutionImpl( String id, long timestamp, ExecutionManagerImpl manager )
@@ -63,6 +80,12 @@ public class ExecutionImpl implements Execution
 		}
 	}
 
+	/**
+	 * Adds track to track map after it was created in execution manager
+	 * 
+	 * @param track
+	 *           Track to add to track map
+	 */
 	public void addTrack( Track track )
 	{
 		trackMap.put( track.getId(), track );

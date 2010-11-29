@@ -78,82 +78,6 @@ import com.eviware.loadui.api.component.categories.*;
 
 public def GROUP_HEIGHT = 126;
 
-
-//TODO: Move the ordering to an xml file
-class GroupOrder extends Comparator {
-
-
-
-	//Used for ordering the groups (They will appear in the reverse order).
-	def groupOrder:String[] = [
-		"AGENTS",
-		"PROJECTS",
-		
-		MiscCategory.CATEGORY.toUpperCase(),
-		OutputCategory.CATEGORY.toUpperCase(),
-		SchedulerCategory.CATEGORY.toUpperCase(),
-		FlowCategory.CATEGORY.toUpperCase(),
-		AnalysisCategory.CATEGORY.toUpperCase(),
-		RunnerCategory.CATEGORY.toUpperCase(),
-		GeneratorCategory.CATEGORY.toUpperCase(),
-		"TESTCASES"
-	];
-
-	public override function compare(o1, o2) {
-			def index1 = Sequences.indexOf(groupOrder, o1.toString().toUpperCase());
-			def index2 = Sequences.indexOf(groupOrder, o2.toString().toUpperCase());
-	
-			if (index1 == index2 )
-				o1.toString().compareToIgnoreCase(o2.toString())
-			else
-				index2-index1;
-			}
-}
-
-class ItemOrder extends Comparator {
-	//Used for ordering the items
-	def loadGeneratorOrder:String[] = [ "FIXED RATE", "VARIANCE", "RANDOM", "RAMP", "VIRTUAL USERS", "FIXED LOAD" ];
-	def analysisOrder:String[] = [  "STATISTICS", "ASSERTION"  ];
-	def flowOrder:String[] = [ "SPLITTER", "DELAY" ];
-	    	
-	public override function compare(o1, o2) {
-	    def t1:ToolbarItem = o1 as ToolbarItem;
-	    def t2:ToolbarItem = o2 as ToolbarItem;
-	    
-	    if (t1.category.equalsIgnoreCase("Generators") and t2.category.equalsIgnoreCase("Generators")) {
-			var index1 = Sequences.indexOf(loadGeneratorOrder, t1.label.toUpperCase());
-	    	var index2 = Sequences.indexOf(loadGeneratorOrder, t2.label.toUpperCase());
-	        
-	    	if (not (index1 == -1 or index2 == -1))
-	    		 return index1-index2;
-	    }
-	
-	    
-	    if (t1.category.equalsIgnoreCase("Analysis") and t2.category.equalsIgnoreCase("Analysis")) {
-	    	var index1 = Sequences.indexOf(analysisOrder, t1.label.toUpperCase());
-	    	var index2 = Sequences.indexOf(analysisOrder, t2.label.toUpperCase());
-	    	        
-	    	if (not (index1 == -1 or index2 == -1))
-	    		return index1-index2;
-	    }
-	    	    
-	   	if (t1.category.equalsIgnoreCase("Flow") and t2.category.equalsIgnoreCase("Flow")) {
-	   		var index1 = Sequences.indexOf(flowOrder, t1.label.toUpperCase());
-	   		var index2 = Sequences.indexOf(flowOrder, t2.label.toUpperCase());
-	   		        
-	   		if (not (index1 == -1 or index2 == -1))
-	   			return index1-index2;
-	   	}
-	    
-	    return o1.toString().compareTo(o2.toString());
-	        	
-
-
-
-	}
-
-}
-	
 /**
  * The main toolbar component for the LoadUI Controller
  * 
@@ -207,8 +131,14 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 	/** Url of horizontal rule which separates components (CSS property: hr-url) */
 	public var hrUrl: String = "images/component_bar_hr.fxz";
 	
-
+	/** Comparator for ordering groups */
+	public var groupOrder: Comparator = GroupOrder{};
 	
+	/** Comparator for ordering items inside group */
+	public var itemOrder: Comparator = ItemOrder{};
+	
+	/** Toolbar title */
+	public var toolbarTitle: String = "Components";
 
 	public function addItem( item:ToolbarItem ) {
 		def group = item.category.toUpperCase();
@@ -216,16 +146,12 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 		if( not itemGroups.containsKey( group ) ) {
 			def newGroup = ToolbarItemGroup { category: group, expandedGroup: expandedGroup };
 			itemGroups.put( group, newGroup );
-			content = Sequences.sort( [ content, newGroup ], GroupOrder{ 
-			
-			}) as Node[];
+			content = Sequences.sort( [ content, newGroup ], groupOrder ) as Node[];
 		}
 		
 		def itemGroup = itemGroups.get( group ) as ToolbarItemGroup;
 		
-		itemGroup.items = Sequences.sort( [ itemGroup.items, item ], ItemOrder{
-		
-		} ) as ToolbarItem[];
+		itemGroup.items = Sequences.sort( [ itemGroup.items, item ], itemOrder ) as ToolbarItem[];
 	}
 	
 	public function removeItem( item:ToolbarItem ) {
@@ -399,7 +325,7 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 					textOrigin: TextOrigin.TOP
 					x: 6
 					y: 6
-					content: "Components"
+					content: toolbarTitle
 					fill: bind textFill 
 					font: Font.font("Arial", FontWeight.BOLD, 10);
 				}, Group {

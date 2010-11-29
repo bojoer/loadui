@@ -29,6 +29,8 @@ import com.eviware.loadui.fx.ui.menu.TestCaseMenu;
 import com.eviware.loadui.fx.ui.menu.WorkspaceMenu;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
+import com.eviware.loadui.fx.ui.toolbar.GroupOrder;
+import com.eviware.loadui.fx.ui.toolbar.ItemOrder;
 import com.eviware.loadui.fx.widgets.AgentList;
 import com.eviware.loadui.fx.widgets.FeedDisplay;
 import com.eviware.loadui.fx.widgets.ProjectList;
@@ -89,13 +91,24 @@ public class MainWindow {
 	public function getToolbar() { toolbar }
 	
 	var tutorialList:TutorialList;
-	public function getTutorialList() { tutorialList }
+	public function getTutorialList() { 
+		tutorialList 
+	}
 	
-	var projectToolbar:Toolbar = Toolbar{layoutY: 110
-		height: bind scene.height - inspectors.height - 100};
-	public function getProjectToolbar() { projectToolbar }
-	var testcaseToolbar:Toolbar = Toolbar{layoutY: 130
-		height: bind scene.height - inspectors.height - 100};
+	var projectToolbar:Toolbar = Toolbar{
+		layoutY: 110
+		height: bind scene.height - inspectors.height - 100
+	}
+	
+	public function getProjectToolbar() { 
+		projectToolbar 
+	}
+	
+	var testcaseToolbar:Toolbar = Toolbar{
+		layoutY: 130
+		height: bind scene.height - inspectors.height - 100
+	}
+	
 	public function getTestcaseToolbar() { testcaseToolbar }
 	
 	public-read var projectCanvas:ProjectCanvas;
@@ -179,7 +192,7 @@ public class MainWindow {
 		def toolbar:Toolbar = Toolbar {
 			layoutY: 90
 			height: bind scene.height - inspectors.height - 100
-		};
+		}
 		
 		toolbar.addItem( ProjectToolbarItem { workspace: workspace } );
 		toolbar.addItem( AgentToolbarItem {} );
