@@ -43,13 +43,14 @@ public interface StatisticPage extends OrderedCollection<ChartGroup>
 	public void setTitle( String title );
 
 	/**
-	 * Creates and returns a new ChartGroup with the given title, placing it at
-	 * the end of the existing ChartGroups.
+	 * Creates and returns a new ChartGroup of the given type, with the given
+	 * title, placing it at the end of the existing ChartGroups.
 	 * 
 	 * @param title
+	 * @param type
 	 * @return
 	 */
-	public ChartGroup createChartGroup( String title );
+	public ChartGroup createChartGroup( String type, String title );
 
 	/**
 	 * Moved a contained ChartGroup to the given index.

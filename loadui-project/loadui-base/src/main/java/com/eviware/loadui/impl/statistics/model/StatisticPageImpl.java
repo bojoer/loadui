@@ -93,9 +93,10 @@ public class StatisticPageImpl implements StatisticPage
 	}
 
 	@Override
-	public ChartGroup createChartGroup( String title )
+	public ChartGroup createChartGroup( String type, String title )
 	{
 		ChartGroupConfig chartGroupConfig = config.addNewChartGroup();
+		chartGroupConfig.setType( type );
 		chartGroupConfig.setTitle( title );
 		ChartGroupImpl chartGroup = new ChartGroupImpl( this, chartGroupConfig );
 		collectionSupport.addChild( chartGroup );

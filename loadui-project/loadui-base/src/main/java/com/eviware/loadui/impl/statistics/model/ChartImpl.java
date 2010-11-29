@@ -18,19 +18,22 @@ package com.eviware.loadui.impl.statistics.model;
 import java.util.Collection;
 import java.util.EventObject;
 
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.Chart;
+import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.config.ChartConfig;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.events.EventSupport;
 
 public class ChartImpl implements Chart
 {
 	private final ChartGroupImpl parent;
 	private ChartConfig config;
-	private final AttributeHolderSupport attributeHolderSupport;
+	private AttributeHolderSupport attributeHolderSupport;
 	private final EventSupport eventSupport = new EventSupport();
 	private StatisticHolder statisticHolder;
 
@@ -38,24 +41,17 @@ public class ChartImpl implements Chart
 	{
 		this.parent = parent;
 		this.config = config;
+		if( config.isSetStatisticHolder() )
+			statisticHolder = ( StatisticHolder )BeanInjector.getBean( AddressableRegistry.class ).lookup(
+					config.getStatisticHolder() );
 
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
 	}
 
 	@Override
-	public String getType()
+	public ChartGroup getChartGroup()
 	{
-		return config.getType();
-	}
-
-	@Override
-	public void setType( String type )
-	{
-		if( !getType().equals( type ) )
-		{
-			config.setType( type );
-			fireEvent( new BaseEvent( this, TYPE ) );
-		}
+		return parent;
 	}
 
 	@Override
@@ -69,8 +65,8 @@ public class ChartImpl implements Chart
 	{
 		if( this.statisticHolder != statisticHolder )
 		{
-			// TODO: Update XML
 			this.statisticHolder = statisticHolder;
+			config.setStatisticHolder( statisticHolder.getId() );
 			fireEvent( new BaseEvent( this, STATISTIC_HOLDER ) );
 		}
 	}
@@ -132,5 +128,6 @@ public class ChartImpl implements Chart
 	void setConfig( ChartConfig chartConfig )
 	{
 		config = chartConfig;
+		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
 	}
 }

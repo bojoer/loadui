@@ -20,6 +20,7 @@ import java.util.EventObject;
 
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.config.ChartConfig;
@@ -32,10 +33,10 @@ import com.eviware.loadui.util.events.EventSupport;
 public class ChartGroupImpl implements ChartGroup
 {
 	private final StatisticPageImpl parent;
-	private ChartGroupConfig config;
 	private final OrderedCollectionSupport<Chart> collectionSupport;
-	private final AttributeHolderSupport attributeHolderSupport;
 	private final EventSupport eventSupport = new EventSupport();
+	private ChartGroupConfig config;
+	private AttributeHolderSupport attributeHolderSupport;
 
 	public ChartGroupImpl( StatisticPageImpl parent, ChartGroupConfig config )
 	{
@@ -44,6 +45,22 @@ public class ChartGroupImpl implements ChartGroup
 
 		collectionSupport = new OrderedCollectionSupport<Chart>( this );
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
+	}
+
+	@Override
+	public String getType()
+	{
+		return config.getType();
+	}
+
+	@Override
+	public void setType( String type )
+	{
+		if( !getType().equals( type ) )
+		{
+			config.setType( type );
+			fireEvent( new BaseEvent( this, TYPE ) );
+		}
 	}
 
 	@Override
@@ -79,10 +96,12 @@ public class ChartGroupImpl implements ChartGroup
 	}
 
 	@Override
-	public Chart createChart( String type )
+	public Chart createChart( StatisticHolder statisticHolder )
 	{
+		// TODO: Check if this ChartGroup already has a Chart for the given
+		// StatisticHolder.
 		ChartConfig chartConfig = config.addNewChart();
-		chartConfig.setType( type );
+		chartConfig.setStatisticHolder( statisticHolder.getId() );
 		ChartImpl chart = new ChartImpl( this, chartConfig );
 		collectionSupport.addChild( chart );
 		return chart;
@@ -189,6 +208,7 @@ public class ChartGroupImpl implements ChartGroup
 	void setConfig( ChartGroupConfig chartGroupConfig )
 	{
 		config = chartGroupConfig;
+		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
 		for( int i = 0; i < getChildCount(); i++ )
 			( ( ChartImpl )getChildAt( i ) ).setConfig( config.getChartArray( i ) );
 	}

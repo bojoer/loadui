@@ -17,6 +17,7 @@ package com.eviware.loadui.api.statistics.model;
 
 import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.model.OrderedCollection;
+import com.eviware.loadui.api.statistics.StatisticHolder;
 
 /**
  * Holds a number of Charts. Allows creation and reordering of the contained
@@ -28,6 +29,9 @@ public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>
 {
 	// BaseEvent key fired when the title of the ChartGroup changes.
 	public static final String TITLE = ChartGroup.class.getName() + "@title";
+
+	// BaseEvent key fired when the type of the ChartGroup changes.
+	public static final String TYPE = ChartGroup.class.getName() + "@type";
 
 	// BaseEvent key fired when the template script of the ChartGroup changes.
 	public static final String TEMPLATE_SCRIPT = ChartGroup.class.getName() + "@templateScript";
@@ -45,6 +49,20 @@ public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>
 	public void setTitle( String title );
 
 	/**
+	 * Gets the type of the ChartGroup.
+	 * 
+	 * @return
+	 */
+	public String getType();
+
+	/**
+	 * Sets the type of the ChartGroup.
+	 * 
+	 * @param type
+	 */
+	public void setType( String type );
+
+	/**
 	 * Gets the template script of the ChartGroup.
 	 * 
 	 * @return
@@ -57,13 +75,13 @@ public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>
 	public void setTemplateScript( String templateScript );
 
 	/**
-	 * Creates and returns a new Chart with the given title, placing it at the
-	 * end of the existing Charts.
+	 * Creates and returns a new Chart for the given StatisticHolder, placing it
+	 * at the end of the existing Charts.
 	 * 
-	 * @param title
+	 * @param statisticHolder
 	 * @return
 	 */
-	public Chart createChart( String type );
+	public Chart createChart( StatisticHolder statisticHolder );
 
 	/**
 	 * Moved a contained Chart to the given index.
