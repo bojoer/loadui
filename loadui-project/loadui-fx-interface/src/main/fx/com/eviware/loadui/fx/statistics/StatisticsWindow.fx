@@ -22,10 +22,16 @@ import javafx.scene.text.Font;
 import javafx.stage.StageStyle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
+import javafx.scene.Group;
+
+import javafx.util.Sequences;
 
 import com.eviware.loadui.api.model.ProjectItem;
 
-var instance:StatisticsWindow;
+import com.eviware.loadui.fx.ui.toolbar.Toolbar;
+import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbar;
+
+public var instance:StatisticsWindow;
 
 public function getInstance():StatisticsWindow {
   if (instance == null) {
@@ -41,6 +47,12 @@ public class StatisticsWindow {
 	var closed:Boolean = true;
 	var scene:Scene;
 	
+	def toolbar: StatisticsToolbar = StatisticsToolbar {
+		layoutY: 90
+		height: bind scene.height - 100
+		project: bind project
+	}
+	
 	public function show() {
 		
     	if ( closed )
@@ -50,6 +62,7 @@ public class StatisticsWindow {
 		    	title: "Statistics"
 		    	scene: scene = Scene {
 				        content: [
+				        	toolbar,
 				        	Rectangle {
 				        		x:1
 				        		y:1
@@ -67,7 +80,7 @@ public class StatisticsWindow {
 				        		x: 1
 				        		y: 22
 				        		width: bind scene.width -2
-				        		height: 90
+				        		height: 50
 				        		fill: Color.web("#989898")
 				        		stroke: Color.web("#000000")
 				        		strokeWidth: 1
@@ -93,7 +106,7 @@ public class StatisticsWindow {
 	public function close() {
 		stage.close()
 	}
-	
+		
 }
 	
 

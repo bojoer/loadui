@@ -23,6 +23,8 @@ public class H2ExecutionManagerTest
 	@Before
 	public void initialize()
 	{
+		System.setProperty( "loadui.home", "target" );
+
 		h2 = new H2ExecutionManager();
 		h2.clearMetaDatabase();
 	}
