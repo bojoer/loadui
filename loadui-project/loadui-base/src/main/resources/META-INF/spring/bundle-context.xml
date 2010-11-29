@@ -68,6 +68,9 @@
 	<bean id="componentRegistry" name="behaviorProvider"
 		class="com.eviware.loadui.impl.component.ComponentRegistryImpl" />
 
+	<bean id="chartViewAdapterRegistry"
+		class="com.eviware.loadui.impl.statistics.model.ChartViewAdapterRegistryImpl" />
+
 	<bean id="statisticsManager"
 		class="com.eviware.loadui.impl.statistics.StatisticsManagerImpl">
 		<constructor-arg ref="executionManager" />

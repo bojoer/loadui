@@ -24,6 +24,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+/**
+ * Cache class which caches values under keys using weak references for the
+ * values. If no references to the value remain, the entry is discarded.
+ * 
+ * @author dain.nilsson
+ * 
+ * @param <K>
+ * @param <V>
+ */
 public class CacheMap<K, V> implements Map<K, V>
 {
 	private final Map<K, WeakReference<V>> cache = new HashMap<K, WeakReference<V>>();

@@ -32,6 +32,8 @@
 	
 	<osgi:service interface="com.eviware.loadui.api.statistics.StatisticsManager" ref="statisticsManager" />
 	
+	<osgi:service interface="com.eviware.loadui.api.statistics.model.chart.ChartViewAdapterRegistry" ref="chartViewAdapterRegistry" />
+	
 	<osgi:set id="statisticWriterFactories" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory"
 		cardinality="0..N">
 		<osgi:listener bind-method="registerStatisticsWriterFactory"
