@@ -23,8 +23,9 @@ import javafx.stage.StageStyle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.scene.Group;
-
 import javafx.util.Sequences;
+
+import com.eviware.loadui.fx.ui.tabs.TabPanel;
 
 import com.eviware.loadui.api.model.ProjectItem;
 
@@ -46,9 +47,35 @@ public class StatisticsWindow {
 	public var project:ProjectItem;
 	var closed:Boolean = true;
 	var scene:Scene;
+	var tabs:TabPanel = TabPanel {
+				        		x: 140
+				        		y: 150
+				        		width: bind scene.width - 150
+				        		height: bind scene.height - 180
+				        		background: Color.web("#323232")
+				        	};
+	
+	init {
+		tabs.addTab("Default", Text {content: "Tab default"});
+		tabs.addTab("Default-1", Rectangle {
+									height:100
+									width: 200
+									fill: Color.RED
+									});
+		tabs.addTab("Default-2", Rectangle {
+									height:100
+									width: 200
+									fill: Color.GREEN
+									});
+		tabs.addTab("Default-3", Rectangle {
+									height:100
+									width: 200
+									fill: Color.BLUE
+									});
+	}
 	
 	def toolbar: StatisticsToolbar = StatisticsToolbar {
-		layoutY: 90
+		layoutY: 150
 		height: bind scene.height - 100
 		project: bind project
 	}
@@ -61,8 +88,8 @@ public class StatisticsWindow {
     			width: 600
 		    	title: "Statistics"
 		    	scene: scene = Scene {
+		    			stylesheets: "file:style.css"
 				        content: [
-				        	toolbar,
 				        	Rectangle {
 				        		x:1
 				        		y:1
@@ -80,7 +107,7 @@ public class StatisticsWindow {
 				        		x: 1
 				        		y: 22
 				        		width: bind scene.width -2
-				        		height: 50
+				        		height: 90
 				        		fill: Color.web("#989898")
 				        		stroke: Color.web("#000000")
 				        		strokeWidth: 1
@@ -90,7 +117,7 @@ public class StatisticsWindow {
 				        		content: "Stats: project {project.getLabel()}"
 				        		font: Font { size: 30 }
 				        		fill: Color.web("#ffffff")
-				        	}
+				        	}, tabs, toolbar
 				        ]
 				        fill: Color.web("#373737")
 	    			   }
