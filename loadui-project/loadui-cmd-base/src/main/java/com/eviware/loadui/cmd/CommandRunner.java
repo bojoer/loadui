@@ -81,9 +81,10 @@ public class CommandRunner
 			for( Entry<String, Object> entry : command.getAttributes().entrySet() )
 				console.setVariable( entry.getKey(), entry.getValue() );
 
+			Object result = 1;
 			try
 			{
-				console.getShell().evaluate( command.getScript() );
+				result = console.getShell().evaluate( command.getScript() );
 			}
 			catch( CompilationFailedException e )
 			{
@@ -96,7 +97,14 @@ public class CommandRunner
 			console.clearContext();
 
 			if( command.exitOnCompletion() )
-				OSGiUtils.shutdown();
+			{
+				if( result instanceof Number )
+					OSGiUtils.shutdown( ( ( Number )result ).intValue() );
+				else if( result instanceof Boolean )
+					OSGiUtils.shutdown( ( Boolean )result ? 0 : 1 );
+				else
+					OSGiUtils.shutdown();
+			}
 		}
 	}
 }

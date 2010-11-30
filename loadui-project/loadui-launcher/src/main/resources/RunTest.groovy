@@ -18,7 +18,7 @@ import com.eviware.loadui.api.model.WorkspaceItem
 import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.events.EventHandler
 import com.eviware.loadui.api.events.ActionEvent
-import com.eviware.loadui.util.FormattingUtils;
+import com.eviware.loadui.util.FormattingUtils
 
 def displayLimit( limit ) {
 	limit <= 0 ? "-" : limit
@@ -191,8 +191,12 @@ log.info """
 
 """
 
+def success = project.getLimit( CanvasItem.FAILURE_COUNTER ) == -1 || project.getCounter( CanvasItem.FAILURE_COUNTER ).get() < project.getLimit( CanvasItem.FAILURE_COUNTER )
+
 log.info "Shutting down..."
 sleep 1000
 
 project.release()
 workspace.release()
+
+return success
