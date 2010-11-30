@@ -42,6 +42,8 @@
 	 -->
 	<osgi:reference id="AgentDiscovery" interface="com.eviware.loadui.api.discovery.AgentDiscovery" />
 	
+	<osgi:reference id="statisticsManager" interface="com.eviware.loadui.api.statistics.StatisticsManager" />
+	
 	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
 		ref="tableWidget" />
 	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"

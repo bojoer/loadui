@@ -18,7 +18,6 @@ package com.eviware.loadui.api.statistics.model;
 import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.model.OrderedCollection;
 import com.eviware.loadui.api.statistics.StatisticHolder;
-import com.eviware.loadui.api.statistics.model.chart.ChartView;
 
 /**
  * Holds a number of Charts. Allows creation and reordering of the contained

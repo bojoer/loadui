@@ -44,6 +44,8 @@ public class ChartGroupImpl implements ChartGroup
 		this.config = config;
 
 		collectionSupport = new OrderedCollectionSupport<Chart>( this );
+		if( config.getAttributes() == null )
+			config.addNewAttributes();
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
 	}
 

@@ -27,9 +27,6 @@ import com.eviware.loadui.api.statistics.StatisticHolder;
  */
 public interface Chart extends AttributeHolder, EventFirer
 {
-	// BaseEvent key fired when the StatisticHolder is changed.
-	public static final String STATISTIC_HOLDER = Chart.class.getName() + "@statisticHolder";
-
 	/**
 	 * Gets the StatisticHolder for which the Chart displays data.
 	 * 
@@ -43,13 +40,6 @@ public interface Chart extends AttributeHolder, EventFirer
 	 * @return
 	 */
 	public ChartGroup getChartGroup();
-
-	/**
-	 * Sets the StatisticHolder for which the Chart should display data.
-	 * 
-	 * @param statisticHolder
-	 */
-	public void setStatisticHolder( StatisticHolder statisticHolder );
 
 	/**
 	 * Deletes the Chart.

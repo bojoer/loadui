@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.EventObject;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
-import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.Chart;
@@ -35,16 +35,21 @@ public class ChartImpl implements Chart
 	private ChartConfig config;
 	private AttributeHolderSupport attributeHolderSupport;
 	private final EventSupport eventSupport = new EventSupport();
-	private StatisticHolder statisticHolder;
+	private final StatisticHolder statisticHolder;
 
 	public ChartImpl( ChartGroupImpl parent, ChartConfig config )
 	{
 		this.parent = parent;
 		this.config = config;
-		if( config.isSetStatisticHolder() )
-			statisticHolder = ( StatisticHolder )BeanInjector.getBean( AddressableRegistry.class ).lookup(
-					config.getStatisticHolder() );
+		if( !config.isSetStatisticHolder() )
+			throw new IllegalArgumentException( "No StatisticHolder defined in Chart config!" );
 
+		statisticHolder = ( StatisticHolder )BeanInjector.getBean( AddressableRegistry.class ).lookup(
+				config.getStatisticHolder() );
+		statisticHolder.addEventListener( CollectionEvent.class, new StatisticHolderListener() );
+
+		if( config.getAttributes() == null )
+			config.addNewAttributes();
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
 	}
 
@@ -58,17 +63,6 @@ public class ChartImpl implements Chart
 	public StatisticHolder getStatisticHolder()
 	{
 		return statisticHolder;
-	}
-
-	@Override
-	public void setStatisticHolder( StatisticHolder statisticHolder )
-	{
-		if( this.statisticHolder != statisticHolder )
-		{
-			this.statisticHolder = statisticHolder;
-			config.setStatisticHolder( statisticHolder.getId() );
-			fireEvent( new BaseEvent( this, STATISTIC_HOLDER ) );
-		}
 	}
 
 	@Override
@@ -129,5 +123,15 @@ public class ChartImpl implements Chart
 	{
 		config = chartConfig;
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
+	}
+
+	private class StatisticHolderListener implements EventHandler<CollectionEvent>
+	{
+		@Override
+		public void handleEvent( CollectionEvent event )
+		{
+			if( CollectionEvent.Event.REMOVED.equals( event.getEvent() ) && event.getElement() == statisticHolder )
+				parent.removeChild( ChartImpl.this );
+		}
 	}
 }
