@@ -29,14 +29,11 @@ import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.MainWindow;
 import javafx.scene.text.Text;
 
-def iconImage = Image { url: "{__ROOT__}images/png/testcase-icon.png" };
+def iconImage = Image { url: "{__ROOT__}images/png/default-component-icon.png" };
 
-public class GraphToolbarItem extends StatisticsToolbarItem {
+public class ChartToolbarItem extends StatisticsToolbarItem {
+	
 	override var icon = iconImage;
-	
-	override var tooltip = "Creates a new Graph";
-	
-	override var label = "Graph";
 	
 	override var category = "GRAPHS";
 	

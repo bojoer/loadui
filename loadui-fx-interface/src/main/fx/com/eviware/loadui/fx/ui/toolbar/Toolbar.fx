@@ -152,6 +152,8 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 		def itemGroup = itemGroups.get( group ) as ToolbarItemGroup;
 		
 		itemGroup.items = Sequences.sort( [ itemGroup.items, item ], itemOrder ) as ToolbarItem[];
+		
+		wipe.content = buildContent();
 	}
 	
 	public function removeItem( item:ToolbarItem ) {
@@ -163,6 +165,8 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 				itemGroups.remove( itemGroup );
 				delete itemGroup from content;
 			}
+			
+			wipe.content = buildContent();
 		}
 	}
 	

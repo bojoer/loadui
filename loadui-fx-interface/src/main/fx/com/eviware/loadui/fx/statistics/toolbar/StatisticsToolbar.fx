@@ -21,23 +21,44 @@ import com.eviware.loadui.fx.statistics.toolbar.items.*;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.EventObject;
 
 import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.statistics.StatisticsManager;
+import com.eviware.loadui.api.statistics.StatisticHolder;
+import com.eviware.loadui.util.BeanInjector;
 
-public class StatisticsToolbar extends Toolbar {
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
+
+import com.eviware.loadui.api.component.ComponentRegistry;
+import com.eviware.loadui.api.component.ComponentDescriptor;
+
+import com.eviware.loadui.fx.FxUtils;
+
+public class StatisticsToolbar extends Toolbar, EventHandler {
     
-    public var project: ProjectItem on replace {
-     	if(project != null){
-        var components: Collection = project.getComponents();
-        for(c in components){
-            if((c as ComponentItem).getStatisticVariableNames().size()>0){
-                addItem(ComponentToolbarItem {
-						component: c as ComponentItem
-                });
-            }
+    var manager: StatisticsManager;
+    
+    var componentRegistry: ComponentRegistry;
+    
+    var statHolderMap: Map = new HashMap();
+    
+    init {
+        manager = BeanInjector.getBean(StatisticsManager.class);
+        manager.addEventListener( BaseEvent.class, this );
+        componentRegistry = BeanInjector.getBean(ComponentRegistry.class);
+    }
+    
+    postinit {
+        addChartItems();
+        addAnalysisItems();
+        for(sh in manager.getStatisticHolders()){
+            addStatisticHolder(sh);
         }
-     	}   
     }
     
     override var toolbarTitle = "Statictics";
@@ -45,4 +66,67 @@ public class StatisticsToolbar extends Toolbar {
     override var groupOrder = StatisticsGroupOrder{};
     
     override var itemOrder = StatisticsItemOrder{};
+    
+    override function handleEvent(e: EventObject) { 
+		if( e instanceof CollectionEvent ) {
+			def event: CollectionEvent = e as CollectionEvent;
+			def element: Object = event.getElement();
+			if(element instanceof StatisticHolder){
+				def sh: StatisticHolder = element as StatisticHolder;
+				if(event.getEvent() == CollectionEvent.Event.ADDED){
+					FxUtils.runInFxThread( function():Void {
+						addStatisticHolder(element as StatisticHolder);
+					});
+				}
+				else if(event.getEvent() == CollectionEvent.Event.REMOVED){
+					FxUtils.runInFxThread( function():Void {
+						removeStatisticHolder(element as StatisticHolder);
+					});
+				}
+			}
+		}
+	}
+	
+	function addStatisticHolder(sh: StatisticHolder){
+		if(sh.getStatisticVariableNames().size() == 0){
+		 	return;   
+		}
+		if(sh instanceof ComponentItem){
+      	def cti: ComponentToolbarItem = ComponentToolbarItem {
+				component: sh as ComponentItem
+				descriptor: componentRegistry.findDescriptor((sh as ComponentItem).getType())
+			} 
+      	addItem(cti);
+      	statHolderMap.put(sh, cti);
+		}
+	}
+	
+	function removeStatisticHolder(sh: StatisticHolder){
+	    if(sh instanceof ComponentItem){
+		    def cti: ComponentToolbarItem = statHolderMap.get(sh) as ComponentToolbarItem;
+		    if(cti != null){
+		    	removeItem(cti);
+		    }
+		    statHolderMap.remove(cti);
+	    }
+	}
+	
+	function addChartItems(){
+	   def cti: ChartToolbarItem = ChartToolbarItem {
+			label: "Line Chart"
+			tooltip: "Create new line chart"
+			//icon: 
+		} 
+   	addItem(cti);
+	}
+
+	function addAnalysisItems(){
+	   def cti: AnalysisToolbarItem = AnalysisToolbarItem {
+			label: "Predefined A"
+			tooltip: "Create new predefined chart A"
+			//icon: 
+		} 
+   	addItem(cti);
+	}
+	
 }

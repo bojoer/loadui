@@ -31,23 +31,29 @@ import javafx.scene.text.Text;
 
 import com.eviware.loadui.api.model.ComponentItem;
 
-def iconImage = Image { url: "{__ROOT__}images/png/testcase-icon.png" };
+import com.eviware.loadui.api.component.ComponentDescriptor;
+
+def defaultImage = Image { url: "{__ROOT__}images/png/default-component-icon.png" };
 
 public class ComponentToolbarItem extends StatisticsToolbarItem {
     
-   public-init var component: ComponentItem on replace {
-   	label = component.getType();   
-   }  
+   public var component: ComponentItem on replace {
+      label = component.getLabel();
+      tooltip = component.getDescription();
+   }
+   
+   public var descriptor: ComponentDescriptor on replace {
+		icon = if( descriptor.getIcon() != null ){
+				Image { url: descriptor.getIcon().toString() }
+			}
+			else {
+				defaultImage;   
+			}
+	}
+   
+   override var category = "COMPONENTS";
     
-	override var icon = iconImage;
-	
-	override var tooltip = "Adds new component to a graph";
-	
-	override var label = "Component";
-	
-	override var category = "COMPONENTS";
-	
-	override def onMouseClicked = function (me:MouseEvent) {
+	override def onMouseClicked = function (me: MouseEvent) {
 		//nothing for now  
 	}
 }
