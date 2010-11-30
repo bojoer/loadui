@@ -16,6 +16,7 @@
 package com.eviware.loadui.api.statistics.model.chart;
 
 import java.util.Collection;
+import java.util.Set;
 
 import com.eviware.loadui.api.statistics.Statistic;
 
@@ -40,6 +41,41 @@ public interface LineChartView extends ChartView
 	 * @return
 	 */
 	public boolean isSegmentsConfigurable();
+
+	/**
+	 * Gets the names of the available StatisticVariables;
+	 * 
+	 * @return
+	 */
+	public Set<String> getVariableNames();
+
+	/**
+	 * Gets the names of the available Statistics, for a given StatisticVariable.
+	 * 
+	 * @param variableName
+	 * @return
+	 */
+	public Set<String> getStatisticNames( String variableName );
+
+	/**
+	 * Gets the names of the available sources, for a given StatisticVariable.
+	 * 
+	 * @param variableName
+	 * @param statisticName
+	 * @return
+	 */
+	public Set<String> getSources( String variableName );
+
+	/**
+	 * Adds a LineSegment for the given Statistic under the given
+	 * StatisticVariable, from the given source.
+	 * 
+	 * @param variableName
+	 * @param statisticName
+	 * @param source
+	 * @return
+	 */
+	public LineSegment addSegment( String variableName, String statisticName, String source );
 
 	/**
 	 * Represents a line in a LineChart. It can be enabled or disabled, has a
