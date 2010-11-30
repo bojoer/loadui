@@ -132,6 +132,8 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		super.init();
 		canvas.addEventListener( ActionEvent.class, canvasListener );
 
+		statisticHolderSupport.init();
+
 		if( workspaceListener != null )
 		{
 			WorkspaceItem workspace = getCanvas().getProject().getWorkspace();
