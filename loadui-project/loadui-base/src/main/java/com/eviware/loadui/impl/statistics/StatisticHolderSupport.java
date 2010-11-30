@@ -44,6 +44,10 @@ public class StatisticHolderSupport
 	{
 		this.owner = owner;
 		manager = BeanInjector.getBean( StatisticsManager.class );
+	}
+
+	public void init()
+	{
 		manager.registerStatisticHolder( owner );
 	}
 
