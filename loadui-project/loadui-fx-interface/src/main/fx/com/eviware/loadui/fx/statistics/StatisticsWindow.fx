@@ -77,7 +77,6 @@ public class StatisticsWindow {
 	def toolbar: StatisticsToolbar = StatisticsToolbar {
 		layoutY: 150
 		height: bind scene.height - 100
-		project: bind project
 	}
 	
 	public function show() {

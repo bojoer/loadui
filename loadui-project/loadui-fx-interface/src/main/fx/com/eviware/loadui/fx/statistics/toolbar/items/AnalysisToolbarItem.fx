@@ -29,16 +29,13 @@ import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.MainWindow;
 import javafx.scene.text.Text;
 
-def iconImage = Image { url: "{__ROOT__}images/png/testcase-icon.png" };
+def iconImage = Image { url: "{__ROOT__}images/png/default-component-icon.png" };
 
 public class AnalysisToolbarItem extends StatisticsToolbarItem {
+	
 	override var icon = iconImage;
 	
-	override var tooltip = "Creates predefined Graph";
-	
-	override var label = "Analysis";
-	
-	override var category = "Analysis";
+	override var category = "ANALYSIS";
 	
 	override def onMouseClicked = function (me:MouseEvent) {
 		//nothing for now  
