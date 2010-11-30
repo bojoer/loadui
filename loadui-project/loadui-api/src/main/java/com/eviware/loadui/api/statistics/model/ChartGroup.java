@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.statistics.model;
 
+import java.util.Set;
+
 import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.model.OrderedCollection;
 import com.eviware.loadui.api.statistics.StatisticHolder;
@@ -95,4 +97,11 @@ public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>
 	 * Deletes the ChartGroup.
 	 */
 	public void delete();
+
+	/**
+	 * Gets a Set of all available sources for the contained Charts.
+	 * 
+	 * @return
+	 */
+	public Set<String> getSources();
 }

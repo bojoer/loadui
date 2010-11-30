@@ -23,7 +23,7 @@ import com.eviware.loadui.api.statistics.model.chart.ChartViewAdapter;
 import com.eviware.loadui.api.statistics.model.chart.ChartViewAdapterRegistry;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.impl.statistics.model.chart.CacheingChartViewAdapter;
-import com.eviware.loadui.impl.statistics.model.chart.LineChartViewAdapter;
+import com.eviware.loadui.impl.statistics.model.chart.line.LineChartViewAdapter;
 
 /**
  * Simple implementation of ChartViewAdapterRegistry which provides

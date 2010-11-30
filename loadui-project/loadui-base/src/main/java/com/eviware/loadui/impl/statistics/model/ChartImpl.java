@@ -17,6 +17,8 @@ package com.eviware.loadui.impl.statistics.model;
 
 import java.util.Collection;
 import java.util.EventObject;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.CollectionEvent;
@@ -123,6 +125,15 @@ public class ChartImpl implements Chart
 	{
 		config = chartConfig;
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
+	}
+
+	Set<String> getSources()
+	{
+		Set<String> sources = new HashSet<String>();
+		for( String name : statisticHolder.getStatisticVariableNames() )
+			sources.addAll( statisticHolder.getStatisticVariable( name ).getSources() );
+
+		return sources;
 	}
 
 	private class StatisticHolderListener implements EventHandler<CollectionEvent>

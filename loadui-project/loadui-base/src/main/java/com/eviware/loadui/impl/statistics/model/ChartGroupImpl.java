@@ -17,6 +17,8 @@ package com.eviware.loadui.impl.statistics.model;
 
 import java.util.Collection;
 import java.util.EventObject;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
@@ -119,6 +121,22 @@ public class ChartGroupImpl implements ChartGroup
 			( ( ChartImpl )collectionSupport.getChildAt( i ) ).setConfig( chartArray[i] );
 	}
 
+	@Override
+	public Set<String> getSources()
+	{
+		Set<String> sources = new HashSet<String>();
+		for( Chart chart : getChildren() )
+			sources.addAll( ( ( ChartImpl )chart ).getSources() );
+
+		return sources;
+	}
+
+	@Override
+	public void delete()
+	{
+		parent.removeChild( this );
+	}
+
 	void removeChild( Chart child )
 	{
 		int index = collectionSupport.indexOf( child );
@@ -127,12 +145,6 @@ public class ChartGroupImpl implements ChartGroup
 			config.removeChart( index );
 			collectionSupport.removeChild( child );
 		}
-	}
-
-	@Override
-	public void delete()
-	{
-		parent.removeChild( this );
 	}
 
 	@Override
