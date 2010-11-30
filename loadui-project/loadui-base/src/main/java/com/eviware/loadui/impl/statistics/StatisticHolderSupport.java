@@ -46,6 +46,10 @@ public class StatisticHolderSupport
 		manager = BeanInjector.getBean( StatisticsManager.class );
 	}
 
+	/**
+	 * Initialized the StatisticHolderSupport and registers the StatisticHolder.
+	 * Should be called once the StatisticHolder has been fully initialized.
+	 */
 	public void init()
 	{
 		manager.registerStatisticHolder( owner );
