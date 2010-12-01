@@ -30,12 +30,14 @@ import javafx.scene.layout.VBox;
 import com.eviware.loadui.fx.ui.tabs.TabPanel;
 
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.util.BeanInjector;
 
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbar;
+import com.eviware.loadui.fx.statistics.chart.ChartPage;
 
 public var instance:StatisticsWindow;
 
@@ -87,12 +89,14 @@ public class StatisticsWindow {
 	}
 	
 	public function show() {
+		//Clean up trash
+		for( sp in project.getStatisticPages().getChildren() ) (sp as StatisticPage).delete();
+		
 		def page = project.getStatisticPages().createPage( "General" );
-		def tabContent:VBox = VBox {
-			spacing: 5
-			content: for( sh in statisticsManager.getStatisticHolders() ) com.eviware.loadui.fx.statistics.chart.ChartGroupHolder { chartGroup: page.createChartGroup( "LINE", "{sh}" ) }
-		}
-		tabs.addTab( "General", tabContent );
+		for( sh in statisticsManager.getStatisticHolders() )
+			page.createChartGroup( "LINE", "{sh}" );
+			
+		tabs.addTab( "General", ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page } );
 		
     	if ( closed )
     		stage = Stage {

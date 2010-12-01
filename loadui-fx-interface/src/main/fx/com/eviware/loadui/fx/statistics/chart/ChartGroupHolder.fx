@@ -17,6 +17,8 @@ package com.eviware.loadui.fx.statistics.chart;
 
 import javafx.scene.Node;
 import javafx.scene.Group;
+import javafx.scene.layout.Resizable;
+import javafx.scene.layout.Container;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -41,7 +43,7 @@ import java.util.EventObject;
  *
  * @author dain.nilsson
  */
-public class ChartGroupHolder extends BaseNode {
+public class ChartGroupHolder extends BaseNode, Resizable {
 	
 	var title:String = "ChartGroupHolder";
 	public-read var expandGroups = false;
@@ -51,6 +53,24 @@ public class ChartGroupHolder extends BaseNode {
 	public-init var chartGroup:ChartGroup on replace {
 		title = chartGroup.getTitle();
 		chartGroup.addEventListener( BaseEvent.class, new ChartGroupListener() );
+	}
+	
+	def resizable:VBox = VBox {
+		padding: Insets { left: 5, top: 5, right: 5, bottom: 5 }
+		spacing: 5
+		width: bind width
+		height: bind height
+		content: [
+			Region { width: bind width, height: bind height, managed: false, style: "-fx-background-color: gray;" },
+			Label { text: bind title },
+			HBox {
+				spacing: 5
+				content: [
+					Rectangle { width: 100, height: 100 },
+					Rectangle { width: 400, height: 100 }
+				]
+			}
+		]
 	}
 	
 	def buttonBar:HBox = HBox {
@@ -65,24 +85,21 @@ public class ChartGroupHolder extends BaseNode {
 	def configurationHolder = VBox {
 	}
 	
-	def vbox:VBox = VBox {
-		layoutX: 150
-		layoutY: 150
-		padding: Insets { left: 5, top: 5, right: 5, bottom: 5 }
-		spacing: 5
-		content: [
-			Region { width: bind vbox.width, height: bind vbox.height, managed: false, style: "-fx-background-color: gray;" },
-			Label { text: bind title },
-			HBox {
-				spacing: 5
-				content: [
-					Rectangle { width: 100, height: 100 },
-					Rectangle { width: 400, height: 100 }
-				]
-			},
-			buttonBar,
-			configurationHolder
-		]
+	init {
+		insert buttonBar into (resizable as Container).content;
+		insert configurationHolder into (resizable as Container).content;
+	}
+	
+	override function create():Node {
+		resizable
+	}
+	
+	override function getPrefHeight( width:Number ):Number {
+		resizable.getPrefHeight( width )
+	}
+	
+	override function getPrefWidth( height:Number ):Number {
+		resizable.getPrefWidth( height )
 	}
 	
 	public function toggleGroupExpand():Void {
@@ -90,9 +107,9 @@ public class ChartGroupHolder extends BaseNode {
 		if( expandGroups ) {
 			if( expandAgents ) toggleAgentExpand();
 			expandedNode = Rectangle { width: 500, height: 200 }
-			insert expandedNode into vbox.content;
+			insert expandedNode into (resizable as Container).content;
 		} else {
-			delete expandedNode from vbox.content;
+			delete expandedNode from (resizable as Container).content;
 		}
 	}
 	
@@ -101,9 +118,9 @@ public class ChartGroupHolder extends BaseNode {
 		if( expandAgents ) {
 			if( expandGroups ) toggleGroupExpand();
 			expandedNode = Rectangle { width: 500, height: 300 }
-			insert expandedNode into vbox.content;
+			insert expandedNode into (resizable as Container).content;
 		} else {
-			delete expandedNode from vbox.content;
+			delete expandedNode from (resizable as Container).content;
 		}
 	}
 	
@@ -113,10 +130,6 @@ public class ChartGroupHolder extends BaseNode {
 		} else {
 			configurationHolder.content = [];
 		}
-	}
-	
-	override function create():Node {
-		vbox
 	}
 }
 
