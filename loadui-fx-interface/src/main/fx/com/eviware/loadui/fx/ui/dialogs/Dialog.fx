@@ -21,6 +21,7 @@
 
 package com.eviware.loadui.fx.ui.dialogs;
 
+import javafx.scene.Scene;
 import javafx.scene.Node;
 import javafx.scene.CustomNode;
 import javafx.scene.Group;
@@ -166,9 +167,10 @@ public class Dialog {
 	protected var dialogContent:VBox;
 	var handle:BaseNode;
 	var titlebarContent:HBox;
+	var scene:Scene;
 	
 	init {
-		def scene = AppState.instance.scene;
+		scene = AppState.instance.scene;
 		
 		def sceneBounds = BoundingBox {
 			width: scene.width;
@@ -292,7 +294,7 @@ public class Dialog {
 	 * Displays the Dialog.
 	 */ 
 	public function show() {
-		insert mainPanel into AppState.overlay;
+		insert mainPanel into AppState.getOverlay( scene ).content;
 		
 		if( okButton != null )
 			okButton.requestFocus();
@@ -305,7 +307,7 @@ public class Dialog {
 	 * Closes the Dialog.
 	 */ 
 	public function close():Void {
-		delete mainPanel from AppState.overlay;
+		delete mainPanel from AppState.getOverlay( scene ).content;
 		onClose();
 	}
 }

@@ -24,6 +24,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.Button;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
@@ -76,7 +77,7 @@ public class ChartGroupHolder extends BaseNode, Resizable {
 	def buttonBar:HBox = HBox {
 		spacing: 5
 		content: [
-			Button { text: "Expand group", action: toggleGroupExpand },
+			Button { text: "Expand group", action: toggleGroupExpand, tooltip: Tooltip { text:"Hello" } },
 			Button { text: "Show agents", action: toggleAgentExpand },
 			Button { text: "Configure", action: toggleConfiguration }
 		]

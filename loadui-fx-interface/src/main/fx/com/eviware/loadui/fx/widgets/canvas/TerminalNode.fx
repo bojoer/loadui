@@ -282,13 +282,13 @@ class TerminalDraggable extends BaseNode, Draggable, TooltipHolder {
 			startY: bind localToScene( layoutBounds ).minY + translateY + h
 		}
 		
-		insert wire into AppState.overlay;
+		insert wire into AppState.getOverlay( scene ).content;
 		wire.toBack();
 	}
 	
 	override var onRelease = function():Void {
 		enableTooltip( true );
-		delete wire from AppState.overlay;
+		delete wire from AppState.getOverlay( scene ).content;
 		
 		inputAccept = false;
 		outputAccept = false;

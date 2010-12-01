@@ -26,6 +26,7 @@ import com.eviware.loadui.fx.ui.node.BaseMixin;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.BaseNode.*;
 
+import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -43,6 +44,8 @@ public mixin class TooltipHolder extends BaseMixin {
 	
 	var tooltipEnabled = true;
 	
+	var myScene:Scene;
+	
 	def label:Label = Label {
 		tooltip: Tooltip { text: bind tooltip }
 		managed: false
@@ -51,7 +54,7 @@ public mixin class TooltipHolder extends BaseMixin {
 	public function enableTooltip( enabled:Boolean ) {
 		if ( not enabled ) {
 			label.tooltip.hide();
-			delete label from AppState.overlay;
+			delete label from AppState.getOverlay( myScene ).content;
 		}
 		tooltipEnabled = enabled;
 	}
@@ -63,19 +66,21 @@ public mixin class TooltipHolder extends BaseMixin {
 	protected function initalizeTooltipHandlers(): Void {
 		(this as BaseNode).addMouseHandler( MOUSE_ENTERED, function( e:MouseEvent ):Void {
 			if( tooltip != null and tooltipEnabled ) {
+				if( myScene == null )
+					myScene = (this as BaseNode).scene;
 				def bounds = (this as BaseNode).localToScene((this as BaseNode).boundsInLocal);
 				label.layoutX = bounds.minX;
 				label.layoutY = bounds.minY;
 				label.width = bounds.width;
 				label.height = bounds.height;
-				insert label into AppState.overlay;
+				insert label into AppState.getOverlay( myScene ).content;
 				label.tooltip.activate();
 			}
 		} );
 		(this as BaseNode).addMouseHandler( MOUSE_EXITED, function( e:MouseEvent ):Void {
 			if( label.tooltip.activated ) {
 				label.tooltip.deactivate();
-				delete label from AppState.overlay;
+				delete label from AppState.getOverlay( myScene ).content;
 			}
 		} );
 	}

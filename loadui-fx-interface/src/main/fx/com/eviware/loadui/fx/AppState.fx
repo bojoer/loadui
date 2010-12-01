@@ -76,7 +76,7 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.AppState" 
  */
 public-read var instance:AppState;
 
-def dummyNode = Rectangle { id: "dummy", fill: Color.rgb(0,0,0,0.01), width: 1, height: 1 };
+/*def dummyNode = Rectangle { id: "dummy", fill: Color.rgb(0,0,0,0.01), width: 1, height: 1 };
 
 public var overlay:Node[] on replace {
 	def dummyIndex = Sequences.indexOf( instance.overlayLayer.content, dummyNode );
@@ -88,6 +88,18 @@ public var overlay:Node[] on replace {
 		}
 		insert overlay into instance.overlayLayer.content;
 	}
+}*/
+
+def overlays = new HashMap();
+public function setOverlay( scene:Scene, overlay:Overlay ):Void {
+	if(scene == null)
+		println("!!!!!!!!!!!!!!!!!!!!!!!!!setOverlay called for null! {overlay}");
+	overlays.put( scene, overlay );
+}
+public function getOverlay( scene:Scene ):Overlay {
+	if(scene == null)
+		println("!!!!!!!!!!!!!!!!!!!!!!!!!getOverlay called for null!");
+	overlays.get( scene ) as Overlay;
 }
 
 /**
@@ -114,7 +126,7 @@ public class AppState extends ApplicationState {
 	 * Should be used for Nodes which must be positioned on top of everything else,
 	 * such as dialog boxes or popup menus.
 	 */
-	def overlayLayer = Group { id: "Overlay Layer", content: dummyNode };
+	def overlayLayer = Group { id: "Overlay Layer", /*content: dummyNode*/ };
 	
 	def localLayer = bind lazy wipePanel.content[0] as Group;
 	var wipePanel:XWipePanel;
@@ -126,8 +138,11 @@ public class AppState extends ApplicationState {
 	 * The scene to place the AppState into.
 	 */
 	public var scene:Scene on replace {
-		log.debug( "Placing AppState layers into scene." );
-		scene.content = layers;
+		if( scene != null ) {
+			log.debug( "Placing AppState layers into scene." );
+			scene.content = layers;
+			setOverlay( scene, Overlay { group: overlayLayer } );
+		}
 	}
 	
 	def blocked = WaitingScreen {
@@ -170,9 +185,9 @@ public class AppState extends ApplicationState {
 		blockingTask.start();
 	}
 	var blockCount = 0;
-	public function block():Void { if( blockCount == 0 ) insert blocked into overlay; blockCount++; }
+	public function block():Void { if( blockCount == 0 ) insert blocked into getOverlay(scene).content; blockCount++; }
 	
-	public function unblock():Void { blockCount = Math.max( 0, blockCount-1 ); if( blockCount == 0 ) delete blocked from overlay; }
+	public function unblock():Void { blockCount = Math.max( 0, blockCount-1 ); if( blockCount == 0 ) delete blocked from getOverlay(scene).content; }
 	
 	public function setBlockedText( text:String ):Void { blocked.text = text; }
 	

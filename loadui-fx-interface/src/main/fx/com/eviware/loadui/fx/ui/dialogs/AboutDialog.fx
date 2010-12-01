@@ -48,8 +48,8 @@ public class AboutDialog {
 				fill: Color.TRANSPARENT
 				blocksMouse: true
 				onMousePressed: function( e:MouseEvent ) {
-					delete group from AppState.overlay;
-					delete modalLayer from AppState.overlay;
+					delete group from AppState.getOverlay( scene ).content;
+					delete modalLayer from AppState.getOverlay( scene ).content;
 				}
 			}, group = Group {
 				layoutX: bind ((scene.width - group.layoutBounds.width) / 2) as Integer
@@ -91,6 +91,6 @@ public class AboutDialog {
 			}
 		];
 
-		insert items into AppState.overlay;
+		insert items into AppState.getOverlay( scene ).content;
 	}
 }

@@ -38,6 +38,4 @@ public class StatisticsToolbarItem extends ToolbarItem {
 	override function initalizeTooltipHandlers(): Void {
 	    //do nohing
 	}
-
-	override var useOverlay = false;
 }

@@ -450,14 +450,14 @@ public class SummaryReport extends Stack {
 	 * Displays the Dialog.
 	 */ 
 	public function show() {
-		insert this into AppState.overlay;
+		insert this into AppState.getOverlay( scene ).content;
 	}
 	
 	 /**
 	 * Closes the Dialog.
 	 */ 
 	public function close():Void {
-		delete this from AppState.overlay;
+		delete this from AppState.getOverlay( scene ).content;
 	}
 	
 
