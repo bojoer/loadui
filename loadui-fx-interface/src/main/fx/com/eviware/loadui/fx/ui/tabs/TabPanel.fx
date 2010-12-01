@@ -73,6 +73,7 @@ public class TabPanel extends CustomNode {
                 onMousePressed: function(e: MouseEvent) {
                 	tb.selected = true;
                 }
+                // press delete to delete tab
                 onKeyTyped: function(k:KeyEvent) {
                 	if( k.char == new java.lang.String(java.lang.Character.toChars(0x007f)) )
                 		if ( sizeof tabBtns > 1 ) {
@@ -187,6 +188,40 @@ public class TabPanel extends CustomNode {
 				}
 			]
 		}
+	}
+	
+	/**
+	* Set content of named tab
+	*/
+	public function setContent(name:String, content:Node) {
+		for( tab in tabBtns ) 
+			if( tab.text == name ) {
+				tab.value = content;
+				break
+			}
+	}
+	
+	
+	/**
+	* return tab names
+	*/
+	public function getTabNames():String[] {
+		var names:String[];
+		for( tab in tabBtns ) {
+			insert tab.text into names
+		}
+		names
+	}
+	
+	/**
+	* rename tab
+	*/
+	public function renameTab(oldName:String, newName:String) {
+		for( tab in tabBtns ) 
+			if( tab.text == oldName ) {
+				tab.text = newName;
+				break
+			}
 	}
 	
 } 
