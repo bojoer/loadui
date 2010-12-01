@@ -26,6 +26,7 @@ import com.eviware.loadui.fx.ui.node.BaseMixin;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.BaseNode.*;
 
+import javafx.scene.Scene;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -136,6 +137,7 @@ public mixin class Draggable extends BaseMixin {
    var realParent:Parent;
    var initX = 0.0;
    var initY = 0.0;
+   var myScene:Scene;
 	
 	function onPressed( e:MouseEvent ) {
 		if( currentDraggable != null or not e.primaryButtonDown or revertAnim.running )
@@ -156,13 +158,15 @@ public mixin class Draggable extends BaseMixin {
 		initY = myNode.layoutY;
 		
 		if( useOverlay ) {
+			if( myScene == null )
+				myScene = (this as Node).scene;
 			if( realParent instanceof Group )
 				delete myNode from (realParent as Group).content
 			else if( realParent instanceof Container )
 				delete myNode from (realParent as Container).content;
 			node.layoutX = startBounds.minX - myNode.layoutBounds.minX;
 			node.layoutY = startBounds.minY - myNode.layoutBounds.minY;
-			insert myNode into AppState.overlay;
+			insert myNode into AppState.getOverlay( myScene ).content;
 		}
 		
 		mouseEvent = e;
@@ -211,7 +215,7 @@ public mixin class Draggable extends BaseMixin {
 			droppable.drop( this );
 		
 		if( useOverlay ) {
-			delete myNode from AppState.overlay;
+			delete myNode from AppState.getOverlay( myScene ).content;
 			myNode.layoutX = initX;
 			myNode.layoutY = initY;
 			if( realParent instanceof Group )

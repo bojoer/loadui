@@ -580,7 +580,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			selectionRect.y = sStartY;
 			selectionRect.width = 0;
 			selectionRect.height = 0;
-			insert selectionRect into AppState.overlay;
+			insert selectionRect into AppState.getOverlay( scene ).content;
 		}
 	}
 	
@@ -590,7 +590,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			cursor = Cursor.DEFAULT;
 		} else if( sDragging ) {
 			sDragging = false;
-			delete selectionRect from AppState.overlay;
+			delete selectionRect from AppState.getOverlay( scene ).content;
 		}
 	}
 	

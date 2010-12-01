@@ -34,6 +34,8 @@ import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.util.BeanInjector;
 
+import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.Overlay;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbar;
@@ -98,7 +100,8 @@ public class StatisticsWindow {
 			
 		tabs.addTab( "General", ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page } );
 		
-    	if ( closed )
+    	if ( closed ) {
+    		var overlay = Group {};
     		stage = Stage {
     			height: 600
     			width: 600
@@ -109,44 +112,47 @@ public class StatisticsWindow {
 		    	]
 		    	scene: scene = Scene {
 		    			stylesheets: "file:style.css"
-				        content: [
-				        	Rectangle {
-				        		x:1
-				        		y:1
-				        		width: bind scene.width -2
-				        		height: 21
-				        		fill: Color.web("#b1b1b1")
-				        		stroke: Color.web("#000000")
-				        		strokeWidth: 1
-				        	}, Text {
-				        		x: 20
-				        		y: 15
-				        		content: "Stats"
-				        		font: Font { size: 10 }
-				        	}, Rectangle {
-				        		x: 1
-				        		y: 22
-				        		width: bind scene.width -2
-				        		height: 90
-				        		fill: Color.web("#989898")
-				        		stroke: Color.web("#000000")
-				        		strokeWidth: 1
-				        	}, Text {
-				        		x: 20
-				        		y: 55
-				        		content: "Stats: project {project.getLabel()}"
-				        		font: Font { size: 30 }
-				        		fill: Color.web("#ffffff")
-				        	}, tabs, toolbar
-				        ]
+				        content: [ Group {
+				        	content: [
+					        	Rectangle {
+					        		x:1
+					        		y:1
+					        		width: bind scene.width -2
+					        		height: 21
+					        		fill: Color.web("#b1b1b1")
+					        		stroke: Color.web("#000000")
+					        		strokeWidth: 1
+					        	}, Text {
+					        		x: 20
+					        		y: 15
+					        		content: "Stats"
+					        		font: Font { size: 10 }
+					        	}, Rectangle {
+					        		x: 1
+					        		y: 22
+					        		width: bind scene.width -2
+					        		height: 90
+					        		fill: Color.web("#989898")
+					        		stroke: Color.web("#000000")
+					        		strokeWidth: 1
+					        	}, Text {
+					        		x: 20
+					        		y: 55
+					        		content: "Stats: project {project.getLabel()}"
+					        		font: Font { size: 30 }
+					        		fill: Color.web("#ffffff")
+					        	}, tabs, toolbar
+					        ]
+					     }, overlay ]
 				        fill: Color.web("#373737")
 	    			   }
 	    		onClose: function() {
 	    		 	closed = true;
 	//    				throw new com.eviware.loadui.util.hacks.PreventClosingStageException(); // this a hack to keep stage open
 	  				}
-	    		
-	    		};
+	    		}
+	    		AppState.setOverlay( scene, Overlay { group: overlay } );
+	    	}
     	closed = false;
 	}
 	
