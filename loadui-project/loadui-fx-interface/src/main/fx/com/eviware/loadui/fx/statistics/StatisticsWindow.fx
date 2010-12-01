@@ -24,11 +24,16 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.scene.Group;
 import javafx.util.Sequences;
+import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.fx.ui.tabs.TabPanel;
 
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.statistics.StatisticsManager;
+import com.eviware.loadui.util.BeanInjector;
 
+import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbar;
 
@@ -47,6 +52,8 @@ public class StatisticsWindow {
 	public var project:ProjectItem;
 	var closed:Boolean = true;
 	var scene:Scene;
+	def statisticsManager:StatisticsManager = BeanInjector.getBean( StatisticsManager.class );
+	
 	var tabs:TabPanel = TabPanel {
 				        		x: 140
 				        		y: 150
@@ -80,12 +87,22 @@ public class StatisticsWindow {
 	}
 	
 	public function show() {
+		def page = project.getStatisticPages().createPage( "General" );
+		def tabContent:VBox = VBox {
+			spacing: 5
+			content: for( sh in statisticsManager.getStatisticHolders() ) com.eviware.loadui.fx.statistics.chart.ChartGroupHolder { chartGroup: page.createChartGroup( "LINE", "{sh}" ) }
+		}
+		tabs.addTab( "General", tabContent );
 		
     	if ( closed )
     		stage = Stage {
     			height: 600
     			width: 600
 		    	title: "Statistics"
+		    	icons: [
+		    		Image { url:"{__ROOT__}images/png/icon_32x32.png" },
+					Image { url:"{__ROOT__}images/png/icon_16x16.png" }
+		    	]
 		    	scene: scene = Scene {
 		    			stylesheets: "file:style.css"
 				        content: [
