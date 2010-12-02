@@ -108,19 +108,19 @@ public class StatisticsWindow {
 	}
 	
 	public function show() {
-
-		def page = project.getStatisticPages().createPage( "General" );
-		def tabContent:VBox = VBox {
-			spacing: 5
-			content: for( sh in statisticsManager.getStatisticHolders() ) com.eviware.loadui.fx.statistics.chart.ChartGroupHolder { chartGroup: page.createChartGroup( "LINE", "{sh}" ) }
+		
+		//Remove in final version, this sets up a basic tab.
+		if( project.getStatisticPages().getChildCount() == 0 ) {
+			def page = project.getStatisticPages().createPage( "General" );
+			
+			pageMap.put(tabs.addTab( page.getTitle(), ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page } ), page );
 		}
-		pageMap.put(tabs.addTab( page.getTitle(), tabContent ), page);
 		
     	if ( closed ) {
     		var overlay = Group {};
     		stage = Stage {
-    			height: 600
-    			width: 600
+    			height: 768
+    			width: 1024
 		    	title: "Statistics"
 		    	icons: [
 		    		Image { url:"{__ROOT__}images/png/icon_32x32.png" },

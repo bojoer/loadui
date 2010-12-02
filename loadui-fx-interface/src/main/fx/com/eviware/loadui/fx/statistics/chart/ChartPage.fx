@@ -36,6 +36,12 @@ import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.dnd.Draggable;
+import com.eviware.loadui.fx.ui.dnd.Droppable;
+import com.eviware.loadui.fx.ui.dnd.DroppableNode;
+import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
+import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
+import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
 
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
@@ -67,17 +73,17 @@ public class ChartPage extends BaseNode, Resizable {
 		width: bind width
 		height: bind height
 		hbarPolicy: ScrollBarPolicy.NEVER
+		vbarPolicy: ScrollBarPolicy.ALWAYS
 		fitToWidth: true
 		node: Stack {
 			nodeVPos: VPos.TOP
 			content: [
-				Region {
-					style: "-fx-background-color: white;"
-					layoutInfo: LayoutInfo { height: bind Math.max( height, vbox.height ) }
+				DropBase {
+					layoutInfo: LayoutInfo { height: bind Math.max( height, vbox.height ), width: bind width }
 				}, vbox = VBox {
 					spacing: 5
 					padding: Insets { left: 5, top: 5, right: 5, bottom: 25 }
-					layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
+					layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.NEVER, vfill: false }
 					content: bind innerContent
 				}
 			]
@@ -94,5 +100,47 @@ public class ChartPage extends BaseNode, Resizable {
 	
 	override function getPrefWidth( height:Number ):Number {
 		resizable.getPrefWidth( height )
+	}
+}
+
+class DropBase extends BaseNode, Resizable, Droppable {
+	def dropBaseNode = Region {
+		style: "-fx-background-color: white;"
+		width: bind width
+		height: bind height
+	}
+	
+	override var accept = function( draggable:Draggable ):Boolean {
+		draggable instanceof StatisticsToolbarItem
+	}
+	
+	override var onDrop = function( draggable:Draggable ):Void {
+		println( "Dropped {draggable}" );
+		if( draggable instanceof ChartToolbarItem ) {
+			insert ChartGroupHolder {
+				chartGroup: statisticPage.createChartGroup( (draggable as ChartToolbarItem).type, "Chart Group {statisticPage.getChildCount()+1}" )
+				layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES }
+			} into innerContent;
+		} else if( draggable instanceof ComponentToolbarItem ) {
+			def sh = (draggable as ComponentToolbarItem).component;
+			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "{sh}" );
+			chartGroup.createChart( sh );
+			insert ChartGroupHolder {
+				chartGroup: chartGroup 
+				layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES }
+			} into innerContent;
+		}
+	}
+	
+	override function create():Node {
+		dropBaseNode
+	}
+	
+	override function getPrefHeight( width:Number ):Number {
+		dropBaseNode.getPrefHeight( width )
+	}
+	
+	override function getPrefWidth( height:Number ):Number {
+		dropBaseNode.getPrefWidth( height )
 	}
 }
