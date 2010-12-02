@@ -44,6 +44,8 @@
 	
 	<osgi:reference id="statisticsManager" interface="com.eviware.loadui.api.statistics.StatisticsManager" />
 	
+	<osgi:reference id="chartViewAdapterRegistry" interface="com.eviware.loadui.api.statistics.model.chart.ChartViewAdapterRegistry" />
+	
 	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
 		ref="tableWidget" />
 	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"

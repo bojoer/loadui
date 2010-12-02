@@ -55,8 +55,10 @@ import java.util.EventObject;
  * @author dain.nilsson
  */
 public class ChartPage extends BaseNode, Resizable {
+	def listener = new ChartPageListener();
+	
 	public-init var statisticPage:StatisticPage on replace {
-		statisticPage.addEventListener( BaseEvent.class, new ChartPageListener() );
+		statisticPage.addEventListener( BaseEvent.class, listener );
 		innerContent = for( chartGroup in statisticPage.getChildren() ) ChartGroupHolder {
 			chartGroup: chartGroup as ChartGroup
 			layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES }
@@ -112,14 +114,17 @@ class ChartPageListener extends EventHandler {
 		def event = e as BaseEvent;
 		if( StatisticPage.CHILDREN == event.getKey() ) {
 			def cEvent = event as CollectionEvent;
-			if( cEvent.getEvent() == CollectionEvent.Event.ADDED ) {
-				insert ChartGroupHolder {
-					chartGroup: cEvent.getElement() as ChartGroup 
-					layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES }
-				} into innerContent;
-			} else {
-				println("TODO: Remove ChartGroup!");
-			}
+			FxUtils.runInFxThread( function():Void {
+				if( cEvent.getEvent() == CollectionEvent.Event.ADDED ) {
+					insert ChartGroupHolder {
+						chartGroup: cEvent.getElement() as ChartGroup
+						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES }
+					} into innerContent;
+				} else {
+					for( chartGroupHolder in innerContent [x|x.chartGroup == cEvent.getElement()] )
+						delete chartGroupHolder from innerContent;
+				}
+			} );
 		}
 	}
 }

@@ -24,7 +24,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.Button;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
@@ -41,8 +40,12 @@ import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.Chart;
+import com.eviware.loadui.api.statistics.model.chart.ChartViewAdapter;
+import com.eviware.loadui.api.statistics.model.chart.ChartViewAdapterRegistry;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.util.BeanInjector;
 import java.util.EventObject;
 
 /**
@@ -51,15 +54,25 @@ import java.util.EventObject;
  * @author dain.nilsson
  */
 public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
-	
 	var title:String = "ChartGroupHolder";
+	var itemCount:Integer = 0;
+	def adapterRegistry = BeanInjector.getBean( ChartViewAdapterRegistry.class );
+	var adapter:ChartViewAdapter;
+	
 	public-read var expandGroups = false;
 	public-read var expandAgents = false;
 	var expandedNode:Node;
 	
-	public-init var chartGroup:ChartGroup on replace {
+	var chartViewHolder:ChartViewHolder;
+	
+	def listener = new ChartGroupListener();
+	
+	public-init var chartGroup:ChartGroup on replace oldChartGroup {
+		chartGroup.addEventListener( BaseEvent.class, listener );
 		title = chartGroup.getTitle();
-		chartGroup.addEventListener( BaseEvent.class, new ChartGroupListener() );
+		itemCount = chartGroup.getChildCount();
+		adapter = adapterRegistry.getAdapter( chartGroup.getType() );
+		chartViewHolder = ChartViewHolder { chartView: adapter.getChartView( chartGroup ) };
 	}
 	
 	override var blocksMouse = true;
@@ -71,23 +84,18 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 		height: bind height
 		content: [
 			Region { width: bind width, height: bind height, managed: false, style: "-fx-background-color: gray;" },
-			Label { text: bind title },
-			HBox {
-				spacing: 5
-				content: [
-					Rectangle { width: 100, height: 100 },
-					Rectangle { width: 400, height: 100 }
-				]
-			}
+			Label { text: bind "{title} ({itemCount})" },
+			HBox { content: bind chartViewHolder }
 		]
 	}
 	
 	def buttonBar:HBox = HBox {
 		spacing: 5
 		content: [
-			Button { text: "Expand group", action: toggleGroupExpand, tooltip: Tooltip { text:"Hello" } },
+			Button { text: "Expand group", action: toggleGroupExpand },
 			Button { text: "Show agents", action: toggleAgentExpand },
-			Button { text: "Configure", action: toggleConfiguration }
+			Button { text: "Configure", action: toggleConfiguration },
+			Button { text: "Delete", action: function():Void { chartGroup.delete() } }
 		]
 	}
 	
@@ -127,7 +135,9 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 		expandGroups = not expandGroups;
 		if( expandGroups ) {
 			if( expandAgents ) toggleAgentExpand();
-			expandedNode = Rectangle { width: 500, height: 200 }
+			expandedNode = VBox {
+				content: for( chart in chartGroup.getChildren() ) ChartViewHolder { chartView: adapter.getChartView( chart as Chart ) }
+			}
 			insert expandedNode into (resizable as Container).content;
 		} else {
 			delete expandedNode from (resizable as Container).content;
@@ -138,7 +148,9 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 		expandAgents = not expandAgents;
 		if( expandAgents ) {
 			if( expandGroups ) toggleGroupExpand();
-			expandedNode = Rectangle { width: 500, height: 300 }
+			expandedNode = VBox {
+				content: for( source in chartGroup.getSources() ) ChartViewHolder { chartView: adapter.getChartView( chartGroup, source ) }
+			}
 			insert expandedNode into (resizable as Container).content;
 		} else {
 			delete expandedNode from (resizable as Container).content;
@@ -162,10 +174,14 @@ class ChartGroupListener extends EventHandler {
 				title = chartGroup.getTitle();
 			} );
 		} else if( ChartGroup.TYPE == event.getKey() ) {
+			adapter = adapterRegistry.getAdapter( chartGroup.getType() );
 			FxUtils.runInFxThread( function():Void {
+				chartViewHolder = ChartViewHolder { chartView: adapter.getChartView( chartGroup ) };
 			} );
 		} else if( ChartGroup.CHILDREN == event.getKey() ) {
-			
+			FxUtils.runInFxThread( function():Void {
+				itemCount = chartGroup.getChildCount();
+			} );
 		}
 	}
 }
