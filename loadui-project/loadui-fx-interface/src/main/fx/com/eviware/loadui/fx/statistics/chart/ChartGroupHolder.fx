@@ -104,7 +104,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 	}
 	
 	override var onDrop = function( draggable:Draggable ):Void {
-		println("ChartGroupHolder.onDrop");
 		if( draggable instanceof ChartToolbarItem ) {
 			chartGroup.setType( (draggable as ChartToolbarItem).type );
 		} else if( draggable instanceof ComponentToolbarItem ) {
@@ -165,6 +164,8 @@ class ChartGroupListener extends EventHandler {
 		} else if( ChartGroup.TYPE == event.getKey() ) {
 			FxUtils.runInFxThread( function():Void {
 			} );
+		} else if( ChartGroup.CHILDREN == event.getKey() ) {
+			
 		}
 	}
 }
