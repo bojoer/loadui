@@ -107,26 +107,26 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
 		    if(cti != null){
 		    	removeItem(cti);
 		    }
-		    statHolderMap.remove(cti);
+		    statHolderMap.remove(sh);
 	    }
 	}
 	
 	function addChartItems(){
-	   def cti: ChartToolbarItem = ChartToolbarItem {
+	   def item: ChartToolbarItem = ChartToolbarItem {
 			label: "Line Chart"
 			tooltip: "Create new line chart"
 			//icon: 
 		} 
-   	addItem(cti);
+   	addItem(item);
 	}
 
 	function addAnalysisItems(){
-	   def cti: AnalysisToolbarItem = AnalysisToolbarItem {
+	   def item: AnalysisToolbarItem = AnalysisToolbarItem {
 			label: "Predefined A"
 			tooltip: "Create new predefined chart A"
 			//icon: 
 		} 
-   	addItem(cti);
+   	addItem(item);
 	}
 	
 }

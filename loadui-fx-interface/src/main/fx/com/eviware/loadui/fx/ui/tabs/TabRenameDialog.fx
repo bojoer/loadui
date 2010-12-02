@@ -34,6 +34,7 @@ import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.api.discovery.AgentDiscovery.*;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.AgentItem;
@@ -55,13 +56,16 @@ public class TabRenameDialog  {
 	
 	public var onOk: function(renamedTab: ToggleButton): Void;
 	
-	public var tabs: ToggleButton[];
+	public var tabButtons: ToggleButton[];
+	
+	public var uniqueNames: Boolean = false;
 	
 	var textField: TextField;
 	var dialogRef: Dialog;
 	
 	public function show() {
 		dialogRef = Dialog {
+		  scene: StatisticsWindow.getInstance().scene
 		  noCancel: false
         modal: true
         title: "Rename Tab"
@@ -97,8 +101,8 @@ public class TabRenameDialog  {
 	
 	function validateName(name: String): Boolean {
 		if(name.length() > 0){
-		    if(tabs != null){
-		        for(t in tabs){
+		    if(uniqueNames and tabButtons != null){
+		        for(t in tabButtons){
 		            if(t != tabToRename and t.text.equals(name)){
 		                return false;
 		            }

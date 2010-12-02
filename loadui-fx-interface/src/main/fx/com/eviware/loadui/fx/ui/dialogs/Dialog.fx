@@ -147,6 +147,8 @@ public class Dialog {
 	
 	public-init var extraButtons:Button[];
 	
+	public var scene: Scene;
+	
 	protected var moved = false;
 	
 	var modalLayer:Node;
@@ -167,10 +169,12 @@ public class Dialog {
 	protected var dialogContent:VBox;
 	var handle:BaseNode;
 	var titlebarContent:HBox;
-	var scene:Scene;
 	
 	init {
-		scene = AppState.instance.scene;
+	    println("------{scene}");
+	   if(scene == null){
+			scene = AppState.instance.scene;
+		}
 		
 		def sceneBounds = BoundingBox {
 			width: scene.width;
@@ -294,6 +298,8 @@ public class Dialog {
 	 * Displays the Dialog.
 	 */ 
 	public function show() {
+	    println("--------------- {AppState.instance.scene}");
+	    println("--------------- {scene}");
 		insert mainPanel into AppState.getOverlay( scene ).content;
 		
 		if( okButton != null )
