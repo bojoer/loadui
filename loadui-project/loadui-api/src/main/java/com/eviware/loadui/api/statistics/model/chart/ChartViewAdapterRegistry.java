@@ -30,4 +30,12 @@ public interface ChartViewAdapterRegistry
 	 * @return
 	 */
 	public <ChartViewType extends ChartView> ChartViewAdapter<ChartViewType> getAdapter( Class<ChartViewType> type );
+
+	/**
+	 * Gets a ChartViewAdapter for the given type of ChartView by class name.
+	 * 
+	 * @param typeName
+	 * @return
+	 */
+	public ChartViewAdapter<?> getAdapter( String typeName );
 }

@@ -46,4 +46,19 @@ public class ChartViewAdapterRegistryImpl implements ChartViewAdapterRegistry
 	{
 		return ( ChartViewAdapter<ChartViewType> )adapters.get( type );
 	}
+
+	@Override
+	public ChartViewAdapter<?> getAdapter( String typeName )
+	{
+		try
+		{
+			@SuppressWarnings( "unchecked" )
+			Class<ChartView> type = ( Class<ChartView> )Class.forName( typeName );
+			return getAdapter( type );
+		}
+		catch( ClassNotFoundException e )
+		{
+			return null;
+		}
+	}
 }
