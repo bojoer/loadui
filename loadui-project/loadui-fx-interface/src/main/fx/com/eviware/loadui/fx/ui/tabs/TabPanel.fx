@@ -46,6 +46,7 @@ import javafx.scene.text.Font;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Sequences;
 import javafx.scene.input.MouseButton;
+import javafx.scene.Scene;
 
 public class TabPanel extends CustomNode {
 	
@@ -125,7 +126,8 @@ public class TabPanel extends CustomNode {
 						if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
 							TabRenameDialog {
 							    tabToRename: tb
-							    tabs: if(uniqueNames) tabBtns else null
+							    tabButtons: tabBtns
+							    uniqueNames: uniqueNames
 							    onOk: function(renamedTab: ToggleButton): Void {
 							        onTabRename(renamedTab);
 							    }

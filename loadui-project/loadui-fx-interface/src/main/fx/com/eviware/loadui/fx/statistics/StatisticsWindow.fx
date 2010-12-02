@@ -59,8 +59,9 @@ public class StatisticsWindow {
 
 	public var stage:Stage;
 	public var project:ProjectItem;
+	public var scene: Scene;
+	
 	var closed:Boolean = true;
-	var scene:Scene;
 	def statisticsManager:StatisticsManager = BeanInjector.getBean( StatisticsManager.class );
 	
 	var pageMap: Map = new HashMap();
