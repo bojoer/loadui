@@ -171,7 +171,6 @@ public class Dialog {
 	var titlebarContent:HBox;
 	
 	init {
-	    println("------{scene}");
 	   if(scene == null){
 			scene = AppState.instance.scene;
 		}
@@ -298,8 +297,6 @@ public class Dialog {
 	 * Displays the Dialog.
 	 */ 
 	public function show() {
-	    println("--------------- {AppState.instance.scene}");
-	    println("--------------- {scene}");
 		insert mainPanel into AppState.getOverlay( scene ).content;
 		
 		if( okButton != null )
