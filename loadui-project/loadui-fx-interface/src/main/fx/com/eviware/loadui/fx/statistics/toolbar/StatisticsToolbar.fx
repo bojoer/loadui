@@ -113,7 +113,7 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
 	
 	function addChartItems(){
 	   def item: ChartToolbarItem = ChartToolbarItem {
-	   	type: com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName()
+			type: com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName()
 			label: "Line Chart"
 			tooltip: "Create new line chart"
 			//icon: 

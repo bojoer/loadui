@@ -102,8 +102,10 @@ public class ChartGroupImpl implements ChartGroup
 	@Override
 	public Chart createChart( StatisticHolder statisticHolder )
 	{
-		// TODO: Check if this ChartGroup already has a Chart for the given
-		// StatisticHolder.
+		for( Chart chart : getChildren() )
+			if( chart.getStatisticHolder() == statisticHolder )
+				return chart;
+
 		ChartConfig chartConfig = config.addNewChart();
 		chartConfig.setStatisticHolder( statisticHolder.getId() );
 		ChartImpl chart = new ChartImpl( this, chartConfig );

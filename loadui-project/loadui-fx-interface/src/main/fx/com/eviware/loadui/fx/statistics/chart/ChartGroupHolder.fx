@@ -28,11 +28,17 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.Button;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
+import javafx.util.Sequences;
 
 import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.dnd.Draggable;
+import com.eviware.loadui.fx.ui.dnd.Droppable;
+import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
+import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
+import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.events.EventHandler;
@@ -44,7 +50,7 @@ import java.util.EventObject;
  *
  * @author dain.nilsson
  */
-public class ChartGroupHolder extends BaseNode, Resizable {
+public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 	
 	var title:String = "ChartGroupHolder";
 	public-read var expandGroups = false;
@@ -55,6 +61,8 @@ public class ChartGroupHolder extends BaseNode, Resizable {
 		title = chartGroup.getTitle();
 		chartGroup.addEventListener( BaseEvent.class, new ChartGroupListener() );
 	}
+	
+	override var blocksMouse = true;
 	
 	def resizable:VBox = VBox {
 		padding: Insets { left: 5, top: 5, right: 5, bottom: 5 }
@@ -89,6 +97,19 @@ public class ChartGroupHolder extends BaseNode, Resizable {
 	init {
 		insert buttonBar into (resizable as Container).content;
 		insert configurationHolder into (resizable as Container).content;
+	}
+	
+	override var accept = function( draggable:Draggable ):Boolean {
+		draggable instanceof StatisticsToolbarItem
+	}
+	
+	override var onDrop = function( draggable:Draggable ):Void {
+		println("ChartGroupHolder.onDrop");
+		if( draggable instanceof ChartToolbarItem ) {
+			chartGroup.setType( (draggable as ChartToolbarItem).type );
+		} else if( draggable instanceof ComponentToolbarItem ) {
+			chartGroup.createChart( (draggable as ComponentToolbarItem).component );
+		}
 	}
 	
 	override function create():Node {
