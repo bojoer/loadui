@@ -279,7 +279,13 @@ public class TestCaseMenu extends HBox {
 							}, TrashHole {
 							}, SeparatorButton {
 								height: bind height;
-							}, showNotesButton = MenubarToggleButton {
+							}, MenubarButton {
+								shape: "M 1.00,14.40 L 3.83,14.40 3.83,9.02 1.00, 9.02 M 11.85,14.40 L 14.68,14.40 14.68,4.92 11.85, 4.92 M 6.43,14.40 L 9.26,14.40 9.26,1.00 6.43, 1.00 Z"
+								tooltip: Tooltip { text: ##[STAT_MONITOR]"Statistics Monitor" }
+								action: function():Void { 
+									StatisticsWindow.getInstance().show();
+								 }
+				         	}, showNotesButton = MenubarToggleButton {
 								shape: "M 0,0 L 0,8 5,8 11,12 9,8 13,8 13,0 Z"
 								tooltip: Tooltip { text: ##[TOGGLE_NOTES]"Toggle note visibility" }
 								selected: showNotes
@@ -309,12 +315,6 @@ public class TestCaseMenu extends HBox {
 								tooltip: Tooltip { text: ##[HELP]"Help Page" }
 								action: function():Void { openURL("http://www.loadui.org/interface/testcase-view.html") }
 							}, MenubarButton {
-								shape: "M0,0 L0,12 10,12, 10,0 0,0 M4,13 L4,16 14,16 14,4 11,4 11,13 4,13"
-								tooltip: Tooltip { text: ##[STAT_MONITOR]"Statistics Monitor" }
-								action: function():Void { 
-									StatisticsWindow.getInstance().show();
-								 }
-				         	}, MenubarButton {
 								shape: "M14.00,2.00 L12.00,0.00 7.00,5.00 2.00,0.00 0.00,2.00 5.00,7.00 0.00,12.00 2.00,14.00 7.00,9.00 12.00,14.00 14.00,12.00 9.00,7.00 Z"
 								tooltip: Tooltip { text: ##[CLOSE_TESTCASE]"Close TestCase" }
 								action: function():Void {
