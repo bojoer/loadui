@@ -44,6 +44,10 @@ import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
 
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
+import java.util.EventObject;
 
 /**
  * A Page displaying ChartGroupHolders, which allows adding, removing, and reordering of its children.
@@ -52,6 +56,7 @@ import com.eviware.loadui.api.statistics.model.ChartGroup;
  */
 public class ChartPage extends BaseNode, Resizable {
 	public-init var statisticPage:StatisticPage on replace {
+		statisticPage.addEventListener( BaseEvent.class, new ChartPageListener() );
 		innerContent = for( chartGroup in statisticPage.getChildren() ) ChartGroupHolder {
 			chartGroup: chartGroup as ChartGroup
 			layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES }
@@ -102,6 +107,23 @@ public class ChartPage extends BaseNode, Resizable {
 	}
 }
 
+class ChartPageListener extends EventHandler {
+	override function handleEvent( e:EventObject ):Void {
+		def event = e as BaseEvent;
+		if( StatisticPage.CHILDREN == event.getKey() ) {
+			def cEvent = event as CollectionEvent;
+			if( cEvent.getEvent() == CollectionEvent.Event.ADDED ) {
+				insert ChartGroupHolder {
+					chartGroup: cEvent.getElement() as ChartGroup 
+					layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES }
+				} into innerContent;
+			} else {
+				println("TODO: Remove ChartGroup!");
+			}
+		}
+	}
+}
+
 class DropBase extends BaseNode, Resizable, Droppable {
 	def dropBaseNode = Region {
 		style: "-fx-background-color: white;"
@@ -114,20 +136,12 @@ class DropBase extends BaseNode, Resizable, Droppable {
 	}
 	
 	override var onDrop = function( draggable:Draggable ):Void {
-		println("ChartPage.onDrop");
 		if( draggable instanceof ChartToolbarItem ) {
-			insert ChartGroupHolder {
-				chartGroup: statisticPage.createChartGroup( (draggable as ChartToolbarItem).type, "Chart Group {statisticPage.getChildCount()+1}" )
-				layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES }
-			} into innerContent;
+			statisticPage.createChartGroup( (draggable as ChartToolbarItem).type, "Chart Group {statisticPage.getChildCount()+1}" )
 		} else if( draggable instanceof ComponentToolbarItem ) {
 			def sh = (draggable as ComponentToolbarItem).component;
 			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "{sh}" );
 			chartGroup.createChart( sh );
-			insert ChartGroupHolder {
-				chartGroup: chartGroup 
-				layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES }
-			} into innerContent;
 		}
 	}
 	
