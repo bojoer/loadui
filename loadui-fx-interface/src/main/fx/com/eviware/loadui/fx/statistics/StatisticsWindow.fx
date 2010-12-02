@@ -26,12 +26,14 @@ import javafx.scene.Group;
 import javafx.util.Sequences;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.ToggleButton;
 
 import com.eviware.loadui.fx.ui.tabs.TabPanel;
 
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.StatisticsManager;
+import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.util.BeanInjector;
 
 import com.eviware.loadui.fx.AppState;
@@ -40,6 +42,9 @@ import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbar;
 import com.eviware.loadui.fx.statistics.chart.ChartPage;
+
+import java.util.Map;
+import java.util.HashMap;
 
 public var instance:StatisticsWindow;
 
@@ -58,12 +63,23 @@ public class StatisticsWindow {
 	var scene:Scene;
 	def statisticsManager:StatisticsManager = BeanInjector.getBean( StatisticsManager.class );
 	
+	var pageMap: Map = new HashMap();
+	
+	function onTabRename(tab: ToggleButton): Void{
+	    def page: StatisticPage = pageMap.get(tab) as StatisticPage;
+	    if(page != null){
+	        page.setTitle(tab.text);
+	    }
+	}
+	
 	var tabs:TabPanel = TabPanel {
 				        		x: 140
 				        		y: 150
 				        		width: bind scene.width - 150
 				        		height: bind scene.height - 180
 				        		background: Color.web("#323232")
+				        		onTabRename: onTabRename
+				        		uniqueNames: true
 				        	};
 	
 	init {
@@ -91,14 +107,13 @@ public class StatisticsWindow {
 	}
 	
 	public function show() {
-		//Clean up trash
-		for( sp in project.getStatisticPages().getChildren() ) (sp as StatisticPage).delete();
-		
+
 		def page = project.getStatisticPages().createPage( "General" );
-		for( sh in statisticsManager.getStatisticHolders() )
-			page.createChartGroup( "LINE", "{sh}" );
-			
-		tabs.addTab( "General", ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page } );
+		def tabContent:VBox = VBox {
+			spacing: 5
+			content: for( sh in statisticsManager.getStatisticHolders() ) com.eviware.loadui.fx.statistics.chart.ChartGroupHolder { chartGroup: page.createChartGroup( "LINE", "{sh}" ) }
+		}
+		pageMap.put(tabs.addTab( page.getTitle(), tabContent ), page);
 		
     	if ( closed ) {
     		var overlay = Group {};

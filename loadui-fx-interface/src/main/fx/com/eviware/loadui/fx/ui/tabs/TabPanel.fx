@@ -45,7 +45,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Sequences;
-
+import javafx.scene.input.MouseButton;
 
 public class TabPanel extends CustomNode {
 	
@@ -54,6 +54,9 @@ public class TabPanel extends CustomNode {
 	public var x:Number;
 	public var y:Number;
 	public var background:Paint;
+	public var uniqueNames: Boolean = false;
+	
+	public var onTabRename: function(tab: ToggleButton): Void;
 	
 	var tabBtns:ToggleButton[];
 	var tabs:HBox;
@@ -62,7 +65,7 @@ public class TabPanel extends CustomNode {
 	var tabContent:Node;
 	var border:Rectangle;
 	
-	public function addTab(name:String, content:Node) { 
+	public function addTab(name:String, content:Node): ToggleButton { 
 		var tb:ToggleButton;
 		
 		insert tb = ToggleButton {
@@ -118,10 +121,24 @@ public class TabPanel extends CustomNode {
                 	tb.translateX = 0;
                 	tb.selected = true;
                 }
+                onMouseClicked: function(e: MouseEvent) {
+						if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
+							TabRenameDialog {
+							    tabToRename: tb
+							    tabs: if(uniqueNames) tabBtns else null
+							    onOk: function(renamedTab: ToggleButton): Void {
+							        onTabRename(renamedTab);
+							    }
+							}.show();
+						}
+                }
             } into tabBtns;
         
-        if (sizeof tabBtns == 1)
-        	tb.selected = true   
+        if (sizeof tabBtns == 1){
+        	tb.selected = true;
+        }   
+        	
+        tb;
 	}
 	
 	public override function create():Node {
