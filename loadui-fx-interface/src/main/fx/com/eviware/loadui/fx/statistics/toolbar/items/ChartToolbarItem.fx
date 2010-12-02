@@ -33,7 +33,7 @@ def iconImage = Image { url: "{__ROOT__}images/png/default-component-icon.png" }
 
 public class ChartToolbarItem extends StatisticsToolbarItem {
 	
-	public-read public-init var type:String;
+	public-init var type:String;
 	
 	override var icon = iconImage;
 	

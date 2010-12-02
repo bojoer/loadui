@@ -38,7 +38,6 @@ import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
-import com.eviware.loadui.fx.ui.dnd.DroppableNode;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
@@ -115,7 +114,7 @@ class DropBase extends BaseNode, Resizable, Droppable {
 	}
 	
 	override var onDrop = function( draggable:Draggable ):Void {
-		println( "Dropped {draggable}" );
+		println("ChartPage.onDrop");
 		if( draggable instanceof ChartToolbarItem ) {
 			insert ChartGroupHolder {
 				chartGroup: statisticPage.createChartGroup( (draggable as ChartToolbarItem).type, "Chart Group {statisticPage.getChildCount()+1}" )
