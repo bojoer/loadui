@@ -20,12 +20,17 @@ import javafx.scene.Group;
 import javafx.scene.layout.Resizable;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Stack;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollView;
+import javafx.scene.control.ScrollBarPolicy;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
+import javafx.geometry.VPos;
+import javafx.util.Math;
 
 import com.sun.javafx.scene.layout.Region;
 
@@ -57,16 +62,26 @@ public class ChartPage extends BaseNode, Resizable {
 		vgrow: Priority.ALWAYS
 	}
 	
-	def resizable:VBox = VBox {
-		padding: Insets { left: 5, top: 5, right: 5, bottom: 5 }
-		spacing: 5
+	var vbox:VBox;
+	def resizable:ScrollView = ScrollView {
 		width: bind width
 		height: bind height
-		content: [
-			Region { width: bind width, height: bind height, managed: false, style: "-fx-background-color: white;" },
-			VBox { spacing: 5, layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }, content: bind innerContent },
-			Region { layoutInfo: LayoutInfo { height: 50, vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS }, style: "-fx-background-color: red;" },
-		]
+		hbarPolicy: ScrollBarPolicy.NEVER
+		fitToWidth: true
+		node: Stack {
+			nodeVPos: VPos.TOP
+			content: [
+				Region {
+					style: "-fx-background-color: white;"
+					layoutInfo: LayoutInfo { height: bind Math.max( height, vbox.height ) }
+				}, vbox = VBox {
+					spacing: 5
+					padding: Insets { left: 5, top: 5, right: 5, bottom: 25 }
+					layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
+					content: bind innerContent
+				}
+			]
+		}
 	}
 	
 	override function create():Node {

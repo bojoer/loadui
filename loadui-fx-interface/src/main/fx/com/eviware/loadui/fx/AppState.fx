@@ -35,6 +35,7 @@ import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
 import com.eviware.loadui.fx.widgets.canvas.Selectable;
 import java.lang.IllegalArgumentException;
+import java.lang.NullPointerException;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.async.Task;
@@ -76,29 +77,13 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.AppState" 
  */
 public-read var instance:AppState;
 
-/*def dummyNode = Rectangle { id: "dummy", fill: Color.rgb(0,0,0,0.01), width: 1, height: 1 };
-
-public var overlay:Node[] on replace {
-	def dummyIndex = Sequences.indexOf( instance.overlayLayer.content, dummyNode );
-	if( dummyIndex == -1 ) {
-		instance.overlayLayer.content = [ dummyNode, overlay ];
-	} else {
-		for( i in Sequences.reverse([0..(sizeof instance.overlayLayer.content - 1)]) as Integer[] ) {
-			if( i != dummyIndex ) delete instance.overlayLayer.content[i];
-		}
-		insert overlay into instance.overlayLayer.content;
-	}
-}*/
-
 def overlays = new HashMap();
 public function setOverlay( scene:Scene, overlay:Overlay ):Void {
-	if(scene == null)
-		println("!!!!!!!!!!!!!!!!!!!!!!!!!setOverlay called for null! {overlay}");
+	if( scene == null )
+		throw new NullPointerException( "setOverlay called with scene = null!" );
 	overlays.put( scene, overlay );
 }
 public function getOverlay( scene:Scene ):Overlay {
-	if(scene == null)
-		println("!!!!!!!!!!!!!!!!!!!!!!!!!getOverlay called for null!");
 	overlays.get( scene ) as Overlay;
 }
 
