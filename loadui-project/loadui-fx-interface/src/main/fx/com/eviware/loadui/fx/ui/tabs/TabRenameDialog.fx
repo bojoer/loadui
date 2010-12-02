@@ -1,0 +1,114 @@
+/* 
+ * Copyright 2010 eviware software ab
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl5
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
+package com.eviware.loadui.fx.ui.tabs;
+
+import javafx.scene.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Panel;
+import javafx.scene.layout.LayoutInfo;
+import javafx.geometry.VPos;
+import javafx.geometry.HPos;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.paint.Color;
+
+import com.eviware.loadui.fx.ui.tabs.*;
+import com.eviware.loadui.fx.ui.form.Form;
+import com.eviware.loadui.fx.ui.form.FormField;
+import com.eviware.loadui.fx.ui.form.fields.*;
+import com.eviware.loadui.api.discovery.AgentDiscovery.*;
+import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
+
+import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.MainWindow;
+
+import org.jfxtras.scene.layout.XMigLayout;
+import org.jfxtras.scene.layout.XMigLayout.*;
+import net.miginfocom.layout.*;
+import javafx.scene.layout.Priority;
+
+import org.slf4j.LoggerFactory;
+
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog" );
+
+public class TabRenameDialog  {
+	
+	public var tabToRename: ToggleButton;
+	
+	public var onOk: function(renamedTab: ToggleButton): Void;
+	
+	public var tabs: ToggleButton[];
+	
+	var textField: TextField;
+	var dialogRef: Dialog;
+	
+	public function show() {
+		dialogRef = Dialog {
+		  noCancel: false
+        modal: true
+        title: "Rename Tab"
+        showPostInit: true
+        closable: true
+        helpUrl: null //"http://www.loadui.org/Working-with-loadUI/rename-tabs.html"
+        content: [
+        		Form {
+        			layoutInfo: LayoutInfo { width: 300 }
+					formContent: [
+						textField = TextField { 
+							label: "New name:", 
+							value: tabToRename.text,
+							action: ok
+						}
+					]
+				}
+			]
+			onOk: ok
+		}
+	}
+	
+	function ok(): Void {
+		if(validateName( textField.value as String )){
+		    tabToRename.text = textField.value as String; 
+		    onOk(tabToRename);
+		    dialogRef.close();
+		}
+		else{
+		    //TODO add warning dialog
+		}
+	}
+	
+	function validateName(name: String): Boolean {
+		if(name.length() > 0){
+		    if(tabs != null){
+		        for(t in tabs){
+		            if(t != tabToRename and t.text.equals(name)){
+		                return false;
+		            }
+		        }
+		    }
+		    true;
+		}
+		else{
+		    false;
+		}
+	}
+	
+}
