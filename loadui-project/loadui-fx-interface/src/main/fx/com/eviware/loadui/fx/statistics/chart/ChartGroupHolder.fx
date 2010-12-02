@@ -72,7 +72,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 		title = chartGroup.getTitle();
 		itemCount = chartGroup.getChildCount();
 		adapter = adapterRegistry.getAdapter( chartGroup.getType() );
-		chartViewHolder = ChartViewHolder { chartView: adapter.getChartView( chartGroup ) };
+		chartViewHolder = ChartViewHolder { chartView: adapter.getChartView( chartGroup ), label: bind "{title} ({itemCount})" };
 	}
 	
 	override var blocksMouse = true;
@@ -84,7 +84,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 		height: bind height
 		content: [
 			Region { width: bind width, height: bind height, managed: false, style: "-fx-background-color: gray;" },
-			Label { text: bind "{title} ({itemCount})" },
+			//Label { text: bind "{title} ({itemCount})" },
 			HBox { content: bind chartViewHolder }
 		]
 	}
@@ -136,7 +136,10 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 		if( expandGroups ) {
 			if( expandAgents ) toggleAgentExpand();
 			expandedNode = VBox {
-				content: for( chart in chartGroup.getChildren() ) ChartViewHolder { chartView: adapter.getChartView( chart as Chart ) }
+				content: for( chart in chartGroup.getChildren() ) ChartViewHolder {
+					chartView: adapter.getChartView( chart as Chart )
+					label: "{chart.getStatisticHolder()}"
+				}
 			}
 			insert expandedNode into (resizable as Container).content;
 		} else {
@@ -149,7 +152,10 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 		if( expandAgents ) {
 			if( expandGroups ) toggleGroupExpand();
 			expandedNode = VBox {
-				content: for( source in chartGroup.getSources() ) ChartViewHolder { chartView: adapter.getChartView( chartGroup, source ) }
+				content: for( source in chartGroup.getSources() ) ChartViewHolder {
+					chartView: adapter.getChartView( chartGroup, source )
+					label: source
+				}
 			}
 			insert expandedNode into (resizable as Container).content;
 		} else {
@@ -176,7 +182,14 @@ class ChartGroupListener extends EventHandler {
 		} else if( ChartGroup.TYPE == event.getKey() ) {
 			adapter = adapterRegistry.getAdapter( chartGroup.getType() );
 			FxUtils.runInFxThread( function():Void {
-				chartViewHolder = ChartViewHolder { chartView: adapter.getChartView( chartGroup ) };
+				chartViewHolder = ChartViewHolder { chartView: adapter.getChartView( chartGroup ), label: bind "{title} ({itemCount})" };
+				if( expandGroups ) {
+					toggleGroupExpand();
+					toggleGroupExpand();
+				} else if( expandAgents ) {
+					toggleAgentExpand();
+					toggleAgentExpand();
+				}
 			} );
 		} else if( ChartGroup.CHILDREN == event.getKey() ) {
 			FxUtils.runInFxThread( function():Void {
