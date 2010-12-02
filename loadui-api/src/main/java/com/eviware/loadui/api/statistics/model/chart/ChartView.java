@@ -22,5 +22,4 @@ package com.eviware.loadui.api.statistics.model.chart;
  */
 public interface ChartView
 {
-
 }

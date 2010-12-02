@@ -41,16 +41,24 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
  * @author dain.nilsson
  */
 public class ChartViewHolder extends BaseNode, Resizable {
+	public var label:String = "ChartView label";
+	
 	public-init var chartView:ChartView on replace {
 	}
 	
-	def resizable:HBox = HBox {
+	def resizable:VBox = VBox {
 		width: bind width
 		height: bind height
 		spacing: 5
 		content: [
-			Rectangle { width: 100, height: 100 },
-			Rectangle { width: 300, height: 100 }
+			Label { text: bind label },
+			HBox {
+				spacing: 5
+				content: [
+					Rectangle { width: 100, height: 100 },
+					Rectangle { width: 300, height: 100 }
+				]
+			}
 		]
 	}
 	
