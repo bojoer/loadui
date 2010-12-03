@@ -15,11 +15,13 @@
  */
 package com.eviware.loadui.api.statistics.model.chart;
 
+import com.eviware.loadui.api.model.AttributeHolder;
+
 /**
  * Provides a model for a specific type of Chart.
  * 
  * @author dain.nilsson
  */
-public interface ChartView
+public interface ChartView extends AttributeHolder
 {
 }

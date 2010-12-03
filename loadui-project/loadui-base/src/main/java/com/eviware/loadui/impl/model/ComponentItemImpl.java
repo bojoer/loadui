@@ -372,7 +372,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	}
 
 	@Override
-	public Collection<String> getStatisticVariableNames()
+	public Set<String> getStatisticVariableNames()
 	{
 		return statisticHolderSupport.getStatisticVariableNames();
 	}

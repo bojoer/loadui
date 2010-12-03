@@ -15,6 +15,10 @@
  */
 package com.eviware.loadui.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class StringUtils
 {
 	public static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
@@ -32,5 +36,29 @@ public class StringUtils
 	public static String fixLineSeparators( String string )
 	{
 		return string == null ? null : string.replaceAll( "\\r\\n|\\r|\\n", LINE_SEPARATOR );
+	}
+
+	public static String serialize( Collection<String> strings )
+	{
+		StringBuilder sb = new StringBuilder();
+		for( String item : strings )
+			sb.append( item.length() ).append( ":" ).append( item );
+
+		return sb.toString();
+	}
+
+	public static List<String> deserialize( String serialized )
+	{
+		List<String> strings = new ArrayList<String>();
+		String remaining = serialized;
+		String[] parts = remaining.split( ":", 2 );
+		while( parts.length == 2 )
+		{
+			int length = Integer.parseInt( parts[0] );
+			strings.add( parts[1].substring( 0, length ) );
+			remaining = parts[1].substring( length );
+			parts = remaining.split( ":", 2 );
+		}
+		return strings;
 	}
 }
