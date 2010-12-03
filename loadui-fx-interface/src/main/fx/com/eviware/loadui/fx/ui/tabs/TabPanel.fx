@@ -48,6 +48,9 @@ import javafx.util.Sequences;
 import javafx.scene.input.MouseButton;
 import javafx.scene.Scene;
 
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
+
 public class TabPanel extends CustomNode {
 	
 	public var width:Number;
@@ -83,12 +86,29 @@ public class TabPanel extends CustomNode {
 	                }
 	                // press delete to delete tab
 	                onKeyTyped: function(k:KeyEvent) {
-	                	if( k.char == new java.lang.String(java.lang.Character.toChars(0x007f)) )
-	                		if ( sizeof tabBtns > 1 ) {
-	                			onTabDeleted(tb);
-	                			delete tb from tabBtns;
-	                			tabBtns[0].selected = true;
-	                		}
+	                	if( k.char == new java.lang.String(java.lang.Character.toChars(0x007f)) ) {
+	                		def dialog:Dialog = Dialog {
+								title: "Deleting Tab"
+								scene: StatisticsWindow.getInstance().scene
+								content: Label {
+									text: "Delete Tab?"
+								}
+								okText: "Yes"
+								cancelText: "No"
+								onOk: function() {
+									if ( sizeof tabBtns > 1 ) {
+			                			onTabDeleted(tb);
+			                			delete tb from tabBtns;
+			                			tabBtns[0].selected = true;
+			                		}
+									dialog.close();
+								}
+								onCancel: function() {
+									dialog.close();
+								}
+							}
+	                		
+	                	}
 	                }
 	                onMouseDragged: function(e: MouseEvent) {
 	                	var trans = if ( e.dragAnchorX > e.x )
