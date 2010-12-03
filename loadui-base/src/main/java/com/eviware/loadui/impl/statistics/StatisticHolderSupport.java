@@ -15,9 +15,9 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.statistics.MutableStatisticVariable;
@@ -99,9 +99,9 @@ public class StatisticHolderSupport
 		return variables.get( statisticVariableName );
 	}
 
-	public Collection<String> getStatisticVariableNames()
+	public Set<String> getStatisticVariableNames()
 	{
-		return Collections.unmodifiableCollection( variables.keySet() );
+		return Collections.unmodifiableSet( variables.keySet() );
 	}
 
 	/**

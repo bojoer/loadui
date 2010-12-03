@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.api.statistics;
 
-import java.util.Collection;
+import java.util.Set;
 
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.events.EventFirer;
@@ -43,5 +43,5 @@ public interface StatisticHolder extends EventFirer, Addressable
 	 * 
 	 * @return
 	 */
-	public Collection<String> getStatisticVariableNames();
+	public Set<String> getStatisticVariableNames();
 }

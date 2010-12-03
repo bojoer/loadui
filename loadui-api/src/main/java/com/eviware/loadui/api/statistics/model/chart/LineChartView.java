@@ -18,29 +18,29 @@ package com.eviware.loadui.api.statistics.model.chart;
 import java.util.Collection;
 import java.util.Set;
 
+import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.statistics.Statistic;
+import com.eviware.loadui.api.statistics.model.Chart;
 
 /**
  * ChartView which describes a Line chart.
  * 
  * @author dain.nilsson
  */
-public interface LineChartView extends ChartView
+public interface LineChartView extends ChartView, EventFirer
 {
+	/**
+	 * CollectionEvent fired when a segment is added or removed.
+	 */
+	public final static String SEGMENTS = LineChartView.class.getName() + "@segments";
+
 	/**
 	 * Gets the contained LineSegments.
 	 * 
 	 * @return
 	 */
 	public Collection<LineSegment> getSegments();
-
-	/**
-	 * True if its LineSegments can be enabled/disabled, false if such
-	 * configuration is done elsewhere.
-	 * 
-	 * @return
-	 */
-	public boolean isSegmentsConfigurable();
 
 	/**
 	 * Gets the names of the available StatisticVariables;
@@ -78,12 +78,19 @@ public interface LineChartView extends ChartView
 	public LineSegment addSegment( String variableName, String statisticName, String source );
 
 	/**
+	 * Removes a LineSegment which has previously been added.
+	 * 
+	 * @param segment
+	 */
+	public void removeSegment( LineSegment segment );
+
+	/**
 	 * Represents a line in a LineChart. It can be enabled or disabled, has a
 	 * color, and is backed by a Statistic.
 	 * 
 	 * @author dain.nilsson
 	 */
-	public interface LineSegment
+	public interface LineSegment extends AttributeHolder
 	{
 		/**
 		 * Gets the backing Statistic.
@@ -91,33 +98,5 @@ public interface LineChartView extends ChartView
 		 * @return
 		 */
 		public Statistic<?> getStatistic();
-
-		/**
-		 * Gets the color of the LineSegment.
-		 * 
-		 * @return
-		 */
-		public String getColor();
-
-		/**
-		 * Sets the color of the LineSegment.
-		 * 
-		 * @param color
-		 */
-		public void setColor( String color );
-
-		/**
-		 * True if the LineSegment is enabled (and should be showing).
-		 * 
-		 * @return
-		 */
-		public boolean isEnabled();
-
-		/**
-		 * Sets if the LineSegment is enabled or not.
-		 * 
-		 * @param enabled
-		 */
-		public void setEnabled( boolean enabled );
 	}
 }

@@ -1,0 +1,132 @@
+/*
+ * Copyright 2010 eviware software ab
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl5
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
+package com.eviware.loadui.impl.statistics.model.chart.line;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EventObject;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.impl.statistics.model.chart.AbstractChartView;
+import com.eviware.loadui.util.events.EventSupport;
+
+/**
+ * Abstract base class for LineChartView implementations.
+ * 
+ * @author dain.nilsson
+ */
+public abstract class AbstractLineChartView extends AbstractChartView implements LineChartView
+{
+	private final EventSupport eventSupport = new EventSupport();
+	private final Map<String, LineSegment> segments = new HashMap<String, LineSegment>();
+
+	public AbstractLineChartView( ChartGroup chartGroup, String prefix )
+	{
+		super( chartGroup, prefix );
+	}
+
+	/**
+	 * Adds the given LineSegment and fires a CollectionEvent about it.
+	 * 
+	 * @param segmentKey
+	 * @param segment
+	 */
+	protected void putSegment( String segmentKey, LineSegment segment )
+	{
+		segments.put( segmentKey, segment );
+		fireEvent( new CollectionEvent( this, SEGMENTS, CollectionEvent.Event.ADDED, segment ) );
+	}
+
+	/**
+	 * Returns a contained LineSegment for the given key.
+	 * 
+	 * @param segmentKey
+	 * @return
+	 */
+	protected LineSegment getSegment( String segmentKey )
+	{
+		return segments.get( segmentKey );
+	}
+
+	/**
+	 * Removes a contained LineSegment and fires a CollectionEvent, if
+	 * successful. Returns the status of the operation.
+	 * 
+	 * @param segment
+	 * @return
+	 */
+	protected boolean deleteSegment( LineSegment segment )
+	{
+		for( Entry<String, LineSegment> entry : segments.entrySet() )
+		{
+			if( entry.getValue().equals( segment ) )
+			{
+				segments.remove( entry.getKey() );
+				fireEvent( new CollectionEvent( this, SEGMENTS, CollectionEvent.Event.REMOVED, segment ) );
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Gets the LineSegment keys for all contained LineSegments.
+	 * 
+	 * @return
+	 */
+	protected Set<String> segmentKeySet()
+	{
+		return segments.keySet();
+	}
+
+	@Override
+	public Collection<LineSegment> getSegments()
+	{
+		return Collections.unmodifiableCollection( segments.values() );
+	}
+
+	@Override
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.addEventListener( type, listener );
+	}
+
+	@Override
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.removeEventListener( type, listener );
+	}
+
+	@Override
+	public void clearEventListeners()
+	{
+		eventSupport.clearEventListeners();
+	}
+
+	@Override
+	public void fireEvent( EventObject event )
+	{
+		eventSupport.fireEvent( event );
+	}
+}

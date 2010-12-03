@@ -13,30 +13,30 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.model.chart.line;
+package com.eviware.loadui.impl.statistics.model.chart;
 
 import java.util.Collection;
 
-import com.eviware.loadui.api.statistics.Statistic;
-import com.eviware.loadui.api.statistics.model.Chart;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.impl.property.DelegatingAttributeHolderSupport;
 
-public class LineSegmentImpl implements LineChartView.LineSegment
+/**
+ * Abstract base class for ChartViews.
+ * 
+ * @author dain.nilsson
+ */
+public class AbstractChartView implements ChartView
 {
-	private final Statistic<?> statistic;
+	public final static String CHART_GROUP_PREFIX = "_CHARTGROUP_";
+	public final static String CHART_PREFIX = "_CHART_";
+	public final static String SOURCE_PREFIX = "_SOURCE_";
+
 	private final DelegatingAttributeHolderSupport attributeSupport;
 
-	public LineSegmentImpl( Chart chart, String variableName, String statisticName, String source )
+	public AbstractChartView( ChartGroup chartGroup, String prefix )
 	{
-		attributeSupport = new DelegatingAttributeHolderSupport( chart, variableName + "_" + statisticName + "_" + source );
-		statistic = chart.getStatisticHolder().getStatisticVariable( variableName ).getStatistic( statisticName, source );
-	}
-
-	@Override
-	public Statistic<?> getStatistic()
-	{
-		return statistic;
+		attributeSupport = new DelegatingAttributeHolderSupport( chartGroup, prefix );
 	}
 
 	@Override

@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.api.statistics;
 
-import java.util.Collection;
+import java.util.Set;
 
 /**
  * A Statistical Variable containing several Statistics, for several instances.
@@ -43,14 +43,14 @@ public interface StatisticVariable
 	 * 
 	 * @return
 	 */
-	public Collection<String> getSources();
+	public Set<String> getSources();
 
 	/**
 	 * Gets the available Statistic names for the StatisticVariable.
 	 * 
 	 * @return
 	 */
-	public Collection<String> getStatisticNames();
+	public Set<String> getStatisticNames();
 
 	/**
 	 * Gets the Statistic corresponding to the given statistic name and source.

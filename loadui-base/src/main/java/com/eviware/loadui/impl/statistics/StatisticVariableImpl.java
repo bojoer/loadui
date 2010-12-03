@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map.Entry;
@@ -79,7 +78,7 @@ public class StatisticVariableImpl implements MutableStatisticVariable
 	}
 
 	@Override
-	public Collection<String> getSources()
+	public Set<String> getSources()
 	{
 		Set<String> sources = new HashSet<String>();
 		sources.add( "local" );
@@ -100,7 +99,7 @@ public class StatisticVariableImpl implements MutableStatisticVariable
 	}
 
 	@Override
-	public Collection<String> getStatisticNames()
+	public Set<String> getStatisticNames()
 	{
 		return Collections.unmodifiableSet( statisticNames );
 	}

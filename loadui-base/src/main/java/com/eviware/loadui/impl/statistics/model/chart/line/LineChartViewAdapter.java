@@ -37,14 +37,12 @@ public class LineChartViewAdapter implements ChartViewAdapter<LineChartView>
 	@Override
 	public LineChartView getChartView( Chart chart )
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new ChartLineChartView( chart );
 	}
 
 	@Override
 	public LineChartView getChartView( ChartGroup chartGroup, String source )
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new SourceLineChartView( chartGroup, source );
 	}
 }
