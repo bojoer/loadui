@@ -58,6 +58,9 @@ public class TabPanel extends CustomNode {
 	public var uniqueNames: Boolean = false;
 	
 	public var onTabRename: function(tab: ToggleButton): Void;
+	public var onTabDeleted: function(tab: ToggleButton): Void;
+	public var onTabAdded: function(tab: ToggleButton): Void;
+	
 	
 	var tabBtns:ToggleButton[];
 	var tabs:HBox;
@@ -69,76 +72,80 @@ public class TabPanel extends CustomNode {
 	public function addTab(name:String, content:Node): ToggleButton { 
 		var tb:ToggleButton;
 		
-		insert tb = ToggleButton {
-                layoutInfo: LayoutInfo { width: 100 }
-                text: name
-                toggleGroup: tGroup
-                value: content
-                onMousePressed: function(e: MouseEvent) {
-                	tb.selected = true;
-                }
-                // press delete to delete tab
-                onKeyTyped: function(k:KeyEvent) {
-                	if( k.char == new java.lang.String(java.lang.Character.toChars(0x007f)) )
-                		if ( sizeof tabBtns > 1 ) {
-                			delete tb from tabBtns;
-                			tabBtns[0].selected = true;
-                		}
-                }
-                onMouseDragged: function(e: MouseEvent) {
-                	var trans = if ( e.dragAnchorX > e.x )
-                						e.dragX
-                				  else 
-                				  		-e.dragX;
-                	var leftDelta =  (e.dragAnchorX - x) - (Sequences.indexOf(tabBtns, tb) * 100) ;
-                	var rightDelta = (x + width - e.dragAnchorX) - ((tabBtns.size() - Sequences.indexOf(tabBtns, tb) - 1) * 100);
-                	if ( (e.dragAnchorX + trans - leftDelta > x) and (e.dragAnchorX + trans + rightDelta < x + width)) 
-                		tb.translateX = trans;
-                	
-                }
-                onMouseReleased: function(e: MouseEvent) {
-                	if ( tb.translateX != 0 )
-	                	for( cnt in [0..tabBtns.size()-1] ) {
-	                		if( tb.translateX < 0 ) {
-	                			if( javafx.util.Sequences.indexOf(tabBtns, tb) <= cnt )
-	                				continue;
-		                		if ( tabBtns[cnt].boundsInParent.minX > tb.boundsInParent.minX - 10) {
-		                			delete tb from tabBtns;
-		                			insert tb before tabBtns[cnt];
-		                			break;
-		                		}
+		if ( isUniqueTabName(name) ) 
+			insert tb = ToggleButton {
+	                layoutInfo: LayoutInfo { width: 100 }
+	                text: name
+	                toggleGroup: tGroup
+	                value: content
+	                onMousePressed: function(e: MouseEvent) {
+	                	tb.selected = true;
+	                }
+	                // press delete to delete tab
+	                onKeyTyped: function(k:KeyEvent) {
+	                	if( k.char == new java.lang.String(java.lang.Character.toChars(0x007f)) )
+	                		if ( sizeof tabBtns > 1 ) {
+	                			onTabDeleted(tb);
+	                			delete tb from tabBtns;
+	                			tabBtns[0].selected = true;
+	                		}
+	                }
+	                onMouseDragged: function(e: MouseEvent) {
+	                	var trans = if ( e.dragAnchorX > e.x )
+	                						e.dragX
+	                				  else 
+	                				  		-e.dragX;
+	                	var leftDelta =  (e.dragAnchorX - x) - (Sequences.indexOf(tabBtns, tb) * 100) ;
+	                	var rightDelta = (x + width - e.dragAnchorX) - ((tabBtns.size() - Sequences.indexOf(tabBtns, tb) - 1) * 100);
+	                	if ( (e.dragAnchorX + trans - leftDelta > x) and (e.dragAnchorX + trans + rightDelta < x + width)) 
+	                		tb.translateX = trans;
+	                	
+	                }
+	                onMouseReleased: function(e: MouseEvent) {
+	                	if ( tb.translateX != 0 )
+		                	for( cnt in [0..tabBtns.size()-1] ) {
+		                		if( tb.translateX < 0 ) {
+		                			if( javafx.util.Sequences.indexOf(tabBtns, tb) <= cnt )
+		                				continue;
+			                		if ( tabBtns[cnt].boundsInParent.minX > tb.boundsInParent.minX - 10) {
+			                			delete tb from tabBtns;
+			                			insert tb before tabBtns[cnt];
+			                			break;
+			                		}
+			                	}
+			                	else  {
+			                		if( javafx.util.Sequences.indexOf(tabBtns, tb) >= cnt )
+		                				continue;
+			                		if (tabBtns[cnt].boundsInParent.maxX < tb.boundsInParent.maxX + 10) {
+			                			delete tb from tabBtns;
+			                			insert tb before tabBtns[cnt];
+			                			break;
+			                		}
+			                	}
 		                	}
-		                	else  {
-		                		if( javafx.util.Sequences.indexOf(tabBtns, tb) >= cnt )
-	                				continue;
-		                		if (tabBtns[cnt].boundsInParent.maxX < tb.boundsInParent.maxX + 10) {
-		                			delete tb from tabBtns;
-		                			insert tb before tabBtns[cnt];
-		                			break;
-		                		}
-		                	}
-	                	}
-                	tb.translateX = 0; 
-                	tb.selected = true; 
-                }
-                onMouseClicked: function(e: MouseEvent) {
-						if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
-							TabRenameDialog {
-							    tabToRename: tb
-							    tabButtons: tabBtns
-							    uniqueNames: uniqueNames
-							    onOk: function(renamedTab: ToggleButton): Void {
-							        onTabRename(renamedTab);
-							    }
-							}.show();
-						}
-                }
-            } into tabBtns;
+	                	tb.translateX = 0; 
+	                	tb.selected = true; 
+	                }
+	                onMouseClicked: function(e: MouseEvent) {
+							if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
+								TabRenameDialog {
+								    tabToRename: tb
+								    tabButtons: tabBtns
+								    uniqueNames: uniqueNames
+								    onOk: function(renamedTab: ToggleButton): Void {
+								        onTabRename(renamedTab);
+								    }
+								}.show();
+							}
+	                }
+	            } into tabBtns
+	    else
+	    	return null;
         
         if (sizeof tabBtns == 1){
         	tb.selected = true;
         }   
-        	
+        onTabAdded(tb);
         tb;
 	}
 	
@@ -176,11 +183,7 @@ public class TabPanel extends CustomNode {
 	     									   	text: "+"
 	     									   	styleClass: "tab-plus"
 	     									   	action: function() {
-	     									   			addTab("New Tab", Rectangle {
-																			height:100
-																			width: 200
-																			fill: Color.BLUE
-																			})
+	     									   			addTab("New Tab", null)
 	     									   		}
 	     									   	}
 	     									   ]
@@ -240,6 +243,18 @@ public class TabPanel extends CustomNode {
 				tab.text = newName;
 				break
 			}
+	}
+	
+	// remove all tabs
+	public function clear() {
+		delete tabBtns;
+	}
+	
+	function isUniqueTabName(name:String) {
+		for(tab in tabBtns)
+			if( tab.text == name )
+				return false;
+		true
 	}
 	
 } 
