@@ -80,27 +80,19 @@ public class StatisticsWindow {
 				        		height: bind scene.height - 180
 				        		background: Color.web("#323232")
 				        		onTabRename: onTabRename
+				        		onTabAdded: function(tb) {
+				        			if ( tb.value == null ) {
+				        				def page = project.getStatisticPages().createPage( tb.text );
+				        				tb.value = ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page };
+				        				pageMap.put( tb, page );
+				        			}
+				        		}
+				        		onTabDeleted: function(tb) {
+				        			def page: StatisticPage = pageMap.get(tb) as StatisticPage;
+				        			page.delete();
+				        		}
 				        		uniqueNames: true
 				        	};
-	
-	init {
-		tabs.addTab("Default", Text {content: "Tab default"});
-		tabs.addTab("Default-1", Rectangle {
-									height:100
-									width: 200
-									fill: Color.RED
-									});
-		tabs.addTab("Default-2", Rectangle {
-									height:100
-									width: 200
-									fill: Color.GREEN
-									});
-		tabs.addTab("Default-3", Rectangle {
-									height:100
-									width: 200
-									fill: Color.BLUE
-									});
-	}
 	
 	def toolbar: StatisticsToolbar = StatisticsToolbar {
 		layoutY: 150
@@ -114,6 +106,12 @@ public class StatisticsWindow {
 			def page = project.getStatisticPages().createPage( "General" );
 			
 			pageMap.put(tabs.addTab( page.getTitle(), ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page } ), page );
+		} else {
+			for( page in project.getStatisticPages().getChildren() ) {
+				var tb = tabs.addTab( page.getTitle(), ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page } );
+				if ( tb != null )
+					pageMap.put(tb, page);
+			}
 		}
 		
     	if ( closed ) {
@@ -164,6 +162,7 @@ public class StatisticsWindow {
 	    			   }
 	    		onClose: function() {
 	    		 	closed = true;
+	    		 	close();
 	//    				throw new com.eviware.loadui.util.hacks.PreventClosingStageException(); // this a hack to keep stage open
 	  				}
 	    		}
@@ -173,6 +172,8 @@ public class StatisticsWindow {
 	}
 	
 	public function close() {
+		tabs.clear();
+		pageMap.clear();
 		stage.close()
 	}
 		
