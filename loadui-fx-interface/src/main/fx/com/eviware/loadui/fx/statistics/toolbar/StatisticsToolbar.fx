@@ -28,6 +28,7 @@ import java.util.EventObject;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticHolder;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.util.BeanInjector;
 
 import com.eviware.loadui.api.events.EventHandler;
@@ -36,6 +37,8 @@ import com.eviware.loadui.api.events.CollectionEvent;
 
 import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.component.ComponentDescriptor;
+
+import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
 
 import com.eviware.loadui.fx.FxUtils;
 
@@ -56,9 +59,6 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
     postinit {
         addChartItems();
         addAnalysisItems();
-        for(sh in manager.getStatisticHolders()){
-            addStatisticHolder(sh);
-        }
     }
     
     override var toolbarTitle = "Statictics";
@@ -70,47 +70,66 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
     override function handleEvent(e: EventObject) { 
 		if( e instanceof CollectionEvent ) {
 			def event: CollectionEvent = e as CollectionEvent;
+			def source: Object = event.getSource();
 			def element: Object = event.getElement();
-			if(element instanceof StatisticHolder){
+			if(source instanceof StatisticsManager and element instanceof StatisticHolder){
 				def sh: StatisticHolder = element as StatisticHolder;
 				if(event.getEvent() == CollectionEvent.Event.ADDED){
-					FxUtils.runInFxThread( function():Void {
-						addStatisticHolder(element as StatisticHolder);
+					sh.addEventListener( BaseEvent.class, this );
+					FxUtils.runInFxThread( function(): Void {
+					   //component added to project so add it to 
+					   //the toolbar only if it has variables
+						handleStatisticHolder(sh);
 					});
 				}
 				else if(event.getEvent() == CollectionEvent.Event.REMOVED){
-					FxUtils.runInFxThread( function():Void {
-						removeStatisticHolder(element as StatisticHolder);
+					sh.removeEventListener( BaseEvent.class, this );
+					FxUtils.runInFxThread( function(): Void {
+					   //component removed from project so remove it from 
+					   //the toolbar even if it has variables
+						removeStatisticHolder(sh);
 					});
 				}
+			}
+		   else if(source instanceof StatisticHolder and element instanceof StatisticVariable){
+			   FxUtils.runInFxThread( function(): Void {
+					handleStatisticHolder(source as StatisticHolder);
+				});
 			}
 		}
 	}
 	
-	function addStatisticHolder(sh: StatisticHolder){
+	/** Removes holder from toolbar if it does not have variables and adds it if it does and it wasn't already added */
+	function handleStatisticHolder(sh: StatisticHolder){
 		if(sh.getStatisticVariableNames().size() == 0){
-		 	return;   
+			// there are no more variables in this holder, remove it from the toolbar
+			removeStatisticHolder(sh);
 		}
-		if(sh instanceof ComponentItem){
-      	def cti: ComponentToolbarItem = ComponentToolbarItem {
-				component: sh as ComponentItem
-				descriptor: componentRegistry.findDescriptor((sh as ComponentItem).getType())
-			} 
-      	addItem(cti);
-      	statHolderMap.put(sh, cti);
+		else if (not statHolderMap.containsKey(sh)){
+		   // there is more than one variable in a holder, so add it to toolbar if it wasn't already added
+			if(sh instanceof ComponentItem){
+	      	def cti: ComponentToolbarItem = ComponentToolbarItem {
+					component: sh as ComponentItem
+					descriptor: componentRegistry.findDescriptor((sh as ComponentItem).getType())
+				}
+				addItem(cti);
+	      	statHolderMap.put(sh, cti);
+			}
 		}
 	}
 	
+	/** Removes holder from toolbar no matter if it has variables or not */
 	function removeStatisticHolder(sh: StatisticHolder){
-	    if(sh instanceof ComponentItem){
-		    def cti: ComponentToolbarItem = statHolderMap.get(sh) as ComponentToolbarItem;
-		    if(cti != null){
-		    	removeItem(cti);
-		    }
-		    statHolderMap.remove(sh);
-	    }
+		if(sh instanceof ComponentItem){
+			def cti: ComponentToolbarItem = statHolderMap.get(sh) as ComponentToolbarItem;
+			if(cti != null){
+				removeItem(cti);
+			}
+			statHolderMap.remove(sh);
+		}
 	}
 	
+	/** Adds chart toolbar items to the toolbar */
 	function addChartItems(){
 	   def item: ChartToolbarItem = ChartToolbarItem {
 			type: com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName()
@@ -121,6 +140,7 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
    	addItem(item);
 	}
 
+	/** Adds analysis toolbar items to the toolbar */
 	function addAnalysisItems(){
 	   def item: AnalysisToolbarItem = AnalysisToolbarItem {
 			label: "Predefined A"
