@@ -10,7 +10,8 @@ import org.h2.jdbcx.JdbcConnectionPool;
 public class H2ExecutionManager extends ExecutionManagerImpl
 {
 	public static final String DB_BASEDIR = new File( System.getProperty( "loadui.home" ), "controller".equals( System
-			.getProperty( "loadui.instance" ) ) ? "data_c" : "data_a" ).toURI().toString().replaceAll( "%20", " " ) + File.separator;
+			.getProperty( "loadui.instance" ) ) ? "data_c" : "data_a" ).toURI().toString().replaceAll( "%20", " " )
+			+ File.separator;
 
 	public static final String SQL_CREATE_TABLE_EXPRESSION = "CREATE TABLE";
 	public static final String SQL_ADD_PRIMARY_KEY_INDEX_EXPRESSION = "ALTER TABLE ? ADD CONSTRAINT ?_pk_index PRIMARY KEY(?)";
@@ -34,7 +35,8 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	@Override
 	public DataSource createDataSource( String db )
 	{
-		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" + DB_BASEDIR + db, "sa", "sa" );
+		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" + DB_BASEDIR + db + ";DB_CLOSE_ON_EXIT=FALSE",
+				"sa", "sa" );
 		// JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:~/_data/" +
 		// db, "sa", "sa" );
 		cp.setMaxConnections( 5 );

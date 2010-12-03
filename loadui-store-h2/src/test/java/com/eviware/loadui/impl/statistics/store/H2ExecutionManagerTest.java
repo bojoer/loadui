@@ -137,4 +137,9 @@ public class H2ExecutionManagerTest
 		h2.writeEntry( t.getId(), entry, "local1" );
 
 	}
+	
+	@Test
+	public void testRelease(){
+		h2.release();
+	}
 }
