@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog" );
 
-public class TabRenameDialog  {
+public class TabRenameDialog {
 	
 	public var tabToRename: ToggleButton;
 	
