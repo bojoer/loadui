@@ -91,18 +91,18 @@ public class TabPanel extends CustomNode {
                 				  else 
                 				  		-e.dragX;
                 	var leftDelta =  (e.dragAnchorX - x) - (Sequences.indexOf(tabBtns, tb) * 100) ;
-                	var rightDelta = (x + width - e.dragAnchorX) - ((sizeof tabBtns - Sequences.indexOf(tabBtns, tb) - 1) * 100);
+                	var rightDelta = (x + width - e.dragAnchorX) - ((tabBtns.size() - Sequences.indexOf(tabBtns, tb) - 1) * 100);
                 	if ( (e.dragAnchorX + trans - leftDelta > x) and (e.dragAnchorX + trans + rightDelta < x + width)) 
                 		tb.translateX = trans;
+                	
                 }
                 onMouseReleased: function(e: MouseEvent) {
                 	if ( tb.translateX != 0 )
-	                	for( cnt in [0..tabBtns.size()] ) {
+	                	for( cnt in [0..tabBtns.size()-1] ) {
 	                		if( tb.translateX < 0 ) {
 	                			if( javafx.util.Sequences.indexOf(tabBtns, tb) <= cnt )
 	                				continue;
-		                		if (tabBtns[cnt].boundsInParent.maxX > tb.boundsInParent.minX and
-		                			 tabBtns[cnt].boundsInParent.minX < tb.boundsInParent.minX) {
+		                		if ( tabBtns[cnt].boundsInParent.minX > tb.boundsInParent.minX - 10) {
 		                			delete tb from tabBtns;
 		                			insert tb before tabBtns[cnt];
 		                			break;
@@ -111,16 +111,15 @@ public class TabPanel extends CustomNode {
 		                	else  {
 		                		if( javafx.util.Sequences.indexOf(tabBtns, tb) >= cnt )
 	                				continue;
-		                		if (tabBtns[cnt].boundsInParent.minX < tb.boundsInParent.maxX and 
-		                			tabBtns[cnt].boundsInParent.maxX > tb.boundsInParent.maxX) {
+		                		if (tabBtns[cnt].boundsInParent.maxX < tb.boundsInParent.maxX + 10) {
 		                			delete tb from tabBtns;
 		                			insert tb before tabBtns[cnt];
 		                			break;
 		                		}
 		                	}
 	                	}
-                	tb.translateX = 0;
-                	tb.selected = true;
+                	tb.translateX = 0; 
+                	tb.selected = true; 
                 }
                 onMouseClicked: function(e: MouseEvent) {
 						if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
