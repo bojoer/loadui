@@ -203,7 +203,7 @@ public class TabPanel extends CustomNode {
 	     									   	text: "+"
 	     									   	styleClass: "tab-plus"
 	     									   	action: function() {
-	     									   			addTab("New Tab", null)
+	     									   			addTab("New Tab_{tabBtns.size()}", null)
 	     									   		}
 	     									   	}
 	     									   ]
