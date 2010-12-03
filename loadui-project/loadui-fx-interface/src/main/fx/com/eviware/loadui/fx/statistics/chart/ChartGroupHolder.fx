@@ -194,6 +194,13 @@ class ChartGroupListener extends EventHandler {
 		} else if( ChartGroup.CHILDREN == event.getKey() ) {
 			FxUtils.runInFxThread( function():Void {
 				itemCount = chartGroup.getChildCount();
+				if( expandGroups ) {
+					toggleGroupExpand();
+					toggleGroupExpand();
+				} else if( expandAgents ) {
+					toggleAgentExpand();
+					toggleAgentExpand();
+				}
 			} );
 		}
 	}

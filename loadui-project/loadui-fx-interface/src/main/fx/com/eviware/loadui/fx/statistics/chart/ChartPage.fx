@@ -145,7 +145,7 @@ class DropBase extends BaseNode, Resizable, Droppable {
 			statisticPage.createChartGroup( (draggable as ChartToolbarItem).type, "Chart Group {statisticPage.getChildCount()+1}" )
 		} else if( draggable instanceof ComponentToolbarItem ) {
 			def sh = (draggable as ComponentToolbarItem).component;
-			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "{sh}" );
+			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart Group {statisticPage.getChildCount()+1}" );
 			chartGroup.createChart( sh );
 		}
 	}
