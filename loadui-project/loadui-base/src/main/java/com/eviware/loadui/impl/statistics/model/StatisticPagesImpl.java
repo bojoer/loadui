@@ -70,6 +70,10 @@ public class StatisticPagesImpl implements StatisticPages
 	@Override
 	public StatisticPage createPage( String title )
 	{
+		for( StatisticPage page : getChildren() )
+			if( title.equals( page.getTitle() ) )
+				throw new IllegalArgumentException( "Non-unique title given for StatisticPage!" );
+
 		StatisticsPageConfig statisticPageConfig = config.addNewPage();
 		statisticPageConfig.setTitle( title );
 		StatisticPageImpl statisticPage = new StatisticPageImpl( this, statisticPageConfig );
