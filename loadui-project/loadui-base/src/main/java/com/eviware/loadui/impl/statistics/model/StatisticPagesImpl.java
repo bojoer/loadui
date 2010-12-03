@@ -117,7 +117,11 @@ public class StatisticPagesImpl implements StatisticPages
 
 	void removeChild( StatisticPage child )
 	{
-		// TODO: Remove from XML config
-		collectionSupport.removeChild( child );
+		int index = indexOf( child );
+		if( index > -1 )
+		{
+			collectionSupport.removeChild( child );
+			config.removePage( index );
+		}
 	}
 }
