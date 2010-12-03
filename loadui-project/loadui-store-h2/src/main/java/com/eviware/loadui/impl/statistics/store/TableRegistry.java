@@ -24,7 +24,7 @@ public class TableRegistry implements TableProvider
 		TableBase dtd = tableMap.get( dbName + tableName );
 		if( dtd == null )
 		{
-			throw new IllegalArgumentException( "Table " + tableName + " does not exeist in execution: " + dbName );
+			throw new IllegalArgumentException( "Table " + tableName + " does not exist in execution: " + dbName );
 		}
 		return dtd;
 	}
