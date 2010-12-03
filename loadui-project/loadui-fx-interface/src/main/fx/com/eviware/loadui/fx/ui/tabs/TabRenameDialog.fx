@@ -61,14 +61,35 @@ public class TabRenameDialog  {
 	public var uniqueNames: Boolean = false;
 	
 	var textField: TextField;
+	
 	var dialogRef: Dialog;
 	
+	var title: String = "Rename Tab";
+	
+	var errorMessage: String = "";
+	
+	def messageDialog: Dialog = Dialog {
+		title: "Error while renaming tab"
+		scene: StatisticsWindow.getInstance().scene
+		showPostInit: false
+		content: LabelField {
+			value: bind errorMessage
+		}
+		okText: "Ok"
+		onOk: function() {
+			messageDialog.close();
+			dialogRef.show();
+			textField.requestFocus();
+		}
+		noCancel: true
+	}
+			    				    
 	public function show() {
 		dialogRef = Dialog {
 		  scene: StatisticsWindow.getInstance().scene
 		  noCancel: false
         modal: true
-        title: "Rename Tab"
+        title: title
         showPostInit: true
         closable: true
         helpUrl: null //"http://www.loadui.org/Working-with-loadUI/rename-tabs.html"
@@ -89,25 +110,38 @@ public class TabRenameDialog  {
 	}
 	
 	function ok(): Void {
-		if(validateName( textField.value as String )){
-		    tabToRename.text = textField.value as String; 
-		    onOk(tabToRename);
-		    dialogRef.close();
+		if(validateLength( textField.value as String )){
+		    if(validateUniqueness( textField.value as String )){
+			    tabToRename.text = textField.value as String; 
+			    onOk(tabToRename);
+			    dialogRef.close();
+		    }
+		    else{
+		        dialogRef.close();
+		        errorMessage = "Tab named '{textField.value}' already exist. Tab name must be unique!";
+		        messageDialog.show();
+		    }
 		}
 		else{
-		    //TODO add warning dialog
+		    dialogRef.close();
+		    errorMessage = "Tab name can not be empty!";
+		    messageDialog.show();
 		}
 	}
 	
-	function validateName(name: String): Boolean {
+	function validateUniqueness(name: String): Boolean {
+	    if(uniqueNames and tabButtons != null){
+	        for(t in tabButtons){
+	            if(t != tabToRename and t.text.equals(name)){
+	                return false;
+	            }
+	        }
+	    }
+	    true;
+	}
+	
+	function validateLength(name: String): Boolean {
 		if(name.length() > 0){
-		    if(uniqueNames and tabButtons != null){
-		        for(t in tabButtons){
-		            if(t != tabToRename and t.text.equals(name)){
-		                return false;
-		            }
-		        }
-		    }
 		    true;
 		}
 		else{
