@@ -39,12 +39,17 @@ import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
 
+import com.eviware.loadui.api.statistics.StatisticsManager;
+import com.eviware.loadui.api.statistics.StatisticHolder;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.chart.ChartViewAdapter;
 import com.eviware.loadui.api.statistics.model.chart.ChartViewAdapterRegistry;
+
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.util.BeanInjector;
 import java.util.EventObject;
 
@@ -59,6 +64,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 	def adapterRegistry = BeanInjector.getBean( ChartViewAdapterRegistry.class );
 	var adapter:ChartViewAdapter;
 	
+	def statisticsManager = BeanInjector.getBean(StatisticsManager.class);
+	
 	public-read var expandGroups = false;
 	public-read var expandAgents = false;
 	var expandedNode:Node;
@@ -66,6 +73,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 	var chartViewHolder:ChartViewHolder;
 	
 	def listener = new ChartGroupListener();
+	def statisticsManagerListener = new StatisticsManagerListener();
 	
 	public-init var chartGroup:ChartGroup on replace oldChartGroup {
 		chartGroup.addEventListener( BaseEvent.class, listener );
@@ -103,6 +111,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 	}
 	
 	init {
+	   statisticsManager.addEventListener( BaseEvent.class, statisticsManagerListener );
+	   
 		insert buttonBar into (resizable as Container).content;
 		insert configurationHolder into (resizable as Container).content;
 	}
@@ -202,6 +212,32 @@ class ChartGroupListener extends EventHandler {
 					toggleAgentExpand();
 				}
 			} );
+		}
+	}
+}
+
+class StatisticsManagerListener extends EventHandler {  
+    override function handleEvent(e: EventObject) { 
+		if( e instanceof CollectionEvent ) {
+			def event: CollectionEvent = e as CollectionEvent;
+			if(event.getSource() instanceof StatisticsManager and event.getElement() instanceof StatisticHolder){
+				if(event.getEvent() == CollectionEvent.Event.REMOVED){
+					FxUtils.runInFxThread( function(): Void {
+					   def sh: StatisticHolder = event.getElement() as StatisticHolder;
+					   for(chart in chartGroup.getChildren()){
+					       println("---chart check");
+					      if(chart.getStatisticHolder() == sh){
+					         println("---delete");
+					         chart.delete();
+					         break;
+					      }
+					   }
+					   if(chartGroup.getChildCount() == 0){
+					       chartGroup.delete();
+					   }
+					});
+				}
+			}
 		}
 	}
 }
