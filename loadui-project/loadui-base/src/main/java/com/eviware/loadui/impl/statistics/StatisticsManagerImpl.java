@@ -197,6 +197,11 @@ public class StatisticsManagerImpl implements StatisticsManager
 			else if( hasCurrent && CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
 			{
 				hasCurrent = false;
+				executionManager.stopExecution();
+				//TODO: send message to agents
+			} else if ( CanvasItem.STOP_ACTION.equals( event.getKey() )) {
+				executionManager.pauseExecution();
+				//TODO: send message to agents
 			}
 		}
 	}
