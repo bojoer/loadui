@@ -16,11 +16,14 @@
 package com.eviware.loadui.launcher;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.osgi.framework.BundleException;
@@ -223,6 +226,22 @@ public class LoadUILauncher
 
 	protected void initSystemProperties()
 	{
+		Properties systemProperties = new Properties();
+		try
+		{
+			systemProperties.load( new FileInputStream( "conf" + File.separator + "system.properties" ) );
+			for( Entry<Object, Object> entry : systemProperties.entrySet() )
+				System.setProperty( ( String )entry.getKey(), ( String )entry.getValue() );
+		}
+		catch( FileNotFoundException e )
+		{
+			// Ignore
+		}
+		catch( IOException e )
+		{
+			// Ignore
+		}
+
 		System.setProperty( "loadui.home", System.getProperty( "user.home", "." ) + File.separator + ".loadui" );
 		System.setProperty( "groovy.root", System.getProperty( "loadui.home" ) + File.separator + ".groovy" );
 
