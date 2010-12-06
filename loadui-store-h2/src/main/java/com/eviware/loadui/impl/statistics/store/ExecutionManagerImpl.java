@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
@@ -51,6 +52,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	 * Current execution
 	 */
 	private ExecutionImpl currentExecution;
+
+	private ExecutionChangeSupportImpl ecs = new ExecutionChangeSupportImpl();
 
 	private Map<String, Execution> executionMap = new HashMap<String, Execution>();
 
@@ -97,6 +100,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			m.put( MetaDatabaseMetaTable.STATIC_FIELD_EXECUTION_NAME, id );
 			m.put( MetaDatabaseMetaTable.STATIC_FIELD_TSTAMP, timestamp );
 			metaDatabaseMetaTable.insert( m );
+
+			fireExecutionStarted();
 
 			return currentExecution;
 		}
@@ -244,7 +249,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			try
 			{
 				getTrack( trackId ); // Not sure if this is needed, but the Track
-											// may not have been instantiated yet...
+				// may not have been instantiated yet...
 				write( execution.getId(), trackId, source, data );
 			}
 			catch( SQLException e )
@@ -352,8 +357,62 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		tableRegistry.dispose();
 		connectionRegistry.dispose();
+		ecs.removeAllExecutionListeners();
 	}
 
 	protected abstract void initializeDatabaseMetadata( DatabaseMetadata metadata );
 
+	@Override
+	public void pauseExecution()
+	{
+		fireExecutionPaused();
+	}
+
+	@Override
+	public void stopExecution()
+	{
+		fireExecutionStoped();
+	}
+
+	@Override
+	public void fireExecutionPaused()
+	{
+		ecs.fireExecutionPaused();
+	}
+
+	@Override
+	public void fireExecutionStarted()
+	{
+		ecs.fireExecutionStarted();
+	}
+
+	@Override
+	public void fireExecutionStoped()
+	{
+		ecs.fireExecutionStoped();
+	}
+
+	@Override
+	public void removeAllExecutionListeners()
+	{
+		ecs.removeAllExecutionListeners();
+	}
+
+	@Override
+	public void addExecutionPausedListener( ExecutionListener el )
+	{
+		ecs.addExecutionPausedListener( el );
+	}
+
+	@Override
+	public void addExecutionStartListener( ExecutionListener el )
+	{
+		ecs.addExecutionStartListener( el );
+	}
+
+	@Override
+	public void addExecutionStopedListener( ExecutionListener el )
+	{
+		ecs.addExecutionStopedListener( el );
+	}
 }
