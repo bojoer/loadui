@@ -46,9 +46,10 @@ public class LineChart extends BaseNode, Resizable {
 	}
 	
 	def resizable:VBox = VBox {
+		width: bind width
+		height: bind height
 		content: Region {
-			width: bind width
-			height: bind height
+			layoutInfo: LayoutInfo { width: 400, height: 100 }
 			style: "-fx-background-color: green;"
 		}
 	}

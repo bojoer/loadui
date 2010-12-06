@@ -30,8 +30,7 @@ public class LineChartViewAdapter implements ChartViewAdapter<LineChartView>
 	@Override
 	public LineChartView getChartView( ChartGroup chartGroup )
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new ChartGroupLineChartView( chartGroup );
 	}
 
 	@Override
