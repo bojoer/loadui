@@ -44,7 +44,10 @@ public class ChartViewHolder extends BaseNode, Resizable {
 	public var label:String = "ChartView label";
 	
 	public-init var chartView:ChartView on replace {
+		chart = ChartRegistry.createChart( chartView );
 	}
+	
+	var chart:Node;
 	
 	def resizable:VBox = VBox {
 		width: bind width
@@ -56,7 +59,7 @@ public class ChartViewHolder extends BaseNode, Resizable {
 				spacing: 5
 				content: [
 					Rectangle { width: 100, height: 100 },
-					Rectangle { width: 300, height: 100 }
+					VBox { content: bind chart }
 				]
 			}
 		]
