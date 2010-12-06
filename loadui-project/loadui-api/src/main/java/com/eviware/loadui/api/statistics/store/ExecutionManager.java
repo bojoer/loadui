@@ -22,7 +22,7 @@ import java.util.Collection;
  * 
  * @author dain.nilsson
  */
-public interface ExecutionManager
+public interface ExecutionManager extends ExecutionChangeSupport
 {
 	/**
 	 * Gets the current Execution. Returns null if no Execution is currently
@@ -41,6 +41,20 @@ public interface ExecutionManager
 	 */
 	public Execution startExecution( String executionId, long startTime );
 
+	/**
+	 * Pauses current execution.
+	 * 
+	 * @return
+	 */
+	public void pauseExecution();
+	
+	/**
+	 * Stops current execution.
+	 * 
+	 * @return
+	 */
+	public void stopExecution();
+	
 	/**
 	 * Registers a TrackDescriptor, providing the structure of a Track.
 	 * 
