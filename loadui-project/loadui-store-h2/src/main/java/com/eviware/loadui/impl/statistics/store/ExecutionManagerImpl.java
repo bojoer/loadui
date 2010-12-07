@@ -23,6 +23,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
@@ -82,6 +85,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private ConnectionRegistry connectionRegistry;
 
+	private boolean paused;
+	private boolean started;
+	
+	private Logger logger = LoggerFactory.getLogger( ExecutionManagerImpl.class ); 
+
 	public ExecutionManagerImpl()
 	{
 		connectionRegistry = new ConnectionRegistry( this );
@@ -95,6 +103,13 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public Execution startExecution( String id, long timestamp )
 	{
+		// unpause
+		// TODO: refactor. could be done better?
+		if (id == null) {
+			fireExecutionStarted();
+			return currentExecution;
+		}
+		
 		try
 		{
 			if( metaDatabaseMetaTable.exist( id ) )
@@ -392,18 +407,32 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public void fireExecutionPaused()
 	{
-		ecs.fireExecutionPaused();
+		// if started and not paused ( can not pause something that is not started )
+		if( !paused  & started) {
+			paused = true;
+			started = false;
+			ecs.fireExecutionPaused();
+		}
 	}
 
 	@Override
 	public void fireExecutionStarted()
 	{
-		ecs.fireExecutionStarted();
+		// if not started at all or starting after pause (unpause)
+		if ( (!started & !paused) || (!started & paused)) {
+			paused = false;
+			started = true;
+			ecs.fireExecutionStarted();
+		}
 	}
 
 	@Override
 	public void fireExecutionStoped()
 	{
+		// not started and not paused
+		logger.info("Execution stopped");
+		started = false;
+		paused = false;
 		ecs.fireExecutionStoped();
 	}
 
@@ -414,20 +443,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	}
 
 	@Override
-	public void addExecutionPausedListener( ExecutionListener el )
+	public void addExecutionListener( ExecutionListener el )
 	{
-		ecs.addExecutionPausedListener( el );
+		ecs.addExecutionListener( el );
 	}
 
-	@Override
-	public void addExecutionStartListener( ExecutionListener el )
-	{
-		ecs.addExecutionStartListener( el );
-	}
-
-	@Override
-	public void addExecutionStopedListener( ExecutionListener el )
-	{
-		ecs.addExecutionStopedListener( el );
-	}
 }
