@@ -18,7 +18,6 @@ package com.eviware.loadui.impl.statistics.model.chart.line;
 import java.util.List;
 import java.util.Set;
 
-import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 import com.eviware.loadui.util.StringUtils;
@@ -32,17 +31,21 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 {
 	private final static String SEGMENTS_ATTRIBUTE = "segments";
 
+	private final LineChartViewProvider provider;
 	private final Chart chart;
 
-	public ChartLineChartView( Chart chart )
+	public ChartLineChartView( LineChartViewProvider provider, Chart chart )
 	{
-		super( chart.getChartGroup(), CHART_PREFIX );
+		super( provider, chart, CHART_PREFIX );
 
+		this.provider = provider;
 		this.chart = chart;
 		for( String segmentString : StringUtils.deserialize( getAttribute( SEGMENTS_ATTRIBUTE, "" ) ) )
 		{
 			List<String> parts = StringUtils.deserialize( segmentString );
-			putSegment( segmentString, new LineSegmentImpl( chart, parts.get( 0 ), parts.get( 1 ), parts.get( 2 ) ) );
+			LineSegmentImpl segment = new LineSegmentImpl( chart, parts.get( 0 ), parts.get( 1 ), parts.get( 2 ) );
+			putSegment( segmentString, segment );
+			provider.fireSegmentAdded( segment );
 		}
 	}
 
@@ -73,7 +76,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 			LineSegment segment = new LineSegmentImpl( chart, variableName, statisticName, source );
 			putSegment( segmentString, segment );
 			setAttribute( SEGMENTS_ATTRIBUTE, StringUtils.serialize( segmentKeySet() ) );
-			chartGroup.fireEvent( new CollectionEvent( chart, SEGMENTS, CollectionEvent.Event.ADDED, segment ) );
+			provider.fireSegmentAdded( segment );
 		}
 
 		return getSegment( segmentString );
@@ -85,7 +88,17 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 		if( deleteSegment( segment ) )
 		{
 			setAttribute( SEGMENTS_ATTRIBUTE, StringUtils.serialize( segmentKeySet() ) );
-			chartGroup.fireEvent( new CollectionEvent( chart, SEGMENTS, CollectionEvent.Event.REMOVED, segment ) );
+			provider.fireSegmentRemoved( segment );
 		}
+	}
+
+	@Override
+	protected void segmentAdded( LineSegmentImpl segment )
+	{
+	}
+
+	@Override
+	protected void segmentRemoved( LineSegmentImpl segment )
+	{
 	}
 }

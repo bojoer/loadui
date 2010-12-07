@@ -15,8 +15,6 @@
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
-import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 
 /**
@@ -26,26 +24,20 @@ import com.eviware.loadui.api.statistics.model.ChartGroup;
  */
 public class ChartGroupLineChartView extends AbstractLineChartView
 {
-	public ChartGroupLineChartView( ChartGroup chartGroup )
+	public ChartGroupLineChartView( LineChartViewProvider provider, ChartGroup chartGroup )
 	{
-		super( chartGroup, CHART_GROUP_PREFIX );
-
-		chartGroup.addEventListener( CollectionEvent.class, new SegmentListener() );
+		super( provider, chartGroup, CHART_GROUP_PREFIX );
 	}
 
-	private class SegmentListener implements EventHandler<CollectionEvent>
+	@Override
+	protected void segmentAdded( LineSegmentImpl segment )
 	{
-		@Override
-		public void handleEvent( CollectionEvent event )
-		{
-			if( SEGMENTS.equals( event.getKey() ) )
-			{
-				LineSegmentImpl segment = ( LineSegmentImpl )event.getElement();
-				if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
-					putSegment( segment.getSegmentString(), segment );
-				else
-					deleteSegment( segment );
-			}
-		}
+		putSegment( segment.getSegmentString(), segment );
+	}
+
+	@Override
+	protected void segmentRemoved( LineSegmentImpl segment )
+	{
+		deleteSegment( segment );
 	}
 }

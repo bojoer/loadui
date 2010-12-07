@@ -15,10 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
-import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 
 /**
@@ -30,49 +27,39 @@ public class SourceLineChartView extends AbstractLineChartView
 {
 	private final String source;
 
-	public SourceLineChartView( ChartGroup chartGroup, String source )
+	public SourceLineChartView( LineChartViewProvider provider, ChartGroup chartGroup, String source )
 	{
-		super( chartGroup, SOURCE_PREFIX + source );
+		super( provider, chartGroup, SOURCE_PREFIX + source );
 
 		this.source = source;
-		chartGroup.addEventListener( CollectionEvent.class, new ChartGroupListener() );
 	}
 
-	private class ChartGroupListener implements EventHandler<CollectionEvent>
+	@Override
+	protected void segmentAdded( LineSegmentImpl segment )
 	{
-		@Override
-		public void handleEvent( CollectionEvent event )
+		if( source.equals( segment.getSource() ) )
+			putSegment( segment.getSegmentString(), segment );
+		else if( StatisticVariable.MAIN_SOURCE.equals( segment.getSource() ) )
 		{
-			if( SEGMENTS.equals( event.getKey() ) )
-			{
-				LineSegmentImpl segment = ( LineSegmentImpl )event.getElement();
-				if( source.equals( segment.getSource() ) )
-				{
-					if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
-						putSegment( segment.getSegmentString(), segment );
-					else
-						deleteSegment( segment );
-				}
-				else if( StatisticVariable.MAIN_SOURCE.equals( segment.getSource() ) )
-				{
-					if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
-					{
-						Chart chart = ( Chart )event.getSource();
-						LineSegmentImpl sourceSegment = new LineSegmentImpl( chart, segment.getVariableName(),
-								segment.getStatisticName(), source );
-						putSegment( sourceSegment.getSegmentString(), sourceSegment );
-					}
-					else
-					{
-						// TODO: Check if event.getSource() also has a segment for the
-						// same
-						// Statistic, but with this source. If so, do not delete the
-						// segment.
-						deleteSegment( getSegment( LineSegmentImpl.createSegmentString( segment.getVariableName(),
-								segment.getStatisticName(), source ) ) );
-					}
-				}
-			}
+			LineSegmentImpl sourceSegment = new LineSegmentImpl( segment.getChart(), segment.getVariableName(),
+					segment.getStatisticName(), source );
+			putSegment( sourceSegment.getSegmentString(), sourceSegment );
+		}
+	}
+
+	@Override
+	protected void segmentRemoved( LineSegmentImpl segment )
+	{
+		if( source.equals( segment.getSource() ) )
+			deleteSegment( segment );
+		else if( StatisticVariable.MAIN_SOURCE.equals( segment.getSource() ) )
+		{
+			// TODO: Check if chart also has a segment for the
+			// same
+			// Statistic, but with this source. If so, do not delete the
+			// segment.
+			deleteSegment( getSegment( LineSegmentImpl.createSegmentString( segment.getVariableName(),
+					segment.getStatisticName(), source ) ) );
 		}
 	}
 }
