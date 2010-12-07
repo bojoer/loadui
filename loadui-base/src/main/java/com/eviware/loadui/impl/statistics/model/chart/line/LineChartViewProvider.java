@@ -13,42 +13,40 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.statistics.model.chart;
+package com.eviware.loadui.impl.statistics.model.chart.line;
 
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.impl.statistics.model.chart.AbstractChartViewProvider;
 
 /**
- * Provides ChartViews of a specific type to Chart objects.
+ * ChartViewProvider for LineChartViews.
  * 
  * @author dain.nilsson
- * 
- * @param <ChartViewType>
  */
-public interface ChartViewAdapter<ChartViewType extends ChartView>
+public class LineChartViewProvider extends AbstractChartViewProvider<LineChartView>
 {
-	/**
-	 * Gets a ChartView for a ChartGroup.
-	 * 
-	 * @param chartGroup
-	 * @return
-	 */
-	public ChartViewType getChartView( ChartGroup chartGroup );
+	public LineChartViewProvider( ChartGroup chartGroup )
+	{
+		super( chartGroup );
+	}
 
-	/**
-	 * Gets a ChartView for a Chart.
-	 * 
-	 * @param chart
-	 * @return
-	 */
-	public ChartViewType getChartView( Chart chart );
+	@Override
+	protected LineChartView buildChartViewForGroup( ChartGroup chartGroup )
+	{
+		return new ChartGroupLineChartView( chartGroup );
+	}
 
-	/**
-	 * Gets a ChartView for a specific source in a ChartGroup.
-	 * 
-	 * @param chartGroup
-	 * @param source
-	 * @return
-	 */
-	public ChartViewType getChartView( ChartGroup chartGroup, String source );
+	@Override
+	protected LineChartView buildChartViewForChart( Chart chart )
+	{
+		return new ChartLineChartView( chart );
+	}
+
+	@Override
+	protected LineChartView buildChartViewForSource( String source )
+	{
+		return new SourceLineChartView( chartGroup, source );
+	}
 }

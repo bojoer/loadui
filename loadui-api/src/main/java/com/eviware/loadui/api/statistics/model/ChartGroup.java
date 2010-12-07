@@ -15,11 +15,13 @@
  */
 package com.eviware.loadui.api.statistics.model;
 
+import java.util.Collection;
 import java.util.Set;
 
 import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.model.OrderedCollection;
 import com.eviware.loadui.api.statistics.StatisticHolder;
+import com.eviware.loadui.api.statistics.model.chart.ChartView;
 
 /**
  * Holds a number of Charts. Allows creation and reordering of the contained
@@ -63,6 +65,44 @@ public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>
 	 * @param type
 	 */
 	public void setType( String type );
+
+	/**
+	 * Gets the ChartView for the ChartGroup. This will change any time setType
+	 * is called with a new type.
+	 * 
+	 * @return
+	 */
+	public ChartView getChartView();
+
+	/**
+	 * Gets the ChartView for a Chart.
+	 * 
+	 * @param chart
+	 * @return
+	 */
+	public ChartView getChartViewForChart( Chart chart );
+
+	/**
+	 * Gets the ChartView for a source.
+	 * 
+	 * @param source
+	 * @return
+	 */
+	public ChartView getChartViewForSource( String source );
+
+	/**
+	 * Gets the ChartViews for the contained Charts.
+	 * 
+	 * @return
+	 */
+	public Collection<ChartView> getChartViewsForCharts();
+
+	/**
+	 * Gets the ChartViews for the available sources.
+	 * 
+	 * @return
+	 */
+	public Collection<ChartView> getChartViewsForSources();
 
 	/**
 	 * Gets the template script of the ChartGroup.

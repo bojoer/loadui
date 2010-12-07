@@ -15,20 +15,20 @@
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.statistics.model.Chart;
+import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 import com.eviware.loadui.util.StringUtils;
 
 /**
- * LineChartView for a Chart.
+ * ConfigurableLineChartView for a Chart.
  * 
  * @author dain.nilsson
  */
-public class ChartLineChartView extends AbstractLineChartView
+public class ChartLineChartView extends AbstractLineChartView implements ConfigurableLineChartView
 {
 	private final static String SEGMENTS_ATTRIBUTE = "segments";
 
@@ -67,13 +67,13 @@ public class ChartLineChartView extends AbstractLineChartView
 	@Override
 	public LineSegment addSegment( String variableName, String statisticName, String source )
 	{
-		String segmentString = StringUtils.serialize( Arrays.asList( variableName, statisticName, source ) );
+		String segmentString = LineSegmentImpl.createSegmentString( variableName, statisticName, source );
 		if( getSegment( segmentString ) == null )
 		{
 			LineSegment segment = new LineSegmentImpl( chart, variableName, statisticName, source );
 			putSegment( segmentString, segment );
 			setAttribute( SEGMENTS_ATTRIBUTE, StringUtils.serialize( segmentKeySet() ) );
-			fireEvent( new CollectionEvent( this, SEGMENTS, CollectionEvent.Event.ADDED, segment ) );
+			chartGroup.fireEvent( new CollectionEvent( chart, SEGMENTS, CollectionEvent.Event.ADDED, segment ) );
 		}
 
 		return getSegment( segmentString );
@@ -83,6 +83,9 @@ public class ChartLineChartView extends AbstractLineChartView
 	public void removeSegment( LineSegment segment )
 	{
 		if( deleteSegment( segment ) )
+		{
 			setAttribute( SEGMENTS_ATTRIBUTE, StringUtils.serialize( segmentKeySet() ) );
+			chartGroup.fireEvent( new CollectionEvent( chart, SEGMENTS, CollectionEvent.Event.REMOVED, segment ) );
+		}
 	}
 }

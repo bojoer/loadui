@@ -25,6 +25,12 @@ import java.util.Set;
 public interface StatisticVariable
 {
 	/**
+	 * When writing to the local, or main source, use this String as the source
+	 * identifier.
+	 */
+	public static final String MAIN_SOURCE = "main";
+
+	/**
 	 * Gets the name of the StatisticVariable.
 	 * 
 	 * @return

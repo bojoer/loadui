@@ -15,13 +15,14 @@
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
-import java.util.Collections;
-import java.util.Set;
-
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 
 /**
- * LineChartView for a Source. Not configurable.
+ * LineChartView for a Source.
  * 
  * @author dain.nilsson
  */
@@ -34,42 +35,44 @@ public class SourceLineChartView extends AbstractLineChartView
 		super( chartGroup, SOURCE_PREFIX + source );
 
 		this.source = source;
-		// TODO: Add a listener to the ChartGroup to listen for added/removed
-		// LineSegments, and add/remove them to the SourceLineChartView if needed.
+		chartGroup.addEventListener( CollectionEvent.class, new ChartGroupListener() );
 	}
 
-	@Override
-	public Set<String> getVariableNames()
+	private class ChartGroupListener implements EventHandler<CollectionEvent>
 	{
-		// TODO: Collect all StatisticHolder variables.
-		return null;
-	}
-
-	@Override
-	public Set<String> getStatisticNames( String variableName )
-	{
-		// TODO Collect all Statistic names for each StatisticVariable for the
-		// given name, for each StatisticHolder.
-		return null;
-	}
-
-	@Override
-	public Set<String> getSources( String variableName )
-	{
-		return Collections.singleton( source );
-	}
-
-	@Override
-	public LineSegment addSegment( String variableName, String statisticName, String source )
-	{
-		throw new UnsupportedOperationException(
-				"Cannot add LineSegments to SourceLineChartView, add them to ChartLineChartView instead!" );
-	}
-
-	@Override
-	public void removeSegment( LineSegment segment )
-	{
-		throw new UnsupportedOperationException(
-				"Cannot remove LineSegments from SourceLineChartView, remove them from ChartLineChartView instead!" );
+		@Override
+		public void handleEvent( CollectionEvent event )
+		{
+			if( SEGMENTS.equals( event.getKey() ) )
+			{
+				LineSegmentImpl segment = ( LineSegmentImpl )event.getElement();
+				if( source.equals( segment.getSource() ) )
+				{
+					if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
+						putSegment( segment.getSegmentString(), segment );
+					else
+						deleteSegment( segment );
+				}
+				else if( StatisticVariable.MAIN_SOURCE.equals( segment.getSource() ) )
+				{
+					if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
+					{
+						Chart chart = ( Chart )event.getSource();
+						LineSegmentImpl sourceSegment = new LineSegmentImpl( chart, segment.getVariableName(),
+								segment.getStatisticName(), source );
+						putSegment( sourceSegment.getSegmentString(), sourceSegment );
+					}
+					else
+					{
+						// TODO: Check if event.getSource() also has a segment for the
+						// same
+						// Statistic, but with this source. If so, do not delete the
+						// segment.
+						deleteSegment( getSegment( LineSegmentImpl.createSegmentString( segment.getVariableName(),
+								segment.getStatisticName(), source ) ) );
+					}
+				}
+			}
+		}
 	}
 }

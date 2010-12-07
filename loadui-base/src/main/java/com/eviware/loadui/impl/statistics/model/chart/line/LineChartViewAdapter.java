@@ -25,6 +25,7 @@ import com.eviware.loadui.api.statistics.model.chart.LineChartView;
  * 
  * @author dain.nilsson
  */
+@Deprecated
 public class LineChartViewAdapter implements ChartViewAdapter<LineChartView>
 {
 	@Override
