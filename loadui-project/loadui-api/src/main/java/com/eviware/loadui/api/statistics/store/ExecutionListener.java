@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.statistics.store;
 
+import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
+
 /**
  * Listener for execution events ( start, stop, paused ) 
  * 
@@ -27,16 +29,16 @@ public interface ExecutionListener
 	/**
 	 * Execute this when execution start event catched.
 	 */
-	void executionStarted();
+	void executionStarted(State oldState);
 
 	/**
 	 * Execution paused, handle it.
 	 */
-	void executionPaused();
+	void executionPaused(State oldState);
 
 	/**
 	 * Execution stoped, handle it.
 	 */
-	void executionStoped();
+	void executionStoped(State oldState);
 	
 }

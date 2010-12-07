@@ -22,7 +22,7 @@ import java.util.Collection;
  * 
  * @author dain.nilsson
  */
-public interface ExecutionManager extends ExecutionChangeSupport
+public interface ExecutionManager
 {
 	/**
 	 * Gets the current Execution. Returns null if no Execution is currently
@@ -118,4 +118,38 @@ public interface ExecutionManager extends ExecutionChangeSupport
 	 * @return
 	 */
 	public Execution getExecution( String executionId );
+	
+	/**
+	 * Add execution listener 
+	 *
+	 * @param el
+	 */
+	void addExecutionListener( ExecutionListener el );
+	
+	/**
+	 * remove all listeners
+	 */
+	void removeAllExecutionListeners();
+	
+	/**
+	 * removes added execution listener
+	 */
+	void removeExecutionListener(ExecutionListener el);
+	
+	/**
+	 * ExecutionManager States, based on execution events.
+	 * state of manager should be handled internaly ( setting the state )
+	 * 
+	 * @author robert
+	 *
+	 */
+	enum State {
+		STARTED, PAUSED, STOPED
+	}
+	
+	/**
+	 * Return current state of ExecutionManager
+	 */
+	State getState();
+	
 }
