@@ -41,6 +41,7 @@ import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
+import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
 import com.eviware.loadui.util.events.EventSupport;
 
 /**
@@ -181,7 +182,6 @@ public class StatisticsManagerImpl implements StatisticsManager
 	private class RunningListener implements EventHandler<ActionEvent>
 	{
 		private boolean hasCurrent = false;
-		private boolean paused = false;
 
 		@Override
 		public void handleEvent( ActionEvent event )
@@ -198,15 +198,17 @@ public class StatisticsManagerImpl implements StatisticsManager
 			else if( hasCurrent && CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
 			{
 				hasCurrent = false;
-				paused = false;
 				executionManager.stopExecution();
 				//TODO: send message to agents
 			} else if ( CanvasItem.STOP_ACTION.equals( event.getKey() )) {
-				paused = true;
 				executionManager.pauseExecution();
 				//TODO: send message to agents
-			} else if ( paused && CanvasItem.START_ACTION.equals( event.getKey() ) ) {
-				paused = false;
+			} else if ( executionManager.getState() == State.PAUSED && CanvasItem.START_ACTION.equals( event.getKey() ) ) {
+				// could this be done better?
+				/*
+				 *  if startExecution is called and execution is in PAUSED stated it will return curectExecution
+				 *  and change state to START
+				 */
 				executionManager.startExecution( null , -1 );
 			}
 		}
