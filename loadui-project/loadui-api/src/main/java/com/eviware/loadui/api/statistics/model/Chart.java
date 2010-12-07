@@ -17,6 +17,7 @@ package com.eviware.loadui.api.statistics.model;
 
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.model.AttributeHolder;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 
 /**
@@ -25,7 +26,7 @@ import com.eviware.loadui.api.statistics.StatisticHolder;
  * 
  * @author dain.nilsson
  */
-public interface Chart extends AttributeHolder, EventFirer
+public interface Chart extends AttributeHolder, EventFirer, Releasable
 {
 	/**
 	 * Gets the StatisticHolder for which the Chart displays data.

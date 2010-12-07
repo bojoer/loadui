@@ -16,6 +16,7 @@
 package com.eviware.loadui.api.statistics.model;
 
 import com.eviware.loadui.api.model.OrderedCollection;
+import com.eviware.loadui.api.model.Releasable;
 
 /**
  * A Page holding a number of ChartGroups. Allows creation and reordering of the
@@ -23,7 +24,7 @@ import com.eviware.loadui.api.model.OrderedCollection;
  * 
  * @author dain.nilsson
  */
-public interface StatisticPage extends OrderedCollection<ChartGroup>
+public interface StatisticPage extends OrderedCollection<ChartGroup>, Releasable
 {
 	// BaseEvent key fired when the title of the StatisticPage changes.
 	public static final String TITLE = StatisticPage.class.getName() + "@title";

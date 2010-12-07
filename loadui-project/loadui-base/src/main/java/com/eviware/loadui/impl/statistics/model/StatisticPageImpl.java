@@ -18,6 +18,7 @@ package com.eviware.loadui.impl.statistics.model;
 import java.util.Collection;
 import java.util.EventObject;
 
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
@@ -107,6 +108,7 @@ public class StatisticPageImpl implements StatisticPage
 	public void delete()
 	{
 		parent.removeChild( this );
+		release();
 	}
 
 	@Override
@@ -148,5 +150,13 @@ public class StatisticPageImpl implements StatisticPage
 		config = statisticsPageConfig;
 		for( int i = 0; i < getChildCount(); i++ )
 			( ( ChartGroupImpl )getChildAt( i ) ).setConfig( config.getChartGroupArray( i ) );
+	}
+
+	@Override
+	public void release()
+	{
+		collectionSupport.releaseChildren();
+		fireEvent( new BaseEvent( this, RELEASED ) );
+		eventSupport.clearEventListeners();
 	}
 }

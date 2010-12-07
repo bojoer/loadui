@@ -18,6 +18,7 @@ package com.eviware.loadui.impl.statistics.model;
 import java.util.Collection;
 import java.util.EventObject;
 
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
@@ -123,5 +124,13 @@ public class StatisticPagesImpl implements StatisticPages
 			collectionSupport.removeChild( child );
 			config.removePage( index );
 		}
+	}
+
+	@Override
+	public void release()
+	{
+		collectionSupport.releaseChildren();
+		fireEvent( new BaseEvent( this, RELEASED ) );
+		eventSupport.clearEventListeners();
 	}
 }
