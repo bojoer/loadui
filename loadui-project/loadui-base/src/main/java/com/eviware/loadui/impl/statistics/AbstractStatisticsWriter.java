@@ -30,6 +30,7 @@ import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
+import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
@@ -58,19 +59,18 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		// TODO
 		manager.getExecutionManager().registerTrackDescriptor( descriptor );
 		manager.addEventListener( CollectionEvent.class, new ExecutionListener() );
-		
+
 		//adding execution listeners.
-		manager.getExecutionManager().addExecutionListener( new ExecutionListenerAdapter()
+		manager.getExecutionManager().addExecutionListener( new ExecutionListenerAdapter() 
 		{
 			private long delta;
 
 			@Override
-			public void executionStarted()
+			public void executionStarted(ExecutionManager.State  oldState)
 			{
 				// unpause
-				if ( !started & paused ) {
-					started = true;
-					paused = false;
+				if( oldState == State.PAUSED )
+				{
 					/*
 					 * Continue, calculate time spent in inteval when pause occured.
 					 * Next write to database will be at regular interval, since delta 
@@ -82,20 +82,14 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 					 * flush() will be when test paused (3s + delta) and next is at 7s. 
 					 */
 					lastTimeFlushed = System.currentTimeMillis() + delta;
-				} else 
-					// fresh start
-					if ( !started & !paused ) {
-					started = true;
 				}
-				
 			}
-			
+
 			@Override
-			public void executionPaused()
+			public void executionPaused(ExecutionManager.State  oldState)
 			{
-				if ( started & !paused ) {
-					started = false;
-					paused = true;
+				if( oldState == State.STARTED )
+				{
 					/*  
 					 * write data at moment when paused. 
 					 * 
@@ -106,21 +100,22 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 					flush();
 				}
 			}
-			
+
 			@Override
-			public void executionStoped()
+			public void executionStoped(ExecutionManager.State  oldState)
 			{
 				/*
 				 * if stoping write last data that came in.
 				 * 
 				 * or this should be done by execution manager?
 				 */
-				if ( started ) {
+				if( oldState == State.STARTED || oldState == State.PAUSED )
+				{
+					delta = 0;
 					flush();
 				}
-				started = false;
 			}
-		});
+		} );
 	}
 
 	/**
