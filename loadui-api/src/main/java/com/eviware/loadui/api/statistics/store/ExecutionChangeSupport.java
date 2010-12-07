@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.statistics.store;
 
+import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
+
 /**
  * Support for handling execution events.
  * 
@@ -37,17 +39,24 @@ public interface ExecutionChangeSupport
 	void removeAllExecutionListeners();
 	
 	/**
+	 * remove particular ExecutionListener
+	 * 
+	 * @param el
+	 */
+	void removeExecutionListener( ExecutionListener el );
+	
+	/**
 	 * notify all start execution listeners
 	 */
-	void fireExecutionStarted();
+	void fireExecutionStarted(State oldState);
 	
 	/**
 	 * notify all paused execution listeners
 	 */
-	void fireExecutionPaused();
+	void fireExecutionPaused(State oldState);
 	
 	/**
 	 * notify all stoped execution listeners.
 	 */
-	void fireExecutionStoped();
+	void fireExecutionStoped(State oldState);
 }
