@@ -30,6 +30,7 @@ import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
+import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 
@@ -57,6 +58,69 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		// TODO
 		manager.getExecutionManager().registerTrackDescriptor( descriptor );
 		manager.addEventListener( CollectionEvent.class, new ExecutionListener() );
+		
+		//adding execution listeners.
+		manager.getExecutionManager().addExecutionListener( new ExecutionListenerAdapter()
+		{
+			private long delta;
+
+			@Override
+			public void executionStarted()
+			{
+				// unpause
+				if ( !started & paused ) {
+					started = true;
+					paused = false;
+					/*
+					 * Continue, calculate time spent in inteval when pause occured.
+					 * Next write to database will be at regular interval, since delta 
+					 * is taken in account.
+					 * 
+					 * Example: if delay is 1s. Which means that flush occures at 1s, 2s, 3s, etc..
+					 * Pause occurs in 4th interval ( between 3s and 4s )
+					 * Than unpause comes after 3s( that woud be between 6s and 7s from test start ).
+					 * flush() will be when test paused (3s + delta) and next is at 7s. 
+					 */
+					lastTimeFlushed = System.currentTimeMillis() + delta;
+				} else 
+					// fresh start
+					if ( !started & !paused ) {
+					started = true;
+				}
+				
+			}
+			
+			@Override
+			public void executionPaused()
+			{
+				if ( started & !paused ) {
+					started = false;
+					paused = true;
+					/*  
+					 * write data at moment when paused. 
+					 * 
+					 * rember how time is spent in this interval after last
+					 * time data is written to db.
+					 */
+					delta = System.currentTimeMillis() - lastTimeFlushed;
+					flush();
+				}
+			}
+			
+			@Override
+			public void executionStoped()
+			{
+				/*
+				 * if stoping write last data that came in.
+				 * 
+				 * or this should be done by execution manager?
+				 */
+				if ( started ) {
+					flush();
+				}
+				started = false;
+			}
+		});
 	}
 
 	/**
