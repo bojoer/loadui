@@ -20,6 +20,7 @@ import java.util.Set;
 
 import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.model.OrderedCollection;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 
@@ -29,7 +30,7 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
  * 
  * @author dain.nilsson
  */
-public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>
+public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>, Releasable
 {
 	// BaseEvent key fired when the title of the ChartGroup changes.
 	public static final String TITLE = ChartGroup.class.getName() + "@title";

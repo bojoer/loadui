@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticHolder;
@@ -71,6 +72,14 @@ public class ChartImpl implements Chart
 	public void delete()
 	{
 		parent.removeChild( this );
+		release();
+	}
+
+	@Override
+	public void release()
+	{
+		fireEvent( new BaseEvent( this, RELEASED ) );
+		eventSupport.clearEventListeners();
 	}
 
 	@Override
@@ -142,7 +151,7 @@ public class ChartImpl implements Chart
 		public void handleEvent( CollectionEvent event )
 		{
 			if( CollectionEvent.Event.REMOVED.equals( event.getEvent() ) && event.getElement() == statisticHolder )
-				parent.removeChild( ChartImpl.this );
+				delete();
 		}
 	}
 }

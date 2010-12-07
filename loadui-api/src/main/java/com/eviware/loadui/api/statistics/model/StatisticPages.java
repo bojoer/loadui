@@ -16,6 +16,7 @@
 package com.eviware.loadui.api.statistics.model;
 
 import com.eviware.loadui.api.model.OrderedCollection;
+import com.eviware.loadui.api.model.Releasable;
 
 /**
  * Holds a number of StatisticPages, and allows creation, and reordering of
@@ -23,7 +24,7 @@ import com.eviware.loadui.api.model.OrderedCollection;
  * 
  * @author dain.nilsson
  */
-public interface StatisticPages extends OrderedCollection<StatisticPage>
+public interface StatisticPages extends OrderedCollection<StatisticPage>, Releasable
 {
 	/**
 	 * Creates and returns a new StatisticPage with the given title, placing it

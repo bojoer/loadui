@@ -97,9 +97,9 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 		// UGLY HACK to make sure the Counter class is loaded by the classloader
 		// before creating the Proxy.
 		Counter c = null;
-		//Same as Counter, classloader issue.
+		// Same as Counter, classloader issue.
 		StatisticVariable sv = null;
-		
+
 		proxy = Proxy.newProxyInstance( cl, interfaces, this );
 
 		scriptProperty = context.createProperty( GroovyBehaviorProvider.SCRIPT_PROPERTY, String.class );
@@ -490,7 +490,13 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 				if( event.getPreviousValue() != null )
 				{
 					log.debug( "Invoking onRelease since script changed for {}", event.getSource() );
-					invokeMethod( "onRelease", new Object[] {} );
+					Object prop = binding.getProperty( "onRelease" );
+					if( prop instanceof Closure )
+					{
+						Closure closure = ( Closure )prop;
+						closure.setDelegate( this );
+						closure.call( new Object[] {} );
+					}
 					context.clearSettingsTabs();
 					context.clearEventListeners();
 				}

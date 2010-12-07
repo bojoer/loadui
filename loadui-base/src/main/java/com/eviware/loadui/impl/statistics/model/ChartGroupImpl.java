@@ -23,6 +23,7 @@ import java.util.Set;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticHolder;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
@@ -178,6 +179,8 @@ public class ChartGroupImpl implements ChartGroup
 		for( Chart chart : getChildren() )
 			sources.addAll( ( ( ChartImpl )chart ).getSources() );
 
+		sources.remove( StatisticVariable.MAIN_SOURCE );
+
 		return sources;
 	}
 
@@ -185,7 +188,7 @@ public class ChartGroupImpl implements ChartGroup
 	public void delete()
 	{
 		parent.removeChild( this );
-		provider.release();
+		release();
 	}
 
 	void removeChild( Chart child )
@@ -276,5 +279,14 @@ public class ChartGroupImpl implements ChartGroup
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
 		for( int i = 0; i < getChildCount(); i++ )
 			( ( ChartImpl )getChildAt( i ) ).setConfig( config.getChartArray( i ) );
+	}
+
+	@Override
+	public void release()
+	{
+		provider.release();
+		collectionSupport.releaseChildren();
+		fireEvent( new BaseEvent( this, RELEASED ) );
+		eventSupport.clearEventListeners();
 	}
 }
