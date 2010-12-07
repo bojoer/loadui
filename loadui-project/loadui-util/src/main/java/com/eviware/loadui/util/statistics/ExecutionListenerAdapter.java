@@ -16,24 +16,23 @@
 package com.eviware.loadui.util.statistics;
 
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
+import com.eviware.loadui.api.statistics.store.ExecutionManager;
 
 public abstract class ExecutionListenerAdapter implements ExecutionListener
 {
-	protected boolean paused;
-	protected boolean started;
 
 	@Override
-	public void executionPaused()
+	public void executionPaused(ExecutionManager.State  oldState)
 	{
 	}
 
 	@Override
-	public void executionStarted()
+	public void executionStarted(ExecutionManager.State  oldState)
 	{
 	}
 
 	@Override
-	public void executionStoped()
+	public void executionStoped(ExecutionManager.State  oldState)
 	{
 	}
 
