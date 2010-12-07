@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import com.eviware.loadui.api.statistics.store.ExecutionChangeSupport;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
 
+import com.eviware.loadui.api.statistics.store.ExecutionManager;
+
 public class ExecutionChangeSupportImpl implements ExecutionChangeSupport
 {
 
@@ -32,30 +34,35 @@ public class ExecutionChangeSupportImpl implements ExecutionChangeSupport
 	}
 
 	@Override
-	public void fireExecutionPaused()
+	public void fireExecutionPaused(ExecutionManager.State  oldState)
 	{
 		for( ExecutionListener el : listeners )
-			el.executionPaused();
+			el.executionPaused(oldState);
 	}
 
 	@Override
-	public void fireExecutionStarted()
+	public void fireExecutionStarted(ExecutionManager.State  oldState)
 	{
 		for ( ExecutionListener el : listeners)
-			el.executionStarted();
+			el.executionStarted(oldState);
 	}
 
 	@Override
-	public void fireExecutionStoped()
+	public void fireExecutionStoped(ExecutionManager.State  oldState)
 	{
 		for( ExecutionListener el: listeners)
-			el.executionStoped();
+			el.executionStoped(oldState);
 	}
 
 	@Override
 	public void removeAllExecutionListeners()
 	{
 		listeners.clear();
+	}
+
+	public void removeExecutionListener( ExecutionListener el )
+	{
+		listeners.remove( el );
 	}
 
 }
