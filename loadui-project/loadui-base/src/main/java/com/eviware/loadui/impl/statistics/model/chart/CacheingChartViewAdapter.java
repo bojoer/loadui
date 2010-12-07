@@ -30,6 +30,7 @@ import com.eviware.loadui.util.CacheMap;
  * 
  * @param <ChartViewType>
  */
+@Deprecated
 public class CacheingChartViewAdapter<ChartViewType extends ChartView> implements ChartViewAdapter<ChartViewType>
 {
 	private final ChartViewAdapter<ChartViewType> adapter;

@@ -194,7 +194,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			Execution currentExecution = executionManager.getCurrentExecution();
 
 			int time = currentExecution == null ? -1 : ( int )( timestamp - currentExecution.getStartTime() );
-			executionManager.writeEntry( getId(), new EntryImpl( time, values, true ), "local" );
+			executionManager.writeEntry( getId(), new EntryImpl( time, values, true ), StatisticVariable.MAIN_SOURCE );
 		}
 	}
 

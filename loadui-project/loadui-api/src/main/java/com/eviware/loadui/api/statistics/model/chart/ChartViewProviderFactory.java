@@ -15,27 +15,21 @@
  */
 package com.eviware.loadui.api.statistics.model.chart;
 
+import com.eviware.loadui.api.statistics.model.ChartGroup;
+
 /**
- * Registry for accessing ChartViewAdapters for the different ChartView types.
+ * Factory for creating ChartViewProviders of different types.
  * 
  * @author dain.nilsson
  */
-public interface ChartViewAdapterRegistry
+public interface ChartViewProviderFactory
 {
 	/**
-	 * Gets a ChartViewAdapter<ChartViewType> for the given type of ChartView.
+	 * Creates a ChartViewProvider of the given type, for the given ChartGroup.
 	 * 
-	 * @param <ChartViewType>
 	 * @param type
+	 * @param chartGroup
 	 * @return
 	 */
-	public <ChartViewType extends ChartView> ChartViewAdapter<ChartViewType> getAdapter( Class<ChartViewType> type );
-
-	/**
-	 * Gets a ChartViewAdapter for the given type of ChartView by class name.
-	 * 
-	 * @param typeName
-	 * @return
-	 */
-	public ChartViewAdapter<?> getAdapter( String typeName );
+	public ChartViewProvider<?> buildProvider( String type, ChartGroup chartGroup );
 }

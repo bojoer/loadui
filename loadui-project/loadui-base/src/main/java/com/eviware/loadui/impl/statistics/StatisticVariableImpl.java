@@ -81,7 +81,7 @@ public class StatisticVariableImpl implements MutableStatisticVariable
 	public Set<String> getSources()
 	{
 		Set<String> sources = new HashSet<String>();
-		sources.add( "local" );
+		sources.add( MAIN_SOURCE );
 
 		// Add labels of assigned agents.
 		// TODO: Share this information per SceneItem instead of recomputing it

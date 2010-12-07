@@ -25,11 +25,15 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.chart.ChartView;
+import com.eviware.loadui.api.statistics.model.chart.ChartViewProvider;
+import com.eviware.loadui.api.statistics.model.chart.ChartViewProviderFactory;
 import com.eviware.loadui.config.ChartConfig;
 import com.eviware.loadui.config.ChartGroupConfig;
 import com.eviware.loadui.impl.XmlBeansUtils;
 import com.eviware.loadui.impl.model.OrderedCollectionSupport;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.events.EventSupport;
 
 public class ChartGroupImpl implements ChartGroup
@@ -37,8 +41,11 @@ public class ChartGroupImpl implements ChartGroup
 	private final StatisticPageImpl parent;
 	private final OrderedCollectionSupport<Chart> collectionSupport;
 	private final EventSupport eventSupport = new EventSupport();
+	private final ChartViewProviderFactory providerFactory;
+
 	private ChartGroupConfig config;
 	private AttributeHolderSupport attributeHolderSupport;
+	private ChartViewProvider<?> provider;
 
 	public ChartGroupImpl( StatisticPageImpl parent, ChartGroupConfig config )
 	{
@@ -49,6 +56,10 @@ public class ChartGroupImpl implements ChartGroup
 		if( config.getAttributes() == null )
 			config.addNewAttributes();
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
+
+		providerFactory = BeanInjector.getBean( ChartViewProviderFactory.class );
+
+		provider = providerFactory.buildProvider( getType(), this );
 	}
 
 	@Override
@@ -63,6 +74,11 @@ public class ChartGroupImpl implements ChartGroup
 		if( !getType().equals( type ) )
 		{
 			config.setType( type );
+
+			if( provider != null )
+				provider.release();
+			provider = providerFactory.buildProvider( type, this );
+
 			fireEvent( new BaseEvent( this, TYPE ) );
 		}
 	}
@@ -97,6 +113,38 @@ public class ChartGroupImpl implements ChartGroup
 			config.setTemplateScript( templateScript );
 			fireEvent( new BaseEvent( this, TEMPLATE_SCRIPT ) );
 		}
+	}
+
+	@Override
+	public ChartView getChartView()
+	{
+		return provider.getChartViewForChartGroup();
+	}
+
+	@Override
+	public ChartView getChartViewForChart( Chart chart )
+	{
+		return provider.getChartViewForChart( chart );
+	}
+
+	@Override
+	public ChartView getChartViewForSource( String source )
+	{
+		return provider.getChartViewForSource( source );
+	}
+
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public Collection<ChartView> getChartViewsForCharts()
+	{
+		return ( Collection<ChartView> )provider.getChartViewsForCharts();
+	}
+
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public Collection<ChartView> getChartViewsForSources()
+	{
+		return ( Collection<ChartView> )provider.getChartViewsForSources();
 	}
 
 	@Override
@@ -137,6 +185,7 @@ public class ChartGroupImpl implements ChartGroup
 	public void delete()
 	{
 		parent.removeChild( this );
+		provider.release();
 	}
 
 	void removeChild( Chart child )

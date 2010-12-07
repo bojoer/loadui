@@ -15,22 +15,64 @@
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.impl.property.DelegatingAttributeHolderSupport;
+import com.eviware.loadui.util.StringUtils;
 
 public class LineSegmentImpl implements LineChartView.LineSegment
 {
 	private final Statistic<?> statistic;
 	private final DelegatingAttributeHolderSupport attributeSupport;
+	private final String variableName;
+	private final String statisticName;
+	private final String source;
+
+	/**
+	 * Generates a String which is unique for the combination of variableName,
+	 * statisticName and source.
+	 * 
+	 * @param variableName
+	 * @param statisticName
+	 * @param source
+	 * @return
+	 */
+	static String createSegmentString( String variableName, String statisticName, String source )
+	{
+		return StringUtils.serialize( Arrays.asList( variableName, statisticName, source ) );
+	}
 
 	public LineSegmentImpl( Chart chart, String variableName, String statisticName, String source )
 	{
 		attributeSupport = new DelegatingAttributeHolderSupport( chart, variableName + "_" + statisticName + "_" + source );
 		statistic = chart.getStatisticHolder().getStatisticVariable( variableName ).getStatistic( statisticName, source );
+		this.variableName = variableName;
+		this.statisticName = statisticName;
+		this.source = source;
+	}
+
+	public String getVariableName()
+	{
+		return variableName;
+	}
+
+	public String getSource()
+	{
+		return source;
+	}
+
+	public String getStatisticName()
+	{
+		return statisticName;
+	}
+
+	public String getSegmentString()
+	{
+		return createSegmentString( variableName, statisticName, source );
 	}
 
 	@Override

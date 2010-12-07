@@ -44,8 +44,6 @@ import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.Chart;
-import com.eviware.loadui.api.statistics.model.chart.ChartViewAdapter;
-import com.eviware.loadui.api.statistics.model.chart.ChartViewAdapterRegistry;
 
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
@@ -61,8 +59,6 @@ import java.util.EventObject;
 public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 	var title:String = "ChartGroupHolder";
 	var itemCount:Integer = 0;
-	def adapterRegistry = BeanInjector.getBean( ChartViewAdapterRegistry.class );
-	var adapter:ChartViewAdapter;
 	
 	def statisticsManager = BeanInjector.getBean(StatisticsManager.class);
 	
@@ -79,8 +75,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 		chartGroup.addEventListener( BaseEvent.class, listener );
 		title = chartGroup.getTitle();
 		itemCount = chartGroup.getChildCount();
-		adapter = adapterRegistry.getAdapter( chartGroup.getType() );
-		chartViewHolder = ChartViewHolder { chartView: adapter.getChartView( chartGroup ), label: bind "{title} ({itemCount})" };
+		chartViewHolder = ChartViewHolder { chartView: chartGroup.getChartView(), label: bind "{title} ({itemCount})" };
 	}
 	
 	override var blocksMouse = true;
@@ -147,7 +142,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 			if( expandAgents ) toggleAgentExpand();
 			expandedNode = VBox {
 				content: for( chart in chartGroup.getChildren() ) ChartViewHolder {
-					chartView: adapter.getChartView( chart as Chart )
+					chartView: chartGroup.getChartViewForChart( chart as Chart )
 					label: "{chart.getStatisticHolder()}"
 				}
 			}
@@ -163,7 +158,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 			if( expandGroups ) toggleGroupExpand();
 			expandedNode = VBox {
 				content: for( source in chartGroup.getSources() ) ChartViewHolder {
-					chartView: adapter.getChartView( chartGroup, source )
+					chartView: chartGroup.getChartViewForSource( source )
 					label: source
 				}
 			}
@@ -190,9 +185,8 @@ class ChartGroupListener extends EventHandler {
 				title = chartGroup.getTitle();
 			} );
 		} else if( ChartGroup.TYPE == event.getKey() ) {
-			adapter = adapterRegistry.getAdapter( chartGroup.getType() );
 			FxUtils.runInFxThread( function():Void {
-				chartViewHolder = ChartViewHolder { chartView: adapter.getChartView( chartGroup ), label: bind "{title} ({itemCount})" };
+				chartViewHolder = ChartViewHolder { chartView: chartGroup.getChartView(), label: bind "{title} ({itemCount})" };
 				if( expandGroups ) {
 					toggleGroupExpand();
 					toggleGroupExpand();

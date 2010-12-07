@@ -15,55 +15,37 @@
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
-import java.util.Set;
-
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 
 /**
- * LineChartView for a ChartGroup. Not configurable.
+ * LineChartView for a ChartGroup.
  * 
  * @author dain.nilsson
  */
 public class ChartGroupLineChartView extends AbstractLineChartView
 {
-
 	public ChartGroupLineChartView( ChartGroup chartGroup )
 	{
 		super( chartGroup, CHART_GROUP_PREFIX );
+
+		chartGroup.addEventListener( CollectionEvent.class, new SegmentListener() );
 	}
 
-	@Override
-	public Set<String> getVariableNames()
+	private class SegmentListener implements EventHandler<CollectionEvent>
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<String> getStatisticNames( String variableName )
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<String> getSources( String variableName )
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public LineSegment addSegment( String variableName, String statisticName, String source )
-	{
-		throw new UnsupportedOperationException(
-				"Cannot add LineSegments to ChartGroupLineChartView, add them to ChartLineChartView instead!" );
-	}
-
-	@Override
-	public void removeSegment( LineSegment segment )
-	{
-		throw new UnsupportedOperationException(
-				"Cannot remove LineSegments from ChartGroupLineChartView, add them to ChartLineChartView instead!" );
+		@Override
+		public void handleEvent( CollectionEvent event )
+		{
+			if( SEGMENTS.equals( event.getKey() ) )
+			{
+				LineSegmentImpl segment = ( LineSegmentImpl )event.getElement();
+				if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
+					putSegment( segment.getSegmentString(), segment );
+				else
+					deleteSegment( segment );
+			}
+		}
 	}
 }

@@ -32,11 +32,13 @@ public class AbstractChartView implements ChartView
 	public final static String CHART_PREFIX = "_CHART_";
 	public final static String SOURCE_PREFIX = "_SOURCE_";
 
+	protected final ChartGroup chartGroup;
 	private final DelegatingAttributeHolderSupport attributeSupport;
 
 	public AbstractChartView( ChartGroup chartGroup, String prefix )
 	{
 		attributeSupport = new DelegatingAttributeHolderSupport( chartGroup, prefix );
+		this.chartGroup = chartGroup;
 	}
 
 	@Override
