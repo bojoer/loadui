@@ -85,10 +85,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private ConnectionRegistry connectionRegistry;
 
-	private boolean paused;
-	private boolean started;
-	
-	private Logger logger = LoggerFactory.getLogger( ExecutionManagerImpl.class ); 
+	private Logger logger = LoggerFactory.getLogger( ExecutionManagerImpl.class );
+
+	private State executionState = State.STOPED;
 
 	public ExecutionManagerImpl()
 	{
@@ -103,13 +102,15 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public Execution startExecution( String id, long timestamp )
 	{
-		// unpause
-		// TODO: refactor. could be done better?
-		if (id == null) {
-			fireExecutionStarted();
+		// unpause if paused otherwise try to create new
+		if( executionState == State.PAUSED )
+		{
+			executionState = State.STARTED;
+			ecs.fireExecutionStarted(State.PAUSED);
+			logger.debug( "State changed: PAUSED -> STARTED" );
 			return currentExecution;
 		}
-		
+
 		try
 		{
 			if( metaDatabaseMetaTable.exist( id ) )
@@ -131,7 +132,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			m.put( MetaDatabaseMetaTable.STATIC_FIELD_TSTAMP, timestamp );
 			metaDatabaseMetaTable.insert( m );
 
-			fireExecutionStarted();
+			executionState = State.STARTED;
+			ecs.fireExecutionStarted(State.STOPED);
+			logger.debug( "State changed: STOPED -> STARTED" );
 
 			return currentExecution;
 		}
@@ -395,45 +398,26 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public void pauseExecution()
 	{
-		fireExecutionPaused();
+		// if started and not paused ( can not pause something that is not started )
+		if( executionState == State.STARTED )
+		{
+			executionState = State.PAUSED;
+			ecs.fireExecutionPaused(State.STARTED);
+			logger.debug( "State changed: START -> PAUSED" );
+		}
 	}
 
 	@Override
 	public void stopExecution()
 	{
-		fireExecutionStoped();
-	}
-
-	@Override
-	public void fireExecutionPaused()
-	{
-		// if started and not paused ( can not pause something that is not started )
-		if( !paused  & started) {
-			paused = true;
-			started = false;
-			ecs.fireExecutionPaused();
+		// execution can be stoped only if started or paused previously
+		if( executionState == State.STARTED || executionState == State.PAUSED )
+		{
+			State oldState = executionState;
+			executionState = State.STOPED;
+			ecs.fireExecutionStoped(oldState);
+			logger.debug( "State changed: " + oldState.name() + " -> STOPED " );
 		}
-	}
-
-	@Override
-	public void fireExecutionStarted()
-	{
-		// if not started at all or starting after pause (unpause)
-		if ( (!started & !paused) || (!started & paused)) {
-			paused = false;
-			started = true;
-			ecs.fireExecutionStarted();
-		}
-	}
-
-	@Override
-	public void fireExecutionStoped()
-	{
-		// not started and not paused
-		logger.info("Execution stopped");
-		started = false;
-		paused = false;
-		ecs.fireExecutionStoped();
 	}
 
 	@Override
@@ -446,6 +430,18 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public void addExecutionListener( ExecutionListener el )
 	{
 		ecs.addExecutionListener( el );
+	}
+
+	@Override
+	public void removeExecutionListener( ExecutionListener el )
+	{
+		ecs.removeExecutionListener( el );
+	}
+
+	@Override
+	public State getState()
+	{
+		return executionState;
 	}
 
 }
