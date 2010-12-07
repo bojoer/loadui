@@ -23,55 +23,39 @@ import com.eviware.loadui.api.statistics.store.ExecutionListener;
 public class ExecutionChangeSupportImpl implements ExecutionChangeSupport
 {
 
-	private ArrayList<ExecutionListener> startedListeners = new ArrayList<ExecutionListener>();
-	private ArrayList<ExecutionListener> pausedListeners = new ArrayList<ExecutionListener>();
-	private ArrayList<ExecutionListener> stopedListeners = new ArrayList<ExecutionListener>();
+	private ArrayList<ExecutionListener> listeners = new ArrayList<ExecutionListener>();
 	
 	@Override
-	public void addExecutionPausedListener( ExecutionListener el )
+	public void addExecutionListener( ExecutionListener el )
 	{
-		pausedListeners.add( el );
-	}
-
-	@Override
-	public void addExecutionStartListener( ExecutionListener el )
-	{
-		startedListeners.add( el );
-	}
-
-	@Override
-	public void addExecutionStopedListener( ExecutionListener el )
-	{
-		stopedListeners.add( el );
+		listeners.add( el );
 	}
 
 	@Override
 	public void fireExecutionPaused()
 	{
-		for( ExecutionListener el : pausedListeners )
+		for( ExecutionListener el : listeners )
 			el.executionPaused();
 	}
 
 	@Override
 	public void fireExecutionStarted()
 	{
-		for ( ExecutionListener el : startedListeners)
+		for ( ExecutionListener el : listeners)
 			el.executionStarted();
 	}
 
 	@Override
 	public void fireExecutionStoped()
 	{
-		for( ExecutionListener el: stopedListeners)
+		for( ExecutionListener el: listeners)
 			el.executionStoped();
 	}
 
 	@Override
 	public void removeAllExecutionListeners()
 	{
-		stopedListeners.clear();
-		startedListeners.clear();
-		pausedListeners.clear();
+		listeners.clear();
 	}
 
 }
