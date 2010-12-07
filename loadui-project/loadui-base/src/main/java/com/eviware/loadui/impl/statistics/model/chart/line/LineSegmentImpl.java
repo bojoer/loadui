@@ -26,12 +26,6 @@ import com.eviware.loadui.util.StringUtils;
 
 public class LineSegmentImpl implements LineChartView.LineSegment
 {
-	private final Statistic<?> statistic;
-	private final DelegatingAttributeHolderSupport attributeSupport;
-	private final String variableName;
-	private final String statisticName;
-	private final String source;
-
 	/**
 	 * Generates a String which is unique for the combination of variableName,
 	 * statisticName and source.
@@ -46,13 +40,26 @@ public class LineSegmentImpl implements LineChartView.LineSegment
 		return StringUtils.serialize( Arrays.asList( variableName, statisticName, source ) );
 	}
 
+	private final Chart chart;
+	private final Statistic<?> statistic;
+	private final DelegatingAttributeHolderSupport attributeSupport;
+	private final String variableName;
+	private final String statisticName;
+	private final String source;
+
 	public LineSegmentImpl( Chart chart, String variableName, String statisticName, String source )
 	{
+		this.chart = chart;
 		attributeSupport = new DelegatingAttributeHolderSupport( chart, variableName + "_" + statisticName + "_" + source );
 		statistic = chart.getStatisticHolder().getStatisticVariable( variableName ).getStatistic( statisticName, source );
 		this.variableName = variableName;
 		this.statisticName = statisticName;
 		this.source = source;
+	}
+
+	public Chart getChart()
+	{
+		return chart;
 	}
 
 	public String getVariableName()

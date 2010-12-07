@@ -15,18 +15,29 @@
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
+import java.util.EventObject;
+
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.impl.statistics.model.chart.AbstractChartViewProvider;
+import com.eviware.loadui.util.events.EventSupport;
 
 /**
  * ChartViewProvider for LineChartViews.
  * 
  * @author dain.nilsson
  */
-public class LineChartViewProvider extends AbstractChartViewProvider<LineChartView>
+public class LineChartViewProvider extends AbstractChartViewProvider<LineChartView> implements EventFirer
 {
+	public static final String LINE_SEGMENTS = LineChartViewProvider.class.getName() + "@lineSegments";
+
+	private final EventSupport eventSupport = new EventSupport();
+
 	public LineChartViewProvider( ChartGroup chartGroup )
 	{
 		super( chartGroup );
@@ -35,18 +46,52 @@ public class LineChartViewProvider extends AbstractChartViewProvider<LineChartVi
 	@Override
 	protected LineChartView buildChartViewForGroup( ChartGroup chartGroup )
 	{
-		return new ChartGroupLineChartView( chartGroup );
+		return new ChartGroupLineChartView( this, chartGroup );
 	}
 
 	@Override
 	protected LineChartView buildChartViewForChart( Chart chart )
 	{
-		return new ChartLineChartView( chart );
+		return new ChartLineChartView( this, chart );
 	}
 
 	@Override
 	protected LineChartView buildChartViewForSource( String source )
 	{
-		return new SourceLineChartView( chartGroup, source );
+		return new SourceLineChartView( this, chartGroup, source );
+	}
+
+	@Override
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.addEventListener( type, listener );
+	}
+
+	@Override
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.removeEventListener( type, listener );
+	}
+
+	@Override
+	public void clearEventListeners()
+	{
+		eventSupport.clearEventListeners();
+	}
+
+	@Override
+	public void fireEvent( EventObject event )
+	{
+		eventSupport.fireEvent( event );
+	}
+
+	void fireSegmentAdded( LineSegment segment )
+	{
+		fireEvent( new CollectionEvent( this, LINE_SEGMENTS, CollectionEvent.Event.ADDED, segment ) );
+	}
+
+	void fireSegmentRemoved( LineSegment segment )
+	{
+		fireEvent( new CollectionEvent( this, LINE_SEGMENTS, CollectionEvent.Event.REMOVED, segment ) );
 	}
 }

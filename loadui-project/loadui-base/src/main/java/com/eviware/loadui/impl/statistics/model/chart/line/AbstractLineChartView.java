@@ -25,7 +25,7 @@ import java.util.Set;
 
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.impl.statistics.model.chart.AbstractChartView;
 import com.eviware.loadui.util.events.EventSupport;
@@ -40,9 +40,11 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 	private final EventSupport eventSupport = new EventSupport();
 	private final Map<String, LineSegment> segments = new HashMap<String, LineSegment>();
 
-	public AbstractLineChartView( ChartGroup chartGroup, String prefix )
+	public AbstractLineChartView( LineChartViewProvider provider, AttributeHolder attributeDelegate, String prefix )
 	{
-		super( chartGroup, prefix );
+		super( attributeDelegate, prefix );
+
+		provider.addEventListener( CollectionEvent.class, new ProviderListener() );
 	}
 
 	/**
@@ -100,6 +102,10 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 		return segments.keySet();
 	}
 
+	protected abstract void segmentAdded( LineSegmentImpl segment );
+
+	protected abstract void segmentRemoved( LineSegmentImpl segment );
+
 	@Override
 	public Collection<LineSegment> getSegments()
 	{
@@ -128,5 +134,21 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 	public void fireEvent( EventObject event )
 	{
 		eventSupport.fireEvent( event );
+	}
+
+	private class ProviderListener implements EventHandler<CollectionEvent>
+	{
+		@Override
+		public void handleEvent( CollectionEvent event )
+		{
+			if( LineChartViewProvider.LINE_SEGMENTS.equals( event.getKey() ) )
+			{
+				LineSegmentImpl segment = ( LineSegmentImpl )event.getElement();
+				if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
+					segmentAdded( segment );
+				else
+					segmentRemoved( segment );
+			}
+		}
 	}
 }
