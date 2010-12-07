@@ -25,25 +25,11 @@ public interface ExecutionChangeSupport
 {
 
 	/**
-	 * Add execution listener for starting execution
+	 * Add execution listener 
 	 *
 	 * @param el
 	 */
-	void addExecutionStartListener( ExecutionListener el );
-	
-	/**
-	 * Add execution listener for pausing execution
-	 * 
-	 * @param el
-	 */
-	void addExecutionPausedListener( ExecutionListener el );
-	
-	/**
-	 * Add listener for stoping execution
-	 * 
-	 * @param el
-	 */
-	void addExecutionStopedListener( ExecutionListener el );
+	void addExecutionListener( ExecutionListener el );
 	
 	/**
 	 * remove all listeners
