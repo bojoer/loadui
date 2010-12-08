@@ -120,7 +120,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final TerminalProxy proxy;
 	private final Set<SceneItem> scenes = new HashSet<SceneItem>();
 	private final Set<SceneItem> awaitingScenes = new HashSet<SceneItem>();
-	private final StatisticPages statisticPages;
+	private final StatisticPagesImpl statisticPages;
 	private final Property<Boolean> saveReport;
 	private final Property<String> reportFolder;
 	private final Property<String> reportFormat;
@@ -208,6 +208,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				}
 			}
 		}
+
+		statisticPages.init();
 	}
 
 	private boolean attachScene( SceneItem scene )

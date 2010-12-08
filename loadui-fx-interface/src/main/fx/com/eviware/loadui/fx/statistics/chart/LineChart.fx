@@ -21,6 +21,7 @@ import javafx.scene.layout.Resizable;
 import javafx.scene.layout.Container;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Stack;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
@@ -36,6 +37,9 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
+import javafx.ext.swing.SwingComponent;
+import com.jidesoft.chart.Chart;
+
 /**
  * Base LineChart Node, visualizes a LineChartView.
  *
@@ -50,16 +54,20 @@ public class LineChart extends BaseNode, Resizable {
 		}
 	}
 	
+	override var layoutInfo = LayoutInfo { vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS }
+	
+	def chartNode = SwingComponent.wrap( new Chart() );
+	
 	def resizable:VBox = VBox {
 		width: bind width
 		height: bind height
-		content: Region {
-			layoutInfo: LayoutInfo { width: 400, height: 100 }
-			style: "-fx-background-color: green;"
+		content: Stack {
+			content: chartNode
 		}
 	}
 	
 	override function create():Node {
+		chartNode.layoutInfo = LayoutInfo { vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS }
 		resizable
 	}
 	

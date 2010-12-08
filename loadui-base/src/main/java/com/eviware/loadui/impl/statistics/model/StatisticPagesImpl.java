@@ -39,7 +39,10 @@ public class StatisticPagesImpl implements StatisticPages
 		this.config = config;
 
 		collectionSupport = new OrderedCollectionSupport<StatisticPage>( this );
+	}
 
+	public void init()
+	{
 		for( StatisticsPageConfig statisticPageConfig : config.getPageArray() )
 			collectionSupport.addChild( new StatisticPageImpl( this, statisticPageConfig ) );
 	}

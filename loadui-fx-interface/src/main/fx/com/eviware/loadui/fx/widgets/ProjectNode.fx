@@ -103,6 +103,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 						projectRef.setEnabled( true );
 					}, function( task:Task ):Void {
 						if( task.failed ) {
+							log.error( "Failed to load project:", task.causeOfFailure as java.lang.Throwable );
 							CorruptProjectDialog{ project:projectRef };
 						} else {
 							AppState.instance.setActiveCanvas( projectRef.getProject() );
@@ -172,6 +173,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 			     }
 			    catch( e:IOException )
 			    {
+			    	log.error( "Failed to load project:", e );
 			    	CorruptProjectDialog{ project:projectRef };
 			    }
 			}

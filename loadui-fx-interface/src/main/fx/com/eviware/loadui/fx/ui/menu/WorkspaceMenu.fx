@@ -69,6 +69,10 @@ import com.eviware.loadui.fx.dialogs.CreateNewAgentDialog;
 import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.MenuButton;
 
+import org.slf4j.LoggerFactory;
+
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.menu.WorkspaceMenu" );
+
 public class WorkspaceMenu extends HBox {
     public-init var workspace: WorkspaceItem;
 
@@ -236,6 +240,7 @@ public class WorkspaceMenu extends HBox {
                     }
                     catch( ex:IOException )
                     {
+                    	log.error( "Failed to load project:", ex );
                     	CorruptProjectDialog{ project:ref };
                     }
                 }
