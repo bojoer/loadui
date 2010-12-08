@@ -15,7 +15,10 @@
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
+import java.util.Collections;
 import java.util.EventObject;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventFirer;
@@ -37,10 +40,13 @@ public class LineChartViewProvider extends AbstractChartViewProvider<LineChartVi
 	public static final String LINE_SEGMENTS = LineChartViewProvider.class.getName() + "@lineSegments";
 
 	private final EventSupport eventSupport = new EventSupport();
+	private final Set<LineSegment> segments = new HashSet<LineSegment>();
 
 	public LineChartViewProvider( ChartGroup chartGroup )
 	{
 		super( chartGroup );
+
+		init();
 	}
 
 	@Override
@@ -87,11 +93,18 @@ public class LineChartViewProvider extends AbstractChartViewProvider<LineChartVi
 
 	void fireSegmentAdded( LineSegment segment )
 	{
+		segments.add( segment );
 		fireEvent( new CollectionEvent( this, LINE_SEGMENTS, CollectionEvent.Event.ADDED, segment ) );
 	}
 
 	void fireSegmentRemoved( LineSegment segment )
 	{
+		segments.remove( segment );
 		fireEvent( new CollectionEvent( this, LINE_SEGMENTS, CollectionEvent.Event.REMOVED, segment ) );
+	}
+
+	Set<LineSegment> getSegments()
+	{
+		return Collections.unmodifiableSet( segments );
 	}
 }

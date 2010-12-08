@@ -32,34 +32,47 @@ public class SourceLineChartView extends AbstractLineChartView
 		super( provider, chartGroup, SOURCE_PREFIX + source );
 
 		this.source = source;
+
+		for( LineSegment segment : provider.getSegments() )
+			segmentAdded( segment );
 	}
 
 	@Override
-	protected void segmentAdded( LineSegmentImpl segment )
+	protected void segmentAdded( LineSegment segment )
 	{
-		if( source.equals( segment.getSource() ) )
-			putSegment( segment.getSegmentString(), segment );
-		else if( StatisticVariable.MAIN_SOURCE.equals( segment.getSource() ) )
+		// This adds any Segment for this source, and adds a
+		// SourceLineSegment for any Segment for the main source, unless such a
+		// Segment already exists.
+
+		// TODO: Think this through a bite more, what happens when segments are
+		// added/removed, does this stay in sync?
+		if( segment instanceof ChartLineSegment )
 		{
-			LineSegmentImpl sourceSegment = new LineSegmentImpl( segment.getChart(), segment.getVariableName(),
-					segment.getStatisticName(), source );
-			putSegment( sourceSegment.getSegmentString(), sourceSegment );
+			ChartLineSegment chartSegment = ( ChartLineSegment )segment;
+			if( source.equals( chartSegment.getSource() ) )
+			{
+				// TODO: Check if we already have a segment for the main source for
+				// this Statistic and if so remove it.
+				addSegment( segment );
+			}
+			else if( StatisticVariable.MAIN_SOURCE.equals( chartSegment.getSource() )
+					&& getSegment( chartSegment.toString() ) == null )
+			{
+				SourceLineSegment sourceSegment = new SourceLineSegment( chartSegment, source );
+				addSegment( sourceSegment );
+			}
 		}
 	}
 
 	@Override
-	protected void segmentRemoved( LineSegmentImpl segment )
+	protected void segmentRemoved( LineSegment segment )
 	{
-		if( source.equals( segment.getSource() ) )
-			deleteSegment( segment );
-		else if( StatisticVariable.MAIN_SOURCE.equals( segment.getSource() ) )
+		if( segment instanceof ChartLineSegment )
 		{
-			// TODO: Check if chart also has a segment for the
-			// same
-			// Statistic, but with this source. If so, do not delete the
-			// segment.
-			deleteSegment( getSegment( LineSegmentImpl.createSegmentString( segment.getVariableName(),
-					segment.getStatisticName(), source ) ) );
+			ChartLineSegment chartSegment = ( ChartLineSegment )segment;
+			LineSegment existingSegment = getSegment( chartSegment.toString() );
+			if( existingSegment != null )
+				deleteSegment( getSegment( chartSegment.toString() ) );
 		}
 	}
 }

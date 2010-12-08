@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -43,8 +44,8 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 		for( String segmentString : StringUtils.deserialize( getAttribute( SEGMENTS_ATTRIBUTE, "" ) ) )
 		{
 			List<String> parts = StringUtils.deserialize( segmentString );
-			LineSegmentImpl segment = new LineSegmentImpl( chart, parts.get( 0 ), parts.get( 1 ), parts.get( 2 ) );
-			putSegment( segmentString, segment );
+			ChartLineSegment segment = new ChartLineSegment( chart, parts.get( 0 ), parts.get( 1 ), parts.get( 2 ) );
+			addSegment( segment );
 			provider.fireSegmentAdded( segment );
 		}
 	}
@@ -70,16 +71,17 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	@Override
 	public LineSegment addSegment( String variableName, String statisticName, String source )
 	{
-		String segmentString = LineSegmentImpl.createSegmentString( variableName, statisticName, source );
-		if( getSegment( segmentString ) == null )
+		ChartLineSegment segment = new ChartLineSegment( chart, variableName, statisticName, source );
+		String segmentId = segment.toString();
+
+		if( getSegment( segmentId ) != null )
 		{
-			LineSegment segment = new LineSegmentImpl( chart, variableName, statisticName, source );
-			putSegment( segmentString, segment );
-			setAttribute( SEGMENTS_ATTRIBUTE, StringUtils.serialize( segmentKeySet() ) );
+			addSegment( segment );
+			storeSegments();
 			provider.fireSegmentAdded( segment );
 		}
 
-		return getSegment( segmentString );
+		return getSegment( segmentId );
 	}
 
 	@Override
@@ -87,18 +89,26 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	{
 		if( deleteSegment( segment ) )
 		{
-			setAttribute( SEGMENTS_ATTRIBUTE, StringUtils.serialize( segmentKeySet() ) );
+			storeSegments();
 			provider.fireSegmentRemoved( segment );
 		}
 	}
 
+	private void storeSegments()
+	{
+		List<String> segmentsStrings = new ArrayList<String>();
+		for( LineSegment lineSegment : getSegments() )
+			segmentsStrings.add( lineSegment.toString() );
+		setAttribute( SEGMENTS_ATTRIBUTE, StringUtils.serialize( segmentsStrings ) );
+	}
+
 	@Override
-	protected void segmentAdded( LineSegmentImpl segment )
+	protected void segmentAdded( LineSegment segment )
 	{
 	}
 
 	@Override
-	protected void segmentRemoved( LineSegmentImpl segment )
+	protected void segmentRemoved( LineSegment segment )
 	{
 	}
 }

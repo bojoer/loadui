@@ -30,14 +30,16 @@ public class ChartGroupLineChartView extends AbstractLineChartView
 	}
 
 	@Override
-	protected void segmentAdded( LineSegmentImpl segment )
+	protected void segmentAdded( LineSegment segment )
 	{
-		putSegment( segment.getSegmentString(), segment );
+		if( segment instanceof ChartLineSegment )
+			addSegment( segment );
 	}
 
 	@Override
-	protected void segmentRemoved( LineSegmentImpl segment )
+	protected void segmentRemoved( LineSegment segment )
 	{
-		deleteSegment( segment );
+		if( segment instanceof ChartLineSegment )
+			deleteSegment( segment );
 	}
 }
