@@ -192,25 +192,48 @@ public class StatisticsManagerImpl implements StatisticsManager
 				long timestamp = System.currentTimeMillis();
 				String executionId = "execution_" + timestamp;
 				executionManager.startExecution( executionId, timestamp );
-				for( AgentItem agent : ( ( ProjectItem )event.getSource() ).getWorkspace().getAgents() )
-					agent.sendMessage( CHANNEL, executionId );
+				if( !( ( ProjectItem )event.getSource() ).getWorkspace().isLocalMode() )
+					notifyAgents( CHANNEL, executionId, ( ( ProjectItem )event.getSource() ).getWorkspace().getAgents() );
 			}
 			else if( hasCurrent && CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
 			{
 				hasCurrent = false;
 				executionManager.stopExecution();
-				//TODO: send message to agents
-			} else if ( CanvasItem.STOP_ACTION.equals( event.getKey() )) {
+				if( !( ( ProjectItem )event.getSource() ).getWorkspace().isLocalMode() )
+				{
+					String message = "stop_" + System.currentTimeMillis();
+					notifyAgents( CHANNEL, message, ( ( ProjectItem )event.getSource() ).getWorkspace().getAgents() );
+				}
+			}
+			else if( CanvasItem.STOP_ACTION.equals( event.getKey() ) )
+			{
 				executionManager.pauseExecution();
-				//TODO: send message to agents
-			} else if ( executionManager.getState() == State.PAUSED && CanvasItem.START_ACTION.equals( event.getKey() ) ) {
+				if( !( ( ProjectItem )event.getSource() ).getWorkspace().isLocalMode() )
+				{
+					String message = "pause_" + System.currentTimeMillis();
+					notifyAgents( CHANNEL, message, ( ( ProjectItem )event.getSource() ).getWorkspace().getAgents() );
+				}
+			}
+			else if( executionManager.getState() == State.PAUSED && CanvasItem.START_ACTION.equals( event.getKey() ) )
+			{
 				// could this be done better?
 				/*
 				 *  if startExecution is called and execution is in PAUSED stated it will return curectExecution
 				 *  and change state to START
 				 */
-				executionManager.startExecution( null , -1 );
+				executionManager.startExecution( null, -1 );
+				if( !( ( ProjectItem )event.getSource() ).getWorkspace().isLocalMode() )
+				{
+					String message = "unpause_" + System.currentTimeMillis();
+					notifyAgents( CHANNEL, message, ( ( ProjectItem )event.getSource() ).getWorkspace().getAgents() );
+				}
 			}
+		}
+
+		private void notifyAgents( String channel, String message, Collection<AgentItem> collection )
+		{
+			for( AgentItem agent : collection )
+				agent.sendMessage( CHANNEL, message );
 		}
 	}
 }

@@ -80,7 +80,16 @@ public class TrackStreamer
 		@Override
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
-			manager.startExecution( data.toString(), System.currentTimeMillis() );
+			log.debug( "Received from controller : " + data.toString() );
+			String message = data.toString();
+			if( message.startsWith( "execution" ) )
+				manager.startExecution( data.toString(), System.currentTimeMillis() );
+			else if( message.startsWith( "pause" ) )
+				manager.pauseExecution();
+			else if( message.startsWith( "stop" ) )
+				manager.stopExecution();
+			else if ( message.startsWith( "unpause" )) 
+				manager.startExecution( data.toString(), System.currentTimeMillis() );
 		}
 	}
 
