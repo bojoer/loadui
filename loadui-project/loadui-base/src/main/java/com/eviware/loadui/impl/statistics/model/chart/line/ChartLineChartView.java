@@ -45,7 +45,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 		{
 			List<String> parts = StringUtils.deserialize( segmentString );
 			ChartLineSegment segment = new ChartLineSegment( chart, parts.get( 0 ), parts.get( 1 ), parts.get( 2 ) );
-			addSegment( segment );
+			putSegment( segment );
 			provider.fireSegmentAdded( segment );
 		}
 	}
@@ -74,9 +74,9 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 		ChartLineSegment segment = new ChartLineSegment( chart, variableName, statisticName, source );
 		String segmentId = segment.toString();
 
-		if( getSegment( segmentId ) != null )
+		if( getSegment( segmentId ) == null )
 		{
-			addSegment( segment );
+			putSegment( segment );
 			storeSegments();
 			provider.fireSegmentAdded( segment );
 		}

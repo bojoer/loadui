@@ -51,7 +51,7 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 	 * 
 	 * @param segment
 	 */
-	protected void addSegment( LineSegment segment )
+	protected void putSegment( LineSegment segment )
 	{
 		segments.put( segment.toString(), segment );
 		fireEvent( new CollectionEvent( this, SEGMENTS, CollectionEvent.Event.ADDED, segment ) );

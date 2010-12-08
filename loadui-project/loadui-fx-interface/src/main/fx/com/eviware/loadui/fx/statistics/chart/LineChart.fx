@@ -35,7 +35,11 @@ import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.CollectionEvent;
+import java.util.EventObject;
 
 import javafx.ext.swing.SwingComponent;
 import com.jidesoft.chart.Chart;
@@ -46,9 +50,16 @@ import com.jidesoft.chart.Chart;
  * @author dain.nilsson
  */
 public class LineChart extends BaseNode, Resizable {
+	def listener = new ChartViewListener();
+	
 	public-init var chartView:LineChartView on replace {
+		chartView.addEventListener( CollectionEvent.class, listener );
+		
+		for( segment in chartView.getSegments() )
+			addedSegment( segment );
+		
 		//TODO: Remove this when LineSegments are configurable within the gui.
-		if( chartView instanceof ConfigurableLineChartView and sizeof chartView.getSegments() == 0) {
+		if( chartView instanceof ConfigurableLineChartView and chartView.getSegments().isEmpty() ) {
 			def clcv = chartView as ConfigurableLineChartView;
 			clcv.addSegment( "TimeTaken", "AVERAGE", "main" );
 		}
@@ -61,9 +72,7 @@ public class LineChart extends BaseNode, Resizable {
 	def resizable:VBox = VBox {
 		width: bind width
 		height: bind height
-		content: Stack {
-			content: chartNode
-		}
+		content: Stack { content: chartNode }
 	}
 	
 	override function create():Node {
@@ -77,5 +86,24 @@ public class LineChart extends BaseNode, Resizable {
 	
 	override function getPrefWidth( height:Number ):Number {
 		resizable.getPrefWidth( height )
+	}
+	
+	function addedSegment( segment:LineSegment ):Void {
+		println("ADDED: {segment} to {chartView}");
+	}
+	
+	function removedSegment( segment:LineSegment ):Void {
+		println("REMOVED: {segment} from {chartView}");
+	}
+}
+
+class ChartViewListener extends EventHandler {
+	override function handleEvent( e:EventObject ):Void {
+		def event = e as CollectionEvent;
+		if( CollectionEvent.Event.ADDED == event.getEvent() ) {
+			FxUtils.runInFxThread( function():Void { addedSegment( event.getElement() as LineSegment ) } );
+		} else {
+			FxUtils.runInFxThread( function():Void { removedSegment( event.getElement() as LineSegment ) } );
+		}
 	}
 }

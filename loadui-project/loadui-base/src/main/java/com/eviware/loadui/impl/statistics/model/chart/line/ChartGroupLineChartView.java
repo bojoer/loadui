@@ -33,7 +33,7 @@ public class ChartGroupLineChartView extends AbstractLineChartView
 	protected void segmentAdded( LineSegment segment )
 	{
 		if( segment instanceof ChartLineSegment )
-			addSegment( segment );
+			putSegment( segment );
 	}
 
 	@Override
