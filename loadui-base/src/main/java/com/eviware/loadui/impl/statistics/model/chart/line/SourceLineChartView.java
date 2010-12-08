@@ -53,13 +53,13 @@ public class SourceLineChartView extends AbstractLineChartView
 			{
 				// TODO: Check if we already have a segment for the main source for
 				// this Statistic and if so remove it.
-				addSegment( segment );
+				putSegment( segment );
 			}
 			else if( StatisticVariable.MAIN_SOURCE.equals( chartSegment.getSource() )
 					&& getSegment( chartSegment.toString() ) == null )
 			{
 				SourceLineSegment sourceSegment = new SourceLineSegment( chartSegment, source );
-				addSegment( sourceSegment );
+				putSegment( sourceSegment );
 			}
 		}
 	}
