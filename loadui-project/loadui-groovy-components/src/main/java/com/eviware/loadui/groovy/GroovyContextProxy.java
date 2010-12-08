@@ -490,12 +490,19 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 				if( event.getPreviousValue() != null )
 				{
 					log.debug( "Invoking onRelease since script changed for {}", event.getSource() );
-					Object prop = binding.getProperty( "onRelease" );
-					if( prop instanceof Closure )
+					try
 					{
-						Closure closure = ( Closure )prop;
-						closure.setDelegate( this );
-						closure.call( new Object[] {} );
+						Object prop = binding.getProperty( "onRelease" );
+						if( prop instanceof Closure )
+						{
+							Closure closure = ( Closure )prop;
+							closure.setDelegate( this );
+							closure.call( new Object[] {} );
+						}
+					}
+					catch( MissingPropertyException e )
+					{
+						// Ignore
 					}
 					context.clearSettingsTabs();
 					context.clearEventListeners();
