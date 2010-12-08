@@ -121,8 +121,10 @@ class ChartPageListener extends EventHandler {
 						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES }
 					} into innerContent;
 				} else {
-					for( chartGroupHolder in innerContent [x|x.chartGroup == cEvent.getElement()] )
+					for( chartGroupHolder in innerContent [x|x.chartGroup == cEvent.getElement()] ) {
 						delete chartGroupHolder from innerContent;
+						chartGroupHolder.release();
+					}
 				}
 			} );
 		}

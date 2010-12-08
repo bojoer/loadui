@@ -14,11 +14,17 @@ public class ChartLineSegment implements LineSegment
 	private final Chart chart;
 	private final DelegatingAttributeHolderSupport attributeSupport;
 	private final String id;
+	private final String variableName;
+	private final String statisticName;
 	private final String source;
+
+	private Statistic<?> statistic;
 
 	public ChartLineSegment( Chart chart, String variableName, String statisticName, String source )
 	{
 		this.chart = chart;
+		this.variableName = variableName;
+		this.statisticName = statisticName;
 		this.source = source;
 		attributeSupport = new DelegatingAttributeHolderSupport( chart, "" );
 		id = StringUtils.serialize( Arrays.asList( variableName, statisticName, source ) );
@@ -29,9 +35,19 @@ public class ChartLineSegment implements LineSegment
 		return chart;
 	}
 
-	public Object getSource()
+	public String getSource()
 	{
 		return source;
+	}
+
+	public String getVariableName()
+	{
+		return variableName;
+	}
+
+	public String getStatisticName()
+	{
+		return statisticName;
 	}
 
 	@Override
@@ -43,8 +59,11 @@ public class ChartLineSegment implements LineSegment
 	@Override
 	public Statistic<?> getStatistic()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		if( statistic == null )
+			statistic = chart.getStatisticHolder().getStatisticVariable( variableName )
+					.getStatistic( statisticName, source );
+
+		return statistic;
 	}
 
 	@Override
