@@ -269,14 +269,14 @@ class StatisticsManagerListener extends EventHandler {
 class ExecutionManagerListener extends ExecutionListener {  
 
    override function executionStarted(state:ExecutionManager.State){
-   	println("---satrted");
+   	println("---started");
    }
 
 	override function executionPaused(state:ExecutionManager.State){
 	   println("---paused"); 
 	}
 
-	override function executionStoped(state:ExecutionManager.State){
-	    println("---stoped");
+	override function executionStopped(state:ExecutionManager.State){
+	    println("---stopped");
 	}
 }

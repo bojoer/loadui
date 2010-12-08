@@ -47,7 +47,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	protected long delay;
 	protected long lastTimeFlushed = System.currentTimeMillis();
 	private long pauseStartedTime;
-	
+
 	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values )
 	{
@@ -61,26 +61,27 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		manager.getExecutionManager().registerTrackDescriptor( descriptor );
 		manager.addEventListener( CollectionEvent.class, new ExecutionListener() );
 
-		//adding execution listeners.
-		manager.getExecutionManager().addExecutionListener( new ExecutionListenerAdapter() 
+		// adding execution listeners.
+		manager.getExecutionManager().addExecutionListener( new ExecutionListenerAdapter()
 		{
 			private long delta;
 
 			@Override
-			public void executionStarted(ExecutionManager.State  oldState)
+			public void executionStarted( ExecutionManager.State oldState )
 			{
 				// unpause
 				if( oldState == State.PAUSED )
 				{
 					/*
 					 * Continue, calculate time spent in inteval when pause occured.
-					 * Next write to database will be at regular interval, since delta 
-					 * is taken in account.
+					 * Next write to database will be at regular interval, since
+					 * delta is taken in account.
 					 * 
-					 * Example: if delay is 1s. Which means that flush occures at 1s, 2s, 3s, etc..
-					 * Pause occurs in 4th interval ( between 3s and 4s )
-					 * Than unpause comes after 3s( that woud be between 6s and 7s from test start ).
-					 * flush() will be when test paused (3s + delta) and next is at 7s. 
+					 * Example: if delay is 1s. Which means that flush occures at 1s,
+					 * 2s, 3s, etc.. Pause occurs in 4th interval ( between 3s and 4s
+					 * ) Than unpause comes after 3s( that woud be between 6s and 7s
+					 * from test start ). flush() will be when test paused (3s +
+					 * delta) and next is at 7s.
 					 */
 					pauseStartedTime = 0;
 					lastTimeFlushed = System.currentTimeMillis() + delta;
@@ -88,15 +89,15 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			}
 
 			@Override
-			public void executionPaused(ExecutionManager.State  oldState)
+			public void executionPaused( ExecutionManager.State oldState )
 			{
 				if( oldState == State.STARTED )
 				{
-					/*  
-					 * write data at moment when paused. 
+					/*
+					 * write data at moment when paused.
 					 * 
-					 * rember how time is spent in this interval after last
-					 * time data is written to db.
+					 * rember how time is spent in this interval after last time data
+					 * is written to db.
 					 */
 					pauseStartedTime = System.currentTimeMillis();
 					delta = pauseStartedTime - lastTimeFlushed;
@@ -105,7 +106,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			}
 
 			@Override
-			public void executionStoped(ExecutionManager.State  oldState)
+			public void executionStopped( ExecutionManager.State oldState )
 			{
 				/*
 				 * if stoping write last data that came in.
@@ -191,7 +192,8 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			ExecutionManager executionManager = manager.getExecutionManager();
 			Execution currentExecution = executionManager.getCurrentExecution();
 
-			int time = currentExecution == null ? -1 : ( int )( timestamp - currentExecution.getStartTime() - pauseStartedTime );
+			int time = currentExecution == null ? -1
+					: ( int )( timestamp - currentExecution.getStartTime() - pauseStartedTime );
 			executionManager.writeEntry( getId(), new EntryImpl( time, values, true ), StatisticVariable.MAIN_SOURCE );
 		}
 	}

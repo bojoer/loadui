@@ -144,7 +144,7 @@ public interface ExecutionManager
 	 *
 	 */
 	enum State {
-		STARTED, PAUSED, STOPED
+		STARTED, PAUSED, STOPPED
 	}
 	
 	/**

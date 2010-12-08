@@ -57,12 +57,13 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	private static final String METADATABASE_NAME = "__meta_database";
 
 	/**
-	 * Postfix added to data table name when creating source table 
+	 * Postfix added to data table name when creating source table
 	 */
 	private static final String SOURCE_TABLE_NAME_POSTFIX = "_sources";
 
 	/**
-	 * Meta table in meta database. Keeps common information: execution names, start times etc.
+	 * Meta table in meta database. Keeps common information: execution names,
+	 * start times etc.
 	 */
 	private MetaDatabaseMetaTable metaDatabaseMetaTable;
 
@@ -87,7 +88,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private Logger logger = LoggerFactory.getLogger( ExecutionManagerImpl.class );
 
-	private State executionState = State.STOPED;
+	private State executionState = State.STOPPED;
 
 	public ExecutionManagerImpl()
 	{
@@ -106,7 +107,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		if( executionState == State.PAUSED )
 		{
 			executionState = State.STARTED;
-			ecs.fireExecutionStarted(State.PAUSED);
+			ecs.fireExecutionStarted( State.PAUSED );
 			logger.debug( "State changed: PAUSED -> STARTED" );
 			return currentExecution;
 		}
@@ -133,8 +134,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			metaDatabaseMetaTable.insert( m );
 
 			executionState = State.STARTED;
-			ecs.fireExecutionStarted(State.STOPED);
-			logger.debug( "State changed: STOPED -> STARTED" );
+			ecs.fireExecutionStarted( State.STOPPED );
+			logger.debug( "State changed: STOPPED -> STARTED" );
 
 			return currentExecution;
 		}
@@ -398,11 +399,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public void pauseExecution()
 	{
-		// if started and not paused ( can not pause something that is not started )
+		// if started and not paused ( can not pause something that is not started
+		// )
 		if( executionState == State.STARTED )
 		{
 			executionState = State.PAUSED;
-			ecs.fireExecutionPaused(State.STARTED);
+			ecs.fireExecutionPaused( State.STARTED );
 			logger.debug( "State changed: START -> PAUSED" );
 		}
 	}
@@ -410,13 +412,13 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public void stopExecution()
 	{
-		// execution can be stoped only if started or paused previously
+		// execution can be stopped only if started or paused previously
 		if( executionState == State.STARTED || executionState == State.PAUSED )
 		{
 			State oldState = executionState;
-			executionState = State.STOPED;
-			ecs.fireExecutionStoped(oldState);
-			logger.debug( "State changed: " + oldState.name() + " -> STOPED " );
+			executionState = State.STOPPED;
+			ecs.fireExecutionStopped( oldState );
+			logger.debug( "State changed: " + oldState.name() + " -> STOPPED " );
 		}
 	}
 

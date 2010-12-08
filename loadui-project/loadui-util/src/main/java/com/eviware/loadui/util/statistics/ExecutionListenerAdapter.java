@@ -32,7 +32,7 @@ public abstract class ExecutionListenerAdapter implements ExecutionListener
 	}
 
 	@Override
-	public void executionStoped(ExecutionManager.State  oldState)
+	public void executionStopped(ExecutionManager.State  oldState)
 	{
 	}
 
