@@ -51,7 +51,10 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 		this.chartGroup = chartGroup;
 
 		chartGroup.addEventListener( CollectionEvent.class, listener );
+	}
 
+	protected void init()
+	{
 		groupChartView = buildChartViewForGroup( chartGroup );
 
 		for( Chart chart : chartGroup.getChildren() )

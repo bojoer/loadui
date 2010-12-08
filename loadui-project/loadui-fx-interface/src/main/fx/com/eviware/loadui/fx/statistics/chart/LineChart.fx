@@ -34,6 +34,7 @@ import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
 /**
  * Base LineChart Node, visualizes a LineChartView.
@@ -42,7 +43,11 @@ import com.eviware.loadui.api.statistics.model.chart.LineChartView;
  */
 public class LineChart extends BaseNode, Resizable {
 	public-init var chartView:LineChartView on replace {
-		
+		//TODO: Remove this when LineSegments are configurable within the gui.
+		if( chartView instanceof ConfigurableLineChartView and sizeof chartView.getSegments() == 0) {
+			def clcv = chartView as ConfigurableLineChartView;
+			clcv.addSegment( "TimeTaken", "AVERAGE", "main" );
+		}
 	}
 	
 	def resizable:VBox = VBox {
