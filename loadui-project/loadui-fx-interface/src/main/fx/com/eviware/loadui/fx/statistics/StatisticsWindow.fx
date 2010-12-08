@@ -115,58 +115,75 @@ public class StatisticsWindow {
 		}
 		
     	if ( closed ) {
-    		var overlay = Group {};
-    		stage = Stage {
-    			height: 768
-    			width: 1024
-		    	title: "Statistics"
-		    	icons: [
-		    		Image { url:"{__ROOT__}images/png/icon_32x32.png" },
-					Image { url:"{__ROOT__}images/png/icon_16x16.png" }
-		    	]
-		    	scene: scene = Scene {
-		    			stylesheets: "file:style.css"
-				        content: [ Group {
-				        	content: [
-					        	Rectangle {
-					        		x:1
-					        		y:1
-					        		width: bind scene.width -2
-					        		height: 21
-					        		fill: Color.web("#b1b1b1")
-					        		stroke: Color.web("#000000")
-					        		strokeWidth: 1
-					        	}, Text {
-					        		x: 20
-					        		y: 15
-					        		content: "Stats"
-					        		font: Font { size: 10 }
-					        	}, Rectangle {
-					        		x: 1
-					        		y: 22
-					        		width: bind scene.width -2
-					        		height: 90
-					        		fill: Color.web("#989898")
-					        		stroke: Color.web("#000000")
-					        		strokeWidth: 1
-					        	}, Text {
-					        		x: 20
-					        		y: 55
-					        		content: "Stats: project {project.getLabel()}"
-					        		font: Font { size: 30 }
-					        		fill: Color.web("#ffffff")
-					        	}, tabs, toolbar
-					        ]
-					     }, overlay ]
-				        fill: Color.web("#373737")
-	    			   }
-	    		onClose: function() {
-	    		 	closed = true;
-	    		 	close();
-	//    				throw new com.eviware.loadui.util.hacks.PreventClosingStageException(); // this a hack to keep stage open
-	  				}
+    		if ( scene == null ) {
+	    		var overlay = Group {};
+	    		stage = Stage {
+	    			height: 768
+	    			width: 1024
+			    	title: "Statistics"
+			    	icons: [
+			    		Image { url:"{__ROOT__}images/png/icon_32x32.png" },
+						Image { url:"{__ROOT__}images/png/icon_16x16.png" }
+			    	]
+			    	scene: scene = Scene {
+			    			stylesheets: "file:style.css"
+					        content: [ Group {
+					        	content: [
+						        	Rectangle {
+						        		x:1
+						        		y:1
+						        		width: bind scene.width -2
+						        		height: 21
+						        		fill: Color.web("#b1b1b1")
+						        		stroke: Color.web("#000000")
+						        		strokeWidth: 1
+						        	}, Text {
+						        		x: 20
+						        		y: 15
+						        		content: "Stats"
+						        		font: Font { size: 10 }
+						        	}, Rectangle {
+						        		x: 1
+						        		y: 22
+						        		width: bind scene.width -2
+						        		height: 90
+						        		fill: Color.web("#989898")
+						        		stroke: Color.web("#000000")
+						        		strokeWidth: 1
+						        	}, Text {
+						        		x: 20
+						        		y: 55
+						        		content: "Stats: project {project.getLabel()}"
+						        		font: Font { size: 30 }
+						        		fill: Color.web("#ffffff")
+						        	}, tabs, toolbar
+						        ]
+						     }, overlay ]
+					        fill: Color.web("#373737")
+		    			   }
+		    		onClose: function() {
+		    		 	closed = true;
+		    		 	close();
+		//    				throw new com.eviware.loadui.util.hacks.PreventClosingStageException(); // this a hack to keep stage open
+		  				}
+		    		}
+		    		AppState.setOverlay( scene, Overlay { group: overlay } );
+	    		} else {
+		    		stage = Stage {
+		    			height: 768
+		    			width: 1024
+				    	title: "Statistics"
+				    	icons: [
+				    		Image { url:"{__ROOT__}images/png/icon_32x32.png" },
+							Image { url:"{__ROOT__}images/png/icon_16x16.png" }
+				    	]
+				    	scene: scene
+			    		onClose: function() {
+			    		 	closed = true;
+			    		 	close();
+			  				}
+			    		}
 	    		}
-	    		AppState.setOverlay( scene, Overlay { group: overlay } );
 	    	}
     	closed = false;
 	}
@@ -176,7 +193,8 @@ public class StatisticsWindow {
 		pageMap.clear();
 		stage.close()
 	}
-		
+
+			
 }
 	
 
