@@ -48,10 +48,10 @@ public class ExecutionChangeSupportImpl implements ExecutionChangeSupport
 	}
 
 	@Override
-	public void fireExecutionStoped(ExecutionManager.State  oldState)
+	public void fireExecutionStopped(ExecutionManager.State  oldState)
 	{
 		for( ExecutionListener el: listeners)
-			el.executionStoped(oldState);
+			el.executionStopped(oldState);
 	}
 
 	@Override

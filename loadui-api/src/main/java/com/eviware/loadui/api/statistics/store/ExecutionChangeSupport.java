@@ -21,42 +21,42 @@ import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
  * Support for handling execution events.
  * 
  * @author robert
- *
+ * 
  */
 public interface ExecutionChangeSupport
 {
 
 	/**
-	 * Add execution listener 
-	 *
+	 * Add execution listener
+	 * 
 	 * @param el
 	 */
 	void addExecutionListener( ExecutionListener el );
-	
+
 	/**
 	 * remove all listeners
 	 */
 	void removeAllExecutionListeners();
-	
+
 	/**
 	 * remove particular ExecutionListener
 	 * 
 	 * @param el
 	 */
 	void removeExecutionListener( ExecutionListener el );
-	
+
 	/**
 	 * notify all start execution listeners
 	 */
-	void fireExecutionStarted(State oldState);
-	
+	void fireExecutionStarted( State oldState );
+
 	/**
 	 * notify all paused execution listeners
 	 */
-	void fireExecutionPaused(State oldState);
-	
+	void fireExecutionPaused( State oldState );
+
 	/**
-	 * notify all stoped execution listeners.
+	 * notify all stopped execution listeners.
 	 */
-	void fireExecutionStoped(State oldState);
+	void fireExecutionStopped( State oldState );
 }
