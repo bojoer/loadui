@@ -21,12 +21,14 @@ import javafx.scene.layout.Resizable;
 import javafx.scene.layout.Container;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Stack;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
+import javafx.geometry.HPos;
 import javafx.util.Sequences;
 
 import com.sun.javafx.scene.layout.Region;
@@ -52,6 +54,8 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.util.BeanInjector;
 import java.util.EventObject;
+
+def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
 
 /**
  * Base Chart Node, visualizes a ChartGroup.
@@ -79,7 +83,11 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 		chartGroup.addEventListener( BaseEvent.class, listener );
 		title = chartGroup.getTitle();
 		itemCount = chartGroup.getChildCount();
-		chartViewHolder = ChartViewHolder { chartView: chartGroup.getChartView(), label: bind "{title} ({itemCount})" };
+		chartViewHolder = ChartViewHolder {
+			chartView: chartGroup.getChartView()
+			label: bind "{title} ({itemCount})"
+			layoutInfo: chartViewInfo
+		};
 	}
 	
 	override var blocksMouse = true;
@@ -92,7 +100,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 		content: [
 			Region { width: bind width, height: bind height, managed: false, style: "-fx-background-color: gray;" },
 			//Label { text: bind "{title} ({itemCount})" },
-			HBox { content: bind chartViewHolder }
+			Stack { nodeHPos: HPos.LEFT,  content: bind chartViewHolder }
 		]
 	}
 	
@@ -149,6 +157,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 				content: for( chart in chartGroup.getChildren() ) ChartViewHolder {
 					chartView: chartGroup.getChartViewForChart( chart as Chart )
 					label: "{chart.getStatisticHolder()}"
+					layoutInfo: chartViewInfo
 				}
 			}
 			insert expandedNode into (resizable as Container).content;
@@ -165,6 +174,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 				content: for( source in chartGroup.getSources() ) ChartViewHolder {
 					chartView: chartGroup.getChartViewForSource( source )
 					label: source
+					layoutInfo: chartViewInfo
 				}
 			}
 			insert expandedNode into (resizable as Container).content;
@@ -191,7 +201,11 @@ class ChartGroupListener extends EventHandler {
 			} );
 		} else if( ChartGroup.TYPE == event.getKey() ) {
 			FxUtils.runInFxThread( function():Void {
-				chartViewHolder = ChartViewHolder { chartView: chartGroup.getChartView(), label: bind "{title} ({itemCount})" };
+				chartViewHolder = ChartViewHolder {
+					chartView: chartGroup.getChartView()
+					label: bind "{title} ({itemCount})"
+					layoutInfo: chartViewInfo
+				};
 				if( expandGroups ) {
 					toggleGroupExpand();
 					toggleGroupExpand();

@@ -61,6 +61,9 @@ public class ChartGroupImpl implements ChartGroup
 		providerFactory = BeanInjector.getBean( ChartViewProviderFactory.class );
 
 		provider = providerFactory.buildProvider( getType(), this );
+
+		for( ChartConfig chartConfig : config.getChartArray() )
+			collectionSupport.addChild( new ChartImpl( this, chartConfig ) );
 	}
 
 	@Override

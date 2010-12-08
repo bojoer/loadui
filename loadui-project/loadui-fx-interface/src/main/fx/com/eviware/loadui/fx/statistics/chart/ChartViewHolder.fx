@@ -21,6 +21,7 @@ import javafx.scene.layout.Resizable;
 import javafx.scene.layout.Container;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Stack;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
@@ -56,10 +57,14 @@ public class ChartViewHolder extends BaseNode, Resizable {
 		content: [
 			Label { text: bind label },
 			HBox {
+				layoutInfo: LayoutInfo { width: bind width }
 				spacing: 5
 				content: [
 					Rectangle { width: 100, height: 100 },
-					VBox { content: bind chart }
+					Stack {
+						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true, vgrow: Priority.ALWAYS }
+						content: bind chart
+					}
 				]
 			}
 		]
