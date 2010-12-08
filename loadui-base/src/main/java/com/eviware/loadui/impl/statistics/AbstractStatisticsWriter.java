@@ -46,7 +46,8 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 
 	protected long delay;
 	protected long lastTimeFlushed = System.currentTimeMillis();
-
+	private long pauseStartedTime;
+	
 	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values )
 	{
@@ -81,6 +82,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 					 * Than unpause comes after 3s( that woud be between 6s and 7s from test start ).
 					 * flush() will be when test paused (3s + delta) and next is at 7s. 
 					 */
+					pauseStartedTime = 0;
 					lastTimeFlushed = System.currentTimeMillis() + delta;
 				}
 			}
@@ -96,7 +98,8 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 					 * rember how time is spent in this interval after last
 					 * time data is written to db.
 					 */
-					delta = System.currentTimeMillis() - lastTimeFlushed;
+					pauseStartedTime = System.currentTimeMillis();
+					delta = pauseStartedTime - lastTimeFlushed;
 					flush();
 				}
 			}
@@ -188,7 +191,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			ExecutionManager executionManager = manager.getExecutionManager();
 			Execution currentExecution = executionManager.getCurrentExecution();
 
-			int time = currentExecution == null ? -1 : ( int )( timestamp - currentExecution.getStartTime() );
+			int time = currentExecution == null ? -1 : ( int )( timestamp - currentExecution.getStartTime() - pauseStartedTime );
 			executionManager.writeEntry( getId(), new EntryImpl( time, values, true ), StatisticVariable.MAIN_SOURCE );
 		}
 	}
