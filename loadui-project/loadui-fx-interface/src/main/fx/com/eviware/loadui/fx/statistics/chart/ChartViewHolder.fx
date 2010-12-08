@@ -34,6 +34,7 @@ import com.sun.javafx.scene.layout.Region;
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 
 /**
@@ -41,7 +42,7 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
  *
  * @author dain.nilsson
  */
-public class ChartViewHolder extends BaseNode, Resizable {
+public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 	public var label:String = "ChartView label";
 	
 	public-init var chartView:ChartView on replace {
@@ -68,6 +69,11 @@ public class ChartViewHolder extends BaseNode, Resizable {
 				]
 			}
 		]
+	}
+	
+	override function release():Void {
+		if( chart instanceof Releasable )
+			(chart as Releasable).release();
 	}
 	
 	override function create():Node {

@@ -41,6 +41,7 @@ import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
 
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -62,7 +63,7 @@ def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
  *
  * @author dain.nilsson
  */
-public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
+public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable {
 	var title:String = "ChartGroupHolder";
 	var itemCount:Integer = 0;
 	
@@ -71,7 +72,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 	
 	public-read var expandGroups = false;
 	public-read var expandAgents = false;
-	var expandedNode:Node;
+	var expandedNode:Container;
 	
 	var chartViewHolder:ChartViewHolder;
 	
@@ -125,6 +126,14 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 		insert configurationHolder into (resizable as Container).content;
 	}
 	
+	override function release():Void {
+		chartViewHolder.release();
+		
+		if( expandedNode != null )
+			for( node in expandedNode.content )
+				(node as ChartViewHolder).release();
+	}
+	
 	override var accept = function( draggable:Draggable ):Boolean {
 		draggable instanceof StatisticsToolbarItem
 	}
@@ -162,6 +171,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 			}
 			insert expandedNode into (resizable as Container).content;
 		} else {
+			for( node in expandedNode.content )
+				(node as ChartViewHolder).release();
 			delete expandedNode from (resizable as Container).content;
 		}
 	}
@@ -179,6 +190,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 			}
 			insert expandedNode into (resizable as Container).content;
 		} else {
+			for( node in expandedNode.content )
+				(node as ChartViewHolder).release();
 			delete expandedNode from (resizable as Container).content;
 		}
 	}

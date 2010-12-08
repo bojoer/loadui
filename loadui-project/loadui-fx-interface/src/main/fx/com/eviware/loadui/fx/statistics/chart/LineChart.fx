@@ -28,6 +28,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Math;
 
 import com.sun.javafx.scene.layout.Region;
 
@@ -39,35 +42,81 @@ import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.model.Releasable;
+import java.awt.Color;
 import java.util.EventObject;
+import java.util.HashMap;
 
 import javafx.ext.swing.SwingComponent;
 import com.jidesoft.chart.Chart;
+import com.jidesoft.chart.model.DefaultChartModel;
+import com.jidesoft.chart.model.ChartPoint;
+import com.jidesoft.range.TimeRange;
+import com.jidesoft.chart.axis.TimeAxis;
+import com.jidesoft.chart.style.ChartStyle;
 
 /**
  * Base LineChart Node, visualizes a LineChartView.
  *
  * @author dain.nilsson
  */
-public class LineChart extends BaseNode, Resizable {
+public class LineChart extends BaseNode, Resizable, Releasable {
 	def listener = new ChartViewListener();
+	def lines = new HashMap();
 	
-	public-init var chartView:LineChartView on replace {
-		chartView.addEventListener( CollectionEvent.class, listener );
+	var min:Number = 0;
+	var max:Number = 0;
+	
+	def timeline = Timeline {
+		repeatCount: Timeline.INDEFINITE
+		keyFrames: [
+			KeyFrame {
+				time: 1s
+				action: function():Void {
+					def time = java.lang.System.currentTimeMillis();
+					for( key in lines.keySet() ) {
+						def segment = key as LineSegment;
+						def model = lines.get( key ) as DefaultChartModel;
+						println("Adding point: {time}:{segment.getStatistic().getValue() as Number}");
+						def yValue = segment.getStatistic().getValue() as Number;
+						min = Math.min( min, yValue );
+						max = Math.max( max, yValue );
+						model.addPoint( new ChartPoint( time, yValue ) );
+					}
+					chart.getXAxis().setRange( new TimeRange( time - 10000, time ) );
+					chart.getYAxis().setRange( min, max );
+				}
+			}
+		]
+	}
+	
+	public-init var chartView:LineChartView on replace oldChartView {
+		if( chartView != null ) {
+			chartView.addEventListener( CollectionEvent.class, listener );
+			
+			for( segment in chartView.getSegments() )
+				addedSegment( segment );
+				
+			timeline.playFromStart();
+			
+			//TODO: Remove this when LineSegments are configurable within the gui.
+			if( chartView instanceof ConfigurableLineChartView and chartView.getSegments().isEmpty() ) {
+				def clcv = chartView as ConfigurableLineChartView;
+				clcv.addSegment( "TimeTaken", "AVERAGE", "main" );
+			}
+		}
 		
-		for( segment in chartView.getSegments() )
-			addedSegment( segment );
-		
-		//TODO: Remove this when LineSegments are configurable within the gui.
-		if( chartView instanceof ConfigurableLineChartView and chartView.getSegments().isEmpty() ) {
-			def clcv = chartView as ConfigurableLineChartView;
-			clcv.addSegment( "TimeTaken", "AVERAGE", "main" );
+		if( oldChartView != null ) {
+			chartView.removeEventListener( CollectionEvent.class, listener );
+			timeline.stop();
+			lines.clear();
 		}
 	}
 	
 	override var layoutInfo = LayoutInfo { vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS }
 	
-	def chartNode = SwingComponent.wrap( new Chart() );
+	def chart = new Chart();
+	def chartNode = SwingComponent.wrap( chart );
 	
 	def resizable:VBox = VBox {
 		width: bind width
@@ -75,8 +124,21 @@ public class LineChart extends BaseNode, Resizable {
 		content: Stack { content: chartNode }
 	}
 	
+	init {
+		chart.setChartBackground(new Color(0, 0, 0, 0));
+		chart.setXAxis( new TimeAxis() );
+		chart.setVerticalGridLinesVisible( false );
+		chart.setHorizontalGridLinesVisible( false );
+		
+		chartNode.layoutInfo = LayoutInfo { height: 150, hfill: true, hgrow: Priority.ALWAYS }
+		timeline.playFromStart();
+	}
+	
+	override function release():Void {
+		chartView = null;
+	}
+	
 	override function create():Node {
-		chartNode.layoutInfo = LayoutInfo { vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS }
 		resizable
 	}
 	
@@ -90,10 +152,16 @@ public class LineChart extends BaseNode, Resizable {
 	
 	function addedSegment( segment:LineSegment ):Void {
 		println("ADDED: {segment} to {chartView}");
+		def model = new DefaultChartModel( "{chartView}" );
+		lines.put( segment, model );
+		def style = new ChartStyle( Color.blue, false, true );
+		chart.addModel( model, style );
 	}
 	
 	function removedSegment( segment:LineSegment ):Void {
 		println("REMOVED: {segment} from {chartView}");
+		def model = lines.remove( segment ) as DefaultChartModel;
+		chart.removeModel( model );
 	}
 }
 

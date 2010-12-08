@@ -12,6 +12,8 @@ public class SourceLineSegment implements LineSegment
 	private final String source;
 	private final DelegatingAttributeHolderSupport attributeSupport;
 
+	private Statistic<?> statistic;
+
 	public SourceLineSegment( ChartLineSegment parent, String source )
 	{
 		this.parent = parent;
@@ -22,7 +24,11 @@ public class SourceLineSegment implements LineSegment
 	@Override
 	public Statistic<?> getStatistic()
 	{
-		return null;
+		if( statistic == null )
+			statistic = parent.getChart().getStatisticHolder().getStatisticVariable( parent.getVariableName() )
+					.getStatistic( parent.getStatisticName(), source );
+
+		return statistic;
 	}
 
 	@Override
