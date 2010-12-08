@@ -44,6 +44,8 @@ import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.Chart;
+import com.eviware.loadui.api.statistics.store.ExecutionManager;
+import com.eviware.loadui.api.statistics.store.ExecutionListener;
 
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
@@ -61,6 +63,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 	var itemCount:Integer = 0;
 	
 	def statisticsManager = BeanInjector.getBean(StatisticsManager.class);
+	def executionManager = BeanInjector.getBean(ExecutionManager.class);
 	
 	public-read var expandGroups = false;
 	public-read var expandAgents = false;
@@ -70,6 +73,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 	
 	def listener = new ChartGroupListener();
 	def statisticsManagerListener = new StatisticsManagerListener();
+	def executionManagerListener = new ExecutionManagerListener();
 	
 	public-init var chartGroup:ChartGroup on replace oldChartGroup {
 		chartGroup.addEventListener( BaseEvent.class, listener );
@@ -107,6 +111,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable {
 	
 	init {
 	   statisticsManager.addEventListener( BaseEvent.class, statisticsManagerListener );
+	   executionManager.addExecutionListener( executionManagerListener );
 	   
 		insert buttonBar into (resizable as Container).content;
 		insert configurationHolder into (resizable as Container).content;
@@ -219,9 +224,7 @@ class StatisticsManagerListener extends EventHandler {
 					FxUtils.runInFxThread( function(): Void {
 					   def sh: StatisticHolder = event.getElement() as StatisticHolder;
 					   for(chart in chartGroup.getChildren()){
-					       println("---chart check");
 					      if(chart.getStatisticHolder() == sh){
-					         println("---delete");
 					         chart.delete();
 					         break;
 					      }
@@ -233,5 +236,20 @@ class StatisticsManagerListener extends EventHandler {
 				}
 			}
 		}
+	}
+}
+
+class ExecutionManagerListener extends ExecutionListener {  
+
+   override function executionStarted(){
+   	println("---satrted");
+   }
+
+	override function executionPaused(){
+	   println("---paused"); 
+	}
+
+	override function executionStoped(){
+	    println("---stoped");
 	}
 }
