@@ -89,6 +89,7 @@ public class StatisticsWindow {
 				        		}
 				        		onTabDeleted: function(tb) {
 				        			def page: StatisticPage = pageMap.get(tb) as StatisticPage;
+				        			(tb.value as ChartPage).release();
 				        			page.delete();
 				        		}
 				        		uniqueNames: true
@@ -190,6 +191,8 @@ public class StatisticsWindow {
 	
 	public function close() {
 		tabs.clear();
+		for( tb in pageMap.keySet() )
+			((tb as ToggleButton).value as ChartPage).release();
 		pageMap.clear();
 		stage.close()
 	}
