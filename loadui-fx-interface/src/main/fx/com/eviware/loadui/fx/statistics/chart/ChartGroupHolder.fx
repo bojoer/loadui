@@ -47,8 +47,6 @@ import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.Chart;
-import com.eviware.loadui.api.statistics.store.ExecutionManager;
-import com.eviware.loadui.api.statistics.store.ExecutionListener;
 
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
@@ -68,7 +66,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	var itemCount:Integer = 0;
 	
 	def statisticsManager = BeanInjector.getBean(StatisticsManager.class);
-	def executionManager = BeanInjector.getBean(ExecutionManager.class);
 	
 	public-read var expandGroups = false;
 	public-read var expandAgents = false;
@@ -78,7 +75,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	
 	def listener = new ChartGroupListener();
 	def statisticsManagerListener = new StatisticsManagerListener();
-	def executionManagerListener = new ExecutionManagerListener();
 	
 	public-init var chartGroup:ChartGroup on replace oldChartGroup {
 		chartGroup.addEventListener( BaseEvent.class, listener );
@@ -120,10 +116,25 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	
 	init {
 	   statisticsManager.addEventListener( BaseEvent.class, statisticsManagerListener );
-	   executionManager.addExecutionListener( executionManagerListener );
 	   
 		insert buttonBar into (resizable as Container).content;
 		insert configurationHolder into (resizable as Container).content;
+	}
+	
+	public function update():Void {
+		chartViewHolder.update();
+		
+		if( expandedNode != null )
+			for( node in expandedNode.content )
+				(node as ChartViewHolder).update();
+	}
+	
+	public function reset():Void {
+		chartViewHolder.reset();
+		
+		if( expandedNode != null )
+			for( node in expandedNode.content )
+				(node as ChartViewHolder).reset();
 	}
 	
 	override function release():Void {
@@ -263,20 +274,5 @@ class StatisticsManagerListener extends EventHandler {
 				}
 			}
 		}
-	}
-}
-
-class ExecutionManagerListener extends ExecutionListener {  
-
-   override function executionStarted(state:ExecutionManager.State){
-   	println("---started");
-   }
-
-	override function executionPaused(state:ExecutionManager.State){
-	   println("---paused"); 
-	}
-
-	override function executionStopped(state:ExecutionManager.State){
-	    println("---stopped");
 	}
 }

@@ -28,8 +28,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.util.Math;
 
 import com.sun.javafx.scene.layout.Region;
@@ -60,35 +58,15 @@ import com.jidesoft.chart.style.ChartStyle;
  *
  * @author dain.nilsson
  */
-public class LineChart extends BaseNode, Resizable, Releasable {
+public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	def listener = new ChartViewListener();
 	def lines = new HashMap();
+	def chart = new Chart();
+	def chartNode = SwingComponent.wrap( chart );
 	
+	var padding = 2;
 	var min:Number = 0;
 	var max:Number = 0;
-	
-	def timeline = Timeline {
-		repeatCount: Timeline.INDEFINITE
-		keyFrames: [
-			KeyFrame {
-				time: 1s
-				action: function():Void {
-					def time = java.lang.System.currentTimeMillis();
-					for( key in lines.keySet() ) {
-						def segment = key as LineSegment;
-						def model = lines.get( key ) as DefaultChartModel;
-						println("Adding point: {time}:{segment.getStatistic().getValue() as Number}");
-						def yValue = segment.getStatistic().getValue() as Number;
-						min = Math.min( min, yValue );
-						max = Math.max( max, yValue );
-						model.addPoint( new ChartPoint( time, yValue ) );
-					}
-					chart.getXAxis().setRange( new TimeRange( time - 10000, time ) );
-					chart.getYAxis().setRange( min, max );
-				}
-			}
-		]
-	}
 	
 	public-init var chartView:LineChartView on replace oldChartView {
 		if( chartView != null ) {
@@ -96,8 +74,6 @@ public class LineChart extends BaseNode, Resizable, Releasable {
 			
 			for( segment in chartView.getSegments() )
 				addedSegment( segment );
-				
-			timeline.playFromStart();
 			
 			//TODO: Remove this when LineSegments are configurable within the gui.
 			if( chartView instanceof ConfigurableLineChartView and chartView.getSegments().isEmpty() ) {
@@ -108,15 +84,11 @@ public class LineChart extends BaseNode, Resizable, Releasable {
 		
 		if( oldChartView != null ) {
 			chartView.removeEventListener( CollectionEvent.class, listener );
-			timeline.stop();
 			lines.clear();
 		}
 	}
 	
 	override var layoutInfo = LayoutInfo { vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS }
-	
-	def chart = new Chart();
-	def chartNode = SwingComponent.wrap( chart );
 	
 	def resizable:VBox = VBox {
 		width: bind width
@@ -125,13 +97,31 @@ public class LineChart extends BaseNode, Resizable, Releasable {
 	}
 	
 	init {
-		chart.setChartBackground(new Color(0, 0, 0, 0));
+		chart.setChartBackground( new Color(0, 0, 0, 0) );
 		chart.setXAxis( new TimeAxis() );
 		chart.setVerticalGridLinesVisible( false );
 		chart.setHorizontalGridLinesVisible( false );
 		
 		chartNode.layoutInfo = LayoutInfo { height: 150, hfill: true, hgrow: Priority.ALWAYS }
-		timeline.playFromStart();
+	}
+	
+	override function update():Void {
+		def time = java.lang.System.currentTimeMillis();
+		for( key in lines.keySet() ) {
+			def segment = key as LineSegment;
+			def model = lines.get( key ) as DefaultChartModel;
+			def yValue = segment.getStatistic().getValue() as Number;
+			min = Math.min( min, yValue );
+			max = Math.max( max, yValue );
+			model.addPoint( new ChartPoint( time, yValue ) );
+		}
+		chart.getXAxis().setRange( new TimeRange( time - 10000, time ) );
+		chart.getYAxis().setRange( min - padding, max + padding );
+	}
+	
+	override function reset():Void {
+		for( model in lines.values() )
+			(model as DefaultChartModel).clearPoints();
 	}
 	
 	override function release():Void {
@@ -155,6 +145,7 @@ public class LineChart extends BaseNode, Resizable, Releasable {
 		def model = new DefaultChartModel( "{chartView}" );
 		lines.put( segment, model );
 		def style = new ChartStyle( Color.blue, false, true );
+		style.setLineWidth( 2 );
 		chart.addModel( model, style );
 	}
 	

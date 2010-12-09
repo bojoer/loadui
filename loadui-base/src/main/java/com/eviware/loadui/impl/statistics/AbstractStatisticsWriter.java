@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +47,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	protected long delay;
 	protected long lastTimeFlushed = System.currentTimeMillis();
 	private long pauseStartedTime;
-	
+
 	private long totalPause = 0;
 
 	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
@@ -197,8 +196,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			ExecutionManager executionManager = manager.getExecutionManager();
 			Execution currentExecution = executionManager.getCurrentExecution();
 
-			int time = currentExecution == null ? -1
-					: ( int )( timestamp - currentExecution.getStartTime() - totalPause );
+			int time = currentExecution == null ? -1 : ( int )( timestamp - currentExecution.getStartTime() - totalPause );
 			executionManager.writeEntry( getId(), new EntryImpl( time, values, true ), StatisticVariable.MAIN_SOURCE );
 		}
 	}

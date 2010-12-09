@@ -15,17 +15,13 @@
  */
 package com.eviware.loadui.fx.statistics.chart;
 
-import javafx.scene.Node;
-
-import com.eviware.loadui.api.statistics.model.chart.*;
-
 /**
- * Creates a Node for a specific ChartView
+ * Base marker for a Chart.
+ *
+ * @author dain.nilsson
  */
-public function createChart( chartView:ChartView ):BaseChart {
-	if( chartView instanceof LineChartView ) {
-		LineChart { chartView: chartView as LineChartView }
-	} else {
-		null
-	}
+public mixin class BaseChart {
+	public abstract function update():Void;
+	
+	public abstract function reset():Void;
 }

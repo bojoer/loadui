@@ -49,7 +49,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 		chart = ChartRegistry.createChart( chartView );
 	}
 	
-	var chart:Node;
+	var chart:BaseChart;
 	
 	def resizable:VBox = VBox {
 		width: bind width
@@ -64,11 +64,19 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 					Rectangle { width: 100, height: 100 },
 					Stack {
 						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true, vgrow: Priority.ALWAYS }
-						content: bind chart
+						content: bind chart as Node
 					}
 				]
 			}
 		]
+	}
+	
+	public function update():Void {
+		chart.update();
+	}
+	
+	public function reset():Void {
+		chart.reset();
 	}
 	
 	override function release():Void {

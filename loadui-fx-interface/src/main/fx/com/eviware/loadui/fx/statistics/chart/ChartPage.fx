@@ -31,6 +31,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.util.Math;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 
 import com.sun.javafx.scene.layout.Region;
 
@@ -42,11 +44,15 @@ import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
 
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.store.ExecutionManager;
+import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.util.BeanInjector;
 import java.util.EventObject;
 
 /**
@@ -54,8 +60,26 @@ import java.util.EventObject;
  *
  * @author dain.nilsson
  */
-public class ChartPage extends BaseNode, Resizable {
+public class ChartPage extends BaseNode, Resizable, Releasable {
 	def listener = new ChartPageListener();
+	def executionListener = new ExecutionManagerListener();
+	
+	def executionManager = BeanInjector.getBean( ExecutionManager.class ) on replace {
+		executionManager.addExecutionListener( executionListener );
+	}
+	
+	def timeline = Timeline {
+		repeatCount: Timeline.INDEFINITE
+		keyFrames: [
+			KeyFrame {
+				time: 1s
+				action: function():Void {
+					for( holder in innerContent )
+						holder.update();
+				}
+			}
+		]
+	}
 	
 	public-init var statisticPage:StatisticPage on replace {
 		statisticPage.addEventListener( BaseEvent.class, listener );
@@ -96,6 +120,13 @@ public class ChartPage extends BaseNode, Resizable {
 		}
 	}
 	
+	override function release():Void {
+		timeline.stop();
+		executionManager.removeExecutionListener( executionListener );
+		for( holder in innerContent )
+			holder.release();
+	}
+	
 	override function create():Node {
 		resizable
 	}
@@ -106,6 +137,28 @@ public class ChartPage extends BaseNode, Resizable {
 	
 	override function getPrefWidth( height:Number ):Number {
 		resizable.getPrefWidth( height )
+	}
+}
+
+class ExecutionManagerListener extends ExecutionListener {
+	var resetOnStart = false;
+   override function executionStarted(state:ExecutionManager.State) {
+   	println("---started");
+   	if( resetOnStart )
+   		for( holder in innerContent )
+   			holder.reset();
+   	timeline.playFromStart();
+   }
+
+	override function executionPaused(state:ExecutionManager.State) {
+	   println("---paused");
+	   timeline.stop();
+	}
+
+	override function executionStopped(state:ExecutionManager.State) {
+	    println("---stopped");
+	    timeline.stop();
+	    resetOnStart = true;
 	}
 }
 
