@@ -36,6 +36,7 @@ import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 
 import com.eviware.loadui.api.statistics.Statistic;
+import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
@@ -174,17 +175,17 @@ class MyChartModel extends DefaultChartModel {
 	public-init var segment:LineSegment on replace {
 		statistic = segment.getStatistic();
 		
-		/*def latestTime = statistic.getTimestamp();
+		def latestTime = statistic.getTimestamp();
 		if( latestTime >= 0 ) {
 			def startTime = Math.max( 0, latestTime - 1000 );
 			for( dataPoint in statistic.getPeriod( startTime, latestTime ) ) {
-				def yValue = dataPoint.getValue();
+				def yValue = (dataPoint as DataPoint).getValue() as Number;
 				min = Math.min( min, yValue );
 				max = Math.max( max, yValue );
-				addPoint( new ChartPoint( dataPoint.getTimestamp(), yValue ) );
+				addPoint( new ChartPoint( (dataPoint as DataPoint).getTimestamp(), yValue ) );
 			}
 			maxTime = Math.max( maxTime, latestTime );
-		}*/
+		}
 	}
 	
 	public function refresh():Void {
