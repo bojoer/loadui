@@ -19,18 +19,17 @@ import com.eviware.loadui.api.statistics.DataPoint;
 
 public class DataPointImpl<T extends Number> implements DataPoint<T>
 {
-
-	private long timestamp;
+	private int timestamp;
 	private T value;
 
-	public DataPointImpl(long timestamp, T value)
+	public DataPointImpl( int timestamp, T value )
 	{
 		this.timestamp = timestamp;
 		this.value = value;
 	}
-	
+
 	@Override
-	public long getTimestamp()
+	public int getTimestamp()
 	{
 		return timestamp;
 	}
@@ -40,5 +39,4 @@ public class DataPointImpl<T extends Number> implements DataPoint<T>
 	{
 		return value;
 	}
-
 }
