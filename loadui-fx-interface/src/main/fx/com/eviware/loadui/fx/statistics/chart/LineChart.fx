@@ -173,6 +173,18 @@ class MyChartModel extends DefaultChartModel {
 	
 	public-init var segment:LineSegment on replace {
 		statistic = segment.getStatistic();
+		
+		/*def latestTime = statistic.getTimestamp();
+		if( latestTime >= 0 ) {
+			def startTime = Math.max( 0, latestTime - 1000 );
+			for( dataPoint in statistic.getPeriod( startTime, latestTime ) ) {
+				def yValue = dataPoint.getValue();
+				min = Math.min( min, yValue );
+				max = Math.max( max, yValue );
+				addPoint( new ChartPoint( dataPoint.getTimestamp(), yValue ) );
+			}
+			maxTime = Math.max( maxTime, latestTime );
+		}*/
 	}
 	
 	public function refresh():Void {
