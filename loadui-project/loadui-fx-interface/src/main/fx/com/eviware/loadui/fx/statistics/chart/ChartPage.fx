@@ -79,8 +79,9 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 	
 	def executionManager = BeanInjector.getBean( ExecutionManager.class ) on replace {
 		executionManager.addExecutionListener( executionListener );
-		if( executionManager.getState() == ExecutionManager.State.STARTED )
+		if( executionManager.getState() == ExecutionManager.State.STARTED ) {
 			timeline.playFromStart();
+		}
 	}
 	
 	public-init var statisticPage:StatisticPage on replace {
