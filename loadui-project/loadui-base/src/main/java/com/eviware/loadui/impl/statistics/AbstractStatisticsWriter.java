@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,6 +48,8 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	protected long delay;
 	protected long lastTimeFlushed = System.currentTimeMillis();
 	private long pauseStartedTime;
+	
+	private long totalPause = 0;
 
 	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values )
@@ -83,7 +86,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 					 * from test start ). flush() will be when test paused (3s +
 					 * delta) and next is at 7s.
 					 */
-					pauseStartedTime = 0;
+					pauseStartedTime = System.currentTimeMillis();
 					lastTimeFlushed = System.currentTimeMillis() + delta;
 				}
 			}
@@ -99,9 +102,9 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 					 * rember how time is spent in this interval after last time data
 					 * is written to db.
 					 */
-					pauseStartedTime = System.currentTimeMillis();
 					delta = pauseStartedTime - lastTimeFlushed;
 					flush();
+					totalPause += System.currentTimeMillis() - pauseStartedTime;
 				}
 			}
 
@@ -117,6 +120,8 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 				{
 					delta = 0;
 					flush();
+					pauseStartedTime = 0;
+					totalPause = 0;
 				}
 			}
 		} );
@@ -193,7 +198,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			Execution currentExecution = executionManager.getCurrentExecution();
 
 			int time = currentExecution == null ? -1
-					: ( int )( timestamp - currentExecution.getStartTime() - pauseStartedTime );
+					: ( int )( timestamp - currentExecution.getStartTime() - totalPause );
 			executionManager.writeEntry( getId(), new EntryImpl( time, values, true ), StatisticVariable.MAIN_SOURCE );
 		}
 	}
