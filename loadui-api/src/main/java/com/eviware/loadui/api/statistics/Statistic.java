@@ -53,4 +53,12 @@ public interface Statistic<T extends Number> extends Value<T>
 	 * @return
 	 */
 	public Iterable<DataPoint<T>> getPeriod( int start, int end );
+
+	/**
+	 * Gets the timestamp of when the last value was recorded, expressed as the
+	 * number of milliseconds since the beginning of the Execution.
+	 * 
+	 * @return
+	 */
+	public int getTimestamp();
 }

@@ -35,6 +35,7 @@ import com.sun.javafx.scene.layout.Region;
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 
+import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
@@ -46,11 +47,12 @@ import java.util.EventObject;
 import java.util.HashMap;
 
 import javafx.ext.swing.SwingComponent;
+import com.jidesoft.chart.annotation.Annotation;
 import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.model.DefaultChartModel;
 import com.jidesoft.chart.model.ChartPoint;
 import com.jidesoft.range.TimeRange;
-import com.jidesoft.chart.axis.TimeAxis;
+import com.jidesoft.chart.axis.NumericAxis;
 import com.jidesoft.chart.style.ChartStyle;
 
 /**
@@ -67,6 +69,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	var padding = 2;
 	var min:Number = 0;
 	var max:Number = 0;
+	var maxTime:Number = 0;
 	
 	public-init var chartView:LineChartView on replace oldChartView {
 		if( chartView != null ) {
@@ -98,7 +101,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	init {
 		chart.setChartBackground( new Color(0, 0, 0, 0) );
-		chart.setXAxis( new TimeAxis() );
+		chart.setXAxis( new NumericAxis() );
 		chart.setVerticalGridLinesVisible( false );
 		chart.setHorizontalGridLinesVisible( false );
 		
@@ -106,22 +109,19 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	override function update():Void {
-		def time = java.lang.System.currentTimeMillis();
-		for( key in lines.keySet() ) {
-			def segment = key as LineSegment;
-			def model = lines.get( key ) as DefaultChartModel;
-			def yValue = segment.getStatistic().getValue() as Number;
-			min = Math.min( min, yValue );
-			max = Math.max( max, yValue );
-			model.addPoint( new ChartPoint( time, yValue ) );
+		for( model in lines.values() ) {
+			(model as MyChartModel).refresh();
 		}
-		chart.getXAxis().setRange( new TimeRange( time - 10000, time ) );
+		chart.getXAxis().setRange( new TimeRange( maxTime - 10000, maxTime ) );
 		chart.getYAxis().setRange( min - padding, max + padding );
 	}
 	
 	override function reset():Void {
 		for( model in lines.values() )
 			(model as DefaultChartModel).clearPoints();
+		maxTime = 0;
+		max = 0;
+		min = 0;
 	}
 	
 	override function release():Void {
@@ -141,8 +141,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	function addedSegment( segment:LineSegment ):Void {
-		println("ADDED: {segment} to {chartView}");
-		def model = new DefaultChartModel( "{chartView}" );
+		def model = MyChartModel { segment: segment };
 		lines.put( segment, model );
 		def style = new ChartStyle( Color.blue, false, true );
 		style.setLineWidth( 2 );
@@ -150,7 +149,6 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	function removedSegment( segment:LineSegment ):Void {
-		println("REMOVED: {segment} from {chartView}");
 		def model = lines.remove( segment ) as DefaultChartModel;
 		chart.removeModel( model );
 	}
@@ -165,4 +163,29 @@ class ChartViewListener extends EventHandler {
 			FxUtils.runInFxThread( function():Void { removedSegment( event.getElement() as LineSegment ) } );
 		}
 	}
+}
+
+class MyChartModel extends DefaultChartModel {
+	var timestamp = -1;
+	var statistic:Statistic;
+	
+	public-init var segment:LineSegment on replace {
+		statistic = segment.getStatistic();
+	}
+	
+	public function refresh():Void {
+		def latestTime = statistic.getTimestamp();
+		if( timestamp != latestTime ) {
+			timestamp = latestTime;
+			def yValue = statistic.getValue() as Number;
+			min = Math.min( min, yValue );
+			max = Math.max( max, yValue );
+			maxTime = Math.max( maxTime, timestamp );
+			addPoint( new ChartPoint( timestamp, yValue ) );
+		}
+	}
+}
+
+class LastPointTime extends Annotation {
+	public var timestamp = -1;
 }

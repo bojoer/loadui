@@ -28,7 +28,7 @@ public interface DataPoint<T extends Number>
 	 * 
 	 * @return
 	 */
-	public long getTimestamp();
+	public int getTimestamp();
 
 	/**
 	 * Gets the value of the DataPoint.

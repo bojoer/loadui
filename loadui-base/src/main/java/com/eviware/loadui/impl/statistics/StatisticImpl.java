@@ -124,4 +124,11 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 			throw new UnsupportedOperationException();
 		}
 	}
+
+	@Override
+	public int getTimestamp()
+	{
+		Entry lastEntry = manager.getLastEntry( trackId, source );
+		return lastEntry == null ? -1 : lastEntry.getTimestamp();
+	}
 }
