@@ -47,7 +47,6 @@ import java.util.EventObject;
 import java.util.HashMap;
 
 import javafx.ext.swing.SwingComponent;
-import com.jidesoft.chart.annotation.Annotation;
 import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.model.DefaultChartModel;
 import com.jidesoft.chart.model.ChartPoint;
@@ -104,6 +103,9 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		chart.setXAxis( new NumericAxis() );
 		chart.setVerticalGridLinesVisible( false );
 		chart.setHorizontalGridLinesVisible( false );
+		
+		chart.getXAxis().setRange( new TimeRange( 0, 10000 ) );
+		chart.getYAxis().setRange( 0, 10 );
 		
 		chartNode.layoutInfo = LayoutInfo { height: 150, hfill: true, hgrow: Priority.ALWAYS }
 	}
@@ -184,8 +186,4 @@ class MyChartModel extends DefaultChartModel {
 			addPoint( new ChartPoint( timestamp, yValue ) );
 		}
 	}
-}
-
-class LastPointTime extends Annotation {
-	public var timestamp = -1;
 }
