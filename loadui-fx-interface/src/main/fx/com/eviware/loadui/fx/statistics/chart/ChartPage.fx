@@ -64,10 +64,6 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 	def listener = new ChartPageListener();
 	def executionListener = new ExecutionManagerListener();
 	
-	def executionManager = BeanInjector.getBean( ExecutionManager.class ) on replace {
-		executionManager.addExecutionListener( executionListener );
-	}
-	
 	def timeline = Timeline {
 		repeatCount: Timeline.INDEFINITE
 		keyFrames: [
@@ -79,6 +75,12 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 				}
 			}
 		]
+	}
+	
+	def executionManager = BeanInjector.getBean( ExecutionManager.class ) on replace {
+		executionManager.addExecutionListener( executionListener );
+		if( executionManager.getState() == ExecutionManager.State.STARTED )
+			timeline.playFromStart();
 	}
 	
 	public-init var statisticPage:StatisticPage on replace {
