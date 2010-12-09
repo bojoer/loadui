@@ -39,4 +39,10 @@ public class DataPointImpl<T extends Number> implements DataPoint<T>
 	{
 		return value;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "DataPoint(time: " + timestamp + ", value: " + value + ")";
+	}
 }

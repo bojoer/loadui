@@ -113,7 +113,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	override function update():Void {
 		for( model in lines.values() ) {
-			(model as MyChartModel).refresh();
+			(model as LineSegmentModel).refresh();
 		}
 		chart.getXAxis().setRange( new TimeRange( maxTime - 10000, maxTime ) );
 		chart.getYAxis().setRange( min - padding, max + padding );
@@ -144,11 +144,9 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	function addedSegment( segment:LineSegment ):Void {
-		def model = MyChartModel { segment: segment };
+		def model = LineSegmentModel { segment: segment };
 		lines.put( segment, model );
-		def style = new ChartStyle( Color.blue, false, true );
-		style.setLineWidth( 2 );
-		chart.addModel( model, style );
+		chart.addModel( model, model.style );
 	}
 	
 	function removedSegment( segment:LineSegment ):Void {
@@ -168,16 +166,18 @@ class ChartViewListener extends EventHandler {
 	}
 }
 
-class MyChartModel extends DefaultChartModel {
+class LineSegmentModel extends DefaultChartModel {
 	var timestamp = -1;
 	var statistic:Statistic;
+	
+	public-read var style = new ChartStyle( Color.blue, false, true );
 	
 	public-init var segment:LineSegment on replace {
 		statistic = segment.getStatistic();
 		
 		def latestTime = statistic.getTimestamp();
 		if( latestTime >= 0 ) {
-			def startTime = Math.max( 0, latestTime - 1000 );
+			def startTime = Math.max( 0, latestTime - 11000 );
 			for( dataPoint in statistic.getPeriod( startTime, latestTime ) ) {
 				def yValue = (dataPoint as DataPoint).getValue() as Number;
 				min = Math.min( min, yValue );
