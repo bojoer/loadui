@@ -66,8 +66,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		// adding execution listeners.
 		manager.getExecutionManager().addExecutionListener( new ExecutionListenerAdapter()
 		{
-			private long delta;
-
 			@Override
 			public void executionStarted( ExecutionManager.State oldState )
 			{
@@ -85,8 +83,12 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 					 * from test start ). flush() will be when test paused (3s +
 					 * delta) and next is at 7s.
 					 */
-					pauseStartedTime = System.currentTimeMillis();
-					lastTimeFlushed = System.currentTimeMillis() + delta;
+					long pauseTime = ( System.currentTimeMillis() - pauseStartedTime );
+					totalPause += pauseTime;
+					lastTimeFlushed += pauseTime;
+					pauseStartedTime = 0;
+					if( pauseTime > delay )
+						flush();
 				}
 			}
 
@@ -101,9 +103,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 					 * rember how time is spent in this interval after last time data
 					 * is written to db.
 					 */
-					delta = pauseStartedTime - lastTimeFlushed;
-					flush();
-					totalPause += System.currentTimeMillis() - pauseStartedTime;
+					pauseStartedTime = System.currentTimeMillis();
 				}
 			}
 
@@ -117,7 +117,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 				 */
 				if( oldState == State.STARTED || oldState == State.PAUSED )
 				{
-					delta = 0;
 					flush();
 					pauseStartedTime = 0;
 					totalPause = 0;
@@ -196,7 +195,8 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			ExecutionManager executionManager = manager.getExecutionManager();
 			Execution currentExecution = executionManager.getCurrentExecution();
 
-			int time = currentExecution == null ? -1 : ( int )( timestamp - currentExecution.getStartTime() - totalPause );
+			int time = currentExecution == null ? -1 : ( int )( ( pauseStartedTime == 0 ? timestamp : pauseStartedTime )
+					- currentExecution.getStartTime() - totalPause );
 			executionManager.writeEntry( getId(), new EntryImpl( time, values, true ), StatisticVariable.MAIN_SOURCE );
 		}
 	}

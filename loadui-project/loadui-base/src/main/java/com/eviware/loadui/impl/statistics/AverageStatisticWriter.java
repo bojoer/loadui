@@ -108,9 +108,9 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 				this.values.remove( 0 );
 			avgSum += doubleValue;
 			avgCnt++ ;
+			if( lastTimeFlushed + delay <= System.currentTimeMillis() )
+				flush();
 		}
-		if( lastTimeFlushed + delay <= System.currentTimeMillis() )
-			flush();
 	}
 
 	/**
