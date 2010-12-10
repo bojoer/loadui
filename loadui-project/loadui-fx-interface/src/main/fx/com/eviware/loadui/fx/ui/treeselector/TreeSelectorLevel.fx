@@ -13,19 +13,28 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.fx.statistics.chart;
+package com.eviware.loadui.fx.ui.treeselector;
 
-import javafx.scene.Node;
+import javafx.scene.layout.VBox;
 
-import com.eviware.loadui.api.statistics.model.chart.*;
-
-/**
- * Creates a Node for a specific ChartView
- */
-public function createChart( chartView:ChartView, holder:ChartViewHolder ):BaseChart {
-	if( chartView instanceof LineChartView ) {
-		LineChart { chartView: chartView as LineChartView, holder: holder }
-	} else {
-		null
+public class TreeSelectorLevel extends VBox {
+	public-init var selector:CascadingTreeSelector;
+	
+	package function addChildrenFor( target:Object ):Void {
+		insert TreeLevelNode { level: this, target: target } into content;
+	}
+	
+	package function removeChildrenFor( target:Object ):Void {
+		for( node in content ) {
+			def treeNode = node as TreeLevelNode;
+			if( treeNode.target == target ) {
+				treeNode.deselectAll();
+				delete treeNode from content;
+				if( sizeof content == 0 ) {
+					selector.removeLevel( this );
+				}
+				break;
+			}
+		}
 	}
 }

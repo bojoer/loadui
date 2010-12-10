@@ -68,7 +68,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 		repeatCount: Timeline.INDEFINITE
 		keyFrames: [
 			KeyFrame {
-				time: 1s
+				time: 250ms
 				action: function():Void {
 					for( holder in innerContent )
 						holder.update();
