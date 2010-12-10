@@ -119,16 +119,18 @@ public class StatisticsWindow {
     		if ( scene == null ) {
 	    		var overlay = Group {};
 	    		stage = Stage {
-	    			height: 768
-	    			width: 1024
 			    	title: "Statistics"
 			    	icons: [
 			    		Image { url:"{__ROOT__}images/png/icon_32x32.png" },
 						Image { url:"{__ROOT__}images/png/icon_16x16.png" }
 			    	]
 			    	scene: scene = Scene {
-			    			stylesheets: "file:style.css"
-					        content: [ Group {
+						stylesheets: "file:style.css"
+						width: 1024
+						height: 768
+						fill: Color.web("#373737")
+						content: [
+							Group {
 					        	content: [
 						        	Rectangle {
 						        		x:1
@@ -159,9 +161,9 @@ public class StatisticsWindow {
 						        		fill: Color.web("#ffffff")
 						        	}, tabs, toolbar
 						        ]
-						     }, overlay ]
-					        fill: Color.web("#373737")
-		    			   }
+							}, overlay
+						]
+					}
 		    		onClose: function() {
 		    		 	closed = true;
 		    		 	close();

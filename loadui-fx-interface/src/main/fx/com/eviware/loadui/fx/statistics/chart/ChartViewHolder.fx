@@ -46,10 +46,12 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 	public var label:String = "ChartView label";
 	
 	public-init var chartView:ChartView on replace {
-		chart = ChartRegistry.createChart( chartView );
+		chart = ChartRegistry.createChart( chartView, this );
+		chart.update();
 	}
 	
 	var chart:BaseChart;
+	var configurationPanel:HBox;
 	
 	def resizable:VBox = VBox {
 		width: bind width
@@ -61,14 +63,42 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 				layoutInfo: LayoutInfo { width: bind width }
 				spacing: 5
 				content: [
-					Rectangle { width: 100, height: 100 },
-					Stack {
+					VBox {
+						content: [
+							Rectangle { width: 100, height: 100 },
+							Button {
+								text: "Configure"
+								action: function():Void {
+									if( sizeof configurationPanel.content == 0 ) {
+										showConfig( Rectangle { width: 400, height: 50 } )
+									} else {
+										hideConfig();
+									}
+								}
+							}
+						]
+					}, Stack {
 						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true, vgrow: Priority.ALWAYS }
 						content: bind chart as Node
 					}
 				]
+			}, configurationPanel = HBox {
+				visible: false
+				managed: false
 			}
 		]
+	}
+	
+	public function showConfig( content:Node[] ):Void {
+		configurationPanel.content = content;
+		configurationPanel.managed = true;
+		configurationPanel.visible = true;
+	}
+	
+	public function hideConfig():Void {
+		configurationPanel.content = [];
+		configurationPanel.visible = false;
+		configurationPanel.managed = false;
 	}
 	
 	public function update():Void {

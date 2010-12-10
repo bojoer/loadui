@@ -209,7 +209,32 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	
 	function toggleConfiguration():Void {
 		if( sizeof configurationHolder.content == 0 ) {
-			insert Rectangle { height: 50, width: 500 } into configurationHolder.content;
+			//insert Rectangle { height: 50, width: 500 } into configurationHolder.content;
+			def root = new javax.swing.tree.DefaultMutableTreeNode("StatisticHolder");
+			def wr1 = new javax.swing.tree.DefaultMutableTreeNode("Web Runner 1");
+			def wr2 = new javax.swing.tree.DefaultMutableTreeNode("Web Runner 2");
+			root.add(wr1);
+			root.add(wr2);
+			def tt = new javax.swing.tree.DefaultMutableTreeNode("TimeTaken");
+			def rs = new javax.swing.tree.DefaultMutableTreeNode("ResponseSize");
+			wr1.add(tt);
+			wr1.add(rs);
+			def tt2 = new javax.swing.tree.DefaultMutableTreeNode("TimeTaken");
+			def rs2 = new javax.swing.tree.DefaultMutableTreeNode("ResponseSize");
+			wr2.add(tt2);
+			wr2.add(rs2);
+			tt.add(new javax.swing.tree.DefaultMutableTreeNode("AVERAGE"));
+			rs.add(new javax.swing.tree.DefaultMutableTreeNode("AVERAGE"));
+			tt2.add(new javax.swing.tree.DefaultMutableTreeNode("AVERAGE"));
+			rs2.add(new javax.swing.tree.DefaultMutableTreeNode("AVERAGE"));
+			def model = new javax.swing.tree.DefaultTreeModel(root);
+			
+			insert com.eviware.loadui.fx.ui.treeselector.CascadingTreeSelector {
+				treeModel: model
+				allowMultiple: true
+				onSelect: function(obj):Void { println("Selected: {obj}") }
+				onDeselect: function(obj):Void { println("Deselected: {obj}") }
+			} into configurationHolder.content;
 		} else {
 			configurationHolder.content = [];
 		}

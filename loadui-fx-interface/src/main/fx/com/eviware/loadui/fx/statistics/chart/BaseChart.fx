@@ -24,4 +24,6 @@ public mixin class BaseChart {
 	public abstract function update():Void;
 	
 	public abstract function reset():Void;
+	
+	public-init var holder:ChartViewHolder;
 }
