@@ -75,4 +75,10 @@ public class SourceLineChartView extends AbstractLineChartView
 				deleteSegment( getSegment( chartSegment.toString() ) );
 		}
 	}
+
+	@Override
+	public String toString()
+	{
+		return source;
+	}
 }

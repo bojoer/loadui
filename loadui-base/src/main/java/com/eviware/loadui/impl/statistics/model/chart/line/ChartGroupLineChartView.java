@@ -24,9 +24,12 @@ import com.eviware.loadui.api.statistics.model.ChartGroup;
  */
 public class ChartGroupLineChartView extends AbstractLineChartView
 {
+	private final ChartGroup chartGroup;
+
 	public ChartGroupLineChartView( LineChartViewProvider provider, ChartGroup chartGroup )
 	{
 		super( provider, chartGroup, CHART_GROUP_PREFIX );
+		this.chartGroup = chartGroup;
 	}
 
 	@Override
@@ -41,5 +44,11 @@ public class ChartGroupLineChartView extends AbstractLineChartView
 	{
 		if( segment instanceof ChartLineSegment )
 			deleteSegment( segment );
+	}
+
+	@Override
+	public String toString()
+	{
+		return chartGroup.toString();
 	}
 }

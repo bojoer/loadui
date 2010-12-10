@@ -46,6 +46,7 @@ import com.eviware.loadui.api.model.Releasable;
 import java.awt.Color;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.lang.Runnable;
 
 import javafx.ext.swing.SwingComponent;
 import com.jidesoft.chart.Chart;
@@ -96,7 +97,16 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	def resizable:VBox = VBox {
 		width: bind width
 		height: bind height
-		content: Stack { content: chartNode }
+		content: [
+			Stack { content: chartNode },
+			if( chartView instanceof ConfigurableLineChartView ) Button { text: "Add Segment", action: function():Void {
+				holder.showConfig( com.eviware.loadui.fx.ui.treeselector.CascadingTreeSelector {
+					treeModel: new SegmentTreeModel( chartView as ConfigurableLineChartView )
+					allowMultiple: false
+					onSelect: function(obj):Void { (obj as Runnable).run(); holder.hideConfig(); }
+				} );
+			} } else null
+		]
 	}
 	
 	init {

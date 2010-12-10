@@ -224,14 +224,15 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			wr2.add(tt2);
 			wr2.add(rs2);
 			tt.add(new javax.swing.tree.DefaultMutableTreeNode("AVERAGE"));
+			tt.add(new javax.swing.tree.DefaultMutableTreeNode("MIN"));
+			tt.add(new javax.swing.tree.DefaultMutableTreeNode("MAX"));
 			rs.add(new javax.swing.tree.DefaultMutableTreeNode("AVERAGE"));
 			tt2.add(new javax.swing.tree.DefaultMutableTreeNode("AVERAGE"));
 			rs2.add(new javax.swing.tree.DefaultMutableTreeNode("AVERAGE"));
 			def model = new javax.swing.tree.DefaultTreeModel(root);
-			
 			insert com.eviware.loadui.fx.ui.treeselector.CascadingTreeSelector {
 				treeModel: model
-				allowMultiple: true
+				allowMultiple: false
 				onSelect: function(obj):Void { println("Selected: {obj}") }
 				onDeselect: function(obj):Void { println("Deselected: {obj}") }
 			} into configurationHolder.content;

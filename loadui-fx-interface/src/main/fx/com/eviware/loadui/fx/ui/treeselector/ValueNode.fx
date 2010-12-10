@@ -23,6 +23,13 @@ public class ValueNode extends CheckBox {
 	public-init var value:Object;
 	
 	override var selected = false on replace {
+		if( selected and not treeNode.level.selector.allowMultiple ) {
+			for( node in treeNode.content[c|c instanceof ValueNode] ) {
+				if( node != this ) {
+					(node as ValueNode).selected = false;
+				}
+			}
+		}
 		if( treeNode.level.selector.treeModel.isLeaf( value ) ) {
 			if( selected ) {
 				treeNode.level.selector.onSelect( value );
@@ -30,13 +37,6 @@ public class ValueNode extends CheckBox {
 				treeNode.level.selector.onDeselect( value );
 			}
 		} else {
-			if( selected and not treeNode.level.selector.allowMultiple ) {
-				for( node in treeNode.content[c|c instanceof ValueNode] ) {
-					if( node != this ) {
-						(node as ValueNode).selected = false;
-					}
-				}
-			}
 			def nextLevel = treeNode.level.selector.getNextLevel( treeNode.level );
 			if( selected ) {
 				nextLevel.addChildrenFor( value );

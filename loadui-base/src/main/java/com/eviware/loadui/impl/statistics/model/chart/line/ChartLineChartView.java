@@ -111,4 +111,10 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	protected void segmentRemoved( LineSegment segment )
 	{
 	}
+
+	@Override
+	public String toString()
+	{
+		return chart.getStatisticHolder().toString();
+	}
 }
