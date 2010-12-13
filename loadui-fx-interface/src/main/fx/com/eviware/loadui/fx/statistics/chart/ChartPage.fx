@@ -28,6 +28,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollView;
 import javafx.scene.control.ScrollBarPolicy;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.util.Math;
@@ -118,6 +119,14 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 					padding: Insets { left: 5, top: 5, right: 5, bottom: 25 }
 					layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.NEVER, vfill: false }
 					content: bind innerContent
+				}, Rectangle {
+					width: bind vbox.width
+					height: bind vbox.height
+					fill: Color.TRANSPARENT
+					onMouseWheelMoved: function( e ) {
+						def stepSize = (resizable.vmax - resizable.vmin) * (50.0 / vbox.height);
+						resizable.vvalue = Math.max( resizable.vmin, Math.min( resizable.vmax, resizable.vvalue + stepSize*e.wheelRotation ) );
+					}
 				}
 			]
 		}
