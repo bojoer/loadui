@@ -146,7 +146,6 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 class ExecutionManagerListener extends ExecutionListener {
 	var resetOnStart = false;
    override function executionStarted(state:ExecutionManager.State) {
-   	println("---started");
    	if( resetOnStart )
    		for( holder in innerContent )
    			holder.reset();
@@ -154,12 +153,10 @@ class ExecutionManagerListener extends ExecutionListener {
    }
 
 	override function executionPaused(state:ExecutionManager.State) {
-	   println("---paused");
 	   timeline.stop();
 	}
 
 	override function executionStopped(state:ExecutionManager.State) {
-	    println("---stopped");
 	    timeline.stop();
 	    resetOnStart = true;
 	}

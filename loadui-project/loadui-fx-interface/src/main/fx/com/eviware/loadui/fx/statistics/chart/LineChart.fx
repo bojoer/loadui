@@ -44,8 +44,10 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.model.Releasable;
 import java.awt.Color;
+import java.awt.BasicStroke;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.Set;
 import java.lang.Runnable;
 
 import javafx.ext.swing.SwingComponent;
@@ -180,7 +182,7 @@ class LineSegmentModel extends DefaultChartModel {
 	var timestamp = -1;
 	var statistic:Statistic;
 	
-	public-read var style = new ChartStyle( Color.blue, false, true );
+	public-read var style = new LineChartStyle();
 	
 	public-init var segment:LineSegment on replace {
 		statistic = segment.getStatistic();
@@ -210,3 +212,74 @@ class LineSegmentModel extends DefaultChartModel {
 		}
 	}
 }
+
+class LineChartStyle extends ChartStyle {
+    
+    public var lineWidth: Integer = 1 on replace {
+    	setLineWidth(lineWidth);
+    }  
+
+    public var strokeType: String = "Solid" on replace {
+     	applyLineStroke();   
+    }
+
+	 //how to set default color for each line. Is it per statistic?
+	 public var lineColor: Color = Color.blue on replace {
+	 	setLineColor(lineColor);    
+	 }
+	 
+    var dashMap: HashMap;
+    
+    init {
+        setPointsVisible(false);
+    }
+    
+    function applyLineStroke(){
+  		  initDashMap();
+        def stroke = new BasicStroke(lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, dashMap.get(strokeType) as Float[], 0);
+        setLineStroke(stroke);
+    }
+
+    function initDashMap() {
+        if(dashMap == null){
+	        dashMap = new HashMap();
+		     dashMap.put("Solid", [1.0]);
+		     dashMap.put("Dashed", [8.0, 8.0]);
+		     dashMap.put("Dotted", [2.0, 2.0]);
+	     }
+    }
+    
+    public function getStrokeTypes(): Set {
+        dashMap.keySet();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
