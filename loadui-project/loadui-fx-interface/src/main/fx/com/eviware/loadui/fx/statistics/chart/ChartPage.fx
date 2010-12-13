@@ -124,7 +124,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 					height: bind vbox.height
 					fill: Color.TRANSPARENT
 					onMouseWheelMoved: function( e ) {
-						def stepSize = (resizable.vmax - resizable.vmin) * (50.0 / vbox.height);
+						def stepSize = (resizable.vmax - resizable.vmin) * (50.0 / (vbox.height - height));
 						resizable.vvalue = Math.max( resizable.vmin, Math.min( resizable.vmax, resizable.vvalue + stepSize*e.wheelRotation ) );
 					}
 				}
