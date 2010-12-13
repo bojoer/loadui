@@ -37,7 +37,4 @@ public class AnalysisToolbarItem extends StatisticsToolbarItem {
 	
 	override var category = "ANALYSIS";
 	
-	override def onMouseClicked = function (me:MouseEvent) {
-		//nothing for now  
-	}
 }

@@ -39,7 +39,4 @@ public class ChartToolbarItem extends StatisticsToolbarItem {
 	
 	override var category = "GRAPHS";
 	
-	override def onMouseClicked = function (me:MouseEvent) {
-		//nothing for now  
-	}
 }

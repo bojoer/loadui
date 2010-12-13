@@ -39,7 +39,7 @@ public class ComponentToolbarItem extends StatisticsToolbarItem {
     
    public var component: ComponentItem on replace {
       label = component.getLabel();
-      tooltip = component.getDescription();
+      tooltip = "Adds {label} to a chart";
    }
    
    public var descriptor: ComponentDescriptor on replace {
@@ -53,7 +53,4 @@ public class ComponentToolbarItem extends StatisticsToolbarItem {
    
    override var category = "COMPONENTS";
     
-	override def onMouseClicked = function (me: MouseEvent) {
-		//nothing for now  
-	}
 }
