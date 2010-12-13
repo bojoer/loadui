@@ -205,7 +205,8 @@ class SegmentButton extends Button {
 	}
 	
 	override var action = function():Void {
-		(chartView as ConfigurableLineChartView).removeSegment( segment );
+		if( chartView instanceof ConfigurableLineChartView )
+			(chartView as ConfigurableLineChartView).removeSegment( segment );
 	}
 }
 
