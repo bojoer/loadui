@@ -205,6 +205,7 @@ class SegmentButton extends Button {
 	}
 	
 	override var action = function():Void {
+		//TODO: Show configuration panel instead of removing the segment.
 		if( chartView instanceof ConfigurableLineChartView )
 			(chartView as ConfigurableLineChartView).removeSegment( segment );
 	}
