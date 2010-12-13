@@ -27,6 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.util.Math;
@@ -45,7 +46,6 @@ import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.model.Releasable;
-import java.awt.Color;
 import java.awt.BasicStroke;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -77,7 +77,8 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	var maxTime:Number = 0;
 	
 	def segmentButtons = VBox {
-		layoutInfo: LayoutInfo { hgrow: Priority.NEVER, hfill: false }
+		layoutInfo: LayoutInfo { hgrow: Priority.NEVER, hfill: false },
+		content: Rectangle { width: 1, height: 1, managed: false, fill: Color.rgb(0,0,0,0.0001) }
 	}
 	
 	public-init var chartView:LineChartView on replace oldChartView {
@@ -101,7 +102,6 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		height: bind height
 		content: [
 			HBox {
-				spacing: 5,
 				content: [
 					segmentButtons, Stack { content: chartNode }
 				]
@@ -128,7 +128,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	init {
-		chart.setChartBackground( new Color(0, 0, 0, 0) );
+		chart.setChartBackground( new java.awt.Color(0, 0, 0, 0) );
 		chart.setXAxis( new NumericAxis() );
 		chart.setVerticalGridLinesVisible( false );
 		chart.setHorizontalGridLinesVisible( false );
@@ -136,7 +136,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		chart.getXAxis().setRange( new TimeRange( 0, 10000 ) );
 		chart.getYAxis().setRange( 0, 10 );
 		
-		chartNode.layoutInfo = LayoutInfo { height: 150, hfill: true, hgrow: Priority.ALWAYS }
+		chartNode.layoutInfo = LayoutInfo { height: 150, hfill: true, hgrow: Priority.ALWAYS };
 	}
 	
 	override function update():Void {
@@ -175,14 +175,14 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		def model = LineSegmentModel { segment: segment };
 		lines.put( segment, model );
 		chart.addModel( model, model.style );
-		insert SegmentButton { segment: segment } into segmentButtons.content;
+		insert SegmentButton { model: model } into segmentButtons.content;
 	}
 	
 	function removedSegment( segment:LineSegment ):Void {
 		def model = lines.remove( segment ) as DefaultChartModel;
 		chart.removeModel( model );
 		for( button in segmentButtons.content[b|b instanceof SegmentButton] ) {
-			if( (button as SegmentButton).segment == segment )
+			if( (button as SegmentButton).model.segment == segment )
 				delete button from segmentButtons.content;
 		}
 	}
@@ -200,14 +200,14 @@ class ChartViewListener extends EventHandler {
 }
 
 class SegmentButton extends Button {
-	public-init var segment:LineSegment on replace {
-		text = segment.getStatistic().getName();
+	public-init var model:LineSegmentModel on replace {
+		text = model.segment.getStatistic().getName();
 	}
 	
 	override var action = function():Void {
 		//TODO: Show configuration panel instead of removing the segment.
 		if( chartView instanceof ConfigurableLineChartView )
-			(chartView as ConfigurableLineChartView).removeSegment( segment );
+			(chartView as ConfigurableLineChartView).removeSegment( model.segment );
 	}
 }
 
@@ -257,7 +257,7 @@ class LineChartStyle extends ChartStyle {
     }
 
 	 //how to set default color for each line. Is it per statistic?
-	 public var lineColor: Color = Color.blue on replace {
+	 public var lineColor: java.awt.Color = java.awt.Color.blue on replace {
 	 	setLineColor(lineColor);
 	 }
 	 
