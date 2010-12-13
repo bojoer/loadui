@@ -28,12 +28,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
+import javafx.geometry.HPos;
 import javafx.util.Math;
 
 import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.treeselector.CascadingTreeSelector;
 
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.DataPoint;
@@ -74,18 +76,16 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	var max:Number = 0;
 	var maxTime:Number = 0;
 	
+	def segmentButtons = VBox {
+		layoutInfo: LayoutInfo { hgrow: Priority.NEVER, hfill: false }
+	}
+	
 	public-init var chartView:LineChartView on replace oldChartView {
 		if( chartView != null ) {
 			chartView.addEventListener( CollectionEvent.class, listener );
 			
 			for( segment in chartView.getSegments() )
 				addedSegment( segment );
-			
-			//TODO: Remove this when LineSegments are configurable within the gui.
-			if( chartView instanceof ConfigurableLineChartView and chartView.getSegments().isEmpty() ) {
-				def clcv = chartView as ConfigurableLineChartView;
-				clcv.addSegment( "TimeTaken", "AVERAGE", "main" );
-			}
 		}
 		
 		if( oldChartView != null ) {
@@ -100,12 +100,28 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		width: bind width
 		height: bind height
 		content: [
-			Stack { content: chartNode },
-			if( chartView instanceof ConfigurableLineChartView ) Button { text: "Add Segment", action: function():Void {
-				holder.showConfig( com.eviware.loadui.fx.ui.treeselector.CascadingTreeSelector {
-					treeModel: new SegmentTreeModel( chartView as ConfigurableLineChartView )
-					allowMultiple: false
-					onSelect: function(obj):Void { (obj as Runnable).run(); holder.hideConfig(); }
+			HBox {
+				spacing: 5,
+				content: [
+					segmentButtons, Stack { content: chartNode }
+				]
+			}, if( chartView instanceof ConfigurableLineChartView ) Button { text: "Add Segment", action: function():Void {
+				var selected:Runnable;
+				holder.showConfig( VBox {
+					content: [
+						CascadingTreeSelector {
+							treeModel: new SegmentTreeModel( chartView as ConfigurableLineChartView )
+							allowMultiple: false
+							onSelect: function(obj):Void { selected = obj as Runnable; }
+							onDeselect: function(obj):Void { selected = null; }
+						}, HBox {
+							hpos: HPos.RIGHT
+							content: [
+								Button { text: "Add", disable: bind selected == null; action: function():Void { selected.run(); holder.hideConfig() } }
+								Button { text: "Cancel", action: function():Void { holder.hideConfig() } }
+							]
+						}
+					]
 				} );
 			} } else null
 		]
@@ -159,11 +175,16 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		def model = LineSegmentModel { segment: segment };
 		lines.put( segment, model );
 		chart.addModel( model, model.style );
+		insert SegmentButton { segment: segment } into segmentButtons.content;
 	}
 	
 	function removedSegment( segment:LineSegment ):Void {
 		def model = lines.remove( segment ) as DefaultChartModel;
 		chart.removeModel( model );
+		for( button in segmentButtons.content[b|b instanceof SegmentButton] ) {
+			if( (button as SegmentButton).segment == segment )
+				delete button from segmentButtons.content;
+		}
 	}
 }
 
@@ -175,6 +196,16 @@ class ChartViewListener extends EventHandler {
 		} else {
 			FxUtils.runInFxThread( function():Void { removedSegment( event.getElement() as LineSegment ) } );
 		}
+	}
+}
+
+class SegmentButton extends Button {
+	public-init var segment:LineSegment on replace {
+		text = segment.getStatistic().getName();
+	}
+	
+	override var action = function():Void {
+		(chartView as ConfigurableLineChartView).removeSegment( segment );
 	}
 }
 
@@ -220,12 +251,12 @@ class LineChartStyle extends ChartStyle {
     }  
 
     public var strokeType: String = "Solid" on replace {
-     	applyLineStroke();   
+     	applyLineStroke();
     }
 
 	 //how to set default color for each line. Is it per statistic?
 	 public var lineColor: Color = Color.blue on replace {
-	 	setLineColor(lineColor);    
+	 	setLineColor(lineColor);
 	 }
 	 
     var dashMap: HashMap;

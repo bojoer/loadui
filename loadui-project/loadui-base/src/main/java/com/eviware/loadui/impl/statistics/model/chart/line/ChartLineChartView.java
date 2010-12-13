@@ -44,7 +44,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 		for( String segmentString : StringUtils.deserialize( getAttribute( SEGMENTS_ATTRIBUTE, "" ) ) )
 		{
 			List<String> parts = StringUtils.deserialize( segmentString );
-			ChartLineSegment segment = new ChartLineSegment( chart, parts.get( 0 ), parts.get( 1 ), parts.get( 2 ) );
+			ChartLineSegment segment = new ChartLineSegment( chart, parts.get( 1 ), parts.get( 2 ), parts.get( 3 ) );
 			putSegment( segment );
 			provider.fireSegmentAdded( segment );
 		}

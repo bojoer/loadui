@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.fx.statistics.chart;
 
+import java.util.HashMap;
+
 
 var statColorMap: HashMap; 
 
