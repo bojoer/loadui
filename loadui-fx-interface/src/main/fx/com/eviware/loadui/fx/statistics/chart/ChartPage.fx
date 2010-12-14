@@ -41,6 +41,7 @@ import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
+import com.eviware.loadui.fx.ui.dnd.SortableBox;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
@@ -93,7 +94,9 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 		};
 	}
 	
-	var innerContent:ChartGroupHolder[];
+	var innerContent:ChartGroupHolder[] on replace {
+		container.content = innerContent;
+	}
 	
 	override var layoutInfo = LayoutInfo {
 		hfill: true
@@ -102,7 +105,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 		vgrow: Priority.ALWAYS
 	}
 	
-	var vbox:VBox;
+	var container:VBox;
 	def resizable:ScrollView = ScrollView {
 		width: bind width
 		height: bind height
@@ -113,18 +116,18 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 			nodeVPos: VPos.TOP
 			content: [
 				DropBase {
-					layoutInfo: LayoutInfo { height: bind Math.max( height, vbox.height ), width: bind width }
-				}, vbox = VBox {
+					layoutInfo: LayoutInfo { height: bind Math.max( height, container.height ), width: bind width }
+				}, container = VBox {
 					spacing: 5
 					padding: Insets { left: 5, top: 5, right: 5, bottom: 25 }
 					layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.NEVER, vfill: false }
-					content: bind innerContent
+					content: innerContent
 				}, Rectangle {
-					width: bind vbox.width
-					height: bind vbox.height
+					width: bind container.width
+					height: bind container.height
 					fill: Color.TRANSPARENT
 					onMouseWheelMoved: function( e ) {
-						def stepSize = (resizable.vmax - resizable.vmin) * (50.0 / (vbox.height - height));
+						def stepSize = (resizable.vmax - resizable.vmin) * (50.0 / (container.height - height));
 						resizable.vvalue = Math.max( resizable.vmin, Math.min( resizable.vmax, resizable.vvalue + stepSize*e.wheelRotation ) );
 					}
 				}
