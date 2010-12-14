@@ -132,7 +132,11 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 							            okText: "Yes"
 							            cancelText: "Cancel"
 							            onOk: function() {
-											table.save(saveFile.value as File);
+							            	var sf = (saveFile.value as File).getAbsolutePath();
+							            	if ( not (sf.endsWith(".txt") or sf.endsWith(".csv")) ) {
+							            		sf = "{sf}.cvs"
+							            	}	
+											table.save(new File(sf));
 											dialog.close();
 							            }
 							        }
