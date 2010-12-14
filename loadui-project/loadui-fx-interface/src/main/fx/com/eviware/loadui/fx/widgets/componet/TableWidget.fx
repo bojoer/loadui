@@ -129,7 +129,7 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 								            	saveFile = FileInputField{id: "saveLog", description: "Save TableLog"}
 								            ]
 							            }
-							            okText: "Yes"
+							            okText: "Ok"
 							            cancelText: "Cancel"
 							            onOk: function() {
 							            	var sf = (saveFile.value as File).getAbsolutePath();
