@@ -55,6 +55,7 @@ import com.eviware.loadui.api.events.BaseEvent;
 import java.util.EventObject;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.model.CanvasItem;
 
 import java.util.EventObject;
@@ -80,8 +81,8 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 	override var modelItem = bind lazy agent;
 	
 	public var sceneItem: SceneItem on replace oldScene {
-		oldScene.removeEventListener(ActionEvent.class, this);
-		sceneItem.addEventListener(ActionEvent.class, this);
+		oldScene.removeEventListener(BaseEvent.class, this);
+		sceneItem.addEventListener(BaseEvent.class, this);
 	};
 	
 	public var isPlaceholder: Boolean = false;
@@ -130,6 +131,14 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 			}
 			else if(CanvasItem.STOP_ACTION == event.getKey() or CanvasItem.COMPLETE_ACTION == event.getKey()) {
 				runInFxThread(function():Void {running = false;});
+			}
+		}
+		else if( e instanceof BaseEvent ) { 
+			def event = e as BaseEvent;
+			if (event.getKey().equals(ModelItem.LABEL)){
+			    runInFxThread(function():Void {
+			        label = sceneItem.getLabel();
+			    });
 			}
 		} 
 	}
