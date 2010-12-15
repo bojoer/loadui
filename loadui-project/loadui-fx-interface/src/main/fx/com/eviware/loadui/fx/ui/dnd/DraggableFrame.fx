@@ -24,6 +24,9 @@ package com.eviware.loadui.fx.ui.dnd;
 import javafx.scene.CustomNode;
 import javafx.scene.Node;
 import javafx.scene.Group;
+import javafx.scene.layout.Resizable;
+import javafx.scene.layout.Stack;
+import javafx.scene.layout.Container;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 
@@ -32,30 +35,38 @@ import javafx.scene.paint.Color;
  *
  * @author dain.nilsson
  */
-public class DraggableFrame extends CustomNode {
+public class DraggableFrame extends CustomNode, Resizable {
 	def group = Group {};
 	
 	/**
 	 * The Draggable to hold.
 	 */
 	public var draggable:Draggable on replace {
-		group.content = [ placeholder, draggable.node ];
+		group.content = [ placeholder, draggable as Node ];
 	}
 	
 	/**
 	 * A node to display behind the Draggable, which remains fixed when the Draggable is dragged.
 	 */
 	public var placeholder:Node on replace {
-		group.content = [ placeholder, draggable.node ];
+		group.content = [ placeholder, draggable as Node ];
 	}
 	
 	override var layoutBounds = bind placeholder.layoutBounds;
 	
+	override var width on replace {
+		Container.setNodeWidth( draggable as Node, width );
+	}
+	
+	override var height on replace {
+		Container.setNodeHeight( draggable as Node, height );
+	}
+	
 	override function create() {
 		if( not FX.isInitialized( placeholder ) ) {
 			placeholder = Rectangle {
-				width: bind draggable.node.layoutBounds.width
-				height: bind draggable.node.layoutBounds.height
+				width: bind (draggable as Node).layoutBounds.width
+				height: bind (draggable as Node).layoutBounds.height
 				visible: bind draggable.dragging
 				opacity: 0.5
 				fill: Color.LIGHTBLUE
@@ -63,6 +74,22 @@ public class DraggableFrame extends CustomNode {
 		}
 		
 		group
+	}
+	
+	override function getPrefHeight( width:Number ):Number {
+		if( draggable instanceof Resizable ) {
+			(draggable as Resizable).getPrefHeight( width )
+		} else {
+			(draggable as Node).layoutBounds.height
+		}
+	}
+	
+	override function getPrefWidth( height:Number ):Number {
+		if( draggable instanceof Resizable ) {
+			(draggable as Resizable).getPrefWidth( width );
+		} else {
+			(draggable as Node).layoutBounds.width
+		}
 	}
 	
 	override function toString():String {

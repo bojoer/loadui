@@ -105,7 +105,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 		vgrow: Priority.ALWAYS
 	}
 	
-	var container:VBox;
+	var container:SortableBox;
 	def resizable:ScrollView = ScrollView {
 		width: bind width
 		height: bind height
@@ -117,11 +117,15 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 			content: [
 				DropBase {
 					layoutInfo: LayoutInfo { height: bind Math.max( height, container.height ), width: bind width }
-				}, container = VBox {
+				}, container = SortableBox {
+					vertical: true
 					spacing: 5
 					padding: Insets { left: 5, top: 5, right: 5, bottom: 25 }
 					layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.NEVER, vfill: false }
 					content: innerContent
+					onMoved: function( child, fromIndex, toIndex ):Void {
+						statisticPage.moveChartGroup( (child as ChartGroupHolder).chartGroup, toIndex );
+					}
 				}, Rectangle {
 					width: bind container.width
 					height: bind container.height

@@ -20,6 +20,10 @@ import javafx.scene.layout.Resizable;
 import javafx.scene.layout.Container;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.LayoutInfo;
+import javafx.scene.layout.Priority;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.geometry.Insets;
@@ -39,6 +43,7 @@ public class SortableBox extends BaseNode, Resizable {
 		box = if( vertical ) VBox {
 			width: bind width
 			height: bind height
+			layoutInfo: bind layoutInfo
 			fillWidth: fillWidth
 			padding: padding
 			spacing: spacing
@@ -49,6 +54,7 @@ public class SortableBox extends BaseNode, Resizable {
 		} else HBox {
 			width: bind width
 			height: bind height
+			layoutInfo: bind layoutInfo
 			fillHeight: fillHeight
 			padding: padding
 			spacing: spacing
@@ -128,11 +134,15 @@ public class SortableBox extends BaseNode, Resizable {
 	
 	function buildContent():Node[] {
 		for( child in content ) {
-			var draggable:DraggableNode;
+			var draggable:ElementNode;
 			var offset = 0.0;
 			
 			def frame:DraggableFrame = DraggableFrame {
-				draggable: draggable = DraggableNode {
+				layoutInfo: child.layoutInfo
+				draggable: draggable = ElementNode {
+					layoutInfo: child.layoutInfo
+					width: bind frame.width
+					height: bind frame.height
 					revert: false
 					contentNode: child
 					containment: bind localToScene( layoutBounds )
@@ -186,5 +196,21 @@ public class SortableBox extends BaseNode, Resizable {
 	
 	override function getPrefWidth( height:Number ):Number {
 		box.getPrefWidth( height )
+	}
+}
+
+class ElementNode extends BaseNode, Draggable, Resizable {
+	override var width on replace { (contentNode as Resizable).width = width }
+	override var height on replace { (contentNode as Resizable).height = height }
+	
+	override function getPrefHeight( width:Number ):Number {
+		(contentNode as Resizable).getPrefHeight( width )
+	}
+	
+	override function getPrefWidth( height:Number ):Number {
+		(contentNode as Resizable).getPrefWidth( height )
+	}
+	
+	override function doLayout():Void {
 	}
 }

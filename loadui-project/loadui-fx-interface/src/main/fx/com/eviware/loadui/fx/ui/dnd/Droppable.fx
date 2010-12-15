@@ -29,13 +29,22 @@ import javafx.scene.Node;
 import javafx.scene.CustomNode;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Sequences;
 
 import com.eviware.loadui.fx.FxUtils.*;
+
+import java.util.Comparator;
 
 /**
  * The Droppable which is currently being dragged over, if any.
  */
 public-read var currentDroppable: Droppable = null;
+
+def descendantOrdering = new DescendandComparator();
+
+var currentDroppables:Droppable[] on replace {
+	currentDroppable = if( sizeof currentDroppables == 0 ) null else currentDroppables[0];
+}
 
 /**
  * Mixin class for making BaseNodes droppable.
@@ -45,17 +54,16 @@ public-read var currentDroppable: Droppable = null;
 public mixin class Droppable extends BaseMixin {
 
 	init {
-		node.addMouseHandler( MOUSE_ENTERED, function( e:MouseEvent ) {
-			currentDroppable = this;
+		node.addMouseHandler( MOUSE_ENTERED, function( e:MouseEvent ):Void {
+			currentDroppables = Sequences.sort( [currentDroppables, this], descendantOrdering ) as Droppable[];
 			if( isAcceptable( Draggable.currentDraggable ) ) {
 				hovering = true;
 			}
 		} );
 		
-		node.addMouseHandler( MOUSE_EXITED, function( e:MouseEvent ) {
+		node.addMouseHandler( MOUSE_EXITED, function( e:MouseEvent ):Void {
+			delete this from currentDroppables;
 			hovering = false;
-			if( currentDroppable == this )
-				currentDroppable = null;
 		} );
 	}
 	
@@ -86,5 +94,15 @@ public mixin class Droppable extends BaseMixin {
 	package function drop( draggable:Draggable ) {
 		hovering = false;
 		onDrop( draggable );
+	}
+}
+
+// TODO: Currently this orders based on if one Node is a descendent of another, 
+// but this should probably be extended to order by z-index even if the two Nodes Parents aren't the same.
+class DescendandComparator extends Comparator {
+	override function compare( a:Object, b:Object ):Integer {
+		if( isDescendant( a as Node, b as Node ) ) -1
+		else if( isDescendant( b as Node, a as Node ) ) 1
+		else 0;
 	}
 }
