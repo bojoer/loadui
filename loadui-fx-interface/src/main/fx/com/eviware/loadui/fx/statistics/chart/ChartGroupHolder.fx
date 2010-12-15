@@ -27,6 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.util.Sequences;
@@ -86,8 +87,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			layoutInfo: chartViewInfo
 		};
 	}
-	
-	override var blocksMouse = true;
 	
 	def resizable:VBox = VBox {
 		padding: Insets { left: 5, top: 5, right: 5, bottom: 5 }
