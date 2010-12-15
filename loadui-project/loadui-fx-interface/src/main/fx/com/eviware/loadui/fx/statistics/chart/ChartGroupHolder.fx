@@ -38,6 +38,7 @@ import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
+import com.eviware.loadui.fx.ui.dnd.SortableBox;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
@@ -70,7 +71,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	
 	public-read var expandGroups = false;
 	public-read var expandAgents = false;
-	var expandedNode:Container;
+	var expandedNode:SortableBox;
 	
 	var chartViewHolder:ChartViewHolder;
 	
@@ -172,12 +173,15 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		expandGroups = not expandGroups;
 		if( expandGroups ) {
 			if( expandAgents ) toggleAgentExpand();
-			expandedNode = VBox {
+			expandedNode = SortableBox {
+				vertical: true
+				layoutInfo: chartViewInfo
 				content: for( chart in chartGroup.getChildren() ) ChartViewHolder {
 					chartView: chartGroup.getChartViewForChart( chart as Chart )
 					label: "{chart.getStatisticHolder()}"
 					layoutInfo: chartViewInfo
 				}
+				//TODO: Implement onMoved
 			}
 			insert expandedNode into (resizable as Container).content;
 		} else {
@@ -191,7 +195,9 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		expandAgents = not expandAgents;
 		if( expandAgents ) {
 			if( expandGroups ) toggleGroupExpand();
-			expandedNode = VBox {
+			expandedNode = SortableBox {
+				vertical: true
+				layoutInfo: chartViewInfo
 				content: for( source in chartGroup.getSources() ) ChartViewHolder {
 					chartView: chartGroup.getChartViewForSource( source )
 					label: source
