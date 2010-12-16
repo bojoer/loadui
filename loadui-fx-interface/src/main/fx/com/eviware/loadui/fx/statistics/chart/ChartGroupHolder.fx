@@ -40,6 +40,7 @@ import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dnd.SortableBox;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
+import com.eviware.loadui.fx.statistics.toolbar.items.AnalysisToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
 
@@ -154,6 +155,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			chartGroup.setType( (draggable as ChartToolbarItem).type );
 		} else if( draggable instanceof ComponentToolbarItem ) {
 			chartGroup.createChart( (draggable as ComponentToolbarItem).component );
+		} else if( draggable instanceof AnalysisToolbarItem ) {
+			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );
 		}
 	}
 	
@@ -177,11 +180,15 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 				vertical: true
 				layoutInfo: chartViewInfo
 				content: for( chart in chartGroup.getChildren() ) ChartViewHolder {
+					chartModel: chart
 					chartView: chartGroup.getChartViewForChart( chart as Chart )
 					label: "{chart.getStatisticHolder()}"
 					layoutInfo: chartViewInfo
 				}
-				//TODO: Implement onMoved
+				onMoved: function( chart, fromIndex, toIndex ):Void {
+					println("Moving {chart} from: {fromIndex} to: {toIndex}");
+					chartGroup.moveChart( (chart as ChartViewHolder).chartModel, toIndex );
+				}
 			}
 			insert expandedNode into (resizable as Container).content;
 		} else {

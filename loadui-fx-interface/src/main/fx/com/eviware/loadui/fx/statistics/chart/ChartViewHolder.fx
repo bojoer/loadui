@@ -45,6 +45,8 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
 public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 	public var label:String = "ChartView label";
 	
+	public-init var chartModel:com.eviware.loadui.api.statistics.model.Chart;
+	
 	public-init var chartView:ChartView on replace {
 		chart = ChartRegistry.createChart( chartView, this );
 		chart.update();
@@ -58,6 +60,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 		height: bind height
 		spacing: 5
 		content: [
+			Region { width: bind width, height: bind height, managed: false, style: "-fx-background-color: lightgray;" },
 			Label { text: bind label },
 			HBox {
 				layoutInfo: LayoutInfo { width: bind width }
@@ -74,6 +77,12 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 									} else {
 										hideConfig();
 									}
+								}
+							}, Button {
+								text: "Delete"
+								visible: bind chartModel != null
+								action: function():Void {
+									chartModel.delete();
 								}
 							}
 						]

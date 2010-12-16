@@ -38,6 +38,20 @@ public class StringUtils
 		return string == null ? null : string.replaceAll( "\\r\\n|\\r|\\n", LINE_SEPARATOR );
 	}
 
+	public static String multiline( String... lines )
+	{
+		if( lines.length == 0 )
+			return null;
+		if( lines.length == 1 )
+			return lines[0];
+
+		StringBuilder sb = new StringBuilder( lines[0] );
+		for( int i = 1; i < lines.length; i++ )
+			sb.append( LINE_SEPARATOR ).append( lines[i] );
+
+		return sb.toString();
+	}
+
 	public static String serialize( Collection<String> strings )
 	{
 		StringBuilder sb = new StringBuilder();

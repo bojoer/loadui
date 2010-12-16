@@ -173,12 +173,14 @@ public class SortableBox extends BaseNode, Resizable {
 					onRelease: function():Void {
 						def index = Sequences.indexByIdentity( box.content, frame );
 						def oldIndex = Sequences.indexByIdentity( content, child );
-						var newContent = content;
-						delete child from newContent;
-						insert child before newContent[index];
-						content = newContent;
-						offset = 0.0;
-						onMoved( child, oldIndex, index );
+						if( oldIndex != index ) {
+							var newContent = content;
+							delete child from newContent;
+							insert child before newContent[index];
+							content = newContent;
+							offset = 0.0;
+							onMoved( child, oldIndex, index );
+						}
 					}
 				}
 			}

@@ -21,9 +21,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
@@ -35,18 +37,22 @@ import com.eviware.loadui.impl.XmlBeansUtils;
 import com.eviware.loadui.impl.model.OrderedCollectionSupport;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.StringUtils;
 import com.eviware.loadui.util.events.EventSupport;
 
 public class ChartGroupImpl implements ChartGroup
 {
+	private final StatisticsManager statisticsManager;
 	private final StatisticPageImpl parent;
 	private final OrderedCollectionSupport<Chart> collectionSupport;
 	private final EventSupport eventSupport = new EventSupport();
 	private final ChartViewProviderFactory providerFactory;
+	private final TemplateListener listener = new TemplateListener();
 
 	private ChartGroupConfig config;
 	private AttributeHolderSupport attributeHolderSupport;
 	private ChartViewProvider<?> provider;
+	private StatisticTemplateGroovyScript template;
 
 	public ChartGroupImpl( StatisticPageImpl parent, ChartGroupConfig config )
 	{
@@ -59,11 +65,15 @@ public class ChartGroupImpl implements ChartGroup
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
 
 		providerFactory = BeanInjector.getBean( ChartViewProviderFactory.class );
+		statisticsManager = BeanInjector.getBean( StatisticsManager.class );
+		statisticsManager.addEventListener( BaseEvent.class, listener );
 
 		provider = providerFactory.buildProvider( getType(), this );
 
 		for( ChartConfig chartConfig : config.getChartArray() )
 			collectionSupport.addChild( new ChartImpl( this, chartConfig ) );
+
+		refreshScript();
 	}
 
 	@Override
@@ -106,7 +116,7 @@ public class ChartGroupImpl implements ChartGroup
 	@Override
 	public String getTemplateScript()
 	{
-		return config.getTemplateScript();
+		return config.getTemplateScript() == null ? "" : config.getTemplateScript();
 	}
 
 	@Override
@@ -115,7 +125,21 @@ public class ChartGroupImpl implements ChartGroup
 		if( !getTemplateScript().equals( templateScript ) )
 		{
 			config.setTemplateScript( templateScript );
+			refreshScript();
 			fireEvent( new BaseEvent( this, TEMPLATE_SCRIPT ) );
+		}
+	}
+
+	private void refreshScript()
+	{
+		if( template != null )
+			template.release();
+
+		if( !StringUtils.isNullOrEmpty( getTemplateScript() ) )
+		{
+			template = new StatisticTemplateGroovyScript( getTemplateScript() );
+			for( StatisticHolder holder : statisticsManager.getStatisticHolders() )
+				template.filter( holder, this );
 		}
 	}
 
@@ -287,9 +311,34 @@ public class ChartGroupImpl implements ChartGroup
 	@Override
 	public void release()
 	{
+		statisticsManager.removeEventListener( BaseEvent.class, listener );
+		if( template != null )
+			template.release();
 		provider.release();
 		collectionSupport.releaseChildren();
 		fireEvent( new BaseEvent( this, RELEASED ) );
 		eventSupport.clearEventListeners();
+	}
+
+	private class TemplateListener implements EventHandler<BaseEvent>
+	{
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( event instanceof CollectionEvent )
+			{
+				CollectionEvent cEvent = ( CollectionEvent )event;
+				if( CollectionEvent.Event.ADDED.equals( cEvent.getEvent() ) )
+				{
+					if( template != null )
+						template.filter( ( StatisticHolder )cEvent.getElement(), ChartGroupImpl.this );
+				}
+			}
+			else if( StatisticsManager.STATISTIC_HOLDER_UPDATED.equals( event.getKey() ) )
+			{
+				if( template != null )
+					template.filter( ( StatisticHolder )event.getSource(), ChartGroupImpl.this );
+			}
+		}
 	}
 }

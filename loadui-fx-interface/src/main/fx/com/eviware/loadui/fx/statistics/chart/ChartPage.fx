@@ -43,6 +43,7 @@ import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dnd.SortableBox;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
+import com.eviware.loadui.fx.statistics.toolbar.items.AnalysisToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
 
@@ -218,6 +219,9 @@ class DropBase extends BaseNode, Resizable, Droppable {
 			def sh = (draggable as ComponentToolbarItem).component;
 			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart Group {statisticPage.getChildCount()+1}" );
 			chartGroup.createChart( sh );
+		} else if( draggable instanceof AnalysisToolbarItem ) {
+			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart Group {statisticPage.getChildCount()+1}" );
+			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );
 		}
 	}
 	

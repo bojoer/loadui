@@ -57,8 +57,11 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 	{
 		groupChartView = buildChartViewForGroup( chartGroup );
 
-		for( Chart chart : chartGroup.getChildren() )
-			chartChartViews.put( chart, buildChartViewForChart( chart ) );
+		synchronized( chartChartViews )
+		{
+			for( Chart chart : chartGroup.getChildren() )
+				chartChartViews.put( chart, buildChartViewForChart( chart ) );
+		}
 
 		for( String source : chartGroup.getSources() )
 			sourceChartViews.put( source, buildChartViewForSource( source ) );
@@ -97,7 +100,16 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 	@Override
 	public ChartViewType getChartViewForChart( Chart chart )
 	{
-		return chartChartViews.get( chart );
+		synchronized( chartChartViews )
+		{
+			ChartViewType chartView = chartChartViews.get( chart );
+			if( chartView == null && chartGroup.getChildren().contains( chart ) )
+			{
+				chartView = buildChartViewForChart( chart );
+				chartChartViews.put( chart, chartView );
+			}
+			return chartView;
+		}
 	}
 
 	@Override
@@ -147,11 +159,14 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 				Chart chart = ( Chart )event.getElement();
 				if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
 				{
-					chartChartViews.put( chart, buildChartViewForChart( chart ) );
+					getChartViewForChart( chart );
 				}
 				else
 				{
-					chartChartViews.remove( chart );
+					synchronized( chartChartViews )
+					{
+						chartChartViews.remove( chart );
+					}
 				}
 			}
 		}

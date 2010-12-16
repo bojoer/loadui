@@ -105,25 +105,28 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 				content: [
 					segmentButtons, Stack { content: chartNode }
 				]
-			}, if( chartView instanceof ConfigurableLineChartView ) Button { text: "Add Segment", action: function():Void {
-				var selected:Runnable;
-				holder.showConfig( VBox {
-					content: [
-						CascadingTreeSelector {
-							treeModel: new SegmentTreeModel( chartView as ConfigurableLineChartView )
-							allowMultiple: false
-							onSelect: function(obj):Void { selected = obj as Runnable; }
-							onDeselect: function(obj):Void { selected = null; }
-						}, HBox {
-							hpos: HPos.RIGHT
-							content: [
-								Button { text: "Add", disable: bind selected == null; action: function():Void { selected.run(); holder.hideConfig() } }
-								Button { text: "Cancel", action: function():Void { holder.hideConfig() } }
-							]
-						}
-					]
-				} );
-			} } else null
+			}, if( chartView instanceof ConfigurableLineChartView ) Button {
+				text: "Add Segment"
+				action: function():Void {
+					var selected:Runnable;
+					holder.showConfig( VBox {
+						content: [
+							CascadingTreeSelector {
+								treeModel: new SegmentTreeModel( chartView as ConfigurableLineChartView )
+								allowMultiple: false
+								onSelect: function(obj):Void { selected = obj as Runnable; }
+								onDeselect: function(obj):Void { selected = null; }
+							}, HBox {
+								hpos: HPos.RIGHT
+								content: [
+									Button { text: "Add", disable: bind selected == null; action: function():Void { selected.run(); holder.hideConfig() } }
+									Button { text: "Cancel", action: function():Void { holder.hideConfig() } }
+								]
+							}
+						]
+					} );
+				}
+			} else null
 		]
 	}
 	
