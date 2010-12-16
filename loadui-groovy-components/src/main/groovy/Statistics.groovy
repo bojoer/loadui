@@ -500,7 +500,7 @@ resetBuffers = {
 	timeStats.reset()
 	byteStats.reset()
 	agentData = [:]
-	agentStatistics = [:]
+	agentStatistics = null
 }
 
 fixOptions = {
