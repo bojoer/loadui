@@ -18,24 +18,24 @@ case "`uname`" in
 esac
 
 # Setup LOADUI_HOME
-if [ "x$LOADUI_AGENT_HOME" = "x" ]
+if [ "x$LOADUI_HOME" = "x" ]
 then
     # get the full path (without any relative bits)
-    LOADUI_AGENT_HOME=`cd $DIRNAME/; pwd`Agent
+    LOADUI_HOME=`cd $DIRNAME/; pwd`
 fi
-export LOADUI_AGENT_HOME
+export LOADUI_HOME
 
-LOADUI_AGENT_CLASSPATH="$LOADUI_AGENT_HOME:$LOADUI_AGENT_HOME/lib/*"
+LOADUI_CLASSPATH="$LOADUI_HOME:$LOADUI_HOME/lib/*"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin
 then
-    LOADUI_AGENT_HOME=`cygpath --path -w "$LOADUI_AGENT_HOME"`
-    LOADUI_AGENT_CLASSPATH=`cygpath --path -w "$LOADUI_AGENT_CLASSPATH"`
+    LOADUI_HOME=`cygpath --path -w "$LOADUI_HOME"`
+    LOADUI_CLASSPATH=`cygpath --path -w "$LOADUI_CLASSPATH"`
 fi 
 
 JAVA="jre/bin/java"
 
 JAVA_OPTS="-Xms128m -Xmx768m -XX:MaxPermSize=128m"
 
-$JAVA $JAVA_OPTS -cp "$LOADUI_AGENT_CLASSPATH" com.eviware.loadui.launcher.LoadUICommandLineLauncher "$@"
+java $JAVA_OPTS -cp "$LOADUI_CLASSPATH" com.eviware.loadui.launcher.LoadUICommandLineLauncher "$@"
