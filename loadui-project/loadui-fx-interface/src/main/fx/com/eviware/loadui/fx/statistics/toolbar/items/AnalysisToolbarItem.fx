@@ -33,6 +33,8 @@ def iconImage = Image { url: "{__ROOT__}images/png/default-component-icon.png" }
 
 public class AnalysisToolbarItem extends StatisticsToolbarItem {
 	
+	public-init var templateScript:String;
+	
 	override var icon = iconImage;
 	
 	override var category = "ANALYSIS";

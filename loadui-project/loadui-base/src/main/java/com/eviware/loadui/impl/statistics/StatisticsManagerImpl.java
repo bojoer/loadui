@@ -66,6 +66,7 @@ public class StatisticsManagerImpl implements StatisticsManager
 
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningListener runningListener = new RunningListener();
+	private final StatisticHolderListener statisticHolderListener = new StatisticHolderListener();
 
 	static StatisticsManagerImpl getInstance()
 	{
@@ -119,14 +120,20 @@ public class StatisticsManagerImpl implements StatisticsManager
 	public void registerStatisticHolder( StatisticHolder statisticHolder )
 	{
 		if( holders.add( statisticHolder ) )
+		{
+			statisticHolder.addEventListener( BaseEvent.class, statisticHolderListener );
 			fireEvent( new CollectionEvent( this, STATISTIC_HOLDERS, CollectionEvent.Event.ADDED, statisticHolder ) );
+		}
 	}
 
 	@Override
 	public void deregisterStatisticHolder( StatisticHolder statisticHolder )
 	{
 		if( holders.remove( statisticHolder ) )
+		{
+			statisticHolder.removeEventListener( BaseEvent.class, statisticHolderListener );
 			fireEvent( new CollectionEvent( this, STATISTIC_HOLDERS, CollectionEvent.Event.REMOVED, statisticHolder ) );
+		}
 	}
 
 	@Override
@@ -164,6 +171,18 @@ public class StatisticsManagerImpl implements StatisticsManager
 			return factory.createStatisticsWriter( this, variable );
 
 		return null;
+	}
+
+	private class StatisticHolderListener implements EventHandler<BaseEvent>
+	{
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( StatisticHolder.STATISTICS.equals( event.getKey() ) )
+			{
+				fireEvent( new BaseEvent( event.getSource(), STATISTIC_HOLDER_UPDATED ) );
+			}
+		}
 	}
 
 	private class CollectionListener implements EventHandler<CollectionEvent>
@@ -218,8 +237,8 @@ public class StatisticsManagerImpl implements StatisticsManager
 			{
 				// could this be done better?
 				/*
-				 *  if startExecution is called and execution is in PAUSED stated it will return curectExecution
-				 *  and change state to START
+				 * if startExecution is called and execution is in PAUSED stated it
+				 * will return curectExecution and change state to START
 				 */
 				executionManager.startExecution( null, -1 );
 				if( !( ( ProjectItem )event.getSource() ).getWorkspace().isLocalMode() )

@@ -29,6 +29,7 @@ import com.eviware.loadui.api.statistics.store.ExecutionManager;
 public interface StatisticsManager extends EventFirer
 {
 	public static final String STATISTIC_HOLDERS = StatisticsManager.class.getName() + "@statisticHolders";
+	public static final String STATISTIC_HOLDER_UPDATED = StatisticsManager.class.getName() + "@statisticHolderUpdated";
 
 	/**
 	 * Registers a StatisticHolder and all of its Statistics.

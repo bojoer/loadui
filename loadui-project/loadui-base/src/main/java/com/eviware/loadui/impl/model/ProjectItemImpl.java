@@ -348,6 +348,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	{
 		getWorkspace().removeEventListener( BaseEvent.class, workspaceListener );
 		agentListener.release();
+		statisticPages.release();
 
 		for( SceneItem scene : new ArrayList<SceneItem>( getScenes() ) )
 			scene.release();

@@ -61,6 +61,11 @@
 			<version>1.4.0</version>
 		</dependency>
 		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-api</artifactId>
 			<version>${project.parent.version}</version>
