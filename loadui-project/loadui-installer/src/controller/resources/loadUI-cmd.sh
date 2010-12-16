@@ -38,4 +38,4 @@ JAVA="jre/bin/java"
 
 JAVA_OPTS="-Xms128m -Xmx768m -XX:MaxPermSize=128m"
 
-java $JAVA_OPTS -cp "$LOADUI_CLASSPATH" com.eviware.loadui.launcher.LoadUICommandLineLauncher "$@"
+$JAVA $JAVA_OPTS -cp "$LOADUI_CLASSPATH" com.eviware.loadui.launcher.LoadUICommandLineLauncher "$@"
