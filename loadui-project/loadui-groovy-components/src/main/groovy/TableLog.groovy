@@ -32,6 +32,7 @@ import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
 import javax.swing.event.TableModelListener
 import javax.swing.event.TableModelEvent
+import java.text.SimpleDateFormat
 
 import com.eviware.loadui.api.summary.MutableSection
 
@@ -41,6 +42,7 @@ createProperty 'saveFile', Boolean, false
 createProperty 'follow', Boolean, false
 createProperty 'summaryRows', Long, 0
 createProperty 'appendSaveFile', Boolean, false
+createProperty 'formatTimestamps', Boolean, true
 
 myTableModel = new LTableModel(1000, follow.value as Boolean)
 myTableModel.addTableModelListener(new TableModelListener() {
@@ -50,6 +52,8 @@ myTableModel.addTableModelListener(new TableModelListener() {
 });
 
 saveFileName = fileName.value?.name
+
+def formater = new SimpleDateFormat("HH:mm:ss:SSS")
 
 updateFollow = {
 	follow.value = myTableModel.follow
@@ -62,6 +66,12 @@ output = { message ->
 	message.keySet().each { k -> myTableModel.addColumn k }
 	lastMsgDate = new Date();
 	
+	if ( formatTimestamps.value )
+		message.each() { key, value ->
+			if ( key.toLowerCase().indexOf("timestamp") > -1 ) 
+				message.put(key, formater.format(new Date(value)) )
+		}
+
 	result = myTableModel.addRow(message) 
 	if( result && saveFile.value ) {
 		try {
@@ -72,7 +82,7 @@ output = { message ->
 			writer.writeNext(entries)
 			writer.flush()
 		} catch (Exception e) {
-			println(e.printStackTrace())
+			e.printStackTrace()
 		} finally {
 			writer.close()
 		}
@@ -105,7 +115,6 @@ addEventListener( ActionEvent ) { event ->
 			def name = saveFileName.substring(0, saveFileName.lastIndexOf("."))
 			def timestamp = new Date().time
 			saveFileName = "${fileName.value.parent}${File.separator}$name-$timestamp$ext"
-			println saveFileName
 		}
 	}
 
@@ -140,6 +149,7 @@ settings(label:'Logging') {
 		property(property: saveFile, label: 'Save Logs?' )
 		property(property: fileName, label: 'Log File (Comma Separated) ' )
 		property(property: appendSaveFile, label: 'Check to append selected file', )
+		property(property: formatTimestamps, label: 'Check to format timestamps(hh:mm:ss:ms)')
 		label('(If not appending file, its name will be used to generate new log files each time test is run.)')
 	}
 }
