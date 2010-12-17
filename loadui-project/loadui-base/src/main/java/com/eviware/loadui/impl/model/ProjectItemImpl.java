@@ -67,6 +67,8 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.PropertySynchronizer;
+import com.eviware.loadui.api.statistics.MutableStatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.summary.Chapter;
 import com.eviware.loadui.api.summary.MutableSummary;
@@ -86,6 +88,7 @@ import com.eviware.loadui.config.SceneAssignmentConfig;
 import com.eviware.loadui.config.SceneItemConfig;
 import com.eviware.loadui.impl.XmlBeansUtils;
 import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
+import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.statistics.model.StatisticPagesImpl;
 import com.eviware.loadui.impl.summary.MutableChapterImpl;
 import com.eviware.loadui.impl.summary.sections.ProjectDataSection;
@@ -127,6 +130,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private File projectFile;
 
 	private ScheduledFuture<?> awaitingSummaryTimeout;
+	
+	private final StatisticHolderSupport statisticHolderSupport;
 
 	public static ProjectItemImpl loadProject( WorkspaceItem workspace, File projectFile ) throws XmlException,
 			IOException
@@ -154,6 +159,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		proxy = BeanInjector.getBean( TerminalProxy.class );
 		statisticPages = new StatisticPagesImpl( getConfig().getStatistics() == null ? getConfig().addNewStatistics()
 				: getConfig().getStatistics() );
+		
+		statisticHolderSupport = new StatisticHolderSupport( this );
 	}
 
 	@Override
@@ -210,6 +217,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		}
 
 		statisticPages.init();
+		statisticHolderSupport.init();
+		
+		MutableStatisticVariable rpsVariable = statisticHolderSupport.addStatisticVariable( "RequestPerSecond" );
+		statisticHolderSupport.addStatisticsWriter( "PSWritter", rpsVariable );
+		
 	}
 
 	private boolean attachScene( SceneItem scene )
@@ -353,6 +365,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		for( SceneItem scene : new ArrayList<SceneItem>( getScenes() ) )
 			scene.release();
 
+		statisticHolderSupport.release();
+		
 		super.release();
 	}
 
@@ -1083,5 +1097,18 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				return true;
 		}
 		return super.isLoadingError();
+	}
+
+	
+	@Override
+	public StatisticVariable getStatisticVariable( String statisticVariableName )
+	{
+		return statisticHolderSupport.getStatisticVariable( statisticVariableName );
+	}
+
+	@Override
+	public Set<String> getStatisticVariableNames()
+	{
+		return statisticHolderSupport.getStatisticVariableNames();
 	}
 }

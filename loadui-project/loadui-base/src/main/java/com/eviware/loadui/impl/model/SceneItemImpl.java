@@ -46,6 +46,8 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.api.statistics.MutableStatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
@@ -55,6 +57,7 @@ import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.config.SceneItemConfig;
 import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.counter.RemoteAggregatedCounterSupport;
+import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.summary.MutableChapterImpl;
 import com.eviware.loadui.impl.summary.sections.TestCaseDataSection;
 import com.eviware.loadui.impl.summary.sections.TestCaseDataSummarySection;
@@ -83,6 +86,8 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	private MessageEndpoint messageEndpoint = null;
 
 	private final Property<Boolean> followProject;
+	
+	private final StatisticHolderSupport statisticHolderSupport;
 
 	public SceneItemImpl( ProjectItem project, SceneItemConfig config )
 	{
@@ -107,6 +112,8 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 				: null;
 
 		projectListener = "controller".equals( System.getProperty( "loadui.instance" ) ) ? new ProjectListener() : null;
+		
+		statisticHolderSupport = new StatisticHolderSupport( this );
 	}
 
 	@Override
@@ -120,6 +127,11 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			project.getWorkspace().addEventListener( PropertyEvent.class, workspaceListener );
 			propagate = project.getWorkspace().isLocalMode();
 		}
+		
+		statisticHolderSupport.init();
+		
+		MutableStatisticVariable rpsVariable = statisticHolderSupport.addStatisticVariable( "RequestPerSecond" );
+		statisticHolderSupport.addStatisticsWriter( "PSWritter", rpsVariable );
 	}
 
 	@Override
@@ -428,5 +440,17 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 				// }
 			}
 		}
+	}
+
+	@Override
+	public StatisticVariable getStatisticVariable( String statisticVariableName )
+	{
+		return statisticHolderSupport.getStatisticVariable( statisticVariableName );
+	}
+
+	@Override
+	public Set<String> getStatisticVariableNames()
+	{
+		return statisticHolderSupport.getStatisticVariableNames();
 	}
 }
