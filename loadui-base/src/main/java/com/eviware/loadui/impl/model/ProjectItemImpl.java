@@ -88,6 +88,7 @@ import com.eviware.loadui.config.SceneAssignmentConfig;
 import com.eviware.loadui.config.SceneItemConfig;
 import com.eviware.loadui.impl.XmlBeansUtils;
 import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
+import com.eviware.loadui.impl.counter.CounterStatisticSupport;
 import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.statistics.model.StatisticPagesImpl;
 import com.eviware.loadui.impl.summary.MutableChapterImpl;
@@ -131,7 +132,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 	private ScheduledFuture<?> awaitingSummaryTimeout;
 	
-	private final StatisticHolderSupport statisticHolderSupport;
+//	private final StatisticHolderSupport statisticHolderSupport;
+//	private final CounterStatisticSupport counterStatisticSupport;
 
 	public static ProjectItemImpl loadProject( WorkspaceItem workspace, File projectFile ) throws XmlException,
 			IOException
@@ -160,7 +162,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		statisticPages = new StatisticPagesImpl( getConfig().getStatistics() == null ? getConfig().addNewStatistics()
 				: getConfig().getStatistics() );
 		
-		statisticHolderSupport = new StatisticHolderSupport( this );
+//		statisticHolderSupport = new StatisticHolderSupport( this );
+//		counterStatisticSupport = new CounterStatisticSupport( this, statisticHolderSupport );
 	}
 
 	@Override
@@ -217,11 +220,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		}
 
 		statisticPages.init();
-		statisticHolderSupport.init();
-		
-		MutableStatisticVariable rpsVariable = statisticHolderSupport.addStatisticVariable( "RequestPerSecond" );
-		statisticHolderSupport.addStatisticsWriter( "PSWritter", rpsVariable );
-		
+//		statisticHolderSupport.init();
 	}
 
 	private boolean attachScene( SceneItem scene )
@@ -365,7 +364,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		for( SceneItem scene : new ArrayList<SceneItem>( getScenes() ) )
 			scene.release();
 
-		statisticHolderSupport.release();
+//		statisticHolderSupport.release();
 		
 		super.release();
 	}
@@ -1099,16 +1098,4 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		return super.isLoadingError();
 	}
 
-	
-	@Override
-	public StatisticVariable getStatisticVariable( String statisticVariableName )
-	{
-		return statisticHolderSupport.getStatisticVariable( statisticVariableName );
-	}
-
-	@Override
-	public Set<String> getStatisticVariableNames()
-	{
-		return statisticHolderSupport.getStatisticVariableNames();
-	}
 }

@@ -87,7 +87,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	private final Property<Boolean> followProject;
 	
-	private final StatisticHolderSupport statisticHolderSupport;
+//	private final StatisticHolderSupport statisticHolderSupport;
 
 	public SceneItemImpl( ProjectItem project, SceneItemConfig config )
 	{
@@ -113,7 +113,8 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 		projectListener = "controller".equals( System.getProperty( "loadui.instance" ) ) ? new ProjectListener() : null;
 		
-		statisticHolderSupport = new StatisticHolderSupport( this );
+//		statisticHolderSupport = new StatisticHolderSupport( this );
+		
 	}
 
 	@Override
@@ -128,10 +129,10 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			propagate = project.getWorkspace().isLocalMode();
 		}
 		
-		statisticHolderSupport.init();
-		
-		MutableStatisticVariable rpsVariable = statisticHolderSupport.addStatisticVariable( "RequestPerSecond" );
-		statisticHolderSupport.addStatisticsWriter( "PSWritter", rpsVariable );
+//		statisticHolderSupport.init();
+//		
+//		MutableStatisticVariable rpsVariable = statisticHolderSupport.addStatisticVariable( "RequestPerSecond" );
+//		statisticHolderSupport.addStatisticsWriter( "PSWritter", rpsVariable );
 	}
 
 	@Override
@@ -442,15 +443,4 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		}
 	}
 
-	@Override
-	public StatisticVariable getStatisticVariable( String statisticVariableName )
-	{
-		return statisticHolderSupport.getStatisticVariable( statisticVariableName );
-	}
-
-	@Override
-	public Set<String> getStatisticVariableNames()
-	{
-		return statisticHolderSupport.getStatisticVariableNames();
-	}
 }
