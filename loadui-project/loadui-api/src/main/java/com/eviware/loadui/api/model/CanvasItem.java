@@ -31,7 +31,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
  * 
  * @author dain.nilsson
  */
-public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
+public interface CanvasItem extends ModelItem, CounterHolder
 {
 	public static final String COMPONENTS = CanvasItem.class.getName() + "@components";
 	public static final String CONNECTIONS = CanvasItem.class.getName() + "@connections";
