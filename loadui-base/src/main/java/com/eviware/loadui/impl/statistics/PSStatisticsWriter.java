@@ -97,7 +97,7 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 			lastTimeUpdated = System.currentTimeMillis();
 		}
 
-		if( lastTimeFlushed + delay >= System.currentTimeMillis() )
+		if( lastTimeFlushed + delay <= System.currentTimeMillis() )
 			flush();
 	}
 
