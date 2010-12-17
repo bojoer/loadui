@@ -684,13 +684,16 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private class ComponentBusyAwaiter implements EventHandler<BaseEvent>
 	{
+		private final String TRY_READY = ComponentBusyAwaiter.class.getName() + "@tryReady";
+
 		private final EventFirer source;
 		private final AtomicInteger awaiting = new AtomicInteger();
 
 		public ComponentBusyAwaiter( EventFirer source )
 		{
 			this.source = source;
-			tryReady();
+			addEventListener( BaseEvent.class, this );
+			fireBaseEvent( TRY_READY );
 		}
 
 		private void tryReady()
@@ -713,7 +716,12 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		@Override
 		public void handleEvent( BaseEvent event )
 		{
-			if( event.getKey().equals( ComponentItem.BUSY ) )
+			if( event.getKey().equals( TRY_READY ) )
+			{
+				removeEventListener( BaseEvent.class, this );
+				tryReady();
+			}
+			else if( event.getKey().equals( ComponentItem.BUSY ) )
 			{
 				event.getSource().removeEventListener( BaseEvent.class, this );
 				if( awaiting.decrementAndGet() == 0 )
