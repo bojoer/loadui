@@ -47,6 +47,8 @@ import com.eviware.loadui.api.events.TerminalConnectionEvent;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.statistics.StatisticHolder;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.api.terminal.Connection;
@@ -56,13 +58,15 @@ import com.eviware.loadui.config.CanvasItemConfig;
 import com.eviware.loadui.config.ComponentItemConfig;
 import com.eviware.loadui.config.ConnectionConfig;
 import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
+import com.eviware.loadui.impl.counter.CounterStatisticSupport;
 import com.eviware.loadui.impl.counter.CounterSupport;
+import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.summary.MutableSummaryImpl;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 
 public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends ModelItemImpl<Config> implements
-		CanvasItem
+		CanvasItem, StatisticHolder
 {
 	private static final String LIMITS_ATTRIBUTE = "limits";
 
@@ -94,6 +98,9 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	private ArrayList<ComponentItemConfig> badComponents = new ArrayList<ComponentItemConfig>();
 	private ArrayList<ConnectionConfig> badConnections = new ArrayList<ConnectionConfig>();
 
+	private final StatisticHolderSupport statisticHolderSupport;
+	private final CounterStatisticSupport counterStatisticSupport;
+
 	public CanvasItemImpl( Config config, CounterSupport counterSupport )
 	{
 		super( config );
@@ -104,6 +111,9 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 		scheduler = BeanInjector.getBean( ScheduledExecutorService.class );
 		behaviorProvider = BeanInjector.getBean( BehaviorProvider.class );
+		
+		statisticHolderSupport = new StatisticHolderSupport( this );
+		counterStatisticSupport = new CounterStatisticSupport( this, statisticHolderSupport );
 	}
 
 	@Override
@@ -192,6 +202,9 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		addEventListener( BaseEvent.class, new ActionListener() );
 
 		// timer.scheduleAtFixedRate( timerTask, 1000, 1000 );
+		
+		statisticHolderSupport.init();
+		counterStatisticSupport.init();
 	}
 
 	@Override
@@ -358,6 +371,9 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		connections.clear();
 		summary = null;
 
+		counterStatisticSupport.release();
+		statisticHolderSupport.release();
+		
 		super.release();
 	}
 
@@ -728,5 +744,17 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 					tryReady();
 			}
 		}
+	}
+	
+	@Override
+	public StatisticVariable getStatisticVariable( String statisticVariableName )
+	{
+		return statisticHolderSupport.getStatisticVariable( statisticVariableName );
+	}
+
+	@Override
+	public Set<String> getStatisticVariableNames()
+	{
+		return statisticHolderSupport.getStatisticVariableNames();
 	}
 }
