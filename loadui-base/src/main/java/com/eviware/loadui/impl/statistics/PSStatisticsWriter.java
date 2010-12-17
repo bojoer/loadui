@@ -39,8 +39,8 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 
 	private final static String TYPE = "PSWritter";
 
-	private Double perSecond;
-	private Double totalSum;
+	private Double perSecond = 0d;
+	private Double totalSum = 0d;
 
 	private long lastTimeUpdated = System.currentTimeMillis();
 
