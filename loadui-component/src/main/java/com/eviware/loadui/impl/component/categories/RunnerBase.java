@@ -404,16 +404,6 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		if( !getContext().isInvalid() )
 		{
 			requestCounter.increment();
-			// this will update statistic variable only on parent canvas
-			( ( MutableStatisticVariable )getContext().getCanvas().getStatisticVariable( "RequestPerSecond" ) ).update(
-					System.currentTimeMillis(), requestCounter.get() );
-			// if this is test case, project statistic variable should be updated too.
-			if( getContext().getCanvas() instanceof SceneItem )
-			{
-				ProjectItem project = ( ( SceneItem )getContext().getCanvas() ).getProject();
-				( ( MutableStatisticVariable )project.getStatisticVariable( "RequestPerSecond" ) ).update( System
-						.currentTimeMillis(), project.getCounter( CanvasItem.REQUEST_COUNTER ).get() );
-			}
 			getContext().setBusy( true );
 			Long startTime = System.nanoTime();
 			updateCurrentlyRunning( currentlyRunning.incrementAndGet() );
