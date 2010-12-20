@@ -50,6 +50,8 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.statistics.MutableStatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.summary.SampleStats;
 import com.eviware.loadui.api.summary.SampleStatsImpl;
 import com.eviware.loadui.api.terminal.InputTerminal;
@@ -66,6 +68,8 @@ import com.eviware.loadui.util.BeanInjector;
 public abstract class RunnerBase extends BaseCategory implements RunnerCategory, EventHandler<BaseEvent>
 {
 	private final static int NUM_TOP_BOTTOM_SAMPLES = 5;
+	private static final String TIME_TAKEN_STATISTICS_BUFFER = "TimeTakenStatisticsBuffer";
+	private static final String RESPONSE_SIZE_STATISTICS_BUFFER = "ResponseSizeStatisticsBuffer";
 
 	private final ScheduledExecutorService scheduler;
 	private final ScheduledFuture<?> updateTask;
@@ -88,6 +92,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final Property<Long> concurrentSamplesProperty;
 	private final Property<Long> maxQueueSizeProperty;
 	private final Property<Boolean> assertOnOverflow;
+	private final Property<Long> timeTakenStatisticsBuffer;
+	private final Property<Long> responseSizeStatisticsBuffer;
+
 	private long concurrentSamples;
 	private long queueSize;
 	private AtomicInteger workerCount = new AtomicInteger();
@@ -151,6 +158,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		concurrentSamples = concurrentSamplesProperty.getValue();
 		maxQueueSizeProperty = context.createProperty( MAX_QUEUE_SIZE_PROPERTY, Long.class, 1000 );
 		assertOnOverflow = context.createProperty( ASSERT_ON_OVERFLOW_PROPERTY, Boolean.class, false );
+		timeTakenStatisticsBuffer = context.createProperty( TIME_TAKEN_STATISTICS_BUFFER, Long.class, 1000 );
+		responseSizeStatisticsBuffer = context.createProperty( RESPONSE_SIZE_STATISTICS_BUFFER, Long.class, 1000 );
+
 		queueSize = maxQueueSizeProperty.getValue();
 
 		context.getComponent().addEventListener( BaseEvent.class, this );
@@ -174,6 +184,11 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			updateTask = null;
 			assignmentListener = null;
 		}
+
+		context.addEventListener( PropertyEvent.class, new PropertyListener() );
+		
+		setWriterBuffer( timeTakenVariable, timeTakenStatisticsBuffer.getValue().intValue() );
+		setWriterBuffer( responseSizeVariable, responseSizeStatisticsBuffer.getValue().intValue() );
 	}
 
 	/**
@@ -753,4 +768,31 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		return executor;
 	}
+
+	private void setWriterBuffer( StatisticVariable var, int val )
+	{
+		for( StatisticsWriter writer : var.getWriters() )
+			if( writer.getType().equals( "AVERAGE" ) )
+				writer.setBufferSize( val );
+	}
+
+	private class PropertyListener implements EventHandler<PropertyEvent>
+	{
+
+		@Override
+		public void handleEvent( PropertyEvent event )
+		{
+			if( TIME_TAKEN_STATISTICS_BUFFER.equals( event.getKey() ) )
+			{
+				setWriterBuffer( timeTakenVariable, timeTakenStatisticsBuffer.getValue().intValue() );
+			}
+			else if( RESPONSE_SIZE_STATISTICS_BUFFER.equals( event.getKey() ) )
+			{
+				setWriterBuffer( responseSizeVariable, responseSizeStatisticsBuffer.getValue().intValue() );
+			}
+
+		}
+
+	}
+
 }
