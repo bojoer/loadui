@@ -136,7 +136,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		canvas.addEventListener( ActionEvent.class, canvasListener );
 
 		statisticHolderSupport.init();
-		counterStatisticSupport.init();
+	//	counterStatisticSupport.init();
 
 		if( workspaceListener != null )
 		{
