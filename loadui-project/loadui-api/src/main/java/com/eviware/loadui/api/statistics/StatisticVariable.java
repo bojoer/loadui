@@ -66,4 +66,11 @@ public interface StatisticVariable
 	 * @return
 	 */
 	public Statistic<?> getStatistic( String statisticName, String source );
+	
+	/**
+	 * Gets all writers assigned to this variable
+	 * 
+	 * @return
+	 */
+	public Set<StatisticsWriter> getWriters();
 }

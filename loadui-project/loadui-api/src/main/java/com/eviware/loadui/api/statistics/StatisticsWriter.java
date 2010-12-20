@@ -73,4 +73,23 @@ public interface StatisticsWriter extends Addressable
 	 * @return
 	 */
 	public TrackDescriptor getTrackDescriptor();
+	
+	/**
+	 * Gets the type of the StatisticsWriter, which should be unique. This can be
+	 * the same as the associated StatisticsWriterFactory.getType().
+	 * 
+	 * @return
+	 */
+	public String getType();
+	
+	/**
+	 * Get buffer size for holding data
+	 */
+	public int getBufferSize();
+	
+	/**
+	 * Set size of buffer for holding data
+	 * @param bufferSize
+	 */
+	public void setBufferSize( int bufferSize );
 }
