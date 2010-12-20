@@ -38,13 +38,13 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	public static final String TYPE = "AVERAGE";
 
 	private Percentile perc = new Percentile( 90 );
+	private Percentile medianPercentile = new Percentile( 50 );
 
 	private Logger log = LoggerFactory.getLogger( AverageStatisticWriter.class );
 
 	public enum Stats
 	{
-		AVERAGE, AVERAGE_COUNT, AVERAGE_SUM, STD_DEV, STD_DEV_SUM, PERCENTILE;
-
+		AVERAGE, AVERAGE_COUNT, AVERAGE_SUM, STD_DEV, STD_DEV_SUM, PERCENTILE, MEDIAN;
 	}
 
 	/**
@@ -71,8 +71,9 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	protected double stdDev = 0.0;
 	protected double sumTotalSquare = 0.0;
 	protected double percentile = 0;
+	private double median = 0;
 
-	private int percentileBufferSize = 1000;
+	private int bufferSize = 1000;
 
 	protected ArrayList<Double> values = new ArrayList<Double>();
 
@@ -104,7 +105,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		{
 			double doubleValue = value.doubleValue();
 			this.values.add( doubleValue );
-			if( this.values.size() >= percentileBufferSize )
+			if( this.values.size() >= bufferSize )
 				this.values.remove( 0 );
 			avgSum += doubleValue;
 			avgCnt++ ;
@@ -131,10 +132,12 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		}
 		stdDev = Math.sqrt( sumTotalSquare / avgCnt );
 		percentile = perc.evaluate( pValues );
+		median = medianPercentile.evaluate( pValues );
 		lastTimeFlushed = System.currentTimeMillis();
-		at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_COUNT.name(), avgCnt )
-				.put( Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.STD_DEV_SUM.name(), sumTotalSquare )
-				.put( Stats.STD_DEV.name(), stdDev ).put( Stats.PERCENTILE.name(), percentile ).write();
+		at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_COUNT.name(), avgCnt ).put(
+				Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.STD_DEV_SUM.name(), sumTotalSquare ).put(
+				Stats.STD_DEV.name(), stdDev ).put( Stats.PERCENTILE.name(), percentile ).put( Stats.MEDIAN.name(), median )
+				.write();
 	}
 
 	@Override
@@ -146,16 +149,17 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		stdDev = 0.0;
 		sumTotalSquare = 0.0;
 		percentile = 0;
+		median = 0;
 	}
 
-	public int getPercentileBufferSize()
+	public int getBufferSize()
 	{
-		return percentileBufferSize;
+		return bufferSize;
 	}
 
-	public void setPercentileBufferSize( int percentileBufferSize )
+	public void setBufferSize( int bufferSize )
 	{
-		this.percentileBufferSize = percentileBufferSize;
+		this.bufferSize = bufferSize;
 	}
 
 	/**
@@ -187,8 +191,10 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			trackStructure.put( Stats.STD_DEV.name(), Double.class );
 			trackStructure.put( Stats.STD_DEV_SUM.name(), Double.class );
 			trackStructure.put( Stats.PERCENTILE.name(), Double.class );
+			trackStructure.put( Stats.MEDIAN.name(), Double.class );
 
 			return new AverageStatisticWriter( statisticsManager, variable, trackStructure );
 		}
 	}
+
 }
