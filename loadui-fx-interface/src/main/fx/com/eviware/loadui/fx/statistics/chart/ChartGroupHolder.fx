@@ -57,6 +57,8 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.util.BeanInjector;
 import java.util.EventObject;
 
+import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
+
 def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
 
 /**
@@ -154,7 +156,9 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		if( draggable instanceof ChartToolbarItem ) {
 			chartGroup.setType( (draggable as ChartToolbarItem).type );
 		} else if( draggable instanceof ComponentToolbarItem ) {
-			chartGroup.createChart( (draggable as ComponentToolbarItem).component );
+			def chart = chartGroup.createChart( (draggable as ComponentToolbarItem).component );
+			def chartView = chartGroup.getChartViewForChart( chart );
+			(chartView as ConfigurableLineChartView).addSegment( 'TimeTaken', 'AVERAGE', 'main' );
 		} else if( draggable instanceof AnalysisToolbarItem ) {
 			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );
 		}
