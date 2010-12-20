@@ -58,6 +58,8 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.util.BeanInjector;
 import java.util.EventObject;
 
+import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
+
 /**
  * A Page displaying ChartGroupHolders, which allows adding, removing, and reordering of its children.
  *
@@ -218,7 +220,9 @@ class DropBase extends BaseNode, Resizable, Droppable {
 		} else if( draggable instanceof ComponentToolbarItem ) {
 			def sh = (draggable as ComponentToolbarItem).component;
 			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart Group {statisticPage.getChildCount()+1}" );
-			chartGroup.createChart( sh );
+			def chart = chartGroup.createChart( sh );
+			def chartView = chartGroup.getChartViewForChart( chart );
+			(chartView as ConfigurableLineChartView).addSegment( 'TimeTaken', 'AVERAGE', 'main' );
 		} else if( draggable instanceof AnalysisToolbarItem ) {
 			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart Group {statisticPage.getChildCount()+1}" );
 			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );
