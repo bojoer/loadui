@@ -126,19 +126,25 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	}
 
 	/**
-	 * Gets the type of the StatisticsWriter, which should be unique. This can be
-	 * the same as the associated StatisticsWriterFactory.getType().
-	 * 
-	 * @return
-	 */
-	protected abstract String getType();
-
-	/**
 	 * Called between Executions, letting the StatisticsWriter know that it
 	 * should clear any buffers and prepare for a new Execution.
 	 */
 	protected abstract void reset();
 
+	@Override
+	public void setBufferSize( int bufferSize )
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public int getBufferSize()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	@Override
 	public String getId()
 	{

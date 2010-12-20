@@ -84,7 +84,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	protected String getType()
+	public String getType()
 	{
 		return TYPE;
 	}
@@ -152,11 +152,13 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		median = 0;
 	}
 
+	@Override
 	public int getBufferSize()
 	{
 		return bufferSize;
 	}
-
+	
+	@Override
 	public void setBufferSize( int bufferSize )
 	{
 		this.bufferSize = bufferSize;

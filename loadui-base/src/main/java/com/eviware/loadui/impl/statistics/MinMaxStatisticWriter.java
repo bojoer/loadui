@@ -51,7 +51,7 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	protected String getType()
+	public String getType()
 	{
 		return TYPE;
 	}

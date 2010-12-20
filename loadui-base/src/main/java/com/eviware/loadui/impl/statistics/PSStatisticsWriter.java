@@ -60,7 +60,7 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	protected String getType()
+	public String getType()
 	{
 		return TYPE;
 	}

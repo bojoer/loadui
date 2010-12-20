@@ -130,4 +130,11 @@ public class StatisticVariableImpl implements MutableStatisticVariable
 		for( StatisticsWriter writer : writers )
 			writer.update( timestamp, value );
 	}
+
+	@Override
+	public Set<StatisticsWriter> getWriters()
+	{
+		return writers;
+	}
+	
 }
