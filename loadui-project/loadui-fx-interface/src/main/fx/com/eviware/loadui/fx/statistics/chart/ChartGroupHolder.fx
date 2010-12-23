@@ -96,7 +96,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	def zoomControl:ZoomControl = ZoomControl{
 										styleClass: "zoom-control"
 										width: bind this.width - 10
-										height: 150
 								   };
 	
 	public-init var chartGroup:ChartGroup on replace oldChartGroup {
