@@ -58,6 +58,7 @@ public class ZoomControl extends CustomNode, Resizable {
 		scale = (buttonGroup.selectedToggle as ToggleButton).text;
 	}
 	
+	// scale should be monitored to set time scale on graph
 	public-read var scale:String = "";
 	var ppoints;
 	
@@ -66,6 +67,7 @@ public class ZoomControl extends CustomNode, Resizable {
 	}
 	
 	init {
+		height = 150;
 		getPPoints();
 		var rec:Rectangle;
 	// it is in init since buttonToggle needs to be init before children
