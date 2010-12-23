@@ -26,11 +26,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.util.Sequences;
+import javafx.scene.control.Separator;
 
 import com.sun.javafx.scene.layout.Region;
 
@@ -58,6 +61,7 @@ import com.eviware.loadui.util.BeanInjector;
 import java.util.EventObject;
 
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
+import com.eviware.loadui.fx.statistics.chart.controls.*;
 
 def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
 
@@ -80,6 +84,20 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	
 	def listener = new ChartGroupListener();
 	def statisticsManagerListener = new StatisticsManagerListener();
+	
+	def controlButtons = new ToggleGroup();
+	var oldConfNode:Node;
+	var configurationNode:Node = bind (controlButtons.selectedToggle.value as Node) on replace {
+		if ( oldConfNode != null ) 
+			delete oldConfNode from configurationHolder.content;
+		insert configurationNode into configurationHolder.content;
+		oldConfNode = configurationNode;
+	};
+	def zoomControl:ZoomControl = ZoomControl{
+										styleClass: "zoom-control"
+										width: bind this.width - 10
+										height: 150
+								   };
 	
 	public-init var chartGroup:ChartGroup on replace oldChartGroup {
 		chartGroup.addEventListener( BaseEvent.class, listener );
@@ -105,17 +123,28 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	}
 	
 	def buttonBar:HBox = HBox {
+		styleClass: "chart-group-toolbar"
 		spacing: 5
 		content: [
-			Button { text: "Expand group", action: toggleGroupExpand },
+			Button { text: "Expand", action: toggleGroupExpand },
+			//Button { text: "Add Statistics", action: toggleAgentExpand },
 			Button { text: "Show agents", action: toggleAgentExpand },
 			Button { text: "Configure", action: toggleConfiguration },
+			ToggleButton { text: "Zoom", toggleGroup:controlButtons, value: zoomControl },
+		//	Button { text: "Scale", action: toggleAgentExpand }, //TODO
+		//	Button { text: "Style", action: toggleAgentExpand }, //TODO
+			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
+		//	Button { text: "Raw Data", action: toggleAgentExpand }, //TODO
+		//	Button { text: "Error", action: toggleAgentExpand }, //TODO
+		//	Button { text: "Notes", action: toggleAgentExpand }, //TODO
+			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
+		//	Button { text: "Settings", action: toggleAgentExpand }, //TODO
+		//	Button { text: "Help", action: toggleAgentExpand }, //TODO
 			Button { text: "Delete", action: function():Void { chartGroup.delete() } }
 		]
 	}
 	
-	def configurationHolder = VBox {
-	}
+	def configurationHolder = VBox {}
 	
 	init {
 	   statisticsManager.addEventListener( BaseEvent.class, statisticsManagerListener );
@@ -224,6 +253,14 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	}
 	
 	function toggleConfiguration():Void {
+		if( sizeof configurationHolder.content == 0 ) {
+			insert Rectangle { height: 50, width: 500 } into configurationHolder.content;
+		} else {
+			configurationHolder.content = [];
+		}
+	}
+	
+	function toggleZoom():Void {
 		if( sizeof configurationHolder.content == 0 ) {
 			insert Rectangle { height: 50, width: 500 } into configurationHolder.content;
 		} else {
