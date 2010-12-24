@@ -15,19 +15,14 @@
  */
 package com.eviware.loadui.impl.summary.sections;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.impl.model.ProjectItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
+import com.eviware.loadui.util.summary.CalendarUtils;
 
 public class ProjectDataSummarySection extends MutableSectionImpl implements DataSummarySection
 {
-
-	private static final long HOUR = 3600000L;
 	private ProjectItemImpl project;
-	private SimpleDateFormat dateFormat = new SimpleDateFormat( "HH:mm:ss" );
 
 	public ProjectDataSummarySection( ProjectItemImpl projectItemImpl )
 	{
@@ -62,19 +57,7 @@ public class ProjectDataSummarySection extends MutableSectionImpl implements Dat
 	@Override
 	public String getTime()
 	{
-		if( project.getStartTime() != null )
-		{
-			Date time = new Date( project.getEndTime().getTime() - project.getStartTime().getTime() );
-			if( new Date().getTime() - project.getStartTime().getTime() < HOUR )
-				dateFormat = new SimpleDateFormat( "00:mm:ss" );
-			else
-				dateFormat = new SimpleDateFormat( "HH:mm:ss" );
-			return dateFormat.format( time );
-		}
-		else
-		{
-			return "N/A";
-		}
+		return CalendarUtils.getFormattedPeriod( project.getStartTime(), project.getEndTime() );
 	}
 
 	@Override

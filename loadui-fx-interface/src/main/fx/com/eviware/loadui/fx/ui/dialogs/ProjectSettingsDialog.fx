@@ -51,6 +51,7 @@ public class ProjectSettingsDialog  {
     				theItem.setDescription(descriptionForm.getField('description').value as String);
     				theItem.setSaveReport(form.getField('saveReport').value as Boolean);
     				theItem.setReportFolder((form.getField('savePath').value as File).getAbsolutePath());
+    				theItem.setAbortOnFinish(executionForm.getField('abortOnFinish').value as Boolean);
     				theItem.setAttribute( IGNORE_INVALID_CANVAS, "{miscForm.getField(IGNORE_INVALID_CANVAS).value as Boolean}" );
     				theItem.setAttribute( IGNORE_UNASSIGNED_TESTCASES, "{miscForm.getField(IGNORE_UNASSIGNED_TESTCASES).value as Boolean}" );
     				dialogRef.close();
@@ -59,6 +60,7 @@ public class ProjectSettingsDialog  {
     var form:Form;
     var descriptionForm:Form;
     var miscForm:Form;
+    var executionForm:Form;
     var dialogRef: Dialog;
 	
 	public function show(item:ProjectItem) {
@@ -87,6 +89,19 @@ public class ProjectSettingsDialog  {
 								value: item.getDescription()
 								action: ok
 								layoutInfo: LayoutInfo { width: 300, height: 150, vfill: true, hfill: true }
+							}
+						]
+					}
+				},
+				Tab {
+      			label: "Execution",
+      			content: executionForm = Form {
+      				singleColumn: true
+						formContent: [
+							CheckBoxField { 
+								id: "abortOnFinish"
+								label: "Abort ongoing requests on finish"
+								value: item.isAbortOnFinish();
 							}
 						]
 					}

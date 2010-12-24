@@ -15,13 +15,13 @@
  */
 package com.eviware.loadui.impl.summary.sections;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.SceneItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
+import com.eviware.loadui.util.summary.CalendarUtils;
 
 public class TestCaseDataSection extends MutableSectionImpl implements DataSection
 {
@@ -73,7 +73,7 @@ public class TestCaseDataSection extends MutableSectionImpl implements DataSecti
 		if( testcase.getLimit( CanvasItem.TIMER_COUNTER ) > -1 )
 		{
 			Date time = new Date( testcase.getLimit( CanvasItem.TIMER_COUNTER ) );
-			return new SimpleDateFormat( "HH:mm:ss" ).format( time );
+			return CalendarUtils.format( time );
 		}
 		else
 			return "N/A";

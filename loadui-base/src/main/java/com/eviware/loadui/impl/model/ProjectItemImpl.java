@@ -20,18 +20,23 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.SwingWorker;
 import javax.swing.table.TableModel;
@@ -51,24 +56,24 @@ import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.CollectionEvent.Event;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.RemoteActionEvent;
-import com.eviware.loadui.api.events.CollectionEvent.Event;
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.SceneCommunication;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.Assignment;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.property.PropertySynchronizer;
-import com.eviware.loadui.api.statistics.MutableStatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.summary.Chapter;
 import com.eviware.loadui.api.summary.MutableSummary;
@@ -88,8 +93,6 @@ import com.eviware.loadui.config.SceneAssignmentConfig;
 import com.eviware.loadui.config.SceneItemConfig;
 import com.eviware.loadui.impl.XmlBeansUtils;
 import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
-import com.eviware.loadui.impl.counter.CounterStatisticSupport;
-import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.statistics.model.StatisticPagesImpl;
 import com.eviware.loadui.impl.summary.MutableChapterImpl;
 import com.eviware.loadui.impl.summary.sections.ProjectDataSection;
@@ -102,7 +105,6 @@ import com.eviware.loadui.impl.terminal.RoutedConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
-import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.util.reporting.JasperReportManager;
 import com.eviware.loadui.util.reporting.ReportEngine.ReportFormats;
 
@@ -123,17 +125,14 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final CounterSynchronizer counterSynchronizer;
 	private final TerminalProxy proxy;
 	private final Set<SceneItem> scenes = new HashSet<SceneItem>();
-	private final Set<SceneItem> awaitingScenes = new HashSet<SceneItem>();
 	private final StatisticPagesImpl statisticPages;
 	private final Property<Boolean> saveReport;
 	private final Property<String> reportFolder;
 	private final Property<String> reportFormat;
 	private File projectFile;
 
-	private ScheduledFuture<?> awaitingSummaryTimeout;
-	
-//	private final StatisticHolderSupport statisticHolderSupport;
-//	private final CounterStatisticSupport counterStatisticSupport;
+	// private final StatisticHolderSupport statisticHolderSupport;
+	// private final CounterStatisticSupport counterStatisticSupport;
 
 	public static ProjectItemImpl loadProject( WorkspaceItem workspace, File projectFile ) throws XmlException,
 			IOException
@@ -161,9 +160,10 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		proxy = BeanInjector.getBean( TerminalProxy.class );
 		statisticPages = new StatisticPagesImpl( getConfig().getStatistics() == null ? getConfig().addNewStatistics()
 				: getConfig().getStatistics() );
-		
-//		statisticHolderSupport = new StatisticHolderSupport( this );
-//		counterStatisticSupport = new CounterStatisticSupport( this, statisticHolderSupport );
+
+		// statisticHolderSupport = new StatisticHolderSupport( this );
+		// counterStatisticSupport = new CounterStatisticSupport( this,
+		// statisticHolderSupport );
 	}
 
 	@Override
@@ -220,7 +220,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		}
 
 		statisticPages.init();
-//		statisticHolderSupport.init();
+		// statisticHolderSupport.init();
 	}
 
 	private boolean attachScene( SceneItem scene )
@@ -258,7 +258,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 			scene.removeEventListener( BaseEvent.class, sceneListener );
 			sceneEndpoints.remove( scene );
-			awaitingScenes.remove( scene );
 			fireCollectionEvent( SCENES, CollectionEvent.Event.REMOVED, scene );
 		}
 	}
@@ -364,8 +363,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		for( SceneItem scene : new ArrayList<SceneItem>( getScenes() ) )
 			scene.release();
 
-//		statisticHolderSupport.release();
-		
+		// statisticHolderSupport.release();
+
 		super.release();
 	}
 
@@ -491,33 +490,57 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	protected void onComplete( EventFirer source )
 	{
-		if( awaitingSummaryTimeout != null )
-			awaitingSummaryTimeout.cancel( true );
+		// At this point all project components are finished. They are either
+		// canceled or finished normally which depends on project 'abortOnFinish'
+		// property. So here we have to wait for all test cases to finish which we
+		// do by listening for ON_COMPLETE_DONE event which is fired after
+		// 'onComplete' method was called in local mode and after controller
+		// received test case data in distributed mode.
+		new SceneCompleteAwaiter();
 
+		// this is not necessary since nobody is listening for project
+		// ON_COMPLETE_DONE
+		setCompleted( true );
+	}
+
+	@Override
+	protected void doGenerateSummary()
+	{
+		// Calculate project start and end time before calling summary generation.
+		// For start time it takes the smallest time between all test cases and
+		// the project itself and for end time it takes the greatest one.
+		Calendar prjStartTime = Calendar.getInstance();
+		prjStartTime.setTime( startTime );
+		Calendar prjEndTime = Calendar.getInstance();
+		prjEndTime.setTime( endTime );
+		Calendar sceneStartTime = Calendar.getInstance();
+		Calendar sceneEndTime = Calendar.getInstance();
 		for( SceneItem scene : getScenes() )
-			if( getAgentsAssignedTo( scene ).size() > 0 && scene.isFollowProject() && !getWorkspace().isLocalMode() )
-				awaitingScenes.add( scene );
-
-		if( awaitingScenes.isEmpty() )
-			doGenerateSummary();
-		else
-			awaitingSummaryTimeout = scheduler.schedule( new Runnable()
+		{
+			if( scene.isFollowProject() )
 			{
-				@Override
-				public void run()
+				sceneStartTime.setTime( ( ( SceneItemImpl )scene ).getStartTime() );
+				if( prjStartTime.after( sceneStartTime ) )
 				{
-					log.error( "Failed to get statistics from all expected Agents within timeout period!" );
-					awaitingScenes.clear();
-					doGenerateSummary();
+					prjStartTime.setTime( sceneStartTime.getTime() );
 				}
-			}, 15, TimeUnit.SECONDS );
+
+				sceneEndTime.setTime( ( ( SceneItemImpl )scene ).getEndTime() );
+				if( prjEndTime.before( sceneEndTime ) )
+				{
+					prjEndTime.setTime( sceneEndTime.getTime() );
+				}
+			}
+		}
+		startTime = prjStartTime.getTime();
+		endTime = prjEndTime.getTime();
+		super.doGenerateSummary();
 	}
 
 	@Override
 	protected void reset()
 	{
 		super.reset();
-		awaitingScenes.clear();
 	}
 
 	@Override
@@ -1012,15 +1035,53 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				SceneItem scene = ( SceneItem )addressableRegistry.lookup( ( String )map.remove( AgentItem.SCENE_ID ) );
 				if( scene instanceof SceneItemImpl )
 				{
-					( ( SceneItemImpl )scene ).handleStatisticsData( ( AgentItem )endpoint, map );
-					if( awaitingScenes.remove( scene ) && awaitingScenes.isEmpty() )
+					try
 					{
-						if( awaitingSummaryTimeout != null )
+						// Get the start and end time received from the agent and set
+						// them to local scene object. It takes the smallest time for
+						// the start time and greatest for the end time.
+						// TODO maybe in this case local time should be ignored and
+						// just set the time from the agent. This is currently done
+						// like this because I wasn't sure how this works when one
+						// test case is deployed to more than one agent (Predrag).
+						SimpleDateFormat sdf = ( SimpleDateFormat )SimpleDateFormat.getDateTimeInstance();
+						sdf.setLenient( false );
+						sdf.applyPattern( "yyyyMMddHHmmssSSS" );
+
+						Calendar sceneTime = Calendar.getInstance();
+						Calendar receivedTime = Calendar.getInstance();
+
+						Date receivedStartTime = sdf.parse( ( String )map.get( AgentItem.SCENE_START_TIME ) );
+						sceneTime.setTime( ( ( SceneItemImpl )scene ).startTime );
+						receivedTime.setTime( receivedStartTime );
+						if( sceneTime.after( receivedTime ) )
 						{
-							awaitingSummaryTimeout.cancel( true );
-							awaitingSummaryTimeout = null;
+							( ( SceneItemImpl )scene ).startTime = receivedTime.getTime();
 						}
-						doGenerateSummary();
+
+						Date receivedEndTime = sdf.parse( ( String )map.get( AgentItem.SCENE_END_TIME ) );
+						sceneTime.setTime( ( ( SceneItemImpl )scene ).endTime );
+						receivedTime.setTime( receivedEndTime );
+						if( sceneTime.before( receivedTime ) )
+						{
+							( ( SceneItemImpl )scene ).endTime = receivedTime.getTime();
+						}
+					}
+					catch( ParseException e )
+					{
+						// this shouldn't occur since we are sending date from agent
+						// always in same format
+						log.info( "Unable to parse date received from the agent.", e );
+					}
+
+					( ( SceneItemImpl )scene ).handleStatisticsData( ( AgentItem )endpoint, map );
+
+					synchronized( scene )
+					{
+						// this will fire ON_COMPLETE_DONE event which will tell
+						// SceneCompleteAwaiter that this scene is finished (this is
+						// just for distributed mode)
+						( ( SceneItemImpl )scene ).setCompleted( true );
 					}
 				}
 			}
@@ -1096,6 +1157,121 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				return true;
 		}
 		return super.isLoadingError();
+	}
+
+	/**
+	 * Waits for ON_COMPLETE_DONE event from all scenes and calls
+	 * 'doGenerateSummary' method. This event is fired after 'onComplete' method
+	 * of test case is executed in local mode, and when controller receives agent
+	 * data in distributed mode.
+	 * 
+	 * @author predrag.vucetic
+	 * 
+	 */
+	private class SceneCompleteAwaiter implements EventHandler<BaseEvent>
+	{
+		// Counts how many test cases didn't send ON_COMPLETE_DONE event.
+		private AtomicInteger a = new AtomicInteger( 0 );
+
+		// timeout scheduler. this is used when all test cases have property
+		// abortOnFinish set to true, so since they should return immediately,
+		// they will be discarded if they do not return in timeout period. if
+		// there is a test case with this property set to false, respond time is
+		// not known and there is no timeout.
+		private ScheduledFuture<?> awaitingSummaryTimeout;
+
+		public SceneCompleteAwaiter()
+		{
+			startTimeoutScheduler();
+			tryComplete();
+		}
+
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( event.getKey().equals( ON_COMPLETE_DONE ) )
+			{
+				( ( ModelItem )event.getSource() ).removeEventListener( BaseEvent.class, this );
+				tryComplete();
+			}
+		}
+
+		private void tryComplete()
+		{
+			a.set( 0 );
+			// increase counter for all non completed linked test cases. if count
+			// is zero call doGenerateSummary()
+			for( SceneItem scene : getScenes() )
+			{
+				synchronized( scene )
+				{
+					if( scene.isFollowProject()
+							&& !scene.isCompleted()
+							&& ( workspace.isLocalMode() || !workspace.isLocalMode()
+									&& getAgentsAssignedTo( scene ).size() > 0 ) )
+
+					{
+						// add this as a listener to a test case
+						scene.addEventListener( BaseEvent.class, this );
+						// increment counter
+						a.incrementAndGet();
+					}
+				}
+			}
+			if( a.get() == 0 )
+			{
+				if( awaitingSummaryTimeout != null )
+				{
+					awaitingSummaryTimeout.cancel( true );
+				}
+				doGenerateSummary();
+			}
+		}
+
+		// if abort is true for all test cases, set timer to wait 15 seconds and
+		// then on each scene call setCompleted(true) which will throw
+		// ON_COMPLETE_DONE event on every test case which will then call the
+		// handleEvent method of this class which will call tryComplete() and
+		// generate summary when all test cases are finished.
+		private void startTimeoutScheduler()
+		{
+			// if at least one of the waiting scenes has abort property set to
+			// false don't start the timeout scheduler.
+			boolean abort = true;
+			for( SceneItem scene : getScenes() )
+			{
+				if( scene.isFollowProject() && !scene.isAbortOnFinish()
+						&& ( workspace.isLocalMode() || !workspace.isLocalMode() && getAgentsAssignedTo( scene ).size() > 0 ) )
+				{
+					abort = false;
+					break;
+				}
+			}
+			if( abort )
+			{
+				awaitingSummaryTimeout = scheduler.schedule( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						log.error( "Failed to get statistics from all expected Agents within timeout period!" );
+						for( SceneItem scene : getScenes() )
+						{
+							synchronized( scene )
+							{
+								if( scene.isFollowProject()
+										&& !scene.isCompleted()
+										&& ( workspace.isLocalMode() || !workspace.isLocalMode()
+												&& getAgentsAssignedTo( scene ).size() > 0 ) )
+								{
+									( ( SceneItemImpl )scene ).setCompleted( true );
+								}
+							}
+						}
+					}
+				}, 15, TimeUnit.SECONDS );
+			}
+		}
 	}
 
 }

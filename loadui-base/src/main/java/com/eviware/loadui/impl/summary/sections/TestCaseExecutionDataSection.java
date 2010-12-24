@@ -16,7 +16,6 @@
 package com.eviware.loadui.impl.summary.sections;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import com.eviware.loadui.api.component.categories.AnalysisCategory;
 import com.eviware.loadui.api.model.CanvasItem;
@@ -24,13 +23,13 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.SceneItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
+import com.eviware.loadui.util.summary.CalendarUtils;
 
 public class TestCaseExecutionDataSection extends MutableSectionImpl implements ExecutionDataSection
 {
 
 	SceneItemImpl testcase;
 	SimpleDateFormat format = new SimpleDateFormat( "HH:mm:ss" );
-	private static final long HOUR = 3600000L;
 
 	public TestCaseExecutionDataSection( SceneItem sceneItem )
 	{
@@ -52,20 +51,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 */
 	public String getExecutionTime()
 	{
-		SimpleDateFormat dateFormat;
-		if( testcase.getStartTime() != null )
-		{
-			Date dd = new Date( ( new Date().getTime() - testcase.getStartTime().getTime() ) );
-			if( new Date().getTime() - testcase.getStartTime().getTime() < HOUR )
-				dateFormat = new SimpleDateFormat( "00:mm:ss" );
-			else
-				dateFormat = new SimpleDateFormat( "HH:mm:ss" );
-			return dateFormat.format( dd );
-		}
-		else
-		{
-			return "N/A";
-		}
+		return CalendarUtils.getFormattedPeriod( testcase.getStartTime(), testcase.getEndTime() );
 	}
 
 	/*

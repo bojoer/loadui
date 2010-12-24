@@ -24,6 +24,7 @@ import java.util.Date;
 import javax.swing.table.AbstractTableModel;
 
 import com.eviware.loadui.api.summary.SampleStats;
+import com.eviware.loadui.util.summary.CalendarUtils;
 
 public class TestCaseTopSamplesTable extends AbstractTableModel
 {
@@ -68,13 +69,8 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 		case 1 :
 			return String.valueOf( data.get( rowIndex ).getStats().getTimeTaken() );
 		case 2 :
-			SimpleDateFormat df;
 			long time = data.get( rowIndex ).getStats().getTime();
-			if( time < 3600000 )
-				df = new SimpleDateFormat( "mm:ss" );
-			else
-				df = new SimpleDateFormat( "HH:mm:ss" );
-			return df.format( new Date( time ) );
+			return CalendarUtils.format( time );
 		case 3 :
 			return String.valueOf( data.get( rowIndex ).getStats().getSize() );
 		default :

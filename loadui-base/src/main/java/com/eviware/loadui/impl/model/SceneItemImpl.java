@@ -16,38 +16,37 @@
 package com.eviware.loadui.impl.model;
 
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.RemoteActionEvent;
 import com.eviware.loadui.api.events.TerminalEvent;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
-import com.eviware.loadui.api.statistics.MutableStatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
@@ -57,7 +56,6 @@ import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.config.SceneItemConfig;
 import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.counter.RemoteAggregatedCounterSupport;
-import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.summary.MutableChapterImpl;
 import com.eviware.loadui.impl.summary.sections.TestCaseDataSection;
 import com.eviware.loadui.impl.summary.sections.TestCaseDataSummarySection;
@@ -86,8 +84,8 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	private MessageEndpoint messageEndpoint = null;
 
 	private final Property<Boolean> followProject;
-	
-//	private final StatisticHolderSupport statisticHolderSupport;
+
+	// private final StatisticHolderSupport statisticHolderSupport;
 
 	public SceneItemImpl( ProjectItem project, SceneItemConfig config )
 	{
@@ -112,9 +110,9 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 				: null;
 
 		projectListener = "controller".equals( System.getProperty( "loadui.instance" ) ) ? new ProjectListener() : null;
-		
-//		statisticHolderSupport = new StatisticHolderSupport( this );
-		
+
+		// statisticHolderSupport = new StatisticHolderSupport( this );
+
 	}
 
 	@Override
@@ -128,11 +126,12 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			project.getWorkspace().addEventListener( PropertyEvent.class, workspaceListener );
 			propagate = project.getWorkspace().isLocalMode();
 		}
-		
-//		statisticHolderSupport.init();
-//		
-//		MutableStatisticVariable rpsVariable = statisticHolderSupport.addStatisticVariable( "RequestPerSecond" );
-//		statisticHolderSupport.addStatisticsWriter( "PSWritter", rpsVariable );
+
+		// statisticHolderSupport.init();
+		//
+		// MutableStatisticVariable rpsVariable =
+		// statisticHolderSupport.addStatisticVariable( "RequestPerSecond" );
+		// statisticHolderSupport.addStatisticsWriter( "PSWritter", rpsVariable );
 	}
 
 	@Override
@@ -288,6 +287,14 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		{
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( AgentItem.SCENE_ID, getId() );
+
+			// send scene start and and time
+			SimpleDateFormat sdf = ( SimpleDateFormat )SimpleDateFormat.getDateTimeInstance();
+			sdf.setLenient( false );
+			sdf.applyPattern( "yyyyMMddHHmmssSSS" );
+			data.put( AgentItem.SCENE_START_TIME, sdf.format( startTime ) );
+			data.put( AgentItem.SCENE_END_TIME, sdf.format( endTime ) );
+
 			for( ComponentItem component : getComponents() )
 				data.put( component.getId(), component.getBehavior().collectStatisticsData() );
 			messageEndpoint.sendMessage( AgentItem.AGENT_CHANNEL, data );
@@ -298,6 +305,13 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 				awaitingSummary = true;
 			else
 				doGenerateSummary();
+
+		// set completed to true only if in local mode. for distributed mode this
+		// will be set to true when component data is received to controller.
+		if( project.getWorkspace().isLocalMode() )
+		{
+			setCompleted( true );
+		}
 	}
 
 	public boolean statisticsReady()

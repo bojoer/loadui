@@ -42,6 +42,8 @@ public interface AgentItem extends ModelItem, MessageEndpoint
 	public final static String DEFINE_SCENE = "defineScene";
 	public final static String SCENE_DEFINITION = "sceneDefinition";
 	public final static String SCENE_ID = "sceneId";
+	public final static String SCENE_START_TIME = "sceneStartTime";
+	public final static String SCENE_END_TIME = "sceneEndTime";
 	public final static String SET_MAX_THREADS = "setMaxThreads";
 	public final static String SET_UTILIZATION = "setUtilization";
 
