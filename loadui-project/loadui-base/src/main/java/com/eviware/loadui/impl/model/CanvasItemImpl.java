@@ -23,8 +23,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -33,16 +33,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import com.eviware.loadui.api.component.BehaviorProvider;
-import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.component.BehaviorProvider.ComponentCreationException;
+import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.counter.Counter;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.TerminalConnectionEvent;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
@@ -70,6 +70,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 {
 	private static final String LIMITS_ATTRIBUTE = "limits";
 
+	public final String ON_COMPLETE_DONE = CanvasItemImpl.class.getName() + "@onCompleteDone";
+
 	protected final CounterSupport counterSupport;
 	private final Set<ComponentItem> components = new HashSet<ComponentItem>();
 	protected final Set<Connection> connections = new HashSet<Connection>();
@@ -92,6 +94,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	protected final Map<String, Long> limits = new HashMap<String, Long>();
 
 	private boolean running = false;
+	private boolean completed = false;
 
 	// here keep all not loaded components and connections, remove them at the
 	// end of init
@@ -111,7 +114,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 		scheduler = BeanInjector.getBean( ScheduledExecutorService.class );
 		behaviorProvider = BeanInjector.getBean( BehaviorProvider.class );
-		
+
 		statisticHolderSupport = new StatisticHolderSupport( this );
 		counterStatisticSupport = new CounterStatisticSupport( this, statisticHolderSupport );
 	}
@@ -202,7 +205,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		addEventListener( BaseEvent.class, new ActionListener() );
 
 		// timer.scheduleAtFixedRate( timerTask, 1000, 1000 );
-		
+
 		statisticHolderSupport.init();
 		counterStatisticSupport.init();
 	}
@@ -363,6 +366,12 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	}
 
 	@Override
+	public boolean isCompleted()
+	{
+		return completed;
+	}
+
+	@Override
 	public void release()
 	{
 		for( ComponentItem component : new ArrayList<ComponentItem>( components ) )
@@ -373,7 +382,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 		counterStatisticSupport.release();
 		statisticHolderSupport.release();
-		
+
 		super.release();
 	}
 
@@ -509,6 +518,18 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		}
 	}
 
+	protected void setCompleted( boolean completed )
+	{
+		if( this.completed != completed )
+		{
+			this.completed = completed;
+			if( completed )
+			{
+				fireBaseEvent( ON_COMPLETE_DONE );
+			}
+		}
+	}
+
 	public Date getStartTime()
 	{
 		return startTime;
@@ -585,6 +606,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private class ActionListener implements EventHandler<BaseEvent>
 	{
+		boolean paused = false;
+
 		@Override
 		public void handleEvent( BaseEvent event )
 		{
@@ -592,39 +615,81 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 			{
 				if( !running && START_ACTION.equals( event.getKey() ) )
 				{
+					// reset time if the test was started again.
+					if( !paused )
+					{
+						time = 0;
+					}
+
 					setRunning( true );
 					timerFuture = scheduler.scheduleAtFixedRate( new TimeUpdateTask(), 250, 250, TimeUnit.MILLISECONDS );
 					fixTimeLimit();
 					if( startTime == null )
 						startTime = new Date();
 					hasStarted = true;
+					paused = false;
+					setCompleted( false );
 				}
 				else if( running && ( STOP_ACTION.equals( event.getKey() ) || COMPLETE_ACTION.equals( event.getKey() ) ) )
 				{
+					if( STOP_ACTION.equals( event.getKey() ) )
+					{
+						paused = true;
+					}
+
 					setRunning( false );
 					if( timerFuture != null )
 						timerFuture.cancel( true );
 					if( timeLimitFuture != null )
 						timeLimitFuture.cancel( true );
-
-					Calendar endTimeCal = Calendar.getInstance();
-					endTimeCal.setTime( startTime );
-					endTimeCal.add( Calendar.SECOND, ( int )time / 1000 );
-					endTime = endTimeCal.getTime();
+					if( isAbortOnFinish() )
+					{
+						Calendar endTimeCal = Calendar.getInstance();
+						endTimeCal.setTime( startTime );
+						endTimeCal.add( Calendar.MILLISECOND, ( int )time );
+						endTime = endTimeCal.getTime();
+					}
 				}
 				else if( CounterHolder.COUNTER_RESET_ACTION.equals( event.getKey() ) )
+				{
 					reset();
+					paused = false;
+				}
 
 				if( COMPLETE_ACTION.equals( event.getKey() ) )
 				{
+					// This event is fired first on project and then on test cases.
 					if( hasStarted )
 					{
 						hasStarted = false;
-						new ComponentBusyAwaiter( event.getSource() );
-						// onComplete( event.getSource() );
+						if( isAbortOnFinish() )
+						{
+							// If on PROJECT: First cancel all project components, then
+							// call its onComplete method to finalize it and finally
+							// send ON_COMPLETE_DONE event which is currently not
+							// listened by any listeners. Method 'onComplete' in
+							// project will start waiter which will wait for all test
+							// cases to receive COMPLETE_ACTION event and finalize them
+							// self.
+
+							// If on TEST CASE: Cancels test case components, calls
+							// 'onComplete' method on test case and fires
+							// ON_COMPLETE_DONE event which tells project that this
+							// test case was finalized.
+							cancelComponents();
+							onComplete( event.getSource() );
+						}
+						else
+						{
+							// Does the very same thing as above but does not cancel
+							// components. It waits them to finish instead.
+							new ComponentBusyAwaiter( event.getSource() );
+						}
 					}
 					else
+					{
 						triggerAction( READY_ACTION );
+					}
 				}
 			}
 			else if( "controller".equals( System.getProperty( "loadui.instance" ) ) && event instanceof CounterEvent
@@ -698,16 +763,33 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		}
 	}
 
+	/**
+	 * Waits for all components to finish, then calculates end time and calls
+	 * onComplete method. After this fires ON_COMPLETE_DONE method. Currently
+	 * this event is sent by test cases to inform project that they are done.
+	 * 
+	 * @author predrag.vucetic
+	 * 
+	 */
 	private class ComponentBusyAwaiter implements EventHandler<BaseEvent>
 	{
 		private final String TRY_READY = ComponentBusyAwaiter.class.getName() + "@tryReady";
 
 		private final EventFirer source;
+
+		// Counts how many components are still busy.
 		private final AtomicInteger awaiting = new AtomicInteger();
+
+		// Used to calculate extra time to be added to test case or project
+		// duration. This extra time is the delay between the moment when
+		// COMPLETE_ACTION event was received and when the last component
+		// finished.
+		private long awaiterStartTime;
 
 		public ComponentBusyAwaiter( EventFirer source )
 		{
 			this.source = source;
+			awaiterStartTime = System.currentTimeMillis();
 			addEventListener( BaseEvent.class, this );
 			fireBaseEvent( TRY_READY );
 		}
@@ -724,9 +806,20 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 				}
 			}
 			if( awaiting.get() == 0 )
+			{
+				// Calculate the actual time when this test case or project have
+				// finished.
+				Calendar endTimeCal = Calendar.getInstance();
+				endTimeCal.setTime( startTime );
+				endTimeCal.add( Calendar.MILLISECOND, ( int )( time + System.currentTimeMillis() - awaiterStartTime ) );
+				endTime = endTimeCal.getTime();
+				// Finalize
 				onComplete( source );
+			}
 			else
+			{
 				log.debug( "Waiting for {} components to finish...", awaiting.get() );
+			}
 		}
 
 		@Override
@@ -745,7 +838,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 			}
 		}
 	}
-	
+
 	@Override
 	public StatisticVariable getStatisticVariable( String statisticVariableName )
 	{

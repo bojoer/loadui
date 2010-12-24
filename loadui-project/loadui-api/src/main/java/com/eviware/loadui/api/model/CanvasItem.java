@@ -126,6 +126,14 @@ public interface CanvasItem extends ModelItem, CounterHolder
 	 *         if it is stopped.
 	 */
 	public boolean isStarted();
+	
+	/**
+	 * Gets whether the cavas item has been completed or not
+	 * 
+	 * @return True if the canvas has been completed, false
+	 *         if it is not.
+	 */
+	public boolean isCompleted();
 
 	/**
 	 * Set a limit for a Counter. When the given counter reaches the limit set,

@@ -17,17 +17,17 @@ package com.eviware.loadui.impl.summary.sections.tablemodels;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.swing.table.AbstractTableModel;
 
 import com.eviware.loadui.api.model.CanvasItem;
-import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.SceneItemImpl;
+import com.eviware.loadui.util.summary.CalendarUtils;
 
 public class TestCaseDataTableModel extends AbstractTableModel
 {
-
+	private static final long serialVersionUID = -99646701272738332L;
+	
 	String columnNames[] = { "Test Case", "exec time", "requests", "assertions", "failed assertions" };
 	ArrayList<TestCaseDataModel> data = new ArrayList<TestCaseDataModel>();
 
@@ -84,25 +84,11 @@ public class TestCaseDataTableModel extends AbstractTableModel
 		String numberOfFailedAssertions;
 		SimpleDateFormat dateFormat;
 
-		private static final long HOUR = 3600000L;
-
 		public TestCaseDataModel( SceneItemImpl tc )
 		{
 			this.name = tc.getLabel();
-			if( tc.getStartTime() != null )
-			{
-				Date dd = new Date( ( new Date().getTime() - tc.getStartTime().getTime() ) );
-				if( new Date().getTime() - tc.getStartTime().getTime() < HOUR )
-					dateFormat = new SimpleDateFormat( "00:mm:ss" );
-				else
-					dateFormat = new SimpleDateFormat( "HH:mm:ss" );
-
-				this.execTime = dateFormat.format( dd );
-			}
-			else
-			{
-				this.execTime = "N/A";
-			}
+			
+			this.execTime = CalendarUtils.getFormattedPeriod( tc.getStartTime(), tc.getEndTime() );
 
 			this.numberOfSamples = String.valueOf( tc.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );
 

@@ -16,18 +16,17 @@
 package com.eviware.loadui.impl.summary.sections;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.SceneItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
+import com.eviware.loadui.util.summary.CalendarUtils;
 
 public class TestCaseDataSummarySection extends MutableSectionImpl implements DataSummarySection
 {
 
 	SceneItemImpl testcase;
-	private static final long HOUR = 3600000L;
 	SimpleDateFormat dateFormat;
 
 	public TestCaseDataSummarySection( SceneItem testcase )
@@ -61,14 +60,7 @@ public class TestCaseDataSummarySection extends MutableSectionImpl implements Da
 	@Override
 	public String getTime()
 	{
-		if( testcase.getStartTime() == null )
-			return "N/A";
-		Date time = new Date( new Date().getTime() - testcase.getStartTime().getTime() );
-		if( time.getTime() < HOUR )
-			dateFormat = new SimpleDateFormat( "00:mm:ss" );
-		else
-			dateFormat = new SimpleDateFormat( "HH:mm:ss" );
-		return dateFormat.format( time );
+		return CalendarUtils.getFormattedPeriod( testcase.getStartTime(), testcase.getEndTime() );
 	}
 
 	@Override

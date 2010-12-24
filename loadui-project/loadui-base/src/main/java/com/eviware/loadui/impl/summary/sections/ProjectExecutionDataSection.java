@@ -16,8 +16,6 @@
 package com.eviware.loadui.impl.summary.sections;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 import javax.swing.table.TableModel;
 
@@ -29,11 +27,11 @@ import com.eviware.loadui.impl.model.ProjectItemImpl;
 import com.eviware.loadui.impl.model.SceneItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseDataTableModel;
+import com.eviware.loadui.util.summary.CalendarUtils;
 
 public class ProjectExecutionDataSection extends MutableSectionImpl implements ExecutionDataSection
 {
 
-	private static final long HOUR = 3600000L;
 	ProjectItemImpl project;
 	private SimpleDateFormat dateFormat = new SimpleDateFormat( "HH:mm:ss" );
 
@@ -65,46 +63,19 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 	@Override
 	public String getEndTime()
 	{
-		return project.getEndTime() != null ? dateFormat.format( project.getEndTime() ) : "N/A";
+		return CalendarUtils.format( project.getEndTime() );
 	}
 
 	@Override
 	public String getExecutionTime()
 	{
-		SimpleDateFormat dateFormat;
-		if( project.getStartTime() != null )
-		{
-			Calendar end = Calendar.getInstance();
-			end.setTime( project.getEndTime() );
-
-			Calendar start = Calendar.getInstance();
-			start.setTime( project.getStartTime() );
-
-			end.add( Calendar.YEAR, -start.get( Calendar.YEAR ) );
-			end.add( Calendar.MONTH, -start.get( Calendar.MONTH ) );
-			end.add( Calendar.DATE, -start.get( Calendar.DATE ) );
-			end.add( Calendar.HOUR, -start.get( Calendar.HOUR ) );
-			end.add( Calendar.MINUTE, -start.get( Calendar.MINUTE ) );
-			end.add( Calendar.SECOND, -start.get( Calendar.SECOND ) );
-			end.set( Calendar.MILLISECOND, 0 );
-
-			Date dd = end.getTime();
-			if( project.getEndTime().getTime() - project.getStartTime().getTime() < HOUR )
-				dateFormat = new SimpleDateFormat( "00:mm:ss" );
-			else
-				dateFormat = new SimpleDateFormat( "HH:mm:ss" );
-			return dateFormat.format( dd );
-		}
-		else
-		{
-			return "N/A";
-		}
+		return CalendarUtils.getFormattedPeriod( project.getStartTime(), project.getEndTime() );
 	}
 
 	@Override
 	public String getStartTime()
 	{
-		return project.getStartTime() != null ? dateFormat.format( project.getStartTime() ) : "N/A";
+		return CalendarUtils.format( project.getStartTime() );
 	}
 
 	@Override

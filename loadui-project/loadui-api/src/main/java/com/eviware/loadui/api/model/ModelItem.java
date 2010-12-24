@@ -30,6 +30,7 @@ public interface ModelItem extends PropertyHolder, AttributeHolder, Addressable,
 
 	// Properties
 	public final String DESCRIPTION_PROPERTY = ModelItem.class.getSimpleName() + ".description";
+	public final String ABORT_ON_FINISH_PROPERTY = ModelItem.class.getSimpleName() + ".abortOnFinish";
 
 	/**
 	 * Gets the name of the ModelItem.
@@ -84,4 +85,17 @@ public interface ModelItem extends PropertyHolder, AttributeHolder, Addressable,
 	 * @param description
 	 */
 	public void setDescription( String description );
+	
+	/**
+	 * Determines if ongoing requests should be aborted on finish
+	 */
+	public boolean isAbortOnFinish();
+
+	/**
+	 * Used to define if ongoing requests should be aborted on finish
+	 * 
+	 * @param abort
+	 *           True to abort ongoing requests, false otherwise
+	 */
+	public void setAbortOnFinish( boolean abort );
 }

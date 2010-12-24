@@ -29,7 +29,7 @@ import javafx.geometry.Insets;
 
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.widgets.RunController;
-import com.eviware.loadui.fx.ui.dialogs.SettingsDialog;
+import com.eviware.loadui.fx.ui.dialogs.TestCaseSettingsDialog;
 import com.eviware.loadui.fx.dialogs.CloneTestCaseDialog;
 import com.eviware.loadui.fx.util.ImageUtil.*;
 import com.eviware.loadui.fx.util.ImageUtil;
@@ -110,7 +110,7 @@ public class TestCaseNode extends CanvasObjectNode {
 	}
 	
 	override var onSettings = function() {
-		new SettingsDialog().show( testCase );
+		new TestCaseSettingsDialog().show( testCase );
 	}
 	
 	override var onClone = function():Void {
