@@ -961,6 +961,12 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		private final Set<AgentItem> agents = new HashSet<AgentItem>();
 		private final AgentContextListener subListener = new AgentContextListener();
 
+		/**
+		 * Counts on how many agents particular test case finished (i.e. its data
+		 * was received in controller)
+		 */
+		private final HashMap<SceneItem, Integer> sceneCompletedCounter = new HashMap<SceneItem, Integer>();
+
 		public void attach( AgentItem agent )
 		{
 			if( agents.add( agent ) )
@@ -1035,53 +1041,86 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				SceneItem scene = ( SceneItem )addressableRegistry.lookup( ( String )map.remove( AgentItem.SCENE_ID ) );
 				if( scene instanceof SceneItemImpl )
 				{
-					try
-					{
-						// Get the start and end time received from the agent and set
-						// them to local scene object. It takes the smallest time for
-						// the start time and greatest for the end time.
-						// TODO maybe in this case local time should be ignored and
-						// just set the time from the agent. This is currently done
-						// like this because I wasn't sure how this works when one
-						// test case is deployed to more than one agent (Predrag).
-						SimpleDateFormat sdf = ( SimpleDateFormat )SimpleDateFormat.getDateTimeInstance();
-						sdf.setLenient( false );
-						sdf.applyPattern( "yyyyMMddHHmmssSSS" );
-
-						Calendar sceneTime = Calendar.getInstance();
-						Calendar receivedTime = Calendar.getInstance();
-
-						Date receivedStartTime = sdf.parse( ( String )map.get( AgentItem.SCENE_START_TIME ) );
-						sceneTime.setTime( ( ( SceneItemImpl )scene ).startTime );
-						receivedTime.setTime( receivedStartTime );
-						if( sceneTime.after( receivedTime ) )
-						{
-							( ( SceneItemImpl )scene ).startTime = receivedTime.getTime();
-						}
-
-						Date receivedEndTime = sdf.parse( ( String )map.get( AgentItem.SCENE_END_TIME ) );
-						sceneTime.setTime( ( ( SceneItemImpl )scene ).endTime );
-						receivedTime.setTime( receivedEndTime );
-						if( sceneTime.before( receivedTime ) )
-						{
-							( ( SceneItemImpl )scene ).endTime = receivedTime.getTime();
-						}
-					}
-					catch( ParseException e )
-					{
-						// this shouldn't occur since we are sending date from agent
-						// always in same format
-						log.info( "Unable to parse date received from the agent.", e );
-					}
-
-					( ( SceneItemImpl )scene ).handleStatisticsData( ( AgentItem )endpoint, map );
-
+					// this is because when test case is deployed to more than one
+					// agent, data from the agents is received in different threads
+					// and could occur at the same time, and the same scene object
+					// instance is used in both threads. so this is basically to
+					// prevent concurrent modification of scene object.
 					synchronized( scene )
 					{
-						// this will fire ON_COMPLETE_DONE event which will tell
-						// SceneCompleteAwaiter that this scene is finished (this is
-						// just for distributed mode)
-						( ( SceneItemImpl )scene ).setCompleted( true );
+						try
+						{
+							// Get the start and end time received from the agent and
+							// set them to local scene object. The smallest of all
+							// agent start times is used for startTime and the
+							// greatest of all end times for endTime
+							SimpleDateFormat sdf = ( SimpleDateFormat )SimpleDateFormat.getDateTimeInstance();
+							sdf.setLenient( false );
+							sdf.applyPattern( "yyyyMMddHHmmssSSS" );
+
+							Date receivedStartTime = sdf.parse( ( String )map.get( AgentItem.SCENE_START_TIME ) );
+							Date receivedEndTime = sdf.parse( ( String )map.get( AgentItem.SCENE_END_TIME ) );
+
+							// when data from first agent arrives, set received start
+							// and end times to local scene object. for next coming
+							// agents compare times to one initially set and update it
+							// if necessary.
+							if( sceneCompletedCounter.get( scene ) == null )
+							{
+								( ( SceneItemImpl )scene ).startTime = receivedStartTime;
+								( ( SceneItemImpl )scene ).endTime = receivedEndTime;
+							}
+							else
+							{
+								Calendar sceneCalendar = Calendar.getInstance();
+								Calendar receivedCalendar = Calendar.getInstance();
+
+								sceneCalendar.setTime( ( ( SceneItemImpl )scene ).startTime );
+								receivedCalendar.setTime( receivedStartTime );
+								if( sceneCalendar.after( receivedCalendar ) )
+								{
+									( ( SceneItemImpl )scene ).startTime = receivedCalendar.getTime();
+								}
+
+								sceneCalendar.setTime( ( ( SceneItemImpl )scene ).endTime );
+								receivedCalendar.setTime( receivedEndTime );
+								if( sceneCalendar.before( receivedCalendar ) )
+								{
+									( ( SceneItemImpl )scene ).endTime = receivedCalendar.getTime();
+								}
+							}
+						}
+						catch( ParseException e )
+						{
+							// this shouldn't occur since we are sending date from
+							// agent always in same format
+							log.info( "Unable to parse date received from the agent.", e );
+						}
+
+						( ( SceneItemImpl )scene ).handleStatisticsData( ( AgentItem )endpoint, map );
+
+						// increment counter
+						Integer cnt = sceneCompletedCounter.get( scene );
+						if( cnt == null )
+						{
+							sceneCompletedCounter.put( scene, new Integer( 1 ) );
+						}
+						else
+						{
+							sceneCompletedCounter.put( scene, ++cnt );
+						}
+
+						// test case is completed when data is received from all
+						// agents it is deployed to
+						if( getAgentsAssignedTo( scene ).size() == sceneCompletedCounter.get( scene ) )
+						{
+							// reset counter
+							sceneCompletedCounter.remove( scene );
+
+							// this will fire ON_COMPLETE_DONE event which will tell
+							// SceneCompleteAwaiter that this scene is finished
+							( ( SceneItemImpl )scene ).setCompleted( true );
+						}
 					}
 				}
 			}
@@ -1233,6 +1272,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		// ON_COMPLETE_DONE event on every test case which will then call the
 		// handleEvent method of this class which will call tryComplete() and
 		// generate summary when all test cases are finished.
+		// TODO add another, longer timeout when there are test cases with
+		// abortOnFinish = false?
 		private void startTimeoutScheduler()
 		{
 			// if at least one of the waiting scenes has abort property set to

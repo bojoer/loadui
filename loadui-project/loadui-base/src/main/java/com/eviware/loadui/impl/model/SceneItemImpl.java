@@ -307,7 +307,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 				doGenerateSummary();
 
 		// set completed to true only if in local mode. for distributed mode this
-		// will be set to true when component data is received to controller.
+		// will be set to true when component data is received on controller.
 		if( project.getWorkspace().isLocalMode() )
 		{
 			setCompleted( true );
