@@ -27,6 +27,7 @@ import javafx.geometry.HPos;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.fields.*;
+import javafx.scene.text.Text;
 
 import com.eviware.loadui.api.model.*;
 
@@ -39,24 +40,52 @@ public class CreateNewTestCaseDialog {
 
 	public-init var project:ProjectItem;
 	
+	var warningMessage: String;
+	var allowZeroLengthName: Boolean = true;
+	
 	public var onOk: function( testCase:SceneItem ):Void;
 	var dialog:Dialog;
+	var warning: Dialog;
 	var form:Form;
 	
 	function ok():Void {
-					def tc:SceneItem = project.createScene( form.getValue( "newTC" ) as String );
-					tc.setAttribute( "gui.layoutX", "200" );
-					tc.setAttribute( "gui.layoutY", "200" );
-					
-					dialog.close();
-					onOk( tc );
-				}
+		dialog.close();
+		if(validateZeroLength()){
+			if(validateUniqueness()){
+		   		def tc: SceneItem = project.createScene( form.getValue( "newTC" ) as String );
+				tc.setAttribute( "gui.layoutX", "200" );
+				tc.setAttribute( "gui.layoutY", "200" );
+				onOk( tc );
+			}
+			else{
+			    warningMessage = "Test case with the specified name already exist in project!";
+			    warning.show();
+			}
+		}
+		else{
+		    warningMessage = "Zero length name is not allowed!";
+		    warning.show();
+		}
+	}
 	
 	postinit {
 		if( not FX.isInitialized( project ) )
 			throw new RuntimeException( "project must not be null!" );
 		
-		
+		warning = Dialog {
+	    	title: "Warning!"
+	    	content: Text {
+	    		content: bind warningMessage
+	    	}
+	    	okText: "Ok"
+	    	onOk: function() {
+	    		warning.close();
+	    		dialog.show();
+	    	}
+	    	noCancel: true
+	    	showPostInit: false
+	    }
+	    
 		dialog = Dialog {
 			title: "New TestCase for: {project.getLabel()}"
 			content: [
@@ -68,4 +97,19 @@ public class CreateNewTestCaseDialog {
 			onOk: ok
 		}
 	}
-};
+	
+	function validateZeroLength(): Boolean {
+	   	def newName: String = form.getValue("newTC") as String;
+	    return allowZeroLengthName or newName.trim().length() > 0;
+	}
+	
+	function validateUniqueness(): Boolean {
+	    def newName: String = form.getValue("newTC") as String;
+		for(item in project.getScenes())	{
+		    if( item.getLabel().compareToIgnoreCase(newName) == 0 ){
+		        return false;
+		    }
+		} 
+		return true;       
+	}	
+}

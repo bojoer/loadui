@@ -52,14 +52,39 @@ public class RenameModelItemDialog {
 	 * The ModelItemHolder to delete.
 	 */
 	public-init var modelItemHolder:ModelItemHolder;
+	
+	/**
+	 * The list of model items in which name must be unique.
+	 */
+	public-init var uniqueInList: ModelItem[];
+	
+	public-init var uniqueNameWarningText: String = "Item with the specified name already exist!";
+	
+	public-init var allowZeroLengthName: Boolean = true;
+	
+	var warningMessage: String;
+	
 	var form:Form;
 	var txt:TextField;
 	var dialog:Dialog;
+	var warning: Dialog;
 			
 	function ok():Void {
 		txt.commit();
-		modelItem.setLabel( form.getValue("name") as String );
 		dialog.close();
+		if(validateZeroLength()){
+			if(validateUniqueness()){
+				modelItem.setLabel( form.getValue("name") as String );
+			}
+			else{
+			    warningMessage = uniqueNameWarningText;
+			    warning.show();
+			}
+		}
+		else{
+		    warningMessage = "Zero length name is not allowed!";
+		    warning.show();
+		}
 	}
 	
 	postinit {
@@ -68,7 +93,21 @@ public class RenameModelItemDialog {
 		
 		def typeName = if( FX.isInitialized( modelItemHolder ) ) modelItemHolder.getTypeName() else modelItem.getClass().getSimpleName();
 		if( not FX.isInitialized( modelItem ) ) modelItem = modelItemHolder.modelItem;
-		
+
+		warning = Dialog {
+	    	title: "Warning!"
+	    	content: Text {
+	    		content: bind warningMessage
+	    	}
+	    	okText: "Ok"
+	    	onOk: function() {
+	    		warning.close();
+	    		dialog.show();
+	    	}
+	    	noCancel: true
+	    	showPostInit: false
+	    }
+	    		
 		dialog = Dialog {
 			title: "Rename {modelItem.getLabel()}"
 			content: form = Form {
@@ -76,5 +115,30 @@ public class RenameModelItemDialog {
 			}
 			onOk: ok
 		}
+	}
+	
+	function validateZeroLength(): Boolean {
+	   	def newName: String = form.getValue("name") as String;
+	    if(not allowZeroLengthName and newName.trim().length() == 0){
+	        return false;
+	    }
+	    else{
+	        return true;
+	    }
+	}
+	
+	function validateUniqueness(): Boolean {
+	    def newName: String = form.getValue("name") as String;
+	    if(uniqueInList != null){
+			for(item in uniqueInList)	{
+			    if( item != modelItem and item.getLabel().compareToIgnoreCase(newName) == 0 ){
+			        return false;
+			    }
+			} 
+			return true;       
+	    }
+	    else{
+	        return true;
+	    }
 	}
 }
