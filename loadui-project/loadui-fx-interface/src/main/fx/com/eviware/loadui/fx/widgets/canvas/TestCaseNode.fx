@@ -26,6 +26,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import javafx.geometry.Insets;
+import javafx.scene.control.Separator;
+import com.javafx.preview.control.MenuItem;
 
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.widgets.RunController;
@@ -34,6 +36,9 @@ import com.eviware.loadui.fx.dialogs.CloneTestCaseDialog;
 import com.eviware.loadui.fx.util.ImageUtil.*;
 import com.eviware.loadui.fx.util.ImageUtil;
 import com.eviware.loadui.fx.AppState;
+
+import com.eviware.loadui.fx.dialogs.RenameModelItemDialog;
+import com.eviware.loadui.fx.dialogs.DeleteModelItemDialog;
 
 import com.eviware.loadui.api.model.SceneItem;
 
@@ -116,4 +121,25 @@ public class TestCaseNode extends CanvasObjectNode {
 	override var onClone = function():Void {
 		CloneTestCaseDialog { canvasObject: canvasObject };
 	}
+	
+	override var menuItems: Node[] = [
+		MenuItem {
+			text: ##[RENAME]"Rename"
+			action: function() { RenameModelItemDialog { 
+				modelItem: canvasObject
+				uniqueInList: for( s in testCase.getProject().getScenes()) s
+				uniqueNameWarningText: "Test case with the specified name already exist in project!" 
+			} }
+		}, MenuItem {
+			text: ##[CLONE]"Clone"
+			action: function() { onClone() }
+		}, MenuItem {
+			text: ##[DELETE]"Delete"
+			action: function() { DeleteModelItemDialog { modelItem: canvasObject } }
+		}, Separator {
+		}, MenuItem {
+			text: ##[SETTINGS]"Settings"
+			action: function() { onSettings() }
+		}
+	];
 }
