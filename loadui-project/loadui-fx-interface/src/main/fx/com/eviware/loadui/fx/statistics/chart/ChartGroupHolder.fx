@@ -87,16 +87,36 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	
 	def controlButtons = new ToggleGroup();
 	var oldConfNode:Node;
-	var configurationNode:Node = bind (controlButtons.selectedToggle.value as Node) on replace {
-		if ( oldConfNode != null ) 
-			delete oldConfNode from configurationHolder.content;
-		insert configurationNode into configurationHolder.content;
-		oldConfNode = configurationNode;
+	var oldConf:String;
+	var configurationNode = bind controlButtons.selectedToggle on replace {
+		var configurationNode:Node = (controlButtons.selectedToggle.value as Node);
+		var selected:String = oldConf;
+		if( controlButtons.selectedToggle != null )
+			selected = (controlButtons.selectedToggle as ToggleButton).text;
+		oldConf = selected;
+		if ( selected == "Expand" ) {
+				toggleGroupExpand();
+		} else if ( selected == "Zoom" ) {
+				if ( oldConfNode != null ) 
+					delete oldConfNode from configurationHolder.content;
+				insert configurationNode into configurationHolder.content;
+				oldConfNode = configurationNode;
+		} else if ( selected == "Show agents" ) {
+			toggleAgentExpand();
+		} else if ( selected == "Configuration" ) {
+			toggleConfiguration();
+		} else if ( selected == "Delete" ) {
+			chartGroup.delete() 
+		}
 	};
+	
 	def zoomControl:ZoomControl = ZoomControl{
 										styleClass: "zoom-control"
 										width: bind this.width - 10
 								   };
+	var chartZoom = bind zoomControl.scale on replace {
+		(chartViewHolder.chart as LineChart).setZoomLevel(chartZoom);
+	}
 	
 	public-init var chartGroup:ChartGroup on replace oldChartGroup {
 		chartGroup.addEventListener( BaseEvent.class, listener );
@@ -115,7 +135,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		width: bind width
 		height: bind height
 		content: [
-			Region { width: bind width, height: bind height, managed: false, style: "-fx-background-color: gray;" },
+			Region { width: bind width, height: bind height, managed: false, styleClass: "chart-group-holder" },
 			//Label { text: bind "{title} ({itemCount})" },
 			Stack { nodeHPos: HPos.LEFT,  content: bind chartViewHolder }
 		]
@@ -125,10 +145,10 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		styleClass: "chart-group-toolbar"
 		spacing: 5
 		content: [
-			Button { text: "Expand", action: toggleGroupExpand },
+			ToggleButton { text: "Expand", toggleGroup:controlButtons, value: null },
 			//Button { text: "Add Statistics", action: toggleAgentExpand },
-			Button { text: "Show agents", action: toggleAgentExpand },
-			Button { text: "Configure", action: toggleConfiguration },
+			ToggleButton { text: "Show agents", toggleGroup:controlButtons },
+			ToggleButton { text: "Configure", toggleGroup:controlButtons },
 			ToggleButton { text: "Zoom", toggleGroup:controlButtons, value: zoomControl },
 		//	Button { text: "Scale", action: toggleAgentExpand }, //TODO
 		//	Button { text: "Style", action: toggleAgentExpand }, //TODO
@@ -139,7 +159,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
 		//	Button { text: "Settings", action: toggleAgentExpand }, //TODO
 		//	Button { text: "Help", action: toggleAgentExpand }, //TODO
-			Button { text: "Delete", action: function():Void { chartGroup.delete() } }
+			ToggleButton { text: "Delete", toggleGroup:controlButtons }
 		]
 	}
 	

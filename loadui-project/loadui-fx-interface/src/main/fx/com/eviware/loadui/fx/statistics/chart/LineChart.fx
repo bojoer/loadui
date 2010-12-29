@@ -58,7 +58,10 @@ import com.jidesoft.chart.model.DefaultChartModel;
 import com.jidesoft.chart.model.ChartPoint;
 import com.jidesoft.range.TimeRange;
 import com.jidesoft.chart.axis.NumericAxis;
+import com.jidesoft.chart.axis.TimeAxis;
 import com.jidesoft.chart.style.ChartStyle;
+
+import com.eviware.loadui.fx.statistics.chart.LoadUIChartTimeTickerCalculator;
 
 /**
  * Base LineChart Node, visualizes a LineChartView.
@@ -68,13 +71,15 @@ import com.jidesoft.chart.style.ChartStyle;
 public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	def listener = new ChartViewListener();
 	def lines = new HashMap();
-	def chart = new Chart();
+	public-read def chart = new Chart();
 	def chartNode = SwingComponent.wrap( chart );
+	var timeCalculator:LoadUIChartTimeTickerCalculator; 
 	
 	var padding = 2;
 	var min:Number = 0;
 	var max:Number = 0;
 	var maxTime:Number = 0;
+	var timeSpan:Number = 10000;
 	
 	def segmentButtons = VBox {
 		layoutInfo: LayoutInfo { hgrow: Priority.NEVER, hfill: false },
@@ -132,13 +137,16 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	init {
 		chart.setChartBackground( new java.awt.Color(0, 0, 0, 0) );
-		chart.setXAxis( new NumericAxis() );
+		def xAxis = new TimeAxis();
+		timeCalculator = new LoadUIChartTimeTickerCalculator();
+		chart.setXAxis( xAxis );
 		chart.setVerticalGridLinesVisible( false );
 		chart.setHorizontalGridLinesVisible( false );
 		
-		chart.getXAxis().setRange( new TimeRange( 0, 10000 ) );
+		xAxis.setRange( new TimeRange( 0, timeSpan ) );
 		chart.getYAxis().setRange( 0, 10 );
 		
+		xAxis.setTickCalculator(timeCalculator);
 		chartNode.layoutInfo = LayoutInfo { height: 150, hfill: true, hgrow: Priority.ALWAYS };
 	}
 	
@@ -146,7 +154,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		for( model in lines.values() ) {
 			(model as LineSegmentModel).refresh();
 		}
-		chart.getXAxis().setRange( new TimeRange( maxTime - 10000, maxTime ) );
+		chart.getXAxis().setRange( new TimeRange( maxTime - timeSpan, maxTime ) );
 		chart.getYAxis().setRange( min - padding, max + padding );
 	}
 	
@@ -189,6 +197,25 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 				delete button from segmentButtons.content;
 		}
 	}
+	
+	public function setZoomLevel(level:String):Void {
+		if( level == "Seconds" )
+			timeSpan = 10000;
+		if( level == "Minutes" )
+			timeSpan = 300000;
+		if( level == "Hours" ) 
+			timeSpan = 3600000 * 10;
+		if( level == "Days" ) 
+			timeSpan = 3600000 * 24 * 7;
+		if( level == "Weeks" ) 
+			timeSpan = 3600000 * 24 * 7 * 10;
+		if( level == "All" ) 
+			timeSpan = 10000;
+			
+		//chart.getXAxis().setRange( new TimeRange( maxTime - timeSpan, maxTime ) );
+		timeCalculator.setLevel(level);
+		chart.update();
+	}
 }
 
 class ChartViewListener extends EventHandler {
@@ -225,7 +252,7 @@ class LineSegmentModel extends DefaultChartModel {
 		
 		def latestTime = statistic.getTimestamp();
 		if( latestTime >= 0 ) {
-			def startTime = Math.max( 0, latestTime - 11000 );
+			def startTime = Math.max( 0, latestTime - timeSpan );
 			for( dataPoint in statistic.getPeriod( startTime, latestTime ) ) {
 				def yValue = (dataPoint as DataPoint).getValue() as Number;
 				min = Math.min( min, yValue );
