@@ -334,7 +334,6 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		{
 			// on agent. cancel components of this test case on current agent
 			super.cancelComponents();
-			System.out.println( "-----canceled on agent " + this );
 		}
 		else
 		{
