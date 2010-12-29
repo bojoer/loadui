@@ -600,3 +600,17 @@
 	-fx-text-fill: #9b9b9b;
 }
 
+.chart-drop-base {
+	-fx-background-color: #2f2f2f;
+	-fx-border-color: #2a2a2a;
+	-fx-border-radius: 15;
+}
+
+.chart-group-holder {
+	-fx-background-color: #2e2e2e;
+	-fx-background-radius: 10;
+	-fx-border-color: #292929;
+	-fx-border-radius: 10;
+	-fx-border-width: 1;
+	-fx-border-style: outside, round, solid;
+}
