@@ -205,7 +205,7 @@ class ChartPageListener extends EventHandler {
 
 class DropBase extends BaseNode, Resizable, Droppable {
 	def dropBaseNode = Region {
-		style: "-fx-background-color: white;"
+		styleClass: "chart-drop-base"
 		width: bind width
 		height: bind height
 	}

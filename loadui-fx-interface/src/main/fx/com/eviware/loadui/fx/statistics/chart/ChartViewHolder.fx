@@ -52,7 +52,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 		chart.update();
 	}
 	
-	var chart:BaseChart;
+	public-read var chart:BaseChart;
 	var configurationPanel:HBox;
 	
 	def resizable:VBox = VBox {
