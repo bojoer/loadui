@@ -1198,6 +1198,20 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		return super.isLoadingError();
 	}
 
+	@Override
+	public void cancelComponents()
+	{
+		for( SceneItem s : getScenes() )
+		{
+			//cancel only linked test cases TODO Is this correct?
+			if( s.isFollowProject() )
+			{
+				s.cancelComponents();
+			}
+		}
+		super.cancelComponents();
+	}
+
 	/**
 	 * Waits for ON_COMPLETE_DONE event from all scenes and calls
 	 * 'doGenerateSummary' method. This event is fired after 'onComplete' method

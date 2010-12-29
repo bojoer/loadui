@@ -18,6 +18,7 @@ package com.eviware.loadui.impl.model;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ import com.eviware.loadui.api.events.RemoteActionEvent;
 import com.eviware.loadui.api.events.TerminalEvent;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
+import com.eviware.loadui.api.messaging.SceneCommunication;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -300,17 +302,64 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			messageEndpoint.sendMessage( AgentItem.AGENT_CHANNEL, data );
 			log.debug( "Sending statistics data from {}", this );
 		}
-		else if( source == this )
-			if( getActiveAgents().size() > 0 && !getProject().getWorkspace().isLocalMode() )
-				awaitingSummary = true;
-			else
-				doGenerateSummary();
-
-		// set completed to true only if in local mode. for distributed mode this
-		// will be set to true when component data is received on controller.
-		if( project.getWorkspace().isLocalMode() )
+		else
 		{
-			setCompleted( true );
+			// on controller
+			if( source == this )
+			{
+				if( getActiveAgents().size() > 0 && !getProject().getWorkspace().isLocalMode() )
+				{
+					awaitingSummary = true;
+				}
+				else
+				{
+					doGenerateSummary();
+				}
+			}
+
+			// set completed to true only if in local mode. for distributed mode
+			// this will be set to true when component data is received on
+			// controller.
+			if( project.getWorkspace().isLocalMode() )
+			{
+				setCompleted( true );
+			}
+		}
+	}
+
+	@Override
+	public void cancelComponents()
+	{
+		if( "agent".equals( System.getProperty( "loadui.instance" ) ) )
+		{
+			// on agent. cancel components of this test case on current agent
+			super.cancelComponents();
+			System.out.println( "-----canceled on agent " + this );
+		}
+		else
+		{
+			if( project.getWorkspace().isLocalMode() )
+			{
+				// local mode, simply cancel components
+				super.cancelComponents();
+			}
+			else
+			{
+				if( project.getAgentsAssignedTo( this ).size() > 0 )
+				{
+					// test cases is deployed to one or more agents so send message
+					// to all agents to cancel
+					broadcastMessage( SceneCommunication.CHANNEL,
+							Arrays.asList( getId(), Long.toString( getVersion() ), SceneCommunication.CANCEL_COMPONENTS ) );
+				}
+				else
+				{
+					// test case is not deployed to any agent, so cancel it locally
+					// (in case non deployed test cases are executed locally. TODO
+					// Are they?)
+					super.cancelComponents();
+				}
+			}
 		}
 	}
 

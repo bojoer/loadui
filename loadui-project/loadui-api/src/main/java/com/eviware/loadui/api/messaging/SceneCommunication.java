@@ -76,4 +76,9 @@ public final class SceneCommunication
 	 * Command for gathering Agent statistics for a completed SceneItem.
 	 */
 	public final static String COLLECT_STATISTICS = "collectStatistics";
+	
+	/**
+	 * Command for canceling components.
+	 */
+	public final static String CANCEL_COMPONENTS = "cancelComponents";
 }

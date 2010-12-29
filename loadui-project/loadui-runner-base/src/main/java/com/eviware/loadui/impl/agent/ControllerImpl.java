@@ -343,6 +343,10 @@ public class ControllerImpl
 					{
 						( ( ModelItem )addressableRegistry.lookup( args.get( 4 ) ) ).triggerAction( args.get( 3 ) );
 					}
+					else if( SceneCommunication.CANCEL_COMPONENTS.equals( args.get( 2 ) ) )
+					{
+						scene.cancelComponents();
+					}
 				}
 				catch( InterruptedException e )
 				{
