@@ -137,7 +137,7 @@ public class ZoomControl extends CustomNode, Resizable {
 												}]
 										}, ToggleButton {
 											toggleGroup:buttonGroup
-							            	text: "Week"
+							            	text: "Weeks"
 							            	value: rec
 							            }
 			            			]	
@@ -158,7 +158,7 @@ public class ZoomControl extends CustomNode, Resizable {
 												}]
 										}, ToggleButton {
 											toggleGroup:buttonGroup
-							            	text: "Day"
+							            	text: "Days"
 							            	value: rec
 							            }
 			            			]	
@@ -230,6 +230,7 @@ public class ZoomControl extends CustomNode, Resizable {
 			            }]
 	            }
 				];
+		buttonGroup.toggles[5].selected = true;
 	}
 	
 						
