@@ -495,18 +495,13 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	{
 		startTime = isRunning() ? new Date() : null;
 		hasStarted = isRunning();
-		// Do it in the Timer thread to prevent concurrent modification
-		// of
-		// time.
-		scheduler.execute( new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				time = 0;
-				fixTimeLimit();
-			}
-		} );
+		setTime( 0 );
+		fixTimeLimit();
+	}
+
+	protected synchronized void setTime( long time )
+	{
+		this.time = time;
 	}
 
 	protected void setRunning( boolean running )
@@ -618,14 +613,13 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 					// reset time if the test was started again.
 					if( !paused )
 					{
-						time = 0;
+						setTime( 0 );
+						startTime = new Date();
 					}
 
 					setRunning( true );
 					timerFuture = scheduler.scheduleAtFixedRate( new TimeUpdateTask(), 250, 250, TimeUnit.MILLISECONDS );
 					fixTimeLimit();
-					if( startTime == null )
-						startTime = new Date();
 					hasStarted = true;
 					paused = false;
 					setCompleted( false );
@@ -642,13 +636,6 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 						timerFuture.cancel( true );
 					if( timeLimitFuture != null )
 						timeLimitFuture.cancel( true );
-					if( isAbortOnFinish() )
-					{
-						Calendar endTimeCal = Calendar.getInstance();
-						endTimeCal.setTime( startTime );
-						endTimeCal.add( Calendar.MILLISECOND, ( int )time );
-						endTime = endTimeCal.getTime();
-					}
 				}
 				else if( CounterHolder.COUNTER_RESET_ACTION.equals( event.getKey() ) )
 				{
@@ -664,13 +651,17 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 						hasStarted = false;
 						if( isAbortOnFinish() )
 						{
+							// calculate end time
+							Calendar endTimeCal = Calendar.getInstance();
+							endTimeCal.setTime( startTime );
+							endTimeCal.add( Calendar.MILLISECOND, ( int )time );
+							endTime = endTimeCal.getTime();
+
 							// If on PROJECT: First cancel all project components, then
-							// call its onComplete method to finalize it and finally
-							// send ON_COMPLETE_DONE event which is currently not
-							// listened by any listeners. Method 'onComplete' in
-							// project will start waiter which will wait for all test
-							// cases to receive COMPLETE_ACTION event and finalize them
-							// self.
+							// call its onComplete method to finalize it. Method
+							// 'onComplete' in project will start waiter which will
+							// wait for all test cases to receive COMPLETE_ACTION event
+							// and finalize them self.
 
 							// If on TEST CASE: Cancels test case components, calls
 							// 'onComplete' method on test case and fires
@@ -721,7 +712,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		public void run()
 		{
 			final long timePassed = ( System.currentTimeMillis() - startTime );
-			time = initialTime + timePassed;
+			setTime( initialTime + timePassed );
 		}
 	}
 
@@ -730,7 +721,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		@Override
 		public void run()
 		{
-			time = getLimit( TIMER_COUNTER ) * 1000;
+			setTime( getLimit( TIMER_COUNTER ) * 1000 );
 			triggerAction( STOP_ACTION );
 			triggerAction( COMPLETE_ACTION );
 		}

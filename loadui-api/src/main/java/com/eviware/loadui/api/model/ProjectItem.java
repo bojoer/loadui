@@ -195,4 +195,13 @@ public interface ProjectItem extends CanvasItem
 	 * @return
 	 */
 	public StatisticPages getStatisticPages();
+
+	/**
+	 * Cancels components of scenes assigned to this project.
+	 * 
+	 * @param linkedOnly
+	 *           If true only linked scenes will be canceled. Otherwise all
+	 *           scenes will be canceled.
+	 */
+	public void cancelScenes( boolean linkedOnly );
 }

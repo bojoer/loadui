@@ -81,7 +81,6 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	private final Map<AgentItem, Map<Object, Object>> remoteStatistics = new HashMap<AgentItem, Map<Object, Object>>();
 	private long version;
 	private boolean propagate = true;
-	private boolean awaitingSummary = false;
 
 	private MessageEndpoint messageEndpoint = null;
 
@@ -301,22 +300,15 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 				data.put( component.getId(), component.getBehavior().collectStatisticsData() );
 			messageEndpoint.sendMessage( AgentItem.AGENT_CHANNEL, data );
 			log.debug( "Sending statistics data from {}", this );
+
+			// this is a hack, since sometimes time variable is not reset when
+			// running multiple tests on agent one after another. So the result
+			// time is actually the execution time is accumulated time from previous
+			// tests.
+			setTime( 0 );
 		}
 		else
 		{
-			// on controller
-			if( source == this )
-			{
-				if( getActiveAgents().size() > 0 && !getProject().getWorkspace().isLocalMode() )
-				{
-					awaitingSummary = true;
-				}
-				else
-				{
-					doGenerateSummary();
-				}
-			}
-
 			// set completed to true only if in local mode. for distributed mode
 			// this will be set to true when component data is received on
 			// controller.
@@ -370,6 +362,11 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		return true;
 	}
 
+	public int getRemoteStatisticsCount()
+	{
+		return remoteStatistics.size();
+	}
+
 	public void handleStatisticsData( AgentItem source, Map<Object, Object> data )
 	{
 		remoteStatistics.put( source, data );
@@ -386,8 +383,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			component.getBehavior().handleStatisticsData( cData );
 		}
 
-		if( awaitingSummary )
-			doGenerateSummary();
+		setCompleted( true );
 	}
 
 	@Override

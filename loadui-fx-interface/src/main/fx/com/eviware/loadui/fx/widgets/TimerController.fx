@@ -29,6 +29,7 @@ import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.model.ProjectItem;
 
 import java.util.EventObject;
 
@@ -92,6 +93,9 @@ class CanvasListener extends EventHandler {
 					busy = true;
 					AppState.instance.setBlockedText( "Waiting for test to complete." );
 					AppState.instance.setCancelHandler( function() {
+					   if(canvas instanceof ProjectItem){
+					       (canvas as ProjectItem).cancelScenes( true );
+					   }
 						canvas.cancelComponents();
 						AppState.instance.unblock();
 					} );
