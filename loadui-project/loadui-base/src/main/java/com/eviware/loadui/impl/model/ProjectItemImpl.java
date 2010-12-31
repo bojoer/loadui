@@ -497,10 +497,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		// 'onComplete' method was called in local mode and after controller
 		// received test case data in distributed mode.
 		new SceneCompleteAwaiter();
-
-		// this is not necessary since nobody is listening for project
-		// ON_COMPLETE_DONE
-		setCompleted( true );
 	}
 
 	@Override
@@ -961,12 +957,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		private final Set<AgentItem> agents = new HashSet<AgentItem>();
 		private final AgentContextListener subListener = new AgentContextListener();
 
-		/**
-		 * Counts on how many agents particular test case finished (i.e. its data
-		 * was received in controller)
-		 */
-		private final HashMap<SceneItem, Integer> sceneCompletedCounter = new HashMap<SceneItem, Integer>();
-
 		public void attach( AgentItem agent )
 		{
 			if( agents.add( agent ) )
@@ -1065,7 +1055,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 							// and end times to local scene object. for next coming
 							// agents compare times to one initially set and update it
 							// if necessary.
-							if( sceneCompletedCounter.get( scene ) == null )
+							if( ( ( SceneItemImpl )scene ).getRemoteStatisticsCount() == 0 )
 							{
 								( ( SceneItemImpl )scene ).startTime = receivedStartTime;
 								( ( SceneItemImpl )scene ).endTime = receivedEndTime;
@@ -1098,29 +1088,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 						}
 
 						( ( SceneItemImpl )scene ).handleStatisticsData( ( AgentItem )endpoint, map );
-
-						// increment counter
-						Integer cnt = sceneCompletedCounter.get( scene );
-						if( cnt == null )
-						{
-							sceneCompletedCounter.put( scene, new Integer( 1 ) );
-						}
-						else
-						{
-							sceneCompletedCounter.put( scene, ++cnt );
-						}
-
-						// test case is completed when data is received from all
-						// agents it is deployed to
-						if( getAgentsAssignedTo( scene ).size() == sceneCompletedCounter.get( scene ) )
-						{
-							// reset counter
-							sceneCompletedCounter.remove( scene );
-
-							// this will fire ON_COMPLETE_DONE event which will tell
-							// SceneCompleteAwaiter that this scene is finished
-							( ( SceneItemImpl )scene ).setCompleted( true );
-						}
 					}
 				}
 			}
@@ -1199,17 +1166,15 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
-	public void cancelComponents()
+	public void cancelScenes( boolean linkedOnly )
 	{
 		for( SceneItem s : getScenes() )
 		{
-			//cancel only linked test cases TODO Is this correct?
-			if( s.isFollowProject() )
+			if( !linkedOnly || linkedOnly && s.isFollowProject() )
 			{
 				s.cancelComponents();
 			}
 		}
-		super.cancelComponents();
 	}
 
 	/**
