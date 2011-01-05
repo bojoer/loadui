@@ -26,6 +26,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
@@ -69,6 +70,8 @@ import com.eviware.loadui.fx.statistics.chart.LoadUIChartTimeTickerCalculator;
  * @author dain.nilsson
  */
 public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
+	override var styleClass = "line-chart";
+	
 	def listener = new ChartViewListener();
 	def lines = new HashMap();
 	public-read def chart = new Chart();
@@ -100,6 +103,11 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		}
 	}
 	
+	def scrollBar = ScrollBar {
+		vertical: false
+		layoutInfo: LayoutInfo { hgrow: Priority.ALWAYS, hfill: true }
+	}
+	
 	override var layoutInfo = LayoutInfo { vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS }
 	
 	def resizable:VBox = VBox {
@@ -111,7 +119,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 				padding: Insets { left: -3, right: 7 }
 				spacing: 5
 				content: [
-					segmentButtons, Stack { content: chartNode }
+					segmentButtons, VBox { content: [ chartNode, scrollBar ] }
 				]
 			}, if( chartView instanceof ConfigurableLineChartView ) Button {
 				text: "Add Segment"
