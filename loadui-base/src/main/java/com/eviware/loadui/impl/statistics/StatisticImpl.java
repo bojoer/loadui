@@ -41,6 +41,7 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 		this.variable = variable;
 		this.name = name;
 		this.source = source;
+		System.out.println("***Statistic name: "+name+" ***");
 	}
 
 	@Override

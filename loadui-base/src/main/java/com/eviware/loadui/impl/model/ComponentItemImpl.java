@@ -872,6 +872,13 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 			return variable;
 		}
+
+		@Override
+		public void removeStatisticVariable( String statisticVariableName )
+		{
+			statisticHolderSupport.removeStatisticalVariable( statisticVariableName );
+			
+		}
 	}
 
 	private abstract class DummyTerminal implements DualTerminal
