@@ -108,7 +108,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		spacing: 5
 		content: [
 			HBox {
-				padding: Insets { left: -3, right: 5 }
+				padding: Insets { left: -3, right: 7 }
 				spacing: 5
 				content: [
 					segmentButtons, Stack { content: chartNode }

@@ -43,6 +43,8 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
  * @author dain.nilsson
  */
 public class ChartViewHolder extends BaseNode, Resizable, Releasable {
+	override var styleClass = "chart-view-holder";
+	
 	public var label:String = "ChartView label";
 	
 	public-init var chartModel:com.eviware.loadui.api.statistics.model.Chart;
