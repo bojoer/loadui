@@ -337,4 +337,11 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	 * @return
 	 */
 	public MutableStatisticVariable addStatisticVariable( String statisticVariableName, String... writerTypes );
+	
+	/**
+	 * Removes a StatisticVariable from the Component.
+	 * 
+	 * @param statisticVariableName
+	 */
+	public void removeStatisticVariable( String statisticVariableName );
 }
