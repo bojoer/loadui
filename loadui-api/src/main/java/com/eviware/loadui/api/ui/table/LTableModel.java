@@ -28,7 +28,7 @@ public class LTableModel extends AbstractTableModel
 
 	private static final long serialVersionUID = 5947811194397913150L;
 
-	private static Logger log = LoggerFactory.getLogger("com.eviware.loadui.api.ui.table.LTableModel");
+	private static Logger log = LoggerFactory.getLogger( "com.eviware.loadui.api.ui.table.LTableModel" );
 
 	private ArrayList<String> header = new ArrayList<String>();
 	private ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
@@ -36,7 +36,7 @@ public class LTableModel extends AbstractTableModel
 	private int maxRow;
 	private boolean follow;
 
-	public LTableModel(int maxRow, boolean follow)
+	public LTableModel( int maxRow, boolean follow )
 	{
 		this.maxRow = maxRow;
 		this.follow = follow;
@@ -45,7 +45,7 @@ public class LTableModel extends AbstractTableModel
 	@Override
 	public int getColumnCount()
 	{
-		if (header.size() == 0)
+		if( header.size() == 0 )
 			return 1;
 		return header.size();
 	}
@@ -57,81 +57,81 @@ public class LTableModel extends AbstractTableModel
 	}
 
 	@Override
-	public Object getValueAt(int rowIndex, int columnIndex)
+	public Object getValueAt( int rowIndex, int columnIndex )
 	{
 		try
 		{
-			if (data.size() > rowIndex && data.get(rowIndex).size() > columnIndex)
-				return data.get(rowIndex).get(columnIndex);
+			if( data.size() > rowIndex && data.get( rowIndex ).size() > columnIndex )
+				return data.get( rowIndex ).get( columnIndex );
 			else
 				return "";
 		}
-		catch (Throwable t)
+		catch( Throwable t )
 		{
 			// t.printStackTrace();
-			log.error(t.getMessage());
+			log.error( t.getMessage() );
 			return null;
 		}
 	}
 
 	@Override
-	public String getColumnName(int column)
+	public String getColumnName( int column )
 	{
-		if (header.size() == 0)
+		if( header.size() == 0 )
 			return " ";
-		return header.get(column);
+		return header.get( column );
 	}
 
-	public void addColumn(String columnName)
+	public void addColumn( String columnName )
 	{
-		if (!header.contains(columnName))
+		if( !header.contains( columnName ) )
 		{
-			header.add(columnName);
+			header.add( columnName );
 			// add a column for each row
-			for (ArrayList<String> row : data)
+			for( ArrayList<String> row : data )
 			{
-				row.add("");
+				row.add( "" );
 			}
 			fireTableStructureChanged();
 		}
 	}
 
-	public boolean addRow(ArrayList<String> row)
+	public boolean addRow( ArrayList<String> row )
 	{
-		while (maxRow > 0 && !(data.size() < maxRow))
+		while( maxRow > 0 && !( data.size() < maxRow ) )
 		{
-			data.remove(0);
-			fireTableRowsDeleted(0, 0);
+			data.remove( 0 );
+			fireTableRowsDeleted( 0, 0 );
 		}
-		boolean result = data.add(row);
-		fireTableRowsInserted(data.size() - 1, data.size() - 1);
+		boolean result = data.add( row );
+		fireTableRowsInserted( data.size() - 1, data.size() - 1 );
 		return result;
 	}
 
-	public boolean addRow(Map<String, String> row)
+	public boolean addRow( Map<String, Object> row )
 	{
-		if (!row.isEmpty())
+		if( !row.isEmpty() )
 		{
 			// first check for columns
-			for (String key : row.keySet())
+			for( String key : row.keySet() )
 			{
-				if (!header.contains(key))
+				if( !header.contains( key ) )
 				{
-					addColumn(key);
+					addColumn( key );
 				}
 			}
 
 			ArrayList<String> newRow = new ArrayList<String>();
-			for (int cnt = 0; cnt < header.size(); cnt++)
-				newRow.add("");
-			for (String key : row.keySet())
+			for( int cnt = 0; cnt < header.size(); cnt++ )
+				newRow.add( "" );
+			for( String key : row.keySet() )
 			{
-				if (header.contains(key))
+				if( header.contains( key ) )
 				{
-					newRow.set(header.indexOf(key), row.get(key));
+					newRow.set( header.indexOf( key ), row.get( key ).toString() );
 				}
 			}
-			addRow(newRow);
+			addRow( newRow );
 			return true;
 		}
 		return false;
@@ -142,16 +142,16 @@ public class LTableModel extends AbstractTableModel
 		return maxRow;
 	}
 
-	public void setMaxRow(Integer maxRow)
+	public void setMaxRow( Integer maxRow )
 	{
 		this.maxRow = maxRow;
-		if (maxRow <= data.size())
+		if( maxRow <= data.size() )
 		{
 			int numberOfTopRowsToDelete = data.size() - maxRow + 1;
-			for (int cnt = 0; cnt < numberOfTopRowsToDelete; cnt++)
+			for( int cnt = 0; cnt < numberOfTopRowsToDelete; cnt++ )
 			{
-				data.remove(0);
-				fireTableRowsDeleted(0, 0);
+				data.remove( 0 );
+				fireTableRowsDeleted( 0, 0 );
 			}
 		}
 
@@ -159,13 +159,13 @@ public class LTableModel extends AbstractTableModel
 
 	public ArrayList getLastRow()
 	{
-		return data.get(data.size() - 1);
+		return data.get( data.size() - 1 );
 	}
 
-	public ArrayList getRowAt(int rowIndex)
+	public ArrayList getRowAt( int rowIndex )
 	{
-		if (data.size() > rowIndex)
-			return data.get(rowIndex);
+		if( data.size() > rowIndex )
+			return data.get( rowIndex );
 		else
 			return null;
 	}
@@ -188,22 +188,22 @@ public class LTableModel extends AbstractTableModel
 		return follow;
 	}
 
-	public void setFollow(boolean follow)
+	public void setFollow( boolean follow )
 	{
 		this.follow = follow;
 		fireTableDataChanged();
 	}
 
-	public LTableModel getLastRows(long numRows)
+	public LTableModel getLastRows( long numRows )
 	{
-		if (numRows >= data.size())
+		if( numRows >= data.size() )
 			return this;
-		LTableModel result = new LTableModel((int) numRows, false);
-		for (String col : header)
-			result.addColumn(col);
-		for (int cnt = data.size() - (int) numRows; cnt <= data.size() - 1; cnt++)
+		LTableModel result = new LTableModel( ( int )numRows, false );
+		for( String col : header )
+			result.addColumn( col );
+		for( int cnt = data.size() - ( int )numRows; cnt <= data.size() - 1; cnt++ )
 		{
-			result.addRow(data.get(cnt));
+			result.addRow( data.get( cnt ) );
 		}
 		return result;
 	}
