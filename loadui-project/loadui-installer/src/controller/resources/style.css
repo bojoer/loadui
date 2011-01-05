@@ -602,15 +602,16 @@
 
 .chart-drop-base {
 	-fx-background-color: #2f2f2f;
-	-fx-border-color: #2a2a2a;
-	-fx-border-radius: 15;
 }
 
 .chart-group-holder {
-	-fx-background-color: #2e2e2e;
-	-fx-background-radius: 10;
-	-fx-border-color: #292929;
-	-fx-border-radius: 10;
-	-fx-border-width: 1;
-	-fx-border-style: outside, round, solid;
+	-fx-background-color: #242424, #5d5d5d, linear (0,0) to (0,8px) stops (0%, #373737) (25%, #7c7d7e) (100%, #6e6e6e);
+	-fx-background-insets: 0, 1, 1 2;
+	-fx-background-radius: 4;
+}
+
+.chart-group-holder-bottom {
+	-fx-background-color: linear (0%,0%) to (0%,100%) stops (0%, #6e6e6e) (100%, #505052);
+	-fx-background-insets: 1 2;
+	-fx-background-radius: 0 0 4 4;
 }

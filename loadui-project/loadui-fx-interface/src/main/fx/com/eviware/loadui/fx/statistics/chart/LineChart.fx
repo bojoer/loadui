@@ -105,8 +105,11 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	def resizable:VBox = VBox {
 		width: bind width
 		height: bind height
+		spacing: 5
 		content: [
 			HBox {
+				padding: Insets { left: -3, right: 5 }
+				spacing: 5
 				content: [
 					segmentButtons, Stack { content: chartNode }
 				]

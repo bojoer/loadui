@@ -137,7 +137,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		content: [
 			Region { width: bind width, height: bind height, managed: false, styleClass: "chart-group-holder" },
 			//Label { text: bind "{title} ({itemCount})" },
-			Stack { nodeHPos: HPos.LEFT,  content: bind chartViewHolder }
+			Stack { nodeHPos: HPos.LEFT,  content: bind chartViewHolder },
+			Region { width: bind width, height: 30, layoutY: bind height - 30, managed: false, styleClass: "chart-group-holder-bottom" },
 		]
 	}
 	
