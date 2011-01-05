@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.statistics;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import com.eviware.loadui.api.events.CollectionEvent;
@@ -93,6 +94,21 @@ public class StatisticHolderSupport
 
 		return variable;
 	}
+	
+	/**
+	 * Removes a StatisticVariable from the StatisticHolder.
+	 * 
+	 * @param statisticVariableName
+	 */
+	public void removeStatisticalVariable( String statisticVariableName )
+	{
+		if( !variables.containsKey( statisticVariableName ) )
+			throw new NoSuchElementException
+				("Attempt made to remove a non-existing StatisticVarible from a StatisticHolder.");
+		
+		StatisticVariableImpl removedVariable = variables.remove( statisticVariableName );
+		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.REMOVED, removedVariable) );
+	}
 
 	public StatisticVariable getStatisticVariable( String statisticVariableName )
 	{
@@ -113,4 +129,5 @@ public class StatisticHolderSupport
 	{
 		manager.deregisterStatisticHolder( owner );
 	}
+	
 }
