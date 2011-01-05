@@ -163,10 +163,22 @@ public class SortableBox extends BaseNode, Resizable {
 						
 						if( pos + offset < prevPos or pos + offset > nextPos ) {
 							def moveIndex = if( pos + offset < prevPos ) index-1 else index+1;
-							var delta = if(vertical) box.content[moveIndex].layoutY else box.content[moveIndex].layoutX;
+							def delta = if( vertical ) {
+								if( moveIndex > index ) {
+									box.content[moveIndex].layoutY - frame.height + box.content[moveIndex].layoutBounds.height - frame.layoutY;
+								} else {
+									box.content[moveIndex].layoutY - frame.layoutY;
+								}
+							} else {
+								if( moveIndex > index ) {
+									box.content[moveIndex].layoutX - frame.width + box.content[moveIndex].layoutBounds.width - frame.layoutX;
+								} else {
+									box.content[moveIndex].layoutX - frame.layoutX;
+								}
+							}
+							
 							delete box.content[index];
 							insert frame before box.content[moveIndex];
-							delta -= if(vertical) box.content[moveIndex].layoutY else box.content[moveIndex].layoutX;
 							offset -= delta;
 						}
 					}
