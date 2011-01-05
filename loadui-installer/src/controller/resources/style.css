@@ -230,6 +230,10 @@
 	-fx-padding: 0 2 0 2;
 }
 
+.draggable-placeholder {
+	-fx-background-color: rgba( 173, 216, 230, 0.5 );
+}
+
 .toolbar-item-frame {
 	-fx-font: 10pt "Arial";
 }
@@ -598,6 +602,10 @@
 	-fx-inner-border: #1b1b1b;
 	-fx-body-color: #202020;
 	-fx-text-fill: #9b9b9b;
+}
+
+.chart-page *.draggable-placeholder {
+	-fx-background-radius: 4;
 }
 
 .chart-drop-base {

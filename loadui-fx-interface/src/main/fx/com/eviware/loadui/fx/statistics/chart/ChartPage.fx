@@ -66,6 +66,8 @@ import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
  * @author dain.nilsson
  */
 public class ChartPage extends BaseNode, Resizable, Releasable {
+	override var styleClass = "chart-page";
+	
 	def listener = new ChartPageListener();
 	def executionListener = new ExecutionManagerListener();
 	

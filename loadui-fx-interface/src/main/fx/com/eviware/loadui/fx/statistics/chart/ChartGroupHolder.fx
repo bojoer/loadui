@@ -71,6 +71,8 @@ def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
  * @author dain.nilsson
  */
 public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable {
+	override var styleClass = "chart-group-holder";
+	
 	var title:String = "ChartGroupHolder";
 	var itemCount:Integer = 0;
 	

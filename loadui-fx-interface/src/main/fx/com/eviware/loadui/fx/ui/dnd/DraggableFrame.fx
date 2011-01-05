@@ -27,8 +27,8 @@ import javafx.scene.Group;
 import javafx.scene.layout.Resizable;
 import javafx.scene.layout.Stack;
 import javafx.scene.layout.Container;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.paint.Color;
+
+import com.sun.javafx.scene.layout.Region;
 
 /**
  * A Node which holds a Draggable, and remains in its place when the Draggable is being dragged.
@@ -64,12 +64,11 @@ public class DraggableFrame extends CustomNode, Resizable {
 	
 	override function create() {
 		if( not FX.isInitialized( placeholder ) ) {
-			placeholder = Rectangle {
+			placeholder = Region {
+				styleClass: "draggable-placeholder"
 				width: bind (draggable as Node).layoutBounds.width
 				height: bind (draggable as Node).layoutBounds.height
 				visible: bind draggable.dragging
-				opacity: 0.5
-				fill: Color.LIGHTBLUE
 			}
 		}
 		
