@@ -93,7 +93,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final Property<Long> maxQueueSizeProperty;
 	private final Property<Boolean> assertOnOverflow;
 	protected final Property<Long> timeTakenStatisticsBuffer;
-	private final Property<Long> responseSizeStatisticsBuffer;
+	protected final Property<Long> responseSizeStatisticsBuffer;
 
 	private long concurrentSamples;
 	private long queueSize;
