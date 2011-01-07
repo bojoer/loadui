@@ -16,12 +16,22 @@
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 import com.eviware.loadui.util.StringUtils;
+
 
 /**
  * ConfigurableLineChartView for a Chart.
@@ -30,10 +40,14 @@ import com.eviware.loadui.util.StringUtils;
  */
 public class ChartLineChartView extends AbstractLineChartView implements ConfigurableLineChartView
 {
+	public static Logger log = LoggerFactory.getLogger( ChartLineChartView.class );
+	
 	private final static String SEGMENTS_ATTRIBUTE = "segments";
 
 	private final LineChartViewProvider provider;
 	private final Chart chart;
+
+	private StatisticVariableListener statisticVariableListener = new StatisticVariableListener();
 
 	public ChartLineChartView( LineChartViewProvider provider, Chart chart )
 	{
@@ -48,6 +62,8 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 			putSegment( segment );
 			provider.fireSegmentAdded( segment );
 		}
+		chart.addEventListener( BaseEvent.class, new ReleaseListener() );
+		chart.getStatisticHolder().addEventListener( CollectionEvent.class, statisticVariableListener );
 	}
 
 	@Override
@@ -116,5 +132,38 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	public String toString()
 	{
 		return chart.getStatisticHolder().toString();
+	}
+	
+	private class StatisticVariableListener implements EventHandler<CollectionEvent>
+	{
+		@Override
+		public void handleEvent( CollectionEvent event )
+		{
+			log.debug( "*** StatisticVariableListener invoked! ***" );
+			
+			if( event.getEvent() == CollectionEvent.Event.REMOVED && event.getElement() instanceof StatisticVariable )
+			{
+				StatisticVariable removedElement = (StatisticVariable) event.getElement();
+				
+				Set<LineSegment> lineSegments = new HashSet<LineSegment>( provider.getSegments() );
+				for (LineSegment l : lineSegments)
+				{
+					if( l.getStatistic().getStatisticVariable().equals( removedElement ) )
+					{
+						removeSegment( l );
+					}
+				}
+			}
+		}
+	}
+	
+	private class ReleaseListener implements EventHandler<BaseEvent>
+	{
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( Releasable.RELEASED.equals( event.getKey() ) )
+				chart.getStatisticHolder().removeEventListener( CollectionEvent.class, null );
+		}
 	}
 }

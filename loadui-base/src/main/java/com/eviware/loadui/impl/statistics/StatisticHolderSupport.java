@@ -20,13 +20,18 @@ import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
+import com.eviware.loadui.impl.statistics.model.chart.line.ChartLineChartView;
 import com.eviware.loadui.util.BeanInjector;
+
 
 /**
  * Support class for Objects implementing StatisticHolder. Handles creating and
@@ -37,6 +42,8 @@ import com.eviware.loadui.util.BeanInjector;
  */
 public class StatisticHolderSupport
 {
+	public static Logger log = LoggerFactory.getLogger( ChartLineChartView.class );
+	
 	private final StatisticsManager manager;
 	private final StatisticHolder owner;
 	private final HashMap<String, StatisticVariableImpl> variables = new HashMap<String, StatisticVariableImpl>();
@@ -108,6 +115,7 @@ public class StatisticHolderSupport
 		
 		StatisticVariableImpl removedVariable = variables.remove( statisticVariableName );
 		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.REMOVED, removedVariable) );
+		log.debug( "Fired CollectionEvent: removed statistic variable!" );
 	}
 
 	public StatisticVariable getStatisticVariable( String statisticVariableName )
