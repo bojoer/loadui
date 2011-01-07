@@ -13,21 +13,36 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.model;
+package com.eviware.loadui.util;
 
-public interface Releasable
+import com.eviware.loadui.api.model.Releasable;
+
+/**
+ * Utility class for handling Releasables.
+ * 
+ * @author dain.nilsson
+ */
+public class ReleasableUtils
 {
 	/**
-	 * If the Releasable also implements EventFirer, it should fire a BaseEvent
-	 * with the RELEASED constant as a key to inform listeners that it has been
-	 * released.
+	 * Releases an Object if it is Releasable, otherwise does nothing.
+	 * 
+	 * @param object
 	 */
-	public static final String RELEASED = Releasable.class.getSimpleName() + "@released";
+	public static void release( Object object )
+	{
+		if( object instanceof Releasable )
+			( ( Releasable )object ).release();
+	}
 
 	/**
-	 * Causes the Releasable to release its resources and stop anything that it
-	 * is doing. After calling this, other methods on the Releasable may no
-	 * longer work as intended.
+	 * Releases all Releasable objects in the given collection.
+	 * 
+	 * @param objects
 	 */
-	public void release();
+	public static void releaseAll( Object... objects )
+	{
+		for( Object object : objects )
+			release( object );
+	}
 }

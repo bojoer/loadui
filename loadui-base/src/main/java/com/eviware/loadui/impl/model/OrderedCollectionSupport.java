@@ -8,7 +8,7 @@ import java.util.List;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.model.OrderedCollection;
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.util.ReleasableUtils;
 
 public class OrderedCollectionSupport<ChildType>
 {
@@ -42,9 +42,7 @@ public class OrderedCollectionSupport<ChildType>
 
 	public void releaseChildren()
 	{
-		for( ChildType child : children )
-			if( child instanceof Releasable )
-				( ( Releasable )child ).release();
+		ReleasableUtils.releaseAll( children );
 		children.clear();
 	}
 

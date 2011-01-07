@@ -28,6 +28,7 @@ import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.ChartViewProvider;
+import com.eviware.loadui.util.ReleasableUtils;
 
 /**
  * Abstract base implementation of a ChartViewProvider. Subclasses need to
@@ -135,15 +136,9 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 	{
 		chartGroup.removeEventListener( CollectionEvent.class, listener );
 
-		for( ChartViewType chartView : chartChartViews.values() )
-			if( chartView instanceof Releasable )
-				( ( Releasable )chartView ).release();
-		for( ChartViewType chartView : sourceChartViews.values() )
-			if( chartView instanceof Releasable )
-				( ( Releasable )chartView ).release();
-
-		if( groupChartView instanceof Releasable )
-			( ( Releasable )groupChartView ).release();
+		ReleasableUtils.releaseAll( chartChartViews.values() );
+		ReleasableUtils.releaseAll( sourceChartViews.values() );
+		ReleasableUtils.release( groupChartView );
 
 		chartChartViews.clear();
 		sourceChartViews.clear();
