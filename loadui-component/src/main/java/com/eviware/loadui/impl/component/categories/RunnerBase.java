@@ -92,7 +92,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final Property<Long> concurrentSamplesProperty;
 	private final Property<Long> maxQueueSizeProperty;
 	private final Property<Boolean> assertOnOverflow;
-	private final Property<Long> timeTakenStatisticsBuffer;
+	protected final Property<Long> timeTakenStatisticsBuffer;
 	private final Property<Long> responseSizeStatisticsBuffer;
 
 	private long concurrentSamples;
@@ -769,7 +769,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		return executor;
 	}
 
-	private void setWriterBuffer( StatisticVariable var, int val )
+	protected void setWriterBuffer( StatisticVariable var, int val )
 	{
 		for( StatisticsWriter writer : var.getWriters() )
 			if( writer.getType().equals( "AVERAGE" ) )
