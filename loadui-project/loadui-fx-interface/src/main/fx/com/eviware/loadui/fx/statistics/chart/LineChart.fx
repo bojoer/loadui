@@ -83,6 +83,10 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		layoutInfo: LayoutInfo { hgrow: Priority.ALWAYS, hfill: true }
 		clickToPosition: true
 	}
+	def scrollBarPosition = bind scrollBar.value on replace {
+		def realPosition = scrollBarPosition * ( maxTime - timeSpan ) / maxTime;
+		chart.getXAxis().setRange( new TimeRange( realPosition, realPosition + timeSpan ) );
+	}
 	
 	var padding = 2;
 	var min:Number = 0;
@@ -173,8 +177,10 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		for( model in lines.values() ) {
 			(model as LineSegmentModel).refresh();
 		}
-		chart.getXAxis().setRange( new TimeRange( maxTime - timeSpan, maxTime ) );
+		//chart.getXAxis().setRange( new TimeRange( maxTime - timeSpan, maxTime ) );
 		chart.getYAxis().setRange( min - padding, max + padding );
+		
+		var position = maxTime;
 		
 		if( maxTime > timeSpan ) {
 			if( scrollBar.max < timeSpan or scrollBar.value == scrollBar.max ) {
@@ -183,9 +189,15 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 			} else {
 				scrollBar.max = maxTime;
 			}
+			position = scrollBar.value;
 		} else {
-			scrollBar.max = 0.0;
+			scrollBar.max = 0;
 		}
+		
+		println("Min: {scrollBar.min}, Value: {scrollBar.value}, Max: {scrollBar.max}, Visible: {scrollBar.visibleAmount}");
+		
+		def realPosition = position * ( maxTime - timeSpan ) / maxTime;
+		chart.getXAxis().setRange( new TimeRange( realPosition, realPosition + timeSpan ) );
 	}
 	
 	override function reset():Void {
@@ -230,17 +242,17 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	public function setZoomLevel(level:String):Void {
 		if( level == "Seconds" )
-		timeSpan = 10000;
+			timeSpan = 10000;
 		if( level == "Minutes" )
-		timeSpan = 300000;
+			timeSpan = 300000;
 		if( level == "Hours" ) 
-		timeSpan = 3600000 * 10;
+			timeSpan = 3600000 * 10;
 		if( level == "Days" ) 
-		timeSpan = 3600000 * 24 * 7;
+			timeSpan = 3600000 * 24 * 7;
 		if( level == "Weeks" ) 
-		timeSpan = 3600000 * 24 * 7 * 10;
+			timeSpan = 3600000 * 24 * 7 * 10;
 		if( level == "All" ) 
-		timeSpan = 10000;
+			timeSpan = 10000;
 		
 		//chart.getXAxis().setRange( new TimeRange( maxTime - timeSpan, maxTime ) );
 		
