@@ -177,7 +177,6 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		for( model in lines.values() ) {
 			(model as LineSegmentModel).refresh();
 		}
-		//chart.getXAxis().setRange( new TimeRange( maxTime - timeSpan, maxTime ) );
 		chart.getYAxis().setRange( min - padding, max + padding );
 		
 		var position = maxTime;
@@ -193,8 +192,6 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		} else {
 			scrollBar.max = 0;
 		}
-		
-		println("Min: {scrollBar.min}, Value: {scrollBar.value}, Max: {scrollBar.max}, Visible: {scrollBar.visibleAmount}");
 		
 		def realPosition = position * ( maxTime - timeSpan ) / maxTime;
 		chart.getXAxis().setRange( new TimeRange( realPosition, realPosition + timeSpan ) );
