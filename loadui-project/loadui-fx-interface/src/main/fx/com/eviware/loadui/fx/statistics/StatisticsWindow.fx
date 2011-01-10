@@ -100,6 +100,10 @@ public class StatisticsWindow {
 		height: bind scene.height - 100
 	}
 	
+	def topMenu:StatisticsMenu = StatisticsMenu {
+	    									width: bind scene.width
+	    								};
+	
 	public function show() {
 		
 		//Remove in final version, this sets up a basic tab.
@@ -132,34 +136,7 @@ public class StatisticsWindow {
 						content: [
 							Group {
 					        	content: [
-						        	Rectangle {
-						        		x:1
-						        		y:1
-						        		width: bind scene.width -2
-						        		height: 21
-						        		fill: Color.web("#b1b1b1")
-						        		stroke: Color.web("#000000")
-						        		strokeWidth: 1
-						        	}, Text {
-						        		x: 20
-						        		y: 15
-						        		content: "Stats"
-						        		font: Font { size: 10 }
-						        	}, Rectangle {
-						        		x: 1
-						        		y: 22
-						        		width: bind scene.width -2
-						        		height: 90
-						        		fill: Color.web("#989898")
-						        		stroke: Color.web("#000000")
-						        		strokeWidth: 1
-						        	}, Text {
-						        		x: 20
-						        		y: 55
-						        		content: "Stats: project {project.getLabel()}"
-						        		font: Font { size: 30 }
-						        		fill: Color.web("#ffffff")
-						        	}, tabs, toolbar
+						        	topMenu, tabs, toolbar
 						        ]
 							}, overlay
 						]
