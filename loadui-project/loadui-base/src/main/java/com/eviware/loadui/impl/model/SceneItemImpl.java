@@ -286,6 +286,10 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	{
 		if( "agent".equals( System.getProperty( "loadui.instance" ) ) )
 		{
+			// if on agent, application is running in distributed mode, so send
+			// data
+			// to the controller
+
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( AgentItem.SCENE_ID, getId() );
 
@@ -303,19 +307,42 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 			// this is a hack, since sometimes time variable is not reset when
 			// running multiple tests on agent one after another. So the result
-			// time is actually the execution time is accumulated time from previous
+			// time is actually the execution time is accumulated time from
+			// previous
 			// tests.
 			setTime( 0 );
 		}
-		else
+		else if( project.getWorkspace().isLocalMode() )
 		{
-			// set completed to true only if in local mode. for distributed mode
-			// this will be set to true when component data is received on
-			// controller.
-			if( project.getWorkspace().isLocalMode() )
+			if( source.equals( project ) )
 			{
+				// if source is project set completed to true to inform it (over
+				// scene waiter) that this test case is finished. for distributed
+				// mode this will be set to true when test case data is received on
+				// controller.
 				setCompleted( true );
 			}
+			else if( source.equals( this ) )
+			{
+				// if source is test case, just generate summary for it
+				doGenerateSummary();
+			}
+		}
+		else if( source.equals( this ) && !project.getWorkspace().isLocalMode() )
+		{
+			// distributed mode, and source is test case...add ON_COMPLETE_DONE
+			// event listener to this test case to listen when it is completed
+			addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
+			{
+				@Override
+				public void handleEvent( BaseEvent event )
+				{
+					if(event.getKey().equals( ON_COMPLETE_DONE )){
+						removeEventListener( BaseEvent.class, this );
+						doGenerateSummary();
+					}
+				}
+			});
 		}
 	}
 
