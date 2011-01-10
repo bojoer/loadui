@@ -29,7 +29,6 @@ import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
-import com.eviware.loadui.impl.statistics.model.chart.line.ChartLineChartView;
 import com.eviware.loadui.util.BeanInjector;
 
 
@@ -42,7 +41,7 @@ import com.eviware.loadui.util.BeanInjector;
  */
 public class StatisticHolderSupport
 {
-	public static Logger log = LoggerFactory.getLogger( ChartLineChartView.class );
+	public static Logger log = LoggerFactory.getLogger( StatisticHolderSupport.class );
 	
 	private final StatisticsManager manager;
 	private final StatisticHolder owner;
