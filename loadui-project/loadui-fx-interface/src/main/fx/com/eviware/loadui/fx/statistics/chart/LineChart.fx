@@ -1,4 +1,4 @@
-/* 
+ /* 
  * Copyright 2010 eviware software ab
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -12,7 +12,7 @@
  * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
- */
+ */ 
 package com.eviware.loadui.fx.statistics.chart;
 
 import javafx.scene.Node;
@@ -66,9 +66,9 @@ import com.eviware.loadui.fx.statistics.chart.LoadUIChartTimeTickerCalculator;
 
 /**
  * Base LineChart Node, visualizes a LineChartView.
- *
+ * 
  * @author dain.nilsson
- */
+*/
 public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	override var styleClass = "line-chart";
 	
@@ -78,15 +78,28 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	def chartNode = SwingComponent.wrap( chart );
 	var timeCalculator:LoadUIChartTimeTickerCalculator; 
 	
+	def scrollBar = ScrollBar {
+		vertical: false
+		layoutInfo: LayoutInfo { hgrow: Priority.ALWAYS, hfill: true }
+		clickToPosition: true
+	}
+	
 	var padding = 2;
 	var min:Number = 0;
 	var max:Number = 0;
 	var maxTime:Number = 0;
-	var timeSpan:Number = 10000;
+	var timeSpan:Number = 10000 on replace oldTimeSpan {
+		scrollBar.visibleAmount = timeSpan;
+		scrollBar.unitIncrement = timeSpan / 10;
+		scrollBar.blockIncrement = timeSpan / 10;
+		
+		if( oldTimeSpan > maxTime and timeSpan < maxTime )
+			scrollBar.value = maxTime;
+	}
 	
 	def segmentButtons = VBox {
-		layoutInfo: LayoutInfo { hgrow: Priority.NEVER, hfill: false },
-		content: Rectangle { width: 1, height: 1, managed: false, fill: Color.rgb(0,0,0,0.0001) }
+		layoutInfo: LayoutInfo { hgrow: Priority.NEVER, hfill: false }, 
+		content: Rectangle { width: 1, height: 1, managed: false, fill: Color.rgb(0, 0, 0, 0.0001) }
 	}
 	
 	public-init var chartView:LineChartView on replace oldChartView {
@@ -94,18 +107,13 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 			chartView.addEventListener( CollectionEvent.class, listener );
 			
 			for( segment in chartView.getSegments() )
-				addedSegment( segment );
+			addedSegment( segment );
 		}
 		
 		if( oldChartView != null ) {
 			chartView.removeEventListener( CollectionEvent.class, listener );
 			lines.clear();
 		}
-	}
-	
-	def scrollBar = ScrollBar {
-		vertical: false
-		layoutInfo: LayoutInfo { hgrow: Priority.ALWAYS, hfill: true }
 	}
 	
 	override var layoutInfo = LayoutInfo { vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS }
@@ -115,34 +123,34 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		height: bind height
 		spacing: 5
 		content: [
-			HBox {
-				padding: Insets { left: -3, right: 7 }
-				spacing: 5
-				content: [
-					segmentButtons, VBox { content: [ chartNode, scrollBar ] }
-				]
+		HBox {
+			padding: Insets { left: - 3, right: 7 }
+			spacing: 5
+			content: [
+			segmentButtons, VBox { content: [ chartNode, scrollBar ] }
+			]
 			}, if( chartView instanceof ConfigurableLineChartView ) Button {
-				text: "Add Segment"
-				action: function():Void {
-					var selected:Runnable;
-					holder.showConfig( VBox {
+			text: "Add Segment"
+			action: function():Void {
+				var selected:Runnable;
+				holder.showConfig( VBox {
+					content: [
+					CascadingTreeSelector {
+						treeModel: new SegmentTreeModel( chartView as ConfigurableLineChartView )
+						allowMultiple: false
+						onSelect: function(obj):Void { selected = obj as Runnable; }
+						onDeselect: function(obj):Void { selected = null; }
+						}, HBox {
+						hpos: HPos.RIGHT
 						content: [
-							CascadingTreeSelector {
-								treeModel: new SegmentTreeModel( chartView as ConfigurableLineChartView )
-								allowMultiple: false
-								onSelect: function(obj):Void { selected = obj as Runnable; }
-								onDeselect: function(obj):Void { selected = null; }
-							}, HBox {
-								hpos: HPos.RIGHT
-								content: [
-									Button { text: "Add", disable: bind selected == null; action: function():Void { selected.run(); holder.hideConfig() } }
-									Button { text: "Cancel", action: function():Void { holder.hideConfig() } }
-								]
-							}
+						Button { text: "Add", disable: bind selected == null; action: function():Void { selected.run(); holder.hideConfig() } }
+						Button { text: "Cancel", action: function():Void { holder.hideConfig() } }
 						]
-					} );
-				}
-			} else null
+					}
+					]
+				} );
+			}
+		} else null
 		]
 	}
 	
@@ -167,6 +175,17 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		}
 		chart.getXAxis().setRange( new TimeRange( maxTime - timeSpan, maxTime ) );
 		chart.getYAxis().setRange( min - padding, max + padding );
+		
+		if( maxTime > timeSpan ) {
+			if( scrollBar.max < timeSpan or scrollBar.value == scrollBar.max ) {
+				scrollBar.max = maxTime;
+				scrollBar.value = maxTime;
+			} else {
+				scrollBar.max = maxTime;
+			}
+		} else {
+			scrollBar.max = 0.0;
+		}
 	}
 	
 	override function reset():Void {
@@ -203,27 +222,28 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	function removedSegment( segment:LineSegment ):Void {
 		def model = lines.remove( segment ) as DefaultChartModel;
 		chart.removeModel( model );
-		for( button in segmentButtons.content[b|b instanceof SegmentButton] ) {
+		for( button in segmentButtons.content[b | b instanceof SegmentButton] ) {
 			if( (button as SegmentButton).model.segment == segment )
-				delete button from segmentButtons.content;
+			delete button from segmentButtons.content;
 		}
 	}
 	
 	public function setZoomLevel(level:String):Void {
 		if( level == "Seconds" )
-			timeSpan = 10000;
+		timeSpan = 10000;
 		if( level == "Minutes" )
-			timeSpan = 300000;
+		timeSpan = 300000;
 		if( level == "Hours" ) 
-			timeSpan = 3600000 * 10;
+		timeSpan = 3600000 * 10;
 		if( level == "Days" ) 
-			timeSpan = 3600000 * 24 * 7;
+		timeSpan = 3600000 * 24 * 7;
 		if( level == "Weeks" ) 
-			timeSpan = 3600000 * 24 * 7 * 10;
+		timeSpan = 3600000 * 24 * 7 * 10;
 		if( level == "All" ) 
-			timeSpan = 10000;
-			
+		timeSpan = 10000;
+		
 		//chart.getXAxis().setRange( new TimeRange( maxTime - timeSpan, maxTime ) );
+		
 		timeCalculator.setLevel(level);
 		chart.update();
 	}
@@ -234,7 +254,7 @@ class ChartViewListener extends EventHandler {
 		def event = e as CollectionEvent;
 		if( CollectionEvent.Event.ADDED == event.getEvent() ) {
 			FxUtils.runInFxThread( function():Void { addedSegment( event.getElement() as LineSegment ) } );
-		} else {
+			} else {
 			FxUtils.runInFxThread( function():Void { removedSegment( event.getElement() as LineSegment ) } );
 		}
 	}
@@ -246,9 +266,9 @@ class SegmentButton extends Button {
 	}
 	
 	override var action = function():Void {
-		//TODO: Show configuration panel instead of removing the segment.
+		 //TODO: Show configuration panel instead of removing the segment.  
 		if( chartView instanceof ConfigurableLineChartView )
-			(chartView as ConfigurableLineChartView).removeSegment( model.segment );
+		(chartView as ConfigurableLineChartView).removeSegment( model.segment );
 	}
 }
 
@@ -276,7 +296,7 @@ class LineSegmentModel extends DefaultChartModel {
 	
 	public function refresh():Void {
 		def latestTime = statistic.getTimestamp();
-		if( timestamp != latestTime ) {
+		if( timestamp != latestTime and latestTime >= 0 ) {
 			timestamp = latestTime;
 			def yValue = statistic.getValue() as Number;
 			min = Math.min( min, yValue );
@@ -288,44 +308,44 @@ class LineSegmentModel extends DefaultChartModel {
 }
 
 class LineChartStyle extends ChartStyle {
-    
-    public var lineWidth: Integer = 1 on replace {
-    	setLineWidth(lineWidth);
-    }  
+	
+	public var lineWidth: Integer = 1 on replace {
+		setLineWidth(lineWidth);
+	}  
 
-    public var strokeType: String = "Solid" on replace {
-     	applyLineStroke();
-    }
+	public var strokeType: String = "Solid" on replace {
+		applyLineStroke();
+	}
 
-	 //how to set default color for each line. Is it per statistic?
-	 public var lineColor: java.awt.Color = java.awt.Color.blue on replace {
-	 	setLineColor(lineColor);
-	 }
-	 
-    var dashMap: HashMap;
-    
-    init {
-        setPointsVisible(false);
-    }
-    
-    function applyLineStroke(){
-  		  initDashMap();
-        def stroke = new BasicStroke(lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, dashMap.get(strokeType) as Float[], 0);
-        setLineStroke(stroke);
-    }
+	 //how to set default color for each line. Is it per statistic?  
+	public var lineColor: java.awt.Color = java.awt.Color.blue on replace {
+		setLineColor(lineColor);
+	}
+	
+	var dashMap: HashMap;
+	
+	init {
+		setPointsVisible(false);
+	}
+	
+	function applyLineStroke(){
+		initDashMap();
+		def stroke = new BasicStroke(lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, dashMap.get(strokeType) as Float[], 0);
+		setLineStroke(stroke);
+	}
 
-    function initDashMap() {
-        if(dashMap == null){
-	        dashMap = new HashMap();
-		     dashMap.put("Solid", [1.0]);
-		     dashMap.put("Dashed", [8.0, 8.0]);
-		     dashMap.put("Dotted", [2.0, 2.0]);
-	     }
-    }
-    
-    public function getStrokeTypes(): Set {
-        dashMap.keySet();
-    }
+	function initDashMap() {
+		if(dashMap == null){
+			dashMap = new HashMap();
+			dashMap.put("Solid", [1.0]);
+			dashMap.put("Dashed", [8.0, 8.0]);
+			dashMap.put("Dotted", [2.0, 2.0]);
+		}
+	}
+	
+	public function getStrokeTypes(): Set {
+		dashMap.keySet();
+	}
 }
 
 
