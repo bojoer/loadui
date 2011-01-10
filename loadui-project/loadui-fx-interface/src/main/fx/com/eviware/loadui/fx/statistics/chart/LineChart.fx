@@ -144,7 +144,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 						allowMultiple: false
 						onSelect: function(obj):Void { selected = obj as Runnable; }
 						onDeselect: function(obj):Void { selected = null; }
-						}, HBox {
+					}, HBox {
 						hpos: HPos.RIGHT
 						content: [
 						Button { text: "Add", disable: bind selected == null; action: function():Void { selected.run(); holder.hideConfig() } }
@@ -251,8 +251,6 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		if( level == "All" ) 
 			timeSpan = 10000;
 		
-		//chart.getXAxis().setRange( new TimeRange( maxTime - timeSpan, maxTime ) );
-		
 		timeCalculator.setLevel(level);
 		chart.update();
 	}
@@ -292,7 +290,7 @@ class LineSegmentModel extends DefaultChartModel {
 		
 		def latestTime = statistic.getTimestamp();
 		if( latestTime >= 0 ) {
-			def startTime = Math.max( 0, latestTime - timeSpan );
+			def startTime = 0; // Since scrolling doesn't yet fetch any data, load all data on creation. //Math.max( 0, latestTime - timeSpan );
 			for( dataPoint in statistic.getPeriod( startTime, latestTime ) ) {
 				def yValue = (dataPoint as DataPoint).getValue() as Number;
 				min = Math.min( min, yValue );
