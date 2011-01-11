@@ -64,6 +64,11 @@ import com.jidesoft.chart.style.ChartStyle;
 
 import com.eviware.loadui.fx.statistics.chart.LoadUIChartTimeTickerCalculator;
 
+
+//Attributes
+def LINE_COLOR = "lineColor";
+def LINE_STROKE = "lineStroke";
+
 /**
  * Base LineChart Node, visualizes a LineChartView.
  * 
@@ -80,7 +85,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	def scrollBar = ScrollBar {
 		vertical: false
-		layoutInfo: LayoutInfo { hgrow: Priority.ALWAYS, hfill: true }
+		layoutInfo: LayoutInfo { hgrow: Priority.ALWAYS, hfill: true, margin: Insets { top: - 1, right: - 1, bottom: - 1, left: - 1 } }
 		clickToPosition: true
 	}
 	def scrollBarPosition = bind scrollBar.value on replace {
@@ -98,7 +103,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		scrollBar.blockIncrement = timeSpan / 10;
 		
 		if( oldTimeSpan > maxTime and timeSpan < maxTime )
-			scrollBar.value = maxTime;
+		scrollBar.value = maxTime;
 	}
 	
 	def segmentButtons = VBox {
@@ -122,35 +127,44 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	override var layoutInfo = LayoutInfo { vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS }
 	
+	var chartVbox:VBox;
 	def resizable:VBox = VBox {
 		width: bind width
 		height: bind height
 		spacing: 5
 		content: [
 		HBox {
-			padding: Insets { left: - 3, right: 7 }
+			padding: Insets { left: -3, right: 15 }
 			spacing: 5
 			content: [
-			segmentButtons, VBox { content: [ chartNode, scrollBar ] }
+				segmentButtons, 
+				chartVbox = VBox {
+					padding: Insets { top: 5 }
+					content: [
+						Region { styleClass: "base-chart", managed: false, width: bind chartVbox.width, height: bind chartVbox.height }, 
+						chartNode, 
+						scrollBar
+					]
+				}
 			]
-			}, if( chartView instanceof ConfigurableLineChartView ) Button {
+		}, if( chartView instanceof ConfigurableLineChartView ) Button {
 			text: "Add Segment"
 			action: function():Void {
 				var selected:Runnable;
 				holder.showConfig( VBox {
 					content: [
-					CascadingTreeSelector {
-						treeModel: new SegmentTreeModel( chartView as ConfigurableLineChartView )
-						allowMultiple: false
-						onSelect: function(obj):Void { selected = obj as Runnable; }
-						onDeselect: function(obj):Void { selected = null; }
-					}, HBox {
-						hpos: HPos.RIGHT
-						content: [
-						Button { text: "Add", disable: bind selected == null; action: function():Void { selected.run(); holder.hideConfig() } }
-						Button { text: "Cancel", action: function():Void { holder.hideConfig() } }
-						]
-					}
+						CascadingTreeSelector {
+							treeModel: new SegmentTreeModel( chartView as ConfigurableLineChartView )
+							allowMultiple: false
+							onSelect: function(obj):Void { selected = obj as Runnable; }
+							onDeselect: function(obj):Void { selected = null; }
+						}, HBox {
+							hpos: HPos.RIGHT
+							content: [
+								Button { text: "Add", disable: bind selected == null; action: function():Void { selected.run(); holder.hideConfig() } }
+								Button { text: "Cancel", action: function():Void { holder.hideConfig() } }
+							]
+						}
 					]
 				} );
 			}
@@ -159,12 +173,11 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	init {
-		chart.setChartBackground( new java.awt.Color(0, 0, 0, 0) );
+		DefaultChartStyles.styleChart( chart );
+		
 		def xAxis = new TimeAxis();
 		timeCalculator = new LoadUIChartTimeTickerCalculator();
 		chart.setXAxis( xAxis );
-		chart.setVerticalGridLinesVisible( false );
-		chart.setHorizontalGridLinesVisible( false );
 		
 		xAxis.setRange( new TimeRange( 0, timeSpan ) );
 		chart.getYAxis().setRange( 0, 10 );
@@ -185,11 +198,11 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 			if( scrollBar.max < timeSpan or scrollBar.value == scrollBar.max ) {
 				scrollBar.max = maxTime;
 				scrollBar.value = maxTime;
-			} else {
+				} else {
 				scrollBar.max = maxTime;
 			}
 			position = scrollBar.value;
-		} else {
+			} else {
 			scrollBar.max = 0;
 		}
 		
@@ -199,7 +212,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	override function reset():Void {
 		for( model in lines.values() )
-			(model as DefaultChartModel).clearPoints();
+		(model as DefaultChartModel).clearPoints();
 		maxTime = 0;
 		max = 0;
 		min = 0;
@@ -239,20 +252,21 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	public function setZoomLevel(level:String):Void {
 		if( level == "Seconds" )
-			timeSpan = 10000;
+		timeSpan = 10000;
 		if( level == "Minutes" )
-			timeSpan = 300000;
+		timeSpan = 300000;
 		if( level == "Hours" ) 
-			timeSpan = 3600000 * 10;
+		timeSpan = 3600000 * 10;
 		if( level == "Days" ) 
-			timeSpan = 3600000 * 24 * 7;
+		timeSpan = 3600000 * 24 * 7;
 		if( level == "Weeks" ) 
-			timeSpan = 3600000 * 24 * 7 * 10;
+		timeSpan = 3600000 * 24 * 7 * 10;
 		if( level == "All" ) 
-			timeSpan = 10000;
+		timeSpan = 10000;
 		
-		timeCalculator.setLevel(level);
-		chart.update();
+		timeCalculator.setLevel( level );
+		
+		update();
 	}
 }
 
@@ -273,9 +287,9 @@ class SegmentButton extends Button {
 	}
 	
 	override var action = function():Void {
-		 //TODO: Show configuration panel instead of removing the segment.  
+		 //TODO: Show configuration panel instead of removing the segment.   
 		if( chartView instanceof ConfigurableLineChartView )
-		(chartView as ConfigurableLineChartView).removeSegment( model.segment );
+			(chartView as ConfigurableLineChartView).removeSegment( model.segment );
 	}
 }
 
@@ -283,14 +297,17 @@ class LineSegmentModel extends DefaultChartModel {
 	var timestamp = -1;
 	var statistic:Statistic;
 	
-	public-read var style = new LineChartStyle();
+	public-read def style = new ChartStyle() on replace {
+		DefaultChartStyles.styleChartStyle( style );
+	}
 	
 	public-init var segment:LineSegment on replace {
 		statistic = segment.getStatistic();
+		loadStyles();
 		
 		def latestTime = statistic.getTimestamp();
 		if( latestTime >= 0 ) {
-			def startTime = 0; // Since scrolling doesn't yet fetch any data, load all data on creation. //Math.max( 0, latestTime - timeSpan );
+			def startTime = 0; // Since scrolling doesn't yet fetch any data, load all data on creation. //Math.max( 0, latestTime - timeSpan ); 
 			for( dataPoint in statistic.getPeriod( startTime, latestTime ) ) {
 				def yValue = (dataPoint as DataPoint).getValue() as Number;
 				min = Math.min( min, yValue );
@@ -312,75 +329,30 @@ class LineSegmentModel extends DefaultChartModel {
 			addPoint( new ChartPoint( timestamp, yValue ) );
 		}
 	}
-}
-
-class LineChartStyle extends ChartStyle {
 	
-	public var lineWidth: Integer = 1 on replace {
-		setLineWidth(lineWidth);
-	}  
-
-	public var strokeType: String = "Solid" on replace {
-		applyLineStroke();
-	}
-
-	 //how to set default color for each line. Is it per statistic?  
-	public var lineColor: java.awt.Color = java.awt.Color.blue on replace {
-		setLineColor(lineColor);
+	public function setLineColor( color:Color ):Void {
+		segment.setAttribute( LINE_COLOR, FxUtils.colorToWebString( color ) );
+		style.setLineColor( FxUtils.getAwtColor( color ) );
 	}
 	
-	var dashMap: HashMap;
-	
-	init {
-		setPointsVisible(false);
-	}
-	
-	function applyLineStroke(){
-		initDashMap();
-		def stroke = new BasicStroke(lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, dashMap.get(strokeType) as Float[], 0);
-		setLineStroke(stroke);
-	}
-
-	function initDashMap() {
-		if(dashMap == null){
-			dashMap = new HashMap();
-			dashMap.put("Solid", [1.0]);
-			dashMap.put("Dashed", [8.0, 8.0]);
-			dashMap.put("Dotted", [2.0, 2.0]);
+	public function setLineStroke( strokeName:String ):Void {
+		segment.setAttribute( LINE_STROKE, strokeName );
+		if( strokeName == "dashed" ) {
+			style.setLineStroke( DefaultChartStyles.dashedStroke );
+		} else if( strokeName == "dotted" ) {
+			style.setLineStroke( DefaultChartStyles.dottedStroke );
+		} else {
+			style.setLineStroke( DefaultChartStyles.solidStroke );
 		}
 	}
 	
-	public function getStrokeTypes(): Set {
-		dashMap.keySet();
+	function loadStyles():Void {
+		def lineColor = segment.getAttribute( LINE_COLOR, null );
+		if( lineColor != null )
+			style.setLineColor( FxUtils.getAwtColor( lineColor ) );
+		
+		def lineStroke = segment.getAttribute( LINE_STROKE, null );
+		if( lineStroke != null )
+			setLineStroke( lineStroke );
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

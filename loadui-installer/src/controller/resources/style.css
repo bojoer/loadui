@@ -675,3 +675,9 @@
 	-fx-background-insets: 1 2;
 	-fx-background-radius: 0 0 4 4;
 }
+
+.base-chart {
+	-fx-background-color: #1a1a1a;
+	-fx-background-insets: -2;
+	-fx-background-radius: 4;
+}

@@ -26,9 +26,9 @@ public class ChartLineSegment implements LineSegment
 		this.variableName = variableName;
 		this.statisticName = statisticName;
 		this.source = source;
-		attributeSupport = new DelegatingAttributeHolderSupport( chart, "" );
 		id = StringUtils.serialize( Arrays.asList( chart.getStatisticHolder().getId(), variableName, statisticName,
 				source ) );
+		attributeSupport = new DelegatingAttributeHolderSupport( chart, "_SEGMENT_" + id + "_" );
 	}
 
 	public Chart getChart()
