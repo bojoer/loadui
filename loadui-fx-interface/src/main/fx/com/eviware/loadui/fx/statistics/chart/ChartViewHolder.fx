@@ -63,7 +63,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 		spacing: 5
 		content: [
 			Region { width: bind width, height: bind height, managed: false, styleClass: "chart-view-holder" },
-			Label { text: bind label },
+			Label { styleClass: "title", text: bind label.toUpperCase() },
 			HBox {
 				layoutInfo: LayoutInfo { width: bind width }
 				spacing: 5

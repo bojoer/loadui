@@ -676,6 +676,11 @@
 	-fx-background-radius: 0 0 4 4;
 }
 
+.chart-view-holder *.title {
+	-fx-text-fill: #bababa;
+	-fx-font-weight: bold;
+}
+
 .base-chart {
 	-fx-background-color: #1a1a1a;
 	-fx-background-insets: -2;
