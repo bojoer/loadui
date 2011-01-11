@@ -22,7 +22,7 @@ import java.awt.BasicStroke;
 import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.style.ChartStyle;
 
-public def chartBackgroundColor = new Color( 0x1a, 0x1a, 0x1a );
+public def chartBackgroundColor = new Color( 0x1a, 0x1a, 0x1a, 0 );
 public def chartForegroundColor = new Color( 0xcd, 0xcd, 0xcd );
 public def lineColor = Color.red;
 
