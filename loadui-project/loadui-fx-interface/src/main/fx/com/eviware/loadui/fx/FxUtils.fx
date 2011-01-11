@@ -16,7 +16,9 @@
 package com.eviware.loadui.fx;
 
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 import javafx.util.Properties;
+
 import java.net.URI;
 import java.lang.Thread;
 import java.lang.ClassLoader;
@@ -112,3 +114,21 @@ class CompareByString extends Comparator {
  * Comparator that compares items by their toString representations.
  */
 public def COMPARE_BY_TOSTRING = new CompareByString();
+
+/**
+ * Converts a JavaFX Color to an AWT Color.
+ */
+public function getAwtColor( color:Color ):java.awt.Color {
+	return new java.awt.Color( color.red, color.green, color.blue, color.opacity );
+}
+
+/**
+ * Creates an AWT Color from a web color string.
+ */
+public function getAwtColor( colorString:String ):java.awt.Color {
+	return getAwtColor( Color.web( colorString ) );
+}
+
+public function colorToWebString( color:Color ):String {
+	return "#{Integer.toHexString((color.red*255) as Integer)}{Integer.toHexString((color.green*255) as Integer)}{Integer.toHexString((color.blue*255) as Integer)}{if(color.opacity != 1.0) Integer.toHexString((color.opacity*255) as Integer) else ''}";
+}
