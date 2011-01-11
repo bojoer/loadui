@@ -28,7 +28,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.util.Math;
@@ -143,6 +146,22 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 					content: [
 						Region { styleClass: "base-chart", managed: false, width: bind chartVbox.width, height: bind chartVbox.height }, 
 						chartNode, 
+						SVGPath {
+							managed: false
+							clip: Rectangle { width: bind chartVbox.width, height: bind chartVbox.height }
+							fill: LinearGradient {
+								startX: 0.0
+								startY: 0.0
+								endX: 30.0
+								endY: 30.0
+								proportional: false
+								stops: [
+									Stop { offset: 0.0 color: Color.rgb( 0xff, 0xff, 0xff, 0.2 ) },
+									Stop { offset: 1.0 color: Color.rgb( 0xff, 0xff, 0xff, 0.06 ) }
+								]
+							}
+							content: "M3.093,0C-0.12,0,0,0.108,0,2.651v98.056c0,1.465,1.385,2.651,3.093,2.651h1.051C16.495,81.713,21.385,0.008,297.475,0.008L3.093,0z"
+						},
 						scrollBar
 					]
 				}
@@ -178,12 +197,15 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		def xAxis = new TimeAxis();
 		timeCalculator = new LoadUIChartTimeTickerCalculator();
 		chart.setXAxis( xAxis );
-		
 		xAxis.setRange( new TimeRange( 0, timeSpan ) );
-		chart.getYAxis().setRange( 0, 10 );
-		
 		xAxis.setTickCalculator(timeCalculator);
-		chartNode.layoutInfo = LayoutInfo { height: 150, hfill: true, hgrow: Priority.ALWAYS };
+		
+		def yAxis = chart.getYAxis();
+		yAxis.setRange( 0, 10 );
+		yAxis.setLabelVisible( false );
+		//yAxis.setLabelWidth( 20 );
+		
+		chartNode.layoutInfo = LayoutInfo { height: 150, hfill: true, hgrow: Priority.ALWAYS, margin: Insets { left: -15, right: 10 } };
 	}
 	
 	override function update():Void {
