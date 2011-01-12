@@ -87,6 +87,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	public-read def chart = new Chart();
 	def chartNode = SwingComponent.wrap( chart );
 	var timeCalculator:LoadUIChartTimeTickerCalculator; 
+	var compactSegments = false;
 	
 	def scrollBar = ScrollBar {
 		vertical: false
@@ -118,7 +119,17 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		spacing: 4
 		content: [
 			Region { managed: false, width: bind segmentButtons.width, height: bind segmentButtons.height, styleClass: "chart-view-panel" },
-			Label { text: "Statistic" }
+			HBox {
+				layoutInfo: LayoutInfo { vfill: false, vgrow: Priority.NEVER }
+				content: [
+					Label { text: "Statistic", layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
+					Button {
+						styleClass: "compact-panel-button"
+						graphic: bind if(compactSegments) Label { text: ">>" } else Label { text: "<<" }
+						action: function():Void { compactSegments = not compactSegments }
+					}
+				]
+			}
 		]
 	}
 	
@@ -314,9 +325,24 @@ class ChartViewListener extends EventHandler {
 class SegmentButton extends Button {
 	public-init var model:LineSegmentModel on replace {
 		def statistic = model.segment.getStatistic();
-		def sourceName = if( statistic.getSource() == StatisticVariable.MAIN_SOURCE ) "All" else statistic.getSource(); 
-		def holderName = statistic.getStatisticVariable().getStatisticHolder().getLabel();
-		text = "{%-10s StringUtils.abbreviate(statistic.getName(), 10)} {%-8s StringUtils.abbreviate(sourceName, 10)} {StringUtils.abbreviate(holderName, 10)}";
+		graphic = HBox {
+			content: [
+				Label {
+					text: statistic.getName()
+					layoutInfo: LayoutInfo { width: 60 }
+				}, Label {
+					text: if( statistic.getSource() == StatisticVariable.MAIN_SOURCE ) "All" else statistic.getSource()
+					layoutInfo: LayoutInfo { width: 40 }
+					visible: bind not compactSegments
+					managed: bind not compactSegments
+				}, Label {
+					text: statistic.getStatisticVariable().getStatisticHolder().getLabel()
+					layoutInfo: LayoutInfo { width: 60 }
+					visible: bind not compactSegments
+					managed: bind not compactSegments
+				}
+			]
+		}
 	}
 	
 	var lineColor:String = bind model.lineColor on replace {
