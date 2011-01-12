@@ -130,5 +130,17 @@ public function getAwtColor( colorString:String ):java.awt.Color {
 }
 
 public function colorToWebString( color:Color ):String {
-	return "#{Integer.toHexString((color.red*255) as Integer)}{Integer.toHexString((color.green*255) as Integer)}{Integer.toHexString((color.blue*255) as Integer)}{if(color.opacity != 1.0) Integer.toHexString((color.opacity*255) as Integer) else ''}";
+	return "#{twoDigitHex((color.red*255) as Integer)}{twoDigitHex((color.green*255) as Integer)}{twoDigitHex((color.blue*255) as Integer)}{if(color.opacity != 1.0) twoDigitHex((color.opacity*255) as Integer) else ''}";
+}
+
+public function colorToWebString( color:java.awt.Color ):String {
+	return "#{twoDigitHex(color.getRed())}{twoDigitHex(color.getGreen())}{twoDigitHex(color.getBlue())}{if(color.getAlpha() != 255) twoDigitHex(color.getAlpha()) else ''}";
+}
+
+function twoDigitHex( n:Integer ):String {
+	def str = Integer.toHexString( n );
+	if( str.length() < 2 )
+		"0{str}"
+	else
+		str
 }

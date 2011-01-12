@@ -19,6 +19,7 @@ import java.util.Set;
 
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.model.Labeled;
 
 /**
  * A Holder of Statistics. Fires CollectionEvents for contained
@@ -26,7 +27,7 @@ import com.eviware.loadui.api.events.EventFirer;
  * 
  * @author dain.nilsson
  */
-public interface StatisticHolder extends EventFirer, Addressable
+public interface StatisticHolder extends EventFirer, Addressable, Labeled
 {
 	public static final String STATISTICS = StatisticHolder.class.getName() + "@statistics";
 

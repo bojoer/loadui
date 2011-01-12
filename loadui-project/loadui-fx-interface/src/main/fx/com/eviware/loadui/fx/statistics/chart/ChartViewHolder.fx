@@ -56,10 +56,12 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 	
 	public-read var chart:BaseChart;
 	var configurationPanel:HBox;
+	var vbox:VBox;
 	
 	def resizable:VBox = VBox {
 		width: bind width
 		height: bind height
+		padding: Insets { left: 5, top: 5, right: 5, bottom: 5 }
 		spacing: 5
 		content: [
 			Region { width: bind width, height: bind height, managed: false, styleClass: "chart-view-holder" },
@@ -68,9 +70,13 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 				layoutInfo: LayoutInfo { width: bind width }
 				spacing: 5
 				content: [
-					VBox {
+					vbox = VBox {
+						padding: Insets { top: 8, right: 8, bottom: 8, left: 8 }
+						spacing: 4
 						content: [
-							Rectangle { width: 100, height: 100 },
+							Region { managed: false, width: bind vbox.width, height: bind vbox.height, styleClass: "chart-view-panel" },
+							Label { text: "Component" },
+							Rectangle { width: 50, height: 30 },
 							Button {
 								text: "Configure"
 								action: function():Void {

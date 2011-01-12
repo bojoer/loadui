@@ -38,6 +38,7 @@ import javafx.scene.control.Separator;
 import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils;
+import com.eviware.loadui.fx.util.ModelUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
@@ -114,7 +115,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	
 	def zoomControl:ZoomControl = ZoomControl{
 										styleClass: "zoom-control"
-										width: bind this.width - 10
+										width: bind this.width - 6
 								   };
 	var chartZoom = bind zoomControl.scale on replace {
 		(chartViewHolder.chart as LineChart).setZoomLevel(chartZoom);
@@ -132,14 +133,17 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	}
 	
 	def resizable:VBox = VBox {
-		padding: Insets { left: 5, top: 5, right: 5, bottom: 5 }
+		padding: Insets { left: 3, top: 3, right: 3, bottom: 3 }
 		spacing: 5
 		width: bind width
 		height: bind height
 		content: [
 			Region { width: bind width, height: bind height, managed: false, styleClass: "chart-group-holder" },
 			//Label { text: bind "{title} ({itemCount})" },
-			Stack { nodeHPos: HPos.LEFT,  content: bind chartViewHolder },
+			Stack {
+				nodeHPos: HPos.LEFT
+				content: bind chartViewHolder
+			},
 			Region { width: bind width, height: 30, layoutY: bind height - 30, managed: false, styleClass: "chart-group-holder-bottom" },
 		]
 	}
@@ -237,11 +241,10 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 				content: for( chart in chartGroup.getChildren() ) ChartViewHolder {
 					chartModel: chart
 					chartView: chartGroup.getChartViewForChart( chart as Chart )
-					label: "{chart.getStatisticHolder()}"
+					label: bind ModelUtils.getLabelHolder( chart.getStatisticHolder() ).label; //"{chart.getStatisticHolder().getLabel()}"
 					layoutInfo: chartViewInfo
 				}
 				onMoved: function( chart, fromIndex, toIndex ):Void {
-					println("Moving {chart} from: {fromIndex} to: {toIndex}");
 					chartGroup.moveChart( (chart as ChartViewHolder).chartModel, toIndex );
 				}
 			}
