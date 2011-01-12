@@ -47,6 +47,7 @@ import com.eviware.loadui.api.events.TerminalConnectionEvent;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.MutableSummary;
@@ -69,8 +70,6 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		CanvasItem, StatisticHolder
 {
 	private static final String LIMITS_ATTRIBUTE = "limits";
-
-	public final String ON_COMPLETE_DONE = CanvasItemImpl.class.getName() + "@onCompleteDone";
 
 	protected final CounterSupport counterSupport;
 	private final Set<ComponentItem> components = new HashSet<ComponentItem>();
@@ -96,6 +95,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	private boolean running = false;
 	private boolean completed = false;
 
+	private final Property<Boolean> abortOnFinish;
+
 	// here keep all not loaded components and connections, remove them at the
 	// end of init
 	private ArrayList<ComponentItemConfig> badComponents = new ArrayList<ComponentItemConfig>();
@@ -117,6 +118,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 		statisticHolderSupport = new StatisticHolderSupport( this );
 		counterStatisticSupport = new CounterStatisticSupport( this, statisticHolderSupport );
+
+		abortOnFinish = createProperty( ABORT_ON_FINISH_PROPERTY, Boolean.class, false );
 	}
 
 	@Override
@@ -841,4 +844,17 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	{
 		return statisticHolderSupport.getStatisticVariableNames();
 	}
+
+	@Override
+	public boolean isAbortOnFinish()
+	{
+		return abortOnFinish.getValue();
+	}
+
+	@Override
+	public void setAbortOnFinish( boolean abort )
+	{
+		abortOnFinish.setValue( abort );
+	}
+
 }

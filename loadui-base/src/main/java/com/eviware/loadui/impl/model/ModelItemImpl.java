@@ -51,7 +51,6 @@ public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 	private String id;
 	private String label;
 	private final Property<String> description;
-	private final Property<Boolean> abortOnFinish;
 	private boolean released = false;
 	private boolean initialized = false;
 	protected final AddressableRegistry addressableRegistry;
@@ -75,7 +74,6 @@ public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
 
 		description = createProperty( DESCRIPTION_PROPERTY, String.class, "" );
-		abortOnFinish = createProperty( ABORT_ON_FINISH_PROPERTY, Boolean.class, false );
 	}
 
 	public void init()
@@ -335,18 +333,5 @@ public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 	public void setDescription( String description )
 	{
 		this.description.setValue( description );
-	}
-	
-	@Override
-	public boolean isAbortOnFinish()
-	{
-		return abortOnFinish.getValue();
-	}
-
-	@Override
-	public void setAbortOnFinish( boolean abort )
-	{
-		abortOnFinish.setValue( abort );
-	}
-
+	}	
 }
