@@ -34,9 +34,13 @@ import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Separator;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
@@ -66,9 +70,16 @@ import org.slf4j.LoggerFactory;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.menu.StatisticsMenu" );
 
+/**
+ * The top menu in the statistics panel.
+ *
+ * @author henrik.olsson
+ */
 public class StatisticsMenu extends VBox {
     
     var menuButton:MenuButton;
+    def tabGroup:ToggleGroup = new ToggleGroup();
+    
     public def menuButtonFont: Font = Font{name:"Arial", size:18};
     public def menuButtonLabel: String = "Statistics";
     
@@ -77,10 +88,9 @@ public class StatisticsMenu extends VBox {
 		content = [
 			Region {
 			    width: bind width, 
-			    height: bind height + 5, 
+			    height: bind height, 
 			    managed: false, 
-			    styleClass: "statistics-top-tabmenu",
-			    layoutY: 50
+			    styleClass: "statistics-topMenu-background"
 			},
 			HBox {
 			 layoutInfo: LayoutInfo {
@@ -143,6 +153,31 @@ public class StatisticsMenu extends VBox {
 								width: 10 }
 					}
 				]
+			},
+			HBox {
+				padding: Insets { top: 10, bottom: 10 }
+	     		spacing: 6
+				content: [
+								ToggleButton {
+								    toggleGroup: tabGroup,
+								    text: "Tab A"
+								},
+								ToggleButton {
+								    toggleGroup: tabGroup,
+								    text: "Tab B"
+								},
+							   Button {
+							   	text: "+"
+							   	styleClass: "tab-plus"
+							   	action: function() { ; }
+							   	}
+							   ]
+			},
+			Region {
+			    //layoutInfo: LayoutInfo { width: bind width, height: 5 }
+			    width: bind width, 
+			    height: bind 5,
+			    styleClass: "statistics-topMenu-bottomShadow"
 			}
 		];
     }
