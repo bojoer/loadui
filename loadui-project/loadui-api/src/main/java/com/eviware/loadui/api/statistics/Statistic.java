@@ -41,6 +41,13 @@ public interface Statistic<T extends Number> extends Value<T>
 	public StatisticVariable getStatisticVariable();
 
 	/**
+	 * Gets the source String of the Statistic.
+	 * 
+	 * @return
+	 */
+	public String getSource();
+
+	/**
 	 * Returns the stored DataPoints for the given time span, in chronological
 	 * order.
 	 * 

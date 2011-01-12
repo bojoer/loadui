@@ -52,6 +52,35 @@ public class StringUtils
 	}
 
 	/**
+	 * Shortens a String if it is longer than the given maxLength, ending an
+	 * abbreviated String with "...".
+	 * 
+	 * @param string
+	 * @param maxLength
+	 * @return
+	 */
+	public static String abbreviate( String string, int maxLength )
+	{
+		return string.length() <= maxLength ? string : string.substring( 0, maxLength - 3 ) + "...";
+	}
+
+	/**
+	 * Shortens a String if it is longer than the given maxLength, keeping the
+	 * start and end intact, placing "..." in the middle of the String where
+	 * content was removed.
+	 * 
+	 * @param string
+	 * @param maxLength
+	 * @return
+	 */
+	public static String abbreviateMiddle( String string, int maxLength )
+	{
+		int splitIndex = ( maxLength - 2 ) / 2;
+		return string.length() <= maxLength ? string : ( string.substring( 0, splitIndex ) + "..." + string
+				.substring( string.length() - ( maxLength - 3 - splitIndex ) ) );
+	}
+
+	/**
 	 * Converts line separators in a String to the system default (defined in the
 	 * System Property "line.separator").
 	 * 

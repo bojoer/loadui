@@ -13,7 +13,7 @@
 }
 
 .button:focused {
-	-fx-background-color: -fx-focus-color,	-fx-outer-border, -fx-body-color;
+	-fx-background-color: -fx-focus-color, -fx-outer-border, -fx-body-color;
 	-fx-background-radius: 2;
 	-fx-background-insets: -1, 0, 1;
 }
@@ -699,4 +699,12 @@
 	-fx-background-radius: 2, 2, 2 0 0 2, 0 2 2 0;
     -fx-background-insets: -1, 0, 1 2 1 1, 1 1 1 8;
 	-fx-font-size: 10pt;
+}
+
+.segment-buttons *.button:hover {
+	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #e2e3e6) (70%, #c0c0c0) (100%, #909090);
+}
+
+.segment-buttons *.button:armed {
+	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #33ccff) (90%, #0398f9);
 }

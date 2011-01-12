@@ -112,11 +112,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			return currentExecution;
 		}
 
+		latestEntries.clear();
+		
 		try
 		{
-			latestEntries.clear();
-			System.out.println( "Latest entries cleared!" );
-
 			if( metaDatabaseMetaTable.exist( id ) )
 			{
 				throw new IllegalArgumentException( "Execution with the specified id already exist!" );
