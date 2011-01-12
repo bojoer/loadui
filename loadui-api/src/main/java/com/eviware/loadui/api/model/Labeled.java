@@ -16,24 +16,22 @@
 package com.eviware.loadui.api.model;
 
 /**
- * An object which needs to be released when no longer needed, in order to
- * release its resources.
+ * An object which has a human readable label which should be used when
+ * displaying the object to a user.
  * 
  * @author dain.nilsson
  */
-public interface Releasable
+public interface Labeled
 {
 	/**
-	 * If the Releasable also implements EventFirer, it should fire a BaseEvent
-	 * with the RELEASED constant as a key to inform listeners that it has been
-	 * released.
+	 * If the Labeled also implements EventFirer, it should fire a BaseEvent with
+	 * the LABLE constant as a key to inform listeners that the label has
+	 * changed.
 	 */
-	public static final String RELEASED = Releasable.class.getSimpleName() + "@released";
+	public static final String LABEL = Labeled.class.getSimpleName() + "@label";
 
 	/**
-	 * Causes the Releasable to release its resources and stop anything that it
-	 * is doing. After calling this, other methods on the Releasable may no
-	 * longer work as intended.
+	 * Gets the lable of the object.
 	 */
-	public void release();
+	public String getLabel();
 }

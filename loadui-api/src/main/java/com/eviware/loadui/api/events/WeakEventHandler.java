@@ -13,27 +13,20 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.model;
+package com.eviware.loadui.api.events;
+
+import java.util.EventObject;
 
 /**
- * An object which needs to be released when no longer needed, in order to
- * release its resources.
+ * A marker interface which tells EventFirers to only hold weak references to
+ * the EventHandler when it is added. A WeakEventHandler may be garbage
+ * collected even though it has been registered with one or more EventFirers.
  * 
  * @author dain.nilsson
+ * 
+ * @param <T>
+ *           The type of event to listen for.
  */
-public interface Releasable
+public interface WeakEventHandler<T extends EventObject> extends EventHandler<T>
 {
-	/**
-	 * If the Releasable also implements EventFirer, it should fire a BaseEvent
-	 * with the RELEASED constant as a key to inform listeners that it has been
-	 * released.
-	 */
-	public static final String RELEASED = Releasable.class.getSimpleName() + "@released";
-
-	/**
-	 * Causes the Releasable to release its resources and stop anything that it
-	 * is doing. After calling this, other methods on the Releasable may no
-	 * longer work as intended.
-	 */
-	public void release();
 }

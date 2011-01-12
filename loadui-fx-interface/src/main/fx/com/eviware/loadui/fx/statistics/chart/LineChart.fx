@@ -50,6 +50,7 @@ import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.util.StringUtils;
 import java.awt.BasicStroke;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -109,9 +110,15 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		scrollBar.value = maxTime;
 	}
 	
-	def segmentButtons = VBox {
+	def segmentButtons:VBox = VBox {
+		styleClass: "segment-buttons";
 		layoutInfo: LayoutInfo { hgrow: Priority.NEVER, hfill: false }, 
-		content: Rectangle { width: 1, height: 1, managed: false, fill: Color.rgb(0, 0, 0, 0.0001) }
+		padding: Insets { top: 8, right: 8, bottom: 8, left: 8 }
+		spacing: 4
+		content: [
+			Region { managed: false, width: bind segmentButtons.width, height: bind segmentButtons.height, styleClass: "chart-view-panel" },
+			Label { text: "Statistic" }
+		]
 	}
 	
 	public-init var chartView:LineChartView on replace oldChartView {
@@ -128,7 +135,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		}
 	}
 	
-	override var layoutInfo = LayoutInfo { vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS }
+	override var layoutInfo = LayoutInfo { vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS, minWidth: 200 }
 	
 	var chartVbox:VBox;
 	def resizable:VBox = VBox {
@@ -138,7 +145,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		content: [
 		HBox {
 			padding: Insets { left: -3, right: 15 }
-			spacing: 5
+			spacing: 10
 			content: [
 				segmentButtons, 
 				chartVbox = VBox {
@@ -167,7 +174,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 				}
 			]
 		}, if( chartView instanceof ConfigurableLineChartView ) Button {
-			text: "Add Segment"
+			text: "Add Statistic"
 			action: function():Void {
 				var selected:Runnable;
 				holder.showConfig( VBox {
@@ -308,6 +315,13 @@ class SegmentButton extends Button {
 		text = model.segment.getStatistic().getName();
 	}
 	
+	var lineColor:String = bind model.lineColor on replace {
+		if( not StringUtils.isNullOrEmpty( lineColor ) )
+			style = "-fx-inner-border: {lineColor};";
+	}
+	
+	override var layoutInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS };
+	
 	override var action = function():Void {
 		 //TODO: Show configuration panel instead of removing the segment.   
 		if( chartView instanceof ConfigurableLineChartView )
@@ -319,8 +333,11 @@ class LineSegmentModel extends DefaultChartModel {
 	var timestamp = -1;
 	var statistic:Statistic;
 	
+	public-read var lineColor:String;
+	
 	public-read def style = new ChartStyle() on replace {
 		DefaultChartStyles.styleChartStyle( style );
+		lineColor = FxUtils.colorToWebString( style.getLineColor() );
 	}
 	
 	public-init var segment:LineSegment on replace {
@@ -353,7 +370,8 @@ class LineSegmentModel extends DefaultChartModel {
 	}
 	
 	public function setLineColor( color:Color ):Void {
-		segment.setAttribute( LINE_COLOR, FxUtils.colorToWebString( color ) );
+		lineColor = FxUtils.colorToWebString( color );
+		segment.setAttribute( LINE_COLOR, lineColor );
 		style.setLineColor( FxUtils.getAwtColor( color ) );
 	}
 	
@@ -369,9 +387,11 @@ class LineSegmentModel extends DefaultChartModel {
 	}
 	
 	function loadStyles():Void {
-		def lineColor = segment.getAttribute( LINE_COLOR, null );
-		if( lineColor != null )
-			style.setLineColor( FxUtils.getAwtColor( lineColor ) );
+		def storedLineColor = segment.getAttribute( LINE_COLOR, null );
+		if( storedLineColor != null ) {
+			style.setLineColor( FxUtils.getAwtColor( storedLineColor ) );
+			lineColor = storedLineColor;
+		}
 		
 		def lineStroke = segment.getAttribute( LINE_STROKE, null );
 		if( lineStroke != null )

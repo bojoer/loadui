@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.util.events;
 
+import java.lang.ref.WeakReference;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,6 +24,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.WeakEventHandler;
 
 public class EventSupport implements EventFirer
 {
@@ -104,7 +106,22 @@ public class EventSupport implements EventFirer
 				{
 					if( listenerEntry.type.isInstance( event ) )
 					{
-						queueEvent( event, listenerEntry.listener, listenerEntry.type );
+						if( listenerEntry.listener != null )
+						{
+							queueEvent( event, listenerEntry.listener, listenerEntry.type );
+						}
+						else
+						{
+							EventHandler<?> listener = listenerEntry.weakListener.get();
+							if( listener != null )
+							{
+								queueEvent( event, listener, listenerEntry.type );
+							}
+							else
+							{
+								listeners.remove( listenerEntry );
+							}
+						}
 					}
 				}
 			}
@@ -138,11 +155,22 @@ public class EventSupport implements EventFirer
 	{
 		private final Class<T> type;
 		private final EventHandler<T> listener;
+		private final WeakReference<EventHandler<T>> weakListener;
 
 		private ListenerEntry( Class<T> type, EventHandler<T> listener )
 		{
 			this.type = type;
-			this.listener = listener;
+
+			if( listener instanceof WeakEventHandler )
+			{
+				this.listener = null;
+				this.weakListener = new WeakReference<EventHandler<T>>( listener );
+			}
+			else
+			{
+				this.listener = listener;
+				this.weakListener = null;
+			}
 		}
 
 		@Override
@@ -151,6 +179,7 @@ public class EventSupport implements EventFirer
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ( ( listener == null ) ? 0 : listener.hashCode() );
+			result = prime * result + ( ( weakListener == null ) ? 0 : weakListener.hashCode() );
 			result = prime * result + ( ( type == null ) ? 0 : type.hashCode() );
 			return result;
 		}
@@ -171,6 +200,13 @@ public class EventSupport implements EventFirer
 					return false;
 			}
 			else if( !listener.equals( other.listener ) )
+				return false;
+			if( weakListener == null )
+			{
+				if( other.weakListener != null )
+					return false;
+			}
+			else if( !weakListener.equals( other.weakListener ) )
 				return false;
 			if( type == null )
 			{
