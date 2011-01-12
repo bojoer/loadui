@@ -43,6 +43,7 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.treeselector.CascadingTreeSelector;
 
 import com.eviware.loadui.api.statistics.Statistic;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
@@ -312,7 +313,10 @@ class ChartViewListener extends EventHandler {
 
 class SegmentButton extends Button {
 	public-init var model:LineSegmentModel on replace {
-		text = model.segment.getStatistic().getName();
+		def statistic = model.segment.getStatistic();
+		def sourceName = if( statistic.getSource() == StatisticVariable.MAIN_SOURCE ) "All" else statistic.getSource(); 
+		def holderName = statistic.getStatisticVariable().getStatisticHolder().getLabel();
+		text = "{%-10s StringUtils.abbreviate(statistic.getName(), 10)} {%-8s StringUtils.abbreviate(sourceName, 10)} {StringUtils.abbreviate(holderName, 10)}";
 	}
 	
 	var lineColor:String = bind model.lineColor on replace {
