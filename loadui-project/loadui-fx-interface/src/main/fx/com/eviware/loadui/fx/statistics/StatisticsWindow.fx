@@ -27,6 +27,7 @@ import javafx.util.Sequences;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.Parent;
 
 import com.eviware.loadui.fx.ui.tabs.TabPanel;
 
