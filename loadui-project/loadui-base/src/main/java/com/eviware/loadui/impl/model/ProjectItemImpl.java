@@ -837,6 +837,17 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		return statisticPages;
 	}
 
+	@Override
+	public void setAbortOnFinish( boolean abort )
+	{
+		// when property changes on project set new value to all test cases
+		super.setAbortOnFinish( abort );
+		for( SceneItem s : getScenes() )
+		{
+			s.setAbortOnFinish( abort );
+		}
+	}
+
 	private class AssignmentImpl implements Assignment
 	{
 		private final SceneItem scene;

@@ -19,7 +19,6 @@ import java.util.Collection;
 
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.counter.CounterHolder;
-import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.api.terminal.Connection;
@@ -33,11 +32,16 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
  */
 public interface CanvasItem extends ModelItem, CounterHolder
 {
+	// events
 	public static final String COMPONENTS = CanvasItem.class.getName() + "@components";
 	public static final String CONNECTIONS = CanvasItem.class.getName() + "@connections";
 	public static final String SUMMARY = CanvasItem.class.getName() + "@summary";
 	public static final String LIMITS = CanvasItem.class.getName() + "@limits";
 	public static final String RUNNING = CanvasItem.class.getName() + "@running";
+	public static final String ON_COMPLETE_DONE = CanvasItem.class.getName() + "@onCompleteDone";
+
+	// properties
+	public static final String ABORT_ON_FINISH_PROPERTY = CanvasItem.class.getSimpleName() + ".abortOnFinish";
 
 	public static final String START_ACTION = "START";
 	public static final String STOP_ACTION = "STOP";
@@ -126,12 +130,11 @@ public interface CanvasItem extends ModelItem, CounterHolder
 	 *         if it is stopped.
 	 */
 	public boolean isStarted();
-	
+
 	/**
 	 * Gets whether the cavas item has been completed or not
 	 * 
-	 * @return True if the canvas has been completed, false
-	 *         if it is not.
+	 * @return True if the canvas has been completed, false if it is not.
 	 */
 	public boolean isCompleted();
 
@@ -191,4 +194,17 @@ public interface CanvasItem extends ModelItem, CounterHolder
 	 * state.
 	 */
 	public void cancelComponents();
+	
+	/**
+	 * Determines if ongoing requests should be aborted on finish
+	 */
+	public boolean isAbortOnFinish();
+
+	/**
+	 * Used to define if ongoing requests should be aborted on finish
+	 * 
+	 * @param abort
+	 *           True to abort ongoing requests, false otherwise
+	 */
+	public void setAbortOnFinish( boolean abort );
 }

@@ -49,7 +49,6 @@ public class TestCaseSettingsDialog  {
 
 	function ok():Void {
 		theItem.setDescription(form.getField('description').value as String);
-		theItem.setAbortOnFinish(executionForm.getField('abortOnFinish').value as Boolean);
 		dialogRef.close();
 	}
 	
@@ -74,20 +73,6 @@ public class TestCaseSettingsDialog  {
 								value: item.getDescription() 
 								action: ok
 								layoutInfo: LayoutInfo { width: 300, height: 150, vfill: true, hfill: true }
-							}
-						]
-					}
-					//onSelect: function() { log.debug( "Selected tab 1" ) }
-				},
-				Tab {
-      			label: "Execution",
-      			content: executionForm = Form {
-      				singleColumn: true
-						formContent: [
-							CheckBoxField { 
-								id: "abortOnFinish"
-								label: "Abort ongoing requests on finish"
-								value: item.isAbortOnFinish();
 							}
 						]
 					}
