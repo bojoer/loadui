@@ -119,8 +119,11 @@ public class StatisticsWindow {
 	    									width: bind scene.width,
 	    									project: project,
 	    									onPageSelect: function( node ):Void {
-	    									    ReleasableUtils.releaseAll( stack.content as Object[] );
-	    									    stack.content = node;
+	    										for( child in stack.content )
+	    										{
+	    											ReleasableUtils.release( child );
+	    										}
+	    										stack.content = node;
 	    									}
 	    								};
 	
