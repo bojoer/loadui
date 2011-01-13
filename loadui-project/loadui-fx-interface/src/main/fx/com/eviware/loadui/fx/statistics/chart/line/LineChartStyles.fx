@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.fx.statistics.chart;
+package com.eviware.loadui.fx.statistics.chart.line;
 
 import java.util.HashMap;
 import java.awt.Color;
@@ -56,10 +56,10 @@ public function getColor(statistic: String) {
 }
 
 /**
- * Provides default colors for statistics
+ * Provides default colors for Line charts.
  *
  * @author predrag.vucetic
  * @author dain.nilsson
  */
-public class DefaultChartStyles {
+public class LineChartStyles {
 }

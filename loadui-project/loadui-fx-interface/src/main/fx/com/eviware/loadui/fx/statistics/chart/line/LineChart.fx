@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */ 
-package com.eviware.loadui.fx.statistics.chart;
+package com.eviware.loadui.fx.statistics.chart.line;
 
 import javafx.scene.Node;
 import javafx.scene.Group;
@@ -41,6 +41,8 @@ import com.sun.javafx.scene.layout.Region;
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.treeselector.CascadingTreeSelector;
+import com.eviware.loadui.fx.statistics.chart.BaseChart;
+import com.eviware.loadui.fx.statistics.chart.SegmentTreeModel;
 
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -214,7 +216,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	init {
-		DefaultChartStyles.styleChart( chart );
+		LineChartStyles.styleChart( chart );
 		
 		def xAxis = new TimeAxis();
 		timeCalculator = new LoadUIChartTimeTickerCalculator();
@@ -368,7 +370,7 @@ class LineSegmentModel extends DefaultChartModel {
 	public-read var lineColor:String;
 	
 	public-read def style = new ChartStyle() on replace {
-		DefaultChartStyles.styleChartStyle( style );
+		LineChartStyles.styleChartStyle( style );
 		lineColor = FxUtils.colorToWebString( style.getLineColor() );
 	}
 	
@@ -410,11 +412,11 @@ class LineSegmentModel extends DefaultChartModel {
 	public function setLineStroke( strokeName:String ):Void {
 		segment.setAttribute( LINE_STROKE, strokeName );
 		if( strokeName == "dashed" ) {
-			style.setLineStroke( DefaultChartStyles.dashedStroke );
+			style.setLineStroke( LineChartStyles.dashedStroke );
 		} else if( strokeName == "dotted" ) {
-			style.setLineStroke( DefaultChartStyles.dottedStroke );
+			style.setLineStroke( LineChartStyles.dottedStroke );
 		} else {
-			style.setLineStroke( DefaultChartStyles.solidStroke );
+			style.setLineStroke( LineChartStyles.solidStroke );
 		}
 	}
 	
