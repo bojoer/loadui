@@ -658,6 +658,7 @@
 
 .chart-page *.draggable-placeholder {
 	-fx-background-radius: 4;
+	-fx-background-color: rgba(0, 0, 0, 0.4);
 }
 
 .chart-drop-base {
@@ -724,9 +725,9 @@
 .segment-buttons *.button {
 	-fx-inner-border: #2e2e2e;
 	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #c2c3c6) (70%, #a0a0a0) (100%, #707070);
-	-fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
-	-fx-background-radius: 2, 2, 2 0 0 2, 0 2 2 0;
-    -fx-background-insets: -1, 0, 1 2 1 1, 1 1 1 8;
+	-fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-outer-border, -fx-body-color;
+	-fx-background-radius: 2, 2, 2 0 0 2, 0 2 2 0, 0 2 2 0;
+    -fx-background-insets: -1, 0, 1 2 1 1, 0 0 0 8, 1 1 1 8;
 	-fx-font-size: 10pt;
 }
 

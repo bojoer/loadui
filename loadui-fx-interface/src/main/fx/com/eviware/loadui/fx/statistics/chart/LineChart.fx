@@ -125,7 +125,10 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 					Label { text: "Statistic", layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
 					Button {
 						styleClass: "compact-panel-button"
-						graphic: bind if(compactSegments) Label { text: ">>" } else Label { text: "<<" }
+						graphic: SVGPath {
+							fill: Color.rgb( 0xb2, 0xb2, 0xb2 )
+							content: bind if(compactSegments) "M 0 0 L 3.5 3.5 0 7 0 0 M 3.5 0 L 7 3.5 3.5 7 3.5 0" else "M 0 0 L -3.5 3.5 0 7 0 0 M -3.5 0 L -7 3.5 -3.5 7 -3.5 0"
+						}
 						action: function():Void { compactSegments = not compactSegments }
 					}
 				]
@@ -222,7 +225,6 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		def yAxis = chart.getYAxis();
 		yAxis.setRange( 0, 10 );
 		yAxis.setLabelVisible( false );
-		//yAxis.setLabelWidth( 20 );
 		
 		chartNode.layoutInfo = LayoutInfo { height: 150, hfill: true, hgrow: Priority.ALWAYS, margin: Insets { left: -15, right: 10 } };
 	}
