@@ -59,6 +59,7 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 import java.util.EventObject;
 
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
@@ -77,13 +78,17 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	var title:String = "ChartGroupHolder";
 	var itemCount:Integer = 0;
 	
-	def statisticsManager = BeanInjector.getBean(StatisticsManager.class);
+	def statisticsManager = BeanInjector.getBean( StatisticsManager.class );
 	
 	public-read var expandGroups = false;
 	public-read var expandAgents = false;
-	var expandedNode:SortableBox;
+	var expandedNode:SortableBox on replace oldValue {
+		for( child in oldValue.content ) ReleasableUtils.release( oldValue );
+	}
 	
-	var chartViewHolder:ChartViewHolder;
+	var chartViewHolder:ChartViewHolder on replace oldValue {
+		ReleasableUtils.release( oldValue );
+	}
 	
 	def listener = new ChartGroupListener();
 	def statisticsManagerListener = new StatisticsManagerListener();
@@ -101,22 +106,21 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 				toggleGroupExpand();
 		} else if ( selected == "Zoom" ) {
 				if ( oldConfNode != null ) 
-					delete oldConfNode from configurationHolder.content;
-				insert configurationNode into configurationHolder.content;
+					delete oldConfNode from panelHolder.content;
+				insert configurationNode into panelHolder.content;
 				oldConfNode = configurationNode;
 		} else if ( selected == "Show agents" ) {
 			toggleAgentExpand();
-		} else if ( selected == "Configuration" ) {
-			toggleConfiguration();
 		} else if ( selected == "Delete" ) {
-			chartGroup.delete() 
+			chartGroup.delete();
 		}
 	};
 	
-	def zoomControl:ZoomControl = ZoomControl{
-										styleClass: "zoom-control"
-										width: bind this.width - 6
-								   };
+	def panelToggleGroup = new PanelToggleGroup();
+	def chartButtons = HBox { spacing: 5, hpos: HPos.RIGHT };
+	
+	def zoomControl:ZoomControl = ZoomControl{ width: bind this.width - 6 };
+	
 	var chartZoom = bind zoomControl.scale on replace {
 		(chartViewHolder.chart as LineChart).setZoomLevel(chartZoom);
 	}
@@ -130,6 +134,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			label: bind "{title} ({itemCount})"
 			layoutInfo: chartViewInfo
 		};
+		
+		rebuildChartButtons();
 	}
 	
 	def resizable:VBox = VBox {
@@ -155,6 +161,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			ToggleButton { text: "Expand", toggleGroup:controlButtons, value: null },
 			//Button { text: "Add Statistics", action: toggleAgentExpand },
 			ToggleButton { text: "Show agents", toggleGroup:controlButtons },
+			chartButtons,
+			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
 			ToggleButton { text: "Configure", toggleGroup:controlButtons },
 			ToggleButton { text: "Zoom", toggleGroup:controlButtons, value: zoomControl },
 		//	Button { text: "Scale", action: toggleAgentExpand }, //TODO
@@ -170,13 +178,16 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		]
 	}
 	
-	def configurationHolder = VBox {}
+	def panelHolder:Stack = Stack {
+		layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
+		content: Region { managed: false, width: bind panelHolder.width, height: bind panelHolder.height, styleClass: "chart-group-panel" }
+	}
 	
 	init {
 	   statisticsManager.addEventListener( BaseEvent.class, statisticsManagerListener );
 	   
 		insert buttonBar into (resizable as Container).content;
-		insert configurationHolder into (resizable as Container).content;
+		insert panelHolder into (resizable as Container).content;
 	}
 	
 	public function update():Void {
@@ -196,11 +207,9 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	}
 	
 	override function release():Void {
-		chartViewHolder.release();
-		
-		if( expandedNode != null )
-			for( node in expandedNode.content )
-				(node as ChartViewHolder).release();
+		statisticsManager.removeEventListener( BaseEvent.class, statisticsManagerListener );
+		chartViewHolder = null;
+		expandedNode = null;
 	}
 	
 	override var accept = function( draggable:Draggable ):Boolean {
@@ -277,19 +286,33 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		}
 	}
 	
-	function toggleConfiguration():Void {
-		if( sizeof configurationHolder.content == 0 ) {
-			insert Rectangle { height: 50, width: 500 } into configurationHolder.content;
+	function toggleZoom():Void {
+		if( sizeof panelHolder.content == 0 ) {
+			insert Rectangle { height: 50, width: 500 } into panelHolder.content;
 		} else {
-			configurationHolder.content = [];
+			panelHolder.content = panelHolder.content[0];
 		}
 	}
 	
-	function toggleZoom():Void {
-		if( sizeof configurationHolder.content == 0 ) {
-			insert Rectangle { height: 50, width: 500 } into configurationHolder.content;
+	function rebuildChartButtons() {
+		chartButtons.content = for( panelFactory in ChartRegistry.getPanels( chartGroup ) ) {
+			ToggleButton {
+				text: panelFactory.title
+				value: panelFactory
+				toggleGroup: panelToggleGroup
+			}
+		}
+	}
+}
+
+class PanelToggleGroup extends ToggleGroup {
+	override var selectedToggle on replace {
+		if( selectedToggle == null ) {
+			for( child in panelHolder.content ) ReleasableUtils.release( child );
+			panelHolder.content = panelHolder.content[0];
 		} else {
-			configurationHolder.content = [];
+			def panelFactory = selectedToggle.value as PanelFactory;
+			panelHolder.content = [ panelHolder.content[0], panelFactory.build() ];
 		}
 	}
 }
@@ -308,6 +331,7 @@ class ChartGroupListener extends EventHandler {
 					label: bind "{title} ({itemCount})"
 					layoutInfo: chartViewInfo
 				};
+				rebuildChartButtons();
 				if( expandGroups ) {
 					toggleGroupExpand();
 					toggleGroupExpand();

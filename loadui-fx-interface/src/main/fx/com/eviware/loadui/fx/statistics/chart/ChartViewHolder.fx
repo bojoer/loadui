@@ -36,6 +36,7 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
+import com.eviware.loadui.util.ReleasableUtils;
 
 /**
  * Base Chart Node, holds a ChartView.
@@ -49,12 +50,16 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 	
 	public-init var chartModel:com.eviware.loadui.api.statistics.model.Chart;
 	
-	public-init var chartView:ChartView on replace {
+	public-init var chartView:ChartView on replace oldValue {
+		ReleasableUtils.release( oldValue );
 		chart = ChartRegistry.createChart( chartView, this );
 		chart.update();
 	}
 	
-	public-read var chart:BaseChart;
+	public-read var chart:BaseChart on replace oldValue {
+		ReleasableUtils.release( oldValue );
+	}
+	
 	var configurationPanel:HBox;
 	var vbox:VBox;
 	
@@ -127,8 +132,8 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 	}
 	
 	override function release():Void {
-		if( chart instanceof Releasable )
-			(chart as Releasable).release();
+		chartView = null;
+		chart = null;
 	}
 	
 	override function create():Node {

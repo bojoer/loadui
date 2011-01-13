@@ -13,31 +13,26 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.fx.statistics.chart;
+package com.eviware.loadui.fx.statistics.chart.line;
 
-import javafx.scene.Node;
-
-import com.eviware.loadui.fx.statistics.chart.line.LineChart;
-import com.eviware.loadui.fx.statistics.chart.line.LineChartPanels;
+import com.eviware.loadui.fx.statistics.chart.PanelFactory;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
-import com.eviware.loadui.api.statistics.model.chart.*;
 
-/**
- * Creates a Node for a specific ChartView
- */
-public function createChart( chartView:ChartView, holder:ChartViewHolder ):BaseChart {
-	if( chartView instanceof LineChartView ) {
-		LineChart { chartView: chartView as LineChartView, holder: holder }
-	} else {
-		null
-	}
+public class LineChartPanels {
 }
 
 public function getPanels( chartGroup:ChartGroup ):PanelFactory[] {
-	if( chartGroup.getType() == LineChartView.class.getName() ) {
-		LineChartPanels.getPanels( chartGroup )
-	} else {
-		[]
-	}
+	[
+		PanelFactory {
+			title: "Zoom",
+			build: function() { ZoomPanel { chartGroup: chartGroup } }
+		}, PanelFactory {
+			title: "Scale"
+			build: function() { javafx.scene.shape.Rectangle { width: 200, height: 100 } }
+		}, PanelFactory {
+			title: "Style"
+			build: function() { javafx.scene.shape.Rectangle { width: 100, height: 200 } }
+		}
+	]
 }
