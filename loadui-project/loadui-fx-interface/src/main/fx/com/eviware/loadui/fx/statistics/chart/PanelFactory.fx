@@ -17,27 +17,13 @@ package com.eviware.loadui.fx.statistics.chart;
 
 import javafx.scene.Node;
 
-import com.eviware.loadui.fx.statistics.chart.line.LineChart;
-import com.eviware.loadui.fx.statistics.chart.line.LineChartPanels;
-
-import com.eviware.loadui.api.statistics.model.ChartGroup;
-import com.eviware.loadui.api.statistics.model.chart.*;
-
 /**
- * Creates a Node for a specific ChartView
+ * A Factory for creating a panel to be displayed when the user clicks a button.
+ *
+ * @author dain.nilsson
  */
-public function createChart( chartView:ChartView, holder:ChartViewHolder ):BaseChart {
-	if( chartView instanceof LineChartView ) {
-		LineChart { chartView: chartView as LineChartView, holder: holder }
-	} else {
-		null
-	}
-}
-
-public function getPanels( chartGroup:ChartGroup ):PanelFactory[] {
-	if( chartGroup.getType() == LineChartView.class.getName() ) {
-		LineChartPanels.getPanels( chartGroup )
-	} else {
-		[]
-	}
+public class PanelFactory {
+	public var title:String = "Panel";
+	
+	public var build:function():Node;
 }

@@ -739,3 +739,36 @@
 	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #33ccff) (90%, #0398f9);
 }
 
+.zoom-panel {
+	-fx-shape: "M 1 0 L 9 0 10 1 0 1 z";
+	-fx-background-color: linear (0%,0%) to (0%,100%) stops (0%, rgba(0,0,0,0)) (100%, rgba(255,255,255,0.1));
+	-fx-background-insets: 20 20 45 20;
+}
+
+.zoom-panel-button {
+	-fx-text-fill: #bababa;
+	-fx-text-alignment: center;
+	-fx-graphic-text-gap: 25;
+	-fx-hpos: center;
+	-fx-vpos: bottom;
+	-fx-graphic-vpos: top;
+	-fx-graphic-hpos: center;
+	-fx-padding: 5 0;
+}
+
+.zoom-panel-button:selected *.radio {
+	-fx-background-color: rgba(0,0,0,0.3);
+	-fx-background-radius: 3;
+	-fx-background-insets: -50 -53 -10 -8;
+	-fx-border-insets: -50 -53 -10 -8;
+	-fx-border-radius: 3;
+	-fx-border-style: solid;
+	-fx-border-color: #000000;
+	-fx-border-width: 3;
+}
+
+.zoom-panel-button:selected *.dot {
+	-fx-background-color: rgba(0,0,0,0.8);
+	-fx-background-radius: 3;
+	-fx-background-insets: 25 -53 -45 -8;
+}
