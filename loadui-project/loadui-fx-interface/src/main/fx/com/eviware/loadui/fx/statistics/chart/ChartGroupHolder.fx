@@ -63,7 +63,9 @@ import com.eviware.loadui.util.ReleasableUtils;
 import java.util.EventObject;
 
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
-import com.eviware.loadui.fx.statistics.chart.controls.*;
+
+import com.eviware.loadui.fx.statistics.chart.line.ZoomControl;
+import com.eviware.loadui.fx.statistics.chart.line.LineChart;
 
 def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
 

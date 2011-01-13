@@ -33,6 +33,7 @@ import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.events.BaseEvent;
 
+public def ZOOM_DEFAULT = "Seconds";
 public def ZOOM_LEVEL = "com.eviware.loadui.fx.statistics.chart.line.ZoomPanel@zoomLevel";
 public def ZOOM_LEVEL_ATTRIBUTE = "zoomLevel";
 
@@ -69,7 +70,7 @@ public class ZoomPanel extends HBox {
 			buildButton( "Day", dayImage ),
 			buildButton( "Hours", hoursImage ),
 			buildButton( "Minutes", minutesImage ),
-			buildButton( "Seconds", secondsImage )
+			buildButton( ZOOM_DEFAULT, secondsImage )
 		];
 	}
 	
@@ -78,7 +79,7 @@ public class ZoomPanel extends HBox {
 			value: text
 			text: text
 			toggleGroup: toggleGroup
-			selected: chartGroup.getAttribute( ZOOM_LEVEL_ATTRIBUTE, "Seconds" ) == text
+			selected: chartGroup.getAttribute( ZOOM_LEVEL_ATTRIBUTE, ZOOM_DEFAULT ) == text
 			graphic: ImageView { image: image }
 			layoutInfo: buttonInfo
 			styleClass: "zoom-panel-button"

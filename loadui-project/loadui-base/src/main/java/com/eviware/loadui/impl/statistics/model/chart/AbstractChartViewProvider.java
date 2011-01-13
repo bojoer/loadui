@@ -23,7 +23,6 @@ import java.util.Map;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.OrderedCollection;
-import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
@@ -93,6 +92,12 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 	protected abstract ChartViewType buildChartViewForSource( String source );
 
 	@Override
+	public ChartGroup getChartGroup()
+	{
+		return chartGroup;
+	}
+
+	@Override
 	public ChartViewType getChartViewForChartGroup()
 	{
 		return groupChartView;
@@ -136,9 +141,7 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 	{
 		chartGroup.removeEventListener( CollectionEvent.class, listener );
 
-		ReleasableUtils.releaseAll( chartChartViews.values() );
-		ReleasableUtils.releaseAll( sourceChartViews.values() );
-		ReleasableUtils.release( groupChartView );
+		ReleasableUtils.releaseAll( chartChartViews.values(), sourceChartViews.values(), groupChartView );
 
 		chartChartViews.clear();
 		sourceChartViews.clear();

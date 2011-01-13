@@ -16,6 +16,7 @@
 package com.eviware.loadui.api.statistics.model.chart;
 
 import com.eviware.loadui.api.model.AttributeHolder;
+import com.eviware.loadui.api.statistics.model.ChartGroup;
 
 /**
  * Provides a model for a specific type of Chart.
@@ -24,4 +25,5 @@ import com.eviware.loadui.api.model.AttributeHolder;
  */
 public interface ChartView extends AttributeHolder
 {
+	public ChartGroup getChartGroup();
 }

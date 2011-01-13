@@ -18,6 +18,7 @@ package com.eviware.loadui.api.statistics.model.chart;
 import java.util.Collection;
 
 import com.eviware.loadui.api.statistics.model.Chart;
+import com.eviware.loadui.api.statistics.model.ChartGroup;
 
 /**
  * Holds ChartViews for a specific ChartGroup.
@@ -28,6 +29,13 @@ import com.eviware.loadui.api.statistics.model.Chart;
  */
 public interface ChartViewProvider<ChartViewType extends ChartView>
 {
+	/**
+	 * Gets the ChartGroup for the ChartViewProvider.
+	 * 
+	 * @return
+	 */
+	public ChartGroup getChartGroup();
+
 	/**
 	 * Gets the ChartView for the ChartGroup.
 	 * 
