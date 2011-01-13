@@ -32,7 +32,7 @@ public function getPanels( chartGroup:ChartGroup ):PanelFactory[] {
 			build: function() { javafx.scene.shape.Rectangle { width: 200, height: 100 } }
 		}, PanelFactory {
 			title: "Style"
-			build: function() { javafx.scene.shape.Rectangle { width: 100, height: 200 } }
+			build: function() { StylePanel { chartGroup: chartGroup } }
 		}
 	]
 }
