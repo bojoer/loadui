@@ -17,9 +17,13 @@ package com.eviware.loadui.fx.statistics.chart.line;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.LayoutInfo;
+import javafx.geometry.Insets;
 
 import com.javafx.preview.layout.Grid;
+import com.javafx.preview.layout.GridRow;
 import com.javafx.preview.layout.GridLayoutInfo;
+
+import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
@@ -33,14 +37,19 @@ import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 public class StylePanel extends Grid {
 	public-init var chartGroup:ChartGroup;
 	
+	override var padding = Insets { top: 10, right: 10, bottom: 10, left: 10 };
+	override var hgap = 10;
+	override var vgap = 10;
+	
 	init {
 		rows = [
-			row([
-				Label { text: "Color" },
-				Label { text: "Statistic", layoutInfo: GridLayoutInfo { hspan: 3 } },
-				Label { text: "Width" },
-				Label { text: "Stroke" }
-			]), for( segment in (chartGroup.getChartView() as LineChartView).getSegments() ) row([
+			GridRow { cells: [
+				Region { managed: false, width: bind width, height: bind height, styleClass: "style-panel" },
+				Label { styleClass: "header-row", text: "Color" },
+				Label { styleClass: "header-row", text: "Statistic", layoutInfo: GridLayoutInfo { hspan: 3 } },
+				Label { styleClass: "header-row", text: "Width" },
+				Label { styleClass: "header-row", text: "Stroke" }
+			] }, for( segment in (chartGroup.getChartView() as LineChartView).getSegments() ) GridRow { cells: [
 				Label { text: "Color" },
 				Label {
 					text: segment.getStatistic().getName()
@@ -54,7 +63,7 @@ public class StylePanel extends Grid {
 				}
 				Label { text: "Width" },
 				Label { text: "Stroke" }
-			])
+			] }
 		];
 	}
 }

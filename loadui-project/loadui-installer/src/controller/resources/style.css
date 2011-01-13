@@ -753,6 +753,10 @@
 	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #33ccff) (90%, #0398f9);
 }
 
+.header-row {
+	-fx-font-weight: bold;
+}
+
 .zoom-panel {
 	-fx-shape: "M 1 0 L 9 0 10 1 0 1 z";
 	-fx-background-color: linear (0%,0%) to (0%,100%) stops (0%, rgba(0,0,0,0)) (100%, rgba(255,255,255,0.1));
@@ -785,4 +789,9 @@
 	-fx-background-color: rgba(0,0,0,0.8);
 	-fx-background-radius: 3;
 	-fx-background-insets: 25 -53 -45 -8;
+}
+
+.style-panel {
+	-fx-background-color: #333333, #252525;
+	-fx-background-insets: 4 0 0 0, 30 0 2 0;
 }
