@@ -17,6 +17,8 @@ package com.eviware.loadui.fx.statistics.chart;
 
 import javafx.scene.Node;
 
+import com.eviware.loadui.fx.statistics.chart.line.LineChart;
+
 import com.eviware.loadui.api.statistics.model.chart.*;
 
 /**
