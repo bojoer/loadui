@@ -51,7 +51,9 @@ import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.util.StringUtils;
 import java.awt.BasicStroke;
@@ -85,10 +87,11 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	override var styleClass = "line-chart";
 	
 	def listener = new ChartViewListener();
+	def groupListener = new ChartGroupListener();
 	def lines = new HashMap();
 	public-read def chart = new Chart();
 	def chartNode = SwingComponent.wrap( chart );
-	var timeCalculator:LoadUIChartTimeTickerCalculator; 
+	var timeCalculator:LoadUIChartTimeTickerCalculator;
 	var compactSegments = false;
 	
 	def scrollBar = ScrollBar {
@@ -315,12 +318,23 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 }
 
+class ChartGroupListener extends EventHandler {
+	override function handleEvent( e:EventObject ):Void {
+		def event = e as BaseEvent;
+		if( event.getKey() == ZoomPanel.ZOOM_LEVEL ) {
+			FxUtils.runInFxThread( function():Void {
+				setZoomLevel( (event.getSource() as AttributeHolder).getAttribute( ZoomPanel.ZOOM_LEVEL_ATTRIBUTE, ZoomPanel.ZOOM_DEFAULT ) )
+			} );
+		}
+	}
+}
+
 class ChartViewListener extends EventHandler {
 	override function handleEvent( e:EventObject ):Void {
 		def event = e as CollectionEvent;
 		if( CollectionEvent.Event.ADDED == event.getEvent() ) {
 			FxUtils.runInFxThread( function():Void { addedSegment( event.getElement() as LineSegment ) } );
-			} else {
+		} else {
 			FxUtils.runInFxThread( function():Void { removedSegment( event.getElement() as LineSegment ) } );
 		}
 	}

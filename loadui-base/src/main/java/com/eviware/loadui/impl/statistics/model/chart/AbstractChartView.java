@@ -20,6 +20,7 @@ import java.util.Collection;
 import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
+import com.eviware.loadui.api.statistics.model.chart.ChartViewProvider;
 import com.eviware.loadui.impl.property.DelegatingAttributeHolderSupport;
 
 /**
@@ -34,10 +35,18 @@ public abstract class AbstractChartView implements ChartView
 	public final static String SOURCE_PREFIX = "_SOURCE_";
 
 	private final DelegatingAttributeHolderSupport attributeSupport;
+	private final ChartGroup chartGroup;
 
-	public AbstractChartView( AttributeHolder attributeDelegate, String prefix )
+	public AbstractChartView( ChartViewProvider<?> provider, AttributeHolder attributeDelegate, String prefix )
 	{
 		attributeSupport = new DelegatingAttributeHolderSupport( attributeDelegate, prefix );
+		chartGroup = provider.getChartGroup();
+	}
+
+	@Override
+	public ChartGroup getChartGroup()
+	{
+		return chartGroup;
 	}
 
 	@Override

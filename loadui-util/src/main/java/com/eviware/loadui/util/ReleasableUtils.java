@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.util;
 
+import java.util.Collection;
+
 import com.eviware.loadui.api.model.Releasable;
 
 /**
@@ -36,13 +38,22 @@ public class ReleasableUtils
 	}
 
 	/**
-	 * Releases all Releasable objects in the given collection.
+	 * Releases all Releasable objects in the given varargs. For arguments that
+	 * are a Collection, each of its children will be released.
 	 * 
 	 * @param objects
 	 */
 	public static void releaseAll( Object... objects )
 	{
 		for( Object object : objects )
+		{
+			if( object instanceof Collection )
+			{
+				for( Object child : ( Collection<?> )object )
+					if( child instanceof Releasable )
+						release( child );
+			}
 			release( object );
+		}
 	}
 }

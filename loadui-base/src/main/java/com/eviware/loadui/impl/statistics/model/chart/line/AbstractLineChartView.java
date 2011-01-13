@@ -41,7 +41,7 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 
 	public AbstractLineChartView( LineChartViewProvider provider, AttributeHolder attributeDelegate, String prefix )
 	{
-		super( attributeDelegate, prefix );
+		super( provider, attributeDelegate, prefix );
 
 		provider.addEventListener( CollectionEvent.class, new ProviderListener() );
 	}
