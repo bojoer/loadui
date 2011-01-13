@@ -91,12 +91,16 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 		}
 	}
 	
-	public-init var statisticPage:StatisticPage on replace {
-		statisticPage.addEventListener( BaseEvent.class, listener );
-		innerContent = for( chartGroup in statisticPage.getChildren() ) ChartGroupHolder {
-			chartGroup: chartGroup as ChartGroup
-			layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES }
-		};
+	public-init var statisticPage:StatisticPage on replace oldValue {
+		if( oldValue != null )
+			oldValue.removeEventListener( BaseEvent.class, listener );
+		if( statisticPage != null ) {
+			statisticPage.addEventListener( BaseEvent.class, listener );
+			innerContent = for( chartGroup in statisticPage.getChildren() ) ChartGroupHolder {
+				chartGroup: chartGroup as ChartGroup
+				layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES }
+			};
+		}
 	}
 	
 	var innerContent:ChartGroupHolder[] on replace {
@@ -147,6 +151,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 	override function release():Void {
 		timeline.stop();
 		executionManager.removeExecutionListener( executionListener );
+		statisticPage = null;
 		for( holder in innerContent )
 			holder.release();
 	}

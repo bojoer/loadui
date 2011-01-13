@@ -144,6 +144,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	
 	def buttonBar:HBox = HBox {
 		styleClass: "chart-group-toolbar"
+		layoutInfo: LayoutInfo { margin: Insets { bottom: 5 } }
 		spacing: 5
 		content: [
 			ToggleButton { text: "Expand", toggleGroup:controlButtons, value: null },
@@ -166,8 +167,12 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	}
 	
 	def panelHolder:Stack = Stack {
+		styleClass: "chart-group-panel"
+		padding: Insets { top: 17, right: 17, bottom: 17, left: 17 }
 		layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
 		content: Region { managed: false, width: bind panelHolder.width, height: bind panelHolder.height, styleClass: "chart-group-panel" }
+		visible: bind ( sizeof panelHolder.content > 1 )
+		managed: bind ( sizeof panelHolder.content > 1 )
 	}
 	
 	init {

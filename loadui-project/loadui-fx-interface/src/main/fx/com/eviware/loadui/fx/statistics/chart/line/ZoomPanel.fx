@@ -46,13 +46,18 @@ def secondsImage = Image { url: "{__ROOT__}images/png/seconds.png" };
 
 def buttonInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS };
 
+/**
+ * Panel for setting the zoom level.
+ *
+ * @author dain.nilsson
+ */
 public class ZoomPanel extends HBox {
 	public-init var chartGroup:ChartGroup;
 	
 	override var hpos = HPos.CENTER;
 	override var vpos = VPos.CENTER;
 	override var nodeVPos = VPos.BOTTOM;
-	override var padding = Insets { top: 10, right: 25, bottom: 15, left: 25 };
+	override var padding = Insets { right: 15, left: 15 };
 	
 	def toggleGroup = new ToggleGroup();
 	def selectedLevel = bind toggleGroup.selectedToggle on replace {
