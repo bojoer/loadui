@@ -687,6 +687,10 @@
 	-fx-background-radius: 4;
 }
 
+.chart-group-panel {
+	-fx-background-color: #252525;
+}
+
 .base-chart {
 	-fx-background-color: #1a1a1a;
 	-fx-background-insets: -2;
