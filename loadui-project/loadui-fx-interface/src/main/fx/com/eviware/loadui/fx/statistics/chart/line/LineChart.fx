@@ -144,6 +144,8 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	public-init var chartView:LineChartView on replace oldChartView {
 		if( chartView != null ) {
 			chartView.addEventListener( CollectionEvent.class, listener );
+			chartView.getChartGroup().addEventListener( BaseEvent.class, groupListener );
+			setZoomLevel( chartView.getChartGroup().getAttribute( ZoomPanel.ZOOM_LEVEL_ATTRIBUTE, ZoomPanel.ZOOM_DEFAULT ) );
 			
 			for( segment in chartView.getSegments() )
 			addedSegment( segment );
@@ -151,6 +153,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		
 		if( oldChartView != null ) {
 			chartView.removeEventListener( CollectionEvent.class, listener );
+			chartView.getChartGroup().removeEventListener( BaseEvent.class, groupListener );
 			lines.clear();
 		}
 	}
