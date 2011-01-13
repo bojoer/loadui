@@ -36,8 +36,6 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;

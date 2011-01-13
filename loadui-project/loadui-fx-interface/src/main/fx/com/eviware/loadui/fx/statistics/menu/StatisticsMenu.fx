@@ -20,7 +20,7 @@
 *Created on jun 1, 2010, 10:51:10 fm
 */
 
-package com.eviware.loadui.fx.statistics;
+package com.eviware.loadui.fx.statistics.menu;
 
 import javafx.scene.Node;
 import javafx.scene.Group;
@@ -38,9 +38,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
@@ -61,8 +60,12 @@ import com.eviware.loadui.fx.ui.resources.Paints;
 import com.eviware.loadui.fx.ui.resources.MenuArrow;
 import com.eviware.loadui.fx.WindowControllerImpl;
 import com.eviware.loadui.fx.ui.menu.MenubarButton;
-
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
+import com.eviware.loadui.fx.statistics.chart.ChartPage;
+import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
+import com.eviware.loadui.api.statistics.model.StatisticPage;
+
 
 import java.lang.Exception;
 
@@ -78,12 +81,20 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.menu.St
 public class StatisticsMenu extends VBox {
     
     var menuButton:MenuButton;
-    def tabGroup:ToggleGroup = new ToggleGroup();
+    
+    public var project:ProjectItem on replace
+    {
+        tabContainer.statisticPages = project.getStatisticPages();
+    };
+    var tabContainer:TabContainer;
     
     public def menuButtonFont: Font = Font{name:"Arial", size:18};
     public def menuButtonLabel: String = "Statistics";
     
+    public var onPageSelect:function(node:Node):Void;
+    
     init {
+        
 		var menuContent:Node;
 		content = [
 			Region {
@@ -102,6 +113,7 @@ public class StatisticsMenu extends VBox {
 					}
 			 spacing: 3
 		    nodeVPos: VPos.CENTER
+		    padding: Insets {left: 10}
 		    content: [
 					ImageView {
 						image: Image {
@@ -154,25 +166,26 @@ public class StatisticsMenu extends VBox {
 					}
 				]
 			},
-			HBox {
-				padding: Insets { top: 10, bottom: 10 }
-	     		spacing: 6
-				content: [
-								ToggleButton {
-								    toggleGroup: tabGroup,
-								    text: "Tab A"
-								},
-								ToggleButton {
-								    toggleGroup: tabGroup,
-								    text: "Tab B"
-								},
-							   Button {
-							   	text: "+"
-							   	styleClass: "tab-plus"
-							   	action: function() { ; }
-							   	}
-							   ]
+			tabContainer = TabContainer {
+			    spacing: 36,
+			    statisticPages: project.getStatisticPages(),
+			    onSelect: function(sp:StatisticPage):Void {
+			        onPageSelect( ChartPage { statisticPage: sp } );
+			    }
 			},
+//			HBox {
+//				padding: Insets {top: 10, bottom: 10, right: 25, left: 25}
+//				nodeVPos: VPos.CENTER,
+//	     		spacing: 6,
+//				content: [
+//								new TabContainer(),
+//							   Button {
+//							   	text: "+"
+//							   	styleClass: "tab-plus"
+//							   	action: function() { ; }
+//							   	}
+//							   ]
+//			},
 			Region {
 			    //layoutInfo: LayoutInfo { width: bind width, height: 5 }
 			    width: bind width, 

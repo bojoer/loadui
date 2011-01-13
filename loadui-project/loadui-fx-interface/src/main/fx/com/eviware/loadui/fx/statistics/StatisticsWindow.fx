@@ -25,17 +25,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.Group;
 import javafx.util.Sequences;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Stack;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.Parent;
 
 import com.eviware.loadui.fx.ui.tabs.TabPanel;
+import com.eviware.loadui.fx.statistics.menu.StatisticsMenu;
 
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.Overlay;
@@ -59,7 +62,10 @@ public function getInstance():StatisticsWindow {
 public class StatisticsWindow {
 
 	public var stage:Stage;
-	public var project:ProjectItem;
+	public var project:ProjectItem on replace {
+	    topMenu.project = project;
+	}
+	
 	public var scene: Scene;
 	
 	var closed:Boolean = true;
@@ -74,26 +80,34 @@ public class StatisticsWindow {
 	    }
 	}
 	
-	var tabs:TabPanel = TabPanel {
-				        		x: 140
-				        		y: 150
+//	var tabs:TabPanel = TabPanel {
+//				        		x: 140
+//				        		y: 150
+//				        		width: bind scene.width - 150
+//				        		height: bind scene.height - 180
+//				        		background: Color.web("#323232")
+//				        		onTabRename: onTabRename
+//				        		onTabAdded: function(tb) {
+//				        			if ( tb.value == null ) {
+//				        				def page = project.getStatisticPages().createPage( tb.text );
+//				        				tb.value = ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page };
+//				        				pageMap.put( tb, page );
+//				        			}
+//				        		}
+//				        		onTabDeleted: function(tb) {
+//				        			def page: StatisticPage = pageMap.get(tb) as StatisticPage;
+//				        			(tb.value as ChartPage).release();
+//				        			page.delete();
+//				        		}
+//				        		uniqueNames: true
+//				        	};
+
+	var stack:Stack = Stack {
+				        		layoutX: 140
+				        		layoutY: 150
 				        		width: bind scene.width - 150
 				        		height: bind scene.height - 180
-				        		background: Color.web("#323232")
-				        		onTabRename: onTabRename
-				        		onTabAdded: function(tb) {
-				        			if ( tb.value == null ) {
-				        				def page = project.getStatisticPages().createPage( tb.text );
-				        				tb.value = ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page };
-				        				pageMap.put( tb, page );
-				        			}
-				        		}
-				        		onTabDeleted: function(tb) {
-				        			def page: StatisticPage = pageMap.get(tb) as StatisticPage;
-				        			(tb.value as ChartPage).release();
-				        			page.delete();
-				        		}
-				        		uniqueNames: true
+				        		//background: Color.web("#323232")
 				        	};
 	
 	def toolbar: StatisticsToolbar = StatisticsToolbar {
@@ -102,23 +116,28 @@ public class StatisticsWindow {
 	}
 	
 	def topMenu:StatisticsMenu = StatisticsMenu {
-	    									width: bind scene.width
+	    									width: bind scene.width,
+	    									project: project,
+	    									onPageSelect: function( node ):Void {
+	    									    ReleasableUtils.releaseAll( stack.content as Object[] );
+	    									    stack.content = node;
+	    									}
 	    								};
 	
 	public function show() {
 		
 		//Remove in final version, this sets up a basic tab.
-		if( project.getStatisticPages().getChildCount() == 0 ) {
-			def page = project.getStatisticPages().createPage( "General" );
-			
-			pageMap.put(tabs.addTab( page.getTitle(), ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page } ), page );
-		} else {
-			for( page in project.getStatisticPages().getChildren() ) {
-				var tb = tabs.addTab( page.getTitle(), ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page } );
-				if ( tb != null )
-					pageMap.put(tb, page);
-			}
-		}
+//		if( project.getStatisticPages().getChildCount() == 0 ) {
+//			def page = project.getStatisticPages().createPage( "General" );
+//			
+//			pageMap.put(tabs.addTab( page.getTitle(), ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page } ), page );
+//		} else {
+//			for( page in project.getStatisticPages().getChildren() ) {
+//				var tb = tabs.addTab( page.getTitle(), ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page } );
+//				if ( tb != null )
+//					pageMap.put(tb, page);
+//			}
+//		}
 		
     	if ( closed ) {
     		if ( scene == null ) {
@@ -137,7 +156,7 @@ public class StatisticsWindow {
 						content: [
 							Group {
 					        	content: [
-						        	topMenu, tabs, toolbar
+						        	topMenu, stack, toolbar
 						        ]
 							}, overlay
 						]
@@ -170,13 +189,12 @@ public class StatisticsWindow {
 	}
 	
 	public function close() {
-		tabs.clear();
+		//tabs.clear();
 		for( tb in pageMap.keySet() )
 			((tb as ToggleButton).value as ChartPage).release();
 		pageMap.clear();
-		stage.close()
+		stage.close();
 	}
-
 			
 }
 	
