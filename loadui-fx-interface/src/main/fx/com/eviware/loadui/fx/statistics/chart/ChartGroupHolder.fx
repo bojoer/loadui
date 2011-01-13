@@ -64,9 +64,6 @@ import java.util.EventObject;
 
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
-import com.eviware.loadui.fx.statistics.chart.line.ZoomControl;
-import com.eviware.loadui.fx.statistics.chart.line.LineChart;
-
 def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
 
 /**
@@ -106,11 +103,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		oldConf = selected;
 		if ( selected == "Expand" ) {
 				toggleGroupExpand();
-		} else if ( selected == "Zoom" ) {
-				if ( oldConfNode != null ) 
-					delete oldConfNode from panelHolder.content;
-				insert configurationNode into panelHolder.content;
-				oldConfNode = configurationNode;
 		} else if ( selected == "Show agents" ) {
 			toggleAgentExpand();
 		} else if ( selected == "Delete" ) {
@@ -120,12 +112,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	
 	def panelToggleGroup = new PanelToggleGroup();
 	def chartButtons = HBox { spacing: 5, hpos: HPos.RIGHT };
-	
-	def zoomControl:ZoomControl = ZoomControl{ width: bind this.width - 6 };
-	
-	var chartZoom = bind zoomControl.scale on replace {
-		(chartViewHolder.chart as LineChart).setZoomLevel(chartZoom);
-	}
 	
 	public-init var chartGroup:ChartGroup on replace oldChartGroup {
 		chartGroup.addEventListener( BaseEvent.class, listener );
@@ -166,7 +152,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			chartButtons,
 			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
 			ToggleButton { text: "Configure", toggleGroup:controlButtons },
-			ToggleButton { text: "Zoom", toggleGroup:controlButtons, value: zoomControl },
 		//	Button { text: "Scale", action: toggleAgentExpand }, //TODO
 		//	Button { text: "Style", action: toggleAgentExpand }, //TODO
 			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
@@ -285,14 +270,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			for( node in expandedNode.content )
 				(node as ChartViewHolder).release();
 			delete expandedNode from (resizable as Container).content;
-		}
-	}
-	
-	function toggleZoom():Void {
-		if( sizeof panelHolder.content == 0 ) {
-			insert Rectangle { height: 50, width: 500 } into panelHolder.content;
-		} else {
-			panelHolder.content = panelHolder.content[0];
 		}
 	}
 	

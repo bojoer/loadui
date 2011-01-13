@@ -66,8 +66,8 @@ public class ZoomPanel extends HBox {
 		content = [
 			Region { managed: false, width: bind width, height: bind height, styleClass: "zoom-panel" },
 			buildButton( "All", allImage ),
-			buildButton( "Week", weekImage ),
-			buildButton( "Day", dayImage ),
+			buildButton( "Weeks", weekImage ),
+			buildButton( "Days", dayImage ),
 			buildButton( "Hours", hoursImage ),
 			buildButton( "Minutes", minutesImage ),
 			buildButton( ZOOM_DEFAULT, secondsImage )
