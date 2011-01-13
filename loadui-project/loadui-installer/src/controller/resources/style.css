@@ -692,6 +692,35 @@
 	-fx-background-radius: 4;
 }
 
+.statistics-topMenu-background {
+	-fx-background-color: #555555;
+	-fx-background-radius: 0;
+}
+
+.statistics-topMenu-bottomShadow {
+	-fx-background-color: linear (0%,0%) to (0%,100%) stops (0%, rgba(0,0,0,0.25)) (100%, rgba(0,0,0,0.0));
+	-fx-background-radius: 0;
+}
+
+.statistics-view-tab {
+	-fx-background-color: rgba(0,0,0,0);
+	-fx-outer-border: #323232;
+	-fx-inner-border: #323232;
+	-fx-body-color: #323232;
+	-fx-background-insets: 3, 1, 3, 1;
+	-fx-background-radius: 5, 5, 4, 3;
+	-fx-font: 14pt "Amble Cn";
+	-fx-text-fill: #000000
+}
+
+.statistics-view-tab :selected {
+	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+    	-fx-outer-border: #1a1a1a;
+	-fx-inner-border: -fx-outer-border;
+	-fx-body-color: -fx-outer-border;
+	-fx-text-fill: #959595
+}
+
 .segment-buttons *.button {
 	-fx-inner-border: #2e2e2e;
 	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #c2c3c6) (70%, #a0a0a0) (100%, #707070);
@@ -708,3 +737,4 @@
 .segment-buttons *.button:armed {
 	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #33ccff) (90%, #0398f9);
 }
+
