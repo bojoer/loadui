@@ -16,7 +16,7 @@ import com.eviware.loadui.api.statistics.model.StatisticPages;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.geometry.Insets;
@@ -31,49 +31,19 @@ public class TabContainer extends HBox {
 	def statisticPagesListener = new StatisticPagesListener();
 
 	public var onSelect:function(sp:StatisticPage):Void;
-	public var statisticPages:StatisticPages on replace
-	{
-	   //TODO: (A) MERGE WITH B
-	   if (statisticPages != null)
-	   { 
-		   
-			sortableBox.content = for ( child in statisticPages.getChildren() )
-			{
-				StatisticsViewTab {
-			   	text: child.getTitle(),
-			      toggleGroup: tabGroup,
-			      value: child
-			   }
-			}
-			statisticPages.addEventListener( CollectionEvent.class, statisticPagesListener )
-		}
-	};
+	public var statisticPages:StatisticPages on replace { sortableBox.content = generateTabs(); };
 
 	var sortableBox:SortableBox;
+	var tabs:RadioButton[];
 	def tabGroup:ToggleTabGroup = new ToggleTabGroup();
+	
 	override var padding = Insets {top: 10, bottom: 4, right: 25, left: 25};
 	override var nodeVPos = VPos.CENTER;
 	override var spacing = 6;
 	
 	init {
-	   var tabs;
-	   
-	   //TODO: (B) MERGE WITH A
- 		if (statisticPages != null)
-	   { 
-			tabs = for ( child in statisticPages.getChildren() )
-			{
-				StatisticsViewTab {
-			   	text: child.getTitle(),
-			      toggleGroup: tabGroup,
-			      value: child
-			   }
-			}
-			statisticPages.addEventListener( CollectionEvent.class, statisticPagesListener )
-		}
-	    
 		sortableBox = SortableBox {
-			content: [tabs],
+			content: generateTabs(),
 			spacing: 36,
 			padding: Insets {left: 10, top: 20},
 			styleClass: "statistics-tabs-sortableBox"
@@ -108,6 +78,29 @@ public class TabContainer extends HBox {
 			];
 	}
 	
+	function generateTabs():RadioButton[]
+	{
+		var tabs:RadioButton[];
+ 		if ( statisticPages != null )
+	   {
+			tabs = for ( child in statisticPages.getChildren() )
+			{
+				RadioButton {
+			   	text: child.getTitle(),
+			      toggleGroup: tabGroup,
+			      value: child,
+					blocksMouse: false,
+			      styleClass: "statistics-view-tab",
+			   }
+			}
+			if ( sizeof tabs == 1 )
+			{
+				tabs[0].selected = true; 
+			}
+			statisticPages.addEventListener( CollectionEvent.class, statisticPagesListener )
+		}
+		return tabs;
+	}
 };
 
 class StatisticPagesListener extends EventHandler {  
@@ -117,7 +110,7 @@ class StatisticPagesListener extends EventHandler {
 			FxUtils.runInFxThread( function(): Void {
 			   def sp:StatisticPage = event.getElement() as StatisticPage;
 			   for(tab in sortableBox.content){
-					if( (tab as StatisticsViewTab).value == sp){
+					if( (tab as RadioButton).value == sp){
 							delete tab from sortableBox.content;
 							break;
 				   	}
@@ -126,49 +119,23 @@ class StatisticPagesListener extends EventHandler {
 		} else if(event.getEvent() == CollectionEvent.Event.ADDED){
 			FxUtils.runInFxThread( function(): Void {
 			   def sp:StatisticPage = event.getElement() as StatisticPage;
-					insert 
-						StatisticsViewTab {
-					   	text: sp.getTitle(),
-					      toggleGroup: tabGroup,
-					      value: sp
-		   		} into sortableBox.content;
+		   	var tab:RadioButton = RadioButton {
+				   	text: sp.getTitle(),
+				      toggleGroup: tabGroup,
+				      value: sp,
+						blocksMouse: false,
+						styleClass: "statistics-view-tab"
+	   		}
+				insert tab into sortableBox.content;
+				tab.selected = true;
 			});
 		}
 	}
 }
 
-/* Makes sure that always one tab is selected, as opposed to the default ToggleBox behaviour */
 class ToggleTabGroup extends ToggleGroup {
 	
-	var selectOne = false;
-	var lastSelected:Toggle = null;
-	
 	override var selectedToggle on replace oldVal {
-		if( selectedToggle == null ) {
-			selectOne = true;
-			FX.deferAction( requestSelect );
-		} else {
-		   lastSelected = selectedToggle;
 		   onSelect( selectedToggle.value as StatisticPage );
-			//selectedTab = selectedToggle.value as Tab;
-		}
 	}
-	
-	function requestSelect() {
-		if( selectOne ) {
-			selectOne = false;
-			if( sizeof toggles > 0 ) {
-				selectedToggle = lastSelected;
-			} else {
-				onSelect( null );
-			}
-		}
-	}
-}
-
-/* Extend for the sole purpose of enabeling its own stylesheet */
-class StatisticsViewTab extends ToggleButton {
-    override var styleClass = "statistics-view-tab";
-    override var blocksMouse = false;
-    //override function action? no, lsiten to toggleGroup requests instead!
 }
