@@ -121,6 +121,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 		hbarPolicy: ScrollBarPolicy.NEVER
 		vbarPolicy: ScrollBarPolicy.ALWAYS
 		fitToWidth: true
+		styleClass: "chart-page-scroll-view"
 		node: Stack {
 			nodeVPos: VPos.TOP
 			content: [
@@ -129,7 +130,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 				}, container = SortableBox {
 					vertical: true
 					spacing: 5
-					padding: Insets { left: 5, top: 5, right: 5, bottom: 25 }
+					padding: Insets { top: 5, right: 5, bottom: 25 }
 					layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.NEVER, vfill: false }
 					content: innerContent
 					onMoved: function( child, fromIndex, toIndex ):Void {

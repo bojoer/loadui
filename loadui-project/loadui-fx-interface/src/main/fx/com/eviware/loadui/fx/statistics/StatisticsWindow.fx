@@ -29,6 +29,7 @@ import javafx.scene.layout.Stack;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.Parent;
+import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.ui.tabs.TabPanel;
 import com.eviware.loadui.fx.statistics.menu.StatisticsMenu;
@@ -80,33 +81,19 @@ public class StatisticsWindow {
 	    }
 	}
 	
-//	var tabs:TabPanel = TabPanel {
-//				        		x: 140
-//				        		y: 150
-//				        		width: bind scene.width - 150
-//				        		height: bind scene.height - 180
-//				        		background: Color.web("#323232")
-//				        		onTabRename: onTabRename
-//				        		onTabAdded: function(tb) {
-//				        			if ( tb.value == null ) {
-//				        				def page = project.getStatisticPages().createPage( tb.text );
-//				        				tb.value = ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page };
-//				        				pageMap.put( tb, page );
-//				        			}
-//				        		}
-//				        		onTabDeleted: function(tb) {
-//				        			def page: StatisticPage = pageMap.get(tb) as StatisticPage;
-//				        			(tb.value as ChartPage).release();
-//				        			page.delete();
-//				        		}
-//				        		uniqueNames: true
-//				        	};
-
+	def layoutRegion:Region = Region {
+		managed: false,
+		width: bind stack.width,
+		height: bind stack.height,
+		styleClass: "statistics-chartpage-container"
+	}
+	
 	var stack:Stack = Stack {
 				        		layoutX: 140
 				        		layoutY: 150
 				        		width: bind scene.width - 150
 				        		height: bind scene.height - 180
+				        		content: [ layoutRegion ]
 				        		//background: Color.web("#323232")
 				        	};
 	
@@ -123,24 +110,11 @@ public class StatisticsWindow {
 	    										{
 	    											ReleasableUtils.release( child );
 	    										}
-	    										stack.content = node;
+	    										stack.content = [ layoutRegion, node ]
 	    									}
 	    								};
 	
 	public function show() {
-		
-		//Remove in final version, this sets up a basic tab.
-//		if( project.getStatisticPages().getChildCount() == 0 ) {
-//			def page = project.getStatisticPages().createPage( "General" );
-//			
-//			pageMap.put(tabs.addTab( page.getTitle(), ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page } ), page );
-//		} else {
-//			for( page in project.getStatisticPages().getChildren() ) {
-//				var tb = tabs.addTab( page.getTitle(), ChartPage { width: bind tabs.width - 60, height: bind tabs.height - 70, statisticPage: page } );
-//				if ( tb != null )
-//					pageMap.put(tb, page);
-//			}
-//		}
 		
     	if ( closed ) {
     		if ( scene == null ) {
