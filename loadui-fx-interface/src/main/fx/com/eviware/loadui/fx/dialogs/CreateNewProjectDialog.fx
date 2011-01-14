@@ -61,6 +61,7 @@ public class CreateNewProjectDialog {
 							if( validateFile( file.value as String ) ) {
 								log.debug( "Creating new project: '\{\}'  with path: '\{\}'", name.value, file.value );
 								def p = workspace.createProject( new File( projectDir, file.value as String ), name.value as String, true );
+								p.getStatisticPages().createPage( "General" );
 								dialog.close();
 								if( open.value as Boolean ) {
 									AppState.instance.setActiveCanvas( p );
