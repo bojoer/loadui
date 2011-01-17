@@ -283,7 +283,8 @@
 }
 
 .draggable-placeholder {
-	-fx-background-color: rgba( 173, 216, 230, 0.5 );
+	-fx-background-color: rgba(0, 0, 0, 0.4);
+	-fx-background-radius: 4;
 }
 
 .toolbar-item-frame {
@@ -654,11 +655,6 @@
 	-fx-inner-border: #1b1b1b;
 	-fx-body-color: #202020;
 	-fx-text-fill: #9b9b9b;
-}
-
-.chart-page *.draggable-placeholder {
-	-fx-background-radius: 4;
-	-fx-background-color: rgba(0, 0, 0, 0.4);
 }
 
 .chart-group-holder {

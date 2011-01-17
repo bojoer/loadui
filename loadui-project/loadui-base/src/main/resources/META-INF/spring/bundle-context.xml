@@ -84,4 +84,5 @@
 	<bean id="psStatisticWriter"
 		class="com.eviware.loadui.impl.statistics.PSStatisticsWriter$Factory" />
 
+	<bean class="com.eviware.loadui.impl.LoggingUncaughtExceptionHandler" factory-method="setForAllThreads"/>
 </beans>
