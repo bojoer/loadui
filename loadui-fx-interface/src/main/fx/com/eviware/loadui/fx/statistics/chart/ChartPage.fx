@@ -222,7 +222,6 @@ class DropBase extends BaseNode, Resizable, Droppable {
 	}
 	
 	override var accept = function( draggable:Draggable ):Boolean {
-		println("Accepted: {draggable instanceof StatisticsToolbarItem}");
 		draggable instanceof StatisticsToolbarItem
 	}
 	
