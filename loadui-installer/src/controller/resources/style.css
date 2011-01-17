@@ -705,27 +705,21 @@
 
 .statistics-view-tab {
 	-fx-background-color: rgba(0,0,0,0);
-	-fx-body-color: #ff3232;
 	-fx-padding: 1 16 3 5;
-	-fx-background-radius: 6;
-	-fx-font: 14pt "Amble Cn";
-	-fx-text-fill: #000000;
+	-fx-background-radius: 4;
+	-fx-font: bold 12pt "Amble Cn";
+	-fx-text-fill: #1a1a1a;
 }
 
 .statistics-view-tab :selected {
-	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
-    -fx-outer-border: #1a1a1a;
-	-fx-inner-border: -fx-outer-border;
-	-fx-body-color: -fx-outer-border;
-	-fx-text-fill: #959595
+	-fx-background-color: #343434;
+	-fx-text-fill: #b6b6b6;
+	-fx-effect: innershadow(one-pass-box, rgba(0,0,0,0.3), 15, 0.0, 0, 0);
 }
 
 .statistics-view-tab :pressed {
-	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
-    -fx-outer-border: #1a1a1a;
-	-fx-inner-border: -fx-outer-border;
-	-fx-body-color: -fx-outer-border;
-	-fx-text-fill: #959595
+	-fx-background-color: #343434;
+	-fx-text-fill: #b6b6b6;
 }
 
 .statistics-tabs-sortableBox *.draggable-placeholder {

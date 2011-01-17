@@ -38,7 +38,10 @@ import java.util.Comparator;
 /**
  * The Droppable which is currently being dragged over, if any.
  */
-public-read var currentDroppable: Droppable = null;
+public-read var currentDroppable: Droppable = null on replace
+{
+	println("currentdroppable: {currentDroppable}");
+};
 
 def descendantOrdering = new DescendandComparator();
 
