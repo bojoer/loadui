@@ -89,8 +89,8 @@ public class StatisticsWindow {
 	}
 	
 	var stack:Stack = Stack {
-				        		layoutX: 140
-				        		layoutY: 150
+				        		layoutX: 135
+				        		layoutY: 125
 				        		width: bind scene.width - 150
 				        		height: bind scene.height - 180
 				        		content: [ layoutRegion ]
@@ -98,7 +98,7 @@ public class StatisticsWindow {
 				        	};
 	
 	def toolbar: StatisticsToolbar = StatisticsToolbar {
-		layoutY: 150
+		layoutY: 120
 		height: bind scene.height - 100
 	}
 	
