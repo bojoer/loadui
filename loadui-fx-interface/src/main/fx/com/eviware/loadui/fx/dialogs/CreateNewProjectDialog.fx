@@ -62,12 +62,14 @@ public class CreateNewProjectDialog {
 								log.debug( "Creating new project: '\{\}'  with path: '\{\}'", name.value, file.value );
 								def p = workspace.createProject( new File( projectDir, file.value as String ), name.value as String, true );
 								p.getStatisticPages().createPage( "General" );
+								//TODO: Add content to the General statistics page.
 								dialog.close();
 								if( open.value as Boolean ) {
 									AppState.instance.setActiveCanvas( p );
 								} else {
 									for( ref in workspace.getProjectRefs() ) {
 										if( ref.isEnabled() and ref.getProject() == p ) {
+											p.save();
 											ref.setEnabled( false );
 											break;
 										}
