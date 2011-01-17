@@ -57,11 +57,8 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.util.BeanInjector;
 import java.util.EventObject;
-import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
-
-public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.statistics.chart.ChartPage" );
 
 /**
  * A Page displaying ChartGroupHolders, which allows adding, removing, and reordering of its children.
@@ -225,12 +222,11 @@ class DropBase extends BaseNode, Resizable, Droppable {
 	}
 	
 	override var accept = function( draggable:Draggable ):Boolean {
+		println("Accepted: {draggable instanceof StatisticsToolbarItem}");
 		draggable instanceof StatisticsToolbarItem
 	}
 	
 	override var onDrop = function( draggable:Draggable ):Void {
-		log.debug( "Dropped \{\} on ChartPage with statisticPage: \{\}", draggable, statisticPage );
-		
 		if( draggable instanceof ChartToolbarItem ) {
 			statisticPage.createChartGroup( (draggable as ChartToolbarItem).type, "Chart Group {statisticPage.getChildCount()+1}" )
 		} else if( draggable instanceof ComponentToolbarItem ) {
