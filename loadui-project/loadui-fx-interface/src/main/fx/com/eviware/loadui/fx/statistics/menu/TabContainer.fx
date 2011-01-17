@@ -93,7 +93,7 @@ public class TabContainer extends HBox {
 			      styleClass: "statistics-view-tab",
 			   }
 			}
-			if ( sizeof tabs == 1 )
+			if ( sizeof tabs > 0 )
 			{
 				tabs[0].selected = true; 
 			}
