@@ -642,7 +642,7 @@
 
 .zoom-control *.toggle-button :selected {
 	-fx-background-color: #0d0d0d;
-    	-fx-outer-border: #111111;
+   	-fx-outer-border: #111111;
 	-fx-inner-border: #0c0c0c;
 	-fx-body-color: -fx-inner-border;
 	-fx-text-fill: #b3b3b3
@@ -650,7 +650,7 @@
 
 .zoom-control *.toggle-button :hover {
 	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
-    	-fx-outer-border: #1d1d1d;
+    -fx-outer-border: #1d1d1d;
 	-fx-inner-border: #1b1b1b;
 	-fx-body-color: #202020;
 	-fx-text-fill: #9b9b9b;
@@ -709,11 +709,11 @@
 
 .statistics-view-tab {
 	-fx-background-color: rgba(0,0,0,0);
-	-fx-body-color: #323232;
+	-fx-body-color: #ff3232;
 	-fx-padding: 1 16 3 5;
 	-fx-background-radius: 6;
 	-fx-font: 14pt "Amble Cn";
-	-fx-text-fill: #000000
+	-fx-text-fill: #000000;
 }
 
 .statistics-view-tab :selected {
