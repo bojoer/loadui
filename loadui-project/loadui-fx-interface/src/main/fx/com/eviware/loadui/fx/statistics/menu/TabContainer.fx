@@ -6,8 +6,11 @@
 
 package com.eviware.loadui.fx.statistics.menu;
 
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.FxUtils;
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.dnd.SortableBox;
+import com.eviware.loadui.fx.ui.form.fields.LabelField;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.tabs.TabRenameDialog;
 
@@ -24,8 +27,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.LayoutInfo;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
+import javafx.util.Sequences;
 
 import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.PopupMenu;
@@ -48,7 +53,6 @@ public class TabContainer extends HBox {
 
 	var latestClickedTab:RadioButton;
 	var sortableBox:SortableBox;
-	var tabs:RadioButton[];
 	def tabGroup:ToggleTabGroup = new ToggleTabGroup();
 
 	def renameAction = MenuItem {
@@ -65,7 +69,23 @@ public class TabContainer extends HBox {
 	}
 	
 	def deleteAction = MenuItem {
-		text: "Delete"
+		text: "Delete",
+		action: function():Void {
+			def dialog:Dialog = Dialog {
+				title: "Delete page: {latestClickedTab.text}"
+				scene: scene
+				showPostInit: true
+				content: LabelField {
+					value: "Are you sure you want to delete '{latestClickedTab.text}'?'"
+				}
+				okText: "Delete"
+				onOk: function() {
+					(latestClickedTab.value as StatisticPage).delete();
+					(sortableBox.content[0] as StatisticsTab).selected = true;
+					dialog.close();
+				}
+			}
+		}
 	}
 	
 	def contextMenu:PopupMenu = PopupMenu {
@@ -74,7 +94,15 @@ public class TabContainer extends HBox {
 			deleteAction
 		],
 		onShowing: function():Void {
-			deleteAction.disable = false;
+			if ( Sequences.indexOf( AppState.getOverlay( scene ).content, contextMenu ) == -1 )
+			{
+				insert contextMenu into AppState.getOverlay( scene ).content;				
+			}
+			deleteAction.disable = (sizeof sortableBox.content == 1);
+			var list:String[] = for (p:StatisticPage in statisticPages.getChildren()) {p.getTitle()};
+		},
+		onHiding: function():Void {
+			delete contextMenu from AppState.getOverlay( scene ).content;
 		}
 	}
 	
@@ -86,14 +114,16 @@ public class TabContainer extends HBox {
 		sortableBox = SortableBox {
 			content: generateTabs(),
 			spacing: 36,
-			//padding: Insets {left: 10, top: 20},
-			styleClass: "statistics-tabs-sortableBox"
+			styleClass: "statistics-tabs-sortableBox",
+			onMoved: function( node:Node, fromIndex:Integer, toIndex:Integer ):Void {
+				statisticPages.movePage( (node as StatisticsTab).value as StatisticPage, toIndex );
+			}
 		};
 		content = [
 			sortableBox,
 			Button {
 		   	text: "+",
-		   	styleClass: "tab-plus",
+		   	styleClass: "statistics-tabs-addnew",
 		   	action: function() {
 		   	    	var highestPageNumber:Integer = 0;
 		   	   	for ( child in statisticPages.getChildren() )
@@ -119,25 +149,16 @@ public class TabContainer extends HBox {
 			];
 	}
 	
-	function generateTabs():RadioButton[]
+	function generateTabs():StatisticsTab[]
 	{
-		var tabs:RadioButton[];
+		var tabs:StatisticsTab[];
  		if ( statisticPages != null )
 	   {
 			tabs = for ( child in statisticPages.getChildren() )
 			{
-				def rb:RadioButton = RadioButton {
+				StatisticsTab {
 			   	text: child.getTitle(),
-			      toggleGroup: tabGroup,
-			      value: child,
-					blocksMouse: false,
-			      styleClass: "statistics-view-tab",
-			      onMouseClicked: function( e:MouseEvent ) {
-						if( e.button == MouseButton.SECONDARY ) {
-							latestClickedTab = rb;
-							contextMenu.show( rb, e.screenX, e.screenY );
-						}
-					}
+			      value: child
 			   }
 			}
 			if ( sizeof tabs > 0 )
@@ -166,12 +187,9 @@ class StatisticPagesListener extends EventHandler {
 		} else if(event.getEvent() == CollectionEvent.Event.ADDED){
 			FxUtils.runInFxThread( function(): Void {
 			   def sp:StatisticPage = event.getElement() as StatisticPage;
-		   	var tab:RadioButton = RadioButton {
+		   	var tab:StatisticsTab = StatisticsTab {
 				   	text: sp.getTitle(),
-				      toggleGroup: tabGroup,
-				      value: sp,
-						blocksMouse: false,
-						styleClass: "statistics-view-tab"
+				      value: sp
 	   		}
 				insert tab into sortableBox.content;
 				tab.selected = true;
@@ -184,4 +202,16 @@ class ToggleTabGroup extends ToggleGroup {
 	override var selectedToggle on replace oldVal {
 		   onSelect( selectedToggle.value as StatisticPage );
 	}
+}
+
+class StatisticsTab extends RadioButton {
+	override var toggleGroup = tabGroup;
+	override var blocksMouse = false;
+	override var styleClass = "statistics-view-tab";
+	override var onMouseClicked = function( e:MouseEvent ) {
+		if( e.button == MouseButton.SECONDARY ) {
+			latestClickedTab = this;
+			contextMenu.show( this, e.screenX, e.screenY );
+		}
+	};
 }

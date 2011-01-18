@@ -104,7 +104,9 @@ public class TabRenameDialog {
 				}
 			]
 			onOk: ok
-		}
+		};
+		FX.deferAction( function() { textField.requestFocus() } );
+		return dialogRef;
 	}
 	
 	function ok(): Void {
