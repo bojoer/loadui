@@ -78,7 +78,7 @@ public class StatisticPageImpl implements StatisticPage
 		config.setChartGroupArray( chartGroupArray );
 		collectionSupport.moveChild( chartGroup, index );
 		for( int i = 0; i < chartGroupArray.length; i++ )
-			( ( ChartGroupImpl )collectionSupport.getChildAt( i ) ).setConfig( chartGroupArray[i] );
+			( ( ChartGroupImpl )collectionSupport.getChildAt( i ) ).setConfig( config.getChartGroupArray( i ) );
 	}
 
 	@Override
