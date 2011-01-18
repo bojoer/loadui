@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.counter.CounterHolder;
@@ -91,7 +92,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	public SceneItemImpl( ProjectItem project, SceneItemConfig config )
 	{
 		super( config,
-				"controller".equals( System.getProperty( "loadui.instance" ) ) ? new RemoteAggregatedCounterSupport(
+				LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? new RemoteAggregatedCounterSupport(
 						BeanInjector.getBean( CounterSynchronizer.class ) ) : new CounterSupport() );
 		this.project = project;
 		version = getConfig().getVersion().longValue();
@@ -107,10 +108,11 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		for( String exportId : getConfig().getExportedTerminalArray() )
 			exports.add( ( OutputTerminal )addressableRegistry.lookup( exportId ) );
 
-		workspaceListener = "controller".equals( System.getProperty( "loadui.instance" ) ) ? new WorkspaceListener()
+		workspaceListener = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? new WorkspaceListener()
 				: null;
 
-		projectListener = "controller".equals( System.getProperty( "loadui.instance" ) ) ? new ProjectListener() : null;
+		projectListener = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? new ProjectListener()
+				: null;
 
 		// statisticHolderSupport = new StatisticHolderSupport( this );
 
@@ -275,7 +277,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	public void broadcastMessage( String channel, Object data )
 	{
-		if( "controller".equals( System.getProperty( "loadui.instance" ) ) )
+		if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) )
 			getProject().broadcastMessage( this, channel, data );
 		else if( messageEndpoint != null )
 			messageEndpoint.sendMessage( channel, data );
@@ -284,7 +286,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	protected void onComplete( EventFirer source )
 	{
-		if( "agent".equals( System.getProperty( "loadui.instance" ) ) )
+		if( LoadUI.AGENT.equals( System.getProperty( LoadUI.INSTANCE ) ) )
 		{
 			// if on agent, application is running in distributed mode, so send
 			// data
@@ -337,19 +339,20 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 				@Override
 				public void handleEvent( BaseEvent event )
 				{
-					if(event.getKey().equals( ON_COMPLETE_DONE )){
+					if( event.getKey().equals( ON_COMPLETE_DONE ) )
+					{
 						removeEventListener( BaseEvent.class, this );
 						doGenerateSummary();
 					}
 				}
-			});
+			} );
 		}
 	}
 
 	@Override
 	public void cancelComponents()
 	{
-		if( "agent".equals( System.getProperty( "loadui.instance" ) ) )
+		if( LoadUI.AGENT.equals( System.getProperty( LoadUI.INSTANCE ) ) )
 		{
 			// on agent. cancel components of this test case on current agent
 			super.cancelComponents();

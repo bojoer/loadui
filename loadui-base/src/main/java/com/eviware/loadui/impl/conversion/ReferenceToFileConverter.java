@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.converter.Converter;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
@@ -40,7 +41,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 
 	public final static String CHANNEL = "/" + ReferenceToFileConverter.class.getName();
 
-	private final File storage = new File( System.getProperty( "loadui.home" ) + File.separator + "fileStorage" );
+	private final File storage = new File( System.getProperty( LoadUI.LOADUI_HOME ) + File.separator + "fileStorage" );
 	private final FilePropertyListener filePropertyListener = new FilePropertyListener();
 	private final Set<File> filesInUse = new HashSet<File>();
 
@@ -52,7 +53,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 	{
 		addressableRegistry.addEventListener( CollectionEvent.class, this );
 		executorService.scheduleAtFixedRate( new RemoveOldFilesTask(), 5, 5, TimeUnit.MINUTES );
-		
+
 		if( !storage.isDirectory() )
 			storage.mkdirs();
 	}
@@ -92,9 +93,10 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 				source.getEndpoint().addMessageListener( CHANNEL, listener );
 				source.getEndpoint().sendMessage( FileToReferenceConverter.CHANNEL, hash );
 			}
-			else if (!isFileHashValid(hash)){
-				log.error( "File has been changed. Request file again...");
-				files.get(hash).delete();
+			else if( !isFileHashValid( hash ) )
+			{
+				log.error( "File has been changed. Request file again..." );
+				files.get( hash ).delete();
 				source.getEndpoint().addMessageListener( CHANNEL, listener );
 				source.getEndpoint().sendMessage( FileToReferenceConverter.CHANNEL, hash );
 			}
@@ -102,18 +104,21 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 		}
 	}
 
-	private boolean isFileHashValid(String hash){
-		try{
-			FileInputStream fis = new FileInputStream(files.get(hash));
-			String md5Hex = DigestUtils.md5Hex(fis);
+	private boolean isFileHashValid( String hash )
+	{
+		try
+		{
+			FileInputStream fis = new FileInputStream( files.get( hash ) );
+			String md5Hex = DigestUtils.md5Hex( fis );
 			fis.close();
-			return hash.equals(md5Hex);
+			return hash.equals( md5Hex );
 		}
-		catch(Exception e){
+		catch( Exception e )
+		{
 			return false;
 		}
 	}
-	
+
 	@Override
 	public void handleEvent( CollectionEvent event )
 	{

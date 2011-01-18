@@ -26,6 +26,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
@@ -38,7 +39,7 @@ public class H2ExecutionManagerTest
 	@Before
 	public void initialize()
 	{
-		System.setProperty( "loadui.home", "target" );
+		System.setProperty( LoadUI.LOADUI_HOME, "target" );
 
 		h2 = new H2ExecutionManager();
 		h2.clearMetaDatabase();
@@ -152,9 +153,10 @@ public class H2ExecutionManagerTest
 		h2.writeEntry( t.getId(), entry, "local1" );
 
 	}
-	
+
 	@Test
-	public void testRelease(){
+	public void testRelease()
+	{
 		h2.release();
 	}
 }

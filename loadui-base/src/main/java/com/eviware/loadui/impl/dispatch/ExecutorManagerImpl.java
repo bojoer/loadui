@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.dispatch.ExecutorManager;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
@@ -87,7 +88,7 @@ public class ExecutorManagerImpl implements ExecutorManager
 			@Override
 			public void run()
 			{
-				if( "controller".equals( System.getProperty( "loadui.instance" ) ) )
+				if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) )
 				{
 					WorkspaceProvider wp = BeanInjector.getBean( WorkspaceProvider.class );
 					while( !wp.isWorkspaceLoaded() )
@@ -114,8 +115,7 @@ public class ExecutorManagerImpl implements ExecutorManager
 								setMaxQueueSize( ( ( Number )event.getProperty().getValue() ).intValue() );
 						}
 					} );
-					setMaxPoolSize( ( ( Number )workspace.getProperty( WorkspaceItem.MAX_THREADS_PROPERTY ).getValue() )
-							.intValue() );
+					setMaxPoolSize( ( ( Number )workspace.getProperty( WorkspaceItem.MAX_THREADS_PROPERTY ).getValue() ).intValue() );
 					setMaxQueueSize( ( ( Number )workspace.getProperty( WorkspaceItem.MAX_THREAD_QUEUE_PROPERTY ).getValue() )
 							.intValue() );
 				}

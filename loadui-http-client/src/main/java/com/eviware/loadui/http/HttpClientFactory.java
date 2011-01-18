@@ -17,19 +17,21 @@ package com.eviware.loadui.http;
 
 import org.eclipse.jetty.client.HttpClient;
 
+import com.eviware.loadui.LoadUI;
+
 public class HttpClientFactory
 {
 	public static HttpClient createHttpsClient()
 	{
 		HttpClient httpClient = new HttpClient();
 
-		httpClient.setKeyManagerPassword( System.getProperty( "loadui.ssl.keyStorePassword" ) );
+		httpClient.setKeyManagerPassword( System.getProperty( LoadUI.KEY_STORE_PASSWORD ) );
 
-		httpClient.setKeyStoreLocation( System.getProperty( "loadui.ssl.keyStore" ) );
-		httpClient.setKeyStorePassword( System.getProperty( "loadui.ssl.keyStorePassword" ) );
+		httpClient.setKeyStoreLocation( System.getProperty( LoadUI.KEY_STORE ) );
+		httpClient.setKeyStorePassword( System.getProperty( LoadUI.KEY_STORE_PASSWORD ) );
 
-		httpClient.setTrustStoreLocation( System.getProperty( "loadui.ssl.trustStore" ) );
-		httpClient.setTrustStorePassword( System.getProperty( "loadui.ssl.trustStorePassword" ) );
+		httpClient.setTrustStoreLocation( System.getProperty( LoadUI.TRUST_STORE ) );
+		httpClient.setTrustStorePassword( System.getProperty( LoadUI.TRUST_STORE_PASSWORD ) );
 
 		try
 		{

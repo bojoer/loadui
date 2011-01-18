@@ -25,6 +25,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
@@ -40,7 +41,7 @@ public class TrackImplTest
 	@Before
 	public void initialize()
 	{
-		System.setProperty( "loadui.home", "target" );
+		System.setProperty( LoadUI.LOADUI_HOME, "target" );
 
 		h2 = new H2ExecutionManager();
 		h2.clearMetaDatabase();
@@ -57,7 +58,7 @@ public class TrackImplTest
 		h2.registerTrackDescriptor( td );
 		track = h2.getTrack( "testTrack" );
 	}
-	
+
 	@Test
 	public void testWrite()
 	{
@@ -67,13 +68,13 @@ public class TrackImplTest
 		values.put( "c", 3 );
 		values.put( "d", 4 );
 
-		EntryImpl entry = new EntryImpl( ( int )( 10 ), values );
+		EntryImpl entry = new EntryImpl( ( 10 ), values );
 		h2.writeEntry( track.getId(), entry, "local1" );
 
-		entry = new EntryImpl( ( int )( 20 ), values );
+		entry = new EntryImpl( ( 20 ), values );
 		h2.writeEntry( track.getId(), entry, "local2" );
 
-		entry = new EntryImpl( ( int )( 30 ), values );
+		entry = new EntryImpl( ( 30 ), values );
 		h2.writeEntry( track.getId(), entry, "local2" );
 	}
 
@@ -104,7 +105,7 @@ public class TrackImplTest
 
 		e = ( List<Entry> )track.getRange( "local1", 8, 9 );
 		assertNull( e );
-		
+
 		e = ( List<Entry> )track.getRange( "local1", 20, 0 );
 		assertNull( e );
 
@@ -116,19 +117,19 @@ public class TrackImplTest
 
 		e = ( List<Entry> )track.getRange( "local1", 10, 10 );
 		assertEquals( e.size(), 1 );
-		
+
 		e = ( List<Entry> )track.getRange( "local1", 5, 15 );
 		assertEquals( e.size(), 1 );
 
 		e = ( List<Entry> )track.getRange( "local2", 20, 30 );
 		assertEquals( e.size(), 2 );
-		
+
 		e = ( List<Entry> )track.getRange( "local2", 15, 35 );
 		assertEquals( e.size(), 2 );
-		
+
 		e = ( List<Entry> )track.getRange( "local2", 25, 35 );
 		assertEquals( e.size(), 1 );
-		
+
 		e = ( List<Entry> )track.getRange( "local2", 15, 25 );
 		assertEquals( e.size(), 1 );
 	}

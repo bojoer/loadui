@@ -21,6 +21,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 
@@ -34,7 +35,7 @@ public class ExecutionImplTest
 	@Before
 	public void initialize()
 	{
-		System.setProperty( "loadui.home", "target" );
+		System.setProperty( LoadUI.LOADUI_HOME, "target" );
 
 		h2 = new H2ExecutionManager();
 		h2.clearMetaDatabase();

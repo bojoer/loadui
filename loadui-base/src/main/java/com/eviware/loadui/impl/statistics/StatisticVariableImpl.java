@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
@@ -86,7 +87,7 @@ public class StatisticVariableImpl implements MutableStatisticVariable
 		// Add labels of assigned agents.
 		// TODO: Share this information per SceneItem instead of recomputing it
 		// each time.
-		if( "controller".equals( System.getProperty( "loadui.instance" ) )
+		if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) )
 				&& getStatisticHolder() instanceof CanvasObjectItem )
 		{
 			CanvasItem canvas = ( ( CanvasObjectItem )getStatisticHolder() ).getCanvas();
@@ -136,5 +137,5 @@ public class StatisticVariableImpl implements MutableStatisticVariable
 	{
 		return writers;
 	}
-	
+
 }

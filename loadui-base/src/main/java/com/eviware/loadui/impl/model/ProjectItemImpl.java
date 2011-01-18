@@ -51,6 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.ActionEvent;
@@ -577,7 +578,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	{
 		File outputDir;
 		if( reportFolder == null || reportFolder.getValue().length() < 1 )
-			outputDir = new File( System.getProperty( "loadui.home" ) );
+			outputDir = new File( System.getProperty( LoadUI.LOADUI_HOME ) );
 		else
 			outputDir = new File( reportFolder.getValue() );
 

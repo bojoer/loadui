@@ -21,6 +21,8 @@ import org.apache.commons.httpclient.methods.HeadMethod;
 import org.junit.*;
 import org.osgi.framework.Bundle;
 
+import com.eviware.loadui.LoadUI;
+
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 
@@ -39,8 +41,8 @@ public class RunnerTest
 		int port = Utilities.getAvailablePort();
 		int sslPort = Utilities.getAvailablePort();
 		System.out.println( "Starting Runner on ports " + port + " and " + sslPort );
-		System.setProperty( "loadui.http.port", Integer.toString( port ) );
-		System.setProperty( "loadui.https.port", Integer.toString( sslPort ) );
+		System.setProperty( LoadUI.HTTP_PORT, Integer.toString( port ) );
+		System.setProperty( LoadUI.HTTPS_PORT, Integer.toString( sslPort ) );
 		runner = new RunnerWrapper();
 	}
 
@@ -57,8 +59,8 @@ public class RunnerTest
 		Bundle[] bundles = runner.getBundleContext().getBundles();
 		// assertThat( bundles.length, greaterThanOrEqualTo( 51 ) );
 		for( Bundle bundle : bundles )
-			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(), anyOf(
-					is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );
+			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(),
+					anyOf( is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );
 	}
 
 	@Test

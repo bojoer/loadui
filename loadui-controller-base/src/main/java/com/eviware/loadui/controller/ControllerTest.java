@@ -24,6 +24,7 @@ import org.codehaus.groovy.control.CompilationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 
@@ -48,7 +49,7 @@ public class ControllerTest
 			@Override
 			public void run()
 			{
-				File home = new File( System.getProperty( "loadui.home" ) );
+				File home = new File( System.getProperty( LoadUI.LOADUI_HOME ) );
 				Console console = new Console();
 				console.setVariable( "workspaceProvider", workspaceProvider );
 				console.setVariable( "componentRegistry", componentRegistry );

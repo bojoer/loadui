@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.springframework.core.convert.ConversionService;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.ActivityStrategy;
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
@@ -114,14 +115,14 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		executor = BeanInjector.getBean( ExecutorService.class );
 		conversionService = BeanInjector.getBean( ConversionService.class );
 
-		counterSupport = "controller".equals( System.getProperty( "loadui.instance" ) ) ? new RemoteAggregatedCounterSupport(
+		counterSupport = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? new RemoteAggregatedCounterSupport(
 				BeanInjector.getBean( CounterSynchronizer.class ) ) : new CounterSupport();
 
-		workspaceListener = "controller".equals( System.getProperty( "loadui.instance" ) ) && canvas instanceof SceneItem ? new WorkspaceListener()
-				: null;
+		workspaceListener = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) )
+				&& canvas instanceof SceneItem ? new WorkspaceListener() : null;
 
-		projectListener = "controller".equals( System.getProperty( "loadui.instance" ) ) && canvas instanceof SceneItem ? new ProjectListener()
-				: null;
+		projectListener = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) )
+				&& canvas instanceof SceneItem ? new ProjectListener() : null;
 
 		terminalHolderSupport = new TerminalHolderSupport( this );
 		statisticHolderSupport = new StatisticHolderSupport( this );
@@ -136,7 +137,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		canvas.addEventListener( ActionEvent.class, canvasListener );
 
 		statisticHolderSupport.init();
-	//	counterStatisticSupport.init();
+		// counterStatisticSupport.init();
 
 		if( workspaceListener != null )
 		{
@@ -534,7 +535,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 			}
 			else if( terminal == controllerTerminal )
 			{
-				if( "controller".equals( System.getProperty( "loadui.instance" ) ) )
+				if( isController() )
 					doHandleTerminalEvent( remoteTerminal, new TerminalMessageEvent( controllerTerminal, message ) );
 				else
 					send( remoteTerminal, message );
@@ -543,7 +544,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 			{
 				if( terminal == remoteTerminal )
 				{
-					if( "controller".equals( System.getProperty( "loadui.instance" ) ) && propagate )
+					if( isController() && propagate )
 					{
 						doHandleTerminalEvent( remoteTerminal, new TerminalMessageEvent( controllerTerminal, message ) );
 					}
@@ -805,7 +806,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		public Collection<DualTerminal> getAgentTerminals()
 		{
 			List<DualTerminal> terminals = new ArrayList<DualTerminal>();
-			if( "controller".equals( System.getProperty( "loadui.instance" ) ) && getCanvas() instanceof SceneItem )
+			if( isController() && getCanvas() instanceof SceneItem )
 				for( AgentItem agent : getCanvas().getProject().getAgentsAssignedTo( ( SceneItem )getCanvas() ) )
 					terminals.add( getAgentTerminal( agent ) );
 
@@ -815,7 +816,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		@Override
 		public boolean isController()
 		{
-			return "controller".equals( System.getProperty( "loadui.instance" ) );
+			return LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) );
 		}
 
 		@Override
@@ -877,7 +878,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		public void removeStatisticVariable( String statisticVariableName )
 		{
 			statisticHolderSupport.removeStatisticalVariable( statisticVariableName );
-			
+
 		}
 	}
 

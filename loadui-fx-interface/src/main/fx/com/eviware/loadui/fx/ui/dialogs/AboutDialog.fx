@@ -30,6 +30,8 @@ import javafx.util.Properties;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.AppState;
 
+import com.eviware.loadui.LoadUI;
+
 import java.lang.Exception;
 import java.lang.System;
 
@@ -37,8 +39,8 @@ public class AboutDialog {
 	var group:Group;
 	var modalLayer:Node;
 	postinit {
-		def version = System.getProperty("loadui.build.number");
-		def date = System.getProperty("loadui.build.date");
+		def version = System.getProperty(LoadUI.BUILD_NUMBER);
+		def date = System.getProperty(LoadUI.BUILD_DATE);
 	
 		def scene = AppState.instance.scene;
 		def items:Node[] = [

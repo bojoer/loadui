@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.counter.Counter;
@@ -173,7 +174,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		if( canvasItem instanceof SceneItem )
 		{
 			updateTask = scheduler.scheduleAtFixedRate( new UpdateRemoteTask(), 1, 1, TimeUnit.SECONDS );
-			if( "controller".equals( System.getProperty( "loadui.instance" ) ) && canvasItem instanceof SceneItem )
+			if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) && canvasItem instanceof SceneItem )
 				canvasItem.getProject().addEventListener( CollectionEvent.class,
 						assignmentListener = new AssignmentListener() );
 			else
@@ -186,7 +187,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		}
 
 		context.addEventListener( PropertyEvent.class, new PropertyListener() );
-		
+
 		setWriterBuffer( timeTakenVariable, timeTakenStatisticsBuffer.getValue().intValue() );
 		setWriterBuffer( responseSizeVariable, responseSizeStatisticsBuffer.getValue().intValue() );
 	}
@@ -601,8 +602,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			statistics.put( "min", String.valueOf( minTime ) );
 			statistics.put( "max", String.valueOf( maxTime ) );
 			statistics.put( "avg", String.valueOf( avgTime ) );
-			statistics.put( "std-dev", String
-					.valueOf( Math.round( Math.sqrt( sumTotalSquare / sampleCount ) * 100d ) / 100d ) );
+			statistics.put( "std-dev",
+					String.valueOf( Math.round( Math.sqrt( sumTotalSquare / sampleCount ) * 100d ) / 100d ) );
 			if( avgTime > 0 )
 			{
 				statistics.put( "min/avg", String.valueOf( Math.round( ( minTime / avgTime ) * 100d ) / 100d ) );
