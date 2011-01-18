@@ -16,8 +16,12 @@
 package com.eviware.loadui.fx.statistics.chart.line;
 
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.LayoutInfo;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
+import javafx.geometry.HPos;
 
 import com.javafx.preview.layout.Grid;
 import com.javafx.preview.layout.GridRow;
@@ -50,27 +54,48 @@ public class StylePanel extends Grid {
 				Region { managed: false, width: bind width, height: bind height, styleClass: "style-panel" },
 				Label { styleClass: "header-row", text: "Color" },
 				Label { styleClass: "header-row", text: "Statistic", layoutInfo: GridLayoutInfo { hspan: 3 } },
-				Label { styleClass: "header-row", text: "Width" },
+				Label { styleClass: "header-row", text: "Width", layoutInfo: GridLayoutInfo { hspan: 2 } },
 				Label { styleClass: "header-row", text: "Stroke" }
-			] }, for( segment in (chartGroup.getChartView() as LineChartView).getSegments() ) GridRow { cells: [
-				ColorPicker {
-					color: LineChart.getLineSegmentModel( segment ).getLineColor();
-					onReplace: function( color ):Void {
-						LineChart.getLineSegmentModel( segment ).setLineColor( color );
-					}
-				}, Label {
-					text: segment.getStatistic().getName()
-					layoutInfo: LayoutInfo { width: 60 }
-				}, Label {
-					text: if( segment.getStatistic().getSource() == StatisticVariable.MAIN_SOURCE ) "All" else segment.getStatistic().getSource()
-					layoutInfo: LayoutInfo { width: 60 }
-				}, Label {
-					text: segment.getStatistic().getStatisticVariable().getStatisticHolder().getLabel()
-					layoutInfo: LayoutInfo { width: 60 }
+			] }, for( segment in (chartGroup.getChartView() as LineChartView).getSegments() ) {
+				def model = LineChart.getLineSegmentModel( segment );
+				var slider:Slider;
+				var width:Number = bind slider.value on replace {
+					model.setLineWidth( width );
+					slider.value = width as Integer;
 				}
-				Label { text: "Width" },
-				Label { text: "Stroke" }
-			] }
+				var lineColor:Color = model.getLineColor();
+				GridRow { cells: [
+					ColorPicker {
+						color: model.getLineColor();
+						onReplace: function( color ):Void {
+							model.setLineColor( color );
+							lineColor = color;
+						}
+					}, Label {
+						text: segment.getStatistic().getName()
+						layoutInfo: LayoutInfo { width: 60 }
+					}, Label {
+						text: if( segment.getStatistic().getSource() == StatisticVariable.MAIN_SOURCE ) "All" else segment.getStatistic().getSource()
+						layoutInfo: LayoutInfo { width: 60 }
+					}, Label {
+						text: segment.getStatistic().getStatisticVariable().getStatisticHolder().getLabel()
+						layoutInfo: LayoutInfo { width: 60 }
+					},
+					Label {
+						text: bind "{width as Integer}px"
+						graphic: Rectangle { height: bind width as Integer, width: 15, fill: bind lineColor }
+						graphicHPos: HPos.RIGHT
+					}, slider = Slider {
+						min: 1
+						max: 9
+						value: model.getLineWidth()
+						minorTickCount: 0
+						majorTickUnit: 1
+						clickToPosition: true
+					},
+					Label { text: "Stroke" }
+				] }
+			}
 		];
 	}
 }

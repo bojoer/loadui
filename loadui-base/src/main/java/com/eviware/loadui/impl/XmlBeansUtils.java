@@ -52,8 +52,10 @@ public class XmlBeansUtils
 		List<T> list = new ArrayList<T>( array.length );
 		for( int i = 0; i < array.length; i++ )
 			if( i != from )
-				list.add( ( T )array[i].copy() );
-		list.add( to, ( T )array[from].copy() );
+				list.add( array[i]/* .copy() */);
+		list.add( to, array[from]/* .copy() */);
+		// Copy doesn't seem to be needed here, as set<...>Array() makes copies of
+		// all elements anyway.
 
 		return list.toArray( ( T[] )Array.newInstance( array[0].getClass(), array.length ) );
 	}
