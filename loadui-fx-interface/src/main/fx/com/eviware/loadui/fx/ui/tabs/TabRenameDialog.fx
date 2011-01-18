@@ -24,7 +24,7 @@ import javafx.scene.layout.Panel;
 import javafx.scene.layout.LayoutInfo;
 import javafx.geometry.VPos;
 import javafx.geometry.HPos;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.RadioButton;
 import javafx.scene.paint.Color;
 
 import com.eviware.loadui.fx.ui.tabs.*;
@@ -52,13 +52,11 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.agents.dis
 
 public class TabRenameDialog {
 	
-	public var tabToRename: ToggleButton;
+	public var tabToRename: RadioButton;
 	
-	public var onOk: function(renamedTab: ToggleButton): Void;
+	public var onOk: function(renamedTab: RadioButton, newName:String): Void;
 	
-	public var tabButtons: ToggleButton[];
-	
-	public var uniqueNames: Boolean = false;
+	public var tabButtons: RadioButton[];
 	
 	var textField: TextField;
 	
@@ -113,7 +111,7 @@ public class TabRenameDialog {
 		if(validateLength( textField.value as String )){
 		    if(validateUniqueness( textField.value as String )){
 			    tabToRename.text = textField.value as String; 
-			    onOk(tabToRename);
+			    onOk(tabToRename, textField.value as String);
 			    dialogRef.close();
 		    }
 		    else{
@@ -130,7 +128,7 @@ public class TabRenameDialog {
 	}
 	
 	function validateUniqueness(name: String): Boolean {
-	    if(uniqueNames and tabButtons != null){
+	    if(tabButtons != null){
 	        for(t in tabButtons){
 	            if(t != tabToRename and t.text.equals(name)){
 	                return false;

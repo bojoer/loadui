@@ -46,30 +46,39 @@ public class TabContainer extends HBox {
 	public var onSelect:function(sp:StatisticPage):Void;
 	public var statisticPages:StatisticPages on replace { sortableBox.content = generateTabs(); };
 
+	var latestClickedTab:RadioButton;
 	var sortableBox:SortableBox;
 	var tabs:RadioButton[];
 	def tabGroup:ToggleTabGroup = new ToggleTabGroup();
-	
-	var contextMouseEvent:MouseEvent;
+
+	def renameAction = MenuItem {
+		text: "Rename",
+		action: function():Void {
+			TabRenameDialog {
+			    tabToRename: latestClickedTab as RadioButton,
+			    tabButtons: for( t:Toggle in tabGroup.toggles ) t as RadioButton,
+			    onOk: function(renamedTab:RadioButton, newName:String):Void {
+			    	(renamedTab.value as StatisticPage).setTitle( newName );
+			    }
+			}.show();
+		}
+	}
 	
 	def deleteAction = MenuItem {
 		text: "Delete"
-		action: function():Void {
-			;
-		}
 	}
 	
 	def contextMenu:PopupMenu = PopupMenu {
 		items: [
+			renameAction,
 			deleteAction
-		]
+		],
 		onShowing: function():Void {
-			println("popupMenu@tab");
 			deleteAction.disable = false;
 		}
 	}
 	
-	override var padding = Insets {top: 10, bottom: 4, right: 25, left: 25};
+	override var padding = Insets {right: 25, left: 25};
 	override var nodeVPos = VPos.CENTER;
 	override var spacing = 6;
 	
@@ -77,7 +86,7 @@ public class TabContainer extends HBox {
 		sortableBox = SortableBox {
 			content: generateTabs(),
 			spacing: 36,
-			padding: Insets {left: 10, top: 20},
+			//padding: Insets {left: 10, top: 20},
 			styleClass: "statistics-tabs-sortableBox"
 		};
 		content = [
@@ -117,17 +126,16 @@ public class TabContainer extends HBox {
 	   {
 			tabs = for ( child in statisticPages.getChildren() )
 			{
-				RadioButton {
+				def rb:RadioButton = RadioButton {
 			   	text: child.getTitle(),
 			      toggleGroup: tabGroup,
 			      value: child,
 					blocksMouse: false,
 			      styleClass: "statistics-view-tab",
 			      onMouseClicked: function( e:MouseEvent ) {
-			      	println("onMouseClicked@tab");
 						if( e.button == MouseButton.SECONDARY ) {
-							contextMouseEvent = e;
-							contextMenu.show( this, e.screenX, e.screenY );
+							latestClickedTab = rb;
+							contextMenu.show( rb, e.screenX, e.screenY );
 						}
 					}
 			   }
@@ -173,7 +181,6 @@ class StatisticPagesListener extends EventHandler {
 }
 
 class ToggleTabGroup extends ToggleGroup {
-	
 	override var selectedToggle on replace oldVal {
 		   onSelect( selectedToggle.value as StatisticPage );
 	}
