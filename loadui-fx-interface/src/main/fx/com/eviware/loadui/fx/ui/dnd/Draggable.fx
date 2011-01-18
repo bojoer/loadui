@@ -46,10 +46,7 @@ import java.awt.MouseInfo;
 /**
  * The Draggable which is currentDraggablely being dragged, if any.
  */
-public-read var currentDraggable: Draggable = null on replace
-{
-	println("currentDraggable: {currentDraggable}");
-};
+public-read var currentDraggable: Draggable = null;
 
 /**
  * Mixin class for making BaseNodes draggable.
