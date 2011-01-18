@@ -25,7 +25,8 @@ public class FileToReferenceConverter implements Converter<File, Reference>
 	public final static String START = "start";
 	public final static String STOP = "stop";
 
-	// private final File storage = new File( System.getProperty( "loadui.home" )
+	// private final File storage = new File( System.getProperty(
+	// LoadUI.LOADUI_HOME )
 	// + File.separator + "fileStorage" );
 	private final ExecutorService executionService;
 	private final Map<String, FileStruct> cache = new HashMap<String, FileStruct>();

@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.BehaviorProvider;
 import com.eviware.loadui.api.component.BehaviorProvider.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
@@ -686,7 +687,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 					}
 				}
 			}
-			else if( "controller".equals( System.getProperty( "loadui.instance" ) ) && event instanceof CounterEvent
+			else if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) && event instanceof CounterEvent
 					&& isRunning() )
 			{
 				CounterEvent cEvent = ( CounterEvent )event;

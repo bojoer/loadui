@@ -22,10 +22,13 @@ import javax.sql.DataSource;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 
+import com.eviware.loadui.LoadUI;
+
 public class H2ExecutionManager extends ExecutionManagerImpl
 {
-	public static final String DB_BASEDIR = new File( System.getProperty( "loadui.home" ), "controller".equals( System
-			.getProperty( "loadui.instance" ) ) ? "data_c" : "data_a" ).toURI().toString().replaceAll( "%20", " " )
+	public static final String DB_BASEDIR = new File( System.getProperty( LoadUI.LOADUI_HOME ),
+			LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? "data_c" : "data_a" ).toURI().toString()
+			.replaceAll( "%20", " " )
 			+ File.separator;
 
 	public static final String SQL_CREATE_TABLE_EXPRESSION = "CREATE TABLE";

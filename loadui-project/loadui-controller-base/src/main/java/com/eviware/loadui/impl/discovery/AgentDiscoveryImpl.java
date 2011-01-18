@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.discovery.AgentDiscovery;
 
 public class AgentDiscoveryImpl implements AgentDiscovery
@@ -83,9 +84,9 @@ public class AgentDiscoveryImpl implements AgentDiscovery
 							String received = new String( packet.getData(), 0, packet.getLength() ).replaceAll( "127.0.0.1",
 									packet.getAddress().getHostAddress() );
 							String[] parts = received.split( " " );
-							if( parts.length == 4 && parts[0].equals( "AGENT" ) )
+							if( parts.length == 4 && parts[0].equals( LoadUI.AGENT ) )
 								if( agents.add( new AgentRefImpl( parts[1], parts[2], parts[3] ) ) )
-									log.debug("Discovered Agent: " + parts[2]);
+									log.debug( "Discovered Agent: " + parts[2] );
 						}
 					}
 					catch( Exception e )

@@ -23,6 +23,7 @@ import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.WorkspaceItem;
@@ -72,7 +73,7 @@ public class WorkspaceProviderImpl implements WorkspaceProvider
 	@Override
 	public WorkspaceItem loadDefaultWorkspace()
 	{
-		return loadWorkspace( new File( System.getProperty( "loadui.home" ), "workspace.xml" ) );
+		return loadWorkspace( new File( System.getProperty( LoadUI.LOADUI_HOME ), "workspace.xml" ) );
 	}
 
 	@Override

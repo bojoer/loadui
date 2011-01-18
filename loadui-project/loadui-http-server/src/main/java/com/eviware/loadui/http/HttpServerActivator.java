@@ -26,6 +26,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.messaging.ServerEndpoint;
 import com.eviware.loadui.impl.messaging.BayeuxServiceServerEndpoint;
 
@@ -40,7 +41,7 @@ public class HttpServerActivator implements BundleActivator
 		server = new Server();
 
 		SelectChannelConnector connector = new SelectChannelConnector();
-		connector.setPort( Integer.parseInt( System.getProperty( "loadui.http.port", "8080" ) ) );
+		connector.setPort( Integer.parseInt( System.getProperty( LoadUI.HTTP_PORT, "8080" ) ) );
 		server.addConnector( connector );
 
 		ServletContextHandler context = new ServletContextHandler( server, "/" );
@@ -49,11 +50,11 @@ public class HttpServerActivator implements BundleActivator
 		sslServer = new Server();
 
 		SslSelectChannelConnector sslConnector = new SslSelectChannelConnector();
-		sslConnector.setKeystore( System.getProperty( "loadui.ssl.keyStore" ) );
-		sslConnector.setKeyPassword( System.getProperty( "loadui.ssl.keyStorePassword" ) );
-		sslConnector.setTruststore( System.getProperty( "loadui.ssl.trustStore" ) );
-		sslConnector.setTrustPassword( System.getProperty( "loadui.ssl.trustStorePassword" ) );
-		sslConnector.setPort( Integer.parseInt( System.getProperty( "loadui.https.port", "8443" ) ) );
+		sslConnector.setKeystore( System.getProperty( LoadUI.KEY_STORE ) );
+		sslConnector.setKeyPassword( System.getProperty( LoadUI.KEY_STORE_PASSWORD ) );
+		sslConnector.setTruststore( System.getProperty( LoadUI.TRUST_STORE ) );
+		sslConnector.setTrustPassword( System.getProperty( LoadUI.TRUST_STORE_PASSWORD ) );
+		sslConnector.setPort( Integer.parseInt( System.getProperty( LoadUI.HTTPS_PORT, "8443" ) ) );
 
 		sslConnector.setNeedClientAuth( true );
 		sslServer.addConnector( sslConnector );

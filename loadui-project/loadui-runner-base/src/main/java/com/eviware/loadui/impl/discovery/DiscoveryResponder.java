@@ -21,6 +21,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.UUID;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.discovery.AgentDiscovery;
 
 public class DiscoveryResponder
@@ -63,7 +64,7 @@ public class DiscoveryResponder
 						String received = new String( packet.getData(), 0, packet.getLength() );
 						if( "DISCOVER".equals( received ) )
 						{
-							buf = ( "AGENT https://" + ip + ":" + System.getProperty( "loadui.https.port", "8443" ) + "/ "
+							buf = ( "AGENT https://" + ip + ":" + System.getProperty( LoadUI.HTTPS_PORT, "8443" ) + "/ "
 									+ label + " " + id ).getBytes();
 							packet = new DatagramPacket( buf, buf.length, packet.getAddress(), packet.getPort() );
 							socket.send( packet );
