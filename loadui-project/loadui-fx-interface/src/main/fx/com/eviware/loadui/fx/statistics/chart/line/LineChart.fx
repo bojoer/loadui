@@ -92,7 +92,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	public-read def chart = new Chart();
 	def chartNode = SwingComponent.wrap( chart );
 	var timeCalculator:LoadUIChartTimeTickerCalculator;
-	var compactSegments = false;
+	var compactSegments = true;
 	
 	def scrollBar = ScrollBar {
 		vertical: false

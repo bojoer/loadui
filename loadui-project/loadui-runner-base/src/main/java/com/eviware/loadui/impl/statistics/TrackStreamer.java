@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.statistics.Statistic;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
@@ -88,7 +89,7 @@ public class TrackStreamer
 				manager.pauseExecution();
 			else if( message.startsWith( "stop" ) )
 				manager.stopExecution();
-			else if ( message.startsWith( "unpause" )) 
+			else if( message.startsWith( "unpause" ) )
 				manager.startExecution( data.toString(), System.currentTimeMillis() );
 		}
 	}
@@ -104,7 +105,7 @@ public class TrackStreamer
 			Set<Entry> currentEntries = new HashSet<Entry>();
 			for( String trackId : manager.getTrackIds() )
 			{
-				Entry entry = manager.getLastEntry( trackId, "local" );
+				Entry entry = manager.getLastEntry( trackId, StatisticVariable.MAIN_SOURCE );
 				if( entry != null )
 				{
 					currentEntries.add( entry );

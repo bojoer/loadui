@@ -121,7 +121,16 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 	@Override
 	public ChartViewType getChartViewForSource( String source )
 	{
-		return sourceChartViews.get( source );
+		synchronized( sourceChartViews )
+		{
+			ChartViewType chartView = sourceChartViews.get( source );
+			if( chartView == null && chartGroup.getSources().contains( source ) )
+			{
+				chartView = buildChartViewForSource( source );
+				sourceChartViews.put( source, chartView );
+			}
+			return chartView;
+		}
 	}
 
 	@Override

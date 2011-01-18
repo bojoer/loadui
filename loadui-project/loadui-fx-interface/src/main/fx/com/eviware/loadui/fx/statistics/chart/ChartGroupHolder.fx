@@ -105,8 +105,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 				toggleGroupExpand();
 		} else if ( selected == "Show agents" ) {
 			toggleAgentExpand();
-		} else if ( selected == "Delete" ) {
-			chartGroup.delete();
 		}
 	};
 	
@@ -159,10 +157,10 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		//	Button { text: "Raw Data", action: toggleAgentExpand }, //TODO
 		//	Button { text: "Error", action: toggleAgentExpand }, //TODO
 		//	Button { text: "Notes", action: toggleAgentExpand }, //TODO
-			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
+		//	Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
 		//	Button { text: "Settings", action: toggleAgentExpand }, //TODO
 		//	Button { text: "Help", action: toggleAgentExpand }, //TODO
-			ToggleButton { text: "Delete", toggleGroup:controlButtons }
+			Button { text: "Delete", action: function():Void { chartGroup.delete(); } }
 		]
 	}
 	
@@ -279,13 +277,16 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	}
 	
 	function rebuildChartButtons() {
-		chartButtons.content = for( panelFactory in ChartRegistry.getPanels( chartGroup ) ) {
-			ToggleButton {
-				text: panelFactory.title
-				value: panelFactory
-				toggleGroup: panelToggleGroup
+		chartButtons.content = [
+			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
+			for( panelFactory in ChartRegistry.getPanels( chartGroup ) ) {
+				ToggleButton {
+					text: panelFactory.title
+					value: panelFactory
+					toggleGroup: panelToggleGroup
+				}
 			}
-		}
+		]
 	}
 }
 
