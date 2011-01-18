@@ -282,6 +282,52 @@
 	-fx-padding: 0 2 0 2;
 }
 
+.color-picker {
+	-fx-background-color: -fx-outer-border, -fx-body-color;
+	-fx-outer-border: #2e2e2e;
+	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #c2c3c6) (70%, #a0a0a0) (100%, #707070);
+	-fx-background-radius: 2;
+    -fx-background-insets: -1, 0;
+	-fx-padding: 1 0 0 3;
+}
+
+.color-picker:hover {
+	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #e2e3e6) (70%, #c0c0c0) (100%, #909090);
+}
+
+.color-picker *.arrow-button {
+    -fx-padding: 0 5 0 0;
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+}
+
+.color-picker *.arrow {
+    -fx-background-color: #323232;
+    -fx-background-insets: 0;
+    -fx-padding: 3.5 2 3.5 2;
+    -fx-shape: "M 0 -3.5 v 7 l 4 -3.5 z";
+}
+
+.color-picker:openvertically *.arrow {
+    -fx-padding: 2 3.5 2 3.5;
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+}
+
+.color-picker .popup-menu {
+	-fx-border-image-source: null;
+    -fx-padding: 4 15;
+    -fx-background-color: #2e2e2e, #1a1a1a;
+	-fx-background-insets: 0, 1;
+	-fx-background-radius: 4;
+	-fx-border-image: null;
+}
+
+.color-picker .menu-item, .color-picker .menu-item:focused {
+    -fx-background-color: null;
+	-fx-text-fill: #b6b6b6;
+}
+
 .draggable-placeholder {
 	-fx-background-color: rgba(0, 0, 0, 0.4);
  	-fx-background-radius: 4;

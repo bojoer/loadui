@@ -25,6 +25,8 @@ import com.javafx.preview.layout.GridLayoutInfo;
 
 import com.sun.javafx.scene.layout.Region;
 
+import com.eviware.loadui.fx.control.ColorPicker;
+
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
@@ -37,6 +39,7 @@ import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 public class StylePanel extends Grid {
 	public-init var chartGroup:ChartGroup;
 	
+	override var styleClass = "style-panel";
 	override var padding = Insets { top: 10, right: 10, bottom: 10, left: 10 };
 	override var hgap = 10;
 	override var vgap = 10;
@@ -50,8 +53,12 @@ public class StylePanel extends Grid {
 				Label { styleClass: "header-row", text: "Width" },
 				Label { styleClass: "header-row", text: "Stroke" }
 			] }, for( segment in (chartGroup.getChartView() as LineChartView).getSegments() ) GridRow { cells: [
-				Label { text: "Color" },
-				Label {
+				ColorPicker {
+					color: LineChart.getLineSegmentModel( segment ).getLineColor();
+					onReplace: function( color ):Void {
+						LineChart.getLineSegmentModel( segment ).setLineColor( color );
+					}
+				}, Label {
 					text: segment.getStatistic().getName()
 					layoutInfo: LayoutInfo { width: 60 }
 				}, Label {
