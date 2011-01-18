@@ -314,7 +314,7 @@
     -fx-shape: "M 0 0 h 7 l -3.5 4 z";
 }
 
-.color-picker .popup-menu {
+.color-picker-menu {
 	-fx-border-image-source: null;
     -fx-padding: 15;
     -fx-background-color: #2e2e2e, #1a1a1a;
@@ -323,7 +323,7 @@
 	-fx-border-image: null;
 }
 
-.color-picker .menu-item, .color-picker .menu-item:focused {
+.color-picker-menu-item {
     -fx-background-color: null;
 	-fx-text-fill: #b6b6b6;
 }
