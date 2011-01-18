@@ -83,6 +83,7 @@ public class ColorPicker extends MenuButton {
 	
 	init {
 		items = CustomMenuItem {
+			styleClass: "color-picker-menu-item"
 			hideOnClick: false
 			node: VBox {
 				snapToPixel: true
@@ -104,6 +105,8 @@ public class ColorPicker extends MenuButton {
 					}
 				]
 			} 
-		}
+		};
+		
+		(items[0] as CustomMenuItem).parentPopup.styleClass = "color-picker-menu";
 	}
 }
