@@ -91,6 +91,7 @@ def chartSet = new HashSet();
 //Attributes
 def LINE_COLOR = "lineColor";
 def LINE_STROKE = "lineStroke";
+def LINE_WIDTH = "lineWidth";
 
 /**
  * Base LineChart Node, visualizes a LineChartView.
@@ -444,6 +445,18 @@ public class LineSegmentModel extends DefaultChartModel {
 	
 	public function getLineColor():Color {
 		Color.web( lineColor );
+	}
+	
+	public function setLineWidth( width:Integer ):Void {
+		segment.setAttribute( LINE_WIDTH, "{width}" );
+	}
+	
+	public function getLineWidth():Integer {
+		try {
+			return Integer.parseInt( segment.getAttribute( LINE_WIDTH, "1" ) );
+		} catch(e) {
+			return 1;
+		}
 	}
 	
 	public function setLineStroke( strokeName:String ):Void {
