@@ -316,7 +316,7 @@
 
 .color-picker .popup-menu {
 	-fx-border-image-source: null;
-    -fx-padding: 4 15;
+    -fx-padding: 15;
     -fx-background-color: #2e2e2e, #1a1a1a;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 4;

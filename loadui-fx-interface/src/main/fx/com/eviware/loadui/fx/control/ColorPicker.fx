@@ -16,6 +16,8 @@
 package com.eviware.loadui.fx.control;
 
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.LayoutInfo;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.control.Label;
@@ -26,6 +28,25 @@ import com.javafx.preview.control.MenuButton;
 import com.javafx.preview.control.CustomMenuItem;
 
 import com.eviware.loadui.fx.FxUtils;
+
+def COLORS = [
+	Color.RED,
+	Color.BLUE,
+	Color.GREEN,
+	Color.YELLOW,
+	Color.RED,
+	Color.BLUE,
+	Color.GREEN,
+	Color.YELLOW,
+	Color.RED,
+	Color.BLUE,
+	Color.GREEN,
+	Color.YELLOW,
+	Color.RED,
+	Color.BLUE,
+	Color.GREEN,
+	Color.YELLOW
+];
 
 /**
  * A control for picking a color.
@@ -49,7 +70,8 @@ public class ColorPicker extends MenuButton {
 	def textbox = TextBox {
 		columns: 6
 		selectOnFocus: true
-		text: FxUtils.colorToWebString( color ).substring( 1 );
+		text: FxUtils.colorToWebString( color ).substring( 1 )
+		layoutInfo: LayoutInfo { width: 50, hfill: false }
 	}
 	
 	def textboxText = bind textbox.text on replace {
@@ -62,15 +84,26 @@ public class ColorPicker extends MenuButton {
 	init {
 		items = CustomMenuItem {
 			hideOnClick: false
-			node: HBox {
-				spacing: 5
-				nodeVPos: VPos.CENTER
+			node: VBox {
+				snapToPixel: true
+				spacing: 10
 				content: [
-					Rectangle { width: 18, height: 18, fill: bind color },
-					Label { text: "Hex #"},
-					textbox
+					HBox {
+						spacing: 5
+						nodeVPos: VPos.CENTER
+						content: [
+							Rectangle { width: 18, height: 18, fill: bind color },
+							Label { text: "Pick a color    Hex #"},
+							textbox
+						]
+					}, HBox {
+						spacing: 1
+						content: for( c in COLORS ) Rectangle { width: 15, height: 15, fill: c, onMouseClicked: function( event ):Void {
+							color = c;
+						} }
+					}
 				]
-			}
+			} 
 		}
 	}
 }
