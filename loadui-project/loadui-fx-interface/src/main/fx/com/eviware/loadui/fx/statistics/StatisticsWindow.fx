@@ -31,7 +31,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.Parent;
 import com.sun.javafx.scene.layout.Region;
 
-import com.eviware.loadui.fx.ui.tabs.TabPanel;
 import com.eviware.loadui.fx.statistics.menu.StatisticsMenu;
 
 import com.eviware.loadui.api.model.ProjectItem;

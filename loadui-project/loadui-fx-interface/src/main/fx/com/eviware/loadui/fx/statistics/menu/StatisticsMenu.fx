@@ -168,6 +168,7 @@ public class StatisticsMenu extends VBox {
 			},
 			tabContainer = TabContainer {
 			    spacing: 36,
+			    layoutInfo: LayoutInfo { height: 43, margin: Insets{top: 8} },
 			    statisticPages: project.getStatisticPages(),
 			    onSelect: function(sp:StatisticPage):Void {
 			        onPageSelect( ChartPage { statisticPage: sp } );
