@@ -59,6 +59,7 @@ import com.eviware.loadui.util.StringUtils;
 import java.awt.BasicStroke;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.lang.Runnable;
 
@@ -73,6 +74,19 @@ import com.jidesoft.chart.style.ChartStyle;
 
 import com.eviware.loadui.fx.statistics.chart.LoadUIChartTimeTickerCalculator;
 
+public function getLineSegmentModel( lineSegment:LineSegment ):LineSegmentModel {
+	for( chart in chartSet ) {
+		for( model in (chart as LineChart).lines.values() ) {
+			def segmentModel = model as LineSegmentModel;
+			if( segmentModel.segment == lineSegment )
+				return segmentModel
+		}
+	}
+	
+	return null;
+}
+
+def chartSet = new HashSet();
 
 //Attributes
 def LINE_COLOR = "lineColor";
@@ -222,6 +236,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	init {
+		chartSet.add( this );
 		LineChartStyles.styleChart( chart );
 		
 		def xAxis = new TimeAxis();
@@ -271,6 +286,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	override function release():Void {
 		chartView = null;
+		chartSet.remove( this );
 	}
 	
 	override function create():Node {
@@ -374,13 +390,13 @@ class SegmentButton extends Button {
 	override var layoutInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS };
 	
 	override var action = function():Void {
-		 //TODO: Show configuration panel instead of removing the segment.   
+		 //TODO: Show configuration panel instead of removing the segment.
 		if( chartView instanceof ConfigurableLineChartView )
 			(chartView as ConfigurableLineChartView).removeSegment( model.segment );
 	}
 }
 
-class LineSegmentModel extends DefaultChartModel {
+public class LineSegmentModel extends DefaultChartModel {
 	var timestamp = -1;
 	var statistic:Statistic;
 	
@@ -424,6 +440,10 @@ class LineSegmentModel extends DefaultChartModel {
 		lineColor = FxUtils.colorToWebString( color );
 		segment.setAttribute( LINE_COLOR, lineColor );
 		style.setLineColor( FxUtils.getAwtColor( color ) );
+	}
+	
+	public function getLineColor():Color {
+		Color.web( lineColor );
 	}
 	
 	public function setLineStroke( strokeName:String ):Void {
