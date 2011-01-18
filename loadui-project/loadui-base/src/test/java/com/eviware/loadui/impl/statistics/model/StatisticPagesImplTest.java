@@ -23,7 +23,7 @@ import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.config.LoaduiProjectDocumentConfig;
 import com.eviware.loadui.config.StatisticsConfig;
 
-public class StatisticPagesImplText
+public class StatisticPagesImplTest
 {
 	StatisticPagesImpl statisticPages;
 
@@ -57,5 +57,35 @@ public class StatisticPagesImplText
 		assertThat( first.getTitle(), is( "first" ) );
 		assertThat( second.getTitle(), is( "second" ) );
 		assertThat( third.getTitle(), is( "third" ) );
+	}
+
+	@Test
+	public void shouldHandleMovingAfterRename()
+	{
+		StatisticPage first = statisticPages.createPage( "first" );
+		StatisticPage second = statisticPages.createPage( "second" );
+		StatisticPage third = statisticPages.createPage( "third" );
+		StatisticPage fourth = statisticPages.createPage( "fourth" );
+
+		assertThat( statisticPages.getChildCount(), is( 4 ) );
+		assertThat( statisticPages.getChildAt( 0 ), is( first ) );
+		assertThat( statisticPages.getChildAt( 1 ), is( second ) );
+		assertThat( statisticPages.getChildAt( 2 ), is( third ) );
+		assertThat( statisticPages.getChildAt( 3 ), is( fourth ) );
+
+		statisticPages.movePage( first, 1 );
+
+		assertThat( statisticPages.getChildAt( 0 ), is( second ) );
+		assertThat( statisticPages.getChildAt( 1 ), is( first ) );
+		assertThat( statisticPages.getChildAt( 2 ), is( third ) );
+		assertThat( statisticPages.getChildAt( 3 ), is( fourth ) );
+
+		third.setTitle( "newThree" );
+
+		assertThat( third.getTitle(), is( "newThree" ) );
+
+		statisticPages.movePage( first, 3 );
+
+		assertThat( third.getTitle(), is( "newThree" ) );
 	}
 }

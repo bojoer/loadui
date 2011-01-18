@@ -92,7 +92,7 @@ public class StatisticPagesImpl implements StatisticPages
 		config.setPageArray( pageArray );
 		collectionSupport.moveChild( page, index );
 		for( int i = 0; i < pageArray.length; i++ )
-			( ( StatisticPageImpl )collectionSupport.getChildAt( i ) ).setConfig( pageArray[i] );
+			( ( StatisticPageImpl )collectionSupport.getChildAt( i ) ).setConfig( config.getPageArray( i ) );
 	}
 
 	@Override

@@ -196,7 +196,7 @@ public class ChartGroupImpl implements ChartGroup
 		config.setChartArray( chartArray );
 		collectionSupport.moveChild( chart, index );
 		for( int i = 0; i < chartArray.length; i++ )
-			( ( ChartImpl )collectionSupport.getChildAt( i ) ).setConfig( chartArray[i] );
+			( ( ChartImpl )collectionSupport.getChildAt( i ) ).setConfig( config.getChartArray( i ) );
 	}
 
 	@Override
