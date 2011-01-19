@@ -4,15 +4,14 @@
 *Created on jan 12, 2011, 10:21:15 fm
 */
 
-package com.eviware.loadui.fx.statistics.menu;
+package com.eviware.loadui.fx.statistics.topmenu;
 
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.FxUtils;
-import com.eviware.loadui.fx.ui.dialogs.Dialog;
+import com.eviware.loadui.fx.ui.dialogs.*;
 import com.eviware.loadui.fx.ui.dnd.SortableBox;
 import com.eviware.loadui.fx.ui.form.fields.LabelField;
 import com.eviware.loadui.fx.ui.node.BaseNode;
-import com.eviware.loadui.fx.ui.tabs.TabRenameDialog;
 
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
