@@ -58,8 +58,15 @@ public class StylePanel extends Grid {
 				Label { styleClass: "header-row", text: "Stroke" }
 			] }, for( segment in (chartGroup.getChartView() as LineChartView).getSegments() ) {
 				def model = LineChart.getLineSegmentModel( segment );
-				var slider:Slider;
-				var width:Number = bind slider.value on replace {
+				def slider = Slider {
+					min: 1
+					max: 9
+					value: model.getLineWidth()
+					minorTickCount: 0
+					majorTickUnit: 1
+					clickToPosition: true
+				}
+				def width:Number = bind slider.value on replace {
 					model.setLineWidth( width );
 					slider.value = width as Integer;
 				}
@@ -85,14 +92,8 @@ public class StylePanel extends Grid {
 						text: bind "{width as Integer}px"
 						graphic: Rectangle { height: bind width as Integer, width: 15, fill: bind lineColor }
 						graphicHPos: HPos.RIGHT
-					}, slider = Slider {
-						min: 1
-						max: 9
-						value: model.getLineWidth()
-						minorTickCount: 0
-						majorTickUnit: 1
-						clickToPosition: true
 					},
+					slider,
 					Label { text: "Stroke" }
 				] }
 			}

@@ -402,6 +402,8 @@ public class LineSegmentModel extends DefaultChartModel {
 	var statistic:Statistic;
 	
 	public-read var lineColor:String;
+	public-read var lineWidth:Integer;
+	public-read var lineStroke:String;
 	
 	public-read def style = new ChartStyle() on replace {
 		LineChartStyles.styleChartStyle( style );
@@ -448,7 +450,10 @@ public class LineSegmentModel extends DefaultChartModel {
 	}
 	
 	public function setLineWidth( width:Integer ):Void {
+		println( "lineWidth set to: {width}" );
 		segment.setAttribute( LINE_WIDTH, "{width}" );
+		lineWidth = width;
+		setStroke();
 	}
 	
 	public function getLineWidth():Integer {
@@ -461,13 +466,8 @@ public class LineSegmentModel extends DefaultChartModel {
 	
 	public function setLineStroke( strokeName:String ):Void {
 		segment.setAttribute( LINE_STROKE, strokeName );
-		if( strokeName == "dashed" ) {
-			style.setLineStroke( LineChartStyles.dashedStroke );
-		} else if( strokeName == "dotted" ) {
-			style.setLineStroke( LineChartStyles.dottedStroke );
-		} else {
-			style.setLineStroke( LineChartStyles.solidStroke );
-		}
+		lineStroke = strokeName;
+		setStroke();
 	}
 	
 	function loadStyles():Void {
@@ -477,8 +477,28 @@ public class LineSegmentModel extends DefaultChartModel {
 			lineColor = storedLineColor;
 		}
 		
+		try {
+			lineWidth = Integer.parseInt( segment.getAttribute( LINE_WIDTH, "1" ) );
+		} catch(e) {
+			lineWidth = 1;
+		}
+		
 		def lineStroke = segment.getAttribute( LINE_STROKE, null );
 		if( lineStroke != null )
 			setLineStroke( lineStroke );
+		
+		setStroke();
+	}
+	
+	function setStroke():Void {
+		def stroke = if( lineStroke == "dashed" ) {
+			LineChartStyles.dashedStroke
+		} else if( lineStroke == "dotted" ) {
+			LineChartStyles.dottedStroke
+		} else {
+			LineChartStyles.solidStroke
+		}
+		
+		style.setLineStroke( LineChartStyles.getStroke( lineWidth, stroke ) );
 	}
 }
