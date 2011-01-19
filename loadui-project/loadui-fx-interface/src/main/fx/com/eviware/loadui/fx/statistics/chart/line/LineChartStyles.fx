@@ -26,9 +26,9 @@ public def chartBackgroundColor = new Color( 0x1a, 0x1a, 0x1a, 0 );
 public def chartForegroundColor = new Color( 0xcd, 0xcd, 0xcd );
 public def lineColor = Color.red;
 
-public def solidStroke = new BasicStroke( 1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, [ 1.0 ], 0 );
-public def dashedStroke = new BasicStroke( 1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, [ 8.0, 8.0 ], 0 );
-public def dottedStroke = new BasicStroke( 1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, [ 2.0, 2.0 ], 0 );
+public def solidStroke = [ 1.0 ];
+public def dashedStroke = [ 8.0, 8.0 ];
+public def dottedStroke = [ 2.0, 2.0 ];
 
 public function styleChart( chart:Chart ):Void {
 	chart.setPanelBackground( chartBackgroundColor );
@@ -43,11 +43,14 @@ public function styleChart( chart:Chart ):Void {
 
 public function styleChartStyle( chartStyle:ChartStyle ):Void {
 	chartStyle.setLineColor( lineColor );
-	chartStyle.setLineStroke( solidStroke );
+	chartStyle.setLineStroke( getStroke( 1, solidStroke ) );
 	
 	chartStyle.setPointsVisible( false );
 }
 
+public function getStroke( width:Integer, style:Integer[] ):BasicStroke {
+	new BasicStroke( width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, style, 0 )
+}
 
 var statColorMap: HashMap;
 
