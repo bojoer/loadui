@@ -1,4 +1,3 @@
-/*
 *TabContainer.fx
 *
 *Created on jan 12, 2011, 10:21:15 fm
@@ -70,25 +69,6 @@ public class TabContainer extends HBox {
 		}
 	}
 	
-//	def deleteAction = MenuItem {
-//		text: "Delete",
-//		action: function():Void {
-//			def dialog:Dialog = Dialog {
-//				title: "Delete page: {latestClickedTab.text}"
-//				scene: scene
-//				showPostInit: true
-//				content: LabelField {
-//					value: "Are you sure you want to delete '{latestClickedTab.text}'?'"
-//				}
-//				okText: "Delete"
-//				onOk: function() {
-//					(latestClickedTab.value as StatisticPage).delete();
-//					(sortableBox.content[0] as StatisticsTab).selected = true;
-//					dialog.close();
-//				}
-//			}
-//		}
-//	}
 
 	def deleteAction = MenuItem {
 		text: "Delete",
