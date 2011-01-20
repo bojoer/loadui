@@ -49,6 +49,7 @@ import com.eviware.loadui.fx.statistics.chart.ChartPage;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.lang.Math;
 
 public var instance:StatisticsWindow;
 
@@ -90,7 +91,7 @@ public class StatisticsWindow {
 	var stack:Stack = Stack {
 				        		layoutX: 135
 				        		layoutY: 125
-				        		width: bind scene.width - 150
+				        		width: bind if(scene.width >= 600) scene.width - 150 else 450
 				        		height: bind scene.height - 180
 				        		content: [ layoutRegion ]
 				        		//background: Color.web("#323232")
