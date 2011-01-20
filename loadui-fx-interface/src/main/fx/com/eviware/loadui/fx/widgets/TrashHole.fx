@@ -39,13 +39,14 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Tr
  */
 public class TrashHole extends BaseNode, Droppable{
 
-	public var iconUrl: String = "images/trash_hole.fxz";
+	public def iconUrl:String = "images/trash_hole.fxz";
+	public var showTooltip:Boolean = true;
 	
 	override function create() {
 		
 		MenuBarButton {
 			//text: ##[TRASH]"Trash"
-			tooltip: ##[DELETE]"Drag items here to delete"
+			tooltip: if( showTooltip ) {"Drag items here to delete";} else {null;}
 			graphicUrl:"{__ROOT__}{iconUrl}"
 			onMouseClicked: function(e:MouseEvent) {
 			}

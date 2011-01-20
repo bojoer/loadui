@@ -132,6 +132,8 @@ public class SortableBox extends BaseNode, Resizable {
 	
 	public var onMoved: function( node:Node, fromIndex:Integer, toIndex:Integer ):Void;
 	
+	public var enforceBounds:Boolean = true;
+	
 	function buildContent():Node[] {
 		for( child in content ) {
 			var draggable:ElementNode;
@@ -145,7 +147,7 @@ public class SortableBox extends BaseNode, Resizable {
 					height: bind frame.height
 					revert: false
 					contentNode: child
-					containment: bind localToScene( layoutBounds )
+					containment: bind if (enforceBounds) localToScene( layoutBounds ) else null
 					onDragging: function():Void {
 						def index = Sequences.indexByIdentity( box.content, frame );
 						var pos:Number;

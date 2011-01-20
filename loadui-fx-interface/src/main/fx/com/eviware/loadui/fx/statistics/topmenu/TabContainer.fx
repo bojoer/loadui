@@ -9,9 +9,12 @@ package com.eviware.loadui.fx.statistics.topmenu;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.dialogs.*;
+import com.eviware.loadui.fx.dialogs.*;
 import com.eviware.loadui.fx.ui.dnd.SortableBox;
 import com.eviware.loadui.fx.ui.form.fields.LabelField;
 import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.node.Deletable;
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
@@ -50,7 +53,7 @@ public class TabContainer extends HBox {
 	public var onSelect:function(sp:StatisticPage):Void;
 	public var statisticPages:StatisticPages on replace { sortableBox.content = generateTabs(); };
 
-	var latestClickedTab:RadioButton;
+	var latestClickedTab:StatisticsTab;
 	var sortableBox:SortableBox;
 	def tabGroup:ToggleTabGroup = new ToggleTabGroup();
 
@@ -58,32 +61,39 @@ public class TabContainer extends HBox {
 		text: "Rename",
 		action: function():Void {
 			TabRenameDialog {
-			    tabToRename: latestClickedTab as RadioButton,
-			    tabButtons: for( t:Toggle in tabGroup.toggles ) t as RadioButton,
-			    onOk: function(renamedTab:RadioButton, newName:String):Void {
-			    	(renamedTab.value as StatisticPage).setTitle( newName );
+			   tabToRename: latestClickedTab as RadioButton,
+			   tabButtons: for( t:Toggle in tabGroup.toggles ) t as RadioButton,
+			   onOk: function(renamedTab:RadioButton, newName:String):Void {
+			   	(renamedTab.value as StatisticPage).setTitle( newName );
 			    }
 			}.show();
 		}
 	}
 	
+//	def deleteAction = MenuItem {
+//		text: "Delete",
+//		action: function():Void {
+//			def dialog:Dialog = Dialog {
+//				title: "Delete page: {latestClickedTab.text}"
+//				scene: scene
+//				showPostInit: true
+//				content: LabelField {
+//					value: "Are you sure you want to delete '{latestClickedTab.text}'?'"
+//				}
+//				okText: "Delete"
+//				onOk: function() {
+//					(latestClickedTab.value as StatisticPage).delete();
+//					(sortableBox.content[0] as StatisticsTab).selected = true;
+//					dialog.close();
+//				}
+//			}
+//		}
+//	}
+
 	def deleteAction = MenuItem {
 		text: "Delete",
 		action: function():Void {
-			def dialog:Dialog = Dialog {
-				title: "Delete page: {latestClickedTab.text}"
-				scene: scene
-				showPostInit: true
-				content: LabelField {
-					value: "Are you sure you want to delete '{latestClickedTab.text}'?'"
-				}
-				okText: "Delete"
-				onOk: function() {
-					(latestClickedTab.value as StatisticPage).delete();
-					(sortableBox.content[0] as StatisticsTab).selected = true;
-					dialog.close();
-				}
-			}
+			latestClickedTab.deleteObject();
 		}
 	}
 	
@@ -113,6 +123,7 @@ public class TabContainer extends HBox {
 		sortableBox = SortableBox {
 			content: generateTabs(),
 			spacing: 36,
+			enforceBounds: false,
 			styleClass: "statistics-tabs-sortableBox",
 			onMoved: function( node:Node, fromIndex:Integer, toIndex:Integer ):Void {
 				statisticPages.movePage( (node as StatisticsTab).value as StatisticPage, toIndex );
@@ -183,6 +194,7 @@ class StatisticPagesListener extends EventHandler {
 				   	}
 				}
 			});
+			FxUtils.runInFxThread( function(): Void { (sortableBox.content[0] as StatisticsTab).selected = true;});
 		} else if(event.getEvent() == CollectionEvent.Event.ADDED){
 			FxUtils.runInFxThread( function(): Void {
 			   def sp:StatisticPage = event.getElement() as StatisticPage;
@@ -203,10 +215,14 @@ class ToggleTabGroup extends ToggleGroup {
 	}
 }
 
-class StatisticsTab extends RadioButton {
+class StatisticsTab extends RadioButton, Deletable {
 	override var toggleGroup = tabGroup;
 	override var blocksMouse = false;
 	override var styleClass = "statistics-view-tab";
+	override var confirmDialogScene = StatisticsWindow.getInstance().scene;
+	override function doDelete():Void {
+			(value as StatisticPage).delete();
+		};
 	override var onMouseClicked = function( e:MouseEvent ) {
 		if( e.button == MouseButton.SECONDARY ) {
 			latestClickedTab = this;
