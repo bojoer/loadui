@@ -286,11 +286,29 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	protected void onComplete( EventFirer source )
 	{
+		if( "controller".equals( System.getProperty( "loadui.instance" ) ) && source.equals( this ) )
+		{
+			// on controller when source is this test case (for both local and
+			// distributed mode)...add ON_COMPLETE_DONE event listener to this test
+			// case to listen when it is completed
+			addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
+			{
+				@Override
+				public void handleEvent( BaseEvent event )
+				{
+					if( event.getKey().equals( ON_COMPLETE_DONE ) )
+					{
+						removeEventListener( BaseEvent.class, this );
+						doGenerateSummary();
+					}
+				}
+			} );
+		}
+
 		if( LoadUI.AGENT.equals( System.getProperty( LoadUI.INSTANCE ) ) )
 		{
 			// if on agent, application is running in distributed mode, so send
-			// data
-			// to the controller
+			// data to the controller
 
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( AgentItem.SCENE_ID, getId() );
@@ -316,36 +334,13 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		}
 		else if( project.getWorkspace().isLocalMode() )
 		{
-			if( source.equals( project ) )
-			{
-				// if source is project set completed to true to inform it (over
-				// scene waiter) that this test case is finished. for distributed
-				// mode this will be set to true when test case data is received on
-				// controller.
-				setCompleted( true );
-			}
-			else if( source.equals( this ) )
-			{
-				// if source is test case, just generate summary for it
-				doGenerateSummary();
-			}
-		}
-		else if( source.equals( this ) && !project.getWorkspace().isLocalMode() )
-		{
-			// distributed mode, and source is test case...add ON_COMPLETE_DONE
-			// event listener to this test case to listen when it is completed
-			addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
-			{
-				@Override
-				public void handleEvent( BaseEvent event )
-				{
-					if( event.getKey().equals( ON_COMPLETE_DONE ) )
-					{
-						removeEventListener( BaseEvent.class, this );
-						doGenerateSummary();
-					}
-				}
-			} );
+			// on controller and in local mode
+
+			// if source is project, set completed will inform project (over
+			// SceneAwaiter) that this test case has finished.
+			// if source is this test case than inform its listener defined at the
+			// top of this method to generate summary
+			setCompleted( true );
 		}
 	}
 
@@ -366,7 +361,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			}
 			else
 			{
-				if( project.getAgentsAssignedTo( this ).size() > 0 )
+				if( getActiveAgents().size() > 0 )
 				{
 					// test cases is deployed to one or more agents so send message
 					// to all agents to cancel
@@ -375,9 +370,8 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 				}
 				else
 				{
-					// test case is not deployed to any agent, so cancel it locally
-					// (in case non deployed test cases are executed locally. TODO
-					// Are they?)
+					// test case is not deployed to any active agent, so cancel it
+					// locally (in case non deployed test cases are executed locally)
 					super.cancelComponents();
 				}
 			}
