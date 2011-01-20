@@ -7,6 +7,7 @@
 package com.eviware.loadui.fx.ui.node;
 
 import com.eviware.loadui.fx.dialogs.DeleteDeletablesDialog;
+import javafx.scene.Scene;
 
 public function deleteObjects( deletables:Deletable[], onOk: function():Void ):Void {
 	if( sizeof deletables[d|d.confirmDelete] > 0 ) {
@@ -29,10 +30,14 @@ public function deleteObjects( deletables:Deletable[] ):Void {
 public mixin class Deletable {
 	
 	public var confirmDelete = true;
+	public var confirmDialogScene:Scene;
 	
 	public function deleteObject():Void {
 		if( confirmDelete ) {
-			DeleteDeletablesDialog { deletables: [ this ] };
+			DeleteDeletablesDialog {
+				deletables: [ this ]
+				hostScene: confirmDialogScene
+			};
 		} else {
 			doDelete();
 		}

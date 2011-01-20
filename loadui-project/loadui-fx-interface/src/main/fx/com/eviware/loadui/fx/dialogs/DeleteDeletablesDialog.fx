@@ -21,10 +21,12 @@
 
 package com.eviware.loadui.fx.dialogs;
 
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
+import com.eviware.loadui.fx.AppState;
 
 import java.lang.RuntimeException;
 import org.slf4j.LoggerFactory;
@@ -38,12 +40,13 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.De
  */
 public class DeleteDeletablesDialog {
 	public var onOk: function(): Void;
-	
 	public-init var deletables: Deletable[];
+	public var hostScene:Scene;
 	
 	postinit {
 		def dialog:Dialog = Dialog {
 			title: "Delete objects"
+			scene: if (hostScene == null) AppState.instance.scene else hostScene
 			content: [
 				Label { text: if( sizeof deletables == 1 ) "Delete this item?" else "Delete these { sizeof deletables } items?" }
 			]

@@ -130,6 +130,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 				}, container = SortableBox {
 					vertical: true
 					spacing: 5
+					enforceBounds: false
 					padding: Insets { top: 5, right: 5, bottom: 25 }
 					layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.NEVER, vfill: false }
 					content: innerContent
