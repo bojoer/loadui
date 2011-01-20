@@ -18,6 +18,7 @@ package com.eviware.loadui.fx.statistics.chart.line;
 import com.eviware.loadui.fx.statistics.chart.PanelFactory;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 
 public class LineChartPanels {
 }
@@ -29,10 +30,10 @@ public function getPanels( chartGroup:ChartGroup ):PanelFactory[] {
 			build: function() { ZoomPanel { chartGroup: chartGroup } }
 		}, PanelFactory {
 			title: "Scale"
-			build: function() { javafx.scene.shape.Rectangle { width: 200, height: 100 } }
+			build: function() { ScalePanel { segments: (chartGroup.getChartView() as LineChartView).getSegments()[s|true] } }
 		}, PanelFactory {
 			title: "Style"
-			build: function() { StylePanel { chartGroup: chartGroup } }
+			build: function() { StylePanel { segments: (chartGroup.getChartView() as LineChartView).getSegments()[s|true] } }
 		}
 	]
 }

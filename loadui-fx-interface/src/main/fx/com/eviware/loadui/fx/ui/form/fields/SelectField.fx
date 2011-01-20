@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.fx.ui.form.fields;
 
+import javafx.scene.Node;
 import javafx.scene.Group;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.control.Label;
@@ -59,13 +60,25 @@ public class SelectField extends MenuButton, FormField {
 		resetItems()
 	}
 	
+	/**
+	 * Provides a Node representation of each option to display.
+	 * The default value returns null.
+	 */
+	public var graphicProvider = function( o:Object ):Node {
+		null
+	} on replace {
+		resetItems()
+	}
+	
 	override var styleClass = "select-field";
 	
 	override var text = bind labelProvider( value );
+	override var graphic = bind graphicProvider( value );
 	
 	function resetItems():Void {
 		items = for( option in options ) MenuItem {
 			text: labelProvider( option )
+			graphic: graphicProvider( option )
 			action: function() { value = option }
 		}
 	}

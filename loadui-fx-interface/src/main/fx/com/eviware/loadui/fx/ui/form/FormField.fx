@@ -31,20 +31,14 @@ import javafx.scene.layout.Resizable;
  */
 public mixin class FormField extends FormItem, Resizable {
 
-	var onValueChangedHandler: function(value: Object);
-
-	public function setOnValueChangedHandler(handler: function(value: Object)){
-		onValueChangedHandler = handler;
-	}
+	public var onValueChanged: function(value: Object);
 	
 	/**
 	 * The value of the FormField.
 	 */
 	public var value:Object on replace {
-		if(onValueChangedHandler != null){
-			(onValueChangedHandler as function(value: Object))(value);
-		}
-	};
+		onValueChanged( value );
+	}
 	
 	/**
 	 * The label for the FormField.

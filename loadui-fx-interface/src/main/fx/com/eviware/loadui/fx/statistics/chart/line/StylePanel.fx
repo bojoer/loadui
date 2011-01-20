@@ -15,11 +15,13 @@
  */
 package com.eviware.loadui.fx.statistics.chart.line;
 
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 
@@ -30,10 +32,11 @@ import com.javafx.preview.layout.GridLayoutInfo;
 import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.control.ColorPicker;
+import com.eviware.loadui.fx.ui.form.fields.SelectField;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 
 /**
  * Panel for changing the style of LineSegments.
@@ -41,7 +44,7 @@ import com.eviware.loadui.api.statistics.model.chart.LineChartView;
  * @author dain.nilsson
  */
 public class StylePanel extends Grid {
-	public-init var chartGroup:ChartGroup;
+	public-init var segments:LineSegment[];
 	
 	override var styleClass = "style-panel";
 	override var padding = Insets { top: 10, right: 10, bottom: 10, left: 10 };
@@ -56,7 +59,7 @@ public class StylePanel extends Grid {
 				Label { styleClass: "header-row", text: "Statistic", layoutInfo: GridLayoutInfo { hspan: 3 } },
 				Label { styleClass: "header-row", text: "Width", layoutInfo: GridLayoutInfo { hspan: 2 } },
 				Label { styleClass: "header-row", text: "Stroke" }
-			] }, for( segment in (chartGroup.getChartView() as LineChartView).getSegments() ) {
+			] }, for( segment in segments ) {
 				def model = LineChart.getLineSegmentModel( segment );
 				def slider = Slider {
 					min: 1
@@ -65,6 +68,20 @@ public class StylePanel extends Grid {
 					minorTickCount: 0
 					majorTickUnit: 1
 					clickToPosition: true
+				}
+				def selector = SelectField {
+					options: [ "solid", "dashed", "dotted" ]
+					labelProvider: function(o):String { null }
+					graphicProvider: function(o):Node {
+						if( o == "dashed" ) SVGPath { content: "M 0 0 L 15 0 15 2 0 2 0 0 M 25 0 L 40 0 40 2 25 2 25 0 M 50 0 L 65 0 65 2 50 2 50 0" }
+						else if( o == "dotted" ) SVGPath { content: "M 1 0 L 3 0 3 2 1 2 1 0 M 5 0 L 7 0 7 2 5 2 5 0 M 9 0 L 11 0 11 2 9 2 9 0 M 13 0 L 15 0 15 2 13 2 13 0 M 17 0 L 19 0 19 2 17 2 17 0 M 21 0 L 23 0 23 2 21 2 21 0 M 25 0 L 27 0 27 2 25 2 25 0 M 29 0 L 31 0 31 2 29 2 29 0 M 33 0 L 35 0 35 2 33 2 33 0 M 37 0 L 39 0 39 2 37 2 37 0 M 41 0 L 43 0 43 2 41 2 41 0 M 45 0 L 47 0 47 2 45 2 45 0 M 49 0 L 51 0 51 2 49 2 49 0 M 53 0 L 55 0 55 2 53 2 53 0 M 57 0 L 59 0 59 2 57 2 57 0 M 61 0 L 63 0 63 2 61 2 61 0" }
+						else Rectangle { width: 65, height: 2 }
+					}
+					value: model.getLineStroke()
+					layoutInfo: LayoutInfo { width: 90 }
+					onValueChanged: function( value ):Void {
+						model.setLineStroke( value as String );
+					}
 				}
 				def width:Number = bind slider.value on replace {
 					model.setLineWidth( width );
@@ -94,7 +111,7 @@ public class StylePanel extends Grid {
 						graphicHPos: HPos.RIGHT
 					},
 					slider,
-					Label { text: "Stroke" }
+					selector
 				] }
 			}
 		];

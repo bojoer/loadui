@@ -157,10 +157,10 @@ public class DefaultComponentSettingsPanel {
 					Form.fieldForType( pp.getType(), key, p.getLabel(), pp.getValue() );
 				}
 
-				formField.setOnValueChangedHandler(function (value: Object){
+				formField.onValueChanged = function (value: Object){
 					pp.setValue(value);
 					update();
-				});
+				};
 				
 				formField;
 			} else if(c instanceof TableLayoutComponent) {
