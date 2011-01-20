@@ -134,7 +134,7 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 							            onOk: function() {
 							            	var sf = (saveFile.value as File).getAbsolutePath();
 							            	if ( not (sf.endsWith(".txt") or sf.endsWith(".csv")) ) {
-							            		sf = "{sf}.cvs"
+							            		sf = "{sf}.csv"
 							            	}	
 											table.save(new File(sf));
 											dialog.close();
