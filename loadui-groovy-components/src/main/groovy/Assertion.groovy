@@ -31,6 +31,8 @@ import com.eviware.loadui.impl.layout.OptionsProviderImpl
 
 import com.eviware.loadui.api.model.CanvasItem;
 
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException
+
 createOutput( 'output', 'Output for failed messages' )
 
 def componentSignature = [
@@ -147,6 +149,9 @@ analyze = { message ->
 		}
 		
 		totalCounter.increment()
+	}
+	catch(GroovyCastException e){
+		log.debug("The Assertion component expects integers in Input Data, but it got something else.")
 	}
 	catch(Exception e){
 		ex(e, "Assertion -> analyze")
