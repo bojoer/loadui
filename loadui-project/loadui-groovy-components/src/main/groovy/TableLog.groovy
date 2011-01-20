@@ -77,7 +77,7 @@ output = { message ->
 		try {
 			char sep = ','
 			
-			writer = new CSVWriter(new FileWriter(saveFileName, true), sep);
+			writer = new CSVWriter(new FileWriter(saveFileName, appendSaveFile), sep);
 			String[] entries = myTableModel.lastRow
 			writer.writeNext(entries)
 			writer.flush()
