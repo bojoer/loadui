@@ -805,21 +805,27 @@
 	-fx-background-insets: 25 -53 -45 -8;
 }
 
-.style-panel {
+.style-panel, .scale-panel {
 	-fx-background-color: #333333, #252525;
 	-fx-background-insets: 4 0 0 0, 30 0 2 0;
 	-fx-text-fill: #9b9b9b;
 }
 
-.style-panel *.slider *.thumb, .style-panel *.slider:focused *.thumb {
-    -fx-background-color: #404040, #8b8b8b, #808080;
+.style-panel *.slider *.thumb, .style-panel *.slider:focused *.thumb, .scale-panel *.slider *.thumb, .scale-panel *.slider:focused *.thumb {
+    -fx-background-color: #404040, #8b8b8b, #404040;
     -fx-background-radius: 2, 2, 0;
-    -fx-background-insets: 0, 1, 0 5.5;
+    -fx-background-insets: 0, 1, 1 5.5;
     -fx-padding: 8 6;
 }
 
 .style-panel *.slider *.track {
     -fx-background-color: linear (0%,0%) to (100%,0%) stops (0%, #3a3a3a)  (100%, #4d4d4d);
     -fx-shape: "M 0 4 L 15 4 15 6 0 6 0 4 M 16 3.5 L 31 3.5 31 6.5 16 6.5 16 3.5 M 32 3 L 47 3 47 7 32 7 32 3 M 48 2.5 L 64 2.5 64 7.5 48 7.5 48 2.5 M 65 2 L 80 2 80 8 65 8 65 2 M 81 1.5 L 96 1.5 96 8.5 81 8.5 81 1.5 M 97 1 L 112 1 112 9 97 9 97 1 M 113 0.5 L 128 0.5 128 9.5 113 9.5 113 0.5";
+    -fx-padding: 4;
+}
+
+.scale-panel *.slider *.track {
+    -fx-background-color: linear (0%,0%) to (100%,0%) stops (0%, #3a3a3a)  (100%, #4d4d4d);
+    -fx-shape: "M 0 4 L 128 0 128 10 0 6 z";
     -fx-padding: 4;
 }

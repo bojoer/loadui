@@ -66,7 +66,6 @@ import java.lang.Runnable;
 import javafx.ext.swing.SwingComponent;
 import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.model.DefaultChartModel;
-import com.jidesoft.chart.model.ChartPoint;
 import com.jidesoft.range.TimeRange;
 import com.jidesoft.chart.axis.NumericAxis;
 import com.jidesoft.chart.axis.TimeAxis;
@@ -89,6 +88,7 @@ public function getLineSegmentModel( lineSegment:LineSegment ):LineSegmentModel 
 def chartSet = new HashSet();
 
 //Attributes
+def SCALE = "scale";
 def LINE_COLOR = "lineColor";
 def LINE_STROKE = "lineStroke";
 def LINE_WIDTH = "lineWidth";
@@ -401,9 +401,14 @@ public class LineSegmentModel extends DefaultChartModel {
 	var timestamp = -1;
 	var statistic:Statistic;
 	
+	public-read var scale:Integer on replace {
+		scaler.setScale( Math.pow( 10, scale ) );
+	}
 	public-read var lineColor:String;
 	public-read var lineWidth:Integer;
 	public-read var lineStroke:String;
+	
+	def scaler = new ScaledPointScale();
 	
 	public-read def style = new ChartStyle() on replace {
 		LineChartStyles.styleChartStyle( style );
@@ -421,7 +426,7 @@ public class LineSegmentModel extends DefaultChartModel {
 				def yValue = (dataPoint as DataPoint).getValue() as Number;
 				min = Math.min( min, yValue );
 				max = Math.max( max, yValue );
-				addPoint( new ChartPoint( (dataPoint as DataPoint).getTimestamp(), yValue ) );
+				addPoint( scaler.createPoint( (dataPoint as DataPoint).getTimestamp(), yValue ) );
 			}
 			maxTime = Math.max( maxTime, latestTime );
 		}
@@ -435,8 +440,17 @@ public class LineSegmentModel extends DefaultChartModel {
 			min = Math.min( min, yValue );
 			max = Math.max( max, yValue );
 			maxTime = Math.max( maxTime, timestamp );
-			addPoint( new ChartPoint( timestamp, yValue ) );
+			addPoint( scaler.createPoint( timestamp, yValue ) );
 		}
+	}
+	
+	public function setScale( newScale:Integer ):Void {
+		scale = newScale;
+		segment.setAttribute( SCALE, "{scale}" );
+	}
+	
+	public function getScale():Integer {
+		scale
 	}
 	
 	public function setLineColor( color:Color ):Void {
@@ -450,7 +464,6 @@ public class LineSegmentModel extends DefaultChartModel {
 	}
 	
 	public function setLineWidth( width:Integer ):Void {
-		println( "lineWidth set to: {width}" );
 		segment.setAttribute( LINE_WIDTH, "{width}" );
 		lineWidth = width;
 		setStroke();
@@ -470,7 +483,17 @@ public class LineSegmentModel extends DefaultChartModel {
 		setStroke();
 	}
 	
+	public function getLineStroke():String {
+		lineStroke;
+	}
+	
 	function loadStyles():Void {
+		try {
+			scale = Integer.parseInt( segment.getAttribute( SCALE, "0" ) );
+		} catch(e) {
+			scale = 0;
+		}
+		
 		def storedLineColor = segment.getAttribute( LINE_COLOR, null );
 		if( storedLineColor != null ) {
 			style.setLineColor( FxUtils.getAwtColor( storedLineColor ) );
@@ -483,9 +506,7 @@ public class LineSegmentModel extends DefaultChartModel {
 			lineWidth = 1;
 		}
 		
-		def lineStroke = segment.getAttribute( LINE_STROKE, null );
-		if( lineStroke != null )
-			setLineStroke( lineStroke );
+		lineStroke = segment.getAttribute( LINE_STROKE, "solid" );
 		
 		setStroke();
 	}
