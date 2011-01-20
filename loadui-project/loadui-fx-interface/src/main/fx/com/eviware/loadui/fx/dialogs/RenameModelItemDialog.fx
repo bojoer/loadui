@@ -72,6 +72,7 @@ public class RenameModelItemDialog {
 	function ok():Void {
 		txt.commit();
 		dialog.close();
+		form.getField("name").value = (form.getValue("name") as String).trim();
 		if(validateZeroLength()){
 			if(validateUniqueness()){
 				modelItem.setLabel( form.getValue("name") as String );

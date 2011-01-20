@@ -30,8 +30,10 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.SceneItem;
 
 import java.util.EventObject;
+import java.util.HashSet;
 
 public def RUNNING = 0;
 public def PAUSED = 1;
@@ -78,35 +80,58 @@ mixin public class TimerController {
 
 var busy = false;
 
+var startedCanvases: HashSet = new HashSet();
+var completedCanvases: HashSet = new HashSet();
+var readyCanvases: HashSet = new HashSet();
+
 class CanvasListener extends EventHandler {
 	override function handleEvent( e:EventObject ) {
 		def event = e as ActionEvent;
 		if( event.getKey() == CanvasItem.STOP_ACTION )
 			FxUtils.runInFxThread( function():Void { playButton.selected = false; state = PAUSED; } )
 		else if( event.getKey() == CanvasItem.START_ACTION )
-			FxUtils.runInFxThread( function():Void { playButton.selected = true; state = RUNNING; } )
+			FxUtils.runInFxThread( function():Void { 
+				playButton.selected = true; 
+				startedCanvases.add(canvas);
+				state = RUNNING; 
+			} )
 		else if( event.getKey() == CanvasItem.COMPLETE_ACTION )
 			FxUtils.runInFxThread( function():Void {
 				playButton.selected = false;
 				state = STOPPED;
-				if( not busy ) {
+				if(startedCanvases.size() > 0){
+					completedCanvases.add(canvas);
+				}
+				if( not busy and not canvas.isAbortOnFinish() and startedCanvases.size() == completedCanvases.size() ) {
 					busy = true;
 					AppState.instance.setBlockedText( "Waiting for test to complete." );
 					AppState.instance.setCancelHandler( function() {
+					   // abort should cancel everything
 					   if(canvas instanceof ProjectItem){
-					       (canvas as ProjectItem).cancelScenes( true );
+					       (canvas as ProjectItem).cancelScenes( false );
+					       (canvas as ProjectItem).cancelComponents();
 					   }
-						canvas.cancelComponents();
-						AppState.instance.unblock();
+					   else{
+					       (canvas as SceneItem).getProject().cancelScenes( false );
+					       (canvas as SceneItem).getProject().cancelComponents();
+					   }
 					} );
 					AppState.instance.block();
 				}
 			} )
 		else if( event.getKey() == CanvasItem.READY_ACTION )
 			FxUtils.runInFxThread( function():Void {
-				if( busy ) {
-					busy = false;
-					AppState.instance.unblock();
+				if(startedCanvases.size() > 0){
+					readyCanvases.add(canvas);
+				}
+				if( startedCanvases.size() == readyCanvases.size()) {
+					startedCanvases.clear();
+					completedCanvases.clear();
+					readyCanvases.clear();
+					if( busy ) {
+						busy = false;
+						AppState.instance.unblock();
+					}
 				}
 			} );
 	}

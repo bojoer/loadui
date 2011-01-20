@@ -404,6 +404,15 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				agents.add( assignment.getAgent() );
 		return agents;
 	}
+	
+	private Collection<AgentItem> getActiveAgentsAssignedTo( SceneItem scene )
+	{
+		ArrayList<AgentItem> agents = new ArrayList<AgentItem>();
+		for( AgentItem agent : getAgentsAssignedTo( scene ) )
+			if( agent.isReady() )
+				agents.add( agent );
+		return agents;
+	}
 
 	@Override
 	public Collection<SceneItem> getScenesAssignedTo( AgentItem agent )
@@ -1238,7 +1247,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					if( scene.isFollowProject()
 							&& !scene.isCompleted()
 							&& ( workspace.isLocalMode() || !workspace.isLocalMode()
-									&& getAgentsAssignedTo( scene ).size() > 0 ) )
+									&& getActiveAgentsAssignedTo( scene ).size() > 0 ) )
 
 					{
 						// add this as a listener to a test case
@@ -1273,7 +1282,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			for( SceneItem scene : getScenes() )
 			{
 				if( scene.isFollowProject() && !scene.isAbortOnFinish()
-						&& ( workspace.isLocalMode() || !workspace.isLocalMode() && getAgentsAssignedTo( scene ).size() > 0 ) )
+						&& ( workspace.isLocalMode() || !workspace.isLocalMode() && getActiveAgentsAssignedTo( scene ).size() > 0 ) )
 				{
 					abort = false;
 					break;
@@ -1294,7 +1303,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 								if( scene.isFollowProject()
 										&& !scene.isCompleted()
 										&& ( workspace.isLocalMode() || !workspace.isLocalMode()
-												&& getAgentsAssignedTo( scene ).size() > 0 ) )
+												&& getActiveAgentsAssignedTo( scene ).size() > 0 ) )
 								{
 									( ( SceneItemImpl )scene ).setCompleted( true );
 								}
