@@ -401,14 +401,16 @@ public class LineSegmentModel extends DefaultChartModel {
 	var timestamp = -1;
 	var statistic:Statistic;
 	
+	def scaler = new ScaledPointScale();
+	
 	public-read var scale:Integer on replace {
 		scaler.setScale( Math.pow( 10, scale ) );
+		for( point in this )
+			max = Math.max( max, point.getY().position() );
 	}
 	public-read var lineColor:String;
 	public-read var lineWidth:Integer;
 	public-read var lineStroke:String;
-	
-	def scaler = new ScaledPointScale();
 	
 	public-read def style = new ChartStyle() on replace {
 		LineChartStyles.styleChartStyle( style );
