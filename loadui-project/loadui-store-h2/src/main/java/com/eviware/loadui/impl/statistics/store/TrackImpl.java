@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.statistics.store;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -130,7 +131,7 @@ public class TrackImpl implements Track
 			}
 			else
 			{
-				return null;
+				return Collections.emptyList();
 			}
 		}
 		catch( SQLException e )

@@ -23,7 +23,8 @@ import com.jidesoft.chart.axis.TickCalculator;
 import com.jidesoft.range.Range;
 
 /**
- * Calculates
+ * Calculates ticks for use in line charts. The range should contain the time
+ * since the start of the test, in ms, for the datapoints.
  * 
  * @author dain.nilsson
  */
