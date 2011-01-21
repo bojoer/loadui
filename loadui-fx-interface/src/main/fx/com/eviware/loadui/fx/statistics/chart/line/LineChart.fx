@@ -66,12 +66,10 @@ import java.lang.Runnable;
 import javafx.ext.swing.SwingComponent;
 import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.model.DefaultChartModel;
-import com.jidesoft.range.TimeRange;
+import com.jidesoft.range.NumericRange;
 import com.jidesoft.chart.axis.NumericAxis;
 import com.jidesoft.chart.axis.TimeAxis;
 import com.jidesoft.chart.style.ChartStyle;
-
-import com.eviware.loadui.fx.statistics.chart.LoadUIChartTimeTickerCalculator;
 
 public function getLineSegmentModel( lineSegment:LineSegment ):LineSegmentModel {
 	for( chart in chartSet ) {
@@ -106,7 +104,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	def lines = new HashMap();
 	public-read def chart = new Chart();
 	def chartNode = SwingComponent.wrap( chart );
-	var timeCalculator:LoadUIChartTimeTickerCalculator;
+	var timeCalculator:TotalTimeTickCalculator;
 	var compactSegments = true;
 	
 	def scrollBar = ScrollBar {
@@ -116,7 +114,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	def scrollBarPosition = bind scrollBar.value on replace {
 		def realPosition = scrollBarPosition * ( maxTime - timeSpan ) / maxTime;
-		chart.getXAxis().setRange( new TimeRange( realPosition, realPosition + timeSpan ) );
+		chart.getXAxis().setRange( new NumericRange( realPosition, realPosition + timeSpan ) );
 	}
 	
 	var padding = 2;
@@ -129,7 +127,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		scrollBar.blockIncrement = timeSpan / 10;
 		
 		if( oldTimeSpan > maxTime and timeSpan < maxTime )
-		scrollBar.value = maxTime;
+			scrollBar.value = maxTime;
 	}
 	
 	def segmentButtons:VBox = VBox {
@@ -241,9 +239,9 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		LineChartStyles.styleChart( chart );
 		
 		def xAxis = new TimeAxis();
-		timeCalculator = new LoadUIChartTimeTickerCalculator();
+		timeCalculator = new TotalTimeTickCalculator();
 		chart.setXAxis( xAxis );
-		xAxis.setRange( new TimeRange( 0, timeSpan ) );
+		xAxis.setRange( new NumericRange( 0, timeSpan ) );
 		xAxis.setTickCalculator(timeCalculator);
 		
 		def yAxis = chart.getYAxis();
@@ -274,7 +272,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		}
 		
 		def realPosition = position * ( maxTime - timeSpan ) / maxTime;
-		chart.getXAxis().setRange( new TimeRange( realPosition, realPosition + timeSpan ) );
+		chart.getXAxis().setRange( new NumericRange( realPosition, realPosition + timeSpan ) );
 	}
 	
 	override function reset():Void {
@@ -319,20 +317,23 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	public function setZoomLevel(level:String):Void {
-		if( level == "Seconds" )
-		timeSpan = 10000;
-		if( level == "Minutes" )
-		timeSpan = 300000;
-		if( level == "Hours" ) 
-		timeSpan = 3600000 * 10;
-		if( level == "Days" ) 
-		timeSpan = 3600000 * 24 * 7;
-		if( level == "Weeks" ) 
-		timeSpan = 3600000 * 24 * 7 * 10;
-		if( level == "All" ) 
-		timeSpan = 10000;
+		def newLevel = TotalTimeTickCalculator.Level.valueOf( level.toUpperCase() );
 		
-		timeCalculator.setLevel( level );
+		if( newLevel == TotalTimeTickCalculator.Level.SECONDS ) {
+			timeSpan = 10000;
+		} else if( newLevel == TotalTimeTickCalculator.Level.MINUTES ) {
+			timeSpan = 600000;
+		} else if( newLevel == TotalTimeTickCalculator.Level.HOURS ) {
+			timeSpan = 3600000 * 10;
+		} else if( newLevel == TotalTimeTickCalculator.Level.DAYS ) {
+			timeSpan = 3600000 * 24 * 7;
+		} else if( newLevel == TotalTimeTickCalculator.Level.WEEKS ) {
+			timeSpan = 3600000 * 24 * 7 * 10;
+		} else if( newLevel == TotalTimeTickCalculator.Level.ALL ) {
+			timeSpan = 10000;
+		}
+			
+		timeCalculator.setLevel( newLevel );
 		
 		update();
 	}
