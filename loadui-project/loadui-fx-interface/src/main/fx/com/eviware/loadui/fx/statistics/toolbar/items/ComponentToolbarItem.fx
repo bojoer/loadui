@@ -22,8 +22,11 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.FxUtils;
 
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.MainWindow;
@@ -36,8 +39,9 @@ import com.eviware.loadui.api.component.ComponentDescriptor;
 def defaultImage = Image { url: "{__ROOT__}images/png/default-component-icon.png" };
 
 public class ComponentToolbarItem extends StatisticsToolbarItem {
-    
-   public var component: ComponentItem on replace {
+   
+   public var component:ComponentItem on replace {
+   	component.addEventListener( BaseEvent.class, new LabelListener() );
       label = component.getLabel();
       tooltip = "Adds {label} to a chart";
    }
@@ -53,4 +57,17 @@ public class ComponentToolbarItem extends StatisticsToolbarItem {
    
    override var category = "COMPONENTS";
     
+}
+
+class LabelListener extends EventHandler {
+	override function handleEvent(e):Void {
+		def event:BaseEvent = e as BaseEvent;
+		
+		if( event.getKey().equals( ComponentItem.LABEL ) )
+		{
+			FxUtils.runInFxThread( function():Void {
+				label = component.getLabel();
+			} );
+		}
+	} 
 }

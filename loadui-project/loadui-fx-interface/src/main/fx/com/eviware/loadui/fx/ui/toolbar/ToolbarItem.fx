@@ -47,7 +47,7 @@ public class ToolbarItem extends BaseNode, Draggable, TooltipHolder {
 	/**
 	 * The label for this ToolbarItem.
 	 */
-	public-init protected var label:String;
+	public var label:String;
 
 	/**
 	 * The label color for this ToolbarItem.
