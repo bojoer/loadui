@@ -65,16 +65,15 @@ import java.lang.Runnable;
 
 import javafx.ext.swing.SwingComponent;
 import com.jidesoft.chart.Chart;
-import com.jidesoft.chart.model.DefaultChartModel;
-import com.jidesoft.range.NumericRange;
+import com.jidesoft.range.IntegerRange;
 import com.jidesoft.chart.axis.NumericAxis;
 import com.jidesoft.chart.axis.TimeAxis;
 import com.jidesoft.chart.style.ChartStyle;
 
-public function getLineSegmentModel( lineSegment:LineSegment ):LineSegmentModel {
+public function getLineSegmentChartModel( lineSegment:LineSegment ):LineSegmentChartModel {
 	for( chart in chartSet ) {
 		for( model in (chart as LineChart).lines.values() ) {
-			def segmentModel = model as LineSegmentModel;
+			def segmentModel = model as LineSegmentChartModel;
 			if( segmentModel.segment == lineSegment )
 				return segmentModel
 		}
@@ -85,12 +84,6 @@ public function getLineSegmentModel( lineSegment:LineSegment ):LineSegmentModel 
 
 def chartSet = new HashSet();
 
-//Attributes
-def SCALE = "scale";
-def LINE_COLOR = "lineColor";
-def LINE_STROKE = "lineStroke";
-def LINE_WIDTH = "lineWidth";
-
 /**
  * Base LineChart Node, visualizes a LineChartView.
  * 
@@ -99,12 +92,13 @@ def LINE_WIDTH = "lineWidth";
 public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	override var styleClass = "line-chart";
 	
+	def xRange = new IntegerRange( 0, 0 );
 	def listener = new ChartViewListener();
 	def groupListener = new ChartGroupListener();
 	def lines = new HashMap();
 	public-read def chart = new Chart();
 	def chartNode = SwingComponent.wrap( chart );
-	var timeCalculator:TotalTimeTickCalculator;
+	def timeCalculator = new TotalTimeTickCalculator();
 	var compactSegments = true;
 	
 	def scrollBar = ScrollBar {
@@ -113,14 +107,16 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		clickToPosition: true
 	}
 	def scrollBarPosition = bind scrollBar.value on replace {
-		def realPosition = scrollBarPosition * ( maxTime - timeSpan ) / maxTime;
-		chart.getXAxis().setRange( new NumericRange( realPosition, realPosition + timeSpan ) );
+		position = scrollBarPosition * ( maxTime - timeSpan ) / maxTime;
+		xRange.setMin( position );
+		xRange.setMax( position + timeSpan );
 	}
 	
 	var padding = 2;
 	var min:Number = 0;
 	var max:Number = 0;
 	var maxTime:Number = 0;
+	var position:Number = 0;
 	var timeSpan:Number = 10000 on replace oldTimeSpan {
 		scrollBar.visibleAmount = timeSpan;
 		scrollBar.unitIncrement = timeSpan / 10;
@@ -239,10 +235,11 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		LineChartStyles.styleChart( chart );
 		
 		def xAxis = new TimeAxis();
-		timeCalculator = new TotalTimeTickCalculator();
 		chart.setXAxis( xAxis );
-		xAxis.setRange( new NumericRange( 0, timeSpan ) );
-		xAxis.setTickCalculator(timeCalculator);
+		xRange.setMin( 0 );
+		xRange.setMax( timeSpan );
+		xAxis.setRange( xRange );
+		xAxis.setTickCalculator( timeCalculator );
 		
 		def yAxis = chart.getYAxis();
 		yAxis.setRange( 0, 10 );
@@ -252,34 +249,53 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	override function update():Void {
-		for( model in lines.values() ) {
-			(model as LineSegmentModel).refresh();
+		maxTime = 0;
+		min = Integer.MAX_VALUE;
+		max = Integer.MIN_VALUE;
+		for( m in lines.values() ) {
+			def model = m as LineSegmentChartModel;
+			model.refresh();
+			maxTime = Math.max( maxTime, (model as LineSegmentChartModel).latestTime );
+			def yRange = model.getYRange();
+			min = Math.min( min, yRange.minimum() );
+			max = Math.max( max, yRange.maximum() );
 		}
-		chart.getYAxis().setRange( min - padding, max + padding );
-		
-		var position = maxTime;
+		if( min > max ) {
+			min = 0;
+			max = 100;
+		}
+		def yPadding = (max-min)*0.1;
+		chart.getYAxis().setRange( min - yPadding, max + yPadding );
 		
 		if( maxTime > timeSpan ) {
 			if( scrollBar.max < timeSpan or scrollBar.value == scrollBar.max ) {
 				scrollBar.max = maxTime;
 				scrollBar.value = maxTime;
-				} else {
+				position = maxTime - timeSpan;
+			} else {
 				scrollBar.max = maxTime;
 			}
-			position = scrollBar.value;
-			} else {
+		} else {
 			scrollBar.max = 0;
+			position = 0;
 		}
+
+		def end = position + timeSpan;
+		xRange.setMin( position );
+		xRange.setMax( end );
 		
-		def realPosition = position * ( maxTime - timeSpan ) / maxTime;
-		chart.getXAxis().setRange( new NumericRange( realPosition, realPosition + timeSpan ) );
+		for( m in lines.values() ) {
+			def model = m as LineSegmentChartModel;
+			def padding = 10000;
+			model.xRange = [ position - padding, end + padding ];
+		}
 	}
 	
 	override function reset():Void {
 		for( model in lines.values() )
-		(model as DefaultChartModel).clearPoints();
+			(model as LineSegmentChartModel).clearPoints();
 		maxTime = 0;
-		max = 0;
+		max = 100;
 		min = 0;
 	}
 	
@@ -301,14 +317,14 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	function addedSegment( segment:LineSegment ):Void {
-		def model = LineSegmentModel { segment: segment };
+		def model = LineSegmentChartModel { segment: segment };
 		lines.put( segment, model );
-		chart.addModel( model, model.style );
+		chart.addModel( model, model.chartStyle );
 		insert SegmentButton { model: model } into segmentButtons.content;
 	}
 	
 	function removedSegment( segment:LineSegment ):Void {
-		def model = lines.remove( segment ) as DefaultChartModel;
+		def model = lines.remove( segment ) as LineSegmentChartModel;
 		chart.removeModel( model );
 		for( button in segmentButtons.content[b | b instanceof SegmentButton] ) {
 			if( (button as SegmentButton).model.segment == segment )
@@ -362,7 +378,7 @@ class ChartViewListener extends EventHandler {
 }
 
 class SegmentButton extends Button {
-	public-init var model:LineSegmentModel on replace {
+	public-init var model:LineSegmentChartModel on replace {
 		def statistic = model.segment.getStatistic();
 		graphic = HBox {
 			content: [
@@ -384,9 +400,8 @@ class SegmentButton extends Button {
 		}
 	}
 	
-	var lineColor:String = bind model.lineColor on replace {
-		if( not StringUtils.isNullOrEmpty( lineColor ) )
-			style = "-fx-inner-border: {lineColor};";
+	var lineColor:Color = bind model.color on replace {
+		style = "-fx-inner-border: {FxUtils.colorToWebString(lineColor)};";
 	}
 	
 	override var layoutInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS };
@@ -395,134 +410,5 @@ class SegmentButton extends Button {
 		 //TODO: Show configuration panel instead of removing the segment.
 		if( chartView instanceof ConfigurableLineChartView )
 			(chartView as ConfigurableLineChartView).removeSegment( model.segment );
-	}
-}
-
-public class LineSegmentModel extends DefaultChartModel {
-	var timestamp = -1;
-	var statistic:Statistic;
-	
-	def scaler = new ScaledPointScale();
-	
-	public-read var scale:Integer on replace {
-		scaler.setScale( Math.pow( 10, scale ) );
-		for( point in this )
-			max = Math.max( max, point.getY().position() );
-	}
-	public-read var lineColor:String;
-	public-read var lineWidth:Integer;
-	public-read var lineStroke:String;
-	
-	public-read def style = new ChartStyle() on replace {
-		LineChartStyles.styleChartStyle( style );
-		lineColor = FxUtils.colorToWebString( style.getLineColor() );
-	}
-	
-	public-init var segment:LineSegment on replace {
-		statistic = segment.getStatistic();
-		loadStyles();
-		
-		def latestTime = statistic.getTimestamp();
-		if( latestTime >= 0 ) {
-			def startTime = 0; // Since scrolling doesn't yet fetch any data, load all data on creation. //Math.max( 0, latestTime - timeSpan ); 
-			for( dataPoint in statistic.getPeriod( startTime, latestTime ) ) {
-				def yValue = (dataPoint as DataPoint).getValue() as Number;
-				min = Math.min( min, yValue );
-				max = Math.max( max, yValue );
-				addPoint( scaler.createPoint( (dataPoint as DataPoint).getTimestamp(), yValue ) );
-			}
-			maxTime = Math.max( maxTime, latestTime );
-		}
-	}
-	
-	public function refresh():Void {
-		def latestTime = statistic.getTimestamp();
-		if( timestamp != latestTime and latestTime >= 0 ) {
-			timestamp = latestTime;
-			def yValue = statistic.getValue() as Number;
-			min = Math.min( min, yValue );
-			max = Math.max( max, yValue );
-			maxTime = Math.max( maxTime, timestamp );
-			addPoint( scaler.createPoint( timestamp, yValue ) );
-		}
-	}
-	
-	public function setScale( newScale:Integer ):Void {
-		scale = newScale;
-		segment.setAttribute( SCALE, "{scale}" );
-	}
-	
-	public function getScale():Integer {
-		scale
-	}
-	
-	public function setLineColor( color:Color ):Void {
-		lineColor = FxUtils.colorToWebString( color );
-		segment.setAttribute( LINE_COLOR, lineColor );
-		style.setLineColor( FxUtils.getAwtColor( color ) );
-	}
-	
-	public function getLineColor():Color {
-		Color.web( lineColor );
-	}
-	
-	public function setLineWidth( width:Integer ):Void {
-		segment.setAttribute( LINE_WIDTH, "{width}" );
-		lineWidth = width;
-		setStroke();
-	}
-	
-	public function getLineWidth():Integer {
-		try {
-			return Integer.parseInt( segment.getAttribute( LINE_WIDTH, "1" ) );
-		} catch(e) {
-			return 1;
-		}
-	}
-	
-	public function setLineStroke( strokeName:String ):Void {
-		segment.setAttribute( LINE_STROKE, strokeName );
-		lineStroke = strokeName;
-		setStroke();
-	}
-	
-	public function getLineStroke():String {
-		lineStroke;
-	}
-	
-	function loadStyles():Void {
-		try {
-			scale = Integer.parseInt( segment.getAttribute( SCALE, "0" ) );
-		} catch(e) {
-			scale = 0;
-		}
-		
-		def storedLineColor = segment.getAttribute( LINE_COLOR, null );
-		if( storedLineColor != null ) {
-			style.setLineColor( FxUtils.getAwtColor( storedLineColor ) );
-			lineColor = storedLineColor;
-		}
-		
-		try {
-			lineWidth = Integer.parseInt( segment.getAttribute( LINE_WIDTH, "1" ) );
-		} catch(e) {
-			lineWidth = 1;
-		}
-		
-		lineStroke = segment.getAttribute( LINE_STROKE, "solid" );
-		
-		setStroke();
-	}
-	
-	function setStroke():Void {
-		def stroke = if( lineStroke == "dashed" ) {
-			LineChartStyles.dashedStroke
-		} else if( lineStroke == "dotted" ) {
-			LineChartStyles.dottedStroke
-		} else {
-			LineChartStyles.solidStroke
-		}
-		
-		style.setLineStroke( LineChartStyles.getStroke( lineWidth, stroke ) );
 	}
 }

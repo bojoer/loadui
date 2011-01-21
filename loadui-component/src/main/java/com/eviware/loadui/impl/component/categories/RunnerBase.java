@@ -136,8 +136,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		executor = BeanInjector.getBean( ExecutorService.class );
 		scheduler = BeanInjector.getBean( ScheduledExecutorService.class );
 
-		timeTakenVariable = context.addStatisticVariable( "TimeTaken", "AVERAGE" );
-		responseSizeVariable = context.addStatisticVariable( "ResponseSize", "AVERAGE" );
+		timeTakenVariable = context.addStatisticVariable( "TimeTaken", "AVERAGE", "MINMAX" );
+		responseSizeVariable = context.addStatisticVariable( "ResponseSize", "AVERAGE", "MINMAX" );
 
 		triggerTerminal = context.createInput( TRIGGER_TERMINAL, "Trigger Input" );
 

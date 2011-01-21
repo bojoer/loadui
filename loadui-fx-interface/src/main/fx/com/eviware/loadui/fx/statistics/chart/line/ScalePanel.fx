@@ -39,7 +39,6 @@ import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.control.ColorPicker;
 import com.eviware.loadui.fx.ui.form.fields.SelectField;
-import com.eviware.loadui.fx.statistics.chart.line.LineChart.LineSegmentModel;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
@@ -80,15 +79,15 @@ class SegmentRow extends GridRow {
 	var scale:Integer on replace {
 		slider.value = scale;
 		selectField.value = SCALES[6+scale];
-		model.setScale( scale );
+		model.scale = scale;
 	}
 	
-	var model:LineSegmentModel on replace {
-		scale = model.getScale();
+	var model:LineSegmentChartModel on replace {
+		scale = model.scale;
 	}
 	
 	public-init var segment:LineSegment on replace {
-		model = LineChart.getLineSegmentModel( segment );
+		model = LineChart.getLineSegmentChartModel( segment );
 	}
 	
 	def slider = Slider {
@@ -128,7 +127,7 @@ class SegmentRow extends GridRow {
 						LineTo { x: 6, y: 17 },
 						ClosePath {}
 					]
-					fill: model.getLineColor()
+					fill: model.color
 					stroke: null
 				}
 				text: segment.getStatistic().getName()

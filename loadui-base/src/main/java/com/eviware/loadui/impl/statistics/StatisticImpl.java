@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 import com.eviware.loadui.api.statistics.DataPoint;
@@ -78,6 +79,9 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	@Override
 	public Iterable<DataPoint<T>> getPeriod( int start, int end )
 	{
+		if( manager.getCurrentExecution() == null )
+			return Collections.emptyList();
+
 		return new DataPointIterable( manager.getTrack( trackId ).getRange( source, start, end ), name );
 	}
 
