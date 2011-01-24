@@ -95,6 +95,11 @@ public interface ExecutionManager
 	 * @param entry
 	 */
 	public void writeEntry( String trackId, Entry entry, String source );
+	
+	/**
+	 * @see writeEntry(String, Entry, String)
+	 */
+	public void writeEntry( String trackId, Entry entry, String source, int interpolationLevel );
 
 	/**
 	 * Gets the last stored Entry for a particular source, which is cached in
@@ -104,6 +109,11 @@ public interface ExecutionManager
 	 */
 	public Entry getLastEntry( String trackId, String source );
 
+	/**
+	 * @see Entry(String, String)
+	 */
+	public Entry getLastEntry( String trackId, String source, int interpolationLevel );
+	
 	/**
 	 * Gets a list of the names of all available Executions.
 	 * 

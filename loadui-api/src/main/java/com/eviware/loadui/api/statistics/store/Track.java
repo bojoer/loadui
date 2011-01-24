@@ -52,11 +52,18 @@ public interface Track
 	 * @return
 	 */
 	public Entry getNextEntry( String source, int timestamp );
+	
+	/**
+	 * @see getNextEntry(String, int)
+	 */
+	public Entry getNextEntry( String source, int timestamp, int interpolationLevel );
 
 	/**
 	 * Gets an Iterable over the specified range, including all Entries with a
 	 * startTime <= timestamp <= endTime for the given source, where the times
 	 * are given as milliseconds since the start of the Execution.
+	 * 
+	 * Interpolationlevel defaults to 0.
 	 * 
 	 * @param source
 	 * @param startTime
@@ -64,6 +71,11 @@ public interface Track
 	 * @return
 	 */
 	public Iterable<Entry> getRange( String source, int startTime, int endTime );
+	
+	/**
+	 * @see getRange(String, int, int)
+	 */
+	public Iterable<Entry> getRange( String source, int startTime, int endTime, int interpolationLevel );
 
 	/**
 	 * Deletes the Track from the Execution, removing all data from the

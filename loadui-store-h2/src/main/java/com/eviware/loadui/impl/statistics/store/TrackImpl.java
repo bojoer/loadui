@@ -71,9 +71,15 @@ public class TrackImpl implements Track
 	@Override
 	public Entry getNextEntry( String source, int timestamp )
 	{
+		return getNextEntry( source, timestamp, 0 );
+	}
+	
+	@Override
+	public Entry getNextEntry( String source, int timestamp, int interpolationLevel )
+	{
 		try
 		{
-			Map<String, Object> result = manager.readNext( execution.getId(), id, source, timestamp );
+			Map<String, Object> result = manager.readNext( execution.getId(), id, source, timestamp, interpolationLevel );
 			if( result.size() > 0 )
 			{
 				Integer tstamp = ( Integer )result.get( DataTable.STATIC_FIELD_TIMESTAMP );
@@ -83,7 +89,8 @@ public class TrackImpl implements Track
 				{
 					String key = keys.next();
 					if( !DataTable.STATIC_FIELD_TIMESTAMP.equalsIgnoreCase( key )
-							&& !DataTable.STATIC_FIELD_SOURCEID.equalsIgnoreCase( key ) )
+							&& !DataTable.STATIC_FIELD_SOURCEID.equalsIgnoreCase( key )
+							&& !DataTable.STATIC_FIELD_INTERPOLATIONLEVEL.equalsIgnoreCase( key ) )
 					{
 						values.put( key, ( Number )result.get( key ) );
 					}
@@ -104,9 +111,15 @@ public class TrackImpl implements Track
 	@Override
 	public Iterable<Entry> getRange( String source, int startTime, int endTime )
 	{
+		return getRange( source, startTime, endTime, 0 );
+	}
+	
+	@Override
+	public Iterable<Entry> getRange( String source, int startTime, int endTime, int interpolationLevel )
+	{
 		try
 		{
-			List<Map<String, Object>> queryResult = manager.read( execution.getId(), id, source, startTime, endTime );
+			List<Map<String, Object>> queryResult = manager.read( execution.getId(), id, source, startTime, endTime, interpolationLevel );
 			if( queryResult.size() > 0 )
 			{
 				List<Entry> resultList = new ArrayList<Entry>();
@@ -120,7 +133,8 @@ public class TrackImpl implements Track
 					{
 						String key = keys.next();
 						if( !DataTable.STATIC_FIELD_TIMESTAMP.equalsIgnoreCase( key )
-								&& !DataTable.STATIC_FIELD_SOURCEID.equalsIgnoreCase( key ) )
+								&& !DataTable.STATIC_FIELD_SOURCEID.equalsIgnoreCase( key )
+								&& !DataTable.STATIC_FIELD_INTERPOLATIONLEVEL.equalsIgnoreCase( key ) )
 						{
 							values.put( key, ( Number )row.get( key ) );
 						}

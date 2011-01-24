@@ -269,13 +269,20 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public void writeEntry( String trackId, Entry entry, String source )
 	{
-		latestEntries.put( trackId + ":" + source, entry );
+		writeEntry( trackId, entry, source, 0 );
+	}
+	
+	@Override
+	public void writeEntry( String trackId, Entry entry, String source, int interpolationLevel )
+	{
+		latestEntries.put( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ), entry );
 
 		Execution execution = getCurrentExecution();
 		if( execution != null )
 		{
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( DataTable.STATIC_FIELD_TIMESTAMP, entry.getTimestamp() );
+			data.put( DataTable.STATIC_FIELD_INTERPOLATIONLEVEL, interpolationLevel );
 			Collection<String> nameCollection = entry.getNames();
 			for( Iterator<String> iterator = nameCollection.iterator(); iterator.hasNext(); )
 			{
@@ -298,7 +305,13 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public Entry getLastEntry( String trackId, String source )
 	{
-		return latestEntries.get( trackId + ":" + source );
+		return getLastEntry( trackId, source, 0 );
+	}
+	
+	@Override
+	public Entry getLastEntry( String trackId, String source, int interpolationLevel )
+	{
+		return latestEntries.get( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ) );
 	}
 
 	public void clearMetaDatabase()
@@ -323,7 +336,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		dtd.insert( data );
 	}
 
-	public Map<String, Object> readNext( String executionId, String trackId, String source, int startTime )
+	public Map<String, Object> readNext( String executionId, String trackId, String source, int startTime, int interpolationLevel )
 			throws SQLException
 	{
 		TableBase dtd = tableRegistry.getTable( executionId, trackId );
@@ -334,11 +347,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		Integer sourceId = ( ( SourceTable )dtd.getParentTable() ).getSourceId( source );
 		data.put( DataTable.SELECT_ARG_SOURCEID_EQ, sourceId );
+		data.put( DataTable.SELECT_ARG_INTERPOLATIONLEVEL_EQ, interpolationLevel );
 
 		return dtd.selectFirst( data );
 	}
 
-	public List<Map<String, Object>> read( String executionId, String trackId, String source, int startTime, int endTime )
+	public List<Map<String, Object>> read( String executionId, String trackId, String source, int startTime, int endTime, int interpolationLevel )
 			throws SQLException
 	{
 		TableBase dtd = tableRegistry.getTable( executionId, trackId );
@@ -349,6 +363,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		Integer sourceId = ( ( SourceTable )dtd.getParentTable() ).getSourceId( source );
 		data.put( DataTable.SELECT_ARG_SOURCEID_EQ, sourceId );
+		data.put( DataTable.SELECT_ARG_INTERPOLATIONLEVEL_EQ, interpolationLevel );
 
 		return dtd.select( data );
 	}
