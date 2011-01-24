@@ -27,7 +27,9 @@ import org.junit.Test;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.statistics.store.Entry;
+import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.impl.statistics.store.table.model.DataTable;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 
@@ -58,9 +60,9 @@ public class TrackImplTest
 		h2.registerTrackDescriptor( td );
 		track = h2.getTrack( "testTrack" );
 	}
-
+	
 	@Test
-	public void testWrite()
+	public void testWriteEntry()
 	{
 		Map<String, Number> values = new HashMap<String, Number>();
 		values.put( "a", 1 );
@@ -69,68 +71,80 @@ public class TrackImplTest
 		values.put( "d", 4 );
 
 		EntryImpl entry = new EntryImpl( ( 10 ), values );
-		h2.writeEntry( track.getId(), entry, "local1" );
+		h2.writeEntry( track.getId(), entry, "local1", 0 );
 
 		entry = new EntryImpl( ( 20 ), values );
-		h2.writeEntry( track.getId(), entry, "local2" );
+		h2.writeEntry( track.getId(), entry, "local2", 0 );
 
 		entry = new EntryImpl( ( 30 ), values );
-		h2.writeEntry( track.getId(), entry, "local2" );
+		h2.writeEntry( track.getId(), entry, "local2", 0 );
+		
+		entry = new EntryImpl( ( 30 ), values );
+		h2.writeEntry( track.getId(), entry, "local3", 1 );
+		
+		entry = new EntryImpl( ( 25 ), values );
+		h2.writeEntry( track.getId(), entry, "local3", 0 );
 	}
 
 	@Test
 	public void testGetNextEntry()
 	{
-		Entry e = track.getNextEntry( "local1", 15 );
+		Entry e = track.getNextEntry( "local1", 15, 0 );
 		assertNull( e );
 
-		e = track.getNextEntry( "local1", 5 );
+		e = track.getNextEntry( "local1", 5, 0 );
 		assertEquals( e.getTimestamp(), 10 );
 
-		e = track.getNextEntry( "local2", 40 );
+		e = track.getNextEntry( "local2", 40, 0 );
 		assertNull( e );
 
-		e = track.getNextEntry( "local2", 25 );
+		e = track.getNextEntry( "local2", 25, 0 );
 		assertEquals( e.getTimestamp(), 30 );
 
-		e = track.getNextEntry( "local2", 15 );
+		e = track.getNextEntry( "local2", 15, 0 );
 		assertEquals( e.getTimestamp(), 20 );
+
+		e = track.getNextEntry( "local3", 10, 1 );
+		assertEquals( e.getTimestamp(), 30 );
 	}
 
 	@Test
 	public void testGetRange()
 	{
-		List<Entry> e = ( List<Entry> )track.getRange( "local1", 15, 20 );
+		List<Entry> e = ( List<Entry> )track.getRange( "local1", 15, 20, 0 );
 		assertNull( e );
 
-		e = ( List<Entry> )track.getRange( "local1", 8, 9 );
+		e = ( List<Entry> )track.getRange( "local1", 8, 9, 0 );
 		assertNull( e );
 
-		e = ( List<Entry> )track.getRange( "local1", 20, 0 );
+		e = ( List<Entry> )track.getRange( "local1", 20, 0, 0 );
 		assertNull( e );
 
-		e = ( List<Entry> )track.getRange( "local1", 10, 20 );
+		e = ( List<Entry> )track.getRange( "local1", 10, 20, 0 );
 		assertEquals( e.size(), 1 );
 
-		e = ( List<Entry> )track.getRange( "local1", 5, 10 );
+		e = ( List<Entry> )track.getRange( "local1", 5, 10, 0 );
 		assertEquals( e.size(), 1 );
 
-		e = ( List<Entry> )track.getRange( "local1", 10, 10 );
+		e = ( List<Entry> )track.getRange( "local1", 10, 10, 0 );
 		assertEquals( e.size(), 1 );
 
-		e = ( List<Entry> )track.getRange( "local1", 5, 15 );
+		e = ( List<Entry> )track.getRange( "local1", 5, 15, 0 );
 		assertEquals( e.size(), 1 );
 
-		e = ( List<Entry> )track.getRange( "local2", 20, 30 );
+		e = ( List<Entry> )track.getRange( "local2", 20, 30, 0 );
 		assertEquals( e.size(), 2 );
 
-		e = ( List<Entry> )track.getRange( "local2", 15, 35 );
+		e = ( List<Entry> )track.getRange( "local2", 15, 35, 0 );
 		assertEquals( e.size(), 2 );
 
-		e = ( List<Entry> )track.getRange( "local2", 25, 35 );
+		e = ( List<Entry> )track.getRange( "local2", 25, 35, 0 );
 		assertEquals( e.size(), 1 );
 
-		e = ( List<Entry> )track.getRange( "local2", 15, 25 );
+		e = ( List<Entry> )track.getRange( "local2", 15, 25, 0 );
+		assertEquals( e.size(), 1 );
+		
+		e = ( List<Entry> )track.getRange( "local3", 0, 50, 1 );
 		assertEquals( e.size(), 1 );
 	}
 

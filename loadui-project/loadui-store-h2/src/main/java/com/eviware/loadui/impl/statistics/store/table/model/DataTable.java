@@ -29,9 +29,11 @@ public class DataTable extends TableBase
 	public static final String SELECT_ARG_TIMESTAMP_GTE = "tstamp_gte";
 	public static final String SELECT_ARG_TIMESTAMP_LTE = "tstamp_lte";
 	public static final String SELECT_ARG_SOURCEID_EQ = "sourceid_eq";
+	public static final String SELECT_ARG_INTERPOLATIONLEVEL_EQ = "interplvl_eq";
 	
 	public static final String STATIC_FIELD_TIMESTAMP = "_TSTAMP";
 	public static final String STATIC_FIELD_SOURCEID = "_SOURCE_ID";
+	public static final String STATIC_FIELD_INTERPOLATIONLEVEL = "_INTERP_LVL";
 
 	public DataTable( String dbName, String name, Map<String, ? extends Class<? extends Object>> dynamicFields,
 			ConnectionProvider connectionProvider, MetadataProvider metadataProvider, TableProvider tableProvider )
@@ -52,13 +54,16 @@ public class DataTable extends TableBase
 	{
 		descriptor.addStaticField( STATIC_FIELD_TIMESTAMP, Integer.class );
 		descriptor.addStaticField( STATIC_FIELD_SOURCEID, Integer.class );
+		descriptor.addStaticField( STATIC_FIELD_INTERPOLATIONLEVEL, Integer.class );
 
 		descriptor.addToPkSequence( STATIC_FIELD_TIMESTAMP );
 		descriptor.addToPkSequence( STATIC_FIELD_SOURCEID );
+//		descriptor.addToPkSequence( STATIC_FIELD_INTERPOLATIONLEVEL );
 
 		descriptor.addSelectCriteria( SELECT_ARG_TIMESTAMP_GTE, STATIC_FIELD_TIMESTAMP, ">=?" );
 		descriptor.addSelectCriteria( SELECT_ARG_TIMESTAMP_LTE, STATIC_FIELD_TIMESTAMP, "<=?" );
 		descriptor.addSelectCriteria( SELECT_ARG_SOURCEID_EQ, STATIC_FIELD_SOURCEID, "=?" );
+		descriptor.addSelectCriteria( SELECT_ARG_INTERPOLATIONLEVEL_EQ, STATIC_FIELD_INTERPOLATIONLEVEL, "=?" );
 	}
 
 }
