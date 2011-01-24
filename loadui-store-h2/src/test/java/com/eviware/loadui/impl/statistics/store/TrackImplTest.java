@@ -112,13 +112,13 @@ public class TrackImplTest
 	public void testGetRange()
 	{
 		List<Entry> e = ( List<Entry> )track.getRange( "local1", 15, 20, 0 );
-		assertNull( e );
+		assertEquals( e.size(), 0 );
 
 		e = ( List<Entry> )track.getRange( "local1", 8, 9, 0 );
-		assertNull( e );
+		assertEquals( e.size(), 0 );
 
 		e = ( List<Entry> )track.getRange( "local1", 20, 0, 0 );
-		assertNull( e );
+		assertEquals( e.size(), 0 );
 
 		e = ( List<Entry> )track.getRange( "local1", 10, 20, 0 );
 		assertEquals( e.size(), 1 );
