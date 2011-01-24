@@ -58,7 +58,7 @@ public class DataTable extends TableBase
 
 		descriptor.addToPkSequence( STATIC_FIELD_TIMESTAMP );
 		descriptor.addToPkSequence( STATIC_FIELD_SOURCEID );
-//		descriptor.addToPkSequence( STATIC_FIELD_INTERPOLATIONLEVEL );
+		descriptor.addToPkSequence( STATIC_FIELD_INTERPOLATIONLEVEL );
 
 		descriptor.addSelectCriteria( SELECT_ARG_TIMESTAMP_GTE, STATIC_FIELD_TIMESTAMP, ">=?" );
 		descriptor.addSelectCriteria( SELECT_ARG_TIMESTAMP_LTE, STATIC_FIELD_TIMESTAMP, "<=?" );
