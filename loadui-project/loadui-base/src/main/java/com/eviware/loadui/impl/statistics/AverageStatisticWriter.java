@@ -109,9 +109,6 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			avgCnt++ ;
 			if( lastTimeFlushed + delay <= System.currentTimeMillis() )
 			{
-				System.out.println( "lasttimeFlushed: " +lastTimeFlushed );
-				System.out.println( "delay: " + delay);
-				System.out.println( "flush" );
 				flush();
 			}
 		}
@@ -216,12 +213,8 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			Map<String, Class<? extends Number>> trackStructure = new TreeMap<String, Class<? extends Number>>();
 
 			// init statistics
-
 			trackStructure.put( Stats.AVERAGE.name(), Double.class );
-			trackStructure.put( Stats.AVERAGE_SUM.name(), Double.class );
-			trackStructure.put( Stats.AVERAGE_COUNT.name(), Long.class );
 			trackStructure.put( Stats.STD_DEV.name(), Double.class );
-			trackStructure.put( Stats.STD_DEV_SUM.name(), Double.class );
 			trackStructure.put( Stats.PERCENTILE.name(), Double.class );
 			trackStructure.put( Stats.MEDIAN.name(), Double.class );
 
