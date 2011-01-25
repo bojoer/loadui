@@ -54,7 +54,7 @@ public class SourceTable extends TableBase
 	}
 
 	@Override
-	public void insert( Map<String, ? extends Object> data ) throws SQLException
+	public synchronized void insert( Map<String, ? extends Object> data ) throws SQLException
 	{
 		super.insert( data );
 		// TODO commit for now.
@@ -86,7 +86,7 @@ public class SourceTable extends TableBase
 	}
 
 	@Override
-	public void dispose()
+	public synchronized void dispose()
 	{
 		super.dispose();
 		inMemoryTable.clear();

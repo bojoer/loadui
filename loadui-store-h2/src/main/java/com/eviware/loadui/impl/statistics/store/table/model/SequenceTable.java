@@ -48,7 +48,7 @@ public class SequenceTable extends TableBase
 				+ " = ? where " + STATIC_FIELD_TABLE + " = ? and " + STATIC_FIELD_COLUMN + " = ?" );
 	}
 
-	public Integer next( String tableName, String column )
+	public synchronized Integer next( String tableName, String column )
 	{
 		try
 		{

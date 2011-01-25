@@ -41,4 +41,13 @@ public interface ExecutionListener
 	 */
 	void executionStopped( State oldState );
 
+	/**
+	 * Track registered, handle it.
+	 */
+	void trackRegistered( TrackDescriptor trackDescriptor );
+
+	/**
+	 * Track unregistered, handle it.
+	 */
+	void trackUnregistered( TrackDescriptor trackDescriptor );
 }

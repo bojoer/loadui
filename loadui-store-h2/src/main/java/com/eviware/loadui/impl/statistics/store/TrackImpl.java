@@ -42,9 +42,9 @@ public class TrackImpl implements Track
 	private final TrackDescriptor trackDescriptor;
 	private final ExecutionManagerImpl manager;
 
-	public TrackImpl( String trackId, Execution execution, TrackDescriptor trackDescriptor, ExecutionManagerImpl manager )
+	public TrackImpl( Execution execution, TrackDescriptor trackDescriptor, ExecutionManagerImpl manager )
 	{
-		this.id = trackId;
+		this.id = trackDescriptor.getId();
 		this.execution = execution;
 		this.trackDescriptor = trackDescriptor;
 		this.manager = manager;

@@ -61,8 +61,16 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	@Override
 	public Entry output()
 	{
-		lastTimeFlushed = System.currentTimeMillis();
-		return at( lastTimeFlushed ).put( Stats.MAX.name(), maximum ).put( Stats.MIN.name(), minimum ).build();
+		long currTime = System.currentTimeMillis();
+		if( lastTimeFlushed == currTime )
+		{
+			return null;
+		}
+		else
+		{
+			lastTimeFlushed = currTime;
+			return at( lastTimeFlushed ).put( Stats.MAX.name(), maximum ).put( Stats.MIN.name(), minimum ).build();
+		}
 	}
 
 	@Override

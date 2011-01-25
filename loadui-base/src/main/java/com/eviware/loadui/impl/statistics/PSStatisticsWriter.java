@@ -70,12 +70,20 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 	@Override
 	public Entry output()
 	{
-		// it should be per second
-		perSecond = totalSum / ( ( System.currentTimeMillis() - lastTimeFlushed ) / 1000 );
-		totalSum = 0D;
-		lastTimeFlushed = System.currentTimeMillis();
-		return at( lastTimeFlushed ).put( Stats.PS.name(), perSecond ).put( Stats.LAST_SECOND_CHANGE.name(), lastSecondChange )
-				.build();
+		long currTime = System.currentTimeMillis();
+		if( lastTimeFlushed == currTime )
+		{
+			return null;
+		}
+		else
+		{
+			// it should be per second
+			perSecond = totalSum / ( ( System.currentTimeMillis() - lastTimeFlushed ) / 1000 );
+			totalSum = 0D;
+			lastTimeFlushed = currTime;
+			return at( lastTimeFlushed ).put( Stats.PS.name(), perSecond )
+					.put( Stats.LAST_SECOND_CHANGE.name(), lastSecondChange ).build();
+		}
 	}
 
 	/**
