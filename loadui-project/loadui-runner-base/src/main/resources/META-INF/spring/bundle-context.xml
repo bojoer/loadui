@@ -5,11 +5,13 @@
 
 	<bean id="counterSynchronizer" class="com.eviware.loadui.impl.agent.AgentCounterSynchronizer" />
 	
-	<bean id="trackStreamer" class="com.eviware.loadui.impl.statistics.TrackStreamer"
+	<!--<bean id="trackStreamer" class="com.eviware.loadui.impl.statistics.TrackStreamer"
 		destroy-method="release">
 		<constructor-arg ref="scheduledExecutorService" />
 		<constructor-arg ref="executionManager" />
-	</bean>
+	</bean>-->
+	
+	<bean id="streamingExecutionManager" class="com.eviware.loadui.impl.statistics.StreamingExecutionManager" />
 
 	<bean id="controller" class="com.eviware.loadui.impl.agent.ControllerImpl">
 		<constructor-arg ref="scheduledExecutorService" />
@@ -20,7 +22,7 @@
 		<constructor-arg ref="addressableRegistry" />
 		<constructor-arg ref="propertySynchronizer" />
 		<constructor-arg ref="counterSynchronizer" />
-		<constructor-arg ref="trackStreamer" />
+		<constructor-arg ref="streamingExecutionManager" />
 	</bean>
 
 	<!--<bean id="runnerServer" class="com.eviware.loadui.impl.agent.RunnerServer"> 

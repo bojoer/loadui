@@ -52,7 +52,7 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.api.terminal.TerminalProxy;
-import com.eviware.loadui.impl.statistics.TrackStreamer;
+import com.eviware.loadui.impl.statistics.StreamingExecutionManager;
 import com.eviware.loadui.util.dispatch.CustomThreadPoolExecutor;
 
 public class ControllerImpl
@@ -68,7 +68,7 @@ public class ControllerImpl
 	private final AddressableRegistry addressableRegistry;
 	private final PropertySynchronizer propertySynchronizer;
 	private final CounterSynchronizer counterSynchronizer;
-	private final TrackStreamer trackStreamer;
+	private final StreamingExecutionManager streamingExecutionManager;
 
 	private final Map<String, SceneAgent> sceneAgents = Collections.synchronizedMap( new HashMap<String, SceneAgent>() );
 	private final Set<MessageEndpoint> clients = new HashSet<MessageEndpoint>();
@@ -76,7 +76,7 @@ public class ControllerImpl
 	public ControllerImpl( ScheduledExecutorService scheduledExecutorService, ExecutorManager executorManager,
 			ConversionService conversionService, ServerEndpoint serverEndpoint, TerminalProxy terminalProxy,
 			AddressableRegistry addressableRegistry, PropertySynchronizer propertySynchronizer,
-			CounterSynchronizer counterSynchronizer, TrackStreamer trackStreamer )
+			CounterSynchronizer counterSynchronizer, StreamingExecutionManager streamingExecutionManager )
 	{
 		this.executorManager = executorManager;
 		this.executorService = executorManager.getExecutor();
@@ -85,7 +85,7 @@ public class ControllerImpl
 		this.addressableRegistry = addressableRegistry;
 		this.propertySynchronizer = propertySynchronizer;
 		this.counterSynchronizer = counterSynchronizer;
-		this.trackStreamer = trackStreamer;
+		this.streamingExecutionManager = streamingExecutionManager;
 
 		serverEndpoint.addConnectionListener( new ConnectionListener()
 		{
@@ -95,7 +95,7 @@ public class ControllerImpl
 				if( connected )
 				{
 					clients.add( endpoint );
-					ControllerImpl.this.trackStreamer.addEndpoint( endpoint );
+					ControllerImpl.this.streamingExecutionManager.addEndpoint( endpoint );
 					AgentListener agentListener = new AgentListener();
 					endpoint.addConnectionListener( agentListener );
 					endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, agentListener );
@@ -105,7 +105,7 @@ public class ControllerImpl
 				else
 				{
 					clients.remove( endpoint );
-					ControllerImpl.this.trackStreamer.removeEndpoint( endpoint );
+					ControllerImpl.this.streamingExecutionManager.removeEndpoint( endpoint );
 					log.info( "Client disconnected" );
 				}
 			}
