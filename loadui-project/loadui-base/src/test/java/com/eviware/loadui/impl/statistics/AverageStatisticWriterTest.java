@@ -57,6 +57,7 @@ public class AverageStatisticWriterTest
 		when( executionManagerMock.getCurrentExecution() ).thenReturn( executionMock );
 		when( executionManagerMock.getTrack( anyString() ) ).thenReturn( trackMock );
 		when( manager.getExecutionManager() ).thenReturn( executionManagerMock );
+		when( manager.getMinimumWriteDelay() ).thenReturn( 1000L );
 
 		ApplicationContext appContext = mock( ApplicationContext.class );
 		when( appContext.getBean( "statisticsManager", StatisticsManager.class ) ).thenReturn( manager );
@@ -66,12 +67,23 @@ public class AverageStatisticWriterTest
 		StatisticVariable variable = holderSupport.addStatisticVariable( "AVG_TEST" );
 		writer = ( AverageStatisticWriter )new AverageStatisticWriter.Factory()
 				.createStatisticsWriter( manager, variable );
+	}
 
+	private void calculate()
+	{
 		size = data.length;
 		for( int cnt = 0; cnt < data.length; cnt++ )
 		{
 			avgSum += data[cnt];
 			writer.update( System.currentTimeMillis(), data[cnt] );
+			try
+			{
+				Thread.sleep( 10 );
+			}
+			catch( InterruptedException e )
+			{
+				e.printStackTrace();
+			}
 		}
 		sumTotalSquare = 0;
 		average = avgSum / size;
@@ -85,24 +97,29 @@ public class AverageStatisticWriterTest
 	@Test
 	public void checkCounter()
 	{
+		calculate();
 		assertEquals( size, writer.avgCnt );
 	}
 
 	@Test
 	public void checkAverageSum()
 	{
+		calculate();
 		assertEquals( avgSum, writer.avgSum, .5 );
 	}
 
 	@Test
 	public void checkSquareSum()
 	{
+		calculate();
+		writer.output();
 		assertEquals( sumTotalSquare, writer.sumTotalSquare, 2.0 );
 	}
 
 	@Test
 	public void checkStdDev()
 	{
+		writer.output();
 		assertEquals( stdDev, writer.stdDev, .5 );
 	}
 
@@ -116,6 +133,7 @@ public class AverageStatisticWriterTest
 	@Test
 	public void checkAverage()
 	{
+		writer.output();
 		assertEquals( average, writer.average, .00 );
 	}
 

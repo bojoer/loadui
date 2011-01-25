@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -24,7 +25,6 @@ import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.api.statistics.store.Entry;
-import com.eviware.loadui.util.collections.CircularList;
 
 import org.apache.commons.math.stat.descriptive.rank.Percentile;
 import org.slf4j.Logger;
@@ -75,9 +75,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	double percentile = 0;
 	double median = 0;
 
-	private int bufferSize = 1000;
-
-	protected CircularList<Double> values = new CircularList<Double>(bufferSize);
+	protected ArrayList<Double> values = new ArrayList<Double>();
 
 	public AverageStatisticWriter( StatisticsManager statisticsManager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> trackStructure )
@@ -110,11 +108,15 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			avgSum += doubleValue;
 			avgCnt++ ;
 			if( lastTimeFlushed + delay <= System.currentTimeMillis() )
+			{
+				System.out.println( "lasttimeFlushed: " +lastTimeFlushed );
+				System.out.println( "delay: " + delay);
+				System.out.println( "flush" );
 				flush();
+			}
 		}
 	}
 
-	@Override
 	public Entry output()
 	{
 		long currTime = System.currentTimeMillis();
@@ -135,12 +137,18 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			stdDev = Math.sqrt( sumTotalSquare / avgCnt );
 			percentile = perc.evaluate( pValues );
 			median = medianPercentile.evaluate( pValues );
-
-			lastTimeFlushed = currTime;
-			return at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_COUNT.name(), avgCnt )
-					.put( Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.STD_DEV_SUM.name(), sumTotalSquare )
-					.put( Stats.STD_DEV.name(), stdDev ).put( Stats.PERCENTILE.name(), percentile )
-					.put( Stats.MEDIAN.name(), median ).build();
+			lastTimeFlushed = System.currentTimeMillis();
+			
+			Entry e = at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_COUNT.name(), avgCnt ).put(
+					Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.STD_DEV_SUM.name(), sumTotalSquare ).put(
+							Stats.STD_DEV.name(), stdDev ).put( Stats.PERCENTILE.name(), percentile ).put( Stats.MEDIAN.name(), median )
+							.build();
+			
+			// reset counters
+			avgSum = 0;
+			avgCnt = 0;
+			values.clear();
+			return e;
 		}
 	}
 	
@@ -150,13 +158,28 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			return null;
 		
 		Entry lastEntry = entries.get( entries.size() - 1);
+
+		long totalSum = 0;
+		long totalCnt = 0;
+		double stddev_partA = 0;
 		
-		double avgSum = lastEntry.getValue( Stats.AVERAGE_SUM.name() ).doubleValue();
-		long avgCnt = lastEntry.getValue( Stats.AVERAGE_COUNT.name() ).longValue();
-		double average = avgSum / avgCnt;
+		for( Entry e : entries )
+		{
+			long count = e.getValue( Stats.AVERAGE_COUNT.name() ).longValue();
+			double average = e.getValue( Stats.AVERAGE.name() ).doubleValue();
+			
+			// average
+			totalSum += count * average;
+			totalCnt += count;
+			
+			// stddev
+			stddev_partA += count * ( Math.pow( e.getValue( Stats.STD_DEV.name() ).doubleValue(), 2) + Math.pow( average, 2 ) );
+		}
+		double totalAverage = totalSum / totalCnt;
 		long timestamp = lastEntry.getTimestamp();
+		double stddev = Math.sqrt( stddev_partA / totalCnt - Math.pow( average, 2 ) );
 		
-		return at( timestamp ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.AVERAGE_COUNT.name(), avgCnt ).build(false);
+		return at( timestamp ).put( Stats.AVERAGE.name(), totalAverage ).put( Stats.AVERAGE_COUNT.name(), totalCnt ).put( Stats.STD_DEV.name(), stddev ).build(false);
 	}
 	
 	@Override
@@ -169,18 +192,6 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		sumTotalSquare = 0.0;
 		percentile = 0;
 		median = 0;
-	}
-
-	@Override
-	public int getBufferSize()
-	{
-		return bufferSize;
-	}
-	
-	@Override
-	public void setBufferSize( int bufferSize )
-	{
-		this.bufferSize = bufferSize;
 	}
 
 	/**
