@@ -119,6 +119,7 @@ public class AverageStatisticWriterTest
 	@Test
 	public void checkStdDev()
 	{
+		calculate();
 		writer.output();
 		assertEquals( stdDev, writer.stdDev, .5 );
 	}
@@ -133,6 +134,7 @@ public class AverageStatisticWriterTest
 	@Test
 	public void checkAverage()
 	{
+		calculate();
 		writer.output();
 		assertEquals( average, writer.average, .00 );
 	}
