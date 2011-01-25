@@ -21,10 +21,16 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.addressable.AddressableRegistry;
+import com.eviware.loadui.api.addressable.AddressableRegistry.DuplicateAddressException;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 import com.eviware.loadui.api.statistics.Statistic;
@@ -33,15 +39,19 @@ import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.util.CacheMap;
+import com.eviware.loadui.util.ReleasableUtils;
 
 /**
  * Implementation of a StatisticVariable.
  * 
  * @author dain.nilsson
  */
-public class StatisticVariableImpl implements MutableStatisticVariable
+public class StatisticVariableImpl implements MutableStatisticVariable, Releasable
 {
+	private Logger log = LoggerFactory.getLogger( StatisticVariableImpl.class );
+
 	private final ExecutionManager manager;
+	private final AddressableRegistry addressableRegistry;
 	private final String name;
 	private final StatisticHolder parent;
 	private final Set<StatisticsWriter> writers = new HashSet<StatisticsWriter>();
@@ -49,9 +59,11 @@ public class StatisticVariableImpl implements MutableStatisticVariable
 	private final Set<String> statisticNames = new HashSet<String>();
 	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<String, StatisticImpl<?>>();
 
-	public StatisticVariableImpl( ExecutionManager executionManager, StatisticHolder parent, String name )
+	public StatisticVariableImpl( ExecutionManager executionManager, StatisticHolder parent, String name,
+			AddressableRegistry addressableRegistry )
 	{
 		this.manager = executionManager;
+		this.addressableRegistry = addressableRegistry;
 		this.name = name;
 		this.parent = parent;
 	}
@@ -75,6 +87,14 @@ public class StatisticVariableImpl implements MutableStatisticVariable
 			TrackDescriptor descriptor = writer.getTrackDescriptor();
 			descriptors.add( descriptor );
 			statisticNames.addAll( descriptor.getValueNames().keySet() );
+			try
+			{
+				addressableRegistry.register( writer );
+			}
+			catch( DuplicateAddressException e )
+			{
+				log.error( "Duplicate address detected:", e );
+			}
 		}
 	}
 
@@ -138,4 +158,12 @@ public class StatisticVariableImpl implements MutableStatisticVariable
 		return writers;
 	}
 
+	@Override
+	public void release()
+	{
+		for( StatisticsWriter writer : writers )
+			addressableRegistry.unregister( writer );
+		ReleasableUtils.release( writers );
+		writers.clear();
+	}
 }

@@ -20,6 +20,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
@@ -39,11 +40,14 @@ public class TrackStreamReceiver
 
 	private final ExecutionManager manager;
 	private final MessageEndpoint endpoint;
+	private final AddressableRegistry addressableRegistry;
 
-	public TrackStreamReceiver( ExecutionManager executionManager, BroadcastMessageEndpoint endpoint )
+	public TrackStreamReceiver( ExecutionManager executionManager, BroadcastMessageEndpoint endpoint,
+			AddressableRegistry addressableRegistry )
 	{
 		this.manager = executionManager;
 		this.endpoint = endpoint;
+		this.addressableRegistry = addressableRegistry;
 
 		this.endpoint.addMessageListener( "/" + Statistic.class.getName(), new MessageListener()
 		{
@@ -61,6 +65,9 @@ public class TrackStreamReceiver
 
 					manager.writeEntry( trackId, new EntryImpl( timestamp, ( Map<String, Number> )data ), agent.getLabel(),
 							level );
+
+					log.debug( "To aggregate track: {}, use: {}", trackId,
+							TrackStreamReceiver.this.addressableRegistry.lookup( trackId ) );
 				}
 			}
 		} );
