@@ -32,18 +32,47 @@ public class TotalTimeTickCalculator implements TickCalculator<Double>
 {
 	public enum Level
 	{
-		ALL( -1 ), WEEKS( 604800 ), DAYS( 86400 ), HOURS( 3600 ), MINUTES( 60 ), SECONDS( 1 );
+		ALL( -1, -1, 0 ), WEEKS( 604800, 4, 4 ), DAYS( 86400, 7, 3 ), HOURS( 3600, 10, 2 ), MINUTES( 60, 10, 1 ), SECONDS(
+				1, 10, 0 );
 
 		private final int interval;
+		private final int span;
+		private final int level;
 
-		Level( int interval )
+		Level( int interval, int span, int level )
 		{
 			this.interval = interval;
+			this.span = span;
+			this.level = level;
 		}
 
 		public int getInterval()
 		{
 			return interval;
+		}
+
+		public int getSpan()
+		{
+			return span;
+		}
+
+		public int getLevel()
+		{
+			return level;
+		}
+
+		private static Level[] spanLevels = { MINUTES, HOURS, DAYS, WEEKS };
+
+		public static Level forSpan( int seconds )
+		{
+			Level last = SECONDS;
+			for( Level level : spanLevels )
+			{
+				if( seconds < level.interval )
+					return last;
+				last = level;
+			}
+			return WEEKS;
 		}
 	}
 
@@ -62,23 +91,8 @@ public class TotalTimeTickCalculator implements TickCalculator<Double>
 	@Override
 	public Tick[] calculateTicks( Range<Double> range )
 	{
-		Level level = this.level;
-		if( level == Level.ALL )
-		{
-			// At the ALL Level, move to the next level when displaying more than
-			// 10 ticks.
-			int span = ( int )( range.maximum() - range.minimum() ) / 10000;
-			if( span > Level.WEEKS.interval )
-				level = Level.WEEKS;
-			else if( span > Level.DAYS.interval )
-				level = Level.DAYS;
-			else if( span > Level.HOURS.interval )
-				level = Level.HOURS;
-			else if( span > Level.MINUTES.interval )
-				level = Level.MINUTES;
-			else
-				level = Level.SECONDS;
-		}
+		int span = ( int )( range.maximum() - range.minimum() ) / 1000;
+		Level level = this.level == Level.ALL ? Level.forSpan( span ) : this.level;
 
 		int interval = level.interval;
 		int firstTick = ( int )range.minimum() / 1000;

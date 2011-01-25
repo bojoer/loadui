@@ -48,9 +48,17 @@ public class LineSegmentChartModel extends DefaultChartModel {
 	def scaler = new ScaledPointScale();
 	var initialized = false;
 	
+	public var level:Integer = 0 on replace {
+		clearPoints();
+		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1], level ) ) {
+			addPoint( scaler.createPoint( (dataPoint as DataPoint).getTimestamp(), (dataPoint as DataPoint).getValue() as Number ), false );
+		}
+		update();
+	}
+	
 	public var xRange:Number[] = [ 0, 0 ] on replace oldXRange {
 		clearPoints();
-		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1] ) ) {
+		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1], level ) ) {
 			addPoint( scaler.createPoint( (dataPoint as DataPoint).getTimestamp(), (dataPoint as DataPoint).getValue() as Number ), false );
 		}
 		update();
@@ -86,11 +94,14 @@ public class LineSegmentChartModel extends DefaultChartModel {
 	}
 	
 	public function refresh():Void {
-		def timestamp = statistic.getTimestamp();
-		if( timestamp != latestTime and timestamp >= 0 ) {
-			latestTime = timestamp;
-			if( timestamp <= xRange[1] )
-				addPoint( scaler.createPoint( timestamp, statistic.getValue() as Number ) );
+		def dataPoint = statistic.getLatestPoint( level );
+		if( dataPoint != null ) {
+			def timestamp = dataPoint.getTimestamp();
+			if( timestamp != latestTime and timestamp >= 0 ) {
+				latestTime = timestamp;
+				if( timestamp <= xRange[1] )
+					addPoint( scaler.createPoint( timestamp, dataPoint.getValue() as Number ) );
+			}
 		}
 	}
 	
@@ -126,5 +137,6 @@ public class LineSegmentChartModel extends DefaultChartModel {
 		}
 		
 		chartStyle.setLineStroke( LineChartStyles.getStroke( width, newStroke ) );
+		fireModelChanged();
 	}
 }

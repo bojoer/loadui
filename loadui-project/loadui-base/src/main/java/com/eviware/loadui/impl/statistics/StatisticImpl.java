@@ -59,6 +59,14 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	}
 
 	@Override
+	@SuppressWarnings( { "unchecked", "rawtypes" } )
+	public DataPoint<T> getLatestPoint( int interpolationLevel )
+	{
+		Entry lastEntry = manager.getLastEntry( trackId, source, interpolationLevel );
+		return lastEntry == null ? null : new DataPointImpl( lastEntry.getTimestamp(), lastEntry.getValue( name ) );
+	}
+
+	@Override
 	public String getName()
 	{
 		return name;
@@ -77,12 +85,19 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	}
 
 	@Override
-	public Iterable<DataPoint<T>> getPeriod( int start, int end )
+	public Iterable<DataPoint<T>> getPeriod( int start, int end, int interpolationLevel )
 	{
 		if( manager.getCurrentExecution() == null )
 			return Collections.emptyList();
 
-		return new DataPointIterable( manager.getTrack( trackId ).getRange( source, start, end ), name );
+		return new DataPointIterable( manager.getTrack( trackId ).getRange( source, start, end, interpolationLevel ),
+				name );
+	}
+
+	@Override
+	public Iterable<DataPoint<T>> getPeriod( int start, int end )
+	{
+		return getPeriod( start, end, 0 );
 	}
 
 	private class DataPointIterable implements Iterable<DataPoint<T>>

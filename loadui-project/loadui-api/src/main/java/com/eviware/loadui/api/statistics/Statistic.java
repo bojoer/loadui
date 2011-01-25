@@ -57,7 +57,18 @@ public interface Statistic<T extends Number> extends Value<T>
 	 * @param end
 	 *           The upper bound for the timestamps of the retrieved DataPoints,
 	 *           as milliseconds since the start of the Execution.
+	 * @param interpolationLevel
+	 *           The interpolationLevel defines the minimum time in-between two
+	 *           datapoints. Data must be stored using the interpolation levels,
+	 *           or none will be available.
 	 * @return
+	 */
+	public Iterable<DataPoint<T>> getPeriod( int start, int end, int interpolationLevel );
+
+	/**
+	 * interpolationLevel defaults to 0.
+	 * 
+	 * @see getPeriod(int, int, int)
 	 */
 	public Iterable<DataPoint<T>> getPeriod( int start, int end );
 
@@ -68,4 +79,12 @@ public interface Statistic<T extends Number> extends Value<T>
 	 * @return
 	 */
 	public int getTimestamp();
+
+	/**
+	 * Gets the latest DataPoint stored for a particular interpolation level.
+	 * 
+	 * @param interpolationLevel
+	 * @return
+	 */
+	public DataPoint<T> getLatestPoint( int interpolationLevel );
 }
