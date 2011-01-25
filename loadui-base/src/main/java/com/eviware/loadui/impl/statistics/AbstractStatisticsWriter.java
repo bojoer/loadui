@@ -198,7 +198,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		Entry e = output();
 		if( e != null )
 		{
-			log.debug( "TIMESTAMP, lvl 0: "+e.getTimestamp() );
 			executionManager.writeEntry( getId(), e, StatisticVariable.MAIN_SOURCE, 0 );
 			firstLevelEntries.add( e );
 		}
@@ -211,11 +210,9 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			a.flush();
 			if( aggregatedEntry != null )
 			{
-				log.debug( "TIMESTAMP, lvl n: "+aggregatedEntry.getTimestamp() );
 				a.aggregatedEntries.add( aggregatedEntry );
 				executionManager.writeEntry( getId(), aggregatedEntry, StatisticVariable.MAIN_SOURCE, a.getDatabaseKey() );
 			}
-			
 		}
 	}
 
@@ -291,7 +288,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		
 		public boolean needsFlushing()
 		{
-			log.debug( "lastTimeFlushed:"+lastTimeFlushed+" intervalInMillis: "+intervalInMillis+" System.currentTimeMillis(): "+System.currentTimeMillis() );
 			return lastFlush + intervalInMillis <= System.currentTimeMillis();
 		}
 		
