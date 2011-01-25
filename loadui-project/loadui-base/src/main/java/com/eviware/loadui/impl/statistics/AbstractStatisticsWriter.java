@@ -250,11 +250,23 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		
 		public Entry build()
 		{
+			return build( true );
+		}
+		public Entry build( boolean adjustTimestamp )
+		{
 			ExecutionManager executionManager = manager.getExecutionManager();
 			Execution currentExecution = executionManager.getCurrentExecution();
-			int time = currentExecution == null ? -1 : ( int )( ( pauseStartedTime == 0 ? timestamp : pauseStartedTime )
+			int adjustedTime;
+			if ( adjustTimestamp )
+			{
+				adjustedTime = currentExecution == null ? -1 : ( int )( ( pauseStartedTime == 0 ? timestamp : pauseStartedTime )
 					- currentExecution.getStartTime() - totalPause );
-			return new EntryImpl( time, values, true );
+			}
+			else
+			{
+				adjustedTime = (int) timestamp;
+			}
+			return new EntryImpl( adjustedTime, values, true );
 		}
 	}
 	
@@ -271,6 +283,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			this.intervalInMillis = intervalInMillis;
 			this.databaseKey = databaseKey;
 			this.sourceEntries = sourceEntries;
+			lastFlush = System.currentTimeMillis();
 		}
 		
 		public boolean needsFlushing()

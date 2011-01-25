@@ -146,12 +146,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		double average = avgSum / avgCnt;
 		long timestamp = lastEntry.getTimestamp();
 		
-		for( Entry e : entries )
-		{
-			avgSum += e.getValue( Stats.AVERAGE_SUM.name() ).doubleValue();
-			avgCnt += e.getValue( Stats.AVERAGE_COUNT.name() ).longValue();
-		}
-		return at( timestamp ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.AVERAGE_COUNT.name(), avgCnt ).build();
+		return at( timestamp ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.AVERAGE_COUNT.name(), avgCnt ).build(false);
 	}
 	
 	@Override
