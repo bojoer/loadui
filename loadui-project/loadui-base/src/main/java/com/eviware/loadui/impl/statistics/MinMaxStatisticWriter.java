@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -22,6 +23,7 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
+import com.eviware.loadui.api.statistics.store.Entry;
 
 /**
  * 
@@ -57,10 +59,10 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	public void flush()
+	public Entry output()
 	{
 		lastTimeFlushed = System.currentTimeMillis();
-		at( lastTimeFlushed ).put( Stats.MAX.name(), maximum ).put( Stats.MIN.name(), minimum ).write();
+		return at( lastTimeFlushed ).put( Stats.MAX.name(), maximum ).put( Stats.MIN.name(), minimum ).build();
 	}
 
 	@Override
@@ -127,6 +129,13 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 
 			return new MinMaxStatisticWriter( statisticsManager, variable, trackStructure );
 		}
+	}
+
+	@Override
+	public Entry aggregate( List<Entry> entries )
+	{
+		// TODO Implement this
+		return null;
 	}
 
 }

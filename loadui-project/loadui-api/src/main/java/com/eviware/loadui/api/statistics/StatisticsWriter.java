@@ -15,7 +15,11 @@
  */
 package com.eviware.loadui.api.statistics;
 
+
+import java.util.List;
+
 import com.eviware.loadui.api.addressable.Addressable;
+import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 
 /**
@@ -59,6 +63,23 @@ public interface StatisticsWriter extends Addressable
 	 * manually be called when ending a test Execution.
 	 */
 	public void flush();
+
+	/**
+	 * Returns an Entry based on raw data acquired from
+	 * calls to update().
+	 * 
+	 * @return
+	 */
+	public Entry output();
+	
+	/**
+	 * Aggregates entries, e.g. for different zoom levels
+	 * or from different agents, into one Entry.
+	 * 
+	 * @param values
+	 * @return
+	 */
+	public Entry aggregate( List<Entry> entries );
 
 	/**
 	 * Gets the associated StatisticVariable.

@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -22,6 +23,7 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
+import com.eviware.loadui.api.statistics.store.Entry;
 
 /**
  * 
@@ -66,15 +68,14 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	public void flush()
+	public Entry output()
 	{
 		// it should be per second
 		perSecond = totalSum / ( ( System.currentTimeMillis() - lastTimeFlushed ) / 1000 );
 		totalSum = 0D;
 		lastTimeFlushed = System.currentTimeMillis();
-		at( lastTimeFlushed ).put( Stats.PS.name(), perSecond ).put( Stats.LAST_SECOND_CHANGE.name(), lastSecondChange )
-				.write();
-		;
+		return at( lastTimeFlushed ).put( Stats.PS.name(), perSecond ).put( Stats.LAST_SECOND_CHANGE.name(), lastSecondChange )
+				.build();
 	}
 
 	/**
@@ -137,5 +138,12 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 
 			return new PSStatisticsWriter( statisticsManager, variable, trackStructure );
 		}
+	}
+
+	@Override
+	public Entry aggregate( List<Entry> entries )
+	{
+		// TODO Implement this
+		return null;
 	}
 }
