@@ -196,6 +196,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		ExecutionManager executionManager = manager.getExecutionManager();
 		
 		Entry e = output();
+		log.debug( "TIMESTAMP, lvl 0: "+e.getTimestamp() );
 		executionManager.writeEntry( getId(), e, StatisticVariable.MAIN_SOURCE, 0 );
 		firstLevelEntries.add( e );
 		
@@ -204,10 +205,10 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			if ( !a.needsFlushing() )
 				break;
 			Entry aggregatedEntry = aggregate( a.sourceEntries );
-			log.debug( "aggregatedEntry: "+aggregatedEntry);
 			a.flush();
 			if( aggregatedEntry != null )
 			{
+				log.debug( "TIMESTAMP, lvl n: "+aggregatedEntry.getTimestamp() );
 				a.aggregatedEntries.add( aggregatedEntry );
 				executionManager.writeEntry( getId(), aggregatedEntry, StatisticVariable.MAIN_SOURCE, a.getDatabaseKey() );
 			}
