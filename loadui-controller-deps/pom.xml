@@ -59,6 +59,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-store-h2</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-controller-base</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>

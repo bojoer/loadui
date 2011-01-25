@@ -41,6 +41,7 @@ import com.eviware.loadui.impl.statistics.store.table.model.MetaTable;
 import com.eviware.loadui.impl.statistics.store.table.model.SequenceTable;
 import com.eviware.loadui.impl.statistics.store.table.model.SourceTable;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
+import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
 
 /**
  * Implementation of execution manager. Basically main class for data handling.
@@ -73,7 +74,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	 */
 	private ExecutionImpl currentExecution;
 
-	private ExecutionChangeSupportImpl ecs = new ExecutionChangeSupportImpl();
+	private ExecutionChangeSupport ecs = new ExecutionChangeSupport();
 
 	private Map<String, Execution> executionMap = new HashMap<String, Execution>();
 

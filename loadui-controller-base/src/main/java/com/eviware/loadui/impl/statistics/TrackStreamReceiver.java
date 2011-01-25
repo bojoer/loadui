@@ -16,7 +16,6 @@
 package com.eviware.loadui.impl.statistics;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,23 +45,22 @@ public class TrackStreamReceiver
 		this.manager = executionManager;
 		this.endpoint = endpoint;
 
-		endpoint.addMessageListener( "/" + Statistic.class.getName(), new MessageListener()
+		this.endpoint.addMessageListener( "/" + Statistic.class.getName(), new MessageListener()
 		{
 			@Override
+			@SuppressWarnings( "unchecked" )
 			public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 			{
-				log.debug( "Received Track data from {}: {}", endpoint, data );
 				if( endpoint instanceof AgentItem )
 				{
+					Map<String, Object> map = ( Map<String, Object> )data;
 					AgentItem agent = ( AgentItem )endpoint;
-					@SuppressWarnings( "unchecked" )
-					Map<String, Map<String, Number>> currentData = ( Map<String, Map<String, Number>> )data;
-					for( Entry<String, Map<String, Number>> entry : currentData.entrySet() )
-					{
-						String[] parts = entry.getKey().split( ":", 2 );
-						int time = Integer.parseInt( parts[0] );
-						manager.writeEntry( parts[1], new EntryImpl( time, entry.getValue(), true ), agent.getLabel() );
-					}
+					int level = ( ( Number )map.remove( "_LEVEL" ) ).intValue();
+					int timestamp = ( ( Number )map.remove( "_TIMESTAMP" ) ).intValue();
+					String trackId = ( String )map.remove( "_TRACK_ID" );
+
+					manager.writeEntry( trackId, new EntryImpl( timestamp, ( Map<String, Number> )data ), agent.getLabel(),
+							level );
 				}
 			}
 		} );

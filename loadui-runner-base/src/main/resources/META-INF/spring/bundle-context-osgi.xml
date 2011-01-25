@@ -4,6 +4,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.0.xsd">
 
+	<osgi:service interface="com.eviware.loadui.api.statistics.store.ExecutionManager" ref="streamingExecutionManager" />
+
 	<osgi:reference interface="com.eviware.loadui.api.dispatch.ExecutorManager"
 		id="executorManager" />
 
@@ -25,7 +27,7 @@
 	<osgi:reference interface="com.eviware.loadui.api.terminal.TerminalProxy"
 		id="terminalProxy" />
 
-	<osgi:reference
+	<!--<osgi:reference
 		interface="com.eviware.loadui.api.statistics.store.ExecutionManager"
-		id="executionManager" />
+		id="executionManager" />-->
 </beans>
