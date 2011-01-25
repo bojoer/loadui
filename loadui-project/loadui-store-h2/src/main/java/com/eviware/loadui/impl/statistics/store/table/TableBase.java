@@ -255,7 +255,7 @@ public abstract class TableBase
 				.replaceFirst( "\\?", tableName ).replaceFirst( "\\?", b.toString() );
 	}
 
-	public void insert( Map<String, ? extends Object> data ) throws SQLException
+	public synchronized void insert( Map<String, ? extends Object> data ) throws SQLException
 	{
 		insertStatement.setArguments( data );
 		insertStatement.executeUpdate();
@@ -282,7 +282,7 @@ public abstract class TableBase
 		}
 	}
 
-	public List<Map<String, Object>> select( Map<String, Object> data ) throws SQLException
+	public synchronized List<Map<String, Object>> select( Map<String, Object> data ) throws SQLException
 	{
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		selectStatement.setArguments( data );
@@ -301,7 +301,7 @@ public abstract class TableBase
 		return result;
 	}
 
-	public Map<String, Object> selectFirst( Map<String, Object> data ) throws SQLException
+	public synchronized Map<String, Object> selectFirst( Map<String, Object> data ) throws SQLException
 	{
 		selectStatement.setArguments( data );
 		ResultSet rs = selectStatement.executeQuery();
@@ -317,7 +317,7 @@ public abstract class TableBase
 		return row;
 	}
 
-	public void delete() throws SQLException
+	public synchronized void delete() throws SQLException
 	{
 		deleteStatement.execute();
 		// TODO Commit on every delete for now. Transaction management needs to be
@@ -325,13 +325,13 @@ public abstract class TableBase
 		commit();
 	}
 
-	public void drop() throws SQLException
+	public synchronized void drop() throws SQLException
 	{
 		Statement stm = connection.createStatement();
 		stm.execute( "drop table " + tableName );
 	}
 
-	public void dispose()
+	public synchronized void dispose()
 	{
 		selectStatement.dispose();
 		insertStatement.dispose();

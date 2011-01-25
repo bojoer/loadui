@@ -196,9 +196,12 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		ExecutionManager executionManager = manager.getExecutionManager();
 		
 		Entry e = output();
-		log.debug( "TIMESTAMP, lvl 0: "+e.getTimestamp() );
-		executionManager.writeEntry( getId(), e, StatisticVariable.MAIN_SOURCE, 0 );
-		firstLevelEntries.add( e );
+		if( e != null )
+		{
+			log.debug( "TIMESTAMP, lvl 0: "+e.getTimestamp() );
+			executionManager.writeEntry( getId(), e, StatisticVariable.MAIN_SOURCE, 0 );
+			firstLevelEntries.add( e );
+		}
 		
 		for( AggregateLevel a : aggregateLevels )
 		{

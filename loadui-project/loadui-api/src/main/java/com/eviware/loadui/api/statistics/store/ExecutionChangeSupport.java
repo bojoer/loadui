@@ -59,4 +59,15 @@ public interface ExecutionChangeSupport
 	 * notify all stopped execution listeners.
 	 */
 	void fireExecutionStopped( State oldState );
+	
+	/**
+	 * notify all that new track has been registered.
+	 */
+	void fireTrackRegistered( TrackDescriptor trackDescriptor );
+	
+	/**
+	 * notify all that track has been unregistered.
+	 */
+	void fireTrackUnregistered( TrackDescriptor trackDescriptor );
+
 }

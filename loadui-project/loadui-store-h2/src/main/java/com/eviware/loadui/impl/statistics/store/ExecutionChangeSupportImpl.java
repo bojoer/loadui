@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import com.eviware.loadui.api.statistics.store.ExecutionChangeSupport;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
+import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 
@@ -26,7 +27,7 @@ public class ExecutionChangeSupportImpl implements ExecutionChangeSupport
 {
 
 	private ArrayList<ExecutionListener> listeners = new ArrayList<ExecutionListener>();
-	
+
 	@Override
 	public void addExecutionListener( ExecutionListener el )
 	{
@@ -34,24 +35,38 @@ public class ExecutionChangeSupportImpl implements ExecutionChangeSupport
 	}
 
 	@Override
-	public void fireExecutionPaused(ExecutionManager.State  oldState)
+	public void fireExecutionPaused( ExecutionManager.State oldState )
 	{
 		for( ExecutionListener el : listeners )
-			el.executionPaused(oldState);
+			el.executionPaused( oldState );
 	}
 
 	@Override
-	public void fireExecutionStarted(ExecutionManager.State  oldState)
+	public void fireExecutionStarted( ExecutionManager.State oldState )
 	{
-		for ( ExecutionListener el : listeners)
-			el.executionStarted(oldState);
+		for( ExecutionListener el : listeners )
+			el.executionStarted( oldState );
 	}
 
 	@Override
-	public void fireExecutionStopped(ExecutionManager.State  oldState)
+	public void fireExecutionStopped( ExecutionManager.State oldState )
 	{
-		for( ExecutionListener el: listeners)
-			el.executionStopped(oldState);
+		for( ExecutionListener el : listeners )
+			el.executionStopped( oldState );
+	}
+
+	@Override
+	public void fireTrackRegistered( TrackDescriptor trackDescriptor )
+	{
+		for( ExecutionListener el : listeners )
+			el.trackRegistered( trackDescriptor );
+	}
+
+	@Override
+	public void fireTrackUnregistered( TrackDescriptor trackDescriptor )
+	{
+		for( ExecutionListener el : listeners )
+			el.trackUnregistered( trackDescriptor );
 	}
 
 	@Override

@@ -17,6 +17,7 @@ package com.eviware.loadui.util.statistics;
 
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
+import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 
 public abstract class ExecutionListenerAdapter implements ExecutionListener
 {
@@ -33,6 +34,16 @@ public abstract class ExecutionListenerAdapter implements ExecutionListener
 
 	@Override
 	public void executionStopped(ExecutionManager.State  oldState)
+	{
+	}
+
+	@Override
+	public void trackRegistered( TrackDescriptor trackDescriptor )
+	{
+	}
+
+	@Override
+	public void trackUnregistered( TrackDescriptor trackDescriptor )
 	{
 	}
 

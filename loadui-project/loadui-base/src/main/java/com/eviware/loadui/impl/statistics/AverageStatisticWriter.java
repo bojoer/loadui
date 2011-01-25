@@ -114,24 +114,34 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		}
 	}
 
+	@Override
 	public Entry output()
 	{
-		average = avgSum / avgCnt;
-		double[] pValues = new double[values.size()];
-		sumTotalSquare = 0;
-		for( int cnt = 0; cnt < values.size(); cnt++ )
+		long currTime = System.currentTimeMillis();
+		if( lastTimeFlushed == currTime )
 		{
-			pValues[cnt] = values.get( cnt ).longValue();
-			sumTotalSquare += Math.pow( pValues[cnt] - average, 2 );
+			return null;
 		}
-		stdDev = Math.sqrt( sumTotalSquare / avgCnt );
-		percentile = perc.evaluate( pValues );
-		median = medianPercentile.evaluate( pValues );
-		lastTimeFlushed = System.currentTimeMillis();
-		return at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_COUNT.name(), avgCnt ).put(
-				Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.STD_DEV_SUM.name(), sumTotalSquare ).put(
-				Stats.STD_DEV.name(), stdDev ).put( Stats.PERCENTILE.name(), percentile ).put( Stats.MEDIAN.name(), median )
-				.build();
+		else
+		{
+			average = avgSum / avgCnt;
+			double[] pValues = new double[values.size()];
+			sumTotalSquare = 0;
+			for( int cnt = 0; cnt < values.size(); cnt++ )
+			{
+				pValues[cnt] = values.get( cnt ).longValue();
+				sumTotalSquare += Math.pow( pValues[cnt] - average, 2 );
+			}
+			stdDev = Math.sqrt( sumTotalSquare / avgCnt );
+			percentile = perc.evaluate( pValues );
+			median = medianPercentile.evaluate( pValues );
+
+			lastTimeFlushed = currTime;
+			return at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_COUNT.name(), avgCnt )
+					.put( Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.STD_DEV_SUM.name(), sumTotalSquare )
+					.put( Stats.STD_DEV.name(), stdDev ).put( Stats.PERCENTILE.name(), percentile )
+					.put( Stats.MEDIAN.name(), median ).build();
+		}
 	}
 	
 	public Entry aggregate(List<Entry> entries)

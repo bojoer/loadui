@@ -40,6 +40,7 @@ import com.eviware.loadui.impl.statistics.store.table.model.MetaDatabaseMetaTabl
 import com.eviware.loadui.impl.statistics.store.table.model.MetaTable;
 import com.eviware.loadui.impl.statistics.store.table.model.SequenceTable;
 import com.eviware.loadui.impl.statistics.store.table.model.SourceTable;
+import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 
 /**
  * Implementation of execution manager. Basically main class for data handling.
@@ -98,6 +99,41 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		initializeDatabaseMetadata( metadata );
 
 		metaDatabaseMetaTable = new MetaDatabaseMetaTable( METADATABASE_NAME, connectionRegistry, metadata, tableRegistry );
+
+		addExecutionListener( new ExecutionListenerAdapter()
+		{
+			@Override
+			public void executionStarted( ExecutionManager.State oldState )
+			{
+				// if new execution was just started create track from all track
+				// descriptors
+				if( oldState == ExecutionManagerImpl.State.STOPPED )
+				{
+					for( TrackDescriptor td : trackDescriptors.values() )
+					{
+						createTrack( td );
+					}
+				}
+			}
+
+			@Override
+			public void trackRegistered( TrackDescriptor trackDescriptor )
+			{
+				// this is in case component is added during the test
+				if( executionState == State.STARTED )
+				{
+					createTrack( trackDescriptor );
+				}
+			}
+
+			@Override
+			public void trackUnregistered( TrackDescriptor trackDescriptor )
+			{
+				// TODO delete track? If yes then do it just during test run or
+				// always?
+			}
+
+		} );
 	}
 
 	@Override
@@ -113,16 +149,13 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 
 		latestEntries.clear();
-		
+
 		try
 		{
 			if( metaDatabaseMetaTable.exist( id ) )
 			{
 				throw new IllegalArgumentException( "Execution with the specified id already exist!" );
 			}
-			currentExecution = new ExecutionImpl( id, timestamp, this );
-			executionMap.put( id, currentExecution );
-
 			// create sequence table
 			SequenceTable sequenceTable = new SequenceTable( id, connectionRegistry, metadata, tableRegistry );
 			tableRegistry.put( id, sequenceTable );
@@ -134,6 +167,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			m.put( MetaDatabaseMetaTable.STATIC_FIELD_EXECUTION_NAME, id );
 			m.put( MetaDatabaseMetaTable.STATIC_FIELD_TSTAMP, timestamp );
 			metaDatabaseMetaTable.insert( m );
+
+			currentExecution = new ExecutionImpl( id, timestamp, this );
+			executionMap.put( id, currentExecution );
 
 			executionState = State.STARTED;
 			ecs.fireExecutionStarted( State.STOPPED );
@@ -161,47 +197,60 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			throw new IllegalArgumentException( "There is no running execution!" );
 		}
 		Track track = currentExecution.getTrack( trackId );
-		if( track != null )
+		if( track == null )
 		{
-			return track;
-		}
-		else
-		{
-			TrackDescriptor td = trackDescriptors.get( trackId );
-			if( td == null )
-			{
-				throw new IllegalArgumentException( "No descriptor defined for specified trackId!" );
-			}
-			track = new TrackImpl( trackId, currentExecution, td, this );
-			currentExecution.addTrack( track );
-			try
-			{
-				String executionId = currentExecution.getId();
-
-				// insert into meta-table
-				Map<String, Object> data = new HashMap<String, Object>();
-				data.put( MetaTable.STATIC_FIELD_TRACK_NAME, trackId );
-				TableBase metaTable = tableRegistry.getTable( executionId, MetaTable.METATABLE_NAME );
-				metaTable.insert( data );
-
-				// create data table
-				DataTable dtd = new DataTable( currentExecution.getId(), td.getId(), td.getValueNames(),
-						connectionRegistry, metadata, tableRegistry );
-
-				// create sources table
-				SourceTable std = new SourceTable( currentExecution.getId(), td.getId() + SOURCE_TABLE_NAME_POSTFIX,
-						connectionRegistry, metadata, tableRegistry );
-				dtd.setParentTable( std );
-
-				tableRegistry.put( executionId, dtd );
-				tableRegistry.put( executionId, std );
-			}
-			catch( SQLException e )
-			{
-				throw new RuntimeException( "Unable to create track!", e );
-			}
+			throw new IllegalArgumentException( "No track found for specified trackId!" );
 		}
 		return track;
+	}
+
+	private synchronized void createTrack( TrackDescriptor td )
+	{
+		// synchronized to make sure that all tracks are created one by one, and
+		// if one track is in process of creation to stop other threads to try to
+		// create the same track. If one thread creates a track, others will have
+		// to wait and when synchronized block is exited new track will already be
+		// placed into currentExecution so another threads threads will know that
+		// this track was created and will exit this method.
+		if( currentExecution.getTrack( td.getId() ) != null )
+		{
+			return;
+		}
+		try
+		{
+			String executionId = currentExecution.getId();
+
+			// create data table
+			DataTable dtd = new DataTable( executionId, td.getId(), td.getValueNames(), connectionRegistry, metadata,
+					tableRegistry );
+
+			// create sources table
+			SourceTable std = new SourceTable( executionId, td.getId() + SOURCE_TABLE_NAME_POSTFIX, connectionRegistry,
+					metadata, tableRegistry );
+			dtd.setParentTable( std );
+
+			tableRegistry.put( executionId, dtd );
+			tableRegistry.put( executionId, std );
+
+			// insert into meta-table
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put( MetaTable.STATIC_FIELD_TRACK_NAME, td.getId() );
+			TableBase metaTable = tableRegistry.getTable( executionId, MetaTable.METATABLE_NAME );
+			metaTable.insert( data );
+
+			// if all tables are created properly and meta data
+			// inserted, create track instance and add it to current
+			// execution
+			Track track = new TrackImpl( currentExecution, td, this );
+			currentExecution.addTrack( track );
+		}
+		catch( SQLException e )
+		{
+			// TODO drop dtd and std tables if they are created and delete
+			// record from meta-table if inserted (and remove from current
+			// execution if added, but this actually shouldn't occur)
+			throw new RuntimeException( "Unable to create track!", e );
+		}
 	}
 
 	@Override
@@ -252,12 +301,13 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public void registerTrackDescriptor( TrackDescriptor trackDescriptor )
 	{
 		trackDescriptors.put( trackDescriptor.getId(), trackDescriptor );
+		ecs.fireTrackRegistered( trackDescriptor );
 	}
 
 	@Override
 	public void unregisterTrackDescriptor( String trackId )
 	{
-		trackDescriptors.remove( trackId );
+		ecs.fireTrackUnregistered( trackDescriptors.remove( trackId ) );
 	}
 
 	@Override
@@ -271,7 +321,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		writeEntry( trackId, entry, source, 0 );
 	}
-	
+
 	@Override
 	public void writeEntry( String trackId, Entry entry, String source, int interpolationLevel )
 	{
@@ -291,8 +341,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			}
 			try
 			{
-				getTrack( trackId ); // Not sure if this is needed, but the Track
-				// may not have been instantiated yet...
 				write( execution.getId(), trackId, source, data );
 			}
 			catch( SQLException e )
@@ -307,7 +355,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		return getLastEntry( trackId, source, 0 );
 	}
-	
+
 	@Override
 	public Entry getLastEntry( String trackId, String source, int interpolationLevel )
 	{
@@ -326,7 +374,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 	}
 
-	public void write( String executionId, String trackId, String source, Map<String, Object> data ) throws SQLException
+	private void write( String executionId, String trackId, String source, Map<String, Object> data )
+			throws SQLException
 	{
 		TableBase dtd = tableRegistry.getTable( executionId, trackId );
 
@@ -336,8 +385,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		dtd.insert( data );
 	}
 
-	public Map<String, Object> readNext( String executionId, String trackId, String source, int startTime, int interpolationLevel )
-			throws SQLException
+	public Map<String, Object> readNext( String executionId, String trackId, String source, int startTime,
+			int interpolationLevel ) throws SQLException
 	{
 		TableBase dtd = tableRegistry.getTable( executionId, trackId );
 
@@ -352,8 +401,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		return dtd.selectFirst( data );
 	}
 
-	public List<Map<String, Object>> read( String executionId, String trackId, String source, int startTime, int endTime, int interpolationLevel )
-			throws SQLException
+	public List<Map<String, Object>> read( String executionId, String trackId, String source, int startTime,
+			int endTime, int interpolationLevel ) throws SQLException
 	{
 		TableBase dtd = tableRegistry.getTable( executionId, trackId );
 

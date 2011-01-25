@@ -42,7 +42,7 @@ public class DataTable extends TableBase
 	}
 
 	@Override
-	public void insert( Map<String, ? extends Object> data ) throws SQLException
+	public synchronized void insert( Map<String, ? extends Object> data ) throws SQLException
 	{
 		super.insert( data );
 		//TODO commit here for now, maybe this will have to change

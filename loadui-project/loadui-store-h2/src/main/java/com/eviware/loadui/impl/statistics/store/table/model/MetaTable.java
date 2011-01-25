@@ -40,7 +40,7 @@ public class MetaTable extends TableBase
 	}
 
 	@Override
-	public void insert( Map<String, ? extends Object> data ) throws SQLException
+	public synchronized void insert( Map<String, ? extends Object> data ) throws SQLException
 	{
 		Map<String, Object> queryData = new HashMap<String, Object>();
 		queryData.put( SELECT_ARG_TRACKNAME_EQ, data.get( STATIC_FIELD_TRACK_NAME ) );

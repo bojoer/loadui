@@ -52,6 +52,7 @@ import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
+import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
@@ -171,7 +172,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 	}
 }
 
-class ExecutionManagerListener extends ExecutionListener {
+class ExecutionManagerListener extends ExecutionListenerAdapter {
 	var resetOnStart = false;
 	
    override function executionStarted(state:ExecutionManager.State) {
