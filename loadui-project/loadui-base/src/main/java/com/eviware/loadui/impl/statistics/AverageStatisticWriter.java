@@ -214,7 +214,10 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 			// init statistics
 			trackStructure.put( Stats.AVERAGE.name(), Double.class );
+			trackStructure.put( Stats.AVERAGE_COUNT.name(), Double.class );
+			trackStructure.put( Stats.AVERAGE_SUM.name(), Double.class );
 			trackStructure.put( Stats.STD_DEV.name(), Double.class );
+			trackStructure.put( Stats.STD_DEV_SUM.name(), Double.class );
 			trackStructure.put( Stats.PERCENTILE.name(), Double.class );
 			trackStructure.put( Stats.MEDIAN.name(), Double.class );
 
