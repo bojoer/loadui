@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
+import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
@@ -43,12 +45,21 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	private final StatisticVariable variable;
 	private final String id;
 	private final TrackDescriptor descriptor;
-
+	
 	protected long delay;
 	protected long lastTimeFlushed = System.currentTimeMillis();
 	private long pauseStartedTime;
 
 	private long totalPause = 0;
+	
+	private long[] aggregateIntervals = {
+			6000,		// 6 seconds
+			120000,	// 2 minutes
+			3600000,	// 1 hour
+			10800000	// 3 hours
+			};
+	private AggregateLevel[] aggregateLevels = new AggregateLevel[4];
+	private ArrayList<Entry> firstLevelEntries = new ArrayList<Entry>();
 
 	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values )
@@ -59,6 +70,14 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		descriptor = new TrackDescriptorImpl( id, values );
 		delay = manager.getMinimumWriteDelay();
 
+		// init AggregationLevels, each level getting a reference to the previous level's aggregated entries.
+		ArrayList<Entry> previousLevelEntries = firstLevelEntries;
+		for( int i=0; i<aggregateLevels.length; i++ )
+		{
+			aggregateLevels[i] = new AggregateLevel( aggregateIntervals[i] , i+1, previousLevelEntries );
+			previousLevelEntries = aggregateLevels[i].aggregatedEntries;
+		}
+			
 		// TODO
 		manager.getExecutionManager().registerTrackDescriptor( descriptor );
 		manager.addEventListener( CollectionEvent.class, new ExecutionListener() );
@@ -86,6 +105,8 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 					long pauseTime = ( System.currentTimeMillis() - pauseStartedTime );
 					totalPause += pauseTime;
 					lastTimeFlushed += pauseTime;
+					for( AggregateLevel a : aggregateLevels )
+						a.lastFlush += pauseTime;
 					pauseStartedTime = 0;
 					if( pauseTime > delay )
 						flush();
@@ -124,7 +145,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			}
 		} );
 	}
-
+	
 	/**
 	 * Called between Executions, letting the StatisticsWriter know that it
 	 * should clear any buffers and prepare for a new Execution.
@@ -168,6 +189,31 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	{
 		return descriptor;
 	}
+	
+	@Override
+	public void flush()
+	{
+		ExecutionManager executionManager = manager.getExecutionManager();
+		
+		Entry e = output();
+		executionManager.writeEntry( getId(), e, StatisticVariable.MAIN_SOURCE, 0 );
+		firstLevelEntries.add( e );
+		
+		for( AggregateLevel a : aggregateLevels )
+		{
+			if ( !a.needsFlushing() )
+				break;
+			Entry aggregatedEntry = aggregate( a.sourceEntries );
+			log.debug( "aggregatedEntry: "+aggregatedEntry);
+			a.flush();
+			if( aggregatedEntry != null )
+			{
+				a.aggregatedEntries.add( aggregatedEntry );
+				executionManager.writeEntry( getId(), aggregatedEntry, StatisticVariable.MAIN_SOURCE, a.getDatabaseKey() );
+			}
+			
+		}
+	}
 
 	protected EntryBuilder at( long timestamp )
 	{
@@ -195,15 +241,52 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			values.put( name, value );
 			return this;
 		}
-
-		public void write()
+		
+		public long getTimestamp()
+		{
+			return timestamp;
+		}
+		
+		public Entry build()
 		{
 			ExecutionManager executionManager = manager.getExecutionManager();
 			Execution currentExecution = executionManager.getCurrentExecution();
-
 			int time = currentExecution == null ? -1 : ( int )( ( pauseStartedTime == 0 ? timestamp : pauseStartedTime )
 					- currentExecution.getStartTime() - totalPause );
-			executionManager.writeEntry( getId(), new EntryImpl( time, values, true ), StatisticVariable.MAIN_SOURCE );
+			return new EntryImpl( time, values, true );
+		}
+	}
+	
+	private class AggregateLevel
+	{
+		private long intervalInMillis;
+		private long lastFlush;
+		private int databaseKey;
+		private ArrayList<Entry> sourceEntries;
+		final public ArrayList<Entry> aggregatedEntries = new ArrayList<Entry>();
+		
+		AggregateLevel( long intervalInMillis, int databaseKey, ArrayList<Entry> sourceEntries )
+		{
+			this.intervalInMillis = intervalInMillis;
+			this.databaseKey = databaseKey;
+			this.sourceEntries = sourceEntries;
+		}
+		
+		public boolean needsFlushing()
+		{
+			log.debug( "lastTimeFlushed:"+lastTimeFlushed+" intervalInMillis: "+intervalInMillis+" System.currentTimeMillis(): "+System.currentTimeMillis() );
+			return lastFlush + intervalInMillis <= System.currentTimeMillis();
+		}
+		
+		public void flush()
+		{
+			lastFlush = System.currentTimeMillis();
+			sourceEntries.clear();
+		}
+		
+		private int getDatabaseKey()
+		{
+			return databaseKey;
 		}
 	}
 

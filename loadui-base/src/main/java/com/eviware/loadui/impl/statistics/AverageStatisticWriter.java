@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -23,6 +23,8 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
+import com.eviware.loadui.api.statistics.store.Entry;
+import com.eviware.loadui.util.collections.CircularList;
 
 import org.apache.commons.math.stat.descriptive.rank.Percentile;
 import org.slf4j.Logger;
@@ -65,17 +67,17 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	 * calculated just before it should be written to database.
 	 */
 
-	protected double average = 0L;
-	protected double avgSum = 0L;
-	protected long avgCnt = 0;
-	protected double stdDev = 0.0;
-	protected double sumTotalSquare = 0.0;
-	protected double percentile = 0;
-	private double median = 0;
+	double average = 0.0;
+	double avgSum = 0.0;
+	long avgCnt = 0L;
+	double stdDev = 0.0;
+	double sumTotalSquare = 0.0;
+	double percentile = 0;
+	double median = 0;
 
 	private int bufferSize = 1000;
 
-	protected ArrayList<Double> values = new ArrayList<Double>();
+	protected CircularList<Double> values = new CircularList<Double>(bufferSize);
 
 	public AverageStatisticWriter( StatisticsManager statisticsManager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> trackStructure )
@@ -105,8 +107,6 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		{
 			double doubleValue = value.doubleValue();
 			this.values.add( doubleValue );
-			if( this.values.size() >= bufferSize )
-				this.values.remove( 0 );
 			avgSum += doubleValue;
 			avgCnt++ ;
 			if( lastTimeFlushed + delay <= System.currentTimeMillis() )
@@ -114,14 +114,8 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		}
 	}
 
-	/**
-	 * stores data in db. Also here calculate percentile since it is expensive
-	 * calculation
-	 */
-	@Override
-	public void flush()
+	public Entry output()
 	{
-		// calculate percentile here since it is expensive operation.
 		average = avgSum / avgCnt;
 		double[] pValues = new double[values.size()];
 		sumTotalSquare = 0;
@@ -134,12 +128,31 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		percentile = perc.evaluate( pValues );
 		median = medianPercentile.evaluate( pValues );
 		lastTimeFlushed = System.currentTimeMillis();
-		at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_COUNT.name(), avgCnt ).put(
+		return at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_COUNT.name(), avgCnt ).put(
 				Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.STD_DEV_SUM.name(), sumTotalSquare ).put(
 				Stats.STD_DEV.name(), stdDev ).put( Stats.PERCENTILE.name(), percentile ).put( Stats.MEDIAN.name(), median )
-				.write();
+				.build();
 	}
-
+	
+	public Entry aggregate(List<Entry> entries)
+	{
+		if( entries.size() == 0)
+			return null;
+		
+		double avgSum = 0;
+		long avgCnt = 0;
+		long timestampSum = 0;
+		
+		for( Entry e : entries )
+		{
+			log.debug( "entry: "+e);
+			avgSum += e.getValue( Stats.AVERAGE_SUM.name() ).doubleValue();
+			avgCnt += e.getValue( Stats.AVERAGE_COUNT.name() ).longValue();
+			timestampSum += e.getTimestamp();
+		}
+		return at( timestampSum/entries.size() ).put( Stats.AVERAGE.name(), avgSum/avgCnt ).put( Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.AVERAGE_COUNT.name(), avgCnt ).build();
+	}
+	
 	@Override
 	protected void reset()
 	{
