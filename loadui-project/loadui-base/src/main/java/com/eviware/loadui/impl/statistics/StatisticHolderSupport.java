@@ -23,6 +23,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
@@ -30,7 +31,7 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.util.BeanInjector;
-
+import com.eviware.loadui.util.ReleasableUtils;
 
 /**
  * Support class for Objects implementing StatisticHolder. Handles creating and
@@ -42,15 +43,17 @@ import com.eviware.loadui.util.BeanInjector;
 public class StatisticHolderSupport
 {
 	public static Logger log = LoggerFactory.getLogger( StatisticHolderSupport.class );
-	
+
 	private final StatisticsManager manager;
 	private final StatisticHolder owner;
+	private final AddressableRegistry addressableRegistry;
 	private final HashMap<String, StatisticVariableImpl> variables = new HashMap<String, StatisticVariableImpl>();
 
 	public StatisticHolderSupport( StatisticHolder owner )
 	{
 		this.owner = owner;
 		manager = BeanInjector.getBean( StatisticsManager.class );
+		addressableRegistry = BeanInjector.getBean( AddressableRegistry.class );
 	}
 
 	/**
@@ -94,13 +97,13 @@ public class StatisticHolderSupport
 			return variables.get( statisticVariableName );
 
 		StatisticVariableImpl variable = new StatisticVariableImpl( manager.getExecutionManager(), owner,
-				statisticVariableName );
+				statisticVariableName, addressableRegistry );
 		variables.put( statisticVariableName, variable );
 		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.ADDED, variable ) );
 
 		return variable;
 	}
-	
+
 	/**
 	 * Removes a StatisticVariable from the StatisticHolder.
 	 * 
@@ -109,11 +112,12 @@ public class StatisticHolderSupport
 	public void removeStatisticalVariable( String statisticVariableName )
 	{
 		if( !variables.containsKey( statisticVariableName ) )
-			throw new NoSuchElementException
-				("Attempt made to remove a non-existing StatisticVarible from a StatisticHolder.");
-		
+			throw new NoSuchElementException(
+					"Attempt made to remove a non-existing StatisticVarible from a StatisticHolder." );
+
 		StatisticVariableImpl removedVariable = variables.remove( statisticVariableName );
-		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.REMOVED, removedVariable) );
+		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.REMOVED,
+				removedVariable ) );
 		log.debug( "Fired CollectionEvent: removed statistic variable!" );
 	}
 
@@ -135,6 +139,7 @@ public class StatisticHolderSupport
 	public void release()
 	{
 		manager.deregisterStatisticHolder( owner );
+		ReleasableUtils.release( variables.values() );
 	}
-	
+
 }

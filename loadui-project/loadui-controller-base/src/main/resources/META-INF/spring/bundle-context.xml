@@ -13,5 +13,6 @@
 	<bean id="trackStreamReceiver" class="com.eviware.loadui.impl.statistics.TrackStreamReceiver">
 		<constructor-arg ref="executionManager" />
 		<constructor-arg ref="broadcastMessageEndpoint" />
+		<constructor-arg ref="addressableRegistry" />
 	</bean>
 </beans>
