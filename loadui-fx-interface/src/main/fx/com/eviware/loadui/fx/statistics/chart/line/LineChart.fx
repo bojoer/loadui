@@ -100,6 +100,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	def chartNode = SwingComponent.wrap( chart );
 	def timeCalculator = new TotalTimeTickCalculator();
 	var compactSegments = true;
+	var zoomLevel = 0;
 	
 	def scrollBar = ScrollBar {
 		vertical: false
@@ -117,7 +118,11 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	var max:Number = 0;
 	var maxTime:Number = 0;
 	var position:Number = 0;
-	var timeSpan:Number = 10000 on replace oldTimeSpan {
+	var showAll = false on replace {
+		if( showAll ) timeSpan = maxTime;	
+	}
+	var timeSpan:Long = 10000 on replace oldTimeSpan {
+		println("Timespan set to {timeSpan}");
 		scrollBar.visibleAmount = timeSpan;
 		scrollBar.unitIncrement = timeSpan / 10;
 		scrollBar.blockIncrement = timeSpan / 10;
@@ -266,6 +271,11 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		}
 		def yPadding = (max-min)*0.1;
 		chart.getYAxis().setRange( min - yPadding, max + yPadding );
+		if( showAll ) {
+			timeSpan = maxTime;
+			def level = TotalTimeTickCalculator.Level.forSpan( timeSpan / 1000 );
+			zoomLevel = level.getLevel();
+		}
 		
 		if( maxTime > timeSpan ) {
 			if( scrollBar.max < timeSpan or scrollBar.value == scrollBar.max ) {
@@ -317,7 +327,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	function addedSegment( segment:LineSegment ):Void {
-		def model = LineSegmentChartModel { segment: segment };
+		def model = LineSegmentChartModel { segment: segment, level: bind zoomLevel };
 		lines.put( segment, model );
 		chart.addModel( model, model.chartStyle );
 		insert SegmentButton { model: model } into segmentButtons.content;
@@ -332,24 +342,15 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		}
 	}
 	
-	public function setZoomLevel(level:String):Void {
+	public function setZoomLevel( level:String ):Void {
 		def newLevel = TotalTimeTickCalculator.Level.valueOf( level.toUpperCase() );
+		def span = newLevel.getSpan() as Long;
+		def interval = newLevel.getInterval() as Long;
 		
-		if( newLevel == TotalTimeTickCalculator.Level.SECONDS ) {
-			timeSpan = 10000;
-		} else if( newLevel == TotalTimeTickCalculator.Level.MINUTES ) {
-			timeSpan = 600000;
-		} else if( newLevel == TotalTimeTickCalculator.Level.HOURS ) {
-			timeSpan = 3600000 * 10;
-		} else if( newLevel == TotalTimeTickCalculator.Level.DAYS ) {
-			timeSpan = 3600000 * 24 * 7;
-		} else if( newLevel == TotalTimeTickCalculator.Level.WEEKS ) {
-			timeSpan = 3600000 * 24 * 7 * 10;
-		} else if( newLevel == TotalTimeTickCalculator.Level.ALL ) {
-			timeSpan = 10000;
-		}
-			
+		timeSpan = 1000 * span * interval;
+		zoomLevel = newLevel.getLevel();
 		timeCalculator.setLevel( newLevel );
+		showAll = newLevel == TotalTimeTickCalculator.Level.ALL;
 		
 		update();
 	}
