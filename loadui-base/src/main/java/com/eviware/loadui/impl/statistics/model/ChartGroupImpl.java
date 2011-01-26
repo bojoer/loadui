@@ -20,6 +20,9 @@ import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
@@ -42,6 +45,8 @@ import com.eviware.loadui.util.events.EventSupport;
 
 public class ChartGroupImpl implements ChartGroup
 {
+	public final static Logger log = LoggerFactory.getLogger( ChartGroupImpl.class );
+
 	private final StatisticsManager statisticsManager;
 	private final StatisticPageImpl parent;
 	private final OrderedCollectionSupport<Chart> collectionSupport;
@@ -71,7 +76,16 @@ public class ChartGroupImpl implements ChartGroup
 		provider = providerFactory.buildProvider( getType(), this );
 
 		for( ChartConfig chartConfig : config.getChartArray() )
-			collectionSupport.addChild( new ChartImpl( this, chartConfig ) );
+		{
+			try
+			{
+				collectionSupport.addChild( new ChartImpl( this, chartConfig ) );
+			}
+			catch( IllegalArgumentException e )
+			{
+				log.error( "Unable to add Chart to ChartGroup:", e );
+			}
+		}
 
 		refreshScript();
 	}

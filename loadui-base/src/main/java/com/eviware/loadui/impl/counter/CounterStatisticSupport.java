@@ -19,11 +19,11 @@ import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.MutableStatisticVariable;
+import com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter;
 import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 
 public class CounterStatisticSupport implements EventHandler<CounterEvent>
 {
-
 	private CounterHolder counterHolder;
 	private StatisticHolderSupport statisticHolderSupport;
 
@@ -42,15 +42,16 @@ public class CounterStatisticSupport implements EventHandler<CounterEvent>
 		// if there is no request per second add it.
 		if( statisticHolderSupport.getStatisticVariable( "RequestPerSecond" ) == null )
 		{
-			MutableStatisticVariable rpsVariable = statisticHolderSupport.addStatisticVariable( "RequestPerSecond" );
-			statisticHolderSupport.addStatisticsWriter( "PSWritter", rpsVariable );
+			MutableStatisticVariable throughputVariable = statisticHolderSupport.addStatisticVariable( "Throughput" );
+			statisticHolderSupport.addStatisticsWriter( ThroughputStatisticsWriter.TYPE, throughputVariable );
 		}
 	}
 
-	public void release() {
+	public void release()
+	{
 		counterHolder.removeEventListener( CounterEvent.class, this );
 	}
-	
+
 	@Override
 	public void handleEvent( CounterEvent event )
 	{
@@ -58,8 +59,8 @@ public class CounterStatisticSupport implements EventHandler<CounterEvent>
 		{
 			for( String sv : statisticHolderSupport.getStatisticVariableNames() )
 			{
-				( ( MutableStatisticVariable )statisticHolderSupport.getStatisticVariable( sv ) ).update( System
-						.currentTimeMillis(), event.getValue() );
+				( ( MutableStatisticVariable )statisticHolderSupport.getStatisticVariable( sv ) ).update(
+						System.currentTimeMillis(), event.getValue() );
 			}
 
 		}

@@ -42,6 +42,6 @@
 	
 	<osgi:service ref="averageStatisticWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
 	<osgi:service ref="minmaxStatisticWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
-	<osgi:service ref="psStatisticWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
+	<osgi:service ref="throughputStatisticWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
 	
 </beans>

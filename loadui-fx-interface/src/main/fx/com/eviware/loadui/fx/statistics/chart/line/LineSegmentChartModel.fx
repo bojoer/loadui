@@ -22,6 +22,8 @@ import com.eviware.loadui.fx.FxUtils;
 
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.DataPoint;
+import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 
 import com.jidesoft.chart.model.DefaultChartModel;
@@ -36,6 +38,11 @@ public class LineSegmentChartModel extends DefaultChartModel {
 	public-read def chartStyle = new ChartStyle();
 	
 	public-read var latestTime:Number;
+	
+	var chartGroup:ChartGroup;
+	public-init var chartView:LineChartView on replace {
+		chartGroup = chartView.getChartGroup();
+	}
 	
 	public-init var segment:LineSegment on replace {
 		statistic = segment.getStatistic();

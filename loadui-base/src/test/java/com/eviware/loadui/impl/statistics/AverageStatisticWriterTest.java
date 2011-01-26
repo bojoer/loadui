@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
@@ -65,6 +66,9 @@ public class AverageStatisticWriterTest
 
 		ApplicationContext appContext = mock( ApplicationContext.class );
 		when( appContext.getBean( "statisticsManager", StatisticsManager.class ) ).thenReturn( manager );
+		AddressableRegistry addressableRegistryMock = mock( AddressableRegistry.class );
+		when( appContext.getBean( "addressableRegistry", AddressableRegistry.class ) ).thenReturn(
+				addressableRegistryMock );
 
 		new BeanInjector().setApplicationContext( appContext );
 		holderSupport = new StatisticHolderSupport( holderMock );
@@ -142,30 +146,34 @@ public class AverageStatisticWriterTest
 		writer.output();
 		assertEquals( average, writer.average, .00 );
 	}
-	
+
 	/* Test aggregations */
 	@Test
 	public void testAverageAggregation()
 	{
 		Entry result = prepareAggregation();
-		assertEquals( result.getValue( Stats.AVERAGE.name() ).doubleValue(), 9.5, 0.00 );
+		assertEquals( result.getValue( Stats.AVERAGE.name() ).doubleValue(), 9.5, 0.001 );
 	}
-	
+
 	@Test
 	public void testStdDevAggregation()
 	{
 		Entry result = prepareAggregation();
 		assertEquals( result.getValue( Stats.STD_DEV.name() ).doubleValue(), 3.008322, 0.005 );
 	}
-	
+
 	private Entry prepareAggregation()
 	{
-		// Based on these three sets of samples: {{10, 8, 6}, {7, 7, 9, 17}, {12, 10, 9}}
+		// Based on these three sets of samples: {{10, 8, 6}, {7, 7, 9, 17}, {12,
+		// 10, 9}}
 		ArrayList<Entry> entries = new ArrayList<Entry>();
-		entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put( Stats.AVERAGE_COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.632993162 ).build(false) );
-		entries.add( writer.at( 2 ).put( Stats.AVERAGE.name(), 10 ).put( Stats.AVERAGE_COUNT.name(), 4 ).put( Stats.STD_DEV.name(), 4.123105626 ).build(false) );
-		entries.add( writer.at( 3 ).put( Stats.AVERAGE.name(), 10.3333333 ).put( Stats.AVERAGE_COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.247219129 ).build(false) );
-		
+		entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put( Stats.AVERAGE_COUNT.name(), 3 )
+				.put( Stats.STD_DEV.name(), 1.632993162 ).build( false ) );
+		entries.add( writer.at( 2 ).put( Stats.AVERAGE.name(), 10 ).put( Stats.AVERAGE_COUNT.name(), 4 )
+				.put( Stats.STD_DEV.name(), 4.123105626 ).build( false ) );
+		entries.add( writer.at( 3 ).put( Stats.AVERAGE.name(), 10.3333333 ).put( Stats.AVERAGE_COUNT.name(), 3 )
+				.put( Stats.STD_DEV.name(), 1.247219129 ).build( false ) );
+
 		return writer.aggregate( entries );
 	}
 

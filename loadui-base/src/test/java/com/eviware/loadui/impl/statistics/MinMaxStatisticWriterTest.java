@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
@@ -38,6 +39,9 @@ public class MinMaxStatisticWriterTest
 
 		ApplicationContext appContext = mock( ApplicationContext.class );
 		when( appContext.getBean( "statisticsManager", StatisticsManager.class ) ).thenReturn( manager );
+		AddressableRegistry addressableRegistryMock = mock( AddressableRegistry.class );
+		when( appContext.getBean( "addressableRegistry", AddressableRegistry.class ) ).thenReturn(
+				addressableRegistryMock );
 
 		new BeanInjector().setApplicationContext( appContext );
 

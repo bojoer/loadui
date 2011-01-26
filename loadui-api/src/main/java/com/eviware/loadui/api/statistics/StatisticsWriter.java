@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.api.statistics;
 
-
 import java.util.List;
 
 import com.eviware.loadui.api.addressable.Addressable;
@@ -65,16 +64,15 @@ public interface StatisticsWriter extends Addressable
 	public void flush();
 
 	/**
-	 * Returns an Entry based on raw data acquired from
-	 * calls to update().
+	 * Returns an Entry based on raw data acquired from calls to update().
 	 * 
 	 * @return
 	 */
 	public Entry output();
-	
+
 	/**
-	 * Aggregates entries, e.g. for different zoom levels
-	 * or from different agents, into one Entry.
+	 * Aggregates entries, e.g. for different zoom levels or from different
+	 * agents, into one Entry.
 	 * 
 	 * @param values
 	 * @return
@@ -94,7 +92,7 @@ public interface StatisticsWriter extends Addressable
 	 * @return
 	 */
 	public TrackDescriptor getTrackDescriptor();
-	
+
 	/**
 	 * Gets the type of the StatisticsWriter, which should be unique. This can be
 	 * the same as the associated StatisticsWriterFactory.getType().
@@ -102,15 +100,18 @@ public interface StatisticsWriter extends Addressable
 	 * @return
 	 */
 	public String getType();
-	
+
 	/**
 	 * Get buffer size for holding data
 	 */
+	@Deprecated
 	public int getBufferSize();
-	
+
 	/**
 	 * Set size of buffer for holding data
+	 * 
 	 * @param bufferSize
 	 */
+	@Deprecated
 	public void setBufferSize( int bufferSize );
 }

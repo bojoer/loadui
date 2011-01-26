@@ -21,7 +21,6 @@ import java.util.TreeMap;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
-import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.api.statistics.store.Entry;
 
@@ -36,26 +35,20 @@ import com.eviware.loadui.api.statistics.store.Entry;
  * PS Statistics is per second statistic during whole run of test.
  * LAST_SECOND_CHANGE is a per second change in last second.
  */
-public class PSStatisticsWriter extends AbstractStatisticsWriter
+public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 {
+	public final static String TYPE = "THROUGHPUT";
 
-	private final static String TYPE = "PSWritter";
-
-	private Double perSecond = 0d;
-	private Double totalSum = 0d;
-
-	private long lastTimeUpdated = System.currentTimeMillis();
-
-	private double lastSecondChange;
+	private int count = 0;
+	private double sum = 0;
 
 	// cound not find better name
 	public enum Stats
 	{
-		PS, LAST_SECOND_CHANGE;
-
+		BPS, TPS;
 	}
 
-	public PSStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
+	public ThroughputStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values )
 	{
 		super( manager, variable, values );
@@ -70,20 +63,17 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 	@Override
 	public Entry output()
 	{
-		long currTime = System.currentTimeMillis();
-		if( lastTimeFlushed == currTime )
-		{
+		if( count == 0 )
 			return null;
-		}
-		else
-		{
-			// it should be per second
-			perSecond = totalSum / ( ( System.currentTimeMillis() - lastTimeFlushed ) / 1000 );
-			totalSum = 0D;
-			lastTimeFlushed = currTime;
-			return at( lastTimeFlushed ).put( Stats.PS.name(), perSecond )
-					.put( Stats.LAST_SECOND_CHANGE.name(), lastSecondChange ).build();
-		}
+
+		double timeDelta = delay / 1000.0;
+		double bps = sum / timeDelta;
+		double tps = count / timeDelta;
+		sum = 0;
+		count = 0;
+		lastTimeFlushed += delay;
+
+		return at( lastTimeFlushed ).put( Stats.BPS.name(), bps ).put( Stats.TPS.name(), tps ).build();
 	}
 
 	/**
@@ -100,29 +90,50 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 	{
 		synchronized( this )
 		{
-			double doubleValue = value.doubleValue();
-			totalSum += doubleValue;
-			lastSecondChange = doubleValue / ( ( System.currentTimeMillis() - lastTimeUpdated ) / 1000 );
-			lastTimeUpdated = System.currentTimeMillis();
+			if( lastTimeFlushed + delay < timestamp )
+				flush();
+
+			count++ ;
+			sum += value.doubleValue();
+		}
+	}
+
+	@Override
+	public Entry aggregate( List<Entry> entries )
+	{
+		if( entries.size() <= 1 )
+			return entries.size() == 0 ? null : entries.get( 0 );
+
+		double tpsSum = 0;
+		double bpsSum = 0;
+		long minTime = Long.MAX_VALUE;
+		long maxTime = 0;
+		for( Entry entry : entries )
+		{
+			bpsSum += entry.getValue( Stats.BPS.name() ).doubleValue();
+			tpsSum += entry.getValue( Stats.TPS.name() ).doubleValue();
+			minTime = Math.min( minTime, entry.getTimestamp() );
+			maxTime = Math.max( maxTime, entry.getTimestamp() );
 		}
 
-		if( lastTimeFlushed + delay <= System.currentTimeMillis() )
-			flush();
+		double timeDelta = Math.max(
+				( ( double )( maxTime - minTime ) / entries.size() * ( entries.size() + 1 ) ) / 1000, delay / 1000 );
+
+		return at( maxTime ).put( Stats.BPS.name(), bpsSum / timeDelta ).put( Stats.TPS.name(), tpsSum / timeDelta )
+				.build( false );
 	}
 
 	@Override
 	protected void reset()
 	{
-		perSecond = 0d;
-		totalSum = 0d;
+		sum = 0;
+		count = 0;
 
-		lastTimeUpdated = System.currentTimeMillis();
-
-		lastSecondChange = 0d;
+		lastTimeFlushed = System.currentTimeMillis();
 	}
 
 	/**
-	 * Factory for instantiating PSStatisticWriters.
+	 * Factory for instantiating ThroughputStatisticsWriters.
 	 * 
 	 * 
 	 */
@@ -135,23 +146,17 @@ public class PSStatisticsWriter extends AbstractStatisticsWriter
 		}
 
 		@Override
-		public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable )
+		public ThroughputStatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager,
+				StatisticVariable variable )
 		{
 			Map<String, Class<? extends Number>> trackStructure = new TreeMap<String, Class<? extends Number>>();
 
 			// init statistics
 
-			trackStructure.put( Stats.PS.name(), Double.class );
-			trackStructure.put( Stats.LAST_SECOND_CHANGE.name(), Double.class );
+			trackStructure.put( Stats.BPS.name(), Double.class );
+			trackStructure.put( Stats.TPS.name(), Double.class );
 
-			return new PSStatisticsWriter( statisticsManager, variable, trackStructure );
+			return new ThroughputStatisticsWriter( statisticsManager, variable, trackStructure );
 		}
-	}
-
-	@Override
-	public Entry aggregate( List<Entry> entries )
-	{
-		// TODO Implement this
-		return null;
 	}
 }
