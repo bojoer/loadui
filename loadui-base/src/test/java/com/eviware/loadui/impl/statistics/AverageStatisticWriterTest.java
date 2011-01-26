@@ -145,16 +145,28 @@ public class AverageStatisticWriterTest
 	
 	/* Test aggregations */
 	@Test
+	public void testAverageAggregation()
+	{
+		Entry result = prepareAggregation();
+		assertEquals( result.getValue( Stats.AVERAGE.name() ).doubleValue(), 9.5, 0.00 );
+	}
+	
+	@Test
 	public void testStdDevAggregation()
+	{
+		Entry result = prepareAggregation();
+		assertEquals( result.getValue( Stats.STD_DEV.name() ).doubleValue(), 3.008322, 0.005 );
+	}
+	
+	private Entry prepareAggregation()
 	{
 		// Based on these three sets of samples: {{10, 8, 6}, {7, 7, 9, 17}, {12, 10, 9}}
 		ArrayList<Entry> entries = new ArrayList<Entry>();
-		entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put( Stats.AVERAGE_COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 2.0 ).build(false) );
-		entries.add( writer.at( 2 ).put( Stats.AVERAGE.name(), 10 ).put( Stats.AVERAGE_COUNT.name(), 4 ).put( Stats.STD_DEV.name(), 4.760952286 ).build(false) );
-		entries.add( writer.at( 3 ).put( Stats.AVERAGE.name(), 10.3333333 ).put( Stats.AVERAGE_COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.527525232 ).build(false) );
+		entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put( Stats.AVERAGE_COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.632993162 ).build(false) );
+		entries.add( writer.at( 2 ).put( Stats.AVERAGE.name(), 10 ).put( Stats.AVERAGE_COUNT.name(), 4 ).put( Stats.STD_DEV.name(), 4.123105626 ).build(false) );
+		entries.add( writer.at( 3 ).put( Stats.AVERAGE.name(), 10.3333333 ).put( Stats.AVERAGE_COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.247219129 ).build(false) );
 		
-		Entry result = writer.aggregate( entries );
-		assertEquals( result.getValue( Stats.STD_DEV.name() ) , writer.values.get( cnt ) );
+		return writer.aggregate( entries );
 	}
 
 }
