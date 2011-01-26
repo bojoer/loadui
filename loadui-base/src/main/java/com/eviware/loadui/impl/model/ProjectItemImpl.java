@@ -15,10 +15,7 @@
  */
 package com.eviware.loadui.impl.model;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,12 +35,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.swing.SwingWorker;
-import javax.swing.table.TableModel;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -51,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 
-import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.ActionEvent;
@@ -67,6 +57,7 @@ import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.SceneCommunication;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.Assignment;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ModelItem;
@@ -76,9 +67,7 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.property.PropertySynchronizer;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
-import com.eviware.loadui.api.summary.Chapter;
 import com.eviware.loadui.api.summary.MutableSummary;
-import com.eviware.loadui.api.summary.Section;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
@@ -106,8 +95,7 @@ import com.eviware.loadui.impl.terminal.RoutedConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
-import com.eviware.loadui.util.reporting.JasperReportManager;
-import com.eviware.loadui.util.reporting.ReportEngine.ReportFormats;
+import com.eviware.loadui.util.summary.SummaryExportUtils;
 
 public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implements ProjectItem
 {
@@ -118,6 +106,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final Set<Assignment> assignments = new HashSet<Assignment>();
 	private final AgentListener agentListener = new AgentListener();
 	private final SceneListener sceneListener = new SceneListener();
+	private final SummaryListener summaryListener = new SummaryListener();
 	private final WorkspaceListener workspaceListener = new WorkspaceListener();
 	private final SceneComponentListener sceneComponentListener = new SceneComponentListener();
 	private final Map<SceneItem, BroadcastMessageEndpoint> sceneEndpoints = new HashMap<SceneItem, BroadcastMessageEndpoint>();
@@ -170,6 +159,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void init()
 	{
+		addEventListener( BaseEvent.class, summaryListener );
+
 		for( SceneItemConfig conf : getConfig().getSceneArray() )
 		{
 			SceneItemImpl scene = new SceneItemImpl( this, conf );
@@ -229,6 +220,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		if( scenes.add( scene ) )
 		{
 			scene.addEventListener( BaseEvent.class, sceneListener );
+			scene.addEventListener( BaseEvent.class, summaryListener );
 			( ( AggregatedCounterSupport )counterSupport ).addChild( scene );
 			sceneEndpoints.put( scene, new BroadcastMessageEndpointImpl() );
 			BroadcastMessageEndpoint sceneEndpoint = sceneEndpoints.get( scene );
@@ -258,6 +250,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			}
 
 			scene.removeEventListener( BaseEvent.class, sceneListener );
+			scene.removeEventListener( BaseEvent.class, summaryListener );
 			sceneEndpoints.remove( scene );
 			fireCollectionEvent( SCENES, CollectionEvent.Event.REMOVED, scene );
 		}
@@ -361,8 +354,14 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		agentListener.release();
 		statisticPages.release();
 
+		removeEventListener( BaseEvent.class, summaryListener );
+
 		for( SceneItem scene : new ArrayList<SceneItem>( getScenes() ) )
+		{
+			scene.removeEventListener( BaseEvent.class, summaryListener );
+			scene.removeEventListener( BaseEvent.class, sceneListener );
 			scene.release();
+		}
 
 		// statisticHolderSupport.release();
 
@@ -404,7 +403,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				agents.add( assignment.getAgent() );
 		return agents;
 	}
-	
+
 	private Collection<AgentItem> getActiveAgentsAssignedTo( SceneItem scene )
 	{
 		ArrayList<AgentItem> agents = new ArrayList<AgentItem>();
@@ -570,202 +569,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		for( ComponentItem component : getComponents() )
 		{
 			component.generateSummary( projectChapter );
-
 		}
-
-		// We decided to wait a bit with this...
-		if( saveReport.getValue() )
-			saveSummary( summary );
-	}
-
-	/**
-	 * saving summary, in background, in xml format, quick and dirty.
-	 * 
-	 * @param summary
-	 */
-	private void saveSummary( MutableSummary summary )
-	{
-		File outputDir;
-		if( reportFolder == null || reportFolder.getValue().length() < 1 )
-			outputDir = new File( System.getProperty( LoadUI.LOADUI_HOME ) );
-		else
-			outputDir = new File( reportFolder.getValue() );
-
-		String format = reportFormat.getValue();
-		if( format == null )
-		{
-			saveSummaryAsXML( summary, createOutputFile( outputDir, "xml" ) );
-		}
-		else
-		{
-			format = format.toUpperCase();
-			boolean formatSupported = false;
-			for( ReportFormats rf : ReportFormats.values() )
-			{
-				if( rf.toString().equals( format ) )
-				{
-					formatSupported = true;
-					File out = createOutputFile( outputDir, format );
-					JasperReportManager.getInstance().createReport( summary, out, format );
-					break;
-				}
-			}
-			if( !formatSupported )
-			{
-				log.warn( "Format '" + format + "' is not supported. Report will be saved in plain xml." );
-				saveSummaryAsXML( summary, createOutputFile( outputDir, "xml" ) );
-			}
-		}
-	}
-
-	private File createOutputFile( File outputDir, String format )
-	{
-		String fileName = getLabel() + "-summary-" + System.currentTimeMillis() + "." + format.toLowerCase();
-		return new File( outputDir, fileName );
-	}
-
-	private void saveSummaryAsXML( final MutableSummary summary, final File out )
-	{
-		SwingWorker worker = new SwingWorker()
-		{
-			@Override
-			protected Object doInBackground() throws Exception
-			{
-				try
-				{
-					XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-					// Create an XML stream writer
-					XMLStreamWriter xmlw = xmlof.createXMLStreamWriter( new BufferedWriter( new FileWriter( out ) ) );
-					xmlw.writeStartDocument();
-					xmlw.writeCharacters( "\n" );
-					xmlw.writeStartElement( "summary" );
-					xmlw.writeCharacters( "\n" );
-					for( String chapKey : summary.getChapters().keySet() )
-					{
-						Chapter chapter = summary.getChapters().get( chapKey );
-						xmlw.writeCharacters( "\t" );
-						xmlw.writeStartElement( "chapter" );
-						xmlw.writeAttribute( "title", chapter.getTitle() );
-						xmlw.writeAttribute( "date", chapter.getDate().toString() );
-						xmlw.writeCharacters( "\n" );
-						xmlw.writeCharacters( "\t\t" );
-						xmlw.writeStartElement( "description" );
-						xmlw.writeCharacters( chapter.getDescription() );
-						xmlw.writeEndElement();
-						xmlw.writeCharacters( "\n" );
-						for( String valKey : chapter.getValues().keySet() )
-						{
-							xmlw.writeCharacters( "\t\t" );
-							xmlw.writeStartElement( valKey.replace( " ", "_" ).replace( "(%)", "" ).toLowerCase() );
-							xmlw.writeCharacters( chapter.getValues().get( valKey ) );
-							xmlw.writeCharacters( "\t\t" );
-							xmlw.writeEndElement();
-							xmlw.writeCharacters( "\n" );
-							/*
-							 * xmlw.writeCharacters( "\n" ); xmlw.writeStartElement(
-							 * "value-value" ); xmlw.writeCharacters(
-							 * chapter.getValues().get( valKey ) );
-							 * xmlw.writeEndElement(); // value-value
-							 * xmlw.writeCharacters( "\n" ); xmlw.writeEndElement(); //
-							 * value
-							 */
-						}
-						for( Section section : chapter.getSections() )
-						{
-							xmlw.writeCharacters( "\t\t" );
-							xmlw.writeStartElement( "section" );
-							xmlw.writeAttribute( "title", section.getTitle() );
-							xmlw.writeCharacters( "\n" );
-							for( String valKey : section.getValues().keySet() )
-							{
-								xmlw.writeCharacters( "\t\t\t" );
-								xmlw.writeStartElement( valKey.replace( " ", "_" ).replace( "(%)", "" ).toLowerCase() );
-								xmlw.writeCharacters( section.getValues().get( valKey ) );
-								xmlw.writeEndElement(); // value-name
-								xmlw.writeCharacters( "\n" );
-							}
-							for( String tablekey : section.getTables().keySet() )
-							{
-								xmlw.writeCharacters( "\t\t\t" );
-								xmlw.writeStartElement( tablekey.replace( " ", "_" ).toLowerCase() );
-								// xmlw.writeAttribute( "name", tablekey );
-								TableModel table = section.getTables().get( tablekey );
-								xmlw.writeCharacters( "\n" );
-								// xmlw.writeStartElement( "columns" );
-								// xmlw.writeAttribute( "size", String.valueOf(
-								// table.getColumnCount() ) );
-								// xmlw.writeCharacters( "\n" );
-								// StringBuffer columns = new StringBuffer();
-								// String columns = new String [table.getColumnCount()]
-								// for( int i = 0; i < table.getColumnCount(); i++ ) {
-								// columns.append( table.getColumnName( i ) ).append(
-								// "," );
-								// columns.deleteCharAt( columns.length() - 1 );
-								// xmlw.writeCharacters( columns.toString() );
-								// xmlw.writeEndElement();// columns
-								// xmlw.writeCharacters( "\n" );
-								//
-								// xmlw.writeStartElement( "rows" );
-								// xmlw.writeAttribute( "size", String.valueOf(
-								// table.getRowCount() ) );
-								// xmlw.writeCharacters( "\n" );
-								for( int j = 0; j < table.getRowCount(); j++ )
-								{
-									xmlw.writeCharacters( "\t\t\t" );
-									xmlw.writeStartElement( "row" );
-									xmlw.writeCharacters( "\n" );
-									StringBuffer row = new StringBuffer();
-									for( int i = 0; i < table.getColumnCount(); i++ )
-									{
-										xmlw.writeCharacters( "\t\t\t\t" );
-										xmlw.writeStartElement( table.getColumnName( i ).replace( " ", "_" ).replace( "/", "_" )
-												.toLowerCase() );
-										if( table.getValueAt( j, i ) != null )
-											xmlw.writeCharacters( table.getValueAt( j, i ).toString() );
-										xmlw.writeEndElement();
-										xmlw.writeCharacters( "\n" );
-									}
-									xmlw.writeCharacters( "\t\t\t" );
-									xmlw.writeEndElement();// row
-									xmlw.writeCharacters( "\n" );
-								}
-								xmlw.writeCharacters( "\t\t\t" );
-								xmlw.writeEndElement(); // table
-								xmlw.writeCharacters( "\n" );
-							}
-							xmlw.writeCharacters( "\t\t" );
-							xmlw.writeEndElement();// section
-							xmlw.writeCharacters( "\n" );
-						}
-						xmlw.writeCharacters( "\t" );
-						xmlw.writeEndElement(); // chapter
-						xmlw.writeCharacters( "\n" );
-					}
-					xmlw.writeEndElement(); //
-					xmlw.writeCharacters( "\n" );
-					xmlw.writeEndDocument();
-					xmlw.flush();
-					xmlw.close();
-				}
-				catch( XMLStreamException e )
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch( FileNotFoundException e )
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch( IOException e )
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return null;
-			}
-		};
-		worker.execute();
 	}
 
 	@Override
@@ -1281,8 +1085,10 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			boolean abort = true;
 			for( SceneItem scene : getScenes() )
 			{
-				if( scene.isFollowProject() && !scene.isAbortOnFinish()
-						&& ( workspace.isLocalMode() || !workspace.isLocalMode() && getActiveAgentsAssignedTo( scene ).size() > 0 ) )
+				if( scene.isFollowProject()
+						&& !scene.isAbortOnFinish()
+						&& ( workspace.isLocalMode() || !workspace.isLocalMode()
+								&& getActiveAgentsAssignedTo( scene ).size() > 0 ) )
 				{
 					abort = false;
 					break;
@@ -1315,4 +1121,40 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		}
 	}
 
+	private class SummaryListener implements EventHandler<BaseEvent>
+	{
+		// once summary event was fired,source is added to this set to prevent
+		// generating summary more than once (in case summary event was received
+		// more than once from the same source e.g. when user stops the project by
+		// clicking STOP button)
+		HashSet<EventFirer> sources = new HashSet<EventFirer>();
+
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( SUMMARY.equals( event.getKey() ) )
+			{
+				if( isSaveReport() && !sources.contains( event.getSource() ) )
+				{
+					if( event.getSource() instanceof ProjectItemImpl )
+					{
+						SummaryExportUtils.saveSummary( ( MutableSummary )summary, getReportFolder(), getReportFormat(),
+								getLabel() );
+					}
+					else
+					{
+						SceneItemImpl scene = ( SceneItemImpl )event.getSource();
+						SummaryExportUtils.saveSummary( ( MutableSummary )scene.summary, getReportFolder(),
+								getReportFormat(), getLabel() + "-" + scene.getLabel() );
+					}
+					fireBaseEvent( SUMMARY_EXPORTED );
+				}
+				sources.add( event.getSource() );
+			}
+			else if( CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
+			{
+				sources.remove( event.getSource() );
+			}
+		}
+	}
 }

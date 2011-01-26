@@ -299,7 +299,16 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 					if( event.getKey().equals( ON_COMPLETE_DONE ) )
 					{
 						removeEventListener( BaseEvent.class, this );
-						doGenerateSummary();
+						// if test case is linked and project is not running then do
+						// generate summary. if project is running it will generate
+						// summary instead. if test case is not linked generate
+						// summary for it. (the scenario when project is running and
+						// the source is test case can occur when limit is set to a
+						// test case so it finishes before project)
+						if( !getProject().isRunning() && isFollowProject() || !isFollowProject() )
+						{
+							doGenerateSummary();
+						}
 					}
 				}
 			} );
