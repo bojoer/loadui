@@ -116,8 +116,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 	public Entry output()
 	{
-		long currTime = System.currentTimeMillis();
-		if( lastTimeFlushed == currTime )
+		if( avgCnt == 0 )
 		{
 			return null;
 		}
@@ -149,14 +148,24 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		}
 	}
 	
+	/**
+	 * Aggregates a list of Entrys.
+	 * 
+	 * Note that we are using Population based Standard deviation,
+	 * as opposed to Sample based Standard deviation.
+	 * 
+	 * @author henrik.olsson
+	 */
 	public Entry aggregate(List<Entry> entries)
 	{
 		if( entries.size() == 0)
 			return null;
+		if( entries.size() == 1)
+			return entries.get( 0 );
 		
 		Entry lastEntry = entries.get( entries.size() - 1);
 
-		long totalSum = 0;
+		double totalSum = 0;
 		long totalCnt = 0;
 		double stddev_partA = 0;
 		
@@ -169,12 +178,14 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			totalSum += count * average;
 			totalCnt += count;
 			
-			// stddev
+			// stddev (population based), implements http://en.wikipedia.org/wiki/Standard_deviation#Combining_standard_deviations
 			stddev_partA += count * ( Math.pow( e.getValue( Stats.STD_DEV.name() ).doubleValue(), 2) + Math.pow( average, 2 ) );
+			
+			// http://davidmlane.com/hyperstat/A79567.html
 		}
 		double totalAverage = totalSum / totalCnt;
 		long timestamp = lastEntry.getTimestamp();
-		double stddev = Math.sqrt( stddev_partA / totalCnt - Math.pow( average, 2 ) );
+		double stddev = Math.sqrt( stddev_partA / totalCnt - Math.pow( totalAverage, 2 ) );
 		
 		return at( timestamp ).put( Stats.AVERAGE.name(), totalAverage ).put( Stats.AVERAGE_COUNT.name(), totalCnt ).put( Stats.STD_DEV.name(), stddev ).build(false);
 	}

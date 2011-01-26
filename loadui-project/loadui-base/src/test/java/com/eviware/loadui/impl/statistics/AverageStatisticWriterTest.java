@@ -18,6 +18,8 @@ package com.eviware.loadui.impl.statistics;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -27,9 +29,11 @@ import org.springframework.context.ApplicationContext;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
+import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.impl.statistics.AverageStatisticWriter.Stats;
 import com.eviware.loadui.util.BeanInjector;
 
 public class AverageStatisticWriterTest
@@ -137,6 +141,20 @@ public class AverageStatisticWriterTest
 		calculate();
 		writer.output();
 		assertEquals( average, writer.average, .00 );
+	}
+	
+	/* Test aggregations */
+	@Test
+	public void testStdDevAggregation()
+	{
+		// Based on these three sets of samples: {{10, 8, 6}, {7, 7, 9, 17}, {12, 10, 9}}
+		ArrayList<Entry> entries = new ArrayList<Entry>();
+		entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put( Stats.AVERAGE_COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 2.0 ).build(false) );
+		entries.add( writer.at( 2 ).put( Stats.AVERAGE.name(), 10 ).put( Stats.AVERAGE_COUNT.name(), 4 ).put( Stats.STD_DEV.name(), 4.760952286 ).build(false) );
+		entries.add( writer.at( 3 ).put( Stats.AVERAGE.name(), 10.3333333 ).put( Stats.AVERAGE_COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.527525232 ).build(false) );
+		
+		Entry result = writer.aggregate( entries );
+		assertEquals( result.getValue( Stats.STD_DEV.name() ) , writer.values.get( cnt ) );
 	}
 
 }
