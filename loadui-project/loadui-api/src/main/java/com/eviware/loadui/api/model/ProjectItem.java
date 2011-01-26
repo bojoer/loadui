@@ -29,6 +29,7 @@ public interface ProjectItem extends CanvasItem
 {
 	public static final String SCENES = ProjectItem.class.getName() + "@scenes";
 	public static final String ASSIGNMENTS = ProjectItem.class.getName() + "@assignments";
+	public static final String SUMMARY_EXPORTED = ProjectItem.class.getName() + "@summaryExported";
 
 	public final String SAVE_REPORT_PROPERTY = ModelItem.class.getSimpleName() + ".saveReport";
 	public final String REPORT_FOLDER_PROPERTY = ModelItem.class.getSimpleName() + ".reportFolder";

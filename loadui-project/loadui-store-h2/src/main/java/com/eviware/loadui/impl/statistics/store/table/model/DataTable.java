@@ -52,7 +52,7 @@ public class DataTable extends TableBase
 	@Override
 	protected void initializeDescriptor( TableDescriptor descriptor )
 	{
-		descriptor.addStaticField( STATIC_FIELD_TIMESTAMP, Integer.class );
+		descriptor.addStaticField( STATIC_FIELD_TIMESTAMP, Long.class );
 		descriptor.addStaticField( STATIC_FIELD_SOURCEID, Integer.class );
 		descriptor.addStaticField( STATIC_FIELD_INTERPOLATIONLEVEL, Integer.class );
 

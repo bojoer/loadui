@@ -14,6 +14,9 @@
 // under the Licence.
 //
 
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.WorkspaceItem
 import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.events.EventHandler
@@ -66,6 +69,17 @@ if( projectRef == null ) projectRef = workspace.importProject( projectFile, true
 log.info "Loading Project: {}", projectFile.absolutePath
 projectRef.enabled = true
 def project = projectRef.project
+
+def summaryExported = false
+def summaryExportListener = new EventHandler<BaseEvent>() {
+	public void handleEvent( BaseEvent event ) {
+		if( ProjectItem.SUMMARY_EXPORTED.equals( event.getKey() ) ) {
+			summaryExported = true;
+		}
+	}
+}
+
+project.addEventListener( BaseEvent.class, summaryExportListener )
 
 //Get the target
 def target = testCase ? project.getSceneByLabel( testCase ) : project
@@ -181,6 +195,13 @@ while( target.summary == null ) {
 	sleep 1000
 }
 
+//Wait for reports to be generated and saved
+if( project.saveReport ) {
+	while( !summaryExported ) {
+		sleep 1000
+	}
+}
+
 //Shutdown
 log.info """
 
@@ -196,6 +217,7 @@ def success = project.getLimit( CanvasItem.FAILURE_COUNTER ) == -1 || project.ge
 log.info "Shutting down..."
 sleep 1000
 
+project.removeEventListener( BaseEvent.class, summaryExportListener )
 project.release()
 workspace.release()
 
