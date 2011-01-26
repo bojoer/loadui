@@ -87,8 +87,6 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	private final Property<Boolean> followProject;
 
-	// private final StatisticHolderSupport statisticHolderSupport;
-
 	public SceneItemImpl( ProjectItem project, SceneItemConfig config )
 	{
 		super( config,
@@ -113,9 +111,6 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 		projectListener = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? new ProjectListener()
 				: null;
-
-		// statisticHolderSupport = new StatisticHolderSupport( this );
-
 	}
 
 	@Override
@@ -129,12 +124,6 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			project.getWorkspace().addEventListener( PropertyEvent.class, workspaceListener );
 			propagate = project.getWorkspace().isLocalMode();
 		}
-
-		// statisticHolderSupport.init();
-		//
-		// MutableStatisticVariable rpsVariable =
-		// statisticHolderSupport.addStatisticVariable( "RequestPerSecond" );
-		// statisticHolderSupport.addStatisticsWriter( "PSWritter", rpsVariable );
 	}
 
 	@Override

@@ -272,7 +272,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		def yPadding = (max-min)*0.1;
 		chart.getYAxis().setRange( min - yPadding, max + yPadding );
 		if( showAll ) {
-			timeSpan = maxTime;
+			timeSpan = maxTime as Integer;
 			def level = TotalTimeTickCalculator.Level.forSpan( timeSpan / 1000 );
 			zoomLevel = level.getLevel();
 		}
@@ -327,7 +327,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	function addedSegment( segment:LineSegment ):Void {
-		def model = LineSegmentChartModel { segment: segment, level: bind zoomLevel };
+		def model = LineSegmentChartModel { chartView: chartView, segment: segment, level: bind zoomLevel };
 		lines.put( segment, model );
 		chart.addModel( model, model.chartStyle );
 		insert SegmentButton { model: model } into segmentButtons.content;

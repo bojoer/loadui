@@ -49,6 +49,9 @@ public class ChartImpl implements Chart
 
 		statisticHolder = ( StatisticHolder )BeanInjector.getBean( AddressableRegistry.class ).lookup(
 				config.getStatisticHolder() );
+
+		if( statisticHolder == null )
+			throw new IllegalArgumentException( "StatisticHolder for Chart doesn't exist!" );
 		statisticHolder.addEventListener( CollectionEvent.class, new StatisticHolderListener() );
 
 		if( config.getAttributes() == null )

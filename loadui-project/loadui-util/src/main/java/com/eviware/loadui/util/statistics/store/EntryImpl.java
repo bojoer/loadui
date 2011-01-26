@@ -65,7 +65,8 @@ public class EntryImpl implements Entry
 	@Override
 	public String toString()
 	{
-		StringBuilder sb = new StringBuilder( "Entry[" );
+		StringBuilder sb = new StringBuilder( "Entry<" );
+		sb.append( timestamp ).append( ">[" );
 		sb.append( values.toString() ).append( "]" );
 		return sb.toString();
 	}

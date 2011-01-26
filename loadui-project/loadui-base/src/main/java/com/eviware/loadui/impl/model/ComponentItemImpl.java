@@ -105,7 +105,6 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 	private ActivityStrategy activityStrategy;
 	private final ActivityListener activityListener = new ActivityListener();
-	private CounterStatisticSupport counterStatisticSupport;
 
 	public ComponentItemImpl( CanvasItem canvas, ComponentItemConfig config )
 	{
@@ -126,7 +125,6 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 		terminalHolderSupport = new TerminalHolderSupport( this );
 		statisticHolderSupport = new StatisticHolderSupport( this );
-		counterStatisticSupport = new CounterStatisticSupport( this, statisticHolderSupport );
 	}
 
 	@Override
@@ -137,7 +135,6 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		canvas.addEventListener( ActionEvent.class, canvasListener );
 
 		statisticHolderSupport.init();
-		// counterStatisticSupport.init();
 
 		if( workspaceListener != null )
 		{
@@ -257,7 +254,6 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 			triggerAction( CanvasItem.STOP_ACTION );
 		if( behavior != null )
 			behavior.onRelease();
-		counterStatisticSupport.release();
 		terminalHolderSupport.release();
 		statisticHolderSupport.release();
 		settingsTabs.clear();

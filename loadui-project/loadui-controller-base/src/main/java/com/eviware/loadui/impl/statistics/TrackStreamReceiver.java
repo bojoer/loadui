@@ -20,13 +20,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.statistics.Statistic;
-import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 
 /**
@@ -36,18 +34,15 @@ import com.eviware.loadui.util.statistics.store.EntryImpl;
  */
 public class TrackStreamReceiver
 {
-	private final static Logger log = LoggerFactory.getLogger( TrackStreamReceiver.class );
+	public final static Logger log = LoggerFactory.getLogger( TrackStreamReceiver.class );
 
-	private final ExecutionManager manager;
 	private final MessageEndpoint endpoint;
-	private final AddressableRegistry addressableRegistry;
+	private final AgentDataAggregator aggregator;
 
-	public TrackStreamReceiver( ExecutionManager executionManager, BroadcastMessageEndpoint endpoint,
-			AddressableRegistry addressableRegistry )
+	public TrackStreamReceiver( BroadcastMessageEndpoint endpoint, AgentDataAggregator aggregator )
 	{
-		this.manager = executionManager;
 		this.endpoint = endpoint;
-		this.addressableRegistry = addressableRegistry;
+		this.aggregator = aggregator;
 
 		this.endpoint.addMessageListener( "/" + Statistic.class.getName(), new MessageListener()
 		{
@@ -63,11 +58,8 @@ public class TrackStreamReceiver
 					int timestamp = ( ( Number )map.remove( "_TIMESTAMP" ) ).intValue();
 					String trackId = ( String )map.remove( "_TRACK_ID" );
 
-					manager.writeEntry( trackId, new EntryImpl( timestamp, ( Map<String, Number> )data ), agent.getLabel(),
-							level );
-
-					log.debug( "To aggregate track: {}, use: {}", trackId,
-							TrackStreamReceiver.this.addressableRegistry.lookup( trackId ) );
+					TrackStreamReceiver.this.aggregator.update(
+							new EntryImpl( timestamp, ( Map<String, Number> )data, true ), trackId, agent, level );
 				}
 			}
 		} );

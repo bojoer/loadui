@@ -120,6 +120,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 	private final MutableStatisticVariable timeTakenVariable;
 	private final MutableStatisticVariable responseSizeVariable;
+	private final MutableStatisticVariable throughputVariable;
 
 	/**
 	 * Constructs an RunnerBase.
@@ -138,6 +139,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 		timeTakenVariable = context.addStatisticVariable( "TimeTaken", "AVERAGE", "MINMAX" );
 		responseSizeVariable = context.addStatisticVariable( "ResponseSize", "AVERAGE", "MINMAX" );
+		throughputVariable = context.addStatisticVariable( "Throughput", "THROUGHPUT" );
 
 		triggerTerminal = context.createInput( TRIGGER_TERMINAL, "Trigger Input" );
 
@@ -263,6 +265,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		// Update StatisticsWriters
 		timeTakenVariable.update( startTime, timeTaken );
 		responseSizeVariable.update( startTime, size );
+		throughputVariable.update( startTime, size );
 	}
 
 	private synchronized void addTopBottomSample( long time, long timeTaken, long size )

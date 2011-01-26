@@ -81,8 +81,8 @@
 		class="com.eviware.loadui.impl.statistics.AverageStatisticWriter$Factory" />
 	<bean id="minmaxStatisticWriter"
 		class="com.eviware.loadui.impl.statistics.MinMaxStatisticWriter$Factory" />
-	<bean id="psStatisticWriter"
-		class="com.eviware.loadui.impl.statistics.PSStatisticsWriter$Factory" />
+	<bean id="throughputStatisticWriter"
+		class="com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter$Factory" />
 
 	<bean class="com.eviware.loadui.impl.LoggingUncaughtExceptionHandler" factory-method="setForAllThreads"/>
 </beans>
