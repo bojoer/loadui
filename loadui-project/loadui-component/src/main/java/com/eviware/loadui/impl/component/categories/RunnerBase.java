@@ -51,8 +51,6 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.statistics.MutableStatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.summary.SampleStats;
 import com.eviware.loadui.api.summary.SampleStatsImpl;
 import com.eviware.loadui.api.terminal.InputTerminal;
@@ -69,8 +67,6 @@ import com.eviware.loadui.util.BeanInjector;
 public abstract class RunnerBase extends BaseCategory implements RunnerCategory, EventHandler<BaseEvent>
 {
 	private final static int NUM_TOP_BOTTOM_SAMPLES = 5;
-	private static final String TIME_TAKEN_STATISTICS_BUFFER = "TimeTakenStatisticsBuffer";
-	private static final String RESPONSE_SIZE_STATISTICS_BUFFER = "ResponseSizeStatisticsBuffer";
 
 	private final ScheduledExecutorService scheduler;
 	private final ScheduledFuture<?> updateTask;
@@ -86,15 +82,15 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final Counter requestCounter;
 	private final Counter sampleCounter;
 	private final Counter failureCounter;
+	private final Counter failedRequestCounter;
+	private final Counter failedAssertionCounter;
 	private final Counter discardsCounter;
 
 	private final ExecutorService executor;
 
 	private final Property<Long> concurrentSamplesProperty;
 	private final Property<Long> maxQueueSizeProperty;
-	private final Property<Boolean> assertOnOverflow;
-	protected final Property<Long> timeTakenStatisticsBuffer;
-	protected final Property<Long> responseSizeStatisticsBuffer;
+	private final Property<Boolean> countDiscarded;
 
 	private long concurrentSamples;
 	private long queueSize;
@@ -155,14 +151,14 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		requestCounter = context.getCounter( CanvasItem.REQUEST_COUNTER );
 		sampleCounter = context.getCounter( CanvasItem.SAMPLE_COUNTER );
 		failureCounter = context.getCounter( CanvasItem.FAILURE_COUNTER );
+		failedRequestCounter = context.getCounter( CanvasItem.REQUEST_FAILURE_COUNTER );
+		failedAssertionCounter = context.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER );
 		discardsCounter = context.getCounter( RunnerCategory.DISCARDED_SAMPLES_COUNTER );
 
 		concurrentSamplesProperty = context.createProperty( CONCURRENT_SAMPLES_PROPERTY, Long.class, 100 );
 		concurrentSamples = concurrentSamplesProperty.getValue();
 		maxQueueSizeProperty = context.createProperty( MAX_QUEUE_SIZE_PROPERTY, Long.class, 1000 );
-		assertOnOverflow = context.createProperty( ASSERT_ON_OVERFLOW_PROPERTY, Boolean.class, false );
-		timeTakenStatisticsBuffer = context.createProperty( TIME_TAKEN_STATISTICS_BUFFER, Long.class, 1000 );
-		responseSizeStatisticsBuffer = context.createProperty( RESPONSE_SIZE_STATISTICS_BUFFER, Long.class, 1000 );
+		countDiscarded = context.createProperty( COUNT_DISCARDED_REQUESTS_PROPERTY, Boolean.class, false );
 
 		queueSize = maxQueueSizeProperty.getValue();
 
@@ -187,11 +183,6 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			updateTask = null;
 			assignmentListener = null;
 		}
-
-		context.addEventListener( PropertyEvent.class, new PropertyListener() );
-
-		setWriterBuffer( timeTakenVariable, timeTakenStatisticsBuffer.getValue().intValue() );
-		setWriterBuffer( responseSizeVariable, responseSizeStatisticsBuffer.getValue().intValue() );
 	}
 
 	/**
@@ -356,6 +347,12 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	}
 
 	@Override
+	public Counter getRequestCounter()
+	{
+		return requestCounter;
+	}
+
+	@Override
 	final public Counter getSampleCounter()
 	{
 		return sampleCounter;
@@ -370,6 +367,16 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	final public Counter getFailureCounter()
 	{
 		return failureCounter;
+	}
+
+	final public Counter getFailedRequestCounter()
+	{
+		return failedRequestCounter;
+	}
+
+	final public Counter getFailedAssertionCounter()
+	{
+		return failedAssertionCounter;
 	}
 
 	@Override
@@ -403,8 +410,12 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		}
 		else
 		{
-			if( assertOnOverflow.getValue() )
+			if( countDiscarded.getValue() )
+			{
+				requestCounter.increment();
+				failedRequestCounter.increment();
 				failureCounter.increment();
+			}
 			discardsCounter.increment();
 		}
 
@@ -592,21 +603,21 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		Map<String, String> statistics = new HashMap<String, String>();
 
-		long sampleCount = sampleCounter.get();
-		long failureCount = failureCounter.get();
+		long requestCount = requestCounter.get();
+		long failureCount = failedRequestCounter.get();
 
-		if( sampleCount > 0 )
+		if( requestCount > 0 )
 		{
-			long perc = failureCount * 100 / sampleCount;
+			long perc = failureCount * 100 / requestCount;
 			String errorRatio = perc + "%"; // failureCount + "/" + sampleCount +
 			// " (" + perc + "%)";
 
-			statistics.put( "cnt", String.valueOf( sampleCount ) );
+			statistics.put( "cnt", String.valueOf( requestCount ) );
 			statistics.put( "min", String.valueOf( minTime ) );
 			statistics.put( "max", String.valueOf( maxTime ) );
 			statistics.put( "avg", String.valueOf( avgTime ) );
 			statistics.put( "std-dev",
-					String.valueOf( Math.round( Math.sqrt( sumTotalSquare / sampleCount ) * 100d ) / 100d ) );
+					String.valueOf( Math.round( Math.sqrt( sumTotalSquare / requestCount ) * 100d ) / 100d ) );
 			if( avgTime > 0 )
 			{
 				statistics.put( "min/avg", String.valueOf( Math.round( ( minTime / avgTime ) * 100d ) / 100d ) );
@@ -772,31 +783,4 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		return executor;
 	}
-
-	protected void setWriterBuffer( StatisticVariable var, int val )
-	{
-		for( StatisticsWriter writer : var.getWriters() )
-			if( writer.getType().equals( "AVERAGE" ) )
-				writer.setBufferSize( val );
-	}
-
-	private class PropertyListener implements EventHandler<PropertyEvent>
-	{
-
-		@Override
-		public void handleEvent( PropertyEvent event )
-		{
-			if( TIME_TAKEN_STATISTICS_BUFFER.equals( event.getKey() ) )
-			{
-				setWriterBuffer( timeTakenVariable, timeTakenStatisticsBuffer.getValue().intValue() );
-			}
-			else if( RESPONSE_SIZE_STATISTICS_BUFFER.equals( event.getKey() ) )
-			{
-				setWriterBuffer( responseSizeVariable, responseSizeStatisticsBuffer.getValue().intValue() );
-			}
-
-		}
-
-	}
-
 }

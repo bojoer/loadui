@@ -66,9 +66,10 @@ public interface RunnerCategory extends ComponentBehavior
 	public static final String MAX_QUEUE_SIZE_PROPERTY = "maxQueueSize";
 
 	/**
-	 * Property specifying whether to raise an assertion on overflow
+	 * Property specifying whether to count discarded requests as failed
+	 * requests.
 	 */
-	public static final String ASSERT_ON_OVERFLOW_PROPERTY = "assertOnOverflow";
+	public static final String COUNT_DISCARDED_REQUESTS_PROPERTY = "countDiscarded";
 
 	/**
 	 * Counter for the number of samples that have been discarded due to queue
@@ -145,6 +146,13 @@ public interface RunnerCategory extends ComponentBehavior
 	 * @return
 	 */
 	public OutputTerminal getCurrentlyRunningTerminal();
+
+	/**
+	 * Gets the Requests Counter.
+	 * 
+	 * @return
+	 */
+	public Counter getRequestCounter();
 
 	/**
 	 * Gets the Samples Counter.
