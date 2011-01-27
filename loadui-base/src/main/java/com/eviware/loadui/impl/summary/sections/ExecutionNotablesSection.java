@@ -19,8 +19,5 @@ import javax.swing.table.TableModel;
 
 public interface ExecutionNotablesSection {
 
-	public abstract TableModel getBottom5Samples();
-
-	public abstract TableModel getTop5Samples();
-
+	public abstract TableModel get5MostExtremeSamples(boolean getTopSamples);
 }

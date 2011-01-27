@@ -15,12 +15,9 @@
  */
 package com.eviware.loadui.impl.summary.sections.tablemodels;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
-
 import javax.swing.table.AbstractTableModel;
 
 import com.eviware.loadui.api.summary.SampleStats;
@@ -30,18 +27,14 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 {
 
 	String[] columnNames = { "name", "ms", "time", "size" };
-	ArrayList<TestCaseSampleModel> data = new ArrayList<TestCaseSampleModel>();
-
-	// SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+	public ArrayList<TestCaseSampleModel> data = new ArrayList<TestCaseSampleModel>();
+	TestCaseSampleModelComparator topDownComparator = new TestCaseSampleModelComparator();
+	Comparator<TestCaseSampleModel> bottomUpComparator = Collections.reverseOrder( new TestCaseSampleModelComparator() );
 
 	@Override
 	public String getColumnName( int column )
 	{
 		return columnNames[column];
-	}
-
-	public TestCaseTopSamplesTable()
-	{
 	}
 
 	@Override
@@ -80,7 +73,6 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 
 	public class TestCaseSampleModel
 	{
-
 		String name;
 		SampleStats stats;
 
@@ -101,33 +93,27 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 		}
 	}
 
-	public void addTop( String label, SampleStats stat )
+	public void add( String label, SampleStats stat, boolean topDown )
 	{
 		synchronized( data )
 		{
 			data.add( new TestCaseSampleModel( label, stat ) );
-			// System.out.println("add " + stat);
-			Collections.sort( data, new TestCaseSampleModelComparator() );
+			Collections.sort( data, topDown ? topDownComparator : bottomUpComparator );
 			if( data.size() > 11 )
 				data.remove( 11 );
 		}
 	}
 
-	public void addBottom( String label, SampleStats stat )
+	public void finalizeOrdering( boolean topDown )
 	{
-		synchronized( data )
-		{
-			// System.out.println("badd " + stat);
-			data.add( new TestCaseSampleModel( label, stat ) );
-			Collections.sort( data, new TestCaseSampleModelComparator2() );
-			if( data.size() > 11 )
-				data.remove( 11 );
-		}
+		if( topDown )
+			Collections.sort( data, bottomUpComparator );
+		else
+			Collections.sort( data, topDownComparator );
 	}
 
 	private class TestCaseSampleModelComparator implements Comparator<TestCaseSampleModel>
 	{
-
 		@Override
 		public int compare( TestCaseSampleModel o1, TestCaseSampleModel o2 )
 		{
@@ -135,19 +121,5 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 			long i2 = o2.getStats().getTimeTaken();
 			return ( int )( i2 - i1 );
 		}
-
-	}
-
-	private class TestCaseSampleModelComparator2 implements Comparator<TestCaseSampleModel>
-	{
-
-		@Override
-		public int compare( TestCaseSampleModel o1, TestCaseSampleModel o2 )
-		{
-			long i1 = o1.getStats().getTimeTaken();
-			long i2 = o2.getStats().getTimeTaken();
-			return ( int )( i1 - i2 );
-		}
-
 	}
 }

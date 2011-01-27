@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.impl.summary.sections;
 
+import java.util.List;
+
 import javax.swing.table.TableModel;
 
 import com.eviware.loadui.api.component.categories.RunnerCategory;
@@ -27,56 +29,30 @@ import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseTopSamplesTa
 
 public class TestCaseExecutionNotablesSection extends MutableSectionImpl implements ExecutionNotablesSection
 {
-
 	SceneItemImpl testcase;
 
 	public TestCaseExecutionNotablesSection( SceneItem sceneItem )
 	{
 		super( "Execution Notables" );
 		testcase = ( SceneItemImpl )sceneItem;
-		addTable( "Top 5 Requests", getTop5Samples() );
-		addTable( "Bottom 5 Requests", getBottom5Samples() );
+		addTable( "Top 5 Requests", get5MostExtremeSamples(true) );
+		addTable( "Bottom 5 Requests", get5MostExtremeSamples(false) );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionNotablesSection#
-	 * getBottom5Samples()
-	 */
-	public synchronized TableModel getBottom5Samples()
+	public synchronized TableModel get5MostExtremeSamples( boolean getTopSamples )
 	{
 		TestCaseTopSamplesTable table = new TestCaseTopSamplesTable();
 
 		for( ComponentItem component : testcase.getComponents() )
 			if( component.getBehavior() instanceof RunnerCategory )
 			{
-				for( SampleStats stat : ( ( RunnerCategory )component.getBehavior() ).getBottomSamples() )
-					table.addBottom( component.getLabel(), stat );
+				RunnerCategory runnerCat = ( RunnerCategory) component.getBehavior();
+				List<SampleStats> sampleStatsList = getTopSamples ? runnerCat.getTopSamples() : runnerCat.getBottomSamples();
+				for( SampleStats stat : sampleStatsList )
+					table.add( component.getLabel(), stat, getTopSamples );
 			}
 
+		table.finalizeOrdering( getTopSamples );
 		return table;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionNotablesSection#
-	 * getTop5Samples()
-	 */
-	public synchronized TableModel getTop5Samples()
-	{
-
-		TestCaseTopSamplesTable table = new TestCaseTopSamplesTable();
-
-		for( ComponentItem component : testcase.getComponents() )
-			if( component.getBehavior() instanceof RunnerCategory )
-			{
-				for( SampleStats stat : ( ( RunnerCategory )component.getBehavior() ).getTopSamples() )
-					table.addTop( component.getLabel(), stat );
-			}
-
-		return table;
-	}
-
 }
