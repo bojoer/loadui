@@ -418,6 +418,11 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		chap.addSection( new TestCaseExecutionNotablesSection( this ) );
 		chap.addSection( new TestCaseDataSection( this ) );
 		chap.setDescription( getDescription() );
+		
+		for( ComponentItem component : getComponents() )
+		{
+			component.generateSummary( chap );
+		}
 	}
 
 	@Override
