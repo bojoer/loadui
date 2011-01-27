@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
@@ -106,74 +105,78 @@ public class AverageStatisticWriterTest
 	public void checkCounter()
 	{
 		calculate();
-		assertEquals( size, writer.avgCnt );
+		assertEquals( size, writer.count );
 	}
 
 	@Test
 	public void checkAverageSum()
 	{
 		calculate();
-		assertEquals( avgSum, writer.avgSum, .5 );
-	}
-
-	@Test
-	public void checkSquareSum()
-	{
-		calculate();
-		writer.output();
-		assertEquals( sumTotalSquare, writer.sumTotalSquare, 2.0 );
+		assertEquals( avgSum, writer.sum, .5 );
 	}
 
 	@Test
 	public void checkStdDev()
 	{
 		calculate();
-		writer.output();
-		assertEquals( stdDev, writer.stdDev, .5 );
-	}
-
-	@Test
-	public void checkGatheredData()
-	{
-		for( int cnt = 0; cnt < writer.values.size(); cnt++ )
-			assertEquals( data[cnt], writer.values.get( cnt ) );
+		Entry result = writer.output();
+		assertEquals( stdDev, result.getValue( Stats.STD_DEV.name() ).doubleValue() , .005 );
 	}
 
 	@Test
 	public void checkAverage()
 	{
 		calculate();
-		writer.output();
-		assertEquals( average, writer.average, .00 );
+		Entry result = writer.output();
+		assertEquals( average, result.getValue( Stats.AVERAGE.name() ).doubleValue() , .005 );
 	}
-
+	
+	@Test
+	public void checkMedian()
+	{
+		calculate();
+		Entry result = writer.output();
+		assertEquals( 6.1078, result.getValue( Stats.MEDIAN.name() ).doubleValue() , .005 );
+	}
+	
+	@Test
+	public void checkPercentile()
+	{
+		calculate();
+		Entry result = writer.output();
+		assertEquals( 10.46705, result.getValue( Stats.PERCENTILE_90TH.name() ).doubleValue() , .1 );
+	}
+	
 	/* Test aggregations */
 	@Test
 	public void testAverageAggregation()
 	{
 		Entry result = prepareAggregation();
-		assertEquals( result.getValue( Stats.AVERAGE.name() ).doubleValue(), 9.5, 0.001 );
+		assertEquals( 9.5, result.getValue( Stats.AVERAGE.name() ).doubleValue(), 0.005 );
 	}
-
+	
 	@Test
 	public void testStdDevAggregation()
 	{
 		Entry result = prepareAggregation();
-		assertEquals( result.getValue( Stats.STD_DEV.name() ).doubleValue(), 3.008322, 0.005 );
+		assertEquals( 3.008322, result.getValue( Stats.STD_DEV.name() ).doubleValue(), 0.005 );
 	}
-
+	
+	@Test
+	public void testMedianAggregation()
+	{
+		Entry result = prepareAggregation();
+		assertEquals( 9.8, result.getValue( Stats.MEDIAN.name() ).doubleValue(), 0.005 );
+	}
+	
 	private Entry prepareAggregation()
 	{
-		// Based on these three sets of samples: {{10, 8, 6}, {7, 7, 9, 17}, {12,
-		// 10, 9}}
+		// Based on these three sets of samples: {{10, 8, 6}, {7, 7, 9, 17}, {12, 10, 9}}
 		ArrayList<Entry> entries = new ArrayList<Entry>();
-		entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put( Stats.AVERAGE_COUNT.name(), 3 )
-				.put( Stats.STD_DEV.name(), 1.632993162 ).build( false ) );
-		entries.add( writer.at( 2 ).put( Stats.AVERAGE.name(), 10 ).put( Stats.AVERAGE_COUNT.name(), 4 )
-				.put( Stats.STD_DEV.name(), 4.123105626 ).build( false ) );
-		entries.add( writer.at( 3 ).put( Stats.AVERAGE.name(), 10.3333333 ).put( Stats.AVERAGE_COUNT.name(), 3 )
-				.put( Stats.STD_DEV.name(), 1.247219129 ).build( false ) );
-
+		entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put( Stats.MEDIAN.name(), 8 ).put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.632993162 ).build(false) );
+		entries.add( writer.at( 2 ).put( Stats.AVERAGE.name(), 10 ).put( Stats.MEDIAN.name(), 11 ).put( Stats.COUNT.name(), 4 ).put( Stats.STD_DEV.name(), 4.123105626 ).build(false) );
+		entries.add( writer.at( 3 ).put( Stats.AVERAGE.name(), 10.3333333 ).put( Stats.MEDIAN.name(), 10 ).put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.247219129 ).build(false) );
+		
 		return writer.aggregate( entries );
 	}
 

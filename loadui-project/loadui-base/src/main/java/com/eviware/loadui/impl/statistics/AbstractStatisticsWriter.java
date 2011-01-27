@@ -92,7 +92,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 				if( oldState == State.PAUSED )
 				{
 					/*
-					 * Continue, calculate time spent in inteval when pause occured.
+					 * Continue, calculate time spent in interval when pause occured.
 					 * Next write to database will be at regular interval, since
 					 * delta is taken in account.
 					 * 
