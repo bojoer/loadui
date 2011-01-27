@@ -78,7 +78,7 @@ public interface Statistic<T extends Number> extends Value<T>
 	 * 
 	 * @return
 	 */
-	public int getTimestamp();
+	public long getTimestamp();
 
 	/**
 	 * Gets the latest DataPoint stored for a particular interpolation level.

@@ -30,22 +30,22 @@ import com.eviware.loadui.api.statistics.store.Entry;
  */
 public class EntryImpl implements Entry
 {
-	private final int timestamp;
+	private final long timestamp;
 	private final Map<String, Number> values;
 
-	public EntryImpl( int timestamp, Map<String, Number> values )
+	public EntryImpl( long timestamp, Map<String, Number> values )
 	{
 		this( timestamp, values, false );
 	}
 
-	public EntryImpl( int timestamp, Map<String, Number> values, boolean dontCloneMap )
+	public EntryImpl( long timestamp, Map<String, Number> values, boolean dontCloneMap )
 	{
 		this.timestamp = timestamp;
 		this.values = Collections.unmodifiableMap( dontCloneMap ? values : new HashMap<String, Number>( values ) );
 	}
 
 	@Override
-	public int getTimestamp()
+	public long getTimestamp()
 	{
 		return timestamp;
 	}

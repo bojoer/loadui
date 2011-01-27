@@ -20,11 +20,13 @@ import javafx.scene.paint.Color;
 
 import com.eviware.loadui.fx.FxUtils;
 
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+import java.beans.PropertyChangeEvent;
 
 import com.jidesoft.chart.model.DefaultChartModel;
 import com.jidesoft.chart.style.ChartStyle;
@@ -42,7 +44,10 @@ public class LineSegmentChartModel extends DefaultChartModel {
 	var chartGroup:ChartGroup;
 	public-init var chartView:LineChartView on replace {
 		chartGroup = chartView.getChartGroup();
+		chartGroup.addEventListener( PropertyChangeEvent.class, listener );
 	}
+	
+	def listener = new StyleEventListener();
 	
 	public-init var segment:LineSegment on replace {
 		statistic = segment.getStatistic();
@@ -79,10 +84,11 @@ public class LineSegmentChartModel extends DefaultChartModel {
 		}
 	}
 	
-	public var color:Color on replace {
+	public var color:Color on replace oldColor {
 		chartStyle.setLineColor( FxUtils.getAwtColor( color ) );
 		if( initialized ) {
 			segment.setAttribute( COLOR, FxUtils.colorToWebString(color) );
+			chartGroup.fireEvent( new PropertyChangeEvent( segment, COLOR, oldColor, color ) );
 		}
 	}
 	
@@ -145,5 +151,18 @@ public class LineSegmentChartModel extends DefaultChartModel {
 		
 		chartStyle.setLineStroke( LineChartStyles.getStroke( width, newStroke ) );
 		fireModelChanged();
+	}
+}
+
+class StyleEventListener extends EventHandler {
+	override function handleEvent( e ) {
+		def event = e as PropertyChangeEvent;
+		if( event.getSource() == segment ) {
+			if( COLOR.equals( event.getPropertyName() ) ) {
+				FxUtils.runInFxThread( function():Void {
+					chartStyle.setLineColor( FxUtils.getAwtColor( event.getNewValue() as Color ) );
+				} );
+			}
+		}
 	}
 }
