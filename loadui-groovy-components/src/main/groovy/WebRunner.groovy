@@ -98,7 +98,6 @@ createProperty( 'outputBody', Boolean, false )
 
 //createProperty( 'propagateSession', Boolean, false )
 createProperty( 'readResponse', Boolean, false )
-createProperty( 'raiseAssertion', Boolean, true )
 createProperty( 'errorCodeList', String )
 
 createProperty( 'proxyHost', String)
@@ -153,12 +152,13 @@ updateProxy = {
 validateUrl()
 updateProxy()
 
+requestResetValue = 0
 sampleResetValue = 0
 discardResetValue = 0
 failedResetValue = 0
 aborting = false
 
-displayRequests = new DelayedFormattedString( '%d', 500, value { (sampleCounter.get() - sampleResetValue) + currentlyRunning } )
+displayRequests = new DelayedFormattedString( '%d', 500, value { (requestCounter.get() - requestResetValue) } )
 displayRunning = new DelayedFormattedString( '%d', 500, value { currentlyRunning } )
 displayTotal = new DelayedFormattedString( '%d', 500,  value { sampleCounter.get() - sampleResetValue } )
 displayQueue = new DelayedFormattedString( '%d', 500, value { queueSize } )
@@ -223,9 +223,8 @@ sample = { message, sampleId ->
 			}
 			
 			message['Status'] = false
-			if (raiseAssertion.value == true) {
-				failureCounter.increment()
-			}
+			failedRequestCounter.increment();
+			failureCounter.increment()
 			
 			return message
 		}
@@ -260,6 +259,7 @@ onRelease = {
 
 addEventListener( ActionEvent ) { event ->
 	if ( event.key == "RESET" ) {
+		requestResetValue = 0
 		sampleResetValue = 0
 		discardResetValue = 0
 		failedResetValue = 0
@@ -301,6 +301,7 @@ layout {
 			node( label:'Failed', fString:displayFailed, constraints:'w 60!' )
 		}
 		action( label:'Reset', action: {
+			requestResetValue = requestCounter.get()
 			sampleResetValue = sampleCounter.get()
 			discardResetValue = discardCounter.get()
 			failedResetValue = failureCounter.get()
@@ -325,11 +326,10 @@ settings( label: "Basic" ) {
 	property( property: outputBody, label: 'Output Response Body' )
 	//property( property: propagateSession, label: 'Propagate Session' )
 	property( property: readResponse, label: 'Read Response' )
-	property( property: raiseAssertion, label: 'Raise Assertion on Error' )
 	property( property: concurrentSamples, label: 'Max Concurrent Requests' )
 	property( property: maxQueueSize, label: 'Max Queue' )
-	property( property: assertOnOverflow, label: 'Raise Assertion on Overflow' )
-	property( property: errorCodeList, label: 'Error Codes that Raise an Assertion', constraints:'w 200!')
+	property( property: errorCodeList, label: 'Error Codes that Count as Failures', constraints:'w 200!')
+	property( property: countDiscarded, label: 'Count Discarded Requests as Failed' )
 }
 
 settings( label: "Proxy" ) {

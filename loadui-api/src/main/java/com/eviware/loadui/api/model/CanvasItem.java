@@ -51,8 +51,10 @@ public interface CanvasItem extends ModelItem, CounterHolder
 	public static final String TIMER_COUNTER = "Time";
 	public static final String SAMPLE_COUNTER = "Samples";
 	public static final String REQUEST_COUNTER = "Requests";
-	public static final String FAILURE_COUNTER = "Failures";
+	public static final String REQUEST_FAILURE_COUNTER = "Failed Requests";
 	public static final String ASSERTION_COUNTER = "Assertions";
+	public static final String ASSERTION_FAILURE_COUNTER = "Failed Assertions";
+	public static final String FAILURE_COUNTER = "Failures";
 
 	/**
 	 * Get the ProjectItem which this CanvasItem belongs to. If this CanvasItem
@@ -194,7 +196,7 @@ public interface CanvasItem extends ModelItem, CounterHolder
 	 * state.
 	 */
 	public void cancelComponents();
-	
+
 	/**
 	 * Determines if ongoing requests should be aborted on finish
 	 */
