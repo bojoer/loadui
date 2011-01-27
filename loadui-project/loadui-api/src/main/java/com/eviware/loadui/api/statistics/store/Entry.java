@@ -31,7 +31,7 @@ public interface Entry
 	 * 
 	 * @return
 	 */
-	public int getTimestamp();
+	public long getTimestamp();
 
 	/**
 	 * Gets the names of the values in the Entry.

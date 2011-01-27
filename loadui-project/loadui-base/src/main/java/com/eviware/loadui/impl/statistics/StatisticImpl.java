@@ -151,7 +151,7 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	}
 
 	@Override
-	public int getTimestamp()
+	public long getTimestamp()
 	{
 		Entry lastEntry = manager.getLastEntry( trackId, source );
 		return lastEntry == null ? -1 : lastEntry.getTimestamp();

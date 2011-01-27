@@ -35,7 +35,7 @@ import com.eviware.loadui.util.statistics.store.EntryImpl;
 
 public class TrackImpl implements Track
 {
-	private final static Logger log = LoggerFactory.getLogger( TrackImpl.class );
+	public final static Logger log = LoggerFactory.getLogger( TrackImpl.class );
 
 	private final String id;
 	private final Execution execution;
@@ -73,7 +73,7 @@ public class TrackImpl implements Track
 	{
 		return getNextEntry( source, timestamp, 0 );
 	}
-	
+
 	@Override
 	public Entry getNextEntry( String source, int timestamp, int interpolationLevel )
 	{
@@ -82,7 +82,7 @@ public class TrackImpl implements Track
 			Map<String, Object> result = manager.readNext( execution.getId(), id, source, timestamp, interpolationLevel );
 			if( result.size() > 0 )
 			{
-				Integer tstamp = ( Integer )result.get( DataTable.STATIC_FIELD_TIMESTAMP );
+				int tstamp = ( ( Long )result.get( DataTable.STATIC_FIELD_TIMESTAMP ) ).intValue();
 				Map<String, Number> values = new HashMap<String, Number>();
 				Iterator<String> keys = result.keySet().iterator();
 				while( keys.hasNext() )
@@ -113,20 +113,21 @@ public class TrackImpl implements Track
 	{
 		return getRange( source, startTime, endTime, 0 );
 	}
-	
+
 	@Override
 	public Iterable<Entry> getRange( String source, int startTime, int endTime, int interpolationLevel )
 	{
 		try
 		{
-			List<Map<String, Object>> queryResult = manager.read( execution.getId(), id, source, startTime, endTime, interpolationLevel );
+			List<Map<String, Object>> queryResult = manager.read( execution.getId(), id, source, startTime, endTime,
+					interpolationLevel );
 			if( queryResult.size() > 0 )
 			{
 				List<Entry> resultList = new ArrayList<Entry>();
 				for( int i = 0; i < queryResult.size(); i++ )
 				{
 					Map<String, Object> row = queryResult.get( i );
-					Integer tstamp = ( Integer )row.get( DataTable.STATIC_FIELD_TIMESTAMP );
+					Long tstamp = ( Long )row.get( DataTable.STATIC_FIELD_TIMESTAMP );
 					Map<String, Number> values = new HashMap<String, Number>();
 					Iterator<String> keys = row.keySet().iterator();
 					while( keys.hasNext() )

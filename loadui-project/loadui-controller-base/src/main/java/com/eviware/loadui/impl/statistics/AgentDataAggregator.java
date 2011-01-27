@@ -40,7 +40,7 @@ public class AgentDataAggregator
 
 	private final static int BUFFER_SIZE = 5;
 
-	private final TreeMap<Integer, Map<Integer, Map<String, List<Entry>>>> times = new TreeMap<Integer, Map<Integer, Map<String, List<Entry>>>>();
+	private final TreeMap<Long, Map<Integer, Map<String, List<Entry>>>> times = new TreeMap<Long, Map<Integer, Map<String, List<Entry>>>>();
 	private final ExecutionManager executionManager;
 	private final AddressableRegistry addressableRegistry;
 
@@ -55,7 +55,7 @@ public class AgentDataAggregator
 	public synchronized void update( Entry entry, String trackId, AgentItem agent, int level )
 	{
 		executionManager.writeEntry( trackId, entry, agent.getLabel(), level );
-		int time = entry.getTimestamp() / 1000;
+		long time = entry.getTimestamp() / 1000;
 
 		if( !times.containsKey( time ) )
 		{

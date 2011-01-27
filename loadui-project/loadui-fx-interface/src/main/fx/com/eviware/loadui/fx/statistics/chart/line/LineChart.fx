@@ -119,7 +119,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	var maxTime:Number = 0;
 	var position:Number = 0;
 	var showAll = false on replace {
-		if( showAll ) timeSpan = maxTime;	
+		if( showAll ) timeSpan = maxTime as Integer;
 	}
 	var timeSpan:Long = 10000 on replace oldTimeSpan {
 		println("Timespan set to {timeSpan}");
