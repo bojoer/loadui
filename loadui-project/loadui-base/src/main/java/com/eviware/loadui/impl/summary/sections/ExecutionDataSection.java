@@ -23,7 +23,7 @@ public interface ExecutionDataSection {
 
 	public abstract String getEndTime();
 
-	public abstract String getTotalNumberOfSamples();
+	public abstract String getTotalNumberOfRequests();
 
 	public abstract String getTotalNumberOfAssertions();
 

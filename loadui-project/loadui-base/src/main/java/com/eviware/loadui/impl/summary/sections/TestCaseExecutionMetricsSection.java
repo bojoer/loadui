@@ -19,7 +19,6 @@ import java.util.Map;
 
 import javax.swing.table.TableModel;
 
-import com.eviware.loadui.api.component.categories.AnalysisCategory;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -27,18 +26,18 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.SceneItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseAssertionMetricsTableModel;
-import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseSapmlerStatisticsTable;
+import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseSamplerStatisticsTable;
 
 public class TestCaseExecutionMetricsSection extends MutableSectionImpl implements ExecutionMetricsSection
 {
-
 	SceneItemImpl testcase;
 
 	public TestCaseExecutionMetricsSection( SceneItem sceneItem )
 	{
 		super( "Execution Metrics" );
 		testcase = ( SceneItemImpl )sceneItem;
-		addValue( "Failed Assertions(%)", getFailedAssertions() );
+		addValue( "Assertion Failure Ratio", getFailedAssertions() );
+		addValue( "Request Failure Ratio", getFailedRequests() );
 		addTable( "Runners", getRunnersMetrics() );
 		addTable( "Assertions", getAssertionsMetrics() );
 	}
@@ -51,21 +50,21 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 	 */
 	public String getFailedAssertions()
 	{
-		long failed = testcase.getCounter( CanvasItem.FAILURE_COUNTER ).get();
-		long total = getTotalNumberOfAssertions();
+		long failed = testcase.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get();
+		long total = testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
 		int perc = ( int )( total > 0 ? failed * 100 / total : 0 );
-		return failed + " / " + total + " (" + perc + " %)";
+		return perc + "%";
 	}
 
-	private long getTotalNumberOfAssertions() {
-		int cnt = 0;
-		for( ComponentItem component : testcase.getComponents() )
-		{
-			if( component.getType().equalsIgnoreCase( "assertion" ) & component.getBehavior() instanceof AnalysisCategory )
-				cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get() ;
-		}
-		return  testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get() + cnt;
+	@Override
+	public String getFailedRequests()
+	{
+		long failed = testcase.getCounter( CanvasItem.REQUEST_FAILURE_COUNTER ).get();
+		long total = testcase.getCounter( CanvasItem.REQUEST_COUNTER ).get();
+		int perc = ( int )( total > 0 ? failed * 100 / total : 0 );
+		return perc + "%";
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -91,7 +90,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 	 */
 	public TableModel getRunnersMetrics()
 	{
-		TestCaseSapmlerStatisticsTable table = new TestCaseSapmlerStatisticsTable();
+		TestCaseSamplerStatisticsTable table = new TestCaseSamplerStatisticsTable();
 		for( ComponentItem component : testcase.getComponents() )
 			// if( component.getType().equals("HttpSampler")) {
 			if( component.getBehavior() instanceof RunnerCategory )
@@ -101,5 +100,4 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 			}
 		return table;
 	}
-
 }

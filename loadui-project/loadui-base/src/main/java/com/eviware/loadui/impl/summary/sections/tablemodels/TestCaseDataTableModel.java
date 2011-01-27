@@ -27,7 +27,7 @@ import com.eviware.loadui.util.summary.CalendarUtils;
 public class TestCaseDataTableModel extends AbstractTableModel
 {
 	private static final long serialVersionUID = -99646701272738332L;
-	
+
 	String columnNames[] = { "Test Case", "exec time", "requests", "assertions", "failed assertions" };
 	ArrayList<TestCaseDataModel> data = new ArrayList<TestCaseDataModel>();
 
@@ -87,14 +87,14 @@ public class TestCaseDataTableModel extends AbstractTableModel
 		public TestCaseDataModel( SceneItemImpl tc )
 		{
 			this.name = tc.getLabel();
-			
+
 			this.execTime = CalendarUtils.getFormattedPeriod( tc.getStartTime(), tc.getEndTime() );
 
 			this.numberOfSamples = String.valueOf( tc.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );
 
 			this.numberOfAssertions = String.valueOf( tc.getCounter( CanvasItem.ASSERTION_COUNTER ).get() );
 
-			this.numberOfFailedAssertions = String.valueOf( tc.getCounter( CanvasItem.FAILURE_COUNTER ).get() );
+			this.numberOfFailedAssertions = String.valueOf( tc.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get() );
 		}
 
 		public String getName()

@@ -40,7 +40,7 @@ public class ProjectDataSection extends MutableSectionImpl implements DataSectio
 		addValue( "Number of project connection", String.valueOf( project.getConnections().size() ) );
 		addValue( "Time Limit", getLimit() );
 		addValue( "Request Limit", getSampleLimit() );
-		addValue( "Assertion Limit", getAssertionLimit() );
+		addValue( "Failure Limit", getFailureLimit() );
 	}
 
 	public String getNumberOfTestCases()
@@ -49,7 +49,7 @@ public class ProjectDataSection extends MutableSectionImpl implements DataSectio
 	}
 
 	@Override
-	public String getAssertionLimit()
+	public String getFailureLimit()
 	{
 		if( project.getLimit( CanvasItem.FAILURE_COUNTER ) > -1 )
 			return String.valueOf( project.getLimit( CanvasItem.FAILURE_COUNTER ) );

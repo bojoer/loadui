@@ -36,7 +36,7 @@ public class TestCaseDataSection extends MutableSectionImpl implements DataSecti
 		addValue( "Number of connections", getNumberOfConnections() );
 		addValue( "Time Limit", getLimit() );
 		addValue( "Request Limit", getSampleLimit() );
-		addValue( "Assertion Limit", getAssertionLimit() );
+		addValue( "Assertion Limit", getFailureLimit() );
 	}
 
 	/*
@@ -98,7 +98,7 @@ public class TestCaseDataSection extends MutableSectionImpl implements DataSecti
 	 * @see
 	 * com.eviware.loadui.impl.summary.sections.DataSection#getAssertionLimit()
 	 */
-	public String getAssertionLimit()
+	public String getFailureLimit()
 	{
 		if( testcase.getLimit( CanvasItem.FAILURE_COUNTER ) > -1 )
 			return String.valueOf( testcase.getLimit( CanvasItem.FAILURE_COUNTER ) );

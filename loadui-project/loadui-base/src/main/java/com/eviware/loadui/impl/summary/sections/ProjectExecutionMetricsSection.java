@@ -19,7 +19,6 @@ import java.util.Map;
 
 import javax.swing.table.TableModel;
 
-import com.eviware.loadui.api.component.categories.AnalysisCategory;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -27,7 +26,7 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.ProjectItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseAssertionMetricsTableModel;
-import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseSapmlerStatisticsTable;
+import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseSamplerStatisticsTable;
 
 public class ProjectExecutionMetricsSection extends MutableSectionImpl implements ExecutionMetricsSection
 {
@@ -40,7 +39,8 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl implement
 
 		project = projectItemImpl;
 
-		addValue( "Failure Ratio", getFailedAssertions() );
+		addValue( "Assertion Failure Ratio", getFailedAssertions() );
+		addValue( "Request Failure Ratio", getFailedRequests() );
 		addTable( "Runners", getRunnersMetrics() );
 		addTable( "Assertions", getAssertionsMetrics() );
 	}
@@ -64,34 +64,27 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl implement
 	@Override
 	public String getFailedAssertions()
 	{
-		long failed = project.getCounter( CanvasItem.FAILURE_COUNTER ).get();
-		long total = getTotalNumberOfAssertions();
+		long failed = project.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get();
+		long total = project.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
 		int perc = ( int )( total > 0 ? failed * 100 / total : 0 );
-		return perc + "%"; //failed + " / " + total + " (" + perc + " %)";
+
+		return perc + "%";
 	}
-	
-	private long getTotalNumberOfAssertions()
+
+	@Override
+	public String getFailedRequests()
 	{
-		int cnt = 0;
-		for( ComponentItem component : project.getComponents() )
-		{
-			if( component.getType().equalsIgnoreCase( "assertion" ) & component.getBehavior() instanceof AnalysisCategory )
-				cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get() ;
-		}
-		for( SceneItem scene : project.getScenes() )
-			for( ComponentItem component : scene.getComponents() )
-			{
-				if( component.getType().equalsIgnoreCase( "assertion" )
-						& component.getBehavior() instanceof AnalysisCategory )
-					cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get() ;
-			}
-		return  project.getCounter( CanvasItem.ASSERTION_COUNTER ).get() + cnt;
+		long failed = project.getCounter( CanvasItem.REQUEST_FAILURE_COUNTER ).get();
+		long total = project.getCounter( CanvasItem.REQUEST_COUNTER ).get();
+		int perc = ( int )( total > 0 ? failed * 100 / total : 0 );
+
+		return perc + "%";
 	}
 
 	@Override
 	public TableModel getRunnersMetrics()
 	{
-		TestCaseSapmlerStatisticsTable table = new TestCaseSapmlerStatisticsTable();
+		TestCaseSamplerStatisticsTable table = new TestCaseSamplerStatisticsTable();
 		for( SceneItem tc : project.getScenes() )
 			for( ComponentItem component : tc.getComponents() )
 				if( component.getBehavior() instanceof RunnerCategory )

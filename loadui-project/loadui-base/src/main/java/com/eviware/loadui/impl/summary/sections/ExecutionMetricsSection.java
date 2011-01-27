@@ -17,9 +17,12 @@ package com.eviware.loadui.impl.summary.sections;
 
 import javax.swing.table.TableModel;
 
-public interface ExecutionMetricsSection {
+public interface ExecutionMetricsSection
+{
 
 	public abstract String getFailedAssertions();
+
+	public abstract String getFailedRequests();
 
 	public abstract TableModel getAssertionsMetrics();
 

@@ -22,92 +22,109 @@ import javax.swing.table.AbstractTableModel;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 
-public class TestCaseAssertionMetricsTableModel extends AbstractTableModel {
+public class TestCaseAssertionMetricsTableModel extends AbstractTableModel
+{
 
-	String[] columnNames = {"name", "cnt", "passed", "failed", "failure ratio"};
+	String[] columnNames = { "name", "cnt", "passed", "failed", "failure ratio" };
 	ArrayList<AssertionMetricsModel> data = new ArrayList<AssertionMetricsModel>();
-	
+
 	@Override
-	public String getColumnName(int column) {
+	public String getColumnName( int column )
+	{
 		return columnNames[column];
 	}
-	
+
 	@Override
-	public int getColumnCount() {
+	public int getColumnCount()
+	{
 		return columnNames.length;
 	}
 
 	@Override
-	public int getRowCount() {
+	public int getRowCount()
+	{
 		return data.size();
 	}
 
 	@Override
-	public Object getValueAt(int row, int col) {
-		switch(col) {
-		case 0: 
-			return data.get(row).getName();
-		case 1:
-			return data.get(row).getCnt();
-		case 2:
-			return data.get(row).getPassed();
-		case 3:
-			return data.get(row).getFailed();
-		case 4:
-			return data.get(row).getFailRatio();
-		default:
-				return null;
+	public Object getValueAt( int row, int col )
+	{
+		switch( col )
+		{
+		case 0 :
+			return data.get( row ).getName();
+		case 1 :
+			return data.get( row ).getCnt();
+		case 2 :
+			return data.get( row ).getPassed();
+		case 3 :
+			return data.get( row ).getFailed();
+		case 4 :
+			return data.get( row ).getFailRatio();
+		default :
+			return null;
 		}
 	}
 
-	public class AssertionMetricsModel {
+	public class AssertionMetricsModel
+	{
 		String name;
 		String cnt;
 		String passed;
 		String failed;
 		String failRatio;
-		
-		public AssertionMetricsModel(ComponentItem component) {
+
+		public AssertionMetricsModel( ComponentItem component )
+		{
 			name = component.getLabel();
-			cnt = String.valueOf(component.getCounter(CanvasItem.ASSERTION_COUNTER).get());
-			passed = String.valueOf(component.getCounter(CanvasItem.ASSERTION_COUNTER).get() - component.getCounter(CanvasItem.FAILURE_COUNTER).get());
-			failed = String.valueOf(component.getCounter(CanvasItem.FAILURE_COUNTER).get());
-			int failedCount = Integer.parseInt(failed);
-			int count = Integer.parseInt(cnt);
+			long assertions = component.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
+			cnt = String.valueOf( assertions );
+			long failedAssertions = component.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get();
+			passed = String.valueOf( assertions - failedAssertions );
+			failed = String.valueOf( failedAssertions );
+			int failedCount = Integer.parseInt( failed );
+			int count = Integer.parseInt( cnt );
 			int perc = 0;
-			if (count > 0)
-				perc = (failedCount * 100/count);
-			failRatio = perc + "%"; //failed + " / " + cnt + " (" + perc + "%)";
+			if( count > 0 )
+				perc = ( failedCount * 100 / count );
+			failRatio = perc + "%"; // failed + " / " + cnt + " (" + perc + "%)";
 		}
 
-		public String getName() {
+		public String getName()
+		{
 			return name;
 		}
 
-		public String getCnt() {
+		public String getCnt()
+		{
 			return cnt;
 		}
 
-		public String getPassed() {
+		public String getPassed()
+		{
 			return passed;
 		}
 
-		public String getFailed() {
+		public String getFailed()
+		{
 			return failed;
 		}
 
-		public String getFailRatio() {
+		public String getFailRatio()
+		{
 			return failRatio;
 		}
-		
+
 		@Override
-		public String toString() {
-			return name + "-"+cnt+"-"+passed+"-"+failed+"-"+failRatio;
+		public String toString()
+		{
+			return name + "-" + cnt + "-" + passed + "-" + failed + "-" + failRatio;
 		}
 	}
 
-	public void add(AssertionMetricsModel row) {
-		data.add(row);
+	public void add( AssertionMetricsModel row )
+	{
+		data.add( row );
 		fireTableDataChanged();
 	}
 }

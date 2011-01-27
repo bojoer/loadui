@@ -21,20 +21,20 @@ import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
-public class TestCaseSapmlerStatisticsTable extends AbstractTableModel {
+public class TestCaseSamplerStatisticsTable extends AbstractTableModel {
 
-	String[] collumnNames = { "name", "cnt", "min", "max", "avg", "std-dev",
+	String[] columnNames = { "name", "cnt", "min", "max", "avg", "std-dev",
 			"min/avg", "max/avg", "err", "ratio" };
 	ArrayList<TestCaseSamplerStatisticsModel> data = new ArrayList<TestCaseSamplerStatisticsModel>();
 
 	@Override
 	public String getColumnName(int column) {
-		return collumnNames[column];
+		return columnNames[column];
 	}
 
 	@Override
 	public int getColumnCount() {
-		return collumnNames.length;
+		return columnNames.length;
 	}
 
 	@Override
@@ -49,11 +49,11 @@ public class TestCaseSapmlerStatisticsTable extends AbstractTableModel {
 		else if (columnIndex == 9 ) {
 			
 		} else {
-			String v = data.get(rowIndex).getStat(collumnNames[columnIndex]);
+			String v = data.get(rowIndex).getStat(columnNames[columnIndex]);
 			if ( v.equals("-1") )
 				return "N/A";
 		}
-		return data.get(rowIndex).getStat(collumnNames[columnIndex]);
+		return data.get(rowIndex).getStat(columnNames[columnIndex]);
 	}
 
 	public void add(TestCaseSamplerStatisticsModel row) {
