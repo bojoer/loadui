@@ -59,6 +59,9 @@ public class EventSupport implements EventFirer
 	@Override
 	public <T extends EventObject> void addEventListener( final Class<T> type, final EventHandler<T> listener )
 	{
+		if( listener == null )
+			throw new NullPointerException( "Cannot add null EventHandler!" );
+
 		eventQueue.offer( new Runnable()
 		{
 			@Override
