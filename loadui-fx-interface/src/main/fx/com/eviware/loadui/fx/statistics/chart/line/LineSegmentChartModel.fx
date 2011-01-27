@@ -41,13 +41,12 @@ public class LineSegmentChartModel extends DefaultChartModel {
 	
 	public-read var latestTime:Number;
 	
+	def listener = new StyleEventListener();
 	var chartGroup:ChartGroup;
 	public-init var chartView:LineChartView on replace {
 		chartGroup = chartView.getChartGroup();
 		chartGroup.addEventListener( PropertyChangeEvent.class, listener );
 	}
-	
-	def listener = new StyleEventListener();
 	
 	public-init var segment:LineSegment on replace {
 		statistic = segment.getStatistic();
@@ -76,11 +75,12 @@ public class LineSegmentChartModel extends DefaultChartModel {
 		update();
 	}
 	
-	public var scale:Integer on replace {
+	public var scale:Integer on replace oldScale {
 		scaler.setScale( Math.pow( 10, scale ) );
 		fireModelChanged();
 		if( initialized ) {
 			segment.setAttribute( SCALE, "{scale}" );
+			chartGroup.fireEvent( new PropertyChangeEvent( segment, SCALE, oldScale, scale ) );
 		}
 	}
 	
@@ -92,16 +92,18 @@ public class LineSegmentChartModel extends DefaultChartModel {
 		}
 	}
 	
-	public var stroke:String on replace {
+	public var stroke:String on replace oldStroke {
 		if( initialized ) {
 			segment.setAttribute( STROKE, stroke );
+			chartGroup.fireEvent( new PropertyChangeEvent( segment, STROKE, oldStroke, stroke ) );
 			updateStroke();
 		}
 	}
 	
-	public var width:Integer on replace {
+	public var width:Integer on replace oldWidth {
 		if( initialized ) {
 			segment.setAttribute( WIDTH, "{width}" );
+			chartGroup.fireEvent( new PropertyChangeEvent( segment, WIDTH, oldWidth, width ) );
 			updateStroke();
 		}
 	}
@@ -158,11 +160,22 @@ class StyleEventListener extends EventHandler {
 	override function handleEvent( e ) {
 		def event = e as PropertyChangeEvent;
 		if( event.getSource() == segment ) {
-			if( COLOR.equals( event.getPropertyName() ) ) {
-				FxUtils.runInFxThread( function():Void {
-					chartStyle.setLineColor( FxUtils.getAwtColor( event.getNewValue() as Color ) );
-				} );
-			}
+			FxUtils.runInFxThread( function():Void {
+				def isInitialized = initialized;
+				initialized = false;
+				if( SCALE.equals( event.getPropertyName() ) ) {
+					scale = event.getNewValue() as Integer;
+				} else if( COLOR.equals( event.getPropertyName() ) ) {
+					color = event.getNewValue() as Color;
+				} else if( STROKE.equals( event.getPropertyName() ) ) {
+					stroke = event.getNewValue() as String;
+					updateStroke();
+				} else if( WIDTH.equals( event.getPropertyName() ) ) {
+					width = event.getNewValue() as Integer;
+					updateStroke();
+				}
+				initialized = isInitialized;
+			} );
 		}
 	}
 }
