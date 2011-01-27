@@ -15,9 +15,9 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.TreeMap;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -26,7 +26,6 @@ import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.api.statistics.store.Entry;
 
-import org.apache.commons.math.stat.descriptive.rank.Percentile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,14 +38,11 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 {
 	public static final String TYPE = "AVERAGE";
 
-	private Percentile perc = new Percentile( 90 );
-	private Percentile medianPercentile = new Percentile( 50 );
-
 	private Logger log = LoggerFactory.getLogger( AverageStatisticWriter.class );
 
 	public enum Stats
 	{
-		AVERAGE, AVERAGE_COUNT, AVERAGE_SUM, STD_DEV, STD_DEV_SUM, PERCENTILE, MEDIAN;
+		AVERAGE, COUNT, SUM, STD_DEV, STD_DEV_SUM, PERCENTILE_90TH, MEDIAN;
 	}
 
 	/**
@@ -67,15 +63,10 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	 * calculated just before it should be written to database.
 	 */
 
-	double average = 0.0;
-	double avgSum = 0.0;
-	long avgCnt = 0L;
-	double stdDev = 0.0;
-	double sumTotalSquare = 0.0;
-	double percentile = 0;
-	double median = 0;
+	double sum = 0.0;
+	long count = 0L;
 
-	protected ArrayList<Double> values = new ArrayList<Double>();
+	private PriorityQueue<Double> sortedValues = new PriorityQueue<Double>();
 
 	public AverageStatisticWriter( StatisticsManager statisticsManager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> trackStructure )
@@ -104,9 +95,9 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		synchronized( this )
 		{
 			double doubleValue = value.doubleValue();
-			this.values.add( doubleValue );
-			avgSum += doubleValue;
-			avgCnt++ ;
+			this.sortedValues.add( doubleValue );
+			sum += doubleValue;
+			count++ ;
 			if( lastTimeFlushed + delay <= System.currentTimeMillis() )
 			{
 				flush();
@@ -116,90 +107,140 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 	public Entry output()
 	{
-		if( avgCnt == 0 )
+		if( count == 0 )
 		{
 			return null;
 		}
 		else
 		{
-			average = avgSum / avgCnt;
-			double[] pValues = new double[values.size()];
+			double average = 0.0;
+			double stdDev = 0.0;
+			double sumTotalSquare = 0.0;
+			double percentile50 = 0;
+			double percentile90 = 0;
+
+			average = sum / count;
 			sumTotalSquare = 0;
-			for( int cnt = 0; cnt < values.size(); cnt++ )
+
+			int i = 0;
+			double previousValue = 0;
+			double upperPercPos50 = 0, upperPercPos90 = 0;
+			double diff50 = 0, diff90 = 0;
+			
+			// percentile precalculations			
+			if ( sortedValues.size() != 1 )
 			{
-				pValues[cnt] = values.get( cnt ).longValue();
-				sumTotalSquare += Math.pow( pValues[cnt] - average, 2 );
+				double percentilePos50 = 50 * ((double) sortedValues.size() + 1 ) / 100 - 1;
+				double percentilePos90 = 90 * ((double) sortedValues.size() + 1 ) / 100 - 1;
+				if( percentilePos90 >= sortedValues.size() - 1 )
+				{
+					upperPercPos90 = sortedValues.size() - 1;
+				}
+				else
+				{
+					upperPercPos90 = Math.floor( percentilePos90 ) + 1;
+				}
+				upperPercPos50 = Math.floor( percentilePos50 ) + 1;
+				diff50 = percentilePos50 - Math.floor( percentilePos50 );
+				diff90 = percentilePos90 - Math.floor( percentilePos90 );
 			}
-			stdDev = Math.sqrt( sumTotalSquare / avgCnt );
-			percentile = perc.evaluate( pValues );
-			median = medianPercentile.evaluate( pValues );
+			
+			for( double value : sortedValues )
+			{
+				sumTotalSquare += Math.pow( value - average, 2 );
+				if( i == upperPercPos50 )
+					percentile50 = previousValue + diff50 * (value - previousValue);
+				if( i == upperPercPos90 )
+					percentile90 = previousValue + diff90 * (value - previousValue);
+				previousValue = value;
+				i++ ;
+			}
+			if( sortedValues.size() == 1 )
+			{
+				percentile50 = percentile90 = sortedValues.peek();
+			}
+
+			stdDev = Math.sqrt( sumTotalSquare / count );
+			//percentile = perc.evaluate( pValues );
+
 			lastTimeFlushed = System.currentTimeMillis();
-			
-			Entry e = at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average ).put( Stats.AVERAGE_COUNT.name(), avgCnt ).put(
-					Stats.AVERAGE_SUM.name(), avgSum ).put( Stats.STD_DEV_SUM.name(), sumTotalSquare ).put(
-							Stats.STD_DEV.name(), stdDev ).put( Stats.PERCENTILE.name(), percentile ).put( Stats.MEDIAN.name(), median )
-							.build();
-			
+
+			Entry e = at( lastTimeFlushed ).put( Stats.AVERAGE.name(), average ).put( Stats.COUNT.name(), count )
+					.put( Stats.SUM.name(), sum ).put( Stats.STD_DEV_SUM.name(), sumTotalSquare )
+					.put( Stats.STD_DEV.name(), stdDev ).put( Stats.PERCENTILE_90TH.name(), percentile90 )
+					.put( Stats.MEDIAN.name(), percentile50 ).build();
+
 			// reset counters
-			avgSum = 0;
-			avgCnt = 0;
-			values.clear();
+			sum = 0;
+			count = 0;
+			sortedValues.clear();
 			return e;
 		}
 	}
-	
+
 	/**
 	 * Aggregates a list of Entrys.
 	 * 
-	 * Note that we are using Population based Standard deviation,
-	 * as opposed to Sample based Standard deviation.
+	 * Note that we are using Population based Standard deviation, as opposed to
+	 * Sample based Standard deviation.
+	 * 
+	 * The percentile calculation assumes that the values are normally
+	 * distributed. This assumption might be wrong, but has to be done to avoid
+	 * storing and iterating through the whole set of actual values provided by
+	 * the loadUI components.
 	 * 
 	 * @author henrik.olsson
 	 */
-	public Entry aggregate(List<Entry> entries)
+	public Entry aggregate( List<Entry> entries )
 	{
-		if( entries.size() == 0)
+		if( entries.size() == 0 )
 			return null;
-		if( entries.size() == 1)
+		if( entries.size() == 1 )
 			return entries.get( 0 );
-		
-		Entry lastEntry = entries.get( entries.size() - 1);
+
+		Entry lastEntry = entries.get( entries.size() - 1 );
 
 		double totalSum = 0;
-		long totalCnt = 0;
+		double medianSum = 0;
+		long totalCount = 0;
 		double stddev_partA = 0;
-		
+
 		for( Entry e : entries )
 		{
-			long count = e.getValue( Stats.AVERAGE_COUNT.name() ).longValue();
+			long count = e.getValue( Stats.COUNT.name() ).longValue();
 			double average = e.getValue( Stats.AVERAGE.name() ).doubleValue();
-			
+
+			// median - not really median of all subpopulations, rather a weighted
+			// average of the subpopulations' medians (performance reasons).
+			medianSum += count * e.getValue( Stats.MEDIAN.name() ).doubleValue();
+
 			// average
 			totalSum += count * average;
-			totalCnt += count;
-			
-			// stddev (population based), implements http://en.wikipedia.org/wiki/Standard_deviation#Combining_standard_deviations
-			stddev_partA += count * ( Math.pow( e.getValue( Stats.STD_DEV.name() ).doubleValue(), 2) + Math.pow( average, 2 ) );
-			
-			// http://davidmlane.com/hyperstat/A79567.html
+			totalCount += count;
+
+			// stddev (population based), implements
+			// http://en.wikipedia.org/wiki/Standard_deviation#Combining_standard_deviations
+			stddev_partA += count
+					* ( Math.pow( e.getValue( Stats.STD_DEV.name() ).doubleValue(), 2 ) + Math.pow( average, 2 ) );
 		}
-		double totalAverage = totalSum / totalCnt;
+		double totalAverage = totalSum / totalCount;
 		long timestamp = lastEntry.getTimestamp();
-		double stddev = Math.sqrt( stddev_partA / totalCnt - Math.pow( totalAverage, 2 ) );
-		
-		return at( timestamp ).put( Stats.AVERAGE.name(), totalAverage ).put( Stats.AVERAGE_COUNT.name(), totalCnt ).put( Stats.STD_DEV.name(), stddev ).build(false);
+		double stddev = Math.sqrt( stddev_partA / totalCount - Math.pow( totalAverage, 2 ) );
+		double percentile = stddev * 1.281552; // 90th percentile = mean + z *
+															// stddev | z = 1.281552
+		double median = medianSum / totalCount;
+
+		return at( timestamp ).put( Stats.AVERAGE.name(), totalAverage ).put( Stats.COUNT.name(), totalCount )
+				.put( Stats.STD_DEV.name(), stddev ).put( Stats.PERCENTILE_90TH.name(), percentile )
+				.put( Stats.PERCENTILE_90TH.name(), percentile ).put( Stats.MEDIAN.name(), median ).build( false );
 	}
-	
+
 	@Override
 	protected void reset()
 	{
-		average = 0L;
-		avgSum = 0L;
-		avgCnt = 0;
-		stdDev = 0.0;
-		sumTotalSquare = 0.0;
-		percentile = 0;
-		median = 0;
+		sortedValues.clear();
+		sum = 0.0;
+		count = 0L;
 	}
 
 	/**
@@ -225,11 +266,11 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 			// init statistics
 			trackStructure.put( Stats.AVERAGE.name(), Double.class );
-			trackStructure.put( Stats.AVERAGE_COUNT.name(), Double.class );
-			trackStructure.put( Stats.AVERAGE_SUM.name(), Double.class );
+			trackStructure.put( Stats.COUNT.name(), Double.class );
+			trackStructure.put( Stats.SUM.name(), Double.class );
 			trackStructure.put( Stats.STD_DEV.name(), Double.class );
 			trackStructure.put( Stats.STD_DEV_SUM.name(), Double.class );
-			trackStructure.put( Stats.PERCENTILE.name(), Double.class );
+			trackStructure.put( Stats.PERCENTILE_90TH.name(), Double.class );
 			trackStructure.put( Stats.MEDIAN.name(), Double.class );
 
 			return new AverageStatisticWriter( statisticsManager, variable, trackStructure );
