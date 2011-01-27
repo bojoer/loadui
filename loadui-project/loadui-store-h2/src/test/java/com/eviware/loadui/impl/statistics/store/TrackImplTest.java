@@ -27,9 +27,7 @@ import org.junit.Test;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.statistics.store.Entry;
-import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
-import com.eviware.loadui.impl.statistics.store.table.model.DataTable;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 

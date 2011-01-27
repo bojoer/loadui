@@ -69,8 +69,6 @@ public class PropertyEvent extends BaseEvent
 	public PropertyEvent( PropertyHolder source, Property<?> property, Event event, Object previous )
 	{
 		super( source, property.getKey() );
-		if( property == null )
-			throw new IllegalArgumentException( "null property" );
 		this.property = property;
 		this.event = event;
 		this.previous = previous;

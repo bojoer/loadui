@@ -24,8 +24,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 
-import com.eviware.loadui.launcher.LoadUILauncher;
-
 /**
  * Holds an embedded Felix OSGi runtime, which can be started and stopped. It
  * can be configured using the Properties object and/or a standard Felix
