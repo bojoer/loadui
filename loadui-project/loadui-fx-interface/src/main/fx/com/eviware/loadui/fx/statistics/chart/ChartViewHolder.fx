@@ -50,6 +50,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 	
 	public-init var chartModel:com.eviware.loadui.api.statistics.model.Chart;
 	
+	public var showBG = true;
 	public-init var chartView:ChartView on replace oldValue {
 		ReleasableUtils.release( oldValue );
 		chart = ChartRegistry.createChart( chartView, this );
@@ -66,10 +67,10 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 	def resizable:VBox = VBox {
 		width: bind width
 		height: bind height
-		padding: Insets { left: 5, top: 5, right: 5, bottom: 5 }
+		padding: Insets { left: 12, top: 5, right: 5, bottom: 5 }
 		spacing: 5
 		content: [
-			Region { width: bind width, height: bind height, managed: false, styleClass: "chart-view-holder" },
+			Region { width: bind width, height: bind height, managed: false, styleClass: "chart-view-holder", visible: bind showBG },
 			Label { styleClass: "title", text: bind label.toUpperCase() },
 			HBox {
 				layoutInfo: LayoutInfo { width: bind width }

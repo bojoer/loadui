@@ -65,6 +65,7 @@ import java.util.EventObject;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
 def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
+def childrenInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, margin: Insets { left: 5, right: 5, top: 3, bottom: 5 } }
 
 /**
  * Base Chart Node, visualizes a ChartGroup.
@@ -87,6 +88,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	
 	var chartViewHolder:ChartViewHolder on replace oldValue {
 		ReleasableUtils.release( oldValue );
+		chartViewHolder.showBG = false;
 	}
 	
 	def listener = new ChartGroupListener();
@@ -102,7 +104,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			selected = (controlButtons.selectedToggle as ToggleButton).text;
 		oldConf = selected;
 		if ( selected == "Expand" ) {
-				toggleGroupExpand();
+			toggleGroupExpand();
 		} else if ( selected == "Show agents" ) {
 			toggleAgentExpand();
 		}
@@ -124,25 +126,9 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		rebuildChartButtons();
 	}
 	
-	def resizable:VBox = VBox {
-		padding: Insets { left: 3, top: 3, right: 3, bottom: 3 }
-		spacing: 5
-		width: bind width
-		height: bind height
-		content: [
-			Region { width: bind width, height: bind height, managed: false, styleClass: "chart-group-holder" },
-			//Label { text: bind "{title} ({itemCount})" },
-			Stack {
-				nodeHPos: HPos.LEFT
-				content: bind chartViewHolder
-			},
-			Region { width: bind width, height: 30, layoutY: bind height - 30, managed: false, styleClass: "chart-group-holder-bottom" },
-		]
-	}
-	
 	def buttonBar:HBox = HBox {
 		styleClass: "chart-group-toolbar"
-		layoutInfo: LayoutInfo { margin: Insets { bottom: 5 } }
+		layoutInfo: LayoutInfo { margin: Insets { left: 5, right: 5, bottom: 5 } }
 		spacing: 5
 		content: [
 			ToggleButton { text: "Expand", toggleGroup:controlButtons, value: null },
@@ -151,22 +137,36 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			chartButtons,
 			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
 			ToggleButton { text: "Configure", toggleGroup:controlButtons },
-		//	Button { text: "Scale", action: toggleAgentExpand }, //TODO
-		//	Button { text: "Style", action: toggleAgentExpand }, //TODO
 			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
-		//	Button { text: "Raw Data", action: toggleAgentExpand }, //TODO
-		//	Button { text: "Error", action: toggleAgentExpand }, //TODO
-		//	Button { text: "Notes", action: toggleAgentExpand }, //TODO
-		//	Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
-		//	Button { text: "Settings", action: toggleAgentExpand }, //TODO
-		//	Button { text: "Help", action: toggleAgentExpand }, //TODO
 			Button { text: "Delete", action: function():Void { chartGroup.delete(); } }
+		]
+	}
+	
+	var groupContent:VBox;
+	def resizable:VBox = VBox {
+		spacing: 6
+		width: bind width
+		height: bind height
+		content: [
+			Region { width: bind width, height: bind height, managed: false, styleClass: "chart-group-holder" },
+			groupContent = VBox {
+				padding: Insets { left: 3, top: 3, right: 3, bottom: 3 }
+				content: [
+					Region { width: bind groupContent.width, height: bind groupContent.height, managed: false, styleClass: "chart-group-face" },
+					//Label { text: bind "{title} ({itemCount})" },
+					Stack {
+						nodeHPos: HPos.LEFT
+						content: bind chartViewHolder
+					},
+					buttonBar
+				]
+			}
 		]
 	}
 	
 	def panelHolder:Stack = Stack {
 		styleClass: "chart-group-panel"
-		padding: Insets { top: 17, right: 17, bottom: 17, left: 17 }
+		padding: Insets { top: 14, right: 17, bottom: 17, left: 17 }
 		layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
 		content: Region { managed: false, width: bind panelHolder.width, height: bind panelHolder.height, styleClass: "chart-group-panel" }
 		visible: bind ( sizeof panelHolder.content > 1 )
@@ -176,7 +176,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	init {
 	   statisticsManager.addEventListener( BaseEvent.class, statisticsManagerListener );
 	   
-		insert buttonBar into (resizable as Container).content;
 		insert panelHolder into (resizable as Container).content;
 	}
 	
@@ -236,7 +235,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			if( expandAgents ) toggleAgentExpand();
 			expandedNode = SortableBox {
 				vertical: true
-				layoutInfo: chartViewInfo
+				layoutInfo: childrenInfo
+				spacing: 5
 				content: for( chart in chartGroup.getChildren() ) ChartViewHolder {
 					chartModel: chart
 					chartView: chartGroup.getChartViewForChart( chart as Chart )
@@ -261,7 +261,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			if( expandGroups ) toggleGroupExpand();
 			expandedNode = SortableBox {
 				vertical: true
-				layoutInfo: chartViewInfo
+				layoutInfo: childrenInfo
+				spacing: 5
 				content: for( source in chartGroup.getSources() ) ChartViewHolder {
 					chartView: chartGroup.getChartViewForSource( source )
 					label: source
