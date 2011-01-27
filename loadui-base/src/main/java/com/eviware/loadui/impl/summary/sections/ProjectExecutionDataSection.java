@@ -43,7 +43,8 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 		addValue( "Execution Time", getExecutionTime() );
 		addValue( "Start Time", getStartTime() );
 		addValue( "End Time", getEndTime() );
-		addValue( "Total number of requests", getTotalNumberOfSamples() );
+		addValue( "Total number of requests", getTotalNumberOfRequests() );
+		addValue( "Total number of failed requests", getTotalNumberOfFailedRequests() );
 		addValue( "Total number of assertions", getTotalNumberOfAssertions() );
 		addValue( "Total number of failed assertions", getTotalNumberOfFailedAssertions() );
 
@@ -81,42 +82,23 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 	@Override
 	public String getTotalNumberOfAssertions()
 	{
-		int cnt = 0;
-		for( ComponentItem component : project.getComponents() )
-		{
-			if( component.getType().equalsIgnoreCase( "assertion" ) & component.getBehavior() instanceof AnalysisCategory )
-				cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
-		}
-		for( SceneItem scene : project.getScenes() )
-			for( ComponentItem component : scene.getComponents() )
-			{
-				if( component.getType().equalsIgnoreCase( "assertion" )
-						& component.getBehavior() instanceof AnalysisCategory )
-					cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
-			}
-		return String.valueOf( project.getCounter( CanvasItem.ASSERTION_COUNTER ).get() + cnt );
+		return String.valueOf( project.getCounter( CanvasItem.ASSERTION_COUNTER ).get() );
 	}
 
 	@Override
 	public String getTotalNumberOfFailedAssertions()
 	{
-		return String.valueOf( project.getCounter( CanvasItem.FAILURE_COUNTER ).get() );
+		return String.valueOf( project.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get() );
 	}
 
 	@Override
-	public String getTotalNumberOfSamples()
+	public String getTotalNumberOfRequests()
 	{
 		return String.valueOf( project.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );
 	}
 
-	private String getCounterValue( String counter )
+	public String getTotalNumberOfFailedRequests()
 	{
-		long total = project.getCounter( counter ).get();
-		for( ComponentItem tc : project.getComponents() )
-		{
-			total += tc.getCounter( counter ).get();
-		}
-		return String.valueOf( total );
+		return String.valueOf( project.getCounter( CanvasItem.REQUEST_FAILURE_COUNTER ).get() );
 	}
-
 }

@@ -25,6 +25,6 @@ public interface DataSection {
 
 	public abstract String getSampleLimit();
 
-	public abstract String getAssertionLimit();
+	public abstract String getFailureLimit();
 
 }

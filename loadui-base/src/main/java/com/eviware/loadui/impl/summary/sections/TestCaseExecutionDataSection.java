@@ -38,7 +38,8 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 		addValue( "Execution Time", getExecutionTime() );// hh:mm:ss
 		addValue( "Start Time", getStartTime() );
 		addValue( "End Time", getEndTime() );
-		addValue( "Total number of requests", getTotalNumberOfSamples() );
+		addValue( "Total number of requests", getTotalNumberOfRequests() );
+		addValue( "Total number of failed requests", getTotalNumberOfFailedRequests() );
 		addValue( "Total number of assertions", getTotalNumberOfAssertions() );
 		addValue( "Total number of failed assertions", getTotalNumberOfFailedAssertions() );
 	}
@@ -88,9 +89,14 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionDataSection#
 	 * getTotalNumberOfSamples()
 	 */
-	public String getTotalNumberOfSamples()
+	public String getTotalNumberOfRequests()
 	{
-		return String.valueOf( testcase.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );
+		return String.valueOf( testcase.getCounter( CanvasItem.REQUEST_COUNTER ).get() );
+	}
+
+	public String getTotalNumberOfFailedRequests()
+	{
+		return String.valueOf( testcase.getCounter( CanvasItem.REQUEST_FAILURE_COUNTER ).get() );
 	}
 
 	/*
@@ -101,13 +107,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 */
 	public String getTotalNumberOfAssertions()
 	{
-		int cnt = 0;
-		for( ComponentItem component : testcase.getComponents() )
-		{
-			if( component.getType().equalsIgnoreCase( "assertion" ) & component.getBehavior() instanceof AnalysisCategory )
-				cnt += component.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
-		}
-		return String.valueOf( testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get() + cnt );
+		return String.valueOf( testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get() );
 	}
 
 	/*
@@ -118,6 +118,6 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 */
 	public String getTotalNumberOfFailedAssertions()
 	{
-		return String.valueOf( testcase.getCounter( CanvasItem.FAILURE_COUNTER ).get() );
+		return String.valueOf( testcase.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get() );
 	}
 }

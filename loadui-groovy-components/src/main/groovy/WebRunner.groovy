@@ -183,6 +183,7 @@ sample = { message, sampleId ->
 				
 				for (code in assertionCodes) {
 					if (code.trim() == response.statusLine.statusCode.toString()) {
+						failedRequestCounter.increment();
 						failureCounter.increment();
 						break;
 					}

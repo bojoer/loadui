@@ -11,10 +11,10 @@ public class SummarySectionDataSource extends JRAbstractBeanDataSource
 
 	private Section section;
 	private int cnt = -1;
-	
-	public SummarySectionDataSource(Section section)
+
+	public SummarySectionDataSource( Section section )
 	{
-		super(true);
+		super( true );
 		this.section = section;
 	}
 
@@ -25,25 +25,25 @@ public class SummarySectionDataSource extends JRAbstractBeanDataSource
 	}
 
 	@Override
-	public Object getFieldValue(JRField field) throws JRException
+	public Object getFieldValue( JRField field ) throws JRException
 	{
-		if (field.getName().equals("time"))
-			return section.getValues().get("time");
-		if (field.getName().equals("requests"))
-			return section.getValues().get("requests");
-		if (field.getName().equals("afailures"))
-			return section.getValues().get("assertion failures");
-		if (field.getName().equals("status"))
-			return section.getValues().get("status");
-		
+		if( field.getName().equals( "time" ) )
+			return section.getValues().get( "time" );
+		if( field.getName().equals( "requests" ) )
+			return section.getValues().get( "requests" );
+		if( field.getName().equals( "afailures" ) )
+			return section.getValues().get( "failures" );
+		if( field.getName().equals( "status" ) )
+			return section.getValues().get( "status" );
+
 		return null;
 	}
 
 	@Override
 	public boolean next() throws JRException
 	{
-		cnt++;
-		if (cnt == 1)
+		cnt++ ;
+		if( cnt == 1 )
 			return false;
 		else
 			return true;

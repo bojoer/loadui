@@ -46,8 +46,9 @@ def componentSignature = [
 		]
 setSignature(output, componentSignature)
 
-failureCounter = getCounter( CanvasItem.FAILURE_COUNTER );
-totalCounter = getCounter( CanvasItem.ASSERTION_COUNTER );
+failureCounter = getCounter( CanvasItem.FAILURE_COUNTER )
+assertionFailureCounter = getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER )
+totalCounter = getCounter( CanvasItem.ASSERTION_COUNTER )
 
 //Properties
 createProperty( 'value', String, "Select value" )
@@ -73,7 +74,7 @@ assertedResetValue = 0
 failedResetValue = 0
 
 assertedDisplay = new DelayedFormattedString( '%d', 500, value { totalCounter.get()-assertedResetValue } )
-failedDisplay = new DelayedFormattedString( '%d', 500, value { failureCounter.get()-failedResetValue } )
+failedDisplay = new DelayedFormattedString( '%d', 500, value { assertionFailureCounter.get()-failedResetValue } )
 valueDisplay = new DelayedFormattedString( '%s', 500, value { value.value } )
 minDisplay = new DelayedFormattedString( '%d', 500, value { min.value } )
 maxDisplay = new DelayedFormattedString( '%d', 500, value { max.value } )
@@ -159,6 +160,7 @@ analyze = { message ->
 }
 
 raiseFailure = {message, timestamp, value ->
+	assertionFailureCounter.increment()
 	failureCounter.increment()
 	
 	m = includeAssertedMessage.value ? message : outMsg
@@ -249,7 +251,7 @@ layout {
 			action: {
 				buffer.clear()
 				assertedResetValue = totalCounter.get()
-				failedResetValue = failureCounter.get()
+				failedResetValue = assertionFailureCounter.get()
 			}, 
 			constraints:'align right'
 		)

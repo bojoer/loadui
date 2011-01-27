@@ -32,7 +32,7 @@ public class ProjectDataSummarySection extends MutableSectionImpl implements Dat
 
 		addValue( "time", getTime() );
 		addValue( "requests", getNumberOfSamples() );
-		addValue( "assertion failures", getNumberOfFailures() );
+		addValue( "failures", getNumberOfFailures() );
 		addValue( "status", getStatus() );
 	}
 
