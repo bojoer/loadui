@@ -675,15 +675,20 @@
 }
 
 .chart-group-holder {
-	-fx-background-color: #242424, #5d5d5d, linear (0,0) to (0,8px) stops (0%, #373737) (25%, #7c7d7e) (100%, #6e6e6e);
-	-fx-background-insets: 0, 1, 1 2;
+	-fx-background-color: #2f2f2f, #232323;
+	-fx-background-insets: -2, -1;
+	-fx-background-radius: 3;
+}
+
+.chart-group-face {
+	-fx-background-color: #242424, #5d5d5d, linear (0%,0%) to (0%,100%) stops (0%, #373737) (1%, #7c7d7e) (6%, #6e6e6e) (85%, #6e6e6e) (100%, #505052);
+	-fx-background-insets: -3, -2, -2 -1;
 	-fx-background-radius: 4;
 }
 
-.chart-group-holder-bottom {
-	-fx-background-color: linear (0%,0%) to (0%,100%) stops (0%, #6e6e6e) (100%, #505052);
-	-fx-background-insets: 1 2;
-	-fx-background-radius: 0 0 4 4;
+.chart-view-holder {
+	-fx-background-color: #303030;
+	-fx-background-radius: 4;
 }
 
 .chart-view-holder *.title {
@@ -692,12 +697,13 @@
 }
 
 .chart-view-panel {
-	-fx-background-color: #787878;
+	-fx-background-color: rgba(255, 255, 255, 0.05);
 	-fx-background-radius: 4;
 }
 
 .chart-group-panel {
-	-fx-background-color: #252525;
+	-fx-background-color: #4d4d4d, #333333, #252525;
+	-fx-background-insets: -4 -2 0 -2, -4 -1 1 -1, -4 0 2 0;
 }
 
 .chart-drop-base {
