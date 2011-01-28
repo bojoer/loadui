@@ -77,7 +77,7 @@ output = { message ->
 		try {
 			char sep = ','
 			
-			writer = new CSVWriter(new FileWriter(saveFileName, appendSaveFile), sep);
+			writer = new CSVWriter(new FileWriter(saveFileName, appendSaveFile.value), sep);
 			String[] entries = myTableModel.lastRow
 			writer.writeNext(entries)
 			writer.flush()
@@ -101,26 +101,85 @@ addEventListener( PropertyEvent ) { event ->
 		}
 		else if( event.property.key == 'follow' && myTableModel.follow != follow.value as Boolean) {
 			myTableModel.follow = follow.value
-		} else if( event.property == fileName ) {
-			saveFileName = fileName.value?.name
-		}
+		} 
 	}
 }
 
 addEventListener( ActionEvent ) { event ->
 	if ( event.key == "START" ) {
-		saveFileName = fileName.value?.name
-		if( !appendSaveFile.value && saveFileName != null) {
-			def ext = saveFileName.substring(saveFileName.lastIndexOf("."), saveFileName.length())
-			def name = saveFileName.substring(0, saveFileName.lastIndexOf("."))
-			def timestamp = new Date().time
-			saveFileName = "${fileName.value.parent}${File.separator}$name-$timestamp$ext"
-		}
+		buildFileName()
 	}
 
 	if ( event.key == "RESET" ) {
 		myTableModel.reset()
 	}
+}
+
+buildFileName = {
+	if( !saveFile.value ) {
+		return
+	}
+	def dir = ""
+	def name = ""
+	def parent = fileName.value?.parentFile
+	if(parent != null){
+		parent.mkdirs()
+		dir = fileName.value.parent
+		name = fileName.value?.name
+	}
+	else{
+		dir = getDefaultLogDir()
+		name = fileName.value?.name
+		if(name == null || name.trim().length() == 0){
+			name = getDefaultLogName()
+		}
+		log.warn("Log file path wasn't specified properly. Will try to use name [$name] and save in [$dir]")
+	}
+	if( !appendSaveFile.value ){
+		name = addTimestampToFileName( name )
+	}
+	saveFileName = "${dir}${File.separator}$name"
+	validateLogFile()
+}
+
+getDefaultLogDir = {
+	def dir = System.getProperty("loadui.home")
+	if(dir == null || dir.trim().length() == 0){
+		dir = "."
+	}
+	return dir			
+}
+				
+getDefaultLogName = {
+	return getLabel().replaceAll(" ","") 			
+}
+				
+validateLogFile = {
+	try {
+	   new File(saveFileName).createNewFile()
+	}
+	catch(Exception e){
+		def name = getDefaultLogName()
+		if( !appendSaveFile.value ){
+			name = addTimestampToFileName( name )
+		}
+		saveFileName = "${getDefaultLogDir()}${File.separator}${name}"	
+		log.warn("Invalid log file path found. Path set to [${saveFileName}]")
+	}	
+}
+
+addTimestampToFileName  = {name ->
+	def ext = ""
+	def ind = name.lastIndexOf(".")
+	if( ind > -1 ){
+		ext = name.substring(ind, name.length())
+		name = name.substring(0, ind)
+	}
+	def timestamp = new Date().time
+	if(name.length() > 0){
+		name = "${name}-"
+	}
+	return "$name$timestamp$ext"
 }
 
 layout { 
