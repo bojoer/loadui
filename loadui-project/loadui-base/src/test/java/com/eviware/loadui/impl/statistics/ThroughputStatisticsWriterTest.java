@@ -18,7 +18,6 @@ package com.eviware.loadui.impl.statistics;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.CoreMatchers.*;
-import org.junit.*;
 
 import java.util.Arrays;
 import java.util.Collections;

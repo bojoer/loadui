@@ -265,6 +265,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		SampleStats stat = null;
 		boolean inserted = false;
 
+		// top
 		ListIterator<SampleStats> it = topStats.listIterator();
 		while( it.hasNext() )
 		{
@@ -285,6 +286,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		else if( topStats.size() > NUM_TOP_BOTTOM_SAMPLES )
 			topStats.removeLast();
 
+		// bottom
 		inserted = false;
 		it = bottomStats.listIterator();
 		while( it.hasNext() )
@@ -598,6 +600,20 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		avgTime = avgSum / statisticsData.size();
 	}
 
+
+
+	@Override
+	public List<SampleStats> getTopSamples()
+	{
+		return new ArrayList<SampleStats>( topStats );
+	}
+
+	@Override
+	public List<SampleStats> getBottomSamples()
+	{
+		return new ArrayList<SampleStats>( bottomStats );
+	}
+	
 	@Override
 	public Map<String, String> getStatistics()
 	{
@@ -647,21 +663,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		return statistics;
 	}
 
-	@Override
-	public List<SampleStats> getTopSamples()
-	{
-		// System.out.println("return ts" + topStats);
-		return new ArrayList<SampleStats>( topStats );
-	}
-
-	@Override
-	public List<SampleStats> getBottomSamples()
-	{
-		// System.out.println("return bs" + bottomStats);
-		return new ArrayList<SampleStats>( bottomStats );
-	}
-
-	/**
+	/*
 	 * Here is all statistics reseted/initialized to avoid NPE
 	 */
 	private void resetStatistics()
@@ -675,11 +677,6 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 		topStats.clear();
 		bottomStats.clear();
-		// for (int i = 0; i < 5; i++) {
-		// topStats.add(new SampleStatsImpl());
-		// bottomStats.add(new SampleStatsImpl(Long.MAX_VALUE, Long.MAX_VALUE,
-		// Long.MAX_VALUE));
-		// }
 	}
 
 	public long getDiscarded()
