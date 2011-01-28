@@ -675,19 +675,20 @@
 }
 
 .chart-group-holder {
-	-fx-background-color: #2f2f2f, #232323;
-	-fx-background-insets: -2, -1;
+	-fx-background-color: #2f2f2f, #1e1e1e, #202020, #232323;
+	-fx-background-insets: 2, 3, 4, 6;
 	-fx-background-radius: 3;
 }
 
-.chart-group-face {
+.chart-group-chart-view-holder {
 	-fx-background-color: #242424, #5d5d5d, linear (0%,0%) to (0%,100%) stops (0%, #373737) (1%, #7c7d7e) (6%, #6e6e6e) (85%, #6e6e6e) (100%, #505052);
-	-fx-background-insets: -3, -2, -2 -1;
+	-fx-background-insets: 0, 1, 1 2;
 	-fx-background-radius: 4;
 }
 
 .chart-view-holder {
-	-fx-background-color: #303030;
+	-fx-background-color: #252525, #303030;
+	-fx-background-insets: 0, 1;
 	-fx-background-radius: 4;
 }
 
@@ -702,8 +703,9 @@
 }
 
 .chart-group-panel {
-	-fx-background-color: #4d4d4d, #333333, #252525;
-	-fx-background-insets: -4 -2 0 -2, -4 -1 1 -1, -4 0 2 0;
+	-fx-background-color: #303030, #2a2a2a, #1e1e1e, #252525;
+	-fx-background-insets: 1 1 0 1, 1 2 1 2, 1 3 2 3, 2 4 3 4;
+	-fx-background-radius: 0 0 2 2, 0 0 1 1, 0, 0;
 }
 
 .chart-drop-base {

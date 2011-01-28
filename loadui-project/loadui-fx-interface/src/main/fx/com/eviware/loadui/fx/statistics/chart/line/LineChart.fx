@@ -180,58 +180,58 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		height: bind height
 		spacing: 5
 		content: [
-		HBox {
-			padding: Insets { left: -3, right: 15 }
-			spacing: 10
-			content: [
-				segmentButtons, 
-				chartVbox = VBox {
-					padding: Insets { top: 5 }
-					content: [
-						Region { styleClass: "base-chart", managed: false, width: bind chartVbox.width, height: bind chartVbox.height }, 
-						chartNode, 
-						SVGPath {
-							managed: false
-							clip: Rectangle { width: bind chartVbox.width, height: bind chartVbox.height }
-							fill: LinearGradient {
-								startX: 0.0
-								startY: 0.0
-								endX: 30.0
-								endY: 30.0
-								proportional: false
-								stops: [
-									Stop { offset: 0.0 color: Color.rgb( 0xff, 0xff, 0xff, 0.2 ) },
-									Stop { offset: 1.0 color: Color.rgb( 0xff, 0xff, 0xff, 0.06 ) }
+			HBox {
+				padding: Insets { left: -3, right: 15 }
+				spacing: 10
+				content: [
+					segmentButtons, 
+					chartVbox = VBox {
+						padding: Insets { top: 5 }
+						content: [
+							Region { styleClass: "base-chart", managed: false, width: bind chartVbox.width, height: bind chartVbox.height }, 
+							chartNode, 
+							SVGPath {
+								managed: false
+								clip: Rectangle { width: bind chartVbox.width, height: bind chartVbox.height }
+								fill: LinearGradient {
+									startX: 0.0
+									startY: 0.0
+									endX: 30.0
+									endY: 30.0
+									proportional: false
+									stops: [
+										Stop { offset: 0.0 color: Color.rgb( 0xff, 0xff, 0xff, 0.2 ) },
+										Stop { offset: 1.0 color: Color.rgb( 0xff, 0xff, 0xff, 0.06 ) }
+									]
+								}
+								content: "M3.093,0C-0.12,0,0,0.108,0,2.651v98.056c0,1.465,1.385,2.651,3.093,2.651h1.051C16.495,81.713,21.385,0.008,297.475,0.008L3.093,0z"
+							},
+							scrollBar
+						]
+					}
+				]
+			}, /*if( chartView instanceof ConfigurableLineChartView ) Button {
+				text: "Add Statistic"
+				action: function():Void {
+					var selected:Runnable;
+					holder.showConfig( VBox {
+						content: [
+							CascadingTreeSelector {
+								treeModel: new SegmentTreeModel( chartView as ConfigurableLineChartView )
+								allowMultiple: false
+								onSelect: function(obj):Void { selected = obj as Runnable; }
+								onDeselect: function(obj):Void { selected = null; }
+							}, HBox {
+								hpos: HPos.RIGHT
+								content: [
+									Button { text: "Add", disable: bind selected == null; action: function():Void { selected.run(); holder.hideConfig() } }
+									Button { text: "Cancel", action: function():Void { holder.hideConfig() } }
 								]
 							}
-							content: "M3.093,0C-0.12,0,0,0.108,0,2.651v98.056c0,1.465,1.385,2.651,3.093,2.651h1.051C16.495,81.713,21.385,0.008,297.475,0.008L3.093,0z"
-						},
-						scrollBar
-					]
+						]
+					} );
 				}
-			]
-		}, if( chartView instanceof ConfigurableLineChartView ) Button {
-			text: "Add Statistic"
-			action: function():Void {
-				var selected:Runnable;
-				holder.showConfig( VBox {
-					content: [
-						CascadingTreeSelector {
-							treeModel: new SegmentTreeModel( chartView as ConfigurableLineChartView )
-							allowMultiple: false
-							onSelect: function(obj):Void { selected = obj as Runnable; }
-							onDeselect: function(obj):Void { selected = null; }
-						}, HBox {
-							hpos: HPos.RIGHT
-							content: [
-								Button { text: "Add", disable: bind selected == null; action: function():Void { selected.run(); holder.hideConfig() } }
-								Button { text: "Cancel", action: function():Void { holder.hideConfig() } }
-							]
-						}
-					]
-				} );
-			}
-		} else null
+			} else null*/
 		]
 	}
 	

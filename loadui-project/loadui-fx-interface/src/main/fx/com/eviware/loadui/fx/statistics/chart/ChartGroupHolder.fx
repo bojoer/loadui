@@ -65,7 +65,7 @@ import java.util.EventObject;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
 def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
-def childrenInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, margin: Insets { left: 5, right: 5, top: 3, bottom: 5 } }
+def childrenInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, margin: Insets { left: 8, right: 8, top: -1, bottom: 8 } }
 
 /**
  * Base Chart Node, visualizes a ChartGroup.
@@ -77,8 +77,12 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	
 	var title:String = "ChartGroupHolder";
 	var itemCount:Integer = 0;
+	var chartGroupHolder = this;
 	
-	def statisticsManager = BeanInjector.getBean( StatisticsManager.class );
+	def statisticsManagerListener = new StatisticsManagerListener();
+	def statisticsManager = BeanInjector.getBean( StatisticsManager.class ) on replace {
+		statisticsManager.addEventListener( BaseEvent.class, statisticsManagerListener );
+	}
 	
 	public-read var expandGroups = false;
 	public-read var expandAgents = false;
@@ -88,58 +92,29 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	
 	var chartViewHolder:ChartViewHolder on replace oldValue {
 		ReleasableUtils.release( oldValue );
-		chartViewHolder.showBG = false;
 	}
 	
 	def listener = new ChartGroupListener();
-	def statisticsManagerListener = new StatisticsManagerListener();
-	
-	def controlButtons = new ToggleGroup();
-	var oldConfNode:Node;
-	var oldConf:String;
-	var configurationNode = bind controlButtons.selectedToggle on replace {
-		var configurationNode:Node = (controlButtons.selectedToggle.value as Node);
-		var selected:String = oldConf;
-		if( controlButtons.selectedToggle != null )
-			selected = (controlButtons.selectedToggle as ToggleButton).text;
-		oldConf = selected;
-		if ( selected == "Expand" ) {
-			toggleGroupExpand();
-		} else if ( selected == "Show agents" ) {
-			toggleAgentExpand();
-		}
-	};
-	
-	def panelToggleGroup = new PanelToggleGroup();
-	def chartButtons = HBox { spacing: 5, hpos: HPos.RIGHT };
 	
 	public-init var chartGroup:ChartGroup on replace oldChartGroup {
 		chartGroup.addEventListener( BaseEvent.class, listener );
 		title = chartGroup.getTitle();
 		itemCount = chartGroup.getChildCount();
-		chartViewHolder = ChartViewHolder {
-			chartView: chartGroup.getChartView()
+		chartViewHolder = ChartGroupChartViewHolder {
+			chartGroupHolder: chartGroupHolder
+			chartGroup: chartGroup
 			label: bind "{title} ({itemCount})"
 			layoutInfo: chartViewInfo
 		};
-		
-		rebuildChartButtons();
 	}
 	
-	def buttonBar:HBox = HBox {
-		styleClass: "chart-group-toolbar"
-		layoutInfo: LayoutInfo { margin: Insets { left: 5, right: 5, bottom: 5 } }
-		spacing: 5
-		content: [
-			ToggleButton { text: "Expand", toggleGroup:controlButtons, value: null },
-			//Button { text: "Add Statistics", action: toggleAgentExpand },
-			ToggleButton { text: "Show agents", toggleGroup:controlButtons },
-			chartButtons,
-			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
-			ToggleButton { text: "Configure", toggleGroup:controlButtons },
-			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
-			Button { text: "Delete", action: function():Void { chartGroup.delete(); } }
-		]
+	def panelHolder:Stack = Stack {
+		styleClass: "chart-group-panel"
+		padding: Insets { top: 17, right: 17, bottom: 17, left: 17 }
+		layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, margin: Insets { top: -7 } }
+		content: Region { managed: false, width: bind panelHolder.width, height: bind panelHolder.height, styleClass: "chart-group-panel" }
+		visible: bind ( sizeof panelHolder.content > 1 )
+		managed: bind ( sizeof panelHolder.content > 1 )
 	}
 	
 	var groupContent:VBox;
@@ -150,33 +125,17 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		content: [
 			Region { width: bind width, height: bind height, managed: false, styleClass: "chart-group-holder" },
 			groupContent = VBox {
-				padding: Insets { left: 3, top: 3, right: 3, bottom: 3 }
 				content: [
 					Region { width: bind groupContent.width, height: bind groupContent.height, managed: false, styleClass: "chart-group-face" },
 					//Label { text: bind "{title} ({itemCount})" },
 					Stack {
 						nodeHPos: HPos.LEFT
 						content: bind chartViewHolder
-					},
-					buttonBar
+					}
 				]
-			}
+			},
+			panelHolder
 		]
-	}
-	
-	def panelHolder:Stack = Stack {
-		styleClass: "chart-group-panel"
-		padding: Insets { top: 14, right: 17, bottom: 17, left: 17 }
-		layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
-		content: Region { managed: false, width: bind panelHolder.width, height: bind panelHolder.height, styleClass: "chart-group-panel" }
-		visible: bind ( sizeof panelHolder.content > 1 )
-		managed: bind ( sizeof panelHolder.content > 1 )
-	}
-	
-	init {
-	   statisticsManager.addEventListener( BaseEvent.class, statisticsManagerListener );
-	   
-		insert panelHolder into (resizable as Container).content;
 	}
 	
 	public function update():Void {
@@ -276,31 +235,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			delete expandedNode from (resizable as Container).content;
 		}
 	}
-	
-	function rebuildChartButtons() {
-		chartButtons.content = [
-			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER },
-			for( panelFactory in ChartRegistry.getPanels( chartGroup ) ) {
-				ToggleButton {
-					text: panelFactory.title
-					value: panelFactory
-					toggleGroup: panelToggleGroup
-				}
-			}
-		]
-	}
-}
-
-class PanelToggleGroup extends ToggleGroup {
-	override var selectedToggle on replace {
-		if( selectedToggle == null ) {
-			for( child in panelHolder.content ) ReleasableUtils.release( child );
-			panelHolder.content = panelHolder.content[0];
-		} else {
-			def panelFactory = selectedToggle.value as PanelFactory;
-			panelHolder.content = [ panelHolder.content[0], panelFactory.build() ];
-		}
-	}
 }
 
 class ChartGroupListener extends EventHandler {
@@ -312,12 +246,12 @@ class ChartGroupListener extends EventHandler {
 			} );
 		} else if( ChartGroup.TYPE == event.getKey() ) {
 			FxUtils.runInFxThread( function():Void {
-				chartViewHolder = ChartViewHolder {
-					chartView: chartGroup.getChartView()
+				chartViewHolder = ChartGroupChartViewHolder {
+					chartGroupHolder: chartGroupHolder
+					chartGroup: chartGroup
 					label: bind "{title} ({itemCount})"
 					layoutInfo: chartViewInfo
 				};
-				rebuildChartButtons();
 				if( expandGroups ) {
 					toggleGroupExpand();
 					toggleGroupExpand();
