@@ -28,8 +28,8 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 
 	String[] columnNames = { "name", "ms", "time", "size" };
 	public ArrayList<TestCaseSampleModel> data = new ArrayList<TestCaseSampleModel>();
-	TestCaseSampleModelComparator topDownComparator = new TestCaseSampleModelComparator();
-	Comparator<TestCaseSampleModel> bottomUpComparator = Collections.reverseOrder( new TestCaseSampleModelComparator() );
+	TestCaseSampleModelComparator bottomUpComparator = new TestCaseSampleModelComparator();
+	Comparator<TestCaseSampleModel> topDownComparator = Collections.reverseOrder( new TestCaseSampleModelComparator() );
 
 	@Override
 	public String getColumnName( int column )
@@ -99,19 +99,19 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 		{
 			data.add( new TestCaseSampleModel( label, stat ) );
 			Collections.sort( data, topDown ? topDownComparator : bottomUpComparator );
-			if( data.size() > 11 )
-				data.remove( 11 );
+			if( data.size() > 5 )
+				data.remove( 5 );
 		}
 	}
 
 	public void finalizeOrdering( boolean topDown )
 	{
 		if( topDown )
-			Collections.sort( data, bottomUpComparator );
-		else
 			Collections.sort( data, topDownComparator );
+		else
+			Collections.sort( data, bottomUpComparator );
 	}
-
+	
 	private class TestCaseSampleModelComparator implements Comparator<TestCaseSampleModel>
 	{
 		@Override
