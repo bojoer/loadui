@@ -639,12 +639,20 @@
 	-fx-text-fill: #000000
 }
 
+.chart-view-holder *.chart-group-toolbar *.toggle-button {
+	-fx-text-fill: #797979;
+}
+
 .chart-group-toolbar *.toggle-button :selected {
 	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
     	-fx-outer-border: #1a1a1a;
 	-fx-inner-border: -fx-outer-border;
 	-fx-body-color: -fx-outer-border;
-	-fx-text-fill: #959595
+	-fx-text-fill: #959595;
+}
+
+.chart-view-holder *.chart-group-toolbar *.toggle-button:selected {
+	-fx-text-fill: #ffffff;
 }
 
 .zoom-control *.toggle-button {
@@ -690,9 +698,10 @@
 	-fx-background-color: #252525, #303030;
 	-fx-background-insets: 0, 1;
 	-fx-background-radius: 4;
+	-fx-text-fill: #797979;
 }
 
-.chart-view-holder *.title {
+.chart-group-chart-view-holder *.title {
 	-fx-text-fill: #bababa;
 	-fx-font-weight: bold;
 }
