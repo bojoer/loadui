@@ -23,7 +23,7 @@ import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 public class LineChartPanels {
 }
 
-public function getPanels( chartGroup:ChartGroup ):PanelFactory[] {
+public function getGroupPanels( chartGroup:ChartGroup ):PanelFactory[] {
 	[
 		PanelFactory {
 			title: "Zoom",
@@ -34,6 +34,24 @@ public function getPanels( chartGroup:ChartGroup ):PanelFactory[] {
 		}, PanelFactory {
 			title: "Style"
 			build: function() { StylePanel { segments: (chartGroup.getChartView() as LineChartView).getSegments()[s|true] } }
+		}
+	]
+}
+
+public function getChartPanels( chartView:LineChartView ):PanelFactory[] {
+	[
+		PanelFactory {
+			title: "Add statistic"
+			build: null
+		}, PanelFactory {
+			title: "Zoom",
+			build: function() { ZoomPanel { chartGroup: null } }
+		}, PanelFactory {
+			title: "Scale"
+			build: function() { ScalePanel { segments: chartView.getSegments()[s|true] } }
+		}, PanelFactory {
+			title: "Style"
+			build: function() { StylePanel { segments: chartView.getSegments()[s|true] } }
 		}
 	]
 }
