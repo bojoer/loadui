@@ -70,7 +70,6 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 		lastTimeFlushed += delay;
 		
 		Entry e = at( lastTimeFlushed ).put( Stats.BPS.name(), bps ).put( Stats.TPS.name(), tps ).build();
-		log.debug( "output built Entry with timestamp {} from lastTimeFlushed={}", e.getTimestamp(), lastTimeFlushed );
 
 		return e;
 	}
