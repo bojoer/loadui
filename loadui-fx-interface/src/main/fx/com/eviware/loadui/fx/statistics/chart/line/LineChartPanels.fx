@@ -19,6 +19,7 @@ import com.eviware.loadui.fx.statistics.chart.PanelFactory;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
 public class LineChartPanels {
 }
@@ -40,12 +41,15 @@ public function getGroupPanels( chartGroup:ChartGroup ):PanelFactory[] {
 
 public function getChartPanels( chartView:LineChartView ):PanelFactory[] {
 	[
+		if( chartView instanceof ConfigurableLineChartView )
+			PanelFactory {
+				title: "Add statistic"
+				build: function() { AddSegmentPanel { chartView: chartView as ConfigurableLineChartView } }
+			}
+		else [],
 		PanelFactory {
-			title: "Add statistic"
-			build: null
-		}, PanelFactory {
 			title: "Zoom",
-			build: function() { ZoomPanel { chartGroup: null } }
+			build: function() { ZoomPanel { chartGroup: chartView.getChartGroup() } }
 		}, PanelFactory {
 			title: "Scale"
 			build: function() { ScalePanel { segments: chartView.getSegments()[s|true] } }
