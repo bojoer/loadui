@@ -61,7 +61,15 @@ public class AgentDataAggregator
 		{
 			times.put( time, new TreeMap<Integer, Map<String, List<Entry>>>() );
 			if( times.size() > BUFFER_SIZE )
-				flush( times.pollFirstEntry().getValue() );
+			{
+				java.util.Map.Entry<Long, Map<Integer, Map<String, List<Entry>>>> oldestEntry = times.pollFirstEntry();
+				if( oldestEntry.getKey().equals( time ) )
+				{
+					log.debug( "Received expired Entry: {} from: {}", entry, agent.getLabel() );
+					return;
+				}
+				flush( oldestEntry.getValue() );
+			}
 		}
 		Map<Integer, Map<String, List<Entry>>> levels = times.get( time );
 

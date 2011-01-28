@@ -80,7 +80,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 
 		// TODO
 		manager.getExecutionManager().registerTrackDescriptor( descriptor );
-		manager.addEventListener( CollectionEvent.class, new ExecutionListener() );
 
 		// adding execution listeners.
 		manager.getExecutionManager().addExecutionListener( new ExecutionListenerAdapter()
@@ -110,6 +109,10 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 					pauseStartedTime = 0;
 					if( pauseTime > delay )
 						flush();
+				}
+				else if( oldState == State.STOPPED )
+				{
+					reset();
 				}
 			}
 
@@ -301,19 +304,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		private int getDatabaseKey()
 		{
 			return databaseKey;
-		}
-	}
-
-	private class ExecutionListener implements EventHandler<CollectionEvent>
-	{
-		@Override
-		public void handleEvent( CollectionEvent event )
-		{
-			if( CollectionEvent.Event.ADDED.equals( event.getEvent() )
-					&& event.getElement().equals( manager.getExecutionManager().getCurrentExecution() ) )
-			{
-				reset();
-			}
 		}
 	}
 }

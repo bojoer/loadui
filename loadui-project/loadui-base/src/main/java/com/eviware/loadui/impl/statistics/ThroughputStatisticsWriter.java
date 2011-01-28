@@ -42,7 +42,6 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 	private int count = 0;
 	private double sum = 0;
 
-	// cound not find better name
 	public enum Stats
 	{
 		BPS, TPS;
@@ -63,17 +62,17 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 	@Override
 	public Entry output()
 	{
-		if( count == 0 )
-			return null;
-
 		double timeDelta = delay / 1000.0;
 		double bps = sum / timeDelta;
 		double tps = count / timeDelta;
 		sum = 0;
 		count = 0;
 		lastTimeFlushed += delay;
+		
+		Entry e = at( lastTimeFlushed ).put( Stats.BPS.name(), bps ).put( Stats.TPS.name(), tps ).build();
+		log.debug( "output built Entry with timestamp {} from lastTimeFlushed={}", e.getTimestamp(), lastTimeFlushed );
 
-		return at( lastTimeFlushed ).put( Stats.BPS.name(), bps ).put( Stats.TPS.name(), tps ).build();
+		return e;
 	}
 
 	/**
@@ -90,7 +89,7 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 	{
 		synchronized( this )
 		{
-			if( lastTimeFlushed + delay < timestamp )
+			while( lastTimeFlushed + delay < timestamp )
 				flush();
 
 			count++ ;
@@ -119,8 +118,10 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 		double timeDelta = Math.max(
 				( ( double )( maxTime - minTime ) / entries.size() * ( entries.size() + 1 ) ) / 1000, delay / 1000 );
 
-		return at( maxTime ).put( Stats.BPS.name(), bpsSum / timeDelta ).put( Stats.TPS.name(), tpsSum / timeDelta )
-				.build( false );
+		Entry e = at( maxTime ).put( Stats.BPS.name(), bpsSum / timeDelta ).put( Stats.TPS.name(), tpsSum / timeDelta )
+		.build( false );
+		
+		return e;
 	}
 
 	@Override
