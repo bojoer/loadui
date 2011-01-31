@@ -405,15 +405,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		return agents;
 	}
 
-	private Collection<AgentItem> getActiveAgentsAssignedTo( SceneItem scene )
-	{
-		ArrayList<AgentItem> agents = new ArrayList<AgentItem>();
-		for( AgentItem agent : getAgentsAssignedTo( scene ) )
-			if( agent.isReady() )
-				agents.add( agent );
-		return agents;
-	}
-
 	@Override
 	public Collection<SceneItem> getScenesAssignedTo( AgentItem agent )
 	{
@@ -1050,11 +1041,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			{
 				synchronized( scene )
 				{
-					if( scene.isFollowProject()
-							&& !scene.isCompleted()
-							&& ( workspace.isLocalMode() || !workspace.isLocalMode()
-									&& getActiveAgentsAssignedTo( scene ).size() > 0 ) )
-
+					if( scene.isFollowProject() && !scene.isCompleted() )
 					{
 						// add this as a listener to a test case
 						scene.addEventListener( BaseEvent.class, this );
@@ -1087,10 +1074,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			boolean abort = true;
 			for( SceneItem scene : getScenes() )
 			{
-				if( scene.isFollowProject()
-						&& !scene.isAbortOnFinish()
-						&& ( workspace.isLocalMode() || !workspace.isLocalMode()
-								&& getActiveAgentsAssignedTo( scene ).size() > 0 ) )
+				if( scene.isFollowProject() && !scene.isAbortOnFinish() )
 				{
 					abort = false;
 					break;
@@ -1108,10 +1092,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 						{
 							synchronized( scene )
 							{
-								if( scene.isFollowProject()
-										&& !scene.isCompleted()
-										&& ( workspace.isLocalMode() || !workspace.isLocalMode()
-												&& getActiveAgentsAssignedTo( scene ).size() > 0 ) )
+								if( scene.isFollowProject() && !scene.isCompleted() )
 								{
 									( ( SceneItemImpl )scene ).setCompleted( true );
 								}
