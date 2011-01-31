@@ -18,7 +18,7 @@ package com.eviware.loadui.impl.statistics;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -173,7 +173,7 @@ public class AverageStatisticWriterTest
 	private Entry prepareAggregation()
 	{
 		// Based on these three sets of samples: {{10, 8, 6}, {7, 7, 9, 17}, {12, 10, 9}}
-		ArrayList<Entry> entries = new ArrayList<Entry>();
+		HashSet<Entry> entries = new HashSet<Entry>();
 		entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put( Stats.MEDIAN.name(), 8 ).put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.632993162 ).build(false) );
 		entries.add( writer.at( 2 ).put( Stats.AVERAGE.name(), 10 ).put( Stats.MEDIAN.name(), 11 ).put( Stats.COUNT.name(), 4 ).put( Stats.STD_DEV.name(), 4.123105626 ).build(false) );
 		entries.add( writer.at( 3 ).put( Stats.AVERAGE.name(), 10.3333333 ).put( Stats.MEDIAN.name(), 10 ).put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.247219129 ).build(false) );
