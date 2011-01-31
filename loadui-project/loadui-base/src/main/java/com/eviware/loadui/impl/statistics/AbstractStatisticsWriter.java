@@ -15,16 +15,14 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
@@ -58,7 +56,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			10800000 // 3 hours
 	};
 	private AggregateLevel[] aggregateLevels = new AggregateLevel[4];
-	private ArrayList<Entry> firstLevelEntries = new ArrayList<Entry>();
+	private HashSet<Entry> firstLevelEntries = new HashSet<Entry>();
 
 	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values )
@@ -71,7 +69,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 
 		// init AggregationLevels, each level getting a reference to the previous
 		// level's aggregated entries.
-		ArrayList<Entry> previousLevelEntries = firstLevelEntries;
+		HashSet<Entry> previousLevelEntries = firstLevelEntries;
 		for( int i = 0; i < aggregateLevels.length; i++ )
 		{
 			aggregateLevels[i] = new AggregateLevel( aggregateIntervals[i], i + 1, previousLevelEntries );
@@ -279,10 +277,10 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		private long intervalInMillis;
 		private long lastFlush;
 		private int databaseKey;
-		private ArrayList<Entry> sourceEntries;
-		final public ArrayList<Entry> aggregatedEntries = new ArrayList<Entry>();
+		private HashSet<Entry> sourceEntries;
+		final public HashSet<Entry> aggregatedEntries = new HashSet<Entry>();
 
-		AggregateLevel( long intervalInMillis, int databaseKey, ArrayList<Entry> sourceEntries )
+		AggregateLevel( long intervalInMillis, int databaseKey, HashSet<Entry> sourceEntries )
 		{
 			this.intervalInMillis = intervalInMillis;
 			this.databaseKey = databaseKey;

@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.api.statistics;
 
-import java.util.List;
+import java.util.Set;
 
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.statistics.store.Entry;
@@ -77,7 +77,7 @@ public interface StatisticsWriter extends Addressable
 	 * @param values
 	 * @return
 	 */
-	public Entry aggregate( List<Entry> entries );
+	public Entry aggregate( Set<Entry> entries );
 
 	/**
 	 * Gets the associated StatisticVariable.

@@ -15,10 +15,10 @@
  */
 package com.eviware.loadui.util.statistics.store;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.eviware.loadui.api.statistics.store.Entry;
 
@@ -51,7 +51,7 @@ public class EntryImpl implements Entry
 	}
 
 	@Override
-	public Collection<String> getNames()
+	public Set<String> getNames()
 	{
 		return values.keySet();
 	}
@@ -69,5 +69,37 @@ public class EntryImpl implements Entry
 		sb.append( timestamp ).append( ">[" );
 		sb.append( values.toString() ).append( "]" );
 		return sb.toString();
+	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ( int )( timestamp ^ ( timestamp >>> 32 ) );
+		result = prime * result + ( ( values == null ) ? 0 : values.hashCode() );
+		return result;
+	}
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		if( this == obj )
+			return true;
+		if( obj == null )
+			return false;
+		if( getClass() != obj.getClass() )
+			return false;
+		EntryImpl other = ( EntryImpl )obj;
+		if( timestamp != other.timestamp )
+			return false;
+		if( values == null )
+		{
+			if( other.values != null )
+				return false;
+		}
+		else if( !values.equals( other.values ) )
+			return false;
+		return true;
 	}
 }

@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.api.statistics.store;
 
-import java.util.Collection;
+import java.util.Set;
 
 /**
  * An entry of a Track, corresponds to a database record where the timestamp is
@@ -38,7 +38,7 @@ public interface Entry
 	 * 
 	 * @return
 	 */
-	public Collection<String> getNames();
+	public Set<String> getNames();
 
 	/**
 	 * Gets the value for the given name.
