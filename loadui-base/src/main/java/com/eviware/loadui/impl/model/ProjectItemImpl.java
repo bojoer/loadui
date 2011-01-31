@@ -62,6 +62,7 @@ import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
@@ -777,7 +778,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		}
 	}
 
-	private class AgentListener implements EventHandler<BaseEvent>, MessageListener
+	private class AgentListener implements EventHandler<BaseEvent>, MessageListener, Releasable
 	{
 		private final Set<AgentItem> agents = new HashSet<AgentItem>();
 		private final AgentContextListener subListener = new AgentContextListener();
@@ -802,6 +803,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			}
 		}
 
+		@Override
 		public void release()
 		{
 			for( AgentItem agent : agents )

@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,7 +60,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 	@Override
 	public File convert( Reference source )
 	{
-		if( source.getId().startsWith( ":" ) )
+		if( source.getId().charAt( 0 ) == ':' )
 			return new File( source.getId().substring( 1 ) );
 
 		File target = getOrCreate( source );

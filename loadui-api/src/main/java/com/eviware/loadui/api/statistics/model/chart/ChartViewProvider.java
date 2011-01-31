@@ -72,10 +72,4 @@ public interface ChartViewProvider<ChartViewType extends ChartView>
 	 * @return
 	 */
 	public Collection<ChartViewType> getChartViewsForSources();
-
-	/**
-	 * Call when the ChartViewProvider is no longer needed to release any
-	 * listeners it has registered.
-	 */
-	public void release();
 }

@@ -40,6 +40,7 @@ import com.eviware.loadui.impl.XmlBeansUtils;
 import com.eviware.loadui.impl.model.OrderedCollectionSupport;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.StringUtils;
 import com.eviware.loadui.util.events.EventSupport;
 
@@ -103,8 +104,7 @@ public class ChartGroupImpl implements ChartGroup
 		{
 			config.setType( type );
 
-			if( provider != null )
-				provider.release();
+			ReleasableUtils.release( provider );
 			provider = providerFactory.buildProvider( type, this );
 
 			fireEvent( new BaseEvent( this, TYPE ) );
@@ -326,9 +326,7 @@ public class ChartGroupImpl implements ChartGroup
 	public void release()
 	{
 		statisticsManager.removeEventListener( BaseEvent.class, listener );
-		if( template != null )
-			template.release();
-		provider.release();
+		ReleasableUtils.releaseAll( template, provider );
 		collectionSupport.releaseChildren();
 		fireEvent( new BaseEvent( this, RELEASED ) );
 		eventSupport.clearEventListeners();

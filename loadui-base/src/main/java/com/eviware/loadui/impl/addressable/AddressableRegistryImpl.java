@@ -19,6 +19,9 @@ import java.util.EventObject;
 import java.util.Map;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.CollectionEvent;
@@ -28,6 +31,8 @@ import com.eviware.loadui.util.events.EventSupport;
 
 public class AddressableRegistryImpl implements AddressableRegistry
 {
+	public static final Logger log = LoggerFactory.getLogger( AddressableRegistryImpl.class );
+
 	private final Map<String, Addressable> lookupTable = new CacheMap<String, Addressable>();
 	private final EventSupport eventSupport = new EventSupport();
 
@@ -47,7 +52,7 @@ public class AddressableRegistryImpl implements AddressableRegistry
 	public void register( Addressable addressable ) throws DuplicateAddressException
 	{
 		if( lookupTable.containsKey( addressable.getId() ) && lookup( addressable.getId() ) != addressable )
-			throw new DuplicateAddressException( addressable.getId() );
+			throw new DuplicateAddressException( addressable, lookup( addressable.getId() ) );
 
 		lookupTable.put( addressable.getId(), addressable );
 		fireEvent( new CollectionEvent( this, ADDRESSABLES, CollectionEvent.Event.ADDED, addressable ) );

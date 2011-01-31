@@ -66,6 +66,7 @@ import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.summary.MutableSummaryImpl;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 
 public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends ModelItemImpl<Config> implements
 		CanvasItem, StatisticHolder
@@ -384,8 +385,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		connections.clear();
 		summary = null;
 
-		counterStatisticSupport.release();
-		statisticHolderSupport.release();
+		ReleasableUtils.releaseAll( counterStatisticSupport, statisticHolderSupport );
 
 		super.release();
 	}
