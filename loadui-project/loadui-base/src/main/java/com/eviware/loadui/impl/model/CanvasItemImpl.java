@@ -119,7 +119,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		behaviorProvider = BeanInjector.getBean( BehaviorProvider.class );
 
 		statisticHolderSupport = new StatisticHolderSupport( this );
-		counterStatisticSupport = new CounterStatisticSupport( this, statisticHolderSupport );
+		counterStatisticSupport = new CounterStatisticSupport( this,
+				statisticHolderSupport.addStatisticVariable( "Throughput" ), REQUEST_COUNTER );
 
 		abortOnFinish = createProperty( ABORT_ON_FINISH_PROPERTY, Boolean.class, false );
 	}

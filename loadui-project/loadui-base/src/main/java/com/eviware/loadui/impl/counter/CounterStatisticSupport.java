@@ -20,33 +20,24 @@ import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.MutableStatisticVariable;
-import com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter;
-import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
-import com.eviware.loadui.util.ReleasableUtils;
 
 public class CounterStatisticSupport implements EventHandler<CounterEvent>, Releasable
 {
 	private CounterHolder counterHolder;
-	private StatisticHolderSupport statisticHolderSupport;
+	private MutableStatisticVariable statisticVariable;
+	private String counterName;
 
-	public CounterStatisticSupport( CounterHolder counterHolder, StatisticHolderSupport statisticHolderSupport )
+	public CounterStatisticSupport( CounterHolder counterHolder, MutableStatisticVariable statisticVariable,
+			String counterName )
 	{
-
 		this.counterHolder = counterHolder;
-		this.statisticHolderSupport = statisticHolderSupport;
-
+		this.statisticVariable = statisticVariable;
+		this.counterName = counterName;
 	}
 
 	public void init()
 	{
 		counterHolder.addEventListener( CounterEvent.class, this );
-
-		// if there is no request per second add it.
-		if( statisticHolderSupport.getStatisticVariable( "RequestPerSecond" ) == null )
-		{
-			MutableStatisticVariable throughputVariable = statisticHolderSupport.addStatisticVariable( "Throughput" );
-			statisticHolderSupport.addStatisticsWriter( ThroughputStatisticsWriter.TYPE, throughputVariable );
-		}
 	}
 
 	@Override
@@ -58,15 +49,7 @@ public class CounterStatisticSupport implements EventHandler<CounterEvent>, Rele
 	@Override
 	public void handleEvent( CounterEvent event )
 	{
-		synchronized( statisticHolderSupport )
-		{
-			for( String sv : statisticHolderSupport.getStatisticVariableNames() )
-			{
-				( ( MutableStatisticVariable )statisticHolderSupport.getStatisticVariable( sv ) ).update(
-						System.currentTimeMillis(), event.getValue() );
-			}
-
-		}
+		if( event.getKey().equals( counterName ) )
+			statisticVariable.update( System.currentTimeMillis(), event.getValue() );
 	}
-
 }
