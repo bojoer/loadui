@@ -21,6 +21,7 @@ import static org.hamcrest.CoreMatchers.*;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Random;
 
 import org.junit.Before;
@@ -119,14 +120,18 @@ public class ThroughputStatisticsWriterTest
 				.put( ThroughputStatisticsWriter.Stats.BPS.name(), 93 )
 				.put( ThroughputStatisticsWriter.Stats.TPS.name(), 11 ).getImmutable() );
 
-		Entry entry = writer.aggregate( Collections.<Entry> emptyList() );
+		Entry entry = writer.aggregate( Collections.<Entry> emptySet() );
 		assertNull( entry );
 
-		entry = writer.aggregate( Arrays.asList( e1 ) );
+		HashSet<Entry> entries = new HashSet<Entry>();
+		entries.add( e1 );
+		entry = writer.aggregate( entries );
 
 		assertThat( entry, is( e1 ) );
 
-		entry = writer.aggregate( Arrays.asList( e1, e2, e3 ) );
+		entries.clear();
+		entries.addAll( Arrays.asList( e1, e2, e3 ) );
+		entry = writer.aggregate( entries );
 
 		assertNotNull( entry );
 

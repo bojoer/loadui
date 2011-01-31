@@ -75,7 +75,7 @@ public class TestCaseDataTableModel extends AbstractTableModel
 		}
 	}
 
-	public static class TestCaseDataModel
+	public class TestCaseDataModel
 	{
 		String name;
 		String execTime;
