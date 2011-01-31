@@ -828,8 +828,15 @@
 	-fx-text-fill: #9b9b9b;
 }
 
-.style-panel *.slider *.thumb, .style-panel *.slider:focused *.thumb, .scale-panel *.slider *.thumb, .scale-panel *.slider:focused *.thumb {
-    -fx-background-color: #404040, #8b8b8b, #404040;
+.style-panel *.slider *.thumb, .style-panel *.slider:focused *.thumb {
+    -fx-background-color: #404040, #8b8b8b, #797979;
+    -fx-background-radius: 2, 2, 0;
+    -fx-background-insets: 0, 1, 1 5.5;
+    -fx-padding: 8 6;
+}
+
+.scale-panel *.slider *.thumb, .scale-panel *.slider:focused *.thumb {
+    -fx-background-color: #404040, #8b8b8b, #797979;
     -fx-background-radius: 2, 2, 0;
     -fx-background-insets: 0, 1, 1 5.5;
     -fx-padding: 8 6;

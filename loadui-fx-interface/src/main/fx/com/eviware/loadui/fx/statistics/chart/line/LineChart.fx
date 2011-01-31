@@ -261,7 +261,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 			def model = m as LineSegmentChartModel;
 			model.refresh();
 			maxTime = Math.max( maxTime, (model as LineSegmentChartModel).latestTime );
-			def yRange = model.getYRange();
+			def yRange = model.getYRange( 0.05, 0.05 );
 			min = Math.min( min, yRange.minimum() );
 			max = Math.max( max, yRange.maximum() );
 		}
@@ -269,8 +269,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 			min = 0;
 			max = 100;
 		}
-		def yPadding = (max-min)*0.1;
-		chart.getYAxis().setRange( min - yPadding, max + yPadding );
+		chart.getYAxis().setRange( min, max );
 		if( showAll ) {
 			timeSpan = maxTime as Integer;
 			def level = TotalTimeTickCalculator.Level.forSpan( timeSpan / 1000 );
