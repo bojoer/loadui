@@ -15,8 +15,8 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -140,10 +140,9 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	public Entry aggregate( List<Entry> entries )
+	public Entry aggregate( Set<Entry> entries )
 	{
 		// TODO Implement this
 		return null;
 	}
-
 }

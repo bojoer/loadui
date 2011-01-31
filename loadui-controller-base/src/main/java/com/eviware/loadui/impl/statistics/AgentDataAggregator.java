@@ -15,10 +15,10 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class AgentDataAggregator
 
 	private final static int BUFFER_SIZE = 5;
 
-	private final TreeMap<Long, Map<Integer, Map<String, List<Entry>>>> times = new TreeMap<Long, Map<Integer, Map<String, List<Entry>>>>();
+	private final TreeMap<Long, Map<Integer, Map<String, Set<Entry>>>> times = new TreeMap<Long, Map<Integer, Map<String, Set<Entry>>>>();
 	private final ExecutionManager executionManager;
 	private final AddressableRegistry addressableRegistry;
 
@@ -59,10 +59,10 @@ public class AgentDataAggregator
 
 		if( !times.containsKey( time ) )
 		{
-			times.put( time, new TreeMap<Integer, Map<String, List<Entry>>>() );
+			times.put( time, new TreeMap<Integer, Map<String, Set<Entry>>>() );
 			if( times.size() > BUFFER_SIZE )
 			{
-				java.util.Map.Entry<Long, Map<Integer, Map<String, List<Entry>>>> oldestEntry = times.pollFirstEntry();
+				java.util.Map.Entry<Long, Map<Integer, Map<String, Set<Entry>>>> oldestEntry = times.pollFirstEntry();
 				if( oldestEntry.getKey().equals( time ) )
 				{
 					log.debug( "Received expired Entry: {} from: {}", entry, agent.getLabel() );
@@ -71,25 +71,25 @@ public class AgentDataAggregator
 				flush( oldestEntry.getValue() );
 			}
 		}
-		Map<Integer, Map<String, List<Entry>>> levels = times.get( time );
+		Map<Integer, Map<String, Set<Entry>>> levels = times.get( time );
 
 		if( !levels.containsKey( level ) )
-			levels.put( level, new HashMap<String, List<Entry>>() );
-		Map<String, List<Entry>> tracks = levels.get( level );
+			levels.put( level, new HashMap<String, Set<Entry>>() );
+		Map<String, Set<Entry>> tracks = levels.get( level );
 
 		if( !tracks.containsKey( trackId ) )
-			tracks.put( trackId, new ArrayList<Entry>() );
-		List<Entry> entries = tracks.get( trackId );
+			tracks.put( trackId, new HashSet<Entry>() );
+		Set<Entry> entries = tracks.get( trackId );
 
 		entries.add( entry );
 	}
 
-	private synchronized void flush( Map<Integer, Map<String, List<Entry>>> map )
+	private synchronized void flush( Map<Integer, Map<String, Set<Entry>>> map )
 	{
-		for( Map.Entry<Integer, Map<String, List<Entry>>> e : map.entrySet() )
+		for( Map.Entry<Integer, Map<String, Set<Entry>>> e : map.entrySet() )
 		{
 			int level = e.getKey();
-			for( Map.Entry<String, List<Entry>> e2 : e.getValue().entrySet() )
+			for( Map.Entry<String, Set<Entry>> e2 : e.getValue().entrySet() )
 			{
 				String trackId = e2.getKey();
 				StatisticsWriter writer = ( StatisticsWriter )addressableRegistry.lookup( trackId );

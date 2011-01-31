@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.statistics;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -97,15 +98,15 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	public Entry aggregate( List<Entry> entries )
+	public Entry aggregate( Set<Entry> entries )
 	{
 		if( entries.size() <= 1 )
-			return entries.size() == 0 ? null : entries.get( 0 );
+			return entries.size() == 0 ? null : entries.iterator().next();
 
 		double tpsSum = 0;
 		double bpsSum = 0;
 		long minTime = Long.MAX_VALUE;
-		long maxTime = 0;
+		long maxTime = -1;
 		for( Entry entry : entries )
 		{
 			bpsSum += entry.getValue( Stats.BPS.name() ).doubleValue();

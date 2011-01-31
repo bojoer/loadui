@@ -18,6 +18,7 @@ package com.eviware.loadui.impl.statistics;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -126,32 +127,32 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			double previousValue = 0;
 			int upperPercPos50 = 0, upperPercPos90 = 0;
 			double diff50 = 0, diff90 = 0;
-			
-			// percentile precalculations			
-			if ( sortedValues.size() != 1 )
+
+			// percentile precalculations
+			if( sortedValues.size() != 1 )
 			{
-				double percentilePos50 = 50 * ((double) sortedValues.size() + 1 ) / 100 - 1;
-				double percentilePos90 = 90 * ((double) sortedValues.size() + 1 ) / 100 - 1;
+				double percentilePos50 = 50 * ( ( double )sortedValues.size() + 1 ) / 100 - 1;
+				double percentilePos90 = 90 * ( ( double )sortedValues.size() + 1 ) / 100 - 1;
 				if( percentilePos90 >= sortedValues.size() - 1 )
 				{
 					upperPercPos90 = sortedValues.size() - 1;
 				}
 				else
 				{
-					upperPercPos90 = (int) Math.floor( percentilePos90 ) + 1;
+					upperPercPos90 = ( int )Math.floor( percentilePos90 ) + 1;
 				}
-				upperPercPos50 = (int) Math.floor( percentilePos50 ) + 1;
+				upperPercPos50 = ( int )Math.floor( percentilePos50 ) + 1;
 				diff50 = percentilePos50 - Math.floor( percentilePos50 );
 				diff90 = percentilePos90 - Math.floor( percentilePos90 );
 			}
-			
+
 			for( double value : sortedValues )
 			{
 				sumTotalSquare += Math.pow( value - average, 2 );
 				if( i == upperPercPos50 )
-					percentile50 = previousValue + diff50 * (value - previousValue);
+					percentile50 = previousValue + diff50 * ( value - previousValue );
 				if( i == upperPercPos90 )
-					percentile90 = previousValue + diff90 * (value - previousValue);
+					percentile90 = previousValue + diff90 * ( value - previousValue );
 				previousValue = value;
 				i++ ;
 			}
@@ -161,7 +162,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			}
 
 			stdDev = Math.sqrt( sumTotalSquare / count );
-			//percentile = perc.evaluate( pValues );
+			// percentile = perc.evaluate( pValues );
 
 			lastTimeFlushed = System.currentTimeMillis();
 
@@ -179,7 +180,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	}
 
 	/**
-	 * Aggregates a list of Entrys.
+	 * Aggregates a list of Entries.
 	 * 
 	 * Note that we are using Population based Standard deviation, as opposed to
 	 * Sample based Standard deviation.
@@ -191,15 +192,15 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	 * 
 	 * @author henrik.olsson
 	 */
-	public Entry aggregate( List<Entry> entries )
+	@Override
+	public Entry aggregate( Set<Entry> entries )
 	{
 		if( entries.size() == 0 )
 			return null;
 		if( entries.size() == 1 )
-			return entries.get( 0 );
+			return entries.iterator().next();
 
-		Entry lastEntry = entries.get( entries.size() - 1 );
-
+		long timestamp = -1;
 		double totalSum = 0;
 		double medianSum = 0;
 		long totalCount = 0;
@@ -209,6 +210,8 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		{
 			long count = e.getValue( Stats.COUNT.name() ).longValue();
 			double average = e.getValue( Stats.AVERAGE.name() ).doubleValue();
+
+			timestamp = Math.max( timestamp, e.getTimestamp() );
 
 			// median - not really median of all subpopulations, rather a weighted
 			// average of the subpopulations' medians (performance reasons).
@@ -224,7 +227,6 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 					* ( Math.pow( e.getValue( Stats.STD_DEV.name() ).doubleValue(), 2 ) + Math.pow( average, 2 ) );
 		}
 		double totalAverage = totalSum / totalCount;
-		long timestamp = lastEntry.getTimestamp();
 		double stddev = Math.sqrt( stddev_partA / totalCount - Math.pow( totalAverage, 2 ) );
 		double percentile = stddev * 1.281552; // 90th percentile = mean + z *
 															// stddev | z = 1.281552

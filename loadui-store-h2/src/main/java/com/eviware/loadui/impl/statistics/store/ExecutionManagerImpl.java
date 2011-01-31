@@ -347,7 +347,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			catch( SQLException e )
 			{
 				logger.error( "Unable to write data to the database:", e );
-				logger.error( "Unable to store entry: {}", entry );
+				logger.error( "Unable to store entry: {} for source: {} at level: {}", new Object[] { entry, source,
+						interpolationLevel } );
 				throw new RuntimeException( "Unable to write data to the database!", e );
 			}
 		}
