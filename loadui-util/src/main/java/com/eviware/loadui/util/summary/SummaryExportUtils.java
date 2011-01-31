@@ -172,7 +172,6 @@ public class SummaryExportUtils
 									xmlw.writeCharacters( "\t\t\t" );
 									xmlw.writeStartElement( "row" );
 									xmlw.writeCharacters( "\n" );
-									StringBuffer row = new StringBuffer();
 									for( int i = 0; i < table.getColumnCount(); i++ )
 									{
 										xmlw.writeCharacters( "\t\t\t\t" );
