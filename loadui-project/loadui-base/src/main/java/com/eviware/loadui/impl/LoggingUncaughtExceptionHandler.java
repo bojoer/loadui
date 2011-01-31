@@ -1,11 +1,9 @@
 package com.eviware.loadui.impl;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoggingUncaughtExceptionHandler implements UncaughtExceptionHandler
+public class LoggingUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
 {
 	@Override
 	public void uncaughtException( Thread t, Throwable e )

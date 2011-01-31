@@ -76,5 +76,11 @@ public interface AddressableRegistry extends EventFirer
 		{
 			super( "Duplicate address detected: " + id );
 		}
+
+		public DuplicateAddressException( Addressable a1, Addressable a2 )
+		{
+			super( "Duplicate address detected between objects: " + a1 + " and " + a2 + " with the common address: "
+					+ a1.getId() );
+		}
 	}
 }

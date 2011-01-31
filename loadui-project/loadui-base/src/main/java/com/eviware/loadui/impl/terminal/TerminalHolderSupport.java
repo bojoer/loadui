@@ -23,6 +23,7 @@ import java.util.Map;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.CollectionEvent.Event;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
@@ -30,7 +31,7 @@ import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalHolder;
 import com.eviware.loadui.util.BeanInjector;
 
-public class TerminalHolderSupport
+public class TerminalHolderSupport implements Releasable
 {
 	private final TerminalHolder owner;
 	private final Map<String, Terminal> terminals = new LinkedHashMap<String, Terminal>();
@@ -106,6 +107,7 @@ public class TerminalHolderSupport
 		return terminals.get( terminal.getLabel() ) == terminal;
 	}
 
+	@Override
 	public void release()
 	{
 		for( Terminal terminal : terminals.values() )

@@ -18,11 +18,13 @@ package com.eviware.loadui.impl.counter;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 import com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter;
 import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
+import com.eviware.loadui.util.ReleasableUtils;
 
-public class CounterStatisticSupport implements EventHandler<CounterEvent>
+public class CounterStatisticSupport implements EventHandler<CounterEvent>, Releasable
 {
 	private CounterHolder counterHolder;
 	private StatisticHolderSupport statisticHolderSupport;
@@ -47,6 +49,7 @@ public class CounterStatisticSupport implements EventHandler<CounterEvent>
 		}
 	}
 
+	@Override
 	public void release()
 	{
 		counterHolder.removeEventListener( CounterEvent.class, this );

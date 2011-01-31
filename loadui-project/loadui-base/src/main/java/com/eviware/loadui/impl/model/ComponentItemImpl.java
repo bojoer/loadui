@@ -67,7 +67,6 @@ import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalHolder;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.config.ComponentItemConfig;
-import com.eviware.loadui.impl.counter.CounterStatisticSupport;
 import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.counter.RemoteAggregatedCounterSupport;
 import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
@@ -75,6 +74,7 @@ import com.eviware.loadui.impl.terminal.OutputTerminalImpl;
 import com.eviware.loadui.impl.terminal.TerminalHolderSupport;
 import com.eviware.loadui.impl.terminal.TerminalMessageImpl;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 
 public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implements ComponentItem
 {
@@ -254,8 +254,9 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 			triggerAction( CanvasItem.STOP_ACTION );
 		if( behavior != null )
 			behavior.onRelease();
-		terminalHolderSupport.release();
-		statisticHolderSupport.release();
+
+		ReleasableUtils.releaseAll( terminalHolderSupport, statisticHolderSupport );
+
 		settingsTabs.clear();
 		layout = null;
 

@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -40,7 +41,7 @@ import com.eviware.loadui.util.ReleasableUtils;
  * 
  * @author dain.nilsson
  */
-public class StatisticHolderSupport
+public class StatisticHolderSupport implements Releasable
 {
 	public static Logger log = LoggerFactory.getLogger( StatisticHolderSupport.class );
 
@@ -136,10 +137,11 @@ public class StatisticHolderSupport
 	 * removes the StatisticHolder from the registry. Should be called when the
 	 * StatisticHolder is destroyed.
 	 */
+	@Override
 	public void release()
 	{
 		manager.deregisterStatisticHolder( owner );
-		ReleasableUtils.release( variables.values() );
+		ReleasableUtils.releaseAll( variables.values() );
 	}
 
 }

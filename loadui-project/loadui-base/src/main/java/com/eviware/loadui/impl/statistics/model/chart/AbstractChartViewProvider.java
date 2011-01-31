@@ -23,6 +23,7 @@ import java.util.Map;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.OrderedCollection;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
@@ -38,7 +39,7 @@ import com.eviware.loadui.util.ReleasableUtils;
  * @param <ChartViewType>
  */
 public abstract class AbstractChartViewProvider<ChartViewType extends ChartView> implements
-		ChartViewProvider<ChartViewType>
+		ChartViewProvider<ChartViewType>, Releasable
 {
 	private final Map<Chart, ChartViewType> chartChartViews = new HashMap<Chart, ChartViewType>();
 	private final Map<String, ChartViewType> sourceChartViews = new HashMap<String, ChartViewType>();
