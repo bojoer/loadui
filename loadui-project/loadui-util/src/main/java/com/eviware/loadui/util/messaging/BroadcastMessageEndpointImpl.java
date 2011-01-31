@@ -19,7 +19,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -76,7 +78,17 @@ public class BroadcastMessageEndpointImpl implements BroadcastMessageEndpoint
 	@Override
 	public void removeMessageListener( MessageListener listener )
 	{
-		listeners.remove( listener );
+		Iterator<Entry<Pattern, MessageListener>> it = listeners.entrySet().iterator();
+		while( it.hasNext() )
+		{
+			Entry<Pattern, MessageListener> entry = it.next();
+			
+			if( entry.getValue().equals( listener ) )
+			{
+				it.remove();
+				break;
+			}
+		}
 	}
 
 	@Override

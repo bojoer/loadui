@@ -139,7 +139,8 @@ public class ClientHttpRequest extends Observable
 
 	private void postCookies()
 	{
-		StringBuffer cookieList = new StringBuffer( rawCookies );
+		// StringBuilder is the same as StringBuffer, but without synchronization
+		StringBuilder cookieList = new StringBuilder( rawCookies );
 		for( Map.Entry<String, String> cookie : cookies.entrySet() )
 		{
 			if( cookieList.length() > 0 )

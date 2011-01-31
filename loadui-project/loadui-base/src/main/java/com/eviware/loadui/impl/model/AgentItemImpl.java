@@ -170,7 +170,7 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	@Override
 	public void setUrl( String url )
 	{
-		if( !getConfig().equals( url ) )
+		if( !getConfig().getUrl().equals( url ) )
 		{
 			getConfig().setUrl( url );
 			setupClient();

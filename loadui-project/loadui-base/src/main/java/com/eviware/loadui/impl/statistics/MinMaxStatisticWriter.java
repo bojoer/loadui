@@ -96,8 +96,8 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	@Override
 	public void update( long timestamp, Number value )
 	{
-		Boolean dirty = false;
-		synchronized( dirty )
+		boolean dirty = false;
+		synchronized( this )
 		{
 			double doubleValue = value.doubleValue();
 			if( minimum == null || minimum > doubleValue )

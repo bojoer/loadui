@@ -24,7 +24,7 @@ public abstract class KeyValueTableModel extends AbstractTableModel
 
 	private static final long serialVersionUID = 6138113207187331068L;
 	
-	protected static String[] header = { "Key", "Value" };
+	protected String[] header = { "Key", "Value" };
 	
 	public KeyValueTableModelObserver observer = new KeyValueTableModelObserver( this );
 

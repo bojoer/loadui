@@ -124,7 +124,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 			int i = 0;
 			double previousValue = 0;
-			double upperPercPos50 = 0, upperPercPos90 = 0;
+			int upperPercPos50 = 0, upperPercPos90 = 0;
 			double diff50 = 0, diff90 = 0;
 			
 			// percentile precalculations			
@@ -138,9 +138,9 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 				}
 				else
 				{
-					upperPercPos90 = Math.floor( percentilePos90 ) + 1;
+					upperPercPos90 = (int) Math.floor( percentilePos90 ) + 1;
 				}
-				upperPercPos50 = Math.floor( percentilePos50 ) + 1;
+				upperPercPos50 = (int) Math.floor( percentilePos50 ) + 1;
 				diff50 = percentilePos50 - Math.floor( percentilePos50 );
 				diff90 = percentilePos90 - Math.floor( percentilePos90 );
 			}

@@ -192,7 +192,7 @@ public abstract class TableBase
 		Map<String, ? extends Object> staticFields = descriptor.getStaticFields();
 		List<String> pkSequence = descriptor.getPkSequence();
 
-		StringBuffer b = new StringBuffer();
+		StringBuilder b = new StringBuilder();
 		b.append( metadataProvider.getCreateTableExpression() );
 		b.append( " " );
 		b.append( tableName );
