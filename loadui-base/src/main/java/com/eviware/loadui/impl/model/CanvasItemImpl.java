@@ -499,6 +499,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	protected void reset()
 	{
 		startTime = isRunning() ? new Date() : null;
+		endTime = null;
 		hasStarted = isRunning();
 		setTime( 0 );
 		fixTimeLimit();

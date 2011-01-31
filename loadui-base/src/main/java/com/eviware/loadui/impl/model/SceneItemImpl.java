@@ -275,7 +275,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	protected void onComplete( EventFirer source )
 	{
-		if( "controller".equals( System.getProperty( "loadui.instance" ) ) && source.equals( this ) )
+		if( LoadUI.CONTROLLER.equals( System.getProperty( "loadui.instance" ) ) && source.equals( this ) )
 		{
 			// on controller when source is this test case (for both local and
 			// distributed mode)...add ON_COMPLETE_DONE event listener to this test
@@ -305,7 +305,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 		if( LoadUI.AGENT.equals( System.getProperty( LoadUI.INSTANCE ) ) )
 		{
-			// if on agent, application is running in distributed mode, so send
+			// on agent, application is running in distributed mode, so send
 			// data to the controller
 
 			Map<String, Object> data = new HashMap<String, Object>();
@@ -326,13 +326,17 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			// this is a hack, since sometimes time variable is not reset when
 			// running multiple tests on agent one after another. So the result
 			// time is actually the execution time is accumulated time from
-			// previous
-			// tests.
+			// previous tests.
 			setTime( 0 );
 		}
-		else if( project.getWorkspace().isLocalMode() )
+		else if( project.getWorkspace().isLocalMode() || !project.getWorkspace().isLocalMode()
+				&& getActiveAgents().size() == 0 )
 		{
-			// on controller and in local mode
+			// on controller, in local mode or in distributed mode with no active
+			// agents
+			// NOTE: when in distributed mode and there are no active agents scene
+			// would never finish and controller won't receive info from it so mark
+			// this scene as completed immediately.
 
 			// if source is project, set completed will inform project (over
 			// SceneAwaiter) that this test case has finished.
@@ -418,7 +422,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		chap.addSection( new TestCaseExecutionNotablesSection( this ) );
 		chap.addSection( new TestCaseDataSection( this ) );
 		chap.setDescription( getDescription() );
-		
+
 		for( ComponentItem component : getComponents() )
 		{
 			component.generateSummary( chap );
