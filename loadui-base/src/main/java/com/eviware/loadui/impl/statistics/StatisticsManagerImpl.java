@@ -190,7 +190,7 @@ public class StatisticsManagerImpl implements StatisticsManager
 		@Override
 		public void handleEvent( CollectionEvent event )
 		{
-			if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
+			if( CollectionEvent.Event.ADDED == event.getEvent() )
 			{
 				if( WorkspaceItem.PROJECTS.equals( event.getKey() ) )
 					( ( ProjectItem )event.getElement() ).addEventListener( ActionEvent.class, runningListener );

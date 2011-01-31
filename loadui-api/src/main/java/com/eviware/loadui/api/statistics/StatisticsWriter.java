@@ -100,18 +100,4 @@ public interface StatisticsWriter extends Addressable
 	 * @return
 	 */
 	public String getType();
-
-	/**
-	 * Get buffer size for holding data
-	 */
-	@Deprecated
-	public int getBufferSize();
-
-	/**
-	 * Set size of buffer for holding data
-	 * 
-	 * @param bufferSize
-	 */
-	@Deprecated
-	public void setBufferSize( int bufferSize );
 }

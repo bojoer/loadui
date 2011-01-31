@@ -134,7 +134,7 @@ public class AgentCounterSynchronizer implements CounterSynchronizer
 		}
 	}
 
-	private class HolderData
+	private static class HolderData
 	{
 		MessageEndpoint endpoint;
 		Map<String, Long> counterData = new HashMap<String, Long>();

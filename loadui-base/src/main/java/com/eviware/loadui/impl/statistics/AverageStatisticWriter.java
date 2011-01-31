@@ -39,7 +39,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 {
 	public static final String TYPE = "AVERAGE";
 
-	private Logger log = LoggerFactory.getLogger( AverageStatisticWriter.class );
+	public static final Logger log = LoggerFactory.getLogger( AverageStatisticWriter.class );
 
 	public enum Stats
 	{

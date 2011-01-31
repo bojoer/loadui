@@ -340,7 +340,7 @@ public class ChartGroupImpl implements ChartGroup
 			if( event instanceof CollectionEvent )
 			{
 				CollectionEvent cEvent = ( CollectionEvent )event;
-				if( CollectionEvent.Event.ADDED.equals( cEvent.getEvent() ) )
+				if( CollectionEvent.Event.ADDED == cEvent.getEvent() )
 				{
 					if( template != null )
 						template.filter( ( StatisticHolder )cEvent.getElement(), ChartGroupImpl.this );

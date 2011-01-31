@@ -663,7 +663,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		}
 	}
 
-	private class AssignmentImpl implements Assignment
+	private static class AssignmentImpl implements Assignment
 	{
 		private final SceneItem scene;
 		private final AgentItem agent;
@@ -954,7 +954,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			if( event instanceof CollectionEvent )
 			{
 				CollectionEvent cEvent = ( CollectionEvent )event;
-				if( WorkspaceItem.AGENTS.equals( event.getKey() ) )
+				if( WorkspaceItem.AGENTS == event.getKey() )
 				{
 					AgentItem agent = ( AgentItem )cEvent.getElement();
 					if( CollectionEvent.Event.ADDED.equals( cEvent.getEvent() ) )

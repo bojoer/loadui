@@ -464,7 +464,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 				{
 					AgentItem agent = assignment.getAgent();
 					AgentTerminal agentTerminal;
-					if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) && !agentTerminals.containsKey( agent ) )
+					if( CollectionEvent.Event.ADDED == event.getEvent() && !agentTerminals.containsKey( agent ) )
 					{
 						agentTerminal = new AgentTerminal( agent );
 						agentTerminals.put( agent, agentTerminal );
@@ -1006,8 +1006,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ( ( handler == null ) ? 0 : handler.hashCode() );
-			result = prime * result + ( ( type == null ) ? 0 : type.hashCode() );
-			return result;
+			return prime * result + ( ( type == null ) ? 0 : type.hashCode() );
 		}
 
 		@Override

@@ -165,7 +165,7 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 			if( OrderedCollection.CHILDREN.equals( event.getKey() ) )
 			{
 				Chart chart = ( Chart )event.getElement();
-				if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
+				if( CollectionEvent.Event.ADDED == event.getEvent() )
 				{
 					getChartViewForChart( chart );
 				}

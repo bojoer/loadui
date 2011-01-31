@@ -146,7 +146,7 @@ public class ValueStatistics
 		dataPoints.clear();
 	}
 
-	public class DataPoint
+	public static class DataPoint
 	{
 		private final long timestamp;
 		private final long value;
