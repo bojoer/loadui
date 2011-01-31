@@ -54,6 +54,7 @@ public class TrashHole extends BaseNode, Droppable{
 	}
 	
 	override var accept = function( d:Draggable ) {
+		println("Trash: {d}");
 		d instanceof Deletable or d instanceof ProjectNode
 	}
 	

@@ -93,7 +93,7 @@ public class ColorPicker extends MenuButton {
 						spacing: 5
 						nodeVPos: VPos.CENTER
 						content: [
-							Rectangle { width: 18, height: 18, fill: bind color },
+							Rectangle { width: 36, height: 18, fill: bind color },
 							Label { text: "Pick a color    Hex #"},
 							textbox
 						]

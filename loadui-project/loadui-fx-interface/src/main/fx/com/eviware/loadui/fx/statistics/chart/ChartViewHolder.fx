@@ -78,7 +78,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 		ReleasableUtils.release( oldValue );
 	}
 	
-	var vbox:VBox;
+	protected var vbox:VBox;
 	var vbox2:VBox;
 	
 	def resizable:VBox = VBox {
@@ -90,7 +90,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 				padding: Insets { left: 12, top: 10, right: 12, bottom: 2 }
 				content: [
 					Region { width: bind vbox.width, height: bind vbox.height, managed: false, styleClass: bind styleClass },
-					Label { styleClass: "title", text: bind label.toUpperCase() },
+					//Label { styleClass: "title", text: bind label.toUpperCase() },
 					HBox {
 						layoutInfo: LayoutInfo { width: bind width }
 						spacing: 5

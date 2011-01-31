@@ -87,6 +87,10 @@ public class ChartGroupChartViewHolder extends ChartViewHolder {
 		chartView = chartGroup.getChartView();
 	}
 	
+	init {
+		insert Label { styleClass: "title", text: bind label.toUpperCase() } after vbox.content[0];
+	}
+	
 	override function rebuildChartButtons() {
 		[
 			expandCharts,
