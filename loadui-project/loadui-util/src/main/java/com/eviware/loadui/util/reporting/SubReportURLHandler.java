@@ -79,7 +79,7 @@ public class SubReportURLHandler extends URLStreamHandler
 	}
 
 
-	private class SubreportConnection extends URLConnection
+	private static class SubreportConnection extends URLConnection
 	{
 		private ByteArrayInputStream in;
 

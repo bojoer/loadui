@@ -86,7 +86,7 @@ public class FileToReferenceConverter implements Converter<File, Reference>
 		}
 	}
 
-	private class FileSender implements Runnable
+	private static class FileSender implements Runnable
 	{
 		private final String hash;
 		private final File file;

@@ -153,7 +153,7 @@ public class ChartImpl implements Chart
 		@Override
 		public void handleEvent( CollectionEvent event )
 		{
-			if( CollectionEvent.Event.REMOVED.equals( event.getEvent() ) && event.getElement() == statisticHolder )
+			if( CollectionEvent.Event.REMOVED == event.getEvent() && event.getElement() == statisticHolder )
 				delete();
 		}
 	}

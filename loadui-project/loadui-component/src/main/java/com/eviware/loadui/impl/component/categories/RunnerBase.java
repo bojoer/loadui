@@ -172,7 +172,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		if( canvasItem instanceof SceneItem )
 		{
 			updateTask = scheduler.scheduleAtFixedRate( new UpdateRemoteTask(), 1, 1, TimeUnit.SECONDS );
-			if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) && canvasItem instanceof SceneItem )
+			if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) )
 				canvasItem.getProject().addEventListener( CollectionEvent.class,
 						assignmentListener = new AssignmentListener() );
 			else

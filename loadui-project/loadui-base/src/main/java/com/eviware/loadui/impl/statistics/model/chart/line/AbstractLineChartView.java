@@ -132,7 +132,7 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 			if( LineChartViewProvider.LINE_SEGMENTS.equals( event.getKey() ) )
 			{
 				LineSegment segment = ( LineSegment )event.getElement();
-				if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
+				if( CollectionEvent.Event.ADDED == event.getEvent() )
 					segmentAdded( segment );
 				else
 					segmentRemoved( segment );

@@ -300,8 +300,7 @@ public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + getId().hashCode();
-		return result;
+		return prime * result + getId().hashCode();
 	}
 
 	@Override

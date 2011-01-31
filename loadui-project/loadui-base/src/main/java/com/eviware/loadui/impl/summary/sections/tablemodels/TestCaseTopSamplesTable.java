@@ -71,7 +71,7 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 		}
 	}
 
-	public class TestCaseSampleModel
+	public static class TestCaseSampleModel
 	{
 		String name;
 		SampleStats stats;
@@ -112,7 +112,7 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 			Collections.sort( data, bottomUpComparator );
 	}
 	
-	private class TestCaseSampleModelComparator implements Comparator<TestCaseSampleModel>
+	private static class TestCaseSampleModelComparator implements Comparator<TestCaseSampleModel>
 	{
 		@Override
 		public int compare( TestCaseSampleModel o1, TestCaseSampleModel o2 )

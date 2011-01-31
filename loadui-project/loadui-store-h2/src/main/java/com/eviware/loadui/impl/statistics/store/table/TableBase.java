@@ -122,7 +122,7 @@ public abstract class TableBase
 	{
 		List<String[]> selectCriteria = descriptor.getSelectCriteria();
 		StatementHolder sh = new StatementHolder();
-		StringBuffer crieriaParams = new StringBuffer();
+		StringBuilder crieriaParams = new StringBuilder();
 		for( int i = 0; i < selectCriteria.size(); i++ )
 		{
 			crieriaParams.append( selectCriteria.get( i )[1] + " " + selectCriteria.get( i )[2] );
@@ -147,7 +147,7 @@ public abstract class TableBase
 		StatementHolder sh = new StatementHolder();
 		String key;
 		StringBuffer names = new StringBuffer();
-		StringBuffer values = new StringBuffer();
+		StringBuilder values = new StringBuilder();
 
 		Iterator<String> keys = descriptor.getStaticFields().keySet().iterator();
 		while( keys.hasNext() )
@@ -242,7 +242,7 @@ public abstract class TableBase
 		{
 			return null;
 		}
-		StringBuffer b = new StringBuffer();
+		StringBuilder b = new StringBuilder();
 		for( int i = 0; i < pkSequence.size(); i++ )
 		{
 			b.append( pkSequence.get( i ) );

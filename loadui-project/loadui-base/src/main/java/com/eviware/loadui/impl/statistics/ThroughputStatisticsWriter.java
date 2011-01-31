@@ -70,9 +70,7 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 		count = 0;
 		lastTimeFlushed += delay;
 
-		Entry e = at( lastTimeFlushed ).put( Stats.BPS.name(), bps ).put( Stats.TPS.name(), tps ).build();
-
-		return e;
+		return at( lastTimeFlushed ).put( Stats.BPS.name(), bps ).put( Stats.TPS.name(), tps ).build();
 	}
 
 	/**
@@ -118,10 +116,8 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 		double timeDelta = Math.max(
 				( ( double )( maxTime - minTime ) / entries.size() * ( entries.size() + 1 ) ) / 1000, delay / 1000.0 );
 
-		Entry e = at( maxTime ).put( Stats.BPS.name(), bpsSum / timeDelta ).put( Stats.TPS.name(), tpsSum / timeDelta )
-				.build( false );
-
-		return e;
+		return at( maxTime ).put( Stats.BPS.name(), bpsSum / timeDelta ).put( Stats.TPS.name(), tpsSum / timeDelta )
+			.build( false );
 	}
 
 	@Override

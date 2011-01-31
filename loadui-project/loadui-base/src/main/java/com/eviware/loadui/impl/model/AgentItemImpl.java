@@ -129,7 +129,7 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	}
 
 	@Override
-	public boolean isEnabled()
+	public final boolean isEnabled()
 	{
 		return getConfig().getEnabled();
 	}

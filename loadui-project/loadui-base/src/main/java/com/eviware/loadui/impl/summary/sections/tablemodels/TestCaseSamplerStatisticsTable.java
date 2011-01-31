@@ -60,7 +60,7 @@ public class TestCaseSamplerStatisticsTable extends AbstractTableModel {
 		data.add(row);
 	}
 
-	public class TestCaseSamplerStatisticsModel {
+	public static class TestCaseSamplerStatisticsModel {
 
 		String name;
 		HashMap<String, String> stats;

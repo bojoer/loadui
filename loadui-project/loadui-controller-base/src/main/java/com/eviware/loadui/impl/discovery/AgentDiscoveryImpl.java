@@ -157,7 +157,7 @@ public class AgentDiscoveryImpl implements AgentDiscovery
 		return Collections.unmodifiableSet( agents );
 	}
 
-	private class AgentRefImpl implements AgentReference
+	private static class AgentRefImpl implements AgentReference
 	{
 		private final String label;
 		private final String url;

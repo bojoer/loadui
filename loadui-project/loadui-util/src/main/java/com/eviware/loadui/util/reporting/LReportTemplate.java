@@ -76,7 +76,7 @@ public class LReportTemplate
 
 	private String readTemplateFile()
 	{
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		File reportFile = new File(path);
 		this.lastModified = reportFile.lastModified();
 		try

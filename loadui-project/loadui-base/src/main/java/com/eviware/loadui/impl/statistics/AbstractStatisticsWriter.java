@@ -154,20 +154,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	protected abstract void reset();
 
 	@Override
-	public void setBufferSize( int bufferSize )
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public int getBufferSize()
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public String getId()
 	{
 		return id;
@@ -272,7 +258,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		}
 	}
 
-	private class AggregateLevel
+	private static class AggregateLevel
 	{
 		private long intervalInMillis;
 		private long lastFlush;
