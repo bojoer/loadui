@@ -121,10 +121,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			public void trackRegistered( TrackDescriptor trackDescriptor )
 			{
 				// this is in case component is added during the test
-				if( executionState == State.STARTED )
-				{
+				if( executionState != State.STOPPED )
 					createTrack( trackDescriptor );
-				}
 			}
 
 			@Override
