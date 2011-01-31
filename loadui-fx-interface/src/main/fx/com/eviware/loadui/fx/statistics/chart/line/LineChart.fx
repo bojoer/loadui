@@ -335,7 +335,8 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	function removedSegment( segment:LineSegment ):Void {
 		def model = lines.remove( segment ) as LineSegmentChartModel;
-		chart.removeModel( model );
+		if( model != null )
+			chart.removeModel( model );
 		for( button in segmentButtons.content[b | b instanceof SegmentButton] ) {
 			if( (button as SegmentButton).model.segment == segment )
 			delete button from segmentButtons.content;

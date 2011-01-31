@@ -30,6 +30,7 @@ import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.config.ChartConfig;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 
 public class ChartImpl implements Chart
@@ -82,7 +83,7 @@ public class ChartImpl implements Chart
 	public void release()
 	{
 		fireEvent( new BaseEvent( this, RELEASED ) );
-		eventSupport.clearEventListeners();
+		ReleasableUtils.release( eventSupport );
 	}
 
 	@Override

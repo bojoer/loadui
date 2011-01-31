@@ -25,8 +25,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.api.model.Releasable;
 
-public class EventSupport implements EventFirer
+public class EventSupport implements EventFirer, Releasable
 {
 	private final Set<ListenerEntry<?>> listeners = new HashSet<ListenerEntry<?>>();
 	private static BlockingQueue<Runnable> eventQueue = new LinkedBlockingQueue<Runnable>();
@@ -96,6 +97,12 @@ public class EventSupport implements EventFirer
 				listeners.clear();
 			}
 		} );
+	}
+
+	@Override
+	public void release()
+	{
+		clearEventListeners();
 	}
 
 	public void fireEvent( final EventObject event )
