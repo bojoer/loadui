@@ -84,7 +84,7 @@ public class TestCaseMenu extends HBox {
 		//workspaceLabel = project.getWorkspace().getLabel();
 		projectLabel = testCase.getProject().getLabel();
 		testCaseLabel = testCase.getLabel();
-		summaryEnabled = false;
+		summaryEnabled = testCase.getSummary() != null;
 		if( oldtestCase != null )
 			oldtestCase.removeEventListener( BaseEvent.class, listener );
 		if( newTestCase != null )
