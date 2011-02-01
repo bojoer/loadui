@@ -38,9 +38,11 @@ import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.node.Deletable;
 
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
+import com.eviware.loadui.api.statistics.model.chart.DeletableChartView;
 import com.eviware.loadui.util.ReleasableUtils;
 
 /**
@@ -48,7 +50,7 @@ import com.eviware.loadui.util.ReleasableUtils;
  *
  * @author dain.nilsson
  */
-public class ChartViewHolder extends BaseNode, Resizable, Releasable {
+public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable {
 	override var styleClass = "chart-view-holder";
 	
 	public var label:String = "ChartView label";
@@ -147,6 +149,11 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable {
 	override function release():Void {
 		chartView = null;
 		chart = null;
+	}
+	
+	override function doDelete():Void {
+		if( chartView instanceof DeletableChartView )
+			(chartView as DeletableChartView).delete();
 	}
 	
 	override function create():Node {

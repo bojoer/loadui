@@ -87,9 +87,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 	
 	def executionManager = BeanInjector.getBean( ExecutionManager.class ) on replace {
 		executionManager.addExecutionListener( executionListener );
-		if( executionManager.getState() == ExecutionManager.State.STARTED ) {
-			timeline.playFromStart();
-		}
+		timeline.playFromStart();
 	}
 	
 	public-init var statisticPage:StatisticPage on replace oldValue {
@@ -181,15 +179,12 @@ class ExecutionManagerListener extends ExecutionListenerAdapter {
    			holder.reset();
    		resetOnStart = false;
    	}
-		timeline.playFromStart();
    }
 
 	override function executionPaused(state:ExecutionManager.State) {
-	   timeline.stop();
 	}
 
 	override function executionStopped(state:ExecutionManager.State) {
-		timeline.stop();
 		resetOnStart = true;
 	}
 }
