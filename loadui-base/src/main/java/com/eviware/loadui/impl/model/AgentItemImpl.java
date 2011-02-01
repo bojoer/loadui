@@ -92,7 +92,9 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 							getProperty( MAX_THREADS_PROPERTY ).getStringValue() ) );
 				}
 				else
+				{
 					broadcastEndpoint.deregisterEndpoint( AgentItemImpl.this );
+				}
 				AgentItemImpl.this.connected = connected;
 
 				fireBaseEvent( READY );

@@ -81,6 +81,9 @@ public class JavaFXActivator extends BundleActivator {
 	
 			def stylesheets = "file:style.css";
 			
+			new org.jdesktop.swingx.JXTable();
+			new javax.swing.JScrollPane();
+			
 			def wc = new WindowControllerImpl();
 			wc.stage = Stage {
 				title: "loadUI {VERSION}"

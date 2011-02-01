@@ -58,6 +58,11 @@ import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import java.io.File;
 
+import javax.swing.UIManager;
+import org.jdesktop.swingx.plaf.nimbus.NimbusLookAndFeelAddons;
+import org.jdesktop.swingx.plaf.LookAndFeelAddons;
+
+
 /**
 * @author robert
 */
@@ -78,7 +83,7 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 	def componentDisabled = bind distributedMode and AppState.instance.state.startsWith( "testcase." );
 	
 	init {
-	    model.addTableModelListener(this);
+	   model.addTableModelListener(this);
 		table = new LTable(model); 
 		table.setAutoCreateColumnsFromModel(true);
 		table.setVisibleRowCount(5);
