@@ -48,7 +48,6 @@ import javafx.scene.text.Font;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
-//import com.eviware.loadui.fx.ui.button.ToggleButton;
 import com.eviware.loadui.fx.ui.resources.PlayShape;
 import com.eviware.loadui.fx.ui.resources.SlashShape;
 import com.eviware.loadui.fx.ui.Kitt;
@@ -83,6 +82,8 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Ru
 public class RunController extends BaseNode, Resizable, TimerController {
 
 	override var styleClass = "run-controller";
+	
+	var stopped = true;
 
 	public var innerShadowColor:Color = Color.web("#777777");
 	public var backgroundFill:Paint = Color.web("#8B8C8F");
@@ -183,9 +184,8 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	def playButtonState = bind playButton.selected on replace {
 		if( playButton.armed and not cancelling) {
 			if( playButtonState ) {
-				if( stopped or not canvas.isStarted() ) {
+				if( not canvas.isStarted() ) {
 					canvas.triggerAction( CounterHolder.COUNTER_RESET_ACTION );
-					stopped = false;
 				}
 				
 				if( canvas.getProject().getAttribute( ProjectSettingsDialog.IGNORE_INVALID_CANVAS, "false" ) == "false" ) {
@@ -220,9 +220,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 					        }
 					        
 					        onClose: function():Void {
-								//cancelling = true;
 								playButton.selected = false;
-								//cancelling = false;
 					        }
 					    }
 					} else {
@@ -237,8 +235,6 @@ public class RunController extends BaseNode, Resizable, TimerController {
 			}
 		}
 	}
-	
-	var stopped = true;
 	
 	init {
 		items = [
@@ -285,13 +281,16 @@ public class RunController extends BaseNode, Resizable, TimerController {
 									fill: bind if(stopButton.armed) activeShapeFill else inactiveShapeFill
 								}
 								action: function() {
-								    if (stopped)
+								    if( not canvas.isStarted() )
+								    {
 								    	canvas.triggerAction( CounterHolder.COUNTER_RESET_ACTION );
+								    }
 									playButton.selected = false;
 									stopped = true;
 									canvas.triggerAction( CanvasItem.COMPLETE_ACTION );
 									
 								}
+								
 							}
 						]
 					}, if (not testcase) {

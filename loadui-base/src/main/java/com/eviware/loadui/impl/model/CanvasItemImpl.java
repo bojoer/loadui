@@ -636,7 +636,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 					{
 						paused = true;
 					}
-
+					
 					setRunning( false );
 					if( timerFuture != null )
 						timerFuture.cancel( true );
