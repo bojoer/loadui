@@ -82,6 +82,11 @@ public class LineSegmentChartModel extends DefaultChartModel {
 			segment.setAttribute( SCALE, "{scale}" );
 			chartGroup.fireEvent( new PropertyChangeEvent( segment, SCALE, oldScale, scale ) );
 		}
+		clearPoints();
+		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1], level ) ) {
+			addPoint( scaler.createPoint( (dataPoint as DataPoint).getTimestamp(), (dataPoint as DataPoint).getValue() as Number ), false );
+		}
+		update();
 	}
 	
 	public var color:Color on replace oldColor {
