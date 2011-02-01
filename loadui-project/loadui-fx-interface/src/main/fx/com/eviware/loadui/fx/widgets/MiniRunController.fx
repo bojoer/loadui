@@ -50,7 +50,6 @@ import javafx.scene.text.Font;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
-//import com.eviware.loadui.fx.ui.button.ToggleButton;
 import com.eviware.loadui.fx.ui.resources.PlayShape;
 import com.eviware.loadui.fx.ui.resources.SlashShape;
 import com.eviware.loadui.fx.ui.Kitt;
@@ -80,6 +79,8 @@ import com.eviware.loadui.fx.ui.dialogs.ProjectSettingsDialog;
 public class MiniRunController extends BaseNode, Resizable, TimerController {
 
 	override var styleClass = "project-run-controller";
+	
+	var stopped = true;
 	
 	override public var canvas = bind MainWindow.instance.projectCanvas.canvasItem on replace oldCanvas = newCanvas {
 		timeLimit = canvas.getLimit( CanvasItem.TIMER_COUNTER );
@@ -155,12 +156,10 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
     var resetButton:Button;
     var limitButton:Button;
     
-    var stopped = true;
-    
     def playButtonState = bind playButton.selected on replace {
 		if( playButton.armed ) {
 			if( playButtonState ) {
-				if( stopped ) {
+				if( not canvas.isStarted() ) {
 					canvas.triggerAction( CounterHolder.COUNTER_RESET_ACTION );
 					stopped = false;
 				}
@@ -259,10 +258,11 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
 									fill: bind if(stopButton.armed) activeShapeFill else inactiveShapeFill
 								}
 								action: function() {
-								    if (stopped)
+								    if( not canvas.isStarted() )
+								    {
 								    	canvas.triggerAction( CounterHolder.COUNTER_RESET_ACTION );
+								    }
 								    playButton.selected = false;
-								    stopped = true;
 								    canvas.triggerAction( CanvasItem.COMPLETE_ACTION );
 								}
 							}

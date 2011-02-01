@@ -504,7 +504,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	protected void doGenerateSummary()
 	{
 		// Calculate project start and end time before calling summary generation.
-		// For start time it takes the smallest time between all test cases and
+		// For start time it takes the smallest time of all test cases and
 		// the project itself and for end time it takes the greatest one.
 		Calendar prjStartTime = Calendar.getInstance();
 		prjStartTime.setTime( startTime );
