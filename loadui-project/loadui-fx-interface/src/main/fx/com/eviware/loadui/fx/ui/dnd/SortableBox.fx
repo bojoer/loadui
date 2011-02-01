@@ -30,6 +30,7 @@ import javafx.geometry.Insets;
 import javafx.util.Sequences;
 
 import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.node.Deletable;
 
 /**
  * Acts as a HBox or VBox, but allows the user to reorder the items using drag and drop.
@@ -141,7 +142,63 @@ public class SortableBox extends BaseNode, Resizable {
 			
 			def frame:DraggableFrame = DraggableFrame {
 				layoutInfo: child.layoutInfo
-				draggable: draggable = ElementNode {
+				draggable: draggable = if( child instanceof Deletable ) DeletableElementNode {
+					confirmDialogScene: scene
+					layoutInfo: child.layoutInfo
+					width: bind frame.width
+					height: bind frame.height
+					revert: false
+					contentNode: child
+					containment: bind if (enforceBounds) localToScene( layoutBounds ) else null
+					onDragging: function():Void {
+						def index = Sequences.indexByIdentity( box.content, frame );
+						var pos:Number;
+						var nextPos:Number;
+						var prevPos:Number;
+						if( vertical ) {
+							pos = draggable.translateY;
+							prevPos = if( index > 0 ) -(spacing + box.content[index-1].layoutBounds.height / 2) else Integer.MIN_VALUE;
+							nextPos = if( index < sizeof content-1 ) spacing + box.content[index+1].layoutBounds.height / 2 else Integer.MAX_VALUE;
+						} else {
+							pos = draggable.translateX;
+							prevPos = if( index > 0 ) -(spacing + box.content[index-1].layoutBounds.width / 2) else Integer.MIN_VALUE;
+							nextPos = if( index < sizeof content-1 ) spacing + box.content[index+1].layoutBounds.width / 2 else Integer.MAX_VALUE;
+						}
+						
+						if( pos + offset < prevPos or pos + offset > nextPos ) {
+							def moveIndex = if( pos + offset < prevPos ) index-1 else index+1;
+							def delta = if( vertical ) {
+								if( moveIndex > index ) {
+									box.content[moveIndex].layoutY - frame.height + box.content[moveIndex].layoutBounds.height - frame.layoutY;
+								} else {
+									box.content[moveIndex].layoutY - frame.layoutY;
+								}
+							} else {
+								if( moveIndex > index ) {
+									box.content[moveIndex].layoutX - frame.width + box.content[moveIndex].layoutBounds.width - frame.layoutX;
+								} else {
+									box.content[moveIndex].layoutX - frame.layoutX;
+								}
+							}
+							
+							delete box.content[index];
+							insert frame before box.content[moveIndex];
+							offset -= delta;
+						}
+					}
+					onRelease: function():Void {
+						def index = Sequences.indexByIdentity( box.content, frame );
+						def oldIndex = Sequences.indexByIdentity( content, child );
+						if( oldIndex != index ) {
+							var newContent = content;
+							delete child from newContent;
+							insert child before newContent[index];
+							content = newContent;
+							offset = 0.0;
+							onMoved( child, oldIndex, index );
+						}
+					}
+				} else ElementNode {
 					layoutInfo: child.layoutInfo
 					width: bind frame.width
 					height: bind frame.height
@@ -228,5 +285,11 @@ class ElementNode extends BaseNode, Draggable, Resizable {
 	}
 	
 	override function doLayout():Void {
+	}
+}
+
+class DeletableElementNode extends ElementNode, Deletable {
+	override function doDelete():Void {
+		(contentNode as Deletable).doDelete();
 	}
 }

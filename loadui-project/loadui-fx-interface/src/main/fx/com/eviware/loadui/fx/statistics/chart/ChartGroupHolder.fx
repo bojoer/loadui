@@ -40,6 +40,7 @@ import com.sun.javafx.scene.layout.Region;
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.util.ModelUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dnd.SortableBox;
@@ -72,7 +73,7 @@ def childrenInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, margin: Ins
  *
  * @author dain.nilsson
  */
-public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable {
+public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable, Deletable {
 	override var styleClass = "chart-group-holder";
 	
 	var title:String = "ChartGroupHolder";
@@ -160,6 +161,10 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		expandedNode = null;
 	}
 	
+	override function doDelete():Void {
+		chartGroup.delete();
+	}
+	
 	override var accept = function( draggable:Draggable ):Boolean {
 		draggable instanceof StatisticsToolbarItem
 	}
@@ -193,6 +198,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		if( expandGroups ) {
 			if( expandAgents ) toggleAgentExpand();
 			expandedNode = SortableBox {
+				enforceBounds: false
 				vertical: true
 				layoutInfo: childrenInfo
 				spacing: 5

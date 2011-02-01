@@ -255,7 +255,7 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 							}
 							catch( RuntimeException e1 )
 							{
-								log.error( "Exception in closure: " + name );
+								log.error( "Exception in closure: " + name, e1 );
 								throw e1;
 							}
 						}

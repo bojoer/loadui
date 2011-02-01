@@ -30,6 +30,7 @@ import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
+import com.eviware.loadui.api.statistics.model.chart.DeletableChartView;
 import com.eviware.loadui.util.StringUtils;
 
 /**
@@ -37,7 +38,7 @@ import com.eviware.loadui.util.StringUtils;
  * 
  * @author dain.nilsson
  */
-public class ChartLineChartView extends AbstractLineChartView implements ConfigurableLineChartView
+public class ChartLineChartView extends AbstractLineChartView implements ConfigurableLineChartView, DeletableChartView
 {
 	public static Logger log = LoggerFactory.getLogger( ChartLineChartView.class );
 
@@ -129,6 +130,12 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	@Override
 	protected void segmentRemoved( LineSegment segment )
 	{
+	}
+
+	@Override
+	public void delete()
+	{
+		chart.delete();
 	}
 
 	@Override
