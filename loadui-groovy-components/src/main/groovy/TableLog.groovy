@@ -75,9 +75,9 @@ output = { message ->
 
 	result = myTableModel.addRow(message) 
 	if( result && saveFile.value ) {
-		if( writer == null )
+		if( writer == null ){
 			writer = new CSVWriter(new FileWriter(saveFileName, appendSaveFile.value), (char) ',');
-		
+		}
 		try {
 			String[] entries = myTableModel.lastRow
 			writer.writeNext(entries)
@@ -163,8 +163,11 @@ getDefaultLogName = {
 validateLogFile = {
 	try {
 		File temp = new File(saveFileName)
-	   temp.createNewFile()
-		temp.delete()
+		if( !temp.exists() )
+		{
+			temp.createNewFile()
+			temp.delete()
+		}
 	}
 	catch(Exception e){
 		def name = getDefaultLogName()
