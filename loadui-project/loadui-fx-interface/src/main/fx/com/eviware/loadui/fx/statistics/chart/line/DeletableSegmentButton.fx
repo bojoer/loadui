@@ -22,6 +22,7 @@ import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
 public class DeletableSegmentButton extends SegmentButton, Draggable, Deletable {
 	override var revert = false;
+	override var confirmDelete = false;
 	
 	override function doDelete():Void {
 		(chartView as ConfigurableLineChartView).removeSegment( model.segment );
