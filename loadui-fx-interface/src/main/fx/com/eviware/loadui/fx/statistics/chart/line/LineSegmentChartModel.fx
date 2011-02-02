@@ -31,10 +31,10 @@ import java.beans.PropertyChangeEvent;
 import com.jidesoft.chart.model.DefaultChartModel;
 import com.jidesoft.chart.style.ChartStyle;
 
-def SCALE = "scale";
-def COLOR = "color";
-def STROKE = "stroke";
-def WIDTH = "width";
+public def SCALE = "scale";
+public def COLOR = "color";
+public def STROKE = "stroke";
+public def WIDTH = "width";
 
 public class LineSegmentChartModel extends DefaultChartModel {
 	public-read def chartStyle = new ChartStyle();
@@ -132,7 +132,11 @@ public class LineSegmentChartModel extends DefaultChartModel {
 			scale = 0;
 		}
 		
-		def colorStr = segment.getAttribute( COLOR, "#ff0000" );
+		var colorStr = segment.getAttribute( COLOR, null );
+		if( colorStr == null ) {
+			colorStr = LineChartStyles.getLineColor( chartView.getChartGroup(), segment );
+			segment.setAttribute( COLOR, colorStr );
+		}
 		chartStyle.setLineColor( FxUtils.getAwtColor( colorStr ) );
 		color = Color.web( colorStr );
 		
