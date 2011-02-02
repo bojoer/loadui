@@ -30,6 +30,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Separator;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
@@ -54,6 +56,10 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	override var styleClass = "chart-view-holder";
 	
 	public var label:String = "ChartView label";
+	
+	public var graphic:Node = Rectangle { width: 50, height: 30 };
+	
+	public var typeLabel:String = "Component";
 	
 	public-init var chartModel:com.eviware.loadui.api.statistics.model.Chart;
 	
@@ -84,6 +90,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	
 	protected var vbox:VBox;
 	var vbox2:VBox;
+	var compact = true;
 	
 	def resizable:VBox = VBox {
 		width: bind width
@@ -94,25 +101,32 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 				padding: Insets { left: 12, top: 10, right: 12, bottom: 2 }
 				content: [
 					Region { width: bind vbox.width, height: bind vbox.height, managed: false, styleClass: bind styleClass },
-					//Label { styleClass: "title", text: bind label.toUpperCase() },
 					HBox {
 						layoutInfo: LayoutInfo { width: bind width }
 						spacing: 5
 						content: [
 							vbox2 = VBox {
+								layoutInfo: bind if(compact) LayoutInfo { width: 100 } else null
 								padding: Insets { top: 8, right: 8, bottom: 8, left: 8 }
 								spacing: 4
 								content: [
 									Region { managed: false, width: bind vbox2.width, height: bind vbox2.height, styleClass: "chart-view-panel" },
-									Label { text: "Component" },
-									Rectangle { width: 50, height: 30 },
-									Button {
-										text: "Delete"
-										visible: bind chartModel != null
-										action: function():Void {
-											chartModel.delete();
-										}
+									HBox {
+										layoutInfo: LayoutInfo { vfill: false, vgrow: Priority.NEVER }
+										content: [
+											Label { text: bind typeLabel, layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
+											Button {
+												styleClass: "compact-panel-button"
+												graphic: SVGPath {
+													fill: Color.rgb( 0xb2, 0xb2, 0xb2 )
+													content: bind if(compact) "M 0 0 L 3.5 3.5 0 7 0 0 M 3.5 0 L 7 3.5 3.5 7 3.5 0" else "M 0 0 L -3.5 3.5 0 7 0 0 M -3.5 0 L -7 3.5 -3.5 7 -3.5 0"
+												}
+												action: function():Void { compact = not compact }
+											}
+										]
 									}
+									graphic,
+									Label { text: bind label }
 								]
 							}, Stack {
 								layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true, vgrow: Priority.ALWAYS }

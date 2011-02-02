@@ -30,22 +30,18 @@ import com.javafx.preview.control.CustomMenuItem;
 import com.eviware.loadui.fx.FxUtils;
 
 def COLORS = [
-	Color.RED,
-	Color.BLUE,
-	Color.GREEN,
-	Color.YELLOW,
-	Color.RED,
-	Color.BLUE,
-	Color.GREEN,
-	Color.YELLOW,
-	Color.RED,
-	Color.BLUE,
-	Color.GREEN,
-	Color.YELLOW,
-	Color.RED,
-	Color.BLUE,
-	Color.GREEN,
-	Color.YELLOW
+	Color.web("#FF2100"),
+	Color.web("#FF7B00"),
+	Color.web("#00B700"),
+	Color.web("#00B2D2"),
+	Color.web("#7826B5"),
+	Color.web("#D7268E"),
+	Color.web("#FFA400"),
+	Color.web("#9BCD00"),
+	Color.web("#002AB6"),
+	Color.web("#007AC3"),
+	Color.web("#FFFB00"),
+	Color.web("#FFFFFF")
 ];
 
 /**
