@@ -33,6 +33,7 @@ public mixin class Deletable {
 	public var confirmDialogScene:Scene;
 	
 	public function deleteObject():Void {
+		println("DeleteObject. confirm: {confirmDelete}, deletable: {this}, hostScene:[confirmDialogScene]");
 		if( confirmDelete ) {
 			DeleteDeletablesDialog {
 				deletables: [ this ]

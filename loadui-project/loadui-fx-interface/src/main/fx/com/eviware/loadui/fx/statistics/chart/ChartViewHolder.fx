@@ -71,9 +71,11 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	
 	public var chartView:ChartView on replace oldValue {
 		ReleasableUtils.release( oldValue );
-		chart = ChartRegistry.createChart( chartView, this );
-		chart.update();
-		chartButtons.content = rebuildChartButtons();
+		if( chartView != null ) {
+			chart = ChartRegistry.createChart( chartView, this );
+			chart.update();
+			chartButtons.content = rebuildChartButtons();
+		}
 	}
 	
 	public-read var chart:BaseChart on replace oldValue {
