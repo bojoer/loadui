@@ -40,6 +40,9 @@ import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.node.Deletable;
+import com.eviware.loadui.fx.ui.dnd.Draggable;
+import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.treeselector.CascadingTreeSelector;
 import com.eviware.loadui.fx.statistics.chart.BaseChart;
 import com.eviware.loadui.fx.statistics.chart.SegmentTreeModel;
@@ -57,6 +60,7 @@ import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.util.StringUtils;
 import java.awt.BasicStroke;
+import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -94,7 +98,6 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	def xRange = new IntegerRange( 0, 0 );
 	def listener = new ChartViewListener();
-	def groupListener = new ChartGroupListener();
 	def lines = new HashMap();
 	public-read def chart = new Chart();
 	def chartNode = SwingComponent.wrap( chart );
@@ -122,7 +125,6 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		if( showAll ) timeSpan = maxTime as Integer;
 	}
 	var timeSpan:Long = 10000 on replace oldTimeSpan {
-		println("Timespan set to {timeSpan}");
 		scrollBar.visibleAmount = timeSpan;
 		scrollBar.unitIncrement = timeSpan / 10;
 		scrollBar.blockIncrement = timeSpan / 10;
@@ -132,7 +134,6 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	def segmentButtons:VBox = VBox {
-		styleClass: "segment-buttons";
 		layoutInfo: LayoutInfo { hgrow: Priority.NEVER, hfill: false }, 
 		padding: Insets { top: 8, right: 8, bottom: 8, left: 8 }
 		spacing: 4
@@ -157,17 +158,15 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	public-init var chartView:LineChartView on replace oldChartView {
 		if( chartView != null ) {
-			chartView.addEventListener( CollectionEvent.class, listener );
-			chartView.getChartGroup().addEventListener( BaseEvent.class, groupListener );
-			setZoomLevel( chartView.getChartGroup().getAttribute( ZoomPanel.ZOOM_LEVEL_ATTRIBUTE, ZoomPanel.ZOOM_DEFAULT ) );
+			chartView.addEventListener( EventObject.class, listener );
+			setZoomLevel( chartView.getAttribute( ZoomPanel.ZOOM_LEVEL_ATTRIBUTE, ZoomPanel.ZOOM_DEFAULT ) );
 			
 			for( segment in chartView.getSegments() )
-			addedSegment( segment );
+				addedSegment( segment );
 		}
 		
 		if( oldChartView != null ) {
-			chartView.removeEventListener( CollectionEvent.class, listener );
-			chartView.getChartGroup().removeEventListener( BaseEvent.class, groupListener );
+			oldChartView.removeEventListener( EventObject.class, listener );
 			lines.clear();
 		}
 	}
@@ -210,28 +209,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 						]
 					}
 				]
-			}, /*if( chartView instanceof ConfigurableLineChartView ) Button {
-				text: "Add Statistic"
-				action: function():Void {
-					var selected:Runnable;
-					holder.showConfig( VBox {
-						content: [
-							CascadingTreeSelector {
-								treeModel: new SegmentTreeModel( chartView as ConfigurableLineChartView )
-								allowMultiple: false
-								onSelect: function(obj):Void { selected = obj as Runnable; }
-								onDeselect: function(obj):Void { selected = null; }
-							}, HBox {
-								hpos: HPos.RIGHT
-								content: [
-									Button { text: "Add", disable: bind selected == null; action: function():Void { selected.run(); holder.hideConfig() } }
-									Button { text: "Cancel", action: function():Void { holder.hideConfig() } }
-								]
-							}
-						]
-					} );
-				}
-			} else null*/
+			}
 		]
 	}
 	
@@ -329,16 +307,25 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		def model = LineSegmentChartModel { chartView: chartView, segment: segment, level: bind zoomLevel };
 		lines.put( segment, model );
 		chart.addModel( model, model.chartStyle );
-		insert SegmentButton { model: model } into segmentButtons.content;
+		insert if( chartView instanceof ConfigurableLineChartView ) {
+			DraggableFrame { draggable: DeletableSegmentButton { compactSegments: bind compactSegments, chartView: chartView, model: model, confirmDialogScene: bind scene } };
+		} else {
+			SegmentButton { compactSegments: bind compactSegments, chartView: chartView, model: model };
+		} into segmentButtons.content;
 	}
 	
 	function removedSegment( segment:LineSegment ):Void {
 		def model = lines.remove( segment ) as LineSegmentChartModel;
 		if( model != null )
 			chart.removeModel( model );
+		for( frame in segmentButtons.content[b | b instanceof DraggableFrame] ) {
+			def button = (frame as DraggableFrame).draggable as DeletableSegmentButton;
+			if( button.model.segment == segment )
+				delete frame from segmentButtons.content;
+		}
 		for( button in segmentButtons.content[b | b instanceof SegmentButton] ) {
 			if( (button as SegmentButton).model.segment == segment )
-			delete button from segmentButtons.content;
+				delete button from segmentButtons.content;
 		}
 	}
 	
@@ -356,60 +343,20 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 }
 
-class ChartGroupListener extends EventHandler {
-	override function handleEvent( e:EventObject ):Void {
-		def event = e as BaseEvent;
-		if( event.getKey() == ZoomPanel.ZOOM_LEVEL ) {
-			FxUtils.runInFxThread( function():Void {
-				setZoomLevel( (event.getSource() as AttributeHolder).getAttribute( ZoomPanel.ZOOM_LEVEL_ATTRIBUTE, ZoomPanel.ZOOM_DEFAULT ) )
-			} );
-		}
-	}
-}
-
 class ChartViewListener extends EventHandler {
 	override function handleEvent( e:EventObject ):Void {
-		def event = e as CollectionEvent;
-		if( CollectionEvent.Event.ADDED == event.getEvent() ) {
-			FxUtils.runInFxThread( function():Void { addedSegment( event.getElement() as LineSegment ) } );
-		} else {
-			FxUtils.runInFxThread( function():Void { removedSegment( event.getElement() as LineSegment ) } );
+		if( e instanceof CollectionEvent ) {
+			def event = e as CollectionEvent;
+			if( CollectionEvent.Event.ADDED == event.getEvent() ) {
+				FxUtils.runInFxThread( function():Void { addedSegment( event.getElement() as LineSegment ) } );
+			} else {
+				FxUtils.runInFxThread( function():Void { removedSegment( event.getElement() as LineSegment ) } );
+			}
+		} else if( e instanceof PropertyChangeEvent ) {
+			def event = e as PropertyChangeEvent;
+			if( ZoomPanel.ZOOM_LEVEL.equals( event.getPropertyName() ) ) {
+				FxUtils.runInFxThread( function():Void { setZoomLevel( event.getNewValue() as String ) } );
+			}
 		}
-	}
-}
-
-class SegmentButton extends Button {
-	public-init var model:LineSegmentChartModel on replace {
-		def statistic = model.segment.getStatistic();
-		graphic = HBox {
-			content: [
-				Label {
-					text: statistic.getName()
-					layoutInfo: LayoutInfo { width: 60 }
-				}, Label {
-					text: if( statistic.getSource() == StatisticVariable.MAIN_SOURCE ) "All" else statistic.getSource()
-					layoutInfo: LayoutInfo { width: 40 }
-					visible: bind not compactSegments
-					managed: bind not compactSegments
-				}, Label {
-					text: statistic.getStatisticVariable().getStatisticHolder().getLabel()
-					layoutInfo: LayoutInfo { width: 60 }
-					visible: bind not compactSegments
-					managed: bind not compactSegments
-				}
-			]
-		}
-	}
-	
-	var lineColor:Color = bind model.color on replace {
-		style = "-fx-inner-border: {FxUtils.colorToWebString(lineColor)};";
-	}
-	
-	override var layoutInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS };
-	
-	override var action = function():Void {
-		 //TODO: Show configuration panel instead of removing the segment.
-		if( chartView instanceof ConfigurableLineChartView )
-			(chartView as ConfigurableLineChartView).removeSegment( model.segment );
 	}
 }

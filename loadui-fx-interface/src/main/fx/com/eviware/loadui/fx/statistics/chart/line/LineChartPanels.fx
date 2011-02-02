@@ -28,7 +28,7 @@ public function getGroupPanels( chartGroup:ChartGroup ):PanelFactory[] {
 	[
 		PanelFactory {
 			title: "Zoom",
-			build: function() { ZoomPanel { chartGroup: chartGroup } }
+			build: function() { ZoomPanel { chartView: chartGroup.getChartView() as LineChartView } }
 		}, PanelFactory {
 			title: "Scale"
 			build: function() { ScalePanel { segments: (chartGroup.getChartView() as LineChartView).getSegments()[s|true] } }
@@ -49,7 +49,7 @@ public function getChartPanels( chartView:LineChartView ):PanelFactory[] {
 		else [],
 		PanelFactory {
 			title: "Zoom",
-			build: function() { ZoomPanel { chartGroup: chartView.getChartGroup() } }
+			build: function() { ZoomPanel { chartView: chartView } }
 		}, PanelFactory {
 			title: "Scale"
 			build: function() { ScalePanel { segments: chartView.getSegments()[s|true] } }

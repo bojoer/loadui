@@ -767,7 +767,7 @@
 	-fx-background-insets: -4;
 }
 
-.segment-buttons *.button {
+.segment-button *.button {
 	-fx-inner-border: #2e2e2e;
 	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #c2c3c6) (70%, #a0a0a0) (100%, #707070);
 	-fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-outer-border, -fx-body-color;
@@ -776,11 +776,11 @@
 	-fx-font-size: 10pt;
 }
 
-.segment-buttons *.button:hover {
+.segment-button *.button:hover {
 	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #e2e3e6) (70%, #c0c0c0) (100%, #909090);
 }
 
-.segment-buttons *.button:armed {
+.segment-button *.button:armed {
 	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #33ccff) (90%, #0398f9);
 }
 
