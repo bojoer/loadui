@@ -1,16 +1,19 @@
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
+import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.statistics.Statistic;
+import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
-import com.eviware.loadui.impl.property.DelegatingAttributeHolderSupport;
 
 public class SourceLineSegment implements LineSegment
 {
+	private final ChartGroup chartGroup;
 	private final ChartLineSegment parent;
 	private final String source;
-	private final DelegatingAttributeHolderSupport attributeSupport;
+	private final EventForwarder eventForwarder = new EventForwarder();
 
 	private Statistic<?> statistic;
 
@@ -18,7 +21,8 @@ public class SourceLineSegment implements LineSegment
 	{
 		this.parent = parent;
 		this.source = source;
-		attributeSupport = new DelegatingAttributeHolderSupport( parent, source );
+		chartGroup = parent.getChart().getChartGroup();
+		chartGroup.addEventListener( PropertyChangeEvent.class, eventForwarder );
 	}
 
 	@Override
@@ -34,30 +38,61 @@ public class SourceLineSegment implements LineSegment
 	@Override
 	public void setAttribute( String key, String value )
 	{
-		attributeSupport.setAttribute( key, value );
+		parent.setAttribute( key, value );
 	}
 
 	@Override
 	public String getAttribute( String key, String defaultValue )
 	{
-		return attributeSupport.getAttribute( key, defaultValue );
+		return parent.getAttribute( key, defaultValue );
 	}
 
 	@Override
 	public void removeAttribute( String key )
 	{
-		attributeSupport.removeAttribute( key );
+		parent.removeAttribute( key );
 	}
 
 	@Override
 	public Collection<String> getAttributes()
 	{
-		return attributeSupport.getAttributes();
+		return parent.getAttributes();
 	}
 
 	@Override
 	public String toString()
 	{
 		return parent.toString();
+	}
+
+	private class ForwardedPropertyChangeEvent extends PropertyChangeEvent
+	{
+		private static final long serialVersionUID = -286054404344955979L;
+
+		public ForwardedPropertyChangeEvent( Object source, String propertyName, Object oldValue, Object newValue )
+		{
+			super( source, propertyName, oldValue, newValue );
+		}
+	}
+
+	private class EventForwarder implements WeakEventHandler<PropertyChangeEvent>
+	{
+		@Override
+		public void handleEvent( PropertyChangeEvent event )
+		{
+			if( !( event instanceof ForwardedPropertyChangeEvent ) )
+			{
+				if( event.getSource() == parent )
+				{
+					chartGroup.fireEvent( new ForwardedPropertyChangeEvent( SourceLineSegment.this, event.getPropertyName(),
+							event.getOldValue(), event.getNewValue() ) );
+				}
+				else if( event.getSource() == SourceLineSegment.this )
+				{
+					chartGroup.fireEvent( new ForwardedPropertyChangeEvent( parent, event.getPropertyName(), event
+							.getOldValue(), event.getNewValue() ) );
+				}
+			}
+		}
 	}
 }

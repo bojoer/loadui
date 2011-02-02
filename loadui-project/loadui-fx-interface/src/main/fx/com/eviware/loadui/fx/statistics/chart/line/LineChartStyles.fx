@@ -22,6 +22,10 @@ import java.awt.BasicStroke;
 import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.style.ChartStyle;
 
+import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+
 public def chartBackgroundColor = new Color( 0x1a, 0x1a, 0x1a, 0 );
 public def chartForegroundColor = new Color( 0xcd, 0xcd, 0xcd );
 public def lineColor = Color.red;
@@ -29,6 +33,21 @@ public def lineColor = Color.red;
 public def solidStroke = [ 1.0, 0.0 ];
 public def dashedStroke = [ 5.0, 6.0 ];
 public def dottedStroke = [ 1.0, 2.0 ];
+
+def lineColors = [
+	"#FF2100",
+	"#FF7B00",
+	"#00B700",
+	"#00B2D2",
+	"#7826B5",
+	"#D7268E",
+	"#FFA400",
+	"#9BCD00",
+	"#002AB6",
+	"#007AC3",
+	"#FFFB00",
+	"#FFFFFF"
+];
 
 public function styleChart( chart:Chart ):Void {
 	chart.setPanelBackground( chartBackgroundColor );
@@ -55,8 +74,14 @@ public function getStroke( width:Integer, style:Number[] ):BasicStroke {
 
 var statColorMap: HashMap;
 
-public function getColor(statistic: String) {
-    
+public function getLineColor( chartGroup:ChartGroup, segment:LineSegment ):String {
+	var colors = lineColors;
+	for( chartView in chartGroup.getChartViewsForCharts() ) {
+		for( s in (chartView as LineChartView).getSegments()[x|x != segment] ) {
+			delete s.getAttribute( LineSegmentChartModel.COLOR, null ) from colors;
+		}
+	}
+	return if( sizeof colors > 0 ) colors[0] else lineColors[0];
 }
 
 /**
