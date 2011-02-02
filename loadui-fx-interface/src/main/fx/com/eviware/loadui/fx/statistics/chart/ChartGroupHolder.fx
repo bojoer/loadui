@@ -30,6 +30,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.util.Sequences;
@@ -38,6 +40,7 @@ import javafx.scene.control.Separator;
 import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils;
+import com.eviware.loadui.fx.FxUtils.__ROOT__;
 import com.eviware.loadui.fx.util.ModelUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
@@ -65,8 +68,10 @@ import java.util.EventObject;
 
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
-def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
-def childrenInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, margin: Insets { left: 8, right: 8, top: -1, bottom: 8 } }
+def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS };
+def childrenInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, margin: Insets { left: 8, right: 8, top: -1, bottom: 8 } };
+
+def agentImage = Image { url: "{__ROOT__}images/png/agent-icon.png" };
 
 /**
  * Base Chart Node, visualizes a ChartGroup.
@@ -104,7 +109,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		chartViewHolder = ChartGroupChartViewHolder {
 			chartGroupHolder: chartGroupHolder
 			chartGroup: chartGroup
-			label: bind "{title} ({itemCount})"
+			typeLabel: bind "Component ({itemCount})"
+			label: bind title
 			layoutInfo: chartViewInfo
 		};
 	}
@@ -231,7 +237,9 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 				content: for( source in chartGroup.getSources() ) ChartViewHolder {
 					chartView: chartGroup.getChartViewForSource( source )
 					label: source
+					typeLabel: "Agent"
 					layoutInfo: chartViewInfo
+					graphic: ImageView { image: agentImage }
 				}
 			}
 			insert expandedNode into (resizable as Container).content;
