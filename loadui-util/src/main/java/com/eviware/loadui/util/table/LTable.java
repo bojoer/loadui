@@ -36,6 +36,7 @@ import javax.swing.table.TableModel;
 
 public class LTable extends JXTable {
 
+	private static final long serialVersionUID = 8659925359922608407L;
 	private boolean autoscroll = false;
 
 	public LTable(TableModel model) {
@@ -80,7 +81,7 @@ public class LTable extends JXTable {
 		CSVWriter writer = null;
 		LTableModel model = (LTableModel) getModel();
 		try {
-			writer = new CSVWriter(new FileWriter(saveFile, true), ',');
+			writer = new CSVWriter(new FileWriter(saveFile, false), ',');
 			for( int cnt = 0; cnt < model.getRowCount(); cnt++ ) 
 				writer.writeNext( convertToStringArray(model.getRowAt(cnt)));
 			writer.flush();

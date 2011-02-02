@@ -98,14 +98,21 @@ public class LTableModel extends AbstractTableModel
 
 	public boolean addRow( ArrayList<String> row )
 	{
-		while( maxRow > 0 && !( data.size() < maxRow ) )
+		if( maxRow > 0 )
 		{
-			data.remove( 0 );
-			fireTableRowsDeleted( 0, 0 );
+			while( maxRow > 0 && !( data.size() < maxRow ) )
+			{
+				data.remove( 0 );
+				fireTableRowsDeleted( 0, 0 );
+			}
+			boolean result = data.add( row );
+			fireTableRowsInserted( data.size() - 1, data.size() - 1 );
+			return result;
 		}
-		boolean result = data.add( row );
-		fireTableRowsInserted( data.size() - 1, data.size() - 1 );
-		return result;
+		else
+		{
+			return false;
+		}
 	}
 
 	public boolean addRow( Map<String, Object> row )
@@ -142,19 +149,16 @@ public class LTableModel extends AbstractTableModel
 		return maxRow;
 	}
 
-	public void setMaxRow( Integer maxRow )
+	public void setMaxRow( Integer maxRows )
 	{
-		this.maxRow = maxRow;
-		if( maxRow <= data.size() )
+		if( maxRows == null )
+			return;
+		this.maxRow = maxRows;
+		while ( data.size() > maxRows )
 		{
-			int numberOfTopRowsToDelete = data.size() - maxRow + 1;
-			for( int cnt = 0; cnt < numberOfTopRowsToDelete; cnt++ )
-			{
-				data.remove( 0 );
-				fireTableRowsDeleted( 0, 0 );
-			}
+			data.remove( 0 );
+			fireTableRowsDeleted( 0, 0 );
 		}
-
 	}
 
 	public ArrayList getLastRow()
