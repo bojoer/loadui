@@ -246,6 +246,9 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		if( min > max ) {
 			min = 0;
 			max = 100;
+		} else if( min == max ) {
+			min -= 2.5;
+			max += 2.5;
 		}
 		chart.getYAxis().setRange( min, max );
 		if( showAll ) {
