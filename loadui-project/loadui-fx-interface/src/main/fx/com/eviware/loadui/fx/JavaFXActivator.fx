@@ -81,6 +81,7 @@ public class JavaFXActivator extends BundleActivator {
 	
 			def stylesheets = "file:style.css";
 			
+			// Instanciate objects to fix Classloading problems in tablelog. Do not remove.
 			new org.jdesktop.swingx.JXTable();
 			new javax.swing.JScrollPane();
 			

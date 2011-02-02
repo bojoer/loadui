@@ -53,6 +53,7 @@ myTableModel.addTableModelListener(new TableModelListener() {
 
 saveFileName = fileName.value?.name
 
+writer = null
 def formater = new SimpleDateFormat("HH:mm:ss:SSS")
 
 updateFollow = {
@@ -74,17 +75,15 @@ output = { message ->
 
 	result = myTableModel.addRow(message) 
 	if( result && saveFile.value ) {
+		if( writer == null )
+			writer = new CSVWriter(new FileWriter(saveFileName, appendSaveFile.value), (char) ',');
+		
 		try {
-			char sep = ','
-			
-			writer = new CSVWriter(new FileWriter(saveFileName, appendSaveFile.value), sep);
 			String[] entries = myTableModel.lastRow
 			writer.writeNext(entries)
 			writer.flush()
 		} catch (Exception e) {
 			e.printStackTrace()
-		} finally {
-			writer.close()
 		}
 	}
 }
@@ -106,17 +105,24 @@ addEventListener( PropertyEvent ) { event ->
 }
 
 addEventListener( ActionEvent ) { event ->
-	if ( event.key == "START" ) {
-		buildFileName()
+	if ( event.key == "COMPLETE" ) {
+		writer?.close()
+		writer = null
 	}
 
-	if ( event.key == "RESET" ) {
+	else if ( event.key == "RESET" ) {
 		myTableModel.reset()
+		buildFileName()
 	}
 }
 
 buildFileName = {
 	if( !saveFile.value ) {
+		writer?.close()
+		writer = null
+		return
+	}
+	if( writer != null ) {
 		return
 	}
 	def dir = ""
@@ -151,12 +157,14 @@ getDefaultLogDir = {
 }
 				
 getDefaultLogName = {
-	return getLabel().replaceAll(" ","") 			
+	return getLabel().replaceAll(" ","")
 }
 				
 validateLogFile = {
 	try {
-	   new File(saveFileName).createNewFile()
+		File temp = new File(saveFileName)
+	   temp.createNewFile()
+		temp.delete()
 	}
 	catch(Exception e){
 		def name = getDefaultLogName()
