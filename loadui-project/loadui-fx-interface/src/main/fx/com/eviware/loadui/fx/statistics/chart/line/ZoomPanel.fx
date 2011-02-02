@@ -31,7 +31,8 @@ import com.sun.javafx.scene.layout.Region;
 import com.eviware.loadui.fx.FxUtils.*;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
-import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import java.beans.PropertyChangeEvent;
 
 public def ZOOM_DEFAULT = "Seconds";
 public def ZOOM_LEVEL = "com.eviware.loadui.fx.statistics.chart.line.ZoomPanel@zoomLevel";
@@ -52,7 +53,7 @@ def buttonInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS };
  * @author dain.nilsson
  */
 public class ZoomPanel extends HBox {
-	public-init var chartGroup:ChartGroup;
+	public-init var chartView:LineChartView;
 	
 	override var hpos = HPos.CENTER;
 	override var vpos = VPos.CENTER;
@@ -60,10 +61,10 @@ public class ZoomPanel extends HBox {
 	override var padding = Insets { right: 15, left: 15 };
 	
 	def toggleGroup = new ToggleGroup();
-	def selectedLevel = bind toggleGroup.selectedToggle on replace {
+	def selectedLevel = bind toggleGroup.selectedToggle on replace oldLevel {
 		if( selectedLevel.value != null ) {
-			chartGroup.setAttribute( ZOOM_LEVEL_ATTRIBUTE, "{selectedLevel.value}" );
-			chartGroup.fireEvent( new BaseEvent( chartGroup, ZOOM_LEVEL ) );
+			chartView.setAttribute( ZOOM_LEVEL_ATTRIBUTE, "{selectedLevel.value}" );
+			chartView.fireEvent( new PropertyChangeEvent( chartView, ZOOM_LEVEL, oldLevel.value, selectedLevel.value ) );
 		}
 	}
 	
@@ -84,7 +85,7 @@ public class ZoomPanel extends HBox {
 			value: text
 			text: text
 			toggleGroup: toggleGroup
-			selected: chartGroup.getAttribute( ZOOM_LEVEL_ATTRIBUTE, ZOOM_DEFAULT ) == text
+			selected: chartView.getAttribute( ZOOM_LEVEL_ATTRIBUTE, ZOOM_DEFAULT ) == text
 			graphic: ImageView { image: image }
 			layoutInfo: buttonInfo
 			styleClass: "zoom-panel-button"
