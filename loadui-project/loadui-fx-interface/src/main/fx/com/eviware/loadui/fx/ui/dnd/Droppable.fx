@@ -57,7 +57,7 @@ public mixin class Droppable extends BaseMixin {
 		node.addMouseHandler( MOUSE_ENTERED, function( e:MouseEvent ):Void {
 			def newDroppables = for( droppable in [ currentDroppables, this ][d|(d as Node).scene == (this as Node).scene
 				and not isDescendant( Draggable.currentDraggable as Node, d as Node )
-				and not Draggable.currentDraggable == d] ) droppable;
+				and Draggable.currentDraggable != d] ) droppable;
 			currentDroppables = Sequences.sort( newDroppables, descendantOrdering ) as Droppable[];
 			if( isAcceptable( Draggable.currentDraggable ) ) {
 				hovering = true;
