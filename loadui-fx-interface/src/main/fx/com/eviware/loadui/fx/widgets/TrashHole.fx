@@ -58,8 +58,6 @@ public class TrashHole extends BaseNode, Droppable{
 	}
 	
 	override var onDrop = function( d:Draggable ) {
-		//log.debug("{d} dropped!");
-		
 		if( d.revert ) {
 			d.revert = false;
 			FX.deferAction( function():Void {
@@ -73,7 +71,7 @@ public class TrashHole extends BaseNode, Droppable{
 		} else if( d instanceof ModelItemHolder ) {
 			DeleteModelItemDialog { modelItemHolder: d as ModelItemHolder }
 		} else {
-			DeleteDeletablesDialog { deletables: d as Deletable }
+			(d as Deletable).deleteObject();
 		}
 	}
 }

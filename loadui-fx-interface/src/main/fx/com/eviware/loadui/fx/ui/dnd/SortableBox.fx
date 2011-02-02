@@ -143,7 +143,7 @@ public class SortableBox extends BaseNode, Resizable {
 			def frame:DraggableFrame = DraggableFrame {
 				layoutInfo: child.layoutInfo
 				draggable: draggable = if( child instanceof Deletable ) DeletableElementNode {
-					confirmDialogScene: scene
+					confirmDialogScene: bind scene
 					layoutInfo: child.layoutInfo
 					width: bind frame.width
 					height: bind frame.height
