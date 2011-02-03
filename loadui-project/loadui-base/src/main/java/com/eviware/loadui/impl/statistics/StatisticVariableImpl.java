@@ -163,7 +163,7 @@ public class StatisticVariableImpl implements MutableStatisticVariable, Releasab
 	{
 		for( StatisticsWriter writer : writers )
 			addressableRegistry.unregister( writer );
-		ReleasableUtils.release( writers );
+		ReleasableUtils.releaseAll( writers );
 		writers.clear();
 	}
 }
