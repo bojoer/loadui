@@ -146,7 +146,7 @@ public abstract class TableBase
 	{
 		StatementHolder sh = new StatementHolder();
 		String key;
-		StringBuffer names = new StringBuffer();
+		StringBuilder names = new StringBuilder();
 		StringBuilder values = new StringBuilder();
 
 		Iterator<String> keys = descriptor.getStaticFields().keySet().iterator();
