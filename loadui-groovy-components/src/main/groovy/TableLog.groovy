@@ -55,6 +55,7 @@ saveFileName = fileName.value?.name
 
 writer = null
 def formater = new SimpleDateFormat("HH:mm:ss:SSS")
+myTableModel.maxRow = maxRows.value
 
 updateFollow = {
 	follow.value = myTableModel.follow
