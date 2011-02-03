@@ -19,7 +19,7 @@ import com.eviware.loadui.api.terminal.TerminalHolder;
 
 public interface CanvasObjectItem extends ModelItem, TerminalHolder
 {
-	public static String RELOADED = ModelItem.class.getSimpleName() + "@reloaded";
+	public static String RELOADED = CanvasObjectItem.class.getSimpleName() + "@reloaded";
 
 	public static String ACTIVITY = CanvasObjectItem.class.getSimpleName() + "@activity";
 
