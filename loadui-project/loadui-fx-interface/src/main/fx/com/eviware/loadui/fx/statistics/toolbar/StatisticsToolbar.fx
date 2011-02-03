@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.EventObject;
 
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -106,12 +107,19 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
 			// there are no more variables in this holder, remove it from the toolbar
 			removeStatisticHolder(sh);
 		}
-		else if (not statHolderMap.containsKey(sh)){
+		else if (not statHolderMap.containsKey(sh)) {
 		   // there is more than one variable in a holder, so add it to toolbar if it wasn't already added
 			if(sh instanceof ComponentItem){
-	      	def cti: ComponentToolbarItem = ComponentToolbarItem {
-					component: sh as ComponentItem
-					descriptor: componentRegistry.findDescriptor((sh as ComponentItem).getType())
+	      	def cti: StatisticHolderToolbarItem = StatisticHolderToolbarItem {
+					statisticHolder: sh
+					category: "COMPONENTS"
+				}
+				addItem(cti);
+	      	statHolderMap.put(sh, cti);
+			} else if(sh instanceof SceneItem) {
+	      	def cti: StatisticHolderToolbarItem = StatisticHolderToolbarItem {
+					statisticHolder: sh
+					category: "GLOBAL"
 				}
 				addItem(cti);
 	      	statHolderMap.put(sh, cti);
@@ -122,7 +130,7 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
 	/** Removes holder from toolbar no matter if it has variables or not */
 	function removeStatisticHolder(sh: StatisticHolder){
 		if(sh instanceof ComponentItem){
-			def cti: ComponentToolbarItem = statHolderMap.get(sh) as ComponentToolbarItem;
+			def cti: StatisticHolderToolbarItem = statHolderMap.get(sh) as StatisticHolderToolbarItem;
 			if(cti != null){
 				removeItem(cti);
 			}

@@ -37,6 +37,8 @@ import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.api.terminal.Connection;
 import java.lang.RuntimeException;
 
+def highlightedCableColor = Color.web("#00adee");
+
 /**
  * Represents a Connection between Terminals in the Canvas.
  * Drawn as a wire, connecting an OutputTerminal to an InputTerminal. 
@@ -108,7 +110,7 @@ public class ConnectionNode extends Selectable, Deletable, BaseNode {
 			startY: bind startY
 			endX: bind endX
 			endY: bind endY
-			fill: Color.GRAY
+			fill: bind if( selected ) highlightedCableColor else Color.GRAY
 			effect: bind if( selected ) Selectable.effect else null
 		}
 	}

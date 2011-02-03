@@ -17,6 +17,7 @@ package com.eviware.loadui.fx;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 import javafx.util.Properties;
 
 import java.net.URI;
@@ -26,6 +27,13 @@ import java.util.Comparator;
 import java.lang.Exception;
 
 import java.net.URL;
+
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.SceneItem;
+import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.component.ComponentRegistry;
+import com.eviware.loadui.util.BeanInjector;
 
 /**
  * Contains static helper functions for common JavaFX related tasks.
@@ -143,4 +151,26 @@ function twoDigitHex( n:Integer ):String {
 		"0{str}"
 	else
 		str
+}
+ 
+public def defaultImage = Image { url: "{__ROOT__}images/png/default-component-icon.png" };
+public def agentImage = Image { url: "{__ROOT__}images/png/agent-icon.png" };
+public def projectImage = Image { url: "{__ROOT__}images/png/project-icon.png" };
+public def testCaseImage = Image { url: "{__ROOT__}images/png/testcase-icon.png" };
+
+/**
+ * Gets an Image to be used as an icon for the given object.
+ */
+public function getImageFor( object:Object ):Image {
+	if( object instanceof AgentItem ) {
+		agentImage
+	} else if( object instanceof ProjectItem ) {
+		projectImage
+	} else if( object instanceof SceneItem ) {
+		testCaseImage
+	} else if( object instanceof ComponentItem ) {
+		Image { url: BeanInjector.getBean(ComponentRegistry.class).findDescriptor((object as ComponentItem).getType()).getIcon().toString() }
+	} else {
+		defaultImage
+	}
 }

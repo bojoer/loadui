@@ -45,7 +45,7 @@ import com.eviware.loadui.fx.ui.dnd.SortableBox;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.AnalysisToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
-import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
+import com.eviware.loadui.fx.statistics.toolbar.items.StatisticHolderToolbarItem;
 
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
@@ -225,12 +225,15 @@ class DropBase extends BaseNode, Resizable, Droppable {
 	override var onDrop = function( draggable:Draggable ):Void {
 		if( draggable instanceof ChartToolbarItem ) {
 			statisticPage.createChartGroup( (draggable as ChartToolbarItem).type, "Chart Group {statisticPage.getChildCount()+1}" )
-		} else if( draggable instanceof ComponentToolbarItem ) {
-			def sh = (draggable as ComponentToolbarItem).component;
+		} else if( draggable instanceof StatisticHolderToolbarItem ) {
+			def sh = (draggable as StatisticHolderToolbarItem).statisticHolder;
 			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart Group {statisticPage.getChildCount()+1}" );
 			def chart = chartGroup.createChart( sh );
-			def chartView = chartGroup.getChartViewForChart( chart );
-			(chartView as ConfigurableLineChartView).addSegment( 'TimeTaken', 'AVERAGE', 'main' );
+			def variable = sh.getStatisticVariable( "TimeTaken" );
+			if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
+				def chartView = chartGroup.getChartViewForChart( chart );
+				(chartView as ConfigurableLineChartView).addSegment( 'TimeTaken', 'AVERAGE', 'main' );
+			}
 		} else if( draggable instanceof AnalysisToolbarItem ) {
 			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart Group {statisticPage.getChildCount()+1}" );
 			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );
