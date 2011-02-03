@@ -50,8 +50,7 @@ public class ReleasableUtils
 			if( object instanceof Collection )
 			{
 				for( Object child : ( Collection<?> )object )
-					if( child instanceof Releasable )
-						release( child );
+					release( child );
 			}
 			release( object );
 		}

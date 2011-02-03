@@ -23,6 +23,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
@@ -35,7 +36,7 @@ import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 
-public abstract class AbstractStatisticsWriter implements StatisticsWriter
+public abstract class AbstractStatisticsWriter implements StatisticsWriter, Releasable
 {
 	public final static Logger log = LoggerFactory.getLogger( AbstractStatisticsWriter.class );
 
@@ -58,6 +59,8 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	private AggregateLevel[] aggregateLevels = new AggregateLevel[4];
 	private HashSet<Entry> firstLevelEntries = new HashSet<Entry>();
 
+	private final ExecutionStateListener executionStateListener;
+
 	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values )
 	{
@@ -79,72 +82,8 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		// TODO
 		manager.getExecutionManager().registerTrackDescriptor( descriptor );
 
-		// adding execution listeners.
-		manager.getExecutionManager().addExecutionListener( new ExecutionListenerAdapter()
-		{
-			@Override
-			public void executionStarted( ExecutionManager.State oldState )
-			{
-				// unpause
-				if( oldState == State.PAUSED )
-				{
-					/*
-					 * Continue, calculate time spent in interval when pause occured.
-					 * Next write to database will be at regular interval, since
-					 * delta is taken in account.
-					 * 
-					 * Example: if delay is 1s. Which means that flush occures at 1s,
-					 * 2s, 3s, etc.. Pause occurs in 4th interval ( between 3s and 4s
-					 * ) Than unpause comes after 3s( that woud be between 6s and 7s
-					 * from test start ). flush() will be when test paused (3s +
-					 * delta) and next is at 7s.
-					 */
-					long pauseTime = ( System.currentTimeMillis() - pauseStartedTime );
-					totalPause += pauseTime;
-					lastTimeFlushed += pauseTime;
-					for( AggregateLevel a : aggregateLevels )
-						a.lastFlush += pauseTime;
-					pauseStartedTime = 0;
-					if( pauseTime > delay )
-						flush();
-				}
-				else if( oldState == State.STOPPED )
-				{
-					reset();
-				}
-			}
-
-			@Override
-			public void executionPaused( ExecutionManager.State oldState )
-			{
-				if( oldState == State.STARTED )
-				{
-					/*
-					 * write data at moment when paused.
-					 * 
-					 * rember how time is spent in this interval after last time data
-					 * is written to db.
-					 */
-					pauseStartedTime = System.currentTimeMillis();
-				}
-			}
-
-			@Override
-			public void executionStopped( ExecutionManager.State oldState )
-			{
-				/*
-				 * if stoping write last data that came in.
-				 * 
-				 * or this should be done by execution manager?
-				 */
-				if( oldState == State.STARTED || oldState == State.PAUSED )
-				{
-					flush();
-					pauseStartedTime = 0;
-					totalPause = 0;
-				}
-			}
-		} );
+		executionStateListener = new ExecutionStateListener();
+		manager.getExecutionManager().addExecutionListener( executionStateListener );
 	}
 
 	/**
@@ -203,9 +142,81 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		}
 	}
 
+	@Override
+	public void release()
+	{
+		manager.getExecutionManager().removeExecutionListener( executionStateListener );
+	}
+
 	protected EntryBuilder at( long timestamp )
 	{
 		return new EntryBuilder( timestamp );
+	}
+
+	private class ExecutionStateListener extends ExecutionListenerAdapter
+	{
+		@Override
+		public void executionStarted( ExecutionManager.State oldState )
+		{
+			// unpause
+			if( oldState == State.PAUSED )
+			{
+				/*
+				 * Continue, calculate time spent in interval when pause occured.
+				 * Next write to database will be at regular interval, since delta
+				 * is taken in account.
+				 * 
+				 * Example: if delay is 1s. Which means that flush occures at 1s,
+				 * 2s, 3s, etc.. Pause occurs in 4th interval ( between 3s and 4s )
+				 * Than unpause comes after 3s( that woud be between 6s and 7s from
+				 * test start ). flush() will be when test paused (3s + delta) and
+				 * next is at 7s.
+				 */
+				long pauseTime = ( System.currentTimeMillis() - pauseStartedTime );
+				totalPause += pauseTime;
+				lastTimeFlushed += pauseTime;
+				for( AggregateLevel a : aggregateLevels )
+					a.lastFlush += pauseTime;
+				pauseStartedTime = 0;
+				if( pauseTime > delay )
+					flush();
+			}
+			else if( oldState == State.STOPPED )
+			{
+				reset();
+			}
+		}
+
+		@Override
+		public void executionPaused( ExecutionManager.State oldState )
+		{
+			if( oldState == State.STARTED )
+			{
+				/*
+				 * write data at moment when paused.
+				 * 
+				 * rember how time is spent in this interval after last time data is
+				 * written to db.
+				 */
+				pauseStartedTime = System.currentTimeMillis();
+			}
+		}
+
+		@Override
+		public void executionStopped( ExecutionManager.State oldState )
+		{
+			/*
+			 * if stoping write last data that came in.
+			 * 
+			 * or this should be done by execution manager?
+			 */
+			if( oldState == State.STARTED || oldState == State.PAUSED )
+			{
+				flush();
+				pauseStartedTime = 0;
+				totalPause = 0;
+			}
+		}
 	}
 
 	/**
