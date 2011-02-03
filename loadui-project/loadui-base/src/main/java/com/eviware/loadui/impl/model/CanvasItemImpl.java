@@ -444,9 +444,6 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	@Override
 	public CanvasObjectItem duplicate( CanvasObjectItem obj )
 	{
-		if( !( obj instanceof ComponentItem ) )
-			throw new IllegalArgumentException( this + " cannot duplicate object of type " + obj.getClass() );
-
 		if( !( obj instanceof ComponentItemImpl ) )
 			throw new IllegalArgumentException( obj + " needs to be an instance of: " + ComponentItemImpl.class.getName() );
 

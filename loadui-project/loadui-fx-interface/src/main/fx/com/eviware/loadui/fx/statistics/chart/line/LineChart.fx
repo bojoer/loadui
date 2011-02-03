@@ -183,12 +183,13 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 				padding: Insets { left: -3, right: 15 }
 				spacing: 10
 				content: [
-					segmentButtons, 
+					Label { layoutInfo: LayoutInfo { height: 163, margin: Insets { right: -10 } }, visible: false },
+					segmentButtons,
 					chartVbox = VBox {
 						padding: Insets { top: 5 }
 						content: [
 							Region { styleClass: "base-chart", managed: false, width: bind chartVbox.width, height: bind chartVbox.height }, 
-							chartNode, 
+							chartNode,
 							SVGPath {
 								managed: false
 								clip: Rectangle { width: bind chartVbox.width, height: bind chartVbox.height }
@@ -228,7 +229,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		yAxis.setRange( 0, 10 );
 		yAxis.setLabelVisible( false );
 		
-		chartNode.layoutInfo = LayoutInfo { height: 150, hfill: true, hgrow: Priority.ALWAYS, margin: Insets { left: -15, right: 10 } };
+		chartNode.layoutInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true, vgrow: Priority.ALWAYS, margin: Insets { left: -15, right: 10 } };
 	}
 	
 	override function update():Void {
