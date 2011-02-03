@@ -24,21 +24,15 @@ package com.eviware.loadui.fx.widgets.toolbar;
 import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
 import com.eviware.loadui.fx.FxUtils.*;
 
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 
-import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.fx.AppState;
 
-import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.MainWindow;
-import javafx.scene.text.Text;
-
-def iconImage = Image { url: "{__ROOT__}images/png/testcase-icon.png" };
 
 public class TestCaseToolbarItem extends ToolbarItem {
-	override var icon = iconImage;
+	override var icon = testCaseImage;
 	
 	override var tooltip = "Creates a new TestCase in the Project";
 	

@@ -49,6 +49,7 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.MutableSummary;
@@ -63,6 +64,7 @@ import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
 import com.eviware.loadui.impl.counter.CounterStatisticSupport;
 import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
+import com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter;
 import com.eviware.loadui.impl.summary.MutableSummaryImpl;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
@@ -119,8 +121,9 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		behaviorProvider = BeanInjector.getBean( BehaviorProvider.class );
 
 		statisticHolderSupport = new StatisticHolderSupport( this );
-		counterStatisticSupport = new CounterStatisticSupport( this,
-				statisticHolderSupport.addStatisticVariable( "Throughput" ), REQUEST_COUNTER );
+		MutableStatisticVariable throughputVariable = statisticHolderSupport.addStatisticVariable( "Throughput" );
+		statisticHolderSupport.addStatisticsWriter( ThroughputStatisticsWriter.TYPE, throughputVariable );
+		counterStatisticSupport = new CounterStatisticSupport( this, throughputVariable, REQUEST_COUNTER );
 
 		abortOnFinish = createProperty( ABORT_ON_FINISH_PROPERTY, Boolean.class, false );
 	}
@@ -636,7 +639,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 					{
 						paused = true;
 					}
-					
+
 					setRunning( false );
 					if( timerFuture != null )
 						timerFuture.cancel( true );

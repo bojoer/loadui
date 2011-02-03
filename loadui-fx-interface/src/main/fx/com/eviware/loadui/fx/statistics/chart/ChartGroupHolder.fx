@@ -50,7 +50,7 @@ import com.eviware.loadui.fx.ui.dnd.SortableBox;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.AnalysisToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
-import com.eviware.loadui.fx.statistics.toolbar.items.ComponentToolbarItem;
+import com.eviware.loadui.fx.statistics.toolbar.items.StatisticHolderToolbarItem;
 
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
@@ -62,16 +62,14 @@ import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.BeanInjector;
 import java.util.EventObject;
 
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
 def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS };
 def childrenInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, margin: Insets { left: 8, right: 8, top: -1, bottom: 8 } };
-
-def agentImage = Image { url: "{__ROOT__}images/png/agent-icon.png" };
 
 /**
  * Base Chart Node, visualizes a ChartGroup.
@@ -134,7 +132,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			groupContent = VBox {
 				content: [
 					Region { width: bind groupContent.width, height: bind groupContent.height, managed: false, styleClass: "chart-group-face" },
-					//Label { text: bind "{title} ({itemCount})" },
 					Stack {
 						nodeHPos: HPos.LEFT
 						content: bind chartViewHolder
@@ -178,10 +175,14 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 	override var onDrop = function( draggable:Draggable ):Void {
 		if( draggable instanceof ChartToolbarItem ) {
 			chartGroup.setType( (draggable as ChartToolbarItem).type );
-		} else if( draggable instanceof ComponentToolbarItem ) {
-			def chart = chartGroup.createChart( (draggable as ComponentToolbarItem).component );
-			def chartView = chartGroup.getChartViewForChart( chart );
-			(chartView as ConfigurableLineChartView).addSegment( 'TimeTaken', 'AVERAGE', 'main' );
+		} else if( draggable instanceof StatisticHolderToolbarItem ) {
+			def sh = (draggable as StatisticHolderToolbarItem).statisticHolder;
+			def chart = chartGroup.createChart( sh );
+			def variable = sh.getStatisticVariable( "TimeTaken" );
+			if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
+				def chartView = chartGroup.getChartViewForChart( chart );
+				(chartView as ConfigurableLineChartView).addSegment( 'TimeTaken', 'AVERAGE', 'main' );
+			}
 		} else if( draggable instanceof AnalysisToolbarItem ) {
 			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );
 		}
@@ -211,8 +212,9 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 				content: for( chart in chartGroup.getChildren() ) ChartViewHolder {
 					chartModel: chart
 					chartView: chartGroup.getChartViewForChart( chart as Chart )
-					label: bind ModelUtils.getLabelHolder( chart.getStatisticHolder() ).label; //"{chart.getStatisticHolder().getLabel()}"
+					label: bind ModelUtils.getLabelHolder( chart.getStatisticHolder() ).label;
 					layoutInfo: chartViewInfo
+					graphic: ImageView { image: FxUtils.getImageFor( chart.getStatisticHolder() ) }
 				}
 				onMoved: function( chart, fromIndex, toIndex ):Void {
 					chartGroup.moveChart( (chart as ChartViewHolder).chartModel, toIndex );
@@ -239,7 +241,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 					label: source
 					typeLabel: "Agent"
 					layoutInfo: chartViewInfo
-					graphic: ImageView { image: agentImage }
+					graphic: ImageView { image: FxUtils.agentImage }
 				}
 			}
 			insert expandedNode into (resizable as Container).content;
