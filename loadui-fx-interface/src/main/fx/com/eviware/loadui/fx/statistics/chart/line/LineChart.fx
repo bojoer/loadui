@@ -240,8 +240,10 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 			model.refresh();
 			maxTime = Math.max( maxTime, (model as LineSegmentChartModel).latestTime );
 			def yRange = model.getYRange( 0.05, 0.05 );
-			min = Math.min( min, yRange.minimum() );
-			max = Math.max( max, yRange.maximum() );
+			if( yRange.minimum() != Double.NEGATIVE_INFINITY and yRange.maximum() != Double.POSITIVE_INFINITY ) {
+				min = Math.min( min, yRange.minimum() );
+				max = Math.max( max, yRange.maximum() );
+			}
 		}
 		if( min > max ) {
 			min = 0;

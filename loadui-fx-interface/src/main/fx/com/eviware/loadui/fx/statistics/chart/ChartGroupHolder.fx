@@ -76,7 +76,7 @@ def childrenInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, margin: Ins
  *
  * @author dain.nilsson
  */
-public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable, Deletable {
+public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable, Droppable {
 	override var styleClass = "chart-group-holder";
 	
 	var title:String = "ChartGroupHolder";
@@ -128,7 +128,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 		width: bind width
 		height: bind height
 		content: [
-			Region { width: bind width, height: bind height, managed: false, styleClass: "chart-group-holder" },
+			Region { styleClass: "chart-group-holder", managed: false, height: bind height, width: bind width }
 			groupContent = VBox {
 				content: [
 					Region { width: bind groupContent.width, height: bind groupContent.height, managed: false, styleClass: "chart-group-face" },
@@ -158,16 +158,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 				(node as ChartViewHolder).reset();
 	}
 	
-	override function release():Void {
-		statisticsManager.removeEventListener( BaseEvent.class, statisticsManagerListener );
-		chartViewHolder = null;
-		expandedNode = null;
-	}
-	
-	override function doDelete():Void {
-		chartGroup.delete();
-	}
-	
 	override var accept = function( draggable:Draggable ):Boolean {
 		draggable instanceof StatisticsToolbarItem
 	}
@@ -181,11 +171,21 @@ public class ChartGroupHolder extends BaseNode, Resizable, Droppable, Releasable
 			def variable = sh.getStatisticVariable( "TimeTaken" );
 			if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
 				def chartView = chartGroup.getChartViewForChart( chart );
-				(chartView as ConfigurableLineChartView).addSegment( 'TimeTaken', 'AVERAGE', 'main' );
+				(chartView as ConfigurableLineChartView).addSegment( 'TimeTaken', 'AVERAGE', StatisticVariable.MAIN_SOURCE );
 			}
 		} else if( draggable instanceof AnalysisToolbarItem ) {
 			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );
 		}
+	}
+	
+	override function release():Void {
+		statisticsManager.removeEventListener( BaseEvent.class, statisticsManagerListener );
+		chartViewHolder = null;
+		expandedNode = null;
+	}
+	
+	override function doDelete():Void {
+		chartGroup.delete();
 	}
 	
 	override function create():Node {

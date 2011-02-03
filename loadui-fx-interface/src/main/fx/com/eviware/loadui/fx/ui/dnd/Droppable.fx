@@ -13,12 +13,6 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-/*
-*Droppable.fx
-*
-*Created on mar 10, 2010, 11:13:10 fm
-*/
-
 package com.eviware.loadui.fx.ui.dnd;
 
 import com.eviware.loadui.fx.ui.node.BaseMixin;
@@ -104,8 +98,6 @@ public mixin class Droppable extends BaseMixin {
 // but this should probably be extended to order by z-index even if the two Nodes Parents aren't the same.
 class DescendandComparator extends Comparator {
 	override function compare( a:Object, b:Object ):Integer {
-		if( isDescendant( a as Node, b as Node ) ) -1
-		else if( isDescendant( b as Node, a as Node ) ) 1
-		else 0;
+		return compareZIndex( a as Node, b as Node );
 	}
 }
