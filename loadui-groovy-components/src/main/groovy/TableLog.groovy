@@ -110,6 +110,10 @@ addEventListener( ActionEvent ) { event ->
 		writer?.close()
 		writer = null
 	}
+	
+	else if ( event.key == "START" ) {
+		buildFileName()
+	}
 
 	else if ( event.key == "RESET" ) {
 		myTableModel.reset()
