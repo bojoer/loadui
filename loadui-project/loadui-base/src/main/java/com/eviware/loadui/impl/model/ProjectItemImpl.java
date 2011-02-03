@@ -810,7 +810,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		public void handleEvent( BaseEvent event )
 		{
 			AgentItem agent = ( AgentItem )event.getSource();
-			if( AgentItem.READY.equals( event.getKey() ) && agent.isReady() )
+			if( AgentItem.BECOME_CONNECTED.equals( event.getKey() ) )
 			{
 				log.debug( "Agent is ready!" );
 				for( SceneItem scene : getScenesAssignedTo( agent ) )

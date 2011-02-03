@@ -147,6 +147,11 @@ public class ControllerImpl
 			{
 				executorManager.setMaxPoolSize( Integer.parseInt( message.get( AgentItem.SET_MAX_THREADS ) ) );
 			}
+			else if( message.containsKey( AgentItem.HANDSHAKE ) )
+			{
+				endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.HANDSHAKE, null ) );
+				log.debug( "Handshake response sent to host: {}", message.get( AgentItem.HANDSHAKE ) );
+			}
 			else if( message.containsKey( AgentItem.ASSIGN ) )
 			{
 				String sceneId = message.get( AgentItem.ASSIGN );
