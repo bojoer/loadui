@@ -50,9 +50,10 @@ import com.eviware.loadui.fx.util.ImageUtil.*;
 
 public class ProjectCanvas extends Canvas {
 
-	def projectItem:ProjectItem = bind lazy canvasItem as ProjectItem;
+	var projectItem:ProjectItem;
 	
-	override var canvasItem on replace oldCanvas { 
+	override var canvasItem on replace oldCanvas {
+		projectItem = canvasItem as ProjectItem; 
 		if(canvasItem != null and not (canvasItem instanceof ProjectItem)) 
 			throw new RuntimeException( "ProjectCanvas can only take a ProjectItem!" ) ;
 		
