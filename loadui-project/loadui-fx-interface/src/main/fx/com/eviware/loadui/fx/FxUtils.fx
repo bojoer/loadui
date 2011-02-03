@@ -16,9 +16,13 @@
 package com.eviware.loadui.fx;
 
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Group;
+import javafx.scene.layout.Container;
 import javafx.scene.paint.Color;
 import javafx.scene.image.Image;
 import javafx.util.Properties;
+import javafx.util.Sequences;
 
 import java.net.URI;
 import java.lang.Thread;
@@ -106,6 +110,47 @@ public function isDescendant( ancestor:Node, descendant:Node ) {
 			return true;
 	}
 	false
+}
+
+public function compareZIndex( nodeA:Node, nodeB:Node ):Integer {
+	if( nodeA == nodeB )
+		return 0;
+	if( isDescendant( nodeA, nodeB ) )
+		return 1;
+	if( isDescendant( nodeB, nodeA ) )
+		return -1;
+	
+	var parents:Node[] = [ nodeA ];
+	var p:Parent = nodeA.parent;
+	while( p != null ) {
+		insert p into parents;
+		p = p.parent;
+	}
+	p = nodeB.parent;
+	var oldP:Node = nodeB;
+	var i = -1;
+	while( p != null ) {
+		i = Sequences.indexByIdentity( parents, p );
+		if( i >= 0 ) {
+			def children = getChildren( p );
+			def indexA = Sequences.indexByIdentity( children, parents[i-1] );
+			def indexB = Sequences.indexByIdentity( children, oldP );
+			return indexB - indexA;
+		}
+		oldP = p;
+		p = p.parent;
+	}
+	return 0;
+}
+
+public function getChildren( p:Parent ):Node[] {
+	if( p instanceof Group ) {
+		(p as Group).content
+	} else if( p instanceof Container ) {
+		(p as Container).content
+	} else {
+		[]
+	}
 }
 
 public function openURL(url:String) {
