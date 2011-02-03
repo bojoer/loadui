@@ -51,9 +51,13 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 	{
 		if( session != null )
 		{
-			if( !sessions.containsKey( session ) )
-				sessions.put( session, new MessageEndpointImpl( session ) );
-
+			synchronized( sessions )
+			{
+				if( !sessions.containsKey( session ) )
+				{
+					sessions.put( session, new MessageEndpointImpl( session ) );
+				}
+			}
 			sessions.get( session ).fireMessage( channel, data );
 		}
 	}
@@ -62,6 +66,18 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 	public void addConnectionListener( ConnectionListener listener )
 	{
 		serverConnectionListeners.add( listener );
+		// for already created points handleConnectionChange(...) wasn't
+		// called on this new listener because at the moment when points were
+		// created this listener wasn't added yet. so call
+		// handleConnectionChange(...) on new listener here for all existing
+		// points.
+		synchronized( sessions )
+		{
+			for( MessageEndpoint messageEndpoint : sessions.values() )
+			{
+				listener.handleConnectionChange( messageEndpoint, true );
+			}
+		}
 	}
 
 	@Override
