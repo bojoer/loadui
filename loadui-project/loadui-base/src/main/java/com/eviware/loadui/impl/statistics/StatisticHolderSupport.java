@@ -117,6 +117,7 @@ public class StatisticHolderSupport implements Releasable
 					"Attempt made to remove a non-existing StatisticVarible from a StatisticHolder." );
 
 		StatisticVariableImpl removedVariable = variables.remove( statisticVariableName );
+		ReleasableUtils.release( removedVariable );
 		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.REMOVED,
 				removedVariable ) );
 		log.debug( "Fired CollectionEvent: removed statistic variable!" );
