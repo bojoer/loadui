@@ -115,7 +115,6 @@ public class StatisticsWindow {
 	    								};
 	
 	public function show() {
-		
     	if ( closed ) {
     		if ( scene == null ) {
 	    		var overlay = Group {};
@@ -163,6 +162,7 @@ public class StatisticsWindow {
 	    		}
 	    	}
     	closed = false;
+    	stage.toFront();
 	}
 	
 	public function close() {
