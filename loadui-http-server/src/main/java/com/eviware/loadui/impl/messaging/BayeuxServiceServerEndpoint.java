@@ -45,20 +45,27 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 	{
 		super( bayeuxServer, "messageEndpoint" );
 		addService( CHANNEL + "/**", "fireMessage" );
+		addService( "/service/init", "initialize" );
 	}
 
 	public void fireMessage( ServerSession session, String channel, Object data, String messageId )
 	{
 		if( session != null )
 		{
-			synchronized( sessions )
-			{
-				if( !sessions.containsKey( session ) )
-				{
-					sessions.put( session, new MessageEndpointImpl( session ) );
-				}
-			}
-			sessions.get( session ).fireMessage( channel, data );
+			MessageEndpointImpl messageEndpoint = sessions.get( session );
+			if( messageEndpoint == null )
+				log.error( "Received message for unknown session:", data );
+			else
+				messageEndpoint.fireMessage( channel, data );
+		}
+	}
+
+	public void initialize( ServerSession session, String channel, Object data, String messageId )
+	{
+		if( session != null )
+		{
+			if( !sessions.containsKey( session ) )
+				sessions.put( session, new MessageEndpointImpl( session ) );
 		}
 	}
 
@@ -66,24 +73,18 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 	public void addConnectionListener( ConnectionListener listener )
 	{
 		serverConnectionListeners.add( listener );
-		// for already created points handleConnectionChange(...) wasn't
-		// called on this new listener because at the moment when points were
-		// created this listener wasn't added yet. so call
-		// handleConnectionChange(...) on new listener here for all existing
-		// points.
-		synchronized( sessions )
-		{
-			for( MessageEndpoint messageEndpoint : sessions.values() )
-			{
-				listener.handleConnectionChange( messageEndpoint, true );
-			}
-		}
 	}
 
 	@Override
 	public void removeConnectionListener( ConnectionListener listener )
 	{
 		serverConnectionListeners.remove( listener );
+	}
+
+	@Override
+	public Set<MessageEndpoint> getConnectedEndpoints()
+	{
+		return new HashSet<MessageEndpoint>( sessions.values() );
 	}
 
 	private class MessageEndpointImpl implements MessageEndpoint, RemoveListener

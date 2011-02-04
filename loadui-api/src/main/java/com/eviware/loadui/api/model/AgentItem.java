@@ -30,8 +30,6 @@ public interface AgentItem extends ModelItem, MessageEndpoint
 	public final static String READY = AgentItem.class.getName() + "@ready";
 	public final static String URL = AgentItem.class.getName() + "@url";
 	public final static String UTILIZATION = AgentItem.class.getName() + "@utilization";
-	public final static String BECOME_CONNECTED = AgentItem.class.getName() + "@becomeConnected";
-	public final static String BECOME_DISCONNECTED = AgentItem.class.getName() + "@becomeDisconnected";
 
 	// Channels
 	public final static String AGENT_CHANNEL = "/" + AgentItem.class.getName();
@@ -48,7 +46,6 @@ public interface AgentItem extends ModelItem, MessageEndpoint
 	public final static String SCENE_END_TIME = "sceneEndTime";
 	public final static String SET_MAX_THREADS = "setMaxThreads";
 	public final static String SET_UTILIZATION = "setUtilization";
-	public final static String HANDSHAKE = "handshake";
 
 	public final static String MAX_THREADS_PROPERTY = AgentItem.class.getSimpleName() + ".maxThreads";
 

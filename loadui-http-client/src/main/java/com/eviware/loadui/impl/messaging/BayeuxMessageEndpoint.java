@@ -46,6 +46,7 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 	private final Set<ConnectionListener> connectionListeners = new HashSet<ConnectionListener>();
 	private final Runnable stateChecker = new StateChecker();
 	private ScheduledFuture<?> stateCheckerFuture;
+	private boolean open = false;
 	private boolean connected = false;
 
 	public BayeuxMessageEndpoint( String url, HttpClient httpClient )
@@ -60,8 +61,9 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 		if( this.connected != connected )
 		{
 			this.connected = connected;
-			for( ConnectionListener listener : connectionListeners )
-				listener.handleConnectionChange( BayeuxMessageEndpoint.this, connected );
+			if( open || !connected )
+				for( ConnectionListener listener : connectionListeners )
+					listener.handleConnectionChange( BayeuxMessageEndpoint.this, connected );
 
 			if( connected )
 			{
@@ -70,13 +72,16 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 					@Override
 					public void onMessage( ClientSessionChannel arg0, Message message )
 					{
-						System.out.println( "MessageListener: " + arg0 + ", " + message );
 						String channel = message.getChannel();
 						if( channel.startsWith( BASE_CHANNEL ) && message.getData() != null )
 							routingSupport.fireMessage( channel.substring( BASE_CHANNEL.length() ), message.getData() );
 					}
 				} );
 				stateCheckerFuture = scheduledExecutor.scheduleAtFixedRate( stateChecker, 1, 1, TimeUnit.SECONDS );
+				Message.Mutable message = newMessage();
+				message.setChannel( "/service/init" );
+				message.setData( null );
+				enqueueSend( message );
 			}
 			else
 			{
@@ -89,7 +94,8 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 	protected void processConnect( Message connect )
 	{
 		super.processConnect( connect );
-		setConnected( connect.isSuccessful() );
+		if( open )
+			setConnected( connect.isSuccessful() );
 	}
 
 	@Override
@@ -103,7 +109,9 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 	public void onMessages( List<Message.Mutable> messages )
 	{
 		for( Message.Mutable message : messages )
+		{
 			routingSupport.fireMessage( message.getChannel(), message.getData() );
+		}
 	}
 
 	@Override
@@ -141,29 +149,37 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 	}
 
 	@Override
-	public void close()
+	public synchronized void close()
 	{
-		try
+		if( open )
 		{
-			disconnect();
-		}
-		catch( Exception e )
-		{
-			e.printStackTrace();
+			try
+			{
+				open = false;
+				disconnect();
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
 	@Override
-	public void open()
+	public synchronized void open()
 	{
-		try
+		if( !open )
 		{
-			handshake();
-			setConnected( isConnected() );
-		}
-		catch( Exception e )
-		{
-			e.printStackTrace();
+			try
+			{
+				handshake();
+				open = true;
+				setConnected( isConnected() );
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
