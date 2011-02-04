@@ -86,7 +86,6 @@ public class ComponentManager extends ComponentRegistry.DescriptorListener {
 	 * @param properties
 	 */
 	public function onUnbind( componentRegistry:ComponentRegistry, properties:Map ):Void {
-		log.debug( "The componentRegistry is no longer, if you are not shutting down..." );
 		componentRegistry.removeDescriptorListener( this );
 	}
 	
