@@ -1,5 +1,5 @@
 /* 
- * Copyright 2010 eviware software ab
+ * Copyright 2011 eviware software ab
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
@@ -75,7 +75,7 @@ public class AboutDialog {
 						layoutX: 20
 						layoutY: 230
 						textFill: Color.WHITE
-						text: "loadUI Version {VERSION}\r\n\r\nBuild version: {if(version != null) version else '[internal]'}\r\nBuild date: {if(date != null) date else '0000-00-00 00:00'}\r\n\r\nCopyright 2010 Eviware Software AB\r\neviware and loadUI are trademarks of Eviware Software AB"
+						text: "loadUI Version {VERSION}\r\n\r\nBuild version: {if(version != null) version else '[internal]'}\r\nBuild date: {if(date != null) date else '0000-00-00 00:00'}\r\n\r\nCopyright 2011 eviware software ab\r\neviware and loadUI are trademarks of Eviware Software AB"
 					}, Hyperlink {
 						layoutX: 20
 						layoutY: 340
