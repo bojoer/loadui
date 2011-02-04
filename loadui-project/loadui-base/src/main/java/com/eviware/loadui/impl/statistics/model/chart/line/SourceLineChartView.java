@@ -44,7 +44,7 @@ public class SourceLineChartView extends AbstractLineChartView
 		// SourceLineSegment for any Segment for the main source, unless such a
 		// Segment already exists.
 
-		// TODO: Think this through a bite more, what happens when segments are
+		// TODO: Think this through a bit more, what happens when segments are
 		// added/removed, does this stay in sync?
 		if( segment instanceof ChartLineSegment )
 		{

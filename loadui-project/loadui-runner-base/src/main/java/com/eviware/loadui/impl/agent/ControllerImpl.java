@@ -101,6 +101,7 @@ public class ControllerImpl
 					endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, agentListener );
 					endpoint.addMessageListener( SceneCommunication.CHANNEL, new SceneListener() );
 					endpoint.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL, new ComponentContextListener() );
+					endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.CONNECTED, null ) );
 				}
 				else
 				{
@@ -110,6 +111,20 @@ public class ControllerImpl
 				}
 			}
 		} );
+		for( MessageEndpoint endpoint : serverEndpoint.getConnectedEndpoints() )
+		{
+			if( !clients.contains( endpoint ) )
+			{
+				clients.add( endpoint );
+				ControllerImpl.this.streamingExecutionManager.addEndpoint( endpoint );
+				AgentListener agentListener = new AgentListener();
+				endpoint.addConnectionListener( agentListener );
+				endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, agentListener );
+				endpoint.addMessageListener( SceneCommunication.CHANNEL, new SceneListener() );
+				endpoint.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL, new ComponentContextListener() );
+				endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.CONNECTED, null ) );
+			}
+		}
 
 		scheduledExecutorService.scheduleAtFixedRate( new Runnable()
 		{
@@ -146,11 +161,6 @@ public class ControllerImpl
 			if( message.containsKey( AgentItem.SET_MAX_THREADS ) )
 			{
 				executorManager.setMaxPoolSize( Integer.parseInt( message.get( AgentItem.SET_MAX_THREADS ) ) );
-			}
-			else if( message.containsKey( AgentItem.HANDSHAKE ) )
-			{
-				endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.HANDSHAKE, null ) );
-				log.debug( "Handshake response sent to host: {}", message.get( AgentItem.HANDSHAKE ) );
 			}
 			else if( message.containsKey( AgentItem.ASSIGN ) )
 			{
