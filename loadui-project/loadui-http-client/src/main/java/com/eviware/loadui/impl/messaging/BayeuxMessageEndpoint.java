@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.messaging;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +29,7 @@ import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
 import org.cometd.client.transport.LongPollingTransport;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.util.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +56,31 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 		super( url, new LongPollingTransport( new HashMap<String, Object>(), httpClient ) );
 
 		scheduledExecutor = BeanInjector.getBean( ScheduledExecutorService.class );
+
+		try
+		{
+			// Replace the Logger in BayeuxClient with one that is static, so that
+			// we can silence it easier.
+			Field loggerField = BayeuxClient.class.getDeclaredField( "logger" );
+			loggerField.setAccessible( true );
+			loggerField.set( this, Log.getLogger( BayeuxMessageEndpoint.class.getName() ) );
+		}
+		catch( SecurityException e )
+		{
+			e.printStackTrace();
+		}
+		catch( NoSuchFieldException e )
+		{
+			e.printStackTrace();
+		}
+		catch( IllegalArgumentException e )
+		{
+			e.printStackTrace();
+		}
+		catch( IllegalAccessException e )
+		{
+			e.printStackTrace();
+		}
 	}
 
 	private void setConnected( boolean connected )
@@ -91,7 +118,7 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 	}
 
 	@Override
-	protected void processConnect( Message connect )
+	protected void processConnect( Message.Mutable connect )
 	{
 		super.processConnect( connect );
 		if( open )
@@ -99,7 +126,7 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 	}
 
 	@Override
-	protected void processDisconnect( Message disconnect )
+	protected void processDisconnect( Message.Mutable disconnect )
 	{
 		super.processDisconnect( disconnect );
 		setConnected( false );

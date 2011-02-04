@@ -107,10 +107,12 @@ public class StatisticVariableImpl implements MutableStatisticVariable, Releasab
 		// Add labels of assigned agents.
 		// TODO: Share this information per SceneItem instead of recomputing it
 		// each time.
+		StatisticHolder statisticHolder = getStatisticHolder();
 		if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) )
-				&& getStatisticHolder() instanceof CanvasObjectItem )
+				&& statisticHolder instanceof CanvasObjectItem )
 		{
-			CanvasItem canvas = ( ( CanvasObjectItem )getStatisticHolder() ).getCanvas();
+			CanvasItem canvas = ( statisticHolder instanceof SceneItem ) ? ( SceneItem )statisticHolder
+					: ( ( CanvasObjectItem )statisticHolder ).getCanvas();
 			if( canvas instanceof SceneItem )
 				for( AgentItem agent : canvas.getProject().getAgentsAssignedTo( ( SceneItem )canvas ) )
 					sources.add( agent.getLabel() );
