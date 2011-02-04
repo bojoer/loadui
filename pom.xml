@@ -9,7 +9,7 @@
 	<url>http://www.eviware.com</url>
 	<properties>
 		<mavenBundlePluginVersion>2.1.0</mavenBundlePluginVersion>
-		<jettyVersion>7.1.6.v20100715</jettyVersion>
+		<jettyVersion>7.3.0.v20110203</jettyVersion>
 		<cometdVersion>2.0.beta1</cometdVersion>
 		<changelog.start.date>2010-06-21</changelog.start.date>
 	</properties>
