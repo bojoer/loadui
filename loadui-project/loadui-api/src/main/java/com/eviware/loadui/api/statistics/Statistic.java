@@ -34,7 +34,7 @@ public interface Statistic<T extends Number> extends Value<T>
 	public String getName();
 
 	/**
-	 * Gets the StatisticHolder of this Statistic.
+	 * Gets the StatisticVariable of this Statistic.
 	 * 
 	 * @return
 	 */
