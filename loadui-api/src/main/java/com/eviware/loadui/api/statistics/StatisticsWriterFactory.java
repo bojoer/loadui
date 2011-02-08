@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.statistics;
 
+import java.util.Map;
+
 /**
  * Factory for instantiating a specific type of StatisticsWriter. Any
  * implementation of this should be exposed as an OSGi service to be picked up
@@ -37,7 +39,12 @@ public interface StatisticsWriterFactory
 	 * 
 	 * @param statisticsManager
 	 * @param variable
+	 * @param config
+	 *           A Map containing configuration options for the StatisticWriter.
+	 *           The contents of this map differs from Writer to Writer. An empty
+	 *           map should always be an acceptable configuration.
 	 * @return
 	 */
-	public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable );
+	public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable,
+			Map<String, Object> config );
 }

@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -262,16 +261,17 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		}
 
 		@Override
-		public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable )
+		public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable,
+				Map<String, Object> config )
 		{
 			Map<String, Class<? extends Number>> trackStructure = new TreeMap<String, Class<? extends Number>>();
 
 			// init statistics
 			trackStructure.put( Stats.AVERAGE.name(), Double.class );
-			//trackStructure.put( Stats.COUNT.name(), Double.class );
-			//trackStructure.put( Stats.SUM.name(), Double.class );
+			// trackStructure.put( Stats.COUNT.name(), Double.class );
+			// trackStructure.put( Stats.SUM.name(), Double.class );
 			trackStructure.put( Stats.STD_DEV.name(), Double.class );
-			//trackStructure.put( Stats.STD_DEV_SUM.name(), Double.class );
+			// trackStructure.put( Stats.STD_DEV_SUM.name(), Double.class );
 			trackStructure.put( Stats.PERCENTILE_90TH.name(), Double.class );
 			trackStructure.put( Stats.MEDIAN.name(), Double.class );
 

@@ -15,6 +15,9 @@
  */
 package com.eviware.loadui.impl.counter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventHandler;
@@ -24,15 +27,11 @@ import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 public class CounterStatisticSupport implements EventHandler<CounterEvent>, Releasable
 {
 	private CounterHolder counterHolder;
-	private MutableStatisticVariable statisticVariable;
-	private String counterName;
+	private final Map<String, MutableStatisticVariable> counters = new HashMap<String, MutableStatisticVariable>();
 
-	public CounterStatisticSupport( CounterHolder counterHolder, MutableStatisticVariable statisticVariable,
-			String counterName )
+	public CounterStatisticSupport( CounterHolder counterHolder )
 	{
 		this.counterHolder = counterHolder;
-		this.statisticVariable = statisticVariable;
-		this.counterName = counterName;
 	}
 
 	public void init()
@@ -46,10 +45,19 @@ public class CounterStatisticSupport implements EventHandler<CounterEvent>, Rele
 		counterHolder.removeEventListener( CounterEvent.class, this );
 	}
 
+	public void addCounterVariable( String counterName, MutableStatisticVariable statisticVariable )
+	{
+		if( counters.put( counterName, statisticVariable ) != null )
+			throw new IllegalArgumentException( "CounterStatisticSupport already contains a mapping for " + counterName );
+	}
+
 	@Override
 	public void handleEvent( CounterEvent event )
 	{
-		if( event.getKey().equals( counterName ) )
-			statisticVariable.update( System.currentTimeMillis(), event.getValue() );
+		String counter = event.getKey();
+		if( counters.containsKey( counter ) )
+		{
+			counters.get( counter ).update( System.currentTimeMillis(), event.getValue() );
+		}
 	}
 }
