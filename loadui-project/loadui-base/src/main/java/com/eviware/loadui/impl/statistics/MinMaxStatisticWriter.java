@@ -128,7 +128,8 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 		}
 
 		@Override
-		public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable )
+		public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable,
+				Map<String, Object> config )
 		{
 			Map<String, Class<? extends Number>> trackStructure = new TreeMap<String, Class<? extends Number>>();
 

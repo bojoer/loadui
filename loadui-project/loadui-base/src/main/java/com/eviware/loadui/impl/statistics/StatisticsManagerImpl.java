@@ -57,8 +57,6 @@ public class StatisticsManagerImpl implements StatisticsManager
 
 	public static final String CHANNEL = "/" + StatisticsManager.class.getName() + "/execution";
 
-	private static StatisticsManagerImpl instance;
-
 	private final ExecutionManager executionManager;
 	private final EventSupport eventSupport = new EventSupport();
 	private Set<StatisticHolder> holders = new HashSet<StatisticHolder>();
@@ -68,14 +66,8 @@ public class StatisticsManagerImpl implements StatisticsManager
 	private final RunningListener runningListener = new RunningListener();
 	private final StatisticHolderListener statisticHolderListener = new StatisticHolderListener();
 
-	static StatisticsManagerImpl getInstance()
-	{
-		return instance;
-	}
-
 	public StatisticsManagerImpl( ExecutionManager executionManager, final WorkspaceProvider workspaceProvider )
 	{
-		instance = this;
 		this.executionManager = executionManager;
 
 		workspaceProvider.addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
@@ -164,11 +156,11 @@ public class StatisticsManagerImpl implements StatisticsManager
 		factories.remove( factory.getType() );
 	}
 
-	StatisticsWriter createStatisticsWriter( String type, StatisticVariable variable )
+	StatisticsWriter createStatisticsWriter( String type, StatisticVariable variable, Map<String, Object> config )
 	{
 		StatisticsWriterFactory factory = factories.get( type );
 		if( factory != null )
-			return factory.createStatisticsWriter( this, variable );
+			return factory.createStatisticsWriter( this, variable, config );
 
 		return null;
 	}

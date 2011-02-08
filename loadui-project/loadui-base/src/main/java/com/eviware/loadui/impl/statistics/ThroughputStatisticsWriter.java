@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -117,7 +116,7 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 				( ( double )( maxTime - minTime ) / entries.size() * ( entries.size() + 1 ) ) / 1000, delay / 1000.0 );
 
 		return at( maxTime ).put( Stats.BPS.name(), bpsSum / timeDelta ).put( Stats.TPS.name(), tpsSum / timeDelta )
-			.build( false );
+				.build( false );
 	}
 
 	@Override
@@ -144,7 +143,7 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 
 		@Override
 		public ThroughputStatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager,
-				StatisticVariable variable )
+				StatisticVariable variable, Map<String, Object> config )
 		{
 			Map<String, Class<? extends Number>> trackStructure = new TreeMap<String, Class<? extends Number>>();
 

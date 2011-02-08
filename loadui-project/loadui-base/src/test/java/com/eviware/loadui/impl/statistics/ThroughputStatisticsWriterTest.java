@@ -55,7 +55,7 @@ public class ThroughputStatisticsWriterTest
 		when( statisticsManagerMock.getExecutionManager() ).thenReturn( executionManagerMock );
 		when( statisticsManagerMock.getMinimumWriteDelay() ).thenReturn( 1000L );
 
-		writer = factory.createStatisticsWriter( statisticsManagerMock, variableMock );
+		writer = factory.createStatisticsWriter( statisticsManagerMock, variableMock, null );
 	}
 
 	@Test

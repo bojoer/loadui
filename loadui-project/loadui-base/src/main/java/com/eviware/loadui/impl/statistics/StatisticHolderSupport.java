@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.statistics;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -74,7 +75,7 @@ public class StatisticHolderSupport implements Releasable
 	 * @param variable
 	 * @return
 	 */
-	public void addStatisticsWriter( String type, StatisticVariable variable )
+	public void addStatisticsWriter( String type, StatisticVariable variable, Map<String, Object> config )
 	{
 		if( !variables.containsValue( variable ) )
 			throw new IllegalArgumentException(
@@ -82,8 +83,13 @@ public class StatisticHolderSupport implements Releasable
 
 		// TODO: Fire CollectionEvent about Statistics exposed by the
 		// StatisticsWriter.
-		StatisticsWriter writer = StatisticsManagerImpl.getInstance().createStatisticsWriter( type, variable );
+		StatisticsWriter writer = ( ( StatisticsManagerImpl )manager ).createStatisticsWriter( type, variable, config );
 		( ( StatisticVariableImpl )variable ).addStatisticsWriter( writer );
+	}
+
+	public void addStatisticsWriter( String type, StatisticVariable variable )
+	{
+		addStatisticsWriter( type, variable, Collections.<String, Object> emptyMap() );
 	}
 
 	/**

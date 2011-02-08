@@ -63,6 +63,7 @@ import com.eviware.loadui.config.ConnectionConfig;
 import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
 import com.eviware.loadui.impl.counter.CounterStatisticSupport;
 import com.eviware.loadui.impl.counter.CounterSupport;
+import com.eviware.loadui.impl.statistics.AverageStatisticWriter;
 import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter;
 import com.eviware.loadui.impl.summary.MutableSummaryImpl;
@@ -121,9 +122,15 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		behaviorProvider = BeanInjector.getBean( BehaviorProvider.class );
 
 		statisticHolderSupport = new StatisticHolderSupport( this );
+		counterStatisticSupport = new CounterStatisticSupport( this );
+
 		MutableStatisticVariable throughputVariable = statisticHolderSupport.addStatisticVariable( "Throughput" );
 		statisticHolderSupport.addStatisticsWriter( ThroughputStatisticsWriter.TYPE, throughputVariable );
-		counterStatisticSupport = new CounterStatisticSupport( this, throughputVariable, REQUEST_COUNTER );
+		counterStatisticSupport.addCounterVariable( REQUEST_COUNTER, throughputVariable );
+
+		MutableStatisticVariable failuresVariable = statisticHolderSupport.addStatisticVariable( "Failures" );
+		statisticHolderSupport.addStatisticsWriter( AverageStatisticWriter.TYPE, failuresVariable );
+		counterStatisticSupport.addCounterVariable( FAILURE_COUNTER, failuresVariable );
 
 		abortOnFinish = createProperty( ABORT_ON_FINISH_PROPERTY, Boolean.class, false );
 	}

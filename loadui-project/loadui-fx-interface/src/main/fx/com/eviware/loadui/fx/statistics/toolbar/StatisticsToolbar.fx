@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.EventObject;
 
 import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.api.model.SceneItem;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -116,7 +116,7 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
 				}
 				addItem(cti);
 	      	statHolderMap.put(sh, cti);
-			} else if(sh instanceof SceneItem) {
+			} else if( sh instanceof CanvasItem ) {
 	      	def cti: StatisticHolderToolbarItem = StatisticHolderToolbarItem {
 					statisticHolder: sh
 					category: "GLOBAL"

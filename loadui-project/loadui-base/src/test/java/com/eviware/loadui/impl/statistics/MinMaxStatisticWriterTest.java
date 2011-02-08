@@ -47,7 +47,8 @@ public class MinMaxStatisticWriterTest
 
 		holderSupport = new StatisticHolderSupport( holderMock );
 		StatisticVariable variable = holderSupport.addStatisticVariable( "Exteme" );
-		writer = ( MinMaxStatisticWriter )new MinMaxStatisticWriter.Factory().createStatisticsWriter( manager, variable );
+		writer = ( MinMaxStatisticWriter )new MinMaxStatisticWriter.Factory().createStatisticsWriter( manager, variable,
+				null );
 
 		for( int cnt = 0; cnt < data.length; cnt++ )
 			writer.update( 1, data[cnt] );
