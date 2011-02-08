@@ -21,20 +21,9 @@ under the Licence.
 
 	<p>
 		The Statistics Package is the core that allows loadUI to show statistics in the StatisticsWindow. The package revolves around the following classes:
-		<ul>
-			<h4>{@link StatisticVariable}</h4>
-			<h4>Statistic</h4>
-			<h4>Datapoint</h4>
-			A datapoint represents a single 2D data point, having a timestamp and a Number value.
-			<h4>StatisticsWriter</h4>
-			Writes statistics data to a Track (which eventually ends up in  the H2 database). A StatisticsWriter can expose several Statistics.
-			<h4>StatisticHolder</h4>'
-			A Holder of Statistics (typically a loadUI Component or Testcase ). Fires CollectionEvents for contained StatisticVariables.
-			<h4>StatisticManager</h4>
-			A registry of available Statistics and StatisticHolders, and the settings they use. Fires a CollectionEvent when StatisticHolders are added or removed.
-		</ul>
+		<br><br>
+		<img src="doc-files/statisticsPackage.PNG" />
 		<br>
-		<img src="statisticsPackage.PNG" />
 	</p>
 
 </body>
