@@ -311,7 +311,7 @@ public class SummaryReport extends Stack {
 								topArrowInactive: "{__ROOT__}images/summary-index-top-arrow-inactive.fxz";
 								bottomArrowActive: "{__ROOT__}images/summary-index-bottom-arrow-active.fxz";
 								bottomArrowInactive: "{__ROOT__}images/summary-index-bottom-arrow-inactive.fxz";
-								content: getChapters()
+								items: getChapters()
 							}
 						]
 					}, main = VBox {

@@ -46,6 +46,7 @@ import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbar;
 import com.eviware.loadui.fx.statistics.chart.ChartPage;
+import com.eviware.loadui.fx.statistics.manager.RecentResultsList;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -74,6 +75,7 @@ public class StatisticsWindow {
 		def appState = AppState {};
 		
 		appState.insertInto ( ManageMenu { width: bind scene.width }, STATISTICS_MANAGE );
+		appState.insertInto ( RecentResultsList { layoutX: 50, layoutY: 100, width: bind scene.width - 100 }, STATISTICS_MANAGE );
 		
 		appState.insertInto( topMenu, STATISTICS_VIEW );
 		appState.insertInto( stack, STATISTICS_VIEW );

@@ -146,7 +146,7 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 		if( not itemGroups.containsKey( group ) ) {
 			def newGroup = ToolbarItemGroup { category: group, expandedGroup: expandedGroup };
 			itemGroups.put( group, newGroup );
-			content = Sequences.sort( [ content, newGroup ], groupOrder ) as Node[];
+			items = Sequences.sort( [ items, newGroup ], groupOrder ) as Node[];
 		}
 		
 		def itemGroup = itemGroups.get( group ) as ToolbarItemGroup;
@@ -161,7 +161,7 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 			
 			if( sizeof itemGroup.items == 0) {
 				itemGroups.remove( itemGroup.category );
-				delete itemGroup from content;
+				delete itemGroup from items;
 			}
 		}
 	}
@@ -205,7 +205,7 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 
 	override var itemsPerPage = bind ( height - 100 ) / GROUP_HEIGHT as Integer;
 
-	def realHeight = bind 95 + GROUP_HEIGHT * Math.min( actualItemsPerPage, sizeof content );
+	def realHeight = bind 95 + GROUP_HEIGHT * Math.min( actualItemsPerPage, sizeof items );
 	
 	def expandedHolder:Group = Group {
 		layoutY: 68
@@ -400,7 +400,7 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 	function buildContent():Group {
 		var yOffset = 0;
 		var withSpacers:Node[];
-		for( n in displayedContent ) {
+		for( n in displayedItems ) {
 			n.layoutY = yOffset;
 			insert n into withSpacers;
 			insert FXDNode {

@@ -128,7 +128,7 @@ public class ToolbarExpander extends CustomNode, Pagination {
 	function buildContent():Group {
 		var offset = 0;
 		Group {
-			content: for( node in displayedContent ) {
+			content: for( node in displayedItems ) {
 				node.layoutX = offset;
 				offset += 100;
 				node
@@ -158,14 +158,14 @@ public class ToolbarExpander extends CustomNode, Pagination {
 		delete this from expandedHolder.content;
 		
 		if( oldGroup != null ) {
-			for( frame in content )
+			for( frame in items )
 				(frame as ToolbarItemFrame).item = null;
-			content = null;
+			items = null;
 			oldGroup.collapse();
 		}
 		
 		if( group != null ) {
-			content = for( item in group.items ) 
+			items = for( item in group.items ) 
 				ToolbarItemFrame { item:item };
 			layoutY = group.layoutY - 12;
 			insert this into expandedHolder.content;
@@ -173,7 +173,7 @@ public class ToolbarExpander extends CustomNode, Pagination {
 		}
 	}
 	
-	override var itemsPerPage = bind Math.min( sizeof content, ((scene.width as Integer) - 100) / 100);
+	override var itemsPerPage = bind Math.min( sizeof items, ((scene.width as Integer) - 100) / 100);
 	
 	var wipePanel:XWipePanel;
 	var oldGroup:Group;
