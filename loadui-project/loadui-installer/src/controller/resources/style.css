@@ -240,6 +240,13 @@
 	-fx-shadow-highlight-color: rgba(0,0,0,0.5);
 }
 
+.tree-selector-level *.scroll-bar {
+	-fx-outer-border: #1a1a1a;
+	-fx-inner-border: linear (0%,0%) to (100%,0%) stops (0.0, #343334) (1.0, #414043);
+	-fx-body-color: linear (0%,0%) to (100%,0%) stops (0.0, #58595b) (1.0, #464649);
+	-fx-shadow-highlight-color: rgba(0,0,0,0.5);
+}
+
 /** Note */
 
 .note-background {
@@ -852,4 +859,51 @@
     -fx-background-color: linear (0%,0%) to (100%,0%) stops (0%, #3a3a3a)  (100%, #4d4d4d);
     -fx-shape: "M 0 4 L 128 0 128 10 0 6 z";
     -fx-padding: 4;
+}
+
+.add-segment-panel *.separator:horizontal *.line {
+	-fx-border-color: #3a3a3a;
+}
+
+.tree-selector-level {
+	-fx-text-background-color: #9c9c9c;
+}
+
+.cascading-tree-selector-cell {
+	-fx-background-color: linear (0%,0%) to (100%,0%) stops (0%, rgba(0,0,0,0.3))  (100%, rgba(0,0,0,0));
+	-fx-background-radius: 4 0 0 4;
+}
+
+.value-node {
+	-fx-padding: 0 5;
+	-fx-background-insets: -2 9 -2 0;
+	-fx-background-radius: 3;
+}
+
+.value-node *.label {
+	-fx-text-fill: -fx-text-background-color;
+	-fx-padding: 0 0 0 8;
+}
+
+.value-node *.box {
+	-fx-padding: 4;
+	-fx-background-color: #939393, #ffffff;
+	-fx-background-radius: 14, 13;
+	-fx-background-insets: 0, 1;
+}
+
+.value-node *.mark {
+	-fx-background-radius: 10;
+	-fx-background-color: transparent;
+	-fx-background-insets: 0;
+	-fx-background-radius: 3;
+	-fx-padding: 3.5;
+}
+
+.value-node:selected *.mark {
+    -fx-background-color: #00a0c5;
+}
+
+.value-node:selected {
+    -fx-background-color: #1a1a1a;
 }

@@ -16,21 +16,37 @@
 package com.eviware.loadui.fx.ui.treeselector;
 
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.LayoutInfo;
+import javafx.scene.control.ScrollView;
+import javafx.scene.control.ScrollBarPolicy;
 
-public class TreeSelectorLevel extends VBox {
+public class TreeSelectorLevel extends ScrollView {
 	public-init var selector:CascadingTreeSelector;
+
+	def vbox:VBox = VBox {
+		spacing: 18
+	}
+	
+	override var styleClass = "tree-selector-level";
+	override var hbarPolicy = ScrollBarPolicy.NEVER;
+	override var fitToWidth = true;
+	override var pannable = false;
+	
+	init {
+		node = vbox;
+	}
 	
 	package function addChildrenFor( target:Object ):Void {
-		insert TreeLevelNode { level: this, target: target } into content;
+		insert TreeLevelNode { level: this, target: target } into vbox.content;
 	}
 	
 	package function removeChildrenFor( target:Object ):Void {
-		for( node in content ) {
+		for( node in vbox.content ) {
 			def treeNode = node as TreeLevelNode;
 			if( treeNode.target == target ) {
 				treeNode.deselectAll();
-				delete treeNode from content;
-				if( sizeof content == 0 ) {
+				delete treeNode from vbox.content;
+				if( sizeof vbox.content == 0 ) {
 					selector.removeLevel( this );
 				}
 				break;

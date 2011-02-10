@@ -27,6 +27,9 @@ public class LineChartPanels {
 public function getGroupPanels( chartGroup:ChartGroup ):PanelFactory[] {
 	[
 		PanelFactory {
+			title: "Add statistic"
+			build: function() { AddSegmentPanel { chartViews: for( chartView in chartGroup.getChartViewsForCharts() ) chartView as ConfigurableLineChartView } }
+		}, PanelFactory {
 			title: "Zoom",
 			build: function() { ZoomPanel { chartView: chartGroup.getChartView() as LineChartView } }
 		}, PanelFactory {
@@ -44,7 +47,7 @@ public function getChartPanels( chartView:LineChartView ):PanelFactory[] {
 		if( chartView instanceof ConfigurableLineChartView )
 			PanelFactory {
 				title: "Add statistic"
-				build: function() { AddSegmentPanel { chartView: chartView as ConfigurableLineChartView } }
+				build: function() { AddSegmentPanel { chartViews: chartView as ConfigurableLineChartView } }
 			}
 		else [],
 		PanelFactory {

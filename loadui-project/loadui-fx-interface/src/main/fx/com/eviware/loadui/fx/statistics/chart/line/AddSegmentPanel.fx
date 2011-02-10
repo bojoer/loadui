@@ -20,6 +20,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
 import javafx.scene.control.Button;
+import javafx.scene.control.Separator;
 import javafx.geometry.VPos;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -33,31 +34,35 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
 import java.lang.Runnable;
+import java.util.Arrays;
 
 def buttonInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS };
 
 /**
- * Panel for setting the zoom level.
+ * Panel for adding a LineSegment.
  *
  * @author dain.nilsson
  */
 public class AddSegmentPanel extends VBox {
-	public-init var chartView:ConfigurableLineChartView;
+	public-init var chartViews:ConfigurableLineChartView[];
 	
+	override var styleClass = "add-segment-panel";
 	override var hpos = HPos.CENTER;
 	override var vpos = VPos.CENTER;
 	override var nodeVPos = VPos.BOTTOM;
-	override var padding = Insets { right: 15, left: 15 };
+	override var spacing = 4;
 	
 	var selected:Runnable;
 	
 	init {
 		content = [
 			CascadingTreeSelector {
-				treeModel: new SegmentTreeModel( chartView )
+				columnCount: 4
+				treeModel: if( sizeof chartViews == 1 ) new SegmentTreeModel( chartViews[0] ) else new SegmentTreeModel( Arrays.asList( chartViews ) )
 				allowMultiple: false
 				onSelect: function(obj):Void { selected = obj as Runnable; }
 				onDeselect: function(obj):Void { selected = null; }
+			}, Separator {
 			}, HBox {
 				hpos: HPos.RIGHT
 				content: Button {

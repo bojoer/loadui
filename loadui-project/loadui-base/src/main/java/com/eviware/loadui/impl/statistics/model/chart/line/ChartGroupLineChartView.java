@@ -49,6 +49,6 @@ public class ChartGroupLineChartView extends AbstractLineChartView
 	@Override
 	public String toString()
 	{
-		return chartGroup.toString();
+		return chartGroup.getTitle();
 	}
 }

@@ -19,6 +19,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.LayoutInfo;
 
 public class ValueNode extends CheckBox {
+	override var styleClass = "value-node";
+	
 	public-init var treeNode:TreeLevelNode;
 	public-init var value:Object;
 	
