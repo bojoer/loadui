@@ -28,21 +28,21 @@ import com.jidesoft.range.Range;
  * 
  * @author dain.nilsson
  */
-public class TotalTimeTickCalculator implements TickCalculator<Double>
+public class TotalTimeTickCalculator implements TickCalculator<Long>
 {
 	public enum Level
 	{
-		ALL( -1, -1, 0 ), WEEKS( 604800, 4, 4 ), DAYS( 86400, 7, 3 ), HOURS( 3600, 10, 2 ), MINUTES( 60, 10, 1 ), SECONDS(
-				1, 10, 0 );
+		ALL( -1, -1, 0 ), WEEKS( 604800, 100, 4 ), DAYS( 86400, 75, 3 ), HOURS( 3600, 50, 2 ), MINUTES( 60, 50, 1 ), SECONDS(
+				1, 50, 0 );
 
 		private final int interval;
-		private final int span;
+		private final int unitWidth;
 		private final int level;
 
-		Level( int interval, int span, int level )
+		Level( int interval, int unitWidth, int level )
 		{
 			this.interval = interval;
-			this.span = span;
+			this.unitWidth = unitWidth;
 			this.level = level;
 		}
 
@@ -51,9 +51,9 @@ public class TotalTimeTickCalculator implements TickCalculator<Double>
 			return interval;
 		}
 
-		public int getSpan()
+		public int getUnitWidth()
 		{
-			return span;
+			return unitWidth;
 		}
 
 		public int getLevel()
@@ -63,7 +63,7 @@ public class TotalTimeTickCalculator implements TickCalculator<Double>
 
 		private static Level[] spanLevels = { MINUTES, HOURS, DAYS, WEEKS };
 
-		public static Level forSpan( int seconds )
+		public static Level forSpan( long seconds )
 		{
 			Level last = SECONDS;
 			for( Level level : spanLevels )
@@ -89,24 +89,24 @@ public class TotalTimeTickCalculator implements TickCalculator<Double>
 	}
 
 	@Override
-	public Tick[] calculateTicks( Range<Double> range )
+	public Tick[] calculateTicks( Range<Long> range )
 	{
-		int span = ( int )( range.maximum() - range.minimum() ) / 1000;
+		long firstTick = range.lower() / 1000;
+		long end = range.upper() / 1000;
+		long span = end - firstTick;
 		Level level = this.level == Level.ALL ? Level.forSpan( span ) : this.level;
 
-		int interval = level.interval;
-		int firstTick = ( int )range.minimum() / 1000;
+		long interval = level.interval;
 		firstTick -= ( firstTick % interval );
-		int end = ( int )range.maximum() / 1000;
 
 		ArrayList<Tick> ticks = new ArrayList<Tick>();
-		for( int i = firstTick; i <= end; i += interval )
+		for( long i = firstTick; i <= end; i += interval )
 			ticks.add( new Tick( i * 1000, formatTime( i, level ) ) );
 
 		return ticks.toArray( new Tick[ticks.size()] );
 	}
 
-	private String formatTime( int time, Level level )
+	private String formatTime( long time, Level level )
 	{
 		StringBuilder stringBuilder = new StringBuilder();
 		if( time < 0 )
@@ -115,19 +115,19 @@ public class TotalTimeTickCalculator implements TickCalculator<Double>
 			time = -time;
 		}
 
-		int seconds = time % Level.MINUTES.interval;
+		int seconds = ( int )( time % Level.MINUTES.interval );
 		time -= seconds;
 
-		int minutes = time % Level.HOURS.interval / Level.MINUTES.interval;
+		int minutes = ( int )( time % Level.HOURS.interval / Level.MINUTES.interval );
 		time -= minutes * Level.MINUTES.interval;
 
-		int hours = time % Level.DAYS.interval / Level.HOURS.interval;
+		int hours = ( int )( time % Level.DAYS.interval / Level.HOURS.interval );
 		time -= hours * Level.HOURS.interval;
 
-		int days = time % Level.WEEKS.interval / Level.DAYS.interval;
+		int days = ( int )( time % Level.WEEKS.interval / Level.DAYS.interval );
 		time -= days * Level.DAYS.interval;
 
-		int weeks = time / Level.WEEKS.interval;
+		int weeks = ( int )( time / Level.WEEKS.interval );
 
 		boolean started = false;
 
