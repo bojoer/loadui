@@ -32,11 +32,11 @@ import javafx.scene.Parent;
 import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.statistics.topmenu.StatisticsMenu;
+import com.eviware.loadui.fx.statistics.topmenu.ManageMenu;
 
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.StatisticsManager;
-import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 
@@ -72,6 +72,9 @@ public class StatisticsWindow {
 	
 	public var scene: Scene on replace {
 		def appState = AppState {};
+		
+		appState.insertInto ( ManageMenu { width: bind scene.width }, STATISTICS_MANAGE );
+		
 		appState.insertInto( topMenu, STATISTICS_VIEW );
 		appState.insertInto( stack, STATISTICS_VIEW );
 		appState.insertInto( toolbar, STATISTICS_VIEW );
@@ -99,31 +102,31 @@ public class StatisticsWindow {
 		styleClass: "statistics-chartpage-container"
 	}
 	
-	var stack:Stack = Stack {
-				        		layoutX: 135
-				        		layoutY: 125
-				        		width: bind if(scene.width >= 600) scene.width - 150 else 450
-				        		height: bind scene.height - 180
-				        		content: [ layoutRegion ]
-				        		//background: Color.web("#323232")
-				        	};
+	def stack:Stack = Stack {
+  		layoutX: 135
+  		layoutY: 145
+  		width: bind if(scene.width >= 600) scene.width - 150 else 450
+  		height: bind scene.height - 180
+  		content: [ layoutRegion ]
+  		//background: Color.web("#323232")
+  	};
 	
 	def toolbar: StatisticsToolbar = StatisticsToolbar {
-		layoutY: 120
-		height: bind scene.height - 100
+		layoutY: 140
+		height: bind scene.height - 140
 	}
 	
 	def topMenu:StatisticsMenu = StatisticsMenu {
-	    									width: bind scene.width,
-	    									project: project,
-	    									onPageSelect: function( node ):Void {
-	    										for( child in stack.content )
-	    										{
-	    											ReleasableUtils.release( child );
-	    										}
-	    										stack.content = [ layoutRegion, node ]
-	    									}
-	    								};
+		width: bind scene.width,
+		project: project,
+		onPageSelect: function( node ):Void {
+			for( child in stack.content )
+			{
+				ReleasableUtils.release( child );
+			}
+			stack.content = [ layoutRegion, node ]
+		}
+	};
 	
 	public function show() {
     	if ( closed ) {
