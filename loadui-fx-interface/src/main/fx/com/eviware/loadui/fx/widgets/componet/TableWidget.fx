@@ -80,7 +80,7 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 			workspace.addEventListener( BaseEvent.class, this );
 		}
 	var distributedMode:Boolean = not workspace.isLocalMode();
-	def componentDisabled = bind distributedMode and AppState.instance.state.startsWith( "testcase." );
+	def componentDisabled = bind distributedMode and AppState.byName("MAIN").state.startsWith( "testcase." );
 	
 	init {
 	   model.addTableModelListener(this);

@@ -83,15 +83,15 @@ public class TabContainer extends HBox {
 			deleteAction
 		],
 		onShowing: function():Void {
-			if ( Sequences.indexOf( AppState.getOverlay( scene ).content, contextMenu ) == -1 )
+			if ( Sequences.indexOf( AppState.byScene( scene ).overlay.content, contextMenu ) == -1 )
 			{
-				insert contextMenu into AppState.getOverlay( scene ).content;				
+				insert contextMenu into AppState.byScene( scene ).overlay.content;				
 			}
 			deleteAction.disable = (sizeof sortableBox.content == 1);
 			var list:String[] = for (p:StatisticPage in statisticPages.getChildren()) {p.getTitle()};
 		},
 		onHiding: function():Void {
-			delete contextMenu from AppState.getOverlay( scene ).content;
+			delete contextMenu from AppState.byScene( scene ).overlay.content;
 		}
 	}
 	

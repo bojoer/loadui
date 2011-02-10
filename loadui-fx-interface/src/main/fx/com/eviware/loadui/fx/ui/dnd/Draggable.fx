@@ -166,7 +166,7 @@ public mixin class Draggable extends BaseMixin {
 				delete myNode from (realParent as Container).content;
 			node.layoutX = startBounds.minX - myNode.layoutBounds.minX;
 			node.layoutY = startBounds.minY - myNode.layoutBounds.minY;
-			insert myNode into AppState.getOverlay( myScene ).content;
+			insert myNode into AppState.byScene( myScene ).overlay.content;
 		}
 		
 		mouseEvent = e;
@@ -215,7 +215,7 @@ public mixin class Draggable extends BaseMixin {
 			droppable.drop( this );
 		
 		if( useOverlay ) {
-			delete myNode from AppState.getOverlay( myScene ).content;
+			delete myNode from AppState.byScene( myScene ).overlay.content;
 			myNode.layoutX = initX;
 			myNode.layoutY = initY;
 			if( realParent instanceof Group )

@@ -187,7 +187,7 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 			opacity: bind if(dragging) 0.8 else 1
 			onMouseClicked: function(e: MouseEvent){
 				if(e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
-					AppState.instance.setActiveCanvas(sceneItem);
+					AppState.byName("MAIN").setActiveCanvas(sceneItem);
 				}
 				else if(e.button == MouseButton.PRIMARY and e.clickCount == 1) {
 					if(not isPlaceholder){

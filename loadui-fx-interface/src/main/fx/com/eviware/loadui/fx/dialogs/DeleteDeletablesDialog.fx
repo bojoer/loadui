@@ -46,7 +46,7 @@ public class DeleteDeletablesDialog {
 	postinit {
 		def dialog:Dialog = Dialog {
 			title: "Delete objects"
-			scene: if (hostScene == null) AppState.instance.scene else hostScene
+			scene: if (hostScene == null) AppState.byName("MAIN").scene else hostScene
 			content: [
 				Label { text: if( sizeof deletables == 1 ) "Delete this item?" else "Delete these { sizeof deletables } items?" }
 			]

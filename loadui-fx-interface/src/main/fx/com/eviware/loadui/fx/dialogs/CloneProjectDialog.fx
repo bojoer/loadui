@@ -54,7 +54,7 @@ public class CloneProjectDialog {
 					var clone: ProjectRef = cloneProject(projectRef);
 					if(form.getField('open').value as Boolean){
 						clone.setEnabled(true);
-						AppState.instance.setActiveCanvas( clone.getProject() );
+						AppState.byName("MAIN").setActiveCanvas( clone.getProject() );
 					}
 					dialog.close();
 				}

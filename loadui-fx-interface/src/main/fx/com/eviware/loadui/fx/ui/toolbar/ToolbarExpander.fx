@@ -154,7 +154,7 @@ public class ToolbarExpander extends CustomNode, Pagination {
 	 * The currently expanded ToolbarItemGroup.
 	 */
 	public var group:ToolbarItemGroup on replace oldGroup {
-		delete modalLayer from AppState.getOverlay( scene ).content;
+		delete modalLayer from AppState.byScene( scene ).overlay.content;
 		delete this from expandedHolder.content;
 		
 		if( oldGroup != null ) {
@@ -169,7 +169,7 @@ public class ToolbarExpander extends CustomNode, Pagination {
 				ToolbarItemFrame { item:item };
 			layoutY = group.layoutY - 12;
 			insert this into expandedHolder.content;
-			insert modalLayer into AppState.getOverlay( scene ).content;
+			insert modalLayer into AppState.byScene( scene ).overlay.content;
 		}
 	}
 	

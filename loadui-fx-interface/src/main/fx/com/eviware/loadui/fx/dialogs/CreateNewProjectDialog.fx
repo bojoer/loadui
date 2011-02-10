@@ -66,7 +66,7 @@ public class CreateNewProjectDialog {
 								p.save();
 								dialog.close();
 								if( open.value as Boolean ) {
-									AppState.instance.setActiveCanvas( p );
+									AppState.byName("MAIN").setActiveCanvas( p );
 								} else {
 									for( ref in workspace.getProjectRefs() ) {
 										if( ref.isEnabled() and ref.getProject() == p ) {

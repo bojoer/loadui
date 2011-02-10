@@ -90,8 +90,8 @@ public class MainButton extends Group {
 					MenuItem {
 						text: ##[EXIT]"Exit"
 						action: function() {
-							if( AppState.instance.state == AppState.TESTCASE_FRONT 
-									or AppState.instance.state == AppState.PROJECT_FRONT ) {
+							if( AppState.byName("MAIN").state == AppState.TESTCASE_FRONT 
+									or AppState.byName("MAIN").state == AppState.PROJECT_FRONT ) {
 								ExitConfirmDialog{};
 							} else {
 								ExitConfirmDialogWorkspace{};

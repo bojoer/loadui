@@ -338,7 +338,7 @@ public class SummaryReport extends Stack {
 									Button {
 										text: "Print"
 										action:function() {
-										    AppState.instance.blockingTask( function():Void {
+										    AppState.byName("MAIN").blockingTask( function():Void {
 		    									com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport(summary);
 		    								}, null, "Generating Printable Report..." );
 										}
@@ -450,14 +450,14 @@ public class SummaryReport extends Stack {
 	 * Displays the Dialog.
 	 */ 
 	public function show() {
-		insert this into AppState.getOverlay( AppState.instance.scene ).content;
+		insert this into AppState.byName("MAIN").overlay.content;
 	}
 	
 	 /**
 	 * Closes the Dialog.
 	 */ 
 	public function close():Void {
-		delete this from AppState.getOverlay( AppState.instance.scene ).content;
+		delete this from AppState.byName("MAIN").overlay.content;
 	}
 	
 

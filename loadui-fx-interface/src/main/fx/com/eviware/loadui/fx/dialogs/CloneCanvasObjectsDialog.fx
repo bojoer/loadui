@@ -82,7 +82,7 @@ public class CloneCanvasObjectsDialog {
 					timeline.playFromStart();	
 				}
 				else if(canvasItem instanceof ProjectItem){
-					AppState.instance.setActiveCanvas(target);
+					AppState.byName("MAIN").setActiveCanvas(target);
 				}
 				dialog.close();
 			}
@@ -113,6 +113,6 @@ public class CloneCanvasObjectsDialog {
 		MainWindow.instance.testcaseCanvas.generateMiniatures();
 		var tcn: TestCaseNode = MainWindow.instance.projectCanvas.lookupCanvasNode(objects[0].getCanvas().getId()) as TestCaseNode;
 		tcn.loadMiniature();
-		AppState.instance.setActiveCanvas( target );
+		AppState.byName("MAIN").setActiveCanvas( target );
 	}
 }

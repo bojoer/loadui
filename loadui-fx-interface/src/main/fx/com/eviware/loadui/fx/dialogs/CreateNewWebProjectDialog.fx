@@ -68,7 +68,7 @@ public class CreateNewWebProjectDialog {
 			var autoStart:CheckBoxField;
 			
 			function ok():Void  {
-				 var project:ProjectItem = AppState.instance.getActiveCanvas() as ProjectItem;	
+				 var project:ProjectItem = AppState.byName("MAIN").getActiveCanvas() as ProjectItem;	
 				 var manager:ComponentRegistry = BeanInjector.getBean(ComponentRegistry.class);
 				 
 				 var webItem:ComponentItem = project.createComponent( "Web Page Runner", manager.findDescriptor("Web Page Runner") );

@@ -198,7 +198,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		def y = sb.minY;
 		if( d.node instanceof ComponentToolbarItem ) {
 			log.debug( "Component dropped at: (\{\}, \{\})", x, y );
-			AppState.instance.blockingTask( function():Void {
+			AppState.byName("MAIN").blockingTask( function():Void {
 				def component = createComponent( (d.node as ComponentToolbarItem).descriptor );
 				component.setAttribute( "gui.layoutX", "{offsetX + x as Integer}" );
 				component.setAttribute( "gui.layoutY", "{offsetY + y as Integer}" );
@@ -408,11 +408,11 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 				
 			refreshComponents();
 		} else {
-			if( AppState.instance.getActiveCanvas() == null ) {
+			if( AppState.byName("MAIN").getActiveCanvas() == null ) {
 				if( MainWindow.instance.projectCanvas.canvasItem == null ) {
-					AppState.instance.displayWorkspace();
+					AppState.byName("MAIN").displayWorkspace();
 				} else {
-					AppState.instance.transitionTo( AppState.PROJECT_FRONT, null );
+					AppState.byName("MAIN").transitionTo( AppState.PROJECT_FRONT, null );
 				}
 			}
 		}
@@ -580,7 +580,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			selectionRect.y = sStartY;
 			selectionRect.width = 0;
 			selectionRect.height = 0;
-			insert selectionRect into AppState.getOverlay( scene ).content;
+			insert selectionRect into AppState.byScene( scene ).overlay.content;
 		}
 	}
 	
@@ -590,7 +590,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			cursor = Cursor.DEFAULT;
 		} else if( sDragging ) {
 			sDragging = false;
-			delete selectionRect from AppState.getOverlay( scene ).content;
+			delete selectionRect from AppState.byScene( scene ).overlay.content;
 		}
 	}
 	

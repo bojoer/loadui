@@ -99,8 +99,8 @@ public class TestCaseNode extends CanvasObjectNode {
 						image: testCaseGrid
 						onMouseClicked: function( e:MouseEvent ) {
 							if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
-							    AppState.instance.blockingTask( function():Void {
-									AppState.instance.setActiveCanvas( testCase );
+							    AppState.byName("MAIN").blockingTask( function():Void {
+									AppState.byName("MAIN").setActiveCanvas( testCase );
 								}, null, "Initializing TestCase." );
 							}
 						}

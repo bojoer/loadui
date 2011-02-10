@@ -11,8 +11,6 @@
 	<osgi:reference interface="com.eviware.loadui.api.model.WorkspaceProvider"
 		id="workspaceProvider" />
 
-	<osgi:service interface="com.eviware.loadui.api.ui.ApplicationState" ref="applicationState" />
-
 	<osgi:service interface="com.eviware.loadui.api.ui.WindowController" ref="windowController" />
 	
 	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
