@@ -31,6 +31,7 @@ import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 
 import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.popup.*;
 import com.eviware.loadui.fx.ui.dialogs.*;
@@ -90,8 +91,8 @@ public class MainButton extends Group {
 					MenuItem {
 						text: ##[EXIT]"Exit"
 						action: function() {
-							if( AppState.byName("MAIN").state == AppState.TESTCASE_FRONT 
-									or AppState.byName("MAIN").state == AppState.PROJECT_FRONT ) {
+							if( AppState.byName("MAIN").state == MainWindow.TESTCASE_FRONT 
+									or AppState.byName("MAIN").state == MainWindow.PROJECT_FRONT ) {
 								ExitConfirmDialog{};
 							} else {
 								ExitConfirmDialogWorkspace{};

@@ -58,7 +58,7 @@ public-init var canvasObject:CanvasObjectItem;
 	function ok():Void {
 			    				if( validateLabel( name.value as String ) ) {
 			    					log.debug( "Cloning: '\{\}''", canvasObject );
-			    					if( AppState.byName("MAIN").state == AppState.TESTCASE_FRONT and level.value == "PROJECT" ) 
+			    					if( AppState.byName("MAIN").state == MainWindow.TESTCASE_FRONT and level.value == "PROJECT" ) 
 			    						copy = (MainWindow.instance.projectCanvas.canvasItem as ProjectItem).duplicate(canvasObject)
 			    					else
 			    						copy = canvasObject.getCanvas().duplicate( canvasObject );
@@ -122,7 +122,7 @@ public-init var canvasObject:CanvasObjectItem;
 			title: "Clone {canvasObject.getLabel()}"
 			content: form = Form {
 				formContent: [
-					name = TextField { label: "Name of clone", value: "copy-of-{canvasObject.getLabel()}", action:ok}, if( AppState.byName("MAIN").state == AppState.TESTCASE_FRONT)
+					name = TextField { label: "Name of clone", value: "copy-of-{canvasObject.getLabel()}", action:ok}, if( AppState.byName("MAIN").state == MainWindow.TESTCASE_FRONT)
 							 level as FormField
 						  else [], copyIn as FormField, copyOut as FormField
 				]

@@ -60,11 +60,6 @@ import javafx.util.Sequences;
 
 import com.eviware.loadui.fx.wizards.NewProjectWizard;
 
-public def WORKSPACE_FRONT = "workspace.front";
-public def PROJECT_FRONT = "project.front";
-public def PROJECT_BACK = "project.back";
-public def TESTCASE_FRONT = "testcase.front";
-
 public def FADE_WIPE = FadeWipe { time: 250ms };
 public def ZOOM_WIPE = FadeZoomWipe { time: 250ms };
 public def FLIP_WIPE = Flip180Wipe { time: 250ms };
@@ -188,8 +183,8 @@ public class AppState extends ApplicationState {
 			if( canvas instanceof ProjectItem ) {
 				MainWindow.instance.projectCanvas.canvasItem = canvas;
 				MainWindow.instance.projectCanvas.setNoteLayer( true );
-				def lastStateWasTestCase = (AppState.TESTCASE_FRONT == state );
-				transitionTo( AppState.PROJECT_FRONT, AppState.ZOOM_WIPE );
+				def lastStateWasTestCase = (MainWindow.TESTCASE_FRONT == state );
+				transitionTo( MainWindow.PROJECT_FRONT, AppState.ZOOM_WIPE );
 				if (canvas.isLoadingError() and not lastStateWasTestCase) {
 				    def dialog:Dialog = Dialog {
 				        noCancel: true
@@ -209,16 +204,16 @@ public class AppState extends ApplicationState {
 				}
 			} else if( canvas instanceof SceneItem ) {
 				MainWindow.instance.testcaseCanvas.canvasItem = canvas;
-				transitionTo( AppState.TESTCASE_FRONT, AppState.ZOOM_WIPE );
+				transitionTo( MainWindow.TESTCASE_FRONT, AppState.ZOOM_WIPE );
 				MainWindow.instance.testcaseCanvas.setNoteLayer( true );
 			}
 		});
 	}
 	
 	override function getActiveCanvas():CanvasItem {
-		if( state == PROJECT_FRONT ) {
+		if( state == MainWindow.PROJECT_FRONT ) {
 			MainWindow.instance.projectCanvas.canvasItem;
-		} else if( state == TESTCASE_FRONT ) {
+		} else if( state == MainWindow.TESTCASE_FRONT ) {
 			MainWindow.instance.testcaseCanvas.canvasItem;
 		} else null;
 	}
@@ -237,14 +232,14 @@ public class AppState extends ApplicationState {
 								MainWindow.instance.testcaseCanvas.canvasItem = null;
 								MainWindow.instance.projectCanvas.canvasItem = null;
 								pRef.setEnabled( false );
-								AppState.byName("MAIN").transitionTo( AppState.WORKSPACE_FRONT, ZOOM_WIPE );
+								AppState.byName("MAIN").transitionTo( MainWindow.WORKSPACE_FRONT, ZOOM_WIPE );
 							} 
 						}
 				    } else {
 						MainWindow.instance.testcaseCanvas.canvasItem = null;
 						MainWindow.instance.projectCanvas.canvasItem = null;
 						pRef.setEnabled( false );
-						AppState.byName("MAIN").transitionTo( AppState.WORKSPACE_FRONT, ZOOM_WIPE );
+						AppState.byName("MAIN").transitionTo( MainWindow.WORKSPACE_FRONT, ZOOM_WIPE );
 				    }
 				}
 			}
@@ -304,7 +299,7 @@ public class AppState extends ApplicationState {
 		
 		log.debug( "Transitioning from state \{\} to state \{\}.", this.state, state );
 		
-		if ( this.state == TESTCASE_FRONT ) {
+		if ( this.state == MainWindow.TESTCASE_FRONT ) {
 		    var tc:SceneItem = MainWindow.instance.testcaseCanvas.canvasItem as SceneItem;
 		    if( tc != null ) {
 		    	var tcn:TestCaseNode = MainWindow.instance.projectCanvas.lookupCanvasNode( tc.getId() ) as TestCaseNode;
