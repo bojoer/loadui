@@ -12,6 +12,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.util.Math;
+
 import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.ui.pagination.Pagination;
@@ -21,7 +23,7 @@ public class PageList extends VBox, Pagination {
 	
 	var itemWidth: Number;
 	
-	override var displayedItems on replace {
+	def displayed = bind displayedItems on replace {
 		itemWidth = 0;
 		for( x in displayedItems )
 			itemWidth = Math.max( itemWidth, x.layoutBounds.width );
