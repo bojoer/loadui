@@ -47,7 +47,7 @@ public mixin class Pagination {
 	/**
 	 * The nodes to display.
 	 */
-	public var content: Node[] on replace {
+	public var items: Node[] on replace {
 		refresh( 0 );
 	}
 	
@@ -66,7 +66,7 @@ public mixin class Pagination {
 	/**
 	 * The content displayed in the current page.
 	 */
-	public-read var displayedContent: Node[];
+	public-read var displayedItems: Node[];
 	
 	public var onDisplayChange: function( oldContent:Node[], direction:Integer ):Void;
 	
@@ -76,17 +76,17 @@ public mixin class Pagination {
 			return;
 		
 		refreshing = true;
-		numPages = if( fluid ) Math.max( sizeof content - actualItemsPerPage + 1, 1 ) else Math.max( Math.ceil( (sizeof content as Double) / actualItemsPerPage ) as Integer, 1 );
+		numPages = if( fluid ) Math.max( sizeof items - actualItemsPerPage + 1, 1 ) else Math.max( Math.ceil( (sizeof items as Double) / actualItemsPerPage ) as Integer, 1 );
 		if( page < 0 ) {
 			page = 0;
 		} else if( page >= numPages ) {
 			page = numPages - 1;
 		}
 		
-		def newContent = if( fluid ) content[page..page+actualItemsPerPage-1] else content[(actualItemsPerPage*page)..(actualItemsPerPage*(page+1)-1)];
-		if( not Sequences.isEqualByContentIdentity( newContent, displayedContent ) ) {
-			def oldContent = displayedContent;
-			displayedContent = newContent;
+		def newContent = if( fluid ) items[page..page+actualItemsPerPage-1] else items[(actualItemsPerPage*page)..(actualItemsPerPage*(page+1)-1)];
+		if( not Sequences.isEqualByContentIdentity( newContent, displayedItems ) ) {
+			def oldContent = displayedItems;
+			displayedItems = newContent;
 			onDisplayChange( oldContent, direction );
 		}
 

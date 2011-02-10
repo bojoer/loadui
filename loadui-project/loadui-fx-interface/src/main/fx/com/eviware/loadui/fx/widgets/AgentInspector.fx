@@ -298,7 +298,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	}
 
 	override function selectionChanged(tc: TestCaseIcon): Void {
-		for(rin in pagelist.content){
+		for(rin in pagelist.items){
 			(rin as AgentInspectorNode).selectTestCaseIcon(tc);
 		}
 		ghostAgent.selectTestCaseIcon(tc);
@@ -479,22 +479,22 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 
 	/** Adds agent node to list */
 	function addAgent( agent: AgentItem ):Void {
-		pagelist.content = Sequences.sort( [ pagelist.content, AgentInspectorNode { agent: agent } ], COMPARE_BY_TOSTRING ) as Node[];
+		pagelist.items = Sequences.sort( [ pagelist.items, AgentInspectorNode { agent: agent } ], COMPARE_BY_TOSTRING ) as Node[];
 	}
 	
 	/** Removes agent from the list */
 	function removeAgent( agent:AgentItem ):Void {
-		for( node in pagelist.content[p|p instanceof AgentNode] )
+		for( node in pagelist.items[p|p instanceof AgentNode] )
 			if( (node as AgentNode).agent == agent )
-				delete node from pagelist.content;
-		for( node in pagelist.content[p|p instanceof AgentInspectorNode] )
+				delete node from pagelist.items;
+		for( node in pagelist.items[p|p instanceof AgentInspectorNode] )
 			if( (node as AgentInspectorNode).agent == agent )
-				delete node from pagelist.content;
+				delete node from pagelist.items;
 	}
 	
 	/** Assign testcase to a specified agent */
 	function deployTestCase(scene: SceneItem, agent: AgentItem): Void {
-		for(rin in pagelist.content){
+		for(rin in pagelist.items){
 			if((rin as AgentInspectorNode).agent == agent){
 				(rin as AgentInspectorNode).addTestCase(TestCaseIcon{
 						stateListeners: [this]
@@ -508,7 +508,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	
 	/** Assign testcase to all agents */
 	function deployTestCase(scene: SceneItem): Void {
-		for(rin in pagelist.content){
+		for(rin in pagelist.items){
 			(rin as AgentInspectorNode).addTestCase(TestCaseIcon{
 					stateListeners: [this]
 					sceneItem: scene
@@ -519,7 +519,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	
 	/** Unassign testcas from specified agent */
 	function undeployTestCase(scene: SceneItem, agent: AgentItem): Void {
-		for(rin in pagelist.content){
+		for(rin in pagelist.items){
 			if((rin as AgentInspectorNode).agent == agent){
 				(rin as AgentInspectorNode).undeployTestCase(scene);
 				return;
@@ -530,7 +530,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	/** Unassign testcas from all agents it is assigned to */
 	function undeployTestCase(sceneItem: SceneItem): Void{
 		ghostAgent.undeployTestCase(sceneItem);
-		for(rin in pagelist.content){
+		for(rin in pagelist.items){
 			(rin as AgentInspectorNode).undeployTestCase(sceneItem);
 		}
 	}
@@ -564,7 +564,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	
 	/** Find agent node by it's agent */
 	function findAgentNode(agent: AgentItem): AgentInspectorNode {
-		for(rin in pagelist.content){
+		for(rin in pagelist.items){
 			if((rin as AgentInspectorNode).agent == agent){
 				return rin as AgentInspectorNode;
 			}
@@ -575,14 +575,14 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	/** Clear test cases from all agent nodes wiothout unassigning them */
 	function clearTestCases(): Void{
 		ghostAgent.clearTestCases(false);
-		for(rin in pagelist.content){
+		for(rin in pagelist.items){
 			(rin as AgentInspectorNode).clearTestCases(false);
 		}
 	}
 	
 	/** Clear test cases from the agent node specified by it's agent with unassigning them */
 	function clearTestCases(agent: AgentItem): Void{
-		for(rin in pagelist.content){
+		for(rin in pagelist.items){
 			if((rin as AgentInspectorNode).agent == agent){
 				(rin as AgentInspectorNode).clearTestCases(true);
 				return;
@@ -595,7 +595,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	 */
 	function selectTestCaseIcon(sceneItem: SceneItem, selected: Boolean): Void {
 		ghostAgent.selectTestCaseIcon(sceneItem, selected);
-		for(rin in pagelist.content){
+		for(rin in pagelist.items){
 			(rin as AgentInspectorNode).selectTestCaseIcon(sceneItem, selected);
 		}
 	}
@@ -603,7 +603,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	/** Deselects all testcase icons */
 	function deselectTestCaseIcons(): Void {
 		ghostAgent.deselectTestCaseIcons();
-		for(rin in pagelist.content){
+		for(rin in pagelist.items){
 			(rin as AgentInspectorNode).deselectTestCaseIcons();
 		}
 	}

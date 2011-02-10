@@ -103,7 +103,7 @@ public class ProjectList extends CustomNode, Resizable, EventHandler {
 	}
 	
 	function addProjectRef( ref:ProjectRef ):Void {
-		pagelist.content = Sequences.sort( [ pagelist.content, DraggableFrame { draggable:ProjectNode { projectRef: ref } } ], COMPARE_BY_TOSTRING ) as Node[];
+		pagelist.items = Sequences.sort( [ pagelist.items, DraggableFrame { draggable:ProjectNode { projectRef: ref } } ], COMPARE_BY_TOSTRING ) as Node[];
 	}
 	
 	public function checkExistingProjects() {
@@ -131,10 +131,10 @@ public class ProjectList extends CustomNode, Resizable, EventHandler {
 	}
 	
 	function removeProjectRef( ref:ProjectRef ):Void {
-		for( node in pagelist.content[f|f instanceof DraggableFrame] ) {
+		for( node in pagelist.items[f|f instanceof DraggableFrame] ) {
 			def draggable = (node as DraggableFrame).draggable;
 			if( (draggable as ProjectNode).projectRef == ref )
-				delete node from pagelist.content;
+				delete node from pagelist.items;
 		}
 	}
 	

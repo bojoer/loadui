@@ -115,10 +115,10 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 	var menuFill: Paint = Color.web("#777777");
 	
 	var contentChanging = false;
-	override var content on replace {
+	override var items on replace {
 		if( not contentChanging ) {
 			contentChanging = true;
-				content = Sequences.sort( content, COMPARE_BY_TOSTRING ) as Node[];
+				items = Sequences.sort( items, COMPARE_BY_TOSTRING ) as Node[];
 			contentChanging = false;
 		}
 	}
@@ -136,7 +136,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 	}
 	
 	public function selectTestCaseIcon(sceneItem: SceneItem, selected: Boolean){
-		for(df in content[x|x instanceof DraggableFrame]){
+		for(df in items[x|x instanceof DraggableFrame]){
 			var testCase = (df as DraggableFrame).draggable as TestCaseIcon;
 			if(testCase.label == sceneItem.getLabel()){
 				testCase.selected = selected;
@@ -156,7 +156,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 	}
 	
 	public function deselectTestCaseIcons(){
-		for(df in content[x|x instanceof DraggableFrame]){
+		for(df in items[x|x instanceof DraggableFrame]){
 			var testCase = ((df as DraggableFrame).draggable as TestCaseIcon).selected = false;
 			var placeholder = (df as DraggableFrame).placeholder as TestCaseIcon;
 			if(placeholder != null){
@@ -168,7 +168,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 	override var accept = function( d: Draggable ) {
 		if(not ghostAgent and d.node instanceof TestCaseIcon){
 			var tcNode: TestCaseIcon = d.node as TestCaseIcon;
-			for(tc in content[x|x instanceof DraggableFrame]){
+			for(tc in items[x|x instanceof DraggableFrame]){
 				if(((tc as DraggableFrame).draggable as TestCaseIcon).label == tcNode.label){
 					return false;
 				}
@@ -200,15 +200,15 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 	
 	def dummyNode = Rectangle { width: 1, height: 1, managed: false, fill: Color.rgb( 0, 0, 0, 0.001 ) }
 	var tcContent:Container;
-	def myDisplayedContent = bind displayedContent on replace {
+	def myDisplayedContent = bind displayedItems on replace {
 		def dummyIndex = Sequences.indexOf( tcContent.content, dummyNode );
 		if( dummyIndex == -1 ) {
-			tcContent.content = [ dummyNode, displayedContent ];
+			tcContent.content = [ dummyNode, displayedItems ];
 		} else {
 			for( i in Sequences.reverse([0..(sizeof tcContent.content - 1)]) as Integer[] ) {
 				if( i != dummyIndex ) delete tcContent.content[i];
 			}
-			insert displayedContent into tcContent.content;
+			insert displayedItems into tcContent.content;
 		}
 	}
 
@@ -304,7 +304,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 							maxHeight: if( ghostAgent ) 90 else 69
 						}
 						vpos: VPos.BOTTOM
-						content: [ dummyNode, displayedContent ]
+						content: [ dummyNode, displayedItems ]
 					}, Button {
 						layoutInfo: LayoutInfo {
 							width: 95
@@ -359,7 +359,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 	}
 	
 	public function addTestCase(tcNode: TestCaseIcon){
-		for(tc in content[x|x instanceof DraggableFrame]){
+		for(tc in items[x|x instanceof DraggableFrame]){
 			if(((tc as DraggableFrame).draggable as TestCaseIcon).label == tcNode.label) {
 				//item already in collection
 				return;
@@ -379,12 +379,12 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 			draggable: tcNode
 			placeholder: tcNode.copy(true)
 		} 
-		into content;
+		into items;
 	}
 	
 	public function undeployTestCase(sceneItem: SceneItem){
 		var projectItem: ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
-		for(df in content[x|x instanceof DraggableFrame]){
+		for(df in items[x|x instanceof DraggableFrame]){
 			if(((df as DraggableFrame).draggable as TestCaseIcon).label == sceneItem.getLabel()){
 				if(not ghostAgent and projectItem != null and agent != null){
 					try{
@@ -394,7 +394,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 						//do nothing, already unassigned
 					}
 				}
-				delete df as Node from content;
+				delete df as Node from items;
 				return;
 			}	
 		}
@@ -402,7 +402,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 	
 	public function clearTestCases(unassign: Boolean){
 		var projectItem: ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
-		for(df in content[x|x instanceof DraggableFrame]){
+		for(df in items[x|x instanceof DraggableFrame]){
 			if(not ghostAgent and unassign and projectItem != null and agent != null){
 				try{
 					projectItem.unassignScene( ((df as DraggableFrame).draggable as TestCaseIcon).sceneItem, agent );
@@ -412,7 +412,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 				}
 			}
 		} 
-		delete content;
+		delete items;
 	}
 					
 	override function toString() { label }

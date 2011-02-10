@@ -152,7 +152,7 @@ public class VScroller extends CustomNode, Resizable, Pagination {
 		fixItemsPerPage();
 	}
 	
-	override var content on replace {
+	override var items on replace {
 		fixItemsPerPage();
 	}
 	
@@ -187,7 +187,7 @@ public class VScroller extends CustomNode, Resizable, Pagination {
 					vgap: bind itemSpacing
 					nodeVPos: VPos.CENTER
 					nodeHPos: HPos.LEFT
-					content: displayedContent
+					content: displayedItems
 					vertical: true
 				}
 			]

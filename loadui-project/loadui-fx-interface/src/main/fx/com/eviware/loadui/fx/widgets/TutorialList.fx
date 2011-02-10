@@ -86,12 +86,12 @@ public class TutorialList extends CustomNode, Resizable {
 		               label: item.title;
 		               text: item.description
 		               url: item.link
-		           } into pagelist.content;
+		           } into pagelist.items;
 	             } );
 	       }
 	       
 	       onChannel: function(channel:Channel):Void {
-	           delete pagelist.content;
+	           delete pagelist.items;
 	       }
 	
 		}.start();
@@ -106,7 +106,7 @@ public class TutorialList extends CustomNode, Resizable {
 			text: ##[TUTORIALS]"TUTORIALS"
 			height: bind height
 			width: bind width
-			content: [
+			items: [
 	/*			TutorialNode {
 					url:"http://www.loadui.org/Getting-Started-with-loadUI/your-first-load-test.html"
 					label:"First LoadUI Test"

@@ -97,14 +97,14 @@ public class AgentList extends CustomNode, Resizable, EventHandler {
 	}
 	
 	function addAgent( agent:AgentItem ):Void {
-		pagelist.content = Sequences.sort( [ pagelist.content, DraggableFrame { draggable:AgentNode { agent: agent } } ], COMPARE_BY_TOSTRING ) as Node[];
+		pagelist.items = Sequences.sort( [ pagelist.items, DraggableFrame { draggable:AgentNode { agent: agent } } ], COMPARE_BY_TOSTRING ) as Node[];
 	}
 	
 	function removeAgent( agent:AgentItem ):Void {
-		for( node in pagelist.content[f|f instanceof DraggableFrame] ) {
+		for( node in pagelist.items[f|f instanceof DraggableFrame] ) {
 			def draggable = (node as DraggableFrame).draggable;
 			if( (draggable as AgentNode).agent == agent )
-				delete node from pagelist.content;
+				delete node from pagelist.items;
 		}
 	}
 

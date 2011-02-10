@@ -92,7 +92,7 @@ public class PagelistControl extends CustomNode, Resizable, Pagination {
 		fixItemsPerPage();
 	}
 	
-	override var content on replace {
+	override var items on replace {
 		fixItemsPerPage();
 	}
 	
@@ -139,14 +139,14 @@ public class PagelistControl extends CustomNode, Resizable, Pagination {
 					hgap: bind itemSpacing
 					nodeVPos: VPos.BOTTOM
 					nodeHPos: HPos.LEFT
-					content: displayedContent
+					content: displayedItems
 				}, Tile {
 					layoutY: bind height - 95
 					width: bind contentWidth + itemSpacing
 					hgap: bind itemSpacing
 					nodeVPos: VPos.TOP
 					nodeHPos: HPos.LEFT
-					content: for( n in displayedContent ) getTextForNode( n )
+					content: for( n in displayedItems ) getTextForNode( n )
 				}
 			]
 		}
