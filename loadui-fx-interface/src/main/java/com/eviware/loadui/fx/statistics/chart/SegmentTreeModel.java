@@ -9,10 +9,13 @@ import java.util.List;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
 public class SegmentTreeModel extends DefaultTreeModel
 {
+	private static final long serialVersionUID = -8572876294099664714L;
+
 	public SegmentTreeModel( Collection<ConfigurableLineChartView> lineChartViews )
 	{
 		super( new ChartGroupTreeNode( null, lineChartViews ) );
@@ -227,7 +230,7 @@ public class SegmentTreeModel extends DefaultTreeModel
 		@Override
 		public String toString()
 		{
-			return sourceName;
+			return StatisticVariable.MAIN_SOURCE.equals( sourceName ) ? "All" : sourceName;
 		}
 	}
 }
