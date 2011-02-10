@@ -3,6 +3,7 @@ package com.eviware.loadui.fx.statistics.chart;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -15,6 +16,8 @@ import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 public class SegmentTreeModel extends DefaultTreeModel
 {
 	private static final long serialVersionUID = -8572876294099664714L;
+
+	private static final ToStringComparator nameComparator = new ToStringComparator();
 
 	public SegmentTreeModel( Collection<ConfigurableLineChartView> lineChartViews )
 	{
@@ -98,6 +101,7 @@ public class SegmentTreeModel extends DefaultTreeModel
 			for( ConfigurableLineChartView chartView : chartViews )
 				children.add( new ChartViewTreeNode( this, chartView ) );
 
+			Collections.sort( children, nameComparator );
 			return children;
 		}
 
@@ -126,6 +130,7 @@ public class SegmentTreeModel extends DefaultTreeModel
 			for( String variableName : lineChartView.getVariableNames() )
 				children.add( new StatisticVariableTreeNode( this, variableName ) );
 
+			Collections.sort( children, nameComparator );
 			return children;
 		}
 
@@ -155,6 +160,7 @@ public class SegmentTreeModel extends DefaultTreeModel
 					.getStatisticNames( variableName ) )
 				children.add( new StatisticTreeNode( this, statisticName ) );
 
+			Collections.sort( children, nameComparator );
 			return children;
 		}
 
@@ -184,6 +190,7 @@ public class SegmentTreeModel extends DefaultTreeModel
 					.getSources( ( ( StatisticVariableTreeNode )getParent() ).variableName ) )
 				children.add( new SourceTreeNode( this, sourceName ) );
 
+			Collections.sort( children, nameComparator );
 			return children;
 		}
 
@@ -231,6 +238,15 @@ public class SegmentTreeModel extends DefaultTreeModel
 		public String toString()
 		{
 			return StatisticVariable.MAIN_SOURCE.equals( sourceName ) ? "All" : sourceName;
+		}
+	}
+
+	private static class ToStringComparator implements Comparator<Object>
+	{
+		@Override
+		public int compare( Object o1, Object o2 )
+		{
+			return String.valueOf( o1 ).compareTo( String.valueOf( o2 ) );
 		}
 	}
 }
