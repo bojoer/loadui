@@ -60,6 +60,11 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.MainWindow
 
 public-read var instance:MainWindow;
 
+public def WORKSPACE_FRONT = "workspace.front";
+public def PROJECT_FRONT = "project.front";
+public def PROJECT_BACK = "project.back";
+public def TESTCASE_FRONT = "testcase.front";
+
 /**
  * Sets up the main window of loadUI. Initialized from Spring and may have dependencies
  * on several objects, both JavaFX based and other. For the Spring handled dependencies,
@@ -110,7 +115,7 @@ public class MainWindow {
 	
 	public-read var projectCanvas:ProjectCanvas;
 	public-read var testcaseCanvas:Canvas;
-	public-read def canvas:Canvas = bind if(AppState.byScene( scene ).state == AppState.TESTCASE_FRONT ) testcaseCanvas else projectCanvas;
+	public-read def canvas:Canvas = bind if(AppState.byScene( scene ).state == TESTCASE_FRONT ) testcaseCanvas else projectCanvas;
 	public-read var navigator:NavigationPanel;
 	
 	/**
@@ -165,7 +170,7 @@ public class MainWindow {
 			layoutY: 90
 			width: bind scene.width - 529
 		}
-		appState.insertInto( projectList, AppState.WORKSPACE_FRONT );
+		appState.insertInto( projectList, WORKSPACE_FRONT );
 		
 		//Pagelist - Agents
 		appState.insertInto( agentList = AgentList {
@@ -173,7 +178,7 @@ public class MainWindow {
 			layoutX: 137
 			layoutY: 327
 			width: bind scene.width - 529
-		} , AppState.WORKSPACE_FRONT );
+		} , WORKSPACE_FRONT );
 		
 		// Tutorials
 		def tutorialList = TutorialList {
@@ -182,7 +187,7 @@ public class MainWindow {
 			layoutY: 605
 			width: bind scene.width - 529
 		}
-		appState.insertInto( tutorialList, AppState.WORKSPACE_FRONT );
+		appState.insertInto( tutorialList, WORKSPACE_FRONT );
 		
 		//Toolbar
 
@@ -201,13 +206,13 @@ public class MainWindow {
 			height: bind scene.height - 135
 		}
 
-		appState.insertInto( toolbar, AppState.WORKSPACE_FRONT );
-		appState.insertInto( feed, AppState.WORKSPACE_FRONT );
+		appState.insertInto( toolbar, WORKSPACE_FRONT );
+		appState.insertInto( feed, WORKSPACE_FRONT );
 		
 		//Set up the Project view
-		appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/grid.png" }, clip: Rectangle{ width: bind scene.width, height: bind scene.height } }, AppState.PROJECT_FRONT );
-		appState.insertInto( projectCanvas = ProjectCanvas { width: bind scene.width, height: bind scene.height }, AppState.PROJECT_FRONT );
-		appState.insertInto( navigator = NavigationPanel { canvas: projectCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( inspectors.height + navigator.height ) }, AppState.PROJECT_FRONT );
+		appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/grid.png" }, clip: Rectangle{ width: bind scene.width, height: bind scene.height } }, PROJECT_FRONT );
+		appState.insertInto( projectCanvas = ProjectCanvas { width: bind scene.width, height: bind scene.height }, PROJECT_FRONT );
+		appState.insertInto( navigator = NavigationPanel { canvas: projectCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( inspectors.height + navigator.height ) }, PROJECT_FRONT );
 		//def projectToolbar:Toolbar = Toolbar {
 						//	layoutY: 90
 						//	height: bind scene.height - inspectors.height - 100
@@ -217,29 +222,29 @@ public class MainWindow {
 						projectToolbar.addItem( TestCaseToolbarItem {} );
 						projectToolbar.addItem( NoteToolbarItem {} );
 						
-		appState.insertInto( projectToolbar, AppState.PROJECT_FRONT );
+		appState.insertInto( projectToolbar, PROJECT_FRONT );
 				
 		//Set up the back Project view
 	//	appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/team.jpg"
 	//	                                                width: 800
 	//	                                                height: 600
-	//	                                                preserveRatio: false } }, AppState.PROJECT_BACK );
-		appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/grid.png" }, clip: Rectangle{ width: bind scene.width, height: bind scene.height } }, AppState.TESTCASE_FRONT );
-	    appState.insertInto( testcaseCanvas = Canvas { width: bind scene.width, height: bind scene.height }, AppState.TESTCASE_FRONT );	
-		appState.insertInto( navigator = NavigationPanel { canvas: testcaseCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( inspectors.height + navigator.height ) }, AppState.TESTCASE_FRONT );
+	//	                                                preserveRatio: false } }, PROJECT_BACK );
+		appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/grid.png" }, clip: Rectangle{ width: bind scene.width, height: bind scene.height } }, TESTCASE_FRONT );
+	    appState.insertInto( testcaseCanvas = Canvas { width: bind scene.width, height: bind scene.height }, TESTCASE_FRONT );	
+		appState.insertInto( navigator = NavigationPanel { canvas: testcaseCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( inspectors.height + navigator.height ) }, TESTCASE_FRONT );
 		testcaseToolbar.addItem( NoteToolbarItem {} );
-		appState.insertInto( testcaseToolbar, AppState.TESTCASE_FRONT );
+		appState.insertInto( testcaseToolbar, TESTCASE_FRONT );
 		
 		insert MainButton { layoutX: 10, layoutY: 7 } into appState.globalLayer.content;
 		insert SoapUIButton { layoutX: 2, layoutY: 2 } into appState.globalLayer.content;
-		appState.insertInto( WorkspaceMenu { width: bind scene.width, workspace: workspace }, AppState.WORKSPACE_FRONT );
-		appState.insertInto( ProjectMenu { width: bind scene.width, project: bind projectCanvas.canvasItem as ProjectItem }, AppState.PROJECT_FRONT );
-		appState.insertInto( TestCaseMenu { width: bind scene.width, testCase: bind testcaseCanvas.canvasItem as SceneItem }, AppState.TESTCASE_FRONT );
+		appState.insertInto( WorkspaceMenu { width: bind scene.width, workspace: workspace }, WORKSPACE_FRONT );
+		appState.insertInto( ProjectMenu { width: bind scene.width, project: bind projectCanvas.canvasItem as ProjectItem }, PROJECT_FRONT );
+		appState.insertInto( TestCaseMenu { width: bind scene.width, testCase: bind testcaseCanvas.canvasItem as SceneItem }, TESTCASE_FRONT );
 		
 		FX.deferAction( function():Void {
 			scene.fill = Color.web("#333333");
 			scene.stage.visible = true;
-			appState.transitionTo( AppState.WORKSPACE_FRONT, AppState.FADE_WIPE );
+			appState.transitionTo( WORKSPACE_FRONT, AppState.FADE_WIPE );
 			AppState.put( scene, appState, "MAIN" );
 			SplashController.closeSplash();
 			projectList.checkExistingProjects();

@@ -412,7 +412,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 				if( MainWindow.instance.projectCanvas.canvasItem == null ) {
 					AppState.byName("MAIN").displayWorkspace();
 				} else {
-					AppState.byName("MAIN").transitionTo( AppState.PROJECT_FRONT, null );
+					AppState.byName("MAIN").transitionTo( MainWindow.PROJECT_FRONT, null );
 				}
 			}
 		}
