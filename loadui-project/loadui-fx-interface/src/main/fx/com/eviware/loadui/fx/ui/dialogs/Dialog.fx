@@ -172,7 +172,7 @@ public class Dialog {
 	
 	init {
 	   if(scene == null){
-			scene = AppState.instance.scene;
+			scene = AppState.byName("MAIN").scene;
 		}
 		
 		def sceneBounds = BoundingBox {
@@ -297,7 +297,7 @@ public class Dialog {
 	 * Displays the Dialog.
 	 */ 
 	public function show() {
-		insert mainPanel into AppState.getOverlay( scene ).content;
+		insert mainPanel into AppState.byScene( scene ).overlay.content;
 		
 		if( okButton != null )
 			okButton.requestFocus();
@@ -310,7 +310,7 @@ public class Dialog {
 	 * Closes the Dialog.
 	 */ 
 	public function close():Void {
-		delete mainPanel from AppState.getOverlay( scene ).content;
+		delete mainPanel from AppState.byScene( scene ).overlay.content;
 		onClose();
 	}
 }

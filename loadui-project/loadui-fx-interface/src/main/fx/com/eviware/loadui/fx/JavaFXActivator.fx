@@ -99,8 +99,8 @@ public class JavaFXActivator extends BundleActivator {
 				
 				override function close() {
 					if( not WindowControllerImpl.instance.doClose ) {
-						if( AppState.instance.state == AppState.TESTCASE_FRONT 
-												or AppState.instance.state == AppState.PROJECT_FRONT ) {
+						if( AppState.byName("MAIN").state == AppState.TESTCASE_FRONT 
+												or AppState.byName("MAIN").state == AppState.PROJECT_FRONT ) {
 							ExitConfirmDialog{};
 						} else {
 							ExitConfirmDialogWorkspace{};

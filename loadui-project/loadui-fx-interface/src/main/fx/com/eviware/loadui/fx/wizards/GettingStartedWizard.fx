@@ -117,11 +117,11 @@ public class GettingStartedWizard {
 					                     def sampleFile = new File(samplesDir,"getting-started-project.xml");
 					                     dialogRef.close();
 					                     if( sampleFile.exists() ) {
-						                 		AppState.instance.blockingTask(
+						                 		AppState.byName("MAIN").blockingTask(
 						                 			function():Void {
 						                 				def projectRef:ProjectRef = workspace.importProject(sampleFile, true);
 															projectRef.setEnabled(true);
-															AppState.instance.setActiveCanvas( projectRef.getProject() );
+															AppState.byName("MAIN").setActiveCanvas( projectRef.getProject() );
 						                 			}, null, "Loading Project."
 						                 		);
 					                     } else {

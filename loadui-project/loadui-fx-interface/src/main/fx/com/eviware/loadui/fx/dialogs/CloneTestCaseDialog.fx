@@ -59,7 +59,7 @@ public class CloneTestCaseDialog {
 								project.assignScene(canvasObject as SceneItem, agent);
 						}
 						if( open.value as Boolean ) {
-							AppState.instance.setActiveCanvas( copy.getCanvas() );
+							AppState.byName("MAIN").setActiveCanvas( copy.getCanvas() );
 						}
 					} else {
 						def warning:Dialog = Dialog {

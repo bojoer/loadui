@@ -156,7 +156,7 @@ public class TestCaseMenu extends HBox {
 				managed: false
 				onMousePressed: function ( e:MouseEvent ) { 
 					// This is disabled until issue LUCO-620 is fixed.
-					//AppState.instance.displayWorkspace(); 
+					//AppState.byName("MAIN").displayWorkspace(); 
 				}
 			}, Rectangle {
 				width: bind width
@@ -166,7 +166,7 @@ public class TestCaseMenu extends HBox {
 				managed: false
 				onMousePressed: function ( e:MouseEvent ) {
 				   // This is disabled until issue LUCO-620 is fixed.
-					//AppState.instance.setActiveCanvas( testCase.getProject() );
+					//AppState.byName("MAIN").setActiveCanvas( testCase.getProject() );
 				}
 			}, Label {
 				layoutInfo: LayoutInfo {
@@ -233,7 +233,7 @@ public class TestCaseMenu extends HBox {
 											def layoutY = Integer.parseInt( testCase.getAttribute( "gui.layoutY", "0" ) ) + 50;
 											copy.setAttribute( "gui.layoutX", "{ layoutX as Integer }" );
 											copy.setAttribute( "gui.layoutY", "{ layoutY as Integer }" );
-											AppState.instance.setActiveCanvas( copy );
+											AppState.byName("MAIN").setActiveCanvas( copy );
 										}
 									}
 									MenuItem {
@@ -242,7 +242,7 @@ public class TestCaseMenu extends HBox {
 											DeleteModelItemDialog { 
 												modelItem: MainWindow.instance.testcaseCanvas.canvasItem as SceneItem
 												onOk: function(): Void {
-													AppState.instance.setActiveCanvas( testCase.getProject() );
+													AppState.byName("MAIN").setActiveCanvas( testCase.getProject() );
 												} 
 											} 
 										}
@@ -266,7 +266,7 @@ public class TestCaseMenu extends HBox {
 										text: "Close"
 										action: function() {
 											MainWindow.instance.testcaseCanvas.generateMiniatures();
-											AppState.instance.setActiveCanvas( testCase.getProject() );
+											AppState.byName("MAIN").setActiveCanvas( testCase.getProject() );
 										}
 									}
 								]
@@ -323,7 +323,7 @@ public class TestCaseMenu extends HBox {
 								tooltip: Tooltip { text: ##[CLOSE_TESTCASE]"Close TestCase" }
 								action: function():Void {
 									MainWindow.instance.testcaseCanvas.generateMiniatures();
-									AppState.instance.setActiveCanvas( testCase.getProject() ) 
+									AppState.byName("MAIN").setActiveCanvas( testCase.getProject() ) 
 								}
 				         }, Label {
 								layoutInfo: LayoutInfo {

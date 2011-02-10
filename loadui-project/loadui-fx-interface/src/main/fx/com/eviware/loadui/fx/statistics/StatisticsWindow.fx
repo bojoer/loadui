@@ -60,6 +60,9 @@ public function getInstance():StatisticsWindow {
   return instance;
 }
 
+public def STATISTICS_MANAGE = "statistics.manage";
+public def STATISTICS_VIEW = "statistics.view";
+
 public class StatisticsWindow {
 
 	public var stage:Stage;
@@ -67,7 +70,15 @@ public class StatisticsWindow {
 	    topMenu.project = project;
 	}
 	
-	public var scene: Scene;
+	public var scene: Scene on replace {
+		def appState = AppState {};
+		appState.insertInto( topMenu, STATISTICS_VIEW );
+		appState.insertInto( stack, STATISTICS_VIEW );
+		appState.insertInto( toolbar, STATISTICS_VIEW );
+		
+		appState.transitionTo( STATISTICS_VIEW, AppState.FADE_WIPE );
+		AppState.put( scene, appState, "STATISTICS" );
+	}
 	
 	var closed:Boolean = true;
 	def statisticsManager:StatisticsManager = BeanInjector.getBean( StatisticsManager.class );
@@ -117,7 +128,6 @@ public class StatisticsWindow {
 	public function show() {
     	if ( closed ) {
     		if ( scene == null ) {
-	    		var overlay = Group {};
 	    		stage = Stage {
 			    	title: "Statistics"
 			    	icons: [
@@ -129,13 +139,6 @@ public class StatisticsWindow {
 						width: 1024
 						height: 768
 						fill: Color.web("#373737")
-						content: [
-							Group {
-					        	content: [
-						        	topMenu, stack, toolbar
-						        ]
-							}, overlay
-						]
 					}
 		    		onClose: function() {
 		    		 	closed = true;
@@ -143,7 +146,6 @@ public class StatisticsWindow {
 		//    				throw new com.eviware.loadui.util.hacks.PreventClosingStageException(); // this a hack to keep stage open
 		  				}
 		    		}
-		    		AppState.setOverlay( scene, Overlay { group: overlay } );
 	    		} else {
 		    		stage = Stage {
 		    			height: 768

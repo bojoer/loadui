@@ -147,7 +147,7 @@ public class WorkspaceMenu extends HBox {
 	                  }
 	                  if ( source != null ) {
 	                  	var success = false;
-	                  	AppState.instance.blockingTask(
+	                  	AppState.byName("MAIN").blockingTask(
 	                  		function():Void {
 			                     try {
 			                         pro = workspace.importProject( source, true );
@@ -236,7 +236,7 @@ public class WorkspaceMenu extends HBox {
                 action: function() {
                     try {
                     	ref.setEnabled( true );
-                    	AppState.instance.setActiveCanvas( ref.getProject() );
+                    	AppState.byName("MAIN").setActiveCanvas( ref.getProject() );
                     }
                     catch( ex:IOException )
                     {

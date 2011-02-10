@@ -72,19 +72,21 @@ public def FLIP_WIPE2 = Flip180Wipe { time: 1500ms, direction: Flip180Wipe.LEFT_
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.AppState" );
 
-/**
- * The instance of the AppState singleton.
- */
-public-read var instance:AppState;
+def appStates = new HashMap();
+def appStatesByName = new HashMap();
 
-def overlays = new HashMap();
-public function setOverlay( scene:Scene, overlay:Overlay ):Void {
-	if( scene == null )
-		throw new NullPointerException( "setOverlay called with scene = null!" );
-	overlays.put( scene, overlay );
+public function put( scene:Scene, appState:AppState, name:String ):Void {
+	appStates.put( scene, appState );
+	appStatesByName.put( name, appState );
+	appState.scene = scene;
 }
-public function getOverlay( scene:Scene ):Overlay {
-	overlays.get( scene ) as Overlay;
+
+public function byScene( scene:Scene ):AppState {
+	return appStates.get( scene ) as AppState;
+}
+
+public function byName( name:String ):AppState {
+	return appStatesByName.get( name ) as AppState;
 }
 
 /**
@@ -112,6 +114,7 @@ public class AppState extends ApplicationState {
 	 * such as dialog boxes or popup menus.
 	 */
 	def overlayLayer = Group { id: "Overlay Layer", /*content: dummyNode*/ };
+	public def overlay = Overlay { group: overlayLayer };
 	
 	def localLayer = bind lazy wipePanel.content[0] as Group;
 	var wipePanel:XWipePanel;
@@ -126,7 +129,6 @@ public class AppState extends ApplicationState {
 		if( scene != null ) {
 			log.debug( "Placing AppState layers into scene." );
 			scene.content = layers;
-			setOverlay( scene, Overlay { group: overlayLayer } );
 		}
 	}
 	
@@ -136,10 +138,6 @@ public class AppState extends ApplicationState {
 	}
 	
 	postinit {
-		instance = this;
-		for( s in [ WORKSPACE_FRONT, PROJECT_FRONT, PROJECT_BACK, TESTCASE_FRONT ] )
-			localNodes.put( s, NodeSequenceWrapper { nodes: [] } );
-		
 		layers.content = [
 			wipePanel = XWipePanel{ content: Group {}, width: bind scene.width, height: bind scene.height },
 			globalLayer,
@@ -170,9 +168,9 @@ public class AppState extends ApplicationState {
 		blockingTask.start();
 	}
 	var blockCount = 0;
-	public function block():Void { if( blockCount == 0 ) insert blocked into getOverlay(scene).content; blockCount++; }
+	public function block():Void { if( blockCount == 0 ) insert blocked into overlay.content; blockCount++; }
 	
-	public function unblock():Void { blockCount = Math.max( 0, blockCount-1 ); if( blockCount == 0 ) delete blocked from getOverlay(scene).content; }
+	public function unblock():Void { blockCount = Math.max( 0, blockCount-1 ); if( blockCount == 0 ) delete blocked from overlay.content; }
 	
 	public function setBlockedText( text:String ):Void { blocked.text = text; }
 	
@@ -239,14 +237,14 @@ public class AppState extends ApplicationState {
 								MainWindow.instance.testcaseCanvas.canvasItem = null;
 								MainWindow.instance.projectCanvas.canvasItem = null;
 								pRef.setEnabled( false );
-								AppState.instance.transitionTo( AppState.WORKSPACE_FRONT, ZOOM_WIPE );
+								AppState.byName("MAIN").transitionTo( AppState.WORKSPACE_FRONT, ZOOM_WIPE );
 							} 
 						}
 				    } else {
 						MainWindow.instance.testcaseCanvas.canvasItem = null;
 						MainWindow.instance.projectCanvas.canvasItem = null;
 						pRef.setEnabled( false );
-						AppState.instance.transitionTo( AppState.WORKSPACE_FRONT, ZOOM_WIPE );
+						AppState.byName("MAIN").transitionTo( AppState.WORKSPACE_FRONT, ZOOM_WIPE );
 				    }
 				}
 			}
@@ -255,9 +253,12 @@ public class AppState extends ApplicationState {
 	
 	/**
 	 * Inserts a node into the localLayer for the given state.
-	 * The state must be one of the predefined ones.
 	 */
 	public function insertInto( node:Node, state:String ):Void {
+		if( not localNodes.containsKey( state ) ) {
+			localNodes.put( state, NodeSequenceWrapper { nodes: [] } );
+		}
+		
 		def wrapper = localNodes.get( state ) as NodeSequenceWrapper;
 		if( wrapper == null )
 			throw new IllegalArgumentException( "State does not exist!" );
@@ -269,7 +270,6 @@ public class AppState extends ApplicationState {
 	
 	/**
 	 * Removes the node from the localLayer for the given state.
-	 * The state must be one of the predefined ones.
 	 */
 	public function deleteFrom( node:Node, state:String ):Void {
 		def wrapper = localNodes.get( state ) as NodeSequenceWrapper;

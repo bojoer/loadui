@@ -40,10 +40,10 @@ public class DeletableSegmentButton extends SegmentButton, Draggable, Deletable 
 			}
 		]
 		onShowing: function():Void {
-			insert contextMenu into AppState.getOverlay( scene ).content;
+			insert contextMenu into AppState.byScene( scene ).overlay.content;
 		}
 		onHiding: function():Void {
-			delete contextMenu from AppState.getOverlay( scene ).content;
+			delete contextMenu from AppState.byScene( scene ).overlay.content;
 		}
 	}
 	

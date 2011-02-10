@@ -47,7 +47,7 @@ public class ComponentToolbarItem extends ToolbarItem {
 	
 	override def onMouseClicked = function (me:MouseEvent) {
 				  if( me.button == MouseButton.PRIMARY and me.clickCount == 2) {
-				     var canvas:CanvasItem = AppState.instance.getActiveCanvas();
+				     var canvas:CanvasItem = AppState.byName("MAIN").getActiveCanvas();
 				     var name = "{descriptor.getLabel()}";
 				     var i=0;
 				     while( sizeof canvas.getComponents()[c|c.getLabel() == name] > 0 )

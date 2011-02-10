@@ -71,9 +71,6 @@ public class MainWindow {
 	var scene:Scene;
 	public function setScene( scene:Scene ):Void { this.scene = scene }
 	
-	var appState:AppState;
-	public function getAppState():AppState { appState }
-	
 	var workspaceProvider:WorkspaceProvider;
 	public-read var workspace:WorkspaceItem;
 	public function setWorkspaceProvider( workspaceProvider:WorkspaceProvider ):Void { this.workspaceProvider = workspaceProvider }
@@ -113,7 +110,7 @@ public class MainWindow {
 	
 	public-read var projectCanvas:ProjectCanvas;
 	public-read var testcaseCanvas:Canvas;
-	public-read def canvas:Canvas = bind if(AppState.instance.state == AppState.TESTCASE_FRONT ) testcaseCanvas else projectCanvas;
+	public-read def canvas:Canvas = bind if(AppState.byScene( scene ).state == AppState.TESTCASE_FRONT ) testcaseCanvas else projectCanvas;
 	public-read var navigator:NavigationPanel;
 	
 	/**
@@ -129,7 +126,7 @@ public class MainWindow {
 		//scene.stylesheets = "{FX.getProperty('javafx.user.home')}{File.separator}.loadui{File.separator}style.css";
 	
 		instance = this;
-		appState = AppState {};
+		def appState = AppState {};
 		
 		//Set the layer to place items being dragged into.
 		
@@ -243,7 +240,7 @@ public class MainWindow {
 			scene.fill = Color.web("#333333");
 			scene.stage.visible = true;
 			appState.transitionTo( AppState.WORKSPACE_FRONT, AppState.FADE_WIPE );
-			appState.scene = scene;
+			AppState.put( scene, appState, "MAIN" );
 			SplashController.closeSplash();
 			projectList.checkExistingProjects();
 		});

@@ -54,7 +54,7 @@ public mixin class TooltipHolder extends BaseMixin {
 	public function enableTooltip( enabled:Boolean ) {
 		if ( not enabled ) {
 			label.tooltip.hide();
-			delete label from AppState.getOverlay( myScene ).content;
+			delete label from AppState.byScene( myScene ).overlay.content;
 		}
 		tooltipEnabled = enabled;
 	}
@@ -73,14 +73,14 @@ public mixin class TooltipHolder extends BaseMixin {
 				label.layoutY = bounds.minY;
 				label.width = bounds.width;
 				label.height = bounds.height;
-				insert label into AppState.getOverlay( myScene ).content;
+				insert label into AppState.byScene( myScene ).overlay.content;
 				label.tooltip.activate();
 			}
 		} );
 		(this as BaseNode).addMouseHandler( MOUSE_EXITED, function( e:MouseEvent ):Void {
 			if( label.tooltip.activated ) {
 				label.tooltip.deactivate();
-				delete label from AppState.getOverlay( myScene ).content;
+				delete label from AppState.byScene( myScene ).overlay.content;
 			}
 		} );
 	}

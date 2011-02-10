@@ -98,7 +98,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 		
 		addMouseHandler( MOUSE_CLICKED, function( e:MouseEvent ) {
 			if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
-				AppState.instance.blockingTask(
+				AppState.byName("MAIN").blockingTask(
 					function():Void {
 						projectRef.setEnabled( true );
 					}, function( task:Task ):Void {
@@ -106,7 +106,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 							log.error( "Failed to load project:", task.causeOfFailure as java.lang.Throwable );
 							CorruptProjectDialog{ project:projectRef };
 						} else {
-							AppState.instance.setActiveCanvas( projectRef.getProject() );
+							AppState.byName("MAIN").setActiveCanvas( projectRef.getProject() );
 						}
 					}, "Loading Project."
 				);
@@ -118,7 +118,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 		MenuItem {
 			text: ##[OPEN]"Open"
 			action: function() {
-				AppState.instance.setActiveCanvas( projectRef.getProject() );
+				AppState.byName("MAIN").setActiveCanvas( projectRef.getProject() );
 			}
 		}, MenuItem {
 			text: ##[DISABLE]"Disable"
@@ -151,7 +151,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 			    try {
 			        if ( projectRef.getProjectFile().exists() ) {
 						projectRef.setEnabled( true );
-						AppState.instance.setActiveCanvas( projectRef.getProject() );
+						AppState.byName("MAIN").setActiveCanvas( projectRef.getProject() );
 			        } else {
 			            var dialog:Dialog = Dialog {
             	    			        		x: 300

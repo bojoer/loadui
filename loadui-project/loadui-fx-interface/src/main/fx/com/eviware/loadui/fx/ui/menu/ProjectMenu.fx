@@ -153,7 +153,7 @@ public class ProjectMenu extends HBox {
 				managed: false
 				onMousePressed: function ( e:MouseEvent ) { 
 					// This is disabled until issue LUCO-620 is fixed.
-				   // AppState.instance.displayWorkspace(); 
+				   // AppState.byName("MAIN").displayWorkspace(); 
 				}
 			}, Label {
 				layoutInfo: LayoutInfo {
@@ -265,14 +265,14 @@ public class ProjectMenu extends HBox {
 				                		statMonitor.close();
 				                		MainWindow.instance.projectCanvas.generateMiniatures(); 
 				                		project.save();
-				                		AppState.instance.displayWorkspace();
+				                		AppState.byName("MAIN").displayWorkspace();
 				                	}
 				                }
 				                MenuItem {
 				                    text: "Close"
 				                    action: function() { 
 				                    	statMonitor.close();
-				                        AppState.instance.displayWorkspace();
+				                        AppState.byName("MAIN").displayWorkspace();
 				                    }
 				                }
 								]
@@ -323,7 +323,7 @@ public class ProjectMenu extends HBox {
 								tooltip: Tooltip { text: ##[CLOSE_PROJECT]"Close Project" }
 								action: function():Void {
 									statMonitor.close();
-									AppState.instance.displayWorkspace() }
+									AppState.byName("MAIN").displayWorkspace() }
 				         	}, Label {
 								layoutInfo: LayoutInfo {
 									width: 10

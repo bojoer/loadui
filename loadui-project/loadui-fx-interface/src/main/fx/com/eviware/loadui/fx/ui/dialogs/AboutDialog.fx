@@ -42,7 +42,7 @@ public class AboutDialog {
 		def version = System.getProperty(LoadUI.BUILD_NUMBER);
 		def date = System.getProperty(LoadUI.BUILD_DATE);
 	
-		def scene = AppState.instance.scene;
+		def scene = AppState.byName("MAIN").scene;
 		def items:Node[] = [
 			modalLayer = Rectangle {
 				width: bind scene.width
@@ -50,8 +50,8 @@ public class AboutDialog {
 				fill: Color.TRANSPARENT
 				blocksMouse: true
 				onMousePressed: function( e:MouseEvent ) {
-					delete group from AppState.getOverlay( scene ).content;
-					delete modalLayer from AppState.getOverlay( scene ).content;
+					delete group from AppState.byScene( scene ).overlay.content;
+					delete modalLayer from AppState.byScene( scene ).overlay.content;
 				}
 			}, group = Group {
 				layoutX: bind ((scene.width - group.layoutBounds.width) / 2) as Integer
@@ -93,6 +93,6 @@ public class AboutDialog {
 			}
 		];
 
-		insert items into AppState.getOverlay( scene ).content;
+		insert items into AppState.byScene( scene ).overlay.content;
 	}
 }
