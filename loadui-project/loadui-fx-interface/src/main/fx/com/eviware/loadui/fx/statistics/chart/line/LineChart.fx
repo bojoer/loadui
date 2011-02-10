@@ -70,7 +70,6 @@ import java.lang.Runnable;
 
 import javafx.ext.swing.SwingComponent;
 import com.jidesoft.chart.Chart;
-import com.jidesoft.range.IntegerRange;
 import com.jidesoft.chart.axis.NumericAxis;
 import com.jidesoft.chart.axis.TimeAxis;
 import com.jidesoft.chart.style.ChartStyle;
@@ -97,7 +96,7 @@ def chartSet = new HashSet();
 public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	override var styleClass = "line-chart";
 	
-	def xRange = new IntegerRange( 0, 0 );
+	def xRange = new LongRange( 0, 0 );
 	def listener = new ChartViewListener();
 	def lines = new HashMap();
 	public-read def chart = new Chart();
@@ -132,6 +131,13 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		
 		if( oldTimeSpan > maxTime and timeSpan < maxTime )
 			scrollBar.value = maxTime;
+	}
+	def chartNodeWidth = bind chartNode.width - 20 on replace {
+		if( not showAll )
+			timeSpan = (chartNodeWidth * xScale) as Long;
+	} 
+	var xScale:Number = 0.002 on replace {
+		timeSpan = (chartNodeWidth * xScale) as Long;
 	}
 	
 	def segmentButtons:VBox = VBox {
@@ -338,10 +344,11 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	public function setZoomLevel( level:String ):Void {
 		def newLevel = TotalTimeTickCalculator.Level.valueOf( level.toUpperCase() );
-		def span = newLevel.getSpan() as Long;
 		def interval = newLevel.getInterval() as Long;
+		def unitWidth = newLevel.getUnitWidth() as Long;
+		xScale = (1000.0 * interval) / unitWidth;
 		
-		timeSpan = 1000 * span * interval;
+		//timeSpan = 1000 * span * interval;
 		zoomLevel = newLevel.getLevel();
 		timeCalculator.setLevel( newLevel );
 		showAll = newLevel == TotalTimeTickCalculator.Level.ALL;
