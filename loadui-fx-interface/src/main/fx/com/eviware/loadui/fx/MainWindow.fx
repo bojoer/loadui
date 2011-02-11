@@ -157,20 +157,9 @@ public class MainWindow {
 		insert inspectors into appState.globalLayer.content;
 		log.debug( "Done initializing InspectorPanel: \{\}", inspectors );
 		
-		def lists = VBox {
-			layoutX: 137
-			layoutY: 90
-			width: bind Math.max( scene.width - 529, 315 )
-			height: bind scene.height - 100
-			spacing: 25
-			content: [
-				projectList = ProjectList { workspace: workspace, layoutInfo: LayoutInfo { hfill: true } },
-				AgentList { workspace: workspace, layoutInfo: LayoutInfo { hfill: true } },
-				TutorialList { workspace: workspace, layoutInfo: LayoutInfo { hfill: true } }
-			]
-		}
-		
-		appState.insertInto( lists, WORKSPACE_FRONT );
+		appState.insertInto( projectList = ProjectList { workspace: workspace, layoutX: 137, layoutY: 90, width: bind Math.max( scene.width - 529, 315 ) }, WORKSPACE_FRONT );
+		appState.insertInto( AgentList { workspace: workspace, layoutX: 137, layoutY: 337, width: bind Math.max( scene.width - 529, 315 ) }, WORKSPACE_FRONT );
+		appState.insertInto( TutorialList { workspace: workspace, layoutX: 137, layoutY: 622, width: bind Math.max( scene.width - 529, 315 ) }, WORKSPACE_FRONT );
 		
 		//Toolbar
 
