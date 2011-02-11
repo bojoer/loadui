@@ -48,6 +48,8 @@ import com.eviware.loadui.fx.widgets.TutorialList;
 import java.lang.Thread;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.LayoutInfo;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -163,31 +165,20 @@ public class MainWindow {
 		insert inspectors into appState.globalLayer.content;
 		log.debug( "Done initializing InspectorPanel: \{\}", inspectors );
 		
-		//ProjectList
-		def projectList = ProjectList {
-			workspace: workspace
+		def lists = VBox {
 			layoutX: 137
 			layoutY: 90
 			width: bind scene.width - 529
+			height: bind scene.height - 100
+			spacing: 25
+			content: [
+				ProjectList { workspace: workspace, layoutInfo: LayoutInfo { hfill: true } },
+				AgentList { workspace: workspace, layoutInfo: LayoutInfo { hfill: true } },
+				TutorialList { workspace: workspace, layoutInfo: LayoutInfo { hfill: true } }
+			]
 		}
-		appState.insertInto( projectList, WORKSPACE_FRONT );
 		
-		//Pagelist - Agents
-		appState.insertInto( agentList = AgentList {
-			workspace: workspace
-			layoutX: 137
-			layoutY: 327
-			width: bind scene.width - 529
-		} , WORKSPACE_FRONT );
-		
-		// Tutorials
-		def tutorialList = TutorialList {
-		    workspace: workspace
-			layoutX: 137
-			layoutY: 605
-			width: bind scene.width - 529
-		}
-		appState.insertInto( tutorialList, WORKSPACE_FRONT );
+		appState.insertInto( lists, WORKSPACE_FRONT );
 		
 		//Toolbar
 
