@@ -66,6 +66,8 @@ public function getInstance():StatisticsWindow {
 public def STATISTICS_MANAGE = "statistics.manage";
 public def STATISTICS_VIEW = "statistics.view";
 
+public def VIEW_ATTRIBUTE = "gui.statistics.view";
+
 public class StatisticsWindow {
 
 	public var stage:Stage;
@@ -85,7 +87,7 @@ public class StatisticsWindow {
 		appState.insertInto( stack, STATISTICS_VIEW );
 		appState.insertInto( toolbar, STATISTICS_VIEW );
 		
-		appState.transitionTo( STATISTICS_VIEW, AppState.FADE_WIPE );
+		appState.transitionTo( project.getAttribute( VIEW_ATTRIBUTE, STATISTICS_MANAGE ), AppState.FADE_WIPE );
 		AppState.put( scene, appState, "STATISTICS" );
 	}
 	
