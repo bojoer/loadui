@@ -98,9 +98,8 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Ag
 /**
  * Static factory method easily invocable from Java Code.
  */
-public function createInstance(name: String) {
-	def AgentInspector = AgentInspector {name: name};
-	AgentInspector;
+public function createInstance( name: String ) {
+	AgentInspector { name: name }
 }
 
 /**
@@ -143,8 +142,13 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	//refernce to a workspace
 	def workspace: WorkspaceItem = bind MainWindow.instance.workspace on replace oldVal {
 		oldVal.removeEventListener( BaseEvent.class, this );
-		workspace.addEventListener( BaseEvent.class, this );
-		populateTestCases();
+		pagelist.items = [];
+		if( workspace != null ) {
+			workspace.addEventListener( BaseEvent.class, this );
+			for( agent in workspace.getAgents() )
+				addAgent( agent );
+			populateTestCases();
+		}
 	}
 	
 	def mainWindowInstance = bind MainWindow.instance;
@@ -479,6 +483,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 
 	/** Adds agent node to list */
 	function addAgent( agent: AgentItem ):Void {
+		println("!!!ADDING AGENT: {agent}");
 		pagelist.items = Sequences.sort( [ pagelist.items, AgentInspectorNode { agent: agent } ], COMPARE_BY_TOSTRING ) as Node[];
 	}
 	
@@ -607,18 +612,4 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 			(rin as AgentInspectorNode).deselectTestCaseIcons();
 		}
 	}
-	
-	postinit {
-		//add agents on workspace replace
-		var tmp = MainWindow.instance.workspace on replace {
-			if(tmp != null){
-				for(agent in tmp.getAgents()){
-					addAgent(agent);
-				}
-			}
-		};
-
-		populateTestCases();
-	}
-	
 }

@@ -54,6 +54,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Math;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -86,18 +87,9 @@ public class MainWindow {
 	public function getInspectorPanel() { inspectors }
 	
 	var projectList:ProjectList;
-	public function getProjectList() { projectList }
-	
-	var agentList:AgentList;
-	public function getAgentList() { agentList }
 	
 	var toolbar:Toolbar;
 	public function getToolbar() { toolbar }
-	
-	var tutorialList:TutorialList;
-	public function getTutorialList() { 
-		tutorialList 
-	}
 	
 	var projectToolbar:Toolbar = Toolbar{
 		layoutY: 110
@@ -168,11 +160,11 @@ public class MainWindow {
 		def lists = VBox {
 			layoutX: 137
 			layoutY: 90
-			width: bind scene.width - 529
+			width: bind Math.max( scene.width - 529, 315 )
 			height: bind scene.height - 100
 			spacing: 25
 			content: [
-				ProjectList { workspace: workspace, layoutInfo: LayoutInfo { hfill: true } },
+				projectList = ProjectList { workspace: workspace, layoutInfo: LayoutInfo { hfill: true } },
 				AgentList { workspace: workspace, layoutInfo: LayoutInfo { hfill: true } },
 				TutorialList { workspace: workspace, layoutInfo: LayoutInfo { hfill: true } }
 			]
