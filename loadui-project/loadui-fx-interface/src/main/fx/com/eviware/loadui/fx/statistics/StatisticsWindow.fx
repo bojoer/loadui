@@ -25,6 +25,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.Group;
 import javafx.util.Sequences;
 import javafx.scene.image.Image;
+import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Stack;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.ToggleButton;
@@ -47,6 +48,7 @@ import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbar;
 import com.eviware.loadui.fx.statistics.chart.ChartPage;
 import com.eviware.loadui.fx.statistics.manager.RecentResultsList;
+import com.eviware.loadui.fx.statistics.manager.ArchivedResultsList;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -75,7 +77,9 @@ public class StatisticsWindow {
 		def appState = AppState {};
 		
 		appState.insertInto ( ManageMenu { width: bind scene.width }, STATISTICS_MANAGE );
-		appState.insertInto ( RecentResultsList { layoutX: 50, layoutY: 100, width: bind scene.width - 100 }, STATISTICS_MANAGE );
+		
+		appState.insertInto ( RecentResultsList { layoutX: 50, layoutY: 100, width: bind Math.max( 315, scene.width - 100 ) }, STATISTICS_MANAGE );
+		appState.insertInto ( ArchivedResultsList { layoutX: 50, layoutY: 347, width: bind Math.max( 315, scene.width - 100 ) }, STATISTICS_MANAGE );
 		
 		appState.insertInto( topMenu, STATISTICS_VIEW );
 		appState.insertInto( stack, STATISTICS_VIEW );
