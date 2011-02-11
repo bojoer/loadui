@@ -32,7 +32,7 @@ import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.PopupMenu;
 
 import com.eviware.loadui.fx.FxUtils.*;
-import com.eviware.loadui.fx.ui.pagelist.PagelistControl;
+import com.eviware.loadui.fx.ui.pagelist.PageList;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.DroppableNode;
@@ -65,10 +65,10 @@ public class AgentList extends CustomNode, Resizable, EventHandler {
 	 */
 	public-init var workspace: WorkspaceItem;
 	
-	var pagelist:PagelistControl;
+	var pagelist:PageList;
 
 	override function getPrefHeight( width:Float ) {
-		248
+		pagelist.getPrefHeight( width );
 	}
 	
 	override function getPrefWidth( height:Float ) {
@@ -127,8 +127,8 @@ public class AgentList extends CustomNode, Resizable, EventHandler {
 			]
 		};
 		
-		pagelist = PagelistControl {
-			text: ##[AGENTS]"AGENTS"
+		pagelist = PageList {
+			label: ##[AGENTS]"AGENTS"
 			height: bind height
 			width: bind width
 			onMousePressed: function(e: MouseEvent){

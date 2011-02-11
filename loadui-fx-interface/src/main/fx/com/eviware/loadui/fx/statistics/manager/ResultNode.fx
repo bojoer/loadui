@@ -57,6 +57,7 @@ public class ResultNode extends BaseNode, Draggable, Deletable {
 	}
 	
 	override function toString():String {
-		execution.toString();
+		//execution.toString();
+		"An Execution"
 	}
 }

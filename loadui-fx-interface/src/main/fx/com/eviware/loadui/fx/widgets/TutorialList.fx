@@ -41,7 +41,7 @@ import java.lang.RuntimeException;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.fx.FxUtils.*;
-import com.eviware.loadui.fx.ui.pagelist.PagelistControl;
+import com.eviware.loadui.fx.ui.pagelist.PageList;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.model.WorkspaceItem;
@@ -58,10 +58,10 @@ public class TutorialList extends CustomNode, Resizable {
 	 */
 	public-init var workspace: WorkspaceItem;
 	
-	var pagelist:PagelistControl;
+	var pagelist:PageList;
 
 	override function getPrefHeight( width:Float ) {
-		200
+		pagelist.getPrefHeight( width );
 	}
 	
 	override function getPrefWidth( height:Float ) {
@@ -102,8 +102,8 @@ public class TutorialList extends CustomNode, Resizable {
 	override function create() {
 		
 		
-		pagelist = PagelistControl {
-			text: ##[TUTORIALS]"TUTORIALS"
+		pagelist = PageList {
+			label: ##[TUTORIALS]"TUTORIALS"
 			height: bind height
 			width: bind width
 			items: [

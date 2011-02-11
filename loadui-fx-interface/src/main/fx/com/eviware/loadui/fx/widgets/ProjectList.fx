@@ -28,10 +28,12 @@ import javafx.scene.CustomNode;
 import javafx.scene.layout.Resizable;
 
 import com.eviware.loadui.fx.FxUtils.*;
-import com.eviware.loadui.fx.ui.pagelist.PagelistControl;
+import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.pagelist.PageList;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.DroppableNode;
+import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
@@ -58,17 +60,17 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Pr
 /**
  * A list of all the Projects in the current Workspace.
  */
-public class ProjectList extends CustomNode, Resizable, EventHandler {
+public class ProjectList extends BaseNode, Droppable, Resizable, EventHandler {
 	
 	/**
-	 * A reference to the current Workspace.
-	 */
+	* A reference to the current Workspace.
+	*/
 	public-init var workspace: WorkspaceItem;
 	
-	var pagelist:PagelistControl;
+	var pagelist:PageList;
 
 	override function getPrefHeight( width:Float ) {
-		210
+		pagelist.getPrefHeight( width );
 	}
 	
 	override function getPrefWidth( height:Float ) {
@@ -76,7 +78,7 @@ public class ProjectList extends CustomNode, Resizable, EventHandler {
 	}
 	
 	override function handleEvent( e:EventObject ) {
-		if(e instanceof CollectionEvent){
+		if(e instanceof CollectionEvent) {
 			def event = e as CollectionEvent;
 			if( event.getKey().equals( WorkspaceItem.PROJECT_REFS ) ) {
 				if( event.getEvent() == CollectionEvent.Event.ADDED ) {
@@ -99,7 +101,7 @@ public class ProjectList extends CustomNode, Resizable, EventHandler {
 		workspace.addEventListener( CollectionEvent.class, this );
 		
 		for( ref in workspace.getProjectRefs() ) 
-				addProjectRef( ref )
+			addProjectRef( ref )
 	}
 	
 	function addProjectRef( ref:ProjectRef ):Void {
@@ -107,27 +109,26 @@ public class ProjectList extends CustomNode, Resizable, EventHandler {
 	}
 	
 	public function checkExistingProjects() {
-	    for( ref in workspace.getProjectRefs() ) {
-    			if ( not ref.getProjectFile().exists() ) {
-	    			    var dialog:Dialog = Dialog {
-	    			        		x: 300
-	    			        		y: 300
-	    			    			title: "Error loading project: {ref.getLabel()}"
-	    			    			content: [
-	    			    				javafx.scene.control.Label { text: "Project file does not exists, do you want to be removed from workspace?"}
-	    			    			]
-	    			    			okText: "Ok"
-	    			    			onOk: function() {
-	    			    				workspace.removeProject( ref );
-	    			    				dialog.close();
-	    			    			}
-	    			    			onCancel: function() {
-	    			    			    dialog.close()
-	    			    			}
-	    			    		}
-	    		}
-	    		
-	    }
+		for( ref in workspace.getProjectRefs() ) {
+			if ( not ref.getProjectFile().exists() ) {
+				var dialog:Dialog = Dialog {
+					x: 300
+					y: 300
+					title: "Error loading project: {ref.getLabel()}"
+					content: [
+						javafx.scene.control.Label { text: "Project file does not exists, do you want to be removed from workspace?"}
+					]
+					okText: "Ok"
+					onOk: function() {
+						workspace.removeProject( ref );
+						dialog.close();
+					}
+					onCancel: function() {
+						dialog.close()
+					}
+				}
+			}
+		}
 	}
 	
 	function removeProjectRef( ref:ProjectRef ):Void {
@@ -141,7 +142,7 @@ public class ProjectList extends CustomNode, Resizable, EventHandler {
 	var x:Number;
 	var y:Number;
 	
-	override function create() {
+	override function create():Node {
 		def popup = PopupMenu {
 			items: [
 				MenuItem {
@@ -155,8 +156,8 @@ public class ProjectList extends CustomNode, Resizable, EventHandler {
 			]
 		};
 		
-	   	pagelist = PagelistControl {
-			text: ##[PROJECTS]"PROJECTS"
+		pagelist = PageList {
+			label: ##[PROJECTS]"PROJECTS"
 			height: bind height
 			width: bind width
 			onMousePressed: function(e: MouseEvent){
@@ -170,22 +171,21 @@ public class ProjectList extends CustomNode, Resizable, EventHandler {
 				}
 			}
 		}
-		DroppableNode {
-			contentNode: Group { content: [ pagelist, popup ] }
-			accept: function( d:Draggable ) {
-			    d.node instanceof ProjectToolbarItem
-			}
-			onDrop: function( d:Draggable ) {
-				log.debug("{d} dropped!");
-				if (d.node instanceof ProjectToolbarItem) {
-					log.debug( "Opening CreateNewProjectDialog..." );
-					CreateNewProjectDialog { 
-						workspace: workspace 
-						layoutX: (d.node as ProjectToolbarItem).translateX - 105
-						layoutY: (d.node as ProjectToolbarItem).translateY + 95
-					};
-				}
-			}
+	}
+	
+	override var accept = function( d:Draggable ) {
+		d.node instanceof ProjectToolbarItem
+	}
+	
+	override var onDrop = function( d:Draggable ) {
+		log.debug("{d} dropped!");
+		if (d.node instanceof ProjectToolbarItem) {
+			log.debug( "Opening CreateNewProjectDialog..." );
+			CreateNewProjectDialog { 
+				workspace: workspace 
+				layoutX: (d.node as ProjectToolbarItem).translateX - 105
+				layoutY: (d.node as ProjectToolbarItem).translateY + 95
+			};
 		}
 	}
 }

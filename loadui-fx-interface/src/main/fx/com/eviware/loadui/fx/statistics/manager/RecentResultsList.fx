@@ -20,14 +20,14 @@ import javafx.scene.layout.Resizable;
 
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
-import com.eviware.loadui.fx.ui.pagelist.PagelistControl;
+import com.eviware.loadui.fx.ui.pagelist.PageList;
 
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.util.BeanInjector;
 
 public class RecentResultsList extends BaseNode, Resizable {
-	def pagelist = PagelistControl { width: bind width, height: bind height, text: "Recent Results" };
+	def pagelist = PageList { width: bind width, height: bind height, label: "Recent Results" };
 	
 	def manager:ExecutionManager = BeanInjector.getBean( ExecutionManager.class ) on replace {
 		pagelist.items = for( name in manager.getExecutionNames() ) DraggableFrame { draggable: ResultNode { execution: manager.getExecution( name ) } }
