@@ -30,6 +30,7 @@ import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.discovery.AgentDiscovery.AgentReference;
 import com.eviware.loadui.api.events.EventHandler;
@@ -93,6 +94,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		createProperty( SOAPUI_SYNC_PROPERTY, Boolean.class );
 		createProperty( SOAPUI_CAJO_PORT_PROPERTY, Integer.class, 1198 );
 		createProperty( LOADUI_CAJO_PORT_PROPERTY, Integer.class, 1199 );
+		createProperty( STATISTIC_RESULTS_PATH, File.class, new File( System.getProperty( LoadUI.LOADUI_HOME ), "results" ) );
 		garbageCollectionInterval = createProperty( AUTO_GARBAGE_COLLECTION_INTERVAL, Long.class, 60 ); // using
 		// seconds
 	}
