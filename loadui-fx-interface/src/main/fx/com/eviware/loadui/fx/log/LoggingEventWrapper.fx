@@ -33,6 +33,7 @@ import org.apache.log4j.spi.LoggingEvent;
 public class LoggingEventWrapper {
 	public-init var loggingEvent:LoggingEvent;
 	var str:String = null;
+	var additionalInfo:String = "";
 	
 	postinit {
 		if( loggingEvent == null )
@@ -43,9 +44,13 @@ public class LoggingEventWrapper {
 		loggingEvent.getLevel();
 	}
 	
+	public function addAdditionalInfo( info:String ) {
+		additionalInfo = info;
+	}
+	
 	override function toString() {
 		if( str == null ) {
-			str = "{new Date( loggingEvent.timeStamp )}:{getLevel()}:{loggingEvent.getMessage()}"
+			str = "{new Date( loggingEvent.timeStamp )}:{getLevel()}:{loggingEvent.getMessage()}\r\n{additionalInfo}"
 		} else {
 			str
 		}
