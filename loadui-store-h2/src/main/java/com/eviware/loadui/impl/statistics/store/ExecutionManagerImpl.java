@@ -155,6 +155,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			m.put( ExecutionMetadataTable.STATIC_FIELD_NAME, id );
 			m.put( ExecutionMetadataTable.STATIC_FIELD_START_TIME, timestamp );
 			m.put( ExecutionMetadataTable.STATIC_FIELD_ARCHIVED, false );
+			m.put( ExecutionMetadataTable.STATIC_FIELD_LABEL, null );
+			m.put( ExecutionMetadataTable.STATIC_FIELD_LENGTH, 0 );
 			executionMetaTable.insert( m );
 
 			// create sequence table
@@ -169,7 +171,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			tableRegistry.put( id, sequenceTable );
 			tableRegistry.put( id, trackMetaTable );
 
-			currentExecution = new ExecutionImpl( id, timestamp, false, null, this );
+			currentExecution = new ExecutionImpl( id, timestamp, 0, false, null, this );
 			executionMap.put( id, currentExecution );
 
 			executionState = State.STARTED;
@@ -300,7 +302,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	 * (ExecutionMetadatatable, TrackMetadataTable, SequenceTable, DataTable(s)
 	 * SourceTable(s)), creates Execution objects instance, adds it to
 	 * executionsMap, reads tracks from TrackMetadataTable, creates Track object
-	 * instances and them to newly created execution. Tracks are tables are
+	 * instances and them to newly created execution. Tracks and tables are
 	 * created just for existing tracks (registered track descriptors)
 	 * 
 	 * @param executionId
@@ -359,12 +361,13 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			String exeName = ( String )result.get( ExecutionMetadataTable.STATIC_FIELD_NAME );
 			Long exeStartTime = ( Long )result.get( ExecutionMetadataTable.STATIC_FIELD_START_TIME );
 			Boolean exeArchived = ( Boolean )result.get( ExecutionMetadataTable.STATIC_FIELD_ARCHIVED );
+			Long exeLength = ( Long )result.get( ExecutionMetadataTable.STATIC_FIELD_LENGTH );
 			String exeLabel = ( String )result.get( ExecutionMetadataTable.STATIC_FIELD_LABEL );
 
 			// all SQL operations have finished successfully, so create
 			// execution object and appropriate tracks and add created tables
 			// to table registry
-			ExecutionImpl execution = new ExecutionImpl( exeName, exeStartTime, exeArchived, exeLabel, this );
+			ExecutionImpl execution = new ExecutionImpl( exeName, exeStartTime, exeLength, exeArchived, exeLabel, this );
 
 			// add created tables into table registry
 			for( int i = 0; i < createdTableList.size(); i++ )
@@ -419,6 +422,20 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		catch( SQLException e )
 		{
 			throw new RuntimeException( "Unable to set execution label.", e );
+		}
+	}
+
+	public void setExecutionLength( String executionId, long length )
+	{
+		ExecutionMetadataTable metaTable = ( ExecutionMetadataTable )tableRegistry.getTable( executionId,
+				ExecutionMetadataTable.TABLE_NAME );
+		try
+		{
+			metaTable.setLength( length );
+		}
+		catch( SQLException e )
+		{
+			throw new RuntimeException( "Unable to set execution length.", e );
 		}
 	}
 
