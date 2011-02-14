@@ -21,9 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.impl.statistics.db.table.TableBase;
 
-public class TableRegistry
+public class TableRegistry implements Releasable
 {
 	private Map<String, TableBase> tableMap = new HashMap<String, TableBase>();
 
@@ -78,6 +79,7 @@ public class TableRegistry
 	/**
 	 * Releases all tables
 	 */
+	@Override
 	public void release()
 	{
 		Iterator<String> keys = tableMap.keySet().iterator();

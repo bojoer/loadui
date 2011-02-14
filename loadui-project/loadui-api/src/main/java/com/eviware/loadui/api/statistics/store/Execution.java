@@ -17,12 +17,14 @@ package com.eviware.loadui.api.statistics.store;
 
 import java.util.Collection;
 
+import com.eviware.loadui.api.model.Labeled;
+
 /**
  * Represents statistical data gathered during a load test Execution.
  * 
  * @author dain.nilsson
  */
-public interface Execution
+public interface Execution extends Labeled
 {
 	/**
 	 * Gets the Executions ID.
@@ -72,13 +74,6 @@ public interface Execution
 	public void archive();
 
 	/**
-	 * Retrieves custom label for this execution.
-	 * 
-	 * @return execution label
-	 */
-	public String getLabel();
-
-	/**
 	 * Sets custom label for this execution.
 	 */
 	public void setLabel( String label );
@@ -87,9 +82,4 @@ public interface Execution
 	 * Gets the length of this execution.
 	 */
 	public long getLength();
-
-	/**
-	 * Sets the length for this execution.
-	 */
-	public void setLength( long length );
 }

@@ -18,6 +18,7 @@ package com.eviware.loadui.fx.statistics.chart.line;
 import javafx.util.Math;
 import javafx.scene.paint.Color;
 
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.fx.FxUtils;
 
 import com.eviware.loadui.api.events.EventHandler;
@@ -61,7 +62,7 @@ public class LineSegmentChartModel extends DefaultChartModel {
 	
 	public var level:Integer = 0 on replace {
 		clearPoints();
-		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1], level ) ) {
+		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1], level, StatisticsWindow.execution ) ) {
 			addPoint( scaler.createPoint( (dataPoint as DataPoint).getTimestamp(), (dataPoint as DataPoint).getValue() as Number ), false );
 		}
 		update();
@@ -69,7 +70,7 @@ public class LineSegmentChartModel extends DefaultChartModel {
 	
 	public var xRange:Number[] = [ 0, 0 ] on replace oldXRange {
 		clearPoints();
-		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1], level ) ) {
+		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1], level, StatisticsWindow.execution ) ) {
 			addPoint( scaler.createPoint( (dataPoint as DataPoint).getTimestamp(), (dataPoint as DataPoint).getValue() as Number ), false );
 		}
 		update();
@@ -83,7 +84,7 @@ public class LineSegmentChartModel extends DefaultChartModel {
 			chartGroup.fireEvent( new PropertyChangeEvent( segment, SCALE, oldScale, scale ) );
 		}
 		clearPoints();
-		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1], level ) ) {
+		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1], level, StatisticsWindow.execution ) ) {
 			addPoint( scaler.createPoint( (dataPoint as DataPoint).getTimestamp(), (dataPoint as DataPoint).getValue() as Number ), false );
 		}
 		update();
@@ -113,7 +114,7 @@ public class LineSegmentChartModel extends DefaultChartModel {
 		}
 	}
 	
-	public function refresh():Void {
+	public function poll():Void {
 		def dataPoint = statistic.getLatestPoint( level );
 		if( dataPoint != null ) {
 			def timestamp = dataPoint.getTimestamp();

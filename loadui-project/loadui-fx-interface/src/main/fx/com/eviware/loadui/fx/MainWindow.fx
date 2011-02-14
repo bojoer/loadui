@@ -157,9 +157,9 @@ public class MainWindow {
 		insert inspectors into appState.globalLayer.content;
 		log.debug( "Done initializing InspectorPanel: \{\}", inspectors );
 		
-		appState.insertInto( projectList = ProjectList { workspace: workspace, layoutX: 137, layoutY: 90, width: bind Math.max( scene.width - 529, 315 ), height: 222 }, WORKSPACE_FRONT );
-		appState.insertInto( AgentList { workspace: workspace, layoutX: 137, layoutY: 337, width: bind Math.max( scene.width - 529, 315 ), height: 260 }, WORKSPACE_FRONT );
-		appState.insertInto( TutorialList { workspace: workspace, layoutX: 137, layoutY: 622, width: bind Math.max( scene.width - 529, 315 ), height: 212 }, WORKSPACE_FRONT );
+		appState.insertInto( projectList = ProjectList { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 529, 315 ), height: 222 } }, WORKSPACE_FRONT );
+		appState.insertInto( AgentList { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 529, 315 ), height: 260 } }, WORKSPACE_FRONT );
+		appState.insertInto( TutorialList { workspace: workspace, layoutX: 137, layoutY: 622, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 529, 315 ), height: 212 } }, WORKSPACE_FRONT );
 		
 		//Toolbar
 
