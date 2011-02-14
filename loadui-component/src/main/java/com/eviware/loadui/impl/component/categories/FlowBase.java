@@ -71,9 +71,9 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 		getContext().setActivityStrategy( ActivityStrategies.ON );
 		incomingTerminal = context.createInput( INCOMING_TERMINAL, "Incoming Data" );
 
-		for ( int i = 0; i < 10; i++ )
-			counters.add( getContext().getCounter( "out_" + i));
-		
+		for( int i = 0; i < 10; i++ )
+			counters.add( getContext().getCounter( "out_" + i ) );
+
 		activityRunnable = new Runnable()
 		{
 			@Override
@@ -105,13 +105,15 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 				"Output Terminal " + " " + ( outgoingTerminals.size() + 1 ) );
 		getContext().setSignature( output, inputSignature );
 		outgoingTerminals.add( output );
-		
+
 		return output;
 	}
 
-	final public ArrayList<Counter> getCounters() {
+	final public ArrayList<Counter> getCounters()
+	{
 		return counters;
 	}
+
 	/**
 	 * Deletes the OutputTerminal in the outgoingTerminals List with the highest
 	 * numbering (the last one to be added). If no OutputTerminals exist in this
@@ -174,7 +176,7 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 	protected void updateSignature()
 	{
 		Map<String, Class<?>> newSig = new HashMap<String, Class<?>>();
-		for( Connection connection : incomingTerminal.getConnections() )
+		for( Connection connection : new ArrayList<Connection>( incomingTerminal.getConnections() ) )
 			for( Entry<String, Class<?>> entry : connection.getOutputTerminal().getMessageSignature().entrySet() )
 				newSig.put( entry.getKey(), entry.getValue() );
 		inputSignature = newSig;
