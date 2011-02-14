@@ -13,18 +13,18 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.store.table.model;
+package com.eviware.loadui.impl.statistics.db.table.model;
 
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.eviware.loadui.impl.statistics.store.table.ConnectionProvider;
-import com.eviware.loadui.impl.statistics.store.table.MetadataProvider;
-import com.eviware.loadui.impl.statistics.store.table.TableBase;
-import com.eviware.loadui.impl.statistics.store.table.TableDescriptor;
-import com.eviware.loadui.impl.statistics.store.table.TableProvider;
+import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
+import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
+import com.eviware.loadui.impl.statistics.db.TableRegistry;
+import com.eviware.loadui.impl.statistics.db.table.TableBase;
+import com.eviware.loadui.impl.statistics.db.table.TableDescriptor;
 
 public class SourceTable extends TableBase
 {
@@ -33,10 +33,10 @@ public class SourceTable extends TableBase
 
 	private Map<String, Integer> inMemoryTable = new HashMap<String, Integer>();
 
-	public SourceTable( String dbName, String name, ConnectionProvider connectionProvider, MetadataProvider metadataProvider,
-			TableProvider tableProvider )
+	public SourceTable( String dbName, String name, ConnectionRegistry connectionRegistry,
+			DatabaseMetadata databaseMetadata, TableRegistry tableRegistry )
 	{
-		super( dbName, name, null, connectionProvider, metadataProvider, tableProvider );
+		super( dbName, name, null, connectionRegistry, databaseMetadata, tableRegistry );
 
 		try
 		{
@@ -49,7 +49,7 @@ public class SourceTable extends TableBase
 		}
 		catch( SQLException e )
 		{
-			throw new RuntimeException( "Unable to read data from table!", e );
+			throw new RuntimeException( "Unable to initialize in-memory table for: " + this, e );
 		}
 	}
 
@@ -57,38 +57,36 @@ public class SourceTable extends TableBase
 	public synchronized void insert( Map<String, ? extends Object> data ) throws SQLException
 	{
 		super.insert( data );
-		// TODO commit for now.
-		commit();
 		inMemoryTable.put( ( String )data.get( STATIC_FIELD_SOURCE_NAME ), ( Integer )data.get( STATIC_FIELD_SOURCEID ) );
 	}
 
-	public synchronized Integer getSourceId( String source )
+	public synchronized Integer getSourceId( String source ) throws SQLException
 	{
 		if( inMemoryTable.get( source ) == null )
 		{
+			// source id for this source is not generated yet, so use sequence
+			// table to generate it
+			SequenceTable st = ( SequenceTable )getTable( SequenceTable.SEQUENCE_TABLE_NAME );
+			Integer sourceId = st.next( getExternalName(), STATIC_FIELD_SOURCEID );
+
+			// insert newly created source id into this table (insert into
+			// inMemoryTable is done in 'insert' method implementation after all
+			// SQL operations are finished successfully). If following insert
+			// fails,
+			// previously generated id will be left unused.
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( STATIC_FIELD_SOURCE_NAME, source );
-
-			SequenceTable st = ( SequenceTable )getTable( SequenceTable.SEQUENCE_TABLE_NAME );
-
-			data.put( STATIC_FIELD_SOURCEID, st.next( getExternalName(), STATIC_FIELD_SOURCEID ) );
-			try
-			{
-				insert( data );
-				commit();
-			}
-			catch( SQLException e )
-			{
-				throw new RuntimeException( "Unable to retrieve sourceid value!", e );
-			}
+			data.put( STATIC_FIELD_SOURCEID, sourceId );
+			insert( data );
+			commit();
 		}
 		return inMemoryTable.get( source );
 	}
 
 	@Override
-	public synchronized void dispose()
+	public synchronized void release()
 	{
-		super.dispose();
+		super.release();
 		inMemoryTable.clear();
 		inMemoryTable = null;
 	}
@@ -100,6 +98,12 @@ public class SourceTable extends TableBase
 		descriptor.addStaticField( STATIC_FIELD_SOURCEID, Integer.class );
 
 		descriptor.addToPkSequence( STATIC_FIELD_SOURCE_NAME );
+	}
+
+	@Override
+	protected boolean useTableSpecificConnection()
+	{
+		return false;
 	}
 
 }

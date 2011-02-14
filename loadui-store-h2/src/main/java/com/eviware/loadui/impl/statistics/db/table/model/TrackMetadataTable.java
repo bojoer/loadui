@@ -13,30 +13,37 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.store.table.model;
+package com.eviware.loadui.impl.statistics.db.table.model;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import com.eviware.loadui.impl.statistics.store.table.ConnectionProvider;
-import com.eviware.loadui.impl.statistics.store.table.MetadataProvider;
-import com.eviware.loadui.impl.statistics.store.table.TableBase;
-import com.eviware.loadui.impl.statistics.store.table.TableDescriptor;
-import com.eviware.loadui.impl.statistics.store.table.TableProvider;
+import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
+import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
+import com.eviware.loadui.impl.statistics.db.TableRegistry;
+import com.eviware.loadui.impl.statistics.db.table.TableBase;
+import com.eviware.loadui.impl.statistics.db.table.TableDescriptor;
 
-public class MetaTable extends TableBase
+public class TrackMetadataTable extends TableBase
 {
 	public static final String SELECT_ARG_TRACKNAME_EQ = "track_eq";
 
-	public static final String METATABLE_NAME = "meta_table";
+	public static final String TABLE_NAME = "track_metadata";
 
 	public static final String STATIC_FIELD_TRACK_NAME = "__TRACK_ID";
 
-	public MetaTable( String dbName, ConnectionProvider connectionProvider, MetadataProvider metadataProvider,
-			TableProvider tableProvider )
+	public static final String STATEMENT_LIST_TRACK_NAMES = "listTrackNamesStatement";
+	
+	public TrackMetadataTable( String dbName, ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata,
+			TableRegistry tableRegistry )
 	{
-		super( dbName, METATABLE_NAME, null, connectionProvider, metadataProvider, tableProvider );
+		super( dbName, TABLE_NAME, null, connectionRegistry, databaseMetadata, tableRegistry );
+
+		prepareStatement( STATEMENT_LIST_TRACK_NAMES, "select " + STATIC_FIELD_TRACK_NAME + " from " + getTableName() );
 	}
 
 	@Override
@@ -47,8 +54,6 @@ public class MetaTable extends TableBase
 		if( select( queryData ).size() == 0 )
 		{
 			super.insert( data );
-			// TODO commit for now, transaction management needs to be implemented
-			commit();
 		}
 	}
 
@@ -59,4 +64,22 @@ public class MetaTable extends TableBase
 		descriptor.addToPkSequence( STATIC_FIELD_TRACK_NAME );
 		descriptor.addSelectCriteria( SELECT_ARG_TRACKNAME_EQ, STATIC_FIELD_TRACK_NAME, "=?" );
 	}
+
+	@Override
+	protected boolean useTableSpecificConnection()
+	{
+		return true;
+	}
+
+	public List<String> listAllTracks() throws SQLException
+	{
+		List<String> resultList = new ArrayList<String>();
+		ResultSet result = executeQuery(STATEMENT_LIST_TRACK_NAMES, null );
+		while( result.next() )
+		{
+			resultList.add( result.getString( STATIC_FIELD_TRACK_NAME ) );
+		}
+		return resultList;
+	}
+
 }

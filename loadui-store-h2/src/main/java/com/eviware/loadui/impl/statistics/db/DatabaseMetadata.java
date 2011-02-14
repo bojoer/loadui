@@ -13,11 +13,9 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.store;
+package com.eviware.loadui.impl.statistics.db;
 
 import java.util.HashMap;
-
-import com.eviware.loadui.impl.statistics.store.table.MetadataProvider;
 
 /**
  * Keeps database specific information.
@@ -25,7 +23,7 @@ import com.eviware.loadui.impl.statistics.store.table.MetadataProvider;
  * @author predrag.vucetic
  * 
  */
-public class DatabaseMetadata implements MetadataProvider
+public class DatabaseMetadata
 {
 	/**
 	 * "CREATE TABLE" DDL expression
@@ -55,7 +53,6 @@ public class DatabaseMetadata implements MetadataProvider
 		typeConversionMap.put( clazz, databaseType );
 	}
 
-	@Override
 	public HashMap<Class<? extends Object>, String> getTypeConversionMap()
 	{
 		return typeConversionMap;
@@ -66,7 +63,6 @@ public class DatabaseMetadata implements MetadataProvider
 		this.createTableExpression = createTableExpression;
 	}
 
-	@Override
 	public String getCreateTableExpression()
 	{
 		return createTableExpression;
@@ -77,7 +73,6 @@ public class DatabaseMetadata implements MetadataProvider
 		this.addPrimaryKeyIndexExpression = addPrimaryKeyIndexExpression;
 	}
 
-	@Override
 	public String getAddPrimaryKeyIndexExpression()
 	{
 		return addPrimaryKeyIndexExpression;

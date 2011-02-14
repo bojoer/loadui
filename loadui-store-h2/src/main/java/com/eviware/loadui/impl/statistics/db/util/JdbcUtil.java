@@ -13,36 +13,50 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.store.table;
+package com.eviware.loadui.impl.statistics.db.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-public class StatementHolder
+public class JdbcUtil
 {
 
-	private String statementSql;
-
-	private List<String> argumentNameList = new ArrayList<String>();
-
-	public void addArgument( String name )
+	public static void close( ResultSet resultSet )
 	{
-		argumentNameList.add( name );
+		try
+		{
+			resultSet.close();
+		}
+		catch( SQLException e )
+		{
+			// do nothing
+		}
 	}
 
-	public String getStatementSql()
+	public static void close( Statement statement )
 	{
-		return statementSql;
+		try
+		{
+			statement.close();
+		}
+		catch( SQLException e )
+		{
+			// do nothing
+		}
 	}
 
-	public void setStatementSql( String statementSql )
+	public static void close( Connection connection )
 	{
-		this.statementSql = statementSql;
-	}
-
-	public List<String> getArgumentNameList()
-	{
-		return argumentNameList;
+		try
+		{
+			connection.close();
+		}
+		catch( SQLException e )
+		{
+			// do nothing
+		}
 	}
 
 }

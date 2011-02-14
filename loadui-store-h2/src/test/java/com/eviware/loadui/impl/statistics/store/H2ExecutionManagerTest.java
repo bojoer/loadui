@@ -40,9 +40,7 @@ public class H2ExecutionManagerTest
 	public void initialize()
 	{
 		System.setProperty( LoadUI.LOADUI_HOME, "target" );
-
 		h2 = new H2ExecutionManager();
-		h2.clearMetaDatabase();
 	}
 
 	@Test
@@ -61,6 +59,7 @@ public class H2ExecutionManagerTest
 		{
 
 		}
+		h2.delete( "test1" );
 	}
 
 	@Test
@@ -69,12 +68,12 @@ public class H2ExecutionManagerTest
 		long time = System.currentTimeMillis();
 		Execution e = h2.startExecution( "test2", time );
 		assertEquals( e, h2.getCurrentExecution() );
+		h2.delete( "test2" );
 	}
 
 	@Test
 	public void testGetExecutionNames()
 	{
-		( ( ExecutionManagerImpl )h2 ).clearMetaDatabase();
 		h2.startExecution( "test1", 10 );
 		h2.startExecution( "test2", 20 );
 		h2.startExecution( "test3", 30 );
@@ -86,14 +85,29 @@ public class H2ExecutionManagerTest
 		assertTrue( l.contains( "test3" ) );
 		assertTrue( l.contains( "test4" ) );
 		assertTrue( l.contains( "test5" ) );
+		h2.delete( "test1" );
+		h2.delete( "test2" );
+		h2.delete( "test3" );
+		h2.delete( "test4" );
+		h2.delete( "test5" );
 	}
 
 	@Test
 	public void testGetExecution()
 	{
-		( ( ExecutionManagerImpl )h2 ).clearMetaDatabase();
 		h2.startExecution( "test1", 10 );
 
+		// add descriptor
+		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
+		types.put( "a", Long.class );
+		types.put( "b", Long.class );
+		types.put( "c", Integer.class );
+		types.put( "d", Double.class );
+		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types );
+		h2.registerTrackDescriptor( td );
+
+		// release to invoke execution loading
+		h2.release();
 		h2.getExecution( "test1" );
 		assertTrue( h2.getExecution( "test1" ).getStartTime() == 10 );
 
@@ -106,6 +120,7 @@ public class H2ExecutionManagerTest
 		{
 
 		}
+		h2.delete( "test1" );
 	}
 
 	@Test
@@ -152,11 +167,34 @@ public class H2ExecutionManagerTest
 		EntryImpl entry = new EntryImpl( ( int )( System.currentTimeMillis() / 10000 ), values );
 		h2.writeEntry( t.getId(), entry, "local1" );
 
+		h2.delete( "test1" );
 	}
 
 	@Test
 	public void testRelease()
 	{
+		h2.startExecution( "test1", 10 );
+
+		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
+		types.put( "a", Long.class );
+		types.put( "b", Long.class );
+		types.put( "c", Integer.class );
+		types.put( "d", Double.class );
+
+		Map<String, Number> values = new HashMap<String, Number>();
+		values.put( "a", 1 );
+		values.put( "b", 2 );
+		values.put( "c", 3 );
+		values.put( "d", 4 );
+
+		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types );
+		h2.registerTrackDescriptor( td );
+		Track t = h2.getTrack( "t1" );
+
+		EntryImpl entry = new EntryImpl( ( int )( System.currentTimeMillis() / 10000 ), values );
+		h2.writeEntry( t.getId(), entry, "local1" );
 		h2.release();
+
+		h2.delete( "test1" );
 	}
 }

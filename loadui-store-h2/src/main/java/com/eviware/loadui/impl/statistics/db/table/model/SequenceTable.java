@@ -13,18 +13,18 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.store.table.model;
+package com.eviware.loadui.impl.statistics.db.table.model;
 
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.eviware.loadui.impl.statistics.store.table.ConnectionProvider;
-import com.eviware.loadui.impl.statistics.store.table.MetadataProvider;
-import com.eviware.loadui.impl.statistics.store.table.TableBase;
-import com.eviware.loadui.impl.statistics.store.table.TableDescriptor;
-import com.eviware.loadui.impl.statistics.store.table.TableProvider;
+import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
+import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
+import com.eviware.loadui.impl.statistics.db.TableRegistry;
+import com.eviware.loadui.impl.statistics.db.table.TableBase;
+import com.eviware.loadui.impl.statistics.db.table.TableDescriptor;
 
 public class SequenceTable extends TableBase
 {
@@ -39,49 +39,41 @@ public class SequenceTable extends TableBase
 
 	public static final String STATEMENT_UPDATE_VALUE = "updateValueStatement";
 
-	public SequenceTable( String dbName, ConnectionProvider connectionProvider, MetadataProvider metadataProvider,
-			TableProvider tableProvider )
+	public SequenceTable( String dbName, ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata,
+			TableRegistry tableRegistry )
 	{
-		super( dbName, SEQUENCE_TABLE_NAME, null, connectionProvider, metadataProvider, tableProvider );
+		super( dbName, SEQUENCE_TABLE_NAME, null, connectionRegistry, databaseMetadata, tableRegistry );
 
 		prepareStatement( STATEMENT_UPDATE_VALUE, "update " + getTableName() + " set " + STATIC_FIELD_VALUE
 				+ " = ? where " + STATIC_FIELD_TABLE + " = ? and " + STATIC_FIELD_COLUMN + " = ?" );
 	}
 
-	public synchronized Integer next( String tableName, String column )
+	public synchronized Integer next( String tableName, String column ) throws SQLException
 	{
-		try
+		Integer id;
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put( SELECT_ARG_TABLE_EQ, tableName );
+		data.put( SELECT_ARG_COLUMN_EQ, column );
+		List<Map<String, Object>> rs = select( data );
+		if( rs.size() == 0 )
 		{
-			Integer id;
-			Map<String, Object> data = new HashMap<String, Object>();
-			data.put( SELECT_ARG_TABLE_EQ, tableName );
-			data.put( SELECT_ARG_COLUMN_EQ, column );
-			List<Map<String, Object>> rs = select( data );
-			if( rs.size() == 0 )
-			{
-				id = 0;
-				data.clear();
-				data.put( STATIC_FIELD_TABLE, tableName );
-				data.put( STATIC_FIELD_COLUMN, column );
-				data.put( STATIC_FIELD_VALUE, id );
-				insert( data );
-			}
-			else
-			{
-				id = ( Integer )rs.get( 0 ).get( STATIC_FIELD_VALUE ) + 1;
-				Object[] params = new Object[3];
-				params[0] = id;
-				params[1] = tableName;
-				params[2] = column;
-				execute( STATEMENT_UPDATE_VALUE, params );
-			}
-			commit();
-			return id;
+			id = 0;
+			data.clear();
+			data.put( STATIC_FIELD_TABLE, tableName );
+			data.put( STATIC_FIELD_COLUMN, column );
+			data.put( STATIC_FIELD_VALUE, id );
+			insert( data );
 		}
-		catch( SQLException e )
+		else
 		{
-			throw new RuntimeException( "Unable to retrieve next sequence value!", e );
+			id = ( Integer )rs.get( 0 ).get( STATIC_FIELD_VALUE ) + 1;
+			Object[] params = new Object[3];
+			params[0] = id;
+			params[1] = tableName;
+			params[2] = column;
+			execute( STATEMENT_UPDATE_VALUE, params );
 		}
+		return id;
 	}
 
 	@Override
@@ -96,6 +88,12 @@ public class SequenceTable extends TableBase
 
 		descriptor.addSelectCriteria( SELECT_ARG_TABLE_EQ, STATIC_FIELD_TABLE, "=?" );
 		descriptor.addSelectCriteria( SELECT_ARG_COLUMN_EQ, STATIC_FIELD_COLUMN, "=?" );
+	}
+
+	@Override
+	protected boolean useTableSpecificConnection()
+	{
+		return true;
 	}
 
 }

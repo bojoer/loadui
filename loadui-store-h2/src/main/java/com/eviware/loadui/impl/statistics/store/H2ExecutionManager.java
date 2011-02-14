@@ -16,20 +16,20 @@
 package com.eviware.loadui.impl.statistics.store;
 
 import java.io.File;
-import java.util.HashMap;
+import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
 
 public class H2ExecutionManager extends ExecutionManagerImpl
 {
-	public static final String DB_BASEDIR = new File( System.getProperty( LoadUI.LOADUI_HOME ),
-			LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? "data_c" : "data_a" ).toURI().toString()
-			.replaceAll( "%20", " " )
-			+ File.separator;
+	public static final File DB_BASEDIR = new File( System.getProperty( LoadUI.LOADUI_HOME ), "executions" );
+
+	public static final String DB_BASEDIR_URI = DB_BASEDIR.toURI().toString().replaceAll( "%20", " " ) + File.separator;
 
 	public static final String SQL_CREATE_TABLE_EXPRESSION = "CREATE TABLE";
 	public static final String SQL_ADD_PRIMARY_KEY_INDEX_EXPRESSION = "ALTER TABLE ? ADD CONSTRAINT ?_pk_index PRIMARY KEY(?)";
@@ -38,36 +38,28 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	public static final String TYPE_BIGINT = "BIGINT";
 	public static final String TYPE_DOUBLE = "DOUBLE";
 	public static final String TYPE_STRING = "VARCHAR(255)";
-
-	private static HashMap<Class<? extends Object>, String> typeConversionMap;
-
-	static
-	{
-		typeConversionMap = new HashMap<Class<? extends Object>, String>();
-		typeConversionMap.put( Integer.class, TYPE_INTEGER );
-		typeConversionMap.put( Long.class, TYPE_BIGINT );
-		typeConversionMap.put( Double.class, TYPE_DOUBLE );
-		typeConversionMap.put( String.class, TYPE_STRING );
-	}
+	public static final String TYPE_BOOLEAN = "BOOLEAN";
 
 	@Override
 	public DataSource createDataSource( String db )
 	{
-		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" + DB_BASEDIR + db + ";DB_CLOSE_ON_EXIT=FALSE",
-				"sa", "sa" );
-		// JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:~/_data/" +
-		// db, "sa", "sa" );
+		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" + DB_BASEDIR_URI + db + File.separator + db
+				+ ";DB_CLOSE_ON_EXIT=FALSE", "sa", "sa" );
 		cp.setMaxConnections( 5 );
 		return cp;
 	}
 
-	/**
-	 * Called before stopping the application. Closes any open connections to
-	 * databases.
-	 */
-	public void release()
+	@Override
+	public void releaseDataSource( DataSource dataSource )
 	{
-		super.dispose();
+		try
+		{
+			((JdbcConnectionPool)dataSource).dispose();
+		}
+		catch( SQLException e )
+		{
+			// do nothing 
+		}
 	}
 
 	@Override
@@ -80,6 +72,15 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 		metadata.addTypeConversionPair( Long.class, TYPE_BIGINT );
 		metadata.addTypeConversionPair( Double.class, TYPE_DOUBLE );
 		metadata.addTypeConversionPair( String.class, TYPE_STRING );
+		metadata.addTypeConversionPair( Boolean.class, TYPE_BOOLEAN );
 	}
+
+	@Override
+	protected String getDBBaseDir()
+	{
+		return DB_BASEDIR.getAbsolutePath();
+	}
+
+
 
 }

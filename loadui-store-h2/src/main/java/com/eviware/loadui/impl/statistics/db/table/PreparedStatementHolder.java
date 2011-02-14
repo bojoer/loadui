@@ -13,14 +13,14 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.store.table;
+package com.eviware.loadui.impl.statistics.db.table;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-import com.eviware.loadui.impl.statistics.store.util.JdbcUtil;
+import com.eviware.loadui.impl.statistics.db.util.JdbcUtil;
 
 public class PreparedStatementHolder
 {
@@ -62,7 +62,7 @@ public class PreparedStatementHolder
 		return preparedStatement.executeQuery();
 	}
 
-	public void dispose()
+	public void release()
 	{
 		JdbcUtil.close( preparedStatement );
 		preparedStatement = null;
