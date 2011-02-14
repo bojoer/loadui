@@ -67,6 +67,20 @@ public class ExecutionImplTest
 		execution.setLabel( null );
 		assertTrue( execution.getLabel() == null );
 	}
+	
+	@Test
+	public void testSetLength()
+	{
+		assertTrue( execution.getLength() == 0 );
+		execution.setLength( 10 );
+		h2.release();
+		execution = h2.getExecution( EXECTUION_NAME );
+		assertTrue( execution.getLength() == 10 );
+		h2.release();
+		execution = h2.getExecution( EXECTUION_NAME );
+		execution.setLength( 20 );
+		assertTrue( execution.getLength() == 20 );
+	}
 
 	@Test
 	public void testDelete()

@@ -82,4 +82,14 @@ public interface Execution
 	 * Sets custom label for this execution.
 	 */
 	public void setLabel( String label );
+
+	/**
+	 * Gets the length of this execution.
+	 */
+	public long getLength();
+
+	/**
+	 * Sets the length for this execution.
+	 */
+	public void setLength( long length );
 }

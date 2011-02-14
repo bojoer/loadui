@@ -55,13 +55,19 @@ public class ExecutionImpl implements Execution
 	 * Execution custom label
 	 */
 	private String label = null;
+	
+	/**
+	 * Execution length
+	 */
+	private long length = 0;
 
-	public ExecutionImpl( String id, long timestamp, boolean archived, String label, ExecutionManagerImpl manager )
+	public ExecutionImpl( String id, long timestamp, long length, boolean archived, String label, ExecutionManagerImpl manager )
 	{
 		this.id = id;
 		this.startTime = timestamp;
 		this.archived = archived;
 		this.label = label;
+		this.length = length;
 		this.manager = manager;
 		trackMap = new HashMap<String, Track>();
 	}
@@ -134,5 +140,18 @@ public class ExecutionImpl implements Execution
 	{
 		manager.setExecutionLabel( getId(), label );
 		this.label = label;
+	}
+	
+	@Override
+	public void setLength( long length )
+	{
+		manager.setExecutionLength( getId(), length );
+		this.length = length;
+	}
+
+	@Override
+	public long getLength()
+	{
+		return length;
 	}
 }

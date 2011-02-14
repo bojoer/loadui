@@ -31,9 +31,11 @@ public class ExecutionMetadataTable extends TableBase
 	public static final String STATIC_FIELD_START_TIME = "__START_TIME";
 	public static final String STATIC_FIELD_ARCHIVED = "__ARCHIVED";
 	public static final String STATIC_FIELD_LABEL = "__LABEL";
+	public static final String STATIC_FIELD_LENGTH = "__LENGTH";
 
 	public static final String STATEMENT_ARCHIVE = "archiveStatement";
 	public static final String STATEMENT_UPDATE_LABEL = "updateLabelStatement";
+	public static final String STATEMENT_UPDATE_LENGTH = "updateLengthStatement";
 
 	public ExecutionMetadataTable( String dbName, ConnectionRegistry connectionRegistry,
 			DatabaseMetadata databaseMetadata, TableRegistry tableRegistry )
@@ -42,6 +44,7 @@ public class ExecutionMetadataTable extends TableBase
 
 		prepareStatement( STATEMENT_ARCHIVE, "update " + getTableName() + " set " + STATIC_FIELD_ARCHIVED + " = TRUE " );
 		prepareStatement( STATEMENT_UPDATE_LABEL, "update " + getTableName() + " set " + STATIC_FIELD_LABEL + " = ? " );
+		prepareStatement( STATEMENT_UPDATE_LENGTH, "update " + getTableName() + " set " + STATIC_FIELD_LENGTH + " = ? " );
 	}
 
 	@Override
@@ -51,6 +54,7 @@ public class ExecutionMetadataTable extends TableBase
 		descriptor.addStaticField( STATIC_FIELD_START_TIME, Long.class );
 		descriptor.addStaticField( STATIC_FIELD_ARCHIVED, Boolean.class );
 		descriptor.addStaticField( STATIC_FIELD_LABEL, String.class );
+		descriptor.addStaticField( STATIC_FIELD_LENGTH, Long.class );
 	}
 
 	@Override
@@ -67,6 +71,11 @@ public class ExecutionMetadataTable extends TableBase
 	public synchronized void setLabel( String label ) throws SQLException
 	{
 		execute( STATEMENT_UPDATE_LABEL, new Object[] { label } );
+	}
+
+	public synchronized void setLength( long length ) throws SQLException
+	{
+		execute( STATEMENT_UPDATE_LENGTH, new Object[] { length } );
 	}
 
 }
