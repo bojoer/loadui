@@ -13,37 +13,33 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.store.table;
+package com.eviware.loadui.impl.statistics.db;
 
-import java.util.HashMap;
+import javax.sql.DataSource;
 
 /**
- * Represents database specific data, like type conversion, DDL statements etc.
- * Implementation of this class should provide data specific to the database
- * which is in use.
+ * Implement this interface to provide creation and disposal handling of data
+ * sources. The implementation if this interface is database specific.
  * 
  * @author predrag.vucetic
+ * 
  */
-public interface MetadataProvider
+public interface DataSourceProvider
 {
 	/**
-	 * Gets the map which contains mapping between java and database types.
+	 * Creates data source for the specified database
 	 * 
-	 * @return
+	 * @param dbName
+	 *           Name of the database for which data source needs to be created
+	 * @return Created data source
 	 */
-	public HashMap<Class<? extends Object>, String> getTypeConversionMap();
+	public DataSource createDataSource( String dbName );
 
 	/**
-	 * Gets CREATE TABLE expression.
+	 * Releases data source
 	 * 
-	 * @return
+	 * @param dataSource
+	 *           data source to release
 	 */
-	public String getCreateTableExpression();
-
-	/**
-	 * Gets the expression for creating primary key index.
-	 * 
-	 * @return
-	 */
-	public String getAddPrimaryKeyIndexExpression();
+	public void releaseDataSource( DataSource dataSource );
 }

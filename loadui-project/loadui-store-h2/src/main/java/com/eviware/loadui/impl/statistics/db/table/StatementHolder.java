@@ -13,18 +13,36 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.store.table;
+package com.eviware.loadui.impl.statistics.db.table;
 
-import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
-public interface DataSourceProvider
+public class StatementHolder
 {
-	/**
-	 * Creates data source for the specified database
-	 * 
-	 * @param dbName
-	 *           Name of the database for which data source needs to be created
-	 * @return Created data source
-	 */
-	public DataSource createDataSource( String dbName );
+
+	private String statementSql;
+
+	private List<String> argumentNameList = new ArrayList<String>();
+
+	public void addArgument( String name )
+	{
+		argumentNameList.add( name );
+	}
+
+	public String getStatementSql()
+	{
+		return statementSql;
+	}
+
+	public void setStatementSql( String statementSql )
+	{
+		this.statementSql = statementSql;
+	}
+
+	public List<String> getArgumentNameList()
+	{
+		return argumentNameList;
+	}
+
 }

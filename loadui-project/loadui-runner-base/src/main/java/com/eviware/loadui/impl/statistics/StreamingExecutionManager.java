@@ -233,6 +233,7 @@ public class StreamingExecutionManager implements ExecutionManager
 	private class ExecutionImpl implements Execution
 	{
 		private final String id;
+		private String label;
 		private final long startTime;
 
 		public ExecutionImpl( String id, long startTime )
@@ -269,6 +270,30 @@ public class StreamingExecutionManager implements ExecutionManager
 		public void delete()
 		{
 			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean isArchived()
+		{
+			return false;
+		}
+
+		@Override
+		public void archive()
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public String getLabel()
+		{
+			return label;
+		}
+
+		@Override
+		public void setLabel( String label )
+		{
+			this.label = label;
 		}
 	}
 }

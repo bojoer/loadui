@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.store.table;
+package com.eviware.loadui.impl.statistics.db.table;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,7 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.eviware.loadui.impl.statistics.store.util.JdbcUtil;
+import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
+import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
+import com.eviware.loadui.impl.statistics.db.TableRegistry;
+import com.eviware.loadui.impl.statistics.db.util.JdbcUtil;
 
 public abstract class TableBase
 {
@@ -59,12 +62,12 @@ public abstract class TableBase
 
 	private TableDescriptor descriptor;
 
-	private TableProvider tableProvider;
+	private TableRegistry tableRegistry;
 
-	private MetadataProvider metadataProvider;
+	private DatabaseMetadata databaseMetadata;
 
 	public TableBase( String dbName, String name, Map<String, ? extends Class<? extends Object>> dynamicFields,
-			ConnectionProvider connectionProvider, MetadataProvider metadataProvider, TableProvider tableProvider )
+			ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata, TableRegistry tableRegistry )
 	{
 		descriptor = new TableDescriptor();
 		initializeDescriptor( descriptor );
@@ -73,12 +76,12 @@ public abstract class TableBase
 		this.tableName = buildTableName( name );
 		this.dbName = dbName;
 		this.dynamicFields = dynamicFields;
-		this.tableProvider = tableProvider;
-		this.metadataProvider = metadataProvider;
+		this.tableRegistry = tableRegistry;
+		this.databaseMetadata = databaseMetadata;
 
 		try
 		{
-			this.connection = connectionProvider.getConnection( this );
+			this.connection = connectionRegistry.getConnection( this, useTableSpecificConnection() );
 
 			addPkIndexScript = createAddPkIndexScript();
 			createScript = createTableCreateScript();
@@ -187,13 +190,13 @@ public abstract class TableBase
 
 	protected String createTableCreateScript()
 	{
-		HashMap<Class<? extends Object>, String> typeConversionMap = metadataProvider.getTypeConversionMap();
+		HashMap<Class<? extends Object>, String> typeConversionMap = databaseMetadata.getTypeConversionMap();
 
 		Map<String, ? extends Object> staticFields = descriptor.getStaticFields();
 		List<String> pkSequence = descriptor.getPkSequence();
 
 		StringBuilder b = new StringBuilder();
-		b.append( metadataProvider.getCreateTableExpression() );
+		b.append( databaseMetadata.getCreateTableExpression() );
 		b.append( " " );
 		b.append( tableName );
 		b.append( " ( " );
@@ -251,7 +254,7 @@ public abstract class TableBase
 				b.append( ", " );
 			}
 		}
-		return metadataProvider.getAddPrimaryKeyIndexExpression().replaceFirst( "\\?", tableName )
+		return databaseMetadata.getAddPrimaryKeyIndexExpression().replaceFirst( "\\?", tableName )
 				.replaceFirst( "\\?", tableName ).replaceFirst( "\\?", b.toString() );
 	}
 
@@ -259,6 +262,7 @@ public abstract class TableBase
 	{
 		insertStatement.setArguments( data );
 		insertStatement.executeUpdate();
+		commit();
 	}
 
 	private void create() throws SQLException
@@ -320,8 +324,6 @@ public abstract class TableBase
 	public synchronized void delete() throws SQLException
 	{
 		deleteStatement.execute();
-		// TODO Commit on every delete for now. Transaction management needs to be
-		// implemented
 		commit();
 	}
 
@@ -331,10 +333,10 @@ public abstract class TableBase
 		stm.execute( "drop table " + tableName );
 	}
 
-	public synchronized void dispose()
+	public synchronized void release()
 	{
-		selectStatement.dispose();
-		insertStatement.dispose();
+		selectStatement.release();
+		insertStatement.release();
 		JdbcUtil.close( deleteStatement );
 		if( extraStatementMap != null )
 		{
@@ -344,8 +346,10 @@ public abstract class TableBase
 				JdbcUtil.close( iterator.next().getValue() );
 			}
 		}
-		// connection not closed here, since it may be shared between tables.
-		// connection registry should dispose connections.
+		// only table resources are released here (e.g. statements). connection is
+		// not closed here, since it may be shared between tables.
+		// ConnectionRegistry handles connections and data sources disposal
+		// instead.
 	}
 
 	public TableBase getParentTable()
@@ -378,11 +382,15 @@ public abstract class TableBase
 		PreparedStatement stm = extraStatementMap.get( statement );
 		if( stm != null )
 		{
-			for( int i = 0; i < params.length; i++ )
+			if( params != null )
 			{
-				stm.setObject( i + 1, params[i] );
+				for( int i = 0; i < params.length; i++ )
+				{
+					stm.setObject( i + 1, params[i] );
+				}
 			}
 			stm.execute();
+			commit();
 		}
 	}
 
@@ -431,8 +439,20 @@ public abstract class TableBase
 
 	public TableBase getTable( String externalName )
 	{
-		return tableProvider.getTable( dbName, externalName );
+		return tableRegistry.getTable( dbName, externalName );
 	}
 
+	/**
+	 * Concrete table implementation must implement this to specify static
+	 * fields, primary key sequence, select criteria parameters
+	 */
 	protected abstract void initializeDescriptor( TableDescriptor descriptor );
+
+	/**
+	 * Must be implemented by concrete table implementations. Determines if that
+	 * table type will use its own connection for data handling. If true, new
+	 * database connection will be created and it will be used just by that table
+	 * type. If false, common connection will be used.
+	 */
+	protected abstract boolean useTableSpecificConnection();
 }

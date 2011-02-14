@@ -13,16 +13,15 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.store.table.model;
+package com.eviware.loadui.impl.statistics.db.table.model;
 
-import java.sql.SQLException;
 import java.util.Map;
 
-import com.eviware.loadui.impl.statistics.store.table.ConnectionProvider;
-import com.eviware.loadui.impl.statistics.store.table.MetadataProvider;
-import com.eviware.loadui.impl.statistics.store.table.TableBase;
-import com.eviware.loadui.impl.statistics.store.table.TableDescriptor;
-import com.eviware.loadui.impl.statistics.store.table.TableProvider;
+import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
+import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
+import com.eviware.loadui.impl.statistics.db.TableRegistry;
+import com.eviware.loadui.impl.statistics.db.table.TableBase;
+import com.eviware.loadui.impl.statistics.db.table.TableDescriptor;
 
 public class DataTable extends TableBase
 {
@@ -36,17 +35,9 @@ public class DataTable extends TableBase
 	public static final String STATIC_FIELD_INTERPOLATIONLEVEL = "_INTERP_LVL";
 
 	public DataTable( String dbName, String name, Map<String, ? extends Class<? extends Object>> dynamicFields,
-			ConnectionProvider connectionProvider, MetadataProvider metadataProvider, TableProvider tableProvider )
+			ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata, TableRegistry tableRegistry )
 	{
-		super( dbName, name, dynamicFields, connectionProvider, metadataProvider, tableProvider );
-	}
-
-	@Override
-	public synchronized void insert( Map<String, ? extends Object> data ) throws SQLException
-	{
-		super.insert( data );
-		//TODO commit here for now, maybe this will have to change
-		commit();
+		super( dbName, name, dynamicFields, connectionRegistry, databaseMetadata, tableRegistry );
 	}
 
 	@Override
@@ -66,4 +57,9 @@ public class DataTable extends TableBase
 		descriptor.addSelectCriteria( SELECT_ARG_INTERPOLATIONLEVEL_EQ, STATIC_FIELD_INTERPOLATIONLEVEL, "=?" );
 	}
 
+	@Override
+	protected boolean useTableSpecificConnection()
+	{
+		return false;
+	}
 }

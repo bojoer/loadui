@@ -30,7 +30,7 @@ public interface Execution
 	 * @return
 	 */
 	public String getId();
-	
+
 	/**
 	 * Gets the start time of the test execution, measured as a Unix Timestamp
 	 * given in milliseconds.
@@ -58,4 +58,28 @@ public interface Execution
 	 * Deletes the Execution with all contained Track data.
 	 */
 	public void delete();
+
+	/**
+	 * Determines if this execution has been archived or not.
+	 * 
+	 * @return true if execution is archived, false otherwise.
+	 */
+	public boolean isArchived();
+
+	/**
+	 * Marks execution as archived.
+	 */
+	public void archive();
+
+	/**
+	 * Retrieves custom label for this execution.
+	 * 
+	 * @return execution label
+	 */
+	public String getLabel();
+
+	/**
+	 * Sets custom label for this execution.
+	 */
+	public void setLabel( String label );
 }

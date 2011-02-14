@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,10 +49,19 @@ public class ExecutionImpl implements Execution
 	 */
 	private Map<String, Track> trackMap;
 
-	public ExecutionImpl( String id, long timestamp, ExecutionManagerImpl manager )
+	private boolean archived = false;
+
+	/**
+	 * Execution custom label
+	 */
+	private String label = null;
+
+	public ExecutionImpl( String id, long timestamp, boolean archived, String label, ExecutionManagerImpl manager )
 	{
 		this.id = id;
 		this.startTime = timestamp;
+		this.archived = archived;
+		this.label = label;
 		this.manager = manager;
 		trackMap = new HashMap<String, Track>();
 	}
@@ -85,14 +93,7 @@ public class ExecutionImpl implements Execution
 	@Override
 	public void delete()
 	{
-		try
-		{
-			manager.delete( id );
-		}
-		catch( SQLException e )
-		{
-			throw new RuntimeException( "Failed to delete execution!", e );
-		}
+		manager.delete( id );
 	}
 
 	/**
@@ -104,5 +105,34 @@ public class ExecutionImpl implements Execution
 	public void addTrack( Track track )
 	{
 		trackMap.put( track.getId(), track );
+	}
+
+	@Override
+	public boolean isArchived()
+	{
+		return archived;
+	}
+
+	@Override
+	public void archive()
+	{
+		if( !archived )
+		{
+			manager.archiveExecution( getId() );
+			archived = true;
+		}
+	}
+
+	@Override
+	public String getLabel()
+	{
+		return label;
+	}
+
+	@Override
+	public void setLabel( String label )
+	{
+		manager.setExecutionLabel( getId(), label );
+		this.label = label;
 	}
 }

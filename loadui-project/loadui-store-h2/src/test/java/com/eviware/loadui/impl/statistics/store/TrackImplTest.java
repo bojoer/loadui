@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,8 +45,7 @@ public class TrackImplTest
 		System.setProperty( LoadUI.LOADUI_HOME, "target" );
 
 		h2 = new H2ExecutionManager();
-		h2.clearMetaDatabase();
-
+		h2.delete( "trackTestExecution" );
 		h2.startExecution( "trackTestExecution", 10 );
 
 		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
@@ -57,11 +57,7 @@ public class TrackImplTest
 		TrackDescriptorImpl td = new TrackDescriptorImpl( "testTrack", types );
 		h2.registerTrackDescriptor( td );
 		track = h2.getTrack( "testTrack" );
-	}
-	
-	@Test
-	public void testWriteEntry()
-	{
+		
 		Map<String, Number> values = new HashMap<String, Number>();
 		values.put( "a", 1 );
 		values.put( "b", 2 );
@@ -83,7 +79,7 @@ public class TrackImplTest
 		entry = new EntryImpl( ( 25 ), values );
 		h2.writeEntry( track.getId(), entry, "local3", 0 );
 	}
-
+	
 	@Test
 	public void testGetNextEntry()
 	{
@@ -152,4 +148,9 @@ public class TrackImplTest
 		track.delete();
 	}
 
+	@After
+	public void release()
+	{
+		h2.release();
+	}
 }

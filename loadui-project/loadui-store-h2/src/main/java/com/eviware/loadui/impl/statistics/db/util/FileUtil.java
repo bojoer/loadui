@@ -13,10 +13,28 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.store.table;
+package com.eviware.loadui.impl.statistics.db.util;
 
+import java.io.File;
 
-public interface TableProvider
+public class FileUtil
 {
-	public TableBase getTable( String dbName, String tableName );
+	public static boolean deleteDirectory( File directory )
+	{
+		boolean result = true;
+		File[] files = directory.listFiles();
+		for( int i = 0; i < files.length; i++ )
+		{
+			if( files[i].isDirectory() )
+			{
+				result = result && deleteDirectory( files[i] );
+			}
+			else
+			{
+				result = result && files[i].delete();
+			}
+		}
+		result = result && directory.delete();
+		return result;
+	}
 }

@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.store;
+package com.eviware.loadui.impl.statistics.db;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,10 +21,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.eviware.loadui.impl.statistics.store.table.TableBase;
-import com.eviware.loadui.impl.statistics.store.table.TableProvider;
+import com.eviware.loadui.impl.statistics.db.table.TableBase;
 
-public class TableRegistry implements TableProvider
+public class TableRegistry
 {
 	private Map<String, TableBase> tableMap = new HashMap<String, TableBase>();
 
@@ -33,7 +32,6 @@ public class TableRegistry implements TableProvider
 		tableMap.put( executionId + table.getExternalName(), table );
 	}
 
-	@Override
 	public TableBase getTable( String dbName, String tableName )
 	{
 		TableBase dtd = tableMap.get( dbName + tableName );
@@ -59,22 +57,33 @@ public class TableRegistry implements TableProvider
 		return result;
 	}
 
-	public void dispose( String dbName, String tableName )
+	/**
+	 * Releases specified table
+	 * 
+	 * @param dbName
+	 *           Table database
+	 * @param tableName
+	 *           Table name
+	 */
+	public void release( String dbName, String tableName )
 	{
 		TableBase dtd = tableMap.get( dbName + tableName );
 		if( dtd != null )
 		{
-			dtd.dispose();
+			dtd.release();
 			tableMap.remove( dbName + tableName );
 		}
 	}
 
-	public void dispose()
+	/**
+	 * Releases all tables
+	 */
+	public void release()
 	{
 		Iterator<String> keys = tableMap.keySet().iterator();
 		while( keys.hasNext() )
 		{
-			tableMap.get( keys.next() ).dispose();
+			tableMap.get( keys.next() ).release();
 		}
 		tableMap.clear();
 	}

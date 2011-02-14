@@ -15,7 +15,10 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,14 +35,17 @@ import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
-import com.eviware.loadui.impl.statistics.store.table.ConnectionRegistry;
-import com.eviware.loadui.impl.statistics.store.table.DataSourceProvider;
-import com.eviware.loadui.impl.statistics.store.table.TableBase;
-import com.eviware.loadui.impl.statistics.store.table.model.DataTable;
-import com.eviware.loadui.impl.statistics.store.table.model.MetaDatabaseMetaTable;
-import com.eviware.loadui.impl.statistics.store.table.model.MetaTable;
-import com.eviware.loadui.impl.statistics.store.table.model.SequenceTable;
-import com.eviware.loadui.impl.statistics.store.table.model.SourceTable;
+import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
+import com.eviware.loadui.impl.statistics.db.DataSourceProvider;
+import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
+import com.eviware.loadui.impl.statistics.db.TableRegistry;
+import com.eviware.loadui.impl.statistics.db.table.TableBase;
+import com.eviware.loadui.impl.statistics.db.table.model.DataTable;
+import com.eviware.loadui.impl.statistics.db.table.model.ExecutionMetadataTable;
+import com.eviware.loadui.impl.statistics.db.table.model.SequenceTable;
+import com.eviware.loadui.impl.statistics.db.table.model.SourceTable;
+import com.eviware.loadui.impl.statistics.db.table.model.TrackMetadataTable;
+import com.eviware.loadui.impl.statistics.db.util.FileUtil;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
 
@@ -52,22 +58,10 @@ import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
  */
 public abstract class ExecutionManagerImpl implements ExecutionManager, DataSourceProvider
 {
-
-	/**
-	 * The name of the meta-database
-	 */
-	private static final String METADATABASE_NAME = "__meta_database";
-
 	/**
 	 * Postfix added to data table name when creating source table
 	 */
 	private static final String SOURCE_TABLE_NAME_POSTFIX = "_sources";
-
-	/**
-	 * Meta table in meta database. Keeps common information: execution names,
-	 * start times etc.
-	 */
-	private MetaDatabaseMetaTable metaDatabaseMetaTable;
 
 	/**
 	 * Current execution
@@ -99,8 +93,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		metadata = new DatabaseMetadata();
 		initializeDatabaseMetadata( metadata );
 
-		metaDatabaseMetaTable = new MetaDatabaseMetaTable( METADATABASE_NAME, connectionRegistry, metadata, tableRegistry );
-
 		addExecutionListener( new ExecutionListenerAdapter()
 		{
 			@Override
@@ -128,8 +120,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			@Override
 			public void trackUnregistered( TrackDescriptor trackDescriptor )
 			{
-				// TODO delete track? If yes then do it just during test run or
-				// always?
+				// don't delete tracks
 			}
 
 		} );
@@ -151,23 +142,34 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		try
 		{
-			if( metaDatabaseMetaTable.exist( id ) )
+			if( getExecutionNames().contains( id ) )
 			{
 				throw new IllegalArgumentException( "Execution with the specified id already exist!" );
 			}
+			// create execution meta-table
+			ExecutionMetadataTable executionMetaTable = new ExecutionMetadataTable( id, connectionRegistry, metadata,
+					tableRegistry );
+
+			// insert execution meta-data
+			HashMap<String, Object> m = new HashMap<String, Object>();
+			m.put( ExecutionMetadataTable.STATIC_FIELD_NAME, id );
+			m.put( ExecutionMetadataTable.STATIC_FIELD_START_TIME, timestamp );
+			m.put( ExecutionMetadataTable.STATIC_FIELD_ARCHIVED, false );
+			executionMetaTable.insert( m );
+
 			// create sequence table
 			SequenceTable sequenceTable = new SequenceTable( id, connectionRegistry, metadata, tableRegistry );
+
+			// create track meta table
+			TrackMetadataTable trackMetaTable = new TrackMetadataTable( id, connectionRegistry, metadata, tableRegistry );
+
+			// after all SQL operations are finished successfully, add created
+			// tables into registry
+			tableRegistry.put( id, executionMetaTable );
 			tableRegistry.put( id, sequenceTable );
+			tableRegistry.put( id, trackMetaTable );
 
-			MetaTable metaTable = new MetaTable( id, connectionRegistry, metadata, tableRegistry );
-			tableRegistry.put( id, metaTable );
-
-			HashMap<String, Object> m = new HashMap<String, Object>();
-			m.put( MetaDatabaseMetaTable.STATIC_FIELD_EXECUTION_NAME, id );
-			m.put( MetaDatabaseMetaTable.STATIC_FIELD_TSTAMP, timestamp );
-			metaDatabaseMetaTable.insert( m );
-
-			currentExecution = new ExecutionImpl( id, timestamp, this );
+			currentExecution = new ExecutionImpl( id, timestamp, false, null, this );
 			executionMap.put( id, currentExecution );
 
 			executionState = State.STARTED;
@@ -178,7 +180,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 		catch( SQLException e )
 		{
-			throw new RuntimeException( "Error while writing execution data to the database!", e );
+			throw new RuntimeException( "Error starting execution!", e );
 		}
 	}
 
@@ -228,26 +230,23 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 					metadata, tableRegistry );
 			dtd.setParentTable( std );
 
+			// insert into meta-table
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put( TrackMetadataTable.STATIC_FIELD_TRACK_NAME, td.getId() );
+			TableBase trackMetadataTable = tableRegistry.getTable( executionId, TrackMetadataTable.TABLE_NAME );
+			trackMetadataTable.insert( data );
+
+			// all tables are created properly and meta data inserted, so all SQL
+			// operations have finished properly. Create track instance and add it
+			// to current execution and put created tables into table registry
 			tableRegistry.put( executionId, dtd );
 			tableRegistry.put( executionId, std );
 
-			// insert into meta-table
-			Map<String, Object> data = new HashMap<String, Object>();
-			data.put( MetaTable.STATIC_FIELD_TRACK_NAME, td.getId() );
-			TableBase metaTable = tableRegistry.getTable( executionId, MetaTable.METATABLE_NAME );
-			metaTable.insert( data );
-
-			// if all tables are created properly and meta data
-			// inserted, create track instance and add it to current
-			// execution
 			Track track = new TrackImpl( currentExecution, td, this );
 			currentExecution.addTrack( track );
 		}
 		catch( SQLException e )
 		{
-			// TODO drop dtd and std tables if they are created and delete
-			// record from meta-table if inserted (and remove from current
-			// execution if added, but this actually shouldn't occur)
 			throw new RuntimeException( "Unable to create track!", e );
 		}
 	}
@@ -255,14 +254,25 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public Collection<String> getExecutionNames()
 	{
-		try
+		File baseDir = new File( getDBBaseDir() );
+		if( !baseDir.exists() )
 		{
-			return metaDatabaseMetaTable.list();
+			baseDir.mkdirs();
 		}
-		catch( SQLException e )
+		File[] executions = baseDir.listFiles( new FileFilter()
 		{
-			throw new RuntimeException( "Error while trying to fetch execution names from the database!", e );
+			@Override
+			public boolean accept( File pathname )
+			{
+				return pathname.isDirectory();
+			}
+		} );
+		ArrayList<String> result = new ArrayList<String>();
+		for( int i = 0; i < executions.length; i++ )
+		{
+			result.add( executions[i].getName() );
 		}
+		return result;
 	}
 
 	@Override
@@ -274,25 +284,141 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 		else
 		{
-			try
+			if( !getExecutionNames().contains( executionId ) )
 			{
-				Map<String, Object> data = new HashMap<String, Object>();
-				data.put( MetaDatabaseMetaTable.SELECT_ARG_EXECUTION_NAME_EQ, executionId );
-				data = metaDatabaseMetaTable.selectFirst( data );
-				if( data.size() == 0 )
+				throw new IllegalArgumentException( "Execution with the specified id does not exist!" );
+			}
+			else
+			{
+				return loadExecution( executionId );
+			}
+		}
+	}
+
+	/**
+	 * Loads an existing execution. Creates all necessary table objects
+	 * (ExecutionMetadatatable, TrackMetadataTable, SequenceTable, DataTable(s)
+	 * SourceTable(s)), creates Execution objects instance, adds it to
+	 * executionsMap, reads tracks from TrackMetadataTable, creates Track object
+	 * instances and them to newly created execution. Tracks are tables are
+	 * created just for existing tracks (registered track descriptors)
+	 * 
+	 * @param executionId
+	 *           ID of execution that has to be loaded
+	 * @return Loaded execution
+	 */
+	private Execution loadExecution( String executionId )
+	{
+		// keep everything in temporary lists, until all SQL operations
+		// are finished successfully and then create objects and add
+		// tables to table registry
+		List<TrackDescriptor> tracksToCreate = new ArrayList<TrackDescriptor>();
+		List<TableBase> createdTableList = new ArrayList<TableBase>();
+		try
+		{
+			ExecutionMetadataTable executionMetaTable = new ExecutionMetadataTable( executionId, connectionRegistry,
+					metadata, tableRegistry );
+			createdTableList.add( executionMetaTable );
+
+			// create sequence table
+			SequenceTable sequenceTable = new SequenceTable( executionId, connectionRegistry, metadata, tableRegistry );
+			createdTableList.add( sequenceTable );
+
+			// create track meta data table
+			TrackMetadataTable trackMetaTable = new TrackMetadataTable( executionId, connectionRegistry, metadata,
+					tableRegistry );
+			createdTableList.add( trackMetaTable );
+
+			// go thorough all tracks in track meta table and for those that
+			// have track descriptor registered, create data and sources
+			// table instance. If table descriptor do not exist it means that
+			// corresponding component has been deleted, so its data won't be
+			// shown anyway.
+			List<String> trackList = trackMetaTable.listAllTracks();
+			for( int i = 0; i < trackList.size(); i++ )
+			{
+				String trackId = trackList.get( i );
+				TrackDescriptor td = trackDescriptors.get( trackId );
+				if( td != null )
 				{
-					throw new IllegalArgumentException( "Execution with the specified id does not exist!" );
-				}
-				else
-				{
-					return new ExecutionImpl( ( String )data.get( MetaDatabaseMetaTable.STATIC_FIELD_EXECUTION_NAME ),
-							( Long )data.get( MetaDatabaseMetaTable.STATIC_FIELD_TSTAMP ), this );
+					// create data table
+					DataTable dtd = new DataTable( executionId, td.getId(), td.getValueNames(), connectionRegistry,
+							metadata, tableRegistry );
+					// create sources table
+					SourceTable std = new SourceTable( executionId, td.getId() + SOURCE_TABLE_NAME_POSTFIX,
+							connectionRegistry, metadata, tableRegistry );
+					dtd.setParentTable( std );
+
+					createdTableList.add( dtd );
+					createdTableList.add( std );
+					tracksToCreate.add( td );
 				}
 			}
-			catch( SQLException e )
+
+			Map<String, Object> result = executionMetaTable.selectFirst( null );
+			String exeName = ( String )result.get( ExecutionMetadataTable.STATIC_FIELD_NAME );
+			Long exeStartTime = ( Long )result.get( ExecutionMetadataTable.STATIC_FIELD_START_TIME );
+			Boolean exeArchived = ( Boolean )result.get( ExecutionMetadataTable.STATIC_FIELD_ARCHIVED );
+			String exeLabel = ( String )result.get( ExecutionMetadataTable.STATIC_FIELD_LABEL );
+
+			// all SQL operations have finished successfully, so create
+			// execution object and appropriate tracks and add created tables
+			// to table registry
+			ExecutionImpl execution = new ExecutionImpl( exeName, exeStartTime, exeArchived, exeLabel, this );
+
+			// add created tables into table registry
+			for( int i = 0; i < createdTableList.size(); i++ )
 			{
-				throw new RuntimeException( "Error while trying to fetch execution data from the database!", e );
+				tableRegistry.put( executionId, createdTableList.get( i ) );
 			}
+
+			// create tracks and add them to execution
+			for( int i = 0; i < tracksToCreate.size(); i++ )
+			{
+				Track track = new TrackImpl( execution, tracksToCreate.get( i ), this );
+				execution.addTrack( track );
+			}
+
+			// add execution to execution map
+			executionMap.put( executionId, execution );
+			return execution;
+		}
+		catch( Exception e )
+		{
+			throw new RuntimeException( "Execution " + executionId + " is corrupted and can't be loaded", e );
+		}
+		finally
+		{
+			createdTableList.clear();
+			tracksToCreate.clear();
+		}
+	}
+
+	public void archiveExecution( String executionId )
+	{
+		ExecutionMetadataTable metaTable = ( ExecutionMetadataTable )tableRegistry.getTable( executionId,
+				ExecutionMetadataTable.TABLE_NAME );
+		try
+		{
+			metaTable.archive();
+		}
+		catch( SQLException e )
+		{
+			throw new RuntimeException( "Unable to archive execution.", e );
+		}
+	}
+
+	public void setExecutionLabel( String executionId, String label )
+	{
+		ExecutionMetadataTable metaTable = ( ExecutionMetadataTable )tableRegistry.getTable( executionId,
+				ExecutionMetadataTable.TABLE_NAME );
+		try
+		{
+			metaTable.setLabel( label );
+		}
+		catch( SQLException e )
+		{
+			throw new RuntimeException( "Unable to set execution label.", e );
 		}
 	}
 
@@ -364,18 +490,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		return latestEntries.get( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ) );
 	}
 
-	public void clearMetaDatabase()
-	{
-		try
-		{
-			metaDatabaseMetaTable.delete();
-		}
-		catch( SQLException e )
-		{
-			throw new RuntimeException( "Unable to clear the meta database!", e );
-		}
-	}
-
 	private void write( String executionId, String trackId, String source, Map<String, Object> data )
 			throws SQLException
 	{
@@ -433,36 +547,45 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				table.drop();
 			}
 
-			// dispose resources and remove from registry
-			tableRegistry.dispose( executionId, trackId );
+			// release resources and remove from registry
+			tableRegistry.release( executionId, trackId );
 		}
 	}
 
-	public void delete( String executionId ) throws SQLException
+	public void delete( String executionId )
 	{
 		List<TableBase> tableList = tableRegistry.getAllTables( executionId );
-		TableBase t;
 		for( int i = 0; i < tableList.size(); i++ )
 		{
-			t = tableList.get( i );
-			t.drop();
+			tableRegistry.release( executionId, tableList.get( i ).getExternalName() );
 		}
-		for( int i = 0; i < tableList.size(); i++ )
+		connectionRegistry.release( executionId );
+		File executionDir = new File( getDBBaseDir(), executionId );
+		if( executionDir.exists() )
 		{
-			tableRegistry.dispose( executionId, tableList.get( i ).getExternalName() );
+			FileUtil.deleteDirectory( executionDir );
 		}
-		// TODO delete from meta database, and remove from list of executions
-		// TODO drop database?
+		executionMap.remove( executionId );
 	}
 
-	public void dispose()
+	public void release()
 	{
-		tableRegistry.dispose();
-		connectionRegistry.dispose();
+		tableRegistry.release();
+		connectionRegistry.release();
+		executionMap.clear();
 		ecs.removeAllExecutionListeners();
 	}
 
+	/**
+	 * Initialization of database meta-data. This must be implemented by concrete
+	 * database execution manager implementation
+	 */
 	protected abstract void initializeDatabaseMetadata( DatabaseMetadata metadata );
+
+	/**
+	 * Gets the base directory where executions will be saved
+	 */
+	protected abstract String getDBBaseDir();
 
 	@Override
 	public void pauseExecution()

@@ -15,21 +15,24 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
-import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 
 public class ExecutionImplTest
 {
 
-	H2ExecutionManager h2;
+	private static final String EXECTUION_NAME = "executionTestExecution";
 
+	H2ExecutionManager h2;
+	Execution execution;
 	Track track;
 
 	@Before
@@ -38,25 +41,45 @@ public class ExecutionImplTest
 		System.setProperty( LoadUI.LOADUI_HOME, "target" );
 
 		h2 = new H2ExecutionManager();
-		h2.clearMetaDatabase();
+		h2.delete( EXECTUION_NAME );
+		execution = h2.startExecution( EXECTUION_NAME, 10 );
+		// unload and load execution
+		h2.release();
+		execution = h2.getExecution( EXECTUION_NAME );
+	}
 
-		h2.startExecution( "executionTestExecution", 10 );
+	@Test
+	public void testArchive()
+	{
+		assertFalse( execution.isArchived() );
+		execution.archive();
+		assertTrue( execution.isArchived() );
+	}
 
-		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
-		types.put( "a", Long.class );
-		types.put( "b", Long.class );
-		types.put( "c", Integer.class );
-		types.put( "d", Double.class );
-
-		TrackDescriptorImpl td = new TrackDescriptorImpl( "testTrack", types );
-		h2.registerTrackDescriptor( td );
-		track = h2.getTrack( "testTrack" );
+	@Test
+	public void testSetLabel()
+	{
+		assertTrue( execution.getLabel() == null );
+		execution.setLabel( "testLabel" );
+		assertTrue( execution.getLabel().equals( "testLabel" ) );
+		execution.setLabel( "" );
+		assertTrue( execution.getLabel().equals( "" ) );
+		execution.setLabel( null );
+		assertTrue( execution.getLabel() == null );
 	}
 
 	@Test
 	public void testDelete()
 	{
-		h2.getCurrentExecution().delete();
+		assertTrue( h2.getExecutionNames().contains( EXECTUION_NAME ) );
+		execution.delete();
+		assertFalse( h2.getExecutionNames().contains( EXECTUION_NAME ) );
+	}
+
+	@After
+	public void release()
+	{
+		h2.release();
 	}
 
 }

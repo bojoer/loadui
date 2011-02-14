@@ -30,7 +30,7 @@ import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
-import com.eviware.loadui.impl.statistics.store.table.model.DataTable;
+import com.eviware.loadui.impl.statistics.db.table.model.DataTable;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 
 public class TrackImpl implements Track

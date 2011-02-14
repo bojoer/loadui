@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics.store.table;
+package com.eviware.loadui.impl.statistics.db.table;
 
 import java.util.ArrayList;
 import java.util.HashMap;
