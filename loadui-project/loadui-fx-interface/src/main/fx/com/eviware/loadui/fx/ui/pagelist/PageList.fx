@@ -61,6 +61,7 @@ public class PageList extends VBox, Pagination {
 	var labelBox = HBox {
 		spacing: 20
 		padding: Insets { left: 60, right: 58 }
+		layoutInfo: LayoutInfo { height: 45 }
 	}
 	
 	init {
@@ -77,6 +78,7 @@ public class PageList extends VBox, Pagination {
 				nodeVPos: VPos.BOTTOM
 				spacing: 20
 				padding: Insets { top: 10, right: 10, left: 10 }
+				layoutInfo: LayoutInfo { vfill: true, vgrow: Priority.ALWAYS }
 				content: [
 					Button {
 						styleClass: "left-button"
