@@ -71,7 +71,7 @@ public class TrackMetadataTable extends TableBase
 		return true;
 	}
 
-	public List<String> listAllTracks() throws SQLException
+	public synchronized List<String> listAllTracks() throws SQLException
 	{
 		List<String> resultList = new ArrayList<String>();
 		ResultSet result = executeQuery(STATEMENT_LIST_TRACK_NAMES, null );

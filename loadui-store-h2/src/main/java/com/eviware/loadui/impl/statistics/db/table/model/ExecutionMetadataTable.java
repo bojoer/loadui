@@ -59,12 +59,12 @@ public class ExecutionMetadataTable extends TableBase
 		return false;
 	}
 
-	public void archive() throws SQLException
+	public synchronized void archive() throws SQLException
 	{
 		execute( STATEMENT_ARCHIVE, null );
 	}
 
-	public void setLabel( String label ) throws SQLException
+	public synchronized void setLabel( String label ) throws SQLException
 	{
 		execute( STATEMENT_UPDATE_LABEL, new Object[] { label } );
 	}
