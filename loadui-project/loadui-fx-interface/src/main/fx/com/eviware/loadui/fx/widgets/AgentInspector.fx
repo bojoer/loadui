@@ -141,6 +141,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 
 	//refernce to a workspace
 	def workspace: WorkspaceItem = bind MainWindow.instance.workspace on replace oldVal {
+		onAgents = not workspace.isLocalMode();
 		oldVal.removeEventListener( BaseEvent.class, this );
 		pagelist.items = [];
 		if( workspace != null ) {
