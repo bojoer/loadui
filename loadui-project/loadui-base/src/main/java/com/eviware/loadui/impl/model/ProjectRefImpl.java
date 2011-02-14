@@ -133,7 +133,7 @@ public class ProjectRefImpl implements ProjectRef
 			}
 			catch( IOException e )
 			{
-				log.error( "Unable to load Project: " + project, e );
+				log.error( "Unable to load Project: " + projectFile.getAbsolutePath(), e );
 				throw e;
 			}
 		}

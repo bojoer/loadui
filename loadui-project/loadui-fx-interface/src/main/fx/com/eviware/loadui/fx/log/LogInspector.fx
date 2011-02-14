@@ -29,6 +29,12 @@ import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.Logger;
 
+import java.lang.StringBuilder;
+import java.lang.Throwable;
+import java.util.StringTokenizer;
+import java.io.StringWriter;
+import java.io.PrintWriter;
+
 import com.eviware.loadui.fx.FxUtils;
 
 /**
@@ -58,7 +64,25 @@ public class LogInspector extends AppenderSkeleton, Inspector {
 
 	override function append( event:LoggingEvent ):Void {
 		FxUtils.runInFxThread( function():Void {
-			insert LoggingEventWrapper { loggingEvent: event } into panel.items;
+			
+			def loggingEventWrapper:LoggingEventWrapper = LoggingEventWrapper { loggingEvent: event };
+			
+			if( event.getThrowableInformation() != null )
+			{
+				def stackTrace:StringBuilder = new StringBuilder();
+				def t:Throwable = event.getThrowableInformation().getThrowable();
+				def sw:StringWriter = new StringWriter();
+				def pw:PrintWriter = new PrintWriter( sw );
+				t.printStackTrace( pw );
+				def st:StringTokenizer = new StringTokenizer( sw.toString(), "\r\n" );
+				while( st.hasMoreElements() )
+					stackTrace.append( "   {st.nextElement()}" );
+					
+				loggingEventWrapper.addAdditionalInfo( sw.toString() );
+			}
+
+			insert loggingEventWrapper into panel.items;
+			
 			while( sizeof panel.items > maxLines )
 				delete panel.items[0];
 			panel.selectLastRow();

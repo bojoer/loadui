@@ -85,7 +85,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		this.doc = doc;
 		this.workspaceFile = workspaceFile;
 
-		localMode = createProperty( LOCAL_MODE_PROPERTY, Boolean.class, false );
+		localMode = createProperty( LOCAL_MODE_PROPERTY, Boolean.class, true );
 		createProperty( MAX_THREADS_PROPERTY, Long.class, 1000 );
 		createProperty( MAX_THREAD_QUEUE_PROPERTY, Long.class, 10000 );
 		createProperty( IMPORT_MISSING_AGENTS_PROPERTY, Boolean.class, false );
@@ -158,7 +158,6 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 				public void run()
 				{
 					long old = Runtime.getRuntime().freeMemory();
-					log.info( "Doing garbage collection!" );
 					System.gc();
 					long free = Runtime.getRuntime().freeMemory();
 					log.info( "Ran Garbage Collection, Free Memory changed from " + old + " to " + free

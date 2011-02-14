@@ -483,7 +483,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 
 	/** Adds agent node to list */
 	function addAgent( agent: AgentItem ):Void {
-		println("!!!ADDING AGENT: {agent}");
+		log.debug("!!!ADDING AGENT: {agent}");
 		pagelist.items = Sequences.sort( [ pagelist.items, AgentInspectorNode { agent: agent } ], COMPARE_BY_TOSTRING ) as Node[];
 	}
 	
