@@ -22,7 +22,9 @@ import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.store.Entry;
+import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
+import com.eviware.loadui.api.statistics.store.Track;
 
 public class StatisticImpl<T extends Number> implements Statistic<T>
 {
@@ -85,13 +87,22 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	}
 
 	@Override
-	public Iterable<DataPoint<T>> getPeriod( int start, int end, int interpolationLevel )
+	public Iterable<DataPoint<T>> getPeriod( int start, int end, int interpolationLevel, Execution execution )
 	{
-		if( manager.getCurrentExecution() == null )
+		if( execution == null )
 			return Collections.emptyList();
 
-		return new DataPointIterable( manager.getTrack( trackId ).getRange( source, start, end, interpolationLevel ),
-				name );
+		Track track = execution.getTrack( trackId );
+		if( track == null )
+			return Collections.emptyList();
+
+		return new DataPointIterable( track.getRange( source, start, end, interpolationLevel ), name );
+	}
+
+	@Override
+	public Iterable<DataPoint<T>> getPeriod( int start, int end, int interpolationLevel )
+	{
+		return getPeriod( start, end, interpolationLevel, manager.getCurrentExecution() );
 	}
 
 	@Override

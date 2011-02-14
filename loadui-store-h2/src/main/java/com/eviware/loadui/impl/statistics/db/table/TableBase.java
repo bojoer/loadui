@@ -27,12 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
 import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
 import com.eviware.loadui.impl.statistics.db.TableRegistry;
 import com.eviware.loadui.impl.statistics.db.util.JdbcUtil;
 
-public abstract class TableBase
+public abstract class TableBase implements Releasable
 {
 	public static final String TABLE_NAME_PREFIX = "_";
 
@@ -333,6 +334,7 @@ public abstract class TableBase
 		stm.execute( "drop table " + tableName );
 	}
 
+	@Override
 	public synchronized void release()
 	{
 		selectStatement.release();

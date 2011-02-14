@@ -9,6 +9,7 @@ package com.eviware.loadui.fx.statistics.manager;
 import javafx.scene.Node;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.VBox;
+import javafx.scene.input.MouseEvent;
 import javafx.geometry.Insets;
 import com.javafx.preview.control.MenuButton;
 import com.javafx.preview.control.MenuItem;
@@ -23,9 +24,20 @@ import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.api.statistics.store.Execution;
 
 public class ResultNode extends BaseNode, Draggable, Deletable {
-	public-init var execution:Execution;
+	public-init var execution:Execution on replace {
+		label = execution.getLabel();
+	}
 	
 	var label:String = "Execution";
+	
+	init {
+		addMouseHandler( MOUSE_PRIMARY_CLICKED, function( e:MouseEvent ):Void {
+			if( e.clickCount == 2 ) {
+				StatisticsWindow.execution = execution;
+				AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
+			}
+		} );
+	}
 	
 	override function create():Node {
 		var menuButton:MenuButton;
@@ -42,6 +54,7 @@ public class ResultNode extends BaseNode, Draggable, Deletable {
 						items: MenuItem {
 							text: ##[OPEN]"Open"
 							action: function() {
+								StatisticsWindow.execution = execution;
 								AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
 							}
 						}

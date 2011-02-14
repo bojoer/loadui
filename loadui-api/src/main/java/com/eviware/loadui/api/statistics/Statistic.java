@@ -16,6 +16,7 @@
 package com.eviware.loadui.api.statistics;
 
 import com.eviware.loadui.api.serialization.Value;
+import com.eviware.loadui.api.statistics.store.Execution;
 
 /**
  * A recording of a value which changes over time, which can be mapped into a
@@ -61,14 +62,23 @@ public interface Statistic<T extends Number> extends Value<T>
 	 *           The interpolationLevel defines the minimum time in-between two
 	 *           datapoints. Data must be stored using the interpolation levels,
 	 *           or none will be available.
+	 * @param execution
+	 *           The Execution to read data from.
 	 * @return
+	 */
+	public Iterable<DataPoint<T>> getPeriod( int start, int end, int interpolationLevel, Execution execution );
+
+	/**
+	 * execution defaults to the current Execution.
+	 * 
+	 * @see getPeriod(int, int, int, Execution)
 	 */
 	public Iterable<DataPoint<T>> getPeriod( int start, int end, int interpolationLevel );
 
 	/**
 	 * interpolationLevel defaults to 0.
 	 * 
-	 * @see getPeriod(int, int, int)
+	 * @see getPeriod(int, int, int, Execution)
 	 */
 	public Iterable<DataPoint<T>> getPeriod( int start, int end );
 

@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +30,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
@@ -46,6 +50,8 @@ import com.eviware.loadui.impl.statistics.db.table.model.SequenceTable;
 import com.eviware.loadui.impl.statistics.db.table.model.SourceTable;
 import com.eviware.loadui.impl.statistics.db.table.model.TrackMetadataTable;
 import com.eviware.loadui.impl.statistics.db.util.FileUtil;
+import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.events.EventSupport;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
 
@@ -56,7 +62,7 @@ import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
  * @author predrag.vucetic
  * 
  */
-public abstract class ExecutionManagerImpl implements ExecutionManager, DataSourceProvider
+public abstract class ExecutionManagerImpl implements ExecutionManager, DataSourceProvider, Releasable
 {
 	/**
 	 * Postfix added to data table name when creating source table
@@ -69,6 +75,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	private ExecutionImpl currentExecution;
 
 	private ExecutionChangeSupport ecs = new ExecutionChangeSupport();
+
+	private final EventSupport eventSupport = new EventSupport();
 
 	private Map<String, Execution> executionMap = new HashMap<String, Execution>();
 
@@ -173,6 +181,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 			currentExecution = new ExecutionImpl( id, timestamp, 0, false, null, this );
 			executionMap.put( id, currentExecution );
+			fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
 
 			executionState = State.STARTED;
 			ecs.fireExecutionStarted( State.STOPPED );
@@ -384,6 +393,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 			// add execution to execution map
 			executionMap.put( executionId, execution );
+			fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, execution ) );
 			return execution;
 		}
 		catch( Exception e )
@@ -469,9 +479,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		latestEntries.put( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ), entry );
 
-		Execution execution = getCurrentExecution();
-		if( execution != null )
+		if( currentExecution != null )
 		{
+			currentExecution.updateLength( entry.getTimestamp() );
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( DataTable.STATIC_FIELD_TIMESTAMP, entry.getTimestamp() );
 			data.put( DataTable.STATIC_FIELD_INTERPOLATIONLEVEL, interpolationLevel );
@@ -483,7 +493,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			}
 			try
 			{
-				write( execution.getId(), trackId, source, data );
+				write( currentExecution.getId(), trackId, source, data );
 			}
 			catch( SQLException e )
 			{
@@ -582,13 +592,14 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			FileUtil.deleteDirectory( executionDir );
 		}
-		executionMap.remove( executionId );
+		fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.REMOVED,
+				executionMap.remove( executionId ) ) );
 	}
 
+	@Override
 	public void release()
 	{
-		tableRegistry.release();
-		connectionRegistry.release();
+		ReleasableUtils.releaseAll( tableRegistry, connectionRegistry, eventSupport );
 		executionMap.clear();
 		ecs.removeAllExecutionListeners();
 	}
@@ -625,6 +636,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			State oldState = executionState;
 			executionState = State.STOPPED;
+			currentExecution.flushLength();
+			latestEntries.clear();
 			ecs.fireExecutionStopped( oldState );
 			logger.debug( "State changed: " + oldState.name() + " -> STOPPED " );
 		}
@@ -654,4 +667,27 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		return executionState;
 	}
 
+	@Override
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.addEventListener( type, listener );
+	}
+
+	@Override
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.removeEventListener( type, listener );
+	}
+
+	@Override
+	public void clearEventListeners()
+	{
+		eventSupport.clearEventListeners();
+	}
+
+	@Override
+	public void fireEvent( EventObject event )
+	{
+		eventSupport.fireEvent( event );
+	}
 }

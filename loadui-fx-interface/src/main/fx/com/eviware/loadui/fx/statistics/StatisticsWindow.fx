@@ -38,6 +38,8 @@ import com.eviware.loadui.fx.statistics.topmenu.ManageMenu;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.StatisticsManager;
+import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 
@@ -54,7 +56,14 @@ import java.util.Map;
 import java.util.HashMap;
 import java.lang.Math;
 
-public var instance:StatisticsWindow;
+public-read var instance:StatisticsWindow;
+public var currentExecution:Execution on replace oldExecution {
+	if( execution == null or execution == oldExecution )
+		execution = currentExecution;
+}
+public var execution:Execution on replace {
+	println("Execution changed from {currentExecution} to {execution}");
+}
 
 public function getInstance():StatisticsWindow {
   if (instance == null) {
@@ -75,24 +84,30 @@ public class StatisticsWindow {
 	    topMenu.project = project;
 	}
 	
-	public var scene: Scene on replace {
-		def appState = AppState {};
-		
-		appState.insertInto ( ManageMenu { width: bind scene.width }, STATISTICS_MANAGE );
-		
-		appState.insertInto ( RecentResultsList { layoutX: 50, layoutY: 100, width: bind Math.max( 315, scene.width - 100 ) }, STATISTICS_MANAGE );
-		appState.insertInto ( ArchivedResultsList { layoutX: 50, layoutY: 347, width: bind Math.max( 315, scene.width - 100 ) }, STATISTICS_MANAGE );
-		
-		appState.insertInto( topMenu, STATISTICS_VIEW );
-		appState.insertInto( stack, STATISTICS_VIEW );
-		appState.insertInto( toolbar, STATISTICS_VIEW );
-		
-		appState.transitionTo( project.getAttribute( VIEW_ATTRIBUTE, STATISTICS_MANAGE ), AppState.FADE_WIPE );
-		AppState.put( scene, appState, "STATISTICS" );
+	public var scene:Scene on replace {
+		if( scene != null ) {
+			def appState = AppState {};
+			
+			appState.insertInto ( ManageMenu { width: bind scene.width }, STATISTICS_MANAGE );
+			
+			appState.insertInto ( RecentResultsList { layoutX: 50, layoutY: 100, layoutInfo: LayoutInfo { width: bind Math.max( 315, scene.width - 100 ) } }, STATISTICS_MANAGE );
+			appState.insertInto ( ArchivedResultsList { layoutX: 50, layoutY: 347, layoutInfo: LayoutInfo { width: bind Math.max( 315, scene.width - 100 ) } }, STATISTICS_MANAGE );
+			
+			appState.insertInto( topMenu, STATISTICS_VIEW );
+			appState.insertInto( stack, STATISTICS_VIEW );
+			appState.insertInto( toolbar, STATISTICS_VIEW );
+			
+			appState.transitionTo( project.getAttribute( VIEW_ATTRIBUTE, STATISTICS_MANAGE ), AppState.FADE_WIPE );
+			AppState.put( scene, appState, "STATISTICS" );
+		}
 	}
 	
 	var closed:Boolean = true;
-	def statisticsManager:StatisticsManager = BeanInjector.getBean( StatisticsManager.class );
+	def statisticsManager:StatisticsManager = BeanInjector.getBean( StatisticsManager.class ) on replace {
+		def executionManager = statisticsManager.getExecutionManager();
+		executionManager.addExecutionListener( new CurrentExecutionListener() );
+		execution = executionManager.getCurrentExecution();
+	}
 	
 	var pageMap: Map = new HashMap();
 	
@@ -188,4 +203,8 @@ public class StatisticsWindow {
 			
 }
 	
-
+class CurrentExecutionListener extends ExecutionListenerAdapter {
+	override function executionStarted( oldState ) {
+		currentExecution = statisticsManager.getExecutionManager().getCurrentExecution();
+	}
+}

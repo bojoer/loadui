@@ -32,7 +32,7 @@ public class ExecutionImplTest
 	private static final String EXECTUION_NAME = "executionTestExecution";
 
 	H2ExecutionManager h2;
-	Execution execution;
+	ExecutionImpl execution;
 	Track track;
 
 	@Before
@@ -42,10 +42,10 @@ public class ExecutionImplTest
 
 		h2 = new H2ExecutionManager();
 		h2.delete( EXECTUION_NAME );
-		execution = h2.startExecution( EXECTUION_NAME, 10 );
+		execution = ( ExecutionImpl )h2.startExecution( EXECTUION_NAME, 10 );
 		// unload and load execution
 		h2.release();
-		execution = h2.getExecution( EXECTUION_NAME );
+		execution = ( ExecutionImpl )h2.getExecution( EXECTUION_NAME );
 	}
 
 	@Test
@@ -67,18 +67,20 @@ public class ExecutionImplTest
 		execution.setLabel( null );
 		assertTrue( execution.getLabel() == null );
 	}
-	
+
 	@Test
 	public void testSetLength()
 	{
 		assertTrue( execution.getLength() == 0 );
-		execution.setLength( 10 );
+		execution.updateLength( 10 );
+		execution.flushLength();
 		h2.release();
-		execution = h2.getExecution( EXECTUION_NAME );
+		execution = ( ExecutionImpl )h2.getExecution( EXECTUION_NAME );
 		assertTrue( execution.getLength() == 10 );
 		h2.release();
-		execution = h2.getExecution( EXECTUION_NAME );
-		execution.setLength( 20 );
+		execution = ( ExecutionImpl )h2.getExecution( EXECTUION_NAME );
+		execution.updateLength( 20 );
+		execution.flushLength();
 		assertTrue( execution.getLength() == 20 );
 	}
 

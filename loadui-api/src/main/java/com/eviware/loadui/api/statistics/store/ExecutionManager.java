@@ -17,13 +17,20 @@ package com.eviware.loadui.api.statistics.store;
 
 import java.util.Collection;
 
+import com.eviware.loadui.api.events.EventFirer;
+
 /**
  * Manages existing Executions, creating new ones, etc.
  * 
  * @author dain.nilsson
  */
-public interface ExecutionManager
+public interface ExecutionManager extends EventFirer
 {
+	/**
+	 * CollectionEvent key for Executions.
+	 */
+	public static final String EXECUTIONS = ExecutionManager.class.getName() + "@executions";
+
 	/**
 	 * Gets the current Execution. Returns null if no Execution is currently
 	 * running.
@@ -47,14 +54,14 @@ public interface ExecutionManager
 	 * @return
 	 */
 	public void pauseExecution();
-	
+
 	/**
 	 * Stops current execution.
 	 * 
 	 * @return
 	 */
 	public void stopExecution();
-	
+
 	/**
 	 * Registers a TrackDescriptor, providing the structure of a Track.
 	 * 
@@ -95,7 +102,7 @@ public interface ExecutionManager
 	 * @param entry
 	 */
 	public void writeEntry( String trackId, Entry entry, String source );
-	
+
 	/**
 	 * @see writeEntry(String, Entry, String)
 	 */
@@ -113,7 +120,7 @@ public interface ExecutionManager
 	 * @see Entry(String, String)
 	 */
 	public Entry getLastEntry( String trackId, String source, int interpolationLevel );
-	
+
 	/**
 	 * Gets a list of the names of all available Executions.
 	 * 
@@ -128,38 +135,39 @@ public interface ExecutionManager
 	 * @return
 	 */
 	public Execution getExecution( String executionId );
-	
+
 	/**
-	 * Add execution listener 
-	 *
+	 * Add execution listener
+	 * 
 	 * @param el
 	 */
 	void addExecutionListener( ExecutionListener el );
-	
+
 	/**
 	 * remove all listeners
 	 */
 	void removeAllExecutionListeners();
-	
+
 	/**
 	 * removes added execution listener
 	 */
-	void removeExecutionListener(ExecutionListener el);
-	
+	void removeExecutionListener( ExecutionListener el );
+
 	/**
-	 * ExecutionManager States, based on execution events.
-	 * state of manager should be handled internaly ( setting the state )
+	 * ExecutionManager States, based on execution events. state of manager
+	 * should be handled internaly ( setting the state )
 	 * 
 	 * @author robert
-	 *
+	 * 
 	 */
-	enum State {
+	enum State
+	{
 		STARTED, PAUSED, STOPPED
 	}
-	
+
 	/**
 	 * Return current state of ExecutionManager
 	 */
 	State getState();
-	
+
 }

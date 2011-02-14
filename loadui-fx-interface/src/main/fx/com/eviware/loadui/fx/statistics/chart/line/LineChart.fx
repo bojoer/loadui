@@ -45,6 +45,7 @@ import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.treeselector.CascadingTreeSelector;
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.fx.statistics.chart.BaseChart;
 import com.eviware.loadui.fx.statistics.chart.SegmentTreeModel;
 
@@ -104,6 +105,11 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	def timeCalculator = new TotalTimeTickCalculator();
 	var compactSegments = true;
 	var zoomLevel = 0;
+	
+	def execution = bind StatisticsWindow.execution on replace {
+		reset();
+		update();
+	}
 	
 	def scrollBar = ScrollBar {
 		vertical: false
@@ -240,12 +246,15 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	override function update():Void {
-		maxTime = 0;
+		maxTime = execution.getLength();
 		min = Integer.MAX_VALUE;
 		max = Integer.MIN_VALUE;
+		def shouldPoll = StatisticsWindow.execution == StatisticsWindow.currentExecution;
 		for( m in lines.values() ) {
 			def model = m as LineSegmentChartModel;
-			model.refresh();
+			if( shouldPoll )
+				model.poll();
+				
 			maxTime = Math.max( maxTime, (model as LineSegmentChartModel).latestTime );
 			def yRange = model.getYRange( 0.05, 0.05 );
 			if( yRange.minimum() != Double.NEGATIVE_INFINITY and yRange.maximum() != Double.POSITIVE_INFINITY ) {
@@ -284,9 +293,9 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		xRange.setMin( position );
 		xRange.setMax( end );
 		
+		def padding = 10000;
 		for( m in lines.values() ) {
 			def model = m as LineSegmentChartModel;
-			def padding = 10000;
 			model.xRange = [ position - padding, end + padding ];
 		}
 	}
@@ -294,6 +303,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	override function reset():Void {
 		for( model in lines.values() )
 			(model as LineSegmentChartModel).clearPoints();
+			
 		maxTime = 0;
 		max = 100;
 		min = 0;

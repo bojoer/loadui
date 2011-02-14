@@ -24,10 +24,11 @@ import java.util.Iterator;
 
 import javax.sql.DataSource;
 
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.impl.statistics.db.table.TableBase;
 import com.eviware.loadui.impl.statistics.db.util.JdbcUtil;
 
-public class ConnectionRegistry
+public class ConnectionRegistry implements Releasable
 {
 	private DataSourceProvider dsProvider;
 
@@ -89,6 +90,7 @@ public class ConnectionRegistry
 	/**
 	 * Releases all connections and data sources
 	 */
+	@Override
 	public void release()
 	{
 		// close all connections

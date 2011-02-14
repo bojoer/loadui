@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.statistics;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,8 +26,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.Entry;
@@ -35,15 +38,18 @@ import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
+import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.events.EventSupport;
 import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
 
-public class StreamingExecutionManager implements ExecutionManager
+public class StreamingExecutionManager implements ExecutionManager, Releasable
 {
 	public static final Logger log = LoggerFactory.getLogger( StreamingExecutionManager.class );
 
 	private static final String STATISTICS_CHANNEL = "/" + Statistic.class.getName();
 	private static final String EXECUTION_CHANNEL = "/" + StatisticsManager.class.getName() + "/execution";
 
+	private final EventSupport eventSupport = new EventSupport();
 	private final Map<String, TrackDescriptor> trackDescriptors = new HashMap<String, TrackDescriptor>();
 	private final Map<String, Track> trackMap = new HashMap<String, Track>();
 	private final Set<MessageEndpoint> endpoints = new HashSet<MessageEndpoint>();
@@ -295,5 +301,41 @@ public class StreamingExecutionManager implements ExecutionManager
 		{
 			this.label = label;
 		}
+
+		@Override
+		public long getLength()
+		{
+			return 0;
+		}
+	}
+
+	@Override
+	public void release()
+	{
+		ReleasableUtils.release( eventSupport );
+	}
+
+	@Override
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.addEventListener( type, listener );
+	}
+
+	@Override
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.removeEventListener( type, listener );
+	}
+
+	@Override
+	public void clearEventListeners()
+	{
+		eventSupport.clearEventListeners();
+	}
+
+	@Override
+	public void fireEvent( EventObject event )
+	{
+		eventSupport.fireEvent( event );
 	}
 }
