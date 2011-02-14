@@ -120,6 +120,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final Property<Boolean> saveReport;
 	private final Property<String> reportFolder;
 	private final Property<String> reportFormat;
+	private final Property<Long> numberOfAutosaves;
 	private File projectFile;
 
 	// private final StatisticHolderSupport statisticHolderSupport;
@@ -148,6 +149,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		saveReport = createProperty( SAVE_REPORT_PROPERTY, Boolean.class, false );
 		reportFolder = createProperty( REPORT_FOLDER_PROPERTY, String.class, "" );
 		reportFormat = createProperty( REPORT_FORMAT_PROPERTY, String.class, "" );
+		numberOfAutosaves = createProperty( STATISTIC_NUMBER_OF_AUTOSAVES, Long.class, 5L );
 		proxy = BeanInjector.getBean( TerminalProxy.class );
 		statisticPages = new StatisticPagesImpl( getConfig().getStatistics() == null ? getConfig().addNewStatistics()
 				: getConfig().getStatistics() );

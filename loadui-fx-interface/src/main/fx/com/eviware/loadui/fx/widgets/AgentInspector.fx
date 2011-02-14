@@ -108,7 +108,7 @@ public function createInstance( name: String ) {
  * @author predrag
  */
 public class AgentInspector extends Inspector {
-	
+	def buttonGroup = ToggleGroup {};
 	public-init var name: String;
 	
 	def panel = AgentInspectorPanel {};
@@ -177,7 +177,16 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	}
 
 	//determines if test cases will be executed localy or on agents
-	var onAgents: Boolean = not workspace.isLocalMode();
+	var onAgents: Boolean = not workspace.isLocalMode() on replace
+	{
+		if( onAgents )
+		{
+			buttonGroup.selectedToggle = onAgentsButton;
+		} else
+		{
+			buttonGroup.selectedToggle = localButton;
+		}
+	};
 	
 	//pagelist that holds agents
 	var pagelist: PagelistControl;
@@ -216,7 +225,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 		]
 	}
 	
-	override function handleEvent( e:EventObject ) { 
+	override function handleEvent( e:EventObject ) {
 		if(e.getSource() == MainWindow.instance.workspace){
 			if( e instanceof PropertyEvent ) {
 				def event = e as PropertyEvent;
@@ -329,7 +338,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	
 	override function create() {
 		var text: Text;
-		def buttonGroup = ToggleGroup {};
+		
 		
 		def panelHeight = 325;
 		

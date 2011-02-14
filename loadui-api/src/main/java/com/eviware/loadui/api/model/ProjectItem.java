@@ -31,9 +31,10 @@ public interface ProjectItem extends CanvasItem
 	public static final String ASSIGNMENTS = ProjectItem.class.getName() + "@assignments";
 	public static final String SUMMARY_EXPORTED = ProjectItem.class.getName() + "@summaryExported";
 
-	public final String SAVE_REPORT_PROPERTY = ModelItem.class.getSimpleName() + ".saveReport";
-	public final String REPORT_FOLDER_PROPERTY = ModelItem.class.getSimpleName() + ".reportFolder";
-	public final String REPORT_FORMAT_PROPERTY = ModelItem.class.getSimpleName() + ".reportFormat";
+	public static final String SAVE_REPORT_PROPERTY = ModelItem.class.getSimpleName() + ".saveReport";
+	public static final String REPORT_FOLDER_PROPERTY = ModelItem.class.getSimpleName() + ".reportFolder";
+	public static final String REPORT_FORMAT_PROPERTY = ModelItem.class.getSimpleName() + ".reportFormat";
+	public static final String STATISTIC_NUMBER_OF_AUTOSAVES = ProjectItem.class.getSimpleName() + ".statisticNumberOfAutosaves";
 
 	/**
 	 * Gets the File for this ProjectItem.

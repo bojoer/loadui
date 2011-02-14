@@ -28,7 +28,9 @@ import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
 public class H2ExecutionManager extends ExecutionManagerImpl
 {
 	public static final File DB_BASEDIR = new File( System.getProperty( LoadUI.LOADUI_HOME ), "executions" );
-
+	// TODO: replace the above with WorkspaceItem's static property STATISTIC_RESULTS_PATH somehow /henrik.olsson
+	// Can be done through method argument passing or Workspaceitem.getProperty(), (although the last mentioned is frowned upon in OSGi)???
+	
 	public static final String DB_BASEDIR_URI = DB_BASEDIR.toURI().toString().replaceAll( "%20", " " ) + File.separator;
 
 	public static final String SQL_CREATE_TABLE_EXPRESSION = "CREATE TABLE";

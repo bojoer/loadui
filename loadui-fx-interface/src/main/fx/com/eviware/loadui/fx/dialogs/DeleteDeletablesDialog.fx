@@ -37,6 +37,7 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.De
  * Dialog allowing the user to confirm deletion of a number of Deletables.
  *
  * @author dain.nilsson
+ * @author henrik.olsson
  */
 public class DeleteDeletablesDialog {
 	public var onOk: function(): Void;
