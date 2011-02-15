@@ -62,6 +62,12 @@ public class ProjectRefImpl implements ProjectRef
 	}
 
 	@Override
+	public String getProjectId()
+	{
+		return config.getProjectId();
+	}
+
+	@Override
 	public String getLabel()
 	{
 		if( project != null )
@@ -105,6 +111,7 @@ public class ProjectRefImpl implements ProjectRef
 		{
 			project = ProjectItemImpl.loadProject( workspace, projectFile );
 			setLabel( project.getLabel() );
+			config.setProjectId( project.getId() );
 			fireEvent( new BaseEvent( this, LOADED ) );
 			workspace.projectLoaded( project );
 		}

@@ -26,11 +26,18 @@ import com.eviware.loadui.api.events.EventFirer;
  * 
  * @author dain.nilsson
  */
-public interface ProjectRef extends EventFirer, AttributeHolder
+public interface ProjectRef extends EventFirer, AttributeHolder, Labeled
 {
 	public static final String LOADED = ProjectRef.class.getName() + "@loaded";
 	public static final String UNLOADED = ProjectRef.class.getName() + "@unloaded";
 	public static final String LABEL = ProjectRef.class.getName() + "@label";
+
+	/**
+	 * Returns the id of the ProjectItem to which this ProjectRef points.
+	 * 
+	 * @return
+	 */
+	public String getProjectId();
 
 	/**
 	 * Checks if the project is enabled.
@@ -47,13 +54,6 @@ public interface ProjectRef extends EventFirer, AttributeHolder
 	 *           True to enable, false to disable.
 	 */
 	public void setEnabled( boolean enabled ) throws IOException;
-
-	/**
-	 * Gets the name of the ProjectItem referenced by this ProjectRef.
-	 * 
-	 * @return The label as a String.
-	 */
-	public String getLabel();
 
 	/**
 	 * Gets the File where the project is stored on disk.
