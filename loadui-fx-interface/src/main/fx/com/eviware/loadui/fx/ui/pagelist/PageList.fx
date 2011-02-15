@@ -104,6 +104,17 @@ public class PageList extends VBox, Pagination {
 		];
 	}
 	
+	override function lookup( id:String ):Node {
+		def res = super.lookup( id );
+		if( res != null or id == null )
+			return res;
+		for( c in items ) {
+			if( id.equals( c.id ) )
+				return c;
+		}
+		return null;
+	}
+	
 	override function doLayout():Void {
 		super.doLayout();
 		

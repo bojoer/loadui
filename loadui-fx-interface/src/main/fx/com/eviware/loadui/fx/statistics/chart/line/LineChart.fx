@@ -301,8 +301,11 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	override function reset():Void {
-		for( model in lines.values() )
-			(model as LineSegmentChartModel).clearPoints();
+		for( m in lines.values() ) {
+			def model = m as LineSegmentChartModel;
+			model.xRange = [ 0, 0 ];
+			//model.clearPoints();
+		}
 			
 		maxTime = 0;
 		max = 100;
