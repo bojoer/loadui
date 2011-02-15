@@ -133,13 +133,16 @@
 
     <complexType name="ProjectReference">
     	<sequence>
-    		<element name="attributes" type="lui:PropertyList" maxOccurs="1" minOccurs="1"></element>
+    		<element name="attributes" type="lui:PropertyList"
+    			maxOccurs="1" minOccurs="1">
+    		</element>
     	</sequence>
     	<attribute name="label" type="string" use="required"></attribute>
     	<attribute name="project-file" type="string" use="required"></attribute>
     	<attribute name="enabled" type="boolean" default="true"
     		use="optional">
     	</attribute>
+    	<attribute name="project-id" type="string"></attribute>
     </complexType>
 
     <complexType name="SceneAssignment">
