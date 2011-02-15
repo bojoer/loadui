@@ -61,19 +61,10 @@ public class LineSegmentChartModel extends DefaultChartModel {
 	var initialized = false;
 	
 	public var level:Integer = 0 on replace {
-		clearPoints();
-		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1], level, StatisticsWindow.execution ) ) {
-			addPoint( scaler.createPoint( (dataPoint as DataPoint).getTimestamp(), (dataPoint as DataPoint).getValue() as Number ), false );
-		}
-		update();
 	}
 	
 	public var xRange:Number[] = [ 0, 0 ] on replace oldXRange {
-		clearPoints();
-		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1], level, StatisticsWindow.execution ) ) {
-			addPoint( scaler.createPoint( (dataPoint as DataPoint).getTimestamp(), (dataPoint as DataPoint).getValue() as Number ), false );
-		}
-		update();
+		refresh();
 	}
 	
 	public var scale:Integer on replace oldScale {
@@ -83,11 +74,7 @@ public class LineSegmentChartModel extends DefaultChartModel {
 			segment.setAttribute( SCALE, "{scale}" );
 			chartGroup.fireEvent( new PropertyChangeEvent( segment, SCALE, oldScale, scale ) );
 		}
-		clearPoints();
-		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1], level, StatisticsWindow.execution ) ) {
-			addPoint( scaler.createPoint( (dataPoint as DataPoint).getTimestamp(), (dataPoint as DataPoint).getValue() as Number ), false );
-		}
-		update();
+		refresh();
 	}
 	
 	public var color:Color on replace oldColor {
@@ -114,6 +101,10 @@ public class LineSegmentChartModel extends DefaultChartModel {
 		}
 	}
 	
+	postinit {
+		refresh();
+	}
+	
 	public function poll():Void {
 		def dataPoint = statistic.getLatestPoint( level );
 		if( dataPoint != null ) {
@@ -124,6 +115,14 @@ public class LineSegmentChartModel extends DefaultChartModel {
 					addPoint( scaler.createPoint( timestamp, dataPoint.getValue() as Number ) );
 			}
 		}
+	}
+	
+	function refresh():Void {
+		clearPoints();
+		for( dataPoint in statistic.getPeriod( xRange[0], xRange[1], level, StatisticsWindow.execution ) ) {
+			addPoint( scaler.createPoint( (dataPoint as DataPoint).getTimestamp(), (dataPoint as DataPoint).getValue() as Number ), false );
+		}
+		update();
 	}
 	
 	function loadStyles() {
