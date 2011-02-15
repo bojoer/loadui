@@ -46,8 +46,13 @@ public interface ExecutionManager extends EventFirer
 	 * @param startTime
 	 * @return
 	 */
-	public Execution startExecution( String executionId, long startTime );
+	public Execution startExecution( String executionId, long startTime, String label );
 
+	/**
+	 * @see com.eviware.loadui.api.statistics.store.getCurrentExecution
+	 */
+	public Execution startExecution( String executionId, long startTime );
+	
 	/**
 	 * Pauses current execution.
 	 * 
@@ -127,7 +132,7 @@ public interface ExecutionManager extends EventFirer
 	 * @return
 	 */
 	public Collection<String> getExecutionNames();
-
+	
 	/**
 	 * Gets a reference to a specific Execution by its ID.
 	 * 
@@ -164,10 +169,9 @@ public interface ExecutionManager extends EventFirer
 	{
 		STARTED, PAUSED, STOPPED
 	}
-
+	
 	/**
 	 * Return current state of ExecutionManager
 	 */
 	State getState();
-
 }

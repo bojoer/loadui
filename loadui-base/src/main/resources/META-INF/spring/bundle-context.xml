@@ -73,8 +73,13 @@
 
 	<bean id="statisticsManager"
 		class="com.eviware.loadui.impl.statistics.StatisticsManagerImpl">
-		<constructor-arg ref="workspaceProvider" />
 		<constructor-arg ref="executionManager" />
+	</bean>
+	
+	<bean id="projectExecutionManager"
+		class="com.eviware.loadui.impl.statistics.ProjectExecutionManagerImpl">
+		<constructor-arg ref="executionManager" />
+		<constructor-arg ref="workspaceProvider" />
 	</bean>
 
 	<bean id="averageStatisticWriter"

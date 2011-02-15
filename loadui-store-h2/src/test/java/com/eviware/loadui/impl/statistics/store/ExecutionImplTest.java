@@ -29,7 +29,7 @@ import com.eviware.loadui.api.statistics.store.Track;
 public class ExecutionImplTest
 {
 
-	private static final String EXECTUION_NAME = "executionTestExecution";
+	private static final String EXECUTION_NAME = "executionTestExecution";
 
 	H2ExecutionManager h2;
 	ExecutionImpl execution;
@@ -41,11 +41,11 @@ public class ExecutionImplTest
 		System.setProperty( LoadUI.LOADUI_HOME, "target" );
 
 		h2 = new H2ExecutionManager();
-		h2.delete( EXECTUION_NAME );
-		execution = ( ExecutionImpl )h2.startExecution( EXECTUION_NAME, 10 );
+		h2.delete( EXECUTION_NAME );
+		execution = ( ExecutionImpl )h2.startExecution( EXECUTION_NAME, 10 );
 		// unload and load execution
 		h2.release();
-		execution = ( ExecutionImpl )h2.getExecution( EXECTUION_NAME );
+		execution = ( ExecutionImpl )h2.getExecution( EXECUTION_NAME );
 	}
 
 	@Test
@@ -59,7 +59,6 @@ public class ExecutionImplTest
 	@Test
 	public void testSetLabel()
 	{
-		assertTrue( execution.getLabel() == null );
 		execution.setLabel( "testLabel" );
 		assertTrue( execution.getLabel().equals( "testLabel" ) );
 		execution.setLabel( "" );
@@ -75,10 +74,10 @@ public class ExecutionImplTest
 		execution.updateLength( 10 );
 		execution.flushLength();
 		h2.release();
-		execution = ( ExecutionImpl )h2.getExecution( EXECTUION_NAME );
+		execution = ( ExecutionImpl )h2.getExecution( EXECUTION_NAME );
 		assertTrue( execution.getLength() == 10 );
 		h2.release();
-		execution = ( ExecutionImpl )h2.getExecution( EXECTUION_NAME );
+		execution = ( ExecutionImpl )h2.getExecution( EXECUTION_NAME );
 		execution.updateLength( 20 );
 		execution.flushLength();
 		assertTrue( execution.getLength() == 20 );
@@ -87,9 +86,9 @@ public class ExecutionImplTest
 	@Test
 	public void testDelete()
 	{
-		assertTrue( h2.getExecutionNames().contains( EXECTUION_NAME ) );
+		assertTrue( h2.getExecutionNames().contains( EXECUTION_NAME ) );
 		execution.delete();
-		assertFalse( h2.getExecutionNames().contains( EXECTUION_NAME ) );
+		assertFalse( h2.getExecutionNames().contains( EXECUTION_NAME ) );
 	}
 
 	@After
