@@ -30,9 +30,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
@@ -64,6 +67,9 @@ import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
  */
 public abstract class ExecutionManagerImpl implements ExecutionManager, DataSourceProvider, Releasable
 {
+	public File baseDirectory = new File( System.getProperty( LoadUI.LOADUI_HOME ), "executions" );
+	public String baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
+	
 	/**
 	 * Postfix added to data table name when creating source table
 	 */
@@ -137,6 +143,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public Execution startExecution( String id, long timestamp )
 	{
+		return startExecution( id, timestamp, "DefaultExecutionLabel" );
+	}
+	
+	@Override
+	public Execution startExecution( String id, long timestamp, String label )
+	{
 		// unpause if paused otherwise try to create new
 		if( executionState == State.PAUSED )
 		{
@@ -163,7 +175,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			m.put( ExecutionMetadataTable.STATIC_FIELD_NAME, id );
 			m.put( ExecutionMetadataTable.STATIC_FIELD_START_TIME, timestamp );
 			m.put( ExecutionMetadataTable.STATIC_FIELD_ARCHIVED, false );
-			m.put( ExecutionMetadataTable.STATIC_FIELD_LABEL, null );
+			m.put( ExecutionMetadataTable.STATIC_FIELD_LABEL, label );
 			m.put( ExecutionMetadataTable.STATIC_FIELD_LENGTH, 0 );
 			executionMetaTable.insert( m );
 
@@ -179,7 +191,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			tableRegistry.put( id, sequenceTable );
 			tableRegistry.put( id, trackMetaTable );
 
-			currentExecution = new ExecutionImpl( id, timestamp, 0, false, null, this );
+			currentExecution = new ExecutionImpl( id, timestamp, 0, false, label, this );
 			executionMap.put( id, currentExecution );
 			fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
 
@@ -285,7 +297,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 		return result;
 	}
-
+	
 	@Override
 	public Execution getExecution( String executionId )
 	{
@@ -613,7 +625,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	/**
 	 * Gets the base directory where executions will be saved
 	 */
-	protected abstract String getDBBaseDir();
+	protected String getDBBaseDir()
+	{
+		return baseDirectory.getAbsolutePath();
+	}
 
 	@Override
 	public void pauseExecution()
@@ -689,5 +704,17 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public void fireEvent( EventObject event )
 	{
 		eventSupport.fireEvent( event );
+	}
+	
+	public void setWorkspaceProvider( WorkspaceProvider provider )
+	{
+		System.out.println("         new workspaceprovider");
+		//TODO provider.addEventListener( type, listener )
+		
+		if( provider.isWorkspaceLoaded() )
+		{
+			baseDirectory = new File( System.getProperty( LoadUI.LOADUI_HOME ), provider.getWorkspace().getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH ).getStringValue() );
+			baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
+		}
 	}
 }

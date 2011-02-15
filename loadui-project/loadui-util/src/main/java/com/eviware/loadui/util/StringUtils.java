@@ -128,6 +128,22 @@ public class StringUtils
 
 		return sb.toString();
 	}
+	
+	/**
+	 * Serializes several Strings into a single string, which can later
+	 * be deserialized to give a List of the original values. Order is preserved.
+	 * 
+	 * @param strings
+	 * @return
+	 */
+	public static String serialize( String... strings )
+	{
+		StringBuilder sb = new StringBuilder();
+		for( String item : strings )
+			sb.append( item.length() ).append( ":" ).append( item );
+
+		return sb.toString();
+	}
 
 	/**
 	 * Deserializes a serialized String back into a List of the original values.

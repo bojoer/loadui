@@ -22,17 +22,10 @@ import javax.sql.DataSource;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 
-import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
 
 public class H2ExecutionManager extends ExecutionManagerImpl
 {
-	public static final File DB_BASEDIR = new File( System.getProperty( LoadUI.LOADUI_HOME ), "executions" );
-	// TODO: replace the above with WorkspaceItem's static property STATISTIC_RESULTS_PATH somehow /henrik.olsson
-	// Can be done through method argument passing or Workspaceitem.getProperty(), (although the last mentioned is frowned upon in OSGi)???
-	
-	public static final String DB_BASEDIR_URI = DB_BASEDIR.toURI().toString().replaceAll( "%20", " " ) + File.separator;
-
 	public static final String SQL_CREATE_TABLE_EXPRESSION = "CREATE TABLE";
 	public static final String SQL_ADD_PRIMARY_KEY_INDEX_EXPRESSION = "ALTER TABLE ? ADD CONSTRAINT ?_pk_index PRIMARY KEY(?)";
 
@@ -45,7 +38,7 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	@Override
 	public DataSource createDataSource( String db )
 	{
-		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" + DB_BASEDIR_URI + db + File.separator + db
+		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" + baseDirectoryURI + db + File.separator + db
 				+ ";DB_CLOSE_ON_EXIT=FALSE", "sa", "sa" );
 		cp.setMaxConnections( 5 );
 		return cp;
@@ -76,13 +69,4 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 		metadata.addTypeConversionPair( String.class, TYPE_STRING );
 		metadata.addTypeConversionPair( Boolean.class, TYPE_BOOLEAN );
 	}
-
-	@Override
-	protected String getDBBaseDir()
-	{
-		return DB_BASEDIR.getAbsolutePath();
-	}
-
-
-
 }

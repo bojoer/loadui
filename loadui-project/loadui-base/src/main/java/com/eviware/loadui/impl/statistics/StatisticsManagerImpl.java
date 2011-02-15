@@ -26,22 +26,15 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.api.model.AgentItem;
-import com.eviware.loadui.api.model.CanvasItem;
-import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.WorkspaceItem;
-import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
-import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
 import com.eviware.loadui.util.events.EventSupport;
 
 /**
@@ -55,33 +48,16 @@ public class StatisticsManagerImpl implements StatisticsManager
 {
 	public static final Logger log = LoggerFactory.getLogger( StatisticsManagerImpl.class );
 
-	public static final String CHANNEL = "/" + StatisticsManager.class.getName() + "/execution";
-
 	private final ExecutionManager executionManager;
 	private final EventSupport eventSupport = new EventSupport();
 	private Set<StatisticHolder> holders = new HashSet<StatisticHolder>();
 	private Map<String, StatisticsWriterFactory> factories = new HashMap<String, StatisticsWriterFactory>();
 
-	private final CollectionListener collectionListener = new CollectionListener();
-	private final RunningListener runningListener = new RunningListener();
 	private final StatisticHolderListener statisticHolderListener = new StatisticHolderListener();
 
-	public StatisticsManagerImpl( ExecutionManager executionManager, final WorkspaceProvider workspaceProvider )
+	public StatisticsManagerImpl( ExecutionManager executionManager )
 	{
 		this.executionManager = executionManager;
-
-		workspaceProvider.addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
-		{
-			@Override
-			public void handleEvent( BaseEvent event )
-			{
-				if( WorkspaceProvider.WORKSPACE_LOADED.equals( event.getKey() ) )
-					workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
-			}
-		} );
-
-		if( workspaceProvider.isWorkspaceLoaded() )
-			workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
 	}
 
 	@Override
@@ -174,77 +150,6 @@ public class StatisticsManagerImpl implements StatisticsManager
 			{
 				fireEvent( new BaseEvent( event.getSource(), STATISTIC_HOLDER_UPDATED ) );
 			}
-		}
-	}
-
-	private class CollectionListener implements EventHandler<CollectionEvent>
-	{
-		@Override
-		public void handleEvent( CollectionEvent event )
-		{
-			if( CollectionEvent.Event.ADDED == event.getEvent() )
-			{
-				if( WorkspaceItem.PROJECTS.equals( event.getKey() ) )
-					( ( ProjectItem )event.getElement() ).addEventListener( ActionEvent.class, runningListener );
-			}
-		}
-	}
-
-	private class RunningListener implements EventHandler<ActionEvent>
-	{
-		private boolean hasCurrent = false;
-
-		@Override
-		public void handleEvent( ActionEvent event )
-		{
-			if( !hasCurrent && CanvasItem.START_ACTION.equals( event.getKey() ) )
-			{
-				hasCurrent = true;
-				long timestamp = System.currentTimeMillis();
-				String executionId = "execution_" + timestamp;
-				executionManager.startExecution( executionId, timestamp );
-				if( !( ( ProjectItem )event.getSource() ).getWorkspace().isLocalMode() )
-					notifyAgents( CHANNEL, executionId, ( ( ProjectItem )event.getSource() ).getWorkspace().getAgents() );
-			}
-			else if( hasCurrent && CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
-			{
-				hasCurrent = false;
-				executionManager.stopExecution();
-				if( !( ( ProjectItem )event.getSource() ).getWorkspace().isLocalMode() )
-				{
-					String message = "stop_" + System.currentTimeMillis();
-					notifyAgents( CHANNEL, message, ( ( ProjectItem )event.getSource() ).getWorkspace().getAgents() );
-				}
-			}
-			else if( CanvasItem.STOP_ACTION.equals( event.getKey() ) )
-			{
-				executionManager.pauseExecution();
-				if( !( ( ProjectItem )event.getSource() ).getWorkspace().isLocalMode() )
-				{
-					String message = "pause_" + System.currentTimeMillis();
-					notifyAgents( CHANNEL, message, ( ( ProjectItem )event.getSource() ).getWorkspace().getAgents() );
-				}
-			}
-			else if( executionManager.getState() == State.PAUSED && CanvasItem.START_ACTION.equals( event.getKey() ) )
-			{
-				// could this be done better?
-				/*
-				 * if startExecution is called and execution is in PAUSED stated it
-				 * will return curectExecution and change state to START
-				 */
-				executionManager.startExecution( null, -1 );
-				if( !( ( ProjectItem )event.getSource() ).getWorkspace().isLocalMode() )
-				{
-					String message = "unpause_" + System.currentTimeMillis();
-					notifyAgents( CHANNEL, message, ( ( ProjectItem )event.getSource() ).getWorkspace().getAgents() );
-				}
-			}
-		}
-
-		private void notifyAgents( String channel, String message, Collection<AgentItem> collection )
-		{
-			for( AgentItem agent : collection )
-				agent.sendMessage( CHANNEL, message );
 		}
 	}
 }

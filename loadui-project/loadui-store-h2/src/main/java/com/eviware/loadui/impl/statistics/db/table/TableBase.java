@@ -72,7 +72,7 @@ public abstract class TableBase implements Releasable
 	{
 		descriptor = new TableDescriptor();
 		initializeDescriptor( descriptor );
-
+		
 		this.externalName = name;
 		this.tableName = buildTableName( name );
 		this.dbName = dbName;

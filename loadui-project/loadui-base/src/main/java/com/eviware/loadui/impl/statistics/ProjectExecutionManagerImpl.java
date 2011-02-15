@@ -1,0 +1,207 @@
+package com.eviware.loadui.impl.statistics;
+
+import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.codec.digest.DigestUtils;
+
+import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.ProjectRef;
+import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.model.WorkspaceProvider;
+import com.eviware.loadui.api.statistics.ProjectExecutionManager;
+import com.eviware.loadui.api.statistics.StatisticsManager;
+import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.statistics.store.ExecutionManager;
+import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
+import com.eviware.loadui.util.StringUtils;
+
+public class ProjectExecutionManagerImpl implements ProjectExecutionManager
+{
+	private static final String CHANNEL = "/" + StatisticsManager.class.getName() + "/execution";
+	private final ExecutionManager executionManager;
+	private final WorkspaceProvider workspaceProvider;
+	private final HashMap<String, HashSet<Execution>> projectIdToExecutions = new HashMap<String, HashSet<Execution>>();
+	private final CollectionListener collectionListener = new CollectionListener();
+	private final RunningListener runningListener = new RunningListener();
+
+	// remove the oldest autosaved execution if needed
+//	Collection<String> executionNames = getExecutionNames();
+//	if( executionNames.size() > currentExecution.getProject().getProperty() ) //TODO: change from 5 to current workspace property
+//	{
+//		Execution oldestExecution = getCurrentExecution();
+//		for( String name : executionNames )
+//		{
+//			Execution e = getExecution( name );
+//			if( e.getStartTime() < oldestExecution.getStartTime() )
+//				oldestExecution = e;
+//		}
+//		oldestExecution.delete();
+//	}
+	
+	ProjectExecutionManagerImpl( final ExecutionManager executionManager, final WorkspaceProvider workspaceProvider )
+	{
+		this.executionManager = executionManager;
+		this.workspaceProvider = workspaceProvider;
+
+		for( String name : executionManager.getExecutionNames() )
+		{
+			Execution e = executionManager.getExecution( name );
+			e.getId();
+		}
+
+		workspaceProvider.addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
+		{
+			@Override
+			public void handleEvent( BaseEvent event )
+			{
+				if( WorkspaceProvider.WORKSPACE_LOADED.equals( event.getKey() ) )
+					workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
+			}
+		} );
+
+		if( workspaceProvider.isWorkspaceLoaded() )
+			workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
+	}
+
+	@Override
+	public Set<Execution> getExecutions( ProjectItem project )
+	{
+		return projectIdToExecutions.get( project.getId() );
+	}
+	
+	@Override
+	public Set<Execution> getExecutions( ProjectItem project, boolean includeRecent, boolean includeArchived )
+	{
+		HashSet<Execution> results = new HashSet<Execution>();
+		for( Execution e : projectIdToExecutions.get( project.getId() ) )
+		{
+			if( (includeRecent && !e.isArchived()) || (includeArchived && e.isArchived()) )
+			{
+				results.add( e );
+			}
+		}
+		return results;
+	}
+	
+	@Override
+	public ProjectRef getProjectRef( Execution execution )
+	{
+		for( ProjectRef projectRef : workspaceProvider.getWorkspace().getProjectRefs() )
+		{
+			String projectId = execution.getId().split( "-" )[0];
+			if( projectRef.getProjectId().equals( projectId ) )
+			{
+				return projectRef;
+			}
+		}
+		return null;
+	}
+
+	private class CollectionListener implements EventHandler<CollectionEvent>
+	{
+		@Override
+		public void handleEvent( CollectionEvent event )
+		{
+			if( CollectionEvent.Event.ADDED == event.getEvent() )
+			{
+				if( WorkspaceItem.PROJECTS.equals( event.getKey() ) )
+					( ( ProjectItem )event.getElement() ).addEventListener( ActionEvent.class, runningListener );
+			}
+		}
+	}
+
+	private class RunningListener implements EventHandler<ActionEvent>
+	{
+		private boolean hasCurrent = false;
+
+		@Override
+		public void handleEvent( ActionEvent event )
+		{
+			if( event.getSource() instanceof CanvasItem )
+			{
+				ProjectItem runningProject = ( ( CanvasItem )event.getSource() ).getProject();
+				boolean localMode = runningProject.getWorkspace().isLocalMode();
+				long timestamp = System.currentTimeMillis();
+				if( !hasCurrent && CanvasItem.START_ACTION.equals( event.getKey() ) )
+				{
+					// start new execution
+					hasCurrent = true;
+					String projectHash = DigestUtils.md5Hex( runningProject.getId() );
+					String executionId = projectHash + "-" + Long.toString( timestamp );
+
+					SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+					String label = dateFormatter.format( new Date(timestamp) );
+					Execution newExecution = executionManager.startExecution( executionId, timestamp, label );
+
+					// add project->execution mapping to cache
+					if( projectIdToExecutions.containsKey( runningProject.getId() ) )
+					{
+						projectIdToExecutions.get( runningProject.getId() ).add( newExecution );
+					}
+					else
+					{
+						HashSet<Execution> executionSet = new HashSet<Execution>();
+						executionSet.add( newExecution );
+						projectIdToExecutions.put( runningProject.getId(), executionSet );
+					}
+
+					// notify agents if in distributed mode
+					if( !localMode )
+						notifyAgents( CHANNEL, executionId, runningProject.getWorkspace().getAgents() );
+				}
+				else if( hasCurrent && CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
+				{
+					hasCurrent = false;
+					executionManager.stopExecution();
+					if( !localMode )
+					{
+						String message = "stop_" + timestamp;
+						notifyAgents( CHANNEL, message, runningProject.getWorkspace().getAgents() );
+					}
+				}
+				else if( CanvasItem.STOP_ACTION.equals( event.getKey() ) )
+				{
+					executionManager.pauseExecution();
+					if( !localMode )
+					{
+						String message = "pause_" + timestamp;
+						notifyAgents( CHANNEL, message, runningProject.getWorkspace().getAgents() );
+					}
+				}
+				else if( executionManager.getState() == State.PAUSED && CanvasItem.START_ACTION.equals( event.getKey() ) )
+				{
+					// could this be done better?
+					/*
+					 * if startExecution is called and execution is in PAUSED stated
+					 * it will return curectExecution and change state to START
+					 */
+					executionManager.startExecution( null, -1 );
+					if( !localMode )
+					{
+						String message = "unpause_" + timestamp;
+						notifyAgents( CHANNEL, message, runningProject.getWorkspace().getAgents() );
+					}
+				}
+			}
+		}
+
+		private void notifyAgents( String channel, String message, Collection<AgentItem> collection )
+		{
+			for( AgentItem agent : collection )
+				agent.sendMessage( CHANNEL, message );
+		}
+	}
+
+}

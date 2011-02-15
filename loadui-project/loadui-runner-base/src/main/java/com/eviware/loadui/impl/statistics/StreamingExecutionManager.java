@@ -67,6 +67,12 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 	@Override
 	public Execution startExecution( String executionId, long startTime )
 	{
+		return startExecution( executionId, startTime, null );
+	}
+	
+	@Override
+	public Execution startExecution( String executionId, long startTime, String label )
+	{
 		// unpause if paused otherwise try to create new
 		if( executionState == State.PAUSED )
 		{
