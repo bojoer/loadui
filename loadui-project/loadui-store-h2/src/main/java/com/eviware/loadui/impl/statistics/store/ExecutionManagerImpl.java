@@ -353,7 +353,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 					tableRegistry );
 			createdTableList.add( trackMetaTable );
 
-			// go thorough all tracks in track meta table and for those that
+			// go through all tracks in track meta table and for those that
 			// have track descriptor registered, create data and sources
 			// table instance. If table descriptor do not exist it means that
 			// corresponding component has been deleted, so its data won't be
