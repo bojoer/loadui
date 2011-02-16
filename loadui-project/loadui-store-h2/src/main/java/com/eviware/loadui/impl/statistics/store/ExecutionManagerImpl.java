@@ -70,7 +70,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 {
 	public File baseDirectory = new File( System.getProperty( LoadUI.LOADUI_HOME ), "executions" );
 	public String baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
-	
+
 	/**
 	 * Postfix added to data table name when creating source table
 	 */
@@ -146,7 +146,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		return startExecution( id, timestamp, "DefaultExecutionLabel" );
 	}
-	
+
 	@Override
 	public Execution startExecution( String id, long timestamp, String label )
 	{
@@ -298,7 +298,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 		return result;
 	}
-	
+
 	@Override
 	public Execution getExecution( String executionId )
 	{
@@ -706,18 +706,19 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		eventSupport.fireEvent( event );
 	}
-	
+
 	public void setWorkspaceProvider( WorkspaceProvider provider )
 	{
 		provider.addEventListener( BaseEvent.class, new WorkspaceListener() );
-		
+
 		if( provider.isWorkspaceLoaded() )
 		{
-			baseDirectory = new File( provider.getWorkspace().getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH ).getStringValue() );
+			baseDirectory = new File( provider.getWorkspace().getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH )
+					.getStringValue() );
 			baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
 		}
 	}
-	
+
 	private class WorkspaceListener implements EventHandler<BaseEvent>
 	{
 		@Override
@@ -725,8 +726,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			if( event.getKey().equals( WorkspaceProvider.WORKSPACE_LOADED ) )
 			{
-				WorkspaceProvider provider = ((WorkspaceProvider) event.getSource());
-				baseDirectory = new File( provider.getWorkspace().getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH ).getStringValue() );
+				WorkspaceProvider provider = ( ( WorkspaceProvider )event.getSource() );
+				baseDirectory = new File( provider.getWorkspace().getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH )
+						.getStringValue() );
 				baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
 			}
 		}

@@ -221,6 +221,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	@Override
 	protected void reset()
 	{
+		super.reset();
 		sortedValues.clear();
 		sum = 0.0;
 		count = 0L;

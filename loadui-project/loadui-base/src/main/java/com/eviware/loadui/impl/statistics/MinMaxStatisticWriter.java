@@ -82,6 +82,7 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	@Override
 	protected void reset()
 	{
+		super.reset();
 		minimum = 0d;
 		maximum = 0d;
 	}
