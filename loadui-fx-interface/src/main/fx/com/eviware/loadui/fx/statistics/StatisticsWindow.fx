@@ -61,9 +61,7 @@ public var currentExecution:Execution on replace oldExecution {
 	if( execution == null or execution == oldExecution )
 		execution = currentExecution;
 }
-public var execution:Execution on replace {
-	println("Execution changed from {currentExecution} to {execution}");
-}
+public var execution:Execution;
 
 public function getInstance():StatisticsWindow {
   if (instance == null) {
@@ -205,6 +203,8 @@ public class StatisticsWindow {
 	
 class CurrentExecutionListener extends ExecutionListenerAdapter {
 	override function executionStarted( oldState ) {
-		currentExecution = statisticsManager.getExecutionManager().getCurrentExecution();
+		runInFxThread( function():Void {
+			currentExecution = statisticsManager.getExecutionManager().getCurrentExecution();
+		} );
 	}
 }

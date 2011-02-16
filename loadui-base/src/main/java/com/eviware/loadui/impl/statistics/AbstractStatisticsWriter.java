@@ -90,7 +90,11 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 	 * Called between Executions, letting the StatisticsWriter know that it
 	 * should clear any buffers and prepare for a new Execution.
 	 */
-	protected abstract void reset();
+	protected void reset()
+	{
+		for( AggregateLevel aggregateLevel : aggregateLevels )
+			aggregateLevel.flush();
+	}
 
 	@Override
 	public String getId()
