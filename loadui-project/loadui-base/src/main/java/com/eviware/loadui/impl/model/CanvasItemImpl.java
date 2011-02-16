@@ -124,13 +124,19 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		statisticHolderSupport = new StatisticHolderSupport( this );
 		counterStatisticSupport = new CounterStatisticSupport( this );
 
+		/* The below one works correctly, but also exposes BPS. It shouldn't ( should specify what to be exposed as a parameter to ThroughputStatisticWriter.Factory.createStatisticsWriter() ). */
 		MutableStatisticVariable throughputVariable = statisticHolderSupport.addStatisticVariable( "Throughput" );
 		statisticHolderSupport.addStatisticsWriter( ThroughputStatisticsWriter.TYPE, throughputVariable );
 		counterStatisticSupport.addCounterVariable( REQUEST_COUNTER, throughputVariable );
 
-		MutableStatisticVariable failuresVariable = statisticHolderSupport.addStatisticVariable( "Failures" );
-		statisticHolderSupport.addStatisticsWriter( AverageStatisticWriter.TYPE, failuresVariable );
-		counterStatisticSupport.addCounterVariable( FAILURE_COUNTER, failuresVariable );
+		/* The below ones does not work correctly - fix this */
+//		MutableStatisticVariable failuresVariable = statisticHolderSupport.addStatisticVariable( "Failures" );
+//		statisticHolderSupport.addStatisticsWriter( ThroughputStatisticsWriter.TYPE, failuresVariable );
+//		counterStatisticSupport.addCounterVariable( FAILURE_COUNTER, failuresVariable );
+//		
+//		MutableStatisticVariable assertionsVariable = statisticHolderSupport.addStatisticVariable( "Assertions" );
+//		statisticHolderSupport.addStatisticsWriter( ThroughputStatisticsWriter.TYPE, assertionsVariable );
+//		counterStatisticSupport.addCounterVariable( ASSERTION_COUNTER, assertionsVariable );
 
 		abortOnFinish = createProperty( ABORT_ON_FINISH_PROPERTY, Boolean.class, false );
 	}
