@@ -42,7 +42,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 		workspaceProvider.addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
 		{
 			@Override
-			public void handleEvent( BaseEvent event ) // should reload projectIdToExecutions!!!!
+			public void handleEvent( BaseEvent event )
 			{
 				if( WorkspaceProvider.WORKSPACE_LOADED.equals( event.getKey() ) )
 					workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
