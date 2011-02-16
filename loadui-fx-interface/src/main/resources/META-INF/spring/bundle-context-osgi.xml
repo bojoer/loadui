@@ -42,6 +42,8 @@
 	
 	<osgi:reference id="statisticsManager" interface="com.eviware.loadui.api.statistics.StatisticsManager" />
 	
+	<osgi:reference id="projectExecutionManager" interface="com.eviware.loadui.api.statistics.ProjectExecutionManager" cardinality="0..1" />
+	
 	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
 		ref="tableWidget" />
 	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
