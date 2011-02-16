@@ -123,9 +123,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final Property<Long> numberOfAutosaves;
 	private File projectFile;
 
-	// private final StatisticHolderSupport statisticHolderSupport;
-	// private final CounterStatisticSupport counterStatisticSupport;
-
 	public static ProjectItemImpl loadProject( WorkspaceItem workspace, File projectFile ) throws XmlException,
 			IOException
 	{
@@ -613,6 +610,18 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	public void setSaveReport( boolean save )
 	{
 		saveReport.setValue( save );
+	}
+	
+	@Override
+	public long getNumberOfAutosaves()
+	{
+		return numberOfAutosaves.getValue();
+	}
+
+	@Override
+	public void setNumberOfAutosaves( long n )
+	{
+		numberOfAutosaves.setValue( n );
 	}
 
 	@Override

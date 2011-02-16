@@ -1,6 +1,5 @@
 package com.eviware.loadui.impl.statistics;
 
-import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -25,7 +24,6 @@ import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
-import com.eviware.loadui.util.StringUtils;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 {
@@ -36,20 +34,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningListener runningListener = new RunningListener();
 
-	// remove the oldest autosaved execution if needed
-//	Collection<String> executionNames = getExecutionNames();
-//	if( executionNames.size() > currentExecution.getProject().getProperty() ) //TODO: change from 5 to current workspace property
-//	{
-//		Execution oldestExecution = getCurrentExecution();
-//		for( String name : executionNames )
-//		{
-//			Execution e = getExecution( name );
-//			if( e.getStartTime() < oldestExecution.getStartTime() )
-//				oldestExecution = e;
-//		}
-//		oldestExecution.delete();
-//	}
-	
 	ProjectExecutionManagerImpl( final ExecutionManager executionManager, final WorkspaceProvider workspaceProvider )
 	{
 		this.executionManager = executionManager;
@@ -165,6 +149,21 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				{
 					hasCurrent = false;
 					executionManager.stopExecution();
+					
+					// remove the oldest autosaved execution if needed
+					Set<Execution> executions = getExecutions( runningProject, true, false );
+					while( executions.size() > runningProject.getNumberOfAutosaves() && runningProject.getNumberOfAutosaves() > 0 ) 
+					{
+						Execution oldestExecution = executionManager.getCurrentExecution();
+						for( Execution e : executions )
+						{
+							if( e.getStartTime() < oldestExecution.getStartTime() )
+								oldestExecution = e;
+						}
+						oldestExecution.delete();
+						executions.remove( oldestExecution );
+					}
+					
 					if( !localMode )
 					{
 						String message = "stop_" + timestamp;

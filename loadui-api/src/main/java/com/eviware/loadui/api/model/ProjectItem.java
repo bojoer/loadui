@@ -206,4 +206,18 @@ public interface ProjectItem extends CanvasItem
 	 *           scenes will be canceled.
 	 */
 	public void cancelScenes( boolean linkedOnly );
+
+	/**
+	 * Gets the maximum number of executions of this project that are automatically saved before the oldest one is deleted.
+	 * 
+	 * @return
+	 */
+	long getNumberOfAutosaves();
+
+	/**
+	 * Sets the maximum number of executions of this project that are automatically saved before the oldest one is deleted.
+	 * 
+	 * @return
+	 */
+	void setNumberOfAutosaves( long n );
 }
