@@ -17,6 +17,7 @@ package com.eviware.loadui.fx.statistics.manager;
 
 import javafx.scene.Node;
 import javafx.scene.layout.Resizable;
+import javafx.scene.layout.Container;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
@@ -32,7 +33,7 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.util.BeanInjector;
 
 public class RecentResultsList extends BaseNode, Resizable {
-	def pagelist = PageList { width: bind width, height: bind height, label: "Recent Results" };
+	def pagelist = MyPageList { width: bind width, height: bind height, label: "Recent Results" };
 	def listener = new ExecutionsListener();
 	
 	def projectExecutionManager:ProjectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
@@ -83,5 +84,13 @@ class ExecutionsListener extends WeakEventHandler {
 				} );
 			}
 		}
+	}
+}
+
+class MyPageList extends PageList {
+	override var leftMargin = 235;
+	postinit {
+		def container = lookup("buttonBox") as Container;
+		insert ResultNodeBase { execution: bind StatisticsWindow.currentExecution } before container.content[0];
 	}
 }

@@ -88,8 +88,8 @@ public class StatisticsWindow {
 			
 			appState.insertInto ( ManageMenu { width: bind scene.width }, STATISTICS_MANAGE );
 			
-			appState.insertInto ( RecentResultsList { layoutX: 50, layoutY: 100, layoutInfo: LayoutInfo { width: bind Math.max( 315, scene.width - 100 ) } }, STATISTICS_MANAGE );
-			appState.insertInto ( ArchivedResultsList { layoutX: 50, layoutY: 347, layoutInfo: LayoutInfo { width: bind Math.max( 315, scene.width - 100 ) } }, STATISTICS_MANAGE );
+			appState.insertInto ( RecentResultsList { layoutX: 50, layoutY: 100, layoutInfo: LayoutInfo { height: 222, width: bind Math.max( 487, scene.width - 100 ) } }, STATISTICS_MANAGE );
+			appState.insertInto ( ArchivedResultsList { layoutX: 50, layoutY: 347, layoutInfo: LayoutInfo { height: 222, width: bind Math.max( 487, scene.width - 100 ) } }, STATISTICS_MANAGE );
 			
 			appState.insertInto( topMenu, STATISTICS_VIEW );
 			appState.insertInto( stack, STATISTICS_VIEW );
