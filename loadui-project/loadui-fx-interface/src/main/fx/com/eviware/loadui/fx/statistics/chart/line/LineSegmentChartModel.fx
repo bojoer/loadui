@@ -42,6 +42,10 @@ public class LineSegmentChartModel extends DefaultChartModel {
 	
 	public-read var latestTime:Number;
 	
+	def execution = bind StatisticsWindow.execution on replace {
+		latestTime = execution.getLength(); 
+	}
+	
 	def listener = new StyleEventListener();
 	var chartGroup:ChartGroup;
 	public-init var chartView:LineChartView on replace {
