@@ -22,6 +22,8 @@ import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
+import com.eviware.loadui.fx.ui.dnd.Draggable;
+import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.pagelist.PageList;
 
 import com.eviware.loadui.api.events.WeakEventHandler;
@@ -31,7 +33,7 @@ import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.util.BeanInjector;
 
-public class ArchivedResultsList extends BaseNode, Resizable {
+public class ArchivedResultsList extends BaseNode, Resizable, Droppable {
 	def pagelist = PageList { width: bind width, height: bind height, label: "Archived Results" };
 	def listener = new ExecutionsListener();
 	
@@ -49,6 +51,14 @@ public class ArchivedResultsList extends BaseNode, Resizable {
 				}
 			}
 		}
+	}
+	
+	override var accept = function( draggable:Draggable ) {
+		draggable instanceof ResultNode and not (draggable as ResultNode).execution.isArchived()
+	}
+	
+	override var onDrop = function( draggable:Draggable ) {
+		(draggable as ResultNode).execution.archive()
 	}
 	
 	override function create():Node {
