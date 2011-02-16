@@ -18,22 +18,37 @@ package com.eviware.loadui.fx.statistics.manager;
 import javafx.scene.Node;
 import javafx.scene.layout.Resizable;
 
+import com.eviware.loadui.fx.FxUtils;
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
-import com.eviware.loadui.fx.ui.dnd.Droppable;
-import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.pagelist.PageList;
 
-import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.util.BeanInjector;
 
-public class ArchivedResultsList extends BaseNode, Resizable, Droppable {
+public class ArchivedResultsList extends BaseNode, Resizable {
 	def pagelist = PageList { width: bind width, height: bind height, label: "Archived Results" };
+	def listener = new ExecutionsListener();
+	
+	def projectExecutionManager:ProjectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
 	
 	def manager:ExecutionManager = BeanInjector.getBean( ExecutionManager.class ) on replace {
-		pagelist.items = for( name in manager.getExecutionNames() ) DraggableFrame { draggable: ResultNode { execution: manager.getExecution( name ) } }
+		manager.addEventListener( CollectionEvent.class, listener );
+	}
+	
+	def project = bind StatisticsWindow.instance.project on replace {
+		if( project != null ) {
+			for( execution in projectExecutionManager.getExecutions( project, false, true ) ) {
+				if( pagelist.lookup( execution.getId() ) == null ) {
+					insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
+				}
+			}
+		}
 	}
 	
 	override function create():Node {
@@ -47,19 +62,26 @@ public class ArchivedResultsList extends BaseNode, Resizable, Droppable {
 	override function getPrefWidth( height:Number ) {
 		pagelist.getPrefWidth( height )
 	}
-	
-	override var accept = function( d:Draggable ) {
-		d.node instanceof ResultNode /*and not (d.node as ResultNode).execution.isArchived()*/
-	}
-	
-	override var onDrop = function( d:Draggable ) {
-		if( d.node instanceof ResultNode ) {
-			//(d.node as ResultNode).execution.archive()
-		}
-	}
 }
 
-class ArchiveListener extends EventHandler {
+class ExecutionsListener extends WeakEventHandler {
 	override function handleEvent( e ):Void {
+		def event = e as CollectionEvent;
+		if( ExecutionManager.EXECUTIONS.equals( event.getKey() ) ) {
+			if( event.getEvent() == CollectionEvent.Event.ADDED ) {
+				FxUtils.runInFxThread( function() {
+					def execution = event.getElement() as Execution;
+					if( project != null and project.getId() == projectExecutionManager.getProjectId( execution ) 
+							and execution.isArchived() and pagelist.lookup( execution.getId() ) == null ) {
+						insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
+					}
+				} );
+			} else {
+				FxUtils.runInFxThread( function() {
+					def execution = event.getElement() as Execution;
+					delete pagelist.lookup( execution.getId() ) from pagelist.items;
+				} );
+			}
+		}
 	}
 }

@@ -2,6 +2,7 @@ package com.eviware.loadui.impl.statistics;
 
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,35 +63,28 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 	@Override
 	public Set<Execution> getExecutions( ProjectItem project )
 	{
-		return projectIdToExecutions.get( project.getId() );
+		return projectIdToExecutions.containsKey( project.getId() ) ? projectIdToExecutions.get( project.getId() )
+				: Collections.<Execution> emptySet();
 	}
-	
+
 	@Override
 	public Set<Execution> getExecutions( ProjectItem project, boolean includeRecent, boolean includeArchived )
 	{
 		HashSet<Execution> results = new HashSet<Execution>();
-		for( Execution e : projectIdToExecutions.get( project.getId() ) )
+		for( Execution e : getExecutions( project ) )
 		{
-			if( (includeRecent && !e.isArchived()) || (includeArchived && e.isArchived()) )
+			if( ( includeRecent && !e.isArchived() ) || ( includeArchived && e.isArchived() ) )
 			{
 				results.add( e );
 			}
 		}
 		return results;
 	}
-	
+
 	@Override
-	public ProjectRef getProjectRef( Execution execution )
+	public String getProjectId( Execution execution )
 	{
-		for( ProjectRef projectRef : workspaceProvider.getWorkspace().getProjectRefs() )
-		{
-			String projectId = execution.getId().split( "-" )[0];
-			if( projectRef.getProjectId().equals( projectId ) )
-			{
-				return projectRef;
-			}
-		}
-		return null;
+		return execution.getId().split( "-" )[0];
 	}
 
 	private class CollectionListener implements EventHandler<CollectionEvent>
@@ -125,8 +119,8 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 					String projectHash = DigestUtils.md5Hex( runningProject.getId() );
 					String executionId = projectHash + "-" + Long.toString( timestamp );
 
-					SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-					String label = dateFormatter.format( new Date(timestamp) );
+					SimpleDateFormat dateFormatter = new SimpleDateFormat( "yyyy-MM-dd HH:mm" );
+					String label = dateFormatter.format( new Date( timestamp ) );
 					Execution newExecution = executionManager.startExecution( executionId, timestamp, label );
 
 					// add project->execution mapping to cache
@@ -149,10 +143,11 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				{
 					hasCurrent = false;
 					executionManager.stopExecution();
-					
+
 					// remove the oldest autosaved execution if needed
 					Set<Execution> executions = getExecutions( runningProject, true, false );
-					while( executions.size() > runningProject.getNumberOfAutosaves() && runningProject.getNumberOfAutosaves() > 0 ) 
+					while( executions.size() > runningProject.getNumberOfAutosaves()
+							&& runningProject.getNumberOfAutosaves() > 0 )
 					{
 						Execution oldestExecution = executionManager.getCurrentExecution();
 						for( Execution e : executions )
@@ -163,7 +158,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 						oldestExecution.delete();
 						executions.remove( oldestExecution );
 					}
-					
+
 					if( !localMode )
 					{
 						String message = "stop_" + timestamp;
