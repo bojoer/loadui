@@ -45,24 +45,6 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		AVERAGE, COUNT, SUM, STD_DEV, STD_DEV_SUM, PERCENTILE_90TH, MEDIAN;
 	}
 
-	/**
-	 * Average = Average_Sum / Average_Count
-	 * 
-	 * Where is: * Average_Sum is sum of all requests times ( total or range ) *
-	 * Average_Count is total number of requests ( total or range )
-	 * 
-	 * Standard_Deviation = Square_Sum / Average_Count Where
-	 * 
-	 * Where is: *Square_Sum =Math.pow( timeTaken - Average_Sum, 2 ) *timeTaken
-	 * is last request time taken
-	 * 
-	 * For calculating 90 percentile it needed to remember data received. To do
-	 * this is defined buffer which hold last n values. Default value is 1000,
-	 * but this can be changed by set/getPercentileBufferSize. Since percentile
-	 * is expensive operation, specially when buffer is large, it should be
-	 * calculated just before it should be written to database.
-	 */
-
 	double sum = 0.0;
 	long count = 0L;
 
