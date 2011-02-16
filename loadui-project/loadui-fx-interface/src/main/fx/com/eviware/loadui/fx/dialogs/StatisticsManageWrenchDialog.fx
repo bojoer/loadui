@@ -66,8 +66,8 @@ public class StatisticsManageWrenchDialog  {
 				Tab {
          			label: "General", content: formT1 = Form {
 						formContent: [
-							FileInputField { id: "resultsPath", label: "Results path", description: "Where to store Results in the file system. This affects all projects.", value: resultsPath, selectMode: FileInputField.DIRECTORIES_ONLY},
-							LongInputField { id: "numberOfAutosaves", label: "Number of Results to autosave", description: "Number of Results to save automatically", value: numberOfAutosaves },
+							FileInputField { id: "resultsPath", label: "Results path (affects all projects)", description: "Where to store Results in the file system. This affects all projects.", value: resultsPath, selectMode: FileInputField.DIRECTORIES_ONLY},
+							LongInputField { id: "numberOfAutosaves", label: "Number of results to autosave", description: "Number of Results to save automatically", value: numberOfAutosaves },
 						]
 					}
 				}

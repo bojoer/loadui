@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.Releasable;
@@ -96,7 +97,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private ConnectionRegistry connectionRegistry;
 
-	private Logger logger = LoggerFactory.getLogger( ExecutionManagerImpl.class );
+	private Logger log = LoggerFactory.getLogger( ExecutionManagerImpl.class );
 
 	private State executionState = State.STOPPED;
 
@@ -154,7 +155,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			executionState = State.STARTED;
 			ecs.fireExecutionStarted( State.PAUSED );
-			logger.debug( "State changed: PAUSED -> STARTED" );
+			log.debug( "State changed: PAUSED -> STARTED" );
 			return currentExecution;
 		}
 
@@ -197,7 +198,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 			executionState = State.STARTED;
 			ecs.fireExecutionStarted( State.STOPPED );
-			logger.debug( "State changed: STOPPED -> STARTED" );
+			log.debug( "State changed: STOPPED -> STARTED" );
 
 			return currentExecution;
 		}
@@ -509,8 +510,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			}
 			catch( SQLException e )
 			{
-				logger.error( "Unable to write data to the database:", e );
-				logger.error( "Unable to store entry: {} for source: {} at level: {}", new Object[] { entry, source,
+				log.error( "Unable to write data to the database:", e );
+				log.error( "Unable to store entry: {} for source: {} at level: {}", new Object[] { entry, source,
 						interpolationLevel } );
 				throw new RuntimeException( "Unable to write data to the database!", e );
 			}
@@ -639,7 +640,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			executionState = State.PAUSED;
 			ecs.fireExecutionPaused( State.STARTED );
-			logger.debug( "State changed: START -> PAUSED" );
+			log.debug( "State changed: START -> PAUSED" );
 		}
 	}
 
@@ -654,7 +655,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			currentExecution.flushLength();
 			latestEntries.clear();
 			ecs.fireExecutionStopped( oldState );
-			logger.debug( "State changed: " + oldState.name() + " -> STOPPED " );
+			log.debug( "State changed: " + oldState.name() + " -> STOPPED " );
 		}
 	}
 
@@ -708,13 +709,26 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	
 	public void setWorkspaceProvider( WorkspaceProvider provider )
 	{
-		System.out.println("         new workspaceprovider");
-		//TODO provider.addEventListener( type, listener )
+		provider.addEventListener( BaseEvent.class, new WorkspaceListener() );
 		
 		if( provider.isWorkspaceLoaded() )
 		{
-			baseDirectory = new File( System.getProperty( LoadUI.LOADUI_HOME ), provider.getWorkspace().getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH ).getStringValue() );
+			baseDirectory = new File( provider.getWorkspace().getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH ).getStringValue() );
 			baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
+		}
+	}
+	
+	private class WorkspaceListener implements EventHandler<BaseEvent>
+	{
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( event.getKey().equals( WorkspaceProvider.WORKSPACE_LOADED ) )
+			{
+				WorkspaceProvider provider = ((WorkspaceProvider) event.getSource());
+				baseDirectory = new File( provider.getWorkspace().getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH ).getStringValue() );
+				baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
+			}
 		}
 	}
 }
