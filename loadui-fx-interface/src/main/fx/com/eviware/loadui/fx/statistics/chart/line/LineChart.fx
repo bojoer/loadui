@@ -301,6 +301,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	override function reset():Void {
+		def fixedTime = StatisticsWindow.execution != StatisticsWindow.currentExecution;
 		for( m in lines.values() ) {
 			def model = m as LineSegmentChartModel;
 			model.xRange = [ 0, 0 ];
