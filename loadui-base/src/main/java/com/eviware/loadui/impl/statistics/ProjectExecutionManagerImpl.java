@@ -17,7 +17,6 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
@@ -40,16 +39,10 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 		this.executionManager = executionManager;
 		this.workspaceProvider = workspaceProvider;
 
-		for( String name : executionManager.getExecutionNames() )
-		{
-			Execution e = executionManager.getExecution( name );
-			e.getId();
-		}
-
 		workspaceProvider.addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
 		{
 			@Override
-			public void handleEvent( BaseEvent event )
+			public void handleEvent( BaseEvent event ) // should reload projectIdToExecutions!!!!
 			{
 				if( WorkspaceProvider.WORKSPACE_LOADED.equals( event.getKey() ) )
 					workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
@@ -84,7 +77,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 	@Override
 	public String getProjectId( Execution execution )
 	{
-		return execution.getId().split( "-" )[0];
+		return execution.getId().split( "_" )[0];
 	}
 
 	private class CollectionListener implements EventHandler<CollectionEvent>
@@ -95,7 +88,24 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 			if( CollectionEvent.Event.ADDED == event.getEvent() )
 			{
 				if( WorkspaceItem.PROJECTS.equals( event.getKey() ) )
-					( ( ProjectItem )event.getElement() ).addEventListener( ActionEvent.class, runningListener );
+				{
+					ProjectItem addedProject = ( ProjectItem )event.getElement();
+					
+					// lazily get project->execution mapping from disk if needed
+					if ( !projectIdToExecutions.containsKey( addedProject.getId() ) )
+					{
+						HashSet<Execution> executionSet = new HashSet<Execution>();
+						for( String name : executionManager.getExecutionNames() )
+						{
+							Execution e = executionManager.getExecution( name );
+							System.out.println(getProjectId( e ) + " = " + ( addedProject.getId() ));
+							if( getProjectId( e ).equals( addedProject.getId() ) )
+								executionSet.add( e );
+						}
+						projectIdToExecutions.put( addedProject.getId(), executionSet );
+					}
+					addedProject.addEventListener( ActionEvent.class, runningListener );
+				}
 			}
 		}
 	}
@@ -116,8 +126,8 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				{
 					// start new execution
 					hasCurrent = true;
-					String projectHash = DigestUtils.md5Hex( runningProject.getId() );
-					String executionId = projectHash + "-" + Long.toString( timestamp );
+					String projectHash = runningProject.getId();
+					String executionId = projectHash + "_" + Long.toString( timestamp );
 
 					SimpleDateFormat dateFormatter = new SimpleDateFormat( "yyyy-MM-dd HH:mm" );
 					String label = dateFormatter.format( new Date( timestamp ) );
