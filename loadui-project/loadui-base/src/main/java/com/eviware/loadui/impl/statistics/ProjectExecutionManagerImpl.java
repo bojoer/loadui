@@ -98,7 +98,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 						for( String name : executionManager.getExecutionNames() )
 						{
 							Execution e = executionManager.getExecution( name );
-							System.out.println(getProjectId( e ) + " = " + ( addedProject.getId() ));
 							if( getProjectId( e ).equals( addedProject.getId() ) )
 								executionSet.add( e );
 						}
