@@ -38,7 +38,9 @@ public class PageList extends VBox, Pagination {
 	
 	override var padding = Insets { left: 20, top: 30, right: 20, bottom: 5 };
 	
-	var itemWidth: Number;
+	protected var leftMargin = 60;
+	protected var rightMargin = 76;
+	var itemWidth:Number;
 	
 	def displayed = bind displayedItems on replace {
 		labelBox.content = for( x in displayedItems ) {
@@ -60,7 +62,7 @@ public class PageList extends VBox, Pagination {
 	var itemBox = HBox { spacing: 20 };
 	var labelBox = HBox {
 		spacing: 20
-		padding: Insets { left: 60, right: 58 }
+		padding: bind Insets { left: leftMargin, right: rightMargin }
 		layoutInfo: LayoutInfo { height: 45 }
 	}
 	
@@ -75,6 +77,7 @@ public class PageList extends VBox, Pagination {
 				]
 			},
 			HBox {
+				id: "buttonBox"
 				nodeVPos: VPos.BOTTOM
 				spacing: 20
 				padding: Insets { top: 10, right: 10, left: 10 }
@@ -122,6 +125,6 @@ public class PageList extends VBox, Pagination {
 			itemWidth = Math.max( itemWidth, x.layoutBounds.width );
 		}
 		
-		itemsPerPage = (width - 136)/(itemWidth + itemBox.spacing) as Integer;
+		itemsPerPage = (width - (leftMargin + rightMargin))/(itemWidth + itemBox.spacing) as Integer;
 	}
 }

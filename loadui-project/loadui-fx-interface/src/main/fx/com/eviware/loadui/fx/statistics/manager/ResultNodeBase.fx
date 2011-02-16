@@ -25,17 +25,53 @@ import com.javafx.preview.control.MenuItem;
 
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.node.BaseNode;
-import com.eviware.loadui.fx.ui.node.Deletable;
-import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.resources.DialogPanel;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
 import com.eviware.loadui.api.statistics.store.Execution;
 
-public class ResultNode extends ResultNodeBase, Draggable, Deletable {
-	override var opacity = bind if( dragging ) 0.8 else 1;
+public class ResultNodeBase extends BaseNode {
+	public var execution:Execution on replace {
+		label = execution.getLabel();
+	}
 	
-	override function doDelete():Void {
-		execution.delete();
+	var label:String = "Execution";
+	
+	init {
+		addMouseHandler( MOUSE_PRIMARY_CLICKED, function( e:MouseEvent ):Void {
+			if( e.clickCount == 2 ) {
+				StatisticsWindow.execution = execution;
+				AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
+			}
+		} );
+	}
+	
+	override function create():Node {
+		var menuButton:MenuButton;
+		
+		DialogPanel {
+			layoutInfo: LayoutInfo { width: 155, height: 108 }
+			body: VBox {
+				padding: Insets { left: 8, right: 8, top: 5 }
+				spacing: 10
+				content: [
+					menuButton = MenuButton {
+						styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
+						text: bind label.toUpperCase();
+						items: MenuItem {
+							text: ##[OPEN]"Open"
+							action: function() {
+								StatisticsWindow.execution = execution;
+								AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
+							}
+						}
+					}
+				]
+			}
+		}
+	}
+	
+	override function toString():String {
+		label
 	}
 }
