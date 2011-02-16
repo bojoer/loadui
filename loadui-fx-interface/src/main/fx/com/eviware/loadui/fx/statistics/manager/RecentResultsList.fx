@@ -43,7 +43,6 @@ public class RecentResultsList extends BaseNode, Resizable {
 	
 	def project = bind StatisticsWindow.instance.project on replace {
 		if( project != null ) {
-			println("Getting executions for project: {project}");
 			for( execution in projectExecutionManager.getExecutions( project, true, false ) ) {
 				if( pagelist.lookup( execution.getId() ) == null ) {
 					insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
