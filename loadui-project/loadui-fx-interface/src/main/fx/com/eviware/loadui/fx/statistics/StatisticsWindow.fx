@@ -62,6 +62,7 @@ public var currentExecution:Execution on replace oldExecution {
 		execution = currentExecution;
 }
 public var execution:Execution;
+public var comparedExecution:Execution;
 
 public function getInstance():StatisticsWindow {
   if (instance == null) {

@@ -60,8 +60,8 @@ public class LineSegmentChartModel extends DefaultChartModel {
 		initialized = true;
 	}
 	
-	var statistic:Statistic;
-	def scaler = new ScaledPointScale();
+	public-read var statistic:Statistic;
+	public def scaler = new ScaledPointScale();
 	var initialized = false;
 	
 	public var level:Integer = 0 on replace {

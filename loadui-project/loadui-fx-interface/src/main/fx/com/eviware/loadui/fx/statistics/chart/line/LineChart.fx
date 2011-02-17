@@ -100,6 +100,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	def xRange = new LongRange( 0, 0 );
 	def listener = new ChartViewListener();
 	def lines = new HashMap();
+	def comparedLines = new HashMap();
 	public-read def chart = new Chart();
 	def chartNode = SwingComponent.wrap( chart );
 	def timeCalculator = new TotalTimeTickCalculator();
@@ -107,6 +108,23 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	var zoomLevel = 0;
 	
 	def execution = bind StatisticsWindow.execution on replace {
+		reset();
+		update();
+	}
+	
+	def comparedExecution = bind StatisticsWindow.comparedExecution on replace {
+		for( model in chart.getModels()[x|x instanceof ComparedLineSegmentChartModel] )
+			chart.removeModel( model );
+		comparedLines.clear();
+		
+		if( comparedExecution != null ) {
+			for( model in chart.getModels()[x|x instanceof LineSegmentChartModel] ) {
+				def comparedModel = ComparedLineSegmentChartModel { baseModel: model as LineSegmentChartModel };
+				comparedLines.put( model, comparedModel );
+				chart.addModel( comparedModel, comparedModel.chartStyle );
+			}
+		}
+		
 		reset();
 		update();
 	}
@@ -262,6 +280,18 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 				max = Math.max( max, yRange.maximum() );
 			}
 		}
+		if( comparedExecution != null ) {
+			maxTime = Math.max( maxTime, comparedExecution.getLength() );
+			for( m in comparedLines.values() ) {
+				def model = m as ComparedLineSegmentChartModel;
+					
+				def yRange = model.getYRange( 0.05, 0.05 );
+				if( yRange.minimum() != Double.NEGATIVE_INFINITY and yRange.maximum() != Double.POSITIVE_INFINITY ) {
+					min = Math.min( min, yRange.minimum() );
+					max = Math.max( max, yRange.maximum() );
+				}
+			}
+		}
 		if( min > max ) {
 			min = 0;
 			max = 100;
@@ -334,6 +364,11 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		def model = LineSegmentChartModel { chartView: chartView, segment: segment, level: bind zoomLevel };
 		lines.put( segment, model );
 		chart.addModel( model, model.chartStyle );
+		if( comparedExecution != null ) {
+			def comparedModel = ComparedLineSegmentChartModel { baseModel: model };
+			comparedLines.put( model, comparedModel );
+			chart.addModel( comparedModel, comparedModel.chartStyle );
+		}
 		insert if( chartView instanceof ConfigurableLineChartView ) {
 			DraggableFrame { draggable: DeletableSegmentButton { compactSegments: bind compactSegments, chartView: chartView, model: model, confirmDialogScene: bind scene } };
 		} else {
@@ -343,8 +378,13 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	function removedSegment( segment:LineSegment ):Void {
 		def model = lines.remove( segment ) as LineSegmentChartModel;
-		if( model != null )
+		if( model != null ) {
 			chart.removeModel( model );
+			def comparedModel = lines.remove( model ) as LineSegmentChartModel;
+			if( comparedModel != null ) {
+				chart.removeModel( comparedModel );
+			}
+		}
 		for( frame in segmentButtons.content[b | b instanceof DraggableFrame] ) {
 			def button = (frame as DraggableFrame).draggable as DeletableSegmentButton;
 			if( button.model.segment == segment )
