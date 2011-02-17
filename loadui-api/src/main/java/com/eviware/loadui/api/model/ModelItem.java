@@ -22,21 +22,13 @@ import com.eviware.loadui.api.addressable.Addressable;
  * 
  * @author dain.nilsson
  */
-public interface ModelItem extends PropertyHolder, AttributeHolder, Addressable, Labeled, Releasable
+public interface ModelItem extends PropertyHolder, AttributeHolder, Addressable, Labeled.Mutable, Releasable
 {
 	// BaseEvents
 	public final String DELETED = ModelItem.class.getSimpleName() + "@deleted";
 
 	// Properties
 	public final String DESCRIPTION_PROPERTY = ModelItem.class.getSimpleName() + ".description";
-
-	/**
-	 * Sets the name of the ModelItem.
-	 * 
-	 * @param label
-	 *           The new name to give to the ModelItem.
-	 */
-	public void setLabel( String label );
 
 	/**
 	 * Causes the ModelItem to first be released, then removed from the

@@ -63,4 +63,38 @@ public interface OrderedCollection<ChildType> extends EventFirer
 	 * @return
 	 */
 	public ChildType getChildAt( int index );
+
+	/**
+	 * Mutable version of OrderedCollection, which allows adding, removing and
+	 * reordering of children.
+	 * 
+	 * @author dain.nilsson
+	 * 
+	 * @param <ChildType>
+	 */
+	public interface Mutable<ChildType> extends OrderedCollection<ChildType>
+	{
+		/**
+		 * Moved a contained child to a new position, as defined by the given
+		 * positional index.
+		 * 
+		 * @param child
+		 * @param index
+		 */
+		public void moveChild( ChildType child, int index );
+
+		/**
+		 * Appends a new child to the end of the collection.
+		 * 
+		 * @param child
+		 */
+		public void addChild( ChildType child );
+
+		/**
+		 * Removes a child from the OrderedCollection.
+		 * 
+		 * @param child
+		 */
+		public void removeChild( ChildType child );
+	}
 }

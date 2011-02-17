@@ -25,13 +25,28 @@ public interface Labeled
 {
 	/**
 	 * If the Labeled also implements EventFirer, it should fire a BaseEvent with
-	 * the LABLE constant as a key to inform listeners that the label has
+	 * the LABEL constant as a key to inform listeners that the label has
 	 * changed.
 	 */
 	public static final String LABEL = Labeled.class.getSimpleName() + "@label";
 
 	/**
-	 * Gets the lable of the object.
+	 * Gets the label of the object.
 	 */
 	public String getLabel();
+
+	/**
+	 * A Labeled object which has an editable label.
+	 * 
+	 * @author dain.nilsson
+	 */
+	public interface Mutable extends Labeled
+	{
+		/**
+		 * Sets the label of the object.
+		 * 
+		 * @param label
+		 */
+		public void setLabel( String label );
+	}
 }

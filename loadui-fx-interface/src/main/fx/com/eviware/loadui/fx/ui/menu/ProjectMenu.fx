@@ -208,7 +208,7 @@ public class ProjectMenu extends HBox {
 				                    text: "Rename"
 				                    action: function() { 
 				                    	RenameModelItemDialog { 
-				                    		modelItem: project
+				                    		labeled: project
 				                    	}
 
 				                    	projectLabel = project.getLabel();

@@ -21,6 +21,7 @@
 
 package com.eviware.loadui.fx.dialogs;
 
+import javafx.scene.Scene;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.text.Text;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
@@ -29,7 +30,7 @@ import com.eviware.loadui.fx.ui.form.FormField;
 import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.widgets.ModelItemHolder;
 
-import com.eviware.loadui.api.model.ModelItem;
+import com.eviware.loadui.api.model.Labeled;
 
 import java.lang.RuntimeException;
 import org.slf4j.LoggerFactory;
@@ -44,9 +45,9 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.De
  */
 public class RenameModelItemDialog {
 	/**
-	 * The ModelItem to delete.
+	 * The Labeled.Mutable to delete.
 	 */
-	public-init var modelItem:ModelItem;
+	public-init var labeled:Labeled.Mutable;
 	
 	/**
 	 * The ModelItemHolder to delete.
@@ -56,11 +57,13 @@ public class RenameModelItemDialog {
 	/**
 	 * The list of model items in which name must be unique.
 	 */
-	public-init var uniqueInList: ModelItem[];
+	public-init var uniqueInList: Labeled[];
 	
 	public-init var uniqueNameWarningText: String = "Item with the specified name already exist!";
 	
 	public-init var allowZeroLengthName: Boolean = true;
+	
+	public-init var scene:Scene;
 	
 	var warningMessage: String;
 	
@@ -75,7 +78,7 @@ public class RenameModelItemDialog {
 		form.getField("name").value = (form.getValue("name") as String).trim();
 		if(validateZeroLength()){
 			if(validateUniqueness()){
-				modelItem.setLabel( form.getValue("name") as String );
+				labeled.setLabel( form.getValue("name") as String );
 			}
 			else{
 			    warningMessage = uniqueNameWarningText;
@@ -89,11 +92,11 @@ public class RenameModelItemDialog {
 	}
 	
 	postinit {
-		if( not ( FX.isInitialized( modelItem ) or FX.isInitialized( modelItemHolder ) ) )
-			throw new RuntimeException( "Neither modelItem nor modelItemHolder are set!" );
+		if( not ( FX.isInitialized( labeled ) or FX.isInitialized( modelItemHolder ) ) )
+			throw new RuntimeException( "Neither labeled nor modelItemHolder are set!" );
 		
-		def typeName = if( FX.isInitialized( modelItemHolder ) ) modelItemHolder.getTypeName() else modelItem.getClass().getSimpleName();
-		if( not FX.isInitialized( modelItem ) ) modelItem = modelItemHolder.modelItem;
+		def typeName = if( FX.isInitialized( modelItemHolder ) ) modelItemHolder.getTypeName() else labeled.getClass().getSimpleName();
+		if( not FX.isInitialized( labeled ) ) labeled = modelItemHolder.modelItem;
 
 		warning = Dialog {
 	    	title: "Warning!"
@@ -110,9 +113,10 @@ public class RenameModelItemDialog {
 	    }
 	    		
 		dialog = Dialog {
-			title: "Rename {modelItem.getLabel()}"
+			scene: scene
+			title: "Rename {labeled.getLabel()}"
 			content: form = Form {
-				formContent: txt = TextField { id:"name", label: "Name", value: modelItem.getLabel(), action:ok }
+				formContent: txt = TextField { id:"name", label: "Name", value: labeled.getLabel(), action:ok }
 			}
 			onOk: ok
 		}
@@ -132,7 +136,7 @@ public class RenameModelItemDialog {
 	    def newName: String = form.getValue("name") as String;
 	    if(uniqueInList != null){
 			for(item in uniqueInList)	{
-			    if( item != modelItem and item.getLabel().compareToIgnoreCase(newName) == 0 ){
+			    if( item != labeled and item.getLabel().compareToIgnoreCase(newName) == 0 ){
 			        return false;
 			    }
 			} 

@@ -219,7 +219,7 @@ public class TestCaseMenu extends HBox {
 										text: "Rename"
 										action: function() { 
 											RenameModelItemDialog { 
-												modelItem: MainWindow.instance.testcaseCanvas.canvasItem as SceneItem
+												labeled: MainWindow.instance.testcaseCanvas.canvasItem as SceneItem
 												uniqueInList: for( s in testCase.getProject().getScenes()) s 
 												uniqueNameWarningText: "Test case with the specified name already exist in project!" 
 											}
