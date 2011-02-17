@@ -16,11 +16,15 @@
 package com.eviware.loadui.impl.statistics.store;
 
 import java.util.Collection;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.util.events.EventSupport;
 
 /**
  * Execution implementation
@@ -43,6 +47,8 @@ public class ExecutionImpl implements Execution
 	 * Reference to execution manager implementation
 	 */
 	private final ExecutionManagerImpl manager;
+
+	private final EventSupport eventSupport = new EventSupport();
 
 	/**
 	 * Map that holds references to all tracks that belongs to this execution
@@ -103,6 +109,7 @@ public class ExecutionImpl implements Execution
 	public void delete()
 	{
 		manager.delete( id );
+		fireEvent( new BaseEvent( this, DELETED ) );
 	}
 
 	/**
@@ -129,6 +136,7 @@ public class ExecutionImpl implements Execution
 		{
 			manager.archiveExecution( getId() );
 			archived = true;
+			fireEvent( new BaseEvent( this, ARCHIVED ) );
 		}
 	}
 
@@ -143,6 +151,7 @@ public class ExecutionImpl implements Execution
 	{
 		manager.setExecutionLabel( getId(), label );
 		this.label = label;
+		fireEvent( new BaseEvent( this, LABEL ) );
 	}
 
 	@Override
@@ -162,5 +171,29 @@ public class ExecutionImpl implements Execution
 	{
 		lastFlushedLength = length;
 		manager.setExecutionLength( getId(), length );
+	}
+
+	@Override
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.addEventListener( type, listener );
+	}
+
+	@Override
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.removeEventListener( type, listener );
+	}
+
+	@Override
+	public void clearEventListeners()
+	{
+		eventSupport.clearEventListeners();
+	}
+
+	@Override
+	public void fireEvent( EventObject event )
+	{
+		eventSupport.fireEvent( event );
 	}
 }

@@ -37,6 +37,8 @@ public class ResultNodeBase extends BaseNode {
 	
 	var label:String = "Execution";
 	
+	protected var menuButton:MenuButton;
+	
 	init {
 		addMouseHandler( MOUSE_PRIMARY_CLICKED, function( e:MouseEvent ):Void {
 			if( e.clickCount == 2 ) {
@@ -47,8 +49,6 @@ public class ResultNodeBase extends BaseNode {
 	}
 	
 	override function create():Node {
-		var menuButton:MenuButton;
-		
 		DialogPanel {
 			layoutInfo: LayoutInfo { width: 155, height: 108 }
 			body: VBox {

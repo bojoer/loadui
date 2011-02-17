@@ -17,6 +17,7 @@ package com.eviware.loadui.api.statistics.store;
 
 import java.util.Collection;
 
+import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.model.Labeled;
 
 /**
@@ -24,8 +25,18 @@ import com.eviware.loadui.api.model.Labeled;
  * 
  * @author dain.nilsson
  */
-public interface Execution extends Labeled
+public interface Execution extends Labeled, EventFirer
 {
+	/**
+	 * BaseEvent key for notifying that this Execution has been archived.
+	 */
+	public final static String ARCHIVED = Execution.class.getSimpleName() + "@archived";
+
+	/**
+	 * BaseEvent key for notifying that this Execution has been deleted.
+	 */
+	public final static String DELETED = Execution.class.getSimpleName() + "@deleted";
+
 	/**
 	 * Gets the Executions ID.
 	 * 

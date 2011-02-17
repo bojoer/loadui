@@ -38,4 +38,13 @@ public class ResultNode extends ResultNodeBase, Draggable, Deletable {
 	override function doDelete():Void {
 		execution.delete();
 	}
+	
+	postinit {
+		insert MenuItem {
+			text: ##[DELETE]"Delete"
+			action: function() {
+				deleteObject();
+			}
+		} into menuButton.items
+	}
 }

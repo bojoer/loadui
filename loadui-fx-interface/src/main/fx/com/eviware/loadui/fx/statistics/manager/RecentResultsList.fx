@@ -26,26 +26,35 @@ import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.pagelist.PageList;
 
 import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.util.BeanInjector;
+
+import java.util.Comparator;
 
 public class RecentResultsList extends BaseNode, Resizable {
 	def pagelist = MyPageList { width: bind width, height: bind height, label: "Recent Results" };
 	def listener = new ExecutionsListener();
+	def executionListener = new ExecutionListener();
+	def executionStoppedListener = new ExecutionStoppedListener();
+	def comparator = new ExecutionComparator();
 	
 	def projectExecutionManager:ProjectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
 	
 	def manager:ExecutionManager = BeanInjector.getBean( ExecutionManager.class ) on replace {
 		manager.addEventListener( CollectionEvent.class, listener );
+		manager.addExecutionListener( executionStoppedListener );
 	}
 	
 	def project = bind StatisticsWindow.instance.project on replace {
 		if( project != null ) {
 			for( execution in projectExecutionManager.getExecutions( project, true, false ) ) {
-				if( pagelist.lookup( execution.getId() ) == null ) {
+				execution.addEventListener( BaseEvent.class, executionListener );
+				if( execution != StatisticsWindow.currentExecution and pagelist.lookup( execution.getId() ) == null ) {
 					insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
 				}
 			}
@@ -65,32 +74,62 @@ public class RecentResultsList extends BaseNode, Resizable {
 	}
 }
 
+class ExecutionListener extends WeakEventHandler {
+	override function handleEvent( e ):Void {
+		def event = e as BaseEvent;
+		def execution = event.getSource() as Execution;
+		if( Execution.ARCHIVED.equals( event.getKey() ) or Execution.DELETED.equals( event.getKey() ) ) {
+			execution.removeEventListener( BaseEvent.class, executionListener );
+			FxUtils.runInFxThread( function() {
+				delete pagelist.lookup( execution.getId() ) from pagelist.items;
+			} );
+		}
+	}
+}
+
 class ExecutionsListener extends WeakEventHandler {
 	override function handleEvent( e ):Void {
 		def event = e as CollectionEvent;
 		if( ExecutionManager.EXECUTIONS.equals( event.getKey() ) ) {
 			if( event.getEvent() == CollectionEvent.Event.ADDED ) {
-				FxUtils.runInFxThread( function() {
-					def execution = event.getElement() as Execution;
-					if( project != null and project.getId() == projectExecutionManager.getProjectId( execution ) 
-							and not execution.isArchived() and pagelist.lookup( execution.getId() ) == null ) {
-						insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
+				def execution = event.getElement() as Execution;
+				if( project != null and project.getId() == projectExecutionManager.getProjectId( execution ) and not execution.isArchived() ) {
+					execution.addEventListener( BaseEvent.class, executionListener );
+					if( execution != StatisticsWindow.currentExecution and pagelist.lookup( execution.getId() ) == null ) {
+						FxUtils.runInFxThread( function() {
+							insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
+						} );
 					}
-				} );
-			} else {
-				FxUtils.runInFxThread( function() {
-					def execution = event.getElement() as Execution;
-					delete pagelist.lookup( execution.getId() ) from pagelist.items;
-				} );
+				}
 			}
 		}
 	}
 }
 
+class ExecutionStoppedListener extends ExecutionListenerAdapter {
+	override function executionStopped( oldState ) {
+		FxUtils.runInFxThread( function() {
+			def execution = StatisticsWindow.currentExecution;
+			if( pagelist.lookup( execution.getId() ) == null ) {
+				insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
+			}
+		} );
+	}
+}
+
 class MyPageList extends PageList {
+	override var comparator = new ExecutionComparator();
 	override var leftMargin = 235;
 	postinit {
 		def container = lookup("buttonBox") as Container;
 		insert ResultNodeBase { execution: bind StatisticsWindow.currentExecution } before container.content[0];
+	}
+}
+
+class ExecutionComparator extends Comparator {
+	override function compare( o1, o2 ) {
+		def e1 = ((o1 as DraggableFrame).draggable as ResultNode).execution;
+		def e2 = ((o2 as DraggableFrame).draggable as ResultNode).execution;
+		- Long.signum( e1.getStartTime() - e2.getStartTime() )
 	}
 }
