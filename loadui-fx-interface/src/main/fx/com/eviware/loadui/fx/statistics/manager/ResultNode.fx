@@ -49,13 +49,20 @@ public class ResultNode extends ResultNodeBase, Draggable, Deletable {
 						labeled: execution
 					}
 				}
-			} into menuButton.items
+			} into menuButton.items;
 		}
+		insert MenuItem {
+			text: "Compare to"
+			action: function() {
+				StatisticsWindow.comparedExecution = execution;
+				AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
+			}
+		} into menuButton.items;
 		insert MenuItem {
 			text: ##[DELETE]"Delete"
 			action: function() {
 				deleteObject();
 			}
-		} into menuButton.items
+		} into menuButton.items;
 	}
 }
