@@ -27,15 +27,19 @@ import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.pagelist.PageList;
 
 import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.util.BeanInjector;
 
+import java.util.Comparator;
+
 public class ArchivedResultsList extends BaseNode, Resizable, Droppable {
-	def pagelist = PageList { width: bind width, height: bind height, label: "Archived Results" };
+	def pagelist = PageList { width: bind width, height: bind height, label: "Archived Results", comparator: new ExecutionComparator() };
 	def listener = new ExecutionsListener();
+	def executionListener = new ExecutionListener();
 	
 	def projectExecutionManager:ProjectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
 	
@@ -46,6 +50,7 @@ public class ArchivedResultsList extends BaseNode, Resizable, Droppable {
 	def project = bind StatisticsWindow.instance.project on replace {
 		if( project != null ) {
 			for( execution in projectExecutionManager.getExecutions( project, false, true ) ) {
+				execution.addEventListener( BaseEvent.class, executionListener );
 				if( pagelist.lookup( execution.getId() ) == null ) {
 					insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
 				}
@@ -74,24 +79,46 @@ public class ArchivedResultsList extends BaseNode, Resizable, Droppable {
 	}
 }
 
+class ExecutionListener extends WeakEventHandler {
+	override function handleEvent( e ):Void {
+		def event = e as BaseEvent;
+		def execution = event.getSource() as Execution;
+		if( Execution.ARCHIVED.equals( event.getKey() ) and pagelist.lookup( execution.getId() ) == null ) {
+			FxUtils.runInFxThread( function() {
+				insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
+			} );
+		} else if( Execution.DELETED.equals( event.getKey() ) ) {
+			execution.removeEventListener( BaseEvent.class, executionListener );
+			FxUtils.runInFxThread( function() {
+				delete pagelist.lookup( execution.getId() ) from pagelist.items;
+			} );
+		}
+	}
+}
+
 class ExecutionsListener extends WeakEventHandler {
 	override function handleEvent( e ):Void {
 		def event = e as CollectionEvent;
 		if( ExecutionManager.EXECUTIONS.equals( event.getKey() ) ) {
+			def execution = event.getElement() as Execution;
 			if( event.getEvent() == CollectionEvent.Event.ADDED ) {
-				FxUtils.runInFxThread( function() {
-					def execution = event.getElement() as Execution;
-					if( project != null and project.getId() == projectExecutionManager.getProjectId( execution ) 
-							and execution.isArchived() and pagelist.lookup( execution.getId() ) == null ) {
-						insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
+				if( project != null and project.getId() == projectExecutionManager.getProjectId( execution ) ) {
+					execution.addEventListener( BaseEvent.class, executionListener );
+					if( execution.isArchived() and pagelist.lookup( execution.getId() ) == null ) {
+						FxUtils.runInFxThread( function() {
+							insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
+						} );
 					}
-				} );
-			} else {
-				FxUtils.runInFxThread( function() {
-					def execution = event.getElement() as Execution;
-					delete pagelist.lookup( execution.getId() ) from pagelist.items;
-				} );
+				}
 			}
 		}
+	}
+}
+
+class ExecutionComparator extends Comparator {
+	override function compare( o1, o2 ) {
+		def e1 = ((o1 as DraggableFrame).draggable as ResultNode).execution;
+		def e2 = ((o2 as DraggableFrame).draggable as ResultNode).execution;
+		- Long.signum( e1.getStartTime() - e2.getStartTime() )
 	}
 }

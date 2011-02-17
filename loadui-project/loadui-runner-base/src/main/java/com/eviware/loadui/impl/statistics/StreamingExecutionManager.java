@@ -69,7 +69,7 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 	{
 		return startExecution( executionId, startTime, null );
 	}
-	
+
 	@Override
 	public Execution startExecution( String executionId, long startTime, String label )
 	{
@@ -312,6 +312,30 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 		public long getLength()
 		{
 			return 0;
+		}
+
+		@Override
+		public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void clearEventListeners()
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void fireEvent( EventObject event )
+		{
+			throw new UnsupportedOperationException();
 		}
 	}
 

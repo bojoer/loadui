@@ -25,6 +25,8 @@ import javafx.scene.Node;
 import javafx.util.Math;
 import javafx.util.Sequences;
 
+import java.util.Comparator;
+
 public mixin class Pagination {
 
 	/**
@@ -32,6 +34,11 @@ public mixin class Pagination {
 	 * This gives a fluid scroll behavior.
 	 */
 	protected var fluid = false;
+
+	/**
+	 * Optional Comparator to sort items by. If set, any time the items variable is changed, items will be sorted by this Comparator.
+	 */
+	public var comparator:Comparator;
 
 	/**
 	 * The number of items to show per page.
@@ -48,7 +55,16 @@ public mixin class Pagination {
 	 * The nodes to display.
 	 */
 	public var items: Node[] on replace {
-		refresh( 0 );
+		if( comparator != null ) {
+			def sorted = Sequences.sort( items, comparator ) as Node[];
+			if( sorted != items ) {
+				items = sorted;
+			} else {
+				refresh( 0 );
+			}
+		} else {
+			refresh( 0 );
+		}
 	}
 	
 	/**
