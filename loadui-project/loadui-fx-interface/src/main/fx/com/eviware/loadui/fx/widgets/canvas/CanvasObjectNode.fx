@@ -100,7 +100,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	public var menuItems: Node[] = [
 		MenuItem {
 			text: ##[RENAME]"Rename"
-			action: function() { RenameModelItemDialog { modelItem: canvasObject } }
+			action: function() { RenameModelItemDialog { labeled: canvasObject } }
 		}, MenuItem {
 			text: ##[CLONE]"Clone"
 			action: function() { onClone() }

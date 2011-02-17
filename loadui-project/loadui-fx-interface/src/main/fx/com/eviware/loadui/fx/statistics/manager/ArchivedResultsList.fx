@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Resizable;
 
 import com.eviware.loadui.fx.FxUtils;
+import com.eviware.loadui.fx.util.ModelUtils;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
@@ -48,11 +49,15 @@ public class ArchivedResultsList extends BaseNode, Resizable, Droppable {
 	}
 	
 	def project = bind StatisticsWindow.instance.project on replace {
+		for( item in pagelist.items ) {
+			((item as DraggableFrame).draggable as ResultNode).execution.removeEventListener( BaseEvent.class, executionListener );
+		}
+		pagelist.items = [];
 		if( project != null ) {
 			for( execution in projectExecutionManager.getExecutions( project, false, true ) ) {
 				execution.addEventListener( BaseEvent.class, executionListener );
 				if( pagelist.lookup( execution.getId() ) == null ) {
-					insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
+					insert DraggableFrame { draggable: ResultNode { execution: execution, label: bind ModelUtils.getLabelHolder( execution ).label }, id: execution.getId() } before pagelist.items[0];
 				}
 			}
 		}
@@ -85,7 +90,7 @@ class ExecutionListener extends WeakEventHandler {
 		def execution = event.getSource() as Execution;
 		if( Execution.ARCHIVED.equals( event.getKey() ) and pagelist.lookup( execution.getId() ) == null ) {
 			FxUtils.runInFxThread( function() {
-				insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
+				insert DraggableFrame { draggable: ResultNode { execution: execution, label: bind ModelUtils.getLabelHolder( execution ).label }, id: execution.getId() } before pagelist.items[0];
 			} );
 		} else if( Execution.DELETED.equals( event.getKey() ) ) {
 			execution.removeEventListener( BaseEvent.class, executionListener );
@@ -106,7 +111,7 @@ class ExecutionsListener extends WeakEventHandler {
 					execution.addEventListener( BaseEvent.class, executionListener );
 					if( execution.isArchived() and pagelist.lookup( execution.getId() ) == null ) {
 						FxUtils.runInFxThread( function() {
-							insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
+							insert DraggableFrame { draggable: ResultNode { execution: execution, label: bind ModelUtils.getLabelHolder( execution ).label }, id: execution.getId() } before pagelist.items[0];
 						} );
 					}
 				}

@@ -126,7 +126,7 @@ public class TestCaseNode extends CanvasObjectNode {
 		MenuItem {
 			text: ##[RENAME]"Rename"
 			action: function() { RenameModelItemDialog { 
-				modelItem: canvasObject
+				labeled: canvasObject
 				uniqueInList: for( s in testCase.getProject().getScenes()) s
 				uniqueNameWarningText: "Test case with the specified name already exist in project!" 
 			} }

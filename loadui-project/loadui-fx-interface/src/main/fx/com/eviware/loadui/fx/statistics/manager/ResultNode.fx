@@ -29,6 +29,7 @@ import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.resources.DialogPanel;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
+import com.eviware.loadui.fx.dialogs.RenameModelItemDialog;
 
 import com.eviware.loadui.api.statistics.store.Execution;
 
@@ -40,6 +41,16 @@ public class ResultNode extends ResultNodeBase, Draggable, Deletable {
 	}
 	
 	postinit {
+		if( execution.isArchived() ) {
+			insert MenuItem {
+				text: ##[RENAME]"Rename"
+				action: function() {
+					RenameModelItemDialog {
+						labeled: execution
+					}
+				}
+			} into menuButton.items
+		}
 		insert MenuItem {
 			text: ##[DELETE]"Delete"
 			action: function() {

@@ -242,7 +242,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 							items: [
 								MenuItem {
 									text: ##[RENAME]"Rename"
-									action: function() { RenameModelItemDialog { modelItem: modelItem } }
+									action: function() { RenameModelItemDialog { labeled: modelItem } }
 								}, MenuItem {
 									text: ##[DELETE]"Delete"
 									action: function() { DeleteModelItemDialog { modelItem: modelItem } }

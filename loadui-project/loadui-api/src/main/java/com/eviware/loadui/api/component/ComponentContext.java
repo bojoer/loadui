@@ -23,10 +23,9 @@ import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.model.Labeled;
 import com.eviware.loadui.api.model.PropertyHolder;
 import com.eviware.loadui.api.statistics.MutableStatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.terminal.DualTerminal;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.MutableTerminalHolder;
@@ -40,7 +39,7 @@ import com.eviware.loadui.api.terminal.TerminalMessage;
  * 
  * @author dain.nilsson
  */
-public interface ComponentContext extends MutableTerminalHolder, PropertyHolder, CounterHolder
+public interface ComponentContext extends Labeled.Mutable, MutableTerminalHolder, PropertyHolder, CounterHolder
 {
 	/**
 	 * Used when triggering actions to specify the scope of the action.
@@ -199,16 +198,6 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	public String getCategory();
 
 	/**
-	 * Get the label for the Component.
-	 */
-	public String getLabel();
-
-	/**
-	 * Set the label for the Component.
-	 */
-	public void setLabel( String label );
-
-	/**
 	 * Get the ID for the Component.
 	 */
 	public String getId();
@@ -337,7 +326,7 @@ public interface ComponentContext extends MutableTerminalHolder, PropertyHolder,
 	 * @return
 	 */
 	public MutableStatisticVariable addStatisticVariable( String statisticVariableName, String... writerTypes );
-	
+
 	/**
 	 * Removes a StatisticVariable from the Component.
 	 * 

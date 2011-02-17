@@ -31,11 +31,9 @@ import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.api.statistics.store.Execution;
 
 public class ResultNodeBase extends BaseNode {
-	public var execution:Execution on replace {
-		label = execution.getLabel();
-	}
+	public var execution:Execution;
 	
-	var label:String = "Execution";
+	public var label:String = "Execution";
 	
 	protected var menuButton:MenuButton;
 	

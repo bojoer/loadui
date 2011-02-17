@@ -25,7 +25,7 @@ import com.eviware.loadui.api.model.Labeled;
  * 
  * @author dain.nilsson
  */
-public interface Execution extends Labeled, EventFirer
+public interface Execution extends Labeled.Mutable, EventFirer
 {
 	/**
 	 * BaseEvent key for notifying that this Execution has been archived.
@@ -83,11 +83,6 @@ public interface Execution extends Labeled, EventFirer
 	 * Marks execution as archived.
 	 */
 	public void archive();
-
-	/**
-	 * Sets custom label for this execution.
-	 */
-	public void setLabel( String label );
 
 	/**
 	 * Gets the length of this execution.
