@@ -25,6 +25,8 @@ import com.jidesoft.chart.model.ChartModelListener;
 import com.jidesoft.chart.style.ChartStyle;
 import com.jidesoft.chart.util.ColorFactory;
 
+def BLACK = FxUtils.getAwtColor( "#000000" );
+
 public class ComparedLineSegmentChartModel extends DefaultChartModel {
 	def listener = new Listener();
 	
@@ -44,7 +46,7 @@ public class ComparedLineSegmentChartModel extends DefaultChartModel {
 	}
 	
 	def color = bind baseModel.color on replace {
-		chartStyle.setLineColor( ColorFactory.intensify( FxUtils.getAwtColor( color ), -100 ) );
+		chartStyle.setLineColor( ColorFactory.transitionColor( FxUtils.getAwtColor( color ), BLACK, 0.5 ) );
 	}
 	
 	function updateStroke():Void {
