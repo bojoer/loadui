@@ -81,6 +81,7 @@ public class StatisticsWindow {
 	public var stage:Stage;
 	public var project:ProjectItem on replace {
 	    topMenu.project = project;
+	    comparedExecution = null;
 	}
 	
 	public var scene:Scene on replace {
