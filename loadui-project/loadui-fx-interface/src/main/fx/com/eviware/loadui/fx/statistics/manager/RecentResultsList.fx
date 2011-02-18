@@ -18,8 +18,10 @@ package com.eviware.loadui.fx.statistics.manager;
 import javafx.scene.Node;
 import javafx.scene.layout.Resizable;
 import javafx.scene.layout.Container;
+import javafx.scene.control.Label;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
+import javafx.geometry.VPos;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.util.ModelUtils;
@@ -137,6 +139,16 @@ class MyPageList extends PageList {
 	override var leftMargin = 235;
 	postinit {
 		def container = lookup("buttonBox") as Container;
+		insert Label {
+			width: 150
+			height: 45
+			managed: false
+			layoutX: bind currentExecutionNode.layoutX + 10
+			layoutY: bind currentExecutionNode.layoutY + currentExecutionNode.layoutBounds.height + 8
+			styleClass: "item-label"
+			text: "Current Run"
+			vpos: VPos.TOP
+		} before container.content[0];
 		insert currentExecutionNode before container.content[0];
 	}
 }
