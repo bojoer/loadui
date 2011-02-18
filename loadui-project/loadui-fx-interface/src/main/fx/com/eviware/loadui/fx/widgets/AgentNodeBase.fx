@@ -33,6 +33,7 @@ import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.resources.DialogPanel;
+import com.eviware.loadui.fx.ui.ActivityLed;
 
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.AgentItem;
@@ -58,10 +59,6 @@ import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.MenuButton;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentNodeBase" );
-
-def ledActive = Image { url: "{__ROOT__}images/png/led-active.png" };
-def ledInactive = Image { url: "{__ROOT__}images/png/led-inactive.png" };
-def ledDisabled = Image { url: "{__ROOT__}images/png/led-disabled.png" };
 
 /**
  * Node to display in the AgentList representing a AgentItem.
@@ -131,9 +128,7 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 					Label {
 						text: bind label.toUpperCase()
 						tooltip: labelTooltip = Tooltip { text: bind "{label} ({url})" }
-						graphic: ImageView {
-							image: bind if( enabled and ready ) ledActive else if( enabled and not ready ) ledInactive else ledDisabled
-						}
+						graphic: ActivityLed { disable : bind not enabled, active: bind ready }
 						onMouseEntered: function(e) { labelTooltip.activate() }
 						onMouseExited: function(e) { labelTooltip.deactivate() }
 					}

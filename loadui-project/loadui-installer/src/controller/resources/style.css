@@ -289,6 +289,31 @@
 	-fx-padding: 0 2 0 2;
 }
 
+.activity-led-on {
+	-fx-outer-border: #000000;
+	-fx-inner-border: linear (0%,0%) to (100%,100%) stops (0%, #cb7070) (100%, #8a1818);
+	-fx-body-color: linear (0%,0%) to (100%,100%) stops (0%, #f04040) (100%, #d01818);
+}
+
+.activity-led-off {
+	-fx-outer-border: #000000;
+	-fx-inner-border: linear (0%,0%) to (100%,100%) stops (0%, #956f6f) (100%, #3b0606);
+	-fx-body-color: linear (0%,0%) to (100%,100%) stops (0%, #8a4141) (100%, #641818);
+}
+
+.activity-led:disabled {
+	-fx-outer-border: linear (0%,0%) to (0%,100%) stops (0%, #808284) (100%, #8a8c8e);
+	-fx-inner-border: linear (0%,0%) to (0%,100%) stops (0%, #656668) (100%, #87898b);
+	-fx-body-color: linear (0%,0%) to (100%,0%) stops (0%, #929496) (100%, #808284);
+}
+
+.activity-led *.led {
+	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+	-fx-background-radius: 3, 2, 0;
+	-fx-background-insets: 0, 1, 2;
+	-fx-padding: 3.5;
+}
+
 .page-list {
 	-fx-background-color: linear (0%,0%) to (0%,100%) stops (0%, #262626) (50%, #636363) (100%, #272727), linear (0%,0%) to (0%,100%) stops (0%, #262626) (70%, #343434) (100%, #272727);
 	-fx-background-insets: 0, 0 2;

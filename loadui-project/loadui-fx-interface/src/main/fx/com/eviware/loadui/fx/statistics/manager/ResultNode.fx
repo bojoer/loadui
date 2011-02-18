@@ -36,6 +36,8 @@ import com.eviware.loadui.api.statistics.store.Execution;
 public class ResultNode extends ResultNodeBase, Draggable, Deletable {
 	override var opacity = bind if( dragging ) 0.8 else 1;
 	
+	override var active = bind StatisticsWindow.execution == execution or StatisticsWindow.comparedExecution == execution;
+	
 	override function doDelete():Void {
 		execution.delete();
 	}
@@ -46,6 +48,7 @@ public class ResultNode extends ResultNodeBase, Draggable, Deletable {
 				text: ##[RENAME]"Rename"
 				action: function() {
 					RenameModelItemDialog {
+						scene: AppState.byName( "STATISTICS" ).scene
 						labeled: execution
 					}
 				}

@@ -18,6 +18,8 @@ package com.eviware.loadui.fx.statistics.manager;
 import javafx.scene.Node;
 import javafx.scene.layout.Resizable;
 import javafx.scene.layout.Container;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.util.ModelUtils;
@@ -38,17 +40,18 @@ import com.eviware.loadui.util.BeanInjector;
 import java.util.Comparator;
 
 public class RecentResultsList extends BaseNode, Resizable {
+	def currentExecutionNode = CurrentExecutionNode {};
 	def pagelist = MyPageList { width: bind width, height: bind height, label: "Recent Results" };
 	def listener = new ExecutionsListener();
 	def executionListener = new ExecutionListener();
-	def executionStoppedListener = new ExecutionStoppedListener();
+	def executionRunningListener = new ExecutionRunningListener();
 	def comparator = new ExecutionComparator();
 	
 	def projectExecutionManager:ProjectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
 	
 	def manager:ExecutionManager = BeanInjector.getBean( ExecutionManager.class ) on replace {
 		manager.addEventListener( CollectionEvent.class, listener );
-		manager.addExecutionListener( executionStoppedListener );
+		manager.addExecutionListener( executionRunningListener );
 	}
 	
 	def project = bind StatisticsWindow.instance.project on replace {
@@ -111,9 +114,16 @@ class ExecutionsListener extends WeakEventHandler {
 	}
 }
 
-class ExecutionStoppedListener extends ExecutionListenerAdapter {
+class ExecutionRunningListener extends ExecutionListenerAdapter {
+	override function executionStarted( oldState ) {
+		FxUtils.runInFxThread( function():Void {
+			currentExecutionNode.blinkAnim.playFromStart();
+		} );
+	}
 	override function executionStopped( oldState ) {
 		FxUtils.runInFxThread( function() {
+			currentExecutionNode.blinkAnim.stop();
+			currentExecutionNode.active = false;
 			def execution = StatisticsWindow.currentExecution;
 			if( pagelist.lookup( execution.getId() ) == null ) {
 				insert DraggableFrame { draggable: ResultNode { execution: execution, label: bind ModelUtils.getLabelHolder( execution ).label }, id: execution.getId() } before pagelist.items[0];
@@ -127,7 +137,23 @@ class MyPageList extends PageList {
 	override var leftMargin = 235;
 	postinit {
 		def container = lookup("buttonBox") as Container;
-		insert ResultNodeBase { execution: bind StatisticsWindow.currentExecution, label: "Current execution" } before container.content[0];
+		insert currentExecutionNode before container.content[0];
+	}
+}
+
+class CurrentExecutionNode extends ResultNodeBase {
+	override var label = "Current run";
+	override var execution = bind StatisticsWindow.currentExecution;
+	def blinkAnim = Timeline {
+		repeatCount: Timeline.INDEFINITE
+		keyFrames: [
+			KeyFrame {
+				time: 500ms
+				action: function() {
+					active = not active;
+				}
+			}
+		]
 	}
 }
 
