@@ -58,9 +58,13 @@ import java.lang.Math;
 
 public-read var instance:StatisticsWindow;
 public var currentExecution:Execution on replace oldExecution {
-	if( execution == null or execution == oldExecution )
-		execution = currentExecution;
+	if( currentExecution != null ) {
+		if( execution == null or execution == lastExecution )
+			execution = currentExecution;
+		lastExecution = currentExecution;
+	}
 }
+var lastExecution:Execution;
 public var execution:Execution on replace {
 	if( execution == comparedExecution )
 		comparedExecution = null;
@@ -210,6 +214,12 @@ class CurrentExecutionListener extends ExecutionListenerAdapter {
 	override function executionStarted( oldState ) {
 		runInFxThread( function():Void {
 			currentExecution = statisticsManager.getExecutionManager().getCurrentExecution();
+		} );
+	}
+	
+	override function executionStopped( oldState ) {
+		runInFxThread( function():Void {
+			currentExecution = null;
 		} );
 	}
 }

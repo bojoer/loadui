@@ -46,14 +46,12 @@ public class RecentResultsList extends BaseNode, Resizable {
 	def pagelist = MyPageList { width: bind width, height: bind height, label: "Recent Results" };
 	def listener = new ExecutionsListener();
 	def executionListener = new ExecutionListener();
-	def executionRunningListener = new ExecutionRunningListener();
 	def comparator = new ExecutionComparator();
 	
 	def projectExecutionManager:ProjectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
 	
 	def manager:ExecutionManager = BeanInjector.getBean( ExecutionManager.class ) on replace {
 		manager.addEventListener( CollectionEvent.class, listener );
-		manager.addExecutionListener( executionRunningListener );
 	}
 	
 	def project = bind StatisticsWindow.instance.project on replace {
@@ -116,24 +114,6 @@ class ExecutionsListener extends WeakEventHandler {
 	}
 }
 
-class ExecutionRunningListener extends ExecutionListenerAdapter {
-	override function executionStarted( oldState ) {
-		FxUtils.runInFxThread( function():Void {
-			currentExecutionNode.blinkAnim.playFromStart();
-		} );
-	}
-	override function executionStopped( oldState ) {
-		FxUtils.runInFxThread( function() {
-			currentExecutionNode.blinkAnim.stop();
-			currentExecutionNode.active = false;
-			def execution = StatisticsWindow.currentExecution;
-			if( pagelist.lookup( execution.getId() ) == null ) {
-				insert DraggableFrame { draggable: ResultNode { execution: execution, label: bind ModelUtils.getLabelHolder( execution ).label }, id: execution.getId() } before pagelist.items[0];
-			}
-		} );
-	}
-}
-
 class MyPageList extends PageList {
 	override var comparator = new ExecutionComparator();
 	override var leftMargin = 235;
@@ -155,7 +135,17 @@ class MyPageList extends PageList {
 
 class CurrentExecutionNode extends ResultNodeBase {
 	override var label = "Current run";
-	override var execution = bind StatisticsWindow.currentExecution;
+	override var execution = bind StatisticsWindow.currentExecution on replace oldExecution {
+		if( execution != null ) {
+			currentExecutionNode.blinkAnim.playFromStart();
+		} else {
+			currentExecutionNode.blinkAnim.stop();
+			currentExecutionNode.active = false;
+		}
+		if( oldExecution != null and pagelist.lookup( oldExecution.getId() ) == null ) {
+			insert DraggableFrame { draggable: ResultNode { execution: oldExecution, label: bind ModelUtils.getLabelHolder( oldExecution ).label }, id: oldExecution.getId() } before pagelist.items[0];
+		}
+	}
 	def blinkAnim = Timeline {
 		repeatCount: Timeline.INDEFINITE
 		keyFrames: [

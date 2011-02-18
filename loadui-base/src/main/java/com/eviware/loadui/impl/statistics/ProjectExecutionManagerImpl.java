@@ -200,7 +200,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 
 		private void notifyAgents( String message, Collection<AgentItem> collection )
 		{
-			System.out.println( "NOTIFY AGENTS: " + message );
 			for( AgentItem agent : collection )
 				agent.sendMessage( CHANNEL, message );
 		}
