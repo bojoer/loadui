@@ -576,6 +576,10 @@
 	-fx-body-color: #c9c9c9;
 }
 
+.result-node-base *.dialog-panel {
+	-fx-body-color: #c9c9c9;
+}
+
 .canvas-object-node *.dialog-panel {
 	-fx-body-color: #d3d3d3;
 	-fx-control-inner-background: #dbdbdb;

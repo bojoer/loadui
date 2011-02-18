@@ -43,6 +43,8 @@ public class ResultNodeBase extends BaseNode {
 	
 	protected var menuButton:MenuButton;
 	
+	override var styleClass = "result-node-base";
+	
 	init {
 		addMouseHandler( MOUSE_PRIMARY_CLICKED, function( e:MouseEvent ):Void {
 			if( e.clickCount == 2 ) {
