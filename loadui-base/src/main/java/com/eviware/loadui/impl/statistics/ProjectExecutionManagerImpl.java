@@ -22,6 +22,7 @@ import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
+import com.eviware.loadui.api.summary.Summary;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 {
@@ -151,6 +152,9 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 					hasCurrent = false;
 					executionManager.stopExecution();
 
+					runningProject.addEventListener( BaseEvent.class,
+							new SummaryAttacher( executionManager.getCurrentExecution() ) );
+
 					// remove the oldest autosaved execution if needed
 					Set<Execution> executions = getExecutions( runningProject, true, false );
 					while( executions.size() > runningProject.getNumberOfAutosaves()
@@ -205,4 +209,25 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 		}
 	}
 
+	private class SummaryAttacher implements EventHandler<BaseEvent>
+	{
+		private final Execution execution;
+
+		public SummaryAttacher( Execution execution )
+		{
+			this.execution = execution;
+		}
+
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( CanvasItem.SUMMARY.equals( event.getKey() ) )
+			{
+				event.getSource().removeEventListener( BaseEvent.class, this );
+				Summary summary = ( ( CanvasItem )event.getSource() ).getSummary();
+
+				// TODO: Attach summary to execution.
+			}
+		}
+	}
 }
