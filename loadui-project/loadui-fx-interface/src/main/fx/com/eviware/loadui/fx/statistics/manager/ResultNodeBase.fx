@@ -26,6 +26,8 @@ import javafx.geometry.VPos;
 import com.javafx.preview.control.MenuButton;
 import com.javafx.preview.control.MenuItem;
 
+import com.sun.javafx.scene.layout.Region;
+
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.ActivityLed;
 import com.eviware.loadui.fx.ui.node.BaseNode;
@@ -58,7 +60,7 @@ public class ResultNodeBase extends BaseNode {
 		DialogPanel {
 			layoutInfo: LayoutInfo { width: 155, height: 108 }
 			body: VBox {
-				padding: Insets { left: 8, right: 8, top: 5 }
+				padding: Insets { left: 8, right: 8, top: 5, bottom: 8 }
 				spacing: 10
 				content: [
 					menuButton = MenuButton {
@@ -72,6 +74,8 @@ public class ResultNodeBase extends BaseNode {
 								AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
 							}
 						}
+					}, Region {
+						styleClass: "graph"
 					}
 				]
 			}

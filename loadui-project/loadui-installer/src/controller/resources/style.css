@@ -580,6 +580,12 @@
 	-fx-body-color: #c9c9c9;
 }
 
+.result-node-base *.graph {
+	-fx-background-color: rgba(0,0,0,0.3), #000000;
+	-fx-background-radius: 5;
+	-fx-background-insets: 0, 1;
+}
+
 .canvas-object-node *.dialog-panel {
 	-fx-body-color: #d3d3d3;
 	-fx-control-inner-background: #dbdbdb;
