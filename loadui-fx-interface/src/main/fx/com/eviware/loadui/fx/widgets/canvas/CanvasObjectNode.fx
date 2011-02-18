@@ -48,6 +48,7 @@ import com.javafx.preview.control.MenuButton;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Movable;
+import com.eviware.loadui.fx.ui.ActivityLed;
 import com.eviware.loadui.fx.widgets.ModelItemHolder;
 import com.eviware.loadui.fx.ui.resources.DialogPanel;
 import com.eviware.loadui.fx.dialogs.RenameModelItemDialog;
@@ -64,9 +65,6 @@ import java.util.EventObject;
 import org.slf4j.LoggerFactory;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.canvas.CanvasObjectNode" );
-
-def ledActive = Image { url: "{__ROOT__}images/png/led-active.png" };
-def ledInactive = Image { url: "{__ROOT__}images/png/led-inactive.png" };
 
 public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHolder, EventHandler {
 	
@@ -194,9 +192,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 						layoutInfo: LayoutInfo { margin: Insets { bottom: 3 } }
 						content: [
 							Label {
-								graphic: ImageView {
-									image: bind if( active ) ledActive else ledInactive
-								}
+								graphic: ActivityLed { active: bind active }
 								text: bind label
 								tooltip: Tooltip { text: bind label }
 								layoutInfo: LayoutInfo { width: 50, hfill: true, hgrow: Priority.ALWAYS }

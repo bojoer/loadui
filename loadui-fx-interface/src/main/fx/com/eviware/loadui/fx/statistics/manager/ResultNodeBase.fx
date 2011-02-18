@@ -18,12 +18,16 @@ package com.eviware.loadui.fx.statistics.manager;
 import javafx.scene.Node;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Label;
 import javafx.geometry.Insets;
+import javafx.geometry.VPos;
 import com.javafx.preview.control.MenuButton;
 import com.javafx.preview.control.MenuItem;
 
 import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.ui.ActivityLed;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.resources.DialogPanel;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
@@ -34,6 +38,8 @@ public class ResultNodeBase extends BaseNode {
 	public var execution:Execution;
 	
 	public var label:String = "Execution";
+	
+	public var active = false;
 	
 	protected var menuButton:MenuButton;
 	
@@ -55,6 +61,7 @@ public class ResultNodeBase extends BaseNode {
 				content: [
 					menuButton = MenuButton {
 						styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
+						graphic: ActivityLed { active: bind active }
 						text: bind label.toUpperCase();
 						items: MenuItem {
 							text: ##[OPEN]"Open"

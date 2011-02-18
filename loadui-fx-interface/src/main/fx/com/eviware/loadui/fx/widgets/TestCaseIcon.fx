@@ -42,6 +42,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 
 import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.ui.ActivityLed;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
@@ -64,10 +65,6 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.fx.AppState;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.TestCaseIcon" );
-
-def ledActive = Image { url: "{__ROOT__}images/png/led-active.png" }
-def ledInactive = Image { url: "{__ROOT__}images/png/led-inactive.png" }
-
 
 /**
  * Node to display in the AgentList representing a AgentItem.
@@ -175,7 +172,7 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 				Label {
 					layoutX: 3
 					layoutInfo: LayoutInfo { width: 90 }
-					graphic: ImageView { image: bind if( running ) ledActive else ledInactive }
+					graphic: ActivityLed { active: bind running }
 					textFill: Color.rgb(0, 0, 0, 0.5)
 					text: bind label
 					height: bind height
