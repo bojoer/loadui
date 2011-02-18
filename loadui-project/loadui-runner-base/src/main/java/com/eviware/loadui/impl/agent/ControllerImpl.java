@@ -94,14 +94,18 @@ public class ControllerImpl
 			{
 				if( connected )
 				{
-					clients.add( endpoint );
-					ControllerImpl.this.streamingExecutionManager.addEndpoint( endpoint );
-					AgentListener agentListener = new AgentListener();
-					endpoint.addConnectionListener( agentListener );
-					endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, agentListener );
-					endpoint.addMessageListener( SceneCommunication.CHANNEL, new SceneListener() );
-					endpoint.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL, new ComponentContextListener() );
-					endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.CONNECTED, null ) );
+					if( clients.add( endpoint ) )
+					{
+						log.info( "Client connected" );
+						ControllerImpl.this.streamingExecutionManager.addEndpoint( endpoint );
+						AgentListener agentListener = new AgentListener();
+						endpoint.addConnectionListener( agentListener );
+						endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, agentListener );
+						endpoint.addMessageListener( SceneCommunication.CHANNEL, new SceneListener() );
+						endpoint.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL,
+								new ComponentContextListener() );
+						endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.CONNECTED, null ) );
+					}
 				}
 				else
 				{
@@ -113,9 +117,9 @@ public class ControllerImpl
 		} );
 		for( MessageEndpoint endpoint : serverEndpoint.getConnectedEndpoints() )
 		{
-			if( !clients.contains( endpoint ) )
+			if( clients.add( endpoint ) )
 			{
-				clients.add( endpoint );
+				log.info( "Client connected" );
 				ControllerImpl.this.streamingExecutionManager.addEndpoint( endpoint );
 				AgentListener agentListener = new AgentListener();
 				endpoint.addConnectionListener( agentListener );

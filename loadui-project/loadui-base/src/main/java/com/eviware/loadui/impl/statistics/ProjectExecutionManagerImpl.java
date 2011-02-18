@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
@@ -90,9 +88,9 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				if( WorkspaceItem.PROJECTS.equals( event.getKey() ) )
 				{
 					ProjectItem addedProject = ( ProjectItem )event.getElement();
-					
+
 					// lazily get project->execution mapping from disk if needed
-					if ( !projectIdToExecutions.containsKey( addedProject.getId() ) )
+					if( !projectIdToExecutions.containsKey( addedProject.getId() ) )
 					{
 						HashSet<Execution> executionSet = new HashSet<Execution>();
 						for( String name : executionManager.getExecutionNames() )
@@ -146,7 +144,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 
 					// notify agents if in distributed mode
 					if( !localMode )
-						notifyAgents( CHANNEL, executionId, runningProject.getWorkspace().getAgents() );
+						notifyAgents( executionId, runningProject.getWorkspace().getAgents() );
 				}
 				else if( hasCurrent && CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
 				{
@@ -171,7 +169,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 					if( !localMode )
 					{
 						String message = "stop_" + timestamp;
-						notifyAgents( CHANNEL, message, runningProject.getWorkspace().getAgents() );
+						notifyAgents( message, runningProject.getWorkspace().getAgents() );
 					}
 				}
 				else if( CanvasItem.STOP_ACTION.equals( event.getKey() ) )
@@ -180,7 +178,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 					if( !localMode )
 					{
 						String message = "pause_" + timestamp;
-						notifyAgents( CHANNEL, message, runningProject.getWorkspace().getAgents() );
+						notifyAgents( message, runningProject.getWorkspace().getAgents() );
 					}
 				}
 				else if( executionManager.getState() == State.PAUSED && CanvasItem.START_ACTION.equals( event.getKey() ) )
@@ -194,14 +192,15 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 					if( !localMode )
 					{
 						String message = "unpause_" + timestamp;
-						notifyAgents( CHANNEL, message, runningProject.getWorkspace().getAgents() );
+						notifyAgents( message, runningProject.getWorkspace().getAgents() );
 					}
 				}
 			}
 		}
 
-		private void notifyAgents( String channel, String message, Collection<AgentItem> collection )
+		private void notifyAgents( String message, Collection<AgentItem> collection )
 		{
+			System.out.println( "NOTIFY AGENTS: " + message );
 			for( AgentItem agent : collection )
 				agent.sendMessage( CHANNEL, message );
 		}

@@ -224,21 +224,51 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 		return executionState;
 	}
 
+	@Override
+	public void release()
+	{
+		ReleasableUtils.release( eventSupport );
+	}
+
+	@Override
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.addEventListener( type, listener );
+	}
+
+	@Override
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.removeEventListener( type, listener );
+	}
+
+	@Override
+	public void clearEventListeners()
+	{
+		eventSupport.clearEventListeners();
+	}
+
+	@Override
+	public void fireEvent( EventObject event )
+	{
+		eventSupport.fireEvent( event );
+	}
+
 	private class ExecutionMessageListener implements MessageListener
 	{
 		@Override
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
-			log.debug( "Received from controller : " + data.toString() );
 			String message = data.toString();
-			if( message.startsWith( "execution" ) )
-				startExecution( data.toString(), System.currentTimeMillis() );
-			else if( message.startsWith( "pause" ) )
+			log.debug( "Received from controller : " + message );
+			if( message.startsWith( "pause" ) )
 				pauseExecution();
 			else if( message.startsWith( "stop" ) )
 				stopExecution();
 			else if( message.startsWith( "unpause" ) )
-				startExecution( data.toString(), System.currentTimeMillis() );
+				startExecution( message, System.currentTimeMillis() );
+			else
+				startExecution( message, System.currentTimeMillis() );
 		}
 	}
 
@@ -337,35 +367,5 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 		{
 			throw new UnsupportedOperationException();
 		}
-	}
-
-	@Override
-	public void release()
-	{
-		ReleasableUtils.release( eventSupport );
-	}
-
-	@Override
-	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
-	{
-		eventSupport.addEventListener( type, listener );
-	}
-
-	@Override
-	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
-	{
-		eventSupport.removeEventListener( type, listener );
-	}
-
-	@Override
-	public void clearEventListeners()
-	{
-		eventSupport.clearEventListeners();
-	}
-
-	@Override
-	public void fireEvent( EventObject event )
-	{
-		eventSupport.fireEvent( event );
 	}
 }
