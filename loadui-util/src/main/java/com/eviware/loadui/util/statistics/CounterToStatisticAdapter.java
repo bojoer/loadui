@@ -19,7 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.eviware.loadui.api.counter.Counter;
-import com.eviware.loadui.api.statistics.MutableStatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.util.BeanInjector;
 
 /**
@@ -30,14 +30,14 @@ import com.eviware.loadui.util.BeanInjector;
 public class CounterToStatisticAdapter
 {
 	private final Counter counter;
-	private final MutableStatisticVariable statisticVariable;
+	private final StatisticVariable.Mutable statisticVariable;
 
-	public CounterToStatisticAdapter( Counter counter, MutableStatisticVariable statisticVariable )
+	public CounterToStatisticAdapter( Counter counter, StatisticVariable.Mutable statisticVariable )
 	{
 		this( counter, statisticVariable, BeanInjector.getBean( ScheduledExecutorService.class ) );
 	}
 
-	public CounterToStatisticAdapter( Counter counter, MutableStatisticVariable statisticVariable,
+	public CounterToStatisticAdapter( Counter counter, StatisticVariable.Mutable statisticVariable,
 			ScheduledExecutorService scheduledExecutor )
 	{
 		this.counter = counter;

@@ -50,7 +50,7 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.property.Property;
-import com.eviware.loadui.api.statistics.MutableStatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.SampleStats;
 import com.eviware.loadui.api.summary.SampleStatsImpl;
 import com.eviware.loadui.api.terminal.InputTerminal;
@@ -114,9 +114,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final Map<String, String> remoteValues = new HashMap<String, String>();
 	private final OutputTerminal controllerTerminal;
 
-	private final MutableStatisticVariable timeTakenVariable;
-	private final MutableStatisticVariable responseSizeVariable;
-	private final MutableStatisticVariable throughputVariable;
+	private final StatisticVariable.Mutable timeTakenVariable;
+	private final StatisticVariable.Mutable responseSizeVariable;
+	private final StatisticVariable.Mutable throughputVariable;
 
 	/**
 	 * Constructs an RunnerBase.
@@ -600,8 +600,6 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		avgTime = avgSum / statisticsData.size();
 	}
 
-
-
 	@Override
 	public List<SampleStats> getTopSamples()
 	{
@@ -613,7 +611,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		return new ArrayList<SampleStats>( bottomStats );
 	}
-	
+
 	@Override
 	public Map<String, String> getStatistics()
 	{

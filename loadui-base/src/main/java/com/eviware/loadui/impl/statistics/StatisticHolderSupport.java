@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.model.Releasable;
-import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
@@ -98,7 +97,7 @@ public class StatisticHolderSupport implements Releasable
 	 * @param statisticVariableName
 	 * @return
 	 */
-	public MutableStatisticVariable addStatisticVariable( String statisticVariableName )
+	public StatisticVariable.Mutable addStatisticVariable( String statisticVariableName )
 	{
 		if( variables.containsKey( statisticVariableName ) )
 			return variables.get( statisticVariableName );

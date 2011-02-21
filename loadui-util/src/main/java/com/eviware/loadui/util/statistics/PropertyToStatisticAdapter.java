@@ -18,10 +18,10 @@ package com.eviware.loadui.util.statistics;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.property.Property;
-import com.eviware.loadui.api.statistics.MutableStatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 
 /**
- * Adapts events fired for a Property to update a MutableStatisticVariable.
+ * Adapts events fired for a Property to update a StatisticVariable.Mutable.
  * 
  * @author dain.nilsson
  * @param <T>
@@ -29,9 +29,9 @@ import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 public class PropertyToStatisticAdapter<T extends Number>
 {
 	private final Property<T> property;
-	private final MutableStatisticVariable statisticVariable;
+	private final StatisticVariable.Mutable statisticVariable;
 
-	public PropertyToStatisticAdapter( Property<T> property, MutableStatisticVariable statisticVariable )
+	public PropertyToStatisticAdapter( Property<T> property, StatisticVariable.Mutable statisticVariable )
 	{
 		this.property = property;
 		this.statisticVariable = statisticVariable;

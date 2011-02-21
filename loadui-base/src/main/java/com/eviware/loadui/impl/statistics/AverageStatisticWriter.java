@@ -51,9 +51,9 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 	private PriorityQueue<Double> sortedValues = new PriorityQueue<Double>();
 
 	public AverageStatisticWriter( StatisticsManager statisticsManager, StatisticVariable variable,
-			Map<String, Class<? extends Number>> trackStructure )
+			Map<String, Class<? extends Number>> trackStructure, Map<String, Object> config )
 	{
-		super( statisticsManager, variable, trackStructure );
+		super( statisticsManager, variable, trackStructure, config );
 	}
 
 	@Override
@@ -62,15 +62,6 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 		return TYPE;
 	}
 
-	@Override
-	public int getValueCount()
-	{
-		return 1;
-	}
-
-	/**
-	 * values : [ value:long ]
-	 */
 	@Override
 	public void update( long timestamp, Number value )
 	{
@@ -258,8 +249,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			trackStructure.put( Stats.PERCENTILE_90TH.name(), Double.class );
 			trackStructure.put( Stats.MEDIAN.name(), Double.class );
 
-			return new AverageStatisticWriter( statisticsManager, variable, trackStructure );
+			return new AverageStatisticWriter( statisticsManager, variable, trackStructure, config );
 		}
 	}
-
 }

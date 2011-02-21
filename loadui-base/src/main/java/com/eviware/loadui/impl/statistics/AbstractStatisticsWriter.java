@@ -18,6 +18,7 @@ package com.eviware.loadui.impl.statistics;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
@@ -40,6 +41,9 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 {
 	public final static Logger log = LoggerFactory.getLogger( AbstractStatisticsWriter.class );
 
+	public static final String DELAY = "delay";
+	public static final String NAMES = "names";
+
 	private final StatisticsManager manager;
 	private final StatisticVariable variable;
 	private final String id;
@@ -60,15 +64,19 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 	private HashSet<Entry> firstLevelEntries = new HashSet<Entry>();
 
 	private final ExecutionStateListener executionStateListener;
+	private final Map<String, Object> config;
 
+	@SuppressWarnings( "unchecked" )
 	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
-			Map<String, Class<? extends Number>> values )
+			Map<String, Class<? extends Number>> values, Map<String, Object> config )
 	{
+		this.config = config;
 		this.manager = manager;
 		this.variable = variable;
 		id = DigestUtils.md5Hex( variable.getStatisticHolder().getId() + variable.getName() + getType() );
 		descriptor = new TrackDescriptorImpl( id, values );
-		delay = manager.getMinimumWriteDelay();
+		delay = config.containsKey( DELAY ) ? ( ( Number )config.get( DELAY ) ).longValue() : manager
+				.getMinimumWriteDelay();
 
 		// init AggregationLevels, each level getting a reference to the previous
 		// level's aggregated entries.
@@ -106,12 +114,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 	public StatisticVariable getStatisticVariable()
 	{
 		return variable;
-	}
-
-	@Override
-	public void setMinimumWriteDelay( long delay )
-	{
-		this.delay = delay;
 	}
 
 	@Override

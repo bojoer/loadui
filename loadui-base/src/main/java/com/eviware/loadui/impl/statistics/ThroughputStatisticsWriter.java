@@ -48,9 +48,9 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	public ThroughputStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
-			Map<String, Class<? extends Number>> values )
+			Map<String, Class<? extends Number>> values, Map<String, Object> config )
 	{
-		super( manager, variable, values );
+		super( manager, variable, values, config );
 	}
 
 	@Override
@@ -70,15 +70,6 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 		lastTimeFlushed += delay;
 
 		return at( lastTimeFlushed ).put( Stats.BPS.name(), bps ).put( Stats.TPS.name(), tps ).build();
-	}
-
-	/**
-	 * this writer needs number of operations/transfers/bytes
-	 */
-	@Override
-	public int getValueCount()
-	{
-		return 1;
 	}
 
 	@Override
@@ -153,7 +144,7 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 			trackStructure.put( Stats.BPS.name(), Double.class );
 			trackStructure.put( Stats.TPS.name(), Double.class );
 
-			return new ThroughputStatisticsWriter( statisticsManager, variable, trackStructure );
+			return new ThroughputStatisticsWriter( statisticsManager, variable, trackStructure, config );
 		}
 	}
 }

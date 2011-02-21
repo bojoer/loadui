@@ -22,12 +22,12 @@ import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.Releasable;
-import com.eviware.loadui.api.statistics.MutableStatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 
 public class CounterStatisticSupport implements EventHandler<CounterEvent>, Releasable
 {
 	private CounterHolder counterHolder;
-	private final Map<String, MutableStatisticVariable> counters = new HashMap<String, MutableStatisticVariable>();
+	private final Map<String, StatisticVariable.Mutable> counters = new HashMap<String, StatisticVariable.Mutable>();
 
 	public CounterStatisticSupport( CounterHolder counterHolder )
 	{
@@ -45,7 +45,7 @@ public class CounterStatisticSupport implements EventHandler<CounterEvent>, Rele
 		counterHolder.removeEventListener( CounterEvent.class, this );
 	}
 
-	public void addCounterVariable( String counterName, MutableStatisticVariable statisticVariable )
+	public void addCounterVariable( String counterName, StatisticVariable.Mutable statisticVariable )
 	{
 		if( counters.put( counterName, statisticVariable ) != null )
 			throw new IllegalArgumentException( "CounterStatisticSupport already contains a mapping for " + counterName );

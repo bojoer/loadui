@@ -31,22 +31,6 @@ import com.eviware.loadui.api.statistics.store.TrackDescriptor;
  */
 public interface StatisticsWriter extends Addressable
 {
-	/**
-	 * Gets the number of values which are needed each update. This number does
-	 * not have to be the same as the number of values stored per entry.
-	 * 
-	 * @return
-	 */
-	public int getValueCount();
-
-	/**
-	 * Sets the minimum write delay for a single instance of StatisticsWriter. No
-	 * matter how many calls are made to update(), the StatisticsWriter should
-	 * never store data to the underlying storage more often than this delay.
-	 * 
-	 * @param delay
-	 */
-	public void setMinimumWriteDelay( long delay );
 
 	/**
 	 * Updates the StatisticsWriter with new data, which may trigger data to be

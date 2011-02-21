@@ -47,9 +47,9 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	protected Double maximum;
 
 	public MinMaxStatisticWriter( StatisticsManager manager, StatisticVariable variable,
-			Map<String, Class<? extends Number>> values )
+			Map<String, Class<? extends Number>> values, Map<String, Object> config )
 	{
-		super( manager, variable, values );
+		super( manager, variable, values, config );
 	}
 
 	@Override
@@ -71,12 +71,6 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 			lastTimeFlushed = currTime;
 			return at( lastTimeFlushed ).put( Stats.MAX.name(), maximum ).put( Stats.MIN.name(), minimum ).build();
 		}
-	}
-
-	@Override
-	public int getValueCount()
-	{
-		return 1;
 	}
 
 	@Override
@@ -137,7 +131,7 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 			trackStructure.put( Stats.MAX.name(), Long.class );
 			trackStructure.put( Stats.MIN.name(), Long.class );
 
-			return new MinMaxStatisticWriter( statisticsManager, variable, trackStructure );
+			return new MinMaxStatisticWriter( statisticsManager, variable, trackStructure, config );
 		}
 	}
 

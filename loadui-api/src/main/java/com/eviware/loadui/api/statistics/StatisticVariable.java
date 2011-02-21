@@ -66,11 +66,29 @@ public interface StatisticVariable
 	 * @return
 	 */
 	public Statistic<?> getStatistic( String statisticName, String source );
-	
+
 	/**
 	 * Gets all writers assigned to this variable
 	 * 
 	 * @return
 	 */
 	public Set<StatisticsWriter> getWriters();
+
+	/**
+	 * Mutable version of a StatisticVariable which is used to provide data to
+	 * its writers.
+	 * 
+	 * @author dain.nilsson
+	 */
+	public interface Mutable extends StatisticVariable
+	{
+		/**
+		 * Updates the StatisticVariable.Mutable with new data, which will be
+		 * passed to the attached StatisticsWriters.
+		 * 
+		 * @param timestamp
+		 * @param value
+		 */
+		public void update( long timestamp, Number value );
+	}
 }
