@@ -1000,3 +1000,84 @@
 .value-node:selected {
     -fx-background-color: #1a1a1a;
 }
+
+.execution-selector {
+	-fx-text-fill: #4d4d4d;
+}
+
+.execution-selector {
+	-fx-text-fill: #4d4d4d;
+}
+
+.execution-selector-menu {
+	-fx-border-image-source: null;
+    -fx-padding: 0;
+    -fx-background-color: #333333;
+	-fx-background-insets: 0;
+	-fx-background-radius: 4;
+	-fx-border-image: null;
+	-fx-effect: dropshadow( gaussian  , #0101017f , 20.0, 0.1, 7, 7 );
+}
+
+.execution-selector-menu-filter-button {
+	-fx-shadow-highlight-color: transparent;
+	-fx-focus-color: null;
+	-fx-outer-border: transparent;
+	-fx-body-color: transparent;
+	-fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-body-color;
+	-fx-background-radius: 5;
+    -fx-background-insets: -1, 0, 1;
+	-fx-padding: 5 11 5 11;
+}
+
+.execution-selector-menu-filter-button:selected {
+	-fx-shadow-highlight-color: transparent;
+	-fx-focus-color: null;
+	-fx-outer-border: #262626;
+	-fx-body-color: #1A1A1A;
+	-fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-body-color;
+	-fx-background-radius: 5;
+    -fx-background-insets: -1, 0, 1;
+	-fx-padding: 5 11 5 11;
+}
+
+.execution-selector-menu-item {
+    -fx-background-color: null;
+	-fx-text-fill: #999999;
+}
+
+.execution-selector-line {
+    -fx-stroke: #404040;
+}
+
+.radio-button *.radio {
+	-fx-background-color: #767676, #ffffff;
+	-fx-background-insets: 0, 1;
+	-fx-border-color: null;
+	-fx-border-image: null;	
+	-fx-focus-color: #009fc5;
+	-fx-hpos: center;
+}
+
+.radio-button:focused  *.radio {
+	-fx-background-color: -fx-focus-color, #ffffff;
+	-fx-background-insets: -1, 0;
+}
+
+.radio-button *.radio *.dot {
+	-fx-background-color: null;
+	-fx-background-insets: 0;
+	-fx-border-color: null;
+	-fx-border-image: null;
+}
+
+.radio-button:selected *.radio *.dot {
+	-fx-background-color: #009fc5;
+	-fx-background-insets: 0;
+	-fx-border-color: null;
+	-fx-border-image: null;
+}
+
+.radio-button *.label {
+	-fx-text-fill: #999999;
+}

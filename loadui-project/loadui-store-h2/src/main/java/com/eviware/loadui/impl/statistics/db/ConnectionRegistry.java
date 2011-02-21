@@ -132,9 +132,11 @@ public class ConnectionRegistry implements Releasable
 		DataSource dataSource = getDataSource( dbName );
 		if( !connectionMap.containsKey( key ) )
 		{
+			long start = System.currentTimeMillis();
 			Connection conn = dataSource.getConnection();
 			conn.setAutoCommit( false );
 			connectionMap.put( key, conn );
+			System.out.println( "------create connection[" + dbName + "]:" + ( System.currentTimeMillis() - start ) );
 		}
 		return connectionMap.get( key );
 	}
