@@ -136,7 +136,6 @@ public class ConnectionRegistry implements Releasable
 			Connection conn = dataSource.getConnection();
 			conn.setAutoCommit( false );
 			connectionMap.put( key, conn );
-			System.out.println( "------create connection[" + dbName + "]:" + ( System.currentTimeMillis() - start ) );
 		}
 		return connectionMap.get( key );
 	}
