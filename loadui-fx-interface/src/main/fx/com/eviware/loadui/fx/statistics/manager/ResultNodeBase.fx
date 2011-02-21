@@ -19,10 +19,14 @@ import javafx.scene.Node;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Stack;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Label;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
+import javafx.geometry.HPos;
 import com.javafx.preview.control.MenuButton;
 import com.javafx.preview.control.MenuItem;
 
@@ -74,8 +78,20 @@ public class ResultNodeBase extends BaseNode {
 								AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
 							}
 						}
-					}, Region {
-						styleClass: "graph"
+					}, Stack {
+						content: [
+							Region {
+								styleClass: "graph"
+							}, SVGPath {
+								layoutInfo: LayoutInfo {
+									margin: Insets { left: 5, top: 5 }
+									vpos: VPos.TOP
+									hpos: HPos.LEFT
+								}
+								fill: Color.rgb( 255,255,255,0.15 )
+								content: "m 242.71845,190.87351 -92.23301,0 c -1.807,0.24262 -2.54911,1.55014 -3.07444,3.07443 l 0,43.52751 c 0.37619,1.83599 2.42728,3.12823 4.69256,0 12.25299,-33.96285 30.46724,-37.6855 90.61489,-46.60194 z"
+							},
+						]
 					}
 				]
 			}
