@@ -49,7 +49,6 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.property.Property;
-import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.MutableSummary;
@@ -64,6 +63,7 @@ import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
 import com.eviware.loadui.impl.counter.CounterStatisticSupport;
 import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.statistics.AverageStatisticWriter;
+import com.eviware.loadui.impl.statistics.CounterStatisticsWriter;
 import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter;
 import com.eviware.loadui.impl.summary.MutableSummaryImpl;
@@ -124,19 +124,23 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		statisticHolderSupport = new StatisticHolderSupport( this );
 		counterStatisticSupport = new CounterStatisticSupport( this );
 
-		/* The below one works correctly, but also exposes BPS. It shouldn't ( should specify what to be exposed as a parameter to ThroughputStatisticWriter.Factory.createStatisticsWriter() ). */
-		MutableStatisticVariable throughputVariable = statisticHolderSupport.addStatisticVariable( "Throughput" );
-		statisticHolderSupport.addStatisticsWriter( ThroughputStatisticsWriter.TYPE, throughputVariable );
-		counterStatisticSupport.addCounterVariable( REQUEST_COUNTER, throughputVariable );
+		StatisticVariable.Mutable requestVariable = statisticHolderSupport.addStatisticVariable( "Requests" );
+		statisticHolderSupport.addStatisticsWriter( CounterStatisticsWriter.TYPE, requestVariable );
+		counterStatisticSupport.addCounterVariable( REQUEST_COUNTER, requestVariable );
 
-		/* The below ones does not work correctly - fix this */
-//		MutableStatisticVariable failuresVariable = statisticHolderSupport.addStatisticVariable( "Failures" );
-//		statisticHolderSupport.addStatisticsWriter( ThroughputStatisticsWriter.TYPE, failuresVariable );
-//		counterStatisticSupport.addCounterVariable( FAILURE_COUNTER, failuresVariable );
-//		
-//		MutableStatisticVariable assertionsVariable = statisticHolderSupport.addStatisticVariable( "Assertions" );
-//		statisticHolderSupport.addStatisticsWriter( ThroughputStatisticsWriter.TYPE, assertionsVariable );
-//		counterStatisticSupport.addCounterVariable( ASSERTION_COUNTER, assertionsVariable );
+		StatisticVariable.Mutable failuresVariable = statisticHolderSupport.addStatisticVariable( "Total Failures" );
+		statisticHolderSupport.addStatisticsWriter( CounterStatisticsWriter.TYPE, failuresVariable );
+		counterStatisticSupport.addCounterVariable( FAILURE_COUNTER, failuresVariable );
+
+		StatisticVariable.Mutable assertionFailuresVariable = statisticHolderSupport
+				.addStatisticVariable( "Assertion Failures" );
+		statisticHolderSupport.addStatisticsWriter( CounterStatisticsWriter.TYPE, assertionFailuresVariable );
+		counterStatisticSupport.addCounterVariable( ASSERTION_FAILURE_COUNTER, assertionFailuresVariable );
+
+		StatisticVariable.Mutable requestFailuresVariable = statisticHolderSupport
+				.addStatisticVariable( "Request Failures" );
+		statisticHolderSupport.addStatisticsWriter( CounterStatisticsWriter.TYPE, requestFailuresVariable );
+		counterStatisticSupport.addCounterVariable( REQUEST_FAILURE_COUNTER, requestFailuresVariable );
 
 		abortOnFinish = createProperty( ABORT_ON_FINISH_PROPERTY, Boolean.class, false );
 	}

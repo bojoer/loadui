@@ -56,7 +56,6 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
-import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.MutableChapter;
 import com.eviware.loadui.api.terminal.Connection;
@@ -862,9 +861,9 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		}
 
 		@Override
-		public MutableStatisticVariable addStatisticVariable( String statisticVariableName, String... writerTypes )
+		public StatisticVariable.Mutable addStatisticVariable( String statisticVariableName, String... writerTypes )
 		{
-			MutableStatisticVariable variable = statisticHolderSupport.addStatisticVariable( statisticVariableName );
+			StatisticVariable.Mutable variable = statisticHolderSupport.addStatisticVariable( statisticVariableName );
 			for( String writerType : writerTypes )
 				statisticHolderSupport.addStatisticsWriter( writerType, variable );
 

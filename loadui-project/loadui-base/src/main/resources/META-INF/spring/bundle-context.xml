@@ -88,6 +88,8 @@
 		class="com.eviware.loadui.impl.statistics.MinMaxStatisticWriter$Factory" />
 	<bean id="throughputStatisticWriter"
 		class="com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter$Factory" />
+	<bean id="counterStatisticWriter"
+		class="com.eviware.loadui.impl.statistics.CounterStatisticsWriter$Factory" />
 
 	<bean class="com.eviware.loadui.impl.LoggingUncaughtExceptionHandler" factory-method="setForAllThreads"/>
 </beans>

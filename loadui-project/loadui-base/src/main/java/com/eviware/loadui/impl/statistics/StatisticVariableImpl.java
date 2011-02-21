@@ -32,9 +32,9 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.model.SceneItem;
-import com.eviware.loadui.api.statistics.MutableStatisticVariable;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
@@ -46,7 +46,7 @@ import com.eviware.loadui.util.ReleasableUtils;
  * 
  * @author dain.nilsson
  */
-public class StatisticVariableImpl implements MutableStatisticVariable, Releasable
+public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasable
 {
 	private Logger log = LoggerFactory.getLogger( StatisticVariableImpl.class );
 
