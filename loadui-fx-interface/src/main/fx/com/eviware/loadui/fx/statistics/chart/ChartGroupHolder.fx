@@ -53,6 +53,8 @@ import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.StatisticHolderToolbarItem;
 
 import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -172,10 +174,18 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 		} else if( draggable instanceof StatisticHolderToolbarItem ) {
 			def sh = (draggable as StatisticHolderToolbarItem).statisticHolder;
 			def chart = chartGroup.createChart( sh );
-			def variable = sh.getStatisticVariable( "TimeTaken" );
-			if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
-				def chartView = chartGroup.getChartViewForChart( chart );
-				(chartView as ConfigurableLineChartView).addSegment( 'TimeTaken', 'AVERAGE', StatisticVariable.MAIN_SOURCE );
+			if( sh instanceof ComponentItem ) {
+				def variable = sh.getStatisticVariable( "TimeTaken" );
+				if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
+					def chartView = chartGroup.getChartViewForChart( chart );
+					(chartView as ConfigurableLineChartView).addSegment( "TimeTaken", "AVERAGE", StatisticVariable.MAIN_SOURCE );
+				}
+			} else if( sh instanceof CanvasItem ) {
+				def variable = sh.getStatisticVariable( "Requests" );
+				if( variable != null and variable.getStatisticNames().contains( "PER_SECOND" ) ) {
+					def chartView = chartGroup.getChartViewForChart( chart );
+					(chartView as ConfigurableLineChartView).addSegment( "Requests", "PER_SECOND", StatisticVariable.MAIN_SOURCE );
+				}
 			}
 		} else if( draggable instanceof AnalysisToolbarItem ) {
 			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );

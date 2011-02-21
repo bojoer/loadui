@@ -48,6 +48,9 @@ import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.StatisticHolderToolbarItem;
 
 import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
@@ -229,10 +232,18 @@ class DropBase extends BaseNode, Resizable, Droppable {
 			def sh = (draggable as StatisticHolderToolbarItem).statisticHolder;
 			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart Group {statisticPage.getChildCount()+1}" );
 			def chart = chartGroup.createChart( sh );
-			def variable = sh.getStatisticVariable( "TimeTaken" );
-			if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
-				def chartView = chartGroup.getChartViewForChart( chart );
-				(chartView as ConfigurableLineChartView).addSegment( 'TimeTaken', 'AVERAGE', 'main' );
+			if( sh instanceof ComponentItem ) {
+				def variable = sh.getStatisticVariable( "TimeTaken" );
+				if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
+					def chartView = chartGroup.getChartViewForChart( chart );
+					(chartView as ConfigurableLineChartView).addSegment( "TimeTaken", "AVERAGE", StatisticVariable.MAIN_SOURCE );
+				}
+			} else if( sh instanceof CanvasItem ) {
+				def variable = sh.getStatisticVariable( "Requests" );
+				if( variable != null and variable.getStatisticNames().contains( "PER_SECOND" ) ) {
+					def chartView = chartGroup.getChartViewForChart( chart );
+					(chartView as ConfigurableLineChartView).addSegment( "Requests", "PER_SECOND", StatisticVariable.MAIN_SOURCE );
+				}
 			}
 		} else if( draggable instanceof AnalysisToolbarItem ) {
 			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart Group {statisticPage.getChildCount()+1}" );
