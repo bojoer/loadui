@@ -100,16 +100,20 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 	
 	def listener = new ChartGroupListener();
 	
+	def graphic = Group {};
+	
 	public-init var chartGroup:ChartGroup on replace oldChartGroup {
 		chartGroup.addEventListener( BaseEvent.class, listener );
 		title = chartGroup.getTitle();
 		itemCount = chartGroup.getChildCount();
+		refreshGraphic();
 		chartViewHolder = ChartGroupChartViewHolder {
 			chartGroupHolder: chartGroupHolder
 			chartGroup: chartGroup
 			typeLabel: bind "Component ({itemCount})"
 			label: bind title
 			layoutInfo: chartViewInfo
+			graphic: graphic
 		};
 	}
 	
@@ -251,6 +255,14 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 			delete expandedNode from (resizable as Container).content;
 		}
 	}
+	
+	function refreshGraphic():Void {
+		var offset = 0;
+		graphic.content = Sequences.reverse( for( chart in chartGroup.getChildren() ) {
+			offset += 5;
+			ImageView { image: FxUtils.getImageFor( chart.getStatisticHolder() ), layoutX: offset, layoutY: offset }
+		} ) as Node[];
+	}
 }
 
 class ChartGroupListener extends EventHandler {
@@ -262,11 +274,13 @@ class ChartGroupListener extends EventHandler {
 			} );
 		} else if( ChartGroup.TYPE == event.getKey() ) {
 			FxUtils.runInFxThread( function():Void {
+				refreshGraphic();
 				chartViewHolder = ChartGroupChartViewHolder {
 					chartGroupHolder: chartGroupHolder
 					chartGroup: chartGroup
 					label: bind "{title} ({itemCount})"
 					layoutInfo: chartViewInfo
+					graphic: graphic
 				};
 				if( expandGroups ) {
 					toggleGroupExpand();
@@ -279,6 +293,7 @@ class ChartGroupListener extends EventHandler {
 		} else if( ChartGroup.CHILDREN == event.getKey() ) {
 			FxUtils.runInFxThread( function():Void {
 				itemCount = chartGroup.getChildCount();
+				refreshGraphic();
 				if( expandGroups ) {
 					toggleGroupExpand();
 					toggleGroupExpand();
