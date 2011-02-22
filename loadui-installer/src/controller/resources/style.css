@@ -1005,10 +1005,6 @@
 	-fx-text-fill: #4d4d4d;
 }
 
-.execution-selector {
-	-fx-text-fill: #4d4d4d;
-}
-
 .execution-selector-menu {
 	-fx-border-image-source: null;
     -fx-padding: 0;
