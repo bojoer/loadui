@@ -43,6 +43,10 @@ import javafx.scene.effect.Glow;
 import javafx.scene.Cursor;
 import javafx.scene.text.Font;  
 
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
+
 import com.javafx.preview.control.MenuButton;
 import com.javafx.preview.control.CustomMenuItem;
 import com.javafx.preview.control.PopupMenu;
@@ -65,6 +69,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.lang.Comparable;
+import java.util.EventObject;
 
 /**
  * A control for selecting executions to compare
@@ -75,22 +80,28 @@ public class ExecutionSelector extends Group {
    
    var currentExecution: Execution = bind StatisticsWindow.execution on replace {
        leftLabel.text = currentExecution.getLabel();
-       loadExecutions();
    }
    
    var comparedExecution: Execution = bind StatisticsWindow.comparedExecution on replace {
        rightLabel.text = comparedExecution.getLabel();
-       loadExecutions();
    }
    
-   def executionListener = new ExecutionManagerListener();
+   def executionListener = new ExecutionManagerStateListener();
+   def executionManagerListener = ExecutionManagerListener{};
    
    def executionManager = BeanInjector.getBean( ExecutionManager.class ) on replace oldExecutionManager {
       oldExecutionManager.removeExecutionListener( executionListener );
+      oldExecutionManager.removeEventListener( EventObject.class, executionManagerListener );
+      
 		executionManager.addExecutionListener( executionListener );
+		executionManager.addEventListener( EventObject.class, executionManagerListener );
 	}
    
-   def glow = Glow { level: .5 };
+   def project = bind StatisticsWindow.instance.project on replace {
+  		loadExecutions(); 
+   }
+   
+   def glow = Glow { level: .2 };
    
    var popupWidth: Number = 411;
    var popupHeight: Number = 442;
@@ -136,7 +147,7 @@ public class ExecutionSelector extends Group {
 		if( selectedFilter == null ) {
 			FX.deferAction( function():Void { oldFilter.selected = true } );
 		} else {
-			FX.deferAction( function():Void { loadExecutions(); } );
+			loadExecutions();
 		}
 	}
 	
@@ -149,9 +160,6 @@ public class ExecutionSelector extends Group {
 	var leftDisabled: RadioButton;
 	var rightDisabled: RadioButton;
 	
-	var currentLeft: Execution;
-	var currentRight: Execution;
-	
 	var leftSelected = bind leftRadioToggles.selectedToggle on replace {
 	   if( rightDisabled != null ){
 	       rightDisabled.disable = false;
@@ -162,13 +170,6 @@ public class ExecutionSelector extends Group {
 	   }
 	   else{
 	       rightDisabled = null;
-	   }
-	   currentLeft = null;
-	   for(c in leftRadioButtons){
-	       if(c.radioButton == leftSelected){
-	           currentLeft = c.execution;
-	           break;
-	       }
 	   }
    }
 	
@@ -183,13 +184,6 @@ public class ExecutionSelector extends Group {
 	   else{
 	       leftDisabled = null;
 	   }
-	   currentRight = null;
-	   for(c in rightRadioButtons){
-	       if(c.radioButton == rightSelected){
-	           currentRight = c.execution;
-	           break;
-	       }
-	   }
    }
    
 	var leftRadioButtons: CustomRadioButton[] = [];
@@ -201,12 +195,10 @@ public class ExecutionSelector extends Group {
 	var leftToRightMapping: HashMap;
 	var rightToLeftMapping: HashMap;
 	
-	var initialized: Boolean = false;
+	var leftExecutions: HashMap;
+	var rightExecutions: HashMap;
 	
 	function loadExecutions(): Void {
-	   if(not initialized){
-	       return;
-	   }
 	   if(selectedFilter == filterAll){
 		    loadExecutions(true, true);
 		}
@@ -218,29 +210,43 @@ public class ExecutionSelector extends Group {
 		}
 	}
 	
-	function loadExecutions(archive: Boolean, recently: Boolean): Void {
+	function reset(): Void {
 		leftToRightMapping = new HashMap();
 		rightToLeftMapping = new HashMap();
+		leftExecutions = new HashMap();
+		rightExecutions = new HashMap();
 		leftRadioToggles = ToggleGroup {};
 		rightRadioToggles = ToggleGroup {}
 		delete leftRadioButtons;
 		delete rightRadioButtons;
-		def names = executionManager.getExecutionNames();
+	}
+	
+	function loadExecutions(archive: Boolean, recently: Boolean): Void {
+	   reset();
+		if(project == null){
+		    // project is null, return. radio buttons are removed in reset() method
+		    return;
+		}
 		def holderList: ArrayList = new ArrayList();
+		def names = executionManager.getExecutionNames();
 		for( n in names ) {
-			def execution: Execution = executionManager.getExecution( n as String );
-			if(archive and execution.isArchived() or recently and (not execution.isArchived())){
-				holderList.add( ExecutionComparable { execution: execution } );
+		   if((n as String).startsWith(project.getId())){
+			   def e = executionManager.getExecution(n as String);
+			   if(archive and e.isArchived() or recently and (not e.isArchived())){
+					holderList.add( ExecutionComparable { execution: e } );
+				}
 			}
 		}
 		Collections.sort( holderList );
 		for( h in holderList ) {
-			def left = CustomRadioButton {execution: (h as ExecutionComparable).execution, radioGroup: leftRadioToggles};
-			def right = CustomRadioButton {execution: (h as ExecutionComparable).execution, radioGroup: rightRadioToggles};
+			def left = CustomRadioButton {text: (h as ExecutionComparable).execution.getLabel(), radioGroup: leftRadioToggles};
+			def right = CustomRadioButton {text: (h as ExecutionComparable).execution.getLabel(), radioGroup: rightRadioToggles};
 			insert left into leftRadioButtons;
 			insert right into rightRadioButtons;
 			leftToRightMapping.put(left.radioButton, right.radioButton);
 			rightToLeftMapping.put(right.radioButton, left.radioButton);
+			leftExecutions.put(left.radioButton, (h as ExecutionComparable).execution);
+			rightExecutions.put(right.radioButton, (h as ExecutionComparable).execution);
 			if(currentExecution != null and (h as ExecutionComparable).execution == currentExecution){
 				left.radioButton.selected = true;
 			}
@@ -248,6 +254,45 @@ public class ExecutionSelector extends Group {
 				right.radioButton.selected = true;
 			}
 		}
+	}
+	
+	function setRadioButtons(): Void {
+	   unsetRadioButtons(true, true);
+	   if(currentExecution != null){
+			for(c in leftRadioButtons){
+			    if(leftExecutions.get(c.radioButton) == currentExecution){
+			        c.radioButton.selected = true;
+			        break;
+			    }
+			}
+		}
+		if(comparedExecution != null){
+			for(c in rightRadioButtons){
+			    if(rightExecutions.get(c.radioButton) == comparedExecution){
+			        c.radioButton.selected = true;
+			        break;
+			    }
+			}
+		}    
+	}
+	
+	function unsetRadioButtons(left: Boolean, right: Boolean): Void {
+	   if(left){
+			for(c in leftRadioButtons){
+			    if(c.radioButton.selected){
+			        c.radioButton.selected = false;
+			        break;
+			    }
+			}
+		}
+		if(right){
+			for(c in rightRadioButtons){
+			    if(c.radioButton.selected){
+			        c.radioButton.selected = false;
+			        break;
+			    }
+			}
+		}    
 	}
 	
 	var resizeYStart: Number = 0;
@@ -276,7 +321,7 @@ public class ExecutionSelector extends Group {
 		 
 	   var popupContent: VBox = VBox {
 	       spacing: 12
-	       padding: Insets { top: 11 right: 18 bottom: 12 left: 18}
+	       padding: Insets { top: 11 right: 18 bottom: 0 left: 18}
 	       nodeHPos: HPos.CENTER
 	       content: [
 		      HBox {
@@ -337,16 +382,16 @@ public class ExecutionSelector extends Group {
 							text: "Load data"
 							action: function():Void {
 							   if(leftSelected != null){
-							       StatisticsWindow.execution = currentLeft;
+							       StatisticsWindow.execution = leftExecutions.get(leftSelected) as Execution;
 							   }
 							   else{
 							       StatisticsWindow.execution = null;
 							   }
 							   if(rightSelected != null){
-							       StatisticsWindow.comparedExecution = currentRight;
+							       StatisticsWindow.comparedExecution = rightExecutions.get(rightSelected) as Execution;
 							   }
 							   else{
-							       StatisticsWindow.execution = null;
+							       StatisticsWindow.comparedExecution = null;
 							   }
 								menu.hide();
 							}
@@ -355,13 +400,7 @@ public class ExecutionSelector extends Group {
 							layoutX: bind popupWidth - 36 - btnClear.layoutBounds.width
 							text: "Clear"
 							action: function():Void {
-								for(b in rightRadioButtons){
-								    if( b.radioButton.selected ){
-								        b.radioButton.selected = false;
-								        break;
-								    }
-								}
-								menu.hide();
+								unsetRadioButtons(false, true);
 							}
 						}
 					]
@@ -392,7 +431,7 @@ public class ExecutionSelector extends Group {
 		   onMouseDragged: function( e: MouseEvent ) {
 		   	if( e.primaryButtonDown ) {
 		   	    def delta = e.screenY - resizeYStart;
-		   	    if(popupHeight + delta >= 265){
+		   	    if(popupHeight + delta >= 250){
 			   	    popupHeight += delta;
 			   	    resizeYStart = e.screenY;
 		   	    }
@@ -407,7 +446,7 @@ public class ExecutionSelector extends Group {
 			node: VBox {
 				snapToPixel: true
 				nodeHPos: HPos.RIGHT
-				spacing: 3
+				spacing: 0
 				content: [
 					popupContent,
 					resizeAction
@@ -419,6 +458,7 @@ public class ExecutionSelector extends Group {
 		    styleClass: "execution-selector-menu"
 		    items: [item]
 		    layoutInfo: LayoutInfo{ height: bind popupHeight, width: bind popupWidth }
+		    onShowing: function(){FX.deferAction( function(){ setRadioButtons(); } )}
 		}
 	   
 	   content = [
@@ -430,16 +470,11 @@ public class ExecutionSelector extends Group {
 	   	menu 
 		]		   		
 	}
-	
-	postinit{
-	    initialized = true;
-	    loadExecutions();
-	}
 }
 
 class CustomRadioButton extends Group {
     
-    public var execution: Execution;
+    public var text: String;
     
     public-init var radioGroup: ToggleGroup;
     
@@ -500,7 +535,7 @@ class CustomRadioButton extends Group {
         		    layoutInfo: LayoutInfo {
         		        width: width - lPad - rPad
         		    },
-        		    text: " {execution.getLabel()}", 
+        		    text: bind " {text}", 
         		    toggleGroup: radioGroup
         		}
         ]
@@ -516,8 +551,19 @@ class ExecutionComparable extends Comparable {
 	}
 }
 
-class ExecutionManagerListener extends ExecutionListenerAdapter {
+class ExecutionManagerStateListener extends ExecutionListenerAdapter {
    override function executionStarted( state: ExecutionManager.State ) {
 		loadExecutions();
    }
+}
+
+class ExecutionManagerListener extends EventHandler {
+	override function handleEvent( e:EventObject ):Void {
+		if( e instanceof CollectionEvent ) {
+			def event = e as CollectionEvent;
+			if( CollectionEvent.Event.REMOVED == event.getEvent() ) {
+				FxUtils.runInFxThread( function():Void { loadExecutions(); } );
+			} 
+		}
+	}
 }
