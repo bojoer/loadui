@@ -31,16 +31,16 @@ public class LReportTemplate
 	private String xml = null;
 	private String description;
 
-	private Logger log = LoggerFactory.getLogger(LReportTemplate.class);
+	private Logger log = LoggerFactory.getLogger( LReportTemplate.class );
 	private long lastModified;
 
-	public LReportTemplate(LReportTemplate report)
+	public LReportTemplate( LReportTemplate report )
 	{
 		this.path = report.getPath();
 		this.reportName = report.reportName;
 	}
 
-	public LReportTemplate(String name, File templateFile)
+	public LReportTemplate( String name, File templateFile )
 	{
 		this.reportName = name;
 		this.path = templateFile.getAbsolutePath();
@@ -52,7 +52,7 @@ public class LReportTemplate
 		return reportName;
 	}
 
-	public void setName(String name)
+	public void setName( String name )
 	{
 		this.reportName = name;
 	}
@@ -62,14 +62,14 @@ public class LReportTemplate
 		return this.path;
 	}
 
-	public void setPath(String path)
+	public void setPath( String path )
 	{
 		this.path = path;
 	}
 
 	public String getData()
 	{
-		if (xml == null)
+		if( xml == null )
 			xml = readTemplateFile();
 		return xml;
 	}
@@ -77,29 +77,29 @@ public class LReportTemplate
 	private String readTemplateFile()
 	{
 		StringBuilder result = new StringBuilder();
-		File reportFile = new File(path);
+		File reportFile = new File( path );
 		this.lastModified = reportFile.lastModified();
 		try
 		{
-			BufferedReader reader = new BufferedReader(new FileReader(reportFile));
+			BufferedReader reader = new BufferedReader( new FileReader( reportFile ) );
 			String line = null;
-			while ((line = reader.readLine()) != null)
+			while( ( line = reader.readLine() ) != null )
 			{
-				result.append(line);
+				result.append( line );
 			}
 		}
-		catch (FileNotFoundException e)
+		catch( FileNotFoundException e )
 		{
-			log.error("Report template file not found " + path, e);
+			log.error( "Report template file not found " + path, e );
 		}
-		catch (IOException e)
+		catch( IOException e )
 		{
-			log.error("Error reading report template file " + path, e);
+			log.error( "Error reading report template file " + path, e );
 		}
 		return result.toString();
 	}
 
-	public void setData(String xml)
+	public void setData( String xml )
 	{
 		this.xml = xml;
 	}
@@ -109,15 +109,15 @@ public class LReportTemplate
 		return description;
 	}
 
-	public void setDescription(String description)
+	public void setDescription( String description )
 	{
 		this.description = description;
 	}
 
 	private boolean isChanged()
 	{
-		File reportFile = new File(path);
-		if (lastModified == reportFile.lastModified())
+		File reportFile = new File( path );
+		if( lastModified == reportFile.lastModified() )
 		{
 			return false;
 		}
@@ -126,8 +126,9 @@ public class LReportTemplate
 
 	public void update()
 	{
-		if (isChanged()) {
-			log.info("Updating report template [" + reportName +"]");
+		if( isChanged() )
+		{
+			log.info( "Updating report template [" + reportName + "]" );
 			xml = readTemplateFile();
 		}
 	}

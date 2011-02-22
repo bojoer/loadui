@@ -23,145 +23,173 @@ import java.util.ListIterator;
 import java.util.Observable;
 
 /**
- * This is observable list, if called update() all added observes will be notified. 
- * When initialized with argument, passed List will be used, otherwise ArrayList is created.
+ * This is observable list, if called update() all added observes will be
+ * notified. When initialized with argument, passed List will be used, otherwise
+ * ArrayList is created.
  * 
  * @author robert
- *
+ * 
  * @param <E>
  */
-public class ObservableList<E> extends Observable implements List<E> {
+public class ObservableList<E> extends Observable implements List<E>
+{
 
 	private List<E> list = null;
 
-	public ObservableList() {
+	public ObservableList()
+	{
 		list = new ArrayList<E>();
 	}
 
-	public ObservableList(List<E> list) {
+	public ObservableList( List<E> list )
+	{
 		this.list = list;
 	}
 
 	@Override
-	public boolean add(E e) {
-		return list.add(e);
+	public boolean add( E e )
+	{
+		return list.add( e );
 	}
 
 	@Override
-	public void add(int index, E element) {
-		list.add(index, element);
+	public void add( int index, E element )
+	{
+		list.add( index, element );
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends E> c) {
-		return list.addAll(c);
+	public boolean addAll( Collection<? extends E> c )
+	{
+		return list.addAll( c );
 	}
 
 	@Override
-	public boolean addAll(int index, Collection<? extends E> c) {
-		return list.addAll(c);
+	public boolean addAll( int index, Collection<? extends E> c )
+	{
+		return list.addAll( c );
 	}
 
 	@Override
-	public void clear() {
+	public void clear()
+	{
 		list.clear();
 	}
 
 	@Override
-	public boolean contains(Object o) {
-		return list.contains(o);
+	public boolean contains( Object o )
+	{
+		return list.contains( o );
 	}
 
 	@Override
-	public boolean containsAll(Collection<?> c) {
-		return list.containsAll(c);
+	public boolean containsAll( Collection<?> c )
+	{
+		return list.containsAll( c );
 	}
 
 	@Override
-	public E get(int index) {
-		return list.get(index);
+	public E get( int index )
+	{
+		return list.get( index );
 	}
 
 	@Override
-	public int indexOf(Object o) {
-		return list.indexOf(o);
+	public int indexOf( Object o )
+	{
+		return list.indexOf( o );
 	}
 
 	@Override
-	public boolean isEmpty() {
+	public boolean isEmpty()
+	{
 		return list.isEmpty();
 	}
 
 	@Override
-	public Iterator<E> iterator() {
+	public Iterator<E> iterator()
+	{
 		return list.iterator();
 	}
 
 	@Override
-	public int lastIndexOf(Object o) {
-		return list.indexOf(o);
+	public int lastIndexOf( Object o )
+	{
+		return list.indexOf( o );
 	}
 
 	@Override
-	public ListIterator<E> listIterator() {
+	public ListIterator<E> listIterator()
+	{
 		return list.listIterator();
 	}
 
 	@Override
-	public ListIterator<E> listIterator(int index) {
-		return list.listIterator(index);
+	public ListIterator<E> listIterator( int index )
+	{
+		return list.listIterator( index );
 	}
 
 	@Override
-	public boolean remove(Object o) {
-		return list.remove(o);
+	public boolean remove( Object o )
+	{
+		return list.remove( o );
 	}
 
 	@Override
-	public E remove(int index) {
-		E res = list.remove(index);
+	public E remove( int index )
+	{
+		E res = list.remove( index );
 		return res;
 	}
 
 	@Override
-	public boolean removeAll(Collection<?> c) {
-		boolean res = list.remove(c);
+	public boolean removeAll( Collection<?> c )
+	{
+		boolean res = list.remove( c );
 		return res;
 	}
 
 	@Override
-	public boolean retainAll(Collection<?> c) {
-		boolean res = list.retainAll(c);
+	public boolean retainAll( Collection<?> c )
+	{
+		boolean res = list.retainAll( c );
 		return res;
 	}
 
 	@Override
-	public E set(int index, E element) {
-		E res = list.set(index, element);
+	public E set( int index, E element )
+	{
+		E res = list.set( index, element );
 		return res;
 	}
 
 	@Override
-	public int size() {
+	public int size()
+	{
 		return list.size();
 	}
 
 	@Override
-	public List<E> subList(int fromIndex, int toIndex) {
-		return list.subList(fromIndex, toIndex);
+	public List<E> subList( int fromIndex, int toIndex )
+	{
+		return list.subList( fromIndex, toIndex );
 	}
 
 	@Override
-	public Object[] toArray() {
+	public Object[] toArray()
+	{
 		return list.toArray();
 	}
 
 	@Override
-	public <T> T[] toArray(T[] a) {
-		return list.toArray(a);
+	public <T> T[] toArray( T[] a )
+	{
+		return list.toArray( a );
 	}
 
-	public void update() {
+	public void update()
+	{
 		setChanged();
 		notifyObservers();
 	}

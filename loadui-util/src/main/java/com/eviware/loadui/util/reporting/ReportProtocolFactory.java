@@ -6,7 +6,7 @@ import java.net.URLStreamHandlerFactory;
 public class ReportProtocolFactory implements URLStreamHandlerFactory
 {
 
-	public ReportProtocolFactory(  )
+	public ReportProtocolFactory()
 	{
 	}
 
@@ -14,15 +14,16 @@ public class ReportProtocolFactory implements URLStreamHandlerFactory
 	{
 		if( protocol.equals( "subreport" ) )
 		{
-//			log.debug( "Creating handler for protocol [" + protocol + "]" );
-			return new SubReportURLHandler( );
+			// log.debug( "Creating handler for protocol [" + protocol + "]" );
+			return new SubReportURLHandler();
 		}
 		else if( protocol.equals( "logo" ) )
 		{
-//			log.debug( "Creating handler for protocol [" + protocol + "]" );
-//			return new LogoProtocolHandler();
+			// log.debug( "Creating handler for protocol [" + protocol + "]" );
+			// return new LogoProtocolHandler();
 		}
-	//	else log.debug( "Failed to create logo handler for protocol [" + protocol + "]" );
+		// else log.debug( "Failed to create logo handler for protocol [" +
+		// protocol + "]" );
 
 		return null;
 	}

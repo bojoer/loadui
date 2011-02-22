@@ -36,24 +36,24 @@ import org.slf4j.LoggerFactory;
 
 public class SubReportURLHandler extends URLStreamHandler
 {
-	
-	Logger log = LoggerFactory.getLogger(SubReportURLHandler.class);
-	
+
+	Logger log = LoggerFactory.getLogger( SubReportURLHandler.class );
+
 	private JasperReportManager reportManager = JasperReportManager.getInstance();
 	private static Map<String, byte[]> reportCache = Collections.synchronizedMap( new WeakHashMap<String, byte[]>() );
 
-	public SubReportURLHandler() 
+	public SubReportURLHandler()
 	{
 	}
 
 	@Override
 	public URLConnection openConnection( URL url ) throws IOException
 	{
-//		log.debug( "Getting subreport for url [" + url + "]" );
+		// log.debug( "Getting subreport for url [" + url + "]" );
 		String subreportFileName = url.getPath();
-		log.info("Looking for subreport : " + subreportFileName);
-		LReportTemplate subreport = reportManager.getReport(subreportFileName);
-		
+		log.info( "Looking for subreport : " + subreportFileName );
+		LReportTemplate subreport = reportManager.getReport( subreportFileName );
+
 		// get xml compile it and pass connection to it..
 		String xml = subreport.getData();
 
@@ -77,7 +77,6 @@ public class SubReportURLHandler extends URLStreamHandler
 
 		return new SubreportConnection( url, reportCache.get( xml ) );
 	}
-
 
 	private static class SubreportConnection extends URLConnection
 	{

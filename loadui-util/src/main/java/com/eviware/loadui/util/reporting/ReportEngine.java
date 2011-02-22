@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.HashMap;
 
 import net.sf.jasperreports.engine.JRAbstractExporter;
+import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
@@ -42,9 +43,6 @@ import net.sf.jasperreports.view.JasperViewer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.summary.Summary;
-import com.eviware.loadui.util.reporting.datasources.SummaryDataSource;
-
 public class ReportEngine
 {
 
@@ -52,95 +50,93 @@ public class ReportEngine
 	{
 		PDF, XLS, HTML, RTF, CSV, TXT, XML
 	};
-	
-	static Logger log = LoggerFactory.getLogger(ReportEngine.class);
 
-	public static void generateJasperReport(Summary summary, LReportTemplate selectedReport, File outfile, String format)
-			throws JRException
+	static Logger log = LoggerFactory.getLogger( ReportEngine.class );
+
+	public static void generateJasperReport( JRDataSource dataSource, LReportTemplate selectedReport, File outfile,
+			String format ) throws JRException
 	{
 		// fill report with data
-		if (selectedReport != null)
+		if( selectedReport != null )
 		{
-			ReportFillWorker reportWorker = new ReportFillWorker(summary, selectedReport);
+			ReportFillWorker reportWorker = new ReportFillWorker( dataSource, selectedReport );
 
 			JasperPrint jp = reportWorker.getJasperReport();
 
-			if (jp != null)
+			if( jp != null )
 			{
-				ReportFormats rf = ReportFormats.valueOf(format);
+				ReportFormats rf = ReportFormats.valueOf( format );
 				JRAbstractExporter jrExporter = null;
-				switch (rf)
+				switch( rf )
 				{
-				case PDF:
+				case PDF :
 					jrExporter = new JRPdfExporter();
 					break;
-				case XLS:
+				case XLS :
 					jrExporter = new JExcelApiExporter();
 					break;
-				case HTML:
+				case HTML :
 					jrExporter = new JRHtmlExporter();
 					break;
-				case RTF:
+				case RTF :
 					jrExporter = new JRRtfExporter();
 					break;
-				case CSV:
+				case CSV :
 					jrExporter = new JRCsvExporter();
 					break;
-				case XML:
+				case XML :
 					jrExporter = new JRXmlExporter();
 					break;
-				default:
+				default :
 					// TXT
 					jrExporter = new JRTextExporter();
-					jrExporter.setParameter(JRTextExporterParameter.CHARACTER_WIDTH, new Float(10));
-					jrExporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Float(10));
+					jrExporter.setParameter( JRTextExporterParameter.CHARACTER_WIDTH, new Float( 10 ) );
+					jrExporter.setParameter( JRTextExporterParameter.CHARACTER_HEIGHT, new Float( 10 ) );
 					break;
 				}
-				jrExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outfile.getAbsolutePath());
-				jrExporter.setParameter(JRExporterParameter.JASPER_PRINT, jp);
+				jrExporter.setParameter( JRExporterParameter.OUTPUT_FILE_NAME, outfile.getAbsolutePath() );
+				jrExporter.setParameter( JRExporterParameter.JASPER_PRINT, jp );
 				jrExporter.exportReport();
 			}
 			else
 			{
-				log.error("Errors in ReportTemplate!");
+				log.error( "Errors in ReportTemplate!" );
 			}
 		}
 		else
 		{
-			log.error("Report do not exists!");
+			log.error( "Report do not exists!" );
 		}
 
 	}
 
-	public static void generateJasperReport(Summary summary, LReportTemplate selectedReport) throws JRException
+	public static void generateJasperReport( JRDataSource dataSource, LReportTemplate selectedReport, String title )
+			throws JRException
 	{
 		// // fill report with data
-		if (selectedReport != null)
+		if( selectedReport != null )
 		{
-			ReportFillWorker reportWorker = new ReportFillWorker(summary, selectedReport);
+			ReportFillWorker reportWorker = new ReportFillWorker( dataSource, selectedReport );
 
 			JasperPrint jp = reportWorker.getJasperReport();
 
-			if (jp != null)
+			if( jp != null )
 			{
-				String title = summary.getChapters().keySet().iterator().next(); // get
-																										// first
-				jp.setName("Report for " + title);
-				JasperViewer jv = new JasperViewer(jp, false);
-				jv.setTitle("Report for " + title);
-				jv.setVisible(true);
+				jp.setName( "Report for " + title );
+				JasperViewer jv = new JasperViewer( jp, false );
+				jv.setTitle( "Report for " + title );
+				jv.setVisible( true );
 				jv.setFitPageZoomRatio();
 			}
 			else
 			{
-				log.error("Errors in ReportTemplate!");
+				log.error( "Errors in ReportTemplate!" );
 			}
 		}
 		else
 		{
-			log.error("Report do not exists!");
+			log.error( "Report do not exists!" );
 		}
-
 	}
 
 	private static class ReportFillWorker
@@ -148,21 +144,21 @@ public class ReportEngine
 
 		private JasperPrint jp;
 		private LReportTemplate report;
-		private Summary summary;
+		private JRDataSource dataSource;
 
-		public ReportFillWorker(Summary summary, LReportTemplate selectedReport)
+		public ReportFillWorker( JRDataSource dataSource, LReportTemplate selectedReport )
 		{
 			report = selectedReport;
-			this.summary = summary;
+			this.dataSource = dataSource;
 		}
 
 		public JasperPrint getJasperReport()
 		{
 			try
 			{
-				jp = createReport(summary, report);
+				jp = createReport( dataSource, report );
 			}
-			catch (Throwable e)
+			catch( Throwable e )
 			{
 				e.printStackTrace();
 				jp = null;
@@ -172,45 +168,46 @@ public class ReportEngine
 		}
 	}
 
-	protected static JasperPrint createReport(Summary summary, LReportTemplate selectedReport) throws JRException
+	protected static JasperPrint createReport( JRDataSource dataSource, LReportTemplate selectedReport )
+			throws JRException
 	{
-		log.debug("Creating report!");
-		updateReport(selectedReport);
+		log.debug( "Creating report!" );
+		updateReport( selectedReport );
 
-		LReportTemplate report = new LReportTemplate(selectedReport);
+		LReportTemplate report = new LReportTemplate( selectedReport );
 
-		JasperReport jr = compileReport(report);
+		JasperReport jr = compileReport( report );
 		ReportProtocolFactory factory = new ReportProtocolFactory();
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put(JRParameter.REPORT_URL_HANDLER_FACTORY, factory);
+		map.put( JRParameter.REPORT_URL_HANDLER_FACTORY, factory );
 
-		return JasperFillManager.fillReport(jr, map, new SummaryDataSource(summary));
+		return JasperFillManager.fillReport( jr, map, dataSource );
 	}
 
-	private static JasperReport compileReport(LReportTemplate report)
+	private static JasperReport compileReport( LReportTemplate report )
 	{
-		log.info("compile report");
+		log.info( "compile report" );
 		JasperReport jr = null;
 		try
 		{
-			ByteArrayInputStream in = new ByteArrayInputStream(report.getData().getBytes());
-			JasperDesign design = JRXmlLoader.load(in);
+			ByteArrayInputStream in = new ByteArrayInputStream( report.getData().getBytes() );
+			JasperDesign design = JRXmlLoader.load( in );
 
-			jr = JasperCompileManager.compileReport(design);
+			jr = JasperCompileManager.compileReport( design );
 		}
-		catch (JRException e)
+		catch( JRException e )
 		{
 			e.printStackTrace();
 		}
-		log.debug("Compiling report done.");
+		log.debug( "Compiling report done." );
 		return jr;
 	}
 
 	/*
 	 * check if report template is changed and if it is reload it.
 	 */
-	private static void updateReport(LReportTemplate report)
+	private static void updateReport( LReportTemplate report )
 	{
 		report.update();
 	}

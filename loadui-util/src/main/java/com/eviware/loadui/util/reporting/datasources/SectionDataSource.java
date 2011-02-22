@@ -14,13 +14,13 @@ import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
 public class SectionDataSource extends JRAbstractBeanDataSource
 {
 
-	Logger logger = LoggerFactory.getLogger(SectionDataSource.class);
+	Logger logger = LoggerFactory.getLogger( SectionDataSource.class );
 	private List<Section> section;
 	private int cnt = -1;
 
-	public SectionDataSource(List<Section> list)
+	public SectionDataSource( List<Section> list )
 	{
-		super(true);
+		super( true );
 		this.section = list;
 	}
 
@@ -31,16 +31,17 @@ public class SectionDataSource extends JRAbstractBeanDataSource
 	}
 
 	@Override
-	public Object getFieldValue(JRField field) throws JRException
+	public Object getFieldValue( JRField field ) throws JRException
 	{
-		logger.debug("Looking for field:" + field.getName());
-		if (field.getName().equals("values"))
-			return new ValuesDataSource(section.get(cnt).getValues());
-		if (field.getName().equals("tables"))
-			return new TablesDataSource(section.get(cnt).getTables());
-		if (field.getName().equals("title")) {
-			logger.debug("title is:" + section.get(cnt).getTitle());
-			return section.get(cnt).getTitle();
+		logger.debug( "Looking for field:" + field.getName() );
+		if( field.getName().equals( "values" ) )
+			return new ValuesDataSource( section.get( cnt ).getValues() );
+		if( field.getName().equals( "tables" ) )
+			return new TablesDataSource( section.get( cnt ).getTables() );
+		if( field.getName().equals( "title" ) )
+		{
+			logger.debug( "title is:" + section.get( cnt ).getTitle() );
+			return section.get( cnt ).getTitle();
 		}
 		return null;
 	}

@@ -64,8 +64,8 @@ public class ChannelRoutingSupport
 
 	public void fireMessage( String channel, Object data )
 	{
-		List<Map.Entry<Pattern, MessageListener>> entries = new ArrayList<Map.Entry<Pattern, MessageListener>>( listeners
-				.entrySet() );
+		List<Map.Entry<Pattern, MessageListener>> entries = new ArrayList<Map.Entry<Pattern, MessageListener>>(
+				listeners.entrySet() );
 		for( Map.Entry<Pattern, MessageListener> entry : entries )
 		{
 			if( entry.getKey().matcher( channel ).matches() )

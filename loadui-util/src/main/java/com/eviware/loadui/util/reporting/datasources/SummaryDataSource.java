@@ -14,9 +14,9 @@ public class SummaryDataSource extends JRAbstractBeanDataSource
 	private Summary summary;
 	private Iterator<String> iterator;
 
-	public SummaryDataSource(Summary summary)
+	public SummaryDataSource( Summary summary )
 	{
-		super(true);
+		super( true );
 		this.summary = summary;
 		iterator = summary.getChapters().keySet().iterator();
 	}
@@ -28,10 +28,10 @@ public class SummaryDataSource extends JRAbstractBeanDataSource
 	}
 
 	@Override
-	public Object getFieldValue(JRField field) throws JRException
+	public Object getFieldValue( JRField field ) throws JRException
 	{
-		if (field.getName().equals("chapter"))
-			return new ChapterDataSource(summary.getChapters().get(iterator.next()));
+		if( field.getName().equals( "chapter" ) )
+			return new ChapterDataSource( summary.getChapters().get( iterator.next() ) );
 		return null;
 	}
 

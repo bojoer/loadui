@@ -21,77 +21,124 @@ import java.util.TreeMap;
 
 import net.sf.jasperreports.engine.JRException;
 
+import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.summary.Summary;
+import com.eviware.loadui.util.reporting.datasources.SummaryDataSource;
+import com.eviware.loadui.util.reporting.datasources.statistics.ExecutionDataSource;
 
-public class JasperReportManager {
+public class JasperReportManager
+{
 
 	private static JasperReportManager _instance = null;
-	
-	private static final File reportDirectory = new File("reports");
-	
-	private TreeMap<String, LReportTemplate> reports = new TreeMap<String, LReportTemplate>(); 
-	
-	private JasperReportManager() {
+
+	private static final File reportDirectory = new File( "reports" );
+
+	private TreeMap<String, LReportTemplate> reports = new TreeMap<String, LReportTemplate>();
+
+	private JasperReportManager()
+	{
 		// load report templates
 		loadReports();
 	}
-	
+
 	/*
-	 * Need to be singleton, since it works with file system and init could done only once.
+	 * Need to be singleton, since it works with file system and init could done
+	 * only once.
 	 */
-	public static JasperReportManager getInstance() {
-		if( _instance == null ) 
+	public static JasperReportManager getInstance()
+	{
+		if( _instance == null )
 			_instance = new JasperReportManager();
 		return _instance;
 	}
-	
+
 	// loads all jasper reports from reports dir
-	private void loadReports() {
-		File[] reports = reportDirectory.listFiles(new FilenameFilter() 
+	private void loadReports()
+	{
+		File[] reports = reportDirectory.listFiles( new FilenameFilter()
 		{
-			
+
 			@Override
-			public boolean accept(File dir, String name)
+			public boolean accept( File dir, String name )
 			{
-				return name.endsWith("jrxml");
+				return name.endsWith( "jrxml" );
 			}
-		});
-		for( File reportTemplate : reports ) {
-			this.reports.put(reportTemplate.getName().replace(".jrxml", ""), new LReportTemplate(reportTemplate.getName(), reportTemplate));
+		} );
+		for( File reportTemplate : reports )
+		{
+			this.reports.put( reportTemplate.getName().replace( ".jrxml", "" ),
+					new LReportTemplate( reportTemplate.getName(), reportTemplate ) );
 		}
 	}
+
 	/*
 	 * This will create a report and open JasperViewer
 	 */
-	public void createReport( Summary summary) {
+	public void createReport( Summary summary )
+	{
 		try
 		{
-			ReportEngine.generateJasperReport(summary, reports.get("SummaryReport"));
+			ReportEngine.generateJasperReport( new SummaryDataSource( summary ), reports.get( "SummaryReport" ), summary
+					.getChapters().keySet().iterator().next() );
 		}
-		catch (JRException e)
+		catch( JRException e )
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	/*
 	 * this will create report and save it in given file and given format
 	 */
-	public void createReport( Summary summary, File file, String format) {
+	public void createReport( Summary summary, File file, String format )
+	{
 		try
 		{
-			ReportEngine.generateJasperReport(summary, reports.get("SummaryReport"), file, format);
+			ReportEngine.generateJasperReport( new SummaryDataSource( summary ), reports.get( "SummaryReport" ), file,
+					format );
 		}
-		catch (JRException e)
+		catch( JRException e )
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	public LReportTemplate getReport(String name) {
-		LReportTemplate result = reports.get(name);
+
+	public void createReport( Execution execution )
+	{
+		try
+		{
+			ReportEngine.generateJasperReport( new ExecutionDataSource( execution ), reports.get( "ResultsReport" ),
+					execution.getLabel() );
+		}
+		catch( JRException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * this will create report and save it in given file and given format
+	 */
+	public void createReport( Execution execution, File file, String format )
+	{
+		try
+		{
+			ReportEngine.generateJasperReport( new ExecutionDataSource( execution ), reports.get( "SummaryReport" ), file,
+					format );
+		}
+		catch( JRException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public LReportTemplate getReport( String name )
+	{
+		LReportTemplate result = reports.get( name );
 		result.update();
 		return result;
 	}
