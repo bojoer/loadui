@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +45,7 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 	public final static Logger log = LoggerFactory.getLogger( BayeuxMessageEndpoint.class );
 
 	private final ScheduledExecutorService scheduledExecutor;
+	private final ExecutorService executorService;
 	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport( this );
 	private final Set<ConnectionListener> connectionListeners = new HashSet<ConnectionListener>();
 	private final Runnable stateChecker = new StateChecker();
@@ -56,6 +58,7 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 		super( url, new LongPollingTransport( new HashMap<String, Object>(), httpClient ) );
 
 		scheduledExecutor = BeanInjector.getBean( ScheduledExecutorService.class );
+		executorService = BeanInjector.getBean( ExecutorService.class );
 
 		try
 		{
@@ -199,9 +202,16 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 		{
 			try
 			{
-				handshake();
-				open = true;
-				setConnected( isConnected() );
+				executorService.submit( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						handshake();
+						open = true;
+						setConnected( isConnected() );
+					}
+				} );
 			}
 			catch( Exception e )
 			{
