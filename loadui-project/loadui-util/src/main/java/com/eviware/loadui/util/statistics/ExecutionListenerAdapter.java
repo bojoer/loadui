@@ -23,17 +23,17 @@ public abstract class ExecutionListenerAdapter implements ExecutionListener
 {
 
 	@Override
-	public void executionPaused(ExecutionManager.State  oldState)
+	public void executionPaused( ExecutionManager.State oldState )
 	{
 	}
 
 	@Override
-	public void executionStarted(ExecutionManager.State  oldState)
+	public void executionStarted( ExecutionManager.State oldState )
 	{
 	}
 
 	@Override
-	public void executionStopped(ExecutionManager.State  oldState)
+	public void executionStopped( ExecutionManager.State oldState )
 	{
 	}
 

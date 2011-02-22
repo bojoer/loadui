@@ -82,7 +82,7 @@ public class BroadcastMessageEndpointImpl implements BroadcastMessageEndpoint
 		while( it.hasNext() )
 		{
 			Entry<Pattern, MessageListener> entry = it.next();
-			
+
 			if( entry.getValue().equals( listener ) )
 			{
 				it.remove();

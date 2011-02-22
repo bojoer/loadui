@@ -23,7 +23,7 @@ public class FormattingUtils
 		seconds %= 3600;
 		long minutes = seconds / 60;
 		seconds %= 60;
-		
+
 		return String.format( "%02d:%02d:%02d", hours, minutes, seconds );
 	}
 }

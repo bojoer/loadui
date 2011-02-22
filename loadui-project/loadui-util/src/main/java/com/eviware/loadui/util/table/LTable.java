@@ -34,67 +34,83 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 import javax.swing.table.TableModel;
 
-public class LTable extends JXTable {
+public class LTable extends JXTable
+{
 
 	private static final long serialVersionUID = 8659925359922608407L;
 	private boolean autoscroll = false;
 
-	public LTable(TableModel model) {
-		super(model);
+	public LTable( TableModel model )
+	{
+		super( model );
 
-		addMouseMotionListener(new MouseMotionAdapter() {
-			public void mouseMoved(MouseEvent e) {
+		addMouseMotionListener( new MouseMotionAdapter()
+		{
+			public void mouseMoved( MouseEvent e )
+			{
 				Point p = e.getPoint();
-				int row = rowAtPoint(p);
-				int column = columnAtPoint(p);
-				if (row > -1 && column > -1) {
-					setToolTipText(String.valueOf(getValueAt(row, column)));
+				int row = rowAtPoint( p );
+				int column = columnAtPoint( p );
+				if( row > -1 && column > -1 )
+				{
+					setToolTipText( String.valueOf( getValueAt( row, column ) ) );
 				}
 			}
-		});
+		} );
 	}
 
 	@Override
-	public void tableChanged(TableModelEvent e) {
-		super.tableChanged(e);
-		if (autoscroll)
-			SwingUtilities.invokeLater(new Runnable() {
+	public void tableChanged( TableModelEvent e )
+	{
+		super.tableChanged( e );
+		if( autoscroll )
+			SwingUtilities.invokeLater( new Runnable()
+			{
 
 				@Override
-				public void run() {
-					if (getRowCount() > 0)
-						scrollRowToVisible(getRowCount() - 1);
+				public void run()
+				{
+					if( getRowCount() > 0 )
+						scrollRowToVisible( getRowCount() - 1 );
 				}
-			});
+			} );
 	}
 
-	public boolean isAutoscroll() {
+	public boolean isAutoscroll()
+	{
 		return autoscroll;
 	}
 
-	public void setAutoscroll(boolean autoscroll) {
+	public void setAutoscroll( boolean autoscroll )
+	{
 		this.autoscroll = autoscroll;
 	}
-	
-	public boolean save ( File saveFile ) {
+
+	public boolean save( File saveFile )
+	{
 		boolean result = true;
 		CSVWriter writer = null;
-		LTableModel model = (LTableModel) getModel();
-		try {
-			writer = new CSVWriter(new FileWriter(saveFile, false), ',');
-			for( int cnt = 0; cnt < model.getRowCount(); cnt++ ) 
-				writer.writeNext( convertToStringArray(model.getRowAt(cnt)));
+		LTableModel model = ( LTableModel )getModel();
+		try
+		{
+			writer = new CSVWriter( new FileWriter( saveFile, false ), ',' );
+			for( int cnt = 0; cnt < model.getRowCount(); cnt++ )
+				writer.writeNext( convertToStringArray( model.getRowAt( cnt ) ) );
 			writer.flush();
-		} catch (Exception e) {
+		}
+		catch( Exception e )
+		{
 			e.printStackTrace();
 			result = false;
-		} finally {
-			if ( writer != null )
+		}
+		finally
+		{
+			if( writer != null )
 				try
 				{
 					writer.close();
 				}
-				catch (IOException e)
+				catch( IOException e )
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -108,11 +124,12 @@ public class LTable extends JXTable {
 	 * @param arraylist
 	 * @return
 	 */
-	private String[] convertToStringArray(ArrayList arraylist)
+	private String[] convertToStringArray( ArrayList arraylist )
 	{
 		String[] result = new String[arraylist.size()];
-		for( int cnt= 0; cnt < arraylist.size(); cnt++ ) {
-			result[cnt] = (arraylist.get(cnt)).toString();
+		for( int cnt = 0; cnt < arraylist.size(); cnt++ )
+		{
+			result[cnt] = ( arraylist.get( cnt ) ).toString();
 		}
 		return result;
 	}

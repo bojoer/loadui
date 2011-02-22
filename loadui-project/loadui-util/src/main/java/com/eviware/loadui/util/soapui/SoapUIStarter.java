@@ -40,11 +40,11 @@ public class SoapUIStarter
 		}
 
 		logger.info( "Cajo offline!Test not passed!" );
-//		String extension = isWindows() ? ".bat" : ".sh";
-//		if( extension.equals( ".sh" ) )
-//		{
-//			soapUIbatPath = soapUIbatPath.replace( ".bat", ".sh" );
-//		}
+		// String extension = isWindows() ? ".bat" : ".sh";
+		// if( extension.equals( ".sh" ) )
+		// {
+		// soapUIbatPath = soapUIbatPath.replace( ".bat", ".sh" );
+		// }
 		try
 		{
 			File file = new File( soapUIbatPath );
@@ -54,15 +54,15 @@ public class SoapUIStarter
 			}
 			String[] commandsWin = new String[] { "cmd.exe", "/c", soapUIbatPath };
 			String[] commandsLinux = new String[] { "sh", soapUIbatPath };
-			String[] commandsOSX = new String[] {soapUIbatPath+"/Contents/MacOS/JavaApplicationStub"};
+			String[] commandsOSX = new String[] { soapUIbatPath + "/Contents/MacOS/JavaApplicationStub" };
 			logger.info( "Launching soapUI..." );
 			deternimeOS();
 			ProcessBuilder pb;
-			if ( isWindows ) 
+			if( isWindows )
 				pb = new ProcessBuilder( commandsWin );
-			else if ( isOSX )
+			else if( isOSX )
 				pb = new ProcessBuilder( commandsOSX );
-			else 
+			else
 				pb = new ProcessBuilder( commandsLinux );
 			Process p = pb.start();
 			// Not closing the input stream may prevent the process from starting
@@ -79,7 +79,7 @@ public class SoapUIStarter
 	{
 		if( isWindows == null )
 			isWindows = new Boolean( System.getProperty( "os.name" ).indexOf( "Windows" ) >= 0 );
-		if ( isOSX == null )
+		if( isOSX == null )
 			isOSX = new Boolean( System.getProperty( "os.name" ).indexOf( "Mac OS X" ) >= 0 );
 	}
 

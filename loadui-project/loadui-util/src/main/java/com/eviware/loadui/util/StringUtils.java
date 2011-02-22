@@ -128,10 +128,10 @@ public class StringUtils
 
 		return sb.toString();
 	}
-	
+
 	/**
-	 * Serializes several Strings into a single string, which can later
-	 * be deserialized to give a List of the original values. Order is preserved.
+	 * Serializes several Strings into a single string, which can later be
+	 * deserialized to give a List of the original values. Order is preserved.
 	 * 
 	 * @param strings
 	 * @return

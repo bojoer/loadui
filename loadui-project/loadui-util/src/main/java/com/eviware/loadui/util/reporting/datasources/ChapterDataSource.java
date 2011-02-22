@@ -14,15 +14,15 @@ import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
 
 public class ChapterDataSource extends JRAbstractBeanDataSource
 {
-	Logger logger = LoggerFactory.getLogger(ChapterDataSource.class);
+	Logger logger = LoggerFactory.getLogger( ChapterDataSource.class );
 
 	private Chapter chapter = null;
 
 	private int cnt = -1;
 
-	public ChapterDataSource(Chapter chapter)
+	public ChapterDataSource( Chapter chapter )
 	{
-		super(true);
+		super( true );
 		this.chapter = chapter;
 	}
 
@@ -34,28 +34,31 @@ public class ChapterDataSource extends JRAbstractBeanDataSource
 	}
 
 	@Override
-	public Object getFieldValue(JRField field) throws JRException
+	public Object getFieldValue( JRField field ) throws JRException
 	{
-		logger.debug("Looking for " + field.getName());
-		if ( field.getName().equals("values") ) {
-			return new ValuesDataSource(chapter.getValues());
+		logger.debug( "Looking for " + field.getName() );
+		if( field.getName().equals( "values" ) )
+		{
+			return new ValuesDataSource( chapter.getValues() );
 		}
-		if ( field.getName().equals("summarySection") ) {
-			return new SummarySectionDataSource(chapter.getSections().get(0));
+		if( field.getName().equals( "summarySection" ) )
+		{
+			return new SummarySectionDataSource( chapter.getSections().get( 0 ) );
 		}
-		if ( field.getName().equals("sections") ) {
+		if( field.getName().equals( "sections" ) )
+		{
 			List<Section> sections = chapter.getSections();
-			sections.remove(0);
-			return new SectionDataSource(sections);
+			sections.remove( 0 );
+			return new SectionDataSource( sections );
 		}
-		return getFieldValue(chapter, field);
+		return getFieldValue( chapter, field );
 	}
 
 	@Override
 	public boolean next() throws JRException
 	{
-		cnt++;
-		if (cnt == 1)
+		cnt++ ;
+		if( cnt == 1 )
 			return false;
 		else
 			return true;

@@ -38,8 +38,8 @@ import java.util.concurrent.TimeoutException;
  */
 public final class ScheduledExecutor
 {
-	public static final ScheduledExecutorService instance = new UnstoppableScheduledExecutorService( Executors
-			.newSingleThreadScheduledExecutor( new ThreadFactory()
+	public static final ScheduledExecutorService instance = new UnstoppableScheduledExecutorService(
+			Executors.newSingleThreadScheduledExecutor( new ThreadFactory()
 			{
 				@Override
 				public Thread newThread( Runnable r )
