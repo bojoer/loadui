@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.util.events.EventSupport;
@@ -195,5 +197,11 @@ public class ExecutionImpl implements Execution
 	public void fireEvent( EventObject event )
 	{
 		eventSupport.fireEvent( event );
+	}
+
+	@Override
+	public File getSummaryReport()
+	{
+		return new File( new File( manager.getDBBaseDir(), id ), "summary.jp" );
 	}
 }

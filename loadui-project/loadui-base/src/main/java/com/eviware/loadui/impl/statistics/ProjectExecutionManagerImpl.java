@@ -1,5 +1,6 @@
 package com.eviware.loadui.impl.statistics;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
@@ -23,6 +25,7 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
 import com.eviware.loadui.api.summary.Summary;
+import com.eviware.loadui.util.reporting.JasperReportManager;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 {
@@ -151,7 +154,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				{
 					hasCurrent = false;
 					executionManager.stopExecution();
-
+					
 					runningProject.addEventListener( BaseEvent.class,
 							new SummaryAttacher( executionManager.getCurrentExecution() ) );
 
@@ -226,7 +229,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				event.getSource().removeEventListener( BaseEvent.class, this );
 				Summary summary = ( ( CanvasItem )event.getSource() ).getSummary();
 
-				// TODO: Save summary to a file-blob in the same directory as the exectution-DB.
+				JasperReportManager.getInstance().createReport(summary,  new File( new File( executionManager.getDBBaseDir(), execution.getId() ), "summary.jp" ), "JASPER_PRINT");
 			}
 		}
 	}

@@ -238,9 +238,23 @@ public class ExecutionSelector extends Group {
 			}
 		}
 		Collections.sort( holderList );
+		holderList.add( ExecutionComparable{ execution: executionManager.getCurrentExecution() } );
 		for( h in holderList ) {
-			def left = CustomRadioButton {text: (h as ExecutionComparable).execution.getLabel(), radioGroup: leftRadioToggles};
-			def right = CustomRadioButton {text: (h as ExecutionComparable).execution.getLabel(), radioGroup: rightRadioToggles};
+			var label:String;
+			if( (h as ExecutionComparable).execution == executionManager.getCurrentExecution() )
+			{
+				label = "Current Run";
+			}
+			else
+			{
+				label = (h as ExecutionComparable).execution.getLabel();
+			}
+			def left = CustomRadioButton {text: label, radioGroup: leftRadioToggles};
+			def right = CustomRadioButton {text: label, radioGroup: rightRadioToggles};
+			if( (h as ExecutionComparable).execution == executionManager.getCurrentExecution() )
+			{
+				right.radioButton.disable = true;
+			}
 			insert left into leftRadioButtons;
 			insert right into rightRadioButtons;
 			leftToRightMapping.put(left.radioButton, right.radioButton);
