@@ -92,7 +92,7 @@ public class StatisticsMenu extends VBox {
 	public def menuButtonFont: Font = Font { name:"Arial", size:18 };
 	public def menuButtonLabel: String = "Statistics";
 	
-	public var onPageSelect:function( node:Node ):Void;
+	public var onPageSelect:function( page:ChartPage ):Void;
 	
 	override var spacing = 2;
 	override var padding = Insets { left: 16 };
@@ -165,7 +165,7 @@ public class StatisticsMenu extends VBox {
 						shape: "M0,0 L0,12 10,12, 10,0 0,0 M4,13 L4,16 14,16 14,4 11,4 11,13 4,13"
 						action: function() {
 							AppState.byName("STATISTICS").blockingTask( function():Void {
-								com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport( StatisticsWindow.execution );
+								com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport( StatisticsWindow.execution, tabContainer.currentPage );
 							}, null, "Generating Printable Report..." );
 						}
 						disable: bind StatisticsWindow.execution == null

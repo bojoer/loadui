@@ -18,6 +18,7 @@ package com.eviware.loadui.impl.statistics;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.junit.Before;
@@ -74,7 +75,7 @@ public class AverageStatisticWriterTest
 		holderSupport = new StatisticHolderSupport( holderMock );
 		StatisticVariable variable = holderSupport.addStatisticVariable( "AVG_TEST" );
 		writer = ( AverageStatisticWriter )new AverageStatisticWriter.Factory().createStatisticsWriter( manager,
-				variable, null );
+				variable, Collections.<String, Object> emptyMap() );
 	}
 
 	private void calculate()

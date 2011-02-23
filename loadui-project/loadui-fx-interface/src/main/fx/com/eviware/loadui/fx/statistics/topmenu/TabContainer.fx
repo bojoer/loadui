@@ -49,6 +49,7 @@ public class TabContainer extends HBox {
 	def DEFAULT_PAGE_NAME = "Untitled page";
 	def statisticPagesListener = new StatisticPagesListener();
 
+	public-read var currentPage:StatisticPage;
 	public var onSelect:function(sp:StatisticPage):Void;
 	public var statisticPages:StatisticPages on replace { sortableBox.content = generateTabs(); };
 
@@ -191,6 +192,7 @@ class StatisticPagesListener extends EventHandler {
 
 class ToggleTabGroup extends ToggleGroup {
 	override var selectedToggle on replace oldVal {
+		currentPage = selectedToggle.value as StatisticPage;
 		   onSelect( selectedToggle.value as StatisticPage );
 	}
 }

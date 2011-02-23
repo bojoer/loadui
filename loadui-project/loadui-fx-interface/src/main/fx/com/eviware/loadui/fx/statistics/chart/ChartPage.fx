@@ -105,7 +105,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 		}
 	}
 	
-	var innerContent:ChartGroupHolder[] on replace {
+	public-read var innerContent:ChartGroupHolder[] on replace {
 		container.content = innerContent;
 	}
 	
