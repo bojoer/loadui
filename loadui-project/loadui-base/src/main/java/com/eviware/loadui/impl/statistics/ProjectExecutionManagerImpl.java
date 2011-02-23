@@ -226,7 +226,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				event.getSource().removeEventListener( BaseEvent.class, this );
 				Summary summary = ( ( CanvasItem )event.getSource() ).getSummary();
 
-				// TODO: Attach summary to execution.
+				// TODO: Save summary to a file-blob in the same directory as the exectution-DB.
 			}
 		}
 	}
