@@ -21,6 +21,7 @@ import java.util.TreeMap;
 
 import net.sf.jasperreports.engine.JRException;
 
+import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.util.reporting.datasources.SummaryDataSource;
@@ -105,11 +106,11 @@ public class JasperReportManager
 		}
 	}
 
-	public void createReport( Execution execution )
+	public void createReport( Execution execution, StatisticPage page )
 	{
 		try
 		{
-			ReportEngine.generateJasperReport( new ExecutionDataSource( execution ), reports.get( "ResultsReport" ),
+			ReportEngine.generateJasperReport( new ExecutionDataSource( execution, page ), reports.get( "ResultsReport" ),
 					execution.getLabel() );
 		}
 		catch( JRException e )
@@ -122,12 +123,12 @@ public class JasperReportManager
 	/*
 	 * this will create report and save it in given file and given format
 	 */
-	public void createReport( Execution execution, File file, String format )
+	public void createReport( Execution execution, StatisticPage page, File file, String format )
 	{
 		try
 		{
-			ReportEngine.generateJasperReport( new ExecutionDataSource( execution ), reports.get( "SummaryReport" ), file,
-					format );
+			ReportEngine.generateJasperReport( new ExecutionDataSource( execution, page ), reports.get( "SummaryReport" ),
+					file, format );
 		}
 		catch( JRException e )
 		{

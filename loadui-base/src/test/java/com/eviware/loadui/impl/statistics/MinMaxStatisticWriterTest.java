@@ -3,6 +3,8 @@ package com.eviware.loadui.impl.statistics;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -48,7 +50,7 @@ public class MinMaxStatisticWriterTest
 		holderSupport = new StatisticHolderSupport( holderMock );
 		StatisticVariable variable = holderSupport.addStatisticVariable( "Exteme" );
 		writer = ( MinMaxStatisticWriter )new MinMaxStatisticWriter.Factory().createStatisticsWriter( manager, variable,
-				null );
+				Collections.<String, Object> emptyMap() );
 
 		for( int cnt = 0; cnt < data.length; cnt++ )
 			writer.update( 1, data[cnt] );

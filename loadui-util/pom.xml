@@ -59,9 +59,9 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-		  <groupId>jasperreports</groupId>
+		  <groupId>net.sf.jasperreports</groupId>
 		  <artifactId>jasperreports</artifactId>
-		  <version>3.7.4</version>
+		  <version>4.0.0</version>
 		  <scope>provided</scope>
 		</dependency>
 		<dependency>

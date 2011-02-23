@@ -71,6 +71,8 @@ public var execution:Execution on replace {
 }
 public var comparedExecution:Execution;
 
+public-read var currentChartPage:ChartPage;
+
 public function getInstance():StatisticsWindow {
   if (instance == null) {
     instance = StatisticsWindow {};
@@ -116,15 +118,6 @@ public class StatisticsWindow {
 		execution = executionManager.getCurrentExecution();
 	}
 	
-	var pageMap: Map = new HashMap();
-	
-	function onTabRename(tab: ToggleButton): Void{
-	    def page: StatisticPage = pageMap.get(tab) as StatisticPage;
-	    if(page != null){
-	        page.setTitle(tab.text);
-	    }
-	}
-	
 	def layoutRegion:Region = Region {
 		managed: false,
 		width: bind stack.width,
@@ -149,12 +142,13 @@ public class StatisticsWindow {
 	def topMenu:StatisticsMenu = StatisticsMenu {
 		width: bind scene.width,
 		project: project,
-		onPageSelect: function( node ):Void {
+		onPageSelect: function( page ):Void {
 			for( child in stack.content )
 			{
 				ReleasableUtils.release( child );
 			}
-			stack.content = [ layoutRegion, node ]
+			currentChartPage = page;
+			stack.content = [ layoutRegion, page ]
 		}
 	};
 	
@@ -202,9 +196,6 @@ public class StatisticsWindow {
 	
 	public function close() {
 		//tabs.clear();
-		for( tb in pageMap.keySet() )
-			((tb as ToggleButton).value as ChartPage).release();
-		pageMap.clear();
 		stage.close();
 	}
 			
