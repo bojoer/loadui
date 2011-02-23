@@ -259,6 +259,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		def yAxis = chart.getYAxis();
 		yAxis.setRange( 0, 10 );
 		yAxis.setLabelVisible( false );
+		(yAxis.getTickCalculator() as com.jidesoft.chart.axis.DefaultNumericTickCalculator).setMinorTickIntervalBetweenMajors( 0 );
 		
 		chartNode.layoutInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true, vgrow: Priority.ALWAYS, margin: Insets { left: -15, right: 10 } };
 	}

@@ -1,5 +1,8 @@
 package com.eviware.loadui.util.reporting.datasources.statistics;
 
+import java.awt.Image;
+import java.util.Map;
+
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.store.Execution;
 
@@ -11,13 +14,15 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 {
 	private final Execution execution;
 	private final StatisticPage page;
+	private final Map<Object, Image> charts;
 	private boolean next = true;
 
-	public ExecutionDataSource( Execution execution, StatisticPage page )
+	public ExecutionDataSource( Execution execution, StatisticPage page, Map<Object, Image> charts )
 	{
 		super( true );
 		this.execution = execution;
 		this.page = page;
+		this.charts = charts;
 	}
 
 	@Override
@@ -30,7 +35,7 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 	public Object getFieldValue( JRField field ) throws JRException
 	{
 		if( field.getName().equals( "chartGroup" ) )
-			return new ChartDataSource( execution, page.getChildAt( 0 ) );
+			return new ChartGroupDataSource( execution, page.getChildAt( 0 ), charts );
 		return null;
 	}
 
