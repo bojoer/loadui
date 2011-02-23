@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.api.statistics.store;
 
+import java.io.File;
 import java.util.Collection;
 
 import com.eviware.loadui.api.events.EventFirer;
@@ -88,4 +89,9 @@ public interface Execution extends Labeled.Mutable, EventFirer
 	 * Gets the length of this execution.
 	 */
 	public long getLength();
+	
+	/**
+	 * Returns a File-object containing the Summary report (serialized JasperPrint-object) from this Execution.
+	 */
+	public File getSummaryReport();
 }

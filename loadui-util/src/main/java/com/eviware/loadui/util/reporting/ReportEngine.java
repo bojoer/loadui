@@ -17,6 +17,10 @@ package com.eviware.loadui.util.reporting;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
 import net.sf.jasperreports.engine.JRAbstractExporter;
@@ -48,7 +52,7 @@ public class ReportEngine
 
 	public enum ReportFormats
 	{
-		PDF, XLS, HTML, RTF, CSV, TXT, XML
+		PDF, XLS, HTML, RTF, CSV, TXT, XML, JASPER_PRINT
 	};
 
 	static Logger log = LoggerFactory.getLogger( ReportEngine.class );
@@ -66,9 +70,30 @@ public class ReportEngine
 			if( jp != null )
 			{
 				ReportFormats rf = ReportFormats.valueOf( format );
+				
 				JRAbstractExporter jrExporter = null;
 				switch( rf )
 				{
+				case JASPER_PRINT :
+					try
+					{
+						ObjectOutput oo;
+						oo = new ObjectOutputStream( new FileOutputStream( outfile ) );
+						try
+						{
+							oo.writeObject( jp );
+						}
+						finally
+						{
+							oo.close();
+						}
+					}
+					catch( IOException e )
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return;
 				case PDF :
 					jrExporter = new JRPdfExporter();
 					break;

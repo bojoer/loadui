@@ -134,6 +134,11 @@ public interface ExecutionManager extends EventFirer
 	public Collection<String> getExecutionNames();
 	
 	/**
+	 * Gets the base directory where executions will be saved
+	 */
+	public String getDBBaseDir();
+	
+	/**
 	 * Gets a reference to a specific Execution by its ID.
 	 * 
 	 * @param executionId

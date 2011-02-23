@@ -623,10 +623,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	 */
 	protected abstract void initializeDatabaseMetadata( DatabaseMetadata metadata );
 
-	/**
-	 * Gets the base directory where executions will be saved
-	 */
-	protected String getDBBaseDir()
+
+	@Override
+	public String getDBBaseDir()
 	{
 		return baseDirectory.getAbsolutePath();
 	}
@@ -634,8 +633,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public void pauseExecution()
 	{
-		// if started and not paused ( can not pause something that is not started
-		// )
+		// if started and not paused (can not pause something that is not started)
 		if( executionState == State.STARTED )
 		{
 			executionState = State.PAUSED;
