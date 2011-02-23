@@ -15,8 +15,10 @@
  */
 package com.eviware.loadui.util.reporting;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Map;
 import java.util.TreeMap;
 
 import net.sf.jasperreports.engine.JRException;
@@ -106,12 +108,12 @@ public class JasperReportManager
 		}
 	}
 
-	public void createReport( Execution execution, StatisticPage page )
+	public void createReport( Execution execution, StatisticPage page, Map<Object, Image> charts )
 	{
 		try
 		{
-			ReportEngine.generateJasperReport( new ExecutionDataSource( execution, page ), reports.get( "ResultsReport" ),
-					execution.getLabel() );
+			ReportEngine.generateJasperReport( new ExecutionDataSource( execution, page, charts ),
+					reports.get( "ResultsReport" ), execution.getLabel() );
 		}
 		catch( JRException e )
 		{
@@ -123,12 +125,13 @@ public class JasperReportManager
 	/*
 	 * this will create report and save it in given file and given format
 	 */
-	public void createReport( Execution execution, StatisticPage page, File file, String format )
+	public void createReport( Execution execution, StatisticPage page, Map<Object, Image> charts, File file,
+			String format )
 	{
 		try
 		{
-			ReportEngine.generateJasperReport( new ExecutionDataSource( execution, page ), reports.get( "SummaryReport" ),
-					file, format );
+			ReportEngine.generateJasperReport( new ExecutionDataSource( execution, page, charts ),
+					reports.get( "SummaryReport" ), file, format );
 		}
 		catch( JRException e )
 		{

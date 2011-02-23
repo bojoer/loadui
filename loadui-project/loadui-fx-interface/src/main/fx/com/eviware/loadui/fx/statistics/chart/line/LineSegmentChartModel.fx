@@ -1,4 +1,4 @@
- /* 
+/* 
  * Copyright 2011 eviware software ab
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -37,9 +37,7 @@ public def COLOR = "color";
 public def STROKE = "stroke";
 public def WIDTH = "width";
 
-public class LineSegmentChartModel extends DefaultChartModel {
-	public-read def chartStyle = new ChartStyle();
-	
+public class LineSegmentChartModel extends DefaultChartModel, LineSegmentChartModelBase {
 	public-read var latestTime:Number;
 	
 	def execution = bind StatisticsWindow.execution on replace {

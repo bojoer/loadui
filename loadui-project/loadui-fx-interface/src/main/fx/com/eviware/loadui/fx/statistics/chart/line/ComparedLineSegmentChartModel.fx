@@ -27,10 +27,8 @@ import com.jidesoft.chart.util.ColorFactory;
 
 def BLACK = FxUtils.getAwtColor( "#000000" );
 
-public class ComparedLineSegmentChartModel extends DefaultChartModel {
+public class ComparedLineSegmentChartModel extends DefaultChartModel, LineSegmentChartModelBase {
 	def listener = new Listener();
-	
-	public-read var chartStyle:ChartStyle;
 	
 	public-init var baseModel:LineSegmentChartModel on replace {
 		baseModel.addChartModelListener( listener );

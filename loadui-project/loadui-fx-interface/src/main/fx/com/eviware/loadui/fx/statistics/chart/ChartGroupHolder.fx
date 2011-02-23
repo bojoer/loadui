@@ -70,6 +70,8 @@ import java.util.EventObject;
 
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
+def EXPAND_ATTRIBUTE = "expand";
+
 def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS };
 def childrenInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, margin: Insets { left: 8, right: 8, top: -1, bottom: 8 } };
 
@@ -94,9 +96,13 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 	public-read var expandAgents = false;
 	var expandedNode:SortableBox on replace oldValue {
 		for( child in oldValue.content ) ReleasableUtils.release( oldValue );
+		
+		expandedChartViews = for( node in expandedNode.content[x|x instanceof ChartViewHolder] ) node as ChartViewHolder;
 	}
 	
-	var chartViewHolder:ChartViewHolder on replace oldValue {
+	public-read var expandedChartViews:ChartViewHolder[];
+	
+	public-read var chartViewHolder:ChartViewHolder on replace oldValue {
 		ReleasableUtils.release( oldValue );
 	}
 	
