@@ -71,6 +71,9 @@ import java.util.EventObject;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
 def EXPAND_ATTRIBUTE = "expand";
+def GROUP = "group";
+def SOURCES = "sources";
+def NONE = "none";
 
 def chartViewInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS };
 def childrenInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, margin: Insets { left: 8, right: 8, top: -1, bottom: 8 } };
@@ -123,6 +126,17 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 			layoutInfo: chartViewInfo
 			graphic: graphic
 		};
+		def expandState = chartGroup.getAttribute( EXPAND_ATTRIBUTE, NONE );
+		if( GROUP.equals( expandState ) and not expandGroups ) {
+			toggleGroupExpand();
+		} else if( SOURCES.equals( expandState ) and not expandAgents ) {
+			toggleAgentExpand();
+		} else {
+			if( expandGroups )
+				toggleGroupExpand();
+			if( expandAgents )
+				toggleAgentExpand();
+		}
 	}
 	
 	def panelHolder:Stack = Stack {
@@ -150,7 +164,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 					}
 				]
 			},
-			panelHolder
+			panelHolder,
+			expandedNode
 		]
 	}
 	
@@ -246,6 +261,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 				(node as ChartViewHolder).release();
 			delete expandedNode from (resizable as Container).content;
 		}
+		chartGroup.setAttribute( EXPAND_ATTRIBUTE, if( expandGroups ) GROUP else NONE );
 	}
 	
 	public function toggleAgentExpand():Void {
@@ -270,6 +286,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 				(node as ChartViewHolder).release();
 			delete expandedNode from (resizable as Container).content;
 		}
+		chartGroup.setAttribute( EXPAND_ATTRIBUTE, if( expandAgents ) SOURCES else NONE );
 	}
 	
 	function refreshGraphic():Void {
