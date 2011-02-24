@@ -3,28 +3,27 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<template><![CDATA["reports/styles.jrtx"]]></template>
 	<field name="chart" class="java.awt.Image"/>
+	<field name="chartName" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<pageHeader>
-		<band height="35" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="0" width="100" height="20"/>
-				<textElement/>
-				<text><![CDATA[Chart]]></text>
-			</staticText>
-		</band>
-	</pageHeader>
 	<detail>
-		<band height="100" splitType="Stretch">
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement style="Heading 3" x="0" y="10" width="555" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center">
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{chartName}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="100">
 			<image>
 				<reportElement x="0" y="0" width="555" height="100"/>
 				<imageExpression class="java.awt.Image"><![CDATA[$F{chart}]]></imageExpression>
 			</image>
 		</band>
 	</detail>
-	<pageFooter>
-		<band height="50"/>
-	</pageFooter>
 </jasperReport>

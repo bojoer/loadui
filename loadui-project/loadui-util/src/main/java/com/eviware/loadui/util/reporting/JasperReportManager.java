@@ -131,7 +131,7 @@ public class JasperReportManager
 		try
 		{
 			ReportEngine.generateJasperReport( new ExecutionDataSource( execution, page, charts ),
-					reports.get( "SummaryReport" ), file, format );
+					reports.get( "ResultsReport" ), file, format );
 		}
 		catch( JRException e )
 		{
