@@ -38,11 +38,11 @@ public class TrackImpl implements Track
 	public final static Logger log = LoggerFactory.getLogger( TrackImpl.class );
 
 	private final String id;
-	private final Execution execution;
+	private final ExecutionImpl execution;
 	private final TrackDescriptor trackDescriptor;
 	private final ExecutionManagerImpl manager;
 
-	public TrackImpl( Execution execution, TrackDescriptor trackDescriptor, ExecutionManagerImpl manager )
+	public TrackImpl( ExecutionImpl execution, TrackDescriptor trackDescriptor, ExecutionManagerImpl manager )
 	{
 		this.id = trackDescriptor.getId();
 		this.execution = execution;

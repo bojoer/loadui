@@ -38,7 +38,6 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	@Override
 	public DataSource createDataSource( String db )
 	{
-		long start = System.currentTimeMillis();
 		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" + baseDirectoryURI + db + File.separator + db
 				+ ";DB_CLOSE_ON_EXIT=FALSE", "sa", "sa" );
 		cp.setMaxConnections( 5 );
