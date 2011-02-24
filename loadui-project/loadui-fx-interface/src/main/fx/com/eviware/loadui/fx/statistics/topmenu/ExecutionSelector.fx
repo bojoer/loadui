@@ -232,13 +232,13 @@ public class ExecutionSelector extends Group {
 		for( n in names ) {
 		   if((n as String).startsWith(project.getId())){
 			   def e = executionManager.getExecution(n as String);
-			   if(archive and e.isArchived() or recently and (not e.isArchived())){
+			   if((archive and e.isArchived() or recently and (not e.isArchived())) and e != executionManager.getCurrentExecution() ){
 					holderList.add( ExecutionComparable { execution: e } );
 				}
 			}
 		}
-		Collections.sort( holderList );
 		holderList.add( ExecutionComparable{ execution: executionManager.getCurrentExecution() } );
+		Collections.sort( holderList );
 		for( h in holderList ) {
 			var label:String;
 			if( (h as ExecutionComparable).execution == executionManager.getCurrentExecution() )
@@ -251,10 +251,10 @@ public class ExecutionSelector extends Group {
 			}
 			def left = CustomRadioButton {text: label, radioGroup: leftRadioToggles};
 			def right = CustomRadioButton {text: label, radioGroup: rightRadioToggles};
-			if( (h as ExecutionComparable).execution == executionManager.getCurrentExecution() )
-			{
-				right.radioButton.disable = true;
-			}
+//			if( (h as ExecutionComparable).execution == executionManager.getCurrentExecution() )
+//			{
+//				right.radioButton.disable = true;
+//			}
 			insert left into leftRadioButtons;
 			insert right into rightRadioButtons;
 			leftToRightMapping.put(left.radioButton, right.radioButton);
@@ -561,6 +561,8 @@ class ExecutionComparable extends Comparable {
 	public var execution: Execution;
 	
 	override function compareTo( o: Object ): Integer {
+		if( (o as ExecutionComparable).execution == null )
+			return 1;
 		((o as ExecutionComparable).execution.getStartTime() - execution.getStartTime()) as Integer;
 	}
 }
