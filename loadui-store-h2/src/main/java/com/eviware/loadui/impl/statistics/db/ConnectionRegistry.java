@@ -129,10 +129,10 @@ public class ConnectionRegistry implements Releasable
 
 	private Connection getOrCreateConnection( String dbName, String key ) throws SQLException
 	{
+		
 		DataSource dataSource = getDataSource( dbName );
 		if( !connectionMap.containsKey( key ) )
 		{
-			long start = System.currentTimeMillis();
 			Connection conn = dataSource.getConnection();
 			conn.setAutoCommit( false );
 			connectionMap.put( key, conn );

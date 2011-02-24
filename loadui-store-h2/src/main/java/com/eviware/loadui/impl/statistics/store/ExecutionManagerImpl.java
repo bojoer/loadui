@@ -47,9 +47,10 @@ import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
 import com.eviware.loadui.impl.statistics.db.DataSourceProvider;
 import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
 import com.eviware.loadui.impl.statistics.db.TableRegistry;
+import com.eviware.loadui.impl.statistics.db.properties.PropertiesRegistry;
+import com.eviware.loadui.impl.statistics.db.properties.model.ExecutionProperties;
 import com.eviware.loadui.impl.statistics.db.table.TableBase;
 import com.eviware.loadui.impl.statistics.db.table.model.DataTable;
-import com.eviware.loadui.impl.statistics.db.table.model.ExecutionMetadataTable;
 import com.eviware.loadui.impl.statistics.db.table.model.SequenceTable;
 import com.eviware.loadui.impl.statistics.db.table.model.SourceTable;
 import com.eviware.loadui.impl.statistics.db.table.model.TrackMetadataTable;
@@ -85,13 +86,15 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private final EventSupport eventSupport = new EventSupport();
 
-	private Map<String, Execution> executionMap = new HashMap<String, Execution>();
+	private Map<String, ExecutionImpl> executionMap = new HashMap<String, ExecutionImpl>();
 
 	private final Map<String, TrackDescriptor> trackDescriptors = new HashMap<String, TrackDescriptor>();
 
 	private final Map<String, Entry> latestEntries = new HashMap<String, Entry>();
 
 	private TableRegistry tableRegistry = new TableRegistry();
+
+	private PropertiesRegistry propertiesRegistry = new PropertiesRegistry();
 
 	private DatabaseMetadata metadata;
 
@@ -100,6 +103,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	private Logger log = LoggerFactory.getLogger( ExecutionManagerImpl.class );
 
 	private State executionState = State.STOPPED;
+
+	private ExecutionPool executionPool = new ExecutionPool();
 
 	public ExecutionManagerImpl()
 	{
@@ -161,51 +166,41 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		latestEntries.clear();
 
-		try
+		if( getExecutionNames().contains( id ) )
 		{
-			if( getExecutionNames().contains( id ) )
-			{
-				throw new IllegalArgumentException( "Execution with the specified id already exist!" );
-			}
-			// create execution meta-table
-			ExecutionMetadataTable executionMetaTable = new ExecutionMetadataTable( id, connectionRegistry, metadata,
-					tableRegistry );
-
-			// insert execution meta-data
-			HashMap<String, Object> m = new HashMap<String, Object>();
-			m.put( ExecutionMetadataTable.STATIC_FIELD_NAME, id );
-			m.put( ExecutionMetadataTable.STATIC_FIELD_START_TIME, timestamp );
-			m.put( ExecutionMetadataTable.STATIC_FIELD_ARCHIVED, false );
-			m.put( ExecutionMetadataTable.STATIC_FIELD_LABEL, label );
-			m.put( ExecutionMetadataTable.STATIC_FIELD_LENGTH, 0 );
-			executionMetaTable.insert( m );
-
-			// create sequence table
-			SequenceTable sequenceTable = new SequenceTable( id, connectionRegistry, metadata, tableRegistry );
-
-			// create track meta table
-			TrackMetadataTable trackMetaTable = new TrackMetadataTable( id, connectionRegistry, metadata, tableRegistry );
-
-			// after all SQL operations are finished successfully, add created
-			// tables into registry
-			tableRegistry.put( id, executionMetaTable );
-			tableRegistry.put( id, sequenceTable );
-			tableRegistry.put( id, trackMetaTable );
-
-			currentExecution = new ExecutionImpl( id, timestamp, 0, false, label, this );
-			executionMap.put( id, currentExecution );
-			fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
-
-			executionState = State.STARTED;
-			ecs.fireExecutionStarted( State.STOPPED );
-			log.debug( "State changed: STOPPED -> STARTED" );
-
-			return currentExecution;
+			throw new IllegalArgumentException( "Execution with the specified id already exist!" );
 		}
-		catch( SQLException e )
-		{
-			throw new RuntimeException( "Error starting execution!", e );
-		}
+
+		ExecutionProperties executionProperties = new ExecutionProperties( getDBBaseDir() + File.separator + id );
+		executionProperties.set( ExecutionProperties.KEY_NAME, id );
+		executionProperties.set( ExecutionProperties.KEY_START_TIME, timestamp );
+		executionProperties.set( ExecutionProperties.KEY_ARCHIVED, false );
+		executionProperties.set( ExecutionProperties.KEY_LABEL, label );
+		executionProperties.set( ExecutionProperties.KEY_LENGTH, 0 );
+		propertiesRegistry.put( id, executionProperties );
+
+		// create sequence table
+		SequenceTable sequenceTable = new SequenceTable( id, connectionRegistry, metadata, tableRegistry );
+
+		// create track meta table
+		TrackMetadataTable trackMetaTable = new TrackMetadataTable( id, connectionRegistry, metadata, tableRegistry );
+
+		// after all SQL operations are finished successfully, add created
+		// tables into registry
+		tableRegistry.put( id, sequenceTable );
+		tableRegistry.put( id, trackMetaTable );
+
+		currentExecution = new ExecutionImpl( id, timestamp, 0, false, label, this );
+		executionMap.put( id, currentExecution );
+		fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
+
+		executionState = State.STARTED;
+		ecs.fireExecutionStarted( State.STOPPED );
+		log.debug( "State changed: STOPPED -> STARTED" );
+
+		currentExecution.setLoaded( true );
+		executionPool.setCurrentExecution( currentExecution );
+		return currentExecution;
 	}
 
 	@Override
@@ -314,9 +309,25 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			}
 			else
 			{
-				return loadExecution( executionId );
+				return prepareExecution( executionId );
 			}
 		}
+	}
+
+	private ExecutionImpl prepareExecution( String executionId )
+	{
+		ExecutionProperties executionProperties = new ExecutionProperties( getDBBaseDir() + File.separator + executionId );
+		propertiesRegistry.put( executionId, executionProperties );
+
+		String exeName = executionProperties.get( ExecutionProperties.KEY_NAME, String.class );
+		Long exeStartTime = executionProperties.get( ExecutionProperties.KEY_START_TIME, Long.class );
+		Boolean exeArchived = executionProperties.get( ExecutionProperties.KEY_ARCHIVED, Boolean.class );
+		String exeLabel = executionProperties.get( ExecutionProperties.KEY_LABEL, String.class );
+		Integer exeLength = executionProperties.get( ExecutionProperties.KEY_LENGTH, Integer.class );
+
+		ExecutionImpl execution = new ExecutionImpl( exeName, exeStartTime, exeLength, exeArchived, exeLabel, this );
+		executionMap.put( executionId, execution );
+		return execution;
 	}
 
 	/**
@@ -331,8 +342,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	 *           ID of execution that has to be loaded
 	 * @return Loaded execution
 	 */
-	private Execution loadExecution( String executionId )
+	public synchronized Execution loadExecution( String executionId )
 	{
+		// synchronized to provide data source creation one by one. because, for
+		// some reason this is faster.
+
 		// keep everything in temporary lists, until all SQL operations
 		// are finished successfully and then create objects and add
 		// tables to table registry
@@ -340,10 +354,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		List<TableBase> createdTableList = new ArrayList<TableBase>();
 		try
 		{
-			ExecutionMetadataTable executionMetaTable = new ExecutionMetadataTable( executionId, connectionRegistry,
-					metadata, tableRegistry );
-			createdTableList.add( executionMetaTable );
-
 			// create sequence table
 			SequenceTable sequenceTable = new SequenceTable( executionId, connectionRegistry, metadata, tableRegistry );
 			createdTableList.add( sequenceTable );
@@ -379,17 +389,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				}
 			}
 
-			Map<String, Object> result = executionMetaTable.selectFirst( null );
-			String exeName = ( String )result.get( ExecutionMetadataTable.STATIC_FIELD_NAME );
-			Long exeStartTime = ( Long )result.get( ExecutionMetadataTable.STATIC_FIELD_START_TIME );
-			Boolean exeArchived = ( Boolean )result.get( ExecutionMetadataTable.STATIC_FIELD_ARCHIVED );
-			Long exeLength = ( Long )result.get( ExecutionMetadataTable.STATIC_FIELD_LENGTH );
-			String exeLabel = ( String )result.get( ExecutionMetadataTable.STATIC_FIELD_LABEL );
-
 			// all SQL operations have finished successfully, so create
 			// execution object and appropriate tracks and add created tables
 			// to table registry
-			ExecutionImpl execution = new ExecutionImpl( exeName, exeStartTime, exeLength, exeArchived, exeLabel, this );
+			ExecutionImpl execution = executionMap.get( executionId );
 
 			// add created tables into table registry
 			for( int i = 0; i < createdTableList.size(); i++ )
@@ -407,6 +410,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			// add execution to execution map
 			executionMap.put( executionId, execution );
 			fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, execution ) );
+			execution.setLoaded( true );
+			executionPool.put( execution );
 			return execution;
 		}
 		catch( Exception e )
@@ -422,44 +427,23 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	public void archiveExecution( String executionId )
 	{
-		ExecutionMetadataTable metaTable = ( ExecutionMetadataTable )tableRegistry.getTable( executionId,
-				ExecutionMetadataTable.TABLE_NAME );
-		try
-		{
-			metaTable.archive();
-		}
-		catch( SQLException e )
-		{
-			throw new RuntimeException( "Unable to archive execution.", e );
-		}
+		ExecutionProperties executionProperties = ( ExecutionProperties )propertiesRegistry.getProperties( executionId,
+				ExecutionProperties.PROPERTIES_NAME );
+		executionProperties.set( ExecutionProperties.KEY_ARCHIVED, true );
 	}
 
 	public void setExecutionLabel( String executionId, String label )
 	{
-		ExecutionMetadataTable metaTable = ( ExecutionMetadataTable )tableRegistry.getTable( executionId,
-				ExecutionMetadataTable.TABLE_NAME );
-		try
-		{
-			metaTable.setLabel( label );
-		}
-		catch( SQLException e )
-		{
-			throw new RuntimeException( "Unable to set execution label.", e );
-		}
+		ExecutionProperties executionProperties = ( ExecutionProperties )propertiesRegistry.getProperties( executionId,
+				ExecutionProperties.PROPERTIES_NAME );
+		executionProperties.set( ExecutionProperties.KEY_LABEL, label );
 	}
 
 	public void setExecutionLength( String executionId, long length )
 	{
-		ExecutionMetadataTable metaTable = ( ExecutionMetadataTable )tableRegistry.getTable( executionId,
-				ExecutionMetadataTable.TABLE_NAME );
-		try
-		{
-			metaTable.setLength( length );
-		}
-		catch( SQLException e )
-		{
-			throw new RuntimeException( "Unable to set execution length.", e );
-		}
+		ExecutionProperties executionProperties = ( ExecutionProperties )propertiesRegistry.getProperties( executionId,
+				ExecutionProperties.PROPERTIES_NAME );
+		executionProperties.set( ExecutionProperties.KEY_LENGTH, length );
 	}
 
 	@Override
@@ -594,12 +578,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	public void delete( String executionId )
 	{
-		List<TableBase> tableList = tableRegistry.getAllTables( executionId );
-		for( int i = 0; i < tableList.size(); i++ )
-		{
-			tableRegistry.release( executionId, tableList.get( i ).getExternalName() );
-		}
-		connectionRegistry.release( executionId );
+		release( executionId );
 		File executionDir = new File( getDBBaseDir(), executionId );
 		if( executionDir.exists() )
 		{
@@ -607,6 +586,19 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 		fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.REMOVED,
 				executionMap.remove( executionId ) ) );
+	}
+
+	public void release( String executionId )
+	{
+		// leave execution in executionMap so meta-data will be available
+		tableRegistry.release( executionId );
+		connectionRegistry.release( executionId );
+		ExecutionImpl execution = executionMap.get( executionId );
+		if( execution != null )
+		{
+			execution.setLoaded( false );
+		}
+		fireEvent( new BaseEvent( this, Releasable.RELEASED ) );
 	}
 
 	@Override
@@ -729,6 +721,35 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 						.getStringValue() );
 				baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
 			}
+		}
+	}
+
+	private class ExecutionPool
+	{
+		private int maxSize = 10;
+
+		private ArrayList<ExecutionImpl> list = new ArrayList<ExecutionImpl>();
+
+		private ExecutionImpl currentExecution;
+
+		public void setCurrentExecution( ExecutionImpl execution )
+		{
+			// put previous current execution in a pool
+			if( currentExecution != null )
+			{
+				put( currentExecution );
+			}
+			// replace old current execution with the new one
+			currentExecution = execution;
+		}
+
+		public void put( ExecutionImpl execution )
+		{
+			if( list.size() == maxSize )
+			{
+				release( list.remove( 0 ).getId() );
+			}
+			list.add( execution );
 		}
 	}
 }

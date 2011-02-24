@@ -23,7 +23,7 @@ import java.util.Map;
 
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.util.events.EventSupport;
@@ -33,7 +33,7 @@ import com.eviware.loadui.util.events.EventSupport;
  * 
  * @author predrag.vucetic
  */
-public class ExecutionImpl implements Execution
+public class ExecutionImpl implements Execution, Releasable
 {
 	/**
 	 * Execution id
@@ -71,6 +71,8 @@ public class ExecutionImpl implements Execution
 
 	private long lastFlushedLength = 0;
 
+	private boolean loaded = false;
+
 	public ExecutionImpl( String id, long timestamp, long length, boolean archived, String label,
 			ExecutionManagerImpl manager )
 	{
@@ -98,12 +100,20 @@ public class ExecutionImpl implements Execution
 	@Override
 	public Track getTrack( String trackId )
 	{
+		if( !isLoaded() )
+		{
+			manager.loadExecution( id );
+		}
 		return trackMap.get( trackId );
 	}
 
 	@Override
 	public Collection<String> getTrackIds()
 	{
+		if( !isLoaded() )
+		{
+			manager.loadExecution( id );
+		}
 		return trackMap.keySet();
 	}
 
@@ -198,10 +208,26 @@ public class ExecutionImpl implements Execution
 	{
 		eventSupport.fireEvent( event );
 	}
-
+	
 	@Override
 	public File getSummaryReport()
 	{
 		return new File( new File( manager.getDBBaseDir(), id ), "summary.jp" );
+	}
+
+	@Override
+	public void release()
+	{
+		manager.release( getId() );
+	}
+
+	public void setLoaded( boolean loaded )
+	{
+		this.loaded = loaded;
+	}
+
+	public boolean isLoaded()
+	{
+		return loaded;
 	}
 }

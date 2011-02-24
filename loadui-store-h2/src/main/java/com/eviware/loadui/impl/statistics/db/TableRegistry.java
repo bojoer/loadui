@@ -59,6 +59,21 @@ public class TableRegistry implements Releasable
 	}
 
 	/**
+	 * Releases all table for a specified database
+	 * 
+	 * @param dbName
+	 *           Database name
+	 */
+	public void release( String dbName )
+	{
+		List<TableBase> tableList = getAllTables( dbName );
+		for( int i = 0; i < tableList.size(); i++ )
+		{
+			release( dbName, tableList.get( i ).getExternalName() );
+		}
+	}
+	
+	/**
 	 * Releases specified table
 	 * 
 	 * @param dbName
