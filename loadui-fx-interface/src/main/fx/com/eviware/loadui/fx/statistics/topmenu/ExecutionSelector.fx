@@ -75,6 +75,7 @@ import java.util.EventObject;
  * A control for selecting executions to compare
  *
  * @author predrag.vucetic
+ * @author henrik.olsson
  */
 public class ExecutionSelector extends Group {
    
@@ -98,7 +99,7 @@ public class ExecutionSelector extends Group {
 	}
    
    def project = bind StatisticsWindow.instance.project on replace {
-  		loadExecutions(); 
+  		FxUtils.runInFxThread( function():Void { loadExecutions(); } );
    }
    
    def glow = Glow { level: .2 };
@@ -147,7 +148,7 @@ public class ExecutionSelector extends Group {
 		if( selectedFilter == null ) {
 			FX.deferAction( function():Void { oldFilter.selected = true } );
 		} else {
-			loadExecutions();
+			FxUtils.runInFxThread( function():Void { loadExecutions(); } );
 		}
 	}
 	
@@ -159,6 +160,7 @@ public class ExecutionSelector extends Group {
 	
 	var leftDisabled: RadioButton;
 	var rightDisabled: RadioButton;
+	var currentRunsRightRadioButton: RadioButton;
 	
 	var leftSelected = bind leftRadioToggles.selectedToggle on replace {
 	   if( rightDisabled != null ){
@@ -171,6 +173,7 @@ public class ExecutionSelector extends Group {
 	   else{
 	       rightDisabled = null;
 	   }
+	   currentRunsRightRadioButton.disable = true;
    }
 	
 	var rightSelected = bind rightRadioToggles.selectedToggle on replace {
@@ -251,10 +254,11 @@ public class ExecutionSelector extends Group {
 			}
 			def left = CustomRadioButton {text: label, radioGroup: leftRadioToggles};
 			def right = CustomRadioButton {text: label, radioGroup: rightRadioToggles};
-//			if( (h as ExecutionComparable).execution == executionManager.getCurrentExecution() )
-//			{
-//				right.radioButton.disable = true;
-//			}
+			if( (h as ExecutionComparable).execution == null )
+			{
+				currentRunsRightRadioButton = right.radioButton;
+				currentRunsRightRadioButton.disable = true;
+			}
 			insert left into leftRadioButtons;
 			insert right into rightRadioButtons;
 			leftToRightMapping.put(left.radioButton, right.radioButton);
@@ -311,28 +315,28 @@ public class ExecutionSelector extends Group {
 	
 	var resizeYStart: Number = 0;
 	
-	var closeImg: String = "{__ROOT__}images/execution-selector-close.fxz";
+//	var closeImg: String = "{__ROOT__}images/execution-selector-close.fxz";
 	var openImg: String = "{__ROOT__}images/execution-selector-open.fxz";
 	var resizeImg: String = "{__ROOT__}images/execution-selector-resize.fxz";
 	var radioHoverImg: String = "{__ROOT__}images/execution-selector-radio-hover.fxz";
 				    
 	init {
-	   def closeAction: Group = Group {
-		   content: [
-		   	Rectangle {
-				    width: 10  
-				    height: 10
-				    fill: Color.TRANSPARENT
-				}
-		   	FXDNode {
-					url: bind closeImg
-					visible: true
-					effect: bind if( closeAction.hover ) glow else null
-				}
-			]
-			onMousePressed: function( e:MouseEvent ) { menu.hide(); }
-		}
-		 
+//	   def closeAction: Group = Group {
+//		   content: [
+//		   	Rectangle {
+//				    width: 10  
+//				    height: 10
+//				    fill: Color.TRANSPARENT
+//				}
+//		   	FXDNode {
+//					url: bind closeImg
+//					visible: true
+//					effect: bind if( closeAction.hover ) glow else null
+//				}
+//			]
+//			onMousePressed: function( e:MouseEvent ) { menu.hide(); }
+//		}
+		
 	   var popupContent: VBox = VBox {
 	       spacing: 12
 	       padding: Insets { top: 11 right: 18 bottom: 0 left: 18}
@@ -353,7 +357,7 @@ public class ExecutionSelector extends Group {
 								filterArchive
 						    ]
 						},
-						closeAction
+//						closeAction
 					]
 				}, Line {
 				   styleClass: "execution-selector-line"
@@ -472,7 +476,7 @@ public class ExecutionSelector extends Group {
 		    styleClass: "execution-selector-menu"
 		    items: [item]
 		    layoutInfo: LayoutInfo{ height: bind popupHeight, width: bind popupWidth }
-		    onShowing: function(){FX.deferAction( function(){ setRadioButtons(); } )}
+		    onShowing: function(){FX.deferAction( function(){ loadExecutions(); setRadioButtons(); } )}
 		}
 	   
 	   content = [
@@ -569,7 +573,7 @@ class ExecutionComparable extends Comparable {
 
 class ExecutionManagerStateListener extends ExecutionListenerAdapter {
    override function executionStarted( state: ExecutionManager.State ) {
-		loadExecutions();
+		FxUtils.runInFxThread( function():Void { loadExecutions(); } );
    }
 }
 
