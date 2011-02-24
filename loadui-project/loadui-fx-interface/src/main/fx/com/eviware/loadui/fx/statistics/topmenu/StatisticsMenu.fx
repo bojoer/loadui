@@ -158,7 +158,7 @@ public class StatisticsMenu extends VBox {
 					}, SeparatorButton {
 							height: bind height
 					}, TrashHole {
-							showTooltip: false; 
+							showTooltip: false
 					}, SeparatorButton {
 							height: bind height
 					}, MenubarButton {

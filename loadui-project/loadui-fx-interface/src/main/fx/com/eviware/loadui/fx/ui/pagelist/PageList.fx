@@ -124,7 +124,7 @@ public class PageList extends VBox, Pagination {
 		for( x in displayedItems ) {
 			itemWidth = Math.max( itemWidth, x.layoutBounds.width );
 		}
-		
+
 		itemsPerPage = (width - (leftMargin + rightMargin))/(itemWidth + itemBox.spacing) as Integer;
 	}
 }

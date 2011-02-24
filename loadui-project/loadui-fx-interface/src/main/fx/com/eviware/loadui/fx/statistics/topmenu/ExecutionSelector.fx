@@ -135,12 +135,12 @@ public class ExecutionSelector extends Group {
    }
 	var filterRecently: ToggleButton = ToggleButton {
 		styleClass: "execution-selector-menu-filter-button"
-		text: "Recently"
+		text: "Recent"
 		toggleGroup: filterToggleGroup
    }
 	var filterArchive: ToggleButton = ToggleButton {
 	   styleClass: "execution-selector-menu-filter-button"
-		text: "Archive"
+		text: "Archived"
 		toggleGroup: filterToggleGroup
    }
 	
