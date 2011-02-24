@@ -103,6 +103,7 @@ public class ManageMenu extends HBox {
 		}, SeparatorButton {
 			height: bind height;
 		}, TrashHole {
+				showTooltip: false 
 		}, SeparatorButton {
 			height: bind height;
 		}, MenubarButton {
