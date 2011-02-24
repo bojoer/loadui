@@ -83,6 +83,7 @@ public class ResultNodeBase extends BaseNode {
 							Region {
 								styleClass: "graph"
 							}, 
+					// This SVGPath reports the wrong width to its parent. Therefore we don't use it.
 							SVGPath {
 								layoutInfo: LayoutInfo {
 									margin: Insets { left: 5, top: 5 }
@@ -90,7 +91,7 @@ public class ResultNodeBase extends BaseNode {
 									hpos: HPos.LEFT
 								}
 								fill: Color.rgb( 255,255,255,0.15 )
-								content: "m 24.271845,19.087351 -9.223301,0 c -0.1807,0.024262 -0.254911,0.155014 -0.307444,0.307443 l 0,4.352751 c 0.037619,0.183599 0.242728,0.312823 0.469256,0 1.225299,-3.396285 3.046724,-3.76855 9.061489,-4.660194 z"
+								content: "m 0.0,0.0 c -1.807,0.24262 -2.54911,1.55014 -3.07444,3.07443 l 0,43.52751 c 0.37619,1.83599 2.42728,3.12823 4.69256,0 12.25299,-33.96285 30.46724,-37.6855 90.61489,-46.60194 z"
 							},
 						]
 					}
