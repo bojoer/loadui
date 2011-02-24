@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
@@ -217,6 +218,12 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 
 		return currentExecution;
 	}
+	
+	@Override
+	public String getDBBaseDir()
+	{
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public State getState()
@@ -364,6 +371,12 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 
 		@Override
 		public void fireEvent( EventObject event )
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public File getSummaryReport()
 		{
 			throw new UnsupportedOperationException();
 		}
