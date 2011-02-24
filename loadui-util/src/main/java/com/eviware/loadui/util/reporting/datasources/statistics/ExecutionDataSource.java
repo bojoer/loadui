@@ -34,9 +34,10 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 	@Override
 	public Object getFieldValue( JRField field ) throws JRException
 	{
-		if( field.getName().equals( "chartGroup" ) )
-			return new ChartGroupDataSource( execution, page.getChildAt( 0 ), charts );
-		return null;
+		String fieldName = field.getName();
+		if( fieldName.equals( "chartGroup" ) )
+			return new ChartGroupsDataSource( page.getChildren(), charts );
+		return fieldName;
 	}
 
 	@Override
