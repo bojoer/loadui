@@ -51,4 +51,10 @@ public class ChartGroupLineChartView extends AbstractLineChartView
 	{
 		return chartGroup.getTitle();
 	}
+
+	@Override
+	public String getLabel()
+	{
+		return "Total/together";
+	}
 }

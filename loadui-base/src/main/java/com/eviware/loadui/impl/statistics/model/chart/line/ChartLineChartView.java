@@ -144,6 +144,12 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 		return chart.getStatisticHolder().getLabel();
 	}
 
+	@Override
+	public String getLabel()
+	{
+		return chart.getStatisticHolder().getLabel();
+	}
+
 	private class StatisticVariableListener implements EventHandler<CollectionEvent>
 	{
 		@Override

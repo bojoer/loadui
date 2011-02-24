@@ -16,6 +16,7 @@
 package com.eviware.loadui.api.statistics.model.chart;
 
 import com.eviware.loadui.api.model.AttributeHolder;
+import com.eviware.loadui.api.model.Labeled;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 
 /**
@@ -23,7 +24,12 @@ import com.eviware.loadui.api.statistics.model.ChartGroup;
  * 
  * @author dain.nilsson
  */
-public interface ChartView extends AttributeHolder
+public interface ChartView extends AttributeHolder, Labeled
 {
+	/**
+	 * Get the ChartGroup which this ChartView belongs to.
+	 * 
+	 * @return
+	 */
 	public ChartGroup getChartGroup();
 }

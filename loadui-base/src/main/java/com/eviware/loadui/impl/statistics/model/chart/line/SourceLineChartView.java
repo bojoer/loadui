@@ -81,4 +81,10 @@ public class SourceLineChartView extends AbstractLineChartView
 	{
 		return source;
 	}
+
+	@Override
+	public String getLabel()
+	{
+		return source;
+	}
 }

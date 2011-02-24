@@ -16,16 +16,15 @@ import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
 
 public class ChartGroupDataSource extends JRAbstractBeanDataSource
 {
-	private final ChartGroup chartGroup;
 	private final Map<Object, Image> charts;
 	private final ArrayList<ChartView> chartViews = new ArrayList<ChartView>();
 	private Iterator<ChartView> chartViewIterator;
+	private ChartView chartView;
 
 	public ChartGroupDataSource( ChartGroup chartGroup, Map<Object, Image> charts )
 	{
 		super( true );
 
-		this.chartGroup = chartGroup;
 		this.charts = charts;
 
 		chartViews.add( chartGroup.getChartView() );
@@ -59,15 +58,20 @@ public class ChartGroupDataSource extends JRAbstractBeanDataSource
 	{
 		String fieldName = field.getName();
 		if( fieldName.equals( "chartName" ) )
-			return chartGroup.getTitle();
+			return chartView.getLabel();
 		else if( fieldName.equals( "chart" ) )
-			return charts.get( chartViewIterator.next() );
+			return charts.get( chartView );
 		return null;
 	}
 
 	@Override
 	public boolean next() throws JRException
 	{
-		return chartViewIterator.hasNext();
+		if( chartViewIterator.hasNext() )
+		{
+			chartView = chartViewIterator.next();
+			return true;
+		}
+		return false;
 	}
 }
