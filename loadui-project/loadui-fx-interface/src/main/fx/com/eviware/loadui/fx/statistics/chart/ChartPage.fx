@@ -207,7 +207,7 @@ class ExecutionManagerListener extends ExecutionListenerAdapter {
 
 	override function executionStopped(state:ExecutionManager.State) {
 		resetOnStart = true;
-		updateIcon();
+		//updateIcon();
 	}
 }
 
