@@ -79,26 +79,42 @@ import java.util.EventObject;
  */
 public class ExecutionSelector extends Group {
    
-   var currentExecution: Execution = bind StatisticsWindow.execution on replace {
-       leftLabel.text = currentExecution.getLabel();
+   var leftExecution: Execution = bind StatisticsWindow.execution on replace {
+      FxUtils.runInFxThread( function():Void { setLabels(); } );
    }
    
-   var comparedExecution: Execution = bind StatisticsWindow.comparedExecution on replace {
-       rightLabel.text = comparedExecution.getLabel();
+   var rightExecution: Execution = bind StatisticsWindow.comparedExecution on replace {
+      FxUtils.runInFxThread( function():Void { setLabels(); } );
    }
    
-   def executionListener = new ExecutionManagerStateListener();
+   def executionManagerStateListener = new ExecutionManagerStateListener();
    def executionManagerListener = ExecutionManagerListener{};
+   def executionListener = ExecutionListener{};
    
    def executionManager = BeanInjector.getBean( ExecutionManager.class ) on replace oldExecutionManager {
-      oldExecutionManager.removeExecutionListener( executionListener );
+      oldExecutionManager.removeExecutionListener( executionManagerStateListener );
       oldExecutionManager.removeEventListener( EventObject.class, executionManagerListener );
       
-		executionManager.addExecutionListener( executionListener );
+		executionManager.addExecutionListener( executionManagerStateListener );
 		executionManager.addEventListener( EventObject.class, executionManagerListener );
 	}
    
-   def project = bind StatisticsWindow.instance.project on replace {
+   def project = bind StatisticsWindow.instance.project on replace prevProject {
+      def names = executionManager.getExecutionNames();
+      if(prevProject != null){
+			for( n in names ) {
+			   if((n as String).startsWith(prevProject.getId())){
+					executionManager.getExecution(n as String).removeEventListener( BaseEvent.class, executionListener );
+				}
+			}
+		}
+		if(project != null){
+			for( n in names ) {
+			   if((n as String).startsWith(project.getId())){
+					executionManager.getExecution(n as String).addEventListener( BaseEvent.class, executionListener );
+				}
+			}
+		} 
   		FxUtils.runInFxThread( function():Void { loadExecutions(); } );
    }
    
@@ -119,6 +135,23 @@ public class ExecutionSelector extends Group {
 	}
    var leftLabel: Label = Label {}
    var rightLabel: Label = Label {}
+   
+   function setLabels(): Void {
+      if(leftExecution == null or isCurrentExecution(leftExecution))
+		{
+			leftLabel.text = "Current run";
+		}
+		else
+		{
+      	leftLabel.text = leftExecution.getLabel();
+      }
+      if(rightExecution != null){
+      	rightLabel.text = rightExecution.getLabel();
+      }
+      else{
+         rightLabel.text = ""; 
+      }
+   }
    
    var menu: PopupMenu;
    var item: CustomMenuItem;
@@ -173,7 +206,7 @@ public class ExecutionSelector extends Group {
 	   else{
 	       rightDisabled = null;
 	   }
-	   currentRunsRightRadioButton.disable = true;
+	   rightRadioButtons[0].radioButton.disable = true;
    }
 	
 	var rightSelected = bind rightRadioToggles.selectedToggle on replace {
@@ -187,6 +220,7 @@ public class ExecutionSelector extends Group {
 	   else{
 	       leftDisabled = null;
 	   }
+	   rightRadioButtons[0].radioButton.disable = true;
    }
    
 	var leftRadioButtons: CustomRadioButton[] = [];
@@ -211,6 +245,7 @@ public class ExecutionSelector extends Group {
 		else if(selectedFilter == filterArchive){
 		    loadExecutions(true, false);
 		}
+		setLabels();
 	}
 	
 	function reset(): Void {
@@ -235,58 +270,84 @@ public class ExecutionSelector extends Group {
 		for( n in names ) {
 		   if((n as String).startsWith(project.getId())){
 			   def e = executionManager.getExecution(n as String);
-			   if((archive and e.isArchived() or recently and (not e.isArchived())) and e != executionManager.getCurrentExecution() ){
+			   if((archive and e.isArchived() or recently and (not e.isArchived())) or e == executionManager.getCurrentExecution()){
 					holderList.add( ExecutionComparable { execution: e } );
 				}
 			}
 		}
-		holderList.add( ExecutionComparable{ execution: executionManager.getCurrentExecution() } );
+		if( executionManager.getCurrentExecution() == null ){
+		    //there is no running execution so add radio for it without execution object
+		    addCurrentRunDummyRadio();
+		}
 		Collections.sort( holderList );
 		for( h in holderList ) {
-			var label:String;
-			if( (h as ExecutionComparable).execution == executionManager.getCurrentExecution() )
-			{
-				label = "Current Run";
-			}
-			else
-			{
-				label = (h as ExecutionComparable).execution.getLabel();
-			}
-			def left = CustomRadioButton {text: label, radioGroup: leftRadioToggles};
-			def right = CustomRadioButton {text: label, radioGroup: rightRadioToggles};
-			if( (h as ExecutionComparable).execution == null )
-			{
-				currentRunsRightRadioButton = right.radioButton;
-				currentRunsRightRadioButton.disable = true;
-			}
-			insert left into leftRadioButtons;
-			insert right into rightRadioButtons;
-			leftToRightMapping.put(left.radioButton, right.radioButton);
-			rightToLeftMapping.put(right.radioButton, left.radioButton);
-			leftExecutions.put(left.radioButton, (h as ExecutionComparable).execution);
-			rightExecutions.put(right.radioButton, (h as ExecutionComparable).execution);
-			if(currentExecution != null and (h as ExecutionComparable).execution == currentExecution){
-				left.radioButton.selected = true;
-			}
-			if(comparedExecution != null and (h as ExecutionComparable).execution == comparedExecution){
-				right.radioButton.selected = true;
-			}
+			addRadioButton((h as ExecutionComparable).execution);
 		}
+	}
+	
+	function addCurrentRunDummyRadio(){
+		var label: String = "Current run";
+		def left = CustomRadioButton {text: label, radioGroup: leftRadioToggles};
+		def right = CustomRadioButton {text: label, radioGroup: rightRadioToggles};
+		insert left into leftRadioButtons;
+		insert right into rightRadioButtons;
+		leftToRightMapping.put(left.radioButton, right.radioButton);
+		rightToLeftMapping.put(right.radioButton, left.radioButton);
+		if(leftExecution == null){
+			left.radioButton.selected = true;
+		}
+	}
+	
+	function addRadioButton(e: Execution){
+		var label:String;
+		if( isCurrentExecution( e ) )
+		{
+			label = "Current run";
+		}
+		else
+		{
+			label = e.getLabel();
+		}
+		def left = CustomRadioButton {text: label, radioGroup: leftRadioToggles};
+		def right = CustomRadioButton {text: label, radioGroup: rightRadioToggles};
+		insert left into leftRadioButtons;
+		insert right into rightRadioButtons;
+		leftToRightMapping.put(left.radioButton, right.radioButton);
+		rightToLeftMapping.put(right.radioButton, left.radioButton);
+		leftExecutions.put(left.radioButton, e);
+		rightExecutions.put(right.radioButton, e);
+		if(e != null and leftExecution != null and e.getId() == leftExecution.getId()){
+			left.radioButton.selected = true;
+		}
+		if(e != null and rightExecution != null and e.getId() == rightExecution.getId()){
+			right.radioButton.selected = true;
+		}
+	}
+	
+	function isCurrentExecution(e: Execution): Boolean {
+	    def curr: Execution = executionManager.getCurrentExecution();
+	    e != null and curr != null and e.getId() == curr.getId();
 	}
 	
 	function setRadioButtons(): Void {
 	   unsetRadioButtons(true, true);
-	   if(currentExecution != null){
+	   if(leftExecution != null){
 			for(c in leftRadioButtons){
-			    if(leftExecutions.get(c.radioButton) == currentExecution){
+			    def e = leftExecutions.get(c.radioButton) as Execution; 
+			    if(e != null and e.getId() == leftExecution.getId()){
 			        c.radioButton.selected = true;
 			        break;
 			    }
 			}
 		}
-		if(comparedExecution != null){
+		else if( executionManager.getCurrentExecution() == null ){
+		    //left execution is null, so select dummy current execution radio button
+		    leftRadioButtons[0].radioButton.selected = true;
+		}
+		if(rightExecution != null){
 			for(c in rightRadioButtons){
-			    if(rightExecutions.get(c.radioButton) == comparedExecution){
+			    def e = rightExecutions.get(c.radioButton) as Execution;
+			    if(e != null and e.getId() == rightExecution.getId()){
 			        c.radioButton.selected = true;
 			        break;
 			    }
@@ -476,7 +537,7 @@ public class ExecutionSelector extends Group {
 		    styleClass: "execution-selector-menu"
 		    items: [item]
 		    layoutInfo: LayoutInfo{ height: bind popupHeight, width: bind popupWidth }
-		    onShowing: function(){FX.deferAction( function(){ loadExecutions(); setRadioButtons(); } )}
+		    onShowing: function(){FX.deferAction( function(){ setRadioButtons(); } )}
 		}
 	   
 	   content = [
@@ -582,6 +643,24 @@ class ExecutionManagerListener extends EventHandler {
 		if( e instanceof CollectionEvent ) {
 			def event = e as CollectionEvent;
 			if( CollectionEvent.Event.REMOVED == event.getEvent() ) {
+			   def execution: Execution = event.getElement() as Execution;
+			   if(execution == leftExecution){
+			   	StatisticsWindow.execution = null;
+			   }
+			   else if(execution == rightExecution){
+			      StatisticsWindow.comparedExecution = null; 
+			   }
+				FxUtils.runInFxThread( function():Void { loadExecutions(); } );
+			} 
+		}
+	}
+}
+
+class ExecutionListener extends EventHandler {
+	override function handleEvent( e:EventObject ):Void {
+		if( e instanceof BaseEvent ) {
+			def event = e as BaseEvent;
+			if( event.getKey().equals(Execution.ARCHIVED)) {
 				FxUtils.runInFxThread( function():Void { loadExecutions(); } );
 			} 
 		}
