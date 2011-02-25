@@ -27,6 +27,8 @@ import java.util.EventObject;
 
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -47,7 +49,6 @@ import com.eviware.loadui.fx.FxUtils;
 public class StatisticsToolbar extends Toolbar, EventHandler {
     
     var manager: StatisticsManager;
-    
     var componentRegistry: ComponentRegistry;
     
     var statHolderMap: Map = new HashMap();
@@ -129,13 +130,11 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
 	
 	/** Removes holder from toolbar no matter if it has variables or not */
 	function removeStatisticHolder(sh: StatisticHolder){
-		if(sh instanceof ComponentItem){
-			def cti: StatisticHolderToolbarItem = statHolderMap.get(sh) as StatisticHolderToolbarItem;
-			if(cti != null){
-				removeItem(cti);
-			}
-			statHolderMap.remove(sh);
+		def cti: StatisticHolderToolbarItem = statHolderMap.get(sh) as StatisticHolderToolbarItem;
+		if(cti != null){
+			removeItem(cti);
 		}
+		statHolderMap.remove(sh);
 	}
 	
 	/** Adds chart toolbar items to the toolbar */
