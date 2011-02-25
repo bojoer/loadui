@@ -61,7 +61,11 @@ public class TypeConverter
 
 	public static String objectToString( Object value )
 	{
-		if( value instanceof Date )
+		if( value == null )
+		{
+			return "";
+		}
+		else if( value instanceof Date )
 		{
 			return String.valueOf( ( ( Date )value ).getTime() );
 		}
