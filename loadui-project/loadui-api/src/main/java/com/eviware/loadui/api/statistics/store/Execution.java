@@ -16,6 +16,7 @@
 package com.eviware.loadui.api.statistics.store;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Collection;
 
 import com.eviware.loadui.api.events.EventFirer;
@@ -37,6 +38,11 @@ public interface Execution extends Labeled.Mutable, EventFirer
 	 * BaseEvent key for notifying that this Execution has been deleted.
 	 */
 	public final static String DELETED = Execution.class.getSimpleName() + "@deleted";
+
+	/**
+	 * BaseEvent key for notifying that this Execution has been deleted.
+	 */
+	public final static String ICON = Execution.class.getSimpleName() + "@icon";
 
 	/**
 	 * Gets the Executions ID.
@@ -89,9 +95,15 @@ public interface Execution extends Labeled.Mutable, EventFirer
 	 * Gets the length of this execution.
 	 */
 	public long getLength();
-	
+
 	/**
-	 * Returns a File-object containing the Summary report (serialized JasperPrint-object) from this Execution.
+	 * Returns a File-object containing the Summary report (serialized
+	 * JasperPrint-object) from this Execution.
 	 */
 	public File getSummaryReport();
+
+	/**
+	 * Returns a URL pointing to an image icon, or null if no icon is available.
+	 */
+	public URL getIcon();
 }

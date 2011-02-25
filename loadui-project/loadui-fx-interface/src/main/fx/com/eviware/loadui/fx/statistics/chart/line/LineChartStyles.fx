@@ -31,7 +31,7 @@ public def chartBackgroundColor = new Color( 0x1a, 0x1a, 0x1a, 0 );
 public def chartForegroundColor = new Color( 0xcd, 0xcd, 0xcd );
 public def lineColor = Color.red;
 
-public def chartBackgroundPrintColor = new Color( 0xff, 0xff, 0xff, 0 );
+public def chartBackgroundPrintColor = new Color( 0xff, 0xff, 0xff );
 public def chartForegroundPrintColor = new Color( 0x0, 0x0, 0x0 );
 
 public def solidStroke = [ 1.0, 0.0 ];

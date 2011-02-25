@@ -24,6 +24,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Label;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.geometry.HPos;
@@ -32,6 +34,7 @@ import com.javafx.preview.control.MenuItem;
 
 import com.sun.javafx.scene.layout.Region;
 
+import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.ActivityLed;
 import com.eviware.loadui.fx.ui.node.BaseNode;
@@ -39,9 +42,27 @@ import com.eviware.loadui.fx.ui.resources.DialogPanel;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.WeakEventHandler;
+
+def defaultImage = Image { url: "{__ROOT__}images/png/default-chart-thumbnail.png" };
 
 public class ResultNodeBase extends BaseNode {
-	public var execution:Execution;
+	var iconImage = defaultImage;
+	def iconListener = new IconListener();
+	
+	public var execution:Execution on replace oldExecution {
+		if( oldExecution != null ) {
+			execution.removeEventListener( BaseEvent.class, iconListener );
+		}
+		
+		execution.addEventListener( BaseEvent.class, iconListener );
+		def icon = execution.getIcon();
+		iconImage = if( icon != null )
+			Image { url: icon.toString() }
+		else
+			defaultImage;
+	}
 	
 	public var label:String = "Execution";
 	
@@ -82,8 +103,8 @@ public class ResultNodeBase extends BaseNode {
 						content: [
 							Region {
 								styleClass: "graph"
-							}, 
-					// This SVGPath reports the wrong width to its parent. Therefore we don't use it.
+							},
+							ImageView { image: bind iconImage },
 							SVGPath {
 								layoutInfo: LayoutInfo {
 									margin: Insets { left: 5, top: 5 }
@@ -92,7 +113,7 @@ public class ResultNodeBase extends BaseNode {
 								}
 								fill: Color.rgb( 255,255,255,0.15 )
 								content: "m 0.0,0.0 c -1.807,0.24262 -2.54911,1.55014 -3.07444,3.07443 l 0,43.52751 c 0.37619,1.83599 2.42728,3.12823 4.69256,0 12.25299,-33.96285 30.46724,-37.6855 90.61489,-46.60194 z"
-							},
+							}
 						]
 					}
 				]
@@ -102,5 +123,20 @@ public class ResultNodeBase extends BaseNode {
 	
 	override function toString():String {
 		label
+	}
+}
+
+class IconListener extends WeakEventHandler {
+	override function handleEvent( e ) {
+		def event = e as BaseEvent;
+		if( Execution.ICON.equals( event.getKey() ) ) {
+			runInFxThread( function():Void {
+				def icon = execution.getIcon();
+				iconImage = if( icon != null )
+					Image { url: icon.toString() }
+				else
+					defaultImage;
+			} );
+		}
 	}
 }

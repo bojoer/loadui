@@ -16,6 +16,7 @@
 package com.eviware.loadui.impl.statistics;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
@@ -218,7 +219,7 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 
 		return currentExecution;
 	}
-	
+
 	@Override
 	public String getDBBaseDir()
 	{
@@ -379,6 +380,12 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 		public File getSummaryReport()
 		{
 			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public URL getIcon()
+		{
+			return null;
 		}
 	}
 }

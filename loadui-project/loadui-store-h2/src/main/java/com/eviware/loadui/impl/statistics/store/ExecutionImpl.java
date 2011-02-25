@@ -16,6 +16,8 @@
 package com.eviware.loadui.impl.statistics.store;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -208,7 +210,7 @@ public class ExecutionImpl implements Execution, Releasable
 	{
 		eventSupport.fireEvent( event );
 	}
-	
+
 	@Override
 	public File getSummaryReport()
 	{
@@ -229,5 +231,19 @@ public class ExecutionImpl implements Execution, Releasable
 	public boolean isLoaded()
 	{
 		return loaded;
+	}
+
+	@Override
+	public URL getIcon()
+	{
+		File icon = new File( new File( manager.getDBBaseDir(), id ), "thumbnail.png" );
+		try
+		{
+			return icon.exists() ? icon.toURI().toURL() : null;
+		}
+		catch( MalformedURLException e )
+		{
+			return null;
+		}
 	}
 }
