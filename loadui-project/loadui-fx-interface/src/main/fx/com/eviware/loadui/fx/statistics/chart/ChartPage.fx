@@ -160,7 +160,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 	public function updateIcon():Void {
 		def execution = StatisticsWindow.execution;
 		for( chartGroupHolder in innerContent ) {
-			for( chartViewHolder in chartGroupHolder.expandedChartViews ) {
+			for( chartViewHolder in [ chartGroupHolder.chartViewHolder, chartGroupHolder.expandedChartViews ] ) {
 				if( chartViewHolder.chart instanceof LineChart ) {
 					LineChartUtils.saveThumbnail( chartViewHolder.chart as LineChart, new File( new File( executionManager.getDBBaseDir(), execution.getId() ), "thumbnail.png" ) );
 					execution.fireEvent( new BaseEvent( execution, Execution.ICON ) );
@@ -172,6 +172,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 	
 	override function release():Void {
 		timeline.stop();
+		updateIcon();
 		executionManager.removeExecutionListener( executionListener );
 		statisticPage = null;
 		for( holder in innerContent )
@@ -206,8 +207,10 @@ class ExecutionManagerListener extends ExecutionListenerAdapter {
 	}
 
 	override function executionStopped(state:ExecutionManager.State) {
-		resetOnStart = true;
-		//updateIcon();
+		FxUtils.runInFxThread( function():Void {
+			resetOnStart = true;
+			updateIcon();
+		} );
 	}
 }
 

@@ -16,6 +16,7 @@
 package com.eviware.loadui.fx.statistics.chart.line;
 
 import com.jidesoft.chart.Chart;
+import com.jidesoft.chart.axis.TimeAxis;
 import com.jidesoft.chart.style.ChartStyle;
 import com.jidesoft.chart.util.ChartUtils;
 
@@ -30,14 +31,36 @@ import javax.swing.JLabel;
 public def printScaleFactor = 4;
 
 public function saveThumbnail( lineChart:LineChart, file:File ):Void {
-	def chart = lineChart.chart;
-	def color = chart.getChartBackground();
-	chart.setChartBackground( Color.BLACK );
+	def chart = new Chart( new Dimension( 128, 56 ) );
+	chart.setAnimateOnShow( false );
+	LineChartStyles.styleChart( chart );
+	chart.setPanelBackground( Color.BLACK );
+	
+	def font = chart.getTickFont();
+	chart.setTickFont( new Font( font.getName(), font.getStyle(), 4 ) );
+	
+	chart.setXAxis( lineChart.chart.getXAxis() );
+	chart.setYAxis( lineChart.chart.getYAxis() );
+	def range = chart.getXAxis().getRange();
+	chart.setXAxis( new TimeAxis( range.lower() as Long, (range.lower() as Long) + 10000 ));
+	chart.setAxisLabelPadding( -6 ); 
+	
+	for( model in lineChart.chart.getModels()[x|x instanceof LineSegmentChartModel] ) {
+		def lineSegment = model as LineSegmentChartModel;
+		chart.addModel( lineSegment, lineSegment.chartStyle );
+	}
+	
+	chart.update();
+	
+	
+	/*def chart = lineChart.chart;
+	def color = chart.getPanelBackground();
+	chart.setPanelBackground( Color.BLACK );
 	def imageIcon = ChartUtils.createThumbnail( chart, 128, 56 );
-	chart.setChartBackground( color );
+	chart.setPanelBackground( color );
 	def label = new JLabel( imageIcon );
-	label.setSize( imageIcon.getIconWidth(), imageIcon.getIconHeight() );
-	ChartUtils.writePngToFile( label, file );
+	label.setSize( imageIcon.getIconWidth(), imageIcon.getIconHeight() );*/
+	ChartUtils.writePngToFile( chart, file );
 }
 
 public function createImage( lineChart:LineChart, width:Integer, height:Integer ):Image {
