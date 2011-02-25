@@ -15,11 +15,16 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
+import com.eviware.loadui.fx.FxUtils.__ROOT__;
+import javafx.fxd.FXDNode;
+import javafx.scene.effect.Glow;
+
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
 
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Toggle;
@@ -70,6 +75,35 @@ public class TabContainer extends HBox {
 		}
 	}
 	
+	def addTabButton:Group = Group {
+			   content: [
+			   	FXDNode {
+						url: bind openImg
+						visible: true
+						effect: bind if( addTabButton.hover ) Glow{ level: .2 } else null
+					}
+				]
+				onMousePressed: function(e:MouseEvent) {
+		   	    	var highestPageNumber:Integer = 0;
+		   	   	for ( child in statisticPages.getChildren() )
+		   	   	{
+		   	   	   var title:String = child.getTitle();
+		   	      	try
+		   	      	{
+			   	      	if ( title.substring(0, DEFAULT_PAGE_NAME.length() + 1).equals("{DEFAULT_PAGE_NAME} ")	)
+			   	      	{
+				   	      	   var pageNumber:Integer = Integer.valueOf( title.substring(DEFAULT_PAGE_NAME.length() + 1) );
+				   	      	   if ( pageNumber > highestPageNumber )
+				   	      	   {
+				   	      	   	highestPageNumber = pageNumber
+				   	      	   }
+								}
+							} catch (ex: NumberFormatException) {;}
+							  catch (ex: StringIndexOutOfBoundsException) {;}
+		   	   	}
+		   	   	statisticPages.createPage("{DEFAULT_PAGE_NAME} {highestPageNumber + 1}");
+		   		}
+			}
 
 	def deleteAction = MenuItem {
 		text: "Delete",
@@ -100,6 +134,8 @@ public class TabContainer extends HBox {
 	override var nodeVPos = VPos.CENTER;
 	override var spacing = 6;
 	
+	def openImg: String = "{__ROOT__}images/execution-selector-open.fxz";
+	
 	init {
 		sortableBox = SortableBox {
 			content: generateTabs(),
@@ -112,31 +148,8 @@ public class TabContainer extends HBox {
 		};
 		content = [
 			sortableBox,
-			Button {
-		   	text: "+",
-		   	styleClass: "statistics-tabs-addnew",
-		   	action: function() {
-		   	    	var highestPageNumber:Integer = 0;
-		   	   	for ( child in statisticPages.getChildren() )
-		   	   	{
-		   	   	   var title:String = child.getTitle();
-		   	      	try
-		   	      	{
-			   	      	if ( title.substring(0, DEFAULT_PAGE_NAME.length() + 1).equals("{DEFAULT_PAGE_NAME} ")	)
-			   	      	{
-				   	      	   var pageNumber:Integer = Integer.valueOf( title.substring(DEFAULT_PAGE_NAME.length() + 1) );
-				   	      	   if ( pageNumber > highestPageNumber )
-				   	      	   {
-				   	      	   	highestPageNumber = pageNumber
-				   	      	   }
-								}
-							} catch (e: NumberFormatException) {;}
-							  catch (e: StringIndexOutOfBoundsException) {;}
-		   	   	}
-		   	   	statisticPages.createPage("{DEFAULT_PAGE_NAME} {highestPageNumber + 1}");
-		   		}
-		   	},
-		   	contextMenu
+			addTabButton,
+	   	contextMenu
 			];
 	}
 	
