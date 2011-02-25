@@ -342,11 +342,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	 *           ID of execution that has to be loaded
 	 * @return Loaded execution
 	 */
-	public synchronized Execution loadExecution( String executionId )
+	public Execution loadExecution( String executionId )
 	{
-		// synchronized to provide data source creation one by one. because, for
-		// some reason this is faster.
-
 		// keep everything in temporary lists, until all SQL operations
 		// are finished successfully and then create objects and add
 		// tables to table registry
