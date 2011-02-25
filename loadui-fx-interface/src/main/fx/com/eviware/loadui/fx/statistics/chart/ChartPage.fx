@@ -42,10 +42,13 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dnd.SortableBox;
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.AnalysisToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.StatisticHolderToolbarItem;
+import com.eviware.loadui.fx.statistics.chart.line.LineChart;
+import com.eviware.loadui.fx.statistics.chart.line.LineChartUtils;
 
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -53,6 +56,7 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
@@ -61,6 +65,7 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.util.BeanInjector;
 import java.util.EventObject;
+import java.io.File;
 
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
@@ -152,6 +157,19 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 		}
 	}
 	
+	public function updateIcon():Void {
+		def execution = StatisticsWindow.execution;
+		for( chartGroupHolder in innerContent ) {
+			for( chartViewHolder in chartGroupHolder.expandedChartViews ) {
+				if( chartViewHolder.chart instanceof LineChart ) {
+					LineChartUtils.saveThumbnail( chartViewHolder.chart as LineChart, new File( new File( executionManager.getDBBaseDir(), execution.getId() ), "thumbnail.png" ) );
+					execution.fireEvent( new BaseEvent( execution, Execution.ICON ) );
+					return;
+				}
+			}
+		}
+	}
+	
 	override function release():Void {
 		timeline.stop();
 		executionManager.removeExecutionListener( executionListener );
@@ -189,6 +207,7 @@ class ExecutionManagerListener extends ExecutionListenerAdapter {
 
 	override function executionStopped(state:ExecutionManager.State) {
 		resetOnStart = true;
+		updateIcon();
 	}
 }
 

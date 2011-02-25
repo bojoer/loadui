@@ -19,12 +19,26 @@ import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.style.ChartStyle;
 import com.jidesoft.chart.util.ChartUtils;
 
+import java.io.File;
 import java.awt.Image;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.BasicStroke;
+import java.awt.Color;
+import javax.swing.JLabel;
 
 public def printScaleFactor = 4;
+
+public function saveThumbnail( lineChart:LineChart, file:File ):Void {
+	def chart = lineChart.chart;
+	def color = chart.getChartBackground();
+	chart.setChartBackground( Color.BLACK );
+	def imageIcon = ChartUtils.createThumbnail( chart, 128, 56 );
+	chart.setChartBackground( color );
+	def label = new JLabel( imageIcon );
+	label.setSize( imageIcon.getIconWidth(), imageIcon.getIconHeight() );
+	ChartUtils.writePngToFile( label, file );
+}
 
 public function createImage( lineChart:LineChart, width:Integer, height:Integer ):Image {
 	def chart = new Chart( new Dimension( width*printScaleFactor, height*printScaleFactor ));

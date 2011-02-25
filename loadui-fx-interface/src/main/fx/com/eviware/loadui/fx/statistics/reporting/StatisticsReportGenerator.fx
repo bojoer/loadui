@@ -37,7 +37,7 @@ public function generateCharts( chartPage:ChartPage ):Map {
 
 function createImage( chart:BaseChart ):Image {
 	if( chart instanceof LineChart )
-		LineChartUtils.createImage( chart as LineChart, 555, 100 )
+		LineChartUtils.createImage( chart as LineChart, 505, 100 )
 	else
 		null;
 }
