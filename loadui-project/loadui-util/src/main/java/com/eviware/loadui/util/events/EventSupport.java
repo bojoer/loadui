@@ -112,7 +112,7 @@ public class EventSupport implements EventFirer, Releasable
 			@Override
 			public void run()
 			{
-				for( ListenerEntry<?> listenerEntry : listeners )
+				for( ListenerEntry<?> listenerEntry : new HashSet<ListenerEntry<?>>( listeners ) )
 				{
 					if( listenerEntry.type.isInstance( event ) )
 					{
