@@ -159,12 +159,14 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 	
 	public function updateIcon():Void {
 		def execution = StatisticsWindow.execution;
-		for( chartGroupHolder in innerContent ) {
-			for( chartViewHolder in [ chartGroupHolder.chartViewHolder, chartGroupHolder.expandedChartViews ] ) {
-				if( chartViewHolder.chart instanceof LineChart ) {
-					LineChartUtils.saveThumbnail( chartViewHolder.chart as LineChart, new File( new File( executionManager.getDBBaseDir(), execution.getId() ), "thumbnail.png" ) );
-					execution.fireEvent( new BaseEvent( execution, Execution.ICON ) );
-					return;
+		if( execution != null ) {
+			for( chartGroupHolder in innerContent ) {
+				for( chartViewHolder in [ chartGroupHolder.chartViewHolder, chartGroupHolder.expandedChartViews ] ) {
+					if( chartViewHolder.chart instanceof LineChart ) {
+						LineChartUtils.saveThumbnail( chartViewHolder.chart as LineChart, new File( new File( executionManager.getDBBaseDir(), execution.getId() ), "thumbnail.png" ) );
+						execution.fireEvent( new BaseEvent( execution, Execution.ICON ) );
+						return;
+					}
 				}
 			}
 		}
