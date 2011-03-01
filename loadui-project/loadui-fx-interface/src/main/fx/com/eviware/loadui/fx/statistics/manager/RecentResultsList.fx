@@ -63,7 +63,7 @@ public class RecentResultsList extends BaseNode, Resizable {
 			for( execution in projectExecutionManager.getExecutions( project, true, false ) ) {
 				execution.addEventListener( BaseEvent.class, executionListener );
 				if( execution != StatisticsWindow.currentExecution and pagelist.lookup( execution.getId() ) == null ) {
-					insert DraggableFrame { draggable: ResultNode { execution: execution, label: bind ModelUtils.getLabelHolder( execution ).label }, id: execution.getId() } before pagelist.items[0];
+					insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
 				}
 			}
 		}
@@ -105,7 +105,7 @@ class ExecutionsListener extends WeakEventHandler {
 					execution.addEventListener( BaseEvent.class, executionListener );
 					if( execution != StatisticsWindow.currentExecution and pagelist.lookup( execution.getId() ) == null ) {
 						FxUtils.runInFxThread( function() {
-							insert DraggableFrame { draggable: ResultNode { execution: execution, label: bind ModelUtils.getLabelHolder( execution ).label }, id: execution.getId() } before pagelist.items[0];
+							insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
 						} );
 					}
 				}
@@ -143,7 +143,7 @@ class CurrentExecutionNode extends ResultNodeBase {
 			currentExecutionNode.active = false;
 		}
 		if( oldExecution != null and pagelist.lookup( oldExecution.getId() ) == null ) {
-			insert DraggableFrame { draggable: ResultNode { execution: oldExecution, label: bind ModelUtils.getLabelHolder( oldExecution ).label }, id: oldExecution.getId() } before pagelist.items[0];
+			insert DraggableFrame { draggable: ResultNode { execution: oldExecution }, id: oldExecution.getId() } before pagelist.items[0];
 		}
 	}
 	def blinkAnim = Timeline {

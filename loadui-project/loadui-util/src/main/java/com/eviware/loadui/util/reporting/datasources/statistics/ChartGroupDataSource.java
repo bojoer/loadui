@@ -9,6 +9,7 @@ import java.util.Map;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
@@ -61,6 +62,8 @@ public class ChartGroupDataSource extends JRAbstractBeanDataSource
 			return chartView.getLabel();
 		else if( fieldName.equals( "chart" ) )
 			return charts.get( chartView );
+		else if( fieldName.equals( "legend" ) )
+			return new ChartLegendDataSource( ( LineChartView )chartView );
 		return null;
 	}
 

@@ -30,13 +30,19 @@ import javafx.scene.layout.Container;
 
 import com.sun.javafx.scene.layout.Region;
 
+import com.eviware.loadui.fx.ui.node.FxLabeled;
+
 /**
  * A Node which holds a Draggable, and remains in its place when the Draggable is being dragged.
  *
  * @author dain.nilsson
  */
-public class DraggableFrame extends CustomNode, Resizable {
+public class DraggableFrame extends CustomNode, Resizable, FxLabeled {
 	def group = Group {};
+	
+	def fxLabel = bind if( draggable instanceof FxLabeled ) (draggable as FxLabeled).label else "{draggable}" on replace {
+		label = fxLabel;
+	}
 	
 	/**
 	 * The Draggable to hold.
