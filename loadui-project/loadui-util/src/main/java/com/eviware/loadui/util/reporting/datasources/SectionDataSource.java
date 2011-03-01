@@ -33,14 +33,12 @@ public class SectionDataSource extends JRAbstractBeanDataSource
 	@Override
 	public Object getFieldValue( JRField field ) throws JRException
 	{
-		logger.debug( "Looking for field:" + field.getName() );
 		if( field.getName().equals( "values" ) )
 			return new ValuesDataSource( section.get( cnt ).getValues() );
 		if( field.getName().equals( "tables" ) )
 			return new TablesDataSource( section.get( cnt ).getTables() );
 		if( field.getName().equals( "title" ) )
 		{
-			logger.debug( "title is:" + section.get( cnt ).getTitle() );
 			return section.get( cnt ).getTitle();
 		}
 		return null;

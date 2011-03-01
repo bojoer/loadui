@@ -39,7 +39,6 @@ public class TablesDataSource extends JRAbstractBeanDataSource
 	@Override
 	public Object getFieldValue( JRField field ) throws JRException
 	{
-		logger.debug( "Looking for field: " + field.getName() );
 		if( field.getName().equals( "title" ) )
 			return keys[cnt];
 		if( field.getName().equals( "table" ) )

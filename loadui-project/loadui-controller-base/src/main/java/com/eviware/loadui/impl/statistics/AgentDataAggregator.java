@@ -94,6 +94,8 @@ public class AgentDataAggregator
 				String trackId = e2.getKey();
 				StatisticsWriter writer = ( StatisticsWriter )addressableRegistry.lookup( trackId );
 
+				log.debug( "writer: " + writer + "; e2: " + e2 );
+				
 				Entry entry = writer.aggregate( e2.getValue() );
 
 				if( entry != null )
