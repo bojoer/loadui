@@ -12,14 +12,17 @@ import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
 
 public class ExecutionDataSource extends JRAbstractBeanDataSource
 {
+	private final String label;
 	private final Execution execution;
 	private final StatisticPage page;
 	private final Map<Object, Image> charts;
 	private boolean next = true;
 
-	public ExecutionDataSource( Execution execution, StatisticPage page, Map<Object, Image> charts )
+	public ExecutionDataSource( String label, Execution execution, StatisticPage page, Map<Object, Image> charts )
 	{
 		super( true );
+
+		this.label = label;
 		this.execution = execution;
 		this.page = page;
 		this.charts = charts;
@@ -35,6 +38,8 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 	public Object getFieldValue( JRField field ) throws JRException
 	{
 		String fieldName = field.getName();
+		if( fieldName.equals( "projectName" ) )
+			return label;
 		if( fieldName.equals( "chartGroup" ) )
 			return new ChartGroupsDataSource( page.getChildren(), charts );
 		return fieldName;
