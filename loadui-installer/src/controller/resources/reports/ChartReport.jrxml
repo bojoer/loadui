@@ -6,6 +6,7 @@
 	<template><![CDATA["reports/styles.jrtx"]]></template>
 	<field name="chart" class="java.awt.Image"/>
 	<field name="chartName" class="java.lang.String"/>
+	<field name="legend" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -24,6 +25,13 @@
 				<reportElement x="0" y="0" width="505" height="100"/>
 				<imageExpression class="java.awt.Image"><![CDATA[$F{chart}]]></imageExpression>
 			</image>
+		</band>
+		<band height="75">
+			<subreport isUsingCache="true">
+				<reportElement x="0" y="25" width="505" height="50"/>
+				<dataSourceExpression><![CDATA[$F{legend}]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA["subreport:ChartLegendReport"]]></subreportExpression>
+			</subreport>
 		</band>
 	</detail>
 </jasperReport>

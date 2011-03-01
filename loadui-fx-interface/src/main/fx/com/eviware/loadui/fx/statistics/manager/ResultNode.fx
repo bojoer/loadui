@@ -24,6 +24,7 @@ import com.javafx.preview.control.MenuButton;
 import com.javafx.preview.control.MenuItem;
 
 import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.util.ModelUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
@@ -41,6 +42,8 @@ public class ResultNode extends ResultNodeBase, Draggable, Deletable {
 	override function doDelete():Void {
 		execution.delete();
 	}
+	
+	override var label = bind ModelUtils.getLabelHolder( execution ).label;
 	
 	postinit {
 		if( execution.isArchived() ) {

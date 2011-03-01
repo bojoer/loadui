@@ -29,6 +29,7 @@ import javafx.util.Math;
 
 import com.sun.javafx.scene.layout.Region;
 
+import com.eviware.loadui.fx.ui.node.FxLabeled;
 import com.eviware.loadui.fx.ui.pagination.Pagination;
 
 public class PageList extends VBox, Pagination {
@@ -44,14 +45,27 @@ public class PageList extends VBox, Pagination {
 	
 	def displayed = bind displayedItems on replace {
 		labelBox.content = for( x in displayedItems ) {
-			Label {
-				styleClass: "item-label"
-				text: "{x}"
-				textWrap: true
-				vpos: VPos.TOP
-				layoutInfo: LayoutInfo {
-					width: bind x.layoutBounds.width
-					height: 45
+			if( x instanceof FxLabeled ) {
+				Label {
+					styleClass: "item-label"
+					text: bind (x as FxLabeled).label
+					textWrap: true
+					vpos: VPos.TOP
+					layoutInfo: LayoutInfo {
+						width: bind x.layoutBounds.width
+						height: 45
+					}
+				}
+			} else {
+				Label {
+					styleClass: "item-label"
+					text: "{x}"
+					textWrap: true
+					vpos: VPos.TOP
+					layoutInfo: LayoutInfo {
+						width: bind x.layoutBounds.width
+						height: 45
+					}
 				}
 			}
 		}

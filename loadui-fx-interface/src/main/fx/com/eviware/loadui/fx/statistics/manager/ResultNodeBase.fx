@@ -38,6 +38,7 @@ import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.ActivityLed;
 import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.ui.node.FxLabeled;
 import com.eviware.loadui.fx.ui.resources.DialogPanel;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
@@ -47,7 +48,7 @@ import com.eviware.loadui.api.events.WeakEventHandler;
 
 def defaultImage = Image { url: "{__ROOT__}images/png/default-chart-thumbnail.png" };
 
-public class ResultNodeBase extends BaseNode {
+public class ResultNodeBase extends BaseNode, FxLabeled {
 	var iconImage = defaultImage;
 	def iconListener = new IconListener();
 	
@@ -64,7 +65,7 @@ public class ResultNodeBase extends BaseNode {
 			defaultImage;
 	}
 	
-	public var label:String = "Execution";
+	override var label = "Execution";
 	
 	public var active = false;
 	
