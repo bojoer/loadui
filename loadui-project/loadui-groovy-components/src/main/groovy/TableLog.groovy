@@ -28,6 +28,8 @@ import com.eviware.loadui.api.ui.table.LTableModel
 import com.eviware.loadui.api.events.PropertyEvent
 import au.com.bytecode.opencsv.CSVWriter
 import java.io.FileWriter
+import java.io.FileOutputStream
+import java.io.FileInputStream
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
 import javax.swing.event.TableModelListener
@@ -37,7 +39,7 @@ import java.text.SimpleDateFormat
 import com.eviware.loadui.api.summary.MutableSection
 
 createProperty 'maxRows', Long, 1000
-createProperty 'fileName', File 
+createProperty 'logFilePath', String
 createProperty 'saveFile', Boolean, false
 createProperty 'follow', Boolean, false
 createProperty 'summaryRows', Long, 0
@@ -51,7 +53,7 @@ myTableModel.addTableModelListener(new TableModelListener() {
 	}
 });
 
-saveFileName = fileName.value?.name
+String saveFileName = null
 
 writer = null
 def formater = new SimpleDateFormat("HH:mm:ss:SSS")
@@ -75,7 +77,7 @@ output = { message ->
 		}
 
 	result = myTableModel.addRow(message) 
-	if( result && saveFile.value ) {
+	if( result && saveFile.value && saveFileName != null) {
 		if( writer == null ){
 			writer = new CSVWriter(new FileWriter(saveFileName, appendSaveFile.value), (char) ',');
 		}
@@ -110,11 +112,9 @@ addEventListener( ActionEvent ) { event ->
 		writer?.close()
 		writer = null
 	}
-	
 	else if ( event.key == "START" ) {
 		buildFileName()
 	}
-
 	else if ( event.key == "RESET" ) {
 		myTableModel.reset()
 		buildFileName()
@@ -130,30 +130,25 @@ buildFileName = {
 	if( writer != null ) {
 		return
 	}
-	def dir = ""
-	def name = ""
-	def parent = fileName.value?.parentFile
-	if(parent != null){
-		parent.mkdirs()
-		dir = fileName.value.parent
-		name = fileName.value?.name
-	}
-	else{
-		dir = getDefaultLogDir()
-		name = fileName.value?.name
-		if(name == null || name.trim().length() == 0){
-			name = getDefaultLogName()
+	def filePath = "${getBaseLogDir()}${File.separator}${logFilePath.value}"
+	if( !validateLogFilePath(filePath) ){
+		filePath = "${getBaseLogDir()}${File.separator}logs${File.separator}table-log${File.separator}${getDefaultLogFileName()}"
+		log.warn("Log file path wasn't specified properly. Try default path: [$filePath]")
+		if( !validateLogFilePath(filePath) ){
+			log.error("Path: [$filePath] can't be used either. Table log component name contains invalid characters. Log file won't be saved.")
+			saveFileName = null
+			return
 		}
-		log.warn("Log file path wasn't specified properly. Will try to use name [$name] and save in [$dir]")
 	}
 	if( !appendSaveFile.value ){
-		name = addTimestampToFileName( name )
+		def f = new File(filePath)
+		filePath = "${f.parent}${File.separator}${addTimestampToFileName( f.name )}"
 	}
-	saveFileName = "${dir}${File.separator}$name"
-	validateLogFile()
+	new File(filePath).parentFile.mkdirs()
+	saveFileName = filePath
 }
 
-getDefaultLogDir = {
+getBaseLogDir = {
 	def dir = System.getProperty("loadui.home")
 	if(dir == null || dir.trim().length() == 0){
 		dir = "."
@@ -161,26 +156,31 @@ getDefaultLogDir = {
 	return dir			
 }
 				
-getDefaultLogName = {
+getDefaultLogFileName = {
 	return getLabel().replaceAll(" ","")
 }
 				
-validateLogFile = {
+validateLogFilePath = { filePath ->
 	try {
-		File temp = new File(saveFileName)
-		if( !temp.exists() )
-		{
-			temp.createNewFile()
+		// the only good way to check if file path 
+		// is correct is to try read and writing
+		File temp = new File(filePath)
+		temp.parentFile.mkdirs()
+		if(!temp.exists()){
+			FileOutputStream fos = new FileOutputStream(temp)
+			fos.write([0])
+			fos.close()
 			temp.delete()
 		}
+		else{
+			FileInputStream fis = new FileInputStream(temp)
+			fis.read()
+			fis.close()
+		}
+		return true
 	}
 	catch(Exception e){
-		def name = getDefaultLogName()
-		if( !appendSaveFile.value ){
-			name = addTimestampToFileName( name )
-		}
-		saveFileName = "${getDefaultLogDir()}${File.separator}${name}"	
-		log.warn("Invalid log file path found. Path set to [${saveFileName}]")
+		return false
 	}	
 }
 
@@ -222,7 +222,7 @@ settings( label: "General" ) {
 settings(label:'Logging') {
 	box {
 		property(property: saveFile, label: 'Save Logs?' )
-		property(property: fileName, label: 'Log File (Comma Separated) ' )
+		property(property: logFilePath, label: 'Log File (Comma separated, relative to loadUI home dir)' )
 		property(property: appendSaveFile, label: 'Check to append selected file', )
 		property(property: formatTimestamps, label: 'Check to format timestamps(hh:mm:ss:ms)')
 		label('(If not appending file, its name will be used to generate new log files each time test is run.)')
