@@ -54,9 +54,9 @@ public class ArchivedResultsList extends BaseNode, Resizable, Droppable {
 		}
 		pagelist.items = [];
 		if( project != null ) {
-			for( execution in projectExecutionManager.getExecutions( project, false, true ) ) {
+			for( execution in projectExecutionManager.getExecutions( project, true, true ) ) {
 				execution.addEventListener( BaseEvent.class, executionListener );
-				if( pagelist.lookup( execution.getId() ) == null ) {
+				if( execution.isArchived() and pagelist.lookup( execution.getId() ) == null ) {
 					insert DraggableFrame { draggable: ResultNode { execution: execution, label: bind ModelUtils.getLabelHolder( execution ).label }, id: execution.getId() } before pagelist.items[0];
 				}
 			}
