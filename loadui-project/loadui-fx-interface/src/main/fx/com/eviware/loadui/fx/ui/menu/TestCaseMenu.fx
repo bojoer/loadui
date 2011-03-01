@@ -61,6 +61,7 @@ import com.eviware.loadui.fx.ui.resources.Paints;
 import com.eviware.loadui.fx.ui.resources.MenuArrow;
 import com.eviware.loadui.fx.widgets.MiniRunController;
 import com.eviware.loadui.fx.widgets.RunController;
+import com.eviware.loadui.fx.widgets.DistributionModeSelector;
 import com.eviware.loadui.fx.summary.SummaryReport;
 import com.eviware.loadui.fx.widgets.canvas.Canvas;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
@@ -174,15 +175,24 @@ public class TestCaseMenu extends HBox {
 				}
 			}, VBox {
 				content: [
-					Label {
-						text: bind workspaceLabel
-						textFill: bind workspaceMenuClosedTextFill
-						font: bind workspaceMenuClosedFont
-						layoutInfo: LayoutInfo {
-							height: 20
-							margin: Insets { left: 3 }
-						}
-					}, HBox {
+					HBox {
+						nodeVPos: VPos.CENTER
+						content: [
+							Label {
+								text: bind workspaceLabel
+								textFill: bind workspaceMenuClosedTextFill
+								font: bind workspaceMenuClosedFont
+								layoutInfo: LayoutInfo {
+									height: 20
+									width: bind menuButton.width
+									margin: Insets { left: 3 }
+								}
+							}, DistributionModeSelector {
+								layoutInfo: LayoutInfo { height: 16, hfill: false, vfill: false }
+							}
+						]
+					},
+					HBox {
 						nodeVPos: VPos.CENTER;
 						content: [
 							Label {
