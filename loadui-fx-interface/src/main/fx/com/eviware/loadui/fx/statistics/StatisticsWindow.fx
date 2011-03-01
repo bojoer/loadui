@@ -75,7 +75,7 @@ public-read var currentChartPage:ChartPage;
 
 public function getInstance():StatisticsWindow {
   if (instance == null) {
-    instance = StatisticsWindow {};
+	instance = StatisticsWindow {};
   }
   return instance;
 }
@@ -89,8 +89,9 @@ public class StatisticsWindow {
 
 	public var stage:Stage;
 	public var project:ProjectItem on replace {
-	    topMenu.project = project;
-	    comparedExecution = null;
+		topMenu.project = project;
+		comparedExecution = null;
+		scene = null;
 	}
 	
 	public var scene:Scene on replace {
@@ -126,13 +127,13 @@ public class StatisticsWindow {
 	}
 	
 	def stack:Stack = Stack {
-  		layoutX: 135
-  		layoutY: 145
-  		width: bind if(scene.width >= 600) scene.width - 150 else 450
-  		height: bind scene.height - 180
-  		content: [ layoutRegion ]
-  		//background: Color.web("#323232")
-  	};
+		layoutX: 135
+		layoutY: 145
+		width: bind if(scene.width >= 600) scene.width - 150 else 450
+		height: bind scene.height - 180
+		content: [ layoutRegion ]
+		//background: Color.web("#323232")
+	};
 	
 	def toolbar: StatisticsToolbar = StatisticsToolbar {
 		layoutY: 140
@@ -153,52 +154,50 @@ public class StatisticsWindow {
 	};
 	
 	public function show() {
-    	if ( closed ) {
-    		if ( scene == null ) {
-	    		stage = Stage {
-			    	title: "Statistics"
-			    	icons: [
-			    		Image { url:"{__ROOT__}images/png/icon_32x32.png" },
+		if ( closed ) {
+			if ( scene == null ) {
+				stage = Stage {
+					title: "Statistics"
+					icons: [
+						Image { url:"{__ROOT__}images/png/icon_32x32.png" },
 						Image { url:"{__ROOT__}images/png/icon_16x16.png" }
-			    	]
-			    	scene: scene = Scene {
+					]
+					scene: scene = Scene {
 						stylesheets: "file:style.css"
 						width: 1024
 						height: 768
 						fill: Color.web("#373737")
 					}
-		    		onClose: function() {
-		    		 	closed = true;
-		    		 	close();
-		//    				throw new com.eviware.loadui.util.hacks.PreventClosingStageException(); // this a hack to keep stage open
-		  				}
-		    		}
-	    		} else {
-		    		stage = Stage {
-		    			height: 768
-		    			width: 1024
-				    	title: "Statistics"
-				    	icons: [
-				    		Image { url:"{__ROOT__}images/png/icon_32x32.png" },
-							Image { url:"{__ROOT__}images/png/icon_16x16.png" }
-				    	]
-				    	scene: scene
-			    		onClose: function() {
-			    		 	closed = true;
-			    		 	close();
-			  				}
-			    		}
-	    		}
-	    	}
-    	closed = false;
-    	stage.toFront();
+					onClose: function() {
+						closed = true;
+						close();
+					}
+				}
+			} else {
+				stage = Stage {
+					height: 768
+					width: 1024
+					title: "Statistics"
+					icons: [
+						Image { url:"{__ROOT__}images/png/icon_32x32.png" },
+						Image { url:"{__ROOT__}images/png/icon_16x16.png" }
+					]
+					scene: scene
+					onClose: function() {
+						closed = true;
+						close();
+					}
+				}
+			}
+		}
+		closed = false;
+		stage.toFront();
 	}
 	
 	public function close() {
 		//tabs.clear();
 		stage.close();
 	}
-			
 }
 	
 class CurrentExecutionListener extends ExecutionListenerAdapter {
