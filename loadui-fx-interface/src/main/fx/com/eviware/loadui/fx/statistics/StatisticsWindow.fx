@@ -90,6 +90,7 @@ public class StatisticsWindow {
 	public var stage:Stage;
 	public var project:ProjectItem on replace {
 		topMenu.project = project;
+		execution = null;
 		comparedExecution = null;
 		scene = null;
 	}
