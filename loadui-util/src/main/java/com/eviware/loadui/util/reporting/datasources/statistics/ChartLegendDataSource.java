@@ -49,13 +49,13 @@ public class ChartLegendDataSource extends JRAbstractBeanDataSource
 		String fieldName = field.getName();
 		if( fieldName.equals( "statistic" ) )
 			return lineSegment.getStatistic().getName();
-		else if( fieldName.equals( "source" ) )
+		if( fieldName.equals( "source" ) )
 			return lineSegment.getStatistic().getSource();
-		else if( fieldName.equals( "component" ) )
+		if( fieldName.equals( "component" ) )
 			return lineSegment.getStatistic().getStatisticVariable().getStatisticHolder().getLabel();
-		else if( fieldName.equals( "variable" ) )
+		if( fieldName.equals( "variable" ) )
 			return lineSegment.getStatistic().getStatisticVariable().getName();
-		else if( fieldName.equals( "color" ) )
+		if( fieldName.equals( "color" ) )
 		{
 			BufferedImage image = new BufferedImage( 12, 4, BufferedImage.TYPE_INT_RGB );
 			Color color = Color.decode( lineSegment.getAttribute( "color", "#000000" ) );

@@ -167,7 +167,7 @@ public class StatisticsMenu extends VBox {
 						action: function() {
 							AppState.byName("STATISTICS").blockingTask( function():Void {
 								def map = com.eviware.loadui.fx.statistics.reporting.StatisticsReportGenerator.generateCharts( StatisticsWindow.currentChartPage );
-								com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport( StatisticsWindow.execution, tabContainer.currentPage, map );
+								com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport( StatisticsWindow.project.getLabel(), StatisticsWindow.execution, tabContainer.currentPage, map );
 							}, null, "Generating Printable Report..." );
 						}
 						disable: bind StatisticsWindow.execution == null
