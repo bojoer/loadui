@@ -39,12 +39,15 @@ import javafx.scene.layout.Priority;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Separator;
 import javafx.scene.input.MouseEvent;
 
 import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.MenuButton;
+
+import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.AppState;
@@ -56,6 +59,7 @@ import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.resources.Paints;
 import com.eviware.loadui.fx.ui.resources.MenuArrow;
 import com.eviware.loadui.fx.widgets.RunController;
+import com.eviware.loadui.fx.widgets.DistributionModeSelector;
 import com.eviware.loadui.fx.summary.SummaryReport;
 import com.eviware.loadui.fx.widgets.canvas.Canvas;
 
@@ -161,15 +165,24 @@ public class ProjectMenu extends HBox {
 				}
 			}, VBox {
 				content: [
-					Label {
-						text: bind workspaceLabel
-						textFill: bind workspaceMenuClosedTextFill
-						font: bind workspaceMenuClosedFont
-						layoutInfo: LayoutInfo {
-							height: 20
-							margin: Insets { left: 3 }
-						}
-					}, HBox {
+					HBox {
+						nodeVPos: VPos.CENTER
+						content: [
+							Label {
+								text: bind workspaceLabel
+								textFill: bind workspaceMenuClosedTextFill
+								font: bind workspaceMenuClosedFont
+								layoutInfo: LayoutInfo {
+									height: 20
+									width: bind menuButton.width
+									margin: Insets { left: 3 }
+								}
+							}, DistributionModeSelector {
+								layoutInfo: LayoutInfo { height: 16, hfill: false, vfill: false }
+							}
+						]
+					},
+					HBox {
 						layoutInfo: LayoutInfo {
 							hgrow: Priority.ALWAYS
 							vgrow: Priority.NEVER

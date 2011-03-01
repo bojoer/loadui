@@ -49,6 +49,7 @@ import com.eviware.loadui.fx.ui.dialogs.*;
 import com.eviware.loadui.fx.dialogs.*;
 import com.eviware.loadui.fx.ui.menu.button.*;
 import com.eviware.loadui.fx.widgets.TrashHole;
+import com.eviware.loadui.fx.widgets.DistributionModeSelector;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.resources.Paints;
 import com.eviware.loadui.fx.ui.resources.MenuArrow;
@@ -201,6 +202,9 @@ public class WorkspaceMenu extends HBox {
 	              action: function() { WindowControllerImpl.instance.close() }
 	          }
 			]
+		}, DistributionModeSelector {
+			layoutInfo: LayoutInfo { height: 24, hfill: false, vfill: false }
+			style: "-fx-background-radius: 8;"
 		}, Label {
             layoutInfo: LayoutInfo {
                 hgrow: Priority.ALWAYS
