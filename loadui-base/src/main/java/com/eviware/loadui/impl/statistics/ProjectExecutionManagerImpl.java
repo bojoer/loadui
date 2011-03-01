@@ -171,6 +171,11 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 						}
 						oldestExecution.delete();
 						executions.remove( oldestExecution );
+						
+						// also remove from projectIdToExecutions
+						HashSet<Execution> recentProjectsExecutionMap = projectIdToExecutions.get( runningProject.getId() );
+						recentProjectsExecutionMap.remove( oldestExecution );
+						projectIdToExecutions.put( runningProject.getId(), recentProjectsExecutionMap );
 					}
 
 					if( !localMode )
