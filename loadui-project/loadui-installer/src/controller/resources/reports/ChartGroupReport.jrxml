@@ -10,24 +10,22 @@
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="30" splitType="Stretch">
-			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="29" width="505" height="1" forecolor="#999999"/>
-			</line>
+		<band height="130">
 			<textField>
-				<reportElement style="Heading 3" x="0" y="9" width="505" height="20" forecolor="#000000"/>
+				<reportElement style="Heading 3" x="0" y="6" width="505" height="20" forecolor="#000000"/>
 				<textElement>
 					<font isUnderline="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{groupName}]]></textFieldExpression>
 			</textField>
-		</band>
-		<band height="100">
 			<subreport>
-				<reportElement x="0" y="0" width="505" height="100"/>
+				<reportElement x="0" y="30" width="505" height="100"/>
 				<dataSourceExpression><![CDATA[$F{group}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:ChartReport"]]></subreportExpression>
 			</subreport>
+			<line>
+				<reportElement x="0" y="26" width="505" height="1" forecolor="#999999"/>
+			</line>
 		</band>
 	</detail>
 </jasperReport>

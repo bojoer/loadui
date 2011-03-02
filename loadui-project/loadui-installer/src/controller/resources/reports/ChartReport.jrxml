@@ -11,7 +11,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="30" splitType="Stretch">
+		<band height="205" splitType="Prevent">
 			<textField>
 				<reportElement style="Heading 3" x="0" y="10" width="505" height="20" forecolor="#000000"/>
 				<textElement textAlignment="Center">
@@ -19,16 +19,12 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{chartName}]]></textFieldExpression>
 			</textField>
-		</band>
-		<band height="100">
 			<image>
-				<reportElement x="0" y="0" width="505" height="100"/>
+				<reportElement x="0" y="34" width="505" height="100"/>
 				<imageExpression class="java.awt.Image"><![CDATA[$F{chart}]]></imageExpression>
 			</image>
-		</band>
-		<band height="75">
 			<subreport isUsingCache="true">
-				<reportElement x="0" y="25" width="505" height="50"/>
+				<reportElement x="0" y="155" width="505" height="50"/>
 				<dataSourceExpression><![CDATA[$F{legend}]]></dataSourceExpression>
 				<subreportExpression class="java.lang.String"><![CDATA["subreport:ChartLegendReport"]]></subreportExpression>
 			</subreport>

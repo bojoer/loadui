@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.fx;
 
+import com.eviware.loadui.LoadUI;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import javafx.stage.Stage;
@@ -87,7 +89,7 @@ public class JavaFXActivator extends BundleActivator {
 			
 			def wc = new WindowControllerImpl();
 			wc.stage = Stage {
-				title: "loadUI {VERSION}"
+				title: "loadUI {LoadUI.VERSION}"
 				visible: false
 				icons: icons
 				scene: scene = Scene {
