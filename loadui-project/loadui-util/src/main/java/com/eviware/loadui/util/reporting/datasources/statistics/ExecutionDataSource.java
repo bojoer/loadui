@@ -1,6 +1,8 @@
 package com.eviware.loadui.util.reporting.datasources.statistics;
 
 import java.awt.Image;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.eviware.loadui.api.statistics.model.StatisticPage;
@@ -14,24 +16,27 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 {
 	private final String label;
 	private final Execution execution;
-	private final StatisticPage page;
+	private final Collection<StatisticPage> pages;
 	private final Map<Object, Image> charts;
-	private boolean next = true;
+	private StatisticPage page;
+	private Iterator<StatisticPage> iterator;
 
-	public ExecutionDataSource( String label, Execution execution, StatisticPage page, Map<Object, Image> charts )
+	public ExecutionDataSource( String label, Execution execution, Collection<StatisticPage> pages,
+			Map<Object, Image> charts )
 	{
 		super( true );
 
 		this.label = label;
 		this.execution = execution;
-		this.page = page;
+		this.pages = pages;
 		this.charts = charts;
+		iterator = pages.iterator();
 	}
 
 	@Override
 	public void moveFirst() throws JRException
 	{
-		next = true;
+		iterator = pages.iterator();
 	}
 
 	@Override
@@ -48,9 +53,9 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 	@Override
 	public boolean next() throws JRException
 	{
-		if( next )
+		if( iterator.hasNext() )
 		{
-			next = false;
+			page = iterator.next();
 			return true;
 		}
 		return false;

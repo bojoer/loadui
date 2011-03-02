@@ -154,6 +154,7 @@ public class Dialog {
 	var modalLayer:Node;
 	var panel:MovableNode;
 	def mainPanel:Panel = Panel {
+		styleClass: "dialog"
 		onLayout: function() {
 			mainPanel.resizeContent();
 			if( not moved ) {
