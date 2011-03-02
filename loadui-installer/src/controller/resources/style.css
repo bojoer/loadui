@@ -728,7 +728,7 @@
 	-fx-background-radius: 3;
 	-fx-background-insets: 0, 1;
 	-fx-background-color: #4e4e4e, linear (0%,0%) to (0%,100%) stops (0%, #dbdbdb) (100%, #606060);
-	-fx-padding: 0 10;
+	-fx-padding: 0 9;
 }
 
 .distribution-mode-selector *.toggle-button:selected {
