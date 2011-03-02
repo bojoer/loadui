@@ -15,17 +15,58 @@
  */
 package com.eviware.loadui.impl.statistics.db.util;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.codec.binary.Base64;
 
 public class TypeConverter
 {
+
+	public static BufferedImage imageFromByteArray( byte[] imagebytes )
+	{
+		try
+		{
+			if( imagebytes != null && ( imagebytes.length > 0 ) )
+			{
+				BufferedImage im = ImageIO.read( new ByteArrayInputStream( imagebytes ) );
+				return im;
+			}
+			return null;
+		}
+		catch( IOException e )
+		{
+			throw new IllegalArgumentException( e.toString() );
+		}
+	}
+
+	public static byte[] imageToByteArray( BufferedImage bufferedImage )
+	{
+		if( bufferedImage != null )
+		{
+			BufferedImage image = bufferedImage;
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			try
+			{
+				ImageIO.write( image, "png", baos );
+			}
+			catch( IOException e )
+			{
+				throw new IllegalStateException( e.toString() );
+			}
+			byte[] b = baos.toByteArray();
+			return b;
+		}
+		return new byte[0];
+	}
 
 	public static Object base64ToObject( String s )
 	{
@@ -77,6 +118,10 @@ public class TypeConverter
 		{
 			return objectToBase64( ( Serializable )value );
 		}
+		else if( value instanceof BufferedImage )
+		{
+			return Base64.encodeBase64String( imageToByteArray( ( BufferedImage )value ) );
+		}
 		else
 		{
 			return value.toString();
@@ -85,7 +130,11 @@ public class TypeConverter
 
 	public static Object stringToObject( String value, Class<? extends Object> type )
 	{
-		if( type == Long.class )
+		if( value == null )
+		{
+			return null;
+		}
+		else if( type == Long.class )
 		{
 			return Long.valueOf( value );
 		}
@@ -118,6 +167,10 @@ public class TypeConverter
 		else if( type == Serializable.class )
 		{
 			return base64ToObject( value );
+		}
+		else if( type == BufferedImage.class )
+		{
+			return imageFromByteArray( Base64.decodeBase64( value ) );
 		}
 		else
 		{

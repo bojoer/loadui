@@ -155,19 +155,19 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 			]
 		}
 	}
-	
+
 	public function update():Void {
 		for( holder in innerContent )
 			holder.update();
 	}
-	
+		
 	public function updateIcon():Void {
 		def execution = StatisticsWindow.execution;
 		if( execution != null ) {
 			for( chartGroupHolder in innerContent ) {
 				for( chartViewHolder in [ chartGroupHolder.chartViewHolder, chartGroupHolder.expandedChartViews ] ) {
 					if( chartViewHolder.chart instanceof LineChart ) {
-						LineChartUtils.saveThumbnail( chartViewHolder.chart as LineChart, new File( new File( executionManager.getDBBaseDir(), execution.getId() ), "thumbnail.png" ) );
+						execution.setIcon( LineChartUtils.createThumbnail( chartViewHolder.chart as LineChart ) );
 						execution.fireEvent( new BaseEvent( execution, Execution.ICON ) );
 						return;
 					}

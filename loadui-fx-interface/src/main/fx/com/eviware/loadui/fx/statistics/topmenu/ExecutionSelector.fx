@@ -283,6 +283,7 @@ public class ExecutionSelector extends Group {
 		for( h in holderList ) {
 			addRadioButton((h as ExecutionComparable).execution);
 		}
+		setRadioButtons();
 	}
 	
 	function addCurrentRunDummyRadio(){
@@ -293,9 +294,6 @@ public class ExecutionSelector extends Group {
 		insert right into rightRadioButtons;
 		leftToRightMapping.put(left.radioButton, right.radioButton);
 		rightToLeftMapping.put(right.radioButton, left.radioButton);
-		if(leftExecution == null){
-			left.radioButton.selected = true;
-		}
 	}
 	
 	function addRadioButton(e: Execution){
@@ -316,12 +314,6 @@ public class ExecutionSelector extends Group {
 		rightToLeftMapping.put(right.radioButton, left.radioButton);
 		leftExecutions.put(left.radioButton, e);
 		rightExecutions.put(right.radioButton, e);
-		if(e != null and leftExecution != null and e.getId() == leftExecution.getId()){
-			left.radioButton.selected = true;
-		}
-		if(e != null and rightExecution != null and e.getId() == rightExecution.getId()){
-			right.radioButton.selected = true;
-		}
 	}
 	
 	function isCurrentExecution(e: Execution): Boolean {
@@ -352,7 +344,8 @@ public class ExecutionSelector extends Group {
 			        break;
 			    }
 			}
-		}    
+		}
+		rightRadioButtons[0].radioButton.disable = true;     
 	}
 	
 	function unsetRadioButtons(left: Boolean, right: Boolean): Void {

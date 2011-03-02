@@ -46,6 +46,9 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
 
+import java.awt.image.BufferedImage;
+import javafx.ext.swing.SwingUtils;
+
 def defaultImage = Image { url: "{__ROOT__}images/png/default-chart-thumbnail.png" };
 
 public class ResultNodeBase extends BaseNode, FxLabeled {
@@ -60,7 +63,7 @@ public class ResultNodeBase extends BaseNode, FxLabeled {
 		execution.addEventListener( BaseEvent.class, iconListener );
 		def icon = execution.getIcon();
 		iconImage = if( icon != null )
-			Image { url: icon.toString() }
+			SwingUtils.toFXImage(icon as BufferedImage)
 		else
 			defaultImage;
 	}
@@ -137,7 +140,7 @@ class IconListener extends WeakEventHandler {
 			runInFxThread( function():Void {
 				def icon = execution.getIcon();
 				iconImage = if( icon != null )
-					Image { url: icon.toString() }
+					 SwingUtils.toFXImage(icon as BufferedImage)
 				else
 					defaultImage;
 			} );

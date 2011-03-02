@@ -15,8 +15,8 @@
  */
 package com.eviware.loadui.api.statistics.store;
 
+import java.awt.Image;
 import java.io.File;
-import java.net.URL;
 import java.util.Collection;
 
 import com.eviware.loadui.api.events.EventFirer;
@@ -103,7 +103,13 @@ public interface Execution extends Labeled.Mutable, EventFirer
 	public File getSummaryReport();
 
 	/**
-	 * Returns a URL pointing to an image icon, or null if no icon is available.
+	 * Returns a image icon.
 	 */
-	public URL getIcon();
+	public Image getIcon();
+
+	/**
+	 * Sets an image icon.
+	 */
+	public void setIcon( Image image );
+
 }
