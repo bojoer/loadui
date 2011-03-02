@@ -70,11 +70,11 @@ log.info "Loading Project: {}", projectFile.absolutePath
 projectRef.enabled = true
 def project = projectRef.project
 
-def summaryExported = false
+def summaryExported = 0
 def summaryExportListener = new EventHandler<BaseEvent>() {
 	public void handleEvent( BaseEvent event ) {
 		if( ProjectItem.SUMMARY_EXPORTED.equals( event.getKey() ) ) {
-			summaryExported = true;
+			summaryExported++;
 		}
 	}
 }
@@ -195,11 +195,14 @@ while( target.summary == null ) {
 	sleep 1000
 }
 
-//Wait for reports to be generated and saved
-if( project.saveReport ) {
-	while( !summaryExported ) {
-		sleep 1000
-	}
+//Wait for reports to be generated and saved (SUMMARY_EXPORTED is fired once when the summary is saved to the execution, then once again once the summary has been exported, but only if it should be exported).
+while( summaryExported < ( project.saveReport ? 2 : 1 ) ) {
+	sleep 1000
+}
+
+//Save Statistics report
+if( statisticPages != null ) {
+	//log.info "StatisticPages: $statisticPages"
 }
 
 //Shutdown

@@ -13,6 +13,7 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
@@ -154,7 +155,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				{
 					hasCurrent = false;
 					executionManager.stopExecution();
-					
+
 					runningProject.addEventListener( BaseEvent.class,
 							new SummaryAttacher( executionManager.getCurrentExecution() ) );
 
@@ -171,7 +172,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 						}
 						oldestExecution.delete();
 						executions.remove( oldestExecution );
-						
+
 						// also remove from projectIdToExecutions
 						HashSet<Execution> recentProjectsExecutionMap = projectIdToExecutions.get( runningProject.getId() );
 						recentProjectsExecutionMap.remove( oldestExecution );
@@ -231,10 +232,14 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 		{
 			if( CanvasItem.SUMMARY.equals( event.getKey() ) )
 			{
-				event.getSource().removeEventListener( BaseEvent.class, this );
-				Summary summary = ( ( CanvasItem )event.getSource() ).getSummary();
+				ProjectItem project = ( ProjectItem )event.getSource();
+				project.removeEventListener( BaseEvent.class, this );
+				Summary summary = project.getSummary();
 
-				JasperReportManager.getInstance().createReport(summary,  new File( new File( executionManager.getDBBaseDir(), execution.getId() ), "summary.jp" ), "JASPER_PRINT");
+				JasperReportManager.getInstance().createReport( summary,
+						new File( new File( executionManager.getDBBaseDir(), execution.getId() ), "summary.jp" ),
+						"JASPER_PRINT" );
+				project.fireEvent( new BaseEvent( project, ProjectItem.SUMMARY_EXPORTED ) );
 			}
 		}
 	}

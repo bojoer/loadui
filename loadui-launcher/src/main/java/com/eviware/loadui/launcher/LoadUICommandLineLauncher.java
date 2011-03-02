@@ -16,7 +16,11 @@
 package com.eviware.loadui.launcher;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
@@ -38,6 +42,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	protected static final String WORKSPACE_OPTION = "w";
 	protected static final String REPORT_DIR_OPTION = "r";
 	protected static final String REPORT_FORMAT_OPTION = "F";
+	protected static final String STATISTICS_REPORT_OPTION = "S";
 
 	public static void main( String[] args )
 	{
@@ -46,7 +51,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 		String[] newArgs = new String[args.length + 1];
 		System.arraycopy( args, 0, newArgs, 0, args.length );
 		newArgs[args.length] = "-" + NOFX_OPTION;
-		
+
 		LoadUICommandLineLauncher launcher = new LoadUICommandLineLauncher( newArgs );
 		launcher.init();
 		launcher.start();
@@ -69,13 +74,23 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 		options.addOption( TESTCASE_OPTION, "testcase", true,
 				"Sets which TestCase to run (leave blank to run the entire Project)" );
 		options.addOption( LIMITS_OPTION, "limits", true, "Sets the limits for the execution (e.g. -L 60:0:200 )" );
-		options.addOption( OptionBuilder.withLongOpt( "agents" ).withDescription(
-				"Sets the agents to use for the test ( usage -" + AGENT_OPTION
-						+ " <ip>[:<port>][=<testCase>[,<testCase>] ...] )" ).hasArgs().create( AGENT_OPTION ) );
+		options.addOption( OptionBuilder
+				.withLongOpt( "agents" )
+				.withDescription(
+						"Sets the agents to use for the test ( usage -" + AGENT_OPTION
+								+ " <ip>[:<port>][=<testCase>[,<testCase>] ...] )" ).hasArgs().create( AGENT_OPTION ) );
 		options.addOption( FILE_OPTION, "file", true, "Executes the specified Groovy script file" );
 		options.addOption( LOCAL_OPTION, "local", false, "Executes TestCases in local mode" );
 		options.addOption( REPORT_DIR_OPTION, "reports", true, "Generates reports and saves them in specified folder" );
-		options.addOption( REPORT_FORMAT_OPTION, "format", true, "Specify output format for the exported reports (supported formats are: PDF, XLS, HTML, RTF, CSV, TXT and XML)" );
+		options
+				.addOption( REPORT_FORMAT_OPTION, "format", true,
+						"Specify output format for the exported reports (supported formats are: PDF, XLS, HTML, RTF, CSV, TXT and XML)" );
+		options
+				.addOption( OptionBuilder
+						.withLongOpt( "statistics" )
+						.withDescription(
+								"Sets which Statistics pages to add to the generated report (leave blank save all pages)" )
+						.hasOptionalArgs().create( STATISTICS_REPORT_OPTION ) );
 
 		return options;
 	}
@@ -89,8 +104,8 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 
 		if( cmd.hasOption( PROJECT_OPTION ) )
 		{
-			attributes.put( "workspaceFile", cmd.hasOption( WORKSPACE_OPTION ) ? new File( cmd
-					.getOptionValue( WORKSPACE_OPTION ) ) : null );
+			attributes.put( "workspaceFile",
+					cmd.hasOption( WORKSPACE_OPTION ) ? new File( cmd.getOptionValue( WORKSPACE_OPTION ) ) : null );
 			attributes.put( "projectFile",
 					cmd.hasOption( PROJECT_OPTION ) ? new File( cmd.getOptionValue( PROJECT_OPTION ) ) : null );
 			attributes.put( "testCase", cmd.getOptionValue( TESTCASE_OPTION ) );
@@ -112,9 +127,17 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 			}
 			attributes.put( "agents", agents );
 
-			attributes.put( "reportFolder", cmd.getOptionValue( REPORT_DIR_OPTION ));
-			attributes.put( "reportFormat", cmd.getOptionValue( REPORT_FORMAT_OPTION ));
-			
+			attributes.put( "reportFolder", cmd.getOptionValue( REPORT_DIR_OPTION ) );
+			attributes.put( "reportFormat", cmd.getOptionValue( REPORT_FORMAT_OPTION ) );
+
+			List<String> statisticPages = null;
+			if( cmd.hasOption( STATISTICS_REPORT_OPTION ) )
+			{
+				String[] optionValues = cmd.getOptionValues( STATISTICS_REPORT_OPTION );
+				statisticPages = optionValues == null ? Collections.<String> emptyList() : Arrays.asList( optionValues );
+			}
+			attributes.put( "statisticPages", statisticPages );
+
 			command = new ResourceGroovyCommand( "/RunTest.groovy", attributes );
 		}
 		else if( cmd.hasOption( FILE_OPTION ) )
