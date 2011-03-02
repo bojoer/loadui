@@ -15,9 +15,8 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
+import java.awt.Image;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -75,7 +74,20 @@ public class ExecutionImpl implements Execution, Releasable
 
 	private boolean loaded = false;
 
-	public ExecutionImpl( String id, long timestamp, long length, boolean archived, String label,
+	private Image icon;
+
+	public ExecutionImpl( String id, long startTime, String label, ExecutionManagerImpl manager )
+	{
+		this.id = id;
+		this.startTime = startTime;
+		this.archived = false;
+		this.label = label;
+		this.length = 0;
+		this.manager = manager;
+		trackMap = new HashMap<String, Track>();
+	}
+
+	public ExecutionImpl( String id, long timestamp, long length, boolean archived, String label, Image icon,
 			ExecutionManagerImpl manager )
 	{
 		this.id = id;
@@ -84,6 +96,7 @@ public class ExecutionImpl implements Execution, Releasable
 		this.label = label;
 		this.length = length;
 		this.manager = manager;
+		this.icon = icon;
 		trackMap = new HashMap<String, Track>();
 	}
 
@@ -234,16 +247,16 @@ public class ExecutionImpl implements Execution, Releasable
 	}
 
 	@Override
-	public URL getIcon()
+	public Image getIcon()
 	{
-		File icon = new File( new File( manager.getDBBaseDir(), id ), "thumbnail.png" );
-		try
-		{
-			return icon.exists() ? icon.toURI().toURL() : null;
-		}
-		catch( MalformedURLException e )
-		{
-			return null;
-		}
+		return icon;
 	}
+
+	@Override
+	public void setIcon( Image icon )
+	{
+		manager.setExecutionIcon( id, icon );
+		this.icon = icon;
+	}
+
 }

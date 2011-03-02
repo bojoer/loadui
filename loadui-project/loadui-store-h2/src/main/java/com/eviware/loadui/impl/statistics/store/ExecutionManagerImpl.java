@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
 import java.sql.SQLException;
@@ -171,13 +173,13 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			throw new IllegalArgumentException( "Execution with the specified id already exist!" );
 		}
 
-		ExecutionProperties executionProperties = new ExecutionProperties( getDBBaseDir() + File.separator + id );
-		executionProperties.set( ExecutionProperties.KEY_NAME, id );
-		executionProperties.set( ExecutionProperties.KEY_START_TIME, timestamp );
-		executionProperties.set( ExecutionProperties.KEY_ARCHIVED, false );
-		executionProperties.set( ExecutionProperties.KEY_LABEL, label );
-		executionProperties.set( ExecutionProperties.KEY_LENGTH, 0 );
-		propertiesRegistry.put( id, executionProperties );
+		ExecutionProperties properties = new ExecutionProperties( getDBBaseDir() + File.separator + id );
+		properties.set( ExecutionProperties.KEY_ID, id );
+		properties.set( ExecutionProperties.KEY_START_TIME, timestamp );
+		properties.set( ExecutionProperties.KEY_ARCHIVED, false );
+		properties.set( ExecutionProperties.KEY_LABEL, label );
+		properties.set( ExecutionProperties.KEY_LENGTH, 0 );
+		propertiesRegistry.put( id, properties );
 
 		// create sequence table
 		SequenceTable sequenceTable = new SequenceTable( id, connectionRegistry, metadata, tableRegistry );
@@ -190,7 +192,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		tableRegistry.put( id, sequenceTable );
 		tableRegistry.put( id, trackMetaTable );
 
-		currentExecution = new ExecutionImpl( id, timestamp, 0, false, label, this );
+		currentExecution = new ExecutionImpl( id, timestamp, label, this );
 		executionMap.put( id, currentExecution );
 		fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
 
@@ -316,16 +318,17 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private ExecutionImpl prepareExecution( String executionId )
 	{
-		ExecutionProperties executionProperties = new ExecutionProperties( getDBBaseDir() + File.separator + executionId );
-		propertiesRegistry.put( executionId, executionProperties );
+		ExecutionProperties properties = new ExecutionProperties( getDBBaseDir() + File.separator + executionId );
+		propertiesRegistry.put( executionId, properties );
 
-		String exeName = executionProperties.get( ExecutionProperties.KEY_NAME, String.class );
-		Long exeStartTime = executionProperties.get( ExecutionProperties.KEY_START_TIME, Long.class );
-		Boolean exeArchived = executionProperties.get( ExecutionProperties.KEY_ARCHIVED, Boolean.class );
-		String exeLabel = executionProperties.get( ExecutionProperties.KEY_LABEL, String.class );
-		Integer exeLength = executionProperties.get( ExecutionProperties.KEY_LENGTH, Integer.class );
+		String exeName = properties.get( ExecutionProperties.KEY_ID, String.class );
+		Long exeStartTime = properties.get( ExecutionProperties.KEY_START_TIME, Long.class );
+		Boolean exeArchived = properties.get( ExecutionProperties.KEY_ARCHIVED, Boolean.class );
+		String exeLabel = properties.get( ExecutionProperties.KEY_LABEL, String.class );
+		Integer exeLength = properties.get( ExecutionProperties.KEY_LENGTH, Integer.class );
+		Image exeIcon = properties.get( ExecutionProperties.KEY_ICON, BufferedImage.class );
 
-		ExecutionImpl execution = new ExecutionImpl( exeName, exeStartTime, exeLength, exeArchived, exeLabel, this );
+		ExecutionImpl execution = new ExecutionImpl( exeName, exeStartTime, exeLength, exeArchived, exeLabel, exeIcon, this );
 		executionMap.put( executionId, execution );
 		return execution;
 	}
@@ -443,6 +446,13 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		executionProperties.set( ExecutionProperties.KEY_LENGTH, length );
 	}
 
+	public void setExecutionIcon( String executionId, Image icon )
+	{
+		ExecutionProperties executionProperties = ( ExecutionProperties )propertiesRegistry.getProperties( executionId,
+				ExecutionProperties.PROPERTIES_NAME );
+		executionProperties.set( ExecutionProperties.KEY_ICON, icon );
+	}
+	
 	@Override
 	public void registerTrackDescriptor( TrackDescriptor trackDescriptor )
 	{
@@ -576,6 +586,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public void delete( String executionId )
 	{
 		release( executionId );
+		propertiesRegistry.release( executionId );
 		File executionDir = new File( getDBBaseDir(), executionId );
 		if( executionDir.exists() )
 		{

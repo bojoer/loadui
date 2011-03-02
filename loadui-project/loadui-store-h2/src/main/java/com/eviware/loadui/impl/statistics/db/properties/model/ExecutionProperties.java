@@ -22,13 +22,12 @@ public class ExecutionProperties extends PropertiesBase
 
 	public static final String PROPERTIES_NAME = "execution";
 
-	public static final String KEY_NAME = "NAME";
-	public static final Class<?> KEY_TYPE_NAME = String.class;
-	
+	public static final String KEY_ID = "ID";
 	public static final String KEY_START_TIME = "START_TIME";
 	public static final String KEY_ARCHIVED = "ARCHIVED";
 	public static final String KEY_LABEL = "LABEL";
 	public static final String KEY_LENGTH = "LENGTH";
+	public static final String KEY_ICON = "ICON";
 
 	public ExecutionProperties( String baseDir )
 	{

@@ -15,8 +15,8 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.awt.Image;
 import java.io.File;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
@@ -383,9 +383,17 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 		}
 
 		@Override
-		public URL getIcon()
+		public Image getIcon()
 		{
-			return null;
+			throw new UnsupportedOperationException();
 		}
+
+		@Override
+		public void setIcon( Image image )
+		{
+			throw new UnsupportedOperationException();
+		}
+
+
 	}
 }
