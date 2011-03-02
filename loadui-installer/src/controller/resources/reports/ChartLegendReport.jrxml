@@ -16,7 +16,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<columnHeader>
-		<band height="18">
+		<band height="18" splitType="Prevent">
 			<staticText>
 				<reportElement style="Heading 4" x="365" y="0" width="100" height="18"/>
 				<textElement/>

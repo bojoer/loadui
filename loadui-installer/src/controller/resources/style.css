@@ -543,6 +543,10 @@
 	-fx-background-color: #666666;
 }
 
+.dialog *.title {
+	-fx-font-weight: bold;
+}
+
 .dialog-panel {
 	-fx-outer-border: #000000;
 	-fx-inner-border: #a5a5a5;

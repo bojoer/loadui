@@ -46,8 +46,6 @@ import com.eviware.loadui.util.BeanInjector;
  */
 public class FxUtils {} //This class exists only so that the above javafxdoc will be displayed.
 
-public def VERSION = "1.5.0-SNAPSHOT";
-
 /**
  * Similar to the builtin __DIR__, __ROOT__ gives the absolute path to the root of the enveloping bundle.
  * Useful for accessing resources which are not in the current package.
