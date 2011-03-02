@@ -24,11 +24,15 @@ import java.util.Map;
 import java.util.HashMap;
 import java.awt.Image;
 
-public function generateCharts( chartPage:ChartPage ):Map {
+public function generateCharts( chartPages:ChartPage[] ):Map {
 	def map = new HashMap();
-	for( chartGroupHolder in chartPage.innerContent ) {
-		for( chartViewHolder in [ chartGroupHolder.chartViewHolder, chartGroupHolder.expandedChartViews ] ) {
-			map.put( chartViewHolder.chartView, createImage( chartViewHolder.chart ) );
+	for( chartPage in chartPages ) {
+		chartPage.layout();
+		chartPage.update();
+		for( chartGroupHolder in chartPage.innerContent ) {
+			for( chartViewHolder in [ chartGroupHolder.chartViewHolder, chartGroupHolder.expandedChartViews ] ) {
+				map.put( chartViewHolder.chartView, createImage( chartViewHolder.chart ) );
+			}
 		}
 	}
 	

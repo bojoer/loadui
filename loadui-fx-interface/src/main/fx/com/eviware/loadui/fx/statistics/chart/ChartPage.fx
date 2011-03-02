@@ -86,8 +86,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 			KeyFrame {
 				time: 250ms
 				action: function():Void {
-					for( holder in innerContent )
-						holder.update();
+					update();
 				}
 			}
 		]
@@ -155,6 +154,11 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 				}
 			]
 		}
+	}
+	
+	public function update():Void {
+		for( holder in innerContent )
+			holder.update();
 	}
 	
 	public function updateIcon():Void {
