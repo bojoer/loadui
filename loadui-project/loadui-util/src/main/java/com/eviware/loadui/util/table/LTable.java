@@ -25,14 +25,13 @@ import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
+import javax.swing.table.TableModel;
 
 import org.jdesktop.swingx.JXTable;
 
-import com.eviware.loadui.api.ui.table.LTableModel;
-
 import au.com.bytecode.opencsv.CSVWriter;
 
-import javax.swing.table.TableModel;
+import com.eviware.loadui.api.ui.table.LTableModel;
 
 public class LTable extends JXTable
 {
@@ -54,6 +53,27 @@ public class LTable extends JXTable
 				if( row > -1 && column > -1 )
 				{
 					setToolTipText( String.valueOf( getValueAt( row, column ) ) );
+				}
+			}
+		} );
+
+		getTableHeader().addMouseMotionListener( new MouseMotionAdapter()
+		{
+			public void mouseMoved( MouseEvent e )
+			{
+				Point p = e.getPoint();
+				int column = columnAtPoint( p );
+				if( column > -1 )
+				{
+					String title = String.valueOf( getTableHeader().getColumnModel().getColumn( column ).getHeaderValue() );
+					if( title.trim().length() > 0 )
+					{
+						getTableHeader().setToolTipText( String.valueOf( title ) );
+					}
+					else
+					{
+						getTableHeader().setToolTipText( null );
+					}
 				}
 			}
 		} );
