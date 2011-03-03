@@ -27,10 +27,12 @@ import org.cometd.server.AbstractService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.ServerEndpoint;
+import com.eviware.loadui.api.messaging.VersionMismatchException;
 import com.eviware.loadui.util.messaging.ChannelRoutingSupport;
 
 public class BayeuxServiceServerEndpoint extends AbstractService implements ServerEndpoint
@@ -64,8 +66,16 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 	{
 		if( session != null )
 		{
-			if( !sessions.containsKey( session ) )
-				sessions.put( session, new MessageEndpointImpl( session ) );
+			if( LoadUI.AGENT_VERSION.equals( data ) )
+			{
+				if( !sessions.containsKey( session ) )
+					sessions.put( session, new MessageEndpointImpl( session ) );
+			}
+			else
+			{
+				log.warn( "Client attempted to connect with invalid version string: {} != {}", LoadUI.AGENT_VERSION, data );
+				send( session, channel, LoadUI.AGENT_VERSION, null );
+			}
 		}
 	}
 

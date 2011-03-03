@@ -63,7 +63,10 @@ import com.eviware.loadui.fx.ui.pagelist.PagelistControl;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.DroppableNode;
+import com.eviware.loadui.fx.ui.dnd.Droppable;
+import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.dialogs.CreateNewAgentDialog;
+import com.eviware.loadui.fx.dialogs.AgentVersionMismatchDialog;
 import com.eviware.loadui.fx.widgets.toolbar.AgentToolbarItem;
 import com.eviware.loadui.fx.widgets.TestCaseIconListener;
 import com.eviware.loadui.fx.widgets.canvas.ProjectCanvas;
@@ -72,6 +75,14 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.Assignment;
+import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.messaging.MessageListener;
+import com.eviware.loadui.api.messaging.MessageEndpoint;
 
 import com.eviware.loadui.fx.agents.discovery.AgentDiscoverer;
 import com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog;
@@ -80,18 +91,7 @@ import java.util.EventObject;
 import java.util.Comparator;
 import javafx.util.Sequences;
 import java.lang.RuntimeException;
-import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.api.events.BaseEvent;
-import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.api.events.PropertyEvent;
-import com.eviware.loadui.api.model.WorkspaceItem;
-import com.eviware.loadui.api.model.AgentItem;
 import org.slf4j.LoggerFactory;
-
-import com.eviware.loadui.fx.ui.dnd.DroppableNode;
-import com.eviware.loadui.fx.ui.dnd.Droppable;
-import com.eviware.loadui.fx.ui.dnd.Draggable;
-import com.eviware.loadui.fx.ui.node.BaseNode;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentInspector" );
 
@@ -112,6 +112,8 @@ public class AgentInspector extends Inspector {
 	public-init var name: String;
 	
 	def panel = AgentInspectorPanel {};
+	
+	def agentErrorListener = new AgentErrorListener();
 	
 	override function onShow(): Void {
 	}
@@ -493,11 +495,13 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 
 	/** Adds agent node to list */
 	function addAgent( agent: AgentItem ):Void {
+		agent.addMessageListener( MessageEndpoint.ERROR_CHANNEL, agentErrorListener );
 		pagelist.items = Sequences.sort( [ pagelist.items, AgentInspectorNode { agent: agent } ], COMPARE_BY_TOSTRING ) as Node[];
 	}
 	
 	/** Removes agent from the list */
 	function removeAgent( agent:AgentItem ):Void {
+		agent.removeMessageListener( agentErrorListener );
 		for( node in pagelist.items[p|p instanceof AgentNode] )
 			if( (node as AgentNode).agent == agent )
 				delete node from pagelist.items;
@@ -620,5 +624,13 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 		for(rin in pagelist.items){
 			(rin as AgentInspectorNode).deselectTestCaseIcons();
 		}
+	}
+}
+
+class AgentErrorListener extends MessageListener {
+	override function handleMessage( channel, endpoint, data ) {
+		runInFxThread( function():Void {
+			AgentVersionMismatchDialog { agent: endpoint as AgentItem }
+		} );
 	}
 }

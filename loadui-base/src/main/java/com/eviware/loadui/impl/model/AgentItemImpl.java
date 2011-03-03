@@ -20,11 +20,13 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Map;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageEndpointProvider;
 import com.eviware.loadui.api.messaging.MessageListener;
+import com.eviware.loadui.api.messaging.VersionMismatchException;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.config.AgentItemConfig;
@@ -95,6 +97,12 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 				Map<String, Object> map = ( Map<String, Object> )data;
 				if( map.containsKey( CONNECTED ) )
 				{
+					String version = map.get( CONNECTED ) == null ? "0" : map.get( CONNECTED ).toString();
+					if( !LoadUI.AGENT_VERSION.equals( version ) )
+					{
+						endpointSupport.fireError( new VersionMismatchException( version ) );
+					}
+
 					String hostName;
 					try
 					{
@@ -117,6 +125,19 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 				{
 					utilization = ( ( Number )map.get( SET_UTILIZATION ) ).intValue();
 					fireBaseEvent( UTILIZATION );
+				}
+			}
+		} );
+
+		addMessageListener( MessageEndpoint.ERROR_CHANNEL, new MessageListener()
+		{
+			@Override
+			public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
+			{
+				if( data instanceof VersionMismatchException )
+				{
+					log.error( "Unable to connect to agent: " + getLabel(), ( VersionMismatchException )data );
+					setEnabled( false );
 				}
 			}
 		} );

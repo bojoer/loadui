@@ -29,6 +29,12 @@ public interface MessageEndpoint
 	public static final String BASE_CHANNEL = "/loadui";
 
 	/**
+	 * A special channel for reporting errors with the connection. Messages sent
+	 * on this channel will be instances of Throwable.
+	 */
+	public static final String ERROR_CHANNEL = "/error";
+
+	/**
 	 * Sends a message to the other endpoint of this connection, over the
 	 * specified channel. The message data needs to be serializable by the
 	 * implementation.

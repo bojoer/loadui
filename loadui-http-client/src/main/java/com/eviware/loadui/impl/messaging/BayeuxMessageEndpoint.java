@@ -34,9 +34,11 @@ import org.eclipse.jetty.util.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
+import com.eviware.loadui.api.messaging.VersionMismatchException;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.messaging.ChannelRoutingSupport;
 
@@ -103,6 +105,16 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 					public void onMessage( ClientSessionChannel arg0, Message message )
 					{
 						String channel = message.getChannel();
+						if( channel.equals( "/service/init" ) )
+						{
+							if( !LoadUI.AGENT_VERSION.equals( message.getData() ) )
+							{
+								log.warn( "Cannot connect to server with different version number than the client: {} != {}",
+										LoadUI.AGENT_VERSION, message.getData() );
+								routingSupport.fireMessage( ERROR_CHANNEL, new VersionMismatchException(
+										message.getData() == null ? "0" : message.getData().toString() ) );
+							}
+						}
 						if( channel.startsWith( BASE_CHANNEL ) && message.getData() != null )
 							routingSupport.fireMessage( channel.substring( BASE_CHANNEL.length() ), message.getData() );
 					}
@@ -110,7 +122,7 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 				stateCheckerFuture = scheduledExecutor.scheduleAtFixedRate( stateChecker, 1, 1, TimeUnit.SECONDS );
 				Message.Mutable message = newMessage();
 				message.setChannel( "/service/init" );
-				message.setData( null );
+				message.setData( LoadUI.AGENT_VERSION );
 				enqueueSend( message );
 			}
 			else
@@ -138,6 +150,7 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 	@Override
 	public void onMessages( List<Message.Mutable> messages )
 	{
+		log.debug( "BayeuxMessageEndpoint.onMessages: {}", messages );
 		for( Message.Mutable message : messages )
 		{
 			routingSupport.fireMessage( message.getChannel(), message.getData() );

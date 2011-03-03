@@ -63,7 +63,7 @@ public class StatisticsReportPrintDialog {
 		}
 		content: [
 			Label { text: "Name", styleClass: "title" },
-			Label { text: "Result report Projectname: 20110223 - 15:43:07" }
+			Label { text: "Result report {StatisticsWindow.getInstance().project.getLabel()}: {StatisticsWindow.execution.getLabel()}" }
 			Separator { layoutInfo: LayoutInfo { margin: Insets { top: 5, bottom: 5 } } },
 			Label { text: "Select content", styleClass: "title" },
 			checkBoxes = for( statisticPage in statisticPages ) {
