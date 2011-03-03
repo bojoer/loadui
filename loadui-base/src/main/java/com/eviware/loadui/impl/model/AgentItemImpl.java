@@ -136,7 +136,8 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 			{
 				if( data instanceof VersionMismatchException )
 				{
-					log.error( "Unable to connect to agent: " + getLabel(), ( VersionMismatchException )data );
+					log.warn( "Unable to connect to agent {}: {}", getLabel(),
+							( ( VersionMismatchException )data ).getMessage() );
 					setEnabled( false );
 				}
 			}

@@ -210,6 +210,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 			}
 		} else if( draggable instanceof AnalysisToolbarItem ) {
 			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );
+			//Just apply the script once, don't keep it attached.
+			chartGroup.setTemplateScript( null );
 		}
 	}
 	

@@ -16,9 +16,10 @@
 
 package com.eviware.loadui.fx.statistics.chart.line;
 
+import java.util.WeakHashMap;
+
 import com.jidesoft.chart.model.ChartPoint;
 import com.jidesoft.chart.model.RealPosition;
-import com.jidesoft.range.Positionable;
 
 /**
  * Provides a scale and creates ChartPoints that are scaled to this.
@@ -27,11 +28,14 @@ import com.jidesoft.range.Positionable;
  */
 public class ScaledPointScale
 {
+	private final WeakHashMap<ScaledChartPoint, Object> points = new WeakHashMap<ScaledChartPoint, Object>();
 	private double scale = 1.0;
 
 	public void setScale( double scale )
 	{
 		this.scale = scale;
+		for( ScaledChartPoint point : points.keySet() )
+			point.setY( new RealPosition( point.realY * scale ) );
 	}
 
 	public double getScale()
@@ -46,15 +50,13 @@ public class ScaledPointScale
 
 	public class ScaledChartPoint extends ChartPoint
 	{
+		private double realY;
+
 		public ScaledChartPoint( double x, double y )
 		{
-			super( x, y );
-		}
-
-		@Override
-		public Positionable getY()
-		{
-			return new RealPosition( scale * super.getY().position() );
+			super( x, y * scale );
+			realY = y;
+			points.put( this, null );
 		}
 	}
 }

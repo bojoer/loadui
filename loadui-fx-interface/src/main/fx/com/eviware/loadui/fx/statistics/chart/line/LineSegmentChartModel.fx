@@ -40,6 +40,8 @@ public def WIDTH = "width";
 public class LineSegmentChartModel extends DefaultChartModel, LineSegmentChartModelBase {
 	public-read var latestTime:Number;
 	
+	public def scaler = new ScaledPointScale();
+	
 	def execution = bind StatisticsWindow.execution on replace {
 		latestTime = execution.getLength();
 	}
@@ -59,7 +61,6 @@ public class LineSegmentChartModel extends DefaultChartModel, LineSegmentChartMo
 	}
 	
 	public-read var statistic:Statistic;
-	public def scaler = new ScaledPointScale();
 	var initialized = false;
 	
 	public var level:Integer = 0 on replace {
