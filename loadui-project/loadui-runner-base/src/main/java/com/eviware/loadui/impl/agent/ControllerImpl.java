@@ -128,7 +128,8 @@ public class ControllerImpl
 				endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, agentListener );
 				endpoint.addMessageListener( SceneCommunication.CHANNEL, new SceneListener() );
 				endpoint.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL, new ComponentContextListener() );
-				endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.CONNECTED, null ) );
+				endpoint.sendMessage( AgentItem.AGENT_CHANNEL,
+						Collections.singletonMap( AgentItem.CONNECTED, LoadUI.AGENT_VERSION ) );
 			}
 		}
 
