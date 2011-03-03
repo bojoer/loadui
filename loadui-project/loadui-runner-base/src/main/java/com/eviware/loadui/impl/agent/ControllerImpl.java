@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
@@ -104,7 +105,8 @@ public class ControllerImpl
 						endpoint.addMessageListener( SceneCommunication.CHANNEL, new SceneListener() );
 						endpoint.addMessageListener( ComponentContext.COMPONENT_CONTEXT_CHANNEL,
 								new ComponentContextListener() );
-						endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.CONNECTED, null ) );
+						endpoint.sendMessage( AgentItem.AGENT_CHANNEL,
+								Collections.singletonMap( AgentItem.CONNECTED, LoadUI.AGENT_VERSION ) );
 					}
 				}
 				else

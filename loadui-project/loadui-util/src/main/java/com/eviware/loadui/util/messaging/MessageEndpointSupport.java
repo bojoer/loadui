@@ -15,7 +15,10 @@
  */
 package com.eviware.loadui.util.messaging;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import com.eviware.loadui.api.messaging.ConnectionListener;
@@ -28,6 +31,7 @@ public class MessageEndpointSupport
 	private final MessageEndpoint source;
 	private final Map<MessageListener, MessageListenerProxy> messageProxies = new WeakHashMap<MessageListener, MessageListenerProxy>();
 	private final Map<ConnectionListener, ConnectionListenerProxy> connectionProxies = new WeakHashMap<ConnectionListener, ConnectionListenerProxy>();
+	private final Set<MessageListener> errorListeners = new HashSet<MessageListener>();
 
 	public MessageEndpointSupport( MessageEndpoint wrapper, MessageEndpoint source )
 	{
@@ -40,16 +44,25 @@ public class MessageEndpointSupport
 		return source;
 	}
 
+	public void fireError( Throwable error )
+	{
+		for( MessageListener listener : new ArrayList<MessageListener>( errorListeners ) )
+			listener.handleMessage( MessageEndpoint.ERROR_CHANNEL, target, error );
+	}
+
 	public void addMessageListener( String channel, MessageListener listener )
 	{
 		if( !messageProxies.containsKey( listener ) )
 			messageProxies.put( listener, new MessageListenerProxy( listener ) );
 		source.addMessageListener( channel, messageProxies.get( listener ) );
+		if( MessageEndpoint.ERROR_CHANNEL.equals( channel ) )
+			errorListeners.add( listener );
 	}
 
 	public void removeMessageListener( MessageListener listener )
 	{
 		source.removeMessageListener( messageProxies.get( listener ) );
+		errorListeners.remove( listener );
 	}
 
 	public void addConnectionListener( ConnectionListener listener )
