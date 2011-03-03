@@ -67,9 +67,9 @@ public class ChartGroupChartViewHolder extends ChartViewHolder {
 	
 	def selectedToggle = bind controlButtons.selectedToggle on replace oldToggle {
 		if( selectedToggle != null ) {
-			if( selectedToggle == expandCharts ) {
+			if( selectedToggle == expandCharts and not chartGroupHolder.expandGroups ) {
 				chartGroupHolder.toggleGroupExpand();
-			} else if( selectedToggle == expandAgents ) {
+			} else if( selectedToggle == expandAgents and not chartGroupHolder.expandAgents ) {
 				chartGroupHolder.toggleAgentExpand();
 			}
 		} else {
@@ -79,6 +79,10 @@ public class ChartGroupChartViewHolder extends ChartViewHolder {
 				chartGroupHolder.toggleAgentExpand();
 			}
 		}
+	}
+	
+	def expandState = bind if( chartGroupHolder.expandGroups ) 0 else if( chartGroupHolder.expandAgents ) 1 else 2 on replace {
+		controlButtons.selectedToggle = if( expandState == 0 ) expandCharts else if( expandState == 1 ) expandAgents else null;
 	}
 	
 	public var chartGroupHolder:ChartGroupHolder;
