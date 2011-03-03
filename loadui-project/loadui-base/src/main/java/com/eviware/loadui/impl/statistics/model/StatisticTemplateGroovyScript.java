@@ -64,9 +64,10 @@ public class StatisticTemplateGroovyScript implements StatisticTemplate, Releasa
 	@Override
 	public void filter( StatisticHolder statisticHolder, ChartGroup chartGroup )
 	{
-		for( Chart chart : chartGroup.getChildren() )
-			if( chart.getStatisticHolder() == statisticHolder )
-				return;
+		/*
+		 * for( Chart chart : chartGroup.getChildren() ) if(
+		 * chart.getStatisticHolder() == statisticHolder ) return;
+		 */
 
 		Binding binding = script.getBinding();
 		binding.setVariable( "log", log );

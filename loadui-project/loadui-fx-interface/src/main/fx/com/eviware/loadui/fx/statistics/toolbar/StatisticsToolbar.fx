@@ -150,7 +150,7 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
 
 	/** Adds analysis toolbar items to the toolbar */
 	function addAnalysisItems(){
-	   def item: AnalysisToolbarItem = AnalysisToolbarItem {
+	   /*def item: AnalysisToolbarItem = AnalysisToolbarItem {
 			label: "Average Comparison"
 			tooltip: "Adds Components with a TimeTaken statistic."
 			//icon:
@@ -165,7 +165,9 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
 				"\}"
 			);
 		} 
-   	addItem(item);
+   	addItem(item);*/
+   	for( item in AnalysisItems.ALL )
+   		addItem(item);
 	}
 	
 }
