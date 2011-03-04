@@ -110,4 +110,13 @@ public class ChartGroupChartViewHolder extends ChartViewHolder {
 			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER }
 		];
 	}
+	
+	override function setAttribute(name: String, value: String): Void {
+	    chartGroup.setAttribute( name, value );
+	}
+	
+	override function getAttribute(name: String, default: String): String {
+	    chartGroup.getAttribute( name, default );
+	}
+	
 }

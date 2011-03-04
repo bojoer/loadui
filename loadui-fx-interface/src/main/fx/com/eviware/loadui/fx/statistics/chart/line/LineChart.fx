@@ -209,6 +209,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		width: bind width
 		height: bind height
 		spacing: 5
+		layoutInfo: LayoutInfo{minHeight: bind segmentButtons.height}
 		content: [
 			HBox {
 				padding: Insets { left: -3, right: 15 }
@@ -359,6 +360,10 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	override function getPrefWidth( height:Number ):Number {
 		resizable.getPrefWidth( height )
+	}
+	
+	override function getMinHeight(): Number {
+		resizable.getMinHeight()
 	}
 	
 	function addedSegment( segment:LineSegment ):Void {
