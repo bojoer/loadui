@@ -54,6 +54,7 @@ public class AgentDataAggregator
 
 	public synchronized void update( Entry entry, String trackId, AgentItem agent, int level )
 	{
+//		log.debug( "AgentDataAggregator:update()");
 		executionManager.writeEntry( trackId, entry, agent.getLabel(), level );
 		long time = entry.getTimestamp() / 1000;
 
@@ -94,12 +95,15 @@ public class AgentDataAggregator
 				String trackId = e2.getKey();
 				StatisticsWriter writer = ( StatisticsWriter )addressableRegistry.lookup( trackId );
 
-				log.debug( "writer: " + writer + "; e2: " + e2 );
-				
-				Entry entry = writer.aggregate( e2.getValue() );
-
-				if( entry != null )
-					executionManager.writeEntry( trackId, entry, StatisticVariable.MAIN_SOURCE, level );
+				if( !writer.getType().equals( "COUNTER" ) )
+				{
+					Entry entry = writer.aggregate( e2.getValue() );
+	
+					if( entry != null )
+					{
+						executionManager.writeEntry( trackId, entry, StatisticVariable.MAIN_SOURCE, level );
+					}
+				}
 			}
 		}
 	}
@@ -109,12 +113,13 @@ public class AgentDataAggregator
 		while( !times.isEmpty() )
 			flush( times.pollFirstEntry().getValue() );
 	}
-
+	
 	private class FlushingExecutionListener implements ExecutionListener
 	{
 		@Override
 		public void executionStarted( State oldState )
 		{
+			times.clear();
 		}
 
 		@Override

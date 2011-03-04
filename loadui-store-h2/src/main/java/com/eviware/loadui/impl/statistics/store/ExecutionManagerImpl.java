@@ -36,6 +36,7 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
@@ -107,6 +108,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	private State executionState = State.STOPPED;
 
 	private ExecutionPool executionPool = new ExecutionPool();
+	
+	private ResultPathListener resultPathListener = new ResultPathListener(); 
 
 	public ExecutionManagerImpl()
 	{
@@ -485,6 +488,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		if( currentExecution != null )
 		{
+//			log.debug( "Trying to store entry: {} for source: {} at level: {}", new Object[] { entry, source,
+//					interpolationLevel } );
+			
 			currentExecution.updateLength( entry.getTimestamp() );
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( DataTable.STATIC_FIELD_TIMESTAMP, entry.getTimestamp() );
@@ -711,10 +717,23 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		if( provider.isWorkspaceLoaded() )
 		{
-			baseDirectory = new File( provider.getWorkspace().getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH )
-					.getStringValue() );
-			baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
+			WorkspaceItem workspace = provider.getWorkspace();
+			updateWorkspace( provider );
 		}
+	}
+
+	private String convertToURI(File baseDirectory)
+	{
+		return baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
+	}
+
+	private void updateWorkspace( WorkspaceProvider provider )
+	{
+		WorkspaceItem workspace = provider.getWorkspace();
+		baseDirectory = new File( provider.getWorkspace().getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH )
+				.getStringValue() );
+		baseDirectoryURI = convertToURI(baseDirectory);
+		workspace.addEventListener( PropertyEvent.class, resultPathListener );
 	}
 
 	private class WorkspaceListener implements EventHandler<BaseEvent>
@@ -725,9 +744,21 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			if( event.getKey().equals( WorkspaceProvider.WORKSPACE_LOADED ) )
 			{
 				WorkspaceProvider provider = ( ( WorkspaceProvider )event.getSource() );
-				baseDirectory = new File( provider.getWorkspace().getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH )
-						.getStringValue() );
-				baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
+				updateWorkspace( provider );
+			}
+		}
+	}
+	
+	private class ResultPathListener implements EventHandler<PropertyEvent>
+	{
+		@Override
+		public void handleEvent( PropertyEvent event )
+		{
+			if( event.getProperty().getKey().equals( WorkspaceItem.STATISTIC_RESULTS_PATH ) && event.getEvent() == PropertyEvent.Event.VALUE )
+			{
+				baseDirectory = new File( event.getProperty().getStringValue() );
+				baseDirectoryURI = convertToURI(baseDirectory);
+				log.debug( "Results base directory changed to " + event.getProperty().getStringValue() );
 			}
 		}
 	}

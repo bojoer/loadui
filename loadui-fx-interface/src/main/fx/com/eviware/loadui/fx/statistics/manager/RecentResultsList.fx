@@ -103,11 +103,11 @@ class ExecutionsListener extends WeakEventHandler {
 				def execution = event.getElement() as Execution;
 				if( project != null and project.getId() == projectExecutionManager.getProjectId( execution ) and not execution.isArchived() ) {
 					execution.addEventListener( BaseEvent.class, executionListener );
-					if( execution != StatisticsWindow.currentExecution and pagelist.lookup( execution.getId() ) == null ) {
-						FxUtils.runInFxThread( function() {
+					FxUtils.runInFxThread( function() {
+						if( execution != StatisticsWindow.currentExecution and pagelist.lookup( execution.getId() ) == null ) {							
 							insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
-						} );
-					}
+						}
+					});
 				}
 			}
 		}
@@ -142,9 +142,11 @@ class CurrentExecutionNode extends ResultNodeBase {
 			currentExecutionNode.blinkAnim.stop();
 			currentExecutionNode.active = false;
 		}
-		if( oldExecution != null and pagelist.lookup( oldExecution.getId() ) == null ) {
-			insert DraggableFrame { draggable: ResultNode { execution: oldExecution }, id: oldExecution.getId() } before pagelist.items[0];
-		}
+		FxUtils.runInFxThread( function() {
+			if( oldExecution != null and pagelist.lookup( oldExecution.getId() ) == null ) {
+				insert DraggableFrame { draggable: ResultNode { execution: oldExecution }, id: oldExecution.getId() } before pagelist.items[0];
+			}
+		});
 	}
 	def blinkAnim = Timeline {
 		repeatCount: Timeline.INDEFINITE

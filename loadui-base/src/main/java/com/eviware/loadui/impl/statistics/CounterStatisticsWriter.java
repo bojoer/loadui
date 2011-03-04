@@ -48,6 +48,7 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 	{
 		synchronized( this )
 		{
+//			log.debug( " CounterStatisticWriter got timestamp: " + timestamp );
 			while( lastTimeFlushed + delay < timestamp )
 				flush();
 

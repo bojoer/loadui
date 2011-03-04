@@ -18,11 +18,12 @@ package com.eviware.loadui.impl.statistics.db.properties;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 import com.eviware.loadui.impl.statistics.db.util.TypeConverter;
 
-public abstract class PropertiesBase
+public abstract class PropertiesBase 
 {
 	private Properties properties = new Properties();
 
@@ -33,7 +34,8 @@ public abstract class PropertiesBase
 		File dir = new File( baseDir );
 		if( !dir.exists() )
 		{
-			dir.mkdirs();
+			if( !dir.mkdirs() )
+				throw new RuntimeException( "Unable to create directory " + baseDir + " for properties" );
 		}
 		propertiesFile = new File( baseDir + File.separator + getName() + ".properties" );
 		if( !propertiesFile.exists() )
@@ -59,15 +61,27 @@ public abstract class PropertiesBase
 
 	private void store()
 	{
+		FileOutputStream outStream = null;
 		try
 		{
-			FileOutputStream outStream = new FileOutputStream( propertiesFile );
+			outStream = new FileOutputStream( propertiesFile );
 			properties.store( outStream, "" );
-			outStream.close();
 		}
 		catch( Exception e )
 		{
 			throw new RuntimeException( "Unable to store properties", e );
+		}
+		finally
+		{
+			try
+			{
+				if( outStream != null )
+					outStream.close();
+			}
+			catch( IOException e )
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -81,6 +95,6 @@ public abstract class PropertiesBase
 		properties.setProperty( key, TypeConverter.objectToString( value ) );
 		store();
 	}
-
+	
 	public abstract String getName();
 }

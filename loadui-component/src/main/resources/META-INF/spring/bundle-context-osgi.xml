@@ -5,7 +5,7 @@
                       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.0.xsd">
 	
 	<osgi:reference interface="com.eviware.loadui.api.component.ComponentRegistry" id="componentRegistry" />
-	
+
 	<osgi:reference interface="java.util.concurrent.ExecutorService" id="executorService" />
 	<osgi:reference interface="java.util.concurrent.ScheduledExecutorService" id="scheduledExecutorService" />
 </beans>
