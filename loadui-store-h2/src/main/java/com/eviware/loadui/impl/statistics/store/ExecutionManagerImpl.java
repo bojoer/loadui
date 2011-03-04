@@ -488,8 +488,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		if( currentExecution != null )
 		{
-//			log.debug( "Trying to store entry: {} for source: {} at level: {}", new Object[] { entry, source,
-//					interpolationLevel } );
+			log.debug( "Trying to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry, source,
+					interpolationLevel, trackId } );
 			
 			currentExecution.updateLength( entry.getTimestamp() );
 			Map<String, Object> data = new HashMap<String, Object>();
@@ -508,8 +508,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			catch( SQLException e )
 			{
 				log.error( "Unable to write data to the database:", e );
-				log.error( "Unable to store entry: {} for source: {} at level: {}", new Object[] { entry, source,
-						interpolationLevel } );
+				log.error( "Unable to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry, source,
+						interpolationLevel, trackId } );
 				throw new RuntimeException( "Unable to write data to the database!", e );
 			}
 		}
