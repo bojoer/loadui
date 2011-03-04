@@ -56,7 +56,6 @@ public class CounterStatisticSupport implements EventHandler<CounterEvent>, Rele
 	@Override
 	public void handleEvent( CounterEvent event )
 	{
-		System.out.println( "   handleCounterEvent from "+counterHolder.toString() );
 		String counter = event.getKey();
 		if( counters.containsKey( counter ) )
 		{

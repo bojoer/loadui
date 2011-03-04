@@ -636,14 +636,16 @@ class ExecutionManagerListener extends EventHandler {
 		if( e instanceof CollectionEvent ) {
 			def event = e as CollectionEvent;
 			if( CollectionEvent.Event.REMOVED == event.getEvent() ) {
-			   def execution: Execution = event.getElement() as Execution;
-			   if(execution == leftExecution){
-			   	StatisticsWindow.execution = null;
-			   }
-			   else if(execution == rightExecution){
-			      StatisticsWindow.comparedExecution = null; 
-			   }
-				FxUtils.runInFxThread( function():Void { loadExecutions(); } );
+			   FxUtils.runInFxThread( function():Void {
+				   def execution: Execution = event.getElement() as Execution;
+				   if(execution == leftExecution){
+				   	StatisticsWindow.execution = null;
+				   }
+				   else if(execution == rightExecution){
+				      StatisticsWindow.comparedExecution = null; 
+				   }
+					loadExecutions();
+				} );
 			} 
 		}
 	}
