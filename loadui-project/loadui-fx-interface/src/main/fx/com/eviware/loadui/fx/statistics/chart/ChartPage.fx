@@ -121,6 +121,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 	}
 	
 	var container:SortableBox;
+	
 	def resizable:ScrollView = ScrollView {
 		width: bind width
 		height: bind height
@@ -128,6 +129,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 		vbarPolicy: ScrollBarPolicy.ALWAYS
 		fitToWidth: true
 		styleClass: "chart-page-scroll-view"
+		vmax: bind Math.max( height, container.height );
 		node: Stack {
 			nodeVPos: VPos.TOP
 			content: [
