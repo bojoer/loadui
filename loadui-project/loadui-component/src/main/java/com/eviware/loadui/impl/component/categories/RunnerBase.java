@@ -57,6 +57,7 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.statistics.CounterStatisticSupport;
 
 /**
  * Base class for runner components which defines base behavior which can be
@@ -117,7 +118,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final StatisticVariable.Mutable timeTakenVariable;
 	private final StatisticVariable.Mutable responseSizeVariable;
 	private final StatisticVariable.Mutable throughputVariable;
-
+	
+	private final CounterStatisticSupport counterStatisticSupport;
+	
 	/**
 	 * Constructs an RunnerBase.
 	 * 
@@ -132,10 +135,6 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 		executor = BeanInjector.getBean( ExecutorService.class );
 		scheduler = BeanInjector.getBean( ScheduledExecutorService.class );
-
-		timeTakenVariable = context.addStatisticVariable( "TimeTaken", "AVERAGE", "MINMAX" );
-		responseSizeVariable = context.addStatisticVariable( "ResponseSize", "AVERAGE", "MINMAX" );
-		throughputVariable = context.addStatisticVariable( "Throughput", "THROUGHPUT" );
 
 		triggerTerminal = context.createInput( TRIGGER_TERMINAL, "Trigger Input" );
 
@@ -155,6 +154,22 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		failedAssertionCounter = context.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER );
 		discardsCounter = context.getCounter( RunnerCategory.DISCARDED_SAMPLES_COUNTER );
 
+		// AverageWriters and ThroughputWriters
+		timeTakenVariable = context.addStatisticVariable( "TimeTaken", "AVERAGE", "MINMAX" );
+		responseSizeVariable = context.addStatisticVariable( "ResponseSize", "AVERAGE", "MINMAX" );
+		throughputVariable = context.addStatisticVariable( "Throughput", "THROUGHPUT" );
+		
+		// CounterWriters
+		counterStatisticSupport = new CounterStatisticSupport( context );
+		StatisticVariable.Mutable requestVariable = context.addStatisticVariable( "Completed", "COUNTER" );
+		counterStatisticSupport.addCounterVariable( CanvasItem.SAMPLE_COUNTER, requestVariable );
+		StatisticVariable.Mutable failedVariable = context.addStatisticVariable( "Failed", "COUNTER" );
+		counterStatisticSupport.addCounterVariable( CanvasItem.FAILURE_COUNTER, failedVariable );
+		StatisticVariable.Mutable discardedVariable = context.addStatisticVariable( "Discarded", "COUNTER" );
+		counterStatisticSupport.addCounterVariable( RunnerCategory.DISCARDED_SAMPLES_COUNTER, discardedVariable );
+		StatisticVariable.Mutable sentVariable = context.addStatisticVariable( "Sent", "COUNTER" );
+		counterStatisticSupport.addCounterVariable( CanvasItem.REQUEST_COUNTER, sentVariable );
+		
 		concurrentSamplesProperty = context.createProperty( CONCURRENT_SAMPLES_PROPERTY, Long.class, 100 );
 		concurrentSamples = concurrentSamplesProperty.getValue();
 		maxQueueSizeProperty = context.createProperty( MAX_QUEUE_SIZE_PROPERTY, Long.class, 1000 );
@@ -183,6 +198,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			updateTask = null;
 			assignmentListener = null;
 		}
+		
+		counterStatisticSupport.init();
 	}
 
 	/**

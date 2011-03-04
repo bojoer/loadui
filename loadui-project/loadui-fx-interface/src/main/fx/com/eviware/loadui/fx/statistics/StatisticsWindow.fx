@@ -192,6 +192,7 @@ public class StatisticsWindow {
 			}
 		}
 		closed = false;
+		stage.iconified = false;
 		stage.toFront();
 	}
 	

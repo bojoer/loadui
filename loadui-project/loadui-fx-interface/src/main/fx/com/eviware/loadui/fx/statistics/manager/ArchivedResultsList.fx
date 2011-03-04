@@ -88,16 +88,15 @@ class ExecutionListener extends WeakEventHandler {
 	override function handleEvent( e ):Void {
 		def event = e as BaseEvent;
 		def execution = event.getSource() as Execution;
-		if( Execution.ARCHIVED.equals( event.getKey() ) and pagelist.lookup( execution.getId() ) == null ) {
-			FxUtils.runInFxThread( function() {
+		FxUtils.runInFxThread( function() {
+			if( Execution.ARCHIVED.equals( event.getKey() ) and pagelist.lookup( execution.getId() ) == null ) {
 				insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
-			} );
-		} else if( Execution.DELETED.equals( event.getKey() ) ) {
-			execution.removeEventListener( BaseEvent.class, executionListener );
-			FxUtils.runInFxThread( function() {
+			}
+			else if( Execution.DELETED.equals( event.getKey() ) ) {
+				execution.removeEventListener( BaseEvent.class, executionListener );
 				delete pagelist.lookup( execution.getId() ) from pagelist.items;
-			} );
-		}
+			}
+		});
 	}
 }
 
@@ -109,11 +108,11 @@ class ExecutionsListener extends WeakEventHandler {
 			if( event.getEvent() == CollectionEvent.Event.ADDED ) {
 				if( project != null and project.getId() == projectExecutionManager.getProjectId( execution ) ) {
 					execution.addEventListener( BaseEvent.class, executionListener );
-					if( execution.isArchived() and pagelist.lookup( execution.getId() ) == null ) {
-						FxUtils.runInFxThread( function() {
+					FxUtils.runInFxThread( function() {
+						if( execution.isArchived() and pagelist.lookup( execution.getId() ) == null ) {
 							insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
-						} );
-					}
+						}
+					});
 				}
 			}
 		}

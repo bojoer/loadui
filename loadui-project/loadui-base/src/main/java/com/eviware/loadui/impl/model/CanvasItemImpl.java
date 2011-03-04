@@ -60,7 +60,6 @@ import com.eviware.loadui.config.CanvasItemConfig;
 import com.eviware.loadui.config.ComponentItemConfig;
 import com.eviware.loadui.config.ConnectionConfig;
 import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
-import com.eviware.loadui.impl.counter.CounterStatisticSupport;
 import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.statistics.CounterStatisticsWriter;
 import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
@@ -68,6 +67,7 @@ import com.eviware.loadui.impl.summary.MutableSummaryImpl;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.statistics.CounterStatisticSupport;
 
 public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends ModelItemImpl<Config> implements
 		CanvasItem, StatisticHolder

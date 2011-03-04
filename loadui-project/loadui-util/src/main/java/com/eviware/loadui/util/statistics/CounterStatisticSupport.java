@@ -13,10 +13,12 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.counter;
+package com.eviware.loadui.util.statistics;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.jfree.util.Log;
 
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.CounterEvent;
@@ -54,6 +56,7 @@ public class CounterStatisticSupport implements EventHandler<CounterEvent>, Rele
 	@Override
 	public void handleEvent( CounterEvent event )
 	{
+		System.out.println( "   handleCounterEvent from "+counterHolder.toString() );
 		String counter = event.getKey();
 		if( counters.containsKey( counter ) )
 		{

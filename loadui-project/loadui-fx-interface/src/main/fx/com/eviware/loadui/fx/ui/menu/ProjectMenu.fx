@@ -301,12 +301,12 @@ public class ProjectMenu extends HBox {
 							}, TrashHole {
 							}, SeparatorButton {
 								height: bind height;
-							},  MenubarButton {
-								shape: "M 1.00,14.40 L 3.83,14.40 3.83,9.02 1.00, 9.02 M 11.85,14.40 L 14.68,14.40 14.68,4.92 11.85, 4.92 M 6.43,14.40 L 9.26,14.40 9.26,1.00 6.43, 1.00 Z"
-								tooltip: Tooltip { text: ##[STAT_MONITOR]"Statistics Monitor" }
-								action: function():Void { 
-									statMonitor.show();
-								 }
+							}, MenubarButton {
+									shape: "M 1.00,14.40 L 3.83,14.40 3.83,9.02 1.00, 9.02 M 11.85,14.40 L 14.68,14.40 14.68,4.92 11.85, 4.92 M 6.43,14.40 L 9.26,14.40 9.26,1.00 6.43, 1.00 Z"
+									tooltip: Tooltip { text: ##[STAT_MONITOR]"Statistics Monitor" }
+									action: function():Void { 
+										statMonitor.show();
+									 }
 				         	}, showNotesButton = MenubarToggleButton {
 								shape: "M 0,0 L 0,8 5,8 11,12 9,8 13,8 13,0 Z"
 								tooltip: Tooltip { text: ##[TOGGLE_NOTES]"Toggle note visibility" }
