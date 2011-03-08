@@ -32,6 +32,7 @@ import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.reporting.JasperReportManager;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class StatisticsReportPrintDialog {
 	var checkBoxes:PageCheckBox[];
@@ -50,13 +51,21 @@ public class StatisticsReportPrintDialog {
 				width: 800
 				height: 600
 			}
-			println("Print {pages}");
 			dialog.close();
+			var map:Map;
+			try {
+				AppState.byName("STATISTICS").setBlockedText("Preparing Charts...");
+				AppState.byName("STATISTICS").block();
+				map = StatisticsReportGenerator.generateCharts( chartPages );
+			} finally {
+				AppState.byName("STATISTICS").unblock();
+			}
+			
 			AppState.byName("STATISTICS").blockingTask( function():Void {
-				def map = StatisticsReportGenerator.generateCharts( chartPages );
 				JasperReportManager.getInstance().createReport( StatisticsWindow.getInstance().project.getLabel(), StatisticsWindow.execution, pages, map );
+			}, function( task ):Void {
 				ReleasableUtils.releaseAll( chartPages as Object );
-			}, null, "Generating Printable Report..." );
+			}, "Generating Printable Report..." );
 		}
 		onCancel: function() {
 			dialog.close();

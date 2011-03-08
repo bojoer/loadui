@@ -75,6 +75,8 @@ import com.jidesoft.chart.axis.NumericAxis;
 import com.jidesoft.chart.axis.TimeAxis;
 import com.jidesoft.chart.style.ChartStyle;
 
+public def POSITION_ATTRIBUTE = "position";
+
 public function getLineSegmentChartModel( lineSegment:LineSegment ):LineSegmentChartModel {
 	for( chart in chartSet ) {
 		for( model in (chart as LineChart).lines.values() ) {
@@ -106,6 +108,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	def timeCalculator = new TotalTimeTickCalculator();
 	var compactSegments = true;
 	var zoomLevel = 0;
+	var initialized = false;
 	
 	def execution = bind StatisticsWindow.execution on replace {
 		reset();
@@ -144,7 +147,11 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	var min:Number = 0;
 	var max:Number = 0;
 	var maxTime:Number = 0;
-	var position:Number = 0;
+	var position:Number = 0 on replace {
+		if( initialized ) {
+			chartView.setAttribute( POSITION_ATTRIBUTE, String.valueOf( position ) );
+		}
+	}
 	var showAll = false on replace {
 		if( showAll ) timeSpan = maxTime as Integer;
 	}
@@ -191,6 +198,8 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		if( chartView != null ) {
 			chartView.addEventListener( EventObject.class, listener );
 			setZoomLevel( chartView.getAttribute( ZoomPanel.ZOOM_LEVEL_ATTRIBUTE, ZoomPanel.ZOOM_DEFAULT ) );
+			position = Double.parseDouble( chartView.getAttribute( POSITION_ATTRIBUTE, "0" ) );
+			scrollBar.value = (position * maxTime)/(maxTime - timeSpan);
 			
 			for( segment in chartView.getSegments() )
 				addedSegment( segment );
@@ -263,6 +272,8 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		(yAxis.getTickCalculator() as com.jidesoft.chart.axis.DefaultNumericTickCalculator).setMinorTickIntervalBetweenMajors( 0 );
 		
 		chartNode.layoutInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true, vgrow: Priority.ALWAYS, margin: Insets { left: -15, right: 10 } };
+		
+		initialized = true;
 	}
 	
 	override function update():Void {

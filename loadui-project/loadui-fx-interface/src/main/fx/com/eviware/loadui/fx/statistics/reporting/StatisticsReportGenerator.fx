@@ -17,6 +17,7 @@ package com.eviware.loadui.fx.statistics.reporting;
 
 import com.eviware.loadui.fx.statistics.chart.BaseChart;
 import com.eviware.loadui.fx.statistics.chart.ChartPage;
+import com.eviware.loadui.fx.statistics.chart.ChartViewHolder;
 import com.eviware.loadui.fx.statistics.chart.line.LineChart;
 import com.eviware.loadui.fx.statistics.chart.line.LineChartUtils;
 
@@ -31,7 +32,7 @@ public function generateCharts( chartPages:ChartPage[] ):Map {
 		chartPage.update();
 		for( chartGroupHolder in chartPage.innerContent ) {
 			for( chartViewHolder in [ chartGroupHolder.chartViewHolder, chartGroupHolder.expandedChartViews ] ) {
-				map.put( chartViewHolder.chartView, createImage( chartViewHolder.chart ) );
+				map.put( chartViewHolder.chartView, createImage( chartViewHolder.chart, chartViewHolder.chartHeight - 30 ) );
 			}
 		}
 	}
@@ -39,11 +40,13 @@ public function generateCharts( chartPages:ChartPage[] ):Map {
 	return map;
 } 
 
-function createImage( chart:BaseChart ):Image {
-	if( chart instanceof LineChart )
-		LineChartUtils.createImage( chart as LineChart, 505, 100 )
-	else
-		null;
+function createImage( chart:BaseChart, height:Number ):Image {
+	if( chart instanceof LineChart ) {
+		def lineChart = chart as LineChart;
+		LineChartUtils.createImage( lineChart, 505, height )
+	} else {
+		null
+	}
 }
 
 public class StatisticsReportGenerator {
