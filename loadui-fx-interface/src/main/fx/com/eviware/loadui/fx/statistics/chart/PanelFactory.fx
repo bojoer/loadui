@@ -26,4 +26,6 @@ public class PanelFactory {
 	public var title:String = "Panel";
 	
 	public var build:function():Node;
+	
+	public var separator: Boolean = false;
 }
