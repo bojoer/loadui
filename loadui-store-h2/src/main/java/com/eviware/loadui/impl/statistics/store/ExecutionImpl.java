@@ -16,17 +16,27 @@
 package com.eviware.loadui.impl.statistics.store;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.impl.statistics.db.util.TypeConverter;
 import com.eviware.loadui.util.events.EventSupport;
 
 /**
@@ -36,15 +46,19 @@ import com.eviware.loadui.util.events.EventSupport;
  */
 public class ExecutionImpl implements Execution, Releasable
 {
+	public static final Logger log = LoggerFactory.getLogger( ExecutionImpl.class );
+
+	public static final String KEY_ID = "ID";
+	public static final String KEY_START_TIME = "START_TIME";
+	public static final String KEY_ARCHIVED = "ARCHIVED";
+	public static final String KEY_LABEL = "LABEL";
+	public static final String KEY_LENGTH = "LENGTH";
+	public static final String KEY_ICON = "ICON";
+
 	/**
 	 * Execution id
 	 */
 	private final String id;
-
-	/**
-	 * Execution start time (in milliseconds since January 1st, 1970)
-	 */
-	private final long startTime;
 
 	/**
 	 * Reference to execution manager implementation
@@ -53,17 +67,13 @@ public class ExecutionImpl implements Execution, Releasable
 
 	private final EventSupport eventSupport = new EventSupport();
 
+	private final Properties attributes = new Properties();
+	private final File propertiesFile;
+
 	/**
 	 * Map that holds references to all tracks that belongs to this execution
 	 */
 	private Map<String, Track> trackMap;
-
-	private boolean archived = false;
-
-	/**
-	 * Execution custom label
-	 */
-	private String label = null;
 
 	/**
 	 * Execution length
@@ -76,28 +86,35 @@ public class ExecutionImpl implements Execution, Releasable
 
 	private Image icon;
 
-	public ExecutionImpl( String id, long startTime, String label, ExecutionManagerImpl manager )
+	public ExecutionImpl( String id, long startTime, ExecutionManagerImpl manager )
 	{
 		this.id = id;
-		this.startTime = startTime;
-		this.archived = false;
-		this.label = label;
-		this.length = 0;
 		this.manager = manager;
 		trackMap = new HashMap<String, Track>();
+
+		propertiesFile = new File( new File( manager.getDBBaseDir(), id ), "execution.properties" );
+		attributes.put( KEY_ID, id );
+
+		if( propertiesFile.exists() )
+			loadAttributes();
+
+		attributes.put( KEY_START_TIME, String.valueOf( startTime ) );
+		storeAttributes();
 	}
 
-	public ExecutionImpl( String id, long timestamp, long length, boolean archived, String label, Image icon,
-			ExecutionManagerImpl manager )
+	public ExecutionImpl( String id, ExecutionManagerImpl manager )
 	{
 		this.id = id;
-		this.startTime = timestamp;
-		this.archived = archived;
-		this.label = label;
-		this.length = length;
 		this.manager = manager;
-		this.icon = icon;
 		trackMap = new HashMap<String, Track>();
+
+		propertiesFile = new File( new File( manager.getDBBaseDir(), id ), "execution.properties" );
+		attributes.put( KEY_ID, id );
+
+		if( propertiesFile.exists() )
+			loadAttributes();
+
+		storeAttributes();
 	}
 
 	@Override
@@ -109,7 +126,7 @@ public class ExecutionImpl implements Execution, Releasable
 	@Override
 	public long getStartTime()
 	{
-		return startTime;
+		return Long.parseLong( getAttribute( KEY_START_TIME, "0" ) );
 	}
 
 	@Override
@@ -153,16 +170,15 @@ public class ExecutionImpl implements Execution, Releasable
 	@Override
 	public boolean isArchived()
 	{
-		return archived;
+		return Boolean.valueOf( getAttribute( KEY_ARCHIVED, "false" ) );
 	}
 
 	@Override
 	public void archive()
 	{
-		if( !archived )
+		if( !isArchived() )
 		{
-			manager.archiveExecution( getId() );
-			archived = true;
+			setAttribute( KEY_ARCHIVED, Boolean.TRUE.toString() );
 			fireEvent( new BaseEvent( this, ARCHIVED ) );
 		}
 	}
@@ -170,14 +186,13 @@ public class ExecutionImpl implements Execution, Releasable
 	@Override
 	public String getLabel()
 	{
-		return label;
+		return getAttribute( KEY_LABEL, "<label missing>" );
 	}
 
 	@Override
 	public void setLabel( String label )
 	{
-		manager.setExecutionLabel( getId(), label );
-		this.label = label;
+		setAttribute( KEY_LABEL, label );
 		fireEvent( new BaseEvent( this, LABEL ) );
 	}
 
@@ -197,7 +212,7 @@ public class ExecutionImpl implements Execution, Releasable
 	void flushLength()
 	{
 		lastFlushedLength = length;
-		manager.setExecutionLength( getId(), length );
+		setAttribute( KEY_LENGTH, String.valueOf( length ) );
 	}
 
 	@Override
@@ -255,8 +270,92 @@ public class ExecutionImpl implements Execution, Releasable
 	@Override
 	public void setIcon( Image icon )
 	{
-		manager.setExecutionIcon( id, icon );
+		setAttribute( KEY_ICON, TypeConverter.objectToString( icon ) );
 		this.icon = icon;
 	}
 
+	@Override
+	public void setAttribute( String key, String value )
+	{
+		attributes.setProperty( key, value );
+		storeAttributes();
+	}
+
+	private void loadAttributes()
+	{
+		FileInputStream fis = null;
+		try
+		{
+			fis = new FileInputStream( propertiesFile );
+			attributes.load( fis );
+			length = Long.parseLong( attributes.getProperty( KEY_LENGTH, "0" ) );
+			icon = ( BufferedImage )TypeConverter.stringToObject( getAttribute( KEY_ICON, null ), BufferedImage.class );
+		}
+		catch( FileNotFoundException e )
+		{
+			log.error( "Could not load execution properties file!", e );
+		}
+		catch( IOException e )
+		{
+			log.error( "Could not load execution properties file!", e );
+		}
+		finally
+		{
+			try
+			{
+				if( fis != null )
+					fis.close();
+			}
+			catch( IOException e )
+			{
+			}
+		}
+	}
+
+	private void storeAttributes()
+	{
+		FileOutputStream fos = null;
+		try
+		{
+			fos = new FileOutputStream( propertiesFile );
+			attributes.store( fos, "" );
+		}
+		catch( FileNotFoundException e )
+		{
+			log.error( "Could not store execution properties file!", e );
+		}
+		catch( IOException e )
+		{
+			log.error( "Could not store execution properties file!", e );
+		}
+		finally
+		{
+			try
+			{
+				if( fos != null )
+					fos.close();
+			}
+			catch( IOException e )
+			{
+			}
+		}
+	}
+
+	@Override
+	public String getAttribute( String key, String defaultValue )
+	{
+		return attributes.getProperty( key, defaultValue );
+	}
+
+	@Override
+	public void removeAttribute( String key )
+	{
+		attributes.remove( key );
+	}
+
+	@Override
+	public Collection<String> getAttributes()
+	{
+		return attributes.stringPropertyNames();
+	}
 }

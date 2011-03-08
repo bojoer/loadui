@@ -55,8 +55,16 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 			return label;
 		if( fieldName.equals( "pageName" ) )
 			return page.getTitle();
-		if( fieldName.equals( "runtime" ) )
+		if( fieldName.equals( "startTime" ) )
+			return new Date( execution.getStartTime() ).toString();
+		if( fieldName.equals( "endTime" ) )
+			return new Date( execution.getStartTime() + execution.getLength() ).toString();
+		if( fieldName.equals( "duration" ) )
 			return FormattingUtils.formatTime( execution.getLength() / 1000 );
+		if( fieldName.equals( "totalRequests" ) )
+			return "";
+		if( fieldName.equals( "totalFailures" ) )
+			return "";
 		if( fieldName.equals( "chartGroup" ) )
 			return new ChartGroupsDataSource( page.getChildren(), charts );
 		return fieldName;

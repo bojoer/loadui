@@ -15,8 +15,6 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
 import java.sql.SQLException;
@@ -50,8 +48,6 @@ import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
 import com.eviware.loadui.impl.statistics.db.DataSourceProvider;
 import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
 import com.eviware.loadui.impl.statistics.db.TableRegistry;
-import com.eviware.loadui.impl.statistics.db.properties.PropertiesRegistry;
-import com.eviware.loadui.impl.statistics.db.properties.model.ExecutionProperties;
 import com.eviware.loadui.impl.statistics.db.table.TableBase;
 import com.eviware.loadui.impl.statistics.db.table.model.DataTable;
 import com.eviware.loadui.impl.statistics.db.table.model.SequenceTable;
@@ -97,8 +93,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private TableRegistry tableRegistry = new TableRegistry();
 
-	private PropertiesRegistry propertiesRegistry = new PropertiesRegistry();
-
 	private DatabaseMetadata metadata;
 
 	private ConnectionRegistry connectionRegistry;
@@ -108,8 +102,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	private State executionState = State.STOPPED;
 
 	private ExecutionPool executionPool = new ExecutionPool();
-	
-	private ResultPathListener resultPathListener = new ResultPathListener(); 
+
+	private ResultPathListener resultPathListener = new ResultPathListener();
 
 	public ExecutionManagerImpl()
 	{
@@ -176,14 +170,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			throw new IllegalArgumentException( "Execution with the specified id already exist!" );
 		}
 
-		ExecutionProperties properties = new ExecutionProperties( getDBBaseDir() + File.separator + id );
-		properties.set( ExecutionProperties.KEY_ID, id );
-		properties.set( ExecutionProperties.KEY_START_TIME, timestamp );
-		properties.set( ExecutionProperties.KEY_ARCHIVED, false );
-		properties.set( ExecutionProperties.KEY_LABEL, label );
-		properties.set( ExecutionProperties.KEY_LENGTH, 0 );
-		propertiesRegistry.put( id, properties );
-
 		// create sequence table
 		SequenceTable sequenceTable = new SequenceTable( id, connectionRegistry, metadata, tableRegistry );
 
@@ -195,7 +181,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		tableRegistry.put( id, sequenceTable );
 		tableRegistry.put( id, trackMetaTable );
 
-		currentExecution = new ExecutionImpl( id, timestamp, label, this );
+		currentExecution = new ExecutionImpl( id, timestamp, this );
+		currentExecution.setLabel( label );
+
 		executionMap.put( id, currentExecution );
 		fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
 
@@ -321,17 +309,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private ExecutionImpl prepareExecution( String executionId )
 	{
-		ExecutionProperties properties = new ExecutionProperties( getDBBaseDir() + File.separator + executionId );
-		propertiesRegistry.put( executionId, properties );
-
-		String exeName = properties.get( ExecutionProperties.KEY_ID, String.class );
-		Long exeStartTime = properties.get( ExecutionProperties.KEY_START_TIME, Long.class );
-		Boolean exeArchived = properties.get( ExecutionProperties.KEY_ARCHIVED, Boolean.class );
-		String exeLabel = properties.get( ExecutionProperties.KEY_LABEL, String.class );
-		Integer exeLength = properties.get( ExecutionProperties.KEY_LENGTH, Integer.class );
-		Image exeIcon = properties.get( ExecutionProperties.KEY_ICON, BufferedImage.class );
-
-		ExecutionImpl execution = new ExecutionImpl( exeName, exeStartTime, exeLength, exeArchived, exeLabel, exeIcon, this );
+		ExecutionImpl execution = new ExecutionImpl( executionId, this );
 		executionMap.put( executionId, execution );
 		return execution;
 	}
@@ -428,34 +406,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 	}
 
-	public void archiveExecution( String executionId )
-	{
-		ExecutionProperties executionProperties = ( ExecutionProperties )propertiesRegistry.getProperties( executionId,
-				ExecutionProperties.PROPERTIES_NAME );
-		executionProperties.set( ExecutionProperties.KEY_ARCHIVED, true );
-	}
-
-	public void setExecutionLabel( String executionId, String label )
-	{
-		ExecutionProperties executionProperties = ( ExecutionProperties )propertiesRegistry.getProperties( executionId,
-				ExecutionProperties.PROPERTIES_NAME );
-		executionProperties.set( ExecutionProperties.KEY_LABEL, label );
-	}
-
-	public void setExecutionLength( String executionId, long length )
-	{
-		ExecutionProperties executionProperties = ( ExecutionProperties )propertiesRegistry.getProperties( executionId,
-				ExecutionProperties.PROPERTIES_NAME );
-		executionProperties.set( ExecutionProperties.KEY_LENGTH, length );
-	}
-
-	public void setExecutionIcon( String executionId, Image icon )
-	{
-		ExecutionProperties executionProperties = ( ExecutionProperties )propertiesRegistry.getProperties( executionId,
-				ExecutionProperties.PROPERTIES_NAME );
-		executionProperties.set( ExecutionProperties.KEY_ICON, icon );
-	}
-	
 	@Override
 	public void registerTrackDescriptor( TrackDescriptor trackDescriptor )
 	{
@@ -488,9 +438,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		if( currentExecution != null )
 		{
-			log.debug( "Trying to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry, source,
-					interpolationLevel, trackId } );
-			
+			log.debug( "Trying to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry,
+					source, interpolationLevel, trackId } );
+
 			currentExecution.updateLength( entry.getTimestamp() );
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( DataTable.STATIC_FIELD_TIMESTAMP, entry.getTimestamp() );
@@ -508,8 +458,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			catch( SQLException e )
 			{
 				log.error( "Unable to write data to the database:", e );
-				log.error( "Unable to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry, source,
-						interpolationLevel, trackId } );
+				log.error( "Unable to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry,
+						source, interpolationLevel, trackId } );
 				throw new RuntimeException( "Unable to write data to the database!", e );
 			}
 		}
@@ -592,7 +542,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public void delete( String executionId )
 	{
 		release( executionId );
-		propertiesRegistry.release( executionId );
 		File executionDir = new File( getDBBaseDir(), executionId );
 		if( executionDir.exists() )
 		{
@@ -628,7 +577,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	 * database execution manager implementation
 	 */
 	protected abstract void initializeDatabaseMetadata( DatabaseMetadata metadata );
-
 
 	@Override
 	public String getDBBaseDir()
@@ -722,7 +670,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 	}
 
-	private String convertToURI(File baseDirectory)
+	private String convertToURI( File baseDirectory )
 	{
 		return baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
 	}
@@ -732,7 +680,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		WorkspaceItem workspace = provider.getWorkspace();
 		baseDirectory = new File( provider.getWorkspace().getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH )
 				.getStringValue() );
-		baseDirectoryURI = convertToURI(baseDirectory);
+		baseDirectoryURI = convertToURI( baseDirectory );
 		workspace.addEventListener( PropertyEvent.class, resultPathListener );
 	}
 
@@ -748,16 +696,17 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			}
 		}
 	}
-	
+
 	private class ResultPathListener implements EventHandler<PropertyEvent>
 	{
 		@Override
 		public void handleEvent( PropertyEvent event )
 		{
-			if( event.getProperty().getKey().equals( WorkspaceItem.STATISTIC_RESULTS_PATH ) && event.getEvent() == PropertyEvent.Event.VALUE )
+			if( event.getProperty().getKey().equals( WorkspaceItem.STATISTIC_RESULTS_PATH )
+					&& event.getEvent() == PropertyEvent.Event.VALUE )
 			{
 				baseDirectory = new File( event.getProperty().getStringValue() );
-				baseDirectoryURI = convertToURI(baseDirectory);
+				baseDirectoryURI = convertToURI( baseDirectory );
 				log.debug( "Results base directory changed to " + event.getProperty().getStringValue() );
 			}
 		}

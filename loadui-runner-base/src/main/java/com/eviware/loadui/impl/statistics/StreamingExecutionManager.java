@@ -23,6 +23,7 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -285,6 +286,7 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 		private final String id;
 		private String label;
 		private final long startTime;
+		private final Properties attributes = new Properties();
 
 		public ExecutionImpl( String id, long startTime )
 		{
@@ -394,6 +396,28 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
+		public void setAttribute( String key, String value )
+		{
+			attributes.setProperty( key, value );
+		}
 
+		@Override
+		public String getAttribute( String key, String defaultValue )
+		{
+			return attributes.getProperty( key, defaultValue );
+		}
+
+		@Override
+		public void removeAttribute( String key )
+		{
+			attributes.remove( key );
+		}
+
+		@Override
+		public Collection<String> getAttributes()
+		{
+			return attributes.stringPropertyNames();
+		}
 	}
 }
