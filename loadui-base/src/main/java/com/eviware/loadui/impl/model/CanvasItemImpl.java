@@ -513,6 +513,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	protected void reset()
 	{
+		log.debug( "Got resetted! Date is now null!" );
 		startTime = isRunning() ? new Date() : null;
 		endTime = null;
 		hasStarted = isRunning();

@@ -54,7 +54,7 @@ public class AgentDataAggregator
 
 	public synchronized void update( Entry entry, String trackId, AgentItem agent, int level )
 	{
-		log.debug( "AgentDataAggregator:update()");
+//		log.debug( "AgentDataAggregator:update()");
 		executionManager.writeEntry( trackId, entry, agent.getLabel(), level );
 		long time = entry.getTimestamp() / 1000;
 
