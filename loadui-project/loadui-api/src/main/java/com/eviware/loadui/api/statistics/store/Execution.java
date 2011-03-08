@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Collection;
 
 import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.model.Labeled;
 
 /**
@@ -27,7 +28,7 @@ import com.eviware.loadui.api.model.Labeled;
  * 
  * @author dain.nilsson
  */
-public interface Execution extends Labeled.Mutable, EventFirer
+public interface Execution extends Labeled.Mutable, EventFirer, AttributeHolder
 {
 	/**
 	 * BaseEvent key for notifying that this Execution has been archived.

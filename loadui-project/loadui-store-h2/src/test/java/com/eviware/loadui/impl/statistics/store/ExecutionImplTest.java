@@ -62,8 +62,6 @@ public class ExecutionImplTest
 		assertTrue( execution.getLabel().equals( "testLabel" ) );
 		execution.setLabel( "" );
 		assertTrue( execution.getLabel().equals( "" ) );
-		execution.setLabel( null );
-		assertTrue( execution.getLabel() == null );
 	}
 
 	@Test
