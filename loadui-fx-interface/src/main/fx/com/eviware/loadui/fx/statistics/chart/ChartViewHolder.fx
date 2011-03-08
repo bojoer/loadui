@@ -55,13 +55,14 @@ import com.eviware.loadui.fx.FxUtils.*;
 
 import java.lang.Exception;
 
+public def HEIGHT_ATTRIBUTE = "height";
+
 /**
  * Base Chart Node, holds a ChartView.
  *
  * @author dain.nilsson
  */
 public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable {
-   def HEIGHT_ATTRIBUTE = "height";
    
 	override var styleClass = "chart-view-holder";
 	
@@ -140,7 +141,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	
 	var hbox: HBox;
 	
-	var hboxHeight = bind hbox.height on replace oldValue {
+	public-read var chartHeight = bind hbox.height on replace oldValue {
 	    if(oldValue == 0 and hbox.height > 0){
 	        def savedHeight = getAttribute( HEIGHT_ATTRIBUTE, "none" );
 	        if(not savedHeight.equals("none")){
