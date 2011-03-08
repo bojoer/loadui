@@ -64,8 +64,8 @@ public class DiscoveryResponder
 						String received = new String( packet.getData(), 0, packet.getLength() );
 						if( "DISCOVER".equals( received ) )
 						{
-							buf = ( "AGENT https://" + ip + ":" + System.getProperty( LoadUI.HTTPS_PORT, "8443" ) + "/ "
-									+ label + " " + id ).getBytes();
+							buf = ( LoadUI.AGENT + " https://" + ip + ":" + System.getProperty( LoadUI.HTTPS_PORT, "8443" )
+									+ "/ " + label + " " + id ).getBytes();
 							packet = new DatagramPacket( buf, buf.length, packet.getAddress(), packet.getPort() );
 							socket.send( packet );
 						}
