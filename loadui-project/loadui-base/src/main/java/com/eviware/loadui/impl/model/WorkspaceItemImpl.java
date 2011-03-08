@@ -411,7 +411,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		if( localMode != isLocalMode() )
 		{
 			triggerAction( CanvasItem.COMPLETE_ACTION );
-			triggerAction( CounterHolder.COUNTER_RESET_ACTION );
+//			triggerAction( CounterHolder.COUNTER_RESET_ACTION ); // shouldn't be needed?
 			this.localMode.setValue( localMode );
 		}
 	}

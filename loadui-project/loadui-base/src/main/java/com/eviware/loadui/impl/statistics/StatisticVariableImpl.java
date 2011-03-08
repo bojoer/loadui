@@ -157,7 +157,9 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	public void update( long timestamp, Number value )
 	{
 		for( StatisticsWriter writer : writers )
+		{
 			writer.update( timestamp, value );
+		}
 	}
 
 	@Override

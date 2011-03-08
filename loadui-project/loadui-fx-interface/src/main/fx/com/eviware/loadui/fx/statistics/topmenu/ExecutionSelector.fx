@@ -345,7 +345,9 @@ public class ExecutionSelector extends Group {
 			    }
 			}
 		}
-		rightRadioButtons[0].radioButton.disable = true;     
+		rightRadioButtons[0].radioButton.disable = true;
+		if( leftRadioToggles.selectedToggle == null )
+			leftRadioButtons[0].radioButton.selected = true;
 	}
 	
 	function unsetRadioButtons(left: Boolean, right: Boolean): Void {

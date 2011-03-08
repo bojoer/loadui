@@ -50,7 +50,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 
 	protected long delay;
 	protected long lastTimeFlushed = System.currentTimeMillis();
-	private long pauseStartedTime;
+	private long pauseStartedTime = 0;
 
 	private long totalPause = 0;
 
@@ -120,6 +120,11 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 		return descriptor;
 	}
 
+	public boolean isPaused()
+	{
+		return pauseStartedTime > 0;
+	}
+
 	@Override
 	public void flush()
 	{
@@ -128,7 +133,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 		Entry e = output();
 		if( e != null )
 		{
-			log.debug( "AbstractStatisticWriter:()" );
 			executionManager.writeEntry( getId(), e, StatisticVariable.MAIN_SOURCE, 0 );
 			firstLevelEntries.add( e );
 		}
@@ -263,8 +267,11 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 			int adjustedTime;
 			if( adjustTimestamp )
 			{
-				adjustedTime = currentExecution == null ? -1 : ( int )( ( pauseStartedTime == 0 ? timestamp
-						: pauseStartedTime ) - currentExecution.getStartTime() - totalPause );
+				adjustedTime = currentExecution == null ? -1 : ( int )( ( isPaused() ? pauseStartedTime : timestamp )
+						- currentExecution.getStartTime() - totalPause );
+//				log.debug( "adjustedTime={}, ({}=" + ( isPaused() ? pauseStartedTime : timestamp )
+//						+ " - currentExecution.getStartTime=" + currentExecution.getStartTime() + " - totalPause="
+//						+ totalPause, adjustedTime, isPaused() ? "pauseStartedTime" : "timestamp" );
 			}
 			else
 			{

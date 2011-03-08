@@ -44,14 +44,14 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	public void update( long timestamp, Number value )
+	public synchronized void update( long timestamp, Number value )
 	{
-		synchronized( this )
+		if( !isPaused() )
 		{
-//			log.debug( " CounterStatisticWriter got timestamp: " + timestamp );
 			while( lastTimeFlushed + delay < timestamp )
+			{
 				flush();
-
+			}
 			change += value.longValue();
 		}
 	}
@@ -59,13 +59,18 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 	@Override
 	public Entry output()
 	{
+		long currentTime = System.currentTimeMillis();
+		if( lastTimeFlushed == currentTime )
+			return null;
 		double timeDelta = delay / 1000.0;
 		total += change;
 		double perSecond = change / timeDelta;
 		change = 0;
-		lastTimeFlushed += delay;
-
-		return at( lastTimeFlushed ).put( Stats.TOTAL.name(), total ).put( Stats.PER_SECOND.name(), perSecond ).build();
+//		log.debug( " counterStatWriter:output()   lastTimeFlushed={} delay={}", lastTimeFlushed, delay );
+		lastTimeFlushed = Math.max( lastTimeFlushed + delay, currentTime );
+		Entry e = at( lastTimeFlushed ).put( Stats.TOTAL.name(), total ).put( Stats.PER_SECOND.name(), perSecond ).build();
+//		log.debug( " ...resulted in Entry {}",e );
+		return e;
 	}
 
 	@Override
