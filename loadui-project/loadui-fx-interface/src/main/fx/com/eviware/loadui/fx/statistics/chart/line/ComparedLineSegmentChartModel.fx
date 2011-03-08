@@ -59,10 +59,6 @@ public class ComparedLineSegmentChartModel extends DefaultChartModel, LineSegmen
 		chartStyle.setLineStroke( LineChartStyles.getStroke( baseModel.width, newStroke ) );
 		fireModelChanged();
 	}
-	
-	override function getName() {
-		""
-	}
 }
 
 class Listener extends ChartModelListener {

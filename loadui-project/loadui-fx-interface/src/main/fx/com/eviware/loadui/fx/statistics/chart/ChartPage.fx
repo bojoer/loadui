@@ -204,11 +204,13 @@ class ExecutionManagerListener extends ExecutionListenerAdapter {
 	var resetOnStart = false;
 	
    override function executionStarted(state:ExecutionManager.State) {
-		if( resetOnStart ) {
-   		for( holder in innerContent )
-   			holder.reset();
-   		resetOnStart = false;
-   	}
+   	FxUtils.runInFxThread( function():Void {
+			if( resetOnStart ) {
+	   		for( holder in innerContent )
+	   			holder.reset();
+	   		resetOnStart = false;
+	   	}
+   	} );
    }
 
 	override function executionPaused(state:ExecutionManager.State) {
