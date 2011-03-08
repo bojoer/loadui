@@ -114,8 +114,14 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 			CanvasItem canvas = ( statisticHolder instanceof SceneItem ) ? ( SceneItem )statisticHolder
 					: ( ( CanvasObjectItem )statisticHolder ).getCanvas();
 			if( canvas instanceof SceneItem )
-				for( AgentItem agent : canvas.getProject().getAgentsAssignedTo( ( SceneItem )canvas ) )
+			{
+				// TODO: Is there a better way to do this? How can I add a Statistic
+				// for an agent that I used in an earlier run but am not using now?
+				// for( AgentItem agent : canvas.getProject().getAgentsAssignedTo( (
+				// SceneItem )canvas ) )
+				for( AgentItem agent : canvas.getProject().getWorkspace().getAgents() )
 					sources.add( agent.getLabel() );
+			}
 		}
 
 		return sources;

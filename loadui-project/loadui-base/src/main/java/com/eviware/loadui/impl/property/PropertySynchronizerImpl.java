@@ -180,6 +180,11 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 			handled.add( getSignature( message ) );
 			ModelItem item = ( ModelItem )addressableRegistry.lookup( message.get( MODELITEM ) );
 			Event event = conversionService.convert( message.get( EVENT ), Event.class );
+			if( item == null )
+			{
+				log.warn( "Got Property Synchronization message for unknown PropertyHolder: {}", event );
+				return;
+			}
 			switch( event )
 			{
 			case VALUE :
