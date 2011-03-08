@@ -34,11 +34,11 @@ import org.slf4j.LoggerFactory;
  * 
  * @author dain.nilsson
  */
-public class AverageStatisticWriter extends AbstractStatisticsWriter
+public class SampleStatisticsWriter extends AbstractStatisticsWriter
 {
-	public static final String TYPE = "AVERAGE";
+	public static final String TYPE = "SAMPLE";
 
-	public static final Logger log = LoggerFactory.getLogger( AverageStatisticWriter.class );
+	public static final Logger log = LoggerFactory.getLogger( SampleStatisticsWriter.class );
 
 	public enum Stats
 	{
@@ -50,7 +50,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 
 	private PriorityQueue<Double> sortedValues = new PriorityQueue<Double>();
 
-	public AverageStatisticWriter( StatisticsManager statisticsManager, StatisticVariable variable,
+	public SampleStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> trackStructure, Map<String, Object> config )
 	{
 		super( statisticsManager, variable, trackStructure, config );
@@ -249,7 +249,7 @@ public class AverageStatisticWriter extends AbstractStatisticsWriter
 			trackStructure.put( Stats.PERCENTILE_90TH.name(), Double.class );
 			trackStructure.put( Stats.MEDIAN.name(), Double.class );
 
-			return new AverageStatisticWriter( statisticsManager, variable, trackStructure, config );
+			return new SampleStatisticsWriter( statisticsManager, variable, trackStructure, config );
 		}
 	}
 }

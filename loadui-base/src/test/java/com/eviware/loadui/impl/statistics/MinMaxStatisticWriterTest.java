@@ -23,7 +23,7 @@ public class MinMaxStatisticWriterTest
 
 	StatisticHolder holderMock;
 	StatisticHolderSupport holderSupport;
-	MinMaxStatisticWriter writer;
+	MinMaxStatisticsWriter writer;
 	StatisticsManager manager;
 	double[] data = { 12, 22, 13, 4, 53, 16, 75, 48, 559, 1044 };
 
@@ -49,7 +49,7 @@ public class MinMaxStatisticWriterTest
 
 		holderSupport = new StatisticHolderSupport( holderMock );
 		StatisticVariable variable = holderSupport.addStatisticVariable( "Exteme" );
-		writer = ( MinMaxStatisticWriter )new MinMaxStatisticWriter.Factory().createStatisticsWriter( manager, variable,
+		writer = ( MinMaxStatisticsWriter )new MinMaxStatisticsWriter.Factory().createStatisticsWriter( manager, variable,
 				Collections.<String, Object> emptyMap() );
 
 		for( int cnt = 0; cnt < data.length; cnt++ )

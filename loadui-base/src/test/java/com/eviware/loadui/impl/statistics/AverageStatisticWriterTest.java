@@ -35,14 +35,14 @@ import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
-import com.eviware.loadui.impl.statistics.AverageStatisticWriter.Stats;
+import com.eviware.loadui.impl.statistics.SampleStatisticsWriter.Stats;
 import com.eviware.loadui.util.BeanInjector;
 
 public class AverageStatisticWriterTest
 {
 	StatisticHolder holderMock;
 	StatisticHolderSupport holderSupport;
-	AverageStatisticWriter writer;
+	SampleStatisticsWriter writer;
 	StatisticsManager manager;
 	Double[] data = { 1.44, 2.56, 3.12, 4.44, 5.55, 6.6656, 7.6767, 8.567, 9.5675, 10.567 };
 	private int size;
@@ -74,7 +74,7 @@ public class AverageStatisticWriterTest
 		new BeanInjector().setApplicationContext( appContext );
 		holderSupport = new StatisticHolderSupport( holderMock );
 		StatisticVariable variable = holderSupport.addStatisticVariable( "AVG_TEST" );
-		writer = ( AverageStatisticWriter )new AverageStatisticWriter.Factory().createStatisticsWriter( manager,
+		writer = ( SampleStatisticsWriter )new SampleStatisticsWriter.Factory().createStatisticsWriter( manager,
 				variable, Collections.<String, Object> emptyMap() );
 	}
 
