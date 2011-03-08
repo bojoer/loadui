@@ -166,6 +166,10 @@ public class LineSegmentChartModel extends DefaultChartModel, LineSegmentChartMo
 		chartStyle.setLineStroke( LineChartStyles.getStroke( width, newStroke ) );
 		fireModelChanged();
 	}
+	
+	override function getName() {
+		""
+	}
 }
 
 class StyleEventListener extends EventHandler {
