@@ -40,10 +40,11 @@
 			unbind-method="unregisterStatisticsWriterFactory" ref="statisticsManager" />
 	</osgi:set>
 	
-	<osgi:service ref="averageStatisticWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
-	<osgi:service ref="minmaxStatisticWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
-	<osgi:service ref="throughputStatisticWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
-	<osgi:service ref="counterStatisticWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
+	<osgi:service ref="sampleStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
+	<osgi:service ref="minmaxStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
+	<osgi:service ref="throughputStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
+	<osgi:service ref="counterStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
+	<osgi:service ref="variableStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
 	
 	<osgi:service interface="com.eviware.loadui.api.statistics.ProjectExecutionManager" id="projectExecutionManager" />
 	

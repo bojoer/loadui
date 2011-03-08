@@ -33,7 +33,7 @@ import com.eviware.loadui.api.statistics.store.Entry;
  *         StatisticVariable.
  * 
  */
-public class MinMaxStatisticWriter extends AbstractStatisticsWriter
+public class MinMaxStatisticsWriter extends AbstractStatisticsWriter
 {
 
 	public static final String TYPE = "MINMAX";
@@ -46,7 +46,7 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 	protected Double minimum;
 	protected Double maximum;
 
-	public MinMaxStatisticWriter( StatisticsManager manager, StatisticVariable variable,
+	public MinMaxStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values, Map<String, Object> config )
 	{
 		super( manager, variable, values, config );
@@ -131,7 +131,7 @@ public class MinMaxStatisticWriter extends AbstractStatisticsWriter
 			trackStructure.put( Stats.MAX.name(), Long.class );
 			trackStructure.put( Stats.MIN.name(), Long.class );
 
-			return new MinMaxStatisticWriter( statisticsManager, variable, trackStructure, config );
+			return new MinMaxStatisticsWriter( statisticsManager, variable, trackStructure, config );
 		}
 	}
 

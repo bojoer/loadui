@@ -82,14 +82,16 @@
 		<constructor-arg ref="workspaceProvider" />
 	</bean>
 
-	<bean id="averageStatisticWriter"
-		class="com.eviware.loadui.impl.statistics.AverageStatisticWriter$Factory" />
-	<bean id="minmaxStatisticWriter"
-		class="com.eviware.loadui.impl.statistics.MinMaxStatisticWriter$Factory" />
-	<bean id="throughputStatisticWriter"
+	<bean id="sampleStatisticsWriter"
+		class="com.eviware.loadui.impl.statistics.SampleStatisticsWriter$Factory" />
+	<bean id="minmaxStatisticsWriter"
+		class="com.eviware.loadui.impl.statistics.MinMaxStatisticsWriter$Factory" />
+	<bean id="throughputStatisticsWriter"
 		class="com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter$Factory" />
-	<bean id="counterStatisticWriter"
+	<bean id="counterStatisticsWriter"
 		class="com.eviware.loadui.impl.statistics.CounterStatisticsWriter$Factory" />
+		<bean id="variableStatisticsWriter"
+		class="com.eviware.loadui.impl.statistics.VariableStatisticsWriter$Factory" />
 
 	<bean class="com.eviware.loadui.impl.LoggingUncaughtExceptionHandler" factory-method="setForAllThreads"/>
 </beans>

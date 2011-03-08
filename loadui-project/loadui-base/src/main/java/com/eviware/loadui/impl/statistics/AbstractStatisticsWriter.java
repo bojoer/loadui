@@ -18,7 +18,6 @@ package com.eviware.loadui.impl.statistics;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
@@ -66,7 +65,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 	private final ExecutionStateListener executionStateListener;
 	private final Map<String, Object> config;
 
-	@SuppressWarnings( "unchecked" )
 	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values, Map<String, Object> config )
 	{

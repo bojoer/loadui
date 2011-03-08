@@ -118,9 +118,11 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final StatisticVariable.Mutable timeTakenVariable;
 	private final StatisticVariable.Mutable responseSizeVariable;
 	private final StatisticVariable.Mutable throughputVariable;
-	
+	private final StatisticVariable.Mutable runningVariable;
+	private final StatisticVariable.Mutable queuedVariable;
+
 	private final CounterStatisticSupport counterStatisticSupport;
-	
+
 	/**
 	 * Constructs an RunnerBase.
 	 * 
@@ -155,10 +157,12 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		discardsCounter = context.getCounter( RunnerCategory.DISCARDED_SAMPLES_COUNTER );
 
 		// AverageWriters and ThroughputWriters
-		timeTakenVariable = context.addStatisticVariable( "TimeTaken", "AVERAGE", "MINMAX" );
-		responseSizeVariable = context.addStatisticVariable( "ResponseSize", "AVERAGE", "MINMAX" );
+		timeTakenVariable = context.addStatisticVariable( "TimeTaken", "SAMPLE", "MINMAX" );
+		responseSizeVariable = context.addStatisticVariable( "ResponseSize", "SAMPLE", "MINMAX" );
 		throughputVariable = context.addStatisticVariable( "Throughput", "THROUGHPUT" );
-		
+		runningVariable = context.addStatisticVariable( "Running", "VARIABLE", "MINMAX" );
+		queuedVariable = context.addStatisticVariable( "Queued", "VARIABLE", "MINMAX" );
+
 		// CounterWriters
 		counterStatisticSupport = new CounterStatisticSupport( context );
 		StatisticVariable.Mutable requestVariable = context.addStatisticVariable( "Completed", "COUNTER" );
@@ -169,7 +173,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		counterStatisticSupport.addCounterVariable( RunnerCategory.DISCARDED_SAMPLES_COUNTER, discardedVariable );
 		StatisticVariable.Mutable sentVariable = context.addStatisticVariable( "Sent", "COUNTER" );
 		counterStatisticSupport.addCounterVariable( CanvasItem.REQUEST_COUNTER, sentVariable );
-		
+
 		concurrentSamplesProperty = context.createProperty( CONCURRENT_SAMPLES_PROPERTY, Long.class, 100 );
 		concurrentSamples = concurrentSamplesProperty.getValue();
 		maxQueueSizeProperty = context.createProperty( MAX_QUEUE_SIZE_PROPERTY, Long.class, 1000 );
@@ -198,7 +202,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			updateTask = null;
 			assignmentListener = null;
 		}
-		
+
 		counterStatisticSupport.init();
 	}
 
@@ -328,12 +332,18 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 	private void updateCurrentlyRunning( int running )
 	{
+		runningVariable.update( System.currentTimeMillis(), running );
 		if( hasCurrentlyRunning )
 		{
 			TerminalMessage message = getContext().newMessage();
 			message.put( CURRENTLY_RUNNING_MESSAGE_PARAM, running );
 			getContext().send( currentlyRunningTerminal, message );
 		}
+	}
+
+	private void updateQueued( int queued )
+	{
+		queuedVariable.update( System.currentTimeMillis(), queued );
 	}
 
 	final public int getCurrentlyRunning()
@@ -403,6 +413,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		queue.clear();
 		queued.set( 0 );
+		updateQueued( 0 );
 		getContext().setBusy( false );
 
 		onCancel();
@@ -425,7 +436,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		if( queued.get() < queueSize && !released )
 		{
 			queue.offer( message );
-			queued.incrementAndGet();
+			updateQueued( queued.incrementAndGet() );
 		}
 		else
 		{
@@ -540,12 +551,15 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 				bottomStats.clear();
 				topStats.clear();
 				resetStatistics();
-				queued.set( queue.size() );
+				int size = queue.size();
+				queued.set( size );
+				updateQueued( size );
 			}
 			else if( CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
 			{
 				queue.clear();
 				queued.set( 0 );
+				updateQueued( 0 );
 			}
 		}
 		else if( event instanceof PropertyEvent )
@@ -736,7 +750,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 					}
 					else
 					{
-						queued.decrementAndGet();
+						updateQueued( queued.decrementAndGet() );
 						doSample( message );
 					}
 				}
