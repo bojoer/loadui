@@ -62,9 +62,9 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 		if( fieldName.equals( "duration" ) )
 			return FormattingUtils.formatTime( execution.getLength() / 1000 );
 		if( fieldName.equals( "totalRequests" ) )
-			return "";
+			return execution.getAttribute( "totalRequests", "" );
 		if( fieldName.equals( "totalFailures" ) )
-			return "";
+			return execution.getAttribute( "totalFailures", "" );
 		if( fieldName.equals( "chartGroup" ) )
 			return new ChartGroupsDataSource( page.getChildren(), charts );
 		return fieldName;
