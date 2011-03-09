@@ -405,7 +405,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		def model = lines.remove( segment ) as LineSegmentChartModel;
 		if( model != null ) {
 			chart.removeModel( model );
-			def comparedModel = lines.remove( model ) as LineSegmentChartModel;
+			def comparedModel = comparedLines.remove( model ) as LineSegmentChartModel;
 			if( comparedModel != null ) {
 				chart.removeModel( comparedModel );
 			}
