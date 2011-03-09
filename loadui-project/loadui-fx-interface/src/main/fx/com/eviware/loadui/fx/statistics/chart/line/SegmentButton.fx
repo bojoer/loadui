@@ -27,6 +27,7 @@ import javafx.scene.paint.Color;
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
+import com.eviware.loadui.fx.util.ModelUtils;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
@@ -64,7 +65,7 @@ public class SegmentButton extends BaseNode, Resizable {
 					visible: bind not compactSegments
 					managed: bind not compactSegments
 				}, Label {
-					text: statistic.getStatisticVariable().getStatisticHolder().getLabel()
+					text: bind ModelUtils.getLabelHolder( statistic.getStatisticVariable().getStatisticHolder() ).label
 					layoutInfo: LayoutInfo { width: 60 }
 					visible: bind not compactSegments
 					managed: bind not compactSegments
