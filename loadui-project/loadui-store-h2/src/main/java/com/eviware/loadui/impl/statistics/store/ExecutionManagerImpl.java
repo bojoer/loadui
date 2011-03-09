@@ -54,6 +54,7 @@ import com.eviware.loadui.impl.statistics.db.table.model.SequenceTable;
 import com.eviware.loadui.impl.statistics.db.table.model.SourceTable;
 import com.eviware.loadui.impl.statistics.db.table.model.TrackMetadataTable;
 import com.eviware.loadui.impl.statistics.db.util.FileUtil;
+import com.eviware.loadui.util.FormattingUtils;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
@@ -143,6 +144,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			}
 
 		} );
+
+		// Load the executions.
+		getExecutions();
 	}
 
 	@Override
@@ -153,6 +157,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	@Override
 	public Execution startExecution( String id, long timestamp, String label )
+	{
+		return startExecution( id, timestamp, label, "Execution_" + String.valueOf( timestamp ) );
+	}
+
+	@Override
+	public Execution startExecution( String id, long timestamp, String label, String fileName )
 	{
 		// unpause if paused otherwise try to create new
 		if( executionState == State.PAUSED )
@@ -165,23 +175,27 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		latestEntries.clear();
 
-		if( getExecutionNames().contains( id ) )
+		if( executionMap.containsKey( id ) )
 		{
 			throw new IllegalArgumentException( "Execution with the specified id already exist!" );
 		}
 
+		File executionDir = new File( getDBBaseDir(), FormattingUtils.formatFileName( fileName ) );
+		executionDir.mkdir();
+		String dbName = executionDir.getName();
+
 		// create sequence table
-		SequenceTable sequenceTable = new SequenceTable( id, connectionRegistry, metadata, tableRegistry );
+		SequenceTable sequenceTable = new SequenceTable( dbName, connectionRegistry, metadata, tableRegistry );
 
 		// create track meta table
-		TrackMetadataTable trackMetaTable = new TrackMetadataTable( id, connectionRegistry, metadata, tableRegistry );
+		TrackMetadataTable trackMetaTable = new TrackMetadataTable( dbName, connectionRegistry, metadata, tableRegistry );
 
 		// after all SQL operations are finished successfully, add created
 		// tables into registry
-		tableRegistry.put( id, sequenceTable );
-		tableRegistry.put( id, trackMetaTable );
+		tableRegistry.put( dbName, sequenceTable );
+		tableRegistry.put( dbName, trackMetaTable );
 
-		currentExecution = new ExecutionImpl( id, timestamp, this );
+		currentExecution = new ExecutionImpl( executionDir, id, timestamp, this );
 		currentExecution.setLabel( label );
 
 		executionMap.put( id, currentExecution );
@@ -231,28 +245,28 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 		try
 		{
-			String executionId = currentExecution.getId();
+			String dbName = currentExecution.getExecutionDir().getName();
 
 			// create data table
-			DataTable dtd = new DataTable( executionId, td.getId(), td.getValueNames(), connectionRegistry, metadata,
+			DataTable dtd = new DataTable( dbName, td.getId(), td.getValueNames(), connectionRegistry, metadata,
 					tableRegistry );
 
 			// create sources table
-			SourceTable std = new SourceTable( executionId, td.getId() + SOURCE_TABLE_NAME_POSTFIX, connectionRegistry,
+			SourceTable std = new SourceTable( dbName, td.getId() + SOURCE_TABLE_NAME_POSTFIX, connectionRegistry,
 					metadata, tableRegistry );
 			dtd.setParentTable( std );
 
 			// insert into meta-table
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( TrackMetadataTable.STATIC_FIELD_TRACK_NAME, td.getId() );
-			TableBase trackMetadataTable = tableRegistry.getTable( executionId, TrackMetadataTable.TABLE_NAME );
+			TableBase trackMetadataTable = tableRegistry.getTable( dbName, TrackMetadataTable.TABLE_NAME );
 			trackMetadataTable.insert( data );
 
 			// all tables are created properly and meta data inserted, so all SQL
 			// operations have finished properly. Create track instance and add it
 			// to current execution and put created tables into table registry
-			tableRegistry.put( executionId, dtd );
-			tableRegistry.put( executionId, std );
+			tableRegistry.put( dbName, dtd );
+			tableRegistry.put( dbName, std );
 
 			Track track = new TrackImpl( currentExecution, td, this );
 			currentExecution.addTrack( track );
@@ -264,14 +278,15 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	}
 
 	@Override
-	public Collection<String> getExecutionNames()
+	public Collection<Execution> getExecutions()
 	{
 		File baseDir = new File( getDBBaseDir() );
 		if( !baseDir.exists() )
 		{
 			baseDir.mkdirs();
 		}
-		File[] executions = baseDir.listFiles( new FileFilter()
+
+		File[] executionDirs = baseDir.listFiles( new FileFilter()
 		{
 			@Override
 			public boolean accept( File pathname )
@@ -279,39 +294,38 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				return pathname.isDirectory();
 			}
 		} );
-		ArrayList<String> result = new ArrayList<String>();
-		for( int i = 0; i < executions.length; i++ )
+
+		for( File executionDir : executionDirs )
 		{
-			result.add( executions[i].getName() );
+			ExecutionImpl execution = new ExecutionImpl( executionDir, this );
+			if( !executionMap.containsKey( execution.getId() ) )
+			{
+				executionMap.put( execution.getId(), execution );
+				fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, execution ) );
+			}
 		}
-		return result;
+
+		ArrayList<Execution> executions = new ArrayList<Execution>();
+		executions.addAll( executionMap.values() );
+
+		return executions;
 	}
 
 	@Override
-	public Execution getExecution( String executionId )
+	public ExecutionImpl getExecution( String executionId )
 	{
+		// If not loaded, force a re-read of the executions directory.
+		if( !executionMap.containsKey( executionId ) )
+			getExecutions();
+
 		if( executionMap.containsKey( executionId ) )
 		{
 			return executionMap.get( executionId );
 		}
 		else
 		{
-			if( !getExecutionNames().contains( executionId ) )
-			{
-				throw new IllegalArgumentException( "Execution with the specified id does not exist!" );
-			}
-			else
-			{
-				return prepareExecution( executionId );
-			}
+			throw new IllegalArgumentException( "Execution with the specified id does not exist!" );
 		}
-	}
-
-	private ExecutionImpl prepareExecution( String executionId )
-	{
-		ExecutionImpl execution = new ExecutionImpl( executionId, this );
-		executionMap.put( executionId, execution );
-		return execution;
 	}
 
 	/**
@@ -328,6 +342,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	 */
 	public Execution loadExecution( String executionId )
 	{
+		ExecutionImpl execution = executionMap.get( executionId );
+		String dbName = execution.getExecutionDir().getName();
 		// keep everything in temporary lists, until all SQL operations
 		// are finished successfully and then create objects and add
 		// tables to table registry
@@ -336,11 +352,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		try
 		{
 			// create sequence table
-			SequenceTable sequenceTable = new SequenceTable( executionId, connectionRegistry, metadata, tableRegistry );
+			SequenceTable sequenceTable = new SequenceTable( dbName, connectionRegistry, metadata, tableRegistry );
 			createdTableList.add( sequenceTable );
 
 			// create track meta data table
-			TrackMetadataTable trackMetaTable = new TrackMetadataTable( executionId, connectionRegistry, metadata,
+			TrackMetadataTable trackMetaTable = new TrackMetadataTable( dbName, connectionRegistry, metadata,
 					tableRegistry );
 			createdTableList.add( trackMetaTable );
 
@@ -357,11 +373,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				if( td != null )
 				{
 					// create data table
-					DataTable dtd = new DataTable( executionId, td.getId(), td.getValueNames(), connectionRegistry,
-							metadata, tableRegistry );
+					DataTable dtd = new DataTable( dbName, td.getId(), td.getValueNames(), connectionRegistry, metadata,
+							tableRegistry );
 					// create sources table
-					SourceTable std = new SourceTable( executionId, td.getId() + SOURCE_TABLE_NAME_POSTFIX,
-							connectionRegistry, metadata, tableRegistry );
+					SourceTable std = new SourceTable( dbName, td.getId() + SOURCE_TABLE_NAME_POSTFIX, connectionRegistry,
+							metadata, tableRegistry );
 					dtd.setParentTable( std );
 
 					createdTableList.add( dtd );
@@ -370,15 +386,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				}
 			}
 
-			// all SQL operations have finished successfully, so create
-			// execution object and appropriate tracks and add created tables
-			// to table registry
-			ExecutionImpl execution = executionMap.get( executionId );
-
 			// add created tables into table registry
 			for( int i = 0; i < createdTableList.size(); i++ )
 			{
-				tableRegistry.put( executionId, createdTableList.get( i ) );
+				tableRegistry.put( dbName, createdTableList.get( i ) );
 			}
 
 			// create tracks and add them to execution
@@ -388,9 +399,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				execution.addTrack( track );
 			}
 
-			// add execution to execution map
-			executionMap.put( executionId, execution );
-			fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, execution ) );
 			execution.setLoaded( true );
 			executionPool.put( execution );
 			return execution;
@@ -453,7 +461,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			}
 			try
 			{
-				write( currentExecution.getId(), trackId, source, data );
+				write( trackId, source, data );
 			}
 			catch( SQLException e )
 			{
@@ -477,10 +485,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		return latestEntries.get( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ) );
 	}
 
-	private void write( String executionId, String trackId, String source, Map<String, Object> data )
-			throws SQLException
+	private void write( String trackId, String source, Map<String, Object> data ) throws SQLException
 	{
-		TableBase dtd = tableRegistry.getTable( executionId, trackId );
+		TableBase dtd = tableRegistry.getTable( currentExecution.getExecutionDir().getName(), trackId );
 
 		Integer sourceId = ( ( SourceTable )dtd.getParentTable() ).getSourceId( source );
 		data.put( DataTable.STATIC_FIELD_SOURCEID, sourceId );
@@ -491,7 +498,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public Map<String, Object> readNext( String executionId, String trackId, String source, int startTime,
 			int interpolationLevel ) throws SQLException
 	{
-		TableBase dtd = tableRegistry.getTable( executionId, trackId );
+		TableBase dtd = tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(), trackId );
 
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
@@ -507,7 +514,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public List<Map<String, Object>> read( String executionId, String trackId, String source, int startTime,
 			int endTime, int interpolationLevel ) throws SQLException
 	{
-		TableBase dtd = tableRegistry.getTable( executionId, trackId );
+		TableBase dtd = tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(), trackId );
 
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
@@ -522,45 +529,51 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	public void deleteTrack( String executionId, String trackId ) throws SQLException
 	{
-		TableBase table = tableRegistry.getTable( executionId, trackId );
+		String dbName = getExecution( executionId ).getExecutionDir().getName();
+		TableBase table = tableRegistry.getTable( dbName, trackId );
 		if( table != null )
 		{
 			table.drop();
 
 			// drop source table
-			table = tableRegistry.getTable( executionId, trackId + SOURCE_TABLE_NAME_POSTFIX );
+			table = tableRegistry.getTable( dbName, trackId + SOURCE_TABLE_NAME_POSTFIX );
 			if( table != null )
 			{
 				table.drop();
 			}
 
 			// release resources and remove from registry
-			tableRegistry.release( executionId, trackId );
+			tableRegistry.release( dbName, trackId );
 		}
 	}
 
 	public void delete( String executionId )
 	{
+		ExecutionImpl execution = executionMap.remove( executionId );
+		if( execution == null )
+			return;
+
 		release( executionId );
-		File executionDir = new File( getDBBaseDir(), executionId );
-		if( executionDir.exists() )
+		if( execution.getExecutionDir().exists() )
 		{
-			FileUtil.deleteDirectory( executionDir );
+			FileUtil.deleteDirectory( execution.getExecutionDir() );
 		}
-		fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.REMOVED,
-				executionMap.remove( executionId ) ) );
+		fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.REMOVED, execution ) );
 	}
 
 	public void release( String executionId )
 	{
 		// leave execution in executionMap so meta-data will be available
-		tableRegistry.release( executionId );
-		connectionRegistry.release( executionId );
 		ExecutionImpl execution = executionMap.get( executionId );
+
 		if( execution != null )
 		{
+			String dbName = execution.getExecutionDir().getName();
+			tableRegistry.release( dbName );
+			connectionRegistry.release( dbName );
 			execution.setLoaded( false );
 		}
+
 		fireEvent( new BaseEvent( this, Releasable.RELEASED ) );
 	}
 

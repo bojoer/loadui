@@ -43,6 +43,22 @@ public interface ExecutionManager extends EventFirer
 	 * Creates and starts a new Execution, making it current.
 	 * 
 	 * @param executionId
+	 *           A unique ID to use for the Execution.
+	 * @param startTime
+	 *           The start time for the Execution as a timestamp.
+	 * @param label
+	 *           The label to show the user for the execution
+	 * @param fileName
+	 *           The name to use for the file/directory which will store the
+	 *           execution data.
+	 * @return
+	 */
+	public Execution startExecution( String executionId, long startTime, String label, String fileName );
+
+	/**
+	 * Creates and starts a new Execution, making it current.
+	 * 
+	 * @param executionId
 	 * @param startTime
 	 * @return
 	 */
@@ -52,7 +68,7 @@ public interface ExecutionManager extends EventFirer
 	 * @see com.eviware.loadui.api.statistics.store.getCurrentExecution
 	 */
 	public Execution startExecution( String executionId, long startTime );
-	
+
 	/**
 	 * Pauses current execution.
 	 * 
@@ -131,8 +147,8 @@ public interface ExecutionManager extends EventFirer
 	 * 
 	 * @return
 	 */
-	public Collection<String> getExecutionNames();
-	
+	public Collection<Execution> getExecutions();
+
 	/**
 	 * Gets a reference to a specific Execution by its ID.
 	 * 
@@ -145,7 +161,7 @@ public interface ExecutionManager extends EventFirer
 	 * Gets the base directory where executions will be saved
 	 */
 	public String getDBBaseDir();
-	
+
 	/**
 	 * Add execution listener
 	 * 
@@ -174,7 +190,7 @@ public interface ExecutionManager extends EventFirer
 	{
 		STARTED, PAUSED, STOPPED
 	}
-	
+
 	/**
 	 * Return current state of ExecutionManager
 	 */

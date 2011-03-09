@@ -112,5 +112,4 @@ public interface Execution extends Labeled.Mutable, EventFirer, AttributeHolder
 	 * Sets an image icon.
 	 */
 	public void setIcon( Image image );
-
 }

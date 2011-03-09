@@ -15,9 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -79,12 +77,11 @@ public class H2ExecutionManagerTest
 		h2.startExecution( "test3", 30 );
 		h2.startExecution( "test4", 40 );
 		h2.startExecution( "test5", 50 );
-		Collection<String> l = h2.getExecutionNames();
-		assertTrue( l.contains( "test1" ) );
-		assertTrue( l.contains( "test2" ) );
-		assertTrue( l.contains( "test3" ) );
-		assertTrue( l.contains( "test4" ) );
-		assertTrue( l.contains( "test5" ) );
+		assertNotNull( h2.getExecution( "test1" ) );
+		assertNotNull( h2.getExecution( "test2" ) );
+		assertNotNull( h2.getExecution( "test3" ) );
+		assertNotNull( h2.getExecution( "test4" ) );
+		assertNotNull( h2.getExecution( "test5" ) );
 		h2.delete( "test1" );
 		h2.delete( "test2" );
 		h2.delete( "test3" );
