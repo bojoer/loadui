@@ -98,9 +98,8 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 					if( !projectIdToExecutions.containsKey( addedProject.getId() ) )
 					{
 						HashSet<Execution> executionSet = new HashSet<Execution>();
-						for( String name : executionManager.getExecutionNames() )
+						for( Execution e : executionManager.getExecutions() )
 						{
-							Execution e = executionManager.getExecution( name );
 							if( getProjectId( e ).equals( addedProject.getId() ) )
 								executionSet.add( e );
 						}
@@ -132,8 +131,11 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 					String executionId = projectHash + "_" + Long.toString( timestamp );
 
 					SimpleDateFormat dateFormatter = new SimpleDateFormat( "yyyy-MM-dd HH:mm" );
-					String label = dateFormatter.format( new Date( timestamp ) );
-					Execution newExecution = executionManager.startExecution( executionId, timestamp, label );
+					Date now = new Date( timestamp );
+					String label = dateFormatter.format( now );
+					SimpleDateFormat dateFormatter2 = new SimpleDateFormat( "yyyy-MM-dd HHmmss-SSS" );
+					String fileName = runningProject.getLabel() + "_" + dateFormatter2.format( now );
+					Execution newExecution = executionManager.startExecution( executionId, timestamp, label, fileName );
 
 					// add project->execution mapping to cache
 					if( projectIdToExecutions.containsKey( runningProject.getId() ) )
@@ -242,9 +244,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				execution.setAttribute( "totalFailures", String.valueOf( totalFailures ) );
 
 				Summary summary = project.getSummary();
-				JasperReportManager.getInstance().createReport( summary,
-						new File( new File( executionManager.getDBBaseDir(), execution.getId() ), "summary.jp" ),
-						"JASPER_PRINT" );
+				JasperReportManager.getInstance().createReport( summary, execution.getSummaryReport(), "JASPER_PRINT" );
 				project.fireEvent( new BaseEvent( project, ProjectItem.SUMMARY_EXPORTED ) );
 			}
 		}

@@ -76,6 +76,12 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 	@Override
 	public Execution startExecution( String executionId, long startTime, String label )
 	{
+		return startExecution( executionId, startTime, label, "Execution_" + String.valueOf( startTime ) );
+	}
+
+	@Override
+	public Execution startExecution( String executionId, long startTime, String label, String fileName )
+	{
 		// unpause if paused otherwise try to create new
 		if( executionState == State.PAUSED )
 		{
@@ -206,10 +212,10 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 	}
 
 	@Override
-	public Collection<String> getExecutionNames()
+	public Collection<Execution> getExecutions()
 	{
-		return currentExecution == null ? Collections.<String> emptyList() : Collections.singletonList( currentExecution
-				.getId() );
+		return currentExecution == null ? Collections.<Execution> emptyList() : Collections
+				.singletonList( currentExecution );
 	}
 
 	@Override

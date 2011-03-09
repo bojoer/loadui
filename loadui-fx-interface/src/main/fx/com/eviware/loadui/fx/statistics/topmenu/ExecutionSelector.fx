@@ -57,6 +57,7 @@ import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
+import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 
@@ -98,21 +99,19 @@ public class ExecutionSelector extends Group {
 		executionManager.addExecutionListener( executionManagerStateListener );
 		executionManager.addEventListener( EventObject.class, executionManagerListener );
 	}
+	
+	def projectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
    
    def project = bind StatisticsWindow.instance.project on replace prevProject {
-      def names = executionManager.getExecutionNames();
-      if(prevProject != null){
-			for( n in names ) {
-			   if((n as String).startsWith(prevProject.getId())){
-					executionManager.getExecution(n as String).removeEventListener( BaseEvent.class, executionListener );
-				}
-			}
+      def executions = executionManager.getExecutions();
+      if( prevProject != null ) {
+      	for( execution in projectExecutionManager.getExecutions( prevProject ) ) {
+      		execution.removeEventListener( BaseEvent.class, executionListener );
+      	}
 		}
-		if(project != null){
-			for( n in names ) {
-			   if((n as String).startsWith(project.getId())){
-					executionManager.getExecution(n as String).addEventListener( BaseEvent.class, executionListener );
-				}
+		if( project != null ) {
+			for( execution in projectExecutionManager.getExecutions( project ) ) {
+				execution.addEventListener( BaseEvent.class, executionListener );
 			}
 		} 
   		FxUtils.runInFxThread( function():Void { loadExecutions(); } );
@@ -266,15 +265,12 @@ public class ExecutionSelector extends Group {
 		    return;
 		}
 		def holderList: ArrayList = new ArrayList();
-		def names = executionManager.getExecutionNames();
-		for( n in names ) {
-		   if((n as String).startsWith(project.getId())){
-			   def e = executionManager.getExecution(n as String);
-			   if((archive and e.isArchived() or recently and (not e.isArchived())) or e == executionManager.getCurrentExecution()){
-					holderList.add( ExecutionComparable { execution: e } );
-				}
+		for( execution in projectExecutionManager.getExecutions( project ) ) {
+			if((archive and execution.isArchived() or recently and (not execution.isArchived())) or execution == executionManager.getCurrentExecution()){
+				holderList.add( ExecutionComparable { execution: execution } );
 			}
 		}
+		
 		if( executionManager.getCurrentExecution() == null ){
 		    //there is no running execution so add radio for it without execution object
 		    addCurrentRunDummyRadio();

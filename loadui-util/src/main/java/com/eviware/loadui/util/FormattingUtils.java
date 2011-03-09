@@ -26,4 +26,9 @@ public class FormattingUtils
 
 		return String.format( "%02d:%02d:%02d", hours, minutes, seconds );
 	}
+
+	public static String formatFileName( String base )
+	{
+		return base.replaceAll( " ", "_" ).replaceAll( "[^a-zA-Z0-9-_]", "" );
+	}
 }

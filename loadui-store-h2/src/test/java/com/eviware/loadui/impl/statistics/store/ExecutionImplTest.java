@@ -83,9 +83,9 @@ public class ExecutionImplTest
 	@Test
 	public void testDelete()
 	{
-		assertTrue( h2.getExecutionNames().contains( EXECUTION_NAME ) );
+		assertTrue( h2.getExecutions().contains( EXECUTION_NAME ) );
 		execution.delete();
-		assertFalse( h2.getExecutionNames().contains( EXECUTION_NAME ) );
+		assertFalse( h2.getExecutions().contains( EXECUTION_NAME ) );
 	}
 
 	@After

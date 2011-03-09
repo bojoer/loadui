@@ -56,9 +56,9 @@ public class ExecutionImpl implements Execution, Releasable
 	public static final String KEY_ICON = "ICON";
 
 	/**
-	 * Execution id
+	 * Execution directory
 	 */
-	private final String id;
+	private final File executionDir;
 
 	/**
 	 * Reference to execution manager implementation
@@ -86,41 +86,38 @@ public class ExecutionImpl implements Execution, Releasable
 
 	private Image icon;
 
-	public ExecutionImpl( String id, long startTime, ExecutionManagerImpl manager )
+	public ExecutionImpl( File executionDir, String id, long startTime, ExecutionManagerImpl manager )
 	{
-		this.id = id;
+		this.executionDir = executionDir;
 		this.manager = manager;
 		trackMap = new HashMap<String, Track>();
 
-		propertiesFile = new File( new File( manager.getDBBaseDir(), id ), "execution.properties" );
-		attributes.put( KEY_ID, id );
+		propertiesFile = new File( executionDir, "execution.properties" );
 
 		if( propertiesFile.exists() )
 			loadAttributes();
 
+		attributes.put( KEY_ID, id );
 		attributes.put( KEY_START_TIME, String.valueOf( startTime ) );
 		storeAttributes();
 	}
 
-	public ExecutionImpl( String id, ExecutionManagerImpl manager )
+	public ExecutionImpl( File executionDir, ExecutionManagerImpl manager )
 	{
-		this.id = id;
+		this.executionDir = executionDir;
 		this.manager = manager;
 		trackMap = new HashMap<String, Track>();
 
-		propertiesFile = new File( new File( manager.getDBBaseDir(), id ), "execution.properties" );
-		attributes.put( KEY_ID, id );
+		propertiesFile = new File( executionDir, "execution.properties" );
 
 		if( propertiesFile.exists() )
 			loadAttributes();
-
-		storeAttributes();
 	}
 
 	@Override
 	public String getId()
 	{
-		return id;
+		return getAttribute( KEY_ID, "" );
 	}
 
 	@Override
@@ -134,7 +131,7 @@ public class ExecutionImpl implements Execution, Releasable
 	{
 		if( !isLoaded() )
 		{
-			manager.loadExecution( id );
+			manager.loadExecution( getId() );
 		}
 		return trackMap.get( trackId );
 	}
@@ -144,7 +141,7 @@ public class ExecutionImpl implements Execution, Releasable
 	{
 		if( !isLoaded() )
 		{
-			manager.loadExecution( id );
+			manager.loadExecution( getId() );
 		}
 		return trackMap.keySet();
 	}
@@ -152,7 +149,7 @@ public class ExecutionImpl implements Execution, Releasable
 	@Override
 	public void delete()
 	{
-		manager.delete( id );
+		manager.delete( getId() );
 		fireEvent( new BaseEvent( this, DELETED ) );
 	}
 
@@ -242,7 +239,7 @@ public class ExecutionImpl implements Execution, Releasable
 	@Override
 	public File getSummaryReport()
 	{
-		return new File( new File( manager.getDBBaseDir(), id ), "summary.jp" );
+		return new File( executionDir, "summary.jp" );
 	}
 
 	@Override
@@ -279,6 +276,11 @@ public class ExecutionImpl implements Execution, Releasable
 	{
 		attributes.setProperty( key, value );
 		storeAttributes();
+	}
+
+	public File getExecutionDir()
+	{
+		return executionDir;
 	}
 
 	private void loadAttributes()

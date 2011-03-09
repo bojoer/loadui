@@ -28,9 +28,9 @@ public class TableRegistry implements Releasable
 {
 	private Map<String, TableBase> tableMap = new HashMap<String, TableBase>();
 
-	public void put( String executionId, TableBase table )
+	public void put( String dbName, TableBase table )
 	{
-		tableMap.put( executionId + table.getExternalName(), table );
+		tableMap.put( dbName + table.getExternalName(), table );
 	}
 
 	public TableBase getTable( String dbName, String tableName )
