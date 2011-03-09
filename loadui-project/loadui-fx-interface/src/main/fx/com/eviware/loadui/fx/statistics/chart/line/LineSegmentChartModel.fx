@@ -114,7 +114,7 @@ public class LineSegmentChartModel extends DefaultChartModel, LineSegmentChartMo
 			def timestamp = dataPoint.getTimestamp();
 			if( timestamp != latestTime and timestamp >= 0 ) {
 				latestTime = timestamp;
-				if( timestamp <= xRange[1] )
+				if( xRange[0] <= timestamp and timestamp <= xRange[1] )
 					addPoint( scaler.createPoint( timestamp, dataPoint.getValue() as Number ) );
 			}
 		}
