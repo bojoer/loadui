@@ -76,6 +76,7 @@ import com.jidesoft.chart.axis.TimeAxis;
 import com.jidesoft.chart.style.ChartStyle;
 
 public def POSITION_ATTRIBUTE = "position";
+public def TIME_SPAN_ATTRIBUTE = "timeSpan";
 
 public function getLineSegmentChartModel( lineSegment:LineSegment ):LineSegmentChartModel {
 	for( chart in chartSet ) {
@@ -148,9 +149,8 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	var max:Number = 0;
 	var maxTime:Number = 0;
 	var position:Number = 0 on replace {
-		if( initialized ) {
+		if( initialized )
 			chartView.setAttribute( POSITION_ATTRIBUTE, String.valueOf( position ) );
-		}
 	}
 	var showAll = false on replace {
 		if( showAll ) timeSpan = maxTime as Integer;
@@ -162,9 +162,12 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		
 		if( oldTimeSpan > maxTime and timeSpan < maxTime )
 			scrollBar.value = maxTime;
+			
+		if( initialized )
+			chartView.setAttribute( TIME_SPAN_ATTRIBUTE, String.valueOf( timeSpan ) );
 	}
 	def chartNodeWidth = bind chartNode.width - 20 on replace {
-		if( not showAll )
+		if( not showAll and initialized )
 			timeSpan = (chartNodeWidth * xScale) as Long;
 	} 
 	var xScale:Number = 0.002 on replace {
@@ -199,6 +202,7 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 			chartView.addEventListener( EventObject.class, listener );
 			setZoomLevel( chartView.getAttribute( ZoomPanel.ZOOM_LEVEL_ATTRIBUTE, ZoomPanel.ZOOM_DEFAULT ) );
 			position = Double.parseDouble( chartView.getAttribute( POSITION_ATTRIBUTE, "0" ) );
+			timeSpan = Long.parseLong( chartView.getAttribute( TIME_SPAN_ATTRIBUTE, "10000" ) );
 			scrollBar.value = (position * maxTime)/(maxTime - timeSpan);
 			
 			for( segment in chartView.getSegments() )
@@ -273,10 +277,14 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		
 		chartNode.layoutInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true, vgrow: Priority.ALWAYS, margin: Insets { left: -15, right: 10 } };
 		
-		initialized = true;
+		if( scene != null )
+			initialized = true;
 	}
 	
 	override function update():Void {
+		if( not initialized and scene != null )
+			initialized = true;
+			
 		maxTime = execution.getLength();
 		min = Integer.MAX_VALUE;
 		max = Integer.MIN_VALUE;
@@ -378,6 +386,9 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	function addedSegment( segment:LineSegment ):Void {
+		for( attr in segment.getAttributes() ) {
+			println("Attr: {attr}={segment.getAttribute(attr, '')}");
+		}
 		def model = LineSegmentChartModel { chartView: chartView, segment: segment, level: bind zoomLevel };
 		lines.put( segment, model );
 		chart.addModel( model, model.chartStyle );

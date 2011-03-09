@@ -56,8 +56,6 @@ public class LineSegmentChartModel extends DefaultChartModel, LineSegmentChartMo
 	public-init var segment:LineSegment on replace {
 		statistic = segment.getStatistic();
 		latestTime = statistic.getTimestamp();
-		loadStyles();
-		initialized = true;
 	}
 	
 	public-read var statistic:Statistic;
@@ -83,7 +81,7 @@ public class LineSegmentChartModel extends DefaultChartModel, LineSegmentChartMo
 	public var color:Color on replace oldColor {
 		chartStyle.setLineColor( FxUtils.getAwtColor( color ) );
 		if( initialized ) {
-			segment.setAttribute( COLOR, FxUtils.colorToWebString(color) );
+			segment.setAttribute( COLOR, FxUtils.colorToWebString( color ) );
 			chartGroup.fireEvent( new PropertyChangeEvent( segment, COLOR, oldColor, color ) );
 		}
 	}
@@ -105,6 +103,8 @@ public class LineSegmentChartModel extends DefaultChartModel, LineSegmentChartMo
 	}
 	
 	postinit {
+		loadStyles();
+		initialized = true;
 		refresh();
 	}
 	
@@ -135,9 +135,10 @@ public class LineSegmentChartModel extends DefaultChartModel, LineSegmentChartMo
 			scale = 0;
 		}
 		
+		println("Loading styles, color is: {segment.getAttribute( COLOR, null )}");
 		var colorStr = segment.getAttribute( COLOR, null );
 		if( colorStr == null ) {
-			colorStr = LineChartStyles.getLineColor( chartView.getChartGroup(), segment );
+			colorStr = LineChartStyles.getLineColor( chartGroup, segment );
 			segment.setAttribute( COLOR, colorStr );
 		}
 		chartStyle.setLineColor( FxUtils.getAwtColor( colorStr ) );

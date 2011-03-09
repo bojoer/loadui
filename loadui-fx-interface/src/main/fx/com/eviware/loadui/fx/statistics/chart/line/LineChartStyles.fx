@@ -95,7 +95,7 @@ public function getLineColor( chartGroup:ChartGroup, segment:LineSegment ):Strin
 	var colors = lineColors;
 	for( chartView in chartGroup.getChartViewsForCharts() ) {
 		for( s in (chartView as LineChartView).getSegments()[x|x != segment] ) {
-			delete s.getAttribute( LineSegmentChartModel.COLOR, null ) from colors;
+			delete s.getAttribute( LineSegmentChartModel.COLOR, "" ).toUpperCase() from colors;
 		}
 	}
 	return if( sizeof colors > 0 ) colors[0] else lineColors[0];

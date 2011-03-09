@@ -82,6 +82,8 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 			if( entry.getValue().equals( segment ) )
 			{
 				segments.remove( entry.getKey() );
+				for( String attr : segment.getAttributes() )
+					segment.removeAttribute( attr );
 				fireEvent( new CollectionEvent( this, SEGMENTS, CollectionEvent.Event.REMOVED, segment ) );
 				return true;
 			}

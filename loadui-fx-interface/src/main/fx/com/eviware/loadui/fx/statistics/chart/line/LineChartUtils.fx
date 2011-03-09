@@ -20,6 +20,8 @@ import com.jidesoft.chart.axis.TimeAxis;
 import com.jidesoft.chart.style.ChartStyle;
 import com.jidesoft.chart.util.ChartUtils;
 
+import com.eviware.loadui.fx.statistics.chart.line.LongRange;
+
 import java.io.File;
 import java.awt.Image;
 import java.awt.Dimension;
