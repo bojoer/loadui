@@ -135,7 +135,6 @@ public class LineSegmentChartModel extends DefaultChartModel, LineSegmentChartMo
 			scale = 0;
 		}
 		
-		println("Loading styles, color is: {segment.getAttribute( COLOR, null )}");
 		var colorStr = segment.getAttribute( COLOR, null );
 		if( colorStr == null ) {
 			colorStr = LineChartStyles.getLineColor( chartGroup, segment );

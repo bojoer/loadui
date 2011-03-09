@@ -95,9 +95,10 @@ public class StatisticsWindow {
 		scene = null;
 	}
 	
+	var appState:AppState;
 	public var scene:Scene on replace {
 		if( scene != null ) {
-			def appState = AppState {};
+			appState = AppState {};
 			
 			appState.insertInto ( ManageMenu { width: bind scene.width }, STATISTICS_MANAGE );
 			
@@ -111,6 +112,10 @@ public class StatisticsWindow {
 			appState.transitionTo( project.getAttribute( VIEW_ATTRIBUTE, STATISTICS_MANAGE ), AppState.FADE_WIPE );
 			AppState.put( scene, appState, "STATISTICS" );
 		}
+	}
+	
+	def state = bind appState.state on replace {
+		project.setAttribute( VIEW_ATTRIBUTE, state );
 	}
 	
 	var closed:Boolean = true;
