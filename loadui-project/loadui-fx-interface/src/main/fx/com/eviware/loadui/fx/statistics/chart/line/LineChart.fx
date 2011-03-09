@@ -386,9 +386,6 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	}
 	
 	function addedSegment( segment:LineSegment ):Void {
-		for( attr in segment.getAttributes() ) {
-			println("Attr: {attr}={segment.getAttribute(attr, '')}");
-		}
 		def model = LineSegmentChartModel { chartView: chartView, segment: segment, level: bind zoomLevel };
 		lines.put( segment, model );
 		chart.addModel( model, model.chartStyle );
