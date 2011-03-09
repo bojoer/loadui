@@ -69,13 +69,15 @@ import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
  */
 public abstract class ExecutionManagerImpl implements ExecutionManager, DataSourceProvider, Releasable
 {
-	public File baseDirectory = new File( System.getProperty( LoadUI.LOADUI_HOME ), "executions" );
-	public String baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
+	private static Logger log = LoggerFactory.getLogger( ExecutionManagerImpl.class );
 
 	/**
 	 * Postfix added to data table name when creating source table
 	 */
 	private static final String SOURCE_TABLE_NAME_POSTFIX = "_sources";
+
+	public File baseDirectory = new File( System.getProperty( LoadUI.LOADUI_HOME ), "executions" );
+	public String baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
 
 	/**
 	 * Current execution
@@ -97,8 +99,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	private DatabaseMetadata metadata;
 
 	private ConnectionRegistry connectionRegistry;
-
-	private Logger log = LoggerFactory.getLogger( ExecutionManagerImpl.class );
 
 	private State executionState = State.STOPPED;
 
@@ -446,8 +446,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		if( currentExecution != null )
 		{
-			log.debug( "Trying to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry,
-					source, interpolationLevel, trackId } );
+			// log.debug(
+			// "Trying to store entry: {} for source: {} at level: {} and trackId: {}",
+			// new Object[] { entry,
+			// source, interpolationLevel, trackId } );
 
 			currentExecution.updateLength( entry.getTimestamp() );
 			Map<String, Object> data = new HashMap<String, Object>();
@@ -678,7 +680,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		if( provider.isWorkspaceLoaded() )
 		{
-			WorkspaceItem workspace = provider.getWorkspace();
 			updateWorkspace( provider );
 		}
 	}

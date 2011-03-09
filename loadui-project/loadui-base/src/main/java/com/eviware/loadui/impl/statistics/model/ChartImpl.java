@@ -76,6 +76,8 @@ public class ChartImpl implements Chart
 	public void delete()
 	{
 		parent.removeChild( this );
+		for( String attr : getAttributes() )
+			removeAttribute( attr );
 		release();
 	}
 

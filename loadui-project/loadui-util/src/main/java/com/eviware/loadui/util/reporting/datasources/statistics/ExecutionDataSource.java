@@ -60,7 +60,7 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 		if( fieldName.equals( "endTime" ) )
 			return new Date( execution.getStartTime() + execution.getLength() ).toString();
 		if( fieldName.equals( "duration" ) )
-			return FormattingUtils.formatTime( execution.getLength() / 1000 );
+			return FormattingUtils.formatTime( Math.round( execution.getLength() / 1000.0 ) );
 		if( fieldName.equals( "totalRequests" ) )
 			return execution.getAttribute( "totalRequests", "" );
 		if( fieldName.equals( "totalFailures" ) )
