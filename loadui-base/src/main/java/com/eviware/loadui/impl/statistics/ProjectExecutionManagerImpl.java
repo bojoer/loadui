@@ -234,8 +234,14 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 			{
 				ProjectItem project = ( ProjectItem )event.getSource();
 				project.removeEventListener( BaseEvent.class, this );
-				Summary summary = project.getSummary();
 
+				long totalRequests = project.getCounter( ProjectItem.SAMPLE_COUNTER ).get();
+				long totalFailures = project.getCounter( ProjectItem.FAILURE_COUNTER ).get();
+
+				execution.setAttribute( "totalRequests", String.valueOf( totalRequests ) );
+				execution.setAttribute( "totalFailures", String.valueOf( totalFailures ) );
+
+				Summary summary = project.getSummary();
 				JasperReportManager.getInstance().createReport( summary,
 						new File( new File( executionManager.getDBBaseDir(), execution.getId() ), "summary.jp" ),
 						"JASPER_PRINT" );
