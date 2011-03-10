@@ -37,7 +37,7 @@
     <launcher name="loadUI-agent.sh" id="44" external="true" excludeFromMenu="false" menuName="" externalFile="loadUI-agent.sh" />
     <launcher name="loadUI-agent.command" id="196" external="true" excludeFromMenu="false" menuName="" externalFile="loadUI-agent.command" />
   </launchers>
-  <installerGui installerType="1" suggestPreviousProgramGroup="false" addOnAppId="" suggestPreviousLocations="true">
+  <installerGui installerType="1" suggestPreviousProgramGroup="false" addOnAppId="" suggestPreviousLocations="false">
     <customCode useInstalledFiles="false" />
     <applications>
       <application name="" id="installer" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" customIcnsFile="" customIcoFile="">
