@@ -176,7 +176,7 @@ public class RowDataPanel extends HBox {
 				text: bind labelText
 			}
 			Button{
-			   text: "Export Row data"
+			   text: "Export Raw data"
 			   disable: bind testIsRunning
 			   action: function(){
 		        def chooser = new JFileChooser(lastSelectedFile);
