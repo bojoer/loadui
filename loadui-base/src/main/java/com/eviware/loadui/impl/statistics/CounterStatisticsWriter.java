@@ -53,9 +53,6 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 				flush();
 			}
 			change += value.longValue();
-			if( getStatisticVariable().getName().equals( "Sent" ) )
-				log.info( "{}.update( {}, {} )",
-						new Object[] { getStatisticVariable().getName(), timestamp, value.longValue() } );
 		}
 	}
 
@@ -68,9 +65,6 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 		double timeDelta = delay / 1000.0;
 		total += change;
 		double perSecond = change / timeDelta;
-		if( getStatisticVariable().getName().equals( "Sent" ) )
-			log.debug( "{}. timeDelta: {}, change: {}, perSecond: {}", new Object[] { getStatisticVariable().getName(),
-					timeDelta, change, perSecond } );
 		change = 0;
 		// log.debug( " counterStatWriter:output()   lastTimeFlushed={} delay={}",
 		// lastTimeFlushed, delay );
