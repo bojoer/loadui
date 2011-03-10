@@ -53,6 +53,9 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 				flush();
 			}
 			change += value.longValue();
+			if( getStatisticVariable().getName().equals( "Sent" ) )
+				log.info( "{}.update( {}, {} )",
+						new Object[] { getStatisticVariable().getName(), timestamp, value.longValue() } );
 		}
 	}
 
@@ -65,11 +68,16 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 		double timeDelta = delay / 1000.0;
 		total += change;
 		double perSecond = change / timeDelta;
+		if( getStatisticVariable().getName().equals( "Sent" ) )
+			log.debug( "{}. timeDelta: {}, change: {}, perSecond: {}", new Object[] { getStatisticVariable().getName(),
+					timeDelta, change, perSecond } );
 		change = 0;
-//		log.debug( " counterStatWriter:output()   lastTimeFlushed={} delay={}", lastTimeFlushed, delay );
-		lastTimeFlushed = Math.max( lastTimeFlushed + delay, currentTime );
-		Entry e = at( lastTimeFlushed ).put( Stats.TOTAL.name(), total ).put( Stats.PER_SECOND.name(), perSecond ).build();
-//		log.debug( " ...resulted in Entry {}",e );
+		// log.debug( " counterStatWriter:output()   lastTimeFlushed={} delay={}",
+		// lastTimeFlushed, delay );
+		lastTimeFlushed = Math.min( lastTimeFlushed + delay, currentTime );
+		Entry e = at( lastTimeFlushed ).put( Stats.TOTAL.name(), total ).put( Stats.PER_SECOND.name(), perSecond )
+				.build();
+		// log.debug( " ...resulted in Entry {}",e );
 		return e;
 	}
 
