@@ -49,6 +49,7 @@ import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.api.statistics.Statistic;
+import com.eviware.loadui.util.FormattingUtils;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -106,6 +107,7 @@ public class RowDataPanel extends HBox {
 	   }
 	}
 	
+	// confirmation dialog when selected file already exists
 	def confirmDialog: Dialog = Dialog {
 		title: "File already exists"
 		scene: AppState.byName("STATISTICS").scene
@@ -126,28 +128,38 @@ public class RowDataPanel extends HBox {
 	   if(file.exists()){
 	       file.delete();
 	   }
+	   
+	   // when execution on left is null do nothing
 	   def e = StatisticsWindow.execution;
 	   if( e == null ){
 	       return;
 	   }
-	   
-	   def fos: FileOutputStream = new FileOutputStream(file);
+
+		// total length is greater of both execution lengths 	   
 	   var length = e.getLength();
 	   def compared = StatisticsWindow.comparedExecution;
 	   if(compared != null and compared.getLength() > length){
 	       length = compared.getLength();
 	   }
 	   
-	   def dataSet: DataSet = DataSet{}; 
+	   
+	   // data export is done in blocks. not whole data is selected at once.
+	   // starting from the test start (zero time), data is retrieved for specified
+	   // intervals (e.g. first half an hour, second half an hour, third...), processed
+	   // and written to a file. this is to controll memory usage, and avoid OutOfMemory
+	   // when there is a lot of data. initial interval is set to 15 minutes, but this
+	   // should be tested in real time to see if it should be more or less.
 	   var start: Number = 0; 
-	   def interval: Number = 3600 * 1000 / 2; //half an hour
-	    
+	   def interval: Number = 15 * 60 * 1000; // 15 minutes
+	   
+	   def dataSet: DataSet = DataSet{}; 
+	   def fos: FileOutputStream = new FileOutputStream(file); 
 		while(start <= length){
 		   if(start <= e.getLength()){ 
 		   	retrieveData(start, start + interval, e, dataSet);
 		   }
 		   if(compared != null and start <= compared.getLength()){
-		       retrieveData(start, start + interval, compared, dataSet);
+		      retrieveData(start, start + interval, compared, dataSet);
 		   }
 		   start += interval + 1;
 			dataSet.write(fos);
@@ -162,9 +174,12 @@ public class RowDataPanel extends HBox {
 		   def variable = statistic.getStatisticVariable();
 		   def holder = variable.getStatisticHolder();
 		   def source = statistic.getSource();
+
+		   def label = "{e.getLabel()}~{holder.getLabel()}~{source}~{variable.getName()}~{statistic.getName()}".replaceAll(" ", "_");
+		   dataSet.addHeader(label);
+
 		   def points: java.lang.Iterable = statistic.getPeriod( start, end, 0, e);
       	for(p in points){
-      	    def label = "{e.getLabel()}~{holder.getLabel()}~{source}~{variable.getName()}~{statistic.getName()}".replaceAll(" ", "_");
       	    dataSet.add((p as DataPoint).getTimestamp()/1000, label, (p as DataPoint).getValue());
       	} 
 		}    
@@ -203,15 +218,27 @@ public class RowDataPanel extends HBox {
 }
 
 class DataSet {
-   def columns: ArrayList = new ArrayList(); 
+   // holds header (column names). When value is added to dataset
+   // its position in DataRow is actually its label index in this list.
+   def columns: ArrayList = new ArrayList();
+   
+   // hash map that holds the data. Key is timestamp and value is DataRow.
+   // when new value needs to be added to data set, apropriate row 
+   // is taken from this map (new is created if it doesn't exist) and value
+   // is added to that row. Position at which this value should be placed in
+   // DataRow is determined by value label, previously stored in 'columns' list.  
 	def data: HashMap = new HashMap();
 	
+	//used to write header just once
 	var headerWritten: Boolean = false;
 	
-	function add(timestamp: Long, label: String, value: Object){
+	function addHeader(label: String){
 	    if(not columns.contains(label)){
 	        columns.add(label);
 	    }
+	}
+	
+	function add(timestamp: Long, label: String, value: Object){
 	    if(data.get(timestamp) == null){
 	        data.put(timestamp, DataRow{ timestamp: timestamp });
 	    }
@@ -268,7 +295,7 @@ class DataRow extends Comparable {
     
     override function toString(): String {
        def sb: StringBuffer = new StringBuffer();
-       sb.append(timestamp);
+       sb.append(FormattingUtils.formatTime(timestamp));
        for(value in data){
          sb.append(SEPARATOR);
          sb.append(value);
