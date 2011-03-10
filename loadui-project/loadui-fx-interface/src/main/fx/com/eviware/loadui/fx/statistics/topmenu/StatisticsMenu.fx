@@ -139,11 +139,6 @@ public class StatisticsMenu extends VBox {
 						font: bind menuButtonFont
 						items: [
 						MenuItem {
-							text: "Settings"
-							action: function() { StatisticsWrenchDialog{}.show(); }
-						},
-						Separator{},
-						MenuItem {
 							text: "Close"
 							action: function() { 
 								StatisticsWindow.getInstance().close();

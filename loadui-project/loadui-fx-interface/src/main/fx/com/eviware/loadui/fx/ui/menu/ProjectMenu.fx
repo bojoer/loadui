@@ -303,7 +303,7 @@ public class ProjectMenu extends HBox {
 								height: bind height;
 							}, MenubarButton {
 									shape: "M 1.00,14.40 L 3.83,14.40 3.83,9.02 1.00, 9.02 M 11.85,14.40 L 14.68,14.40 14.68,4.92 11.85, 4.92 M 6.43,14.40 L 9.26,14.40 9.26,1.00 6.43, 1.00 Z"
-									tooltip: Tooltip { text: ##[STAT_MONITOR]"Statistics Monitor" }
+									tooltip: Tooltip { text: ##[STAT_MONITOR]"Statistics Window" }
 									action: function():Void { 
 										statMonitor.show();
 									 }
