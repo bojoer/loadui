@@ -1034,7 +1034,7 @@
 	-fx-background-insets: 0;
 	-fx-background-radius: 4;
 	-fx-border-image: null;
-	-fx-effect: dropshadow( gaussian  , #0101017f , 20.0, 0.1, 7, 7 );
+	-fx-effect: dropshadow( three-pass-box  , #0101017f , 20.0, 0.1, 7, 7 );
 }
 
 .execution-selector-menu-filter-button {
