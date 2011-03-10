@@ -12,12 +12,16 @@
 package com.eviware.loadui.util.soapui;
 
 import java.io.File;
+import java.util.concurrent.CountDownLatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SoapUIStarter
 {
+	/** SoapUI start timeout in milliseconds */
+	public static final long START_TIMEOUT = 20000;
+
 	private static Logger logger = LoggerFactory.getLogger( SoapUIStarter.class );
 	private static Boolean isWindows;
 	private static Boolean isOSX;
@@ -56,7 +60,7 @@ public class SoapUIStarter
 			String[] commandsLinux = new String[] { "sh", soapUIbatPath };
 			String[] commandsOSX = new String[] { soapUIbatPath + "/Contents/MacOS/JavaApplicationStub" };
 			logger.info( "Launching soapUI..." );
-			deternimeOS();
+			determineOS();
 			ProcessBuilder pb;
 			if( isWindows )
 				pb = new ProcessBuilder( commandsWin );
@@ -68,6 +72,35 @@ public class SoapUIStarter
 			// Not closing the input stream may prevent the process from starting
 			// immediately.
 			p.getInputStream().close();
+
+			// wait for soapUI to start
+			final CountDownLatch latch = new CountDownLatch( 1 );
+			new Thread()
+			{
+				@Override
+				public void run()
+				{
+					long start = System.currentTimeMillis();
+					while( !CajoClient.getInstance().testConnection() )
+					{
+						try
+						{
+							Thread.sleep( 1000 );
+						}
+						catch( InterruptedException e )
+						{
+							// do nothing
+						}
+						if( System.currentTimeMillis() - start > START_TIMEOUT )
+						{
+							logger.error( "Unable to establish connection to SoapUI. The timeout period elapsed prior to obtaining a connection to cajo server." );
+							break;
+						}
+					}
+					latch.countDown();
+				}
+			}.start();
+			latch.await();
 		}
 		catch( Exception e )
 		{
@@ -75,12 +108,11 @@ public class SoapUIStarter
 		}
 	}
 
-	public static void deternimeOS()
+	public static void determineOS()
 	{
 		if( isWindows == null )
 			isWindows = new Boolean( System.getProperty( "os.name" ).indexOf( "Windows" ) >= 0 );
 		if( isOSX == null )
 			isOSX = new Boolean( System.getProperty( "os.name" ).indexOf( "Mac OS X" ) >= 0 );
 	}
-
 }
