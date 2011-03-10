@@ -45,7 +45,6 @@ public class TrackImplTest
 		System.setProperty( LoadUI.LOADUI_HOME, "target" );
 
 		h2 = new H2ExecutionManager();
-		h2.delete( "trackTestExecution" );
 		h2.startExecution( "trackTestExecution", 10 );
 
 		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
@@ -57,7 +56,7 @@ public class TrackImplTest
 		TrackDescriptorImpl td = new TrackDescriptorImpl( "testTrack", types );
 		h2.registerTrackDescriptor( td );
 		track = h2.getTrack( "testTrack" );
-		
+
 		Map<String, Number> values = new HashMap<String, Number>();
 		values.put( "a", 1 );
 		values.put( "b", 2 );
@@ -72,14 +71,14 @@ public class TrackImplTest
 
 		entry = new EntryImpl( ( 30 ), values );
 		h2.writeEntry( track.getId(), entry, "local2", 0 );
-		
+
 		entry = new EntryImpl( ( 30 ), values );
 		h2.writeEntry( track.getId(), entry, "local3", 1 );
-		
+
 		entry = new EntryImpl( ( 25 ), values );
 		h2.writeEntry( track.getId(), entry, "local3", 0 );
 	}
-	
+
 	@Test
 	public void testGetNextEntry()
 	{
@@ -137,7 +136,7 @@ public class TrackImplTest
 
 		e = ( List<Entry> )track.getRange( "local2", 15, 25, 0 );
 		assertEquals( e.size(), 1 );
-		
+
 		e = ( List<Entry> )track.getRange( "local3", 0, 50, 1 );
 		assertEquals( e.size(), 1 );
 	}
@@ -151,6 +150,7 @@ public class TrackImplTest
 	@After
 	public void release()
 	{
+		h2.delete( "trackTestExecution" );
 		h2.release();
 	}
 }

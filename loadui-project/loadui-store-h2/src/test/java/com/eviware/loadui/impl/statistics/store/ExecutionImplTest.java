@@ -15,8 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,11 +39,10 @@ public class ExecutionImplTest
 		System.setProperty( LoadUI.LOADUI_HOME, "target" );
 
 		h2 = new H2ExecutionManager();
-		h2.delete( EXECUTION_NAME );
 		execution = ( ExecutionImpl )h2.startExecution( EXECUTION_NAME, 10 );
 		// unload and load execution
 		h2.release();
-		execution = ( ExecutionImpl )h2.getExecution( EXECUTION_NAME );
+		execution = h2.getExecution( EXECUTION_NAME );
 	}
 
 	@Test
@@ -71,27 +69,34 @@ public class ExecutionImplTest
 		execution.updateLength( 10 );
 		execution.flushLength();
 		h2.release();
-		execution = ( ExecutionImpl )h2.getExecution( EXECUTION_NAME );
+		execution = h2.getExecution( EXECUTION_NAME );
 		assertTrue( execution.getLength() == 10 );
 		h2.release();
-		execution = ( ExecutionImpl )h2.getExecution( EXECUTION_NAME );
+		execution = h2.getExecution( EXECUTION_NAME );
 		execution.updateLength( 20 );
 		execution.flushLength();
 		assertTrue( execution.getLength() == 20 );
 	}
 
-	@Test
+	@Test( expected = IllegalArgumentException.class )
 	public void testDelete()
 	{
-		assertTrue( h2.getExecutions().contains( EXECUTION_NAME ) );
+		assertNotNull( h2.getExecution( EXECUTION_NAME ) );
 		execution.delete();
-		assertFalse( h2.getExecutions().contains( EXECUTION_NAME ) );
+		assertNull( h2.getExecution( EXECUTION_NAME ) );
 	}
 
 	@After
 	public void release()
 	{
+		try
+		{
+			h2.delete( EXECUTION_NAME );
+		}
+		catch( IllegalArgumentException e )
+		{
+		}
+
 		h2.release();
 	}
-
 }

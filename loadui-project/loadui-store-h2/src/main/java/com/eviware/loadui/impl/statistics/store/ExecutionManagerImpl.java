@@ -551,11 +551,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	public void delete( String executionId )
 	{
-		ExecutionImpl execution = executionMap.remove( executionId );
+		ExecutionImpl execution = getExecution( executionId );
 		if( execution == null )
 			return;
 
-		release( executionId );
+		executionMap.remove( executionId );
+		release( execution );
 		if( execution.getExecutionDir().exists() )
 		{
 			FileUtil.deleteDirectory( execution.getExecutionDir() );
@@ -565,9 +566,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	public void release( String executionId )
 	{
-		// leave execution in executionMap so meta-data will be available
-		ExecutionImpl execution = executionMap.get( executionId );
+		release( executionMap.get( executionId ) );
+	}
 
+	public void release( ExecutionImpl execution )
+	{
 		if( execution != null )
 		{
 			String dbName = execution.getExecutionDir().getName();
