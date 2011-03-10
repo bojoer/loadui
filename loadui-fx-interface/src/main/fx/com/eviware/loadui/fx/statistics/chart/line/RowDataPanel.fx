@@ -28,13 +28,14 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
+import javafx.util.Sequences;
 
 import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils.*;
 
-import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import java.beans.PropertyChangeEvent;
 
 import com.eviware.loadui.util.BeanInjector;
@@ -47,6 +48,7 @@ import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.api.statistics.Statistic;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -64,15 +66,21 @@ def SEPARATOR = ",";
 def NEW_LINE = System.getProperty("line.separator");
 
 var lastSelectedFile: File;
+
 /**
  * Panel for exporting the row data.
  *
  * @author predrag.vucetic
  */
 public class RowDataPanel extends HBox {
+   
+   var statistics: Statistic[];
+   
+   public-init var segments: LineSegment[] on replace {
+      var sortedSegments = Sequences.sort(for(s in segments) SegmentComparable{segment: s});
+		statistics = for(s in sortedSegments) (s as SegmentComparable).segment.getStatistic(); 
+   }
     
-	public-init var chartGroup: ChartGroup;
-	
 	override var styleClass = "row-data-panel";
 	override var hpos = HPos.RIGHT;
 	override var vpos = VPos.CENTER;
@@ -118,13 +126,12 @@ public class RowDataPanel extends HBox {
 	   if(file.exists()){
 	       file.delete();
 	   }
-	   def fos: FileOutputStream = new FileOutputStream(file);
-	     
 	   def e = StatisticsWindow.execution;
 	   if( e == null ){
 	       return;
 	   }
-
+	   
+	   def fos: FileOutputStream = new FileOutputStream(file);
 	   var length = e.getLength();
 	   def compared = StatisticsWindow.comparedExecution;
 	   if(compared != null and compared.getLength() > length){
@@ -136,8 +143,10 @@ public class RowDataPanel extends HBox {
 	   def interval: Number = 3600 * 1000 / 2; //half an hour
 	    
 		while(start <= length){
-		   retrieveData(start, start + interval, e, dataSet);
-		   if(compared != null){
+		   if(start <= e.getLength()){ 
+		   	retrieveData(start, start + interval, e, dataSet);
+		   }
+		   if(compared != null and start <= compared.getLength()){
 		       retrieveData(start, start + interval, compared, dataSet);
 		   }
 		   start += interval + 1;
@@ -149,26 +158,15 @@ public class RowDataPanel extends HBox {
 	} 
 	
 	function retrieveData(start: Number, end: Number, e: Execution, dataSet: DataSet){
-		for(c in chartGroup.getChildren()){
-		   def sHolder = c.getStatisticHolder(); 
-		   def sVarNames = sHolder.getStatisticVariableNames();
-		   for(sVarName in sVarNames){
-		       def sVar = sHolder.getStatisticVariable(sVarName);
-		       def sVarStatNames = sVar.getStatisticNames();
-		       def sources = sVar.getSources();
-		       for(sVarStatName in sVarStatNames){
-		           for(source in sources){
-		               def statistic = sVar.getStatistic(sVarStatName, source);
-		               if(start <= e.getLength()){
-		               	def points: java.lang.Iterable = statistic.getPeriod( start, end, 0, e);
-		               	for(p in points){
-		               	    def label = "{e.getLabel()}~{sHolder.getLabel()}~{source}~{sVarName}~{statistic.getName()}".replaceAll(" ", "_");
-		               	    dataSet.add((p as DataPoint).getTimestamp()/1000, label, (p as DataPoint).getValue());
-		               	}
-	               	}
-		           }
-		       }
-		   }
+		for(statistic in statistics){
+		   def variable = statistic.getStatisticVariable();
+		   def holder = variable.getStatisticHolder();
+		   def source = statistic.getSource();
+		   def points: java.lang.Iterable = statistic.getPeriod( start, end, 0, e);
+      	for(p in points){
+      	    def label = "{e.getLabel()}~{holder.getLabel()}~{source}~{variable.getName()}~{statistic.getName()}".replaceAll(" ", "_");
+      	    dataSet.add((p as DataPoint).getTimestamp()/1000, label, (p as DataPoint).getValue());
+      	} 
 		}    
 	}
 	
@@ -208,7 +206,7 @@ class DataSet {
    def columns: ArrayList = new ArrayList(); 
 	def data: HashMap = new HashMap();
 	
-	var headerExported: Boolean = false;
+	var headerWritten: Boolean = false;
 	
 	function add(timestamp: Long, label: String, value: Object){
 	    if(not columns.contains(label)){
@@ -232,12 +230,12 @@ class DataSet {
        sb.append(NEW_LINE);
        sb.toString().toUpperCase();
    }
-    
+   
 	function write(os: OutputStream){
-	    if(not headerExported){
-       	os.write(getHeader().getBytes("utf8"));
-       	headerExported = true;
-       }
+	    if(not headerWritten){
+	       os.write(getHeader().getBytes("utf8")); 
+	       headerWritten = true;
+	    }
 	    def dataRowList = new ArrayList( data.values() );
 	    Collections.sort( dataRowList );
 	    for(row in dataRowList){
@@ -296,5 +294,14 @@ class  FileChooserFileFilter extends javax.swing.filechooser.FileFilter {
 	 
 	override public function getDescription():String {
 		".csv files";
+	}
+}
+
+class SegmentComparable extends Comparable {
+	var segment: LineSegment;
+	override function compareTo(other: Object): Integer {
+	    def name = segment.getStatistic().getStatisticVariable().getStatisticHolder().getLabel();
+	    def otherName = (other as SegmentComparable).segment.getStatistic().getStatisticVariable().getStatisticHolder().getLabel();  
+	    return name.compareTo(otherName);
 	}
 }
