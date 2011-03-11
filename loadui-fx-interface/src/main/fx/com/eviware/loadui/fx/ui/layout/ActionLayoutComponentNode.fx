@@ -23,6 +23,8 @@ package com.eviware.loadui.fx.ui.layout;
 
 import javafx.scene.control.Button;
 import com.eviware.loadui.fx.FxUtils;
+import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.async.BlockingTask;
 
 import com.eviware.loadui.api.layout.ActionLayoutComponent;
 
@@ -41,7 +43,18 @@ public class ActionLayoutComponentNode extends LayoutComponentNode {
 			width: bind width
 			height: bind height
 			action: function() {
-				(layoutComponent as ActionLayoutComponent).getAction().run();
+				if( (layoutComponent as ActionLayoutComponent).isAsynchronous() ) {
+					def blockingTask:BlockingTask = BlockingTask {
+						task: function() {
+							(layoutComponent as ActionLayoutComponent).getAction().run();
+						}
+					};
+					blockingTask.start();
+				} else {
+					AppState.byName( "MAIN" ).blockingTask( function() {
+						(layoutComponent as ActionLayoutComponent).getAction().run();
+					}, null, "Please wait..." );
+				}
 			}
 			text: (layoutComponent as ActionLayoutComponent).getLabel();
 			disable: not (layoutComponent as ActionLayoutComponent).isEnabled()
