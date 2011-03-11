@@ -55,13 +55,13 @@ public class ChartGroupChartViewHolder extends ChartViewHolder {
 	def controlButtons = new ToggleGroup();
 	
 	def expandCharts = ToggleButton {
-		text: "Expand"
+		text: "Components"
 		toggleGroup: controlButtons
 		layoutInfo: LayoutInfo { margin: Insets { right: 50 } }
 	}
 	
 	def expandAgents = ToggleButton {
-		text: "Show Agents"
+		text: "Agents"
 		toggleGroup: controlButtons
 	}
 	
@@ -109,8 +109,7 @@ public class ChartGroupChartViewHolder extends ChartViewHolder {
 					}
 					if( panelFactory.separator ) Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER } else null
 				]
-			},
-			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER }
+			}
 		];
 	}
 	
