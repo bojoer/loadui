@@ -26,6 +26,7 @@ public class ActionLayoutComponentImpl extends LayoutComponentImpl implements Ac
 {
 	public final static String LABEL = "label";
 	public final static String ACTION = "action";
+	public final static String ASYNC = "async";
 
 	private final Set<ActionEnabledListener> listeners = new HashSet<ActionEnabledListener>();
 	private boolean enabled = true;
@@ -48,6 +49,12 @@ public class ActionLayoutComponentImpl extends LayoutComponentImpl implements Ac
 	public String getLabel()
 	{
 		return MapUtils.getOr( properties, LABEL, "" );
+	}
+
+	@Override
+	public boolean isAsynchronous()
+	{
+		return MapUtils.getOr( properties, ASYNC, true );
 	}
 
 	@Override

@@ -16,6 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
+import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.util.StringUtils;
+
 import gnu.cajo.invoke.Remote;
 
 public class CajoClient
@@ -150,6 +153,10 @@ public class CajoClient
 	public void setPathToSoapUIBat( String pathToSoapUIBat )
 	{
 		this.pathToSoapUIBat = pathToSoapUIBat;
+		Property<?> pathProperty = workspaceProviderRegistry.getWorkspace().getProperty(
+				WorkspaceItem.SOAPUI_PATH_PROPERTY );
+		if( pathProperty.getValue() == null )
+			pathProperty.setValue( pathToSoapUIBat );
 	}
 
 	public void setWorkspaceProviderRegistry( WorkspaceProvider workspaceProviderRegistry )
@@ -159,7 +166,8 @@ public class CajoClient
 
 	public void startSoapUI()
 	{
-		SoapUIStarter.start( workspaceProviderRegistry.getWorkspace().getProperty( WorkspaceItem.SOAPUI_PATH_PROPERTY )
-				.getStringValue() );
+		String path = StringUtils.isNullOrEmpty( pathToSoapUIBat ) ? workspaceProviderRegistry.getWorkspace()
+				.getProperty( WorkspaceItem.SOAPUI_PATH_PROPERTY ).getStringValue() : pathToSoapUIBat;
+		SoapUIStarter.start( path );
 	}
 }

@@ -49,7 +49,7 @@ public class SoapUIButton extends Group {
       instance = this;
       
       tooltip = Tooltip{
-		    text:"You are about to launch soapUI"
+		    text: "Launch soapUI"
 		}
       
 		image = ImageView {

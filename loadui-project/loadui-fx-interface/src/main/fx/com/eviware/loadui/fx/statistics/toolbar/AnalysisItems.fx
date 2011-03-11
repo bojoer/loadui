@@ -20,7 +20,7 @@ import com.eviware.loadui.fx.statistics.toolbar.items.AnalysisToolbarItem;
 import com.eviware.loadui.util.StringUtils;
 
 public def RESPONSE_TIMES = AnalysisToolbarItem {
-	label: "Respose Times"
+	label: "Response Times"
 	templateScript: StringUtils.multiline(
 		"",
 		"import com.eviware.loadui.api.model.ComponentItem",

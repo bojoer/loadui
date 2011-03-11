@@ -47,6 +47,14 @@ public interface ActionLayoutComponent extends LayoutComponent
 	public boolean isEnabled();
 
 	/**
+	 * Checks to see if the action should be performed asynchronously (in a
+	 * background Thread).
+	 * 
+	 * @return
+	 */
+	public boolean isAsynchronous();
+
+	/**
 	 * Enables the action in the interface. This is the default mode.
 	 * 
 	 * @param enabled
