@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.HashSet;
@@ -75,9 +76,9 @@ public class ChartImpl implements Chart
 	@Override
 	public void delete()
 	{
-		parent.removeChild( this );
-		for( String attr : getAttributes() )
+		for( String attr : new ArrayList<String>( getAttributes() ) )
 			removeAttribute( attr );
+		parent.removeChild( this );
 		release();
 	}
 
@@ -85,7 +86,7 @@ public class ChartImpl implements Chart
 	public void release()
 	{
 		fireEvent( new BaseEvent( this, RELEASED ) );
-		ReleasableUtils.release( eventSupport );
+		ReleasableUtils.releaseAll( eventSupport, attributeHolderSupport );
 	}
 
 	@Override

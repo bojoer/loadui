@@ -28,6 +28,7 @@ import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.util.ModelUtils;
+import com.eviware.loadui.fx.statistics.chart.ChartNamePrettifier;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
@@ -57,10 +58,10 @@ public class SegmentButton extends BaseNode, Resizable {
 		button.graphic = HBox {
 			content: [
 				Label {
-					text: statistic.getName()
+					text: ChartNamePrettifier.nameFor( statistic )
 					layoutInfo: LayoutInfo { width: 60 }
 				}, Label {
-					text: if( statistic.getSource() == StatisticVariable.MAIN_SOURCE ) "All" else statistic.getSource()
+					text: ChartNamePrettifier.nameForSource( statistic.getSource() )
 					layoutInfo: LayoutInfo { width: 40 }
 					visible: bind not compactSegments
 					managed: bind not compactSegments

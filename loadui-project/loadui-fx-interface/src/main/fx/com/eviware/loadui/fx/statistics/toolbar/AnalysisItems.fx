@@ -22,7 +22,6 @@ import com.eviware.loadui.util.StringUtils;
 public def RESPONSE_TIMES = AnalysisToolbarItem {
 	label: "Response Times"
 	templateScript: StringUtils.multiline(
-		"",
 		"import com.eviware.loadui.api.model.ComponentItem",
 		"import com.eviware.loadui.api.model.ProjectItem",
 		"import com.eviware.loadui.api.component.categories.RunnerCategory",
@@ -73,8 +72,9 @@ public def REQUEST_PERCENTILE = AnalysisToolbarItem {
 		"    chartGroup.type = 'com.eviware.loadui.api.statistics.model.chart.LineChartView'",
 		"    def chart = chartGroup.createChart( statisticHolder )",
 		"    def chartView = chartGroup.getChartViewForChart( chart )",
-		"    //chartView.addSegment( 'TimeTaken', 'PERCENTILE_25TH', 'main' )",
-		"    //chartView.addSegment( 'TimeTaken', 'PERCENTILE_75TH', 'main' )",
+		"    chartView.addSegment( 'TimeTaken', 'PERCENTILE_25TH', 'main' )",
+		"    chartView.addSegment( 'TimeTaken', 'MEDIAN', 'main' )",
+		"    chartView.addSegment( 'TimeTaken', 'PERCENTILE_75TH', 'main' )",
 		"    chartView.addSegment( 'TimeTaken', 'PERCENTILE_90TH', 'main' )",
 		"\} else if( statisticHolder instanceof ProjectItem ) \{",
 		"    chartGroup.type = 'com.eviware.loadui.api.statistics.model.chart.LineChartView'",
@@ -117,7 +117,7 @@ public def REQUEST_ERRORS = AnalysisToolbarItem {
 		"    chartGroup.type = 'com.eviware.loadui.api.statistics.model.chart.LineChartView'",
 		"    def chart = chartGroup.createChart( statisticHolder )",
 		"    def chartView = chartGroup.getChartViewForChart( chart )",
-		"    //chartView.addSegment( 'Failures', 'PER_SECOND', 'main' )",
+		"    chartView.addSegment( 'Failures', 'PER_SECOND', 'main' )",
 		"\} else if( statisticHolder instanceof ProjectItem ) \{",
 		"    chartGroup.type = 'com.eviware.loadui.api.statistics.model.chart.LineChartView'",
 		"    def chart = chartGroup.createChart( statisticHolder )",

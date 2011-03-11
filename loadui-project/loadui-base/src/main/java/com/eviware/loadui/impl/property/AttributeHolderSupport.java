@@ -16,18 +16,26 @@
 package com.eviware.loadui.impl.property;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.model.AttributeHolder;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.config.PropertyConfig;
 import com.eviware.loadui.config.PropertyListConfig;
 import com.eviware.loadui.util.StringUtils;
 
-public class AttributeHolderSupport implements AttributeHolder
+public class AttributeHolderSupport implements AttributeHolder, Releasable
 {
+	public static final Logger log = LoggerFactory.getLogger( AttributeHolderSupport.class );
+
 	private final Map<String, String> attributes = new HashMap<String, String>();
 	private final PropertyListConfig config;
+	private boolean released = false;
 
 	public AttributeHolderSupport( PropertyListConfig config )
 	{
@@ -40,12 +48,23 @@ public class AttributeHolderSupport implements AttributeHolder
 	@Override
 	public String getAttribute( String key, String defaultValue )
 	{
+		if( released )
+		{
+			log.warn( "Cannot get attribute {}, AttributeHolderSupport has been released, returning default value.", key );
+			return defaultValue;
+		}
 		return attributes.containsKey( key ) ? attributes.get( key ) : defaultValue;
 	}
 
 	@Override
 	public void setAttribute( String key, String value )
 	{
+		if( released )
+		{
+			log.warn( "Unable to set attribute {}={}, AttributeHolderSupport has been released!", key, value );
+			return;
+		}
+
 		if( attributes.containsKey( key ) )
 		{
 			for( int i = config.sizeOfPropertyArray() - 1; i >= 0; i-- )
@@ -84,6 +103,12 @@ public class AttributeHolderSupport implements AttributeHolder
 	@Override
 	public Collection<String> getAttributes()
 	{
-		return attributes.keySet();
+		return released ? Collections.<String> emptySet() : attributes.keySet();
+	}
+
+	@Override
+	public void release()
+	{
+		released = true;
 	}
 }
