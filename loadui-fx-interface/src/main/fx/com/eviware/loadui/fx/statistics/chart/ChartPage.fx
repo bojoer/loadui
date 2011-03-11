@@ -259,10 +259,10 @@ class DropBase extends BaseNode, Resizable, Droppable {
 	
 	override var onDrop = function( draggable:Draggable ):Void {
 		if( draggable instanceof ChartToolbarItem ) {
-			statisticPage.createChartGroup( (draggable as ChartToolbarItem).type, "Chart Group {statisticPage.getChildCount()+1}" )
+			statisticPage.createChartGroup( (draggable as ChartToolbarItem).type, "Chart {statisticPage.getChildCount()+1}" )
 		} else if( draggable instanceof StatisticHolderToolbarItem ) {
 			def sh = (draggable as StatisticHolderToolbarItem).statisticHolder;
-			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart Group {statisticPage.getChildCount()+1}" );
+			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart {statisticPage.getChildCount()+1}" );
 			def chart = chartGroup.createChart( sh );
 			if( sh instanceof ComponentItem ) {
 				def variable = sh.getStatisticVariable( "Time Taken" );
