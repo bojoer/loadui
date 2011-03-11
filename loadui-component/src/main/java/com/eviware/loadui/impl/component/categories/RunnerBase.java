@@ -167,7 +167,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		counterStatisticSupport = new CounterStatisticSupport( context );
 		StatisticVariable.Mutable requestVariable = context.addStatisticVariable( "Completed", "COUNTER" );
 		counterStatisticSupport.addCounterVariable( CanvasItem.SAMPLE_COUNTER, requestVariable );
-		StatisticVariable.Mutable failedVariable = context.addStatisticVariable( "Failed", "COUNTER" );
+		StatisticVariable.Mutable failedVariable = context.addStatisticVariable( "Failures", "COUNTER" );
 		counterStatisticSupport.addCounterVariable( CanvasItem.FAILURE_COUNTER, failedVariable );
 		StatisticVariable.Mutable discardedVariable = context.addStatisticVariable( "Discarded", "COUNTER" );
 		counterStatisticSupport.addCounterVariable( RunnerCategory.DISCARDED_SAMPLES_COUNTER, discardedVariable );

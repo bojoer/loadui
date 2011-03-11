@@ -38,18 +38,18 @@ import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.impl.statistics.SampleStatisticsWriter.Stats;
 import com.eviware.loadui.util.BeanInjector;
 
-public class AverageStatisticWriterTest
+public class SampleStatisticWriterTest
 {
 	StatisticHolder holderMock;
 	StatisticHolderSupport holderSupport;
 	SampleStatisticsWriter writer;
 	StatisticsManager manager;
-	Double[] data = { 1.44, 2.56, 3.12, 4.44, 5.55, 6.6656, 7.6767, 8.567, 9.5675, 10.567 };
+	Double[] data = { 0.3, 1.44, 2.56, 3.12, 4.44, 5.55, 6.6656, 7.6767, 8.567, 9.5675, 10.567 };
 	private int size;
 	private double avgSum;
 	private double sumTotalSquare;
 	private double stdDev;
-	final Logger logger = LoggerFactory.getLogger( AverageStatisticWriterTest.class );
+	final Logger logger = LoggerFactory.getLogger( SampleStatisticWriterTest.class );
 	private double average;
 
 	@Before
@@ -138,7 +138,7 @@ public class AverageStatisticWriterTest
 	{
 		calculate();
 		Entry result = writer.output();
-		assertEquals( 6.1078, result.getValue( Stats.MEDIAN.name() ).doubleValue(), .005 );
+		assertEquals( 5.55, result.getValue( Stats.MEDIAN.name() ).doubleValue(), .005 );
 	}
 
 	@Test
@@ -146,7 +146,10 @@ public class AverageStatisticWriterTest
 	{
 		calculate();
 		Entry result = writer.output();
-		assertEquals( 10.46705, result.getValue( Stats.PERCENTILE_90TH.name() ).doubleValue(), .1 );
+		assertEquals( 2.84, result.getValue( Stats.PERCENTILE_25TH.name() ).doubleValue(), .1 );
+		assertEquals( 5.55, result.getValue( Stats.MEDIAN.name() ).doubleValue(), .1 );
+		assertEquals( 8.12185, result.getValue( Stats.PERCENTILE_75TH.name() ).doubleValue(), .1 );
+		assertEquals( 9.5675, result.getValue( Stats.PERCENTILE_90TH.name() ).doubleValue(), .1 );
 	}
 
 	/* Test aggregations */
