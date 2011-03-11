@@ -41,7 +41,7 @@ public function getGroupPanels( chartGroup:ChartGroup ):PanelFactory[] {
 			build: function() { StylePanel { segments: (chartGroup.getChartView() as LineChartView).getSegments()[s|true] } }
 		}, PanelFactory {
 			title: "Raw data"
-			build: function() { RowDataPanel { segments: (chartGroup.getChartView() as LineChartView).getSegments()[s|true] } }
+			build: function() { RawDataPanel { segments: (chartGroup.getChartView() as LineChartView).getSegments()[s|true] } }
 		}
 	]
 }
@@ -66,7 +66,7 @@ public function getChartPanels( chartView:LineChartView ):PanelFactory[] {
 			build: function() { StylePanel { segments: chartView.getSegments()[s|true] } }
 		}, PanelFactory {
 			title: "Raw data"
-			build: function() { RowDataPanel { segments: chartView.getSegments()[s|true] } }
+			build: function() { RawDataPanel { segments: chartView.getSegments()[s|true] } }
 		}
 	]
 }

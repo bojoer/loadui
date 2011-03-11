@@ -944,7 +944,7 @@
 	-fx-background-insets: 25 -53 -45 -8;
 }
 
-.style-panel, .scale-panel, .row-data-panel {
+.style-panel, .scale-panel, .raw-data-panel {
 	-fx-background-color: #333333, #252525;
 	-fx-background-insets: 4 0 0 0, 30 0 2 0;
 	-fx-text-fill: #9b9b9b;

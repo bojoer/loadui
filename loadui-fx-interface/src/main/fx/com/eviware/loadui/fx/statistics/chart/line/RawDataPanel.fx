@@ -69,11 +69,11 @@ def NEW_LINE = System.getProperty("line.separator");
 var lastSelectedFile: File;
 
 /**
- * Panel for exporting the row data.
+ * Panel for exporting the raw data.
  *
  * @author predrag.vucetic
  */
-public class RowDataPanel extends HBox {
+public class RawDataPanel extends HBox {
    
    var statistics: Statistic[];
    
@@ -82,7 +82,7 @@ public class RowDataPanel extends HBox {
 		statistics = for(s in sortedSegments) (s as SegmentComparable).segment.getStatistic(); 
    }
     
-	override var styleClass = "row-data-panel";
+	override var styleClass = "raw-data-panel";
 	override var hpos = HPos.RIGHT;
 	override var vpos = VPos.CENTER;
 	override var nodeVPos = VPos.CENTER;
