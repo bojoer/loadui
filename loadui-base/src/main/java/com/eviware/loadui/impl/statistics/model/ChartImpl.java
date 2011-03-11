@@ -78,8 +78,8 @@ public class ChartImpl implements Chart
 	{
 		for( String attr : new ArrayList<String>( getAttributes() ) )
 			removeAttribute( attr );
-		parent.removeChild( this );
 		release();
+		parent.removeChild( this );
 	}
 
 	@Override

@@ -265,10 +265,10 @@ class DropBase extends BaseNode, Resizable, Droppable {
 			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart Group {statisticPage.getChildCount()+1}" );
 			def chart = chartGroup.createChart( sh );
 			if( sh instanceof ComponentItem ) {
-				def variable = sh.getStatisticVariable( "TimeTaken" );
+				def variable = sh.getStatisticVariable( "Time Taken" );
 				if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
 					def chartView = chartGroup.getChartViewForChart( chart );
-					(chartView as ConfigurableLineChartView).addSegment( "TimeTaken", "AVERAGE", StatisticVariable.MAIN_SOURCE );
+					(chartView as ConfigurableLineChartView).addSegment( "Time Taken", "AVERAGE", StatisticVariable.MAIN_SOURCE );
 				}
 			} else if( sh instanceof CanvasItem ) {
 				def variable = sh.getStatisticVariable( "Requests" );

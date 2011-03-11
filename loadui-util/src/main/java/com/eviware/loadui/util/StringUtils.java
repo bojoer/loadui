@@ -48,7 +48,27 @@ public class StringUtils
 	 */
 	public static String capitalize( String string )
 	{
-		return isNullOrEmpty( string ) ? string : string.substring( 0, 1 ).toUpperCase() + string.substring( 1 );
+		return isNullOrEmpty( string ) ? string : string.substring( 0, 1 ).toUpperCase()
+				+ string.substring( 1 ).toLowerCase();
+	}
+
+	/**
+	 * Capitalizes The First Character Of Each Word In The String.
+	 * 
+	 * @param string
+	 * @return
+	 */
+	public static String capitalizeEachWord( String string )
+	{
+		if( isNullOrEmpty( string ) )
+			return string;
+
+		StringBuilder stringBuilder = new StringBuilder();
+		for( String word : string.split( " " ) )
+			stringBuilder.append( " " ).append( capitalize( word ) );
+		stringBuilder.deleteCharAt( 0 );
+
+		return stringBuilder.toString();
 	}
 
 	/**

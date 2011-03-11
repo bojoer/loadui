@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +98,14 @@ public class AttributeHolderSupport implements AttributeHolder, Releasable
 	@Override
 	public void removeAttribute( String key )
 	{
-		setAttribute( key, null );
+		try
+		{
+			setAttribute( key, null );
+		}
+		catch( XmlValueDisconnectedException e )
+		{
+			log.warn( "Unable to remove attribute {}, Owner has been removed.", key );
+		}
 	}
 
 	@Override

@@ -17,6 +17,7 @@ package com.eviware.loadui.fx.statistics.chart;
 
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.util.StringUtils;
 
 public class ChartNamePrettifier
 {
@@ -32,8 +33,14 @@ public class ChartNamePrettifier
 
 	public static String nameForStatistic( String statisticName )
 	{
-		if( statisticName.startsWith( "PERCENTILE" ) )
-			statisticName = statisticName.replaceFirst( "PERCENT", "%-" );
+		statisticName = statisticName.replaceAll( "_", " " );
+		statisticName = StringUtils.capitalizeEachWord( statisticName );
+		if( statisticName.startsWith( "Percentile" ) )
+		{
+			statisticName = statisticName.replaceFirst( "Percent", "%-" );
+		}
+
+		statisticName = statisticName.replaceAll( "^Tps$", "TPS" ).replaceAll( "^Bps$", "BPS" );
 
 		return statisticName;
 	}

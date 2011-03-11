@@ -98,7 +98,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 	public-read var expandGroups = false;
 	public-read var expandAgents = false;
 	var expandedNode:SortableBox on replace oldValue {
-		for( child in oldValue.content ) ReleasableUtils.release( oldValue );
+		for( child in oldValue.content ) ReleasableUtils.release( child );
+		delete oldValue from (resizable as Container).content;
 		
 		expandedChartViews = for( node in expandedNode.content[x|x instanceof ChartViewHolder] ) node as ChartViewHolder;
 	}
@@ -196,10 +197,10 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 			def sh = (draggable as StatisticHolderToolbarItem).statisticHolder;
 			def chart = chartGroup.createChart( sh );
 			if( sh instanceof ComponentItem ) {
-				def variable = sh.getStatisticVariable( "TimeTaken" );
+				def variable = sh.getStatisticVariable( "Time Taken" );
 				if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
 					def chartView = chartGroup.getChartViewForChart( chart );
-					(chartView as ConfigurableLineChartView).addSegment( "TimeTaken", "AVERAGE", StatisticVariable.MAIN_SOURCE );
+					(chartView as ConfigurableLineChartView).addSegment( "Time Taken", "AVERAGE", StatisticVariable.MAIN_SOURCE );
 				}
 			} else if( sh instanceof CanvasItem ) {
 				def variable = sh.getStatisticVariable( "Requests" );
@@ -259,9 +260,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 			}
 			insert expandedNode into (resizable as Container).content;
 		} else {
-			for( node in expandedNode.content )
-				(node as ChartViewHolder).release();
-			delete expandedNode from (resizable as Container).content;
+			expandedNode = null;
 		}
 		chartGroup.setAttribute( EXPAND_ATTRIBUTE, if( expandGroups ) GROUP else NONE );
 	}
@@ -284,9 +283,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 			}
 			insert expandedNode into (resizable as Container).content;
 		} else {
-			for( node in expandedNode.content )
-				(node as ChartViewHolder).release();
-			delete expandedNode from (resizable as Container).content;
+			expandedNode = null;
 		}
 		chartGroup.setAttribute( EXPAND_ATTRIBUTE, if( expandAgents ) SOURCES else NONE );
 	}
