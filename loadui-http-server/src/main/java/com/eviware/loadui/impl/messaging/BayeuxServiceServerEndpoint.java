@@ -32,7 +32,6 @@ import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.ServerEndpoint;
-import com.eviware.loadui.api.messaging.VersionMismatchException;
 import com.eviware.loadui.util.messaging.ChannelRoutingSupport;
 
 public class BayeuxServiceServerEndpoint extends AbstractService implements ServerEndpoint
@@ -172,6 +171,13 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 			connectionListeners.clear();
 
 			sessions.remove( session );
+		}
+
+		@Override
+		public String toString()
+		{
+			return MessageEndpointImpl.class.getSimpleName() + "[connected=" + session.isConnected() + ",handshook="
+					+ session.isHandshook() + "]";
 		}
 	}
 }

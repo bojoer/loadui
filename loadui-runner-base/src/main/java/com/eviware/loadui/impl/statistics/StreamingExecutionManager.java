@@ -191,6 +191,7 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 		Map<String, Object> data = new HashMap<String, Object>();
 		for( String key : entry.getNames() )
 			data.put( key, entry.getValue( key ) );
+		data.put( "_EXECUTION", currentExecution == null ? "null" : currentExecution.getId() );
 		data.put( "_TIMESTAMP", entry.getTimestamp() );
 		data.put( "_TRACK_ID", trackId );
 		data.put( "_LEVEL", interpolationLevel );
@@ -274,16 +275,21 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 		@Override
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
-			String message = data.toString();
+			@SuppressWarnings( "unchecked" )
+			Map<String, Object> message = ( Map<String, Object> )data;
 			log.debug( "Received from controller : " + message );
-			if( message.startsWith( "pause" ) )
+			if( message.containsKey( "PAUSE" ) )
 				pauseExecution();
-			else if( message.startsWith( "stop" ) )
+			else if( message.containsKey( "STOP" ) )
 				stopExecution();
-			else if( message.startsWith( "unpause" ) )
-				startExecution( message, System.currentTimeMillis() );
-			else
-				startExecution( message, System.currentTimeMillis() );
+			else if( message.containsKey( "UNPAUSE" ) )
+				startExecution( message.get( "UNPAUSE" ).toString(), System.currentTimeMillis() );
+			else if( message.containsKey( "START" ) )
+			{
+				log.debug( "Starting execution with length: {}", message.get( "LENGTH" ) );
+				startExecution( message.get( "START" ).toString(),
+						System.currentTimeMillis() - ( Long )message.get( "LENGTH" ) );
+			}
 		}
 	}
 

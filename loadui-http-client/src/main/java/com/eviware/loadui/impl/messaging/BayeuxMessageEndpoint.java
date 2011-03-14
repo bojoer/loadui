@@ -68,7 +68,7 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 			// we can silence it easier.
 			Field loggerField = BayeuxClient.class.getDeclaredField( "logger" );
 			loggerField.setAccessible( true );
-			loggerField.set( this, Log.getLogger( BayeuxMessageEndpoint.class.getName() ) );
+			loggerField.set( this, Log.getLogger( BayeuxClient.class.getName() ) );
 		}
 		catch( SecurityException e )
 		{
@@ -105,16 +105,6 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 					public void onMessage( ClientSessionChannel arg0, Message message )
 					{
 						String channel = message.getChannel();
-						if( channel.equals( "/service/init" ) )
-						{
-							if( !LoadUI.AGENT_VERSION.equals( message.getData() ) )
-							{
-								log.warn( "Cannot connect to server with different version number than the client: {} != {}",
-										LoadUI.AGENT_VERSION, message.getData() );
-								routingSupport.fireMessage( ERROR_CHANNEL, new VersionMismatchException(
-										message.getData() == null ? "0" : message.getData().toString() ) );
-							}
-						}
 						if( channel.startsWith( BASE_CHANNEL ) && message.getData() != null )
 							routingSupport.fireMessage( channel.substring( BASE_CHANNEL.length() ), message.getData() );
 					}
@@ -150,9 +140,20 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 	@Override
 	public void onMessages( List<Message.Mutable> messages )
 	{
-		log.debug( "BayeuxMessageEndpoint.onMessages: {}", messages );
+		// log.debug( "BayeuxMessageEndpoint.onMessages: {}", messages );
 		for( Message.Mutable message : messages )
 		{
+			String channel = message.getChannel();
+			if( message.getData() != null && channel.equals( "/service/init" ) )
+			{
+				if( !LoadUI.AGENT_VERSION.equals( message.getData() ) )
+				{
+					log.warn( "Cannot connect to server with different version number than the client: {} != {}",
+							LoadUI.AGENT_VERSION, message.getData() );
+					routingSupport.fireMessage( ERROR_CHANNEL, new VersionMismatchException( message.getData() == null ? "0"
+							: message.getData().toString() ) );
+				}
+			}
 			routingSupport.fireMessage( message.getChannel(), message.getData() );
 		}
 	}
@@ -175,7 +176,7 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 		Message.Mutable message = newMessage();
 		message.setChannel( "/service" + BASE_CHANNEL + channel );
 		message.setData( data );
-		log.debug( "Sending message: {} on channel: {}", data, message );
+		// log.debug( "Sending message: {} on channel: {}", data, message );
 		enqueueSend( message );
 	}
 
