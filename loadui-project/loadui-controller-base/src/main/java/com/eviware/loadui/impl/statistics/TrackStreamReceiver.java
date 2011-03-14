@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -25,6 +26,10 @@ import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.statistics.Statistic;
+import com.eviware.loadui.api.statistics.StatisticsManager;
+import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.statistics.store.ExecutionManager;
+import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 
 /**
@@ -34,15 +39,20 @@ import com.eviware.loadui.util.statistics.store.EntryImpl;
  */
 public class TrackStreamReceiver
 {
+	private static final String CHANNEL = "/" + StatisticsManager.class.getName() + "/execution";
+
 	public final static Logger log = LoggerFactory.getLogger( TrackStreamReceiver.class );
 
 	private final MessageEndpoint endpoint;
 	private final AgentDataAggregator aggregator;
+	private final ExecutionManager executionManager;
 
-	public TrackStreamReceiver( BroadcastMessageEndpoint endpoint, AgentDataAggregator aggregator )
+	public TrackStreamReceiver( BroadcastMessageEndpoint endpoint, AgentDataAggregator aggregator,
+			ExecutionManager executionManager )
 	{
 		this.endpoint = endpoint;
 		this.aggregator = aggregator;
+		this.executionManager = executionManager;
 
 		this.endpoint.addMessageListener( "/" + Statistic.class.getName(), new MessageListener()
 		{
@@ -54,12 +64,29 @@ public class TrackStreamReceiver
 				{
 					Map<String, Object> map = ( Map<String, Object> )data;
 					AgentItem agent = ( AgentItem )endpoint;
+					String executionId = map.remove( "_EXECUTION" ).toString();
+					Execution execution = TrackStreamReceiver.this.executionManager.getCurrentExecution();
 					int level = ( ( Number )map.remove( "_LEVEL" ) ).intValue();
 					int timestamp = ( ( Number )map.remove( "_TIMESTAMP" ) ).intValue();
 					String trackId = ( String )map.remove( "_TRACK_ID" );
 
-					TrackStreamReceiver.this.aggregator.update(
-							new EntryImpl( timestamp, ( Map<String, Number> )data, true ), trackId, agent, level );
+					EntryImpl entry = new EntryImpl( timestamp, ( Map<String, Number> )data, true );
+					if( execution != null && execution.getId().equals( executionId ) )
+					{
+						TrackStreamReceiver.this.aggregator.update( entry, trackId, agent, level );
+					}
+					else
+					{
+						log.warn( "Received Entry: {} for incorrect Execution: {}", entry, executionId );
+						if( execution != null )
+						{
+							log.debug( "Correcting Agent execution: {}, length: {}", execution.getId(), execution.getLength() );
+							endpoint.sendMessage(
+									CHANNEL,
+									MapUtils.build( String.class, Object.class ).put( "START", execution.getId() )
+											.put( "LENGTH", execution.getLength() ).get() );
+						}
+					}
 				}
 			}
 		} );

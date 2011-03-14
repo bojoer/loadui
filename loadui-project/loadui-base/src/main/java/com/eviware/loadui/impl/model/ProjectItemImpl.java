@@ -611,7 +611,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	{
 		saveReport.setValue( save );
 	}
-	
+
 	@Override
 	public long getNumberOfAutosaves()
 	{
@@ -842,6 +842,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				SceneItem scene = ( SceneItem )addressableRegistry.lookup( message.get( AgentItem.DEFINE_SCENE ) );
 				if( scene != null )
 				{
+					log.debug( "Agent {} has requested a TestCase: {}, sending...", endpoint,
+							message.get( AgentItem.DEFINE_SCENE ) );
 					endpoint.sendMessage(
 							channel,
 							MapUtils.build( String.class, String.class ).put( AgentItem.SCENE_ID, scene.getId() )
@@ -850,7 +852,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				}
 				else
 				{
-					log.info( "An Agent {} has requested a nonexistant TestCase: {}", endpoint,
+					log.warn( "An Agent {} has requested a nonexistant TestCase: {}", endpoint,
 							message.get( AgentItem.DEFINE_SCENE ) );
 				}
 			}

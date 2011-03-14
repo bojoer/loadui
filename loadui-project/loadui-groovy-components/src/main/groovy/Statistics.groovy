@@ -36,7 +36,7 @@ import com.eviware.loadui.api.model.ProjectItem
 import com.eviware.loadui.api.chart.CustomTimeRange
 import com.eviware.loadui.api.chart.CustomNumericRange
 import com.eviware.loadui.api.chart.ChartModel
-import com.eviware.loadui.api.chart.ChartAdapter;
+import com.eviware.loadui.api.chart.ChartAdapter
 
 import com.eviware.loadui.api.terminal.InputTerminal
 import com.eviware.loadui.api.terminal.OutputTerminal

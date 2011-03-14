@@ -54,7 +54,6 @@ public class AgentDataAggregator
 
 	public synchronized void update( Entry entry, String trackId, AgentItem agent, int level )
 	{
-//		log.debug( "AgentDataAggregator:update()");
 		executionManager.writeEntry( trackId, entry, agent.getLabel(), level );
 		long time = entry.getTimestamp() / 1000;
 
@@ -113,7 +112,7 @@ public class AgentDataAggregator
 		while( !times.isEmpty() )
 			flush( times.pollFirstEntry().getValue() );
 	}
-	
+
 	private class FlushingExecutionListener implements ExecutionListener
 	{
 		@Override
