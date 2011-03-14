@@ -69,39 +69,22 @@ public class TutorialNode extends CustomNode {
 			var end:Integer = text.indexOf("\"", start+5);
 		    url = text.substring(start + 5, end);
 		}
-		var exists:Boolean = true;
-		if ( not (url == null) )
-			exists = (new URL(url).openConnection() as HttpURLConnection).getResponseCode() == 200
-		else
-			exists = false;
 		
 		Stack {
 			content: [
-			   if ( not exists )
-					ImageView {
-					    image: Image {
-							url: "{__ROOT__}images/png/tutorial-holder.png"
-							backgroundLoading: true
-					    }
-					    fitWidth: 130
-						fitHeight: 98					    
-					    smooth: true
-					    cache: true
-					}
-				else 
-					ImageView {
-					    image: Image {
-							url: url	
-							backgroundLoading: true
-							placeholder: Image {
-					            url: "{__ROOT__}agent-icon.png"
-					        }		    
-					    }
-					    fitWidth: 130
-						fitHeight: 98					    
-					    smooth: true
-					    cache: true
-					}
+				ImageView {
+				    image: Image {
+						url: url	
+						backgroundLoading: true
+						placeholder: Image {
+				      	url: "{__ROOT__}images/png/tutorial-holder.png"
+				      }
+				    }
+				    fitWidth: 130
+					fitHeight: 98					    
+				    smooth: true
+				    cache: true
+				}
 			]
 		} 
 		
