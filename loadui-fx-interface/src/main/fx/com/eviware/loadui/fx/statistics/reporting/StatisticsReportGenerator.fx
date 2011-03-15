@@ -32,7 +32,9 @@ public function generateCharts( chartPages:ChartPage[] ):Map {
 		chartPage.update();
 		for( chartGroupHolder in chartPage.innerContent ) {
 			for( chartViewHolder in [ chartGroupHolder.chartViewHolder, chartGroupHolder.expandedChartViews ] ) {
-				map.put( chartViewHolder.chartView, createImage( chartViewHolder.chart, chartViewHolder.chartHeight - 30 ) );
+				def image = createImage( chartViewHolder.chart, chartViewHolder.chartHeight - 30 );
+				if( image != null )
+					map.put( chartViewHolder.chartView, image );
 			}
 		}
 	}
@@ -43,7 +45,11 @@ public function generateCharts( chartPages:ChartPage[] ):Map {
 function createImage( chart:BaseChart, height:Number ):Image {
 	if( chart instanceof LineChart ) {
 		def lineChart = chart as LineChart;
-		LineChartUtils.createImage( lineChart, 505, height )
+		if( lineChart.chart.pointCount() > 0 ) {
+			LineChartUtils.createImage( lineChart, 505, height )
+		} else {
+			null
+		}
 	} else {
 		null
 	}

@@ -67,6 +67,8 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.BeanInjector;
 import java.util.EventObject;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
@@ -269,13 +271,15 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 		expandAgents = not expandAgents;
 		if( expandAgents ) {
 			if( expandGroups ) toggleGroupExpand();
+			def sources = new ArrayList( chartGroup.getSources() );
+			Collections.sort( sources );
 			expandedNode = SortableBox {
 				vertical: true
 				layoutInfo: childrenInfo
 				spacing: 5
-				content: for( source in chartGroup.getSources() ) ChartViewHolder {
-					chartView: chartGroup.getChartViewForSource( source )
-					label: source
+				content: for( source in sources ) ChartViewHolder {
+					chartView: chartGroup.getChartViewForSource( source as String )
+					label: source as String
 					typeLabel: "Agent"
 					layoutInfo: chartViewInfo
 					graphic: ImageView { image: FxUtils.agentImage }

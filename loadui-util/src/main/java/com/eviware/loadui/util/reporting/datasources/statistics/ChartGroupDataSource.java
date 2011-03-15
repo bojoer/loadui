@@ -70,10 +70,12 @@ public class ChartGroupDataSource extends JRAbstractBeanDataSource
 	@Override
 	public boolean next() throws JRException
 	{
-		if( chartViewIterator.hasNext() )
+		while( chartViewIterator.hasNext() )
 		{
 			chartView = chartViewIterator.next();
-			return true;
+			// If there is no chart stored for this ChartView, skip it.
+			if( charts.containsKey( chartView ) )
+				return true;
 		}
 		return false;
 	}
