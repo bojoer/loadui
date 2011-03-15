@@ -18,6 +18,10 @@
 	<field name="startTime" class="java.lang.String"/>
 	<field name="loaduiVersion" class="java.lang.String"/>
 	<field name="currentTime" class="java.lang.String"/>
+	<variable name="headerCount" class="java.lang.Integer">
+		<variableExpression><![CDATA[Integer.valueOf($V{headerCount}.intValue() + 1)]]></variableExpression>
+		<initialValueExpression><![CDATA[Integer.valueOf(0)]]></initialValueExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -59,7 +63,7 @@
 	</pageHeader>
 	<detail>
 		<band height="130">
-			<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$V{headerCount} == 1]]></printWhenExpression>
 			<rectangle radius="10">
 				<reportElement x="0" y="5" width="505" height="110" backcolor="#CCCCCC"/>
 				<graphicElement>
