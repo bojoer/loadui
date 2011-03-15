@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.fx.statistics.reporting;
 
+import javafx.util.Math;
+
 import com.eviware.loadui.fx.statistics.chart.BaseChart;
 import com.eviware.loadui.fx.statistics.chart.ChartPage;
 import com.eviware.loadui.fx.statistics.chart.ChartViewHolder;
@@ -32,7 +34,7 @@ public function generateCharts( chartPages:ChartPage[] ):Map {
 		chartPage.update();
 		for( chartGroupHolder in chartPage.innerContent ) {
 			for( chartViewHolder in [ chartGroupHolder.chartViewHolder, chartGroupHolder.expandedChartViews ] ) {
-				def image = createImage( chartViewHolder.chart, chartViewHolder.chartHeight - 30 );
+				def image = createImage( chartViewHolder.chart, Math.max( 150, chartViewHolder.chartHeight ) - 30 );
 				if( image != null )
 					map.put( chartViewHolder.chartView, image );
 			}
