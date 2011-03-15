@@ -63,6 +63,9 @@ public def HEIGHT_ATTRIBUTE = "height";
  * @author dain.nilsson
  */
 public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable {
+	
+	//This variable is completely optional, not all ChartViews have a ChartModel. This variable should not be used in this class.
+	public-init var chartModel:com.eviware.loadui.api.statistics.model.Chart;
    
 	override var styleClass = "chart-view-holder";
 	
@@ -71,8 +74,6 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	public var graphic:Node = Rectangle { width: 50, height: 30 };
 	
 	public var typeLabel:String = "Component";
-	
-	public-init var chartModel:com.eviware.loadui.api.statistics.model.Chart;
 	
 	def chartButtons = HBox { spacing: 5, vpos: VPos.CENTER, styleClass: "chart-group-toolbar", padding: Insets { bottom: 5, top: 5, right: 3 }, layoutInfo: LayoutInfo { vfill: false, vgrow: Priority.NEVER } };
 	protected def panelToggleGroup = new PanelToggleGroup();
@@ -92,6 +93,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 			chart = ChartRegistry.createChart( chartView, this );
 			chart.update();
 			chartButtons.content = rebuildChartButtons();
+			chartHeight = Double.parseDouble( chartView.getAttribute( HEIGHT_ATTRIBUTE, "0" ) );
 		}
 	}
 	
@@ -104,8 +106,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	var compact = true;
 	
 	var resizeYStart: Number = 0;
-	var resizeImg: String = "{__ROOT__}images/execution-selector-resize.fxz";
-	var resizing: Boolean = false;
+	def resizeImg: String = "{__ROOT__}images/execution-selector-resize.fxz";
 		
 	def resizeAction: Group = Group {
 	   blocksMouse: true
@@ -119,58 +120,32 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	   	FXDNode {
 	   	   layoutX: -3
       		layoutY: -3 
-				url: bind resizeImg
+				url: resizeImg
 				visible: true
 			}
 		]
 		onMousePressed: function( e: MouseEvent ) {
 	   	if( e.primaryButtonDown ) {
-	   	    resizing = true;
 	   	    resizeYStart = e.screenY;
 	   	} 
 	   }
 	   onMouseReleased: function( e: MouseEvent ) {
-	   	resizing = false;
+	   	if( chartHeight < hbox.height )
+	   		chartHeight = hbox.height;
 	   }
 	   onMouseDragged: function( e: MouseEvent ) {
 	   	if( e.primaryButtonDown ) {
 	   	    def delta = e.screenY - resizeYStart;
-	   	    if((hbox.layoutInfo as LayoutInfo).height + delta >= Math.max((chart as Resizable).getMinHeight(), 105 )){
-		   	   (hbox.layoutInfo as LayoutInfo).height += delta;
-		   	 	setAttribute( HEIGHT_ATTRIBUTE, String.valueOf((hbox.layoutInfo as LayoutInfo).height) );
-		   	 	resizeYStart = e.screenY;
-	   	    }
+	   	    chartHeight += delta;
+	   	    resizeYStart = e.screenY;
 	   	} 
-	   }
-	}
-	
-	var innerChartHeight = bind (chart as Resizable).height on replace {
-	   if(not resizing){ 
-		   def minHeight = Math.max((chart as Resizable).getMinHeight(), 163 );
-		   if(not resizing and (hbox.layoutInfo as LayoutInfo).height < minHeight){
-	   	   (hbox.layoutInfo as LayoutInfo).height = innerChartHeight;
-	   		setAttribute( HEIGHT_ATTRIBUTE, String.valueOf((hbox.layoutInfo as LayoutInfo).height) );
-		   }
 	   }
 	}
 	
 	var hbox: HBox;
 	
-	public-read var chartHeight = bind hbox.height on replace oldValue {
-	    if(oldValue == 0 and hbox.height > 0){
-	        def savedHeight = getAttribute( HEIGHT_ATTRIBUTE, "none" );
-	        if(not savedHeight.equals("none")){
-	            try{
-	                (hbox.layoutInfo as LayoutInfo).height = Float.parseFloat(savedHeight);
-	            }
-	            catch(e: Exception){
-	                (hbox.layoutInfo as LayoutInfo).height = hbox.height;
-	            }
-	        }
-	        else{
-	            (hbox.layoutInfo as LayoutInfo).height = hbox.height;
-	        }
-	    }
+	public-read var chartHeight:Number = if(chartView != null) Double.parseDouble( chartView.getAttribute( HEIGHT_ATTRIBUTE, "0" ) ) else 0.0 on replace oldValue {
+		chartView.setAttribute( HEIGHT_ATTRIBUTE, String.valueOf( chartHeight ) );
 	}
 	
 	def resizable:VBox = VBox {
@@ -187,36 +162,44 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 						padding: Insets { left: 12, top: 10, right: 12, bottom: 2 }
 						content: [
 							Region { width: bind vbox.width, height: bind vbox.height, managed: false, styleClass: bind styleClass },
-							hbox = HBox {
-								layoutInfo: LayoutInfo{ width: bind width }
-								spacing: 5
+							Stack {
+								nodeVPos: VPos.TOP
 								content: [
-									vbox2 = VBox {
-										layoutInfo: bind if(compact) LayoutInfo { width: 100 } else null
-										padding: Insets { top: 8, right: 8, bottom: 8, left: 8 }
-										spacing: 4
+									Label {
+										layoutInfo: LayoutInfo { height: bind chartHeight }
+									},
+									hbox = HBox {
+										layoutInfo: LayoutInfo { width: bind width }
+										spacing: 5
 										content: [
-											Region { managed: false, width: bind vbox2.width, height: bind vbox2.height, styleClass: "chart-view-panel" },
-											HBox {
-												layoutInfo: LayoutInfo { vfill: false, vgrow: Priority.NEVER }
+											vbox2 = VBox {
+												layoutInfo: bind if(compact) LayoutInfo { width: 100 } else null
+												padding: Insets { top: 8, right: 8, bottom: 8, left: 8 }
+												spacing: 4
 												content: [
-													Label { text: bind typeLabel, layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
-													Button {
-														styleClass: "compact-panel-button"
-														graphic: SVGPath {
-															fill: Color.rgb( 0xb2, 0xb2, 0xb2 )
-															content: bind if(compact) "M 0 0 L 3.5 3.5 0 7 0 0 M 3.5 0 L 7 3.5 3.5 7 3.5 0" else "M 0 0 L -3.5 3.5 0 7 0 0 M -3.5 0 L -7 3.5 -3.5 7 -3.5 0"
-														}
-														action: function():Void { compact = not compact }
+													Region { managed: false, width: bind vbox2.width, height: bind vbox2.height, styleClass: "chart-view-panel" },
+													HBox {
+														layoutInfo: LayoutInfo { vfill: false, vgrow: Priority.NEVER }
+														content: [
+															Label { text: bind typeLabel, layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
+															Button {
+																styleClass: "compact-panel-button"
+																graphic: SVGPath {
+																	fill: Color.rgb( 0xb2, 0xb2, 0xb2 )
+																	content: bind if(compact) "M 0 0 L 3.5 3.5 0 7 0 0 M 3.5 0 L 7 3.5 3.5 7 3.5 0" else "M 0 0 L -3.5 3.5 0 7 0 0 M -3.5 0 L -7 3.5 -3.5 7 -3.5 0"
+																}
+																action: function():Void { compact = not compact }
+															}
+														]
 													}
+													graphic,
+													Label { text: bind label }
 												]
+											}, Stack {
+												layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true, vgrow: Priority.ALWAYS }
+												content: bind chart as Node
 											}
-											graphic,
-											Label { text: bind label }
 										]
-									}, Stack {
-										layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true, vgrow: Priority.ALWAYS }
-										content: bind chart as Node
 									}
 								]
 							}, chartButtons
@@ -244,14 +227,6 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 			},
 			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER }
 		];
-	}
-	
-	protected function setAttribute(name: String, value: String): Void {
-	    chartModel.setAttribute( name, value );
-	}
-	
-	protected function getAttribute(name: String, default: String): String {
-	    chartModel.getAttribute( name, default );
 	}
 	
 	public function update():Void {

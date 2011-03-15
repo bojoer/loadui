@@ -141,7 +141,7 @@ public class StatisticsMenu extends VBox {
 						MenuItem {
 							text: "Close"
 							action: function() { 
-								StatisticsWindow.getInstance().close();
+								AppState.byName("STATISTICS").transitionTo( StatisticsWindow.STATISTICS_MANAGE, AppState.ZOOM_WIPE );
 							}
 						}
 						]

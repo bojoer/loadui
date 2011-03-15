@@ -112,13 +112,4 @@ public class ChartGroupChartViewHolder extends ChartViewHolder {
 			}
 		];
 	}
-	
-	override function setAttribute(name: String, value: String): Void {
-	    chartGroup.setAttribute( name, value );
-	}
-	
-	override function getAttribute(name: String, default: String): String {
-	    chartGroup.getAttribute( name, default );
-	}
-	
 }
