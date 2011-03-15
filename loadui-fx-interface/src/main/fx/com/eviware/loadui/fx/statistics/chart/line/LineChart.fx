@@ -160,8 +160,9 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		scrollBar.unitIncrement = timeSpan / 10;
 		scrollBar.blockIncrement = timeSpan / 10;
 		
-		if( oldTimeSpan > maxTime and timeSpan < maxTime )
+		if( oldTimeSpan > maxTime and timeSpan < maxTime ) {
 			scrollBar.value = maxTime;
+		}
 			
 		if( initialized )
 			chartView.setAttribute( TIME_SPAN_ATTRIBUTE, String.valueOf( timeSpan ) );
@@ -203,7 +204,8 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 			setZoomLevel( chartView.getAttribute( ZoomPanel.ZOOM_LEVEL_ATTRIBUTE, ZoomPanel.ZOOM_DEFAULT ) );
 			position = Double.parseDouble( chartView.getAttribute( POSITION_ATTRIBUTE, "0" ) );
 			timeSpan = Long.parseLong( chartView.getAttribute( TIME_SPAN_ATTRIBUTE, "10000" ) );
-			scrollBar.value = (position * maxTime)/(maxTime - timeSpan);
+			if( not showAll )
+				scrollBar.value = (position * maxTime)/(maxTime - timeSpan);
 			
 			for( segment in chartView.getSegments() )
 				addedSegment( segment );
