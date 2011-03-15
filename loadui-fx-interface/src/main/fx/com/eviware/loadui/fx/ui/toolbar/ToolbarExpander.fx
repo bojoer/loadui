@@ -282,7 +282,7 @@ public class ToolbarExpander extends CustomNode, Pagination {
 							}
 						}, Rectangle {
 							layoutX: 13
-							layoutY: 77
+							layoutY: 80
 							fill: bind hrBackgroundFill
 							height: 1
 							width: bind 100 * actualItemsPerPage
