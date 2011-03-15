@@ -105,6 +105,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	
 	var resizeYStart: Number = 0;
 	var resizeImg: String = "{__ROOT__}images/execution-selector-resize.fxz";
+	var resizing: Boolean = false;
 		
 	def resizeAction: Group = Group {
 	   blocksMouse: true
@@ -124,8 +125,12 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 		]
 		onMousePressed: function( e: MouseEvent ) {
 	   	if( e.primaryButtonDown ) {
+	   	    resizing = true;
 	   	    resizeYStart = e.screenY;
 	   	} 
+	   }
+	   onMouseReleased: function( e: MouseEvent ) {
+	   	resizing = false;
 	   }
 	   onMouseDragged: function( e: MouseEvent ) {
 	   	if( e.primaryButtonDown ) {
@@ -136,6 +141,16 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 		   	 	resizeYStart = e.screenY;
 	   	    }
 	   	} 
+	   }
+	}
+	
+	var innerChartHeight = bind (chart as Resizable).height on replace {
+	   if(not resizing){ 
+		   def minHeight = Math.max((chart as Resizable).getMinHeight(), 163 );
+		   if(not resizing and (hbox.layoutInfo as LayoutInfo).height < minHeight){
+	   	   (hbox.layoutInfo as LayoutInfo).height = innerChartHeight;
+	   		setAttribute( HEIGHT_ATTRIBUTE, String.valueOf((hbox.layoutInfo as LayoutInfo).height) );
+		   }
 	   }
 	}
 	

@@ -217,12 +217,17 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 	
 	override var layoutInfo = LayoutInfo { vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS, minWidth: 200 }
 	
+	var h =  bind segmentButtons.height on replace old {
+	   if(old > 0 and h > old){
+			height += h - old;  
+		}
+	}
+	
 	var chartVbox:VBox;
 	def resizable:VBox = VBox {
 		width: bind width
 		height: bind height
 		spacing: 5
-		layoutInfo: LayoutInfo{minHeight: bind segmentButtons.height}
 		content: [
 			HBox {
 				padding: Insets { left: -3, right: 15 }
