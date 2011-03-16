@@ -90,7 +90,7 @@ public class StatisticsMenu extends VBox {
 	var tabContainer:TabContainer;
 	
 	public def menuButtonFont: Font = Font { name:"Arial", size:18 };
-	public def menuButtonLabel: String = "Statistics";
+	public def menuButtonLabel: String = "Analysis";
 	
 	public var onPageSelect:function( page:ChartPage ):Void;
 	
