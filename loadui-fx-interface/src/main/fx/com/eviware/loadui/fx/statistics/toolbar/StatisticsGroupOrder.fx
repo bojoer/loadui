@@ -21,10 +21,10 @@ public class StatisticsGroupOrder extends GroupOrder {
 
 	//Used for ordering the groups (They will appear in the reverse order).
 	override def groupOrder: String[] = [
+		"GLOBAL",
 		"COMPONENTS",
 		"GRAPHS",
-		"ANALYSIS"
+		"ANALYSES"
 	]
-
 }
 
