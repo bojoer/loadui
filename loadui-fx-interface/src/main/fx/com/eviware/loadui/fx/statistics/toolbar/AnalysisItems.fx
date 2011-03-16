@@ -131,7 +131,7 @@ public def REQUEST_ERRORS = AnalysisToolbarItem {
 		"    def chart = chartGroup.createChart( statisticHolder )",
 		"    def chartView = chartGroup.getChartViewForChart( chart )",
 		"    chartView.addSegment( 'Requests', 'PER_SECOND', 'main' )",
-		"    chartView.addSegment( 'Total Failures', 'PER_SECOND', 'main' )",
+		"    chartView.addSegment( 'Failures', 'PER_SECOND', 'main' )",
 		"\}",
 	)
 }
