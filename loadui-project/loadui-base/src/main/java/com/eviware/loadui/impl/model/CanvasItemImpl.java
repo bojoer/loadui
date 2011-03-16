@@ -126,7 +126,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		statisticHolderSupport.addStatisticsWriter( CounterStatisticsWriter.TYPE, requestVariable );
 		counterStatisticSupport.addCounterVariable( REQUEST_COUNTER, requestVariable );
 
-		StatisticVariable.Mutable failuresVariable = statisticHolderSupport.addStatisticVariable( "Total Failures" );
+		StatisticVariable.Mutable failuresVariable = statisticHolderSupport.addStatisticVariable( "Failures" );
 		statisticHolderSupport.addStatisticsWriter( CounterStatisticsWriter.TYPE, failuresVariable );
 		counterStatisticSupport.addCounterVariable( FAILURE_COUNTER, failuresVariable );
 
