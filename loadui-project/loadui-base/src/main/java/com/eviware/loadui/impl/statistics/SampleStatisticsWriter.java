@@ -126,7 +126,8 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 				diff90 = percentilePos90 - Math.floor( percentilePos90 );
 			}
 
-			for( double value : sortedValues )
+			Double value;
+			while( ( value = sortedValues.poll() ) != null )
 			{
 				sumTotalSquare += Math.pow( value - average, 2 );
 				if( i == upperPercPos25 )

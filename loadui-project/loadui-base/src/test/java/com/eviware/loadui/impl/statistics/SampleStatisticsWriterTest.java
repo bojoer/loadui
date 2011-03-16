@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.statistics;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.*;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -38,7 +39,7 @@ import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.impl.statistics.SampleStatisticsWriter.Stats;
 import com.eviware.loadui.util.BeanInjector;
 
-public class SampleStatisticWriterTest
+public class SampleStatisticsWriterTest
 {
 	StatisticHolder holderMock;
 	StatisticHolderSupport holderSupport;
@@ -49,7 +50,7 @@ public class SampleStatisticWriterTest
 	private double avgSum;
 	private double sumTotalSquare;
 	private double stdDev;
-	final Logger logger = LoggerFactory.getLogger( SampleStatisticWriterTest.class );
+	final Logger logger = LoggerFactory.getLogger( SampleStatisticsWriterTest.class );
 	private double average;
 
 	@Before
@@ -150,6 +151,30 @@ public class SampleStatisticWriterTest
 		assertEquals( 5.55, result.getValue( Stats.MEDIAN.name() ).doubleValue(), .1 );
 		assertEquals( 8.12185, result.getValue( Stats.PERCENTILE_75TH.name() ).doubleValue(), .1 );
 		assertEquals( 9.5675, result.getValue( Stats.PERCENTILE_90TH.name() ).doubleValue(), .1 );
+	}
+
+	@Test
+	public void ensurePercentileOrder()
+	{
+		long time = System.currentTimeMillis();
+		double[] values = new double[100];
+		for( int i = 0; i < 100; i++ )
+		{
+			time += 100;
+			values[i] = Math.random() * 100;
+			writer.update( time, values[i] );
+			if( i % 10 == 0 )
+			{
+				Entry entry = writer.output();
+				double p25 = entry.getValue( Stats.PERCENTILE_25TH.name() ).doubleValue();
+				double p50 = entry.getValue( Stats.MEDIAN.name() ).doubleValue();
+				double p75 = entry.getValue( Stats.PERCENTILE_75TH.name() ).doubleValue();
+				double p90 = entry.getValue( Stats.PERCENTILE_90TH.name() ).doubleValue();
+				assertThat( "25th less than 50th", p25, lessThanOrEqualTo( p50 ) );
+				assertThat( "50th less than 75th", p50, lessThanOrEqualTo( p75 ) );
+				assertThat( "75th less than 90th", p75, lessThanOrEqualTo( p90 ) );
+			}
+		}
 	}
 
 	/* Test aggregations */
