@@ -26,9 +26,6 @@ import java.nio.channels.OverlappingFileLockException;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.swing.JScrollPane;
-import javax.swing.UIManager;
-
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.apache.commons.cli.CommandLine;
