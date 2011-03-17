@@ -50,6 +50,7 @@ import com.eviware.loadui.fx.ui.dnd.MovableNode;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.lang.Duration;
+import javafx.animation.Interpolator;
 
 /**
  * Displays a minimap for a Canvas, which allows the user to navigate the full Canvas area.
@@ -114,8 +115,34 @@ public class NavigationPanel extends CustomNode, Resizable {
 	            canSkip: true
 	        }
         ]
-    }
-    
+   }
+   
+   // move to mouse pointer on click animation
+   // current animated X position
+   var animateX: Number on replace{
+       handle.layoutX = animateX;
+       updateCanvasPosition();
+   }
+   // current animated Y position
+   var animateY: Number on replace{
+       handle.layoutY = animateY;
+       updateCanvasPosition();
+   }
+   // animation start and end positions, calculated on onMouseClick 
+   var animateXStart: Number;
+   var animateYStart: Number;
+   var animateXEnd: Number;
+   var animateYEnd: Number;
+   
+   // move animation timeline started on onMouseClick
+	var moveAnimationTimeline: Timeline = Timeline {
+	    keyFrames:[
+	        KeyFrame { time: 0s values: [animateX => animateXStart, animateY => animateYStart] },
+	        KeyFrame { time: 200ms values: [animateX => animateXEnd tween Interpolator.LINEAR, animateY => animateYEnd tween Interpolator.LINEAR] },
+	    ]
+	    repeatCount: 1
+	}
+	
 	var shouldRefreshMinis: Boolean = false;
 	
 	var miniature: Image;
@@ -257,6 +284,16 @@ public class NavigationPanel extends CustomNode, Resizable {
 									width: bind canvas.areaWidth * scale
 									height: bind canvas.areaHeight * scale
 									fill: Color.web( "#2d2d2d" )
+									onMouseClicked: function( e:MouseEvent ) {
+										if( e.button == MouseButton.PRIMARY ){
+											animateXStart = handle.layoutX;
+											animateXEnd = Math.max( 0, Math.min( map.width - handle.layoutBounds.width, e.x - handle.layoutBounds.width/2) );
+											animateYStart = handle.layoutY;
+											animateYEnd = Math.max( 0, Math.min( map.height - handle.layoutBounds.height, e.y - handle.layoutBounds.height/2) );
+											moveAnimationTimeline.evaluateKeyValues();
+											moveAnimationTimeline.playFromStart();
+										}
+									}
 								}, miniatures,
 								handle = MovableNode {
 									contentNode: Group {
@@ -290,9 +327,7 @@ public class NavigationPanel extends CustomNode, Resizable {
 										handle.containment = map.localToScene( map.layoutBounds );
 									}
 									onDragging: function() {
-										canvas.offsetX = ( handle.layoutX + handle.translateX ) / scale as Integer;
-										canvas.offsetY = ( handle.layoutY + handle.translateY ) / scale as Integer;
-										canvas.refreshTerminals();
+										updateCanvasPosition();
 									}
 								}
 							]
@@ -305,6 +340,12 @@ public class NavigationPanel extends CustomNode, Resizable {
 				}
 			]
 		}
+	}
+	
+	function updateCanvasPosition() {
+		canvas.offsetX = ( handle.layoutX + handle.translateX ) / scale as Integer;
+		canvas.offsetY = ( handle.layoutY + handle.translateY ) / scale as Integer;
+		canvas.refreshTerminals();
 	}
 	
 	override function getPrefWidth( height:Float ) {
