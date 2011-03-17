@@ -33,7 +33,7 @@ public class TotalTimeTickCalculator implements TickCalculator<Long>
 	public enum Level
 	{
 		ALL( -1, -1, 0 ), WEEKS( 604800, 100, 4 ), DAYS( 86400, 75, 3 ), HOURS( 3600, 50, 2 ), MINUTES( 60, 50, 1 ), SECONDS(
-				1, 50, 0 );
+				1, 25, 0 );
 
 		private final int interval;
 		private final int unitWidth;
