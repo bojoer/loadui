@@ -40,7 +40,7 @@ import java.io.File;
  */
 public class StatisticsManageWrenchDialog  {
 	
-	public var title:String = "Workspace";
+	public var title:String = "Stored Results";
 	var workspace: WorkspaceItem = MainWindow.instance.workspace;
 	var formT1: Form;
 	var dialogRef: Dialog;
@@ -61,7 +61,7 @@ public class StatisticsManageWrenchDialog  {
 			scene: StatisticsWindow.getInstance().scene
          title: title
          subtitle: "Settings"
-         helpUrl: "http://www.loadui.org/TODO" 
+         helpUrl: "http://loadui.org/Getting-results/managing-stored-results.html#settings" 
          tabs: [
 				Tab {
          			label: "General", content: formT1 = Form {
