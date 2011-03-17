@@ -55,9 +55,9 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 	private long totalPause = 0;
 
 	private long[] aggregateIntervals = { 6000, // 6 seconds
-			120000, // 2 minutes
-			3600000, // 1 hour
-			10800000 // 3 hours
+			240000, // 4 minutes
+			7200000, // 2 hours
+			43200000 // 12 hours
 	};
 	private AggregateLevel[] aggregateLevels = new AggregateLevel[4];
 	private HashSet<Entry> firstLevelEntries = new HashSet<Entry>();
