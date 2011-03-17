@@ -64,7 +64,7 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
         addAnalysisItems();
     }
     
-    override var toolbarTitle = "Statictics";
+    override var toolbarTitle = "Statistics";
     
     override var groupOrder = StatisticsGroupOrder{};
     
