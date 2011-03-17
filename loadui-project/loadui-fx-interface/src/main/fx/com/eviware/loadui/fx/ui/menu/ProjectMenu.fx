@@ -132,6 +132,10 @@ public class ProjectMenu extends HBox {
 		Canvas.showNotes = showNotesButtonState;
 	}
 	
+	// used for file chooser in 'save as' action to set the previously selected value
+	// when file chooser is reopened
+	var lastFileChooserLocation: File;
+	
 	init {
 		var menuContent:Node;
 		var menuButton:MenuButton;
@@ -243,7 +247,7 @@ public class ProjectMenu extends HBox {
 				                MenuItem {
 				                    text: "Save As"
 				                    action: function() {
-				                        def chooser = new JFileChooser();
+				                        def chooser = new JFileChooser(lastFileChooserLocation);
 				                        chooser.addChoosableFileFilter(new XMLFileFilter());
 				                        chooser.setAcceptAllFileFilterUsed(false);
 				                        if (JFileChooser.APPROVE_OPTION == chooser.showSaveDialog(null)) {
@@ -252,23 +256,26 @@ public class ProjectMenu extends HBox {
 				                                def newname = "{destination.getAbsolutePath()}.xml";
 				                                destination = new File(newname); 
 				                            }
-				                            try {
-				                              MainWindow.instance.projectCanvas.generateMiniatures();
-		                                      project.saveAs(destination);
-											  project.save();					
-		                                  } catch(e:IOException) {
-		                                      def warning:Dialog = Dialog {
-		             	                           title: "Warning!"
-		             	                           content: Text {
-		             	                               content: "Failed to Import Project, see log for more details!"
-		             	                           }
-		             	                           okText: "Ok"
-		             	                           onOk: function() {
-		             	                               warning.close();
-		             	                           }
-		             	                           noCancel: true
-		             	                        };
-		                                   }
+				                            lastFileChooserLocation = destination;
+							                   if(destination != null and destination.exists()){
+							                     // confirmation dialog when selected file already exists
+														def confirmDialog: Dialog = Dialog {
+															title: "Confirm Save As"
+															content: [
+																Text { content: "File exists, overwrite with current project?" },
+															]
+															okText: "Yes"
+															cancelText: "No"
+															onOk: function() {
+																saveAsProject(destination);
+																confirmDialog.close();
+															}
+															onCancel: function() {confirmDialog.close();}
+														}
+									             }
+							                   else{
+							                      saveAsProject(destination);
+							                   }
 				                        }
 				                    }
 				                }
@@ -347,6 +354,26 @@ public class ProjectMenu extends HBox {
 				]
 			}
 		];
+	}
+	
+	function saveAsProject(destination: File){
+	    try {
+	      MainWindow.instance.projectCanvas.generateMiniatures();
+	      project.saveAs(destination);
+			project.save();					
+	    } catch(e:IOException) {
+	        def warning:Dialog = Dialog {
+	            title: "Warning!"
+	            content: Text {
+	                content: "Failed to Import Project, see log for more details!"
+	            }
+	            okText: "Ok"
+	            onOk: function() {
+	                warning.close();
+	            }
+	            noCancel: true
+	         };
+	     }
 	}
 }
 
