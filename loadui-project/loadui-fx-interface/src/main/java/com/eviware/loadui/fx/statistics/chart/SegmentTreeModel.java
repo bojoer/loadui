@@ -200,12 +200,19 @@ public class SegmentTreeModel extends DefaultTreeModel
 		@Override
 		protected List<TreeNode> getChildren()
 		{
-			List<TreeNode> children = new ArrayList<TreeNode>();
-			for( String sourceName : ( ( ChartViewTreeNode )( getParent().getParent() ) ).lineChartView
-					.getSources( ( ( StatisticVariableTreeNode )getParent() ).variableName ) )
-				children.add( new SourceTreeNode( this, sourceName ) );
+			ArrayList<TreeNode> children = new ArrayList<TreeNode>();
+			ArrayList<String> sources = new ArrayList<String>(
+					( ( ChartViewTreeNode )( getParent().getParent() ) ).lineChartView
+							.getSources( ( ( StatisticVariableTreeNode )getParent() ).variableName ) );
+			Collections.sort( sources, nameComparator );
+			if( sources.contains( StatisticVariable.MAIN_SOURCE ) )
+			{
+				sources.remove( StatisticVariable.MAIN_SOURCE );
+				sources.add( 0, StatisticVariable.MAIN_SOURCE );
+			}
 
-			Collections.sort( children, nameComparator );
+			for( String sourceName : sources )
+				children.add( new SourceTreeNode( this, sourceName ) );
 			return children;
 		}
 

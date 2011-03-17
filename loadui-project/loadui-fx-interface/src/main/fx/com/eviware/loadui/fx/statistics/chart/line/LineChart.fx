@@ -36,7 +36,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.util.Math;
 
-
 import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils;
@@ -346,9 +345,10 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 		xRange.setMax( end );
 		
 		def padding = 10000;
+		def range = [ position - padding, end + padding ];
 		for( m in lines.values() ) {
 			def model = m as LineSegmentChartModel;
-			model.xRange = [ position - padding, end + padding ];
+			model.xRange = range;
 		}
 	}
 	

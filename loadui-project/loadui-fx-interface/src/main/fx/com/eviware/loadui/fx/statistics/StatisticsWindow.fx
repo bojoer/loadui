@@ -35,6 +35,8 @@ import com.sun.javafx.scene.layout.Region;
 import com.eviware.loadui.fx.statistics.topmenu.StatisticsMenu;
 import com.eviware.loadui.fx.statistics.topmenu.ManageMenu;
 
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.StatisticsManager;
@@ -86,6 +88,8 @@ public def STATISTICS_VIEW = "statistics.view";
 public def VIEW_ATTRIBUTE = "gui.statistics.view";
 
 public class StatisticsWindow {
+	
+	def statisticPagesListener = new StatisticPagesListener();
 
 	public var stage:Stage;
 	public var project:ProjectItem on replace {
@@ -93,6 +97,8 @@ public class StatisticsWindow {
 		execution = null;
 		comparedExecution = null;
 		scene = null;
+		project.getStatisticPages().addEventListener( CollectionEvent.class, statisticPagesListener );
+		checkForEmptyPages();
 	}
 	
 	var appState:AppState;
@@ -205,6 +211,12 @@ public class StatisticsWindow {
 		//tabs.clear();
 		stage.close();
 	}
+	
+	function checkForEmptyPages() {
+		def statisticPages = project.getStatisticPages();
+		if( statisticPages.getChildCount() == 0 )
+			statisticPages.createPage( "General" );
+	}
 }
 	
 class CurrentExecutionListener extends ExecutionListenerAdapter {
@@ -218,5 +230,16 @@ class CurrentExecutionListener extends ExecutionListenerAdapter {
 		runInFxThread( function():Void {
 			currentExecution = null;
 		} );
+	}
+}
+
+class StatisticPagesListener extends WeakEventHandler {
+    override function handleEvent( e ) { 
+		def event: CollectionEvent = e as CollectionEvent;
+		if( event.getEvent() == CollectionEvent.Event.REMOVED ) {
+			runInFxThread( function():Void {
+				checkForEmptyPages();
+			} );
+		}
 	}
 }

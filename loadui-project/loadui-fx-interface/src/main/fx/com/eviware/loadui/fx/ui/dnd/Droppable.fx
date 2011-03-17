@@ -90,7 +90,11 @@ public mixin class Droppable extends BaseMixin {
 	
 	package function drop( draggable:Draggable ) {
 		hovering = false;
-		onDrop( draggable );
+		try {
+			onDrop( draggable );
+		} catch (e) {
+			e.printStackTrace();
+		}
 	}
 }
 
