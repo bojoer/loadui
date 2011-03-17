@@ -42,6 +42,11 @@ public class LTableModel extends AbstractTableModel
 		this.follow = follow;
 	}
 
+	public ArrayList getHeader()
+	{
+		return header;
+	}
+	
 	@Override
 	public int getColumnCount()
 	{

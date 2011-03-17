@@ -45,6 +45,9 @@ createProperty 'follow', Boolean, false
 createProperty 'summaryRows', Long, 0
 createProperty 'appendSaveFile', Boolean, false
 createProperty 'formatTimestamps', Boolean, true
+createProperty 'addHeaders', Boolean, false
+
+def latestHeader
 
 myTableModel = new LTableModel(1000, follow.value as Boolean)
 myTableModel.addTableModelListener(new TableModelListener() {
@@ -82,6 +85,11 @@ output = { message ->
 			writer = new CSVWriter(new FileWriter(saveFileName, appendSaveFile.value), (char) ',');
 		}
 		try {
+			String[] header = myTableModel.header
+			if(addHeaders.value && !Arrays.equals(latestHeader, header)){
+				writer.writeNext(header)
+				latestHeader = header
+			}
 			String[] entries = myTableModel.lastRow
 			writer.writeNext(entries)
 			writer.flush()
@@ -225,6 +233,7 @@ settings(label:'Logging') {
 		property(property: logFilePath, label: 'Log File (Comma separated, relative to loadUI home dir)' )
 		property(property: appendSaveFile, label: 'Check to append selected file', )
 		property(property: formatTimestamps, label: 'Check to format timestamps(hh:mm:ss:ms)')
+		property(property: addHeaders, label: 'Check to add headers to a file')
 		label('(If not appending file, its name will be used to generate new log files each time test is run.)')
 	}
 }
