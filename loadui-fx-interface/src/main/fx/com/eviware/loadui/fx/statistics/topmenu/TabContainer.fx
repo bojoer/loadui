@@ -185,17 +185,18 @@ public class TabContainer extends HBox {
 	}
 };
 
-class StatisticPagesListener extends EventHandler {  
+class StatisticPagesListener extends EventHandler {
     override function handleEvent(e: EventObject) { 
 		def event: CollectionEvent = e as CollectionEvent;
 		if(event.getEvent() == CollectionEvent.Event.REMOVED){
 			FxUtils.runInFxThread( function(): Void {
 			   def sp:StatisticPage = event.getElement() as StatisticPage;
 			   for(tab in sortableBox.content){
-					if( (tab as RadioButton).value == sp){
-							delete tab from sortableBox.content;
-							break;
-				   	}
+					if( (tab as RadioButton).value == sp) {
+						if( (tab as RadioButton).selected ) (tab as RadioButton).toggleGroup = null;
+						delete tab from sortableBox.content;
+						break;
+			   	}
 				}
 			previouslySelectedTab.selected = true;
 			});
