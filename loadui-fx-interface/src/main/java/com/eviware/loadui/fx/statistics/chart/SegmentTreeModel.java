@@ -123,7 +123,7 @@ public class SegmentTreeModel extends DefaultTreeModel
 		@Override
 		public String toString()
 		{
-			return "StatisticHolders";
+			return "Components";
 		}
 	}
 

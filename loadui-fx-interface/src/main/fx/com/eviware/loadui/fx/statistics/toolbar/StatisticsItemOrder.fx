@@ -64,42 +64,20 @@ import com.eviware.loadui.api.component.categories.*;
 
 import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
 
+//Used for ordering the items
+def itemOrder:String[] = [ "response times", "request throughput", "bytes throughput", "request percentile", "assertion failures", "request errors", "running requests"  ];
+
 public class StatisticsItemOrder extends Comparator {
-	//Used for ordering the items
-	def loadGeneratorOrder:String[] = [ "FIXED RATE", "VARIANCE", "RANDOM", "RAMP", "VIRTUAL USERS", "FIXED LOAD" ];
-	def analysisOrder:String[] = [  "STATISTICS", "ASSERTION"  ];
-	def flowOrder:String[] = [ "SPLITTER", "DELAY" ];
-	    	
-	public override function compare(o1, o2) {
-		 def t1:ToolbarItem = o1 as ToolbarItem;
-		 def t2:ToolbarItem = o2 as ToolbarItem;
-		 
-		 if (t1.category.equalsIgnoreCase("Generators") and t2.category.equalsIgnoreCase("Generators")) {
-			var index1 = Sequences.indexOf(loadGeneratorOrder, t1.label.toUpperCase());
-		 	var index2 = Sequences.indexOf(loadGeneratorOrder, t2.label.toUpperCase());
-		     
-		 	if (not (index1 == -1 or index2 == -1))
-		 		 return index1-index2;
-		 }
-		
-		 
-		 if (t1.category.equalsIgnoreCase("Analysis") and t2.category.equalsIgnoreCase("Analysis")) {
-		 	var index1 = Sequences.indexOf(analysisOrder, t1.label.toUpperCase());
-		 	var index2 = Sequences.indexOf(analysisOrder, t2.label.toUpperCase());
-		 	        
-		 	if (not (index1 == -1 or index2 == -1))
-		 		return index1-index2;
-		 }
-		 	    
-		if (t1.category.equalsIgnoreCase("Flow") and t2.category.equalsIgnoreCase("Flow")) {
-			var index1 = Sequences.indexOf(flowOrder, t1.label.toUpperCase());
-			var index2 = Sequences.indexOf(flowOrder, t2.label.toUpperCase());
-			        
-			if (not (index1 == -1 or index2 == -1))
-				return index1-index2;
-		}
-	    
-	    return o1.toString().compareTo(o2.toString());
+	public override function compare( o1, o2 ) {
+		def t1:ToolbarItem = o1 as ToolbarItem;
+		def t2:ToolbarItem = o2 as ToolbarItem;
+		def index1 = Sequences.indexOf( itemOrder, t1.label.toLowerCase() );
+		def index2 = Sequences.indexOf( itemOrder, t2.label.toLowerCase() );
+	
+		if (index1 == index2 )
+			t1.label.compareTo( t2.label )
+		else
+			index1-index2;
 	}
 }
 

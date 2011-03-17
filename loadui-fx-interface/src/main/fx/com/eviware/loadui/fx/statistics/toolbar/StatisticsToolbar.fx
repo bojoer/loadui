@@ -150,22 +150,6 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
 
 	/** Adds analysis toolbar items to the toolbar */
 	function addAnalysisItems(){
-	   /*def item: AnalysisToolbarItem = AnalysisToolbarItem {
-			label: "Average Comparison"
-			tooltip: "Adds Components with a TimeTaken statistic."
-			//icon:
-			templateScript: StringUtils.multiline(
-				"def variable = statisticHolder.getStatisticVariable('TimeTaken')",
-				"if( variable?.statisticNames?.contains('AVERAGE') ) \{",
-				"    chartGroup.type = 'com.eviware.loadui.api.statistics.model.chart.LineChartView'",
-				"    def chart = chartGroup.createChart( statisticHolder )",
-				"    def chartView = chartGroup.getChartViewForChart( chart )",
-				"    chartView.addSegment( 'TimeTaken', 'AVERAGE', 'main' )",
-				"    log.info \"Added new Chart: $statisticHolder to $chartGroup.title\"",
-				"\}"
-			);
-		} 
-   	addItem(item);*/
    	for( item in AnalysisItems.ALL )
    		addItem(item);
 	}
