@@ -69,6 +69,7 @@ public class TabContainer extends HBox {
 	public var statisticPages:StatisticPages on replace { sortableBox.content = generateTabs(); };
 
 	var latestClickedTab:StatisticsTab;
+	var previouslySelectedTab:StatisticsTab;
 	var sortableBox:SortableBox;
 	def tabGroup:ToggleTabGroup = new ToggleTabGroup();
 
@@ -132,7 +133,6 @@ public class TabContainer extends HBox {
 			{
 				insert contextMenu into AppState.byScene( scene ).overlay.content;				
 			}
-			deleteAction.disable = (sizeof sortableBox.content == 1);
 			var list:String[] = for (p:StatisticPage in statisticPages.getChildren()) {p.getTitle()};
 		},
 		onHiding: function():Void {
@@ -197,8 +197,8 @@ class StatisticPagesListener extends EventHandler {
 							break;
 				   	}
 				}
+			previouslySelectedTab.selected = true;
 			});
-			FxUtils.runInFxThread( function(): Void { (sortableBox.content[0] as StatisticsTab).selected = true;});
 		} else if(event.getEvent() == CollectionEvent.Event.ADDED){
 			FxUtils.runInFxThread( function(): Void {
 			   def sp:StatisticPage = event.getElement() as StatisticPage;
@@ -216,7 +216,8 @@ class StatisticPagesListener extends EventHandler {
 class ToggleTabGroup extends ToggleGroup {
 	override var selectedToggle on replace oldVal {
 		currentPage = selectedToggle.value as StatisticPage;
-		   onSelect( selectedToggle.value as StatisticPage );
+		onSelect( selectedToggle.value as StatisticPage );
+		previouslySelectedTab = oldVal as StatisticsTab;
 	}
 }
 
