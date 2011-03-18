@@ -146,6 +146,7 @@ public class StatisticsMenu extends VBox {
 						}
 						]
 					}, ExecutionSelector {
+							layoutInfo: LayoutInfo { margin: Insets { left: 20 } }
 					}, Label {
 						layoutInfo: LayoutInfo {
 							hgrow: Priority.ALWAYS
