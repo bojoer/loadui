@@ -103,6 +103,14 @@ if( limits != null ) {
 	}
 }
 
+// abort ongoing requests
+if( abort != null && abort.toLowerCase().startsWith("t")) {
+	project.setAbortOnFinish( true )
+}
+else if( abort != null && abort.toLowerCase().startsWith("f")){
+	project.setAbortOnFinish( false )
+}
+
 //Assign Agents
 if( agents != null ) {
 	for( agentUrl in agents.keySet() ) {

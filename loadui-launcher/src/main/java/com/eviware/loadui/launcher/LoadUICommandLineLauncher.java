@@ -42,6 +42,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	protected static final String REPORT_DIR_OPTION = "r";
 	protected static final String REPORT_FORMAT_OPTION = "F";
 	protected static final String STATISTICS_REPORT_OPTION = "S";
+	protected static final String ABORT_ONGOING_REQUESTS_OPTION = "A";
 
 	public static void main( String[] args )
 	{
@@ -90,6 +91,12 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 						.withDescription(
 								"Sets which Statistics pages to add to the generated report (leave blank save all pages)" )
 						.hasOptionalArgs().create( STATISTICS_REPORT_OPTION ) );
+		options
+				.addOption(
+						ABORT_ONGOING_REQUESTS_OPTION,
+						"abort",
+						true,
+						"Overrides project's \"Abort ongoing requests on finish\" property (supported values are: true - abort ongoing requests, false - wait for test to finish)" );
 
 		return options;
 	}
@@ -136,6 +143,8 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 				statisticPages = optionValues == null ? Collections.<String> emptyList() : Arrays.asList( optionValues );
 			}
 			attributes.put( "statisticPages", statisticPages );
+
+			attributes.put( "abort", cmd.getOptionValue( ABORT_ONGOING_REQUESTS_OPTION ) );
 
 			command = new ResourceGroovyCommand( "/RunTest.groovy", attributes );
 		}
