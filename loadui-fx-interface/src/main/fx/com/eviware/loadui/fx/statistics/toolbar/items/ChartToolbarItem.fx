@@ -29,7 +29,7 @@ import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.MainWindow;
 import javafx.scene.text.Text;
 
-def iconImage = Image { url: "{__ROOT__}images/png/default-component-icon.png" };
+def iconImage = Image { url: "{__ROOT__}images/png/line-chart.png" };
 
 public class ChartToolbarItem extends StatisticsToolbarItem {
 	
