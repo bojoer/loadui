@@ -96,7 +96,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 						ABORT_ONGOING_REQUESTS_OPTION,
 						"abort",
 						true,
-						"Overrides project's \"Abort ongoing requests on finish\" property (supported values are: true - abort ongoing requests, false - wait for test to finish)" );
+						"Overrides \"Abort ongoing requests on finish\" project property. If set to true ongoing requests will be canceled, if false test will finish when all ongoing requests complete. If not set, property value from project will be used to determine what to do with ongoing requests." );
 
 		return options;
 	}
