@@ -24,6 +24,7 @@ import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.api.statistics.store.Entry;
+import com.eviware.loadui.impl.statistics.SampleStatisticsWriter.Stats;
 
 /**
  * 
@@ -138,7 +139,22 @@ public class MinMaxStatisticsWriter extends AbstractStatisticsWriter
 	@Override
 	public Entry aggregate( Set<Entry> entries )
 	{
-		// TODO Implement this
-		return null;
+		if( entries.size() == 0 )
+			return null;
+		if( entries.size() == 1 )
+			return entries.iterator().next();
+		
+		double globalMin = Double.MAX_VALUE;
+		double globalMax = Double.MIN_VALUE;
+		long greatestTimestamp = -1;
+		
+		for( Entry e : entries )
+		{
+			Math.min( globalMin, e.getValue( Stats.MIN.name() ).doubleValue() );
+			Math.min( globalMax, e.getValue( Stats.MAX.name() ).doubleValue() );
+			greatestTimestamp = Math.max( greatestTimestamp, e.getTimestamp() );
+		}
+		
+		return at( greatestTimestamp ).put( Stats.MIN.name(), globalMin ).put( Stats.MAX.name(), globalMax ).build( false );
 	}
 }
