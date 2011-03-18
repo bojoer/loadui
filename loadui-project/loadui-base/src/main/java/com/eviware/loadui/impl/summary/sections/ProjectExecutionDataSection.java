@@ -40,7 +40,7 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 
 		super( "Execution Data" );
 		project = projectItemImpl;
-		addValue( "Execution Time", getExecutionTime() );
+		addValue( "Duration", getExecutionTime() );
 		addValue( "Start Time", getStartTime() );
 		addValue( "End Time", getEndTime() );
 		addValue( "Total number of requests", getTotalNumberOfRequests() );

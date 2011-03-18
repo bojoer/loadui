@@ -35,7 +35,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	{
 		super( "Execution Data" );
 		testcase = ( SceneItemImpl )sceneItem;
-		addValue( "Execution Time", getExecutionTime() );// hh:mm:ss
+		addValue( "Duration", getExecutionTime() );// hh:mm:ss
 		addValue( "Start Time", getStartTime() );
 		addValue( "End Time", getEndTime() );
 		addValue( "Total number of requests", getTotalNumberOfRequests() );
