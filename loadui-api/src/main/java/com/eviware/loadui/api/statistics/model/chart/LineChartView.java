@@ -54,5 +54,10 @@ public interface LineChartView extends ChartView, EventFirer
 		 * @return
 		 */
 		public Statistic<?> getStatistic();
+
+		public interface Removable extends LineSegment
+		{
+			public void remove();
+		}
 	}
 }

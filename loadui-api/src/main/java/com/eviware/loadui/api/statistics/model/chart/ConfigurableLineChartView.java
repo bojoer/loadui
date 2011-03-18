@@ -58,12 +58,5 @@ public interface ConfigurableLineChartView extends LineChartView
 	 * @param source
 	 * @return
 	 */
-	public LineSegment addSegment( String variableName, String statisticName, String source );
-
-	/**
-	 * Removes a LineSegment which has previously been added.
-	 * 
-	 * @param segment
-	 */
-	public void removeSegment( LineSegment segment );
+	public LineSegment.Removable addSegment( String variableName, String statisticName, String source );
 }

@@ -24,11 +24,13 @@ import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 
-import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 
 public class DeletableSegmentButton extends SegmentButton, Draggable, Deletable {
 	override var revert = false;
 	override var confirmDelete = false;
+	
+	public-init var segment: LineSegment.Removable;
 	
 	def contextMenu:PopupMenu = PopupMenu {
 		items: [
@@ -55,6 +57,6 @@ public class DeletableSegmentButton extends SegmentButton, Draggable, Deletable 
 	}
 	
 	override function doDelete():Void {
-		(chartView as ConfigurableLineChartView).removeSegment( model.segment );
+		segment.remove();
 	}
 }

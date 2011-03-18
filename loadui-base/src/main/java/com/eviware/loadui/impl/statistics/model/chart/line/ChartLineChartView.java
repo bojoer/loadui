@@ -59,7 +59,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 		for( String segmentString : StringUtils.deserialize( getAttribute( SEGMENTS_ATTRIBUTE, "" ) ) )
 		{
 			List<String> parts = StringUtils.deserialize( segmentString );
-			ChartLineSegment segment = new ChartLineSegment( chart, parts.get( 1 ), parts.get( 2 ), parts.get( 3 ) );
+			ChartLineSegment segment = new ChartLineSegment( this, parts.get( 1 ), parts.get( 2 ), parts.get( 3 ) );
 			putSegment( segment );
 			provider.fireSegmentAdded( segment );
 		}
@@ -86,9 +86,9 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	}
 
 	@Override
-	public LineSegment addSegment( String variableName, String statisticName, String source )
+	public LineSegment.Removable addSegment( String variableName, String statisticName, String source )
 	{
-		ChartLineSegment segment = new ChartLineSegment( chart, variableName, statisticName, source );
+		ChartLineSegment segment = new ChartLineSegment( this, variableName, statisticName, source );
 		String segmentId = segment.toString();
 
 		if( getSegment( segmentId ) == null )
@@ -98,10 +98,9 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 			provider.fireSegmentAdded( segment );
 		}
 
-		return getSegment( segmentId );
+		return ( ChartLineSegment )getSegment( segmentId );
 	}
 
-	@Override
 	public void removeSegment( LineSegment segment )
 	{
 		if( deleteSegment( segment ) )
@@ -148,6 +147,11 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	public String getLabel()
 	{
 		return chart.getStatisticHolder().getLabel();
+	}
+
+	public Chart getChart()
+	{
+		return chart;
 	}
 
 	private class StatisticVariableListener implements EventHandler<CollectionEvent>
