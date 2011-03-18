@@ -9,9 +9,9 @@ import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.impl.property.DelegatingAttributeHolderSupport;
 import com.eviware.loadui.util.StringUtils;
 
-public class ChartLineSegment implements LineSegment
+public class ChartLineSegment implements LineSegment.Removable
 {
-	private final Chart chart;
+	private final ChartLineChartView chartView;
 	private final DelegatingAttributeHolderSupport attributeSupport;
 	private final String id;
 	private final String variableName;
@@ -20,20 +20,20 @@ public class ChartLineSegment implements LineSegment
 
 	private Statistic<?> statistic;
 
-	public ChartLineSegment( Chart chart, String variableName, String statisticName, String source )
+	public ChartLineSegment( ChartLineChartView chart, String variableName, String statisticName, String source )
 	{
-		this.chart = chart;
+		this.chartView = chart;
 		this.variableName = variableName;
 		this.statisticName = statisticName;
 		this.source = source;
-		id = StringUtils.serialize( Arrays.asList( chart.getStatisticHolder().getId(), variableName, statisticName,
-				source ) );
+		id = StringUtils.serialize( Arrays.asList( chart.getChart().getStatisticHolder().getId(), variableName,
+				statisticName, source ) );
 		attributeSupport = new DelegatingAttributeHolderSupport( chart, "_SEGMENT_" + id + "_" );
 	}
 
 	public Chart getChart()
 	{
-		return chart;
+		return chartView.getChart();
 	}
 
 	public String getSource()
@@ -61,7 +61,7 @@ public class ChartLineSegment implements LineSegment
 	public Statistic<?> getStatistic()
 	{
 		if( statistic == null )
-			statistic = chart.getStatisticHolder().getStatisticVariable( variableName )
+			statistic = chartView.getChart().getStatisticHolder().getStatisticVariable( variableName )
 					.getStatistic( statisticName, source );
 
 		return statistic;
@@ -89,5 +89,11 @@ public class ChartLineSegment implements LineSegment
 	public Collection<String> getAttributes()
 	{
 		return attributeSupport.getAttributes();
+	}
+
+	@Override
+	public void remove()
+	{
+		chartView.removeSegment( this );
 	}
 }

@@ -391,8 +391,8 @@ public class LineChart extends BaseNode, Resizable, BaseChart, Releasable {
 			comparedLines.put( model, comparedModel );
 			chart.addModel( comparedModel, comparedModel.chartStyle );
 		}
-		insert if( chartView instanceof ConfigurableLineChartView ) {
-			DraggableFrame { draggable: DeletableSegmentButton { compactSegments: bind compactSegments, chartView: chartView, model: model, confirmDialogScene: bind scene } };
+		insert if( segment instanceof LineSegment.Removable ) {
+			DraggableFrame { draggable: DeletableSegmentButton { segment: segment as LineSegment.Removable, compactSegments: bind compactSegments, chartView: chartView, model: model, confirmDialogScene: bind scene } };
 		} else {
 			SegmentButton { compactSegments: bind compactSegments, chartView: chartView, model: model };
 		} into segmentButtons.content;
