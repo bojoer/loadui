@@ -23,6 +23,7 @@ package com.eviware.loadui.fx.widgets;
 
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.FxUtils;
+import com.eviware.loadui.fx.util.ModelUtils;
 
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.events.EventHandler;
@@ -43,9 +44,15 @@ public mixin class ModelItemHolder extends Deletable {
 	public-read protected var modelItem: ModelItem on replace oldVal = newVal {
 		if( oldVal != null )
 			oldVal.removeEventListener( BaseEvent.class, listener );
-		if( newVal != null )
-			newVal.addEventListener( BaseEvent.class, listener );		
+		if( newVal != null ) {
+			newVal.addEventListener( BaseEvent.class, listener );
+			labelHolder.labeled = newVal;
+		}		
 	}
+	
+	def labelHolder = ModelUtils.getLabelHolder( modelItem );
+	
+	public def label = bind labelHolder.label;
 	
 	override function doDelete() {
 		modelItem.delete();	

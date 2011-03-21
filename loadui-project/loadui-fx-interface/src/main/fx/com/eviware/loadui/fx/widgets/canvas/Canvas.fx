@@ -27,6 +27,7 @@ import javafx.scene.CustomNode;
 import javafx.scene.Group;
 import javafx.scene.layout.Resizable;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.paint.Color;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
@@ -45,6 +46,7 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
+import com.eviware.loadui.fx.ui.resources.GrayShape;
 import com.eviware.loadui.fx.widgets.toolbar.NoteToolbarItem;
 import com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
@@ -350,6 +352,12 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	override function create() {
 		Group {
 			content: [
+				SVGPath {
+					content: GrayShape.SHAPE
+					layoutX: 28
+					layoutY: 150
+					visible: bind label.equals( GrayShape.STRING );
+				},
 				Rectangle {
 					fill: Color.TRANSPARENT
 					width: bind width

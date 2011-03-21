@@ -110,8 +110,6 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 		}
 	}
 	
-	public-init var label: String = sceneItem.getLabel();
-	
 	public var selected: Boolean = false;
 	
 	public var width: Number = 95;
@@ -130,14 +128,6 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 				runInFxThread(function():Void {running = false;});
 			}
 		}
-		else if( e instanceof BaseEvent ) { 
-			def event = e as BaseEvent;
-			if (event.getKey().equals(ModelItem.LABEL)){
-			    runInFxThread(function():Void {
-			        label = sceneItem.getLabel();
-			    });
-			}
-		} 
 	}
 	
 	override function create() {
@@ -215,7 +205,6 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 	
 	public function copy(placeholder: Boolean): TestCaseIcon {
 		TestCaseIcon {
-			label: label
 			selected: selected
 			isPlaceholder: placeholder
 			sceneItem: sceneItem

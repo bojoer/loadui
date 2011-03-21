@@ -81,7 +81,6 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		oldCanvasObject.removeEventListener( BaseEvent.class, this );
 		if( canvasObject != null ) {
 			canvasObject.addEventListener( BaseEvent.class, this );
-			label = canvasObject.getLabel();
 			active = canvasObject.isActive();
 			def terminals = for( terminal in canvasObject.getTerminals() ) TerminalNode { id: terminal.getId(), canvas: canvas, terminal: terminal, fill: bind color };
 			inputs = terminals[t|t.terminal instanceof InputTerminal];
@@ -132,8 +131,6 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	}
 	
 	public-read var color:Color;
-	
-	public-read var label:String;
 	
 	public-read var active:Boolean;
 	
@@ -269,9 +266,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			}
 		} else if( e instanceof BaseEvent ) {
 			def event = e as BaseEvent;
-			if( event.getKey() == CanvasObjectItem.LABEL ) {
-				runInFxThread( function():Void { label = canvasObject.getLabel() } );
-			} else if( event.getKey() == CanvasObjectItem.ACTIVITY ) {
+			if( event.getKey() == CanvasObjectItem.ACTIVITY ) {
 				runInFxThread( function():Void { active = canvasObject.isActive() } );
 			}
 		}

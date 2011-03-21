@@ -33,7 +33,7 @@ public function getLabelHolder( labeled:Labeled ):LabelHolder {
 public class LabelHolder extends WeakEventHandler {
 	public-read var label:String = "null";
 	
-	public-init var labeled:Labeled on replace oldLabeled {
+	public var labeled:Labeled on replace oldLabeled {
 		if( oldLabeled != null and oldLabeled instanceof EventFirer )
 			(oldLabeled as EventFirer).removeEventListener( BaseEvent.class, this );
 			
