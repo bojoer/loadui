@@ -36,35 +36,30 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.SVGPath;
 import javafx.geometry.Insets;
 import javafx.fxd.FXDNode;
-import javafx.scene.effect.Glow;
 import javafx.scene.Cursor;
 import javafx.scene.text.Font;  
 
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
-
-import com.javafx.preview.control.MenuButton;
-import com.javafx.preview.control.CustomMenuItem;
-import com.javafx.preview.control.PopupMenu;
-
-import com.eviware.loadui.fx.AppState;
-import com.eviware.loadui.util.BeanInjector;
-
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
-
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
-
-import com.eviware.loadui.fx.statistics.StatisticsWindow;
-
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
+import com.eviware.loadui.fx.ui.menu.MenubarButton;
+
+
+import com.javafx.preview.control.MenuButton;
+import com.javafx.preview.control.CustomMenuItem;
+import com.javafx.preview.control.PopupMenu;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -117,21 +112,15 @@ public class ExecutionSelector extends Group {
   		FxUtils.runInFxThread( function():Void { loadExecutions(); } );
    }
    
-   def glow = Glow { level: .2 };
-   
    var popupWidth: Number = 411;
    var popupHeight: Number = 442;
    
-   def openButton: Group = Group {
-	   content: [
-	   	FXDNode {
-				url: bind openImg
-				visible: true
-				effect: bind if( openButton.hover ) glow else null
-			}
-		]
-		onMousePressed: function( e:MouseEvent ) { menu.show(openButton, HPos.CENTER, VPos.BOTTOM, -201 + openButton.layoutBounds.width / 2, 6); }
+	def openButton:MenubarButton = MenubarButton {
+		shape: "M0,5 L3,5 3,8 5,8 5,5 8,5 8,3 5,3 5,0 3,0 3,3 0,3 Z"
+		action: function():Void { menu.show(openButton, HPos.CENTER, VPos.BOTTOM, -201 + openButton.layoutBounds.width / 2, 6); }
 	}
+
+	
    var leftLabel: Label = Label {}
    var rightLabel: Label = Label {}
    
@@ -533,7 +522,7 @@ public class ExecutionSelector extends Group {
 	   
 	   content = [
 	   	HBox {
-	   	    nodeHPos: HPos.CENTER
+	   	    nodeVPos: VPos.CENTER
 	   	    spacing: 9
 	   	    content: [leftLabel, openButton, rightLabel]
 	   	},

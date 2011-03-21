@@ -33,6 +33,7 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
+import com.eviware.loadui.fx.ui.menu.TabcontainerButton;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -86,35 +87,59 @@ public class TabContainer extends HBox {
 		}
 	}
 	
-	def addTabButton:Group = Group {
-			   content: [
-			   	FXDNode {
-						url: bind openImg
-						visible: true
-						effect: bind if( addTabButton.hover ) Glow{ level: .2 } else null
+	def addTabButton:TabcontainerButton = TabcontainerButton {
+		shape: "M0,5 L3,5 3,8 5,8 5,5 8,5 8,3 5,3 5,0 3,0 3,3 0,3 Z"
+		action: function():Void {
+	    	var highestPageNumber:Integer = 0;
+	   	for ( child in statisticPages.getChildren() )
+	   	{
+	   	   var title:String = child.getTitle();
+	      	try
+	      	{
+   	      	if ( title.substring(0, DEFAULT_PAGE_NAME.length() + 1).equals("{DEFAULT_PAGE_NAME} ")	)
+   	      	{
+	   	      	   var pageNumber:Integer = Integer.valueOf( title.substring(DEFAULT_PAGE_NAME.length() + 1) );
+	   	      	   if ( pageNumber > highestPageNumber )
+	   	      	   {
+	   	      	   	highestPageNumber = pageNumber
+	   	      	   }
 					}
-				]
-				onMousePressed: function(e:MouseEvent) {
-		   	    	var highestPageNumber:Integer = 0;
-		   	   	for ( child in statisticPages.getChildren() )
-		   	   	{
-		   	   	   var title:String = child.getTitle();
-		   	      	try
-		   	      	{
-			   	      	if ( title.substring(0, DEFAULT_PAGE_NAME.length() + 1).equals("{DEFAULT_PAGE_NAME} ")	)
-			   	      	{
-				   	      	   var pageNumber:Integer = Integer.valueOf( title.substring(DEFAULT_PAGE_NAME.length() + 1) );
-				   	      	   if ( pageNumber > highestPageNumber )
-				   	      	   {
-				   	      	   	highestPageNumber = pageNumber
-				   	      	   }
-								}
-							} catch (ex: NumberFormatException) {;}
-							  catch (ex: StringIndexOutOfBoundsException) {;}
-		   	   	}
-		   	   	statisticPages.createPage("{DEFAULT_PAGE_NAME} {highestPageNumber + 1}");
-		   		}
-			}
+				} catch (ex: NumberFormatException) {;}
+				  catch (ex: StringIndexOutOfBoundsException) {;}
+	   	}
+	   	statisticPages.createPage("{DEFAULT_PAGE_NAME} {highestPageNumber + 1}");
+		}
+	}
+	
+//	def addTabButton:Group = Group {
+//			   content: [
+//			   	FXDNode {
+//						url: bind openImg
+//						visible: true
+//						effect: bind if( addTabButton.hover ) Glow{ level: .2 } else null
+//					}
+//				]
+//				onMousePressed: function(e:MouseEvent) {
+//		   	    	var highestPageNumber:Integer = 0;
+//		   	   	for ( child in statisticPages.getChildren() )
+//		   	   	{
+//		   	   	   var title:String = child.getTitle();
+//		   	      	try
+//		   	      	{
+//			   	      	if ( title.substring(0, DEFAULT_PAGE_NAME.length() + 1).equals("{DEFAULT_PAGE_NAME} ")	)
+//			   	      	{
+//				   	      	   var pageNumber:Integer = Integer.valueOf( title.substring(DEFAULT_PAGE_NAME.length() + 1) );
+//				   	      	   if ( pageNumber > highestPageNumber )
+//				   	      	   {
+//				   	      	   	highestPageNumber = pageNumber
+//				   	      	   }
+//								}
+//							} catch (ex: NumberFormatException) {;}
+//							  catch (ex: StringIndexOutOfBoundsException) {;}
+//		   	   	}
+//		   	   	statisticPages.createPage("{DEFAULT_PAGE_NAME} {highestPageNumber + 1}");
+//		   		}
+//			}
 
 	def deleteAction = MenuItem {
 		text: "Delete",
