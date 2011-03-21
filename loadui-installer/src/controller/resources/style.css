@@ -543,6 +543,19 @@
 	-fx-background-color: #666666;
 }
 
+.tabcontainer-button {
+	-fx-background-radius: 3;
+	-fx-background-color: transparent;
+}
+
+.tabcontainer-button:hover {
+	-fx-background-color: #4c4c4c;
+}
+
+.tabcontainer-button:armed, .tabcontainer-button:selected {
+	-fx-background-color: #343434;
+}
+
 .dialog *.title {
 	-fx-font-weight: bold;
 }
