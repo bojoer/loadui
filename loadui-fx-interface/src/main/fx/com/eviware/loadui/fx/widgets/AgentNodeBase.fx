@@ -66,7 +66,6 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Ag
 public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 	public var enabled: Boolean;
 	public-read var ready: Boolean;
-	public-read var label:String;
 	public-read var url:String;
 	public-read var utilization:Integer;
 	
@@ -77,7 +76,6 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 		modelItem = agent;
 		oldAgent.removeEventListener( BaseEvent.class, this );
 		agent.addEventListener( BaseEvent.class, this );
-		label = agent.getLabel();
 		url = agent.getUrl();
 		enabled = agent.isEnabled();
 		ready = agent.isReady();
@@ -139,9 +137,7 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 	
 	override function handleEvent( e:EventObject ) {
 		def event = e as BaseEvent;
-		if( event.getKey().equals( ModelItem.LABEL ) ) {
-			runInFxThread( function():Void { label = agent.getLabel() } );
-		} else if( event.getKey().equals( AgentItem.URL ) ) {
+		if( event.getKey().equals( AgentItem.URL ) ) {
 			runInFxThread( function():Void { url = agent.getUrl() } );
 		} else if(event.getKey().equals(AgentItem.ENABLED)) {
 			runInFxThread( function():Void {
