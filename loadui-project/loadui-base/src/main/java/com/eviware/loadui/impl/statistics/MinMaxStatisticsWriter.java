@@ -150,8 +150,8 @@ public class MinMaxStatisticsWriter extends AbstractStatisticsWriter
 		
 		for( Entry e : entries )
 		{
-			Math.min( globalMin, e.getValue( Stats.MIN.name() ).doubleValue() );
-			Math.min( globalMax, e.getValue( Stats.MAX.name() ).doubleValue() );
+			globalMin = Math.min( globalMin, e.getValue( Stats.MIN.name() ).doubleValue() );
+			globalMax = Math.max( globalMax, e.getValue( Stats.MAX.name() ).doubleValue() );
 			greatestTimestamp = Math.max( greatestTimestamp, e.getTimestamp() );
 		}
 		
