@@ -45,6 +45,8 @@ import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 
+import com.eviware.loadui.fx.WindowControllerImpl;
+
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.Overlay;
 import com.eviware.loadui.fx.FxUtils.*;
@@ -90,6 +92,11 @@ public def VIEW_ATTRIBUTE = "gui.statistics.view";
 public class StatisticsWindow {
 	
 	def statisticPagesListener = new StatisticPagesListener();
+	public def wc = WindowControllerImpl {
+		windowTitleFilter: "Statistics"
+	} on replace {
+		println("StatWindow: My wc was replaced, now it is {wc}, and its frame is {wc.frame.getTitle()} and it should catch windows called '{wc.windowTitleFilter}'");
+	};
 
 	public var stage:Stage;
 	public var project:ProjectItem on replace {
@@ -201,10 +208,12 @@ public class StatisticsWindow {
 					}
 				}
 			}
+			wc.stage = stage;
 		}
 		closed = false;
 		stage.iconified = false;
 		stage.toFront();
+		println("StatWindow: My wwcc is called {wc}, whos frame is called {wc.frame.getTitle()} and it should catch windows called '{wc.windowTitleFilter}'");
 	}
 	
 	public function close() {

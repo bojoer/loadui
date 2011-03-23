@@ -79,6 +79,9 @@ public class MainWindow {
 	var scene:Scene;
 	public function setScene( scene:Scene ):Void { this.scene = scene }
 	
+	public var wc:WindowControllerImpl;
+	public function setWindowController( wc:WindowControllerImpl ):Void { this.wc = wc }
+	
 	var workspaceProvider:WorkspaceProvider;
 	public-read var workspace:WorkspaceItem;
 	public function setWorkspaceProvider( workspaceProvider:WorkspaceProvider ):Void { this.workspaceProvider = workspaceProvider }

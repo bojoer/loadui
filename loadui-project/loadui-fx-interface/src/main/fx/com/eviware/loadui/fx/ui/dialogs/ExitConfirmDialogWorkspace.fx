@@ -29,6 +29,9 @@ import com.eviware.loadui.fx.WindowControllerImpl;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
 public class ExitConfirmDialogWorkspace {
+    
+    public-init var wc:WindowControllerImpl;
+    
     postinit {
         
         def dialog:Dialog = Dialog {
@@ -41,7 +44,7 @@ public class ExitConfirmDialogWorkspace {
             onOk: function() {
                 dialog.close();
                 StatisticsWindow.getInstance().close();
-                WindowControllerImpl.instance.forceClose();
+                wc.forceClose();
             }
         }
     }
