@@ -46,7 +46,7 @@ public class LTableModel extends AbstractTableModel
 	{
 		return header;
 	}
-	
+
 	@Override
 	public int getColumnCount()
 	{
@@ -140,7 +140,7 @@ public class LTableModel extends AbstractTableModel
 			{
 				if( header.contains( key ) )
 				{
-					newRow.set( header.indexOf( key ), row.get( key ).toString() );
+					newRow.set( header.indexOf( key ), String.valueOf( row.get( key ) ) );
 				}
 			}
 			addRow( newRow );
@@ -159,7 +159,7 @@ public class LTableModel extends AbstractTableModel
 		if( maxRows == null )
 			return;
 		this.maxRow = maxRows;
-		while ( data.size() > maxRows )
+		while( data.size() > maxRows )
 		{
 			data.remove( 0 );
 			fireTableRowsDeleted( 0, 0 );

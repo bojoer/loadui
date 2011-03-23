@@ -83,11 +83,6 @@ public interface RunnerCategory extends ComponentBehavior
 	public static final String SAMPLE_ACTION = "SAMPLE";
 
 	/**
-	 * Action which cancels queued and (where possible) running samples.
-	 */
-	public static final String CANCEL_ACTION = "CANCEL";
-
-	/**
 	 * The label of the InputTerminal which is returned by getTriggerTerminal().
 	 */
 	public static final String TRIGGER_TERMINAL = "triggerTerminal";
