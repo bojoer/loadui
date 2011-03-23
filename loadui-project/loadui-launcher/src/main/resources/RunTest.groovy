@@ -103,12 +103,11 @@ if( limits != null ) {
 	}
 }
 
-// abort ongoing requests
-if( abort != null && abort.toLowerCase().startsWith("t")) {
-	project.setAbortOnFinish( true )
-}
-else if( abort != null && abort.toLowerCase().startsWith("f")){
-	project.setAbortOnFinish( false )
+//Abort ongoing requests
+if( abort?.toLowerCase()?.startsWith( "t" ) ) {
+	project.abortOnFinish = true
+} else if( abort?.toLowerCase()?.startsWith( "f" ) ) {
+	project.abortOnFinish = false
 }
 
 //Assign Agents

@@ -283,24 +283,6 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 						});
 					}
 				}
-			//} else if (e instanceof BaseEvent){
-				//THIS OCCURS MUCH TOO OFTEN! Each time any Event is generated, TestCaseIcons are created, blocking the UI thread until the memory runs out.
-				//Since we listen to the Workspace, we should be notified when a Project is created anyway. The only problem is if a Project is loaded before 
-
-				/*
-				* When project is imported and opened for first time, controller is not aware does it have
-				* test cases or not. It becomes aware of them next time.
-				* So, here check if ghost agent have them and add if not.
-				*/
-				/*def project:ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
-				runInFxThread( function():Void {
-					for( s in project.getScenes() ) {
-						ghostAgent.addTestCase( TestCaseIcon {
-							stateListeners: [this]
-							sceneItem: s
-						} );
-					}				
-				} );*/
 			}
 		}
 	}

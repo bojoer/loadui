@@ -75,11 +75,10 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 	 */
 	public-init var agent: AgentItem;
 	
-	override var modelItem = bind lazy agent;
-	
 	public var sceneItem: SceneItem on replace oldScene {
 		oldScene.removeEventListener(BaseEvent.class, this);
 		sceneItem.addEventListener(BaseEvent.class, this);
+		modelItem = sceneItem;
 	};
 	
 	public var isPlaceholder: Boolean = false;
