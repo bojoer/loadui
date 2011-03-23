@@ -46,7 +46,7 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
-import com.eviware.loadui.fx.ui.resources.GrayShape;
+import com.eviware.loadui.fx.ui.resources.GageReset;
 import com.eviware.loadui.fx.widgets.toolbar.NoteToolbarItem;
 import com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
@@ -353,10 +353,10 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		Group {
 			content: [
 				SVGPath {
-					content: GrayShape.SHAPE
+					content: GageReset.SHAPE
 					layoutX: 28
 					layoutY: 150
-					visible: bind label.equals( GrayShape.STRING );
+					visible: bind label.equals( GageReset.STRING );
 				},
 				Rectangle {
 					fill: Color.TRANSPARENT

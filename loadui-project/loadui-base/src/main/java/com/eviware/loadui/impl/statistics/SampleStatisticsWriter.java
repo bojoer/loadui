@@ -42,7 +42,7 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 
 	public enum Stats
 	{
-		AVERAGE, COUNT, SUM, STD_DEV, STD_DEV_SUM, PERCENTILE_25TH, PERCENTILE_75TH, PERCENTILE_90TH, MEDIAN;
+		AVERAGE, COUNT, SUM, STD_DEV, STD_DEV_SUM, PERCENTILE_25TH, PERCENTILE_75TH, PERCENTILE_90TH, MEDIAN, MIN, MAX;
 	}
 
 	double sum = 0.0;
@@ -97,7 +97,6 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 			average = sum / count;
 			sumTotalSquare = 0;
 
-			int i = 0;
 			double previousValue = 0;
 			int upperPercPos25 = 0, upperPercPos50 = 0, upperPercPos75 = 0, upperPercPos90 = 0;
 			double diff25 = 0, diff50 = 0, diff75 = 0, diff90 = 0;
@@ -127,24 +126,30 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 			}
 
 			Double value;
-			while( ( value = sortedValues.poll() ) != null )
+			double min = sortedValues.peek();
+			if( sortedValues.size() > 1 )
 			{
-				sumTotalSquare += Math.pow( value - average, 2 );
-				if( i == upperPercPos25 )
-					percentile25 = previousValue + diff25 * ( value - previousValue );
-				if( i == upperPercPos50 )
-					percentile50 = previousValue + diff50 * ( value - previousValue );
-				if( i == upperPercPos75 )
-					percentile75 = previousValue + diff75 * ( value - previousValue );
-				if( i == upperPercPos90 )
-					percentile90 = previousValue + diff90 * ( value - previousValue );
-				previousValue = value;
-				i++ ;
+				int i = 0;
+				while( ( value = sortedValues.poll() ) != null )
+				{
+					sumTotalSquare += Math.pow( value - average, 2 );
+					if( i == upperPercPos25 )
+						percentile25 = previousValue + diff25 * ( value - previousValue );
+					if( i == upperPercPos50 )
+						percentile50 = previousValue + diff50 * ( value - previousValue );
+					if( i == upperPercPos75 )
+						percentile75 = previousValue + diff75 * ( value - previousValue );
+					if( i == upperPercPos90 )
+						percentile90 = previousValue + diff90 * ( value - previousValue );
+					previousValue = value;
+					i++ ;
+				}
 			}
-			if( sortedValues.size() == 1 )
+			else
 			{
-				percentile25 = percentile50 = percentile75 = percentile90 = sortedValues.peek();
+				previousValue = percentile25 = percentile50 = percentile75 = percentile90 = min;
 			}
+			double max = previousValue;
 
 			stdDev = Math.sqrt( sumTotalSquare / count );
 			// percentile = perc.evaluate( pValues );
@@ -155,7 +160,8 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 					.put( Stats.SUM.name(), sum ).put( Stats.STD_DEV_SUM.name(), sumTotalSquare )
 					.put( Stats.STD_DEV.name(), stdDev ).put( Stats.PERCENTILE_25TH.name(), percentile25 )
 					.put( Stats.PERCENTILE_75TH.name(), percentile75 ).put( Stats.PERCENTILE_90TH.name(), percentile90 )
-					.put( Stats.MEDIAN.name(), percentile50 ).build();
+					.put( Stats.MEDIAN.name(), percentile50 ).put( Stats.MIN.name(), min ).put( Stats.MAX.name(), max )
+					.build();
 
 			// reset counters
 			sum = 0;
@@ -179,7 +185,7 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 	 * @author henrik.olsson
 	 */
 	@Override
-	public Entry aggregate( Set<Entry> entries )
+	public Entry aggregate( Set<Entry> entries, boolean parallel )
 	{
 		if( entries.size() == 0 )
 			return null;
@@ -191,6 +197,8 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 		double medianSum = 0;
 		long totalCount = 0;
 		double stddev_partA = 0;
+		double min = Double.MAX_VALUE;
+		double max = 0;
 
 		for( Entry e : entries )
 		{
@@ -211,6 +219,9 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 			// http://en.wikipedia.org/wiki/Standard_deviation#Combining_standard_deviations
 			stddev_partA += count
 					* ( Math.pow( e.getValue( Stats.STD_DEV.name() ).doubleValue(), 2 ) + Math.pow( average, 2 ) );
+
+			min = Math.min( min, e.getValue( Stats.MIN.name() ).doubleValue() );
+			max = Math.max( max, e.getValue( Stats.MAX.name() ).doubleValue() );
 		}
 		double totalAverage = totalSum / totalCount;
 		double stddev = Math.sqrt( stddev_partA / totalCount - Math.pow( totalAverage, 2 ) );
@@ -224,7 +235,7 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 		return at( timestamp ).put( Stats.AVERAGE.name(), totalAverage ).put( Stats.COUNT.name(), totalCount )
 				.put( Stats.STD_DEV.name(), stddev ).put( Stats.PERCENTILE_90TH.name(), percentile90 )
 				.put( Stats.PERCENTILE_25TH.name(), percentile25 ).put( Stats.PERCENTILE_75TH.name(), percentile75 )
-				.put( Stats.MEDIAN.name(), median ).build( false );
+				.put( Stats.MEDIAN.name(), median ).put( Stats.MIN.name(), min ).put( Stats.MAX.name(), max ).build();
 	}
 
 	@Override
@@ -260,6 +271,8 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 
 			// init statistics
 			trackStructure.put( Stats.AVERAGE.name(), Double.class );
+			trackStructure.put( Stats.MIN.name(), Double.class );
+			trackStructure.put( Stats.MAX.name(), Double.class );
 			// trackStructure.put( Stats.COUNT.name(), Double.class );
 			// trackStructure.put( Stats.SUM.name(), Double.class );
 			trackStructure.put( Stats.STD_DEV.name(), Double.class );

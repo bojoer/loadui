@@ -12,7 +12,7 @@ public class LoadUI
 	 * Compatibility is only ensures when this version number is the same for
 	 * both agent and controller.
 	 */
-	public static final String AGENT_VERSION = "2";
+	public static final String AGENT_VERSION = "3";
 
 	public static final String INSTANCE = "loadui.instance";
 	public static final String CONTROLLER = "controller";

@@ -157,11 +157,11 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		discardsCounter = context.getCounter( RunnerCategory.DISCARDED_SAMPLES_COUNTER );
 
 		// AverageWriters and ThroughputWriters
-		timeTakenVariable = context.addStatisticVariable( "Time Taken", "SAMPLE", "MINMAX" );
-		responseSizeVariable = context.addStatisticVariable( "Response Size", "SAMPLE", "MINMAX" );
+		timeTakenVariable = context.addStatisticVariable( "Time Taken", "SAMPLE" );
+		responseSizeVariable = context.addStatisticVariable( "Response Size", "SAMPLE" );
 		throughputVariable = context.addStatisticVariable( "Throughput", "THROUGHPUT" );
-		runningVariable = context.addStatisticVariable( "Running", "VARIABLE", "MINMAX" );
-		queuedVariable = context.addStatisticVariable( "Queued", "VARIABLE", "MINMAX" );
+		runningVariable = context.addStatisticVariable( "Running", "VARIABLE" );
+		queuedVariable = context.addStatisticVariable( "Queued", "VARIABLE" );
 
 		// CounterWriters
 		counterStatisticSupport = new CounterStatisticSupport( context );

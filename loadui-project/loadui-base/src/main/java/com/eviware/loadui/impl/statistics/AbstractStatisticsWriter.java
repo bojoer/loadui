@@ -28,11 +28,9 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.Entry;
-import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
-import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
-import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
+import com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter.Stats;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 
@@ -50,9 +48,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 
 	protected long delay;
 	protected long lastTimeFlushed = System.currentTimeMillis();
-	private long pauseStartedTime = 0;
-
-	private long totalPause = 0;
 
 	private long[] aggregateIntervals = { 6000, // 6 seconds
 			240000, // 4 minutes
@@ -62,7 +57,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 	private AggregateLevel[] aggregateLevels = new AggregateLevel[4];
 	private HashSet<Entry> firstLevelEntries = new HashSet<Entry>();
 
-	private final ExecutionStateListener executionStateListener;
 	private final Map<String, Object> config;
 
 	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
@@ -87,9 +81,11 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 
 		// TODO
 		manager.getExecutionManager().registerTrackDescriptor( descriptor );
+	}
 
-		executionStateListener = new ExecutionStateListener();
-		manager.getExecutionManager().addExecutionListener( executionStateListener );
+	protected Map<String, Object> getConfig()
+	{
+		return config;
 	}
 
 	/**
@@ -120,11 +116,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 		return descriptor;
 	}
 
-	public boolean isPaused()
-	{
-		return pauseStartedTime > 0;
-	}
-
 	@Override
 	public void flush()
 	{
@@ -141,7 +132,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 		{
 			if( !a.needsFlushing() )
 				break;
-			Entry aggregatedEntry = aggregate( a.sourceEntries );
+			Entry aggregatedEntry = aggregate( a.sourceEntries, false );
 			a.flush();
 			if( aggregatedEntry != null )
 			{
@@ -154,78 +145,11 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 	@Override
 	public void release()
 	{
-		manager.getExecutionManager().removeExecutionListener( executionStateListener );
 	}
 
 	protected EntryBuilder at( long timestamp )
 	{
 		return new EntryBuilder( timestamp );
-	}
-
-	private class ExecutionStateListener extends ExecutionListenerAdapter
-	{
-		@Override
-		public void executionStarted( ExecutionManager.State oldState )
-		{
-			// unpause
-			if( oldState == State.PAUSED )
-			{
-				/*
-				 * Continue, calculate time spent in interval when pause occured.
-				 * Next write to database will be at regular interval, since delta
-				 * is taken in account.
-				 * 
-				 * Example: if delay is 1s. Which means that flush occures at 1s,
-				 * 2s, 3s, etc.. Pause occurs in 4th interval ( between 3s and 4s )
-				 * Than unpause comes after 3s( that woud be between 6s and 7s from
-				 * test start ). flush() will be when test paused (3s + delta) and
-				 * next is at 7s.
-				 */
-				long pauseTime = ( System.currentTimeMillis() - pauseStartedTime );
-				totalPause += pauseTime;
-				lastTimeFlushed += pauseTime;
-				for( AggregateLevel a : aggregateLevels )
-					a.lastFlush += pauseTime;
-				pauseStartedTime = 0;
-				if( pauseTime > delay )
-					flush();
-			}
-			else if( oldState == State.STOPPED )
-			{
-				reset();
-			}
-		}
-
-		@Override
-		public void executionPaused( ExecutionManager.State oldState )
-		{
-			if( oldState == State.STARTED )
-			{
-				/*
-				 * write data at moment when paused.
-				 * 
-				 * rember how time is spent in this interval after last time data is
-				 * written to db.
-				 */
-				pauseStartedTime = System.currentTimeMillis();
-			}
-		}
-
-		@Override
-		public void executionStopped( ExecutionManager.State oldState )
-		{
-			/*
-			 * if stoping write last data that came in.
-			 * 
-			 * or this should be done by execution manager?
-			 */
-			if( oldState == State.STARTED || oldState == State.PAUSED )
-			{
-				flush();
-				pauseStartedTime = 0;
-				totalPause = 0;
-			}
-		}
 	}
 
 	/**
@@ -257,27 +181,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 
 		public Entry build()
 		{
-			return build( true );
-		}
-
-		public Entry build( boolean adjustTimestamp )
-		{
-			ExecutionManager executionManager = manager.getExecutionManager();
-			Execution currentExecution = executionManager.getCurrentExecution();
-			int adjustedTime;
-			if( adjustTimestamp )
-			{
-				adjustedTime = currentExecution == null ? -1 : ( int )( ( isPaused() ? pauseStartedTime : timestamp )
-						- currentExecution.getStartTime() - totalPause );
-//				log.debug( "adjustedTime={}, ({}=" + ( isPaused() ? pauseStartedTime : timestamp )
-//						+ " - currentExecution.getStartTime=" + currentExecution.getStartTime() + " - totalPause="
-//						+ totalPause, adjustedTime, isPaused() ? "pauseStartedTime" : "timestamp" );
-			}
-			else
-			{
-				adjustedTime = ( int )timestamp;
-			}
-			return new EntryImpl( adjustedTime, values, true );
+			return new EntryImpl( timestamp, values, true );
 		}
 	}
 

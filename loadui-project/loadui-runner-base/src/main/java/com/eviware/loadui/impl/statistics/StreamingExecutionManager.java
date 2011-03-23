@@ -50,21 +50,17 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 	public static final Logger log = LoggerFactory.getLogger( StreamingExecutionManager.class );
 
 	private static final String STATISTICS_CHANNEL = "/" + Statistic.class.getName();
-	private static final String EXECUTION_CHANNEL = "/" + StatisticsManager.class.getName() + "/execution";
 
 	private final EventSupport eventSupport = new EventSupport();
 	private final Map<String, TrackDescriptor> trackDescriptors = new HashMap<String, TrackDescriptor>();
 	private final Map<String, Track> trackMap = new HashMap<String, Track>();
 	private final Set<MessageEndpoint> endpoints = new HashSet<MessageEndpoint>();
 	private final ExecutionChangeSupport ecs = new ExecutionChangeSupport();
-	private final ExecutionMessageListener executionMessageListener = new ExecutionMessageListener();
-	private State executionState = State.STOPPED;
-	private Execution currentExecution;
 
 	@Override
 	public Execution getCurrentExecution()
 	{
-		return currentExecution;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -82,53 +78,25 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 	@Override
 	public Execution startExecution( String executionId, long startTime, String label, String fileName )
 	{
-		// unpause if paused otherwise try to create new
-		if( executionState == State.PAUSED )
-		{
-			executionState = State.STARTED;
-			ecs.fireExecutionStarted( State.PAUSED );
-			log.debug( "State changed: PAUSED -> STARTED" );
-			return currentExecution;
-		}
-
-		currentExecution = new ExecutionImpl( executionId, startTime );
-
-		executionState = State.STARTED;
-		ecs.fireExecutionStarted( State.STOPPED );
-		log.debug( "State changed: STOPPED -> STARTED" );
-
-		return currentExecution;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void pauseExecution()
 	{
-		// if started and not paused ( can not pause something that is not started
-		// )
-		if( executionState == State.STARTED )
-		{
-			executionState = State.PAUSED;
-			ecs.fireExecutionPaused( State.STARTED );
-		}
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void stopExecution()
 	{
-		// execution can be stopped only if started or paused previously
-		if( executionState == State.STARTED || executionState == State.PAUSED )
-		{
-			State oldState = executionState;
-			executionState = State.STOPPED;
-			ecs.fireExecutionStopped( oldState );
-		}
+		throw new UnsupportedOperationException();
 	}
 
 	public void addEndpoint( MessageEndpoint endpoint )
 	{
 		log.debug( "Added Endpoint: {}", endpoint );
 		endpoints.add( endpoint );
-		endpoint.addMessageListener( EXECUTION_CHANNEL, executionMessageListener );
 	}
 
 	public void removeEndpoint( MessageEndpoint endpoint )
@@ -191,8 +159,7 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 		Map<String, Object> data = new HashMap<String, Object>();
 		for( String key : entry.getNames() )
 			data.put( key, entry.getValue( key ) );
-		data.put( "_EXECUTION", currentExecution == null ? "null" : currentExecution.getId() );
-		data.put( "_TIMESTAMP", entry.getTimestamp() );
+		data.put( "_TIMESTAMP", System.currentTimeMillis() - entry.getTimestamp() );
 		data.put( "_TRACK_ID", trackId );
 		data.put( "_LEVEL", interpolationLevel );
 
@@ -215,17 +182,13 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 	@Override
 	public Collection<Execution> getExecutions()
 	{
-		return currentExecution == null ? Collections.<Execution> emptyList() : Collections
-				.singletonList( currentExecution );
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Execution getExecution( String executionId )
 	{
-		if( currentExecution == null || !currentExecution.getId().equals( executionId ) )
-			return null;
-
-		return currentExecution;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -237,7 +200,7 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 	@Override
 	public State getState()
 	{
-		return executionState;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -268,168 +231,5 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 	public void fireEvent( EventObject event )
 	{
 		eventSupport.fireEvent( event );
-	}
-
-	private class ExecutionMessageListener implements MessageListener
-	{
-		@Override
-		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
-		{
-			@SuppressWarnings( "unchecked" )
-			Map<String, Object> message = ( Map<String, Object> )data;
-			log.debug( "Received from controller : " + message );
-			if( message.containsKey( "PAUSE" ) )
-				pauseExecution();
-			else if( message.containsKey( "STOP" ) )
-				stopExecution();
-			else if( message.containsKey( "UNPAUSE" ) )
-				startExecution( message.get( "UNPAUSE" ).toString(), System.currentTimeMillis() );
-			else if( message.containsKey( "START" ) )
-			{
-				log.debug( "Starting execution with length: {}", message.get( "LENGTH" ) );
-				startExecution( message.get( "START" ).toString(),
-						System.currentTimeMillis() - ( Long )message.get( "LENGTH" ) );
-			}
-		}
-	}
-
-	private class ExecutionImpl implements Execution
-	{
-		private final String id;
-		private String label;
-		private final long startTime;
-		private final Properties attributes = new Properties();
-
-		public ExecutionImpl( String id, long startTime )
-		{
-			this.id = id;
-			this.startTime = startTime;
-		}
-
-		@Override
-		public String getId()
-		{
-			return id;
-		}
-
-		@Override
-		public long getStartTime()
-		{
-			return startTime;
-		}
-
-		@Override
-		public Track getTrack( String trackId )
-		{
-			return trackMap.get( trackId );
-		}
-
-		@Override
-		public Collection<String> getTrackIds()
-		{
-			return trackMap.keySet();
-		}
-
-		@Override
-		public void delete()
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public boolean isArchived()
-		{
-			return false;
-		}
-
-		@Override
-		public void archive()
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public String getLabel()
-		{
-			return label;
-		}
-
-		@Override
-		public void setLabel( String label )
-		{
-			this.label = label;
-		}
-
-		@Override
-		public long getLength()
-		{
-			return 0;
-		}
-
-		@Override
-		public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void clearEventListeners()
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void fireEvent( EventObject event )
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public File getSummaryReport()
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public Image getIcon()
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void setIcon( Image image )
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void setAttribute( String key, String value )
-		{
-			attributes.setProperty( key, value );
-		}
-
-		@Override
-		public String getAttribute( String key, String defaultValue )
-		{
-			return attributes.getProperty( key, defaultValue );
-		}
-
-		@Override
-		public void removeAttribute( String key )
-		{
-			attributes.remove( key );
-		}
-
-		@Override
-		public Collection<String> getAttributes()
-		{
-			return attributes.stringPropertyNames();
-		}
 	}
 }

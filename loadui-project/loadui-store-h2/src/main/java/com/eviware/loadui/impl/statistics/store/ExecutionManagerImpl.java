@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +107,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private ResultPathListener resultPathListener = new ResultPathListener();
 
+	private long pauseStartedTime = 0;
+
+	private long totalPause = 0;
+
 	public ExecutionManagerImpl()
 	{
 		connectionRegistry = new ConnectionRegistry( this );
@@ -168,6 +173,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		if( executionState == State.PAUSED )
 		{
 			executionState = State.STARTED;
+			totalPause += System.currentTimeMillis() - pauseStartedTime;
 			ecs.fireExecutionStarted( State.PAUSED );
 			log.debug( "State changed: PAUSED -> STARTED" );
 			return currentExecution;
@@ -207,6 +213,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		currentExecution.setLoaded( true );
 		executionPool.setCurrentExecution( currentExecution );
+
+		totalPause = 0;
 		return currentExecution;
 	}
 
@@ -442,8 +450,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public void writeEntry( String trackId, Entry entry, String source, int interpolationLevel )
 	{
-		latestEntries.put( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ), entry );
-
 		if( currentExecution != null )
 		{
 			// log.debug(
@@ -451,9 +457,18 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			// new Object[] { entry,
 			// source, interpolationLevel, trackId } );
 
-			currentExecution.updateLength( entry.getTimestamp() );
+			// Adjust timestamp:
+			long timestamp = entry.getTimestamp();
+			if( executionState == State.PAUSED )
+				timestamp = Math.min( timestamp, pauseStartedTime );
+			timestamp -= ( currentExecution.getStartTime() + totalPause );
+
+			latestEntries.put( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ), new AdjustedEntry(
+					entry, timestamp ) );
+
+			currentExecution.updateLength( timestamp );
 			Map<String, Object> data = new HashMap<String, Object>();
-			data.put( DataTable.STATIC_FIELD_TIMESTAMP, entry.getTimestamp() );
+			data.put( DataTable.STATIC_FIELD_TIMESTAMP, timestamp );
 			data.put( DataTable.STATIC_FIELD_INTERPOLATIONLEVEL, interpolationLevel );
 			Collection<String> nameCollection = entry.getNames();
 			for( Iterator<String> iterator = nameCollection.iterator(); iterator.hasNext(); )
@@ -609,6 +624,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		if( executionState == State.STARTED )
 		{
 			executionState = State.PAUSED;
+			pauseStartedTime = System.currentTimeMillis();
 			ecs.fireExecutionPaused( State.STARTED );
 			log.debug( "State changed: START -> PAUSED" );
 		}
@@ -699,6 +715,37 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				.getStringValue() );
 		baseDirectoryURI = convertToURI( baseDirectory );
 		workspace.addEventListener( PropertyEvent.class, resultPathListener );
+	}
+
+	private class AdjustedEntry implements Entry
+	{
+		private final Entry delegate;
+		private final long timestamp;
+
+		public AdjustedEntry( Entry delegate, long timestamp )
+		{
+			this.delegate = delegate;
+			this.timestamp = timestamp;
+		}
+
+		@Override
+		public long getTimestamp()
+		{
+			return timestamp;
+		}
+
+		@Override
+		public Set<String> getNames()
+		{
+			return delegate.getNames();
+		}
+
+		@Override
+		public Number getValue( String name )
+		{
+			return delegate.getValue( name );
+		}
+
 	}
 
 	private class WorkspaceListener implements EventHandler<BaseEvent>

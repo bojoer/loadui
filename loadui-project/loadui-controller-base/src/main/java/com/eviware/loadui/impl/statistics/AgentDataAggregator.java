@@ -65,7 +65,8 @@ public class AgentDataAggregator
 				java.util.Map.Entry<Long, Map<Integer, Map<String, Set<Entry>>>> oldestEntry = times.pollFirstEntry();
 				if( oldestEntry.getKey().equals( time ) )
 				{
-					log.debug( "Received expired Entry: {} from: {}", entry, agent.getLabel() );
+					// log.debug( "Received expired Entry: {} from: {}", entry,
+					// agent.getLabel() );
 					return;
 				}
 				flush( oldestEntry.getValue() );
@@ -96,7 +97,7 @@ public class AgentDataAggregator
 
 				if( !writer.getType().equals( "COUNTER" ) )
 				{
-					Entry entry = writer.aggregate( e2.getValue() );
+					Entry entry = writer.aggregate( e2.getValue(), true );
 
 					if( entry != null )
 					{

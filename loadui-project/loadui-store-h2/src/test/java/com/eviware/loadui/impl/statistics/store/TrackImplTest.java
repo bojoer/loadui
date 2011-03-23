@@ -39,13 +39,15 @@ public class TrackImplTest
 
 	Track track;
 
+	long now = System.currentTimeMillis();
+
 	@Before
 	public void initialize()
 	{
 		System.setProperty( LoadUI.LOADUI_HOME, "target" );
 
 		h2 = new H2ExecutionManager();
-		h2.startExecution( "trackTestExecution", 10 );
+		h2.startExecution( "trackTestExecution", now );
 
 		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
 		types.put( "a", Long.class );
@@ -63,19 +65,19 @@ public class TrackImplTest
 		values.put( "c", 3 );
 		values.put( "d", 4 );
 
-		EntryImpl entry = new EntryImpl( ( 10 ), values );
+		EntryImpl entry = new EntryImpl( ( now + 10 ), values );
 		h2.writeEntry( track.getId(), entry, "local1", 0 );
 
-		entry = new EntryImpl( ( 20 ), values );
+		entry = new EntryImpl( ( now + 20 ), values );
 		h2.writeEntry( track.getId(), entry, "local2", 0 );
 
-		entry = new EntryImpl( ( 30 ), values );
+		entry = new EntryImpl( ( now + 30 ), values );
 		h2.writeEntry( track.getId(), entry, "local2", 0 );
 
-		entry = new EntryImpl( ( 30 ), values );
+		entry = new EntryImpl( ( now + 30 ), values );
 		h2.writeEntry( track.getId(), entry, "local3", 1 );
 
-		entry = new EntryImpl( ( 25 ), values );
+		entry = new EntryImpl( ( now + 25 ), values );
 		h2.writeEntry( track.getId(), entry, "local3", 0 );
 	}
 

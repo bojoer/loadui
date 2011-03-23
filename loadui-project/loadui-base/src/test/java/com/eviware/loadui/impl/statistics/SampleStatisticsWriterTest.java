@@ -199,19 +199,36 @@ public class SampleStatisticsWriterTest
 		assertEquals( 9.8, result.getValue( Stats.MEDIAN.name() ).doubleValue(), 0.005 );
 	}
 
+	@Test
+	public void testMinAggregation()
+	{
+		Entry result = prepareAggregation();
+		assertEquals( 6, result.getValue( Stats.MIN.name() ).doubleValue(), 0.005 );
+	}
+
+	@Test
+	public void testMaxAggregation()
+	{
+		Entry result = prepareAggregation();
+		assertEquals( 17, result.getValue( Stats.MAX.name() ).doubleValue(), 0.005 );
+	}
+
 	private Entry prepareAggregation()
 	{
 		// Based on these three sets of samples: {{10, 8, 6}, {7, 7, 9, 17}, {12,
 		// 10, 9}}
 		HashSet<Entry> entries = new HashSet<Entry>();
 		entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put( Stats.MEDIAN.name(), 8 )
-				.put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.632993162 ).build( false ) );
+				.put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.632993162 ).put( Stats.MIN.name(), 6 )
+				.put( Stats.MAX.name(), 10 ).build() );
 		entries.add( writer.at( 2 ).put( Stats.AVERAGE.name(), 10 ).put( Stats.MEDIAN.name(), 11 )
-				.put( Stats.COUNT.name(), 4 ).put( Stats.STD_DEV.name(), 4.123105626 ).build( false ) );
+				.put( Stats.COUNT.name(), 4 ).put( Stats.STD_DEV.name(), 4.123105626 ).put( Stats.MIN.name(), 7 )
+				.put( Stats.MAX.name(), 17 ).build() );
 		entries.add( writer.at( 3 ).put( Stats.AVERAGE.name(), 10.3333333 ).put( Stats.MEDIAN.name(), 10 )
-				.put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.247219129 ).build( false ) );
+				.put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.247219129 ).put( Stats.MIN.name(), 9 )
+				.put( Stats.MAX.name(), 12 ).build() );
 
-		return writer.aggregate( entries );
+		return writer.aggregate( entries, false );
 	}
 
 }

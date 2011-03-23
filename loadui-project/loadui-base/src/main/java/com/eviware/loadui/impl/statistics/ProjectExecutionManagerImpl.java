@@ -1,7 +1,6 @@
 package com.eviware.loadui.impl.statistics;
 
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,24 +11,19 @@ import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
-import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
 import com.eviware.loadui.api.summary.Summary;
-import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.reporting.JasperReportManager;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 {
-	private static final String CHANNEL = "/" + StatisticsManager.class.getName() + "/execution";
-
 	private final ExecutionManager executionManager;
 	private final WorkspaceProvider workspaceProvider;
 	private final HashMap<String, HashSet<Execution>> projectIdToExecutions = new HashMap<String, HashSet<Execution>>();
@@ -120,7 +114,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 			if( event.getSource() instanceof CanvasItem )
 			{
 				ProjectItem runningProject = ( ( CanvasItem )event.getSource() ).getProject();
-				boolean localMode = runningProject.getWorkspace().isLocalMode();
 				long timestamp = System.currentTimeMillis();
 				if( !hasCurrent && CanvasItem.START_ACTION.equals( event.getKey() ) )
 				{
@@ -147,12 +140,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 						executionSet.add( newExecution );
 						projectIdToExecutions.put( runningProject.getId(), executionSet );
 					}
-
-					// notify agents if in distributed mode
-					if( !localMode )
-						notifyAgents(
-								MapUtils.build( String.class, Object.class ).put( "START", executionId ).put( "LENGTH", 0 )
-										.get(), runningProject.getWorkspace().getAgents() );
 				}
 				else if( hasCurrent && CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
 				{
@@ -181,21 +168,10 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 						recentProjectsExecutionMap.remove( oldestExecution );
 						projectIdToExecutions.put( runningProject.getId(), recentProjectsExecutionMap );
 					}
-
-					if( !localMode )
-					{
-						notifyAgents( Collections.singletonMap( "STOP", timestamp ), runningProject.getWorkspace()
-								.getAgents() );
-					}
 				}
 				else if( CanvasItem.STOP_ACTION.equals( event.getKey() ) )
 				{
 					executionManager.pauseExecution();
-					if( !localMode )
-					{
-						notifyAgents( Collections.singletonMap( "PAUSE", timestamp ), runningProject.getWorkspace()
-								.getAgents() );
-					}
 				}
 				else if( executionManager.getState() == State.PAUSED && CanvasItem.START_ACTION.equals( event.getKey() ) )
 				{
@@ -205,19 +181,8 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 					 * it will return curectExecution and change state to START
 					 */
 					executionManager.startExecution( null, -1 );
-					if( !localMode )
-					{
-						notifyAgents( Collections.singletonMap( "UNPAUSE", timestamp ), runningProject.getWorkspace()
-								.getAgents() );
-					}
 				}
 			}
-		}
-
-		private void notifyAgents( Object message, Collection<AgentItem> collection )
-		{
-			for( AgentItem agent : collection )
-				agent.sendMessage( CHANNEL, message );
 		}
 	}
 
