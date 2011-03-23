@@ -88,7 +88,7 @@ public class TestCaseDataTableModel extends AbstractTableModel
 		{
 			this.name = tc.getLabel();
 
-			this.execTime = CalendarUtils.getFormattedPeriod( tc.getStartTime(), tc.getEndTime() );
+			this.execTime = CalendarUtils.formatInterval( tc.getStartTime(), tc.getEndTime() );
 
 			this.numberOfSamples = String.valueOf( tc.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );
 

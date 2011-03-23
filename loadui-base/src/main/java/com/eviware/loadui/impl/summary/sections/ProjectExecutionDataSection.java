@@ -15,13 +15,9 @@
  */
 package com.eviware.loadui.impl.summary.sections;
 
-import java.text.SimpleDateFormat;
-
 import javax.swing.table.TableModel;
 
-import com.eviware.loadui.api.component.categories.AnalysisCategory;
 import com.eviware.loadui.api.model.CanvasItem;
-import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.ProjectItemImpl;
 import com.eviware.loadui.impl.model.SceneItemImpl;
@@ -33,7 +29,6 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 {
 
 	ProjectItemImpl project;
-	private SimpleDateFormat dateFormat = new SimpleDateFormat( "HH:mm:ss" );
 
 	public ProjectExecutionDataSection( ProjectItemImpl projectItemImpl )
 	{
@@ -64,19 +59,19 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 	@Override
 	public String getEndTime()
 	{
-		return CalendarUtils.format( project.getEndTime() );
+		return CalendarUtils.formatAbsoluteTime( project.getEndTime() );
 	}
 
 	@Override
 	public String getExecutionTime()
 	{
-		return CalendarUtils.getFormattedPeriod( project.getStartTime(), project.getEndTime() );
+		return CalendarUtils.formatInterval( project.getStartTime(), project.getEndTime() );
 	}
 
 	@Override
 	public String getStartTime()
 	{
-		return CalendarUtils.format( project.getStartTime() );
+		return CalendarUtils.formatAbsoluteTime( project.getStartTime() );
 	}
 
 	@Override

@@ -57,7 +57,7 @@ public class ProjectDataSummarySection extends MutableSectionImpl implements Dat
 	@Override
 	public String getTime()
 	{
-		return CalendarUtils.getFormattedPeriod( project.getStartTime(), project.getEndTime() );
+		return CalendarUtils.formatInterval( project.getStartTime(), project.getEndTime() );
 	}
 
 	@Override

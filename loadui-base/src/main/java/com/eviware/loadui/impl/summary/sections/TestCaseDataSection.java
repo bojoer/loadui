@@ -15,8 +15,6 @@
  */
 package com.eviware.loadui.impl.summary.sections;
 
-import java.util.Date;
-
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.SceneItemImpl;
@@ -72,8 +70,7 @@ public class TestCaseDataSection extends MutableSectionImpl implements DataSecti
 	{
 		if( testcase.getLimit( CanvasItem.TIMER_COUNTER ) > -1 )
 		{
-			Date time = new Date( testcase.getLimit( CanvasItem.TIMER_COUNTER ) );
-			return CalendarUtils.format( time );
+			return CalendarUtils.formatInterval( testcase.getLimit( CanvasItem.TIMER_COUNTER ) * 1000 );
 		}
 		else
 			return "N/A";
