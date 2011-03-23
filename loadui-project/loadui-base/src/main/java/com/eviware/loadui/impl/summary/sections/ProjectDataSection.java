@@ -15,8 +15,6 @@
  */
 package com.eviware.loadui.impl.summary.sections;
 
-import java.util.Date;
-
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.ProjectItemImpl;
@@ -61,7 +59,7 @@ public class ProjectDataSection extends MutableSectionImpl implements DataSectio
 	public String getLimit()
 	{
 		if( project.getLimit( CanvasItem.TIMER_COUNTER ) > -1 )
-			return CalendarUtils.format( new Date( project.getLimit( CanvasItem.TIMER_COUNTER ) ) );
+			return CalendarUtils.formatInterval( project.getLimit( CanvasItem.TIMER_COUNTER ) * 1000 );
 		else
 			return "N/A";
 	}

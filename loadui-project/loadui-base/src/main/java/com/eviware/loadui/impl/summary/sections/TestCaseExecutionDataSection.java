@@ -15,11 +15,7 @@
  */
 package com.eviware.loadui.impl.summary.sections;
 
-import java.text.SimpleDateFormat;
-
-import com.eviware.loadui.api.component.categories.AnalysisCategory;
 import com.eviware.loadui.api.model.CanvasItem;
-import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.SceneItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
@@ -29,7 +25,6 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 {
 
 	SceneItemImpl testcase;
-	SimpleDateFormat format = new SimpleDateFormat( "HH:mm:ss" );
 
 	public TestCaseExecutionDataSection( SceneItem sceneItem )
 	{
@@ -52,7 +47,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 */
 	public String getExecutionTime()
 	{
-		return CalendarUtils.getFormattedPeriod( testcase.getStartTime(), testcase.getEndTime() );
+		return CalendarUtils.formatInterval( testcase.getStartTime(), testcase.getEndTime() );
 	}
 
 	/*
@@ -66,7 +61,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	{
 		if( testcase.getStartTime() == null )
 			return "N/A";
-		return format.format( testcase.getStartTime() );
+		return CalendarUtils.formatAbsoluteTime( testcase.getStartTime() );
 	}
 
 	/*
@@ -80,7 +75,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	{
 		if( testcase.getEndTime() == null )
 			return "N/A";
-		return format.format( testcase.getEndTime() );
+		return CalendarUtils.formatAbsoluteTime( testcase.getEndTime() );
 	}
 
 	/*

@@ -15,8 +15,6 @@
  */
 package com.eviware.loadui.impl.summary.sections;
 
-import java.text.SimpleDateFormat;
-
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.SceneItemImpl;
@@ -27,7 +25,6 @@ public class TestCaseDataSummarySection extends MutableSectionImpl implements Da
 {
 
 	SceneItemImpl testcase;
-	SimpleDateFormat dateFormat;
 
 	public TestCaseDataSummarySection( SceneItem testcase )
 	{
@@ -60,7 +57,7 @@ public class TestCaseDataSummarySection extends MutableSectionImpl implements Da
 	@Override
 	public String getTime()
 	{
-		return CalendarUtils.getFormattedPeriod( testcase.getStartTime(), testcase.getEndTime() );
+		return CalendarUtils.formatInterval( testcase.getStartTime(), testcase.getEndTime() );
 	}
 
 	@Override

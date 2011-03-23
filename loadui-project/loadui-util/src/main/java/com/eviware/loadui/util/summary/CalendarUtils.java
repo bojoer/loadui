@@ -16,69 +16,36 @@
 package com.eviware.loadui.util.summary;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
+
+import com.eviware.loadui.util.FormattingUtils;
 
 public class CalendarUtils
 {
-
-	private static final long HOUR = 3600000L;
-
-	public static String getFormattedPeriod( Date startTime, Date endTime )
+	public static String formatInterval( Date startTime, Date endTime )
 	{
-		Date period = getPeriod( startTime, endTime );
-		return format( period );
+		return FormattingUtils.formatTime( ( endTime.getTime() - startTime.getTime() ) / 1000 );
 	}
 
-	public static String format( long time )
+	public static String formatInterval( long intervalInMillis )
 	{
-		return format( new Date( time ) );
+		return FormattingUtils.formatTime( intervalInMillis / 1000 );
 	}
 
-	public static String format( Date date )
+	public static String formatAbsoluteTime( long time )
+	{
+		return formatAbsoluteTime( new Date(time) );
+	}
+	
+	public static String formatAbsoluteTime( Date date )
 	{
 		if( date != null )
 		{
-			SimpleDateFormat dateFormat;
-			if( date.getTime() < HOUR )
-			{
-				dateFormat = new SimpleDateFormat( "00:mm:ss" );
-			}
-			else
-			{
-				dateFormat = new SimpleDateFormat( "HH:mm:ss" );
-			}
-			return dateFormat.format( date );
+			return new SimpleDateFormat( "HH:mm:ss" ).format( date );
 		}
 		else
 		{
 			return "N/A";
-		}
-	}
-
-	public static Date getPeriod( Date startTime, Date endTime )
-	{
-		if( startTime != null && endTime != null )
-		{
-			Calendar end = Calendar.getInstance();
-			end.setTime( endTime );
-
-			Calendar start = Calendar.getInstance();
-			start.setTime( startTime );
-
-			end.add( Calendar.YEAR, -start.get( Calendar.YEAR ) );
-			end.add( Calendar.MONTH, -start.get( Calendar.MONTH ) );
-			end.add( Calendar.DATE, -start.get( Calendar.DATE ) );
-			end.add( Calendar.HOUR, -start.get( Calendar.HOUR ) );
-			end.add( Calendar.MINUTE, -start.get( Calendar.MINUTE ) );
-			end.add( Calendar.SECOND, -start.get( Calendar.SECOND ) );
-			end.set( Calendar.MILLISECOND, 0 );
-
-			return end.getTime();
-		}
-		else
-		{
-			return null;
 		}
 	}
 }

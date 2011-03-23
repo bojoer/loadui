@@ -26,6 +26,8 @@ import com.eviware.loadui.util.summary.CalendarUtils;
 public class TestCaseTopSamplesTable extends AbstractTableModel
 {
 
+	private static final long serialVersionUID = 6713052691535987646L;
+	
 	String[] columnNames = { "name", "ms", "time", "size" };
 	public ArrayList<TestCaseSampleModel> data = new ArrayList<TestCaseSampleModel>();
 	TestCaseSampleModelComparator bottomUpComparator = new TestCaseSampleModelComparator();
@@ -62,8 +64,7 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 		case 1 :
 			return String.valueOf( data.get( rowIndex ).getStats().getTimeTaken() );
 		case 2 :
-			long time = data.get( rowIndex ).getStats().getTime();
-			return CalendarUtils.format( time );
+			return CalendarUtils.formatAbsoluteTime( data.get( rowIndex ).getStats().getTime() );
 		case 3 :
 			return String.valueOf( data.get( rowIndex ).getStats().getSize() );
 		default :
