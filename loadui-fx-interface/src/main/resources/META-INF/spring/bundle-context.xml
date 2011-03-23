@@ -5,9 +5,13 @@
 
 	<bean id="scene" class="com.eviware.loadui.fx.JavaFXActivator"
 		factory-method="getScene" />
+		
+	<bean id="windowController" class="com.eviware.loadui.fx.JavaFXActivator"
+		factory-method="getWindowController" />
 
 	<bean id="mainWindow" class="com.eviware.loadui.fx.MainWindow" init-method="initialize" destroy-method="destroy">
 		<property name="scene" ref="scene" />
+		<property name="windowController" ref="windowController" />
 		<property name="workspaceProvider" ref="workspaceProvider" />
 	</bean>
 	
@@ -18,8 +22,6 @@
 	<bean id="httpClientHolder" class="com.eviware.loadui.fx.http.HttpClientHolder" init-method="initialize" destroy-method="destroy">
 		<property name="provider" ref="httpClientProvider" />
 	</bean>
-	
-	<bean id="windowController" class="com.eviware.loadui.fx.WindowControllerImpl" factory-method="getInstance" />
 	
 	<bean id="inspectorPanel" factory-bean="mainWindow" factory-method="getInspectorPanel" />
 	

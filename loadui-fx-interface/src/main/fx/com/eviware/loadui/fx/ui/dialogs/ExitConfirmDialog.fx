@@ -33,6 +33,8 @@ import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import java.lang.RuntimeException;
 
 public class ExitConfirmDialog {
+	
+	public-init var wc:WindowControllerImpl;
     
     postinit {
         
@@ -57,12 +59,12 @@ public class ExitConfirmDialog {
 							project.save();
 							dialog2.close();
 							StatisticsWindow.getInstance().close();
-							WindowControllerImpl.instance.forceClose();
+							wc.forceClose();
 						}
 						onCancel: function() {
 							dialog2.close();
 							StatisticsWindow.getInstance().close();
-							WindowControllerImpl.instance.forceClose();
+							wc.forceClose();
 						}
 					}
 					dialog.close();

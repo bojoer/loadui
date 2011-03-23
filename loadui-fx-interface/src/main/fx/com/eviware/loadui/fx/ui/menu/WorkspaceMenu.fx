@@ -199,7 +199,7 @@ public class WorkspaceMenu extends HBox {
 	          Separator{}
 	          MenuItem {
 	              text: "Exit"
-	              action: function() { WindowControllerImpl.instance.close() }
+	              action: function() { MainWindow.instance.wc.close() }
 	          }
 			]
 		}, DistributionModeSelector {

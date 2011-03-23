@@ -41,8 +41,10 @@ import com.eviware.loadui.fx.ui.dialogs.*;
 //public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.JavaFXActivator" );
 
 public-read var scene:Scene;
+public-read var wc:WindowControllerImpl;
 
 public function getScene() { scene };
+public function getWindowController() { wc };
 
 /**
  * An OSGi Activator in JavaFX. Launches the main window.
@@ -87,7 +89,10 @@ public class JavaFXActivator extends BundleActivator {
 			new org.jdesktop.swingx.JXTable();
 			new javax.swing.JScrollPane();
 			
-			def wc = new WindowControllerImpl();
+			wc = WindowControllerImpl {
+				windowTitleFilter: "loadUI"
+			};
+			
 			wc.stage = Stage {
 				title: "loadUI {LoadUI.VERSION}"
 				visible: false
@@ -100,12 +105,16 @@ public class JavaFXActivator extends BundleActivator {
 				}
 				
 				override function close() {
-					if( not WindowControllerImpl.instance.doClose ) {
+					if( not wc.doClose ) {
 						if( AppState.byName("MAIN").state == MainWindow.TESTCASE_FRONT 
 												or AppState.byName("MAIN").state == MainWindow.PROJECT_FRONT ) {
-							ExitConfirmDialog{};
+							ExitConfirmDialog{
+								wc: wc
+							};
 						} else {
-							ExitConfirmDialogWorkspace{};
+							ExitConfirmDialogWorkspace{
+								wc: wc
+							};
 						}
 						throw new com.eviware.loadui.util.hacks.PreventClosingStageException(); // this a hack to keep stage open
 					} else {
@@ -113,8 +122,6 @@ public class JavaFXActivator extends BundleActivator {
 						super.close();
 					}
 				}
-				
-				
 			}
 		});
 	}

@@ -165,9 +165,9 @@ public class TabContainer extends HBox {
 		}
 	}
 	
-	override var padding = Insets {right: 25, left: 25};
+	override var padding = Insets {right: 9, left: 9};
 	override var nodeVPos = VPos.CENTER;
-	override var spacing = 6;
+	override var spacing = 0;
 	
 	def openImg: String = "{__ROOT__}images/execution-selector-open.fxz";
 	
