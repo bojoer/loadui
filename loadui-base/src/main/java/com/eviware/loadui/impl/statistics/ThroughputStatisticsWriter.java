@@ -86,7 +86,7 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	public Entry aggregate( Set<Entry> entries )
+	public Entry aggregate( Set<Entry> entries, boolean parallel )
 	{
 		if( entries.size() <= 1 )
 			return entries.size() == 0 ? null : entries.iterator().next();
@@ -103,11 +103,15 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 			maxTime = Math.max( maxTime, entry.getTimestamp() );
 		}
 
-		double timeDelta = Math.max(
-				( ( double )( maxTime - minTime ) / entries.size() * ( entries.size() + 1 ) ) / 1000, delay / 1000.0 );
+		double tps = tpsSum;
+		double bps = bpsSum;
+		if( !parallel )
+		{
+			tps /= entries.size();
+			bps /= entries.size();
+		}
 
-		return at( maxTime ).put( Stats.BPS.name(), bpsSum / timeDelta ).put( Stats.TPS.name(), tpsSum / timeDelta )
-				.build( false );
+		return at( maxTime ).put( Stats.BPS.name(), bps ).put( Stats.TPS.name(), tps ).build();
 	}
 
 	@Override

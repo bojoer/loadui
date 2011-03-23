@@ -46,14 +46,11 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 	@Override
 	public synchronized void update( long timestamp, Number value )
 	{
-		if( !isPaused() )
+		while( lastTimeFlushed + delay < timestamp )
 		{
-			while( lastTimeFlushed + delay < timestamp )
-			{
-				flush();
-			}
-			change += value.longValue();
+			flush();
 		}
+		change += value.longValue();
 	}
 
 	@Override
@@ -76,28 +73,28 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	public Entry aggregate( Set<Entry> entries )
+	public Entry aggregate( Set<Entry> entries, boolean parallel )
 	{
+		// Counters already aggregate their values on their own, so we shouldn't
+		// do this here.
+		if( parallel )
+			return null;
 		if( entries.size() <= 1 )
 			return entries.size() == 0 ? null : entries.iterator().next();
 
 		long total = 0;
 		double perSecond = 0;
-		long minTime = Long.MAX_VALUE;
 		long maxTime = -1;
 		for( Entry entry : entries )
 		{
 			total = Math.max( total, entry.getValue( Stats.TOTAL.name() ).longValue() );
 			perSecond += entry.getValue( Stats.PER_SECOND.name() ).longValue();
-			minTime = Math.min( minTime, entry.getTimestamp() );
 			maxTime = Math.max( maxTime, entry.getTimestamp() );
 		}
 
-		double timeDelta = Math.max(
-				( ( double )( maxTime - minTime ) / entries.size() * ( entries.size() + 1 ) ) / 1000, delay / 1000.0 );
+		perSecond /= entries.size();
 
-		return at( maxTime ).put( Stats.TOTAL.name(), total ).put( Stats.PER_SECOND.name(), perSecond / timeDelta )
-				.build( false );
+		return at( maxTime ).put( Stats.TOTAL.name(), total ).put( Stats.PER_SECOND.name(), perSecond ).build();
 	}
 
 	@Override

@@ -121,18 +121,18 @@ public class ThroughputStatisticsWriterTest
 				.put( ThroughputStatisticsWriter.Stats.BPS.name(), 93 )
 				.put( ThroughputStatisticsWriter.Stats.TPS.name(), 11 ).getImmutable() );
 
-		Entry entry = writer.aggregate( Collections.<Entry> emptySet() );
+		Entry entry = writer.aggregate( Collections.<Entry> emptySet(), false );
 		assertNull( entry );
 
 		HashSet<Entry> entries = new HashSet<Entry>();
 		entries.add( e1 );
-		entry = writer.aggregate( entries );
+		entry = writer.aggregate( entries, false );
 
 		assertThat( entry, is( e1 ) );
 
 		entries.clear();
 		entries.addAll( Arrays.asList( e1, e2, e3 ) );
-		entry = writer.aggregate( entries );
+		entry = writer.aggregate( entries, true );
 
 		assertNotNull( entry );
 
@@ -141,5 +141,15 @@ public class ThroughputStatisticsWriterTest
 
 		assertThat( ( Double )bps, is( 976.0 ) );
 		assertThat( ( Double )tps, is( 22.0 ) );
+
+		entry = writer.aggregate( entries, false );
+
+		assertNotNull( entry );
+
+		bps = entry.getValue( ThroughputStatisticsWriter.Stats.BPS.name() );
+		tps = entry.getValue( ThroughputStatisticsWriter.Stats.TPS.name() );
+
+		assertEquals( ( Double )bps, 325.33, 0.01 );
+		assertEquals( ( Double )tps, 7.33, 0.01 );
 	}
 }

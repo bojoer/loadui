@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -26,10 +25,8 @@ import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.statistics.Statistic;
-import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
-import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 
 /**
@@ -39,8 +36,6 @@ import com.eviware.loadui.util.statistics.store.EntryImpl;
  */
 public class TrackStreamReceiver
 {
-	private static final String CHANNEL = "/" + StatisticsManager.class.getName() + "/execution";
-
 	public final static Logger log = LoggerFactory.getLogger( TrackStreamReceiver.class );
 
 	private final MessageEndpoint endpoint;
@@ -64,28 +59,15 @@ public class TrackStreamReceiver
 				{
 					Map<String, Object> map = ( Map<String, Object> )data;
 					AgentItem agent = ( AgentItem )endpoint;
-					String executionId = map.remove( "_EXECUTION" ).toString();
 					Execution execution = TrackStreamReceiver.this.executionManager.getCurrentExecution();
 					int level = ( ( Number )map.remove( "_LEVEL" ) ).intValue();
-					int timestamp = ( ( Number )map.remove( "_TIMESTAMP" ) ).intValue();
+					long timestamp = System.currentTimeMillis() - ( ( Number )map.remove( "_TIMESTAMP" ) ).longValue();
 					String trackId = ( String )map.remove( "_TRACK_ID" );
 
 					EntryImpl entry = new EntryImpl( timestamp, ( Map<String, Number> )data, true );
-					if( execution != null && execution.getId().equals( executionId ) )
+					if( execution != null )
 					{
 						TrackStreamReceiver.this.aggregator.update( entry, trackId, agent, level );
-					}
-					else
-					{
-						log.warn( "Received Entry: {} for incorrect Execution: {}", entry, executionId );
-						if( execution != null )
-						{
-							log.debug( "Correcting Agent execution: {}, length: {}", execution.getId(), execution.getLength() );
-							endpoint.sendMessage(
-									CHANNEL,
-									MapUtils.build( String.class, Object.class ).put( "START", execution.getId() )
-											.put( "LENGTH", execution.getLength() ).get() );
-						}
 					}
 				}
 			}

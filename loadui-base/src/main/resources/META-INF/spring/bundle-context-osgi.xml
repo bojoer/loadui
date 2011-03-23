@@ -41,7 +41,6 @@
 	</osgi:set>
 	
 	<osgi:service ref="sampleStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
-	<osgi:service ref="minmaxStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
 	<osgi:service ref="throughputStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
 	<osgi:service ref="counterStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
 	<osgi:service ref="variableStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />

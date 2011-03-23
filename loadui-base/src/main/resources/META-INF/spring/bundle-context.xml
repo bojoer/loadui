@@ -84,8 +84,6 @@
 
 	<bean id="sampleStatisticsWriter"
 		class="com.eviware.loadui.impl.statistics.SampleStatisticsWriter$Factory" />
-	<bean id="minmaxStatisticsWriter"
-		class="com.eviware.loadui.impl.statistics.MinMaxStatisticsWriter$Factory" />
 	<bean id="throughputStatisticsWriter"
 		class="com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter$Factory" />
 	<bean id="counterStatisticsWriter"

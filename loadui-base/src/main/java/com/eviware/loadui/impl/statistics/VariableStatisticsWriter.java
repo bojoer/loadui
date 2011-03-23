@@ -63,22 +63,23 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	public Entry aggregate( Set<Entry> entries )
+	public Entry aggregate( Set<Entry> entries, boolean parallel )
 	{
 		if( entries.size() <= 1 )
 			return entries.size() == 0 ? null : entries.iterator().next();
 
 		long maxTime = -1;
-		double total = 0;
-		int count = 0;
+		double value = 0;
 		for( Entry entry : entries )
 		{
-			count++ ;
 			maxTime = Math.max( maxTime, entry.getTimestamp() );
-			total += entry.getValue( Stats.VALUE.name() ).doubleValue();
+			value += entry.getValue( Stats.VALUE.name() ).doubleValue();
 		}
 
-		return at( maxTime ).put( Stats.VALUE.name(), total / count ).build( false );
+		if( !parallel )
+			value /= entries.size();
+
+		return at( maxTime ).put( Stats.VALUE.name(), value ).build();
 	}
 
 	@Override
