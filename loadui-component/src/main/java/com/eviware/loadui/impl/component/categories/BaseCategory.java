@@ -53,7 +53,7 @@ public abstract class BaseCategory implements ComponentBehavior
 	public BaseCategory( ComponentContext context )
 	{
 		this.context = context;
-		context.addEventListener( ActionEvent.class, listener );
+		context.getComponent().addEventListener( ActionEvent.class, listener );
 	}
 
 	/**
