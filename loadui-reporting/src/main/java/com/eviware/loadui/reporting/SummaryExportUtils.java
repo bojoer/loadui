@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.util.summary;
+package com.eviware.loadui.reporting;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,8 +34,8 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.summary.Chapter;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Section;
-import com.eviware.loadui.util.reporting.JasperReportManager;
-import com.eviware.loadui.util.reporting.ReportEngine.ReportFormats;
+import com.eviware.loadui.impl.reporting.ReportEngine.ReportFormats;
+import com.eviware.loadui.util.BeanInjector;
 
 public class SummaryExportUtils
 {
@@ -63,7 +63,7 @@ public class SummaryExportUtils
 				{
 					formatSupported = true;
 					File out = createOutputFile( outputDir, reportFormat, label );
-					JasperReportManager.getInstance().createReport( summary, out, reportFormat );
+					BeanInjector.getBean( ReportingManager.class ).createReport( summary, out, reportFormat );
 					break;
 				}
 			}

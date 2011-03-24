@@ -96,7 +96,6 @@ import com.eviware.loadui.impl.terminal.RoutedConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
-import com.eviware.loadui.util.summary.SummaryExportUtils;
 
 public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implements ProjectItem
 {
@@ -107,7 +106,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final Set<Assignment> assignments = new HashSet<Assignment>();
 	private final AgentListener agentListener = new AgentListener();
 	private final SceneListener sceneListener = new SceneListener();
-	private final SummaryListener summaryListener = new SummaryListener();
 	private final WorkspaceListener workspaceListener = new WorkspaceListener();
 	private final SceneComponentListener sceneComponentListener = new SceneComponentListener();
 	private final Map<SceneItem, BroadcastMessageEndpoint> sceneEndpoints = new HashMap<SceneItem, BroadcastMessageEndpoint>();
@@ -159,8 +157,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void init()
 	{
-		addEventListener( BaseEvent.class, summaryListener );
-
 		for( SceneItemConfig conf : getConfig().getSceneArray() )
 		{
 			SceneItemImpl scene = new SceneItemImpl( this, conf );
@@ -220,7 +216,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		if( scenes.add( scene ) )
 		{
 			scene.addEventListener( BaseEvent.class, sceneListener );
-			scene.addEventListener( BaseEvent.class, summaryListener );
 			( ( AggregatedCounterSupport )counterSupport ).addChild( scene );
 			sceneEndpoints.put( scene, new BroadcastMessageEndpointImpl() );
 			BroadcastMessageEndpoint sceneEndpoint = sceneEndpoints.get( scene );
@@ -250,7 +245,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			}
 
 			scene.removeEventListener( BaseEvent.class, sceneListener );
-			scene.removeEventListener( BaseEvent.class, summaryListener );
 			sceneEndpoints.remove( scene );
 			fireCollectionEvent( SCENES, CollectionEvent.Event.REMOVED, scene );
 		}
@@ -354,11 +348,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		agentListener.release();
 		statisticPages.release();
 
-		removeEventListener( BaseEvent.class, summaryListener );
-
 		for( SceneItem scene : new ArrayList<SceneItem>( getScenes() ) )
 		{
-			scene.removeEventListener( BaseEvent.class, summaryListener );
 			scene.removeEventListener( BaseEvent.class, sceneListener );
 			scene.release();
 		}
@@ -488,7 +479,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void broadcastMessage( SceneItem scene, String channel, Object data )
 	{
-		log.debug( "BROADCASTING: " + scene +" "+ channel +" "+ data );
+		log.debug( "BROADCASTING: " + scene + " " + channel + " " + data );
 		sceneEndpoints.get( scene ).sendMessage( channel, data );
 	}
 
@@ -1118,43 +1109,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 						}
 					}
 				}, 15, TimeUnit.SECONDS );
-			}
-		}
-	}
-
-	private class SummaryListener implements EventHandler<BaseEvent>
-	{
-		// once summary event was fired,source is added to this set to prevent
-		// generating summary more than once (in case summary event was received
-		// more than once from the same source e.g. when user stops the project by
-		// clicking STOP button)
-		HashSet<EventFirer> sources = new HashSet<EventFirer>();
-
-		@Override
-		public void handleEvent( BaseEvent event )
-		{
-			if( SUMMARY.equals( event.getKey() ) )
-			{
-				if( isSaveReport() && !sources.contains( event.getSource() ) )
-				{
-					if( event.getSource() instanceof ProjectItemImpl )
-					{
-						SummaryExportUtils.saveSummary( ( MutableSummary )summary, getReportFolder(), getReportFormat(),
-								getLabel() );
-					}
-					else
-					{
-						SceneItemImpl scene = ( SceneItemImpl )event.getSource();
-						SummaryExportUtils.saveSummary( ( MutableSummary )scene.summary, getReportFolder(),
-								getReportFormat(), getLabel() + "-" + scene.getLabel() );
-					}
-					fireBaseEvent( SUMMARY_EXPORTED );
-				}
-				sources.add( event.getSource() );
-			}
-			else if( CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
-			{
-				sources.remove( event.getSource() );
 			}
 		}
 	}
