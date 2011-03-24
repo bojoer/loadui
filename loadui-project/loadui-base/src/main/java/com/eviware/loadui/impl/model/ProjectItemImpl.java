@@ -371,6 +371,10 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void delete()
 	{
+		for( SceneItem scene : new ArrayList<SceneItem>( getScenes() ) )
+		{
+			scene.delete();
+		}
 		release();
 		projectFile.delete();
 		super.delete();
@@ -484,6 +488,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void broadcastMessage( SceneItem scene, String channel, Object data )
 	{
+		log.debug( "BROADCASTING: " + scene +" "+ channel +" "+ data );
 		sceneEndpoints.get( scene ).sendMessage( channel, data );
 	}
 

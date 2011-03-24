@@ -198,6 +198,11 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	public void delete()
 	{
+		for( ComponentItem component : new ArrayList<ComponentItem>( getComponents() ) )
+		{
+			component.delete();
+		}
+		
 		for( Terminal terminal : getTerminals() )
 			for( Connection connection : terminal.getConnections().toArray(
 					new Connection[terminal.getConnections().size()] ) )
