@@ -10,13 +10,17 @@
 
 	<osgi:reference interface="com.eviware.loadui.api.model.WorkspaceProvider"
 		id="workspaceProvider" />
-
+	
+	<osgi:reference interface="com.eviware.loadui.reporting.ReportingManager" id="reportingManager" />
+	
+	<osgi:reference interface="com.eviware.loadui.api.statistics.ProjectExecutionManager" id="projectExecutionManager" />
+	
 	<osgi:service interface="com.eviware.loadui.api.ui.WindowController" ref="windowController" />
 	
 	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
 		ref="systemLogInspector" />
 	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
-		ref="AgentInspector" />
+		ref="agentInspector" />
 
 	<osgi:set id="inspectors" interface="com.eviware.loadui.api.ui.inspector.Inspector"
 		cardinality="0..N">
@@ -38,11 +42,9 @@
 	 <!-- 
 	<osgi:reference id="executorService" interface="java.util.concurrent.ThreadPoolExecutor"></osgi:reference>
 	 -->
-	<osgi:reference id="AgentDiscovery" interface="com.eviware.loadui.api.discovery.AgentDiscovery" />
+	<osgi:reference id="agentDiscovery" interface="com.eviware.loadui.api.discovery.AgentDiscovery" />
 	
 	<osgi:reference id="statisticsManager" interface="com.eviware.loadui.api.statistics.StatisticsManager" />
-	
-	<osgi:reference id="projectExecutionManager" interface="com.eviware.loadui.api.statistics.ProjectExecutionManager" cardinality="0..1" />
 	
 	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
 		ref="tableWidget" />

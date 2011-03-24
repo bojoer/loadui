@@ -95,7 +95,7 @@ public class ExecutionSelector extends Group {
 		executionManager.addEventListener( EventObject.class, executionManagerListener );
 	}
 	
-	def projectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
+	def projectExecutionManager:ProjectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
    
    def project = bind StatisticsWindow.instance.project on replace prevProject {
       def executions = executionManager.getExecutions();

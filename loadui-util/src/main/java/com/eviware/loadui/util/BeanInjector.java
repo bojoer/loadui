@@ -15,18 +15,18 @@
  */
 package com.eviware.loadui.util;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.springframework.osgi.context.BundleContextAware;
 
-public class BeanInjector implements ApplicationContextAware
+public class BeanInjector implements BundleContextAware
 {
-	private static ApplicationContext context;
+	private static BeanInjector instance;
 	private static Object waiter = new Object();
 
 	public static <T> T getBean( Class<T> cls )
 	{
-		if( context == null )
+		if( instance == null )
 		{
 			synchronized( waiter )
 			{
@@ -37,20 +37,39 @@ public class BeanInjector implements ApplicationContextAware
 				catch( InterruptedException e )
 				{
 				}
-				if( context == null )
-					throw new RuntimeException( "ApplicationContext is missing, has BeanInjector been configured?" );
+				if( instance == null )
+					throw new RuntimeException( "BundleContext is missing, has BeanInjector been configured?" );
 			}
 		}
 
-		String camelCase = cls.getSimpleName().substring( 0, 1 ).toLowerCase() + cls.getSimpleName().substring( 1 );
-		Object obj = context.getBean( camelCase, cls );
-		if( cls.isInstance( obj ) )
-			return cls.cast( obj );
+		return instance.doGetBean( cls );
+	}
+
+	private BundleContext context;
+
+	public BeanInjector()
+	{
+		instance = this;
+	}
+
+	private <T> T doGetBean( Class<T> cls )
+	{
+		// String camelCase = cls.getSimpleName().substring( 0, 1 ).toLowerCase()
+		// + cls.getSimpleName().substring( 1 );
+
+		ServiceReference ref = context.getServiceReference( cls.getName() );
+		if( ref != null )
+		{
+			Object service = context.getService( ref );
+			if( service != null )
+				return cls.cast( service );
+		}
+
 		throw new IllegalArgumentException( "No Bean found for class: " + cls );
 	}
 
 	@Override
-	public void setApplicationContext( ApplicationContext arg0 ) throws BeansException
+	public void setBundleContext( BundleContext arg0 )
 	{
 		context = arg0;
 		synchronized( waiter )

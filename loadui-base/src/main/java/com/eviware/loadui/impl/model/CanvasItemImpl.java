@@ -36,6 +36,7 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.BehaviorProvider;
 import com.eviware.loadui.api.component.BehaviorProvider.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
+import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.counter.Counter;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.ActionEvent;
@@ -79,7 +80,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	protected final Set<Connection> connections = new HashSet<Connection>();
 	private final ComponentListener componentListener = new ComponentListener();
 	private final ConnectionListener connectionListener = new ConnectionListener();
-	private final BehaviorProvider behaviorProvider;
+	private final ComponentRegistry componentRegistry;
 	protected final ScheduledExecutorService scheduler;
 	protected final Counter timerCounter = new TimerCounter();
 	private ScheduledFuture<?> timerFuture;
@@ -117,7 +118,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		this.counterSupport = counterSupport;
 
 		scheduler = BeanInjector.getBean( ScheduledExecutorService.class );
-		behaviorProvider = BeanInjector.getBean( BehaviorProvider.class );
+		componentRegistry = BeanInjector.getBean( ComponentRegistry.class );
 
 		statisticHolderSupport = new StatisticHolderSupport( this );
 		counterStatisticSupport = new CounterStatisticSupport( this );
@@ -267,7 +268,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 		try
 		{
-			component.setBehavior( behaviorProvider.createBehavior( descriptor, component.getContext() ) );
+			component.setBehavior( componentRegistry.createBehavior( descriptor, component.getContext() ) );
 			component.addEventListener( BaseEvent.class, componentListener );
 			if( counterSupport instanceof AggregatedCounterSupport )
 				( ( AggregatedCounterSupport )counterSupport ).addChild( component );
@@ -292,7 +293,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		component.init();
 		try
 		{
-			component.setBehavior( behaviorProvider.loadBehavior( config.getType(), component.getContext() ) );
+			component.setBehavior( componentRegistry.loadBehavior( config.getType(), component.getContext() ) );
 			if( components.add( component ) )
 			{
 				component.addEventListener( BaseEvent.class, componentListener );

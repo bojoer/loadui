@@ -1,3 +1,18 @@
+/*
+ * Copyright 2011 eviware software ab
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl5
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.impl.statistics;
 
 import java.text.SimpleDateFormat;
@@ -20,20 +35,23 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
 import com.eviware.loadui.api.summary.Summary;
-import com.eviware.loadui.util.reporting.JasperReportManager;
+import com.eviware.loadui.reporting.ReportingManager;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 {
 	private final ExecutionManager executionManager;
 	private final WorkspaceProvider workspaceProvider;
+	private final ReportingManager reportingManager;
 	private final HashMap<String, HashSet<Execution>> projectIdToExecutions = new HashMap<String, HashSet<Execution>>();
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningListener runningListener = new RunningListener();
 
-	ProjectExecutionManagerImpl( final ExecutionManager executionManager, final WorkspaceProvider workspaceProvider )
+	ProjectExecutionManagerImpl( final ExecutionManager executionManager, final WorkspaceProvider workspaceProvider,
+			final ReportingManager reportingManager )
 	{
 		this.executionManager = executionManager;
 		this.workspaceProvider = workspaceProvider;
+		this.reportingManager = reportingManager;
 
 		workspaceProvider.addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
 		{
@@ -210,7 +228,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				execution.setAttribute( "totalFailures", String.valueOf( totalFailures ) );
 
 				Summary summary = project.getSummary();
-				JasperReportManager.getInstance().createReport( summary, execution.getSummaryReport(), "JASPER_PRINT" );
+				reportingManager.createReport( summary, execution.getSummaryReport(), "JASPER_PRINT" );
 				project.fireEvent( new BaseEvent( project, ProjectItem.SUMMARY_EXPORTED ) );
 			}
 		}
