@@ -86,6 +86,8 @@ import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.reporting.ReportingManager;
 
 import java.lang.IllegalArgumentException;
 
@@ -95,8 +97,9 @@ import java.lang.Exception;
 import java.text.SimpleDateFormat;
 
 public class SummaryReport extends Stack {
-	
 	def sdf: SimpleDateFormat = new SimpleDateFormat("d MMM yyyy hh:mm a", Locale.ENGLISH);
+	
+	def reportingManager:ReportingManager = BeanInjector.getBean( ReportingManager.class );
 	
 	var navigator:VBox;
 	var main:VBox;
@@ -339,7 +342,7 @@ public class SummaryReport extends Stack {
 										text: "Print"
 										action:function() {
 										    AppState.byName("MAIN").blockingTask( function():Void {
-		    									com.eviware.loadui.util.reporting.JasperReportManager.getInstance().createReport(summary);
+		    									reportingManager.createReport( summary );
 		    								}, null, "Generating Printable Report..." );
 										}
 									}, GlowButton {

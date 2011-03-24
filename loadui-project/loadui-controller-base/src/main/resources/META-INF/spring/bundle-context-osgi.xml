@@ -18,5 +18,9 @@
 	
 	<osgi:reference interface="com.eviware.loadui.api.statistics.store.ExecutionManager" id="executionManager" />
 	
+	<osgi:reference interface="com.eviware.loadui.reporting.ReportingManager" id="reportingManager" />
+	
 	<osgi:service interface="com.eviware.loadui.api.discovery.AgentDiscovery" ref="agentDiscovery" />
+	
+	<osgi:service interface="com.eviware.loadui.api.statistics.ProjectExecutionManager" ref="projectExecutionManager" />
 </beans>

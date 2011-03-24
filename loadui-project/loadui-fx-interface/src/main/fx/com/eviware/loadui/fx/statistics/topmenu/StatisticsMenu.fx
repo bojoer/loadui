@@ -61,11 +61,13 @@ import com.eviware.loadui.fx.ui.resources.MenuArrow;
 import com.eviware.loadui.fx.ui.menu.MenubarButton;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.fx.statistics.chart.ChartPage;
+import com.eviware.loadui.fx.statistics.topmenu.ExecutionSelector;
+
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
-import com.eviware.loadui.fx.statistics.topmenu.ExecutionSelector;
-
+import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.reporting.ReportingManager;
 
 import java.lang.Exception;
 
@@ -79,6 +81,8 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.menu.St
  * @author henrik.olsson
  */
 public class StatisticsMenu extends VBox {
+	
+	def reportingManager:ReportingManager = BeanInjector.getBean( ReportingManager.class );
 	
 	var menuButton:MenuButton;
 	

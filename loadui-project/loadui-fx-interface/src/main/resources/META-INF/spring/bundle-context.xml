@@ -8,15 +8,15 @@
 		
 	<bean id="windowController" class="com.eviware.loadui.fx.JavaFXActivator"
 		factory-method="getWindowController" />
-
+		
 	<bean id="mainWindow" class="com.eviware.loadui.fx.MainWindow" init-method="initialize" destroy-method="destroy">
 		<property name="scene" ref="scene" />
 		<property name="windowController" ref="windowController" />
 		<property name="workspaceProvider" ref="workspaceProvider" />
 	</bean>
 	
-	<bean id="AgentDiscoverer" class="com.eviware.loadui.fx.agents.discovery.AgentDiscoverer" init-method="initialize" destroy-method="destroy">
-		<property name="AgentDiscovery" ref="AgentDiscovery" />
+	<bean id="agentDiscoverer" class="com.eviware.loadui.fx.agents.discovery.AgentDiscoverer" init-method="initialize" destroy-method="destroy">
+		<property name="agentDiscovery" ref="agentDiscovery" />
 	</bean>
 
 	<bean id="httpClientHolder" class="com.eviware.loadui.fx.http.HttpClientHolder" init-method="initialize" destroy-method="destroy">
@@ -45,7 +45,7 @@
 		<constructor-arg value="System Log" />
 	</bean>
 	
-	<bean id="AgentInspector" class="com.eviware.loadui.fx.widgets.AgentInspector" factory-method="createInstance">
+	<bean id="agentInspector" class="com.eviware.loadui.fx.widgets.AgentInspector" factory-method="createInstance">
 		<constructor-arg value="Agents" />
 	</bean>
 	

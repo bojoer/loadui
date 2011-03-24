@@ -72,7 +72,8 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 			}
 			else
 			{
-				log.warn( "Client attempted to connect with invalid version string: {} != {}", LoadUI.AGENT_VERSION, data );
+				log.warn( "Client attempted to connect with invalid version string. Mine: {}, Theirs: {}",
+						LoadUI.AGENT_VERSION, data );
 				send( session, channel, LoadUI.AGENT_VERSION, null );
 			}
 		}

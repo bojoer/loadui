@@ -29,13 +29,16 @@ import com.eviware.loadui.fx.statistics.chart.ChartPage;
 
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.util.ReleasableUtils;
-import com.eviware.loadui.util.reporting.JasperReportManager;
+import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.reporting.ReportingManager;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 public class StatisticsReportPrintDialog {
 	var checkBoxes:PageCheckBox[];
+	
+	def reportingManager:ReportingManager = BeanInjector.getBean( ReportingManager.class );
 	
 	def statisticPages = StatisticsWindow.getInstance().project.getStatisticPages().getChildren();
 	
@@ -62,7 +65,7 @@ public class StatisticsReportPrintDialog {
 			}
 			
 			AppState.byName("STATISTICS").blockingTask( function():Void {
-				JasperReportManager.getInstance().createReport( StatisticsWindow.getInstance().project.getLabel(), StatisticsWindow.execution, pages, map );
+				reportingManager.createReport( StatisticsWindow.getInstance().project.getLabel(), StatisticsWindow.execution, pages, map );
 			}, function( task ):Void {
 				ReleasableUtils.releaseAll( chartPages as Object );
 			}, "Generating Printable Report..." );

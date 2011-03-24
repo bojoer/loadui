@@ -36,6 +36,7 @@
 		<module>loadui-component</module>
 		<module>loadui-cmd-base</module>
 		<module>loadui-store-h2</module>
+		<module>loadui-reporting</module>
 	</modules>
 
 

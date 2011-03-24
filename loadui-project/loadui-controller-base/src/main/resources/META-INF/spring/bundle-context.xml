@@ -20,4 +20,11 @@
 		<constructor-arg ref="executionManager" />
 		<constructor-arg ref="addressableRegistry" />
 	</bean>
+	
+	<bean id="projectExecutionManager"
+		class="com.eviware.loadui.impl.statistics.ProjectExecutionManagerImpl">
+		<constructor-arg ref="executionManager" />
+		<constructor-arg ref="workspaceProvider" />
+		<constructor-arg ref="reportingManager" />
+	</bean>
 </beans>

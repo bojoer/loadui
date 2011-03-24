@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.util.reporting;
+package com.eviware.loadui.impl.reporting;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,14 +36,14 @@ import org.slf4j.LoggerFactory;
 
 public class SubReportURLHandler extends URLStreamHandler
 {
-
-	Logger log = LoggerFactory.getLogger( SubReportURLHandler.class );
-
-	private JasperReportManager reportManager = JasperReportManager.getInstance();
+	public static Logger log = LoggerFactory.getLogger( SubReportURLHandler.class );
 	private static Map<String, byte[]> reportCache = Collections.synchronizedMap( new WeakHashMap<String, byte[]>() );
 
-	public SubReportURLHandler()
+	private final ReportEngine reportEngine;
+
+	public SubReportURLHandler( ReportEngine reportEngine )
 	{
+		this.reportEngine = reportEngine;
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class SubReportURLHandler extends URLStreamHandler
 		// log.debug( "Getting subreport for url [" + url + "]" );
 		String subreportFileName = url.getPath();
 		log.info( "Looking for subreport : " + subreportFileName );
-		LReportTemplate subreport = reportManager.getReport( subreportFileName );
+		LReportTemplate subreport = reportEngine.getReport( subreportFileName );
 
 		// get xml compile it and pass connection to it..
 		String xml = subreport.getData();

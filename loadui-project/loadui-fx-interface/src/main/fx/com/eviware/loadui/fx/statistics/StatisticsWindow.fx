@@ -111,6 +111,17 @@ public class StatisticsWindow {
 	var appState:AppState;
 	public var scene:Scene on replace {
 		if( scene != null ) {
+			topMenu = StatisticsMenu {
+				width: bind scene.width,
+				project: project,
+				onPageSelect: function( page ):Void {
+					for( child in stack.content ) {
+						ReleasableUtils.release( child );
+					}
+					currentChartPage = page;
+					stack.content = [ layoutRegion, page ]
+				}
+			};
 			appState = AppState {};
 			
 			appState.insertInto ( ManageMenu { width: bind scene.width }, STATISTICS_MANAGE );
@@ -159,18 +170,7 @@ public class StatisticsWindow {
 		height: bind scene.height - 140
 	}
 	
-	def topMenu:StatisticsMenu = StatisticsMenu {
-		width: bind scene.width,
-		project: project,
-		onPageSelect: function( page ):Void {
-			for( child in stack.content )
-			{
-				ReleasableUtils.release( child );
-			}
-			currentChartPage = page;
-			stack.content = [ layoutRegion, page ]
-		}
-	};
+	var topMenu:StatisticsMenu;
 	
 	public function show() {
 		if ( closed ) {

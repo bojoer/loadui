@@ -32,6 +32,8 @@
 	
 	<osgi:service interface="com.eviware.loadui.api.statistics.StatisticsManager" ref="statisticsManager" />
 	
+	<osgi:service interface="com.eviware.loadui.api.counter.CounterSynchronizer" ref="counterSynchronizer" />
+	
 	<osgi:service interface="com.eviware.loadui.api.statistics.model.chart.ChartViewProviderFactory" ref="chartViewProviderFactory" />
 	
 	<osgi:set id="statisticWriterFactories" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory"
@@ -43,8 +45,5 @@
 	<osgi:service ref="sampleStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
 	<osgi:service ref="throughputStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
 	<osgi:service ref="counterStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
-	<osgi:service ref="variableStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />
-	
-	<osgi:service interface="com.eviware.loadui.api.statistics.ProjectExecutionManager" id="projectExecutionManager" />
-	
+	<osgi:service ref="variableStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />	
 </beans>
