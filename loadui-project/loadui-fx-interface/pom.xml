@@ -154,6 +154,16 @@
 			<version>1.4.0</version>
 		</dependency>
 		<dependency>
+			<groupId>commons-math</groupId>
+			<artifactId>commons-math</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.discovery</artifactId>
+			<version>0.4.0</version>
+		</dependency>
+		<dependency>
 			<groupId>jide</groupId>
 			<artifactId>jide-common</artifactId>
 			<version>2.10.4</version>
@@ -169,18 +179,6 @@
 			<groupId>org.apache.batik</groupId>
 			<artifactId>batik-awt-util</artifactId>
 			<version>1.7-beta1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-math</groupId>
-			<artifactId>commons-math</artifactId>
-			<version>1.2</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-discovery</groupId>
-			<artifactId>commons-discovery</artifactId>
-			<version>20040218.194635</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

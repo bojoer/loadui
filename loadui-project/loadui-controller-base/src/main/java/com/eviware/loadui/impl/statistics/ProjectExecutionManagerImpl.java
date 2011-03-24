@@ -25,17 +25,21 @@ import java.util.Set;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
+import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.reporting.ReportingManager;
+import com.eviware.loadui.reporting.SummaryExportUtils;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 {
@@ -43,6 +47,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 	private final WorkspaceProvider workspaceProvider;
 	private final ReportingManager reportingManager;
 	private final HashMap<String, HashSet<Execution>> projectIdToExecutions = new HashMap<String, HashSet<Execution>>();
+	private final HashMap<ProjectItem, SummaryListener> summaryListeners = new HashMap<ProjectItem, ProjectExecutionManagerImpl.SummaryListener>();
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningListener runningListener = new RunningListener();
 
@@ -117,6 +122,30 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 						projectIdToExecutions.put( addedProject.getId(), executionSet );
 					}
 					addedProject.addEventListener( ActionEvent.class, runningListener );
+
+					SummaryListener summaryListener = new SummaryListener( addedProject );
+					summaryListeners.put( addedProject, summaryListener );
+					addedProject.addEventListener( BaseEvent.class, summaryListener );
+				}
+				else if( ProjectItem.SCENES.equals( event.getKey() ) )
+				{
+					SceneItem scene = ( SceneItem )event.getElement();
+					scene.addEventListener( BaseEvent.class, summaryListeners.get( event.getSource() ) );
+				}
+			}
+			else
+			{
+				if( WorkspaceItem.PROJECTS.equals( event.getKey() ) )
+				{
+					ProjectItem removedProject = ( ProjectItem )event.getElement();
+
+					removedProject.removeEventListener( ActionEvent.class, runningListener );
+					removedProject.removeEventListener( BaseEvent.class, summaryListeners.remove( removedProject ) );
+				}
+				else if( ProjectItem.SCENES.equals( event.getKey() ) )
+				{
+					SceneItem scene = ( SceneItem )event.getElement();
+					scene.removeEventListener( BaseEvent.class, summaryListeners.get( event.getSource() ) );
 				}
 			}
 		}
@@ -230,6 +259,50 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				Summary summary = project.getSummary();
 				reportingManager.createReport( summary, execution.getSummaryReport(), "JASPER_PRINT" );
 				project.fireEvent( new BaseEvent( project, ProjectItem.SUMMARY_EXPORTED ) );
+			}
+		}
+	}
+
+	private class SummaryListener implements EventHandler<BaseEvent>
+	{
+		// once summary event was fired,source is added to this set to prevent
+		// generating summary more than once (in case summary event was received
+		// more than once from the same source e.g. when user stops the project by
+		// clicking STOP button)
+		private final HashSet<EventFirer> sources = new HashSet<EventFirer>();
+
+		private final ProjectItem project;
+
+		public SummaryListener( ProjectItem project )
+		{
+			this.project = project;
+		}
+
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( CanvasItem.SUMMARY.equals( event.getKey() ) )
+			{
+				if( project.isSaveReport() && !sources.contains( event.getSource() ) )
+				{
+					if( event.getSource() instanceof ProjectItem )
+					{
+						SummaryExportUtils.saveSummary( ( MutableSummary )project.getSummary(), project.getReportFolder(),
+								project.getReportFormat(), project.getLabel() );
+					}
+					else
+					{
+						SceneItem scene = ( SceneItem )event.getSource();
+						SummaryExportUtils.saveSummary( ( MutableSummary )scene.getSummary(), project.getReportFolder(),
+								project.getReportFormat(), project.getLabel() + "-" + scene.getLabel() );
+					}
+					project.fireEvent( new BaseEvent( project, ProjectItem.SUMMARY_EXPORTED ) );
+				}
+				sources.add( event.getSource() );
+			}
+			else if( CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
+			{
+				sources.remove( event.getSource() );
 			}
 		}
 	}

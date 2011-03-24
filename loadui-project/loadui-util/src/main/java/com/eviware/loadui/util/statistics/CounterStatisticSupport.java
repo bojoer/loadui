@@ -18,8 +18,6 @@ package com.eviware.loadui.util.statistics;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jfree.util.Log;
-
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventHandler;
