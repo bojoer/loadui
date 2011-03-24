@@ -24,9 +24,10 @@ import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.statistics.StatisticHolder;
@@ -66,13 +67,18 @@ public class SampleStatisticsWriterTest
 		when( manager.getExecutionManager() ).thenReturn( executionManagerMock );
 		when( manager.getMinimumWriteDelay() ).thenReturn( 1000L );
 
-		ApplicationContext appContext = mock( ApplicationContext.class );
-		when( appContext.getBean( "statisticsManager", StatisticsManager.class ) ).thenReturn( manager );
-		AddressableRegistry addressableRegistryMock = mock( AddressableRegistry.class );
-		when( appContext.getBean( "addressableRegistry", AddressableRegistry.class ) ).thenReturn(
-				addressableRegistryMock );
+		BundleContext bundleContext = mock( BundleContext.class );
 
-		new BeanInjector().setApplicationContext( appContext );
+		ServiceReference smMock = mock( ServiceReference.class );
+		when( bundleContext.getServiceReference( StatisticsManager.class.getName() ) ).thenReturn( smMock );
+		when( bundleContext.getService( smMock ) ).thenReturn( manager );
+
+		ServiceReference arMock = mock( ServiceReference.class );
+		when( bundleContext.getServiceReference( AddressableRegistry.class.getName() ) ).thenReturn( arMock );
+		AddressableRegistry addressableRegistryMock = mock( AddressableRegistry.class );
+		when( bundleContext.getService( arMock ) ).thenReturn( addressableRegistryMock );
+
+		new BeanInjector().setBundleContext( bundleContext );
 		holderSupport = new StatisticHolderSupport( holderMock );
 		StatisticVariable variable = holderSupport.addStatisticVariable( "AVG_TEST" );
 		writer = ( SampleStatisticsWriter )new SampleStatisticsWriter.Factory().createStatisticsWriter( manager,
