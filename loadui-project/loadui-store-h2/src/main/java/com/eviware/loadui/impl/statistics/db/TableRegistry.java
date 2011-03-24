@@ -28,6 +28,14 @@ public class TableRegistry implements Releasable
 {
 	private Map<String, TableBase> tableMap = new HashMap<String, TableBase>();
 
+	public void putAll( String dbName, List<TableBase> tableList )
+	{
+		for( TableBase table : tableList )
+		{
+			tableMap.put( dbName + table.getExternalName(), table );
+		}
+	}
+
 	public void put( String dbName, TableBase table )
 	{
 		tableMap.put( dbName + table.getExternalName(), table );
@@ -72,7 +80,7 @@ public class TableRegistry implements Releasable
 			release( dbName, tableList.get( i ).getExternalName() );
 		}
 	}
-	
+
 	/**
 	 * Releases specified table
 	 * 
