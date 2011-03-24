@@ -22,7 +22,8 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.springframework.core.convert.ConversionService;
 
 import static org.mockito.Mockito.*;
@@ -42,13 +43,22 @@ public class WorkspaceProviderImplTest
 	@Before
 	public void setup()
 	{
-		ApplicationContext ctx = mock( ApplicationContext.class );
-		when( ctx.getBean( anyString(), eq( AddressableRegistry.class ) ) ).thenReturn( new AddressableRegistryImpl() );
 		ConversionService csrv = mock( ConversionService.class );
-		when( ctx.getBean( anyString(), eq( ConversionService.class ) ) ).thenReturn( csrv );
-		when( ctx.getBean( anyString(), eq( ScheduledExecutorService.class ) ) ).thenReturn(
-				Executors.newSingleThreadScheduledExecutor() );
-		new BeanInjector().setApplicationContext( ctx );
+		BundleContext bundleContext = mock( BundleContext.class );
+
+		ServiceReference arMock = mock( ServiceReference.class );
+		when( bundleContext.getServiceReference( AddressableRegistry.class.getName() ) ).thenReturn( arMock );
+		when( bundleContext.getService( arMock ) ).thenReturn( new AddressableRegistryImpl() );
+
+		ServiceReference csMock = mock( ServiceReference.class );
+		when( bundleContext.getServiceReference( ConversionService.class.getName() ) ).thenReturn( csMock );
+		when( bundleContext.getService( csMock ) ).thenReturn( csrv );
+
+		ServiceReference sesMock = mock( ServiceReference.class );
+		when( bundleContext.getServiceReference( ScheduledExecutorService.class.getName() ) ).thenReturn( sesMock );
+		when( bundleContext.getService( sesMock ) ).thenReturn( Executors.newSingleThreadScheduledExecutor() );
+
+		new BeanInjector().setBundleContext( bundleContext );
 	}
 
 	@Test
