@@ -89,8 +89,7 @@ public class TrackImpl implements Track
 				{
 					String key = keys.next();
 					if( !DataTable.STATIC_FIELD_TIMESTAMP.equalsIgnoreCase( key )
-							&& !DataTable.STATIC_FIELD_SOURCEID.equalsIgnoreCase( key )
-							&& !DataTable.STATIC_FIELD_INTERPOLATIONLEVEL.equalsIgnoreCase( key ) )
+							&& !DataTable.STATIC_FIELD_SOURCEID.equalsIgnoreCase( key ) )
 					{
 						values.put( key, ( Number )result.get( key ) );
 					}
@@ -134,8 +133,7 @@ public class TrackImpl implements Track
 					{
 						String key = keys.next();
 						if( !DataTable.STATIC_FIELD_TIMESTAMP.equalsIgnoreCase( key )
-								&& !DataTable.STATIC_FIELD_SOURCEID.equalsIgnoreCase( key )
-								&& !DataTable.STATIC_FIELD_INTERPOLATIONLEVEL.equalsIgnoreCase( key ) )
+								&& !DataTable.STATIC_FIELD_SOURCEID.equalsIgnoreCase( key ) )
 						{
 							values.put( key, ( Number )row.get( key ) );
 						}

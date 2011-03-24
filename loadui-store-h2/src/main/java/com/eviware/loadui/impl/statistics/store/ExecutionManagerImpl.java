@@ -72,6 +72,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 {
 	private static Logger log = LoggerFactory.getLogger( ExecutionManagerImpl.class );
 
+	private static final int INTERPOLATION_LEVEL_COUNT = 5;
+
 	/**
 	 * Postfix added to data table name when creating source table
 	 */
@@ -255,14 +257,19 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			String dbName = currentExecution.getExecutionDir().getName();
 
-			// create data table
-			DataTable dtd = new DataTable( dbName, td.getId(), td.getValueNames(), connectionRegistry, metadata,
-					tableRegistry );
-
 			// create sources table
 			SourceTable std = new SourceTable( dbName, td.getId() + SOURCE_TABLE_NAME_POSTFIX, connectionRegistry,
 					metadata, tableRegistry );
-			dtd.setParentTable( std );
+
+			// create data tables
+			ArrayList<TableBase> dataTableList = new ArrayList<TableBase>();
+			for( int i = 0; i < INTERPOLATION_LEVEL_COUNT; i++ )
+			{
+				DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), i ), td.getValueNames(), connectionRegistry,
+						metadata, tableRegistry );
+				dtd.setParentTable( std );
+				dataTableList.add( dtd );
+			}
 
 			// insert into meta-table
 			Map<String, Object> data = new HashMap<String, Object>();
@@ -273,7 +280,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			// all tables are created properly and meta data inserted, so all SQL
 			// operations have finished properly. Create track instance and add it
 			// to current execution and put created tables into table registry
-			tableRegistry.put( dbName, dtd );
+			tableRegistry.putAll( dbName, dataTableList );
 			tableRegistry.put( dbName, std );
 
 			Track track = new TrackImpl( currentExecution, td, this );
@@ -380,25 +387,26 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				TrackDescriptor td = trackDescriptors.get( trackId );
 				if( td != null )
 				{
-					// create data table
-					DataTable dtd = new DataTable( dbName, td.getId(), td.getValueNames(), connectionRegistry, metadata,
-							tableRegistry );
 					// create sources table
 					SourceTable std = new SourceTable( dbName, td.getId() + SOURCE_TABLE_NAME_POSTFIX, connectionRegistry,
 							metadata, tableRegistry );
-					dtd.setParentTable( std );
 
-					createdTableList.add( dtd );
+					// create data tables
+					for( int k = 0; k < INTERPOLATION_LEVEL_COUNT; k++ )
+					{
+						DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), k ), td.getValueNames(), connectionRegistry,
+								metadata, tableRegistry );
+						dtd.setParentTable( std );
+						createdTableList.add( dtd );
+					}
+
 					createdTableList.add( std );
 					tracksToCreate.add( td );
 				}
 			}
 
 			// add created tables into table registry
-			for( int i = 0; i < createdTableList.size(); i++ )
-			{
-				tableRegistry.put( dbName, createdTableList.get( i ) );
-			}
+			tableRegistry.putAll( dbName, createdTableList );
 
 			// create tracks and add them to execution
 			for( int i = 0; i < tracksToCreate.size(); i++ )
@@ -469,7 +477,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			currentExecution.updateLength( timestamp );
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( DataTable.STATIC_FIELD_TIMESTAMP, timestamp );
-			data.put( DataTable.STATIC_FIELD_INTERPOLATIONLEVEL, interpolationLevel );
 			Collection<String> nameCollection = entry.getNames();
 			for( Iterator<String> iterator = nameCollection.iterator(); iterator.hasNext(); )
 			{
@@ -478,7 +485,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			}
 			try
 			{
-				write( trackId, source, data );
+				write( trackId, source, interpolationLevel, data );
 			}
 			catch( SQLException e )
 			{
@@ -502,9 +509,16 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		return latestEntries.get( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ) );
 	}
 
-	private void write( String trackId, String source, Map<String, Object> data ) throws SQLException
+	private String buildDataTableName( String trackId, long interpolationLevel )
 	{
-		TableBase dtd = tableRegistry.getTable( currentExecution.getExecutionDir().getName(), trackId );
+		return trackId + "_" + interpolationLevel;
+	}
+
+	private void write( String trackId, String source, int interpolationLevel, Map<String, Object> data )
+			throws SQLException
+	{
+		TableBase dtd = tableRegistry.getTable( currentExecution.getExecutionDir().getName(),
+				buildDataTableName( trackId, interpolationLevel ) );
 
 		Integer sourceId = ( ( SourceTable )dtd.getParentTable() ).getSourceId( source );
 		data.put( DataTable.STATIC_FIELD_SOURCEID, sourceId );
@@ -515,7 +529,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public Map<String, Object> readNext( String executionId, String trackId, String source, int startTime,
 			int interpolationLevel ) throws SQLException
 	{
-		TableBase dtd = tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(), trackId );
+		TableBase dtd = tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(),
+				buildDataTableName( trackId, interpolationLevel ) );
 
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
@@ -523,7 +538,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		Integer sourceId = ( ( SourceTable )dtd.getParentTable() ).getSourceId( source );
 		data.put( DataTable.SELECT_ARG_SOURCEID_EQ, sourceId );
-		data.put( DataTable.SELECT_ARG_INTERPOLATIONLEVEL_EQ, interpolationLevel );
 
 		return dtd.selectFirst( data );
 	}
@@ -531,7 +545,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public List<Map<String, Object>> read( String executionId, String trackId, String source, int startTime,
 			int endTime, int interpolationLevel ) throws SQLException
 	{
-		TableBase dtd = tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(), trackId );
+		TableBase dtd = tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(),
+				buildDataTableName( trackId, interpolationLevel ) );
 
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
@@ -539,7 +554,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		Integer sourceId = ( ( SourceTable )dtd.getParentTable() ).getSourceId( source );
 		data.put( DataTable.SELECT_ARG_SOURCEID_EQ, sourceId );
-		data.put( DataTable.SELECT_ARG_INTERPOLATIONLEVEL_EQ, interpolationLevel );
 
 		return dtd.select( data );
 	}
@@ -547,21 +561,27 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public void deleteTrack( String executionId, String trackId ) throws SQLException
 	{
 		String dbName = getExecution( executionId ).getExecutionDir().getName();
-		TableBase table = tableRegistry.getTable( dbName, trackId );
-		if( table != null )
+		TableBase table;
+		for( int i = 0; i < INTERPOLATION_LEVEL_COUNT; i++ )
 		{
-			table.drop();
-
-			// drop source table
-			table = tableRegistry.getTable( dbName, trackId + SOURCE_TABLE_NAME_POSTFIX );
+			table = tableRegistry.getTable( dbName, buildDataTableName( trackId, i ) );
 			if( table != null )
 			{
 				table.drop();
+				// release resources and remove from registry
+				tableRegistry.release( dbName, buildDataTableName( trackId, i ) );
 			}
-
-			// release resources and remove from registry
-			tableRegistry.release( dbName, trackId );
 		}
+
+		// drop source table
+		table = tableRegistry.getTable( dbName, trackId + SOURCE_TABLE_NAME_POSTFIX );
+		if( table != null )
+		{
+			table.drop();
+			// release resources and remove from registry
+			tableRegistry.release( dbName, trackId + SOURCE_TABLE_NAME_POSTFIX );
+		}
+
 	}
 
 	public void delete( String executionId )

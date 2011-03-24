@@ -17,7 +17,6 @@ package com.eviware.loadui.impl.statistics.store;
 
 import static org.junit.Assert.*;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
