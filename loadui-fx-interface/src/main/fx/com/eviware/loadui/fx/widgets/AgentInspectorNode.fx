@@ -380,6 +380,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 			placeholder: tcNode.copy(true)
 		} 
 		into items;
+		tcNode.containerNode = this;
 	}
 	
 	public function undeployTestCase(sceneItem: SceneItem){

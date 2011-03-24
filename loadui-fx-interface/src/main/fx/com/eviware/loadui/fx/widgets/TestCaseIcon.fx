@@ -64,16 +64,18 @@ import java.lang.RuntimeException;
 import org.slf4j.LoggerFactory;
 import com.eviware.loadui.fx.AppState;
 
+import com.javafx.preview.control.PopupMenu;
+import com.javafx.preview.control.MenuItem;
+
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.TestCaseIcon" );
 
 /**
  * Node to display in the AgentList representing a AgentItem.
  */
 public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHandler {
-	/**
-	 * The AgentItem to represent.
-	 */
-	public-init var agent: AgentItem;
+
+	// container node instance. Use containerNode.agent to retrieve reference to corresponding AgentItem.
+	public var containerNode: AgentInspectorNode;
 	
 	public var sceneItem: SceneItem on replace oldScene {
 		oldScene.removeEventListener(BaseEvent.class, this);
@@ -168,7 +170,8 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 					vpos: VPos.CENTER
 					textWrap: false
 					font: Font.font("Arial", 9)
-				}
+				},
+				contextMenu
 			]
 			opacity: bind if(dragging) 0.8 else 1
 			onMouseClicked: function(e: MouseEvent){
@@ -181,12 +184,41 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 						fireTestCaseIconSelected();
 					}
 				}
+				else if( e.button == MouseButton.SECONDARY ) {
+				   if(not isPlaceholder) {
+						contextMenu.show( this, e.screenX, e.screenY );	
+					}
+				}
 			}
 			onKeyPressed: function(e: KeyEvent) { 
 				if(not isPlaceholder and e.code == KeyCode.VK_DELETE) {
-					fireTestCaseRemoved();	
+					remove();	
 				}
 			}
+		}
+	}
+	
+	def openAction = MenuItem {
+		text: "Open"
+		action: function():Void {
+			AppState.byName("MAIN").setActiveCanvas(sceneItem);
+		}
+	}
+	
+	def unassignAction = MenuItem {
+		text: "Unassign"
+		action: function():Void {
+			remove();
+		}
+	}
+
+	def contextMenu: PopupMenu = PopupMenu {
+		items: [
+			openAction,
+			unassignAction
+		]
+		onShowing: function():Void {
+			unassignAction.visible = not containerNode.ghostAgent;
 		}
 	}
 	
