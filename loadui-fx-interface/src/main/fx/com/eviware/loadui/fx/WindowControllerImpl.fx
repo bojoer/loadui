@@ -27,22 +27,14 @@ import java.awt.event.ContainerEvent;
 import javafx.lang.FX;
 import javax.swing.JFrame;
 
-//public var instance:WindowControllerImpl;
-//public function getInstance():WindowController { instance }
-
 public class WindowControllerImpl extends WindowController {
 	public var stage:Stage;
 	public var frame:JFrame;
 	public-read var doClose = false;
 	public-init var windowTitleFilter:String;
 	
-	public var self:WindowControllerImpl;
-	
 	init {
 		Toolkit.getDefaultToolkit().addAWTEventListener( new Listener(), AWTEvent.COMPONENT_EVENT_MASK );
-		//instance = this;
-		println( "{this} wc was inited and will listen for '{windowTitleFilter}'" );
-		self = this;
 	}
 	
 	override function isFullscreen():Boolean {
@@ -64,7 +56,6 @@ public class WindowControllerImpl extends WindowController {
 	
 	public function setAlwaysOnTop( enabled:Boolean )
 	{
-		println("{this} is setting always-on-top for Window {frame.getTitle()}" );
 		frame.setAlwaysOnTop( enabled );
 	}
 	
@@ -81,10 +72,9 @@ class Listener extends AWTEventListener {
 	override function eventDispatched( event:AWTEvent ) {
 		if(event.getID() == ContainerEvent.COMPONENT_RESIZED) {
 			if(event.getSource() instanceof JFrame) {
-				if ( ((event.getSource() as JFrame).getTitle().contains( windowTitleFilter ) ) ) { // added this so it does not pickup splash jframe
+				if ( ((event.getSource() as JFrame).getTitle().contains( windowTitleFilter ) ) ) {
 					Toolkit.getDefaultToolkit().removeAWTEventListener(this);
 					frame = event.getSource() as JFrame;
-					println("{self} listener got {frame.getTitle()}" );
 				}
 			}
 		}
