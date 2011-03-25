@@ -20,8 +20,8 @@
  * @help http://www.loadui.org/Runners/web-page-runner-component.html
  * @name Web Page Runner
  * @category runners
- * @dependency org.apache.httpcomponents:httpcore:4.1-beta1
- * @dependency org.apache.httpcomponents:httpclient:4.1-alpha2
+ * @dependency org.apache.httpcomponents:httpcore:4.1
+ * @dependency org.apache.httpcomponents:httpclient:4.1.1
  */
 
 import org.apache.http.* 
@@ -84,19 +84,14 @@ sr.register( new Scheme( "http", PlainSocketFactory.socketFactory, 80 ) )
 sr.register( new Scheme( "https", sslSocketFactory, 443 ) )
 
 def cm = new ThreadSafeClientConnManager( sr )
-cm.maxTotalConnections = 50000
+cm.maxTotal = 50000
 cm.defaultMaxPerRoute = 50000
 
-http = new DefaultHttpClient( cm )
-
-def runningSamples = Collections.synchronizedSet( new HashSet() )
-runAction = null
 
 //Properties
 createProperty( 'url', String )
 createProperty( 'outputBody', Boolean, false )
 
-//createProperty( 'propagateSession', Boolean, false )
 createProperty( 'readResponse', Boolean, false )
 createProperty( 'errorCodeList', String )
 
@@ -104,6 +99,15 @@ createProperty( 'proxyHost', String)
 createProperty( 'proxyPort', Long)
 createProperty( 'proxyUsername', String)
 proxyPassword = createProperty( '_proxyPassword', String)
+authUsername = createProperty( '_authUsername', String)
+authPassword = createProperty( '_authPassword', String)
+
+http = new DefaultHttpClient( cm )
+
+
+			
+def runningSamples = Collections.synchronizedSet( new HashSet() )
+runAction = null
 
 eviPattern = ~/https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/
 dummyUrl = "http://GoSpamYourself.com"
@@ -136,12 +140,15 @@ updateProxy = {
 		
 		if( proxyUsername.value != null && proxyUsername.value.trim().length() > 0 && proxyPassword.value != null  ) {
 			http.credentialsProvider.setCredentials( 
-					new AuthScope(proxyHost.value, (int)proxyPort.value), 
-					new UsernamePasswordCredentials(proxyUsername.value, 
-					new String(proxyPassword.value)))
+				new AuthScope(proxyHost.value, (int)proxyPort.value), 
+				new UsernamePasswordCredentials(
+					proxyUsername.value,
+					new String(proxyPassword.value)
+				)
+			)
 		}
 		else {
-			http.credentialsProvider = null
+			http.credentialsProvider.clear()
 		}
 	}
 	else {
@@ -149,8 +156,22 @@ updateProxy = {
 	}
 }
 
+updateAuth = {
+	if( authUsername.value?.trim() && authPassword.value?.trim() ) {
+		http.credentialsProvider.setCredentials( 
+			new AuthScope( AuthScope.ANY ), 
+			new UsernamePasswordCredentials(
+				authUsername.value, 
+				new String(authPassword.value)
+			)
+		)
+		println ("auth WAS updated to " + authUsername.value + ":" + authPassword.value)
+	}
+}
+
 validateUrl()
 updateProxy()
+updateAuth()
 
 requestResetValue = 0
 sampleResetValue = 0
@@ -276,9 +297,15 @@ addEventListener( PropertyEvent ) { event ->
 		if( event.property == url ) {
 			validateUrl()
 		}
-		else if( event.property == proxyHost || event.property == proxyPort ||
-		event.property == proxyUsername || event.property == proxyPassword ) {
+		else if(
+				event.property == proxyHost || event.property == proxyPort ||
+				event.property == proxyUsername || event.property == proxyPassword ||
+				event.property == authUsername || event.property == authPassword
+				)
+		{
+			http.credentialsProvider.clear()
 			updateProxy()
+			updateAuth()
 		}
 	}
 }
@@ -331,6 +358,11 @@ settings( label: "Basic" ) {
 	property( property: maxQueueSize, label: 'Max Queue' )
 	property( property: errorCodeList, label: 'Error Codes that Count as Failures', constraints:'w 200!')
 	property( property: countDiscarded, label: 'Count Discarded Requests as Failed' )
+}
+
+settings( label: "Authentication" ) {
+	property( property: authUsername, label: 'Username' )
+	property( property: authPassword, widget: 'password', label: 'Password' )
 }
 
 settings( label: "Proxy" ) {

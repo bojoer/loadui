@@ -354,6 +354,22 @@ public class ExecutionSelector extends Group {
 		}    
 	}
 	
+	var loadAndClose = function() {
+		if( leftSelected != null ){
+	   	StatisticsWindow.execution = leftExecutions.get(leftSelected) as Execution;
+		}
+		else{
+	   	StatisticsWindow.execution = null;
+		}
+		if(rightSelected != null){
+	   	StatisticsWindow.comparedExecution = rightExecutions.get(rightSelected) as Execution;
+		}
+		else{
+	   	StatisticsWindow.comparedExecution = null;
+		}
+		menu.hide();
+	}
+	
 	var resizeYStart: Number = 0;
 	
 //	var closeImg: String = "{__ROOT__}images/execution-selector-close.fxz";
@@ -437,29 +453,16 @@ public class ExecutionSelector extends Group {
 						    fill: Color.TRANSPARENT
 						},
 						btnLoadData = Button {
-							layoutX: bind (popupWidth - 36 - btnLoadData.layoutBounds.width) / 2
-							text: "Load data"
-							action: function():Void {
-							   if(leftSelected != null){
-							       StatisticsWindow.execution = leftExecutions.get(leftSelected) as Execution;
-							   }
-							   else{
-							       StatisticsWindow.execution = null;
-							   }
-							   if(rightSelected != null){
-							       StatisticsWindow.comparedExecution = rightExecutions.get(rightSelected) as Execution;
-							   }
-							   else{
-							       StatisticsWindow.comparedExecution = null;
-							   }
-								menu.hide();
-							}
+								layoutX: bind (popupWidth - 36 - btnLoadData.layoutBounds.width) / 2
+								text: "Load data"
+								action: loadAndClose
 						},
 						btnClear = Button {
 							layoutX: bind popupWidth - 36 - btnClear.layoutBounds.width
 							text: "Clear"
 							action: function():Void {
 								unsetRadioButtons(false, true);
+								loadAndClose();
 							}
 						}
 					]

@@ -21,6 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Stack;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.control.Label;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.paint.Color;
@@ -29,8 +30,10 @@ import javafx.scene.image.ImageView;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.geometry.HPos;
+import javafx.util.Sequences;
 import com.javafx.preview.control.MenuButton;
 import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.PopupMenu;
 
 import com.sun.javafx.scene.layout.Region;
 
@@ -83,7 +86,37 @@ public class ResultNodeBase extends BaseNode, FxLabeled {
 				AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
 			}
 		} );
+		
+		addMouseHandler( MOUSE_CLICKED, function( e:MouseEvent ):Void {
+			if( e.button == MouseButton.SECONDARY )
+			{
+				popup.show( this, e.screenX, e.screenY );
+			}
+		} );
 	}
+	
+	protected function generateMenu():Node[] {
+		MenuItem {
+		text: ##[OPEN]"Open"
+		action: function() {
+				StatisticsWindow.execution = execution;
+				AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
+			}
+		}
+	}
+	
+	def popup:PopupMenu = PopupMenu {
+		items: generateMenu()
+		onShowing: function():Void {
+			if ( Sequences.indexOf( AppState.byScene( scene ).overlay.content, popup ) == -1 )
+			{
+				insert popup into AppState.byScene( scene ).overlay.content;				
+			}
+		},
+		onHiding: function():Void {
+			delete popup from AppState.byScene( scene ).overlay.content;
+		}
+	};
 	
 	override function create():Node {
 		DialogPanel {
@@ -98,13 +131,10 @@ public class ResultNodeBase extends BaseNode, FxLabeled {
 						styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
 						//graphic: ActivityLed { active: bind active } //Bug in MenuButton causing incorrect margins for the "arrow" when using a graphic.
 						text: bind label.toUpperCase();
-						items: MenuItem {
-							text: ##[OPEN]"Open"
-							action: function() {
-								StatisticsWindow.execution = execution;
-								AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
-							}
-						}
+						items: 
+						[
+							generateMenu()
+						]
 					},
 					Stack {
 						content: [
@@ -120,7 +150,8 @@ public class ResultNodeBase extends BaseNode, FxLabeled {
 								}
 								fill: Color.rgb( 255,255,255,0.15 )
 								content: "m 0.0,0.0 c -1.807,0.24262 -2.54911,1.55014 -3.07444,3.07443 l 0,43.52751 c 0.37619,1.83599 2.42728,3.12823 4.69256,0 12.25299,-33.96285 30.46724,-37.6855 90.61489,-46.60194 z"
-							}
+							},
+							popup
 						]
 					}
 				]

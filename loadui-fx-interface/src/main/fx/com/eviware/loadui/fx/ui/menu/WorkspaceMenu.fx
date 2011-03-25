@@ -14,12 +14,6 @@
  * under the Licence.
  */
 
-/*
-*WorkspaceMenu.fx
-*
-*Created on jun 1, 2010, 10:51:10 fm
-*/
-
 package com.eviware.loadui.fx.ui.menu;
 
 import javafx.scene.Node;

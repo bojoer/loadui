@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.VBox;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Separator;
 import javafx.geometry.Insets;
 import com.javafx.preview.control.MenuButton;
 import com.javafx.preview.control.MenuItem;
@@ -45,7 +46,14 @@ public class ResultNode extends ResultNodeBase, Draggable, Deletable {
 	
 	override var label = bind ModelUtils.getLabelHolder( execution ).label;
 	
-	postinit {
+	override function generateMenu()
+	{
+		var menu:Node[];
+		
+		insert super.generateMenu() into menu;
+		
+		insert Separator{} into menu;
+		
 		if( execution.isArchived() ) {
 			insert MenuItem {
 				text: ##[RENAME]"Rename"
@@ -55,7 +63,7 @@ public class ResultNode extends ResultNodeBase, Draggable, Deletable {
 						labeled: execution
 					}
 				}
-			} into menuButton.items;
+			} into menu;
 		}
 		insert MenuItem {
 			text: "Compare to"
@@ -63,12 +71,14 @@ public class ResultNode extends ResultNodeBase, Draggable, Deletable {
 				StatisticsWindow.comparedExecution = execution;
 				AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
 			}
-		} into menuButton.items;
+		} into menu;
 		insert MenuItem {
 			text: ##[DELETE]"Delete"
 			action: function() {
 				deleteObject();
 			}
-		} into menuButton.items;
+		} into menu;
+		
+		menu
 	}
 }
