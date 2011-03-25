@@ -245,7 +245,7 @@ public class ProjectMenu extends HBox {
 				                    }
 				                }
 				                MenuItem {
-				                    text: "Save As"
+				                    text: "Save As Copy..."
 				                    action: function() {
 				                        def chooser = new JFileChooser(lastFileChooserLocation);
 				                        chooser.addChoosableFileFilter(new XMLFileFilter());
@@ -260,7 +260,7 @@ public class ProjectMenu extends HBox {
 							                   if(destination != null and destination.exists()){
 							                     // confirmation dialog when selected file already exists
 														def confirmDialog: Dialog = Dialog {
-															title: "Confirm Save As"
+															title: "Confirm overwrite"
 															content: [
 																Text { content: "File exists, overwrite with current project?" },
 															]
