@@ -33,6 +33,9 @@ public class ExitConfirmDialogWorkspace {
     public-init var wc:WindowControllerImpl;
     
     postinit {
+    	
+    	  wc.stage.iconified = false;
+		  wc.stage.toFront();
         
         def dialog:Dialog = Dialog {
             title: "Exit confirm!"

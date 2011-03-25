@@ -55,6 +55,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
 import javafx.geometry.Insets;
 
+import com.javafx.preview.control.PopupMenu;
 import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.MenuButton;
 
@@ -111,6 +112,12 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 				);
 			}
 		} );
+		
+		addMouseHandler( MOUSE_CLICKED, function( e:MouseEvent ) {
+			if( e.button == MouseButton.SECONDARY ) {
+				popup.show( this, e.screenX, e.screenY );
+			}
+		} );
 	}	
 	
 	def enabledMenu:Node[] = [
@@ -137,77 +144,75 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 		}
 	];
 	
-	def disabledMenu:Node[] = [
-		//ActionMenuItem {
-		//	text: ##[ENABLE]"Enable"
-		//	action: function() {
-		//		projectRef.setEnabled( true );
-		//	}
-		//
-		MenuItem {
-			text: ##[OPEN]"Open"
-			action: function() {
-			    try {
-			        if ( projectRef.getProjectFile().exists() ) {
-						projectRef.setEnabled( true );
-						AppState.byName("MAIN").setActiveCanvas( projectRef.getProject() );
-			        } else {
-			            var dialog:Dialog = Dialog {
-            	    			        		x: 300
-            	    			        		y: 300
-            	    			    			title: "Error loading project: {projectRef.getLabel()}"
-            	    			    			content: [
-            	    			    				javafx.scene.control.Label { text: "Project file does not exists, do you want to be removed from workspace?"}
-            	    			    			]
-            	    			    			okText: "Ok"
-            	    			    			onOk: function() {
-            	    			    				MainWindow.instance.workspace.removeProject( projectRef );
-            	    			    				dialog.close();
-            	    			    			}
-            	    			    			onCancel: function() {
-            	    			    			    dialog.close()
-            	    			    			}
-			            	    			   }
-			        }
-			     }
-			    catch( e:IOException )
-			    {
-			    	log.error( "Failed to load project:", e );
-			    	CorruptProjectDialog{ project:projectRef };
-			    }
+	function generateDisabledMenu() {
+		[
+			MenuItem {
+				text: ##[OPEN]"Open"
+				action: function() {
+				    try {
+				        if ( projectRef.getProjectFile().exists() ) {
+							projectRef.setEnabled( true );
+							AppState.byName("MAIN").setActiveCanvas( projectRef.getProject() );
+				        } else {
+				            var dialog:Dialog = Dialog {
+	    			        		x: 300
+	    			        		y: 300
+	    			    			title: "Error loading project: {projectRef.getLabel()}"
+	    			    			content: [
+	    			    				javafx.scene.control.Label { text: "Project file does not exists, do you want to be removed from workspace?"}
+	    			    			]
+	    			    			okText: "Ok"
+	    			    			onOk: function() {
+	    			    				MainWindow.instance.workspace.removeProject( projectRef );
+	    			    				dialog.close();
+	    			    			}
+	    			    			onCancel: function() {
+	    			    			    dialog.close()
+	    			    			}
+         	    		   }
+				        }
+				     }
+				    catch( e:IOException )
+				    {
+				    	log.error( "Failed to load project:", e );
+				    	CorruptProjectDialog{ project:projectRef };
+				    }
+				}
+			} 
+			Separator{}
+			MenuItem {
+				text: ##[CLONE]"Clone"
+				action: function() { 
+				    if( projectRef.getProjectFile().exists() )
+						CloneProjectDialog { projectRef: projectRef }
+					else {
+					    var dialog:Dialog = Dialog {
+	            	    			        		x: 300
+	            	    			        		y: 300
+	            	    			    			title: "Error loading project: {projectRef.getLabel()}"
+	            	    			    			content: [
+	            	    			    				javafx.scene.control.Label { text: "Project file does not exists, do you want to be removed from workspace?"}
+	            	    			    			]
+	            	    			    			okText: "Ok"
+	            	    			    			onOk: function() {
+	            	    			    				MainWindow.instance.workspace.removeProject( projectRef );
+	            	    			    				dialog.close();
+	            	    			    			}
+	            	    			    			onCancel: function() {
+	            	    			    			    dialog.close()
+	            	    			    			}
+				            	    		}
+					} 
+				}
 			}
-		} 
-		Separator{}
-		MenuItem {
-			text: ##[CLONE]"Clone"
-			action: function() { 
-			    if( projectRef.getProjectFile().exists() )
-					CloneProjectDialog { projectRef: projectRef }
-				else {
-				    var dialog:Dialog = Dialog {
-            	    			        		x: 300
-            	    			        		y: 300
-            	    			    			title: "Error loading project: {projectRef.getLabel()}"
-            	    			    			content: [
-            	    			    				javafx.scene.control.Label { text: "Project file does not exists, do you want to be removed from workspace?"}
-            	    			    			]
-            	    			    			okText: "Ok"
-            	    			    			onOk: function() {
-            	    			    				MainWindow.instance.workspace.removeProject( projectRef );
-            	    			    				dialog.close();
-            	    			    			}
-            	    			    			onCancel: function() {
-            	    			    			    dialog.close()
-            	    			    			}
-			            	    		}
-				} 
+			MenuItem {
+				text: ##[DELETE]"Delete"
+				action: function() { DeleteProjectDialog { projectRef: projectRef } }
 			}
-		}
-		MenuItem {
-			text: ##[DELETE]"Delete"
-			action: function() { DeleteProjectDialog { projectRef: projectRef } }
-		}
-	];
+		];
+	}
+	
+	def disabledMenu:Node[] = generateDisabledMenu();
 	
 	var miniature: Image; 
 	function refreshMiniature(){
@@ -220,6 +225,8 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 			miniature = base64ToFXImage(base64);
 		}
 	}
+	
+	def popup:PopupMenu = PopupMenu {items: generateDisabledMenu() };
 	
 	override function create() {
 		refreshMiniature();
@@ -238,9 +245,10 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 					}, Group {
 						content: [
 							ImageView { image: projectGrid, x: 7, y: 7 },
-							ImageView { image: bind miniature, x: 12, y: 12 }
+							ImageView { image: bind miniature, x: 12, y: 12 },
 						]
 					}
+					popup
 				]
 			}
 			opacity: bind if( dragging ) 0.8 else 1
@@ -276,4 +284,5 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 	}
 	
 	override function toString() { label }
+	
 }

@@ -43,7 +43,6 @@ import com.eviware.loadui.fx.agents.discovery.AgentDiscoverer;
 import com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog;
 
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.MouseButton;
 
 import java.util.EventObject;
 import java.util.Comparator;
