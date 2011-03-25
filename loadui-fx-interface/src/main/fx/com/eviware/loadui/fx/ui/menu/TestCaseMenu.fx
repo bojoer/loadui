@@ -48,6 +48,7 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 
 import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.Menu;
 import com.javafx.preview.control.MenuButton;
 
 import com.eviware.loadui.fx.MainWindow;
@@ -64,6 +65,7 @@ import com.eviware.loadui.fx.widgets.RunController;
 import com.eviware.loadui.fx.widgets.DistributionModeSelector;
 import com.eviware.loadui.fx.summary.SummaryReport;
 import com.eviware.loadui.fx.widgets.canvas.Canvas;
+import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
 import com.eviware.loadui.api.model.ModelItem;
@@ -134,9 +136,49 @@ public class TestCaseMenu extends HBox {
 		Canvas.showNotes = showNotesButtonState;
 	}
 	
+	def newTestcaseMenuItem = MenuItem {
+		text: "New TestCase..."
+		action: function(): Void {
+			CreateNewTestCaseDialog { 
+				project: testCase.getProject(), 
+				onOk: function( createdTestCase: SceneItem ): Void {
+					switchTestCase(testCase, createdTestCase);
+				}
+			}
+		}
+	}
+					
+	def switchTestcaseSubmenu: Menu = Menu {
+		text: "Switch TestCase"
+		onShowing: function() {
+			def scenes: java.util.Collection = testCase.getProject().getScenes();
+			switchTestcaseSubmenu.items = for (s in scenes[d|d != testCase]) MenuItem {
+				text: (s as SceneItem).getLabel()
+				disable: false
+				action: function(): Void {
+					switchTestCase(testCase, s as SceneItem);
+				}
+			}
+			if(sizeof switchTestcaseSubmenu.items > 0){
+				insert Separator{} into switchTestcaseSubmenu.items;
+			}
+			insert newTestcaseMenuItem into switchTestcaseSubmenu.items;
+		}
+		onHidden: function() { //This shouldn't be needed, but is required for now due to a bug in the JavaFX PopupMenu.
+			menuButton.hide();
+		}
+	}
+	
+	function switchTestCase(oldScene: SceneItem, newScene: SceneItem): Void {
+	   MainWindow.instance.testcaseCanvas.generateMiniatures();
+	   var tcn: TestCaseNode = MainWindow.instance.projectCanvas.lookupCanvasNode(oldScene.getId()) as TestCaseNode;
+		tcn.loadMiniature();
+		AppState.byName("MAIN").setActiveCanvas(newScene);
+	}
+	
+	var menuButton: MenuButton;
+	
 	init {
-		var menuButton:MenuButton;
-		
 		content = [
 			ImageView {
 				image: Image {
@@ -271,7 +313,7 @@ public class TestCaseMenu extends HBox {
 											MainWindow.instance.testcaseCanvas.canvasItem.getProject().save(); 
 										}
 									}
-									
+									switchTestcaseSubmenu,									
 									MenuItem {
 										text: "Close"
 										action: function() {
