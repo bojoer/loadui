@@ -77,6 +77,8 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 
 import java.util.EventObject;
+import java.util.Collections;
+import java.util.Comparator;
 
 import com.eviware.loadui.api.counter.CounterHolder;
 
@@ -147,11 +149,18 @@ public class TestCaseMenu extends HBox {
 			}
 		}
 	}
+	
+	def sceneComparator = SceneComparator{}
 					
 	def switchTestcaseSubmenu: Menu = Menu {
 		text: "Switch TestCase"
 		onShowing: function() {
-			def scenes: java.util.Collection = testCase.getProject().getScenes();
+			var scenes = new java.util.ArrayList();
+			var sceneCollection = testCase.getProject().getScenes();
+			for(s in sceneCollection){
+				scenes.add(s);
+			}
+			Collections.sort( scenes, sceneComparator );
 			switchTestcaseSubmenu.items = for (s in scenes[d|d != testCase]) MenuItem {
 				text: (s as SceneItem).getLabel()
 				disable: false
@@ -409,5 +418,11 @@ class SummaryListener extends EventHandler {
 		else if (event.getKey().equals(CounterHolder.COUNTER_RESET_ACTION)){
 			runInFxThread( function(): Void { summaryEnabled = false } );
 		}
+	}
+}
+
+class SceneComparator extends Comparator {
+	override function compare( o1, o2 ) {
+		return (o1 as SceneItem).getLabel().compareTo((o2 as SceneItem).getLabel());
 	}
 }

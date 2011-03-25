@@ -44,7 +44,7 @@ public class SegmentTreeModel extends DefaultTreeModel
 		super( new ChartViewTreeNode( null, lineChartView ) );
 	}
 
-	private static abstract class BaseTreeNode implements TreeNode
+	public static abstract class BaseTreeNode implements TreeNode
 	{
 		private final TreeNode parent;
 
@@ -95,6 +95,11 @@ public class SegmentTreeModel extends DefaultTreeModel
 		public Enumeration<?> children()
 		{
 			return Collections.enumeration( getChildren() );
+		}
+		
+		public boolean isSelectedByDefault()
+		{
+			return false;
 		}
 	}
 
@@ -260,6 +265,12 @@ public class SegmentTreeModel extends DefaultTreeModel
 		public String toString()
 		{
 			return ChartNamePrettifier.nameForSource( sourceName );
+		}
+		
+		@Override
+		public boolean isSelectedByDefault()
+		{
+			return StatisticVariable.MAIN_SOURCE.equals( sourceName );
 		}
 	}
 
