@@ -133,7 +133,7 @@ class SegmentRow extends GridRow {
 				text: segment.getStatistic().getName()
 				layoutInfo: LayoutInfo { width: 60 }
 			}, Label {
-				text: if( segment.getStatistic().getSource() == StatisticVariable.MAIN_SOURCE ) "All" else segment.getStatistic().getSource()
+				text: if( segment.getStatistic().getSource() == StatisticVariable.MAIN_SOURCE ) "Total" else segment.getStatistic().getSource()
 				layoutInfo: LayoutInfo { width: 60 }
 			}, Label {
 				text: segment.getStatistic().getStatisticVariable().getStatisticHolder().getLabel()

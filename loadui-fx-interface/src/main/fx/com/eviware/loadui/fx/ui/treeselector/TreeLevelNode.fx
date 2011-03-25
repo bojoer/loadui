@@ -21,18 +21,27 @@ import javafx.scene.layout.Priority;
 import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import com.eviware.loadui.fx.statistics.chart.SegmentTreeModel.BaseTreeNode;
 
 public class TreeLevelNode extends VBox {
 	public-init var level:TreeSelectorLevel;
 	
 	public-init var target:Object on replace {
+		var valueNode: ValueNode = null;
 		content = [
 			Label { text: "{target}", layoutInfo: LayoutInfo { margin: Insets { bottom: 10 } }, styleClass: "title" },
 			for( childIndex in [0..level.selector.treeModel.getChildCount( target ) - 1] ) {
 				def child = level.selector.treeModel.getChild( target, childIndex );
-				ValueNode { treeNode: this, text: "{child}", value: child, layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } }
+				valueNode = ValueNode { treeNode: this, text: "{child}", value: child, layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } }
+				if((child as BaseTreeNode).isSelectedByDefault()){
+					valueNode.selected = true;
+				}
+				valueNode;
 			}
 		];
+		if( valueNode != null and level.selector.treeModel.getChildCount( target ) == 1 and not valueNode.selected ){
+			valueNode.selected = true;
+		}
 	}
 	
 	override var layoutInfo = LayoutInfo { margin: Insets { right: 18, left: 18 } };

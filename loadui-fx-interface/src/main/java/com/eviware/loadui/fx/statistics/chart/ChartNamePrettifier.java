@@ -28,7 +28,7 @@ public class ChartNamePrettifier
 
 	public static String nameForSource( String source )
 	{
-		return StatisticVariable.MAIN_SOURCE.equals( source ) ? "All" : source;
+		return StatisticVariable.MAIN_SOURCE.equals( source ) ? "Total" : source;
 	}
 
 	public static String nameForStatistic( String statisticName )
