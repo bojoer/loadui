@@ -51,12 +51,12 @@ public interface Track
 	 * @param timestamp
 	 * @return
 	 */
-	public Entry getNextEntry( String source, int timestamp );
+	public Entry getNextEntry( String source, long timestamp );
 	
 	/**
 	 * @see getNextEntry(String, int)
 	 */
-	public Entry getNextEntry( String source, int timestamp, int interpolationLevel );
+	public Entry getNextEntry( String source, long timestamp, int interpolationLevel );
 
 	/**
 	 * Gets an Iterable over the specified range, including all Entries with a
@@ -70,12 +70,12 @@ public interface Track
 	 * @param endTime
 	 * @return
 	 */
-	public Iterable<Entry> getRange( String source, int startTime, int endTime );
+	public Iterable<Entry> getRange( String source, long startTime, long endTime );
 	
 	/**
 	 * @see getRange(String, int, int)
 	 */
-	public Iterable<Entry> getRange( String source, int startTime, int endTime, int interpolationLevel );
+	public Iterable<Entry> getRange( String source, long startTime, long endTime, int interpolationLevel );
 
 	/**
 	 * Deletes the Track from the Execution, removing all data from the

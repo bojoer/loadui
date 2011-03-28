@@ -1,0 +1,317 @@
+/*
+ * Copyright 2011 eviware software ab
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl5
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
+
+package com.eviware.loadui.impl.charting.line;
+
+import java.awt.Color;
+import java.beans.PropertyChangeEvent;
+
+import com.eviware.loadui.api.charting.line.LineSegmentModel;
+import com.eviware.loadui.api.charting.line.StrokeStyle;
+import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.api.statistics.DataPoint;
+import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+import com.eviware.loadui.api.statistics.store.Execution;
+import com.jidesoft.chart.model.DefaultChartModel;
+import com.jidesoft.chart.style.ChartStyle;
+
+public class LineSegmentChartModel extends DefaultChartModel implements LineSegmentModel
+{
+	private final ChartGroup chartGroup;
+	private final LineSegment segment;
+	private final ChartStyle chartStyle = new ChartStyle();
+	private final ScaledPointScale scaler = new ScaledPointScale();
+	private final StyleEventListener listener = new StyleEventListener();
+
+	private Execution execution;
+	private long latestTime = 0;
+	private long xRangeMin = 0;
+	private long xRangeMax = 0;
+	private int level = 0;
+	private int scale = 0;
+	private Color color;
+	private StrokeStyle strokeStyle;
+	private int strokeWidth = 1;
+
+	public LineSegmentChartModel( LineChartView chartView, LineSegment segment )
+	{
+		this.segment = segment;
+		chartGroup = chartView.getChartGroup();
+
+		chartGroup.addEventListener( PropertyChangeEvent.class, listener );
+
+		loadStyles();
+	}
+
+	public void poll()
+	{
+		DataPoint<?> dataPoint = segment.getStatistic().getLatestPoint( level );
+		if( dataPoint != null )
+		{
+			long timestamp = dataPoint.getTimestamp();
+			if( timestamp != latestTime && timestamp >= 0 )
+			{
+				latestTime = timestamp;
+				if( xRangeMin <= timestamp && timestamp <= xRangeMax )
+					addPoint( scaler.createPoint( timestamp, dataPoint.getValue().doubleValue() ) );
+			}
+		}
+	}
+
+	private void refresh()
+	{
+		clearPoints();
+		for( DataPoint<?> dataPoint : segment.getStatistic().getPeriod( xRangeMin, xRangeMax, level, execution ) )
+			addPoint( scaler.createPoint( dataPoint.getTimestamp(), dataPoint.getValue().doubleValue() ), false );
+
+		update();
+	}
+
+	private void loadStyles()
+	{
+		int scale = 0;
+		try
+		{
+			scale = Integer.parseInt( segment.getAttribute( SCALE, "0" ) );
+		}
+		catch( NumberFormatException e )
+		{
+		}
+		setScale( scale, false );
+
+		String colorStr = segment.getAttribute( COLOR, null );
+		if( colorStr == null )
+		{
+			// TODO: Get default color.
+			// colorStr = LineChartStyles.getLineColor( chartGroup, segment );
+			segment.setAttribute( COLOR, colorStr );
+		}
+		setColor( Color.decode( colorStr ), false );
+
+		try
+		{
+			strokeWidth = Integer.parseInt( segment.getAttribute( WIDTH, "1" ) );
+		}
+		catch( NumberFormatException e )
+		{
+			strokeWidth = 1;
+		}
+
+		strokeStyle = StrokeStyle.valueOf( segment.getAttribute( STROKE, StrokeStyle.SOLID.name() ) );
+
+		updateStroke();
+	}
+
+	private void updateStroke()
+	{
+		chartStyle.setLineStroke( strokeStyle.getStroke( strokeWidth ) );
+		fireModelChanged();
+	}
+
+	public ChartStyle getChartStyle()
+	{
+		return chartStyle;
+	}
+
+	public LineSegment getLineSegment()
+	{
+		return segment;
+	}
+
+	public ChartGroup getChartGroup()
+	{
+		return chartGroup;
+	}
+
+	public Execution getExecution()
+	{
+		return execution;
+	}
+
+	public void setExecution( Execution execution )
+	{
+		this.execution = execution;
+		latestTime = execution.getLength();
+		refresh();
+	}
+
+	public long getLatestTime()
+	{
+		return latestTime;
+	}
+
+	public long getXRangeMin()
+	{
+		return xRangeMin;
+	}
+
+	public long getXRangeMax()
+	{
+		return xRangeMax;
+	}
+
+	public void setXRange( long min, long max )
+	{
+		if( xRangeMin != min || xRangeMax != max )
+		{
+			xRangeMin = min;
+			xRangeMax = max;
+			refresh();
+		}
+	}
+
+	public int getLevel()
+	{
+		return level;
+	}
+
+	public void setLevel( int level )
+	{
+		this.level = level;
+	}
+
+	@Override
+	public int getScale()
+	{
+		return scale;
+	}
+
+	private void setScale( int scale, boolean fireEvent )
+	{
+		if( scale != this.scale )
+		{
+			int oldScale = this.scale;
+			this.scale = scale;
+			scaler.setScale( Math.pow( 10, scale ) );
+			fireModelChanged();
+			if( fireEvent )
+			{
+				segment.setAttribute( SCALE, String.valueOf( scale ) );
+				chartGroup.fireEvent( new PropertyChangeEvent( segment, SCALE, oldScale, scale ) );
+			}
+			refresh();
+		}
+	}
+
+	@Override
+	public void setScale( int scale )
+	{
+		setScale( scale, true );
+	}
+
+	public ScaledPointScale getScaler()
+	{
+		return scaler;
+	}
+
+	@Override
+	public Color getColor()
+	{
+		return color;
+	}
+
+	private void setColor( Color color, boolean fireEvent )
+	{
+		if( !this.color.equals( color ) )
+		{
+			Color oldColor = this.color;
+			this.color = color;
+			chartStyle.setLineColor( color );
+			if( fireEvent )
+			{
+				String partialColor = Integer.toHexString( color.getRGB() & 0xFFFFFF );
+				String colorString = "#" + "000000".substring( partialColor.length() ) + partialColor.toUpperCase();
+				segment.setAttribute( COLOR, colorString );
+				chartGroup.fireEvent( new PropertyChangeEvent( segment, COLOR, oldColor, color ) );
+			}
+		}
+	}
+
+	@Override
+	public void setColor( Color color )
+	{
+		setColor( color, true );
+	}
+
+	@Override
+	public StrokeStyle getStrokeStyle()
+	{
+		return strokeStyle;
+	}
+
+	@Override
+	public void setStrokeStyle( StrokeStyle strokeStyle )
+	{
+		if( this.strokeStyle != strokeStyle )
+		{
+			StrokeStyle oldStrokeStyle = strokeStyle;
+			this.strokeStyle = strokeStyle;
+			segment.setAttribute( STROKE, strokeStyle.name() );
+			chartGroup.fireEvent( new PropertyChangeEvent( segment, STROKE, oldStrokeStyle, strokeStyle ) );
+			updateStroke();
+		}
+	}
+
+	@Override
+	public int getStrokeWidth()
+	{
+		return strokeWidth;
+	}
+
+	@Override
+	public void setStrokeWidth( int strokeWidth )
+	{
+		if( this.strokeWidth != strokeWidth )
+		{
+			int oldStrokeWidth = this.strokeWidth;
+			this.strokeWidth = strokeWidth;
+			segment.setAttribute( WIDTH, String.valueOf( strokeWidth ) );
+			chartGroup.fireEvent( new PropertyChangeEvent( segment, WIDTH, oldStrokeWidth, strokeWidth ) );
+			updateStroke();
+		}
+	}
+
+	private class StyleEventListener implements WeakEventHandler<PropertyChangeEvent>
+	{
+		@Override
+		public void handleEvent( PropertyChangeEvent event )
+		{
+			if( event.getSource() == segment )
+			{
+				if( SCALE.equals( event.getPropertyName() ) )
+				{
+					setScale( ( Integer )event.getNewValue(), false );
+				}
+				else if( COLOR.equals( event.getPropertyName() ) )
+				{
+					setColor( ( Color )event.getNewValue(), false );
+				}
+				else if( STROKE.equals( event.getPropertyName() ) )
+				{
+					strokeStyle = StrokeStyle.valueOf( ( String )event.getNewValue() );
+					updateStroke();
+				}
+				else if( WIDTH.equals( event.getPropertyName() ) )
+				{
+					strokeWidth = ( Integer )event.getNewValue();
+					updateStroke();
+				}
+			}
+		}
+	}
+}

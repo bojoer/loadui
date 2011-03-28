@@ -20,6 +20,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
 
+import com.eviware.loadui.api.charting.ChartNamePrettifier;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 
@@ -63,9 +64,9 @@ public class ChartLegendDataSource extends JRAbstractBeanDataSource
 	{
 		String fieldName = field.getName();
 		if( fieldName.equals( "statistic" ) )
-			return lineSegment.getStatistic().getName();
+			return ChartNamePrettifier.nameFor( lineSegment.getStatistic() );
 		if( fieldName.equals( "source" ) )
-			return lineSegment.getStatistic().getSource();
+			return ChartNamePrettifier.nameForSource( lineSegment.getStatistic().getSource() );
 		if( fieldName.equals( "component" ) )
 			return lineSegment.getStatistic().getStatisticVariable().getStatisticHolder().getLabel();
 		if( fieldName.equals( "variable" ) )

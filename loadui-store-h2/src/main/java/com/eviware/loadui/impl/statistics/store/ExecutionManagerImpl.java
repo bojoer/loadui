@@ -265,8 +265,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			ArrayList<TableBase> dataTableList = new ArrayList<TableBase>();
 			for( int i = 0; i < INTERPOLATION_LEVEL_COUNT; i++ )
 			{
-				DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), i ), td.getValueNames(), connectionRegistry,
-						metadata, tableRegistry );
+				DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), i ), td.getValueNames(),
+						connectionRegistry, metadata, tableRegistry );
 				dtd.setParentTable( std );
 				dataTableList.add( dtd );
 			}
@@ -394,8 +394,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 					// create data tables
 					for( int k = 0; k < INTERPOLATION_LEVEL_COUNT; k++ )
 					{
-						DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), k ), td.getValueNames(), connectionRegistry,
-								metadata, tableRegistry );
+						DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), k ), td.getValueNames(),
+								connectionRegistry, metadata, tableRegistry );
 						dtd.setParentTable( std );
 						createdTableList.add( dtd );
 					}
@@ -526,7 +526,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		dtd.insert( data );
 	}
 
-	public Map<String, Object> readNext( String executionId, String trackId, String source, int startTime,
+	public Map<String, Object> readNext( String executionId, String trackId, String source, long startTime,
 			int interpolationLevel ) throws SQLException
 	{
 		TableBase dtd = tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(),
@@ -542,8 +542,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		return dtd.selectFirst( data );
 	}
 
-	public List<Map<String, Object>> read( String executionId, String trackId, String source, int startTime,
-			int endTime, int interpolationLevel ) throws SQLException
+	public List<Map<String, Object>> read( String executionId, String trackId, String source, long startTime,
+			long endTime, int interpolationLevel ) throws SQLException
 	{
 		TableBase dtd = tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(),
 				buildDataTableName( trackId, interpolationLevel ) );
