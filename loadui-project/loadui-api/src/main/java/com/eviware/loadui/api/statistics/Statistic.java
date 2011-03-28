@@ -66,21 +66,21 @@ public interface Statistic<T extends Number> extends Value<T>
 	 *           The Execution to read data from.
 	 * @return
 	 */
-	public Iterable<DataPoint<T>> getPeriod( int start, int end, int interpolationLevel, Execution execution );
+	public Iterable<DataPoint<T>> getPeriod( long start, long end, int interpolationLevel, Execution execution );
 
 	/**
 	 * execution defaults to the current Execution.
 	 * 
 	 * @see getPeriod(int, int, int, Execution)
 	 */
-	public Iterable<DataPoint<T>> getPeriod( int start, int end, int interpolationLevel );
+	public Iterable<DataPoint<T>> getPeriod( long start, long end, int interpolationLevel );
 
 	/**
 	 * interpolationLevel defaults to 0.
 	 * 
 	 * @see getPeriod(int, int, int, Execution)
 	 */
-	public Iterable<DataPoint<T>> getPeriod( int start, int end );
+	public Iterable<DataPoint<T>> getPeriod( long start, long end );
 
 	/**
 	 * Gets the timestamp of when the last value was recorded, expressed as the

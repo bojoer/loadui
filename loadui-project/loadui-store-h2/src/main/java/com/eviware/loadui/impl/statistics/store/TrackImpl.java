@@ -69,13 +69,13 @@ public class TrackImpl implements Track
 	}
 
 	@Override
-	public Entry getNextEntry( String source, int timestamp )
+	public Entry getNextEntry( String source, long timestamp )
 	{
 		return getNextEntry( source, timestamp, 0 );
 	}
 
 	@Override
-	public Entry getNextEntry( String source, int timestamp, int interpolationLevel )
+	public Entry getNextEntry( String source, long timestamp, int interpolationLevel )
 	{
 		try
 		{
@@ -108,13 +108,13 @@ public class TrackImpl implements Track
 	}
 
 	@Override
-	public Iterable<Entry> getRange( String source, int startTime, int endTime )
+	public Iterable<Entry> getRange( String source, long startTime, long endTime )
 	{
 		return getRange( source, startTime, endTime, 0 );
 	}
 
 	@Override
-	public Iterable<Entry> getRange( String source, int startTime, int endTime, int interpolationLevel )
+	public Iterable<Entry> getRange( String source, long startTime, long endTime, int interpolationLevel )
 	{
 		try
 		{

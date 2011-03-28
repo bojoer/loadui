@@ -87,7 +87,7 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	}
 
 	@Override
-	public Iterable<DataPoint<T>> getPeriod( int start, int end, int interpolationLevel, Execution execution )
+	public Iterable<DataPoint<T>> getPeriod( long start, long end, int interpolationLevel, Execution execution )
 	{
 		if( execution == null )
 			return Collections.emptyList();
@@ -100,13 +100,13 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	}
 
 	@Override
-	public Iterable<DataPoint<T>> getPeriod( int start, int end, int interpolationLevel )
+	public Iterable<DataPoint<T>> getPeriod( long start, long end, int interpolationLevel )
 	{
 		return getPeriod( start, end, interpolationLevel, manager.getCurrentExecution() );
 	}
 
 	@Override
-	public Iterable<DataPoint<T>> getPeriod( int start, int end )
+	public Iterable<DataPoint<T>> getPeriod( long start, long end )
 	{
 		return getPeriod( start, end, 0 );
 	}
