@@ -11,7 +11,7 @@
 	<osgi:reference interface="com.eviware.loadui.api.model.WorkspaceProvider"
 		id="workspaceProvider" />
 	
-	<osgi:reference interface="com.eviware.loadui.reporting.ReportingManager" id="reportingManager" />
+	<osgi:reference interface="com.eviware.loadui.api.reporting.ReportingManager" id="reportingManager" />
 	
 	<osgi:reference interface="com.eviware.loadui.api.statistics.ProjectExecutionManager" id="projectExecutionManager" />
 	

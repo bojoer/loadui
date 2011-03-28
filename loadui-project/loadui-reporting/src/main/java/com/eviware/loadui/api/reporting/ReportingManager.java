@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.reporting;
+package com.eviware.loadui.api.reporting;
 
 import java.awt.Image;
 import java.io.File;

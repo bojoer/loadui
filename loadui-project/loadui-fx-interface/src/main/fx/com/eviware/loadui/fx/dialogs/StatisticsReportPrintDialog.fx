@@ -28,9 +28,9 @@ import com.eviware.loadui.fx.statistics.reporting.StatisticsReportGenerator;
 import com.eviware.loadui.fx.statistics.chart.ChartPage;
 
 import com.eviware.loadui.api.statistics.model.StatisticPage;
+import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.BeanInjector;
-import com.eviware.loadui.reporting.ReportingManager;
 
 import java.util.ArrayList;
 import java.util.Map;

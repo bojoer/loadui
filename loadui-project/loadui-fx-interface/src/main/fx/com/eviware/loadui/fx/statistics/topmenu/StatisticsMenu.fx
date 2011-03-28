@@ -66,8 +66,8 @@ import com.eviware.loadui.fx.statistics.topmenu.ExecutionSelector;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
+import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.util.BeanInjector;
-import com.eviware.loadui.reporting.ReportingManager;
 
 import java.lang.Exception;
 

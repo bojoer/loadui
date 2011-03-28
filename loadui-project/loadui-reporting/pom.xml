@@ -27,7 +27,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Export-Package>com.eviware.loadui.reporting.*</Export-Package>
+						<Export-Package>com.eviware.loadui.api.reporting.*</Export-Package>
 						<Embed-Dependency>*;scope=provided</Embed-Dependency>
 						<Import-Package>!antlr*;!apple.*;!com.apple.*;!bsh;!com.lowagie.*;!com.sun.*;!sun.*;!javax.persistence;!mondrian.olap;!net.sourceforge.barbecue.*;!org.apache.batik.*;!org.apache.commons.javaflow;!org.apache.poi.*;!org.apache.tools.ant.*;!org.apache.xml.*;!org.apache.xpath.*;!org.bouncycastle.*;!org.eclipse.*;!org.hibernate.*;!org.jaxen.*;!org.jfree.*;!org.krysalis.*;!org.mozilla.*;!org.w3c.dom.svg;*</Import-Package>
 					</instructions>

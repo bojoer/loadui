@@ -22,12 +22,12 @@ import java.util.Map;
 
 import net.sf.jasperreports.engine.JRException;
 
+import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.impl.reporting.statistics.ExecutionDataSource;
 import com.eviware.loadui.impl.reporting.summary.SummaryDataSource;
-import com.eviware.loadui.reporting.ReportingManager;
 
 public class ReportingManagerImpl implements ReportingManager
 {
