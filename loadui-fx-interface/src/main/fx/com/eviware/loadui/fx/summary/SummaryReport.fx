@@ -86,8 +86,8 @@ import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.util.BeanInjector;
-import com.eviware.loadui.reporting.ReportingManager;
 
 import java.lang.IllegalArgumentException;
 

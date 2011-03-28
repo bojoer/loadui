@@ -32,14 +32,14 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
+import com.eviware.loadui.api.reporting.ReportingManager;
+import com.eviware.loadui.api.reporting.SummaryExportUtils;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
-import com.eviware.loadui.reporting.ReportingManager;
-import com.eviware.loadui.reporting.SummaryExportUtils;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 {
