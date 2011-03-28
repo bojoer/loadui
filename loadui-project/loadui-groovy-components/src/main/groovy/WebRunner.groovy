@@ -104,7 +104,8 @@ authPassword = createProperty( '_authPassword', String)
 
 http = new DefaultHttpClient( cm )
 
-
+inlineUrlAuthUsername = null
+inlineUrlAuthPassword = null
 			
 def runningSamples = Collections.synchronizedSet( new HashSet() )
 runAction = null
@@ -113,11 +114,26 @@ eviPattern = ~/https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/
 dummyUrl = "http://GoSpamYourself.com"
 
 validateUrl = {  
-	if ((url.value != null) && !(url.value.toLowerCase().startsWith( "http://" ) || url.value.toLowerCase().startsWith( "https://" ))) {
+	if((url.value != null) && !(url.value.toLowerCase().startsWith( "http://" ) || url.value.toLowerCase().startsWith( "https://" ))) {
 		url.value = "http://" + url.value;
 	}
 	
-	if( url.value != null && eviPattern.matcher(url.value).matches() ) url.value = dummyUrl
+	if( url.value != null && eviPattern.matcher(url.value).matches() )
+	{
+		url.value = dummyUrl
+	}
+	
+	// extract possible username and password from username:password@domain syntax
+	matcher = url.value?.replace("http://","") =~ /([^:]+):([^@]+)@(.+)/
+	if ( matcher )
+	{
+		inlineUrlAuthUsername = matcher[0][1]
+		inlineUrlAuthPassword = matcher[0][2]
+	} else
+	{
+		inlineUrlAuthUsername = inlineUrlAuthPassword = null
+	}
+	updateAuth()
 	
 	setInvalid( url.value == null || url.value == dummyUrl )
 	runAction?.enabled = !isInvalid()
@@ -157,12 +173,24 @@ updateProxy = {
 }
 
 updateAuth = {
-	if( authUsername.value?.trim() && authPassword.value?.trim() ) {
+	username = null
+	password = null
+	if( inlineUrlAuthUsername && inlineUrlAuthPassword )
+	{
+		username = inlineUrlAuthUsername
+		password = inlineUrlAuthPassword
+	}
+	else if( authUsername.value?.trim() && authPassword.value?.trim() )
+	{
+		username = authUsername.value
+		password = authPassword.value
+	}
+	if( username && password ) {
 		http.credentialsProvider.setCredentials( 
 			new AuthScope( AuthScope.ANY ), 
 			new UsernamePasswordCredentials(
-				authUsername.value, 
-				new String(authPassword.value)
+				username, 
+				new String(password)
 			)
 		)
 		println ("auth WAS updated to " + authUsername.value + ":" + authPassword.value)
@@ -171,7 +199,6 @@ updateAuth = {
 
 validateUrl()
 updateProxy()
-updateAuth()
 
 requestResetValue = 0
 sampleResetValue = 0
