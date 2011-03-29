@@ -183,7 +183,7 @@ public class StatisticsWindow {
 					]
 					scene: scene = Scene {
 						stylesheets: "file:style.css"
-						width: 1024
+						width: 1085
 						height: 768
 						fill: Color.web("#373737")
 					}
@@ -195,7 +195,7 @@ public class StatisticsWindow {
 			} else {
 				stage = Stage {
 					height: 768
-					width: 1024
+					width: 1085
 					title: "Results"
 					icons: [
 						Image { url:"{__ROOT__}images/png/icon_32x32.png" },

@@ -60,7 +60,7 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
     }
     
     postinit {
-        addChartItems();
+        //addChartItems();
         addAnalysisItems();
     }
     
