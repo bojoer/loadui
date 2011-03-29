@@ -93,7 +93,7 @@ public class StatisticsWindow {
 	
 	def statisticPagesListener = new StatisticPagesListener();
 	public def wc = WindowControllerImpl {
-		windowTitleFilter: "Statistics"
+		windowTitleFilter: "Results"
 	} on replace {
 		println("StatWindow: My wc was replaced, now it is {wc}, and its frame is {wc.frame.getTitle()} and it should catch windows called '{wc.windowTitleFilter}'");
 	};
@@ -176,7 +176,7 @@ public class StatisticsWindow {
 		if ( closed ) {
 			if ( scene == null ) {
 				stage = Stage {
-					title: "Statistics"
+					title: "Results"
 					icons: [
 						Image { url:"{__ROOT__}images/png/icon_32x32.png" },
 						Image { url:"{__ROOT__}images/png/icon_16x16.png" }
@@ -196,7 +196,7 @@ public class StatisticsWindow {
 				stage = Stage {
 					height: 768
 					width: 1024
-					title: "Statistics"
+					title: "Results"
 					icons: [
 						Image { url:"{__ROOT__}images/png/icon_32x32.png" },
 						Image { url:"{__ROOT__}images/png/icon_16x16.png" }

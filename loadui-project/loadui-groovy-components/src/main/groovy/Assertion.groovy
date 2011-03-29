@@ -81,30 +81,18 @@ maxDisplay = new DelayedFormattedString( '%d', 500, value { max.value } )
 
 onConnect = { outgoing, incoming ->
 	if( incoming == inputTerminal ){
-		updateProviders()
+		redraw()
 	}
 }
 
 onDisconnect = { outgoing, incoming ->
 	if( incoming == inputTerminal ){
-		updateProviders()
+		redraw()
 	}
-}
-
-updateProviders = {
-	def options = []
-	for( conn in inputTerminal.connections ) {
-		for( key in conn.outputTerminal.messageSignature.keySet() )
-			if( !options.contains(key))
-				options += key
-	}
-	provider.options = options
-	if( !options.contains(value.value) )
-		value.value = 'Select value'
 }
 
 onSignature = { outgoing, signature ->
-	updateProviders()
+	redraw()
 }
 
 analyze = { message ->
@@ -225,38 +213,56 @@ ex = {t, m ->
 	println("-------------------------------")
 }
 
-//Layout
-layout {
-	property( property: value, widget: 'comboBox', label: 'Value', options: provider, constraints: 'w 100!' )
-	separator( vertical: true )
-//	box {
-		property( property: min, label: 'Min', min: 0 )
-		property( property: max, label: 'Max', min: 0 )
-//	}
-	separator( vertical: true )
-//	box {
-//		property( property: tolerance, label: 'Tolerance', min: 1, constraints:'wrap 1')
-//		property( property: period, label: 'Period', min: 0 )
-//	}
-//	separator( vertical: true )
-	box(layout:'wrap, ins 0') {
-		box( widget:'display', layout:'wrap 2') {
-			node( label:'Asserted', fString: assertedDisplay, constraints:'w 50!' )
-			node( label:'Failed', fString: failedDisplay, constraints:'w 50!' )
-			node( label:'Min', fString: minDisplay, constraints:'w 50!' )
-			node( label:'Max', fString: maxDisplay, constraints:'w 50!' )
+def redraw()
+{
+	def options = []
+	for( conn in inputTerminal.connections ) {
+		for( key in conn.outputTerminal.messageSignature.keySet() )
+			if( !options.contains(key))
+				options += key
+	}
+
+	provider = new OptionsProviderImpl([])
+	provider.options = options
+	
+	if( !options.contains(value.value) )
+		value.value = 'Select value'
+		
+	//Layout
+	layout {
+		property( property: value, widget: 'comboBox', label: 'Value', options: provider, constraints: 'w 100!' )
+		separator( vertical: true )
+	//	box {
+			property( property: min, label: 'Min', min: 0 )
+			property( property: max, label: 'Max', min: 0 )
+	//	}
+		separator( vertical: true )
+	//	box {
+	//		property( property: tolerance, label: 'Tolerance', min: 1, constraints:'wrap 1')
+	//		property( property: period, label: 'Period', min: 0 )
+	//	}
+	//	separator( vertical: true )
+		box(layout:'wrap, ins 0') {
+			box( widget:'display', layout:'wrap 2') {
+				node( label:'Asserted', fString: assertedDisplay, constraints:'w 50!' )
+				node( label:'Failed', fString: failedDisplay, constraints:'w 50!' )
+				node( label:'Min', fString: minDisplay, constraints:'w 50!' )
+				node( label:'Max', fString: maxDisplay, constraints:'w 50!' )
+			}
+			action( 
+				label: 'Reset', 
+				action: {
+					buffer.clear()
+					assertedResetValue = totalCounter.get()
+					failedResetValue = assertionFailureCounter.get()
+				}, 
+				constraints:'align right'
+			)
 		}
-		action( 
-			label: 'Reset', 
-			action: {
-				buffer.clear()
-				assertedResetValue = totalCounter.get()
-				failedResetValue = assertionFailureCounter.get()
-			}, 
-			constraints:'align right'
-		)
 	}
 }
+
+redraw()
 
 //Compact Layout
 compactLayout {

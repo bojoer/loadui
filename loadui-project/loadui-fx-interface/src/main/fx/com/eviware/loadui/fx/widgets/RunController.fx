@@ -362,9 +362,6 @@ public class RunController extends BaseNode, Resizable, TimerController {
 				}
 			}, resetButton = if (showResetButton) {
 				Button {
-				    tooltip:Tooltip {
-				    	text:"Reset"
-				    }
 					styleClass: "run-controller-button"
 					layoutInfo: LayoutInfo { height: 20 hpos: HPos.CENTER }
 					text: "Reset"
@@ -375,9 +372,6 @@ public class RunController extends BaseNode, Resizable, TimerController {
 			} else null, 
 			limitButton = if (showLimitButton) {
 				Button {
-				    tooltip:Tooltip {
-				    	text:"Limit"
-				    }
 					styleClass: "run-controller-button"
 					layoutInfo: LayoutInfo { height: 20 hpos: HPos.CENTER }
 					text: "Limit"

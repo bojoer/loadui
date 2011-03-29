@@ -66,6 +66,7 @@ import com.eviware.loadui.fx.statistics.topmenu.ExecutionSelector;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
+import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.util.BeanInjector;
 
@@ -83,6 +84,7 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.menu.St
 public class StatisticsMenu extends VBox {
 	
 	def reportingManager:ReportingManager = BeanInjector.getBean( ReportingManager.class );
+	var executionSelector:ExecutionSelector;
 	
 	var menuButton:MenuButton;
 	
@@ -93,7 +95,16 @@ public class StatisticsMenu extends VBox {
 	var tabContainer:TabContainer;
 	
 	public def menuButtonFont: Font = Font { name:"Arial", size:18 };
-	public def menuButtonLabel: String = "Analysis";
+	//public def menuButtonLabel: String = "Analysis";
+	
+//	var mainExecution:Execution = bind StatisticsWindow.execution on replace {
+//      runInFxThread( function():Void {
+//      	if( StatisticsWindow.execution == null or StatisticsWindow.execution == StatisticsWindow.currentExecution )
+//      		menuButton.text = bind leftExecution
+//      	else
+//      		menuButton.text = StatisticsWindow.execution.getLabel()
+//      	} );
+//   }
 	
 	public var onPageSelect:function( page:ChartPage ):Void;
 	
@@ -138,7 +149,7 @@ public class StatisticsMenu extends VBox {
 					menuButton = MenuButton {
 						styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
 						layoutInfo: LayoutInfo { hshrink: Priority.SOMETIMES, minWidth: 100 }
-						text: bind menuButtonLabel
+						text: bind executionSelector.leftLabel.text
 						font: bind menuButtonFont
 						items: [
 						MenuItem {
@@ -148,7 +159,7 @@ public class StatisticsMenu extends VBox {
 							}
 						}
 						]
-					}, ExecutionSelector {
+					}, executionSelector = ExecutionSelector {
 							layoutInfo: LayoutInfo { margin: Insets { left: 20 } }
 					}, Label {
 						layoutInfo: LayoutInfo {
