@@ -121,7 +121,7 @@ public class ExecutionSelector extends Group {
 	}
 
 	
-   var leftLabel: Label = Label {}
+   public-read var leftLabel: Label = Label {}
    var rightLabel: Label = Label {}
    
    function setLabels(): Void {
@@ -303,7 +303,7 @@ public class ExecutionSelector extends Group {
 	
 	function isCurrentExecution(e: Execution): Boolean {
 	    def curr: Execution = executionManager.getCurrentExecution();
-	    e != null and curr != null and e.getId() == curr.getId();
+	    e != null and curr != null and e == curr;
 	}
 	
 	function setRadioButtons(): Void {

@@ -153,9 +153,6 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
     
     public-read var stopButton:Button;
     
-    var resetButton:Button;
-    var limitButton:Button;
-    
     def playButtonState = bind playButton.selected on replace {
 		if( playButton.armed ) {
 			if( playButtonState ) {

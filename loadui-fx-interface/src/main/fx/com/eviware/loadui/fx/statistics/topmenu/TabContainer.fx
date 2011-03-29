@@ -165,16 +165,17 @@ public class TabContainer extends HBox {
 		}
 	}
 	
-	override var padding = Insets {right: 9, left: 9};
+	override var padding = Insets {left: 16, right: 0};
 	override var nodeVPos = VPos.CENTER;
-	override var spacing = 0;
+	override var spacing = 9;
 	
 	def openImg: String = "{__ROOT__}images/execution-selector-open.fxz";
 	
 	init {
 		sortableBox = SortableBox {
 			content: generateTabs(),
-			spacing: 36,
+			spacing: 9,
+			padding: Insets {left: 0, right: 0},
 			enforceBounds: false,
 			styleClass: "statistics-tabs-sortableBox",
 			onMoved: function( node:Node, fromIndex:Integer, toIndex:Integer ):Void {

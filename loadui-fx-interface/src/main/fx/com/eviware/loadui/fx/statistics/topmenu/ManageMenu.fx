@@ -83,7 +83,7 @@ public class ManageMenu extends HBox {
 				layoutY: -42
 			}, menuButton = MenuButton {
 				styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
-				text: "Stored Results"
+				text: "Results"
 				font: Font { name:"Arial", size:18 }
 				items: [
 					MenuItem {
