@@ -127,7 +127,7 @@ public class StatisticsMenu extends VBox {
 				managed: false
 				layoutY: -20
 			}, Label {
-				text: "Manage Results"
+				text: "Results"
 				textFill: Color.web("#666666")
 				font: Font { name: "Arial", size: 10 }
 				layoutInfo: LayoutInfo {

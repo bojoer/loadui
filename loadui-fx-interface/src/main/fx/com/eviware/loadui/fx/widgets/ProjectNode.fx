@@ -108,7 +108,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 						} else {
 							AppState.byName("MAIN").setActiveCanvas( projectRef.getProject() );
 						}
-					}, "Loading Project."
+					}, "Loading Project..."
 				);
 			}
 		} );

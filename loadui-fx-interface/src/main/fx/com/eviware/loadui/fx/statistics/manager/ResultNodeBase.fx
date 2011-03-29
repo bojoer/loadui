@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.fx.statistics.manager;
 
+import javafx.async.Task;
 import javafx.scene.Node;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.VBox;
@@ -35,11 +36,14 @@ import com.javafx.preview.control.MenuButton;
 import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.PopupMenu;
 
+import java.lang.Thread;
+
 import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.ActivityLed;
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.FxLabeled;
 import com.eviware.loadui.fx.ui.resources.DialogPanel;
@@ -99,8 +103,28 @@ public class ResultNodeBase extends BaseNode, FxLabeled {
 		MenuItem {
 		text: ##[OPEN]"Open"
 		action: function() {
-				StatisticsWindow.execution = execution;
-				AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
+
+				AppState.byName("STATISTICS").blockingTask(
+					function():Void { Thread.sleep(3000); StatisticsWindow.execution = execution; }
+					,function(task:Task):Void {
+						if( true ){ //task.failed ) {
+							def dialog:Dialog = Dialog {
+								scene: StatisticsWindow.instance.scene
+								title: "Could not load Result"
+								content: [
+									Label { text: "The Result could not be loaded. It might be corrupt." }
+								]
+								okText: "Ok"
+								onOk: function() {
+									dialog.close();
+								}
+							}
+						} else {
+							AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
+						}
+					}
+					,"Loading Result...");
+				//AppState.byName("STATISTICS").setActiveCanvas( projectRef.getProject() );
 			}
 		}
 	}

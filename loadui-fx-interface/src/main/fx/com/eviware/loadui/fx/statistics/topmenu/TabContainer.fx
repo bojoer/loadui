@@ -89,6 +89,7 @@ public class TabContainer extends HBox {
 	
 	def addTabButton:TabcontainerButton = TabcontainerButton {
 		shape: "M0,5 L3,5 3,8 5,8 5,5 8,5 8,3 5,3 5,0 3,0 3,3 0,3 Z"
+		layoutInfo: LayoutInfo { margin: Insets{left: -23}, width: 24, height: 24 };
 		action: function():Void {
 	    	var highestPageNumber:Integer = 0;
 	   	for ( child in statisticPages.getChildren() )
@@ -110,36 +111,6 @@ public class TabContainer extends HBox {
 	   	statisticPages.createPage("{DEFAULT_PAGE_NAME} {highestPageNumber + 1}");
 		}
 	}
-	
-//	def addTabButton:Group = Group {
-//			   content: [
-//			   	FXDNode {
-//						url: bind openImg
-//						visible: true
-//						effect: bind if( addTabButton.hover ) Glow{ level: .2 } else null
-//					}
-//				]
-//				onMousePressed: function(e:MouseEvent) {
-//		   	    	var highestPageNumber:Integer = 0;
-//		   	   	for ( child in statisticPages.getChildren() )
-//		   	   	{
-//		   	   	   var title:String = child.getTitle();
-//		   	      	try
-//		   	      	{
-//			   	      	if ( title.substring(0, DEFAULT_PAGE_NAME.length() + 1).equals("{DEFAULT_PAGE_NAME} ")	)
-//			   	      	{
-//				   	      	   var pageNumber:Integer = Integer.valueOf( title.substring(DEFAULT_PAGE_NAME.length() + 1) );
-//				   	      	   if ( pageNumber > highestPageNumber )
-//				   	      	   {
-//				   	      	   	highestPageNumber = pageNumber
-//				   	      	   }
-//								}
-//							} catch (ex: NumberFormatException) {;}
-//							  catch (ex: StringIndexOutOfBoundsException) {;}
-//		   	   	}
-//		   	   	statisticPages.createPage("{DEFAULT_PAGE_NAME} {highestPageNumber + 1}");
-//		   		}
-//			}
 
 	def deleteAction = MenuItem {
 		text: "Delete",
@@ -167,7 +138,7 @@ public class TabContainer extends HBox {
 	
 	override var padding = Insets {left: 16, right: 0};
 	override var nodeVPos = VPos.CENTER;
-	override var spacing = 9;
+	override var spacing = 0;
 	
 	def openImg: String = "{__ROOT__}images/execution-selector-open.fxz";
 	
