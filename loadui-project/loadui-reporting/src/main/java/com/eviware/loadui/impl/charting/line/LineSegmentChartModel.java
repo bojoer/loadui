@@ -19,6 +19,11 @@ package com.eviware.loadui.impl.charting.line;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 
+import javax.swing.SwingUtilities;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.charting.line.StrokeStyle;
 import com.eviware.loadui.api.events.WeakEventHandler;
@@ -32,10 +37,11 @@ import com.jidesoft.chart.style.ChartStyle;
 
 public class LineSegmentChartModel extends DefaultChartModel implements LineSegmentModel
 {
+	public static final Logger log = LoggerFactory.getLogger( LineSegmentChartModel.class );
+
 	private final ChartGroup chartGroup;
 	private final LineSegment segment;
 	private final ChartStyle chartStyle = new ChartStyle();
-	private final ScaledPointScale scaler = new ScaledPointScale();
 	private final StyleEventListener listener = new StyleEventListener();
 
 	private Execution execution;
@@ -44,15 +50,16 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 	private long xRangeMax = 0;
 	private int level = 0;
 	private int scale = 0;
-	private Color color;
+	private double scalar = 1;
+	private Color color = Color.decode( LineChartStyles.lineColors[0] );
 	private StrokeStyle strokeStyle;
 	private int strokeWidth = 1;
 
 	public LineSegmentChartModel( LineChartView chartView, LineSegment segment )
 	{
 		this.segment = segment;
-		chartGroup = chartView.getChartGroup();
 
+		chartGroup = chartView.getChartGroup();
 		chartGroup.addEventListener( PropertyChangeEvent.class, listener );
 
 		loadStyles();
@@ -68,16 +75,17 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 			{
 				latestTime = timestamp;
 				if( xRangeMin <= timestamp && timestamp <= xRangeMax )
-					addPoint( scaler.createPoint( timestamp, dataPoint.getValue().doubleValue() ) );
+					addPoint( timestamp, scalar * dataPoint.getValue().doubleValue() );
 			}
 		}
 	}
 
-	private void refresh()
+	private void redraw()
 	{
 		clearPoints();
-		for( DataPoint<?> dataPoint : segment.getStatistic().getPeriod( xRangeMin, xRangeMax, level, execution ) )
-			addPoint( scaler.createPoint( dataPoint.getTimestamp(), dataPoint.getValue().doubleValue() ), false );
+		if( execution != null )
+			for( DataPoint<?> dataPoint : segment.getStatistic().getPeriod( xRangeMin, xRangeMax, level, execution ) )
+				addPoint( dataPoint.getTimestamp(), scalar * dataPoint.getValue().doubleValue(), false );
 
 		update();
 	}
@@ -97,11 +105,11 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 		String colorStr = segment.getAttribute( COLOR, null );
 		if( colorStr == null )
 		{
-			// TODO: Get default color.
-			// colorStr = LineChartStyles.getLineColor( chartGroup, segment );
+			colorStr = LineChartStyles.getLineColor( chartGroup, segment );
 			segment.setAttribute( COLOR, colorStr );
 		}
 		setColor( Color.decode( colorStr ), false );
+		chartStyle.setLineColor( color );
 
 		try
 		{
@@ -112,7 +120,14 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 			strokeWidth = 1;
 		}
 
-		strokeStyle = StrokeStyle.valueOf( segment.getAttribute( STROKE, StrokeStyle.SOLID.name() ) );
+		try
+		{
+			strokeStyle = StrokeStyle.valueOf( segment.getAttribute( STROKE, StrokeStyle.SOLID.name() ) );
+		}
+		catch( IllegalArgumentException e )
+		{
+			strokeStyle = StrokeStyle.SOLID;
+		}
 
 		updateStroke();
 	}
@@ -128,6 +143,7 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 		return chartStyle;
 	}
 
+	@Override
 	public LineSegment getLineSegment()
 	{
 		return segment;
@@ -145,9 +161,12 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 
 	public void setExecution( Execution execution )
 	{
-		this.execution = execution;
-		latestTime = execution.getLength();
-		refresh();
+		if( this.execution != execution )
+		{
+			this.execution = execution;
+			latestTime = execution.getLength();
+			redraw();
+		}
 	}
 
 	public long getLatestTime()
@@ -171,7 +190,7 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 		{
 			xRangeMin = min;
 			xRangeMax = max;
-			refresh();
+			redraw();
 		}
 	}
 
@@ -195,16 +214,18 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 	{
 		if( scale != this.scale )
 		{
+			log.debug( "Setting scale: {} in Thread: {}", scale, Thread.currentThread() );
+
 			int oldScale = this.scale;
 			this.scale = scale;
-			scaler.setScale( Math.pow( 10, scale ) );
-			fireModelChanged();
+			scalar = Math.pow( 10, scale );
+			redraw();
+
 			if( fireEvent )
 			{
 				segment.setAttribute( SCALE, String.valueOf( scale ) );
 				chartGroup.fireEvent( new PropertyChangeEvent( segment, SCALE, oldScale, scale ) );
 			}
-			refresh();
 		}
 	}
 
@@ -214,9 +235,9 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 		setScale( scale, true );
 	}
 
-	public ScaledPointScale getScaler()
+	public double getScalar()
 	{
-		return scaler;
+		return scalar;
 	}
 
 	@Override
@@ -232,6 +253,7 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 			Color oldColor = this.color;
 			this.color = color;
 			chartStyle.setLineColor( color );
+			fireModelChanged();
 			if( fireEvent )
 			{
 				String partialColor = Integer.toHexString( color.getRGB() & 0xFFFFFF );
@@ -289,28 +311,35 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 	private class StyleEventListener implements WeakEventHandler<PropertyChangeEvent>
 	{
 		@Override
-		public void handleEvent( PropertyChangeEvent event )
+		public void handleEvent( final PropertyChangeEvent event )
 		{
 			if( event.getSource() == segment )
 			{
-				if( SCALE.equals( event.getPropertyName() ) )
+				SwingUtilities.invokeLater( new Runnable()
 				{
-					setScale( ( Integer )event.getNewValue(), false );
-				}
-				else if( COLOR.equals( event.getPropertyName() ) )
-				{
-					setColor( ( Color )event.getNewValue(), false );
-				}
-				else if( STROKE.equals( event.getPropertyName() ) )
-				{
-					strokeStyle = StrokeStyle.valueOf( ( String )event.getNewValue() );
-					updateStroke();
-				}
-				else if( WIDTH.equals( event.getPropertyName() ) )
-				{
-					strokeWidth = ( Integer )event.getNewValue();
-					updateStroke();
-				}
+					@Override
+					public void run()
+					{
+						if( SCALE.equals( event.getPropertyName() ) )
+						{
+							setScale( ( Integer )event.getNewValue(), false );
+						}
+						else if( COLOR.equals( event.getPropertyName() ) )
+						{
+							setColor( ( Color )event.getNewValue(), false );
+						}
+						else if( STROKE.equals( event.getPropertyName() ) )
+						{
+							strokeStyle = ( StrokeStyle )event.getNewValue();
+							updateStroke();
+						}
+						else if( WIDTH.equals( event.getPropertyName() ) )
+						{
+							strokeWidth = ( Integer )event.getNewValue();
+							updateStroke();
+						}
+					}
+				} );
 			}
 		}
 	}

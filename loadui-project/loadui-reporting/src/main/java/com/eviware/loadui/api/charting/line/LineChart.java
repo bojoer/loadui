@@ -16,6 +16,7 @@
 package com.eviware.loadui.api.charting.line;
 
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 
 /**
@@ -29,6 +30,8 @@ public interface LineChart
 	public static final String POSITION_ATTRIBUTE = "position";
 	public static final String TIME_SPAN_ATTRIBUTE = "timeSpan";
 	public static final String ZOOM_LEVEL_ATTRIBUTE = "zoomLevel";
+
+	public static final String ZOOM_LEVEL = "zoomLevel";
 
 	/**
 	 * Refreshes the LineChart. If shouldPoll is set to true, then the LineChart
@@ -103,6 +106,14 @@ public interface LineChart
 	 * @param zoomLevel
 	 */
 	public void setZoomLevel( ZoomLevel zoomLevel );
+
+	/**
+	 * Gets the LineSegmentModel for a LineSegment.
+	 * 
+	 * @param segment
+	 * @return
+	 */
+	public LineSegmentModel getLineSegmentModel( LineSegment segment );
 
 	/**
 	 * Factory for creating LineCharts.

@@ -19,13 +19,13 @@ package com.eviware.loadui.impl.charting.line;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 
+import javax.swing.SwingUtilities;
+
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.store.Execution;
-import com.eviware.loadui.impl.charting.line.ScaledPointScale.ScaledChartPoint;
-import com.jidesoft.chart.model.ChartModelListener;
 import com.jidesoft.chart.model.DefaultChartModel;
 import com.jidesoft.chart.style.ChartStyle;
 import com.jidesoft.chart.util.ColorFactory;
@@ -34,16 +34,16 @@ public class ComparedLineSegmentChartModel extends DefaultChartModel
 {
 	private final LineSegmentChartModel baseModel;
 	private final ChartStyle chartStyle;
-	private final BaseModelListener baseModelListener = new BaseModelListener();
 	private final ChartGroupListener chartGroupListener = new ChartGroupListener();
 
 	private Execution execution;
+	private double scalar = 1;
 
 	public ComparedLineSegmentChartModel( LineSegmentChartModel baseModel )
 	{
 		this.baseModel = baseModel;
 		chartStyle = new ChartStyle( baseModel.getChartStyle() );
-		baseModel.addChartModelListener( baseModelListener );
+		chartStyle.setLineColor( ColorFactory.transitionColor( chartStyle.getLineColor(), Color.BLACK, 0.5 ) );
 		baseModel.getChartGroup().addEventListener( PropertyChangeEvent.class, chartGroupListener );
 	}
 
@@ -57,51 +57,50 @@ public class ComparedLineSegmentChartModel extends DefaultChartModel
 		if( this.execution != execution )
 		{
 			this.execution = execution;
-			refresh();
+			redraw();
 		}
 	}
 
-	private void refresh()
+	private void redraw()
 	{
 		clearPoints();
 		Statistic<?> statistic = baseModel.getLineSegment().getStatistic();
 		for( DataPoint<?> dataPoint : statistic.getPeriod( baseModel.getXRangeMin(), baseModel.getXRangeMax(),
 				baseModel.getLevel(), execution ) )
-		{
-			ScaledChartPoint point = baseModel.getScaler().createPoint( dataPoint.getTimestamp(),
-					dataPoint.getValue().doubleValue() );
-			addPoint( point, false );
-		}
+			addPoint( dataPoint.getTimestamp(), scalar * dataPoint.getValue().doubleValue(), false );
 		update();
-	}
-
-	private class BaseModelListener implements ChartModelListener
-	{
-		@Override
-		public void chartModelChanged()
-		{
-			refresh();
-		}
 	}
 
 	private class ChartGroupListener implements WeakEventHandler<PropertyChangeEvent>
 	{
 		@Override
-		public void handleEvent( PropertyChangeEvent event )
+		public void handleEvent( final PropertyChangeEvent event )
 		{
 			if( event.getSource() == baseModel.getLineSegment() )
 			{
-				if( LineSegmentModel.COLOR.equals( event.getPropertyName() ) )
+				SwingUtilities.invokeLater( new Runnable()
 				{
-					Color color = ColorFactory.transitionColor( ( Color )event.getNewValue(), Color.BLACK, 0.5 );
-					chartStyle.setLineColor( color );
-				}
-				else if( LineSegmentModel.STROKE.equals( event.getPropertyName() )
-						|| LineSegmentModel.WIDTH.equals( event.getPropertyName() ) )
-				{
-					chartStyle.setLineStroke( baseModel.getStrokeStyle().getStroke( baseModel.getStrokeWidth() ) );
-					fireModelChanged();
-				}
+					@Override
+					public void run()
+					{
+						if( LineSegmentModel.COLOR.equals( event.getPropertyName() ) )
+						{
+							Color color = ColorFactory.transitionColor( ( Color )event.getNewValue(), Color.BLACK, 0.5 );
+							chartStyle.setLineColor( color );
+						}
+						else if( LineSegmentModel.SCALE.equals( event.getPropertyName() ) )
+						{
+							scalar = Math.pow( 10, baseModel.getScale() );
+							redraw();
+						}
+						else if( LineSegmentModel.STROKE.equals( event.getPropertyName() )
+								|| LineSegmentModel.WIDTH.equals( event.getPropertyName() ) )
+						{
+							chartStyle.setLineStroke( baseModel.getStrokeStyle().getStroke( baseModel.getStrokeWidth() ) );
+							fireModelChanged();
+						}
+					}
+				} );
 			}
 		}
 	}
