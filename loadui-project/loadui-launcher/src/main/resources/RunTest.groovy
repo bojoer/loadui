@@ -17,12 +17,44 @@
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem
 import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.events.EventHandler
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.FormattingUtils
-import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.CollectionEvent
+import com.eviware.loadui.api.messaging.MessageListener
+import com.eviware.loadui.api.messaging.MessageEndpoint
+import com.eviware.loadui.api.model.AgentItem
+
+def agentMessageListener = new MessageListener() {
+	
+	def agents = new HashSet()
+	
+	public void put(AgentItem agent, SceneItem scene){
+		agents.add("${agent.id}:${scene.id}")
+		agent.addMessageListener(AgentItem.AGENT_CHANNEL, this)	
+	}
+	
+	public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
+	{
+		Map<String, Object> map = ( Map<String, Object> )data;
+		if( map.containsKey( AgentItem.STARTED ) )
+		{
+			logInfo "Test case ${map.get( AgentItem.STARTED )} on agent ${endpoint.url} initialized"
+			agents.remove("${endpoint.id}:${map.get( AgentItem.STARTED )}")
+		}
+	}
+	
+	public boolean allTestCasesReady(){
+		return agents.size() == 0
+	}
+}
+
+def logInfo (GString m) {
+	log.info m
+}
 
 def displayLimit( limit ) {
 	limit <= 0 ? "-" : limit
@@ -128,6 +160,7 @@ if( agents != null ) {
 		def agent = workspace.createAgent( agentUrl, agentUrl )
 		if( tcs == null ) {
 			for( tc in project.scenes ) {
+				agentMessageListener.put(agent, tc)
 				project.assignScene( tc, agent )
 			}
 		} else {
@@ -138,6 +171,7 @@ if( agents != null ) {
 					workspace?.release()
 					return
 				}
+				agentMessageListener.put(agent, tc)
 				project.assignScene( tc, agent )
 			}
 		}
@@ -188,6 +222,24 @@ if( testCase != null ) {
 	
 	//TODO: Instead of waiting for 5 seconds here, it should be possible to find out from the agent that it is ready.
 	sleep 5000
+}
+
+// wait until all test cases on all agents are ready
+def waitForTestCases = !agentMessageListener.allTestCasesReady() 
+if( waitForTestCases ){
+	log.info "Start test case initialization..."
+} 
+def timeout = System.currentTimeMillis() + 60000
+while( !agentMessageListener.allTestCasesReady() ){
+	if(System.currentTimeMillis() >= timeout){
+		log.error "Some test cases not initialized during timout period. Program will exit"
+		workspace?.release()
+		return
+	}
+	sleep 1000
+}
+if( waitForTestCases ){
+	log.info "All test cases initialized properly"
 }
 
 // wait until workspace fires ADDED event for this
