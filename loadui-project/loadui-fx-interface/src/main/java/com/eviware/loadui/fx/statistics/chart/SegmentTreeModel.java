@@ -25,6 +25,7 @@ import java.util.List;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 
+import com.eviware.loadui.api.charting.ChartNamePrettifier;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 
@@ -96,7 +97,7 @@ public class SegmentTreeModel extends DefaultTreeModel
 		{
 			return Collections.enumeration( getChildren() );
 		}
-		
+
 		public boolean isSelectedByDefault()
 		{
 			return false;
@@ -266,7 +267,7 @@ public class SegmentTreeModel extends DefaultTreeModel
 		{
 			return ChartNamePrettifier.nameForSource( sourceName );
 		}
-		
+
 		@Override
 		public boolean isSelectedByDefault()
 		{
