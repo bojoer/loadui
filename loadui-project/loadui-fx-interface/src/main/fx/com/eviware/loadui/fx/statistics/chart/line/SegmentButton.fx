@@ -22,39 +22,48 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.util.ModelUtils;
-import com.eviware.loadui.fx.statistics.chart.ChartNamePrettifier;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.charting.ChartNamePrettifier;
+import com.eviware.loadui.api.charting.line.LineSegmentModel;
+import com.eviware.loadui.api.events.WeakEventHandler;
+
+import java.awt.Color;
+import java.beans.PropertyChangeEvent;
 
 public class SegmentButton extends BaseNode, Resizable {
 	override var styleClass = "segment-button";
 	override var width on replace { button.width = width }
 	override var height on replace { button.height = height }
+	
+	def listener = new SegmentListener();
+	
 	public var compactSegments = true;
-	public-init var chartView:LineChartView;
+	public-init var chartView:LineChartView on replace {
+		chartView.getChartGroup().addEventListener( PropertyChangeEvent.class, listener );
+	}
 	
 	def button = Button {
 		layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS };
 		blocksMouse: false
 		action: function():Void {
 			//TODO: Implement segment panel.
-			println("TODO");
 		}
 	}
 	
-	var lineColor:Color = bind model.color on replace {
+	var lineColor:Color on replace {
 		button.style = "-fx-inner-border: {FxUtils.colorToWebString(lineColor)};";
 	}
 	
-	public-init var model:LineSegmentChartModel on replace {
-		def statistic = model.segment.getStatistic();
+	public-init var model:LineSegmentModel on replace {
+		def statistic = model.getLineSegment().getStatistic();
+		lineColor = model.getColor();
 		button.graphic = HBox {
 			content: [
 				Label {
@@ -88,5 +97,16 @@ public class SegmentButton extends BaseNode, Resizable {
 	}
 	
 	override function doLayout():Void {
+	}
+}
+
+class SegmentListener extends WeakEventHandler {
+	override function handleEvent( e ):Void {
+		def event = e as PropertyChangeEvent;
+		if( model.getLineSegment() == event.getSource() ) {
+			if( LineSegmentModel.COLOR.equals( event.getPropertyName() ) ) {
+				FxUtils.runInFxThread( function():Void { lineColor = event.getNewValue() as Color; } );
+			}
+		}
 	}
 }

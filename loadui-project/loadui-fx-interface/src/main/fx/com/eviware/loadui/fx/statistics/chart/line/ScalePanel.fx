@@ -37,12 +37,14 @@ import com.javafx.preview.layout.GridLayoutInfo;
 
 import com.sun.javafx.scene.layout.Region;
 
+import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.control.ColorPicker;
 import com.eviware.loadui.fx.ui.form.fields.SelectField;
 
+import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+import com.eviware.loadui.api.charting.line.LineSegmentModel;
+import com.eviware.loadui.api.charting.ChartNamePrettifier;
 
 def SCALES = [ "0.000001", "0.00001", "0.0001", "0.001", "0.01", "0.1", "1", "10", "100", "1000", "10000", "100000", "1000000" ];
 
@@ -52,7 +54,7 @@ def SCALES = [ "0.000001", "0.00001", "0.0001", "0.001", "0.01", "0.1", "1", "10
  * @author dain.nilsson
  */
 public class ScalePanel extends Grid {
-	public-init var segments:LineSegment[];
+	public-init var lineSegmentModels:LineSegmentModel[];
 	
 	override var styleClass = "scale-panel";
 	override var padding = Insets { top: 10, right: 10, bottom: 10, left: 10 };
@@ -68,8 +70,8 @@ public class ScalePanel extends Grid {
 				Label { styleClass: "header-row", text: "0", layoutInfo: LayoutInfo { width: 60 } },
 				Label { styleClass: "header-row", text: "1.0", hpos: HPos.CENTER, layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
 				Label { styleClass: "header-row", text: "1000000", layoutInfo: LayoutInfo { width: 60 } },
-			] }, for( segment in segments ) {
-				SegmentRow { segment: segment }
+			] }, for( lineModel in lineSegmentModels ) {
+				SegmentRow { lineModel: lineModel }
 			}
 		];
 	}
@@ -79,15 +81,14 @@ class SegmentRow extends GridRow {
 	var scale:Integer on replace {
 		slider.value = scale;
 		selectField.value = SCALES[6+scale];
-		model.scale = scale;
+		lineModel.setScale( scale );
 	}
 	
-	var model:LineSegmentChartModel on replace {
-		scale = model.scale;
-	}
+	var statistic:Statistic;
 	
-	public-init var segment:LineSegment on replace {
-		model = LineChart.getLineSegmentChartModel( segment );
+	public-init var lineModel:LineSegmentModel on replace {
+		scale = lineModel.getScale();
+		statistic = lineModel.getLineSegment().getStatistic();
 	}
 	
 	def slider = Slider {
@@ -127,16 +128,16 @@ class SegmentRow extends GridRow {
 						LineTo { x: 6, y: 17 },
 						ClosePath {}
 					]
-					fill: model.color
+					fill: FxUtils.awtColorToFx( lineModel.getColor() )
 					stroke: null
 				}
-				text: segment.getStatistic().getName()
+				text: statistic.getName()
 				layoutInfo: LayoutInfo { width: 60 }
 			}, Label {
-				text: if( segment.getStatistic().getSource() == StatisticVariable.MAIN_SOURCE ) "Total" else segment.getStatistic().getSource()
+				text: ChartNamePrettifier.nameForSource( statistic.getSource() )
 				layoutInfo: LayoutInfo { width: 60 }
 			}, Label {
-				text: segment.getStatistic().getStatisticVariable().getStatisticHolder().getLabel()
+				text: statistic.getStatisticVariable().getStatisticHolder().getLabel()
 				layoutInfo: LayoutInfo { width: 60 }
 			},
 			selectField,

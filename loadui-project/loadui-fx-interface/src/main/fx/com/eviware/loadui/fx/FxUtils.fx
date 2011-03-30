@@ -188,6 +188,10 @@ public function colorToWebString( color:java.awt.Color ):String {
 	return "#{twoDigitHex(color.getRed())}{twoDigitHex(color.getGreen())}{twoDigitHex(color.getBlue())}{if(color.getAlpha() != 255) twoDigitHex(color.getAlpha()) else ''}";
 }
 
+public function awtColorToFx( color:java.awt.Color ):Color {
+	Color.web( colorToWebString( color ) )
+} 
+
 function twoDigitHex( n:Integer ):String {
 	def str = Integer.toHexString( n );
 	if( str.length() < 2 )
