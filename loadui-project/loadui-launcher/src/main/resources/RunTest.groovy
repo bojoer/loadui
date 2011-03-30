@@ -22,6 +22,7 @@ import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.events.EventHandler
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.FormattingUtils
+import com.eviware.loadui.api.events.CollectionEvent;
 
 def displayLimit( limit ) {
 	limit <= 0 ? "-" : limit
@@ -47,6 +48,17 @@ if( workspaceFile != null ) {
 
 def importAgents = workspace.getProperty( WorkspaceItem.IMPORT_MISSING_AGENTS_PROPERTY )
 workspace.localMode = localMode
+
+def projectAdded = false;
+def workspaceCollectionListener = new EventHandler<CollectionEvent>() {
+	public void handleEvent( CollectionEvent event ) {
+		if( CollectionEvent.Event.ADDED == event.getEvent() && WorkspaceItem.PROJECTS.equals( event.getKey() ) )
+		{
+			projectAdded = true;
+		}
+	}
+}
+workspace.addEventListener( CollectionEvent.class, workspaceCollectionListener );
 
 //If custom agents are provided, remove saved ones.
 if( agents != null ) {
@@ -78,7 +90,6 @@ def summaryExportListener = new EventHandler<BaseEvent>() {
 		}
 	}
 }
-
 project.addEventListener( BaseEvent.class, summaryExportListener )
 
 //Get the target
@@ -179,6 +190,17 @@ if( testCase != null ) {
 	sleep 5000
 }
 
+// wait until workspace fires ADDED event for this
+// project. this will ensure that RunningListener in
+// ProjectManagerImpl is added to project before start
+// so it can handle incoming events properly. Without
+// this START event occurs before RunningLister is 
+// assigned to the project and START event is not handled
+// at all.  
+while( !projectAdded ){
+	sleep 1000
+}
+
 //Run the test
 log.info """
 
@@ -229,6 +251,8 @@ sleep 1000
 
 project.removeEventListener( BaseEvent.class, summaryExportListener )
 project.release()
+
+workspace.removeEventListener( CollectionEvent.class, workspaceCollectionListener )
 workspace.release()
 
 return success
