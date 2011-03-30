@@ -34,11 +34,21 @@ public function getGroupPanels( chartGroup:ChartGroup ):PanelFactory[] {
 			build: function() { ZoomPanel { chartView: chartGroup.getChartView() as LineChartView } }
 		}, PanelFactory {
 			title: "Scale"
-			build: function() { ScalePanel { segments: (chartGroup.getChartView() as LineChartView).getSegments()[s|true] } }
+			build: function() {
+				def chartView = chartGroup.getChartView() as LineChartView;
+				def lineChart = LineChartHolder.getLineChart( chartView );
+				def lineModels = for( segment in chartView.getSegments() ) lineChart.getLineSegmentModel( segment );
+				ScalePanel { lineSegmentModels: lineModels }
+			}
 		}, PanelFactory {
 			title: "Style"
 			separator: true
-			build: function() { StylePanel { segments: (chartGroup.getChartView() as LineChartView).getSegments()[s|true] } }
+			build: function() {
+				def chartView = chartGroup.getChartView() as LineChartView;
+				def lineChart = LineChartHolder.getLineChart( chartView );
+				def lineModels = for( segment in chartView.getSegments() ) lineChart.getLineSegmentModel( segment );
+				StylePanel { lineSegmentModels: lineModels }
+			}
 		}, PanelFactory {
 			title: "Raw data"
 			build: function() { RawDataPanel { segments: (chartGroup.getChartView() as LineChartView).getSegments()[s|true] } }
@@ -59,11 +69,19 @@ public function getChartPanels( chartView:LineChartView ):PanelFactory[] {
 			build: function() { ZoomPanel { chartView: chartView } }
 		}, PanelFactory {
 			title: "Scale"
-			build: function() { ScalePanel { segments: chartView.getSegments()[s|true] } }
+			build: function() {
+				def lineChart = LineChartHolder.getLineChart( chartView );
+				def lineModels = for( segment in chartView.getSegments() ) lineChart.getLineSegmentModel( segment );
+				ScalePanel { lineSegmentModels: lineModels }
+			}
 		}, PanelFactory {
 			title: "Style"
 			separator: true
-			build: function() { StylePanel { segments: chartView.getSegments()[s|true] } }
+			build: function() {
+				def lineChart = LineChartHolder.getLineChart( chartView );
+				def lineModels = for( segment in chartView.getSegments() ) lineChart.getLineSegmentModel( segment );
+				StylePanel { lineSegmentModels: lineModels }
+			}
 		}, PanelFactory {
 			title: "Raw data"
 			build: function() { RawDataPanel { segments: chartView.getSegments()[s|true] } }

@@ -19,9 +19,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.LayoutInfo;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 
@@ -31,12 +31,14 @@ import com.javafx.preview.layout.GridLayoutInfo;
 
 import com.sun.javafx.scene.layout.Region;
 
+import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.control.ColorPicker;
 import com.eviware.loadui.fx.ui.form.fields.SelectField;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+import com.eviware.loadui.api.charting.line.LineSegmentModel;
+import com.eviware.loadui.api.charting.line.StrokeStyle;
+import com.eviware.loadui.api.charting.ChartNamePrettifier;
 
 /**
  * Panel for changing the style of LineSegments.
@@ -44,7 +46,7 @@ import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
  * @author dain.nilsson
  */
 public class StylePanel extends Grid {
-	public-init var segments:LineSegment[];
+	public-init var lineSegmentModels:LineSegmentModel[];
 	
 	override var styleClass = "style-panel";
 	override var padding = Insets { top: 10, right: 10, bottom: 10, left: 10 };
@@ -59,50 +61,50 @@ public class StylePanel extends Grid {
 				Label { styleClass: "header-row", text: "Statistic", layoutInfo: GridLayoutInfo { hspan: 3 } },
 				Label { styleClass: "header-row", text: "Width", layoutInfo: GridLayoutInfo { hspan: 2 } },
 				Label { styleClass: "header-row", text: "Stroke" }
-			] }, for( segment in segments ) {
-				def model = LineChart.getLineSegmentChartModel( segment );
+			] }, for( model in lineSegmentModels ) {
+				def statistic = model.getLineSegment().getStatistic();
 				def slider = Slider {
 					min: 1
 					max: 9
-					value: model.width
+					value: model.getStrokeWidth()
 					minorTickCount: 0
 					majorTickUnit: 1
 					clickToPosition: true
 				}
 				def selector = SelectField {
-					options: [ "solid", "dashed", "dotted" ]
+					options: [ StrokeStyle.SOLID, StrokeStyle.DASHED, StrokeStyle.DOTTED ]
 					labelProvider: function(o):String { null }
 					graphicProvider: function(o):Node {
-						if( o == "dashed" ) SVGPath { content: "M 0 0 L 15 0 15 2 0 2 0 0 M 25 0 L 40 0 40 2 25 2 25 0 M 50 0 L 65 0 65 2 50 2 50 0" }
-						else if( o == "dotted" ) SVGPath { content: "M 1 0 L 3 0 3 2 1 2 1 0 M 5 0 L 7 0 7 2 5 2 5 0 M 9 0 L 11 0 11 2 9 2 9 0 M 13 0 L 15 0 15 2 13 2 13 0 M 17 0 L 19 0 19 2 17 2 17 0 M 21 0 L 23 0 23 2 21 2 21 0 M 25 0 L 27 0 27 2 25 2 25 0 M 29 0 L 31 0 31 2 29 2 29 0 M 33 0 L 35 0 35 2 33 2 33 0 M 37 0 L 39 0 39 2 37 2 37 0 M 41 0 L 43 0 43 2 41 2 41 0 M 45 0 L 47 0 47 2 45 2 45 0 M 49 0 L 51 0 51 2 49 2 49 0 M 53 0 L 55 0 55 2 53 2 53 0 M 57 0 L 59 0 59 2 57 2 57 0 M 61 0 L 63 0 63 2 61 2 61 0" }
+						if( o == StrokeStyle.DASHED ) SVGPath { content: "M 0 0 L 15 0 15 2 0 2 0 0 M 25 0 L 40 0 40 2 25 2 25 0 M 50 0 L 65 0 65 2 50 2 50 0" }
+						else if( o == StrokeStyle.DOTTED ) SVGPath { content: "M 1 0 L 3 0 3 2 1 2 1 0 M 5 0 L 7 0 7 2 5 2 5 0 M 9 0 L 11 0 11 2 9 2 9 0 M 13 0 L 15 0 15 2 13 2 13 0 M 17 0 L 19 0 19 2 17 2 17 0 M 21 0 L 23 0 23 2 21 2 21 0 M 25 0 L 27 0 27 2 25 2 25 0 M 29 0 L 31 0 31 2 29 2 29 0 M 33 0 L 35 0 35 2 33 2 33 0 M 37 0 L 39 0 39 2 37 2 37 0 M 41 0 L 43 0 43 2 41 2 41 0 M 45 0 L 47 0 47 2 45 2 45 0 M 49 0 L 51 0 51 2 49 2 49 0 M 53 0 L 55 0 55 2 53 2 53 0 M 57 0 L 59 0 59 2 57 2 57 0 M 61 0 L 63 0 63 2 61 2 61 0" }
 						else Rectangle { width: 65, height: 2 }
 					}
-					value: model.stroke
+					value: model.getStrokeStyle()
 					layoutInfo: LayoutInfo { width: 90 }
 					onValueChanged: function( value ):Void {
-						model.stroke = value as String;
+						model.setStrokeStyle( value as StrokeStyle );
 					}
 				}
 				def width:Number = bind slider.value on replace {
-					model.width = width as Integer;
+					model.setStrokeWidth( width );
 					slider.value = width as Integer;
 				}
-				var lineColor:Color = model.color;
+				var lineColor:Color = FxUtils.awtColorToFx( model.getColor() );
 				GridRow { cells: [
 					ColorPicker {
-						color: model.color;
+						color: FxUtils.awtColorToFx( model.getColor() );
 						onReplace: function( color ):Void {
-							model.color = color;
 							lineColor = color;
+							model.setColor( FxUtils.getAwtColor( color ) );
 						}
 					}, Label {
-						text: segment.getStatistic().getName()
+						text: statistic.getName()
 						layoutInfo: LayoutInfo { width: 60 }
 					}, Label {
-						text: if( segment.getStatistic().getSource() == StatisticVariable.MAIN_SOURCE ) "Total" else segment.getStatistic().getSource()
+						text: ChartNamePrettifier.nameForSource( statistic.getSource() )
 						layoutInfo: LayoutInfo { width: 60 }
 					}, Label {
-						text: segment.getStatistic().getStatisticVariable().getStatisticHolder().getLabel()
+						text: statistic.getStatisticVariable().getStatisticHolder().getLabel()
 						layoutInfo: LayoutInfo { width: 60 }
 					},
 					Label {

@@ -47,8 +47,6 @@ import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.AnalysisToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.StatisticHolderToolbarItem;
-import com.eviware.loadui.fx.statistics.chart.line.LineChart;
-import com.eviware.loadui.fx.statistics.chart.line.LineChartUtils;
 
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -56,10 +54,12 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
+import com.eviware.loadui.util.charting.LineChartUtils;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
@@ -168,8 +168,8 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 		if( execution != null ) {
 			for( chartGroupHolder in innerContent ) {
 				for( chartViewHolder in [ chartGroupHolder.chartViewHolder, chartGroupHolder.expandedChartViews ] ) {
-					if( chartViewHolder.chart instanceof LineChart ) {
-						execution.setIcon( LineChartUtils.createThumbnail( chartViewHolder.chart as LineChart ) );
+					if( chartViewHolder.chartView instanceof LineChartView ) {
+						execution.setIcon( LineChartUtils.createThumbnail( chartViewHolder.chartView as LineChartView, StatisticsWindow.execution, StatisticsWindow.comparedExecution ) );
 						execution.fireEvent( new BaseEvent( execution, Execution.ICON ) );
 						return;
 					}

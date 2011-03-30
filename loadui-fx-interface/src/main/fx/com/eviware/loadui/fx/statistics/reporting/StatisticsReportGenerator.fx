@@ -17,11 +17,14 @@ package com.eviware.loadui.fx.statistics.reporting;
 
 import javafx.util.Math;
 
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.fx.statistics.chart.BaseChart;
 import com.eviware.loadui.fx.statistics.chart.ChartPage;
 import com.eviware.loadui.fx.statistics.chart.ChartViewHolder;
-import com.eviware.loadui.fx.statistics.chart.line.LineChart;
-import com.eviware.loadui.fx.statistics.chart.line.LineChartUtils;
+import com.eviware.loadui.util.charting.LineChartUtils;
+
+import com.eviware.loadui.api.statistics.model.chart.ChartView;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -34,7 +37,7 @@ public function generateCharts( chartPages:ChartPage[] ):Map {
 		chartPage.update();
 		for( chartGroupHolder in chartPage.innerContent ) {
 			for( chartViewHolder in [ chartGroupHolder.chartViewHolder, chartGroupHolder.expandedChartViews ] ) {
-				def image = createImage( chartViewHolder.chart, Math.max( 150, chartViewHolder.chartHeight ) - 30 );
+				def image = createImage( chartViewHolder.chartView, Math.max( 150, chartViewHolder.chartHeight ) - 30 );
 				if( image != null )
 					map.put( chartViewHolder.chartView, image );
 			}
@@ -44,14 +47,9 @@ public function generateCharts( chartPages:ChartPage[] ):Map {
 	return map;
 } 
 
-function createImage( chart:BaseChart, height:Number ):Image {
-	if( chart instanceof LineChart ) {
-		def lineChart = chart as LineChart;
-		if( lineChart.chart.pointCount() > 0 ) {
-			LineChartUtils.createImage( lineChart, 505, height )
-		} else {
-			null
-		}
+function createImage( chartView:ChartView, height:Integer ):Image {
+	if( chartView instanceof LineChartView ) {
+		LineChartUtils.createImage( chartView as LineChartView, 505, height, StatisticsWindow.execution, StatisticsWindow.comparedExecution );
 	} else {
 		null
 	}

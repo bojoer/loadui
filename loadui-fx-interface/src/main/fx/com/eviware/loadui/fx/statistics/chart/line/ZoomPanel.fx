@@ -32,11 +32,9 @@ import com.eviware.loadui.fx.FxUtils.*;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.charting.line.LineChart;
+import com.eviware.loadui.api.charting.line.ZoomLevel;
 import java.beans.PropertyChangeEvent;
-
-public def ZOOM_DEFAULT = "Seconds";
-public def ZOOM_LEVEL = "com.eviware.loadui.fx.statistics.chart.line.ZoomPanel@zoomLevel";
-public def ZOOM_LEVEL_ATTRIBUTE = "zoomLevel";
 
 def allImage = Image { url: "{__ROOT__}images/png/all.png" };
 def weekImage = Image { url: "{__ROOT__}images/png/week.png" };
@@ -63,29 +61,29 @@ public class ZoomPanel extends HBox {
 	def toggleGroup = new ToggleGroup();
 	def selectedLevel = bind toggleGroup.selectedToggle on replace oldLevel {
 		if( selectedLevel.value != null ) {
-			chartView.setAttribute( ZOOM_LEVEL_ATTRIBUTE, "{selectedLevel.value}" );
-			chartView.fireEvent( new PropertyChangeEvent( chartView, ZOOM_LEVEL, oldLevel.value, selectedLevel.value ) );
+			chartView.setAttribute( LineChart.ZOOM_LEVEL_ATTRIBUTE, "{selectedLevel.value}" );
+			chartView.fireEvent( new PropertyChangeEvent( chartView, LineChart.ZOOM_LEVEL, oldLevel.value, selectedLevel.value ) );
 		}
 	}
 	
 	init {
 		content = [
 			Region { managed: false, width: bind width, height: bind height, styleClass: "zoom-panel" },
-			buildButton( "All", allImage ),
-			buildButton( "Weeks", weekImage ),
-			buildButton( "Days", dayImage ),
-			buildButton( "Hours", hoursImage ),
-			buildButton( "Minutes", minutesImage ),
-			buildButton( ZOOM_DEFAULT, secondsImage )
+			buildButton( "All", allImage, ZoomLevel.ALL.name() ),
+			buildButton( "Weeks", weekImage, ZoomLevel.WEEKS.name() ),
+			buildButton( "Days", dayImage, ZoomLevel.DAYS.name() ),
+			buildButton( "Hours", hoursImage, ZoomLevel.HOURS.name() ),
+			buildButton( "Minutes", minutesImage, ZoomLevel.MINUTES.name() ),
+			buildButton( "Seconds", secondsImage, ZoomLevel.SECONDS.name() )
 		];
 	}
 	
-	function buildButton( text:String, image:Image ) {
+	function buildButton( text:String, image:Image, value:String ) {
 		RadioButton {
-			value: text
+			value: value
 			text: text
 			toggleGroup: toggleGroup
-			selected: chartView.getAttribute( ZOOM_LEVEL_ATTRIBUTE, ZOOM_DEFAULT ) == text
+			selected: chartView.getAttribute( LineChart.ZOOM_LEVEL_ATTRIBUTE, ZoomLevel.SECONDS.name() ).equals( value )
 			graphic: ImageView { image: image }
 			layoutInfo: buttonInfo
 			styleClass: "zoom-panel-button"
