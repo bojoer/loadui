@@ -110,6 +110,12 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				{
 					ProjectItem addedProject = ( ProjectItem )event.getElement();
 
+					addedProject.addEventListener( ActionEvent.class, runningListener );
+
+					SummaryListener summaryListener = new SummaryListener( addedProject );
+					summaryListeners.put( addedProject, summaryListener );
+					addedProject.addEventListener( BaseEvent.class, summaryListener );
+
 					// lazily get project->execution mapping from disk if needed
 					if( !projectIdToExecutions.containsKey( addedProject.getId() ) )
 					{
@@ -121,11 +127,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 						}
 						projectIdToExecutions.put( addedProject.getId(), executionSet );
 					}
-					addedProject.addEventListener( ActionEvent.class, runningListener );
-
-					SummaryListener summaryListener = new SummaryListener( addedProject );
-					summaryListeners.put( addedProject, summaryListener );
-					addedProject.addEventListener( BaseEvent.class, summaryListener );
 				}
 				else if( ProjectItem.SCENES.equals( event.getKey() ) )
 				{
@@ -176,6 +177,9 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 					String fileName = runningProject.getLabel() + "_" + dateFormatter2.format( now );
 					Execution newExecution = executionManager.startExecution( executionId, timestamp, label, fileName );
 
+					runningProject.addEventListener( BaseEvent.class,
+							new SummaryAttacher( executionManager.getCurrentExecution() ) );
+
 					// add project->execution mapping to cache
 					if( projectIdToExecutions.containsKey( runningProject.getId() ) )
 					{
@@ -192,9 +196,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				{
 					hasCurrent = false;
 					executionManager.stopExecution();
-
-					runningProject.addEventListener( BaseEvent.class,
-							new SummaryAttacher( executionManager.getCurrentExecution() ) );
 
 					// remove the oldest autosaved execution if needed
 					Set<Execution> executions = getExecutions( runningProject, true, false );
