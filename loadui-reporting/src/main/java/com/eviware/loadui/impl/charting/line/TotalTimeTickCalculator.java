@@ -49,9 +49,11 @@ public class TotalTimeTickCalculator implements TickCalculator<Long>
 		long firstTick = range.lower() / 1000;
 		long end = range.upper() / 1000;
 		long span = end - firstTick;
-		ZoomLevel level = this.level == ZoomLevel.ALL ? ZoomLevel.forSpan( span ) : this.level;
+		final ZoomLevel level = this.level == ZoomLevel.ALL ? ZoomLevel.forSpan( span ) : this.level;
 
-		long interval = level.getInterval();
+		final long interval = level.getInterval();
+		if( interval < 1 )
+			throw new RuntimeException( "Interval must be positive! Interval = " + interval );
 		firstTick -= ( firstTick % interval );
 
 		ArrayList<Tick> ticks = new ArrayList<Tick>();

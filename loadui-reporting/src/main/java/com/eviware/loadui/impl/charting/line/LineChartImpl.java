@@ -16,26 +16,41 @@
 
 package com.eviware.loadui.impl.charting.line;
 
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.HashMap;
+
+import javax.swing.SwingUtilities;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.charting.line.LineChart;
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.charting.line.ZoomLevel;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.jidesoft.chart.Chart;
+import com.jidesoft.chart.axis.Axis;
+import com.jidesoft.chart.axis.DefaultNumericTickCalculator;
 import com.jidesoft.chart.axis.NumericAxis;
 import com.jidesoft.range.Range;
 
-public class LineChartImpl extends Chart implements LineChart
+public class LineChartImpl extends Chart implements LineChart, Releasable
 {
+	public static final Logger log = LoggerFactory.getLogger( LineChartImpl.class );
+
+	private static final int PADDING = 10000;
+
 	private final LineChartView chartView;
 
-	private final HashMap<LineSegment, LineSegmentChartModel> lines = new HashMap<LineChartView.LineSegment, LineSegmentChartModel>();
+	private final HashMap<LineSegment, LineSegmentChartModel> lines = new HashMap<LineSegment, LineSegmentChartModel>();
 	private final HashMap<LineSegmentChartModel, ComparedLineSegmentChartModel> comparedLines = new HashMap<LineSegmentChartModel, ComparedLineSegmentChartModel>();
 	private final TotalTimeTickCalculator timeCalculator = new TotalTimeTickCalculator();
 	private final ChartViewListener chartViewListener = new ChartViewListener();
@@ -45,7 +60,7 @@ public class LineChartImpl extends Chart implements LineChart
 	private Execution comparedExecution;
 	private long position = 0;
 	private long timeSpan = 10000;
-	private ZoomLevel zoomLevel = ZoomLevel.SECONDS;
+	private ZoomLevel zoomLevel = null;
 
 	public LineChartImpl( LineChartView chartView )
 	{
@@ -69,12 +84,32 @@ public class LineChartImpl extends Chart implements LineChart
 			timeSpan = 10000;
 		}
 
-		xRange = new LongRange( 0, timeSpan );
+		xRange = new LongRange( position, position + timeSpan );
 		NumericAxis xAxis = new NumericAxis( xRange );
 		xAxis.setTickCalculator( timeCalculator );
 		setXAxis( xAxis );
 
-		chartView.addEventListener( CollectionEvent.class, chartViewListener );
+		Axis yAxis = getYAxis();
+		DefaultNumericTickCalculator yTickCalculator = new DefaultNumericTickCalculator();
+		yTickCalculator.setMinorTickIntervalBetweenMajors( 0 );
+		yAxis.setTickCalculator( yTickCalculator );
+		yAxis.setRange( 0, 10 );
+		yAxis.setLabelVisible( false );
+
+		LineChartStyles.styleChart( this );
+
+		ZoomLevel level;
+		try
+		{
+			level = ZoomLevel.valueOf( chartView.getAttribute( ZOOM_LEVEL_ATTRIBUTE, "SECONDS" ) );
+		}
+		catch( IllegalArgumentException e )
+		{
+			level = ZoomLevel.SECONDS;
+		}
+		setZoomLevel( level );
+
+		chartView.addEventListener( EventObject.class, chartViewListener );
 
 		for( LineSegment segment : chartView.getSegments() )
 			addedSegment( segment );
@@ -85,6 +120,25 @@ public class LineChartImpl extends Chart implements LineChart
 	{
 		double min = Double.POSITIVE_INFINITY;
 		double max = Double.NEGATIVE_INFINITY;
+
+		if( zoomLevel == ZoomLevel.ALL )
+		{
+			long maxTime = getMaxTime();
+			if( timeSpan != maxTime || position != 0 )
+			{
+				position = 0;
+				timeSpan = getMaxTime();
+				xRange.setMin( 0 );
+				xRange.setMax( timeSpan );
+				int level = ZoomLevel.forSpan( timeSpan / 1000 ).getLevel();
+
+				for( LineSegmentChartModel lineModel : lines.values() )
+				{
+					lineModel.setLevel( level );
+					lineModel.setXRange( -PADDING, timeSpan + PADDING );
+				}
+			}
+		}
 
 		for( LineSegmentChartModel lineModel : lines.values() )
 		{
@@ -135,7 +189,7 @@ public class LineChartImpl extends Chart implements LineChart
 		{
 			mainExecution = execution;
 			for( LineSegmentChartModel lineModel : lines.values() )
-				lineModel.setXRange( 0, 0 );
+				lineModel.setExecution( execution );
 			refresh( false );
 		}
 	}
@@ -143,6 +197,9 @@ public class LineChartImpl extends Chart implements LineChart
 	@Override
 	public void setComparedExecution( Execution execution )
 	{
+		if( mainExecution == execution )
+			execution = null;
+
 		if( comparedExecution != execution )
 		{
 			if( comparedExecution == null )
@@ -150,6 +207,7 @@ public class LineChartImpl extends Chart implements LineChart
 				for( LineSegmentChartModel lineModel : lines.values() )
 				{
 					ComparedLineSegmentChartModel comparedModel = new ComparedLineSegmentChartModel( lineModel );
+					comparedModel.setExecution( execution );
 					comparedLines.put( lineModel, comparedModel );
 					addModel( comparedModel, comparedModel.getChartStyle() );
 				}
@@ -157,12 +215,16 @@ public class LineChartImpl extends Chart implements LineChart
 			else if( execution == null )
 			{
 				for( LineSegmentModel lineModel : new ArrayList<LineSegmentChartModel>( comparedLines.keySet() ) )
-					removeModel( comparedLines.remove( lineModel ) );
+				{
+					ComparedLineSegmentChartModel comparedModel = comparedLines.remove( lineModel );
+					removeModel( comparedModel );
+					ReleasableUtils.release( comparedModel );
+				}
 			}
 			else
 			{
 				for( ComparedLineSegmentChartModel comparedModel : comparedLines.values() )
-					comparedModel.setExecution( comparedExecution );
+					comparedModel.setExecution( execution );
 			}
 			comparedExecution = execution;
 		}
@@ -174,10 +236,14 @@ public class LineChartImpl extends Chart implements LineChart
 		{
 			LineSegmentChartModel lineModel = new LineSegmentChartModel( chartView, segment );
 			lines.put( segment, lineModel );
+			if( mainExecution != null )
+				lineModel.setExecution( mainExecution );
+			lineModel.setXRange( position - PADDING, position + timeSpan + PADDING );
 			addModel( lineModel, lineModel.getChartStyle() );
 			if( comparedExecution != null )
 			{
 				ComparedLineSegmentChartModel comparedModel = new ComparedLineSegmentChartModel( lineModel );
+				comparedModel.setExecution( comparedExecution );
 				comparedLines.put( lineModel, comparedModel );
 				addModel( comparedModel, comparedModel.getChartStyle() );
 			}
@@ -192,17 +258,27 @@ public class LineChartImpl extends Chart implements LineChart
 			removeModel( model );
 			ComparedLineSegmentChartModel comparedModel = comparedLines.remove( model );
 			if( comparedModel != null )
-			{
 				removeModel( comparedModel );
-			}
+			ReleasableUtils.releaseAll( model, comparedModel );
 		}
+	}
+
+	private void updateXRange()
+	{
+		xRange.setMin( position );
+		xRange.setMax( position + timeSpan );
+		long xMin = position - PADDING;
+		long xMax = position + timeSpan + PADDING;
+		for( LineSegmentChartModel lineModel : lines.values() )
+			lineModel.setXRange( xMin, xMax );
 	}
 
 	@Override
 	public long getMaxTime()
 	{
-		return comparedExecution == null ? mainExecution.getLength() : Math.max( mainExecution.getLength(),
-				comparedExecution.getLength() );
+		long mainLength = mainExecution == null ? 0 : mainExecution.getLength();
+		long comparedLength = comparedExecution == null ? 0 : comparedExecution.getLength();
+		return Math.max( mainLength, comparedLength );
 	}
 
 	@Override
@@ -216,7 +292,10 @@ public class LineChartImpl extends Chart implements LineChart
 	{
 		if( this.timeSpan != timeSpan )
 		{
+			this.timeSpan = timeSpan;
 			chartView.setAttribute( TIME_SPAN_ATTRIBUTE, String.valueOf( timeSpan ) );
+			updateXRange();
+
 			refresh( false );
 		}
 	}
@@ -230,19 +309,13 @@ public class LineChartImpl extends Chart implements LineChart
 	@Override
 	public void setPosition( long position )
 	{
+		position = Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
 		if( this.position != position )
 		{
 			this.position = position;
 			chartView.setAttribute( POSITION_ATTRIBUTE, String.valueOf( position ) );
-			xRange.setMin( position );
-			xRange.setMax( position + timeSpan );
 
-			int padding = 10000;
-			long xMin = position - padding;
-			long xMax = position + timeSpan + padding;
-			for( LineSegmentChartModel lineModel : lines.values() )
-				lineModel.setXRange( xMin, xMax );
-
+			updateXRange();
 			refresh( false );
 		}
 	}
@@ -260,20 +333,65 @@ public class LineChartImpl extends Chart implements LineChart
 		{
 			this.zoomLevel = zoomLevel;
 			timeCalculator.setLevel( zoomLevel );
+			int level = zoomLevel == ZoomLevel.ALL ? ZoomLevel.forSpan( getMaxTime() / 1000 ).getLevel() : zoomLevel
+					.getLevel();
+
+			for( LineSegmentChartModel lineModel : lines.values() )
+				lineModel.setLevel( level );
 
 			refresh( false );
 		}
 	}
 
-	private class ChartViewListener implements WeakEventHandler<CollectionEvent>
+	@Override
+	public LineSegmentModel getLineSegmentModel( LineSegment segment )
+	{
+		return lines.get( segment );
+	}
+
+	@Override
+	public void release()
+	{
+		chartView.removeEventListener( EventObject.class, chartViewListener );
+		ReleasableUtils.releaseAll( lines.values() );
+		lines.clear();
+	}
+
+	private class ChartViewListener implements WeakEventHandler<EventObject>
 	{
 		@Override
-		public void handleEvent( CollectionEvent event )
+		public void handleEvent( final EventObject e )
 		{
-			if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
-				addedSegment( ( LineSegment )event.getElement() );
-			else
-				removedSegment( ( LineSegment )event.getElement() );
+			SwingUtilities.invokeLater( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					if( e instanceof CollectionEvent )
+					{
+						CollectionEvent event = ( CollectionEvent )e;
+						if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
+							addedSegment( ( LineSegment )event.getElement() );
+						else
+							removedSegment( ( LineSegment )event.getElement() );
+					}
+					else if( e instanceof PropertyChangeEvent )
+					{
+						PropertyChangeEvent event = ( PropertyChangeEvent )e;
+						if( ZOOM_LEVEL.equals( event.getPropertyName() ) )
+							setZoomLevel( ZoomLevel.valueOf( ( String )event.getNewValue() ) );
+					}
+				}
+			} );
+		}
+	}
+
+	public static class Factory implements LineChart.Factory
+	{
+		@Override
+		public LineChart createLineChart( LineChartView lineChartView )
+		{
+			return new LineChartImpl( lineChartView );
 		}
 	}
 }

@@ -18,6 +18,8 @@ package com.eviware.loadui.api.charting.line;
 
 import java.awt.Color;
 
+import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+
 /**
  * A line in a LineChart, which can be styled.
  * 
@@ -29,6 +31,8 @@ public interface LineSegmentModel
 	public static final String COLOR = "color";
 	public static final String STROKE = "stroke";
 	public static final String WIDTH = "width";
+
+	public LineSegment getLineSegment();
 
 	public int getScale();
 
