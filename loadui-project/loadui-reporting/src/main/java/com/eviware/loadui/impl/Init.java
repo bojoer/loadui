@@ -23,9 +23,8 @@ public class Init
 			Properties jidedata = new Properties();
 			jidedata.load( Init.class.getResourceAsStream( "/properties/jide.properties" ) );
 			String company = jidedata.getProperty( "company" );
-			String product = jidedata.getProperty( "product" );
-			log.debug( "Initializing JIDE {} for {}", product, company );
-			Lm.verifyLicense( company, product, jidedata.getProperty( "license" ) );
+			log.debug( "Initializing JIDE for {}", company );
+			Lm.verifyLicense( company, jidedata.getProperty( "product" ), jidedata.getProperty( "license" ) );
 		}
 		catch( Throwable e )
 		{

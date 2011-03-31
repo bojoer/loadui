@@ -55,7 +55,7 @@ public class BeanInjector implements BundleContextAware
 	private <T> T doGetBean( Class<T> cls )
 	{
 		// String camelCase = cls.getSimpleName().substring( 0, 1 ).toLowerCase()
-		// + cls.getSimpleName().substring( 1 );
+		// + cls.getSimpleName().substring( 1 ).replaceAll( "\\$", "." );
 
 		ServiceReference ref = context.getServiceReference( cls.getName() );
 		if( ref != null )

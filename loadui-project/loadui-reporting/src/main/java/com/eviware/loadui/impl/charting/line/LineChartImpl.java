@@ -292,12 +292,17 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	{
 		if( this.timeSpan != timeSpan )
 		{
-			this.timeSpan = timeSpan;
 			chartView.setAttribute( TIME_SPAN_ATTRIBUTE, String.valueOf( timeSpan ) );
-			updateXRange();
-
-			refresh( false );
+			setTimeSpanNoSave( timeSpan );
 		}
+	}
+
+	public void setTimeSpanNoSave( long timeSpan )
+	{
+		this.timeSpan = timeSpan;
+		updateXRange();
+
+		refresh( false );
 	}
 
 	@Override
