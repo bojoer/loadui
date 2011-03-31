@@ -229,8 +229,10 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	 * Invoked when a request is made to cancel the running samples. The
 	 * RunnerBase will take care of clearing the queue. This method can be
 	 * implemented to cancel running samples.
+	 * 
+	 * @return The number of running requests that were cancelled.
 	 */
-	protected abstract void onCancel();
+	protected abstract int onCancel();
 
 	/**
 	 * Called when a sample is completed. Updates the currentlyRunning count as
@@ -411,12 +413,14 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	@Override
 	protected void cancel()
 	{
+		discardsCounter.increment( (long) queue.size() );
 		queue.clear();
 		queued.set( 0 );
 		updateQueued( 0 );
 		getContext().setBusy( false );
 
-		onCancel();
+		int runningRequests = onCancel();
+		discardsCounter.increment( (long) runningRequests );
 	}
 
 	@Override

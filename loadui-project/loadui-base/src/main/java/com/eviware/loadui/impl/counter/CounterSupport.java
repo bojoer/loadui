@@ -66,7 +66,7 @@ public class CounterSupport
 		return counters.containsKey( name ) ? counters.get( name ).get() : 0;
 	}
 
-	protected long incrementCounterValue( String name )
+	protected long incrementCounterValue( String name, long value )
 	{
 		if( !counters.containsKey( name ) )
 		{
@@ -77,7 +77,7 @@ public class CounterSupport
 			}
 		}
 
-		counters.get( name ).incrementAndGet();
+		counters.get( name ).addAndGet( value );
 
 		long current = getCounterValue( name );
 		owner.fireEvent( new CounterEvent( ( CounterHolder )owner, name, 1 ) );
@@ -98,11 +98,17 @@ public class CounterSupport
 		{
 			return getCounterValue( name );
 		}
-
+		
 		@Override
 		public void increment()
 		{
-			incrementCounterValue( name );
+			incrementCounterValue( name, 1 );
+		}
+
+		@Override
+		public void increment( long value )
+		{
+			incrementCounterValue( name, value );
 		}
 
 		@Override

@@ -35,8 +35,8 @@ import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Label;
-import javafx.geometry.VPos;
 import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
@@ -151,7 +151,7 @@ public class SummarySection extends CustomNode {
 						layoutInfo: LayoutInfo {
 							hgrow: Priority.NEVER vgrow: Priority.ALWAYS
 							hfill: false vfill: true
-							width: 270	 
+							width: 270
 					    }
 						text: bind key
 						textFill: Color.web("#000000")
@@ -162,11 +162,13 @@ public class SummarySection extends CustomNode {
 						layoutInfo: LayoutInfo {
 							hgrow: Priority.NEVER vgrow: Priority.ALWAYS
 							hfill: false vfill: true	 
+							hpos: HPos.RIGHT
 					    }
 						text: bind value
 						textFill: Color.web("#000000")
 						font: Font { name:"Arial" size: 10 }
 						vpos: VPos.CENTER 
+						hpos: HPos.RIGHT 
 					}
 				]
 			}

@@ -48,9 +48,9 @@ public class AggregatedCounterSupport extends CounterSupport
 	}
 
 	@Override
-	protected long incrementCounterValue( String name )
+	protected long incrementCounterValue( String name, long value )
 	{
-		super.incrementCounterValue( name );
+		super.incrementCounterValue( name, value );
 		synchronized( cachedValues )
 		{
 			if( cachedValues.containsKey( name ) )

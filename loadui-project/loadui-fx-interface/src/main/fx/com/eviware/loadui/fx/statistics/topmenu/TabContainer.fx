@@ -69,6 +69,7 @@ public class TabContainer extends HBox {
 	public var onSelect:function(sp:StatisticPage):Void;
 	public var statisticPages:StatisticPages on replace { sortableBox.content = generateTabs(); };
 
+	var isRemovingTab:Boolean = false;
 	var latestClickedTab:StatisticsTab;
 	var previouslySelectedTab:StatisticsTab;
 	var sortableBox:SortableBox;
@@ -165,7 +166,7 @@ public class TabContainer extends HBox {
 		var tabs:StatisticsTab[];
  		if ( statisticPages != null )
 	   {
-			tabs = for ( child in statisticPages.getChildren() )
+			tabs = for( child in statisticPages.getChildren() )
 			{
 				StatisticsTab {
 			   	text: child.getTitle(),
@@ -186,17 +187,36 @@ class StatisticPagesListener extends EventHandler {
     override function handleEvent(e: EventObject) { 
 		def event: CollectionEvent = e as CollectionEvent;
 		if(event.getEvent() == CollectionEvent.Event.REMOVED){
+			isRemovingTab = true;
 			FxUtils.runInFxThread( function(): Void {
+				println("prevTab still: {previouslySelectedTab}");
+				
 			   def sp:StatisticPage = event.getElement() as StatisticPage;
+			   
+			   var tabToDelete:RadioButton;
+			   var prevTabExists:Boolean;
 			   for(tab in sortableBox.content){
 					if( (tab as RadioButton).value == sp) {
-						if( (tab as RadioButton).selected ) (tab as RadioButton).toggleGroup = null;
-						delete tab from sortableBox.content;
-						break;
+						tabToDelete = tab as RadioButton;
+			   	}
+			   	else if( (tab as RadioButton) == previouslySelectedTab) {
+						tabToDelete = tab as RadioButton;
 			   	}
 				}
-			previouslySelectedTab.selected = true;
+				println("tabToDelete: {tabToDelete}");
+				
+				if( prevTabExists )
+				{
+					previouslySelectedTab.selected = true;
+				}
+				else
+				{
+					tabGroup.toggles[0].selected = true;		
+				}
+				tabToDelete.toggleGroup = null;
+				delete tabToDelete from sortableBox.content;
 			});
+			isRemovingTab = false;
 		} else if(event.getEvent() == CollectionEvent.Event.ADDED){
 			FxUtils.runInFxThread( function(): Void {
 			   def sp:StatisticPage = event.getElement() as StatisticPage;
@@ -213,9 +233,14 @@ class StatisticPagesListener extends EventHandler {
 
 class ToggleTabGroup extends ToggleGroup {
 	override var selectedToggle on replace oldVal {
-		currentPage = selectedToggle.value as StatisticPage;
-		onSelect( selectedToggle.value as StatisticPage );
-		previouslySelectedTab = oldVal as StatisticsTab;
+		if( not isRemovingTab )
+		{
+			println("       selectedToggle goes from {oldVal} to {selectedToggle}");
+			currentPage = selectedToggle.value as StatisticPage;
+			onSelect( selectedToggle.value as StatisticPage );
+			previouslySelectedTab = oldVal as StatisticsTab;
+			println("       and (prevtab of course goes to {previouslySelectedTab})");
+		}
 	}
 }
 

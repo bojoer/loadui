@@ -286,6 +286,8 @@ sample = { message, sampleId ->
 onCancel = {
 	aborting = true
 	
+	numberOfRunning = runningSamples.size()
+	
 	synchronized( runningSamples ) {
 		def methods = runningSamples.toArray()
 		runningSamples.clear()
@@ -294,6 +296,8 @@ onCancel = {
 		}
 	}
 	aborting = false
+	
+	return numberOfRunning
 }
 
 onRelease = {
