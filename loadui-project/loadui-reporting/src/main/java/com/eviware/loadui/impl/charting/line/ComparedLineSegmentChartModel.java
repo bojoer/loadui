@@ -23,52 +23,27 @@ import javax.swing.SwingUtilities;
 
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.events.WeakEventHandler;
-import com.eviware.loadui.api.statistics.DataPoint;
-import com.eviware.loadui.api.statistics.Statistic;
-import com.eviware.loadui.api.statistics.store.Execution;
-import com.jidesoft.chart.model.DefaultChartModel;
 import com.jidesoft.chart.style.ChartStyle;
 import com.jidesoft.chart.util.ColorFactory;
 
-public class ComparedLineSegmentChartModel extends DefaultChartModel
+public class ComparedLineSegmentChartModel extends AbstractLineSegmentModel
 {
 	private final LineSegmentChartModel baseModel;
-	private final ChartStyle chartStyle;
 	private final ChartGroupListener chartGroupListener = new ChartGroupListener();
-
-	private Execution execution;
-	private double scalar = 1;
 
 	public ComparedLineSegmentChartModel( LineSegmentChartModel baseModel )
 	{
+		super( new ChartStyle( baseModel.getChartStyle() ) );
 		this.baseModel = baseModel;
-		chartStyle = new ChartStyle( baseModel.getChartStyle() );
 		chartStyle.setLineColor( ColorFactory.transitionColor( chartStyle.getLineColor(), Color.BLACK, 0.5 ) );
 		baseModel.getChartGroup().addEventListener( PropertyChangeEvent.class, chartGroupListener );
 	}
 
-	public ChartStyle getChartStyle()
+	@Override
+	protected void redraw()
 	{
-		return chartStyle;
-	}
-
-	public void setExecution( Execution execution )
-	{
-		if( this.execution != execution )
-		{
-			this.execution = execution;
-			redraw();
-		}
-	}
-
-	private void redraw()
-	{
-		clearPoints();
-		Statistic<?> statistic = baseModel.getLineSegment().getStatistic();
-		for( DataPoint<?> dataPoint : statistic.getPeriod( baseModel.getXRangeMin(), baseModel.getXRangeMax(),
-				baseModel.getLevel(), execution ) )
-			addPoint( dataPoint.getTimestamp(), scalar * dataPoint.getValue().doubleValue(), false );
-		update();
+		doRedraw( baseModel.getLineSegment().getStatistic(), baseModel.getXRangeMin(), baseModel.getXRangeMax(),
+				baseModel.getLevel() );
 	}
 
 	private class ChartGroupListener implements WeakEventHandler<PropertyChangeEvent>
