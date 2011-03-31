@@ -29,6 +29,6 @@ public class FormattingUtils
 
 	public static String formatFileName( String base )
 	{
-		return base.replaceAll( " ", "_" ).replaceAll( "[^a-zA-Z0-9-_]", "" );
+		return base.replaceAll( " ", "_" ).replaceAll( "[^a-zA-Z0-9-_.]", "" );
 	}
 }

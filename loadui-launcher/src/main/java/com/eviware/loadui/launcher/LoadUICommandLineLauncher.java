@@ -134,7 +134,8 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 			attributes.put( "agents", agents );
 
 			attributes.put( "reportFolder", cmd.getOptionValue( REPORT_DIR_OPTION ) );
-			attributes.put( "reportFormat", cmd.getOptionValue( REPORT_FORMAT_OPTION ) );
+			attributes.put( "reportFormat",
+					cmd.hasOption( REPORT_FORMAT_OPTION ) ? cmd.getOptionValue( REPORT_FORMAT_OPTION ) : "PDF" );
 
 			List<String> statisticPages = null;
 			if( cmd.hasOption( STATISTICS_REPORT_OPTION ) )

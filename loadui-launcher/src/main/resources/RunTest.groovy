@@ -22,11 +22,15 @@ import com.eviware.loadui.api.model.WorkspaceItem
 import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.events.EventHandler
 import com.eviware.loadui.api.events.ActionEvent
-import com.eviware.loadui.util.FormattingUtils
 import com.eviware.loadui.api.events.CollectionEvent
 import com.eviware.loadui.api.messaging.MessageListener
 import com.eviware.loadui.api.messaging.MessageEndpoint
 import com.eviware.loadui.api.model.AgentItem
+import com.eviware.loadui.api.statistics.store.ExecutionManager
+import com.eviware.loadui.api.reporting.ReportingManager
+import com.eviware.loadui.util.BeanInjector
+import com.eviware.loadui.util.FormattingUtils
+import com.eviware.loadui.util.charting.LineChartUtils
 
 def agentMessageListener = new MessageListener() {
 	
@@ -282,8 +286,12 @@ while( summaryExported < ( project.saveReport ? 2 : 1 ) ) {
 }
 
 //Save Statistics report
-if( statisticPages != null ) {
-	//log.info "StatisticPages: $statisticPages"
+if( statisticPages && project.reportFolder ) {
+	def pages = statisticPages.empty ? project.statisticPages.children : project.statisticPages.children.findAll { statisticPages.contains( it.title ) }
+	def execution = BeanInjector.getBean( ExecutionManager.class ).currentExecution
+	def map = LineChartUtils.createImages( pages, execution, null );
+	def file = new File( project.reportFolder, FormattingUtils.formatFileName( "${project.label} ${execution.label}.${project.reportFormat.toLowerCase()}}" ) )
+	BeanInjector.getBean( ReportingManager.class ).createReport( project.label, execution, pages, map, file, project.reportFormat )
 }
 
 //Shutdown
