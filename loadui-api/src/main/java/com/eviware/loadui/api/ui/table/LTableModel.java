@@ -35,13 +35,22 @@ public class LTableModel extends AbstractTableModel
 
 	private int maxRow;
 	private boolean follow;
+	private boolean enabledInDistMode;
 
 	public LTableModel( int maxRow, boolean follow )
 	{
 		this.maxRow = maxRow;
 		this.follow = follow;
+		this.enabledInDistMode = false;
 	}
 
+	public LTableModel( int maxRow, boolean follow, boolean enabledInDistMode )
+	{
+		this.maxRow = maxRow;
+		this.follow = follow;
+		this.enabledInDistMode = enabledInDistMode;
+	}
+	
 	public ArrayList getHeader()
 	{
 		return header;
@@ -203,6 +212,17 @@ public class LTableModel extends AbstractTableModel
 		fireTableDataChanged();
 	}
 
+	public boolean isEnabledInDistMode()
+	{
+		return enabledInDistMode;
+	}
+
+	public void setEnabledInDistMode( boolean enabledInDistMode )
+	{
+		this.enabledInDistMode = enabledInDistMode;
+		fireTableDataChanged();
+	}
+	
 	public LTableModel getLastRows( long numRows )
 	{
 		if( numRows >= data.size() )
