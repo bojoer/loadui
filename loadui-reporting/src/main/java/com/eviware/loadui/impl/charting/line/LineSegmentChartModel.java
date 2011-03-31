@@ -32,31 +32,28 @@ import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
-import com.jidesoft.chart.model.DefaultChartModel;
 import com.jidesoft.chart.style.ChartStyle;
 
-public class LineSegmentChartModel extends DefaultChartModel implements LineSegmentModel
+public class LineSegmentChartModel extends AbstractLineSegmentModel implements LineSegmentModel
 {
 	public static final Logger log = LoggerFactory.getLogger( LineSegmentChartModel.class );
 
 	private final ChartGroup chartGroup;
 	private final LineSegment segment;
-	private final ChartStyle chartStyle = new ChartStyle();
 	private final StyleEventListener listener = new StyleEventListener();
 
-	private Execution execution;
 	private long latestTime = 0;
 	private long xRangeMin = 0;
 	private long xRangeMax = 0;
 	private int level = 0;
 	private int scale = 0;
-	private double scalar = 1;
 	private Color color = Color.decode( LineChartStyles.lineColors[0] );
 	private StrokeStyle strokeStyle;
 	private int strokeWidth = 1;
 
 	public LineSegmentChartModel( LineChartView chartView, LineSegment segment )
 	{
+		super( new ChartStyle() );
 		this.segment = segment;
 
 		chartGroup = chartView.getChartGroup();
@@ -80,14 +77,10 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 		}
 	}
 
-	private void redraw()
+	@Override
+	protected void redraw()
 	{
-		clearPoints();
-		if( execution != null )
-			for( DataPoint<?> dataPoint : segment.getStatistic().getPeriod( xRangeMin, xRangeMax, level, execution ) )
-				addPoint( dataPoint.getTimestamp(), scalar * dataPoint.getValue().doubleValue(), false );
-
-		update();
+		doRedraw( segment.getStatistic(), xRangeMin, xRangeMax, level );
 	}
 
 	private void loadStyles()
@@ -138,11 +131,6 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 		fireModelChanged();
 	}
 
-	public ChartStyle getChartStyle()
-	{
-		return chartStyle;
-	}
-
 	@Override
 	public LineSegment getLineSegment()
 	{
@@ -159,14 +147,11 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 		return execution;
 	}
 
+	@Override
 	public void setExecution( Execution execution )
 	{
-		if( this.execution != execution )
-		{
-			this.execution = execution;
-			latestTime = execution.getLength();
-			redraw();
-		}
+		super.setExecution( execution );
+		latestTime = execution.getLength();
 	}
 
 	public long getLatestTime()

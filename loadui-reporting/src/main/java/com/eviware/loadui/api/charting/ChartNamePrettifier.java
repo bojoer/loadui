@@ -23,7 +23,7 @@ public class ChartNamePrettifier
 {
 	public static String nameFor( Statistic<?> statistic )
 	{
-		return nameForStatistic( statistic.getName() );
+		return statistic == null ? null : nameForStatistic( statistic.getName() );
 	}
 
 	public static String nameForSource( String source )
