@@ -249,12 +249,22 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 				vertical: true
 				layoutInfo: childrenInfo
 				spacing: 5
-				content: for( chart in chartGroup.getChildren() ) ChartViewHolder {
-					chartModel: chart
-					chartView: chartGroup.getChartViewForChart( chart as Chart )
-					label: bind ModelUtils.getLabelHolder( chart.getStatisticHolder() ).label;
-					layoutInfo: chartViewInfo
-					graphic: ImageView { image: FxUtils.getImageFor( chart.getStatisticHolder() ) }
+				content: for( chart in chartGroup.getChildren() ) {
+					def subChartView = chartGroup.getChartViewForChart( chart as Chart );
+					if( not "true".equals( subChartView.getAttribute( "saved", "false" ) ) ) {
+						println( "Resetting chart!" );
+						subChartView.setAttribute( "saved", "true" );
+						subChartView.setAttribute( "position", null );
+						subChartView.setAttribute( "timeSpan", null );
+						subChartView.setAttribute( "zoomLevel", null );
+					}
+					ChartViewHolder {
+						chartModel: chart
+						chartView: subChartView
+						label: bind ModelUtils.getLabelHolder( chart.getStatisticHolder() ).label;
+						layoutInfo: chartViewInfo
+						graphic: ImageView { image: FxUtils.getImageFor( chart.getStatisticHolder() ) }
+					}
 				}
 				onMoved: function( chart, fromIndex, toIndex ):Void {
 					chartGroup.moveChart( (chart as ChartViewHolder).chartModel, toIndex );

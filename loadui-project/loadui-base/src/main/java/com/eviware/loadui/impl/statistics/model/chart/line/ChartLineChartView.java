@@ -42,6 +42,8 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 {
 	public static Logger log = LoggerFactory.getLogger( ChartLineChartView.class );
 
+	private static final String NULL = new String( "null" );
+
 	private final static String SEGMENTS_ATTRIBUTE = "segments";
 
 	private final LineChartViewProvider provider;
@@ -147,6 +149,13 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	public String getLabel()
 	{
 		return chart.getStatisticHolder().getLabel();
+	}
+
+	@Override
+	public String getAttribute( String key, String defaultValue )
+	{
+		String value = super.getAttribute( key, NULL );
+		return value == NULL ? getChartGroup().getChartView().getAttribute( key, defaultValue ) : value;
 	}
 
 	public Chart getChart()

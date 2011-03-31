@@ -25,6 +25,8 @@ import com.eviware.loadui.api.statistics.model.ChartGroup;
  */
 public class SourceLineChartView extends AbstractLineChartView
 {
+	private static final String NULL = new String( "null" );
+
 	private final String source;
 
 	public SourceLineChartView( LineChartViewProvider provider, ChartGroup chartGroup, String source )
@@ -74,6 +76,13 @@ public class SourceLineChartView extends AbstractLineChartView
 			if( existingSegment != null )
 				deleteSegment( getSegment( chartSegment.toString() ) );
 		}
+	}
+
+	@Override
+	public String getAttribute( String key, String defaultValue )
+	{
+		String value = super.getAttribute( key, NULL );
+		return value == NULL ? getChartGroup().getChartView().getAttribute( key, defaultValue ) : value;
 	}
 
 	@Override
