@@ -18,22 +18,16 @@ package com.eviware.loadui.impl.reporting;
 import java.awt.Image;
 import java.io.File;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JRException;
 
 import com.eviware.loadui.api.reporting.ReportingManager;
-import com.eviware.loadui.api.statistics.model.Chart;
-import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
-import com.eviware.loadui.api.statistics.model.chart.ChartView;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.impl.reporting.statistics.ExecutionDataSource;
 import com.eviware.loadui.impl.reporting.summary.SummaryDataSource;
-import com.eviware.loadui.util.charting.LineChartUtils;
 
 public class ReportingManagerImpl implements ReportingManager
 {
