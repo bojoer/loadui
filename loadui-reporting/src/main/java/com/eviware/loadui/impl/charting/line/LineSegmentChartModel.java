@@ -83,6 +83,12 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 		doRedraw( segment.getStatistic(), xRangeMin, xRangeMax, level );
 	}
 
+	@Override
+	public String getName()
+	{
+		return segment.toString();
+	}
+
 	private void loadStyles()
 	{
 		int scale = 0;

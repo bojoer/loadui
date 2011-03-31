@@ -53,6 +53,12 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 		dataFetcher.queueRead( new PendingRead( statistic, xMin, xMax, level, scalar ) );
 	}
 
+	@Override
+	public String getName()
+	{
+		return "";
+	}
+
 	private class PendingRead implements Runnable
 	{
 		private final Statistic<?> statistic;
@@ -105,26 +111,33 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 
 			while( true )
 			{
-				synchronized( queue )
+				try
 				{
-					try
+					synchronized( queue )
 					{
-						if( queue.isEmpty() )
-							queue.wait();
+						try
+						{
+							if( queue.isEmpty() )
+								queue.wait();
 
-						Iterator<PendingRead> iterator = queue.values().iterator();
-						pendingRead = iterator.next();
-						iterator.remove();
+							Iterator<PendingRead> iterator = queue.values().iterator();
+							pendingRead = iterator.next();
+							iterator.remove();
+						}
+						catch( Exception e )
+						{
+							e.printStackTrace();
+						}
 					}
-					catch( InterruptedException e )
+					if( pendingRead != null )
 					{
-						e.printStackTrace();
+						pendingRead.read();
+						SwingUtilities.invokeLater( pendingRead );
 					}
 				}
-				if( pendingRead != null )
+				catch( Exception e )
 				{
-					pendingRead.read();
-					SwingUtilities.invokeLater( pendingRead );
+					e.printStackTrace();
 				}
 			}
 		}
