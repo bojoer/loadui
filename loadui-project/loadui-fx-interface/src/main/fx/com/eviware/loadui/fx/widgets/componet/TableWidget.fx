@@ -40,10 +40,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.CustomNode;
 import javafx.scene.Node;
 import javafx.geometry.VPos;
+import javafx.geometry.HPos;
 
 import javafx.scene.control.Label;
 import javafx.scene.shape.*;
 import javafx.scene.paint.*;
+import javafx.scene.layout.LayoutInfo;
+import javafx.scene.layout.Priority;
+
 
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
@@ -69,18 +73,23 @@ import org.jdesktop.swingx.plaf.LookAndFeelAddons;
 
 public class TableWidget extends VBox, EventHandler, TableModelListener {
 	
-	var table:LTable;
-	var saveFile:FileInputField;
+	var table: LTable;
+	var saveFile: FileInputField;
 	public var model: LTableModel;
 	
-	var cb:CheckBox;
+	var cb: CheckBox;
+	var enabledInDistModeCb: CheckBox;
 	
 	def workspace: WorkspaceItem = bind MainWindow.instance.workspace on replace oldVal {
-			oldVal.removeEventListener( BaseEvent.class, this );
-			workspace.addEventListener( BaseEvent.class, this );
-		}
-	var distributedMode:Boolean = not workspace.isLocalMode();
-	def componentDisabled = bind distributedMode and AppState.byName("MAIN").state.startsWith( "testcase." );
+		oldVal.removeEventListener( BaseEvent.class, this );
+		workspace.addEventListener( BaseEvent.class, this );
+	}
+	
+	var distributedMode: Boolean = not workspace.isLocalMode();
+	
+	def inTestCase = bind AppState.byName("MAIN").state.startsWith( "testcase." );
+	
+	def componentDisabled = bind distributedMode and inTestCase and not enabledInDistModeCb.selected;
 	
 	init {
 	   model.addTableModelListener(this);
@@ -110,20 +119,24 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 				spacing: 10
 				vpos: VPos.CENTER
 				nodeVPos: VPos.CENTER
+				layoutInfo: LayoutInfo { vfill: false, hfill: true, vgrow: Priority.NEVER, hgrow: Priority.ALWAYS }
 				content: [
 					Button {
+						layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
 						text: "Reset"
 						action: function() {
 							(model as LTableModel).reset();
 						}
 						disable: bind componentDisabled
 					}, Button {
+						layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
 						text: "Clear"
 						action: function() {
 							(model as LTableModel).clear();
 						}
 						disable: bind componentDisabled
 					}, Button {
+						layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
 						text: "Save"
 						action: function() {
 							def dialog:Dialog = Dialog {
@@ -148,22 +161,28 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 						}
 						disable: bind componentDisabled
 					}, cb = CheckBox {
+						layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
 						text: "Follow"
 						onMouseClicked: function(e) {
 							model.setFollow(cb.selected);   
 						}
 						disable: bind componentDisabled
-					},
-					Rectangle { width: 250, height:1, fill:Color.TRANSPARENT, stroke:Color.TRANSPARENT },
-					Label {
-					    text: "disabled in distributed mode"
-					    visible: bind componentDisabled
+					},	enabledInDistModeCb = CheckBox {
+						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
+						hpos: HPos.RIGHT
+						text: "Enable in distributed mode"
+						onMouseClicked: function(e) {
+							model.setEnabledInDistMode(enabledInDistModeCb.selected);
+						}
+						disable: bind not (distributedMode and inTestCase)
+						visible: bind inTestCase
 					}
 				] 
 			}
 		];
 		
 		cb.selected = model.isFollow();
+		enabledInDistModeCb.selected = model.isEnabledInDistMode();
 		table.setAutoscroll(model.isFollow());
 	}
 	
@@ -182,6 +201,7 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 	
 	override function tableChanged(e: TableModelEvent): Void {
 		cb.selected = model.isFollow();
+		enabledInDistModeCb.selected = model.isEnabledInDistMode();
 		table.setAutoscroll(model.isFollow());
 	}
 }

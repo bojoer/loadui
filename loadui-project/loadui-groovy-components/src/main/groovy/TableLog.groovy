@@ -42,6 +42,7 @@ createProperty 'maxRows', Long, 1000
 createProperty 'logFilePath', String
 createProperty 'saveFile', Boolean, false
 createProperty 'follow', Boolean, false
+createProperty 'enabledInDistMode', Boolean, false
 createProperty 'summaryRows', Long, 0
 createProperty 'appendSaveFile', Boolean, false
 createProperty 'formatTimestamps', Boolean, true
@@ -49,10 +50,10 @@ createProperty 'addHeaders', Boolean, false
 
 def latestHeader
 
-myTableModel = new LTableModel(1000, follow.value as Boolean)
+myTableModel = new LTableModel(1000, follow.value as Boolean, enabledInDistMode.value as Boolean)
 myTableModel.addTableModelListener(new TableModelListener() {
 	public void tableChanged(TableModelEvent e){
-		updateFollow()
+		updateProperties()
 	}
 });
 
@@ -62,40 +63,59 @@ writer = null
 def formater = new SimpleDateFormat("HH:mm:ss:SSS")
 myTableModel.maxRow = maxRows.value
 
-updateFollow = {
+updateProperties = {
 	follow.value = myTableModel.follow
+	enabledInDistMode.value = myTableModel.enabledInDistMode
 }
 
 rowsDisplay = new DelayedFormattedString( '%d', 500, value { myTableModel.rowCount } )
 fileDisplay = new DelayedFormattedString( '%s', 500, value { saveFileName ?: '-' } )
 
-output = { message ->
-	message.keySet().each { k -> myTableModel.addColumn k }
-	lastMsgDate = new Date();
-	
-	if ( formatTimestamps.value )
-		message.each() { key, value ->
-			if ( key.toLowerCase().indexOf("timestamp") > -1 ) 
-				message.put(key, formater.format(new Date(value)) )
-		}
+onMessage = { o, i, m ->
+	if(controller && i == remoteTerminal) {
+		//controller received message from agent
+		m["Source"] = o.label
+		super.onTerminalMessage(o, inputTerminal, m)
+	}
+	else{
+		super.onTerminalMessage(o, i, m)
+	}
+}
 
-	result = myTableModel.addRow(message) 
-	if( result && saveFile.value && saveFileName != null) {
-		if( writer == null ){
-			writer = new CSVWriter(new FileWriter(saveFileName, appendSaveFile.value), (char) ',');
-		}
-		try {
-			String[] header = myTableModel.header
-			if(addHeaders.value && !Arrays.equals(latestHeader, header)){
-				writer.writeNext(header)
-				latestHeader = header
+output = { message ->
+	if(controller){
+		message.keySet().each { k -> myTableModel.addColumn k }
+		lastMsgDate = new Date();
+		
+		if ( formatTimestamps.value ){
+			message.each() { key, value ->
+				if ( key.toLowerCase().indexOf("timestamp") > -1 ) 
+					message.put(key, formater.format(new Date(value)) )
 			}
-			String[] entries = myTableModel.lastRow
-			writer.writeNext(entries)
-			writer.flush()
-		} catch (Exception e) {
-			e.printStackTrace()
 		}
+		
+		result = myTableModel.addRow(message)
+		if( result && saveFile.value && saveFileName != null) {
+			if( writer == null ){
+				writer = new CSVWriter(new FileWriter(saveFileName, appendSaveFile.value), (char) ',');
+			}
+			try {
+				String[] header = myTableModel.header
+				if(addHeaders.value && !Arrays.equals(latestHeader, header)){
+					writer.writeNext(header)
+					latestHeader = header
+				}
+				String[] entries = myTableModel.lastRow
+				writer.writeNext(entries)
+				writer.flush()
+			} catch (Exception e) {
+				e.printStackTrace()
+			}
+		}
+	}
+	else if( myTableModel.isEnabledInDistMode() ){
+		// on agent and enabled, so send message to controller
+		send(controllerTerminal, message)
 	}
 }
 
@@ -111,7 +131,10 @@ addEventListener( PropertyEvent ) { event ->
 		}
 		else if( event.property.key == 'follow' && myTableModel.follow != follow.value as Boolean) {
 			myTableModel.follow = follow.value
-		} 
+		}
+		else if( event.property.key == 'enabledInDistMode' && myTableModel.enabledInDistMode != enabledInDistMode.value as Boolean) {
+			myTableModel.enabledInDistMode = enabledInDistMode.value
+		}
 	}
 }
 
