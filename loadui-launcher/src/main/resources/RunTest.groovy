@@ -286,7 +286,7 @@ while( summaryExported < ( project.saveReport ? 2 : 1 ) ) {
 }
 
 //Save Statistics report
-if( statisticPages && project.reportFolder ) {
+if( statisticPages != null && project.reportFolder ) {
 	def pages = statisticPages.empty ? project.statisticPages.children : project.statisticPages.children.findAll { statisticPages.contains( it.title ) }
 	def execution = BeanInjector.getBean( ExecutionManager.class ).currentExecution
 	def map = LineChartUtils.createImages( pages, execution, null );
