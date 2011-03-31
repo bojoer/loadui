@@ -53,15 +53,18 @@ public class GroovyRunner extends RunnerBase
 	}
 
 	@Override
-	protected void onCancel()
+	protected int onCancel()
 	{
+		int runningRequests = 0;
 		try
 		{
-			InvokerHelper.invokeMethod( delegate, "onCancel", new Object[] {} );
+			Object returnValue = InvokerHelper.invokeMethod( delegate, "onCancel", new Object[] {} );
+			runningRequests = (Integer) returnValue;
 		}
 		catch( MissingMethodException e )
 		{
-			// Ignore.
+			// Ignore, as this method is optional.
 		}
+		return runningRequests;
 	}
 }

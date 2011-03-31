@@ -278,7 +278,7 @@ class DropBase extends BaseNode, Resizable, Droppable {
 				}
 			}
 		} else if( draggable instanceof AnalysisToolbarItem ) {
-			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart Group {statisticPage.getChildCount()+1}" );
+			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart {statisticPage.getChildCount()+1}" );
 			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );
 		}
 	}

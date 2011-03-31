@@ -86,8 +86,7 @@ public class ResultNodeBase extends BaseNode, FxLabeled {
 	init {
 		addMouseHandler( MOUSE_PRIMARY_CLICKED, function( e:MouseEvent ):Void {
 			if( e.clickCount == 2 ) {
-				StatisticsWindow.execution = execution;
-				AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
+				loadExecution();
 			}
 		} );
 		
@@ -103,30 +102,34 @@ public class ResultNodeBase extends BaseNode, FxLabeled {
 		MenuItem {
 		text: ##[OPEN]"Open"
 		action: function() {
-
-				AppState.byName("STATISTICS").blockingTask(
-					function():Void { Thread.sleep(3000); StatisticsWindow.execution = execution; }
-					,function(task:Task):Void {
-						if( true ){ //task.failed ) {
-							def dialog:Dialog = Dialog {
-								scene: StatisticsWindow.instance.scene
-								title: "Could not load Result"
-								content: [
-									Label { text: "The Result could not be loaded. It might be corrupt." }
-								]
-								okText: "Ok"
-								onOk: function() {
-									dialog.close();
-								}
-							}
-						} else {
-							AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
-						}
-					}
-					,"Loading Result...");
-				//AppState.byName("STATISTICS").setActiveCanvas( projectRef.getProject() );
+				loadExecution();
 			}
 		}
+	}
+	
+	function loadExecution():Void
+	{
+		AppState.byName("STATISTICS").blockingTask(
+		function():Void { StatisticsWindow.execution = execution; }
+		,function(task:Task):Void {
+			if( task.failed ) {
+				def dialog:Dialog = Dialog {
+					scene: StatisticsWindow.instance.scene
+					noCancel: true
+					title: "Could not load Result"
+					content: [
+						Label { text: "The Result could not be loaded. It might be corrupt." }
+					]
+					okText: "Ok"
+					onOk: function() {
+						dialog.close();
+					}
+				}
+			} else {
+				AppState.byName( "STATISTICS" ).transitionTo( StatisticsWindow.STATISTICS_VIEW, AppState.ZOOM_WIPE );
+			}
+		}
+		,"Loading Result...");
 	}
 	
 	def popup:PopupMenu = PopupMenu {

@@ -67,7 +67,10 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	//This variable is completely optional, not all ChartViews have a ChartModel. This variable should not be used in this class.
 	public-init var chartModel:com.eviware.loadui.api.statistics.model.Chart;
    
+   def MIN_CHART_HEIGHT:Number = 163;
+   
 	override var styleClass = "chart-view-holder";
+	
 	
 	public var label:String = "ChartView label";
 	
@@ -93,7 +96,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 			chart = ChartRegistry.createChart( chartView, this );
 			chart.update();
 			chartButtons.content = rebuildChartButtons();
-			chartHeight = Double.parseDouble( chartView.getAttribute( HEIGHT_ATTRIBUTE, "0" ) );
+			chartHeight = Double.parseDouble( chartView.getAttribute( HEIGHT_ATTRIBUTE, Integer.toString(MIN_CHART_HEIGHT) ) );
 		}
 	}
 	
@@ -144,7 +147,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	
 	var hbox: HBox;
 	
-	public-read var chartHeight:Number = if(chartView != null) Double.parseDouble( chartView.getAttribute( HEIGHT_ATTRIBUTE, "0" ) ) else 0.0 on replace oldValue {
+	public-read var chartHeight:Number = if(chartView != null) Double.parseDouble( chartView.getAttribute( HEIGHT_ATTRIBUTE, Integer.toString(MIN_CHART_HEIGHT) ) ) else MIN_CHART_HEIGHT on replace oldValue {
 		chartView.setAttribute( HEIGHT_ATTRIBUTE, String.valueOf( chartHeight ) );
 	}
 	

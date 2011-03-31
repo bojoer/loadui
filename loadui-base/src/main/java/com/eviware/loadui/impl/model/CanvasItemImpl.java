@@ -760,6 +760,12 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		@Override
 		public void increment()
 		{
+			increment( 1 );
+		}
+		
+		@Override
+		public void increment( long value )
+		{
 			throw new UnsupportedOperationException( "The timer counter cannot be manually incremented!" );
 		}
 
