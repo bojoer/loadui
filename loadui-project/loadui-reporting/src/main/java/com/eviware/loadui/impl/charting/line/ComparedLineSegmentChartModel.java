@@ -23,6 +23,7 @@ import javax.swing.SwingUtilities;
 
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.events.WeakEventHandler;
+import com.jidesoft.chart.model.ChartModelListener;
 import com.jidesoft.chart.style.ChartStyle;
 import com.jidesoft.chart.util.ColorFactory;
 
@@ -34,9 +35,18 @@ public class ComparedLineSegmentChartModel extends AbstractLineSegmentModel
 	public ComparedLineSegmentChartModel( LineSegmentChartModel baseModel )
 	{
 		super( new ChartStyle( baseModel.getChartStyle() ) );
+
 		this.baseModel = baseModel;
 		chartStyle.setLineColor( ColorFactory.transitionColor( chartStyle.getLineColor(), Color.BLACK, 0.5 ) );
 		baseModel.getChartGroup().addEventListener( PropertyChangeEvent.class, chartGroupListener );
+		baseModel.addChartModelListener( new ChartModelListener()
+		{
+			@Override
+			public void chartModelChanged()
+			{
+				redraw();
+			}
+		} );
 	}
 
 	@Override
@@ -44,6 +54,12 @@ public class ComparedLineSegmentChartModel extends AbstractLineSegmentModel
 	{
 		doRedraw( baseModel.getLineSegment().getStatistic(), baseModel.getXRangeMin(), baseModel.getXRangeMax(),
 				baseModel.getLevel() );
+	}
+
+	@Override
+	public String getName()
+	{
+		return "Compared " + baseModel.getName();
 	}
 
 	private class ChartGroupListener implements WeakEventHandler<PropertyChangeEvent>
