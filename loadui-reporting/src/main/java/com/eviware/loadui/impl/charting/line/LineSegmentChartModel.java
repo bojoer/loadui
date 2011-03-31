@@ -214,8 +214,6 @@ public class LineSegmentChartModel extends DefaultChartModel implements LineSegm
 	{
 		if( scale != this.scale )
 		{
-			log.debug( "Setting scale: {} in Thread: {}", scale, Thread.currentThread() );
-
 			int oldScale = this.scale;
 			this.scale = scale;
 			scalar = Math.pow( 10, scale );

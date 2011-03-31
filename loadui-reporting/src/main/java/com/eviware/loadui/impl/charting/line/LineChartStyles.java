@@ -16,7 +16,7 @@
 package com.eviware.loadui.impl.charting.line;
 
 import java.awt.Color;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
@@ -61,7 +61,7 @@ public class LineChartStyles
 
 	public static String getLineColor( ChartGroup chartGroup, LineSegment segment )
 	{
-		HashSet<String> colors = new HashSet<String>();
+		LinkedHashSet<String> colors = new LinkedHashSet<String>();
 		for( String color : lineColors )
 			colors.add( color );
 
