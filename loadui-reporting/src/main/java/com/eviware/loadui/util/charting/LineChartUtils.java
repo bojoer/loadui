@@ -20,7 +20,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.eviware.loadui.api.statistics.model.Chart;
+import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.StatisticPage;
+import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.impl.charting.line.LineChartImpl;
@@ -34,6 +41,56 @@ import com.jidesoft.chart.util.ChartUtils;
 public class LineChartUtils
 {
 	public static final int printScaleFactor = 4;
+
+	public static Map<ChartView, Image> createImages( Collection<StatisticPage> pages, Execution mainExecution,
+			Execution comparedExecution )
+	{
+		HashMap<ChartView, Image> images = new HashMap<ChartView, Image>();
+		for( StatisticPage page : pages )
+			for( ChartGroup chartGroup : page.getChildren() )
+				images.putAll( createImages( chartGroup, mainExecution, comparedExecution ) );
+
+		return images;
+	}
+
+	public static Map<ChartView, Image> createImages( ChartGroup chartGroup, Execution mainExecution,
+			Execution comparedExecution )
+	{
+		HashMap<ChartView, Image> images = new HashMap<ChartView, Image>();
+
+		ChartView groupChartView = chartGroup.getChartView();
+		images.put( groupChartView, generateChartImage( groupChartView, mainExecution, comparedExecution ) );
+
+		String expand = chartGroup.getAttribute( "expand", "none" );
+		if( "group".equals( expand ) )
+		{
+			for( Chart chart : chartGroup.getChildren() )
+			{
+				ChartView chartView = chartGroup.getChartViewForChart( chart );
+				images.put( chartView, generateChartImage( chartView, mainExecution, comparedExecution ) );
+			}
+		}
+		else if( "sources".equals( expand ) )
+		{
+			for( String source : chartGroup.getSources() )
+			{
+				ChartView chartView = chartGroup.getChartViewForSource( source );
+				images.put( chartView, generateChartImage( chartView, mainExecution, comparedExecution ) );
+			}
+		}
+
+		return images;
+	}
+
+	public static Image generateChartImage( ChartView chartView, Execution mainExecution, Execution comparedExecution )
+	{
+		if( chartView instanceof LineChartView )
+		{
+			int height = Math.max( ( int )Double.parseDouble( chartView.getAttribute( "height", "0" ) ), 100 );
+			return LineChartUtils.createImage( ( LineChartView )chartView, 505, height, mainExecution, comparedExecution );
+		}
+		return null;
+	}
 
 	public static Image createImage( LineChartView chartView, int width, int height, Execution mainExecution,
 			Execution comparedExecution )
@@ -80,7 +137,7 @@ public class LineChartUtils
 		Font font = chart.getTickFont();
 		chart.setTickFont( new Font( font.getName(), font.getStyle(), 4 ) );
 
-		chart.setTimeSpan( 10000 );
+		chart.setTimeSpanNoSave( 10000 );
 
 		LongRange range = ( LongRange )chart.getXAxis().getRange();
 		range.setMax( range.lower() + 10000 );

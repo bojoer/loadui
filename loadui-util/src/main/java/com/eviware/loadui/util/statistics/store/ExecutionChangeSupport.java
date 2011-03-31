@@ -32,31 +32,31 @@ public class ExecutionChangeSupport
 
 	public void fireExecutionPaused( ExecutionManager.State oldState )
 	{
-		for( ExecutionListener el : listeners )
+		for( ExecutionListener el : new ArrayList<ExecutionListener>( listeners ) )
 			el.executionPaused( oldState );
 	}
 
 	public void fireExecutionStarted( ExecutionManager.State oldState )
 	{
-		for( ExecutionListener el : listeners )
+		for( ExecutionListener el : new ArrayList<ExecutionListener>( listeners ) )
 			el.executionStarted( oldState );
 	}
 
 	public void fireExecutionStopped( ExecutionManager.State oldState )
 	{
-		for( ExecutionListener el : listeners )
+		for( ExecutionListener el : new ArrayList<ExecutionListener>( listeners ) )
 			el.executionStopped( oldState );
 	}
 
 	public void fireTrackRegistered( TrackDescriptor trackDescriptor )
 	{
-		for( ExecutionListener el : listeners )
+		for( ExecutionListener el : new ArrayList<ExecutionListener>( listeners ) )
 			el.trackRegistered( trackDescriptor );
 	}
 
 	public void fireTrackUnregistered( TrackDescriptor trackDescriptor )
 	{
-		for( ExecutionListener el : listeners )
+		for( ExecutionListener el : new ArrayList<ExecutionListener>( listeners ) )
 			el.trackUnregistered( trackDescriptor );
 	}
 

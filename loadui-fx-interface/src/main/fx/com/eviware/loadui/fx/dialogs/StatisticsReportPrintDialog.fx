@@ -24,13 +24,13 @@ import javafx.geometry.Insets;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
-import com.eviware.loadui.fx.statistics.reporting.StatisticsReportGenerator;
 import com.eviware.loadui.fx.statistics.chart.ChartPage;
 
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.charting.LineChartUtils;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -49,17 +49,12 @@ public class StatisticsReportPrintDialog {
 		onOk: function() {
 			def pages = new ArrayList();
 			for( checkBox in checkBoxes[x|x.selected] ) pages.add( checkBox.page );
-			def chartPages = for( page in pages ) ChartPage {
-				statisticPage: page as StatisticPage
-				width: 800
-				height: 600
-			}
 			dialog.close();
 			var map:Map;
 			try {
 				AppState.byName("STATISTICS").setBlockedText("Preparing Charts...");
 				AppState.byName("STATISTICS").block();
-				map = StatisticsReportGenerator.generateCharts( chartPages );
+				map = LineChartUtils.createImages( pages, StatisticsWindow.execution, StatisticsWindow.comparedExecution );
 			} finally {
 				AppState.byName("STATISTICS").unblock();
 			}
@@ -67,7 +62,6 @@ public class StatisticsReportPrintDialog {
 			AppState.byName("STATISTICS").blockingTask( function():Void {
 				reportingManager.createReport( StatisticsWindow.getInstance().project.getLabel(), StatisticsWindow.execution, pages, map );
 			}, function( task ):Void {
-				ReleasableUtils.releaseAll( chartPages as Object );
 			}, "Generating Printable Report..." );
 		}
 		onCancel: function() {
