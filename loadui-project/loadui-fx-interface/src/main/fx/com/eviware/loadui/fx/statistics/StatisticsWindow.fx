@@ -159,7 +159,7 @@ public class StatisticsWindow {
 	def stack:Stack = Stack {
 		layoutX: 135
 		layoutY: 145
-		width: bind if(scene.width >= 600) scene.width - 150 else 450
+		width: bind Math.max( 550, scene.width - 150 );
 		height: bind scene.height - 180
 		content: [ layoutRegion ]
 		//background: Color.web("#323232")
