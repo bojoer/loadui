@@ -227,8 +227,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 					}
 					if(panelFactory.separator) Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER } else null
 				]
-			},
-			Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER }
+			}
 		];
 	}
 	
