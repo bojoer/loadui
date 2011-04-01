@@ -8,8 +8,8 @@
 	<detail>
 		<band height="16">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="162" y="0" width="360" height="14"/>
-				<textElement/>
+				<reportElement x="162" y="0" width="135" height="14"/>
+				<textElement textAlignment="Right"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{value}]]></textFieldExpression>
 			</textField>
 			<textField>
