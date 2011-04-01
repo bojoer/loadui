@@ -264,7 +264,7 @@ class DropBase extends BaseNode, Resizable, Droppable {
 			def sh = (draggable as StatisticHolderToolbarItem).statisticHolder;
 			ChartDefaults.createSubChart( ChartDefaults.createChartGroup( statisticPage, null, null ), sh );
 		} else if( draggable instanceof AnalysisToolbarItem ) {
-			def chartGroup = ChartDefaults.createChartGroup( statisticPage, (draggable as ChartToolbarItem).type, null );
+			def chartGroup = ChartDefaults.createChartGroup( statisticPage, null, null );
 			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );
 			//Just apply the script once, don't keep it attached.
 			chartGroup.setTemplateScript( null );
