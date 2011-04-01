@@ -34,6 +34,7 @@ public class LineChartStyles
 
 	public static void styleChart( LineChartImpl chart )
 	{
+		chart.setAnimateOnShow( false );
 		chart.setPanelBackground( CHART_BACKGROUND_COLOR );
 		chart.setChartBackground( CHART_BACKGROUND_COLOR );
 		chart.setLabelColor( CHART_FOREGROUND_COLOR );
