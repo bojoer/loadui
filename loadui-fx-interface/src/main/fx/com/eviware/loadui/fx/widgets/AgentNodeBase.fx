@@ -28,6 +28,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
 
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.node.BaseNode;
@@ -64,10 +66,16 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Ag
  * Node to display in the AgentList representing a AgentItem.
  */
 public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
-	public var enabled: Boolean;
-	public-read var ready: Boolean;
+	public var enabled: Boolean on replace {
+		setState();
+	}
+	public var ready: Boolean on replace {
+		setState();
+	}
 	public-read var url:String;
-	public-read var utilization:Integer;
+	public-read var utilization: Integer;
+	
+	public var customLabel: String = null;
 	
 	/**
 	 * The AgentItem to represent.
@@ -80,6 +88,34 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 		enabled = agent.isEnabled();
 		ready = agent.isReady();
 		utilization = agent.getUtilization();
+	}
+	
+	def blinkAnim = Timeline {
+		repeatCount: Timeline.INDEFINITE
+		keyFrames: [
+			KeyFrame {
+				time: 500ms
+				action: function() {
+					isNodeActive = not isNodeActive;
+				}
+			}
+		]
+	}
+	
+	var isNodeActive: Boolean = false;
+	
+	public var blink: Boolean = false on replace {
+		setState();
+	}
+	
+	function setState() {
+		if( blink and ready ){
+			blinkAnim.playFromStart();
+		}
+		else{
+			blinkAnim.stop();
+			isNodeActive = ready;
+		}
 	}
 	
 	protected def activityNode = Group {
@@ -124,9 +160,9 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 				spacing: 8
 				content: [
 					Label {
-						text: bind label.toUpperCase()
+						text: bind if(customLabel != null) customLabel else label.toUpperCase()
 						tooltip: labelTooltip = Tooltip { text: bind "{label} ({url})" }
-						graphic: ActivityLed { disable : bind not enabled, active: bind ready }
+						graphic: ActivityLed { disable : bind not enabled, active: bind isNodeActive }
 						onMouseEntered: function(e) { labelTooltip.activate() }
 						onMouseExited: function(e) { labelTooltip.deactivate() }
 					}

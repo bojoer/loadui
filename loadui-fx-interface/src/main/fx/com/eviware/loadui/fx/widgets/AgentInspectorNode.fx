@@ -38,7 +38,9 @@ import com.eviware.loadui.fx.ui.pagination.Pagination;
 import com.eviware.loadui.fx.ui.resources.DialogPanel;
 
 import com.eviware.loadui.api.model.ModelItem;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.model.ProjectItem;
@@ -94,6 +96,12 @@ import javafx.scene.control.ScrollBarPolicy;
 
 import com.eviware.loadui.fx.ui.dialogs.*;
 
+import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.fx.FxUtils;
+
 public def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentInspectorNode" );
 
 /**
@@ -104,15 +112,29 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 	/**
 	 * The AgentItem to represent.
 	 */ 
-	
 	public-init var ghostAgent = false on replace {
 		itemsPerPage = if( ghostAgent ) 4 else 3;
 	}
 	
 	override var fluid = true;
 	
-	
 	var menuFill: Paint = Color.web("#777777");
+	
+	def testCaseListener = TestCaseListener{}
+	def workspaceListener = WorkspaceListener{}
+	
+	def workspace: WorkspaceItem = bind MainWindow.instance.workspace on replace oldVal {
+		oldVal.removeEventListener( BaseEvent.class, workspaceListener );
+		workspace.addEventListener( BaseEvent.class, workspaceListener );
+		isLocalMode = workspace.isLocalMode();
+	}
+	
+	var isLocalMode: Boolean on replace {
+		if( ghostAgent ) {
+			ready = isLocalMode;
+		}
+		checkActivity();
+	}
 	
 	var contentChanging = false;
 	override var items on replace {
@@ -220,7 +242,8 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 		var toolbarBoxRight: HBox;
 		var menuNode:MenuButton;
 		if( ghostAgent ) {
-			(base.body as Container).content = Label { text: "GHOST AGENT", layoutInfo: LayoutInfo { margin: Insets { left: 6 } } };
+			customLabel = "GHOST AGENT";
+			enabled = true;
 		}
 		
 		insert [
@@ -374,6 +397,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 				e.printStackTrace();
 			}
 		}
+		tcNode.sceneItem.addEventListener(BaseEvent.class, testCaseListener);
 		tcNode.addTestCaseListener(this);
 		insert DraggableFrame{
 			draggable: tcNode
@@ -381,6 +405,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 		} 
 		into items;
 		tcNode.containerNode = this;
+		checkActivity();
 	}
 	
 	public function undeployTestCase(sceneItem: SceneItem){
@@ -395,31 +420,81 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 						//do nothing, already unassigned
 					}
 				}
+				sceneItem.removeEventListener(BaseEvent.class, testCaseListener);
 				delete df as Node from items;
 				return;
 			}	
 		}
+		checkActivity();
 	}
-	
+
 	public function clearTestCases(unassign: Boolean){
 		var projectItem: ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
 		for(df in items[x|x instanceof DraggableFrame]){
+			def scene: SceneItem = ((df as DraggableFrame).draggable as TestCaseIcon).sceneItem;
 			if(not ghostAgent and unassign and projectItem != null and agent != null){
 				try{
-					projectItem.unassignScene( ((df as DraggableFrame).draggable as TestCaseIcon).sceneItem, agent );
+					projectItem.unassignScene( scene, agent );
 				}
 				catch(e: Exception) {
  					//do nothing, already unassigned
 				}
 			}
+			scene.removeEventListener(BaseEvent.class, testCaseListener);
 		} 
 		delete items;
+		checkActivity();
 	}
-					
+	
+	function checkActivity() {
+		// should blink only if at least one test case is active and in local
+		// mode and ghost agent or dist mode and not ghost agent
+		var shouldBlink = false;
+		if( ( isLocalMode and ghostAgent) or ( not isLocalMode and not ghostAgent ) ) {
+			for(d in items){
+				if(((d as DraggableFrame).draggable as TestCaseIcon).sceneItem.isActive()){
+					shouldBlink = true;
+					break;	
+				}
+			}
+		}
+		if(blink == not shouldBlink){
+			blink = shouldBlink;
+		}
+	}
+	
 	override function toString() { label }
 	
 	postinit{
 		blocksMouse = true;		
 	}
 	
+}
+
+class TestCaseListener extends EventHandler {
+	override function handleEvent( e: EventObject ) { 
+		if( e instanceof BaseEvent ) {
+			def event = e as BaseEvent;
+			if( CanvasObjectItem.ACTIVITY.equals( event.getKey() ) ){
+				FxUtils.runInFxThread( function():Void {
+					checkActivity();
+				} );
+			}
+		}
+	}
+}
+
+class WorkspaceListener extends EventHandler {
+	override function handleEvent( e:EventObject ) { 
+		if(e.getSource() == workspace){
+			if( e instanceof PropertyEvent ) {
+				def event = e as PropertyEvent;
+				if( WorkspaceItem.LOCAL_MODE_PROPERTY == event.getProperty().getKey() ) {
+					FxUtils.runInFxThread( function():Void {
+						isLocalMode = workspace.isLocalMode();
+					} );
+				} 
+			}
+		} 
+	}
 }
