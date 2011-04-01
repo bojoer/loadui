@@ -252,7 +252,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 				content: for( chart in chartGroup.getChildren() ) {
 					def subChartView = chartGroup.getChartViewForChart( chart as Chart );
 					if( not "true".equals( subChartView.getAttribute( "saved", "false" ) ) ) {
-						println( "Resetting chart!" );
 						subChartView.setAttribute( "saved", "true" );
 						subChartView.setAttribute( "position", null );
 						subChartView.setAttribute( "timeSpan", null );
@@ -287,12 +286,21 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 				vertical: true
 				layoutInfo: childrenInfo
 				spacing: 5
-				content: for( source in sources ) ChartViewHolder {
-					chartView: chartGroup.getChartViewForSource( source as String )
-					label: source as String
-					typeLabel: "Agent"
-					layoutInfo: chartViewInfo
-					graphic: ImageView { image: FxUtils.agentImage }
+				content: for( source in sources ) {
+					def subChartView = chartGroup.getChartViewForSource( source as String );
+					if( not "true".equals( subChartView.getAttribute( "saved", "false" ) ) ) {
+						subChartView.setAttribute( "saved", "true" );
+						subChartView.setAttribute( "position", null );
+						subChartView.setAttribute( "timeSpan", null );
+						subChartView.setAttribute( "zoomLevel", null );
+					}
+					ChartViewHolder {
+						chartView: subChartView
+						label: source as String
+						typeLabel: "Agent"
+						layoutInfo: chartViewInfo
+						graphic: ImageView { image: FxUtils.agentImage }
+					}
 				}
 			}
 			insert expandedNode into (resizable as Container).content;

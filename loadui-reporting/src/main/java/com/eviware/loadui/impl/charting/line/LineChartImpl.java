@@ -61,19 +61,13 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	private long position = 0;
 	private long timeSpan = 10000;
 	private ZoomLevel zoomLevel = null;
+	private boolean follow = true;
 
 	public LineChartImpl( LineChartView chartView )
 	{
 		this.chartView = chartView;
 
-		try
-		{
-			position = Long.parseLong( chartView.getAttribute( POSITION_ATTRIBUTE, "0" ) );
-		}
-		catch( NumberFormatException e )
-		{
-			position = 0;
-		}
+		follow = Boolean.valueOf( chartView.getAttribute( FOLLOW_ATTRIBUTE, "true" ) );
 
 		try
 		{
@@ -82,6 +76,18 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 		catch( NumberFormatException e )
 		{
 			timeSpan = 10000;
+		}
+
+		if( !follow )
+		{
+			try
+			{
+				position = Long.parseLong( chartView.getAttribute( POSITION_ATTRIBUTE, "0" ) );
+			}
+			catch( NumberFormatException e )
+			{
+				position = 0;
+			}
 		}
 
 		xRange = new LongRange( position, position + timeSpan );
@@ -138,6 +144,10 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 					lineModel.setXRange( -PADDING, timeSpan + PADDING );
 				}
 			}
+		}
+		else if( follow )
+		{
+			setPosition( getMaxTime() - timeSpan );
 		}
 
 		for( LineSegmentChartModel lineModel : lines.values() )
@@ -345,6 +355,24 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 				lineModel.setLevel( level );
 
 			refresh( false );
+		}
+	}
+
+	@Override
+	public boolean isFollow()
+	{
+		return follow;
+	}
+
+	@Override
+	public void setFollow( boolean follow )
+	{
+		if( this.follow != follow )
+		{
+			this.follow = follow;
+			chartView.setAttribute( FOLLOW_ATTRIBUTE, Boolean.toString( follow ) );
+			if( follow )
+				refresh( false );
 		}
 	}
 
