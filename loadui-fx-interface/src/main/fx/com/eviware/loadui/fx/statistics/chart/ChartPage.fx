@@ -162,7 +162,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 		for( holder in innerContent )
 			holder.update();
 	}
-		
+	
 	public function updateIcon():Void {
 		def execution = StatisticsWindow.execution;
 		if( execution != null ) {
@@ -259,27 +259,15 @@ class DropBase extends BaseNode, Resizable, Droppable {
 	
 	override var onDrop = function( draggable:Draggable ):Void {
 		if( draggable instanceof ChartToolbarItem ) {
-			statisticPage.createChartGroup( (draggable as ChartToolbarItem).type, "Chart {statisticPage.getChildCount()+1}" )
+			ChartDefaults.createChartGroup( statisticPage, (draggable as ChartToolbarItem).type, null );
 		} else if( draggable instanceof StatisticHolderToolbarItem ) {
 			def sh = (draggable as StatisticHolderToolbarItem).statisticHolder;
-			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart {statisticPage.getChildCount()+1}" );
-			def chart = chartGroup.createChart( sh );
-			if( sh instanceof ComponentItem ) {
-				def variable = sh.getStatisticVariable( "Time Taken" );
-				if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
-					def chartView = chartGroup.getChartViewForChart( chart );
-					(chartView as ConfigurableLineChartView).addSegment( "Time Taken", "AVERAGE", StatisticVariable.MAIN_SOURCE );
-				}
-			} else if( sh instanceof CanvasItem ) {
-				def variable = sh.getStatisticVariable( "Requests" );
-				if( variable != null and variable.getStatisticNames().contains( "PER_SECOND" ) ) {
-					def chartView = chartGroup.getChartViewForChart( chart );
-					(chartView as ConfigurableLineChartView).addSegment( "Requests", "PER_SECOND", StatisticVariable.MAIN_SOURCE );
-				}
-			}
+			ChartDefaults.createSubChart( ChartDefaults.createChartGroup( statisticPage, null, null ), sh );
 		} else if( draggable instanceof AnalysisToolbarItem ) {
-			def chartGroup = statisticPage.createChartGroup( com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName(), "Chart {statisticPage.getChildCount()+1}" );
+			def chartGroup = ChartDefaults.createChartGroup( statisticPage, (draggable as ChartToolbarItem).type, null );
 			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );
+			//Just apply the script once, don't keep it attached.
+			chartGroup.setTemplateScript( null );
 		}
 	}
 	
