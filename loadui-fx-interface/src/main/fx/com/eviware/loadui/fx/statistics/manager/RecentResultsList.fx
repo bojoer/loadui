@@ -135,19 +135,6 @@ class MyPageList extends PageList {
 
 class CurrentExecutionNode extends ResultNodeBase {
 	override var label = "Current run";
-	override var execution = bind StatisticsWindow.currentExecution on replace oldExecution {
-		if( execution != null ) {
-			currentExecutionNode.blinkAnim.playFromStart();
-		} else {
-			currentExecutionNode.blinkAnim.stop();
-			currentExecutionNode.active = false;
-		}
-		FxUtils.runInFxThread( function() {
-			if( oldExecution != null and pagelist.lookup( oldExecution.getId() ) == null ) {
-				insert DraggableFrame { draggable: ResultNode { execution: oldExecution }, id: oldExecution.getId() } before pagelist.items[0];
-			}
-		});
-	}
 	def blinkAnim = Timeline {
 		repeatCount: Timeline.INDEFINITE
 		keyFrames: [
@@ -158,6 +145,24 @@ class CurrentExecutionNode extends ResultNodeBase {
 				}
 			}
 		]
+	}
+	
+	override def execution = bind StatisticsWindow.currentExecution on replace oldExecution {
+		if( execution != null ) {
+			blinkAnim.playFromStart();
+		} else {
+			blinkAnim.stop();
+			active = false;
+		}
+		FxUtils.runInFxThread( function() {
+			if( oldExecution != null and pagelist.lookup( oldExecution.getId() ) == null ) {
+				insert DraggableFrame { draggable: ResultNode { execution: oldExecution }, id: oldExecution.getId() } before pagelist.items[0];
+			}
+		});
+	}
+	
+	postinit {
+		if( execution != null ) blinkAnim.playFromStart();
 	}
 }
 
