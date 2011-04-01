@@ -25,28 +25,28 @@
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="160" y="0" width="80" height="20"/>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{columns}.size() > 1? ((String)$F{columns}.get( 1 )).toUpperCase() : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="240" y="0" width="80" height="20"/>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{columns}.size() > 2? ((String)$F{columns}.get( 2 )).toUpperCase() : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="320" y="0" width="80" height="20"/>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{columns}.size() > 3? ((String)$F{columns}.get( 3 )).toUpperCase() : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="0" width="80" height="20"/>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{columns}.size() > 4? ((String)$F{columns}.get( 4 )).toUpperCase() : ""]]></textFieldExpression>
@@ -60,12 +60,12 @@
 		<band height="21">
 			<textField isStretchWithOverflow="true" evaluationTime="Auto" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="240" y="1" width="80" height="20"/>
-				<textElement textAlignment="Left"/>
+				<textElement textAlignment="Right"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{columns}.size() > 2? $F{COLUMN_2}.toString() : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Auto" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="160" y="1" width="80" height="20"/>
-				<textElement textAlignment="Left"/>
+				<textElement textAlignment="Right"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{columns}.size() > 1? $F{COLUMN_1}.toString() : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -75,12 +75,12 @@
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Auto" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="320" y="1" width="80" height="20"/>
-				<textElement textAlignment="Left"/>
+				<textElement textAlignment="Right"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{columns}.size() > 3? $F{COLUMN_3}.toString() : ""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Auto" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="400" y="1" width="80" height="20" isRemoveLineWhenBlank="true"/>
-				<textElement textAlignment="Left"/>
+				<textElement textAlignment="Right"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{columns}.size() > 4? $F{COLUMN_4}.toString() : ""]]></textFieldExpression>
 			</textField>
 		</band>
