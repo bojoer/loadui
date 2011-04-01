@@ -347,6 +347,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 		if( this.zoomLevel != zoomLevel )
 		{
 			this.zoomLevel = zoomLevel;
+			chartView.setAttribute( ZOOM_LEVEL_ATTRIBUTE, zoomLevel.name() );
 			timeCalculator.setLevel( zoomLevel );
 			int level = zoomLevel == ZoomLevel.ALL ? ZoomLevel.forSpan( getMaxTime() / 1000 ).getLevel() : zoomLevel
 					.getLevel();
