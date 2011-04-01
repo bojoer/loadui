@@ -127,9 +127,15 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 	def scrollBarPosition = bind scrollBar.value on replace oldVal {
 		if( initialized ) {
 			def maxTime = chart.getMaxTime();
-			def position = scrollBarPosition * ( maxTime - chart.getTimeSpan() ) / maxTime;
-			if( Math.abs( chart.getPosition() - position ) > 10 )
-				chart.setPosition( position );
+			var sbPos = Math.min( maxTime, scrollBarPosition );
+			if( maxTime - sbPos < 1000 ) {
+				chart.setFollow( true );
+			} else {
+				chart.setFollow( false );
+				def position = scrollBarPosition * ( maxTime - chart.getTimeSpan() ) / maxTime;
+				if( Math.abs( chart.getPosition() - position ) > 10 )
+					chart.setPosition( position );
+			}
 		}
 	}
 	
@@ -206,7 +212,7 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 	}
 	
 	override function update():Void {
-		def follow = scrollBar.value == scrollBar.max;
+		def follow = chart.isFollow();
 		
 		def unitWidth = chart.getZoomLevel().getUnitWidth();
 		def interval = chart.getZoomLevel().getInterval();

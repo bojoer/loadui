@@ -30,6 +30,7 @@ public interface LineChart
 	public static final String POSITION_ATTRIBUTE = "position";
 	public static final String TIME_SPAN_ATTRIBUTE = "timeSpan";
 	public static final String ZOOM_LEVEL_ATTRIBUTE = "zoomLevel";
+	public static final String FOLLOW_ATTRIBUTE = "follow";
 
 	public static final String ZOOM_LEVEL = "zoomLevel";
 
@@ -106,6 +107,20 @@ public interface LineChart
 	 * @param zoomLevel
 	 */
 	public void setZoomLevel( ZoomLevel zoomLevel );
+
+	/**
+	 * If in follow mode, the rightmost section of the chart is always displayed.
+	 * 
+	 * @return
+	 */
+	public boolean isFollow();
+
+	/**
+	 * Sets follow mode.
+	 * 
+	 * @param follow
+	 */
+	public void setFollow( boolean follow );
 
 	/**
 	 * Gets the LineSegmentModel for a LineSegment.
