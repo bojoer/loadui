@@ -464,7 +464,7 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 					}
 					catch( Exception e )
 					{
-						log.error( "Failed loading dependencies using Grape, fallback to manual jar loading." );
+						log.error( "Failed loading dependencies using Grape, fallback to manual jar loading.", e );
 						System.setProperty( "loadui.grape.disable", "true" );
 						loadDependencies( scriptContent );
 						return;

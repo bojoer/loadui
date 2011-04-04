@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.api.charting.line;
 
+import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
@@ -25,7 +26,7 @@ import com.eviware.loadui.api.statistics.store.Execution;
  * 
  * @author dain.nilsson
  */
-public interface LineChart
+public interface LineChart extends EventFirer
 {
 	public static final String LINE_SEGMENT_MODELS = LineChart.class.getName() + "@lineSegmentModels";
 
