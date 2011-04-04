@@ -257,6 +257,8 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 				comparedLines.put( lineModel, comparedModel );
 				addModel( comparedModel, comparedModel.getChartStyle() );
 			}
+			chartView.fireEvent( new CollectionEvent( chartView, LINE_SEGMENT_MODELS, CollectionEvent.Event.ADDED,
+					lineModel ) );
 		}
 	}
 
@@ -270,6 +272,8 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 			if( comparedModel != null )
 				removeModel( comparedModel );
 			ReleasableUtils.releaseAll( model, comparedModel );
+			chartView
+					.fireEvent( new CollectionEvent( chartView, LINE_SEGMENT_MODELS, CollectionEvent.Event.REMOVED, model ) );
 		}
 	}
 
@@ -394,29 +398,41 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	private class ChartViewListener implements WeakEventHandler<EventObject>
 	{
 		@Override
-		public void handleEvent( final EventObject e )
+		public void handleEvent( EventObject e )
 		{
-			SwingUtilities.invokeLater( new Runnable()
+			if( e instanceof CollectionEvent )
 			{
-				@Override
-				public void run()
+				final CollectionEvent event = ( CollectionEvent )e;
+				if( LineChartView.SEGMENTS.equals( event.getKey() ) )
 				{
-					if( e instanceof CollectionEvent )
+					SwingUtilities.invokeLater( new Runnable()
 					{
-						CollectionEvent event = ( CollectionEvent )e;
-						if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
-							addedSegment( ( LineSegment )event.getElement() );
-						else
-							removedSegment( ( LineSegment )event.getElement() );
-					}
-					else if( e instanceof PropertyChangeEvent )
-					{
-						PropertyChangeEvent event = ( PropertyChangeEvent )e;
-						if( ZOOM_LEVEL.equals( event.getPropertyName() ) )
-							setZoomLevel( ZoomLevel.valueOf( ( String )event.getNewValue() ) );
-					}
+						@Override
+						public void run()
+						{
+							if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
+								addedSegment( ( LineSegment )event.getElement() );
+							else
+								removedSegment( ( LineSegment )event.getElement() );
+						}
+					} );
 				}
-			} );
+			}
+			else if( e instanceof PropertyChangeEvent )
+			{
+				final PropertyChangeEvent event = ( PropertyChangeEvent )e;
+				if( ZOOM_LEVEL.equals( event.getPropertyName() ) )
+				{
+					SwingUtilities.invokeLater( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							setZoomLevel( ZoomLevel.valueOf( ( String )event.getNewValue() ) );
+						}
+					} );
+				}
+			}
 		}
 	}
 

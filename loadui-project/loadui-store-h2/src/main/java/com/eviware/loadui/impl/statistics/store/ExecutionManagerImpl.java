@@ -79,7 +79,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	 */
 	private static final String SOURCE_TABLE_NAME_POSTFIX = "_sources";
 
-	public File baseDirectory = new File( System.getProperty( LoadUI.LOADUI_HOME ), "executions" );
+	public File baseDirectory = new File( System.getProperty( LoadUI.LOADUI_HOME ), "results" );
 	public String baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
 
 	/**

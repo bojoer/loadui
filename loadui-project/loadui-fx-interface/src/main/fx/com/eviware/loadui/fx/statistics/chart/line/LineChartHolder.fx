@@ -46,6 +46,7 @@ import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.api.charting.line.LineChart;
+import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.charting.line.ZoomLevel;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
@@ -239,7 +240,7 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 	
 	override function create():Node {
 		for( segment in chartView.getSegments() )
-			addSegment( segment );
+			addSegment( chart.getLineSegmentModel( segment ) );
 		
 		initialized = true;
 		
@@ -258,14 +259,15 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 		chart = null;
 	}
 	
-	function addSegment( segment:LineSegment ):Void {
+	function addSegment( lineModel:LineSegmentModel ):Void {
+		def segment = lineModel.getLineSegment();
 		insert if( segment instanceof LineSegment.Removable ) {
 			DraggableFrame {
 				draggable: DeletableSegmentButton {
 					segment: segment as LineSegment.Removable
 					compactSegments: bind compactSegments
 					chartView: chartView
-					model: chart.getLineSegmentModel( segment )
+					model: lineModel
 					confirmDialogScene: bind scene
 				}
 			};
@@ -273,12 +275,13 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 			SegmentButton {
 				compactSegments: bind compactSegments
 				chartView: chartView
-				model: chart.getLineSegmentModel( segment )
+				model: lineModel
 			};
 		} into segmentButtons.content;
 	}
 	
-	function removeSegment( segment:LineSegment ):Void {
+	function removeSegment( lineModel:LineSegmentModel ):Void {
+		def segment = lineModel.getLineSegment();
 		for( frame in segmentButtons.content[b | b instanceof DraggableFrame] ) {
 			def button = (frame as DraggableFrame).draggable as DeletableSegmentButton;
 			if( button.model.getLineSegment() == segment )
@@ -294,11 +297,13 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 class SegmentListener extends WeakEventHandler {
 	override function handleEvent( e ):Void {
 		def event = e as CollectionEvent;
-		def segment = event.getElement() as LineSegment;
-		if( CollectionEvent.Event.ADDED == event.getEvent() ) {
-			FxUtils.runInFxThread( function():Void { addSegment( segment ); } );
-		} else {
-			FxUtils.runInFxThread( function():Void { removeSegment( segment ); } );
+		if( LineChart.LINE_SEGMENT_MODELS.equals( event.getKey() ) ) {
+			def segment = event.getElement() as LineSegmentModel;
+			if( CollectionEvent.Event.ADDED == event.getEvent() ) {
+				FxUtils.runInFxThread( function():Void { addSegment( segment ); } );
+			} else {
+				FxUtils.runInFxThread( function():Void { removeSegment( segment ); } );
+			}
 		}
 	}
 }

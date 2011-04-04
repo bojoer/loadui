@@ -317,10 +317,6 @@ addEventListener( ActionEvent ) { event ->
 		discardResetValue = 0
 		failedResetValue = 0
 	}
-	else if ( event.key == "BROWSE" ) {
-		if( url.value != null && url.value.startsWith( "http"))
-			java.awt.Desktop.getDesktop().browse( new java.net.URI(url.value ))
-	}
 }
 
 addEventListener( PropertyEvent ) { event ->
@@ -345,7 +341,10 @@ addEventListener( PropertyEvent ) { event ->
 layout {
 	box( layout:'wrap 2, ins 0' ) {
 		property( property:url, label:'Web Page Address', constraints: 'w 300!, spanx 2', style: '-fx-font-size: 17pt' )
-		action( label:'Open in Browser', constraints:'spanx 2', action: { triggerAction('BROWSE') } )
+		action( label:'Open in Browser', constraints:'spanx 2', action: {
+			if( url.value != null && url.value.startsWith( "http" ) )
+				java.awt.Desktop.desktop.browse( new java.net.URI( url.value ) )
+		} )
 		runAction = action( label:'Run Once', action: { triggerAction('SAMPLE') } )
 		action( label:'Abort Running Pages', action: { triggerAction('CANCEL') } )
 	}
