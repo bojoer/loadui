@@ -30,12 +30,14 @@ import com.eviware.loadui.api.charting.line.LineChart;
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.charting.line.ZoomLevel;
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.events.EventSupport;
 import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.axis.Axis;
 import com.jidesoft.chart.axis.DefaultNumericTickCalculator;
@@ -50,6 +52,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 
 	private final LineChartView chartView;
 
+	private final EventSupport eventSupport = new EventSupport();
 	private final HashMap<LineSegment, LineSegmentChartModel> lines = new HashMap<LineSegment, LineSegmentChartModel>();
 	private final HashMap<LineSegmentChartModel, ComparedLineSegmentChartModel> comparedLines = new HashMap<LineSegmentChartModel, ComparedLineSegmentChartModel>();
 	private final TotalTimeTickCalculator timeCalculator = new TotalTimeTickCalculator();
@@ -257,8 +260,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 				comparedLines.put( lineModel, comparedModel );
 				addModel( comparedModel, comparedModel.getChartStyle() );
 			}
-			chartView.fireEvent( new CollectionEvent( chartView, LINE_SEGMENT_MODELS, CollectionEvent.Event.ADDED,
-					lineModel ) );
+			fireEvent( new CollectionEvent( this, LINE_SEGMENT_MODELS, CollectionEvent.Event.ADDED, lineModel ) );
 		}
 	}
 
@@ -272,8 +274,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 			if( comparedModel != null )
 				removeModel( comparedModel );
 			ReleasableUtils.releaseAll( model, comparedModel );
-			chartView
-					.fireEvent( new CollectionEvent( chartView, LINE_SEGMENT_MODELS, CollectionEvent.Event.REMOVED, model ) );
+			fireEvent( new CollectionEvent( this, LINE_SEGMENT_MODELS, CollectionEvent.Event.REMOVED, model ) );
 		}
 	}
 
@@ -391,8 +392,32 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	public void release()
 	{
 		chartView.removeEventListener( EventObject.class, chartViewListener );
-		ReleasableUtils.releaseAll( lines.values() );
+		ReleasableUtils.releaseAll( lines.values(), eventSupport );
 		lines.clear();
+	}
+
+	@Override
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.addEventListener( type, listener );
+	}
+
+	@Override
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.removeEventListener( type, listener );
+	}
+
+	@Override
+	public void clearEventListeners()
+	{
+		eventSupport.clearEventListeners();
+	}
+
+	@Override
+	public void fireEvent( EventObject event )
+	{
+		eventSupport.fireEvent( event );
 	}
 
 	private class ChartViewListener implements WeakEventHandler<EventObject>

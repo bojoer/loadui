@@ -71,7 +71,7 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 	
 	public-init var chartView:LineChartView on replace {
 		chart = if( chartView == null ) null else lineChartFactory.createLineChart( chartView );
-		chartView.addEventListener( CollectionEvent.class, segmentListener );
+		chart.addEventListener( CollectionEvent.class, segmentListener );
 		lineChartCache.put( chartView, chart );
 	}
 	
