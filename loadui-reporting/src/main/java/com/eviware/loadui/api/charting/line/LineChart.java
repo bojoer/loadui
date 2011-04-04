@@ -27,6 +27,8 @@ import com.eviware.loadui.api.statistics.store.Execution;
  */
 public interface LineChart
 {
+	public static final String LINE_SEGMENT_MODELS = LineChart.class.getName() + "@lineSegmentModels";
+
 	public static final String POSITION_ATTRIBUTE = "position";
 	public static final String TIME_SPAN_ATTRIBUTE = "timeSpan";
 	public static final String ZOOM_LEVEL_ATTRIBUTE = "zoomLevel";
