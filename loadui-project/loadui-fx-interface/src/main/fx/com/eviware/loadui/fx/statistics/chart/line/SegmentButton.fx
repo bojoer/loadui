@@ -1,4 +1,4 @@
- /* 
+/* 
  * Copyright 2011 eviware software ab
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -63,12 +63,22 @@ public class SegmentButton extends BaseNode, Resizable {
 	
 	public-init var model:LineSegmentModel on replace {
 		def statistic = model.getLineSegment().getStatistic();
+		def metricName:String = statistic.getName();
+		def dataName:String = statistic.getStatisticVariable().getName();
+		def singleColumnInCompactMode:Boolean = ChartNamePrettifier.compactNameIsAlone( dataName );
+				
 		lineColor = model.getColor();
 		button.graphic = HBox {
 			content: [
 				Label {
-					text: ChartNamePrettifier.nameFor( statistic )
-					layoutInfo: LayoutInfo { width: 60 }
+					text: bind if(compactSegments) ChartNamePrettifier.compactDataName( dataName, metricName ) else ChartNamePrettifier.nameForStatistic( dataName )
+					layoutInfo: LayoutInfo { width: bind if(not compactSegments) 75 else if (singleColumnInCompactMode) 55 else 37 }
+				},
+				Label {
+					text: bind if(compactSegments) ChartNamePrettifier.compactMetricName( metricName ) else ChartNamePrettifier.nameForStatistic( metricName )
+					layoutInfo: LayoutInfo { width: bind if(compactSegments) 18 else 55 }
+					visible: bind not (compactSegments and singleColumnInCompactMode)
+					managed: bind not (compactSegments and singleColumnInCompactMode)
 				}, Label {
 					text: ChartNamePrettifier.nameForSource( statistic.getSource() )
 					layoutInfo: LayoutInfo { width: 40 }
@@ -76,7 +86,7 @@ public class SegmentButton extends BaseNode, Resizable {
 					managed: bind not compactSegments
 				}, Label {
 					text: bind ModelUtils.getLabelHolder( statistic.getStatisticVariable().getStatisticHolder() ).label
-					layoutInfo: LayoutInfo { width: 60 }
+					layoutInfo: LayoutInfo { width: 75 }
 					visible: bind not compactSegments
 					managed: bind not compactSegments
 				}

@@ -69,7 +69,6 @@ public class TabContainer extends HBox {
 	public var onSelect:function(sp:StatisticPage):Void;
 	public var statisticPages:StatisticPages on replace { sortableBox.content = generateTabs(); };
 
-//	var isRemovingTab:Boolean = false;
 	var latestClickedTab:StatisticsTab;
 	var previouslySelectedTab:StatisticsTab;
 	var sortableBox:SortableBox;
@@ -187,10 +186,7 @@ class StatisticPagesListener extends EventHandler {
     override function handleEvent(e: EventObject) { 
 		def event: CollectionEvent = e as CollectionEvent;
 		if(event.getEvent() == CollectionEvent.Event.REMOVED){
-//			isRemovingTab = true;
 			FxUtils.runInFxThread( function(): Void {
-				println("prevTab still: {previouslySelectedTab}");
-				
 			   def sp:StatisticPage = event.getElement() as StatisticPage;
 			   
 			   var tabToDelete:RadioButton;
@@ -203,8 +199,6 @@ class StatisticPagesListener extends EventHandler {
 						prevTabExists = true;
 			   	}
 				}
-				println("tabToDelete: {tabToDelete}");
-				
 				if( prevTabExists )
 				{
 					previouslySelectedTab.selected = true;
@@ -216,7 +210,6 @@ class StatisticPagesListener extends EventHandler {
 				tabToDelete.toggleGroup = null;
 				delete tabToDelete from sortableBox.content;
 			});
-//			isRemovingTab = false;
 		} else if(event.getEvent() == CollectionEvent.Event.ADDED){
 			FxUtils.runInFxThread( function(): Void {
 			   def sp:StatisticPage = event.getElement() as StatisticPage;
@@ -233,14 +226,9 @@ class StatisticPagesListener extends EventHandler {
 
 class ToggleTabGroup extends ToggleGroup {
 	override var selectedToggle on replace oldVal {
-//		if( not isRemovingTab )
-//		{
-			println("       selectedToggle goes from {oldVal} to {selectedToggle}");
-			currentPage = selectedToggle.value as StatisticPage;
-			onSelect( selectedToggle.value as StatisticPage );
-			previouslySelectedTab = oldVal as StatisticsTab;
-			println("       and (prevtab of course goes to {previouslySelectedTab})");
-//		}
+		currentPage = selectedToggle.value as StatisticPage;
+		onSelect( selectedToggle.value as StatisticPage );
+		previouslySelectedTab = oldVal as StatisticsTab;
 	}
 }
 
