@@ -99,7 +99,7 @@ public class JavaFXActivator extends BundleActivator {
 				icons: icons
 				scene: scene = Scene {
 					width: 1085.0
-					height: 768.0
+					height: 720.0
 					stylesheets: bind stylesheets
 					//stylesheets: "{__ROOT__}themes/default/style.css";//bind stylesheets
 				}

@@ -1112,3 +1112,30 @@
 .radio-button *.label {
 	-fx-text-fill: #999999;
 }
+
+.menu-button *.box {
+	-fx-background-color: null;
+}
+
+.loadui-menu-button .check-box *.box {
+
+	-fx-background-color: null;
+}
+
+.loadui-menu-button .check-box:focused *.box {
+
+	-fx-background-color: null;
+}
+
+.loadui-menu-button .check-box:hover {
+	-fx-background: #3e5fc3;
+	-fx-background-color: #3e5fc3;
+}
+
+.loadui-menu-button .check-box:hover *.label {
+	-fx-text-fill: #ffffff;
+}
+
+.loadui-menu-button .check-box *.label {
+	-fx-padding: 0 24 0 7;
+}
