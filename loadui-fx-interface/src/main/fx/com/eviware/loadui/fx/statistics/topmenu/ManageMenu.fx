@@ -81,7 +81,19 @@ public class ManageMenu extends HBox {
 				fitWidth: bind width
 				managed: false
 				layoutY: -42
-			}, menuButton = MenuButton {
+			},
+			Rectangle {
+				width: 78
+				height: 50
+				fill: Color.rgb( 0, 0, 0, 0.1 )
+				managed: false
+			}, 
+			Label {
+				layoutInfo: LayoutInfo {
+					width: 95
+				}
+			},
+			menuButton = MenuButton {
 				styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
 				text: "Results"
 				font: Font { name:"Arial", size:18 }
