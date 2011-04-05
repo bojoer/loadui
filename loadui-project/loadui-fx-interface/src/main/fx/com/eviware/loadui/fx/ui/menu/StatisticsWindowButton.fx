@@ -70,6 +70,7 @@ public class StatisticsWindowButton extends Group {
 				items: [
 					CheckBox {
 						text: "Always on top"
+						styleClass: "context-menu-check-box"
 						onMouseClicked:function(e:MouseEvent):Void {
 							StatisticsWindow.instance.wc.toggleAlwaysOnTop();
 						}

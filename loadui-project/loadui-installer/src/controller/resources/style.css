@@ -1113,29 +1113,52 @@
 	-fx-text-fill: #999999;
 }
 
-.menu-button *.box {
-	-fx-background-color: null;
+.context-menu-check-box *.label {
+   /* 3 pixels between bottom of radio button shape to -fx-baseline of text */
+   /* 5 pixels between right edge of button and left edge of text       */
+   -fx-padding: 0 24 0 7;
 }
 
-.loadui-menu-button .check-box *.box {
-
-	-fx-background-color: null;
+.context-menu-check-box *.box {
+    -fx-padding: 3 3 3 3;
+    -fx-background-color: null;
+    -fx-background-radius: 2, 2, 1, 1;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
 }
 
-.loadui-menu-button .check-box:focused *.box {
-
-	-fx-background-color: null;
+.context-menu-check-box:hover *.label {
+	-fx-text-fill: #ffffff;
 }
 
-.loadui-menu-button .check-box:hover {
+.context-menu-check-box:hover {
 	-fx-background: #3e5fc3;
 	-fx-background-color: #3e5fc3;
 }
 
-.loadui-menu-button .check-box:hover *.label {
-	-fx-text-fill: #ffffff;
+.context-menu-check-box:armed *.box {
+    -fx-color: -fx-pressed-base;
 }
 
-.loadui-menu-button .check-box *.label {
-	-fx-padding: 0 24 0 7;
+.context-menu-check-box *.mark {
+    -fx-background-color: transparent;
+    -fx-padding: 4 4 4 4;
+    -fx-scale-shape: false;
+}
+
+.context-menu-check-box:undefined *.mark {
+    -fx-shape: "M0,0H8V2H0Z";
+    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-insets: 1 0 -1 0, 0;
+}
+
+.context-menu-check-box:selected *.mark {
+    -fx-shape: "M0,4H2L3,6L6,0H8L4,8H2Z";
+    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-insets: 1 0 -1 0, 0;
+}
+
+.context-menu-check-box:selected:undefined *.mark {
+    -fx-shape: "M0,0H8V2H0Z";
+    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-insets: 1 0 -1 0, 0;
 }

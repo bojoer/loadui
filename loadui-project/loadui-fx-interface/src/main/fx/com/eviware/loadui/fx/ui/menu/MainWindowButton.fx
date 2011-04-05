@@ -68,6 +68,7 @@ public class MainWindowButton extends Group {
 					}
 				items: [
 					CheckBox {
+						styleClass: "context-menu-check-box"
 						text: "Always on top"
 						onMouseClicked:function(e:MouseEvent):Void {
 							MainWindow.instance.wc.toggleAlwaysOnTop();
