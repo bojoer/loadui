@@ -15,6 +15,9 @@
  */
 package com.eviware.loadui.controller;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 import groovy.ui.Console;
 
 import java.io.File;
@@ -50,17 +53,20 @@ public class ControllerTest
 			public void run()
 			{
 				File home = new File( System.getProperty( LoadUI.LOADUI_HOME ) );
-				Console console = new Console();
-				console.setVariable( "workspaceProvider", workspaceProvider );
-				console.setVariable( "componentRegistry", componentRegistry );
-				console.setVariable( "home", home );
+				GroovyShell shell = new GroovyShell();
+				Binding binding = new Binding();
+				binding.setVariable( "workspaceProvider", workspaceProvider );
+				binding.setVariable( "componentRegistry", componentRegistry );
+				binding.setVariable( "home", home );
 
 				File initScript = new File( home, "init.groovy" );
 				if( initScript.exists() )
 				{
 					try
 					{
-						console.getShell().evaluate( initScript );
+						Script script = shell.parse( initScript );
+						script.setBinding( binding );
+						script.run();
 					}
 					catch( CompilationFailedException e )
 					{
@@ -72,7 +78,7 @@ public class ControllerTest
 					}
 				}
 				if( !System.getProperty( "console", "false" ).equals( "false" ) )
-					console.run();
+					new Console( binding ).run();
 			}
 		} ).start();
 	}
