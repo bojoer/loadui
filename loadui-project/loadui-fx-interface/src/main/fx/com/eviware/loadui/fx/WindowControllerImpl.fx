@@ -32,6 +32,7 @@ public class WindowControllerImpl extends WindowController {
 	public var frame:JFrame;
 	public-read var doClose = false;
 	public-init var windowTitleFilter:String;
+	var isAlwaysOnTop:Boolean = false;
 	
 	init {
 		Toolkit.getDefaultToolkit().addAWTEventListener( new Listener(), AWTEvent.COMPONENT_EVENT_MASK );
@@ -52,6 +53,12 @@ public class WindowControllerImpl extends WindowController {
 	public function forceClose():Void {
 		doClose = true;
 		stage.close();
+	}
+	
+	public function toggleAlwaysOnTop()
+	{
+		isAlwaysOnTop = not isAlwaysOnTop;
+		frame.setAlwaysOnTop( isAlwaysOnTop );
 	}
 	
 	public function setAlwaysOnTop( enabled:Boolean )

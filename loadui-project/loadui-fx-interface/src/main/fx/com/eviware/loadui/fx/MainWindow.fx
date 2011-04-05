@@ -22,7 +22,7 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.inspector.InspectorPanelControl;
-import com.eviware.loadui.fx.ui.menu.MainButton;
+import com.eviware.loadui.fx.ui.menu.MainWindowButton;
 import com.eviware.loadui.fx.ui.menu.ProjectMenu;
 import com.eviware.loadui.fx.ui.menu.SoapUIButton;
 import com.eviware.loadui.fx.ui.menu.TestCaseMenu;
@@ -205,12 +205,12 @@ public class MainWindow {
 	//	                                                height: 600
 	//	                                                preserveRatio: false } }, PROJECT_BACK );
 		appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/grid.png" }, clip: Rectangle{ width: bind scene.width, height: bind scene.height } }, TESTCASE_FRONT );
-	    appState.insertInto( testcaseCanvas = Canvas { width: bind scene.width, height: bind scene.height }, TESTCASE_FRONT );	
+	   appState.insertInto( testcaseCanvas = Canvas { width: bind scene.width, height: bind scene.height }, TESTCASE_FRONT );	
 		appState.insertInto( navigator = NavigationPanel { canvas: testcaseCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( inspectors.height + navigator.height ) }, TESTCASE_FRONT );
 		testcaseToolbar.addItem( NoteToolbarItem {} );
 		appState.insertInto( testcaseToolbar, TESTCASE_FRONT );
 		
-		insert MainButton { layoutX: 10, layoutY: 7 } into appState.globalLayer.content;
+		insert MainWindowButton { layoutX: 10, layoutY: 7 } into appState.globalLayer.content;
 		insert SoapUIButton { layoutX: 2, layoutY: 2 } into appState.globalLayer.content;
 		appState.insertInto( WorkspaceMenu { width: bind scene.width, workspace: workspace }, WORKSPACE_FRONT );
 		appState.insertInto( ProjectMenu { width: bind scene.width, project: bind projectCanvas.canvasItem as ProjectItem }, PROJECT_FRONT );

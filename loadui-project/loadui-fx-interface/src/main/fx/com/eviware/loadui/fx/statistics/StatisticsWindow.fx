@@ -50,14 +50,13 @@ import com.eviware.loadui.fx.WindowControllerImpl;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.Overlay;
 import com.eviware.loadui.fx.FxUtils.*;
-import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbar;
 import com.eviware.loadui.fx.statistics.chart.ChartPage;
 import com.eviware.loadui.fx.statistics.manager.RecentResultsList;
 import com.eviware.loadui.fx.statistics.manager.ArchivedResultsList;
+import com.eviware.loadui.fx.ui.menu.StatisticsWindowButton;
+import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.lang.Math;
 
 public-read var instance:StatisticsWindow;
@@ -124,6 +123,8 @@ public class StatisticsWindow {
 			};
 			appState = AppState {};
 			
+			insert StatisticsWindowButton { layoutX: 10, layoutY: 7 } into appState.globalLayer.content;
+			
 			appState.insertInto ( ManageMenu { width: bind scene.width }, STATISTICS_MANAGE );
 			
 			appState.insertInto ( RecentResultsList { layoutX: 50, layoutY: 100, layoutInfo: LayoutInfo { height: 222, width: bind Math.max( 487, scene.width - 100 ) } }, STATISTICS_MANAGE );
@@ -184,7 +185,7 @@ public class StatisticsWindow {
 					scene: scene = Scene {
 						stylesheets: "file:style.css"
 						width: 1085
-						height: 768
+						height: 720
 						fill: Color.web("#373737")
 					}
 					onClose: function() {
@@ -194,8 +195,8 @@ public class StatisticsWindow {
 				}
 			} else {
 				stage = Stage {
-					height: 768
 					width: 1085
+					height: 720
 					title: "Results"
 					icons: [
 						Image { url:"{__ROOT__}images/png/icon_32x32.png" },

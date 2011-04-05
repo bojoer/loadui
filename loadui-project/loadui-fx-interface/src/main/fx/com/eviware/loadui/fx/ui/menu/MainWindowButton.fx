@@ -13,19 +13,22 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-
-/*
-*MainButton.fx
-*
-*Created on jun 1, 2010, 15:07:38 em
-*/
+ 
+/**
+ * This is the big loadUI logo in the upper left corner.
+ *
+ * Contains Window specific actions.
+ */
 
 package com.eviware.loadui.fx.ui.menu;
 
 import javafx.scene.Group;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Separator;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
@@ -40,7 +43,7 @@ import com.eviware.loadui.fx.ui.menu.button.*;
 import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.MenuButton;
 
-public class MainButton extends Group {
+public class MainWindowButton extends Group {
 	init {
 		content = [
 			Ellipse {
@@ -61,9 +64,16 @@ public class MainButton extends Group {
 			}, MenuButton {
 				styleClass: "loadui-menu-button"
 				graphic: ImageView {
-					image: Image { url: "{__ROOT__}images/png/main-button-no-shadow.png" }
-				}
+						image: Image { url: "{__ROOT__}images/png/main-button-no-shadow.png" }
+					}
 				items: [
+					CheckBox {
+						text: "Always on top"
+						onMouseClicked:function(e:MouseEvent):Void {
+							MainWindow.instance.wc.toggleAlwaysOnTop();
+						}
+					},
+					Separator{},
 					MenuItem {
 						text: ##[ABOUT]"About"
 						action: function() {
@@ -76,18 +86,13 @@ public class MainButton extends Group {
 							new SystemPropertiesDialog();
 						}
 					},
-		/*			MenuItem {
-						text: ##[UPDATES]"Get Updates"
-						action: function() {
-							openURL("http://www.eviware.com/nightly-builds/loadui/")
-						}
-					}, */
 					MenuItem {
 						text: ##[FORUM]"Give Feedback"
 						action: function() {
 							openURL("http://www.eviware.com/forum/viewforum.php?f=9")
 						}
-					},						
+					},
+					Separator{},
 					MenuItem {
 						text: ##[EXIT]"Exit"
 						action: function() {
