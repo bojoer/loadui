@@ -24,4 +24,7 @@ public class GroovyComponent
 	 * Logger used by Groovy Component scripts.
 	 */
 	public static final Logger log = LoggerFactory.getLogger( GroovyComponent.class );
+	public final static String SCRIPT_PROPERTY = "_script";
+	public final static String SCRIPT_FILE_ATTRIBUTE = "_scriptFile";
+	public final static String DIGEST_ATTRIBUTE = "_digest";
 }

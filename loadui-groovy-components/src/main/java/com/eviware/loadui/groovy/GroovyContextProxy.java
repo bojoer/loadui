@@ -57,6 +57,7 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.util.MapUtils;
 
+@Deprecated
 public class GroovyContextProxy extends GroovyObjectSupport implements InvocationHandler
 {
 	private final static Map<String, String> ALIASES = MapUtils.build( String.class, String.class ) //
@@ -102,7 +103,7 @@ public class GroovyContextProxy extends GroovyObjectSupport implements Invocatio
 
 		proxy = Proxy.newProxyInstance( cl, interfaces, this );
 
-		scriptProperty = context.createProperty( GroovyBehaviorProvider.SCRIPT_PROPERTY, String.class );
+		scriptProperty = context.createProperty( GroovyComponent.SCRIPT_PROPERTY, String.class );
 
 		if( script != null )
 			scriptProperty.setValue( script );

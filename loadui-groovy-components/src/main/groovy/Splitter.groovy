@@ -68,7 +68,6 @@
  future = null
 
  onMessage = { incoming, outgoing, message ->
-   super.onTerminalMessage(incoming, outgoing, message)
    try {
     def next = 0;
     switch( selected.value ) {
