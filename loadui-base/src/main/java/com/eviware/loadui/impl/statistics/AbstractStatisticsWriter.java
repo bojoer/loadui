@@ -67,6 +67,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 		this.variable = variable;
 		id = DigestUtils.md5Hex( variable.getStatisticHolder().getId() + variable.getName() + getType() );
 		descriptor = new TrackDescriptorImpl( id, values );
+		log.debug( "Registered trackId " + id );
 		delay = config.containsKey( DELAY ) ? ( ( Number )config.get( DELAY ) ).longValue() : manager
 				.getMinimumWriteDelay();
 
@@ -124,7 +125,8 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 		Entry e = output();
 		if( e != null )
 		{
-			executionManager.writeEntry( getId(), e, StatisticVariable.MAIN_SOURCE, 0 );
+			log.debug( "flushing to {}", id );
+			executionManager.writeEntry( id, e, StatisticVariable.MAIN_SOURCE, 0 );
 			firstLevelEntries.add( e );
 		}
 
@@ -137,7 +139,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 			if( aggregatedEntry != null )
 			{
 				a.aggregatedEntries.add( aggregatedEntry );
-				executionManager.writeEntry( getId(), aggregatedEntry, StatisticVariable.MAIN_SOURCE, a.getDatabaseKey() );
+				executionManager.writeEntry( id, aggregatedEntry, StatisticVariable.MAIN_SOURCE, a.getDatabaseKey() );
 			}
 		}
 	}

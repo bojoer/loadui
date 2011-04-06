@@ -493,7 +493,6 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	}
 	
 	function addComponent( component:ComponentItem ):Void {
-		log.debug( "Adding ComponentItem \{\}", component );
 		//def cmp = ComponentNode { id: component.getId(), canvas: this, component: component };
 		def cmp = ComponentNode.create( component, this );
 		insert cmp into componentLayer.content;

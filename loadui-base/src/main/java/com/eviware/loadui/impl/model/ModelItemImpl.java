@@ -64,6 +64,7 @@ public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 			config.setId( addressableRegistry.generateId() );
 
 		id = config.getId();
+		
 		label = config.getLabel();
 
 		properties = new PropertyMapImpl( this, BeanInjector.getBean( ConversionService.class ) );
