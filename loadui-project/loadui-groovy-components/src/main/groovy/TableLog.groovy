@@ -75,10 +75,6 @@ onMessage = { o, i, m ->
 	if(controller && i == remoteTerminal) {
 		//controller received message from agent
 		m["Source"] = o.label
-		super.onTerminalMessage(o, inputTerminal, m)
-	}
-	else{
-		super.onTerminalMessage(o, i, m)
 	}
 }
 

@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.groovy;
 
-import java.awt.EventQueue;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,12 +23,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.EventObject;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -50,6 +49,8 @@ import com.eviware.loadui.api.component.categories.OutputCategory;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.component.categories.SchedulerCategory;
 import com.eviware.loadui.api.component.categories.GeneratorCategory;
+import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.groovy.categories.GroovyAnalysis;
 import com.eviware.loadui.groovy.categories.GroovyFlow;
 import com.eviware.loadui.groovy.categories.GroovyMisc;
@@ -57,14 +58,11 @@ import com.eviware.loadui.groovy.categories.GroovyOutput;
 import com.eviware.loadui.groovy.categories.GroovyRunner;
 import com.eviware.loadui.groovy.categories.GroovyScheduler;
 import com.eviware.loadui.groovy.categories.GroovyGenerator;
+import com.eviware.loadui.util.events.EventSupport;
 
-public class GroovyBehaviorProvider implements BehaviorProvider
+public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 {
 	public static final String TYPE = "com.eviware.loadui.groovy.GroovyComponent";
-
-	public final static String SCRIPT_PROPERTY = "_script";
-	public final static String SCRIPT_FILE_ATTRIBUTE = "_scriptFile";
-	public final static String DIGEST_ATTRIBUTE = "_digest";
 
 	private static final int UPDATE_FREQUENCY = 5;
 
@@ -72,7 +70,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 	private final ComponentRegistry registry;
 	private final Map<File, ScriptDescriptor> scripts = new HashMap<File, ScriptDescriptor>();
 	private final ScheduledFuture<?> future;
-	private final Set<ComponentContext> activeComponents = new HashSet<ComponentContext>();
+	private final EventSupport eventSupport = new EventSupport();
 
 	private final ComponentDescriptor emptyDescriptor = new ComponentDescriptor( TYPE, "misc", "EmptyScriptComponent",
 			"", null );
@@ -96,14 +94,17 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 		{
 			ScriptDescriptor scriptDescriptor = ( ScriptDescriptor )descriptor;
 			context.setCategory( descriptor.getCategory() );
-			context.setAttribute( SCRIPT_FILE_ATTRIBUTE, scriptDescriptor.getScriptFile().getAbsolutePath() );
-			context.setAttribute( DIGEST_ATTRIBUTE, scriptDescriptor.getDigest() );
-			return createBehaviorProxy( context, ( ( ScriptDescriptor )descriptor ).getScript() );
+			context.setAttribute( GroovyComponent.SCRIPT_FILE_ATTRIBUTE, scriptDescriptor.getScriptFile()
+					.getAbsolutePath() );
+			context.setAttribute( GroovyComponent.DIGEST_ATTRIBUTE, scriptDescriptor.getDigest() );
+			context.createProperty( GroovyComponent.SCRIPT_PROPERTY, String.class,
+					( ( ScriptDescriptor )descriptor ).getScript() );
+			return instantiateBehavior( context, ( ( ScriptDescriptor )descriptor ).getCategory() );
 		}
 		else if( descriptor == emptyDescriptor )
 		{
 			context.setCategory( descriptor.getCategory() );
-			return createBehaviorProxy( context, null );
+			return instantiateBehavior( context, null );
 		}
 		return null;
 	}
@@ -114,8 +115,8 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 	{
 		if( TYPE.equals( componentType ) )
 		{
-			String scriptPath = context.getAttribute( SCRIPT_FILE_ATTRIBUTE, null );
-			String digest = context.getAttribute( DIGEST_ATTRIBUTE, null );
+			String scriptPath = context.getAttribute( GroovyComponent.SCRIPT_FILE_ATTRIBUTE, null );
+			String digest = context.getAttribute( GroovyComponent.DIGEST_ATTRIBUTE, null );
 			if( scriptPath != null && digest != null )
 			{
 				for( Entry<File, ScriptDescriptor> entry : scripts.entrySet() )
@@ -126,107 +127,51 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 						if( !digest.equals( d.getDigest() ) )
 						{
 							// Script file has changed, update the component.
-							context.setAttribute( DIGEST_ATTRIBUTE, d.getDigest() );
-							context.getProperty( SCRIPT_PROPERTY ).setValue( d.getScript() );
+							context.setAttribute( GroovyComponent.DIGEST_ATTRIBUTE, d.getDigest() );
+							context.getProperty( GroovyComponent.SCRIPT_PROPERTY ).setValue( d.getScript() );
 						}
 						break;
 					}
 				}
 			}
-			return createBehaviorProxy( context, null );
+			return instantiateBehavior( context, context.getCategory() );
 		}
 		return null;
 	}
 
-	private ComponentBehavior createBehaviorProxy( ComponentContext context, String script )
-			throws ComponentCreationException
-	{
-		ProxyCreator proxyCreator = new ProxyCreator( context, script );
-		try
-		{
-			if( EventQueue.isDispatchThread() )
-				proxyCreator.run();
-			else
-				EventQueue.invokeAndWait( proxyCreator );
-		}
-		catch( Exception e )
-		{
-			throw new ComponentCreationException( TYPE, e );
-		}
-		return proxyCreator.proxy;
-	}
-
-	private Object createBase( GroovyContextProxy handler, Class<? extends ComponentBehavior> category )
-	{
-		ComponentContext context = ( ComponentContext )handler.getProxy();
-		if( GeneratorCategory.class == category )
-		{
-			return new GroovyGenerator( context, handler );
-		}
-		else if( RunnerCategory.class == category )
-		{
-			return new GroovyRunner( context, handler );
-		}
-		else if( FlowCategory.class == category )
-		{
-			return new GroovyFlow( context, handler );
-		}
-		else if( AnalysisCategory.class == category )
-		{
-			return new GroovyAnalysis( context, handler );
-		}
-		else if( OutputCategory.class == category )
-		{
-			return new GroovyOutput( context, handler );
-		}
-		else if( MiscCategory.class == category )
-		{
-			return new GroovyMisc( context, handler );
-		}
-		else if( SchedulerCategory.class == category )
-		{
-			return new GroovyScheduler( context, handler );
-		}
-		else
-		{
-			context.setCategory( MiscCategory.CATEGORY );
-			return new GroovyMisc( context, handler );
-		}
-	}
-
-	private Class<? extends ComponentBehavior> getCategoryType( String category )
+	private ComponentBehavior instantiateBehavior( ComponentContext context, String category )
 	{
 		if( GeneratorCategory.CATEGORY.equalsIgnoreCase( category ) || "generator".equalsIgnoreCase( category ) )
 		{
-			return GeneratorCategory.class;
+			return new GroovyGenerator( this, context );
 		}
 		else if( RunnerCategory.CATEGORY.equalsIgnoreCase( category ) || "runner".equalsIgnoreCase( category ) )
 		{
-			return RunnerCategory.class;
+			return new GroovyRunner( this, context );
 		}
 		else if( FlowCategory.CATEGORY.equalsIgnoreCase( category ) )
 		{
-			return FlowCategory.class;
+			return new GroovyFlow( this, context );
 		}
 		else if( AnalysisCategory.CATEGORY.equalsIgnoreCase( category ) )
 		{
-			return AnalysisCategory.class;
+			return new GroovyAnalysis( this, context );
 		}
 		else if( OutputCategory.CATEGORY.equalsIgnoreCase( category ) )
 		{
-			return OutputCategory.class;
+			return new GroovyOutput( this, context );
 		}
 		else if( SchedulerCategory.CATEGORY.equalsIgnoreCase( category ) )
 		{
-			return SchedulerCategory.class;
+			return new GroovyScheduler( this, context );
 		}
 		else if( MiscCategory.CATEGORY.equalsIgnoreCase( category ) )
 		{
-			return MiscCategory.class;
+			return new GroovyMisc( this, context );
 		}
 		else
 		{
-			return MiscCategory.class;
+			return new GroovyMisc( this, context );
 		}
 	}
 
@@ -235,7 +180,31 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 		future.cancel( true );
 	}
 
-	private static class ScriptDescriptor extends ComponentDescriptor
+	@Override
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.addEventListener( type, listener );
+	}
+
+	@Override
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	{
+		eventSupport.removeEventListener( type, listener );
+	}
+
+	@Override
+	public void clearEventListeners()
+	{
+		eventSupport.clearEventListeners();
+	}
+
+	@Override
+	public void fireEvent( EventObject event )
+	{
+		eventSupport.fireEvent( event );
+	}
+
+	public static class ScriptDescriptor extends ComponentDescriptor
 	{
 		private final File script;
 		private final long changed;
@@ -368,31 +337,6 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 		}
 	}
 
-	private class ProxyCreator implements Runnable
-	{
-		private final ComponentContext context;
-		private final String script;
-
-		private ComponentBehavior proxy;
-
-		public ProxyCreator( ComponentContext context, String script )
-		{
-			this.context = context;
-			this.script = script;
-		}
-
-		@Override
-		public void run()
-		{
-			Class<? extends ComponentBehavior> categoryType = getCategoryType( context.getCategory() );
-			GroovyContextProxy handler = new GroovyContextProxy( context, script, categoryType, activeComponents );
-			Object base = createBase( handler, categoryType );
-			handler.setDelegates( new Object[] { base, context, new GroovyContextSupport( context ) } );
-			handler.init();
-			proxy = ( ComponentBehavior )handler.getProxy();
-		}
-	}
-
 	private class DirWatcher implements Runnable
 	{
 		@Override
@@ -421,19 +365,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider
 						ScriptDescriptor descriptor = ScriptDescriptor.parseFile( file );
 						scripts.put( file, descriptor );
 						registry.registerDescriptor( descriptor, GroovyBehaviorProvider.this );
-						// Check for existing components using an older version of
-						// this
-						// script.
-						for( ComponentContext c : activeComponents )
-						{
-							if( file.getAbsolutePath().equals( c.getAttribute( SCRIPT_FILE_ATTRIBUTE, null ) )
-									&& !descriptor.getDigest().equals( c.getAttribute( DIGEST_ATTRIBUTE, null ) ) )
-							{
-								System.out.println( "Script changed, updating component: " + c.getLabel() );
-								c.setAttribute( DIGEST_ATTRIBUTE, descriptor.getDigest() );
-								c.getProperty( SCRIPT_PROPERTY ).setValue( descriptor.getScript() );
-							}
-						}
+						fireEvent( new PropertyChangeEvent( descriptor, file.getCanonicalPath(), null, descriptor.getScript() ) );
 					}
 				}
 			}

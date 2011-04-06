@@ -196,7 +196,6 @@ analyze = { message ->
 }
 
 onMessage = { o, i, m ->
-	super.onTerminalMessage(o, i, m)
 	if(i == remoteTerminal) {
 		def data = new HashMap(m)
 		data[AGENT_DATA_TIMESTAMP] = System.currentTimeMillis()
