@@ -125,6 +125,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			@Override
 			public void executionStarted( ExecutionManager.State oldState )
 			{
+				log.debug(" ExecutionManagerImpl:executionStarted()" );
 				// if new execution was just started create track from all track
 				// descriptors
 				if( oldState == ExecutionManagerImpl.State.STOPPED )
@@ -139,7 +140,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			@Override
 			public void trackRegistered( TrackDescriptor trackDescriptor )
 			{
-				// this is in case component is added during the test
+				// This is in case component is added during the test.
 				if( executionState != State.STOPPED )
 					createTrack( trackDescriptor );
 			}
@@ -210,6 +211,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
 
 		executionState = State.STARTED;
+		
 		ecs.fireExecutionStarted( State.STOPPED );
 		log.debug( "State changed: STOPPED -> STARTED" );
 
@@ -249,6 +251,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		// to wait and when synchronized block is exited new track will already be
 		// placed into currentExecution so another threads threads will know that
 		// this track was created and will exit this method.
+		
 		if( currentExecution.getTrack( td.getId() ) != null )
 		{
 			return;
@@ -269,6 +272,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 						connectionRegistry, metadata, tableRegistry );
 				dtd.setParentTable( std );
 				dataTableList.add( dtd );
+				
+				log.debug( "   ...creating " + buildDataTableName( td.getId(), i ) );
 			}
 
 			// insert into meta-table
@@ -456,7 +461,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	}
 
 	@Override
-	public void writeEntry( String trackId, Entry entry, String source, int interpolationLevel )
+	public void writeEntry( final String trackId, Entry entry, String source, int interpolationLevel )
 	{
 		if( currentExecution != null )
 		{
@@ -517,6 +522,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	private void write( String trackId, String source, int interpolationLevel, Map<String, Object> data )
 			throws SQLException
 	{
+		if( executionState != State.STOPPED )
+		{
+			log.debug( "Write request to STOPPED execution ignored." );
+			return;
+		}
+		
 		TableBase dtd = tableRegistry.getTable( currentExecution.getExecutionDir().getName(),
 				buildDataTableName( trackId, interpolationLevel ) );
 

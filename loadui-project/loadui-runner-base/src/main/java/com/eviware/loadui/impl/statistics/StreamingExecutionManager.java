@@ -15,15 +15,11 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.awt.Image;
-import java.io.File;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -31,10 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
-import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.Statistic;
-import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
