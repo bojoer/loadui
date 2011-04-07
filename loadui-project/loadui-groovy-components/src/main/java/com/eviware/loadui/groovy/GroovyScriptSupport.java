@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +26,7 @@ import groovy.grape.Grape;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.DelegatingMetaClass;
+import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import groovy.lang.MetaClass;
 import groovy.lang.MissingMethodException;
@@ -38,6 +38,8 @@ public class GroovyScriptSupport implements Releasable
 	private static final Pattern m2Pattern = java.util.regex.Pattern.compile( ".*@m2repo (.*)\\s*" );
 	private static final Pattern depPattern = java.util.regex.Pattern.compile( ".*@dependency (.*)\\s*" );
 
+	private final static GroovyClassLoader globalClassLoader = new GroovyClassLoader( GroovyShell.class.getClassLoader() );
+
 	private final static Map<String, String> ALIASES = MapUtils.build( String.class, String.class ) //
 			.put( "onTerminalMessage", "onMessage" ) //
 			.put( "onTerminalConnect", "onConnect" ) //
@@ -45,7 +47,7 @@ public class GroovyScriptSupport implements Releasable
 			.put( "onTerminalSignatureChange", "onSignature" ) //
 			.getImmutable();
 
-	private final GroovyShell shell = new GroovyShell();
+	private final GroovyShell shell = new GroovyShell( globalClassLoader );
 
 	private final Logger log;
 	private final PropertyEventListener propertyEventListener;
@@ -159,6 +161,9 @@ public class GroovyScriptSupport implements Releasable
 			String[] parts = depMatcher.group( 1 ).split( ":" );
 			if( parts.length >= 3 )
 			{
+				GroovyClassLoader classLoader = ( parts.length >= 4 && "global".equals( parts[3] ) ) ? globalClassLoader
+						: shell.getClassLoader();
+
 				if( Boolean.getBoolean( "loadui.grape.disable" ) )
 				{
 					File depFile = new File( System.getProperty( "groovy.root" ), "grapes" + File.separator + parts[0]
@@ -169,7 +174,7 @@ public class GroovyScriptSupport implements Releasable
 						try
 						{
 							log.debug( "Manually loading jar: " + depMatcher.group( 1 ) );
-							shell.getClassLoader().addURL( depFile.toURI().toURL() );
+							classLoader.addURL( depFile.toURI().toURL() );
 						}
 						catch( MalformedURLException e )
 						{
@@ -180,14 +185,10 @@ public class GroovyScriptSupport implements Releasable
 				else
 				{
 					log.debug( "Loading dependency using Grape: " + depMatcher.group( 1 ) );
-					final ClassLoader cl = Thread.currentThread().getContextClassLoader();
 					try
 					{
-						Thread.currentThread().setContextClassLoader( shell.getClassLoader() );
-
 						Grape.grab( MapUtils.build( String.class, Object.class ).put( "group", parts[0] )
-								.put( "module", parts[1] ).put( "version", parts[2] )
-								.put( "classLoader", shell.getClassLoader() ).get() );
+								.put( "module", parts[1] ).put( "version", parts[2] ).put( "classLoader", classLoader ).get() );
 					}
 					catch( Exception e )
 					{
@@ -195,10 +196,6 @@ public class GroovyScriptSupport implements Releasable
 						System.setProperty( "loadui.grape.disable", "true" );
 						loadDependencies( scriptContent );
 						return;
-					}
-					finally
-					{
-						Thread.currentThread().setContextClassLoader( cl );
 					}
 				}
 			}
