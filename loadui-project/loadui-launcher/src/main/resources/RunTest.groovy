@@ -291,7 +291,12 @@ if( statisticPages != null && project.reportFolder ) {
 	def execution = BeanInjector.getBean( ExecutionManager.class ).currentExecution
 	def map = LineChartUtils.createImages( pages, execution, null );
 	def file = new File( project.reportFolder, FormattingUtils.formatFileName( "${project.label}-statistics-${execution.label}.${project.reportFormat.toLowerCase()}}" ) )
-	BeanInjector.getBean( ReportingManager.class ).createReport( project.label, execution, pages, map, file, project.reportFormat )
+	if(includeSummary){
+		BeanInjector.getBean( ReportingManager.class ).createReport( project.label, execution, pages, map, file, project.reportFormat, execution.summaryReport )
+	}
+	else{
+		BeanInjector.getBean( ReportingManager.class ).createReport( project.label, execution, pages, map, file, project.reportFormat )
+	}
 }
 
 //Shutdown

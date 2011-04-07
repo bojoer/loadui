@@ -75,4 +75,36 @@ public interface ReportingManager
 	 */
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
 			Map<Object, Image> charts, File file, String format );
+
+	/**
+	 * Creates a Statistics Report (and prepends another report to it) using the given
+	 * label, for the given StatisticPages. The report is based in the Execution
+	 * data and the given charts. The report is shown to the user.
+	 * 
+	 * @param label
+	 * @param execution
+	 * @param pages
+	 * @param charts
+	 * @param jpFileToPrepend
+	 */
+	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
+			Map<Object, Image> charts, File jpFileToPrepend );
+
+	/**
+	 * Creates a Statistics Report (and prepends another report to it) using the given
+	 * label, for the given StatisticPages. The report is based in the Execution
+	 * data and the given charts. The report is saved to the given file using the
+	 * format specified.
+	 * 
+	 * @param label
+	 * @param execution
+	 * @param pages
+	 * @param charts
+	 * @param file
+	 * @param format
+	 * @param jpFileToPrepend
+	 */
+	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
+			Map<Object, Image> charts, File file, String format, File jpFileToPrepend );
+
 }

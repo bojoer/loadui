@@ -164,17 +164,21 @@ public class TypeConverter
 			d.setTime( Long.valueOf( value ) );
 			return d;
 		}
-		else if( type == Serializable.class )
-		{
-			return base64ToObject( value );
-		}
 		else if( type == BufferedImage.class )
 		{
 			return imageFromByteArray( Base64.decodeBase64( value ) );
 		}
 		else
 		{
-			return value;
+			try
+			{
+				type.asSubclass( Serializable.class );
+				return base64ToObject( value );
+			}
+			catch( Exception e )
+			{
+				return value;
+			}
 		}
 	}
 
