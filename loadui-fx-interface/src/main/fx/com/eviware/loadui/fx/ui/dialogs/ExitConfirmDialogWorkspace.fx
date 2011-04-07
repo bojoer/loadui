@@ -22,20 +22,18 @@
 package com.eviware.loadui.fx.ui.dialogs;
 
 import javafx.scene.text.Text;
+import com.eviware.loadui.api.ui.WindowController;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.dialogs.*;
-import com.eviware.loadui.fx.WindowControllerImpl;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
 public class ExitConfirmDialogWorkspace {
     
-    public-init var wc:WindowControllerImpl;
+    public-init var wc:WindowController;
     
     postinit {
-    	
-    	  wc.stage.iconified = false;
-		  wc.stage.toFront();
+    	  wc.bringToFront();
         
         def dialog:Dialog = Dialog {
             title: "Exit confirm!"

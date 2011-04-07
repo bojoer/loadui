@@ -210,7 +210,7 @@ public class MainWindow {
 		testcaseToolbar.addItem( NoteToolbarItem {} );
 		appState.insertInto( testcaseToolbar, TESTCASE_FRONT );
 		
-		insert MainWindowButton { layoutX: 10, layoutY: 7 } into appState.globalLayer.content;
+		insert MainWindowButton { layoutX: 10, layoutY: 7, wc:wc } into appState.globalLayer.content;
 		insert SoapUIButton { layoutX: 2, layoutY: 2 } into appState.globalLayer.content;
 		appState.insertInto( WorkspaceMenu { width: bind scene.width, workspace: workspace }, WORKSPACE_FRONT );
 		appState.insertInto( ProjectMenu { width: bind scene.width, project: bind projectCanvas.canvasItem as ProjectItem }, PROJECT_FRONT );
