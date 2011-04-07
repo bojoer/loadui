@@ -192,15 +192,11 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 						projectIdToExecutions.put( runningProject.getId(), executionSet );
 					}
 				}
-<<<<<<< .mine
 				else if( CanvasItem.ON_COMPLETE_DONE.equals( event.getKey() ) )
 //				{
 //					System.out.print( "    ON_COMPLETE_DONE was fired!" );
 //				}
 //				else if( hasCurrent && CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
-=======
-				else if( hasCurrent && CanvasItem.ON_COMPLETE_DONE.equals( event.getKey() ) && event.getSource() instanceof ProjectItem )
->>>>>>> .r5714
 				{
 					hasCurrent = false;
 					executionManager.stopExecution();

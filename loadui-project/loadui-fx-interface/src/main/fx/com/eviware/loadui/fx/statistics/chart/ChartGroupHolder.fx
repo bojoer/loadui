@@ -361,9 +361,6 @@ class StatisticsManagerListener extends EventHandler {
 					         break;
 					      }
 					   }
-					   if(chartGroup.getChildCount() == 0){
-					       chartGroup.delete();
-					   }
 					});
 				}
 			}
