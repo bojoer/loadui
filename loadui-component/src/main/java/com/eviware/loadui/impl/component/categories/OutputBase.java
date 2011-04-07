@@ -58,7 +58,7 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 
 		inputTerminal = context.createInput( INPUT_TERMINAL, "Data for Display" );
 
-		getContext().setActivityStrategy( ActivityStrategies.ON );
+		context.setActivityStrategy( ActivityStrategies.ON );
 		activityRunnable = new Runnable()
 		{
 			@Override

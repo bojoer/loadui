@@ -56,9 +56,6 @@
 								<copy todir="${basedir}/target/runner/bundle">
 									<fileset dir="${basedir}/../loadui-runner-deps/target/bundle" />
 								</copy>
-								<copy todir="${basedir}/target/controller/lib">
-									<fileset file="${basedir}/src/runner/resources/*.jar" />
-								</copy>
 							</tasks>
 						</configuration>
 						<goals>

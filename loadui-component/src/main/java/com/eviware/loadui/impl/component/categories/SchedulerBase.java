@@ -43,7 +43,7 @@ public abstract class SchedulerBase extends OnOffBase implements SchedulerCatego
 		offMessage = context.newMessage();
 		offMessage.put( ENABLED_MESSAGE_PARAM, false );
 
-		context.addEventListener( PropertyEvent.class, listener );
+		context.getComponent().addEventListener( PropertyEvent.class, listener );
 		context.setActivityStrategy( getStateProperty().getValue() ? ActivityStrategies.ON : ActivityStrategies.OFF );
 	}
 
