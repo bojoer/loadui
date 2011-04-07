@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
@@ -54,6 +55,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.api.terminal.TerminalProxy;
 import com.eviware.loadui.impl.statistics.StreamingExecutionManager;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.dispatch.CustomThreadPoolExecutor;
 
 public class ControllerImpl
@@ -174,6 +176,13 @@ public class ControllerImpl
 				String sceneId = message.get( AgentItem.ASSIGN );
 				if( !sceneAgents.containsKey( sceneId ) )
 				{
+					SceneItem scene = ( SceneItem )addressableRegistry.lookup( sceneId );
+					if( scene != null )
+					{
+						log.warn( "Attempted to load an already existing TestCase! Force releasing old TestCase..." );
+						ReleasableUtils.release( scene );
+						addressableRegistry.unregister( scene );
+					}
 					log.info( "Loading SceneItem {}", sceneId );
 					executorService.execute( new SceneAgent( sceneId, endpoint ) );
 				}
@@ -188,8 +197,18 @@ public class ControllerImpl
 			}
 			else if( message.containsKey( AgentItem.SCENE_DEFINITION ) )
 			{
-				if( addressableRegistry.lookup( message.get( AgentItem.SCENE_ID ) ) == null )
-					sceneAgents.get( message.get( AgentItem.SCENE_ID ) ).sceneDef = message.get( AgentItem.SCENE_DEFINITION );
+				log.debug( "Got TestCase Definition for: {}", message.get( AgentItem.SCENE_ID ) );
+				SceneAgent sceneAgent = sceneAgents.get( message.get( AgentItem.SCENE_ID ) );
+				if( sceneAgent != null )
+				{
+					synchronized( sceneAgent )
+					{
+						sceneAgent.sceneDef = message.get( AgentItem.SCENE_DEFINITION );
+						sceneAgent.notifyAll();
+					}
+				}
+				else
+					log.warn( "No SceneAgent for TestCase: {}", message.get( AgentItem.SCENE_ID ) );
 			}
 		}
 
@@ -247,19 +266,21 @@ public class ControllerImpl
 		public void run()
 		{
 			// Load SceneItem
-			int tries = 10;
-			while( sceneDef == null && tries > 0 )
+			int tries = 0;
+			synchronized( this )
 			{
-				log.debug( "REQUESTING DEFINITION: {} from: {}", sceneId, endpoint );
-				endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.DEFINE_SCENE, sceneId ) );
-				try
+				while( sceneDef == null && tries < 5 )
 				{
-					Thread.sleep( 1000 );
-					tries-- ;
-				}
-				catch( InterruptedException e )
-				{
-					e.printStackTrace();
+					log.debug( "REQUESTING DEFINITION: {} from: {}", sceneId, endpoint );
+					endpoint.sendMessage( AgentItem.AGENT_CHANNEL,
+							Collections.singletonMap( AgentItem.DEFINE_SCENE, sceneId ) );
+					try
+					{
+						wait( ( long )Math.pow( 2, tries++ ) * 1000 );
+					}
+					catch( InterruptedException e )
+					{
+					}
 				}
 			}
 

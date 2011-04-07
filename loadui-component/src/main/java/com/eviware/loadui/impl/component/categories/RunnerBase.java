@@ -51,7 +51,6 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.summary.SampleStats;
 import com.eviware.loadui.api.summary.SampleStatsImpl;
 import com.eviware.loadui.api.terminal.InputTerminal;
@@ -414,14 +413,14 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	@Override
 	protected void cancel()
 	{
-		discardsCounter.increment( (long) queue.size() );
+		discardsCounter.increment( queue.size() );
 		queue.clear();
 		queued.set( 0 );
 		updateQueued( 0 );
 		getContext().setBusy( false );
 
 		int runningRequests = onCancel();
-		discardsCounter.increment( (long) runningRequests );
+		discardsCounter.increment( runningRequests );
 	}
 
 	@Override
@@ -564,7 +563,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			{
 				queue.clear();
 				queued.set( 0 );
-				
+
 				updateQueued( 0 );
 			}
 		}
