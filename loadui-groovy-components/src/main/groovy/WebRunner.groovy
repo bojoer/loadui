@@ -262,9 +262,13 @@ sample = { message, sampleId ->
 			}
 		} catch( e ) {
 			if( e instanceof SampleCancelledException)
-				throw e;
+				throw e
 			
-			e.printStackTrace()
+			if( e instanceof SocketException )
+				log.warn( "SocketException in $label: {}", e.message )
+			else
+				log.error( "Exception in $label: ", e )
+			
 			get.abort()
 			
 			if (!runningSamples.remove(get)) {
