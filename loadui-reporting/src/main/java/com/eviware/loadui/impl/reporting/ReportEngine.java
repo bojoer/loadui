@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.TreeMap;
 
 import net.sf.jasperreports.engine.JRAbstractExporter;
@@ -30,6 +32,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.JRPrintPage;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -74,6 +77,12 @@ public class ReportEngine
 	public void generateJasperReport( JRDataSource dataSource, String selectedReportName, File outfile, String format )
 			throws JRException
 	{
+		generateJasperReport( dataSource, selectedReportName, outfile, format, null );
+	}
+
+	public void generateJasperReport( JRDataSource dataSource, String selectedReportName, File outfile, String format,
+			JasperPrint prepend ) throws JRException
+	{
 		LReportTemplate selectedReport = getReport( selectedReportName );
 		// fill report with data
 		if( selectedReport != null )
@@ -81,6 +90,10 @@ public class ReportEngine
 			ReportFillWorker reportWorker = new ReportFillWorker( dataSource, selectedReport );
 
 			JasperPrint jp = reportWorker.getJasperReport();
+			if( prepend != null )
+			{
+				jp = mergeJprints( prepend, jp );
+			}
 
 			if( jp != null )
 			{
@@ -153,6 +166,12 @@ public class ReportEngine
 	public void generateJasperReport( JRDataSource dataSource, String selectedReportName, String title )
 			throws JRException
 	{
+		generateJasperReport( dataSource, selectedReportName, title, null );
+	}
+
+	public void generateJasperReport( JRDataSource dataSource, String selectedReportName, String title,
+			JasperPrint prepend ) throws JRException
+	{
 		LReportTemplate selectedReport = getReport( selectedReportName );
 		// // fill report with data
 		if( selectedReport != null )
@@ -160,6 +179,10 @@ public class ReportEngine
 			ReportFillWorker reportWorker = new ReportFillWorker( dataSource, selectedReport );
 
 			JasperPrint jp = reportWorker.getJasperReport();
+			if( prepend != null )
+			{
+				jp = mergeJprints( prepend, jp );
+			}
 
 			if( jp != null )
 			{
@@ -246,6 +269,22 @@ public class ReportEngine
 		LReportTemplate result = reports.get( name );
 		result.update();
 		return result;
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public JasperPrint mergeJprints( JasperPrint jp1, JasperPrint jp2 )
+	{
+		List<JRPrintPage> jPages2 = jp2.getPages();
+		for( Iterator<JRPrintPage> iter = jPages2.iterator(); iter.hasNext(); )
+		{
+			JRPrintPage jPage = ( JRPrintPage )iter.next();
+			jp1.addPage( jPage );
+		}
+		jp1.setPageHeight( jp2.getPageHeight() );
+		jp1.setPageWidth( jp2.getPageWidth() );
+		jp1.setOrientation( jp2.getOrientationValue() );
+		jp1.setDefaultFont( jp2.getDefaultFont() );
+		return jp1;
 	}
 
 	private class ReportFillWorker

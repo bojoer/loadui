@@ -22,6 +22,7 @@ import javafx.scene.layout.LayoutInfo;
 import javafx.geometry.Insets;
 
 import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.fx.statistics.chart.ChartPage;
@@ -32,11 +33,30 @@ import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.charting.LineChartUtils;
 
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.events.EventHandler;
+
+import com.eviware.loadui.fx.FxUtils;
+
+import java.util.EventObject;
 import java.util.ArrayList;
 import java.util.Map;
 
 public class StatisticsReportPrintDialog {
+
+	var projectEventHandler = ProjectEventHandler{}
+	
+	var project: ProjectItem = bind MainWindow.instance.projectCanvas.canvasItem as ProjectItem on replace old {
+		old.removeEventListener(BaseEvent.class, projectEventHandler);
+		project.addEventListener(BaseEvent.class, projectEventHandler);
+		prependSummaryCb.disable = not StatisticsWindow.execution.getSummaryReport().exists();
+	}
+	
 	var checkBoxes:PageCheckBox[];
+	
+	var prependSummaryCb: CheckBox;
 	
 	def reportingManager:ReportingManager = BeanInjector.getBean( ReportingManager.class );
 	
@@ -60,7 +80,12 @@ public class StatisticsReportPrintDialog {
 			}
 			
 			AppState.byName("STATISTICS").blockingTask( function():Void {
-				reportingManager.createReport( StatisticsWindow.getInstance().project.getLabel(), StatisticsWindow.execution, pages, map );
+				if( not prependSummaryCb.disabled and prependSummaryCb.selected ){
+					reportingManager.createReport( StatisticsWindow.getInstance().project.getLabel(), StatisticsWindow.execution, pages, map, StatisticsWindow.execution.getSummaryReport() );
+				}
+				else{
+					reportingManager.createReport( StatisticsWindow.getInstance().project.getLabel(), StatisticsWindow.execution, pages, map );
+				}
 			}, function( task ):Void {
 			}, "Generating Printable Report..." );
 		}
@@ -71,14 +96,43 @@ public class StatisticsReportPrintDialog {
 			Label { text: "Name", styleClass: "title" },
 			Label { text: "Result report {StatisticsWindow.getInstance().project.getLabel()}: {StatisticsWindow.execution.getLabel()}" }
 			Separator { layoutInfo: LayoutInfo { margin: Insets { top: 5, bottom: 5 } } },
+			Label { text: "Summary report", styleClass: "title" },
+			prependSummaryCb = CheckBox { text: "Prepend summary report", selected: false },
+			Separator { layoutInfo: LayoutInfo { margin: Insets { top: 5, bottom: 5 } } },
 			Label { text: "Select content", styleClass: "title" },
 			checkBoxes = for( statisticPage in statisticPages ) {
 				PageCheckBox { text: statisticPage.getTitle(), selected: true, page: statisticPage }
 			}
 		]
 	}
+	
+	postinit{
+		prependSummaryCb.disable = not StatisticsWindow.execution.getSummaryReport().exists();
+	}
 }
 
 class PageCheckBox extends CheckBox {
 	public-init var page:StatisticPage;
 }
+
+class ProjectEventHandler extends EventHandler {
+	override function handleEvent( e: EventObject ) {
+		if(e instanceof BaseEvent){
+			def event = e as BaseEvent;
+			if( ProjectItem.SUMMARY_EXPORTED.equals( event.getKey() ) ) {
+				FxUtils.runInFxThread( function():Void {
+					prependSummaryCb.disable = not StatisticsWindow.execution.getSummaryReport().exists();
+				});
+			}
+			else if( ProjectItem.START_ACTION.equals( event.getKey() ) ) {
+				FxUtils.runInFxThread( function():Void {
+					prependSummaryCb.disable = true;
+				});
+			} 
+		}
+	}
+}	
+
+
+
+

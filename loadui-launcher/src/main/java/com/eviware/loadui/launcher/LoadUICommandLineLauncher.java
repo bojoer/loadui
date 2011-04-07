@@ -42,6 +42,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	protected static final String REPORT_DIR_OPTION = "r";
 	protected static final String REPORT_FORMAT_OPTION = "F";
 	protected static final String STATISTICS_REPORT_OPTION = "S";
+	protected static final String STATISTICS_REPORT_INCLUDE_SUMMARY_OPTION = "s";
 	protected static final String ABORT_ONGOING_REQUESTS_OPTION = "A";
 
 	public static void main( String[] args )
@@ -91,6 +92,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 						.withDescription(
 								"Sets which Statistics pages to add to the generated report (leave blank save all pages)" )
 						.hasOptionalArgs().create( STATISTICS_REPORT_OPTION ) );
+		options.addOption( STATISTICS_REPORT_INCLUDE_SUMMARY_OPTION, "summary", false, "Set to include summary report in statistics report" );
 		options
 				.addOption(
 						ABORT_ONGOING_REQUESTS_OPTION,
@@ -147,6 +149,8 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 
 			attributes.put( "abort", cmd.getOptionValue( ABORT_ONGOING_REQUESTS_OPTION ) );
 
+			attributes.put( "includeSummary", cmd.hasOption( STATISTICS_REPORT_INCLUDE_SUMMARY_OPTION ) );
+			
 			command = new ResourceGroovyCommand( "/RunTest.groovy", attributes );
 		}
 		else if( cmd.hasOption( FILE_OPTION ) )
