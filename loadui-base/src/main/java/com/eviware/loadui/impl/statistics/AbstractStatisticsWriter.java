@@ -125,7 +125,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 		Entry e = output();
 		if( e != null )
 		{
-			log.debug( "flushing to {}", id );
 			executionManager.writeEntry( id, e, StatisticVariable.MAIN_SOURCE, 0 );
 			firstLevelEntries.add( e );
 		}
