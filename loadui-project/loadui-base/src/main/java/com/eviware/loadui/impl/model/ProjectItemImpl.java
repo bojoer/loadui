@@ -1065,6 +1065,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				{
 					awaitingSummaryTimeout.cancel( true );
 				}
+				setCompleted( true );
 				doGenerateSummary();
 			}
 		}
