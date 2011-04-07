@@ -272,8 +272,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 						connectionRegistry, metadata, tableRegistry );
 				dtd.setParentTable( std );
 				dataTableList.add( dtd );
-				
-				log.debug( "   ...creating " + buildDataTableName( td.getId(), i ) );
 			}
 
 			// insert into meta-table
@@ -522,7 +520,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	private void write( String trackId, String source, int interpolationLevel, Map<String, Object> data )
 			throws SQLException
 	{
-		if( executionState != State.STOPPED )
+		if( executionState == State.STOPPED )
 		{
 			log.debug( "Write request to STOPPED execution ignored." );
 			return;

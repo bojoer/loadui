@@ -24,4 +24,8 @@ public interface WindowController
 	public void bringToFront();
 
 	public void close();
+	
+	public void forceClose();
+	
+	public void toggleAlwaysOnTop();
 }

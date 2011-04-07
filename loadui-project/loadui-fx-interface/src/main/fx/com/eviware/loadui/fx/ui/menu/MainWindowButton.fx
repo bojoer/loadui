@@ -33,6 +33,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 
+import com.eviware.loadui.api.ui.WindowController;
+
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.FxUtils.*;
@@ -44,6 +46,8 @@ import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.MenuButton;
 
 public class MainWindowButton extends Group {
+	public-init var wc:WindowController;
+	
 	init {
 		content = [
 			Ellipse {
@@ -99,9 +103,9 @@ public class MainWindowButton extends Group {
 						action: function() {
 							if( AppState.byName("MAIN").state == MainWindow.TESTCASE_FRONT 
 									or AppState.byName("MAIN").state == MainWindow.PROJECT_FRONT ) {
-								ExitConfirmDialog{};
+								ExitConfirmDialog{wc:wc};
 							} else {
-								ExitConfirmDialogWorkspace{};
+								ExitConfirmDialogWorkspace{wc:wc};
 							}
 						}
 					}

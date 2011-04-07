@@ -93,8 +93,6 @@ public class StatisticsWindow {
 	def statisticPagesListener = new StatisticPagesListener();
 	public def wc = WindowControllerImpl {
 		windowTitleFilter: "Results"
-	} on replace {
-		println("StatWindow: My wc was replaced, now it is {wc}, and its frame is {wc.frame.getTitle()} and it should catch windows called '{wc.windowTitleFilter}'");
 	};
 
 	public var stage:Stage;
@@ -212,9 +210,8 @@ public class StatisticsWindow {
 			wc.stage = stage;
 		}
 		closed = false;
-		stage.iconified = false;
-		stage.toFront();
-		println("StatWindow: My wwcc is called {wc}, whos frame is called {wc.frame.getTitle()} and it should catch windows called '{wc.windowTitleFilter}'");
+		
+		wc.bringToFront();
 	}
 	
 	public function close() {

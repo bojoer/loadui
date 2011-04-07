@@ -26,7 +26,7 @@ import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.dialogs.*;
 import com.eviware.loadui.fx.MainWindow;
-import com.eviware.loadui.fx.WindowControllerImpl;
+import com.eviware.loadui.api.ui.WindowController;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
@@ -34,12 +34,10 @@ import java.lang.RuntimeException;
 
 public class ExitConfirmDialog {
 	
-	public-init var wc:WindowControllerImpl;
+	public-init var wc:WindowController;
     
     postinit {
-    	
-    	  wc.stage.iconified = false;
-		  wc.stage.toFront();
+    	  wc.bringToFront();
         
         def dialog:Dialog = Dialog {
             title: "Exit confirm!"

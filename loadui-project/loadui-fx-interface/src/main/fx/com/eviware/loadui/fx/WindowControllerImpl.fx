@@ -29,7 +29,7 @@ import javax.swing.JFrame;
 
 public class WindowControllerImpl extends WindowController {
 	public var stage:Stage;
-	public var frame:JFrame;
+	var frame:JFrame;
 	public-read var doClose = false;
 	public-init var windowTitleFilter:String;
 	var isAlwaysOnTop:Boolean = false;
@@ -50,12 +50,12 @@ public class WindowControllerImpl extends WindowController {
 		stage.close();
 	}
 	
-	public function forceClose():Void {
+	override function forceClose():Void {
 		doClose = true;
 		stage.close();
 	}
 	
-	public function toggleAlwaysOnTop()
+	override function toggleAlwaysOnTop()
 	{
 		isAlwaysOnTop = not isAlwaysOnTop;
 		frame.setAlwaysOnTop( isAlwaysOnTop );
@@ -67,11 +67,11 @@ public class WindowControllerImpl extends WindowController {
 	}
 	
 	override function bringToFront():Void {
-		 //stage.toFront() 
-		println(frame.getTitle());
-		frame.setVisible( true );
-		frame.setAlwaysOnTop( true );
-		frame.setAlwaysOnTop( false );
+		stage.iconified = false;
+		stage.toFront(); 
+//		frame.setVisible( true );
+//		frame.setAlwaysOnTop( true );
+//		frame.setAlwaysOnTop( false );
 	}
 }
 
