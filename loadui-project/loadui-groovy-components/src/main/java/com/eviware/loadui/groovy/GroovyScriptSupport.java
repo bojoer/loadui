@@ -121,12 +121,16 @@ public class GroovyScriptSupport implements Releasable
 			if( ALIASES.containsKey( name ) )
 				return invokeClosure( ignoreMissing, ALIASES.get( name ), args );
 		}
+		catch( Throwable e )
+		{
+			log.error( "Exception in closure " + name + " of " + scriptName + ":", e );
+			return null;
+		}
 
 		if( !ignoreMissing )
 			throw new UnsupportedOperationException( "Groovy script is missing the Closure: " + name );
 
 		return null;
-
 	}
 
 	@Override
