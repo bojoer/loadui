@@ -334,8 +334,8 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			// previous tests.
 			setTime( 0 );
 		}
-		else if( project.getWorkspace().isLocalMode() || !project.getWorkspace().isLocalMode()
-				&& getActiveAgents().size() == 0 )
+		else if( project.getWorkspace().isLocalMode() || (!project.getWorkspace().isLocalMode()
+				&& getActiveAgents().size() == 0) )
 		{
 			// on controller, in local mode or in distributed mode with no active
 			// agents

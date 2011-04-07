@@ -482,10 +482,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		}
 	}
 
-	protected void onComplete( EventFirer source )
-	{
-		doGenerateSummary();
-	}
+	abstract void onComplete( EventFirer source );
 
 	protected void doGenerateSummary()
 	{
