@@ -68,7 +68,7 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 		super( context );
 		executor = BeanInjector.getBean( ScheduledExecutorService.class );
 
-		getContext().setActivityStrategy( ActivityStrategies.ON );
+		context.setActivityStrategy( ActivityStrategies.ON );
 		incomingTerminal = context.createInput( INCOMING_TERMINAL, "Incoming Data" );
 
 		for( int i = 0; i < 10; i++ )

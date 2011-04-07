@@ -58,7 +58,7 @@ public abstract class AnalysisBase extends BaseCategory implements AnalysisCateg
 
 		inputTerminal = context.createInput( INPUT_TERMINAL, "Input Data to be Analysed" );
 
-		getContext().setActivityStrategy( ActivityStrategies.ON );
+		context.setActivityStrategy( ActivityStrategies.ON );
 		activityRunnable = new Runnable()
 		{
 			@Override
