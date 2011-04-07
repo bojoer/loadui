@@ -56,7 +56,7 @@ public class GroovyScriptSupport implements Releasable
 	private final Property<String> scriptProperty;
 	private final String scriptName;
 	private final String filePath;
-	private Binding binding;
+	private Binding binding = new Binding();
 	private String digest;
 
 	public GroovyScriptSupport( EventFirer scriptUpdateFirer, ComponentBehavior behavior, ComponentContext context )
