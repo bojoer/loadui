@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.terminal;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,12 +39,12 @@ public class InputTerminalImpl extends TerminalImpl implements InputTerminal
 	{
 		Set<Connection> connections = new HashSet<Connection>();
 		CanvasItem canvas = getTerminalHolder().getCanvas();
-		for( Connection connection : canvas.getConnections() )
+		for( Connection connection : new ArrayList<Connection>( canvas.getConnections() ) )
 			if( connection.getInputTerminal() == this )
 				connections.add( connection );
 
 		if( canvas instanceof SceneItem && canvas.getProject() != null )
-			for( Connection connection : canvas.getProject().getConnections() )
+			for( Connection connection : new ArrayList<Connection>( canvas.getProject().getConnections() ) )
 				if( connection.getInputTerminal() == this )
 					connections.add( connection );
 
