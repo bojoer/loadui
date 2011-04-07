@@ -110,7 +110,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				{
 					ProjectItem addedProject = ( ProjectItem )event.getElement();
 
-					addedProject.addEventListener( ActionEvent.class, runningListener );
+					addedProject.addEventListener( BaseEvent.class, runningListener );
 
 					SummaryListener summaryListener = new SummaryListener( addedProject );
 					summaryListeners.put( addedProject, summaryListener );
@@ -140,7 +140,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				{
 					ProjectItem removedProject = ( ProjectItem )event.getElement();
 
-					removedProject.removeEventListener( ActionEvent.class, runningListener );
+					removedProject.removeEventListener( BaseEvent.class, runningListener );
 					removedProject.removeEventListener( BaseEvent.class, summaryListeners.remove( removedProject ) );
 				}
 				else if( ProjectItem.SCENES.equals( event.getKey() ) )
@@ -152,12 +152,12 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 		}
 	}
 
-	private class RunningListener implements EventHandler<ActionEvent>
+	private class RunningListener implements EventHandler<BaseEvent>
 	{
 		private boolean hasCurrent = false;
-
+		
 		@Override
-		public void handleEvent( ActionEvent event )
+		public void handleEvent( BaseEvent event )
 		{
 			if( event.getSource() instanceof CanvasItem )
 			{
@@ -192,7 +192,15 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 						projectIdToExecutions.put( runningProject.getId(), executionSet );
 					}
 				}
+<<<<<<< .mine
+				else if( CanvasItem.ON_COMPLETE_DONE.equals( event.getKey() ) )
+//				{
+//					System.out.print( "    ON_COMPLETE_DONE was fired!" );
+//				}
+//				else if( hasCurrent && CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
+=======
 				else if( hasCurrent && CanvasItem.ON_COMPLETE_DONE.equals( event.getKey() ) && event.getSource() instanceof ProjectItem )
+>>>>>>> .r5714
 				{
 					hasCurrent = false;
 					executionManager.stopExecution();
