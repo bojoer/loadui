@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -42,6 +44,8 @@ public class TrackStreamReceiver
 	private final AgentDataAggregator aggregator;
 	private final ExecutionManager executionManager;
 
+	private final Map<MessageEndpoint, LatencyFilter> latencies = new HashMap<MessageEndpoint, LatencyFilter>();
+
 	public TrackStreamReceiver( BroadcastMessageEndpoint endpoint, AgentDataAggregator aggregator,
 			ExecutionManager executionManager )
 	{
@@ -61,7 +65,19 @@ public class TrackStreamReceiver
 					AgentItem agent = ( AgentItem )endpoint;
 					Execution execution = TrackStreamReceiver.this.executionManager.getCurrentExecution();
 					int level = ( ( Number )map.remove( "_LEVEL" ) ).intValue();
-					long timestamp = System.currentTimeMillis() - ( ( Number )map.remove( "_TIMESTAMP" ) ).longValue();
+
+					LatencyFilter latency = latencies.get( endpoint );
+					if( latency == null )
+					{
+						latency = new LatencyFilter();
+						latencies.put( endpoint, latency );
+					}
+
+					long delta = latency.filter( ( ( Number )map.remove( "_CURRENT_TIME" ) ).longValue()
+							- System.currentTimeMillis() );
+
+					long timestamp = ( ( Number )map.remove( "_TIMESTAMP" ) ).longValue() - delta;
+
 					String trackId = ( String )map.remove( "_TRACK_ID" );
 
 					EntryImpl entry = new EntryImpl( timestamp, ( Map<String, Number> )data, true );
@@ -72,5 +88,22 @@ public class TrackStreamReceiver
 				}
 			}
 		} );
+	}
+
+	private class LatencyFilter
+	{
+		private static final int VALUE_COUNT = 10;
+		private final LinkedList<Long> values = new LinkedList<Long>();
+		private long total = 0;
+
+		public long filter( long delta )
+		{
+			values.add( delta );
+			total += delta;
+			if( values.size() > VALUE_COUNT )
+				total -= values.removeFirst();
+
+			return total / values.size();
+		}
 	}
 }

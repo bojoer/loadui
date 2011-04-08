@@ -153,7 +153,8 @@ public class StreamingExecutionManager implements ExecutionManager, Releasable
 		Map<String, Object> data = new HashMap<String, Object>();
 		for( String key : entry.getNames() )
 			data.put( key, entry.getValue( key ) );
-		data.put( "_TIMESTAMP", System.currentTimeMillis() - entry.getTimestamp() );
+		data.put( "_CURRENT_TIME", System.currentTimeMillis() );
+		data.put( "_TIMESTAMP", entry.getTimestamp() );
 		data.put( "_TRACK_ID", trackId );
 		data.put( "_LEVEL", interpolationLevel );
 
