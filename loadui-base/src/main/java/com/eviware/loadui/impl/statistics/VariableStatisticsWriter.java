@@ -41,12 +41,10 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 	{
 		synchronized( this )
 		{
-			if( lastValue != Double.NaN )
+			if( !Double.isNaN( lastValue ) )
 			{
 				while( lastTimeFlushed + delay < timestamp )
 					flush();
-				long delta = timestamp - lastUpdate;
-				sum += lastValue * delta;
 			}
 			else
 			{
@@ -54,6 +52,8 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 			}
 			lastUpdate = timestamp;
 			lastValue = value.doubleValue();
+			long delta = timestamp - lastUpdate;
+			sum += lastValue * delta;
 		}
 	}
 

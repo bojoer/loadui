@@ -77,8 +77,15 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 	{
 		synchronized( this )
 		{
-			while( lastTimeFlushed + delay < timestamp )
-				flush();
+			if( count > 0 )
+			{
+				while( lastTimeFlushed + delay < timestamp )
+					flush();
+			}
+			else
+			{
+				lastTimeFlushed = timestamp;
+			}
 
 			count++ ;
 			sum += value.doubleValue();
@@ -118,10 +125,9 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 	protected void reset()
 	{
 		super.reset();
+
 		sum = 0;
 		count = 0;
-
-		lastTimeFlushed = System.currentTimeMillis();
 	}
 
 	/**
