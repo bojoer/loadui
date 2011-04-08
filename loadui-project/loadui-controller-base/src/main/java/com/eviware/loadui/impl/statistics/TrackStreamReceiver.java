@@ -82,9 +82,7 @@ public class TrackStreamReceiver
 
 					EntryImpl entry = new EntryImpl( timestamp, ( Map<String, Number> )data, true );
 					if( execution != null )
-					{
 						TrackStreamReceiver.this.aggregator.update( entry, trackId, agent, level );
-					}
 				}
 			}
 		} );
