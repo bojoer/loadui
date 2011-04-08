@@ -92,7 +92,8 @@ public class TrackStreamReceiver
 
 	private class LatencyFilter
 	{
-		private static final int VALUE_COUNT = 10;
+		private static final int VALUE_COUNT = 25;
+
 		private final LinkedList<Long> values = new LinkedList<Long>();
 		private long total = 0;
 
