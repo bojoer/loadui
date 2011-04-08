@@ -8,9 +8,10 @@ import java.util.List;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.model.OrderedCollection;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.util.ReleasableUtils;
 
-public class OrderedCollectionSupport<ChildType>
+public class OrderedCollectionSupport<ChildType> implements Releasable
 {
 	private final List<ChildType> children = new ArrayList<ChildType>();
 	private final OrderedCollection<ChildType> owner;
@@ -40,7 +41,8 @@ public class OrderedCollectionSupport<ChildType>
 		return children.get( index );
 	}
 
-	public void releaseChildren()
+	@Override
+	public void release()
 	{
 		ReleasableUtils.releaseAll( children );
 		children.clear();

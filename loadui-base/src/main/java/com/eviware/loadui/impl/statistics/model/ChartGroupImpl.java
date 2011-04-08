@@ -326,8 +326,7 @@ public class ChartGroupImpl implements ChartGroup
 	public void release()
 	{
 		statisticsManager.removeEventListener( BaseEvent.class, listener );
-		ReleasableUtils.releaseAll( template, provider );
-		collectionSupport.releaseChildren();
+		ReleasableUtils.releaseAll( template, provider, attributeHolderSupport, collectionSupport );
 		fireEvent( new BaseEvent( this, RELEASED ) );
 		eventSupport.clearEventListeners();
 	}
