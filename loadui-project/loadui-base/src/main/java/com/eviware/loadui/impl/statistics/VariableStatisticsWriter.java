@@ -27,7 +27,7 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	private double sum = 0;
-	private double lastValue = 0;
+	private double lastValue = Double.NaN;
 	private long lastUpdate = System.currentTimeMillis();
 
 	public VariableStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
@@ -41,11 +41,18 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 	{
 		synchronized( this )
 		{
-			while( lastTimeFlushed + delay < timestamp )
-				flush();
-			long delta = timestamp - lastUpdate;
+			if( lastValue != Double.NaN )
+			{
+				while( lastTimeFlushed + delay < timestamp )
+					flush();
+				long delta = timestamp - lastUpdate;
+				sum += lastValue * delta;
+			}
+			else
+			{
+				lastTimeFlushed = timestamp;
+			}
 			lastUpdate = timestamp;
-			sum += lastValue * delta;
 			lastValue = value.doubleValue();
 		}
 	}
@@ -87,9 +94,8 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 	{
 		super.reset();
 
-		lastTimeFlushed = System.currentTimeMillis();
 		lastUpdate = lastTimeFlushed;
-		lastValue = 0;
+		lastValue = Double.NaN;
 		sum = 0;
 	}
 

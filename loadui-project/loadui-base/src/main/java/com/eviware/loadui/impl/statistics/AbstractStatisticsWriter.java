@@ -30,7 +30,6 @@ import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
-import com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter.Stats;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 
@@ -95,6 +94,8 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 	 */
 	protected void reset()
 	{
+		lastTimeFlushed = System.currentTimeMillis();
+
 		for( AggregateLevel aggregateLevel : aggregateLevels )
 			aggregateLevel.flush();
 	}

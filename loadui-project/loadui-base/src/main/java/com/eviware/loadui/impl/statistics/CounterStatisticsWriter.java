@@ -46,10 +46,17 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 	@Override
 	public synchronized void update( long timestamp, Number value )
 	{
-		while( lastTimeFlushed + delay < timestamp )
+		if( total == 0 )
 		{
+			lastTimeFlushed = timestamp - delay;
 			flush();
 		}
+		else
+		{
+			while( lastTimeFlushed + delay < timestamp )
+				flush();
+		}
+
 		change += value.longValue();
 	}
 
@@ -109,8 +116,6 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 		super.reset();
 		total = 0;
 		change = 0;
-
-		lastTimeFlushed = System.currentTimeMillis();
 	}
 
 	public static class Factory implements StatisticsWriterFactory
