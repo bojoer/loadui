@@ -125,7 +125,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			@Override
 			public void executionStarted( ExecutionManager.State oldState )
 			{
-				log.debug(" ExecutionManagerImpl:executionStarted()" );
+				log.debug( " ExecutionManagerImpl:executionStarted()" );
 				// if new execution was just started create track from all track
 				// descriptors
 				if( oldState == ExecutionManagerImpl.State.STOPPED )
@@ -211,7 +211,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
 
 		executionState = State.STARTED;
-		
+
 		ecs.fireExecutionStarted( State.STOPPED );
 		log.debug( "State changed: STOPPED -> STARTED" );
 
@@ -251,7 +251,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		// to wait and when synchronized block is exited new track will already be
 		// placed into currentExecution so another threads threads will know that
 		// this track was created and will exit this method.
-		
+
 		if( currentExecution.getTrack( td.getId() ) != null )
 		{
 			return;
@@ -525,7 +525,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			log.debug( "Write request to STOPPED execution ignored." );
 			return;
 		}
-		
+
 		TableBase dtd = tableRegistry.getTable( currentExecution.getExecutionDir().getName(),
 				buildDataTableName( trackId, interpolationLevel ) );
 
