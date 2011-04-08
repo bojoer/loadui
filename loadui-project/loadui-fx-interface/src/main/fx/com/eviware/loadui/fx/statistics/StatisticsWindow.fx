@@ -91,10 +91,9 @@ public def VIEW_ATTRIBUTE = "gui.statistics.view";
 public class StatisticsWindow {
 	
 	def statisticPagesListener = new StatisticPagesListener();
-	public def wc = WindowControllerImpl {
+	public-read def wc:WindowControllerImpl = WindowControllerImpl {
 		windowTitleFilter: "Results"
 	};
-
 	public var stage:Stage;
 	public var project:ProjectItem on replace {
 		topMenu.project = project;
@@ -173,6 +172,7 @@ public class StatisticsWindow {
 	
 	public function show() {
 		if ( closed ) {
+			wc.listenForNewWindow();
 			if ( scene == null ) {
 				stage = Stage {
 					title: "Results"
@@ -209,8 +209,8 @@ public class StatisticsWindow {
 			}
 			wc.stage = stage;
 		}
-		closed = false;
 		
+		closed = false;
 		wc.bringToFront();
 	}
 	

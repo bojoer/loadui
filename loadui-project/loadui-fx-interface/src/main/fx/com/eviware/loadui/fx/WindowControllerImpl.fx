@@ -32,10 +32,11 @@ public class WindowControllerImpl extends WindowController {
 	var frame:JFrame;
 	public-read var doClose = false;
 	public-init var windowTitleFilter:String;
-	var isAlwaysOnTop:Boolean = false;
+	public-read var isAlwaysOnTop:Boolean = false;
+	var isListening:Boolean = false;
 	
 	init {
-		Toolkit.getDefaultToolkit().addAWTEventListener( new Listener(), AWTEvent.COMPONENT_EVENT_MASK );
+		listenForNewWindow();
 	}
 	
 	override function isFullscreen():Boolean {
@@ -66,6 +67,15 @@ public class WindowControllerImpl extends WindowController {
 		frame.setAlwaysOnTop( enabled );
 	}
 	
+	public function listenForNewWindow()
+	{
+		if( not isListening )
+		{
+			Toolkit.getDefaultToolkit().addAWTEventListener( new Listener(), AWTEvent.COMPONENT_EVENT_MASK );
+			isListening = true;
+		}
+	}
+	
 	override function bringToFront():Void {
 		stage.iconified = false;
 		stage.toFront(); 
@@ -82,6 +92,9 @@ class Listener extends AWTEventListener {
 				if ( ((event.getSource() as JFrame).getTitle().contains( windowTitleFilter ) ) ) {
 					Toolkit.getDefaultToolkit().removeAWTEventListener(this);
 					frame = event.getSource() as JFrame;
+					isListening = false;
+					println( "GOT NEW frame: {frame}, setting AOT to {isAlwaysOnTop}" );
+					setAlwaysOnTop( isAlwaysOnTop );
 				}
 			}
 		}
