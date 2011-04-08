@@ -58,9 +58,17 @@ public class TotalTimeTickCalculator implements TickCalculator<Long>
 
 		ArrayList<Tick> ticks = new ArrayList<Tick>();
 		for( long i = firstTick; i <= end; i += interval )
-			ticks.add( new Tick( i * 1000, formatTime( i, level ) ) );
+			ticks.add( makeTick( i, level ) );
 
 		return ticks.toArray( new Tick[ticks.size()] );
+	}
+
+	private Tick makeTick( long time, ZoomLevel level )
+	{
+		if( ZoomLevel.ALL != level && time % level.getMajorTickInterval() != 0 )
+			return new Tick( time * 1000 );
+		else
+			return new Tick( time * 1000, formatTime( time, level ) );
 	}
 
 	private String formatTime( long time, ZoomLevel level )
