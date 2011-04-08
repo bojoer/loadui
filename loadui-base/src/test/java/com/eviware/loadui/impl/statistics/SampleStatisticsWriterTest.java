@@ -199,10 +199,13 @@ public class SampleStatisticsWriterTest
 	}
 
 	@Test
-	public void testMedianAggregation()
+	public void testPercentileAggregation()
 	{
 		Entry result = prepareAggregation();
-		assertEquals( 9.8, result.getValue( Stats.MEDIAN.name() ).doubleValue(), 0.005 );
+		assertEquals( 7.25, result.getValue( Stats.PERCENTILE_25TH.name() ).doubleValue(), 0.005 );
+		assertEquals( 9.0, result.getValue( Stats.MEDIAN.name() ).doubleValue(), 0.005 );
+		assertEquals( 10.0, result.getValue( Stats.PERCENTILE_75TH.name() ).doubleValue(), 0.005 );
+		assertEquals( 12.5, result.getValue( Stats.PERCENTILE_90TH.name() ).doubleValue(), 0.005 );
 	}
 
 	@Test

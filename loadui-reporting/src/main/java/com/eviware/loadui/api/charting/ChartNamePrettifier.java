@@ -38,7 +38,6 @@ public class ChartNamePrettifier
 	
 	public static boolean compactNameIsAlone( String name )
 	{
-		System.out.println("CompactNameIsAlone "+name+"?" );
 		return name.equals( "Running" ) || name.equals( "Queued" ) || name.equals( "Completed" ) || 
 			name.equals( "Discarded" ) || name.equals( "Failures" ) || name.equals( "Sent" ) ||
 			name.equals( "Assertion Failures" ) || name.equals( "Request Failures" ) || name.equals( "Requests" );
@@ -60,8 +59,6 @@ public class ChartNamePrettifier
 	
 	public static String compactDataName( String data, String metric )
 	{
-		System.out.println( "compactDataName for " + data );
-		
 		if( metric.equalsIgnoreCase( "PER_SECOND" ) )
 			return compactDataNameHelper( data ) + "/s";
 		

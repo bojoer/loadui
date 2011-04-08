@@ -463,10 +463,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		if( currentExecution != null )
 		{
-			// log.debug(
-			// "Trying to store entry: {} for source: {} at level: {} and trackId: {}",
-			// new Object[] { entry,
-			// source, interpolationLevel, trackId } );
+//			log.debug( "Trying to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry,
+//					source, interpolationLevel, trackId } );
 
 			// Adjust timestamp:
 			long timestamp = entry.getTimestamp();
@@ -522,6 +520,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		if( executionState == State.STOPPED )
 		{
+			// This will occur from time to time because sometimes a
+			// StatisticHolder will get the START_ACTION event and trigger
+			// StatisticWriter (which will write it's starting values) before the
+			// ProjectExecutionManager have started a new Execution. One way to get
+			// around this would be to allow addEventListener(... , ... , priority
+			// ).
 			log.debug( "Write request to STOPPED execution ignored." );
 			return;
 		}
