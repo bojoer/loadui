@@ -26,6 +26,7 @@ import com.eviware.loadui.config.ChartGroupConfig;
 import com.eviware.loadui.config.StatisticsPageConfig;
 import com.eviware.loadui.impl.XmlBeansUtils;
 import com.eviware.loadui.impl.model.OrderedCollectionSupport;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 
 public class StatisticPageImpl implements StatisticPage
@@ -155,8 +156,7 @@ public class StatisticPageImpl implements StatisticPage
 	@Override
 	public void release()
 	{
-		collectionSupport.releaseChildren();
 		fireEvent( new BaseEvent( this, RELEASED ) );
-		eventSupport.clearEventListeners();
+		ReleasableUtils.releaseAll( collectionSupport, eventSupport );
 	}
 }
