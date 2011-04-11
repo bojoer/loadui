@@ -28,18 +28,6 @@
 						<phase>generate-resources</phase>
 						<configuration>
 							<tasks>
-								<!-- Runner resources -->
-								<copy todir="${basedir}/target/runner/">
-									<fileset dir="${basedir}/src/main/resources" />
-									<fileset dir="${basedir}/src/runner/resources" />
-								</copy>
-								<copy todir="${basedir}/target/runner/lib">
-									<fileset file="${basedir}/../loadui-launcher/target/*.jar" />
-									<fileset file="${basedir}/../loadui-launcher/target/lib/*.jar" />
-								</copy>
-								<copy todir="${basedir}/target/runner/bundle">
-									<fileset dir="${basedir}/../loadui-runner-deps/target/bundle" />
-								</copy>
 								<!-- Controller resources -->
 								<copy todir="${basedir}/target/controller/">
 									<fileset dir="${basedir}/src/main/resources" />
@@ -56,6 +44,19 @@
 									<fileset
 										dir="${basedir}/../loadui-groovy-components/src/main/groovy" />
 								</copy>
+								<!-- Runner resources -->
+								<copy todir="${basedir}/target/runner/">
+									<fileset dir="${basedir}/src/main/resources" />
+									<fileset dir="${basedir}/src/runner/resources" />
+								</copy>
+								<copy todir="${basedir}/target/runner/lib">
+									<fileset file="${basedir}/../loadui-launcher/target/*.jar" />
+									<fileset file="${basedir}/../loadui-launcher/target/lib/*.jar" />
+								</copy>
+								<copy todir="${basedir}/target/runner/bundle">
+									<fileset dir="${basedir}/../loadui-runner-deps/target/bundle" />
+								</copy>
+								<!-- Dummy copy. For some reason the last copy task doesn't seem to work on our build servers. -->
 								<copy todir="${basedir}/target/dummy">
 									<fileset dir="${basedir}/src/main" />
 								</copy>
