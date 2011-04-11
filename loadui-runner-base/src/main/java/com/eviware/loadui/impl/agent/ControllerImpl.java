@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
@@ -174,17 +173,20 @@ public class ControllerImpl
 			else if( message.containsKey( AgentItem.ASSIGN ) )
 			{
 				String sceneId = message.get( AgentItem.ASSIGN );
-				if( !sceneAgents.containsKey( sceneId ) )
+				synchronized( sceneAgents )
 				{
-					SceneItem scene = ( SceneItem )addressableRegistry.lookup( sceneId );
-					if( scene != null )
+					if( !sceneAgents.containsKey( sceneId ) )
 					{
-						log.warn( "Attempted to load an already existing TestCase! Force releasing old TestCase..." );
-						ReleasableUtils.release( scene );
-						addressableRegistry.unregister( scene );
+						SceneItem scene = ( SceneItem )addressableRegistry.lookup( sceneId );
+						if( scene != null )
+						{
+							log.warn( "Attempted to load an already existing TestCase! Force releasing old TestCase..." );
+							ReleasableUtils.release( scene );
+							addressableRegistry.unregister( scene );
+						}
+						log.info( "Loading SceneItem {}", sceneId );
+						executorService.execute( new SceneAgent( sceneId, endpoint ) );
 					}
-					log.info( "Loading SceneItem {}", sceneId );
-					executorService.execute( new SceneAgent( sceneId, endpoint ) );
 				}
 			}
 			else if( message.containsKey( AgentItem.UNASSIGN ) )
