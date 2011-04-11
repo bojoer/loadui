@@ -135,16 +135,15 @@ public class StatisticsWindow {
 			appState.transitionTo( project.getAttribute( VIEW_ATTRIBUTE, STATISTICS_MANAGE ), AppState.FADE_WIPE );
 			AppState.put( scene, appState, "STATISTICS" );
 			
+			// This region is just for fixing JavaFX's lack of working support for onMouseExited@Window and alwaysOnTop().
 			insert Region{
 				managed:false,
 				width: bind scene.width - 5
 				height: bind scene.height - 5
 				onMouseExited: function(e:MouseEvent):Void {
-					println("MUHAHA IM IN UR WINDOWZ!");
 					StatisticsWindow.instance.wc.setAlwaysOnTop( wc.isAlwaysOnTop );
 				}
 				onMouseEntered: function(e:MouseEvent):Void {
-					println("MUHAHA IM IN UR WINDOWZ!");
 					StatisticsWindow.instance.wc.setAlwaysOnTop( false );
 				}
 			} into appState.globalLayer.content;
