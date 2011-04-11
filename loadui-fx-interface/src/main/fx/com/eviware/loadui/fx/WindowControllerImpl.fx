@@ -27,6 +27,9 @@ import java.awt.event.ContainerEvent;
 import javafx.lang.FX;
 import javax.swing.JFrame;
 
+import org.slf4j.LoggerFactory;
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.WindowControllerImpl" );
+
 public class WindowControllerImpl extends WindowController {
 	public var stage:Stage;
 	var frame:JFrame;
@@ -93,8 +96,8 @@ class Listener extends AWTEventListener {
 					Toolkit.getDefaultToolkit().removeAWTEventListener(this);
 					frame = event.getSource() as JFrame;
 					isListening = false;
-					println( "GOT NEW frame: {frame}, setting AOT to {isAlwaysOnTop}" );
-					setAlwaysOnTop( isAlwaysOnTop );
+					log.debug( "GOT NEW frame: {frame}, setting AOT to {isAlwaysOnTop}" );
+//					setAlwaysOnTop( isAlwaysOnTop );
 				}
 			}
 		}

@@ -46,6 +46,7 @@ import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 
 import com.eviware.loadui.fx.WindowControllerImpl;
+import javafx.scene.input.MouseEvent;
 
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.Overlay;
@@ -133,6 +134,20 @@ public class StatisticsWindow {
 			
 			appState.transitionTo( project.getAttribute( VIEW_ATTRIBUTE, STATISTICS_MANAGE ), AppState.FADE_WIPE );
 			AppState.put( scene, appState, "STATISTICS" );
+			
+			insert Region{
+				managed:false,
+				width: bind scene.width - 5
+				height: bind scene.height - 5
+				onMouseExited: function(e:MouseEvent):Void {
+					println("MUHAHA IM IN UR WINDOWZ!");
+					StatisticsWindow.instance.wc.setAlwaysOnTop( wc.isAlwaysOnTop );
+				}
+				onMouseEntered: function(e:MouseEvent):Void {
+					println("MUHAHA IM IN UR WINDOWZ!");
+					StatisticsWindow.instance.wc.setAlwaysOnTop( false );
+				}
+			} into appState.globalLayer.content;
 		}
 	}
 	

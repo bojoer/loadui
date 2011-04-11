@@ -80,6 +80,9 @@ import java.io.IOException;
 
 import java.util.EventObject;
 
+import org.slf4j.LoggerFactory;
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.menu.ProjectMenu" );
+
 public class ProjectMenu extends HBox {
 	def listener = new SummaryListener();
 	var statMonitor = StatisticsWindow.getInstance();
@@ -326,7 +329,7 @@ public class ProjectMenu extends HBox {
 										def summary = SummaryReport{ select: project.getLabel(), summary:project.getSummary() };
 										summary.show();
 									} else {
-										println("No summary exists!");
+										log.debug("No summary exists!");
 									}
 								}
 								disable: bind not summaryEnabled
