@@ -56,6 +56,9 @@
 									<fileset
 										dir="${basedir}/../loadui-groovy-components/src/main/groovy" />
 								</copy>
+								<copy todir="${basedir}/target/dummy">
+									<fileset dir="${basedir}/src/main" />
+								</copy>
 							</tasks>
 						</configuration>
 						<goals>
