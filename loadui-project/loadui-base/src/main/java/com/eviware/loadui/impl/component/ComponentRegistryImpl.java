@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.component.BehaviorProvider;
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
@@ -32,6 +35,8 @@ import com.eviware.loadui.api.component.ComponentRegistry;
 
 public class ComponentRegistryImpl implements ComponentRegistry
 {
+	public static final Logger log = LoggerFactory.getLogger( ComponentRegistryImpl.class );
+
 	private final Map<ComponentDescriptor, BehaviorProvider> descriptors = new HashMap<ComponentDescriptor, BehaviorProvider>();
 	private final Map<String, BehaviorProvider> types = new HashMap<String, BehaviorProvider>();
 	private final Set<DescriptorListener> listeners = new HashSet<DescriptorListener>();
@@ -50,7 +55,7 @@ public class ComponentRegistryImpl implements ComponentRegistry
 					"Cannot register ComponentDescriptor with null provider, or null descriptor!" );
 		descriptors.put( descriptor, provider );
 		types.put( descriptor.getType(), provider );
-		System.out.println( "Registered descriptor: " + descriptor.getLabel() );
+		log.info( "Registered Component Descriptor: {}", descriptor.getLabel() );
 		fireDescriptorAdded( descriptor );
 	}
 
@@ -73,7 +78,7 @@ public class ComponentRegistryImpl implements ComponentRegistry
 				return;
 		types.remove( descriptor.getType() );
 	}
-	
+
 	@Override
 	public ComponentDescriptor findDescriptor( String label )
 	{
@@ -84,6 +89,7 @@ public class ComponentRegistryImpl implements ComponentRegistry
 		}
 		return null;
 	}
+
 	@Override
 	public void unregisterProvider( BehaviorProvider provider )
 	{
