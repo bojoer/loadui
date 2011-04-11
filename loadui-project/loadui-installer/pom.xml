@@ -53,8 +53,9 @@
 									<fileset file="${basedir}/../loadui-launcher/target/*.jar" />
 									<fileset file="${basedir}/../loadui-launcher/target/lib/*.jar" />
 								</copy>
-								<copy todir="${basedir}/target/runner/bundle" verbose="true" failonerror="true">
-									<fileset dir="${basedir}/../loadui-runner-deps/target/bundle" />
+								<copy todir="${basedir}/target/runner/bundle">
+									
+									<fileset dir="${basedir}/../loadui-controller-deps/target/bundle" />
 								</copy>
 								<echo message="Testing echo" />
 							</tasks>
