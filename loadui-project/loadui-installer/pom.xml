@@ -53,11 +53,11 @@
 									<fileset file="${basedir}/../loadui-launcher/target/*.jar" />
 									<fileset file="${basedir}/../loadui-launcher/target/lib/*.jar" />
 								</copy>
+								<mkdir dir="${basedir}/target/runner/bundle" />
 								<copy todir="${basedir}/target/runner/bundle">
-									
-									<fileset dir="${basedir}/../loadui-controller-deps/target/bundle" />
+									<fileset dir="${basedir}/../loadui-runner-deps/target/bundle" />
 								</copy>
-								<echo message="Testing echo" />
+								<echo message="Echo ${basedir}/target/runner/bundle" />
 							</tasks>
 						</configuration>
 						<goals>
