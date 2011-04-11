@@ -46,7 +46,7 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 	@Override
 	public synchronized void update( long timestamp, Number value )
 	{
-		if( total == 0 )
+		if( total + change == 0 )
 		{
 			lastTimeFlushed = timestamp - delay;
 			flush();
@@ -64,7 +64,7 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 	public Entry output()
 	{
 		long currentTime = System.currentTimeMillis();
-		if( lastTimeFlushed == currentTime )
+		if( lastTimeFlushed >= currentTime )
 			return null;
 		double timeDelta = delay / 1000.0;
 		total += change;
