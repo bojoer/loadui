@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="4.2.8" transformSequenceNumber="2">
+<install4j version="4.2.6" transformSequenceNumber="2">
   <directoryPresets config="../../target/controller" />
   <application name="loadUI ${compiler:version}" distributionSourceDir="" applicationId="3648-6792-9261-9102" mediaDir="../../target" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" missingFilesStrategy="warn" shortName="loadUI" publisher="eviware ab" publisherWeb="http://www.eviware.com" version="${compiler:version}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
@@ -21,11 +21,10 @@
     <filesets />
     <roots />
     <mountPoints>
-      <mountPoint id="143" root="" location="felix-cache" mode="755" />
       <mountPoint id="20" root="" location="" mode="755" />
     </mountPoints>
     <entries>
-      <dirEntry mountPoint="20" file="../../target/controller" overwrite="5" shared="true" mode="644" uninstallMode="0" excludeSuffixes="" dirMode="755">
+      <dirEntry mountPoint="20" file="../../target/controller" overwrite="5" shared="false" mode="644" uninstallMode="0" excludeSuffixes="" dirMode="755">
         <exclude>
           <entry location="felix-cache" fileType="regular" />
         </exclude>
