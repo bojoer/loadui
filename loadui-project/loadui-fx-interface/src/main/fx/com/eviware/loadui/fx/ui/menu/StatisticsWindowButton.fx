@@ -73,6 +73,7 @@ public class StatisticsWindowButton extends Group {
 						styleClass: "context-menu-check-box"
 						onMouseClicked:function(e:MouseEvent):Void {
 							StatisticsWindow.instance.wc.toggleAlwaysOnTop();
+							println( "AOT: {StatisticsWindow.instance.wc.isAlwaysOnTop}" );
 						}
 					},
 					Separator{},					
