@@ -46,6 +46,7 @@ public interface AgentItem extends ModelItem, MessageEndpoint
 	public final static String SCENE_END_TIME = "sceneEndTime";
 	public final static String SET_MAX_THREADS = "setMaxThreads";
 	public final static String SET_UTILIZATION = "setUtilization";
+	public final static String TIME_CHECK = "timeCheck";
 
 	public final static String MAX_THREADS_PROPERTY = AgentItem.class.getSimpleName() + ".maxThreads";
 
@@ -101,4 +102,14 @@ public interface AgentItem extends ModelItem, MessageEndpoint
 	 * @return
 	 */
 	public int getUtilization();
+
+	/**
+	 * Returns an approximation of the difference in system clocks between the
+	 * controller and the agent in ms. A negative value means that the agents
+	 * clock is ahead of the controllers, so the following can be used to convert
+	 * an agent timestamp to a local one: localTime = agentTime + timeDifference.
+	 * 
+	 * @return
+	 */
+	public long getTimeDifference();
 }

@@ -31,6 +31,7 @@ createProperty( 'start', Long, 0 )
 createProperty( 'end', Long, 10 )
 createProperty( 'period', Long, 10 )
 createProperty( 'unit', String, 'Sec' )
+
 direction = "up"
 msPerUnit = 1000
 currentRate = 0
@@ -142,22 +143,15 @@ addEventListener( PropertyEvent ) { event ->
 	}
 }
 
-addEventListener( ActionEvent ) { event ->
-	if ( event.key == "STOP" ) {
-		future?.cancel();
-		started = false;
-		scheduled = false;
-	}
-	
-	if ( event.key == "START" ) {
-		schedule()
-	}
-	
-	if ( event.key == "COMPLETE" ) {
-		reset()
-	}
+onAction( "START" ) { schedule() }
+
+onAction( "STOP" ) {
+	future?.cancel()
+	started = false
+	scheduled = false
 }
 
+onAction( "COMPLETE" ) { reset() }
 
 //Layout
 layout  { 

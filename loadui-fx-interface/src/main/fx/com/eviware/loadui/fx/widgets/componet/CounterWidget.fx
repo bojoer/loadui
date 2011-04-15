@@ -50,7 +50,7 @@ import java.util.ArrayList;
 * @author robert
 */
 
-
+//DEPRECATED
 public class CounterWidget extends Panel, Observer {
     
     public var component:ObservableList;

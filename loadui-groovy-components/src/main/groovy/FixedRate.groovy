@@ -33,9 +33,25 @@ import java.util.concurrent.TimeUnit
 executor = Executors.newSingleThreadScheduledExecutor()
 
 //Properties
-createProperty( 'rate', Long, 10 )
-createProperty( 'unit', String, 'Sec' )
-
+createProperty( 'rate', Long, 10 ) { value ->
+	delay = Math.max( 1, (long)(milisecondsPerUnit/value) )
+	display.setArgs( value, unit.value )
+	schedule()
+}
+createProperty( 'unit', String, 'Sec' ) { value ->
+	if ( value == "Sec" )
+		milisecondsPerUnit = 1000000
+	else if ( value == "Min" )
+		milisecondsPerUnit = 60000000
+	else if ( value == "Hour" )
+		milisecondsPerUnit = 3600000000
+	display.setArgs( rate.value, value )
+	schedule()
+}
+onReplace( stateProperty ) { value ->
+	if( value ) schedule()
+	else future?.cancel( true )
+}
 
 milisecondsPerUnit = 1000000				
 delay = milisecondsPerUnit/rate.value
@@ -78,17 +94,9 @@ addEventListener( PropertyEvent ) { event ->
 	}
 }
 
-addEventListener( ActionEvent ) { event ->
-	if ( event.key == "STOP" ) {
-		future?.cancel(true)
-	}
-	
-	if ( event.key == "START" ) {
-		schedule()
-	}
-	
-	//RESET in this case would not really do anything
-}
+onAction( "START" ) { schedule() }
+
+onAction( "STOP" ) { future?.cancel( true ) }
 
 //Layout
 layout { 

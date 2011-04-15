@@ -95,24 +95,22 @@ onRelease = {
 	workspace?.removeEventListener( PropertyEvent, workspaceListener )
 }
 
-addEventListener( ActionEvent ) { event ->
-	if ( event.key == "COMPLETE" && executor != null ) {
+onAction( "START" ) {
+	if( executor == null ) executor = Executors.newSingleThreadScheduledExecutor()
+}
+
+onAction( "COMPLETE" ) {
+	executor?.shutdownNow()
+	executor = null
+	waitingCount = 0
+}
+
+onAction( "RESET" ) {
+	display.args = 0
+	waitingCount = 0
+	if( executor != null ) {
 		executor.shutdownNow()
-		executor = null
-		waitingCount = 0;
-	}
-	
-	if ( event.key == "START" && executor == null ) {
 		executor = Executors.newSingleThreadScheduledExecutor()
-	}
-	
-	if ( event.key == "RESET" ) {
-		display.args = 0
-		waitingCount = 0;
-		if( executor != null ) {
-			executor.shutdownNow()
-			executor = Executors.newSingleThreadScheduledExecutor()
-		}
 	}
 }
 

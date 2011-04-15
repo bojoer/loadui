@@ -33,18 +33,34 @@ import java.util.concurrent.TimeUnit
 
 executor = Executors.newSingleThreadScheduledExecutor()
 
-//Properties
-createProperty( 'load', Long, 100 )
-createProperty( 'interval', Long, 10 )
-
-loadDisplay = new DelayedFormattedString( '%d', 200, 0 )
-intervalDisplay = new DelayedFormattedString( '%d/ms', 200, interval.value )
-
 sampleCount = createInput( 'Sample Count' )
 count = 0;
 
-running = true
 future = null
+
+//Properties
+createProperty( 'load', Long, 10 ) { value ->
+	if( !doDelay && count < value ) {
+		trigger()
+		loadDisplay.args = count + 1
+	}
+}
+createProperty( 'interval', Long, 0 ) { value ->
+	intervalDisplay.args = value
+	doDelay = stateProperty.value && value > 0
+	schedule()
+}
+
+onReplace( stateProperty ) { value ->
+	doDelay = value && interval.value > 0
+	if( value ) schedule()
+	else future?.cancel( true )
+}
+
+doDelay = stateProperty.value && interval.value > 0
+
+loadDisplay = new DelayedFormattedString( '%d', 200, 0 )
+intervalDisplay = new DelayedFormattedString( '%d/ms', 200, interval.value )
 
 onRelease = {
 	executor.shutdownNow()
@@ -54,14 +70,7 @@ onRelease = {
 
 schedule = {
 	future?.cancel( true )
-	if (stateProperty.value) {
-		if (interval.value > 0) {
-			running = true;
-			future = executor.scheduleAtFixedRate( { if( count < load.value ) trigger() }, interval.value, interval.value, TimeUnit.MILLISECONDS )
-		} else {
-			running = false;
-		}
-	}
+	if( doDelay ) future = executor.scheduleAtFixedRate( { if( count < load.value ) trigger() }, interval.value, interval.value, TimeUnit.MILLISECONDS )
 }
 
 onMessage = { outgoing, incoming, message ->
@@ -69,7 +78,7 @@ onMessage = { outgoing, incoming, message ->
 		def currentCount = message.get( RunnerCategory.CURRENTLY_RUNNING_MESSAGE_PARAM )
 		count = currentCount
 		
-		if (currentCount < load.value && !running) {
+		if (currentCount < load.value && !doDelay) {
 			trigger()
 			currentCount++
 		}
@@ -83,30 +92,12 @@ onConnect = { outgoing, incoming ->
 		trigger()
 }
 
-addEventListener( PropertyEvent ) { event ->
-	if ( event.event == PropertyEvent.Event.VALUE ) {
-		if ( event.property == stateProperty ) {
-			if( stateProperty.value ) schedule()
-			else future?.cancel( true )
-		} else if( event.property == interval ) {
-			intervalDisplay.args = interval.value
-			schedule()
-		} else if( event.property == load && !running && count < load.value ) {
-			trigger()
-			loadDisplay.args = count + 1
-		}
-	}
+onAction( "START" ) {
+	schedule()
+	if( !doDelay && load.value > 0 ) trigger()
 }
 
-addEventListener( ActionEvent ) { event ->
-	if ( event.key == "STOP" ) future?.cancel( true )
-	if ( event.key == "START" ) {
-		schedule()
-		if(!running && load.value > 0) trigger()
-	}
-	
-	//RESET in this case would not really do anything
-}
+onAction( "STOP" ) { future?.cancel( true ) }
 
 //Layout
 layout  { 

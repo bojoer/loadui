@@ -30,7 +30,7 @@ import com.eviware.loadui.util.collections.ObservableList;
 /**
  * @author robert
  */
-
+//DEPRECATED
 public class CounterWidgetFactory extends WidgetFactory {
     
     override public function getId(){
