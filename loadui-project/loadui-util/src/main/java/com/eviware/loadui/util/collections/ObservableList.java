@@ -31,6 +31,7 @@ import java.util.Observable;
  * 
  * @param <E>
  */
+@Deprecated
 public class ObservableList<E> extends Observable implements List<E>
 {
 

@@ -89,7 +89,9 @@ cm.defaultMaxPerRoute = 50000
 
 
 //Properties
-createProperty( 'url', String )
+createProperty( 'url', String ) { ->
+	validateUrl()
+}
 createProperty( 'outputBody', Boolean, false )
 
 createProperty( 'readResponse', Boolean, false )
@@ -314,26 +316,16 @@ onRelease = {
 	displayRequests.release()
 }
 
-addEventListener( ActionEvent ) { event ->
-	if ( event.key == "RESET" ) {
-		requestResetValue = 0
-		sampleResetValue = 0
-		discardResetValue = 0
-		failedResetValue = 0
-	}
+onAction( "RESET" ) {
+	requestResetValue = 0
+	sampleResetValue = 0
+	discardResetValue = 0
+	failedResetValue = 0
 }
 
 addEventListener( PropertyEvent ) { event ->
 	if ( event.event == PropertyEvent.Event.VALUE ) {
-		if( event.property == url ) {
-			validateUrl()
-		}
-		else if(
-				event.property == proxyHost || event.property == proxyPort ||
-				event.property == proxyUsername || event.property == proxyPassword ||
-				event.property == authUsername || event.property == authPassword
-				)
-		{
+		if( event.property in [ proxyHost, proxyPort, proxyUsername, proxyPassword, authUsername, authPassword ] ) {
 			http.credentialsProvider.clear()
 			updateProxy()
 			updateAuth()

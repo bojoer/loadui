@@ -51,10 +51,9 @@ createProperty( 'duration', Long, 0 )
 createProperty( 'unit', String, 'Sec' )
 createProperty( 'mode', String, 'Single' )
 
-def timerCounter = getCounter( CanvasItem.TIMER_COUNTER )
+def timerCounter = counters[CanvasItem.TIMER_COUNTER]
 def canvas = getCanvas()
 def runCount = 0
-def running = canvas.running;
 
 def startFuture = null
 def stopFuture = null
@@ -129,32 +128,30 @@ updateState = {
 	interval.notifyObservers()
 }
 
-addEventListener( ActionEvent ) { event ->
-	if( event.key == CanvasItem.START_ACTION ) {
-		running = true
-	} else if( event.key == CanvasItem.STOP_ACTION ) {
-		running = false
-	} else if( event.key == CounterHolder.COUNTER_RESET_ACTION ) {
-		running = canvas.running
-		interval.position = 0
-		runCount = 0
-	} else {
-		return
-	}
-	
+onAction( "START" ) {
 	cancelAll()
 	updateState()
 }
 
+onAction( "STOP" ) {
+	cancelAll()
+	updateState()
+}
+
+onAction( "RESET" ) {
+	interval.position = 0
+	runCount = 0
+}
+
 addEventListener( PropertyEvent ) { event ->
 	if( event.property in [ startAt, duration, unit, mode ] ) {
-		if( !canvas.running ) updateState()
+		if( !running ) updateState()
 	}
 }
 
 def limitsListener = addEventListener( canvas, BaseEvent ) { event ->
 	if( event.key == CanvasItem.LIMITS ) {
-		if( !canvas.running ) updateState()
+		if( !running ) updateState()
 	}
 }
 

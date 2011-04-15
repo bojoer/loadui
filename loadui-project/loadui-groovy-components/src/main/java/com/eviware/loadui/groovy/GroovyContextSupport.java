@@ -19,11 +19,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
 
 import com.eviware.loadui.api.component.ActivityStrategy;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.counter.Counter;
+import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
@@ -45,18 +50,23 @@ import com.eviware.loadui.impl.layout.LayoutContainerImpl;
 import com.eviware.loadui.impl.layout.SettingsLayoutContainerImpl;
 
 import groovy.lang.Closure;
-import groovy.lang.GroovyObjectSupport;
 
 public class GroovyContextSupport implements ComponentContext
 {
 	private final PropertyEventHandler propertyEventHandler = new PropertyEventHandler();
+	private final ActionEventHandler actionEventHandler = new ActionEventHandler();
+	private final CounterHelper counterHelper = new CounterHelper();
 
 	private final ComponentContext context;
+	private final Logger log;
 
-	public GroovyContextSupport( ComponentContext context )
+	public GroovyContextSupport( ComponentContext context, Logger log )
 	{
 		this.context = context;
+		this.log = log;
+
 		context.addEventListener( PropertyEvent.class, propertyEventHandler );
+		context.addEventListener( ActionEvent.class, actionEventHandler );
 	}
 
 	public void layout( Closure<?> closure )
@@ -123,9 +133,20 @@ public class GroovyContextSupport implements ComponentContext
 		propertyEventHandler.replaceHandlers.put( property, handler );
 	}
 
+	public void onAction( String action, Closure<?> handler )
+	{
+		actionEventHandler.actionHandlers.put( action, handler );
+	}
+
+	public CounterHelper getCounters()
+	{
+		return counterHelper;
+	}
+
 	void reset()
 	{
 		propertyEventHandler.replaceHandlers.clear();
+		actionEventHandler.actionHandlers.clear();
 		clearSettingsTabs();
 	}
 
@@ -152,6 +173,16 @@ public class GroovyContextSupport implements ComponentContext
 	public Value<?> value( Closure<?> closure )
 	{
 		return new ClosureValue( closure );
+	}
+
+	/**
+	 * Invokes all registered onReplace handlers with the current property value.
+	 */
+	public void invokeReplaceHandlers()
+	{
+		for( Property<?> property : new HashSet<Property<?>>( propertyEventHandler.replaceHandlers.keySet() ) )
+			propertyEventHandler.handleEvent( new PropertyEvent( property.getOwner(), property, PropertyEvent.Event.VALUE,
+					null ) );
 	}
 
 	@Override
@@ -268,7 +299,7 @@ public class GroovyContextSupport implements ComponentContext
 		if( initialValue instanceof Closure )
 		{
 			Property<T> property = context.createProperty( propertyName, propertyType );
-			propertyEventHandler.replaceHandlers.put( property, ( Closure<?> )initialValue );
+			onReplace( property, ( Closure<?> )initialValue );
 			return property;
 		}
 		return context.createProperty( propertyName, propertyType, initialValue );
@@ -278,7 +309,7 @@ public class GroovyContextSupport implements ComponentContext
 			Closure<?> handler )
 	{
 		Property<T> property = context.createProperty( propertyName, propertyType, initialValue );
-		propertyEventHandler.replaceHandlers.put( property, handler );
+		onReplace( property, handler );
 		return property;
 	}
 
@@ -496,6 +527,81 @@ public class GroovyContextSupport implements ComponentContext
 		}
 	}
 
+	private class CounterHelper implements Map<String, Counter>
+	{
+		@Override
+		public int size()
+		{
+			return context.getCounterNames().size();
+		}
+
+		@Override
+		public boolean isEmpty()
+		{
+			return context.getCounterNames().isEmpty();
+		}
+
+		@Override
+		public boolean containsKey( Object key )
+		{
+			return context.getCounterNames().contains( key );
+		}
+
+		@Override
+		public boolean containsValue( Object value )
+		{
+			return value instanceof Counter && context.getCounterNames().contains( ( ( Counter )value ).getValue() );
+		}
+
+		@Override
+		public Counter get( Object key )
+		{
+			return context.getCounter( String.valueOf( key ) );
+		}
+
+		@Override
+		public Counter put( String key, Counter value )
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Counter remove( Object key )
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void putAll( Map<? extends String, ? extends Counter> m )
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void clear()
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Set<String> keySet()
+		{
+			return new HashSet<String>( context.getCounterNames() );
+		}
+
+		@Override
+		public Collection<Counter> values()
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Set<java.util.Map.Entry<String, Counter>> entrySet()
+		{
+			throw new UnsupportedOperationException();
+		}
+	}
+
 	private class PropertyEventHandler implements WeakEventHandler<PropertyEvent>
 	{
 		private final HashMap<Property<?>, Closure<?>> replaceHandlers = new HashMap<Property<?>, Closure<?>>();
@@ -508,18 +614,47 @@ public class GroovyContextSupport implements ComponentContext
 				Closure<?> handler = replaceHandlers.get( event.getProperty() );
 				if( handler != null )
 				{
-					switch( handler.getMaximumNumberOfParameters() )
+					try
 					{
-					case 0 :
-						handler.call();
-						break;
-					case 1 :
-						handler.call( event.getProperty().getValue() );
-						break;
-					case 2 :
-					default :
-						handler.call( event.getProperty().getValue(), event.getPreviousValue() );
+						switch( handler.getMaximumNumberOfParameters() )
+						{
+						case 0 :
+							handler.call();
+							break;
+						case 1 :
+							handler.call( event.getProperty().getValue() );
+							break;
+						case 2 :
+						default :
+							handler.call( event.getProperty().getValue(), event.getPreviousValue() );
+						}
 					}
+					catch( Exception e )
+					{
+						log.error( "Exception caught when calling onReplace handler for " + event.getProperty().getKey(), e );
+					}
+				}
+			}
+		}
+	}
+
+	private class ActionEventHandler implements WeakEventHandler<ActionEvent>
+	{
+		private final HashMap<String, Closure<?>> actionHandlers = new HashMap<String, Closure<?>>();
+
+		@Override
+		public void handleEvent( ActionEvent event )
+		{
+			Closure<?> handler = actionHandlers.get( event.getKey() );
+			if( handler != null )
+			{
+				try
+				{
+					handler.call();
+				}
+				catch( Exception e )
+				{
+					log.error( "Exception caught when calling onAction handler for " + event.getKey(), e );
 				}
 			}
 		}

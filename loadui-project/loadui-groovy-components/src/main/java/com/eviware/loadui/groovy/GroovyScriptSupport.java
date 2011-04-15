@@ -63,11 +63,11 @@ public class GroovyScriptSupport implements Releasable
 
 	public GroovyScriptSupport( EventFirer scriptUpdateFirer, ComponentBehavior behavior, ComponentContext context )
 	{
-		this.behavior = behavior;
-		this.context = new GroovyContextSupport( context );
-
 		scriptName = "Groovy" + context.getLabel().replaceAll( "[^a-zA-Z]", "" );
 		log = LoggerFactory.getLogger( "com.eviware.loadui.groovy." + scriptName );
+
+		this.behavior = behavior;
+		this.context = new GroovyContextSupport( context, log );
 
 		scriptProperty = context.createProperty( GroovyComponent.SCRIPT_PROPERTY, String.class );
 		propertyEventListener = new PropertyEventListener();
@@ -90,8 +90,9 @@ public class GroovyScriptSupport implements Releasable
 
 	public void updateScript( String scriptText )
 	{
-		shell.resetLoadedClasses();
+		invokeClosure( true, "onReplace" );
 		context.reset();
+		shell.resetLoadedClasses();
 		loadDependencies( scriptText );
 
 		try
@@ -103,6 +104,7 @@ public class GroovyScriptSupport implements Releasable
 
 			script.setBinding( binding );
 			script.run();
+			context.invokeReplaceHandlers();
 		}
 		catch( Exception e )
 		{

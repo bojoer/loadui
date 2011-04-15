@@ -46,14 +46,21 @@ def componentSignature = [
 		]
 setSignature(output, componentSignature)
 
-failureCounter = getCounter( CanvasItem.FAILURE_COUNTER )
-assertionFailureCounter = getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER )
-totalCounter = getCounter( CanvasItem.ASSERTION_COUNTER )
+failureCounter = counters[CanvasItem.FAILURE_COUNTER]
+assertionFailureCounter = counters[CanvasItem.ASSERTION_FAILURE_COUNTER]
+totalCounter = counters[CanvasItem.ASSERTION_COUNTER]
 
 //Properties
-createProperty( 'value', String, "Select value" )
-createProperty( 'min', Long, 0 )
+createProperty( 'value', String, "Select value" ) { value ->
+	valueToAssert = value
+	resetComponent()
+}
 createProperty( 'max', Long, 1000 )
+createProperty( 'min', Long, 0 ) { value ->
+	if(max.value < value ) {
+		max.value = value
+	}
+}
 createProperty( 'tolerance', Long, 1 )
 createProperty( 'period', Long, 0 )
 
@@ -174,24 +181,8 @@ resetComponent = {
 	failedResetValue = 0
 }
 
-addEventListener( PropertyEvent ) { event ->
-	if ( event.event == PropertyEvent.Event.VALUE ) {
-		if( event.property == value ) {
-			valueToAssert = value.value
-			resetComponent()
-		}
-		else if( event.property == min ) {
-			if(max.value < min.value){
-				max.value = min.value
-			}
-		}
-	}
-}
-
-addEventListener( ActionEvent ) { event ->
-	if ( event.key == "RESET" ) {
-		resetComponent()
-	}
+onAction( "RESET" ) { ->
+	resetComponent()
 }
 
 ex = {t, m ->

@@ -31,6 +31,7 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.config.AgentItemConfig;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.messaging.MessageEndpointSupport;
 
 public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements AgentItem
@@ -41,6 +42,8 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	private MessageEndpointSupport endpointSupport;
 	private boolean connected = false;
 	private int utilization = 0;
+	private long timeDiff = 0;
+	private long fastestTimeCheck = Long.MAX_VALUE;
 
 	public AgentItemImpl( WorkspaceItem workspace, AgentItemConfig config )
 	{
@@ -95,6 +98,19 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 			public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 			{
 				Map<String, Object> map = ( Map<String, Object> )data;
+				if( map.containsKey( TIME_CHECK ) )
+				{
+					long currentTime = System.currentTimeMillis();
+					long agentTime = Long.parseLong( ( String )map.get( TIME_CHECK ) );
+					long roundTripTime = currentTime - Long.parseLong( ( String )map.get( "startTimeCheck" ) );
+					if( roundTripTime < fastestTimeCheck )
+					{
+						timeDiff = currentTime - ( agentTime + roundTripTime / 2 );
+						log.debug( "Agent TimeDiff updated to {}", timeDiff );
+						log.debug( "RTT: {}, times: {}, {}, {}", new Object[] { roundTripTime, currentTime - roundTripTime,
+								agentTime, currentTime } );
+					}
+				}
 				if( map.containsKey( CONNECTED ) )
 				{
 					String version = map.get( CONNECTED ) == null ? "0" : map.get( CONNECTED ).toString();
@@ -120,6 +136,8 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 					AgentItemImpl.this.connected = true;
 					fireBaseEvent( READY );
 					fireBaseEvent( UTILIZATION );
+					fastestTimeCheck = Long.MAX_VALUE;
+					sendTimeCheck();
 				}
 				else if( map.containsKey( SET_UTILIZATION ) )
 				{
@@ -172,6 +190,12 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	public int getUtilization()
 	{
 		return isReady() ? utilization : 0;
+	}
+
+	@Override
+	public long getTimeDifference()
+	{
+		return timeDiff;
 	}
 
 	@Override
@@ -250,5 +274,13 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	public void removeConnectionListener( ConnectionListener listener )
 	{
 		endpointSupport.removeConnectionListener( listener );
+	}
+
+	private void sendTimeCheck()
+	{
+		Map<String, String> data = MapUtils.build( String.class, String.class ).put( TIME_CHECK, "" )
+				.put( "startTimeCheck", String.valueOf( System.currentTimeMillis() ) ).get();
+
+		sendMessage( AGENT_CHANNEL, data );
 	}
 }

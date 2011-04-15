@@ -162,6 +162,11 @@ public class ControllerImpl
 			// log.debug( "handleMessage got data: {} on channel {}", data, channel
 			// );
 			Map<String, String> message = ( Map<String, String> )data;
+			if( message.containsKey( AgentItem.TIME_CHECK ) )
+			{
+				message.put( AgentItem.TIME_CHECK, String.valueOf( System.currentTimeMillis() ) );
+				endpoint.sendMessage( AgentItem.AGENT_CHANNEL, message );
+			}
 			if( message.containsKey( AgentItem.CONNECTED ) )
 			{
 				log.info( "Client connected: {}", message.get( AgentItem.CONNECTED ) );

@@ -119,10 +119,15 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 	 * numbering (the last one to be added). If no OutputTerminals exist in this
 	 * list, nothing will happen.
 	 */
-	final public void deleteOutgoing()
+	final public OutputTerminal deleteOutgoing()
 	{
 		if( outgoingTerminals.size() > 0 )
-			getContext().deleteTerminal( outgoingTerminals.remove( outgoingTerminals.size() - 1 ) );
+		{
+			OutputTerminal removed = outgoingTerminals.remove( outgoingTerminals.size() - 1 );
+			getContext().deleteTerminal( removed );
+			return removed;
+		}
+		return null;
 	}
 
 	@Override

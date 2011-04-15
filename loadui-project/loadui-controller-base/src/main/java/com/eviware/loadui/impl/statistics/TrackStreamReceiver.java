@@ -66,17 +66,27 @@ public class TrackStreamReceiver
 					Execution execution = TrackStreamReceiver.this.executionManager.getCurrentExecution();
 					int level = ( ( Number )map.remove( "_LEVEL" ) ).intValue();
 
-					LatencyFilter latency = latencies.get( endpoint );
-					if( latency == null )
+					/*
+					 * LatencyFilter latency = latencies.get( endpoint ); if( latency
+					 * == null ) { latency = new LatencyFilter(); latencies.put(
+					 * endpoint, latency ); }
+					 */
+
+					long currentTimeMillis = System.currentTimeMillis();
+					// long delta = latency.filter( ( ( Number )map.remove(
+					// "_CURRENT_TIME" ) ).longValue() - currentTimeMillis );
+
+					// long timestamp = ( ( Number )map.remove( "_TIMESTAMP" )
+					// ).longValue() - delta;
+					long timestamp = ( ( Number )map.remove( "_TIMESTAMP" ) ).longValue() + agent.getTimeDifference();
+					if( timestamp > currentTimeMillis + 1000 )
 					{
-						latency = new LatencyFilter();
-						latencies.put( endpoint, latency );
+						log.warn( "Got Entry {}s in the future from {}, dropping.", ( timestamp - currentTimeMillis ) / 1000,
+								agent );
+						return;
 					}
-
-					long delta = latency.filter( ( ( Number )map.remove( "_CURRENT_TIME" ) ).longValue()
-							- System.currentTimeMillis() );
-
-					long timestamp = ( ( Number )map.remove( "_TIMESTAMP" ) ).longValue() - delta;
+					if( timestamp > currentTimeMillis )
+						timestamp = currentTimeMillis;
 
 					String trackId = ( String )map.remove( "_TRACK_ID" );
 

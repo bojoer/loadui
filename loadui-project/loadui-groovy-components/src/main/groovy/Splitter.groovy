@@ -1,197 +1,109 @@
-// 
+//
 // Copyright 2011 eviware software ab
-// 
+//
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
 // versions of the EUPL (the "Licence");
 // You may not use this work except in compliance with the Licence.
 // You may obtain a copy of the Licence at:
-// 
+//
 // http://ec.europa.eu/idabc/eupl5
-// 
+//
 // Unless required by applicable law or agreed to in writing, software distributed under the Licence is
 // distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
 // express or implied. See the Licence for the specific language governing permissions and limitations
 // under the Licence.
-// 
+//
 
 /**
  * Splits input to specified number of outputs
- * 
+ *
  * @help http://www.loadui.org/Flow-Control/splitter-component.html
  * @category flow
  * @nonBlocking true
  */
- 
- import java.util.concurrent.Executors
- import java.util.concurrent.TimeUnit
 
- import com.eviware.loadui.api.events.PropertyEvent
- import com.eviware.loadui.util.collections.ObservableList
- import com.eviware.loadui.util.layout.DelayedFormattedString
- import com.eviware.loadui.api.events.ActionEvent
+import com.eviware.loadui.util.layout.DelayedFormattedString
+import com.eviware.loadui.util.ReleasableUtils
 
- import com.eviware.loadui.api.terminal.InputTerminal
- import com.eviware.loadui.api.terminal.OutputTerminal
- import com.eviware.loadui.api.terminal.TerminalMessage
- 
- // one output minimum
- 
- createProperty('selected', String, "Round-Robin" )
- createProperty('outputs', Integer, 1 )
- createProperty('total', Integer, 0 )
- createProperty('counterUse', Boolean, true )
- createProperty('updateCounterDelay', Long, 500)
- 
- // locals
+total = counters['total_output']
+countDisplays = [:]
+resetValues = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+totalReset = 0
 
- total.value = 0
- 
- def roundRobinNext = 0
- ObservableList outputStats = new ObservableList()
- outputStats.add(0)
- for( i in 1..9 ) {
-    outputStats.add(-1)
+for( i in 0..outgoingTerminalList.size() - 1 ) {
+	countDisplays[i] = new DelayedFormattedString( '%d', 500, value { counters["output_$i"].get() - resetValues[i] } )
 }
- cnt = 0
- while( outputs.value > cnt ) {
- 	createOutgoing()
- 	outputStats.set( cnt, 0 )
-        cnt++
- }
 
- counters = getCounters()
-    
- display = new DelayedFormattedString( '%d', 500, value { total.value } )
- outputDisplay = new DelayedFormattedString( '%s', 500, value({ outputStats.findAll({ it >= 0 }).join('          ') }) )
-
- executor = Executors.newSingleThreadScheduledExecutor()
- future = null
-
- onMessage = { incoming, outgoing, message ->
-   try {
-    def next = 0;
-    switch( selected.value ) {
-        case "Round-Robin": 
-            next = roundRobinNext
-            if( next > getOutgoingTerminalList().size() )
-		next = 0;
-	    counters.get(next).increment()
-            outputStats.set(next, counters.get(next).get())
-            send ( getOutgoingTerminalList().get(next), message )
-            if( roundRobinNext + 1 == getOutgoingTerminalList().size() )
-                roundRobinNext = 0
-            else
-                roundRobinNext++
-            break
-        case "Random" :
-            random = new Random()
-            next = random.nextInt(getOutgoingTerminalList().size())
-	    counters.get(next).increment()
-            outputStats.set(next, counters.get(next).get())
-            send ( getOutgoingTerminalList().get(next), message )
-            break
-    }
-    total.value++
-  //  display.setArgs( total.value )
-   } catch ( Exception e ) {
- 	println e.printStackTrace   
-   }
-
-} 
- addEventListener( PropertyEvent ) { event ->
-    if( event.event == PropertyEvent.Event.VALUE ) {
-        switch( event.getProperty().getKey() ) {
-            case 'outputs': 
-                while ( outputs.value != getOutgoingTerminalList().size() ) {
-                    if ( outputs.value > getOutgoingTerminalList().size() ) {
-                        createOutgoing()
-                        outputStats.set(getOutgoingTerminalList().size() -1, 0)
-                    } else {
-                        outputStats.set(getOutgoingTerminalList().size() -1, -1)
-                        deleteOutgoing()
-			def sum = 0
-			for(cnt in outputStats) 
-         			sum += cnt == -1?0:cnt
-                        total.value = sum
-                      //  display.setArgs( total.value )
-                    }
-                }
-    		outputStats.update()
-                break;
-        }
-    }
- }
- 
- addEventListener( ActionEvent ) { event ->
-	if ( event.key == "STOP" ) {
-		
+createProperty( 'type', String, "Round-Robin" )
+createProperty( 'numOutputs', Integer, 1 ) { outputCount ->
+	while( outgoingTerminalList.size() < outputCount ) {
+		createOutgoing()
+		def i = outgoingTerminalList.size() - 1
+		countDisplays[i] = new DelayedFormattedString( '%d', 500, value { counters["output_$i"].get() - resetValues[i] } )
 	}
-	
-	if ( event.key == "START" ) {
-           if ( future == null || future?.isDone() || future?.isCancelled() )
-	    future = executor.scheduleWithFixedDelay( { outputStats.update()
-								 }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
-		
+	while( outgoingTerminalList.size() > outputCount ) {
+		def i = outgoingTerminalList.size() - 1
+		deleteOutgoing()
+		countDisplays.remove( i )?.release()
 	}
-	
-	if ( event.key == "RESET" ) {
-	    future?.cancel(true)
-	    executor?.shutdownNow()
-	    roundRobinNext = 0
+	refreshLayout()
+}
 
-	    total.value = 0
-	 //   display.setArgs( 0 )
-            for( i in 0..9 ) {
-	     if( outputStats.get(i) > -1 )
-	          outputStats.set(i as Integer,0)
-	    }
-	    outputStats.update()
-	    executor = Executors.newSingleThreadScheduledExecutor()
-	    future = executor.scheduleWithFixedDelay( { outputStats.update()
-							 }, updateCounterDelay.value, updateCounterDelay.value, TimeUnit.MILLISECONDS ) 
+random = new Random()
+lastOutput = -1
+
+totalDisplay = new DelayedFormattedString( '%d', 500, value { total.get() - totalReset } )
+compactDisplay = new DelayedFormattedString( '%s', 500, value {
+	(0..outgoingTerminalList.size() - 1).collect( { counters["output_$it"].get() - resetValues[it] } ).join( " " )
+} )
+
+onMessage = { incoming, outgoing, message ->
+	if( type.value == "Round-Robin" ) lastOutput = (lastOutput + 1) % numOutputs.value
+	else lastOutput = random.nextInt( numOutputs.value )
+	send( outgoingTerminalList[lastOutput], message )
+	counters["output_$lastOutput"].increment()
+	total.increment()
+}
+
+onAction( "RESET" ) {
+	lastOutput = -1
+	resetValues = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+	totalReset = 0
+}
+
+onRelease = { ReleasableUtils.releaseAll( totalDisplay, compactDisplay, countDisplay.values ) }
+
+refreshLayout = {
+	layout ( layout:'gap 10 5' ) {
+		node( widget: 'selectorWidget', label: "Type", labels: [ "Round-Robin", "Random" ], default: type.value, selected: type )
+		separator( vertical: true )
+		node( widget: 'sliderWidget', property: numOutputs, constraints: 'center, w 270!' )
+		separator( vertical: true )
+		box( layout: 'wrap, ins 0' ) {
+			box( widget: 'display',  constraints: 'w 100!' ) {
+				node( label: 'Count', fString: totalDisplay, constraints: 'wrap' )
+			}
+			action( label:'Clear', action: {
+				for( i in 0..9 ) resetValues[i] = counters["output_$i"].get()
+				totalReset = total.get()
+			}, constraints:'right' )
+		}
+		separator( vertical: false )
+		box( layout: 'ins 0, center', constraints: 'span 5, w 498!' ) {
+			def gap = (int)((249/numOutputs.value)-19)
+			for( i in 0..numOutputs.value - 1 ) {
+				if( i != 0 ) separator( vertical: true )
+				box( widget: 'display', layout: 'ins -5, center', constraints: "w 32!, h 24!, gap "+gap+" "+gap ) {
+					node( fString: countDisplays[i], constraints: 'pad -6 -4' )
+				}
+			}
+		}
 	}
 }
 
- onRelease = {
-   display.release()
-   outputDisplay.release()
-   future?.cancel(true)
-   executor.shutdownNow()
- }
-
- 
- settings( label: "Counter Settings", layout: 'wrap 2' ) {
-	box( layout:"wrap 1", constraints:"growx" ) {
-		property(property: counterUse, label: 'Enable Counters' )
-		property(property: updateCounterDelay, label: 'Time interval for refreshing counters(ms)' )
-	}
- }
- 
- layout ( layout:'gap 10 5' ) { 
-    node(widget: 'selectorWidget', label:"Type", labels:["Round-Robin", "Random"], default: "Round-Robin", selected: selected)
-    separator( vertical: true )
-    node( widget: 'sliderWidget', property: outputs, constraints:'center, w 270!' )
-    separator( vertical: true ) 
-    box( layout: 'wrap, ins 0' ) {
-	    box( widget:'display',  constraints:'w 100!' ) {
-			 node( label:'Count', fString:display, constraints:'wrap' )
-	    }
-	    action( label:'Clear', action: {  
-	       total.value = 0
-		   // display.setArgs( 0 )
-			 for( i in 0..9 ) {
-			     if( outputStats.get(i) > -1 ) outputStats.set(i as Integer,0)
-			 }
-			 outputStats.update()
-	    }, constraints:'right' )
-	}
-    separator( vertical: false )
-    node( widget: 'counterWidget', counters: outputStats , counts:counters,onOff: counterUse, constraints:'span 5,center')
-  }
- 
-compactLayout() {
+compactLayout {
 	box( widget: 'display', layout: 'wrap, fillx', constraints: 'growx' ) {
-		node( label: 'Count', fString: display )
-		node( label: 'Distribution', fString: outputDisplay )
+		node( label: 'Count', fString: totalDisplay )
+		node( label: 'Distribution', fString: compactDisplay )
 	}
 }
