@@ -136,8 +136,7 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 					AgentItemImpl.this.connected = true;
 					fireBaseEvent( READY );
 					fireBaseEvent( UTILIZATION );
-					fastestTimeCheck = Long.MAX_VALUE;
-					sendTimeCheck();
+					resetTimeDifference();
 				}
 				else if( map.containsKey( SET_UTILIZATION ) )
 				{
@@ -196,6 +195,13 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	public long getTimeDifference()
 	{
 		return timeDiff;
+	}
+
+	@Override
+	public void resetTimeDifference()
+	{
+		fastestTimeCheck = Long.MAX_VALUE;
+		sendTimeCheck();
 	}
 
 	@Override
