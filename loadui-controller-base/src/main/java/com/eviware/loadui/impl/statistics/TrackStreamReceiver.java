@@ -44,8 +44,6 @@ public class TrackStreamReceiver
 	private final AgentDataAggregator aggregator;
 	private final ExecutionManager executionManager;
 
-	private final Map<MessageEndpoint, LatencyFilter> latencies = new HashMap<MessageEndpoint, LatencyFilter>();
-
 	public TrackStreamReceiver( BroadcastMessageEndpoint endpoint, AgentDataAggregator aggregator,
 			ExecutionManager executionManager )
 	{
@@ -66,23 +64,14 @@ public class TrackStreamReceiver
 					Execution execution = TrackStreamReceiver.this.executionManager.getCurrentExecution();
 					int level = ( ( Number )map.remove( "_LEVEL" ) ).intValue();
 
-					/*
-					 * LatencyFilter latency = latencies.get( endpoint ); if( latency
-					 * == null ) { latency = new LatencyFilter(); latencies.put(
-					 * endpoint, latency ); }
-					 */
-
 					long currentTimeMillis = System.currentTimeMillis();
-					// long delta = latency.filter( ( ( Number )map.remove(
-					// "_CURRENT_TIME" ) ).longValue() - currentTimeMillis );
 
-					// long timestamp = ( ( Number )map.remove( "_TIMESTAMP" )
-					// ).longValue() - delta;
 					long timestamp = ( ( Number )map.remove( "_TIMESTAMP" ) ).longValue() + agent.getTimeDifference();
 					if( timestamp > currentTimeMillis + 1000 )
 					{
 						log.warn( "Got Entry {}s in the future from {}, dropping.", ( timestamp - currentTimeMillis ) / 1000,
 								agent );
+						agent.resetTimeDifference();
 						return;
 					}
 					if( timestamp > currentTimeMillis )
@@ -96,23 +85,5 @@ public class TrackStreamReceiver
 				}
 			}
 		} );
-	}
-
-	private class LatencyFilter
-	{
-		private static final int VALUE_COUNT = 25;
-
-		private final LinkedList<Long> values = new LinkedList<Long>();
-		private long total = 0;
-
-		public long filter( long delta )
-		{
-			values.add( delta );
-			total += delta;
-			if( values.size() > VALUE_COUNT )
-				total -= values.removeFirst();
-
-			return total / values.size();
-		}
 	}
 }

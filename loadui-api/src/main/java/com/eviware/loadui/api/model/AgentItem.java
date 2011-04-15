@@ -112,4 +112,9 @@ public interface AgentItem extends ModelItem, MessageEndpoint
 	 * @return
 	 */
 	public long getTimeDifference();
+
+	/**
+	 * Forces timer difference approximation to run.
+	 */
+	public void resetTimeDifference();
 }
