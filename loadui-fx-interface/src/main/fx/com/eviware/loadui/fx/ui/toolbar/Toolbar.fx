@@ -166,7 +166,7 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 		}
 	}
 	
-	var hidden = false;
+	public-read var hidden = false;
 	def itemGroups:Map = new HashMap();
 	var mainToolbar:Group;
 

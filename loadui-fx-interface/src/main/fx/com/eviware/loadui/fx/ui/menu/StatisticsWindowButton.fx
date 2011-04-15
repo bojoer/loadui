@@ -78,7 +78,7 @@ public class StatisticsWindowButton extends Group {
 					},
 					Separator{},					
 					MenuItem {
-						text: ##[EXIT]"Exit"
+						text: ##[EXIT]"Close"
 						action: function() {
 							StatisticsWindow.instance.close();
 						}

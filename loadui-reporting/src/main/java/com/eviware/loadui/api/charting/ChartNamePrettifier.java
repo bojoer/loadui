@@ -99,9 +99,11 @@ public class ChartNamePrettifier
 		if( metric.equalsIgnoreCase( "VALUE" ) )
 			return "";
 		if( metric.equalsIgnoreCase( "PERCENTILE_25TH" ) )
-			return "%25";
+			return "25%";
 		if( metric.equalsIgnoreCase( "PERCENTILE_75TH" ) )
-			return "%75";
+			return "75%";
+		if( metric.equalsIgnoreCase( "PERCENTILE_90TH" ) )
+			return "90%";
 		if( metric.equalsIgnoreCase( "STD_DEV" ) )
 			return "SDv";
 		if( metric.equalsIgnoreCase( "MEDIAN" ) )

@@ -32,6 +32,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.Parent;
 import com.sun.javafx.scene.layout.Region;
 
+import com.eviware.loadui.LoadUI;
+
 import com.eviware.loadui.fx.statistics.topmenu.StatisticsMenu;
 import com.eviware.loadui.fx.statistics.topmenu.ManageMenu;
 
@@ -168,19 +170,19 @@ public class StatisticsWindow {
 		styleClass: "statistics-chartpage-container"
 	}
 	
-	def stack:Stack = Stack {
-		layoutX: 135
-		layoutY: 145
-		width: bind Math.max( 550, scene.width - 150 );
-		height: bind scene.height - 180
-		content: [ layoutRegion ]
-		//background: Color.web("#323232")
-	};
-	
 	def toolbar: StatisticsToolbar = StatisticsToolbar {
 		layoutY: 140
 		height: bind scene.height - 140
 	}
+	
+	def stack:Stack = Stack {
+		layoutX: bind if(toolbar.hidden) 63 else 135
+		layoutY: 145
+		width: bind if(toolbar.hidden) Math.max( 550, scene.width - 78 ) else Math.max( 550, scene.width - 150 )
+		height: bind scene.height - 180
+		content: [ layoutRegion ]
+		//background: Color.web("#323232")
+	};
 	
 	var topMenu:StatisticsMenu;
 	
@@ -189,7 +191,7 @@ public class StatisticsWindow {
 			wc.listenForNewWindow();
 			if ( scene == null ) {
 				stage = Stage {
-					title: "Results"
+					title: "loadUI {LoadUI.VERSION} - Results Workbench"
 					icons: [
 						Image { url:"{__ROOT__}images/png/icon_32x32.png" },
 						Image { url:"{__ROOT__}images/png/icon_16x16.png" }
@@ -209,7 +211,7 @@ public class StatisticsWindow {
 				stage = Stage {
 					width: 1085
 					height: 720
-					title: "Results"
+					title: "loadUI {LoadUI.VERSION} - Results Workbench"
 					icons: [
 						Image { url:"{__ROOT__}images/png/icon_32x32.png" },
 						Image { url:"{__ROOT__}images/png/icon_16x16.png" }

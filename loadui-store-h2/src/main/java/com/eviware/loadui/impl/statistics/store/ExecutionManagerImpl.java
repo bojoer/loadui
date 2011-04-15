@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.statistics.store;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +38,7 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
@@ -72,7 +75,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 {
 	private static Logger log = LoggerFactory.getLogger( ExecutionManagerImpl.class );
 
+	private static ExecutionManagerImpl instance;
+	
 	private static final int INTERPOLATION_LEVEL_COUNT = 5;
+
+	private WorkspaceItem workspace = null;
 
 	/**
 	 * Postfix added to data table name when creating source table
@@ -155,6 +162,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		// Load the executions.
 		getExecutions();
+		
+		instance = this;
 	}
 
 	@Override
@@ -189,16 +198,31 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			throw new IllegalArgumentException( "Execution with the specified id already exist!" );
 		}
 
-		File executionDir = new File( getDBBaseDir(), FormattingUtils.formatFileName( fileName ) );
-		executionDir.mkdir();
-		String dbName = executionDir.getName();
-
-		// create sequence table
-		SequenceTable sequenceTable = new SequenceTable( dbName, connectionRegistry, metadata, tableRegistry );
-
-		// create track meta table
-		TrackMetadataTable trackMetaTable = new TrackMetadataTable( dbName, connectionRegistry, metadata, tableRegistry );
-
+		File executionDir = null;
+		SequenceTable sequenceTable = null;
+		TrackMetadataTable trackMetaTable = null;
+		String dbName;
+		try
+		{
+			executionDir = new File( getDBBaseDir(), FormattingUtils.formatFileName( fileName ) );
+			executionDir.mkdir();
+			dbName = executionDir.getName();
+	
+			// create sequence table
+			sequenceTable = new SequenceTable( dbName, connectionRegistry, metadata, tableRegistry );
+	
+			// create track meta table
+			trackMetaTable = new TrackMetadataTable( dbName, connectionRegistry, metadata, tableRegistry );
+		} catch( SQLException e )
+		{
+			log.debug( "    "+e.getMessage()  );
+			if( e.getMessage().contains( "not enough space" ) )
+				signalLowDiskspace();
+			else
+				signalDiskProblem();
+			return null;
+		} 
+		
 		// after all SQL operations are finished successfully, add created
 		// tables into registry
 		tableRegistry.put( dbName, sequenceTable );
@@ -241,6 +265,29 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			throw new IllegalArgumentException( "No track found for specified trackId!" );
 		}
 		return track;
+	}
+	
+	static void signalDiskProblem()
+	{
+		signalDiskProblem( "genericDiskProblem" );
+	}
+	
+	static void signalDiskProblem( String msg )
+	{
+		log.warn( "Stopping execution since loadUI was unable to record statistics to disk. Please make sure that there's enough free disk space." );
+		instance.stopExecution();
+		if( instance.workspace != null )
+		{
+			log.debug( "fff: " + msg );
+			instance.workspace.getProjects().iterator().next().triggerAction( CanvasItem.COMPLETE_ACTION );
+			instance.workspace.fireEvent( new BaseEvent( instance, msg ) );
+		}
+	}
+	
+	static void signalLowDiskspace()
+	{
+		log.warn( "Stopping execution due to critically low diskspace." );
+		signalDiskProblem( "lowDiskspace" );
 	}
 
 	private synchronized void createTrack( TrackDescriptor td )
@@ -743,7 +790,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private void updateWorkspace( WorkspaceProvider provider )
 	{
-		WorkspaceItem workspace = provider.getWorkspace();
+		workspace = provider.getWorkspace();
 		baseDirectory = new File( provider.getWorkspace().getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH )
 				.getStringValue() );
 		baseDirectoryURI = convertToURI( baseDirectory );

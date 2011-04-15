@@ -68,7 +68,7 @@ public abstract class TableBase implements Releasable
 	private DatabaseMetadata databaseMetadata;
 
 	public TableBase( String dbName, String name, Map<String, ? extends Class<? extends Object>> dynamicFields,
-			ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata, TableRegistry tableRegistry )
+			ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata, TableRegistry tableRegistry ) throws SQLException
 	{
 		descriptor = new TableDescriptor();
 		initializeDescriptor( descriptor );
@@ -80,8 +80,8 @@ public abstract class TableBase implements Releasable
 		this.tableRegistry = tableRegistry;
 		this.databaseMetadata = databaseMetadata;
 
-		try
-		{
+//		try
+//		{
 			this.connection = connectionRegistry.getConnection( this, useTableSpecificConnection() );
 
 			addPkIndexScript = createAddPkIndexScript();
@@ -96,11 +96,11 @@ public abstract class TableBase implements Releasable
 			sh = createTableSelectScript();
 			selectStatement = new PreparedStatementHolder( connection.prepareStatement( sh.getStatementSql() ), sh );
 			deleteStatement = connection.prepareStatement( "DELETE FROM " + tableName );
-		}
-		catch( SQLException e )
-		{
-			throw new RuntimeException( "Unable to initialize statements for table handling!", e );
-		}
+//		}
+//		catch( SQLException e )
+//		{
+//			throw new RuntimeException( "Unable to initialize statements for table handling!", e );
+//		}
 	}
 
 	protected boolean exist()

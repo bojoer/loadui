@@ -16,6 +16,8 @@
 package com.eviware.loadui.fx;
 
 import com.eviware.loadui.launcher.api.SplashController;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
@@ -45,9 +47,12 @@ import com.eviware.loadui.fx.wizards.GettingStartedWizard;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.widgets.TutorialList;
 
+import java.lang.Object;
 import java.lang.Thread;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.text.Text;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.image.Image;
@@ -223,13 +228,15 @@ public class MainWindow {
 			AppState.put( scene, appState, "MAIN" );
 			SplashController.closeSplash();
 			projectList.checkExistingProjects();
-		});
 		
 		if( workspace.getAttribute( GettingStartedWizard.SHOW_GETTING_STARTED, "true" ) == "true" )
 			GettingStartedWizard {
 				x: scene.width/3
 			    y: scene.height/4
 			}.show();
+		});
+			
+		workspace.addEventListener( BaseEvent.class, new ExecutionAlertListener() );
 	}
 	
 	/**
@@ -243,5 +250,47 @@ public class MainWindow {
 				projectRef.setEnabled( false );
 		workspace.save();
 		workspace.release();
+	}
+}
+
+class ExecutionAlertListener extends EventHandler {
+    var dialogIsOpen:AtomicBoolean = new AtomicBoolean( false );
+    
+    override function handleEvent( e ) { 
+		def event:BaseEvent = e as BaseEvent;
+		var msg:String = null;
+		def path:String = (workspace.getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH ).getValue() as File).getAbsolutePath();
+		def currentPathMsg:String = "The directory that loadUI is configured to use is:\n    {path}";
+		if( event.getKey().equals("lowDiskspace") )
+		{
+			msg = "The project had to be stopped since there was not enough disk space to record statistics.\n{currentPathMsg}"
+		} else if ( event.getKey().equals("genericDiskProblem") )
+		{
+			msg = "The project had to be stopped since loadUI was unable to record statistics to disk.\n{currentPathMsg}"
+		}
+		if( msg != null ) {
+			runInFxThread( function():Void {
+				
+				if( not dialogIsOpen.get() )
+				{
+					dialogIsOpen.set( true );
+					def dialogRef: Dialog = Dialog {
+						noCancel: true
+				        modal: true
+				        title: "Disc problem"
+				        showPostInit: true
+				        closable: true
+				        helpUrl: "http://loadui.org/Getting-results/managing-stored-results.html#2-change-settings"
+				        content: Text {
+				            content: msg
+				        }
+						onOk: function() {
+							dialogRef.close();
+							dialogIsOpen.set( false );
+						}
+					}
+				}
+			});
+		}
 	}
 }

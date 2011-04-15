@@ -194,12 +194,11 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 
 		long timestamp = -1;
 		double totalSum = 0;
-		double medianSum = 0;
 		long totalCount = 0;
-		double stddev_partA = 0;
 		double min = Double.MAX_VALUE;
 		double max = 0;
-
+		double median=0, percentile25=0, percentile75=0, percentile90=0, stddev=0;
+		
 		for( Entry e : entries )
 		{
 			long count = e.getValue( Stats.COUNT.name() ).longValue();
@@ -209,28 +208,27 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 
 			// median - not really median of all subpopulations, rather a weighted
 			// average of the subpopulations' medians (performance reasons).
-			medianSum += count * e.getValue( Stats.MEDIAN.name() ).doubleValue();
+			median += count * e.getValue( Stats.MEDIAN.name() ).doubleValue();
+			percentile25 += count * e.getValue( Stats.PERCENTILE_25TH.name() ).doubleValue();
+			percentile75 += count * e.getValue( Stats.PERCENTILE_75TH.name() ).doubleValue();
+			percentile90 += count * e.getValue( Stats.PERCENTILE_90TH.name() ).doubleValue();
+			stddev += count * e.getValue( Stats.STD_DEV.name() ).doubleValue();
 
 			// average
 			totalSum += count * average;
 			totalCount += count;
 
-			// stddev (population based), implements
-			// http://en.wikipedia.org/wiki/Standard_deviation#Combining_standard_deviations
-			stddev_partA += count
-					* ( Math.pow( e.getValue( Stats.STD_DEV.name() ).doubleValue(), 2 ) + Math.pow( average, 2 ) );
-
 			min = Math.min( min, e.getValue( Stats.MIN.name() ).doubleValue() );
 			max = Math.max( max, e.getValue( Stats.MAX.name() ).doubleValue() );
 		}
+		
+		median = median / totalCount;
+		percentile25 = percentile25 / totalCount;
+		percentile75 = percentile75 / totalCount;
+		percentile90 = percentile90 / totalCount;
+		stddev = stddev / totalCount;
+		
 		double totalAverage = totalSum / totalCount;
-		double stddev = Math.sqrt( stddev_partA / totalCount - Math.pow( totalAverage, 2 ) );
-		double percentile90 = totalAverage + stddev * 1.281552; // 90th percentile
-																					// = mean + z *
-		// stddev | z = 1.281552
-		double percentile75 = totalAverage + stddev * .6744897;
-		double percentile25 = totalAverage + stddev * -.8416212;
-		double median = medianSum / totalCount;
 
 		return at( timestamp ).put( Stats.AVERAGE.name(), totalAverage ).put( Stats.COUNT.name(), totalCount )
 				.put( Stats.STD_DEV.name(), stddev ).put( Stats.PERCENTILE_90TH.name(), percentile90 )
