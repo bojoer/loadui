@@ -62,7 +62,7 @@ import java.util.EventObject;
  * @author henrik.olsson
  */
 public class TabContainer extends HBox {
-	def DEFAULT_PAGE_NAME = "Untitled page";
+	def DEFAULT_PAGE_NAME = "Untitled tab";
 	def statisticPagesListener = new StatisticPagesListener();
 
 	public-read var currentPage:StatisticPage;

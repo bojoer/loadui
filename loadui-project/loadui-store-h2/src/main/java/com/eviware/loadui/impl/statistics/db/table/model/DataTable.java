@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics.db.table.model;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
@@ -33,7 +34,7 @@ public class DataTable extends TableBase
 	public static final String STATIC_FIELD_SOURCEID = "_SOURCE_ID";
 
 	public DataTable( String dbName, String name, Map<String, ? extends Class<? extends Object>> dynamicFields,
-			ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata, TableRegistry tableRegistry )
+			ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata, TableRegistry tableRegistry ) throws SQLException
 	{
 		super( dbName, name, dynamicFields, connectionRegistry, databaseMetadata, tableRegistry );
 	}

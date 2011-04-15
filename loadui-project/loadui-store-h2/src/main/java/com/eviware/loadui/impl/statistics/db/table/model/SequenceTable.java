@@ -40,7 +40,7 @@ public class SequenceTable extends TableBase
 	public static final String STATEMENT_UPDATE_VALUE = "updateValueStatement";
 
 	public SequenceTable( String dbName, ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata,
-			TableRegistry tableRegistry )
+			TableRegistry tableRegistry ) throws SQLException
 	{
 		super( dbName, SEQUENCE_TABLE_NAME, null, connectionRegistry, databaseMetadata, tableRegistry );
 

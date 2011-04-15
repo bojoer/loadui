@@ -205,7 +205,8 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
 					canvas.triggerAction( CanvasItem.START_ACTION );
 				}
 			} else {
-				canvas.triggerAction( CanvasItem.STOP_ACTION );
+				//canvas.triggerAction( CanvasItem.STOP_ACTION );
+				println("PAUSE is deprecated: ignored");
 			}
 		}
 	}

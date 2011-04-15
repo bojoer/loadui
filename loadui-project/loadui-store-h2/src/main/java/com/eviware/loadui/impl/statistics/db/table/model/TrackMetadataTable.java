@@ -39,7 +39,7 @@ public class TrackMetadataTable extends TableBase
 	public static final String STATEMENT_LIST_TRACK_NAMES = "listTrackNamesStatement";
 	
 	public TrackMetadataTable( String dbName, ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata,
-			TableRegistry tableRegistry )
+			TableRegistry tableRegistry ) throws SQLException
 	{
 		super( dbName, TABLE_NAME, null, connectionRegistry, databaseMetadata, tableRegistry );
 

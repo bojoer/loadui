@@ -34,7 +34,7 @@ public class SourceTable extends TableBase
 	private Map<String, Integer> inMemoryTable = new HashMap<String, Integer>();
 
 	public SourceTable( String dbName, String name, ConnectionRegistry connectionRegistry,
-			DatabaseMetadata databaseMetadata, TableRegistry tableRegistry )
+			DatabaseMetadata databaseMetadata, TableRegistry tableRegistry ) throws SQLException
 	{
 		super( dbName, name, null, connectionRegistry, databaseMetadata, tableRegistry );
 

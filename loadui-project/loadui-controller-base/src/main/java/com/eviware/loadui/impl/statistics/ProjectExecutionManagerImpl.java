@@ -22,7 +22,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.eviware.loadui.api.events.ActionEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventFirer;
@@ -43,6 +46,8 @@ import com.eviware.loadui.api.summary.Summary;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 {
+	private static Logger log = LoggerFactory.getLogger( ProjectExecutionManagerImpl.class );
+	
 	private final ExecutionManager executionManager;
 	private final WorkspaceProvider workspaceProvider;
 	private final ReportingManager reportingManager;
@@ -159,8 +164,10 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 		@Override
 		public void handleEvent( BaseEvent event )
 		{
-			if( event.getSource() instanceof CanvasItem )
+			if( event.getSource() instanceof CanvasItem && !Boolean.getBoolean( LoadUI.DISABLE_STATISTICS ) )
 			{
+//				log.debug( "GOT EVENT: "+ event.getKey() + " from " +event.getSource().getClass().getName() );
+				
 				ProjectItem runningProject = ( ( CanvasItem )event.getSource() ).getProject();
 				long timestamp = System.currentTimeMillis();
 				if( !hasCurrent && CanvasItem.START_ACTION.equals( event.getKey() ) )
@@ -177,6 +184,12 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 					String fileName = runningProject.getLabel() + "_" + dateFormatter2.format( now );
 					Execution newExecution = executionManager.startExecution( executionId, timestamp, label, fileName );
 
+					if( newExecution == null )
+					{
+						log.warn( "Could not create a new execution." );
+						return;
+					}
+					
 					runningProject.addEventListener( BaseEvent.class,
 							new SummaryAttacher( executionManager.getCurrentExecution() ) );
 
@@ -193,10 +206,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 					}
 				}
 				else if( CanvasItem.ON_COMPLETE_DONE.equals( event.getKey() ) )
-//				{
-//					System.out.print( "    ON_COMPLETE_DONE was fired!" );
-//				}
-//				else if( hasCurrent && CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
 				{
 					hasCurrent = false;
 					executionManager.stopExecution();
