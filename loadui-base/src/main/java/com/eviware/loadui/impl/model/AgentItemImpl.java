@@ -19,6 +19,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
@@ -39,6 +42,8 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	private final WorkspaceItem workspace;
 	private final MessageEndpointProvider provider;
 	private final BroadcastMessageEndpoint broadcastEndpoint;
+	private final ScheduledExecutorService executorService;
+	private ScheduledFuture<?> timeSynchronizerFuture;
 	private MessageEndpointSupport endpointSupport;
 	private boolean connected = false;
 	private int utilization = 0;
@@ -51,6 +56,7 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 		this.workspace = workspace;
 		broadcastEndpoint = BeanInjector.getBean( BroadcastMessageEndpoint.class );
 		provider = BeanInjector.getBean( MessageEndpointProvider.class );
+		executorService = BeanInjector.getBean( ScheduledExecutorService.class );
 		createProperty( MAX_THREADS_PROPERTY, Long.class, 1000 );
 		setupClient();
 
@@ -65,6 +71,8 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 				e.printStackTrace();
 			}
 		}
+
+		timeSynchronizerFuture = executorService.scheduleAtFixedRate( new TimeSynchronizer(), 5, 5, TimeUnit.MINUTES );
 	}
 
 	private void setupClient()
@@ -100,15 +108,18 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 				Map<String, Object> map = ( Map<String, Object> )data;
 				if( map.containsKey( TIME_CHECK ) )
 				{
+					log.debug( "Got message: {}", map );
 					long currentTime = System.currentTimeMillis();
 					long agentTime = Long.parseLong( ( String )map.get( TIME_CHECK ) );
 					long roundTripTime = currentTime - Long.parseLong( ( String )map.get( "startTimeCheck" ) );
 					if( roundTripTime < fastestTimeCheck )
 					{
+						fastestTimeCheck = roundTripTime;
 						timeDiff = currentTime - ( agentTime + roundTripTime / 2 );
-						log.debug( "Agent TimeDiff updated to {}", timeDiff );
-						log.debug( "RTT: {}, times: {}, {}, {}", new Object[] { roundTripTime, currentTime - roundTripTime,
-								agentTime, currentTime } );
+						log.debug( "{} TimeDiff updated to {}. RTT: {}, times: {}, {}, {}", new Object[] {
+								AgentItemImpl.this, timeDiff, roundTripTime, currentTime - roundTripTime, agentTime,
+								currentTime } );
+						sendTimeCheck();
 					}
 				}
 				if( map.containsKey( CONNECTED ) )
@@ -282,11 +293,29 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 		endpointSupport.removeConnectionListener( listener );
 	}
 
+	@Override
+	public void release()
+	{
+		super.release();
+
+		timeSynchronizerFuture.cancel( true );
+	}
+
 	private void sendTimeCheck()
 	{
 		Map<String, String> data = MapUtils.build( String.class, String.class ).put( TIME_CHECK, "" )
 				.put( "startTimeCheck", String.valueOf( System.currentTimeMillis() ) ).get();
 
 		sendMessage( AGENT_CHANNEL, data );
+	}
+
+	private class TimeSynchronizer implements Runnable
+	{
+		@Override
+		public void run()
+		{
+			if( isReady() )
+				resetTimeDifference();
+		}
 	}
 }

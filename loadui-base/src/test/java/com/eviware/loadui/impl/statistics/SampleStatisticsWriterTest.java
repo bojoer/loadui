@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.*;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -195,7 +196,7 @@ public class SampleStatisticsWriterTest
 	public void testStdDevAggregation()
 	{
 		Entry result = prepareAggregation();
-		assertEquals( 3.008322, result.getValue( Stats.STD_DEV.name() ).doubleValue(), 0.005 );
+		assertEquals( 2.5133, result.getValue( Stats.STD_DEV.name() ).doubleValue(), 0.005 );
 	}
 
 	@Test
@@ -230,6 +231,22 @@ public class SampleStatisticsWriterTest
 	{
 		// Based on these three sets of samples: {{10, 8, 6}, {7, 7, 9, 17}, {12,
 		// 10, 9}}
+		writer.update( 123, 10 );
+		writer.update( 223, 8 );
+		writer.update( 323, 6 );
+		Entry e1 = writer.output();
+
+		writer.update( 1123, 7 );
+		writer.update( 1223, 7 );
+		writer.update( 1323, 9 );
+		writer.update( 1423, 17 );
+		Entry e2 = writer.output();
+
+		writer.update( 2123, 12 );
+		writer.update( 2223, 10 );
+		writer.update( 2323, 9 );
+		Entry e3 = writer.output();
+
 		HashSet<Entry> entries = new HashSet<Entry>();
 		entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put( Stats.MEDIAN.name(), 8 )
 				.put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.632993162 ).put( Stats.MIN.name(), 6 )
@@ -241,7 +258,6 @@ public class SampleStatisticsWriterTest
 				.put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.247219129 ).put( Stats.MIN.name(), 9 )
 				.put( Stats.MAX.name(), 12 ).build() );
 
-		return writer.aggregate( entries, false );
+		return writer.aggregate( new HashSet<Entry>( Arrays.asList( e1, e2, e3 ) ), false );
 	}
-
 }
