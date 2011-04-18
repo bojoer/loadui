@@ -16,7 +16,6 @@
 package com.eviware.loadui.impl.model;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -28,12 +27,10 @@ import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.component.BehaviorProvider;
 import com.eviware.loadui.api.component.BehaviorProvider.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.component.ComponentRegistry;
@@ -487,7 +484,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	protected void doGenerateSummary()
 	{
 		log.debug( "Generating summary for: {}", CanvasItemImpl.this );
-		MutableSummary summary = new MutableSummaryImpl();
+		endTime = new Date();
+		MutableSummary summary = new MutableSummaryImpl( getStartTime(), getEndTime() );
 		generateSummary( summary );
 		CanvasItemImpl.this.summary = summary;
 		fireBaseEvent( SUMMARY );
@@ -539,6 +537,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 			this.completed = completed;
 			if( completed )
 			{
+				endTime = new Date();
 				fireBaseEvent( ON_COMPLETE_DONE );
 			}
 		}
@@ -578,6 +577,30 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		for( ComponentItem component : getComponents() )
 			if( component.isBusy() )
 				component.triggerAction( ComponentItem.CANCEL_ACTION );
+	}
+
+	@Override
+	public StatisticVariable getStatisticVariable( String statisticVariableName )
+	{
+		return statisticHolderSupport.getStatisticVariable( statisticVariableName );
+	}
+
+	@Override
+	public Set<String> getStatisticVariableNames()
+	{
+		return statisticHolderSupport.getStatisticVariableNames();
+	}
+
+	@Override
+	public boolean isAbortOnFinish()
+	{
+		return abortOnFinish.getValue();
+	}
+
+	@Override
+	public void setAbortOnFinish( boolean abort )
+	{
+		abortOnFinish.setValue( abort );
 	}
 
 	private class ComponentListener implements EventHandler<BaseEvent>
@@ -670,12 +693,6 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 						hasStarted = false;
 						if( isAbortOnFinish() )
 						{
-							// calculate end time
-							Calendar endTimeCal = Calendar.getInstance();
-							endTimeCal.setTime( startTime );
-							endTimeCal.add( Calendar.MILLISECOND, ( int )time );
-							endTime = endTimeCal.getTime();
-
 							// If on PROJECT: First cancel all project components, then
 							// call its onComplete method to finalize it. Method
 							// 'onComplete' in project will start waiter which will
@@ -759,7 +776,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		{
 			increment( 1 );
 		}
-		
+
 		@Override
 		public void increment( long value )
 		{
@@ -793,90 +810,46 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 		private final EventFirer source;
 
-		// Counts how many components are still busy.
-		private final AtomicInteger awaiting = new AtomicInteger();
-
-		// Used to calculate extra time to be added to test case or project
-		// duration. This extra time is the delay between the moment when
-		// COMPLETE_ACTION event was received and when the last component
-		// finished.
-		private long awaiterStartTime;
+		private int awaitingCount = 0;
 
 		public ComponentBusyAwaiter( EventFirer source )
 		{
 			this.source = source;
-			awaiterStartTime = System.currentTimeMillis();
 			addEventListener( BaseEvent.class, this );
 			fireBaseEvent( TRY_READY );
 		}
 
-		private void tryReady()
+		private synchronized void tryReady()
 		{
-			awaiting.set( 0 );
+			awaitingCount = 0;
 			for( ComponentItem component : getComponents() )
 			{
+				component.addEventListener( BaseEvent.class, this );
 				if( component.isBusy() )
-				{
-					component.addEventListener( BaseEvent.class, this );
-					awaiting.incrementAndGet();
-				}
+					awaitingCount++ ;
+				else
+					component.removeEventListener( BaseEvent.class, this );
 			}
-			if( awaiting.get() == 0 )
-			{
-				// Calculate the actual time when this test case or project have
-				// finished.
-				Calendar endTimeCal = Calendar.getInstance();
-				endTimeCal.setTime( startTime );
-				endTimeCal.add( Calendar.MILLISECOND, ( int )( time + System.currentTimeMillis() - awaiterStartTime ) );
-				endTime = endTimeCal.getTime();
-				// Finalize
+			if( awaitingCount == 0 )
 				onComplete( source );
-			}
 			else
-			{
-				log.debug( "Waiting for {} components to finish...", awaiting.get() );
-			}
+				log.debug( "Waiting for {} components to finish...", awaitingCount );
 		}
 
 		@Override
-		public void handleEvent( BaseEvent event )
+		public synchronized void handleEvent( BaseEvent event )
 		{
 			if( event.getKey().equals( TRY_READY ) )
 			{
-				removeEventListener( BaseEvent.class, this );
+				event.getSource().removeEventListener( BaseEvent.class, this );
 				tryReady();
 			}
 			else if( event.getKey().equals( ComponentItem.BUSY ) )
 			{
 				event.getSource().removeEventListener( BaseEvent.class, this );
-				if( awaiting.decrementAndGet() == 0 )
+				if( --awaitingCount == 0 )
 					tryReady();
 			}
 		}
 	}
-
-	@Override
-	public StatisticVariable getStatisticVariable( String statisticVariableName )
-	{
-		return statisticHolderSupport.getStatisticVariable( statisticVariableName );
-	}
-
-	@Override
-	public Set<String> getStatisticVariableNames()
-	{
-		return statisticHolderSupport.getStatisticVariableNames();
-	}
-
-	@Override
-	public boolean isAbortOnFinish()
-	{
-		return abortOnFinish.getValue();
-	}
-
-	@Override
-	public void setAbortOnFinish( boolean abort )
-	{
-		abortOnFinish.setValue( abort );
-	}
-
 }

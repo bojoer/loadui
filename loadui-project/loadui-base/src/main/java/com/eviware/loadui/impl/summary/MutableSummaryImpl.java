@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.summary;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,26 +25,45 @@ import com.eviware.loadui.api.summary.MutableSummary;
 
 public class MutableSummaryImpl implements MutableSummary
 {
+	private final LinkedHashMap<String, Chapter> chapters = new LinkedHashMap<String, Chapter>();
+	private final Date startTime;
+	private final Date endTime;
 
-	private LinkedHashMap<String, Chapter> chapters = new LinkedHashMap<String, Chapter>();
+	public MutableSummaryImpl( Date startTime, Date endTime )
+	{
+		this.startTime = startTime;
+		this.endTime = endTime;
+	}
 
 	@Override
 	public MutableChapter addChapter( String name )
 	{
 		MutableChapter chapter = new MutableChapterImpl( name );
-		chapters.put(name, chapter);
+		chapters.put( name, chapter );
 		return chapter;
 	}
 
 	@Override
 	public MutableChapter getChapter( String title )
 	{
-		return (MutableChapter)chapters.get(title);
+		return ( MutableChapter )chapters.get( title );
 	}
 
 	@Override
-	public Map<String, Chapter> getChapters() {
+	public Map<String, Chapter> getChapters()
+	{
 		return chapters;
 	}
 
+	@Override
+	public Date getStartTime()
+	{
+		return startTime;
+	}
+
+	@Override
+	public Date getEndTime()
+	{
+		return endTime;
+	}
 }

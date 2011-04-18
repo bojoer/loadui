@@ -39,6 +39,8 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 	private final Map<Object, Image> charts;
 	private StatisticPage page;
 	private Iterator<StatisticPage> iterator;
+	private final long startTime;
+	private final long endTime;
 
 	public ExecutionDataSource( String label, Execution execution, Collection<StatisticPage> pages,
 			Map<Object, Image> charts )
@@ -49,6 +51,9 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 		this.execution = execution;
 		this.pages = pages;
 		this.charts = charts;
+		startTime = Long.parseLong( execution.getAttribute( "startTime", String.valueOf( execution.getStartTime() ) ) );
+		endTime = Long.parseLong( execution.getAttribute( "endTime",
+				String.valueOf( execution.getStartTime() + execution.getLength() ) ) );
 		iterator = pages.iterator();
 	}
 
@@ -71,11 +76,11 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 		if( fieldName.equals( "pageName" ) )
 			return page.getTitle();
 		if( fieldName.equals( "startTime" ) )
-			return new Date( execution.getStartTime() ).toString();
+			return new Date( startTime ).toString();
 		if( fieldName.equals( "endTime" ) )
-			return new Date( execution.getStartTime() + execution.getLength() ).toString();
+			return new Date( endTime ).toString();
 		if( fieldName.equals( "duration" ) )
-			return FormattingUtils.formatTime( Math.round( execution.getLength() / 1000.0 ) );
+			return FormattingUtils.formatTime( Math.round( ( endTime - startTime ) / 1000.0 ) );
 		if( fieldName.equals( "totalRequests" ) )
 			return execution.getAttribute( "totalRequests", "" );
 		if( fieldName.equals( "totalFailures" ) )

@@ -86,7 +86,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 */
 	public String getTotalNumberOfRequests()
 	{
-		return String.valueOf( testcase.getCounter( CanvasItem.REQUEST_COUNTER ).get() );
+		return String.valueOf( testcase.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );
 	}
 
 	public String getTotalNumberOfFailedRequests()

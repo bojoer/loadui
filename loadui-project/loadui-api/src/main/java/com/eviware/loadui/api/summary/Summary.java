@@ -15,9 +15,14 @@
  */
 package com.eviware.loadui.api.summary;
 
+import java.util.Date;
 import java.util.Map;
 
 public interface Summary
 {
+	public Date getStartTime();
+
+	public Date getEndTime();
+
 	public Map<String, Chapter> getChapters();
 }
