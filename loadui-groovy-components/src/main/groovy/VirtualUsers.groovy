@@ -74,19 +74,12 @@ addEventListener( PropertyEvent ) { event ->
 	}
 }
 
-addEventListener( ActionEvent ) { event ->
-	if ( event.key == "STOP" ) {
-		future?.cancel()
-	}
-	
-	if ( event.key == "START" ) {
-		future?.cancel()
-		schedule()
-	}
-	
-	//RESET in this case would not really do anything
+onAction( "START" ) {
+	future?.cancel()
+	schedule()
 }
 
+onAction( "STOP" ) { future?.cancel() }
 
 //Layout
 layout  { 

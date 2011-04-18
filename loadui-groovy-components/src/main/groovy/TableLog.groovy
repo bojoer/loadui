@@ -38,11 +38,17 @@ import java.text.SimpleDateFormat
 
 import com.eviware.loadui.api.summary.MutableSection
 
-createProperty 'maxRows', Long, 1000
+createProperty( 'maxRows', Long, 1000 ) { value ->
+	myTableModel.maxRow = value
+}
 createProperty 'logFilePath', String
 createProperty 'saveFile', Boolean, false
-createProperty 'follow', Boolean, false
-createProperty 'enabledInDistMode', Boolean, false
+createProperty( 'follow', Boolean, false ) { value ->
+	if( myTableModel.follow != value as Boolean ) myTableModel.follow = value
+}
+createProperty( 'enabledInDistMode', Boolean, false ) { value ->
+	if( myTableModel.enabledInDistMode != value as Boolean ) myTableModel.enabledInDistMode = value
+}
 createProperty 'summaryRows', Long, 0
 createProperty 'appendSaveFile', Boolean, false
 createProperty 'formatTimestamps', Boolean, true
@@ -120,32 +126,16 @@ onRelease = {
 	fileDisplay.release()
 }
 
-addEventListener( PropertyEvent ) { event ->
-	if( event.event == PropertyEvent.Event.VALUE ) {
-		if( event.property.key == 'maxRows' ) {
-			myTableModel.maxRow = maxRows.value
-		}
-		else if( event.property.key == 'follow' && myTableModel.follow != follow.value as Boolean) {
-			myTableModel.follow = follow.value
-		}
-		else if( event.property.key == 'enabledInDistMode' && myTableModel.enabledInDistMode != enabledInDistMode.value as Boolean) {
-			myTableModel.enabledInDistMode = enabledInDistMode.value
-		}
-	}
+onAction( "START" ) { buildFileName() }
+
+onAction( "COMPLETE" ) {
+	writer?.close()
+	writer = null
 }
 
-addEventListener( ActionEvent ) { event ->
-	if ( event.key == "COMPLETE" ) {
-		writer?.close()
-		writer = null
-	}
-	else if ( event.key == "START" ) {
-		buildFileName()
-	}
-	else if ( event.key == "RESET" ) {
-		myTableModel.reset()
-		buildFileName()
-	}
+onAction( "RESET" ) {
+	myTableModel.reset()
+	buildFileName()
 }
 
 buildFileName = {
