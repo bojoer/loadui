@@ -168,20 +168,9 @@ addEventListener( PropertyEvent ) { event ->
 	}
 }
 
-addEventListener( ActionEvent ) { event ->
-	if ( event.key == "STOP" ) {
-		if ( future != null )
-			future?.cancel();
-	}
-	
-	if ( event.key == "START" ) {
-		schedule()
-	}
-	
-	if ( event.key == "RESET" ) {
-		reset()
-	}
-}
+onAction("START") { schedule() }
+onAction("STOP") { future?.cancel() }
+onAction("RESET") { reset() }
 
 //Layout
 layout  { 
