@@ -523,7 +523,15 @@ public class GroovyContextSupport implements ComponentContext
 		@Override
 		public Object getValue()
 		{
-			return closure.call();
+			try
+			{
+				return closure.call();
+			}
+			catch( Exception e )
+			{
+				log.error( "Error in value Closure:", e );
+				return null;
+			}
 		}
 	}
 
