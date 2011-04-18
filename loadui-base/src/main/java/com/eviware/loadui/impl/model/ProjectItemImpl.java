@@ -17,14 +17,10 @@ package com.eviware.loadui.impl.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -57,10 +53,8 @@ import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.SceneCommunication;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.Assignment;
-import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.model.SceneItem;
@@ -479,7 +473,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void broadcastMessage( SceneItem scene, String channel, Object data )
 	{
-//		log.debug( "BROADCASTING: " + scene + " " + channel + " " + data );
+		// log.debug( "BROADCASTING: " + scene + " " + channel + " " + data );
 		sceneEndpoints.get( scene ).sendMessage( channel, data );
 	}
 
@@ -496,40 +490,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
-	protected void doGenerateSummary()
-	{
-		// Calculate project start and end time before calling summary generation.
-		// For start time it takes the smallest time of all test cases and
-		// the project itself and for end time it takes the greatest one.
-		Calendar prjStartTime = Calendar.getInstance();
-		prjStartTime.setTime( startTime );
-		Calendar prjEndTime = Calendar.getInstance();
-		prjEndTime.setTime( endTime );
-		Calendar sceneStartTime = Calendar.getInstance();
-		Calendar sceneEndTime = Calendar.getInstance();
-		for( SceneItem scene : getScenes() )
-		{
-			if( scene.isFollowProject() )
-			{
-				sceneStartTime.setTime( ( ( SceneItemImpl )scene ).getStartTime() );
-				if( prjStartTime.after( sceneStartTime ) )
-				{
-					prjStartTime.setTime( sceneStartTime.getTime() );
-				}
-
-				sceneEndTime.setTime( ( ( SceneItemImpl )scene ).getEndTime() );
-				if( prjEndTime.before( sceneEndTime ) )
-				{
-					prjEndTime.setTime( sceneEndTime.getTime() );
-				}
-			}
-		}
-		startTime = prjStartTime.getTime();
-		endTime = prjEndTime.getTime();
-		super.doGenerateSummary();
-	}
-
-	@Override
 	protected void reset()
 	{
 		super.reset();
@@ -540,11 +500,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	{
 		// add a project chapter first
 		MutableChapterImpl projectChapter = ( MutableChapterImpl )summary.addChapter( getLabel() );
+
 		// add and generate test case chapters
-		for( SceneItem it : scenes )
-		{
-			it.generateSummary( summary );
-		}
+		for( SceneItem scene : scenes )
+			scene.generateSummary( summary );
+
 		// fill project chapter
 		projectChapter.addSection( new ProjectDataSummarySection( this ) );
 		projectChapter.addSection( new ProjectExecutionDataSection( this ) );
@@ -554,9 +514,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		projectChapter.setDescription( getDescription() );
 
 		for( ComponentItem component : getComponents() )
-		{
 			component.generateSummary( projectChapter );
-		}
 	}
 
 	@Override
@@ -858,62 +816,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				SceneItem scene = ( SceneItem )addressableRegistry.lookup( ( String )map.remove( AgentItem.SCENE_ID ) );
 				if( scene instanceof SceneItemImpl )
 				{
-					// this is because when test case is deployed to more than one
-					// agent, data from the agents is received in different threads
-					// and could occur at the same time, and the same scene object
-					// instance is used in both threads. so this is basically to
-					// prevent concurrent modification of scene object.
 					synchronized( scene )
 					{
-						try
-						{
-							// Get the start and end time received from the agent and
-							// set them to local scene object. The smallest of all
-							// agent start times is used for startTime and the
-							// greatest of all end times for endTime
-							SimpleDateFormat sdf = ( SimpleDateFormat )SimpleDateFormat.getDateTimeInstance();
-							sdf.setLenient( false );
-							sdf.applyPattern( "yyyyMMddHHmmssSSS" );
-
-							Date receivedStartTime = sdf.parse( ( String )map.get( AgentItem.SCENE_START_TIME ) );
-							Date receivedEndTime = sdf.parse( ( String )map.get( AgentItem.SCENE_END_TIME ) );
-
-							// when data from first agent arrives, set received start
-							// and end times to local scene object. for next coming
-							// agents compare times to one initially set and update it
-							// if necessary.
-							if( ( ( SceneItemImpl )scene ).getRemoteStatisticsCount() == 0 )
-							{
-								( ( SceneItemImpl )scene ).startTime = receivedStartTime;
-								( ( SceneItemImpl )scene ).endTime = receivedEndTime;
-							}
-							else
-							{
-								Calendar sceneCalendar = Calendar.getInstance();
-								Calendar receivedCalendar = Calendar.getInstance();
-
-								sceneCalendar.setTime( ( ( SceneItemImpl )scene ).startTime );
-								receivedCalendar.setTime( receivedStartTime );
-								if( sceneCalendar.after( receivedCalendar ) )
-								{
-									( ( SceneItemImpl )scene ).startTime = receivedCalendar.getTime();
-								}
-
-								sceneCalendar.setTime( ( ( SceneItemImpl )scene ).endTime );
-								receivedCalendar.setTime( receivedEndTime );
-								if( sceneCalendar.before( receivedCalendar ) )
-								{
-									( ( SceneItemImpl )scene ).endTime = receivedCalendar.getTime();
-								}
-							}
-						}
-						catch( ParseException e )
-						{
-							// this shouldn't occur since we are sending date from
-							// agent always in same format
-							log.info( "Unable to parse date received from the agent.", e );
-						}
-
 						( ( SceneItemImpl )scene ).handleStatisticsData( ( AgentItem )endpoint, map );
 					}
 				}
@@ -1036,7 +940,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		{
 			if( event.getKey().equals( ON_COMPLETE_DONE ) )
 			{
-				( ( ModelItem )event.getSource() ).removeEventListener( BaseEvent.class, this );
+				event.getSource().removeEventListener( BaseEvent.class, this );
 				tryComplete();
 			}
 		}

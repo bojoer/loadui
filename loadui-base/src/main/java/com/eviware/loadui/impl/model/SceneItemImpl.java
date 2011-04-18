@@ -16,7 +16,6 @@
 package com.eviware.loadui.impl.model;
 
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -202,7 +201,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		{
 			component.delete();
 		}
-		
+
 		for( Terminal terminal : getTerminals() )
 			for( Connection connection : terminal.getConnections().toArray(
 					new Connection[terminal.getConnections().size()] ) )
@@ -316,26 +315,13 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( AgentItem.SCENE_ID, getId() );
 
-			// send scene start and and time
-			SimpleDateFormat sdf = ( SimpleDateFormat )SimpleDateFormat.getDateTimeInstance();
-			sdf.setLenient( false );
-			sdf.applyPattern( "yyyyMMddHHmmssSSS" );
-			data.put( AgentItem.SCENE_START_TIME, sdf.format( startTime ) );
-			data.put( AgentItem.SCENE_END_TIME, sdf.format( endTime ) );
-
 			for( ComponentItem component : getComponents() )
 				data.put( component.getId(), component.getBehavior().collectStatisticsData() );
 			messageEndpoint.sendMessage( AgentItem.AGENT_CHANNEL, data );
 			log.debug( "Sending statistics data from {}", this );
-
-			// this is a hack, since sometimes time variable is not reset when
-			// running multiple tests on agent one after another. So the result
-			// time is actually the execution time is accumulated time from
-			// previous tests.
-			setTime( 0 );
 		}
-		else if( project.getWorkspace().isLocalMode() || (!project.getWorkspace().isLocalMode()
-				&& getActiveAgents().size() == 0) )
+		else if( project.getWorkspace().isLocalMode()
+				|| ( !project.getWorkspace().isLocalMode() && getActiveAgents().size() == 0 ) )
 		{
 			// on controller, in local mode or in distributed mode with no active
 			// agents
@@ -385,7 +371,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		}
 	}
 
-	public boolean statisticsReady()
+	public boolean isStatisticsReady()
 	{
 		for( AgentItem agent : getActiveAgents() )
 			if( !remoteStatistics.containsKey( agent ) )
@@ -402,7 +388,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	{
 		remoteStatistics.put( source, data );
 		log.debug( "{} got statistics data from {}", this, source );
-		if( !statisticsReady() )
+		if( !isStatisticsReady() )
 			return;
 
 		for( ComponentItem component : getComponents() )

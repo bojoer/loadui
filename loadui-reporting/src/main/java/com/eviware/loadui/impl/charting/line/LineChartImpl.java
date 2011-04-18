@@ -420,6 +420,12 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 		eventSupport.fireEvent( event );
 	}
 
+	@Override
+	public void awaitDraw()
+	{
+		AbstractLineSegmentModel.awaitQueuedReads();
+	}
+
 	private class ChartViewListener implements WeakEventHandler<EventObject>
 	{
 		@Override

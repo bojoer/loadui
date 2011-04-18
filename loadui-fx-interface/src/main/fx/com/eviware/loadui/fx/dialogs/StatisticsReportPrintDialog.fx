@@ -71,23 +71,19 @@ public class StatisticsReportPrintDialog {
 			for( checkBox in checkBoxes[x|x.selected] ) pages.add( checkBox.page );
 			dialog.close();
 			var map:Map;
-			try {
-				AppState.byName("STATISTICS").setBlockedText("Preparing Charts...");
-				AppState.byName("STATISTICS").block();
-				map = LineChartUtils.createImages( pages, StatisticsWindow.execution, StatisticsWindow.comparedExecution );
-			} finally {
-				AppState.byName("STATISTICS").unblock();
-			}
 			
 			AppState.byName("STATISTICS").blockingTask( function():Void {
-				if( not prependSummaryCb.disabled and prependSummaryCb.selected ){
-					reportingManager.createReport( StatisticsWindow.getInstance().project.getLabel(), StatisticsWindow.execution, pages, map, StatisticsWindow.execution.getSummaryReport() );
-				}
-				else{
-					reportingManager.createReport( StatisticsWindow.getInstance().project.getLabel(), StatisticsWindow.execution, pages, map );
-				}
+				map = LineChartUtils.createImages( pages, StatisticsWindow.execution, StatisticsWindow.comparedExecution );
 			}, function( task ):Void {
-			}, "Generating Printable Report..." );
+				AppState.byName("STATISTICS").blockingTask( function():Void {
+					if( not prependSummaryCb.disabled and prependSummaryCb.selected ){
+						reportingManager.createReport( StatisticsWindow.getInstance().project.getLabel(), StatisticsWindow.execution, pages, map, StatisticsWindow.execution.getSummaryReport() );
+					} else {
+						reportingManager.createReport( StatisticsWindow.getInstance().project.getLabel(), StatisticsWindow.execution, pages, map );
+					}
+				}, function( task ):Void {
+				}, "Generating Printable Report..." );
+			}, "Preparing Charts..." );
 		}
 		onCancel: function() {
 			dialog.close();

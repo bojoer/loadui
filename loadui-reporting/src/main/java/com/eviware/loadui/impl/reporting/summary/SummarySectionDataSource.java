@@ -43,7 +43,7 @@ public class SummarySectionDataSource extends JRAbstractBeanDataSource
 	public Object getFieldValue( JRField field ) throws JRException
 	{
 		if( field.getName().equals( "time" ) )
-			return section.getValues().get( "time" );
+			return section.getValues().get( "duration" );
 		if( field.getName().equals( "requests" ) )
 			return section.getValues().get( "requests" );
 		if( field.getName().equals( "afailures" ) )

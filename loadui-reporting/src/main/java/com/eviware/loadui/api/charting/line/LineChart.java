@@ -134,6 +134,12 @@ public interface LineChart extends EventFirer
 	public LineSegmentModel getLineSegmentModel( LineSegment segment );
 
 	/**
+	 * Since chart data is fetched asynchronously in a background thread, this
+	 * allows us to ensure that the LineChart has finished drawing.
+	 */
+	public void awaitDraw();
+
+	/**
 	 * Factory for creating LineCharts.
 	 * 
 	 * @author dain.nilsson

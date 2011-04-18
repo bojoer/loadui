@@ -115,6 +115,7 @@ public class LineChartUtils
 		}
 
 		chart.refresh( false );
+		chart.awaitDraw();
 		chart.update();
 
 		Image image = ChartUtils.createImage( chart );

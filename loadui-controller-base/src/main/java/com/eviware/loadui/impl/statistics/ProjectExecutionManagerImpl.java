@@ -47,12 +47,12 @@ import com.eviware.loadui.api.summary.Summary;
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 {
 	private static Logger log = LoggerFactory.getLogger( ProjectExecutionManagerImpl.class );
-	
+
 	private final ExecutionManager executionManager;
 	private final WorkspaceProvider workspaceProvider;
 	private final ReportingManager reportingManager;
 	private final HashMap<String, HashSet<Execution>> projectIdToExecutions = new HashMap<String, HashSet<Execution>>();
-	private final HashMap<ProjectItem, SummaryListener> summaryListeners = new HashMap<ProjectItem, ProjectExecutionManagerImpl.SummaryListener>();
+	private final HashMap<ProjectItem, SummaryListener> summaryListeners = new HashMap<ProjectItem, SummaryListener>();
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningListener runningListener = new RunningListener();
 
@@ -160,14 +160,15 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 	private class RunningListener implements EventHandler<BaseEvent>
 	{
 		private boolean hasCurrent = false;
-		
+
 		@Override
 		public void handleEvent( BaseEvent event )
 		{
 			if( event.getSource() instanceof CanvasItem && !Boolean.getBoolean( LoadUI.DISABLE_STATISTICS ) )
 			{
-//				log.debug( "GOT EVENT: "+ event.getKey() + " from " +event.getSource().getClass().getName() );
-				
+				// log.debug( "GOT EVENT: "+ event.getKey() + " from "
+				// +event.getSource().getClass().getName() );
+
 				ProjectItem runningProject = ( ( CanvasItem )event.getSource() ).getProject();
 				long timestamp = System.currentTimeMillis();
 				if( !hasCurrent && CanvasItem.START_ACTION.equals( event.getKey() ) )
@@ -189,7 +190,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 						log.warn( "Could not create a new execution." );
 						return;
 					}
-					
+
 					runningProject.addEventListener( BaseEvent.class,
 							new SummaryAttacher( executionManager.getCurrentExecution() ) );
 
@@ -271,6 +272,9 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				execution.setAttribute( "totalFailures", String.valueOf( totalFailures ) );
 
 				Summary summary = project.getSummary();
+				execution.setAttribute( "startTime", String.valueOf( summary.getStartTime().getTime() ) );
+				execution.setAttribute( "endTime", String.valueOf( summary.getEndTime().getTime() ) );
+
 				reportingManager.createReport( summary, execution.getSummaryReport(), "JASPER_PRINT" );
 				project.fireEvent( new BaseEvent( project, ProjectItem.SUMMARY_EXPORTED ) );
 			}
@@ -299,17 +303,22 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 			{
 				if( project.isSaveReport() && !sources.contains( event.getSource() ) )
 				{
+					Summary summary = null;
+					String label = null;
 					if( event.getSource() instanceof ProjectItem )
 					{
-						SummaryExportUtils.saveSummary( ( MutableSummary )project.getSummary(), project.getReportFolder(),
-								project.getReportFormat(), project.getLabel() );
+						summary = project.getSummary();
+						label = project.getLabel();
 					}
 					else
 					{
 						SceneItem scene = ( SceneItem )event.getSource();
-						SummaryExportUtils.saveSummary( ( MutableSummary )scene.getSummary(), project.getReportFolder(),
-								project.getReportFormat(), project.getLabel() + "-" + scene.getLabel() );
+						summary = scene.getSummary();
+						label = project.getLabel() + "-" + scene.getLabel();
 					}
+					SummaryExportUtils.saveSummary( ( MutableSummary )summary, project.getReportFolder(),
+							project.getReportFormat(), label );
+
 					project.fireEvent( new BaseEvent( project, ProjectItem.SUMMARY_EXPORTED ) );
 				}
 				sources.add( event.getSource() );
