@@ -15,8 +15,6 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import org.slf4j.Logger;
