@@ -49,7 +49,7 @@ public class ChartGroupLineChartView extends AbstractLineChartView
 	@Override
 	public String toString()
 	{
-		return chartGroup.getTitle();
+		return chartGroup.getLabel();
 	}
 
 	@Override

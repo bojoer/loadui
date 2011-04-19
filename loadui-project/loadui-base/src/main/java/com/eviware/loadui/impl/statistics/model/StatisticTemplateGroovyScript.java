@@ -26,7 +26,6 @@ import groovy.lang.Script;
 
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
-import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.StatisticTemplate;
 
@@ -79,7 +78,7 @@ public class StatisticTemplateGroovyScript implements StatisticTemplate, Releasa
 		}
 		catch( Exception e )
 		{
-			log.error( "TemplateScript for ChartGroup " + chartGroup.getTitle() + " threw an exception:", e );
+			log.error( "TemplateScript for ChartGroup " + chartGroup.getLabel() + " threw an exception:", e );
 		}
 	}
 

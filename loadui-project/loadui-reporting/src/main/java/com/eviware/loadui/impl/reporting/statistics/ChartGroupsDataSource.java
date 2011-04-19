@@ -54,7 +54,7 @@ public class ChartGroupsDataSource extends JRAbstractBeanDataSource
 		String fieldName = field.getName();
 
 		if( fieldName.equals( "groupName" ) )
-			return chartGroup.getTitle();
+			return chartGroup.getLabel();
 		if( fieldName.equals( "group" ) )
 			return new ChartGroupDataSource( chartGroup, charts );
 		return null;

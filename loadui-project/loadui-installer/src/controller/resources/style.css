@@ -836,7 +836,7 @@
 	-fx-text-fill: #797979;
 }
 
-.chart-group-chart-view-holder *.title {
+.chart-group-chart-view-holder *.menu-button, .chart-group-chart-view-holder *.menu-button-showing {
 	-fx-text-fill: #bababa;
 	-fx-font-weight: bold;
 }
