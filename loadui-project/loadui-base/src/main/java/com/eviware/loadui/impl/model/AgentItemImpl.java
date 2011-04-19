@@ -108,7 +108,6 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 				Map<String, Object> map = ( Map<String, Object> )data;
 				if( map.containsKey( TIME_CHECK ) )
 				{
-					log.debug( "Got message: {}", map );
 					long currentTime = System.currentTimeMillis();
 					long agentTime = Long.parseLong( ( String )map.get( TIME_CHECK ) );
 					long roundTripTime = currentTime - Long.parseLong( ( String )map.get( "startTimeCheck" ) );
