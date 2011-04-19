@@ -314,8 +314,8 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		def clones = new HashMap();
 		for( object in objects ) clones.put( object, target.duplicate( object ) );
 		for( connection in canvasItem.getConnections() ) {
-			def inputComponent = connection.getInputTerminal().getTerminalHolder() as ComponentItem;
-			def outputComponent = connection.getOutputTerminal().getTerminalHolder() as ComponentItem;
+			def inputComponent = connection.getInputTerminal().getTerminalHolder() as CanvasObjectItem;
+			def outputComponent = connection.getOutputTerminal().getTerminalHolder() as CanvasObjectItem;
 			if( Sequences.indexOf( objects, inputComponent ) >= 0 and Sequences.indexOf( objects, outputComponent ) >= 0 ) {
 				def outputTerminal = (clones.get( outputComponent ) as CanvasObjectItem).getTerminalByLabel( connection.getOutputTerminal().getLabel() ) as OutputTerminal;
 				def inputTerminal = (clones.get( inputComponent ) as CanvasObjectItem).getTerminalByLabel( connection.getInputTerminal().getLabel() ) as InputTerminal;
@@ -510,7 +510,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		insert ConnectionNode { id: getConnectionId( connection ), canvas:this, connection:connection } into connectionLayer.content;
 	}
 	
-	function removeConnection( connection:Connection ):Void {
+	protected function removeConnection( connection:Connection ):Void {
 		log.debug( "Removing Connection \{\}", connection );
 		def node = connectionLayer.lookup( getConnectionId( connection ) ) as ConnectionNode;
 		node.deselect();

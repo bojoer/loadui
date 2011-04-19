@@ -415,9 +415,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		chap.setDescription( getDescription() );
 
 		for( ComponentItem component : getComponents() )
-		{
 			component.generateSummary( chap );
-		}
 	}
 
 	@Override

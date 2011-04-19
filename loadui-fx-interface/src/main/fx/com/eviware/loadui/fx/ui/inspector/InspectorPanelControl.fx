@@ -377,7 +377,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 	 */
 	override function collapse() {
 		if( not expanded ) return;
-		log.debug("Collapsing panel");
 		
 		expandAnim.stop();
 		collapseAnim.playFromStart();
@@ -410,7 +409,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 	 */
 	override function expand() {
 		if( expanded ) return;
-		log.debug("Expanding panel");
 		
 		collapseAnim.stop();
 		expandAnim.playFromStart();

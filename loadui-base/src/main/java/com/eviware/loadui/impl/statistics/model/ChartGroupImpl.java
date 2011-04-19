@@ -112,18 +112,18 @@ public class ChartGroupImpl implements ChartGroup
 	}
 
 	@Override
-	public String getTitle()
+	public String getLabel()
 	{
 		return config.isSetTitle() ? config.getTitle() : "";
 	}
 
 	@Override
-	public void setTitle( String title )
+	public void setLabel( String title )
 	{
-		if( !getTitle().equals( title ) )
+		if( !getLabel().equals( title ) )
 		{
 			config.setTitle( title );
-			fireEvent( new BaseEvent( this, TITLE ) );
+			fireEvent( new BaseEvent( this, LABEL ) );
 		}
 	}
 

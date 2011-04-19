@@ -34,10 +34,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 
+import com.javafx.preview.control.MenuButton;
+import com.javafx.preview.control.MenuItem;
 import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.dialogs.RenameModelItemDialog;
+import com.eviware.loadui.fx.dialogs.DeleteDeletablesDialog;
 
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
@@ -92,7 +96,25 @@ public class ChartGroupChartViewHolder extends ChartViewHolder {
 	}
 	
 	init {
-		insert Label { styleClass: "title", text: bind chartGroup.getTitle().toUpperCase() } after vbox.content[0];
+		var menuButton:MenuButton;
+		insert menuButton = MenuButton {
+			styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
+			style: "-fx-text-fill: #bababa;"
+			text: bind label.toUpperCase()
+			items: [
+				MenuItem {
+					text: "Rename"
+					action: function():Void {
+						RenameModelItemDialog { scene: scene, labeled: chartGroup }
+					}
+				}, MenuItem {
+					text: "Delete"
+					action: function():Void {
+						DeleteDeletablesDialog { hostScene: scene, deletables: chartGroupHolder }
+					}
+				}
+			]
+		} after vbox.content[0];
 	}
 	
 	override function rebuildChartButtons() {

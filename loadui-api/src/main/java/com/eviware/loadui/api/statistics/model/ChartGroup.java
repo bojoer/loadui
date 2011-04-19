@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.eviware.loadui.api.model.AttributeHolder;
+import com.eviware.loadui.api.model.Labeled;
 import com.eviware.loadui.api.model.OrderedCollection;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
@@ -30,28 +31,13 @@ import com.eviware.loadui.api.statistics.model.chart.ChartView;
  * 
  * @author dain.nilsson
  */
-public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>, Releasable
+public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>, Releasable, Labeled.Mutable
 {
-	// BaseEvent key fired when the title of the ChartGroup changes.
-	public static final String TITLE = ChartGroup.class.getName() + "@title";
-
 	// BaseEvent key fired when the type of the ChartGroup changes.
 	public static final String TYPE = ChartGroup.class.getName() + "@type";
 
 	// BaseEvent key fired when the template script of the ChartGroup changes.
 	public static final String TEMPLATE_SCRIPT = ChartGroup.class.getName() + "@templateScript";
-
-	/**
-	 * Gets the title of the ChartGroup.
-	 * 
-	 * @return
-	 */
-	public String getTitle();
-
-	/**
-	 * Sets the title of the ChartGroup.
-	 */
-	public void setTitle( String title );
 
 	/**
 	 * Gets the type of the ChartGroup.

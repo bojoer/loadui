@@ -51,7 +51,9 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 		TestCaseDataTableModel model = new TestCaseDataTableModel();
 		for( SceneItem testcase : project.getScenes() )
 		{
-			model.add( model.new TestCaseDataModel( ( SceneItemImpl )testcase ) );
+			SceneItemImpl sceneItemImpl = ( SceneItemImpl )testcase;
+			if( sceneItemImpl.getStartTime() != null && sceneItemImpl.getEndTime() != null )
+				model.add( model.new TestCaseDataModel( sceneItemImpl ) );
 		}
 		return model;
 	}

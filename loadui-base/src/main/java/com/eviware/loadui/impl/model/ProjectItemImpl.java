@@ -501,9 +501,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		// add a project chapter first
 		MutableChapterImpl projectChapter = ( MutableChapterImpl )summary.addChapter( getLabel() );
 
-		// add and generate test case chapters
+		// add and generate TestCase chapters if the TestCase has run at least
+		// once.
 		for( SceneItem scene : scenes )
-			scene.generateSummary( summary );
+			if( ( ( SceneItemImpl )scene ).getEndTime() != null && ( ( SceneItemImpl )scene ).getStartTime() != null )
+				scene.generateSummary( summary );
 
 		// fill project chapter
 		projectChapter.addSection( new ProjectDataSummarySection( this ) );
@@ -954,7 +956,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			{
 				synchronized( scene )
 				{
-					if( scene.isFollowProject() && !scene.isCompleted() )
+					if( ( ( SceneItemImpl )scene ).getStartTime() != null && !scene.isCompleted() )
 					{
 						// add this as a listener to a test case
 						scene.addEventListener( BaseEvent.class, this );
@@ -966,9 +968,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			if( a.get() == 0 )
 			{
 				if( awaitingSummaryTimeout != null )
-				{
 					awaitingSummaryTimeout.cancel( true );
-				}
+
 				setCompleted( true );
 				doGenerateSummary();
 			}
@@ -1006,7 +1007,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 						{
 							synchronized( scene )
 							{
-								if( scene.isFollowProject() && !scene.isCompleted() )
+								if( !scene.isCompleted() )
 								{
 									( ( SceneItemImpl )scene ).setCompleted( true );
 								}

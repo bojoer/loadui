@@ -58,10 +58,14 @@ public class ProjectCanvas extends Canvas {
 			throw new RuntimeException( "ProjectCanvas can only take a ProjectItem!" ) ;
 		
 		if (canvasItem != null) {
-			for(testcase in projectItem.getScenes()){
+			for(testcase in projectItem.getScenes()) {
 				addTestCase( testcase );
 			}
-			refreshTerminals();
+			
+			for( connection in projectItem.getConnections() ) {
+				removeConnection( connection );
+				addConnection( connection );
+			}
 		}
 	}
 	

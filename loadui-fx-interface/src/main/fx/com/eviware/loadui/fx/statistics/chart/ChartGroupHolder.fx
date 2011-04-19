@@ -35,7 +35,6 @@ import javafx.scene.image.ImageView;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.util.Sequences;
-import javafx.scene.control.Separator;
 
 import com.sun.javafx.scene.layout.Region;
 
@@ -118,7 +117,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 	
 	public-init var chartGroup:ChartGroup on replace oldChartGroup {
 		chartGroup.addEventListener( BaseEvent.class, listener );
-		title = chartGroup.getTitle();
+		title = chartGroup.getLabel();
 		itemCount = chartGroup.getChildCount();
 		refreshGraphic();
 		chartViewHolder = ChartGroupChartViewHolder {
@@ -309,9 +308,9 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 class ChartGroupListener extends EventHandler {
 	override function handleEvent( e:EventObject ):Void {
 		def event = e as BaseEvent;
-		if( ChartGroup.TITLE == event.getKey() ) {
+		if( ChartGroup.LABEL == event.getKey() ) {
 			FxUtils.runInFxThread( function():Void {
-				title = chartGroup.getTitle();
+				title = chartGroup.getLabel();
 			} );
 		} else if( ChartGroup.TYPE == event.getKey() ) {
 			FxUtils.runInFxThread( function():Void {
