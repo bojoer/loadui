@@ -103,11 +103,11 @@ onAction( "STOP" ) { future?.cancel( true ) }
 layout  { 
 	property( property:load, label:'Load', min:0 ) 
 	separator( vertical:true )
-	property( property:interval, label:'Interval\n(ms)', min:0 ) 
+	property( property:interval, label:'Min. Delay', min:0 ) 
 	separator( vertical:true )
 	box( widget:'display' ) {
 		node( label:'Load', fString:loadDisplay, constraints:"w 60!" )
-		node( label:'Interval', fString:intervalDisplay, constraints:"w 60!" )
+		node( label:'Min. Delay', fString:intervalDisplay, constraints:"w 60!" )
 	}
 }
 
@@ -115,7 +115,7 @@ layout  {
 compactLayout  {
 	box( widget:'display' ) {
 		node( label:'Load', fString:loadDisplay )
-		node( label:'Interval', fString:intervalDisplay )
+		node( label:'Min. Delay', fString:intervalDisplay )
 	}
 }
 
