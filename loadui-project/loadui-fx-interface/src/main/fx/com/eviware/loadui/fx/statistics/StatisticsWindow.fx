@@ -72,7 +72,6 @@ public var currentExecution:Execution on replace oldExecution {
 }
 var lastExecution:Execution;
 public var execution:Execution on replace {
-	println("!!!!!EXECUTION : {execution}");
 	if( execution == comparedExecution )
 		comparedExecution = null;
 }

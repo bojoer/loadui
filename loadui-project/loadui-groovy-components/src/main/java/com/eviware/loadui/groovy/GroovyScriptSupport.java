@@ -93,7 +93,7 @@ public class GroovyScriptSupport implements Releasable
 		invokeClosure( true, "onReplace" );
 		context.reset();
 		shell.resetLoadedClasses();
-		loadDependencies( scriptText );
+		loadDependencies( scriptText, Boolean.getBoolean( "loadui.grape.disable" ) );
 
 		try
 		{
@@ -145,7 +145,7 @@ public class GroovyScriptSupport implements Releasable
 		context.clearEventListeners();
 	}
 
-	private void loadDependencies( final String scriptContent )
+	private void loadDependencies( final String scriptContent, boolean manual )
 	{
 		Matcher m2Matcher = m2Pattern.matcher( scriptContent );
 		Matcher depMatcher = depPattern.matcher( scriptContent );
@@ -166,7 +166,7 @@ public class GroovyScriptSupport implements Releasable
 				GroovyClassLoader classLoader = ( parts.length >= 4 && "global".equals( parts[3] ) ) ? globalClassLoader
 						: shell.getClassLoader();
 
-				if( Boolean.getBoolean( "loadui.grape.disable" ) )
+				if( manual )
 				{
 					File depFile = new File( System.getProperty( "groovy.root" ), "grapes" + File.separator + parts[0]
 							+ File.separator + parts[1] + File.separator + "jars" + File.separator + parts[1] + "-" + parts[2]
@@ -195,8 +195,7 @@ public class GroovyScriptSupport implements Releasable
 					catch( Exception e )
 					{
 						log.error( "Failed loading dependencies using Grape, fallback to manual jar loading.", e );
-						System.setProperty( "loadui.grape.disable", "true" );
-						loadDependencies( scriptContent );
+						loadDependencies( scriptContent, true );
 						return;
 					}
 				}

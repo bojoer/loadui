@@ -40,6 +40,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	protected static final String PROJECT_OPTION = "p";
 	protected static final String WORKSPACE_OPTION = "w";
 	protected static final String REPORT_DIR_OPTION = "r";
+	protected static final String RETAIN_SAVED_ZOOM_LEVELS = "z";
 	protected static final String REPORT_FORMAT_OPTION = "F";
 	protected static final String STATISTICS_REPORT_OPTION = "S";
 	protected static final String STATISTICS_REPORT_INCLUDE_SUMMARY_OPTION = "s";
@@ -74,7 +75,8 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 		options.addOption( PROJECT_OPTION, "project", true, "Sets the Project file to run" );
 		options.addOption( TESTCASE_OPTION, "testcase", true,
 				"Sets which TestCase to run (leave blank to run the entire Project)" );
-		options.addOption( LIMITS_OPTION, "limits", true, "Sets the limits for the execution (e.g. -L 60:0:200 )" );
+		options.addOption( LIMITS_OPTION, "limits", true,
+				"Sets the limits (<SECONDS>:<REQUESTS>:<FAILURES>) for the execution (e.g. -L 60:0:200 )" );
 		options.addOption( OptionBuilder
 				.withLongOpt( "agents" )
 				.withDescription(
@@ -92,13 +94,16 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 						.withDescription(
 								"Sets which Statistics pages to add to the generated report (leave blank save all pages)" )
 						.hasOptionalArgs().create( STATISTICS_REPORT_OPTION ) );
-		options.addOption( STATISTICS_REPORT_INCLUDE_SUMMARY_OPTION, "summary", false, "Set to include summary report in statistics report" );
+		options.addOption( STATISTICS_REPORT_INCLUDE_SUMMARY_OPTION, "summary", false,
+				"Set to include summary report in statistics report" );
 		options
 				.addOption(
 						ABORT_ONGOING_REQUESTS_OPTION,
 						"abort",
 						true,
 						"Overrides \"Abort ongoing requests on finish\" project property. If set to true ongoing requests will be canceled, if false test will finish when all ongoing requests complete. If not set, property value from project will be used to determine what to do with ongoing requests." );
+
+		options.addOption( RETAIN_SAVED_ZOOM_LEVELS, false, "Use the saved zoom levels for charts from the project." );
 
 		return options;
 	}
@@ -150,7 +155,9 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 			attributes.put( "abort", cmd.getOptionValue( ABORT_ONGOING_REQUESTS_OPTION ) );
 
 			attributes.put( "includeSummary", cmd.hasOption( STATISTICS_REPORT_INCLUDE_SUMMARY_OPTION ) );
-			
+
+			attributes.put( "retainZoom", cmd.hasOption( RETAIN_SAVED_ZOOM_LEVELS ) );
+
 			command = new ResourceGroovyCommand( "/RunTest.groovy", attributes );
 		}
 		else if( cmd.hasOption( FILE_OPTION ) )
