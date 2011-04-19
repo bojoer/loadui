@@ -60,7 +60,7 @@ onReplace( stateProperty ) { value ->
 doDelay = stateProperty.value && interval.value > 0
 
 loadDisplay = new DelayedFormattedString( '%d', 200, 0 )
-intervalDisplay = new DelayedFormattedString( '%d/ms', 200, interval.value )
+intervalDisplay = new DelayedFormattedString( '%d ms', 200, interval.value )
 
 onRelease = {
 	executor.shutdownNow()
