@@ -153,7 +153,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 
 		if( interval != null && interval > 0 )
 		{
-			log.info( "Scheduling a garbage collection, for " + interval + " seconds." );
+			log.debug( "Scheduling a garbage collection, for " + interval + " seconds." );
 			gcTask = executor.scheduleWithFixedDelay( new Runnable()
 			{
 				@Override
@@ -162,7 +162,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 					long old = Runtime.getRuntime().freeMemory();
 					System.gc();
 					long free = Runtime.getRuntime().freeMemory();
-					log.info( "Ran Garbage Collection, Free Memory changed from " + old + " to " + free
+					log.debug( "Ran Garbage Collection, Free Memory changed from " + old + " to " + free
 							+ ", total memory = " + Runtime.getRuntime().totalMemory() );
 				}
 			}, interval, interval, TimeUnit.SECONDS );
