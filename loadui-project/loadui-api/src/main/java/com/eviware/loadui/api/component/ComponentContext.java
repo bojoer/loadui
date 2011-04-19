@@ -154,7 +154,7 @@ public interface ComponentContext extends Labeled.Mutable, MutableTerminalHolder
 	public DualTerminal getRemoteTerminal();
 
 	/**
-	 * Gets a special OutputTerminal which and can be used to send messages to
+	 * Gets a special OutputTerminal which can be used to send messages to
 	 * remote instances of the ComponentItem itself. Regardless of if a
 	 * TerminalMessage is sent to this Terminal from a Component on a Agent or on
 	 * the Controller, the Component instance on the Controller will receive the
