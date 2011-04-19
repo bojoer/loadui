@@ -288,13 +288,23 @@ while( summaryExported < ( project.saveReport ? 2 : 1 ) ) {
 //Save Statistics report
 if( statisticPages != null && project.reportFolder ) {
 	def pages = statisticPages.empty ? project.statisticPages.children : project.statisticPages.children.findAll { statisticPages.contains( it.title ) }
+	if( !retainZoom ) {
+		for( page in pages ) {
+			for( chartGroup in page.children ) {
+				for( chartView in [ chartGroup.chartView, chartGroup.chartViewsForCharts, chartGroup.chartViewsForSources ].flatten() ) {
+					chartView.setAttribute( "zoomLevel", "ALL" )
+				}
+			}
+		}
+	} else {
+		log.info "Retaining Project zoom levels for charts"
+	}
 	def execution = BeanInjector.getBean( ExecutionManager.class ).currentExecution
 	def map = LineChartUtils.createImages( pages, execution, null );
 	def file = new File( project.reportFolder, FormattingUtils.formatFileName( "${project.label}-statistics-${execution.label}.${project.reportFormat.toLowerCase()}}" ) )
-	if(includeSummary){
+	if( includeSummary ) {
 		BeanInjector.getBean( ReportingManager.class ).createReport( project.label, execution, pages, map, file, project.reportFormat, execution.summaryReport )
-	}
-	else{
+	} else {
 		BeanInjector.getBean( ReportingManager.class ).createReport( project.label, execution, pages, map, file, project.reportFormat )
 	}
 }
