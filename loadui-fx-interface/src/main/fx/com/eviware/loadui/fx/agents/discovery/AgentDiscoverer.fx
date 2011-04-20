@@ -29,9 +29,9 @@ public-read var instance: AgentDiscoverer;
 
 public class AgentDiscoverer {
 
-	var AgentDiscovery: AgentDiscovery;
-	public function setAgentDiscovery(AgentDiscovery: AgentDiscovery):Void { 
-		this.AgentDiscovery = AgentDiscovery; 
+	var agentDiscovery: AgentDiscovery;
+	public function setAgentDiscovery(agentDiscovery: AgentDiscovery):Void { 
+		this.agentDiscovery = agentDiscovery;
 	}
 
 	function initialize(): Void {
@@ -44,7 +44,7 @@ public class AgentDiscoverer {
 	
 	public function getNewAgents(): AgentReference[] {
 		var result: AgentReference[] = [];
-		if(AgentDiscovery != null){
+		if(agentDiscovery != null){
 			var ids = new HashSet();
 			var urls = new HashSet();
 			var workspace: WorkspaceItem = MainWindow.instance.workspace;
@@ -55,7 +55,7 @@ public class AgentDiscoverer {
 				}
 			}
 	
-			var discovered: Collection = AgentDiscovery.getDiscoveredAgents();
+			var discovered: Collection = agentDiscovery.getDiscoveredAgents();
 			for(d in discovered){
 				def id = (d as AgentReference).getId();
 				def url = (d as AgentReference).getUrl();
