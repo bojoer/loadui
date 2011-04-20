@@ -23,7 +23,7 @@ public interface SchedulerCategory extends OnOffCategory
 	/**
 	 * The String identifier of the category.
 	 */
-	public static final String CATEGORY = "Scheduler";
+	public static final String CATEGORY = "Schedulers";
 
 	/**
 	 * The color of the category.

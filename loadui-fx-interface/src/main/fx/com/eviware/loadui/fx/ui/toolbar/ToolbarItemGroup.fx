@@ -163,7 +163,7 @@ public class ToolbarItemGroup extends CustomNode {
 			}, frame, btn = Button {
 				styleClass: "expander-button"
 				graphic: Polygon {
-					fill: bind if(btn.hover) Color.web("#222222") else Color.web("#4b4b4b")
+					fill: bind if(btn.hover) Color.web("#222222") else Color.web("#8b8b8b")
 					points: [
 						0, 0,
 						4, 4,

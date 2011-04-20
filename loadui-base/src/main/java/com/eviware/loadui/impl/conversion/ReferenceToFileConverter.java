@@ -76,6 +76,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 				{
 				}
 			}
+			log.debug( "target is: {}", target );
 		}
 
 		return target;
