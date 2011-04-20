@@ -78,7 +78,7 @@ public class ExecutionGraphic extends Stack {
 		]
 	}
 	
-	def circles = for( color in [ Color.web("#f20017"), Color.web("#c10010"), Color.web("#910009"), Color.web("#600004"), Color.web("#300001") ] ) Circle { fill: color, radius: 2 }
+	def circles = for( color in [ Color.web("#f20017"), Color.web("#c10010"), Color.web("#910009"), Color.web("#600004"), Color.web("#300001") ] ) Circle { fill: color, radius: 1.5 }
 	
 	init {
 		children = [
