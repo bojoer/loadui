@@ -41,6 +41,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
+import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.geometry.HPos;
 import javafx.util.Math;
@@ -176,7 +177,6 @@ public class RunController extends BaseNode, Resizable, TimerController {
 		}
 	}
 	
-	public-read var stopButton:Button;
 	var resetButton:Button;
 	var limitButton:Button;
 	var cancelling = false;
@@ -230,86 +230,23 @@ public class RunController extends BaseNode, Resizable, TimerController {
 					canvas.triggerAction( CanvasItem.START_ACTION );
 				}
 			} else {
-				//canvas.triggerAction( CanvasItem.STOP_ACTION );
-				println("PAUSE is deprecated: ignored");
+				canvas.triggerAction( CanvasItem.STOP_ACTION );
+				stopped = true;
+				canvas.triggerAction( CanvasItem.COMPLETE_ACTION );
+				//println("PAUSE is deprecated: ignored");
 			}
 		}
 	}
 	
 	init {
 		items = [
-			Group {
-				content: [
-					HBox {
-						spacing: 4
-						content: [
-							playButton = ToggleButton {
-							    tooltip:Tooltip {
-							    	text:"Play/Pause"
-							    }
-								styleClass: "run-controller-button"
-								layoutInfo: LayoutInfo { height: 20 }
-								selected: false
-								graphic: Group {
-									content: [
-										PlayShape {
-											width: 8
-											height: 10
-											fill: bind if(playButton.armed or playButton.selected) activeShapeFill else inactiveShapeFill
-										}, Rectangle {
-											layoutX: 15
-											width: 3
-											height: 10
-											fill: bind if(playButton.armed or playButton.selected) activeShapeFill else inactiveShapeFill
-										}, Rectangle {
-											layoutX: 22
-											width: 3
-											height: 10
-											fill: bind if(playButton.armed or playButton.selected) activeShapeFill else inactiveShapeFill
-										}
-									]
-								}
-							}, stopButton = Button {
-							    tooltip:Tooltip {
-							    	text:"Stop"
-							    }
-								styleClass: "run-controller-button"
-								layoutInfo: LayoutInfo { height: 20, width: 20 }
-								graphic: Rectangle {
-									width: 10
-									height: 10
-									fill: bind if(stopButton.armed) activeShapeFill else inactiveShapeFill
-								}
-								action: function() {
-								    if( not canvas.isStarted() )
-								    {
-								    	canvas.triggerAction( CounterHolder.COUNTER_RESET_ACTION );
-								    }
-									playButton.selected = false;
-									stopped = true;
-									canvas.triggerAction( CanvasItem.COMPLETE_ACTION );
-									
-								}
-								
-							}
-						]
-					}, if (not testcase) {
-						Kitt {
-							layoutY: 25
-							width: 65
-							height: 5
-							state: bind state
-						}
-					} else {
-						Rectangle {
-						    layoutY: 25
-						    width: 65
-						    height: 5
-						    fill: Color.TRANSPARENT
-						} 
-						
-					}
-				]
+			playButton = ToggleButton {
+				layoutInfo: LayoutInfo { height: 33, width: 33, margin: Insets { top: -2, bottom: 2 } }
+				styleClass: "execution-button"
+				selected: false
+				graphic: ExecutionGraphic { layoutInfo: LayoutInfo { height: 33, width: 33 }, running: bind (playButton.armed or playButton.selected) }
+				tooltip:Tooltip { text:"Play/Stop" }
+			}, 
 			/*}, Group {
 				content: [
 					Rectangle {
@@ -328,7 +265,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 						text: bind "{FormattingUtils.formatTime(time)}        {%-20d requestCount} {failureCount}"
 					}
 				]*/
-			}, if (testcase) linkButton else null, 
+			if (testcase) linkButton else null, 
 			Limiter {
 			    small: small
 				text: "Time"
