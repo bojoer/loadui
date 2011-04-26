@@ -44,6 +44,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	protected static final String REPORT_FORMAT_OPTION = "F";
 	protected static final String STATISTICS_REPORT_OPTION = "S";
 	protected static final String STATISTICS_REPORT_INCLUDE_SUMMARY_OPTION = "s";
+	protected static final String STATISTICS_REPORT_COMPARE_OPTION = "c";
 	protected static final String ABORT_ONGOING_REQUESTS_OPTION = "A";
 
 	public static void main( String[] args )
@@ -96,6 +97,8 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 						.hasOptionalArgs().create( STATISTICS_REPORT_OPTION ) );
 		options.addOption( STATISTICS_REPORT_INCLUDE_SUMMARY_OPTION, "summary", false,
 				"Set to include summary report in statistics report" );
+		options.addOption( STATISTICS_REPORT_COMPARE_OPTION, "compare", true,
+				"Specify a saved execution to use as a base for comparison in the generated statistics report" );
 		options
 				.addOption(
 						ABORT_ONGOING_REQUESTS_OPTION,
@@ -151,6 +154,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 				statisticPages = optionValues == null ? Collections.<String> emptyList() : Arrays.asList( optionValues );
 			}
 			attributes.put( "statisticPages", statisticPages );
+			attributes.put( "compare", cmd.getOptionValue( STATISTICS_REPORT_COMPARE_OPTION ) );
 
 			attributes.put( "abort", cmd.getOptionValue( ABORT_ONGOING_REQUESTS_OPTION ) );
 

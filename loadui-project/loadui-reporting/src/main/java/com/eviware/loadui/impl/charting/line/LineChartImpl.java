@@ -17,6 +17,7 @@
 package com.eviware.loadui.impl.charting.line;
 
 import java.beans.PropertyChangeEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -215,66 +216,124 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 
 		if( comparedExecution != execution )
 		{
-			if( comparedExecution == null )
+			final Execution cExecution = execution;
+
+			try
 			{
-				for( LineSegmentChartModel lineModel : lines.values() )
+				SwingUtilities.invokeAndWait( new Runnable()
 				{
-					ComparedLineSegmentChartModel comparedModel = new ComparedLineSegmentChartModel( lineModel );
-					comparedModel.setExecution( execution );
-					comparedLines.put( lineModel, comparedModel );
-					addModel( comparedModel, comparedModel.getChartStyle() );
-				}
+					@Override
+					public void run()
+					{
+						if( comparedExecution == null )
+						{
+							for( LineSegmentChartModel lineModel : lines.values() )
+							{
+								ComparedLineSegmentChartModel comparedModel = new ComparedLineSegmentChartModel( lineModel );
+								comparedModel.setExecution( cExecution );
+								comparedLines.put( lineModel, comparedModel );
+								addModel( comparedModel, comparedModel.getChartStyle() );
+							}
+						}
+						else if( cExecution == null )
+						{
+							for( LineSegmentModel lineModel : new ArrayList<LineSegmentChartModel>( comparedLines.keySet() ) )
+							{
+								ComparedLineSegmentChartModel comparedModel = comparedLines.remove( lineModel );
+								removeModel( comparedModel );
+								ReleasableUtils.release( comparedModel );
+							}
+						}
+						else
+						{
+							for( ComparedLineSegmentChartModel comparedModel : comparedLines.values() )
+								comparedModel.setExecution( cExecution );
+						}
+						comparedExecution = cExecution;
+					}
+				} );
 			}
-			else if( execution == null )
+			catch( InterruptedException e )
 			{
-				for( LineSegmentModel lineModel : new ArrayList<LineSegmentChartModel>( comparedLines.keySet() ) )
-				{
-					ComparedLineSegmentChartModel comparedModel = comparedLines.remove( lineModel );
-					removeModel( comparedModel );
-					ReleasableUtils.release( comparedModel );
-				}
+				log.error( "Error setting compared Execution", e );
 			}
-			else
+			catch( InvocationTargetException e )
 			{
-				for( ComparedLineSegmentChartModel comparedModel : comparedLines.values() )
-					comparedModel.setExecution( execution );
+				log.error( "Error setting compared Execution", e );
 			}
-			comparedExecution = execution;
 		}
 	}
 
-	private void addedSegment( LineSegment segment )
+	private void addedSegment( final LineSegment segment )
 	{
 		if( !lines.containsKey( segment ) )
 		{
-			LineSegmentChartModel lineModel = new LineSegmentChartModel( chartView, segment );
-			lines.put( segment, lineModel );
-			if( mainExecution != null )
-				lineModel.setExecution( mainExecution );
-			lineModel.setXRange( position - PADDING, position + timeSpan + PADDING );
-			addModel( lineModel, lineModel.getChartStyle() );
-			if( comparedExecution != null )
+			try
 			{
-				ComparedLineSegmentChartModel comparedModel = new ComparedLineSegmentChartModel( lineModel );
-				comparedModel.setExecution( comparedExecution );
-				comparedLines.put( lineModel, comparedModel );
-				addModel( comparedModel, comparedModel.getChartStyle() );
+				SwingUtilities.invokeAndWait( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						LineSegmentChartModel lineModel = new LineSegmentChartModel( chartView, segment );
+						lines.put( segment, lineModel );
+						if( mainExecution != null )
+							lineModel.setExecution( mainExecution );
+						lineModel.setXRange( position - PADDING, position + timeSpan + PADDING );
+						addModel( lineModel, lineModel.getChartStyle() );
+						if( comparedExecution != null )
+						{
+							ComparedLineSegmentChartModel comparedModel = new ComparedLineSegmentChartModel( lineModel );
+							comparedModel.setExecution( comparedExecution );
+							comparedLines.put( lineModel, comparedModel );
+							addModel( comparedModel, comparedModel.getChartStyle() );
+						}
+						fireEvent( new CollectionEvent( LineChartImpl.this, LINE_SEGMENT_MODELS, CollectionEvent.Event.ADDED,
+								lineModel ) );
+					}
+				} );
 			}
-			fireEvent( new CollectionEvent( this, LINE_SEGMENT_MODELS, CollectionEvent.Event.ADDED, lineModel ) );
+			catch( InterruptedException e )
+			{
+				log.error( "Error adding LineSegment", e );
+			}
+			catch( InvocationTargetException e )
+			{
+				log.error( "Error adding LineSegment", e );
+			}
 		}
 	}
 
 	private void removedSegment( LineSegment segment )
 	{
-		LineSegmentChartModel model = lines.remove( segment );
+		final LineSegmentChartModel model = lines.remove( segment );
 		if( model != null )
 		{
-			removeModel( model );
-			ComparedLineSegmentChartModel comparedModel = comparedLines.remove( model );
-			if( comparedModel != null )
-				removeModel( comparedModel );
-			ReleasableUtils.releaseAll( model, comparedModel );
-			fireEvent( new CollectionEvent( this, LINE_SEGMENT_MODELS, CollectionEvent.Event.REMOVED, model ) );
+			try
+			{
+				SwingUtilities.invokeAndWait( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						removeModel( model );
+						ComparedLineSegmentChartModel comparedModel = comparedLines.remove( model );
+						if( comparedModel != null )
+							removeModel( comparedModel );
+						ReleasableUtils.releaseAll( model, comparedModel );
+						fireEvent( new CollectionEvent( LineChartImpl.this, LINE_SEGMENT_MODELS,
+								CollectionEvent.Event.REMOVED, model ) );
+					}
+				} );
+			}
+			catch( InterruptedException e )
+			{
+				log.error( "Error removing LineSegment", e );
+			}
+			catch( InvocationTargetException e )
+			{
+				log.error( "Error removing LineSegment", e );
+			}
 		}
 	}
 
