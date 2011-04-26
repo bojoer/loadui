@@ -42,6 +42,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
+import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.geometry.HPos;
 import javafx.util.Math;
@@ -205,68 +206,23 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
 					canvas.triggerAction( CanvasItem.START_ACTION );
 				}
 			} else {
-				//canvas.triggerAction( CanvasItem.STOP_ACTION );
-				println("PAUSE is deprecated: ignored");
+				canvas.triggerAction( CanvasItem.STOP_ACTION );
+				stopped = true;
+				canvas.triggerAction( CanvasItem.COMPLETE_ACTION );
 			}
 		}
 	}
 	
     init {
         itemsInactive = [
-			Group {
-				content: [
-					HBox {
-						spacing: 4
-						content: [
-							playButton = ToggleButton {
-							    tooltip:Tooltip {
-							        text:"Play/Pause"
-							    }
-								styleClass: "run-controller-button"
-								layoutInfo: LayoutInfo { height: 12 }
-								selected:true
-								graphic: Group {
-									content: [
-										PlayShape {
-											width: 8
-											height: 6
-											fill: bind if(playButton.armed or playButton.selected) activeShapeFill else inactiveShapeFill
-										}, Rectangle {
-											layoutX: 15
-											width: 3
-											height: 6
-											fill: bind if(playButton.armed or playButton.selected) activeShapeFill else inactiveShapeFill
-										}, Rectangle {
-											layoutX: 22
-											width: 3
-											height: 6
-											fill: bind if(playButton.armed or playButton.selected) activeShapeFill else inactiveShapeFill
-										}
-									]
-								}
-							}, stopButton = Button {
-								tooltip:Tooltip {
-							        text:"Stop"
-							    }
-								styleClass: "project-run-controller-button"
-								layoutInfo: LayoutInfo { height: 12, width: 20 }
-								graphic: Rectangle {
-									width: 10//6
-									height: 6
-									fill: bind if(stopButton.armed) activeShapeFill else inactiveShapeFill
-								}
-								action: function() {
-								    if( not canvas.isStarted() )
-								    {
-								    	canvas.triggerAction( CounterHolder.COUNTER_RESET_ACTION );
-								    }
-								    playButton.selected = false;
-								    canvas.triggerAction( CanvasItem.COMPLETE_ACTION );
-								}
-							}
-						]
-					} 
-				]
+			playButton = ToggleButton {
+				layoutInfo: LayoutInfo { height: 33, width: 33, margin: Insets {  } }
+				styleClass: "execution-button"
+				selected: false
+				graphic: ExecutionGraphic { layoutInfo: LayoutInfo { height: 33, width: 33 }, running: bind (playButton.armed or playButton.selected) }
+				tooltip:Tooltip { text:"Play/Stop" }
+				scaleX: 0.4
+				scaleY: 0.4
 			},Label {
 				text: "Master"
 				font: Font.font("Arial", 8)

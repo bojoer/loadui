@@ -161,7 +161,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 		{
 			return new GroovyOutput( this, context );
 		}
-		else if( SchedulerCategory.CATEGORY.equalsIgnoreCase( category ) )
+		else if( SchedulerCategory.CATEGORY.equalsIgnoreCase( category ) || "scheduler".equalsIgnoreCase( category ) )
 		{
 			return new GroovyScheduler( this, context );
 		}
