@@ -14,10 +14,10 @@
 // under the Licence.
 //
 
-import com.eviware.loadui.api.events.BaseEvent;
-import com.eviware.loadui.api.events.EventFirer;
-import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.SceneItem;
+import com.eviware.loadui.api.events.BaseEvent
+import com.eviware.loadui.api.events.EventFirer
+import com.eviware.loadui.api.model.ProjectItem
+import com.eviware.loadui.api.model.SceneItem
 import com.eviware.loadui.api.model.WorkspaceItem
 import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.events.EventHandler
@@ -37,28 +37,21 @@ def agentMessageListener = new MessageListener() {
 	
 	def agents = new HashSet()
 	
-	public void put(AgentItem agent, SceneItem scene){
+	public void put(AgentItem agent, SceneItem scene) {
 		agents.add("${agent.id}:${scene.id}")
-		agent.addMessageListener(AgentItem.AGENT_CHANNEL, this)	
+		agent.addMessageListener( AgentItem.AGENT_CHANNEL, this )
 	}
 	
-	public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
-	{
-		Map<String, Object> map = ( Map<String, Object> )data;
-		if( map.containsKey( AgentItem.STARTED ) )
-		{
-			logInfo "Test case ${map.get( AgentItem.STARTED )} on agent ${endpoint.url} initialized"
-			agents.remove("${endpoint.id}:${map.get( AgentItem.STARTED )}")
+	public void handleMessage( String channel, MessageEndpoint endpoint, Object data ) {
+		if( data.containsKey( AgentItem.STARTED ) ) {
+			log.info "Test case ${data[AgentItem.STARTED]} on agent ${endpoint.url} initialized"
+			agents.remove( "${endpoint.id}:${data[AgentItem.STARTED]}" )
 		}
 	}
 	
-	public boolean allTestCasesReady(){
+	public boolean allTestCasesReady() {
 		return agents.size() == 0
 	}
-}
-
-def logInfo (GString m) {
-	log.info m
 }
 
 def displayLimit( limit ) {
@@ -86,16 +79,14 @@ if( workspaceFile != null ) {
 def importAgents = workspace.getProperty( WorkspaceItem.IMPORT_MISSING_AGENTS_PROPERTY )
 workspace.localMode = localMode
 
-def projectAdded = false;
+def projectAdded = false
 def workspaceCollectionListener = new EventHandler<CollectionEvent>() {
 	public void handleEvent( CollectionEvent event ) {
-		if( CollectionEvent.Event.ADDED == event.getEvent() && WorkspaceItem.PROJECTS.equals( event.getKey() ) )
-		{
-			projectAdded = true;
-		}
+		if( CollectionEvent.Event.ADDED == event.event && WorkspaceItem.PROJECTS == event.key )
+			projectAdded = true
 	}
 }
-workspace.addEventListener( CollectionEvent.class, workspaceCollectionListener );
+workspace.addEventListener( CollectionEvent.class, workspaceCollectionListener )
 
 //If custom agents are provided, remove saved ones.
 if( agents != null ) {
@@ -123,7 +114,7 @@ def summaryExported = 0
 def summaryExportListener = new EventHandler<BaseEvent>() {
 	public void handleEvent( BaseEvent event ) {
 		if( ProjectItem.SUMMARY_EXPORTED.equals( event.getKey() ) ) {
-			summaryExported++;
+			summaryExported++
 		}
 	}
 }
@@ -131,14 +122,14 @@ project.addEventListener( BaseEvent.class, summaryExportListener )
 
 //Get the target
 def target = testCase ? project.getSceneByLabel( testCase ) : project
-if( target == null ) {
+if( !target ) {
 	log.error "TestCase '${testCase}' doesn't exist in Project '${project.label}'"
 	workspace?.release()
 	return
 }
 
 //Set limits
-if( limits != null ) {
+if( limits ) {
 	def names = [ CanvasItem.TIMER_COUNTER, CanvasItem.SAMPLE_COUNTER, CanvasItem.FAILURE_COUNTER ]
 	for( limit in limits ) {
 		try {
@@ -165,7 +156,7 @@ if( agents != null ) {
 		def agent = workspace.createAgent( agentUrl, agentUrl )
 		if( tcs == null ) {
 			for( tc in project.scenes ) {
-				agentMessageListener.put(agent, tc)
+				agentMessageListener.put( agent, tc )
 				project.assignScene( tc, agent )
 			}
 		} else {
@@ -176,7 +167,7 @@ if( agents != null ) {
 					workspace?.release()
 					return
 				}
-				agentMessageListener.put(agent, tc)
+				agentMessageListener.put( agent, tc )
 				project.assignScene( tc, agent )
 			}
 		}
@@ -201,50 +192,34 @@ if( reportFolder != null ) {
 }
 
 //Make sure all agents are ready
-if( testCase != null ) {
-	def notReady = new HashSet()
-	for( tc in project.scenes )
-		for( agent in project.getAgentsAssignedTo( tc ) )
-			notReady << agent
-	def ready = false
-	def timeout = System.currentTimeMillis() + 5000
-	while( !ready ) {
-		def stillNotReady = []
-		for( agent in notReady )
-			if( !agent.ready )
-				stillNotReady << agent
-		if( !stillNotReady.empty ) {
-			notReady = stillNotReady
-			if( System.currentTimeMillis() > timeout ) {
-				log.error "Agents not connectable: ${notReady}"
-				workspace?.release()
-				return
-			}
-		} else {
-			ready = true
+if( !workspace.localMode ) {
+	log.info "Connectiong to agents..."
+	def notReady = project.scenes.collect( { project.getAgentsAssignedTo( it ) } ).flatten() as Set
+	def timeout = System.currentTimeMillis() + 20000
+	while( !notReady.empty ) {
+		if( System.currentTimeMillis() > timeout ) {
+			log.error "Agents not connectable: ${notReady}"
+			workspace?.release()
+			return
 		}
+		sleep 500
+		notReady.removeAll { it.ready }
 	}
-	
-	//TODO: Instead of waiting for 5 seconds here, it should be possible to find out from the agent that it is ready.
-	sleep 5000
 }
 
 // wait until all test cases on all agents are ready
-def waitForTestCases = !agentMessageListener.allTestCasesReady() 
-if( waitForTestCases ){
-	log.info "Start test case initialization..."
-} 
-def timeout = System.currentTimeMillis() + 60000
-while( !agentMessageListener.allTestCasesReady() ){
-	if(System.currentTimeMillis() >= timeout){
-		log.error "Some test cases not initialized during timout period. Program will exit"
-		workspace?.release()
-		return
+if( !agentMessageListener.allTestCasesReady() ) { 
+	log.info "Awaiting TestCase initialization..."
+	def timeout = System.currentTimeMillis() + 60000
+	while( !agentMessageListener.allTestCasesReady() ) {
+		if( System.currentTimeMillis() >= timeout ) {
+			log.error "Some TestCases not initialized during timeout period. Program will exit"
+			workspace?.release()
+			return
+		}
+		sleep 500
 	}
-	sleep 1000
-}
-if( waitForTestCases ){
-	log.info "All test cases initialized properly"
+	log.info "All TestCases initialized properly"
 }
 
 // wait until workspace fires ADDED event for this
@@ -254,7 +229,7 @@ if( waitForTestCases ){
 // this START event occurs before RunningLister is 
 // assigned to the project and START event is not handled
 // at all.  
-while( !projectAdded ){
+while( !projectAdded ) {
 	sleep 1000
 }
 
