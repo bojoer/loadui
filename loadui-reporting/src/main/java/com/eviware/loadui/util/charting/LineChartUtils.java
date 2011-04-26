@@ -20,9 +20,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.SwingUtilities;
+
+import org.slf4j.Logger;
 
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
@@ -151,5 +156,21 @@ public class LineChartUtils
 		ReleasableUtils.release( chart );
 
 		return image;
+	}
+
+	public static void invokeInSwingAndWait( Runnable runnable ) throws InterruptedException, InvocationTargetException
+	{
+		if( SwingUtilities.isEventDispatchThread() )
+			runnable.run();
+		else
+			SwingUtilities.invokeAndWait( runnable );
+	}
+
+	public static void invokeInSwingLater( Runnable runnable )
+	{
+		if( SwingUtilities.isEventDispatchThread() )
+			runnable.run();
+		else
+			SwingUtilities.invokeLater( runnable );
 	}
 }
