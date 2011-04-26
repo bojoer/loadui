@@ -27,6 +27,7 @@ import com.eviware.loadui.api.messaging.MessageListener
 import com.eviware.loadui.api.messaging.MessageEndpoint
 import com.eviware.loadui.api.model.AgentItem
 import com.eviware.loadui.api.statistics.store.ExecutionManager
+import com.eviware.loadui.api.statistics.ProjectExecutionManager
 import com.eviware.loadui.api.reporting.ReportingManager
 import com.eviware.loadui.util.BeanInjector
 import com.eviware.loadui.util.FormattingUtils
@@ -299,8 +300,18 @@ if( statisticPages != null && project.reportFolder ) {
 	} else {
 		log.info "Retaining Project zoom levels for charts"
 	}
-	def execution = BeanInjector.getBean( ExecutionManager.class ).currentExecution
-	def map = LineChartUtils.createImages( pages, execution, null );
+	def executionManager = BeanInjector.getBean( ExecutionManager.class )
+	def execution = executionManager.currentExecution
+	def comparedExecution = null
+	if( compare ) {
+		comparedExecution = BeanInjector.getBean( ProjectExecutionManager.class ).getExecutions( project ).find { it.label == compare }
+		if( comparedExecution ) {
+			log.info "Comparing to previous execution: $comparedExecution.label"
+		} else {
+			log.info "No execution with label '$compare' found!"
+		}
+	}
+	def map = LineChartUtils.createImages( pages, execution, comparedExecution )
 	def file = new File( project.reportFolder, FormattingUtils.formatFileName( "${project.label}-statistics-${execution.label}.${project.reportFormat.toLowerCase()}}" ) )
 	if( includeSummary ) {
 		BeanInjector.getBean( ReportingManager.class ).createReport( project.label, execution, pages, map, file, project.reportFormat, execution.summaryReport )

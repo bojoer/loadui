@@ -94,7 +94,7 @@ public class LoadUILauncher
 		if( configProps == null )
 		{
 			System.err.println( "There was an error loading the OSGi configuration!" );
-			System.exit( -1 );
+			exitInError();
 		}
 		Main.copySystemProperties( configProps );
 	}
@@ -133,18 +133,18 @@ public class LoadUILauncher
 					if( lock == null )
 					{
 						System.err.println( "An instance of loadUI is already running!" );
-						System.exit( -1 );
+						exitInError();
 					}
 				}
 				catch( OverlappingFileLockException e )
 				{
 					System.err.println( "An instance of loadUI is already running!" );
-					System.exit( -1 );
+					exitInError();
 				}
 				catch( IOException e )
 				{
 					e.printStackTrace();
-					System.exit( -1 );
+					exitInError();
 				}
 			}
 
@@ -156,7 +156,7 @@ public class LoadUILauncher
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp( "loadUILauncher", options );
 
-			System.exit( -1 );
+			exitInError();
 		}
 
 		framework = new FrameworkFactory().newFramework( configProps );
@@ -169,6 +169,19 @@ public class LoadUILauncher
 		{
 			ex.printStackTrace();
 		}
+	}
+
+	protected void exitInError()
+	{
+		try
+		{
+			System.err.println( "Exiting..." );
+			Thread.sleep( 5000 );
+		}
+		catch( InterruptedException e )
+		{
+		}
+		System.exit( -1 );
 	}
 
 	protected void printUsageAndQuit()
