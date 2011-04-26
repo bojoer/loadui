@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashMap;
 
-import javax.swing.SwingUtilities;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +36,7 @@ import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.charting.LineChartUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.axis.Axis;
@@ -220,7 +219,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 
 			try
 			{
-				SwingUtilities.invokeAndWait( new Runnable()
+				LineChartUtils.invokeInSwingAndWait( new Runnable()
 				{
 					@Override
 					public void run()
@@ -270,7 +269,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 		{
 			try
 			{
-				SwingUtilities.invokeAndWait( new Runnable()
+				LineChartUtils.invokeInSwingAndWait( new Runnable()
 				{
 					@Override
 					public void run()
@@ -311,7 +310,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 		{
 			try
 			{
-				SwingUtilities.invokeAndWait( new Runnable()
+				LineChartUtils.invokeInSwingAndWait( new Runnable()
 				{
 					@Override
 					public void run()
@@ -495,7 +494,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 				final CollectionEvent event = ( CollectionEvent )e;
 				if( LineChartView.SEGMENTS.equals( event.getKey() ) )
 				{
-					SwingUtilities.invokeLater( new Runnable()
+					LineChartUtils.invokeInSwingLater( new Runnable()
 					{
 						@Override
 						public void run()
@@ -513,7 +512,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 				final PropertyChangeEvent event = ( PropertyChangeEvent )e;
 				if( ZOOM_LEVEL.equals( event.getPropertyName() ) )
 				{
-					SwingUtilities.invokeLater( new Runnable()
+					LineChartUtils.invokeInSwingLater( new Runnable()
 					{
 						@Override
 						public void run()
