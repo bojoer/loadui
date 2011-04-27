@@ -47,6 +47,8 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 	private final Map<String, File> files = new HashMap<String, File>();
 	private final Map<String, OutputStream> writers = Collections.synchronizedMap( new HashMap<String, OutputStream>() );
 	private final FileReceiver listener = new FileReceiver();
+	
+	private final HashSet<String> filesInProgress = new HashSet<String>();
 
 	public ReferenceToFileConverter( AddressableRegistry addressableRegistry, ScheduledExecutorService executorService )
 	{
@@ -64,19 +66,28 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 			return new File( source.getId().substring( 1 ) );
 
 		File target = getOrCreate( source );
+		String hash = source.getId();
+		
 		synchronized( target )
 		{
-			while( !target.exists() )
+			while( !target.exists() || filesInProgress.contains( hash ) )
 			{
 				try
 				{
+					log.debug( "waiting for {}", source.getId() );
 					target.wait();
 				}
 				catch( InterruptedException e )
 				{
+					log.debug( "got waken up, was waiting for {}", source.getId() );
 				}
 			}
-			log.debug( "target is: {}", target );
+			try{
+				FileInputStream fis = new FileInputStream( target );
+				String md5Hex = DigestUtils.md5Hex( fis );
+				fis.close();
+				log.debug( "target is: {} and is {} bytes with hash "+md5Hex, target, target.length() );
+			} catch (Exception e){ e.printStackTrace(); }
 		}
 
 		return target;
@@ -87,15 +98,20 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 		String hash = source.getId();
 		synchronized( files )
 		{
+			log.debug( "getOrCreate() {}", hash );
+			
 			if( !files.containsKey( hash ) )
 			{
 				files.put( hash, new File( storage, hash ) );
+				log.debug( "Adding {} to filesInProgress", hash );
+				filesInProgress.add( hash );
 				source.getEndpoint().addMessageListener( CHANNEL, listener );
 				source.getEndpoint().sendMessage( FileToReferenceConverter.CHANNEL, hash );
 			}
-			else if( !isFileHashValid( hash ) )
+			else if( !filesInProgress.contains( hash ) && !isFileHashValid( hash ) )
 			{
 				log.error( "File has been changed. Request file again..." );
+				log.debug( "Removing {} from filesInProgress", hash );
 				files.get( hash ).delete();
 				source.getEndpoint().addMessageListener( CHANNEL, listener );
 				source.getEndpoint().sendMessage( FileToReferenceConverter.CHANNEL, hash );
@@ -187,6 +203,8 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 									fis.close();
 									if( hash.equals( md5Hex ) )
 									{
+										log.debug( "File done. Removing {} from filesInProgress", hash );
+										filesInProgress.remove( hash );
 										file.notifyAll();
 									}
 									else
