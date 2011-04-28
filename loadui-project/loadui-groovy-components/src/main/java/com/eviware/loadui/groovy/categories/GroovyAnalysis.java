@@ -42,41 +42,41 @@ public class GroovyAnalysis extends AnalysisBase
 	@Override
 	public void analyze( TerminalMessage message )
 	{
-		scriptSupport.invokeClosure( false, "analyze", message );
+		scriptSupport.invokeClosure( false, false, "analyze", message );
 	}
 
 	@Override
 	public void onTerminalConnect( OutputTerminal output, InputTerminal input )
 	{
 		super.onTerminalConnect( output, input );
-		scriptSupport.invokeClosure( true, "onTerminalConnect", output, input );
+		scriptSupport.invokeClosure( true, false, "onTerminalConnect", output, input );
 	}
 
 	@Override
 	public void onTerminalDisconnect( OutputTerminal output, InputTerminal input )
 	{
 		super.onTerminalDisconnect( output, input );
-		scriptSupport.invokeClosure( true, "onTerminalDisconnect", output, input );
+		scriptSupport.invokeClosure( true, false, "onTerminalDisconnect", output, input );
 	}
 
 	@Override
 	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
 	{
 		super.onTerminalMessage( output, input, message );
-		scriptSupport.invokeClosure( true, "onTerminalMessage", output, input, message );
+		scriptSupport.invokeClosure( true, false, "onTerminalMessage", output, input, message );
 	}
 
 	@Override
 	public void onTerminalSignatureChange( OutputTerminal output, Map<String, Class<?>> signature )
 	{
 		super.onTerminalSignatureChange( output, signature );
-		scriptSupport.invokeClosure( true, "onTerminalSignatureChange", output, signature );
+		scriptSupport.invokeClosure( true, false, "onTerminalSignatureChange", output, signature );
 	}
 
 	@Override
 	public Object collectStatisticsData()
 	{
-		Object result = scriptSupport.invokeClosure( true, "collectStatisticsData" );
+		Object result = scriptSupport.invokeClosure( true, false, "collectStatisticsData" );
 		return result != null ? result : super.collectStatisticsData();
 	}
 
@@ -84,14 +84,14 @@ public class GroovyAnalysis extends AnalysisBase
 	public void handleStatisticsData( Map<AgentItem, Object> statisticsData )
 	{
 		super.handleStatisticsData( statisticsData );
-		scriptSupport.invokeClosure( true, "handleStatisticsData", statisticsData );
+		scriptSupport.invokeClosure( true, false, "handleStatisticsData", statisticsData );
 	}
 
 	@Override
 	public void generateSummary( MutableChapter summary )
 	{
 		super.generateSummary( summary );
-		scriptSupport.invokeClosure( true, "generateSummary", summary );
+		scriptSupport.invokeClosure( true, false, "generateSummary", summary );
 	}
 
 	@Override

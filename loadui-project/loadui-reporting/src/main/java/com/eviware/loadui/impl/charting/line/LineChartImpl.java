@@ -195,6 +195,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	@Override
 	public void setMainExecution( Execution execution )
 	{
+		log.debug( "!!!!! setMainExecution: {} from: {}", execution, mainExecution );
 		if( execution == null )
 			throw new NullPointerException( "Main Execution cannot be null!" );
 

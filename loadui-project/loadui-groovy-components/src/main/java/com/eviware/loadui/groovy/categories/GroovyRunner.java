@@ -19,9 +19,6 @@ import java.util.Map;
 
 import groovy.lang.MissingMethodException;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
-import org.codehaus.groovy.runtime.InvokerInvocationException;
-
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.model.AgentItem;
@@ -47,18 +44,23 @@ public class GroovyRunner extends RunnerBase
 	@Override
 	protected TerminalMessage sample( TerminalMessage triggerMessage, Object sampleId ) throws SampleCancelledException
 	{
-		try
+		Object value = scriptSupport.invokeClosure( false, true, "sample", triggerMessage, sampleId );
+		if( value instanceof Throwable )
 		{
-			return ( TerminalMessage )scriptSupport.invokeClosure( false, "sample", triggerMessage, sampleId );
-		}
-		catch( InvokerInvocationException e )
-		{
-			Throwable cause = e.getCause();
-			if( cause instanceof SampleCancelledException )
-				throw ( SampleCancelledException )cause;
+			Throwable exception = ( Throwable )value;
+			if( exception.getCause() instanceof SampleCancelledException )
+				throw ( SampleCancelledException )exception.getCause();
 			else
-				throw e;
+			{
+				scriptSupport.getLog().error( "Exception in closure sample:", exception );
+				if( exception instanceof RuntimeException )
+					throw ( RuntimeException )exception;
+				else
+					throw new RuntimeException( exception );
+			}
 		}
+
+		return ( TerminalMessage )value;
 	}
 
 	@Override
@@ -67,7 +69,7 @@ public class GroovyRunner extends RunnerBase
 		int runningRequests = 0;
 		try
 		{
-			Object returnValue = scriptSupport.invokeClosure( false, "onCancel" );
+			Object returnValue = scriptSupport.invokeClosure( false, false, "onCancel" );
 			runningRequests = ( Integer )returnValue;
 		}
 		catch( MissingMethodException e )
@@ -81,34 +83,34 @@ public class GroovyRunner extends RunnerBase
 	public void onTerminalConnect( OutputTerminal output, InputTerminal input )
 	{
 		super.onTerminalConnect( output, input );
-		scriptSupport.invokeClosure( true, "onTerminalConnect", output, input );
+		scriptSupport.invokeClosure( true, false, "onTerminalConnect", output, input );
 	}
 
 	@Override
 	public void onTerminalDisconnect( OutputTerminal output, InputTerminal input )
 	{
 		super.onTerminalDisconnect( output, input );
-		scriptSupport.invokeClosure( true, "onTerminalDisconnect", output, input );
+		scriptSupport.invokeClosure( true, false, "onTerminalDisconnect", output, input );
 	}
 
 	@Override
 	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
 	{
 		super.onTerminalMessage( output, input, message );
-		scriptSupport.invokeClosure( true, "onTerminalMessage", output, input, message );
+		scriptSupport.invokeClosure( true, false, "onTerminalMessage", output, input, message );
 	}
 
 	@Override
 	public void onTerminalSignatureChange( OutputTerminal output, Map<String, Class<?>> signature )
 	{
 		super.onTerminalSignatureChange( output, signature );
-		scriptSupport.invokeClosure( true, "onTerminalSignatureChange", output, signature );
+		scriptSupport.invokeClosure( true, false, "onTerminalSignatureChange", output, signature );
 	}
 
 	@Override
 	public Object collectStatisticsData()
 	{
-		Object result = scriptSupport.invokeClosure( true, "collectStatisticsData" );
+		Object result = scriptSupport.invokeClosure( true, false, "collectStatisticsData" );
 		return result != null ? result : super.collectStatisticsData();
 	}
 
@@ -116,14 +118,14 @@ public class GroovyRunner extends RunnerBase
 	public void handleStatisticsData( Map<AgentItem, Object> statisticsData )
 	{
 		super.handleStatisticsData( statisticsData );
-		scriptSupport.invokeClosure( true, "handleStatisticsData", statisticsData );
+		scriptSupport.invokeClosure( true, false, "handleStatisticsData", statisticsData );
 	}
 
 	@Override
 	public void generateSummary( MutableChapter summary )
 	{
 		super.generateSummary( summary );
-		scriptSupport.invokeClosure( true, "generateSummary", summary );
+		scriptSupport.invokeClosure( true, false, "generateSummary", summary );
 	}
 
 	@Override

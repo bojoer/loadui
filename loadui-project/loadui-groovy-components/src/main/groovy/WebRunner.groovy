@@ -36,13 +36,11 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.api.events.PropertyEvent
-import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledException
-
-import java.util.HashSet
-import java.util.Collections
 import com.eviware.loadui.impl.component.ActivityStrategies
+import com.eviware.loadui.util.layout.DelayedFormattedString
+import com.eviware.loadui.util.ReleasableUtils
 
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -56,11 +54,9 @@ import javax.net.ssl.X509TrustManager
 import java.security.cert.X509Certificate
 import java.security.cert.CertificateException
 import java.security.SecureRandom
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import com.eviware.loadui.api.terminal.TerminalMessage;
+import java.util.HashMap
+import java.util.Map
+import java.util.concurrent.TimeUnit
 
 executor = Executors.newSingleThreadScheduledExecutor()
 future = executor.scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
@@ -76,7 +72,7 @@ class NaiveTrustManager implements X509TrustManager {
 def sslContext = SSLContext.getInstance("SSL")
 TrustManager[] tms = [ new NaiveTrustManager() ]
 sslContext.init( new KeyManager[0], tms, new SecureRandom() )
-def sslSocketFactory = new SSLSocketFactory( sslContext );
+def sslSocketFactory = new SSLSocketFactory( sslContext )
 sslSocketFactory.hostnameVerifier = SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER
 
 def sr = new SchemeRegistry()
@@ -97,105 +93,82 @@ createProperty( 'outputBody', Boolean, false )
 createProperty( 'readResponse', Boolean, false )
 createProperty( 'errorCodeList', String )
 
-createProperty( 'proxyHost', String)
-createProperty( 'proxyPort', Long)
-createProperty( 'proxyUsername', String)
-proxyPassword = createProperty( '_proxyPassword', String)
-authUsername = createProperty( '_authUsername', String)
-authPassword = createProperty( '_authPassword', String)
+createProperty( 'proxyHost', String )
+createProperty( 'proxyPort', Long )
+createProperty( 'proxyUsername', String )
+proxyPassword = createProperty( '_proxyPassword', String )
+authUsername = createProperty( '_authUsername', String )
+authPassword = createProperty( '_authPassword', String )
 
 http = new DefaultHttpClient( cm )
 
 inlineUrlAuthUsername = null
 inlineUrlAuthPassword = null
 			
-def runningSamples = Collections.synchronizedSet( new HashSet() )
+def runningSamples = ([] as Set).asSynchronized()
 runAction = null
 
-eviPattern = ~/https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/
-dummyUrl = "http://GoSpamYourself.com"
+def dummyUrl = "http://GoSpamYourself.com"
 
 validateUrl = {  
-	if((url.value != null) && !(url.value.toLowerCase().startsWith( "http://" ) || url.value.toLowerCase().startsWith( "https://" ))) {
-		url.value = "http://" + url.value;
+	if( url.value && !( url.value.toLowerCase().startsWith( "http://" ) || url.value.toLowerCase().startsWith( "https://" ) ) ) {
+		url.value = "http://" + url.value
 	}
 	
-	if( url.value != null && eviPattern.matcher(url.value).matches() )
-	{
-		url.value = dummyUrl
-	}
+	if( url.value =~ /https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/ ) url.value = dummyUrl
 	
 	// extract possible username and password from username:password@domain syntax
-	matcher = url.value?.replace("http://","") =~ /([^:]+):([^@]+)@(.+)/
-	if ( matcher )
-	{
+	matcher = url.value?.replace( "http://", "" ) =~ /([^:]+):([^@]+)@(.+)/
+	if ( matcher ) {
 		inlineUrlAuthUsername = matcher[0][1]
 		inlineUrlAuthPassword = matcher[0][2]
-	} else
-	{
+	} else {
 		inlineUrlAuthUsername = inlineUrlAuthPassword = null
 	}
 	updateAuth()
 	
-	setInvalid( url.value == null || url.value == dummyUrl )
+	setInvalid( !url.value || url.value == dummyUrl )
 	runAction?.enabled = !isInvalid()
 }
 
 updateLed = {
-	if (runAction?.enabled)
-		if (currentlyRunning > 0)
-			setActivityStrategy(ActivityStrategies.BLINKING)
-		else
-			setActivityStrategy(ActivityStrategies.ON)
-	else 
-		setActivityStrategy(ActivityStrategies.OFF)
+	setActivityStrategy( runAction?.enabled ? ( currentlyRunning > 0 ? ActivityStrategies.BLINKING : ActivityStrategies.ON ) : ActivityStrategies.OFF )
 }
 
 updateProxy = {
-	if( proxyHost.value != null && proxyHost.value.trim().length() > 0 && proxyPort.value != null && proxyPort.value > 0 ) {
-		HttpHost hcProxyHost = new HttpHost(proxyHost.value, (int)proxyPort.value, "http");
-		http.params.setParameter(ConnRoutePNames.DEFAULT_PROXY, hcProxyHost);
+	if( proxyHost.value?.trim() && proxyPort.value ) {
+		HttpHost hcProxyHost = new HttpHost( proxyHost.value, (int)proxyPort.value, "http" )
+		http.params.setParameter( ConnRoutePNames.DEFAULT_PROXY, hcProxyHost )
 		
-		if( proxyUsername.value != null && proxyUsername.value.trim().length() > 0 && proxyPassword.value != null  ) {
-			http.credentialsProvider.setCredentials( 
-				new AuthScope(proxyHost.value, (int)proxyPort.value), 
-				new UsernamePasswordCredentials(
-					proxyUsername.value,
-					new String(proxyPassword.value)
-				)
+		if( proxyUsername.value?.trim() && proxyPassword.value ) {
+			http.credentialsProvider.setCredentials(
+				new AuthScope( proxyHost.value, (int)proxyPort.value ), 
+				new UsernamePasswordCredentials( proxyUsername.value, proxyPassword.value )
 			)
-		}
-		else {
+		} else {
 			http.credentialsProvider.clear()
 		}
-	}
-	else {
-		http.params.setParameter(ConnRoutePNames.DEFAULT_PROXY, null );
+	} else {
+		http.params.setParameter( ConnRoutePNames.DEFAULT_PROXY, null )
 	}
 }
 
 updateAuth = {
-	username = null
-	password = null
-	if( inlineUrlAuthUsername && inlineUrlAuthPassword )
-	{
+	def username = null
+	def password = null
+	if( inlineUrlAuthUsername && inlineUrlAuthPassword ) {
 		username = inlineUrlAuthUsername
 		password = inlineUrlAuthPassword
-	}
-	else if( authUsername.value?.trim() && authPassword.value?.trim() )
-	{
+	} else if( authUsername.value?.trim() && authPassword.value?.trim() ) {
 		username = authUsername.value
 		password = authPassword.value
 	}
+	
 	if( username && password ) {
-		http.credentialsProvider.setCredentials( 
+		http.credentialsProvider.setCredentials(
 			new AuthScope( AuthScope.ANY ), 
-			new UsernamePasswordCredentials(
-				username, 
-				new String(password)
-			)
+			new UsernamePasswordCredentials( username, password )
 		)
-		println ("auth WAS updated to " + authUsername.value + ":" + authPassword.value)
 	}
 }
 
@@ -206,9 +179,8 @@ requestResetValue = 0
 sampleResetValue = 0
 discardResetValue = 0
 failedResetValue = 0
-aborting = false
 
-displayRequests = new DelayedFormattedString( '%d', 500, value { (requestCounter.get() - requestResetValue) } )
+displayRequests = new DelayedFormattedString( '%d', 500, value { requestCounter.get() - requestResetValue } )
 displayRunning = new DelayedFormattedString( '%d', 500, value { currentlyRunning } )
 displayTotal = new DelayedFormattedString( '%d', 500,  value { sampleCounter.get() - sampleResetValue } )
 displayQueue = new DelayedFormattedString( '%d', 500, value { queueSize } )
@@ -228,14 +200,14 @@ sample = { message, sampleId ->
 			message['URI'] = uri
 			message['HttpStatus'] = response.statusLine.statusCode
 			
-			if (errorCodeList.value != null) {
+			if( errorCodeList.value ) {
 				def assertionCodes = errorCodeList.value.split(',')
 				
-				for (code in assertionCodes) {
-					if (code.trim() == response.statusLine.statusCode.toString()) {
-						failedRequestCounter.increment();
-						failureCounter.increment();
-						break;
+				for( code in assertionCodes ) {
+					if( code.trim() == response.statusLine.statusCode.toString() ) {
+						failedRequestCounter.increment()
+						failureCounter.increment()
+						break
 					}
 				}
 			}
@@ -245,40 +217,40 @@ sample = { message, sampleId ->
 				message['Bytes'] = contentLength
 				
 				if( outputBody.value )
-					message['Response'] = EntityUtils.toString(response.entity)
+					message['Response'] = EntityUtils.toString( response.entity )
 				
 				if( contentLength < 0 ) {
-					if( outputBody.value)
+					if( outputBody.value )
 						message['Bytes'] = message['Response'].length()
 					else
-						message['Bytes'] = EntityUtils.toString(response.entity).length()
+						message['Bytes'] = EntityUtils.toString( response.entity ).length()
 				}
 				
 				response.entity.consumeContent()
 				
-				if (!runningSamples.remove(get)) {
+				if( !runningSamples.remove( get ) ) {
 					throw new SampleCancelledException()
 				}
 				
 				return message
 			}
 		} catch( e ) {
-			if( e instanceof SampleCancelledException)
+			if( e instanceof SampleCancelledException )
 				throw e
 			
-			if( e instanceof SocketException )
-				log.warn( "SocketException in $label: {}", e.message )
+			if( e instanceof IOException )
+				log.warn( "IOException in {}: {}", label, e.message )
 			else
-				log.error( "Exception in $label: ", e )
+				log.error( "Exception in $label:", e )
 			
 			get.abort()
 			
-			if (!runningSamples.remove(get)) {
+			if ( !runningSamples.remove( get ) ) {
 				throw new SampleCancelledException()
 			}
 			
 			message['Status'] = false
-			failedRequestCounter.increment();
+			failedRequestCounter.increment()
 			failureCounter.increment()
 			
 			return message
@@ -290,30 +262,20 @@ sample = { message, sampleId ->
 }
 
 onCancel = {
-	aborting = true
-	
-	numberOfRunning = runningSamples.size()
-	
+	def numberOfRunning = 0
 	synchronized( runningSamples ) {
 		def methods = runningSamples.toArray()
+		numberOfRunning = methods.size()
 		runningSamples.clear()
-		methods.each { method ->
-			if( !method.aborted ) method.abort()
-		}
+		methods.each { if( !it.aborted ) it.abort() }
 	}
-	aborting = false
 	
 	return numberOfRunning
 }
 
 onRelease = {
 	executor.shutdownNow()
-	displayRunning.release()
-	displayTotal.release()
-	displayQueue.release()
-	displayDiscarded.release()
-	displayFailed.release()
-	displayRequests.release()
+	ReleasableUtils.releaseAll( displayRunning, displayTotal, displayQueue, displayDiscarded, displayFailed, displayRequests )
 }
 
 onAction( "RESET" ) {
@@ -341,8 +303,8 @@ layout {
 			if( url.value != null && url.value.startsWith( "http" ) )
 				java.awt.Desktop.desktop.browse( new java.net.URI( url.value ) )
 		} )
-		runAction = action( label:'Run Once', action: { triggerAction('SAMPLE') } )
-		action( label:'Abort Running Pages', action: { triggerAction('CANCEL') } )
+		runAction = action( label:'Run Once', action: { triggerAction( 'SAMPLE' ) } )
+		action( label:'Abort Running Pages', action: { triggerAction( 'CANCEL' ) } )
 	}
 	separator(vertical:true)
 	box( layout:'wrap, ins 0' ){
@@ -400,23 +362,25 @@ settings( label: "Proxy" ) {
 
 executor.scheduleAtFixedRate( 
 {
-	def message = newMessage();
-	message["Requests"] = Integer.parseInt( displayRequests.getCurrentValue() ) 
-	message["Running"] = Integer.parseInt( displayRunning.getCurrentValue() ) 
-	message["Discarded"] = Integer.parseInt( displayDiscarded.getCurrentValue() ) 
-	message["Failed"]= Integer.parseInt( displayFailed.getCurrentValue() ) 
-	message["Queued"]= Integer.parseInt( displayQueue.getCurrentValue() ) 
-	message["Completed"]= Integer.parseInt( displayTotal.getCurrentValue() ) 
-	send( statisticsOutput, message );
-}, 1000, 1000, TimeUnit.MILLISECONDS );
+	def message = newMessage()
+	Integer.with {
+		message["Requests"] = parseInt( displayRequests.currentValue )
+		message["Running"] = parseInt( displayRunning.currentValue )
+		message["Discarded"] = parseInt( displayDiscarded.currentValue )
+		message["Failed"] = parseInt( displayFailed.currentValue )
+		message["Queued"] = parseInt( displayQueue.currentValue )
+		message["Completed"] = parseInt( displayTotal.currentValue )
+	}
+	send( statisticsOutput, message )
+}, 1, 1, TimeUnit.SECONDS )
 
 def statisticsSignature = [
-		"Requests" : Integer.class,
-		"Running" : Integer.class,
-		"Discarded" : Integer.class,
-		"Failed" : Integer.class,
-		"Queued" : Integer.class,
-		"Completed" : Integer.class,
-		]
+	"Requests" : Integer.class,
+	"Running" : Integer.class,
+	"Discarded" : Integer.class,
+	"Failed" : Integer.class,
+	"Queued" : Integer.class,
+	"Completed" : Integer.class
+]
 
-setSignature(statisticsOutput, statisticsSignature)
+setSignature( statisticsOutput, statisticsSignature )
