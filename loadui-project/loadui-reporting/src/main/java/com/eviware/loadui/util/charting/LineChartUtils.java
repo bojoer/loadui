@@ -17,6 +17,7 @@ package com.eviware.loadui.util.charting;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
@@ -152,12 +153,24 @@ public class LineChartUtils
 		chart.setAxisLabelPadding( -6 );
 
 		chart.awaitDraw();
-		chart.update();
 
-		Image image = ChartUtils.createImage( chart );
-		ReleasableUtils.release( chart );
+		ImageCreator imageCreator = new ImageCreator( chart );
+		try
+		{
+			invokeInSwingAndWait( imageCreator );
+			ReleasableUtils.release( chart );
+			return imageCreator.getImage();
+		}
+		catch( InterruptedException e )
+		{
+			e.printStackTrace();
+		}
+		catch( InvocationTargetException e )
+		{
+			e.printStackTrace();
+		}
 
-		return image;
+		return null;
 	}
 
 	public static void updateExecutionIcon( final Execution execution, final LineChartView chartView,
@@ -188,5 +201,28 @@ public class LineChartUtils
 			runnable.run();
 		else
 			SwingUtilities.invokeLater( runnable );
+	}
+
+	private static class ImageCreator implements Runnable
+	{
+		private final LineChartImpl chart;
+		private Image image;
+
+		public ImageCreator( LineChartImpl chart )
+		{
+			this.chart = chart;
+		}
+
+		@Override
+		public void run()
+		{
+			chart.update();
+			image = ChartUtils.createImage( chart );
+		}
+
+		public Image getImage()
+		{
+			return image;
+		}
 	}
 }
