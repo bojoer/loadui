@@ -79,7 +79,7 @@ public def GROUP_HEIGHT = 126;
 public class ItemOrder extends Comparator {
 	//Used for ordering the items
 	def loadGeneratorOrder:String[] = [ "FIXED RATE", "VARIANCE", "RANDOM", "RAMP", "VIRTUAL USERS", "FIXED LOAD" ];
-	def analysisOrder:String[] = [  "STATISTICS", "ASSERTION"  ];
+	def analysisOrder:String[] = [ "ASSERTION", "STATISTICS" ];
 	def flowOrder:String[] = [ "SPLITTER", "DELAY" ];
 	    	
 	public override function compare(o1, o2) {
