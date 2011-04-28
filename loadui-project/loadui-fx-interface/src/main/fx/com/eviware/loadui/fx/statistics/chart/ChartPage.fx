@@ -169,8 +169,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 			for( chartGroupHolder in innerContent ) {
 				for( chartViewHolder in [ chartGroupHolder.chartViewHolder, chartGroupHolder.expandedChartViews ] ) {
 					if( chartViewHolder.chartView instanceof LineChartView ) {
-						execution.setIcon( LineChartUtils.createThumbnail( chartViewHolder.chartView as LineChartView, StatisticsWindow.execution, StatisticsWindow.comparedExecution ) );
-						execution.fireEvent( new BaseEvent( execution, Execution.ICON ) );
+						LineChartUtils.updateExecutionIcon( execution, chartViewHolder.chartView as LineChartView, StatisticsWindow.comparedExecution );
 						return;
 					}
 				}

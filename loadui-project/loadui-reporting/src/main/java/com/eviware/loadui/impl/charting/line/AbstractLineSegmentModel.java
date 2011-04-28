@@ -125,6 +125,12 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 
 		public void awaitDone()
 		{
+			if( SwingUtilities.isEventDispatchThread() )
+			{
+				log.error( "Cannot await Chart drawing in the Event Dispatch Thread! Charts may not be drawn!" );
+				return;
+			}
+
 			synchronized( this )
 			{
 				if( !done )
