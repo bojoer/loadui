@@ -24,11 +24,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
@@ -38,6 +40,7 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.impl.charting.line.LineChartImpl;
 import com.eviware.loadui.impl.charting.line.LineChartStyles;
 import com.eviware.loadui.impl.charting.line.LongRange;
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.jidesoft.chart.model.ChartModel;
 import com.jidesoft.chart.style.ChartStyle;
@@ -119,7 +122,6 @@ public class LineChartUtils
 					.getLineJoin() ) );
 		}
 
-		chart.refresh( false );
 		chart.awaitDraw();
 		chart.update();
 
@@ -149,13 +151,27 @@ public class LineChartUtils
 		range.setMax( range.lower() + 10000 );
 		chart.setAxisLabelPadding( -6 );
 
-		chart.refresh( false );
+		chart.awaitDraw();
 		chart.update();
 
 		Image image = ChartUtils.createImage( chart );
 		ReleasableUtils.release( chart );
 
 		return image;
+	}
+
+	public static void updateExecutionIcon( final Execution execution, final LineChartView chartView,
+			final Execution comparedExecution )
+	{
+		BeanInjector.getBean( ExecutorService.class ).execute( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				execution.setIcon( LineChartUtils.createThumbnail( chartView, execution, comparedExecution ) );
+				execution.fireEvent( new BaseEvent( execution, Execution.ICON ) );
+			}
+		} );
 	}
 
 	public static void invokeInSwingAndWait( Runnable runnable ) throws InterruptedException, InvocationTargetException

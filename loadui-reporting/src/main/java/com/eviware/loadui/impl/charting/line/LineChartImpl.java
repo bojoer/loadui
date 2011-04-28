@@ -482,6 +482,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	public void awaitDraw()
 	{
 		AbstractLineSegmentModel.awaitQueuedReads();
+		refresh( false );
 	}
 
 	private class ChartViewListener implements WeakEventHandler<EventObject>
