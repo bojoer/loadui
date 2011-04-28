@@ -55,6 +55,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 	};
 	private AggregateLevel[] aggregateLevels = new AggregateLevel[4];
 	private HashSet<Entry> firstLevelEntries = new HashSet<Entry>();
+	private long lastFlushed;
 
 	private final Map<String, Object> config;
 
@@ -125,6 +126,10 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 		Entry e = output();
 		if( e != null )
 		{
+			if( e.getTimestamp() == lastFlushed )
+				return;
+
+			lastFlushed = e.getTimestamp();
 			executionManager.writeEntry( id, e, StatisticVariable.MAIN_SOURCE, 0 );
 			firstLevelEntries.add( e );
 		}

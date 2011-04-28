@@ -157,6 +157,7 @@ public class AppState extends ApplicationState {
 			task:task
 			onDone:function() {
 				unblock();
+				setBlockedText( "Waiting..." );
 				onDone( blockingTask );
 			}
 		};

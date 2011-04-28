@@ -27,6 +27,7 @@ import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.DelegatingMetaClass;
 import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyRuntimeException;
 import groovy.lang.GroovyShell;
 import groovy.lang.MetaClass;
 import groovy.lang.MissingMethodException;
@@ -88,9 +89,14 @@ public class GroovyScriptSupport implements Releasable
 		updateScript( scriptProperty.getValue() );
 	}
 
+	public Logger getLog()
+	{
+		return log;
+	}
+
 	public void updateScript( String scriptText )
 	{
-		invokeClosure( true, "onReplace" );
+		invokeClosure( true, false, "onReplace" );
 		context.reset();
 		shell.resetLoadedClasses();
 		loadDependencies( scriptText, Boolean.getBoolean( "loadui.grape.disable" ) );
@@ -99,7 +105,7 @@ public class GroovyScriptSupport implements Releasable
 		{
 			Script script = shell.parse( scriptText, scriptName );
 			binding = new Binding();
-			binding.setProperty( "log", GroovyComponent.log );
+			binding.setProperty( "log", log );
 			script.setMetaClass( new ScriptMetaClass( script.getMetaClass() ) );
 
 			script.setBinding( binding );
@@ -112,7 +118,7 @@ public class GroovyScriptSupport implements Releasable
 		}
 	}
 
-	public Object invokeClosure( boolean ignoreMissing, String name, Object... args )
+	public Object invokeClosure( boolean ignoreMissing, boolean returnException, String name, Object... args )
 	{
 		try
 		{
@@ -123,10 +129,13 @@ public class GroovyScriptSupport implements Releasable
 		catch( MissingPropertyException e )
 		{
 			if( ALIASES.containsKey( name ) )
-				return invokeClosure( ignoreMissing, ALIASES.get( name ), args );
+				return invokeClosure( ignoreMissing, returnException, ALIASES.get( name ), args );
 		}
 		catch( Throwable e )
 		{
+			if( returnException )
+				return e;
+
 			log.error( "Exception in closure " + name + " of " + scriptName + ":", e );
 			return null;
 		}
@@ -140,7 +149,7 @@ public class GroovyScriptSupport implements Releasable
 	@Override
 	public void release()
 	{
-		invokeClosure( true, "onRelease" );
+		invokeClosure( true, false, "onRelease" );
 		context.reset();
 		context.clearEventListeners();
 	}

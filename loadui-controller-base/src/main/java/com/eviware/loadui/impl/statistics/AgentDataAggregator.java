@@ -95,14 +95,12 @@ public class AgentDataAggregator
 				String trackId = e2.getKey();
 				StatisticsWriter writer = ( StatisticsWriter )addressableRegistry.lookup( trackId );
 
-				if( !writer.getType().equals( "COUNTER" ) )
+				if( writer != null && !writer.getType().equals( "COUNTER" ) )
 				{
 					Entry entry = writer.aggregate( e2.getValue(), true );
 
 					if( entry != null )
-					{
 						executionManager.writeEntry( trackId, entry, StatisticVariable.MAIN_SOURCE, level );
-					}
 				}
 			}
 		}
