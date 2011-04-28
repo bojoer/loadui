@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +75,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	private static Logger log = LoggerFactory.getLogger( ExecutionManagerImpl.class );
 
 	private static ExecutionManagerImpl instance;
-	
+
 	private static final int INTERPOLATION_LEVEL_COUNT = 5;
 
 	private WorkspaceItem workspace = null;
@@ -162,7 +161,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		// Load the executions.
 		getExecutions();
-		
+
 		instance = this;
 	}
 
@@ -207,22 +206,23 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			executionDir = new File( getDBBaseDir(), FormattingUtils.formatFileName( fileName ) );
 			executionDir.mkdir();
 			dbName = executionDir.getName();
-	
+
 			// create sequence table
 			sequenceTable = new SequenceTable( dbName, connectionRegistry, metadata, tableRegistry );
-	
+
 			// create track meta table
 			trackMetaTable = new TrackMetadataTable( dbName, connectionRegistry, metadata, tableRegistry );
-		} catch( SQLException e )
+		}
+		catch( SQLException e )
 		{
-			log.debug( "    "+e.getMessage()  );
+			log.debug( "    " + e.getMessage() );
 			if( e.getMessage().contains( "not enough space" ) )
 				signalLowDiskspace();
 			else
 				signalDiskProblem();
 			return null;
-		} 
-		
+		}
+
 		// after all SQL operations are finished successfully, add created
 		// tables into registry
 		tableRegistry.put( dbName, sequenceTable );
@@ -266,12 +266,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 		return track;
 	}
-	
+
 	static void signalDiskProblem()
 	{
 		signalDiskProblem( "genericDiskProblem" );
 	}
-	
+
 	static void signalDiskProblem( String msg )
 	{
 		log.warn( "Stopping execution since loadUI was unable to record statistics to disk. Please make sure that there's enough free disk space." );
@@ -283,7 +283,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			instance.workspace.fireEvent( new BaseEvent( instance, msg ) );
 		}
 	}
-	
+
 	static void signalLowDiskspace()
 	{
 		log.warn( "Stopping execution due to critically low diskspace." );
@@ -510,8 +510,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		if( currentExecution != null )
 		{
-//			log.debug( "Trying to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry,
-//					source, interpolationLevel, trackId } );
+			// log.debug(
+			// "Trying to store entry: {} for source: {} at level: {} and trackId: {}",
+			// new Object[] { entry,
+			// source, interpolationLevel, trackId } );
 
 			// Adjust timestamp:
 			long timestamp = entry.getTimestamp();
@@ -540,7 +542,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				log.error( "Unable to write data to the database:", e );
 				log.error( "Unable to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry,
 						source, interpolationLevel, trackId } );
-				throw new RuntimeException( "Unable to write data to the database!", e );
 			}
 		}
 	}
