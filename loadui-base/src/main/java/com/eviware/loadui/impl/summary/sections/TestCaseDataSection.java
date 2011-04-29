@@ -24,12 +24,12 @@ import com.eviware.loadui.util.summary.CalendarUtils;
 public class TestCaseDataSection extends MutableSectionImpl implements DataSection
 {
 
-	SceneItemImpl testcase;
+	SceneItem testcase;
 
 	public TestCaseDataSection( SceneItem sceneItem )
 	{
 		super( "TestCase Data" );
-		testcase = ( SceneItemImpl )sceneItem;
+		testcase = sceneItem;
 		addValue( "Number of components", getNumberOfComponents() );
 		addValue( "Number of connections", getNumberOfConnections() );
 		addValue( "Time Limit", getLimit() );
@@ -44,6 +44,7 @@ public class TestCaseDataSection extends MutableSectionImpl implements DataSecti
 	 * com.eviware.loadui.impl.summary.sections.DataSection#getNumberOfComponents
 	 * ()
 	 */
+	@Override
 	public String getNumberOfComponents()
 	{
 		return String.valueOf( testcase.getComponents().size() );
@@ -56,6 +57,7 @@ public class TestCaseDataSection extends MutableSectionImpl implements DataSecti
 	 * com.eviware.loadui.impl.summary.sections.DataSection#getNumberOfConnections
 	 * ()
 	 */
+	@Override
 	public String getNumberOfConnections()
 	{
 		return String.valueOf( testcase.getConnections().size() );
@@ -66,6 +68,7 @@ public class TestCaseDataSection extends MutableSectionImpl implements DataSecti
 	 * 
 	 * @see com.eviware.loadui.impl.summary.sections.DataSection#getLimit()
 	 */
+	@Override
 	public String getLimit()
 	{
 		if( testcase.getLimit( CanvasItem.TIMER_COUNTER ) > -1 )
@@ -81,6 +84,7 @@ public class TestCaseDataSection extends MutableSectionImpl implements DataSecti
 	 * 
 	 * @see com.eviware.loadui.impl.summary.sections.DataSection#getSampleLimit()
 	 */
+	@Override
 	public String getSampleLimit()
 	{
 		if( testcase.getLimit( CanvasItem.SAMPLE_COUNTER ) > -1 )
@@ -95,6 +99,7 @@ public class TestCaseDataSection extends MutableSectionImpl implements DataSecti
 	 * @see
 	 * com.eviware.loadui.impl.summary.sections.DataSection#getAssertionLimit()
 	 */
+	@Override
 	public String getFailureLimit()
 	{
 		if( testcase.getLimit( CanvasItem.FAILURE_COUNTER ) > -1 )

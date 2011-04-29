@@ -70,7 +70,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	{
 		this.chartView = chartView;
 
-		follow = Boolean.valueOf( chartView.getAttribute( FOLLOW_ATTRIBUTE, "true" ) );
+		follow = Boolean.parseBoolean( chartView.getAttribute( FOLLOW_ATTRIBUTE, "true" ) );
 
 		try
 		{
@@ -500,7 +500,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 						@Override
 						public void run()
 						{
-							if( CollectionEvent.Event.ADDED.equals( event.getEvent() ) )
+							if( CollectionEvent.Event.ADDED == event.getEvent() )
 								addedSegment( ( LineSegment )event.getElement() );
 							else
 								removedSegment( ( LineSegment )event.getElement() );

@@ -469,7 +469,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 						agentTerminals.put( agent, agentTerminal );
 						fireCollectionEvent( ComponentContext.AGENT_TERMINALS, event.getEvent(), agentTerminal );
 					}
-					else if( CollectionEvent.Event.REMOVED.equals( event.getEvent() ) && agentTerminals.containsKey( agent ) )
+					else if( CollectionEvent.Event.REMOVED == event.getEvent() && agentTerminals.containsKey( agent ) )
 					{
 						agentTerminal = agentTerminals.remove( agent );
 						fireCollectionEvent( ComponentContext.AGENT_TERMINALS, event.getEvent(), agentTerminal );

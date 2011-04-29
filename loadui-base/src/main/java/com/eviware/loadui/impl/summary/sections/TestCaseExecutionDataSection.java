@@ -26,10 +26,10 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 
 	SceneItemImpl testcase;
 
-	public TestCaseExecutionDataSection( SceneItem sceneItem )
+	public TestCaseExecutionDataSection( SceneItemImpl sceneItem )
 	{
 		super( "Execution Data" );
-		testcase = ( SceneItemImpl )sceneItem;
+		testcase = sceneItem;
 		addValue( "Duration", getExecutionTime() );// hh:mm:ss
 		addValue( "Start Time", getStartTime() );
 		addValue( "End Time", getEndTime() );
@@ -45,6 +45,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionDataSection#
 	 * getExecutionTime()
 	 */
+	@Override
 	public String getExecutionTime()
 	{
 		return CalendarUtils.formatInterval( testcase.getStartTime(), testcase.getEndTime() );
@@ -57,6 +58,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 * com.eviware.loadui.impl.summary.sections.ExecutionDataSection#getStartTime
 	 * ()
 	 */
+	@Override
 	public String getStartTime()
 	{
 		if( testcase.getStartTime() == null )
@@ -71,6 +73,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 * com.eviware.loadui.impl.summary.sections.ExecutionDataSection#getEndTime
 	 * ()
 	 */
+	@Override
 	public String getEndTime()
 	{
 		if( testcase.getEndTime() == null )
@@ -84,6 +87,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionDataSection#
 	 * getTotalNumberOfSamples()
 	 */
+	@Override
 	public String getTotalNumberOfRequests()
 	{
 		return String.valueOf( testcase.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );
@@ -100,6 +104,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionDataSection#
 	 * getTotalNumberOfAssertions()
 	 */
+	@Override
 	public String getTotalNumberOfAssertions()
 	{
 		return String.valueOf( testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get() );
@@ -111,6 +116,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionDataSection#
 	 * getTotalNumberOfFailedAssertions()
 	 */
+	@Override
 	public String getTotalNumberOfFailedAssertions()
 	{
 		return String.valueOf( testcase.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get() );

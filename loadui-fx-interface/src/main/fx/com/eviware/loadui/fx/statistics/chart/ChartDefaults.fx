@@ -56,10 +56,20 @@ public function createChartGroup( parent:StatisticPage, type:String, label:Strin
 public function createSubChart( parent:ChartGroup, sh:StatisticHolder ):Chart {
 	def chart = parent.createChart( sh );
 	if( sh instanceof ComponentItem ) {
-		def variable = sh.getStatisticVariable( "Time Taken" );
-		if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
-			def chartView = parent.getChartViewForChart( chart );
-			(chartView as ConfigurableLineChartView).addSegment( "Time Taken", "AVERAGE", StatisticVariable.MAIN_SOURCE );
+		def component:ComponentItem = sh as ComponentItem;
+		
+		if( component.getType().equals( "Assertion" ) ) {	
+			def variable = component.getStatisticVariable( "Assertion Failures" );
+			if( variable != null and variable.getStatisticNames().contains( "TOTAL" ) ) {
+				def chartView = parent.getChartViewForChart( chart );
+				(chartView as ConfigurableLineChartView).addSegment( "Assertion Failures", "TOTAL", StatisticVariable.MAIN_SOURCE );
+			}
+		} else {
+			def variable = component.getStatisticVariable( "Time Taken" );
+			if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
+				def chartView = parent.getChartViewForChart( chart );
+				(chartView as ConfigurableLineChartView).addSegment( "Time Taken", "AVERAGE", StatisticVariable.MAIN_SOURCE );
+			}
 		}
 	} else if( sh instanceof CanvasItem ) {
 		def variable = sh.getStatisticVariable( "Requests" );

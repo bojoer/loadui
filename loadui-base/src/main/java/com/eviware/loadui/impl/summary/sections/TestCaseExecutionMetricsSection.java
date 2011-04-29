@@ -30,12 +30,12 @@ import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseSamplerStati
 
 public class TestCaseExecutionMetricsSection extends MutableSectionImpl implements ExecutionMetricsSection
 {
-	SceneItemImpl testcase;
+	SceneItem testcase;
 
 	public TestCaseExecutionMetricsSection( SceneItem sceneItem )
 	{
 		super( "Execution Metrics" );
-		testcase = ( SceneItemImpl )sceneItem;
+		testcase = sceneItem;
 		addValue( "Assertion Failure Ratio", getFailedAssertions() );
 		addValue( "Request Failure Ratio", getFailedRequests() );
 		addTable( "Runners", getRunnersMetrics() );
@@ -48,6 +48,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionMetricsSection#
 	 * getFailedAssertions()
 	 */
+	@Override
 	public String getFailedAssertions()
 	{
 		long failed = testcase.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get();
@@ -71,6 +72,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionMetricsSection#
 	 * getAssertionsMetrics(com.eviware.loadui.api.model.SceneItem)
 	 */
+	@Override
 	public TableModel getAssertionsMetrics()
 	{
 		TestCaseAssertionMetricsTableModel table = new TestCaseAssertionMetricsTableModel();
@@ -88,6 +90,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionMetricsSection#
 	 * getRunnersMetrics(com.eviware.loadui.api.model.SceneItem)
 	 */
+	@Override
 	public TableModel getRunnersMetrics()
 	{
 		TestCaseSamplerStatisticsTable table = new TestCaseSamplerStatisticsTable();
