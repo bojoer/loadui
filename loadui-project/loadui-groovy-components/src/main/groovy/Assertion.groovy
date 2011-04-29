@@ -26,10 +26,10 @@ import java.util.LinkedList
 
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.api.events.ActionEvent
-import com.eviware.loadui.util.layout.DelayedFormattedString
-import com.eviware.loadui.impl.layout.OptionsProviderImpl
-
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.impl.layout.OptionsProviderImpl
+import com.eviware.loadui.util.layout.DelayedFormattedString
+import com.eviware.loadui.util.statistics.CounterStatisticSupport;
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 
@@ -49,6 +49,12 @@ setSignature(output, componentSignature)
 failureCounter = counters[CanvasItem.FAILURE_COUNTER]
 assertionFailureCounter = counters[CanvasItem.ASSERTION_FAILURE_COUNTER]
 totalCounter = counters[CanvasItem.ASSERTION_COUNTER]
+
+// Expose statistics
+counterStatisticSupport = new CounterStatisticSupport( component )
+assertionFailuresVariable = addStatisticVariable( "Assertion Failures", "COUNTER" )
+counterStatisticSupport.addCounterVariable( CanvasItem.ASSERTION_FAILURE_COUNTER, assertionFailuresVariable )
+counterStatisticSupport.init()
 
 //Properties
 createProperty( 'value', String, "Select value" ) { value ->
@@ -129,7 +135,6 @@ analyze = { message ->
 				buffer.addLast( timestamp )
 				if( buffer.size() >= tolerance.value ) {
 					def lit = buffer.listIterator()
-					long entry = null
 					//Remove old entries
 					if( period.value > 0 ) {
 						long oldest = timestamp - period.value * 1000
@@ -171,8 +176,7 @@ raiseFailure = {message, timestamp, value ->
 }
 
 onRelease = { 
-	assertedDisplay.release()
-	failedDisplay.release()
+	ReleasableUtils.releaseAll( counterStatisticSupport, failedDisplay, assertedDisplay )
 }
 
 resetComponent = {
@@ -267,10 +271,10 @@ compactLayout {
 }
 
 settings( label: "General" ) {
-	property( property: tolerance, label: 'Tolerance', min: 1)
+	property( property: tolerance, label: 'Tolerance', min: 1 )
 	property( property: period, label: 'Period' )
-	property(property: failOnMissingValue, label: 'Fail on missing value' )
-	property(property: sampleId, label: 'Sample ID' )
-	property(property: failOnMissingID, label: 'Fail on mismatching ID' )
-	property(property: includeAssertedMessage, label: 'Include original message in failure messages' )
+	property( property: failOnMissingValue, label: 'Fail on missing value' )
+	property( property: sampleId, label: 'Sample ID' )
+	property( property: failOnMissingID, label: 'Fail on mismatching ID' )
+	property( property: includeAssertedMessage, label: 'Include original message in failure messages' )
 }
