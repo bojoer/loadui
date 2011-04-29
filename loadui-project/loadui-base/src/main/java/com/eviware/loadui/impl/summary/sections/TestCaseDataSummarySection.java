@@ -26,10 +26,10 @@ public class TestCaseDataSummarySection extends MutableSectionImpl implements Da
 
 	SceneItemImpl testcase;
 
-	public TestCaseDataSummarySection( SceneItem testcase )
+	public TestCaseDataSummarySection( SceneItemImpl testcase )
 	{
 		super( testcase.getLabel() );
-		this.testcase = ( SceneItemImpl )testcase;
+		this.testcase = testcase;
 		addValue( "duration", getTime() );
 		addValue( "requests", getNumberOfSamples() );
 		addValue( "failures", getNumberOfFailures() );

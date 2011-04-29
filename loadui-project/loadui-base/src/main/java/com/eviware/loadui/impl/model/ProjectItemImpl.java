@@ -863,7 +863,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				if( WorkspaceItem.AGENTS == event.getKey() )
 				{
 					AgentItem agent = ( AgentItem )cEvent.getElement();
-					if( CollectionEvent.Event.ADDED.equals( cEvent.getEvent() ) )
+					if( CollectionEvent.Event.ADDED == cEvent.getEvent() )
 						agentListener.attach( agent );
 					else
 						agentListener.detach( agent );

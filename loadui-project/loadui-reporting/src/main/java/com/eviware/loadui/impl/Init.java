@@ -1,5 +1,7 @@
 package com.eviware.loadui.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -18,10 +20,12 @@ public class Init
 
 	public void initJIDE()
 	{
+		InputStream licenseStream = null;
 		try
 		{
 			Properties jidedata = new Properties();
-			jidedata.load( Init.class.getResourceAsStream( "/properties/jide.properties" ) );
+			licenseStream = Init.class.getResourceAsStream( "/properties/jide.properties" );
+			jidedata.load( licenseStream );
 			String company = jidedata.getProperty( "company" );
 			log.debug( "Initializing JIDE for {}", company );
 			Lm.verifyLicense( company, jidedata.getProperty( "product" ), jidedata.getProperty( "license" ) );
@@ -29,6 +33,20 @@ public class Init
 		catch( Throwable e )
 		{
 			log.error( "Failed to initialize JIDE:", e );
+		}
+		finally
+		{
+			if( licenseStream != null )
+			{
+				try
+				{
+					licenseStream.close();
+				}
+				catch( IOException e )
+				{
+					log.error( "Failed to initialize JIDE:", e );
+				}
+			}
 		}
 	}
 }

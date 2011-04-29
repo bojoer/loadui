@@ -82,6 +82,11 @@ public class GroovyContextSupport implements ComponentContext
 		closure.call();
 		context.setLayout( layoutBuilder.build() );
 	}
+	
+	public ComponentContext getContext()
+	{
+		return context;
+	}
 
 	public void compactLayout( Closure<?> closure )
 	{

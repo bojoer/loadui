@@ -29,16 +29,17 @@ import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseTopSamplesTa
 
 public class TestCaseExecutionNotablesSection extends MutableSectionImpl implements ExecutionNotablesSection
 {
-	SceneItemImpl testcase;
+	SceneItem testcase;
 
 	public TestCaseExecutionNotablesSection( SceneItem sceneItem )
 	{
 		super( "Execution Notables" );
-		testcase = ( SceneItemImpl )sceneItem;
-		addTable( "Top 5 Requests", get5MostExtremeSamples(true) );
-		addTable( "Bottom 5 Requests", get5MostExtremeSamples(false) );
+		testcase = sceneItem;
+		addTable( "Top 5 Requests", get5MostExtremeSamples( true ) );
+		addTable( "Bottom 5 Requests", get5MostExtremeSamples( false ) );
 	}
 
+	@Override
 	public synchronized TableModel get5MostExtremeSamples( boolean getTopSamples )
 	{
 		TestCaseTopSamplesTable table = new TestCaseTopSamplesTable();
@@ -46,8 +47,9 @@ public class TestCaseExecutionNotablesSection extends MutableSectionImpl impleme
 		for( ComponentItem component : testcase.getComponents() )
 			if( component.getBehavior() instanceof RunnerCategory )
 			{
-				RunnerCategory runnerCat = ( RunnerCategory) component.getBehavior();
-				List<SampleStats> sampleStatsList = getTopSamples ? runnerCat.getTopSamples() : runnerCat.getBottomSamples();
+				RunnerCategory runnerCat = ( RunnerCategory )component.getBehavior();
+				List<SampleStats> sampleStatsList = getTopSamples ? runnerCat.getTopSamples() : runnerCat
+						.getBottomSamples();
 				for( SampleStats stat : sampleStatsList )
 					table.add( component.getLabel(), stat, getTopSamples );
 			}
