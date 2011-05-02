@@ -487,15 +487,11 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		{
 			if( !isFollowProject() && ( START_ACTION.equals( event.getKey() ) || STOP_ACTION.equals( event.getKey() ) ) )
 				return;
-
-			if( propagate && !CounterHolder.COUNTER_RESET_ACTION.equals( event.getKey() ) )
-				fireEvent( event );
-			else
-			{
+			
+			if( !propagate || COUNTER_RESET_ACTION.equals( event.getKey() ) || COMPLETE_ACTION.equals( event.getKey() ) )
 				fireEvent( new RemoteActionEvent( SceneItemImpl.this, event ) );
-				// if( COUNTER_RESET_ACTION.equals( event.getKey() ) )
-				fireEvent( event );
-			}
+
+			fireEvent( event );
 		}
 	}
 
