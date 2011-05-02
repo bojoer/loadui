@@ -131,7 +131,7 @@ chartModel.addChartListener( new ChartAdapter() {
 			resetBuffers()
 		}
 		catch(Throwable e2) {
-			ex(e2, 'chartCleared')
+			log.error( 'chartCleared', e2 )
 		}
 	}
 } )
@@ -170,28 +170,28 @@ analyze = { message ->
 	try {
 		long timestamp = System.currentTimeMillis()
 		
-		if( !message.containsKey('TimeTaken') )
+		if( !message['TimeTaken'] )
 			return
 		
-		String sourceID = message['id'] == null ? message['ID']:message['id'] 
+		String sourceID = message['id'] == null ? message['ID'] : message['id'] 
 		
-		if (!(sourceID == null) && !sourceIDs.contains(sourceID)) {
-			sourceIDs.add(sourceID)
+		if( sourceID && !sourceIDs.contains( sourceID ) ) {
+			sourceIDs.add( sourceID )
 			availableSourceIDs.options = sourceIDs
 		}
 		
-		if (currentSourceID.value == "none" || currentSourceID.value == sourceID) {
-				long timeTaken = message['TimeTaken']
+		if( currentSourceID.value == "none" || currentSourceID.value == sourceID ) {
+			long timeTaken = message['TimeTaken']
 			timeStats.addValue( timestamp, timeTaken )
 		
-			long bytesCount = message['Bytes'] 
-			if(bytesCount < 0 && message.containsKey('Response'))
+			long bytesCount = message['Bytes'] ?: -1
+			if( bytesCount < 0 && message.containsKey( 'Response' ) )
 				bytesCount = message['Response'].length
-			if(bytesCount <= 0) bytesCount = 0
+			if( bytesCount < 0 ) bytesCount = 0
 			byteStats.addValue( timestamp, bytesCount )
 		}
-	} catch(Exception e) {
-		ex(e, 'Statistics -> analyze')
+	} catch( Exception e ) {
+		log.error( 'analyze', e )
 	}
 }
 
@@ -270,8 +270,8 @@ calculate = {
 			send(output, message)
 			send(controllerTerminal, message)
 		}
-	} catch(Throwable e1) {
-		ex(e1, 'calculate')
+	} catch( Throwable e1 ) {
+		log.error( 'calculate', e1 )
 	}
 	def oldKeys = agentData.keySet().findAll { agentData[it][AGENT_DATA_TIMESTAMP] < currentTime - AGENT_DATA_TTL }
 	oldKeys.each { agentData.remove( it ) }
@@ -317,12 +317,13 @@ updateChart = { currentTime ->
 				data['Avg'] /= count
 				data['Std-Dev'] /= count
 			}
-		} catch( e ) { ex(e, 'Aggregating')
+		} catch( e ) {
+			log.error( 'Aggregating', e )
 		}
 	} else {
 		data = agentData[selectedAgent.value]
 	}
-	if(data == null || data.isEmpty()) {
+	if( !data ) {
 		return
 	}
 	try {
@@ -364,23 +365,6 @@ updateChart = { currentTime ->
 		e.printStackTrace()
 	}
 
-}
-
-ex = {t, m ->
-	println('-------------------------------')
-	println("exception in $m method in groovy")
-	println("type: $t")
-	println('stacktrace:')
-	boolean first = true
-	for(item in t.stackTrace){
-		if(first) {
-			println(item)
-			first = false
-		} else {
-			println("\t$item")
-		}
-	}
-	println('-------------------------------')
 }
 
 schedule = {
@@ -458,8 +442,8 @@ addEventListener(PropertyEvent) { event ->
 			}
 		}
 	}
-	catch(Throwable e2){
-		ex(e2, 'addEventListener')
+	catch( Throwable e2 ) {
+		log.error( 'addEventListener', e2 )
 	}
 }
 
