@@ -22,6 +22,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 
@@ -38,6 +44,7 @@ import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.serialization.Value;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -51,7 +58,7 @@ import com.eviware.loadui.impl.layout.SettingsLayoutContainerImpl;
 
 import groovy.lang.Closure;
 
-public class GroovyContextSupport implements ComponentContext
+public class GroovyContextSupport implements ComponentContext, Releasable
 {
 	private final PropertyEventHandler propertyEventHandler = new PropertyEventHandler();
 	private final ActionEventHandler actionEventHandler = new ActionEventHandler();
@@ -59,6 +66,9 @@ public class GroovyContextSupport implements ComponentContext
 
 	private final ComponentContext context;
 	private final Logger log;
+	
+	private ScheduledExecutorService executor = null;
+	private final HashSet<Future<?>> futures = new HashSet<Future<?>>();
 
 	public GroovyContextSupport( ComponentContext context, Logger log )
 	{
@@ -68,7 +78,23 @@ public class GroovyContextSupport implements ComponentContext
 		context.addEventListener( PropertyEvent.class, propertyEventHandler );
 		context.addEventListener( ActionEvent.class, actionEventHandler );
 	}
+	
+	@Override
+	public void release() {
+		reset();
+		clearEventListeners();
+		context.removeEventListener( PropertyEvent.class, propertyEventHandler );
+		context.removeEventListener( ActionEvent.class, actionEventHandler );
+		if( executor != null )
+			executor.shutdownNow();
+		futures.clear();
+	}
 
+	public ComponentContext getContext()
+	{
+		return context;
+	}
+	
 	public void layout( Closure<?> closure )
 	{
 		Map<String, ?> map = Collections.emptyMap();
@@ -81,11 +107,6 @@ public class GroovyContextSupport implements ComponentContext
 		closure.setDelegate( layoutBuilder );
 		closure.call();
 		context.setLayout( layoutBuilder.build() );
-	}
-	
-	public ComponentContext getContext()
-	{
-		return context;
 	}
 
 	public void compactLayout( Closure<?> closure )
@@ -188,6 +209,68 @@ public class GroovyContextSupport implements ComponentContext
 		for( Property<?> property : new HashSet<Property<?>>( propertyEventHandler.replaceHandlers.keySet() ) )
 			propertyEventHandler.handleEvent( new PropertyEvent( property.getOwner(), property, PropertyEvent.Event.VALUE,
 					null ) );
+	}
+	
+	private synchronized ScheduledExecutorService getExecutor()
+	{
+		if( executor == null )
+			executor = Executors.newSingleThreadScheduledExecutor();
+		
+		return executor;
+	}
+	
+	private synchronized <V, T extends Future<V>> T addFuture( T future )
+	{
+		futures.add( future );
+		return future;
+	}
+	
+	public void cancelTasks()
+	{
+		synchronized ( futures )
+		{
+			for( Future<?> future : futures )
+			{
+				if( !future.isDone() )
+					future.cancel( true );
+			}
+			futures.clear();
+		}
+	}
+	
+	public Future<?> submit( Runnable runnable )
+	{
+		return addFuture( getExecutor().submit( runnable ) );
+	}
+	
+	public <T> Future<T> submit( Runnable runnable, T result )
+	{
+		return addFuture( getExecutor().submit( runnable, result ) );
+	}
+	
+	public <T> Future<T> submit( Callable<T> callable )
+	{
+		return addFuture( getExecutor().submit( callable ) );
+	}
+	
+	public <V> ScheduledFuture<V> schedule( Callable<V> callable, long delay, TimeUnit unit )
+	{
+		return addFuture( getExecutor().schedule( callable, delay, unit ) );
+	}
+	
+	public ScheduledFuture<?> schedule( Runnable command, long delay, TimeUnit unit )
+	{
+		return addFuture( getExecutor().schedule( command, delay, unit) );
+	}
+	
+	public ScheduledFuture<?> scheduleAtFixedRate( Runnable command, long initialDelay, long period, TimeUnit unit )
+	{
+		return addFuture( getExecutor().scheduleAtFixedRate( command, initialDelay, period, unit ) );
+	}
+	
+	public ScheduledFuture<?> scheduleWithFixedDelay( Runnable command, long initialDelay, long delay, TimeUnit unit )
+	{
+		return addFuture( getExecutor().scheduleWithFixedDelay( command, initialDelay, delay, unit ) );
 	}
 
 	@Override

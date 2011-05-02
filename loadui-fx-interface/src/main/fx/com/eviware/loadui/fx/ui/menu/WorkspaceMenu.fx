@@ -132,7 +132,6 @@ public class WorkspaceMenu extends HBox {
 	          MenuItem {
 	              text: "Import Project"
 	              action: function() {
-	                  var pro:ProjectRef; 
 	                  def chooser = new JFileChooser();
 	                  chooser.addChoosableFileFilter(new XMLFileFilter());
 	                  chooser.setAcceptAllFileFilterUsed(false);
@@ -145,7 +144,7 @@ public class WorkspaceMenu extends HBox {
 	                  	AppState.byName("MAIN").blockingTask(
 	                  		function():Void {
 			                     try {
-			                         pro = workspace.importProject( source, true );
+			                         workspace.importProject( source, false );
 			                         success = true;
 			                     } catch(e:IOException) {
 			                     }
