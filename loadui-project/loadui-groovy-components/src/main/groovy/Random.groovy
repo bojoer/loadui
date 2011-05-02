@@ -26,10 +26,7 @@ import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
 
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-
-executor = Executors.newSingleThreadScheduledExecutor()
 
 //Properties
 createProperty( 'rate', Long, 10 )
@@ -52,11 +49,9 @@ random = new Random()
 
 timer = new Timer(true)
 
-future = null
-
 onRelease = {  display.release() }
 
-schedule = {
+enqueue = {
 	if (rate.value > 0 && stateProperty.value) {
 		if (factor.value > 0) {
 			if ( type.value == 'Uniform' ) 
@@ -71,11 +66,10 @@ schedule = {
 		//if (currentDelay.intValue() == 0)
 		//	currentDelay = 1
 		
-		
-		future = timer.runAfter(currentDelay.intValue()) {
+		schedule( {
 			trigger()
-			schedule()
-		}
+			enqueue()
+		}, currentDelay.intValue(), TimeUnit.MILLISECONDS )
 	}
 }
 
@@ -83,9 +77,9 @@ addEventListener( PropertyEvent ) { event ->
 	if ( event.event == PropertyEvent.Event.VALUE ) {
 		
 		if (event.property == stateProperty && !stateProperty.value)
-			future?.cancel()
+			cancelTasks()
 		if (stateProperty.value)
-			future?.cancel()
+			cancelTasks()
 		
 		if( event.property == unit ) {
 			if ( unit.value == "Sec" )
@@ -99,21 +93,17 @@ addEventListener( PropertyEvent ) { event ->
 			defaultDelay = msPerUnit/rate.value
 		display.setArgs(rate.value, unit.value)
 		randomDisplay.setArgs(factor.value, "%")
-		schedule()
+		enqueue()
 	}
 }
 
-addEventListener( ActionEvent ) { event ->
-	if ( event.key == "STOP" ) {
-		future?.cancel();
-	}
-	
-	if ( event.key == "START" ) {
-		future?.cancel()
-		schedule()
-	}
-	
-	//RESET in this case would not really do anything
+onAction( 'START' ) {
+	cancelTasks()
+	enqueue()
+}
+
+onAction( 'STOP' ) {
+	cancelTasks()
 }
 
 //Layout
@@ -153,5 +143,4 @@ compactLayout {
 //	}
 //} 
 
-if (running)
-	schedule();
+if( running ) enqueue()

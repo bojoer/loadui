@@ -21,13 +21,13 @@ import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.groovy.GroovyBehaviorProvider.ScriptDescriptor;
 import com.eviware.loadui.util.MapUtils;
+import com.eviware.loadui.util.ReleasableUtils;
 
 import groovy.grape.Grape;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.DelegatingMetaClass;
 import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyRuntimeException;
 import groovy.lang.GroovyShell;
 import groovy.lang.MetaClass;
 import groovy.lang.MissingMethodException;
@@ -150,8 +150,7 @@ public class GroovyScriptSupport implements Releasable
 	public void release()
 	{
 		invokeClosure( true, false, "onRelease" );
-		context.reset();
-		context.clearEventListeners();
+		ReleasableUtils.release( context );
 	}
 
 	private void loadDependencies( final String scriptContent, boolean manual )

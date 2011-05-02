@@ -42,7 +42,6 @@ import com.eviware.loadui.impl.component.ActivityStrategies
 import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.util.ReleasableUtils
 
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 import org.apache.http.conn.scheme.Scheme
@@ -58,8 +57,7 @@ import java.util.HashMap
 import java.util.Map
 import java.util.concurrent.TimeUnit
 
-executor = Executors.newSingleThreadScheduledExecutor()
-future = executor.scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
+scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
 
 createOutput( 'statisticsOutput', 'Runner Statistics' )
 
@@ -274,7 +272,6 @@ onCancel = {
 }
 
 onRelease = {
-	executor.shutdownNow()
 	ReleasableUtils.releaseAll( displayRunning, displayTotal, displayQueue, displayDiscarded, displayFailed, displayRequests )
 }
 
@@ -360,8 +357,7 @@ settings( label: "Proxy" ) {
 	property( property: proxyPassword, widget: 'password', label: 'Proxy Password' )
 }
 
-executor.scheduleAtFixedRate( 
-{
+scheduleAtFixedRate( {
 	def message = newMessage()
 	Integer.with {
 		message["Requests"] = parseInt( displayRequests.currentValue )

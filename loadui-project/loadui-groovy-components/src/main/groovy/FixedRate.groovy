@@ -27,10 +27,7 @@ import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
 
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-
-executor = Executors.newSingleThreadScheduledExecutor()
 
 //Properties
 createProperty( 'rate', Long, 10 ) { value ->
@@ -59,14 +56,13 @@ delay = milisecondsPerUnit/rate.value
 display = new DelayedFormattedString( '%d / %s', 200, rate.value, unit.value )
 
 onRelease = { 
-	executor.shutdownNow() 
 	display.release()
 }
 future = null
 schedule = {
 	if (stateProperty.value) {
 		future?.cancel(true);
-		future = executor.scheduleAtFixedRate( { trigger() }, delay.longValue(), delay.longValue(), TimeUnit.MICROSECONDS )
+		future = scheduleAtFixedRate( { trigger() }, delay.longValue(), delay.longValue(), TimeUnit.MICROSECONDS )
 	}
 }
 

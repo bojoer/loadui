@@ -24,7 +24,6 @@
  
 import com.eviware.loadui.api.events.PropertyEvent
  
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
@@ -47,7 +46,6 @@ createProperty('delay', Long, 0)
 createProperty('selected', String, UNIFORM)
 createProperty('randomDelay', Integer, 0)
 
-executor = Executors.newSingleThreadScheduledExecutor()
 
 workspace = canvas.project?.workspace
 fixDisplay = {
@@ -81,7 +79,7 @@ onMessage = { incoming, outgoing, message ->
 	}
 	
 	message.put( 'actualDelay', delayTime )
-	executor.schedule( {
+	schedule( {
 		send( output, message )
 		waitingCount--
 		display.args = delayTime
@@ -91,27 +89,18 @@ onMessage = { incoming, outgoing, message ->
 onRelease = {
 	display.release()
 	waitingDisplay.release()
-	executor?.shutdownNow()
 	workspace?.removeEventListener( PropertyEvent, workspaceListener )
 }
 
-onAction( "START" ) {
-	if( executor == null ) executor = Executors.newSingleThreadScheduledExecutor()
-}
-
 onAction( "COMPLETE" ) {
-	executor?.shutdownNow()
-	executor = null
+	cancelTasks()
 	waitingCount = 0
 }
 
 onAction( "RESET" ) {
 	display.args = 0
 	waitingCount = 0
-	if( executor != null ) {
-		executor.shutdownNow()
-		executor = Executors.newSingleThreadScheduledExecutor()
-	}
+	cancelTasks()
 }
 
 layout { 

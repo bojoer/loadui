@@ -28,10 +28,7 @@ import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
 
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-
-executor = Executors.newSingleThreadScheduledExecutor()
 
 sampleCount = createInput( 'Sample Count' )
 count = 0;
@@ -63,14 +60,13 @@ loadDisplay = new DelayedFormattedString( '%d', 200, 0 )
 intervalDisplay = new DelayedFormattedString( '%d ms', 200, interval.value )
 
 onRelease = {
-	executor.shutdownNow()
 	loadDisplay.release()
 	intervalDisplay.release()
 }
 
 schedule = {
 	future?.cancel( true )
-	if( doDelay ) future = executor.scheduleAtFixedRate( { if( count < load.value ) trigger() }, interval.value, interval.value, TimeUnit.MILLISECONDS )
+	if( doDelay ) future = scheduleAtFixedRate( { if( count < load.value ) trigger() }, interval.value, interval.value, TimeUnit.MILLISECONDS )
 }
 
 onMessage = { outgoing, incoming, message ->

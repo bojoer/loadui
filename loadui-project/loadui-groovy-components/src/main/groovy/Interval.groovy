@@ -37,13 +37,11 @@ import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.counter.CounterHolder
 
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 import com.eviware.loadui.api.events.BaseEvent
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.util.layout.IntervalModel
-import com.eviware.loadui.util.ScheduledExecutor
 import com.eviware.loadui.util.layout.DelayedFormattedString
 
 createProperty( 'startAt', Long, 0 )
@@ -60,7 +58,6 @@ def stopFuture = null
 
 def endFuture = null
 
-def executor = ScheduledExecutor.instance
 def interval = new IntervalModel()
 
 updateState = {
@@ -98,11 +95,11 @@ updateState = {
 	if( running ) {
 		if( currentTime < stopTime ) {
 			stopFuture?.cancel( true )
-			stopFuture = executor.schedule( { sendEnabled( false ) }, stopTime - currentTime, TimeUnit.MILLISECONDS )
+			stopFuture = schedule( { sendEnabled( false ) }, stopTime - currentTime, TimeUnit.MILLISECONDS )
 		}
 		if( currentTime < interval.end ) {
 			endFuture?.cancel( true )
-			endFuture = executor.schedule( {
+			endFuture = schedule( {
 				if( mode.value == 'Single' ) {
 					intervalModel.stop()
 					intervalModel.update()
@@ -115,7 +112,7 @@ updateState = {
 		}
 		if( currentTime < startTime ) {
 			startFuture?.cancel( true )
-			startFuture = executor.schedule( { sendEnabled( true ) }, startTime - currentTime, TimeUnit.MILLISECONDS )
+			startFuture = schedule( { sendEnabled( true ) }, startTime - currentTime, TimeUnit.MILLISECONDS )
 			sendEnabled( false )
 		} else if( currentTime < stopTime ) {
 			sendEnabled( true )
@@ -161,11 +158,9 @@ onRelease = {
 }
 
 cancelAll = {
-	startFuture?.cancel( true )
+	cancelTasks()
 	startFuture = null
-	stopFuture?.cancel( true )
 	stopFuture = null
-	endFuture?.cancel( true )
 	endFuture = null
 }
 
