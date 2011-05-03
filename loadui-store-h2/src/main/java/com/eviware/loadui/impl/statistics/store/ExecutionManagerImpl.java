@@ -17,7 +17,6 @@ package com.eviware.loadui.impl.statistics.store;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,8 +52,8 @@ import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
 import com.eviware.loadui.impl.statistics.db.TableRegistry;
 import com.eviware.loadui.impl.statistics.db.table.TableBase;
 import com.eviware.loadui.impl.statistics.db.table.model.DataTable;
-import com.eviware.loadui.impl.statistics.db.table.model.SequenceTable;
-import com.eviware.loadui.impl.statistics.db.table.model.SourceTable;
+import com.eviware.loadui.impl.statistics.db.table.model.InterpolationLevelTable;
+import com.eviware.loadui.impl.statistics.db.table.model.SourceMetadataTable;
 import com.eviware.loadui.impl.statistics.db.table.model.TrackMetadataTable;
 import com.eviware.loadui.impl.statistics.db.util.FileUtil;
 import com.eviware.loadui.util.FormattingUtils;
@@ -76,14 +75,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private static ExecutionManagerImpl instance;
 
-	private static final int INTERPOLATION_LEVEL_COUNT = 5;
-
 	private WorkspaceItem workspace = null;
-
-	/**
-	 * Postfix added to data table name when creating source table
-	 */
-	private static final String SOURCE_TABLE_NAME_POSTFIX = "_sources";
 
 	public File baseDirectory = new File( System.getProperty( LoadUI.LOADUI_HOME ), "results" );
 	public String baseDirectoryURI = baseDirectory.toURI().toString().replaceAll( "%20", " " ) + File.separator;
@@ -198,7 +190,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 
 		File executionDir = null;
-		SequenceTable sequenceTable = null;
+		SourceMetadataTable sourceMetaTable = null;
+		InterpolationLevelTable levelMetaTable = null;
 		TrackMetadataTable trackMetaTable = null;
 		String dbName;
 		try
@@ -207,8 +200,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			executionDir.mkdir();
 			dbName = executionDir.getName();
 
-			// create sequence table
-			sequenceTable = new SequenceTable( dbName, connectionRegistry, metadata, tableRegistry );
+			// create source meta table
+			sourceMetaTable = new SourceMetadataTable( dbName, connectionRegistry, metadata, tableRegistry );
+
+			// create interpolation level meta table
+			levelMetaTable = new InterpolationLevelTable( dbName, connectionRegistry, metadata, tableRegistry );
 
 			// create track meta table
 			trackMetaTable = new TrackMetadataTable( dbName, connectionRegistry, metadata, tableRegistry );
@@ -225,7 +221,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		// after all SQL operations are finished successfully, add created
 		// tables into registry
-		tableRegistry.put( dbName, sequenceTable );
+		tableRegistry.put( dbName, sourceMetaTable );
+		tableRegistry.put( dbName, levelMetaTable );
 		tableRegistry.put( dbName, trackMetaTable );
 
 		currentExecution = new ExecutionImpl( executionDir, id, timestamp, this );
@@ -290,6 +287,48 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		signalDiskProblem( "lowDiskspace" );
 	}
 
+	private synchronized void createTrackSourceLevelTable( String dbName, String trackId, int interpolationLevel,
+			String source )
+	{
+		if( tableRegistry.getTable( dbName, buildDataTableName( trackId, interpolationLevel, source ) ) != null )
+		{
+			return;
+		}
+		try
+		{
+			// create data table
+			TrackDescriptor td = trackDescriptors.get( trackId );
+			DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), interpolationLevel, source ),
+					td.getValueNames(), connectionRegistry, metadata, tableRegistry );
+
+			SourceMetadataTable sources = ( SourceMetadataTable )tableRegistry.getTable( dbName,
+					SourceMetadataTable.SOURCE_TABLE_NAME );
+			if( !sources.getInMemoryTable().contains( source ) )
+			{
+				Map<String, Object> data = new HashMap<String, Object>();
+				data.put( SourceMetadataTable.STATIC_FIELD_SOURCE_NAME, source );
+				sources.insert( data );
+			}
+
+			InterpolationLevelTable levels = ( InterpolationLevelTable )tableRegistry.getTable( dbName,
+					InterpolationLevelTable.INTERPOLATION_LEVEL_TABLE_NAME );
+			if( !levels.getInMemoryTable().contains( interpolationLevel ) )
+			{
+				Map<String, Object> data = new HashMap<String, Object>();
+				data.put( InterpolationLevelTable.STATIC_FIELD_INTERPOLATION_LEVEL, interpolationLevel );
+				levels.insert( data );
+			}
+
+			// all SQL operations were successful so add created table into table
+			// registry
+			tableRegistry.put( dbName, dtd );
+		}
+		catch( SQLException e )
+		{
+			throw new RuntimeException( "Unable to create table for source!", e );
+		}
+	}
+
 	private synchronized void createTrack( TrackDescriptor td )
 	{
 		// synchronized to make sure that all tracks are created one by one, and
@@ -307,31 +346,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			String dbName = currentExecution.getExecutionDir().getName();
 
-			// create sources table
-			SourceTable std = new SourceTable( dbName, td.getId() + SOURCE_TABLE_NAME_POSTFIX, connectionRegistry,
-					metadata, tableRegistry );
-
-			// create data tables
-			ArrayList<TableBase> dataTableList = new ArrayList<TableBase>();
-			for( int i = 0; i < INTERPOLATION_LEVEL_COUNT; i++ )
-			{
-				DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), i ), td.getValueNames(),
-						connectionRegistry, metadata, tableRegistry );
-				dtd.setParentTable( std );
-				dataTableList.add( dtd );
-			}
-
 			// insert into meta-table
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( TrackMetadataTable.STATIC_FIELD_TRACK_NAME, td.getId() );
 			TableBase trackMetadataTable = tableRegistry.getTable( dbName, TrackMetadataTable.TABLE_NAME );
 			trackMetadataTable.insert( data );
-
-			// all tables are created properly and meta data inserted, so all SQL
-			// operations have finished properly. Create track instance and add it
-			// to current execution and put created tables into table registry
-			tableRegistry.putAll( dbName, dataTableList );
-			tableRegistry.put( dbName, std );
 
 			Track track = new TrackImpl( currentExecution, td, this );
 			currentExecution.addTrack( track );
@@ -416,9 +435,15 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		List<TableBase> createdTableList = new ArrayList<TableBase>();
 		try
 		{
-			// create sequence table
-			SequenceTable sequenceTable = new SequenceTable( dbName, connectionRegistry, metadata, tableRegistry );
-			createdTableList.add( sequenceTable );
+			// create source meta table
+			SourceMetadataTable sourceMetaTable = new SourceMetadataTable( dbName, connectionRegistry, metadata,
+					tableRegistry );
+			createdTableList.add( sourceMetaTable );
+
+			// create level table
+			InterpolationLevelTable levelTable = new InterpolationLevelTable( dbName, connectionRegistry, metadata,
+					tableRegistry );
+			createdTableList.add( levelTable );
 
 			// create track meta data table
 			TrackMetadataTable trackMetaTable = new TrackMetadataTable( dbName, connectionRegistry, metadata,
@@ -437,20 +462,16 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				TrackDescriptor td = trackDescriptors.get( trackId );
 				if( td != null )
 				{
-					// create sources table
-					SourceTable std = new SourceTable( dbName, td.getId() + SOURCE_TABLE_NAME_POSTFIX, connectionRegistry,
-							metadata, tableRegistry );
-
 					// create data tables
-					for( int k = 0; k < INTERPOLATION_LEVEL_COUNT; k++ )
+					for( Integer level : levelTable.getLevels() )
 					{
-						DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), k ), td.getValueNames(),
-								connectionRegistry, metadata, tableRegistry );
-						dtd.setParentTable( std );
-						createdTableList.add( dtd );
+						for( String source : sourceMetaTable.getSourceNames() )
+						{
+							DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), level, source ), td.getValueNames(),
+									connectionRegistry, metadata, tableRegistry );
+							createdTableList.add( dtd );
+						}
 					}
-
-					createdTableList.add( std );
 					tracksToCreate.add( td );
 				}
 			}
@@ -518,7 +539,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			// Adjust timestamp:
 			long timestamp = entry.getTimestamp();
 			if( executionState == State.PAUSED )
+			{
 				timestamp = Math.min( timestamp, pauseStartedTime );
+			}
 			timestamp -= ( currentExecution.getStartTime() + totalPause );
 
 			latestEntries.put( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ), new AdjustedEntry(
@@ -558,9 +581,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		return latestEntries.get( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ) );
 	}
 
-	private String buildDataTableName( String trackId, long interpolationLevel )
+	private String buildDataTableName( String trackId, long interpolationLevel, String source )
 	{
-		return trackId + "_" + interpolationLevel;
+		source = source.replaceAll( "[^A-Za-z0-9]", "" );
+		return trackId + "_" + interpolationLevel + "_" + source;
 	}
 
 	private void write( String trackId, String source, int interpolationLevel, Map<String, Object> data )
@@ -578,11 +602,13 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			return;
 		}
 
-		TableBase dtd = tableRegistry.getTable( currentExecution.getExecutionDir().getName(),
-				buildDataTableName( trackId, interpolationLevel ) );
+		// check if source is registered, and register it and create relevant
+		// tables if necessary
+		String dbName = currentExecution.getExecutionDir().getName();
+		createTrackSourceLevelTable( dbName, trackId, interpolationLevel, source );
 
-		Integer sourceId = ( ( SourceTable )dtd.getParentTable() ).getSourceId( source );
-		data.put( DataTable.STATIC_FIELD_SOURCEID, sourceId );
+		TableBase dtd = tableRegistry.getTable( currentExecution.getExecutionDir().getName(),
+				buildDataTableName( trackId, interpolationLevel, source ) );
 
 		dtd.insert( data );
 	}
@@ -591,15 +617,17 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			int interpolationLevel ) throws SQLException
 	{
 		TableBase dtd = tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(),
-				buildDataTableName( trackId, interpolationLevel ) );
+				buildDataTableName( trackId, interpolationLevel, source ) );
 
 		Map<String, Object> data = new HashMap<String, Object>();
+		if( dtd == null )
+		{
+			// if table does not exist return empty set
+			return data;
+		}
+
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_LTE, System.currentTimeMillis() );
-
-		Integer sourceId = ( ( SourceTable )dtd.getParentTable() ).getSourceId( source );
-		data.put( DataTable.SELECT_ARG_SOURCEID_EQ, sourceId );
-
 		return dtd.selectFirst( data );
 	}
 
@@ -607,14 +635,17 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			long endTime, int interpolationLevel ) throws SQLException
 	{
 		TableBase dtd = tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(),
-				buildDataTableName( trackId, interpolationLevel ) );
+				buildDataTableName( trackId, interpolationLevel, source ) );
+
+		if( dtd == null )
+		{
+			// if table does not exist return empty set
+			return new ArrayList<Map<String, Object>>();
+		}
 
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_LTE, endTime );
-
-		Integer sourceId = ( ( SourceTable )dtd.getParentTable() ).getSourceId( source );
-		data.put( DataTable.SELECT_ARG_SOURCEID_EQ, sourceId );
 
 		return dtd.select( data );
 	}
@@ -622,27 +653,25 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public void deleteTrack( String executionId, String trackId ) throws SQLException
 	{
 		String dbName = getExecution( executionId ).getExecutionDir().getName();
+		SourceMetadataTable sources = ( SourceMetadataTable )tableRegistry.getTable( dbName,
+				SourceMetadataTable.SOURCE_TABLE_NAME );
+		InterpolationLevelTable levels = ( InterpolationLevelTable )tableRegistry.getTable( dbName,
+				InterpolationLevelTable.INTERPOLATION_LEVEL_TABLE_NAME );
+
 		TableBase table;
-		for( int i = 0; i < INTERPOLATION_LEVEL_COUNT; i++ )
+		for( Integer level : levels.getLevels() )
 		{
-			table = tableRegistry.getTable( dbName, buildDataTableName( trackId, i ) );
-			if( table != null )
+			for( String s : sources.getSourceNames() )
 			{
-				table.drop();
-				// release resources and remove from registry
-				tableRegistry.release( dbName, buildDataTableName( trackId, i ) );
+				table = tableRegistry.getTable( dbName, buildDataTableName( trackId, level, s ) );
+				if( table != null )
+				{
+					table.drop();
+					// release resources and remove from registry
+					tableRegistry.release( dbName, buildDataTableName( trackId, level, s ) );
+				}
 			}
 		}
-
-		// drop source table
-		table = tableRegistry.getTable( dbName, trackId + SOURCE_TABLE_NAME_POSTFIX );
-		if( table != null )
-		{
-			table.drop();
-			// release resources and remove from registry
-			tableRegistry.release( dbName, trackId + SOURCE_TABLE_NAME_POSTFIX );
-		}
-
 	}
 
 	public void delete( String executionId )

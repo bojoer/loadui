@@ -43,12 +43,7 @@ public class TableRegistry implements Releasable
 
 	public TableBase getTable( String dbName, String tableName )
 	{
-		TableBase dtd = tableMap.get( dbName + tableName );
-		if( dtd == null )
-		{
-			throw new IllegalArgumentException( "Table " + tableName + " does not exist in execution: " + dbName );
-		}
-		return dtd;
+		return tableMap.get( dbName + tableName );
 	}
 
 	public List<TableBase> getAllTables( String dbName )

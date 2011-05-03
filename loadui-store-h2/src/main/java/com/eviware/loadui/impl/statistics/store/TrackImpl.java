@@ -88,8 +88,7 @@ public class TrackImpl implements Track
 				while( keys.hasNext() )
 				{
 					String key = keys.next();
-					if( !DataTable.STATIC_FIELD_TIMESTAMP.equalsIgnoreCase( key )
-							&& !DataTable.STATIC_FIELD_SOURCEID.equalsIgnoreCase( key ) )
+					if( !DataTable.STATIC_FIELD_TIMESTAMP.equalsIgnoreCase( key ) )
 					{
 						values.put( key, ( Number )result.get( key ) );
 					}
@@ -132,8 +131,7 @@ public class TrackImpl implements Track
 					while( keys.hasNext() )
 					{
 						String key = keys.next();
-						if( !DataTable.STATIC_FIELD_TIMESTAMP.equalsIgnoreCase( key )
-								&& !DataTable.STATIC_FIELD_SOURCEID.equalsIgnoreCase( key ) )
+						if( !DataTable.STATIC_FIELD_TIMESTAMP.equalsIgnoreCase( key ) )
 						{
 							values.put( key, ( Number )row.get( key ) );
 						}

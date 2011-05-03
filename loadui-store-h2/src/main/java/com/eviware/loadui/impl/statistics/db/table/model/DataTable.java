@@ -31,7 +31,6 @@ public class DataTable extends TableBase
 	public static final String SELECT_ARG_SOURCEID_EQ = "sourceid_eq";
 	
 	public static final String STATIC_FIELD_TIMESTAMP = "_TSTAMP";
-	public static final String STATIC_FIELD_SOURCEID = "_SOURCE_ID";
 
 	public DataTable( String dbName, String name, Map<String, ? extends Class<? extends Object>> dynamicFields,
 			ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata, TableRegistry tableRegistry ) throws SQLException
@@ -43,14 +42,11 @@ public class DataTable extends TableBase
 	protected void initializeDescriptor( TableDescriptor descriptor )
 	{
 		descriptor.addStaticField( STATIC_FIELD_TIMESTAMP, Long.class );
-		descriptor.addStaticField( STATIC_FIELD_SOURCEID, Integer.class );
 
 		descriptor.addToPkSequence( STATIC_FIELD_TIMESTAMP );
-		descriptor.addToPkSequence( STATIC_FIELD_SOURCEID );
 
 		descriptor.addSelectCriteria( SELECT_ARG_TIMESTAMP_GTE, STATIC_FIELD_TIMESTAMP, ">=?" );
 		descriptor.addSelectCriteria( SELECT_ARG_TIMESTAMP_LTE, STATIC_FIELD_TIMESTAMP, "<=?" );
-		descriptor.addSelectCriteria( SELECT_ARG_SOURCEID_EQ, STATIC_FIELD_SOURCEID, "=?" );
 	}
 
 	@Override
