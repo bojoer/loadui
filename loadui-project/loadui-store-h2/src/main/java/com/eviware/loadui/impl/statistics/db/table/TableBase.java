@@ -57,8 +57,6 @@ public abstract class TableBase implements Releasable
 
 	private Connection connection;
 
-	private TableBase parentTable;
-
 	private Map<String, PreparedStatement> extraStatementMap;
 
 	private TableDescriptor descriptor;
@@ -352,16 +350,6 @@ public abstract class TableBase implements Releasable
 		// not closed here, since it may be shared between tables.
 		// ConnectionRegistry handles connections and data sources disposal
 		// instead.
-	}
-
-	public TableBase getParentTable()
-	{
-		return parentTable;
-	}
-
-	public void setParentTable( TableBase parentTable )
-	{
-		this.parentTable = parentTable;
 	}
 
 	public String getExternalName()

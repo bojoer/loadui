@@ -16,9 +16,10 @@
 package com.eviware.loadui.impl.statistics.db.table.model;
 
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
 import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
@@ -26,25 +27,25 @@ import com.eviware.loadui.impl.statistics.db.TableRegistry;
 import com.eviware.loadui.impl.statistics.db.table.TableBase;
 import com.eviware.loadui.impl.statistics.db.table.TableDescriptor;
 
-public class SourceTable extends TableBase
+public class SourceMetadataTable extends TableBase
 {
 	public static final String STATIC_FIELD_SOURCE_NAME = "__SOURCE";
-	public static final String STATIC_FIELD_SOURCEID = "__SOURCE_ID";
 
-	private Map<String, Integer> inMemoryTable = new HashMap<String, Integer>();
+	public static final String SOURCE_TABLE_NAME = "source_metadata";
 
-	public SourceTable( String dbName, String name, ConnectionRegistry connectionRegistry,
-			DatabaseMetadata databaseMetadata, TableRegistry tableRegistry ) throws SQLException
+	private Set<String> inMemoryTable = new HashSet<String>();
+
+	public SourceMetadataTable( String dbName, ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata,
+			TableRegistry tableRegistry ) throws SQLException
 	{
-		super( dbName, name, null, connectionRegistry, databaseMetadata, tableRegistry );
+		super( dbName, SOURCE_TABLE_NAME, null, connectionRegistry, databaseMetadata, tableRegistry );
 
 		try
 		{
 			List<Map<String, Object>> result = select( null );
 			for( int i = 0; i < result.size(); i++ )
 			{
-				inMemoryTable.put( ( String )result.get( i ).get( STATIC_FIELD_SOURCE_NAME ), ( Integer )result.get( i )
-						.get( STATIC_FIELD_SOURCEID ) );
+				inMemoryTable.add( ( String )result.get( i ).get( STATIC_FIELD_SOURCE_NAME ) );
 			}
 		}
 		catch( SQLException e )
@@ -57,30 +58,7 @@ public class SourceTable extends TableBase
 	public synchronized void insert( Map<String, ? extends Object> data ) throws SQLException
 	{
 		super.insert( data );
-		inMemoryTable.put( ( String )data.get( STATIC_FIELD_SOURCE_NAME ), ( Integer )data.get( STATIC_FIELD_SOURCEID ) );
-	}
-
-	public synchronized Integer getSourceId( String source ) throws SQLException
-	{
-		if( inMemoryTable.get( source ) == null )
-		{
-			// source id for this source is not generated yet, so use sequence
-			// table to generate it
-			SequenceTable st = ( SequenceTable )getTable( SequenceTable.SEQUENCE_TABLE_NAME );
-			Integer sourceId = st.next( getExternalName(), STATIC_FIELD_SOURCEID );
-
-			// insert newly created source id into this table (insert into
-			// inMemoryTable is done in 'insert' method implementation after all
-			// SQL operations are finished successfully). If following insert
-			// fails,
-			// previously generated id will be left unused.
-			Map<String, Object> data = new HashMap<String, Object>();
-			data.put( STATIC_FIELD_SOURCE_NAME, source );
-			data.put( STATIC_FIELD_SOURCEID, sourceId );
-			insert( data );
-			commit();
-		}
-		return inMemoryTable.get( source );
+		inMemoryTable.add( ( String )data.get( STATIC_FIELD_SOURCE_NAME ) );
 	}
 
 	@Override
@@ -95,7 +73,6 @@ public class SourceTable extends TableBase
 	protected void initializeDescriptor( TableDescriptor descriptor )
 	{
 		descriptor.addStaticField( STATIC_FIELD_SOURCE_NAME, String.class );
-		descriptor.addStaticField( STATIC_FIELD_SOURCEID, Integer.class );
 
 		descriptor.addToPkSequence( STATIC_FIELD_SOURCE_NAME );
 	}
@@ -103,7 +80,18 @@ public class SourceTable extends TableBase
 	@Override
 	protected boolean useTableSpecificConnection()
 	{
-		return false;
+		return true;
+	}
+
+	public String[] getSourceNames()
+	{
+		return inMemoryTable.toArray( new String[0] );
+	}
+
+	
+	public Set<String> getInMemoryTable()
+	{
+		return inMemoryTable;
 	}
 
 }
