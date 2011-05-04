@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.LayoutInfo;
+import javafx.scene.layout.Priority;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.paint.Color;
@@ -98,19 +99,20 @@ public class StylePanel extends Grid {
 							model.setColor( FxUtils.getAwtColor( color ) );
 						}
 					}, Label {
-						text: statistic.getName()
-						layoutInfo: LayoutInfo { width: 60 }
+						text: ChartNamePrettifier.compactDataAndMetricName( statistic.getStatisticVariable().getName(), statistic.getName() )
+						layoutInfo: LayoutInfo { width: 70 }
 					}, Label {
 						text: ChartNamePrettifier.nameForSource( statistic.getSource() )
 						layoutInfo: LayoutInfo { width: 60 }
 					}, Label {
 						text: statistic.getStatisticVariable().getStatisticHolder().getLabel()
-						layoutInfo: LayoutInfo { width: 60 }
+						layoutInfo: LayoutInfo { width: 100, hshrink: Priority.ALWAYS }
 					},
 					Label {
 						text: bind "{width as Integer}px"
 						graphic: Rectangle { height: bind width as Integer, width: 15, fill: bind lineColor }
 						graphicHPos: HPos.RIGHT
+						layoutInfo: LayoutInfo { hshrink: Priority.NEVER, width: 45 }
 					},
 					slider,
 					selector

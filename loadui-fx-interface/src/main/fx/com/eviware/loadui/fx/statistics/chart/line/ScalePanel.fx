@@ -131,14 +131,14 @@ class SegmentRow extends GridRow {
 					fill: FxUtils.awtColorToFx( lineModel.getColor() )
 					stroke: null
 				}
-				text: statistic.getName()
-				layoutInfo: LayoutInfo { width: 60 }
+				text: ChartNamePrettifier.compactDataAndMetricName( statistic.getStatisticVariable().getName(), statistic.getName() )
+				layoutInfo: LayoutInfo { width: 70 }
 			}, Label {
 				text: ChartNamePrettifier.nameForSource( statistic.getSource() )
 				layoutInfo: LayoutInfo { width: 60 }
 			}, Label {
 				text: statistic.getStatisticVariable().getStatisticHolder().getLabel()
-				layoutInfo: LayoutInfo { width: 60 }
+				layoutInfo: LayoutInfo { width: 100, hshrink: Priority.ALWAYS }
 			},
 			selectField,
 			slider
