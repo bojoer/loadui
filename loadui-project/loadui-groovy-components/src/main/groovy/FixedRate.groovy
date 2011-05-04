@@ -50,10 +50,19 @@ onReplace( stateProperty ) { value ->
 	else future?.cancel( true )
 }
 
+createProperty( 'burstSize', Long, 1 )
+
 milisecondsPerUnit = 1000000				
 delay = milisecondsPerUnit/rate.value
 
 display = new DelayedFormattedString( '%d / %s', 200, rate.value, unit.value )
+
+triggerBurst = {
+	for( i in 1..burstSize.value )
+	{
+		trigger()
+	}
+}
 
 onRelease = { 
 	display.release()
@@ -62,7 +71,7 @@ future = null
 schedule = {
 	if (stateProperty.value) {
 		future?.cancel(true);
-		future = scheduleAtFixedRate( { trigger() }, delay.longValue(), delay.longValue(), TimeUnit.MICROSECONDS )
+		future = scheduleAtFixedRate( { triggerBurst() }, delay.longValue(), delay.longValue(), TimeUnit.MICROSECONDS )
 	}
 }
 
@@ -113,12 +122,9 @@ compactLayout {
 }
 
 //Settings
-//settings( label: "Settings", layout: 'wrap 2' ) {
-//	box(layout:"growx, wrap 1") {
-//		property( property:rate, label:'Rate', min:0 ) 
-//		property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
-//	}
-//} 
+settings( label: "General" ) {
+	property( property: burstSize, label:'Burst size' ) 
+}
 
 //Start scheduler
 if ( unit.value == "Sec" )

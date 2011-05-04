@@ -15,7 +15,7 @@
 // 
 
 /**
- * Sends a HTTP request
+ * Sends an HTTP request
  * 
  * @help http://www.loadui.org/Runners/web-page-runner-component.html
  * @name Web Page Runner

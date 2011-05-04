@@ -25,7 +25,7 @@ public class ChartNamePrettifier
 	{
 		return compactDataName( statistic.getName(), "" );
 	}
-	
+
 	public static String nameFor( Statistic<?> statistic )
 	{
 		return statistic == null ? null : nameForStatistic( statistic.getName() );
@@ -35,12 +35,12 @@ public class ChartNamePrettifier
 	{
 		return StatisticVariable.MAIN_SOURCE.equals( source ) ? "Total" : source;
 	}
-	
+
 	public static boolean compactNameIsAlone( String name )
 	{
-		return name.equals( "Running" ) || name.equals( "Queued" ) || name.equals( "Completed" ) || 
-			name.equals( "Discarded" ) || name.equals( "Failures" ) || name.equals( "Sent" ) ||
-			name.equals( "Assertion Failures" ) || name.equals( "Request Failures" ) || name.equals( "Requests" );
+		return name.equals( "Running" ) || name.equals( "Queued" ) || name.equals( "Completed" )
+				|| name.equals( "Discarded" ) || name.equals( "Failures" ) || name.equals( "Sent" )
+				|| name.equals( "Assertion Failures" ) || name.equals( "Request Failures" ) || name.equals( "Requests" );
 	}
 
 	public static String nameForStatistic( String statisticName )
@@ -56,21 +56,21 @@ public class ChartNamePrettifier
 
 		return statisticName;
 	}
-	
+
 	public static String compactDataName( String data, String metric )
 	{
 		if( metric.equalsIgnoreCase( "PER_SECOND" ) )
 			return compactDataNameHelper( data ) + "/s";
-		
+
 		if( metric.equalsIgnoreCase( "TOTAL" ) )
 			return compactDataNameHelper( data );
-		
+
 		if( data.equalsIgnoreCase( "THROUGHPUT" ) )
 			return metric;
-		
+
 		return compactDataNameHelper( data );
 	}
-	
+
 	public static String compactDataNameHelper( String data )
 	{
 		if( data.equalsIgnoreCase( "Response Size" ) )
@@ -83,7 +83,7 @@ public class ChartNamePrettifier
 			return "TimeT";
 		return data;
 	}
-	
+
 	public static String compactMetricName( String metric )
 	{
 		if( metric.equalsIgnoreCase( "AVERAGE" ) )
@@ -113,5 +113,14 @@ public class ChartNamePrettifier
 		if( metric.equalsIgnoreCase( "TPS" ) )
 			return "";
 		return metric;
+	}
+
+	public static String compactDataAndMetricName( String data, String metric )
+	{
+		if( compactNameIsAlone( data ) )
+		{
+			return compactDataName( data, metric );
+		}
+		return compactDataName( data, metric ) + " " + ChartNamePrettifier.compactMetricName( metric );
 	}
 }
