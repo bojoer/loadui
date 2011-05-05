@@ -24,6 +24,7 @@ import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.api.statistics.store.Entry;
+import com.google.common.collect.Iterables;
 
 public class CounterStatisticsWriter extends AbstractStatisticsWriter
 {
@@ -87,7 +88,7 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 		if( parallel )
 			return null;
 		if( entries.size() <= 1 )
-			return entries.size() == 0 ? null : entries.iterator().next();
+			return Iterables.getFirst( entries, null );
 
 		long total = 0;
 		double perSecond = 0;

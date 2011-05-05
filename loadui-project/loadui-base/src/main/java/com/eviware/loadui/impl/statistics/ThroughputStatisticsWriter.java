@@ -23,6 +23,7 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.api.statistics.store.Entry;
+import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -96,7 +97,7 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 	public Entry aggregate( Set<Entry> entries, boolean parallel )
 	{
 		if( entries.size() <= 1 )
-			return entries.size() == 0 ? null : entries.iterator().next();
+			return Iterables.getFirst( entries, null );
 
 		double tpsSum = 0;
 		double bpsSum = 0;
