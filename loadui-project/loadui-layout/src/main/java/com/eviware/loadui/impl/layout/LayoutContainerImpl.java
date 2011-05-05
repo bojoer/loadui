@@ -26,6 +26,7 @@ import java.util.Map;
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.LayoutContainer;
 import com.eviware.loadui.util.MapUtils;
+import com.google.common.collect.ImmutableMap;
 
 public class LayoutContainerImpl extends LayoutComponentImpl implements LayoutContainer
 {
@@ -44,9 +45,8 @@ public class LayoutContainerImpl extends LayoutComponentImpl implements LayoutCo
 	public LayoutContainerImpl( String layoutConstraints, String colConstraints, String rowConstraints,
 			String constraints )
 	{
-		this( MapUtils.build( String.class, Object.class ).put( LAYOUT_CONSTRAINTS, layoutConstraints )
-				.put( COLUMN_CONSTRAINTS, colConstraints ).put( ROW_CONSTRAINTS, rowConstraints )
-				.put( CONSTRAINTS, constraints ).getImmutable() );
+		this( ImmutableMap.of( LAYOUT_CONSTRAINTS, layoutConstraints, COLUMN_CONSTRAINTS, colConstraints,
+				ROW_CONSTRAINTS, rowConstraints, CONSTRAINTS, constraints ) );
 	}
 
 	@Override

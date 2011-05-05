@@ -20,6 +20,7 @@ import java.util.Map;
 import com.eviware.loadui.api.layout.PropertyLayoutComponent;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.util.MapUtils;
+import com.google.common.collect.ImmutableMap;
 
 public class PropertyLayoutComponentImpl<T> extends LayoutComponentImpl implements PropertyLayoutComponent<T>
 {
@@ -39,9 +40,9 @@ public class PropertyLayoutComponentImpl<T> extends LayoutComponentImpl implemen
 	public PropertyLayoutComponentImpl( Property<T> property, String label, String constraints, boolean readOnly,
 			String hint )
 	{
-		this( MapUtils.build( String.class, Object.class ).put( PROPERTY, property ).put( LABEL, label ).put(
-				CONSTRAINTS, constraints ).put( READ_ONLY, readOnly ).put( HINT, ( hint == null ) ? "" : hint )
-				.getImmutable() );
+		this( ImmutableMap.<String, Object> builder().put( PROPERTY, property ).put( LABEL, label )
+				.put( CONSTRAINTS, constraints ).put( READ_ONLY, readOnly ).put( HINT, ( hint == null ) ? "" : hint )
+				.build() );
 	}
 
 	@Override

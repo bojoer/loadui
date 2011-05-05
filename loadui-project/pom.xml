@@ -67,6 +67,11 @@
 			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
 			<url>http://repository.springsource.com/maven/bundles/external</url>
 		</repository>
+		<repository>
+			<id>sonatype</id>
+			<name>Sonatype OSS Maven repository</name>
+			<url>http://oss.sonatype.org/content/repositories/releases</url>
+		</repository>
 	</repositories>
 	<scm>
 		<connection>scm:svn:svn://svn.eviware.com/loadui/trunk/loadui-project</connection>

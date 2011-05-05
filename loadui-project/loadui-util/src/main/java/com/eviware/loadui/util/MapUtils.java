@@ -27,7 +27,7 @@ import java.util.Map;
 public class MapUtils
 {
 	/**
-	 * Starts building a new Map.
+	 * DEPRECATED! Use Google Guava instead! Starts building a new Map.
 	 * 
 	 * @param <K>
 	 * @param <V>
@@ -37,6 +37,7 @@ public class MapUtils
 	 *           The type to use for values.
 	 * @return A new instance of MapBuilder, containing an empty Map<T1, T2>.
 	 */
+	@Deprecated
 	public static <K, V> MapBuilder<K, V> build( Class<K> keyType, Class<V> valueType )
 	{
 		return new MapBuilder<K, V>();
@@ -69,6 +70,7 @@ public class MapUtils
 		return defaultValue;
 	}
 
+	@Deprecated
 	public static class MapBuilder<K, V>
 	{
 

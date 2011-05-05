@@ -34,8 +34,8 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.config.AgentItemConfig;
 import com.eviware.loadui.util.BeanInjector;
-import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.messaging.MessageEndpointSupport;
+import com.google.common.collect.ImmutableMap;
 
 public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements AgentItem
 {
@@ -302,8 +302,8 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 
 	private void sendTimeCheck()
 	{
-		Map<String, String> data = MapUtils.build( String.class, String.class ).put( TIME_CHECK, "" )
-				.put( "startTimeCheck", String.valueOf( System.currentTimeMillis() ) ).get();
+		Map<String, String> data = ImmutableMap.of( TIME_CHECK, "", "startTimeCheck",
+				String.valueOf( System.currentTimeMillis() ) );
 
 		sendMessage( AGENT_CHANNEL, data );
 	}

@@ -19,6 +19,7 @@ import java.util.Map;
 
 import com.eviware.loadui.api.layout.SeparatorLayoutComponent;
 import com.eviware.loadui.util.MapUtils;
+import com.google.common.collect.ImmutableMap;
 
 public class SeparatorLayoutComponentImpl extends LayoutComponentImpl implements SeparatorLayoutComponent
 {
@@ -31,8 +32,7 @@ public class SeparatorLayoutComponentImpl extends LayoutComponentImpl implements
 
 	public SeparatorLayoutComponentImpl( boolean vertical, String constraints )
 	{
-		this( MapUtils.build( String.class, Object.class ).put( VERTICAL, vertical ).put( CONSTRAINTS, constraints )
-				.getImmutable() );
+		this( ImmutableMap.of( VERTICAL, vertical, CONSTRAINTS, constraints ) );
 	}
 
 	@Override

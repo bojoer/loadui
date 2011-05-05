@@ -57,6 +57,11 @@
 			<version>1.2.1</version>
 		</dependency>
 		<dependency>
+			<groupId>com.googlecode.guava-osgi</groupId>
+			<artifactId>guava-osgi</artifactId>
+			<version>9.0.0</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-math</groupId>
 			<artifactId>commons-math</artifactId>
 			<version>1.2</version>

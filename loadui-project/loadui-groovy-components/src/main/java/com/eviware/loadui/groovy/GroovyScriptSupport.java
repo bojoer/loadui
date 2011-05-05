@@ -20,8 +20,8 @@ import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.groovy.GroovyBehaviorProvider.ScriptDescriptor;
-import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.google.common.collect.ImmutableMap;
 
 import groovy.grape.Grape;
 import groovy.lang.Binding;
@@ -41,12 +41,9 @@ public class GroovyScriptSupport implements Releasable
 
 	private final static GroovyClassLoader globalClassLoader = new GroovyClassLoader( GroovyShell.class.getClassLoader() );
 
-	private final static Map<String, String> ALIASES = MapUtils.build( String.class, String.class ) //
-			.put( "onTerminalMessage", "onMessage" ) //
-			.put( "onTerminalConnect", "onConnect" ) //
-			.put( "onTerminalDisconnect", "onDisconnect" ) //
-			.put( "onTerminalSignatureChange", "onSignature" ) //
-			.getImmutable();
+	private final static Map<String, String> ALIASES = ImmutableMap.of( "onTerminalMessage", "onMessage",
+			"onTerminalConnect", "onConnect", "onTerminalDisconnect", "onDisconnect", "onTerminalSignatureChange",
+			"onSignature" );
 
 	private final GroovyShell shell = new GroovyShell( globalClassLoader );
 
@@ -162,8 +159,8 @@ public class GroovyScriptSupport implements Releasable
 		while( m2Matcher.find() )
 		{
 			String url = m2Matcher.group( 1 );
-			Grape.addResolver( MapUtils.build( String.class, Object.class ).put( "name", "repo_" + repos++ )
-					.put( "root", url ).put( "m2compatible", true ).get() );
+			Grape.addResolver( ImmutableMap.<String, Object> of( "name", "repo_" + repos++ , "root", url, "m2compatible",
+					true ) );
 		}
 
 		while( depMatcher.find() )
@@ -197,8 +194,9 @@ public class GroovyScriptSupport implements Releasable
 					log.debug( "Loading dependency using Grape: " + depMatcher.group( 1 ) );
 					try
 					{
-						Grape.grab( MapUtils.build( String.class, Object.class ).put( "group", parts[0] )
-								.put( "module", parts[1] ).put( "version", parts[2] ).put( "classLoader", classLoader ).get() );
+
+						Grape.grab( ImmutableMap.of( "group", parts[0], "module", parts[1], "version", parts[2],
+								"classLoader", classLoader ) );
 					}
 					catch( Exception e )
 					{

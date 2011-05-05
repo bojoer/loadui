@@ -16,9 +16,9 @@
 package com.eviware.loadui.impl.layout;
 
 import java.util.Map;
-import com.eviware.loadui.util.MapUtils;
 
 import com.eviware.loadui.api.layout.SettingsLayoutContainer;
+import com.google.common.collect.ImmutableMap;
 
 public class SettingsLayoutContainerImpl extends LayoutContainerImpl implements SettingsLayoutContainer
 {
@@ -35,9 +35,9 @@ public class SettingsLayoutContainerImpl extends LayoutContainerImpl implements 
 	public SettingsLayoutContainerImpl( String label, String layoutConstraints, String colConstraints,
 			String rowConstraints, String constraints )
 	{
-		super( MapUtils.build( String.class, Object.class ).put( LAYOUT_CONSTRAINTS, layoutConstraints )
+		super( ImmutableMap.<String, Object> builder().put( LAYOUT_CONSTRAINTS, layoutConstraints )
 				.put( COLUMN_CONSTRAINTS, colConstraints ).put( ROW_CONSTRAINTS, rowConstraints )
-				.put( CONSTRAINTS, constraints ).put( LABEL, label ).getImmutable() );
+				.put( CONSTRAINTS, constraints ).put( LABEL, label ).build() );
 
 		if( !( properties.get( LABEL ) instanceof String ) )
 			throw new IllegalArgumentException( "Illegal label: " + properties.get( LABEL ) );
