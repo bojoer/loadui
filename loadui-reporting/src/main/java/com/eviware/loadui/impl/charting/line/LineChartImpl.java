@@ -195,15 +195,30 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	@Override
 	public void setMainExecution( Execution execution )
 	{
-		if( execution == null )
-			throw new NullPointerException( "Main Execution cannot be null!" );
-
 		if( mainExecution != execution )
 		{
-			mainExecution = execution;
-			for( LineSegmentChartModel lineModel : lines.values() )
-				lineModel.setExecution( execution );
-			refresh( false );
+			if( execution == null )
+			{
+				mainExecution = null;
+				for( LineSegmentChartModel lineModel : lines.values() )
+				{
+					removeModel( lineModel );
+				}
+			}
+			else
+			{
+				mainExecution = execution;
+				for( LineSegmentChartModel lineModel : lines.values() )
+				{
+					lineModel.clearPoints();
+					lineModel.setExecution( execution );
+					if( !containsModel( lineModel ) )
+					{
+						addModel( lineModel, lineModel.getChartStyle() );
+					}
+				}
+				refresh( false );
+			}
 		}
 	}
 
@@ -229,6 +244,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 							for( LineSegmentChartModel lineModel : lines.values() )
 							{
 								ComparedLineSegmentChartModel comparedModel = new ComparedLineSegmentChartModel( lineModel );
+								comparedModel.clearPoints();
 								comparedModel.setExecution( cExecution );
 								comparedLines.put( lineModel, comparedModel );
 								addModel( comparedModel, comparedModel.getChartStyle() );
@@ -246,7 +262,10 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 						else
 						{
 							for( ComparedLineSegmentChartModel comparedModel : comparedLines.values() )
+							{
+								comparedModel.clearPoints();
 								comparedModel.setExecution( cExecution );
+							}
 						}
 						comparedExecution = cExecution;
 					}

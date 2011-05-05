@@ -82,7 +82,7 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 	var compactSegments = true;
 	
 	def execution = bind StatisticsWindow.execution on replace {
-		if( execution != null ) chart.setMainExecution( execution );
+		chart.setMainExecution( execution );
 	}
 	
 	def comparedExecution = bind StatisticsWindow.comparedExecution on replace {
