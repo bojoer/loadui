@@ -34,6 +34,8 @@ then
     LOADUI_RUNNER_CLASSPATH=`cygpath --path -w "$LOADUI_RUNNER_CLASSPATH"`
 fi 
 
+cd $LOADUI_RUNNER_HOME
+
 JAVA="jre/bin/java"
 
 JAVA_OPTS="-Xms128m -Xmx768m -XX:MaxPermSize=128m"
