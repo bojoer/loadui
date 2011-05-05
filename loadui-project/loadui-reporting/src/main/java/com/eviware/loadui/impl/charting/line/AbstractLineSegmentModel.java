@@ -1,7 +1,6 @@
 package com.eviware.loadui.impl.charting.line;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
 
@@ -48,18 +47,15 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 
 	public void setExecution( Execution execution )
 	{
-		if( this.execution != execution )
-		{
-			this.execution = execution;
-			redraw();
-		}
+		this.execution = execution;
+		redraw();
 	}
 
 	protected abstract void redraw();
 
 	protected void doRedraw( Statistic<?> statistic, long xMin, long xMax, int level )
 	{
-		dataFetcher.queueRead( this, new PendingRead( statistic, xMin, xMax, level, scalar ) );
+		dataFetcher.queueRead( new PendingRead( statistic, xMin, xMax, level, scalar ) );
 	}
 
 	@Override
@@ -110,7 +106,7 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 
 		public QueueWaiter()
 		{
-			dataFetcher.queueRead( this, this );
+			dataFetcher.queueRead( this );
 		}
 
 		@Override
@@ -154,7 +150,7 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 
 	private static class DataFetcher implements Runnable
 	{
-		private final LinkedHashMap<Object, Runnable> queue = new LinkedHashMap<Object, Runnable>();
+		private final ArrayList<Runnable> queue = new ArrayList<Runnable>();
 
 		@Override
 		public void run()
@@ -172,9 +168,7 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 							if( queue.isEmpty() )
 								queue.wait();
 
-							Iterator<Runnable> iterator = queue.values().iterator();
-							task = iterator.next();
-							iterator.remove();
+							task = queue.remove( 0 );
 						}
 						catch( Exception e )
 						{
@@ -195,11 +189,11 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 			}
 		}
 
-		private void queueRead( Object key, Runnable read )
+		private void queueRead( Runnable read )
 		{
 			synchronized( queue )
 			{
-				queue.put( key, read );
+				queue.add( read );
 				queue.notifyAll();
 			}
 		}
