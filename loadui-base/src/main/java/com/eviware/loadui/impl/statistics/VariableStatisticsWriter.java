@@ -9,6 +9,7 @@ import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.api.statistics.store.Entry;
+import com.google.common.collect.Iterables;
 
 /**
  * A StatisticsWriter used to calculate a raw value, where each update signifies
@@ -74,7 +75,7 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 	public Entry aggregate( Set<Entry> entries, boolean parallel )
 	{
 		if( entries.size() <= 1 )
-			return entries.size() == 0 ? null : entries.iterator().next();
+			return Iterables.getFirst( entries, null );
 
 		long maxTime = -1;
 		double value = 0;

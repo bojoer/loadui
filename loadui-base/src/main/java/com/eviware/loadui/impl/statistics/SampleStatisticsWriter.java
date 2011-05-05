@@ -25,6 +25,7 @@ import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.api.statistics.store.Entry;
+import com.google.common.collect.Iterables;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,10 +188,8 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 	@Override
 	public Entry aggregate( Set<Entry> entries, boolean parallel )
 	{
-		if( entries.size() == 0 )
-			return null;
-		if( entries.size() == 1 )
-			return entries.iterator().next();
+		if( entries.size() <= 1 )
+			return Iterables.getFirst( entries, null );
 
 		long timestamp = -1;
 		double totalSum = 0;

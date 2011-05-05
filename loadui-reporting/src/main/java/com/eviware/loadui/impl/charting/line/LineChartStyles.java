@@ -22,6 +22,7 @@ import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+import com.google.common.collect.Iterables;
 
 public class LineChartStyles
 {
@@ -71,6 +72,6 @@ public class LineChartStyles
 				if( s != segment )
 					colors.remove( s.getAttribute( LineSegmentChartModel.COLOR, "" ) );
 
-		return ( colors.size() > 0 ) ? colors.iterator().next() : lineColors[0];
+		return Iterables.getFirst( colors, lineColors[0] );
 	}
 }
