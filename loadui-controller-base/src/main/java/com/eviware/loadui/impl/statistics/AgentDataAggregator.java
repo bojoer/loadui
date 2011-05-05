@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticsAggregator;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
@@ -34,35 +35,36 @@ import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 
-public class AgentDataAggregator
+public class AgentDataAggregator implements StatisticsAggregator
 {
 	public final static Logger log = LoggerFactory.getLogger( AgentDataAggregator.class );
 
 	private final static int BUFFER_SIZE = 5;
 
-	private final TreeMap<Long, Map<Integer, Map<String, Set<Entry>>>> times = new TreeMap<Long, Map<Integer, Map<String, Set<Entry>>>>();
-	private final ExecutionManager executionManager;
+	private final TreeMap<Long, Map<String, Set<Entry>>> times = new TreeMap<Long, Map<String, Set<Entry>>>();
 	private final AddressableRegistry addressableRegistry;
+	private final StatisticsInterpolator statisticsInterpolator;
 
 	public AgentDataAggregator( ExecutionManager executionManager, AddressableRegistry addressableRegistry )
 	{
-		this.executionManager = executionManager;
 		this.addressableRegistry = addressableRegistry;
+		statisticsInterpolator = new StatisticsInterpolator( executionManager, addressableRegistry );
 
 		executionManager.addExecutionListener( new FlushingExecutionListener() );
 	}
 
-	public synchronized void update( Entry entry, String trackId, AgentItem agent, int level )
+	public synchronized void update( Entry entry, String trackId, AgentItem agent )
 	{
-		executionManager.writeEntry( trackId, entry, agent.getLabel(), level );
+		statisticsInterpolator.update( entry, trackId, agent.getLabel() );
+
 		long time = entry.getTimestamp() / 1000;
 
 		if( !times.containsKey( time ) )
 		{
-			times.put( time, new TreeMap<Integer, Map<String, Set<Entry>>>() );
+			times.put( time, new HashMap<String, Set<Entry>>() );
 			if( times.size() > BUFFER_SIZE )
 			{
-				java.util.Map.Entry<Long, Map<Integer, Map<String, Set<Entry>>>> oldestEntry = times.pollFirstEntry();
+				java.util.Map.Entry<Long, Map<String, Set<Entry>>> oldestEntry = times.pollFirstEntry();
 				if( oldestEntry.getKey().equals( time ) )
 				{
 					// log.debug( "Received expired Entry: {} from: {}", entry,
@@ -72,11 +74,7 @@ public class AgentDataAggregator
 				flush( oldestEntry.getValue() );
 			}
 		}
-		Map<Integer, Map<String, Set<Entry>>> levels = times.get( time );
-
-		if( !levels.containsKey( level ) )
-			levels.put( level, new HashMap<String, Set<Entry>>() );
-		Map<String, Set<Entry>> tracks = levels.get( level );
+		Map<String, Set<Entry>> tracks = times.get( time );
 
 		if( !tracks.containsKey( trackId ) )
 			tracks.put( trackId, new HashSet<Entry>() );
@@ -85,31 +83,35 @@ public class AgentDataAggregator
 		entries.add( entry );
 	}
 
-	private synchronized void flush( Map<Integer, Map<String, Set<Entry>>> map )
+	private synchronized void flush( Map<String, Set<Entry>> map )
 	{
-		for( Map.Entry<Integer, Map<String, Set<Entry>>> e : map.entrySet() )
+		for( Map.Entry<String, Set<Entry>> e : map.entrySet() )
 		{
-			int level = e.getKey();
-			for( Map.Entry<String, Set<Entry>> e2 : e.getValue().entrySet() )
+			String trackId = e.getKey();
+			StatisticsWriter writer = ( StatisticsWriter )addressableRegistry.lookup( trackId );
+
+			if( writer != null && !writer.getType().equals( "COUNTER" ) )
 			{
-				String trackId = e2.getKey();
-				StatisticsWriter writer = ( StatisticsWriter )addressableRegistry.lookup( trackId );
+				Entry entry = writer.aggregate( e.getValue(), true );
 
-				if( writer != null && !writer.getType().equals( "COUNTER" ) )
-				{
-					Entry entry = writer.aggregate( e2.getValue(), true );
-
-					if( entry != null )
-						executionManager.writeEntry( trackId, entry, StatisticVariable.MAIN_SOURCE, level );
-				}
+				if( entry != null )
+					statisticsInterpolator.update( entry, trackId, StatisticVariable.MAIN_SOURCE );
 			}
 		}
 	}
 
 	private void flushAll()
 	{
+		long flushTime = System.currentTimeMillis();
 		while( !times.isEmpty() )
 			flush( times.pollFirstEntry().getValue() );
+		statisticsInterpolator.flush( flushTime );
+	}
+
+	@Override
+	public void addEntry( String trackId, Entry entry )
+	{
+		statisticsInterpolator.update( entry, trackId, StatisticVariable.MAIN_SOURCE );
 	}
 
 	private class FlushingExecutionListener implements ExecutionListener
@@ -118,6 +120,7 @@ public class AgentDataAggregator
 		public void executionStarted( State oldState )
 		{
 			times.clear();
+			statisticsInterpolator.reset();
 		}
 
 		@Override

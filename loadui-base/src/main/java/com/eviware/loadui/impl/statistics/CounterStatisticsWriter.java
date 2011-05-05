@@ -111,7 +111,7 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	protected void reset()
+	public void reset()
 	{
 		super.reset();
 		total = 0;

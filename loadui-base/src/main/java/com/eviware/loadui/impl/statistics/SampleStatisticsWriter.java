@@ -197,8 +197,8 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 		long totalCount = 0;
 		double min = Double.MAX_VALUE;
 		double max = 0;
-		double median=0, percentile25=0, percentile75=0, percentile90=0, stddev=0;
-		
+		double median = 0, percentile25 = 0, percentile75 = 0, percentile90 = 0, stddev = 0;
+
 		for( Entry e : entries )
 		{
 			long count = e.getValue( Stats.COUNT.name() ).longValue();
@@ -221,13 +221,13 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 			min = Math.min( min, e.getValue( Stats.MIN.name() ).doubleValue() );
 			max = Math.max( max, e.getValue( Stats.MAX.name() ).doubleValue() );
 		}
-		
+
 		median = median / totalCount;
 		percentile25 = percentile25 / totalCount;
 		percentile75 = percentile75 / totalCount;
 		percentile90 = percentile90 / totalCount;
 		stddev = stddev / totalCount;
-		
+
 		double totalAverage = totalSum / totalCount;
 
 		return at( timestamp ).put( Stats.AVERAGE.name(), totalAverage ).put( Stats.COUNT.name(), totalCount )
@@ -237,7 +237,7 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	protected void reset()
+	public void reset()
 	{
 		super.reset();
 		sortedValues.clear();

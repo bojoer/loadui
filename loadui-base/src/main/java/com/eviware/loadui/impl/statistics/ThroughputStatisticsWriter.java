@@ -122,7 +122,7 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	protected void reset()
+	public void reset()
 	{
 		super.reset();
 

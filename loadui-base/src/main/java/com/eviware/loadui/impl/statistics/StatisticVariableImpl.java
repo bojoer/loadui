@@ -27,6 +27,9 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.addressable.AddressableRegistry.DuplicateAddressException;
+import com.eviware.loadui.api.counter.CounterHolder;
+import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
@@ -58,6 +61,7 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	private final Set<TrackDescriptor> descriptors = new HashSet<TrackDescriptor>();
 	private final Set<String> statisticNames = new HashSet<String>();
 	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<String, StatisticImpl<?>>();
+	private final ActionListener actionListener = new ActionListener();
 
 	public StatisticVariableImpl( ExecutionManager executionManager, StatisticHolder parent, String name,
 			AddressableRegistry addressableRegistry )
@@ -66,6 +70,8 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 		this.addressableRegistry = addressableRegistry;
 		this.name = name;
 		this.parent = parent;
+
+		parent.addEventListener( ActionEvent.class, actionListener );
 	}
 
 	@Override
@@ -171,9 +177,24 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	@Override
 	public void release()
 	{
+		parent.removeEventListener( ActionEvent.class, actionListener );
+
 		for( StatisticsWriter writer : writers )
 			addressableRegistry.unregister( writer );
 		ReleasableUtils.releaseAll( writers );
 		writers.clear();
+	}
+
+	private class ActionListener implements WeakEventHandler<ActionEvent>
+	{
+		@Override
+		public void handleEvent( ActionEvent event )
+		{
+			if( CounterHolder.COUNTER_RESET_ACTION.equals( event.getKey() ) )
+			{
+				for( StatisticsWriter writer : writers )
+					writer.reset();
+			}
+		}
 	}
 }

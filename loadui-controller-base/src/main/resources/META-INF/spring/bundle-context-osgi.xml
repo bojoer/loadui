@@ -22,5 +22,7 @@
 	
 	<osgi:service interface="com.eviware.loadui.api.discovery.AgentDiscovery" ref="agentDiscovery" />
 	
+	<osgi:service interface="com.eviware.loadui.api.statistics.StatisticsAggregator" ref="statisticsAggregator" />
+	
 	<osgi:service interface="com.eviware.loadui.api.statistics.ProjectExecutionManager" ref="projectExecutionManager" />
 </beans>

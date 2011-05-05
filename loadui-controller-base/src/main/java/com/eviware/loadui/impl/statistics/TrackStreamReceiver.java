@@ -60,7 +60,6 @@ public class TrackStreamReceiver
 					Map<String, Object> map = ( Map<String, Object> )data;
 					AgentItem agent = ( AgentItem )endpoint;
 					Execution execution = TrackStreamReceiver.this.executionManager.getCurrentExecution();
-					int level = ( ( Number )map.remove( "_LEVEL" ) ).intValue();
 
 					long currentTimeMillis = System.currentTimeMillis();
 
@@ -79,7 +78,7 @@ public class TrackStreamReceiver
 
 					EntryImpl entry = new EntryImpl( timestamp, ( Map<String, Number> )data, true );
 					if( execution != null )
-						TrackStreamReceiver.this.aggregator.update( entry, trackId, agent, level );
+						TrackStreamReceiver.this.aggregator.update( entry, trackId, agent );
 				}
 			}
 		} );

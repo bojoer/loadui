@@ -12,7 +12,7 @@ public class LoadUI
 	 * Compatibility is only ensures when this version number is the same for
 	 * both agent and controller.
 	 */
-	public static final String AGENT_VERSION = "4";
+	public static final String AGENT_VERSION = "5";
 
 	public static final String INSTANCE = "loadui.instance";
 	public static final String CONTROLLER = "controller";
@@ -25,7 +25,7 @@ public class LoadUI
 
 	public static final String HTTP_PORT = "loadui.http.port";
 	public static final String HTTPS_PORT = "loadui.https.port";
-	
+
 	public static final String DISABLE_STATISTICS = "loadui.statistics.disable";
 
 	public static final String KEY_STORE = "loadui.ssl.keyStore";
