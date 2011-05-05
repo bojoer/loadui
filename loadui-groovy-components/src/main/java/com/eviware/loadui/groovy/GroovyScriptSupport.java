@@ -22,6 +22,7 @@ import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.groovy.GroovyBehaviorProvider.ScriptDescriptor;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import groovy.grape.Grape;
 import groovy.lang.Binding;
@@ -159,8 +160,11 @@ public class GroovyScriptSupport implements Releasable
 		while( m2Matcher.find() )
 		{
 			String url = m2Matcher.group( 1 );
-			Grape.addResolver( ImmutableMap.<String, Object> of( "name", "repo_" + repos++ , "root", url, "m2compatible",
-					true ) );
+			Map<String, Object> args = Maps.newHashMap();
+			args.put( "name", "repo_" + repos++ );
+			args.put( "root", url );
+			args.put( "m2compatible", true );
+			Grape.addResolver( args );
 		}
 
 		while( depMatcher.find() )
@@ -194,9 +198,12 @@ public class GroovyScriptSupport implements Releasable
 					log.debug( "Loading dependency using Grape: " + depMatcher.group( 1 ) );
 					try
 					{
-
-						Grape.grab( ImmutableMap.of( "group", parts[0], "module", parts[1], "version", parts[2],
-								"classLoader", classLoader ) );
+						Map<String, Object> args = Maps.newHashMap();
+						args.put( "group", parts[0] );
+						args.put( "module", parts[1] );
+						args.put( "version", parts[2] );
+						args.put( "classLoader", classLoader );
+						Grape.grab( args );
 					}
 					catch( Exception e )
 					{
