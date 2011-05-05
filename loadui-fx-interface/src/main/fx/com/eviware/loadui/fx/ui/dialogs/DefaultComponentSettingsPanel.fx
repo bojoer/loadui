@@ -216,7 +216,7 @@ public class DefaultComponentSettingsPanel {
 			width: 470
 			height: 300
 			subtitle: "Settings"
-			helpUrl: "http://www.loadui.org/interface/workspace-view.html"
+			helpUrl: component.getHelpUrl()
 			okText: "Save"
 			tabs: tabArray
 			onOk: function() {

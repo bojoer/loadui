@@ -33,9 +33,10 @@ public class ProjectDataSection extends MutableSectionImpl implements DataSectio
 
 		addValue( "Number of TestCases", getNumberOfTestCases() );
 		addValue( "Number of components", getNumberOfComponents() );
-		addValue( "Number of connections", getNumberOfConnections() );
+		// addValue( "Number of connections", getNumberOfConnections() );
 		addValue( "Number of project components", String.valueOf( project.getComponents().size() ) );
-		addValue( "Number of project connection", String.valueOf( project.getConnections().size() ) );
+		// addValue( "Number of project connections", String.valueOf(
+		// project.getConnections().size() ) );
 		addValue( "Time Limit", getLimit() );
 		addValue( "Request Limit", getSampleLimit() );
 		addValue( "Failure Limit", getFailureLimit() );
