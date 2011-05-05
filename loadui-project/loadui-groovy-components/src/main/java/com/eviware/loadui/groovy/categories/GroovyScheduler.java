@@ -18,12 +18,12 @@ package com.eviware.loadui.groovy.categories;
 import java.util.Map;
 
 import com.eviware.loadui.api.component.ComponentContext;
-import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.summary.MutableChapter;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
+import com.eviware.loadui.groovy.GroovyBehaviorProvider;
 import com.eviware.loadui.groovy.GroovyScriptSupport;
 import com.eviware.loadui.impl.component.categories.SchedulerBase;
 import com.eviware.loadui.util.ReleasableUtils;
@@ -32,7 +32,7 @@ public class GroovyScheduler extends SchedulerBase
 {
 	private final GroovyScriptSupport scriptSupport;
 
-	public GroovyScheduler( EventFirer scriptUpdateFirer, ComponentContext context )
+	public GroovyScheduler( GroovyBehaviorProvider scriptUpdateFirer, ComponentContext context )
 	{
 		super( context );
 

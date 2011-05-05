@@ -58,7 +58,10 @@ import com.eviware.loadui.groovy.categories.GroovyOutput;
 import com.eviware.loadui.groovy.categories.GroovyRunner;
 import com.eviware.loadui.groovy.categories.GroovyScheduler;
 import com.eviware.loadui.groovy.categories.GroovyGenerator;
+import com.eviware.loadui.util.MapUtils;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
+import com.google.common.collect.Maps;
 
 public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 {
@@ -71,6 +74,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 	private final Map<File, ScriptDescriptor> scripts = new HashMap<File, ScriptDescriptor>();
 	private final ScheduledFuture<?> future;
 	private final EventSupport eventSupport = new EventSupport();
+	private final ClassLoaderRegistry clr = new ClassLoaderRegistry();
 
 	private final ComponentDescriptor emptyDescriptor = new ComponentDescriptor( TYPE, "misc", "EmptyScriptComponent",
 			"", null );
@@ -128,6 +132,8 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 						{
 							// Script file has changed, update the component.
 							context.setAttribute( GroovyComponent.DIGEST_ATTRIBUTE, d.getDigest() );
+							context.setAttribute( GroovyComponent.ID_ATTRIBUTE, d.getId() );
+							context.setAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, d.getClassLoaderId() );
 							context.getProperty( GroovyComponent.SCRIPT_PROPERTY ).setValue( d.getScript() );
 						}
 						break;
@@ -178,6 +184,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 	public void destroy()
 	{
 		future.cancel( true );
+		ReleasableUtils.releaseAll( eventSupport, clr );
 	}
 
 	@Override
@@ -204,8 +211,15 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 		eventSupport.fireEvent( event );
 	}
 
+	public ClassLoaderRegistry getClassLoaderRegistry()
+	{
+		return clr;
+	}
+
 	public static class ScriptDescriptor extends ComponentDescriptor
 	{
+		private final String id;
+		private final String classLoaderId;
 		private final File script;
 		private final long changed;
 		private final String digest;
@@ -214,8 +228,9 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 
 		public static ScriptDescriptor parseFile( File script )
 		{
-			Map<String, String> params = new HashMap<String, String>();
+			Map<String, String> params = Maps.newHashMap();
 			String baseName = script.getName().substring( 0, script.getName().lastIndexOf( ".groovy" ) );
+			params.put( "id", baseName );
 			params.put( "name", baseName );
 			params.put( "category", MiscCategory.CATEGORY );
 			params.put( "description", "" );
@@ -269,8 +284,9 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 				}
 			}
 
-			return new ScriptDescriptor( script, params.get( "category" ), params.get( "name" ),
-					params.get( "description" ), icon.exists() ? icon : null, params.get( "digest" ), params.get( "help" ) );
+			return new ScriptDescriptor( params.get( "id" ), MapUtils.getOr( params, "classloader", params.get( "id" ) ),
+					script, params.get( "category" ), params.get( "name" ), params.get( "description" ),
+					icon.exists() ? icon : null, params.get( "digest" ), params.get( "help" ) );
 		}
 
 		private static String getFileContent( File file )
@@ -300,10 +316,12 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 			return "";
 		}
 
-		private ScriptDescriptor( File script, String category, String label, String description, File icon,
-				String digest, String helpUrl )
+		private ScriptDescriptor( String id, String classLoaderId, File script, String category, String label,
+				String description, File icon, String digest, String helpUrl )
 		{
 			super( TYPE, category, label, description, icon == null ? null : icon.toURI(), null );
+			this.classLoaderId = classLoaderId;
+			this.id = id;
 			this.script = script;
 			this.digest = digest;
 			this.helpUrl = helpUrl;
@@ -328,6 +346,16 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 		public String getDigest()
 		{
 			return digest;
+		}
+
+		public String getId()
+		{
+			return id;
+		}
+
+		public String getClassLoaderId()
+		{
+			return classLoaderId;
 		}
 
 		@Override
