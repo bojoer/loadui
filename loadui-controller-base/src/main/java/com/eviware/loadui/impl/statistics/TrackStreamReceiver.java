@@ -76,7 +76,7 @@ public class TrackStreamReceiver
 
 					String trackId = ( String )map.remove( "_TRACK_ID" );
 
-					EntryImpl entry = new EntryImpl( timestamp, ( Map<String, Number> )data, true );
+					EntryImpl entry = new EntryImpl( timestamp, ( Map<String, Number> )data );
 					if( execution != null )
 						TrackStreamReceiver.this.aggregator.update( entry, trackId, agent );
 				}

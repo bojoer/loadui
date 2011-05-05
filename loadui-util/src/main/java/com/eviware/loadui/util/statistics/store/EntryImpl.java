@@ -15,12 +15,12 @@
  */
 package com.eviware.loadui.util.statistics.store;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import com.eviware.loadui.api.statistics.store.Entry;
+import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Immutable implementation of the Entry, used to store data for a number of
@@ -31,17 +31,12 @@ import com.eviware.loadui.api.statistics.store.Entry;
 public class EntryImpl implements Entry
 {
 	private final long timestamp;
-	private final Map<String, Number> values;
+	private final ImmutableMap<String, Number> values;
 
 	public EntryImpl( long timestamp, Map<String, Number> values )
 	{
-		this( timestamp, values, false );
-	}
-
-	public EntryImpl( long timestamp, Map<String, Number> values, boolean dontCloneMap )
-	{
 		this.timestamp = timestamp;
-		this.values = Collections.unmodifiableMap( dontCloneMap ? values : new HashMap<String, Number>( values ) );
+		this.values = ImmutableMap.copyOf( values );
 	}
 
 	@Override
@@ -65,20 +60,13 @@ public class EntryImpl implements Entry
 	@Override
 	public String toString()
 	{
-		StringBuilder sb = new StringBuilder( "Entry<" );
-		sb.append( timestamp ).append( ">[" );
-		sb.append( values.toString() ).append( "]" );
-		return sb.toString();
+		return Objects.toStringHelper( this ).add( "timestamp", timestamp ).add( "values", values ).toString();
 	}
 
 	@Override
 	public int hashCode()
 	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ( int )( timestamp ^ ( timestamp >>> 32 ) );
-		result = prime * result + ( ( values == null ) ? 0 : values.hashCode() );
-		return result;
+		return Objects.hashCode( timestamp, values );
 	}
 
 	@Override
@@ -88,18 +76,13 @@ public class EntryImpl implements Entry
 			return true;
 		if( obj == null )
 			return false;
-		if( getClass() != obj.getClass() )
-			return false;
-		EntryImpl other = ( EntryImpl )obj;
-		if( timestamp != other.timestamp )
-			return false;
-		if( values == null )
+		if( getClass() == obj.getClass() )
 		{
-			if( other.values != null )
-				return false;
+			EntryImpl other = ( EntryImpl )obj;
+			if( Objects.equal( timestamp, other.timestamp ) && Objects.equal( values, other.values ) )
+				return true;
 		}
-		else if( !values.equals( other.values ) )
-			return false;
+
 		return true;
 	}
 }

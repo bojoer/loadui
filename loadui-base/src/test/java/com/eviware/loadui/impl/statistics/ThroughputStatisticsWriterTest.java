@@ -39,6 +39,7 @@ import com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter.Factory;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
+import com.google.common.collect.ImmutableMap;
 
 public class ThroughputStatisticsWriterTest
 {
@@ -122,17 +123,14 @@ public class ThroughputStatisticsWriterTest
 	@Test
 	public void shouldAggregateValue()
 	{
-		Entry e1 = new EntryImpl( 123, MapUtils.build( String.class, Number.class )
-				.put( ThroughputStatisticsWriter.Stats.BPS.name(), 321 )
-				.put( ThroughputStatisticsWriter.Stats.TPS.name(), 4 ).getImmutable() );
+		Entry e1 = new EntryImpl( 123, ImmutableMap.<String, Number> of( ThroughputStatisticsWriter.Stats.BPS.name(),
+				321, ThroughputStatisticsWriter.Stats.TPS.name(), 4 ) );
 
-		Entry e2 = new EntryImpl( 234, MapUtils.build( String.class, Number.class )
-				.put( ThroughputStatisticsWriter.Stats.BPS.name(), 562 )
-				.put( ThroughputStatisticsWriter.Stats.TPS.name(), 7 ).getImmutable() );
+		Entry e2 = new EntryImpl( 234, ImmutableMap.<String, Number> of( ThroughputStatisticsWriter.Stats.BPS.name(),
+				562, ThroughputStatisticsWriter.Stats.TPS.name(), 7 ) );
 
-		Entry e3 = new EntryImpl( 345, MapUtils.build( String.class, Number.class )
-				.put( ThroughputStatisticsWriter.Stats.BPS.name(), 93 )
-				.put( ThroughputStatisticsWriter.Stats.TPS.name(), 11 ).getImmutable() );
+		Entry e3 = new EntryImpl( 345, ImmutableMap.<String, Number> of( ThroughputStatisticsWriter.Stats.BPS.name(), 93,
+				ThroughputStatisticsWriter.Stats.TPS.name(), 11 ) );
 
 		Entry entry = writer.aggregate( Collections.<Entry> emptySet(), false );
 		assertNull( entry );

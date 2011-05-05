@@ -19,6 +19,7 @@ import java.util.Map;
 
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.util.MapUtils;
+import com.google.common.collect.ImmutableMap;
 
 public class LayoutComponentImpl implements LayoutComponent
 {
@@ -33,7 +34,7 @@ public class LayoutComponentImpl implements LayoutComponent
 
 	public LayoutComponentImpl( String constraints )
 	{
-		this( MapUtils.build( String.class, Object.class ).put( CONSTRAINTS, constraints ).getImmutable() );
+		this( ImmutableMap.of( CONSTRAINTS, constraints ) );
 	}
 
 	@Override

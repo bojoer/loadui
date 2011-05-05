@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -33,6 +32,7 @@ import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
+import com.google.common.collect.ImmutableMap;
 
 public abstract class AbstractStatisticsWriter implements StatisticsWriter, Releasable
 {
@@ -133,7 +133,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 	protected class EntryBuilder
 	{
 		private final long timestamp;
-		private final Map<String, Number> values = new HashMap<String, Number>();
+		private final ImmutableMap.Builder<String, Number> mapBuilder = ImmutableMap.builder();
 
 		public EntryBuilder( long timestamp )
 		{
@@ -142,7 +142,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 
 		public <T extends Number> EntryBuilder put( String name, T value )
 		{
-			values.put( name, value );
+			mapBuilder.put( name, value );
 			return this;
 		}
 
@@ -153,7 +153,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 
 		public Entry build()
 		{
-			return new EntryImpl( timestamp, values, true );
+			return new EntryImpl( timestamp, mapBuilder.build() );
 		}
 	}
 }

@@ -15,10 +15,6 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
@@ -34,6 +30,9 @@ import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.SetMultimap;
 
 public class AgentDataAggregator implements StatisticsAggregator
 {
@@ -41,7 +40,7 @@ public class AgentDataAggregator implements StatisticsAggregator
 
 	private final static int BUFFER_SIZE = 5;
 
-	private final TreeMap<Long, Map<String, Set<Entry>>> times = new TreeMap<Long, Map<String, Set<Entry>>>();
+	private final TreeMap<Long, SetMultimap<String, Entry>> times = Maps.newTreeMap();
 	private final AddressableRegistry addressableRegistry;
 	private final StatisticsInterpolator statisticsInterpolator;
 
@@ -61,10 +60,10 @@ public class AgentDataAggregator implements StatisticsAggregator
 
 		if( !times.containsKey( time ) )
 		{
-			times.put( time, new HashMap<String, Set<Entry>>() );
+			times.put( time, HashMultimap.<String, Entry> create() );
 			if( times.size() > BUFFER_SIZE )
 			{
-				java.util.Map.Entry<Long, Map<String, Set<Entry>>> oldestEntry = times.pollFirstEntry();
+				java.util.Map.Entry<Long, SetMultimap<String, Entry>> oldestEntry = times.pollFirstEntry();
 				if( oldestEntry.getKey().equals( time ) )
 				{
 					// log.debug( "Received expired Entry: {} from: {}", entry,
@@ -74,25 +73,18 @@ public class AgentDataAggregator implements StatisticsAggregator
 				flush( oldestEntry.getValue() );
 			}
 		}
-		Map<String, Set<Entry>> tracks = times.get( time );
-
-		if( !tracks.containsKey( trackId ) )
-			tracks.put( trackId, new HashSet<Entry>() );
-		Set<Entry> entries = tracks.get( trackId );
-
-		entries.add( entry );
+		times.get( time ).put( trackId, entry );
 	}
 
-	private synchronized void flush( Map<String, Set<Entry>> map )
+	private synchronized void flush( SetMultimap<String, Entry> map )
 	{
-		for( Map.Entry<String, Set<Entry>> e : map.entrySet() )
+		for( String trackId : map.keySet() )
 		{
-			String trackId = e.getKey();
 			StatisticsWriter writer = ( StatisticsWriter )addressableRegistry.lookup( trackId );
 
 			if( writer != null && !writer.getType().equals( "COUNTER" ) )
 			{
-				Entry entry = writer.aggregate( e.getValue(), true );
+				Entry entry = writer.aggregate( map.get( trackId ), true );
 
 				if( entry != null )
 					statisticsInterpolator.update( entry, trackId, StatisticVariable.MAIN_SOURCE );

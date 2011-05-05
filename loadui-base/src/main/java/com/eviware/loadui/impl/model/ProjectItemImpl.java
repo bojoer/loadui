@@ -90,6 +90,7 @@ import com.eviware.loadui.impl.terminal.RoutedConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
+import com.google.common.collect.ImmutableMap;
 
 public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implements ProjectItem
 {
@@ -802,9 +803,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 							message.get( AgentItem.DEFINE_SCENE ) );
 					endpoint.sendMessage(
 							channel,
-							MapUtils.build( String.class, String.class ).put( AgentItem.SCENE_ID, scene.getId() )
-									.put( AgentItem.SCENE_DEFINITION, conversionService.convert( scene, String.class ) )
-									.getImmutable() );
+							ImmutableMap.of( AgentItem.SCENE_ID, scene.getId(), AgentItem.SCENE_DEFINITION,
+									conversionService.convert( scene, String.class ) ) );
 				}
 				else
 				{

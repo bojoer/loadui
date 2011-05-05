@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.eviware.loadui.util.MapUtils;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.MapMaker;
+
 import org.apache.commons.math.stat.descriptive.rank.Percentile;
 
 public class ValueStatistics
@@ -126,7 +129,7 @@ public class ValueStatistics
 
 		double percentile = perc.evaluate( dataSet, 90 );
 
-		return MapUtils.build( String.class, Number.class ) //
+		return new ImmutableMap.Builder<String, Number>() //
 				.put( "Max", max ) //
 				.put( "Min", min == Long.MAX_VALUE ? 0 : min ) //
 				.put( "Avg", avg ) //
@@ -138,7 +141,7 @@ public class ValueStatistics
 				.put( "Avg-Vps", duration > 0 ? 1000 * sum / duration : 0 ) //
 				.put( "Percentile", percentile ) //
 				.put( "AvgResponseSize", 1000 * sum / ( dataPoints.size() == 0 ? 1 : dataPoints.size() ) ) //
-				.get();
+				.build();
 	}
 
 	public void reset()

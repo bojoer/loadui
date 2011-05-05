@@ -21,6 +21,7 @@ import javax.swing.table.TableModel;
 
 import com.eviware.loadui.api.layout.TableLayoutComponent;
 import com.eviware.loadui.util.MapUtils;
+import com.google.common.collect.ImmutableMap;
 
 public class TableLayoutComponentImpl extends LayoutComponentImpl implements TableLayoutComponent
 {
@@ -37,8 +38,7 @@ public class TableLayoutComponentImpl extends LayoutComponentImpl implements Tab
 
 	public TableLayoutComponentImpl( TableModel tableModel, String label, String constraints )
 	{
-		this( MapUtils.build( String.class, Object.class ).put( TABLE_MODEL, tableModel ).put( LABEL, label ).put(
-				CONSTRAINTS, constraints ).getImmutable() );
+		this( ImmutableMap.of( TABLE_MODEL, tableModel, LABEL, label, CONSTRAINTS, constraints ) );
 	}
 
 	@Override

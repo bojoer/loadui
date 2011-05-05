@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.LayoutContainer;
-import com.eviware.loadui.util.MapUtils;
+import com.google.common.collect.ImmutableMap;
 
 public class LayoutContainerImplTest
 {
@@ -33,8 +33,7 @@ public class LayoutContainerImplTest
 	@Before
 	public void setup()
 	{
-		layoutContainer = new LayoutContainerImpl( MapUtils.build( String.class, Object.class ).put( "label",
-				"constraints" ).getImmutable() );
+		layoutContainer = new LayoutContainerImpl( ImmutableMap.of( "label", "constraints" ) );
 	}
 
 	@Test
