@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
-import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.Releasable;
@@ -40,13 +39,14 @@ public class GroovyScriptSupport implements Releasable
 	private static final Pattern m2Pattern = java.util.regex.Pattern.compile( ".*@m2repo (.*)\\s*" );
 	private static final Pattern depPattern = java.util.regex.Pattern.compile( ".*@dependency (.*)\\s*" );
 
-	private final static GroovyClassLoader globalClassLoader = new GroovyClassLoader( GroovyShell.class.getClassLoader() );
-
 	private final static Map<String, String> ALIASES = ImmutableMap.of( "onTerminalMessage", "onMessage",
 			"onTerminalConnect", "onConnect", "onTerminalDisconnect", "onDisconnect", "onTerminalSignatureChange",
 			"onSignature" );
 
-	private final GroovyShell shell = new GroovyShell( globalClassLoader );
+	private final ClassLoaderRegistry clr;
+	private final String classLoaderId;
+	private final GroovyClassLoader classLoader;
+	private final GroovyShell shell;
 
 	private final Logger log;
 	private final PropertyEventListener propertyEventListener;
@@ -60,13 +60,20 @@ public class GroovyScriptSupport implements Releasable
 	private Binding binding = new Binding();
 	private String digest;
 
-	public GroovyScriptSupport( EventFirer scriptUpdateFirer, ComponentBehavior behavior, ComponentContext context )
+	public GroovyScriptSupport( GroovyBehaviorProvider behaviorProvider, ComponentBehavior behavior,
+			ComponentContext context )
 	{
 		scriptName = "Groovy" + context.getLabel().replaceAll( "[^a-zA-Z]", "" );
 		log = LoggerFactory.getLogger( "com.eviware.loadui.groovy." + scriptName );
 
 		this.behavior = behavior;
 		this.context = new GroovyContextSupport( context, log );
+
+		clr = behaviorProvider.getClassLoaderRegistry();
+
+		classLoaderId = context.getAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, scriptName );
+		classLoader = clr.useClassLoader( classLoaderId, this );
+		shell = new GroovyShell( classLoader );
 
 		scriptProperty = context.createProperty( GroovyComponent.SCRIPT_PROPERTY, String.class );
 		propertyEventListener = new PropertyEventListener();
@@ -77,7 +84,7 @@ public class GroovyScriptSupport implements Releasable
 		if( context.isController() && digest != null && filePath != null )
 		{
 			scriptFileListener = new ScriptFileListener();
-			scriptUpdateFirer.addEventListener( PropertyChangeEvent.class, scriptFileListener );
+			behaviorProvider.addEventListener( PropertyChangeEvent.class, scriptFileListener );
 		}
 		else
 		{
@@ -149,6 +156,8 @@ public class GroovyScriptSupport implements Releasable
 	{
 		invokeClosure( true, false, "onRelease" );
 		ReleasableUtils.release( context );
+		shell.resetLoadedClasses();
+		clr.releaseClassLoader( classLoaderId, this );
 	}
 
 	private void loadDependencies( final String scriptContent, boolean manual )
@@ -172,9 +181,6 @@ public class GroovyScriptSupport implements Releasable
 			String[] parts = depMatcher.group( 1 ).split( ":" );
 			if( parts.length >= 3 )
 			{
-				GroovyClassLoader classLoader = ( parts.length >= 4 && "global".equals( parts[3] ) ) ? globalClassLoader
-						: shell.getClassLoader();
-
 				if( manual )
 				{
 					File depFile = new File( System.getProperty( "groovy.root" ), "grapes" + File.separator + parts[0]

@@ -27,4 +27,6 @@ public class GroovyComponent
 	public final static String SCRIPT_PROPERTY = "_script";
 	public final static String SCRIPT_FILE_ATTRIBUTE = "_scriptFile";
 	public final static String DIGEST_ATTRIBUTE = "_digest";
+	public final static String ID_ATTRIBUTE = "_id";
+	public final static String CLASS_LOADER_ATTRIBUTE = "_classLoader";
 }
