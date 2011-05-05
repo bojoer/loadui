@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticsAggregator;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
@@ -78,6 +79,11 @@ public class SampleStatisticsWriterTest
 		when( bundleContext.getServiceReference( AddressableRegistry.class.getName() ) ).thenReturn( arMock );
 		AddressableRegistry addressableRegistryMock = mock( AddressableRegistry.class );
 		when( bundleContext.getService( arMock ) ).thenReturn( addressableRegistryMock );
+
+		ServiceReference saMock = mock( ServiceReference.class );
+		when( bundleContext.getServiceReference( StatisticsAggregator.class.getName() ) ).thenReturn( saMock );
+		StatisticsAggregator statisticsAggrMock = mock( StatisticsAggregator.class );
+		when( bundleContext.getService( saMock ) ).thenReturn( statisticsAggrMock );
 
 		new BeanInjector().setBundleContext( bundleContext );
 		holderSupport = new StatisticHolderSupport( holderMock );

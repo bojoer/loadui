@@ -87,4 +87,9 @@ public interface StatisticsWriter extends Addressable
 	 * @return
 	 */
 	public String getType();
+
+	/**
+	 * Resets the state of the StatisticsWriter.
+	 */
+	public void reset();
 }

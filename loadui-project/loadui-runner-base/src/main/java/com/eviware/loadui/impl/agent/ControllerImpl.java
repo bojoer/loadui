@@ -53,7 +53,7 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.api.terminal.TerminalProxy;
-import com.eviware.loadui.impl.statistics.StreamingExecutionManager;
+import com.eviware.loadui.impl.statistics.StreamingStatisticsAggregator;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.dispatch.CustomThreadPoolExecutor;
 
@@ -70,7 +70,7 @@ public class ControllerImpl
 	private final AddressableRegistry addressableRegistry;
 	private final PropertySynchronizer propertySynchronizer;
 	private final CounterSynchronizer counterSynchronizer;
-	private final StreamingExecutionManager streamingExecutionManager;
+	private final StreamingStatisticsAggregator streamingExecutionManager;
 
 	private final Map<String, SceneAgent> sceneAgents = Collections.synchronizedMap( new HashMap<String, SceneAgent>() );
 	private final Set<MessageEndpoint> clients = new HashSet<MessageEndpoint>();
@@ -78,7 +78,7 @@ public class ControllerImpl
 	public ControllerImpl( ScheduledExecutorService scheduledExecutorService, ExecutorManager executorManager,
 			ConversionService conversionService, ServerEndpoint serverEndpoint, TerminalProxy terminalProxy,
 			AddressableRegistry addressableRegistry, PropertySynchronizer propertySynchronizer,
-			CounterSynchronizer counterSynchronizer, StreamingExecutionManager streamingExecutionManager )
+			CounterSynchronizer counterSynchronizer, StreamingStatisticsAggregator streamingExecutionManager )
 	{
 		this.executorManager = executorManager;
 		this.executorService = executorManager.getExecutor();

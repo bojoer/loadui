@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.0.xsd">
 
-	<osgi:service interface="com.eviware.loadui.api.statistics.store.ExecutionManager" ref="streamingExecutionManager" />
+	<osgi:service interface="com.eviware.loadui.api.statistics.StatisticsAggregator" ref="statisticsAggregator" />
 
 	<osgi:reference interface="com.eviware.loadui.api.dispatch.ExecutorManager"
 		id="executorManager" />

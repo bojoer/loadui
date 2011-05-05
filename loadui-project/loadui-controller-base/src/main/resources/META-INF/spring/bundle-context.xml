@@ -11,12 +11,12 @@
 	<bean id="agentDiscovery" class="com.eviware.loadui.impl.discovery.AgentDiscoveryImpl" destroy-method="release" />
 	
 	<bean id="trackStreamReceiver" class="com.eviware.loadui.impl.statistics.TrackStreamReceiver">
-		<constructor-arg ref="agentDataAggregator" />
+		<constructor-arg ref="statisticsAggregator" />
 		<constructor-arg ref="broadcastMessageEndpoint" />
 		<constructor-arg ref="executionManager" />
 	</bean>
 	
-	<bean id="agentDataAggregator" class="com.eviware.loadui.impl.statistics.AgentDataAggregator">
+	<bean id="statisticsAggregator" class="com.eviware.loadui.impl.statistics.AgentDataAggregator">
 		<constructor-arg ref="executionManager" />
 		<constructor-arg ref="addressableRegistry" />
 	</bean>

@@ -91,7 +91,7 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	protected void reset()
+	public void reset()
 	{
 		super.reset();
 
