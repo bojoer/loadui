@@ -1,6 +1,7 @@
 package com.eviware.loadui.impl.charting.line;
 
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 import javax.swing.SwingUtilities;
 
@@ -10,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 import com.jidesoft.chart.model.DefaultChartModel;
 import com.jidesoft.chart.style.ChartStyle;
 
@@ -34,9 +37,11 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 
 	protected Execution execution;
 	protected double scalar = 1;
+	private final String name;
 
-	public AbstractLineSegmentModel( ChartStyle chartStyle )
+	public AbstractLineSegmentModel( String name, ChartStyle chartStyle )
 	{
+		this.name = name;
 		this.chartStyle = chartStyle;
 	}
 
@@ -55,13 +60,26 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 
 	protected void doRedraw( Statistic<?> statistic, long xMin, long xMax, int level )
 	{
-		dataFetcher.queueRead( new PendingRead( statistic, xMin, xMax, level, scalar ) );
+		log.debug( "Scheduling read for {}:{}", this, System.identityHashCode( this ) );
+		dataFetcher.queueRead( this, new PendingRead( statistic, xMin, xMax, level, scalar ) );
 	}
 
 	@Override
 	public String getName()
 	{
-		return "";
+		return name;
+	}
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		return this == obj;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hashCode( chartStyle, name );
 	}
 
 	private class PendingRead implements Runnable
@@ -106,7 +124,7 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 
 		public QueueWaiter()
 		{
-			dataFetcher.queueRead( this );
+			dataFetcher.queueRead( this, this );
 		}
 
 		@Override
@@ -150,7 +168,7 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 
 	private static class DataFetcher implements Runnable
 	{
-		private final ArrayList<Runnable> queue = new ArrayList<Runnable>();
+		private final LinkedHashMap<Object, Runnable> queue = Maps.newLinkedHashMap();
 
 		@Override
 		public void run()
@@ -168,7 +186,9 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 							if( queue.isEmpty() )
 								queue.wait();
 
-							task = queue.remove( 0 );
+							Iterator<Runnable> iterator = queue.values().iterator();
+							task = iterator.next();
+							iterator.remove();
 						}
 						catch( Exception e )
 						{
@@ -189,11 +209,11 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 			}
 		}
 
-		private void queueRead( Runnable read )
+		private void queueRead( Object reader, Runnable read )
 		{
 			synchronized( queue )
 			{
-				queue.add( read );
+				queue.put( reader, read );
 				queue.notifyAll();
 			}
 		}

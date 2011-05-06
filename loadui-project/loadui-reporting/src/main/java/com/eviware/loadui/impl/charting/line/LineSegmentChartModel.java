@@ -53,7 +53,7 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 
 	public LineSegmentChartModel( LineChartView chartView, LineSegment segment )
 	{
-		super( new ChartStyle() );
+		super( segment.getStatistic().getName(), new ChartStyle() );
 		this.segment = segment;
 
 		chartGroup = chartView.getChartGroup();
@@ -81,12 +81,6 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 	protected void redraw()
 	{
 		doRedraw( segment.getStatistic(), xRangeMin, xRangeMax, level );
-	}
-
-	@Override
-	public String getName()
-	{
-		return segment.toString();
 	}
 
 	private void loadStyles()
