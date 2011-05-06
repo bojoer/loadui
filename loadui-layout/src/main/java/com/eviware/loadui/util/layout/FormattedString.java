@@ -17,9 +17,10 @@ package com.eviware.loadui.util.layout;
 
 import java.util.Observable;
 
+import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.serialization.Value;
 
-public class FormattedString extends Observable
+public class FormattedString extends Observable implements Releasable
 {
 	private String format;
 	private Object[] args = new Object[0];
@@ -86,6 +87,7 @@ public class FormattedString extends Observable
 		return value;
 	}
 
+	@Override
 	public void release()
 	{
 		args = new Object[] {};
