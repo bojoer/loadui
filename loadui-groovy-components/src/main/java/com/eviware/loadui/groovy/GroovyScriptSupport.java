@@ -57,7 +57,6 @@ public class GroovyScriptSupport implements Releasable
 	private final String filePath;
 	private Binding binding = new Binding();
 	private String digest;
-	private Script script;
 
 	public GroovyScriptSupport( GroovyBehaviorProvider behaviorProvider, ComponentBehavior behavior,
 			ComponentContext context )
@@ -103,14 +102,12 @@ public class GroovyScriptSupport implements Releasable
 	{
 		invokeClosure( true, false, "onReplace" );
 		context.reset();
-		if( script != null )
-			InvokerHelper.removeClass( script.getClass() );
 		shell.resetLoadedClasses();
 		loadDependencies( scriptText );
 
 		try
 		{
-			script = shell.parse( scriptText, scriptName );
+			Script script = shell.parse( scriptText, scriptName );
 			binding = new Binding();
 			binding.setProperty( "log", log );
 			script.setMetaClass( new ScriptMetaClass( script.getMetaClass() ) );
@@ -157,8 +154,6 @@ public class GroovyScriptSupport implements Releasable
 	public void release()
 	{
 		invokeClosure( true, false, "onRelease" );
-		if( script != null )
-			InvokerHelper.removeClass( script.getClass() );
 		ReleasableUtils.release( context );
 		shell.resetLoadedClasses();
 	}
