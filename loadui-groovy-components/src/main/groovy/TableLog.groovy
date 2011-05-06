@@ -117,7 +117,6 @@ output = { message ->
 		}
 	}
 	else if( myTableModel.enabledInDistMode ){
-		log.info "Sending to controller..."
 		// on agent and enabled, so send message to controller
 		send(controllerTerminal, message)
 	}
