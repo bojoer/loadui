@@ -1,8 +1,6 @@
 package com.eviware.loadui.groovy;
 
 import java.beans.PropertyChangeEvent;
-import java.io.File;
-import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +13,7 @@ import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.Terminal;
@@ -27,7 +26,6 @@ import groovy.grape.Grape;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.DelegatingMetaClass;
-import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import groovy.lang.MetaClass;
 import groovy.lang.MissingMethodException;
@@ -45,7 +43,7 @@ public class GroovyScriptSupport implements Releasable
 
 	private final ClassLoaderRegistry clr;
 	private final String classLoaderId;
-	private final GroovyClassLoader classLoader;
+	private final GroovyComponentClassLoader classLoader;
 	private final GroovyShell shell;
 
 	private final Logger log;
@@ -59,11 +57,13 @@ public class GroovyScriptSupport implements Releasable
 	private final String filePath;
 	private Binding binding = new Binding();
 	private String digest;
+	private Script script;
 
 	public GroovyScriptSupport( GroovyBehaviorProvider behaviorProvider, ComponentBehavior behavior,
 			ComponentContext context )
 	{
-		scriptName = "Groovy" + context.getLabel().replaceAll( "[^a-zA-Z]", "" );
+		String type = context.getAttribute( ComponentItem.TYPE, context.getLabel() );
+		scriptName = "Groovy" + type.replaceAll( "[^a-zA-Z]", "" );
 		log = LoggerFactory.getLogger( "com.eviware.loadui.groovy." + scriptName );
 
 		this.behavior = behavior;
@@ -71,7 +71,7 @@ public class GroovyScriptSupport implements Releasable
 
 		clr = behaviorProvider.getClassLoaderRegistry();
 
-		classLoaderId = context.getAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, scriptName );
+		classLoaderId = context.getAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, type );
 		classLoader = clr.useClassLoader( classLoaderId, this );
 		shell = new GroovyShell( classLoader );
 
@@ -103,12 +103,14 @@ public class GroovyScriptSupport implements Releasable
 	{
 		invokeClosure( true, false, "onReplace" );
 		context.reset();
+		if( script != null )
+			InvokerHelper.removeClass( script.getClass() );
 		shell.resetLoadedClasses();
-		loadDependencies( scriptText, Boolean.getBoolean( "loadui.grape.disable" ) );
+		loadDependencies( scriptText );
 
 		try
 		{
-			Script script = shell.parse( scriptText, scriptName );
+			script = shell.parse( scriptText, scriptName );
 			binding = new Binding();
 			binding.setProperty( "log", log );
 			script.setMetaClass( new ScriptMetaClass( script.getMetaClass() ) );
@@ -155,12 +157,13 @@ public class GroovyScriptSupport implements Releasable
 	public void release()
 	{
 		invokeClosure( true, false, "onRelease" );
+		if( script != null )
+			InvokerHelper.removeClass( script.getClass() );
 		ReleasableUtils.release( context );
 		shell.resetLoadedClasses();
-		clr.releaseClassLoader( classLoaderId, this );
 	}
 
-	private void loadDependencies( final String scriptContent, boolean manual )
+	private void loadDependencies( final String scriptContent )
 	{
 		Matcher m2Matcher = m2Pattern.matcher( scriptContent );
 		Matcher depMatcher = depPattern.matcher( scriptContent );
@@ -180,48 +183,8 @@ public class GroovyScriptSupport implements Releasable
 		{
 			String[] parts = depMatcher.group( 1 ).split( ":" );
 			if( parts.length >= 3 )
-			{
-				if( manual )
-				{
-					File depFile = new File( System.getProperty( "groovy.root" ), "grapes" + File.separator + parts[0]
-							+ File.separator + parts[1] + File.separator + "jars" + File.separator + parts[1] + "-" + parts[2]
-							+ ".jar" );
-					if( depFile.exists() )
-					{
-						try
-						{
-							log.debug( "Manually loading jar: " + depMatcher.group( 1 ) );
-							classLoader.addURL( depFile.toURI().toURL() );
-						}
-						catch( MalformedURLException e )
-						{
-							e.printStackTrace();
-						}
-					}
-				}
-				else
-				{
-					log.debug( "Loading dependency using Grape: " + depMatcher.group( 1 ) );
-					try
-					{
-						Map<String, Object> args = Maps.newHashMap();
-						args.put( "group", parts[0] );
-						args.put( "module", parts[1] );
-						args.put( "version", parts[2] );
-						args.put( "classLoader", classLoader );
-						Grape.grab( args );
-					}
-					catch( Exception e )
-					{
-						log.error( "Failed loading dependencies using Grape, fallback to manual jar loading.", e );
-						loadDependencies( scriptContent, true );
-						return;
-					}
-				}
-			}
+				classLoader.loadDependency( parts[0], parts[1], parts[2] );
 		}
-
-		log.debug( "Done loading dependencies!" );
 	}
 
 	private class ScriptMetaClass extends DelegatingMetaClass

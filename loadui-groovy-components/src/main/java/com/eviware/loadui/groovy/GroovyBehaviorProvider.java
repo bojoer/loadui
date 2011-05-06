@@ -101,6 +101,8 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 			context.setAttribute( GroovyComponent.SCRIPT_FILE_ATTRIBUTE, scriptDescriptor.getScriptFile()
 					.getAbsolutePath() );
 			context.setAttribute( GroovyComponent.DIGEST_ATTRIBUTE, scriptDescriptor.getDigest() );
+			context.setAttribute( GroovyComponent.ID_ATTRIBUTE, scriptDescriptor.getId() );
+			context.setAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, scriptDescriptor.getClassLoaderId() );
 			context.createProperty( GroovyComponent.SCRIPT_PROPERTY, String.class,
 					( ( ScriptDescriptor )descriptor ).getScript() );
 			return instantiateBehavior( context, ( ( ScriptDescriptor )descriptor ).getCategory() );
