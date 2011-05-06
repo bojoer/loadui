@@ -15,22 +15,20 @@
  */
 package com.eviware.loadui.groovy;
 
-import java.util.HashMap;
-import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.Releasable;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.MapEvictionListener;
+import com.google.common.collect.MapMaker;
 
-import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 
 /**
- * Manages GroovyClassLoaders by id. Creates and disposes of ClassLoaders on
- * demand.
+ * Manages GroovyComponentClassLoaders by id. Creates ClassLoaders on demand,
+ * and caches them, but will only use weak references.
  * 
  * @author dain.nilsson
  */
@@ -38,53 +36,32 @@ public class ClassLoaderRegistry implements Releasable
 {
 	public static final Logger log = LoggerFactory.getLogger( ClassLoaderRegistry.class );
 
-	private final HashMap<String, ClassLoaderEntry> classLoaders = Maps.newHashMap();
-
-	public synchronized GroovyClassLoader useClassLoader( String id, Object user )
-	{
-		if( !classLoaders.containsKey( id ) )
-		{
-			classLoaders.put( id, new ClassLoaderEntry() );
-			log.debug( "Created Classloader: {}", id );
-		}
-
-		ClassLoaderEntry entry = classLoaders.get( id );
-		entry.users.add( user );
-
-		return entry.classLoader;
-	}
-
-	public synchronized void releaseClassLoader( String id, Object user )
-	{
-		ClassLoaderEntry entry = classLoaders.get( id );
-		if( entry != null )
-		{
-			entry.users.remove( user );
-			if( entry.users.isEmpty() )
+	private final ConcurrentMap<String, GroovyComponentClassLoader> classLoaders = new MapMaker().weakValues()
+			.evictionListener( new MapEvictionListener<String, GroovyComponentClassLoader>()
 			{
-				entry.classLoader.clearCache();
-				classLoaders.remove( id );
-				log.debug( "Removed Classloader: {}", id );
-			}
+				@Override
+				public void onEviction( String key, GroovyComponentClassLoader value )
+				{
+					log.debug( "GroovyClassLoader evicted: {}", key );
+				}
+			} ).makeMap();
+
+	public synchronized GroovyComponentClassLoader useClassLoader( String id, Object user )
+	{
+		GroovyComponentClassLoader classLoader = classLoaders.get( id );
+		if( classLoader == null )
+		{
+			classLoader = new GroovyComponentClassLoader( GroovyShell.class.getClassLoader() );
+			classLoaders.put( id, classLoader );
+			log.debug( "GroovyClassLoader created: {}", id );
 		}
+
+		return classLoader;
 	}
 
 	@Override
 	public synchronized void release()
 	{
-		for( ClassLoaderEntry entry : classLoaders.values() )
-			entry.classLoader.clearCache();
 		classLoaders.clear();
-	}
-
-	private static class ClassLoaderEntry
-	{
-		private final GroovyClassLoader classLoader;
-		private final Set<Object> users = Sets.newHashSet();
-
-		private ClassLoaderEntry()
-		{
-			this.classLoader = new GroovyClassLoader( GroovyShell.class.getClassLoader() );
-		}
 	}
 }
