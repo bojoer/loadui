@@ -43,7 +43,7 @@ public class ComparedLineSegmentChartModel extends AbstractLineSegmentModel impl
 
 	public ComparedLineSegmentChartModel( LineSegmentChartModel baseModel )
 	{
-		super( new ChartStyle( baseModel.getChartStyle() ) );
+		super( "Compared " + baseModel.getName(), new ChartStyle( baseModel.getChartStyle() ) );
 
 		this.baseModel = baseModel;
 		chartStyle.setLineColor( ColorFactory.transitionColor( chartStyle.getLineColor(), Color.BLACK, 0.5 ) );
@@ -56,12 +56,6 @@ public class ComparedLineSegmentChartModel extends AbstractLineSegmentModel impl
 	{
 		doRedraw( baseModel.getLineSegment().getStatistic(), baseModel.getXRangeMin(), baseModel.getXRangeMax(),
 				baseModel.getLevel() );
-	}
-
-	@Override
-	public String getName()
-	{
-		return "Compared " + baseModel.getName();
 	}
 
 	@Override
