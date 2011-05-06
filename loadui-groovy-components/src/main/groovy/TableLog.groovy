@@ -78,9 +78,10 @@ rowsDisplay = new DelayedFormattedString( '%d', 500, value { myTableModel.rowCou
 fileDisplay = new DelayedFormattedString( '%s', 500, value { saveFileName ?: '-' } )
 
 onMessage = { o, i, m ->
-	if(controller && i == remoteTerminal) {
+	if( controller && i == remoteTerminal ) {
 		//controller received message from agent
 		m["Source"] = o.label
+		output( m )
 	}
 }
 
@@ -115,7 +116,8 @@ output = { message ->
 			}
 		}
 	}
-	else if( myTableModel.isEnabledInDistMode() ){
+	else if( myTableModel.enabledInDistMode ){
+		log.info "Sending to controller..."
 		// on agent and enabled, so send message to controller
 		send(controllerTerminal, message)
 	}
