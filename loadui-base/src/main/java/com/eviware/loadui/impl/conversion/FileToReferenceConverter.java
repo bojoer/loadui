@@ -17,6 +17,7 @@ import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.impl.property.Reference;
+import com.google.common.io.Closeables;
 
 public class FileToReferenceConverter implements Converter<File, Reference>
 {
@@ -141,15 +142,7 @@ public class FileToReferenceConverter implements Converter<File, Reference>
 			}
 			finally
 			{
-				try
-				{
-					if( fis != null )
-						fis.close();
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
+				Closeables.closeQuietly( fis );
 			}
 		}
 	}

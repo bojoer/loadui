@@ -33,6 +33,7 @@ import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.PropertyHolder;
 import com.eviware.loadui.impl.property.Reference;
+import com.google.common.io.Closeables;
 
 public class ReferenceToFileConverter implements Converter<Reference, File>, EventHandler<CollectionEvent>
 {
@@ -47,7 +48,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 	private final Map<String, File> files = new HashMap<String, File>();
 	private final Map<String, OutputStream> writers = Collections.synchronizedMap( new HashMap<String, OutputStream>() );
 	private final FileReceiver listener = new FileReceiver();
-	
+
 	private final HashSet<String> filesInProgress = new HashSet<String>();
 
 	public ReferenceToFileConverter( AddressableRegistry addressableRegistry, ScheduledExecutorService executorService )
@@ -67,7 +68,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 
 		File target = getOrCreate( source );
 		String hash = source.getId();
-		
+
 		synchronized( target )
 		{
 			while( !target.exists() || filesInProgress.contains( hash ) )
@@ -82,12 +83,22 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 					log.debug( "got waken up, was waiting for {}", source.getId() );
 				}
 			}
-			try{
-				FileInputStream fis = new FileInputStream( target );
+			FileInputStream fis = null;
+			try
+			{
+				fis = new FileInputStream( target );
 				String md5Hex = DigestUtils.md5Hex( fis );
-				fis.close();
-				log.debug( "target is: {} and is {} bytes with hash "+md5Hex, target, target.length() );
-			} catch (Exception e){ e.printStackTrace(); }
+				log.debug( "target is: {} and is {} bytes with hash " + md5Hex, target, target.length() );
+			}
+			catch( IOException e )
+			{
+				log.error( "Exception while verifying hash", e );
+				e.printStackTrace();
+			}
+			finally
+			{
+				Closeables.closeQuietly( fis );
+			}
 		}
 
 		return target;
@@ -99,7 +110,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 		synchronized( files )
 		{
 			log.debug( "getOrCreate() {}", hash );
-			
+
 			if( !files.containsKey( hash ) )
 			{
 				files.put( hash, new File( storage, hash ) );
@@ -122,16 +133,20 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 
 	private boolean isFileHashValid( String hash )
 	{
+		FileInputStream fis = null;
 		try
 		{
-			FileInputStream fis = new FileInputStream( files.get( hash ) );
+			fis = new FileInputStream( files.get( hash ) );
 			String md5Hex = DigestUtils.md5Hex( fis );
-			fis.close();
 			return hash.equals( md5Hex );
 		}
-		catch( Exception e )
+		catch( IOException e )
 		{
 			return false;
+		}
+		finally
+		{
+			Closeables.closeQuietly( fis );
 		}
 	}
 
@@ -185,22 +200,14 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 						}
 						else if( FileToReferenceConverter.STOP.equals( entry.getValue() ) )
 						{
-							try
-							{
-								writers.remove( hash ).close();
-							}
-							catch( IOException e )
-							{
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+							Closeables.closeQuietly( writers.remove( hash ) );
 							synchronized( file )
 							{
+								FileInputStream fis = null;
 								try
 								{
-									FileInputStream fis = new FileInputStream( file );
+									fis = new FileInputStream( file );
 									String md5Hex = DigestUtils.md5Hex( fis );
-									fis.close();
 									if( hash.equals( md5Hex ) )
 									{
 										log.debug( "File done. Removing {} from filesInProgress", hash );
@@ -214,15 +221,13 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 										endpoint.sendMessage( FileToReferenceConverter.CHANNEL, hash );
 									}
 								}
-								catch( FileNotFoundException e )
-								{
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
 								catch( IOException e )
 								{
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									log.error( "Exception while verifying completed file", e );
+								}
+								finally
+								{
+									Closeables.closeQuietly( fis );
 								}
 							}
 						}
@@ -234,7 +239,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 							}
 							catch( IOException e )
 							{
-								e.printStackTrace();
+								log.error( "Exception while writing to file", e );
 							}
 						}
 					}
