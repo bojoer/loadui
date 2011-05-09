@@ -83,7 +83,25 @@ public class DefaultComponentSettingsPanel {
 	*/
 	public-init var component:ComponentItem on replace {
 		for( property in component.getContext().getProperties()) {
-			propertyBuffer.put( property.getKey(), new PropertyProxy(property));
+			
+			var propertyHasSettingsField:Boolean = false;
+			
+			for( tab in dialogRef.tabs ) {
+         	var form:Form = tab.content as Form;
+            var field = form.getField( property.getKey() );
+            if ( field != null ) {
+            	propertyHasSettingsField = true;
+            	break;
+            }
+         }
+			
+			// invert this statement
+			if( not property.getKey().charAt(0).equals('_') or propertyHasSettingsField )
+			{
+				propertyBuffer.put( property.getKey(), new PropertyProxy(property));
+			}
+			else
+				log.debug("  property {property.getKey()} was skipped from propertyProxy");
 		}
 	};
 	
