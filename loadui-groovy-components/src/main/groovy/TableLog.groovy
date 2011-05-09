@@ -92,11 +92,17 @@ output = { message ->
 		
 		if ( formatTimestamps.value ){
 			message.each() { key, value ->
-				if ( key.toLowerCase().indexOf("timestamp") > -1 ) 
-					message.put(key, formater.format(new Date(value)) )
+				if ( key.toLowerCase().contains("timestamp") ) 
+					try
+					{
+						message.put(key, formater.format(new Date(value)) )
+					} catch ( IllegalArgumentException e )
+					{
+						log.info("Failed to format Timestamp in a column whose name hinted about it containing a Timestamp")
+					}
 			}
 		}
-		
+
 		result = myTableModel.addRow(message)
 		if( result && saveFile.value && saveFileName != null) {
 			if( writer == null ){
