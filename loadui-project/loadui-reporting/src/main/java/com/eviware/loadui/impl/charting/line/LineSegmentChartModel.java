@@ -53,7 +53,7 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 
 	public LineSegmentChartModel( LineChartView chartView, LineSegment segment )
 	{
-		super( segment.getStatistic().getName(), new ChartStyle() );
+		super( Integer.toString( System.identityHashCode( segment ) ), new ChartStyle() );
 		this.segment = segment;
 
 		chartGroup = chartView.getChartGroup();
