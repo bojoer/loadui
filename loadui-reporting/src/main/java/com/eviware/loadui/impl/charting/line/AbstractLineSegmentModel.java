@@ -60,7 +60,6 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 
 	protected void doRedraw( Statistic<?> statistic, long xMin, long xMax, int level )
 	{
-		log.debug( "Scheduling read for {}:{}", this, System.identityHashCode( this ) );
 		dataFetcher.queueRead( this, new PendingRead( statistic, xMin, xMax, level, scalar ) );
 	}
 
