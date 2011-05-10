@@ -1070,7 +1070,7 @@ return f.exists();</condition>
     </applications>
   </installerGui>
   <mediaSets>
-    <unixInstaller name="Unix Installer" id="25" mediaFileName="loadUI-${compiler:version}" installDir="eviware/loadUI-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-i386-1.6.0_23_ws" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Unix Installer" id="25" mediaFileName="loadUI-${compiler:version}" installDir="eviware/loadUI-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-x86-1.6.0_25_ws_client_only" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="24" />
         <launcher id="225" />
