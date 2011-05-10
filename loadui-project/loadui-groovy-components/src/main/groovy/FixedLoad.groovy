@@ -24,8 +24,6 @@
  */
 
 import com.eviware.loadui.api.component.categories.RunnerCategory
-import com.eviware.loadui.api.events.PropertyEvent
-import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
 
 import java.util.concurrent.TimeUnit

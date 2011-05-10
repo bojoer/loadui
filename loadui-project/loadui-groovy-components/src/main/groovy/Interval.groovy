@@ -33,16 +33,13 @@
 // On Reset it just resets the timer and stops it.
 
 
-import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.api.model.CanvasItem
-import com.eviware.loadui.api.counter.CounterHolder
-
-import java.util.concurrent.TimeUnit
-
 import com.eviware.loadui.api.events.BaseEvent
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.util.layout.IntervalModel
 import com.eviware.loadui.util.layout.DelayedFormattedString
+
+import java.util.concurrent.TimeUnit
 
 createProperty( 'startAt', Long, 0 )
 createProperty( 'duration', Long, 0 )

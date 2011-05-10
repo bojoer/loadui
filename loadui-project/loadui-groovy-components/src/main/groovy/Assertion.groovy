@@ -24,8 +24,6 @@
 
 import java.util.LinkedList
 
-import com.eviware.loadui.api.events.PropertyEvent
-import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.impl.layout.OptionsProviderImpl
 import com.eviware.loadui.util.layout.DelayedFormattedString
