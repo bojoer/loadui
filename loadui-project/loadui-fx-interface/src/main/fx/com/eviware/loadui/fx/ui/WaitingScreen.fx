@@ -30,7 +30,9 @@ import javafx.animation.KeyFrame;
 import com.eviware.loadui.fx.ui.resources.DialogPanel;
 
 public class WaitingScreen extends Stack {
-	public var text:String = "Waiting...";
+	public var text:String = "Waiting..." on replace {
+		layout();
+	};
 	
 	public var onAbort:function():Void;
 	
