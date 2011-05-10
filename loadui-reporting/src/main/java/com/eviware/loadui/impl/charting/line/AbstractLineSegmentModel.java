@@ -38,6 +38,8 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 	protected Execution execution;
 	protected double scalar = 1;
 	private final String name;
+	private double minY = Double.POSITIVE_INFINITY;
+	private double maxY = Double.NEGATIVE_INFINITY;
 
 	public AbstractLineSegmentModel( String name, ChartStyle chartStyle )
 	{
@@ -67,6 +69,34 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 	public String getName()
 	{
 		return name;
+	}
+
+	public double getMaxY()
+	{
+		return maxY;
+	}
+
+	public double getMinY()
+	{
+		return minY;
+	}
+
+	@Override
+	public DefaultChartModel addPoint( double x, double y, boolean flush )
+	{
+		minY = Math.min( minY, y );
+		maxY = Math.max( maxY, y );
+
+		return super.addPoint( x, y, flush );
+	}
+
+	@Override
+	public void clearPoints()
+	{
+		super.clearPoints();
+
+		minY = Double.POSITIVE_INFINITY;
+		maxY = Double.NEGATIVE_INFINITY;
 	}
 
 	@Override
@@ -176,34 +206,27 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 
 			while( true )
 			{
-				try
+				synchronized( queue )
 				{
-					synchronized( queue )
+					try
 					{
-						try
-						{
-							if( queue.isEmpty() )
-								queue.wait();
+						if( queue.isEmpty() )
+							queue.wait();
 
-							Iterator<Runnable> iterator = queue.values().iterator();
-							task = iterator.next();
-							iterator.remove();
-						}
-						catch( Exception e )
-						{
-							e.printStackTrace();
-						}
+						Iterator<Runnable> iterator = queue.values().iterator();
+						task = iterator.next();
+						iterator.remove();
 					}
-					if( task != null )
+					catch( InterruptedException e )
 					{
-						if( task instanceof PendingRead )
-							( ( PendingRead )task ).read();
-						SwingUtilities.invokeLater( task );
+						// Do nothing.
 					}
 				}
-				catch( Exception e )
+				if( task != null )
 				{
-					e.printStackTrace();
+					if( task instanceof PendingRead )
+						( ( PendingRead )task ).read();
+					SwingUtilities.invokeLater( task );
 				}
 			}
 		}

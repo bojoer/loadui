@@ -23,7 +23,6 @@
  */
 
 import com.eviware.loadui.api.events.PropertyEvent
-import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
 
 //Properties

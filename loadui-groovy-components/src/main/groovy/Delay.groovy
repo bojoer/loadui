@@ -25,9 +25,7 @@
 import com.eviware.loadui.api.events.PropertyEvent
  
 import java.util.concurrent.TimeUnit
-import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
-import com.eviware.loadui.api.model.WorkspaceItem
 import com.eviware.loadui.api.model.SceneItem
 
 final GAUSSIAN = 'Gaussian'

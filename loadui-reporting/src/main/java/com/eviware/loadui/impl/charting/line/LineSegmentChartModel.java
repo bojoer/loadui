@@ -72,7 +72,7 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 			{
 				latestTime = timestamp;
 				if( xRangeMin <= timestamp && timestamp <= xRangeMax )
-					addPoint( timestamp, scalar * dataPoint.getValue().doubleValue() );
+					addPoint( timestamp, scalar * dataPoint.getValue().doubleValue(), true );
 			}
 		}
 	}

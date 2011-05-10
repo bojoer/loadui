@@ -42,7 +42,7 @@ import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.axis.Axis;
 import com.jidesoft.chart.axis.DefaultNumericTickCalculator;
 import com.jidesoft.chart.axis.NumericAxis;
-import com.jidesoft.range.Range;
+import com.jidesoft.chart.model.ChartModel;
 
 public class LineChartImpl extends Chart implements LineChart, Releasable
 {
@@ -127,9 +127,6 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	@Override
 	public void refresh( boolean shouldPoll )
 	{
-		double min = Double.POSITIVE_INFINITY;
-		double max = Double.NEGATIVE_INFINITY;
-
 		if( zoomLevel == ZoomLevel.ALL )
 		{
 			long maxTime = getMaxTime();
@@ -153,32 +150,24 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 			setPosition( getMaxTime() - timeSpan );
 		}
 
-		for( LineSegmentChartModel lineModel : lines.values() )
+		if( shouldPoll )
 		{
-			if( shouldPoll )
+			for( LineSegmentChartModel lineModel : lines.values() )
 				lineModel.poll();
-
-			Range<Double> yRange = lineModel.getYRange( 0.05, 0.05 );
-			if( yRange.minimum() != Double.NEGATIVE_INFINITY && yRange.maximum() != Double.POSITIVE_INFINITY )
-			{
-				min = Math.min( min, yRange.minimum() );
-				max = Math.max( max, yRange.maximum() );
-			}
 		}
+	}
 
-		if( comparedExecution != null )
+	@Override
+	public void update()
+	{
+		double min = Double.POSITIVE_INFINITY;
+		double max = Double.NEGATIVE_INFINITY;
+
+		for( ChartModel model : getModels() )
 		{
-			for( ComparedLineSegmentChartModel lineModel : comparedLines.values() )
-			{
-				Range<Double> yRange = lineModel.getYRange( 0.05, 0.05 );
-				if( yRange.minimum() != Double.NEGATIVE_INFINITY && yRange.maximum() != Double.POSITIVE_INFINITY )
-				{
-					min = Math.min( min, yRange.minimum() );
-					max = Math.max( max, yRange.maximum() );
-				}
-			}
+			min = Math.min( min, ( ( AbstractLineSegmentModel )model ).getMinY() );
+			max = Math.max( max, ( ( AbstractLineSegmentModel )model ).getMaxY() );
 		}
-
 		if( min > max )
 		{
 			min = 0;
@@ -189,7 +178,9 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 			min -= 2.5;
 			max += 2.5;
 		}
+
 		getYAxis().setRange( min, max );
+		super.update();
 	}
 
 	@Override
@@ -435,7 +426,10 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 					.getLevel();
 
 			for( LineSegmentChartModel lineModel : lines.values() )
+			{
+				lineModel.clearPoints();
 				lineModel.setLevel( level );
+			}
 
 			refresh( false );
 		}
