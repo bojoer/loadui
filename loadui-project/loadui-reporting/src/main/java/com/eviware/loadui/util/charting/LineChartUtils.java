@@ -28,8 +28,6 @@ import java.util.concurrent.ExecutorService;
 
 import javax.swing.SwingUtilities;
 
-import org.slf4j.Logger;
-
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
@@ -133,31 +131,11 @@ public class LineChartUtils
 
 	public static Image createThumbnail( LineChartView chartView, Execution mainExecution, Execution comparedExecution )
 	{
-		LineChartImpl chart = new LineChartImpl( chartView );
-		chart.setMainExecution( mainExecution );
-		chart.setComparedExecution( comparedExecution );
-		chart.setSize( new Dimension( 128, 56 ) );
-
-		chart.setAnimateOnShow( false );
-		LineChartStyles.styleChart( chart );
-		chart.setPanelBackground( Color.BLACK );
-
-		Font font = chart.getTickFont();
-		chart.setTickFont( new Font( font.getName(), font.getStyle(), 4 ) );
-
-		chart.setTimeSpanNoSave( 10000 );
-
-		LongRange range = ( LongRange )chart.getXAxis().getRange();
-		range.setMax( range.lower() + 10000 );
-		chart.setAxisLabelPadding( -6 );
-
-		chart.awaitDraw();
-
-		ImageCreator imageCreator = new ImageCreator( chart );
+		ImageCreator imageCreator = new ImageCreator( chartView, mainExecution, comparedExecution );
 		try
 		{
 			invokeInSwingAndWait( imageCreator );
-			ReleasableUtils.release( chart );
+
 			return imageCreator.getImage();
 		}
 		catch( InterruptedException e )
@@ -204,19 +182,43 @@ public class LineChartUtils
 
 	private static class ImageCreator implements Runnable
 	{
-		private final LineChartImpl chart;
+		private final LineChartView chartView;
+		private final Execution mainExecution;
+		private final Execution comparedExecution;
 		private Image image;
 
-		public ImageCreator( LineChartImpl chart )
+		public ImageCreator( LineChartView chartView, Execution mainExecution, Execution comparedExecution )
 		{
-			this.chart = chart;
+			this.chartView = chartView;
+			this.mainExecution = mainExecution;
+			this.comparedExecution = comparedExecution;
 		}
 
 		@Override
 		public void run()
 		{
+			LineChartImpl chart = new LineChartImpl( chartView );
+			chart.setMainExecution( mainExecution );
+			chart.setComparedExecution( comparedExecution );
+			chart.setSize( new Dimension( 128, 56 ) );
+
+			chart.setAnimateOnShow( false );
+			LineChartStyles.styleChart( chart );
+			chart.setPanelBackground( Color.BLACK );
+
+			Font font = chart.getTickFont();
+			chart.setTickFont( new Font( font.getName(), font.getStyle(), 4 ) );
+
+			chart.setTimeSpanNoSave( 10000 );
+
+			LongRange range = ( LongRange )chart.getXAxis().getRange();
+			range.setMax( range.lower() + 10000 );
+			chart.setAxisLabelPadding( -6 );
+
+			chart.awaitDraw();
 			chart.update();
 			image = ChartUtils.createImage( chart );
+			ReleasableUtils.release( chart );
 		}
 
 		public Image getImage()
