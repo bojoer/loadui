@@ -17,6 +17,7 @@
 /**
  * Sends an empty message in a variance pattern depending on the settings.
  * 
+ * @id com.eviware.Variance
  * @help http://www.loadui.org/Generators/variance-component.html
  * @category generators
  * @nonBlocking true

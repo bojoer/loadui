@@ -17,6 +17,7 @@
 /**
  * Displays statistical information  
  * 
+ * @id com.eviware.Statistics
  * @help http://www.loadui.org/Analysis/statistics.html
  * @category analysis
  * @nonBlocking true

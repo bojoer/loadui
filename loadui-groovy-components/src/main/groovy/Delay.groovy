@@ -17,6 +17,7 @@
 /**
  * Delays incoming messages for a period of time
  * 
+ * @id com.eviware.Delay
  * @help http://www.loadui.org/Flow-Control/delay-component.html
  * @category flow
  * @nonBlocking true

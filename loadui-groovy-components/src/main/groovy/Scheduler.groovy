@@ -16,6 +16,7 @@
 /**
  * Schedules the start and stop at a specified day & time
  *
+ * @id com.eviware.Scheduler
  * @help http://www.loadui.org/Schedulers/scheduler-component.html
  * @category scheduler
  * @nonBlocking true

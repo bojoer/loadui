@@ -17,6 +17,7 @@
 /**
  * Simulates a "classic" fixed load situation
  * 
+ * @id com.eviware.FixedLoad
  * @help http://www.loadui.org/Generators/fixed-load-component.html
  * @name Fixed Load
  * @category generators

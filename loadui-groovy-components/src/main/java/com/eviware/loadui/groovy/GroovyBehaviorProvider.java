@@ -121,15 +121,27 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 	{
 		if( TYPE.equals( componentType ) )
 		{
+			String id = context.getAttribute( GroovyComponent.ID_ATTRIBUTE, null );
 			String scriptPath = context.getAttribute( GroovyComponent.SCRIPT_FILE_ATTRIBUTE, null );
 			String digest = context.getAttribute( GroovyComponent.DIGEST_ATTRIBUTE, null );
 			if( scriptPath != null && digest != null )
 			{
 				for( Entry<File, ScriptDescriptor> entry : scripts.entrySet() )
 				{
+					ScriptDescriptor d = entry.getValue();
+					if( id.equals( d.getId() ) )
+					{
+						if( !digest.equals( d.getDigest() ) )
+						{
+							// ID matches, update the component.
+							context.setAttribute( GroovyComponent.DIGEST_ATTRIBUTE, d.getDigest() );
+							context.setAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, d.getClassLoaderId() );
+							context.getProperty( GroovyComponent.SCRIPT_PROPERTY ).setValue( d.getScript() );
+						}
+						break;
+					}
 					if( entry.getKey().getAbsolutePath().equals( scriptPath ) )
 					{
-						ScriptDescriptor d = entry.getValue();
 						if( !digest.equals( d.getDigest() ) )
 						{
 							// Script file has changed, update the component.
@@ -396,6 +408,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 						scripts.put( file, descriptor );
 						registry.registerDescriptor( descriptor, GroovyBehaviorProvider.this );
 						fireEvent( new PropertyChangeEvent( descriptor, file.getCanonicalPath(), null, descriptor.getScript() ) );
+						fireEvent( new PropertyChangeEvent( descriptor, descriptor.getId(), null, descriptor.getScript() ) );
 					}
 				}
 			}

@@ -17,6 +17,7 @@
 /**
  * Checks for errors and increases global assertion count
  * 
+ * @id com.eviware.Assertion
  * @help http://www.loadui.org/Analysis/assertion-component.html
  * @category analysis
  * @nonBlocking true
