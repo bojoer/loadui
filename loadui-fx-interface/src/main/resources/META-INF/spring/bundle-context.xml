@@ -25,6 +25,8 @@
 	
 	<bean id="inspectorPanel" factory-bean="mainWindow" factory-method="getInspectorPanel" />
 	
+	<bean id="applicationState" factory-bean="mainWindow" factory-method="getApplicationState" />
+	
 	<bean id="inspectorManager" class="com.eviware.loadui.fx.osgi.InspectorManager">
 		<property name="inspectorPanel" ref="inspectorPanel" />
 		<property name="activeInspector" value="Agents" />

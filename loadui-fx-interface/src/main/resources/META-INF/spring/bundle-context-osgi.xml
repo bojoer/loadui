@@ -42,6 +42,9 @@
 	 <!-- 
 	<osgi:reference id="executorService" interface="java.util.concurrent.ThreadPoolExecutor"></osgi:reference>
 	 -->
+	
+	<osgi:service interface="com.eviware.loadui.api.ui.ApplicationState" ref="applicationState" />
+	 
 	<osgi:reference id="agentDiscovery" interface="com.eviware.loadui.api.discovery.AgentDiscovery" />
 	
 	<osgi:reference id="statisticsManager" interface="com.eviware.loadui.api.statistics.StatisticsManager" />
