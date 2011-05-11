@@ -108,7 +108,7 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 	@Override
 	public int hashCode()
 	{
-		return Objects.hashCode( chartStyle, name );
+		return Objects.hashCode( name );
 	}
 
 	private class PendingRead implements Runnable
