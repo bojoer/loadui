@@ -199,7 +199,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 			else
 			{
 				mainExecution = execution;
-				position = Math.max( 0, Math.min( position, getMaxTime() - timeSpan ) );
+				position = Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
 				for( LineSegmentChartModel lineModel : lines.values() )
 				{
 					lineModel.clearPoints();
@@ -260,6 +260,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 							}
 						}
 						comparedExecution = cExecution;
+						position = Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
 					}
 				} );
 			}
