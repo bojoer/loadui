@@ -92,6 +92,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 				position = 0;
 			}
 		}
+		position = Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
 
 		xRange = new LongRange( position, position + timeSpan );
 		NumericAxis xAxis = new NumericAxis( xRange );
