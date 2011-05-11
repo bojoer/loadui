@@ -84,6 +84,9 @@ public class MainWindow {
 	var scene:Scene;
 	public function setScene( scene:Scene ):Void { this.scene = scene }
 	
+	def appState = AppState {};
+	public function getApplicationState() { appState }
+	
 	public var wc:WindowControllerImpl;
 	public function setWindowController( wc:WindowControllerImpl ):Void { this.wc = wc }
 	
@@ -133,7 +136,7 @@ public class MainWindow {
 		//scene.stylesheets = "{FX.getProperty('javafx.user.home')}{File.separator}.loadui{File.separator}style.css";
 	
 		instance = this;
-		def appState = AppState {};
+		//def appState = AppState {};
 		
 		//Set the layer to place items being dragged into.
 		
