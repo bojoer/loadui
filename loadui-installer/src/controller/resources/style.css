@@ -458,7 +458,7 @@
 	-fx-background-color: #606060;
 }
 
-.execution-button {
+.execution-button, .small-execution-button {
 	-fx-shape: "M 0,0 A 1,1 0 0,0 2,0 A 1,1 0 0,0 0,0";
 	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color, -fx-shadow-highlight-color;
 	-fx-background-insets: 0, 4, 5, 4;
@@ -471,13 +471,18 @@
 	-fx-shadow-highlight-color: transparent;
 }
 
-.execution-button:armed, .execution-button:selected {
+.small-execution-button {
+	-fx-background-color: -fx-inner-border, -fx-body-color, -fx-shadow-highlight-color;
+	-fx-background-insets: 0, 1, 0;
+}
+
+.execution-button:armed, .execution-button:selected, .small-execution-button:armed, .small-execution-button:selected {
 	-fx-outer-border: #000000;
 	-fx-inner-border: #333333;
 	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #39383a) (100%, #464646);
 }
 
-.execution-button:hover {
+.execution-button:hover, .small-execution-button:hover {
 	-fx-shadow-highlight-color: radial (50%,50%) , 50% focus (50%,50%) stops (0.0,transparent) (0.7,transparent) (1,rgba(0,0,0,0.4));
 }
 
