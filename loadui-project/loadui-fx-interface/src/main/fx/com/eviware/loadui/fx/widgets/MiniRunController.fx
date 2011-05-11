@@ -216,13 +216,11 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
     init {
         itemsInactive = [
 			playButton = ToggleButton {
-				layoutInfo: LayoutInfo { height: 33, width: 33, margin: Insets {  } }
-				styleClass: "execution-button"
+				layoutInfo: LayoutInfo { height: 16, width: 16, margin: Insets { left: 9, right: 8, top: -5, bottom: -5 } }
+				styleClass: "small-execution-button"
 				selected: false
-				graphic: ExecutionGraphic { layoutInfo: LayoutInfo { height: 33, width: 33 }, running: bind (playButton.armed or playButton.selected) }
+				graphic: SmallExecutionGraphic { running: bind (playButton.armed or playButton.selected) }
 				tooltip:Tooltip { text:"Play/Stop" }
-				scaleX: 0.4
-				scaleY: 0.4
 			},Label {
 				text: "Master"
 				font: Font.font("Arial", 8)
