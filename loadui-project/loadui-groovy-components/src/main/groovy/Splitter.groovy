@@ -17,6 +17,7 @@
 /**
  * Splits input to specified number of outputs
  *
+ * @id com.eviware.Splitter
  * @help http://www.loadui.org/Flow-Control/splitter-component.html
  * @category flow
  * @nonBlocking true

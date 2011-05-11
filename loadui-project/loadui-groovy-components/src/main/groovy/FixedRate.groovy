@@ -17,6 +17,7 @@
 /**
  * Sends an empty message periodically, at a set rate
  * 
+ * @id com.eviware.FixedRate
  * @help http://www.loadui.org/Generators/fixed-rate-component.html
  * @name Fixed Rate
  * @category generators

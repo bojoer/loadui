@@ -13,7 +13,6 @@ import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
-import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.Terminal;
@@ -41,6 +40,7 @@ public class GroovyScriptSupport implements Releasable
 			"onTerminalConnect", "onConnect", "onTerminalDisconnect", "onDisconnect", "onTerminalSignatureChange",
 			"onSignature" );
 
+	private final String id;
 	private final ClassLoaderRegistry clr;
 	private final String classLoaderId;
 	private final GroovyComponentClassLoader classLoader;
@@ -48,7 +48,7 @@ public class GroovyScriptSupport implements Releasable
 
 	private final Logger log;
 	private final PropertyEventListener propertyEventListener;
-	private final ScriptFileListener scriptFileListener;
+	private final ScriptChangeListener scriptChangeListener;
 
 	private final ComponentBehavior behavior;
 	private final GroovyContextSupport context;
@@ -61,16 +61,16 @@ public class GroovyScriptSupport implements Releasable
 	public GroovyScriptSupport( GroovyBehaviorProvider behaviorProvider, ComponentBehavior behavior,
 			ComponentContext context )
 	{
-		String type = context.getAttribute( ComponentItem.TYPE, context.getLabel() );
-		scriptName = "Groovy" + type.replaceAll( "[^a-zA-Z]", "" );
-		log = LoggerFactory.getLogger( "com.eviware.loadui.groovy." + scriptName );
+		id = context.getAttribute( GroovyComponent.ID_ATTRIBUTE, null );
+		scriptName = "Groovy" + id.replaceAll( "[^a-zA-Z]", "" );
+		log = LoggerFactory.getLogger( "com.eviware.loadui.groovy." + id );
 
 		this.behavior = behavior;
 		this.context = new GroovyContextSupport( context, log );
 
 		clr = behaviorProvider.getClassLoaderRegistry();
 
-		classLoaderId = context.getAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, type );
+		classLoaderId = context.getAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, id );
 		classLoader = clr.useClassLoader( classLoaderId, this );
 		shell = new GroovyShell( classLoader );
 
@@ -82,12 +82,12 @@ public class GroovyScriptSupport implements Releasable
 		filePath = context.getAttribute( GroovyComponent.SCRIPT_FILE_ATTRIBUTE, null );
 		if( context.isController() && digest != null && filePath != null )
 		{
-			scriptFileListener = new ScriptFileListener();
-			behaviorProvider.addEventListener( PropertyChangeEvent.class, scriptFileListener );
+			scriptChangeListener = new ScriptChangeListener();
+			behaviorProvider.addEventListener( PropertyChangeEvent.class, scriptChangeListener );
 		}
 		else
 		{
-			scriptFileListener = null;
+			scriptChangeListener = null;
 		}
 
 		updateScript( scriptProperty.getValue() );
@@ -269,12 +269,12 @@ public class GroovyScriptSupport implements Releasable
 		}
 	}
 
-	private class ScriptFileListener implements WeakEventHandler<PropertyChangeEvent>
+	private class ScriptChangeListener implements WeakEventHandler<PropertyChangeEvent>
 	{
 		@Override
 		public void handleEvent( PropertyChangeEvent event )
 		{
-			if( filePath.equals( event.getPropertyName() ) )
+			if( filePath.equals( event.getPropertyName() ) || id.equals( event.getPropertyName() ) )
 			{
 				ScriptDescriptor descriptor = ( ScriptDescriptor )event.getSource();
 				scriptProperty.setValue( descriptor.getScript() );

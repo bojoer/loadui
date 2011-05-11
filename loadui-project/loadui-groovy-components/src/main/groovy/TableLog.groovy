@@ -17,6 +17,7 @@
 /**
  * Tabulates incoming messages and creates a csv output 
  * 
+ * @id com.eviware.TableLog
  * @help http://www.loadui.org/Output/table-log-component.html
  * @name Table Log
  * @category output
