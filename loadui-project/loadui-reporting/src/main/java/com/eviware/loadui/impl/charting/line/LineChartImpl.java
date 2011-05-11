@@ -199,6 +199,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 			else
 			{
 				mainExecution = execution;
+				position = Math.max( 0, Math.min( position, getMaxTime() - timeSpan ) );
 				for( LineSegmentChartModel lineModel : lines.values() )
 				{
 					lineModel.clearPoints();
@@ -285,6 +286,8 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 					public void run()
 					{
 						LineSegmentChartModel lineModel = new LineSegmentChartModel( chartView, segment );
+						lineModel.setLevel( zoomLevel == ZoomLevel.ALL ? ZoomLevel.forSpan( getMaxTime() / 1000 ).getLevel()
+								: zoomLevel.getLevel() );
 						lines.put( segment, lineModel );
 						if( mainExecution != null )
 							lineModel.setExecution( mainExecution );
