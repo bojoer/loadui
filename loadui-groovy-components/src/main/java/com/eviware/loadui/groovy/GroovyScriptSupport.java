@@ -101,6 +101,8 @@ public class GroovyScriptSupport implements Releasable
 
 	public void updateScript( String scriptText )
 	{
+		if( scriptText == null )
+			scriptText = "";
 		invokeClosure( true, false, "onReplace" );
 		context.reset();
 		shell.resetLoadedClasses();
