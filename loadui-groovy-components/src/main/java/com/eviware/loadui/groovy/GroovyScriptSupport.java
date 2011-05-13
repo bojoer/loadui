@@ -19,6 +19,7 @@ import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.groovy.GroovyBehaviorProvider.ScriptDescriptor;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -274,7 +275,7 @@ public class GroovyScriptSupport implements Releasable
 		@Override
 		public void handleEvent( PropertyChangeEvent event )
 		{
-			if( filePath.equals( event.getPropertyName() ) || id.equals( event.getPropertyName() ) )
+			if( Objects.equal( filePath, event.getPropertyName() ) || id.equals( event.getPropertyName() ) )
 			{
 				ScriptDescriptor descriptor = ( ScriptDescriptor )event.getSource();
 				String digest = descriptor.getDigest();
