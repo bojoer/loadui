@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="4.2.6" transformSequenceNumber="2">
+<install4j version="4.2.8" transformSequenceNumber="2">
   <directoryPresets config="../../target/controller" />
   <application name="loadUI ${compiler:version}" distributionSourceDir="" applicationId="3648-6792-9261-9102" mediaDir="../../target" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" missingFilesStrategy="warn" shortName="loadUI" publisher="eviware ab" publisherWeb="http://www.eviware.com" version="${compiler:version}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
@@ -417,15 +417,32 @@ Appendix
                 <initScript />
                 <visibiltyScript />
               </formComponent>
-              <formComponent name="" id="770" beanClass="com.install4j.runtime.beans.formcomponents.IntegerTextfieldComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+              <formComponent name="" id="953" beanClass="com.install4j.runtime.beans.formcomponents.TextfieldComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.formcomponents.IntegerTextfieldComponent">
-                      <void property="allowsInvalid">
-                        <boolean>true</boolean>
-                      </void>
-                      <void property="columns">
-                        <int>6</int>
+                    <object class="com.install4j.runtime.beans.formcomponents.TextfieldComponent">
+                      <void property="inputVerifier">
+                        <object class="com.install4j.api.beans.ScriptProperty">
+                          <void property="value">
+                            <string>try{
+    if(text == null || text.trim().length() == 0){
+        return true;
+    }
+    int i = Integer.parseInt(text);
+    if(i &gt;= 0 &amp;&amp; i &lt; 65536){
+        return true;
+    }
+    else{
+        Util.showErrorMessage("Port must be an integer between 0 and 65535!");
+        return false;
+    }
+}
+catch(Exception e){
+    Util.showErrorMessage("Port must be an integer between 0 and 65535!");
+    return false;
+}</string>
+                          </void>
+                        </object>
                       </void>
                       <void property="labelText">
                         <string>Port:</string>
