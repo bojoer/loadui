@@ -17,7 +17,7 @@
 /**
  * Schedules the start and stop of connected components 
  *
- *@id com.eviware.Interval
+ * @id com.eviware.Interval
  * @help http://www.loadui.org/Schedulers/interval-component.html
  * @category scheduler
  * @nonBlocking true
