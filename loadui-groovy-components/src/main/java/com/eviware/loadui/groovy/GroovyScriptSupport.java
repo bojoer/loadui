@@ -13,6 +13,7 @@ import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.Terminal;
@@ -61,7 +62,8 @@ public class GroovyScriptSupport implements Releasable
 	public GroovyScriptSupport( GroovyBehaviorProvider behaviorProvider, ComponentBehavior behavior,
 			ComponentContext context )
 	{
-		id = context.getAttribute( GroovyComponent.ID_ATTRIBUTE, null );
+		id = context.getAttribute( GroovyComponent.ID_ATTRIBUTE,
+				context.getAttribute( ComponentItem.TYPE, context.getLabel() ) );
 		scriptName = "Groovy" + id.replaceAll( "[^a-zA-Z]", "" );
 		log = LoggerFactory.getLogger( "com.eviware.loadui.groovy." + id );
 
@@ -80,7 +82,7 @@ public class GroovyScriptSupport implements Releasable
 
 		digest = context.getAttribute( GroovyComponent.DIGEST_ATTRIBUTE, null );
 		filePath = context.getAttribute( GroovyComponent.SCRIPT_FILE_ATTRIBUTE, null );
-		if( context.isController() && digest != null && filePath != null )
+		if( context.isController() )
 		{
 			scriptChangeListener = new ScriptChangeListener();
 			behaviorProvider.addEventListener( PropertyChangeEvent.class, scriptChangeListener );

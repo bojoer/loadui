@@ -98,8 +98,6 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 		{
 			ScriptDescriptor scriptDescriptor = ( ScriptDescriptor )descriptor;
 			context.setCategory( descriptor.getCategory() );
-			context.setAttribute( GroovyComponent.SCRIPT_FILE_ATTRIBUTE, scriptDescriptor.getScriptFile()
-					.getAbsolutePath() );
 			context.setAttribute( GroovyComponent.DIGEST_ATTRIBUTE, scriptDescriptor.getDigest() );
 			context.setAttribute( GroovyComponent.ID_ATTRIBUTE, scriptDescriptor.getId() );
 			context.setAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, scriptDescriptor.getClassLoaderId() );
@@ -136,7 +134,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 							// ID matches, update the component.
 							context.setAttribute( GroovyComponent.DIGEST_ATTRIBUTE, d.getDigest() );
 							context.setAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, d.getClassLoaderId() );
-							context.getProperty( GroovyComponent.SCRIPT_PROPERTY ).setValue( d.getScript() );
+							context.createProperty( GroovyComponent.SCRIPT_PROPERTY, String.class ).setValue( d.getScript() );
 						}
 						break;
 					}
@@ -148,7 +146,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 							context.setAttribute( GroovyComponent.DIGEST_ATTRIBUTE, d.getDigest() );
 							context.setAttribute( GroovyComponent.ID_ATTRIBUTE, d.getId() );
 							context.setAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, d.getClassLoaderId() );
-							context.getProperty( GroovyComponent.SCRIPT_PROPERTY ).setValue( d.getScript() );
+							context.createProperty( GroovyComponent.SCRIPT_PROPERTY, String.class ).setValue( d.getScript() );
 						}
 						break;
 					}
