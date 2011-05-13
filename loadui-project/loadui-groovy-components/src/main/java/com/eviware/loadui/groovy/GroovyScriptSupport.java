@@ -57,7 +57,6 @@ public class GroovyScriptSupport implements Releasable
 	private final String scriptName;
 	private final String filePath;
 	private Binding binding = new Binding();
-	private String digest;
 
 	public GroovyScriptSupport( GroovyBehaviorProvider behaviorProvider, ComponentBehavior behavior,
 			ComponentContext context )
@@ -80,7 +79,6 @@ public class GroovyScriptSupport implements Releasable
 		propertyEventListener = new PropertyEventListener();
 		context.getComponent().addEventListener( PropertyEvent.class, propertyEventListener );
 
-		digest = context.getAttribute( GroovyComponent.DIGEST_ATTRIBUTE, null );
 		filePath = context.getAttribute( GroovyComponent.SCRIPT_FILE_ATTRIBUTE, null );
 		if( context.isController() )
 		{
@@ -279,8 +277,12 @@ public class GroovyScriptSupport implements Releasable
 			if( filePath.equals( event.getPropertyName() ) || id.equals( event.getPropertyName() ) )
 			{
 				ScriptDescriptor descriptor = ( ScriptDescriptor )event.getSource();
-				scriptProperty.setValue( descriptor.getScript() );
-				context.setAttribute( GroovyComponent.DIGEST_ATTRIBUTE, descriptor.getDigest() );
+				String digest = descriptor.getDigest();
+				if( !digest.equals( context.getAttribute( GroovyComponent.DIGEST_ATTRIBUTE, null ) ) )
+				{
+					scriptProperty.setValue( descriptor.getScript() );
+					context.setAttribute( GroovyComponent.DIGEST_ATTRIBUTE, digest );
+				}
 			}
 		}
 	}
