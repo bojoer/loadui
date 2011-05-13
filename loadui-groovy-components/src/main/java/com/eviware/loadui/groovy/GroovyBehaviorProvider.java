@@ -121,7 +121,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 	{
 		if( TYPE.equals( componentType ) )
 		{
-			String id = context.getAttribute( GroovyComponent.ID_ATTRIBUTE, null );
+			String id = context.getAttribute( GroovyComponent.ID_ATTRIBUTE, "" );
 			String scriptPath = context.getAttribute( GroovyComponent.SCRIPT_FILE_ATTRIBUTE, null );
 			String digest = context.getAttribute( GroovyComponent.DIGEST_ATTRIBUTE, null );
 			if( scriptPath != null && digest != null )
