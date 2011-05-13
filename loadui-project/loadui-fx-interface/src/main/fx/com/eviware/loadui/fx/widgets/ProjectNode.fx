@@ -37,6 +37,7 @@ import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.util.ImageUtil.*;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 
+import java.lang.Throwable;
 import java.io.IOException;
 import java.lang.RuntimeException;
 import java.util.EventObject;
@@ -104,6 +105,8 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 						projectRef.setEnabled( true );
 					}, function( task:Task ):Void {
 						if( task.failed ) {
+							if( task.causeOfFailure instanceof Throwable )
+								log.error( "Error loading project {projectRef.getLabel()}", task.causeOfFailure as Throwable );
 							CorruptProjectDialog{ project:projectRef };
 						} else {
 							AppState.byName("MAIN").setActiveCanvas( projectRef.getProject() );
