@@ -137,7 +137,7 @@ public class StatisticsMenu extends VBox {
 				content: [
 					Label {
 						layoutInfo: LayoutInfo {
-							width: 95
+							width: 88
 						}
 					}, VBox {
 						content: [
@@ -156,7 +156,7 @@ public class StatisticsMenu extends VBox {
 										hfill: true
 										vfill: false
 										height: 45
-										margin: Insets { left: 16 }
+										margin: Insets { left: -3 }
 									}
 									spacing: 3
 									nodeVPos: VPos.CENTER

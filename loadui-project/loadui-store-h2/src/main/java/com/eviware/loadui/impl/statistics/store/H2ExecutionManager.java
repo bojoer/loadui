@@ -38,8 +38,15 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	@Override
 	public DataSource createDataSource( String db )
 	{
-		JdbcConnectionPool cp = JdbcConnectionPool.create( "jdbc:h2:" + baseDirectoryURI + db + File.separator + db
-				+ ";DB_CLOSE_ON_EXIT=FALSE;DATABASE_EVENT_LISTENER='com.eviware.loadui.impl.statistics.store.H2EventListener'", "sa", "sa" );
+		JdbcConnectionPool cp = JdbcConnectionPool
+				.create(
+						"jdbc:h2:"
+								+ baseDirectoryURI
+								+ db
+								+ File.separator
+								+ db
+								+ ";DB_CLOSE_ON_EXIT=FALSE;DATABASE_EVENT_LISTENER='com.eviware.loadui.impl.statistics.store.H2EventListener';TRACE_LEVEL_FILE=2",
+						"sa", "sa" );
 		cp.setMaxConnections( 5 );
 		return cp;
 	}

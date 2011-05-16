@@ -90,7 +90,7 @@ public class ManageMenu extends HBox {
 			}, 
 			Label {
 				layoutInfo: LayoutInfo {
-					width: 95
+					width: 71
 				}
 			},
 			menuButton = MenuButton {

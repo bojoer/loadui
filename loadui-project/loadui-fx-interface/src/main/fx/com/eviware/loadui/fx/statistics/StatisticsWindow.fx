@@ -123,7 +123,7 @@ public class StatisticsWindow {
 			};
 			appState = AppState {};
 			
-			insert StatisticsWindowButton { layoutX: 10, layoutY: 7 } into appState.globalLayer.content;
+			insert StatisticsWindowButton { layoutX: 10, layoutY: 2 } into appState.globalLayer.content;
 			
 			appState.insertInto ( ManageMenu { width: bind scene.width }, STATISTICS_MANAGE );
 			

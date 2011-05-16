@@ -100,6 +100,7 @@ public class ReportEngine
 				ReportFormats rf = ReportFormats.valueOf( format );
 
 				JRAbstractExporter jrExporter = null;
+				log.debug( "  got param: {}", rf.toString() );
 				switch( rf )
 				{
 				case JASPER_PRINT :
@@ -277,7 +278,7 @@ public class ReportEngine
 		List<JRPrintPage> jPages2 = jp2.getPages();
 		for( Iterator<JRPrintPage> iter = jPages2.iterator(); iter.hasNext(); )
 		{
-			JRPrintPage jPage = ( JRPrintPage )iter.next();
+			JRPrintPage jPage = iter.next();
 			jp1.addPage( jPage );
 		}
 		jp1.setPageHeight( jp2.getPageHeight() );
@@ -291,8 +292,8 @@ public class ReportEngine
 	{
 
 		private JasperPrint jp;
-		private LReportTemplate report;
-		private JRDataSource dataSource;
+		private final LReportTemplate report;
+		private final JRDataSource dataSource;
 
 		public ReportFillWorker( JRDataSource dataSource, LReportTemplate selectedReport )
 		{
