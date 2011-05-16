@@ -189,29 +189,12 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	{
 		if( mainExecution != execution )
 		{
-			if( execution == null )
-			{
-				mainExecution = null;
-				for( LineSegmentChartModel lineModel : lines.values() )
-				{
-					removeModel( lineModel );
-				}
-			}
-			else
-			{
-				mainExecution = execution;
-				position = Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
-				for( LineSegmentChartModel lineModel : lines.values() )
-				{
-					lineModel.clearPoints();
-					lineModel.setExecution( execution );
-					if( !containsModel( lineModel ) )
-					{
-						addModel( lineModel, lineModel.getChartStyle() );
-					}
-				}
-				refresh( false );
-			}
+			mainExecution = execution;
+			position = Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
+			for( LineSegmentChartModel lineModel : lines.values() )
+				lineModel.setExecution( execution );
+			updateXRange();
+			refresh( false );
 		}
 	}
 

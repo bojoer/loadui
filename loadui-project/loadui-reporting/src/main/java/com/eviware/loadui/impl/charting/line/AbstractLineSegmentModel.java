@@ -1,5 +1,6 @@
 package com.eviware.loadui.impl.charting.line;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
@@ -130,7 +131,7 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 
 		public void read()
 		{
-			dataPoints = statistic.getPeriod( xMin, xMax, level, execution );
+			dataPoints = execution == null ? Collections.emptyList() : statistic.getPeriod( xMin, xMax, level, execution );
 		}
 
 		@Override
