@@ -369,11 +369,12 @@ public class ProjectMenu extends HBox {
 	      MainWindow.instance.projectCanvas.generateMiniatures();
 	      project.saveAs(destination);
 			project.save();					
-	    } catch(e:IOException) {
+	    } catch( e:IOException ) {
+	    		log.error( "Error saving project: {project.getLabel()}", e );
 	        def warning:Dialog = Dialog {
 	            title: "Warning!"
 	            content: Text {
-	                content: "Failed to Import Project, see log for more details!"
+	                content: "Failed to Save Project, see log for more details!"
 	            }
 	            okText: "Ok"
 	            onOk: function() {

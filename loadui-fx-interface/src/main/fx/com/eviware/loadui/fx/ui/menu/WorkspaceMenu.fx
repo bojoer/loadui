@@ -54,6 +54,7 @@ import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import javax.swing.JFileChooser;
 import java.io.File;
+import java.lang.Throwable;
 import java.lang.Exception;
 import java.io.IOException;
 
@@ -146,7 +147,8 @@ public class WorkspaceMenu extends HBox {
 			                     try {
 			                         workspace.importProject( source, false );
 			                         success = true;
-			                     } catch(e:IOException) {
+			                     } catch(e:Throwable) {
+			                     	log.error( "Failed importing project: {source}", e );
 			                     }
 			                  }, function( task ):Void {
 			                  	if( not success ) {

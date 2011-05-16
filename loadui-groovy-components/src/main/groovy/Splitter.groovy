@@ -50,6 +50,9 @@ createProperty( 'numOutputs', Integer, 1 ) { outputCount ->
 	refreshLayout()
 }
 
+//Here to support Splitters created in loadUI 1.0, remove in the future:
+getProperty( "outputs" )?.value?.with { numOutputs.value = it }
+
 random = new Random()
 lastOutput = -1
 
