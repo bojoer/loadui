@@ -172,7 +172,7 @@ public class ProjectMenu extends HBox {
 				}
 			}, Label {
 				layoutInfo: LayoutInfo {
-					width: 95
+					width: 86
 				}
 			}, VBox {
 				content: [
@@ -206,7 +206,7 @@ public class ProjectMenu extends HBox {
 						content: [
 							menuButton = MenuButton {
 								styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
-								layoutInfo: LayoutInfo { hshrink: Priority.SOMETIMES, minWidth: 100 }
+								layoutInfo: LayoutInfo { hshrink: Priority.SOMETIMES, minWidth: 100, margin: Insets { left: -4 } }
 								text: bind projectLabel
 								font: bind projectMenuOpenedFont
 								items: [

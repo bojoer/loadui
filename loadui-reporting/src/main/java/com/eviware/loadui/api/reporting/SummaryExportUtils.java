@@ -49,7 +49,7 @@ public class SummaryExportUtils
 		else
 			outputDir = new File( reportFolder );
 
-		if( reportFormat == null )
+		if( reportFormat == null || reportFormat.equalsIgnoreCase( "xml" ) )
 		{
 			saveSummaryAsXML( summary, createOutputFile( outputDir, "xml", label ) );
 		}

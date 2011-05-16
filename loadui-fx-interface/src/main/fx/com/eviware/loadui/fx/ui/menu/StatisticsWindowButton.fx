@@ -47,25 +47,26 @@ import com.javafx.preview.control.MenuButton;
 public class StatisticsWindowButton extends Group {
 	init {
 		content = [
-			Ellipse {
-				radiusX: 29
-				radiusY: 6
-				centerX: 29
-				centerY: 57
-				fill: RadialGradient {
-					centerX: 0.5
-					centerY: 0.5
-					focusX: 0.5
-					focusY: 0.5
-					stops: [
-						Stop { offset: 0, color: Color.rgb( 0, 0, 0, 0.7 ) },
-						Stop { offset: 0.45, color: Color.TRANSPARENT }
-					]
-				}
-			}, MenuButton {
+//			Ellipse {
+//				radiusX: 29
+//				radiusY: 6
+//				centerX: 29
+//				centerY: 57
+//				fill: RadialGradient {
+//					centerX: 0.5
+//					centerY: 0.5
+//					focusX: 0.5
+//					focusY: 0.5
+//					stops: [
+//						Stop { offset: 0, color: Color.rgb( 0, 0, 0, 0.7 ) },
+//						Stop { offset: 0.45, color: Color.TRANSPARENT }
+//					]
+//				}
+//			},
+			MenuButton {
 				styleClass: "loadui-menu-button"
 				graphic: ImageView {
-					image: Image { url: "{__ROOT__}images/png/main-button-no-shadow.png" }
+					image: Image { url: "{__ROOT__}images/png/results-button.png" }
 				}
 				items: [
 					CheckBox {
