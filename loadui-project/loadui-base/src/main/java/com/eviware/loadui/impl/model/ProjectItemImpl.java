@@ -88,7 +88,6 @@ import com.eviware.loadui.impl.summary.sections.ProjectExecutionNotablesSection;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.impl.terminal.RoutedConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
-import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
 import com.google.common.collect.ImmutableMap;
 
@@ -114,7 +113,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final Property<String> reportFolder;
 	private final Property<String> reportFormat;
 	private final Property<Long> numberOfAutosaves;
-	private File projectFile;
+	private final File projectFile;
 
 	public static ProjectItemImpl loadProject( WorkspaceItem workspace, File projectFile ) throws XmlException,
 			IOException
@@ -319,6 +318,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		}
 	}
 
+	@Override
 	public void saveAs( File saveAsFile )
 	{
 		try
@@ -922,7 +922,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private class SceneCompleteAwaiter implements EventHandler<BaseEvent>
 	{
 		// Counts how many test cases didn't send ON_COMPLETE_DONE event.
-		private AtomicInteger a = new AtomicInteger( 0 );
+		private final AtomicInteger a = new AtomicInteger( 0 );
 
 		// timeout scheduler. this is used when all test cases have property
 		// abortOnFinish set to true, so since they should return immediately,

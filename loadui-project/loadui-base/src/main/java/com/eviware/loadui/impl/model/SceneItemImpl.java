@@ -81,6 +81,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	private final Map<AgentItem, Map<Object, Object>> remoteStatistics = new HashMap<AgentItem, Map<Object, Object>>();
 	private long version;
 	private boolean propagate = true;
+	private boolean wasLocalModeWhenStarted = true;
 
 	private MessageEndpoint messageEndpoint = null;
 
@@ -284,6 +285,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			// on controller when source is this test case (for both local and
 			// distributed mode)...add ON_COMPLETE_DONE event listener to this test
 			// case to listen when it is completed
+
 			addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
 			{
 				@Override
@@ -307,6 +309,10 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			} );
 		}
 
+		// log.debug( "  HELLO!! " + wasLocalModeWhenStarted + ", " +
+		// project.getWorkspace().isLocalMode() + ", "
+		// + getActiveAgents().size() );
+
 		if( LoadUI.AGENT.equals( System.getProperty( LoadUI.INSTANCE ) ) )
 		{
 			// on agent, application is running in distributed mode, so send
@@ -320,8 +326,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			messageEndpoint.sendMessage( AgentItem.AGENT_CHANNEL, data );
 			log.debug( "Sending statistics data from {}", this );
 		}
-		else if( project.getWorkspace().isLocalMode()
-				|| ( !project.getWorkspace().isLocalMode() && getActiveAgents().size() == 0 ) )
+		else if( wasLocalModeWhenStarted || ( !project.getWorkspace().isLocalMode() && getActiveAgents().size() == 0 ) )
 		{
 			// on controller, in local mode or in distributed mode with no active
 			// agents
@@ -435,6 +440,14 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	{
 		super.setRunning( running );
 
+		if( running )
+		{
+			log.debug( "   dd " + LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) );
+			wasLocalModeWhenStarted = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? project
+					.getWorkspace().isLocalMode() : true;
+			log.debug( "setting wasLocalModeWhenStarted to {}", wasLocalModeWhenStarted );
+		}
+
 		fireBaseEvent( ACTIVITY );
 	}
 
@@ -487,7 +500,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		{
 			if( !isFollowProject() && ( START_ACTION.equals( event.getKey() ) || STOP_ACTION.equals( event.getKey() ) ) )
 				return;
-			
+
 			if( !propagate || COUNTER_RESET_ACTION.equals( event.getKey() ) || COMPLETE_ACTION.equals( event.getKey() ) )
 				fireEvent( new RemoteActionEvent( SceneItemImpl.this, event ) );
 
