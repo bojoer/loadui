@@ -128,7 +128,7 @@ layout {
 	box( layout: 'wrap 2, ins 0' ) {
 		property( property:command, label:"Command", constraints: 'growx, span 2' )
 		separator()
-		runButton = action( label: 'Run Once', action: { triggerAction('SAMPLE') }, enabled: ( scriptFile.value && scriptFile.value.exists() ) )
+		runButton = action( label: 'Run Once', action: { triggerAction('SAMPLE') }, enabled: ( command.value ) )
 		action( label: 'Abort Running Commands', action: { triggerAction('CANCEL') } )
 	}
 	separator( vertical: true )

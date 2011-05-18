@@ -20,6 +20,9 @@
  * 
  * @name Rate Adapter
  * @nonBlocking true
+ * @help http://loadui.org/Custom-Components/rate-adapter.html
+ * @id com.eviware.RateAdapter
+ *
  */
 
 import com.eviware.loadui.api.events.CollectionEvent
@@ -35,7 +38,6 @@ import com.eviware.loadui.api.summary.MutableSection
 
 import java.lang.Math
 
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit 
 
 // inputs and outputs
@@ -75,9 +77,6 @@ def displayRollingAvg = new DelayedFormattedString( '%.2f', 500, value { rolling
 def displayStdDev = new DelayedFormattedString( '%.2f', 500, value { stdDev } )
 def displayStdDevPercent = new DelayedFormattedString( '%.2f', 500, value { stdDevPercent } )
 
-// create executor for scheduling internal functionality
-executor = Executors.newSingleThreadScheduledExecutor()
-
 // method for updating the list of target components
 def updateTargets =
 {
@@ -102,7 +101,7 @@ def eventListener = addEventListener( context.canvas, CollectionEvent.class ) { 
 }
 
 // schedule closure for calculating current TPS and updating the LED 
-executor.scheduleAtFixedRate( 
+scheduleAtFixedRate( 
 {
 	if( context.canvas.running )
 	{
@@ -182,7 +181,7 @@ startScheduler =
 {
 	stopScheduledFuture()
 
-	scheduledFuture = executor.schedule( 
+	scheduledFuture = schedule( 
 	{
 		if( context.canvas.running )
 		{
@@ -363,7 +362,6 @@ onRelease =
 	displayRollingAvg.release()
 	displayStdDev.release()
 	displayStdDevPercent.release()
-	executor.shutdownNow()
 }
 
 
