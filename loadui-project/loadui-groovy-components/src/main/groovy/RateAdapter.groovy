@@ -20,7 +20,6 @@
  * 
  * @name Rate Adapter
  * @nonBlocking true
- * @dependency commons-math:commons-math:1.2
  */
 
 import com.eviware.loadui.api.events.CollectionEvent
@@ -31,7 +30,6 @@ import com.eviware.loadui.impl.component.categories.BaseCategory
 import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.impl.component.ActivityStrategies
-import org.apache.commons.math.stat.descriptive.moment.StandardDeviation
 import com.eviware.loadui.api.ui.table.LTableModel
 import com.eviware.loadui.api.summary.MutableSection
 
@@ -236,7 +234,8 @@ startScheduler =
 				rollingAvg = avgTpsHistory.sum() / avgTpsHistory.size()
 				
 				// update standard deviation counters
-				stdDev = new StandardDeviation().evaluate( avgTpsHistory as double[] )
+				stdDev = Math.sqrt( avgTpsHistory.collect( { Math.pow( it - rollingAvg, 2 ) } ).sum() / avgTpsHistory.size() )
+				
 				stdDevPercent = stdDev/rollingAvg * 100
 			   
 			    // reset for next measurement period
