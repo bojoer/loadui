@@ -37,12 +37,8 @@ import groovy.lang.GroovyShell
 import groovy.lang.Binding
 
 //Properties
-createProperty( 'command', String, "")
-createProperty( 'scriptFile', File )
-createProperty( 'cacheScriptContent', Boolean, true )
-createProperty( 'setBinding', Boolean, true )
-scriptContent = createProperty( '_scriptContent', String ) {
-	parseScript()
+createProperty( 'command', String, "") {
+	parseCommand
 }
 
 updateLed = {
@@ -52,8 +48,6 @@ updateLed = {
 future = scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
 
 runningSamples = Collections.synchronizedSet( new HashSet() )
-shell = new GroovyShell()
-script = null
 
 requestResetValue = 0
 sampleResetValue = 0
@@ -72,32 +66,10 @@ discardCounter.get() - discardResetValue } )
 displayFailed = new DelayedFormattedString( '%d', 500,  value {
 failureCounter.get() - failedResetValue } )
 
-parseScript = {
+parseCommand = {
 	if( command.value != "" )
 		runButton?.enabled = false
 }
-
-//We'll only ever read the file on the controller, and send out the script content as a String to the agents.
-if( controller ) {
-	lastModified = null
-	updateScript = {
-		if( scriptFile.value && scriptFile.value.exists() ) {
-			if( lastModified != scriptFile.value.lastModified() ) {
-				scriptContent.value = scriptFile.value.text
-				lastModified = scriptFile.value.lastModified()
-				parseScript()
-			}
-		} else {
-			lastModified = null
-			scriptContent.value = null
-		}
-	}
-	updateScript()
-	
-	onReplace( scriptFile, updateScript )
-	onReplace( cacheScriptContent, updateScript )
-}
-
 
 sample = { message, sampleId ->
 	try
@@ -188,8 +160,4 @@ compactLayout {
 		node( label: 'Discarded', fString: displayDiscarded )
 		node( label: 'Failed', fString: displayFailed )
 	}
-}
-
-settings( label: "Basic" ) {
-	property( property: setBinding, label: 'Make trigger message parameters available to the script' )
 }
