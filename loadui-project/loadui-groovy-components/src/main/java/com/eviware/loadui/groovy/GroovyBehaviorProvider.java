@@ -235,7 +235,6 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 		private final File script;
 		private final long changed;
 		private final String digest;
-		private final String helpUrl;
 		private final static Pattern pattern = Pattern.compile( "(?s)\\s*/\\*+\\s?(.*?)\\*/" );
 
 		public static ScriptDescriptor parseFile( File script )
@@ -331,12 +330,11 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 		private ScriptDescriptor( String id, String classLoaderId, File script, String category, String label,
 				String description, File icon, String digest, String helpUrl )
 		{
-			super( TYPE, category, label, description, icon == null ? null : icon.toURI(), null );
+			super( TYPE, category, label, description, icon == null ? null : icon.toURI(), helpUrl );
 			this.classLoaderId = classLoaderId;
 			this.id = id;
 			this.script = script;
 			this.digest = digest;
-			this.helpUrl = helpUrl;
 			changed = script.lastModified();
 		}
 
@@ -368,12 +366,6 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 		public String getClassLoaderId()
 		{
 			return classLoaderId;
-		}
-
-		@Override
-		public String getHelpUrl()
-		{
-			return helpUrl;
 		}
 	}
 

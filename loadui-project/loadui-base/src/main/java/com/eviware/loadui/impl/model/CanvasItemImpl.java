@@ -261,7 +261,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		ComponentItemImpl component = new ComponentItemImpl( this, config );
 		component.init();
 		component.setAttribute( ComponentItem.TYPE, descriptor.getLabel() );
-		component.getContext().setHelpUrl( descriptor.getHelpUrl() );
+		if( descriptor.getHelpUrl() != null )
+			component.getContext().setHelpUrl( descriptor.getHelpUrl() );
 
 		try
 		{
