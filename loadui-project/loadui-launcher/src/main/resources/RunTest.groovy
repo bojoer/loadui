@@ -200,7 +200,7 @@ if( !workspace.localMode ) {
 		if( System.currentTimeMillis() > timeout ) {
 			log.error "Agents not connectable: ${notReady}"
 			workspace?.release()
-			return
+			return false
 		}
 		sleep 500
 		notReady.removeAll { it.ready }
