@@ -40,7 +40,8 @@ public class ChartNamePrettifier
 	{
 		return name.equals( "Running" ) || name.equals( "Queued" ) || name.equals( "Completed" )
 				|| name.equals( "Discarded" ) || name.equals( "Failures" ) || name.equals( "Sent" )
-				|| name.equals( "Assertion Failures" ) || name.equals( "Request Failures" ) || name.equals( "Requests" );
+				|| name.equals( "Assertion Failures" ) || name.equals( "Request Failures" ) || name.equals( "Requests" )
+				|| name.equals( "Throughput" );
 	}
 
 	public static String nameForStatistic( String statisticName )
@@ -61,9 +62,6 @@ public class ChartNamePrettifier
 	{
 		if( metric.equalsIgnoreCase( "PER_SECOND" ) )
 			return compactDataNameHelper( data ) + "/s";
-
-		if( metric.equalsIgnoreCase( "TOTAL" ) )
-			return compactDataNameHelper( data );
 
 		if( data.equalsIgnoreCase( "THROUGHPUT" ) )
 			return metric;

@@ -151,7 +151,7 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 	public void setExecution( Execution execution )
 	{
 		super.setExecution( execution );
-		latestTime = execution.getLength();
+		latestTime = execution == null ? 0 : execution.getLength();
 	}
 
 	public long getLatestTime()
