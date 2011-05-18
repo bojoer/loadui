@@ -17,20 +17,20 @@
 /**
  * Runs a Groovy Script
  *
- * @name Groovy Runner
+ * @name Script Runner
  * @category runners
+ * @id com.eviware.ScriptRunner
+ * @help http://loadui.org/Custom-Components/groovyrunner.html
  */
 
-import com.eviware.loadui.api.events.ActionEvent
-import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
+import com.eviware.loadui.util.ReleasableUtils
 import com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledException
 
 import java.util.HashSet
 import java.util.Collections
 import com.eviware.loadui.impl.component.ActivityStrategies
 
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 import groovy.lang.GroovyShell
@@ -40,18 +40,15 @@ import groovy.lang.Binding
 createProperty( 'scriptFile', File )
 createProperty( 'cacheScriptContent', Boolean, true )
 createProperty( 'setBinding', Boolean, true )
-scriptContent = createProperty( '_scriptContent', String )
+scriptContent = createProperty( '_scriptContent', String ) {
+	parseScript()
+}
 
 updateLed = {
 	setActivityStrategy( currentlyRunning > 0 ? ActivityStrategies.BLINKING : ActivityStrategies.ON )
 }
 
-//If, by some chance, a future version of loadUI there is a request counter, use it. Otherwise, use the sample counter.
-if( !hasProperty( "requestCounter" ) ) { requestCounter = sampleCounter }
-
-executor = Executors.newSingleThreadScheduledExecutor()
-future = executor.scheduleAtFixedRate( { updateLed() }, 500, 500,
-TimeUnit.MILLISECONDS )
+future = scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
 
 runningSamples = Collections.synchronizedSet( new HashSet() )
 shell = new GroovyShell()
@@ -75,6 +72,12 @@ displayFailed = new DelayedFormattedString( '%d', 500,  value {
 failureCounter.get() - failedResetValue } )
 
 parseScript = {
+	if( script == null )
+	{
+		runButton?.enabled = false
+		return
+	}
+
 	try {
 		script = shell.parse( scriptContent.value )
 		runButton?.enabled = true
@@ -101,22 +104,10 @@ if( controller ) {
 	}
 	updateScript()
 	
-	addEventListener( PropertyEvent ) { event ->
-		if ( event.event == PropertyEvent.Event.VALUE ) {
-			if( event.property == scriptFile || event.property == cacheScriptContent ) {
-				updateScript()
-			}
-		}
-	}
+	onReplace( scriptFile, updateScript )
+	onReplace( cacheScriptContent, updateScript )
 }
 
-addEventListener( PropertyEvent ) { event ->
-	if ( event.event == PropertyEvent.Event.VALUE ) {
-		if( event.property == scriptContent ) {
-			parseScript()
-		}
-	}
-}
 
 sample = { message, sampleId ->
 	try {
@@ -124,7 +115,7 @@ sample = { message, sampleId ->
 		if( controller && !cacheScriptContent.value )
 			updateScript()
 		if( setBinding.value )
-			script.binding = new Binding( message )
+			script.binding = new Binding( new HashMap( message ) )
 		def result = script.run()
 		message['Status'] = true
 		if( result instanceof Map ) {
@@ -155,23 +146,15 @@ onCancel = {
 }
 
 onRelease = {
+	ReleasableUtils.releaseAll( displayRunning, displayTotal, displayQueue, displayDiscarded, displayFailed, displayRequests)
 	shell.resetLoadedClasses()
-	executor.shutdownNow()
-	displayRunning.release()
-	displayTotal.release()
-	displayQueue.release()
-	displayDiscarded.release()
-	displayFailed.release()
-	displayRequests.release()
 }
 
-addEventListener( ActionEvent ) { event ->
-	if ( event.key == "RESET" ) {
-		requestResetValue = 0
-		sampleResetValue = 0
-		discardResetValue = 0
-		failedResetValue = 0
-	}
+onAction( "RESET" ) { 
+	requestResetValue = 0
+	sampleResetValue = 0
+	discardResetValue = 0
+	failedResetValue = 0
 }
 
 //Layout
