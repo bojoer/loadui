@@ -22,6 +22,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.shape.Polyline;
+import javafx.geometry.VPos;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
@@ -69,19 +71,17 @@ public class SegmentButton extends BaseNode, Resizable {
 				
 		lineColor = model.getColor();
 		button.graphic = HBox {
+			nodeVPos: VPos.CENTER
+			spacing: 3
 			content: [
 				Label {
-					text: bind if(compactSegments) ChartNamePrettifier.compactDataName( dataName, metricName ) else ChartNamePrettifier.nameForStatistic( dataName )
-					layoutInfo: LayoutInfo { width: bind if(not compactSegments) 75 else if (singleColumnInCompactMode) 55 else 37 }
-				},
-				Label {
-					text: bind if(compactSegments) ChartNamePrettifier.compactMetricName( metricName ) else ChartNamePrettifier.nameForStatistic( metricName )
-					layoutInfo: LayoutInfo { width: bind if(compactSegments) 18 else 55 }
-					visible: bind not (compactSegments and singleColumnInCompactMode)
-					managed: bind not (compactSegments and singleColumnInCompactMode)
-				}, Label {
 					text: ChartNamePrettifier.nameForSource( statistic.getSource() )
 					layoutInfo: LayoutInfo { width: 40 }
+					visible: bind not compactSegments
+					managed: bind not compactSegments
+				}, Polyline {
+					points: [ 0, 0, 3, 3, 0, 6 ]
+					stroke: javafx.scene.paint.Color.rgb( 0x78, 0x78, 0x78 )
 					visible: bind not compactSegments
 					managed: bind not compactSegments
 				}, Label {
@@ -89,6 +89,24 @@ public class SegmentButton extends BaseNode, Resizable {
 					layoutInfo: LayoutInfo { width: 75 }
 					visible: bind not compactSegments
 					managed: bind not compactSegments
+				}, Polyline {
+					points: [ 0, 0, 3, 3, 0, 6 ]
+					stroke: javafx.scene.paint.Color.rgb( 0x78, 0x78, 0x78 )
+					visible: bind not compactSegments
+					managed: bind not compactSegments
+				}, Label {
+					text: bind if(compactSegments) ChartNamePrettifier.compactDataName( dataName, metricName ) else ChartNamePrettifier.nameForStatistic( dataName )
+					layoutInfo: LayoutInfo { width: bind if(not compactSegments) 75 else if (singleColumnInCompactMode) 66 else 37 }
+				}, Polyline {
+					points: [ 0, 0, 3, 3, 0, 6 ]
+					stroke: javafx.scene.paint.Color.rgb( 0x78, 0x78, 0x78 )
+					visible: bind not (compactSegments and singleColumnInCompactMode)
+					managed: bind not (compactSegments and singleColumnInCompactMode)
+				}, Label {
+					text: bind if(compactSegments) ChartNamePrettifier.compactMetricName( metricName ) else ChartNamePrettifier.nameForStatistic( metricName )
+					layoutInfo: LayoutInfo { width: bind if(compactSegments) 18 else 55 }
+					visible: bind not (compactSegments and singleColumnInCompactMode)
+					managed: bind not (compactSegments and singleColumnInCompactMode)
 				}
 			]
 		}
