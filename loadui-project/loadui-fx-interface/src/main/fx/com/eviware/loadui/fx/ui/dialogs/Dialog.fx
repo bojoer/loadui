@@ -61,6 +61,9 @@ import com.eviware.loadui.fx.ui.resources.DialogPanel;
 import com.eviware.loadui.fx.ui.resources.Paints;
 import com.eviware.loadui.fx.ui.menu.MenubarButton;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+
 import org.jfxtras.scene.layout.XMigLayout;
 import org.jfxtras.scene.layout.XMigLayout.*;
 import net.miginfocom.layout.*;
@@ -205,7 +208,10 @@ public class Dialog {
 		if( not noOk ) {
 			okButton = Button {
 				text: okText
-				action: function() { onOk() }
+				onKeyPressed: function( e:KeyEvent ):Void { if( e.code == KeyCode.VK_ENTER )
+					okButton.arm() else if ( e.code == KeyCode.VK_ESCAPE ) close() }
+				onKeyReleased: function( e:KeyEvent ):Void { if( e.code == KeyCode.VK_ENTER ) onOk() }
+				action: onOk
 				layoutInfo: nodeConstraints( new CC().tag( "ok" ) )
 			}
 			insert okButton into dialogButtons;
