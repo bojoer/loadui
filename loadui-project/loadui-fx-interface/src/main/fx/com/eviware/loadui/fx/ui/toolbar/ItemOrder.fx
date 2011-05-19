@@ -76,11 +76,16 @@ import com.eviware.loadui.api.component.categories.*;
 
 public def GROUP_HEIGHT = 126;
 
+/*
+ * Used for ordering toolbar items.
+ */
+
 public class ItemOrder extends Comparator {
-	//Used for ordering the items
+	
 	def loadGeneratorOrder:String[] = [ "FIXED RATE", "VARIANCE", "RANDOM", "RAMP", "VIRTUAL USERS", "FIXED LOAD" ];
 	def analysisOrder:String[] = [ "ASSERTION", "STATISTICS" ];
 	def flowOrder:String[] = [ "SPLITTER", "DELAY" ];
+	def runnerOrder:String[] = [ "WEB PAGE RUNNER", "SOAPUI RUNNER", "SCRIPT RUNNER", "PROCESS RUNNER" ];
 	    	
 	public override function compare(o1, o2) {
 		 def t1:ToolbarItem = o1 as ToolbarItem;
@@ -106,6 +111,14 @@ public class ItemOrder extends Comparator {
 		if (t1.category.equalsIgnoreCase("Flow") and t2.category.equalsIgnoreCase("Flow")) {
 			var index1 = Sequences.indexOf(flowOrder, t1.label.toUpperCase());
 			var index2 = Sequences.indexOf(flowOrder, t2.label.toUpperCase());
+			        
+			if (not (index1 == -1 or index2 == -1))
+				return index1-index2;
+		}
+		
+		if (t1.category.equalsIgnoreCase("Runners") and t2.category.equalsIgnoreCase("Runners")) {
+			var index1 = Sequences.indexOf(runnerOrder, t1.label.toUpperCase());
+			var index2 = Sequences.indexOf(runnerOrder, t2.label.toUpperCase());
 			        
 			if (not (index1 == -1 or index2 == -1))
 				return index1-index2;
