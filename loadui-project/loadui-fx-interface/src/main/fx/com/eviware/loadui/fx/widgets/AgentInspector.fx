@@ -85,7 +85,6 @@ import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 
 import com.eviware.loadui.fx.agents.discovery.AgentDiscoverer;
-import com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog;
 
 import java.util.EventObject;
 import java.util.Comparator;

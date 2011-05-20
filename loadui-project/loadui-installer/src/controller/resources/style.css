@@ -1190,3 +1190,7 @@
     -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
     -fx-background-insets: 1 0 -1 0, 0;
 }
+
+.header-field {
+	-fx-font: bold
+}

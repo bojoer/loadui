@@ -40,7 +40,6 @@ import com.eviware.loadui.fx.dialogs.CreateNewAgentDialog;
 import com.eviware.loadui.fx.widgets.toolbar.AgentToolbarItem;
 
 import com.eviware.loadui.fx.agents.discovery.AgentDiscoverer;
-import com.eviware.loadui.fx.agents.discovery.AgentDiscovererDialog;
 
 import javafx.scene.input.MouseEvent;
 

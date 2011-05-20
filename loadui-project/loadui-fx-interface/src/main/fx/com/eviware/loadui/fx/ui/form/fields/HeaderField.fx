@@ -23,13 +23,13 @@ package com.eviware.loadui.fx.ui.form.fields;
 import javafx.scene.control.Label;
 import com.eviware.loadui.fx.ui.form.FormField;
 
-public class LabelField extends Label, FormField {
-	
-	override var styleClass = "header-field";
+public class HeaderField extends Label, FormField {
 	
 	override var value on replace {
 		text = if(value == null) "null" else value.toString();
 	}
 	
 	override var skipLabel = true;
+	
+	override var styleClass = "header-field";
 }

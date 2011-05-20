@@ -34,7 +34,9 @@ import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
-import com.eviware.loadui.fx.ui.form.fields.*;
+import com.eviware.loadui.fx.ui.form.fields.HeaderField;
+import com.eviware.loadui.fx.ui.form.fields.TextField;
+import com.eviware.loadui.fx.ui.form.fields.CheckBoxField;
 
 import com.eviware.loadui.api.model.WorkspaceItem;
 import java.io.File;
@@ -160,6 +162,12 @@ public class CreateNewAgentDialog {
 			content: form = Form {
 				layoutInfo: LayoutInfo { width: 250 }
 				formContent: [
+					HeaderField {
+						value: "Agents detected in your network",
+						layoutInfo: LayoutInfo {
+							margin: Insets { top: 60 }
+						}
+					},
 					agentName = TextField { label: "Agent Name", action: ok },
 					agentUrl = TextField { label: "Agent URL", action: ok }
 				]
@@ -170,7 +178,12 @@ public class CreateNewAgentDialog {
 		
 		if( agentsDiscovered)
 		{
-			insert HeaderField {	value: "Agents detected in your network", layoutInfo: LayoutInfo{ margin: Insets { top: 20 } } } into form.formContent;
+			insert HeaderField {
+				value: "Agents detected in your network",
+				layoutInfo: LayoutInfo {
+					margin: Insets { top: 40 }
+				}
+			} into form.formContent;
 			insert checkBoxes into form.formContent;
 		}
 		
