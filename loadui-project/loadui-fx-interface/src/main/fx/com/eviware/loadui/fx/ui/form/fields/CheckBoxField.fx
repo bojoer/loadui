@@ -52,6 +52,7 @@ public class CheckBoxField extends CheckBox, FormField {
 	
 	override var selected on replace {
 		value = selected;
+		onSelect();
 	}
 	
 	override var label on replace {
@@ -59,4 +60,6 @@ public class CheckBoxField extends CheckBox, FormField {
 	}
 
 	override var skipLabel = true;
+	
+	public-init var onSelect:function():Void = function():Void {};
 }
