@@ -21,9 +21,16 @@
 
 package com.eviware.loadui.fx.dialogs;
 
+import javafx.async.Task;
+import javafx.geometry.Insets;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.text.Text;
 
+import com.eviware.loadui.fx.agents.discovery.AgentDiscoverer;
+import com.eviware.loadui.api.discovery.AgentDiscovery.*;
+
+import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
@@ -61,35 +68,92 @@ public class CreateNewAgentDialog {
 	var dialog: Dialog;
 
 	var form:Form;
-	var agentName: TextField;
-	var agentUrl: TextField;
+	var agentName:TextField;
+	var agentUrl:TextField;
+	var checkBoxes: CheckBoxField[] = [];
+	var agentsDiscovered:Boolean = false;
+	var agents: AgentReference[];
+	
+	function getValidName(name: String): String {
+		if(validateName(name)){
+			return name;
+		}
+		var c = 1;
+		while(not validateName("{name} {c}")){
+			c++;
+		}
+		"{name} {c}";
+	}
+	
+	function isAnyBoxChecked():Boolean {
+		for( c:CheckBoxField in checkBoxes )
+		{
+			if( c.value as Boolean )
+				return true;
+		}
+		return false;
+	}
 	
 	function ok():Void  {
-					if(not validateName(agentName.value as String)){
-						msgDialog.title = "Agent name invalid";
-						msgDialog.content = [Text{content: "Agent name '{agentName.value}' is not valid! Must be unique non zero length string."}];
-						msgDialog.show();
-						return;
+					if( isAnyBoxChecked() ){
+			        	for(i in [0..checkBoxes.size()-1]){
+			        		if(checkBoxes[i].selected){
+			        			MainWindow.instance.workspace.createAgent(agents[i], getValidName(agents[i].getDefaultLabel()));
+			        		}
+			        	}
+			        	dialog.close();
+		        	}
+		        	else
+		        	{	
+						if(not validateName(agentName.value as String)){
+							msgDialog.title = "Agent name invalid";
+							msgDialog.content = [Text{content: "Agent name '{agentName.value}' is not valid! Must be unique non zero length string."}];
+							msgDialog.show();
+							return;
+						}
+						if(not validateURL()){
+							msgDialog.title = "Agent URL invalid";
+							msgDialog.content = [Text{content: "URL '{agentUrl.value}' is invalid!"}];
+							msgDialog.show();
+							return;
+						}
+						if(not validateAgentAlreadyExist()){
+							msgDialog.title = "Agent already in workspace";
+							msgDialog.content = [Text{content: "Agent at address '{agentUrl.value}' already exists in workspace!"}];
+							msgDialog.show();
+							return;
+						}
+						
+						validateAgent(); 
 					}
-					if(not validateURL()){
-						msgDialog.title = "Agent URL invalid";
-						msgDialog.content = [Text{content: "URL '{agentUrl.value}' is invalid!"}];
-						msgDialog.show();
-						return;
-					}
-					if(not validateAgentAlreadyExist()){
-						msgDialog.title = "Agent already in workspace";
-						msgDialog.content = [Text{content: "Agent at address '{agentUrl.value}' already exists in workspace!"}];
-						msgDialog.show();
-						return;
-					}
-					
-					validateAgent(); 
 				}
 	
 	postinit {
 		if( not FX.isInitialized( workspace ) )
 			throw new RuntimeException( "Workspace is null!" );
+		
+		agents = AgentDiscoverer.instance.getNewAgents();
+		agentsDiscovered = agents.size() > 0;
+		
+		for(r in agents){
+			insert CheckBoxField { 
+				id: r.getUrl()
+				label: "{r.getDefaultLabel()} ({r.getUrl()})"
+				description: r.getUrl()
+				onSelect: function() {
+					if( isAnyBoxChecked() )
+					{
+						agentName.disable = true;
+						agentUrl.disable = true;
+					}
+					else
+					{
+						agentName.disable = false;
+						agentUrl.disable = false;
+					}
+				}
+			} into checkBoxes; 
+		}
 		
 		dialog = Dialog {
 			title: "Add new agent"
@@ -102,6 +166,12 @@ public class CreateNewAgentDialog {
 			}
 			okText: "Add"
 			onOk: ok
+		}
+		
+		if( agentsDiscovered)
+		{
+			insert HeaderField {	value: "Agents detected in your network", layoutInfo: LayoutInfo{ margin: Insets { top: 20 } } } into form.formContent;
+			insert checkBoxes into form.formContent;
 		}
 		
 		var c = 1;
@@ -189,25 +259,32 @@ public class CreateNewAgentDialog {
 			
 			var url: String = agentUrl.value as String;
 			exchange.setURL("{url}/status");
+			var exchangeState: Integer;
 			
-			if((agentUrl.value as String).startsWith("https")){
-				exchange.setScheme(HttpSchemes.HTTPS_BUFFER);
-				HttpClientHolder.instance.getHttpsClient().send(exchange);
-			}
-			else{
-				exchange.setScheme(HttpSchemes.HTTP_BUFFER);
-				HttpClientHolder.instance.getHttpClient().send(exchange);
-			}
-			
-			var exchangeState: Integer = exchange.waitForDone();
-			if (exchangeState == HttpExchange.STATUS_COMPLETED and agentValid){
-				log.debug( "Creating new Agent: '\{\}'  with URL: '\{\}'", agentName.value, agentUrl.value );
-				workspace.createAgent(agentUrl.value as String, agentName.value as String);
-				dialog.close();
-			}
-			else{
-				confirmDialog.show();
-			}
+			AppState.byName("MAIN").blockingTask( function():Void {
+					if((agentUrl.value as String).startsWith("https")){
+						exchange.setScheme(HttpSchemes.HTTPS_BUFFER);
+						HttpClientHolder.instance.getHttpsClient().send(exchange);
+					}
+					else{
+						exchange.setScheme(HttpSchemes.HTTP_BUFFER);
+						HttpClientHolder.instance.getHttpClient().send(exchange);
+					}
+					exchangeState = exchange.waitForDone();
+				}
+				, function(task:Task):Void {
+				
+					if (exchangeState == HttpExchange.STATUS_COMPLETED and agentValid){
+						log.debug( "Creating new Agent: '\{\}'  with URL: '\{\}'", agentName.value, agentUrl.value );
+						workspace.createAgent(agentUrl.value as String, agentName.value as String);
+						dialog.close();
+					}
+					else{
+						confirmDialog.show();
+					}
+				
+				}, "Contacting agent..." );
+									
 		}
 		catch(e: Exception){
 			confirmDialog.show();

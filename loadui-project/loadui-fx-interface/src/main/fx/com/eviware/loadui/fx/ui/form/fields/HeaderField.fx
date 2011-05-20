@@ -24,6 +24,9 @@ import javafx.scene.control.Label;
 import com.eviware.loadui.fx.ui.form.FormField;
 
 public class LabelField extends Label, FormField {
+	
+	override var styleClass = "header-field";
+	
 	override var value on replace {
 		text = if(value == null) "null" else value.toString();
 	}

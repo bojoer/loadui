@@ -329,13 +329,6 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 		def popup = PopupMenu {
 			items: [
 				MenuItem {
-					text: "Detect Agents"
-					action: function() {
-						AgentDiscovererDialog{}.show();
-					}
-				}
-				Separator{}
-				MenuItem {
 					text: "New Agent"
 					action: function() {
 						CreateNewAgentDialog{ workspace: workspace };

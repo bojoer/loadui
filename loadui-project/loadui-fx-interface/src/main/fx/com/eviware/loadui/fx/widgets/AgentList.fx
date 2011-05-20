@@ -111,13 +111,6 @@ public class AgentList extends CustomNode, Resizable, EventHandler {
 		def popup = PopupMenu {
 			items: [
 				MenuItem {
-					text: "Detect Agents"
-					action: function() {
-						AgentDiscovererDialog{}.show();
-					}
-				}
-				Separator{}
-				MenuItem {
 					text: "New Agent"
 					action: function() {
 						CreateNewAgentDialog{ workspace: workspace };

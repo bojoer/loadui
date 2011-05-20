@@ -42,6 +42,7 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dnd.SortableBox;
+import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.AnalysisToolbarItem;
@@ -163,6 +164,18 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 			holder.update();
 	}
 	
+	public function countChildrenStartingWithName( startingName:String ) {
+		var count:Integer = 0;
+		for( cgh:ChartGroupHolder in innerContent )
+		{
+			if( cgh.chartGroup.getLabel().indexOf( startingName ) == 0 )
+			{
+				count++;
+			}
+		}
+		count;
+	}
+	
 	public function updateIcon():Void {
 		def execution = StatisticsWindow.execution;
 		if( execution != null ) {
@@ -257,13 +270,20 @@ class DropBase extends BaseNode, Resizable, Droppable {
 	}
 	
 	override var onDrop = function( draggable:Draggable ):Void {
+				
 		if( draggable instanceof ChartToolbarItem ) {
 			ChartDefaults.createChartGroup( statisticPage, (draggable as ChartToolbarItem).type, null );
 		} else if( draggable instanceof StatisticHolderToolbarItem ) {
+			def number = countChildrenStartingWithName("Chart") + 1;
+			def name = "Chart {number}";
 			def sh = (draggable as StatisticHolderToolbarItem).statisticHolder;
-			ChartDefaults.createSubChart( ChartDefaults.createChartGroup( statisticPage, null, null ), sh );
+			ChartDefaults.createSubChart( ChartDefaults.createChartGroup( statisticPage, null, name ), sh );
 		} else if( draggable instanceof AnalysisToolbarItem ) {
-			def chartGroup = ChartDefaults.createChartGroup( statisticPage, null, null );
+			var label = (draggable as ToolbarItem).label;
+			def number = countChildrenStartingWithName(label) + 1;
+			if( number > 1 )
+				label = "{label} {number}";
+			def chartGroup = ChartDefaults.createChartGroup( statisticPage, null, label );
 			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );
 			//Just apply the script once, don't keep it attached.
 			chartGroup.setTemplateScript( null );
