@@ -163,10 +163,7 @@ public class CreateNewAgentDialog {
 				layoutInfo: LayoutInfo { width: 250 }
 				formContent: [
 					HeaderField {
-						value: "Agents detected in your network",
-						layoutInfo: LayoutInfo {
-							margin: Insets { top: 60 }
-						}
+						value: "Specify agent properties"
 					},
 					agentName = TextField { label: "Agent Name", action: ok },
 					agentUrl = TextField { label: "Agent URL", action: ok }
@@ -179,10 +176,7 @@ public class CreateNewAgentDialog {
 		if( agentsDiscovered)
 		{
 			insert HeaderField {
-				value: "Agents detected in your network",
-				layoutInfo: LayoutInfo {
-					margin: Insets { top: 40 }
-				}
+				value: "Agents detected in your network"
 			} into form.formContent;
 			insert checkBoxes into form.formContent;
 		}
