@@ -1192,5 +1192,6 @@
 }
 
 .header-field {
-	-fx-font: bold
+    -fx-font-weight: bold;
+    -fx-padding: 13 0 8 0;
 }
