@@ -88,7 +88,6 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 	override var styleClass = "chart-group-holder";
 	
 	var title:String = "ChartGroupHolder";
-	var itemCount:Integer = 0;
 	var chartGroupHolder = this;
 	
 	def statisticsManagerListener = new StatisticsManagerListener();
@@ -118,12 +117,11 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 	public-init var chartGroup:ChartGroup on replace oldChartGroup {
 		chartGroup.addEventListener( BaseEvent.class, listener );
 		title = chartGroup.getLabel();
-		itemCount = chartGroup.getChildCount();
 		refreshGraphic();
 		chartViewHolder = ChartGroupChartViewHolder {
 			chartGroupHolder: chartGroupHolder
 			chartGroup: chartGroup
-			typeLabel: bind "Component ({itemCount})"
+			typeLabel: "Component"
 			label: bind title
 			layoutInfo: chartViewInfo
 			graphic: graphic
@@ -318,7 +316,6 @@ class ChartGroupListener extends EventHandler {
 				chartViewHolder = ChartGroupChartViewHolder {
 					chartGroupHolder: chartGroupHolder
 					chartGroup: chartGroup
-					label: bind "{title} ({itemCount})"
 					layoutInfo: chartViewInfo
 					graphic: graphic
 				};
@@ -332,7 +329,6 @@ class ChartGroupListener extends EventHandler {
 			} );
 		} else if( ChartGroup.CHILDREN == event.getKey() ) {
 			FxUtils.runInFxThread( function():Void {
-				itemCount = chartGroup.getChildCount();
 				refreshGraphic();
 				if( expandGroups ) {
 					toggleGroupExpand();

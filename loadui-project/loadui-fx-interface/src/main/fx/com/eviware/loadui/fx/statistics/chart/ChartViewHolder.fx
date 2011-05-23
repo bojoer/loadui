@@ -71,6 +71,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
    
 	override var styleClass = "chart-view-holder";
 	
+	public var subLabel:Label;
 	
 	public var label:String = "ChartView label";
 	
@@ -110,7 +111,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	
 	var resizeYStart: Number = 0;
 	def resizeImg: String = "{__ROOT__}images/execution-selector-resize.fxz";
-		
+	
 	def resizeAction: Group = Group {
 	   blocksMouse: true
       cursor: Cursor.V_RESIZE
@@ -196,7 +197,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 														]
 													}
 													graphic,
-													Label { text: bind label }
+													subLabel = Label { text: label }
 												]
 											}, Stack {
 												layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: true, vgrow: Priority.ALWAYS }

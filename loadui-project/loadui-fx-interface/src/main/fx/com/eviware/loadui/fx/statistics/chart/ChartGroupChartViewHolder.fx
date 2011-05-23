@@ -40,20 +40,25 @@ import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
+import com.eviware.loadui.fx.util.ModelUtils;
 import com.eviware.loadui.fx.dialogs.RenameModelItemDialog;
 import com.eviware.loadui.fx.dialogs.DeleteDeletablesDialog;
 
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.util.ReleasableUtils;
+
+import java.util.EventObject;
 
 /**
  * Base Chart Node, holds a ChartView.
  *
  * @author dain.nilsson
  */
-public class ChartGroupChartViewHolder extends ChartViewHolder {
+public class ChartGroupChartViewHolder extends ChartViewHolder, WeakEventHandler {
 	override var styleClass = "chart-group-chart-view-holder";
 	
 	def controlButtons = new ToggleGroup();
@@ -93,6 +98,28 @@ public class ChartGroupChartViewHolder extends ChartViewHolder {
 	
 	public var chartGroup:ChartGroup on replace {
 		chartView = chartGroup.getChartView();
+		updateSubLabel();
+		chartGroup.addEventListener(
+			CollectionEvent.class,
+			this
+		);
+	}
+	
+	function updateSubLabel():Void
+	{
+		def count = chartGroup.getChildCount();
+		if( count > 1 )
+		{
+			subLabel.text = "Group ({Integer.toString( count )})";
+		}
+		else if( count == 1 )
+		{
+			subLabel.text = ModelUtils.getLabelHolder( chartGroup.getChildren().iterator().next().getStatisticHolder() ).label;
+		}
+		else
+		{
+			subLabel.text = "";
+		}
 	}
 	
 	init {
@@ -133,5 +160,13 @@ public class ChartGroupChartViewHolder extends ChartViewHolder {
 				]
 			}
 		];
+	}
+	
+	override function handleEvent( e: EventObject ) {
+
+		FxUtils.runInFxThread( function():Void {
+				updateSubLabel();
+			});
+
 	}
 }
