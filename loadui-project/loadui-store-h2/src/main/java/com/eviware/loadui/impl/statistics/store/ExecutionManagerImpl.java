@@ -467,8 +467,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 					{
 						for( String source : sourceMetaTable.getSourceNames() )
 						{
-							DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), level, source ), td.getValueNames(),
-									connectionRegistry, metadata, tableRegistry );
+							DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), level, source ),
+									td.getValueNames(), connectionRegistry, metadata, tableRegistry );
 							createdTableList.add( dtd );
 						}
 					}
@@ -540,7 +540,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			long timestamp = entry.getTimestamp();
 			if( executionState == State.PAUSED )
 			{
-				timestamp = Math.min( timestamp, pauseStartedTime );
+				// quick fix since we are going to remove pause functionality. for
+				// some reason when project finishes execution it goes through PAUSE
+				// state. All timestamps greater than pauseStartedTime are set to
+				// pauseStartedTime which causes primary key exception.
+				// timestamp = Math.min( timestamp, pauseStartedTime );
 			}
 			timestamp -= ( currentExecution.getStartTime() + totalPause );
 
