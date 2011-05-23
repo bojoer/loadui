@@ -424,7 +424,7 @@
 }
 
 .toolbar-item-frame {
-	-fx-font: 10pt "Arial";
+	-fx-font: 10pt "Amble";
 }
 
 .display-label {
@@ -441,12 +441,12 @@
 
 .run-controller *.label {
 	-fx-text-fill: #2D2D2D;
-	-fx-font: 9pt Arial;
+	-fx-font: 9pt Amble;
 }
 
 .project-run-controller *.label {
 	-fx-text-fill: #2D2D2D;
-	-fx-font: 9pt Arial;
+	-fx-font: 9pt Amble;
 }
 
 .expander-button {
@@ -543,12 +543,12 @@
 	-fx-background-insets: 0, 0 0 2 0;
 	-fx-background-color: #dacc55, #f2e25e;
 	-fx-text-fill: rgba(51,51,51, 0.6);
-	-fx-font: 14 Arial;
+	-fx-font: 14 Amble;
 	-fx-padding: 0 0 0 15;
 }
 
 .summary-header *.label {
-	-fx-font: 24 Arial;
+	-fx-font: 24 Amble;
 }
 
 .agent-inspector-node-button {

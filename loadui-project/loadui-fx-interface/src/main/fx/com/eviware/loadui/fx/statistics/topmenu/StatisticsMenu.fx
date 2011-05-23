@@ -94,7 +94,7 @@ public class StatisticsMenu extends VBox {
 	
 	var tabContainer:TabContainer;
 	
-	public def menuButtonFont: Font = Font { name:"Arial", size:18 };
+	public def menuButtonFont: Font = Font { size:18 };
 	//public def menuButtonLabel: String = "Analysis";
 	
 //	var mainExecution:Execution = bind StatisticsWindow.execution on replace {

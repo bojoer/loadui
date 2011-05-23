@@ -137,7 +137,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 			Label {
 				layoutY: 10
 				text:"link"
-				font: Font.font("Arial", 8)
+				font: Font.font("Amble", 8)
 				layoutInfo: LayoutInfo{width: 28}
 				hpos: HPos.CENTER
 			}

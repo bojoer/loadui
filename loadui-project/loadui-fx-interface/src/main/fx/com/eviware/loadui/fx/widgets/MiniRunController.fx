@@ -223,7 +223,7 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
 				tooltip:Tooltip { text:"Play/Stop" }
 			},Label {
 				text: "Master"
-				font: Font.font("Arial", 8)
+				font: Font.font("Amble", 8)
 				layoutInfo: LayoutInfo{width: 28}
 				hpos: HPos.CENTER
 			}, CompactLimiter {

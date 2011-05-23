@@ -110,7 +110,7 @@ public class SummaryTable extends Grid {
 					tooltip: Tooltip { text: (table.getColumnName(i) as String).toUpperCase() }
 					text: (table.getColumnName(i).toString()).toUpperCase()
 					textFill: Color.web("#000000")
-					font: Font.font("Arial", FontWeight.BOLD, 10)
+					font: Font.font("Amble", FontWeight.BOLD, 10)
 					vpos: VPos.CENTER 
 					hpos: if(i == 0) HPos.LEFT else HPos.RIGHT
 				}
@@ -143,7 +143,7 @@ public class SummaryTable extends Grid {
 										table.getValueAt(i, j).toString() 
 							}
 							textFill: Color.web("#000000")
-							font: if(j == 0) Font.font("Arial", FontWeight.BOLD, 10) else Font { name:"Arial" size: 10 }
+							font: if(j == 0) Font.font("Amble", FontWeight.BOLD, 10) else Font { size: 10 }
 							vpos: VPos.BOTTOM
 							hpos: if(j == 0) HPos.LEFT else HPos.RIGHT
 						}

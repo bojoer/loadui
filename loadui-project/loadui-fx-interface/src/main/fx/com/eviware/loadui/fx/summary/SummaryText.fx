@@ -90,7 +90,7 @@ public class SummaryText extends CustomNode {
 						Label {
 							text: bind title
 							textFill: Color.web("#4d4d4d")
-							font: Font.font("Arial", FontWeight.BOLD, 16)
+							font: Font.font("Amble", FontWeight.BOLD, 16)
 							vpos: VPos.CENTER 
 						}
 					]

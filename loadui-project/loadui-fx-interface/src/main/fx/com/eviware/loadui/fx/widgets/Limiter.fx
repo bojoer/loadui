@@ -81,7 +81,7 @@ public class Limiter extends BaseNode, Resizable {
 				}, labelNode = Label {
 					layoutY: 15
 					text: bind text
-					font: bind if( small ) Font.font( "Monospaced", 8 ) else Font.font( "Monospaced", 9 );
+					font: bind if( small ) Font.font( "Amble", 8 ) else Font.font( "Amble", 9 );
 				}, Rectangle {
 					layoutY: 22
 					layoutX: bind labelNode.layoutBounds.width

@@ -108,7 +108,7 @@ public class SummarySection extends CustomNode {
 					layoutInfo: GridLayoutInfo {hspan: 2}
 					text: bind title
 					textFill: Color.web("#4d4d4d")
-					font: Font.font("Arial", FontWeight.BOLD, 16)
+					font: Font.font("Amble", FontWeight.BOLD, 16)
 					vpos: VPos.CENTER 
 				}
 			]
@@ -155,7 +155,7 @@ public class SummarySection extends CustomNode {
 					    }
 						text: bind key
 						textFill: Color.web("#000000")
-						font: Font { name:"Arial" size: 10 }
+						font: Font { size: 10 }
 						vpos: VPos.CENTER 
 					}
 					Label {
@@ -166,7 +166,7 @@ public class SummarySection extends CustomNode {
 					    }
 						text: bind value
 						textFill: Color.web("#000000")
-						font: Font { name:"Arial" size: 10 }
+						font: Font { size: 10 }
 						vpos: VPos.CENTER 
 						hpos: HPos.RIGHT 
 					}

@@ -327,7 +327,7 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 					y: 6
 					content: toolbarTitle
 					fill: bind textFill 
-					font: Font.font("Arial", FontWeight.BOLD, 10);
+					font: Font.font("Amble", FontWeight.BOLD, 10);
 				}, Group {
 					layoutY: 26
 					onMouseClicked: function( e:MouseEvent ) {

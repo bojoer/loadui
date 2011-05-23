@@ -42,7 +42,7 @@ public class ToolbarItemFrame extends CustomNode {
 	 */
 	public var item:ToolbarItem;
 	
-	public var font:Font = Font.font( "Arial", 10 );
+	public var font:Font = Font.font("Amble", 10 );
 	
 	//public-read var df: DraggableFrame;
 	

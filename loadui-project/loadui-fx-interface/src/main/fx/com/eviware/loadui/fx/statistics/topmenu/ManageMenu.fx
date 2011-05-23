@@ -96,7 +96,7 @@ public class ManageMenu extends HBox {
 			menuButton = MenuButton {
 				styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
 				text: "Results"
-				font: Font { name:"Arial", size:18 }
+				font: Font { size:18 }
 				items: [
 					MenuItem {
 						text: "Open Viewer"

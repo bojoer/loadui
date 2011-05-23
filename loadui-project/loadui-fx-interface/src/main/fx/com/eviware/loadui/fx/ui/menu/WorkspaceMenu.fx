@@ -87,8 +87,8 @@ public class WorkspaceMenu extends HBox {
     public var workspaceMenuOpenedTextFill: Paint = Color.web("#4D4D4D");
     public var workspaceMenuClosedArrowFill: Paint = Color.web("#666666");
     public var workspaceMenuOpenedArrowFill: Paint = Color.web("#4D4D4D");
-    public var workspaceMenuClosedFont: Font = Font{name:"Arial", size:10};
-    public var workspaceMenuOpenedFont: Font = Font{name:"Arial", size:18};
+    public var workspaceMenuClosedFont: Font = Font{size:10};
+    public var workspaceMenuOpenedFont: Font = Font{size:18};
     
     var projectList: Node[];
     var menuButton:MenuButton;

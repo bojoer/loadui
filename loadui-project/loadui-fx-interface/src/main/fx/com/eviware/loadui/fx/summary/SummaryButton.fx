@@ -125,7 +125,7 @@ public class SummaryButton extends CustomNode {
 					}
 					text: bind text
 					textFill: Color.web("#000000")
-					font: bind if(selected) Font.font("Arial", FontWeight.BOLD, 10) else Font { name:"Arial" size: 10 }
+					font: bind if(selected) Font.font( "Amble", FontWeight.BOLD, 10) else Font { size: 10 }
 					vpos: VPos.CENTER 
 					hpos: HPos.LEFT
 				}

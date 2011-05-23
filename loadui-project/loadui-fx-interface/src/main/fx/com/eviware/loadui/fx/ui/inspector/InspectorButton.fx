@@ -54,7 +54,7 @@ public class InspectorButton extends CustomNode {
 		y: 4
 		content: bind text
 		textOrigin: TextOrigin.TOP
-		font: Font.font("Arial", 10)
+		font: Font.font("Amble", 10)
 	}
 	
 	def button:GrayButton = GrayButton {

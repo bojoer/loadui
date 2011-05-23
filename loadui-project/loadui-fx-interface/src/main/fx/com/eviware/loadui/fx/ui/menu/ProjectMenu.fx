@@ -114,11 +114,11 @@ public class ProjectMenu extends HBox {
 	public var projectMenuOpenedTextFill: Paint = Color.web("#4D4D4D");
 	public var projectMenuClosedArrowFill: Paint = Color.web("#666666");
 	public var projectMenuOpenedArrowFill: Paint = Color.web("#4D4D4D");
-	public var projectMenuClosedFont: Font = Font{name:"Arial", size:10};
-	public var projectMenuOpenedFont: Font = Font{name:"Arial", size:18};
+	public var projectMenuClosedFont: Font = Font{size:10};
+	public var projectMenuOpenedFont: Font = Font{size:18};
 	public var workspaceMenuClosedTextFill: Paint = Color.web("#666666");
 	public var workspaceMenuClosedArrowFill: Paint = Color.web("#666666");
-	public var workspaceMenuClosedFont: Font = Font{name:"Arial", size:10};
+	public var workspaceMenuClosedFont: Font = Font{size:10};
 	
 	override var layoutInfo = LayoutInfo {
 		hgrow: Priority.ALWAYS

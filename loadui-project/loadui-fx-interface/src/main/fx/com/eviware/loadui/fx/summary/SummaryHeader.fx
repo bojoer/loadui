@@ -119,7 +119,7 @@ public class SummaryHeader extends CustomNode {
 							    }
 								text: bind key.toUpperCase()
 								textFill: Color.web("#000000")
-								font: if(bold) Font.font("Arial", FontWeight.BOLD, 10) else Font { name:"Arial" size: 10 }
+								font: if(bold) Font.font( "Amble", FontWeight.BOLD, 10) else Font { size: 10 }
 								vpos: VPos.BOTTOM
 								hpos: hpos
 							}
@@ -135,7 +135,7 @@ public class SummaryHeader extends CustomNode {
 							    }
 								text: bind value
 								textFill: Color.web("#000000")
-								font: if(bold) Font.font("Arial", FontWeight.BOLD, 10) else Font { name:"Arial" size: 10 } 
+								font: if(bold) Font.font( "Amble", FontWeight.BOLD, 10) else Font { size: 10 } 
 								vpos: VPos.TOP
 								hpos: hpos
 							}

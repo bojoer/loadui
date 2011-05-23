@@ -153,7 +153,7 @@ public class SchedulerLCDWidget extends Widget, BaseNode, Resizable, TooltipHold
     	var textBox: Text = Text {
     		layoutX: bind if(centerAlign) layoutX - textBox.layoutBounds.width/2 else layoutX
     		layoutY: layoutY
-            font: Font.font("Arial", 8)
+            font: Font.font("Amble", 8)
             fill: Color.web("#1ae519")
             content: text
         }

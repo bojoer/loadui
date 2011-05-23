@@ -408,7 +408,7 @@ public class ExecutionSelector extends Group {
 						    spacing: 5
 						    layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vfill: false, vgrow: Priority.NEVER }
 						    content: [
-								Label { text: "Compare Results:      ", font: Font { name:"Arial", size:12 }},
+								Label { text: "Compare Results:      ", font: Font { size:12 }},
 								filterAll,
 								filterRecently,
 								filterArchive

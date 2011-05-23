@@ -108,7 +108,7 @@ public class Interval extends Panel, Resizable, Observer {
     
     var startText:Text = Text {
         content: "0:0 min"
-        font: Font.font("Arial", 8)
+        font: Font.font("Amble", 8)
         fill: Color.web("#1ae519")
         managed: false
         layoutX: 30
@@ -117,7 +117,7 @@ public class Interval extends Panel, Resizable, Observer {
     
     var endText:Text = Text {
         content: bind endLimitText
-        font: Font.font("Arial", 8)
+        font: Font.font("Amble", 8)
         fill: Color.web("#1ae519")
         managed: false
         layoutX: bind 250 - endText.layoutBounds.width - 10
@@ -126,7 +126,7 @@ public class Interval extends Panel, Resizable, Observer {
     
     var startPeriod:Text = Text {
         content: startPeriodText
-        font: Font.font("Arial", 8)
+        font: Font.font("Amble", 8)
         fill: Color.web("#1ae519")
         layoutX: 70
         layoutY: 20
@@ -134,7 +134,7 @@ public class Interval extends Panel, Resizable, Observer {
     
     var startPeriod2:Text = Text {
         content: bind startPeriodText2
-        font: Font.font("Arial", 8)
+        font: Font.font("Amble", 8)
         fill: Color.web("#1ae519")
         layoutX: 70
         layoutY: 30
@@ -150,7 +150,7 @@ public class Interval extends Panel, Resizable, Observer {
     
     var endPeriod:Text = Text {
     	  content: endPeriodText
-        font: Font.font("Arial", 8)
+        font: Font.font("Amble", 8)
         fill: Color.web("#1ae519")
         layoutX: 170
         layoutY: 20
@@ -158,7 +158,7 @@ public class Interval extends Panel, Resizable, Observer {
     
     var endPeriod2:Text = Text {
         content: bind endPeriodText2
-        font: Font.font("Arial", 8)
+        font: Font.font("Amble", 8)
         fill: Color.web("#1ae519")
         layoutX: 170
         layoutY: 30

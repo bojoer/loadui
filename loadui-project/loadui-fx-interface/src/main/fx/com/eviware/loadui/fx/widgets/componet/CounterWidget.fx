@@ -74,7 +74,7 @@ public class CounterWidget extends Panel, Observer {
                 },
                 Text {
                     content: cnt.toString()
-                    font: Font.font("Arial", 12)
+                    font: Font.font("Amble", 12)
                     fill: Color.web("#00FF00")
                 }
                 ]

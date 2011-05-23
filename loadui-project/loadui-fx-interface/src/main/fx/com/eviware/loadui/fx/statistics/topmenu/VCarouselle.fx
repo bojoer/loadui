@@ -208,7 +208,7 @@ public class VCarouselle extends CustomNode, Resizable, Pagination {
 			layoutInfo: LayoutInfo{ height: bind upArrow.layoutBounds.height }
 			textFill: Color.web("#666666")
 			vpos: VPos.BOTTOM
-			font: Font { name:"Arial", size:9 }
+			font: Font { size:9 }
 		}
 		Group {
 			content: [

@@ -95,7 +95,7 @@ public class SliderWidget extends Widget, BaseNode, Resizable, TooltipHolder{
         digit = Text {
             layoutX: if ( i == 0 or i == 9 ) i*notchSize + notchSize/2 - digit.layoutBounds.width/2 -8 else i*notchSize + notchSize/2 - digit.layoutBounds.width/2 - 5
             content: (i + 1).toString()
-            font: bind if (i == boldText) Font.font("Arial", FontWeight.ULTRA_BOLD, 11) else Font.font("Arial", 10);
+            font: bind if (i == boldText) Font.font("Amble", FontWeight.ULTRA_BOLD, 11) else Font.font("Amble", 10);
         }
         
         
@@ -106,7 +106,7 @@ public class SliderWidget extends Widget, BaseNode, Resizable, TooltipHolder{
             content: [
             Text {
                 content: "Number Of Outputs"
-                font: Font.font("Arial", 12)
+                font: Font.font("Amble", 12)
             },
             Group {
                 content: [

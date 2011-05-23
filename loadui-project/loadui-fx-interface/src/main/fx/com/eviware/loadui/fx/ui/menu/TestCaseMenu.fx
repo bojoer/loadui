@@ -109,15 +109,15 @@ public class TestCaseMenu extends HBox {
 	public var tcMenuOpenedTextFill: Paint = Color.web("#4d4d4d");
 	public var tcMenuClosedArrowFill: Paint = Color.web("#666666");
 	public var tcMenuOpenedArrowFill: Paint = Color.web("#4D4D4D");
-	public var tcMenuClosedFont: Font = Font{name:"Arial", size:10};
-	public var tcMenuOpenedFont: Font = Font{name:"Arial", size:18};
+	public var tcMenuClosedFont: Font = Font{size:10};
+	public var tcMenuOpenedFont: Font = Font{size:18};
 	
 	public var projectMenuClosedTextFill: Paint = Color.web("#666666");
 	public var projectMenuClosedArrowFill: Paint = Color.web("#666666");
-	public var projectMenuClosedFont: Font = Font{name:"Arial", size:10};
+	public var projectMenuClosedFont: Font = Font{size:10};
 	public var workspaceMenuClosedTextFill: Paint = Color.web("#666666");
 	public var workspaceMenuClosedArrowFill: Paint = Color.web("#666666");
-	public var workspaceMenuClosedFont: Font = Font{name:"Arial", size:10};
+	public var workspaceMenuClosedFont: Font = Font{size:10};
 	
 	override var layoutInfo = LayoutInfo {
 		hgrow: Priority.ALWAYS

@@ -169,7 +169,7 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 					height: bind height
 					vpos: VPos.CENTER
 					textWrap: false
-					font: Font.font("Arial", 9)
+					font: Font.font("Amble",9)
 				},
 				contextMenu
 			]

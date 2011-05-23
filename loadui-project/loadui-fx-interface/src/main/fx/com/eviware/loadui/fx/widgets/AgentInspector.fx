@@ -414,14 +414,14 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 					layoutY: bind panelHeight - 50 + text.layoutBounds.height
 					fill: Color.web("#b2b2b2")
 					content: "Local (Ghost) agent"
-					font: Font.font("Arial", 10)
+					font: Font.font("Amble", 10)
 				}
 				Text { //up text on the left panel
 					layoutX: leftPanelContentOffset
 					layoutY: 27
 					fill: Color.web("#212121")
 					content: "Test case distribution"
-					font: Font.font("Arial", 10)
+					font: Font.font("Amble", 10)
 				}
 				localButton = ToggleButton {
 			   	text: "Local"

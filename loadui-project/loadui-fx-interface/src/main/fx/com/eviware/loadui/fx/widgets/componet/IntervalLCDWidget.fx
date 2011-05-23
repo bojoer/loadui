@@ -54,12 +54,12 @@ public class IntervalLCDWidget extends Widget, BaseNode, Resizable, TooltipHolde
                     spacing: 15
                     content:[
                     Text {
-                        font: Font.font("Arial", 8)
+                        font: Font.font("Amble", 8)
                         fill: Color.web("#1ae519")
                         content: "Interval"
                     },
                     Text {
-                        font: Font.font("Arial", 8)
+                        font: Font.font("Amble", 8)
                         fill: Color.web("#1ae519")
                         content: "Total test duration"
                     }
