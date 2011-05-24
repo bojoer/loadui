@@ -72,7 +72,7 @@ displayFailed = new DelayedFormattedString( '%d', 500,  value {
 failureCounter.get() - failedResetValue } )
 
 parseScript = {
-	if( script == null )
+	if( !scriptContent.value )
 	{
 		runButton?.enabled = false
 		return
@@ -142,6 +142,7 @@ onCancel = {
 		def threads = runningSamples.toArray()
 		runningSamples.clear()
 		threads.each { it.interrupt() }
+		return threads.length
 	}
 }
 
