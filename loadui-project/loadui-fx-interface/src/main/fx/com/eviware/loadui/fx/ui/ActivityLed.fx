@@ -17,15 +17,18 @@ package com.eviware.loadui.fx.ui;
 
 import javafx.scene.CustomNode;
 import javafx.scene.Group;
+import javafx.scene.layout.Stack;
+import javafx.scene.layout.LayoutInfo;
 
 import com.sun.javafx.scene.layout.Region;
 
-public class ActivityLed extends CustomNode {
+public class ActivityLed extends Stack {
 	public var active = true on replace {
 		styleClass = if( active ) "activity-led-on" else "activity-led-off";
 	}
 	
-	override function create() {
-		Group { disable: bind disabled, styleClass: "activity-led", content: Region { styleClass: "led" } }
-	}
+	override var layoutInfo = LayoutInfo { width: 7, height: 7, hfill: false vfill: false };
+	override var content = [
+		Stack { disable: bind disabled, styleClass: "activity-led", content: Region { styleClass: "led" } }
+	];
 }

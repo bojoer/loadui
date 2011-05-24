@@ -36,6 +36,7 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.resources.DialogPanel;
 import com.eviware.loadui.fx.ui.ActivityLed;
+import com.eviware.loadui.fx.ui.ConnectingAnimation;
 
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.AgentItem;
@@ -55,6 +56,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.LayoutInfo;
 import javafx.geometry.Insets;
+import javafx.geometry.VPos;
 import javafx.geometry.Rectangle2D;
 
 import com.javafx.preview.control.MenuItem;
@@ -160,9 +162,15 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 				spacing: 8
 				content: [
 					Label {
-						text: bind if(customLabel != null) customLabel else label.toUpperCase()
+						text: bind if( enabled and not isNodeActive ) "Connecting..." else if(customLabel != null) customLabel else label.toUpperCase()
 						tooltip: labelTooltip = Tooltip { text: bind "{label} ({url})" }
-						graphic: ActivityLed { disable : bind not enabled, active: bind isNodeActive }
+						graphic: HBox {
+							nodeVPos: VPos.CENTER
+							content: [
+								ActivityLed { disable : bind not enabled, active: bind isNodeActive },
+								ConnectingAnimation { visible: bind enabled and not isNodeActive, managed: bind enabled and not isNodeActive }
+							]
+						}
 						onMouseEntered: function(e) { labelTooltip.activate() }
 						onMouseExited: function(e) { labelTooltip.deactivate() }
 					}
