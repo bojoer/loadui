@@ -152,11 +152,9 @@ public class ResultNodeBase extends BaseNode, FxLabeled {
 				padding: Insets { left: 8, right: 8, top: 5, bottom: 8 }
 				spacing: 8
 				content: [ 
-					ActivityLed { active: bind active, managed: false, layoutX: 8, layoutY: 12 },
 					menuButton = MenuButton {
-						layoutInfo: LayoutInfo { margin: Insets { left: 8 } }
 						styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
-						//graphic: ActivityLed { active: bind active } //Bug in MenuButton causing incorrect margins for the "arrow" when using a graphic.
+						graphic: ActivityLed { active: bind active }
 						text: bind label.toUpperCase();
 						items: 
 						[
