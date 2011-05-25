@@ -104,7 +104,7 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 		]
 	}
 	
-	var isNodeActive: Boolean = false;
+	protected var isNodeActive: Boolean = false;
 	
 	public var blink: Boolean = false on replace {
 		setState();

@@ -365,7 +365,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 									}, Label {
 										text: bind "{utilization}%"
 										tooltip: Tooltip { text: "Agenty Activity: {utilization}%" }
-										textFill: Color.rgb( 0x0, 0xce, 0x16 )
+										textFill: bind if( isNodeActive ) Color.rgb( 0x0, 0xce, 0x16 ) else Color.rgb( 0x8c, 0x8c, 0x8c )
 										font: Font { size: 10 }
 										hpos: HPos.CENTER
 										layoutInfo: LayoutInfo { width: 24, height: 11 }

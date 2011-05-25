@@ -19,7 +19,7 @@ package com.eviware.loadui.fx.ui;
 import javafx.scene.layout.Stack;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
@@ -47,10 +47,11 @@ public class ConnectingAnimation extends Stack {
 		keyFrames: KeyFrame { time: 500ms, action: positionLight }
 	}
 	
-	def light = Circle {
-		centerX: 0.5
-		centerY: 0.5
-		radius: 1.5
+	def light = Rectangle {
+		x: -1
+		y: -1
+		width: 3
+		height: 3
 		fill: Color.rgb( 0xf3, 0x86, 0x1b )
 	}
 	
