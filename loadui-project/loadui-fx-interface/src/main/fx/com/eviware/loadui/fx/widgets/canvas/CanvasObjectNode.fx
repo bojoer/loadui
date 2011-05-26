@@ -77,22 +77,18 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	var upperBaloonsShowing:Boolean = false;
 	
 	def lowerBalloonHolder:HBox = HBox {
-		style:"-fx-background-color: #ff0000;",
 		nodeVPos: VPos.TOP,
 		nodeHPos: HPos.CENTER,
 		hpos: HPos.CENTER,
-		spacing: 14,
-		padding: Insets { right: 7, left: 7 },
+		spacing: 14
 	};
 	
 	def upperBalloonHolder:HBox = HBox {
-		style:"-fx-background-color: #ff0000;",
 		nodeVPos: VPos.BOTTOM,
 		nodeHPos: HPos.CENTER,
 		hpos: HPos.CENTER,
 		spacing: 14,
-		padding: Insets { right: 7, left: 7 },
-		translateY: bind upperBalloonHolder.height * -1,
+		translateY: bind upperBalloonHolder.height * -1
 	};
 	
 	var compactToggle:ToggleButton;
@@ -312,7 +308,9 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			
 			def sceneBounds = localToScene( layoutBounds );
 			upperBalloonHolder.layoutX = sceneBounds.minX;
-			upperBalloonHolder.layoutY = sceneBounds.minY;
+			upperBalloonHolder.layoutY = sceneBounds.minY + 6;
+			
+			upperBalloonHolder.padding = Insets { right: if( selected ) 30 else 20, left: if( selected ) 30 else 20 }
 			
 			upperBalloonHolder.layoutInfo = LayoutInfo { 
 				width: sceneBounds.width;
@@ -331,10 +329,12 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			
 			def sceneBounds = localToScene( layoutBounds );
 			lowerBalloonHolder.layoutX = sceneBounds.minX;
-			lowerBalloonHolder.layoutY = sceneBounds.maxY - 18;
+			lowerBalloonHolder.layoutY = sceneBounds.maxY - 22;
+			
+			lowerBalloonHolder.padding = Insets { right: if( selected ) 30 else 20, left: if( selected ) 30 else 20 }
 			
 			lowerBalloonHolder.layoutInfo = LayoutInfo { 
-				width: sceneBounds.width;
+				width: sceneBounds.width
 			};
 			
 			lowerBaloonsShowing = true;

@@ -23,6 +23,7 @@
 package com.eviware.loadui.fx.ui.popup;
 
 import com.eviware.loadui.api.terminal.InputTerminal;
+import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.widgets.canvas.TerminalNode;
 import com.eviware.loadui.fx.ui.node.BaseMixin;
@@ -30,6 +31,7 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.BaseNode.*;
 
 import javafx.geometry.Insets;
+import javafx.geometry.HPos;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextOrigin;
@@ -57,7 +59,7 @@ public-read var currentHolder:TooltipHolder;
  *
  * @author henrik.olsson
  */
-public class Balloon extends Stack {
+public class Balloon extends VBox {
 
 //	def tooltipNode = Group {
 //		content: vBox
@@ -69,7 +71,9 @@ public class Balloon extends Stack {
 	override var layoutInfo = LayoutInfo { 
 		minWidth: 50, 
 		width: 100,
-		maxWidth: 180
+		maxWidth: 180,
+		vfill: false,
+		hfill: false
 	};
 	
 	/**
@@ -112,22 +116,42 @@ public class Balloon extends Stack {
 			style: "-fx-font-size: 14"
 		};
 		
-		insert Region {
-			styleClass: "balloon-frame"
+		if( terminalNode.terminal instanceof OutputTerminal )
+		{
+			insert Region {
+				styleClass: "balloon-arrow-up",
+				layoutInfo: LayoutInfo { width: 8, height: 5, vfill: false, hfill: false, hpos: HPos.CENTER }
+			} into content;
+		}
+		
+		insert Stack {
+			content:
+			[ 
+				Region {
+					styleClass: "balloon-frame"
+				},
+				VBox {
+					content: [
+						headerNode, 
+						textNode], 
+					spacing: 6,
+					layoutInfo: LayoutInfo { 
+						margin: Insets { top: 10, right: 10, bottom: 10, left: 10 }, 
+						minWidth: 50, 
+						width: 100,
+						maxWidth: 250
+					}
+				}
+			]
 		} into content;
 		
-		insert VBox {
-			content: [
-				headerNode, 
-				textNode], 
-			spacing: 6,
-			layoutInfo: LayoutInfo { 
-				margin: Insets { top: 10, right: 10, bottom: 10, left: 10 }, 
-				minWidth: 50, 
-				width: 100,
-				maxWidth: 250
-			}
-		} into content;
+		if( terminalNode.terminal instanceof InputTerminal )
+		{
+			insert Region {
+				styleClass: "balloon-arrow-down",
+				layoutInfo: LayoutInfo { width: 8, height: 5, vfill: false, hfill: false, hpos: HPos.CENTER }
+			} into content;
+		}
 		
 	}
 	
