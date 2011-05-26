@@ -162,13 +162,13 @@ public class AgentNodeBase extends BaseNode, ModelItemHolder, EventHandler {
 				spacing: 8
 				content: [
 					Label {
-						text: bind if( enabled and not isNodeActive ) "Connecting..." else if(customLabel != null) customLabel else label.toUpperCase()
+						text: bind if( enabled and not ready ) "Connecting..." else if(customLabel != null) customLabel else label.toUpperCase()
 						tooltip: labelTooltip = Tooltip { text: bind "{label} ({url})" }
 						graphic: HBox {
 							nodeVPos: VPos.CENTER
 							content: [
 								ActivityLed { disable : bind not enabled, active: bind isNodeActive },
-								ConnectingAnimation { visible: bind enabled and not isNodeActive, managed: bind enabled and not isNodeActive }
+								ConnectingAnimation { visible: bind enabled and not ready, managed: bind enabled and not ready }
 							]
 						}
 						onMouseEntered: function(e) { labelTooltip.activate() }

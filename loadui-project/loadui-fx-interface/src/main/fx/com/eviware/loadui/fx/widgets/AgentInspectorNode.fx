@@ -114,6 +114,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 	 */ 
 	public-init var ghostAgent = false on replace {
 		itemsPerPage = if( ghostAgent ) 4 else 3;
+		if( ghostAgent ) ready = true;
 	}
 	
 	override var fluid = true;
@@ -131,7 +132,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 	
 	var isLocalMode: Boolean on replace {
 		if( ghostAgent ) {
-			ready = isLocalMode;
+			isNodeActive = isLocalMode;
 		}
 		checkActivity();
 	}
@@ -365,7 +366,7 @@ public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconLi
 									}, Label {
 										text: bind "{utilization}%"
 										tooltip: Tooltip { text: "Agenty Activity: {utilization}%" }
-										textFill: bind if( isNodeActive ) Color.rgb( 0x0, 0xce, 0x16 ) else Color.rgb( 0x8c, 0x8c, 0x8c )
+										textFill: bind if( ready ) Color.rgb( 0x0, 0xce, 0x16 ) else Color.rgb( 0x8c, 0x8c, 0x8c )
 										font: Font { size: 10 }
 										hpos: HPos.CENTER
 										layoutInfo: LayoutInfo { width: 24, height: 11 }
