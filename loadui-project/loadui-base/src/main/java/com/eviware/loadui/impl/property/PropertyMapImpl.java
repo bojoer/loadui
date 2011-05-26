@@ -127,16 +127,30 @@ public class PropertyMapImpl extends HashMap<String, Property<?>> implements Pro
 	@SuppressWarnings( "unchecked" )
 	public <T> Property<T> createProperty( String key, Class<T> type, Object initialValue, boolean propagates )
 	{
-		if( containsKey( key ) && get( key ).getType() == type )
-			return ( Property<T> )get( key );
+		PropertyImpl<T> property = ( PropertyImpl<T> )get( key );
+		if( property != null )
+		{
+			if( property.getType() == type )
+			{
+				if( !propagates )
+					property.makeNonPropagating();
+			}
+			else
+			{
+				remove( key );
+			}
+
+			return property;
+		}
 
 		PropertyConfig pc = config.addNewProperty();
 		pc.setPropagates( propagates );
 		pc.setKey( key );
 		pc.setStringValue( conversionService.convert( conversionService.convert( initialValue, type ), String.class ) );
-		PropertyImpl<T> property = loadProperty( pc, type );
+		property = loadProperty( pc, type );
 		put( key, property );
 		owner.firePropertyEvent( property, PropertyEvent.Event.CREATED, null );
+
 		return property;
 	}
 }

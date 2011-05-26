@@ -30,7 +30,7 @@ public class PropertyImpl<T> extends MutableValueImpl<T> implements Property<T>
 {
 	private final PropertyConfig config;
 	private final ModelItemImpl<?> owner;
-	private final boolean propagates;
+	private boolean propagates;
 
 	public PropertyImpl( ModelItemImpl<?> owner, PropertyConfig config, Class<T> type,
 			ConversionService conversionService )
@@ -85,5 +85,14 @@ public class PropertyImpl<T> extends MutableValueImpl<T> implements Property<T>
 	public boolean isPropagated()
 	{
 		return propagates;
+	}
+
+	public void makeNonPropagating()
+	{
+		if( propagates )
+		{
+			propagates = false;
+			config.setPropagates( false );
+		}
 	}
 }
