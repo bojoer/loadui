@@ -32,7 +32,8 @@ public abstract class OnOffBase extends BaseCategory implements OnOffCategory
 		super( context );
 
 		stateProperty = context.createProperty( STATE_PROPERTY, Boolean.class, true );
-		stateTerminal = context.createInput( STATE_TERMINAL, "Activation Terminal" );
+		stateTerminal = context.createInput( STATE_TERMINAL, "Component activation",
+				"Connect to a Scheduler to turn this Generator on and off." );
 	}
 
 	@Override

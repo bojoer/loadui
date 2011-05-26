@@ -56,7 +56,8 @@ public abstract class GeneratorBase extends OnOffBase implements GeneratorCatego
 	{
 		super( context );
 
-		triggerTerminal = context.createOutput( TRIGGER_TERMINAL, "Trigger Signal" );
+		triggerTerminal = context.createOutput( TRIGGER_TERMINAL, "Trigger Signal",
+				"Sends a trigger signal that can trigger e.g. a Runner." );
 		triggerMessage = context.newMessage();
 
 		ledOnMessage = context.newMessage();

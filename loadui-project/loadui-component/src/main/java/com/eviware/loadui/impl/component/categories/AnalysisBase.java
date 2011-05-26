@@ -56,7 +56,7 @@ public abstract class AnalysisBase extends BaseCategory implements AnalysisCateg
 		super( context );
 		executor = BeanInjector.getBean( ScheduledExecutorService.class );
 
-		inputTerminal = context.createInput( INPUT_TERMINAL, "Input Data to be Analysed" );
+		inputTerminal = context.createInput( INPUT_TERMINAL, "Data to analyze" );
 
 		context.setActivityStrategy( ActivityStrategies.ON );
 		activityRunnable = new Runnable()

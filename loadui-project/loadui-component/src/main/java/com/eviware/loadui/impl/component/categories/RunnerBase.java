@@ -95,8 +95,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 	private long concurrentSamples;
 	private long queueSize;
-	private AtomicInteger workerCount = new AtomicInteger();
-	private AtomicInteger queued = new AtomicInteger();
+	private final AtomicInteger workerCount = new AtomicInteger();
+	private final AtomicInteger queued = new AtomicInteger();
 
 	private final BlockingQueue<TerminalMessage> queue = new LinkedBlockingQueue<TerminalMessage>();
 
@@ -138,16 +138,19 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		executor = BeanInjector.getBean( ExecutorService.class );
 		scheduler = BeanInjector.getBean( ScheduledExecutorService.class );
 
-		triggerTerminal = context.createInput( TRIGGER_TERMINAL, "Trigger Input" );
+		triggerTerminal = context.createInput( TRIGGER_TERMINAL, "Trigger Input",
+				"Connect to a Generator to recieve trigger signals. Each signal will trigger the component to run once." );
 
-		resultTerminal = context.createOutput( RESULT_TERMINAL, "Results" );
+		resultTerminal = context.createOutput( RESULT_TERMINAL, "Results",
+				"Outputs data such as TimeTaken for each request." );
 		Map<String, Class<?>> resultSignature = new HashMap<String, Class<?>>();
 		resultSignature.put( TIME_TAKEN_MESSAGE_PARAM, Long.class );
 		resultSignature.put( TIMESTAMP_MESSAGE_PARAM, Long.class );
 		resultSignature.put( STATUS_MESSAGE_PARAM, Boolean.class );
 		context.setSignature( resultTerminal, resultSignature );
 
-		currentlyRunningTerminal = context.createOutput( CURRENLY_RUNNING_TERMINAL, "Requests Currently Running" );
+		currentlyRunningTerminal = context.createOutput( CURRENLY_RUNNING_TERMINAL, "Requests Currently Running",
+				"Outputs the number of currently running requests, when that number changes." );
 
 		requestCounter = context.getCounter( CanvasItem.REQUEST_COUNTER );
 		sampleCounter = context.getCounter( CanvasItem.SAMPLE_COUNTER );

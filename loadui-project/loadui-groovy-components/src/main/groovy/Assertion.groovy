@@ -32,7 +32,7 @@ import com.eviware.loadui.util.statistics.CounterStatisticSupport;
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 
-createOutput( 'output', 'Output for failed messages' )
+createOutput( 'output', 'Failed messages', 'Messages that did not pass the assertion are outputted here.' )
 
 def componentSignature = [
 		"Assert" : String.class,

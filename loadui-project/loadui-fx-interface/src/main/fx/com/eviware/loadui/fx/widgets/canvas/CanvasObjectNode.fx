@@ -63,6 +63,9 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+
 import java.util.EventObject;
 import org.slf4j.LoggerFactory;
 
@@ -198,6 +201,9 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		{
 			insert Balloon { terminalNode: tn } into upperBalloonHolder.content;
 		}
+		
+		FX.deferAction( function() { showOutputBalloons(); FX.deferAction( function() { hideOutputBalloons(); } ); } );
+		
 		
 	}
 	
@@ -339,6 +345,11 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			
 			lowerBaloonsShowing = true;
 			insert lowerBalloonHolder into AppState.byName("MAIN").overlay.content;
+			
+//			Timeline{ 
+//				keyFrames: [ KeyFrame{ time: 500ms, action: function() { hideInputBalloons(); } },
+//					KeyFrame{ time: 750ms, action: function() { showInputBalloons(); } } ]
+//	 		}.playFromStart();
 		}
 	}
 	

@@ -60,7 +60,7 @@ import java.util.concurrent.TimeUnit
 
 scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
 
-createOutput( 'statisticsOutput', 'Runner Statistics' )
+createOutput( 'statisticsOutput', 'Statistics', 'Connect to a Statistics component to feed it with the displayed values.' )
 
 //SSL support, trust all certificates and hostnames.
 class NaiveTrustManager implements X509TrustManager {

@@ -40,10 +40,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.scene.control.Label;
 import javafx.scene.layout.LayoutInfo;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Stack;
 import javafx.scene.layout.VBox;
-import javafx.animation.Timeline;
-import javafx.animation.KeyFrame;
 import javafx.util.Math;
 
 import com.sun.javafx.scene.layout.Region;
@@ -73,8 +72,10 @@ public class Balloon extends VBox {
 		width: 100,
 		maxWidth: 180,
 		vfill: false,
-		hfill: false
+		hfill: true
 	};
+	
+	var innerVBox:VBox;
 	
 	/**
 	* The text to display for this nodes tooltip. If it is null or an empty String, no tooltip will be displayed.
@@ -129,19 +130,23 @@ public class Balloon extends VBox {
 			[ 
 				Region {
 					styleClass: "balloon-frame"
-				},
-				VBox {
-					content: [
-						headerNode, 
-						textNode], 
-					spacing: 6,
-					layoutInfo: LayoutInfo { 
-						margin: Insets { top: 10, right: 10, bottom: 10, left: 10 }, 
-						minWidth: 50, 
-						width: 100,
-						maxWidth: 250
-					}
+					content:
+					[
+						innerVBox=VBox {
+							content: [
+								headerNode, 
+								textNode], 
+							spacing: 6,
+							layoutInfo: LayoutInfo { 
+								margin: Insets { top: 10, right: 10, bottom: 10, left: 10 }, 
+								minWidth: 50, 
+								width: 100,
+								maxWidth: 250
+							}
+						}
+					]
 				}
+
 			]
 		} into content;
 		
@@ -152,7 +157,5 @@ public class Balloon extends VBox {
 				layoutInfo: LayoutInfo { width: 8, height: 5, vfill: false, hfill: false, hpos: HPos.CENTER }
 			} into content;
 		}
-		
 	}
-	
 }

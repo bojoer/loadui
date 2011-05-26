@@ -29,7 +29,7 @@ import com.eviware.loadui.util.layout.DelayedFormattedString
 
 import java.util.concurrent.TimeUnit
 
-sampleCount = createInput( 'Sample Count' )
+sampleCount = createInput( 'Sample Count', 'Currently running feedback', 'Used to recieve the number of currently running requests from the triggered Runner.' )
 count = 0;
 
 future = null

@@ -56,7 +56,8 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 		super( context );
 		executor = BeanInjector.getBean( ScheduledExecutorService.class );
 
-		inputTerminal = context.createInput( INPUT_TERMINAL, "Data for Display" );
+		inputTerminal = context.createInput( INPUT_TERMINAL, "Data to output",
+				"Messages sent here will be outputted by this component." );
 
 		context.setActivityStrategy( ActivityStrategies.ON );
 		activityRunnable = new Runnable()
