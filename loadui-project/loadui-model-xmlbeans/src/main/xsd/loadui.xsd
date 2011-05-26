@@ -70,6 +70,7 @@
     				use="optional">
     			</attribute>
     			<attribute name="key" type="string" use="required"></attribute>
+    			<attribute name="propagates" type="boolean" default="true" use="optional"></attribute>
     		</extension>
     	</simpleContent>
     </complexType>

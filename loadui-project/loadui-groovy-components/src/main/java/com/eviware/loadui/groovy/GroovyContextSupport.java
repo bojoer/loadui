@@ -66,7 +66,7 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 
 	private final ComponentContext context;
 	private final Logger log;
-	
+
 	private ScheduledExecutorService executor = null;
 	private final HashSet<Future<?>> futures = new HashSet<Future<?>>();
 
@@ -78,9 +78,10 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 		context.addEventListener( PropertyEvent.class, propertyEventHandler );
 		context.addEventListener( ActionEvent.class, actionEventHandler );
 	}
-	
+
 	@Override
-	public void release() {
+	public void release()
+	{
 		reset();
 		clearEventListeners();
 		context.removeEventListener( PropertyEvent.class, propertyEventHandler );
@@ -94,7 +95,7 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 	{
 		return context;
 	}
-	
+
 	public void layout( Closure<?> closure )
 	{
 		Map<String, ?> map = Collections.emptyMap();
@@ -210,24 +211,24 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 			propertyEventHandler.handleEvent( new PropertyEvent( property.getOwner(), property, PropertyEvent.Event.VALUE,
 					null ) );
 	}
-	
+
 	private synchronized ScheduledExecutorService getExecutor()
 	{
 		if( executor == null )
 			executor = Executors.newSingleThreadScheduledExecutor();
-		
+
 		return executor;
 	}
-	
+
 	private synchronized <V, T extends Future<V>> T addFuture( T future )
 	{
 		futures.add( future );
 		return future;
 	}
-	
+
 	public void cancelTasks()
 	{
-		synchronized ( futures )
+		synchronized( futures )
 		{
 			for( Future<?> future : futures )
 			{
@@ -237,37 +238,37 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 			futures.clear();
 		}
 	}
-	
+
 	public Future<?> submit( Runnable runnable )
 	{
 		return addFuture( getExecutor().submit( runnable ) );
 	}
-	
+
 	public <T> Future<T> submit( Runnable runnable, T result )
 	{
 		return addFuture( getExecutor().submit( runnable, result ) );
 	}
-	
+
 	public <T> Future<T> submit( Callable<T> callable )
 	{
 		return addFuture( getExecutor().submit( callable ) );
 	}
-	
+
 	public <V> ScheduledFuture<V> schedule( Callable<V> callable, long delay, TimeUnit unit )
 	{
 		return addFuture( getExecutor().schedule( callable, delay, unit ) );
 	}
-	
+
 	public ScheduledFuture<?> schedule( Runnable command, long delay, TimeUnit unit )
 	{
-		return addFuture( getExecutor().schedule( command, delay, unit) );
+		return addFuture( getExecutor().schedule( command, delay, unit ) );
 	}
-	
+
 	public ScheduledFuture<?> scheduleAtFixedRate( Runnable command, long initialDelay, long period, TimeUnit unit )
 	{
 		return addFuture( getExecutor().scheduleAtFixedRate( command, initialDelay, period, unit ) );
 	}
-	
+
 	public ScheduledFuture<?> scheduleWithFixedDelay( Runnable command, long initialDelay, long delay, TimeUnit unit )
 	{
 		return addFuture( getExecutor().scheduleWithFixedDelay( command, initialDelay, delay, unit ) );
@@ -393,10 +394,25 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 		return context.createProperty( propertyName, propertyType, initialValue );
 	}
 
+	@Override
+	public <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue,
+			boolean propagates )
+	{
+		return context.createProperty( propertyName, propertyType, initialValue, propagates );
+	}
+
 	public <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue,
 			Closure<?> handler )
 	{
 		Property<T> property = context.createProperty( propertyName, propertyType, initialValue );
+		onReplace( property, handler );
+		return property;
+	}
+
+	public <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue,
+			boolean propagates, Closure<?> handler )
+	{
+		Property<T> property = context.createProperty( propertyName, propertyType, initialValue, propagates );
 		onReplace( property, handler );
 		return property;
 	}

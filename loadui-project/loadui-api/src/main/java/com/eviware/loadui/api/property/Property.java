@@ -25,4 +25,6 @@ public interface Property<T> extends MutableValue<T>
 	public String getKey();
 
 	public String getStringValue();
+
+	public boolean isPropagated();
 }

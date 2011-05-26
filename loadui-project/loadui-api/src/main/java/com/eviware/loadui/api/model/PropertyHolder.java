@@ -86,6 +86,27 @@ public interface PropertyHolder extends EventFirer
 	public <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue );
 
 	/**
+	 * Creates a new Property of the given type if it does not already exist, or
+	 * returns the already existing Property.
+	 * 
+	 * @param <T>
+	 *           The type of the Property to create.
+	 * @param propertyName
+	 *           The name to give the new Property.
+	 * @param propertyType
+	 *           The type of the Property.
+	 * @param initialValue
+	 *           An initial value to use for the Property, if it does not already
+	 *           exist.
+	 * @param propagates
+	 *           If set to false, this Property will not propagate between
+	 *           Controller and Agents.
+	 * @return The newly created Property.
+	 */
+	public <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue,
+			boolean propagates );
+
+	/**
 	 * Deletes a Property.
 	 * 
 	 * @param propertyName

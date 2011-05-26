@@ -114,17 +114,24 @@ public class PropertyMapImpl extends HashMap<String, Property<?>> implements Pro
 	@Override
 	public <T> Property<T> createProperty( String key, Class<T> type )
 	{
-		return createProperty( key, type, null );
+		return createProperty( key, type, null, true );
+	}
+
+	@Override
+	public <T> Property<T> createProperty( String key, Class<T> type, Object initialValue )
+	{
+		return createProperty( key, type, initialValue, true );
 	}
 
 	@Override
 	@SuppressWarnings( "unchecked" )
-	public <T> Property<T> createProperty( String key, Class<T> type, Object initialValue )
+	public <T> Property<T> createProperty( String key, Class<T> type, Object initialValue, boolean propagates )
 	{
 		if( containsKey( key ) && get( key ).getType() == type )
 			return ( Property<T> )get( key );
 
 		PropertyConfig pc = config.addNewProperty();
+		pc.setPropagates( propagates );
 		pc.setKey( key );
 		pc.setStringValue( conversionService.convert( conversionService.convert( initialValue, type ), String.class ) );
 		PropertyImpl<T> property = loadProperty( pc, type );

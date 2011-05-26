@@ -64,7 +64,7 @@ public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 			config.setId( addressableRegistry.generateId() );
 
 		id = config.getId();
-		
+
 		label = config.getLabel();
 
 		properties = new PropertyMapImpl( this, BeanInjector.getBean( ConversionService.class ) );
@@ -231,6 +231,13 @@ public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 	}
 
 	@Override
+	public <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue,
+			boolean propagates )
+	{
+		return properties.createProperty( propertyName, propertyType, initialValue, propagates );
+	}
+
+	@Override
 	public void renameProperty( String oldName, String newName )
 	{
 		properties.renameProperty( oldName, newName );
@@ -333,5 +340,5 @@ public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 	public void setDescription( String description )
 	{
 		this.description.setValue( description );
-	}	
+	}
 }

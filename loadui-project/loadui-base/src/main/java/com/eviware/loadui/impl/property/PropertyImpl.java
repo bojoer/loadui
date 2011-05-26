@@ -30,6 +30,7 @@ public class PropertyImpl<T> extends MutableValueImpl<T> implements Property<T>
 {
 	private final PropertyConfig config;
 	private final ModelItemImpl<?> owner;
+	private final boolean propagates;
 
 	public PropertyImpl( ModelItemImpl<?> owner, PropertyConfig config, Class<T> type,
 			ConversionService conversionService )
@@ -39,6 +40,7 @@ public class PropertyImpl<T> extends MutableValueImpl<T> implements Property<T>
 		config.setType( type.getName() );
 		this.owner = owner;
 		this.config = config;
+		this.propagates = config.getPropagates();
 	}
 
 	@Override
@@ -75,7 +77,13 @@ public class PropertyImpl<T> extends MutableValueImpl<T> implements Property<T>
 	@Override
 	public String getStringValue()
 	{
-		return StringUtils.fixLineSeparators( ( String )conversionService.convert( getValue(), TypeDescriptor
-				.valueOf( getType() ), TypeDescriptor.valueOf( String.class ) ) );
+		return StringUtils.fixLineSeparators( ( String )conversionService.convert( getValue(),
+				TypeDescriptor.valueOf( getType() ), TypeDescriptor.valueOf( String.class ) ) );
+	}
+
+	@Override
+	public boolean isPropagated()
+	{
+		return propagates;
 	}
 }

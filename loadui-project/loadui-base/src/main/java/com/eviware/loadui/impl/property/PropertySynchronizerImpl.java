@@ -145,11 +145,13 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 				else if( event instanceof PropertyEvent )
 				{
 					PropertyEvent pEvent = ( PropertyEvent )event;
-
-					Map<String, String> message = createMessage( pEvent );
-					if( !handled.remove( getSignature( message ) ) )
+					if( pEvent.getProperty().isPropagated() )
 					{
-						endpoints.get( item ).sendMessage( CHANNEL, message );
+						Map<String, String> message = createMessage( pEvent );
+						if( !handled.remove( getSignature( message ) ) )
+						{
+							endpoints.get( item ).sendMessage( CHANNEL, message );
+						}
 					}
 				}
 			}
@@ -170,8 +172,11 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 				{
 					for( Property<?> property : item.getProperties() )
 					{
-						endpoint.sendMessage( CHANNEL, createMessage( new PropertyEvent( item, property,
-								PropertyEvent.Event.VALUE, property.getValue() ) ) );
+						if( property.isPropagated() )
+						{
+							endpoint.sendMessage( CHANNEL, createMessage( new PropertyEvent( item, property,
+									PropertyEvent.Event.VALUE, property.getValue() ) ) );
+						}
 					}
 				}
 				return;

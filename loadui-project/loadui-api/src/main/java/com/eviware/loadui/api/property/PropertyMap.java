@@ -24,4 +24,6 @@ public interface PropertyMap extends Map<String, Property<?>>
 	public <T> Property<T> createProperty( String key, Class<T> type );
 
 	public <T> Property<T> createProperty( String key, Class<T> type, Object initialValue );
+
+	public <T> Property<T> createProperty( String key, Class<T> type, Object initialValue, boolean propagates );
 }

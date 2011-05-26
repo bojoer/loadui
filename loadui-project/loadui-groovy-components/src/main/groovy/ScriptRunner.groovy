@@ -37,8 +37,8 @@ import groovy.lang.GroovyShell
 import groovy.lang.Binding
 
 //Properties
-createProperty( 'scriptFile', File )
-createProperty( 'cacheScriptContent', Boolean, true )
+createProperty( 'scriptFile', File, null, false )
+createProperty( 'cacheScriptContent', Boolean, true, false )
 createProperty( 'setBinding', Boolean, true )
 scriptContent = createProperty( '_scriptContent', String ) {
 	parseScript()
@@ -152,6 +152,7 @@ onRelease = {
 }
 
 onAction( "RESET" ) { 
+	if( controller ) updateScript()
 	requestResetValue = 0
 	sampleResetValue = 0
 	discardResetValue = 0

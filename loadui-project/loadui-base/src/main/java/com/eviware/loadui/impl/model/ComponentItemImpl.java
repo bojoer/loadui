@@ -590,6 +590,13 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		}
 
 		@Override
+		public <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue,
+				boolean propagates )
+		{
+			return ComponentItemImpl.this.createProperty( propertyName, propertyType, initialValue, propagates );
+		}
+
+		@Override
 		public Collection<Property<?>> getProperties()
 		{
 			return ComponentItemImpl.this.getProperties();
