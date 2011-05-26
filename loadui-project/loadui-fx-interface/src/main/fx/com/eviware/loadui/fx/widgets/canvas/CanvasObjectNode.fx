@@ -45,10 +45,12 @@ import com.sun.javafx.scene.layout.Region;
 import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.MenuButton;
 
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Movable;
 import com.eviware.loadui.fx.ui.ActivityLed;
+import com.eviware.loadui.fx.ui.popup.Balloon;
 import com.eviware.loadui.fx.widgets.ModelItemHolder;
 import com.eviware.loadui.fx.ui.resources.DialogPanel;
 import com.eviware.loadui.fx.dialogs.RenameModelItemDialog;
@@ -71,6 +73,28 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	var inputs:TerminalNode[];
 	var outputs:TerminalNode[];
 	
+	var lowerBaloonsShowing:Boolean = false;
+	var upperBaloonsShowing:Boolean = false;
+	
+	def lowerBalloonHolder:HBox = HBox {
+		style:"-fx-background-color: #ff0000;",
+		nodeVPos: VPos.TOP,
+		nodeHPos: HPos.CENTER,
+		hpos: HPos.CENTER,
+		spacing: 14,
+		padding: Insets { right: 7, left: 7 },
+	};
+	
+	def upperBalloonHolder:HBox = HBox {
+		style:"-fx-background-color: #ff0000;",
+		nodeVPos: VPos.BOTTOM,
+		nodeHPos: HPos.CENTER,
+		hpos: HPos.CENTER,
+		spacing: 14,
+		padding: Insets { right: 7, left: 7 },
+		translateY: bind upperBalloonHolder.height * -1,
+	};
+	
 	var compactToggle:ToggleButton;
 	def compactToggleSelected = bind compactToggle.selected on replace {
 		compact = compactToggleSelected;
@@ -82,7 +106,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		if( canvasObject != null ) {
 			canvasObject.addEventListener( BaseEvent.class, this );
 			active = canvasObject.isActive();
-			def terminals = for( terminal in canvasObject.getTerminals() ) TerminalNode { id: terminal.getId(), canvas: canvas, terminal: terminal, fill: bind color };
+			def terminals = for( terminal in canvasObject.getTerminals() ) TerminalNode { id: terminal.getId(), canvas: canvas, canvasObjectNode: this, terminal: terminal, fill: bind color };
 			inputs = terminals[t|t.terminal instanceof InputTerminal];
 			outputs = terminals[t|not (t.terminal instanceof InputTerminal)];
 			layoutX = Integer.parseInt( canvasObject.getAttribute( "gui.layoutX", "0" ) );
@@ -169,6 +193,16 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		addMouseHandler( MOUSE_PRESSED, function( e:MouseEvent ):Void {
 			if( e.secondaryButtonDown and not e.controlDown and not selected ) selectOnly(); 
 		} );
+		
+		for( tn:TerminalNode in outputs )
+		{
+			insert Balloon { terminalNode: tn } into lowerBalloonHolder.content;
+		}
+		for( tn:TerminalNode in inputs )
+		{
+			insert Balloon { terminalNode: tn } into upperBalloonHolder.content;
+		}
+		
 	}
 	
 	override function create():Node {
@@ -254,6 +288,70 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		}
 	}
 	
+	public function hideAllInputBalloonsButThis( terminalNode:TerminalNode ):Void {
+		for( b:Node in upperBalloonHolder.content )
+		{
+			if( (b as Balloon).terminalNode != terminalNode )
+				(b as Balloon).visible = false;
+		}
+	}
+	
+	public function hideAllOutputBalloonsButThis( terminalNode:TerminalNode ):Void {
+		for( b:Node in lowerBalloonHolder.content )
+		{
+			if( (b as Balloon).terminalNode != terminalNode )
+				(b as Balloon).visible = false;
+		}
+	}
+	
+	public function showInputBalloons():Void {
+		if( not upperBaloonsShowing )
+		{
+			for( b:Node in upperBalloonHolder.content )
+				(b as Balloon).visible = true;
+			
+			def sceneBounds = localToScene( layoutBounds );
+			upperBalloonHolder.layoutX = sceneBounds.minX;
+			upperBalloonHolder.layoutY = sceneBounds.minY;
+			
+			upperBalloonHolder.layoutInfo = LayoutInfo { 
+				width: sceneBounds.width;
+			};
+			
+			upperBaloonsShowing = true;
+			insert upperBalloonHolder into AppState.byName("MAIN").overlay.content;
+		}
+	}
+	
+	public function showOutputBalloons():Void {
+		if( not lowerBaloonsShowing )
+		{
+			for( b:Node in lowerBalloonHolder.content )
+				(b as Balloon).visible = true;
+			
+			def sceneBounds = localToScene( layoutBounds );
+			lowerBalloonHolder.layoutX = sceneBounds.minX;
+			lowerBalloonHolder.layoutY = sceneBounds.maxY - 18;
+			
+			lowerBalloonHolder.layoutInfo = LayoutInfo { 
+				width: sceneBounds.width;
+			};
+			
+			lowerBaloonsShowing = true;
+			insert lowerBalloonHolder into AppState.byName("MAIN").overlay.content;
+		}
+	}
+	
+	public function hideInputBalloons():Void {
+		delete upperBalloonHolder from AppState.byName("MAIN").overlay.content;
+		upperBaloonsShowing = false;
+	}
+	
+	public function hideOutputBalloons():Void {
+		delete lowerBalloonHolder from AppState.byName("MAIN").overlay.content;
+		lowerBaloonsShowing = false;
+	}
+	
 	override function handleEvent( e:EventObject ) {
 		if( e instanceof CollectionEvent ) {
 			def event = e as CollectionEvent;
@@ -282,7 +380,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	}
 	
 	function addTerminal( terminal:Terminal ) {
-		def tNode = TerminalNode { id: terminal.getId(), canvas: canvas, terminal: terminal, fill: bind color };
+		def tNode = TerminalNode { id: terminal.getId(), canvasObjectNode: this, canvas: canvas, terminal: terminal, fill: bind color };
 		if( terminal instanceof InputTerminal ) {
 			insert tNode into inputs;
 		} else {

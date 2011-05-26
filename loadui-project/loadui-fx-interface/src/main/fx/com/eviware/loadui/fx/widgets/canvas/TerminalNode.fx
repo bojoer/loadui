@@ -23,6 +23,7 @@ package com.eviware.loadui.fx.widgets.canvas;
 
 import javafx.scene.Node;
 import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Resizable;
@@ -41,12 +42,14 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.geometry.Bounds;
 
+import com.eviware.loadui.fx.ui.popup.TooltipHolder;
+
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
-import com.eviware.loadui.fx.ui.popup.TooltipHolder;
+import com.eviware.loadui.fx.ui.popup.Balloon;
 import com.eviware.loadui.fx.ui.resources.Wire;
 
 import com.eviware.loadui.api.terminal.Terminal;
@@ -103,13 +106,48 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 	 * The Canvas that contains the TerminalNode.
 	 */
 	public-init var canvas:Canvas;
+	public-init var canvasObjectNode:CanvasObjectNode;
 	
 	public var fill:Paint = Color.GRAY;
+	
+	public var isDragging = false;
 	
 	override var layoutInfo = LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES };
 
 	override function create() {
 		def flip = terminal instanceof OutputTerminal;
+		
+		addMouseHandler(
+			MOUSE_ENTERED,
+			function( e:MouseEvent ):Void {
+				if( terminal instanceof InputTerminal )
+				{
+					canvasObjectNode.showInputBalloons();
+				}
+				else
+				{
+					canvasObjectNode.showOutputBalloons();
+				}
+			}
+		);
+	
+		addMouseHandler(
+			MOUSE_EXITED,
+			function( e:MouseEvent ):Void {
+				if( not isDragging )
+				{
+					if( terminal instanceof InputTerminal )
+					{
+						canvasObjectNode.hideInputBalloons();
+					}
+					else
+					{
+						canvasObjectNode.hideOutputBalloons();
+					}
+				}
+			}
+		);
+		
 		Group {
 			layoutX: bind width / 2
 			layoutY: if( flip ) -50 else 5
@@ -192,7 +230,7 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 		
 		false
 	}
-	
+
 	override var onDrop = function( d:Draggable ):Void {
 		def other = (d as TerminalDraggable).currentTerminal;
 		
@@ -208,15 +246,10 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 	override function getPrefWidth( height:Number ) { 30 }
 }
 
-class TerminalDraggable extends BaseNode, Draggable, TooltipHolder {
+class TerminalDraggable extends BaseNode, Draggable {
 	public-init var tNode:TerminalNode;
 	
 	override function create() {
-		if (terminal.getDescription() != null) {
-			tooltip = StringUtils.capitalize( terminal.getDescription() );
-		} else {
-			tooltip = StringUtils.capitalize( terminal.getLabel() );
-		}
 		Group {
 			content: [
 				Circle {
@@ -234,9 +267,24 @@ class TerminalDraggable extends BaseNode, Draggable, TooltipHolder {
 	
 	var prev:ConnectionNode;
 	var currentTerminal:Terminal;
+	
 	override var onGrab = function():Void {
+		isDragging = true;
+		
+		if( terminal instanceof InputTerminal )
+		{
+			canvasObjectNode.hideAllInputBalloonsButThis( tNode );
+			canvas.showOutputBalloons();
+			outputAccept = true;
+		}
+		else
+		{
+			canvasObjectNode.hideAllOutputBalloonsButThis( tNode );
+			canvas.showInputBalloons();
+			inputAccept = true;
+		}
+		
 		var startNode:Node;
-		enableTooltip( false );
 		
 		if( sizeof Selectable.selects == 1 and Selectable.selects[0] instanceof ConnectionNode ) {
 			def conn = Selectable.selects[0] as ConnectionNode;
@@ -257,12 +305,6 @@ class TerminalDraggable extends BaseNode, Draggable, TooltipHolder {
 		if( startNode == null ) {
 			startNode = this;
 			currentTerminal = terminal;
-		}
-		
-		if( currentTerminal instanceof InputTerminal ) {
-			outputAccept = true;
-		} else {
-			inputAccept = true;
 		}
 		
 		def pw = startNode.layoutBounds.width / 2;
@@ -287,7 +329,19 @@ class TerminalDraggable extends BaseNode, Draggable, TooltipHolder {
 	}
 	
 	override var onRelease = function():Void {
-		enableTooltip( true );
+		isDragging = false;
+		
+		if( terminal instanceof InputTerminal )
+		{
+			canvasObjectNode.hideInputBalloons();
+			canvas.hideOutputBalloons();
+		}
+		else
+		{
+			canvasObjectNode.hideOutputBalloons();
+			canvas.hideInputBalloons();
+		}
+		
 		delete wire from AppState.byScene( scene ).overlay.content;
 		
 		inputAccept = false;

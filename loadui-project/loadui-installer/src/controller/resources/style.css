@@ -1195,3 +1195,9 @@
     -fx-font-weight: bold;
     -fx-padding: 13 0 8 0;
 }
+
+.balloon-frame {
+    -fx-background-color: black, white;
+    -fx-background-radius: 10;
+    -fx-background-insets: 0, 1;
+}
