@@ -45,6 +45,7 @@ import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.MenuButton;
 
 public class StatisticsWindowButton extends Group {
+	var menuButton:MenuButton;
 	init {
 		content = [
 //			Ellipse {
@@ -63,7 +64,7 @@ public class StatisticsWindowButton extends Group {
 //					]
 //				}
 //			},
-			MenuButton {
+			menuButton = MenuButton {
 				styleClass: "loadui-menu-button"
 				graphic: ImageView {
 					image: Image { url: "{__ROOT__}images/png/results-button.png" }
@@ -87,5 +88,9 @@ public class StatisticsWindowButton extends Group {
 				]
 			}
 		]
+	}
+	
+	postinit {
+		FX.deferAction( function() { menuButton.show(); FX.deferAction( function() { menuButton.hide() } ) } );
 	}
 }
