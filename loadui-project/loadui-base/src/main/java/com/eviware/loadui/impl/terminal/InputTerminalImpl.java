@@ -29,9 +29,9 @@ import com.eviware.loadui.api.terminal.TerminalHolder;
 public class InputTerminalImpl extends TerminalImpl implements InputTerminal
 {
 
-	public InputTerminalImpl( TerminalHolder owner, String label, String description )
+	public InputTerminalImpl( TerminalHolder owner, String name, String label, String description )
 	{
-		super( owner, label, description );
+		super( owner, name, label, description );
 	}
 
 	@Override

@@ -275,9 +275,21 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 	}
 
 	@Override
-	public InputTerminal createInput( String label, String description )
+	public InputTerminal createInput( String name )
 	{
-		return context.createInput( label, description );
+		return context.createInput( name );
+	}
+
+	@Override
+	public InputTerminal createInput( String name, String label )
+	{
+		return context.createInput( name, label );
+	}
+
+	@Override
+	public InputTerminal createInput( String name, String label, String description )
+	{
+		return context.createInput( name, label, description );
 	}
 
 	@Override
@@ -323,9 +335,9 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 	}
 
 	@Override
-	public Terminal getTerminalByLabel( String label )
+	public Terminal getTerminalByName( String name )
 	{
-		return context.getTerminalByLabel( label );
+		return context.getTerminalByName( name );
 	}
 
 	@Override
@@ -335,9 +347,21 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 	}
 
 	@Override
-	public OutputTerminal createOutput( String label, String description )
+	public OutputTerminal createOutput( String name )
 	{
-		return context.createOutput( label, description );
+		return context.createOutput( name );
+	}
+
+	@Override
+	public OutputTerminal createOutput( String name, String label )
+	{
+		return context.createOutput( name, label );
+	}
+
+	@Override
+	public OutputTerminal createOutput( String name, String label, String description )
+	{
+		return context.createOutput( name, label, description );
 	}
 
 	@Override
@@ -445,18 +469,6 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 	public ComponentItem getComponent()
 	{
 		return context.getComponent();
-	}
-
-	@Override
-	public InputTerminal createInput( String label )
-	{
-		return context.createInput( label );
-	}
-
-	@Override
-	public OutputTerminal createOutput( String label )
-	{
-		return context.createOutput( label );
 	}
 
 	@Override

@@ -122,4 +122,10 @@ public class OutputTerminalStub implements OutputTerminal
 	{
 		return id;
 	}
+
+	@Override
+	public String getName()
+	{
+		return label;
+	}
 }

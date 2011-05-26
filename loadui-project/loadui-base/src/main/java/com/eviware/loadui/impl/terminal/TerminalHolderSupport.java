@@ -43,37 +43,37 @@ public class TerminalHolderSupport implements Releasable
 		addressableRegistry = BeanInjector.getBean( AddressableRegistry.class );
 	}
 
-	public InputTerminal createInput( String label, String description )
+	public InputTerminal createInput( String name, String label, String description )
 	{
-		if( terminals.containsKey( label ) )
+		if( terminals.containsKey( name ) )
 		{
-			Terminal existing = terminals.get( label );
+			Terminal existing = terminals.get( name );
 			if( existing instanceof InputTerminal )
 				return ( InputTerminal )existing;
 			throw new IllegalArgumentException( "TerminalHolder already has a Terminal with label '" + label
 					+ "' which is of different type than the requested." );
 		}
 
-		InputTerminal terminal = new InputTerminalImpl( owner, label, description );
-		terminals.put( label, terminal );
+		InputTerminal terminal = new InputTerminalImpl( owner, name, label, description );
+		terminals.put( name, terminal );
 		owner.fireEvent( new CollectionEvent( owner, TerminalHolder.TERMINALS, Event.ADDED, terminal ) );
 
 		return terminal;
 	}
 
-	public OutputTerminal createOutput( String label, String description )
+	public OutputTerminal createOutput( String name, String label, String description )
 	{
-		if( terminals.containsKey( label ) )
+		if( terminals.containsKey( name ) )
 		{
-			Terminal existing = terminals.get( label );
+			Terminal existing = terminals.get( name );
 			if( existing instanceof OutputTerminal )
 				return ( OutputTerminal )existing;
 			throw new IllegalArgumentException( "TerminalHolder already has a Terminal with label '" + label
 					+ "' which is of different type than the requested." );
 		}
 
-		OutputTerminal terminal = new OutputTerminalImpl( owner, label, description );
-		terminals.put( label, terminal );
+		OutputTerminal terminal = new OutputTerminalImpl( owner, name, label, description );
+		terminals.put( name, terminal );
 		owner.fireEvent( new CollectionEvent( owner, TerminalHolder.TERMINALS, Event.ADDED, terminal ) );
 
 		return terminal;
@@ -97,14 +97,14 @@ public class TerminalHolderSupport implements Releasable
 		return Collections.unmodifiableCollection( terminals.values() );
 	}
 
-	public Terminal getTerminalByLabel( String label )
+	public Terminal getTerminalByName( String name )
 	{
-		return terminals.get( label );
+		return terminals.get( name );
 	}
 
 	public boolean containsTerminal( Terminal terminal )
 	{
-		return terminals.get( terminal.getLabel() ) == terminal;
+		return terminals.get( terminal.getName() ) == terminal;
 	}
 
 	@Override

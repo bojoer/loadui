@@ -101,7 +101,8 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 		terminalHolderSupport = new TerminalHolderSupport( this );
 
-		stateTerminal = terminalHolderSupport.createInput( OnOffCategory.STATE_TERMINAL, "Controls TestCase execution." );
+		stateTerminal = terminalHolderSupport.createInput( OnOffCategory.STATE_TERMINAL, OnOffCategory.STATE_TERMINAL,
+				"Controls TestCase execution." );
 
 		for( String exportId : getConfig().getExportedTerminalArray() )
 			exports.add( ( OutputTerminal )addressableRegistry.lookup( exportId ) );
@@ -236,9 +237,9 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	}
 
 	@Override
-	public Terminal getTerminalByLabel( String label )
+	public Terminal getTerminalByName( String name )
 	{
-		return terminalHolderSupport.getTerminalByLabel( label );
+		return terminalHolderSupport.getTerminalByName( name );
 	}
 
 	@Override

@@ -24,18 +24,21 @@ import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalHolder;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.events.EventSupport;
+import com.google.common.base.Preconditions;
 
 public abstract class TerminalImpl implements Terminal
 {
 	private final EventSupport eventsupport = new EventSupport();
 	private final TerminalHolder owner;
+	private final String name;
 	private final String label;
 	private final String description;
 
-	public TerminalImpl( TerminalHolder component, String label, String description )
+	public TerminalImpl( TerminalHolder component, String name, String label, String description )
 	{
-		this.owner = component;
-		this.label = label;
+		this.owner = Preconditions.checkNotNull( component );
+		this.name = Preconditions.checkNotNull( name );
+		this.label = Preconditions.checkNotNull( label );
 		this.description = description;
 
 		try
@@ -51,7 +54,13 @@ public abstract class TerminalImpl implements Terminal
 	@Override
 	public String getId()
 	{
-		return owner.getId() + "/" + label;
+		return owner.getId() + "/" + name;
+	}
+
+	@Override
+	public String getName()
+	{
+		return name;
 	}
 
 	@Override

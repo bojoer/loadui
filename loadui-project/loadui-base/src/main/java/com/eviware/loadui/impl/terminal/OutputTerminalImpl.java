@@ -36,9 +36,9 @@ public class OutputTerminalImpl extends TerminalImpl implements OutputTerminal
 {
 	private Map<String, Class<?>> signature = Collections.emptyMap();
 
-	public OutputTerminalImpl( TerminalHolder owner, String label, String description )
+	public OutputTerminalImpl( TerminalHolder owner, String name, String label, String description )
 	{
-		super( owner, label, description );
+		super( owner, name, label, description );
 	}
 
 	public void setMessageSignature( Map<String, Class<?>> signature )

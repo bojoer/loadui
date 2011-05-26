@@ -209,9 +209,9 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	}
 
 	@Override
-	public Terminal getTerminalByLabel( String label )
+	public Terminal getTerminalByName( String name )
 	{
-		return terminalHolderSupport.getTerminalByLabel( label );
+		return terminalHolderSupport.getTerminalByName( name );
 	}
 
 	@Override
@@ -493,27 +493,39 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		private final List<EventHandlerRegistration<?>> handlerRegistrations = new ArrayList<EventHandlerRegistration<?>>();
 
 		@Override
-		public InputTerminal createInput( String label, String description )
+		public InputTerminal createInput( String name, String label, String description )
 		{
-			return terminalHolderSupport.createInput( label, description );
+			return terminalHolderSupport.createInput( name, label, description );
 		}
 
 		@Override
-		public InputTerminal createInput( String label )
+		public InputTerminal createInput( String name, String label )
 		{
-			return createInput( label, null );
+			return createInput( name, label, null );
 		}
 
 		@Override
-		public OutputTerminal createOutput( String label, String description )
+		public InputTerminal createInput( String name )
 		{
-			return terminalHolderSupport.createOutput( label, description );
+			return createInput( name, name, null );
 		}
 
 		@Override
-		public OutputTerminal createOutput( String label )
+		public OutputTerminal createOutput( String name, String label, String description )
 		{
-			return createOutput( label, null );
+			return terminalHolderSupport.createOutput( name, label, description );
+		}
+
+		@Override
+		public OutputTerminal createOutput( String name, String label )
+		{
+			return createOutput( name, label, null );
+		}
+
+		@Override
+		public OutputTerminal createOutput( String name )
+		{
+			return createOutput( name, name, null );
 		}
 
 		@Override
@@ -572,9 +584,9 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		}
 
 		@Override
-		public Terminal getTerminalByLabel( String label )
+		public Terminal getTerminalByName( String name )
 		{
-			return ComponentItemImpl.this.getTerminalByLabel( label );
+			return ComponentItemImpl.this.getTerminalByName( name );
 		}
 
 		@Override
@@ -887,7 +899,6 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 	private abstract class DummyTerminal implements DualTerminal
 	{
-
 		@Override
 		public Connection connectTo( InputTerminal input )
 		{
@@ -939,7 +950,13 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		@Override
 		public String getId()
 		{
-			return ComponentItemImpl.this.getId() + "/" + getLabel();
+			return ComponentItemImpl.this.getId() + "/" + getName();
+		}
+
+		@Override
+		public String getLabel()
+		{
+			return getName();
 		}
 
 		@Override
@@ -952,7 +969,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private class RemoteTerminal extends DummyTerminal
 	{
 		@Override
-		public String getLabel()
+		public String getName()
 		{
 			return ComponentContext.REMOTE_TERMINAL;
 		}
@@ -968,7 +985,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		}
 
 		@Override
-		public String getLabel()
+		public String getName()
 		{
 			return agent.getLabel();
 		}
@@ -983,7 +1000,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private class ControllerTerminal extends DummyTerminal
 	{
 		@Override
-		public String getLabel()
+		public String getName()
 		{
 			return ComponentContext.CONTROLLER_TERMINAL;
 		}

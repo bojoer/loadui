@@ -113,14 +113,24 @@ public interface ComponentContext extends Labeled.Mutable, MutableTerminalHolder
 	public ComponentItem getComponent();
 
 	/**
-	 * @see #createInput(String label, String description)
+	 * @see #createInput(String name, String label, String description)
 	 */
-	public InputTerminal createInput( String label );
+	public InputTerminal createInput( String name );
 
 	/**
-	 * @see #createOutput(String label, String description)
+	 * @see #createInput(String name, String label, String description)
 	 */
-	public OutputTerminal createOutput( String label );
+	public InputTerminal createInput( String name, String label );
+
+	/**
+	 * @see #createOutput(String name, String label, String description)
+	 */
+	public OutputTerminal createOutput( String name );
+
+	/**
+	 * @see #createOutput(String name, String label, String description)
+	 */
+	public OutputTerminal createOutput( String name, String label );
 
 	/**
 	 * Changes the signature of the messages sent from an OutputTerminal on this
@@ -154,11 +164,10 @@ public interface ComponentContext extends Labeled.Mutable, MutableTerminalHolder
 	public DualTerminal getRemoteTerminal();
 
 	/**
-	 * Gets a special OutputTerminal which can be used to send messages to
-	 * remote instances of the ComponentItem itself. Regardless of if a
-	 * TerminalMessage is sent to this Terminal from a Component on a Agent or on
-	 * the Controller, the Component instance on the Controller will receive the
-	 * event.
+	 * Gets a special OutputTerminal which can be used to send messages to remote
+	 * instances of the ComponentItem itself. Regardless of if a TerminalMessage
+	 * is sent to this Terminal from a Component on a Agent or on the Controller,
+	 * the Component instance on the Controller will receive the event.
 	 * 
 	 * @return The Controller OutputTerminal.
 	 */

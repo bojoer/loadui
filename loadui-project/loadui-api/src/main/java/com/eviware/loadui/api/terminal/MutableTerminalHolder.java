@@ -22,28 +22,32 @@ public interface MutableTerminalHolder extends TerminalHolder
 	 * description. If an InputTerminal already exists with the given label, that
 	 * Terminal is instead returned, and no new Terminal is created.
 	 * 
+	 * @param name
+	 *           The name to give to the new OutputTerminal, must be unique per
+	 *           TerminalHolder.
 	 * @param label
-	 *           The label to give the new InputTerminal, must be unique for the
-	 *           Component.
+	 *           The label to give the new InputTerminal.
 	 * @param description
 	 *           A description of the Terminal.
 	 * @return An InputTerminal with the given label.
 	 */
-	public InputTerminal createInput( String label, String description );
+	public InputTerminal createInput( String name, String label, String description );
 
 	/**
 	 * Creates and returns a new OutputTerminal using the given label and
 	 * description. If an OutputTerminal already exists with the given label,
 	 * that Terminal is instead returned, and no new Terminal is created.
 	 * 
+	 * @param name
+	 *           The name to give to the new OutputTerminal, must be unique per
+	 *           TerminalHolder.
 	 * @param label
-	 *           The label to give the new OutputTerminal, must be unique for the
-	 *           Component.
+	 *           The label to give the new OutputTerminal.
 	 * @param description
 	 *           A description of the Terminal.
 	 * @return An OutputTerminal with the given label.
 	 */
-	public OutputTerminal createOutput( String label, String description );
+	public OutputTerminal createOutput( String name, String label, String description );
 
 	/**
 	 * Removes a Terminal from the Component.

@@ -92,7 +92,7 @@ public class CreateNewSoapUIProjectDialog {
 								 
 								 var triggerTerminal:OutputTerminal;
 								 for (terminal in fixedRateItem.getTerminals()) {
-								     if (terminal.getLabel() == GeneratorCategory.TRIGGER_TERMINAL) {
+								     if (terminal.getName().equals( GeneratorCategory.TRIGGER_TERMINAL )) {
 								     	triggerTerminal = terminal as OutputTerminal;
 								     	break;
 								     }
@@ -101,7 +101,7 @@ public class CreateNewSoapUIProjectDialog {
 								 
 								 var controllerTerminal:InputTerminal;
 								 for (terminal in soapuiItem.getTerminals()) {
-								 	if (terminal.getLabel() == RunnerCategory.TRIGGER_TERMINAL) {
+								 	if (terminal.getName().equals(RunnerCategory.TRIGGER_TERMINAL)) {
 								 		controllerTerminal = terminal as InputTerminal;
 								 		break;
 								 	}
@@ -114,7 +114,7 @@ public class CreateNewSoapUIProjectDialog {
 								 	statisticsItem.setAttribute( "gui.layoutY", "500" );
 								 	var outputTerminal:OutputTerminal;
 								 	for (terminal in soapuiItem.getTerminals()) {
-								 		if (terminal.getLabel() == RunnerCategory.RESULT_TERMINAL) {
+								 		if (terminal.getName().equals(RunnerCategory.RESULT_TERMINAL)) {
 								 			outputTerminal = terminal as OutputTerminal;
 								 			break;
 								 		}
@@ -122,7 +122,7 @@ public class CreateNewSoapUIProjectDialog {
 								 	
 								 	var statisticsTerminal:InputTerminal;
 								 	for (terminal in statisticsItem.getTerminals()) {
-								 		if (terminal.getLabel() == AnalysisCategory.INPUT_TERMINAL) {
+								 		if (terminal.getName().equals(AnalysisCategory.INPUT_TERMINAL)) {
 								 			statisticsTerminal = terminal as InputTerminal;
 								 			break;
 								 		}

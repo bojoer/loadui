@@ -341,8 +341,8 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			def inputComponent = connection.getInputTerminal().getTerminalHolder() as CanvasObjectItem;
 			def outputComponent = connection.getOutputTerminal().getTerminalHolder() as CanvasObjectItem;
 			if( Sequences.indexOf( objects, inputComponent ) >= 0 and Sequences.indexOf( objects, outputComponent ) >= 0 ) {
-				def outputTerminal = (clones.get( outputComponent ) as CanvasObjectItem).getTerminalByLabel( connection.getOutputTerminal().getLabel() ) as OutputTerminal;
-				def inputTerminal = (clones.get( inputComponent ) as CanvasObjectItem).getTerminalByLabel( connection.getInputTerminal().getLabel() ) as InputTerminal;
+				def outputTerminal = (clones.get( outputComponent ) as CanvasObjectItem).getTerminalByName( connection.getOutputTerminal().getName() ) as OutputTerminal;
+				def inputTerminal = (clones.get( inputComponent ) as CanvasObjectItem).getTerminalByName( connection.getInputTerminal().getName() ) as InputTerminal;
 				target.connect( outputTerminal, inputTerminal );
 			}
 		}

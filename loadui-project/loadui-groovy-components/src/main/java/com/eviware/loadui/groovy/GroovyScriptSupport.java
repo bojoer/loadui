@@ -252,7 +252,7 @@ public class GroovyScriptSupport implements Releasable
 						if( prop != null )
 							return prop;
 						for( Terminal terminal : context.getTerminals() )
-							if( property.equals( terminal.getLabel() ) )
+							if( property.equals( terminal.getName() ) )
 								return terminal;
 
 						throw e2;
