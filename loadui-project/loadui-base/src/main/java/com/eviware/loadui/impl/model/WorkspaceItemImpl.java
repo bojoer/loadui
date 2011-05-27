@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.discovery.AgentDiscovery.AgentReference;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
@@ -94,7 +93,8 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		createProperty( SOAPUI_SYNC_PROPERTY, Boolean.class );
 		createProperty( SOAPUI_CAJO_PORT_PROPERTY, Integer.class, 1198 );
 		createProperty( LOADUI_CAJO_PORT_PROPERTY, Integer.class, 1199 );
-		createProperty( STATISTIC_RESULTS_PATH, File.class, new File( System.getProperty( LoadUI.LOADUI_HOME ), "results" ) );
+		createProperty( STATISTIC_RESULTS_PATH, File.class,
+				new File( System.getProperty( LoadUI.LOADUI_HOME ), "results" ) );
 		garbageCollectionInterval = createProperty( AUTO_GARBAGE_COLLECTION_INTERVAL, Long.class, 60 ); // using
 		// seconds
 	}
@@ -245,6 +245,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			ref.setEnabled( enabled );
 			projects.add( ref );
 			fireCollectionEvent( PROJECT_REFS, CollectionEvent.Event.ADDED, ref );
+			save();
 			return ref;
 		}
 		catch( IOException e )
@@ -271,6 +272,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		agent.addEventListener( BaseEvent.class, agentListener );
 		agents.add( agent );
 		fireCollectionEvent( AGENTS, CollectionEvent.Event.ADDED, agent );
+		save();
 		return agent;
 	}
 
@@ -286,6 +288,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		agent.addEventListener( BaseEvent.class, agentListener );
 		agents.add( agent );
 		fireCollectionEvent( AGENTS, CollectionEvent.Event.ADDED, agent );
+		save();
 		return agent;
 	}
 
@@ -334,6 +337,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			{
 				fireCollectionEvent( PROJECT_REFS, CollectionEvent.Event.REMOVED, projectRef );
 				getConfig().removeProject( i );
+				save();
 				return;
 			}
 		}
@@ -369,6 +373,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 				{
 					fireCollectionEvent( AGENTS, CollectionEvent.Event.REMOVED, agent );
 					getConfig().removeAgent( i );
+					save();
 					return;
 				}
 			}
@@ -412,7 +417,8 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		if( localMode != isLocalMode() )
 		{
 			triggerAction( CanvasItem.COMPLETE_ACTION );
-//			triggerAction( CounterHolder.COUNTER_RESET_ACTION ); // shouldn't be needed?
+			// triggerAction( CounterHolder.COUNTER_RESET_ACTION ); // shouldn't be
+			// needed?
 			this.localMode.setValue( localMode );
 		}
 	}

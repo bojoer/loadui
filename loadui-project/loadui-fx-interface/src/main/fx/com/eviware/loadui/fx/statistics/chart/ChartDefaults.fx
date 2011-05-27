@@ -21,6 +21,7 @@ import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.Chart;
@@ -34,6 +35,16 @@ import com.eviware.loadui.util.StringUtils;
 
 
 def defaultChartGroupLabel = "Chart";
+
+public function createStatisticsTab( pages:StatisticPages, label:String, sh:StatisticHolder ):StatisticPage {
+	def pageLabel = if( StringUtils.isNullOrEmpty( label ) ) "Page {pages.getChildCount()+1}" else label;
+	def page = pages.createPage( pageLabel );
+	if( sh != null ) {
+		createSubChart( createChartGroup( page, null, null ), sh );
+	}
+	
+	return page;
+}
 
 public function createChartGroup( parent:StatisticPage, type:String, label:String ):ChartGroup {
 	def groupLabel = if( StringUtils.isNullOrEmpty( label ) ) "Chart {parent.getChildCount()+1}" else label;

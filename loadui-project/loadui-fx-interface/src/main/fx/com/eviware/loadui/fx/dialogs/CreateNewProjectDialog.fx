@@ -61,7 +61,7 @@ public class CreateNewProjectDialog {
 							if( validateFile( file.value as String ) ) {
 								log.debug( "Creating new project: '\{\}'  with path: '\{\}'", name.value, file.value );
 								def p = workspace.createProject( new File( projectDir, file.value as String ), name.value as String, true );
-								p.getStatisticPages().createPage( "General" );
+								//p.getStatisticPages().createPage( "General" );
 								//TODO: Add content to the General statistics page.
 								p.save();
 								dialog.close();

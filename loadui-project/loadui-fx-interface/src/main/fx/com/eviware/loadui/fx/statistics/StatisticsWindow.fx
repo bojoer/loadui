@@ -34,6 +34,7 @@ import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.LoadUI;
 
+import com.eviware.loadui.fx.statistics.chart.ChartDefaults;
 import com.eviware.loadui.fx.statistics.topmenu.StatisticsMenu;
 import com.eviware.loadui.fx.statistics.topmenu.ManageMenu;
 
@@ -238,7 +239,7 @@ public class StatisticsWindow {
 	function checkForEmptyPages() {
 		def statisticPages = project.getStatisticPages();
 		if( statisticPages.getChildCount() == 0 )
-			statisticPages.createPage( "General" );
+			ChartDefaults.createStatisticsTab( statisticPages, "General", project );
 	}
 }
 	

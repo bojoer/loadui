@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.counter.CounterHolder;
+import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.api.terminal.Connection;
@@ -30,7 +31,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
  * 
  * @author dain.nilsson
  */
-public interface CanvasItem extends ModelItem, CounterHolder
+public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 {
 	// events
 	public static final String COMPONENTS = CanvasItem.class.getName() + "@components";

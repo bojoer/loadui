@@ -47,7 +47,6 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.property.Property;
-import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
@@ -68,7 +67,7 @@ import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.statistics.CounterStatisticSupport;
 
 public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends ModelItemImpl<Config> implements
-		CanvasItem, StatisticHolder
+		CanvasItem
 {
 	private static final String LIMITS_ATTRIBUTE = "limits";
 

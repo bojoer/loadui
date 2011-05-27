@@ -40,13 +40,17 @@ import com.eviware.loadui.api.reporting.SummaryExportUtils;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
-import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 {
 	private static Logger log = LoggerFactory.getLogger( ProjectExecutionManagerImpl.class );
+
+	private enum State
+	{
+		STOPPED, PROJECT_STARTED, TESTCASE_STARTED
+	}
 
 	private final ExecutionManager executionManager;
 	private final WorkspaceProvider workspaceProvider;
@@ -55,6 +59,8 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 	private final HashMap<ProjectItem, SummaryListener> summaryListeners = new HashMap<ProjectItem, SummaryListener>();
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningListener runningListener = new RunningListener();
+
+	private State state = State.STOPPED;
 
 	ProjectExecutionManagerImpl( final ExecutionManager executionManager, final WorkspaceProvider workspaceProvider,
 			final ReportingManager reportingManager )
@@ -116,6 +122,9 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 					ProjectItem addedProject = ( ProjectItem )event.getElement();
 
 					addedProject.addEventListener( BaseEvent.class, runningListener );
+					addedProject.addEventListener( CollectionEvent.class, collectionListener );
+					for( SceneItem scene : addedProject.getScenes() )
+						scene.addEventListener( BaseEvent.class, runningListener );
 
 					SummaryListener summaryListener = new SummaryListener( addedProject );
 					summaryListeners.put( addedProject, summaryListener );
@@ -136,6 +145,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				else if( ProjectItem.SCENES.equals( event.getKey() ) )
 				{
 					SceneItem scene = ( SceneItem )event.getElement();
+					scene.addEventListener( BaseEvent.class, runningListener );
 					scene.addEventListener( BaseEvent.class, summaryListeners.get( event.getSource() ) );
 				}
 			}
@@ -146,12 +156,14 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 					ProjectItem removedProject = ( ProjectItem )event.getElement();
 
 					removedProject.removeEventListener( BaseEvent.class, runningListener );
+					removedProject.removeEventListener( CollectionEvent.class, collectionListener );
 					removedProject.removeEventListener( BaseEvent.class, summaryListeners.remove( removedProject ) );
 				}
 				else if( ProjectItem.SCENES.equals( event.getKey() ) )
 				{
 					SceneItem scene = ( SceneItem )event.getElement();
 					scene.removeEventListener( BaseEvent.class, summaryListeners.get( event.getSource() ) );
+					scene.removeEventListener( BaseEvent.class, runningListener );
 				}
 			}
 		}
@@ -159,8 +171,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 
 	private class RunningListener implements EventHandler<BaseEvent>
 	{
-		private boolean hasCurrent = false;
-
 		@Override
 		public void handleEvent( BaseEvent event )
 		{
@@ -169,82 +179,117 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				// log.debug( "GOT EVENT: "+ event.getKey() + " from "
 				// +event.getSource().getClass().getName() );
 
-				ProjectItem runningProject = ( ( CanvasItem )event.getSource() ).getProject();
-				long timestamp = System.currentTimeMillis();
-				if( !hasCurrent && CanvasItem.START_ACTION.equals( event.getKey() ) )
+				CanvasItem canvas = ( CanvasItem )event.getSource();
+				ProjectItem runningProject = canvas.getProject();
+				if( state == State.STOPPED )
 				{
-					// start new execution
-					hasCurrent = true;
-					String projectHash = runningProject.getId();
-					String executionId = projectHash + "_" + Long.toString( timestamp );
-
-					SimpleDateFormat dateFormatter = new SimpleDateFormat( "yyyy-MM-dd HH:mm" );
-					Date now = new Date( timestamp );
-					String label = dateFormatter.format( now );
-					SimpleDateFormat dateFormatter2 = new SimpleDateFormat( "yyyy-MM-dd HHmmss-SSS" );
-					String fileName = runningProject.getLabel() + "_" + dateFormatter2.format( now );
-					Execution newExecution = executionManager.startExecution( executionId, timestamp, label, fileName );
-
-					if( newExecution == null )
-					{
-						log.warn( "Could not create a new execution." );
-						return;
-					}
-
-					runningProject.addEventListener( BaseEvent.class,
-							new SummaryAttacher( executionManager.getCurrentExecution() ) );
-
-					// add project->execution mapping to cache
-					if( projectIdToExecutions.containsKey( runningProject.getId() ) )
-					{
-						projectIdToExecutions.get( runningProject.getId() ).add( newExecution );
-					}
-					else
-					{
-						HashSet<Execution> executionSet = new HashSet<Execution>();
-						executionSet.add( newExecution );
-						projectIdToExecutions.put( runningProject.getId(), executionSet );
-					}
+					if( CanvasItem.START_ACTION.equals( event.getKey() ) )
+						startExecution( canvas, runningProject );
 				}
-				else if( CanvasItem.ON_COMPLETE_DONE.equals( event.getKey() ) )
+				else if( state == State.TESTCASE_STARTED )
 				{
-					hasCurrent = false;
-					executionManager.stopExecution();
-
-					// remove the oldest autosaved execution if needed
-					Set<Execution> executions = getExecutions( runningProject, true, false );
-					while( executions.size() > runningProject.getNumberOfAutosaves()
-							&& runningProject.getNumberOfAutosaves() > 0 )
+					if( CanvasItem.START_ACTION.equals( event.getKey() ) && canvas == runningProject )
 					{
-						Execution oldestExecution = executionManager.getCurrentExecution();
-						for( Execution e : executions )
+						runningProject.addEventListener( BaseEvent.class,
+								new SummaryAttacher( executionManager.getCurrentExecution() ) );
+						state = State.PROJECT_STARTED;
+					}
+					else if( CanvasItem.ON_COMPLETE_DONE.equals( event.getKey() ) )
+					{
+						if( canvas == runningProject )
 						{
-							if( e.getStartTime() < oldestExecution.getStartTime() )
-								oldestExecution = e;
+							stopExecution( canvas, runningProject );
 						}
-						oldestExecution.delete();
-						executions.remove( oldestExecution );
+						else
+						{
+							if( !runningProject.isRunning() )
+							{
+								for( SceneItem scene : runningProject.getScenes() )
+									if( scene.isRunning() )
+										return;
 
-						// also remove from projectIdToExecutions
-						HashSet<Execution> recentProjectsExecutionMap = projectIdToExecutions.get( runningProject.getId() );
-						recentProjectsExecutionMap.remove( oldestExecution );
-						projectIdToExecutions.put( runningProject.getId(), recentProjectsExecutionMap );
+								stopExecution( canvas, runningProject );
+							}
+						}
 					}
 				}
-				else if( CanvasItem.STOP_ACTION.equals( event.getKey() ) )
+				else if( state == State.PROJECT_STARTED )
 				{
-					executionManager.pauseExecution();
-				}
-				else if( executionManager.getState() == State.PAUSED && CanvasItem.START_ACTION.equals( event.getKey() ) )
-				{
-					// could this be done better?
-					/*
-					 * if startExecution is called and execution is in PAUSED stated
-					 * it will return curectExecution and change state to START
-					 */
-					executionManager.startExecution( null, -1 );
+					if( CanvasItem.ON_COMPLETE_DONE.equals( event.getKey() ) && canvas == runningProject )
+					{
+						stopExecution( canvas, runningProject );
+					}
 				}
 			}
+		}
+
+		private void startExecution( CanvasItem canvas, ProjectItem runningProject )
+		{
+			// start new execution
+			long timestamp = System.currentTimeMillis();
+			String projectHash = runningProject.getId();
+			String executionId = projectHash + "_" + Long.toString( timestamp );
+
+			SimpleDateFormat dateFormatter = new SimpleDateFormat( "yyyy-MM-dd HH:mm" );
+			Date now = new Date( timestamp );
+			String label = dateFormatter.format( now );
+			SimpleDateFormat dateFormatter2 = new SimpleDateFormat( "yyyy-MM-dd HHmmss-SSS" );
+			String fileName = runningProject.getLabel() + "_" + dateFormatter2.format( now );
+			Execution newExecution = executionManager.startExecution( executionId, timestamp, label, fileName );
+
+			if( newExecution == null )
+			{
+				log.warn( "Could not create a new execution." );
+				return;
+			}
+
+			if( canvas == runningProject )
+			{
+				runningProject.addEventListener( BaseEvent.class,
+						new SummaryAttacher( executionManager.getCurrentExecution() ) );
+				state = State.PROJECT_STARTED;
+			}
+			else
+			{
+				state = State.TESTCASE_STARTED;
+			}
+
+			// add project->execution mapping to cache
+			if( projectIdToExecutions.containsKey( runningProject.getId() ) )
+			{
+				projectIdToExecutions.get( runningProject.getId() ).add( newExecution );
+			}
+			else
+			{
+				HashSet<Execution> executionSet = new HashSet<Execution>();
+				executionSet.add( newExecution );
+				projectIdToExecutions.put( runningProject.getId(), executionSet );
+			}
+		}
+
+		private void stopExecution( CanvasItem canvas, ProjectItem runningProject )
+		{
+			executionManager.stopExecution();
+
+			// remove the oldest autosaved execution if needed
+			Set<Execution> executions = getExecutions( runningProject, true, false );
+			while( executions.size() > runningProject.getNumberOfAutosaves() && runningProject.getNumberOfAutosaves() > 0 )
+			{
+				Execution oldestExecution = executionManager.getCurrentExecution();
+				for( Execution e : executions )
+				{
+					if( e.getStartTime() < oldestExecution.getStartTime() )
+						oldestExecution = e;
+				}
+				oldestExecution.delete();
+				executions.remove( oldestExecution );
+
+				// also remove from projectIdToExecutions
+				HashSet<Execution> recentProjectsExecutionMap = projectIdToExecutions.get( runningProject.getId() );
+				recentProjectsExecutionMap.remove( oldestExecution );
+				projectIdToExecutions.put( runningProject.getId(), recentProjectsExecutionMap );
+			}
+			state = State.STOPPED;
 		}
 	}
 
