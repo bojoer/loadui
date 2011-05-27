@@ -22,17 +22,22 @@
 package com.eviware.loadui.fx.widgets.canvas;
 
 import javafx.util.Math;
+import javafx.geometry.BoundingBox;
 import javafx.scene.Node;
 import javafx.scene.CustomNode;
 import javafx.scene.Group;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.Resizable;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.SVGPath;
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.control.Separator;
-import javafx.geometry.BoundingBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.Cursor;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Sequences;
 
 import com.javafx.preview.control.PopupMenu;
 import com.javafx.preview.control.MenuItem;
@@ -54,31 +59,24 @@ import com.eviware.loadui.fx.dialogs.CreateNewTestCaseDialog;
 import com.eviware.loadui.fx.dialogs.CloneCanvasObjectsDialog;
 
 import com.eviware.loadui.api.component.ComponentDescriptor;
-import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.api.terminal.OutputTerminal;
+import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
-import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.fx.util.ImageUtil.*;
 
 import java.util.EventObject;
 import java.util.HashMap;
 import java.lang.RuntimeException;
 import org.slf4j.LoggerFactory;
-
-import javafx.scene.Cursor;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.util.Sequences;
-import javafx.scene.image.Image;
-import javafx.geometry.BoundingBox;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Canvas" );
 
@@ -95,17 +93,19 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	def dummyNodeConnections = Rectangle { fill: Color.rgb(0,0,0,0.0001), width: 1, height: 1 };
 	def dummyNodeComponents = Rectangle { fill: Color.rgb(0,0,0,0.0001), width: 1, height: 1 };
 	def dummyNodeNotes = Rectangle { fill: Color.rgb(0,0,0,0.0001), width: 1, height: 1 };
+	def dummyNodeBalloons = Rectangle { fill: Color.rgb(0,0,0,0.0001), width: 1, height: 1 };
 	
 	protected def connectionLayer = Group { content: dummyNodeConnections };
 	protected def componentLayer = Group { content: dummyNodeComponents };
 	protected def noteLayer = Group { visible: bind showNotes, content: dummyNodeNotes };
+	protected def balloonsLayer = Group { content: dummyNodeBalloons };
 	
 	public var wireIsBeingDragged:Boolean = false;
 	
 	public def testcaseItem = modelItem as SceneItem;
 	
 	protected def layers = Group {
-		content: [ noteLayer, connectionLayer, componentLayer ]
+		content: [ noteLayer, connectionLayer, componentLayer, balloonsLayer ]
 	}
 	
 	def _showNotes = bind showNotes on replace {
@@ -115,9 +115,9 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	
 	public function setNoteLayer( front:Boolean ) {
 		layers.content = if( front )
-			[ connectionLayer, componentLayer, noteLayer ]
+			[ connectionLayer, componentLayer, balloonsLayer, noteLayer ]
 		else
-			[ noteLayer, connectionLayer, componentLayer ];
+			[ noteLayer, connectionLayer, componentLayer, balloonsLayer ];
 	}
 	
 	public var padding:Integer = 200;
@@ -529,6 +529,17 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		def node = lookupCanvasNode( modelItem.getId() );
 		node.deselect();
 		delete node from componentLayer.content;
+	}
+	
+	public function addBalloons( balloonHolder:Node ):Void {
+		log.debug( "Adding Balloons" );
+		balloonHolder.opacity = 1.0;
+		if( Sequences.indexOf( balloonsLayer.content, balloonHolder ) == -1 )
+			insert balloonHolder into balloonsLayer.content;
+	}
+	
+	public function removeBalloons( balloonHolder:Node ):Void {
+		delete balloonHolder from balloonsLayer.content;
 	}
 	
 	protected function addConnection( connection:Connection ):Void {

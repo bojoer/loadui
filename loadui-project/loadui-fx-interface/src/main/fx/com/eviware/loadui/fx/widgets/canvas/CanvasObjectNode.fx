@@ -21,6 +21,7 @@
 
 package com.eviware.loadui.fx.widgets.canvas;
 
+import javafx.animation.transition.FadeTransition;
 import javafx.scene.Node;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
@@ -93,6 +94,18 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		spacing: 14,
 		translateY: bind upperBalloonHolder.height * -1
 	};
+	
+	def lowerBalloonsFading = FadeTransition {
+     duration: 0.4s node: lowerBalloonHolder 
+     fromValue: 1.0 toValue: 0.0
+     action: function() { canvas.removeBalloons( lowerBalloonHolder ); }
+ 	};
+	
+	def upperBalloonsFading = FadeTransition {
+     duration: 0.4s node: upperBalloonHolder 
+     fromValue: 1.0 toValue: 0.0
+     action: function() { canvas.removeBalloons( upperBalloonHolder ); }
+ 	};
 	
 	var compactToggle:ToggleButton;
 	def compactToggleSelected = bind compactToggle.selected on replace {
@@ -297,7 +310,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		for( b:Node in upperBalloonHolder.content )
 		{
 			if( (b as Balloon).terminalNode != terminalNode )
-				(b as Balloon).visible = false;
+				(b as Balloon).fading.playFromStart(); //(b as Balloon).visible = false;
 		}
 	}
 	
@@ -305,15 +318,22 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		for( b:Node in lowerBalloonHolder.content )
 		{
 			if( (b as Balloon).terminalNode != terminalNode )
-				(b as Balloon).visible = false;
+				(b as Balloon).fading.playFromStart(); //(b as Balloon).visible = false;
 		}
 	}
 	
 	public function showInputBalloons():Void {
-		if( not upperBaloonsShowing )
+		if( not upperBaloonsShowing and not dragging )
 		{
+			upperBalloonsFading.stop();
+			
 			for( b:Node in upperBalloonHolder.content )
-				(b as Balloon).visible = true;
+			{
+				//(b as Balloon).visible = true;
+				(b as Balloon).fading.stop();
+				(b as Balloon).opacity = 1.0;
+				println("got here");
+			}
 			
 			def sceneBounds = localToScene( layoutBounds );
 			upperBalloonHolder.layoutX = sceneBounds.minX;
@@ -326,14 +346,17 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			};
 			
 			upperBaloonsShowing = true;
-			insert upperBalloonHolder into AppState.byName("MAIN").overlay.content;
+			
+			upperBalloonsFading.stop();
+			//insert upperBalloonHolder into AppState.byName("MAIN").overlay.content;
+			canvas.addBalloons( upperBalloonHolder );
 			
 			// Hack to force the balloons to layout properly the first time.
 			if( not inputBalloonsHasBeenShown )
 			{
 				inputBalloonsHasBeenShown = true;
 				Timeline{ 
-					keyFrames: [ KeyFrame{ time: 25ms, action: function() { hideInputBalloons(); } },
+					keyFrames: [ KeyFrame{ time: 25ms, action: function() { hideInputBalloons(false); } },
 						KeyFrame{ time: 50ms, action: function() { showInputBalloons(); } } ]
 		 		}.playFromStart();
 		 		
@@ -342,10 +365,17 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	}
 	
 	public function showOutputBalloons():Void {
-		if( not lowerBaloonsShowing )
+		if( not lowerBaloonsShowing and not dragging )
 		{
+			lowerBalloonsFading.stop();
+			
 			for( b:Node in lowerBalloonHolder.content )
-				(b as Balloon).visible = true;
+			{
+				//(b as Balloon).visible = true;
+				(b as Balloon).fading.stop();
+				(b as Balloon).opacity = 1.0;
+				println("got here");
+			}
 			
 			def sceneBounds = localToScene( layoutBounds );
 			lowerBalloonHolder.layoutX = sceneBounds.minX;
@@ -358,14 +388,16 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			};
 			
 			lowerBaloonsShowing = true;
-			insert lowerBalloonHolder into AppState.byName("MAIN").overlay.content;
+			lowerBalloonsFading.stop();
+			//insert lowerBalloonHolder into AppState.byName("MAIN").overlay.content;
+			canvas.addBalloons( lowerBalloonHolder );
 			
 			// Hack to force the balloons to layout properly the first time.
 			if( not outputBalloonsHasBeenShown )
 			{
 				outputBalloonsHasBeenShown = true;
 				Timeline{ 
-					keyFrames: [ KeyFrame{ time: 25ms, action: function() { hideOutputBalloons(); } },
+					keyFrames: [ KeyFrame{ time: 25ms, action: function() { hideOutputBalloons(false); } },
 						KeyFrame{ time: 50ms, action: function() { showOutputBalloons(); } } ]
 		 		}.playFromStart();
 	 		}
@@ -373,12 +405,34 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	}
 	
 	public function hideInputBalloons():Void {
-		delete upperBalloonHolder from AppState.byName("MAIN").overlay.content;
+		hideInputBalloons( true );
+	}
+	
+	public function hideInputBalloons( fadeOut:Boolean ):Void {
+		if( fadeOut )
+		{
+			upperBalloonsFading.playFromStart();
+    	}
+    	else
+    	{
+			canvas.removeBalloons( upperBalloonHolder );
+		}
 		upperBaloonsShowing = false;
 	}
 	
 	public function hideOutputBalloons():Void {
-		delete lowerBalloonHolder from AppState.byName("MAIN").overlay.content;
+		hideOutputBalloons( true );
+	}
+	
+	public function hideOutputBalloons( fadeOut:Boolean ):Void {
+		if( fadeOut )
+		{
+			lowerBalloonsFading.playFromStart();
+    	}
+    	else
+    	{
+    		canvas.removeBalloons( lowerBalloonHolder );
+    	}
 		lowerBaloonsShowing = false;
 	}
 	

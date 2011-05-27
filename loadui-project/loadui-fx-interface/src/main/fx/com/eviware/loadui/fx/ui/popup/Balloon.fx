@@ -30,6 +30,7 @@ import com.eviware.loadui.fx.ui.node.BaseMixin;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.BaseNode.*;
 
+import javafx.animation.transition.FadeTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.scene.text.Font;
@@ -63,6 +64,10 @@ public class Balloon extends VBox {
 //	def tooltipNode = Group {
 //		content: vBox
 //	}
+	public def fading = FadeTransition {
+     duration: 0.4s node: this 
+     fromValue: 1.0 toValue: 0.0
+ 	};
 	
 	var x:Number;
 	var y:Number;
