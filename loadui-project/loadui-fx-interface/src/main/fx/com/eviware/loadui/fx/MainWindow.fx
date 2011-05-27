@@ -124,9 +124,9 @@ public class MainWindow {
 	public-read var navigator:NavigationPanel;
 	
 	/**
-	 * Called once the bean is fully initialized (all the properties defined in the Spring
-	 * configuration set through the setters). It sets up the main window.
-	 */
+	* Called once the bean is fully initialized (all the properties defined in the Spring
+	* configuration set through the setters). It sets up the main window.
+	*/
 	function initialize():Void {
 	
 		//change classloader of JavaFX thread to this thread's (Spring's) classloader
@@ -141,18 +141,20 @@ public class MainWindow {
 		//Set the layer to place items being dragged into.
 		
 		//Load workspace
-		workspace = if( workspaceProvider.isWorkspaceLoaded() )
-			workspaceProvider.getWorkspace()
-		else //TODO: Use a global configuration file to select workspace.
+		workspace = if( workspaceProvider.isWorkspaceLoaded() ) {
+			workspaceProvider.getWorkspace();
+		} else { //TODO: Use a global configuration file to select workspace.
 			workspaceProvider.loadDefaultWorkspace();
+		}
 		
 		//if workspace file does not exists it must be after clean install, so add a sample project
 		if( not workspace.getWorkspaceFile().exists() ) {
-		    def samplesDir = new File("samples");
-            def sampleFile = new File(samplesDir,"getting-started-project.xml");
-             if( sampleFile.exists() ) {
-                 workspace.importProject(sampleFile, true);
-			 }
+			def samplesDir = new File("samples");
+			def sampleFile = new File(samplesDir,"getting-started-project.xml");
+			if( sampleFile.exists() ) {
+				def projectRef = workspace.importProject(sampleFile, true);
+				projectRef.setEnabled(false);
+			}
 		}
 		
 		//InspectorPanel
@@ -197,23 +199,23 @@ public class MainWindow {
 		appState.insertInto( projectCanvas = ProjectCanvas { width: bind scene.width, height: bind scene.height }, PROJECT_FRONT );
 		appState.insertInto( navigator = NavigationPanel { canvas: projectCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( inspectors.height + navigator.height ) }, PROJECT_FRONT );
 		//def projectToolbar:Toolbar = Toolbar {
-						//	layoutY: 90
-						//	height: bind scene.height - inspectors.height - 100
-						//};
-		
-		
-						projectToolbar.addItem( TestCaseToolbarItem {} );
-						projectToolbar.addItem( NoteToolbarItem {} );
+		//	layoutY: 90
+		//	height: bind scene.height - inspectors.height - 100
+		//};
+
+
+		projectToolbar.addItem( TestCaseToolbarItem {} );
+		projectToolbar.addItem( NoteToolbarItem {} );
 						
 		appState.insertInto( projectToolbar, PROJECT_FRONT );
 				
 		//Set up the back Project view
 	//	appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/team.jpg"
-	//	                                                width: 800
-	//	                                                height: 600
-	//	                                                preserveRatio: false } }, PROJECT_BACK );
+	//													width: 800
+	//													height: 600
+	//													preserveRatio: false } }, PROJECT_BACK );
 		appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/grid.png" }, clip: Rectangle{ width: bind scene.width, height: bind scene.height } }, TESTCASE_FRONT );
-	   appState.insertInto( testcaseCanvas = Canvas { width: bind scene.width, height: bind scene.height }, TESTCASE_FRONT );	
+		appState.insertInto( testcaseCanvas = Canvas { width: bind scene.width, height: bind scene.height }, TESTCASE_FRONT );	
 		appState.insertInto( navigator = NavigationPanel { canvas: testcaseCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( inspectors.height + navigator.height ) }, TESTCASE_FRONT );
 		testcaseToolbar.addItem( NoteToolbarItem {} );
 		appState.insertInto( testcaseToolbar, TESTCASE_FRONT );
@@ -232,20 +234,21 @@ public class MainWindow {
 			SplashController.closeSplash();
 			projectList.checkExistingProjects();
 		
-		if( workspace.getAttribute( GettingStartedWizard.SHOW_GETTING_STARTED, "true" ) == "true" )
-			GettingStartedWizard {
-				x: scene.width/3
-			    y: scene.height/4
-			}.show();
-		});
+			if( workspace.getAttribute( GettingStartedWizard.SHOW_GETTING_STARTED, "true" ) == "true" ) {
+				GettingStartedWizard {
+					x: scene.width/3
+					y: scene.height/4
+				}.show();
+			}
+		} );
 			
 		workspace.addEventListener( BaseEvent.class, new ExecutionAlertListener() );
 	}
 	
 	/**
-	 * Called when the JavaFX UI bundle is stopped. Generally this will be once the window 
-	 * has been closed, JavaFX Nodes may already be destroyed.
-	 */
+	* Called when the JavaFX UI bundle is stopped. Generally this will be once the window 
+	* has been closed, JavaFX Nodes may already be destroyed.
+	*/
 	public function destroy():Void {
 		log.info( "Shutting down..." );
 		for( projectRef in workspace.getProjectRefs() )
@@ -257,36 +260,33 @@ public class MainWindow {
 }
 
 class ExecutionAlertListener extends EventHandler {
-    var dialogIsOpen:AtomicBoolean = new AtomicBoolean( false );
-    
-    override function handleEvent( e ) { 
+	var dialogIsOpen:AtomicBoolean = new AtomicBoolean( false );
+	
+	override function handleEvent( e ) { 
 		def event:BaseEvent = e as BaseEvent;
 		var msg:String = null;
 		def path:String = (workspace.getProperty( WorkspaceItem.STATISTIC_RESULTS_PATH ).getValue() as File).getAbsolutePath();
-		def currentPathMsg:String = "The directory that loadUI is configured to use is:\n    {path}";
-		if( event.getKey().equals("lowDiskspace") )
-		{
+		def currentPathMsg:String = "The directory that loadUI is configured to use is:\n	{path}";
+		if( event.getKey().equals("lowDiskspace") ) {
 			msg = "The project had to be stopped since there was not enough disk space to record statistics.\n{currentPathMsg}"
-		} else if ( event.getKey().equals("genericDiskProblem") )
-		{
+		} else if ( event.getKey().equals("genericDiskProblem") ) {
 			msg = "The project had to be stopped since loadUI was unable to record statistics to disk.\n{currentPathMsg}"
 		}
 		if( msg != null ) {
 			runInFxThread( function():Void {
-				
 				if( not dialogIsOpen.get() )
 				{
 					dialogIsOpen.set( true );
 					def dialogRef: Dialog = Dialog {
 						noCancel: true
-				        modal: true
-				        title: "Disc problem"
-				        showPostInit: true
-				        closable: true
-				        helpUrl: "http://loadui.org/Getting-results/managing-stored-results.html#2-change-settings"
-				        content: Text {
-				            content: msg
-				        }
+						modal: true
+						title: "Disc problem"
+						showPostInit: true
+						closable: true
+						helpUrl: "http://loadui.org/Getting-results/managing-stored-results.html#2-change-settings"
+						content: Text {
+							content: msg
+						}
 						onOk: function() {
 							dialogRef.close();
 							dialogIsOpen.set( false );

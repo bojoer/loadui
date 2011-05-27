@@ -120,7 +120,7 @@ public class GettingStartedWizard {
 						                 		AppState.byName("MAIN").blockingTask(
 						                 			function():Void {
 						                 				def projectRef:ProjectRef = workspace.importProject(sampleFile, true);
-															projectRef.setEnabled(true);
+															//projectRef.setEnabled(true);
 															AppState.byName("MAIN").setActiveCanvas( projectRef.getProject() );
 						                 			}, null, "Loading Project."
 						                 		);

@@ -48,6 +48,8 @@ import com.javafx.preview.control.MenuButton;
 public class MainWindowButton extends Group {
 	public-init var wc:WindowController;
 	
+	var menuButton:MenuButton;
+	
 	init {
 		content = [
 			Ellipse {
@@ -65,7 +67,7 @@ public class MainWindowButton extends Group {
 						Stop { offset: 0.45, color: Color.TRANSPARENT }
 					]
 				}
-			}, MenuButton {
+			}, menuButton = MenuButton {
 				styleClass: "loadui-menu-button"
 				graphic: ImageView {
 						image: Image { url: "{__ROOT__}images/png/main-button-no-shadow.png" }
@@ -112,5 +114,9 @@ public class MainWindowButton extends Group {
 				]
 			}
 		]
+	}
+	
+	postinit {
+		FX.deferAction( function() { menuButton.show(); FX.deferAction( function() { menuButton.hide() } ) } );
 	}
 }
