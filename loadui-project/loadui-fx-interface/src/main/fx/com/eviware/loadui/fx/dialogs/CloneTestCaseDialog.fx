@@ -55,8 +55,9 @@ public class CloneTestCaseDialog {
 						dialog.close();
 						if( distribute.value as Boolean ) {
 							def project = (MainWindow.instance.projectCanvas.canvasItem as ProjectItem);
-							for( agent in project.getAgentsAssignedTo(canvasObject as SceneItem) )
-								project.assignScene(canvasObject as SceneItem, agent);
+							for( agent in project.getAgentsAssignedTo(canvasObject as SceneItem) ){
+								project.assignScene(copy as SceneItem, agent);
+							}
 						}
 						if( open.value as Boolean ) {
 							AppState.byName("MAIN").setActiveCanvas( copy.getCanvas() );
