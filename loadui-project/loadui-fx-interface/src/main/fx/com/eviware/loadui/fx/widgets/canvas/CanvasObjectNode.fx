@@ -161,6 +161,9 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	
 	public-read var body:VBox;
 	
+	var outputBalloonsHasBeenShown:Boolean = false;
+	var inputBalloonsHasBeenShown:Boolean = false;
+	
 	override function release() {
 		canvasObject = null;
 	}
@@ -201,11 +204,11 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		{
 			insert Balloon { terminalNode: tn } into upperBalloonHolder.content;
 		}
-		
-		FX.deferAction( function() { showOutputBalloons(); FX.deferAction( function() { hideOutputBalloons(); } ); } );
-		
-		
 	}
+	
+//	postinit {
+////		FX.deferAction( function() { showOutputBalloons(); FX.deferAction( function() { hideOutputBalloons(); } ); } );
+//	}
 	
 	override function create():Node {
 		var menuButton:MenuButton;
@@ -324,6 +327,17 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			
 			upperBaloonsShowing = true;
 			insert upperBalloonHolder into AppState.byName("MAIN").overlay.content;
+			
+			// Hack to force the balloons to layout properly the first time.
+			if( not inputBalloonsHasBeenShown )
+			{
+				inputBalloonsHasBeenShown = true;
+				Timeline{ 
+					keyFrames: [ KeyFrame{ time: 25ms, action: function() { hideInputBalloons(); } },
+						KeyFrame{ time: 50ms, action: function() { showInputBalloons(); } } ]
+		 		}.playFromStart();
+		 		
+	 		}
 		}
 	}
 	
@@ -346,10 +360,15 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			lowerBaloonsShowing = true;
 			insert lowerBalloonHolder into AppState.byName("MAIN").overlay.content;
 			
-//			Timeline{ 
-//				keyFrames: [ KeyFrame{ time: 500ms, action: function() { hideInputBalloons(); } },
-//					KeyFrame{ time: 750ms, action: function() { showInputBalloons(); } } ]
-//	 		}.playFromStart();
+			// Hack to force the balloons to layout properly the first time.
+			if( not outputBalloonsHasBeenShown )
+			{
+				outputBalloonsHasBeenShown = true;
+				Timeline{ 
+					keyFrames: [ KeyFrame{ time: 25ms, action: function() { hideOutputBalloons(); } },
+						KeyFrame{ time: 50ms, action: function() { showOutputBalloons(); } } ]
+		 		}.playFromStart();
+	 		}
 		}
 	}
 	

@@ -100,6 +100,8 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	protected def componentLayer = Group { content: dummyNodeComponents };
 	protected def noteLayer = Group { visible: bind showNotes, content: dummyNodeNotes };
 	
+	public var wireIsBeingDragged:Boolean = false;
+	
 	public def testcaseItem = modelItem as SceneItem;
 	
 	protected def layers = Group {

@@ -120,13 +120,16 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 		addMouseHandler(
 			MOUSE_ENTERED,
 			function( e:MouseEvent ):Void {
-				if( terminal instanceof InputTerminal )
+				if( not canvas.wireIsBeingDragged )
 				{
-					canvasObjectNode.showInputBalloons();
-				}
-				else
-				{
-					canvasObjectNode.showOutputBalloons();
+					if( terminal instanceof InputTerminal )
+					{
+						canvasObjectNode.showInputBalloons();
+					}
+					else
+					{
+						canvasObjectNode.showOutputBalloons();
+					}
 				}
 			}
 		);
@@ -134,7 +137,7 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 		addMouseHandler(
 			MOUSE_EXITED,
 			function( e:MouseEvent ):Void {
-				if( not isDragging )
+				if( not isDragging and not canvas.wireIsBeingDragged )
 				{
 					if( terminal instanceof InputTerminal )
 					{
@@ -270,6 +273,7 @@ class TerminalDraggable extends BaseNode, Draggable {
 	
 	override var onGrab = function():Void {
 		isDragging = true;
+		canvas.wireIsBeingDragged = true;
 		
 		if( terminal instanceof InputTerminal )
 		{
@@ -330,6 +334,7 @@ class TerminalDraggable extends BaseNode, Draggable {
 	
 	override var onRelease = function():Void {
 		isDragging = false;
+		canvas.wireIsBeingDragged = false;
 		
 		if( terminal instanceof InputTerminal )
 		{
