@@ -104,22 +104,11 @@ public class Balloon extends VBox {
 	init {
 		
 		def header:String = terminalNode.terminal.getLabel();
-		var text:String = "no description";
-		
-		if (terminalNode.terminal.getDescription() != null) {
-			text = terminalNode.terminal.getDescription();
-		}
 		
 		def headerNode:Label = Label {
 			textWrap: false
 			text: header
 			style: "-fx-font-weight: bold; -fx-font-size: 14"
-		};
-		
-		def textNode:Label = Label {
-			textWrap: true
-			text: text
-			style: "-fx-font-size: 14"
 		};
 		
 		if( terminalNode.terminal instanceof OutputTerminal )
@@ -138,9 +127,7 @@ public class Balloon extends VBox {
 					content:
 					[
 						innerVBox=VBox {
-							content: [
-								headerNode, 
-								textNode], 
+							content: headerNode, 
 							spacing: 6,
 							layoutInfo: LayoutInfo { 
 								margin: Insets { top: 10, right: 10, bottom: 10, left: 10 }, 
@@ -154,6 +141,22 @@ public class Balloon extends VBox {
 
 			]
 		} into content;
+		
+		
+		var text:String = null;
+		
+		if ( terminalNode.terminal.getDescription() != null ) {
+			text = terminalNode.terminal.getDescription();
+		}
+		
+		if( text != null )
+		{
+			insert Label {
+				textWrap: true
+				text: text
+				style: "-fx-font-size: 14"
+			} into innerVBox.content;
+		}
 		
 		if( terminalNode.terminal instanceof InputTerminal )
 		{

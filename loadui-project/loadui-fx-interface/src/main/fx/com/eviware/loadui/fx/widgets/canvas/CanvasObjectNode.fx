@@ -322,62 +322,65 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		}
 	}
 	
-	public function showInputBalloons():Void {
+	public function showInputBalloons( hoveredTerminal:TerminalNode ):Void {
 		if( not upperBaloonsShowing and not dragging )
 		{
 			upperBalloonsFading.stop();
 			
 			for( b:Node in upperBalloonHolder.content )
 			{
-				//(b as Balloon).visible = true;
 				(b as Balloon).fading.stop();
 				(b as Balloon).opacity = 1.0;
 				println("got here");
 			}
 			
-			def sceneBounds = localToScene( layoutBounds );
+			for( b:Node in upperBalloonHolder.content )
+			{
+				(b as Balloon).fading.stop();
+				
+				b.opacity =	if( (b as Balloon).terminalNode == hoveredTerminal or hoveredTerminal == null ) 1.0	else 0.5;
+
+				println("got here");
+			}
+			
+			def sceneBounds = localToParent( layoutBounds );
 			upperBalloonHolder.layoutX = sceneBounds.minX;
 			upperBalloonHolder.layoutY = sceneBounds.minY + 6;
 			
 			upperBalloonHolder.padding = Insets { right: if( selected ) 30 else 20, left: if( selected ) 30 else 20 }
 			
-			upperBalloonHolder.layoutInfo = LayoutInfo { 
-				width: sceneBounds.width;
-			};
+			upperBalloonHolder.layoutInfo = LayoutInfo {	width: sceneBounds.width };
 			
 			upperBaloonsShowing = true;
-			
 			upperBalloonsFading.stop();
-			//insert upperBalloonHolder into AppState.byName("MAIN").overlay.content;
 			canvas.addBalloons( upperBalloonHolder );
 			
 			// Hack to force the balloons to layout properly the first time.
 			if( not inputBalloonsHasBeenShown )
 			{
 				inputBalloonsHasBeenShown = true;
-				Timeline{ 
+				Timeline{
 					keyFrames: [ KeyFrame{ time: 25ms, action: function() { hideInputBalloons(false); } },
-						KeyFrame{ time: 50ms, action: function() { showInputBalloons(); } } ]
+						KeyFrame{ time: 50ms, action: function() { showInputBalloons( hoveredTerminal ); } } ]
 		 		}.playFromStart();
 		 		
 	 		}
 		}
 	}
 	
-	public function showOutputBalloons():Void {
+	public function showOutputBalloons( hoveredTerminal:TerminalNode ):Void {
 		if( not lowerBaloonsShowing and not dragging )
 		{
 			lowerBalloonsFading.stop();
 			
 			for( b:Node in lowerBalloonHolder.content )
 			{
-				//(b as Balloon).visible = true;
 				(b as Balloon).fading.stop();
-				(b as Balloon).opacity = 1.0;
-				println("got here");
+				
+				b.opacity =	if( (b as Balloon).terminalNode == hoveredTerminal or hoveredTerminal == null ) 1.0	else 0.5;
 			}
 			
-			def sceneBounds = localToScene( layoutBounds );
+			def sceneBounds = localToParent( layoutBounds );
 			lowerBalloonHolder.layoutX = sceneBounds.minX;
 			lowerBalloonHolder.layoutY = sceneBounds.maxY - 22;
 			
@@ -389,7 +392,6 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			
 			lowerBaloonsShowing = true;
 			lowerBalloonsFading.stop();
-			//insert lowerBalloonHolder into AppState.byName("MAIN").overlay.content;
 			canvas.addBalloons( lowerBalloonHolder );
 			
 			// Hack to force the balloons to layout properly the first time.
@@ -398,7 +400,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 				outputBalloonsHasBeenShown = true;
 				Timeline{ 
 					keyFrames: [ KeyFrame{ time: 25ms, action: function() { hideOutputBalloons(false); } },
-						KeyFrame{ time: 50ms, action: function() { showOutputBalloons(); } } ]
+						KeyFrame{ time: 50ms, action: function() { showOutputBalloons( hoveredTerminal ); } } ]
 		 		}.playFromStart();
 	 		}
 		}

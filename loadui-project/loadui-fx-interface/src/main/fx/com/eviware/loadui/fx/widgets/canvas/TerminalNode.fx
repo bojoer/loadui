@@ -124,11 +124,11 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 				{
 					if( terminal instanceof InputTerminal )
 					{
-						canvasObjectNode.showInputBalloons();
+						canvasObjectNode.showInputBalloons( this );
 					}
 					else
 					{
-						canvasObjectNode.showOutputBalloons();
+						canvasObjectNode.showOutputBalloons( this );
 					}
 				}
 			}
@@ -278,13 +278,13 @@ class TerminalDraggable extends BaseNode, Draggable {
 		if( terminal instanceof InputTerminal )
 		{
 			canvasObjectNode.hideAllInputBalloonsButThis( tNode );
-			canvas.showOutputBalloons();
+			canvas.showOutputBalloons( canvasObjectNode );
 			outputAccept = true;
 		}
 		else
 		{
 			canvasObjectNode.hideAllOutputBalloonsButThis( tNode );
-			canvas.showInputBalloons();
+			canvas.showInputBalloons( canvasObjectNode );
 			inputAccept = true;
 		}
 		

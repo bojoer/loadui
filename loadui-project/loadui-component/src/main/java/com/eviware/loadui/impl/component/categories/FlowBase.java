@@ -55,7 +55,7 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 	private final Runnable activityRunnable;
 	private long lastMsg;
 	private ScheduledFuture<?> activityFuture;
-	private ArrayList<Counter> counters = new ArrayList<Counter>();
+	private final ArrayList<Counter> counters = new ArrayList<Counter>();
 
 	/**
 	 * Constructs a FlowBase.
@@ -69,7 +69,7 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 		executor = BeanInjector.getBean( ScheduledExecutorService.class );
 
 		context.setActivityStrategy( ActivityStrategies.ON );
-		incomingTerminal = context.createInput( INCOMING_TERMINAL, "Incoming Data" );
+		incomingTerminal = context.createInput( INCOMING_TERMINAL, "Incoming messages" );
 
 		for( int i = 0; i < 10; i++ )
 			counters.add( getContext().getCounter( "out_" + i ) );

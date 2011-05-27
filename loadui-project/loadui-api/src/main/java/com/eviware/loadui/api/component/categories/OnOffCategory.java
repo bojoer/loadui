@@ -40,6 +40,11 @@ public interface OnOffCategory extends ComponentBehavior
 	public static final String STATE_TERMINAL = "stateTerminal";
 
 	/**
+	 * The description of the InputTerminal.
+	 */
+	public static final String STATE_TERMINAL_DESCRIPTION = "Connect to a Scheduler to turn this component On or Off.";
+
+	/**
 	 * The key to be used to set the stateProperty for incoming messages.
 	 */
 	public static final String ENABLED_MESSAGE_PARAM = "Enabled";

@@ -146,16 +146,22 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		FX.deferAction( function():Void { refreshComponents() } );
 	}
 	
-	public function showInputBalloons()
+	public function showInputBalloons( hoveredCanvasObjectNode:CanvasObjectNode )
 	{
 		for( c:CanvasObjectNode in components )
-			c.showInputBalloons();
+		{
+			if( c != hoveredCanvasObjectNode )
+				c.showInputBalloons( null );
+		}
 	}
 	
-	public function showOutputBalloons()
+	public function showOutputBalloons( hoveredCanvasObjectNode:CanvasObjectNode )
 	{
 		for( c:CanvasObjectNode in components )
-			c.showOutputBalloons();
+		{
+			if( c != hoveredCanvasObjectNode )
+				c.showOutputBalloons( null );
+		}
 	}
 	
 	public function hideInputBalloons()

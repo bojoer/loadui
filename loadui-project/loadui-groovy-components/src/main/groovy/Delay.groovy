@@ -39,7 +39,7 @@ waitingCount = 0
 display = new DelayedFormattedString( '%d ms', 500, 0 )
 waitingDisplay = new DelayedFormattedString( '%d', 500, value { waitingCount } )
  
-output = createOutput( 'output', "Message Output" )
+output = createOutput( 'output', 'Delayed messages', 'Incoming messages are outputted here after being delayed.' )
  
 createProperty('delay', Long, 0)
 createProperty('selected', String, UNIFORM)

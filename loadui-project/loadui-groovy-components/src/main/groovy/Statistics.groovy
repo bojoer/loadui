@@ -67,8 +67,8 @@ AGENT_DATA_TTL = 5000
 
 executor = Executors.newSingleThreadScheduledExecutor()
 
-createOutput( 'output', 'Statistics Output')
-statisticsInput = createInput( 'statistics', 'Runner Statistics')
+createOutput( 'output', 'Statistic data', 'Outputs the generated statistic data as text. Useful to connect e.g. to an Ouput or Assertion component.' )
+statisticsInput = createInput( 'statistics', 'Runner Statistics', "Connect to a Runner's Statistics Terminal to get general statistics from the Runner." )
 
 //Properties
 createProperty( 'period', Long, 1 )
