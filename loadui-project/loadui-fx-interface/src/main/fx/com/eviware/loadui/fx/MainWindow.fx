@@ -147,6 +147,21 @@ public class MainWindow {
 			workspaceProvider.loadDefaultWorkspace();
 		}
 		
+		//if workspace file does not exists it must be after clean install, so add a sample project
+		if( not workspace.getWorkspaceFile().exists() ) {
+			def samplesDir = new File("samples");
+			def sampleFile = new File(samplesDir,"getting-started-project.xml");
+			if( sampleFile.exists() ) {
+				def projectRef = workspace.importProject(sampleFile, true);
+				//FX.deferAction( function() {
+					//projectCanvas.generateMiniatures();
+					//projectRef.getProject().save();
+					projectRef.setAttribute( "miniature", projectRef.getProject().getAttribute( "miniature", "" ) );
+					projectRef.setEnabled( false );
+				//} );
+			}
+		}
+		
 		//InspectorPanel
 		log.debug( "Initializing InspectorPanel" );
 		inspectors = InspectorPanelControl {
@@ -231,20 +246,6 @@ public class MainWindow {
 				}.show();
 			}
 		} );
-		
-		//if workspace file does not exists it must be after clean install, so add a sample project
-		if( not workspace.getWorkspaceFile().exists() ) {
-			def samplesDir = new File("samples");
-			def sampleFile = new File(samplesDir,"getting-started-project.xml");
-			if( sampleFile.exists() ) {
-				def projectRef = workspace.importProject(sampleFile, true);
-				FX.deferAction( function() {
-					projectCanvas.generateMiniatures();
-					projectRef.getProject().save();
-					projectRef.setEnabled( false );
-				} );
-			}
-		}
 			
 		workspace.addEventListener( BaseEvent.class, new ExecutionAlertListener() );
 	}
