@@ -44,6 +44,7 @@ import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Stack;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.FontWeight;
 import javafx.util.Math;
 
 import com.sun.javafx.scene.layout.Region;
@@ -108,7 +109,8 @@ public class Balloon extends VBox {
 		def headerNode:Label = Label {
 			textWrap: false
 			text: header
-			style: "-fx-font-weight: bold; -fx-font-size: 14"
+			styleClass: "balloon-header"
+			//font: Font{ size: 11, embolden: true }
 		};
 		
 		if( terminalNode.terminal instanceof OutputTerminal )
@@ -154,7 +156,8 @@ public class Balloon extends VBox {
 			insert Label {
 				textWrap: true
 				text: text
-				style: "-fx-font-size: 14"
+				//font: Font { size: 11 }
+				styleClass: "balloon-text"
 			} into innerVBox.content;
 		}
 		
