@@ -1212,3 +1212,12 @@
     -fx-background-radius: 10;
     -fx-shape: "M0 3 L4 0 L8 3 Z";
 }
+
+.balloon-header {
+	-fx-font-size: 14;
+	-fx-font-weight: bold;
+}
+
+.balloon-text {
+	-fx-font-size: 14;
+}
