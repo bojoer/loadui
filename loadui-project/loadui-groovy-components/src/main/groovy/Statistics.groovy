@@ -69,6 +69,8 @@ executor = Executors.newSingleThreadScheduledExecutor()
 
 createOutput( 'output', 'Statistic data', 'Outputs the generated statistic data as text. Useful to connect e.g. to an Ouput or Assertion component.' )
 statisticsInput = createInput( 'statistics', 'Runner Statistics', "Connect to a Runner's Statistics Terminal to get general statistics from the Runner." )
+inputTerminal.label = 'Input values'
+inputTerminal.description = 'Messages sent here will be aggregated into statistics.'
 
 //Properties
 createProperty( 'period', Long, 1 )
