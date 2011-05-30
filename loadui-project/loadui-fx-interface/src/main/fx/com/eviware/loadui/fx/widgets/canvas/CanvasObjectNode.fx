@@ -246,55 +246,55 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 								tooltip: Tooltip { text: bind label }
 								layoutInfo: LayoutInfo { width: 50, hfill: true, hgrow: Priority.ALWAYS }
 							}, Separator { //Gap
-								styleClass: ""
-								vertical: true
-								layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.SOMETIMES }
+									styleClass: ""
+									vertical: true
+									layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.SOMETIMES }
 							}, compactToggle = ToggleButton {
-								styleClass: "compact-button"
-								tooltip: Tooltip { text: ##[COMPACT]"Toggle compact mode" }
-								graphic: Region { styleClass: "button-icon" }
-								selected: compact
+									styleClass: "compact-button"
+									tooltip: Tooltip { text: ##[COMPACT]"Toggle compact mode" }
+									graphic: Region { styleClass: "button-icon" }
+									selected: compact
 							}
 						]
 					}, toolbar = HBox {
-						styleClass: "canvas-object-toolbar"
-						visible: bind not compact
-						managed: bind not compact
-						nodeVPos: VPos.CENTER
-						spacing: 3
-						layoutInfo: LayoutInfo { height: 19, maxHeight: 19, margin: Insets { left: 10, bottom: -9 } }
-						content: [
-							menuButton = MenuButton {
-								styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
-								text: ##[MENU]"Menu"
-								tooltip: Tooltip { text: bind label }
-								items: bind menuItems
-							}, Separator { //Gap
-								vertical: false
-								styleClass: ""
-								layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.ALWAYS }
-							}, Separator {
-								vertical: true
-							}, Button {
-								graphic: FXDNode { url: "{__ROOT__}images/component_wrench_icon.fxz" }
-								tooltip: Tooltip { text: ##[SETTINGS]"Settings" }
-								action: function() { onSettings() }
-							}, Separator {
-								vertical: true
-							}, Button {
-								graphic: FXDNode { url: "{__ROOT__}images/component_help_icon.fxz" }
-								tooltip: Tooltip { text: ##[HELP]"Open Help page" }
-								action: function() { openURL( modelItem.getHelpUrl() ) }
-							}
-						]
+							styleClass: "canvas-object-toolbar"
+							visible: bind not compact
+							managed: bind not compact
+							nodeVPos: VPos.CENTER
+							spacing: 3
+							layoutInfo: LayoutInfo { height: 19, maxHeight: 19, margin: Insets { left: 10, bottom: -9 } }
+							content: [
+								menuButton = MenuButton {
+									styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
+									text: ##[MENU]"Menu"
+									tooltip: Tooltip { text: bind label }
+									items: bind menuItems
+								}, Separator { //Gap
+									vertical: false
+									styleClass: ""
+									layoutInfo: LayoutInfo { height: 0, hfill: true, hgrow: Priority.ALWAYS }
+								}, Separator {
+									vertical: true
+								}, Button {
+									graphic: FXDNode { url: "{__ROOT__}images/component_wrench_icon.fxz" }
+									tooltip: Tooltip { text: ##[SETTINGS]"Settings" }
+									action: function() { onSettings() }
+								}, Separator {
+									vertical: true
+								}, Button {
+									graphic: FXDNode { url: "{__ROOT__}images/component_help_icon.fxz" }
+									tooltip: Tooltip { text: ##[HELP]"Open Help page" }
+									action: function() { openURL( modelItem.getHelpUrl() ) }
+								}
+							]
 					}, body = VBox {
-						layoutInfo: LayoutInfo { hfill: true, vfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.ALWAYS, margin: Insets { top: 10, bottom: 10 } }
-						nodeHPos: HPos.CENTER
-						nodeVPos: VPos.CENTER
+							layoutInfo: LayoutInfo { hfill: true, vfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.ALWAYS, margin: Insets { top: 10, bottom: 10 } }
+							nodeHPos: HPos.CENTER
+							nodeVPos: VPos.CENTER
 					}, HBox {
-						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, height: 31, maxHeight: 31, margin: Insets { top: 4, bottom: -14 } }
-						nodeHPos: HPos.CENTER
-						content: bind outputs
+							layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, height: 31, maxHeight: 31, margin: Insets { top: 4, bottom: -14 } }
+							nodeHPos: HPos.CENTER
+							content: bind outputs
 					}
 				]
 			}
@@ -331,16 +331,12 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			{
 				(b as Balloon).fading.stop();
 				(b as Balloon).opacity = 1.0;
-				println("got here");
 			}
 			
 			for( b:Node in upperBalloonHolder.content )
 			{
 				(b as Balloon).fading.stop();
-				
 				b.opacity =	if( (b as Balloon).terminalNode == hoveredTerminal or hoveredTerminal == null ) 1.0	else 0.5;
-
-				println("got here");
 			}
 			
 			def sceneBounds = localToParent( layoutBounds );
@@ -376,7 +372,6 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			for( b:Node in lowerBalloonHolder.content )
 			{
 				(b as Balloon).fading.stop();
-				
 				b.opacity =	if( (b as Balloon).terminalNode == hoveredTerminal or hoveredTerminal == null ) 1.0	else 0.5;
 			}
 			

@@ -64,7 +64,7 @@ public class ConnectionNode extends Selectable, Deletable, BaseNode {
 	var endX:Number;
 	var endY:Number;
 	
-	override var blocksMouse = false;
+	override var blocksMouse = true;
 	
 	override var onMouseClicked = function( e:MouseEvent ) {
 		if( e.button == MouseButton.PRIMARY ) {

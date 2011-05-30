@@ -538,7 +538,6 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	}
 	
 	public function addBalloons( balloonHolder:Node ):Void {
-		log.debug( "Adding Balloons" );
 		balloonHolder.opacity = 1.0;
 		if( Sequences.indexOf( balloonsLayer.content, balloonHolder ) == -1 )
 			insert balloonHolder into balloonsLayer.content;
