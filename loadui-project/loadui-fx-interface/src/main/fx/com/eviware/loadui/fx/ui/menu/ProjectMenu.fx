@@ -208,7 +208,7 @@ public class ProjectMenu extends HBox {
 								styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
 								layoutInfo: LayoutInfo { hshrink: Priority.SOMETIMES, minWidth: 100, margin: Insets { left: -4 } }
 								text: bind projectLabel
-								font: bind projectMenuOpenedFont
+								font: projectMenuOpenedFont
 								items: [
 									MenuItem {
 				                    text: "New TestCase"

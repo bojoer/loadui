@@ -115,14 +115,8 @@ public class ExecutionSelector extends Group {
    var popupWidth: Number = 411;
    var popupHeight: Number = 442;
    
-	def openButton:MenubarButton = MenubarButton {
-		shape: "M0,5 L3,5 3,8 5,8 5,5 8,5 8,3 5,3 5,0 3,0 3,3 0,3 Z"
-		action: function():Void { menu.show(openButton, HPos.CENTER, VPos.BOTTOM, -201 + openButton.layoutBounds.width / 2, 6); }
-	}
-
-	
-   public-read var leftLabel: Label = Label {}
-   var rightLabel: Label = Label {}
+   public-read var leftLabel: Label = Label {};
+   var rightLabel: Label = Label { styleClass: "menu-button-no-hover", font: Font { size:18 } };
    
    function setLabels(): Void {
       if(leftExecution == null or isCurrentExecution(leftExecution))
@@ -142,6 +136,7 @@ public class ExecutionSelector extends Group {
    }
    
    var menu: PopupMenu;
+   var openButton:MenuButton;
    var item: CustomMenuItem;
    
 	override var styleClass = "execution-selector";
@@ -367,14 +362,15 @@ public class ExecutionSelector extends Group {
 		else{
 	   	StatisticsWindow.comparedExecution = null;
 		}
-		menu.hide();
+		//menu.hide();
+		openButton.hide();
 	}
 	
 	var resizeYStart: Number = 0;
 	
 //	var closeImg: String = "{__ROOT__}images/execution-selector-close.fxz";
 	var openImg: String = "{__ROOT__}images/execution-selector-open.fxz";
-	var resizeImg: String = "{__ROOT__}images/execution-selector-resize.fxz";
+	//var resizeImg: String = "{__ROOT__}images/execution-selector-resize.fxz";
 	var radioHoverImg: String = "{__ROOT__}images/execution-selector-radio-hover.fxz";
 				    
 	init {
@@ -446,6 +442,7 @@ public class ExecutionSelector extends Group {
 				   styleClass: "execution-selector-line"
 					endX: bind popupWidth - 36
 				}, Group{ 
+					layoutInfo: LayoutInfo{ margin: Insets{ bottom: 12 } }
 					content:	[
 						Rectangle{
 						    width: bind popupWidth - 36
@@ -470,36 +467,36 @@ public class ExecutionSelector extends Group {
 	       ]
 	   } 
 	   
-	   def resizeAction: Group = Group {
-	      cursor: Cursor.V_RESIZE
-		   content: [
-		     	Rectangle {
-				    width: 10  
-				    height: 10
-				    fill: Color.TRANSPARENT
-				}
-		   	FXDNode {
-		   	   layoutX: -3
-	      		layoutY: -3 
-					url: bind resizeImg
-					visible: true
-				}
-			]
-			onMousePressed: function( e: MouseEvent ) {
-		   	if( e.primaryButtonDown ) {
-		   	    resizeYStart = e.screenY;
-		   	} 
-		   }
-		   onMouseDragged: function( e: MouseEvent ) {
-		   	if( e.primaryButtonDown ) {
-		   	    def delta = e.screenY - resizeYStart;
-		   	    if(popupHeight + delta >= 250){
-			   	    popupHeight += delta;
-			   	    resizeYStart = e.screenY;
-		   	    }
-		   	} 
-		   }
-		}
+//	   def resizeAction: Group = Group {
+//	      cursor: Cursor.V_RESIZE
+//		   content: [
+//		     	Rectangle {
+//				    width: 10  
+//				    height: 10
+//				    fill: Color.TRANSPARENT
+//				}
+//		   	FXDNode {
+//		   	   layoutX: -3
+//	      		layoutY: -3 
+//					url: bind resizeImg
+//					visible: true
+//				}
+//			]
+//			onMousePressed: function( e: MouseEvent ) {
+//		   	if( e.primaryButtonDown ) {
+//		   	    resizeYStart = e.screenY;
+//		   	} 
+//		   }
+//		   onMouseDragged: function( e: MouseEvent ) {
+//		   	if( e.primaryButtonDown ) {
+//		   	    def delta = e.screenY - resizeYStart;
+//		   	    if(popupHeight + delta >= 250){
+//			   	    popupHeight += delta;
+//			   	    resizeYStart = e.screenY;
+//		   	    }
+//		   	} 
+//		   }
+//		}
 					
 	   item = CustomMenuItem {
 			styleClass: "execution-selector-menu-item"
@@ -511,25 +508,36 @@ public class ExecutionSelector extends Group {
 				spacing: 0
 				content: [
 					popupContent,
-					resizeAction
+//					resizeAction
 				]
 			} 
-		}
+		};
 		
-		menu = PopupMenu {
-		    styleClass: "execution-selector-menu"
-		    items: [item]
-		    layoutInfo: LayoutInfo{ height: bind popupHeight, width: bind popupWidth }
-		    onShowing: function(){FX.deferAction( function(){ setRadioButtons(); } )}
-		}
+//		menu = PopupMenu {
+//		    styleClass: "execution-selector-menu"
+//		    items: [item]
+//		    layoutInfo: LayoutInfo{ height: bind popupHeight, width: bind popupWidth }
+//		    onShowing: function(){FX.deferAction( function(){ setRadioButtons(); } )}
+//		}
+		
+		openButton = MenuButton {
+			styleClass: bind if( openButton.showing ) "menu-button-showing" else "menu-button"
+			layoutInfo: LayoutInfo { hshrink: Priority.SOMETIMES, minWidth: 100 }
+			text: "Compare results"
+			font: Font { size:12 }
+			items: [item]
+			onMouseClicked: function( e:MouseEvent ){ FX.deferAction( function(){ setRadioButtons(); } ) }
+			//onMouseClicked: function( e:MouseEvent ):Void { menu.show(openButton, HPos.CENTER, VPos.BOTTOM, -201 + openButton.layoutBounds.width / 2, 6); }
+		};
+		
+		item.parentPopup.styleClass = "execution-selector-menu";
 	   
 	   content = [
 	   	HBox {
 	   	    nodeVPos: VPos.CENTER
 	   	    spacing: 9
-	   	    content: [leftLabel, openButton, rightLabel]
-	   	},
-	   	menu 
+	   	    content: [openButton, rightLabel]
+	   	}
 		]		   		
 	}
 }

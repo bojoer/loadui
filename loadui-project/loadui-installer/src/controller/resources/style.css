@@ -117,6 +117,18 @@
 	-fx-background-radius: 5;
 }
 
+.menu-button-no-hover *.arrow {
+	-fx-mark-highlight-color: rgba(100,100,100,0.5);
+	-fx-mark-color: #4d4d4d;
+}
+
+.menu-button-no-hover, .menu-button-no-hover:focused {
+	-fx-background-color: transparent;
+	-fx-background-radius: 0;
+	-fx-background-insets: 0;
+	-fx-text-fill: #4d4d4d;
+}
+
 .hyperlink:focused {
 	-fx-border-color: transparent;
 }
