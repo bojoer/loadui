@@ -23,12 +23,10 @@
  * @nonBlocking true
  */
 
-import java.util.LinkedList
-
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.impl.layout.OptionsProviderImpl
 import com.eviware.loadui.util.layout.DelayedFormattedString
-import com.eviware.loadui.util.statistics.CounterStatisticSupport;
+import com.eviware.loadui.util.statistics.CounterStatisticSupport
 
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 
@@ -76,7 +74,7 @@ createProperty( 'includeAssertedMessage', Boolean, false )
 
 String valueToAssert = value.value
 
-buffer = new LinkedList()
+buffer = [] as LinkedList
 
 outMsg = newMessage()
 
