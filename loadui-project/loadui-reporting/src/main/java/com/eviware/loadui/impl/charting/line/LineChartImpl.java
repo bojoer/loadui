@@ -148,7 +148,10 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 		}
 		else if( follow )
 		{
-			setPosition( getMaxTime() - timeSpan );
+			long pos = mainExecution == null ? 0 : mainExecution.getLength();
+			if( comparedExecution != null && comparedExecution.getLength() > pos )
+				pos = Math.min( pos + timeSpan / 3, comparedExecution.getLength() );
+			setPosition( pos - timeSpan );
 		}
 
 		if( shouldPoll )
@@ -520,6 +523,17 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 						public void run()
 						{
 							setZoomLevel( ZoomLevel.valueOf( ( String )event.getNewValue() ) );
+						}
+					} );
+				}
+				else if( FOLLOW.equals( event.getPropertyName() ) )
+				{
+					LineChartUtils.invokeInSwingLater( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							setFollow( ( Boolean )event.getNewValue() );
 						}
 					} );
 				}

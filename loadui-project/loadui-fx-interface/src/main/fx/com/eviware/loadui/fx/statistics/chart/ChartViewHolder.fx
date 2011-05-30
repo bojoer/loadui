@@ -42,6 +42,7 @@ import com.sun.javafx.scene.layout.Region;
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
+import com.eviware.loadui.fx.statistics.chart.line.LineChartHolder;
 
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
@@ -206,7 +207,7 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 										]
 									}
 								]
-							}, chartButtons
+							}, chartButtons,
 						]
 					},
 					resizeAction
@@ -219,17 +220,25 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	protected function rebuildChartButtons():Node[] {
 		[
 			Label { layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
-			for( panelFactory in ChartRegistry.getChartPanels( chartView ) ) {
-				[
+			for( button in getPanels() ) {
+				if( button instanceof PanelFactory ) {
+					def panelFactory = button as PanelFactory;
 					ToggleButton {
 						text: panelFactory.title
 						value: panelFactory
 						toggleGroup: panelToggleGroup
 					}
-					if(panelFactory.separator) Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER } else null
-				]
+				} else if( button instanceof Node ) {
+					button as Node
+				} else {
+					null
+				}
 			}
 		];
+	}
+	
+	protected function getPanels():Object[] {
+		ChartRegistry.getChartPanels( chartView )
 	}
 	
 	public function update():Void {

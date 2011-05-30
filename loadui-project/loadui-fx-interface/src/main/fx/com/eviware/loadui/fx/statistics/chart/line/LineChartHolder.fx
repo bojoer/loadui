@@ -54,6 +54,7 @@ import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 
 import java.util.WeakHashMap;
+import java.beans.PropertyChangeEvent;
 
 def lineChartCache = new WeakHashMap();
 
@@ -68,6 +69,9 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 	def lineChartFactory:LineChart.Factory = BeanInjector.getBean( LineChart.Factory.class );
 	
 	def segmentListener = new SegmentListener();
+	public var follow:Boolean on replace {
+		chart.setFollow( follow );
+	}
 	
 	public-init var chartView:LineChartView on replace {
 		chart = if( chartView == null ) null else lineChartFactory.createLineChart( chartView );
@@ -102,6 +106,7 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 				xScale = (1000.0 * interval) / unitWidth;
 				def maxTime = chart.getMaxTime();
 				def timeSpan = chart.getTimeSpan();
+				follow = chart.isFollow();
 				if( maxTime > timeSpan ) {
 					scrollBar.value = ( chart.getPosition() * maxTime ) / ( maxTime - timeSpan );
 					scrollBar.visibleAmount = timeSpan;
@@ -129,13 +134,13 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 		if( initialized ) {
 			def maxTime = chart.getMaxTime();
 			var sbPos = Math.min( maxTime, scrollBarPosition );
-			if( maxTime - sbPos < 1000 ) {
-				chart.setFollow( true );
-			} else {
-				chart.setFollow( false );
-				def position = scrollBarPosition * ( maxTime - chart.getTimeSpan() ) / maxTime;
-				if( Math.abs( chart.getPosition() - position ) > 10 )
-					chart.setPosition( position );
+			def position = scrollBarPosition * ( maxTime - chart.getTimeSpan() ) / maxTime;
+			if( Math.abs( chart.getPosition() - position ) > 10 ) {
+				if( chart.isFollow() ) {
+					chart.setFollow( false );
+					chartView.fireEvent( new PropertyChangeEvent( chartView, LineChart.FOLLOW, true, false ) );
+				}
+				chart.setPosition( position );
 			}
 		}
 	}
@@ -213,7 +218,7 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 	}
 	
 	override function update():Void {
-		def follow = chart.isFollow();
+		follow = chart.isFollow();
 		
 		def unitWidth = chart.getZoomLevel().getUnitWidth();
 		def interval = chart.getZoomLevel().getInterval();
@@ -225,7 +230,7 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 		
 		if( maxTime > timeSpan ) {
 			scrollBar.max = maxTime;
-			scrollBar.value = if( follow ) maxTime else chart.getPosition() * maxTime / ( maxTime - timeSpan );
+			scrollBar.value = /*if( follow ) maxTime else*/ chart.getPosition() * maxTime / ( maxTime - timeSpan );
 			scrollBar.visibleAmount = timeSpan;
 			scrollBar.unitIncrement = timeSpan / 10;
 			scrollBar.blockIncrement = timeSpan / 10;

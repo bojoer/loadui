@@ -148,25 +148,17 @@ public class ChartGroupChartViewHolder extends ChartViewHolder, WeakEventHandler
 		[
 			expandCharts,
 			expandAgents,
-			Label { layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
-			for( panelFactory in ChartRegistry.getGroupPanels( chartGroup ) ) {
-				[
-					ToggleButton {
-						text: panelFactory.title
-						value: panelFactory
-						toggleGroup: panelToggleGroup
-					}
-					if( panelFactory.separator ) Separator { vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER } else null
-				]
-			}
+			super.rebuildChartButtons()
 		];
 	}
 	
+	override function getPanels() {
+		ChartRegistry.getGroupPanels( chartGroup )
+	}
+	
 	override function handleEvent( e: EventObject ) {
-
 		FxUtils.runInFxThread( function():Void {
-				updateSubLabel();
-			});
-
+			updateSubLabel();
+		});
 	}
 }

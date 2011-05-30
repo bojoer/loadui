@@ -818,6 +818,23 @@
 	-fx-text-fill: #797979;
 }
 
+.chart-group-toolbar *.check-box {
+	-fx-font: 10pt "Amble Cn";
+	-fx-base: #58585a;
+}
+
+.chart-view-holder *.chart-group-toolbar *.check-box {
+	-fx-base: #303030;
+}
+
+.chart-group-toolbar *.check-box *.label {
+	-fx-text-fill: #000000;
+}
+
+.chart-view-holder *.chart-group-toolbar *.check-box *.label {
+	-fx-text-fill: #797979;
+}
+
 .chart-group-toolbar *.toggle-button :selected {
 	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
     	-fx-outer-border: #1a1a1a;
@@ -1040,6 +1057,11 @@
 .cascading-tree-selector-cell {
 	-fx-background-color: linear (0%,0%) to (100%,0%) stops (0%, rgba(0,0,0,0.3))  (100%, rgba(0,0,0,0));
 	-fx-background-radius: 4 0 0 4;
+}
+
+.cascading-tree-selector *.title {
+	-fx-text-fill: #9c9c9c;
+	-fx-font-weight: bold;
 }
 
 .value-node {

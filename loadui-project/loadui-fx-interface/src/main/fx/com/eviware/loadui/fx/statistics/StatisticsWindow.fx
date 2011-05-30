@@ -179,7 +179,7 @@ public class StatisticsWindow {
 	def stack:Stack = Stack {
 		layoutX: bind if(toolbar.hidden) 63 else 135
 		layoutY: 145
-		width: bind if(toolbar.hidden) Math.max( 550, scene.width - 78 ) else Math.max( 550, scene.width - 150 )
+		width: bind if(toolbar.hidden) Math.max( 575, scene.width - 78 ) else Math.max( 575, scene.width - 150 )
 		height: bind scene.height - 180
 		content: [ layoutRegion ]
 		//background: Color.web("#323232")

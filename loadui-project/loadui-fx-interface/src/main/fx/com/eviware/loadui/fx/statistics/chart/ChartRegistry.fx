@@ -34,7 +34,7 @@ public function createChart( chartView:ChartView, holder:ChartViewHolder ):BaseC
 	}
 }
 
-public function getGroupPanels( chartGroup:ChartGroup ):PanelFactory[] {
+public function getGroupPanels( chartGroup:ChartGroup ):Object[] {
 	if( chartGroup.getType() == LineChartView.class.getName() ) {
 		LineChartPanels.getGroupPanels( chartGroup )
 	} else {
@@ -42,7 +42,7 @@ public function getGroupPanels( chartGroup:ChartGroup ):PanelFactory[] {
 	}
 }
 
-public function getChartPanels( chartView:ChartView ):PanelFactory[] {
+public function getChartPanels( chartView:ChartView ):Object[] {
 	if( chartView instanceof LineChartView ) {
 		LineChartPanels.getChartPanels( chartView as LineChartView )
 	} else {

@@ -41,6 +41,8 @@ public class CascadingTreeSelector extends Stack {
 		nodeHPos: HPos.RIGHT
 	}
 	
+	override var styleClass = "cascading-tree-selector";
+	
 	public-init var columnCount:Integer = 1 on replace {
 		bgHbox.content = for( i in [1..columnCount] ) Region { styleClass: "cascading-tree-selector-cell", layoutInfo: LayoutInfo { width: 16, hfill: false } }
 	}
