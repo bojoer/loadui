@@ -21,11 +21,13 @@ import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.model.Labeled;
 
-public interface Terminal extends EventFirer, Addressable, Labeled
+public interface Terminal extends EventFirer, Addressable, Labeled.Mutable
 {
 	public String getName();
 
 	public String getDescription();
+
+	public void setDescription( String description );
 
 	public TerminalHolder getTerminalHolder();
 

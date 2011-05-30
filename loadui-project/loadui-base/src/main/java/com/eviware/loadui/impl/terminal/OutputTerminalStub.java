@@ -23,17 +23,19 @@ import java.util.Collections;
 import java.util.EventObject;
 import java.util.Map;
 
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.util.events.EventSupport;
+import com.google.common.base.Objects;
 
 public class OutputTerminalStub implements OutputTerminal
 {
 	private final String id;
-	private final String label;
+	private String label;
 	private Map<String, Class<?>> signature = Collections.emptyMap();
 	private final EventSupport eventsupport = new EventSupport();
 
@@ -88,9 +90,24 @@ public class OutputTerminalStub implements OutputTerminal
 	}
 
 	@Override
+	public void setDescription( String description )
+	{
+	}
+
+	@Override
 	public String getLabel()
 	{
 		return label;
+	}
+
+	@Override
+	public void setLabel( String label )
+	{
+		if( !Objects.equal( this.label, label ) )
+		{
+			this.label = label;
+			fireEvent( new BaseEvent( this, LABEL ) );
+		}
 	}
 
 	@Override

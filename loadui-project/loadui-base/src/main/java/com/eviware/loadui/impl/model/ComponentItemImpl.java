@@ -964,6 +964,18 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		{
 			return "A special Terminal which can be used to send messages to remote instances of the ComponentItem itself.";
 		}
+
+		@Override
+		public void setDescription( String description )
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void setLabel( String label )
+		{
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private class RemoteTerminal extends DummyTerminal

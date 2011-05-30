@@ -19,11 +19,13 @@ import java.util.EventObject;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.addressable.AddressableRegistry.DuplicateAddressException;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalHolder;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.events.EventSupport;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 public abstract class TerminalImpl implements Terminal
@@ -31,8 +33,8 @@ public abstract class TerminalImpl implements Terminal
 	private final EventSupport eventsupport = new EventSupport();
 	private final TerminalHolder owner;
 	private final String name;
-	private final String label;
-	private final String description;
+	private String label;
+	private String description;
 
 	public TerminalImpl( TerminalHolder component, String name, String label, String description )
 	{
@@ -79,6 +81,22 @@ public abstract class TerminalImpl implements Terminal
 	public String getLabel()
 	{
 		return label;
+	}
+
+	@Override
+	public void setLabel( String label )
+	{
+		if( !Objects.equal( this.label, label ) )
+		{
+			this.label = label;
+			fireEvent( new BaseEvent( this, LABEL ) );
+		}
+	}
+
+	@Override
+	public void setDescription( String description )
+	{
+		this.description = description;
 	}
 
 	@Override
