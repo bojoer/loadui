@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.component.categories;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.OnOffCategory;
+import com.eviware.loadui.api.component.categories.SchedulerCategory;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
@@ -34,6 +35,14 @@ public abstract class OnOffBase extends BaseCategory implements OnOffCategory
 		stateProperty = context.createProperty( STATE_PROPERTY, Boolean.class, true );
 		stateTerminal = context.createInput( STATE_TERMINAL, STATE_TERMINAL_LABEL,
 				OnOffCategory.STATE_TERMINAL_DESCRIPTION );
+		stateTerminal.setLikeFunction( new InputTerminal.LikeFunction()
+		{
+			@Override
+			public boolean call( OutputTerminal output )
+			{
+				return SchedulerCategory.OUTGOING_TERMINAL.equals( output.getName() );
+			}
+		} );
 	}
 
 	@Override

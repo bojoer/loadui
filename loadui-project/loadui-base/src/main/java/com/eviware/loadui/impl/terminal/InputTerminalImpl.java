@@ -24,10 +24,12 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
+import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalHolder;
 
 public class InputTerminalImpl extends TerminalImpl implements InputTerminal
 {
+	private LikeFunction likeFunction = null;
 
 	public InputTerminalImpl( TerminalHolder owner, String name, String label, String description )
 	{
@@ -49,5 +51,17 @@ public class InputTerminalImpl extends TerminalImpl implements InputTerminal
 					connections.add( connection );
 
 		return connections;
+	}
+
+	@Override
+	public boolean likes( OutputTerminal outputTerminal )
+	{
+		return likeFunction != null ? likeFunction.call( outputTerminal ) : false;
+	}
+
+	@Override
+	public void setLikeFunction( LikeFunction likeFunction )
+	{
+		this.likeFunction = likeFunction;
 	}
 }

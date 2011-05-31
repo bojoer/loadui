@@ -59,6 +59,10 @@ import com.eviware.loadui.util.StringUtils;
 
 var wire:Wire;
 
+var draggingTerminal:Terminal = null on replace {
+	println("Dragging: {draggingTerminal}");
+}
+
 var inputAccept = false;
 var outputAccept = false;
 
@@ -77,6 +81,15 @@ def green = RadialGradient {
 	stops: [
 		Stop { offset: 0, color: Color.rgb( 0xcc, 0xff, 0x0 ) },
 		Stop { offset: 0.5, color: Color.rgb( 0xcc, 0xff, 0x0, 0 ) }
+	]
+}
+
+def like = RadialGradient {
+	centerX: 0.5
+	centerY: 0.5
+	stops: [
+		Stop { offset: 0, color: Color.rgb( 0x0, 0xff, 0x0 ) },
+		Stop { offset: 0.65, color: Color.rgb( 0x0, 0xff, 0x0, 0 ) }
 	]
 }
 
@@ -195,7 +208,12 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 					radiusX: 15
 					radiusY: 9
 					fill: bind if( ( not flip and inputAccept )
-						or ( flip and outputAccept ) ) if( hover ) green else white else Color.TRANSPARENT
+						or ( flip and outputAccept ) ) if(
+								(terminal instanceof InputTerminal and draggingTerminal instanceof OutputTerminal 
+								and (terminal as InputTerminal).likes( draggingTerminal as OutputTerminal )) or
+								(terminal instanceof OutputTerminal and draggingTerminal instanceof InputTerminal 
+								and (draggingTerminal as InputTerminal).likes( terminal as OutputTerminal ))
+						) like else if( hover ) green else white else Color.TRANSPARENT
 					clip: Rectangle {
 						x: -15
 						y: if( flip ) 6 else -19
@@ -332,6 +350,8 @@ class TerminalDraggable extends BaseNode, Draggable {
 			currentTerminal = terminal;
 		}
 		
+		draggingTerminal = currentTerminal;
+		
 		def pw = startNode.layoutBounds.width / 2;
 		def ph = startNode.layoutBounds.height / 2;
 		def w = layoutBounds.width / 2;
@@ -356,6 +376,7 @@ class TerminalDraggable extends BaseNode, Draggable {
 	override var onRelease = function():Void {
 		isDragging = false;
 		canvas.wireIsBeingDragged = false;
+		draggingTerminal = null;
 		
 		if( terminal instanceof InputTerminal )
 		{

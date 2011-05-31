@@ -976,6 +976,18 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		{
 			throw new UnsupportedOperationException();
 		}
+
+		@Override
+		public boolean likes( OutputTerminal outputTerminal )
+		{
+			return false;
+		}
+
+		@Override
+		public void setLikeFunction( LikeFunction likeFuntion )
+		{
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	private class RemoteTerminal extends DummyTerminal

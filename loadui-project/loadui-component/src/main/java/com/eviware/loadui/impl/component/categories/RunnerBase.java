@@ -140,6 +140,14 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 		triggerTerminal = context.createInput( TRIGGER_TERMINAL, "Trigger Input",
 				"Connect to a Generator to recieve trigger signals. Each signal will trigger the component to run once." );
+		triggerTerminal.setLikeFunction( new InputTerminal.LikeFunction()
+		{
+			@Override
+			public boolean call( OutputTerminal output )
+			{
+				return GeneratorBase.TRIGGER_TERMINAL.equals( output.getName() );
+			}
+		} );
 
 		resultTerminal = context.createOutput( RESULT_TERMINAL, "Results",
 				"Outputs data such as TimeTaken for each request." );

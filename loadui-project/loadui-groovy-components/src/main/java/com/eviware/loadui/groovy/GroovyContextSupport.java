@@ -155,14 +155,37 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 		context.triggerAction( actionName, scope );
 	}
 
-	public void onReplace( Property<?> property, Closure<?> handler )
+	public <T> Property<T> onReplace( Property<T> property, Closure<?> handler )
 	{
 		propertyEventHandler.replaceHandlers.put( property, handler );
+		return property;
 	}
 
 	public void onAction( String action, Closure<?> handler )
 	{
 		actionEventHandler.actionHandlers.put( action, handler );
+	}
+
+	public InputTerminal likes( final InputTerminal input, final Closure<Boolean> handler )
+	{
+		input.setLikeFunction( new InputTerminal.LikeFunction()
+		{
+			@Override
+			public boolean call( OutputTerminal output )
+			{
+				try
+				{
+					return handler.call( output );
+				}
+				catch( Exception e )
+				{
+					log.error( "Exception caught when calling like function for " + input, e );
+					return false;
+				}
+			}
+		} );
+
+		return input;
 	}
 
 	public CounterHelper getCounters()
@@ -280,16 +303,31 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 		return context.createInput( name );
 	}
 
+	public InputTerminal createInput( String name, Closure<Boolean> likeFunction )
+	{
+		return likes( context.createInput( name ), likeFunction );
+	}
+
 	@Override
 	public InputTerminal createInput( String name, String label )
 	{
 		return context.createInput( name, label );
 	}
 
+	public InputTerminal createInput( String name, String label, Closure<Boolean> likeFunction )
+	{
+		return likes( context.createInput( name, label ), likeFunction );
+	}
+
 	@Override
 	public InputTerminal createInput( String name, String label, String description )
 	{
 		return context.createInput( name, label, description );
+	}
+
+	public InputTerminal createInput( String name, String label, String description, Closure<Boolean> likeFunction )
+	{
+		return likes( context.createInput( name, label, description ), likeFunction );
 	}
 
 	@Override
@@ -410,11 +448,8 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 	public <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue )
 	{
 		if( initialValue instanceof Closure )
-		{
-			Property<T> property = context.createProperty( propertyName, propertyType );
-			onReplace( property, ( Closure<?> )initialValue );
-			return property;
-		}
+			return onReplace( context.createProperty( propertyName, propertyType ), ( Closure<?> )initialValue );
+
 		return context.createProperty( propertyName, propertyType, initialValue );
 	}
 
@@ -428,17 +463,13 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 	public <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue,
 			Closure<?> handler )
 	{
-		Property<T> property = context.createProperty( propertyName, propertyType, initialValue );
-		onReplace( property, handler );
-		return property;
+		return onReplace( context.createProperty( propertyName, propertyType, initialValue ), handler );
 	}
 
 	public <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue,
 			boolean propagates, Closure<?> handler )
 	{
-		Property<T> property = context.createProperty( propertyName, propertyType, initialValue, propagates );
-		onReplace( property, handler );
-		return property;
+		return onReplace( context.createProperty( propertyName, propertyType, initialValue, propagates ), handler );
 	}
 
 	@Override

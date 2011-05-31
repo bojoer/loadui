@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.component.categories;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.AnalysisCategory;
+import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
@@ -57,6 +58,14 @@ public abstract class AnalysisBase extends BaseCategory implements AnalysisCateg
 		executor = BeanInjector.getBean( ScheduledExecutorService.class );
 
 		inputTerminal = context.createInput( INPUT_TERMINAL, "Data to analyze" );
+		inputTerminal.setLikeFunction( new InputTerminal.LikeFunction()
+		{
+			@Override
+			public boolean call( OutputTerminal output )
+			{
+				return RunnerCategory.RESULT_TERMINAL.equals( output.getName() );
+			}
+		} );
 
 		context.setActivityStrategy( ActivityStrategies.ON );
 		activityRunnable = new Runnable()

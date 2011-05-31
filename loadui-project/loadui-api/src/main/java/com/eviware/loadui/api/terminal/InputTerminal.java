@@ -17,4 +17,32 @@ package com.eviware.loadui.api.terminal;
 
 public interface InputTerminal extends Terminal
 {
+	/**
+	 * Returns true if this InputTerminal "likes" the given OutputTerminal. If an
+	 * InputTerminal likes an OutputTerminal, this is a strong signal that the
+	 * user may want to connect the two together. Implementing this is optional.
+	 * If it isn't known that the two Terminals go well together always prefer to
+	 * return false.
+	 * 
+	 * @param outputTerminal
+	 * @return
+	 */
+	public boolean likes( OutputTerminal outputTerminal );
+
+	/**
+	 * Allows setting the like behavior of an InputTerminal.
+	 * 
+	 * @param likeFuntion
+	 */
+	public void setLikeFunction( LikeFunction likeFuntion );
+
+	/**
+	 * Simple interface defining the like function.
+	 * 
+	 * @author dain.nilsson
+	 */
+	public interface LikeFunction
+	{
+		public boolean call( OutputTerminal output );
+	}
 }
