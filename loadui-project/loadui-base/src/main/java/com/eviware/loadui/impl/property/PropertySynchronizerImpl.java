@@ -194,21 +194,24 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 			{
 			case VALUE :
 				final Property<?> property = item.getProperty( message.get( PROPERTY_NAME ) );
-				if( message.get( ARGUMENT ) != null && conversionService.canConvert( property.getType(), Reference.class ) )
+				if( property != null )
 				{
-					final Reference ref = new Reference( message.get( ARGUMENT ), endpoint );
-					executorService.execute( new Runnable()
+					if( message.get( ARGUMENT ) != null
+							&& conversionService.canConvert( property.getType(), Reference.class ) )
 					{
-						@Override
-						public void run()
+						final Reference ref = new Reference( message.get( ARGUMENT ), endpoint );
+						executorService.execute( new Runnable()
 						{
-							property.setValue( conversionService.convert( ref, property.getType() ) );
-						}
-					} );
+							@Override
+							public void run()
+							{
+								property.setValue( conversionService.convert( ref, property.getType() ) );
+							}
+						} );
+					}
+					else
+						property.setValue( StringUtils.fixLineSeparators( message.get( ARGUMENT ) ) );
 				}
-				else
-					item.getProperty( message.get( PROPERTY_NAME ) ).setValue(
-							StringUtils.fixLineSeparators( message.get( ARGUMENT ) ) );
 				break;
 			case CREATED :
 				try
