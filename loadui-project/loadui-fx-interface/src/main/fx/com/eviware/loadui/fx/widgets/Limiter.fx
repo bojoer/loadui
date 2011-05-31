@@ -83,15 +83,15 @@ public class Limiter extends BaseNode, Resizable {
 					text: bind text
 					font: bind if( small ) Font.font( "Amble", 8 ) else Font.font( "Amble", 9 );
 				}, Rectangle {
-					layoutY: 22
-					layoutX: bind labelNode.layoutBounds.width
-					width: bind width - labelNode.layoutBounds.width
+					layoutY: 20
+					layoutX: bind labelNode.layoutBounds.width + 3
+					width: bind width - (labelNode.layoutBounds.width + 3)
 					height: 3
 					fill: bind if(limit==null) Color.TRANSPARENT else barBackgroundFill
 				}, Rectangle {
-					layoutY: 22
-					layoutX: bind labelNode.layoutBounds.width
-					width: bind progress * ( width - labelNode.layoutBounds.width )
+					layoutY: 20
+					layoutX: bind labelNode.layoutBounds.width + 3
+					width: bind progress * ( width - (labelNode.layoutBounds.width + 3) )
 					height: 3
 					fill: bind if(limit==null) Color.TRANSPARENT else barFill
 				}
