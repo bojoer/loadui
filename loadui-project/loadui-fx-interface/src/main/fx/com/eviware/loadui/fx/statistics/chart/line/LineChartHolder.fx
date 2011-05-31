@@ -228,6 +228,7 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 		def maxTime = chart.getMaxTime();
 		def timeSpan = chart.getTimeSpan();
 		
+		def oldInitialized = initialized;
 		if( maxTime > timeSpan ) {
 			scrollBar.max = maxTime;
 			scrollBar.value = /*if( follow ) maxTime else*/ chart.getPosition() * maxTime / ( maxTime - timeSpan );
@@ -238,6 +239,7 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 			scrollBar.max = 0;
 			scrollBar.value = 0;
 		}
+		initialized = oldInitialized;
 	}
 	
 	override function reset():Void {

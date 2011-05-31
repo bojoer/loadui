@@ -63,6 +63,8 @@ public function getGroupPanels( chartGroup:ChartGroup ):Object[] {
 			vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER
 		}, FollowCheckBox {
 			chartView: chartGroup.getChartView() as LineChartView, layoutInfo: LayoutInfo { margin: Insets { top: 3 } }, vpos: VPos.CENTER
+		}, SyncButton {
+			chartView: chartGroup.getChartView() as LineChartView, layoutInfo: LayoutInfo { margin: Insets { top: 2 } }, vpos: VPos.CENTER
 		}
 	]
 }
@@ -101,6 +103,8 @@ public function getChartPanels( chartView:LineChartView ):Object[] {
 			vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos: HPos.CENTER
 		}, FollowCheckBox {
 			chartView: chartView, layoutInfo: LayoutInfo { margin: Insets { top: 3 } }, vpos: VPos.CENTER
+		}, SyncButton {
+			chartView: chartView, layoutInfo: LayoutInfo { margin: Insets { top: 2 } }, vpos: VPos.CENTER
 		}
 	]
 }

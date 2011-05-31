@@ -92,7 +92,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 				position = 0;
 			}
 		}
-		position = Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
+		long position = getPosition();
 
 		xRange = new LongRange( position, position + timeSpan );
 		NumericAxis xAxis = new NumericAxis( xRange );
@@ -131,6 +131,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 		if( zoomLevel == ZoomLevel.ALL )
 		{
 			long maxTime = getMaxTime();
+			long position = getPosition();
 			if( timeSpan != maxTime || position != 0 )
 			{
 				position = 0;
@@ -193,7 +194,6 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 		if( mainExecution != execution )
 		{
 			mainExecution = execution;
-			position = Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
 			for( LineSegmentChartModel lineModel : lines.values() )
 				lineModel.setExecution( execution );
 			updateXRange();
@@ -247,7 +247,6 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 							}
 						}
 						comparedExecution = cExecution;
-						position = Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
 					}
 				} );
 			}
@@ -279,6 +278,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 						lines.put( segment, lineModel );
 						if( mainExecution != null )
 							lineModel.setExecution( mainExecution );
+						long position = getPosition();
 						lineModel.setXRange( position - PADDING, position + timeSpan + PADDING );
 						addModel( lineModel, lineModel.getChartStyle() );
 						if( comparedExecution != null )
@@ -339,6 +339,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 
 	private void updateXRange()
 	{
+		long position = getPosition();
 		xRange.setMin( position );
 		xRange.setMax( position + timeSpan );
 		long xMin = position - PADDING;
@@ -382,18 +383,17 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	@Override
 	public long getPosition()
 	{
-		return position;
+		return Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
 	}
 
 	@Override
 	public void setPosition( long position )
 	{
-		position = Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
+		position = Math.max( 0, position );
 		if( this.position != position )
 		{
 			this.position = position;
 			chartView.setAttribute( POSITION_ATTRIBUTE, String.valueOf( position ) );
-
 			updateXRange();
 			refresh( false );
 		}
@@ -534,6 +534,17 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 						public void run()
 						{
 							setFollow( ( Boolean )event.getNewValue() );
+						}
+					} );
+				}
+				else if( POSITION.equals( event.getPropertyName() ) )
+				{
+					LineChartUtils.invokeInSwingLater( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							setPosition( ( ( Number )event.getNewValue() ).longValue() );
 						}
 					} );
 				}

@@ -37,6 +37,7 @@ public interface LineChart extends EventFirer
 
 	public static final String ZOOM_LEVEL = "zoomLevel";
 	public static final String FOLLOW = "follow";
+	public static final String POSITION = "position";
 
 	/**
 	 * Refreshes the LineChart. If shouldPoll is set to true, then the LineChart

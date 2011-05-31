@@ -61,7 +61,7 @@ public class ZoomPanel extends HBox {
 	def toggleGroup = new ToggleGroup();
 	def selectedLevel = bind toggleGroup.selectedToggle on replace oldLevel {
 		if( selectedLevel.value != null ) {
-			chartView.setAttribute( LineChart.ZOOM_LEVEL_ATTRIBUTE, "{selectedLevel.value}" );
+			//chartView.setAttribute( LineChart.ZOOM_LEVEL_ATTRIBUTE, "{selectedLevel.value}" );
 			chartView.fireEvent( new PropertyChangeEvent( chartView, LineChart.ZOOM_LEVEL, oldLevel.value, selectedLevel.value ) );
 		}
 	}
