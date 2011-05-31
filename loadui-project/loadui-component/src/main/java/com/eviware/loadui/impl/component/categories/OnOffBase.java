@@ -32,7 +32,7 @@ public abstract class OnOffBase extends BaseCategory implements OnOffCategory
 		super( context );
 
 		stateProperty = context.createProperty( STATE_PROPERTY, Boolean.class, true );
-		stateTerminal = context.createInput( STATE_TERMINAL, "Component activation",
+		stateTerminal = context.createInput( STATE_TERMINAL, STATE_TERMINAL_LABEL,
 				OnOffCategory.STATE_TERMINAL_DESCRIPTION );
 	}
 

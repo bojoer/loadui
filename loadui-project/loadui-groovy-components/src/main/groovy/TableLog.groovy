@@ -39,6 +39,8 @@ import java.text.SimpleDateFormat
 
 import com.eviware.loadui.api.summary.MutableSection
 
+inputTerminal.description = 'Messages sent here will be displayed in the table.'
+
 createProperty( 'maxRows', Long, 1000 ) { value ->
 	myTableModel.maxRow = value
 }

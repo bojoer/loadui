@@ -275,21 +275,10 @@ class TerminalDraggable extends BaseNode, Draggable {
 		isDragging = true;
 		canvas.wireIsBeingDragged = true;
 		
-		if( terminal instanceof InputTerminal )
-		{
-			canvasObjectNode.hideAllInputBalloonsButThis( tNode );
-			canvas.showOutputBalloons( canvasObjectNode );
-			outputAccept = true;
-		}
-		else
-		{
-			canvasObjectNode.hideAllOutputBalloonsButThis( tNode );
-			canvas.showInputBalloons( canvasObjectNode );
-			inputAccept = true;
-		}
-		
 		var startNode:Node;
+		var balloonsHasBeenShown:Boolean = false;
 		
+		// Special behaviour when moving an existing wire to a new terminal (wire has to be selected first).
 		if( sizeof Selectable.selects == 1 and Selectable.selects[0] instanceof ConnectionNode ) {
 			def conn = Selectable.selects[0] as ConnectionNode;
 			if( terminal == conn.connection.getInputTerminal() or terminal == conn.connection.getOutputTerminal() ) {
@@ -301,10 +290,42 @@ class TerminalDraggable extends BaseNode, Draggable {
 				currentTerminal = (startNode as TerminalNode).terminal;
 				prev = conn;
 				prev.visible = false;
+				
+				if( terminal instanceof InputTerminal )
+				{
+					//canvasObjectNode.hideAllInputBalloonsButThis( tNode );
+					canvas.showInputBalloons( canvasObjectNode );
+					inputAccept = true;
+				}
+				else
+				{
+					//canvasObjectNode.hideAllOutputBalloonsButThis( tNode );
+					canvas.showOutputBalloons( canvasObjectNode );
+					outputAccept = true;
+				}
+				balloonsHasBeenShown = true
+				
 			}
 		} else {
 			Selectable.selectNone();
 		}
+		
+		if( not balloonsHasBeenShown )
+		{
+			if( terminal instanceof InputTerminal )
+			{
+				canvasObjectNode.hideAllInputBalloonsButThis( tNode );
+				canvas.showOutputBalloons( canvasObjectNode );
+				outputAccept = true;
+			}
+			else
+			{
+				canvasObjectNode.hideAllOutputBalloonsButThis( tNode );
+				canvas.showInputBalloons( canvasObjectNode );
+				inputAccept = true;
+			}
+		}
+		
 		
 		if( startNode == null ) {
 			startNode = this;
@@ -338,13 +359,15 @@ class TerminalDraggable extends BaseNode, Draggable {
 		
 		if( terminal instanceof InputTerminal )
 		{
-			canvasObjectNode.hideInputBalloons();
+			//canvasObjectNode.hideInputBalloons();
+			canvas.hideInputBalloons();
 			canvas.hideOutputBalloons();
 		}
 		else
 		{
-			canvasObjectNode.hideOutputBalloons();
+			//canvasObjectNode.hideOutputBalloons();
 			canvas.hideInputBalloons();
+			canvas.hideOutputBalloons();
 		}
 		
 		delete wire from AppState.byScene( scene ).overlay.content;

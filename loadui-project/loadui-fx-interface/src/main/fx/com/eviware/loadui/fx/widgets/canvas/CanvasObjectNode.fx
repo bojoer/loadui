@@ -202,7 +202,11 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	
 	override var onMove = function() { canvas.refreshComponents() };
 	
-	override var onDragging = function() { canvas.refreshTerminals() };
+	override var onDragging = function() {
+		canvas.refreshTerminals();
+		hideInputBalloons(false);
+		hideOutputBalloons(false);
+	};
 	
 	init {
 		addMouseHandler( MOUSE_PRESSED, function( e:MouseEvent ):Void {
@@ -356,8 +360,17 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			{
 				inputBalloonsHasBeenShown = true;
 				Timeline{
-					keyFrames: [ KeyFrame{ time: 25ms, action: function() { hideInputBalloons(false); } },
-						KeyFrame{ time: 50ms, action: function() { showInputBalloons( hoveredTerminal ); } } ]
+					keyFrames: [
+						KeyFrame{ time: 25ms, action: function() {
+								hideInputBalloons( hoveredTerminal != null or not hoveredTerminal.hover )
+							}
+						},
+						KeyFrame{ time: 50ms, action: function() {
+								if( hoveredTerminal == null or hoveredTerminal.hover  )
+									showInputBalloons( hoveredTerminal );
+							}
+						}
+					]
 		 		}.playFromStart();
 		 		
 	 		}
@@ -393,9 +406,18 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			if( not outputBalloonsHasBeenShown )
 			{
 				outputBalloonsHasBeenShown = true;
-				Timeline{ 
-					keyFrames: [ KeyFrame{ time: 25ms, action: function() { hideOutputBalloons(false); } },
-						KeyFrame{ time: 50ms, action: function() { showOutputBalloons( hoveredTerminal ); } } ]
+				Timeline{
+					keyFrames: [
+						KeyFrame{ time: 25ms, action: function() {
+								hideOutputBalloons( hoveredTerminal != null or not hoveredTerminal.hover )
+							}
+						},
+						KeyFrame{ time: 50ms, action: function() {
+								if( hoveredTerminal == null or hoveredTerminal.hover )
+									showOutputBalloons( hoveredTerminal );
+							}
+						}
+					]
 		 		}.playFromStart();
 	 		}
 		}

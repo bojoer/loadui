@@ -26,6 +26,8 @@
 import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.util.ReleasableUtils
 
+incomingTerminal.description = 'Recieved messages will be outputted in different output terminals.'
+
 total = counters['total_output']
 countDisplays = [:]
 resetValues = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]

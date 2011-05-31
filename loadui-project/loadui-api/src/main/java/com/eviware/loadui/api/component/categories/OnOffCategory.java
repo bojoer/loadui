@@ -35,9 +35,14 @@ public interface OnOffCategory extends ComponentBehavior
 	public static final String STATE_PROPERTY = "stateProperty";
 
 	/**
-	 * The label of the InputTerminal which is returned by getStateTerminal().
+	 * The name of the InputTerminal which is returned by getStateTerminal().
 	 */
 	public static final String STATE_TERMINAL = "stateTerminal";
+
+	/**
+	 * The name of the InputTerminal which is returned by getStateTerminal().
+	 */
+	public static final String STATE_TERMINAL_LABEL = "Component activation";
 
 	/**
 	 * The description of the InputTerminal.

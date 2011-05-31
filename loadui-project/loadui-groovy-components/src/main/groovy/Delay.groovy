@@ -39,8 +39,10 @@ waitingCount = 0
 display = new DelayedFormattedString( '%d ms', 500, 0 )
 waitingDisplay = new DelayedFormattedString( '%d', 500, value { waitingCount } )
  
-output = createOutput( 'output', 'Delayed messages', 'Incoming messages are outputted here after being delayed.' )
- 
+output = createOutput( 'output', 'Delayed messages', 'After being delayed, messages are outputted here.' )
+incomingTerminal.label = 'Messages to delay'
+incomingTerminal.description = 'Recieved messages will be delayed before being outputted. Messages are processed independently in parallel (as opposed to being queued).'
+
 createProperty('delay', Long, 0)
 createProperty('selected', String, UNIFORM)
 createProperty('randomDelay', Integer, 0)

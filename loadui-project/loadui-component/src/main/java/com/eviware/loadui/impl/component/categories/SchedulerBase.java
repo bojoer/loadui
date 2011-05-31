@@ -36,7 +36,8 @@ public abstract class SchedulerBase extends OnOffBase implements SchedulerCatego
 	{
 		super( context );
 
-		output = context.createOutput( OUTGOING_TERMINAL, "Scheduling Terminal" );
+		output = context.createOutput( OUTGOING_TERMINAL, "Scheduling Terminal",
+				"Connect to the Component activation terminal of other components to enable/disable them." );
 
 		onMessage = context.newMessage();
 		onMessage.put( ENABLED_MESSAGE_PARAM, true );
