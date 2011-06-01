@@ -237,7 +237,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 				padding: Insets { left: 13, right: 13 }
 				content: [
 					HBox {
-						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, height: 31, maxHeight: 31, margin: Insets { top: -14, bottom: -7 } }
+						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, height: 31, maxHeight: 31, margin: Insets { top: -24, bottom: 3 } }
 						nodeHPos: HPos.CENTER
 						content: bind inputs
 					}, HBox {
@@ -296,7 +296,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 							nodeHPos: HPos.CENTER
 							nodeVPos: VPos.CENTER
 					}, HBox {
-							layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, height: 31, maxHeight: 31, margin: Insets { top: 4, bottom: -14 } }
+							layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, height: 31, maxHeight: 31, margin: Insets { top: -11, bottom: 4 } }
 							nodeHPos: HPos.CENTER
 							content: bind outputs
 					}
@@ -345,7 +345,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			
 			def sceneBounds = localToParent( layoutBounds );
 			upperBalloonHolder.layoutX = sceneBounds.minX;
-			upperBalloonHolder.layoutY = sceneBounds.minY + 6;
+			upperBalloonHolder.layoutY = sceneBounds.minY + 12;
 			
 			upperBalloonHolder.padding = Insets { right: if( selected ) 30 else 20, left: if( selected ) 30 else 20 }
 			
@@ -390,7 +390,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			
 			def sceneBounds = localToParent( layoutBounds );
 			lowerBalloonHolder.layoutX = sceneBounds.minX;
-			lowerBalloonHolder.layoutY = sceneBounds.maxY - 22;
+			lowerBalloonHolder.layoutY = sceneBounds.maxY - 12;
 			
 			lowerBalloonHolder.padding = Insets { right: if( selected ) 30 else 20, left: if( selected ) 30 else 20 }
 			

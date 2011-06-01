@@ -24,6 +24,7 @@ package com.eviware.loadui.fx.widgets.canvas;
 import javafx.scene.Node;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Stack;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Resizable;
@@ -40,6 +41,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+import javafx.geometry.Insets;
 import javafx.geometry.Bounds;
 
 import com.eviware.loadui.fx.ui.popup.TooltipHolder;
@@ -59,9 +61,7 @@ import com.eviware.loadui.util.StringUtils;
 
 var wire:Wire;
 
-var draggingTerminal:Terminal = null on replace {
-	println("Dragging: {draggingTerminal}");
-}
+var draggingTerminal:Terminal = null;
 
 var inputAccept = false;
 var outputAccept = false;
@@ -71,7 +71,7 @@ def white = RadialGradient {
 	centerY: 0.5
 	stops: [
 		Stop { offset: 0, color: Color.rgb( 0xff, 0xff, 0xff, 0.8 ) },
-		Stop { offset: 0.5, color: Color.rgb( 0xff, 0xff, 0xff, 0 ) }
+		Stop { offset: 0.35, color: Color.rgb( 0xff, 0xff, 0xff, 0 ) }
 	]
 }
 
@@ -84,14 +84,23 @@ def green = RadialGradient {
 	]
 }
 
-def like = RadialGradient {
+/*def like = RadialGradient {
 	centerX: 0.5
 	centerY: 0.5
 	stops: [
 		Stop { offset: 0, color: Color.rgb( 0x0, 0xff, 0x0 ) },
-		Stop { offset: 0.65, color: Color.rgb( 0x0, 0xff, 0x0, 0 ) }
+		Stop { offset: 0.5, color: Color.rgb( 0x0, 0xff, 0x0, 0 ) }
 	]
-}
+}*/
+
+def like = RadialGradient {
+		centerX: 0.5
+		centerY: 0.5
+		stops: [
+			Stop { offset: 0, color: Color.rgb( 0xc1, 0xff, 0x06 ) },
+			Stop { offset: 0.5, color: Color.rgb( 0xc1, 0xff, 0x06, 0 ) }
+		]
+	}
 
 def sphere = RadialGradient {
 	centerX: 0.4
@@ -121,7 +130,7 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 	public-init var canvas:Canvas;
 	public-init var canvasObjectNode:CanvasObjectNode;
 	
-	public var fill:Paint = Color.GRAY;
+	public var fill:Color = Color.GRAY;
 	
 	public var isDragging = false;
 	
@@ -133,14 +142,10 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 		addMouseHandler(
 			MOUSE_ENTERED,
 			function( e:MouseEvent ):Void {
-				if( not canvas.wireIsBeingDragged )
-				{
-					if( terminal instanceof InputTerminal )
-					{
+				if( not canvas.wireIsBeingDragged ) {
+					if( terminal instanceof InputTerminal ) {
 						canvasObjectNode.showInputBalloons( this );
-					}
-					else
-					{
+					} else {
 						canvasObjectNode.showOutputBalloons( this );
 					}
 				}
@@ -150,36 +155,23 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 		addMouseHandler(
 			MOUSE_EXITED,
 			function( e:MouseEvent ):Void {
-				if( not isDragging and not canvas.wireIsBeingDragged )
-				{
-					if( terminal instanceof InputTerminal )
-					{
+				if( not isDragging and not canvas.wireIsBeingDragged ) {
+					if( terminal instanceof InputTerminal ) {
 						canvasObjectNode.hideInputBalloons();
-					}
-					else
-					{
+					} else {
 						canvasObjectNode.hideOutputBalloons();
 					}
 				}
 			}
 		);
 		
-		Group {
-			layoutX: bind width / 2
-			layoutY: if( flip ) -50 else 5
+		Stack {
 			content: [
-			Circle {
-							    				centerY: 12
-											    radius: 24
-											    fill: Color.TRANSPARENT
-											  //  clip: Rectangle {
-											    			//			y: if( flip ) -24 else 0
-											    			//			x: -24
-											    				//		width: 48
-											    				//		height: 48
-											    				//	}
-											},
 				Circle {
+	 				centerY: 12
+					radius: 24
+					fill: Color.TRANSPARENT
+				}, Circle {
 					radius: 12
 					fill: LinearGradient {
 						endY: 0
@@ -203,31 +195,29 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 						width: 24
 						height: 7
 					}
-				}, Ellipse {
-					centerY: if( flip ) 10 else -10
-					radiusX: 15
-					radiusY: 9
-					fill: bind if( ( not flip and inputAccept )
-						or ( flip and outputAccept ) ) if(
-								(terminal instanceof InputTerminal and draggingTerminal instanceof OutputTerminal 
-								and (terminal as InputTerminal).likes( draggingTerminal as OutputTerminal )) or
-								(terminal instanceof OutputTerminal and draggingTerminal instanceof InputTerminal 
-								and (draggingTerminal as InputTerminal).likes( terminal as OutputTerminal ))
-						) like else if( hover ) green else white else Color.TRANSPARENT
-					clip: Rectangle {
-						x: -15
-						y: if( flip ) 6 else -19
-						width: 30
-						height: 13
-					}
+				}, Circle {
+					radius: 30
+					fill: bind if( draggingTerminal != null ) {
+						if( ( not flip and inputAccept ) or ( flip and outputAccept ) ) {
+							if( (terminal.getTerminalHolder() != draggingTerminal.getTerminalHolder()) and
+									((terminal instanceof InputTerminal and draggingTerminal instanceof OutputTerminal 
+									and (terminal as InputTerminal).likes( draggingTerminal as OutputTerminal )) or
+									(terminal instanceof OutputTerminal and draggingTerminal instanceof InputTerminal 
+									and (draggingTerminal as InputTerminal).likes( terminal as OutputTerminal )))
+							) like else if( hover ) white else Color.TRANSPARENT;
+						} else Color.TRANSPARENT;
+					} else if( hover ) white else Color.TRANSPARENT
 				}, Circle {
 					radius: 10
 					fill: bind if( flip ) Color.rgb( 0xc9, 0xc9, 0xc9 ) else fill
 				}, DraggableFrame {
 					draggable: TerminalDraggable { tNode: this }
-					placeholder: Group {
+					placeholder: Stack {
 						content: [
 							Circle {
+								radius: 15
+								fill: Color.TRANSPARENT
+							}, Circle {
 								radius: 8
 								fill: Color.rgb( 0x4a, 0x4a, 0x4a )
 							}, Circle {
@@ -271,9 +261,12 @@ class TerminalDraggable extends BaseNode, Draggable {
 	public-init var tNode:TerminalNode;
 	
 	override function create() {
-		Group {
+		Stack {
 			content: [
 				Circle {
+					radius: 15
+					fill: Color.TRANSPARENT
+				}, Circle {
 					radius: 8
 					fill: Color.rgb( 0x4a, 0x4a, 0x4a )
 				}, Circle {

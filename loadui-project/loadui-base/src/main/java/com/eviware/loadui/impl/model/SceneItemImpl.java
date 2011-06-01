@@ -29,6 +29,7 @@ import java.util.Set;
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.component.categories.OnOffCategory;
+import com.eviware.loadui.api.component.categories.SchedulerCategory;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.ActionEvent;
@@ -103,6 +104,14 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 		stateTerminal = terminalHolderSupport.createInput( OnOffCategory.STATE_TERMINAL,
 				OnOffCategory.STATE_TERMINAL_LABEL, OnOffCategory.STATE_TERMINAL_DESCRIPTION );
+		stateTerminal.setLikeFunction( new InputTerminal.LikeFunction()
+		{
+			@Override
+			public boolean call( OutputTerminal output )
+			{
+				return SchedulerCategory.OUTGOING_TERMINAL.equals( output.getName() );
+			}
+		} );
 
 		for( String exportId : getConfig().getExportedTerminalArray() )
 			exports.add( ( OutputTerminal )addressableRegistry.lookup( exportId ) );
