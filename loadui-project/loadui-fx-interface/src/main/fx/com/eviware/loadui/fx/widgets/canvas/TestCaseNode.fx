@@ -99,9 +99,7 @@ public class TestCaseNode extends CanvasObjectNode {
 						image: testCaseGrid
 						onMouseClicked: function( e:MouseEvent ) {
 							if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
-							    AppState.byName("MAIN").blockingTask( function():Void {
-									AppState.byName("MAIN").setActiveCanvas( testCase );
-								}, null, "Initializing TestCase." );
+							    open();
 							}
 						}
 					}, ImageView {
@@ -122,8 +120,18 @@ public class TestCaseNode extends CanvasObjectNode {
 		CloneTestCaseDialog { canvasObject: canvasObject };
 	}
 	
+	function open() {
+			AppState.byName("MAIN").blockingTask( function():Void {
+			AppState.byName("MAIN").setActiveCanvas( testCase );
+		}, null, "Initializing TestCase." );
+	}
+	
 	override var menuItems: Node[] = [
 		MenuItem {
+			text: "Open"
+			action: function() { open() }
+		}, Separator {
+		}, MenuItem {
 			text: ##[RENAME]"Rename"
 			action: function() { RenameModelItemDialog { 
 				labeled: canvasObject
