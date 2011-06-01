@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.FlowCategory;
@@ -72,13 +73,30 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 		incomingTerminal = context.createInput( INCOMING_TERMINAL, "Incoming messages" );
 		context.setLikeFunction( incomingTerminal, new ComponentContext.LikeFunction()
 		{
+			private final AtomicBoolean delegating = new AtomicBoolean( false );
+
 			@Override
 			public boolean call( OutputTerminal output )
 			{
-				for( OutputTerminal ot : getOutgoingTerminalList() )
-					for( Connection conn : ot.getConnections() )
-						if( conn.getInputTerminal().likes( output ) )
-							return true;
+				if( delegating.get() )
+					return false;
+
+				try
+				{
+					delegating.set( true );
+					for( OutputTerminal ot : getOutgoingTerminalList() )
+					{
+						for( Connection conn : ot.getConnections() )
+						{
+							if( conn.getInputTerminal().likes( output ) )
+								return true;
+						}
+					}
+				}
+				finally
+				{
+					delegating.set( false );
+				}
 
 				return false;
 			}
