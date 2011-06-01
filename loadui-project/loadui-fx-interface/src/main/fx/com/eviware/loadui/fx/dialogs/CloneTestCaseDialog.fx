@@ -19,6 +19,7 @@ package com.eviware.loadui.fx.dialogs;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
+import com.eviware.loadui.api.model.CanvasItem;
 
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.MainWindow;
@@ -35,49 +36,57 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.Cl
 
 public class CloneTestCaseDialog {
 
-	public-init var canvasObject:CanvasObjectItem;
+	public-init var canvasObject: CanvasObjectItem;
 	
-	def testCase = bind canvasObject instanceof SceneItem;
 	var name:TextField;
 	var dialog:Dialog;
 	var open:CheckBoxField;
 	var distribute:CheckBoxField;
 	
 	function ok():Void {
-					if( validateLabel( name.value as String ) ) {
-						log.debug( "Cloning: '\{\}''", canvasObject );
-						def copy = canvasObject.getCanvas().duplicate( canvasObject );
-						copy.setLabel(name.value as String);
-						def layoutX = Integer.parseInt( canvasObject.getAttribute( "gui.layoutX", "0" ) ) + 50;
-						def layoutY = Integer.parseInt( canvasObject.getAttribute( "gui.layoutY", "0" ) ) + 50;
-						copy.setAttribute( "gui.layoutX", "{ layoutX as Integer }" );
-						copy.setAttribute( "gui.layoutY", "{ layoutY as Integer }" );
-						dialog.close();
-						if( distribute.value as Boolean ) {
-							def project = (MainWindow.instance.projectCanvas.canvasItem as ProjectItem);
-							for( agent in project.getAgentsAssignedTo(canvasObject as SceneItem) ){
-								project.assignScene(copy as SceneItem, agent);
-							}
-						}
-						if( open.value as Boolean ) {
-							AppState.byName("MAIN").setActiveCanvas( copy.getCanvas() );
-						}
-					} else {
-						def warning:Dialog = Dialog {
-					    	title: "Warning!"
-					    	content: Text {
-					    		content: "Item already exists with label: '{name.value}'!"
-					    	}
-					    	okText: "Ok"
-					    	onOk: function() {
-					    		warning.close();
-					    	}
-					    	noCancel: true
-					    
-					    }
-						log.error( "Item already exists with label: '{name.value}'!" );
-					}
+		if( validateLabel( name.value as String ) ) {
+			log.debug( "Cloning: '\{\}''", canvasObject );
+			def copy = canvasObject.getCanvas().duplicate( canvasObject );
+			copy.setLabel(name.value as String);
+			def layoutX = Integer.parseInt( canvasObject.getAttribute( "gui.layoutX", "0" ) ) + 50;
+			def layoutY = Integer.parseInt( canvasObject.getAttribute( "gui.layoutY", "0" ) ) + 50;
+			copy.setAttribute( "gui.layoutX", "{ layoutX as Integer }" );
+			copy.setAttribute( "gui.layoutY", "{ layoutY as Integer }" );
+			dialog.close();
+			if( distribute.value as Boolean ) {
+				def project = (MainWindow.instance.projectCanvas.canvasItem as ProjectItem);
+				for( agent in project.getAgentsAssignedTo(canvasObject as SceneItem) ){
+					project.assignScene(copy as SceneItem, agent);
 				}
+			}
+			if( open.value as Boolean ) {
+				openTestCase( copy as SceneItem );
+			}
+		} else {
+			def warning:Dialog = Dialog {
+		    	title: "Warning!"
+		    	content: Text {
+		    		content: "Item already exists with label: '{name.value}'!"
+		    	}
+		    	okText: "Ok"
+		    	onOk: function() {
+		    		warning.close();
+		    	}
+		    	noCancel: true
+		    }
+			log.error( "Item already exists with label: '{name.value}'!" );
+		}
+	}
+	
+	function openTestCase( testCase: SceneItem ){
+		AppState.byName("MAIN").blockingTask( 
+			function(): Void {
+				AppState.byName("MAIN").setActiveCanvas( testCase );
+			}, 
+			null, 
+			"Initializing TestCase." 
+		);
+	}
 	
 	postinit {
 		var form:Form;
@@ -86,7 +95,7 @@ public class CloneTestCaseDialog {
 		open = CheckBoxField { label: "Open the new TestCase?", value: true };
 		distribute = CheckBoxField { label: "Distibute to same agents?", value: true };
 		
-		def dialog:Dialog = Dialog {
+		dialog = Dialog {
 			title: "Clone {canvasObject.getLabel()}"
 			content: form = Form {
 				formContent: [ name, distribute, open ]
