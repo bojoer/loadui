@@ -24,7 +24,6 @@ package com.eviware.loadui.fx.widgets;
 import javafx.scene.Node;
 import javafx.scene.CustomNode;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 

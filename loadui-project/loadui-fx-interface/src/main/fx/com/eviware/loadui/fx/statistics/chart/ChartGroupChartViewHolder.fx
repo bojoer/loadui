@@ -17,6 +17,7 @@ package com.eviware.loadui.fx.statistics.chart;
 
 import javafx.scene.Node;
 import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Resizable;
 import javafx.scene.layout.Container;
 import javafx.scene.layout.LayoutInfo;
@@ -33,11 +34,14 @@ import javafx.scene.shape.Rectangle;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.util.Sequences;
 
 import com.javafx.preview.control.MenuButton;
 import com.javafx.preview.control.MenuItem;
+import com.javafx.preview.control.PopupMenu;
 import com.sun.javafx.scene.layout.Region;
 
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.util.ModelUtils;
@@ -122,26 +126,47 @@ public class ChartGroupChartViewHolder extends ChartViewHolder, WeakEventHandler
 		}
 	}
 	
+	def popup:PopupMenu = PopupMenu {
+		items: contextMenuItems()
+		onShowing: function():Void {
+			if ( Sequences.indexOf( AppState.byScene( scene ).overlay.content, popup ) == -1 )
+			{
+				insert popup into AppState.byScene( scene ).overlay.content;				
+			}
+		},
+		onHiding: function():Void {
+			delete popup from AppState.byScene( scene ).overlay.content;
+		}
+	};
+	
 	init {
 		var menuButton:MenuButton;
 		insert menuButton = MenuButton {
 			styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
 			style: "-fx-text-fill: #bababa;"
 			text: bind label.toUpperCase()
-			items: [
-				MenuItem {
-					text: "Rename"
-					action: function():Void {
-						RenameModelItemDialog { scene: scene, labeled: chartGroup }
-					}
-				}, MenuItem {
-					text: "Delete"
-					action: function():Void {
-						DeleteDeletablesDialog { hostScene: scene, deletables: chartGroupHolder }
-					}
-				}
-			]
+			items: contextMenuItems();
 		} after vbox.content[0];
+		
+		addMouseHandler( MOUSE_PRESSED, function( e:MouseEvent ):Void {
+			if( e.secondaryButtonDown ) popup.show( this, e.screenX, e.screenY );
+		} );
+	}
+	
+	function contextMenuItems():Node[] {
+		[
+			MenuItem {
+				text: "Rename"
+				action: function():Void {
+					RenameModelItemDialog { scene: scene, labeled: chartGroup }
+				}
+			}, MenuItem {
+				text: "Delete"
+				action: function():Void {
+					DeleteDeletablesDialog { hostScene: scene, deletables: chartGroupHolder }
+				}
+			}
+		]
 	}
 	
 	override function rebuildChartButtons() {

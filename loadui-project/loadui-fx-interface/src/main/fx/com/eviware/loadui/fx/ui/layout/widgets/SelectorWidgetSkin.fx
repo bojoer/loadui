@@ -70,18 +70,19 @@ public class SelectorWidgetSkin extends Skin {
         	hbox = HBox {
         	    	layoutX:0
         	    	layoutY:0
-        	                vpos: VPos.CENTER
-        	                spacing: 15
+        	               vpos: VPos.CENTER
+        	               spacing: 5
         	            	content: [
         	            		FXDNode {
-        	            		    layoutY: 10
+        	            		   layoutY: 10
         	            			url: bind if (radioButton.selected) SELECTED else NOTSELECTED
         	            		},
         	            		label = Label {
-        	            		    vpos: VPos.CENTER
-        	                		text:bind if (showLabels) radioButton.text else null
-        	                		graphic:bind radioButton.graphic
+        	            		   vpos: VPos.CENTER
+        	                		text: bind if (showLabels) radioButton.text else null
+        	                		graphic: bind radioButton.graphic
         	                		font: Font { size: 10 }
+        	                		style: "-fx-text-fill: black"
         	            	}]
         	            	
         	            }

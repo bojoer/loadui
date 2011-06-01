@@ -223,10 +223,6 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		}
 	}
 	
-//	postinit {
-////		FX.deferAction( function() { showOutputBalloons(); FX.deferAction( function() { hideOutputBalloons(); } ); } );
-//	}
-	
 	override function create():Node {
 		var menuButton:MenuButton;
 		
@@ -327,7 +323,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	}
 	
 	public function showInputBalloons( hoveredTerminal:TerminalNode ):Void {
-		if( not upperBaloonsShowing and not dragging )
+		if( not upperBaloonsShowing and not compact )
 		{
 			upperBalloonsFading.stop();
 			
@@ -378,7 +374,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	}
 	
 	public function showOutputBalloons( hoveredTerminal:TerminalNode ):Void {
-		if( not lowerBaloonsShowing and not dragging )
+		if( not lowerBaloonsShowing and not compact )
 		{
 			lowerBalloonsFading.stop();
 			
@@ -428,15 +424,18 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	}
 	
 	public function hideInputBalloons( fadeOut:Boolean ):Void {
-		if( fadeOut )
+		if( not compact )
 		{
-			upperBalloonsFading.playFromStart();
-    	}
-    	else
-    	{
-			canvas.removeBalloons( upperBalloonHolder );
+			if( fadeOut )
+			{
+				upperBalloonsFading.playFromStart();
+	    	}
+	    	else
+	    	{
+				canvas.removeBalloons( upperBalloonHolder );
+			}
+			upperBaloonsShowing = false;
 		}
-		upperBaloonsShowing = false;
 	}
 	
 	public function hideOutputBalloons():Void {
@@ -444,15 +443,18 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	}
 	
 	public function hideOutputBalloons( fadeOut:Boolean ):Void {
-		if( fadeOut )
+		if( not compact )
 		{
-			lowerBalloonsFading.playFromStart();
-    	}
-    	else
-    	{
-    		canvas.removeBalloons( lowerBalloonHolder );
-    	}
-		lowerBaloonsShowing = false;
+			if( fadeOut )
+			{
+				lowerBalloonsFading.playFromStart();
+	    	}
+	    	else
+	    	{
+	    		canvas.removeBalloons( lowerBalloonHolder );
+	    	}
+			lowerBaloonsShowing = false;
+		}
 	}
 	
 	override function handleEvent( e:EventObject ) {

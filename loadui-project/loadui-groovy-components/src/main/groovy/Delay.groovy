@@ -108,11 +108,11 @@ onAction( "RESET" ) {
 }
 
 layout { 
-	property( property:delay, label:"Delay(ms)", min:0, step:100, span:60000 ) 
+	property( property:delay, label:"Delay\n(ms)", min:0, step:100, span:60000 ) 
 	separator( vertical:true )
 	node( widget:'selectorWidget', label:'Distribution', labels:[ UNIFORM, EXPONENTIAL, GAUSSIAN ],
 		images:[ 'linear_shape.png', 'poisson_shape.png', 'gauss_shape.png' ], default: selected.value, selected: selected )
-	property( property: randomDelay, label:'Random(%)', min:0, max: 100 )
+	property( property: randomDelay, label:'Random\n(%)', min:0, max: 100 )
 	separator( vertical:true )
 	box( widget:'display' ) {
 		node( label:'Delay ', fString:display, constraints:'w 60!' )
