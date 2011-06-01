@@ -239,7 +239,7 @@ public class StatisticsWindow {
 	function checkForEmptyPages() {
 		def statisticPages = project.getStatisticPages();
 		if( statisticPages.getChildCount() == 0 )
-			ChartDefaults.createStatisticsTab( statisticPages, "General", project );
+			ChartDefaults.createStatisticsTab( statisticPages, "General", /*project*/ null );
 	}
 }
 	

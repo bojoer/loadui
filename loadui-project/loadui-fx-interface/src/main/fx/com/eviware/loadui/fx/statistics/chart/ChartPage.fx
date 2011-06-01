@@ -136,16 +136,29 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 			content: [
 				DropBase {
 					layoutInfo: LayoutInfo { height: bind Math.max( height, container.height ), width: bind width }
-				}, container = SortableBox {
-					vertical: true
-					spacing: 5
-					enforceBounds: false
-					padding: Insets { top: 5, right: 5, bottom: 25 }
-					layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.NEVER, vfill: false }
-					content: innerContent
-					onMoved: function( child, fromIndex, toIndex ):Void {
-						statisticPage.moveChartGroup( (child as ChartGroupHolder).chartGroup, toIndex );
-					}
+				}, VBox {
+					content: [
+						Stack {
+							visible: bind sizeof container.content == 0
+							managed: bind sizeof container.content == 0
+							styleClass: "dnd-placeholder"
+							layoutInfo: LayoutInfo { height: 200, vfill: false }
+							content: [
+								Region { styleClass: "dnd-placeholder" },
+								Label { text: "Drag and drop items from the sidebar to the rack to create charts." }
+							]
+						}, container = SortableBox {
+							vertical: true
+							spacing: 5
+							enforceBounds: false
+							padding: Insets { top: 5, right: 5, bottom: 25 }
+							layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.NEVER, vfill: false }
+							content: innerContent
+							onMoved: function( child, fromIndex, toIndex ):Void {
+								statisticPage.moveChartGroup( (child as ChartGroupHolder).chartGroup, toIndex );
+							}
+						}
+					]
 				}, Rectangle {
 					width: bind container.width
 					height: bind container.height

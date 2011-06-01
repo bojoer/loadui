@@ -39,7 +39,7 @@ waitingCount = 0
 display = new DelayedFormattedString( '%d ms', 500, 0 )
 waitingDisplay = new DelayedFormattedString( '%d', 500, value { waitingCount } )
 
-output = createOutgoing()
+createOutgoing( 'output' )
 output.label = 'Delayed messages'
 output.description = 'After being delayed, messages are outputted here.'
 

@@ -56,6 +56,7 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
     init {
         manager = BeanInjector.getBean(StatisticsManager.class);
         manager.addEventListener( BaseEvent.class, this );
+        for( sh in manager.getStatisticHolders() ) handleStatisticHolder( sh );
         componentRegistry = BeanInjector.getBean(ComponentRegistry.class);
     }
     

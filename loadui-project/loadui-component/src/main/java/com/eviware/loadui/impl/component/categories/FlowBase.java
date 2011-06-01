@@ -130,14 +130,25 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 	 * 
 	 * @return
 	 */
-	final public OutputTerminal createOutgoing()
+	final public OutputTerminal createOutgoing( String name )
 	{
-		OutputTerminal output = getContext().createOutput( OUTGOING_TERMINAL + " " + ( outgoingTerminals.size() + 1 ),
+		OutputTerminal output = getContext().createOutput( name,
 				"Output Terminal " + " " + ( outgoingTerminals.size() + 1 ) );
 		getContext().setSignature( output, inputSignature );
 		outgoingTerminals.add( output );
 
 		return output;
+	}
+
+	/**
+	 * Creates an additional OutputTerminal and appends it to the
+	 * outgoingTerminals List using a default name.
+	 * 
+	 * @return
+	 */
+	final public OutputTerminal createOutgoing()
+	{
+		return createOutgoing( OUTGOING_TERMINAL + " " + ( outgoingTerminals.size() + 1 ) );
 	}
 
 	final public ArrayList<Counter> getCounters()

@@ -42,6 +42,9 @@ public class ProjectRefImpl implements ProjectRef
 	private final AttributeHolderSupport attributeHolderSupport;
 	private File projectFile;
 	private ProjectItem project;
+	// With the current UI, we do not wish to autoload projects at startup, so do
+	// not save the enabled state as true, ever.
+	private boolean enabled = false;
 
 	public ProjectRefImpl( WorkspaceItemImpl workspace, ProjectReferenceConfig config ) throws IOException
 	{
@@ -49,6 +52,8 @@ public class ProjectRefImpl implements ProjectRef
 		this.config = config;
 		if( config.getAttributes() == null )
 			config.addNewAttributes();
+
+		config.setEnabled( false );
 
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
 		projectFile = new File( config.getProjectFile() );
@@ -99,7 +104,7 @@ public class ProjectRefImpl implements ProjectRef
 	@Override
 	public boolean isEnabled()
 	{
-		return config.getEnabled();
+		return enabled; // config.getEnabled();
 	}
 
 	private void loadProject() throws IOException
@@ -136,7 +141,7 @@ public class ProjectRefImpl implements ProjectRef
 					project = null;
 					eventSupport.fireEvent( new BaseEvent( this, UNLOADED ) );
 				}
-				config.setEnabled( enabled );
+				this.enabled = enabled; // config.setEnabled( enabled );
 			}
 			catch( IOException e )
 			{
