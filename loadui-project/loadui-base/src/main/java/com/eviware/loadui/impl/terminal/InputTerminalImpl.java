@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.eviware.loadui.api.component.ComponentContext.LikeFunction;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.terminal.Connection;
@@ -59,7 +60,6 @@ public class InputTerminalImpl extends TerminalImpl implements InputTerminal
 		return likeFunction != null ? likeFunction.call( outputTerminal ) : false;
 	}
 
-	@Override
 	public void setLikeFunction( LikeFunction likeFunction )
 	{
 		this.likeFunction = likeFunction;

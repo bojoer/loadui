@@ -58,12 +58,14 @@ public abstract class AnalysisBase extends BaseCategory implements AnalysisCateg
 		executor = BeanInjector.getBean( ScheduledExecutorService.class );
 
 		inputTerminal = context.createInput( INPUT_TERMINAL, "Data to analyze" );
-		inputTerminal.setLikeFunction( new InputTerminal.LikeFunction()
+		context.setLikeFunction( inputTerminal, new ComponentContext.LikeFunction()
 		{
 			@Override
 			public boolean call( OutputTerminal output )
 			{
-				return RunnerCategory.RESULT_TERMINAL.equals( output.getName() );
+				return RunnerCategory.RESULT_TERMINAL.equals( output.getName() )
+						|| ( output.getMessageSignature().containsKey( RunnerCategory.TIMESTAMP_MESSAGE_PARAM ) && output
+								.getMessageSignature().containsKey( RunnerCategory.TIME_TAKEN_MESSAGE_PARAM ) );
 			}
 		} );
 

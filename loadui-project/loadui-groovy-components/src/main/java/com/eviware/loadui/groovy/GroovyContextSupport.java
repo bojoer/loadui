@@ -168,7 +168,7 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 
 	public InputTerminal likes( final InputTerminal input, final Closure<Boolean> handler )
 	{
-		input.setLikeFunction( new InputTerminal.LikeFunction()
+		context.setLikeFunction( input, new LikeFunction()
 		{
 			@Override
 			public boolean call( OutputTerminal output )
@@ -500,6 +500,12 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 	public ComponentItem getComponent()
 	{
 		return context.getComponent();
+	}
+
+	@Override
+	public void setLikeFunction( InputTerminal terminal, LikeFunction likeFunction )
+	{
+		context.setLikeFunction( terminal, likeFunction );
 	}
 
 	@Override

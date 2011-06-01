@@ -35,12 +35,12 @@ public abstract class OnOffBase extends BaseCategory implements OnOffCategory
 		stateProperty = context.createProperty( STATE_PROPERTY, Boolean.class, true );
 		stateTerminal = context.createInput( STATE_TERMINAL, STATE_TERMINAL_LABEL,
 				OnOffCategory.STATE_TERMINAL_DESCRIPTION );
-		stateTerminal.setLikeFunction( new InputTerminal.LikeFunction()
+		context.setLikeFunction( stateTerminal, new ComponentContext.LikeFunction()
 		{
 			@Override
 			public boolean call( OutputTerminal output )
 			{
-				return SchedulerCategory.OUTGOING_TERMINAL.equals( output.getName() );
+				return output.getMessageSignature().containsKey( SchedulerCategory.ENABLED_MESSAGE_PARAM );
 			}
 		} );
 	}

@@ -22,6 +22,7 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.impl.component.ActivityStrategies;
+import com.google.common.collect.ImmutableMap;
 
 public abstract class SchedulerBase extends OnOffBase implements SchedulerCategory
 {
@@ -38,6 +39,7 @@ public abstract class SchedulerBase extends OnOffBase implements SchedulerCatego
 
 		output = context.createOutput( OUTGOING_TERMINAL, "Scheduling Terminal",
 				"Connect to the Component activation terminal of other components to enable/disable them." );
+		context.setSignature( output, ImmutableMap.<String, Class<?>> of( ENABLED_MESSAGE_PARAM, Boolean.class ) );
 
 		onMessage = context.newMessage();
 		onMessage.put( ENABLED_MESSAGE_PARAM, true );

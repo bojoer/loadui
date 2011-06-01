@@ -25,8 +25,6 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.CollectionEvent.Event;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.terminal.Connection;
-import com.eviware.loadui.api.terminal.InputTerminal;
-import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalHolder;
 import com.eviware.loadui.util.BeanInjector;
@@ -43,36 +41,36 @@ public class TerminalHolderSupport implements Releasable
 		addressableRegistry = BeanInjector.getBean( AddressableRegistry.class );
 	}
 
-	public InputTerminal createInput( String name, String label, String description )
+	public InputTerminalImpl createInput( String name, String label, String description )
 	{
 		if( terminals.containsKey( name ) )
 		{
 			Terminal existing = terminals.get( name );
-			if( existing instanceof InputTerminal )
-				return ( InputTerminal )existing;
+			if( existing instanceof InputTerminalImpl )
+				return ( InputTerminalImpl )existing;
 			throw new IllegalArgumentException( "TerminalHolder already has a Terminal with label '" + label
 					+ "' which is of different type than the requested." );
 		}
 
-		InputTerminal terminal = new InputTerminalImpl( owner, name, label, description );
+		InputTerminalImpl terminal = new InputTerminalImpl( owner, name, label, description );
 		terminals.put( name, terminal );
 		owner.fireEvent( new CollectionEvent( owner, TerminalHolder.TERMINALS, Event.ADDED, terminal ) );
 
 		return terminal;
 	}
 
-	public OutputTerminal createOutput( String name, String label, String description )
+	public OutputTerminalImpl createOutput( String name, String label, String description )
 	{
 		if( terminals.containsKey( name ) )
 		{
 			Terminal existing = terminals.get( name );
-			if( existing instanceof OutputTerminal )
-				return ( OutputTerminal )existing;
+			if( existing instanceof OutputTerminalImpl )
+				return ( OutputTerminalImpl )existing;
 			throw new IllegalArgumentException( "TerminalHolder already has a Terminal with label '" + label
 					+ "' which is of different type than the requested." );
 		}
 
-		OutputTerminal terminal = new OutputTerminalImpl( owner, name, label, description );
+		OutputTerminalImpl terminal = new OutputTerminalImpl( owner, name, label, description );
 		terminals.put( name, terminal );
 		owner.fireEvent( new CollectionEvent( owner, TerminalHolder.TERMINALS, Event.ADDED, terminal ) );
 

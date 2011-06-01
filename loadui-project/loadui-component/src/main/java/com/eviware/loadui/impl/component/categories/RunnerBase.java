@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.ComponentContext;
+import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.counter.Counter;
 import com.eviware.loadui.api.counter.CounterHolder;
@@ -58,6 +59,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.statistics.CounterStatisticSupport;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Base class for runner components which defines base behavior which can be
@@ -140,25 +142,26 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 		triggerTerminal = context.createInput( TRIGGER_TERMINAL, "Trigger Input",
 				"Connect to a Generator to recieve trigger signals. Each signal will trigger the component to run once." );
-		triggerTerminal.setLikeFunction( new InputTerminal.LikeFunction()
+		context.setLikeFunction( triggerTerminal, new ComponentContext.LikeFunction()
 		{
 			@Override
 			public boolean call( OutputTerminal output )
 			{
-				return GeneratorBase.TRIGGER_TERMINAL.equals( output.getName() );
+				return output.getMessageSignature().containsKey( GeneratorCategory.TRIGGER_TIMESTAMP_MESSAGE_PARAM );
 			}
 		} );
 
 		resultTerminal = context.createOutput( RESULT_TERMINAL, "Results",
 				"Outputs data such as TimeTaken for each request." );
-		Map<String, Class<?>> resultSignature = new HashMap<String, Class<?>>();
-		resultSignature.put( TIME_TAKEN_MESSAGE_PARAM, Long.class );
-		resultSignature.put( TIMESTAMP_MESSAGE_PARAM, Long.class );
-		resultSignature.put( STATUS_MESSAGE_PARAM, Boolean.class );
-		context.setSignature( resultTerminal, resultSignature );
+
+		context.setSignature( resultTerminal, ImmutableMap.<String, Class<?>> of( TIME_TAKEN_MESSAGE_PARAM, Long.class,
+				TIMESTAMP_MESSAGE_PARAM, Long.class, STATUS_MESSAGE_PARAM, Boolean.class ) );
 
 		currentlyRunningTerminal = context.createOutput( CURRENLY_RUNNING_TERMINAL, "Requests Currently Running",
 				"Outputs the number of currently running requests, when that number changes." );
+
+		context.setSignature( currentlyRunningTerminal,
+				ImmutableMap.<String, Class<?>> of( CURRENTLY_RUNNING_MESSAGE_PARAM, Long.class ) );
 
 		requestCounter = context.getCounter( CanvasItem.REQUEST_COUNTER );
 		sampleCounter = context.getCounter( CanvasItem.SAMPLE_COUNTER );
@@ -343,7 +346,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			bottomStats.removeLast();
 	}
 
-	private void updateCurrentlyRunning( int running )
+	private void updateCurrentlyRunning( long running )
 	{
 		runningVariable.update( System.currentTimeMillis(), running );
 		if( hasCurrentlyRunning )

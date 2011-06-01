@@ -28,21 +28,4 @@ public interface InputTerminal extends Terminal
 	 * @return
 	 */
 	public boolean likes( OutputTerminal outputTerminal );
-
-	/**
-	 * Allows setting the like behavior of an InputTerminal.
-	 * 
-	 * @param likeFuntion
-	 */
-	public void setLikeFunction( LikeFunction likeFuntion );
-
-	/**
-	 * Simple interface defining the like function.
-	 * 
-	 * @author dain.nilsson
-	 */
-	public interface LikeFunction
-	{
-		public boolean call( OutputTerminal output );
-	}
 }

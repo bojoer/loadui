@@ -15,8 +15,6 @@
  */
 package com.eviware.loadui.impl.component.categories;
 
-import java.util.Collections;
-
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import com.eviware.loadui.api.events.ActionEvent;
@@ -28,6 +26,7 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.impl.component.ActivityStrategies;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Base class for trigger components which defines base behavior which can be
@@ -66,7 +65,7 @@ public abstract class GeneratorBase extends OnOffBase implements GeneratorCatego
 		ledOffMessage.put( ACTIVITY_MESSAGE_PARAM, false );
 
 		context.setSignature( triggerTerminal,
-				Collections.<String, Class<?>> singletonMap( TRIGGER_TIMESTAMP_MESSAGE_PARAM, Long.class ) );
+				ImmutableMap.<String, Class<?>> of( TRIGGER_TIMESTAMP_MESSAGE_PARAM, Long.class ) );
 
 		context.getComponent().addEventListener( BaseEvent.class, listener );
 		fixActivityStrategy( false );

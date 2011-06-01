@@ -144,6 +144,15 @@ public interface ComponentContext extends Labeled.Mutable, MutableTerminalHolder
 	public void setSignature( OutputTerminal terminal, Map<String, Class<?>> signature );
 
 	/**
+	 * Allows setting the like behavior of an InputTerminal.
+	 * 
+	 * @param terminal
+	 *           The InputTerminal to set the LikeFunction for.
+	 * @param likeFuntion
+	 */
+	public void setLikeFunction( InputTerminal terminal, LikeFunction likeFunction );
+
+	/**
 	 * Sends a message out through an OutputTerminal.
 	 * 
 	 * @param terminal
@@ -342,4 +351,14 @@ public interface ComponentContext extends Labeled.Mutable, MutableTerminalHolder
 	 * @param statisticVariableName
 	 */
 	public void removeStatisticVariable( String statisticVariableName );
+
+	/**
+	 * Simple interface defining the like function.
+	 * 
+	 * @author dain.nilsson
+	 */
+	public interface LikeFunction
+	{
+		public boolean call( OutputTerminal output );
+	}
 }

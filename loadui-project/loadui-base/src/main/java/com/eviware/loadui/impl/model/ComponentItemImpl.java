@@ -69,6 +69,7 @@ import com.eviware.loadui.config.ComponentItemConfig;
 import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.counter.RemoteAggregatedCounterSupport;
 import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
+import com.eviware.loadui.impl.terminal.InputTerminalImpl;
 import com.eviware.loadui.impl.terminal.OutputTerminalImpl;
 import com.eviware.loadui.impl.terminal.TerminalHolderSupport;
 import com.eviware.loadui.impl.terminal.TerminalMessageImpl;
@@ -578,6 +579,13 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		}
 
 		@Override
+		public void setLikeFunction( InputTerminal terminal, LikeFunction likeFunction )
+		{
+			if( terminal instanceof InputTerminalImpl && terminalHolderSupport.containsTerminal( terminal ) )
+				( ( InputTerminalImpl )terminal ).setLikeFunction( likeFunction );
+		}
+
+		@Override
 		public Collection<Terminal> getTerminals()
 		{
 			return ComponentItemImpl.this.getTerminals();
@@ -981,12 +989,6 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		public boolean likes( OutputTerminal outputTerminal )
 		{
 			return false;
-		}
-
-		@Override
-		public void setLikeFunction( LikeFunction likeFuntion )
-		{
-			throw new UnsupportedOperationException();
 		}
 	}
 

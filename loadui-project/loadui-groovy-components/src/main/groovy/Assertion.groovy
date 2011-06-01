@@ -33,6 +33,7 @@ import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 createOutput( 'output', 'Failed messages', 'Messages that did not pass the assertion are outputted here.' )
 inputTerminal.label = 'Messages to assert'
 inputTerminal.description = 'Messages sent here will be verified based on their values.'
+likes( inputTerminal ) { it.messageSignature.values().any { Number.isAssignableFrom( it ) } }
 
 def componentSignature = [
 		"Assert" : String.class,

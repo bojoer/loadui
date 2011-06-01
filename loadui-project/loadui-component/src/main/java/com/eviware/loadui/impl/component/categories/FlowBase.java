@@ -70,6 +70,19 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 
 		context.setActivityStrategy( ActivityStrategies.ON );
 		incomingTerminal = context.createInput( INCOMING_TERMINAL, "Incoming messages" );
+		context.setLikeFunction( incomingTerminal, new ComponentContext.LikeFunction()
+		{
+			@Override
+			public boolean call( OutputTerminal output )
+			{
+				for( OutputTerminal ot : getOutgoingTerminalList() )
+					for( Connection conn : ot.getConnections() )
+						if( conn.getInputTerminal().likes( output ) )
+							return true;
+
+				return false;
+			}
+		} );
 
 		for( int i = 0; i < 10; i++ )
 			counters.add( getContext().getCounter( "out_" + i ) );

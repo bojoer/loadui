@@ -28,9 +28,9 @@ import java.util.Set;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
+import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.component.categories.SchedulerCategory;
-import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
@@ -66,6 +66,7 @@ import com.eviware.loadui.impl.summary.sections.TestCaseExecutionDataSection;
 import com.eviware.loadui.impl.summary.sections.TestCaseExecutionMetricsSection;
 import com.eviware.loadui.impl.summary.sections.TestCaseExecutionNotablesSection;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
+import com.eviware.loadui.impl.terminal.InputTerminalImpl;
 import com.eviware.loadui.impl.terminal.TerminalHolderSupport;
 import com.eviware.loadui.util.BeanInjector;
 
@@ -102,16 +103,18 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 		terminalHolderSupport = new TerminalHolderSupport( this );
 
-		stateTerminal = terminalHolderSupport.createInput( OnOffCategory.STATE_TERMINAL,
+		final InputTerminalImpl stateTerminalImpl = terminalHolderSupport.createInput( OnOffCategory.STATE_TERMINAL,
 				OnOffCategory.STATE_TERMINAL_LABEL, OnOffCategory.STATE_TERMINAL_DESCRIPTION );
-		stateTerminal.setLikeFunction( new InputTerminal.LikeFunction()
+		stateTerminalImpl.setLikeFunction( new ComponentContext.LikeFunction()
 		{
 			@Override
 			public boolean call( OutputTerminal output )
 			{
-				return SchedulerCategory.OUTGOING_TERMINAL.equals( output.getName() );
+				return output.getMessageSignature().containsKey( SchedulerCategory.ENABLED_MESSAGE_PARAM );
 			}
 		} );
+
+		stateTerminal = stateTerminalImpl;
 
 		for( String exportId : getConfig().getExportedTerminalArray() )
 			exports.add( ( OutputTerminal )addressableRegistry.lookup( exportId ) );
