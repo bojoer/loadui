@@ -1025,18 +1025,18 @@
 
 .zoom-panel-button:selected *.radio {
 	-fx-background-color: rgba(0,0,0,0.3);
-	-fx-background-radius: 3;
+	-fx-background-radius: 7, 6, 5;
 	-fx-background-insets: -50 -53 -10 -8;
-	-fx-border-insets: -50 -53 -10 -8;
-	-fx-border-radius: 3;
+	-fx-border-insets: -50 -53 -10 -8, -49 -52 -9 -7, -48 -51 -8 -6;
+	-fx-border-radius: 7, 6, 5;
 	-fx-border-style: solid;
-	-fx-border-color: #000000;
-	-fx-border-width: 3;
+	-fx-border-color: #040404, #060606, #101010;
+	
 }
 
 .zoom-panel-button:selected *.dot {
 	-fx-background-color: rgba(0,0,0,0.8);
-	-fx-background-radius: 3;
+	-fx-background-radius: 4;
 	-fx-background-insets: 25 -53 -45 -8;
 }
 
