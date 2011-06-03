@@ -163,11 +163,11 @@ public class StringToStringTableModel extends KeyValueTableModel {
 	}
 
 	private String unescape(String string) {
-		return string.replaceAll("&#124;", "|").replaceAll("&#061;", "=");
+		return string == null ? "" : string.replaceAll("&#124;", "|").replaceAll("&#061;", "=");
 	}
 
 	private String escape(String string) {
-		return string.replaceAll("\\|", "&#124;").replaceAll("=", "&#061;");
+		return string == null ? "" : string.replaceAll("\\|", "&#124;").replaceAll("=", "&#061;");
 	}
 
 	public static class StringProperty {
