@@ -42,6 +42,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
+import javafx.scene.control.Label;
 import javafx.scene.text.TextOrigin;
 import javafx.scene.image.ImageView;
 import javafx.geometry.Point2D;
@@ -75,6 +76,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 import com.eviware.loadui.api.component.categories.*;
+
+import com.eviware.loadui.fx.ui.popup.TooltipHolder;
 
 public def GROUP_HEIGHT = 126;
 
@@ -139,6 +142,12 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 	
 	/** Toolbar title */
 	public var toolbarTitle: String = "Components";
+	
+	/** If specified, link pointing to the specified URL will be added as the last item in the toolbar */
+	public var linkURL: String = null;
+	
+	/** Label of the link that will be added as the last item in the toolbar. If not specified, link URL will be used instead */
+	public var linkLabel: String = null;
 
 	public function addItem( item:ToolbarItem ) {
 		def group = item.category.toUpperCase();
@@ -417,9 +426,63 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 		Group { content: withSpacers }
 	}
 	
-	
+	postinit {
+		if(linkLabel == null){
+			linkLabel = linkURL;
+		}
+		if(linkLabel != null){
+			def link = HyperlinkItem{
+				label: bind linkLabel, 
+				url: bind linkURL
+			}
+			// put \uffff as first character to ensure this item will always be the last in the list 
+			itemGroups.put( "\uffff{link.label}", link );
+			items = Sequences.sort( [ items, link ], groupOrder ) as Node[];
+		}
+	}	
 
 }
 
+/**
+ * Hyperlink. Used as the last item in the toolbar.
+ *
+ * @author predrag.vucetic
+ */
+public class HyperlinkItem extends BaseNode, TooltipHolder {
 
+	override var styleClass = "toolbar-hyperlink";
+	
+	public var label: String;
+	
+	public var url: String;
+	
+	override var tooltip: String = bind url;
+	
+	def contentGroup: Group = Group {
+		content: [
+			Label {
+				layoutX: 13
+				layoutY: 12
+				text: bind label
+				cursor: Cursor.HAND
+				onMouseClicked: function(e: MouseEvent): Void {
+					openURL(url);
+				}
+				styleClass: "toolbar-hyperlink"
+			}
+		]
+	}
+	
+	override function create() {
+		Group {
+			layoutY: -12
+			content: contentGroup
+		}
+	}
+	
+	override function toString():String {
+		"{label} ({url})"
+	}
+
+}
 

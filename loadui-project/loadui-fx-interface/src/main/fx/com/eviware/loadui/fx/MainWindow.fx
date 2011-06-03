@@ -105,6 +105,8 @@ public class MainWindow {
 	var projectToolbar:Toolbar = Toolbar{
 		layoutY: 110
 		height: bind scene.height - inspectors.height - 100
+		linkURL: "http://www.loadui.org/Custom-Components"
+		linkLabel: "Get more\ncomponents \u00bb"
 	}
 	
 	public function getProjectToolbar() { 
@@ -114,6 +116,8 @@ public class MainWindow {
 	var testcaseToolbar:Toolbar = Toolbar{
 		layoutY: 130
 		height: bind scene.height - inspectors.height - 100
+		linkURL: "http://www.loadui.org/Custom-Components"
+		linkLabel: "Get more\ncomponents \u00bb"
 	}
 	
 	public function getTestcaseToolbar() { testcaseToolbar }

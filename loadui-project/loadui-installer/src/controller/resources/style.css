@@ -454,6 +454,12 @@
 	-fx-font: 10pt "Amble";
 }
 
+.toolbar-hyperlink {
+	-fx-text-fill: #9c9c9c;
+	-fx-font-size: 11pt;
+	-fx-font-weight: bold;
+}
+
 .display-label {
 	-fx-text-fill: #0EFF0F;
 }
@@ -1274,10 +1280,10 @@
 }
 
 .balloon-header {
-	-fx-font-size: 14;
+	-fx-font-size: 12pt;
 	-fx-font-weight: bold;
 }
 
 .balloon-text {
-	-fx-font-size: 14;
+	-fx-font-size: 12pt;
 }
