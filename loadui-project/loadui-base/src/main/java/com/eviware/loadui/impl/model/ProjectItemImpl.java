@@ -88,6 +88,7 @@ import com.eviware.loadui.impl.summary.sections.ProjectExecutionNotablesSection;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.impl.terminal.RoutedConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
 import com.google.common.collect.ImmutableMap;
 
@@ -340,16 +341,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	public void release()
 	{
 		getWorkspace().removeEventListener( BaseEvent.class, workspaceListener );
-		agentListener.release();
-		statisticPages.release();
-
-		for( SceneItem scene : new ArrayList<SceneItem>( getScenes() ) )
-		{
-			scene.removeEventListener( BaseEvent.class, sceneListener );
-			scene.release();
-		}
-
-		// statisticHolderSupport.release();
+		ReleasableUtils.releaseAll( agentListener, statisticPages, getScenes() );
 
 		super.release();
 	}
@@ -358,9 +350,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	public void delete()
 	{
 		for( SceneItem scene : new ArrayList<SceneItem>( getScenes() ) )
-		{
 			scene.delete();
-		}
+
 		release();
 		projectFile.delete();
 		super.delete();
@@ -471,6 +462,15 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		broadcastMessage( scene, SceneCommunication.CHANNEL, message );
 	}
 
+	private AssignmentImpl getAssignment( SceneItem scene, AgentItem agent )
+	{
+		for( Assignment assignment : assignments )
+			if( assignment.getScene() == scene && assignment.getAgent() == agent )
+				return ( AssignmentImpl )assignment;
+
+		return null;
+	}
+
 	@Override
 	public void broadcastMessage( SceneItem scene, String channel, Object data )
 	{
@@ -558,6 +558,13 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
+	public boolean isSceneLoaded( SceneItem scene, AgentItem agent )
+	{
+		AssignmentImpl assignment = getAssignment( scene, agent );
+		return assignment == null ? false : assignment.loaded;
+	}
+
+	@Override
 	public boolean isSaveReport()
 	{
 		return saveReport.getValue();
@@ -622,15 +629,25 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		}
 	}
 
-	private static class AssignmentImpl implements Assignment
+	private class AssignmentImpl implements Assignment
 	{
 		private final SceneItem scene;
 		private final AgentItem agent;
+		private boolean loaded = false;
 
 		public AssignmentImpl( SceneItem scene, AgentItem agent )
 		{
 			this.scene = scene;
 			this.agent = agent;
+		}
+
+		public void setLoaded( boolean loaded )
+		{
+			if( this.loaded != loaded )
+			{
+				this.loaded = loaded;
+				fireBaseEvent( SCENE_LOADED );
+			}
 		}
 
 		@Override
@@ -778,13 +795,19 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		public void handleEvent( BaseEvent event )
 		{
 			AgentItem agent = ( AgentItem )event.getSource();
-			if( AgentItem.READY.equals( event.getKey() ) && agent.isReady() )
+			if( AgentItem.READY.equals( event.getKey() ) )
 			{
-				log.debug( "Agent is ready!" );
+				final boolean ready = agent.isReady();
+				log.debug( "Agent {} ready: {}", agent, ready );
 				for( SceneItem scene : getScenesAssignedTo( agent ) )
 				{
 					log.debug( "Send message assign: {}", scene.getLabel() );
-					agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, scene.getId() ) );
+					AssignmentImpl assignment = getAssignment( scene, agent );
+					if( assignment != null )
+						assignment.setLoaded( false );
+					if( ready )
+						agent.sendMessage( AgentItem.AGENT_CHANNEL,
+								Collections.singletonMap( AgentItem.ASSIGN, scene.getId() ) );
 				}
 			}
 		}
@@ -801,6 +824,9 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				{
 					log.debug( "Agent {} has requested a TestCase: {}, sending...", endpoint,
 							message.get( AgentItem.DEFINE_SCENE ) );
+					AssignmentImpl assignment = getAssignment( scene, ( AgentItem )endpoint );
+					if( assignment != null )
+						assignment.setLoaded( false );
 					endpoint.sendMessage(
 							channel,
 							ImmutableMap.of( AgentItem.SCENE_ID, scene.getId(), AgentItem.SCENE_DEFINITION,
@@ -827,6 +853,10 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			else if( message.containsKey( AgentItem.STARTED ) )
 			{
 				SceneItem scene = ( SceneItem )addressableRegistry.lookup( message.get( AgentItem.STARTED ) );
+				AssignmentImpl assignment = getAssignment( scene, ( AgentItem )endpoint );
+				if( assignment != null )
+					assignment.setLoaded( true );
+
 				if( scene.isRunning() && !workspace.isLocalMode() )
 					endpoint
 							.sendMessage( SceneCommunication.CHANNEL, Arrays.asList( scene.getId(),

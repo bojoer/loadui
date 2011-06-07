@@ -34,6 +34,7 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.config.AgentItemConfig;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.messaging.MessageEndpointSupport;
 import com.google.common.collect.ImmutableMap;
 
@@ -296,6 +297,7 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	public void release()
 	{
 		super.release();
+		ReleasableUtils.release( endpointSupport );
 
 		timeSynchronizerFuture.cancel( true );
 	}

@@ -30,6 +30,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.scene.control.Label;
 import javafx.scene.layout.LayoutInfo;
+import javafx.scene.layout.HBox;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.effect.Glow;
@@ -43,6 +44,7 @@ import javafx.scene.image.Image;
 
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.ActivityLed;
+import com.eviware.loadui.fx.ui.ConnectingAnimation;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
@@ -54,10 +56,11 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 
 import java.util.EventObject;
-import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.ProjectItem;
 
 import java.util.EventObject;
 import java.lang.RuntimeException;
@@ -72,14 +75,21 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Te
 /**
  * Node to display in the AgentList representing a AgentItem.
  */
-public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHandler {
+public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, WeakEventHandler {
 
 	// container node instance. Use containerNode.agent to retrieve reference to corresponding AgentItem.
-	public var containerNode: AgentInspectorNode;
+	public var containerNode: AgentInspectorNode on replace {
+		loaded = containerNode.agent == null or project.isSceneLoaded( sceneItem, containerNode.agent );
+	}
 	
+	var project:ProjectItem;
 	public var sceneItem: SceneItem on replace oldScene {
-		oldScene.removeEventListener(BaseEvent.class, this);
-		sceneItem.addEventListener(BaseEvent.class, this);
+		oldScene.removeEventListener(ActionEvent.class, this);
+		oldScene.getProject().removeEventListener(BaseEvent.class, this);
+		sceneItem.addEventListener(ActionEvent.class, this);
+		project = sceneItem.getProject();
+		loaded = containerNode.agent == null or project.isSceneLoaded( sceneItem, containerNode.agent );
+		project.addEventListener(BaseEvent.class, this);
 		modelItem = sceneItem;
 	};
 	
@@ -118,15 +128,24 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 	public var height: Number = 20;
 	
 	var running: Boolean = sceneItem.isRunning();
+	var loaded = false;
 	
 	override function handleEvent(e: EventObject) {
-		if( e instanceof ActionEvent ) {
-			def event = e as ActionEvent;
-			if(CanvasItem.START_ACTION == event.getKey()) {
-				runInFxThread(function():Void {running = true;});
+		if( e.getSource() == sceneItem ) {
+			if( e instanceof ActionEvent ) {
+				def event = e as ActionEvent;
+				if( CanvasItem.START_ACTION.equals( event.getKey() ) ) {
+					runInFxThread( function():Void { running = true } );
+				} else if( CanvasItem.STOP_ACTION.equals( event.getKey() ) or CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) ) {
+					runInFxThread( function():Void { running = false } );
+				}
 			}
-			else if(CanvasItem.STOP_ACTION == event.getKey() or CanvasItem.COMPLETE_ACTION == event.getKey()) {
-				runInFxThread(function():Void {running = false;});
+		} else if( e.getSource() == project ) {
+			if( e instanceof BaseEvent ) {
+				def event = e as BaseEvent;
+				if( ProjectItem.SCENE_LOADED.equals( event.getKey() ) ) {
+					runInFxThread( function():Void { loaded = containerNode.agent == null or project.isSceneLoaded( sceneItem, containerNode.agent ) } );
+				}
 			}
 		}
 	}
@@ -163,9 +182,15 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, EventHan
 				Label {
 					layoutX: 3
 					layoutInfo: LayoutInfo { width: 90 }
-					graphic: ActivityLed { active: bind running }
+					graphic: HBox {
+						nodeVPos: VPos.CENTER
+						content: [
+							ActivityLed { active: bind running },
+							ConnectingAnimation { visible: bind containerNode.ready and not loaded, managed: bind containerNode.ready and not loaded }
+						]
+					}
 					textFill: Color.rgb(0, 0, 0, 0.5)
-					text: bind label
+					text: bind if(containerNode.ready and not loaded) "Distributing..." else label
 					height: bind height
 					vpos: VPos.CENTER
 					textWrap: false

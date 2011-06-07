@@ -24,8 +24,9 @@ import java.util.WeakHashMap;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
+import com.eviware.loadui.api.model.Releasable;
 
-public class MessageEndpointSupport
+public class MessageEndpointSupport implements Releasable
 {
 	private final MessageEndpoint target;
 	private final MessageEndpoint source;
@@ -90,6 +91,18 @@ public class MessageEndpointSupport
 	public void close()
 	{
 		source.close();
+	}
+
+	@Override
+	public void release()
+	{
+		for( ConnectionListenerProxy listener : connectionProxies.values() )
+			source.removeConnectionListener( listener );
+		connectionProxies.clear();
+		for( MessageListenerProxy listener : messageProxies.values() )
+			source.removeMessageListener( listener );
+		messageProxies.clear();
+		errorListeners.clear();
 	}
 
 	private class MessageListenerProxy implements MessageListener

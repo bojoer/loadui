@@ -30,11 +30,13 @@ public interface ProjectItem extends CanvasItem
 	public static final String SCENES = ProjectItem.class.getName() + "@scenes";
 	public static final String ASSIGNMENTS = ProjectItem.class.getName() + "@assignments";
 	public static final String SUMMARY_EXPORTED = ProjectItem.class.getName() + "@summaryExported";
+	public static final String SCENE_LOADED = ProjectItem.class.getName() + "@sceneLoaded";
 
 	public static final String SAVE_REPORT_PROPERTY = ModelItem.class.getSimpleName() + ".saveReport";
 	public static final String REPORT_FOLDER_PROPERTY = ModelItem.class.getSimpleName() + ".reportFolder";
 	public static final String REPORT_FORMAT_PROPERTY = ModelItem.class.getSimpleName() + ".reportFormat";
-	public static final String STATISTIC_NUMBER_OF_AUTOSAVES = ProjectItem.class.getSimpleName() + ".statisticNumberOfAutosaves";
+	public static final String STATISTIC_NUMBER_OF_AUTOSAVES = ProjectItem.class.getSimpleName()
+			+ ".statisticNumberOfAutosaves";
 
 	/**
 	 * Gets the File for this ProjectItem.
@@ -88,6 +90,15 @@ public interface ProjectItem extends CanvasItem
 	 * @return A Collection of AgentItems.
 	 */
 	public Collection<AgentItem> getAgentsAssignedTo( SceneItem scene );
+
+	/**
+	 * Checks to see if a given SceneItem is loaded on a particular AgentItem.
+	 * 
+	 * @param scene
+	 * @param agent
+	 * @return
+	 */
+	public boolean isSceneLoaded( SceneItem scene, AgentItem agent );
 
 	/**
 	 * Broadcasts a message to all AgentItems currently assigned to the given
@@ -208,14 +219,16 @@ public interface ProjectItem extends CanvasItem
 	public void cancelScenes( boolean linkedOnly );
 
 	/**
-	 * Gets the maximum number of executions of this project that are automatically saved before the oldest one is deleted.
+	 * Gets the maximum number of executions of this project that are
+	 * automatically saved before the oldest one is deleted.
 	 * 
 	 * @return
 	 */
 	long getNumberOfAutosaves();
 
 	/**
-	 * Sets the maximum number of executions of this project that are automatically saved before the oldest one is deleted.
+	 * Sets the maximum number of executions of this project that are
+	 * automatically saved before the oldest one is deleted.
 	 * 
 	 * @return
 	 */
