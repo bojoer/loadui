@@ -185,7 +185,7 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, WeakEven
 					graphic: HBox {
 						nodeVPos: VPos.CENTER
 						content: [
-							ActivityLed { active: bind running },
+							ActivityLed { active: bind running, disable: bind not containerNode.ready and not isPlaceholder },
 							ConnectingAnimation { visible: bind containerNode.ready and not loaded, managed: bind containerNode.ready and not loaded }
 						]
 					}
