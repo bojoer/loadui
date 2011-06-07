@@ -225,6 +225,7 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 					@Override
 					public void run()
 					{
+						sequence = Long.MIN_VALUE;
 						handshake();
 						open = true;
 						setConnected( isConnected() );
