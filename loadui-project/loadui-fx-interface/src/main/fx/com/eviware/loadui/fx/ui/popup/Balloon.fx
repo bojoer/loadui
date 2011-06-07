@@ -33,6 +33,7 @@ import com.eviware.loadui.fx.ui.node.BaseNode.*;
 import javafx.animation.transition.FadeTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextOrigin;
@@ -60,7 +61,7 @@ public-read var currentHolder:TooltipHolder;
  *
  * @author henrik.olsson
  */
-public class Balloon extends VBox {
+public class Balloon extends Stack {
 
 //	def tooltipNode = Group {
 //		content: vBox
@@ -113,36 +114,31 @@ public class Balloon extends VBox {
 			//font: Font{ size: 11, embolden: true }
 		};
 		
-		if( terminalNode.terminal instanceof OutputTerminal )
-		{
-			insert Region {
-				styleClass: "balloon-arrow-up",
-				layoutInfo: LayoutInfo { width: 8, height: 5, vfill: false, hfill: false, hpos: HPos.CENTER }
-			} into content;
-		}
-		
-		insert Stack {
-			content:
-			[ 
-				Region {
-					styleClass: "balloon-frame"
-					content:
-					[
-						innerVBox=VBox {
-							content: headerNode, 
-							spacing: 6,
-							layoutInfo: LayoutInfo { 
-								margin: Insets { top: 10, right: 10, bottom: 10, left: 10 }, 
-								minWidth: 50, 
-								width: 100,
-								maxWidth: 250
-							}
+		insert [
+			Stack {
+				layoutInfo: LayoutInfo { margin: Insets { top: 5, bottom: 5 } }
+				content: [ 
+					Region {
+						styleClass: "balloon-frame"
+					}, innerVBox=VBox {
+						content: headerNode, 
+						spacing: 6,
+						layoutInfo: LayoutInfo { 
+							margin: Insets { top: 10, right: 10, bottom: 10, left: 10 }
+							minWidth: 50
+							width: 100
+							maxWidth: 250
 						}
-					]
-				}
-
-			]
-		} into content;
+					}
+				]
+			}, if( terminalNode.terminal instanceof OutputTerminal ) Region {
+				styleClass: "balloon-arrow-up",
+				layoutInfo: LayoutInfo { width: 8, height: 5, vfill: false, hfill: false, hpos: HPos.CENTER, vpos: VPos.TOP }
+			} else Region {
+				styleClass: "balloon-arrow-down",
+				layoutInfo: LayoutInfo { width: 8, height: 5, vfill: false, hfill: false, hpos: HPos.CENTER, vpos: VPos.BOTTOM }
+			}
+		] into content;
 		
 		
 		var text:String = null;
@@ -159,14 +155,6 @@ public class Balloon extends VBox {
 				//font: Font { size: 11 }
 				styleClass: "balloon-text"
 			} into innerVBox.content;
-		}
-		
-		if( terminalNode.terminal instanceof InputTerminal )
-		{
-			insert Region {
-				styleClass: "balloon-arrow-down",
-				layoutInfo: LayoutInfo { width: 8, height: 5, vfill: false, hfill: false, hpos: HPos.CENTER }
-			} into content;
 		}
 	}
 }

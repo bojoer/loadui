@@ -1263,19 +1263,20 @@
 }
 
 .balloon-frame {
-    -fx-background-color: white;
+	-fx-background-color: rgba(0,0,0,0.4), #262626, white;
+	-fx-background-insets: 2 -2 -2 2, 0, 1;
     -fx-background-radius: 10;
 }
 
 .balloon-arrow-down {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
+    -fx-background-color: rgba(0,0,0,0.4), #262626, white;
+	-fx-background-insets: 2 -2 -2 2, 0, -1 1 1 1;
     -fx-shape: "M0 0 L4 3 L8 0 Z";
 }
 
 .balloon-arrow-up {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
+    -fx-background-color: #262626, white;
+	-fx-background-insets: 0, 1 1 -1 1;
     -fx-shape: "M0 3 L4 0 L8 3 Z";
 }
 
