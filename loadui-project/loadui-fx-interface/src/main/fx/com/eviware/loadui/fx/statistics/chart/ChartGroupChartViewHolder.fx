@@ -49,13 +49,19 @@ import com.eviware.loadui.fx.dialogs.RenameModelItemDialog;
 import com.eviware.loadui.fx.dialogs.DeleteDeletablesDialog;
 
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.MainWindow;
 
 import java.util.EventObject;
+import java.util.ArrayList;
 
 /**
  * Base Chart Node, holds a ChartView.
@@ -63,19 +69,53 @@ import java.util.EventObject;
  * @author dain.nilsson
  */
 public class ChartGroupChartViewHolder extends ChartViewHolder, WeakEventHandler {
+	
+	def workspaceListener = WorkspaceListener{}
+	
+	def workspace: WorkspaceItem = bind MainWindow.instance.workspace on replace oldVal {
+		oldVal.removeEventListener( BaseEvent.class, workspaceListener );
+		workspace.addEventListener( BaseEvent.class, workspaceListener );
+	}
+	
 	override var styleClass = "chart-group-chart-view-holder";
 	
 	def controlButtons = new ToggleGroup();
-	
+
+	var hasCharts: Boolean on replace {
+		if( not hasCharts ) {
+			expandCharts.selected = false;
+			if(selectedToggle == expandCharts ) {
+				controlButtons.selectedToggle = null;
+			}
+		}
+	}
+
 	def expandCharts = ToggleButton {
 		text: "Components"
 		toggleGroup: controlButtons
 		layoutInfo: LayoutInfo { margin: Insets { right: 50 } }
+		disable: bind not hasCharts
+	}
+	
+	var hasAgents: Boolean on replace {
+		if( not hasAgents ){
+			expandAgents.selected = false;
+			if(selectedToggle == expandAgents ) {
+				controlButtons.selectedToggle = null;
+			}
+		}
+	}
+	
+	def agentsExpanded: Boolean = bind chartGroupHolder.expandAgents on replace {
+		if( agentsExpanded and not hasAgents ){
+			chartGroupHolder.toggleAgentExpand();
+		}
 	}
 	
 	def expandAgents = ToggleButton {
 		text: "Agents"
 		toggleGroup: controlButtons
+		disable: bind not hasAgents
 	}
 	
 	def selectedToggle = bind controlButtons.selectedToggle on replace oldToggle {
@@ -91,11 +131,13 @@ public class ChartGroupChartViewHolder extends ChartViewHolder, WeakEventHandler
 			} else if( oldToggle == expandAgents ) {
 				chartGroupHolder.toggleAgentExpand();
 			}
-		}
+		}	
 	}
 	
 	def expandState = bind if( chartGroupHolder.expandGroups ) 0 else if( chartGroupHolder.expandAgents ) 1 else 2 on replace {
 		controlButtons.selectedToggle = if( expandState == 0 ) expandCharts else if( expandState == 1 ) expandAgents else null;
+		hasCharts = chartGroup.getChildren().size() > 0;
+		hasAgents = chartGroup.getSources().size() > 0;
 	}
 	
 	public var chartGroupHolder:ChartGroupHolder;
@@ -185,5 +227,30 @@ public class ChartGroupChartViewHolder extends ChartViewHolder, WeakEventHandler
 		FxUtils.runInFxThread( function():Void {
 			updateSubLabel();
 		});
+		def event = e as BaseEvent;
+		if( ChartGroup.CHILDREN == event.getKey() ) {
+			runInFxThread( function():Void {
+				hasCharts = chartGroup.getChildren().size() > 0;
+				hasAgents = chartGroup.getSources().size() > 0;
+			} );
+		}
+	}
+	
+	postinit{
+		hasCharts = chartGroup.getChildren().size() > 0;
+		hasAgents = chartGroup.getSources().size() > 0;
+	}
+}
+
+class WorkspaceListener extends EventHandler {
+	override function handleEvent( e:EventObject ) {
+		if( e instanceof CollectionEvent ) {
+			def event = e as CollectionEvent;
+			if( WorkspaceItem.AGENTS == event.getKey() ) {
+				runInFxThread( function():Void {
+					hasAgents = chartGroup.getSources().size() > 0;
+				});
+			}
+		}
 	}
 }
