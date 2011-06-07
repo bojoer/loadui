@@ -918,6 +918,11 @@
 	-fx-background-radius: 4;
 }
 
+.chart-group-chart-view-holder *.toggle-button:disabled, .chart-group-chart-view-holder *.toggle-button:disabled *.label {
+	-fx-opacity: 1;
+	-fx-text-fill: #454545;
+}
+
 .chart-view-holder {
 	-fx-background-color: #252525, #303030;
 	-fx-background-insets: 0, 1;
