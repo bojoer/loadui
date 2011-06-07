@@ -17,6 +17,7 @@ import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.impl.property.Reference;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Closeables;
 
 public class FileToReferenceConverter implements Converter<File, Reference>
@@ -118,16 +119,7 @@ public class FileToReferenceConverter implements Converter<File, Reference>
 						res = new byte[len];
 						System.arraycopy( buf, 0, res, 0, len );
 						endpoint.sendMessage( ReferenceToFileConverter.CHANNEL,
-								Collections.singletonMap( hash, Base64.encodeBase64String( res ) ) );
-						try
-						{
-							// This needs to be here, or messages may be dropped.
-							// TODO: Better file transferring.
-							Thread.sleep( 10 );
-						}
-						catch( InterruptedException e )
-						{
-						}
+								ImmutableMap.<String, String> of( hash, Base64.encodeBase64String( res ) ) );
 					}
 					endpoint.sendMessage( ReferenceToFileConverter.CHANNEL, Collections.singletonMap( hash, STOP ) );
 				}

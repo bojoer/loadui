@@ -46,7 +46,6 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 	private final Set<File> filesInUse = new HashSet<File>();
 
 	private final Map<String, File> files = new HashMap<String, File>();
-	private final Map<String, OutputStream> writers = Collections.synchronizedMap( new HashMap<String, OutputStream>() );
 	private final FileReceiver listener = new FileReceiver();
 
 	private final HashSet<String> filesInProgress = new HashSet<String>();
@@ -166,6 +165,9 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 
 	private class FileReceiver implements MessageListener
 	{
+		private final Map<String, OutputStream> writers = Collections
+				.synchronizedMap( new HashMap<String, OutputStream>() );
+
 		@Override
 		@SuppressWarnings( "unchecked" )
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )

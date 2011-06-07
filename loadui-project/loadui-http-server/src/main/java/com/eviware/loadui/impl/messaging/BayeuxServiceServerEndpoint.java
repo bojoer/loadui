@@ -19,11 +19,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import org.cometd.bayeux.Message;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.ServerSession;
 import org.cometd.bayeux.server.ServerSession.RemoveListener;
 import org.cometd.server.AbstractService;
+import org.cometd.server.ext.AcknowledgedMessagesExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,31 +39,36 @@ import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.ServerEndpoint;
 import com.eviware.loadui.util.messaging.ChannelRoutingSupport;
+import com.google.common.collect.Maps;
 
 public class BayeuxServiceServerEndpoint extends AbstractService implements ServerEndpoint
 {
-	public static Logger log = LoggerFactory.getLogger( BayeuxServiceServerEndpoint.class );
+	public final static Logger log = LoggerFactory.getLogger( BayeuxServiceServerEndpoint.class );
 
 	private final static String CHANNEL = "/service" + MessageEndpoint.BASE_CHANNEL;
+
 	private final Set<ConnectionListener> serverConnectionListeners = new HashSet<ConnectionListener>();
 	private final Map<ServerSession, MessageEndpointImpl> sessions = new HashMap<ServerSession, MessageEndpointImpl>();
+	private final ScheduledExecutorService timeoutWatcher = Executors.newSingleThreadScheduledExecutor();
 
 	public BayeuxServiceServerEndpoint( BayeuxServer bayeuxServer )
 	{
 		super( bayeuxServer, "messageEndpoint" );
+		bayeuxServer.addExtension( new AcknowledgedMessagesExtension() );
+
 		addService( CHANNEL + "/**", "fireMessage" );
 		addService( "/service/init", "initialize" );
 	}
 
-	public void fireMessage( ServerSession session, String channel, Object data, String messageId )
+	public void fireMessage( ServerSession session, Message message )
 	{
 		if( session != null )
 		{
 			MessageEndpointImpl messageEndpoint = sessions.get( session );
 			if( messageEndpoint == null )
-				log.error( "Received message for unknown session:", data );
+				log.error( "Received message for unknown session:", message.getData() );
 			else
-				messageEndpoint.fireMessage( channel, data );
+				messageEndpoint.fireMessage( message );
 		}
 	}
 
@@ -101,7 +112,10 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 	{
 		private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport( this );
 		private final Set<ConnectionListener> connectionListeners = new HashSet<ConnectionListener>();
+		private final HashMap<Long, Message> buffer = Maps.newHashMap();
 		private final ServerSession session;
+		private long nextSeq = Long.MIN_VALUE;
+		private Future<?> timeoutFuture;
 
 		public MessageEndpointImpl( ServerSession session )
 		{
@@ -113,7 +127,57 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 				listener.handleConnectionChange( this, true );
 		}
 
-		public void fireMessage( String channel, Object data )
+		public synchronized void fireMessage( Message message )
+		{
+			Long seq = ( Long )message.getExt().get( "seq" );
+			if( seq.longValue() == nextSeq )
+			{
+				if( timeoutFuture != null )
+				{
+					timeoutFuture.cancel( true );
+					timeoutFuture = null;
+					// log.debug( "Cancelling timeout, buffer size: {}",
+					// buffer.size() );
+				}
+
+				doFire( message.getChannel(), message.getData() );
+				flushBuffer();
+			}
+			else
+			{
+				buffer.put( seq, message );
+			}
+
+			if( !buffer.isEmpty() && timeoutFuture == null )
+			{
+				// log.debug( "Scheduling timeout, buffer size: {}", buffer.size()
+				// );
+				timeoutFuture = timeoutWatcher.schedule( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						synchronized( MessageEndpointImpl.this )
+						{
+							log.error( "Message with SEQ: {} dropped!", nextSeq++ );
+							flushBuffer();
+							timeoutFuture = buffer.isEmpty() ? null : timeoutWatcher.schedule( this, 5, TimeUnit.SECONDS );
+						}
+					}
+				}, 5, TimeUnit.SECONDS );
+			}
+		}
+
+		private void flushBuffer()
+		{
+			while( buffer.containsKey( ++nextSeq ) )
+			{
+				Message message = buffer.remove( nextSeq );
+				doFire( message.getChannel(), message.getData() );
+			}
+		}
+
+		private void doFire( String channel, Object data )
 		{
 			if( channel.startsWith( CHANNEL ) )
 				routingSupport.fireMessage( channel.substring( CHANNEL.length() ), data );

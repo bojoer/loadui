@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
+import org.cometd.client.ext.AckExtension;
 import org.cometd.client.transport.LongPollingTransport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.log.Log;
@@ -54,10 +55,13 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 	private ScheduledFuture<?> stateCheckerFuture;
 	private boolean open = false;
 	private boolean connected = false;
+	private long sequence = Long.MIN_VALUE;
 
 	public BayeuxMessageEndpoint( String url, HttpClient httpClient )
 	{
 		super( url, new LongPollingTransport( new HashMap<String, Object>(), httpClient ) );
+
+		addExtension( new AckExtension() );
 
 		scheduledExecutor = BeanInjector.getBean( ScheduledExecutorService.class );
 		executorService = BeanInjector.getBean( ExecutorService.class );
@@ -171,12 +175,12 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 	}
 
 	@Override
-	public void sendMessage( String channel, Object data )
+	public synchronized void sendMessage( String channel, Object data )
 	{
 		Message.Mutable message = newMessage();
 		message.setChannel( "/service" + BASE_CHANNEL + channel );
 		message.setData( data );
-		// log.debug( "Sending message: {} on channel: {}", data, message );
+		message.getExt( true ).put( "seq", sequence++ );
 		enqueueSend( message );
 	}
 
