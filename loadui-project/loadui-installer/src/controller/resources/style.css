@@ -1280,10 +1280,10 @@
 }
 
 .balloon-header {
-	-fx-font-size: 12pt;
+	-fx-font-size: 11pt;
 	-fx-font-weight: bold;
 }
 
 .balloon-text {
-	-fx-font-size: 12pt;
+	-fx-font-size: 11pt;
 }
