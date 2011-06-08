@@ -52,6 +52,26 @@ import java.text.SimpleDateFormat
 import com.eviware.loadui.impl.component.ActivityStrategies
 import com.eviware.loadui.util.layout.SchedulerModel
 
+// Each component instace has its own group since they all share
+// same scheduler instance. This group level should be unique for 
+// each component instance.
+def SCHEDULER_GROUP = this.toString()
+
+// names of jobs, they can be the same in all instances because
+// they are added to different groups
+def START_JOB_NAME = "startJob"
+def END_JOB_NAME = "endJob"
+
+// by specifying unique name make sure that each component instance
+// has its own listeners
+def START_JOB_LISTENER_NAME = "${SCHEDULER_GROUP}startJobListener"
+def END_JOB_LISTENER_NAME = "${SCHEDULER_GROUP}endJobListener"
+
+// names of triggers, they can be the same in all instances because
+// they are added to different groups
+def START_TRIGGER_NAME = "startTrigger"
+def END_TRIGGER_NAME = "endTrigger"
+
 def counter = 0
 def durationHolder = 0
 def runsHolder = 0
@@ -90,12 +110,12 @@ class SchedulerJob implements Job {
 }
 
 def startTrigger = null
-def startJob = new JobDetail("startJob", "group", SchedulerJob.class)
-startJob.addJobListener("startJobListener")
+def startJob = new JobDetail(START_JOB_NAME, SCHEDULER_GROUP, SchedulerJob.class)
+startJob.addJobListener(START_JOB_LISTENER_NAME)
 
 def endTrigger = null
-def endJob = new JobDetail("endJob", "group", SchedulerJob.class)
-endJob.addJobListener("endJobListener")
+def endJob = new JobDetail(END_JOB_NAME, SCHEDULER_GROUP, SchedulerJob.class)
+endJob.addJobListener(END_JOB_LISTENER_NAME)
 
 def paused = false
 def pauseStart = -1
@@ -106,11 +126,14 @@ def endTriggerTimeLeft = null
 
 def maxDuration = 0;
 
+// create not initialized StdSchedulerFactory (no properties files supplied)
+// this factory always returns the same instance of scheduler (shared between components)
 def scheduler = new StdSchedulerFactory().getScheduler()
+
 scheduler.addJobListener(new JobListenerSupport()
 {
 	String getName(){
-		"startJobListener"
+		START_JOB_LISTENER_NAME
 	}
 	void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
 		sendStart()
@@ -121,7 +144,7 @@ scheduler.addJobListener(new JobListenerSupport()
 scheduler.addJobListener(new JobListenerSupport()
 {
 	String getName(){
-		"endJobListener"
+		END_JOB_LISTENER_NAME
 	}
 	void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
 		sendStop()
@@ -217,7 +240,7 @@ scheduleStartTrigger = {
 	def startTriggerPattern = createStartTriggerPattern()
 	unscheduleStartTrigger()
 	scheduler.addJob(startJob, true)
-	startTrigger = new CronTrigger("startTrigger", "group", "startJob", "group", startTriggerPattern)
+	startTrigger = new CronTrigger(START_TRIGGER_NAME, SCHEDULER_GROUP, START_JOB_NAME, SCHEDULER_GROUP, startTriggerPattern)
 	scheduler.scheduleJob(startTrigger)
 	
 	def now = new Date()
@@ -248,7 +271,7 @@ scheduleEndTrigger = {startTime, durationInMillis ->
 		
 		unscheduleEndTrigger()
 		scheduler.addJob(endJob, true)
-		endTrigger = new CronTrigger("endTrigger", "group", "endJob", "group", endTriggerPattern)
+		endTrigger = new CronTrigger(END_TRIGGER_NAME, SCHEDULER_GROUP, END_JOB_NAME, SCHEDULER_GROUP, endTriggerPattern)
 		scheduler.scheduleJob(endTrigger)
 	}
 }
@@ -274,14 +297,14 @@ reset = {
 
 unscheduleStartTrigger = {
 	try{
-		scheduler.unscheduleJob("startTrigger", "group")
+		scheduler.unscheduleJob(START_TRIGGER_NAME, SCHEDULER_GROUP)
 	}
 	catch(Exception e){}
 }
 
 unscheduleEndTrigger = {
 	try{
-		scheduler.unscheduleJob("endTrigger", "group")
+		scheduler.unscheduleJob(END_TRIGGER_NAME, SCHEDULER_GROUP)
 	}
 	catch(Exception e){}
 }
