@@ -46,6 +46,26 @@ import com.javafx.preview.control.MenuButton;
 
 public class StatisticsWindowButton extends Group {
 	var menuButton:MenuButton;
+	
+	var alwaysOnTopCheckBox = CheckBox {
+		text: "Always on top"
+		styleClass: "context-menu-check-box"
+		onMouseClicked:function(e:MouseEvent):Void {
+			// only one window is allowed to be always on top, so unset the other
+			// one before setting the current one alwaysOnTop
+			if(MainWindow.instance.wc.isAlwaysOnTop){
+				MainWindow.instance.wc.toggleAlwaysOnTop();
+			}
+			StatisticsWindow.instance.wc.toggleAlwaysOnTop();
+		}
+	}
+	
+	// this is to set or unset check box if alwaysonTop was changed in 
+	// WindowControllerImpl (not by clicking check box)
+	def statisticsWindowAlwaysOnTop = bind StatisticsWindow.instance.wc.isAlwaysOnTop on replace {
+		alwaysOnTopCheckBox.selected = statisticsWindowAlwaysOnTop;
+	}
+					
 	init {
 		content = [
 //			Ellipse {
@@ -70,14 +90,7 @@ public class StatisticsWindowButton extends Group {
 					image: Image { url: "{__ROOT__}images/png/results-button.png" }
 				}
 				items: [
-					CheckBox {
-						text: "Always on top"
-						styleClass: "context-menu-check-box"
-						onMouseClicked:function(e:MouseEvent):Void {
-							StatisticsWindow.instance.wc.toggleAlwaysOnTop();
-							println( "AOT: {StatisticsWindow.instance.wc.isAlwaysOnTop}" );
-						}
-					},
+					alwaysOnTopCheckBox,
 					Separator{},					
 					MenuItem {
 						text: ##[EXIT]"Close"

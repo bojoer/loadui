@@ -45,10 +45,31 @@ import com.eviware.loadui.fx.ui.menu.button.*;
 import com.javafx.preview.control.MenuItem;
 import com.javafx.preview.control.MenuButton;
 
+import com.eviware.loadui.fx.statistics.StatisticsWindow;
+
 public class MainWindowButton extends Group {
 	public-init var wc:WindowController;
 	
 	var menuButton:MenuButton;
+	
+	var alwaysOnTopCheckBox = CheckBox {
+		styleClass: "context-menu-check-box"
+		text: "Always on top"
+		onMouseClicked:function(e:MouseEvent):Void {
+			// only one window is allowed to be always on top, so unset the other
+			// one before setting the current one alwaysOnTop
+			if(StatisticsWindow.instance.wc.isAlwaysOnTop){
+				StatisticsWindow.instance.wc.toggleAlwaysOnTop();
+			}
+			MainWindow.instance.wc.toggleAlwaysOnTop();
+		}
+	}
+	
+	// this is to set or unset check box if alwaysonTop was changed in 
+	// WindowControllerImpl (not by clicking check box)
+	def mainWindowAlwaysOnTop = bind MainWindow.instance.wc.isAlwaysOnTop on replace {
+		alwaysOnTopCheckBox.selected = mainWindowAlwaysOnTop;
+	}
 	
 	init {
 		content = [
@@ -73,13 +94,7 @@ public class MainWindowButton extends Group {
 						image: Image { url: "{__ROOT__}images/png/main-button-no-shadow.png" }
 					}
 				items: [
-					CheckBox {
-						styleClass: "context-menu-check-box"
-						text: "Always on top"
-						onMouseClicked:function(e:MouseEvent):Void {
-							MainWindow.instance.wc.toggleAlwaysOnTop();
-						}
-					},
+					alwaysOnTopCheckBox,
 					Separator{},
 					MenuItem {
 						text: ##[ABOUT]"About"
