@@ -17,6 +17,7 @@ package com.eviware.loadui.fx.statistics.chart;
 
 import javafx.scene.Node;
 import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Resizable;
 import javafx.scene.layout.Container;
 import javafx.scene.layout.LayoutInfo;
@@ -50,6 +51,7 @@ import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.AnalysisToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.StatisticHolderToolbarItem;
+import com.eviware.loadui.fx.widgets.canvas.Selectable;
 
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -84,7 +86,7 @@ def childrenInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, margin: Ins
  *
  * @author dain.nilsson
  */
-public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable, Droppable {
+public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable, Droppable, Selectable {
 	override var styleClass = "chart-group-holder";
 	
 	var title:String = "ChartGroupHolder";
@@ -154,7 +156,12 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 		width: bind width
 		height: bind height
 		content: [
-			Region { styleClass: "chart-group-holder", managed: false, height: bind height, width: bind width }
+			Region {
+				styleClass: bind if( selected ) "chart-group-holder-selected" else "chart-group-holder",
+				managed: false,
+				height: bind height,
+				width: bind width
+			}
 			groupContent = VBox {
 				content: [
 					Region { width: bind groupContent.width, height: bind groupContent.height, managed: false, styleClass: "chart-group-face" },
@@ -167,6 +174,12 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 			panelHolder,
 			expandedNode
 		]
+	}
+	
+	init {
+		addMouseHandler( MOUSE_CLICKED, function( e:MouseEvent ) {
+			if( e.controlDown ) { if( selected ) deselect() else select() } else if( not selected ) selectOnly();
+		} );
 	}
 	
 	public function update():Void {

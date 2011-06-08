@@ -17,6 +17,8 @@ package com.eviware.loadui.fx.statistics.chart;
 
 import javafx.scene.Node;
 import javafx.scene.Group;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Resizable;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
@@ -48,6 +50,7 @@ import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.AnalysisToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.StatisticHolderToolbarItem;
+import com.eviware.loadui.fx.widgets.canvas.Selectable;
 
 import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -276,6 +279,14 @@ class DropBase extends BaseNode, Resizable, Droppable {
 		styleClass: "chart-drop-base"
 		width: bind width
 		height: bind height
+	}
+	
+	init {
+		addMouseHandler(MOUSE_PRESSED, function( e:MouseEvent ) {
+			if( e.button == MouseButton.PRIMARY and not e.controlDown ) {
+				Selectable.selectNone();
+			}
+		});
 	}
 	
 	override var accept = function( draggable:Draggable ):Boolean {
