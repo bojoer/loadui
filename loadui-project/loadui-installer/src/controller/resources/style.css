@@ -912,6 +912,12 @@
 	-fx-background-radius: 3;
 }
 
+.chart-group-holder-selected {
+	-fx-background-color: #454545, #2f2f2f, #1e1e1e, #202020, #232323;
+	-fx-background-insets: -2, 2, 3, 4, 6;
+	-fx-background-radius: 3;
+}
+
 .chart-group-chart-view-holder {
 	-fx-background-color: #242424, #5d5d5d, linear (0%,0%) to (0%,100%) stops (0%, #373737) (1%, #7c7d7e) (6%, #6e6e6e) (85%, #6e6e6e) (100%, #505052);
 	-fx-background-insets: 0, 1, 1 2;
