@@ -38,7 +38,7 @@ import groovy.lang.Binding
 
 //Properties
 createProperty( 'command', String, "") {
-	parseCommand
+	parseCommand()
 }
 
 updateLed = {
@@ -67,8 +67,10 @@ displayFailed = new DelayedFormattedString( '%d', 500,  value {
 failureCounter.get() - failedResetValue } )
 
 parseCommand = {
-	if( command.value != "" )
+	if( !command.value || command.value == "" )
 		runButton?.enabled = false
+	else
+		runButton?.enabled = true
 }
 
 sample = { message, sampleId ->
