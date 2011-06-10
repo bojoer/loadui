@@ -56,6 +56,7 @@ import com.eviware.loadui.api.terminal.TerminalProxy;
 import com.eviware.loadui.impl.statistics.StreamingStatisticsAggregator;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.dispatch.CustomThreadPoolExecutor;
+import com.google.common.collect.Maps;
 
 public class ControllerImpl
 {
@@ -164,8 +165,9 @@ public class ControllerImpl
 			Map<String, String> message = ( Map<String, String> )data;
 			if( message.containsKey( AgentItem.TIME_CHECK ) )
 			{
-				message.put( AgentItem.TIME_CHECK, String.valueOf( System.currentTimeMillis() ) );
-				endpoint.sendMessage( AgentItem.AGENT_CHANNEL, message );
+				Map<String, String> newMessage = Maps.newHashMap( message );
+				newMessage.put( AgentItem.TIME_CHECK, String.valueOf( System.currentTimeMillis() ) );
+				endpoint.sendMessage( AgentItem.AGENT_CHANNEL, newMessage );
 			}
 			if( message.containsKey( AgentItem.CONNECTED ) )
 			{
