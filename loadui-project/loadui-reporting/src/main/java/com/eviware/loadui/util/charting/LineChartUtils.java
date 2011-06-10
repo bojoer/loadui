@@ -93,7 +93,7 @@ public class LineChartUtils
 		if( chartView instanceof LineChartView )
 		{
 			int height = Math.max( ( int )Double.parseDouble( chartView.getAttribute( "height", "0" ) ), 100 );
-			return LineChartUtils.createImage( ( LineChartView )chartView, 505, height, mainExecution, comparedExecution );
+			return createImage( ( LineChartView )chartView, 505, height, mainExecution, comparedExecution );
 		}
 		return null;
 	}
@@ -131,23 +131,7 @@ public class LineChartUtils
 
 	public static Image createThumbnail( LineChartView chartView, Execution mainExecution, Execution comparedExecution )
 	{
-		ImageCreator imageCreator = new ImageCreator( chartView, mainExecution, comparedExecution );
-		try
-		{
-			invokeInSwingAndWait( imageCreator );
-
-			return imageCreator.getImage();
-		}
-		catch( InterruptedException e )
-		{
-			e.printStackTrace();
-		}
-		catch( InvocationTargetException e )
-		{
-			e.printStackTrace();
-		}
-
-		return null;
+		return new ImageCreator( chartView, mainExecution, comparedExecution ).getImage();
 	}
 
 	public static void updateExecutionIcon( final Execution execution, final LineChartView chartView,
@@ -180,12 +164,12 @@ public class LineChartUtils
 			SwingUtilities.invokeLater( runnable );
 	}
 
-	private static class ImageCreator implements Runnable
+	private static class ImageCreator
 	{
 		private final LineChartView chartView;
 		private final Execution mainExecution;
 		private final Execution comparedExecution;
-		private Image image;
+		private LineChartImpl chart;
 
 		public ImageCreator( LineChartView chartView, Execution mainExecution, Execution comparedExecution )
 		{
@@ -194,35 +178,50 @@ public class LineChartUtils
 			this.comparedExecution = comparedExecution;
 		}
 
-		@Override
-		public void run()
+		public Image getImage()
 		{
-			LineChartImpl chart = new LineChartImpl( chartView );
-			chart.setMainExecution( mainExecution );
-			chart.setComparedExecution( comparedExecution );
-			chart.setSize( new Dimension( 128, 56 ) );
+			try
+			{
+				invokeInSwingAndWait( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						chart = new LineChartImpl( chartView );
+						chart.setMainExecution( mainExecution );
+						chart.setComparedExecution( comparedExecution );
+						chart.setSize( new Dimension( 128, 56 ) );
 
-			chart.setAnimateOnShow( false );
-			LineChartStyles.styleChart( chart );
-			chart.setPanelBackground( Color.BLACK );
+						chart.setAnimateOnShow( false );
+						LineChartStyles.styleChart( chart );
+						chart.setPanelBackground( Color.BLACK );
 
-			Font font = chart.getTickFont();
-			chart.setTickFont( new Font( font.getName(), font.getStyle(), 4 ) );
+						Font font = chart.getTickFont();
+						chart.setTickFont( new Font( font.getName(), font.getStyle(), 4 ) );
 
-			chart.setTimeSpanNoSave( 10000 );
+						chart.setTimeSpanNoSave( 10000 );
 
-			LongRange range = ( LongRange )chart.getXAxis().getRange();
-			range.setMax( range.lower() + 10000 );
-			chart.setAxisLabelPadding( -6 );
+						LongRange range = ( LongRange )chart.getXAxis().getRange();
+						range.setMax( range.lower() + 10000 );
+						chart.setAxisLabelPadding( -6 );
+					}
+				} );
+			}
+			catch( InterruptedException e )
+			{
+				e.printStackTrace();
+			}
+			catch( InvocationTargetException e )
+			{
+				e.printStackTrace();
+			}
 
 			chart.awaitDraw();
 			chart.update();
-			image = ChartUtils.createImage( chart );
-			ReleasableUtils.release( chart );
-		}
 
-		public Image getImage()
-		{
+			Image image = ChartUtils.createImage( chart );
+			ReleasableUtils.release( chart );
+
 			return image;
 		}
 	}
