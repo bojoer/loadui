@@ -163,10 +163,22 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 						{
 							if( !buffer.isEmpty() )
 							{
-								while( !buffer.containsKey( nextSeq ) )
+								log.error( "Message with SEQ: {} dropped!", nextSeq++ );
+								ArrayList<Long> sequences = new ArrayList<Long>( buffer.keySet() );
+								Collections.sort( sequences );
+								boolean found = false;
+								for( Long seq : sequences )
 								{
-									log.error( "Message with SEQ: {} dropped!", nextSeq++ );
+									if( seq >= nextSeq )
+									{
+										nextSeq = seq;
+										found = true;
+										break;
+									}
 								}
+								if( !found )
+									nextSeq = sequences.get( 0 );
+
 								flushBuffer();
 							}
 							timeoutFuture = buffer.isEmpty() ? null : timeoutWatcher.schedule( this, 5, TimeUnit.SECONDS );
