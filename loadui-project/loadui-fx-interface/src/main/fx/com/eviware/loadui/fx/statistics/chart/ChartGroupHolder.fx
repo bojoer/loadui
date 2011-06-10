@@ -177,7 +177,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 	}
 	
 	init {
-		addMouseHandler( MOUSE_CLICKED, function( e:MouseEvent ) {
+		addMouseHandler( MOUSE_PRESSED, function( e:MouseEvent ) {
 			if( e.controlDown ) { if( selected ) deselect() else select() } else if( not selected ) selectOnly();
 		} );
 	}

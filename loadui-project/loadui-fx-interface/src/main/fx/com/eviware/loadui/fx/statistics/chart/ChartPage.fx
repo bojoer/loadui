@@ -284,7 +284,7 @@ class DropBase extends BaseNode, Resizable, Droppable {
 	
 	init {
 		addMouseHandler(MOUSE_PRESSED, function( e:MouseEvent ) {
-			if( e.button == MouseButton.PRIMARY and not e.controlDown ) {
+			if( Draggable.currentDraggable == null and e.button == MouseButton.PRIMARY and not e.controlDown ) {
 				Selectable.selectNone();
 			}
 		});
