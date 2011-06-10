@@ -143,6 +143,7 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 				}
 
 				doFire( message.getChannel(), message.getData() );
+				nextSeq++ ;
 				flushBuffer();
 			}
 			else
@@ -190,9 +191,9 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 
 		private void flushBuffer()
 		{
-			while( buffer.containsKey( ++nextSeq ) )
+			while( buffer.containsKey( nextSeq ) )
 			{
-				Message message = buffer.remove( nextSeq );
+				Message message = buffer.remove( nextSeq++ );
 				doFire( message.getChannel(), message.getData() );
 			}
 		}
