@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.impl.messaging;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -161,9 +163,10 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 						{
 							if( !buffer.isEmpty() )
 							{
-								log.error( "Message with SEQ: {} dropped!", nextSeq );
-								while( !buffer.containsKey( ++nextSeq ) )
-									;
+								while( !buffer.containsKey( nextSeq ) )
+								{
+									log.error( "Message with SEQ: {} dropped!", nextSeq++ );
+								}
 								flushBuffer();
 							}
 							timeoutFuture = buffer.isEmpty() ? null : timeoutWatcher.schedule( this, 5, TimeUnit.SECONDS );
@@ -201,9 +204,37 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 		}
 
 		@Override
-		public void close()
+		public synchronized void close()
 		{
 			session.disconnect();
+			if( timeoutFuture != null )
+			{
+				timeoutFuture.cancel( true );
+				timeoutFuture = null;
+			}
+			ArrayList<Long> sequences = new ArrayList<Long>( buffer.keySet() );
+			Collections.sort( sequences );
+			for( Long seq : sequences )
+			{
+				if( seq >= nextSeq )
+				{
+					Message message = buffer.remove( seq );
+					doFire( message.getChannel(), message.getData() );
+				}
+			}
+			for( Long seq : sequences )
+			{
+				if( seq < nextSeq )
+				{
+					Message message = buffer.remove( seq );
+					doFire( message.getChannel(), message.getData() );
+				}
+				else
+				{
+					break;
+				}
+			}
+			buffer.clear();
 		}
 
 		@Override

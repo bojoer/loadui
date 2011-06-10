@@ -70,7 +70,11 @@ public class GroovyRunner extends RunnerBase
 		try
 		{
 			Object returnValue = scriptSupport.invokeClosure( false, false, "onCancel" );
-			runningRequests = ( Integer )returnValue;
+			if( returnValue instanceof Number )
+				runningRequests = ( ( Number )returnValue ).intValue();
+			else
+				scriptSupport.getLog().warn( "onCancel returned value of type {}, expecting an int!",
+						returnValue == null ? null : returnValue.getClass() );
 		}
 		catch( MissingMethodException e )
 		{
