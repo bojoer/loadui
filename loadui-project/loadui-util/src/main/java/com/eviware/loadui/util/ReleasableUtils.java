@@ -18,6 +18,7 @@ package com.eviware.loadui.util;
 import java.util.Collection;
 
 import com.eviware.loadui.api.model.Releasable;
+import com.google.common.collect.Sets;
 
 /**
  * Utility class for handling Releasables.
@@ -49,7 +50,7 @@ public class ReleasableUtils
 		{
 			if( object instanceof Collection )
 			{
-				for( Object child : ( Collection<?> )object )
+				for( Object child : Sets.newHashSet( ( Collection<?> )object ) )
 					release( child );
 			}
 			release( object );
