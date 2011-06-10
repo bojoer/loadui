@@ -27,6 +27,7 @@ import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Stack;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
@@ -215,11 +216,11 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		
 		for( tn:TerminalNode in outputs )
 		{
-			insert Balloon { terminalNode: tn } into lowerBalloonHolder.content;
+			insert Stack{ nodeHPos:HPos.CENTER, nodeVPos:VPos.TOP, content: Balloon { terminalNode: tn } } into lowerBalloonHolder.content;
 		}
 		for( tn:TerminalNode in inputs )
 		{
-			insert Balloon { terminalNode: tn } into upperBalloonHolder.content;
+			insert Stack{ nodeHPos:HPos.CENTER, nodeVPos:VPos.TOP, content: Balloon { terminalNode: tn } } into upperBalloonHolder.content;
 		}
 	}
 	
@@ -307,18 +308,22 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 	}
 	
 	public function hideAllInputBalloonsButThis( terminalNode:TerminalNode ):Void {
-		for( b:Node in upperBalloonHolder.content )
+		for( n:Node in upperBalloonHolder.content )
 		{
-			if( (b as Balloon).terminalNode != terminalNode )
-				(b as Balloon).fading.playFromStart(); //(b as Balloon).visible = false;
+			def stack:Stack = n as Stack;
+			def b:Balloon = stack.content[0] as Balloon;
+			if( b.terminalNode != terminalNode )
+				b.fading.playFromStart();
 		}
 	}
 	
 	public function hideAllOutputBalloonsButThis( terminalNode:TerminalNode ):Void {
-		for( b:Node in lowerBalloonHolder.content )
+		for( n:Node in lowerBalloonHolder.content )
 		{
-			if( (b as Balloon).terminalNode != terminalNode )
-				(b as Balloon).fading.playFromStart(); //(b as Balloon).visible = false;
+			def stack:Stack = n as Stack;
+			def b:Balloon = stack.content[0] as Balloon;
+			if( b.terminalNode != terminalNode )
+				b.fading.playFromStart();
 		}
 	}
 	
@@ -327,16 +332,12 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		{
 			upperBalloonsFading.stop();
 			
-			for( b:Node in upperBalloonHolder.content )
+			for( n:Node in upperBalloonHolder.content )
 			{
-				(b as Balloon).fading.stop();
-				(b as Balloon).opacity = 1.0;
-			}
-			
-			for( b:Node in upperBalloonHolder.content )
-			{
-				(b as Balloon).fading.stop();
-				b.opacity =	if( (b as Balloon).terminalNode == hoveredTerminal or hoveredTerminal == null ) 1.0	else 0.5;
+				def stack:Stack = n as Stack;
+				def b:Balloon = stack.content[0] as Balloon;
+				b.fading.stop();
+				b.opacity =	if( b.terminalNode == hoveredTerminal or hoveredTerminal == null ) 1.0	else 0.5;
 			}
 			
 			def sceneBounds = localToParent( layoutBounds );
@@ -378,10 +379,12 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		{
 			lowerBalloonsFading.stop();
 			
-			for( b:Node in lowerBalloonHolder.content )
+			for( n:Node in lowerBalloonHolder.content )
 			{
-				(b as Balloon).fading.stop();
-				b.opacity =	if( (b as Balloon).terminalNode == hoveredTerminal or hoveredTerminal == null ) 1.0	else 0.5;
+				def stack:Stack = n as Stack;
+				def b:Balloon = stack.content[0] as Balloon;
+				b.fading.stop();
+				b.opacity =	if( b.terminalNode == hoveredTerminal or hoveredTerminal == null ) 1.0	else 0.5;
 			}
 			
 			def sceneBounds = localToParent( layoutBounds );
@@ -392,6 +395,9 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			
 			lowerBalloonHolder.layoutInfo = LayoutInfo { 
 				width: sceneBounds.width
+				hfill: true
+				hgrow: Priority.ALWAYS
+				hshrink: Priority.NEVER
 			};
 			
 			lowerBaloonsShowing = true;
