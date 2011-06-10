@@ -151,6 +151,7 @@ public class ChartPage extends BaseNode, Resizable, Releasable {
 								Label { text: "Drag and drop items from the sidebar to the rack to create charts." }
 							]
 						}, container = SortableBox {
+							styleClass: "statistics-page-sortable-box"
 							vertical: true
 							spacing: 5
 							enforceBounds: false

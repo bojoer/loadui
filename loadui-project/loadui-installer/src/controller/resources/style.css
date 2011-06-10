@@ -907,8 +907,8 @@
 }
 
 .chart-group-holder {
-	-fx-background-color: #2f2f2f, #1e1e1e, #202020, #232323;
-	-fx-background-insets: 2, 3, 4, 6;
+	-fx-background-color: transparent, #2f2f2f, #1e1e1e, #202020, #232323;
+	-fx-background-insets: -2, 2, 3, 4, 6;
 	-fx-background-radius: 3;
 }
 
@@ -916,6 +916,11 @@
 	-fx-background-color: #454545, #2f2f2f, #1e1e1e, #202020, #232323;
 	-fx-background-insets: -2, 2, 3, 4, 6;
 	-fx-background-radius: 3;
+}
+
+.statistics-page-sortable-box *.draggable-placeholder {
+	-fx-background-insets: -2, 0 4 4 0;
+	-fx-background-color: transparent, rgba(0, 0, 0, 0.4);
 }
 
 .chart-group-chart-view-holder {
