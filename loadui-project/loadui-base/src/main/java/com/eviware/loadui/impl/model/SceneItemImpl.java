@@ -322,10 +322,6 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			} );
 		}
 
-		// log.debug( "  HELLO!! " + wasLocalModeWhenStarted + ", " +
-		// project.getWorkspace().isLocalMode() + ", "
-		// + getActiveAgents().size() );
-
 		if( LoadUI.AGENT.equals( System.getProperty( LoadUI.INSTANCE ) ) )
 		{
 			// on agent, application is running in distributed mode, so send
@@ -455,10 +451,8 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 		if( running )
 		{
-			log.debug( "   dd " + LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) );
 			wasLocalModeWhenStarted = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? project
 					.getWorkspace().isLocalMode() : true;
-			log.debug( "setting wasLocalModeWhenStarted to {}", wasLocalModeWhenStarted );
 		}
 
 		fireBaseEvent( ACTIVITY );
