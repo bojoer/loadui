@@ -100,11 +100,13 @@ onConnect = { outgoing, incoming ->
 
 onDisconnect = { outgoing, incoming ->
 	if( incoming == inputTerminal ){
+		if( !options().contains( value.value ) ) value.value = 'Select value'
 		redraw()
 	}
 }
 
 onSignature = { outgoing, signature ->
+	if( !options().contains( value.value ) ) value.value = 'Select value'
 	redraw()
 }
 
@@ -208,20 +210,13 @@ ex = {t, m ->
 	println("-------------------------------")
 }
 
-def redraw()
-{
-	def options = []
-	for( conn in inputTerminal.connections ) {
-		for( key in conn.outputTerminal.messageSignature.keySet() )
-			if( !options.contains(key))
-				options += key
-	}
+def options() {
+	inputTerminal.connections.collect( { it.outputTerminal.messageSignature.keySet() } ).flatten().toSet()
+}
 
+def redraw() {
 	provider = new OptionsProviderImpl([])
-	provider.options = options
-	
-	if( !options.contains(value.value) )
-		value.value = 'Select value'
+	provider.options = options()
 		
 	//Layout
 	layout {
