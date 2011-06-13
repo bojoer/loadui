@@ -27,7 +27,7 @@ public class SplashController
 				WindowUtils.setWindowTransparent( window, true );
 				image = new ImageIcon( SplashController.class.getResource( "/loadui-splash.png" ) );
 			}
-			catch( Exception e )
+			catch( Throwable e )
 			{
 				image = new ImageIcon( SplashController.class.getResource( "/loadui-splash-no-transparency.png" ) );
 			}
