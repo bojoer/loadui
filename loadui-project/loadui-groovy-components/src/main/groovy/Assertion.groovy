@@ -27,8 +27,10 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.impl.layout.OptionsProviderImpl
 import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.util.statistics.CounterStatisticSupport
-
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
+
+//Here to support Assertion components created in loadUI 1.0, remove in the future:
+try { renameProperty( 'value', 'valueName' ) } catch( e ) {}
 
 createOutput( 'output', 'Failed messages', 'Messages that did not pass the assertion are outputted here.' )
 inputTerminal.label = 'Messages to assert'
@@ -55,9 +57,6 @@ counterStatisticSupport = new CounterStatisticSupport( component )
 assertionFailuresVariable = addStatisticVariable( "Assertion Failures", "COUNTER" )
 counterStatisticSupport.addCounterVariable( CanvasItem.ASSERTION_FAILURE_COUNTER, assertionFailuresVariable )
 counterStatisticSupport.init()
-
-//Here to support Splitters created in loadUI 1.0, remove in the future:
-try { renameProperty( 'value', 'valueName' ) } catch( e ) {}
 
 //Properties
 createProperty( 'valueName', String, "Select value" ) { value ->

@@ -26,6 +26,9 @@
 import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.util.ReleasableUtils
 
+//Here to support Splitters created in loadUI 1.0, remove in the future:
+try { renameProperty( 'outputs', 'numOutputs' ) } catch( e ) {}
+
 incomingTerminal.description = 'Recieved messages will be outputted in different output terminals.'
 
 total = counters['total_output']
@@ -36,9 +39,6 @@ totalReset = 0
 for( i in 0..outgoingTerminalList.size() - 1 ) {
 	countDisplays[i] = new DelayedFormattedString( '%d', 500, value { counters["output_$i"].get() - resetValues[i] } )
 }
-
-//Here to support Splitters created in loadUI 1.0, remove in the future:
-try { renameProperty( 'outputs', 'numOutputs' ) } catch( e ) {}
 
 createProperty( 'type', String, "Round-Robin" )
 createProperty( 'numOutputs', Integer, 1 ) { outputCount ->
