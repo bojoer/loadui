@@ -115,7 +115,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	
 	public function setNoteLayer( front:Boolean ) {
 		layers.content = if( front )
-			[ connectionLayer, componentLayer, balloonsLayer, noteLayer ]
+			[ connectionLayer, componentLayer, noteLayer, balloonsLayer ]
 		else
 			[ noteLayer, connectionLayer, componentLayer, balloonsLayer ];
 	}
