@@ -121,6 +121,10 @@ public class PageList extends VBox, Pagination {
 		];
 	}
 	
+	override var onMouseWheelMoved = function( e ) {
+		if( e.wheelRotation > 0 and page < (numPages-1) ) page++ else if( e.wheelRotation < 0 and page > 0 ) page--;
+	}
+	
 	override function lookup( id:String ):Node {
 		def res = super.lookup( id );
 		if( res != null or id == null )
