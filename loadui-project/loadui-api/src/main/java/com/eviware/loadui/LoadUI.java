@@ -5,7 +5,7 @@ public class LoadUI
 	/**
 	 * The main version number of loadUI.
 	 */
-	public static final String VERSION = "1.5.0-beta-2";
+	public static final String VERSION = "1.5.0";
 
 	/**
 	 * Internal version number used to determine controller/agent compatibility.
