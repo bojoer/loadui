@@ -56,8 +56,11 @@ assertionFailuresVariable = addStatisticVariable( "Assertion Failures", "COUNTER
 counterStatisticSupport.addCounterVariable( CanvasItem.ASSERTION_FAILURE_COUNTER, assertionFailuresVariable )
 counterStatisticSupport.init()
 
+//Here to support Splitters created in loadUI 1.0, remove in the future:
+try { renameProperty( 'value', 'valueName' ) } catch( e ) {}
+
 //Properties
-createProperty( 'value', String, "Select value" ) { value ->
+createProperty( 'valueName', String, "Select value" ) { value ->
 	valueToAssert = value
 	resetComponent()
 }
@@ -75,8 +78,6 @@ createProperty( 'failOnMissingID', Boolean, false )
 createProperty( 'failOnMissingValue', Boolean, false )
 createProperty( 'includeAssertedMessage', Boolean, false )
 
-String valueToAssert = value.value
-
 buffer = [] as LinkedList
 
 outMsg = newMessage()
@@ -88,7 +89,7 @@ failedResetValue = 0
 
 assertedDisplay = new DelayedFormattedString( '%d', 500, value { totalCounter.get()-assertedResetValue } )
 failedDisplay = new DelayedFormattedString( '%d', 500, value { assertionFailureCounter.get()-failedResetValue } )
-valueDisplay = new DelayedFormattedString( '%s', 500, value { value.value } )
+valueDisplay = new DelayedFormattedString( '%s', 500, value { valueName.value } )
 minDisplay = new DelayedFormattedString( '%d', 500, value { min.value } )
 maxDisplay = new DelayedFormattedString( '%d', 500, value { max.value } )
 
@@ -100,13 +101,13 @@ onConnect = { outgoing, incoming ->
 
 onDisconnect = { outgoing, incoming ->
 	if( incoming == inputTerminal ){
-		if( !options().contains( value.value ) ) value.value = 'Select value'
+		if( !options().contains( valueName.value ) ) valueName.value = 'Select value'
 		redraw()
 	}
 }
 
 onSignature = { outgoing, signature ->
-	if( !options().contains( value.value ) ) value.value = 'Select value'
+	if( !options().contains( valueName.value ) ) valueName.value = 'Select value'
 	redraw()
 }
 
@@ -114,19 +115,19 @@ analyze = { message ->
 	try{
 		long timestamp = System.currentTimeMillis()
 		
-		if(!message.containsKey(value.value)) {
+		if( !message.containsKey( valueName.value ) ) {
 			if( failOnMissingValue.value ) {
-				raiseFailure(message, timestamp, null)
+				raiseFailure( message, timestamp, null )
 				totalCounter.increment()
 			}
 			return
 		}
 		
-		double val = message[value.value]
+		double val = message[valueName.value]
 		
 		if( sampleId.value ?: "" != "" && message[SampleCategory.SAMPLE_ID] != sampleId.value ) {
 			if( failOnMissingID.value ) {
-				raiseFailure(message, timestamp, val)
+				raiseFailure( message, timestamp, val )
 				totalCounter.increment()
 			}
 			return
@@ -167,7 +168,7 @@ raiseFailure = {message, timestamp, value ->
 	
 	m = includeAssertedMessage.value ? message : outMsg
 	
-	m["Assert"] = valueToAssert
+	m["Assert"] = valueName.value
 	m["Min"] = min.value
 	m["Value"] = value
 	m["Max"] = max.value
@@ -220,7 +221,7 @@ def redraw() {
 		
 	//Layout
 	layout {
-		property( property: value, widget: 'comboBox', label: 'Value', options: provider, constraints: 'w 100!' )
+		property( property: valueName, widget: 'comboBox', label: 'Value', options: provider, constraints: 'w 100!' )
 		separator( vertical: true )
 	//	box {
 			property( property: min, label: 'Min', min: 0 )
