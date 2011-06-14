@@ -38,12 +38,12 @@
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
-			<version>4.1.0</version>
+			<version>${osgiVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.compendium</artifactId>
-			<version>4.1.0</version>
+			<version>${osgiVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

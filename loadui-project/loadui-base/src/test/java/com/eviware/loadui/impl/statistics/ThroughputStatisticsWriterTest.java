@@ -87,7 +87,7 @@ public class ThroughputStatisticsWriterTest
 
 		assertNotNull( entry );
 		Number tps = entry.getValue( ThroughputStatisticsWriter.Stats.TPS.name() );
-		assertThat( tps, is( Double.class ) );
+		assertThat( tps, instanceOf( Double.class ) );
 		assertThat( ( Double )tps, is( 5.0 ) );
 	}
 
@@ -105,7 +105,7 @@ public class ThroughputStatisticsWriterTest
 
 		assertNotNull( entry );
 		Number bps = entry.getValue( ThroughputStatisticsWriter.Stats.BPS.name() );
-		assertThat( bps, is( Double.class ) );
+		assertThat( bps, instanceOf( Double.class ) );
 		assertThat( ( Double )bps, is( 1077.0 ) );
 
 		writer.update( timestamp + 1010, 143 );
@@ -116,7 +116,7 @@ public class ThroughputStatisticsWriterTest
 
 		assertNotNull( entry );
 		bps = entry.getValue( ThroughputStatisticsWriter.Stats.BPS.name() );
-		assertThat( bps, is( Double.class ) );
+		assertThat( bps, instanceOf( Double.class ) );
 		assertThat( ( Double )bps, is( 522.0 ) );
 	}
 

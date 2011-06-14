@@ -251,13 +251,14 @@ public class ReportEngine
 	{
 		File[] reports = reportDirectory.listFiles( new FilenameFilter()
 		{
-
 			@Override
 			public boolean accept( File dir, String name )
 			{
 				return name.endsWith( "jrxml" );
 			}
 		} );
+		if( reports == null )
+			reports = new File[0];
 		for( File reportTemplate : reports )
 		{
 			this.reports.put( reportTemplate.getName().replace( ".jrxml", "" ),

@@ -50,12 +50,10 @@ public class ControllerTest
 		controller.stop();
 	}
 
-	@SuppressWarnings( "unchecked" )
 	@Test
 	public void shouldHaveNoFailedBundles()
 	{
 		Bundle[] bundles = controller.getBundleContext().getBundles();
-		// assertThat( bundles.length, greaterThanOrEqualTo( 43 ) );
 		for( Bundle bundle : bundles )
 			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(),
 					anyOf( is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );

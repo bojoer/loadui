@@ -58,9 +58,9 @@ public class TerminalMessageImplTest
 		message.put( "b", 42 );
 		message.put( "c", 4711L );
 
-		assertThat( message.get( "a" ), is( String.class ) );
-		assertThat( message.get( "b" ), is( Integer.class ) );
-		assertThat( message.get( "c" ), is( Long.class ) );
+		assertThat( message.get( "a" ), instanceOf( String.class ) );
+		assertThat( message.get( "b" ), instanceOf( Integer.class ) );
+		assertThat( message.get( "c" ), instanceOf( Long.class ) );
 
 		assertThat( ( String )message.get( "a" ), is( "Hello" ) );
 		assertThat( ( Integer )message.get( "b" ), is( 42 ) );
@@ -80,9 +80,9 @@ public class TerminalMessageImplTest
 
 		message.load( serialized );
 
-		assertThat( message.get( "a" ), is( String.class ) );
-		assertThat( message.get( "b" ), is( Integer.class ) );
-		assertThat( message.get( "c" ), is( Double.class ) );
+		assertThat( message.get( "a" ), instanceOf( String.class ) );
+		assertThat( message.get( "b" ), instanceOf( Integer.class ) );
+		assertThat( message.get( "c" ), instanceOf( Double.class ) );
 
 		assertThat( ( String )message.get( "a" ), is( "Hello" ) );
 		assertThat( ( Integer )message.get( "b" ), is( 42 ) );
