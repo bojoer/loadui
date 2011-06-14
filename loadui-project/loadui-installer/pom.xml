@@ -32,6 +32,9 @@
 								<copy todir="${basedir}/target/controller/">
 									<fileset dir="${basedir}/src/main/resources" />
 									<fileset dir="${basedir}/src/controller/resources" />
+									<filterset>
+										<filter token="VERSION" value="${project.parent.version}" />
+									</filterset>
 								</copy>
 								<copy todir="${basedir}/target/controller/lib">
 									<fileset file="${basedir}/../loadui-launcher/target/*.jar" />
@@ -56,7 +59,8 @@
 								<copy todir="${basedir}/target/runner/bundle">
 									<fileset dir="${basedir}/../loadui-runner-deps/target/bundle" />
 								</copy>
-								<!-- Dummy copy. For some reason the last copy task doesn't seem to work on our build servers. -->
+								<!-- Dummy copy. For some reason the last copy task doesn't seem 
+									to work on our build servers. -->
 								<copy todir="${basedir}/target/dummy">
 									<fileset dir="${basedir}/src/main" />
 								</copy>
