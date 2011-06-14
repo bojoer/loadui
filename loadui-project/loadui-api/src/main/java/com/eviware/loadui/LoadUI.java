@@ -5,11 +5,11 @@ public class LoadUI
 	/**
 	 * The main version number of loadUI.
 	 */
-	public static final String VERSION = "1.5.0";
+	public static final String VERSION = "2.0.0-SNAPSHOT";
 
 	/**
 	 * Internal version number used to determine controller/agent compatibility.
-	 * Compatibility is only ensures when this version number is the same for
+	 * Compatibility is only ensured when this version string is the same for
 	 * both agent and controller.
 	 */
 	public static final String AGENT_VERSION = "6";
