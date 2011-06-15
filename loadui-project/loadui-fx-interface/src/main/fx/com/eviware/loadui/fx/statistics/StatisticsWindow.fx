@@ -192,7 +192,7 @@ public class StatisticsWindow {
 			wc.listenForNewWindow();
 			if ( scene == null ) {
 				stage = Stage {
-					title: "loadUI {LoadUI.VERSION} - Results Workbench"
+					title: "loadUI {LoadUI.VERSION} - Statistics Workbench"
 					icons: [
 						Image { url:"{__ROOT__}images/png/icon_32x32.png" },
 						Image { url:"{__ROOT__}images/png/icon_16x16.png" }
@@ -212,7 +212,7 @@ public class StatisticsWindow {
 				stage = Stage {
 					width: 1085
 					height: 720
-					title: "loadUI {LoadUI.VERSION} - Results Workbench"
+					title: "loadUI {LoadUI.VERSION} - Statistics Workbench"
 					icons: [
 						Image { url:"{__ROOT__}images/png/icon_32x32.png" },
 						Image { url:"{__ROOT__}images/png/icon_16x16.png" }
