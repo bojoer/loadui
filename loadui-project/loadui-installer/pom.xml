@@ -32,6 +32,9 @@
 								<copy todir="${basedir}/target/controller/">
 									<fileset dir="${basedir}/src/main/resources" />
 									<fileset dir="${basedir}/src/controller/resources" />
+								</copy>
+								<copy todir="${basedir}/target/controller/">
+									<fileset dir="${basedir}/src/main/resources" includes="*.jnlp" />
 									<filterset>
 										<filter token="VERSION" value="${project.parent.version}" />
 									</filterset>
