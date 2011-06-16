@@ -20,6 +20,8 @@ public class WebStartRunner
 		 * ).getParentFile(), "jre" + File.separator + "bin" );
 		 */
 
+		System.out.println( "Launching loadUI.jnlp in directory: " + new File( "." ).getAbsolutePath() );
+
 		try
 		{
 			Runtime.getRuntime().exec( new String[] { "javaws", "loadUI.jnlp" }, null,
