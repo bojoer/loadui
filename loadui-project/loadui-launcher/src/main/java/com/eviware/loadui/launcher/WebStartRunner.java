@@ -24,7 +24,7 @@ public class WebStartRunner
 
 		try
 		{
-			Runtime.getRuntime().exec( new String[] { "javaws", "loadUI.jnlp" }, null,
+			Runtime.getRuntime().exec( new String[] { "javaws", new File( "loadUI.jnlp" ).getAbsolutePath() }, null,
 					new File( "jre" + File.separator + "bin" ) );
 		}
 		catch( IOException e )
