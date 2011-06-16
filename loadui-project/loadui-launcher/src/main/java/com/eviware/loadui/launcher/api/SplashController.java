@@ -30,6 +30,7 @@ public class SplashController
 			catch( Throwable e )
 			{
 				image = new ImageIcon( SplashController.class.getResource( "/loadui-splash-no-transparency.png" ) );
+				e.printStackTrace();
 			}
 
 			JLabel label = new JLabel( image );

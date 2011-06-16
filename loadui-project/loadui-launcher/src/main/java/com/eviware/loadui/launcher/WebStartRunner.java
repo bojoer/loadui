@@ -10,29 +10,11 @@ public class WebStartRunner
 	 */
 	public static void main( String[] args )
 	{
-		/*
-		 * String name = WebStartRunner.class.getName().replace( '.', '/' ); name
-		 * = WebStartRunner.class.getResource( "/" + name + ".class" ).toString();
-		 * name = name.substring( 0, name.indexOf( ".jar" ) ); name =
-		 * name.substring( name.lastIndexOf( ':' ) - 1, name.lastIndexOf( '/' ) +
-		 * 1 ).replace( '%', ' ' ); File dir = new File( new File(
-		 * name.replaceAll( "%\\d{1,2}", " " ).replace( '/', File.separatorChar )
-		 * ).getParentFile(), "jre" + File.separator + "bin" );
-		 */
-
 		try
 		{
 			Runtime.getRuntime().exec(
 					new String[] { new File( "jre/bin/javaws" ).getAbsolutePath(),
-							new File( "loadUI.jnlp" ).getAbsolutePath() }, null, new File( "." /*
-																													 * "jre"
-																													 * +
-																													 * File
-																													 * .
-																													 * separator
-																													 * +
-																													 * "bin"
-																													 */) );
+							new File( "loadUI.jnlp" ).getAbsolutePath() }, null );
 		}
 		catch( IOException e )
 		{
