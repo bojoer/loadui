@@ -37,7 +37,7 @@
     <launcher name="loadUI.bat" id="24" external="true" excludeFromMenu="false" menuName="" externalFile="loadUI.bat" />
     <launcher name="loadUI.command" id="225" external="true" excludeFromMenu="false" menuName="" externalFile="loadUI.command" />
     <launcher name="loadUI" id="1014" external="false" excludeFromMenu="false" menuName="" icnsFile="" pngIcon16File="../../target/controller/loadui-logo-icon-16.png" pngIcon32File="../../target/controller/loadui-logo-icon-32.png" macServiceDependencies="" swtApp="false" fileset="">
-      <executable name="loadUI" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false">
+      <executable name="loadUI-${compiler:version}" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
       <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="" java6SplashScreen="false">
@@ -48,7 +48,7 @@
       </splashScreen>
       <java mainClass="com.eviware.loadui.launcher.WebStartRunner" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <directory location="lib" failOnError="false" />
+          <scanDirectory location="lib" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
