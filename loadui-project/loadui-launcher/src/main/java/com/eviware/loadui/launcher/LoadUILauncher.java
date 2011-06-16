@@ -266,6 +266,9 @@ public class LoadUILauncher
 
 		if( System.getProperty( "loadui.instance" ) == null )
 			System.setProperty( "loadui.instance", "controller" );
+
+		if( System.getProperty( "sun.java2d.noddraw" ) == null )
+			System.setProperty( "sun.java2d.noddraw", "true" );
 	}
 
 	protected void addJavaFxPackages()
