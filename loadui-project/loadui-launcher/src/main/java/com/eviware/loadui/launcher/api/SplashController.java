@@ -8,10 +8,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JWindow;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sun.jna.platform.WindowUtils;
 
 public class SplashController
 {
+	public static final Logger log = LoggerFactory.getLogger( SplashController.class );
+
 	private static JWindow window;
 
 	public static void openSplash()
@@ -29,8 +34,8 @@ public class SplashController
 			}
 			catch( Throwable e )
 			{
+				log.info( "Unable to create transparent window, using non-transparent splash: {}", e.getMessage() );
 				image = new ImageIcon( SplashController.class.getResource( "/loadui-splash-no-transparency.png" ) );
-				e.printStackTrace();
 			}
 
 			JLabel label = new JLabel( image );
