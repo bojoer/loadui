@@ -19,8 +19,10 @@ import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.EventObject;
@@ -62,6 +64,10 @@ import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.google.common.collect.Maps;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 
 public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 {
@@ -83,6 +89,30 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 	{
 		this.scriptDir = scriptDir;
 		this.registry = registry;
+
+		File groovyRoot = new File( System.getProperty( "groovy.root" ) );
+		if( !groovyRoot.isDirectory() )
+			groovyRoot.mkdirs();
+
+		File groovyConfig = new File( groovyRoot, "grapeConfig.xml" );
+		if( !groovyConfig.exists() )
+		{
+			try
+			{
+				Files.copy( new InputSupplier<InputStream>()
+				{
+					@Override
+					public InputStream getInput() throws IOException
+					{
+						return getClass().getResourceAsStream( "/grapeConfig.xml" );
+					}
+				}, groovyConfig );
+			}
+			catch( IOException e )
+			{
+				e.printStackTrace();
+			}
+		}
 
 		// registry.registerDescriptor( emptyDescriptor, this );
 		registry.registerType( TYPE, this );

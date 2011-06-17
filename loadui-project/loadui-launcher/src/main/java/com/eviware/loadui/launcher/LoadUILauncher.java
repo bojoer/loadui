@@ -18,6 +18,7 @@ package com.eviware.loadui.launcher;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -25,6 +26,8 @@ import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.util.Map.Entry;
 import java.util.Properties;
+
+import javax.swing.filechooser.FileSystemView;
 
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
@@ -269,6 +272,49 @@ public class LoadUILauncher
 
 		if( System.getProperty( "sun.java2d.noddraw" ) == null )
 			System.setProperty( "sun.java2d.noddraw", "true" );
+
+		File loaduiHome = new File( System.getProperty( "loadui.home" ) );
+		if( !loaduiHome.isDirectory() )
+			loaduiHome.mkdirs();
+
+		File keystore = new File( System.getProperty( "loadui.ssl.keyStore" ) );
+		if( !keystore.exists() )
+		{
+			InputStream is = getClass().getResourceAsStream( "/keystore.jks" );
+			FileOutputStream fos = null;
+			try
+			{
+				fos = new FileOutputStream( keystore );
+				byte buf[] = new byte[1024];
+				int len;
+				while( ( len = is.read( buf ) ) > 0 )
+					fos.write( buf, 0, len );
+
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				try
+				{
+					is.close();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+				try
+				{
+					fos.close();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	protected void addJavaFxPackages()

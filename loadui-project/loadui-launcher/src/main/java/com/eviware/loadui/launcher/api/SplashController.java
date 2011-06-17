@@ -15,8 +15,6 @@ import com.sun.jna.platform.WindowUtils;
 
 public class SplashController
 {
-	public static final Logger log = LoggerFactory.getLogger( SplashController.class );
-
 	private static JWindow window;
 
 	public static void openSplash()
@@ -34,7 +32,7 @@ public class SplashController
 			}
 			catch( Throwable e )
 			{
-				log.info( "Unable to create transparent window, using non-transparent splash: {}", e.getMessage() );
+				System.out.println( "Unable to create transparent window, using non-transparent splash: " + e.getMessage() );
 				image = new ImageIcon( SplashController.class.getResource( "/loadui-splash-no-transparency.png" ) );
 			}
 
