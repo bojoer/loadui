@@ -27,8 +27,6 @@ import java.nio.channels.OverlappingFileLockException;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.swing.filechooser.FileSystemView;
-
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.apache.commons.cli.CommandLine;
@@ -299,7 +297,8 @@ public class LoadUILauncher
 			{
 				try
 				{
-					is.close();
+					if( is != null )
+						is.close();
 				}
 				catch( IOException e )
 				{
@@ -307,7 +306,8 @@ public class LoadUILauncher
 				}
 				try
 				{
-					fos.close();
+					if( fos != null )
+						fos.close();
 				}
 				catch( IOException e )
 				{
