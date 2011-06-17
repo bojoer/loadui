@@ -33,8 +33,8 @@
     <components />
   </files>
   <launchers>
-    <launcher name="loadUI" id="1014" external="false" excludeFromMenu="false" menuName="" icnsFile="" pngIcon16File="../../target/controller/loadui-logo-icon-16.png" pngIcon32File="../../target/controller/loadui-logo-icon-32.png" macServiceDependencies="" swtApp="false" fileset="">
-      <executable name="loadUI-${compiler:version}" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false">
+    <launcher name="loadUI" id="1014" external="false" excludeFromMenu="false" menuName="" icnsFile="../../target/controller/loadUI_icon_mac.icns" pngIcon16File="../../target/controller/loadui-logo-icon-16.png" pngIcon32File="../../target/controller/loadui-logo-icon-32.png" macServiceDependencies="" swtApp="false" fileset="">
+      <executable name="loadUI-${compiler:version}" type="1" iconSet="true" iconFile="../../target/controller/loadUI_icon_win.ico" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
       <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="" java6SplashScreen="false">
@@ -468,39 +468,6 @@ catch(Exception e){
                       </void>
                       <void property="variableName">
                         <string>${compiler:port}</string>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <initScript />
-                <visibiltyScript />
-              </formComponent>
-            </formComponents>
-          </screen>
-          <screen name="" id="1090" beanClass="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen" />
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents>
-              <formComponent name="Add a desktop link" id="1091" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
-                      <void property="checkboxText">
-                        <string>${i18n:CreateDesktopIcon}</string>
-                      </void>
-                      <void property="initiallySelected">
-                        <boolean>true</boolean>
-                      </void>
-                      <void property="variableName">
-                        <string>createDesktopLinkAction</string>
                       </void>
                     </object>
                   </java>
