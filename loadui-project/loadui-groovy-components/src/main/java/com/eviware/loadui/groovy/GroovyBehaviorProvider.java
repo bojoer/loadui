@@ -94,8 +94,8 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 		if( !groovyRoot.isDirectory() )
 			groovyRoot.mkdirs();
 
-		File groovyConfig = new File( groovyRoot, "grapeConfig.xml" );
-		if( !groovyConfig.exists() )
+		File grapeConfig = new File( groovyRoot, "grapeConfig.xml" );
+		if( !grapeConfig.exists() )
 		{
 			try
 			{
@@ -106,7 +106,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 					{
 						return getClass().getResourceAsStream( "/grapeConfig.xml" );
 					}
-				}, groovyConfig );
+				}, grapeConfig );
 			}
 			catch( IOException e )
 			{
