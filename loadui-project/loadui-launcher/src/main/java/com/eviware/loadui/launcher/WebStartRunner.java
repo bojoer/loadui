@@ -10,11 +10,12 @@ public class WebStartRunner
 	 */
 	public static void main( String[] args )
 	{
+		File javaws = new File( "jre/bin/javaws" );
+		String command = javaws.exists() ? javaws.getAbsolutePath() : "javaws";
+
 		try
 		{
-			Runtime.getRuntime().exec(
-					new String[] { new File( "jre/bin/javaws" ).getAbsolutePath(),
-							new File( "loadUI.jnlp" ).getAbsolutePath() }, null );
+			Runtime.getRuntime().exec( new String[] { command, new File( "loadUI.jnlp" ).getAbsolutePath() }, null );
 		}
 		catch( IOException e )
 		{
