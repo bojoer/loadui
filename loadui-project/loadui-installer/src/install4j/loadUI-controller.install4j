@@ -522,11 +522,11 @@ catch(Exception e){
                     <object class="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction">
                       <void property="icon">
                         <object class="com.install4j.api.beans.ExternalFile">
-                          <string>${installer:sys.userHome}/loadUI_icon_win.ico</string>
+                          <string>${installer:sys.installationDir}/loadUI_icon_win.ico</string>
                         </object>
                       </void>
                       <void property="itemName">
-                        <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
+                        <string>${compiler:sys.fullName}</string>
                       </void>
                     </object>
                   </java>
@@ -777,7 +777,20 @@ catch(Exception e){
             <validation />
             <preActivation />
             <postActivation />
-            <actions />
+            <actions>
+              <action name="" id="1099" beanClass="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction">
+                      <void property="launcherId">
+                        <string>1014</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getBooleanVariable("executeLauncherAction") &amp;&amp; (!context.isUnattended())</condition>
+              </action>
+            </actions>
             <formComponents>
               <formComponent name="" id="573" beanClass="com.install4j.runtime.beans.formcomponents.HyperlinkLabelComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
                 <serializedBean>
@@ -788,6 +801,25 @@ catch(Exception e){
                       </void>
                       <void property="url">
                         <string>http://loadui.org/Getting-Started-with-loadUI/your-first-load-test.html</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <initScript />
+                <visibiltyScript />
+              </formComponent>
+              <formComponent name="Execute launcher" id="1100" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
+                      <void property="checkboxText">
+                        <string>${i18n:RunEntryExec("${compiler:sys.fullName}")}</string>
+                      </void>
+                      <void property="initiallySelected">
+                        <boolean>true</boolean>
+                      </void>
+                      <void property="variableName">
+                        <string>executeLauncherAction</string>
                       </void>
                     </object>
                   </java>
