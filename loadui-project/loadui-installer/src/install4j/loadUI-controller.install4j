@@ -33,9 +33,6 @@
     <components />
   </files>
   <launchers>
-    <launcher name="loadUI.sh" id="23" external="true" excludeFromMenu="false" menuName="" externalFile="loadUI.sh" />
-    <launcher name="loadUI.bat" id="24" external="true" excludeFromMenu="false" menuName="" externalFile="loadUI.bat" />
-    <launcher name="loadUI.command" id="225" external="true" excludeFromMenu="false" menuName="" externalFile="loadUI.command" />
     <launcher name="loadUI" id="1014" external="false" excludeFromMenu="false" menuName="" icnsFile="" pngIcon16File="../../target/controller/loadui-logo-icon-16.png" pngIcon32File="../../target/controller/loadui-logo-icon-32.png" macServiceDependencies="" swtApp="false" fileset="">
       <executable name="loadUI-${compiler:version}" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
