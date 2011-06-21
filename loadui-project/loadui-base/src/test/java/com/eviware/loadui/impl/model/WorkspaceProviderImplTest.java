@@ -58,7 +58,7 @@ public class WorkspaceProviderImplTest
 		when( bundleContext.getServiceReference( ScheduledExecutorService.class.getName() ) ).thenReturn( sesMock );
 		when( bundleContext.getService( sesMock ) ).thenReturn( Executors.newSingleThreadScheduledExecutor() );
 
-		new BeanInjector().setBundleContext( bundleContext );
+		BeanInjector.setBundleContext( bundleContext );
 	}
 
 	@Test

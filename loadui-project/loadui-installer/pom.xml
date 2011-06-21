@@ -50,16 +50,16 @@
 									<fileset
 										dir="${basedir}/../loadui-groovy-components/src/main/groovy" />
 								</copy>
-								<!-- Runner resources -->
-								<copy todir="${basedir}/target/runner/">
+								<!-- Agent resources -->
+								<copy todir="${basedir}/target/agent/">
 									<fileset dir="${basedir}/src/main/resources" />
-									<fileset dir="${basedir}/src/runner/resources" />
+									<fileset dir="${basedir}/src/agent/resources" />
 								</copy>
-								<copy todir="${basedir}/target/runner/lib">
+								<copy todir="${basedir}/target/agent/lib">
 									<fileset file="${basedir}/../loadui-launcher/target/*.jar" />
 									<fileset file="${basedir}/../loadui-launcher/target/lib/*.jar" />
 								</copy>
-								<copy todir="${basedir}/target/runner/bundle">
+								<copy todir="${basedir}/target/agent/bundle">
 									<fileset dir="${basedir}/../loadui-runner-deps/target/bundle" />
 								</copy>
 								<!-- Dummy copy. For some reason the last copy task doesn't seem 
@@ -120,13 +120,13 @@
 								</configuration>
 							</execution>
 							<execution>
-								<id>install-runner</id>
+								<id>install-agent</id>
 								<phase>compile</phase>
 								<goals>
 									<goal>compile</goal>
 								</goals>
 								<configuration>
-									<configFile>"${basedir}/src/install4j/loadUI-runner.install4j"</configFile>
+									<configFile>"${basedir}/src/install4j/loadUI-agent.install4j"</configFile>
 								</configuration>
 							</execution>
 						</executions>

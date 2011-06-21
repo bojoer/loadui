@@ -24,12 +24,16 @@ import java.util.List;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlTokenSource;
 
+import com.google.common.io.Files;
+
 public class XmlBeansUtils
 {
+	@edu.umd.cs.findbugs.annotations.SuppressWarnings( value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "Failing to delete these files should be ignored." )
 	public static void saveToFile( XmlTokenSource source, File target ) throws IOException
 	{
 		File backup = File.createTempFile( "loadui-temp-", ".bak", target.getParentFile() );
-		backup.delete();
+		Files.deleteRecursively( backup );
+
 		File temp = File.createTempFile( "loadui-temp-", ".xml", target.getParentFile() );
 		source.save( temp );
 		if( !target.renameTo( backup ) )
@@ -43,7 +47,7 @@ public class XmlBeansUtils
 			throw new IOException( "Error saving file: " + target + "! Unable to write to file!" );
 		}
 
-		backup.delete();
+		Files.deleteRecursively( backup );
 	}
 
 	@SuppressWarnings( "unchecked" )

@@ -15,42 +15,49 @@
  */
 package com.eviware.loadui.util;
 
+import javax.annotation.Nonnull;
+
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.springframework.osgi.context.BundleContextAware;
 
-public class BeanInjector implements BundleContextAware
+public enum BeanInjector
 {
-	private static BeanInjector instance;
-	private static Object waiter = new Object();
+	INSTANCE;
 
+	@Nonnull
 	public static <T> T getBean( Class<T> cls )
 	{
-		if( instance == null )
+		if( INSTANCE.context == null )
 		{
-			synchronized( waiter )
+			synchronized( INSTANCE.waiter )
 			{
 				try
 				{
-					waiter.wait( 5000 );
+					INSTANCE.waiter.wait( 5000 );
 				}
 				catch( InterruptedException e )
 				{
 				}
-				if( instance == null )
+				if( INSTANCE.context == null )
 					throw new RuntimeException( "BundleContext is missing, has BeanInjector been configured?" );
 			}
 		}
 
-		return instance.doGetBean( cls );
+		return INSTANCE.doGetBean( cls );
 	}
 
-	private BundleContext context;
-
-	public BeanInjector()
+	public static void setBundleContext( BundleContext arg0 )
 	{
-		instance = this;
+		synchronized( INSTANCE.waiter )
+		{
+			INSTANCE.context = arg0;
+			INSTANCE.waiter.notifyAll();
+		}
 	}
+
+	private final Object waiter = new Object();
+	private BundleContext context;
 
 	private <T> T doGetBean( Class<T> cls )
 	{
@@ -68,13 +75,12 @@ public class BeanInjector implements BundleContextAware
 		throw new IllegalArgumentException( "No Bean found for class: " + cls );
 	}
 
-	@Override
-	public void setBundleContext( BundleContext arg0 )
+	protected static class ContextSetter implements BundleContextAware
 	{
-		context = arg0;
-		synchronized( waiter )
+		@Override
+		public void setBundleContext( BundleContext arg0 )
 		{
-			waiter.notifyAll();
+			BeanInjector.setBundleContext( arg0 );
 		}
 	}
 }

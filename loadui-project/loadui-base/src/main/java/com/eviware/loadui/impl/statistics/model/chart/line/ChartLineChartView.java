@@ -33,11 +33,14 @@ import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
 import com.eviware.loadui.api.statistics.model.chart.DeletableChartView;
 import com.eviware.loadui.util.StringUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 /**
  * ConfigurableLineChartView for a Chart.
  * 
  * @author dain.nilsson
  */
+@SuppressWarnings( value = "DM_STRING_CTOR", justification = "A unique instance of a String is required" )
 public class ChartLineChartView extends AbstractLineChartView implements ConfigurableLineChartView, DeletableChartView
 {
 	public static Logger log = LoggerFactory.getLogger( ChartLineChartView.class );

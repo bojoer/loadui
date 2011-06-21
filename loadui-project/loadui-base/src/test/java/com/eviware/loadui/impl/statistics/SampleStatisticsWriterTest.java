@@ -85,7 +85,7 @@ public class SampleStatisticsWriterTest
 		StatisticsAggregator statisticsAggrMock = mock( StatisticsAggregator.class );
 		when( bundleContext.getService( saMock ) ).thenReturn( statisticsAggrMock );
 
-		new BeanInjector().setBundleContext( bundleContext );
+		BeanInjector.setBundleContext( bundleContext );
 		holderSupport = new StatisticHolderSupport( holderMock );
 		StatisticVariable variable = holderSupport.addStatisticVariable( "AVG_TEST" );
 		writer = ( SampleStatisticsWriter )new SampleStatisticsWriter.Factory().createStatisticsWriter( manager,

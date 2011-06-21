@@ -163,7 +163,8 @@ public class ProjectRefImpl implements ProjectRef
 			else
 			{
 				log.info( "Removing project '{}' from Workspace and deleting the file '{}'.", getLabel(), projectFile );
-				projectFile.delete();
+				if( !projectFile.delete() )
+					throw new RuntimeException( "Unable to delete project file: " + projectFile.getAbsolutePath() );
 				workspace.removeProject( this );
 			}
 		}

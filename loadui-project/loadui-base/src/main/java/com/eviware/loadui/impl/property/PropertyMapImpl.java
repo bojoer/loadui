@@ -15,8 +15,10 @@
  */
 package com.eviware.loadui.impl.property;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.core.convert.ConversionService;
 
@@ -27,9 +29,9 @@ import com.eviware.loadui.config.PropertyConfig;
 import com.eviware.loadui.config.PropertyListConfig;
 import com.eviware.loadui.impl.model.ModelItemImpl;
 
-public class PropertyMapImpl extends HashMap<String, Property<?>> implements PropertyMap
+public class PropertyMapImpl implements PropertyMap
 {
-	private static final long serialVersionUID = 4955105240269868315L;
+	private final HashMap<String, Property<?>> map = new HashMap<String, Property<?>>();
 
 	private final ModelItemImpl<?> owner;
 	private final PropertyListConfig config;
@@ -84,7 +86,7 @@ public class PropertyMapImpl extends HashMap<String, Property<?>> implements Pro
 	@Override
 	public void clear()
 	{
-		super.clear();
+		map.clear();
 		for( int i = config.getPropertyArray().length - 1; i >= 0; i-- )
 			config.removeProperty( i );
 	}
@@ -92,7 +94,7 @@ public class PropertyMapImpl extends HashMap<String, Property<?>> implements Pro
 	@Override
 	public Property<?> put( String key, Property<?> value )
 	{
-		return super.put( key, value );
+		return map.put( key, value );
 	}
 
 	@Override
@@ -105,7 +107,7 @@ public class PropertyMapImpl extends HashMap<String, Property<?>> implements Pro
 	@Override
 	public Property<?> remove( Object key )
 	{
-		Property<?> property = super.remove( key );
+		Property<?> property = map.remove( key );
 		if( property != null )
 			owner.firePropertyEvent( property, PropertyEvent.Event.DELETED, property.getValue() );
 		return property;
@@ -152,5 +154,53 @@ public class PropertyMapImpl extends HashMap<String, Property<?>> implements Pro
 		owner.firePropertyEvent( property, PropertyEvent.Event.CREATED, null );
 
 		return property;
+	}
+
+	@Override
+	public int size()
+	{
+		return map.size();
+	}
+
+	@Override
+	public boolean isEmpty()
+	{
+		return map.isEmpty();
+	}
+
+	@Override
+	public Property<?> get( Object key )
+	{
+		return map.get( key );
+	}
+
+	@Override
+	public boolean containsKey( Object key )
+	{
+		return map.containsKey( key );
+	}
+
+	@Override
+	public boolean containsValue( Object value )
+	{
+		return map.containsValue( value );
+	}
+
+	@Override
+	public Set<String> keySet()
+	{
+		return map.keySet();
+	}
+
+	@Override
+	public Collection<Property<?>> values()
+	{
+		return map.values();
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<String, Property<?>>> entrySet()
+	{
+		return map.entrySet();
 	}
 }

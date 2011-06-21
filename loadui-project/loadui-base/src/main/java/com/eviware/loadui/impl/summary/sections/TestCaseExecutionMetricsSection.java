@@ -23,7 +23,6 @@ import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.SceneItem;
-import com.eviware.loadui.impl.model.SceneItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseAssertionMetricsTableModel;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseSamplerStatisticsTable;
@@ -79,7 +78,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 		for( ComponentItem component : testcase.getComponents() )
 		{
 			if( component.getType().equals( "Assertion" ) )
-				table.add( table.new AssertionMetricsModel( component ) );
+				table.add( new TestCaseAssertionMetricsTableModel.AssertionMetricsModel( component ) );
 		}
 		return table;
 	}
@@ -99,7 +98,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 			if( component.getBehavior() instanceof RunnerCategory )
 			{
 				Map<String, String> stats = ( ( RunnerCategory )component.getBehavior() ).getStatistics();
-				table.add( table.new TestCaseSamplerStatisticsModel( component.getLabel(), stats ) );
+				table.add( new TestCaseSamplerStatisticsTable.TestCaseSamplerStatisticsModel( component.getLabel(), stats ) );
 			}
 		return table;
 	}

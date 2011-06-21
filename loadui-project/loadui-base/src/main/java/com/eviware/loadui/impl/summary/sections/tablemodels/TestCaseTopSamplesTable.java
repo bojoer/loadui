@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.summary.sections.tablemodels;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,7 +28,7 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 {
 
 	private static final long serialVersionUID = 6713052691535987646L;
-	
+
 	String[] columnNames = { "name", "ms", "time", "size" };
 	public ArrayList<TestCaseSampleModel> data = new ArrayList<TestCaseSampleModel>();
 	TestCaseSampleModelComparator bottomUpComparator = new TestCaseSampleModelComparator();
@@ -112,9 +113,11 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 		else
 			Collections.sort( data, bottomUpComparator );
 	}
-	
-	private static class TestCaseSampleModelComparator implements Comparator<TestCaseSampleModel>
+
+	private static class TestCaseSampleModelComparator implements Comparator<TestCaseSampleModel>, Serializable
 	{
+		private static final long serialVersionUID = -4523677768824378210L;
+
 		@Override
 		public int compare( TestCaseSampleModel o1, TestCaseSampleModel o2 )
 		{

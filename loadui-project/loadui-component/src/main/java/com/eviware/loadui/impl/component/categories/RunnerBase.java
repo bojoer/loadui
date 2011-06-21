@@ -680,12 +680,11 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			statistics.put( "min", String.valueOf( minTime ) );
 			statistics.put( "max", String.valueOf( maxTime ) );
 			statistics.put( "avg", String.valueOf( avgTime ) );
-			statistics.put( "std-dev",
-					String.valueOf( Math.round( Math.sqrt( sumTotalSquare / requestCount ) * 100d ) / 100d ) );
+			statistics.put( "std-dev", String.format( "%.2f", ( double )sumTotalSquare / requestCount ) );
 			if( avgTime > 0 )
 			{
-				statistics.put( "min/avg", String.valueOf( Math.round( ( minTime / avgTime ) * 100d ) / 100d ) );
-				statistics.put( "max/avg", String.valueOf( Math.round( ( maxTime / avgTime ) * 100d ) / 100d ) );
+				statistics.put( "min/avg", String.format( "%.2f", ( double )minTime / avgTime ) );
+				statistics.put( "max/avg", String.format( "%.2f", ( double )maxTime / avgTime ) );
 			}
 			else
 			{

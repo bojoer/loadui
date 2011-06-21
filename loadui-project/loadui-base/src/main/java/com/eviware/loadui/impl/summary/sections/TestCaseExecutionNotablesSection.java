@@ -23,7 +23,6 @@ import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.summary.SampleStats;
-import com.eviware.loadui.impl.model.SceneItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseTopSamplesTable;
 

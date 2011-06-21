@@ -130,7 +130,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 	 * 
 	 * @author dain.nilsson
 	 */
-	protected class EntryBuilder
+	protected static class EntryBuilder
 	{
 		private final long timestamp;
 		private final ImmutableMap.Builder<String, Number> mapBuilder = ImmutableMap.builder();

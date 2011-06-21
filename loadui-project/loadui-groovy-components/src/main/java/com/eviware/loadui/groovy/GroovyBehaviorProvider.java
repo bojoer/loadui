@@ -19,7 +19,6 @@ import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,8 +63,6 @@ import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.google.common.collect.Maps;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -92,7 +89,8 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 
 		File groovyRoot = new File( System.getProperty( "groovy.root" ) );
 		if( !groovyRoot.isDirectory() )
-			groovyRoot.mkdirs();
+			if( !groovyRoot.mkdirs() )
+				throw new RuntimeException( "Unable to create required directories: " + groovyRoot.getAbsolutePath() );
 
 		File grapeConfig = new File( groovyRoot, "grapeConfig.xml" );
 		if( !grapeConfig.exists() )

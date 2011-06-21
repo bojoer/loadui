@@ -80,7 +80,7 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 	}
 
 	@Override
-	public void release()
+	public synchronized void release()
 	{
 		reset();
 		clearEventListeners();

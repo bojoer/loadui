@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.2.6" transformSequenceNumber="2">
-  <directoryPresets config="../../target/runner" />
+  <directoryPresets config="../../target/agent" />
   <application name="loadUI Agent ${compiler:version}" distributionSourceDir="" applicationId="1318-1385-4617-6779" mediaDir="" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" missingFilesStrategy="warn" shortName="loadUI-Agent" publisher="eviware ab" publisherWeb="http://www.eviware.com" version="${compiler:version}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -22,7 +22,7 @@
       <mountPoint id="42" root="" location="" mode="755" />
     </mountPoints>
     <entries>
-      <dirEntry mountPoint="42" file="../../target/runner" overwrite="5" shared="false" mode="644" uninstallMode="0" excludeSuffixes="" dirMode="755">
+      <dirEntry mountPoint="42" file="../../target/agent" overwrite="5" shared="false" mode="644" uninstallMode="0" excludeSuffixes="" dirMode="755">
         <exclude />
       </dirEntry>
     </entries>
@@ -97,7 +97,7 @@
                 <object class="com.install4j.runtime.beans.screens.WelcomeScreen">
                   <void property="bannerImageFile">
                     <object class="com.install4j.api.beans.ExternalFile">
-                      <string>../../target/runner/Installer_pic_loadUI_PNG.png</string>
+                      <string>../../target/agent/Installer_pic_loadUI_PNG.png</string>
                     </object>
                   </void>
                 </object>
@@ -442,7 +442,7 @@ Appendix
                     <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
                       <void property="file">
                         <object class="java.io.File">
-                          <string>loadUI-runner.command</string>
+                          <string>loadUI-agent.command</string>
                         </object>
                       </void>
                       <void property="name">
@@ -459,7 +459,7 @@ Appendix
                     <object class="com.install4j.runtime.beans.actions.files.SetModeAction">
                       <void property="file">
                         <object class="java.io.File">
-                          <string>loadUI-runner.command</string>
+                          <string>loadUI-agent.command</string>
                         </object>
                       </void>
                       <void property="mode">
@@ -522,54 +522,21 @@ Appendix
             <preActivation />
             <postActivation />
             <actions>
-              <action name="" id="328" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+              <action name="" id="623" beanClass="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
-                      <void property="executable">
-                        <object class="java.io.File">
-                          <string>loadUI-agent.bat</string>
-                        </object>
-                      </void>
-                      <void property="showWindowsConsole">
-                        <boolean>true</boolean>
+                    <object class="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction">
+                      <void property="launcherId">
+                        <string>562</string>
                       </void>
                     </object>
                   </java>
                 </serializedBean>
-                <condition>"${compiler:sys.platform}" == "windows" &amp;&amp; context.getBooleanVariable("executeLauncherAction") &amp;&amp; (!context.isUnattended())</condition>
-              </action>
-              <action name="" id="329" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
-                      <void property="executable">
-                        <object class="java.io.File">
-                          <string>loadUI-agent.sh</string>
-                        </object>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition>("${compiler:sys.platform}" == "linux" || "${compiler:sys.platform}" == "unix") &amp;&amp; context.getBooleanVariable("executeLauncherAction") &amp;&amp; (!context.isUnattended())</condition>
-              </action>
-              <action name="" id="330" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
-                      <void property="executable">
-                        <object class="java.io.File">
-                          <string>loadUI-agent.command</string>
-                        </object>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition>"${compiler:sys.platform}" == "mac" &amp;&amp; context.getBooleanVariable("executeLauncherAction") &amp;&amp; (!context.isUnattended())</condition>
+                <condition>context.getBooleanVariable("executeLauncherAction") &amp;&amp; (!context.isUnattended())</condition>
               </action>
             </actions>
             <formComponents>
-              <formComponent name="" id="289" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+              <formComponent name="Execute launcher" id="624" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
@@ -633,7 +600,7 @@ Appendix
                 </object>
               </java>
             </serializedBean>
-            <condition>File f = new File("${installer:sys.userHome}/.loadui/runner-cache/loadui.lock");
+            <condition>File f = new File("${installer:sys.userHome}/.loadui/agent-cache/loadui.lock");
 return f.exists();</condition>
             <validation />
             <preActivation />
@@ -647,7 +614,7 @@ return f.exists();</condition>
                 <object class="com.install4j.runtime.beans.screens.UninstallWelcomeScreen">
                   <void property="bannerImageFile">
                     <object class="com.install4j.api.beans.ExternalFile">
-                      <string>../../target/runner/Installer_pic_loadUI_PNG.png</string>
+                      <string>../../target/agent/Installer_pic_loadUI_PNG.png</string>
                     </object>
                   </void>
                 </object>
@@ -694,7 +661,7 @@ return f.exists();</condition>
                     <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
                       <void property="file">
                         <object class="java.io.File">
-                          <string>${installer:sys.userHome}/.loadui/runner-cache</string>
+                          <string>${installer:sys.userHome}/.loadui/agent-cache</string>
                         </object>
                       </void>
                       <void property="recurse">
@@ -789,7 +756,7 @@ return f.exists();</condition>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="loadUI-runner.bat" fileType="regular" />
+        <entry location="loadUI-agent.bat" fileType="regular" />
       </exclude>
       <variables />
       <installerScript mode="1" file="">
@@ -807,7 +774,7 @@ return f.exists();</condition>
       </excludedBeans>
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="loadUI-runner.sh" fileType="regular" />
+        <entry location="loadUI-agent.sh" fileType="regular" />
       </exclude>
       <variables />
     </win32>
@@ -820,7 +787,7 @@ return f.exists();</condition>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="loadUI-runner.sh" fileType="regular" />
+        <entry location="loadUI-agent.sh" fileType="regular" />
       </exclude>
       <variables />
     </win32Archive>
@@ -833,7 +800,7 @@ return f.exists();</condition>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="loadUI-runner.bat" fileType="regular" />
+        <entry location="loadUI-agent.bat" fileType="regular" />
       </exclude>
       <variables />
     </unixArchive>

@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.groovy;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
@@ -51,7 +53,14 @@ public class ClassLoaderRegistry implements Releasable
 		GroovyComponentClassLoader classLoader = classLoaders.get( id );
 		if( classLoader == null )
 		{
-			classLoader = new GroovyComponentClassLoader( GroovyShell.class.getClassLoader() );
+			classLoader = AccessController.doPrivileged( new PrivilegedAction<GroovyComponentClassLoader>()
+			{
+				@Override
+				public GroovyComponentClassLoader run()
+				{
+					return new GroovyComponentClassLoader( GroovyShell.class.getClassLoader() );
+				}
+			} );
 			classLoaders.put( id, classLoader );
 			log.debug( "GroovyClassLoader created: {}", id );
 		}

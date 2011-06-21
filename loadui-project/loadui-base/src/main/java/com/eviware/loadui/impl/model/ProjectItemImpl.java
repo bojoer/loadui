@@ -308,7 +308,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			log.info( "Saving Project {}...", getLabel() );
 
 			if( !projectFile.exists() )
-				projectFile.createNewFile();
+				if( !projectFile.createNewFile() )
+					throw new RuntimeException( "Unable to create project file: " + projectFile.getAbsolutePath() );
 
 			XmlBeansUtils.saveToFile( doc, projectFile );
 			lastSavedHash = DigestUtils.md5Hex( getConfig().xmlText() );
@@ -327,7 +328,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			log.info( "Saving Project {}...", getLabel() );
 
 			if( !saveAsFile.exists() )
-				saveAsFile.createNewFile();
+				if( !saveAsFile.createNewFile() )
+					throw new RuntimeException( "Unable to create project file: " + projectFile.getAbsolutePath() );
 
 			XmlBeansUtils.saveToFile( doc, saveAsFile );
 		}
@@ -353,7 +355,10 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			scene.delete();
 
 		release();
-		projectFile.delete();
+
+		if( !projectFile.delete() )
+			throw new RuntimeException( "Unable to delete project file: " + projectFile.getAbsolutePath() );
+
 		super.delete();
 	}
 

@@ -52,7 +52,7 @@ public class StatisticsTest
 		AddressableRegistry addressableRegistryMock = mock( AddressableRegistry.class );
 		when( bundleContext.getService( arMock ) ).thenReturn( addressableRegistryMock );
 
-		new BeanInjector().setBundleContext( bundleContext );
+		BeanInjector.setBundleContext( bundleContext );
 		holderMock = mock( StatisticHolder.class );
 		holderSupport = new StatisticHolderSupport( holderMock );
 	}

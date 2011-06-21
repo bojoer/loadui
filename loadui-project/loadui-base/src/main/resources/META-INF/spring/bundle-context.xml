@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-	<bean id="beanInjector" class="com.eviware.loadui.util.BeanInjector" />
+	<bean id="beanInjectorContextSetter" class="com.eviware.loadui.util.BeanInjector$ContextSetter" />
 
 	<bean id="addressableRegistry"
 		class="com.eviware.loadui.impl.addressable.AddressableRegistryImpl" />

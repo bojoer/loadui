@@ -326,7 +326,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 		}
 	}
 
-	private class SummaryListener implements EventHandler<BaseEvent>
+	private static class SummaryListener implements EventHandler<BaseEvent>
 	{
 		// once summary event was fired,source is added to this set to prevent
 		// generating summary more than once (in case summary event was received

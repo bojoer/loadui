@@ -66,7 +66,7 @@ public class TestCaseAssertionMetricsTableModel extends AbstractTableModel
 		}
 	}
 
-	public class AssertionMetricsModel
+	public static class AssertionMetricsModel
 	{
 		String name;
 		String cnt;

@@ -96,9 +96,12 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 	{
 		super.reset();
 
-		lastUpdate = lastTimeFlushed;
-		lastValue = Double.NaN;
-		sum = 0;
+		synchronized( this )
+		{
+			lastUpdate = lastTimeFlushed;
+			lastValue = Double.NaN;
+			sum = 0;
+		}
 	}
 
 	@Override

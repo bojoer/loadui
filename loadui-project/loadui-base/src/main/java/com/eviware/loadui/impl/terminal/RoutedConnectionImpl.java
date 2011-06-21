@@ -35,7 +35,7 @@ public class RoutedConnectionImpl extends ConnectionImpl implements RoutedConnec
 
 	private final RoutedConnectionConfig config;
 	private final TerminalProxy proxy;
-	private TerminalEvent initEvent;
+	private TerminalEvent initEvent = null;
 
 	public RoutedConnectionImpl( TerminalProxy proxy, RoutedConnectionConfig config, OutputTerminal output,
 			InputTerminal input )

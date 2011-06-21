@@ -52,11 +52,11 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl implement
 		for( SceneItem testcase : project.getScenes() )
 			for( ComponentItem component : testcase.getComponents() )
 				if( component.getType().equals( "Assertion" ) )
-					table.add( table.new AssertionMetricsModel( component ) );
+					table.add( new TestCaseAssertionMetricsTableModel.AssertionMetricsModel( component ) );
 		for( ComponentItem component : project.getComponents() )
 		{
 			if( component.getType().equals( "Assertion" ) )
-				table.add( table.new AssertionMetricsModel( component ) );
+				table.add( new TestCaseAssertionMetricsTableModel.AssertionMetricsModel( component ) );
 		}
 		return table;
 	}
@@ -90,13 +90,14 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl implement
 				if( component.getBehavior() instanceof RunnerCategory )
 				{
 					Map<String, String> stats = ( ( RunnerCategory )component.getBehavior() ).getStatistics();
-					table.add( table.new TestCaseSamplerStatisticsModel( component.getLabel(), stats ) );
+					table.add( new TestCaseSamplerStatisticsTable.TestCaseSamplerStatisticsModel( component.getLabel(),
+							stats ) );
 				}
 		for( ComponentItem component : project.getComponents() )
 			if( component.getBehavior() instanceof RunnerCategory )
 			{
 				Map<String, String> stats = ( ( RunnerCategory )component.getBehavior() ).getStatistics();
-				table.add( table.new TestCaseSamplerStatisticsModel( component.getLabel(), stats ) );
+				table.add( new TestCaseSamplerStatisticsTable.TestCaseSamplerStatisticsModel( component.getLabel(), stats ) );
 			}
 		return table;
 	}

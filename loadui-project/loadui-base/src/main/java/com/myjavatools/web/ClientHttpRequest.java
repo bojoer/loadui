@@ -267,7 +267,6 @@ public class ClientHttpRequest extends Observable
 			}
 		}
 		out.flush();
-		buf = null;
 	}
 
 	/**

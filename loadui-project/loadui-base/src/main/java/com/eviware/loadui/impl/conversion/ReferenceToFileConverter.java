@@ -34,6 +34,7 @@ import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.PropertyHolder;
 import com.eviware.loadui.impl.property.Reference;
 import com.google.common.io.Closeables;
+import com.google.common.io.Files;
 
 public class ReferenceToFileConverter implements Converter<Reference, File>, EventHandler<CollectionEvent>
 {
@@ -56,7 +57,8 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 		executorService.scheduleAtFixedRate( new RemoveOldFilesTask(), 5, 5, TimeUnit.MINUTES );
 
 		if( !storage.isDirectory() )
-			storage.mkdirs();
+			if( !storage.mkdirs() )
+				throw new RuntimeException( "Unable to create path: " + storage.getAbsolutePath() );
 	}
 
 	@Override
@@ -122,7 +124,8 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 			{
 				log.error( "File has been changed. Request file again..." );
 				log.debug( "Removing {} from filesInProgress", hash );
-				files.get( hash ).delete();
+				if( !files.get( hash ).delete() )
+					log.error( "Unable to delete file: {}", files.get( hash ) );
 				source.getEndpoint().addMessageListener( CHANNEL, listener );
 				source.getEndpoint().sendMessage( FileToReferenceConverter.CHANNEL, hash );
 			}
@@ -219,7 +222,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 									else
 									{
 										log.error( "File transfered with MD5 hash: {}, should be {}. Retrying...", md5Hex, hash );
-										file.delete();
+										Files.deleteRecursively( file );
 										endpoint.sendMessage( FileToReferenceConverter.CHANNEL, hash );
 									}
 								}
@@ -304,8 +307,9 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 					int newSize = unused.size() - i - 1;
 					while( unused.size() > newSize )
 					{
-						unused.get( 0 ).delete();
-						unused.remove( 0 );
+						final File file = unused.remove( 0 );
+						if( !file.delete() )
+							log.error( "Unable to remove file: {}", file );
 					}
 					break;
 				}

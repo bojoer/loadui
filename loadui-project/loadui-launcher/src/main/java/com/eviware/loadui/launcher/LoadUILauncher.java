@@ -76,16 +76,28 @@ public class LoadUILauncher
 	{
 		argv = args;
 
+		final InputStream is = getClass().getResourceAsStream( "/properties/buildinfo.txt" );
 		try
 		{
 			Properties buildinfo = new Properties();
-			buildinfo.load( getClass().getResourceAsStream( "/properties/buildinfo.txt" ) );
+			buildinfo.load( is );
 			System.setProperty( "loadui.build.number", buildinfo.getProperty( "build.number" ) );
 			System.setProperty( "loadui.build.date", buildinfo.getProperty( "build.date" ) );
 		}
 		catch( IOException e )
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				is.close();
+			}
+			catch( IOException e )
+			{
+				e.printStackTrace();
+			}
 		}
 
 		System.out.println( "Launching loadUI Build: " + System.getProperty( "loadui.build.number", "[internal]" ) + " "
@@ -125,11 +137,14 @@ public class LoadUILauncher
 				{
 					File bundleCache = new File( configProps.getProperty( "org.osgi.framework.storage" ) );
 					if( !bundleCache.isDirectory() )
-						bundleCache.mkdirs();
+						if( !bundleCache.mkdirs() )
+							throw new RuntimeException( "Unable to create directory: " + bundleCache.getAbsolutePath() );
 
 					File lockFile = new File( bundleCache, "loadui.lock" );
 					if( !lockFile.exists() )
-						lockFile.createNewFile();
+						if( !lockFile.createNewFile() )
+							throw new RuntimeException( "Unable to create file: " + lockFile.getAbsolutePath() );
+
 					FileLock lock = new RandomAccessFile( lockFile, "rw" ).getChannel().tryLock();
 					if( lock == null )
 					{
@@ -289,7 +304,8 @@ public class LoadUILauncher
 
 		File loaduiHome = new File( System.getProperty( "loadui.home" ) );
 		if( !loaduiHome.isDirectory() )
-			loaduiHome.mkdirs();
+			if( !loaduiHome.mkdirs() )
+				throw new RuntimeException( "Unable to create directory: " + loaduiHome.getAbsolutePath() );
 
 		File keystore = new File( System.getProperty( "loadui.ssl.keyStore" ) );
 		if( !keystore.exists() )

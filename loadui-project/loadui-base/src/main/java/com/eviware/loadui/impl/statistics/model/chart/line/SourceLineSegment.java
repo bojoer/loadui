@@ -65,7 +65,7 @@ public class SourceLineSegment implements LineSegment
 		return parent.toString();
 	}
 
-	private class ForwardedPropertyChangeEvent extends PropertyChangeEvent
+	private static class ForwardedPropertyChangeEvent extends PropertyChangeEvent
 	{
 		private static final long serialVersionUID = -286054404344955979L;
 

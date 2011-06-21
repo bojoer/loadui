@@ -26,13 +26,13 @@ import org.osgi.framework.BundleException;
  * 
  * @author dain.nilsson
  */
-public class RunnerWrapper
+public class AgentWrapper
 {
 	private final File baseDir = new File( "target/runnerTest" );
 	private final OSGiLauncher launcher;
 	private final BundleContext context;
 
-	public RunnerWrapper() throws BundleException
+	public AgentWrapper() throws BundleException
 	{
 		if( baseDir.exists() )
 			Utilities.deleteRecursive( baseDir );

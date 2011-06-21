@@ -21,61 +21,72 @@ import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
-public class TestCaseSamplerStatisticsTable extends AbstractTableModel {
+public class TestCaseSamplerStatisticsTable extends AbstractTableModel
+{
 
-	String[] columnNames = { "name", "cnt", "min", "max", "avg", "std-dev",
-			"min/avg", "max/avg", "err", "ratio" };
+	String[] columnNames = { "name", "cnt", "min", "max", "avg", "std-dev", "min/avg", "max/avg", "err", "ratio" };
 	ArrayList<TestCaseSamplerStatisticsModel> data = new ArrayList<TestCaseSamplerStatisticsModel>();
 
 	@Override
-	public String getColumnName(int column) {
+	public String getColumnName( int column )
+	{
 		return columnNames[column];
 	}
 
 	@Override
-	public int getColumnCount() {
+	public int getColumnCount()
+	{
 		return columnNames.length;
 	}
 
 	@Override
-	public int getRowCount() {
+	public int getRowCount()
+	{
 		return data.size();
 	}
 
 	@Override
-	public Object getValueAt(int rowIndex, int columnIndex) {
-		if (columnIndex == 0)
-			return data.get(rowIndex).getName();
-		else if (columnIndex == 9 ) {
-			
-		} else {
-			String v = data.get(rowIndex).getStat(columnNames[columnIndex]);
-			if ( v.equals("-1") )
+	public Object getValueAt( int rowIndex, int columnIndex )
+	{
+		if( columnIndex == 0 )
+			return data.get( rowIndex ).getName();
+		else if( columnIndex == 9 )
+		{
+
+		}
+		else
+		{
+			String v = data.get( rowIndex ).getStat( columnNames[columnIndex] );
+			if( v.equals( "-1" ) )
 				return "N/A";
 		}
-		return data.get(rowIndex).getStat(columnNames[columnIndex]);
+		return data.get( rowIndex ).getStat( columnNames[columnIndex] );
 	}
 
-	public void add(TestCaseSamplerStatisticsModel row) {
-		data.add(row);
+	public void add( TestCaseSamplerStatisticsModel row )
+	{
+		data.add( row );
 	}
 
-	public class TestCaseSamplerStatisticsModel {
+	public static class TestCaseSamplerStatisticsModel
+	{
 
 		String name;
 		HashMap<String, String> stats;
 
-		public TestCaseSamplerStatisticsModel(String label,
-				Map<String, String> stats) {
+		public TestCaseSamplerStatisticsModel( String label, Map<String, String> stats )
+		{
 			this.name = label;
-			this.stats = new HashMap<String, String>(stats);
+			this.stats = new HashMap<String, String>( stats );
 		}
 
-		public String getStat(String statName) {
-			return stats.get(statName);
+		public String getStat( String statName )
+		{
+			return stats.get( statName );
 		}
 
-		public String getName() {
+		public String getName()
+		{
 			return this.name;
 		}
 	}

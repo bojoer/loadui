@@ -831,7 +831,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		workspace.addEventListener( PropertyEvent.class, resultPathListener );
 	}
 
-	private class AdjustedEntry implements Entry
+	private static class AdjustedEntry implements Entry
 	{
 		private final Entry delegate;
 		private final long timestamp;

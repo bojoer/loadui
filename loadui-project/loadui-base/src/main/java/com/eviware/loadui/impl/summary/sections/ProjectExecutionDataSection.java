@@ -53,7 +53,7 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 		{
 			SceneItemImpl sceneItemImpl = ( SceneItemImpl )testcase;
 			if( sceneItemImpl.getStartTime() != null && sceneItemImpl.getEndTime() != null )
-				model.add( model.new TestCaseDataModel( sceneItemImpl ) );
+				model.add( new TestCaseDataTableModel.TestCaseDataModel( sceneItemImpl ) );
 		}
 		return model;
 	}

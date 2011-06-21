@@ -18,6 +18,8 @@ package com.eviware.loadui.impl.model;
 import java.util.Collection;
 import java.util.EventObject;
 
+import javax.annotation.Nonnull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
@@ -38,7 +40,7 @@ import com.eviware.loadui.impl.property.PropertyMapImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.events.EventSupport;
 
-public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
+public abstract class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 {
 	public static final Logger log = LoggerFactory.getLogger( ModelItemImpl.class );
 
@@ -55,7 +57,7 @@ public class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 	private boolean initialized = false;
 	protected final AddressableRegistry addressableRegistry;
 
-	public ModelItemImpl( Config config )
+	public ModelItemImpl( @Nonnull Config config )
 	{
 		this.config = config;
 

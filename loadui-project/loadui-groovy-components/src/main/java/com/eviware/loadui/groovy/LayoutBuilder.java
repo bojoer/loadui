@@ -51,32 +51,32 @@ public class LayoutBuilder
 	}
 
 	@Deprecated
-	public void box( Closure closure )
+	public void box( Closure<?> closure )
 	{
 		box( "", "", "", closure );
 	}
 
 	@Deprecated
-	public void box( String layoutConstraints, Closure closure )
+	public void box( String layoutConstraints, Closure<?> closure )
 	{
 		box( layoutConstraints, "", "", closure );
 	}
 
 	@Deprecated
-	public void box( String layoutConstraints, String colConstraints, Closure closure )
+	public void box( String layoutConstraints, String colConstraints, Closure<?> closure )
 	{
 		box( layoutConstraints, colConstraints, "", closure );
 	}
 
 	@Deprecated
-	public void box( String layoutConstraints, String colConstraints, String rowConstraints, Closure closure )
+	public void box( String layoutConstraints, String colConstraints, String rowConstraints, Closure<?> closure )
 	{
 		box( layoutConstraints, colConstraints, rowConstraints, "", closure );
 	}
 
 	@Deprecated
 	public void box( String layoutConstraints, String colConstraints, String rowConstraints, String constraints,
-			Closure closure )
+			Closure<?> closure )
 	{
 		LayoutContainer parent = current;
 		current = new LayoutContainerImpl( layoutConstraints, colConstraints, rowConstraints, constraints );
@@ -86,7 +86,7 @@ public class LayoutBuilder
 		current = parent;
 	}
 
-	public void box( Map<String, ?> args, Closure closure )
+	public void box( Map<String, ?> args, Closure<?> closure )
 	{
 		LayoutContainer parent = current;
 		current = new LayoutContainerImpl( args );
@@ -178,7 +178,7 @@ public class LayoutBuilder
 		current.add( new SeparatorLayoutComponentImpl( args ) );
 	}
 
-	@SuppressWarnings( "rawtypes" )
+	@SuppressWarnings( { "rawtypes", "unchecked" } )
 	public void node( Map<String, ?> args )
 	{
 		if( args.containsKey( "property" ) )

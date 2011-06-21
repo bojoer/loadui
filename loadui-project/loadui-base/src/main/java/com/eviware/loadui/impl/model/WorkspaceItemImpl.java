@@ -50,6 +50,8 @@ import com.eviware.loadui.config.WorkspaceItemConfig;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.impl.XmlBeansUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implements WorkspaceItem
 {
 	public static final Logger log = LoggerFactory.getLogger( WorkspaceItemImpl.class );
@@ -157,6 +159,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			gcTask = executor.scheduleWithFixedDelay( new Runnable()
 			{
 				@Override
+				@SuppressWarnings( value = "DM_GC", justification = "Explicit GC calls are needed due to a memory issue with Jetty." )
 				public void run()
 				{
 					long old = Runtime.getRuntime().freeMemory();
@@ -179,7 +182,9 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	public void delete()
 	{
 		release();
-		workspaceFile.delete();
+		if( !workspaceFile.delete() )
+			throw new RuntimeException( "Unable to delete Workspace file: " + workspaceFile.getAbsolutePath() );
+
 		super.delete();
 	}
 
@@ -394,7 +399,8 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		try
 		{
 			if( !workspaceFile.exists() )
-				workspaceFile.createNewFile();
+				if( !workspaceFile.createNewFile() )
+					throw new IOException( "Unable to create file: " + workspaceFile.getAbsolutePath() );
 
 			log.info( "Saving Workspace to file: '{}'", workspaceFile );
 			XmlBeansUtils.saveToFile( doc, workspaceFile );

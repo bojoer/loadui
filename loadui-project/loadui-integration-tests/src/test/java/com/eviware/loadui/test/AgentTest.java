@@ -27,42 +27,42 @@ import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 
 /**
- * Integration tests for testing the loadUI runner through its API.
+ * Integration tests for testing the loadUI agent through its API.
  * 
  * @author dain.nilsson
  */
-public class RunnerTest
+public class AgentTest
 {
-	private static RunnerWrapper runner;
+	private static AgentWrapper agent;
 
 	@BeforeClass
-	public static void startRunner() throws Exception
+	public static void startAgent() throws Exception
 	{
 		int port = Utilities.getAvailablePort();
 		int sslPort = Utilities.getAvailablePort();
-		System.out.println( "Starting Runner on ports " + port + " and " + sslPort );
+		System.out.println( "Starting Agent on ports " + port + " and " + sslPort );
 		System.setProperty( LoadUI.HTTP_PORT, Integer.toString( port ) );
 		System.setProperty( LoadUI.HTTPS_PORT, Integer.toString( sslPort ) );
-		runner = new RunnerWrapper();
+		agent = new AgentWrapper();
 	}
 
 	@AfterClass
-	public static void stopRunner() throws Exception
+	public static void stopAgent() throws Exception
 	{
-		runner.stop();
+		agent.stop();
 	}
 
 	@Test
 	public void shouldHaveNoFailedBundles()
 	{
-		Bundle[] bundles = runner.getBundleContext().getBundles();
+		Bundle[] bundles = agent.getBundleContext().getBundles();
 		for( Bundle bundle : bundles )
 			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(),
 					anyOf( is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );
 	}
 
 	@Test
-	public void shouldHaveRunnerStatusPage() throws Exception
+	public void shouldHaveAgentStatusPage() throws Exception
 	{
 		HttpClient client = new HttpClient();
 		HeadMethod method = new HeadMethod( "http://127.0.0.1:" + System.getProperty( "loadui.http.port" ) + "/" );

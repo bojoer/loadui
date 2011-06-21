@@ -34,7 +34,7 @@ import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.collections.ResizableBlockingQueue;
 import com.eviware.loadui.util.dispatch.CustomThreadPoolExecutor;
 
-public class ExecutorManagerImpl implements ExecutorManager
+public final class ExecutorManagerImpl implements ExecutorManager
 {
 	private final static int MIN_POOL_SIZE = 10;
 	private final static int DEFAULT_POOL_SIZE = 1000;

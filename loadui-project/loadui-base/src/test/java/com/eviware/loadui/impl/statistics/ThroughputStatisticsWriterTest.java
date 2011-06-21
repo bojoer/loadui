@@ -37,7 +37,6 @@ import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter.Factory;
 import com.eviware.loadui.util.BeanInjector;
-import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.google.common.collect.ImmutableMap;
 
@@ -67,7 +66,7 @@ public class ThroughputStatisticsWriterTest
 		StatisticsAggregator statisticsAggrMock = mock( StatisticsAggregator.class );
 		when( bundleContext.getService( saMock ) ).thenReturn( statisticsAggrMock );
 
-		new BeanInjector().setBundleContext( bundleContext );
+		BeanInjector.setBundleContext( bundleContext );
 
 		writer = factory.createStatisticsWriter( statisticsManagerMock, variableMock,
 				Collections.<String, Object> emptyMap() );
