@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * @author dain.nilsson
  */
-public class CustomThreadPoolExecutor extends AbstractExecutorService
+public final class CustomThreadPoolExecutor extends AbstractExecutorService
 {
 	private static final int IDLE_TIME = 30;
 	private static final int MIN_POOL_SIZE = 30;
