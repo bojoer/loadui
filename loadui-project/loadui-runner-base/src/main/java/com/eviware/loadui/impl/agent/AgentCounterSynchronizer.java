@@ -38,7 +38,7 @@ public class AgentCounterSynchronizer implements CounterSynchronizer
 
 	public final static Logger log = LoggerFactory.getLogger( AgentCounterSynchronizer.class );
 
-	private final Timer timer = new Timer();
+	private final Timer timer = new Timer( "AgentCounterSynchronizer", true );
 	private final BaseEventListener listener = new BaseEventListener();
 	private final Map<CounterHolder, HolderData> holders = new HashMap<CounterHolder, HolderData>();
 
