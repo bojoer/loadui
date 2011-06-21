@@ -61,7 +61,7 @@
 			<scope>test</scope>
 		</dependency><!-- <dependency> <groupId>com.eviware.loadui</groupId> <artifactId>loadui-controller-deps</artifactId> 
 			<type>pom</type> <version>${project.parent.version}</version> <scope>test</scope> 
-			</dependency> <dependency> <groupId>com.eviware.loadui</groupId> <artifactId>loadui-runner-deps</artifactId> 
+			</dependency> <dependency> <groupId>com.eviware.loadui</groupId> <artifactId>loadui-agent-deps</artifactId> 
 			<type>pom</type> <version>${project.parent.version}</version> <scope>test</scope> 
 			</dependency> -->
 	</dependencies>

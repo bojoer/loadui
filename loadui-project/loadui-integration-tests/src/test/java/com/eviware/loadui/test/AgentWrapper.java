@@ -45,7 +45,7 @@ public class AgentWrapper
 		launcher = new OSGiLauncher( new String[] { "-nolock", "-nofx" } );
 		Properties config = launcher.getConfig();
 		config.setProperty( "felix.cache.rootdir", baseDir.getAbsolutePath() );
-		config.setProperty( "felix.auto.deploy.dir", new File( "../loadui-runner-deps/target/bundle" ).getAbsolutePath() );
+		config.setProperty( "felix.auto.deploy.dir", new File( "../loadui-agent-deps/target/bundle" ).getAbsolutePath() );
 		launcher.init();
 		launcher.start();
 		context = launcher.getBundleContext();

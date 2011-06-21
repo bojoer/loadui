@@ -60,7 +60,7 @@
 									<fileset file="${basedir}/../loadui-launcher/target/lib/*.jar" />
 								</copy>
 								<copy todir="${basedir}/target/agent/bundle">
-									<fileset dir="${basedir}/../loadui-runner-deps/target/bundle" />
+									<fileset dir="${basedir}/../loadui-agent-deps/target/bundle" />
 								</copy>
 								<!-- Dummy copy. For some reason the last copy task doesn't seem 
 									to work on our build servers. -->
@@ -164,7 +164,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-runner-deps</artifactId>
+			<artifactId>loadui-agent-deps</artifactId>
 			<type>pom</type>
 			<version>${project.parent.version}</version>
 		</dependency>

@@ -18,13 +18,13 @@
 	</properties>
 	<modules>
 		<module>loadui-http-server</module>
-		<module>loadui-runner-deps</module>
+		<module>loadui-agent-deps</module>
 		<module>loadui-core-deps</module>
 		<module>loadui-bundle-updater</module>
 		<module>loadui-api</module>
 		<module>loadui-model-xmlbeans</module>
 		<module>loadui-base</module>
-		<module>loadui-runner-base</module>
+		<module>loadui-agent-base</module>
 		<module>loadui-controller-base</module>
 		<module>loadui-controller-deps</module>
 		<module>loadui-util</module>

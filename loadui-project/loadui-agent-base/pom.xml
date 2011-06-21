@@ -6,9 +6,9 @@
 		<version>2.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>loadui-runner-base</artifactId>
+	<artifactId>loadui-agent-base</artifactId>
 	<packaging>bundle</packaging>
-	<name>loadUI Runner Base</name>
+	<name>loadUI Agent Base</name>
 	<build>
 		<plugins>
 			<plugin>

@@ -6,9 +6,9 @@
 		<version>2.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>loadui-runner-deps</artifactId>
+	<artifactId>loadui-agent-deps</artifactId>
 	<packaging>pom</packaging>
-	<name>loadUI Runner Dependencies</name>
+	<name>loadUI Agent Dependencies</name>
 	<build>
 		<plugins>
 			<plugin>
@@ -39,7 +39,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-runner-base</artifactId>
+			<artifactId>loadui-agent-base</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
