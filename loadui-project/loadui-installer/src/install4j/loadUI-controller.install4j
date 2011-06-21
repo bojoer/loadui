@@ -409,7 +409,7 @@ Appendix
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent">
                       <void property="labelText">
-                        <string>This is where you can enter the proxy settings that Java WebStart will use when starting LoadUI. Leave them blank if you do not use a proxy to reach the internet.</string>
+                        <string>This is where you can enter the proxy settings that Java WebStart will use when starting loadUI. Leave them blank if you do not use a proxy to reach the internet.</string>
                       </void>
                     </object>
                   </java>
@@ -697,7 +697,7 @@ catch(Exception e){
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.screens.CustomizableInfoScreen">
                   <void property="displayedText">
-                    <string>LoadUI installer will install JavaFX, the installer will continue when the JavaFX install is complete.</string>
+                    <string>The installer will now install JavaFX, and continue when the JavaFX installation has been completed.</string>
                   </void>
                 </object>
               </java>
@@ -797,7 +797,7 @@ catch(Exception e){
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.formcomponents.HyperlinkLabelComponent">
                       <void property="hyperlinkText">
-                        <string>Read about how to get started with LoadUI</string>
+                        <string>Read about how to get started with loadUI</string>
                       </void>
                       <void property="url">
                         <string>http://loadui.org/Getting-Started-with-loadUI/your-first-load-test.html</string>
@@ -867,7 +867,7 @@ catch(Exception e){
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.screens.CustomizableInfoScreen">
                   <void property="displayedText">
-                    <string>A version of LoadUI is running, please close it before starting the uninstallation again.</string>
+                    <string>A version of loadUI is running, please close it before starting the uninstallation again.</string>
                   </void>
                 </object>
               </java>
