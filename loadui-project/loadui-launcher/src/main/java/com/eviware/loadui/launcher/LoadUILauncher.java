@@ -241,9 +241,11 @@ public class LoadUILauncher
 	protected void initSystemProperties()
 	{
 		Properties systemProperties = new Properties();
+		FileInputStream fis = null;
 		try
 		{
-			systemProperties.load( new FileInputStream( "conf" + File.separator + "system.properties" ) );
+			fis = new FileInputStream( "conf" + File.separator + "system.properties" );
+			systemProperties.load( fis );
 			for( Entry<Object, Object> entry : systemProperties.entrySet() )
 				System.setProperty( ( String )entry.getKey(), ( String )entry.getValue() );
 		}
@@ -254,6 +256,20 @@ public class LoadUILauncher
 		catch( IOException e )
 		{
 			// Ignore
+		}
+		finally
+		{
+			if( fis != null )
+			{
+				try
+				{
+					fis.close();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+			}
 		}
 
 		System.setProperty( "loadui.home", System.getProperty( "user.home", "." ) + File.separator + ".loadui" );
@@ -347,6 +363,17 @@ public class LoadUILauncher
 			catch( IOException e )
 			{
 				e.printStackTrace();
+			}
+			finally
+			{
+				try
+				{
+					is.close();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}

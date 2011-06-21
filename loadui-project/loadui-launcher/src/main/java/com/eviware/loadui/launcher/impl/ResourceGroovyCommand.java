@@ -45,6 +45,17 @@ public class ResourceGroovyCommand extends AbstractGroovyCommand
 		{
 			throw new RuntimeException( e );
 		}
+		finally
+		{
+			try
+			{
+				br.close();
+			}
+			catch( IOException e )
+			{
+				e.printStackTrace();
+			}
+		}
 
 		return s.toString();
 	}
