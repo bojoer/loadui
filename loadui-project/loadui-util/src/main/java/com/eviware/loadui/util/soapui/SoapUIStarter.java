@@ -23,8 +23,8 @@ public class SoapUIStarter
 	public static final long START_TIMEOUT = 20000;
 
 	private static Logger logger = LoggerFactory.getLogger( SoapUIStarter.class );
-	private static Boolean isWindows;
-	private static Boolean isOSX;
+	private static boolean isWindows = System.getProperty( "os.name" ).indexOf( "Windows" ) >= 0;
+	private static boolean isOSX = System.getProperty( "os.name" ).indexOf( "Mac OS X" ) >= 0;
 
 	public static void start( String soapUIbatPath )
 	{
@@ -60,7 +60,6 @@ public class SoapUIStarter
 			String[] commandsLinux = new String[] { "sh", soapUIbatPath };
 			String[] commandsOSX = new String[] { soapUIbatPath + "/Contents/MacOS/JavaApplicationStub" };
 			logger.info( "Launching soapUI..." );
-			determineOS();
 			ProcessBuilder pb;
 			if( isWindows )
 				pb = new ProcessBuilder( commandsWin );
@@ -106,13 +105,5 @@ public class SoapUIStarter
 		{
 			logger.error( "Error while start soapui ", e );
 		}
-	}
-
-	public static void determineOS()
-	{
-		if( isWindows == null )
-			isWindows = new Boolean( System.getProperty( "os.name" ).indexOf( "Windows" ) >= 0 );
-		if( isOSX == null )
-			isOSX = new Boolean( System.getProperty( "os.name" ).indexOf( "Mac OS X" ) >= 0 );
 	}
 }
