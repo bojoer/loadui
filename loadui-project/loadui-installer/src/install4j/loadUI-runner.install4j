@@ -29,9 +29,6 @@
     <components />
   </files>
   <launchers>
-    <launcher name="loadUI-agent.bat" id="43" external="true" excludeFromMenu="false" menuName="" externalFile="loadUI-agent.bat" />
-    <launcher name="loadUI-agent.sh" id="44" external="true" excludeFromMenu="false" menuName="" externalFile="loadUI-agent.sh" />
-    <launcher name="loadUI-agent.command" id="196" external="true" excludeFromMenu="false" menuName="" externalFile="loadUI-agent.command" />
     <launcher name="loadUI-Agent-${compiler:version}" id="562" external="false" excludeFromMenu="false" menuName="" icnsFile="../../target/controller/loadUI_icon_mac.icns" pngIcon16File="../../target/controller/loadui-logo-icon-16.png" pngIcon32File="../../target/controller/loadui-logo-icon-32.png" macServiceDependencies="" swtApp="false" fileset="">
       <executable name="loadUI-Agent-${compiler:version}" type="1" iconSet="true" iconFile="../../target/controller/loadUI_icon_win.ico" executableDir="" redirectStderr="false" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="2" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
