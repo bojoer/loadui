@@ -381,7 +381,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	}
 
 	@Override
-	public long getPosition()
+	public final long getPosition()
 	{
 		return Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
 	}
@@ -406,7 +406,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	}
 
 	@Override
-	public void setZoomLevel( ZoomLevel zoomLevel )
+	public final void setZoomLevel( ZoomLevel zoomLevel )
 	{
 		if( this.zoomLevel != zoomLevel )
 		{

@@ -82,7 +82,7 @@ public class AgentDataAggregator implements StatisticsAggregator
 		{
 			StatisticsWriter writer = ( StatisticsWriter )addressableRegistry.lookup( trackId );
 
-			if( writer != null && !writer.getType().equals( "COUNTER" ) )
+			if( writer != null && !"COUNTER".equals( writer.getType() ) )
 			{
 				Entry entry = writer.aggregate( map.get( trackId ), true );
 

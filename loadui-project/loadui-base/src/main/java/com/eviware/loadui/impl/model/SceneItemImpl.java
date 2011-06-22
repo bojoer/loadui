@@ -335,7 +335,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			messageEndpoint.sendMessage( AgentItem.AGENT_CHANNEL, data );
 			log.debug( "Sending statistics data from {}", this );
 		}
-		else if( wasLocalModeWhenStarted || ( !project.getWorkspace().isLocalMode() && getActiveAgents().size() == 0 ) )
+		else if( wasLocalModeWhenStarted || ( !project.getWorkspace().isLocalMode() && getActiveAgents().isEmpty() ) )
 		{
 			// on controller, in local mode or in distributed mode with no active
 			// agents

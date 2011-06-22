@@ -673,8 +673,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ( ( agent == null ) ? 0 : agent.getId().hashCode() );
-			result = prime * result + ( ( scene == null ) ? 0 : scene.getId().hashCode() );
-			return result;
+			return prime * result + ( ( scene == null ) ? 0 : scene.getId().hashCode() );
 		}
 
 		@Override
@@ -895,7 +894,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			if( event instanceof CollectionEvent )
 			{
 				CollectionEvent cEvent = ( CollectionEvent )event;
-				if( WorkspaceItem.AGENTS == event.getKey() )
+				if( WorkspaceItem.AGENTS.equals( event.getKey() ) )
 				{
 					AgentItem agent = ( AgentItem )cEvent.getElement();
 					if( CollectionEvent.Event.ADDED == cEvent.getEvent() )
@@ -938,7 +937,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	{
 		for( SceneItem s : getScenes() )
 		{
-			if( !linkedOnly || linkedOnly && s.isFollowProject() )
+			if( !linkedOnly || s.isFollowProject() )
 			{
 				s.cancelComponents();
 			}

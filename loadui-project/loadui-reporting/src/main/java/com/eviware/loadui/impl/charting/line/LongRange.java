@@ -19,7 +19,7 @@ package com.eviware.loadui.impl.charting.line;
 import com.jidesoft.range.AbstractNumericRange;
 import com.jidesoft.range.Range;
 
-public class LongRange extends AbstractNumericRange<Long> implements Range<Long>
+public class LongRange extends AbstractNumericRange<Long>
 {
 	private long min, max;
 

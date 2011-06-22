@@ -23,28 +23,18 @@ public abstract class ExecutionListenerAdapter implements ExecutionListener
 {
 
 	@Override
-	public void executionPaused( ExecutionManager.State oldState )
-	{
-	}
+	public abstract void executionPaused( ExecutionManager.State oldState );
 
 	@Override
-	public void executionStarted( ExecutionManager.State oldState )
-	{
-	}
+	public abstract void executionStarted( ExecutionManager.State oldState );
 
 	@Override
-	public void executionStopped( ExecutionManager.State oldState )
-	{
-	}
+	public abstract void executionStopped( ExecutionManager.State oldState );
 
 	@Override
-	public void trackRegistered( TrackDescriptor trackDescriptor )
-	{
-	}
+	public abstract void trackRegistered( TrackDescriptor trackDescriptor );
 
 	@Override
-	public void trackUnregistered( TrackDescriptor trackDescriptor )
-	{
-	}
+	public abstract void trackUnregistered( TrackDescriptor trackDescriptor );
 
 }

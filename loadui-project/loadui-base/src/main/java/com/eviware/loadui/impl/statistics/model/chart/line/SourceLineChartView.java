@@ -85,7 +85,7 @@ public class SourceLineChartView extends AbstractLineChartView
 	public String getAttribute( String key, String defaultValue )
 	{
 		String value = super.getAttribute( key, NULL );
-		return value == NULL ? getChartGroup().getChartView().getAttribute( key, defaultValue ) : value;
+		return value.equals( NULL ) ? getChartGroup().getChartView().getAttribute( key, defaultValue ) : value;
 	}
 
 	@Override

@@ -115,9 +115,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 	}
 
 	@Override
-	public void release()
-	{
-	}
+	abstract public void release();
 
 	protected EntryBuilder at( long timestamp )
 	{

@@ -187,7 +187,7 @@ public class LoadUILauncher
 		}
 	}
 
-	protected void exitInError()
+	protected final void exitInError()
 	{
 		try
 		{
@@ -371,10 +371,10 @@ public class LoadUILauncher
 					out.append( new String( b, 0, n ) );
 
 				String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
-				if( !extra.equals( "" ) )
+				if( !extra.isEmpty() )
 					out.append( "," ).append( extra );
 
-				configProps.put( "org.osgi.framework.system.packages.extra", out.toString() );
+				configProps.setProperty( "org.osgi.framework.system.packages.extra", out.toString() );
 			}
 			catch( IOException e )
 			{

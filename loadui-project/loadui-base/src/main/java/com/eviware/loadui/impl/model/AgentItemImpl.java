@@ -44,7 +44,7 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	private final MessageEndpointProvider provider;
 	private final BroadcastMessageEndpoint broadcastEndpoint;
 	private final ScheduledExecutorService executorService;
-	private ScheduledFuture<?> timeSynchronizerFuture;
+	private final ScheduledFuture<?> timeSynchronizerFuture;
 	private MessageEndpointSupport endpointSupport;
 	private boolean connected = false;
 	private int utilization = 0;
@@ -276,7 +276,7 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	}
 
 	@Override
-	public void open()
+	final public void open()
 	{
 		endpointSupport.open();
 	}

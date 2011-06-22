@@ -53,7 +53,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	private final Chart chart;
 	private boolean released = false;
 
-	private StatisticVariableListener statisticVariableListener = new StatisticVariableListener();
+	private final StatisticVariableListener statisticVariableListener = new StatisticVariableListener();
 
 	public ChartLineChartView( LineChartViewProvider provider, Chart chart )
 	{
@@ -158,7 +158,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	public String getAttribute( String key, String defaultValue )
 	{
 		String value = super.getAttribute( key, NULL );
-		return value == NULL ? getChartGroup().getChartView().getAttribute( key, defaultValue ) : value;
+		return value.equals( NULL ) ? getChartGroup().getChartView().getAttribute( key, defaultValue ) : value;
 	}
 
 	public Chart getChart()

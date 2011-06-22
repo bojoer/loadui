@@ -74,10 +74,8 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 		// log.debug( " counterStatWriter:output()   lastTimeFlushed={} delay={}",
 		// lastTimeFlushed, delay );
 		lastTimeFlushed = Math.min( lastTimeFlushed + delay, currentTime );
-		Entry e = at( lastTimeFlushed ).put( Stats.TOTAL.name(), total ).put( Stats.PER_SECOND.name(), perSecond )
-				.build();
+		return at( lastTimeFlushed ).put( Stats.TOTAL.name(), total ).put( Stats.PER_SECOND.name(), perSecond ).build();
 		// log.debug( " ...resulted in Entry {}",e );
-		return e;
 	}
 
 	@Override

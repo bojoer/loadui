@@ -99,7 +99,7 @@ public class GroovyScriptSupport implements Releasable
 		return log;
 	}
 
-	public void updateScript( String scriptText )
+	public final void updateScript( String scriptText )
 	{
 		if( scriptText == null )
 			scriptText = "";
@@ -267,7 +267,7 @@ public class GroovyScriptSupport implements Releasable
 		@Override
 		public void handleEvent( PropertyEvent event )
 		{
-			if( PropertyEvent.Event.VALUE.equals( event.getEvent() ) && event.getProperty() == scriptProperty )
+			if( PropertyEvent.Event.VALUE == event.getEvent() && event.getProperty() == scriptProperty )
 				updateScript( scriptProperty.getValue() );
 		}
 	}

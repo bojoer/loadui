@@ -77,7 +77,7 @@ public class ControllerTest
 						e.printStackTrace();
 					}
 				}
-				if( !System.getProperty( "console", "false" ).equals( "false" ) )
+				if( !"false".equals( System.getProperty( "console", "false" ) ) )
 					new Console( binding ).run();
 			}
 		} ).start();

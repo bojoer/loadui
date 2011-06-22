@@ -37,40 +37,41 @@ public abstract class TableBase implements Releasable
 {
 	public static final String TABLE_NAME_PREFIX = "_";
 
-	private String dbName;
+	private final String dbName;
 
-	private String externalName;
+	private final String externalName;
 
-	private String tableName;
+	private final String tableName;
 
-	private PreparedStatementHolder insertStatement;
+	private final PreparedStatementHolder insertStatement;
 
-	private PreparedStatementHolder selectStatement;
+	private final PreparedStatementHolder selectStatement;
 
-	private String createScript;
+	private final String createScript;
 
-	private String addPkIndexScript;
+	private final String addPkIndexScript;
 
-	private PreparedStatement deleteStatement;
+	private final PreparedStatement deleteStatement;
 
 	private Map<String, ? extends Class<? extends Object>> dynamicFields = new HashMap<String, Class<? extends Object>>();
 
-	private Connection connection;
+	private final Connection connection;
 
 	private Map<String, PreparedStatement> extraStatementMap;
 
-	private TableDescriptor descriptor;
+	private final TableDescriptor descriptor;
 
-	private TableRegistry tableRegistry;
+	private final TableRegistry tableRegistry;
 
-	private DatabaseMetadata databaseMetadata;
+	private final DatabaseMetadata databaseMetadata;
 
 	public TableBase( String dbName, String name, Map<String, ? extends Class<? extends Object>> dynamicFields,
-			ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata, TableRegistry tableRegistry ) throws SQLException
+			ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata, TableRegistry tableRegistry )
+			throws SQLException
 	{
 		descriptor = new TableDescriptor();
 		initializeDescriptor( descriptor );
-		
+
 		this.externalName = name;
 		this.tableName = buildTableName( name );
 		this.dbName = dbName;
@@ -78,27 +79,27 @@ public abstract class TableBase implements Releasable
 		this.tableRegistry = tableRegistry;
 		this.databaseMetadata = databaseMetadata;
 
-//		try
-//		{
-			this.connection = connectionRegistry.getConnection( this, useTableSpecificConnection() );
+		//		try
+		//		{
+		this.connection = connectionRegistry.getConnection( this, useTableSpecificConnection() );
 
-			addPkIndexScript = createAddPkIndexScript();
-			createScript = createTableCreateScript();
-			if( !exist() )
-			{
-				create();
-			}
+		addPkIndexScript = createAddPkIndexScript();
+		createScript = createTableCreateScript();
+		if( !exist() )
+		{
+			create();
+		}
 
-			StatementHolder sh = createTableInsertScript();
-			insertStatement = new PreparedStatementHolder( connection.prepareStatement( sh.getStatementSql() ), sh );
-			sh = createTableSelectScript();
-			selectStatement = new PreparedStatementHolder( connection.prepareStatement( sh.getStatementSql() ), sh );
-			deleteStatement = connection.prepareStatement( "DELETE FROM " + tableName );
-//		}
-//		catch( SQLException e )
-//		{
-//			throw new RuntimeException( "Unable to initialize statements for table handling!", e );
-//		}
+		StatementHolder sh = createTableInsertScript();
+		insertStatement = new PreparedStatementHolder( connection.prepareStatement( sh.getStatementSql() ), sh );
+		sh = createTableSelectScript();
+		selectStatement = new PreparedStatementHolder( connection.prepareStatement( sh.getStatementSql() ), sh );
+		deleteStatement = connection.prepareStatement( "DELETE FROM " + tableName );
+		//		}
+		//		catch( SQLException e )
+		//		{
+		//			throw new RuntimeException( "Unable to initialize statements for table handling!", e );
+		//		}
 	}
 
 	protected boolean exist()
@@ -330,6 +331,7 @@ public abstract class TableBase implements Releasable
 	{
 		Statement stm = connection.createStatement();
 		stm.execute( "drop table " + tableName );
+		stm.close();
 	}
 
 	@Override

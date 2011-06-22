@@ -314,7 +314,7 @@ public class ExecutionImpl implements Execution, Releasable
 		return executionDir;
 	}
 
-	private void loadAttributes()
+	private final void loadAttributes()
 	{
 		FileInputStream fis = null;
 		try

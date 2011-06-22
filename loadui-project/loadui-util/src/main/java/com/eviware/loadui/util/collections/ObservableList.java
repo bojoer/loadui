@@ -140,29 +140,25 @@ public class ObservableList<E> extends Observable implements List<E>
 	@Override
 	public E remove( int index )
 	{
-		E res = list.remove( index );
-		return res;
+		return list.remove( index );
 	}
 
 	@Override
 	public boolean removeAll( Collection<?> c )
 	{
-		boolean res = list.remove( c );
-		return res;
+		return list.remove( c );
 	}
 
 	@Override
 	public boolean retainAll( Collection<?> c )
 	{
-		boolean res = list.retainAll( c );
-		return res;
+		return list.retainAll( c );
 	}
 
 	@Override
 	public E set( int index, E element )
 	{
-		E res = list.set( index, element );
-		return res;
+		return list.set( index, element );
 	}
 
 	@Override

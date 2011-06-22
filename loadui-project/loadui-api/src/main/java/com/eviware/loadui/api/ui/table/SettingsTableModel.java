@@ -21,52 +21,63 @@ import java.util.Observable;
 
 import com.eviware.loadui.api.property.Property;
 
-public class SettingsTableModel extends KeyValueTableModel {
+public class SettingsTableModel extends KeyValueTableModel
+{
 
 	private static final long serialVersionUID = 3644028575932424988L;
-	
-	private ArrayList<PropertyProxy> data = new ArrayList<PropertyProxy>();
 
-	public SettingsTableModelObserver observer = new SettingsTableModelObserver(this);
+	private final ArrayList<PropertyProxy> data = new ArrayList<PropertyProxy>();
 
-	public SettingsTableModel() {
+	public SettingsTableModelObserver observer = new SettingsTableModelObserver( this );
+
+	public SettingsTableModel()
+	{
 		header = new String[] { "Property Name", "Property Value" };
 	}
 
 	@Override
-	public int getRowCount() {
+	public int getRowCount()
+	{
 		return data.size();
 	}
 
 	@Override
-	public Object getValueAt(int rowIndex, int columnIndex) {
-		switch (columnIndex) {
-		case 0:
-			return data.get(rowIndex).getName();
-		case 1:
-			return data.get(rowIndex).getValue();
-		default:
+	public Object getValueAt( int rowIndex, int columnIndex )
+	{
+		switch( columnIndex )
+		{
+		case 0 :
+			return data.get( rowIndex ).getName();
+		case 1 :
+			return data.get( rowIndex ).getValue();
+		default :
 			return null;
 		}
 	}
 
 	@Override
-	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		PropertyProxy p = data.get(rowIndex);
-		if (p.getType().getSimpleName().equals(File.class.getSimpleName())) {
-			p.setValue(new File((String) aValue));
+	public void setValueAt( Object aValue, int rowIndex, int columnIndex )
+	{
+		PropertyProxy p = data.get( rowIndex );
+		if( p.getType().getSimpleName().equals( File.class.getSimpleName() ) )
+		{
+			p.setValue( new File( ( String )aValue ) );
 		}
-		else if (p.getType().getSimpleName().equals(Double.class.getSimpleName())) {
-			p.setValue(Double.valueOf((String) aValue));
+		else if( p.getType().getSimpleName().equals( Double.class.getSimpleName() ) )
+		{
+			p.setValue( Double.valueOf( ( String )aValue ) );
 		}
-		else if (p.getType().getSimpleName().equals(Boolean.class.getSimpleName())) {
-			p.setValue(Boolean.valueOf((String) aValue));
+		else if( p.getType().getSimpleName().equals( Boolean.class.getSimpleName() ) )
+		{
+			p.setValue( Boolean.valueOf( ( String )aValue ) );
 		}
-		else if (p.getType().getSimpleName().equals(Long.class.getSimpleName())) {
-			p.setValue(Long.valueOf((String) aValue));
+		else if( p.getType().getSimpleName().equals( Long.class.getSimpleName() ) )
+		{
+			p.setValue( Long.valueOf( ( String )aValue ) );
 		}
-		else {
-			p.setValue(aValue);
+		else
+		{
+			p.setValue( aValue );
 		}
 		hashCode();
 		fireTableDataChanged();
@@ -74,68 +85,86 @@ public class SettingsTableModel extends KeyValueTableModel {
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		int hashCode = 0;
-		for (PropertyProxy v : data) {
+		for( PropertyProxy v : data )
+		{
 			hashCode += v.getValue() == null ? 0 : v.getValue().hashCode();
 		}
 		return hashCode;
 	}
 
-	public void addRow(PropertyProxy p) {
-		data.add(p);
+	public void addRow( PropertyProxy p )
+	{
+		data.add( p );
 		hashCode();
 		fireTableDataChanged();
 	}
 
-	public static class PropertyProxy {
-		private String name;
+	public static class PropertyProxy
+	{
+		private final String name;
 		private Object value;
-		private Class pClass;
+		private final Class pClass;
 
-		public PropertyProxy(Property p) {
+		public PropertyProxy( Property p )
+		{
 			this.name = p.getKey();
 			this.value = p.getValue();
 			this.pClass = p.getType();
 		}
 
-		public PropertyProxy(String name, Object value, Class type) {
+		public PropertyProxy( String name, Object value, Class type )
+		{
 			this.name = name;
 			this.value = value;
 			this.pClass = type;
 		}
 
-		public Class getType() {
+		public Class getType()
+		{
 			return pClass;
 		}
 
-		public String getName() {
+		public String getName()
+		{
 			return name;
 		}
 
-		public Object getValue() {
+		public Object getValue()
+		{
 			return value;
 		}
 
-		public void setValue(Object v) {
+		public void setValue( Object v )
+		{
 			this.value = v;
 		}
 
 		@Override
-		public String toString() {
-			return name == null ? "name null" : name + " " + value == null ? "null" : "" + value;
+		public String toString()
+		{
+			if( name == null )
+				System.out.println();
+			if( value == null )
+				System.out.println();
+			return name == null ? "name null" : name + " " + ( value == null ? "null" : value.toString() );
 		}
 	}
 
-	public static class SettingsTableModelObserver extends Observable {
+	public static class SettingsTableModelObserver extends Observable
+	{
 
 		public SettingsTableModel model;
 
-		public SettingsTableModelObserver(SettingsTableModel model) {
+		public SettingsTableModelObserver( SettingsTableModel model )
+		{
 			this.model = model;
 		}
 
-		public void startNotification() {
+		public void startNotification()
+		{
 			setChanged();
 			notifyObservers();
 		}

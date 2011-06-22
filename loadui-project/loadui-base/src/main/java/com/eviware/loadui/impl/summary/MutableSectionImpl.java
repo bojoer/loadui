@@ -26,9 +26,9 @@ import com.eviware.loadui.api.summary.MutableSection;
 public class MutableSectionImpl implements MutableSection
 {
 
-	private LinkedHashMap<String, TableModel> tables = new LinkedHashMap<String, TableModel>();
-	private LinkedHashMap<String, String> values = new LinkedHashMap<String, String>();
-	private String title;
+	private final LinkedHashMap<String, TableModel> tables = new LinkedHashMap<String, TableModel>();
+	private final LinkedHashMap<String, String> values = new LinkedHashMap<String, String>();
+	private final String title;
 
 	public MutableSectionImpl( String title )
 	{
@@ -36,13 +36,13 @@ public class MutableSectionImpl implements MutableSection
 	}
 
 	@Override
-	public void addTable( String name, TableModel model )
+	public final void addTable( String name, TableModel model )
 	{
 		tables.put( name, model );
 	}
 
 	@Override
-	public void addValue( String name, String value )
+	public final void addValue( String name, String value )
 	{
 		values.put( name, value );
 	}
@@ -77,6 +77,7 @@ public class MutableSectionImpl implements MutableSection
 		return tables.keySet();
 	}
 
+	@Override
 	public String getTitle()
 	{
 		return title;

@@ -53,9 +53,7 @@ public class ChartNamePrettifier
 			statisticName = statisticName.replaceFirst( "Percent", "%-" );
 		}
 
-		statisticName = statisticName.replaceAll( "^Tps$", "TPS" ).replaceAll( "^Bps$", "BPS" );
-
-		return statisticName;
+		return statisticName.replaceAll( "^Tps$", "TPS" ).replaceAll( "^Bps$", "BPS" );
 	}
 
 	public static String compactDataName( String data, String metric )

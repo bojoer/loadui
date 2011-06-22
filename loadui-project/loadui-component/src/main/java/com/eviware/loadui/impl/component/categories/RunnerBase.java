@@ -805,7 +805,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		@Override
 		public void handleEvent( CollectionEvent event )
 		{
-			if( ProjectItem.ASSIGNMENTS.equals( event.getKey() ) && event.getEvent().equals( Event.REMOVED ) )
+			if( ProjectItem.ASSIGNMENTS.equals( event.getKey() ) && event.getEvent() == Event.REMOVED )
 			{
 				Assignment assignment = ( Assignment )event.getElement();
 				remoteValues.remove( getContext().getId() + "/" + assignment.getAgent().getId() );

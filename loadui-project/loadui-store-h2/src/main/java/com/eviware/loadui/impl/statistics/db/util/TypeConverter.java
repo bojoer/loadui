@@ -94,7 +94,7 @@ public class TypeConverter
 			oos.close();
 			return new String( Base64.encodeBase64( baos.toByteArray() ) );
 		}
-		catch( Exception e )
+		catch( IOException e )
 		{
 			return null;
 		}

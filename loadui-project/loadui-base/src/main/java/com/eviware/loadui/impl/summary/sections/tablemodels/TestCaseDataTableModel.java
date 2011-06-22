@@ -82,7 +82,6 @@ public class TestCaseDataTableModel extends AbstractTableModel
 		String numberOfSamples;
 		String numberOfAssertions;
 		String numberOfFailedAssertions;
-		SimpleDateFormat dateFormat;
 
 		public TestCaseDataModel( SceneItemImpl tc )
 		{

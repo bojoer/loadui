@@ -770,7 +770,7 @@ public class GroovyContextSupport implements ComponentContext, Releasable
 		@Override
 		public void handleEvent( PropertyEvent event )
 		{
-			if( PropertyEvent.Event.VALUE.equals( event.getEvent() ) )
+			if( PropertyEvent.Event.VALUE == event.getEvent() )
 			{
 				Closure<?> handler = replaceHandlers.get( event.getProperty() );
 				if( handler != null )

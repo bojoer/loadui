@@ -84,12 +84,12 @@ public class AgentDiscoveryImpl implements AgentDiscovery
 							String received = new String( packet.getData(), 0, packet.getLength() ).replaceAll( "127.0.0.1",
 									packet.getAddress().getHostAddress() );
 							String[] parts = received.split( " " );
-							if( parts.length == 4 && parts[0].equals( LoadUI.AGENT ) )
+							if( parts.length == 4 && LoadUI.AGENT.equals( parts[0] ) )
 								if( agents.add( new AgentRefImpl( parts[1], parts[2], parts[3] ) ) )
 									log.debug( "Discovered Agent: " + parts[2] );
 						}
 					}
-					catch( Exception e )
+					catch( IOException e )
 					{
 						// ignore
 					}
@@ -190,8 +190,7 @@ public class AgentDiscoveryImpl implements AgentDiscovery
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ( ( label == null ) ? 0 : label.hashCode() );
-			result = prime * result + ( ( url == null ) ? 0 : url.hashCode() );
-			return result;
+			return prime * result + ( ( url == null ) ? 0 : url.hashCode() );
 		}
 
 		@Override

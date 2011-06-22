@@ -58,7 +58,7 @@ public class FileToReferenceConverter implements Converter<File, Reference>
 				cache.put( key, new FileStruct( hash, file.lastModified() ) );
 				lookupTable.put( hash, file );
 			}
-			catch( Exception e )
+			catch( IOException e )
 			{
 				throw new RuntimeException( "Error calculating hash of file [" + file.getName() + "].", e );
 			}

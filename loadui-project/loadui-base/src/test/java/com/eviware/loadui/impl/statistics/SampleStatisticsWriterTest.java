@@ -208,7 +208,7 @@ public class SampleStatisticsWriterTest
 	@Test
 	public void testPercentileAggregation()
 	{
-		Entry result = prepareAggregation();
+		//		Entry result = prepareAggregation();
 		/*
 		 * assertEquals( 7.25, result.getValue( Stats.PERCENTILE_25TH.name()
 		 * ).doubleValue(), 0.005 ); assertEquals( 9.0, result.getValue(
@@ -253,16 +253,16 @@ public class SampleStatisticsWriterTest
 		writer.update( 2323, 9 );
 		Entry e3 = writer.output();
 
-		HashSet<Entry> entries = new HashSet<Entry>();
-		entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put( Stats.MEDIAN.name(), 8 )
-				.put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.632993162 ).put( Stats.MIN.name(), 6 )
-				.put( Stats.MAX.name(), 10 ).build() );
-		entries.add( writer.at( 2 ).put( Stats.AVERAGE.name(), 10 ).put( Stats.MEDIAN.name(), 11 )
-				.put( Stats.COUNT.name(), 4 ).put( Stats.STD_DEV.name(), 4.123105626 ).put( Stats.MIN.name(), 7 )
-				.put( Stats.MAX.name(), 17 ).build() );
-		entries.add( writer.at( 3 ).put( Stats.AVERAGE.name(), 10.3333333 ).put( Stats.MEDIAN.name(), 10 )
-				.put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.247219129 ).put( Stats.MIN.name(), 9 )
-				.put( Stats.MAX.name(), 12 ).build() );
+		//		HashSet<Entry> entries = new HashSet<Entry>();
+		//		entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put( Stats.MEDIAN.name(), 8 )
+		//				.put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.632993162 ).put( Stats.MIN.name(), 6 )
+		//				.put( Stats.MAX.name(), 10 ).build() );
+		//		entries.add( writer.at( 2 ).put( Stats.AVERAGE.name(), 10 ).put( Stats.MEDIAN.name(), 11 )
+		//				.put( Stats.COUNT.name(), 4 ).put( Stats.STD_DEV.name(), 4.123105626 ).put( Stats.MIN.name(), 7 )
+		//				.put( Stats.MAX.name(), 17 ).build() );
+		//		entries.add( writer.at( 3 ).put( Stats.AVERAGE.name(), 10.3333333 ).put( Stats.MEDIAN.name(), 10 )
+		//				.put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.247219129 ).put( Stats.MIN.name(), 9 )
+		//				.put( Stats.MAX.name(), 12 ).build() );
 
 		return writer.aggregate( new HashSet<Entry>( Arrays.asList( e1, e2, e3 ) ), false );
 	}

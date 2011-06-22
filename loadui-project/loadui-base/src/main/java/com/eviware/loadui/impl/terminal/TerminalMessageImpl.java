@@ -96,15 +96,7 @@ public class TerminalMessageImpl implements TerminalMessage
 		{
 			MutableValue<?> value = entry.getValue();
 			String[] parts;
-			try
-			{
-				parts = new String[] { conversionService.convert( value.getValue(), String.class ),
-						value.getType().getName() };
-			}
-			catch( Exception e )
-			{
-				parts = new String[] { value.getValue().toString(), String.class.getName() };
-			}
+			parts = new String[] { conversionService.convert( value.getValue(), String.class ), value.getType().getName() };
 
 			serialized.put( entry.getKey(), parts );
 		}

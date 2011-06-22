@@ -44,7 +44,7 @@ public abstract class AnalysisBase extends BaseCategory implements AnalysisCateg
 	private final ScheduledExecutorService executor;
 	private final Runnable activityRunnable;
 	private long lastMsg;
-	private ScheduledFuture<?> activityFuture;
+	private volatile ScheduledFuture<?> activityFuture;
 
 	/**
 	 * Constructs an AnalysisBase.

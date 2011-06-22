@@ -60,7 +60,7 @@ public class PropertyMapImplTest
 		assertNotNull( p );
 		assertThat( p.getKey(), is( "test" ) );
 		assertEquals( p.getOwner(), owner );
-		assertEquals( p.getType(), String.class );
+		assertEquals( String.class, p.getType() );
 
 		p.setValue( "Hello world" );
 

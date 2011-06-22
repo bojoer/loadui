@@ -85,27 +85,27 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	 */
 	private ExecutionImpl currentExecution;
 
-	private ExecutionChangeSupport ecs = new ExecutionChangeSupport();
+	private final ExecutionChangeSupport ecs = new ExecutionChangeSupport();
 
 	private final EventSupport eventSupport = new EventSupport();
 
-	private Map<String, ExecutionImpl> executionMap = new HashMap<String, ExecutionImpl>();
+	private final Map<String, ExecutionImpl> executionMap = new HashMap<String, ExecutionImpl>();
 
 	private final Map<String, TrackDescriptor> trackDescriptors = new HashMap<String, TrackDescriptor>();
 
 	private final Map<String, Entry> latestEntries = new HashMap<String, Entry>();
 
-	private TableRegistry tableRegistry = new TableRegistry();
+	private final TableRegistry tableRegistry = new TableRegistry();
 
-	private DatabaseMetadata metadata;
+	private final DatabaseMetadata metadata;
 
-	private ConnectionRegistry connectionRegistry;
+	private final ConnectionRegistry connectionRegistry;
 
 	private State executionState = State.STOPPED;
 
-	private ExecutionPool executionPool = new ExecutionPool();
+	private final ExecutionPool executionPool = new ExecutionPool();
 
-	private ResultPathListener resultPathListener = new ResultPathListener();
+	private final ResultPathListener resultPathListener = new ResultPathListener();
 
 	private long pauseStartedTime = 0;
 
@@ -141,12 +141,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				// This is in case component is added during the test.
 				if( executionState != State.STOPPED )
 					createTrack( trackDescriptor );
-			}
-
-			@Override
-			public void trackUnregistered( TrackDescriptor trackDescriptor )
-			{
-				// don't delete tracks
 			}
 
 		} );
@@ -490,7 +484,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			executionPool.put( execution );
 			return execution;
 		}
-		catch( Exception e )
+		catch( SQLException e )
 		{
 			throw new RuntimeException( "Execution " + executionId + " is corrupted and can't be loaded", e );
 		}
@@ -892,9 +886,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private class ExecutionPool
 	{
-		private int maxSize = 10;
+		private final int maxSize = 10;
 
-		private ArrayList<ExecutionImpl> list = new ArrayList<ExecutionImpl>();
+		private final ArrayList<ExecutionImpl> list = new ArrayList<ExecutionImpl>();
 
 		private ExecutionImpl currentExecution;
 

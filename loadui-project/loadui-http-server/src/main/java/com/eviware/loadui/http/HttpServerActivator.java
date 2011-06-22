@@ -32,22 +32,18 @@ import com.eviware.loadui.impl.messaging.BayeuxServiceServerEndpoint;
 
 public class HttpServerActivator implements BundleActivator
 {
-	private Server sslServer;
-	private Server server;
+	private final Server sslServer = new Server();
+	private final Server server = new Server();
 
 	@Override
 	public void start( BundleContext bc ) throws Exception
 	{
-		server = new Server();
-
 		SelectChannelConnector connector = new SelectChannelConnector();
 		connector.setPort( Integer.parseInt( System.getProperty( LoadUI.HTTP_PORT, "8080" ) ) );
 		server.addConnector( connector );
 
 		ServletContextHandler context = new ServletContextHandler( server, "/" );
 		context.addServlet( new ServletHolder( new StatusServlet() ), "/*" );
-
-		sslServer = new Server();
 
 		SslSelectChannelConnector sslConnector = new SslSelectChannelConnector();
 		sslConnector.setKeystore( System.getProperty( LoadUI.KEY_STORE ) );

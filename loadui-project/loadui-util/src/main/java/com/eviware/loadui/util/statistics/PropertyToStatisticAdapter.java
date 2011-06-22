@@ -44,7 +44,7 @@ public class PropertyToStatisticAdapter<T extends Number>
 		@Override
 		public void handleEvent( PropertyEvent event )
 		{
-			if( PropertyEvent.Event.VALUE.equals( event.getEvent() ) && event.getProperty() == property )
+			if( PropertyEvent.Event.VALUE == event.getEvent() && event.getProperty() == property )
 				statisticVariable.update( System.currentTimeMillis(), property.getValue() );
 		}
 	}

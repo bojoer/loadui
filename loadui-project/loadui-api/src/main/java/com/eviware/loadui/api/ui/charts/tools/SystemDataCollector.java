@@ -21,55 +21,66 @@ import javax.swing.SwingUtilities;
 import com.eviware.loadui.api.ui.charts.UpdateListener;
 
 /**
- *
+ * 
  * @author robert
  */
 
-public class SystemDataCollector implements Runnable {
+public class SystemDataCollector implements Runnable
+{
 
-    private static final Random random = new Random();
-    private UpdateListener updateListener = null;
-    private Thread thread = null;
-    private boolean stop = false;
-    
+	private static final Random random = new Random();
+	private UpdateListener updateListener = null;
+	private Thread thread = null;
+	private boolean stop = false;
 
-    private Runtime runtime = Runtime.getRuntime();
+	private final Runtime runtime = Runtime.getRuntime();
 
+	public SystemDataCollector( UpdateListener ul )
+	{
+		thread = new Thread( this );
+		this.updateListener = ul;
+	}
 
-    public SystemDataCollector(UpdateListener ul) {
-        thread = new Thread(this);
-        this.updateListener = ul;
-    }
+	public void start()
+	{
+		thread.start();
+	}
 
-    public void start() {
-        thread.start();
-    }
+	public void stop()
+	{
+		stop = true;
+	}
 
-    public void stop() {
-        stop = true;
-    }
-    public void run() {
+	@Override
+	public void run()
+	{
 
-        while(!stop) {
-            
-            final int free = (int) Math.abs(runtime.freeMemory() * 100 / runtime.totalMemory() );
-            final int bussy = 100 - free;
-            final int idle = 50;
+		while( !stop )
+		{
 
-            final int timeStep = 2;
-            /**
-             * Update listeners via Event Dispatch Thread
-             */
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    updateListener.update(timeStep, free, bussy, 0);
-                }
-            });
+			final int free = ( int )Math.abs( runtime.freeMemory() * 100 / runtime.totalMemory() );
+			final int bussy = 100 - free;
 
-            try {
-                Thread.sleep(500);
-            } catch (Exception e) {
-            }
-        }
-    }
+			final int timeStep = 2;
+			/**
+			 * Update listeners via Event Dispatch Thread
+			 */
+			SwingUtilities.invokeLater( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					updateListener.update( timeStep, free, bussy, 0 );
+				}
+			} );
+
+			try
+			{
+				Thread.sleep( 500 );
+			}
+			catch( InterruptedException e )
+			{
+			}
+		}
+	}
 }
