@@ -60,7 +60,7 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	public Entry output()
+	public synchronized Entry output()
 	{
 		double value = sum / delay;
 		lastTimeFlushed += delay;

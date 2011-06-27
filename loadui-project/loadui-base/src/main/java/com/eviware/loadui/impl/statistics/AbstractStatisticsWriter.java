@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsAggregator;
 import com.eviware.loadui.api.statistics.StatisticsManager;
@@ -34,7 +33,7 @@ import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 import com.google.common.collect.ImmutableMap;
 
-public abstract class AbstractStatisticsWriter implements StatisticsWriter, Releasable
+public abstract class AbstractStatisticsWriter implements StatisticsWriter
 {
 	public final static Logger log = LoggerFactory.getLogger( AbstractStatisticsWriter.class );
 
@@ -113,9 +112,6 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter, Rele
 			aggregator.addEntry( id, entry );
 		}
 	}
-
-	@Override
-	abstract public void release();
 
 	protected EntryBuilder at( long timestamp )
 	{

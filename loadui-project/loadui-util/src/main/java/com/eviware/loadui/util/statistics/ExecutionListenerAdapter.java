@@ -21,20 +21,28 @@ import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 
 public abstract class ExecutionListenerAdapter implements ExecutionListener
 {
+	@Override
+	public void executionPaused( ExecutionManager.State oldState )
+	{
+	}
 
 	@Override
-	public abstract void executionPaused( ExecutionManager.State oldState );
+	public void executionStarted( ExecutionManager.State oldState )
+	{
+	}
 
 	@Override
-	public abstract void executionStarted( ExecutionManager.State oldState );
+	public void executionStopped( ExecutionManager.State oldState )
+	{
+	}
 
 	@Override
-	public abstract void executionStopped( ExecutionManager.State oldState );
+	public void trackRegistered( TrackDescriptor trackDescriptor )
+	{
+	}
 
 	@Override
-	public abstract void trackRegistered( TrackDescriptor trackDescriptor );
-
-	@Override
-	public abstract void trackUnregistered( TrackDescriptor trackDescriptor );
-
+	public void trackUnregistered( TrackDescriptor trackDescriptor )
+	{
+	}
 }
