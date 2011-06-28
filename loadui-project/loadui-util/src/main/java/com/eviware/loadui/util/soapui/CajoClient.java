@@ -23,6 +23,8 @@ import gnu.cajo.invoke.Remote;
 
 public class CajoClient
 {
+	private static final Logger log = LoggerFactory.getLogger( CajoClient.class );
+
 	private String server = "localhost";
 	private String port = "1198";
 	private String itemName = "soapuiIntegration";
@@ -41,8 +43,6 @@ public class CajoClient
 			return instance;
 	}
 
-	Logger logger = LoggerFactory.getLogger( CajoClient.class );
-
 	private CajoClient()
 	{
 	}
@@ -52,7 +52,7 @@ public class CajoClient
 		return Remote.getItem( getConnectionString() );
 	}
 
-	public Object invoke( String method, Object object ) throws Exception
+	public Object invoke( String method, Object object )
 	{
 		try
 		{
@@ -60,8 +60,7 @@ public class CajoClient
 		}
 		catch( Exception e )
 		{
-			logger.warn( "Could not connect to SoapUI cajo server on " + getConnectionString() + " , method name:"
-					+ method );
+			log.warn( "Could not connect to SoapUI cajo server on " + getConnectionString() + " , method name:" + method );
 			return null;
 		}
 	}
@@ -90,18 +89,11 @@ public class CajoClient
 				.getStringValue();
 		if( soapUIPath == null || soapUIPath.trim().length() == 0 )
 		{
-			try
+			soapUIPath = ( String )invoke( "getSoapUIPath", null );
+			if( soapUIPath != null )
 			{
-				soapUIPath = ( String )invoke( "getSoapUIPath", null );
-				if( soapUIPath != null )
-				{
-					workspaceProviderRegistry.getWorkspace().getProperty( WorkspaceItem.SOAPUI_PATH_PROPERTY )
-							.setValue( soapUIPath );
-				}
-			}
-			catch( Exception e )
-			{
-				// do nothing
+				workspaceProviderRegistry.getWorkspace().getProperty( WorkspaceItem.SOAPUI_PATH_PROPERTY )
+						.setValue( soapUIPath );
 			}
 		}
 	}

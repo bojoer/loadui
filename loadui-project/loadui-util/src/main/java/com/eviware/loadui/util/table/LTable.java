@@ -45,6 +45,7 @@ public class LTable extends JXTable
 
 		addMouseMotionListener( new MouseMotionAdapter()
 		{
+			@Override
 			public void mouseMoved( MouseEvent e )
 			{
 				Point p = e.getPoint();
@@ -59,6 +60,7 @@ public class LTable extends JXTable
 
 		getTableHeader().addMouseMotionListener( new MouseMotionAdapter()
 		{
+			@Override
 			public void mouseMoved( MouseEvent e )
 			{
 				Point p = e.getPoint();
@@ -144,12 +146,12 @@ public class LTable extends JXTable
 	 * @param arraylist
 	 * @return
 	 */
-	private String[] convertToStringArray( ArrayList arraylist )
+	private String[] convertToStringArray( ArrayList<?> arraylist )
 	{
 		String[] result = new String[arraylist.size()];
 		for( int cnt = 0; cnt < arraylist.size(); cnt++ )
 		{
-			result[cnt] = ( arraylist.get( cnt ) ).toString();
+			result[cnt] = String.valueOf( arraylist.get( cnt ) );
 		}
 		return result;
 	}

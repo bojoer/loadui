@@ -26,7 +26,7 @@ public enum BeanInjector
 	INSTANCE;
 
 	@Nonnull
-	public static <T> T getBean( Class<T> cls )
+	public static <T> T getBean( @Nonnull Class<T> cls )
 	{
 		if( INSTANCE.context == null )
 		{
@@ -59,7 +59,7 @@ public enum BeanInjector
 	private final Object waiter = new Object();
 	private BundleContext context;
 
-	private <T> T doGetBean( Class<T> cls )
+	private <T> T doGetBean( @Nonnull Class<T> cls )
 	{
 		// String camelCase = cls.getSimpleName().substring( 0, 1 ).toLowerCase()
 		// + cls.getSimpleName().substring( 1 ).replaceAll( "\\$", "." );

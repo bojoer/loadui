@@ -20,9 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.eviware.loadui.util.MapUtils;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.MapMaker;
 
 import org.apache.commons.math.stat.descriptive.rank.Percentile;
 

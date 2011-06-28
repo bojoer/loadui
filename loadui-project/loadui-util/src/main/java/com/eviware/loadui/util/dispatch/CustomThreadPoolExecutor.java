@@ -24,6 +24,9 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Custom Threadpool Executor which keeps a pool of threads, trying not to
  * exceed the max pool size, retiring Threads that have been idle for too long.
@@ -32,6 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class CustomThreadPoolExecutor extends AbstractExecutorService
 {
+	private static final Logger log = LoggerFactory.getLogger( CustomThreadPoolExecutor.class );
+
 	private static final int IDLE_TIME = 30;
 	private static final int MIN_POOL_SIZE = 30;
 
@@ -119,21 +124,24 @@ public final class CustomThreadPoolExecutor extends AbstractExecutorService
 	@Override
 	public void shutdown()
 	{
-		// throw new UnsupportedOperationException(
-		// "This Executor may not be shutdown!" );
 		isShutdown = true;
 	}
 
 	@Override
 	public List<Runnable> shutdownNow()
 	{
-		// throw new UnsupportedOperationException(
-		// "This Executor may not be shutdown!" );
 		shutdown();
 		List<Runnable> remaining = new ArrayList<Runnable>();
 		workQueue.drainTo( remaining );
+
 		for( int i = nWorkers.get(); i >= 0; i-- )
-			workQueue.offer( EXIT_RUNNER );
+		{
+			if( !workQueue.offer( EXIT_RUNNER ) )
+			{
+				log.warn( "Failed adding sufficient EXIT_RUNNER commands!" );
+				break;
+			}
+		}
 
 		return remaining;
 	}
@@ -145,7 +153,8 @@ public final class CustomThreadPoolExecutor extends AbstractExecutorService
 			return;
 
 		// This may fail. If so, we ignore it...
-		workQueue.offer( command );
+		if( !workQueue.offer( command ) )
+			;
 
 		// If we have no idle Workers, and are allowed to create a new one, do so.
 		if( nSleeping.get() == 0 && nWorkers.get() < maxPoolSize )
