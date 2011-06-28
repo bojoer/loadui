@@ -21,16 +21,23 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.discovery.AgentDiscovery;
+import com.eviware.loadui.api.model.Releasable;
 
-public class DiscoveryResponder
+public final class DiscoveryResponder implements Releasable
 {
-	private String ip = "127.0.0.1";
-	private final String label;
-	private final DatagramSocket socket;
-	private final Thread responderThread;
+	private static final Logger log = LoggerFactory.getLogger( DiscoveryResponder.class );
+
+	private static final String ip = "127.0.0.1";
+
 	private final String id;
+	private String label;
+	private DatagramSocket socket;
+	private Thread responderThread;
 
 	public DiscoveryResponder()
 	{
@@ -43,7 +50,8 @@ public class DiscoveryResponder
 		}
 		catch( Exception e )
 		{
-			throw new RuntimeException( e );
+			log.error( "Failed starting AutoDiscovery, AutoDiscovery of this agent will not work!", e );
+			return;
 		}
 
 		responderThread = new Thread( new Runnable()
@@ -83,6 +91,7 @@ public class DiscoveryResponder
 		responderThread.start();
 	}
 
+	@Override
 	public void release()
 	{
 		socket.close();
