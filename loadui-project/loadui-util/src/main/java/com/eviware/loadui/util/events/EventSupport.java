@@ -22,6 +22,9 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.WeakEventHandler;
@@ -29,6 +32,8 @@ import com.eviware.loadui.api.model.Releasable;
 
 public class EventSupport implements EventFirer, Releasable
 {
+	private static final Logger log = LoggerFactory.getLogger( EventSupport.class );
+
 	private final Set<ListenerEntry<?>> listeners = new HashSet<ListenerEntry<?>>();
 	private static BlockingQueue<Runnable> eventQueue = new LinkedBlockingQueue<Runnable>();
 	private static Thread eventThread = new Thread( new Runnable()
@@ -63,40 +68,43 @@ public class EventSupport implements EventFirer, Releasable
 		if( listener == null )
 			throw new NullPointerException( "Cannot add null EventHandler!" );
 
-		eventQueue.offer( new Runnable()
+		if( !eventQueue.offer( new Runnable()
 		{
 			@Override
 			public void run()
 			{
 				listeners.add( new ListenerEntry<T>( type, listener ) );
 			}
-		} );
+		} ) )
+			log.error( "Event queue full! Unable to add event listener: {}", listener );
 	}
 
 	@Override
 	public <T extends EventObject> void removeEventListener( final Class<T> type, final EventHandler<T> listener )
 	{
-		eventQueue.offer( new Runnable()
+		if( !eventQueue.offer( new Runnable()
 		{
 			@Override
 			public void run()
 			{
 				listeners.remove( new ListenerEntry<T>( type, listener ) );
 			}
-		} );
+		} ) )
+			log.error( "Event queue full! Unable to remove event listener: {}", listener );
 	}
 
 	@Override
 	public void clearEventListeners()
 	{
-		eventQueue.offer( new Runnable()
+		if( !eventQueue.offer( new Runnable()
 		{
 			@Override
 			public void run()
 			{
 				listeners.clear();
 			}
-		} );
+		} ) )
+			log.error( "Event queue full! Unable to clear event listeners!" );
 	}
 
 	@Override
@@ -107,7 +115,7 @@ public class EventSupport implements EventFirer, Releasable
 
 	public void fireEvent( final EventObject event )
 	{
-		eventQueue.offer( new Runnable()
+		if( !eventQueue.offer( new Runnable()
 		{
 			@Override
 			public void run()
@@ -135,13 +143,15 @@ public class EventSupport implements EventFirer, Releasable
 					}
 				}
 			}
-		} );
+		} ) )
+			log.error( "Event queue full! Unable to fire event: {}", event );
 	}
 
 	@SuppressWarnings( "unchecked" )
 	private <E extends EventObject> void queueEvent( EventObject event, EventHandler<?> handler, Class<E> type )
 	{
-		eventQueue.offer( new PendingEvent<E>( ( E )event, ( EventHandler<E> )handler ) );
+		if( !eventQueue.offer( new PendingEvent<E>( ( E )event, ( EventHandler<E> )handler ) ) )
+			log.error( "Event queue full! Unable to queue event: {}", event );
 	}
 
 	private static class PendingEvent<E extends EventObject> implements Runnable
