@@ -61,9 +61,6 @@ public enum BeanInjector
 
 	private <T> T doGetBean( @Nonnull Class<T> cls )
 	{
-		// String camelCase = cls.getSimpleName().substring( 0, 1 ).toLowerCase()
-		// + cls.getSimpleName().substring( 1 ).replaceAll( "\\$", "." );
-
 		ServiceReference ref = context.getServiceReference( cls.getName() );
 		if( ref != null )
 		{

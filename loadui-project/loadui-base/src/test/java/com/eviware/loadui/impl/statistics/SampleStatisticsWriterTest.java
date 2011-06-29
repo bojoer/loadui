@@ -25,22 +25,18 @@ import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticsAggregator;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.impl.statistics.SampleStatisticsWriter.Stats;
-import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.test.BeanInjectorMocker;
 
 public class SampleStatisticsWriterTest
 {
@@ -57,7 +53,7 @@ public class SampleStatisticsWriterTest
 	private double average;
 
 	@Before
-	public void setUp() throws Exception
+	public void setup() throws Exception
 	{
 		holderMock = mock( StatisticHolder.class );
 		manager = mock( StatisticsManager.class );
@@ -69,23 +65,8 @@ public class SampleStatisticsWriterTest
 		when( manager.getExecutionManager() ).thenReturn( executionManagerMock );
 		when( manager.getMinimumWriteDelay() ).thenReturn( 1000L );
 
-		BundleContext bundleContext = mock( BundleContext.class );
+		new BeanInjectorMocker().put( StatisticsManager.class, manager );
 
-		ServiceReference smMock = mock( ServiceReference.class );
-		when( bundleContext.getServiceReference( StatisticsManager.class.getName() ) ).thenReturn( smMock );
-		when( bundleContext.getService( smMock ) ).thenReturn( manager );
-
-		ServiceReference arMock = mock( ServiceReference.class );
-		when( bundleContext.getServiceReference( AddressableRegistry.class.getName() ) ).thenReturn( arMock );
-		AddressableRegistry addressableRegistryMock = mock( AddressableRegistry.class );
-		when( bundleContext.getService( arMock ) ).thenReturn( addressableRegistryMock );
-
-		ServiceReference saMock = mock( ServiceReference.class );
-		when( bundleContext.getServiceReference( StatisticsAggregator.class.getName() ) ).thenReturn( saMock );
-		StatisticsAggregator statisticsAggrMock = mock( StatisticsAggregator.class );
-		when( bundleContext.getService( saMock ) ).thenReturn( statisticsAggrMock );
-
-		BeanInjector.setBundleContext( bundleContext );
 		holderSupport = new StatisticHolderSupport( holderMock );
 		StatisticVariable variable = holderSupport.addStatisticVariable( "AVG_TEST" );
 		writer = ( SampleStatisticsWriter )new SampleStatisticsWriter.Factory().createStatisticsWriter( manager,
@@ -208,7 +189,7 @@ public class SampleStatisticsWriterTest
 	@Test
 	public void testPercentileAggregation()
 	{
-		//		Entry result = prepareAggregation();
+		// Entry result = prepareAggregation();
 		/*
 		 * assertEquals( 7.25, result.getValue( Stats.PERCENTILE_25TH.name()
 		 * ).doubleValue(), 0.005 ); assertEquals( 9.0, result.getValue(
@@ -253,16 +234,22 @@ public class SampleStatisticsWriterTest
 		writer.update( 2323, 9 );
 		Entry e3 = writer.output();
 
-		//		HashSet<Entry> entries = new HashSet<Entry>();
-		//		entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put( Stats.MEDIAN.name(), 8 )
-		//				.put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.632993162 ).put( Stats.MIN.name(), 6 )
-		//				.put( Stats.MAX.name(), 10 ).build() );
-		//		entries.add( writer.at( 2 ).put( Stats.AVERAGE.name(), 10 ).put( Stats.MEDIAN.name(), 11 )
-		//				.put( Stats.COUNT.name(), 4 ).put( Stats.STD_DEV.name(), 4.123105626 ).put( Stats.MIN.name(), 7 )
-		//				.put( Stats.MAX.name(), 17 ).build() );
-		//		entries.add( writer.at( 3 ).put( Stats.AVERAGE.name(), 10.3333333 ).put( Stats.MEDIAN.name(), 10 )
-		//				.put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.247219129 ).put( Stats.MIN.name(), 9 )
-		//				.put( Stats.MAX.name(), 12 ).build() );
+		// HashSet<Entry> entries = new HashSet<Entry>();
+		// entries.add( writer.at( 1 ).put( Stats.AVERAGE.name(), 8 ).put(
+		// Stats.MEDIAN.name(), 8 )
+		// .put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.632993162
+		// ).put( Stats.MIN.name(), 6 )
+		// .put( Stats.MAX.name(), 10 ).build() );
+		// entries.add( writer.at( 2 ).put( Stats.AVERAGE.name(), 10 ).put(
+		// Stats.MEDIAN.name(), 11 )
+		// .put( Stats.COUNT.name(), 4 ).put( Stats.STD_DEV.name(), 4.123105626
+		// ).put( Stats.MIN.name(), 7 )
+		// .put( Stats.MAX.name(), 17 ).build() );
+		// entries.add( writer.at( 3 ).put( Stats.AVERAGE.name(), 10.3333333
+		// ).put( Stats.MEDIAN.name(), 10 )
+		// .put( Stats.COUNT.name(), 3 ).put( Stats.STD_DEV.name(), 1.247219129
+		// ).put( Stats.MIN.name(), 9 )
+		// .put( Stats.MAX.name(), 12 ).build() );
 
 		return writer.aggregate( new HashSet<Entry>( Arrays.asList( e1, e2, e3 ) ), false );
 	}

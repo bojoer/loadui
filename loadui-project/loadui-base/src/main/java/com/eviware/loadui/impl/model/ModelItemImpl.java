@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.EventObject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +80,7 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 		description = createProperty( DESCRIPTION_PROPERTY, String.class, "" );
 	}
 
+	@OverridingMethodsMustInvokeSuper
 	public void init()
 	{
 		if( initialized )
@@ -156,6 +158,7 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 	}
 
 	@Override
+	@OverridingMethodsMustInvokeSuper
 	public void release()
 	{
 		if( !released )
@@ -168,6 +171,7 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 	}
 
 	@Override
+	@OverridingMethodsMustInvokeSuper
 	public void delete()
 	{
 		log.debug( "Deleting {}", this );

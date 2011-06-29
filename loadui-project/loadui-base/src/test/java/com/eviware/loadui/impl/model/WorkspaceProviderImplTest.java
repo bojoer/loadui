@@ -22,11 +22,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.springframework.core.convert.ConversionService;
-
-import static org.mockito.Mockito.*;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -36,29 +31,15 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.config.LoaduiWorkspaceDocumentConfig;
 import com.eviware.loadui.impl.addressable.AddressableRegistryImpl;
-import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.test.BeanInjectorMocker;
 
 public class WorkspaceProviderImplTest
 {
 	@Before
 	public void setup()
 	{
-		ConversionService csrv = mock( ConversionService.class );
-		BundleContext bundleContext = mock( BundleContext.class );
-
-		ServiceReference arMock = mock( ServiceReference.class );
-		when( bundleContext.getServiceReference( AddressableRegistry.class.getName() ) ).thenReturn( arMock );
-		when( bundleContext.getService( arMock ) ).thenReturn( new AddressableRegistryImpl() );
-
-		ServiceReference csMock = mock( ServiceReference.class );
-		when( bundleContext.getServiceReference( ConversionService.class.getName() ) ).thenReturn( csMock );
-		when( bundleContext.getService( csMock ) ).thenReturn( csrv );
-
-		ServiceReference sesMock = mock( ServiceReference.class );
-		when( bundleContext.getServiceReference( ScheduledExecutorService.class.getName() ) ).thenReturn( sesMock );
-		when( bundleContext.getService( sesMock ) ).thenReturn( Executors.newSingleThreadScheduledExecutor() );
-
-		BeanInjector.setBundleContext( bundleContext );
+		new BeanInjectorMocker().put( AddressableRegistry.class, new AddressableRegistryImpl() ).put(
+				ScheduledExecutorService.class, Executors.newSingleThreadScheduledExecutor() );
 	}
 
 	@Test

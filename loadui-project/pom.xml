@@ -27,7 +27,7 @@
 		<module>loadui-agent-base</module>
 		<module>loadui-controller-base</module>
 		<module>loadui-controller-deps</module>
-		<module>loadui-util</module>
+		<module>loadui-utils</module>
 		<module>loadui-http-client</module>
 		<module>loadui-groovy-components</module>
 		<module>loadui-upload-server</module>
@@ -40,6 +40,7 @@
 		<module>loadui-cmd-base</module>
 		<module>loadui-store-h2</module>
 		<module>loadui-reporting</module>
+		<module>loadui-test-utils</module>
 	</modules>
 	<repositories>
 		<repository>
@@ -248,18 +249,6 @@
 			<version>1.8.5</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>jsr305</artifactId>
-			<version>1.3.9</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>annotations</artifactId>
-			<version>1.3.9</version>
-			<scope>compile</scope>
-		</dependency>
 	</dependencies>
 	<build>
 		<pluginManagement>
@@ -277,9 +266,10 @@
 									<pluginExecutionFilter>
 										<groupId>org.apache.felix</groupId>
 										<artifactId>maven-bundle-plugin</artifactId>
-										<versionRange>[2.3.4,)</versionRange>
+										<versionRange>[2.3.0,)</versionRange>
 										<goals>
 											<goal>run</goal>
+											<goal>package</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>

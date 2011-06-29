@@ -44,7 +44,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-util</artifactId>
+			<artifactId>loadui-utils</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

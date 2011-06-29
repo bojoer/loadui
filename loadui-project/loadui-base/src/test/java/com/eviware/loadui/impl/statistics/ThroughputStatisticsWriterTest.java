@@ -26,18 +26,14 @@ import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticsAggregator;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter.Factory;
-import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
+import com.eviware.loadui.util.test.BeanInjectorMocker;
 import com.google.common.collect.ImmutableMap;
 
 public class ThroughputStatisticsWriterTest
@@ -59,14 +55,7 @@ public class ThroughputStatisticsWriterTest
 		when( statisticsManagerMock.getExecutionManager() ).thenReturn( executionManagerMock );
 		when( statisticsManagerMock.getMinimumWriteDelay() ).thenReturn( 1000L );
 
-		BundleContext bundleContext = mock( BundleContext.class );
-
-		ServiceReference saMock = mock( ServiceReference.class );
-		when( bundleContext.getServiceReference( StatisticsAggregator.class.getName() ) ).thenReturn( saMock );
-		StatisticsAggregator statisticsAggrMock = mock( StatisticsAggregator.class );
-		when( bundleContext.getService( saMock ) ).thenReturn( statisticsAggrMock );
-
-		BeanInjector.setBundleContext( bundleContext );
+		new BeanInjectorMocker();
 
 		writer = factory.createStatisticsWriter( statisticsManagerMock, variableMock,
 				Collections.<String, Object> emptyMap() );

@@ -18,14 +18,10 @@ package com.eviware.loadui.impl.statistics;
 import java.util.EventObject;
 
 import org.junit.*;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
-import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.StatisticsManager;
-import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.test.BeanInjectorMocker;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -41,18 +37,8 @@ public class StatisticsTest
 	@Before
 	public void setup()
 	{
-		StatisticsManager manager = mock( StatisticsManager.class );
-		BundleContext bundleContext = mock( BundleContext.class );
-		ServiceReference smMock = mock( ServiceReference.class );
-		when( bundleContext.getServiceReference( StatisticsManager.class.getName() ) ).thenReturn( smMock );
-		when( bundleContext.getService( smMock ) ).thenReturn( manager );
+		new BeanInjectorMocker();
 
-		ServiceReference arMock = mock( ServiceReference.class );
-		when( bundleContext.getServiceReference( AddressableRegistry.class.getName() ) ).thenReturn( arMock );
-		AddressableRegistry addressableRegistryMock = mock( AddressableRegistry.class );
-		when( bundleContext.getService( arMock ) ).thenReturn( addressableRegistryMock );
-
-		BeanInjector.setBundleContext( bundleContext );
 		holderMock = mock( StatisticHolder.class );
 		holderSupport = new StatisticHolderSupport( holderMock );
 	}
