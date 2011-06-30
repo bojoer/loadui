@@ -39,5 +39,4 @@ public class IsMock<T> extends BaseMatcher<T>
 	{
 		description.appendText( "is a mock" );
 	}
-
 }

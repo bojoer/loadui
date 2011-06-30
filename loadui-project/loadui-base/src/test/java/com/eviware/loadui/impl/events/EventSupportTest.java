@@ -17,6 +17,8 @@ package com.eviware.loadui.impl.events;
 
 import org.junit.*;
 import org.mockito.InOrder;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -147,16 +149,18 @@ public class EventSupportTest
 	public void shouldDeliverEventsInCorrectOrder() throws InterruptedException
 	{
 		EventHandler<EventObject> handler1 = mock( EventHandler.class );
-		EventHandler<EventObject> handler2 = new EventHandler<EventObject>()
+		EventHandler<EventObject> handler2 = mock( EventHandler.class );
+		EventHandler<EventObject> handler3 = mock( EventHandler.class );
+
+		doAnswer( new Answer<Void>()
 		{
 			@Override
-			public void handleEvent( EventObject event )
+			public Void answer( InvocationOnMock invocation ) throws Throwable
 			{
-				if( event == superType )
-					support.fireEvent( sameType );
+				support.fireEvent( sameType );
+				return null;
 			}
-		};
-		EventHandler<EventObject> handler3 = mock( EventHandler.class );
+		} ).when( handler2 ).handleEvent( superType );
 
 		support.addEventListener( EventObject.class, handler1 );
 		support.addEventListener( EventObject.class, handler2 );
@@ -171,6 +175,12 @@ public class EventSupportTest
 		inOrder.verify( handler1 ).handleEvent( superType );
 		inOrder.verify( handler1 ).handleEvent( sameType );
 		verifyNoMoreInteractions( handler1 );
+
+		inOrder = inOrder( handler2 );
+
+		inOrder.verify( handler2 ).handleEvent( superType );
+		inOrder.verify( handler2 ).handleEvent( sameType );
+		verifyNoMoreInteractions( handler2 );
 
 		inOrder = inOrder( handler3 );
 
