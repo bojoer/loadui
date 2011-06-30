@@ -17,6 +17,7 @@ import com.eviware.loadui.util.BeanInjector;
 public class BeanInjectorMockerTest
 {
 	@Test
+	@SuppressWarnings( "unchecked" )
 	public void shouldReturnMocks()
 	{
 		new BeanInjectorMocker();
@@ -24,16 +25,16 @@ public class BeanInjectorMockerTest
 		Object one = BeanInjector.getBean( TestInterface.class );
 		Object two = BeanInjector.getBean( TestInterface.class );
 
-		assertThat( one, is( TestInterface.class ) );
-		assertThat( two, is( TestInterface.class ) );
+		assertThat( one, isAMock() );
+		assertThat( one, instanceOf( TestInterface.class ) );
 
-		assertSame( one, two );
+		assertThat( two, allOf( isAMock(), is( TestInterface.class ) ) );
 
-		assertThat( one, isMock() );
-		assertThat( two, isMock() );
+		assertThat( one, sameInstance( two ) );
 	}
 
 	@Test
+	@SuppressWarnings( "unchecked" )
 	public void shouldReturnMappedBeanAddedInConstructor()
 	{
 		final TestInterface testBean = new TestInterface()
@@ -45,17 +46,15 @@ public class BeanInjectorMockerTest
 		TestInterface one = BeanInjector.getBean( TestInterface.class );
 		TestInterface two = BeanInjector.getBean( TestInterface.class );
 
-		assertThat( one, instanceOf( TestInterface.class ) );
-		assertThat( two, instanceOf( TestInterface.class ) );
-
+		assertThat( one, isNotAMock() );
+		assertThat( one, is( TestInterface.class ) );
 		assertThat( one, sameInstance( testBean ) );
-		assertThat( two, sameInstance( testBean ) );
 
-		assertThat( one, isNotMock() );
-		assertThat( two, isNotMock() );
+		assertThat( two, allOf( isNotAMock(), is( TestInterface.class ), sameInstance( testBean ) ) );
 	}
 
 	@Test
+	@SuppressWarnings( "unchecked" )
 	public void shouldReturnMappedBeanAddedByPut()
 	{
 		final TestInterface testBean = new TestInterface()
@@ -67,23 +66,33 @@ public class BeanInjectorMockerTest
 		TestInterface one = BeanInjector.getBean( TestInterface.class );
 		TestInterface two = BeanInjector.getBean( TestInterface.class );
 
-		assertThat( one, instanceOf( TestInterface.class ) );
-		assertThat( two, instanceOf( TestInterface.class ) );
-
+		assertThat( one, isNotAMock() );
+		assertThat( one, is( TestInterface.class ) );
 		assertThat( one, sameInstance( testBean ) );
-		assertThat( two, sameInstance( testBean ) );
+
+		assertThat( two, allOf( isNotAMock(), is( TestInterface.class ), sameInstance( testBean ) ) );
 	}
 
 	public interface TestInterface
 	{
 	}
 
-	public static <T> Matcher<T> isMock()
+	/**
+	 * Verified that the object to match is a mock.
+	 * 
+	 * @return
+	 */
+	public static <T> Matcher<T> isAMock()
 	{
 		return new IsMock<T>();
 	}
 
-	public static <T> Matcher<T> isNotMock()
+	/**
+	 * Verified that the object to match is not a mock.
+	 * 
+	 * @return
+	 */
+	public static <T> Matcher<T> isNotAMock()
 	{
 		return not( new IsMock<T>() );
 	}
@@ -97,7 +106,7 @@ public class BeanInjectorMockerTest
 	 * 
 	 * @param <T>
 	 */
-	public static class IsMock<T> extends BaseMatcher<T>
+	private static class IsMock<T> extends BaseMatcher<T>
 	{
 		public boolean matches( Object item )
 		{
@@ -114,7 +123,7 @@ public class BeanInjectorMockerTest
 
 		public void describeTo( Description description )
 		{
-			description.appendText( "mock" );
+			description.appendText( "is a mock" );
 		}
 
 	}
