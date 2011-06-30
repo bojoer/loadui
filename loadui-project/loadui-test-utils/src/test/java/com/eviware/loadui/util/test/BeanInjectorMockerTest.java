@@ -16,21 +16,39 @@ import com.eviware.loadui.util.BeanInjector;
 
 public class BeanInjectorMockerTest
 {
+	/**
+	 * Dummy interface to create mocks for.
+	 * 
+	 * @author dain.nilsson
+	 */
+	private interface TestInterface
+	{
+	}
+
+	/**
+	 * Subclass of TestInterface, also used for testing.
+	 * 
+	 * @author dain.nilsson
+	 */
+	private interface TestInterfaceSubclass extends TestInterface
+	{
+	}
+
 	@Test
 	@SuppressWarnings( "unchecked" )
 	public void shouldReturnMocks()
 	{
 		new BeanInjectorMocker();
 
-		Object one = BeanInjector.getBean( TestInterface.class );
-		Object two = BeanInjector.getBean( TestInterface.class );
+		TestInterface beanOne = BeanInjector.getBean( TestInterface.class );
+		TestInterface beanTwo = BeanInjector.getBean( TestInterface.class );
 
-		assertThat( one, isAMock() );
-		assertThat( one, instanceOf( TestInterface.class ) );
+		assertThat( beanOne, mockObject() );
+		assertThat( beanOne, instanceOf( TestInterface.class ) );
 
-		assertThat( two, allOf( isAMock(), is( TestInterface.class ) ) );
+		assertThat( beanTwo, allOf( mockObject(), is( TestInterface.class ) ) );
 
-		assertThat( one, sameInstance( two ) );
+		assertThat( beanOne, sameInstance( beanTwo ) );
 	}
 
 	@Test
@@ -43,14 +61,14 @@ public class BeanInjectorMockerTest
 
 		new BeanInjectorMocker( Collections.<Class<?>, Object> singletonMap( TestInterface.class, testBean ) );
 
-		TestInterface one = BeanInjector.getBean( TestInterface.class );
-		TestInterface two = BeanInjector.getBean( TestInterface.class );
+		TestInterface beanOne = BeanInjector.getBean( TestInterface.class );
+		TestInterface beanTwo = BeanInjector.getBean( TestInterface.class );
 
-		assertThat( one, isNotAMock() );
-		assertThat( one, is( TestInterface.class ) );
-		assertThat( one, sameInstance( testBean ) );
+		assertThat( beanOne, is( notMockObject() ) );
+		assertThat( beanOne, is( instanceOf( TestInterface.class ) ) );
+		assertThat( beanOne, is( sameInstance( testBean ) ) );
 
-		assertThat( two, allOf( isNotAMock(), is( TestInterface.class ), sameInstance( testBean ) ) );
+		assertThat( beanTwo, allOf( notMockObject(), is( TestInterface.class ), sameInstance( testBean ) ) );
 	}
 
 	@Test
@@ -63,18 +81,32 @@ public class BeanInjectorMockerTest
 
 		new BeanInjectorMocker().put( TestInterface.class, testBean );
 
-		TestInterface one = BeanInjector.getBean( TestInterface.class );
-		TestInterface two = BeanInjector.getBean( TestInterface.class );
+		TestInterface beanOne = BeanInjector.getBean( TestInterface.class );
+		TestInterface beanTwo = BeanInjector.getBean( TestInterface.class );
 
-		assertThat( one, isNotAMock() );
-		assertThat( one, is( TestInterface.class ) );
-		assertThat( one, sameInstance( testBean ) );
+		assertThat( beanOne, notMockObject() );
+		assertThat( beanOne, is( TestInterface.class ) );
+		assertThat( beanOne, sameInstance( testBean ) );
 
-		assertThat( two, allOf( isNotAMock(), is( TestInterface.class ), sameInstance( testBean ) ) );
+		assertThat( beanTwo, allOf( notMockObject(), is( TestInterface.class ), sameInstance( testBean ) ) );
 	}
 
-	public interface TestInterface
+	@Test
+	public void shouldNotReturnMappedBeanForSuperClass()
 	{
+		final TestInterfaceSubclass testSubclassBean = new TestInterfaceSubclass()
+		{
+		};
+
+		new BeanInjectorMocker().put( TestInterfaceSubclass.class, testSubclassBean );
+
+		TestInterface bean = BeanInjector.getBean( TestInterface.class );
+		TestInterfaceSubclass subclassBean = BeanInjector.getBean( TestInterfaceSubclass.class );
+
+		assertThat( bean, not( sameInstance( ( TestInterface )testSubclassBean ) ) );
+		assertThat( bean, mockObject() );
+
+		assertThat( subclassBean, sameInstance( testSubclassBean ) );
 	}
 
 	/**
@@ -82,7 +114,7 @@ public class BeanInjectorMockerTest
 	 * 
 	 * @return
 	 */
-	public static <T> Matcher<T> isAMock()
+	public static <T> Matcher<T> mockObject()
 	{
 		return new IsMock<T>();
 	}
@@ -92,7 +124,7 @@ public class BeanInjectorMockerTest
 	 * 
 	 * @return
 	 */
-	public static <T> Matcher<T> isNotAMock()
+	public static <T> Matcher<T> notMockObject()
 	{
 		return not( new IsMock<T>() );
 	}
@@ -110,6 +142,8 @@ public class BeanInjectorMockerTest
 	{
 		public boolean matches( Object item )
 		{
+			assertThat( item, notNullValue() );
+
 			try
 			{
 				verifyZeroInteractions( item );
@@ -118,6 +152,7 @@ public class BeanInjectorMockerTest
 			{
 				return false;
 			}
+
 			return true;
 		}
 
