@@ -2,6 +2,9 @@ package com.eviware.loadui.util.test;
 
 import java.util.Collections;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.*;
 import org.mockito.exceptions.misusing.NotAMockException;
 
@@ -26,8 +29,8 @@ public class BeanInjectorMockerTest
 
 		assertSame( one, two );
 
-		assertTrue( isAMock( one ) );
-		assertTrue( isAMock( two ) );
+		assertThat( one, isMock() );
+		assertThat( two, isMock() );
 	}
 
 	@Test
@@ -39,30 +42,17 @@ public class BeanInjectorMockerTest
 
 		new BeanInjectorMocker( Collections.<Class<?>, Object> singletonMap( TestInterface.class, testBean ) );
 
-		Object one = BeanInjector.getBean( TestInterface.class );
-		Object two = BeanInjector.getBean( TestInterface.class );
+		TestInterface one = BeanInjector.getBean( TestInterface.class );
+		TestInterface two = BeanInjector.getBean( TestInterface.class );
 
-		assertThat( one, is( TestInterface.class ) );
-		assertThat( two, is( TestInterface.class ) );
+		assertThat( one, instanceOf( TestInterface.class ) );
+		assertThat( two, instanceOf( TestInterface.class ) );
 
-		assertSame( testBean, one );
-		assertSame( testBean, two );
+		assertThat( one, sameInstance( testBean ) );
+		assertThat( two, sameInstance( testBean ) );
 
-		assertFalse( isAMock( one ) );
-		assertFalse( isAMock( two ) );
-	}
-
-	public boolean isAMock( Object mock )
-	{
-		try
-		{
-			verifyZeroInteractions( mock );
-		}
-		catch( NotAMockException e )
-		{
-			return false;
-		}
-		return true;
+		assertThat( one, isNotMock() );
+		assertThat( two, isNotMock() );
 	}
 
 	@Test
@@ -74,18 +64,58 @@ public class BeanInjectorMockerTest
 
 		new BeanInjectorMocker().put( TestInterface.class, testBean );
 
-		Object one = BeanInjector.getBean( TestInterface.class );
-		Object two = BeanInjector.getBean( TestInterface.class );
+		TestInterface one = BeanInjector.getBean( TestInterface.class );
+		TestInterface two = BeanInjector.getBean( TestInterface.class );
 
-		assertThat( one, is( TestInterface.class ) );
-		assertThat( two, is( TestInterface.class ) );
+		assertThat( one, instanceOf( TestInterface.class ) );
+		assertThat( two, instanceOf( TestInterface.class ) );
 
-		assertSame( testBean, one );
-		assertSame( testBean, two );
+		assertThat( one, sameInstance( testBean ) );
+		assertThat( two, sameInstance( testBean ) );
 	}
 
 	public interface TestInterface
 	{
+	}
+
+	public static <T> Matcher<T> isMock()
+	{
+		return new IsMock<T>();
+	}
+
+	public static <T> Matcher<T> isNotMock()
+	{
+		return not( new IsMock<T>() );
+	}
+
+	/**
+	 * Checks if an Object is a mock or not. Limited by the fact that it checks
+	 * that no interactions have been invoked on the mock, meaning it needs to be
+	 * called before invoking any method on the mock to function.
+	 * 
+	 * @author dain.nilsson
+	 * 
+	 * @param <T>
+	 */
+	public static class IsMock<T> extends BaseMatcher<T>
+	{
+		public boolean matches( Object item )
+		{
+			try
+			{
+				verifyZeroInteractions( item );
+			}
+			catch( NotAMockException e )
+			{
+				return false;
+			}
+			return true;
+		}
+
+		public void describeTo( Description description )
+		{
+			description.appendText( "mock" );
+		}
 
 	}
 }
