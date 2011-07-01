@@ -128,11 +128,12 @@ public class EventSupportTest
 		verify( secondListener ).handleEvent( subType );
 
 		support.fireEvent( sameType );
+		support.fireEvent( sameType );
 
 		Thread.sleep( 100 );
 
-		verify( mockListener ).handleEvent( sameType );
-		verify( secondListener ).handleEvent( sameType );
+		verify( mockListener, times( 2 ) ).handleEvent( sameType );
+		verify( secondListener, times( 2 ) ).handleEvent( sameType );
 
 		support.fireEvent( superType );
 
