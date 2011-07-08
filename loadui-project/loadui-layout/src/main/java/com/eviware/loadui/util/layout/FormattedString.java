@@ -17,8 +17,8 @@ package com.eviware.loadui.util.layout;
 
 import java.util.Observable;
 
-import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.serialization.Value;
+import com.eviware.loadui.api.traits.Releasable;
 
 public class FormattedString extends Observable implements Releasable
 {

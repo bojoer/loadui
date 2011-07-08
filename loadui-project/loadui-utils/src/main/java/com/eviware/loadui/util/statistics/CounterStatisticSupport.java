@@ -21,8 +21,8 @@ import java.util.Map;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.traits.Releasable;
 
 public class CounterStatisticSupport implements EventHandler<CounterEvent>, Releasable
 {

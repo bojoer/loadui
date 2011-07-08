@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;
 import com.google.common.collect.MapEvictionListener;
 import com.google.common.collect.MapMaker;
 

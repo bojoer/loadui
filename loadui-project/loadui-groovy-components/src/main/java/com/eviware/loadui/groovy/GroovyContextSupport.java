@@ -44,7 +44,6 @@ import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.serialization.Value;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -53,6 +52,7 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.layout.LayoutContainerImpl;
 import com.eviware.loadui.impl.layout.SettingsLayoutContainerImpl;
 

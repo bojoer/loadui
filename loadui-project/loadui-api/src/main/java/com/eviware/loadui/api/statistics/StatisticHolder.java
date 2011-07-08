@@ -19,7 +19,7 @@ import java.util.Set;
 
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.events.EventFirer;
-import com.eviware.loadui.api.model.Labeled;
+import com.eviware.loadui.api.traits.Labeled;
 
 /**
  * A Holder of Statistics. Fires CollectionEvents for contained

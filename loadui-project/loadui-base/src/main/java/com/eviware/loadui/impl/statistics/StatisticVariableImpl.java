@@ -21,6 +21,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import javax.annotation.CheckForNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +35,6 @@ import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
-import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
@@ -41,6 +42,7 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.CacheMap;
 import com.eviware.loadui.util.ReleasableUtils;
 
@@ -51,7 +53,7 @@ import com.eviware.loadui.util.ReleasableUtils;
  */
 public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasable
 {
-	private Logger log = LoggerFactory.getLogger( StatisticVariableImpl.class );
+	private final Logger log = LoggerFactory.getLogger( StatisticVariableImpl.class );
 
 	private final ExecutionManager manager;
 	private final AddressableRegistry addressableRegistry;
@@ -62,6 +64,8 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	private final Set<String> statisticNames = new HashSet<String>();
 	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<String, StatisticImpl<?>>();
 	private final ActionListener actionListener = new ActionListener();
+
+	private String description;
 
 	public StatisticVariableImpl( ExecutionManager executionManager, StatisticHolder parent, String name,
 			AddressableRegistry addressableRegistry )
@@ -197,4 +201,19 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 			}
 		}
 	}
+
+	@Override
+	public void setDescription( String description )
+	{
+		this.description = description;
+
+	}
+
+	@Override
+	@CheckForNull
+	public String getDescription()
+	{
+		return description;
+	}
+
 }

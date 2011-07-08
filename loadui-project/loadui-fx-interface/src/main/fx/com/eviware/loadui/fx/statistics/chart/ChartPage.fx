@@ -52,7 +52,7 @@ import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.StatisticHolderToolbarItem;
 import com.eviware.loadui.fx.widgets.canvas.Selectable;
 
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.statistics.StatisticVariable;

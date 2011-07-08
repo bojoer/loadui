@@ -7,7 +7,7 @@ import com.eviware.loadui.api.addon.Addon;
 import com.eviware.loadui.api.addon.AddonHolder;
 import com.eviware.loadui.api.addon.AddonItem;
 import com.eviware.loadui.api.addon.AddonRegistry;
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.config.AddonItemConfig;
 import com.eviware.loadui.config.AddonListConfig;
 import com.eviware.loadui.util.ReleasableUtils;

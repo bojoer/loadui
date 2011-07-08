@@ -19,11 +19,11 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.eviware.loadui.api.model.AttributeHolder;
-import com.eviware.loadui.api.model.Labeled;
 import com.eviware.loadui.api.model.OrderedCollection;
-import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
+import com.eviware.loadui.api.traits.Labeled;
+import com.eviware.loadui.api.traits.Releasable;
 
 /**
  * Holds a number of Charts. Allows creation and reordering of the contained

@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.AttributeHolder;
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.config.PropertyConfig;
 import com.eviware.loadui.config.PropertyListConfig;
 import com.eviware.loadui.util.StringUtils;

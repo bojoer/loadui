@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
 import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
 import com.eviware.loadui.impl.statistics.db.TableRegistry;

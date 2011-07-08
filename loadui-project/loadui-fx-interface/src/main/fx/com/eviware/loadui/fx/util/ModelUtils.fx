@@ -16,7 +16,7 @@
 
 package com.eviware.loadui.fx.util;
 
-import com.eviware.loadui.api.model.Labeled;
+import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.events.BaseEvent;

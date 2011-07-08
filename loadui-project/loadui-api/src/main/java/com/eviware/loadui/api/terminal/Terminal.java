@@ -19,7 +19,7 @@ import java.util.Collection;
 
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.events.EventFirer;
-import com.eviware.loadui.api.model.Labeled;
+import com.eviware.loadui.api.traits.Labeled;
 
 public interface Terminal extends EventFirer, Addressable, Labeled.Mutable
 {

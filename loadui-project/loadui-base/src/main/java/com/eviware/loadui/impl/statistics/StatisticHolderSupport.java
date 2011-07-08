@@ -26,11 +26,11 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 

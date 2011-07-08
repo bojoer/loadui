@@ -16,6 +16,8 @@
 package com.eviware.loadui.api.model;
 
 import com.eviware.loadui.api.addon.AddonHolder;
+import com.eviware.loadui.api.traits.Labeled;
+import com.eviware.loadui.api.traits.Releasable;
 
 /**
  * The base for all model items in loadUI.

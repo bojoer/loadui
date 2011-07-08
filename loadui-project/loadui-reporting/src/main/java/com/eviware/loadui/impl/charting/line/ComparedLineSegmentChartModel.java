@@ -23,7 +23,7 @@ import javax.swing.SwingUtilities;
 
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.events.WeakEventHandler;
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;
 import com.jidesoft.chart.model.ChartModelListener;
 import com.jidesoft.chart.style.ChartStyle;
 import com.jidesoft.chart.util.ColorFactory;

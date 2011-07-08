@@ -33,9 +33,9 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.statistics.db.util.TypeConverter;
 import com.eviware.loadui.util.events.EventSupport;
 

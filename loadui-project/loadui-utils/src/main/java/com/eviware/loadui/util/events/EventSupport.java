@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.WeakEventHandler;
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;
 
 public class EventSupport implements EventFirer, Releasable
 {

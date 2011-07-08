@@ -24,7 +24,7 @@ import java.util.WeakHashMap;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;
 
 public class MessageEndpointSupport implements Releasable
 {

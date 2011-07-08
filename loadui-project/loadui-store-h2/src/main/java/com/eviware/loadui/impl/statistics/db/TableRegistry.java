@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.statistics.db.table.TableBase;
 
 public class TableRegistry implements Releasable

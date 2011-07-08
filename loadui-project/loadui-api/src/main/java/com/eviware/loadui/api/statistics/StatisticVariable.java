@@ -17,12 +17,14 @@ package com.eviware.loadui.api.statistics;
 
 import java.util.Set;
 
+import com.eviware.loadui.api.traits.Describable;
+
 /**
  * A Statistical Variable containing several Statistics, for several instances.
  * 
  * @author dain.nilsson
  */
-public interface StatisticVariable
+public interface StatisticVariable extends Describable.Mutable
 {
 	/**
 	 * When writing to the local, or main source, use this String as the source

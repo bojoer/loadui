@@ -13,33 +13,40 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.statistics.model;
-
-import com.eviware.loadui.api.model.OrderedCollection;
-import com.eviware.loadui.api.traits.Releasable;
+package com.eviware.loadui.api.traits;
 
 /**
- * Holds a number of StatisticPages, and allows creation, and reordering of
- * these.
+ * An object which has a human readable label which should be used when
+ * displaying the object to a user.
  * 
  * @author dain.nilsson
  */
-public interface StatisticPages extends OrderedCollection<StatisticPage>, Releasable
+public interface Labeled
 {
 	/**
-	 * Creates and returns a new StatisticPage with the given title, placing it
-	 * at the end of the existing StatisticPages.
-	 * 
-	 * @param title
-	 * @return
+	 * If the Labeled also implements EventFirer, it should fire a BaseEvent with
+	 * the LABEL constant as a key to inform listeners that the label has
+	 * changed.
 	 */
-	public StatisticPage createPage( String title );
+	public static final String LABEL = Labeled.class.getSimpleName() + "@label";
 
 	/**
-	 * Moved a contained StatisticPage to the given index.
-	 * 
-	 * @param page
-	 * @param index
+	 * Gets the label of the object.
 	 */
-	public void movePage( StatisticPage page, int index );
+	public String getLabel();
+
+	/**
+	 * A Labeled object which has an editable label.
+	 * 
+	 * @author dain.nilsson
+	 */
+	public interface Mutable extends Labeled
+	{
+		/**
+		 * Sets the label of the object.
+		 * 
+		 * @param label
+		 */
+		public void setLabel( String label );
+	}
 }

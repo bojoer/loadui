@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.traits.Labeled;
 
 /**
  * A reference to a ProjectItem. Used by the workspace to keep track of project

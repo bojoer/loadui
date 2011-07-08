@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.discovery.AgentDiscovery;
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;
 
 public final class DiscoveryResponder implements Releasable
 {

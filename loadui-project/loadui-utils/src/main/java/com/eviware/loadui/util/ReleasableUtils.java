@@ -17,7 +17,7 @@ package com.eviware.loadui.util;
 
 import java.util.Collection;
 
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;
 import com.google.common.collect.Sets;
 
 /**

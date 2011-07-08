@@ -23,10 +23,10 @@ import java.util.Map;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.CollectionEvent.Event;
-import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalHolder;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
 
 public class TerminalHolderSupport implements Releasable

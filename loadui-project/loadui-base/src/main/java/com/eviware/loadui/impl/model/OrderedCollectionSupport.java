@@ -8,7 +8,7 @@ import java.util.List;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.model.OrderedCollection;
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.ReleasableUtils;
 
 public class OrderedCollectionSupport<ChildType> implements Releasable

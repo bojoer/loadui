@@ -30,7 +30,7 @@ import com.eviware.loadui.fx.ui.form.FormField;
 import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.widgets.ModelItemHolder;
 
-import com.eviware.loadui.api.model.Labeled;
+import com.eviware.loadui.api.traits.Labeled;
 
 import java.lang.RuntimeException;
 import org.slf4j.LoggerFactory;

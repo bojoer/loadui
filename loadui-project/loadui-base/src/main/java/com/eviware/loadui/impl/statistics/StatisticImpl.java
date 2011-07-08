@@ -167,4 +167,11 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 		Entry lastEntry = manager.getLastEntry( trackId, source );
 		return lastEntry == null ? -1 : lastEntry.getTimestamp();
 	}
+
+	@Override
+	public String getDescription()
+	{
+		// TODO This should combine variable description with trackDescriptor.structure description. Problem is how to store the description for a trackDescriptor.structure entry and how to fetch that from this method.
+		return variable.getDescription();
+	}
 }

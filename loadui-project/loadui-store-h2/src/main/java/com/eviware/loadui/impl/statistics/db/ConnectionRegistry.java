@@ -24,7 +24,7 @@ import java.util.Iterator;
 
 import javax.sql.DataSource;
 
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.statistics.db.table.TableBase;
 import com.eviware.loadui.impl.statistics.db.util.JdbcUtil;
 

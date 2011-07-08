@@ -24,10 +24,10 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
-import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.StatisticTemplate;
+import com.eviware.loadui.api.traits.Releasable;
 
 /**
  * StatisticTemplate which runs a Groovy script.

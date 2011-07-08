@@ -16,7 +16,7 @@
 package com.eviware.loadui.api.statistics.model;
 
 import com.eviware.loadui.api.model.OrderedCollection;
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;
 
 /**
  * A Page holding a number of ChartGroups. Allows creation and reordering of the

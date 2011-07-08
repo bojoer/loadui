@@ -23,7 +23,6 @@ import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
-import com.eviware.loadui.api.model.Labeled;
 import com.eviware.loadui.api.model.PropertyHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.terminal.DualTerminal;
@@ -31,6 +30,7 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.MutableTerminalHolder;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
+import com.eviware.loadui.api.traits.Labeled;
 
 /**
  * The ComponentContext is attached to a Component and given to its

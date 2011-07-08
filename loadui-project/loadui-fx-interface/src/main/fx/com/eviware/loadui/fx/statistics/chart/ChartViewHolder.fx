@@ -44,7 +44,7 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.statistics.chart.line.LineChartHolder;
 
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.DeletableChartView;
 import com.eviware.loadui.util.ReleasableUtils;

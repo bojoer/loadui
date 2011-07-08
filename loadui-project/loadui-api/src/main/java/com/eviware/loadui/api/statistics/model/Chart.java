@@ -17,8 +17,8 @@ package com.eviware.loadui.api.statistics.model;
 
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.model.AttributeHolder;
-import com.eviware.loadui.api.model.Releasable;
 import com.eviware.loadui.api.statistics.StatisticHolder;
+import com.eviware.loadui.api.traits.Releasable;
 
 /**
  * A Chart of a specific type, displaying data from a specific source of a

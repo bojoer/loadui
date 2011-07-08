@@ -42,7 +42,7 @@ import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.fx.statistics.chart.BaseChart;
 
-import com.eviware.loadui.api.model.Releasable;
+import com.eviware.loadui.api.traits.Releasable;;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 import com.eviware.loadui.api.charting.line.LineChart;

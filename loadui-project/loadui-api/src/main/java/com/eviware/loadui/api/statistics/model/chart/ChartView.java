@@ -16,8 +16,8 @@
 package com.eviware.loadui.api.statistics.model.chart;
 
 import com.eviware.loadui.api.model.AttributeHolder;
-import com.eviware.loadui.api.model.Labeled;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.traits.Labeled;
 
 /**
  * Provides a model for a specific type of Chart.

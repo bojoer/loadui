@@ -13,27 +13,32 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.model;
+package com.eviware.loadui.api.traits;
 
 /**
- * An object which needs to be released when no longer needed, in order to
- * release its resources.
+ * An object which has human-readable text description.
  * 
- * @author dain.nilsson
+ * @author henrik.olsson
  */
-public interface Releasable
+public interface Describable
 {
 	/**
-	 * If the Releasable also implements EventFirer, it should fire a BaseEvent
-	 * with the RELEASED constant as a key to inform listeners that it has been
-	 * released.
+	 * Gets the description of the object.
 	 */
-	public static final String RELEASED = Releasable.class.getSimpleName() + "@released";
+	public String getDescription();
 
 	/**
-	 * Causes the Releasable to release its resources and stop anything that it
-	 * is doing. After calling this, other methods on the Releasable may no
-	 * longer work as intended.
+	 * A Describable object which has an editable description.
+	 * 
+	 * @author henrik.olsson
 	 */
-	public void release();
+	public interface Mutable extends Describable
+	{
+		/**
+		 * Sets the description of the object.
+		 * 
+		 * @param description
+		 */
+		public void setDescription( String description );
+	}
 }

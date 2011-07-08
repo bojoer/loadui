@@ -21,7 +21,7 @@ import java.util.Collection;
 
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.model.AttributeHolder;
-import com.eviware.loadui.api.model.Labeled;
+import com.eviware.loadui.api.traits.Labeled;
 
 /**
  * Represents statistical data gathered during a load test Execution.
