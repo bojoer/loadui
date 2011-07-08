@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 
+import com.eviware.loadui.api.addon.Addon;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.addressable.AddressableRegistry.DuplicateAddressException;
 import com.eviware.loadui.api.events.ActionEvent;
@@ -36,9 +37,11 @@ import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.property.PropertyMap;
 import com.eviware.loadui.config.ModelItemConfig;
+import com.eviware.loadui.impl.addon.AddonHolderSupportImpl;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
 import com.eviware.loadui.impl.property.PropertyMapImpl;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 
 public abstract class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
@@ -57,6 +60,7 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 	private boolean released = false;
 	private boolean initialized = false;
 	protected final AddressableRegistry addressableRegistry;
+	private final AddonHolderSupportImpl addonSupport;
 
 	public ModelItemImpl( @Nonnull Config config )
 	{
@@ -70,12 +74,13 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 
 		label = config.getLabel();
 
-		properties = new PropertyMapImpl( this, BeanInjector.getBean( ConversionService.class ) );
+		properties = new PropertyMapImpl( this, BeanInjector.getBean( ConversionService.class ),
+				config.getProperties() == null ? config.addNewProperties() : config.getProperties() );
 
-		if( config.getAttributes() == null )
-			config.addNewAttributes();
-
-		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
+		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() == null ? config.addNewAttributes()
+				: config.getAttributes() );
+		addonSupport = new AddonHolderSupportImpl( this, config.getAddons() == null ? config.addNewAddons()
+				: config.getAddons() );
 
 		description = createProperty( DESCRIPTION_PROPERTY, String.class, "" );
 	}
@@ -167,6 +172,7 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 			released = true;
 			addressableRegistry.unregister( this );
 			eventSupport.clearEventListeners();
+			ReleasableUtils.releaseAll( addonSupport, attributeHolderSupport );
 		}
 	}
 
@@ -186,6 +192,12 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 		}
 		else
 			throw new RuntimeException( "Cannot delete released ModelItem" );
+	}
+
+	@Override
+	public <T extends Addon> T getAddon( Class<T> type )
+	{
+		return addonSupport.getAddon( type );
 	}
 
 	@Override

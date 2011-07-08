@@ -22,18 +22,16 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.PropertyHolder;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.config.PropertyConfig;
-import com.eviware.loadui.impl.model.ModelItemImpl;
 import com.eviware.loadui.impl.serialization.MutableValueImpl;
 import com.eviware.loadui.util.StringUtils;
 
 public class PropertyImpl<T> extends MutableValueImpl<T> implements Property<T>
 {
 	private final PropertyConfig config;
-	private final ModelItemImpl<?> owner;
+	private final PropertyHolder owner;
 	private boolean propagates;
 
-	public PropertyImpl( ModelItemImpl<?> owner, PropertyConfig config, Class<T> type,
-			ConversionService conversionService )
+	public PropertyImpl( PropertyHolder owner, PropertyConfig config, Class<T> type, ConversionService conversionService )
 	{
 		super( type, config.getStringValue() == null ? null : StringUtils.fixLineSeparators( config.getStringValue() ),
 				conversionService );
@@ -65,7 +63,7 @@ public class PropertyImpl<T> extends MutableValueImpl<T> implements Property<T>
 			return;
 
 		config.setStringValue( getStringValue() );
-		owner.firePropertyEvent( this, PropertyEvent.Event.VALUE, oldVal );
+		owner.fireEvent( new PropertyEvent( owner, this, PropertyEvent.Event.VALUE, oldVal ) );
 	}
 
 	@Override

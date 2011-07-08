@@ -34,6 +34,7 @@ import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
+import com.eviware.loadui.api.statistics.ExecutionAddon;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
@@ -60,7 +61,7 @@ public class RecentResultsList extends BaseNode, Resizable {
 		}
 		pagelist.items = [];
 		if( project != null ) {
-			for( execution in projectExecutionManager.getExecutions( project, true, false ) ) {
+			for( execution in project.getAddon( ExecutionAddon.class ).getExecutions( true, false ) ) {
 				execution.addEventListener( BaseEvent.class, executionListener );
 				if( execution != StatisticsWindow.currentExecution and pagelist.lookup( execution.getId() ) == null ) {
 					insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
@@ -101,7 +102,7 @@ class ExecutionsListener extends WeakEventHandler {
 		if( ExecutionManager.EXECUTIONS.equals( event.getKey() ) ) {
 			if( event.getEvent() == CollectionEvent.Event.ADDED ) {
 				def execution = event.getElement() as Execution;
-				if( project != null and project.getId() == projectExecutionManager.getProjectId( execution ) and not execution.isArchived() ) {
+				if( project != null and project.getAddon( ExecutionAddon.class ).getExecutions( true, false ).contains( execution ) ) {
 					execution.addEventListener( BaseEvent.class, executionListener );
 					FxUtils.runInFxThread( function() {
 						if( execution != StatisticsWindow.currentExecution and pagelist.lookup( execution.getId() ) == null ) {							

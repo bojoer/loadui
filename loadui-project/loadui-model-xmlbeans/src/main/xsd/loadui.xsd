@@ -9,16 +9,28 @@
 			</extension>
 		</complexContent>
 	</complexType>
-
-	<complexType name="ModelItem" abstract="true">
+	
+	<complexType name="AddonHolderItem" abstract="true">
 		<sequence>
 			<element name="properties" type="lui:PropertyList"
 				maxOccurs="1" minOccurs="1">
 			</element>
-			<element name="attributes" type="lui:PropertyList" maxOccurs="1" minOccurs="1"></element>
+			<element name="attributes" type="lui:PropertyList"
+				maxOccurs="1" minOccurs="1">
+			</element>
+			<element name="addons" type="lui:AddonList" maxOccurs="1"
+				minOccurs="1">
+			</element>
 		</sequence>
 		<attribute name="id" type="string"></attribute>
-		<attribute name="label" type="string"></attribute>
+	</complexType>
+
+	<complexType name="ModelItem" abstract="true">
+		<complexContent>
+			<extension base="lui:AddonHolderItem">
+				<attribute name="label" type="string"></attribute>
+			</extension>
+		</complexContent>
 	</complexType>
 
 	<complexType name="SceneItem">
@@ -186,6 +198,20 @@
     <complexType name="Statistics">
     	<sequence>
     		<element name="page" type="lui:StatisticsPage" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="AddonItem">
+    	<complexContent>
+    		<extension base="lui:AddonHolderItem">
+    			<attribute name="type" type="string" use="required"></attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="AddonList">
+    	<sequence>
+    		<element name="addon" type="lui:AddonItem" maxOccurs="unbounded" minOccurs="0"></element>
     	</sequence>
     </complexType>
 </schema>

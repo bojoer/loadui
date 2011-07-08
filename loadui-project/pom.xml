@@ -6,7 +6,7 @@
 	<packaging>pom</packaging>
 	<version>2.0.0-SNAPSHOT</version>
 	<name>loadUI Project</name>
-	<url>http://www.eviware.com</url>
+	<url>http://www.loadui.org</url>
 	<properties>
 		<mavenBundlePluginVersion>2.3.4</mavenBundlePluginVersion>
 		<jettyVersion>7.4.2.v20110526</jettyVersion>
@@ -309,6 +309,25 @@
 										<versionRange>[2.0,)</versionRange>
 										<goals>
 											<goal>xmlbeans</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.jvnet.jaxb2.maven2
+										</groupId>
+										<artifactId>
+											maven-jaxb2-plugin
+										</artifactId>
+										<versionRange>
+											[0.7.1,)
+										</versionRange>
+										<goals>
+											<goal>generate</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>

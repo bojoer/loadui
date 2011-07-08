@@ -26,6 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.addon.Addon;
+import com.eviware.loadui.api.addon.Addon.Context;
+import com.eviware.loadui.api.addon.AddonRegistry;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventFirer;
@@ -37,6 +40,7 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.reporting.ReportingManager;
 import com.eviware.loadui.api.reporting.SummaryExportUtils;
+import com.eviware.loadui.api.statistics.ExecutionAddon;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
@@ -81,6 +85,15 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 
 		if( workspaceProvider.isWorkspaceLoaded() )
 			workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
+
+		AddonRegistry.registerFactory( ExecutionAddon.class, new Addon.Factory<ExecutionAddon>()
+		{
+			@Override
+			public ExecutionAddon create( Context context )
+			{
+				return new ExecutionAddonImpl( context );
+			}
+		} );
 	}
 
 	@Override
@@ -108,6 +121,29 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 	public String getProjectId( Execution execution )
 	{
 		return execution.getId().split( "_" )[0];
+	}
+
+	private class ExecutionAddonImpl implements ExecutionAddon
+	{
+		private final Addon.Context context;
+
+		public ExecutionAddonImpl( Addon.Context context )
+		{
+			this.context = context;
+		}
+
+		@Override
+		public Set<Execution> getExecutions()
+		{
+			return ProjectExecutionManagerImpl.this.getExecutions( ( ProjectItem )context.getOwner() );
+		}
+
+		@Override
+		public Set<Execution> getExecutions( boolean includeRecent, boolean includeArchived )
+		{
+			return ProjectExecutionManagerImpl.this.getExecutions( ( ProjectItem )context.getOwner(), includeRecent,
+					includeArchived );
+		}
 	}
 
 	private class CollectionListener implements EventHandler<CollectionEvent>

@@ -31,6 +31,7 @@ import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.statistics.ProjectExecutionManager;
+import com.eviware.loadui.api.statistics.ExecutionAddon;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.util.BeanInjector;
@@ -54,7 +55,7 @@ public class ArchivedResultsList extends BaseNode, Resizable, Droppable {
 		}
 		pagelist.items = [];
 		if( project != null ) {
-			for( execution in projectExecutionManager.getExecutions( project, true, true ) ) {
+			for( execution in project.getAddon( ExecutionAddon.class ).getExecutions() ) {
 				execution.addEventListener( BaseEvent.class, executionListener );
 				if( execution.isArchived() and pagelist.lookup( execution.getId() ) == null ) {
 					insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
@@ -106,7 +107,7 @@ class ExecutionsListener extends WeakEventHandler {
 		if( ExecutionManager.EXECUTIONS.equals( event.getKey() ) ) {
 			def execution = event.getElement() as Execution;
 			if( event.getEvent() == CollectionEvent.Event.ADDED ) {
-				if( project != null and project.getId() == projectExecutionManager.getProjectId( execution ) ) {
+				if( project != null and project.getAddon( ExecutionAddon.class ).getExecutions().contains( execution ) ) {
 					execution.addEventListener( BaseEvent.class, executionListener );
 					FxUtils.runInFxThread( function() {
 						if( execution.isArchived() and pagelist.lookup( execution.getId() ) == null ) {

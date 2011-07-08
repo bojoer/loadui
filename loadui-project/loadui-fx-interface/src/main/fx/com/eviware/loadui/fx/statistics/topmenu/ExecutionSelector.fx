@@ -47,7 +47,7 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
-import com.eviware.loadui.api.statistics.ProjectExecutionManager;
+import com.eviware.loadui.api.statistics.ExecutionAddon;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.fx.AppState;
@@ -95,17 +95,15 @@ public class ExecutionSelector extends Group {
 		executionManager.addEventListener( EventObject.class, executionManagerListener );
 	}
 	
-	def projectExecutionManager:ProjectExecutionManager = BeanInjector.getBean( ProjectExecutionManager.class );
-   
    def project = bind StatisticsWindow.instance.project on replace prevProject {
       def executions = executionManager.getExecutions();
       if( prevProject != null ) {
-      	for( execution in projectExecutionManager.getExecutions( prevProject ) ) {
+      	for( execution in  prevProject.getAddon( ExecutionAddon.class ).getExecutions() ) {
       		execution.removeEventListener( BaseEvent.class, executionListener );
       	}
 		}
 		if( project != null ) {
-			for( execution in projectExecutionManager.getExecutions( project ) ) {
+			for( execution in project.getAddon( ExecutionAddon.class ).getExecutions() ) {
 				execution.addEventListener( BaseEvent.class, executionListener );
 			}
 		} 
@@ -249,7 +247,7 @@ public class ExecutionSelector extends Group {
 		    return;
 		}
 		def holderList: ArrayList = new ArrayList();
-		for( execution in projectExecutionManager.getExecutions( project ) ) {
+		for( execution in project.getAddon( ExecutionAddon.class ).getExecutions() ) {
 			if((archive and execution.isArchived() or recently and (not execution.isArchived())) or execution == executionManager.getCurrentExecution()){
 				holderList.add( ExecutionComparable { execution: execution } );
 			}

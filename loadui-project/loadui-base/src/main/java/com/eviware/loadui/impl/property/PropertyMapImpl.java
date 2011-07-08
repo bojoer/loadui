@@ -23,26 +23,25 @@ import java.util.Set;
 import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.model.PropertyHolder;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.property.PropertyMap;
 import com.eviware.loadui.config.PropertyConfig;
 import com.eviware.loadui.config.PropertyListConfig;
-import com.eviware.loadui.impl.model.ModelItemImpl;
 
 public class PropertyMapImpl implements PropertyMap
 {
 	private final HashMap<String, Property<?>> map = new HashMap<String, Property<?>>();
 
-	private final ModelItemImpl<?> owner;
+	private final PropertyHolder owner;
 	private final PropertyListConfig config;
 	private final ConversionService conversionService;
 
-	public PropertyMapImpl( ModelItemImpl<?> owner, ConversionService conversionService )
+	public PropertyMapImpl( PropertyHolder owner, ConversionService conversionService, PropertyListConfig config )
 	{
 		this.owner = owner;
+		this.config = config;
 		this.conversionService = conversionService;
-		config = owner.getConfig().getProperties() != null ? owner.getConfig().getProperties() : owner.getConfig()
-				.addNewProperties();
 
 		for( PropertyConfig pc : config.getPropertyArray() )
 		{
@@ -62,6 +61,11 @@ public class PropertyMapImpl implements PropertyMap
 		return new PropertyImpl<T>( owner, pc, type, conversionService );
 	}
 
+	private void firePropertyEvent( Property<?> property, PropertyEvent.Event event, Object argument )
+	{
+		owner.fireEvent( new PropertyEvent( owner, property, event, argument ) );
+	}
+
 	@Override
 	public void renameProperty( String key, String newKey )
 	{
@@ -73,7 +77,7 @@ public class PropertyMapImpl implements PropertyMap
 				if( p.getKey().equals( key ) )
 				{
 					p.setKey( newKey );
-					owner.firePropertyEvent( get( newKey ), PropertyEvent.Event.RENAMED, key );
+					firePropertyEvent( get( newKey ), PropertyEvent.Event.RENAMED, key );
 					return;
 				}
 			}
@@ -109,7 +113,7 @@ public class PropertyMapImpl implements PropertyMap
 	{
 		Property<?> property = map.remove( key );
 		if( property != null )
-			owner.firePropertyEvent( property, PropertyEvent.Event.DELETED, property.getValue() );
+			firePropertyEvent( property, PropertyEvent.Event.DELETED, property.getValue() );
 		return property;
 	}
 
@@ -151,7 +155,7 @@ public class PropertyMapImpl implements PropertyMap
 		pc.setStringValue( conversionService.convert( conversionService.convert( initialValue, type ), String.class ) );
 		property = loadProperty( pc, type );
 		put( key, property );
-		owner.firePropertyEvent( property, PropertyEvent.Event.CREATED, null );
+		firePropertyEvent( property, PropertyEvent.Event.CREATED, null );
 
 		return property;
 	}

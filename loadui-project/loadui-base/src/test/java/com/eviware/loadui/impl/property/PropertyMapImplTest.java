@@ -49,7 +49,7 @@ public class PropertyMapImplTest
 		when( ( ModelItemConfig )owner.getConfig() ).thenReturn( mic );
 		when( mic.getProperties() ).thenReturn( config );
 		conversionService = ConversionServiceFactory.createDefaultConversionService();
-		map = new PropertyMapImpl( owner, conversionService );
+		map = new PropertyMapImpl( owner, conversionService, owner.getConfig().getProperties() );
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class PropertyMapImplTest
 		Property<String> p = map.createProperty( "test", String.class );
 		p.setValue( "Hello world" );
 
-		PropertyMapImpl map2 = new PropertyMapImpl( owner, conversionService );
+		PropertyMapImpl map2 = new PropertyMapImpl( owner, conversionService, owner.getConfig().getProperties() );
 
 		assertThat( map2.values().size(), is( 1 ) );
 
@@ -96,7 +96,7 @@ public class PropertyMapImplTest
 		config.save( tmp );
 		config = PropertyListConfig.Factory.parse( tmp );
 
-		PropertyMapImpl map2 = new PropertyMapImpl( owner, conversionService );
+		PropertyMapImpl map2 = new PropertyMapImpl( owner, conversionService, owner.getConfig().getProperties() );
 
 		assertThat( map2.values().size(), is( 1 ) );
 

@@ -15,26 +15,17 @@
  */
 package com.eviware.loadui.api.model;
 
-import com.eviware.loadui.api.addressable.Addressable;
+import com.eviware.loadui.api.addon.AddonHolder;
 
 /**
  * The base for all model items in loadUI.
  * 
  * @author dain.nilsson
  */
-public interface ModelItem extends PropertyHolder, AttributeHolder, Addressable, Labeled.Mutable, Releasable
+public interface ModelItem extends BaseItem, AddonHolder, AttributeHolder, PropertyHolder, Labeled.Mutable, Releasable
 {
-	// BaseEvents
-	public final String DELETED = ModelItem.class.getSimpleName() + "@deleted";
-
 	// Properties
 	public final String DESCRIPTION_PROPERTY = ModelItem.class.getSimpleName() + ".description";
-
-	/**
-	 * Causes the ModelItem to first be released, then removed from the
-	 * application.
-	 */
-	public void delete();
 
 	/**
 	 * Gets the URL to a web site providing help for the ComponentBehavior, or
