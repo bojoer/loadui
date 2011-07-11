@@ -6,7 +6,6 @@ import org.springframework.core.convert.support.GenericConversionService;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import com.eviware.loadui.api.model.PropertyHolder;
