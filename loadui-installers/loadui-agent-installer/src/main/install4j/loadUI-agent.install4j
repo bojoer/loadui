@@ -97,7 +97,7 @@
                 <object class="com.install4j.runtime.beans.screens.WelcomeScreen">
                   <void property="bannerImageFile">
                     <object class="com.install4j.api.beans.ExternalFile">
-                      <string>${compiler:builddir}/Installer_pic_loadUI_PNG.png</string>
+                      <string>${compiler:resourcedir}/Installer_pic_loadUI_PNG.png</string>
                     </object>
                   </void>
                 </object>
@@ -614,7 +614,7 @@ return f.exists();</condition>
                 <object class="com.install4j.runtime.beans.screens.UninstallWelcomeScreen">
                   <void property="bannerImageFile">
                     <object class="com.install4j.api.beans.ExternalFile">
-                      <string>${compiler:builddir}/Installer_pic_loadUI_PNG.png</string>
+                      <string>${compiler:resourcedir}/Installer_pic_loadUI_PNG.png</string>
                     </object>
                   </void>
                 </object>
