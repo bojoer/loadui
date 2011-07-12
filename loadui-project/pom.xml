@@ -34,7 +34,6 @@
 		<module>loadui-layout</module>
 		<module>loadui-fx-interface</module>
 		<module>loadui-launcher</module>
-		<module>loadui-installer</module>
 		<module>loadui-integration-tests</module>
 		<module>loadui-component</module>
 		<module>loadui-cmd-base</module>
