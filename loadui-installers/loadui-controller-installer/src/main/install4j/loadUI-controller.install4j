@@ -1096,7 +1096,7 @@ return f.exists();</condition>
       <exclude />
       <variables />
     </win32>
-    <macos name="Mac OS X Single Bundle" id="1087" mediaFileName="" installDir="loadUI ${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" launcherId="1014">
+    <macos name="Mac OS X Single Bundle" id="1087" mediaFileName="loadUI-${compiler:version}" installDir="loadUI ${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" launcherId="1014">
       <excludedComponents />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />

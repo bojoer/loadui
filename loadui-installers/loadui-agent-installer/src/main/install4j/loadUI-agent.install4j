@@ -804,7 +804,7 @@ return f.exists();</condition>
       </exclude>
       <variables />
     </unixArchive>
-    <macosFolder name="Mac OS X Folder" id="192" mediaFileName="" installDir="loadUI-Agent" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <macosFolder name="Mac OS X Folder" id="192" mediaFileName="loadUI-Agent-${compiler:version}" installDir="loadUI-Agent" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="43" />
         <launcher id="46" />
@@ -815,7 +815,7 @@ return f.exists();</condition>
       <exclude />
       <variables />
     </macosFolder>
-    <macosFolderArchive name="Mac OS X Folder Archive" id="193" mediaFileName="" installDir="loadUI-Agent" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false">
+    <macosFolderArchive name="Mac OS X Folder Archive" id="193" mediaFileName="loadUI-Agent-binary-${compiler:version}" installDir="loadUI-Agent" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false">
       <excludedLaunchers>
         <launcher id="43" />
         <launcher id="46" />
