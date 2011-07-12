@@ -13,6 +13,7 @@
 			<outputDirectory>bundle</outputDirectory>
 			<includes>
 				<include>com.eviware.loadui:loadui-controller-deps</include>
+				<include>com.eviware.soapui:loadui-soapui-plugin</include>
 			</includes>
 			<excludes>
 				<exclude>*:pom</exclude>
