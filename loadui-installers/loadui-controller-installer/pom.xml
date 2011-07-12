@@ -30,13 +30,6 @@
 								<resource>
 									<directory>src/main/resources</directory>
 								</resource>
-								<resource>
-									<directory>src/main/resources</directory>
-									<filtering>true</filtering>
-									<includes>
-										<include>**/*.jnlp</include>
-									</includes>
-								</resource>
 							</resources>
 							<outputDirectory>${project.build.directory}/main</outputDirectory>
 						</configuration>
@@ -44,9 +37,21 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sign</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>com.google.code.maven-install4j</groupId>
 				<artifactId>maven-install4j-plugin</artifactId>
-				<version>0.1.1</version>
 				<executions>
 					<execution>
 						<id>install-controller</id>
@@ -59,34 +64,6 @@
 						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<executable>${devenv.install4jc}</executable>
-					<releaseId>${project.version}</releaseId>
-					<attach>true</attach>
-					<skipOnMissingExecutable>true</skipOnMissingExecutable>
-					<compilerVariables>
-						<property>
-							<name>builddir</name>
-							<value>../../../target/main</value>
-						</property>
-						<property>
-							<name>resourcedir</name>
-							<value>../../../../src/main/install4j_resources</value>
-						</property>
-						<property>
-							<name>version</name>
-							<value>${project.parent.version}</value>
-						</property>
-						<property>
-							<name>SIGNTOOL_PATH</name>
-							<value>${maven.install4j.signtool}</value>
-						</property>
-						<property>
-							<name>CERT_PATH</name>
-							<value>${maven.install4j.cert}</value>
-						</property>
-					</compilerVariables>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

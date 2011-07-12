@@ -10,11 +10,11 @@
 	<resources>
         <j2se version="1.6+" java-vm-args="-Xms128m -Xmx768m -XX:MaxPermSize=128m -Dsun.java2d.noddraw=true"/>
         <extension name="JavaFX Runtime" href="http://dl.javafx.com/1.3/javafx-rt.jnlp"/>
-        <jar href="lib/loadui-launcher-${project.version}.jar" main="true"/>
-        <jar href="lib/org.apache.felix.main-3.2.2.jar"/>
-        <jar href="lib/commons-cli-1.2.jar"/>
-        <jar href="lib/jna-3.2.7.jar"/>
-        <jar href="lib/platform-3.2.7.jar"/>
+        <jar href="lib/loadui-launcher.jar" main="true"/>
+        <jar href="lib/org.apache.felix.main.jar"/>
+        <jar href="lib/commons-cli.jar"/>
+        <jar href="lib/jna.jar"/>
+        <jar href="lib/platform.jar"/>
     </resources>
 	<security>
 		<all-permissions/>

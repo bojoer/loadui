@@ -31,6 +31,7 @@
 			<excludes>
 				<exclude>org.apache.felix:org.apache.felix.framework</exclude>
 			</excludes>
+			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<useTransitiveDependencies>true</useTransitiveDependencies>
 			<useTransitiveFiltering>true</useTransitiveFiltering>
 			<scope>compile</scope>
