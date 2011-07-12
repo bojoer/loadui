@@ -94,13 +94,13 @@
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-controller-deps</artifactId>
-			<version>${project.version}</version>
+			<version>${project.parent.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-groovy-component-pack</artifactId>
-			<version>${project.version}</version>
+			<version>${project.parent.version}</version>
 			<type>jar</type>
 		</dependency>
 	</dependencies>

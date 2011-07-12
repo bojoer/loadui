@@ -6,9 +6,9 @@
 		<version>2.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>loadui-agent-installer</artifactId>
+	<artifactId>loadui-pro-controller-installer</artifactId>
 	<packaging>pom</packaging>
-	<name>loadUI Agent Installer</name>
+	<name>loadUI Pro Controller Installer</name>
 	<build>
 		<plugins>
 			<plugin>
@@ -28,7 +28,14 @@
 									<directory>${project.parent.basedir}/src/main/resources</directory>
 								</resource>
 								<resource>
-									<directory>src/main/resources</directory>
+									<directory>${project.parent.basedir}/loadui-controller-installer/src/main/resources</directory>
+								</resource>
+								<resource>
+									<directory>${project.parent.basedir}/loadui-controller-installer/src/main/resources</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>**/*.jnlp</include>
+									</includes>
 								</resource>
 							</resources>
 							<outputDirectory>${project.build.directory}/main</outputDirectory>
@@ -48,7 +55,7 @@
 							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<configFile>"${project.basedir}/src/main/install4j/loadUI-agent.install4j"</configFile>
+							<configFile>"${project.basedir}/src/main/install4j/loadUI-pro-controller.install4j"</configFile>
 						</configuration>
 					</execution>
 				</executions>
@@ -85,10 +92,16 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-agent-deps</artifactId>
+			<groupId>com.eviware.loadui.pro</groupId>
+			<artifactId>loadui-pro-controller-deps</artifactId>
 			<version>${project.parent.version}</version>
 			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-groovy-component-pack</artifactId>
+			<version>${project.parent.version}</version>
+			<type>jar</type>
 		</dependency>
 	</dependencies>
 </project>

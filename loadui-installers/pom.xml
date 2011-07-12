@@ -20,6 +20,7 @@
 	<modules>
 		<module>loadui-controller-installer</module>
 		<module>loadui-agent-installer</module>
+		<module>loadui-pro-controller-installer</module>
 	</modules>
 	<build>
 		<plugins>
