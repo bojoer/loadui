@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.traits;
 
+import javax.annotation.Nonnull;
+
 /**
  * An object which has a human readable label which should be used when
  * displaying the object to a user.
@@ -47,6 +49,6 @@ public interface Labeled
 		 * 
 		 * @param label
 		 */
-		public void setLabel( String label );
+		public void setLabel( @Nonnull String label );
 	}
 }

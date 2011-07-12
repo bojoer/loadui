@@ -17,6 +17,8 @@ package com.eviware.loadui.api.statistics;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.traits.Labeled;
@@ -44,5 +46,6 @@ public interface StatisticHolder extends EventFirer, Addressable, Labeled
 	 * 
 	 * @return
 	 */
+	@Nonnull
 	public Set<String> getStatisticVariableNames();
 }

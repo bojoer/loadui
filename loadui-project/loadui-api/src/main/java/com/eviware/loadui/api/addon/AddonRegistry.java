@@ -2,6 +2,8 @@ package com.eviware.loadui.api.addon;
 
 import java.util.HashMap;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.addon.Addon.Factory;
 
 /**
@@ -20,7 +22,7 @@ public class AddonRegistry
 	 * @param type
 	 * @param factory
 	 */
-	public static <T extends Addon> void registerFactory( Class<T> type, Addon.Factory<T> factory )
+	public static <T extends Addon> void registerFactory( @Nonnull Class<T> type, @Nonnull Addon.Factory<T> factory )
 	{
 		factories.put( type, factory );
 	}
@@ -32,7 +34,7 @@ public class AddonRegistry
 	 * @return
 	 */
 	@SuppressWarnings( "unchecked" )
-	public static <T extends Addon> Addon.Factory<T> getFactory( Class<T> type )
+	public static <T extends Addon> Addon.Factory<T> getFactory( @Nonnull Class<T> type )
 	{
 		return ( Factory<T> )factories.get( type );
 	}

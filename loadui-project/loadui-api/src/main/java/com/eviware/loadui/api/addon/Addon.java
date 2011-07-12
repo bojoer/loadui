@@ -2,6 +2,8 @@ package com.eviware.loadui.api.addon;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 /**
  * Provides additional functionality to an AddonHolder, without having to extend
  * the AddonHolder itself.
@@ -22,6 +24,7 @@ public interface Addon
 		 * 
 		 * @return
 		 */
+		@Nonnull
 		public AddonHolder getOwner();
 
 		/**
@@ -30,6 +33,7 @@ public interface Addon
 		 * 
 		 * @return
 		 */
+		@Nonnull
 		public AddonItem.Support createAddonItemSupport();
 
 		/**
@@ -37,6 +41,7 @@ public interface Addon
 		 * 
 		 * @return
 		 */
+		@Nonnull
 		public Collection<AddonItem.Support> getAddonItemSupports();
 	}
 
@@ -56,6 +61,7 @@ public interface Addon
 		 * @param context
 		 * @return
 		 */
-		public T create( Context context );
+		@Nonnull
+		public T create( @Nonnull Context context );
 	}
 }

@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.statistics;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.serialization.Value;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.traits.Describable;
@@ -33,6 +35,7 @@ public interface Statistic<T extends Number> extends Value<T>, Describable
 	 * 
 	 * @return
 	 */
+	@Nonnull
 	public String getName();
 
 	/**
@@ -40,6 +43,7 @@ public interface Statistic<T extends Number> extends Value<T>, Describable
 	 * 
 	 * @return
 	 */
+	@Nonnull
 	public StatisticVariable getStatisticVariable();
 
 	/**
@@ -47,6 +51,7 @@ public interface Statistic<T extends Number> extends Value<T>, Describable
 	 * 
 	 * @return
 	 */
+	@Nonnull
 	public String getSource();
 
 	/**
@@ -67,6 +72,7 @@ public interface Statistic<T extends Number> extends Value<T>, Describable
 	 *           The Execution to read data from.
 	 * @return
 	 */
+	@Nonnull
 	public Iterable<DataPoint<T>> getPeriod( long start, long end, int interpolationLevel, Execution execution );
 
 	/**
@@ -74,6 +80,7 @@ public interface Statistic<T extends Number> extends Value<T>, Describable
 	 * 
 	 * @see getPeriod(int, int, int, Execution)
 	 */
+	@Nonnull
 	public Iterable<DataPoint<T>> getPeriod( long start, long end, int interpolationLevel );
 
 	/**
@@ -81,6 +88,7 @@ public interface Statistic<T extends Number> extends Value<T>, Describable
 	 * 
 	 * @see getPeriod(int, int, int, Execution)
 	 */
+	@Nonnull
 	public Iterable<DataPoint<T>> getPeriod( long start, long end );
 
 	/**
