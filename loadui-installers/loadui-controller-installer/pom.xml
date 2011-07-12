@@ -50,7 +50,7 @@
 				<executions>
 					<execution>
 						<id>install-controller</id>
-						<phase>compile</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>compile</goal>
 						</goals>

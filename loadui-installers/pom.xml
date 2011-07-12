@@ -45,6 +45,28 @@
 					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>sign</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<keystore>"${maven.jnlp.signjar.store}"</keystore>
+					<alias>"${maven.jnlp.signjar.alias}"</alias>
+					<storepass>"${maven.jnlp.signjar.storepass}"</storepass>
+					<keypass>"${maven.jnlp.signjar.storepass}"</keypass>
+					<removeExistingSignatures>true</removeExistingSignatures>
+					<archiveDirectory>${project.build.directory}/main/lib</archiveDirectory>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
