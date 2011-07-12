@@ -87,7 +87,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-groovy-components</artifactId>
+			<artifactId>loadui-groovy-component</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

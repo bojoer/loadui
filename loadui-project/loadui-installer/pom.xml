@@ -48,7 +48,7 @@
 								</copy>
 								<copy todir="${basedir}/target/controller/script-components">
 									<fileset
-										dir="${basedir}/../loadui-groovy-components/src/main/groovy" />
+										dir="${basedir}/../loadui-groovy-component/src/main/groovy" />
 								</copy>
 								<!-- Agent resources -->
 								<copy todir="${basedir}/target/agent/">

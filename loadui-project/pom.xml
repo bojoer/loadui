@@ -29,7 +29,7 @@
 		<module>loadui-controller-deps</module>
 		<module>loadui-utils</module>
 		<module>loadui-http-client</module>
-		<module>loadui-groovy-components</module>
+		<module>loadui-groovy-component</module>
 		<module>loadui-upload-server</module>
 		<module>loadui-layout</module>
 		<module>loadui-fx-interface</module>
@@ -41,6 +41,7 @@
 		<module>loadui-store-h2</module>
 		<module>loadui-reporting</module>
 		<module>loadui-test-utils</module>
+		<module>loadui-groovy-component-pack</module>
 	</modules>
 	<repositories>
 		<repository>

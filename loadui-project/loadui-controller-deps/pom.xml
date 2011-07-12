@@ -38,7 +38,7 @@
 						<configuration>
 							<tasks>
 								<copy todir="${basedir}/target/script-components">
-									<fileset dir="${basedir}/../loadui-groovy-components/src/main/groovy" />
+									<fileset dir="${project.parent.basedir}/loadui-groovy-component/src/main/groovy" />
 								</copy>
 							</tasks>
 						</configuration>
