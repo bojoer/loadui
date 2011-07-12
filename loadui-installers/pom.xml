@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.eviware.loadui</groupId>
+	<artifactId>loadui-installers</artifactId>
+	<version>2.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>loadUI Installers</name>
+	<description>This project builds the loadUI installers</description>
+	<properties>
+		<devenv.install4jc>${env.INSTALL4J_HOME}/bin/install4jc.exe</devenv.install4jc>
+	</properties>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>googlecode-maven-install4j</id>
+			<name>googlecode-maven-install4j</name>
+			<url>http://maven-install4j.googlecode.com/svn/m2-repo</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<modules>
+		<module>loadui-controller-installer</module>
+		<module>loadui-agent-installer</module>
+	</modules>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2.1</version><!--$NO-MVN-MAN-VER$ -->
+				<executions>
+					<execution>
+						<id>aggregate</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptor>src/main/assembly/default.xml</descriptor>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<attach>false</attach>
+					<finalName>main</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-launcher</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>

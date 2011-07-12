@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ChartReport" pageWidth="505" pageHeight="802" columnWidth="505" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["reports/styles.jrtx"]]></template>
+	<field name="group" class="net.sf.jasperreports.engine.JRDataSource"/>
+	<field name="groupName" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="130">
+			<textField>
+				<reportElement style="Heading 3" x="0" y="6" width="505" height="20" forecolor="#000000"/>
+				<textElement>
+					<font isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{groupName}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="30" width="505" height="100"/>
+				<dataSourceExpression><![CDATA[$F{group}]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA["subreport:ChartReport"]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="0" y="26" width="505" height="1" forecolor="#999999"/>
+			</line>
+			<break>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="129" width="100" height="1"/>
+			</break>
+		</band>
+	</detail>
+</jasperReport>

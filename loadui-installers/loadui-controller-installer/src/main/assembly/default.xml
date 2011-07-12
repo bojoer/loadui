@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd ">
+	<id>default</id>
+	<formats>
+		<format>dir</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>bundle</outputDirectory>
+			<includes>
+				<include>com.eviware.loadui:loadui-controller-deps</include>
+			</includes>
+			<excludes>
+				<exclude>*:pom</exclude>
+				<exclude>javafx</exclude>
+			</excludes>
+			<useTransitiveDependencies>true</useTransitiveDependencies>
+			<useTransitiveFiltering>true</useTransitiveFiltering>
+			<scope>compile</scope>
+		</dependencySet>
+		<dependencySet>
+			<outputDirectory>lib</outputDirectory>
+			<includes>
+				<include>com.eviware.loadui:loadui-launcher</include>
+			</includes>
+			<excludes>
+				<exclude>org.apache.felix:org.apache.felix.framework</exclude>
+			</excludes>
+			<useTransitiveDependencies>true</useTransitiveDependencies>
+			<useTransitiveFiltering>true</useTransitiveFiltering>
+			<scope>compile</scope>
+		</dependencySet>
+		<dependencySet>
+			<outputDirectory>script-components</outputDirectory>
+			<includes>
+				<include>com.eviware.loadui:loadui-groovy-component-pack</include>
+			</includes>
+			<scope>compile</scope>
+			<unpack>true</unpack>
+			<unpackOptions>
+				<excludes>
+					<exclude>META-INF/**</exclude>
+				</excludes>
+			</unpackOptions>
+		</dependencySet>
+	</dependencySets>
+</assembly>
