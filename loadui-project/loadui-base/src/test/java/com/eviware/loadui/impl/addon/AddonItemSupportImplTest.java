@@ -18,6 +18,7 @@ public class AddonItemSupportImplTest
 {
 	AddonListConfig list;
 	AddonItemSupportImpl support;
+	AddonHolderSupportImpl owner;
 
 	@Before
 	public void setup()
@@ -25,7 +26,8 @@ public class AddonItemSupportImplTest
 		new BeanInjectorMocker().put( ConversionService.class, new GenericConversionService() );
 
 		list = AddonListConfig.Factory.newInstance();
-		support = new AddonItemSupportImpl( list.addNewAddon(), list );
+		owner = mock( AddonHolderSupportImpl.class );
+		support = new AddonItemSupportImpl( owner, list.addNewAddon(), list );
 	}
 
 	@Test
@@ -41,7 +43,7 @@ public class AddonItemSupportImplTest
 
 		support.release();
 
-		support = new AddonItemSupportImpl( list.getAddonArray( 0 ), list );
+		support = new AddonItemSupportImpl( owner, list.getAddonArray( 0 ), list );
 		pm = support.getPropertyMap( phMock );
 		testProperty = pm.createProperty( "TEST", String.class );
 
@@ -57,7 +59,7 @@ public class AddonItemSupportImplTest
 
 		support.release();
 
-		support = new AddonItemSupportImpl( list.getAddonArray( 0 ), list );
+		support = new AddonItemSupportImpl( owner, list.getAddonArray( 0 ), list );
 		assertThat( support.getAttribute( "TEST", null ), is( "Hi there" ) );
 	}
 }

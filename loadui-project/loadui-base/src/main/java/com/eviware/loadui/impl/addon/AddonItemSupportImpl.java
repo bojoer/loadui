@@ -21,6 +21,7 @@ import com.google.common.base.Objects;
 
 public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 {
+	private final AddonHolderSupportImpl owner;
 	private final AddonItemConfig config;
 	private final AddonListConfig listConfig;
 
@@ -30,8 +31,9 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	private PropertyMapImpl propertyMap;
 	private AddonHolderSupportImpl addonHolderSupport;
 
-	public AddonItemSupportImpl( AddonItemConfig config, AddonListConfig listConfig )
+	public AddonItemSupportImpl( AddonHolderSupportImpl owner, AddonItemConfig config, AddonListConfig listConfig )
 	{
+		this.owner = owner;
 		this.config = config;
 		this.listConfig = listConfig;
 
@@ -110,6 +112,7 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 			if( Objects.equal( config.getId(), listConfig.getAddonArray( i ).getId() ) )
 			{
 				listConfig.removeAddon( i );
+				owner.removeAddonItem( this );
 				return;
 			}
 		}

@@ -17,9 +17,9 @@ package com.eviware.loadui.api.layout;
 
 import java.util.Map;
 
-public interface SettingsLayoutContainer extends LayoutContainer
+import com.eviware.loadui.api.traits.Labeled;
+
+public interface SettingsLayoutContainer extends LayoutContainer, Labeled
 {
-	public String getLabel();
-	
 	public Map<String, ?> getProperties();
 }

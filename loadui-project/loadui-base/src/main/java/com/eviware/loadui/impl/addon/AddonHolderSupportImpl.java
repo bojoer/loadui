@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.eviware.loadui.api.addon.Addon;
 import com.eviware.loadui.api.addon.AddonHolder;
 import com.eviware.loadui.api.addon.AddonItem;
+import com.eviware.loadui.api.addon.AddonItem.Support;
 import com.eviware.loadui.api.addon.AddonRegistry;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.config.AddonItemConfig;
@@ -47,7 +48,7 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 			{
 				if( type.equals( addonItem.getType() ) )
 				{
-					addonItems.put( type, new AddonItemSupportImpl( addonItem, config ) );
+					addonItems.put( type, new AddonItemSupportImpl( this, addonItem, config ) );
 				}
 			}
 
@@ -64,7 +65,12 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 		addons.clear();
 	}
 
-	private class ContextImpl implements Addon.Context
+	void removeAddonItem( AddonItemSupportImpl addonItemSupport )
+	{
+		addonItems.get( addonItemSupport.getType() ).remove( addonItemSupport );
+	}
+
+	class ContextImpl implements Addon.Context
 	{
 		private final String type;
 
@@ -80,21 +86,21 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 		}
 
 		@Override
-		public AddonItem.Support createAddonItemSupport()
-		{
-			final AddonItemConfig addonConfig = config.addNewAddon();
-			addonConfig.setType( type );
-			final AddonItemSupportImpl addonItem = new AddonItemSupportImpl( addonConfig, config );
-			addonItems.put( type, addonItem );
-			// TODO: Fire CollectionEvent
-
-			return addonItem;
-		}
-
-		@Override
 		public Collection<AddonItem.Support> getAddonItemSupports()
 		{
 			return ImmutableSet.copyOf( addonItems.get( type ) );
+		}
+
+		@Override
+		public Support createAddonItemSupport()
+		{
+			final AddonItemConfig addonConfig = config.addNewAddon();
+			addonConfig.setType( type );
+			final AddonItemSupportImpl addonItem = new AddonItemSupportImpl( AddonHolderSupportImpl.this, addonConfig,
+					config );
+			addonItems.put( type, addonItem );
+
+			return addonItem;
 		}
 	}
 }
