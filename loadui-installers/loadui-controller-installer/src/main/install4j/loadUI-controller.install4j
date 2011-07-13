@@ -45,7 +45,7 @@
       </splashScreen>
       <java mainClass="com.eviware.loadui.launcher.WebStartRunner" vmParameters="" arguments="-Xms128m -Xmx768m -XX:MaxPermSize=128m -Dsun.java2d.noddraw=true" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <archive location="lib/loadui-launcher-${compiler:version}.jar" failOnError="true" />
+          <archive location="lib/loadui-launcher.jar" failOnError="true" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
