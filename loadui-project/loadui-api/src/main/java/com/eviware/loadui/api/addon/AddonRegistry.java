@@ -3,6 +3,7 @@ package com.eviware.loadui.api.addon;
 import java.util.HashMap;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.eviware.loadui.api.addon.Addon.Factory;
 
@@ -34,6 +35,7 @@ public class AddonRegistry
 	 * @return
 	 */
 	@SuppressWarnings( "unchecked" )
+	@Nullable
 	public static <T extends Addon> Addon.Factory<T> getFactory( @Nonnull Class<T> type )
 	{
 		return ( Factory<T> )factories.get( type );
