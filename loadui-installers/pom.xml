@@ -31,7 +31,7 @@
 				<version>2.2.1</version><!--$NO-MVN-MAN-VER$ -->
 				<executions>
 					<execution>
-						<id>aggregate</id>
+						<id>default</id>
 						<phase>process-resources</phase>
 						<goals>
 							<goal>single</goal>
@@ -43,8 +43,8 @@
 				</executions>
 				<configuration>
 					<attach>false</attach>
-					<finalName>main</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
+					<finalName>main</finalName>
 				</configuration>
 			</plugin>
 			<plugin>
