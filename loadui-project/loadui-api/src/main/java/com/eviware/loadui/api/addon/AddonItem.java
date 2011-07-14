@@ -64,7 +64,7 @@ public interface AddonItem extends BaseItem
 		 * @return
 		 */
 		@Nonnull
-		public PropertyMap getPropertyMap( PropertyHolder owner );
+		public PropertyMap getPropertyMap( @Nonnull PropertyHolder owner );
 
 		/**
 		 * Returns an AddonHolder.Support object for the given AddonHolder. An
@@ -75,6 +75,6 @@ public interface AddonItem extends BaseItem
 		 * @return
 		 */
 		@Nonnull
-		public AddonHolder.Support getAddonHolderSupport( AddonHolder owner );
+		public AddonHolder.Support getAddonHolderSupport( @Nonnull AddonHolder owner );
 	}
 }
