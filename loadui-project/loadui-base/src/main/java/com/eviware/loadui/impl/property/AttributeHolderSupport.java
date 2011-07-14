@@ -28,6 +28,7 @@ import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.config.PropertyConfig;
 import com.eviware.loadui.config.PropertyListConfig;
 import com.eviware.loadui.util.StringUtils;
+import com.google.common.collect.ImmutableSet;
 
 public class AttributeHolderSupport implements AttributeHolder, Releasable
 {
@@ -110,7 +111,7 @@ public class AttributeHolderSupport implements AttributeHolder, Releasable
 	@Override
 	public Collection<String> getAttributes()
 	{
-		return released ? Collections.<String> emptySet() : attributes.keySet();
+		return released ? Collections.<String> emptySet() : ImmutableSet.copyOf( attributes.keySet() );
 	}
 
 	@Override

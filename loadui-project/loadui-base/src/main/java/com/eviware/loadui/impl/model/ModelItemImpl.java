@@ -43,6 +43,7 @@ import com.eviware.loadui.impl.property.PropertyMapImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
+import com.google.common.collect.ImmutableList;
 
 public abstract class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 {
@@ -227,7 +228,7 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 	@Override
 	public Collection<Property<?>> getProperties()
 	{
-		return properties.values();
+		return ImmutableList.copyOf( properties.values() );
 	}
 
 	@Override

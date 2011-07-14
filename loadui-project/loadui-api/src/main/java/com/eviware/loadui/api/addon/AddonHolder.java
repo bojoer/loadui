@@ -42,9 +42,10 @@ public interface AddonHolder extends EventFirer
 	 * 
 	 * @author dain.nilsson
 	 */
-	@Nonnull
+
 	public interface Support
 	{
+		@Nonnull
 		public <T extends Addon> T getAddon( @Nonnull Class<T> cls );
 	}
 }

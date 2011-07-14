@@ -56,10 +56,24 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 	@SuppressWarnings( "unchecked" )
 	public <T extends Addon> T getAddon( Class<T> cls )
 	{
+		ensureAddon( cls );
+
+		return ( T )addons.get( cls );
+	}
+
+	/**
+	 * Ensures that the given Addon type has been initialized, and if not,
+	 * attempts to initialize it using the addonRegistry.
+	 * 
+	 * @param cls
+	 */
+	private <T extends Addon> void ensureAddon( Class<T> cls )
+	{
 		if( !addons.containsKey( cls ) )
 		{
 			Addon.Factory<T> factory = addonRegistry.getFactory( cls );
 			Preconditions.checkNotNull( factory, "No Addon.Factory available for {}", cls );
+
 			final String type = cls.getName();
 			for( AddonItemConfig addonItem : config.getAddonArray() )
 			{
@@ -71,8 +85,6 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 
 			addons.put( cls, factory.create( new ContextImpl( cls.getName() ) ) );
 		}
-
-		return ( T )addons.get( cls );
 	}
 
 	@Override
@@ -82,6 +94,12 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 		addons.clear();
 	}
 
+	/**
+	 * Internal package method called by AddonItemSupportImpl to clean up
+	 * addonItems when an AddonItemSupportImpl is deleted.
+	 * 
+	 * @param addonItemSupport
+	 */
 	void removeAddonItem( AddonItemSupportImpl addonItemSupport )
 	{
 		addonItems.get( addonItemSupport.getType() ).remove( addonItemSupport );
