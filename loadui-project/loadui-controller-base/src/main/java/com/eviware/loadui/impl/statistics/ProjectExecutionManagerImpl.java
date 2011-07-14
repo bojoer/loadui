@@ -46,6 +46,7 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
+import com.eviware.loadui.util.BeanInjector;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 {
@@ -86,14 +87,15 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 		if( workspaceProvider.isWorkspaceLoaded() )
 			workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
 
-		AddonRegistry.registerFactory( ExecutionAddon.class, new Addon.Factory<ExecutionAddon>()
-		{
-			@Override
-			public ExecutionAddon create( Context context )
-			{
-				return new ExecutionAddonImpl( context );
-			}
-		} );
+		BeanInjector.getBean( AddonRegistry.class ).registerFactory( ExecutionAddon.class,
+				new Addon.Factory<ExecutionAddon>()
+				{
+					@Override
+					public ExecutionAddon create( Context context )
+					{
+						return new ExecutionAddonImpl( context );
+					}
+				} );
 	}
 
 	@Override

@@ -32,6 +32,8 @@
 	
 	<osgi:service interface="com.eviware.loadui.api.statistics.StatisticsManager" ref="statisticsManager" />
 	
+	<osgi:service interface="com.eviware.loadui.api.addon.AddonRegistry" ref="addonRegistry" />
+	
 	<osgi:service interface="com.eviware.loadui.api.counter.CounterSynchronizer" ref="counterSynchronizer" />
 	
 	<osgi:service interface="com.eviware.loadui.api.statistics.model.chart.ChartViewProviderFactory" ref="chartViewProviderFactory" />
@@ -40,6 +42,11 @@
 		cardinality="0..N">
 		<osgi:listener bind-method="registerStatisticsWriterFactory"
 			unbind-method="unregisterStatisticsWriterFactory" ref="statisticsManager" />
+	</osgi:set>
+	
+	<osgi:set id="addonFactories" interface="com.eviware.loadui.api.addon.Addon$Factory"
+		cardinality="0..N">
+		<osgi:listener bind-method="factoryAdded" unbind-method="factoryRemoved" ref="addonRegistry" />
 	</osgi:set>
 	
 	<osgi:service ref="sampleStatisticsWriter" interface="com.eviware.loadui.api.statistics.StatisticsWriterFactory" />

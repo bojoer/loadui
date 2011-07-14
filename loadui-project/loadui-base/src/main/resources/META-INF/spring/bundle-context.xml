@@ -75,6 +75,8 @@
 		class="com.eviware.loadui.impl.statistics.StatisticsManagerImpl">
 		<constructor-arg ref="executionManager" />
 	</bean>
+	
+	<bean id="addonRegistry" class="com.eviware.loadui.impl.addon.AddonRegistryImpl" />
 
 	<bean id="sampleStatisticsWriter"
 		class="com.eviware.loadui.impl.statistics.SampleStatisticsWriter$Factory" />

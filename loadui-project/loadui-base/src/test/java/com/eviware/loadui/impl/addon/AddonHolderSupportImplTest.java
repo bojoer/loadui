@@ -15,6 +15,7 @@ import com.eviware.loadui.api.addon.AddonRegistry;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.config.AddonListConfig;
 import com.eviware.loadui.util.test.BeanInjectorMocker;
+import com.eviware.loadui.util.test.DefaultAddonRegistry;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
 
 public class AddonHolderSupportImplTest
 {
+	AddonRegistry addonRegistry;
 	AddonHolderSupportImpl addonHolderSupport;
 	private MockAddon addonMock;
 	private Addon.Context context;
@@ -41,7 +43,9 @@ public class AddonHolderSupportImplTest
 	@Before
 	public void setup()
 	{
-		new BeanInjectorMocker().put( AddressableRegistry.class, mock( AddressableRegistry.class ) );
+		addonRegistry = new DefaultAddonRegistry();
+		new BeanInjectorMocker().put( AddressableRegistry.class, mock( AddressableRegistry.class ) ).put(
+				AddonRegistry.class, addonRegistry );
 
 		config = AddonListConfig.Factory.newInstance();
 		AddonHolder holderMock = mock( AddonHolder.class );
@@ -58,7 +62,7 @@ public class AddonHolderSupportImplTest
 			}
 		} );
 
-		AddonRegistry.registerFactory( MockAddon.class, ( Addon.Factory<MockAddon> )factoryMock );
+		addonRegistry.registerFactory( MockAddon.class, ( Addon.Factory<MockAddon> )factoryMock );
 
 		addonHolderSupport = new AddonHolderSupportImpl( holderMock, config );
 	}
@@ -117,7 +121,7 @@ public class AddonHolderSupportImplTest
 			}
 		} );
 
-		AddonRegistry.registerFactory( SecondMockAddon.class, factoryMock );
+		addonRegistry.registerFactory( SecondMockAddon.class, factoryMock );
 
 		addonHolderSupport.getAddon( SecondMockAddon.class );
 

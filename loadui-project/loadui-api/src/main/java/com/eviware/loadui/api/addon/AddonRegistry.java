@@ -1,21 +1,30 @@
+/*
+ * Copyright 2011 eviware software ab
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl5
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.api.addon;
-
-import java.util.HashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.eviware.loadui.api.addon.Addon.Factory;
-
 /**
- * A static registry of available Addons, with factories.
+ * A registry of available Addons, with factories.
  * 
  * @author dain.nilsson
  */
-public class AddonRegistry
+public interface AddonRegistry
 {
-	private static final HashMap<Class<? extends Addon>, Addon.Factory<? extends Addon>> factories = new HashMap<Class<? extends Addon>, Addon.Factory<? extends Addon>>();
-
 	/**
 	 * Registers an Addon.Factory for creating Addons of a specific type. Only
 	 * one factory should be registered per Addon type.
@@ -23,10 +32,15 @@ public class AddonRegistry
 	 * @param type
 	 * @param factory
 	 */
-	public static <T extends Addon> void registerFactory( @Nonnull Class<T> type, @Nonnull Addon.Factory<T> factory )
-	{
-		factories.put( type, factory );
-	}
+	public <T extends Addon> void registerFactory( @Nonnull Class<T> type, @Nonnull Addon.Factory<T> factory );
+
+	/**
+	 * Unregisters an Addon.Factory that has previously been registered.
+	 * 
+	 * @param type
+	 * @param factory
+	 */
+	public <T extends Addon> void unregisterFactory( @Nonnull Class<T> type, @Nonnull Addon.Factory<T> factory );
 
 	/**
 	 * Returns the Addon.Factory registered for a specific Addon type.
@@ -34,10 +48,6 @@ public class AddonRegistry
 	 * @param type
 	 * @return
 	 */
-	@SuppressWarnings( "unchecked" )
 	@Nullable
-	public static <T extends Addon> Addon.Factory<T> getFactory( @Nonnull Class<T> type )
-	{
-		return ( Factory<T> )factories.get( type );
-	}
+	public <T extends Addon> Addon.Factory<T> getFactory( @Nonnull Class<T> type );
 }
