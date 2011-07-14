@@ -33,6 +33,12 @@ public interface AddonHolder extends EventFirer
 	 */
 	public <T extends Addon> T getAddon( Class<T> type );
 
+	/**
+	 * Support class for AddonHolders, providing an implementation of getAddon to
+	 * delegate to.
+	 * 
+	 * @author dain.nilsson
+	 */
 	public interface Support
 	{
 		public <T extends Addon> T getAddon( Class<T> cls );
