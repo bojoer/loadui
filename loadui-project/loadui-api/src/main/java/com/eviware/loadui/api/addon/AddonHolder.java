@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.addon;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.events.EventFirer;
 
 /**
@@ -31,7 +33,8 @@ public interface AddonHolder extends EventFirer
 	 * @param type
 	 * @return
 	 */
-	public <T extends Addon> T getAddon( Class<T> type );
+	@Nonnull
+	public <T extends Addon> T getAddon( @Nonnull Class<T> type );
 
 	/**
 	 * Support class for AddonHolders, providing an implementation of getAddon to
@@ -39,8 +42,9 @@ public interface AddonHolder extends EventFirer
 	 * 
 	 * @author dain.nilsson
 	 */
+	@Nonnull
 	public interface Support
 	{
-		public <T extends Addon> T getAddon( Class<T> cls );
+		public <T extends Addon> T getAddon( @Nonnull Class<T> cls );
 	}
 }
