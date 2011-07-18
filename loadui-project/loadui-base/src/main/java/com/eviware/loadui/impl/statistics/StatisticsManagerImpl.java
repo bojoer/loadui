@@ -146,7 +146,7 @@ public class StatisticsManagerImpl implements StatisticsManager
 		@Override
 		public void handleEvent( BaseEvent event )
 		{
-			if( StatisticHolder.STATISTICS.equals( event.getKey() ) )
+			if( StatisticHolder.STATISTIC_VARIABLES.equals( event.getKey() ) )
 			{
 				fireEvent( new BaseEvent( event.getSource(), STATISTIC_HOLDER_UPDATED ) );
 			}

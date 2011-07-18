@@ -900,8 +900,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		@Override
 		public void removeStatisticVariable( String statisticVariableName )
 		{
-			statisticHolderSupport.removeStatisticalVariable( statisticVariableName );
-
+			statisticHolderSupport.removeStatisticVariable( statisticVariableName );
 		}
 	}
 

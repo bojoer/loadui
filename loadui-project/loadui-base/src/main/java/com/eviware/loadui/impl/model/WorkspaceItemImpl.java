@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +46,11 @@ import com.eviware.loadui.config.ProjectReferenceConfig;
 import com.eviware.loadui.config.AgentItemConfig;
 import com.eviware.loadui.config.WorkspaceItemConfig;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.collections.CollectionEventSupport;
 import com.eviware.loadui.impl.XmlBeansUtils;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
@@ -59,8 +61,8 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	private File workspaceFile;
 	private final ScheduledExecutorService executor;
 	private final LoaduiWorkspaceDocumentConfig doc;
-	private final Set<ProjectRefImpl> projects = new HashSet<ProjectRefImpl>();
-	private final Set<AgentItem> agents = new HashSet<AgentItem>();
+	private final CollectionEventSupport<ProjectRefImpl> projectList;
+	private final CollectionEventSupport<AgentItem> agentList;
 	private final ProjectListener projectListener = new ProjectListener();
 	private final AgentListener agentListener = new AgentListener();
 	private final Property<Boolean> localMode;
@@ -83,6 +85,9 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		super( doc.getLoaduiWorkspace() == null ? doc.addNewLoaduiWorkspace() : doc.getLoaduiWorkspace() );
 
 		executor = BeanInjector.getBean( ScheduledExecutorService.class );
+
+		projectList = new CollectionEventSupport<ProjectRefImpl>( this, PROJECT_REFS );
+		agentList = new CollectionEventSupport<AgentItem>( this, AGENTS );
 
 		this.doc = doc;
 		this.workspaceFile = workspaceFile;
@@ -111,14 +116,14 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			AgentItemImpl agent = new AgentItemImpl( this, agentConfig );
 			agent.init();
 			agent.addEventListener( BaseEvent.class, agentListener );
-			agents.add( agent );
+			agentList.addItem( agent );
 		}
 
 		for( ProjectReferenceConfig projectRefConfig : getConfig().getProjectArray() )
 		{
 			try
 			{
-				projects.add( new ProjectRefImpl( this, projectRefConfig ) );
+				projectList.addItem( new ProjectRefImpl( this, projectRefConfig ) );
 			}
 			catch( IOException e )
 			{
@@ -191,9 +196,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	@Override
 	public void release()
 	{
-		for( ProjectRef ref : projects )
-			if( ref.isEnabled() )
-				ref.getProject().release();
+		ReleasableUtils.releaseAll( projectList, agentList );
 
 		super.release();
 	}
@@ -232,7 +235,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			throw new IllegalArgumentException( "File does not exist: " + projectFile );
 
 		// if project is already in workspace do not import it again.
-		for( ProjectRefImpl projectRef : projects )
+		for( ProjectRefImpl projectRef : projectList.getItems() )
 		{
 			if( projectRef.getProjectFile().getAbsolutePath().equals( projectFile.getAbsolutePath() ) )
 			{
@@ -248,7 +251,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		{
 			ref = new ProjectRefImpl( this, projectRefConfig );
 			ref.setEnabled( enabled );
-			projects.add( ref );
+			projectList.addItem( ref );
 			fireCollectionEvent( PROJECT_REFS, CollectionEvent.Event.ADDED, ref );
 			save();
 			return ref;
@@ -275,8 +278,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		AgentItemImpl agent = new AgentItemImpl( this, agentConfig );
 		agent.init();
 		agent.addEventListener( BaseEvent.class, agentListener );
-		agents.add( agent );
-		fireCollectionEvent( AGENTS, CollectionEvent.Event.ADDED, agent );
+		agentList.addItem( agent );
 		save();
 		return agent;
 	}
@@ -291,8 +293,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		AgentItemImpl agent = new AgentItemImpl( this, agentConfig );
 		agent.init();
 		agent.addEventListener( BaseEvent.class, agentListener );
-		agents.add( agent );
-		fireCollectionEvent( AGENTS, CollectionEvent.Event.ADDED, agent );
+		agentList.addItem( agent );
 		save();
 		return agent;
 	}
@@ -301,7 +302,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	public Collection<ProjectItem> getProjects()
 	{
 		Collection<ProjectItem> list = new ArrayList<ProjectItem>();
-		for( ProjectRef ref : projects )
+		for( ProjectRef ref : projectList.getItems() )
 			if( ref.isEnabled() )
 				list.add( ref.getProject() );
 		return list;
@@ -310,80 +311,80 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	@Override
 	public Collection<ProjectRef> getProjectRefs()
 	{
-		Collection<ProjectRef> list = new ArrayList<ProjectRef>();
-		for( ProjectRef ref : projects )
-			list.add( ref );
-		return list;
+		return ImmutableSet.<ProjectRef> copyOf( projectList.getItems() );
 	}
 
 	@Override
 	public Collection<AgentItem> getAgents()
 	{
-		return Collections.unmodifiableSet( agents );
+		return agentList.getItems();
 	}
 
 	@Override
-	public void removeProject( ProjectRef projectRef )
+	public void removeProject( final ProjectRef projectRef )
 	{
-		if( !projects.contains( projectRef ) || !( projectRef instanceof ProjectRefImpl ) )
+		if( !( projectRef instanceof ProjectRefImpl && projectList.removeItem( ( ProjectRefImpl )projectRef,
+				new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						ReleasableUtils.release( projectRef );
+						for( int i = 0; i < getConfig().sizeOfProjectArray(); i++ )
+						{
+							if( getConfig().getProjectArray( i ) == ( ( ProjectRefImpl )projectRef ).getConfig() )
+							{
+								getConfig().removeProject( i );
+								save();
+								return;
+							}
+						}
+					}
+				} ) ) )
+		{
 			throw new IllegalArgumentException( "Project does not belong to this Workspace" );
-
-		if( projectRef.isEnabled() )
-		{
-			ProjectItem project = projectRef.getProject();
-			if( project != null )
-				project.release();
-		}
-
-		projects.remove( projectRef );
-		for( int i = 0; i < getConfig().sizeOfProjectArray(); i++ )
-		{
-			if( getConfig().getProjectArray( i ) == ( ( ProjectRefImpl )projectRef ).getConfig() )
-			{
-				fireCollectionEvent( PROJECT_REFS, CollectionEvent.Event.REMOVED, projectRef );
-				getConfig().removeProject( i );
-				save();
-				return;
-			}
 		}
 	}
 
 	@Override
 	public void removeProject( ProjectItem project )
 	{
-		if( project == null )
-			throw new IllegalArgumentException( "Project is null" );
+		Preconditions.checkNotNull( project, "Project is null" );
 
-		for( ProjectRefImpl ref : projects )
+		for( ProjectRefImpl ref : projectList.getItems() )
+		{
 			if( project == ref.getProject() )
 			{
 				removeProject( ref );
 				return;
 			}
+		}
 
 		throw new IllegalArgumentException( "Project does not belong to this Workspace" );
 	}
 
 	@Override
-	public void removeAgent( AgentItem agent )
+	public void removeAgent( final AgentItem agent )
 	{
 		if( agent == null )
 			throw new IllegalArgumentException( "Agent is null" );
 
-		if( agents.remove( agent ) )
+		if( !agentList.removeItem( agent, new Runnable()
 		{
-			for( int i = 0; i < getConfig().sizeOfAgentArray(); i++ )
+			@Override
+			public void run()
 			{
-				if( getConfig().getAgentArray( i ) == ( ( AgentItemImpl )agent ).getConfig() )
+				for( int i = 0; i < getConfig().sizeOfAgentArray(); i++ )
 				{
-					fireCollectionEvent( AGENTS, CollectionEvent.Event.REMOVED, agent );
-					getConfig().removeAgent( i );
-					save();
-					return;
+					if( getConfig().getAgentArray( i ) == ( ( AgentItemImpl )agent ).getConfig() )
+					{
+						getConfig().removeAgent( i );
+						save();
+						return;
+					}
 				}
 			}
-		}
-		else
+		} ) )
 			throw new IllegalArgumentException( "Agent does not belong to this Workspace" );
 	}
 

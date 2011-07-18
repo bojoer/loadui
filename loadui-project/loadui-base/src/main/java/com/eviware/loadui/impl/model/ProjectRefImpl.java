@@ -28,11 +28,13 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.config.ProjectReferenceConfig;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 
-public class ProjectRefImpl implements ProjectRef
+public class ProjectRefImpl implements ProjectRef, Releasable
 {
 	public static final Logger log = LoggerFactory.getLogger( ProjectRefImpl.class );
 
@@ -221,5 +223,11 @@ public class ProjectRefImpl implements ProjectRef
 	public Collection<String> getAttributes()
 	{
 		return attributeHolderSupport.getAttributes();
+	}
+
+	@Override
+	public void release()
+	{
+		ReleasableUtils.release( project );
 	}
 }

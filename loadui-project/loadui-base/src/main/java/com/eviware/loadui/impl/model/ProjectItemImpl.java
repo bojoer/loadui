@@ -162,7 +162,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		super.init();
 
 		for( RoutedConnectionConfig conf : getConfig().getRoutedConnectionArray() )
-			connections.add( new RoutedConnectionImpl( proxy, conf ) );
+			connectionList.addItem( new RoutedConnectionImpl( proxy, conf ) );
 
 		workspace.addEventListener( BaseEvent.class, workspaceListener );
 
@@ -434,23 +434,26 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
-	protected void disconnect( Connection connection )
+	protected void disconnect( final Connection connection )
 	{
 		if( connection instanceof RoutedConnection )
 		{
-			if( connections.remove( connection ) )
+			connectionList.removeItem( connection, new Runnable()
 			{
-				for( int i = getConfig().sizeOfRoutedConnectionArray() - 1; i >= 0; i-- )
+				@Override
+				public void run()
 				{
-					RoutedConnectionConfig connConfig = getConfig().getRoutedConnectionArray( i );
-					if( connection.getOutputTerminal().getId().equals( connConfig.getOutputTerminalId() )
-							&& connection.getInputTerminal().getId().equals( connConfig.getInputTerminalId() ) )
+					for( int i = getConfig().sizeOfRoutedConnectionArray() - 1; i >= 0; i-- )
 					{
-						getConfig().removeRoutedConnection( i );
+						RoutedConnectionConfig connConfig = getConfig().getRoutedConnectionArray( i );
+						if( connection.getOutputTerminal().getId().equals( connConfig.getOutputTerminalId() )
+								&& connection.getInputTerminal().getId().equals( connConfig.getInputTerminalId() ) )
+						{
+							getConfig().removeRoutedConnection( i );
+						}
 					}
 				}
-				fireCollectionEvent( CONNECTIONS, CollectionEvent.Event.REMOVED, connection );
-			}
+			} );
 		}
 		else
 			super.disconnect( connection );

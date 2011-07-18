@@ -173,12 +173,6 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	}
 
 	@Override
-	public Set<StatisticsWriter> getWriters()
-	{
-		return writers;
-	}
-
-	@Override
 	public void release()
 	{
 		parent.removeEventListener( ActionEvent.class, actionListener );
@@ -187,19 +181,6 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 			addressableRegistry.unregister( writer );
 		ReleasableUtils.releaseAll( writers );
 		writers.clear();
-	}
-
-	private class ActionListener implements WeakEventHandler<ActionEvent>
-	{
-		@Override
-		public void handleEvent( ActionEvent event )
-		{
-			if( CounterHolder.COUNTER_RESET_ACTION.equals( event.getKey() ) )
-			{
-				for( StatisticsWriter writer : writers )
-					writer.reset();
-			}
-		}
 	}
 
 	@Override
@@ -216,4 +197,16 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 		return description;
 	}
 
+	private class ActionListener implements WeakEventHandler<ActionEvent>
+	{
+		@Override
+		public void handleEvent( ActionEvent event )
+		{
+			if( CounterHolder.COUNTER_RESET_ACTION.equals( event.getKey() ) )
+			{
+				for( StatisticsWriter writer : writers )
+					writer.reset();
+			}
+		}
+	}
 }

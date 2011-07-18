@@ -31,7 +31,10 @@ import com.eviware.loadui.api.traits.Labeled;
  */
 public interface StatisticHolder extends EventFirer, Addressable, Labeled
 {
-	public static final String STATISTICS = StatisticHolder.class.getName() + "@statistics";
+	/**
+	 * Collection of StatisticVariables.
+	 */
+	public static final String STATISTIC_VARIABLES = StatisticHolder.class.getName() + "@statisticVariables";
 
 	/**
 	 * Retrieves a particular Statistic by its name.

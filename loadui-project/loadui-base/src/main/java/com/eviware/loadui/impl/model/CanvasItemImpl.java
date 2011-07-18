@@ -17,10 +17,8 @@ package com.eviware.loadui.impl.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -38,7 +36,6 @@ import com.eviware.loadui.api.counter.Counter;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
-import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
@@ -46,6 +43,7 @@ import com.eviware.loadui.api.events.TerminalConnectionEvent;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.MutableSummary;
@@ -64,6 +62,7 @@ import com.eviware.loadui.impl.summary.MutableSummaryImpl;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.collections.CollectionEventSupport;
 import com.eviware.loadui.util.statistics.CounterStatisticSupport;
 
 public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends ModelItemImpl<Config> implements
@@ -72,8 +71,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	private static final String LIMITS_ATTRIBUTE = "limits";
 
 	protected final CounterSupport counterSupport;
-	private final Set<ComponentItem> components = new HashSet<ComponentItem>();
-	protected final Set<Connection> connections = new HashSet<Connection>();
+	private final CollectionEventSupport<ComponentItem> componentList;
+	protected final CollectionEventSupport<Connection> connectionList;
 	private final ComponentListener componentListener = new ComponentListener();
 	private final ConnectionListener connectionListener = new ConnectionListener();
 	private final ComponentRegistry componentRegistry;
@@ -115,6 +114,9 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 		scheduler = BeanInjector.getBean( ScheduledExecutorService.class );
 		componentRegistry = BeanInjector.getBean( ComponentRegistry.class );
+
+		componentList = new CollectionEventSupport<ComponentItem>( this, COMPONENTS );
+		connectionList = new CollectionEventSupport<Connection>( this, CONNECTIONS );
 
 		statisticHolderSupport = new StatisticHolderSupport( this );
 		counterStatisticSupport = new CounterStatisticSupport( this );
@@ -183,7 +185,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 			{
 				Connection connection = new ConnectionImpl( connectionConfig );
 				connection.getOutputTerminal().addEventListener( TerminalConnectionEvent.class, connectionListener );
-				connections.add( connection );
+				connectionList.addItem( connection );
 			}
 			catch( Exception e )
 			{
@@ -269,8 +271,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 			component.addEventListener( BaseEvent.class, componentListener );
 			if( counterSupport instanceof AggregatedCounterSupport )
 				( ( AggregatedCounterSupport )counterSupport ).addChild( component );
-			components.add( component );
-			fireCollectionEvent( COMPONENTS, CollectionEvent.Event.ADDED, component );
+			componentList.addItem( component );
 		}
 		catch( ComponentCreationException e )
 		{
@@ -286,17 +287,21 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private ComponentItemImpl loadComponent( ComponentItemConfig config ) throws ComponentCreationException
 	{
-		ComponentItemImpl component = new ComponentItemImpl( this, config );
+		final ComponentItemImpl component = new ComponentItemImpl( this, config );
 		component.init();
 		try
 		{
 			component.setBehavior( componentRegistry.loadBehavior( config.getType(), component.getContext() ) );
-			if( components.add( component ) )
+			componentList.addItem( component, new Runnable()
 			{
-				component.addEventListener( BaseEvent.class, componentListener );
-				if( counterSupport instanceof AggregatedCounterSupport )
-					( ( AggregatedCounterSupport )counterSupport ).addChild( component );
-			}
+				@Override
+				public void run()
+				{
+					component.addEventListener( BaseEvent.class, componentListener );
+					if( counterSupport instanceof AggregatedCounterSupport )
+						( ( AggregatedCounterSupport )counterSupport ).addChild( component );
+				}
+			} );
 		}
 		catch( ComponentCreationException e )
 		{
@@ -313,12 +318,9 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	{
 		ComponentItemConfig componentConf = getConfig().addNewComponent();
 		componentConf.set( config );
-		ComponentItem component;
 		try
 		{
-			component = loadComponent( componentConf );
-			fireCollectionEvent( COMPONENTS, CollectionEvent.Event.ADDED, component );
-			return component;
+			return loadComponent( componentConf );
 		}
 		catch( ComponentCreationException e )
 		{
@@ -331,13 +333,13 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	@Override
 	public Collection<ComponentItem> getComponents()
 	{
-		return Collections.unmodifiableSet( components );
+		return componentList.getItems();
 	}
 
 	@Override
 	public ComponentItem getComponentByLabel( String label )
 	{
-		for( ComponentItem component : components )
+		for( ComponentItem component : componentList.getItems() )
 			if( component.getLabel().equals( label ) )
 				return component;
 
@@ -347,7 +349,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	@Override
 	public Collection<Connection> getConnections()
 	{
-		return Collections.unmodifiableSet( connections );
+		return connectionList.getItems();
 	}
 
 	@Override
@@ -362,7 +364,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		}
 		// If the two Terminals are in separate CanvasItems, the connection should
 		// be made in the ProjectItem.
-		else if( canvas.getProject() != this )
+		else if( !( this instanceof ProjectItem && canvas.getProject() == ( ProjectItem )this ) )
 			return canvas.getProject().connect( output, input );
 
 		// Make sure an identical Connection doesn't already exist.
@@ -371,12 +373,15 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 				return connection;
 
 		// Create the Connection.
-		Connection connection = createConnection( output, input );
-		if( connections.add( connection ) )
+		final Connection connection = createConnection( output, input );
+		connectionList.addItem( connection, new Runnable()
 		{
-			connection.getOutputTerminal().addEventListener( TerminalConnectionEvent.class, connectionListener );
-			fireCollectionEvent( CONNECTIONS, CollectionEvent.Event.ADDED, connection );
-		}
+			@Override
+			public void run()
+			{
+				connection.getOutputTerminal().addEventListener( TerminalConnectionEvent.class, connectionListener );
+			}
+		} );
 
 		return connection;
 	}
@@ -396,10 +401,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	@Override
 	public void release()
 	{
-		for( ComponentItem component : new ArrayList<ComponentItem>( components ) )
-			component.release();
-		components.clear();
-		connections.clear();
+		ReleasableUtils.releaseAll( componentList, connectionList );
 		summary = null;
 
 		ReleasableUtils.releaseAll( counterStatisticSupport, statisticHolderSupport );
@@ -407,21 +409,24 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		super.release();
 	}
 
-	protected void disconnect( Connection connection )
+	protected void disconnect( final Connection connection )
 	{
-		if( connections.remove( connection ) )
+		connectionList.removeItem( connection, new Runnable()
 		{
-			for( int i = getConfig().sizeOfConnectionArray() - 1; i >= 0; i-- )
+			@Override
+			public void run()
 			{
-				ConnectionConfig connConfig = getConfig().getConnectionArray( i );
-				if( connection.getOutputTerminal().getId().equals( connConfig.getOutputTerminalId() )
-						&& connection.getInputTerminal().getId().equals( connConfig.getInputTerminalId() ) )
+				for( int i = getConfig().sizeOfConnectionArray() - 1; i >= 0; i-- )
 				{
-					getConfig().removeConnection( i );
+					ConnectionConfig connConfig = getConfig().getConnectionArray( i );
+					if( connection.getOutputTerminal().getId().equals( connConfig.getOutputTerminalId() )
+							&& connection.getInputTerminal().getId().equals( connConfig.getInputTerminalId() ) )
+					{
+						getConfig().removeConnection( i );
+					}
 				}
 			}
-			fireCollectionEvent( CONNECTIONS, CollectionEvent.Event.REMOVED, connection );
-		}
+		} );
 	}
 
 	@Override
@@ -465,12 +470,9 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		if( obj.getCanvas().equals( this ) )
 			config.setLabel( "Copy of " + config.getLabel() );
 		config.setId( addressableRegistry.generateId() );
-		ComponentItemImpl copy;
 		try
 		{
-			copy = loadComponent( config );
-			fireCollectionEvent( COMPONENTS, CollectionEvent.Event.ADDED, copy );
-			return copy;
+			return loadComponent( config );
 		}
 		catch( ComponentCreationException e )
 		{
@@ -613,20 +615,22 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 			if( event.getKey().equals( DELETED ) )
 			{
-				ComponentItem component = ( ComponentItem )event.getSource();
-				if( components.remove( component ) )
+				final ComponentItem component = ( ComponentItem )event.getSource();
+				componentList.removeItem( component, new Runnable()
 				{
-					for( int i = 0; i < getConfig().sizeOfComponentArray(); i++ )
+					@Override
+					public void run()
 					{
-						if( component.getId().equals( getConfig().getComponentArray( i ).getId() ) )
+						for( int i = 0; i < getConfig().sizeOfComponentArray(); i++ )
 						{
-							getConfig().removeComponent( i );
-							break;
+							if( component.getId().equals( getConfig().getComponentArray( i ).getId() ) )
+							{
+								getConfig().removeComponent( i );
+								break;
+							}
 						}
 					}
-					log.debug( "Firing COMPONENTS REMOVED {}", event.getSource() );
-					fireCollectionEvent( COMPONENTS, CollectionEvent.Event.REMOVED, event.getSource() );
-				}
+				} );
 			}
 		}
 	}

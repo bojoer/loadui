@@ -105,7 +105,7 @@ public class StatisticHolderSupport implements Releasable
 		StatisticVariableImpl variable = new StatisticVariableImpl( manager.getExecutionManager(), owner,
 				statisticVariableName, addressableRegistry );
 		variables.put( statisticVariableName, variable );
-		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.ADDED, variable ) );
+		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTIC_VARIABLES, CollectionEvent.Event.ADDED, variable ) );
 
 		return variable;
 	}
@@ -115,7 +115,7 @@ public class StatisticHolderSupport implements Releasable
 	 * 
 	 * @param statisticVariableName
 	 */
-	public void removeStatisticalVariable( String statisticVariableName )
+	public void removeStatisticVariable( String statisticVariableName )
 	{
 		if( !variables.containsKey( statisticVariableName ) )
 			throw new NoSuchElementException(
@@ -123,7 +123,7 @@ public class StatisticHolderSupport implements Releasable
 
 		StatisticVariableImpl removedVariable = variables.remove( statisticVariableName );
 		ReleasableUtils.release( removedVariable );
-		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTICS, CollectionEvent.Event.REMOVED,
+		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTIC_VARIABLES, CollectionEvent.Event.REMOVED,
 				removedVariable ) );
 		log.debug( "Fired CollectionEvent: removed statistic variable!" );
 	}

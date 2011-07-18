@@ -19,12 +19,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
@@ -69,13 +66,15 @@ import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.impl.terminal.InputTerminalImpl;
 import com.eviware.loadui.impl.terminal.TerminalHolderSupport;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.collections.CollectionEventSupport;
 
 public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements SceneItem
 {
 	private final static String INCREMENT_VERSION = "incrementVersion";
 
 	private final ProjectItem project;
-	private final Set<OutputTerminal> exports = new HashSet<OutputTerminal>();
+	//private final Set<OutputTerminal> exports = new HashSet<OutputTerminal>();
+	private final CollectionEventSupport<OutputTerminal> exportList;
 	private final ProjectListener projectListener;
 	private final WorkspaceListener workspaceListener;
 	private final TerminalHolderSupport terminalHolderSupport;
@@ -116,8 +115,12 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 		stateTerminal = stateTerminalImpl;
 
+		exportList = new CollectionEventSupport<OutputTerminal>( this, EXPORTS );
+
 		for( String exportId : getConfig().getExportedTerminalArray() )
-			exports.add( ( OutputTerminal )addressableRegistry.lookup( exportId ) );
+		{
+			exportList.addItem( ( OutputTerminal )addressableRegistry.lookup( exportId ) );
+		}
 
 		workspaceListener = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? new WorkspaceListener()
 				: null;
@@ -146,36 +149,42 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	}
 
 	@Override
-	public void exportTerminal( OutputTerminal terminal )
+	public void exportTerminal( final OutputTerminal terminal )
 	{
-		if( exports.add( terminal ) )
+		exportList.addItem( terminal, new Runnable()
 		{
-			getConfig().addExportedTerminal( terminal.getId() );
-			fireCollectionEvent( EXPORTS, CollectionEvent.Event.ADDED, terminal );
-		}
+			@Override
+			public void run()
+			{
+				getConfig().addExportedTerminal( terminal.getId() );
+			}
+		} );
 	}
 
 	@Override
-	public void unexportTerminal( OutputTerminal terminal )
+	public void unexportTerminal( final OutputTerminal terminal )
 	{
-		if( exports.remove( terminal ) )
+		exportList.removeItem( terminal, new Runnable()
 		{
-			for( int i = 0; i < getConfig().sizeOfExportedTerminalArray(); i++ )
+			@Override
+			public void run()
 			{
-				if( terminal.getId().equals( getConfig().getExportedTerminalArray( i ) ) )
+				for( int i = 0; i < getConfig().sizeOfExportedTerminalArray(); i++ )
 				{
-					getConfig().removeExportedTerminal( i );
-					break;
+					if( terminal.getId().equals( getConfig().getExportedTerminalArray( i ) ) )
+					{
+						getConfig().removeExportedTerminal( i );
+						break;
+					}
 				}
 			}
-			fireCollectionEvent( EXPORTS, CollectionEvent.Event.REMOVED, terminal );
-		}
+		} );
 	}
 
 	@Override
 	public Collection<OutputTerminal> getExportedTerminals()
 	{
-		return Collections.unmodifiableSet( exports );
+		return exportList.getItems();
 	}
 
 	@Override

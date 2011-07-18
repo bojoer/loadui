@@ -33,6 +33,11 @@ public interface StatisticVariable extends Describable.Mutable
 	public static final String MAIN_SOURCE = "main";
 
 	/**
+	 * Collection of Statistics
+	 */
+	public static final String STATISTICS = StatisticVariable.class.getName() + "@statistics";
+
+	/**
 	 * Gets the name of the StatisticVariable.
 	 * 
 	 * @return
@@ -70,15 +75,9 @@ public interface StatisticVariable extends Describable.Mutable
 	public Statistic<?> getStatistic( String statisticName, String source );
 
 	/**
-	 * Gets all writers assigned to this variable
-	 * 
-	 * @return
-	 */
-	public Set<StatisticsWriter> getWriters();
-
-	/**
-	 * Mutable version of a StatisticVariable which is used to provide data to
-	 * its writers.
+	 * A mutable version of StatisticVariable. Its values are controlled by one
+	 * or more attached StatisticWriters, which receive data from the update
+	 * method.
 	 * 
 	 * @author dain.nilsson
 	 */
