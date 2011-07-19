@@ -70,7 +70,7 @@ public class ChartLegendDataSource extends JRAbstractBeanDataSource
 		if( fieldName.equals( "component" ) )
 			return lineSegment.getStatistic().getStatisticVariable().getStatisticHolder().getLabel();
 		if( fieldName.equals( "variable" ) )
-			return lineSegment.getStatistic().getStatisticVariable().getName();
+			return lineSegment.getStatistic().getStatisticVariable().getLabel();
 		if( fieldName.equals( "color" ) )
 		{
 			BufferedImage image = new BufferedImage( 12, 4, BufferedImage.TYPE_INT_RGB );

@@ -99,7 +99,7 @@ public class StylePanel extends Grid {
 							model.setColor( FxUtils.getAwtColor( color ) );
 						}
 					}, Label {
-						text: ChartNamePrettifier.compactDataAndMetricName( statistic.getStatisticVariable().getName(), statistic.getName() )
+						text: ChartNamePrettifier.compactDataAndMetricName( statistic.getStatisticVariable().getLabel(), statistic.getName() )
 						layoutInfo: LayoutInfo { width: 70 }
 					}, Label {
 						text: ChartNamePrettifier.nameForSource( statistic.getSource() )

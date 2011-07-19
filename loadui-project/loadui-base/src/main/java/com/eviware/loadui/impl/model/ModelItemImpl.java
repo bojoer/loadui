@@ -43,6 +43,7 @@ import com.eviware.loadui.impl.property.PropertyMapImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
 public abstract class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
@@ -358,6 +359,10 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 	@Override
 	public void setDescription( String description )
 	{
-		this.description.setValue( description );
+		if( !Objects.equal( this.description.getValue(), description ) )
+		{
+			this.description.setValue( description );
+			fireBaseEvent( DESCRIPTION );
+		}
 	}
 }

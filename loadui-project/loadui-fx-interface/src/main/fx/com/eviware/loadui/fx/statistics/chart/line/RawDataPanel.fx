@@ -175,7 +175,7 @@ public class RawDataPanel extends HBox {
 		   def holder = variable.getStatisticHolder();
 		   def source = statistic.getSource();
 
-		   def label = "{e.getLabel()}~{holder.getLabel()}~{source}~{variable.getName()}~{statistic.getName()}".replaceAll(" ", "_");
+		   def label = "{e.getLabel()}~{holder.getLabel()}~{source}~{variable.getLabel()}~{statistic.getName()}".replaceAll(" ", "_");
 		   dataSet.addHeader(label);
 
 		   def points: java.lang.Iterable = statistic.getPeriod( start, end, 0, e);

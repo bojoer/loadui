@@ -15,11 +15,10 @@
  */
 package com.eviware.loadui.util.statistics.store;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Immutable implementation of the TrackDescriptor, used to store the structure
@@ -32,16 +31,10 @@ public class TrackDescriptorImpl implements TrackDescriptor
 	private final String id;
 	private final Map<String, Class<? extends Number>> structure;
 
-	public TrackDescriptorImpl( String trackId, Map<String, Class<? extends Number>> values )
-	{
-		this( trackId, values, false );
-	}
-
-	public TrackDescriptorImpl( String trackId, Map<String, Class<? extends Number>> structure, boolean dontCloneMap )
+	public TrackDescriptorImpl( String trackId, Map<String, Class<? extends Number>> structure )
 	{
 		id = trackId;
-		this.structure = Collections.unmodifiableMap( dontCloneMap ? structure
-				: new HashMap<String, Class<? extends Number>>( structure ) );
+		this.structure = ImmutableMap.copyOf( structure );
 	}
 
 	@Override

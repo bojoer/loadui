@@ -18,13 +18,14 @@ package com.eviware.loadui.api.statistics;
 import java.util.Set;
 
 import com.eviware.loadui.api.traits.Describable;
+import com.eviware.loadui.api.traits.Labeled;
 
 /**
  * A Statistical Variable containing several Statistics, for several instances.
  * 
  * @author dain.nilsson
  */
-public interface StatisticVariable extends Describable.Mutable
+public interface StatisticVariable extends Describable.Mutable, Labeled
 {
 	/**
 	 * When writing to the local, or main source, use this String as the source
@@ -36,13 +37,6 @@ public interface StatisticVariable extends Describable.Mutable
 	 * Collection of Statistics
 	 */
 	public static final String STATISTICS = StatisticVariable.class.getName() + "@statistics";
-
-	/**
-	 * Gets the name of the StatisticVariable.
-	 * 
-	 * @return
-	 */
-	public String getName();
 
 	/**
 	 * Gets the StatisticHolder which this StatisticVariable belongs to.

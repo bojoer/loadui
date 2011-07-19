@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.statistics;
+package com.eviware.loadui.util.statistics;
 
 import com.eviware.loadui.api.statistics.DataPoint;
 

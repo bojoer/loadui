@@ -66,7 +66,7 @@ public class SegmentButton extends BaseNode, Resizable {
 	public-init var model:LineSegmentModel on replace {
 		def statistic = model.getLineSegment().getStatistic();
 		def metricName:String = statistic.getName();
-		def dataName:String = statistic.getStatisticVariable().getName();
+		def dataName:String = statistic.getStatisticVariable().getLabel();
 		def singleColumnInCompactMode:Boolean = ChartNamePrettifier.compactNameIsAlone( dataName );
 				
 		lineColor = model.getColor();

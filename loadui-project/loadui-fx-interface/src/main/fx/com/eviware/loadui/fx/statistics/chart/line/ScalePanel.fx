@@ -131,7 +131,7 @@ class SegmentRow extends GridRow {
 					fill: FxUtils.awtColorToFx( lineModel.getColor() )
 					stroke: null
 				}
-				text: ChartNamePrettifier.compactDataAndMetricName( statistic.getStatisticVariable().getName(), statistic.getName() )
+				text: ChartNamePrettifier.compactDataAndMetricName( statistic.getStatisticVariable().getLabel(), statistic.getName() )
 				layoutInfo: LayoutInfo { width: 70 }
 			}, Label {
 				text: ChartNamePrettifier.nameForSource( statistic.getSource() )

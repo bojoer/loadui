@@ -16,6 +16,7 @@
 package com.eviware.loadui.api.model;
 
 import com.eviware.loadui.api.addon.AddonHolder;
+import com.eviware.loadui.api.traits.Describable;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.traits.Releasable;
 
@@ -24,7 +25,8 @@ import com.eviware.loadui.api.traits.Releasable;
  * 
  * @author dain.nilsson
  */
-public interface ModelItem extends BaseItem, AddonHolder, AttributeHolder, PropertyHolder, Labeled.Mutable, Releasable
+public interface ModelItem extends BaseItem, AddonHolder, AttributeHolder, PropertyHolder, Labeled.Mutable,
+		Describable.Mutable, Releasable
 {
 	// Properties
 	public final String DESCRIPTION_PROPERTY = ModelItem.class.getSimpleName() + ".description";
@@ -47,18 +49,4 @@ public interface ModelItem extends BaseItem, AddonHolder, AttributeHolder, Prope
 	 *           The name of the action to trigger.
 	 */
 	public void triggerAction( String actionName );
-
-	/**
-	 * Gets the description of the ModelItem.
-	 * 
-	 * @return
-	 */
-	public String getDescription();
-
-	/**
-	 * Sets the description for the ModelItem.
-	 * 
-	 * @param description
-	 */
-	public void setDescription( String description );
 }

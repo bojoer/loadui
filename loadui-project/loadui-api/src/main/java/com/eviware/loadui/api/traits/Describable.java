@@ -23,6 +23,13 @@ package com.eviware.loadui.api.traits;
 public interface Describable
 {
 	/**
+	 * If the Describable also implements EventFirer, it should fire a BaseEvent
+	 * with the DESCRIPTION constant as a key to inform listeners that the
+	 * description has changed.
+	 */
+	public static final String DESCRIPTION = Describable.class.getSimpleName() + "@description";
+
+	/**
 	 * Gets the description of the object.
 	 */
 	public String getDescription();

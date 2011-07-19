@@ -45,6 +45,7 @@ import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.CacheMap;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.statistics.StatisticImpl;
 
 /**
  * Implementation of a StatisticVariable.
@@ -79,7 +80,7 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	}
 
 	@Override
-	public String getName()
+	public String getLabel()
 	{
 		return name;
 	}
@@ -187,7 +188,6 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	public void setDescription( String description )
 	{
 		this.description = description;
-
 	}
 
 	@Override

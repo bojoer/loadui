@@ -58,7 +58,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	{
 		this.config = config;
 		this.variable = variable;
-		id = DigestUtils.md5Hex( variable.getStatisticHolder().getId() + variable.getName() + getType() );
+		id = DigestUtils.md5Hex( variable.getStatisticHolder().getId() + variable.getLabel() + getType() );
 		descriptor = new TrackDescriptorImpl( id, values );
 		delay = config.containsKey( DELAY ) ? ( ( Number )config.get( DELAY ) ).longValue() : manager
 				.getMinimumWriteDelay();
