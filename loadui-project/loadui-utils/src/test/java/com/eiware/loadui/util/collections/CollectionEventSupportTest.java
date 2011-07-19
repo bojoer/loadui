@@ -9,18 +9,19 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.Mockito.*;
 
 import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.collections.CollectionEventSupport;
 
 public class CollectionEventSupportTest
 {
-	private CollectionEventSupport<String> collectionEventSupport;
+	private CollectionEventSupport<Object, Object> collectionEventSupport;
 	private EventFirer eventFirerMock;
 
 	@Before
 	public void setup()
 	{
 		eventFirerMock = mock( EventFirer.class );
-		collectionEventSupport = new CollectionEventSupport<String>( eventFirerMock, "COLLECTION" );
+		collectionEventSupport = new CollectionEventSupport<Object, Object>( eventFirerMock, "COLLECTION" );
 	}
 
 	@Test
@@ -59,5 +60,62 @@ public class CollectionEventSupportTest
 		assertThat( collectionEventSupport.getItems().size(), is( 2 ) );
 
 		verifyNoMoreInteractions( eventFirerMock );
+	}
+
+	@Test
+	public void shouldReleaseChildrenWhenReleased()
+	{
+		Releasable releasableMock1 = mock( Releasable.class );
+		Releasable releasableMock2 = mock( Releasable.class );
+
+		collectionEventSupport.addItem( releasableMock1 );
+		collectionEventSupport.addItem( "A String" );
+		collectionEventSupport.addItem( releasableMock2 );
+
+		collectionEventSupport.release();
+
+		verify( releasableMock1 ).release();
+		verify( releasableMock2 ).release();
+	}
+
+	@Test
+	public void shouldClearWhenReleased()
+	{
+		collectionEventSupport.addItem( "ONE" );
+		collectionEventSupport.addItem( "TWO" );
+		collectionEventSupport.addItem( "THREE" );
+
+		collectionEventSupport.release();
+
+		assertThat( collectionEventSupport.getItems(), notNullValue() );
+		assertThat( collectionEventSupport.getItems().isEmpty(), is( true ) );
+	}
+
+	@Test( expected = NullPointerException.class )
+	public void shouldNotAcceptNullAttachments()
+	{
+		collectionEventSupport.addItemWith( "NULL ATTACHMENT", null );
+	}
+
+	@Test
+	public void shouldKeepAttachments()
+	{
+		Object attachment1 = new Object();
+		Object attachment2 = new Object();
+		Object attachment3 = new Object();
+
+		collectionEventSupport.addItemWith( "ONE", attachment1 );
+		collectionEventSupport.addItem( "NO ATTACHMENT" );
+		collectionEventSupport.addItemWith( "TWO", attachment2 );
+		//Shouldn't change the attachment since TWO already exists.
+		collectionEventSupport.addItemWith( "TWO", attachment3 );
+
+		assertThat( collectionEventSupport.getAttachment( "ONE" ), is( attachment1 ) );
+		assertThat( collectionEventSupport.getAttachment( "TWO" ), is( attachment2 ) );
+		assertThat( collectionEventSupport.getAttachment( "NO ATTACHMENT" ), nullValue() );
+
+		collectionEventSupport.removeItem( "TWO" );
+		collectionEventSupport.addItemWith( "TWO", attachment3 );
+		assertThat( collectionEventSupport.getAttachment( "TWO" ), is( attachment3 ) );
 	}
 }

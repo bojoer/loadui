@@ -74,7 +74,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	private final ProjectItem project;
 	//private final Set<OutputTerminal> exports = new HashSet<OutputTerminal>();
-	private final CollectionEventSupport<OutputTerminal> exportList;
+	private final CollectionEventSupport<OutputTerminal, Void> exportList;
 	private final ProjectListener projectListener;
 	private final WorkspaceListener workspaceListener;
 	private final TerminalHolderSupport terminalHolderSupport;
@@ -115,7 +115,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 		stateTerminal = stateTerminalImpl;
 
-		exportList = new CollectionEventSupport<OutputTerminal>( this, EXPORTS );
+		exportList = CollectionEventSupport.of( this, EXPORTS );
 
 		for( String exportId : getConfig().getExportedTerminalArray() )
 		{

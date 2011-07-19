@@ -1,7 +1,7 @@
 package com.eviware.loadui.util.collections;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,20 +10,38 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 
 /**
  * Support class for adding and removing objects to a collection, taking care of
- * firing CollectionEvents when needed.
+ * firing CollectionEvents when needed. It also allows attaching an arbitrary
+ * Object to each item. If you are not interested in this feature, it is
+ * recommended that you set the second Generic parameter to Void.
  * 
  * @author dain.nilsson
  * 
  * @param <V>
  */
-public class CollectionEventSupport<V> implements Releasable
+public class CollectionEventSupport<V, A> implements Releasable
 {
-	private final HashSet<V> values = Sets.newHashSet();
+	/**
+	 * Creates a new CollectionEventSupport using the given parameters. Same as
+	 * using the constructor, but uses type inference for Generics.
+	 * 
+	 * @param owner
+	 * @param collectionKey
+	 * @return
+	 */
+	public static <X, Y> CollectionEventSupport<X, Y> of( @Nonnull EventFirer owner, @Nonnull String collectionKey )
+	{
+		return new CollectionEventSupport<X, Y>( owner, collectionKey );
+	}
+
+	private final static Object DUMMY = new Object();
+
+	private final HashMap<V, Object> values = Maps.newHashMap();
 
 	private final EventFirer owner;
 	private final String collectionKey;
@@ -42,7 +60,7 @@ public class CollectionEventSupport<V> implements Releasable
 	@Nonnull
 	public Collection<V> getItems()
 	{
-		return ImmutableSet.copyOf( values );
+		return ImmutableSet.copyOf( values.keySet() );
 	}
 
 	/**
@@ -51,9 +69,9 @@ public class CollectionEventSupport<V> implements Releasable
 	 * @param item
 	 * @return
 	 */
-	public boolean containsItem( V item )
+	public boolean containsItem( @Nonnull V item )
 	{
-		return values.contains( item );
+		return values.containsKey( Preconditions.checkNotNull( item ) );
 	}
 
 	/**
@@ -63,9 +81,9 @@ public class CollectionEventSupport<V> implements Releasable
 	 * @param item
 	 * @return True if the item was added, false if it was already contained.
 	 */
-	public boolean addItem( V item )
+	public boolean addItem( @Nonnull V item )
 	{
-		return addItem( item, null );
+		return doAddItemWith( item, null, null );
 	}
 
 	/**
@@ -77,10 +95,50 @@ public class CollectionEventSupport<V> implements Releasable
 	 * @param onAdd
 	 * @return
 	 */
-	public boolean addItem( V item, @Nullable Runnable onAdd )
+	public boolean addItem( @Nonnull V item, @Nullable Runnable onAdd )
 	{
-		if( values.add( item ) )
+		return doAddItemWith( item, onAdd, null );
+	}
+
+	/**
+	 * Adds an item to the collection as with {@link addItem}, but also attaches
+	 * an Object to the item reference, which can be retrieved using
+	 * {@link getAttachment}. This attachment may hold arbitrary data which
+	 * should be associated to the item. If the item already exists in the
+	 * collection the attachment will NOT be changed.
+	 * 
+	 * @see addItemWith( V item, Runnable onAdd, Object attachment )
+	 * @param item
+	 * @param attachment
+	 * @return
+	 */
+	public boolean addItemWith( @Nonnull V item, @Nonnull A attachment )
+	{
+		return doAddItemWith( item, null, Preconditions.checkNotNull( attachment ) );
+	}
+
+	/**
+	 * Adds an item to the collection as with {@link addItem}, but also attaches
+	 * an Object to the item reference, which can be retrieved using
+	 * {@link getAttachment}. This attachment may hold arbitrary data which
+	 * should be associated to the item. If the item already exists in the
+	 * collection the attachment will NOT be changed.
+	 * 
+	 * @see addItem
+	 * @param item
+	 * @param attachment
+	 * @return
+	 */
+	public boolean addItemWith( @Nonnull V item, @Nullable Runnable onAdd, @Nonnull A attachment )
+	{
+		return doAddItemWith( item, onAdd, Preconditions.checkNotNull( attachment ) );
+	}
+
+	private boolean doAddItemWith( @Nonnull V item, @Nullable Runnable onAdd, @Nullable A attachment )
+	{
+		if( !values.containsKey( Preconditions.checkNotNull( item ) ) )
 		{
+			values.put( item, attachment == null ? DUMMY : attachment );
 			if( onAdd != null )
 			{
 				onAdd.run();
@@ -95,6 +153,21 @@ public class CollectionEventSupport<V> implements Releasable
 	}
 
 	/**
+	 * Gets the Object attached to a previously added item, or null if no
+	 * attachment was added.
+	 * 
+	 * @param item
+	 * @return
+	 */
+	public A getAttachment( @Nonnull V item )
+	{
+		@SuppressWarnings( "unchecked" )
+		A attachment = ( A )values.get( Preconditions.checkNotNull( item ) );
+
+		return attachment == DUMMY ? null : attachment;
+	}
+
+	/**
 	 * Removes an item from the collection, and fires a REMOVED event, unless the
 	 * item isn't contained by the collection.
 	 * 
@@ -102,7 +175,7 @@ public class CollectionEventSupport<V> implements Releasable
 	 * @return True if the item was removed, false if it wasn't in the collection
 	 *         to begin with.
 	 */
-	public boolean removeItem( V item )
+	public boolean removeItem( @Nonnull V item )
 	{
 		return removeItem( item, null );
 	}
@@ -116,9 +189,9 @@ public class CollectionEventSupport<V> implements Releasable
 	 * @param onRemove
 	 * @return
 	 */
-	public boolean removeItem( V item, Runnable onRemove )
+	public boolean removeItem( @Nonnull V item, @Nullable Runnable onRemove )
 	{
-		if( values.remove( item ) )
+		if( values.remove( Preconditions.checkNotNull( item ) ) != null )
 		{
 			if( onRemove != null )
 			{
@@ -135,7 +208,7 @@ public class CollectionEventSupport<V> implements Releasable
 	@Override
 	public void release()
 	{
-		ReleasableUtils.releaseAll( values );
+		ReleasableUtils.releaseAll( values.keySet() );
 		values.clear();
 	}
 }

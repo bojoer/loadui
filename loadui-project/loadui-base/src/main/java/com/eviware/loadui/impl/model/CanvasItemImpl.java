@@ -71,8 +71,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	private static final String LIMITS_ATTRIBUTE = "limits";
 
 	protected final CounterSupport counterSupport;
-	private final CollectionEventSupport<ComponentItem> componentList;
-	protected final CollectionEventSupport<Connection> connectionList;
+	private final CollectionEventSupport<ComponentItem, Void> componentList;
+	protected final CollectionEventSupport<Connection, Void> connectionList;
 	private final ComponentListener componentListener = new ComponentListener();
 	private final ConnectionListener connectionListener = new ConnectionListener();
 	private final ComponentRegistry componentRegistry;
@@ -115,8 +115,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		scheduler = BeanInjector.getBean( ScheduledExecutorService.class );
 		componentRegistry = BeanInjector.getBean( ComponentRegistry.class );
 
-		componentList = new CollectionEventSupport<ComponentItem>( this, COMPONENTS );
-		connectionList = new CollectionEventSupport<Connection>( this, CONNECTIONS );
+		componentList = CollectionEventSupport.of( this, COMPONENTS );
+		connectionList = CollectionEventSupport.of( this, CONNECTIONS );
 
 		statisticHolderSupport = new StatisticHolderSupport( this );
 		counterStatisticSupport = new CounterStatisticSupport( this );

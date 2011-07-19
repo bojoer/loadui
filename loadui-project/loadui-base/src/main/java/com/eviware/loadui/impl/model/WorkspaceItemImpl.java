@@ -61,8 +61,8 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	private File workspaceFile;
 	private final ScheduledExecutorService executor;
 	private final LoaduiWorkspaceDocumentConfig doc;
-	private final CollectionEventSupport<ProjectRefImpl> projectList;
-	private final CollectionEventSupport<AgentItem> agentList;
+	private final CollectionEventSupport<ProjectRefImpl, Void> projectList;
+	private final CollectionEventSupport<AgentItem, Void> agentList;
 	private final ProjectListener projectListener = new ProjectListener();
 	private final AgentListener agentListener = new AgentListener();
 	private final Property<Boolean> localMode;
@@ -86,8 +86,8 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 
 		executor = BeanInjector.getBean( ScheduledExecutorService.class );
 
-		projectList = new CollectionEventSupport<ProjectRefImpl>( this, PROJECT_REFS );
-		agentList = new CollectionEventSupport<AgentItem>( this, AGENTS );
+		projectList = CollectionEventSupport.of( this, PROJECT_REFS );
+		agentList = CollectionEventSupport.of( this, AGENTS );
 
 		this.doc = doc;
 		this.workspaceFile = workspaceFile;
