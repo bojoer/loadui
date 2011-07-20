@@ -208,6 +208,11 @@ public class CollectionEventSupport<V, A> implements Releasable
 	@Override
 	public void release()
 	{
+		for( V item : values.keySet() )
+		{
+			owner.fireEvent( new CollectionEvent( owner, collectionKey, CollectionEvent.Event.REMOVED, item ) );
+		}
+
 		ReleasableUtils.releaseAll( values.keySet() );
 		values.clear();
 	}

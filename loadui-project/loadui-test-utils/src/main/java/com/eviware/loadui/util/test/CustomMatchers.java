@@ -4,7 +4,9 @@ import static org.hamcrest.CoreMatchers.not;
 
 import org.hamcrest.Matcher;
 
+import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.util.test.matchers.IsMock;
+import com.eviware.loadui.util.test.matchers.CollectionEventMatcher;
 
 /**
  * Class for static methods for creating custom Matchers.
@@ -14,7 +16,7 @@ import com.eviware.loadui.util.test.matchers.IsMock;
 public class CustomMatchers
 {
 	/**
-	 * Verified that the object to match is a mock.
+	 * Verifies that the object to match is a mock.
 	 * 
 	 * @return
 	 */
@@ -24,12 +26,24 @@ public class CustomMatchers
 	}
 
 	/**
-	 * Verified that the object to match is not a mock.
+	 * Verifies that the object to match is not a mock.
 	 * 
 	 * @return
 	 */
 	public static <T> Matcher<T> notMockObject()
 	{
 		return not( new IsMock<T>() );
+	}
+
+	/**
+	 * Matches a CollectionEvent against its collection key and event type.
+	 * 
+	 * @param collection
+	 * @param event
+	 * @return
+	 */
+	public static CollectionEventMatcher matchesCollectionEvent( String collection, CollectionEvent.Event event )
+	{
+		return new CollectionEventMatcher( collection, event );
 	}
 }

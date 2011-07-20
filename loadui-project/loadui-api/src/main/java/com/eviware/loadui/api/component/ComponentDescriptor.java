@@ -17,12 +17,15 @@ package com.eviware.loadui.api.component;
 
 import java.net.URI;
 
+import com.eviware.loadui.api.traits.Describable;
+import com.eviware.loadui.api.traits.Labeled;
+
 /**
  * An immutable data structure describing a type of Component.
  * 
  * @author dain.nilsson
  */
-public class ComponentDescriptor
+public class ComponentDescriptor implements Labeled, Describable
 {
 	private final String type;
 	private final String category;
@@ -30,7 +33,7 @@ public class ComponentDescriptor
 	private final String description;
 	private final URI icon;
 	private final String helpUrl;
-	
+
 	/**
 	 * Constructs a new ComponentDescriptor using the given values.
 	 * 
@@ -55,7 +58,7 @@ public class ComponentDescriptor
 		this.icon = icon;
 		this.helpUrl = helpUrl;
 	}
-	
+
 	/**
 	 * Constructs a new ComponentDescriptor using the given values.
 	 * 
@@ -80,7 +83,6 @@ public class ComponentDescriptor
 		this.icon = icon;
 		this.helpUrl = null;
 	}
-	
 
 	public String getType()
 	{
@@ -106,7 +108,7 @@ public class ComponentDescriptor
 	{
 		return icon;
 	}
-	
+
 	public String getHelpUrl()
 	{
 		return helpUrl;
