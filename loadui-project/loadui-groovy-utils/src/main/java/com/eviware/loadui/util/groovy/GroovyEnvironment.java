@@ -36,6 +36,14 @@ import groovy.lang.Script;
 import com.eviware.loadui.api.traits.Releasable;
 import com.google.common.collect.Maps;
 
+/**
+ * A runtime environment for a ParsedGroovyScript. The script is compiled and
+ * run using the given parameters, such as classloader, GroovyResolver, etc. The
+ * script can be interacted with by calling invokeClosure, which attempts to run
+ * a Closure within the scripts binding.
+ * 
+ * @author dain.nilsson
+ */
 public class GroovyEnvironment implements Releasable
 {
 	private final ParsedGroovyScript script;
@@ -63,6 +71,10 @@ public class GroovyEnvironment implements Releasable
 				: GroovyResolver.NULL_RESOLVER;
 	}
 
+	/**
+	 * Initializes the script, loading any required dependencies and running the
+	 * script.
+	 */
 	public void init()
 	{
 		int repos = 0;
@@ -97,22 +109,50 @@ public class GroovyEnvironment implements Releasable
 		}
 	}
 
+	/**
+	 * Returns a Logger object which is specific to this script.
+	 * 
+	 * @return
+	 */
 	public Logger getLog()
 	{
 		return log;
 	}
 
+	/**
+	 * Attempts to call a Closure in the scripts binding with the given
+	 * arguments.
+	 * 
+	 * @param ignoreMissing
+	 *           If set to true, null will be returned if the Closure does not
+	 *           exist. Otherwise an UpsupportedOperationException will be
+	 *           thrown.
+	 * @param returnException
+	 *           If set to true, any Exception thrown by the invoked Closure will
+	 *           be returned as the result. Otherwise the exception will be
+	 *           logged and null will be returned.
+	 * @param name
+	 *           The name of the Closure to call.
+	 * @param args
+	 *           The arguments to pass to the Closure being called.
+	 * @return The result of the Closure, if successful.
+	 */
 	@Nullable
 	public Object invokeClosure( boolean ignoreMissing, boolean returnException, @Nonnull String name, Object... args )
 	{
+		Object property = null;
 		try
 		{
-			Object property = binding.getProperty( name );
-			if( property instanceof Closure )
-				return ( ( Closure<?> )property ).call( args );
+			property = binding.getProperty( name );
 		}
 		catch( MissingPropertyException e )
 		{
+		}
+
+		try
+		{
+			if( property instanceof Closure )
+				return ( ( Closure<?> )property ).call( args );
 		}
 		catch( Throwable e )
 		{

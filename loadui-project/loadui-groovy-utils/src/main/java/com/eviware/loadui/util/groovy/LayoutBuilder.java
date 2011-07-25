@@ -29,6 +29,11 @@ import com.eviware.loadui.impl.layout.LayoutContainerImpl;
 import com.eviware.loadui.impl.layout.PropertyLayoutComponentImpl;
 import com.eviware.loadui.impl.layout.SeparatorLayoutComponentImpl;
 
+/**
+ * Provides a Groovy DSL for creating a LayoutContainer structure.
+ * 
+ * @author dain.nilsson
+ */
 public class LayoutBuilder
 {
 	private final LayoutContainer root;

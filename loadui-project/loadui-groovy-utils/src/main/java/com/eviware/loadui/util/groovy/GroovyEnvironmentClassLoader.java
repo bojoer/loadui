@@ -30,6 +30,12 @@ import com.google.common.collect.Sets;
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 
+/**
+ * A GroovyClassLoader which can load dependencies dynamically from a Maven
+ * repository using Grape.
+ * 
+ * @author dain.nilsson
+ */
 public class GroovyEnvironmentClassLoader extends GroovyClassLoader
 {
 	public static final Logger log = LoggerFactory.getLogger( GroovyEnvironmentClassLoader.class );
@@ -41,6 +47,15 @@ public class GroovyEnvironmentClassLoader extends GroovyClassLoader
 		super( classLoader );
 	}
 
+	/**
+	 * Loads the given dependency, unless it is already loaded. If Grape should
+	 * fail, an attempt is made to manually load the JAR file from the file
+	 * system. This does not take into consideration any transitive dependencies.
+	 * 
+	 * @param group
+	 * @param module
+	 * @param version
+	 */
 	public synchronized void loadDependency( String group, String module, String version )
 	{
 		String dependency = Joiner.on( ':' ).join( group, module );
