@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.addon;
 
+import java.util.Collection;
+
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.addressable.Addressable;
@@ -76,5 +78,23 @@ public interface AddonItem extends BaseItem
 		 */
 		@Nonnull
 		public AddonHolder.Support getAddonHolderSupport( @Nonnull AddonHolder owner );
+
+		/**
+		 * Creates an AddonItemSupport object which a child AddonItem managed by
+		 * this AddonItem may use to persist data.
+		 * 
+		 * @return
+		 */
+		@Nonnull
+		public AddonItem.Support createAddonItemSupport( @Nonnull String type );
+
+		/**
+		 * Returns all existing child AddonItemSupport objects for the AddonItem
+		 * of a specific type.
+		 * 
+		 * @return
+		 */
+		@Nonnull
+		public Collection<AddonItem.Support> getAddonItemSupports( @Nonnull String type );
 	}
 }

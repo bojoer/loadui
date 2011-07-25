@@ -18,7 +18,7 @@ public class AddonItemSupportImplTest
 {
 	AddonListConfig list;
 	AddonItemSupportImpl support;
-	AddonHolderSupportImpl owner;
+	AddonItemHolderSupport owner;
 
 	@Before
 	public void setup()
@@ -26,7 +26,7 @@ public class AddonItemSupportImplTest
 		new BeanInjectorMocker().put( ConversionService.class, new GenericConversionService() );
 
 		list = AddonListConfig.Factory.newInstance();
-		owner = mock( AddonHolderSupportImpl.class );
+		owner = mock( AddonItemHolderSupport.class );
 		support = new AddonItemSupportImpl( owner, list.addNewAddon(), list );
 	}
 

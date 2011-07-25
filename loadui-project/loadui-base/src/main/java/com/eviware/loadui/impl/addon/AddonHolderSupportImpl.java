@@ -24,13 +24,10 @@ import com.eviware.loadui.api.addon.AddonItem;
 import com.eviware.loadui.api.addon.AddonItem.Support;
 import com.eviware.loadui.api.addon.AddonRegistry;
 import com.eviware.loadui.api.traits.Releasable;
-import com.eviware.loadui.config.AddonItemConfig;
 import com.eviware.loadui.config.AddonListConfig;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 /**
@@ -42,14 +39,14 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 {
 	private final HashMap<Class<? extends Addon>, Addon> addons = Maps.newHashMap();
 	private final AddonHolder owner;
-	private final AddonListConfig config;
-	private final HashMultimap<String, AddonItem.Support> addonItems = HashMultimap.create();
+	private final AddonItemHolderSupport addonItemHolderSupport;
 	private final AddonRegistry addonRegistry = BeanInjector.getBean( AddonRegistry.class );
 
 	public AddonHolderSupportImpl( AddonHolder owner, AddonListConfig config )
 	{
 		this.owner = owner;
-		this.config = config;
+
+		addonItemHolderSupport = new AddonItemHolderSupport( config );
 	}
 
 	@Override
@@ -75,13 +72,7 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 			Preconditions.checkNotNull( factory, "No Addon.Factory available for {}", cls );
 
 			final String type = cls.getName();
-			for( AddonItemConfig addonItem : config.getAddonArray() )
-			{
-				if( type.equals( addonItem.getType() ) )
-				{
-					addonItems.put( type, new AddonItemSupportImpl( this, addonItem, config ) );
-				}
-			}
+			addonItemHolderSupport.loadType( type );
 
 			addons.put( cls, factory.create( new ContextImpl( cls.getName() ) ) );
 		}
@@ -102,7 +93,7 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 	 */
 	void removeAddonItem( AddonItemSupportImpl addonItemSupport )
 	{
-		addonItems.get( addonItemSupport.getType() ).remove( addonItemSupport );
+		addonItemHolderSupport.removeAddonItem( addonItemSupport );
 	}
 
 	class ContextImpl implements Addon.Context
@@ -123,19 +114,13 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 		@Override
 		public Collection<AddonItem.Support> getAddonItemSupports()
 		{
-			return ImmutableSet.copyOf( addonItems.get( type ) );
+			return addonItemHolderSupport.getAddonItemSupports( type );
 		}
 
 		@Override
 		public Support createAddonItemSupport()
 		{
-			final AddonItemConfig addonConfig = config.addNewAddon();
-			addonConfig.setType( type );
-			final AddonItemSupportImpl addonItem = new AddonItemSupportImpl( AddonHolderSupportImpl.this, addonConfig,
-					config );
-			addonItems.put( type, addonItem );
-
-			return addonItem;
+			return addonItemHolderSupport.createAddonItemSupport( type );
 		}
 	}
 }

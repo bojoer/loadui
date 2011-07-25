@@ -49,7 +49,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Export-Package>com.eviware.loadui.groovy.*</Export-Package>
+						<Private-Package>com.eviware.loadui.groovy.*</Private-Package>
 						<Import-Package>!com.eviware.loadui.groovy.*;!org.apache.http.*;*</Import-Package>
 						<Embed-Dependency>*;scope=provided</Embed-Dependency>
 					</instructions>

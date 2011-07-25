@@ -36,9 +36,10 @@ import com.google.common.base.Objects;
 
 public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 {
-	private final AddonHolderSupportImpl owner;
+	private final AddonItemHolderSupport owner;
 	private final AddonItemConfig config;
-	private final AddonListConfig listConfig;
+	private final AddonListConfig parentListConfig;
+	private final AddonItemHolderSupport addonItemHolderSupport;
 
 	private final EventSupport eventSupport = new EventSupport();
 	private final AttributeHolderSupport attributeSupport;
@@ -46,11 +47,15 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	private PropertyMapImpl propertyMap;
 	private AddonHolderSupportImpl addonHolderSupport;
 
-	public AddonItemSupportImpl( AddonHolderSupportImpl owner, AddonItemConfig config, AddonListConfig listConfig )
+	public AddonItemSupportImpl( AddonItemHolderSupport owner, AddonItemConfig config, AddonListConfig listConfig )
 	{
 		this.owner = owner;
 		this.config = config;
-		this.listConfig = listConfig;
+		this.parentListConfig = listConfig;
+
+		if( config.getAddons() == null )
+			config.addNewAddons();
+		addonItemHolderSupport = new AddonItemHolderSupport( config.getAddons() );
 
 		if( !config.isSetId() )
 			config.setId( BeanInjector.getBean( AddressableRegistry.class ).generateId() );
@@ -122,15 +127,27 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	@Override
 	public void delete()
 	{
-		for( int i = listConfig.sizeOfAddonArray() - 1; i <= 0; i-- )
+		for( int i = parentListConfig.sizeOfAddonArray() - 1; i <= 0; i-- )
 		{
-			if( Objects.equal( config.getId(), listConfig.getAddonArray( i ).getId() ) )
+			if( Objects.equal( config.getId(), parentListConfig.getAddonArray( i ).getId() ) )
 			{
-				listConfig.removeAddon( i );
+				parentListConfig.removeAddon( i );
 				owner.removeAddonItem( this );
 				return;
 			}
 		}
+	}
+
+	@Override
+	public AddonItem.Support createAddonItemSupport( String type )
+	{
+		return addonItemHolderSupport.createAddonItemSupport( type );
+	}
+
+	@Override
+	public Collection<AddonItem.Support> getAddonItemSupports( String type )
+	{
+		return addonItemHolderSupport.getAddonItemSupports( type );
 	}
 
 	@Override
