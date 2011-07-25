@@ -138,7 +138,7 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 				{
 					timeoutFuture.cancel( true );
 					timeoutFuture = null;
-					// log.debug( "Cancelling timeout, buffer size: {}",
+					// log.debug( "Canceling timeout, buffer size: {}",
 					// buffer.size() );
 				}
 

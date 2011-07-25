@@ -33,8 +33,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -59,10 +57,11 @@ import com.eviware.loadui.groovy.categories.GroovyOutput;
 import com.eviware.loadui.groovy.categories.GroovyRunner;
 import com.eviware.loadui.groovy.categories.GroovyScheduler;
 import com.eviware.loadui.groovy.categories.GroovyGenerator;
-import com.eviware.loadui.util.MapUtils;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
-import com.google.common.collect.Maps;
+import com.eviware.loadui.util.groovy.ClassLoaderRegistry;
+import com.eviware.loadui.util.groovy.ParsedGroovyScript;
+import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
@@ -126,10 +125,10 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 		{
 			ScriptDescriptor scriptDescriptor = ( ScriptDescriptor )descriptor;
 			context.setCategory( descriptor.getCategory() );
-			context.setAttribute( GroovyComponent.DIGEST_ATTRIBUTE, scriptDescriptor.getDigest() );
-			context.setAttribute( GroovyComponent.ID_ATTRIBUTE, scriptDescriptor.getId() );
-			context.setAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, scriptDescriptor.getClassLoaderId() );
-			context.createProperty( GroovyComponent.SCRIPT_PROPERTY, String.class,
+			context.setAttribute( GroovyBehaviorSupport.DIGEST_ATTRIBUTE, scriptDescriptor.getDigest() );
+			context.setAttribute( GroovyBehaviorSupport.ID_ATTRIBUTE, scriptDescriptor.getId() );
+			context.setAttribute( GroovyBehaviorSupport.CLASS_LOADER_ATTRIBUTE, scriptDescriptor.getClassLoaderId() );
+			context.createProperty( GroovyBehaviorSupport.SCRIPT_PROPERTY, String.class,
 					( ( ScriptDescriptor )descriptor ).getScript() );
 			return instantiateBehavior( context, ( ( ScriptDescriptor )descriptor ).getCategory() );
 		}
@@ -147,9 +146,9 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 	{
 		if( TYPE.equals( componentType ) )
 		{
-			String id = context.getAttribute( GroovyComponent.ID_ATTRIBUTE, "" );
-			String scriptPath = context.getAttribute( GroovyComponent.SCRIPT_FILE_ATTRIBUTE, null );
-			String digest = context.getAttribute( GroovyComponent.DIGEST_ATTRIBUTE, null );
+			String id = context.getAttribute( GroovyBehaviorSupport.ID_ATTRIBUTE, "" );
+			String scriptPath = context.getAttribute( GroovyBehaviorSupport.SCRIPT_FILE_ATTRIBUTE, null );
+			String digest = context.getAttribute( GroovyBehaviorSupport.DIGEST_ATTRIBUTE, null );
 			if( digest != null )
 			{
 				for( Entry<File, ScriptDescriptor> entry : scripts.entrySet() )
@@ -160,9 +159,9 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 						if( !digest.equals( d.getDigest() ) )
 						{
 							// ID matches, update the component.
-							context.setAttribute( GroovyComponent.DIGEST_ATTRIBUTE, d.getDigest() );
-							context.setAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, d.getClassLoaderId() );
-							context.createProperty( GroovyComponent.SCRIPT_PROPERTY, String.class ).setValue( d.getScript() );
+							context.setAttribute( GroovyBehaviorSupport.DIGEST_ATTRIBUTE, d.getDigest() );
+							context.setAttribute( GroovyBehaviorSupport.CLASS_LOADER_ATTRIBUTE, d.getClassLoaderId() );
+							context.createProperty( GroovyBehaviorSupport.SCRIPT_PROPERTY, String.class ).setValue( d.getScript() );
 						}
 						break;
 					}
@@ -171,10 +170,10 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 						if( !digest.equals( d.getDigest() ) )
 						{
 							// Script file has changed, update the component.
-							context.setAttribute( GroovyComponent.DIGEST_ATTRIBUTE, d.getDigest() );
-							context.setAttribute( GroovyComponent.ID_ATTRIBUTE, d.getId() );
-							context.setAttribute( GroovyComponent.CLASS_LOADER_ATTRIBUTE, d.getClassLoaderId() );
-							context.createProperty( GroovyComponent.SCRIPT_PROPERTY, String.class ).setValue( d.getScript() );
+							context.setAttribute( GroovyBehaviorSupport.DIGEST_ATTRIBUTE, d.getDigest() );
+							context.setAttribute( GroovyBehaviorSupport.ID_ATTRIBUTE, d.getId() );
+							context.setAttribute( GroovyBehaviorSupport.CLASS_LOADER_ATTRIBUTE, d.getClassLoaderId() );
+							context.createProperty( GroovyBehaviorSupport.SCRIPT_PROPERTY, String.class ).setValue( d.getScript() );
 						}
 						break;
 					}
@@ -263,44 +262,19 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 		private final File script;
 		private final long changed;
 		private final String digest;
-		private final static Pattern pattern = Pattern.compile( "(?s)\\s*/\\*+\\s?(.*?)\\*/" );
 
 		public static ScriptDescriptor parseFile( File script )
 		{
-			Map<String, String> params = Maps.newHashMap();
 			String baseName = script.getName().substring( 0, script.getName().lastIndexOf( ".groovy" ) );
-			params.put( "id", baseName );
-			params.put( "name", baseName );
-			params.put( "category", MiscCategory.CATEGORY );
-			params.put( "description", "" );
-			params.put( "icon", baseName + ".png" );
+			ParsedGroovyScript headers = new ParsedGroovyScript( getFileContent( script ) );
 
-			Matcher m = pattern.matcher( getFileContent( script ) );
-			if( m.find() )
-			{
-				StringBuilder description = new StringBuilder();
-				for( String line : m.group( 1 ).split( "\r\n|\r|\n" ) )
-				{
-					if( line.startsWith( " *" ) )
-						line = line.substring( 2 );
-					line = line.trim();
-					if( line.startsWith( "@" ) )
-					{
-						String[] parts = line.split( "\\s", 2 );
-						params.put( parts[0].substring( 1 ), parts[1].trim() );
-					}
-					else
-						description.append( line ).append( '\n' );
-				}
-				params.put( "description", description.toString().trim() );
-			}
-
-			File icon = new File( script.getParentFile(), params.get( "icon" ) );
+			File icon = new File( script.getParentFile(), headers.getHeader( "icon", baseName + ".png" ) );
 			FileInputStream fis = null;
+			String digest = null;
 			try
 			{
 				fis = new FileInputStream( script );
-				params.put( "digest", DigestUtils.md5Hex( fis ) );
+				digest = DigestUtils.md5Hex( fis );
 			}
 			catch( FileNotFoundException e )
 			{
@@ -323,16 +297,18 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 				}
 			}
 
-			return new ScriptDescriptor( params.get( "id" ), MapUtils.getOr( params, "classloader", params.get( "id" ) ),
-					script, params.get( "category" ), params.get( "name" ), params.get( "description" ),
-					icon.exists() ? icon : null, params.get( "digest" ), params.get( "help" ) );
+			return new ScriptDescriptor( headers.getHeader( "id", baseName ), headers.getHeader( "classloader",
+					headers.getHeader( "id", baseName ) ), script, headers.getHeader( "category", MiscCategory.CATEGORY ),
+					headers.getHeader( "name", baseName ), headers.getDescription(), icon.exists() ? icon : null, digest,
+					headers.getHeader( "help", null ) );
 		}
 
 		private static String getFileContent( File file )
 		{
+			Reader in = null;
 			try
 			{
-				Reader in = new FileReader( file );
+				in = new FileReader( file );
 				StringBuilder sb = new StringBuilder();
 				char[] chars = new char[1 << 16];
 				int length;
@@ -341,7 +317,6 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 				{
 					sb.append( chars, 0, length );
 				}
-				in.close();
 				return sb.toString();
 			}
 			catch( FileNotFoundException e )
@@ -352,6 +327,11 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 			{
 				e.printStackTrace();
 			}
+			finally
+			{
+				Closeables.closeQuietly( in );
+			}
+
 			return "";
 		}
 

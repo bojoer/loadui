@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.groovy;
+package com.eviware.loadui.util.groovy;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -38,27 +38,27 @@ public class ClassLoaderRegistry implements Releasable
 {
 	public static final Logger log = LoggerFactory.getLogger( ClassLoaderRegistry.class );
 
-	private final ConcurrentMap<String, GroovyComponentClassLoader> classLoaders = new MapMaker().weakValues()
-			.evictionListener( new MapEvictionListener<String, GroovyComponentClassLoader>()
+	private final ConcurrentMap<String, GroovyEnvironmentClassLoader> classLoaders = new MapMaker().weakValues()
+			.evictionListener( new MapEvictionListener<String, GroovyEnvironmentClassLoader>()
 			{
 				@Override
-				public void onEviction( String key, GroovyComponentClassLoader value )
+				public void onEviction( String key, GroovyEnvironmentClassLoader value )
 				{
 					log.debug( "GroovyClassLoader evicted: {}", key );
 				}
 			} ).makeMap();
 
-	public synchronized GroovyComponentClassLoader useClassLoader( String id, Object user )
+	public synchronized GroovyEnvironmentClassLoader useClassLoader( String id, Object user )
 	{
-		GroovyComponentClassLoader classLoader = classLoaders.get( id );
+		GroovyEnvironmentClassLoader classLoader = classLoaders.get( id );
 		if( classLoader == null )
 		{
-			classLoader = AccessController.doPrivileged( new PrivilegedAction<GroovyComponentClassLoader>()
+			classLoader = AccessController.doPrivileged( new PrivilegedAction<GroovyEnvironmentClassLoader>()
 			{
 				@Override
-				public GroovyComponentClassLoader run()
+				public GroovyEnvironmentClassLoader run()
 				{
-					return new GroovyComponentClassLoader( GroovyShell.class.getClassLoader() );
+					return new GroovyEnvironmentClassLoader( GroovyShell.class.getClassLoader() );
 				}
 			} );
 			classLoaders.put( id, classLoader );

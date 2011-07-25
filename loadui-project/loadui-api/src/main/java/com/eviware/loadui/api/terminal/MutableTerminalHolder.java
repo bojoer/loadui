@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.terminal;
 
+import com.eviware.loadui.api.component.ComponentContext.LikeFunction;
+
 public interface MutableTerminalHolder extends TerminalHolder
 {
 	/**
@@ -56,4 +58,13 @@ public interface MutableTerminalHolder extends TerminalHolder
 	 *           The Terminal to remove.
 	 */
 	public void deleteTerminal( Terminal terminal );
+
+	/**
+	 * Allows setting the like behavior of an InputTerminal.
+	 * 
+	 * @param terminal
+	 *           The InputTerminal to set the LikeFunction for.
+	 * @param likeFuntion
+	 */
+	public void setLikeFunction( InputTerminal terminal, LikeFunction likeFunction );
 }

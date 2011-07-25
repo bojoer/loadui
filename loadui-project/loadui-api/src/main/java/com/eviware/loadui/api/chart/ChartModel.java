@@ -74,6 +74,7 @@ public class ChartModel
 
 	public void addPoint( int serieIndex, double x, double y )
 	{
+		System.out.println( "!!!Adding point: " + x + ":" + y + " for serie: " + series.get( serieIndex ).getName() );
 		Point p = new Point( x, y );
 		if( series != null && serieIndex >= 0 && serieIndex < series.size() && series.get( serieIndex ).isEnabled() )
 			firePointAddedToModel( series.get( serieIndex ), p );

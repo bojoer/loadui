@@ -1,4 +1,19 @@
-package com.eviware.loadui.groovy;
+/*
+ * Copyright 2011 eviware software ab
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl5
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
+package com.eviware.loadui.util.groovy;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -15,13 +30,13 @@ import com.google.common.collect.Sets;
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 
-public class GroovyComponentClassLoader extends GroovyClassLoader
+public class GroovyEnvironmentClassLoader extends GroovyClassLoader
 {
-	public static final Logger log = LoggerFactory.getLogger( GroovyComponentClassLoader.class );
+	public static final Logger log = LoggerFactory.getLogger( GroovyEnvironmentClassLoader.class );
 
 	private final HashSet<Object> loadedDeps = Sets.newHashSet();
 
-	public GroovyComponentClassLoader( ClassLoader classLoader )
+	public GroovyEnvironmentClassLoader( ClassLoader classLoader )
 	{
 		super( classLoader );
 	}

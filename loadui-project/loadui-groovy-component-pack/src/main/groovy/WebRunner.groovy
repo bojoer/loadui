@@ -109,7 +109,7 @@ runAction = null
 
 def dummyUrl = "http://GoSpamYourself.com"
 
-validateUrl = {  
+validateUrl = {
 	if( url.value && !( url.value.toLowerCase().startsWith( "http://" ) || url.value.toLowerCase().startsWith( "https://" ) ) ) {
 		url.value = "http://" + url.value
 	}

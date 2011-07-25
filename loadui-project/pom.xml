@@ -10,7 +10,7 @@
 	<properties>
 		<mavenBundlePluginVersion>2.3.4</mavenBundlePluginVersion>
 		<jettyVersion>7.4.2.v20110526</jettyVersion>
-		<groovyVersion>1.8.0</groovyVersion>
+		<groovyVersion>1.8.1</groovyVersion>
 		<cometdVersion>2.2.0</cometdVersion>
 		<changelog.start.date>2011-06-13</changelog.start.date>
 		<osgiVersion>4.2.0</osgiVersion>
@@ -41,6 +41,7 @@
 		<module>loadui-reporting</module>
 		<module>loadui-test-utils</module>
 		<module>loadui-groovy-component-pack</module>
+		<module>loadui-groovy-utils</module>
 	</modules>
 	<repositories>
 		<repository>
