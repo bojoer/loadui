@@ -78,7 +78,11 @@ public class TypeConverter
 			ois.close();
 			return o;
 		}
-		catch( Exception e )
+		catch( IOException e )
+		{
+			return null;
+		}
+		catch( ClassNotFoundException e )
 		{
 			return null;
 		}

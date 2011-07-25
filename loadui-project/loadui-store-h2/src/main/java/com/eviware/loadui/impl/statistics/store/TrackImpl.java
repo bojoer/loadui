@@ -84,13 +84,13 @@ public class TrackImpl implements Track
 			{
 				int tstamp = ( ( Long )result.get( DataTable.STATIC_FIELD_TIMESTAMP ) ).intValue();
 				Map<String, Number> values = new HashMap<String, Number>();
-				Iterator<String> keys = result.keySet().iterator();
-				while( keys.hasNext() )
+				Iterator<java.util.Map.Entry<String, Object>> entries = result.entrySet().iterator();
+				while( entries.hasNext() )
 				{
-					String key = keys.next();
-					if( !DataTable.STATIC_FIELD_TIMESTAMP.equalsIgnoreCase( key ) )
+					java.util.Map.Entry<String, Object> entry = entries.next();
+					if( !DataTable.STATIC_FIELD_TIMESTAMP.equalsIgnoreCase( entry.getKey() ) )
 					{
-						values.put( key, ( Number )result.get( key ) );
+						values.put( entry.getKey(), ( Number )entry.getValue() );
 					}
 				}
 				return new EntryImpl( tstamp, values );
@@ -127,13 +127,13 @@ public class TrackImpl implements Track
 					Map<String, Object> row = queryResult.get( i );
 					Long tstamp = ( Long )row.get( DataTable.STATIC_FIELD_TIMESTAMP );
 					Map<String, Number> values = new HashMap<String, Number>();
-					Iterator<String> keys = row.keySet().iterator();
-					while( keys.hasNext() )
+					Iterator<java.util.Map.Entry<String, Object>> entries = row.entrySet().iterator();
+					while( entries.hasNext() )
 					{
-						String key = keys.next();
-						if( !DataTable.STATIC_FIELD_TIMESTAMP.equalsIgnoreCase( key ) )
+						java.util.Map.Entry<String, Object> entry = entries.next();
+						if( !DataTable.STATIC_FIELD_TIMESTAMP.equalsIgnoreCase( entry.getKey() ) )
 						{
-							values.put( key, ( Number )row.get( key ) );
+							values.put( entry.getKey(), ( Number )entry.getValue() );
 						}
 					}
 					resultList.add( new EntryImpl( tstamp, values ) );

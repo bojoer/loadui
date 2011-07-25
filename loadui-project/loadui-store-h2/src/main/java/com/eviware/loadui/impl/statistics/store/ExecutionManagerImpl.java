@@ -148,7 +148,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		// Load the executions.
 		getExecutions();
 
-		instance = this;
+		setInstance( this );
+	}
+
+	private static void setInstance( ExecutionManagerImpl instance )
+	{
+		ExecutionManagerImpl.instance = instance;
 	}
 
 	@Override
@@ -191,7 +196,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		try
 		{
 			executionDir = new File( getDBBaseDir(), FormattingUtils.formatFileName( fileName ) );
-			executionDir.mkdir();
+			if( !executionDir.mkdir() )
+			{
+				log.error( "Unable to start Execution, couldn't create directory: {}", executionDir );
+				return null;
+			}
 			dbName = executionDir.getName();
 
 			// create source meta table
@@ -361,7 +370,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		File baseDir = new File( getDBBaseDir() );
 		if( !baseDir.exists() )
 		{
-			baseDir.mkdirs();
+			if( !baseDir.mkdirs() )
+			{
+				log.error( "Unable to create directory for executions: {}", baseDir );
+				return Collections.emptyList();
+			}
 		}
 
 		File[] executionDirs = baseDir.listFiles( new FileFilter()
@@ -886,7 +899,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private class ExecutionPool
 	{
-		private final int maxSize = 10;
+		private static final int maxSize = 10;
 
 		private final ArrayList<ExecutionImpl> list = new ArrayList<ExecutionImpl>();
 

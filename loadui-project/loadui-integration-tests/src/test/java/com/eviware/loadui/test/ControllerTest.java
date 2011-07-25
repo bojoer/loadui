@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.*;
 import org.osgi.framework.Bundle;
@@ -37,6 +38,11 @@ public class ControllerTest
 {
 	private static ControllerWrapper controller;
 	private static WorkspaceProvider workspaceProvider;
+
+	private static void setWorkspaceProvider( WorkspaceProvider provider )
+	{
+		workspaceProvider = provider;
+	}
 
 	@BeforeClass
 	public static void startController() throws Exception
@@ -65,7 +71,7 @@ public class ControllerTest
 		BundleContext context = controller.getBundleContext();
 
 		ServiceReference ref = null;
-		for( int tries = 100; ref == null; tries-- )
+		for( int tries = 100; ref == null && tries > 0; tries-- )
 		{
 			ref = context.getServiceReference( WorkspaceProvider.class.getName() );
 			Thread.sleep( 100 );
@@ -73,16 +79,17 @@ public class ControllerTest
 		Object service = context.getService( ref );
 		assertThat( service, notNullValue() );
 
-		workspaceProvider = ( WorkspaceProvider )service;
+		setWorkspaceProvider( ( WorkspaceProvider )service );
 		assertThat( workspaceProvider, notNullValue() );
 	}
 
 	@Test
-	public void createAndTestWorkspace()
+	public void createAndTestWorkspace() throws IOException
 	{
 		File workspaceFile = new File( "target/workspace.xml" );
 		if( workspaceFile.exists() )
-			workspaceFile.delete();
+			if( !workspaceFile.delete() )
+				throw new IOException( "Unable to delete: " + workspaceFile );
 
 		WorkspaceItem workspace = workspaceProvider.loadWorkspace( workspaceFile );
 		assertThat( workspace, notNullValue() );

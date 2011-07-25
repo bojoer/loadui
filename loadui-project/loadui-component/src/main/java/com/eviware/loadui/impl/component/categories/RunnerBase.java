@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
@@ -100,7 +99,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final AtomicInteger workerCount = new AtomicInteger();
 	private final AtomicInteger queued = new AtomicInteger();
 
-	private final BlockingQueue<TerminalMessage> queue = new LinkedBlockingQueue<TerminalMessage>();
+	private final LinkedBlockingQueue<TerminalMessage> queue = new LinkedBlockingQueue<TerminalMessage>();
 
 	private final LinkedList<SampleStats> topStats = new LinkedList<SampleStats>();
 	private final LinkedList<SampleStats> bottomStats = new LinkedList<SampleStats>();

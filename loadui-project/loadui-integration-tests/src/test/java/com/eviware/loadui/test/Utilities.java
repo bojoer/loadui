@@ -24,6 +24,8 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.SocketException;
 
+import com.google.common.io.Closeables;
+
 /**
  * A collection of static utility methods for simplifying some tasks.
  * 
@@ -47,7 +49,8 @@ public class Utilities
 		if( sourceLocation.isDirectory() )
 		{
 			if( !targetLocation.exists() )
-				targetLocation.mkdir();
+				if( !targetLocation.mkdir() )
+					throw new IOException( "Unable to create directory: " + targetLocation );
 
 			String[] children = sourceLocation.list();
 			for( int i = 0; i < children.length; i++ )
@@ -55,17 +58,24 @@ public class Utilities
 		}
 		else
 		{
+			InputStream in = null;
+			OutputStream out = null;
+			try
+			{
+				in = new FileInputStream( sourceLocation );
+				out = new FileOutputStream( targetLocation );
 
-			InputStream in = new FileInputStream( sourceLocation );
-			OutputStream out = new FileOutputStream( targetLocation );
-
-			// Copy the bits from instream to outstream
-			byte[] buf = new byte[1024];
-			int len;
-			while( ( len = in.read( buf ) ) > 0 )
-				out.write( buf, 0, len );
-			in.close();
-			out.close();
+				// Copy the bits from instream to outstream
+				byte[] buf = new byte[1024];
+				int len;
+				while( ( len = in.read( buf ) ) > 0 )
+					out.write( buf, 0, len );
+			}
+			finally
+			{
+				Closeables.closeQuietly( in );
+				Closeables.closeQuietly( out );
+			}
 		}
 	}
 

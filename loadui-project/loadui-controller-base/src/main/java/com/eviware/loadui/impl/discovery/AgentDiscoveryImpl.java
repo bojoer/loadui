@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.discovery.AgentDiscovery;
 
-public class AgentDiscoveryImpl implements AgentDiscovery
+public final class AgentDiscoveryImpl implements AgentDiscovery
 {
 	private final static int DELAY = 30;
 	private final static Logger log = LoggerFactory.getLogger( AgentDiscoveryImpl.class );

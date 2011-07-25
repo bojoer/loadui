@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.statistics.store.Track;
 
 public class ExecutionImplTest
 {
@@ -31,7 +30,6 @@ public class ExecutionImplTest
 
 	H2ExecutionManager h2;
 	ExecutionImpl execution;
-	Track track;
 
 	@Before
 	public void initialize()

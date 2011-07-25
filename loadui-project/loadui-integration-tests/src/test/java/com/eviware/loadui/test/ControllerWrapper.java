@@ -16,6 +16,7 @@
 package com.eviware.loadui.test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Set;
@@ -65,7 +66,10 @@ public class ControllerWrapper
 		for( File bundle : bundleDir.listFiles() )
 		{
 			if( bundle.getName().startsWith( "loadui-fx-" ) )
-				bundle.delete();
+			{
+				if( !bundle.delete() )
+					throw new IOException( "Unable to delete file: " + bundle );
+			}
 			else if( bundle.getName().startsWith( "loadui-api" ) )
 			{
 				ZipFile api = new ZipFile( bundle );
@@ -86,7 +90,8 @@ public class ControllerWrapper
 				config.put( "org.osgi.framework.system.packages.extra", apiPackages.toString().substring( 1 ) );
 				api.close();
 
-				bundle.delete();
+				if( !bundle.delete() )
+					throw new IOException( "Unable to delete file: " + bundle );
 			}
 		}
 
