@@ -55,15 +55,16 @@ public class GroovyBehaviorSupport
 	private final ComponentContext context;
 	private final GroovyComponentContext groovyContext;
 	private final ClassLoaderRegistry clr;
-	private GroovyResolver resolver;
 	private final String filePath;
 	private final ScriptChangeListener scriptChangeListener;
 	private final PropertyEventListener propertyEventListener;
+	private final Property<String> scriptProperty;
 
 	private GroovyEnvironment groovyEnv;
-	private Property<String> scriptProperty;
+	private GroovyResolver resolver;
 
-	public GroovyBehaviorSupport( GroovyBehaviorProvider behaviorProvider, ComponentBehavior behavior, ComponentContext context )
+	public GroovyBehaviorSupport( GroovyBehaviorProvider behaviorProvider, ComponentBehavior behavior,
+			ComponentContext context )
 	{
 		id = context.getAttribute( ID_ATTRIBUTE, context.getAttribute( ComponentItem.TYPE, context.getLabel() ) );
 		log = LoggerFactory.getLogger( "com.eviware.loadui.groovy.component." + id );

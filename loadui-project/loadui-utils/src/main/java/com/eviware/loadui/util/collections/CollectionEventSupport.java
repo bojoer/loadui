@@ -2,6 +2,7 @@ package com.eviware.loadui.util.collections;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -205,15 +206,29 @@ public class CollectionEventSupport<V, A> implements Releasable
 		return false;
 	}
 
-	@Override
-	public void release()
+	/**
+	 * Removes all items from the collection, firing REMOVED events for each of
+	 * them. Optionally releases the items as well.
+	 * 
+	 * @param releaseItems
+	 *           If true, removed items are released.
+	 */
+	public Set<V> removeAllItems()
 	{
-		for( V item : values.keySet() )
+		ImmutableSet<V> removed = ImmutableSet.copyOf( values.keySet() );
+		values.clear();
+
+		for( V item : removed )
 		{
 			owner.fireEvent( new CollectionEvent( owner, collectionKey, CollectionEvent.Event.REMOVED, item ) );
 		}
 
-		ReleasableUtils.releaseAll( values.keySet() );
-		values.clear();
+		return removed;
+	}
+
+	@Override
+	public void release()
+	{
+		ReleasableUtils.releaseAll( removeAllItems() );
 	}
 }
