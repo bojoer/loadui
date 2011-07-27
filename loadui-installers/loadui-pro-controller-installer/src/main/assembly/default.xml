@@ -49,5 +49,18 @@
 				</excludes>
 			</unpackOptions>
 		</dependencySet>
+		<dependencySet>
+			<outputDirectory>script-monitors</outputDirectory>
+			<includes>
+				<include>com.eviware.loadui.pro:loadui-pro-groovy-monitor-pack</include>
+			</includes>
+			<scope>compile</scope>
+			<unpack>true</unpack>
+			<unpackOptions>
+				<excludes>
+					<exclude>META-INF/**</exclude>
+				</excludes>
+			</unpackOptions>
+		</dependencySet>
 	</dependencySets>
 </assembly>
