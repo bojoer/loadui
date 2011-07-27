@@ -26,6 +26,7 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.groovy.GroovyBehaviorProvider.ScriptDescriptor;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.groovy.ClassLoaderRegistry;
@@ -40,7 +41,7 @@ import com.eviware.loadui.util.groovy.resolvers.ScheduledExecutionResolver;
 import com.eviware.loadui.util.groovy.resolvers.TerminalHolderResolver;
 import com.google.common.base.Objects;
 
-public class GroovyBehaviorSupport
+public class GroovyBehaviorSupport implements Releasable
 {
 	public final static String SCRIPT_PROPERTY = "_script";
 	public final static String SCRIPT_FILE_ATTRIBUTE = "_scriptFile";
@@ -124,6 +125,12 @@ public class GroovyBehaviorSupport
 		{
 			log.error( "Compilation of Groovy script failed: ", e );
 		}
+	}
+
+	@Override
+	public void release()
+	{
+		ReleasableUtils.releaseAll( groovyEnv, resolver, groovyContext );
 	}
 
 	private class PropertyEventListener implements WeakEventHandler<PropertyEvent>
