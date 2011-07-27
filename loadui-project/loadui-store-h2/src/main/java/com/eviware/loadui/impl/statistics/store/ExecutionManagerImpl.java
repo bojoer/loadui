@@ -328,6 +328,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 		catch( SQLException e )
 		{
+			log.error( "Exception thrown when attempting to create table for {}", trackDescriptors.get( trackId ) );
 			throw new RuntimeException( "Unable to create table for source!", e );
 		}
 	}

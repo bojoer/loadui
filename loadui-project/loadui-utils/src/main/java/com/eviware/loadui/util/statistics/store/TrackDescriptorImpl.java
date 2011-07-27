@@ -18,6 +18,7 @@ package com.eviware.loadui.util.statistics.store;
 import java.util.Map;
 
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -47,5 +48,11 @@ public class TrackDescriptorImpl implements TrackDescriptor
 	public Map<String, Class<? extends Number>> getValueNames()
 	{
 		return structure;
+	}
+
+	@Override
+	public String toString()
+	{
+		return Objects.toStringHelper( this ).add( "structure", structure ).toString();
 	}
 }
