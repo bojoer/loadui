@@ -16,6 +16,7 @@
 package com.eviware.loadui.util.statistics;
 
 import com.eviware.loadui.api.statistics.DataPoint;
+import com.google.common.base.Objects;
 
 public class DataPointImpl<T extends Number> implements DataPoint<T>
 {
@@ -43,6 +44,6 @@ public class DataPointImpl<T extends Number> implements DataPoint<T>
 	@Override
 	public String toString()
 	{
-		return "DataPoint(time: " + timestamp + ", value: " + value + ")";
+		return Objects.toStringHelper( this ).add( "timestamp", timestamp ).add( "value", value ).toString();
 	}
 }

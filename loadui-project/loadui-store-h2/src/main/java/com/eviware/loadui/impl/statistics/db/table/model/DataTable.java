@@ -29,11 +29,12 @@ public class DataTable extends TableBase
 	public static final String SELECT_ARG_TIMESTAMP_GTE = "tstamp_gte";
 	public static final String SELECT_ARG_TIMESTAMP_LTE = "tstamp_lte";
 	public static final String SELECT_ARG_SOURCEID_EQ = "sourceid_eq";
-	
+
 	public static final String STATIC_FIELD_TIMESTAMP = "_TSTAMP";
 
 	public DataTable( String dbName, String name, Map<String, ? extends Class<? extends Object>> dynamicFields,
-			ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata, TableRegistry tableRegistry ) throws SQLException
+			ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata, TableRegistry tableRegistry )
+			throws SQLException
 	{
 		super( dbName, name, dynamicFields, connectionRegistry, databaseMetadata, tableRegistry );
 	}

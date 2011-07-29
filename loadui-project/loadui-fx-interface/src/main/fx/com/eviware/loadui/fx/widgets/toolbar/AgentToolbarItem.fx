@@ -21,7 +21,7 @@
 
 package com.eviware.loadui.fx.widgets.toolbar;
 
-import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
+import com.eviware.loadui.fx.ui.toolbar.ToolbarItemNode;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.dialogs.CreateNewAgentDialog;
 import com.eviware.loadui.api.model.WorkspaceItem;
@@ -32,7 +32,7 @@ import javafx.scene.input.MouseButton;
 
 def iconImage = Image { url: "{__ROOT__}images/png/agent-icon.png" };
 
-public class AgentToolbarItem extends ToolbarItem {
+public class AgentToolbarItem extends ToolbarItemNode {
     public-init var workspace:WorkspaceItem;
 	override var icon = iconImage;
 	

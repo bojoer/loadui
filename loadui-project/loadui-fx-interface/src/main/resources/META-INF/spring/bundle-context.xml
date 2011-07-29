@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="scene" class="com.eviware.loadui.fx.JavaFXActivator"
 		factory-method="getScene" />
@@ -26,6 +27,8 @@
 	<bean id="inspectorPanel" factory-bean="mainWindow" factory-method="getInspectorPanel" />
 	
 	<bean id="applicationState" factory-bean="mainWindow" factory-method="getApplicationState" />
+	
+	<bean id="toolbarItemManager" class="com.eviware.loadui.fx.osgi.ToolbarItemManager" />
 	
 	<bean id="inspectorManager" class="com.eviware.loadui.fx.osgi.InspectorManager">
 		<property name="inspectorPanel" ref="inspectorPanel" />

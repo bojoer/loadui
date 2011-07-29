@@ -47,7 +47,7 @@
 					<instructions>
 						<_include>src/main/filters/default.properties</_include>
 						<Bundle-Activator>com.eviware.loadui.fx.JavaFXActivator</Bundle-Activator>
-						<Private-Package>com.eviware.loadui.fx*</Private-Package>
+						<Export-Package>com.eviware.loadui.fx*</Export-Package>
 						<Embed-Dependency>*;scope=provided</Embed-Dependency>
 						<Import-Package>!org.apache.batik.*;!com.sun.javaws.jnl;!com.sun.image.codec.*;!javax.jnlp;!com.sun.deploy.*;!org.jdesktop*;!org.jvnet*;!org.eclipse.swt*;!apple.laf.*;!com.sun.java.swing.plaf.*;!com.sun.org.apache.*;!org.apache.xml.*;!sun.*;*</Import-Package>
 					</instructions>
@@ -130,6 +130,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-utils</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-layout</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
@@ -147,6 +152,29 @@
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
 			<version>${osgiVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-core</artifactId>
+			<version>1.2.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>org.springframework.aop</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>org.springframework.context</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>org.springframework.beans</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>org.springframework.core</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

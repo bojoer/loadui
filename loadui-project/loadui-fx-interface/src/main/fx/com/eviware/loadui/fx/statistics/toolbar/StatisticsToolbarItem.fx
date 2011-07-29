@@ -26,14 +26,14 @@ import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.popup.TooltipHolder;
 
-import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
+import com.eviware.loadui.fx.ui.toolbar.ToolbarItemNode;
 
 /**
  * An item displayed in a Toolbar.
  *
  * @author dain.nilsson
  */
-public class StatisticsToolbarItem extends ToolbarItem {
+public class StatisticsToolbarItem extends ToolbarItemNode {
 	
 	override function initalizeTooltipHandlers(): Void {
 	    //do nohing

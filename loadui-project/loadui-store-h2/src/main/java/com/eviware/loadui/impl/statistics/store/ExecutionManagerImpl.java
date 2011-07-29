@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,6 +60,11 @@ import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.MapMaker;
+import com.google.common.collect.Maps;
 
 /**
  * Implementation of execution manager. Basically main class for data handling.
@@ -72,6 +76,16 @@ import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
 public abstract class ExecutionManagerImpl implements ExecutionManager, DataSourceProvider, Releasable
 {
 	private static Logger log = LoggerFactory.getLogger( ExecutionManagerImpl.class );
+
+	private static final Map<String, String> columnNames = new MapMaker().weakKeys().makeComputingMap(
+			new Function<String, String>()
+			{
+				@Override
+				public String apply( String name )
+				{
+					return name.replaceAll( "\\s", "_" ).replaceAll( "[^\\w]", "" ).toUpperCase();
+				}
+			} );
 
 	private static ExecutionManagerImpl instance;
 
@@ -301,8 +315,14 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			// create data table
 			TrackDescriptor td = trackDescriptors.get( trackId );
+			ImmutableMap.Builder<String, Class<? extends Number>> builder = ImmutableMap.builder();
+			for( java.util.Map.Entry<String, Class<? extends Number>> entry : td.getValueNames().entrySet() )
+			{
+				builder.put( columnNames.get( entry.getKey() ), entry.getValue() );
+			}
+
 			DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), interpolationLevel, source ),
-					td.getValueNames(), connectionRegistry, metadata, tableRegistry );
+					builder.build(), connectionRegistry, metadata, tableRegistry );
 
 			SourceMetadataTable sources = ( SourceMetadataTable )tableRegistry.getTable( dbName,
 					SourceMetadataTable.SOURCE_TABLE_NAME );
@@ -562,11 +582,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			currentExecution.updateLength( timestamp );
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( DataTable.STATIC_FIELD_TIMESTAMP, timestamp );
-			Collection<String> nameCollection = entry.getNames();
-			for( Iterator<String> iterator = nameCollection.iterator(); iterator.hasNext(); )
+
+			for( String name : getTrack( trackId ).getTrackDescriptor().getValueNames().keySet() )
 			{
-				String name = iterator.next();
-				data.put( name, entry.getValue( name ) );
+				data.put( columnNames.get( name ), entry.getValue( name ) );
 			}
 			try
 			{
@@ -640,10 +659,22 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_LTE, System.currentTimeMillis() );
-		return dtd.selectFirst( data );
+
+		HashMap<String, Object> cleanedData = Maps.newHashMap();
+		Map<String, Object> rawData = dtd.selectFirst( data );
+		if( !rawData.isEmpty() )
+		{
+			for( String name : getTrack( trackId ).getTrackDescriptor().getValueNames().keySet() )
+			{
+				cleanedData.put( name, rawData.remove( columnNames.get( name ) ) );
+			}
+			cleanedData.putAll( rawData );
+		}
+
+		return cleanedData;
 	}
 
-	public List<Map<String, Object>> read( String executionId, String trackId, String source, long startTime,
+	public Iterable<Map<String, Object>> read( String executionId, String trackId, String source, long startTime,
 			long endTime, int interpolationLevel ) throws SQLException
 	{
 		TableBase dtd = tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(),
@@ -659,7 +690,23 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_LTE, endTime );
 
-		return dtd.select( data );
+		final Set<String> descriptorNames = getTrack( trackId ).getTrackDescriptor().getValueNames().keySet();
+
+		return Iterables.transform( dtd.select( data ), new Function<Map<String, Object>, Map<String, Object>>()
+		{
+			@Override
+			public Map<String, Object> apply( Map<String, Object> rawData )
+			{
+				HashMap<String, Object> data = Maps.newHashMap();
+				for( String name : descriptorNames )
+				{
+					data.put( name, rawData.remove( columnNames.get( name ) ) );
+				}
+				data.putAll( rawData );
+
+				return data;
+			}
+		} );
 	}
 
 	public void deleteTrack( String executionId, String trackId ) throws SQLException

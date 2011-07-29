@@ -38,7 +38,7 @@ import javafx.scene.layout.LayoutInfo;
 import org.jfxtras.scene.shape.MultiRoundRectangle;
 
 /**
- * Graphical node used by the Toolbar to represent a group of ToolbarItems. 
+ * Graphical node used by the Toolbar to represent a group of ToolbarItemNodes. 
  *
  * @author dain.nilsson
  */
@@ -70,16 +70,16 @@ public class ToolbarItemGroup extends CustomNode {
 	public var expanderButtonHover: Boolean = false;
 	
 	/**
-	 * A ToolbarExpander used to place the ToolbarItems in this ToolbarGroup into when in an expanded state.
+	 * A ToolbarExpander used to place the ToolbarItemNodes in this ToolbarGroup into when in an expanded state.
 	 */
 	public-init var expandedGroup:ToolbarExpander;
 
 	def frame = ToolbarItemFrame {}
 	
 	/**
-	 * The ToolbarItems contained in this ToolbarGroup.
+	 * The ToolbarItemNodes contained in this ToolbarGroup.
 	 */
-	public var items: ToolbarItem[] on replace {
+	public var items: ToolbarItemNode[] on replace {
 		if( sizeof items == 0 ) {
 			clearFrame();
 		} else {
@@ -88,7 +88,7 @@ public class ToolbarItemGroup extends CustomNode {
 	}
 	
 	/**
-	 * The category of the ToolbarItems in this ToolbarItemGroup.
+	 * The category of the ToolbarItemNodes in this ToolbarItemGroup.
 	 */
 	public-init var category:String;
 	var label:String;

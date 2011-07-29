@@ -21,7 +21,7 @@
 
 package com.eviware.loadui.fx.widgets.toolbar;
 
-import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
+import com.eviware.loadui.fx.ui.toolbar.ToolbarItemNode;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import javafx.scene.image.Image;
@@ -34,7 +34,7 @@ import com.eviware.loadui.fx.AppState;
 
 def defaultImage = Image { url: "{__ROOT__}images/png/default-component-icon.png" };
 
-public class ComponentToolbarItem extends ToolbarItem {
+public class ComponentToolbarItem extends ToolbarItemNode {
 	public var descriptor:ComponentDescriptor on replace {
 		icon = if( descriptor.getIcon() != null )
 			Image { url: descriptor.getIcon().toString() }

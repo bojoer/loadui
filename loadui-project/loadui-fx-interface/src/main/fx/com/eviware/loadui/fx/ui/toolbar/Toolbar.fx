@@ -59,6 +59,7 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.resources.Paints;
 import com.eviware.loadui.fx.ui.pagination.Pagination;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
+import com.eviware.loadui.fx.osgi.ToolbarItemManager;
 
 //import org.jfxtras.animation.wipe.XWipePanel;
 import com.eviware.loadui.fx.ui.XWipePanel;
@@ -149,7 +150,7 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 	/** Label of the link that will be added as the last item in the toolbar. If not specified, link URL will be used instead */
 	public var linkLabel: String = null;
 
-	public function addItem( item:ToolbarItem ) {
+	public function addItem( item:ToolbarItemNode ) {
 		def group = item.category.toUpperCase();
 		
 		if( not itemGroups.containsKey( group ) ) {
@@ -160,10 +161,10 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 		
 		def itemGroup = itemGroups.get( group ) as ToolbarItemGroup;
 		
-		itemGroup.items = Sequences.sort( [ itemGroup.items, item ], itemOrder ) as ToolbarItem[];
+		itemGroup.items = Sequences.sort( [ itemGroup.items, item ], itemOrder ) as ToolbarItemNode[];
 	}
 	
-	public function removeItem( item:ToolbarItem ) {
+	public function removeItem( item:ToolbarItemNode ) {
 		def itemGroup = itemGroups.get( item.category.toUpperCase() ) as ToolbarItemGroup;
 		if( itemGroup != null ) {
 			delete item from itemGroup.items;
@@ -439,6 +440,8 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 			itemGroups.put( "\uffff{link.label}", link );
 			items = Sequences.sort( [ items, link ], groupOrder ) as Node[];
 		}
+		
+		ToolbarItemManager.registerToolbar( this );
 	}	
 
 }

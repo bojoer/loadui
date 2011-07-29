@@ -32,15 +32,15 @@ import javafx.scene.paint.Color;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 
 /**
- * A holder for ToolbarItems, which provides a DraggableFrame with a placeholder, and displays the ToolbarItems label.
+ * A holder for ToolbarItemNodes, which provides a DraggableFrame with a placeholder, and displays the ToolbarItemNodes label.
  *
  * @author dain.nilsson
  */
 public class ToolbarItemFrame extends CustomNode {
 	/**
-	 * A ToolbarItem to place inside the ToolbarItemFrame.
+	 * A ToolbarItemNode to place inside the ToolbarItemFrame.
 	 */
-	public var item:ToolbarItem;
+	public var item:ToolbarItemNode;
 	
 	public var font:Font = Font.font("Amble", 10 );
 	

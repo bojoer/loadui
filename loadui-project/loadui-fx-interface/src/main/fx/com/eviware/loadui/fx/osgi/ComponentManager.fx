@@ -30,7 +30,7 @@ import java.util.Comparator;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
-import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
+import com.eviware.loadui.fx.ui.toolbar.ToolbarItemNode;
 import com.eviware.loadui.api.component.ComponentRegistry;
 
 import com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem;
@@ -104,8 +104,8 @@ public class ComponentManager extends ComponentRegistry.DescriptorListener {
 	override function descriptorRemoved( descriptor:ComponentDescriptor ):Void {
 		log.debug( "Removed ComponentDescriptor: \{\}", descriptor );
 		FxUtils.runInFxThread( function():Void {
-			def toolbarItem = items.remove( descriptor ) as ToolbarItem;
-			def tcToolbarItem = testcaseItems.remove ( descriptor ) as ToolbarItem;
+			def toolbarItem = items.remove( descriptor ) as ToolbarItemNode;
+			def tcToolbarItem = testcaseItems.remove ( descriptor ) as ToolbarItemNode;
 			projectToolbar.removeItem( toolbarItem );
 			testcaseToolbar.removeItem( tcToolbarItem );
 		} );

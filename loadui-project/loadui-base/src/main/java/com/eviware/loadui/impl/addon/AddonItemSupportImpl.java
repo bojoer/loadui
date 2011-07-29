@@ -22,7 +22,9 @@ import org.springframework.core.convert.ConversionService;
 import com.eviware.loadui.api.addon.AddonHolder;
 import com.eviware.loadui.api.addon.AddonHolder.Support;
 import com.eviware.loadui.api.addon.AddonItem;
+import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
+import com.eviware.loadui.api.addressable.AddressableRegistry.DuplicateAddressException;
 import com.eviware.loadui.api.model.PropertyHolder;
 import com.eviware.loadui.api.property.PropertyMap;
 import com.eviware.loadui.api.traits.Releasable;
@@ -36,20 +38,22 @@ import com.google.common.base.Objects;
 
 public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 {
-	private final AddonItemHolderSupport owner;
+	private final AddonItemHolderSupport parent;
 	private final AddonItemConfig config;
 	private final AddonListConfig parentListConfig;
 	private final AddonItemHolderSupport addonItemHolderSupport;
+	private final AddressableRegistry addressableRegistry;
 
 	private final EventSupport eventSupport = new EventSupport();
 	private final AttributeHolderSupport attributeSupport;
 
+	private AddonItem owner;
 	private PropertyMapImpl propertyMap;
 	private AddonHolderSupportImpl addonHolderSupport;
 
-	public AddonItemSupportImpl( AddonItemHolderSupport owner, AddonItemConfig config, AddonListConfig listConfig )
+	public AddonItemSupportImpl( AddonItemHolderSupport parent, AddonItemConfig config, AddonListConfig listConfig )
 	{
-		this.owner = owner;
+		this.parent = parent;
 		this.config = config;
 		this.parentListConfig = listConfig;
 
@@ -62,6 +66,31 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 
 		attributeSupport = new AttributeHolderSupport( config.getAttributes() == null ? config.addNewAttributes()
 				: config.getAttributes() );
+
+		addressableRegistry = BeanInjector.getBean( AddressableRegistry.class );
+	}
+
+	@Override
+	public void init( AddonItem owner )
+	{
+		this.owner = owner;
+
+		try
+		{
+			addressableRegistry.register( owner );
+		}
+		catch( DuplicateAddressException e )
+		{
+			config.setId( addressableRegistry.generateId() );
+			try
+			{
+				addressableRegistry.register( owner );
+			}
+			catch( DuplicateAddressException e1 )
+			{
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -132,7 +161,7 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 			if( Objects.equal( config.getId(), parentListConfig.getAddonArray( i ).getId() ) )
 			{
 				parentListConfig.removeAddon( i );
-				owner.removeAddonItem( this );
+				parent.removeAddonItem( this );
 				return;
 			}
 		}
@@ -153,6 +182,7 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	@Override
 	public void release()
 	{
+		addressableRegistry.unregister( owner );
 		eventSupport.clearEventListeners();
 	}
 }

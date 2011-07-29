@@ -27,27 +27,39 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
+import com.eviware.loadui.api.ui.ToolbarItem;
+
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.popup.TooltipHolder;
+
+import java.net.URI;
 
 /**
  * An item displayed in a Toolbar.
  *
  * @author dain.nilsson
  */
-public class ToolbarItem extends BaseNode, Draggable, TooltipHolder {
+public class ToolbarItemNode extends BaseNode, Draggable, TooltipHolder, ToolbarItem {
 	
 	/**
 	 * The icon to show in the Toolbar for this ToolbarItem.
 	 */
 	public-init protected var icon:Image;
 	
+	override function getIconUri():URI {
+		new URI( icon.url )
+	}
+	
 	/**
 	 * The label for this ToolbarItem.
 	 */
 	public var label:String;
+	
+	override function getLabel():String {
+		label
+	}
 
 	/**
 	 * The label color for this ToolbarItem.
@@ -58,6 +70,10 @@ public class ToolbarItem extends BaseNode, Draggable, TooltipHolder {
 	 * The category to place this ToolbarItem in.
 	 */
 	public-init protected var category:String = "misc";
+	
+	override function getCategory():String {
+		category
+	}
 	
 	override var revert = false;
 	

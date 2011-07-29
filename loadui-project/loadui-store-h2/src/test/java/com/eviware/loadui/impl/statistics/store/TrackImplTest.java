@@ -31,6 +31,7 @@ import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
+import com.google.common.collect.Lists;
 
 public class TrackImplTest
 {
@@ -106,40 +107,40 @@ public class TrackImplTest
 	@Test
 	public void testGetRange()
 	{
-		List<Entry> e = ( List<Entry> )track.getRange( "local1", 15, 20, 0 );
+		List<Entry> e = Lists.newArrayList( track.getRange( "local1", 15, 20, 0 ) );
 		assertEquals( e.size(), 0 );
 
-		e = ( List<Entry> )track.getRange( "local1", 8, 9, 0 );
+		e = Lists.newArrayList( track.getRange( "local1", 8, 9, 0 ) );
 		assertEquals( e.size(), 0 );
 
-		e = ( List<Entry> )track.getRange( "local1", 20, 0, 0 );
+		e = Lists.newArrayList( track.getRange( "local1", 20, 0, 0 ) );
 		assertEquals( e.size(), 0 );
 
-		e = ( List<Entry> )track.getRange( "local1", 10, 20, 0 );
+		e = Lists.newArrayList( track.getRange( "local1", 10, 20, 0 ) );
 		assertEquals( e.size(), 1 );
 
-		e = ( List<Entry> )track.getRange( "local1", 5, 10, 0 );
+		e = Lists.newArrayList( track.getRange( "local1", 5, 10, 0 ) );
 		assertEquals( e.size(), 1 );
 
-		e = ( List<Entry> )track.getRange( "local1", 10, 10, 0 );
+		e = Lists.newArrayList( track.getRange( "local1", 10, 10, 0 ) );
 		assertEquals( e.size(), 1 );
 
-		e = ( List<Entry> )track.getRange( "local1", 5, 15, 0 );
+		e = Lists.newArrayList( track.getRange( "local1", 5, 15, 0 ) );
 		assertEquals( e.size(), 1 );
 
-		e = ( List<Entry> )track.getRange( "local2", 20, 30, 0 );
+		e = Lists.newArrayList( track.getRange( "local2", 20, 30, 0 ) );
 		assertEquals( e.size(), 2 );
 
-		e = ( List<Entry> )track.getRange( "local2", 15, 35, 0 );
+		e = Lists.newArrayList( track.getRange( "local2", 15, 35, 0 ) );
 		assertEquals( e.size(), 2 );
 
-		e = ( List<Entry> )track.getRange( "local2", 25, 35, 0 );
+		e = Lists.newArrayList( track.getRange( "local2", 25, 35, 0 ) );
 		assertEquals( e.size(), 1 );
 
-		e = ( List<Entry> )track.getRange( "local2", 15, 25, 0 );
+		e = Lists.newArrayList( track.getRange( "local2", 15, 25, 0 ) );
 		assertEquals( e.size(), 1 );
 
-		e = ( List<Entry> )track.getRange( "local3", 0, 50, 1 );
+		e = Lists.newArrayList( track.getRange( "local3", 0, 50, 1 ) );
 		assertEquals( e.size(), 1 );
 	}
 

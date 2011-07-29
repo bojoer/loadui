@@ -62,15 +62,15 @@ import javafx.scene.text.FontWeight;
 
 import com.eviware.loadui.api.component.categories.*;
 
-import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
+import com.eviware.loadui.fx.ui.toolbar.ToolbarItemNode;
 
 //Used for ordering the items
 def itemOrder:String[] = [ "response times", "request throughput", "bytes throughput", "request percentile", "assertion failures", "request errors", "running requests"  ];
 
 public class StatisticsItemOrder extends Comparator {
 	public override function compare( o1, o2 ) {
-		def t1:ToolbarItem = o1 as ToolbarItem;
-		def t2:ToolbarItem = o2 as ToolbarItem;
+		def t1:ToolbarItemNode = o1 as ToolbarItemNode;
+		def t2:ToolbarItemNode = o2 as ToolbarItemNode;
 		def index1 = Sequences.indexOf( itemOrder, t1.label.toLowerCase() );
 		def index2 = Sequences.indexOf( itemOrder, t2.label.toLowerCase() );
 	

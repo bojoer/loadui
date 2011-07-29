@@ -142,7 +142,9 @@ public abstract class AbstractLineSegmentModel extends DefaultChartModel
 			for( Object object : dataPoints )
 			{
 				dataPoint = ( DataPoint<?> )object;
-				addPoint( dataPoint.getTimestamp(), scalar * dataPoint.getValue().doubleValue(), false );
+				final double doubleValue = dataPoint.getValue().doubleValue();
+				if( !Double.isNaN( doubleValue ) )
+					addPoint( dataPoint.getTimestamp(), scalar * doubleValue, false );
 			}
 			update();
 		}

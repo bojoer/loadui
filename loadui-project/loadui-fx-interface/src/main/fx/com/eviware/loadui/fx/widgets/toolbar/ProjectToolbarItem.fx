@@ -21,7 +21,7 @@
 
 package com.eviware.loadui.fx.widgets.toolbar;
 
-import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
+import com.eviware.loadui.fx.ui.toolbar.ToolbarItemNode;
 import com.eviware.loadui.fx.FxUtils.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
@@ -34,7 +34,7 @@ import com.eviware.loadui.fx.wizards.NewProjectWizard;
 
 def iconImage = Image { url: "{__ROOT__}images/png/project-icon.png" };
 
-public class ProjectToolbarItem extends ToolbarItem {
+public class ProjectToolbarItem extends ToolbarItemNode {
     
     public-init var workspace:WorkspaceItem;
 	override var icon = iconImage;

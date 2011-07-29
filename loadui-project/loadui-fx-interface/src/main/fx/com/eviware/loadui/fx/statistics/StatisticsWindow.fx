@@ -172,6 +172,7 @@ public class StatisticsWindow {
 	}
 	
 	def toolbar: StatisticsToolbar = StatisticsToolbar {
+		id: "StatisticsToolbar"
 		layoutY: 140
 		height: bind scene.height - 140
 	}

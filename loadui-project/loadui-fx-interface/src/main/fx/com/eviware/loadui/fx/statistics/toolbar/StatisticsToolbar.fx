@@ -42,8 +42,6 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 
-import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
-
 import com.eviware.loadui.fx.FxUtils;
 
 public class StatisticsToolbar extends Toolbar, EventHandler {

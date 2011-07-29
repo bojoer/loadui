@@ -50,7 +50,7 @@ import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.menu.button.MenuBarButton;
 
 /**
- * Displays all the ToolbarItems inside a ToobarItemGroup when it is expanded.
+ * Displays all the ToolbarItemNodes inside a ToobarItemGroup when it is expanded.
  * If not all items fit on the screen at once, they are paginated, and buttons for paging are displayed.
  *
  * @author dain.nilsson

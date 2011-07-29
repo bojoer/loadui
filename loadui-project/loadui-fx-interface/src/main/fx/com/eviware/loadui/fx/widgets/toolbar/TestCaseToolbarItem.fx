@@ -21,7 +21,7 @@
 
 package com.eviware.loadui.fx.widgets.toolbar;
 
-import com.eviware.loadui.fx.ui.toolbar.ToolbarItem;
+import com.eviware.loadui.fx.ui.toolbar.ToolbarItemNode;
 import com.eviware.loadui.fx.FxUtils.*;
 
 import javafx.scene.input.MouseEvent;
@@ -31,7 +31,7 @@ import com.eviware.loadui.fx.AppState;
 
 import com.eviware.loadui.fx.MainWindow;
 
-public class TestCaseToolbarItem extends ToolbarItem {
+public class TestCaseToolbarItem extends ToolbarItemNode {
 	override var icon = testCaseImage;
 	
 	override var tooltip = "Creates a new TestCase in the Project";

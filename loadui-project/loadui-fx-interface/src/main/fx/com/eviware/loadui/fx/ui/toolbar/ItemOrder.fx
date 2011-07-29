@@ -88,8 +88,8 @@ public class ItemOrder extends Comparator {
 	def runnerOrder:String[] = [ "WEB PAGE RUNNER", "SOAPUI RUNNER", "SCRIPT RUNNER", "PROCESS RUNNER" ];
 	    	
 	public override function compare(o1, o2) {
-		 def t1:ToolbarItem = o1 as ToolbarItem;
-		 def t2:ToolbarItem = o2 as ToolbarItem;
+		 def t1:ToolbarItemNode = o1 as ToolbarItemNode;
+		 def t2:ToolbarItemNode = o2 as ToolbarItemNode;
 		 
 		 if (t1.category.equalsIgnoreCase("Generators") and t2.category.equalsIgnoreCase("Generators")) {
 			var index1 = Sequences.indexOf(loadGeneratorOrder, t1.label.toUpperCase());

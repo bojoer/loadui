@@ -16,7 +16,6 @@
 package com.eviware.loadui.util.statistics;
 
 import java.util.Collections;
-import java.util.Iterator;
 
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.Statistic;
@@ -25,6 +24,8 @@ import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 public class StatisticImpl<T extends Number> implements Statistic<T>
 {
@@ -96,7 +97,16 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 		if( track == null )
 			return Collections.emptyList();
 
-		return new DataPointIterable( track.getRange( source, start, end, interpolationLevel ), name );
+		return Iterables.transform( track.getRange( source, start, end, interpolationLevel ),
+				new Function<Entry, DataPoint<T>>()
+				{
+					@Override
+					@SuppressWarnings( "unchecked" )
+					public DataPoint<T> apply( Entry entry )
+					{
+						return new DataPointImpl<T>( entry.getTimestamp(), ( T )entry.getValue( name ) );
+					}
+				} );
 	}
 
 	@Override
@@ -108,57 +118,7 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	@Override
 	public Iterable<DataPoint<T>> getPeriod( long start, long end )
 	{
-		return getPeriod( start, end, 0 );
-	}
-
-	private class DataPointIterable implements Iterable<DataPoint<T>>
-	{
-		private final Iterable<Entry> iterable;
-		private final String key;
-
-		public DataPointIterable( Iterable<Entry> iterable, String key )
-		{
-			this.iterable = iterable;
-			this.key = key;
-		}
-
-		@Override
-		public Iterator<DataPoint<T>> iterator()
-		{
-			return new DataPointIterator( iterable.iterator(), key );
-		}
-	}
-
-	private class DataPointIterator implements Iterator<DataPoint<T>>
-	{
-		private final Iterator<Entry> iterator;
-		private final String key;
-
-		public DataPointIterator( Iterator<Entry> iterator, String key )
-		{
-			this.iterator = iterator;
-			this.key = key;
-		}
-
-		@Override
-		public boolean hasNext()
-		{
-			return iterator.hasNext();
-		}
-
-		@Override
-		@SuppressWarnings( "unchecked" )
-		public DataPoint<T> next()
-		{
-			Entry entry = iterator.next();
-			return new DataPointImpl<T>( entry.getTimestamp(), ( T )entry.getValue( key ) );
-		}
-
-		@Override
-		public void remove()
-		{
-			throw new UnsupportedOperationException();
-		}
+		return getPeriod( start, end, 0, manager.getCurrentExecution() );
 	}
 
 	@Override

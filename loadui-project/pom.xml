@@ -8,7 +8,7 @@
 	<name>loadUI Project</name>
 	<url>http://www.loadui.org</url>
 	<properties>
-		<mavenBundlePluginVersion>2.3.4</mavenBundlePluginVersion>
+		<mavenBundlePluginVersion>2.3.5</mavenBundlePluginVersion>
 		<jettyVersion>7.4.2.v20110526</jettyVersion>
 		<groovyVersion>1.8.1</groovyVersion>
 		<cometdVersion>2.2.0</cometdVersion>
@@ -218,13 +218,13 @@
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>annotations</artifactId>
 			<version>1.3.9</version>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>
 			<version>1.3.9</version>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

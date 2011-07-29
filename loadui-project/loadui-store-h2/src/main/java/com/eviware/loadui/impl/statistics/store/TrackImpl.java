@@ -16,11 +16,8 @@
 package com.eviware.loadui.impl.statistics.store;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -32,6 +29,9 @@ import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.impl.statistics.db.table.model.DataTable;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 public class TrackImpl implements Track
 {
@@ -117,33 +117,25 @@ public class TrackImpl implements Track
 	{
 		try
 		{
-			List<Map<String, Object>> queryResult = manager.read( execution.getId(), id, source, startTime, endTime,
-					interpolationLevel );
-			if( queryResult.size() > 0 )
-			{
-				List<Entry> resultList = new ArrayList<Entry>();
-				for( int i = 0; i < queryResult.size(); i++ )
-				{
-					Map<String, Object> row = queryResult.get( i );
-					Long tstamp = ( Long )row.get( DataTable.STATIC_FIELD_TIMESTAMP );
-					Map<String, Number> values = new HashMap<String, Number>();
-					Iterator<java.util.Map.Entry<String, Object>> entries = row.entrySet().iterator();
-					while( entries.hasNext() )
+			return Iterables.transform(
+					manager.read( execution.getId(), id, source, startTime, endTime, interpolationLevel ),
+					new Function<Map<String, Object>, Entry>()
 					{
-						java.util.Map.Entry<String, Object> entry = entries.next();
-						if( !DataTable.STATIC_FIELD_TIMESTAMP.equalsIgnoreCase( entry.getKey() ) )
+						@Override
+						public Entry apply( Map<String, Object> entryData )
 						{
-							values.put( entry.getKey(), ( Number )entry.getValue() );
+							Long timestamp = ( Long )entryData.remove( DataTable.STATIC_FIELD_TIMESTAMP );
+
+							return new EntryImpl( timestamp, Maps.transformValues( entryData, new Function<Object, Number>()
+							{
+								@Override
+								public Number apply( Object value )
+								{
+									return ( Number )value;
+								}
+							} ) );
 						}
-					}
-					resultList.add( new EntryImpl( tstamp, values ) );
-				}
-				return resultList;
-			}
-			else
-			{
-				return Collections.emptyList();
-			}
+					} );
 		}
 		catch( SQLException e )
 		{
