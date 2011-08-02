@@ -15,9 +15,12 @@
  */
 package com.eviware.loadui.util.groovy.resolvers;
 
+import java.util.ArrayList;
+
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.groovy.GroovyResolver;
+import com.google.common.collect.Lists;
 
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
@@ -44,11 +47,16 @@ public class DelegatingResolver implements GroovyResolver.Methods, GroovyResolve
 		return resolver instanceof Releasable ? new NonReleasingResolver( resolver ) : resolver;
 	}
 
-	private final GroovyResolver[] delegates;
+	private final ArrayList<GroovyResolver> delegates;
 
 	public DelegatingResolver( GroovyResolver... delegates )
 	{
-		this.delegates = delegates;
+		this.delegates = Lists.newArrayList( delegates );
+	}
+
+	public void addResolver( GroovyResolver resolver )
+	{
+		delegates.add( resolver );
 	}
 
 	@Override
@@ -97,7 +105,7 @@ public class DelegatingResolver implements GroovyResolver.Methods, GroovyResolve
 	@Override
 	public void release()
 	{
-		ReleasableUtils.releaseAll( ( Object[] )delegates );
+		ReleasableUtils.releaseAll( delegates );
 	}
 
 	private static final class NonReleasingResolver implements GroovyResolver.Methods, GroovyResolver.Properties
