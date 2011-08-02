@@ -44,13 +44,28 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 
 	public enum Stats
 	{
-		AVERAGE, COUNT, SUM, STD_DEV, STD_DEV_SUM, PERCENTILE_25TH, PERCENTILE_75TH, PERCENTILE_90TH, MEDIAN, MIN, MAX;
+		AVERAGE( "The average %v." ), COUNT, SUM, STD_DEV( "The standard deviation of %v." ), STD_DEV_SUM, PERCENTILE_25TH(
+				"The 25th percentile of %v." ), PERCENTILE_75TH( "The 75th percentile of %v." ), PERCENTILE_90TH(
+				"The 90th percentile of %v." ), MEDIAN( "The median value of %v." ), MIN( "The mininum value of %v." ), MAX(
+				"The maximum value of %v." );
+
+		private final String description;
+
+		Stats()
+		{
+			this.description = this.name() + " of %v.";
+		}
+
+		Stats( String description )
+		{
+			this.description = description;
+		}
 	}
 
 	double sum = 0.0;
 	long count = 0L;
 
-	private PriorityQueue<Double> sortedValues = new PriorityQueue<Double>();
+	private final PriorityQueue<Double> sortedValues = new PriorityQueue<Double>();
 
 	public SampleStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> trackStructure, Map<String, Object> config )
@@ -80,6 +95,7 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 		}
 	}
 
+	@Override
 	public Entry output()
 	{
 		if( count == 0 )
@@ -286,4 +302,16 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 			return new SampleStatisticsWriter( statisticsManager, variable, trackStructure, config );
 		}
 	}
+
+	@Override
+	public String getDescriptionForMetric( String metricName )
+	{
+		for( Stats s : Stats.values() )
+		{
+			if( s.name().equals( metricName ) )
+				return s.description;
+		}
+		return null;
+	}
+
 }

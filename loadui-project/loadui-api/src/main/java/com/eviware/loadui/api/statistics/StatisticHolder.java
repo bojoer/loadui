@@ -40,6 +40,7 @@ public interface StatisticHolder extends EventFirer, Addressable, Labeled
 	 * Retrieves a particular Statistic by its name.
 	 * 
 	 * @param statisticName
+	 * @param description
 	 * @return
 	 */
 	public StatisticVariable getStatisticVariable( String statisticVariableName );

@@ -42,7 +42,20 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 
 	public enum Stats
 	{
-		TOTAL, PER_SECOND;
+		TOTAL( "The number of %v in total since the last time the project was started or resetted." ), PER_SECOND(
+				"The number of %v per second." );
+
+		private final String description;
+
+		Stats()
+		{
+			this.description = this.name() + " of %v.";
+		}
+
+		Stats( String description )
+		{
+			this.description = description;
+		}
 	}
 
 	@Override
@@ -143,5 +156,16 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 		{
 			return new CounterStatisticsWriter( statisticsManager, variable, trackStructure, config );
 		}
+	}
+
+	@Override
+	public String getDescriptionForMetric( String metricName )
+	{
+		for( Stats s : Stats.values() )
+		{
+			if( s.name().equals( metricName ) )
+				return s.description;
+		}
+		return null;
 	}
 }

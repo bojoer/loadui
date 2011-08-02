@@ -20,12 +20,14 @@ import java.util.Set;
 import com.eviware.loadui.api.traits.Describable;
 import com.eviware.loadui.api.traits.Labeled;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
  * A Statistical Variable containing several Statistics, for several instances.
  * 
  * @author dain.nilsson
  */
-public interface StatisticVariable extends Describable.Mutable, Labeled
+public interface StatisticVariable extends Labeled, Describable.Mutable
 {
 	/**
 	 * When writing to the local, or main source, use this String as the source
@@ -86,4 +88,12 @@ public interface StatisticVariable extends Describable.Mutable, Labeled
 		 */
 		public void update( long timestamp, Number value );
 	}
+
+	/**
+	 * Gets the description for this a specific statistic.
+	 * 
+	 * @param statisticName
+	 * @return
+	 */
+	public String getDescriptionForStatistic( @NonNull String statisticName );
 }

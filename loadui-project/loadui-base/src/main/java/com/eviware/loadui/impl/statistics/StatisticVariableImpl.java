@@ -21,8 +21,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import javax.annotation.CheckForNull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,12 +67,13 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	private String description;
 
 	public StatisticVariableImpl( ExecutionManager executionManager, StatisticHolder parent, String name,
-			AddressableRegistry addressableRegistry )
+			AddressableRegistry addressableRegistry, String description )
 	{
 		this.manager = executionManager;
 		this.addressableRegistry = addressableRegistry;
 		this.name = name;
 		this.parent = parent;
+		this.description = description;
 
 		parent.addEventListener( ActionEvent.class, actionListener );
 	}
@@ -185,16 +184,28 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	}
 
 	@Override
-	public void setDescription( String description )
-	{
-		this.description = description;
-	}
-
-	@Override
-	@CheckForNull
 	public String getDescription()
 	{
 		return description;
+	}
+
+	@Override
+	public String getDescriptionForStatistic( String statisticName )
+	{
+		for( StatisticsWriter writer : writers )
+		{
+			String metricDescription = writer.getDescriptionForMetric( statisticName );
+			if( metricDescription != null )
+			{
+				if( metricDescription.contains( "%v" ) )
+					return metricDescription.replace( "%v", getDescription() );
+				else
+					return metricDescription + " of " + getDescription();
+			}
+		}
+
+		return getDescription();
+
 	}
 
 	private class ActionListener implements WeakEventHandler<ActionEvent>
@@ -208,5 +219,11 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 					writer.reset();
 			}
 		}
+	}
+
+	@Override
+	public void setDescription( String description )
+	{
+		this.description = description;
 	}
 }

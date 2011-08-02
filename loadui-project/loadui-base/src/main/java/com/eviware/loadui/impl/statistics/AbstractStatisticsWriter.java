@@ -29,6 +29,7 @@ import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
+import com.eviware.loadui.impl.statistics.SampleStatisticsWriter.Stats;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
@@ -151,4 +152,5 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 			return new EntryImpl( timestamp, mapBuilder.build() );
 		}
 	}
+
 }

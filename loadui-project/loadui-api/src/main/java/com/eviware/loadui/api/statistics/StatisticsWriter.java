@@ -17,6 +17,8 @@ package com.eviware.loadui.api.statistics;
 
 import java.util.Set;
 
+import javax.annotation.CheckForNull;
+
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
@@ -80,4 +82,10 @@ public interface StatisticsWriter extends Addressable
 	 * Resets the state of the StatisticsWriter.
 	 */
 	public void reset();
+
+	/**
+	 * Get a description for a specific metric.
+	 */
+	@CheckForNull
+	public String getDescriptionForMetric( String metricName );
 }

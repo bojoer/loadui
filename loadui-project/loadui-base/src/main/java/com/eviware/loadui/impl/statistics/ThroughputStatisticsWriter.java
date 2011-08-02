@@ -46,7 +46,20 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 
 	public enum Stats
 	{
-		BPS, TPS;
+		BPS( "The throughput measured in bytes per second." ), TPS(
+				"The throughput measured in transactions (completed requests) per second." );
+
+		private final String description;
+
+		Stats()
+		{
+			this.description = this.name() + " of %v.";
+		}
+
+		Stats( String description )
+		{
+			this.description = description;
+		}
 	}
 
 	public ThroughputStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
@@ -161,5 +174,16 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 
 			return new ThroughputStatisticsWriter( statisticsManager, variable, trackStructure, config );
 		}
+	}
+
+	@Override
+	public String getDescriptionForMetric( String metricName )
+	{
+		for( Stats s : Stats.values() )
+		{
+			if( s.name().equals( metricName ) )
+				return s.description;
+		}
+		return null;
 	}
 }

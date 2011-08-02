@@ -92,7 +92,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private ComponentBehavior behavior;
 	private LayoutComponent layout;
 	private LayoutComponent compactLayout;
-	private Set<SettingsLayoutContainer> settingsTabs = new LinkedHashSet<SettingsLayoutContainer>();
+	private final Set<SettingsLayoutContainer> settingsTabs = new LinkedHashSet<SettingsLayoutContainer>();
 	private boolean nonBlocking = false;
 	private String helpUrl = "http://www.loadui.org";
 	private boolean invalid = false;
@@ -888,9 +888,11 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		}
 
 		@Override
-		public StatisticVariable.Mutable addStatisticVariable( String statisticVariableName, String... writerTypes )
+		public StatisticVariable.Mutable addStatisticVariable( String statisticVariableName, String description,
+				String... writerTypes )
 		{
-			StatisticVariable.Mutable variable = statisticHolderSupport.addStatisticVariable( statisticVariableName );
+			StatisticVariable.Mutable variable = statisticHolderSupport.addStatisticVariable( statisticVariableName,
+					description );
 			for( String writerType : writerTypes )
 				statisticHolderSupport.addStatisticsWriter( writerType, variable );
 

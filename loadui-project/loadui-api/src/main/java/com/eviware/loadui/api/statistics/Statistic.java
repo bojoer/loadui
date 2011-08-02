@@ -19,7 +19,6 @@ import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.serialization.Value;
 import com.eviware.loadui.api.statistics.store.Execution;
-import com.eviware.loadui.api.traits.Describable;
 
 /**
  * A recording of a value which changes over time, which can be mapped into a
@@ -27,7 +26,7 @@ import com.eviware.loadui.api.traits.Describable;
  * 
  * @author dain.nilsson
  */
-public interface Statistic<T extends Number> extends Value<T>, Describable
+public interface Statistic<T extends Number> extends Value<T>
 {
 	/**
 	 * Gets the name of this Statistic. Names should be unique per

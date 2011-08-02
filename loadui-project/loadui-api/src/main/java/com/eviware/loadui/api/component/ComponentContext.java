@@ -102,6 +102,7 @@ public interface ComponentContext extends Labeled.Mutable, MutableTerminalHolder
 	 * 
 	 * @return
 	 */
+	@Override
 	public CanvasItem getCanvas();
 
 	/**
@@ -209,6 +210,7 @@ public interface ComponentContext extends Labeled.Mutable, MutableTerminalHolder
 	/**
 	 * Get the ID for the Component.
 	 */
+	@Override
 	public String getId();
 
 	/**
@@ -332,9 +334,11 @@ public interface ComponentContext extends Labeled.Mutable, MutableTerminalHolder
 	 * 
 	 * @param statisticVariableName
 	 * @param writerTypes
+	 * @param description
 	 * @return
 	 */
-	public StatisticVariable.Mutable addStatisticVariable( String statisticVariableName, String... writerTypes );
+	public StatisticVariable.Mutable addStatisticVariable( String statisticVariableName, String description,
+			String... writerTypes );
 
 	/**
 	 * Removes a StatisticVariable from the Component.

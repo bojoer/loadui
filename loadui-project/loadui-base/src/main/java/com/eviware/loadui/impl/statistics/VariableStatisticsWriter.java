@@ -23,9 +23,21 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 {
 	public static final String TYPE = "VARIABLE";
 
-	public static enum Stats
+	public enum Stats
 	{
-		VALUE
+		VALUE( "The number of %v." );
+
+		private final String description;
+
+		Stats()
+		{
+			this.description = this.name() + " of %v.";
+		}
+
+		Stats( String description )
+		{
+			this.description = description;
+		}
 	}
 
 	private double sum = 0;
@@ -129,5 +141,16 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 			return new VariableStatisticsWriter( statisticsManager, variable,
 					Collections.<String, Class<? extends Number>> singletonMap( Stats.VALUE.name(), Double.class ), config );
 		}
+	}
+
+	@Override
+	public String getDescriptionForMetric( String metricName )
+	{
+		for( Stats s : Stats.values() )
+		{
+			if( s.name().equals( metricName ) )
+				return s.description;
+		}
+		return null;
 	}
 }

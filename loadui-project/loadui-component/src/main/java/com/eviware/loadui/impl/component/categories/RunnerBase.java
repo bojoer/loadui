@@ -170,21 +170,25 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		discardsCounter = context.getCounter( RunnerCategory.DISCARDED_SAMPLES_COUNTER );
 
 		// AverageWriters and ThroughputWriters
-		timeTakenVariable = context.addStatisticVariable( "Time Taken", "SAMPLE" );
-		responseSizeVariable = context.addStatisticVariable( "Response Size", "SAMPLE" );
-		throughputVariable = context.addStatisticVariable( "Throughput", "THROUGHPUT" );
-		runningVariable = context.addStatisticVariable( "Running", "VARIABLE" );
-		queuedVariable = context.addStatisticVariable( "Queued", "VARIABLE" );
+		timeTakenVariable = context.addStatisticVariable( "Time Taken", "elapsed time for a request to complete",
+				"SAMPLE" );
+		responseSizeVariable = context.addStatisticVariable( "Response Size", "response size (in bytes)", "SAMPLE" );
+		throughputVariable = context.addStatisticVariable( "Throughput", "", "THROUGHPUT" );
+		runningVariable = context.addStatisticVariable( "Running", "running requests", "VARIABLE" );
+		queuedVariable = context.addStatisticVariable( "Queued", "queued requests", "VARIABLE" );
 
 		// CounterWriters
 		counterStatisticSupport = new CounterStatisticSupport( context );
-		StatisticVariable.Mutable requestVariable = context.addStatisticVariable( "Completed", "COUNTER" );
+		StatisticVariable.Mutable requestVariable = context.addStatisticVariable( "Completed", "completed requests",
+				"COUNTER" );
 		counterStatisticSupport.addCounterVariable( CanvasItem.SAMPLE_COUNTER, requestVariable );
-		StatisticVariable.Mutable failedVariable = context.addStatisticVariable( "Failures", "COUNTER" );
+		StatisticVariable.Mutable failedVariable = context
+				.addStatisticVariable( "Failures", "failed requests", "COUNTER" );
 		counterStatisticSupport.addCounterVariable( CanvasItem.FAILURE_COUNTER, failedVariable );
-		StatisticVariable.Mutable discardedVariable = context.addStatisticVariable( "Discarded", "COUNTER" );
+		StatisticVariable.Mutable discardedVariable = context.addStatisticVariable( "Discarded", "discarded requests",
+				"COUNTER" );
 		counterStatisticSupport.addCounterVariable( RunnerCategory.DISCARDED_SAMPLES_COUNTER, discardedVariable );
-		StatisticVariable.Mutable sentVariable = context.addStatisticVariable( "Sent", "COUNTER" );
+		StatisticVariable.Mutable sentVariable = context.addStatisticVariable( "Sent", "sent requests", "COUNTER" );
 		counterStatisticSupport.addCounterVariable( CanvasItem.REQUEST_COUNTER, sentVariable );
 
 		concurrentSamplesProperty = context.createProperty( CONCURRENT_SAMPLES_PROPERTY, Long.class, 100 );

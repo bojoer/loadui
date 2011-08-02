@@ -68,7 +68,9 @@ public class SegmentButton extends BaseNode, Resizable {
 		def metricName:String = statistic.getName();
 		def dataName:String = statistic.getStatisticVariable().getLabel();
 		def singleColumnInCompactMode:Boolean = ChartNamePrettifier.compactNameIsAlone( dataName );
-				
+		
+		println( "DescriptionForStatistic: {statistic.getStatisticVariable().getDescriptionForStatistic( metricName )}" );
+		
 		lineColor = model.getColor();
 		button.graphic = HBox {
 			nodeVPos: VPos.CENTER
@@ -130,6 +132,7 @@ public class SegmentButton extends BaseNode, Resizable {
 
 class SegmentListener extends WeakEventHandler {
 	override function handleEvent( e ):Void {
+		
 		def event = e as PropertyChangeEvent;
 		if( model.getLineSegment() == event.getSource() ) {
 			if( LineSegmentModel.COLOR.equals( event.getPropertyName() ) ) {
