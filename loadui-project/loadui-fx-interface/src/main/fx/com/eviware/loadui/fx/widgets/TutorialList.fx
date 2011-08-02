@@ -45,6 +45,7 @@ import com.eviware.loadui.fx.ui.pagelist.PageList;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.model.WorkspaceItem;
+import java.io.IOException;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.TutorialList" );
 
@@ -72,13 +73,17 @@ public class TutorialList extends CustomNode, Resizable {
 		if( workspace == null )
 			throw new RuntimeException( "Workspace must not be null!" );
 		
-		RssTask{
+		RssTask {
 	        location: "http://www.loadui.org/component/option,com_ninjarsssyndicator/feed_id,1/format,raw/lang,en/"
 	        interval: 300s
 	        
-	        onException: function(e) {
-	            log.error( "An error occured when parsing the news RSS feed.", e );
-	        }
+			onException: function(e) {
+	         if( e instanceof IOException ) {
+					log.warn( "An error occured when downloading the news RSS feed." );
+				} else {
+					log.error( "An error occured when parsing the news RSS feed.", e );
+				}
+			}
 	        
 	       onItem: function(item:Item):Void {
 	           FX.deferAction( function() {

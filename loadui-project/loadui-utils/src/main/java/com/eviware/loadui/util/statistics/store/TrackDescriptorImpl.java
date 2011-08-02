@@ -17,6 +17,7 @@ package com.eviware.loadui.util.statistics.store;
 
 import java.util.Map;
 
+import com.eviware.loadui.api.statistics.EntryAggregator;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
@@ -31,11 +32,14 @@ public class TrackDescriptorImpl implements TrackDescriptor
 {
 	private final String id;
 	private final Map<String, Class<? extends Number>> structure;
+	private final EntryAggregator aggregator;
 
-	public TrackDescriptorImpl( String trackId, Map<String, Class<? extends Number>> structure )
+	public TrackDescriptorImpl( String trackId, Map<String, Class<? extends Number>> structure,
+			EntryAggregator aggregator )
 	{
 		id = trackId;
 		this.structure = ImmutableMap.copyOf( structure );
+		this.aggregator = aggregator;
 	}
 
 	@Override
@@ -54,5 +58,11 @@ public class TrackDescriptorImpl implements TrackDescriptor
 	public String toString()
 	{
 		return Objects.toStringHelper( this ).add( "structure", structure ).toString();
+	}
+
+	@Override
+	public EntryAggregator getEntryAggregator()
+	{
+		return aggregator;
 	}
 }

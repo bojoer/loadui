@@ -18,7 +18,6 @@
 	
 	<bean id="statisticsAggregator" class="com.eviware.loadui.impl.statistics.AgentDataAggregator">
 		<constructor-arg ref="executionManager" />
-		<constructor-arg ref="addressableRegistry" />
 	</bean>
 	
 	<bean id="projectExecutionManager"

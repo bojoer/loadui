@@ -56,7 +56,7 @@ public class TrackImplTest
 		types.put( "c", Integer.class );
 		types.put( "d", Double.class );
 
-		TrackDescriptorImpl td = new TrackDescriptorImpl( "testTrack", types );
+		TrackDescriptorImpl td = new TrackDescriptorImpl( "testTrack", types, null );
 		h2.registerTrackDescriptor( td );
 		track = h2.getTrack( "testTrack" );
 

@@ -55,18 +55,6 @@ public interface StatisticsWriter extends Addressable
 	public Entry output();
 
 	/**
-	 * Aggregates entries, e.g. for different zoom levels or from different
-	 * agents, into one Entry.
-	 * 
-	 * @param parallel
-	 *           TODO
-	 * @param values
-	 * 
-	 * @return
-	 */
-	public Entry aggregate( Set<Entry> entries, boolean parallel );
-
-	/**
 	 * Gets the associated StatisticVariable.
 	 * 
 	 * @return

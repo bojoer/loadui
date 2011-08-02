@@ -26,6 +26,8 @@ import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.eviware.loadui.api.statistics.EntryAggregator;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
@@ -120,18 +122,20 @@ public class ThroughputStatisticsWriterTest
 		Entry e3 = new EntryImpl( 345, ImmutableMap.<String, Number> of( ThroughputStatisticsWriter.Stats.BPS.name(), 93,
 				ThroughputStatisticsWriter.Stats.TPS.name(), 11 ) );
 
-		Entry entry = writer.aggregate( Collections.<Entry> emptySet(), false );
+		EntryAggregator aggregator = writer.getTrackDescriptor().getEntryAggregator();
+
+		Entry entry = aggregator.aggregate( Collections.<Entry> emptySet(), false );
 		assertNull( entry );
 
 		HashSet<Entry> entries = new HashSet<Entry>();
 		entries.add( e1 );
-		entry = writer.aggregate( entries, false );
+		entry = aggregator.aggregate( entries, false );
 
 		assertThat( entry, is( e1 ) );
 
 		entries.clear();
 		entries.addAll( Arrays.asList( e1, e2, e3 ) );
-		entry = writer.aggregate( entries, true );
+		entry = aggregator.aggregate( entries, true );
 
 		assertNotNull( entry );
 
@@ -141,7 +145,7 @@ public class ThroughputStatisticsWriterTest
 		assertThat( ( Double )bps, is( 976.0 ) );
 		assertThat( ( Double )tps, is( 22.0 ) );
 
-		entry = writer.aggregate( entries, false );
+		entry = aggregator.aggregate( entries, false );
 
 		assertNotNull( entry );
 

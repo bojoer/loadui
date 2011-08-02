@@ -45,6 +45,7 @@ import com.eviware.loadui.fx.FxUtils;
 import javafx.scene.text.Font;
 
 import javafx.util.Math;
+import java.io.IOException;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.FeedDisplay" );
 
@@ -61,7 +62,11 @@ public class FeedDisplay extends BaseNode, Resizable {
 			interval: 60s
 			
 			onException: function(e) {
-				log.error( "An error occured when parsing the news RSS feed.", e );
+				if( e instanceof IOException ) {
+					log.warn( "An error occured when downloading the news RSS feed." );
+				} else {
+					log.error( "An error occured when parsing the news RSS feed.", e );
+				}
 			}
 			
 		onItem: function(item:Item):Void {

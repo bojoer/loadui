@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.eviware.loadui.api.statistics.EntryAggregator;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
@@ -51,7 +52,7 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 	public ThroughputStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values, Map<String, Object> config )
 	{
-		super( manager, variable, values, config );
+		super( manager, variable, values, config, new Aggregator() );
 	}
 
 	@Override
@@ -94,41 +95,44 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	public Entry aggregate( Set<Entry> entries, boolean parallel )
-	{
-		if( entries.size() <= 1 )
-			return Iterables.getFirst( entries, null );
-
-		double tpsSum = 0;
-		double bpsSum = 0;
-		long minTime = Long.MAX_VALUE;
-		long maxTime = -1;
-		for( Entry entry : entries )
-		{
-			bpsSum += entry.getValue( Stats.BPS.name() ).doubleValue();
-			tpsSum += entry.getValue( Stats.TPS.name() ).doubleValue();
-			minTime = Math.min( minTime, entry.getTimestamp() );
-			maxTime = Math.max( maxTime, entry.getTimestamp() );
-		}
-
-		double tps = tpsSum;
-		double bps = bpsSum;
-		if( !parallel )
-		{
-			tps /= entries.size();
-			bps /= entries.size();
-		}
-
-		return at( maxTime ).put( Stats.BPS.name(), bps ).put( Stats.TPS.name(), tps ).build();
-	}
-
-	@Override
 	public void reset()
 	{
 		super.reset();
 
 		sum = 0;
 		count = 0;
+	}
+
+	private static class Aggregator implements EntryAggregator
+	{
+		@Override
+		public Entry aggregate( Set<Entry> entries, boolean parallel )
+		{
+			if( entries.size() <= 1 )
+				return Iterables.getFirst( entries, null );
+
+			double tpsSum = 0;
+			double bpsSum = 0;
+			long minTime = Long.MAX_VALUE;
+			long maxTime = -1;
+			for( Entry entry : entries )
+			{
+				bpsSum += entry.getValue( Stats.BPS.name() ).doubleValue();
+				tpsSum += entry.getValue( Stats.TPS.name() ).doubleValue();
+				minTime = Math.min( minTime, entry.getTimestamp() );
+				maxTime = Math.max( maxTime, entry.getTimestamp() );
+			}
+
+			double tps = tpsSum;
+			double bps = bpsSum;
+			if( !parallel )
+			{
+				tps /= entries.size();
+				bps /= entries.size();
+			}
+
+			return at( maxTime ).put( Stats.BPS.name(), bps ).put( Stats.TPS.name(), tps ).build();
+		}
 	}
 
 	/**

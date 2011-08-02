@@ -17,6 +17,8 @@ package com.eviware.loadui.api.statistics.store;
 
 import java.util.Map;
 
+import com.eviware.loadui.api.statistics.EntryAggregator;
+
 /**
  * Defines the structure of a Track, and once registered, allows the creation of
  * the Track itself.
@@ -40,4 +42,12 @@ public interface TrackDescriptor
 	 * @return
 	 */
 	public Map<String, Class<? extends Number>> getValueNames();
+
+	/**
+	 * Gets the EntryAggregator to be used for aggregating Entries for this
+	 * TrackDescriptor.
+	 * 
+	 * @return
+	 */
+	public EntryAggregator getEntryAggregator();
 }

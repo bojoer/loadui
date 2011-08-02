@@ -20,11 +20,10 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.api.statistics.EntryAggregator;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsAggregator;
-import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
@@ -41,13 +40,13 @@ public class AgentDataAggregator implements StatisticsAggregator
 	private final static int BUFFER_SIZE = 5;
 
 	private final TreeMap<Long, SetMultimap<String, Entry>> times = Maps.newTreeMap();
-	private final AddressableRegistry addressableRegistry;
+	private final ExecutionManager executionManager;
 	private final StatisticsInterpolator statisticsInterpolator;
 
-	public AgentDataAggregator( ExecutionManager executionManager, AddressableRegistry addressableRegistry )
+	public AgentDataAggregator( ExecutionManager executionManager )
 	{
-		this.addressableRegistry = addressableRegistry;
-		statisticsInterpolator = new StatisticsInterpolator( executionManager, addressableRegistry );
+		this.executionManager = executionManager;
+		statisticsInterpolator = new StatisticsInterpolator( executionManager );
 
 		executionManager.addExecutionListener( new FlushingExecutionListener() );
 	}
@@ -80,11 +79,11 @@ public class AgentDataAggregator implements StatisticsAggregator
 	{
 		for( String trackId : map.keySet() )
 		{
-			StatisticsWriter writer = ( StatisticsWriter )addressableRegistry.lookup( trackId );
+			EntryAggregator aggregator = executionManager.getTrack( trackId ).getTrackDescriptor().getEntryAggregator();
 
-			if( writer != null && !"COUNTER".equals( writer.getType() ) )
+			if( aggregator != null )
 			{
-				Entry entry = writer.aggregate( map.get( trackId ), true );
+				Entry entry = aggregator.aggregate( map.get( trackId ), true );
 
 				if( entry != null )
 					statisticsInterpolator.update( entry, trackId, StatisticVariable.MAIN_SOURCE );
@@ -104,6 +103,12 @@ public class AgentDataAggregator implements StatisticsAggregator
 	public void addEntry( String trackId, Entry entry )
 	{
 		statisticsInterpolator.update( entry, trackId, StatisticVariable.MAIN_SOURCE );
+	}
+
+	@Override
+	public void addEntry( String trackId, Entry entry, String source )
+	{
+		statisticsInterpolator.update( entry, trackId, source );
 	}
 
 	private class FlushingExecutionListener implements ExecutionListener

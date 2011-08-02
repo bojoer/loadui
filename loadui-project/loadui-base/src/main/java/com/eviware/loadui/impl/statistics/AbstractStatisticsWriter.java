@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.statistics.EntryAggregator;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsAggregator;
 import com.eviware.loadui.api.statistics.StatisticsManager;
@@ -54,12 +55,12 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 	private final Map<String, Object> config;
 
 	public AbstractStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
-			Map<String, Class<? extends Number>> values, Map<String, Object> config )
+			Map<String, Class<? extends Number>> values, Map<String, Object> config, EntryAggregator entryAggregator )
 	{
 		this.config = config;
 		this.variable = variable;
 		id = DigestUtils.md5Hex( variable.getStatisticHolder().getId() + variable.getLabel() + getType() );
-		descriptor = new TrackDescriptorImpl( id, values );
+		descriptor = new TrackDescriptorImpl( id, values, entryAggregator );
 		delay = config.containsKey( DELAY ) ? ( ( Number )config.get( DELAY ) ).longValue() : manager
 				.getMinimumWriteDelay();
 
@@ -113,7 +114,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 		}
 	}
 
-	protected EntryBuilder at( long timestamp )
+	protected static EntryBuilder at( long timestamp )
 	{
 		return new EntryBuilder( timestamp );
 	}

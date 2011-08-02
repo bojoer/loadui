@@ -60,4 +60,11 @@ public class StreamingStatisticsAggregator implements StatisticsAggregator
 		for( MessageEndpoint endpoint : endpoints )
 			endpoint.sendMessage( STATISTICS_CHANNEL, data );
 	}
+
+	@Override
+	public void addEntry( String trackId, Entry entry, String source )
+	{
+		throw new UnsupportedOperationException(
+				"StreamingStatisticsAggregator cannot add an Entry for a specified source!" );
+	}
 }

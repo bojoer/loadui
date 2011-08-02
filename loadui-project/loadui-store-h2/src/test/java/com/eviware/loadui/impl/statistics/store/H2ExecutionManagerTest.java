@@ -99,7 +99,7 @@ public class H2ExecutionManagerTest
 		types.put( "b", Long.class );
 		types.put( "c", Integer.class );
 		types.put( "d", Double.class );
-		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types );
+		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types, null );
 		h2.registerTrackDescriptor( td );
 
 		// release to invoke execution loading
@@ -156,7 +156,7 @@ public class H2ExecutionManagerTest
 		values.put( "c", 3 );
 		values.put( "d", 4 );
 
-		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types );
+		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types, null );
 		h2.registerTrackDescriptor( td );
 		Track t = h2.getTrack( "t1" );
 
@@ -183,7 +183,7 @@ public class H2ExecutionManagerTest
 		values.put( "c", 3 );
 		values.put( "d", 4 );
 
-		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types );
+		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types, null );
 		h2.registerTrackDescriptor( td );
 		Track t = h2.getTrack( "t1" );
 

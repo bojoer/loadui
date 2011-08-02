@@ -6,8 +6,6 @@ import java.util.HashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.addressable.AddressableRegistry;
-import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 
@@ -21,14 +19,12 @@ public class StatisticsInterpolator
 			43200000 // 12 hours
 	};
 
-	private final AddressableRegistry addressableRegistry;
 	private final ExecutionManager executionManager;
 
 	private final HashMap<String, AggregateLevel> aggregateLevels = new HashMap<String, AggregateLevel>();
 
-	public StatisticsInterpolator( ExecutionManager executionManager, AddressableRegistry addressableRegistry )
+	public StatisticsInterpolator( ExecutionManager executionManager )
 	{
-		this.addressableRegistry = addressableRegistry;
 		this.executionManager = executionManager;
 	}
 
@@ -123,7 +119,8 @@ public class StatisticsInterpolator
 			if( entries.isEmpty() )
 				return null;
 
-			Entry entry = ( ( StatisticsWriter )addressableRegistry.lookup( trackId ) ).aggregate( entries, false );
+			Entry entry = executionManager.getTrack( trackId ).getTrackDescriptor().getEntryAggregator()
+					.aggregate( entries, false );
 			entries.clear();
 
 			return entry;

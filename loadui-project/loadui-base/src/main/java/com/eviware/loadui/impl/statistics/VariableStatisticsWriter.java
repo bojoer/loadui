@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import com.eviware.loadui.api.statistics.EntryAggregator;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
@@ -34,7 +35,7 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 	public VariableStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values, Map<String, Object> config )
 	{
-		super( manager, variable, values, config );
+		super( manager, variable, values, config, new Aggregator() );
 	}
 
 	@Override
@@ -72,26 +73,6 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	public Entry aggregate( Set<Entry> entries, boolean parallel )
-	{
-		if( entries.size() <= 1 )
-			return Iterables.getFirst( entries, null );
-
-		long maxTime = -1;
-		double value = 0;
-		for( Entry entry : entries )
-		{
-			maxTime = Math.max( maxTime, entry.getTimestamp() );
-			value += entry.getValue( Stats.VALUE.name() ).doubleValue();
-		}
-
-		if( !parallel )
-			value /= entries.size();
-
-		return at( maxTime ).put( Stats.VALUE.name(), value ).build();
-	}
-
-	@Override
 	public void reset()
 	{
 		super.reset();
@@ -108,6 +89,29 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 	public String getType()
 	{
 		return TYPE;
+	}
+
+	private static class Aggregator implements EntryAggregator
+	{
+		@Override
+		public Entry aggregate( Set<Entry> entries, boolean parallel )
+		{
+			if( entries.size() <= 1 )
+				return Iterables.getFirst( entries, null );
+
+			long maxTime = -1;
+			double value = 0;
+			for( Entry entry : entries )
+			{
+				maxTime = Math.max( maxTime, entry.getTimestamp() );
+				value += entry.getValue( Stats.VALUE.name() ).doubleValue();
+			}
+
+			if( !parallel )
+				value /= entries.size();
+
+			return at( maxTime ).put( Stats.VALUE.name(), value ).build();
+		}
 	}
 
 	public static class Factory implements StatisticsWriterFactory

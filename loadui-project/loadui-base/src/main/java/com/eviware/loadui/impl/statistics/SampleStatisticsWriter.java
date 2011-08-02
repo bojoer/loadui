@@ -20,6 +20,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.eviware.loadui.api.statistics.EntryAggregator;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
@@ -54,7 +55,7 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 	public SampleStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> trackStructure, Map<String, Object> config )
 	{
-		super( statisticsManager, variable, trackStructure, config );
+		super( statisticsManager, variable, trackStructure, config, new Aggregator() );
 	}
 
 	@Override
@@ -172,69 +173,6 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 		}
 	}
 
-	/**
-	 * Aggregates a list of Entries.
-	 * 
-	 * Note that we are using Population based Standard deviation, as opposed to
-	 * Sample based Standard deviation.
-	 * 
-	 * The percentile calculation assumes that the values are normally
-	 * distributed. This assumption might be wrong, but has to be done to avoid
-	 * storing and iterating through the whole set of actual values provided by
-	 * the loadUI components.
-	 * 
-	 * @author henrik.olsson
-	 */
-	@Override
-	public Entry aggregate( Set<Entry> entries, boolean parallel )
-	{
-		if( entries.size() <= 1 )
-			return Iterables.getFirst( entries, null );
-
-		long timestamp = -1;
-		double totalSum = 0;
-		long totalCount = 0;
-		double min = Double.MAX_VALUE;
-		double max = 0;
-		double median = 0, percentile25 = 0, percentile75 = 0, percentile90 = 0, stddev = 0;
-
-		for( Entry e : entries )
-		{
-			long count = e.getValue( Stats.COUNT.name() ).longValue();
-			double average = e.getValue( Stats.AVERAGE.name() ).doubleValue();
-
-			timestamp = Math.max( timestamp, e.getTimestamp() );
-
-			// median - not really median of all subpopulations, rather a weighted
-			// average of the subpopulations' medians (performance reasons).
-			median += count * e.getValue( Stats.MEDIAN.name() ).doubleValue();
-			percentile25 += count * e.getValue( Stats.PERCENTILE_25TH.name() ).doubleValue();
-			percentile75 += count * e.getValue( Stats.PERCENTILE_75TH.name() ).doubleValue();
-			percentile90 += count * e.getValue( Stats.PERCENTILE_90TH.name() ).doubleValue();
-			stddev += count * e.getValue( Stats.STD_DEV.name() ).doubleValue();
-
-			// average
-			totalSum += count * average;
-			totalCount += count;
-
-			min = Math.min( min, e.getValue( Stats.MIN.name() ).doubleValue() );
-			max = Math.max( max, e.getValue( Stats.MAX.name() ).doubleValue() );
-		}
-
-		median = median / totalCount;
-		percentile25 = percentile25 / totalCount;
-		percentile75 = percentile75 / totalCount;
-		percentile90 = percentile90 / totalCount;
-		stddev = stddev / totalCount;
-
-		double totalAverage = totalSum / totalCount;
-
-		return at( timestamp ).put( Stats.AVERAGE.name(), totalAverage ).put( Stats.COUNT.name(), totalCount )
-				.put( Stats.STD_DEV.name(), stddev ).put( Stats.PERCENTILE_90TH.name(), percentile90 )
-				.put( Stats.PERCENTILE_25TH.name(), percentile25 ).put( Stats.PERCENTILE_75TH.name(), percentile75 )
-				.put( Stats.MEDIAN.name(), median ).put( Stats.MIN.name(), min ).put( Stats.MAX.name(), max ).build();
-	}
-
 	@Override
 	public void reset()
 	{
@@ -242,6 +180,72 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 		sortedValues.clear();
 		sum = 0.0;
 		count = 0L;
+	}
+
+	private static class Aggregator implements EntryAggregator
+	{
+		/**
+		 * Aggregates a list of Entries.
+		 * 
+		 * Note that we are using Population based Standard deviation, as opposed
+		 * to Sample based Standard deviation.
+		 * 
+		 * The percentile calculation assumes that the values are normally
+		 * distributed. This assumption might be wrong, but has to be done to
+		 * avoid storing and iterating through the whole set of actual values
+		 * provided by the loadUI components.
+		 * 
+		 * @author henrik.olsson
+		 */
+		@Override
+		public Entry aggregate( Set<Entry> entries, boolean parallel )
+		{
+			if( entries.size() <= 1 )
+				return Iterables.getFirst( entries, null );
+
+			long timestamp = -1;
+			double totalSum = 0;
+			long totalCount = 0;
+			double min = Double.MAX_VALUE;
+			double max = 0;
+			double median = 0, percentile25 = 0, percentile75 = 0, percentile90 = 0, stddev = 0;
+
+			for( Entry e : entries )
+			{
+				long count = e.getValue( Stats.COUNT.name() ).longValue();
+				double average = e.getValue( Stats.AVERAGE.name() ).doubleValue();
+
+				timestamp = Math.max( timestamp, e.getTimestamp() );
+
+				// median - not really median of all subpopulations, rather a weighted
+				// average of the subpopulations' medians (performance reasons).
+				median += count * e.getValue( Stats.MEDIAN.name() ).doubleValue();
+				percentile25 += count * e.getValue( Stats.PERCENTILE_25TH.name() ).doubleValue();
+				percentile75 += count * e.getValue( Stats.PERCENTILE_75TH.name() ).doubleValue();
+				percentile90 += count * e.getValue( Stats.PERCENTILE_90TH.name() ).doubleValue();
+				stddev += count * e.getValue( Stats.STD_DEV.name() ).doubleValue();
+
+				// average
+				totalSum += count * average;
+				totalCount += count;
+
+				min = Math.min( min, e.getValue( Stats.MIN.name() ).doubleValue() );
+				max = Math.max( max, e.getValue( Stats.MAX.name() ).doubleValue() );
+			}
+
+			median = median / totalCount;
+			percentile25 = percentile25 / totalCount;
+			percentile75 = percentile75 / totalCount;
+			percentile90 = percentile90 / totalCount;
+			stddev = stddev / totalCount;
+
+			double totalAverage = totalSum / totalCount;
+
+			return at( timestamp ).put( Stats.AVERAGE.name(), totalAverage ).put( Stats.COUNT.name(), totalCount )
+					.put( Stats.STD_DEV.name(), stddev ).put( Stats.PERCENTILE_90TH.name(), percentile90 )
+					.put( Stats.PERCENTILE_25TH.name(), percentile25 ).put( Stats.PERCENTILE_75TH.name(), percentile75 )
+					.put( Stats.MEDIAN.name(), median ).put( Stats.MIN.name(), min ).put( Stats.MAX.name(), max ).build();
+		}
 	}
 
 	/**

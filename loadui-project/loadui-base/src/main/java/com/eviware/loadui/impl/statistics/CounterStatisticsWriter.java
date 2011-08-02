@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.eviware.loadui.api.statistics.EntryAggregator;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
@@ -36,7 +37,7 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 	public CounterStatisticsWriter( StatisticsManager manager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> values, Map<String, Object> config )
 	{
-		super( manager, variable, values, config );
+		super( manager, variable, values, config, new Aggregator() );
 	}
 
 	public enum Stats
@@ -79,31 +80,6 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 	}
 
 	@Override
-	public Entry aggregate( Set<Entry> entries, boolean parallel )
-	{
-		// Counters already aggregate their values on their own, so we shouldn't
-		// do this here.
-		if( parallel )
-			return null;
-		if( entries.size() <= 1 )
-			return Iterables.getFirst( entries, null );
-
-		long total = 0;
-		double perSecond = 0;
-		long maxTime = -1;
-		for( Entry entry : entries )
-		{
-			total = Math.max( total, entry.getValue( Stats.TOTAL.name() ).longValue() );
-			perSecond += entry.getValue( Stats.PER_SECOND.name() ).longValue();
-			maxTime = Math.max( maxTime, entry.getTimestamp() );
-		}
-
-		perSecond /= entries.size();
-
-		return at( maxTime ).put( Stats.TOTAL.name(), total ).put( Stats.PER_SECOND.name(), perSecond ).build();
-	}
-
-	@Override
 	public String getType()
 	{
 		return TYPE;
@@ -115,6 +91,34 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 		super.reset();
 		total = 0;
 		change = 0;
+	}
+
+	private static class Aggregator implements EntryAggregator
+	{
+		@Override
+		public Entry aggregate( Set<Entry> entries, boolean parallel )
+		{
+			// Counters already aggregate their values on their own, so we shouldn't
+			// do this here.
+			if( parallel )
+				return null;
+			if( entries.size() <= 1 )
+				return Iterables.getFirst( entries, null );
+
+			long total = 0;
+			double perSecond = 0;
+			long maxTime = -1;
+			for( Entry entry : entries )
+			{
+				total = Math.max( total, entry.getValue( Stats.TOTAL.name() ).longValue() );
+				perSecond += entry.getValue( Stats.PER_SECOND.name() ).longValue();
+				maxTime = Math.max( maxTime, entry.getTimestamp() );
+			}
+
+			perSecond /= entries.size();
+
+			return at( maxTime ).put( Stats.TOTAL.name(), total ).put( Stats.PER_SECOND.name(), perSecond ).build();
+		}
 	}
 
 	public static class Factory implements StatisticsWriterFactory

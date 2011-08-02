@@ -10,8 +10,6 @@
 	
 	<osgi:reference interface="com.eviware.loadui.api.model.WorkspaceProvider" id="workspaceProvider" />
 	
-	<osgi:reference interface="com.eviware.loadui.api.addressable.AddressableRegistry" id="addressableRegistry" />
-	
 	<osgi:reference interface="com.eviware.loadui.api.component.ComponentRegistry" id="componentRegistry" />
 	
 	<osgi:reference interface="com.eviware.loadui.api.terminal.TerminalProxy" id="terminalProxy" />

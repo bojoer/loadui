@@ -251,6 +251,7 @@ public class SampleStatisticsWriterTest
 		// ).put( Stats.MIN.name(), 9 )
 		// .put( Stats.MAX.name(), 12 ).build() );
 
-		return writer.aggregate( new HashSet<Entry>( Arrays.asList( e1, e2, e3 ) ), false );
+		return writer.getTrackDescriptor().getEntryAggregator()
+				.aggregate( new HashSet<Entry>( Arrays.asList( e1, e2, e3 ) ), false );
 	}
 }

@@ -15,30 +15,21 @@
  */
 package com.eviware.loadui.api.statistics;
 
+import java.util.Set;
+
 import com.eviware.loadui.api.statistics.store.Entry;
 
-/**
- * Sends a level 0 Entry to be aggregated and stored in the database.
- * 
- * @author dain.nilsson
- */
-public interface StatisticsAggregator
+public interface EntryAggregator
 {
 	/**
-	 * Sends a level 0 Entry to be interpolated and stored in the database, using
-	 * the default source.
+	 * Aggregates entries, e.g. for different zoom levels or from different
+	 * agents, into one Entry.
 	 * 
-	 * @param trackId
-	 * @param entry
-	 */
-	public void addEntry( String trackId, Entry entry );
-
-	/**
-	 * Sends a level 0 Entry to be interpolated and stored in the database.
+	 * @param parallel
 	 * 
-	 * @param trackId
-	 * @param entry
-	 * @param source
+	 * @param values
+	 * 
+	 * @return
 	 */
-	public void addEntry( String trackId, Entry entry, String source );
+	public Entry aggregate( Set<Entry> entries, boolean parallel );
 }
