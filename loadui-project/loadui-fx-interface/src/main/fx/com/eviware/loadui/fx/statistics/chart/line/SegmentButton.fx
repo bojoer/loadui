@@ -69,8 +69,6 @@ public class SegmentButton extends BaseNode, Resizable {
 		def dataName:String = statistic.getStatisticVariable().getLabel();
 		def singleColumnInCompactMode:Boolean = ChartNamePrettifier.compactNameIsAlone( dataName );
 		
-		println( "DescriptionForStatistic: {statistic.getStatisticVariable().getDescriptionForStatistic( metricName )}" );
-		
 		lineColor = model.getColor();
 		button.graphic = HBox {
 			nodeVPos: VPos.CENTER
