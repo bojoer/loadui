@@ -16,11 +16,13 @@
 package com.eviware.loadui.util.groovy.resolvers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.groovy.GroovyResolver;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
@@ -47,33 +49,49 @@ public class DelegatingResolver implements GroovyResolver.Methods, GroovyResolve
 		return resolver instanceof Releasable ? new NonReleasingResolver( resolver ) : resolver;
 	}
 
-	private final ArrayList<GroovyResolver> delegates;
+	private final ArrayList<GroovyResolver.Properties> propertyDelegates = Lists.newArrayList();
+	private final ArrayList<GroovyResolver.Methods> methodDelegates = Lists.newArrayList();
+	private final HashSet<GroovyResolver> releasables = Sets.newHashSet();
 
 	public DelegatingResolver( GroovyResolver... delegates )
 	{
-		this.delegates = Lists.newArrayList( delegates );
+		for( GroovyResolver resolver : delegates )
+			addResolver( resolver );
 	}
 
 	public void addResolver( GroovyResolver resolver )
 	{
-		delegates.add( resolver );
+		if( resolver instanceof Releasable )
+		{
+			releasables.add( resolver );
+		}
+		else if( resolver instanceof NonReleasingResolver )
+		{
+			resolver = ( ( NonReleasingResolver )resolver ).resolver;
+		}
+
+		if( resolver instanceof GroovyResolver.Methods )
+		{
+			methodDelegates.add( ( GroovyResolver.Methods )resolver );
+		}
+		if( resolver instanceof GroovyResolver.Properties )
+		{
+			propertyDelegates.add( ( GroovyResolver.Properties )resolver );
+		}
 	}
 
 	@Override
 	public Object invokeMethod( String methodName, Object... args ) throws MissingMethodException
 	{
-		for( GroovyResolver resolver : delegates )
+		for( GroovyResolver.Methods resolver : methodDelegates )
 		{
-			if( resolver instanceof GroovyResolver.Methods )
+			try
 			{
-				try
-				{
-					return ( ( GroovyResolver.Methods )resolver ).invokeMethod( methodName, args );
-				}
-				catch( MissingMethodException e )
-				{
-					//Do nothing, try next.
-				}
+				return resolver.invokeMethod( methodName, args );
+			}
+			catch( MissingMethodException e )
+			{
+				//Do nothing, try next.
 			}
 		}
 
@@ -83,18 +101,15 @@ public class DelegatingResolver implements GroovyResolver.Methods, GroovyResolve
 	@Override
 	public Object getProperty( String propertyName ) throws MissingPropertyException
 	{
-		for( GroovyResolver resolver : delegates )
+		for( GroovyResolver.Properties resolver : propertyDelegates )
 		{
-			if( resolver instanceof GroovyResolver.Properties )
+			try
 			{
-				try
-				{
-					return ( ( GroovyResolver.Properties )resolver ).getProperty( propertyName );
-				}
-				catch( MissingPropertyException e )
-				{
-					//Do nothing, try next.
-				}
+				return resolver.getProperty( propertyName );
+			}
+			catch( MissingPropertyException e )
+			{
+				//Do nothing, try next.
 			}
 		}
 
@@ -105,16 +120,20 @@ public class DelegatingResolver implements GroovyResolver.Methods, GroovyResolve
 	@Override
 	public void release()
 	{
-		ReleasableUtils.releaseAll( delegates );
+		ReleasableUtils.releaseAll( releasables );
+		methodDelegates.clear();
+		propertyDelegates.clear();
 	}
 
-	private static final class NonReleasingResolver implements GroovyResolver.Methods, GroovyResolver.Properties
+	private static final class NonReleasingResolver implements GroovyResolver.Properties, GroovyResolver.Methods
 	{
+		private final GroovyResolver resolver;
 		private final Methods methodResolver;
 		private final Properties propertyResolver;
 
 		private NonReleasingResolver( GroovyResolver delegate )
 		{
+			resolver = delegate;
 			methodResolver = ( Methods )( delegate instanceof Methods ? delegate : NULL_RESOLVER );
 			propertyResolver = ( Properties )( delegate instanceof Properties ? delegate : NULL_RESOLVER );
 		}

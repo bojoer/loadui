@@ -96,7 +96,7 @@ public class ControllerTest
 		workspace.setLabel( "MyTestWorkspace" );
 
 		workspace.save();
-		assertThat( workspaceFile.length() > 0, is( true ) );
+		assertThat( workspaceFile.length(), greaterThan( 0l ) );
 
 		workspace.release();
 		workspace = workspaceProvider.loadWorkspace( workspaceFile );
