@@ -83,7 +83,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				@Override
 				public String apply( String name )
 				{
-					return name.replaceAll( "\\s", "_" ).replaceAll( "[^\\w]", "" ).toUpperCase();
+					return name.replaceAll( "\\s", "_" ).replaceAll( "[^\\w]", "" ).replaceAll( "^(\\d)", "C$0" )
+							.toUpperCase();
 				}
 			} );
 

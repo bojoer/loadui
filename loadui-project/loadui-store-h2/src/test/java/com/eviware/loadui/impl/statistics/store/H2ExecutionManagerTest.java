@@ -31,6 +31,11 @@ import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 
 public class H2ExecutionManagerTest
 {
+	private static final String COLUMN_1 = "table";
+	private static final String COLUMN_2 = "a column with spaces";
+	private static final String COLUMN_3 = "Column@With #\"Characters";
+	private static final String COLUMN_4 = "12 3 45";
+
 	H2ExecutionManager h2;
 
 	@Before
@@ -95,10 +100,10 @@ public class H2ExecutionManagerTest
 
 		// add descriptor
 		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
-		types.put( "a", Long.class );
-		types.put( "b", Long.class );
-		types.put( "c", Integer.class );
-		types.put( "d", Double.class );
+		types.put( COLUMN_1, Long.class );
+		types.put( COLUMN_2, Long.class );
+		types.put( COLUMN_3, Integer.class );
+		types.put( COLUMN_4, Double.class );
 		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types, null );
 		h2.registerTrackDescriptor( td );
 
@@ -145,16 +150,16 @@ public class H2ExecutionManagerTest
 		}
 
 		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
-		types.put( "a", Long.class );
-		types.put( "b", Long.class );
-		types.put( "c", Integer.class );
-		types.put( "d", Double.class );
+		types.put( COLUMN_1, Long.class );
+		types.put( COLUMN_2, Long.class );
+		types.put( COLUMN_3, Integer.class );
+		types.put( COLUMN_4, Double.class );
 
 		Map<String, Number> values = new HashMap<String, Number>();
-		values.put( "a", 1 );
-		values.put( "b", 2 );
-		values.put( "c", 3 );
-		values.put( "d", 4 );
+		values.put( COLUMN_1, 1 );
+		values.put( COLUMN_2, 2 );
+		values.put( COLUMN_3, 3 );
+		values.put( COLUMN_4, 4 );
 
 		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types, null );
 		h2.registerTrackDescriptor( td );
@@ -172,16 +177,16 @@ public class H2ExecutionManagerTest
 		h2.startExecution( "test1", 10 );
 
 		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
-		types.put( "a", Long.class );
-		types.put( "b", Long.class );
-		types.put( "c", Integer.class );
-		types.put( "d", Double.class );
+		types.put( COLUMN_1, Long.class );
+		types.put( COLUMN_2, Long.class );
+		types.put( COLUMN_3, Integer.class );
+		types.put( COLUMN_4, Double.class );
 
 		Map<String, Number> values = new HashMap<String, Number>();
-		values.put( "a", 1 );
-		values.put( "b", 2 );
-		values.put( "c", 3 );
-		values.put( "d", 4 );
+		values.put( COLUMN_1, 1 );
+		values.put( COLUMN_2, 2 );
+		values.put( COLUMN_3, 3 );
+		values.put( COLUMN_4, 4 );
 
 		TrackDescriptorImpl td = new TrackDescriptorImpl( "t1", types, null );
 		h2.registerTrackDescriptor( td );
