@@ -83,6 +83,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				@Override
 				public String apply( String name )
 				{
+					//Replaces whitespace characters with underscore, removes all non-word characters, and places a C in front of any column name starting with a digit. 
 					return name.replaceAll( "\\s", "_" ).replaceAll( "[^\\w]", "" ).replaceAll( "^(\\d)", "C$0" )
 							.toUpperCase();
 				}
