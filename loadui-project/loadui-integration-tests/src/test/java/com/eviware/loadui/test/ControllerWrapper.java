@@ -27,6 +27,8 @@ import java.util.zip.ZipFile;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 
+import com.eviware.loadui.LoadUI;
+
 /**
  * An embedded headless loadUI Controller which can be used for testing. All
  * packages in the loadui-api bundle are exported into the runtime so that they
@@ -84,8 +86,9 @@ public class ControllerWrapper
 					}
 				}
 				StringBuilder apiPackages = new StringBuilder();
+				String version = LoadUI.VERSION.substring( 0, LoadUI.VERSION.indexOf( "-" ) );
 				for( String pkg : packages )
-					apiPackages.append( "," ).append( pkg );
+					apiPackages.append( ", " ).append( pkg ).append( "; version=\"" ).append( version ).append( '"' );
 
 				config.put( "org.osgi.framework.system.packages.extra", apiPackages.toString().substring( 1 ) );
 				api.close();

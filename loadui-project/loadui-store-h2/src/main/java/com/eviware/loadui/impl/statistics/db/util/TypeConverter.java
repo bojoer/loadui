@@ -31,21 +31,14 @@ import org.apache.commons.codec.binary.Base64;
 public class TypeConverter
 {
 
-	public static BufferedImage imageFromByteArray( byte[] imagebytes )
+	public static BufferedImage imageFromByteArray( byte[] imagebytes ) throws IOException
 	{
-		try
+		if( imagebytes != null && ( imagebytes.length > 0 ) )
 		{
-			if( imagebytes != null && ( imagebytes.length > 0 ) )
-			{
-				BufferedImage im = ImageIO.read( new ByteArrayInputStream( imagebytes ) );
-				return im;
-			}
-			return null;
+			BufferedImage im = ImageIO.read( new ByteArrayInputStream( imagebytes ) );
+			return im;
 		}
-		catch( IOException e )
-		{
-			throw new IllegalArgumentException( e.toString() );
-		}
+		return null;
 	}
 
 	public static byte[] imageToByteArray( BufferedImage bufferedImage )
@@ -132,7 +125,7 @@ public class TypeConverter
 		}
 	}
 
-	public static Object stringToObject( String value, Class<? extends Object> type )
+	public static Object stringToObject( String value, Class<? extends Object> type ) throws IOException
 	{
 		if( value == null )
 		{

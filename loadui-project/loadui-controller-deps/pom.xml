@@ -30,24 +30,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>generate-resources</phase>
-						<configuration>
-							<tasks>
-								<copy todir="${basedir}/target/script-components">
-									<fileset dir="${project.parent.basedir}/loadui-groovy-component/src/main/groovy" />
-								</copy>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
