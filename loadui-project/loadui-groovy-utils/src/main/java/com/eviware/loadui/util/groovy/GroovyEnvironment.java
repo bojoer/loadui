@@ -109,6 +109,11 @@ public class GroovyEnvironment implements Releasable
 		}
 	}
 
+	public Binding getBinding()
+	{
+		return binding;
+	}
+
 	/**
 	 * Returns a Logger object which is specific to this script.
 	 * 

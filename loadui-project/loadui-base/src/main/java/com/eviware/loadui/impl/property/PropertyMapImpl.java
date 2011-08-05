@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.api.events.PropertyEvent;
@@ -28,10 +30,13 @@ import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.property.PropertyMap;
 import com.eviware.loadui.config.PropertyConfig;
 import com.eviware.loadui.config.PropertyListConfig;
+import com.google.common.collect.HashMultimap;
 
 public class PropertyMapImpl implements PropertyMap
 {
+	public static final Logger log = LoggerFactory.getLogger( PropertyMapImpl.class );
 	private final HashMap<String, Property<?>> map = new HashMap<String, Property<?>>();
+	private final HashMultimap<String, PropertyConfig> notLoadedProperties = HashMultimap.create();
 
 	private final PropertyHolder owner;
 	private final PropertyListConfig config;
@@ -51,7 +56,8 @@ public class PropertyMapImpl implements PropertyMap
 			}
 			catch( ClassNotFoundException e )
 			{
-				e.printStackTrace();
+				log.debug( "Unable to load Property {} of type {}, class not found.", pc.getKey(), pc.getType() );
+				notLoadedProperties.put( pc.getType(), pc );
 			}
 		}
 	}
@@ -133,6 +139,11 @@ public class PropertyMapImpl implements PropertyMap
 	@SuppressWarnings( "unchecked" )
 	public <T> Property<T> createProperty( String key, Class<T> type, Object initialValue, boolean propagates )
 	{
+		for( PropertyConfig propertyConfig : notLoadedProperties.removeAll( type.getName() ) )
+		{
+			loadProperty( propertyConfig, type );
+		}
+
 		PropertyImpl<T> property = ( PropertyImpl<T> )get( key );
 		if( property != null )
 		{

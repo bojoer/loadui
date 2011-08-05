@@ -160,8 +160,8 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 		{
 			if( Objects.equal( config.getId(), parentListConfig.getAddonArray( i ).getId() ) )
 			{
-				parentListConfig.removeAddon( i );
 				parent.removeAddonItem( this );
+				parentListConfig.removeAddon( i );
 				return;
 			}
 		}
