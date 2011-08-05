@@ -3,6 +3,7 @@ package com.eviware.loadui.impl.addon;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.hamcrest.collection.IsEmptyCollection;
 import org.junit.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -132,5 +133,17 @@ public class AddonHolderSupportImplTest
 		assertThat( context.getAddonItemSupports().size(), is( 2 ) );
 		assertThat( secondContext.getAddonItemSupports().size(), is( 1 ) );
 		assertThat( config.getAddonArray().length, is( 3 ) );
+	}
+
+	@Test
+	public void shouldDeleteAddonItemSupports()
+	{
+		addonHolderSupport.getAddon( MockAddon.class );
+
+		AddonItem.Support addonItemSupport = context.createAddonItemSupport();
+
+		addonItemSupport.delete();
+
+		assertThat( context.getAddonItemSupports(), IsEmptyCollection.<AddonItem.Support> empty() );
 	}
 }

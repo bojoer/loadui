@@ -22,7 +22,6 @@ import org.springframework.core.convert.ConversionService;
 import com.eviware.loadui.api.addon.AddonHolder;
 import com.eviware.loadui.api.addon.AddonHolder.Support;
 import com.eviware.loadui.api.addon.AddonItem;
-import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.addressable.AddressableRegistry.DuplicateAddressException;
 import com.eviware.loadui.api.model.PropertyHolder;
@@ -47,6 +46,7 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	private final EventSupport eventSupport = new EventSupport();
 	private final AttributeHolderSupport attributeSupport;
 
+	private String id;
 	private AddonItem owner;
 	private PropertyMapImpl propertyMap;
 	private AddonHolderSupportImpl addonHolderSupport;
@@ -63,6 +63,7 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 
 		if( !config.isSetId() )
 			config.setId( BeanInjector.getBean( AddressableRegistry.class ).generateId() );
+		id = config.getId();
 
 		attributeSupport = new AttributeHolderSupport( config.getAttributes() == null ? config.addNewAttributes()
 				: config.getAttributes() );
@@ -82,13 +83,15 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 		catch( DuplicateAddressException e )
 		{
 			config.setId( addressableRegistry.generateId() );
+			id = config.getId();
 			try
 			{
 				addressableRegistry.register( owner );
 			}
 			catch( DuplicateAddressException e1 )
 			{
-				e1.printStackTrace();
+				//This shouldn't happen.
+				throw new RuntimeException( e1 );
 			}
 		}
 	}
@@ -96,7 +99,7 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	@Override
 	public String getId()
 	{
-		return config.getId();
+		return id;
 	}
 
 	@Override
@@ -158,7 +161,7 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	{
 		for( int i = parentListConfig.sizeOfAddonArray() - 1; i <= 0; i-- )
 		{
-			if( Objects.equal( config.getId(), parentListConfig.getAddonArray( i ).getId() ) )
+			if( Objects.equal( getId(), parentListConfig.getAddonArray( i ).getId() ) )
 			{
 				parent.removeAddonItem( this );
 				parentListConfig.removeAddon( i );
