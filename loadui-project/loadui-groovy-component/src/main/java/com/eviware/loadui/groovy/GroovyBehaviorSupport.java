@@ -22,8 +22,11 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
+import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.traits.Releasable;
@@ -88,7 +91,7 @@ public class GroovyBehaviorSupport implements Releasable
 
 		scriptProperty = context.createProperty( GroovyBehaviorSupport.SCRIPT_PROPERTY, String.class );
 		propertyEventListener = new PropertyEventListener();
-		context.getComponent().addEventListener( PropertyEvent.class, propertyEventListener );
+		context.getComponent().addEventListener( BaseEvent.class, propertyEventListener );
 
 		updateScript( scriptProperty.getValue() );
 	}
@@ -133,13 +136,28 @@ public class GroovyBehaviorSupport implements Releasable
 		ReleasableUtils.releaseAll( groovyEnv, resolver, groovyContext );
 	}
 
-	private class PropertyEventListener implements WeakEventHandler<PropertyEvent>
+	private class PropertyEventListener implements WeakEventHandler<BaseEvent>
 	{
 		@Override
-		public void handleEvent( PropertyEvent event )
+		public void handleEvent( BaseEvent event )
 		{
-			if( PropertyEvent.Event.VALUE == event.getEvent() && event.getProperty() == scriptProperty )
-				updateScript( scriptProperty.getValue() );
+			if( event instanceof PropertyEvent )
+			{
+				PropertyEvent pEvent = ( PropertyEvent )event;
+				if( PropertyEvent.Event.VALUE == pEvent.getEvent() && pEvent.getProperty() == scriptProperty )
+					updateScript( scriptProperty.getValue() );
+			}
+			else if( event instanceof ActionEvent )
+			{
+				if( CanvasItem.START_ACTION.equals( event.getKey() ) )
+				{
+					groovyEnv.invokeClosure( true, false, "onStart" );
+				}
+				else if( CanvasItem.STOP_ACTION.equals( event.getKey() ) )
+				{
+					groovyEnv.invokeClosure( true, false, "onStop" );
+				}
+			}
 		}
 	}
 
