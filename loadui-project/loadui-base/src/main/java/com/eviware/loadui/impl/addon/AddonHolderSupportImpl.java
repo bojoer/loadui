@@ -87,7 +87,7 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 	public void release()
 	{
 		addonRegistry.unregisterAddonHolder( owner );
-		ReleasableUtils.releaseAll( addons.values() );
+		ReleasableUtils.releaseAll( addons.values(), addonItemHolderSupport );
 		addons.clear();
 	}
 

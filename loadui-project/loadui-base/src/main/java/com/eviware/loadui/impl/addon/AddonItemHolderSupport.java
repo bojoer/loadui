@@ -6,13 +6,15 @@ import java.util.HashSet;
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.addon.AddonItem;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.config.AddonItemConfig;
 import com.eviware.loadui.config.AddonListConfig;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-public class AddonItemHolderSupport
+public class AddonItemHolderSupport implements Releasable
 {
 	private final AddonListConfig listConfig;
 	private final HashMultimap<String, AddonItem.Support> addonItems = HashMultimap.create();
@@ -59,5 +61,11 @@ public class AddonItemHolderSupport
 	public void removeAddonItem( @Nonnull AddonItem.Support child )
 	{
 		addonItems.get( child.getType() ).remove( child );
+	}
+
+	@Override
+	public void release()
+	{
+		ReleasableUtils.releaseAll( addonItems.values() );
 	}
 }

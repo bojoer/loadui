@@ -34,10 +34,9 @@ import com.eviware.loadui.util.FormattingUtils
 import com.eviware.loadui.util.charting.LineChartUtils
 
 def agentMessageListener = new MessageListener() {
+	def agents = [] as Set
 	
-	def agents = new HashSet()
-	
-	public void put(AgentItem agent, SceneItem scene) {
+	public void put( AgentItem agent, SceneItem scene ) {
 		agents.add("${agent.id}:${scene.id}")
 		agent.addMessageListener( AgentItem.AGENT_CHANNEL, this )
 	}

@@ -32,6 +32,7 @@ import com.eviware.loadui.config.AddonListConfig;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
 import com.eviware.loadui.impl.property.PropertyMapImpl;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.google.common.base.Objects;
 
@@ -189,5 +190,6 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	{
 		addressableRegistry.unregister( owner );
 		eventSupport.clearEventListeners();
+		ReleasableUtils.releaseAll( addonHolderSupport, addonItemHolderSupport );
 	}
 }
