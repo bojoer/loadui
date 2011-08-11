@@ -15,9 +15,12 @@
  */
 package com.eviware.loadui.impl.addon;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -26,16 +29,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.osgi.context.BundleContextAware;
 
 import com.eviware.loadui.api.addon.Addon;
+import com.eviware.loadui.api.addon.AddonHolder;
 import com.eviware.loadui.api.addon.AddonRegistry;
-import com.eviware.loadui.api.addon.Addon.Factory;
+import com.google.common.base.Predicate;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
 public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 {
 	public static final Logger log = LoggerFactory.getLogger( AddonRegistryImpl.class );
 
 	private final HashMap<String, ServiceRegistration> registrations = Maps.newHashMap();
-	private final HashMap<String, Addon.Factory<? extends Addon>> factories = Maps.newHashMap();
+	private final HashMap<String, Addon.Factory<?>> factories = Maps.newHashMap();
+	private final Multimap<Class<?>, Addon.Factory<?>> eagerAddons = HashMultimap.create();
+	private final Set<AddonHolder> registeredHolders = Collections
+			.newSetFromMap( new WeakHashMap<AddonHolder, Boolean>() );
 
 	private BundleContext bundleContext;
 
@@ -46,7 +56,7 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 	}
 
 	@Override
-	public synchronized <T extends Addon> void registerFactory( Class<T> type, Factory<T> factory )
+	public synchronized <T extends Addon> void registerFactory( Class<T> type, Addon.Factory<T> factory )
 	{
 		Hashtable<String, String> properties = new Hashtable<String, String>();
 		properties.put( "type", type.getName() );
@@ -56,7 +66,7 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 	}
 
 	@Override
-	public synchronized <T extends Addon> void unregisterFactory( Class<T> type, Factory<T> factory )
+	public synchronized <T extends Addon> void unregisterFactory( Class<T> type, Addon.Factory<T> factory )
 	{
 		ServiceRegistration registration = registrations.get( type.getName() );
 		if( registration != null )
@@ -65,9 +75,9 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 
 	@SuppressWarnings( "unchecked" )
 	@Override
-	public synchronized <T extends Addon> Factory<T> getFactory( Class<T> type )
+	public synchronized <T extends Addon> Addon.Factory<T> getFactory( Class<T> type )
 	{
-		return ( Factory<T> )factories.get( type.getName() );
+		return ( Addon.Factory<T> )factories.get( type.getName() );
 	}
 
 	/**
@@ -76,12 +86,39 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 	 * @param factory
 	 * @param properties
 	 */
-	public synchronized void factoryAdded( Factory<?> factory, Map<String, String> properties )
+	public synchronized void factoryAdded( final Addon.Factory<?> factory, Map<String, String> properties )
 	{
 		if( properties.containsKey( "type" ) )
 		{
-			factories.put( properties.get( "type" ), factory );
-			log.debug( "Registered Addon.Factory for type: {}", properties.get( "type" ) );
+			final String typeStr = properties.get( "type" );
+
+			factories.put( typeStr, factory );
+			for( Class<?> type : factory.getEagerTypes() )
+			{
+				eagerAddons.put( type, factory );
+			}
+			log.debug( "Registered Addon.Factory for type: {}", typeStr );
+
+			Iterable<AddonHolder> matchingHolders = Iterables.filter( registeredHolders, new Predicate<AddonHolder>()
+			{
+				@Override
+				public boolean apply( AddonHolder input )
+				{
+					return Iterables.all( factory.getEagerTypes(), new Predicate<Class<?>>()
+					{
+						@Override
+						public boolean apply( Class<?> input )
+						{
+							return input.isInstance( input );
+						}
+					} );
+				}
+			} );
+
+			for( AddonHolder holder : matchingHolders )
+			{
+				loadAddon( holder, factory );
+			}
 		}
 	}
 
@@ -91,11 +128,45 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 	 * @param factory
 	 * @param properties
 	 */
-	public synchronized void factoryRemoved( Factory<?> factory, Map<String, String> properties )
+	public synchronized void factoryRemoved( Addon.Factory<?> factory, Map<String, String> properties )
 	{
 		if( factories.remove( properties.get( "type" ) ) != null )
 		{
+			for( Class<?> type : factory.getEagerTypes() )
+			{
+				eagerAddons.remove( type, factory );
+			}
 			log.debug( "Unregistered Addon.Factory for type: {}", properties.get( "type" ) );
 		}
+	}
+
+	@Override
+	public void registerAddonHolder( final AddonHolder addonHolder )
+	{
+		registeredHolders.add( addonHolder );
+		final Predicate<Class<?>> typeMatcher = new Predicate<Class<?>>()
+		{
+			@Override
+			public boolean apply( Class<?> input )
+			{
+				return input.isInstance( addonHolder );
+			}
+		};
+
+		for( Addon.Factory<?> factory : Iterables.concat( Maps.filterKeys( eagerAddons.asMap(), typeMatcher ).values() ) )
+		{
+			loadAddon( addonHolder, factory );
+		}
+	}
+
+	@Override
+	public void unregisterAddonHolder( AddonHolder addonHolder )
+	{
+		registeredHolders.remove( addonHolder );
+	}
+
+	private void loadAddon( AddonHolder addonHolder, Addon.Factory<?> factory )
+	{
+		addonHolder.getAddon( factory.getType() );
 	}
 }

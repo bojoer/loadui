@@ -50,4 +50,21 @@ public interface AddonRegistry
 	 */
 	@Nullable
 	public <T extends Addon> Addon.Factory<T> getFactory( @Nonnull Class<T> type );
+
+	/**
+	 * Registers the instantiation of an AddonHolder with the AddonRegistry. This
+	 * will cause any eager Addons for the AddonHolder to be loaded, as well as
+	 * any eager addon which is registered while the AddonHolder is registered.
+	 * 
+	 * @param addonHolder
+	 */
+	public void registerAddonHolder( AddonHolder addonHolder );
+
+	/**
+	 * Unregisters an AddonHolder so that new eager Addons will no longer be
+	 * loaded for the AddonHolder.
+	 * 
+	 * @param addonHolder
+	 */
+	public void unregisterAddonHolder( AddonHolder addonHolder );
 }

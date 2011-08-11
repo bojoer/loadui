@@ -111,6 +111,8 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 			}
 		}
 
+		addonSupport.init();
+
 		initialized = true;
 	}
 

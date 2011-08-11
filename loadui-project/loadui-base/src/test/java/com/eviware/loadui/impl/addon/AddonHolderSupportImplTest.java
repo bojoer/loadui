@@ -66,6 +66,7 @@ public class AddonHolderSupportImplTest
 		addonRegistry.registerFactory( MockAddon.class, ( Addon.Factory<MockAddon> )factoryMock );
 
 		addonHolderSupport = new AddonHolderSupportImpl( holderMock, config );
+		addonHolderSupport.init();
 	}
 
 	@Test

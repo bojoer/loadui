@@ -1,20 +1,25 @@
 package com.eviware.loadui.util.test;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.eviware.loadui.api.addon.Addon;
+import com.eviware.loadui.api.addon.AddonHolder;
 import com.eviware.loadui.api.addon.AddonRegistry;
 import com.eviware.loadui.api.addon.Addon.Factory;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
- * Map backed AddonRegistry which doesn't use OSGi. Used in Unit tests.
+ * Map backed AddonRegistry which doesn't use OSGi. Used in Unit tests. Does NOT
+ * load eager Addons!
  * 
  * @author dain.nilsson
  */
 public class DefaultAddonRegistry implements AddonRegistry
 {
-	private static final HashMap<Class<? extends Addon>, Addon.Factory<? extends Addon>> factories = Maps.newHashMap();
+	private final HashMap<Class<? extends Addon>, Addon.Factory<? extends Addon>> factories = Maps.newHashMap();
+	private final HashSet<AddonHolder> registeredHolders = Sets.newHashSet();
 
 	@Override
 	public synchronized <T extends Addon> void registerFactory( Class<T> type, Addon.Factory<T> factory )
@@ -33,5 +38,17 @@ public class DefaultAddonRegistry implements AddonRegistry
 	public <T extends Addon> void unregisterFactory( Class<T> type, Factory<T> factory )
 	{
 		factories.remove( type );
+	}
+
+	@Override
+	public void registerAddonHolder( AddonHolder addonHolder )
+	{
+		registeredHolders.add( addonHolder );
+	}
+
+	@Override
+	public void unregisterAddonHolder( AddonHolder addonHolder )
+	{
+		registeredHolders.remove( addonHolder );
 	}
 }

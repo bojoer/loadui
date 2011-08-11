@@ -47,6 +47,7 @@ import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.util.BeanInjector;
+import com.google.common.collect.ImmutableSet;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 {
@@ -91,9 +92,21 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				new Addon.Factory<ExecutionAddon>()
 				{
 					@Override
+					public Class<ExecutionAddon> getType()
+					{
+						return ExecutionAddon.class;
+					}
+
+					@Override
 					public ExecutionAddon create( Context context )
 					{
 						return new ExecutionAddonImpl( context );
+					}
+
+					@Override
+					public Set<Class<?>> getEagerTypes()
+					{
+						return ImmutableSet.of();
 					}
 				} );
 	}

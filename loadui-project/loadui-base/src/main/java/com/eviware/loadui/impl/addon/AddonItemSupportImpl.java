@@ -121,6 +121,8 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 		{
 			addonHolderSupport = new AddonHolderSupportImpl( owner, config.getAddons() == null ? config.addNewAddons()
 					: config.getAddons() );
+
+			addonHolderSupport.init();
 		}
 
 		return addonHolderSupport;

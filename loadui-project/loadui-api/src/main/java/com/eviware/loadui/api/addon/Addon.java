@@ -16,6 +16,7 @@
 package com.eviware.loadui.api.addon;
 
 import java.util.Collection;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -71,6 +72,14 @@ public interface Addon
 	public interface Factory<T extends Addon>
 	{
 		/**
+		 * Returns the type of the AddonFactory.
+		 * 
+		 * @return
+		 */
+		@Nonnull
+		public Class<T> getType();
+
+		/**
 		 * Creates a new instance of the specific Addon using the given Context.
 		 * 
 		 * @param context
@@ -78,5 +87,14 @@ public interface Addon
 		 */
 		@Nonnull
 		public T create( @Nonnull Context context );
+
+		/**
+		 * Returns a set of AddonHolder types for which the Addon should be
+		 * eagerly loaded for.
+		 * 
+		 * @return
+		 */
+		@Nonnull
+		public Set<Class<?>> getEagerTypes();
 	}
 }

@@ -49,6 +49,11 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 		addonItemHolderSupport = new AddonItemHolderSupport( config );
 	}
 
+	public void init()
+	{
+		addonRegistry.registerAddonHolder( owner );
+	}
+
 	@Override
 	@SuppressWarnings( "unchecked" )
 	public <T extends Addon> T getAddon( Class<T> cls )
@@ -81,6 +86,7 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 	@Override
 	public void release()
 	{
+		addonRegistry.unregisterAddonHolder( owner );
 		ReleasableUtils.releaseAll( addons.values() );
 		addons.clear();
 	}
