@@ -93,6 +93,31 @@ public class ToolbarItemManager extends BundleContextAware {
 	}
 	
 	/**
+	 * When a new ToolbarItem becomes unavailable, this method is called with a
+	 * reference to that ServiceReference. This is used to get the actual object implementing the service and not a proxy provided by Spring.
+	 * 
+	 * @param serviceReference
+	 */
+	public function toolbarItemServiceRemoved( serviceReference:ServiceReference ):Void {
+		def nativeReference = (serviceReference as ServiceReferenceProxy).getTargetServiceReference();
+		def toolbarId = nativeReference.getProperty( TOOLBAR_ID );
+		if( toolbarId != null ) {
+			def toolbarItem = bundleContext.getService( nativeReference ) as ToolbarItem;			
+			toolbarItemMap.remove( toolbarId, toolbarItem );
+			def toolbarItemNode = ( if( toolbarItem instanceof ToolbarItemNode ) toolbarItem else toolbarItemNodes.remove( toolbarItem ) ) as ToolbarItemNode;
+			def toolbar = toolbarMap.get( toolbarId ) as Toolbar;
+			
+			println("From {toolbar} remove {toolbarItemNode}");
+			
+			if( toolbar != null and toolbarItemNode != null ) {
+				runInFxThread( function():Void {
+					toolbar.removeItem( toolbarItemNode );
+				} );
+			}
+		}
+	}
+	
+	/**
 	 * When a new ToolbarItem becomes available, this method is called with a
 	 * reference to that ToolbarItem and a Map of its properties.
 	 * 
@@ -115,9 +140,12 @@ public class ToolbarItemManager extends BundleContextAware {
 	 * @param properties
 	 */
 	public function toolbarItemRemoved( toolbarItem:ToolbarItem, properties:Map ):Void {
+		println("!!!ITEM_REMOVED: {toolbarItem}, {properties}");
 		toolbarItemMap.remove( properties.get( TOOLBAR_ID ), toolbarItem );
 		def toolbarItemNode = ( if( toolbarItem instanceof ToolbarItemNode ) toolbarItem else toolbarItemNodes.remove( toolbarItem ) ) as ToolbarItemNode;
 		def toolbar = toolbarMap.get( properties.get( TOOLBAR_ID ) ) as Toolbar;
+		
+		println("From {toolbar} remove {toolbarItemNode}");
 		
 		if( toolbar != null and toolbarItemNode != null ) {
 			runInFxThread( function():Void {

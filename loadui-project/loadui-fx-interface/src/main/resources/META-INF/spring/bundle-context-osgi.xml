@@ -32,7 +32,7 @@
 	
 	<osgi:set id="toolbarItems" interface="com.eviware.loadui.api.ui.ToolbarItem"
 		cardinality="0..N">
-		<osgi:listener bind-method="toolbarItemServiceAdded" unbind-method="toolbarItemRemoved"
+		<osgi:listener bind-method="toolbarItemServiceAdded" unbind-method="toolbarItemServiceRemoved"
 			ref="toolbarItemManager" />
 	</osgi:set>
 	
