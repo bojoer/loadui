@@ -15,8 +15,11 @@
  */
 package com.eviware.loadui.util.groovy.resolvers;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.slf4j.Logger;
 
@@ -24,8 +27,8 @@ import groovy.lang.Closure;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 
-import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.PropertyHolder;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.traits.Releasable;
@@ -43,6 +46,7 @@ public class PropertyHolderResolver implements GroovyResolver.Methods, GroovyRes
 	private final PropertyHolder propertyHolder;
 	private final Logger log;
 	private final PropertyEventHandler handler = new PropertyEventHandler();
+	private final Set<PropertyHolder> holders = Collections.newSetFromMap( new WeakHashMap<PropertyHolder, Boolean>() );
 
 	public PropertyHolderResolver( PropertyHolder propertyHolder, Logger log )
 	{
@@ -50,6 +54,7 @@ public class PropertyHolderResolver implements GroovyResolver.Methods, GroovyRes
 		this.log = log;
 
 		propertyHolder.addEventListener( PropertyEvent.class, handler );
+		holders.add( propertyHolder );
 	}
 
 	/**
@@ -110,6 +115,11 @@ public class PropertyHolderResolver implements GroovyResolver.Methods, GroovyRes
 			Closure<?> replaceHandler = ( Closure<?> )Preconditions.checkNotNull( args[1] );
 
 			this.handler.replaceHandlers.put( property, replaceHandler );
+			PropertyHolder owner = property.getOwner();
+			if( holders.add( owner ) )
+			{
+				owner.addEventListener( PropertyEvent.class, handler );
+			}
 
 			return property;
 		}
@@ -133,10 +143,13 @@ public class PropertyHolderResolver implements GroovyResolver.Methods, GroovyRes
 	public void release()
 	{
 		handler.replaceHandlers.clear();
-		propertyHolder.removeEventListener( PropertyEvent.class, handler );
+		for( PropertyHolder holder : holders )
+		{
+			holder.removeEventListener( PropertyEvent.class, handler );
+		}
 	}
 
-	private class PropertyEventHandler implements EventHandler<PropertyEvent>
+	private class PropertyEventHandler implements WeakEventHandler<PropertyEvent>
 	{
 		private final HashMap<Property<?>, Closure<?>> replaceHandlers = new HashMap<Property<?>, Closure<?>>();
 
