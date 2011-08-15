@@ -19,6 +19,10 @@
 	<bean id="executorService" factory-bean="executorManager"
 		factory-method="getExecutor" />
 
+	<bean id="lifecycleScheduler" class="com.eviware.loadui.impl.lifecycle.LifecycleSchedulerImpl">
+		<constructor-arg ref="executorService" />
+	</bean>
+
 	<bean id="propertySynchronizer"
 		class="com.eviware.loadui.impl.property.PropertySynchronizerImpl">
 		<constructor-arg ref="addressableRegistry" />
