@@ -116,6 +116,7 @@ sample = { message, sampleId ->
 			updateScript()
 		if( setBinding.value )
 			script.binding = new Binding( new HashMap( message ) )
+		script.binding.setProperty( 'log', log )
 		def result = script.run()
 		message['Status'] = true
 		if( result instanceof Map ) {
