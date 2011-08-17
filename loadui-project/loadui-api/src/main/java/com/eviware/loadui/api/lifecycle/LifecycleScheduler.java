@@ -1,6 +1,23 @@
+/*
+ * Copyright 2011 eviware software ab
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl5
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.api.lifecycle;
 
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
 
 /**
@@ -11,6 +28,9 @@ import java.util.concurrent.Future;
  */
 public interface LifecycleScheduler
 {
+	public static final EnumSet<Phase> START_PHASES = EnumSet.of( Phase.PRE_START, Phase.START, Phase.POST_START );
+	public static final EnumSet<Phase> STOP_PHASES = EnumSet.of( Phase.PRE_STOP, Phase.STOP, Phase.POST_STOP );
+
 	/**
 	 * Returns the current state of the LifecycleScheduler.
 	 * 
@@ -31,7 +51,7 @@ public interface LifecycleScheduler
 	 * @return
 	 * @throws IllegalLifecycleStateException
 	 */
-	public Future<Map<String, Object>> requestStart( final Map<String, Object> initialContext )
+	public Future<ConcurrentMap<String, Object>> requestStart( final Map<String, Object> initialContext )
 			throws IllegalLifecycleStateException;
 
 	/**
@@ -44,7 +64,7 @@ public interface LifecycleScheduler
 	 * @return
 	 * @throws IllegalLifecycleStateException
 	 */
-	public Future<Map<String, Object>> requestStop() throws IllegalLifecycleStateException;
+	public Future<ConcurrentMap<String, Object>> requestStop() throws IllegalLifecycleStateException;
 
 	/**
 	 * Registers a LifecycleTask to be part of a Phase. All tasks registered for
@@ -55,15 +75,15 @@ public interface LifecycleScheduler
 	 * task for as long as it is used, or it may be garbage collected.
 	 * 
 	 * @param task
-	 * @param phase
+	 * @param phases
 	 */
-	public void registerTask( LifecycleTask task, Phase phase );
+	public void registerTask( LifecycleTask task, Phase... phases );
 
 	/**
 	 * Unregisters a LifecycleTask from a specific Phase.
 	 * 
 	 * @param task
-	 * @param phase
+	 * @param phases
 	 */
-	public void unregisterTask( LifecycleTask task, Phase phase );
+	public void unregisterTask( LifecycleTask task, Phase... phases );
 }

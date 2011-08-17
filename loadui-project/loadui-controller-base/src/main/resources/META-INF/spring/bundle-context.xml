@@ -8,6 +8,10 @@
 		<constructor-arg ref="componentRegistry" />
 	</bean>
 	
+	<bean id="lifecycleScheduler" class="com.eviware.loadui.impl.lifecycle.LifecycleSchedulerImpl">
+		<constructor-arg ref="executorService" />
+	</bean>
+	
 	<bean id="agentDiscovery" class="com.eviware.loadui.impl.discovery.AgentDiscoveryImpl" destroy-method="release" />
 	
 	<bean id="trackStreamReceiver" class="com.eviware.loadui.impl.statistics.TrackStreamReceiver">
@@ -26,4 +30,6 @@
 		<constructor-arg ref="workspaceProvider" />
 		<constructor-arg ref="reportingManager" />
 	</bean>
+	
+	<bean id="agentLifecycleAddonFactory" class="com.eviware.loadui.impl.lifecycle.AgentLifecycleAddon$Factory" />
 </beans>

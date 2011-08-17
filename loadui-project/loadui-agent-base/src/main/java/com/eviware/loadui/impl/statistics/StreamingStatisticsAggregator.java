@@ -16,9 +16,7 @@
 package com.eviware.loadui.impl.statistics;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,17 +32,11 @@ public class StreamingStatisticsAggregator implements StatisticsAggregator
 
 	private static final String STATISTICS_CHANNEL = "/" + Statistic.class.getName();
 
-	private final Set<MessageEndpoint> endpoints = new HashSet<MessageEndpoint>();
+	private final MessageEndpoint endpoint;
 
-	public void addEndpoint( MessageEndpoint endpoint )
+	public StreamingStatisticsAggregator( MessageEndpoint endpoint )
 	{
-		log.debug( "Added Endpoint: {}", endpoint );
-		endpoints.add( endpoint );
-	}
-
-	public void removeEndpoint( MessageEndpoint endpoint )
-	{
-		endpoints.remove( endpoint );
+		this.endpoint = endpoint;
 	}
 
 	@Override
@@ -57,8 +49,7 @@ public class StreamingStatisticsAggregator implements StatisticsAggregator
 		data.put( "_TIMESTAMP", entry.getTimestamp() );
 		data.put( "_TRACK_ID", trackId );
 
-		for( MessageEndpoint endpoint : endpoints )
-			endpoint.sendMessage( STATISTICS_CHANNEL, data );
+		endpoint.sendMessage( STATISTICS_CHANNEL, data );
 	}
 
 	@Override

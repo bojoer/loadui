@@ -38,6 +38,7 @@ import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.dispatch.ExecutorManager;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
+import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
@@ -53,7 +54,6 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.api.terminal.TerminalProxy;
-import com.eviware.loadui.impl.statistics.StreamingStatisticsAggregator;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.dispatch.CustomThreadPoolExecutor;
 import com.google.common.collect.Maps;
@@ -71,7 +71,7 @@ public class ControllerImpl
 	private final AddressableRegistry addressableRegistry;
 	private final PropertySynchronizer propertySynchronizer;
 	private final CounterSynchronizer counterSynchronizer;
-	private final StreamingStatisticsAggregator streamingExecutionManager;
+	private final BroadcastMessageEndpoint broadcastEndpoint;
 
 	private final Map<String, SceneAgent> sceneAgents = Collections.synchronizedMap( new HashMap<String, SceneAgent>() );
 	private final Set<MessageEndpoint> clients = new HashSet<MessageEndpoint>();
@@ -79,7 +79,7 @@ public class ControllerImpl
 	public ControllerImpl( ScheduledExecutorService scheduledExecutorService, ExecutorManager executorManager,
 			ConversionService conversionService, ServerEndpoint serverEndpoint, TerminalProxy terminalProxy,
 			AddressableRegistry addressableRegistry, PropertySynchronizer propertySynchronizer,
-			CounterSynchronizer counterSynchronizer, StreamingStatisticsAggregator streamingExecutionManager )
+			CounterSynchronizer counterSynchronizer, BroadcastMessageEndpoint broadcastEndpoint )
 	{
 		this.executorManager = executorManager;
 		this.executorService = executorManager.getExecutor();
@@ -88,7 +88,7 @@ public class ControllerImpl
 		this.addressableRegistry = addressableRegistry;
 		this.propertySynchronizer = propertySynchronizer;
 		this.counterSynchronizer = counterSynchronizer;
-		this.streamingExecutionManager = streamingExecutionManager;
+		this.broadcastEndpoint = broadcastEndpoint;
 
 		serverEndpoint.addConnectionListener( new ConnectionListener()
 		{
@@ -100,7 +100,7 @@ public class ControllerImpl
 					if( clients.add( endpoint ) )
 					{
 						log.info( "Client connected" );
-						ControllerImpl.this.streamingExecutionManager.addEndpoint( endpoint );
+						ControllerImpl.this.broadcastEndpoint.registerEndpoint( endpoint );
 						AgentListener agentListener = new AgentListener();
 						endpoint.addConnectionListener( agentListener );
 						endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, agentListener );
@@ -114,7 +114,7 @@ public class ControllerImpl
 				else
 				{
 					clients.remove( endpoint );
-					ControllerImpl.this.streamingExecutionManager.removeEndpoint( endpoint );
+					ControllerImpl.this.broadcastEndpoint.deregisterEndpoint( endpoint );
 					log.info( "Client disconnected" );
 				}
 			}
@@ -124,7 +124,7 @@ public class ControllerImpl
 			if( clients.add( endpoint ) )
 			{
 				log.info( "Client connected" );
-				ControllerImpl.this.streamingExecutionManager.addEndpoint( endpoint );
+				ControllerImpl.this.broadcastEndpoint.registerEndpoint( endpoint );
 				AgentListener agentListener = new AgentListener();
 				endpoint.addConnectionListener( agentListener );
 				endpoint.addMessageListener( AgentItem.AGENT_CHANNEL, agentListener );

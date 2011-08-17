@@ -20,8 +20,6 @@
 	
 	<osgi:service interface="java.util.concurrent.ScheduledExecutorService" ref="scheduledExecutorService" />
 	
-	<osgi:service interface="com.eviware.loadui.api.lifecycle.LifecycleScheduler" ref="lifecycleScheduler" />
-	
 	<osgi:service interface="com.eviware.loadui.api.property.PropertySynchronizer" ref="propertySynchronizer" />
 	
 	<osgi:service interface="com.eviware.loadui.api.terminal.TerminalProxy" ref="terminalProxy" />
