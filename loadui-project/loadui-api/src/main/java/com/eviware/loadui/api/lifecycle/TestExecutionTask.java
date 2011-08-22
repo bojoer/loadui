@@ -16,11 +16,19 @@
 package com.eviware.loadui.api.lifecycle;
 
 /**
- * Life-cycle states.
+ * A task which is invoked during one or several phases of a TestExecution
+ * life-cycle. A life-cycle phase will not complete until all TestExecutionTasks
+ * for the given phase have completed. Tasks are executed in parallel.
  * 
  * @author dain.nilsson
  */
-public enum State
+public interface TestExecutionTask
 {
-	IDLE, RUNNING
+	/**
+	 * Called when the given Phase is initiated.
+	 * 
+	 * @param context
+	 * @param phase
+	 */
+	public void invoke( TestExecution execution, Phase phase );
 }

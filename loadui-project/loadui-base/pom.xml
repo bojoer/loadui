@@ -29,8 +29,6 @@
 					<instructions>
 						<Embed-Dependency>*;scope=provided</Embed-Dependency>
 						<Import-Package>!org.apache.commons.discovery.tools;!com.sun.javadoc;!com.sun.tools.javadoc;!org.apache.tools.ant*;!org.apache.xml.resolver*;!org.apache.crimson.*;org.w3c.dom;*</Import-Package>
-						<!-- <DynamicImport-Package>schemaorg_apache_xmlbeans.*</DynamicImport-Package>
-						<Import-Package>org.apache.xmlbeans.impl.schema;version="2.4",!org.apache.commons.discovery.tools,!com.sun.javadoc,!com.sun.tools.javadoc,!org.apache.tools.ant*,!org.apache.xml.resolver*,!org.apache.crimson.*,org.w3c.dom,*</Import-Package> -->
 					</instructions>
 				</configuration>
 			</plugin>

@@ -16,12 +16,11 @@
 package com.eviware.loadui.api.lifecycle;
 
 /**
- * Phases of a TestExecution life-cycle.
+ * TestExecution states.
  * 
  * @author dain.nilsson
  */
-public enum Phase
+public enum TestState
 {
-	PRE_START, START, POST_START, //Startup phases
-	PRE_STOP, STOP, POST_STOP //Shutdown phases
+	ENQUEUED, STARTING, RUNNING, STOPPING, COMPLETED
 }

@@ -15,23 +15,48 @@
  */
 package com.eviware.loadui.api.lifecycle;
 
-import java.util.concurrent.ConcurrentMap;
+import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.summary.Summary;
 
 /**
- * A task which is invoked during one or several phases of a life-cycle. A
- * life-cycle phase will not complete until all LifecycleTasks for the given
- * phase have completed. Tasks are executed in parallel.
+ * Holds information about the end result of a TestExecution.
  * 
  * @author dain.nilsson
  */
-public interface LifecycleTask
+public interface ExecutionResult
 {
 	/**
-	 * Called when the given Phase is initiated. The context given is shared
-	 * between all LifecycleTasks for the entire life-cycle, and is thread safe.
+	 * Gets the CanvasItem which was run.
 	 * 
-	 * @param context
-	 * @param phase
+	 * @return
 	 */
-	public void invoke( ConcurrentMap<String, Object> context, Phase phase );
+	public CanvasItem getCanvas();
+
+	/**
+	 * Gets a Summary of the execution.
+	 * 
+	 * @return
+	 */
+	public Summary getSummary();
+
+	/**
+	 * Returns the total run time of the Execution in milliseconds.
+	 * 
+	 * @return
+	 */
+	public long getExecutionLength();
+
+	/**
+	 * True if the test was run in Distributed mode.
+	 * 
+	 * @return
+	 */
+	public boolean isDistributed();
+
+	/**
+	 * True if the test was aborted.
+	 * 
+	 * @return
+	 */
+	public boolean isAborted();
 }

@@ -15,7 +15,7 @@
 		<constructor-arg ref="broadcastMessageEndpoint" />
 	</bean>
 	
-	<bean id="lifecycleScheduler" class="com.eviware.loadui.impl.lifecycle.AgentLifecycleScheduler" destroy-method="release">
+	<bean id="testRunner" class="com.eviware.loadui.impl.lifecycle.AgentTestRunner" destroy-method="release">
 		<constructor-arg ref="broadcastMessageEndpoint" />
 		<constructor-arg ref="executorService" />
 	</bean>

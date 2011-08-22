@@ -2,14 +2,14 @@ package com.eviware.loadui.impl.lifecycle;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.addon.Addon;
-import com.eviware.loadui.api.lifecycle.LifecycleScheduler;
-import com.eviware.loadui.api.lifecycle.LifecycleTask;
+import com.eviware.loadui.api.lifecycle.TestExecution;
+import com.eviware.loadui.api.lifecycle.TestRunner;
+import com.eviware.loadui.api.lifecycle.TestExecutionTask;
 import com.eviware.loadui.api.lifecycle.Phase;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
@@ -40,19 +40,19 @@ public class AgentLifecycleAddon implements Addon, Releasable
 	{
 		this.project = project;
 
-		BeanInjector.getBean( LifecycleScheduler.class ).registerTask( task, Phase.values() );
+		BeanInjector.getBean( TestRunner.class ).registerTask( task, Phase.values() );
 	}
 
 	@Override
 	public void release()
 	{
-		BeanInjector.getBean( LifecycleScheduler.class ).unregisterTask( task, Phase.values() );
+		BeanInjector.getBean( TestRunner.class ).unregisterTask( task, Phase.values() );
 	}
 
-	private class DistributePhaseTask implements LifecycleTask
+	private class DistributePhaseTask implements TestExecutionTask
 	{
 		@Override
-		public void invoke( final ConcurrentMap<String, Object> phaseContext, final Phase phase )
+		public void invoke( final TestExecution execution, final Phase phase )
 		{
 			if( project.getWorkspace().isLocalMode() )
 				return;
@@ -69,7 +69,7 @@ public class AgentLifecycleAddon implements Addon, Releasable
 			HashSet<MessageAwaiter> waiters = Sets.newHashSet();
 			for( AgentItem agent : agents )
 			{
-				waiters.add( new MessageAwaiter( agent, phase ) );
+				waiters.add( new MessageAwaiter( agent, execution, phase ) );
 			}
 
 			long waitUntil = System.currentTimeMillis() + 10000;
@@ -107,17 +107,19 @@ public class AgentLifecycleAddon implements Addon, Releasable
 		private static final String CHANNEL = "/lifecycleAddon";
 
 		private final AgentItem agent;
+		private final String canvasId;
 		private final Phase phase;
 		private boolean done = false;
 
-		private MessageAwaiter( AgentItem agent, Phase phase )
+		private MessageAwaiter( AgentItem agent, TestExecution execution, Phase phase )
 		{
 			this.agent = agent;
+			this.canvasId = execution.getCanvas().getId();
 			this.phase = phase;
 
 			agent.addMessageListener( CHANNEL, this );
 			agent.addConnectionListener( this );
-			agent.sendMessage( CHANNEL, phase );
+			agent.sendMessage( CHANNEL, new Object[] { canvasId, phase.toString() } );
 		}
 
 		private synchronized void complete()
@@ -131,9 +133,13 @@ public class AgentLifecycleAddon implements Addon, Releasable
 		@Override
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
-			if( CHANNEL.equals( channel ) && phase == Phase.valueOf( String.valueOf( data ) ) )
+			if( CHANNEL.equals( channel ) )
 			{
-				complete();
+				Object[] strings = ( Object[] )data;
+				if( canvasId.equals( strings[0] ) && phase == Phase.valueOf( ( String )strings[1] ) )
+				{
+					complete();
+				}
 			}
 		}
 

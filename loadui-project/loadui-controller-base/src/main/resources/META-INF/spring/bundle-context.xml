@@ -8,7 +8,7 @@
 		<constructor-arg ref="componentRegistry" />
 	</bean>
 	
-	<bean id="lifecycleScheduler" class="com.eviware.loadui.impl.lifecycle.LifecycleSchedulerImpl">
+	<bean id="testRunner" class="com.eviware.loadui.impl.lifecycle.TestRunnerImpl">
 		<constructor-arg ref="executorService" />
 	</bean>
 	
