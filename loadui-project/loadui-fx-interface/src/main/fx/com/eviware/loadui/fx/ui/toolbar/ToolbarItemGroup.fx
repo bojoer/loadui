@@ -35,6 +35,8 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.control.Button;
 import javafx.scene.layout.LayoutInfo;
 
+import java.lang.Math;
+
 import org.jfxtras.scene.shape.MultiRoundRectangle;
 
 /**
@@ -73,8 +75,25 @@ public class ToolbarItemGroup extends CustomNode {
 	 * A ToolbarExpander used to place the ToolbarItemNodes in this ToolbarGroup into when in an expanded state.
 	 */
 	public-init var expandedGroup:ToolbarExpander;
+	
+	/**
+	* The height in pixels of the item group.
+	*/
+	public-init var groupHeight:Number;
+	
+	/**
+	* The upper margin of the item group.
+	*/
+	public-init var topMargin:Number;
+	
+	/**
+	* The left margin of the item group.
+	*/
+	public var leftMargin:Integer = 13;
 
-	def frame = ToolbarItemFrame {}
+	def frame = ToolbarItemFrame { leftMargin: leftMargin }
+	
+	var expanderButtonHeight = Math.max( groupHeight/3, 18 );
 	
 	/**
 	 * The ToolbarItemNodes contained in this ToolbarGroup.
@@ -116,7 +135,7 @@ public class ToolbarItemGroup extends CustomNode {
 	
 	def expanderButton:Group = Group {
 		layoutX: 85
-		layoutY: Toolbar.GROUP_HEIGHT / 2 - 20
+		layoutY: groupHeight / 2 - 20
 		visible: bind sizeof items > 1
 		onMouseClicked: function( e:MouseEvent ) {
 			expand();
@@ -154,26 +173,28 @@ public class ToolbarItemGroup extends CustomNode {
 	def collapsedGroup:Group = Group {
 		content: [
 			Text {
-				x: 13
-				y: 12
+				x: leftMargin
+				y: topMargin
 				content: category
 				textOrigin: TextOrigin.TOP
 				font: bind font
 				fill: bind textFill
-			}, frame, btn = Button {
+			},
+			frame,
+			btn = Button {
 				styleClass: "expander-button"
 				graphic: Polygon {
 					fill: bind if(btn.hover) Color.web("#222222") else Color.web("#8b8b8b")
 					points: [
 						0, 0,
-						4, 4,
-						4, 6,
+						4, 5,
+						4, 5,
 						0, 10
 					]
 				}
-				layoutInfo: LayoutInfo { width: 24, height: 35 }
-				layoutX: 73
-				layoutY: Toolbar.GROUP_HEIGHT / 2 - 20
+				layoutInfo: LayoutInfo { width: 20, height: expanderButtonHeight } //{ width: 24, height: 35 }
+				layoutX: 70
+				layoutY: groupHeight / 2 - expanderButtonHeight / 2
 				visible: bind sizeof items > 1
 				action: expand
 			} // expanderButton

@@ -108,6 +108,8 @@ public class MainWindow {
 		height: bind scene.height - inspectors.height - 100
 		linkURL: "http://www.loadui.org/Custom-Components"
 		linkLabel: "Get more\ncomponents \u00bb"
+		groupHeight: 110
+		width: 92
 	}
 	
 	public function getProjectToolbar() { 

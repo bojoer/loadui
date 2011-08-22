@@ -123,6 +123,21 @@ public class ToolbarExpander extends CustomNode, Pagination {
 	 */
 	public-init var expandedHolder:Group;
 	
+	/**
+	* The height in pixels of the item group.
+	*/
+	public-init var groupHeight:Number;
+	
+	/**
+	* The upper margin of the item group.
+	*/
+	public-init var topMargin:Number;
+	
+	/**
+	* The upper margin of the item group.
+	*/
+	public-init var groupLeftMargin:Number;
+	
 	def glow = Glow { level: .5 };
 	
 	function buildContent():Group {
@@ -166,7 +181,7 @@ public class ToolbarExpander extends CustomNode, Pagination {
 		
 		if( group != null ) {
 			items = for( item in group.items ) 
-				ToolbarItemFrame { item:item };
+				ToolbarItemFrame { item:item, leftMargin: groupLeftMargin };
 			layoutY = group.layoutY - 12;
 			insert this into expandedHolder.content;
 			insert modalLayer into AppState.byScene( scene ).overlay.content;
@@ -207,7 +222,7 @@ public class ToolbarExpander extends CustomNode, Pagination {
 				width: 25
 				layoutX: -5
 				fill: bind leftArrowBackgroundFill
-				height: Toolbar.GROUP_HEIGHT
+				height: groupHeight
 			}, FXDNode {
 				layoutY: 40
 				url: bind "{__ROOT__}{leftArrowActiveUrl}"
@@ -233,7 +248,7 @@ public class ToolbarExpander extends CustomNode, Pagination {
 				width: 25
 				layoutX: -5
 				fill: bind rightArrowBackgroundFill
-				height: Toolbar.GROUP_HEIGHT
+				height: groupHeight
 			}, FXDNode {
 				layoutY: 40
 				url: bind "{__ROOT__}{rightArrowActiveUrl}"
@@ -253,7 +268,7 @@ public class ToolbarExpander extends CustomNode, Pagination {
 				MultiRoundRectangle {
 					x: -1
 					width: bind if(numPages == 1) 100 * actualItemsPerPage + 14 else 100 * actualItemsPerPage + 75
-					height: Toolbar.GROUP_HEIGHT - 1
+					height: groupHeight - 1
 					fill: bind backgroundFill
 					blocksMouse: true
 					topRightHeight: 5
@@ -262,8 +277,8 @@ public class ToolbarExpander extends CustomNode, Pagination {
 					bottomRightWidth: 5
 					stroke: bind borderFill
 				}, Text {
-					x: 13
-					y: 12
+					x: groupLeftMargin
+					y: topMargin
 					content: bind group.category
 					textOrigin: TextOrigin.TOP
 					fill: bind textFill
@@ -274,7 +289,7 @@ public class ToolbarExpander extends CustomNode, Pagination {
 							content: buildContent()
 							wipe: slideWipe
 							width: bind 100 * actualItemsPerPage
-							height: Toolbar.GROUP_HEIGHT
+							height: groupHeight
 							action: function() {
 								if( oldGroup != null )
 									oldGroup.content = null;

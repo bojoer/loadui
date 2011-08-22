@@ -44,14 +44,13 @@ public class ToolbarItemFrame extends CustomNode {
 	
 	public var font:Font = Font.font("Amble", 10 );
 	
-	//public-read var df: DraggableFrame;
+	public var leftMargin:Integer = 13;
 	
 	override function create() {
 		Group {
-			layoutX: 13
+			layoutX: leftMargin
 			layoutY: 32
 			content: [
-				//df = DraggableFrame {
 				DraggableFrame {
 					draggable: bind item
 					placeholder: ImageView { image: bind item.icon }

@@ -59,7 +59,6 @@ import com.eviware.loadui.fx.statistics.chart.ChartPage;
 import com.eviware.loadui.fx.statistics.manager.RecentResultsList;
 import com.eviware.loadui.fx.statistics.manager.ArchivedResultsList;
 import com.eviware.loadui.fx.ui.menu.StatisticsWindowButton;
-import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 
 import java.lang.Math;
 

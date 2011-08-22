@@ -80,13 +80,12 @@ import com.eviware.loadui.api.component.categories.*;
 
 import com.eviware.loadui.fx.ui.popup.TooltipHolder;
 
-public def GROUP_HEIGHT = 126;
-
 /**
  * The main toolbar component for the LoadUI Controller
  * 
  * @author nenad.ristic
  * @author dain.nilsson
+ * @author henrik.olsson
  */
 public class Toolbar extends CustomNode, Resizable, Pagination {
 
@@ -150,11 +149,24 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 	/** Label of the link that will be added as the last item in the toolbar. If not specified, link URL will be used instead */
 	public var linkLabel: String = null;
 
+	/** The height of each item group */
+	public var groupHeight = 110;
+	
+	/** The width of the toolbar */
+	public var preferredWidth = 90; //100
+	
+	/** The upper margin of each item group */
+	public var groupTopMargin = 10;
+	
+	public var groupLeftMargin = 10;
+	
+	public override var width = 112;
+
 	public function addItem( item:ToolbarItemNode ) {
 		def group = item.category.toUpperCase();
 		
 		if( not itemGroups.containsKey( group ) ) {
-			def newGroup = ToolbarItemGroup { category: group, expandedGroup: expandedGroup };
+			def newGroup = ToolbarItemGroup { category: group, expandedGroup: expandedGroup, groupHeight: groupHeight, topMargin: groupTopMargin, leftMargin: groupLeftMargin };
 			itemGroups.put( group, newGroup );
 			items = Sequences.sort( [ items, newGroup ], groupOrder ) as Node[];
 		}
@@ -211,17 +223,15 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 		}
 	}
 
-	override var width = 112;
+	override var itemsPerPage = bind ( height - 100 ) / groupHeight as Integer;
 
-	override var itemsPerPage = bind ( height - 100 ) / GROUP_HEIGHT as Integer;
-
-	def realHeight = bind 95 + GROUP_HEIGHT * Math.min( actualItemsPerPage, sizeof items );
+	def realHeight = bind 95 + groupHeight * Math.min( actualItemsPerPage, sizeof items );
 	
 	def expandedHolder:Group = Group {
 		layoutY: 68
 		layoutX: bind -translateX
 	}
-	def expandedGroup = ToolbarExpander { expandedHolder: expandedHolder };
+	def expandedGroup = ToolbarExpander { expandedHolder: expandedHolder, groupHeight: groupHeight, topMargin: groupTopMargin, groupLeftMargin: groupLeftMargin };
 	
 	def modalLayer = Rectangle {
 		width: bind scene.width
@@ -400,7 +410,7 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 	}
 	
 	override function getPrefWidth( height:Float ) {
-		100
+		preferredWidth
 	}
 	
 	override function getPrefHeight( width:Float ) {
@@ -417,10 +427,10 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 				url: bind "{__ROOT__}{hrUrl}"
 				scaleX: bind width
 				translateX: bind width / 2
-				layoutY: yOffset + GROUP_HEIGHT - 15
+				layoutY: yOffset + groupHeight - 15
 			} into withSpacers;
 			
-			yOffset += GROUP_HEIGHT;
+			yOffset += groupHeight;
 		}
 		delete withSpacers[sizeof withSpacers - 1];
 		
