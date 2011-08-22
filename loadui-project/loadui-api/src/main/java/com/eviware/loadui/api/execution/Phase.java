@@ -13,22 +13,15 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.lifecycle;
+package com.eviware.loadui.api.execution;
 
 /**
- * A task which is invoked during one or several phases of a TestExecution
- * life-cycle. A life-cycle phase will not complete until all TestExecutionTasks
- * for the given phase have completed. Tasks are executed in parallel.
+ * Phases of a TestExecution life-cycle.
  * 
  * @author dain.nilsson
  */
-public interface TestExecutionTask
+public enum Phase
 {
-	/**
-	 * Called when the given Phase is initiated.
-	 * 
-	 * @param context
-	 * @param phase
-	 */
-	public void invoke( TestExecution execution, Phase phase );
+	PRE_START, START, POST_START, //Startup phases
+	PRE_STOP, STOP, POST_STOP //Shutdown phases
 }

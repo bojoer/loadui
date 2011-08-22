@@ -28,10 +28,10 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.lifecycle.Phase;
-import com.eviware.loadui.api.lifecycle.TestExecution;
-import com.eviware.loadui.api.lifecycle.TestExecutionTask;
-import com.eviware.loadui.api.lifecycle.TestRunner;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
+import com.eviware.loadui.api.execution.TestRunner;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -114,11 +114,11 @@ public abstract class AbstractTestRunner implements TestRunner
 		}
 		catch( InterruptedException e )
 		{
-			log.error( "Error invoking LifecycleTask", e );
+			log.error( "Error invoking TestExecutionTask", e );
 		}
 		catch( ExecutionException e )
 		{
-			log.error( "Error invoking LifecycleTask", e );
+			log.error( "Error invoking TestExecutionTask", e );
 		}
 		return false;
 	}

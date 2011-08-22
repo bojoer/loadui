@@ -17,9 +17,9 @@ package com.eviware.loadui.util.execution;
 
 import java.util.concurrent.Future;
 
-import com.eviware.loadui.api.lifecycle.ExecutionResult;
-import com.eviware.loadui.api.lifecycle.TestExecution;
-import com.eviware.loadui.api.lifecycle.TestState;
+import com.eviware.loadui.api.execution.ExecutionResult;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestState;
 import com.eviware.loadui.api.model.CanvasItem;
 
 /**

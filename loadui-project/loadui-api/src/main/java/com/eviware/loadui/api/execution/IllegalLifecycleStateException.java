@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.lifecycle;
+package com.eviware.loadui.api.execution;
 
 /**
  * Exception used when requesting a state change from an illegal state, for
@@ -23,6 +23,7 @@ package com.eviware.loadui.api.lifecycle;
  * 
  * @author dain.nilsson
  */
+@Deprecated
 public final class IllegalLifecycleStateException extends Exception
 {
 	private static final long serialVersionUID = 152307637308761877L;

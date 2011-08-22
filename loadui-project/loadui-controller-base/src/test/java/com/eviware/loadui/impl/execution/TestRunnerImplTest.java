@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.lifecycle;
+package com.eviware.loadui.impl.execution;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -22,9 +22,10 @@ import java.util.concurrent.TimeUnit;
 import org.junit.*;
 import static org.mockito.Mockito.*;
 
-import com.eviware.loadui.api.lifecycle.ExecutionResult;
-import com.eviware.loadui.api.lifecycle.TestExecution;
+import com.eviware.loadui.api.execution.ExecutionResult;
+import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.impl.execution.TestRunnerImpl;
 
 public class TestRunnerImplTest
 {
@@ -39,7 +40,7 @@ public class TestRunnerImplTest
 	}
 
 	@Test
-	public void shouldCompleteLifecycle() throws Exception
+	public void shouldCompleteTestExecution() throws Exception
 	{
 		TestExecution execution = testRunner.enqueueExecution( canvasMock );
 		Future<ExecutionResult> future = execution.complete();

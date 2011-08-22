@@ -6,7 +6,7 @@
 
 	<osgi:service interface="com.eviware.loadui.api.statistics.StatisticsAggregator" ref="statisticsAggregator" />
 	
-	<osgi:service interface="com.eviware.loadui.api.lifecycle.TestRunner" ref="testRunner" />
+	<osgi:service interface="com.eviware.loadui.api.execution.TestRunner" ref="testRunner" />
 	
 	<osgi:reference interface="com.eviware.loadui.api.messaging.BroadcastMessageEndpoint" id="broadcastMessageEndpoint" />
 

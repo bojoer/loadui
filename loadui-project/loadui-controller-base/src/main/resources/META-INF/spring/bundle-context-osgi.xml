@@ -20,7 +20,7 @@
 	
 	<osgi:reference interface="com.eviware.loadui.api.reporting.ReportingManager" id="reportingManager" />
 	
-	<osgi:service interface="com.eviware.loadui.api.lifecycle.TestRunner" ref="testRunner" />
+	<osgi:service interface="com.eviware.loadui.api.execution.TestRunner" ref="testRunner" />
 	
 	<osgi:service interface="com.eviware.loadui.api.discovery.AgentDiscovery" ref="agentDiscovery" />
 	
@@ -28,7 +28,7 @@
 	
 	<osgi:service interface="com.eviware.loadui.api.statistics.ProjectExecutionManager" ref="projectExecutionManager" />
 	
-	<osgi:service ref="agentLifecycleAddonFactory" interface="com.eviware.loadui.api.addon.Addon$Factory" />
+	<osgi:service ref="agentTestExecutionAddonFactory" interface="com.eviware.loadui.api.addon.Addon$Factory" />
 	
 	<osgi:service ref="testExecutionAddonFactory" interface="com.eviware.loadui.api.addon.Addon$Factory" />
 </beans>

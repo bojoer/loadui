@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.lifecycle;
+package com.eviware.loadui.api.execution;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
 import com.eviware.loadui.api.model.CanvasItem;
 
 /**
- * Schedules life-cycles. The LifecycleScheduler may have a single life-cycle
+ * Schedules test executions. The TestRunner may have a single test execution
  * running at any one time.
  * 
  * @author dain.nilsson
@@ -62,7 +62,7 @@ public interface TestRunner
 	public void registerTask( TestExecutionTask task, Phase... phases );
 
 	/**
-	 * Unregisters a LifecycleTask from a specific Phase.
+	 * Unregisters a TestExecutionTask from a specific Phase.
 	 * 
 	 * @param task
 	 * @param phases

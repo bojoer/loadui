@@ -1,12 +1,12 @@
-package com.eviware.loadui.impl.lifecycle;
+package com.eviware.loadui.impl.execution;
 
 import java.util.Set;
 
 import com.eviware.loadui.api.addon.Addon;
-import com.eviware.loadui.api.lifecycle.Phase;
-import com.eviware.loadui.api.lifecycle.TestExecution;
-import com.eviware.loadui.api.lifecycle.TestExecutionTask;
-import com.eviware.loadui.api.lifecycle.TestRunner;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
+import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.traits.Releasable;
@@ -27,17 +27,18 @@ public class TestExecutionAddon implements Addon, Releasable
 		@Override
 		public void invoke( TestExecution execution, Phase phase )
 		{
+			final CanvasItem canvas = execution.getCanvas();
 			switch( phase )
 			{
 			case PRE_START :
-				execution.getCanvas().triggerAction( CanvasItem.COUNTER_RESET_ACTION );
+				canvas.triggerAction( CanvasItem.COUNTER_RESET_ACTION );
 				break;
 			case START :
-				execution.getCanvas().triggerAction( CanvasItem.START_ACTION );
+				canvas.triggerAction( CanvasItem.START_ACTION );
 				break;
 			case STOP :
-				execution.getCanvas().triggerAction( CanvasItem.STOP_ACTION );
-				execution.getCanvas().triggerAction( CanvasItem.COMPLETE_ACTION );
+				canvas.triggerAction( CanvasItem.STOP_ACTION );
+				canvas.triggerAction( CanvasItem.COMPLETE_ACTION );
 				break;
 			}
 		}

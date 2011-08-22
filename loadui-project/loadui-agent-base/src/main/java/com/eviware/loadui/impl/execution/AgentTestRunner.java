@@ -13,15 +13,14 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.lifecycle;
+package com.eviware.loadui.impl.execution;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import com.eviware.loadui.api.lifecycle.TestExecution;
-import com.eviware.loadui.api.lifecycle.Phase;
-import com.eviware.loadui.api.lifecycle.TestExecutionTask;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.CanvasItem;
@@ -30,8 +29,8 @@ import com.eviware.loadui.util.execution.AbstractTestRunner;
 import com.google.common.collect.Maps;
 
 /**
- * Listens for remote invocations of lifecycle phases. When a phase is started
- * remotely, the AgentLifecycleScheduler will be notified and will run its
+ * Listens for remote invocations of test execution phases. When a phase is
+ * started remotely, the AgentTestRunner will be notified and will run its
  * registered tasks, before sending a reply notifying the remote controller that
  * the agent is done.
  * 
@@ -39,7 +38,7 @@ import com.google.common.collect.Maps;
  */
 public class AgentTestRunner extends AbstractTestRunner implements Releasable
 {
-	private static final String CHANNEL = "/lifecycleAddon";
+	private static final String CHANNEL = "/agentTestExecutionAddon";
 
 	private final PhaseMessageListener phaseListener = new PhaseMessageListener();
 	private final HashMap<String, AgentTestExecution> executions = Maps.newHashMap();

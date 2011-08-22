@@ -1,4 +1,4 @@
-package com.eviware.loadui.impl.lifecycle;
+package com.eviware.loadui.impl.execution;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -7,10 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.addon.Addon;
-import com.eviware.loadui.api.lifecycle.TestExecution;
-import com.eviware.loadui.api.lifecycle.TestRunner;
-import com.eviware.loadui.api.lifecycle.TestExecutionTask;
-import com.eviware.loadui.api.lifecycle.Phase;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
+import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
@@ -24,19 +24,19 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
- * Hooks into the Lifecycle at each phase, and lets each Agent run its own tasks
- * before reporting back and continuing with the next phase.
+ * Hooks into the TestExecution at each phase, and lets each Agent run its own
+ * tasks before reporting back and continuing with the next phase.
  * 
  * @author dain.nilsson
  */
-public class AgentLifecycleAddon implements Addon, Releasable
+public class AgentTestExecutionAddon implements Addon, Releasable
 {
-	private static final Logger log = LoggerFactory.getLogger( AgentLifecycleAddon.class );
+	private static final Logger log = LoggerFactory.getLogger( AgentTestExecutionAddon.class );
 
 	private final ProjectItem project;
 	private final DistributePhaseTask task = new DistributePhaseTask();
 
-	private AgentLifecycleAddon( ProjectItem project )
+	private AgentTestExecutionAddon( ProjectItem project )
 	{
 		this.project = project;
 
@@ -104,7 +104,7 @@ public class AgentLifecycleAddon implements Addon, Releasable
 
 	private static class MessageAwaiter implements MessageListener, ConnectionListener
 	{
-		private static final String CHANNEL = "/lifecycleAddon";
+		private static final String CHANNEL = "/agentTestExecutionAddon";
 
 		private final AgentItem agent;
 		private final String canvasId;
@@ -150,21 +150,21 @@ public class AgentLifecycleAddon implements Addon, Releasable
 		}
 	}
 
-	public static class Factory implements Addon.Factory<AgentLifecycleAddon>
+	public static class Factory implements Addon.Factory<AgentTestExecutionAddon>
 	{
 		private final Set<Class<?>> eagerTypes = ImmutableSet.<Class<?>> of( ProjectItem.class );
 
 		@Override
-		public Class<AgentLifecycleAddon> getType()
+		public Class<AgentTestExecutionAddon> getType()
 		{
-			return AgentLifecycleAddon.class;
+			return AgentTestExecutionAddon.class;
 		}
 
 		@Override
-		public AgentLifecycleAddon create( Addon.Context context )
+		public AgentTestExecutionAddon create( Addon.Context context )
 		{
 			ProjectItem project = ( ProjectItem )Preconditions.checkNotNull( context.getOwner() );
-			return new AgentLifecycleAddon( project );
+			return new AgentTestExecutionAddon( project );
 		}
 
 		@Override

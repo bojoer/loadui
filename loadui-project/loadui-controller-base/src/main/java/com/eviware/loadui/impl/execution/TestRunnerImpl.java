@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.impl.lifecycle;
+package com.eviware.loadui.impl.execution;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,10 +22,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.eviware.loadui.api.lifecycle.ExecutionResult;
-import com.eviware.loadui.api.lifecycle.Phase;
-import com.eviware.loadui.api.lifecycle.TestExecution;
-import com.eviware.loadui.api.lifecycle.TestState;
+import com.eviware.loadui.api.execution.ExecutionResult;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestState;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.execution.AbstractTestRunner;

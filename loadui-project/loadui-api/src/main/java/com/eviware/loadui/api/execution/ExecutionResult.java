@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.lifecycle;
+package com.eviware.loadui.api.execution;
 
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.summary.Summary;

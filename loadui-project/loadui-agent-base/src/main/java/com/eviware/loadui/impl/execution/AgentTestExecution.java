@@ -1,4 +1,4 @@
-package com.eviware.loadui.impl.lifecycle;
+package com.eviware.loadui.impl.execution;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -6,7 +6,7 @@ import java.lang.reflect.Proxy;
 import java.util.concurrent.Future;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
-import com.eviware.loadui.api.lifecycle.ExecutionResult;
+import com.eviware.loadui.api.execution.ExecutionResult;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.execution.AbstractTestExecution;
