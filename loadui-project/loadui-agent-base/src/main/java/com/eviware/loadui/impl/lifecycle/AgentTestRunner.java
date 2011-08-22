@@ -45,7 +45,6 @@ public class AgentTestRunner extends AbstractTestRunner implements Releasable
 	private final HashMap<String, AgentTestExecution> executions = Maps.newHashMap();
 	private final MessageEndpoint endpoint;
 	private final ExecutorService executorService;
-	private final TestExecutionTask task;
 
 	public AgentTestRunner( MessageEndpoint endpoint, ExecutorService executorService )
 	{
@@ -54,23 +53,6 @@ public class AgentTestRunner extends AbstractTestRunner implements Releasable
 		this.executorService = executorService;
 
 		endpoint.addMessageListener( CHANNEL, phaseListener );
-
-		registerTask( task = new TestExecutionTask()
-		{
-			@Override
-			public void invoke( TestExecution execution, Phase phase )
-			{
-				System.out.println( "Phase: " + phase + " execution: " + execution );
-				try
-				{
-					Thread.sleep( 1000 );
-				}
-				catch( InterruptedException e )
-				{
-					e.printStackTrace();
-				}
-			}
-		}, Phase.values() );
 	}
 
 	@Override

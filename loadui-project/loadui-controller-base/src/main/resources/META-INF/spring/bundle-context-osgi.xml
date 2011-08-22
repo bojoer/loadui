@@ -28,10 +28,7 @@
 	
 	<osgi:service interface="com.eviware.loadui.api.statistics.ProjectExecutionManager" ref="projectExecutionManager" />
 	
-	<osgi:service ref="agentLifecycleAddonFactory"
-		interface="com.eviware.loadui.api.addon.Addon$Factory">
-		<osgi:service-properties>
-			<entry key="type" value="com.eviware.loadui.impl.lifecycle.AgentLifecycleAddon" />
-		</osgi:service-properties>
-	</osgi:service>
+	<osgi:service ref="agentLifecycleAddonFactory" interface="com.eviware.loadui.api.addon.Addon$Factory" />
+	
+	<osgi:service ref="testExecutionAddonFactory" interface="com.eviware.loadui.api.addon.Addon$Factory" />
 </beans>

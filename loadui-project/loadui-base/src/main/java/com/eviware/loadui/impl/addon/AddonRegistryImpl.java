@@ -88,37 +88,34 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 	 */
 	public synchronized void factoryAdded( final Addon.Factory<?> factory, Map<String, String> properties )
 	{
-		if( properties.containsKey( "type" ) )
+		final String typeStr = factory.getType().getName();
+
+		factories.put( typeStr, factory );
+		for( Class<?> type : factory.getEagerTypes() )
 		{
-			final String typeStr = properties.get( "type" );
+			eagerAddons.put( type, factory );
+		}
+		log.debug( "Registered Addon.Factory for type: {}", typeStr );
 
-			factories.put( typeStr, factory );
-			for( Class<?> type : factory.getEagerTypes() )
+		Iterable<AddonHolder> matchingHolders = Iterables.filter( registeredHolders, new Predicate<AddonHolder>()
+		{
+			@Override
+			public boolean apply( AddonHolder input )
 			{
-				eagerAddons.put( type, factory );
-			}
-			log.debug( "Registered Addon.Factory for type: {}", typeStr );
-
-			Iterable<AddonHolder> matchingHolders = Iterables.filter( registeredHolders, new Predicate<AddonHolder>()
-			{
-				@Override
-				public boolean apply( AddonHolder input )
+				return Iterables.all( factory.getEagerTypes(), new Predicate<Class<?>>()
 				{
-					return Iterables.all( factory.getEagerTypes(), new Predicate<Class<?>>()
+					@Override
+					public boolean apply( Class<?> input )
 					{
-						@Override
-						public boolean apply( Class<?> input )
-						{
-							return input.isInstance( input );
-						}
-					} );
-				}
-			} );
-
-			for( AddonHolder holder : matchingHolders )
-			{
-				loadAddon( holder, factory );
+						return input.isInstance( input );
+					}
+				} );
 			}
+		} );
+
+		for( AddonHolder holder : matchingHolders )
+		{
+			loadAddon( holder, factory );
 		}
 	}
 
