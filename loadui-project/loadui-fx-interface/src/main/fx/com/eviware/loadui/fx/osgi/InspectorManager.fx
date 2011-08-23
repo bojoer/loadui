@@ -29,6 +29,10 @@ import java.util.Map;
 import com.eviware.loadui.api.ui.inspector.Inspector;
 import com.eviware.loadui.api.ui.inspector.InspectorPanel;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.MapMaker;
+import com.google.common.collect.HashMultimap;
+
 def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.osgi.InspectorManager" );
 
 /**
@@ -36,17 +40,27 @@ def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.osgi.InspectorManager"
  * are added as OSGi services.
  * 
  * @author dain.nilsson
+ * @author henrik.olsson
  */
+ 
+def panelMap = new MapMaker().weakValues().makeMap();
+def inspectorMap = HashMultimap.create();
+
+public def PANEL_ID = "panelId";
+
+public function registerPanel( panel:InspectorPanel ):Void {
+	def panelId = panel.getId();
+	if( not Strings.isNullOrEmpty( panelId ) ) {
+		panelMap.put( panelId, panel );
+		
+		for( inspector in inspectorMap.get( panelId ) ) {
+			panel.addInspector( inspector as Inspector );
+		}
+	}
+}
+
+
 public class InspectorManager {
-	public-init var inspectorPanel:InspectorPanel;
-	public function setInspectorPanel( inspectorPanel:InspectorPanel ):Void {
-		this.inspectorPanel = inspectorPanel;
-	}
-	
-	public-init var activeInspector: String;
-	public function setActiveInspector( activeInspector: String ):Void {
-		this.activeInspector = activeInspector;
-	}
 	
 	/**
 	 * When a new Inspector becomes available, this method is called with a
@@ -55,14 +69,21 @@ public class InspectorManager {
 	 * @param inspector
 	 * @param properties
 	 */
+	
 	public function onBind( inspector:Inspector, properties:Map ):Void {
 		log.debug( "Adding Inspector '\{\}' to the InspectorPanel.", inspector );
-		runInFxThread( function() {
-			inspectorPanel.addInspector( inspector );
-			if(inspector.getName().equals(activeInspector)){
-				inspectorPanel.selectInspector( inspector );
+		def panelId = properties.get( PANEL_ID );
+		if( panelId != null )
+		{
+			inspectorMap.put( panelId, inspector );
+			def panel = panelMap.get( panelId ) as InspectorPanel;
+			if( panel != null )
+			{
+				runInFxThread( function() {
+					panel.addInspector( inspector );
+				} );
 			}
-		} );
+		}
 	}
 	
 	/**
@@ -75,8 +96,17 @@ public class InspectorManager {
 	 */
 	public function onUnbind( inspector:Inspector, properties:Map ):Void {
 		log.debug( "Removing Inspector '\{\}' from the InspectorPanel.", inspector );
-		runInFxThread( function() {
-			inspectorPanel.removeInspector( inspector );
-		} );
+		def panelId = properties.get( PANEL_ID );
+		if( panelId != null )
+		{
+			inspectorMap.remove( panelId, inspector );
+			def panel = panelMap.get( panelId ) as InspectorPanel;
+			if( panel != null )
+			{
+				runInFxThread( function() {
+					panel.removeInspector( inspector );
+				} );
+			}
+		}
 	}
 }

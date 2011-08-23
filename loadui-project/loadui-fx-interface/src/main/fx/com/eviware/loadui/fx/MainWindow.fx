@@ -172,11 +172,13 @@ public class MainWindow {
 		//InspectorPanel
 		log.debug( "Initializing InspectorPanel" );
 		inspectors = InspectorPanelControl {
+			id: "MainWindowInspector"
 			height: bind inspectors.prefHeight
 			width: bind scene.width
 			layoutY: bind scene.height - inspectors.height
 			layoutX: 0
 			maxHeight: bind scene.height - 100 as Integer
+			defaultInspector: "Agents"
 		}
 		inspectors.collapse();
 		insert inspectors into appState.globalLayer.content;

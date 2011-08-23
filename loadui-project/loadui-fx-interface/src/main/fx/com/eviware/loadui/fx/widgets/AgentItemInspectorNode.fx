@@ -102,12 +102,12 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.fx.FxUtils;
 
-public def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentInspectorNode" );
+public def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentItemInspectorNode" );
 
 /**
  * Node to display in the AgentList representing a AgentItem.
  */
-public class AgentInspectorNode extends AgentNodeBase, Droppable, TestCaseIconListener, Pagination {
+public class AgentItemInspectorNode extends AgentNodeBase, Droppable, TestCaseIconListener, Pagination {
 	
 	/**
 	 * The AgentItem to represent.

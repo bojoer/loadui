@@ -20,9 +20,18 @@
 	<osgi:service interface="com.eviware.loadui.api.ui.WindowController" ref="windowController" />
 	
 	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
-		ref="systemLogInspector" />
+		ref="systemLogInspector" >
+		<osgi:service-properties>
+			<entry key="panelId" value="MainWindowInspector"/>
+		</osgi:service-properties>
+	</osgi:service>
+	
 	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
-		ref="agentInspector" />
+		ref="agentInspector">
+		<osgi:service-properties>
+			<entry key="panelId" value="MainWindowInspector"/>
+		</osgi:service-properties>
+	</osgi:service>
 
 	<osgi:set id="inspectors" interface="com.eviware.loadui.api.ui.inspector.Inspector"
 		cardinality="0..N">

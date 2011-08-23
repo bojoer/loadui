@@ -126,17 +126,17 @@ public class ToolbarExpander extends CustomNode, Pagination {
 	/**
 	* The height in pixels of the item group.
 	*/
-	public-init var groupHeight:Number;
+	public-init var groupHeight:Integer;
 	
 	/**
 	* The upper margin of the item group.
 	*/
-	public-init var topMargin:Number;
+	public-init var topMargin:Integer;
 	
 	/**
 	* The upper margin of the item group.
 	*/
-	public-init var groupLeftMargin:Number;
+	public-init var groupLeftMargin:Integer;
 	
 	def glow = Glow { level: .5 };
 	

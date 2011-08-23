@@ -110,7 +110,7 @@ public class AgentInspector extends Inspector {
 	def buttonGroup = ToggleGroup {};
 	public-init var name: String;
 	
-	def panel = AgentInspectorPanel {};
+	def panel = AgentInspectorNode {};
 	
 	def agentErrorListener = new AgentErrorListener();
 	
@@ -138,7 +138,7 @@ public class AgentInspector extends Inspector {
 	
 }
 
-public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizable, EventHandler, Droppable {
+public class AgentInspectorNode extends BaseNode, TestCaseIconListener, Resizable, EventHandler, Droppable {
 
 	//refernce to a workspace
 	def workspace: WorkspaceItem = bind MainWindow.instance.workspace on replace oldVal {
@@ -204,7 +204,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	def leftPanelContentOffset: Number = 40;
 	
 	//ghost agent instance
-	var ghostAgent: AgentInspectorNode;
+	var ghostAgent: AgentItemInspectorNode;
 	
 	//fill of inactive panel (can be local or onAgents)
 	def inactivePanelFill = LinearGradient {
@@ -296,7 +296,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 
 	override function selectionChanged(tc: TestCaseIcon): Void {
 		for(rin in pagelist.items){
-			(rin as AgentInspectorNode).selectTestCaseIcon(tc);
+			(rin as  AgentItemInspectorNode).selectTestCaseIcon(tc);
 		}
 		ghostAgent.selectTestCaseIcon(tc);
 	}
@@ -437,7 +437,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 					layoutY: 15
 					selected: onAgents
 			    }
-			    ghostAgent = AgentInspectorNode { 
+			    ghostAgent =  AgentItemInspectorNode { 
 			    	layoutX: leftPanelContentOffset
 					layoutY: bind panelHeight - 50 - ghostAgent.layoutBounds.height
 			    	ghostAgent: true
@@ -470,7 +470,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	/** Adds agent node to list */
 	function addAgent( agent: AgentItem ):Void {
 		agent.addMessageListener( MessageEndpoint.ERROR_CHANNEL, agentErrorListener );
-		pagelist.items = Sequences.sort( [ pagelist.items, AgentInspectorNode { agent: agent } ], COMPARE_BY_TOSTRING ) as Node[];
+		pagelist.items = Sequences.sort( [ pagelist.items,  AgentItemInspectorNode { agent: agent } ], COMPARE_BY_TOSTRING ) as Node[];
 	}
 	
 	/** Removes agent from the list */
@@ -479,16 +479,16 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 		for( node in pagelist.items[p|p instanceof AgentNode] )
 			if( (node as AgentNode).agent == agent )
 				delete node from pagelist.items;
-		for( node in pagelist.items[p|p instanceof AgentInspectorNode] )
-			if( (node as AgentInspectorNode).agent == agent )
+		for( node in pagelist.items[p|p instanceof  AgentItemInspectorNode] )
+			if( (node as  AgentItemInspectorNode).agent == agent )
 				delete node from pagelist.items;
 	}
 	
 	/** Assign testcase to a specified agent */
 	function deployTestCase(scene: SceneItem, agent: AgentItem): Void {
 		for(rin in pagelist.items){
-			if((rin as AgentInspectorNode).agent == agent){
-				(rin as AgentInspectorNode).addTestCase(TestCaseIcon{
+			if((rin as  AgentItemInspectorNode).agent == agent){
+				(rin as  AgentItemInspectorNode).addTestCase(TestCaseIcon{
 						stateListeners: [this]
 						sceneItem: scene
 					}
@@ -501,7 +501,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	/** Assign testcase to all agents */
 	function deployTestCase(scene: SceneItem): Void {
 		for(rin in pagelist.items){
-			(rin as AgentInspectorNode).addTestCase(TestCaseIcon{
+			(rin as  AgentItemInspectorNode).addTestCase(TestCaseIcon{
 					stateListeners: [this]
 					sceneItem: scene
 				}
@@ -512,8 +512,8 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	/** Unassign testcas from specified agent */
 	function undeployTestCase(scene: SceneItem, agent: AgentItem): Void {
 		for(rin in pagelist.items){
-			if((rin as AgentInspectorNode).agent == agent){
-				(rin as AgentInspectorNode).undeployTestCase(scene);
+			if((rin as  AgentItemInspectorNode).agent == agent){
+				(rin as  AgentItemInspectorNode).undeployTestCase(scene);
 				return;
 			}
 		}
@@ -523,7 +523,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	function undeployTestCase(sceneItem: SceneItem): Void{
 		ghostAgent.undeployTestCase(sceneItem);
 		for(rin in pagelist.items){
-			(rin as AgentInspectorNode).undeployTestCase(sceneItem);
+			(rin as  AgentItemInspectorNode).undeployTestCase(sceneItem);
 		}
 	}
 	
@@ -540,7 +540,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 				} 
 				ghostAgent.addTestCase(tc);
 				
-				var rin: AgentInspectorNode;
+				var rin:  AgentItemInspectorNode;
 				var agents = projectItem.getAgentsAssignedTo(s as SceneItem);
 				if(agents != null){
 					for(r in agents){
@@ -555,28 +555,28 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	}
 	
 	/** Find agent node by it's agent */
-	function findAgentNode(agent: AgentItem): AgentInspectorNode {
+	function findAgentNode(agent: AgentItem):  AgentItemInspectorNode {
 		for(rin in pagelist.items){
-			if((rin as AgentInspectorNode).agent == agent){
-				return rin as AgentInspectorNode;
+			if((rin as AgentItemInspectorNode).agent == agent){
+				return rin as AgentItemInspectorNode;
 			}
 		}
-		return null as AgentInspectorNode;
+		return null as AgentItemInspectorNode;
 	}
 	
 	/** Clear test cases from all agent nodes wiothout unassigning them */
 	function clearTestCases(): Void{
 		ghostAgent.clearTestCases(false);
 		for(rin in pagelist.items){
-			(rin as AgentInspectorNode).clearTestCases(false);
+			(rin as AgentItemInspectorNode).clearTestCases(false);
 		}
 	}
 	
 	/** Clear test cases from the agent node specified by it's agent with unassigning them */
 	function clearTestCases(agent: AgentItem): Void{
 		for(rin in pagelist.items){
-			if((rin as AgentInspectorNode).agent == agent){
-				(rin as AgentInspectorNode).clearTestCases(true);
+			if((rin as AgentItemInspectorNode).agent == agent){
+				(rin as AgentItemInspectorNode).clearTestCases(true);
 				return;
 			}
 		}
@@ -588,7 +588,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	function selectTestCaseIcon(sceneItem: SceneItem, selected: Boolean): Void {
 		ghostAgent.selectTestCaseIcon(sceneItem, selected);
 		for(rin in pagelist.items){
-			(rin as AgentInspectorNode).selectTestCaseIcon(sceneItem, selected);
+			(rin as AgentItemInspectorNode).selectTestCaseIcon(sceneItem, selected);
 		}
 	}
 	
@@ -596,7 +596,7 @@ public class AgentInspectorPanel extends BaseNode, TestCaseIconListener, Resizab
 	function deselectTestCaseIcons(): Void {
 		ghostAgent.deselectTestCaseIcons();
 		for(rin in pagelist.items){
-			(rin as AgentInspectorNode).deselectTestCaseIcons();
+			(rin as AgentItemInspectorNode).deselectTestCaseIcons();
 		}
 	}
 }

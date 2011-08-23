@@ -53,6 +53,13 @@ public interface InspectorPanel
 	public Inspector getInspector( String name );
 
 	/**
+	 * Get the unique id associated with this InspectorPanel.
+	 * 
+	 * @return This InspectorPanel's id.
+	 */
+	public String getId();
+
+	/**
 	 * Get a list of all contained Inspectors.
 	 * 
 	 * @return A Collection of all contained Inspectors.
@@ -90,5 +97,5 @@ public interface InspectorPanel
 	 * @return true if the Panel is expanded, false if not.
 	 */
 	public boolean isExpanded();
-	
+
 }

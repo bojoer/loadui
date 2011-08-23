@@ -46,6 +46,7 @@ import javafx.scene.input.MouseButton;
 import javafx.ext.swing.SwingComponent;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.button.GlowButton;
+import com.eviware.loadui.fx.osgi.InspectorManager;
 
 import org.slf4j.LoggerFactory;
 import java.util.HashMap;
@@ -96,6 +97,8 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 			inspectorHolder.content = getNode(activeInspector.getPanel());
 	};
 	
+	public-init var defaultInspector: String;
+	
 	/**
 	 * The height of the panel.
 	 */
@@ -119,6 +122,7 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 	var resizeStart:Number;
 	
 	postinit {
+		InspectorManager.registerPanel( this );
 		FX.deferAction( function():Void {
 			lastGoodHeight = inspectorHeight;
 			prefHeight = getPrefHeight( width ) as Integer;
@@ -132,6 +136,7 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 			}
 		]
 	};
+	
 	
 	/**
 	 * {@inheritDoc}
@@ -285,8 +290,10 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 			i++;
 		}
 		insert btn before buttons[i];
-		//if( activeInspector == null )
-		//	selectInspector( inspector );
+		
+		if( inspector.getName().equals( defaultInspector ) ) {
+			selectInspector( inspector );
+		}
 	}
 
 	/**
@@ -330,6 +337,13 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 			activeInspector = inspector;
 			getButton( activeInspector ).pushed = true;
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	override function getId() {
+		id;
 	}
 	
 	/**

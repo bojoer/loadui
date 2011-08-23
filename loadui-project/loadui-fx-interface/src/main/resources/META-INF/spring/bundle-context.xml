@@ -30,10 +30,7 @@
 	
 	<bean id="toolbarItemManager" class="com.eviware.loadui.fx.osgi.ToolbarItemManager" />
 	
-	<bean id="inspectorManager" class="com.eviware.loadui.fx.osgi.InspectorManager">
-		<property name="inspectorPanel" ref="inspectorPanel" />
-		<property name="activeInspector" value="Agents" />
-	</bean>
+	<bean id="inspectorManager" class="com.eviware.loadui.fx.osgi.InspectorManager" />
 	
 	<bean id="projectToolbar" factory-bean="mainWindow" factory-method="getProjectToolbar" />
 	<bean id="testcaseToolbar" factory-bean="mainWindow" factory-method="getTestcaseToolbar" />

@@ -78,7 +78,7 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Te
 public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, WeakEventHandler {
 
 	// container node instance. Use containerNode.agent to retrieve reference to corresponding AgentItem.
-	public var containerNode: AgentInspectorNode on replace {
+	public var containerNode: AgentItemInspectorNode on replace {
 		loaded = containerNode.agent == null or project.isSceneLoaded( sceneItem, containerNode.agent );
 	}
 	
