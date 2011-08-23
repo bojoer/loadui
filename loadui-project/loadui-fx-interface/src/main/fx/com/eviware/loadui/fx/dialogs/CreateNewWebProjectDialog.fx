@@ -27,6 +27,7 @@ import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
 import com.eviware.loadui.fx.ui.form.fields.*;
+import com.eviware.loadui.fx.util.TestExecutionUtils;
 
 import com.eviware.loadui.api.model.CanvasItem;
 
@@ -123,9 +124,9 @@ public class CreateNewWebProjectDialog {
 				 	project.connect(outputTerminal, statisticsTerminal);
 				 }
 				 dialog.close();
-				  if (autoStart.selected) {
-				 								     project.triggerAction(CanvasItem.START_ACTION);
-				 								 }
+				if (autoStart.selected) {
+					TestExecutionUtils.startCanvas( project );
+				}
 			}
 						
 	var dialog:Dialog;

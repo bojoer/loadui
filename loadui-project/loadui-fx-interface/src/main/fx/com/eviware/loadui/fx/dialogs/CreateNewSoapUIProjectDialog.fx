@@ -39,6 +39,7 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.util.TestExecutionUtils;
 
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.api.component.ComponentRegistry;
@@ -131,7 +132,7 @@ public class CreateNewSoapUIProjectDialog {
 								 }
 								 dialog.close();
 								 if (autoStart.selected) {
-								     project.triggerAction(CanvasItem.START_ACTION);
+								 	  TestExecutionUtils.startCanvas( project );
 								 }
 						}
 						

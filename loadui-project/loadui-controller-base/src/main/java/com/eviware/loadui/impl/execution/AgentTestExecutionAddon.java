@@ -62,7 +62,10 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 			{
 				for( AgentItem agent : project.getAgentsAssignedTo( scene ) )
 				{
-					agents.add( agent );
+					if( agent.isEnabled() )
+					{
+						agents.add( agent );
+					}
 				}
 			}
 
@@ -82,7 +85,7 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 						try
 						{
 							long waitTime = waitUntil - System.currentTimeMillis();
-							if( waitTime > 0 )
+							if( waiter.agent.isReady() && waitTime > 0 )
 							{
 								waiter.wait( waitTime );
 							}

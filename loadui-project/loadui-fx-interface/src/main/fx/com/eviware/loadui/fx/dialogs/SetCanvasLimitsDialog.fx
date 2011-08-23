@@ -23,6 +23,7 @@ package com.eviware.loadui.fx.dialogs;
 
 import javafx.scene.text.Text;
 
+import com.eviware.loadui.fx.util.TestExecutionUtils;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
@@ -103,7 +104,7 @@ public class SetCanvasLimitsDialog {
 	}
 	
 	function reset(): Void {
-		runController.canvas.triggerAction( "RESET" );
+		TestExecutionUtils.startCanvas( runController.canvas );
 	}
 
 	function validateLimits(): Void {

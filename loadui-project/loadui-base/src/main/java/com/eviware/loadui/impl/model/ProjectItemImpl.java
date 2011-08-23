@@ -27,8 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -47,6 +49,10 @@ import com.eviware.loadui.api.events.CollectionEvent.Event;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.RemoteActionEvent;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
+import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
@@ -89,8 +95,12 @@ import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.impl.terminal.RoutedConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.collections.CollectionFuture;
+import com.eviware.loadui.util.events.EventFuture;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implements ProjectItem
 {
@@ -104,6 +114,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final WorkspaceListener workspaceListener = new WorkspaceListener();
 	private final SceneComponentListener sceneComponentListener = new SceneComponentListener();
 	private final Map<SceneItem, BroadcastMessageEndpoint> sceneEndpoints = new HashMap<SceneItem, BroadcastMessageEndpoint>();
+	private final AgentReadyAwaiterTask agentAwaiter = new AgentReadyAwaiterTask();
 	private final ConversionService conversionService;
 	private final PropertySynchronizer propertySynchronizer;
 	private final CounterSynchronizer counterSynchronizer;
@@ -147,6 +158,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		// statisticHolderSupport = new StatisticHolderSupport( this );
 		// counterStatisticSupport = new CounterStatisticSupport( this,
 		// statisticHolderSupport );
+
+		BeanInjector.getBean( TestRunner.class ).registerTask( agentAwaiter, Phase.PRE_START );
 	}
 
 	@Override
@@ -342,6 +355,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void release()
 	{
+		BeanInjector.getBean( TestRunner.class ).unregisterTask( agentAwaiter, Phase.PRE_START );
 		getWorkspace().removeEventListener( BaseEvent.class, workspaceListener );
 		ReleasableUtils.releaseAll( agentListener, statisticPages, getScenes() );
 
@@ -1052,6 +1066,53 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 						}
 					}
 				}, 15, TimeUnit.SECONDS );
+			}
+		}
+	}
+
+	private class AgentReadyAwaiterTask implements TestExecutionTask
+	{
+		@Override
+		public void invoke( TestExecution execution, Phase phase )
+		{
+			if( execution.getCanvas() == ProjectItemImpl.this && !getWorkspace().isLocalMode() )
+			{
+				ArrayList<EventFuture<BaseEvent>> awaitingScenes = Lists.newArrayList();
+				for( final SceneItem scene : getScenes() )
+				{
+					for( final AgentItem agent : getAgentsAssignedTo( scene ) )
+					{
+						if( agent.isEnabled() && !isSceneLoaded( scene, agent ) )
+						{
+							awaitingScenes.add( new EventFuture<BaseEvent>( ProjectItemImpl.this, BaseEvent.class,
+									new Predicate<BaseEvent>()
+									{
+										@Override
+										public boolean apply( BaseEvent event )
+										{
+											return SCENE_LOADED.equals( event.getKey() ) && isSceneLoaded( scene, agent );
+										}
+									} ) );
+						}
+					}
+				}
+
+				try
+				{
+					new CollectionFuture<BaseEvent>( awaitingScenes ).get( 10, TimeUnit.SECONDS );
+				}
+				catch( InterruptedException e )
+				{
+					log.error( "Error while waiting for TestCases to become ready on Agents", e );
+				}
+				catch( ExecutionException e )
+				{
+					log.error( "Error while waiting for TestCases to become ready on Agents", e );
+				}
+				catch( TimeoutException e )
+				{
+					log.error( "Timed out waiting for TestCases to become ready on Agents", e );
+				}
 			}
 		}
 	}
