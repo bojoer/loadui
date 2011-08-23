@@ -155,6 +155,7 @@ public class TestRunnerImpl extends AbstractTestRunner implements Releasable
 			{
 				if( !execution.isAborted() )
 				{
+					log.debug( "Starting TestExecution: {}", execution );
 					execution.setState( TestState.STARTING );
 					awaitFuture( runPhase( Phase.PRE_START, execution ) );
 					execution.setState( TestState.RUNNING );
@@ -168,6 +169,7 @@ public class TestRunnerImpl extends AbstractTestRunner implements Releasable
 					awaitFuture( runPhase( Phase.STOP, execution ) );
 					awaitFuture( runPhase( Phase.POST_STOP, execution ) );
 					execution.setState( TestState.COMPLETED );
+					log.debug( "Completed TestExecution: {}", execution );
 				}
 
 				//TODO: Create ExecutionResult

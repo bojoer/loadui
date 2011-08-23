@@ -64,6 +64,7 @@ import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.util.FormattingUtils;
 import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.util.TestExecutionUtils;
 
 import java.util.EventObject;
 import javafx.fxd.FXDNode;
@@ -183,6 +184,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	
 	def playButtonState = bind playButton.selected on replace {
 		if( playButton.armed and not cancelling) {
+
 			if( playButtonState ) {
 				if( not canvas.isStarted() ) {
 					canvas.triggerAction( CounterHolder.COUNTER_RESET_ACTION );
@@ -215,7 +217,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 					        ]
 					        onOk: function():Void {
 					        		if( checkbox.selected ) canvas.getProject().setAttribute( ProjectSettingsDialog.IGNORE_INVALID_CANVAS, "true" );
-					            canvas.triggerAction( CanvasItem.START_ACTION );
+					        		TestExecutionUtils.startCanvas( canvas );
 					            dlg.close();
 					        }
 					        
@@ -224,16 +226,14 @@ public class RunController extends BaseNode, Resizable, TimerController {
 					        }
 					    }
 					} else {
-						canvas.triggerAction( CanvasItem.START_ACTION );
+						TestExecutionUtils.startCanvas( canvas );
 					}
 				} else {
-					canvas.triggerAction( CanvasItem.START_ACTION );
+					TestExecutionUtils.startCanvas( canvas );
 				}
 			} else {
-				canvas.triggerAction( CanvasItem.STOP_ACTION );
+				TestExecutionUtils.stopCanvas( canvas );
 				stopped = true;
-				canvas.triggerAction( CanvasItem.COMPLETE_ACTION );
-				//println("PAUSE is deprecated: ignored");
 			}
 		}
 	}

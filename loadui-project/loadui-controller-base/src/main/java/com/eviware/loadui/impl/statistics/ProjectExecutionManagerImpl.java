@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,10 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
+import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
@@ -47,6 +52,8 @@ import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.events.EventFuture;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
@@ -63,6 +70,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 	private final ReportingManager reportingManager;
 	private final HashMap<String, HashSet<Execution>> projectIdToExecutions = new HashMap<String, HashSet<Execution>>();
 	private final HashMap<ProjectItem, SummaryListener> summaryListeners = new HashMap<ProjectItem, SummaryListener>();
+	private final HashSet<SummaryAttacher> summaryAttachers = new HashSet<SummaryAttacher>();
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningListener runningListener = new RunningListener();
 
@@ -241,8 +249,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				{
 					if( CanvasItem.START_ACTION.equals( event.getKey() ) && canvas == runningProject )
 					{
-						runningProject.addEventListener( BaseEvent.class,
-								new SummaryAttacher( executionManager.getCurrentExecution() ) );
+						summaryAttachers.add( new SummaryAttacher( runningProject, executionManager.getCurrentExecution() ) );
 						state = State.PROJECT_STARTED;
 					}
 					else if( CanvasItem.ON_COMPLETE_DONE.equals( event.getKey() ) )
@@ -296,8 +303,8 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 
 			if( canvas == runningProject )
 			{
-				runningProject.addEventListener( BaseEvent.class,
-						new SummaryAttacher( executionManager.getCurrentExecution() ) );
+				summaryAttachers.add( new SummaryAttacher( runningProject, executionManager.getCurrentExecution() ) );
+
 				state = State.PROJECT_STARTED;
 			}
 			else
@@ -344,35 +351,61 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 		}
 	}
 
-	private class SummaryAttacher implements EventHandler<BaseEvent>
+	private class SummaryAttacher implements TestExecutionTask
 	{
-		private final Execution execution;
-
-		public SummaryAttacher( Execution execution )
+		private final Predicate<BaseEvent> isSummary = new Predicate<BaseEvent>()
 		{
+			@Override
+			public boolean apply( BaseEvent event )
+			{
+				return CanvasItem.SUMMARY.equals( event.getKey() );
+			}
+		};
+		private final ProjectItem project;
+		private final Execution execution;
+		private final EventFuture<BaseEvent> summaryWaiterFuture;
+
+		public SummaryAttacher( ProjectItem project, Execution execution )
+		{
+			this.project = project;
 			this.execution = execution;
+			summaryWaiterFuture = new EventFuture<BaseEvent>( project, BaseEvent.class, isSummary );
+			BeanInjector.getBean( TestRunner.class ).registerTask( this, Phase.POST_STOP );
 		}
 
 		@Override
-		public void handleEvent( BaseEvent event )
+		public void invoke( TestExecution testExecution, Phase phase )
 		{
-			if( CanvasItem.SUMMARY.equals( event.getKey() ) )
+			if( testExecution.getCanvas() == project )
 			{
-				ProjectItem project = ( ProjectItem )event.getSource();
-				project.removeEventListener( BaseEvent.class, this );
+				try
+				{
+					summaryWaiterFuture.get();
 
-				long totalRequests = project.getCounter( ProjectItem.SAMPLE_COUNTER ).get();
-				long totalFailures = project.getCounter( ProjectItem.FAILURE_COUNTER ).get();
+					long totalRequests = project.getCounter( ProjectItem.SAMPLE_COUNTER ).get();
+					long totalFailures = project.getCounter( ProjectItem.FAILURE_COUNTER ).get();
 
-				execution.setAttribute( "totalRequests", String.valueOf( totalRequests ) );
-				execution.setAttribute( "totalFailures", String.valueOf( totalFailures ) );
+					execution.setAttribute( "totalRequests", String.valueOf( totalRequests ) );
+					execution.setAttribute( "totalFailures", String.valueOf( totalFailures ) );
 
-				Summary summary = project.getSummary();
-				execution.setAttribute( "startTime", String.valueOf( summary.getStartTime().getTime() ) );
-				execution.setAttribute( "endTime", String.valueOf( summary.getEndTime().getTime() ) );
+					Summary summary = project.getSummary();
+					execution.setAttribute( "startTime", String.valueOf( summary.getStartTime().getTime() ) );
+					execution.setAttribute( "endTime", String.valueOf( summary.getEndTime().getTime() ) );
 
-				reportingManager.createReport( summary, execution.getSummaryReport(), "JASPER_PRINT" );
-				project.fireEvent( new BaseEvent( project, ProjectItem.SUMMARY_EXPORTED ) );
+					reportingManager.createReport( summary, execution.getSummaryReport(), "JASPER_PRINT" );
+					project.fireEvent( new BaseEvent( project, ProjectItem.SUMMARY_EXPORTED ) );
+				}
+				catch( InterruptedException e )
+				{
+					log.error( "Failed waiting for summary!", e );
+				}
+				catch( ExecutionException e )
+				{
+					log.error( "Failed waiting for summary!", e );
+				}
+
+				BeanInjector.getBean( TestRunner.class ).unregisterTask( this, Phase.POST_STOP );
+				summaryAttachers.remove( this );
 			}
 		}
 	}

@@ -104,19 +104,14 @@ class CanvasListener extends EventHandler {
 				}
 				if( not busy and not canvas.isAbortOnFinish() and startedCanvases.size() == completedCanvases.size() ) {
 					busy = true;
-					AppState.byName("MAIN").setBlockedText( "Waiting for test to complete." );
-					AppState.byName("MAIN").setCancelHandler( function() {
+					def mainAppState = AppState.byName("MAIN");
+					mainAppState.setBlockedText( "Waiting for test to complete." );
+					mainAppState.setCancelHandler( function() {
 					   // abort should cancel everything
-					   if(canvas instanceof ProjectItem){
-					       (canvas as ProjectItem).cancelScenes( false );
-					       (canvas as ProjectItem).cancelComponents();
-					   }
-					   else{
-					       (canvas as SceneItem).getProject().cancelScenes( false );
-					       (canvas as SceneItem).getProject().cancelComponents();
-					   }
+				       canvas.getProject().cancelScenes( false );
+				       canvas.getProject().cancelComponents();
 					} );
-					AppState.byName("MAIN").block();
+					mainAppState.block();
 				}
 			} )
 		else if( event.getKey() == CanvasItem.READY_ACTION )

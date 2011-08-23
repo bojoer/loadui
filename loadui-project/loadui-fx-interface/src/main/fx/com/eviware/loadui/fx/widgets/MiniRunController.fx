@@ -56,6 +56,7 @@ import com.eviware.loadui.fx.ui.resources.SlashShape;
 import com.eviware.loadui.fx.ui.Kitt;
 import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.dialogs.SetCanvasLimitsDialog;
+import com.eviware.loadui.fx.util.TestExecutionUtils;
 
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
@@ -189,7 +190,7 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
 					        ]
 					        onOk: function():Void {
 					        		if( checkbox.selected ) canvas.getProject().setAttribute( ProjectSettingsDialog.IGNORE_INVALID_CANVAS, "true" );
-					            canvas.triggerAction( CanvasItem.START_ACTION );
+					            TestExecutionUtils.startCanvas( canvas );
 					            dlg.close();
 					        }
 					        
@@ -200,15 +201,14 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
 					        }
 					    }
 					} else {
-						canvas.triggerAction( CanvasItem.START_ACTION );
+						TestExecutionUtils.startCanvas( canvas );
 					}
 				} else {
-					canvas.triggerAction( CanvasItem.START_ACTION );
+					TestExecutionUtils.startCanvas( canvas );
 				}
 			} else {
-				canvas.triggerAction( CanvasItem.STOP_ACTION );
+				TestExecutionUtils.stopCanvas( canvas );
 				stopped = true;
-				canvas.triggerAction( CanvasItem.COMPLETE_ACTION );
 			}
 		}
 	}

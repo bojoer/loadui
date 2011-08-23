@@ -88,9 +88,11 @@ public class EventFuture<T extends EventObject> implements Future<T>
 			if( matchedEvent == null )
 			{
 				listener.wait( unit.toMillis( timeout ) );
-				throw new TimeoutException();
 			}
 		}
+
+		if( matchedEvent == null )
+			throw new TimeoutException();
 
 		return matchedEvent;
 	}

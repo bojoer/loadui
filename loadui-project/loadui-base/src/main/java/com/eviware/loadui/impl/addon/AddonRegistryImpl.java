@@ -127,13 +127,14 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 	 */
 	public synchronized void factoryRemoved( Addon.Factory<?> factory, Map<String, String> properties )
 	{
-		if( factories.remove( properties.get( "type" ) ) != null )
+		final String typeStr = factory.getType().getName();
+		if( factories.remove( typeStr ) != null )
 		{
 			for( Class<?> type : factory.getEagerTypes() )
 			{
 				eagerAddons.remove( type, factory );
 			}
-			log.debug( "Unregistered Addon.Factory for type: {}", properties.get( "type" ) );
+			log.debug( "Unregistered Addon.Factory for type: {}", typeStr );
 		}
 	}
 
