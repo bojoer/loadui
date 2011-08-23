@@ -58,9 +58,14 @@ import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbar;
 import com.eviware.loadui.fx.statistics.chart.ChartPage;
 import com.eviware.loadui.fx.statistics.manager.RecentResultsList;
 import com.eviware.loadui.fx.statistics.manager.ArchivedResultsList;
+import com.eviware.loadui.fx.ui.inspector.InspectorPanelControl;
 import com.eviware.loadui.fx.ui.menu.StatisticsWindowButton;
 
 import java.lang.Math;
+
+import org.slf4j.LoggerFactory;
+
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.statistics.StatisticsWindow" );
 
 public-read var instance:StatisticsWindow;
 public var currentExecution:Execution on replace oldExecution {
@@ -92,6 +97,8 @@ public def STATISTICS_VIEW = "statistics.view";
 public def VIEW_ATTRIBUTE = "gui.statistics.view";
 
 public class StatisticsWindow {
+	
+	var inspectors:InspectorPanelControl;
 	
 	def statisticPagesListener = new StatisticPagesListener();
 	public-read def wc:WindowControllerImpl = WindowControllerImpl {
@@ -149,6 +156,21 @@ public class StatisticsWindow {
 					StatisticsWindow.instance.wc.setAlwaysOnTop( false );
 				}
 			} into appState.globalLayer.content;
+			
+			//InspectorPanel
+			log.debug( "Initializing StatInspectorPanel" );
+			inspectors = InspectorPanelControl {
+				id: "StatisticWorkbenchInspector"
+				height: bind inspectors.prefHeight
+				width: bind scene.width
+				layoutY: bind scene.height - inspectors.height
+				layoutX: 0
+				maxHeight: bind scene.height - 100 as Integer
+				defaultInspector: "Monitors"
+			}
+			inspectors.collapse();
+			insert inspectors into appState.globalLayer.content;
+			log.debug( "Done initializing StatInspectorPanel: \{\}", inspectors );
 		}
 	}
 	
