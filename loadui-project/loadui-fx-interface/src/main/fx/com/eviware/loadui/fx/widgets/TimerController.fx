@@ -78,56 +78,21 @@ mixin public class TimerController {
 	public-read var state = STOPPED;
 };
 
-var busy = false;
-
-var startedCanvases: HashSet = new HashSet();
-var completedCanvases: HashSet = new HashSet();
-var readyCanvases: HashSet = new HashSet();
-
 class CanvasListener extends EventHandler {
 	override function handleEvent( e:EventObject ) {
 		def event = e as ActionEvent;
-		if( event.getKey() == CanvasItem.STOP_ACTION )
+		if( event.getKey() == CanvasItem.STOP_ACTION ) {
 			FxUtils.runInFxThread( function():Void { playButton.selected = false; state = PAUSED; } )
-		else if( event.getKey() == CanvasItem.START_ACTION )
+		} else if( event.getKey() == CanvasItem.START_ACTION ) {
 			FxUtils.runInFxThread( function():Void { 
 				playButton.selected = true; 
-				startedCanvases.add(canvas);
 				state = RUNNING; 
 			} )
-		else if( event.getKey() == CanvasItem.COMPLETE_ACTION )
+		} else if( event.getKey() == CanvasItem.COMPLETE_ACTION ) {
 			FxUtils.runInFxThread( function():Void {
 				playButton.selected = false;
 				state = STOPPED;
-				if(startedCanvases.size() > 0){
-					completedCanvases.add(canvas);
-				}
-				if( not busy and not canvas.isAbortOnFinish() and startedCanvases.size() == completedCanvases.size() ) {
-					busy = true;
-					def mainAppState = AppState.byName("MAIN");
-					mainAppState.setBlockedText( "Waiting for test to complete." );
-					mainAppState.setCancelHandler( function() {
-					   // abort should cancel everything
-				       canvas.getProject().cancelScenes( false );
-				       canvas.getProject().cancelComponents();
-					} );
-					mainAppState.block();
-				}
 			} )
-		else if( event.getKey() == CanvasItem.READY_ACTION )
-			FxUtils.runInFxThread( function():Void {
-				if(startedCanvases.size() > 0){
-					readyCanvases.add(canvas);
-				}
-				if( startedCanvases.size() == readyCanvases.size()) {
-					startedCanvases.clear();
-					completedCanvases.clear();
-					readyCanvases.clear();
-					if( busy ) {
-						busy = false;
-						AppState.byName("MAIN").unblock();
-					}
-				}
-			} );
+		}
 	}
 }

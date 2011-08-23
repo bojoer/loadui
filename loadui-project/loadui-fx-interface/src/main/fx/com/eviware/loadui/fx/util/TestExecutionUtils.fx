@@ -18,12 +18,27 @@ package com.eviware.loadui.fx.util;
 
 import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.execution.TestState;
+import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.util.BeanInjector;
 
-def testRunner = BeanInjector.getBean( TestRunner.class );
+import com.eviware.loadui.fx.FxUtils;
+import com.eviware.loadui.fx.AppState;
+
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
+import java.lang.Runnable;
+
+def startingDialogTask = new StartingDialogTask();
+def stoppingDialogTask = new StoppingDialogTask();
+
+def testRunner = BeanInjector.getBean( TestRunner.class ) on replace {
+	testRunner.registerTask( startingDialogTask, Phase.PRE_START, Phase.START );
+	testRunner.registerTask( stoppingDialogTask, Phase.STOP );
+}
 
 public function startCanvas( canvas:CanvasItem ):TestExecution {
 	var queuedExecutions:TestExecution[] = for( e in testRunner.getExecutionQueue() ) e;
@@ -68,4 +83,50 @@ public function currentExecution():TestExecution {
 
 
 public class TestExecutionUtils {
+}
+
+class StartingDialogTask extends TestExecutionTask {
+	override function invoke( execution, phase ):Void {
+		def canvas = execution.getCanvas();
+		if( phase == Phase.PRE_START ) {
+			FxUtils.runInFxThread( function():Void {
+				def mainAppState = AppState.byName("MAIN");
+				mainAppState.setBlockedText( "Initializing test." );
+				mainAppState.setCancelHandler( function():Void {
+				   execution.abort();
+				} );
+				mainAppState.block();
+			} );
+		} else if( phase == Phase.START ) {
+			FxUtils.runInFxThread( function():Void {
+				AppState.byName("MAIN").unblock();
+			} );
+		}
+	}
+}
+
+class StoppingDialogTask extends TestExecutionTask, Runnable {
+	override function invoke( execution, phase ):Void {
+		def canvas = execution.getCanvas();
+		if( not canvas.isAbortOnFinish() ) {
+			FxUtils.runInFxThread( function():Void {
+				def mainAppState = AppState.byName("MAIN");
+				mainAppState.setBlockedText( "Waiting for test to complete." );
+				mainAppState.setCancelHandler( function() {
+				   // abort should cancel everything
+			       canvas.getProject().cancelScenes( false );
+			       canvas.getProject().cancelComponents();
+				} );
+				mainAppState.block();
+				
+				Futures.makeListenable( execution.complete() ).addListener( this, MoreExecutors.sameThreadExecutor() );
+			} );
+		}
+	}
+	
+	override function run():Void {
+		FxUtils.runInFxThread( function():Void {
+			AppState.byName("MAIN").unblock();
+		} );
+	}
 }
