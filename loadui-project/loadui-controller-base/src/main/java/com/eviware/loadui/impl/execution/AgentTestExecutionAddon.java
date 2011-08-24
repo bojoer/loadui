@@ -58,21 +58,16 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 				return;
 
 			HashSet<AgentItem> agents = Sets.newHashSet();
+			HashSet<MessageAwaiter> waiters = Sets.newHashSet();
 			for( SceneItem scene : project.getScenes() )
 			{
 				for( AgentItem agent : project.getAgentsAssignedTo( scene ) )
 				{
-					if( agent.isEnabled() )
+					if( agent.isEnabled() && agents.add( agent ) )
 					{
-						agents.add( agent );
+						waiters.add( new MessageAwaiter( agent, execution, phase ) );
 					}
 				}
-			}
-
-			HashSet<MessageAwaiter> waiters = Sets.newHashSet();
-			for( AgentItem agent : agents )
-			{
-				waiters.add( new MessageAwaiter( agent, execution, phase ) );
 			}
 
 			long waitUntil = System.currentTimeMillis() + 10000;
