@@ -24,7 +24,6 @@ package com.eviware.loadui.fx.ui.resources;
 import javafx.scene.Node;
 import javafx.scene.CustomNode;
 import javafx.scene.Group;
-import javafx.scene.text.Text;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
@@ -87,7 +86,7 @@ public class GrayButton extends CustomNode {
 					fill: Color.BLACK
 					opacity: 0.1
 				}, Group {
-					translateY: bind if( state == HOVER ) -1 else 0
+					//translateY: bind if( state == HOVER ) -1 else 0
 					content: [
 						Rectangle {
 							width: bind width

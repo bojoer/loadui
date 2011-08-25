@@ -56,10 +56,15 @@ public class LogInspector extends AppenderSkeleton, Inspector {
 	public var maxLines:Integer = 20;
 	public-init var packages:String;
 	
+	def maxHeight:Integer = 401;
 	def panel = ListView {};
 	
 	postinit {
 		Logger.getLogger( packages ).addAppender( this );
+	}
+	
+	override function getMaxHeight() {
+		return maxHeight;
 	}
 
 	override function append( event:LoggingEvent ):Void {

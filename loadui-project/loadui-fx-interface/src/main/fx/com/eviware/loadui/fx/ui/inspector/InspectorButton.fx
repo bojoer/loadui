@@ -23,21 +23,63 @@ package com.eviware.loadui.fx.ui.inspector;
 
 import javafx.scene.CustomNode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextOrigin;
 import javafx.scene.text.Font;
-
-import com.eviware.loadui.fx.ui.resources.GrayButton;
+import javafx.scene.Node;
+import javafx.scene.Group;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import com.sun.javafx.scene.layout.Region;
 
 /**
  * A Button for selecting which Inspector to show on the InspectorPanel.
  *
  * @author dain.nilsson
+ * @author henrik.olsson
  */
+ 
+/**
+ * The normal state.
+ */
+public def NORMAL = 0;
+
+/**
+ * The pushed state.
+ */
+public def PUSHED = 1;
+
+/**
+ * The state for when the cursor is hovering over the button.
+ */
+public def HOVER = 2;
+
 public class InspectorButton extends CustomNode {
 	public var pushed = false on replace {
-		button.state = if( pushed ) GrayButton.PUSHED else GrayButton.NORMAL;
+		state = if( pushed ) PUSHED else NORMAL;
 	}
+	
+	/**
+	 * The width of the button.
+	 */
+	public var width:Number = bind label.layoutBounds.width + 20;
+	
+	/**
+	 * The height of the button.
+	 */
+	public var height:Number = 18;
+	
+	/**
+	 * Which state the Button is in. 
+	 */
+	public var state = NORMAL;
+	
+	/**
+	 * Node[] content to place inside the button.
+	 */
+	public var content: Node[];
 	
 	/**
 	 * The label to put on the button.
@@ -55,32 +97,52 @@ public class InspectorButton extends CustomNode {
 		content: bind text
 		textOrigin: TextOrigin.TOP
 		font: Font.font("Amble", 10)
+		fill: bind if( state == PUSHED ) Color.web("#cbcbcb") else Color.web("#202020") 
 	}
 	
-	def button:GrayButton = GrayButton {
-		height: 18
-		width: bind label.layoutBounds.width + 20
-		content: label
-		onMouseEntered: function( e:MouseEvent ) {
-			if( not pushed )
-				button.state = GrayButton.HOVER;
-		}
-		onMouseExited: function( e:MouseEvent ) {
-			if( not pushed )
-				button.state = GrayButton.NORMAL;
-		}
-		onMousePressed: function( e:MouseEvent ) {
-			if( e.primaryButtonDown )
-				button.state = GrayButton.PUSHED;
-		}
-		onMouseReleased: function( e:MouseEvent ) {
-			if( not pushed and button.state == GrayButton.PUSHED ) {
-				action();
-			}
-		}
+	init {
+		insert label into content;		
 	}
+	
+	override def onMouseEntered = function ( e:MouseEvent ) {
+		if( not pushed )
+			state = HOVER;
+	};
+	
+	override def onMouseExited = function ( e:MouseEvent ):Void {
+		if( not pushed )
+			state = NORMAL;
+	};
+	
+	override def onMousePressed = function ( e:MouseEvent ):Void {
+		if( e.primaryButtonDown )
+			state = PUSHED;
+	};
+	
+	override def onMouseReleased = function ( e:MouseEvent ):Void {
+			action();
+	};
 	
 	override function create() {
-		button
+		Group {
+			content: [
+				
+				Group {
+					//translateY: bind if( state == HOVER ) -1 else 0
+					content: [
+						Region {
+							managed: true
+							width: bind width
+							height: bind height
+							//fill: bind if( state == PUSHED ) Color.web("#707070") else Color.web("#545454")
+							style: bind if(state == PUSHED ) "-fx-background-insets: 0 0 -2 0, 1 , 2 1 -2 1; -fx-background-color: #282828, #cccccc, #6f6f6f;"
+								else "-fx-background-insets: 0 0 -1 0, 1, 2 1 -1 1; -fx-background-color: #282828, #9c9c9c, #555555;"
+						}, Group {
+							content: bind content
+						}
+					]
+				}
+			]
+		}
 	}
 }

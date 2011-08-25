@@ -36,6 +36,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextOrigin;
+import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.animation.Timeline;
@@ -53,8 +54,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Collections;
 import java.lang.RuntimeException;
+import java.lang.Math;
 import javax.swing.JComponent;
 import java.awt.MouseInfo;
+
+import com.sun.javafx.scene.layout.Region;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.inspector.InspectorPanelControl" );
 
@@ -66,6 +70,7 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.inspect
  * resized by the user.
  *
  * @author dain.nilsson
+ * @author henrik.olsson
  */
 public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable {
 	
@@ -109,7 +114,7 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 	
 	def inspectors: Map = new HashMap();
 	var shown = 1.0;
-	override var translateY = bind ( 1-shown ) * ( height - resizeBar.boundsInLocal.height );
+	override var translateY = bind ( 1-shown ) * ( height - (resizeBar.boundsInLocal.height-4) );
 	
 	var buttons: InspectorButton[] = [];
 	var inspectorHolder:Panel;
@@ -143,8 +148,11 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 	 */
 	override function create(): Node {
 		node = VBox {
+			height: bind inspectorHeight
+			width: bind width
 			blocksMouse: true
 			content: [
+				Region{ managed: false, style: "-fx-background-color: #6f6f6f;", width: bind width, height: bind height }
 				resizeBar = Stack {
 					width: bind width
 					content: [
@@ -190,84 +198,133 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 									doubleClickTimer.playFromStart();
 								}
 							}
-						}, Stack {
-							cursor: Cursor.HAND
-							width: bind 30
-							layoutInfo: LayoutInfo { hpos: HPos.LEFT }
-							content: [
-								Rectangle {
-									width: 30
-									height: 20
-									fill: Color.TRANSPARENT
-								}, FXDNode {
-									url: "{__ROOT__}images/double_arrows.fxz"
-									scaleY: bind if( expanded ) -1 else 1
-								}
+						}, 
+						
+						
+						HBox {
+							content:
+							[
+								Stack {
+									cursor: Cursor.HAND
+									width: bind 30
+									layoutInfo: LayoutInfo { hpos: HPos.LEFT }
+									content: [
+										Rectangle {
+											width: 30
+											height: 20
+											fill: Color.TRANSPARENT
+										}, FXDNode {
+											url: "{__ROOT__}images/double_arrows.fxz"
+											scaleY: bind if( expanded ) -1 else 1
+										}
+									]
+									blocksMouse: true
+										onMouseClicked: function( e:MouseEvent ) {
+											if( e.button == MouseButton.PRIMARY )
+												toggle();
+										}
+								},
+								
+								buttonBox = HBox {
+									blocksMouse: true
+									layoutInfo: LayoutInfo {
+										hfill: false
+										vfill: false
+								      hgrow: Priority.NEVER
+								      vgrow: Priority.NEVER
+								      width: bind width
+								      hpos: HPos.LEFT
+								      vpos: VPos.CENTER 
+								    }
+									spacing: -1
+									nodeVPos: VPos.CENTER
+									content: bind buttons
+								},
 							]
-							blocksMouse: true
-								onMouseClicked: function( e:MouseEvent ) {
-									if( e.button == MouseButton.PRIMARY )
-										toggle();
-								}
-						}, Text {
-							textOrigin: TextOrigin.TOP
-							translateX: 30
-							content: "System"
-							fill: Color.web("#303030")
-							layoutInfo: LayoutInfo { hpos: HPos.LEFT, vpos: VPos.CENTER }
-						}, FXDNode {
+						}
+
+						
+//						 Text {
+//							textOrigin: TextOrigin.TOP
+//							translateX: 30
+//							content: "System"
+//							fill: Color.web("#303030")
+//							layoutInfo: LayoutInfo { hpos: HPos.LEFT, vpos: VPos.CENTER }
+//						},
+						FXDNode {
 							url: "{__ROOT__}images/drag_handle.fxz"
 						}
 					]
-				}, contentPane = Stack {
+				}, 
+				
+				contentPane = Stack {
 					width: bind width
 					height: bind inspectorHeight
 					content: [
-						Rectangle {
-							fill: Color.rgb( 0x70, 0x70, 0x70 )
-							width: bind contentPane.width
-							height: bind contentPane.height
-						}, GlowButton {
-							layoutX: bind width - 30
-							layoutY: bind 15
-							visible: bind activeInspector.getHelpUrl() != null
-							managed: false
-							width: 20
-							height: 15
-							tooltip: "Open Help page"
-							contentNode: FXDNode {
-								url: "{__ROOT__}images/inspector_help_icon.fxz"
-							}
-							action: function() {
-								openURL( activeInspector.getHelpUrl() );
-							}
-						}, VBox {
+//						Region{ managed: false, style: "-fx-background-color: #00ff00;", width: bind width, height: bind inspectorHeight }
+//						Rectangle {
+//							fill: Color.rgb( 0x70, 0x70, 0x70 )
+//							width: bind contentPane.width
+//							height: bind contentPane.height
+//						}, GlowButton {
+//							layoutX: bind width - 30
+//							layoutY: bind 15
+//							visible: bind activeInspector.getHelpUrl() != null
+//							managed: false
+//							width: 20
+//							height: 15
+//							tooltip: "Open Help page"
+//							contentNode: FXDNode {
+//								url: "{__ROOT__}images/inspector_help_icon.fxz"
+//							}
+//							action: function() {
+//								openURL( activeInspector.getHelpUrl() );
+//							}
+//						},
+						 VBox {
 							spacing: 0
 							content: [
-								buttonBox = HBox {
-									layoutInfo: LayoutInfo {
-										hfill: false vfill: false
-								        hgrow: Priority.NEVER vgrow: Priority.NEVER
-								        width: bind width
-								    }
-									spacing: 2
-									nodeVPos: VPos.CENTER
-									content: bind [ Rectangle { fill: Color.TRANSPARENT, width: 10 height: 40 }, buttons ]
-								}, inspectorHolder = Panel {
+//								Region{ managed: false, style: "-fx-background-color: #00ffff;", width: bind width, height: bind height }
+//								Region{ managed: true, style: "-fx-background-color: #ff0000;", width: bind width, height: 10 }
+//								buttonBox = HBox {
+//									layoutInfo: LayoutInfo {
+//										hfill: false vfill: false
+//								        hgrow: Priority.NEVER vgrow: Priority.NEVER
+//								        width: bind width
+//								    }
+//									spacing: 2
+//									nodeVPos: VPos.CENTER
+//									content: bind [ Rectangle { fill: Color.TRANSPARENT, width: 10 height: 40 }, buttons ]
+//								},
+								 inspectorHolder = Panel {
+								 	layoutInfo: LayoutInfo { margin: Insets{top:14} }
+//								 	content: [Region{ managed: false, style: "-fx-background-color: #ffff00;", width: bind width, height: bind inspectorHeight - 30 }]
 									onLayout: function():Void {
 										for( node in Panel.getManaged( inspectorHolder.content ) )
-											Panel.resizeNode( node, width, inspectorHeight - buttonBox.height );
+											Panel.resizeNode( node, width, inspectorHeight );
 									}
 									width: bind width
-								    height: bind inspectorHeight - buttonBox.height
+								   height: bind height
+//								   nodeVPos: VPos.TOP
+//								       layoutInfo: LayoutInfo {
+//									        hfill: true
+//									        hgrow: Priority.SOMETIMES
+//									    }
 								}
+//								 inspectorHolder = Panel {
+//									onLayout: function():Void {
+//										for( node in Panel.getManaged( inspectorHolder.content ) )
+//											Panel.resizeNode( node, width, inspectorHeight - buttonBox.height );
+//									}
+//									width: bind width
+//								   height: bind inspectorHeight - buttonBox.height
+//								}
 							]
 						}
 					]
 				}
 			]
-			height: bind height
-			width: bind width
+
 		}
 	}
 
@@ -327,11 +384,13 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 	 */
 	override function selectInspector( inspector: Inspector ) {
 		if( getInspector( inspector.getName() ) == inspector ) {
+			maxHeight = inspector.getMaxHeight();
 			if( expanded ) {
 				if( activeInspector != null ) {
 					activeInspector.onHide();
 					getButton( activeInspector ).pushed = false;
 				}
+				inspectorHeight = Math.min( inspectorHeight, maxHeight );
 				inspector.onShow();
 			}
 			activeInspector = inspector;
@@ -442,7 +501,21 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 		def btn_id = "inspector_button_{inspector.getName()}";
 		var btn = buttonBox.lookup( btn_id ) as InspectorButton;
 		if( btn == null )
-			btn = InspectorButton { id: btn_id, text: inspector.getName(), action: function() { selectInspector( inspector ) } };
+			btn = InspectorButton { id: btn_id, text: inspector.getName(), action: function() {
+					if ( inspector == activeInspector )
+					{
+						toggle();
+					}
+					else
+					{
+						if( not expanded )
+						{
+							toggle();
+						}
+						selectInspector( inspector );
+					}
+				}
+			};
 		
 		btn;
 	}

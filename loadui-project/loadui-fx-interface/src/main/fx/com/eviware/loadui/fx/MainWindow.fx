@@ -177,7 +177,7 @@ public class MainWindow {
 			width: bind scene.width
 			layoutY: bind scene.height - inspectors.height
 			layoutX: 0
-			maxHeight: bind scene.height - 100 as Integer
+			//maxHeight: bind scene.height - 100 as Integer
 			defaultInspector: "Agents"
 		}
 		inspectors.collapse();

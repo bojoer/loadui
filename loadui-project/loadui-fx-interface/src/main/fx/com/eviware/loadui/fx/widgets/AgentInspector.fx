@@ -110,6 +110,8 @@ public class AgentInspector extends Inspector {
 	def buttonGroup = ToggleGroup {};
 	public-init var name: String;
 	
+	def maxHeight:Integer = 341;
+	
 	def panel = AgentInspectorNode {};
 	
 	def agentErrorListener = new AgentErrorListener();
@@ -126,6 +128,10 @@ public class AgentInspector extends Inspector {
 
 	override function getName(): String {
 		name
+	}
+	
+	override function getMaxHeight() {
+		return maxHeight;
 	}
 	
 	override function getHelpUrl(): String {
