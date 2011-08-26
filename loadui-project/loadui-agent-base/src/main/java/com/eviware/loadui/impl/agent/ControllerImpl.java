@@ -34,6 +34,7 @@ import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
+import com.eviware.loadui.api.addressable.AddressableRegistry.DuplicateAddressException;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.dispatch.ExecutorManager;
@@ -56,6 +57,8 @@ import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.api.terminal.TerminalProxy;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.dispatch.CustomThreadPoolExecutor;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 public class ControllerImpl
@@ -74,6 +77,7 @@ public class ControllerImpl
 	private final BroadcastMessageEndpoint broadcastEndpoint;
 
 	private final Map<String, SceneAgent> sceneAgents = Collections.synchronizedMap( new HashMap<String, SceneAgent>() );
+	private final Map<String, AgentProjectItem> projects = new HashMap<String, AgentProjectItem>();
 	private final Set<MessageEndpoint> clients = new HashSet<MessageEndpoint>();
 
 	public ControllerImpl( ScheduledExecutorService scheduledExecutorService, ExecutorManager executorManager,
@@ -93,7 +97,7 @@ public class ControllerImpl
 		serverEndpoint.addConnectionListener( new ConnectionListener()
 		{
 			@Override
-			public void handleConnectionChange( MessageEndpoint endpoint, boolean connected )
+			public void handleConnectionChange( final MessageEndpoint endpoint, boolean connected )
 			{
 				if( connected )
 				{
@@ -114,6 +118,19 @@ public class ControllerImpl
 				else
 				{
 					clients.remove( endpoint );
+					for( Map.Entry<String, AgentProjectItem> entry : Iterables.filter( projects.entrySet(),
+							new Predicate<Map.Entry<String, AgentProjectItem>>()
+							{
+								@Override
+								public boolean apply( Map.Entry<String, AgentProjectItem> input )
+								{
+									return input.getValue().getEndpoint() == endpoint;
+								}
+							} ) )
+					{
+						ReleasableUtils.release( entry.getValue() );
+						projects.remove( entry.getKey() );
+					}
 					ControllerImpl.this.broadcastEndpoint.deregisterEndpoint( endpoint );
 					log.info( "Client disconnected" );
 				}
@@ -137,7 +154,6 @@ public class ControllerImpl
 
 		scheduledExecutorService.scheduleAtFixedRate( new Runnable()
 		{
-
 			@Override
 			public void run()
 			{
@@ -179,9 +195,21 @@ public class ControllerImpl
 			}
 			else if( message.containsKey( AgentItem.ASSIGN ) )
 			{
+				String projectId = message.get( AgentItem.PROJECT_ID );
 				String sceneId = message.get( AgentItem.ASSIGN );
 				synchronized( sceneAgents )
 				{
+					if( !projects.containsKey( projectId ) )
+					{
+						try
+						{
+							projects.put( projectId, new AgentProjectItem( endpoint, projectId ) );
+						}
+						catch( DuplicateAddressException e )
+						{
+							log.error( "Unable to create Project", e );
+						}
+					}
 					if( !sceneAgents.containsKey( sceneId ) )
 					{
 						SceneItem scene = ( SceneItem )addressableRegistry.lookup( sceneId );
@@ -192,7 +220,7 @@ public class ControllerImpl
 							addressableRegistry.unregister( scene );
 						}
 						log.info( "Loading SceneItem {}", sceneId );
-						executorService.execute( new SceneAgent( sceneId, endpoint ) );
+						executorService.execute( new SceneAgent( sceneId, endpoint, projects.get( projectId ) ) );
 					}
 				}
 			}
@@ -241,14 +269,16 @@ public class ControllerImpl
 
 	private class SceneAgent implements Runnable
 	{
+		private final AgentProjectItem project;
 		private final String sceneId;
 		private final MessageEndpoint endpoint;
 		private final BlockingQueue<List<String>> commands = new LinkedBlockingQueue<List<String>>();
 		private String sceneDef;
 		private SceneItem scene;
 
-		public SceneAgent( String sceneId, MessageEndpoint endpoint )
+		public SceneAgent( String sceneId, MessageEndpoint endpoint, AgentProjectItem project )
 		{
+			this.project = project;
 			this.sceneId = sceneId;
 			this.endpoint = endpoint;
 			sceneAgents.put( sceneId, this );
@@ -291,19 +321,19 @@ public class ControllerImpl
 					{
 					}
 				}
-			}
 
-			if( sceneDef == null )
-			{
-				log.error( "Unable to get TestCase definition: {} from endpoint: {}", sceneId, endpoint );
-				synchronized( sceneAgents )
+				if( sceneDef == null )
 				{
-					sceneAgents.remove( sceneId );
+					log.error( "Unable to get TestCase definition: {} from endpoint: {}", sceneId, endpoint );
+					synchronized( sceneAgents )
+					{
+						sceneAgents.remove( sceneId );
+					}
+					return;
 				}
-				return;
-			}
 
-			scene = conversionService.convert( sceneDef, SceneItem.class );
+				scene = conversionService.convert( sceneDef, SceneItem.class );
+			}
 
 			// TODO: This is really ugly and should be fixed when there is time.
 			try
@@ -314,6 +344,8 @@ public class ControllerImpl
 			{
 				e.printStackTrace();
 			}
+
+			project.addScene( scene );
 
 			propertySynchronizer.syncProperties( scene, endpoint );
 			counterSynchronizer.syncCounters( scene, endpoint );
@@ -334,6 +366,7 @@ public class ControllerImpl
 					if( args.get( 0 ) == null )
 					{
 						log.info( "Stopping scene: {}", scene.getLabel() );
+						project.removeScene( scene );
 						scene.release();
 						synchronized( sceneAgents )
 						{
@@ -344,12 +377,13 @@ public class ControllerImpl
 					else if( scene.getVersion() > Long.parseLong( args.get( 1 ) ) )
 					{
 						log.debug( "SceneItem out of sync with controller, restarting..." );
+						project.removeScene( scene );
 						scene.release();
 						synchronized( sceneAgents )
 						{
 							sceneAgents.remove( sceneId );
 						}
-						executorService.execute( new SceneAgent( sceneId, endpoint ) );
+						executorService.execute( new SceneAgent( sceneId, endpoint, project ) );
 						return;
 					}
 					else if( SceneCommunication.LABEL.equals( args.get( 2 ) ) )

@@ -21,8 +21,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 
 /**
@@ -39,6 +41,49 @@ public class EventFuture<T extends EventObject> implements Future<T>
 	private T matchedEvent = null;
 	private boolean done = false;
 
+	/**
+	 * Creates an EventFuture for the given EventFirer, matching events of the
+	 * given event type with the given key.
+	 * 
+	 * @param eventFirer
+	 * @param eventType
+	 * @param key
+	 * @return
+	 */
+	public static <V extends BaseEvent> EventFuture<V> forKey( EventFirer eventFirer, Class<V> eventType,
+			final String key )
+	{
+		return new EventFuture<V>( eventFirer, eventType, new Predicate<V>()
+		{
+			@Override
+			public boolean apply( V input )
+			{
+				return Objects.equal( key, input.getKey() );
+			}
+		} );
+	}
+
+	/**
+	 * Creates an EventFuture for the given EventFirer, matching events of
+	 * BaseEvent with the given Key.
+	 * 
+	 * @param eventFirer
+	 * @param key
+	 * @return
+	 */
+	public static EventFuture<BaseEvent> forKey( EventFirer eventFirer, final String key )
+	{
+		return forKey( eventFirer, BaseEvent.class, key );
+	}
+
+	/**
+	 * Create a new EventFuture listening for eventType events on eventFirer,
+	 * which satisfy the given Predicate.
+	 * 
+	 * @param eventFirer
+	 * @param eventType
+	 * @param predicate
+	 */
 	public EventFuture( EventFirer eventFirer, Class<T> eventType, Predicate<T> predicate )
 	{
 		listener = new PredicateListener( eventFirer, eventType, predicate );

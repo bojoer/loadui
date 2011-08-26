@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +42,10 @@ import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.TerminalConnectionEvent;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
+import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -63,7 +69,11 @@ import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.collections.CollectionEventSupport;
+import com.eviware.loadui.util.events.EventFuture;
 import com.eviware.loadui.util.statistics.CounterStatisticSupport;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.Futures;
 
 public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends ModelItemImpl<Config> implements
 		CanvasItem
@@ -75,6 +85,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	protected final CollectionEventSupport<Connection, Void> connectionList;
 	private final ComponentListener componentListener = new ComponentListener();
 	private final ConnectionListener connectionListener = new ConnectionListener();
+	private final CanvasTestExecutionTask executionTask = new CanvasTestExecutionTask();
 	private final ComponentRegistry componentRegistry;
 	protected final ScheduledExecutorService scheduler;
 	protected final Counter timerCounter = new TimerCounter();
@@ -226,6 +237,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		}
 
 		addEventListener( BaseEvent.class, new ActionListener() );
+
+		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.PRE_STOP, Phase.STOP );
 
 		// timer.scheduleAtFixedRate( timerTask, 1000, 1000 );
 
@@ -401,6 +414,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	@Override
 	public void release()
 	{
+		BeanInjector.getBean( TestRunner.class ).unregisterTask( executionTask, Phase.values() );
 		ReleasableUtils.releaseAll( componentList, connectionList );
 		summary = null;
 
@@ -647,80 +661,14 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private class ActionListener implements EventHandler<BaseEvent>
 	{
-		boolean paused = false;
-
 		@Override
 		public void handleEvent( BaseEvent event )
 		{
 			if( event instanceof ActionEvent )
 			{
-				if( !running && START_ACTION.equals( event.getKey() ) )
-				{
-					// reset time if the test was started again.
-					if( !paused )
-					{
-						setTime( 0 );
-						startTime = new Date();
-					}
-
-					setRunning( true );
-					timerFuture = scheduler.scheduleAtFixedRate( new TimeUpdateTask(), 250, 250, TimeUnit.MILLISECONDS );
-					fixTimeLimit();
-					hasStarted = true;
-					paused = false;
-					setCompleted( false );
-				}
-				else if( running && ( STOP_ACTION.equals( event.getKey() ) || COMPLETE_ACTION.equals( event.getKey() ) ) )
-				{
-					if( STOP_ACTION.equals( event.getKey() ) )
-					{
-						paused = true;
-					}
-
-					setRunning( false );
-					if( timerFuture != null )
-						timerFuture.cancel( true );
-					if( timeLimitFuture != null )
-						timeLimitFuture.cancel( true );
-				}
-				else if( CounterHolder.COUNTER_RESET_ACTION.equals( event.getKey() ) )
+				if( CounterHolder.COUNTER_RESET_ACTION.equals( event.getKey() ) )
 				{
 					reset();
-					paused = false;
-				}
-
-				if( COMPLETE_ACTION.equals( event.getKey() ) )
-				{
-					// This event is fired first on project and then on test cases.
-					if( hasStarted )
-					{
-						hasStarted = false;
-						if( isAbortOnFinish() )
-						{
-							// If on PROJECT: First cancel all project components, then
-							// call its onComplete method to finalize it. Method
-							// 'onComplete' in project will start waiter which will
-							// wait for all test cases to receive COMPLETE_ACTION event
-							// and finalize them self.
-
-							// If on TEST CASE: Cancels test case components, calls
-							// 'onComplete' method on test case and fires
-							// ON_COMPLETE_DONE event which tells project that this
-							// test case was finalized.
-							cancelComponents();
-							onComplete( event.getSource() );
-						}
-						else
-						{
-							// Does the very same thing as above but does not cancel
-							// components. It waits them to finish instead.
-							new ComponentBusyAwaiter( event.getSource() );
-						}
-					}
-					else
-					{
-						triggerAction( READY_ACTION );
-					}
 				}
 			}
 			else if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) && event instanceof CounterEvent
@@ -800,59 +748,69 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		}
 	}
 
-	/**
-	 * Waits for all components to finish, then calculates end time and calls
-	 * onComplete method. After this fires ON_COMPLETE_DONE method. Currently
-	 * this event is sent by test cases to inform project that they are done.
-	 * 
-	 * @author predrag.vucetic
-	 * 
-	 */
-	private class ComponentBusyAwaiter implements EventHandler<BaseEvent>
+	private class CanvasTestExecutionTask implements TestExecutionTask
 	{
-		private final String TRY_READY = ComponentBusyAwaiter.class.getName() + "@tryReady";
-
-		private final EventFirer source;
-
-		private int awaitingCount = 0;
-
-		public ComponentBusyAwaiter( EventFirer source )
+		private final Function<ComponentItem, Future<BaseEvent>> busyFuture = new Function<ComponentItem, Future<BaseEvent>>()
 		{
-			this.source = source;
-			addEventListener( BaseEvent.class, this );
-			fireBaseEvent( TRY_READY );
-		}
-
-		private synchronized void tryReady()
-		{
-			awaitingCount = 0;
-			for( ComponentItem component : getComponents() )
+			@Override
+			public Future<BaseEvent> apply( ComponentItem component )
 			{
-				component.addEventListener( BaseEvent.class, this );
-				if( component.isBusy() )
-					awaitingCount++ ;
-				else
-					component.removeEventListener( BaseEvent.class, this );
+				return component.isBusy() ? EventFuture.forKey( component, ComponentItem.BUSY ) : Futures
+						.<BaseEvent> immediateFuture( null );
 			}
-			if( awaitingCount == 0 )
-				onComplete( source );
-			else
-				log.debug( "Waiting for {} components to finish...", awaitingCount );
-		}
+		};
 
 		@Override
-		public synchronized void handleEvent( BaseEvent event )
+		public void invoke( TestExecution execution, Phase phase )
 		{
-			if( event.getKey().equals( TRY_READY ) )
+			if( execution.contains( CanvasItemImpl.this ) )
 			{
-				event.getSource().removeEventListener( BaseEvent.class, this );
-				tryReady();
-			}
-			else if( event.getKey().equals( ComponentItem.BUSY ) )
-			{
-				event.getSource().removeEventListener( BaseEvent.class, this );
-				if( --awaitingCount == 0 )
-					tryReady();
+				switch( phase )
+				{
+				case START :
+					setRunning( true );
+					setTime( 0 );
+					startTime = new Date();
+					timerFuture = scheduler.scheduleAtFixedRate( new TimeUpdateTask(), 250, 250, TimeUnit.MILLISECONDS );
+					fixTimeLimit();
+					hasStarted = true;
+					setCompleted( false );
+					break;
+				case PRE_STOP :
+					hasStarted = false;
+					if( timeLimitFuture != null )
+						timeLimitFuture.cancel( true );
+
+					if( isAbortOnFinish() )
+					{
+						cancelComponents();
+					}
+					else
+					{
+						for( Future<BaseEvent> future : Iterables.transform( getComponents(), busyFuture ) )
+						{
+							try
+							{
+								future.get();
+							}
+							catch( InterruptedException e )
+							{
+								log.error( "Failed waiting for a Component", e );
+							}
+							catch( ExecutionException e )
+							{
+								log.error( "Failed waiting for a Component", e );
+							}
+						}
+					}
+					onComplete( execution.getCanvas() );
+					break;
+				case STOP :
+					if( timerFuture != null )
+						timerFuture.cancel( true );
+					setRunning( false );
+					break;
+				}
 			}
 		}
 	}

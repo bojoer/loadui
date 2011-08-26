@@ -28,6 +28,16 @@ public interface TestExecution
 	public CanvasItem getCanvas();
 
 	/**
+	 * Checks if the given CanvasItem is contained in the Execution, that is, it
+	 * is either the current CanvasItem being executed, or it is a SceneItem
+	 * belonging to the ProjectItem being executed.
+	 * 
+	 * @param canvas
+	 * @return
+	 */
+	public boolean contains( CanvasItem canvas );
+
+	/**
 	 * Initiates the termination of a TestExecution (if not already in progress),
 	 * returning a Future which can be used to wait for the completion to finish.
 	 * If the TestExecution has already completed, this method can be used to get

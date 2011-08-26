@@ -53,7 +53,6 @@ import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.events.EventFuture;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager
@@ -353,14 +352,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 
 	private class SummaryAttacher implements TestExecutionTask
 	{
-		private final Predicate<BaseEvent> isSummary = new Predicate<BaseEvent>()
-		{
-			@Override
-			public boolean apply( BaseEvent event )
-			{
-				return CanvasItem.SUMMARY.equals( event.getKey() );
-			}
-		};
 		private final ProjectItem project;
 		private final Execution execution;
 		private final EventFuture<BaseEvent> summaryWaiterFuture;
@@ -369,7 +360,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 		{
 			this.project = project;
 			this.execution = execution;
-			summaryWaiterFuture = new EventFuture<BaseEvent>( project, BaseEvent.class, isSummary );
+			summaryWaiterFuture = EventFuture.forKey( project, CanvasItem.SUMMARY );
 			BeanInjector.getBean( TestRunner.class ).registerTask( this, Phase.POST_STOP );
 		}
 

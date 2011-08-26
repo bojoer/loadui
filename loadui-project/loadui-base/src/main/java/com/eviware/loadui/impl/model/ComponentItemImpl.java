@@ -436,7 +436,9 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		public void handleEvent( ActionEvent event )
 		{
 			if( CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
+			{
 				fireEvent( new ActionEvent( event.getSource(), CanvasItem.STOP_ACTION ) );
+			}
 			fireEvent( event );
 		}
 	}

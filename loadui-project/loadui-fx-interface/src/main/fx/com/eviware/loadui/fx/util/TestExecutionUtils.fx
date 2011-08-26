@@ -37,7 +37,7 @@ def stoppingDialogTask = new StoppingDialogTask();
 
 def testRunner = BeanInjector.getBean( TestRunner.class ) on replace {
 	testRunner.registerTask( startingDialogTask, Phase.PRE_START, Phase.START );
-	testRunner.registerTask( stoppingDialogTask, Phase.STOP );
+	testRunner.registerTask( stoppingDialogTask, Phase.PRE_STOP );
 }
 
 public function startCanvas( canvas:CanvasItem ):TestExecution {
@@ -113,9 +113,11 @@ class StoppingDialogTask extends TestExecutionTask, Runnable {
 				def mainAppState = AppState.byName("MAIN");
 				mainAppState.setBlockedText( "Waiting for test to complete." );
 				mainAppState.setCancelHandler( function() {
-				   // abort should cancel everything
-			       canvas.getProject().cancelScenes( false );
-			       canvas.getProject().cancelComponents();
+					// abort should cancel everything
+					mainAppState.setBlockedText( "Aborting running requests..." );
+					mainAppState.setCancelHandler( null );
+					canvas.getProject().cancelScenes( false );
+					canvas.getProject().cancelComponents();
 				} );
 				mainAppState.block();
 				

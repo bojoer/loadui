@@ -209,7 +209,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				AssignmentImpl assignment = new AssignmentImpl( scene, agent );
 				if( assignments.add( assignment ) )
 				{
-					agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, scene.getId() ) );
+					sendAssignMessage( agent, scene );
 					fireCollectionEvent( ASSIGNMENTS, Event.ADDED, assignment );
 				}
 			}
@@ -217,6 +217,12 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 		statisticPages.init();
 		// statisticHolderSupport.init();
+	}
+
+	private void sendAssignMessage( AgentItem agent, SceneItem scene )
+	{
+		agent.sendMessage( AgentItem.AGENT_CHANNEL,
+				ImmutableMap.<String, String> of( AgentItem.ASSIGN, scene.getId(), AgentItem.PROJECT_ID, getId() ) );
 	}
 
 	private boolean attachScene( SceneItem scene )
@@ -389,7 +395,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			conf.setAgentRef( agent.getId() );
 			conf.setAgentLabel( agent.getLabel() );
 			conf.setAgentAddress( agent.getUrl() );
-			agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.ASSIGN, sceneId ) );
+			sendAssignMessage( agent, scene );
 			fireCollectionEvent( ASSIGNMENTS, Event.ADDED, assignment );
 		}
 	}
@@ -827,8 +833,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					if( assignment != null )
 						assignment.setLoaded( false );
 					if( ready )
-						agent.sendMessage( AgentItem.AGENT_CHANNEL,
-								Collections.singletonMap( AgentItem.ASSIGN, scene.getId() ) );
+						sendAssignMessage( agent, scene );
 				}
 			}
 		}

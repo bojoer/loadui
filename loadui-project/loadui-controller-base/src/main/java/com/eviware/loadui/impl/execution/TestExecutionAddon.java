@@ -58,7 +58,7 @@ public class TestExecutionAddon implements Addon
 				case START :
 					canvas.triggerAction( CanvasItem.START_ACTION );
 					break;
-				case STOP :
+				case PRE_STOP :
 					canvas.triggerAction( CanvasItem.STOP_ACTION );
 					canvas.triggerAction( CanvasItem.COMPLETE_ACTION );
 					break;
@@ -68,7 +68,7 @@ public class TestExecutionAddon implements Addon
 
 		private WorkspaceTestExecutionAddon( WorkspaceItem workspace )
 		{
-			testRunner.registerTask( actionTask, Phase.PRE_START, Phase.START, Phase.STOP );
+			testRunner.registerTask( actionTask, Phase.PRE_START, Phase.START, Phase.PRE_STOP );
 		}
 
 		@Override
@@ -96,7 +96,7 @@ public class TestExecutionAddon implements Addon
 			@Override
 			public void invoke( TestExecution execution, Phase phase )
 			{
-				if( execution.getCanvas() == canvas || execution.getCanvas() == canvas.getProject() )
+				if( execution.contains( canvas ) )
 				{
 					if( phase == Phase.PRE_STOP )
 					{

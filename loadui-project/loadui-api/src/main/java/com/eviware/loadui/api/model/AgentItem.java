@@ -40,6 +40,7 @@ public interface AgentItem extends ModelItem, MessageEndpoint
 	public final static String UNASSIGN = "unassign";
 	public final static String STARTED = "started";
 	public final static String DEFINE_SCENE = "defineScene";
+	public final static String PROJECT_ID = "projectId";
 	public final static String SCENE_DEFINITION = "sceneDefinition";
 	public final static String SCENE_ID = "sceneId";
 	public final static String SCENE_START_TIME = "sceneStartTime";

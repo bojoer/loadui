@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.util.collections;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -23,6 +24,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
  * Wraps a collection of Futures in a single Future, allowing to wait for them
@@ -42,6 +45,11 @@ public class CollectionFuture<V> implements Future<List<V>>
 	public CollectionFuture( Iterable<? extends Future<? extends V>> futures )
 	{
 		this.futures = futures;
+	}
+
+	public int size()
+	{
+		return Iterables.size( futures );
 	}
 
 	@Override
@@ -75,16 +83,15 @@ public class CollectionFuture<V> implements Future<List<V>>
 		lock.lock();
 		try
 		{
-
 			if( results == null )
 			{
-				ImmutableList.Builder<V> builder = ImmutableList.builder();
+				ArrayList<V> resultList = Lists.newArrayList();
 				for( Future<? extends V> future : futures )
 				{
-					builder.add( future.get() );
+					resultList.add( future.get() );
 				}
 
-				results = builder.build();
+				results = resultList;
 			}
 		}
 		finally

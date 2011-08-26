@@ -18,6 +18,7 @@
 	<bean id="testRunner" class="com.eviware.loadui.impl.execution.AgentTestRunner" destroy-method="release">
 		<constructor-arg ref="broadcastMessageEndpoint" />
 		<constructor-arg ref="executorService" />
+		<constructor-arg ref="scheduledExecutorService" />
 	</bean>
 
 	<bean id="controller" class="com.eviware.loadui.impl.agent.ControllerImpl">

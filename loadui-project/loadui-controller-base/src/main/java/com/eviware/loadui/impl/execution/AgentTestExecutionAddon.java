@@ -70,32 +70,9 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 				}
 			}
 
-			long waitUntil = System.currentTimeMillis() + 10000;
 			for( MessageAwaiter waiter : waiters )
 			{
-				synchronized( waiter )
-				{
-					while( !waiter.done )
-					{
-						try
-						{
-							long waitTime = waitUntil - System.currentTimeMillis();
-							if( waiter.agent.isReady() && waitTime > 0 )
-							{
-								waiter.wait( waitTime );
-							}
-							if( !waiter.done )
-							{
-								log.error( "Timed out waiting for Agent: {}", waiter.agent );
-								waiter.complete();
-							}
-						}
-						catch( InterruptedException e )
-						{
-							e.printStackTrace();
-						}
-					}
-				}
+				waiter.await();
 			}
 		}
 	}
@@ -103,11 +80,13 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 	private static class MessageAwaiter implements MessageListener, ConnectionListener
 	{
 		private static final String CHANNEL = "/agentTestExecutionAddon";
+		private static final int TIMEOUT = 10000;
 
 		private final AgentItem agent;
 		private final String canvasId;
 		private final Phase phase;
 		private boolean done = false;
+		private long deadline;
 
 		private MessageAwaiter( AgentItem agent, TestExecution execution, Phase phase )
 		{
@@ -128,6 +107,36 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 			notifyAll();
 		}
 
+		private boolean await()
+		{
+			synchronized( this )
+			{
+				deadline = System.currentTimeMillis() + TIMEOUT;
+				while( !done )
+				{
+					try
+					{
+						if( agent.isReady() )
+						{
+							wait( deadline - System.currentTimeMillis() );
+						}
+						if( !done && System.currentTimeMillis() >= deadline )
+						{
+							log.error( "Timed out waiting for Agent: {}", agent );
+							complete();
+							return false;
+						}
+					}
+					catch( InterruptedException e )
+					{
+						e.printStackTrace();
+					}
+				}
+
+				return true;
+			}
+		}
+
 		@Override
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
@@ -136,7 +145,17 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 				Object[] strings = ( Object[] )data;
 				if( canvasId.equals( strings[0] ) && phase == Phase.valueOf( ( String )strings[1] ) )
 				{
-					complete();
+					if( Boolean.parseBoolean( ( String )strings[2] ) )
+					{
+						complete();
+					}
+					else
+					{
+						synchronized( this )
+						{
+							deadline = System.currentTimeMillis() + TIMEOUT;
+						}
+					}
 				}
 			}
 		}

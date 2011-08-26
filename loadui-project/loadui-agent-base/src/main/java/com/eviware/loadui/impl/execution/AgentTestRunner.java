@@ -18,6 +18,9 @@ package com.eviware.loadui.impl.execution;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
@@ -27,6 +30,7 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.execution.AbstractTestRunner;
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.Futures;
 
 /**
  * Listens for remote invocations of test execution phases. When a phase is
@@ -44,12 +48,15 @@ public class AgentTestRunner extends AbstractTestRunner implements Releasable
 	private final HashMap<String, AgentTestExecution> executions = Maps.newHashMap();
 	private final MessageEndpoint endpoint;
 	private final ExecutorService executorService;
+	private final ScheduledExecutorService scheduledExecutorService;
 
-	public AgentTestRunner( MessageEndpoint endpoint, ExecutorService executorService )
+	public AgentTestRunner( MessageEndpoint endpoint, ExecutorService executorService,
+			ScheduledExecutorService scheduledExecutorService )
 	{
 		super( executorService );
 		this.endpoint = endpoint;
 		this.executorService = executorService;
+		this.scheduledExecutorService = scheduledExecutorService;
 
 		endpoint.addMessageListener( CHANNEL, phaseListener );
 	}
@@ -95,15 +102,24 @@ public class AgentTestRunner extends AbstractTestRunner implements Releasable
 					executions.remove( canvasId );
 				}
 
-				executorService.execute( new Runnable()
+				final Future<?> keepAliveFuture = scheduledExecutorService.scheduleAtFixedRate( new Runnable()
 				{
 					@Override
 					public void run()
 					{
-						awaitFuture( runPhase( phase, execution ) );
-						endpoint.sendMessage( CHANNEL, data );
+						endpoint.sendMessage( CHANNEL, new Object[] { canvasId, phase.toString(), String.valueOf( false ) } );
 					}
-				} );
+				}, 5, 5, TimeUnit.SECONDS );
+
+				Futures.makeListenable( runPhase( phase, execution ) ).addListener( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						keepAliveFuture.cancel( true );
+						endpoint.sendMessage( CHANNEL, new Object[] { canvasId, phase.toString(), String.valueOf( true ) } );
+					}
+				}, executorService );
 			}
 		}
 	}

@@ -114,8 +114,8 @@ public class GroovyBehaviorSupport implements Releasable
 			ParsedGroovyScript headers = new ParsedGroovyScript( scriptText );
 			PropertyHolderResolver propertyHolderResolver = new PropertyHolderResolver( context, log );
 			resolver = new DelegatingResolver( noRelease( new JavaBeanGroovyResolver( groovyContext ) ),
-					noRelease( new JavaBeanGroovyResolver( behavior ) ), propertyHolderResolver, new TerminalHolderResolver(
-							context, log ), new ScheduledExecutionResolver(),
+					noRelease( new JavaBeanGroovyResolver( behavior ) ), new ComponentTestExecutionResolver( context ),
+					propertyHolderResolver, new TerminalHolderResolver( context, log ), new ScheduledExecutionResolver(),
 					noRelease( new JavaBeanGroovyResolver( context ) ) );
 
 			groovyEnv = new GroovyEnvironment( headers, id, "com.eviware.loadui.groovy.component", clr, classLoaderId,

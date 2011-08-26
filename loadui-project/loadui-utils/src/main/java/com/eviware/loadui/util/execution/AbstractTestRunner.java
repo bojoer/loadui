@@ -137,6 +137,7 @@ public abstract class AbstractTestRunner implements TestRunner
 		@Override
 		public void run()
 		{
+			log.debug( "Starting phase: {}", phase );
 			LinkedList<Future<?>> futures = Lists.newLinkedList();
 			for( TestExecutionTask task : tasks.get( phase ) )
 			{
@@ -146,6 +147,7 @@ public abstract class AbstractTestRunner implements TestRunner
 			{
 				awaitFuture( future );
 			}
+			log.debug( "Completed phase: {}", phase );
 		}
 
 		private class TaskRunner implements Runnable
