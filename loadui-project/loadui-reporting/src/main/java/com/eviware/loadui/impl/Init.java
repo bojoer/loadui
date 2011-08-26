@@ -12,6 +12,7 @@ import com.jidesoft.utils.Lm;
 /**
  * Initialized the JIDE license.
  * 
+ * 
  * @author dain.nilsson
  */
 public class Init
