@@ -27,10 +27,16 @@ import com.eviware.loadui.util.BeanInjector;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.lang.Runnable;
+
+import javafx.scene.control.Label;
+import javafx.scene.control.CheckBox;
+
+def WARN_STOPPING_TEST = "gui.warn_stopping_test";
 
 def startingDialogTask = new StartingDialogTask();
 def stoppingDialogTask = new StoppingDialogTask();
@@ -55,11 +61,33 @@ public function startCanvas( canvas:CanvasItem ):TestExecution {
 			return null;
 		}
 		
-		for( execution in queuedExecutions ) execution.abort();
-		currentExecution.complete();
+		if( Boolean.parseBoolean(canvas.getProject().getAttribute( WARN_STOPPING_TEST, "true" ) ) ) {
+			def checkbox = CheckBox { text: "Don't show this dialog again" }
+			def dialog:Dialog = Dialog {
+				title: "Stop current test?"
+				content: [
+					Label { text: "Starting {canvas.getLabel()} requires that the current test be stopped.\r\nDo you wish to stop the currently running test?\r\n" },
+					checkbox
+				]
+				okText: "Yes"
+				cancelText: "No"
+				onOk: function() {
+					if( checkbox.selected ) canvas.getProject().setAttribute( WARN_STOPPING_TEST, "false" );
+					for( execution in queuedExecutions ) execution.abort();
+					currentExecution.complete();
+					testRunner.enqueueExecution( canvas );
+					dialog.close();
+				}
+			}
+			return null;
+		} else {
+			for( execution in queuedExecutions ) execution.abort();
+			currentExecution.complete();
+			return testRunner.enqueueExecution( canvas );
+		}
+	} else {
+		testRunner.enqueueExecution( canvas );
 	}
-	
-	testRunner.enqueueExecution( canvas );
 }
 
 public function stopCanvas( canvas:CanvasItem ):TestExecution {
@@ -91,9 +119,9 @@ class StartingDialogTask extends TestExecutionTask {
 		if( phase == Phase.PRE_START ) {
 			FxUtils.runInFxThread( function():Void {
 				def mainAppState = AppState.byName("MAIN");
-				mainAppState.setBlockedText( "Initializing test." );
+				mainAppState.setBlockedText( "Initializing {canvas.getLabel()}." );
 				mainAppState.setCancelHandler( function():Void {
-				   execution.abort();
+					execution.abort();
 				} );
 				mainAppState.block();
 			} );
@@ -111,7 +139,7 @@ class StoppingDialogTask extends TestExecutionTask, Runnable {
 		if( not canvas.isAbortOnFinish() ) {
 			FxUtils.runInFxThread( function():Void {
 				def mainAppState = AppState.byName("MAIN");
-				mainAppState.setBlockedText( "Waiting for test to complete." );
+				mainAppState.setBlockedText( "Waiting for {canvas.getLabel()} to complete." );
 				mainAppState.setCancelHandler( function() {
 					// abort should cancel everything
 					mainAppState.setBlockedText( "Aborting running requests..." );

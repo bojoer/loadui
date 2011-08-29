@@ -58,10 +58,14 @@ import com.eviware.loadui.fx.dialogs.SetCanvasLimitsDialog;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.execution.TestRunner;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.FormattingUtils;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.util.TestExecutionUtils;
@@ -113,11 +117,11 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	public var showLimitButton:Boolean = true;
 	
 	public var items:Node[] on replace {
-			hbox.content = for( i in [0..<sizeof items] ) [
-				if(i>0) Rectangle { width: 3, height: 25, fill: bind separatorFill } else null,
-				items[i]
-			];
-		}
+		hbox.content = for( i in [0..<sizeof items] ) [
+			if(i>0) Rectangle { width: 3, height: 25, fill: bind separatorFill } else null,
+			items[i]
+		];
+	}
 	
 	def activeLinkUrl = "{__ROOT__}images/testcase_link_active.fxz";
 	def defaultLinkUrl = "{__ROOT__}images/testcase_link_default.fxz";
@@ -127,13 +131,13 @@ public class RunController extends BaseNode, Resizable, TimerController {
 		content: [
 			FXDNode {
 				layoutX: 3
-	    		url: bind if (testcaseLinked) activeLinkUrl else defaultLinkUrl
-	    		onMousePressed: function( e:MouseEvent ) {
-	        		testcaseLinked = not testcaseLinked;
-	    		}
-	    		onMouseReleased: function( e:MouseEvent ) {
-	        		(canvas as SceneItem).setFollowProject(testcaseLinked);
-	    		} 
+				url: bind if (testcaseLinked) activeLinkUrl else defaultLinkUrl
+				onMousePressed: function( e:MouseEvent ) {
+					testcaseLinked = not testcaseLinked;
+				}
+				onMouseReleased: function( e:MouseEvent ) {
+					(canvas as SceneItem).setFollowProject(testcaseLinked);
+				} 
 			},
 			Label {
 				layoutY: 10
@@ -181,10 +185,8 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	var resetButton:Button;
 	var limitButton:Button;
 	var cancelling = false;
-	
 	def playButtonState = bind playButton.selected on replace {
 		if( playButton.armed and not cancelling) {
-
 			if( playButtonState ) {
 				if( not canvas.isStarted() ) {
 					canvas.triggerAction( CounterHolder.COUNTER_RESET_ACTION );
@@ -194,48 +196,53 @@ public class RunController extends BaseNode, Resizable, TimerController {
 					var valid:Boolean = checkForTriggerAndRunner(canvas);
 				
 					if (not valid and canvas instanceof ProjectItem) {
-					    var project:ProjectItem = canvas as ProjectItem;
-					    for (testcase in project.getScenes()) {
-					        if (checkForTriggerAndRunner(testcase)) {
-					            valid = true;
-					            break;
-					        }
-					    }
+						var project:ProjectItem = canvas as ProjectItem;
+						for (testcase in project.getScenes()) {
+							if (checkForTriggerAndRunner(testcase)) {
+								valid = true;
+								break;
+							}
+						}
 					}
 					
 					if (not valid) {
-					    var type = if (canvas instanceof ProjectItem) "Project" else "TestCase";
-					    var checkbox:CheckBox;
-					    var dlg:Dialog = Dialog {
-					        title: "Start {type}";
-					        content: [
-					        				Label { text: "Your {type} currently does not seem to generate any load, \n be sure to add a Generator and connect it to a Runner component to get going!" }
-					        				checkbox = CheckBox {
-					        					selected: false
-             								text: "Don't show this dialog again"
-					        				}
-					        ]
-					        onOk: function():Void {
-					        		if( checkbox.selected ) canvas.getProject().setAttribute( ProjectSettingsDialog.IGNORE_INVALID_CANVAS, "true" );
-					        		TestExecutionUtils.startCanvas( canvas );
-					            dlg.close();
-					        }
-					        
-					        onClose: function():Void {
+						var type = if (canvas instanceof ProjectItem) "Project" else "TestCase";
+						var checkbox:CheckBox;
+						var dlg:Dialog = Dialog {
+							title: "Start {type}";
+							content: [
+								Label { text: "Your {type} currently does not seem to generate any load, \n be sure to add a Generator and connect it to a Runner component to get going!" }
+								checkbox = CheckBox {
+									selected: false
+									text: "Don't show this dialog again"
+								}
+							]
+							onOk: function():Void {
+								if( checkbox.selected ) canvas.getProject().setAttribute( ProjectSettingsDialog.IGNORE_INVALID_CANVAS, "true" );
+								if(TestExecutionUtils.startCanvas( canvas ) == null) FX.deferAction(function():Void { playButton.selected = false } );
+								dlg.close();
+							}
+							
+							onClose: function():Void {
 								playButton.selected = false;
-					        }
-					    }
+							}
+						}
 					} else {
-						TestExecutionUtils.startCanvas( canvas );
+						if(TestExecutionUtils.startCanvas( canvas ) == null) FX.deferAction(function():Void { playButton.selected = false } );
 					}
 				} else {
-					TestExecutionUtils.startCanvas( canvas );
+					if(TestExecutionUtils.startCanvas( canvas ) == null) FX.deferAction(function():Void { playButton.selected = false } );
 				}
 			} else {
 				TestExecutionUtils.stopCanvas( canvas );
 				stopped = true;
 			}
 		}
+	}
+	
+	def runningTask = new RunningTask();
+	def testRunner = BeanInjector.getBean( TestRunner.class ) on replace {
+		testRunner.registerTask( runningTask, Phase.START, Phase.STOP );
 	}
 	
 	init {
@@ -246,38 +253,20 @@ public class RunController extends BaseNode, Resizable, TimerController {
 				selected: false
 				graphic: ExecutionGraphic { layoutInfo: LayoutInfo { height: 33, width: 33 }, running: bind (playButton.armed or playButton.selected) }
 				tooltip:Tooltip { text:"Play/Stop" }
-			}, 
-			/*}, Group {
-				content: [
-					Rectangle {
-						width: 200
-						height: 30
-					}, Label {
-						styleClass: "displayLabel"
-						layoutX: 5
-						width: 200
-						text: "Time             Requests          Failures"
-					}, Label {
-						styleClass: "displayValue"
-						layoutX: 5
-						width: 200
-						layoutY: 15
-						text: bind "{FormattingUtils.formatTime(time)}        {%-20d requestCount} {failureCount}"
-					}
-				]*/
-			if (testcase) linkButton else null, 
+			},
+			if (testcase) linkButton else null,
 			Limiter {
-			    small: small
+				small: small
 				text: "Time"
 				width: if (not small) 105 else 55
 				progress: bind if(timeLimit > 0) Math.min( (time as Number) / timeLimit, 1.0) else 0
 				value: bind FormattingUtils.formatTime(time)
 				limit: bind if(timeLimit > 0) FormattingUtils.formatTime(timeLimit) else null
 				layoutInfo: LayoutInfo {
-				    hpos:HPos.CENTER
+					hpos:HPos.CENTER
 				}
 			}, Limiter {
-			    small: small
+				small: small
 				text: "Requests"
 				width: if (not small) 105 else 55
 				progress: bind if(requestLimit > 0) Math.min( (requestCount as Number) / requestLimit, 1.0) else 0
@@ -287,8 +276,8 @@ public class RunController extends BaseNode, Resizable, TimerController {
 					hpos:HPos.CENTER
 				}
 			}, Limiter {
-			    //layoutX: -1
-			    small: small
+				//layoutX: -1
+				small: small
 				text:  "Failures"
 				width: if (not small) 105 else 55
 				progress: bind if(failureLimit > 0) Math.min( (failureCount as Number) / failureLimit, 1.0) else 0
@@ -324,19 +313,20 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	}
 	
 	function checkForTriggerAndRunner(canvas:CanvasItem):Boolean {
-	    var foundTrigger:Boolean = false;
-	    var foundRunner:Boolean = false;
-	    for (comp in canvas.getComponents()) {
-	        var component:ComponentItem = comp as ComponentItem;
-	    	if (component.getCategory().equalsIgnoreCase(RunnerCategory.CATEGORY) or component.getType().contains("Runner")) {
-	    		foundRunner = true;
+		var foundTrigger:Boolean = false;
+		var foundRunner:Boolean = false;
+		for (comp in canvas.getComponents()) {
+			var component:ComponentItem = comp as ComponentItem;
+			if (component.getCategory().equalsIgnoreCase(RunnerCategory.CATEGORY) or component.getType().contains("Runner")) {
+				foundRunner = true;
+			} else if (component.getCategory().equalsIgnoreCase(GeneratorCategory.CATEGORY)) {
+				foundTrigger = true;
 			}
-	    	else if (component.getCategory().equalsIgnoreCase(GeneratorCategory.CATEGORY))
-	    		foundTrigger = true;
-	    	if (foundTrigger and foundRunner)
-	    		break;
-	    }
-	    foundTrigger and foundRunner;
+			if (foundTrigger and foundRunner) {
+				break;
+			}
+		}
+		foundTrigger and foundRunner;
 	}
 	
 	override var blocksMouse = true;
@@ -351,7 +341,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 					arcHeight: 16
 					fill: bind backgroundFill
 					effect: InnerShadow {
-                  radius: 5
+						radius: 5
 						color: bind innerShadowColor
 					}
 				}, hbox
@@ -361,15 +351,20 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	
 	override function getPrefWidth( height:Float ) { hbox.getPrefWidth( height ) + 30 }
 	override function getPrefHeight( width:Float ) { 38 }
-	
-	public function refreshRunner() {
-	    timeLimit = canvas.getLimit( CanvasItem.TIMER_COUNTER );
-	    		requestLimit = canvas.getLimit( CanvasItem.REQUEST_COUNTER );
-	    		failureLimit = canvas.getLimit( CanvasItem.FAILURE_COUNTER );
-	    		
-	    		playButton.selected = canvas.isRunning();
-	}
-	
 }
 
-
+class RunningTask extends TestExecutionTask {
+	override function invoke( execution, phase ):Void {
+		if( execution.getCanvas() == canvas ) {
+			if( phase == Phase.START ) {
+				FxUtils.runInFxThread( function():Void {
+					playButton.selected = canvas.isRunning();
+				} );
+			} else if( phase == Phase.STOP ) {
+				FxUtils.runInFxThread( function():Void {
+					playButton.selected = false;
+				} );
+			}
+		}
+	}
+}
