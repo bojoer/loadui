@@ -4,7 +4,8 @@
 
 .server-node {
 	-fx-padding: 2;
-	-fx-font: 12pt "Amble Cn";
+	-fx-font: 12pt "Amble";
+	-fx-text-fill: #838383;
 }
 
 .server-node *.base {
@@ -23,4 +24,14 @@
 	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
 	-fx-background-insets: 2 3 3 3, 2 3 5 3, 5;
 	-fx-background-radius: 12 12 0 0;
+	-fx-padding: 16;
+}
+
+.server-node *.menu-button, .server-node *.menu-button:focused {
+	-fx-font: 12pt "Amble";
+	-fx-text-fill: #838383;
+}
+
+.server-node *.menu-button *.arrow, .server-node *.menu-button:focused *.arrow {
+	-fx-background-color: #838383;
 }
