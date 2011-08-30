@@ -47,6 +47,9 @@
 								<resource>
 									<directory>${project.parent.basedir}/loadui-controller-installer/src/main/resources</directory>
 								</resource>
+								<resource>
+									<directory>src/main/resources</directory>
+								</resource>
 							</resources>
 							<outputDirectory>${project.build.directory}/main</outputDirectory>
 						</configuration>

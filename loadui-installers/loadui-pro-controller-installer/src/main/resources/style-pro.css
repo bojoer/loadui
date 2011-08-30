@@ -1,0 +1,26 @@
+/**
+ * loadUI Pro stylesheet
+ */
+
+.server-node {
+	-fx-padding: 2;
+	-fx-font: 12pt "Amble Cn";
+}
+
+.server-node *.base {
+	-fx-outer-border: #000000;
+	-fx-inner-border: linear (0%,0%) to (100%,0%) stops (0%, #606060) (100%, #000000);
+	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #282628) (100%, #171314);
+	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+	-fx-background-radius: 13, 12;
+	-fx-background-insets: 0, 1 1 3 1, 3 3 2 3;
+}
+
+.server-node *.bar {
+	-fx-outer-border: #403f40;
+	-fx-inner-border: linear (0%,0%) to (0%,100%) stops (0%, #7b797a) (50%, #332f30) (55%, #171314) (100%, #171314);
+	-fx-body-color: transparent;
+	-fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+	-fx-background-insets: 2 3 3 3, 2 3 5 3, 5;
+	-fx-background-radius: 12 12 0 0;
+}
