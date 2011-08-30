@@ -2,7 +2,7 @@
  * loadUI Pro stylesheet
  */
 
-.server-node {
+.server-node, .server-node *.menu-button, .server-node *.menu-button:focused {
 	-fx-padding: 2;
 	-fx-font: 12pt "Amble";
 	-fx-text-fill: #838383;
@@ -27,11 +27,46 @@
 	-fx-padding: 16;
 }
 
-.server-node *.menu-button, .server-node *.menu-button:focused {
-	-fx-font: 12pt "Amble";
-	-fx-text-fill: #838383;
+.server-node *.scroll-area {
+	-fx-background-color: #333333, linear (0%,0%) to (0%,100%) stops (0%, #171314) (100%, #424243);
+	-fx-background-insets: 0, 1;
+	-fx-background-radius: 3;
 }
 
 .server-node *.menu-button *.arrow, .server-node *.menu-button:focused *.arrow {
 	-fx-background-color: #838383;
+}
+
+.server-node-button {
+	-fx-background-radius: 2;
+	-fx-background-insets: 0, 1;
+	-fx-background-color: #333333, linear (0%,0%) to (0%,100%) stops (0%, #404041) (15%, #4d4e51) (100%, #1f1b1c);
+	-fx-padding: 3;
+}
+
+.monitor-node {
+	-fx-font: 12pt "Amble";
+	-fx-text-fill: #404040;
+	-fx-background-radius: 4;
+	-fx-background-insets: 0, 1;
+	-fx-background-color: #555555, linear (0%,0%) to (0%,100%) stops (0%, #c2c3c6) (70%, #a0a0a0) (100%, #707070);
+}
+
+.monitor-node  *.separator:vertical *.line {
+    -fx-background-color: #5a5a5a;
+    -fx-border-color: null;
+    -fx-border-style: null;
+    -fx-padding: 0 1 0 0;
+}
+
+.monitor-node *.menu-button *.arrow, .monitor-node *.menu-button:focused *.arrow {
+	-fx-background-color: #404040;
+}
+
+.monitor-node *.menu-button *.arrow-button, .monitor-node *.menu-button:focused *.arrow-button {
+	-fx-padding: 0 2 0 0;
+}
+
+.monitor-node *.menu-button *.label {
+    -fx-padding: 0;
 }
