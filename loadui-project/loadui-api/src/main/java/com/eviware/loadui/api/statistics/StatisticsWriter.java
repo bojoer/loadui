@@ -15,8 +15,6 @@
  */
 package com.eviware.loadui.api.statistics;
 
-import java.util.Set;
-
 import javax.annotation.CheckForNull;
 
 import com.eviware.loadui.api.addressable.Addressable;

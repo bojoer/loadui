@@ -29,6 +29,7 @@ import javafx.util.Properties;
 
 import java.lang.Exception;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.InputStreamReader;
 import net.miginfocom.layout.PlatformDefaults;
 import net.miginfocom.layout.UnitValue;
@@ -83,7 +84,8 @@ public class JavaFXActivator extends BundleActivator {
 
 			//log.debug("JavaFX Bundle started!");
 	
-			def stylesheets = "file:style.css";
+			def stylesheets = for( f in new File(".").list( new CssFilter() ) ) "file:{f}";
+			//def stylesheets = "file:style.css";
 			
 			// Instantiate objects to fix Classloading problems in tablelog. Do not remove.
 			new org.jdesktop.swingx.JXTable();
@@ -133,5 +135,11 @@ public class JavaFXActivator extends BundleActivator {
 	 */
 	override function stop( bc: BundleContext ) {
 		//log.debug("JavaFX Bundle stopped!");
+	}
+}
+
+class CssFilter extends FilenameFilter {
+	override function accept( dir, name ) {
+		name.endsWith(".css")
 	}
 }
