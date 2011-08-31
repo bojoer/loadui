@@ -136,15 +136,8 @@ public class AgentItemInspectorNode extends AgentNodeBase, Droppable, TestCaseIc
 		}
 		checkActivity();
 	}
-	
-	var contentChanging = false;
-	override var items on replace {
-		if( not contentChanging ) {
-			contentChanging = true;
-				items = Sequences.sort( items, COMPARE_BY_TOSTRING ) as Node[];
-			contentChanging = false;
-		}
-	}
+
+	override var comparator = COMPARE_BY_TOSTRING;
 	
 	override function selectionChanged(tc: TestCaseIcon): Void { 
 	

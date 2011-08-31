@@ -25,7 +25,8 @@ import javafx.scene.text.Text;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.widgets.ModelItemHolder;
 
-import com.eviware.loadui.api.model.ModelItem;
+import com.eviware.loadui.api.model.BaseItem;
+import com.eviware.loadui.api.traits.Labeled;
 
 import java.lang.RuntimeException;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class DeleteModelItemDialog {
 	/**
 	 * The ModelItem to delete.
 	 */
-	public-init var modelItem:ModelItem;
+	public-init var modelItem:BaseItem;
 	
 	/**
 	 * The ModelItemHolder to delete.
@@ -58,10 +59,12 @@ public class DeleteModelItemDialog {
 		def typeName = if( FX.isInitialized( modelItemHolder ) ) modelItemHolder.getTypeName() else modelItem.getClass().getSimpleName();
 		if( not FX.isInitialized( modelItem ) ) modelItem = modelItemHolder.modelItem;
 		
+		def label = if( modelItem instanceof Labeled ) (modelItem as Labeled).getLabel() else "{modelItem}";
+		
 		def dialog:Dialog = Dialog {
-			title: "Delete {modelItem.getLabel()}"
+			title: "Delete {label}"
 			content: [
-				Text { content: "Are you sure you want to delete '{modelItem.getLabel()}'?" },
+				Text { content: "Are you sure you want to delete '{label}'?" },
 			]
 			okText: "Delete"
 			onOk: function() {

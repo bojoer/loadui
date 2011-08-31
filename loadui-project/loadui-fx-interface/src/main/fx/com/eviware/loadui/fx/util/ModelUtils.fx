@@ -20,6 +20,7 @@ import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
 
 import com.eviware.loadui.fx.FxUtils;
 
@@ -27,7 +28,11 @@ public class ModelUtils {
 }
 
 public function getLabelHolder( labeled:Labeled ):LabelHolder {
-	return LabelHolder { labeled: labeled };
+	LabelHolder { labeled: labeled }
+}
+
+public function getCollectionHolder( eventFirer:EventFirer, key:String ):CollectionHolder {
+	CollectionHolder { owner: eventFirer, key: key }
 }
 
 public class LabelHolder extends WeakEventHandler {
@@ -48,10 +53,45 @@ public class LabelHolder extends WeakEventHandler {
 	
 	override function handleEvent( e ):Void {
 		def baseEvent = e as BaseEvent;
-		if( (e as BaseEvent).getKey() == Labeled.LABEL ) {
+		if( baseEvent.getKey().equals( Labeled.LABEL ) ) {
 			FxUtils.runInFxThread( function():Void {
 				label = labeled.getLabel();
 			} );
+		}
+	}
+}
+
+public class CollectionHolder extends WeakEventHandler {
+	public-read var items:Object[];
+	
+	public-init var key:String;
+	
+	public-init var owner:EventFirer on replace oldOwner {
+		if( oldOwner != null ) {
+			oldOwner.removeEventListener( CollectionEvent.class, this );
+		}
+		if( owner != null ) {
+			owner.addEventListener( CollectionEvent.class, this );
+		}
+	}
+	
+	public var onAdd: function( element:Object ):Void;
+	public var onRemove: function( element:Object ):Void;
+	
+	override function handleEvent( e ):Void {
+		def event = e as CollectionEvent;
+		if( event.getKey().equals( key ) ) {
+			if( event.getEvent() == CollectionEvent.Event.ADDED ) {
+				FxUtils.runInFxThread( function():Void {
+					insert event.getElement() into items;
+					onAdd( event.getElement() );
+				} );
+			} else if( event.getEvent() == CollectionEvent.Event.REMOVED ) {
+				FxUtils.runInFxThread( function():Void {
+					delete event.getElement() from items;
+					onRemove( event.getElement() );
+				} );
+			}
 		}
 	}
 }

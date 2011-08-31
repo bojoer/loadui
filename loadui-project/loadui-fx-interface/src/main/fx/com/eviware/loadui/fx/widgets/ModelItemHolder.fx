@@ -26,7 +26,7 @@ import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.util.ModelUtils;
 
 import com.eviware.loadui.api.model.ModelItem;
-import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
 
 import java.util.EventObject;
@@ -71,7 +71,7 @@ public mixin class ModelItemHolder extends Deletable {
 	//override function toString():String { "{getTypeName()}: {modelItem.getLabel()}" }
 }
 
-public class ReleaseListener extends EventHandler {
+public class ReleaseListener extends WeakEventHandler {
 	override function handleEvent( e:EventObject ) {
 		def event = e as BaseEvent;
 		if( event.getKey() == ModelItem.RELEASED ) {
