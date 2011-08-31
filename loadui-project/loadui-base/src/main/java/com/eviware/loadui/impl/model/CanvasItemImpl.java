@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -89,6 +90,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	private final ComponentRegistry componentRegistry;
 	protected final ScheduledExecutorService scheduler;
 	protected final Counter timerCounter = new TimerCounter();
+	protected final TestRunner testRunner = BeanInjector.getBean( TestRunner.class );
 	private ScheduledFuture<?> timerFuture;
 	private ScheduledFuture<?> timeLimitFuture;
 	private long time = 0;
@@ -238,7 +240,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 		addEventListener( BaseEvent.class, new ActionListener() );
 
-		BeanInjector.getBean( TestRunner.class ).registerTask( executionTask, Phase.START, Phase.PRE_STOP, Phase.STOP );
+		testRunner.registerTask( executionTask, Phase.START, Phase.PRE_STOP, Phase.STOP );
 
 		// timer.scheduleAtFixedRate( timerTask, 1000, 1000 );
 
@@ -414,7 +416,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	@Override
 	public void release()
 	{
-		BeanInjector.getBean( TestRunner.class ).unregisterTask( executionTask, Phase.values() );
+		testRunner.unregisterTask( executionTask, Phase.values() );
 		ReleasableUtils.releaseAll( componentList, connectionList );
 		summary = null;
 
@@ -678,8 +680,16 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 				long limit = getLimit( cEvent.getKey() );
 				if( limit > 0 && limit <= cEvent.getSource().getCounter( cEvent.getKey() ).get() )
 				{
-					triggerAction( STOP_ACTION );
-					triggerAction( COMPLETE_ACTION );
+					List<TestExecution> executions = testRunner.getExecutionQueue();
+					if( !executions.isEmpty() && executions.get( 0 ).getCanvas() == CanvasItemImpl.this )
+					{
+						executions.get( 0 ).complete();
+					}
+					else
+					{
+						triggerAction( STOP_ACTION );
+						triggerAction( COMPLETE_ACTION );
+					}
 				}
 			}
 		}
@@ -709,9 +719,17 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		@Override
 		public void run()
 		{
-			setTime( getLimit( TIMER_COUNTER ) * 1000 );
-			triggerAction( STOP_ACTION );
-			triggerAction( COMPLETE_ACTION );
+			List<TestExecution> executions = testRunner.getExecutionQueue();
+			if( !executions.isEmpty() && executions.get( 0 ).getCanvas() == CanvasItemImpl.this )
+			{
+				executions.get( 0 ).complete();
+			}
+			else
+			{
+				setTime( getLimit( TIMER_COUNTER ) * 1000 );
+				triggerAction( STOP_ACTION );
+				triggerAction( COMPLETE_ACTION );
+			}
 		}
 	}
 
