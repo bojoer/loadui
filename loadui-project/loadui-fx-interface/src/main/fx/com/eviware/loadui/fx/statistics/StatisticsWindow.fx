@@ -51,6 +51,7 @@ import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.fx.WindowControllerImpl;
 import javafx.scene.input.MouseEvent;
 
+import com.eviware.loadui.fx.JavaFXActivator;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.Overlay;
 import com.eviware.loadui.fx.FxUtils.*;
@@ -220,7 +221,7 @@ public class StatisticsWindow {
 						Image { url:"{__ROOT__}images/png/icon_16x16.png" }
 					]
 					scene: scene = Scene {
-						stylesheets: "file:style.css"
+						stylesheets: bind JavaFXActivator.stylesheets
 						width: 1085
 						height: 720
 						fill: Color.web("#373737")

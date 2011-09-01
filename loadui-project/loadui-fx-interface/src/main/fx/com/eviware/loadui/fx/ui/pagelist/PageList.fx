@@ -39,6 +39,8 @@ public class PageList extends VBox, Pagination {
 	
 	override var padding = Insets { left: 20, top: 30, right: 20, bottom: 5 };
 	
+	override var layoutInfo = LayoutInfo { vfill: true, vgrow: Priority.ALWAYS }
+	
 	protected var leftMargin = 60;
 	protected var rightMargin = 76;
 	var itemWidth:Number;
@@ -84,6 +86,7 @@ public class PageList extends VBox, Pagination {
 		content = [
 			Region { styleClass: "page-list", width: bind width, height: bind height, managed: false },
 			HBox {
+				layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
 				content: [
 					Label { text: bind label.toUpperCase() },
 					Label { layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
@@ -95,7 +98,7 @@ public class PageList extends VBox, Pagination {
 				nodeVPos: VPos.BOTTOM
 				spacing: 20
 				padding: Insets { top: 10, right: 10, left: 10 }
-				layoutInfo: LayoutInfo { vfill: true, vgrow: Priority.ALWAYS }
+				layoutInfo: LayoutInfo { vfill: true, vgrow: Priority.ALWAYS, hfill: true, hgrow: Priority.ALWAYS }
 				content: [
 					Button {
 						styleClass: "left-button"
@@ -143,6 +146,6 @@ public class PageList extends VBox, Pagination {
 			itemWidth = Math.max( itemWidth, x.layoutBounds.width );
 		}
 
-		itemsPerPage = (width - (leftMargin + rightMargin))/(itemWidth + itemBox.spacing) as Integer;
+		itemsPerPage = (width - (leftMargin + rightMargin + itemBox.spacing + 1))/(itemWidth + itemBox.spacing) as Integer;
 	}
 }

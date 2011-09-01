@@ -117,7 +117,7 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 	override var translateY = bind ( 1-shown ) * ( height - (resizeBar.boundsInLocal.height-4) );
 	
 	var buttons: InspectorButton[] = [];
-	var inspectorHolder:Panel;
+	var inspectorHolder:Stack;
 	var buttonBox:HBox;
 	var node:VBox;
 	var resizeBar:Node;
@@ -296,13 +296,13 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 //									nodeVPos: VPos.CENTER
 //									content: bind [ Rectangle { fill: Color.TRANSPARENT, width: 10 height: 40 }, buttons ]
 //								},
-								 inspectorHolder = Panel {
+								 inspectorHolder = Stack {
 								 	layoutInfo: LayoutInfo { margin: Insets{top:14} }
 //								 	content: [Region{ managed: false, style: "-fx-background-color: #ffff00;", width: bind width, height: bind inspectorHeight - 30 }]
-									onLayout: function():Void {
-										for( node in Panel.getManaged( inspectorHolder.content ) )
-											Panel.resizeNode( node, width, inspectorHeight );
-									}
+//									onLayout: function():Void {
+//										for( node in Panel.getManaged( inspectorHolder.content ) )
+//											Panel.resizeNode( node, width, inspectorHeight );
+//									}
 									width: bind width
 								   height: bind height
 //								   nodeVPos: VPos.TOP

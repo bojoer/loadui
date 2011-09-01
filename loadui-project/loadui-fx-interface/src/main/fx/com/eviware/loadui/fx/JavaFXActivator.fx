@@ -47,6 +47,8 @@ public-read var wc:WindowControllerImpl;
 public function getScene() { scene };
 public function getWindowController() { wc };
 
+public def stylesheets = for( f in new File(".").list( new CssFilter() ) ) "file:{f}";
+
 /**
  * An OSGi Activator in JavaFX. Launches the main window.
  * 
@@ -84,7 +86,6 @@ public class JavaFXActivator extends BundleActivator {
 
 			//log.debug("JavaFX Bundle started!");
 	
-			def stylesheets = for( f in new File(".").list( new CssFilter() ) ) "file:{f}";
 			//def stylesheets = "file:style.css";
 			
 			// Instantiate objects to fix Classloading problems in tablelog. Do not remove.

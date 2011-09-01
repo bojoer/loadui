@@ -23,6 +23,7 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 
 import com.eviware.loadui.fx.FxUtils;
+import java.lang.IllegalArgumentException;
 
 public class ModelUtils {
 }
@@ -62,7 +63,7 @@ public class LabelHolder extends WeakEventHandler {
 }
 
 public class CollectionHolder extends WeakEventHandler {
-	public-read var items:Object[];
+	public-init var items:Object[];
 	
 	public-init var key:String;
 	
@@ -78,17 +79,23 @@ public class CollectionHolder extends WeakEventHandler {
 	public var onAdd: function( element:Object ):Void;
 	public var onRemove: function( element:Object ):Void;
 	
+	postinit {
+		if( not FX.isInitialized( owner ) ) throw new IllegalArgumentException("No Owner set for ModelUtils.CollectionHolder!");
+	}
+	
 	override function handleEvent( e ):Void {
 		def event = e as CollectionEvent;
 		if( event.getKey().equals( key ) ) {
 			if( event.getEvent() == CollectionEvent.Event.ADDED ) {
 				FxUtils.runInFxThread( function():Void {
 					insert event.getElement() into items;
+					println("!!!Calling onAdd with {event.getElement()}");
 					onAdd( event.getElement() );
 				} );
 			} else if( event.getEvent() == CollectionEvent.Event.REMOVED ) {
 				FxUtils.runInFxThread( function():Void {
 					delete event.getElement() from items;
+					println("!!!Calling onRemove with {event.getElement()}");
 					onRemove( event.getElement() );
 				} );
 			}

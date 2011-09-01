@@ -21,7 +21,9 @@
 
 package com.eviware.loadui.fx.dialogs;
 
+import javafx.scene.Scene;
 import javafx.scene.text.Text;
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.widgets.ModelItemHolder;
 
@@ -52,6 +54,8 @@ public class DeleteModelItemDialog {
 	
 	public var onOk: function(): Void;
 	
+	public var hostScene:Scene;
+	
 	postinit {
 		if( not ( FX.isInitialized( modelItem ) or FX.isInitialized( modelItemHolder ) ) )
 			throw new RuntimeException( "Neither modelItem nor modelItemHolder are set!" );
@@ -62,6 +66,7 @@ public class DeleteModelItemDialog {
 		def label = if( modelItem instanceof Labeled ) (modelItem as Labeled).getLabel() else "{modelItem}";
 		
 		def dialog:Dialog = Dialog {
+			scene: if (hostScene == null) AppState.byName("MAIN").scene else hostScene
 			title: "Delete {label}"
 			content: [
 				Text { content: "Are you sure you want to delete '{label}'?" },
