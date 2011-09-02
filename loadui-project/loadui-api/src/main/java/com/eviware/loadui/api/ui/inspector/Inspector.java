@@ -46,16 +46,6 @@ public interface Inspector
 	public void onShow();
 
 	/**
-	 * Returns this inspector's desired maximal height.
-	 */
-	public int getMaxHeight();
-
-	/**
-	 * Returns this inspector's desired minimal height.
-	 */
-	public int getMinHeight();
-
-	/**
 	 * This method is called to notify the Inspector that its content panel is no
 	 * longer visible on screen.
 	 */
