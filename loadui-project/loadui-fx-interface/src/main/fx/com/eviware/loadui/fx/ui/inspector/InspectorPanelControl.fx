@@ -171,7 +171,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 					topBar = TopBar {
 						width: bind rn.width
 						height: bind 30
-						containment: bind BoundingBox{ width: rn.boundsInLocal.width, minY: scene.height - maxHeight, height: maxHeight }
 						blocksMouse: true
 					}
 				]	
@@ -443,6 +442,10 @@ public class TopBar extends BaseNode, Movable, Resizable {
 		inspectorHeight = topBar.layoutY + topBar.translateY;	
 		
 		println( "endOfMove::: layoutY: {topBar.layoutY}, translateY: {topBar.translateY}" );
+	}
+	
+	override var onGrab = function() {
+		containment = BoundingBox { width: width, minY: Math.max( 0, rn.height - maxHeight), height: rn.height };
 	}
 	
 	override var onDragging = function() {
