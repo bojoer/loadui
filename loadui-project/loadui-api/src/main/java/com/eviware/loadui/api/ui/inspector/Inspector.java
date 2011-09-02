@@ -51,6 +51,11 @@ public interface Inspector
 	public int getMaxHeight();
 
 	/**
+	 * Returns this inspector's desired minimal height.
+	 */
+	public int getMinHeight();
+
+	/**
 	 * This method is called to notify the Inspector that its content panel is no
 	 * longer visible on screen.
 	 */

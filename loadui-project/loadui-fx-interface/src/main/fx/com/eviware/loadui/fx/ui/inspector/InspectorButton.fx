@@ -116,25 +116,26 @@ public class InspectorButton extends CustomNode {
 	
 	override def onMousePressed = function ( e:MouseEvent ):Void {
 		if( e.primaryButtonDown )
+		{
 			state = PUSHED;
+			action();
+		}
 	};
 	
-	override def onMouseReleased = function ( e:MouseEvent ):Void {
-			action();
-	};
+//	override def onMouseReleased = function ( e:MouseEvent ):Void {
+//			action();
+//	};
 	
 	override function create() {
 		Group {
 			content: [
 				
 				Group {
-					//translateY: bind if( state == HOVER ) -1 else 0
 					content: [
 						Region {
 							managed: true
 							width: bind width
 							height: bind height
-							//fill: bind if( state == PUSHED ) Color.web("#707070") else Color.web("#545454")
 							style: bind if(state == PUSHED ) "-fx-background-insets: 0 0 -2 0, 1 , 2 1 -2 1; -fx-background-color: #282828, #cccccc, #6f6f6f;"
 								else "-fx-background-insets: 0 0 -1 0, 1, 2 1 -1 1; -fx-background-color: #282828, #9c9c9c, #555555;"
 						}, Group {

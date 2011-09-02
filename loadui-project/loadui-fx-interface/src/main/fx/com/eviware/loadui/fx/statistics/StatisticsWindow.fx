@@ -162,11 +162,6 @@ public class StatisticsWindow {
 			log.debug( "Initializing StatInspectorPanel" );
 			inspectors = InspectorPanelControl {
 				id: "StatisticWorkbenchInspector"
-				height: bind inspectors.prefHeight
-				width: bind scene.width
-				layoutY: bind scene.height - inspectors.height
-				layoutX: 0
-				//maxHeight: bind scene.height - 100 as Integer
 				defaultInspector: "Monitors"
 			}
 			inspectors.collapse();
@@ -196,7 +191,7 @@ public class StatisticsWindow {
 	def toolbar: StatisticsToolbar = StatisticsToolbar {
 		id: "StatisticsToolbar"
 		layoutY: 140
-		height: bind scene.height - inspectors.height - 140
+		height: bind scene.height - 140
 	}
 	
 	def stack:Stack = Stack {

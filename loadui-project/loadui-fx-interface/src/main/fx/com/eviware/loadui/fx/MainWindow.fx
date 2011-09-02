@@ -105,7 +105,7 @@ public class MainWindow {
 	var projectToolbar:Toolbar = Toolbar {
 		id: "ProjectComponentToolbar"
 		layoutY: 110
-		height: bind scene.height - inspectors.height - 100
+		height: bind scene.height - 100
 		linkURL: "http://www.loadui.org/Custom-Components"
 		linkLabel: "Get more\ncomponents \u00bb"
 		groupHeight: 110
@@ -118,7 +118,7 @@ public class MainWindow {
 	
 	var testcaseToolbar:Toolbar = Toolbar{
 		layoutY: 130
-		height: bind scene.height - inspectors.height - 100
+		height: bind scene.height - 100
 		linkURL: "http://www.loadui.org/Custom-Components"
 		linkLabel: "Get more\ncomponents \u00bb"
 	}
@@ -173,14 +173,9 @@ public class MainWindow {
 		log.debug( "Initializing InspectorPanel" );
 		inspectors = InspectorPanelControl {
 			id: "MainWindowInspector"
-			height: bind inspectors.prefHeight
-			width: bind scene.width
-			layoutY: bind scene.height - inspectors.height
-			layoutX: 0
-			//maxHeight: bind scene.height - 100 as Integer
 			defaultInspector: "Agents"
 		}
-		inspectors.collapse();
+		//inspectors.collapse();
 		insert inspectors into appState.globalLayer.content;
 		log.debug( "Done initializing InspectorPanel: \{\}", inspectors );
 		
@@ -193,7 +188,7 @@ public class MainWindow {
 		def toolbar:Toolbar = Toolbar {
 			id: "TestCaseComponentToolbar"
 			layoutY: 90
-			height: bind scene.height - inspectors.height - 100
+			height: bind scene.height - 100
 		}
 		
 		toolbar.addItem( ProjectToolbarItem { workspace: workspace } );
@@ -212,7 +207,7 @@ public class MainWindow {
 		//Set up the Project view
 		appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/grid.png" }, clip: Rectangle{ width: bind scene.width, height: bind scene.height } }, PROJECT_FRONT );
 		appState.insertInto( projectCanvas = ProjectCanvas { width: bind scene.width, height: bind scene.height }, PROJECT_FRONT );
-		appState.insertInto( navigator = NavigationPanel { canvas: projectCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( inspectors.height + navigator.height ) }, PROJECT_FRONT );
+		appState.insertInto( navigator = NavigationPanel { canvas: projectCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( /*inspectors.height +*/ navigator.height ) }, PROJECT_FRONT );
 		//def projectToolbar:Toolbar = Toolbar {
 		//	layoutY: 90
 		//	height: bind scene.height - inspectors.height - 100
@@ -231,7 +226,7 @@ public class MainWindow {
 	//													preserveRatio: false } }, PROJECT_BACK );
 		appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/grid.png" }, clip: Rectangle{ width: bind scene.width, height: bind scene.height } }, TESTCASE_FRONT );
 		appState.insertInto( testcaseCanvas = Canvas { width: bind scene.width, height: bind scene.height }, TESTCASE_FRONT );	
-		appState.insertInto( navigator = NavigationPanel { canvas: testcaseCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( inspectors.height + navigator.height ) }, TESTCASE_FRONT );
+		appState.insertInto( navigator = NavigationPanel { canvas: testcaseCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( /*inspectors.height +*/ navigator.height ) }, TESTCASE_FRONT );
 		testcaseToolbar.addItem( NoteToolbarItem {} );
 		appState.insertInto( testcaseToolbar, TESTCASE_FRONT );
 		

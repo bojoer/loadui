@@ -92,6 +92,8 @@ import javafx.util.Sequences;
 import java.lang.RuntimeException;
 import org.slf4j.LoggerFactory;
 
+import com.sun.javafx.scene.layout.Region;
+
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.AgentInspector" );
 
 /**
@@ -109,8 +111,6 @@ public function createInstance( name: String ) {
 public class AgentInspector extends Inspector {
 	def buttonGroup = ToggleGroup {};
 	public-init var name: String;
-	
-	def maxHeight:Integer = 341;
 	
 	def panel = AgentInspectorNode {};
 	
@@ -131,7 +131,11 @@ public class AgentInspector extends Inspector {
 	}
 	
 	override function getMaxHeight() {
-		return maxHeight;
+		return 341;
+	}
+	
+	override function getMinHeight() {
+		return 0;
 	}
 	
 	override function getHelpUrl(): String {
@@ -345,15 +349,16 @@ public class AgentInspectorNode extends BaseNode, TestCaseIconListener, Resizabl
 		var panel: Group = Group {
 			layoutX: 0
 			layoutY: 0
+			layoutInfo: LayoutInfo { hgrow: Priority.ALWAYS, hfill: true }
 			content: [
 				pagelist = PagelistControl {
 					layoutInfo: LayoutInfo {
-						hfill: true vfill: true
+						hfill: true vfill: true, hgrow: Priority.ALWAYS
 				    }
 					layoutY: 0
 					layoutX: leftPanelWidth
 					height: bind panelHeight
-					width: bind width - paddingLeft - paddingRight - leftPanelWidth
+					width: bind scene.width - paddingLeft - paddingRight - leftPanelWidth
 					itemSpacing: 18
 					fill: bind if(onAgents) activePanelFill else inactivePanelFill
 					fillOpacity: 1.0
@@ -460,15 +465,17 @@ public class AgentInspectorNode extends BaseNode, TestCaseIconListener, Resizabl
 			}
 		}
 		
-		VBox {
+		var vb:VBox = VBox {
 			styleClass: "agent-inspector"
 			padding: Insets { top: paddingTop right: paddingRight bottom: paddingBottom left: paddingLeft}
 			layoutInfo: LayoutInfo {
 				height: bind if(height > panelHeight + paddingTop + paddingBottom) height else panelHeight + paddingTop + paddingBottom
+				hfill: true
 			}
 			spacing: 0
 			nodeHPos: HPos.LEFT
 			vpos: VPos.BOTTOM
+			width: bind scene.width
 			content: [ panel ]
 		}
 	}

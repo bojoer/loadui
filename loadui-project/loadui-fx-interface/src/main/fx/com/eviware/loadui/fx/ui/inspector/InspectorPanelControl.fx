@@ -47,7 +47,12 @@ import javafx.scene.input.MouseButton;
 import javafx.ext.swing.SwingComponent;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.button.GlowButton;
+import com.eviware.loadui.fx.ui.dnd.Movable;
 import com.eviware.loadui.fx.osgi.InspectorManager;
+import com.eviware.loadui.fx.ui.node.BaseNode;
+
+import javafx.geometry.BoundingBox;
+import javafx.scene.layout.Panel;
 
 import org.slf4j.LoggerFactory;
 import java.util.HashMap;
@@ -58,7 +63,9 @@ import java.lang.Math;
 import javax.swing.JComponent;
 import java.awt.MouseInfo;
 
+import javafx.animation.transition.TranslateTransition;
 import com.sun.javafx.scene.layout.Region;
+import javafx.scene.control.Button;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.inspector.InspectorPanelControl" );
 
@@ -72,65 +79,51 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.inspect
  * @author dain.nilsson
  * @author henrik.olsson
  */
-public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable {
-	
-	/**
-	 * The minimum allowed height to allow the user to resize the panel to.
-	 */
-	public var minHeight:Integer = 20;
-	
-	/**
-	 * The maximum allowed height to allow the user to resize the panel to.
-	 */
-	public var maxHeight:Integer = 500;
+public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	
 	/**
 	 * True if the panel is currently expanded, false if not.
 	 */
-	public-read var expanded = true;
-	
-	/**
-	 * The preferred height of the panel using the current width.
-	 */
-	public-read var prefHeight:Integer;
+	public-read var expanded = true on replace { println("expanded = {expanded}") };
 	
 	/**
 	 * The currently displayed Inspector.
 	 */
 	public-read var activeInspector: Inspector = null on replace {
-		if( activeInspector != null )
-			inspectorHolder.content = getNode(activeInspector.getPanel());
+		insertInspector();
 	};
+	
+	public function insertInspector():Void {
+		if( activeInspector != null )
+		{
+			activeInspector.onShow();
+			inspectorHolder.content = Region { managed: false, width: bind inspectorHolder.width, height: bind inspectorHolder.height, style:"-fx-background-color: #6f6f6f;" };
+			insert getNode(activeInspector.getPanel()) into inspectorHolder.content;
+		}
+	}
 	
 	public-init var defaultInspector: String;
 	
-	/**
-	 * The height of the panel.
-	 */
-	public var inspectorHeight:Integer = 200 on replace {
-		prefHeight = getPrefHeight( width ) as Integer;
-	};
-	var lastGoodHeight:Integer = 0;
-	
 	def inspectors: Map = new HashMap();
-	var shown = 1.0;
-	override var translateY = bind ( 1-shown ) * ( height - (resizeBar.boundsInLocal.height-4) );
 	
 	var buttons: InspectorButton[] = [];
 	var inspectorHolder:Stack;
 	var buttonBox:HBox;
 	var node:VBox;
-	var resizeBar:Node;
-	var contentPane:Stack;
-	
-	var resizeY:Number;
-	var resizeStart:Number;
+	var inspectorHeight:Number = 0;
+
+	var lastGoodHeight:Number = -1;
+	function getLastGoodHeight():Number {
+		if( lastGoodHeight != -1)
+			lastGoodHeight
+		else
+			scene.height - 250;
+	}
 	
 	postinit {
 		InspectorManager.registerPanel( this );
 		FX.deferAction( function():Void {
-			lastGoodHeight = inspectorHeight;
-			prefHeight = getPrefHeight( width ) as Integer;
+			inspectorHeight = inspectorHolder.layoutY;
 		} );
 	}
 	
@@ -142,189 +135,37 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 		]
 	};
 	
+	var rn:Panel;
+	var topBar:TopBar;
+	var maxHeight:Integer;
+	var minHeight:Integer;
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	override function create(): Node {
-		node = VBox {
-			height: bind inspectorHeight
-			width: bind width
-			blocksMouse: true
-			content: [
-				Region{ managed: false, style: "-fx-background-color: #6f6f6f;", width: bind width, height: bind height }
-				resizeBar = Stack {
-					width: bind width
-					content: [
-						FXDNode {
-							url: "{__ROOT__}images/drag_stripe_1px.fxz"
-							scaleX: bind width
-							cursor: Cursor.V_RESIZE
-							onMousePressed: function( e:MouseEvent ) {
-								if( not e.primaryButtonDown )
-									return;
-								
-								if( inspectorHeight >= minHeight )
-									lastGoodHeight = inspectorHeight;
-								if( not expanded ) {
-									inspectorHeight = 0;
-									expand();
-								}
-								resizeStart = inspectorHeight;
-								resizeY = MouseInfo.getPointerInfo().getLocation().y;
-							}
-							onMouseDragged: function( e:MouseEvent ) {
-								if( not e.primaryButtonDown )
-									return;
-								def h = resizeStart + ( resizeY - MouseInfo.getPointerInfo().getLocation().y ) as Integer;
-								inspectorHeight = if( h > maxHeight ) maxHeight else h;
-							}
-							onMouseReleased: function( e:MouseEvent ) {
-								if( e.button != MouseButton.PRIMARY )
-									return;
-								if( inspectorHeight < minHeight ) {
-									collapse();
-								} else {
-									lastGoodHeight = inspectorHeight;
-								}
-							}
-							onMouseClicked: function( e:MouseEvent ) {
-								if( e.button != MouseButton.PRIMARY )
-									return;
-								if( doubleClickTimer.running ) {
-									doubleClickTimer.stop();
-									toggle();
-								} else {
-									doubleClickTimer.playFromStart();
-								}
-							}
-						}, 
-						
-						
-						HBox {
-							content:
-							[
-								Stack {
-									cursor: Cursor.HAND
-									width: bind 30
-									layoutInfo: LayoutInfo { hpos: HPos.LEFT }
-									content: [
-										Rectangle {
-											width: 30
-											height: 20
-											fill: Color.TRANSPARENT
-										}, FXDNode {
-											url: "{__ROOT__}images/double_arrows.fxz"
-											scaleY: bind if( expanded ) -1 else 1
-										}
-									]
-									blocksMouse: true
-										onMouseClicked: function( e:MouseEvent ) {
-											if( e.button == MouseButton.PRIMARY )
-												toggle();
-										}
-								},
-								
-								buttonBox = HBox {
-									blocksMouse: true
-									layoutInfo: LayoutInfo {
-										hfill: false
-										vfill: false
-								      hgrow: Priority.NEVER
-								      vgrow: Priority.NEVER
-								      width: bind width
-								      hpos: HPos.LEFT
-								      vpos: VPos.CENTER 
-								    }
-									spacing: -1
-									nodeVPos: VPos.CENTER
-									content: bind buttons
-								},
-							]
-						}
-
-						
-//						 Text {
-//							textOrigin: TextOrigin.TOP
-//							translateX: 30
-//							content: "System"
-//							fill: Color.web("#303030")
-//							layoutInfo: LayoutInfo { hpos: HPos.LEFT, vpos: VPos.CENTER }
-//						},
-						FXDNode {
-							url: "{__ROOT__}images/drag_handle.fxz"
-						}
-					]
-				}, 
-				
-				contentPane = Stack {
-					width: bind width
-					height: bind inspectorHeight
-					content: [
-//						Region{ managed: false, style: "-fx-background-color: #00ff00;", width: bind width, height: bind inspectorHeight }
-//						Rectangle {
-//							fill: Color.rgb( 0x70, 0x70, 0x70 )
-//							width: bind contentPane.width
-//							height: bind contentPane.height
-//						}, GlowButton {
-//							layoutX: bind width - 30
-//							layoutY: bind 15
-//							visible: bind activeInspector.getHelpUrl() != null
-//							managed: false
-//							width: 20
-//							height: 15
-//							tooltip: "Open Help page"
-//							contentNode: FXDNode {
-//								url: "{__ROOT__}images/inspector_help_icon.fxz"
-//							}
-//							action: function() {
-//								openURL( activeInspector.getHelpUrl() );
-//							}
-//						},
-						 VBox {
-							spacing: 0
-							content: [
-//								Region{ managed: false, style: "-fx-background-color: #00ffff;", width: bind width, height: bind height }
-//								Region{ managed: true, style: "-fx-background-color: #ff0000;", width: bind width, height: 10 }
-//								buttonBox = HBox {
-//									layoutInfo: LayoutInfo {
-//										hfill: false vfill: false
-//								        hgrow: Priority.NEVER vgrow: Priority.NEVER
-//								        width: bind width
-//								    }
-//									spacing: 2
-//									nodeVPos: VPos.CENTER
-//									content: bind [ Rectangle { fill: Color.TRANSPARENT, width: 10 height: 40 }, buttons ]
-//								},
-								 inspectorHolder = Stack {
-								 	layoutInfo: LayoutInfo { margin: Insets{top:14} }
-//								 	content: [Region{ managed: false, style: "-fx-background-color: #ffff00;", width: bind width, height: bind inspectorHeight - 30 }]
-//									onLayout: function():Void {
-//										for( node in Panel.getManaged( inspectorHolder.content ) )
-//											Panel.resizeNode( node, width, inspectorHeight );
-//									}
-									width: bind width
-								   height: bind height
-//								   nodeVPos: VPos.TOP
-//								       layoutInfo: LayoutInfo {
-//									        hfill: true
-//									        hgrow: Priority.SOMETIMES
-//									    }
-								}
-//								 inspectorHolder = Panel {
-//									onLayout: function():Void {
-//										for( node in Panel.getManaged( inspectorHolder.content ) )
-//											Panel.resizeNode( node, width, inspectorHeight - buttonBox.height );
-//									}
-//									width: bind width
-//								   height: bind inspectorHeight - buttonBox.height
-//								}
-							]
-						}
-					]
-				}
-			]
-
+		rn = Panel {
+			override var height = bind scene.height on replace {
+				println( "rn.height on replace: layoutY is now {height - inspectorHeight - 30}" );
+				topBar.layoutY = height - inspectorHeight - 30;
+			}
+			width: bind scene.width
+			
+			content:
+				[
+					inspectorHolder = Stack {
+						height: bind rn.height - (topBar.layoutY + topBar.translateY) - 30
+						layoutY: bind topBar.layoutY + topBar.translateY + 30
+						width: bind rn.width
+						nodeVPos: VPos.TOP
+						padding: Insets { top:10 right:0 bottom: 0 left: 0 }
+					}
+					topBar = TopBar {
+						width: bind rn.width
+						height: bind 30
+						containment: bind BoundingBox{ width: rn.boundsInLocal.width, height: rn.height }
+					}
+				]	
 		}
 	}
 
@@ -385,14 +226,14 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 	override function selectInspector( inspector: Inspector ) {
 		if( getInspector( inspector.getName() ) == inspector ) {
 			maxHeight = inspector.getMaxHeight();
-			if( expanded ) {
-				if( activeInspector != null ) {
-					activeInspector.onHide();
-					getButton( activeInspector ).pushed = false;
-				}
-				inspectorHeight = Math.min( inspectorHeight, maxHeight );
-				inspector.onShow();
+			minHeight = inspector.getMinHeight();
+			
+			if( expanded and activeInspector != null ) {
+				activeInspector.onHide();
 			}
+			getButton( activeInspector ).pushed = false;
+			inspector.onShow();
+			
 			activeInspector = inspector;
 			getButton( activeInspector ).pushed = true;
 		}
@@ -410,72 +251,54 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 	 */
 	override function isExpanded() { expanded }
 	
-	/**
-	 * {@inheritDoc}
-	 */
-	override function getPrefHeight( width: Float ) {
-		resizeBar.boundsInLocal.height + inspectorHeight;
-	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
-	override function getPrefWidth( height: Float ) {
-		buttonBox.getPrefWidth( buttonBox.height );
-	}
+//	def collapseAnim = Timeline {
+//				action: function() {
+//					if( activeInspector != null ) {
+//						activeInspector.onHide();
+//						inspectorHolder.content = null;
+//					}
+////					if( Sequences.indexByIdentity( node.content, contentPane ) != -1 )
+////						delete contentPane from node.content;
+//				}
 	
-	def collapseAnim = Timeline {
-		keyFrames: [
-			KeyFrame {
-				time: 0s
-				values: [ shown => 1.0 ]
-			}, KeyFrame {
-				time: 100ms
-				values: [ shown => 0.0 tween Interpolator.EASEIN ]
-				action: function() {
-					inspectorHeight = 0;
-					if( activeInspector != null ) {
-						activeInspector.onHide();
-						inspectorHolder.content = null;
-					}
-					if( Sequences.indexByIdentity( node.content, contentPane ) != -1 )
-						delete contentPane from node.content;
-				}
-			}
-		]
-	};
 	
+//	def expandAnim = Timeline {
+//				action: function() {
+//					if( Sequences.indexByIdentity( node.content, contentPane ) == -1 )
+//						insert contentPane into node.content;
+
+	var collapseAnim:TranslateTransition;
+
 	/**
 	 * {@inheritDoc}
 	 */
 	override function collapse() {
 		if( not expanded ) return;
 		
-		expandAnim.stop();
+		println( "scene.height: {scene.height}, layoutY: {topBar.layoutY}");
+		def goalHeight = scene.height - topBar.layoutY - 30;
+		println( "goalHeight: {goalHeight}");
+		
+		collapseAnim = TranslateTransition {
+			node: topBar
+			toY: goalHeight;
+			//rn.boundsInLocal.maxY - 30
+			action: function() {
+				topBar.layoutY += topBar.translateY;
+				topBar.translateY = 0;
+				println( "endOfCollapse::: layoutY: {topBar.layoutY}, translateY: {topBar.translateY}" );
+				expanded = false;
+			}
+		}
 		collapseAnim.playFromStart();
-		expanded = false;
+		
+		inspectorHeight = 0;
+		
+		
 	}
 	
-	def expandAnim = Timeline {
-		keyFrames: [
-			KeyFrame {
-				time: 0s
-				values: [ shown => 0.0 ]
-				action: function() {
-					if( activeInspector != null ) {
-						activeInspector.onShow();
-						inspectorHolder.content = getNode(activeInspector.getPanel());
-					}
-					
-					if( Sequences.indexByIdentity( node.content, contentPane ) == -1 )
-						insert contentPane into node.content;
-				}
-			}, KeyFrame {
-				time: 100ms
-				values: [ shown => 1.0 tween Interpolator.EASEIN ]
-			}
-		]
-	};
+	var expandAnim:TranslateTransition;
 	
 	/**
 	 * {@inheritDoc}
@@ -483,16 +306,33 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 	override function expand() {
 		if( expanded ) return;
 		
-		collapseAnim.stop();
+//		collapseAnim.stop();
+
+		def goalHeight = getLastGoodHeight() - topBar.layoutY;
+		
+		println( "lastGoodHeight: {lastGoodHeight}, topBar.layoutY: {topBar.layoutY}, (topBar.layoutY: {topBar.translateY})");
+		println( "=> goalHeight: {goalHeight}");
+		
+		expandAnim = TranslateTransition {
+			node: topBar
+			toY: goalHeight;
+			action: function() {
+				insertInspector();
+				topBar.layoutY += topBar.translateY;
+				topBar.translateY = 0;
+				println( "endOfExpand::: layoutY: {topBar.layoutY}, translateY: {topBar.translateY}" );
+				expanded = true;
+			}
+		}
+		
 		expandAnim.playFromStart();
-		expanded = true;
+		
 	}
 	
 	function toggle() {
 		if( expanded ) {
 			collapse();
 		} else {
-			inspectorHeight = lastGoodHeight;
 			expand();
 		}
 	}
@@ -501,13 +341,13 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 		def btn_id = "inspector_button_{inspector.getName()}";
 		var btn = buttonBox.lookup( btn_id ) as InspectorButton;
 		if( btn == null )
-			btn = InspectorButton { id: btn_id, text: inspector.getName(), action: function() {
+			btn = InspectorButton { id: btn_id, text: inspector.getName(), blocksMouse: true, action: function() {
 					if ( inspector == activeInspector )
 					{
 						toggle();
 					}
 					else
-					{
+					{			
 						if( not expanded )
 						{
 							toggle();
@@ -528,3 +368,87 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode, Resizable
 		else throw new RuntimeException("Unsupported panel type: {object.getClass()}");
 	}
 }
+
+
+public class TopBar extends BaseNode, Movable, Resizable {
+	
+	def container:HBox = HBox {
+		height: bind height
+		width: bind width
+		nodeHPos: HPos.LEFT
+		
+		content:
+		[
+			Region { managed: false, width: bind container.width, height: bind container.height, style: "-fx-background-color: #555555;" }
+			Stack {
+				cursor: Cursor.HAND
+				width: bind 30
+				layoutInfo: LayoutInfo { hpos: HPos.LEFT, hgrow: Priority.NEVER }
+				content: [
+					Rectangle {
+						width: 30
+						height: 20
+						fill: Color.TRANSPARENT
+					}, FXDNode {
+						url: "{__ROOT__}images/double_arrows.fxz"
+						scaleY: bind if( expanded ) -1 else 1
+					}
+				]
+				blocksMouse: true
+				onMouseClicked: function( e:MouseEvent ) {
+					if( e.button == MouseButton.PRIMARY )
+						toggle();
+				}
+			},
+			
+			buttonBox = HBox {
+				layoutInfo: LayoutInfo {
+					hfill: false
+					vfill: false
+			      hgrow: Priority.NEVER
+			      vgrow: Priority.NEVER
+			      hpos: HPos.LEFT
+			      vpos: VPos.CENTER 
+			    }
+				spacing: -1
+				nodeVPos: VPos.CENTER
+				content: bind buttons
+			}
+		]
+	}
+	
+	override function getPrefHeight( width ):Number {
+		container.getPrefHeight( width )
+	}
+	
+	override function getPrefWidth( height ):Number {
+		container.getPrefWidth( height )
+	}
+	
+	override function create(): Node {
+		container
+	}
+	
+	override var onMove =  function() {
+		//println( topBar.layoutY + topBar.translateY );
+		
+		
+		if( topBar.layoutY == scene.height - 30 )
+			expanded = false
+		else if( not expanded )
+		{
+			lastGoodHeight = topBar.layoutY + topBar.translateY;
+			expanded = true;
+		}
+		
+		inspectorHeight = topBar.layoutY + topBar.translateY;	
+		
+		println( "endOfMove::: layoutY: {topBar.layoutY}, translateY: {topBar.translateY}" );
+	}
+	
+	override var onDragging = function() {
+		println( "endOfDragging::: layoutY: {topBar.layoutY}, translateY: {topBar.translateY}" );
+	}
+
+}
+
