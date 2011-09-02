@@ -24,6 +24,7 @@ import com.eviware.loadui.api.events.CollectionEvent;
 
 import com.eviware.loadui.fx.FxUtils;
 import java.lang.IllegalArgumentException;
+import java.util.Collection;
 
 public class ModelUtils {
 }
@@ -81,6 +82,10 @@ public class CollectionHolder extends WeakEventHandler {
 	
 	postinit {
 		if( not FX.isInitialized( owner ) ) throw new IllegalArgumentException("No Owner set for ModelUtils.CollectionHolder!");
+		
+		if( sizeof items == 1 and items[0] instanceof Collection ) {
+			items = for( elem in items[0] as Collection ) elem;
+		}
 	}
 	
 	override function handleEvent( e ):Void {

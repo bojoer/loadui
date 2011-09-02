@@ -192,7 +192,7 @@ public class ToolbarExpander extends CustomNode, Pagination {
 		}
 	}
 	
-	override var itemsPerPage = bind Math.min( sizeof items, ((scene.width as Integer) - width) / width);
+	override var itemsPerPage = bind Math.min( sizeof items, ((scene.width as Integer) - width as Integer) / width as Integer);
 	
 	var wipePanel:XWipePanel;
 	var oldGroup:Group;
