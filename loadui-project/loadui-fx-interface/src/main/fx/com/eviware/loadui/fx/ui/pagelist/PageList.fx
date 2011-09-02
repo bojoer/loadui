@@ -20,6 +20,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.LayoutInfo;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
@@ -44,6 +46,8 @@ public class PageList extends VBox, Pagination {
 	protected var leftMargin = 60;
 	protected var rightMargin = 76;
 	var itemWidth:Number;
+	
+	def dummyNode = Rectangle { width: 1, height: 1, fill: Color.rgb(0,0,0,0.001), layoutInfo: LayoutInfo { margin: Insets { left: -21 } } }
 	
 	def displayed = bind displayedItems on replace {
 		labelBox.content = for( x in displayedItems ) {
@@ -73,11 +77,11 @@ public class PageList extends VBox, Pagination {
 				}
 			}
 		}
-		itemBox.content = displayedItems;
+		itemBox.content = [ dummyNode, displayedItems ];
 		doLayout();
 	}
 	
-	var itemBox = HBox { spacing: 20 };
+	var itemBox = HBox { spacing: 20, content: dummyNode };
 	var labelBox = HBox {
 		spacing: 20
 		padding: bind Insets { left: leftMargin, right: rightMargin }
