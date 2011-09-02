@@ -99,7 +99,13 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 		{
 			activeInspector.onShow();
 			inspectorHolder.content = Region { managed: false, width: bind inspectorHolder.width, height: bind inspectorHolder.height, style:"-fx-background-color: #6f6f6f;" };
-			insert getNode(activeInspector.getPanel()) into inspectorHolder.content;
+			
+			def node = getNode(activeInspector.getPanel());
+			
+			maxHeight = Container.getNodeMaxHeight( node );
+			minHeight = Container.getNodeMinHeight( node );
+			
+			insert node into inspectorHolder.content;
 		}
 	}
 	
@@ -156,7 +162,7 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 			content:
 				[
 					inspectorHolder = Stack {
-						height: bind rn.height - (topBar.layoutY + topBar.translateY) - 30
+						height: bind Math.max( rn.height - (topBar.layoutY + topBar.translateY) - 30, minHeight )
 						layoutY: bind topBar.layoutY + topBar.translateY + 30
 						width: bind rn.width
 						nodeVPos: VPos.TOP
@@ -239,9 +245,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 			
 			activeInspector = inspector;
 			getButton( activeInspector ).pushed = true;
-			
-			
-			maxHeight = Container.getNodeMaxHeight( getNode(activeInspector.getPanel()) );
 			
 			if( scene.height - topBar.layoutY > maxHeight )
 				topBar.layoutY = scene.height - maxHeight;
