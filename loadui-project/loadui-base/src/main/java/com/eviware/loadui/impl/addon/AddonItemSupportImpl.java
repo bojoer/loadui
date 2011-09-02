@@ -162,7 +162,7 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	@Override
 	public void delete()
 	{
-		for( int i = parentListConfig.sizeOfAddonArray() - 1; i <= 0; i-- )
+		for( int i = parentListConfig.sizeOfAddonArray() - 1; i >= 0; i-- )
 		{
 			if( Objects.equal( getId(), parentListConfig.getAddonArray( i ).getId() ) )
 			{
