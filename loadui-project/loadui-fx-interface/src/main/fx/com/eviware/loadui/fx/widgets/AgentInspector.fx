@@ -130,13 +130,9 @@ public class AgentInspector extends Inspector {
 		name
 	}
 	
-	override function getMaxHeight() {
-		return 341;
-	}
-	
-	override function getMinHeight() {
-		return 0;
-	}
+//	override function getMaxHeight() {
+//		return 341;
+//	}
 	
 	override function getHelpUrl(): String {
 		"http://www.loadui.org/interface/workspace-view.html";

@@ -62,14 +62,6 @@ public class LogInspector extends AppenderSkeleton, Inspector {
 		Logger.getLogger( packages ).addAppender( this );
 	}
 	
-	override function getMaxHeight() {
-		return Integer.MAX_VALUE;
-	}
-	
-	override function getMinHeight() {
-		return 0;
-	}
-
 	override function append( event:LoggingEvent ):Void {
 		FxUtils.runInFxThread( function():Void {
 			
