@@ -112,7 +112,11 @@ public class AgentInspector extends Inspector {
 	def buttonGroup = ToggleGroup {};
 	public-init var name: String;
 	
-	def panel = AgentInspectorNode {};
+	def panel = AgentInspectorNode {
+		layoutInfo: LayoutInfo {
+			maxHeight: 341
+		}
+	};
 	
 	def agentErrorListener = new AgentErrorListener();
 	
@@ -129,10 +133,6 @@ public class AgentInspector extends Inspector {
 	override function getName(): String {
 		name
 	}
-	
-//	override function getMaxHeight() {
-//		return 341;
-//	}
 	
 	override function getHelpUrl(): String {
 		"http://www.loadui.org/interface/workspace-view.html";

@@ -66,6 +66,7 @@ import java.awt.MouseInfo;
 import javafx.animation.transition.TranslateTransition;
 import com.sun.javafx.scene.layout.Region;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Container;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.inspector.InspectorPanelControl" );
 
@@ -137,13 +138,14 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	
 	var rn:Panel;
 	var topBar:TopBar;
-	var maxHeight:Integer;
-	var minHeight:Integer;
+	var maxHeight:Number = 350;
+	var minHeight:Number;
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	override function create(): Node {
+
 		rn = Panel {
 			override var height = bind scene.height on replace {
 				println( "rn.height on replace: layoutY is now {height - inspectorHeight - 30}" );
@@ -163,7 +165,8 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 					topBar = TopBar {
 						width: bind rn.width
 						height: bind 30
-						containment: bind BoundingBox{ width: rn.boundsInLocal.width, height: rn.height }
+						containment: bind BoundingBox{ width: rn.boundsInLocal.width, minY: scene.height - maxHeight, height: maxHeight }
+						blocksMouse: true
 					}
 				]	
 		}
@@ -225,8 +228,8 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	 */
 	override function selectInspector( inspector: Inspector ) {
 		if( getInspector( inspector.getName() ) == inspector ) {
-			maxHeight = inspector.getMaxHeight();
-			minHeight = inspector.getMinHeight();
+//			maxHeight = inspector.getMaxHeight();
+//			minHeight = inspector.getMinHeight();
 			
 			if( expanded and activeInspector != null ) {
 				activeInspector.onHide();
@@ -236,6 +239,13 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 			
 			activeInspector = inspector;
 			getButton( activeInspector ).pushed = true;
+			
+			
+			maxHeight = Container.getNodeMaxHeight( getNode(activeInspector.getPanel()) );
+			
+			if( scene.height - topBar.layoutY > maxHeight )
+				topBar.layoutY = scene.height - maxHeight;
+			//println("maxHeight: {mh}");
 		}
 	}
 	
@@ -251,23 +261,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	 */
 	override function isExpanded() { expanded }
 	
-	
-//	def collapseAnim = Timeline {
-//				action: function() {
-//					if( activeInspector != null ) {
-//						activeInspector.onHide();
-//						inspectorHolder.content = null;
-//					}
-////					if( Sequences.indexByIdentity( node.content, contentPane ) != -1 )
-////						delete contentPane from node.content;
-//				}
-	
-	
-//	def expandAnim = Timeline {
-//				action: function() {
-//					if( Sequences.indexByIdentity( node.content, contentPane ) == -1 )
-//						insert contentPane into node.content;
-
 	var collapseAnim:TranslateTransition;
 
 	/**
@@ -294,8 +287,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 		collapseAnim.playFromStart();
 		
 		inspectorHeight = 0;
-		
-		
 	}
 	
 	var expandAnim:TranslateTransition;
@@ -435,11 +426,16 @@ public class TopBar extends BaseNode, Movable, Resizable {
 		
 		if( topBar.layoutY == scene.height - 30 )
 			expanded = false
-		else if( not expanded )
+		else
 		{
 			lastGoodHeight = topBar.layoutY + topBar.translateY;
-			expanded = true;
+			
+			if( not expanded )
+			{
+				expanded = true;
+			}
 		}
+
 		
 		inspectorHeight = topBar.layoutY + topBar.translateY;	
 		
@@ -447,7 +443,18 @@ public class TopBar extends BaseNode, Movable, Resizable {
 	}
 	
 	override var onDragging = function() {
-		println( "endOfDragging::: layoutY: {topBar.layoutY}, translateY: {topBar.translateY}" );
+		println(scene.height);
+		println(maxHeight);
+		//println( "endOfDragging::: layoutY: {topBar.layoutY}, translateY: {topBar.translateY}" );
+	}
+	
+	postinit {
+		addMouseHandler( MOUSE_CLICKED, function( e:MouseEvent ) {
+				if( e.clickCount == 2 ) {
+					toggle();
+				}
+			}
+		)
 	}
 
 }
