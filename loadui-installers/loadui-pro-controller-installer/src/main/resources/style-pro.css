@@ -37,6 +37,23 @@
 	-fx-background-color: #838383;
 }
 
+.server-button {
+	-fx-shadow-highlight-color: transparent;
+	-fx-body-color: #878787;
+	-fx-padding: 2;
+	-fx-background-radius: 5;
+	-fx-background-insets: 0, 1;
+	-fx-background-color: transparent;
+}
+
+.server-button:hover {
+	-fx-background-color: #434343, linear (0%,0%) to (0%,100%) stops (0%, #434343) (100%, #201e1f);
+}
+
+.server-button:armed, .server-button:selected {
+	-fx-background-color: #393939, radial (50%,50%) , 50% focus (50%,50%) stops (0%, #3b3b3b) (100%, #2e2e2e);
+}
+
 .server-node-button {
 	-fx-background-radius: 2;
 	-fx-background-insets: 0, 1;
