@@ -89,13 +89,11 @@ public class CollectionHolder extends WeakEventHandler {
 			if( event.getEvent() == CollectionEvent.Event.ADDED ) {
 				FxUtils.runInFxThread( function():Void {
 					insert event.getElement() into items;
-					println("!!!Calling onAdd with {event.getElement()}");
 					onAdd( event.getElement() );
 				} );
 			} else if( event.getEvent() == CollectionEvent.Event.REMOVED ) {
 				FxUtils.runInFxThread( function():Void {
 					delete event.getElement() from items;
-					println("!!!Calling onRemove with {event.getElement()}");
 					onRemove( event.getElement() );
 				} );
 			}

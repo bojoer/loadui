@@ -26,8 +26,10 @@ import javafx.scene.Group;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextOrigin;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.geometry.VPos;
 
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 
@@ -46,6 +48,8 @@ public class ToolbarItemFrame extends CustomNode {
 	
 	public var leftMargin:Integer = 13;
 	
+	public var showLabels = true;
+	
 	override function create() {
 		Group {
 			layoutX: leftMargin
@@ -53,15 +57,18 @@ public class ToolbarItemFrame extends CustomNode {
 			content: [
 				DraggableFrame {
 					draggable: bind item
-					placeholder: ImageView { image: bind item.icon }
-				}, Text {
-					y: 57
-					wrappingWidth: 80
-					content: bind item.label
-					textOrigin: TextOrigin.TOP
-					fill: bind item.textFill
+					placeholder: bind item.placeholder
+				}, if(showLabels) Label {
+					height: 16
+					layoutY: 52
+					width: bind 80
+					text: bind item.label
+					vpos: VPos.CENTER
+					//textOrigin: TextOrigin.TOP
+					textWrap: true
+					textFill: bind item.textFill
 					font: bind font
-				}
+				} else null
 			]
 		}
 	}

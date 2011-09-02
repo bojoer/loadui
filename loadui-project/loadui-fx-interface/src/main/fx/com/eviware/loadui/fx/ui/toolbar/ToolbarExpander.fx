@@ -138,14 +138,18 @@ public class ToolbarExpander extends CustomNode, Pagination {
 	*/
 	public-init var groupLeftMargin:Integer;
 	
+	public var width:Number = 100;
+	
+	public var showLabels = true;
+	
 	def glow = Glow { level: .5 };
 	
 	function buildContent():Group {
-		var offset = 0;
+		var offset = 0.0;
 		Group {
 			content: for( node in displayedItems ) {
 				node.layoutX = offset;
-				offset += 100;
+				offset += width;
 				node
 			}
 		}
@@ -181,14 +185,14 @@ public class ToolbarExpander extends CustomNode, Pagination {
 		
 		if( group != null ) {
 			items = for( item in group.items ) 
-				ToolbarItemFrame { item:item, leftMargin: groupLeftMargin };
+				ToolbarItemFrame { item:item, leftMargin: groupLeftMargin, showLabels: showLabels };
 			layoutY = group.layoutY - 12;
 			insert this into expandedHolder.content;
 			insert modalLayer into AppState.byScene( scene ).overlay.content;
 		}
 	}
 	
-	override var itemsPerPage = bind Math.min( sizeof items, ((scene.width as Integer) - 100) / 100);
+	override var itemsPerPage = bind Math.min( sizeof items, ((scene.width as Integer) - width) / width);
 	
 	var wipePanel:XWipePanel;
 	var oldGroup:Group;
@@ -237,7 +241,7 @@ public class ToolbarExpander extends CustomNode, Pagination {
 	}
 	
 	def rightArrow:Node = Group {
-		layoutX: bind 100 * actualItemsPerPage + 20
+		layoutX: bind width * actualItemsPerPage + 20
 		onMouseClicked: function( e:MouseEvent ) {
 			if( e.button == MouseButton.PRIMARY and page < numPages - 1 and not wiping )
 				page++;
@@ -267,7 +271,7 @@ public class ToolbarExpander extends CustomNode, Pagination {
 			content: [
 				MultiRoundRectangle {
 					x: -1
-					width: bind if(numPages == 1) 100 * actualItemsPerPage + 14 else 100 * actualItemsPerPage + 75
+					width: bind if(numPages == 1) width * actualItemsPerPage + 14 else width * actualItemsPerPage + 75
 					height: groupHeight - 1
 					fill: bind backgroundFill
 					blocksMouse: true
@@ -288,24 +292,24 @@ public class ToolbarExpander extends CustomNode, Pagination {
 						leftArrow, wipePanel = XWipePanel {
 							content: buildContent()
 							wipe: slideWipe
-							width: bind 100 * actualItemsPerPage
+							width: bind width * actualItemsPerPage
 							height: groupHeight
 							action: function() {
 								if( oldGroup != null )
 									oldGroup.content = null;
 								wiping = false;
 							}
-						}, Rectangle {
+						}, if(showLabels) Rectangle {
 							layoutX: 13
 							layoutY: 80
 							fill: bind hrBackgroundFill
 							height: 1
-							width: bind 100 * actualItemsPerPage
-						}, rightArrow, 
+							width: bind width * actualItemsPerPage
+						} else null, rightArrow, 
 						MenuBarButton {
 								blocksMouse: true
 						      layoutY: 10
-						      layoutX: bind 100 * actualItemsPerPage - 20
+						      layoutX: bind width * actualItemsPerPage - 20
 				            graphicUrl: bind "{__ROOT__}{closeBtnIconUrl}"
 				            onMouseClicked: function(e:MouseEvent) {
 									group = null;

@@ -161,12 +161,14 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 	public var groupLeftMargin = 10;
 	
 	public override var width = 112;
+	
+	public var showLabels = true;
 
 	public function addItem( item:ToolbarItemNode ) {
 		def group = item.category.toUpperCase();
 		
 		if( not itemGroups.containsKey( group ) ) {
-			def newGroup = ToolbarItemGroup { category: group, expandedGroup: expandedGroup, groupHeight: groupHeight, topMargin: groupTopMargin, leftMargin: groupLeftMargin };
+			def newGroup = ToolbarItemGroup { category: group, expandedGroup: expandedGroup, showLabels: showLabels, width: bind width, groupHeight: groupHeight, topMargin: groupTopMargin, leftMargin: groupLeftMargin };
 			itemGroups.put( group, newGroup );
 			items = Sequences.sort( [ items, newGroup ], groupOrder ) as Node[];
 		}
@@ -231,7 +233,7 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 		layoutY: 68
 		layoutX: bind -translateX
 	}
-	def expandedGroup = ToolbarExpander { expandedHolder: expandedHolder, groupHeight: groupHeight, topMargin: groupTopMargin, groupLeftMargin: groupLeftMargin };
+	def expandedGroup = ToolbarExpander { expandedHolder: expandedHolder, showLabels: showLabels, width: bind width, groupHeight: groupHeight, topMargin: groupTopMargin, groupLeftMargin: groupLeftMargin };
 	
 	def modalLayer = Rectangle {
 		width: bind scene.width

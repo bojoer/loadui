@@ -37,8 +37,6 @@ import javafx.scene.layout.LayoutInfo;
 
 import java.lang.Math;
 
-import org.jfxtras.scene.shape.MultiRoundRectangle;
-
 /**
  * Graphical node used by the Toolbar to represent a group of ToolbarItemNodes. 
  *
@@ -86,12 +84,16 @@ public class ToolbarItemGroup extends CustomNode {
 	*/
 	public-init var topMargin:Number;
 	
+	public var width:Number = 109;
+	
+	public var showLabels = true;
+	
 	/**
 	* The left margin of the item group.
 	*/
 	public var leftMargin:Integer = 13;
 
-	def frame = ToolbarItemFrame { leftMargin: leftMargin }
+	def frame = ToolbarItemFrame { leftMargin: leftMargin, showLabels: showLabels }
 	
 	var expanderButtonHeight = Math.max( groupHeight/3, 18 );
 	
@@ -133,42 +135,6 @@ public class ToolbarItemGroup extends CustomNode {
 		frame.item = item;
 	}
 	
-	def expanderButton:Group = Group {
-		layoutX: 85
-		layoutY: groupHeight / 2 - 20
-		visible: bind sizeof items > 1
-		onMouseClicked: function( e:MouseEvent ) {
-			expand();
-		}
-		onMouseEntered: function(e: MouseEvent):Void {
-        	expanderButtonHover = true;
-	    }
-	    onMouseExited: function(e: MouseEvent):Void {
-	        expanderButtonHover = false;
-	    }
-		content: [
-			MultiRoundRectangle {
-				width: 24
-				height: 35
-				topLeftHeight: 3
-				topLeftWidth: 4
-				bottomLeftHeight: 3
-				bottomLeftWidth: 4
-				fill: bind expanderButtonBackgroundFill
-				stroke: null
-			}, Polygon {
-				fill: bind expanderButtonArrowFill
-				layoutX: 10
-				layoutY: 13
-				points: [
-					0, 0,
-					4, 4,
-					4, 6,
-					0, 10
-				]
-			}
-		]
-	}
 	var btn:Button;
 	def collapsedGroup:Group = Group {
 		content: [
@@ -193,11 +159,11 @@ public class ToolbarItemGroup extends CustomNode {
 					]
 				}
 				layoutInfo: LayoutInfo { width: 20, height: expanderButtonHeight } //{ width: 24, height: 35 }
-				layoutX: 70
+				layoutX: bind width - 20
 				layoutY: groupHeight / 2 - expanderButtonHeight / 2
 				visible: bind sizeof items > 1
 				action: expand
-			} // expanderButton
+			}
 		]
 	}
 	

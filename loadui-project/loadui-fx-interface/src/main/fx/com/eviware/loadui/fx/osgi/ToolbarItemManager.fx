@@ -107,8 +107,6 @@ public class ToolbarItemManager extends BundleContextAware {
 			def toolbarItemNode = ( if( toolbarItem instanceof ToolbarItemNode ) toolbarItem else toolbarItemNodes.remove( toolbarItem ) ) as ToolbarItemNode;
 			def toolbar = toolbarMap.get( toolbarId ) as Toolbar;
 			
-			println("From {toolbar} remove {toolbarItemNode}");
-			
 			if( toolbar != null and toolbarItemNode != null ) {
 				runInFxThread( function():Void {
 					toolbar.removeItem( toolbarItemNode );
@@ -140,12 +138,9 @@ public class ToolbarItemManager extends BundleContextAware {
 	 * @param properties
 	 */
 	public function toolbarItemRemoved( toolbarItem:ToolbarItem, properties:Map ):Void {
-		println("!!!ITEM_REMOVED: {toolbarItem}, {properties}");
 		toolbarItemMap.remove( properties.get( TOOLBAR_ID ), toolbarItem );
 		def toolbarItemNode = ( if( toolbarItem instanceof ToolbarItemNode ) toolbarItem else toolbarItemNodes.remove( toolbarItem ) ) as ToolbarItemNode;
 		def toolbar = toolbarMap.get( properties.get( TOOLBAR_ID ) ) as Toolbar;
-		
-		println("From {toolbar} remove {toolbarItemNode}");
 		
 		if( toolbar != null and toolbarItemNode != null ) {
 			runInFxThread( function():Void {

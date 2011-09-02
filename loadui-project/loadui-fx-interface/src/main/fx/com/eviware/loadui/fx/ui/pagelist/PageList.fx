@@ -57,6 +57,8 @@ public class PageList extends VBox, Pagination {
 						width: bind x.layoutBounds.width
 						height: 45
 					}
+					managed: bind x.managed
+					visible: bind x.visible
 				}
 			} else {
 				Label {

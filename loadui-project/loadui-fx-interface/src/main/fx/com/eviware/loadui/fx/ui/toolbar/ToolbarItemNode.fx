@@ -21,6 +21,7 @@
 
 package com.eviware.loadui.fx.ui.toolbar;
 
+import javafx.scene.Node;
 import javafx.scene.CustomNode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -48,6 +49,8 @@ public class ToolbarItemNode extends BaseNode, Draggable, TooltipHolder, Toolbar
 	 */
 	public-init protected var icon:Image;
 	
+	public-read var placeholder:Node;
+	
 	override function getIconUri():URI {
 		new URI( icon.url )
 	}
@@ -70,6 +73,12 @@ public class ToolbarItemNode extends BaseNode, Draggable, TooltipHolder, Toolbar
 	 * The category to place this ToolbarItem in.
 	 */
 	public-init protected var category:String = "misc";
+	
+	postinit {
+		if( not FX.isInitialized( placeholder ) ) {
+			placeholder = create();
+		}
+	}
 	
 	override function getCategory():String {
 		category
