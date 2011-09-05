@@ -64,12 +64,12 @@ public class InspectorButton extends CustomNode {
 	/**
 	 * The width of the button.
 	 */
-	public var width:Number = bind label.layoutBounds.width + 20;
+	public var width:Number = bind label.layoutBounds.width + 25;
 	
 	/**
 	 * The height of the button.
 	 */
-	public var height:Number = 18;
+	public var height:Number = 25;
 	
 	/**
 	 * Which state the Button is in. 
@@ -92,12 +92,12 @@ public class InspectorButton extends CustomNode {
 	public var action: function():Void;
 	
 	def label = Text {
-		x: 10
-		y: 4
+		x: 12
+		y: 7
 		content: bind text
-		textOrigin: TextOrigin.TOP
 		font: Font.font("Amble", 10)
 		fill: bind if( state == PUSHED ) Color.web("#cbcbcb") else Color.web("#202020") 
+		textOrigin: TextOrigin.TOP
 	}
 	
 	init {
@@ -122,10 +122,6 @@ public class InspectorButton extends CustomNode {
 		}
 	};
 	
-//	override def onMouseReleased = function ( e:MouseEvent ):Void {
-//			action();
-//	};
-	
 	override function create() {
 		Group {
 			content: [
@@ -136,8 +132,11 @@ public class InspectorButton extends CustomNode {
 							managed: true
 							width: bind width
 							height: bind height
-							style: bind if(state == PUSHED ) "-fx-background-insets: 0 0 -2 0, 1 , 2 1 -2 1; -fx-background-color: #282828, #cccccc, #6f6f6f;"
-								else "-fx-background-insets: 0 0 -1 0, 1, 2 1 -1 1; -fx-background-color: #282828, #9c9c9c, #555555;"
+							style: bind
+								if(state == PUSHED )
+									"-fx-background-insets: 0 0 1 0, 0 1 1 1, 1 1 0 1; -fx-background-color: #282828, #cccccc, #6f6f6f;"
+								else
+									"-fx-background-insets: 0 0 0 0, 0 1 1 1, 1 1 1 1; -fx-background-color: #282828, #9c9c9c, #555555;"
 						}, Group {
 							content: bind content
 						}

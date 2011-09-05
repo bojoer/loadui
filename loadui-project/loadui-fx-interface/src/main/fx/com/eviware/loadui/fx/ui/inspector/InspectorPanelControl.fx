@@ -83,9 +83,14 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.inspect
 public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	
 	/**
+	 * The height of the top bar (the draggable bar containing the tabs).
+	 */
+	public def topBarHeight:Integer = 25;
+	
+	/**
 	 * True if the panel is currently expanded, false if not.
 	 */
-	public-read var expanded = true on replace { println("expanded = {expanded}") };
+	public-read var expanded = false on replace { println("expanded = {expanded}") };
 	
 	/**
 	 * The currently displayed Inspector.
@@ -122,7 +127,15 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	var lastGoodHeight:Number = -1;
 	function getLastGoodHeight():Number {
 		if( lastGoodHeight != -1)
-			lastGoodHeight
+		{
+			println( scene.height );
+			println( lastGoodHeight );
+			println( maxHeight );
+			if( scene.height - lastGoodHeight > maxHeight )
+				scene.height - maxHeight
+			else
+				lastGoodHeight;
+		} 
 		else
 			scene.height - 250;
 	}
@@ -154,23 +167,23 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 
 		rn = Panel {
 			override var height = bind scene.height on replace {
-				println( "rn.height on replace: layoutY is now {height - inspectorHeight - 30}" );
-				topBar.layoutY = height - inspectorHeight - 30;
+				println( "rn.height on replace: layoutY is now {height - inspectorHeight - topBarHeight}" );
+				topBar.layoutY = height - inspectorHeight - topBarHeight;
 			}
 			width: bind scene.width
 			
 			content:
 				[
 					inspectorHolder = Stack {
-						height: bind Math.max( rn.height - (topBar.layoutY + topBar.translateY) - 30, minHeight )
-						layoutY: bind topBar.layoutY + topBar.translateY + 30
+						height: bind Math.max( rn.height - (topBar.layoutY + topBar.translateY) - topBarHeight, minHeight )
+						layoutY: bind topBar.layoutY + topBar.translateY + topBarHeight
 						width: bind rn.width
 						nodeVPos: VPos.TOP
 						padding: Insets { top:10 right:0 bottom: 0 left: 0 }
 					}
 					topBar = TopBar {
 						width: bind rn.width
-						height: bind 30
+						height: bind topBarHeight
 						blocksMouse: true
 					}
 				]	
@@ -233,9 +246,7 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	 */
 	override function selectInspector( inspector: Inspector ) {
 		if( getInspector( inspector.getName() ) == inspector ) {
-//			maxHeight = inspector.getMaxHeight();
-//			minHeight = inspector.getMinHeight();
-			
+
 			if( expanded and activeInspector != null ) {
 				activeInspector.onHide();
 			}
@@ -247,7 +258,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 			
 			if( scene.height - topBar.layoutY > maxHeight )
 				topBar.layoutY = scene.height - maxHeight;
-			//println("maxHeight: {mh}");
 		}
 	}
 	
@@ -272,13 +282,12 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 		if( not expanded ) return;
 		
 		println( "scene.height: {scene.height}, layoutY: {topBar.layoutY}");
-		def goalHeight = scene.height - topBar.layoutY - 30;
+		def goalHeight = scene.height - topBar.layoutY - topBarHeight;
 		println( "goalHeight: {goalHeight}");
 		
 		collapseAnim = TranslateTransition {
 			node: topBar
 			toY: goalHeight;
-			//rn.boundsInLocal.maxY - 30
 			action: function() {
 				topBar.layoutY += topBar.translateY;
 				topBar.translateY = 0;
@@ -299,8 +308,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	override function expand() {
 		if( expanded ) return;
 		
-//		collapseAnim.stop();
-
 		def goalHeight = getLastGoodHeight() - topBar.layoutY;
 		
 		println( "lastGoodHeight: {lastGoodHeight}, topBar.layoutY: {topBar.layoutY}, (topBar.layoutY: {topBar.translateY})");
@@ -340,12 +347,12 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 						toggle();
 					}
 					else
-					{			
+					{	
+						selectInspector( inspector );		
 						if( not expanded )
 						{
 							toggle();
 						}
-						selectInspector( inspector );
 					}
 				}
 			};
@@ -372,19 +379,26 @@ public class TopBar extends BaseNode, Movable, Resizable {
 		
 		content:
 		[
-			Region { managed: false, width: bind container.width, height: bind container.height, style: "-fx-background-color: #555555;" }
+			Region {
+				managed: false
+				width: bind container.width
+				height: bind container.height
+				style: "-fx-background-insets: 0, 0 0 1 0, 1 0 1 0; -fx-background-color: #333333, #9c9c9c, #555555;"
+			}
 			Stack {
+				nodeHPos: HPos.CENTER
 				cursor: Cursor.HAND
-				width: bind 30
+				width: 35
 				layoutInfo: LayoutInfo { hpos: HPos.LEFT, hgrow: Priority.NEVER }
 				content: [
 					Rectangle {
-						width: 30
+						width: 35
 						height: 20
 						fill: Color.TRANSPARENT
 					}, FXDNode {
 						url: "{__ROOT__}images/double_arrows.fxz"
 						scaleY: bind if( expanded ) -1 else 1
+						layoutInfo: LayoutInfo { hpos: HPos.CENTER }
 					}
 				]
 				blocksMouse: true
@@ -422,11 +436,10 @@ public class TopBar extends BaseNode, Movable, Resizable {
 		container
 	}
 	
+	override var hoverCursor = Cursor.V_RESIZE;
+	
 	override var onMove =  function() {
-		//println( topBar.layoutY + topBar.translateY );
-		
-		
-		if( topBar.layoutY == scene.height - 30 )
+		if( topBar.layoutY == scene.height - topBarHeight )
 			expanded = false
 		else
 		{
@@ -437,22 +450,13 @@ public class TopBar extends BaseNode, Movable, Resizable {
 				expanded = true;
 			}
 		}
-
-		
 		inspectorHeight = topBar.layoutY + topBar.translateY;	
-		
-		println( "endOfMove::: layoutY: {topBar.layoutY}, translateY: {topBar.translateY}" );
 	}
 	
 	override var onGrab = function() {
-		containment = BoundingBox { width: width, minY: Math.max( 0, rn.height - maxHeight), height: rn.height };
-	}
-	
-	override var onDragging = function() {
-		println(scene.height);
-		println(maxHeight);
-		//println( "endOfDragging::: layoutY: {topBar.layoutY}, translateY: {topBar.translateY}" );
-	}
+	  def minY = Math.max( 0, rn.height - maxHeight);
+	  containment = BoundingBox { width: width, minY: minY, height: rn.height - minY };
+	 }
 	
 	postinit {
 		addMouseHandler( MOUSE_CLICKED, function( e:MouseEvent ) {

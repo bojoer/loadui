@@ -72,9 +72,14 @@ public mixin class Draggable extends BaseMixin {
 			handle.addMouseHandler( MOUSE_RELEASED, onReleased );
 			
 			if( handle.cursor == null )
-				handle.cursor = Cursor.MOVE;
+				handle.cursor = hoverCursor;
 		}
 	}
+	
+	/**
+	 * The pointer cursor that appears when hovering the Draggable.
+	 */
+	public var hoverCursor: Cursor = Cursor.MOVE;
 	
 	/**
 	 * A Bounds for in which to contain the Draggable when dragging.
