@@ -153,7 +153,7 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	};
 	
 	var rn:Panel;
-	var topBar:TopBar;
+	public-read var topBar:TopBar;
 	var maxHeight:Number = 350;
 	var minHeight:Number;
 	

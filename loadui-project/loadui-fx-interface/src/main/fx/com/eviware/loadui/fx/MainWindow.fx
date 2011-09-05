@@ -105,7 +105,7 @@ public class MainWindow {
 	var projectToolbar:Toolbar = Toolbar {
 		id: "ProjectComponentToolbar"
 		layoutY: 110
-		height: bind scene.height - 100
+		height: bind scene.height - (scene.height - inspectors.topBar.layoutY) - 100
 		linkURL: "http://www.loadui.org/Custom-Components"
 		linkLabel: "Get more\ncomponents \u00bb"
 		groupHeight: 110
