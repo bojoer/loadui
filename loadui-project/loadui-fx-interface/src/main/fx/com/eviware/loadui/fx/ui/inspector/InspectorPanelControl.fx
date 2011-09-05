@@ -122,7 +122,7 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	var inspectorHolder:Stack;
 	var buttonBox:HBox;
 	var node:VBox;
-	var inspectorHeight:Number = 0;
+	var inspectorHeight:Number = 0 on replace { println(inspectorHeight); };
 
 	var lastGoodHeight:Number = -1;
 	function getLastGoodHeight():Number {
@@ -164,6 +164,10 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 
 		rn = Panel {
 			override var height = bind scene.height on replace {
+				println( "***" );
+				println( height );
+				println( inspectorHeight );
+				println( topBarHeight );
 				topBar.layoutY = height - inspectorHeight - topBarHeight;
 			}
 			width: bind scene.width
@@ -285,12 +289,11 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 			action: function() {
 				topBar.layoutY += topBar.translateY;
 				topBar.translateY = 0;
+				inspectorHeight = scene.height - topBar.layoutY - topBarHeight;
 				expanded = false;
 			}
 		}
 		collapseAnim.playFromStart();
-		
-		inspectorHeight = 0;
 	}
 	
 	var expandAnim:TranslateTransition;
@@ -310,6 +313,7 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 				insertInspector();
 				topBar.layoutY += topBar.translateY;
 				topBar.translateY = 0;
+				inspectorHeight = scene.height - topBar.layoutY - topBarHeight;
 				expanded = true;
 			}
 		}
@@ -439,7 +443,9 @@ public class TopBar extends BaseNode, Movable, Resizable {
 				expanded = true;
 			}
 		}
-		inspectorHeight = topBar.layoutY + topBar.translateY;	
+		inspectorHeight = scene.height - (topBar.layoutY + topBar.translateY) - topBarHeight;
+		
+		println( "::: {topBar.layoutY + topBar.translateY - 100}" );
 	}
 	
 	override var onGrab = function() {

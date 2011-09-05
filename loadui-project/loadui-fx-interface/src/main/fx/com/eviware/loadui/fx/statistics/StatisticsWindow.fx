@@ -191,7 +191,7 @@ public class StatisticsWindow {
 	def toolbar: StatisticsToolbar = StatisticsToolbar {
 		id: "StatisticsToolbar"
 		layoutY: 140
-		height: bind scene.height - 140
+		height: bind inspectors.topBar.layoutY + inspectors.topBar.translateY - 165
 	}
 	
 	def stack:Stack = Stack {
@@ -199,8 +199,7 @@ public class StatisticsWindow {
 		layoutY: 145
 		width: bind if(toolbar.hidden) Math.max( 625, scene.width - 78 ) else Math.max( 625, scene.width - 150 )
 		height: bind scene.height - 180
-		content: [ layoutRegion ]
-		//background: Color.web("#323232")
+		content: layoutRegion
 	};
 	
 	var topMenu:StatisticsMenu;

@@ -114,7 +114,7 @@ public class AgentInspector extends Inspector {
 	
 	def panel = AgentInspectorNode {
 		layoutInfo: LayoutInfo {
-			maxHeight: 333
+			maxHeight: 325
 		}
 	};
 	
