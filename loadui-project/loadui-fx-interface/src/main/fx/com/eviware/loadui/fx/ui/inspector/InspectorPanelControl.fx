@@ -90,7 +90,7 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	/**
 	 * True if the panel is currently expanded, false if not.
 	 */
-	public-read var expanded = false on replace { println("expanded = {expanded}") };
+	public-read var expanded = false;
 	
 	/**
 	 * The currently displayed Inspector.
@@ -128,9 +128,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	function getLastGoodHeight():Number {
 		if( lastGoodHeight != -1)
 		{
-			println( scene.height );
-			println( lastGoodHeight );
-			println( maxHeight );
 			if( scene.height - lastGoodHeight > maxHeight )
 				scene.height - maxHeight
 			else
@@ -167,7 +164,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 
 		rn = Panel {
 			override var height = bind scene.height on replace {
-				println( "rn.height on replace: layoutY is now {height - inspectorHeight - topBarHeight}" );
 				topBar.layoutY = height - inspectorHeight - topBarHeight;
 			}
 			width: bind scene.width
@@ -256,8 +252,8 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 			activeInspector = inspector;
 			getButton( activeInspector ).pushed = true;
 			
-			if( scene.height - topBar.layoutY > maxHeight )
-				topBar.layoutY = scene.height - maxHeight;
+			if( scene.height - topBar.layoutY - topBarHeight > maxHeight )
+				topBar.layoutY = scene.height - maxHeight - topBarHeight;
 		}
 	}
 	
@@ -281,9 +277,7 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	override function collapse() {
 		if( not expanded ) return;
 		
-		println( "scene.height: {scene.height}, layoutY: {topBar.layoutY}");
 		def goalHeight = scene.height - topBar.layoutY - topBarHeight;
-		println( "goalHeight: {goalHeight}");
 		
 		collapseAnim = TranslateTransition {
 			node: topBar
@@ -291,7 +285,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 			action: function() {
 				topBar.layoutY += topBar.translateY;
 				topBar.translateY = 0;
-				println( "endOfCollapse::: layoutY: {topBar.layoutY}, translateY: {topBar.translateY}" );
 				expanded = false;
 			}
 		}
@@ -310,9 +303,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 		
 		def goalHeight = getLastGoodHeight() - topBar.layoutY;
 		
-		println( "lastGoodHeight: {lastGoodHeight}, topBar.layoutY: {topBar.layoutY}, (topBar.layoutY: {topBar.translateY})");
-		println( "=> goalHeight: {goalHeight}");
-		
 		expandAnim = TranslateTransition {
 			node: topBar
 			toY: goalHeight;
@@ -320,7 +310,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 				insertInspector();
 				topBar.layoutY += topBar.translateY;
 				topBar.translateY = 0;
-				println( "endOfExpand::: layoutY: {topBar.layoutY}, translateY: {topBar.translateY}" );
 				expanded = true;
 			}
 		}
@@ -454,7 +443,7 @@ public class TopBar extends BaseNode, Movable, Resizable {
 	}
 	
 	override var onGrab = function() {
-	  def minY = Math.max( 0, rn.height - maxHeight);
+	  def minY = Math.max( 0, rn.height - maxHeight - topBarHeight );
 	  containment = BoundingBox { width: width, minY: minY, height: rn.height - minY };
 	 }
 	
