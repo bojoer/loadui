@@ -57,6 +57,8 @@ public function buildLayoutComponentNode( layoutComponent:LayoutComponent ):Layo
 		ActionLayoutComponentNode { layoutComponent: layoutComponent }
 	} else if( layoutComponent instanceof SeparatorLayoutComponent ) {
 		SeparatorLayoutComponentNode { layoutComponent: layoutComponent }
+	} else if( layoutComponent instanceof LabelLayoutComponent ) {
+		LabelLayoutComponentNode { layoutComponent: layoutComponent }
 	} else {
 		null
 	}

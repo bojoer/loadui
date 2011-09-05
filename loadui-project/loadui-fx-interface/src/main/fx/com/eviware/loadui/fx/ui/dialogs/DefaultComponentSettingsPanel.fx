@@ -155,7 +155,7 @@ public class DefaultComponentSettingsPanel {
 			if(c instanceof LabelLayoutComponent){
 				LabelField {
 					value: (c as LabelLayoutComponent).getLabel()
-					font: if(level == 0) Font.font("Amble", FontWeight.BOLD, 10) else Font { size: 10 }
+					//font: if(level == 0) Font.font("Amble", FontWeight.BOLD, 10) else Font { size: 10 }
 					//layoutInfo: LayoutInfo { 
 					//	height: if(level == 0) 0 else 22
 					//}

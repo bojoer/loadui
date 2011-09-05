@@ -15,18 +15,14 @@
  */
 package com.eviware.loadui.api.layout;
 
+import com.eviware.loadui.api.traits.Labeled;
+
 /**
  * A LayoutComponent representing a label. It has a static String that is
  * displayed.
  * 
  * @author dain.nilsson
  */
-public interface LabelLayoutComponent extends LayoutComponent
+public interface LabelLayoutComponent extends LayoutComponent, Labeled
 {
-	/**
-	 * The contents of the Label.
-	 * 
-	 * @return
-	 */
-	public String getLabel();
 }
