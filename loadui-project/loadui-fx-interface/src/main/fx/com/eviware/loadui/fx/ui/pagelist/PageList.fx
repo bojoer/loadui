@@ -85,7 +85,7 @@ public class PageList extends VBox, Pagination {
 	var labelBox = HBox {
 		spacing: 20
 		padding: bind Insets { left: leftMargin, right: rightMargin }
-		layoutInfo: LayoutInfo { height: 45 }
+		layoutInfo: LayoutInfo { height: 45, vshrink: Priority.NEVER }
 	}
 	
 	init {
