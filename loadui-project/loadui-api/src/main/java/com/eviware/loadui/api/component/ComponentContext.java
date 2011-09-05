@@ -252,9 +252,9 @@ public interface ComponentContext extends Labeled.Mutable, MutableTerminalHolder
 	public void setHelpUrl( String helpUrl );
 
 	/**
-	 * Adds settings layout container to component. This container is added as a
-	 * tab in wrench dialog of a component and is defined in component's groovy
-	 * script.
+	 * Adds a SettingsLayoutContainer to the Components settings panel. The
+	 * contents of this panel is displayed to the user via the GUI, and can be
+	 * used to configure the Component.
 	 * 
 	 * @param tab
 	 */
