@@ -115,7 +115,7 @@ public class WorkspaceWrenchDialog  {
 						formContent: [
 							LongInputField { id: "maxThreads", label: "Max internal threads", description: "Max internal threads", value: maxThreads },
 							LongInputField { id: "maxQueue", label: "Max internal thread queue size", description: "Max internal thread queue size", value: maxQueue },
-						   	LongInputField { id: "gcInterval", label: "Schedule garbage collection interval", description: "Time interval after which garbage collection will be done.", value: gcInterval }
+						   LongInputField { id: "gcInterval", label: "Schedule garbage collection interval", description: "Time interval after which garbage collection will be done.", value: gcInterval }
 						]
 					}
 				}
