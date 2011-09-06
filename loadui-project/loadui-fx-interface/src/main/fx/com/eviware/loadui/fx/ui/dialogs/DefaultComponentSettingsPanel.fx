@@ -129,6 +129,14 @@ public class DefaultComponentSettingsPanel {
 				id: "settings"
 				data: propertyBuffer
 			}
+			onCommit: function():Void {
+				for( property in component.getProperties()) {
+					var pp:PropertyProxy = propertyBuffer.get(property.getKey()) as PropertyProxy;
+					if ( pp != null ) {
+						(property as com.eviware.loadui.api.serialization.MutableValue).setValue( pp.getValue() );
+					}
+				}
+			}
 		}
 		
 		var tabArray: Tab[] = retrieveSettingsTabs();
@@ -145,15 +153,8 @@ public class DefaultComponentSettingsPanel {
 			okText: "Save"
 			tabs: tabArray
 			onOk: function() {
-				for( tab in dialogRef.tabs[x|x.content instanceof SettingsLayoutContainerForm] ) {
-					def form = (tab.content as SettingsLayoutContainerForm);
-					form.commit();
-				}
-				for( property in component.getProperties()) {
-					var pp:PropertyProxy = propertyBuffer.get(property.getKey()) as PropertyProxy;
-					if ( pp != null ) {
-						(property as com.eviware.loadui.api.serialization.MutableValue).setValue( pp.getValue() );
-					}
+				for( tab in dialogRef.tabs[x|x.content instanceof Form] ) {
+					(tab.content as Form).commit();
 				}
 				dialogRef.close();
 			}
