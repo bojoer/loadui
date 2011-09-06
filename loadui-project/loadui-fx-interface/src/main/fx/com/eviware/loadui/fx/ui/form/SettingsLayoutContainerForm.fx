@@ -40,8 +40,10 @@ public class SettingsLayoutContainerForm extends Form {
 	
 	public var onFieldChanged: function( field:FormField ):Void;
 	
-	public function commit():Void {
+	override function commit():Void {
 		for( component in container ) updateProperties( component );
+		
+		super.commit();
 	}
 	
 	function updateProperties( component:LayoutComponent ):Void {

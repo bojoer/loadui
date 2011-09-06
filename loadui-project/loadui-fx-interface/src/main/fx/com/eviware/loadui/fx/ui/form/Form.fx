@@ -74,6 +74,10 @@ public class Form extends Container {
 	def fieldMap = new HashMap();
 	def labelMap = new HashMap();
 	var fields: FormField[];
+	
+	public var onCommit: function():Void;
+	
+	public function commit():Void { onCommit() }
 
 	/**
 	 * The content to display in the form.
