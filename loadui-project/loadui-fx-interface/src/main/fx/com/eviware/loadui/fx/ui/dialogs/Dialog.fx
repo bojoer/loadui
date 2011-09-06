@@ -248,7 +248,7 @@ public class Dialog {
 							content: [
 								Label {
 									textFill: Color.rgb(0, 0, 0, 0.5)
-									text: bind title
+									text: bind title.toUpperCase()
 									font: Font { size: 10 }
 									layoutInfo: LayoutInfo {
 										hfill: true
