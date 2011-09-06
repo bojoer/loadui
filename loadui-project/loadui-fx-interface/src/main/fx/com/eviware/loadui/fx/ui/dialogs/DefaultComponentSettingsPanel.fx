@@ -110,6 +110,7 @@ public class DefaultComponentSettingsPanel {
 				Tab {
 					label: settingsTab.getLabel();
 					content: SettingsLayoutContainerForm {
+						singleColumn: true
 						container: settingsTab
 						onFieldChanged: function( field ):Void {
 							def property = propertyBuffer.get( (field as Node).id ) as PropertyProxy;

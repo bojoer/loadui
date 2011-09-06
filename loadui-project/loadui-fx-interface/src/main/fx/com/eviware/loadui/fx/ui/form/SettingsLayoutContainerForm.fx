@@ -23,7 +23,7 @@ import com.eviware.loadui.fx.ui.layout.widgets.support.SelectSupport;
 
 import javax.swing.table.TableModel;
 
-public class SettingsLayoutContainerForm extends Form {
+public class SettingsLayoutContainerForm extends Form {	
 	public-read var label:String;
 	
 	public var container:SettingsLayoutContainer on replace {
