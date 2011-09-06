@@ -26,6 +26,10 @@
 	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #33ccff) (90%, #0398f9);
 }
 
+.button:strong {
+	-fx-body-color: linear (0%,0%) to (0%,100%) stops (0%, #61cbfe) (90%, #4d9cf8);
+}
+
 .text-box {
 	-fx-shadow-highlight-color: transparent;
 	-fx-focus-color: #009bf9;
@@ -661,6 +665,12 @@
 	-fx-background-radius: 15;
 	-fx-background-color: rgba(83,83,83,0.6);
 	-fx-background-insets: -10;
+}
+
+.dialog-inset {
+	-fx-background-color: #d9d9d9;
+	-fx-background-radius: 5;
+	-fx-effect: innershadow(one-pass-box, #bbbbbb, 10, 0.0, 0, 0);
 }
 
 .model-item-node {

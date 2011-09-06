@@ -91,3 +91,23 @@
 .wizard-description {
 	-fx-background-color: linear (0%,0%) to (100%,0%) stops (0%, rgba(0,0,0,0.2)) (2%, rgba(0,0,0,0.08)) (10%, rgba(0,0,0,0)) (100%, rgba(0,0,0,0));
 }
+
+.step-label:disabled {
+	-fx-opacity: 0.4;
+}
+
+.step-label *.dot-strong {
+	-fx-background-radius: 8;
+	-fx-background-insets: 0, 1;
+	-fx-background-color: #8f8f90, linear (0%,0%) to (0%,100%) stops (0%, #61cbfe) (100%, #4e9ff8);
+	-fx-font: 10pt "Amble Cn";
+	-fx-text-fill: #ffffff;
+}
+
+.step-label *.dot {
+	-fx-background-radius: 8;
+	-fx-background-insets: 0, 1;
+	-fx-background-color: #8f8f90, linear (0%,0%) to (0%,100%) stops (0%, #e5e5e5) (100%, #a0a2a4);
+	-fx-font: 10pt "Amble Cn";
+	-fx-text-fill: #000000;
+}
