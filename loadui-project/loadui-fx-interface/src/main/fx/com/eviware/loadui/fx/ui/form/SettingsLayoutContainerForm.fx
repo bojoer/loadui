@@ -15,13 +15,21 @@
  */
 package com.eviware.loadui.fx.ui.form;
 
+import javafx.scene.control.Label;
+import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
+import javafx.geometry.VPos;
+
 import com.eviware.loadui.api.layout.*;
 import com.eviware.loadui.api.ui.table.StringToStringTableModel;
 
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.ui.layout.widgets.support.SelectSupport;
+import com.eviware.loadui.fx.async.BlockingTask;
 
 import javax.swing.table.TableModel;
+import java.util.concurrent.Callable;
 
 public class SettingsLayoutContainerForm extends Form {	
 	public-read var label:String;
@@ -60,6 +68,7 @@ public class SettingsLayoutContainerForm extends Form {
 	function buildFormItems( component:LayoutComponent ):FormItem[] {
 		if( component instanceof LabelLayoutComponent ) {
 			LabelField {
+				textWrap: true
 				value: (component as LabelLayoutComponent).getLabel()
 			}
 		} else if( component instanceof PropertyLayoutComponent ) {
@@ -73,7 +82,8 @@ public class SettingsLayoutContainerForm extends Form {
 			} else { 
 				Form.fieldForType( property.getType(), property.getKey(), plc.getLabel(), property.getValue() );
 			}
-
+		} else if( component instanceof ActionLayoutComponent ) {
+			ActionButton { component: component as ActionLayoutComponent }
 		} else if( component instanceof TableLayoutComponent ) {
 			def tlc = component as TableLayoutComponent;
 			
@@ -81,6 +91,60 @@ public class SettingsLayoutContainerForm extends Form {
 		} else if( component instanceof LayoutContainer ) {
 			for( subComponent in (component as LayoutContainer) ) buildFormItems( subComponent );
 		} else null
+	}
+}
+
+class ActionButton extends HBox, FormField, ActionLayoutComponent.ActionEnabledListener {
+	var buttonText:String;
+	var statusText:String;
+	
+	public-init var component:ActionLayoutComponent on replace {
+		component.registerListener( this );
+		label = component.getLabel();
+		buttonText = if(component.has("buttonLabel")) component.get("buttonLabel") as String else label;
+		updateStatus();
+		disable = not component.isEnabled();
+	}
+	
+	//override var skipLabel = true;
+	
+	override function stateChanged(source) {
+		disable = not source.isEnabled()
+	}
+	
+	function updateStatus() {
+		if( component.has("status") ) {
+			statusText = String.valueOf((component.get("status") as Callable).call());
+		}
+	}
+	
+	init {
+		spacing = 5;
+		nodeVPos = VPos.CENTER;
+		content = [
+			Button {
+				action: function() {
+					if( component.isAsynchronous() ) {
+						def blockingTask:BlockingTask = BlockingTask {
+							task: function() {
+								component.getAction().run();
+								FX.deferAction( function() { updateStatus() } );
+							}
+						};
+						blockingTask.start();
+					} else {
+						AppState.byScene( scene ).blockingTask( function() {
+							component.getAction().run();
+						}, function(task) {
+							updateStatus();
+						}, "Please wait..." );
+					}
+				}
+				text: bind buttonText;
+			}, Label {
+				text: bind statusText
+			}
+		]
 	}
 }
 

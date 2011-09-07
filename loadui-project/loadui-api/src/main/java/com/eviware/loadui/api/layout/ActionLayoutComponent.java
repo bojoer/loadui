@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.layout;
 
+import com.eviware.loadui.api.traits.Labeled;
+
 /**
  * A LayoutComponent which holds an action to perform when the user activates
  * it. It is generally rendered as a button which can be clicked to run the
@@ -22,16 +24,8 @@ package com.eviware.loadui.api.layout;
  * 
  * @author dain.nilsson
  */
-public interface ActionLayoutComponent extends LayoutComponent
+public interface ActionLayoutComponent extends LayoutComponent, Labeled
 {
-	/**
-	 * Each ActionLayoutComponent may optionally have a label attached to it. If
-	 * the component does not have a label, this method will return null.
-	 * 
-	 * @return The label if one exists, otherwise null.
-	 */
-	public String getLabel();
-
 	/**
 	 * The action to perform when the component is activated.
 	 * 

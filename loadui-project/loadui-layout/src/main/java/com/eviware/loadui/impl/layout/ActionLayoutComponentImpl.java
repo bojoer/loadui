@@ -15,12 +15,13 @@
  */
 package com.eviware.loadui.impl.layout;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import com.eviware.loadui.api.layout.ActionLayoutComponent;
 import com.eviware.loadui.util.MapUtils;
+import com.google.common.collect.Sets;
 
 public class ActionLayoutComponentImpl extends LayoutComponentImpl implements ActionLayoutComponent
 {
@@ -28,7 +29,8 @@ public class ActionLayoutComponentImpl extends LayoutComponentImpl implements Ac
 	public final static String ACTION = "action";
 	public final static String ASYNC = "async";
 
-	private final Set<ActionEnabledListener> listeners = new HashSet<ActionEnabledListener>();
+	private final Set<ActionEnabledListener> listeners = Sets
+			.newSetFromMap( new WeakHashMap<ActionEnabledListener, Boolean>() );
 	private boolean enabled = true;
 
 	public ActionLayoutComponentImpl( Map<String, ?> args )
