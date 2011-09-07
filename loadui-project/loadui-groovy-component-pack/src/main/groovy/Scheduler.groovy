@@ -36,6 +36,7 @@ import com.eviware.loadui.util.layout.IntervalModel
 import com.eviware.loadui.util.ScheduledExecutor
 import com.eviware.loadui.util.FormattingUtils
 import com.eviware.loadui.util.layout.DelayedFormattedString
+import com.eviware.loadui.util.ReleasableUtils
 import org.quartz.Scheduler
 import org.quartz.CronTrigger
 import org.quartz.CronExpression
@@ -129,6 +130,12 @@ def maxDuration = 0;
 // create not initialized StdSchedulerFactory (no properties files supplied)
 // this factory always returns the same instance of scheduler (shared between components)
 def scheduler = new StdSchedulerFactory().getScheduler()
+
+
+dayDFString = new DelayedFormattedString( '%s', 1000, day )
+timeDFString = new DelayedFormattedString( '%s', 1000, value{ ssmmhh = time.value.split(" ") -> "${ssmmhh[2]}:${ssmmhh[1]}:${ssmmhh[0]}" } )
+durationDFSString = new DelayedFormattedString( '%s', 1000, value { FormattingUtils.formatTime( duration.value ) } )
+
 
 scheduler.addJobListener(new JobListenerSupport()
 {
@@ -311,6 +318,7 @@ unscheduleEndTrigger = {
 
 onRelease = {
 	scheduler.shutdown()
+	ReleasableUtils.releaseAll( dayDFString, timeDFString, durationDFSString )
 }
 
 layout {
@@ -325,9 +333,9 @@ layout {
 
 compactLayout {
 	box( widget:'display' ) {
-		node( label:'Day', fString:new DelayedFormattedString( '%s', 1000, day ) )
-		node( label:'Time', fString:new DelayedFormattedString( '%s', 1000, value{ ssmmhh = time.value.split(" ") -> "${ssmmhh[2]}:${ssmmhh[1]}:${ssmmhh[0]}" } ) )
-		node( label:'Duration', fString:new DelayedFormattedString( '%s', 1000, value { FormattingUtils.formatTime( duration.value ) } ) )
+		node( label:'Day', fString: dayDFString )
+		node( label:'Time', fString: timeDFString )
+		node( label:'Duration', fString: durationDFSString )
 	}
 }
 
