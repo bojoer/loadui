@@ -97,6 +97,13 @@
 	-fx-padding: 0;
 }
 
+.wizard-description *.scroll-bar {
+	-fx-outer-border: #999999;
+	-fx-inner-border: linear (0%,0%) to (100%,0%) stops (0.0, #aaacaf) (1.0, #d0d2d3);
+	-fx-body-color: linear (0%,0%) to (100%,0%) stops (0.0, #e6e7e8) (1.0, #b5b6b9);
+	-fx-shadow-highlight-color: rgba(102,102,102,0.3);
+}
+
 .step-label:disabled {
 	-fx-opacity: 0.4;
 }

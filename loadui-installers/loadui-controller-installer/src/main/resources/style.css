@@ -139,7 +139,7 @@
 
 .scroll-view {
     -fx-padding: 0;
-    -fx-background-color: -fx-background;
+    -fx-background-color: transparent;
     -fx-background-insets: 0;
 }
 
