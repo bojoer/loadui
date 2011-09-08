@@ -159,7 +159,7 @@ public class GroovyEnvironment implements Releasable
 			if( property instanceof Closure )
 				return ( ( Closure<?> )property ).call( args );
 		}
-		catch( Throwable e )
+		catch( Exception e )
 		{
 			if( returnException )
 				return e;

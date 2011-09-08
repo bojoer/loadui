@@ -48,6 +48,7 @@ function buildFieldTypeMap() {
 	fieldTypeMap.put( Double.class, DoubleInputField.build );
 	fieldTypeMap.put( Float.class, FloatInputField.build );
 	fieldTypeMap.put( Long.class, LongInputField.build );
+	fieldTypeMap.put( Integer.class, IntegerInputField.build );
 	fieldTypeMap.put( File.class, FileInputField.build );
 	fieldTypeMap.put( Boolean.class, CheckBoxField.build );
 	fieldTypeMap.put( TableModel.class, TableField.build );
