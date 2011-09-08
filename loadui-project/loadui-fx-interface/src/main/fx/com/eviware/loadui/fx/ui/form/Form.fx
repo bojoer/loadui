@@ -32,7 +32,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.lang.RuntimeException;
 import java.lang.Class;
+import java.lang.Enum;
 import java.io.File;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import com.eviware.loadui.fx.ui.form.fields.*;
 
@@ -57,7 +61,13 @@ def fieldTypeMap = buildFieldTypeMap();
  * Creates and returns a new FormField for the given parameter type, using the given arguments.
  */
 public function fieldForType( type:Class, id:String, label:String, value:Object ):FormField {
-	(fieldTypeMap.get( type ) as function( id:String, label:String, value:Object ):FormField)( id, label, value ) as FormField;
+	if( type.isEnum() )
+	{
+		var options = type.getMethod("values").invoke( null ) as nativearray of Object;
+		SelectField { id: id, label: label, value: value, options: for(x in options) x }
+	}
+	else
+		(fieldTypeMap.get( type ) as function( id:String, label:String, value:Object ):FormField)( id, label, value ) as FormField;
 }
 
 /**

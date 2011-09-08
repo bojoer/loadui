@@ -191,7 +191,7 @@ public class StatisticsWindow {
 	def toolbar: StatisticsToolbar = StatisticsToolbar {
 		id: "StatisticsToolbar"
 		layoutY: 140
-		height: bind inspectors.topBar.layoutY + inspectors.topBar.translateY - 165
+		height: bind inspectors.topBar.layoutY + inspectors.topBar.translateY - 160
 	}
 	
 	def stack:Stack = Stack {
