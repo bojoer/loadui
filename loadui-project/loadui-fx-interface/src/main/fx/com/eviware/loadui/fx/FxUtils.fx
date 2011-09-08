@@ -212,10 +212,7 @@ public def agentImage = Image { url: "{__ROOT__}images/png/agent-icon.png" };
 public def projectImage = Image { url: "{__ROOT__}images/png/project-icon.png" };
 public def testCaseImage = Image { url: "{__ROOT__}images/png/testcase-icon.png" };
 
-/**
- * Gets an Image to be used as an icon for the given object.
- */
-public function getImageFor( object:Object ):Image {
+public var imageResolvers:(function(object:Object):Image)[] = function(object):Image {
 	if( object instanceof AgentItem ) {
 		agentImage
 	} else if( object instanceof ProjectItem ) {
@@ -225,6 +222,18 @@ public function getImageFor( object:Object ):Image {
 	} else if( object instanceof ComponentItem ) {
 		Image { url: BeanInjector.getBean(ComponentRegistry.class).findDescriptor((object as ComponentItem).getType()).getIcon().toString() }
 	} else {
-		defaultImage
+		null
 	}
+}
+
+/**
+ * Gets an Image to be used as an icon for the given object.
+ */
+public function getImageFor( object:Object ):Image {
+	for( resolver in imageResolvers ) {
+		def image = resolver(object);
+		if( image != null ) return image;
+	}
+	
+	return defaultImage;
 }

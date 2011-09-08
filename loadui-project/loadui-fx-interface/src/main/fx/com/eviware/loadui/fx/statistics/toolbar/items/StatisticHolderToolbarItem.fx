@@ -32,7 +32,9 @@ public class StatisticHolderToolbarItem extends StatisticsToolbarItem {
    	statisticHolder.addEventListener( BaseEvent.class, labelListener );
       label = statisticHolder.getLabel();
       tooltip = "Adds {label} to a chart";
-      icon = FxUtils.getImageFor( statisticHolder );
+      if( not FX.isInitialized( icon ) ) {
+      	icon = FxUtils.getImageFor( statisticHolder );
+      }
    }
 }
 
