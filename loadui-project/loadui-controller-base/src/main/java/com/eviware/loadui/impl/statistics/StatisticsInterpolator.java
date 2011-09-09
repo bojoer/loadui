@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
+import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
 
 public class StatisticsInterpolator
 {
@@ -36,31 +37,37 @@ public class StatisticsInterpolator
 	public synchronized void update( Entry entry, String trackId, String source )
 	{
 		long currentTime = entry.getTimestamp();
-		executionManager.writeEntry( trackId, entry, source );
+		if( executionManager.getState() != State.STOPPED )
+		{
+			executionManager.writeEntry( trackId, entry, source );
 
-		String key = trackId + source;
-		if( !aggregateLevels.containsKey( key ) )
-			aggregateLevels.put( key, new AggregateLevel( source, trackId, 0, currentTime ) );
+			String key = trackId + source;
+			if( !aggregateLevels.containsKey( key ) )
+				aggregateLevels.put( key, new AggregateLevel( source, trackId, 0, currentTime ) );
 
-		aggregateLevels.get( key ).update( entry, currentTime );
+			aggregateLevels.get( key ).update( entry, currentTime );
+		}
 	}
 
 	public synchronized void flush( long flushTime )
 	{
-		for( java.util.Map.Entry<String, AggregateLevel> entry : aggregateLevels.entrySet() )
+		if( executionManager.getState() != State.STOPPED )
 		{
-			String source = entry.getKey();
-			AggregateLevel sublevel = entry.getValue();
-			while( sublevel != null )
+			for( java.util.Map.Entry<String, AggregateLevel> entry : aggregateLevels.entrySet() )
 			{
-				Entry aggregateEntry = sublevel.flush( flushTime );
-				if( aggregateEntry != null )
+				String source = entry.getKey();
+				AggregateLevel sublevel = entry.getValue();
+				while( sublevel != null )
 				{
-					executionManager.writeEntry( sublevel.trackId, aggregateEntry, source, sublevel.level + 1 );
-					if( sublevel.child != null )
-						sublevel.child.update( aggregateEntry, flushTime );
+					Entry aggregateEntry = sublevel.flush( flushTime );
+					if( aggregateEntry != null )
+					{
+						executionManager.writeEntry( sublevel.trackId, aggregateEntry, source, sublevel.level + 1 );
+						if( sublevel.child != null )
+							sublevel.child.update( aggregateEntry, flushTime );
+					}
+					sublevel = sublevel.child;
 				}
-				sublevel = sublevel.child;
 			}
 		}
 	}
