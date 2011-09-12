@@ -207,7 +207,7 @@ public class MainWindow {
 		//Set up the Project view
 		appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/grid.png" }, clip: Rectangle{ width: bind scene.width, height: bind scene.height } }, PROJECT_FRONT );
 		appState.insertInto( projectCanvas = ProjectCanvas { width: bind scene.width, height: bind scene.height }, PROJECT_FRONT );
-		appState.insertInto( navigator = NavigationPanel { canvas: projectCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( /*inspectors.height +*/ navigator.height ) }, PROJECT_FRONT );
+		appState.insertInto( navigator = NavigationPanel { canvas: projectCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind inspectors.topBar.layoutY + inspectors.topBar.translateY - navigator.height }, PROJECT_FRONT );
 		//def projectToolbar:Toolbar = Toolbar {
 		//	layoutY: 90
 		//	height: bind scene.height - inspectors.height - 100
@@ -226,7 +226,7 @@ public class MainWindow {
 	//													preserveRatio: false } }, PROJECT_BACK );
 		appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/grid.png" }, clip: Rectangle{ width: bind scene.width, height: bind scene.height } }, TESTCASE_FRONT );
 		appState.insertInto( testcaseCanvas = Canvas { width: bind scene.width, height: bind scene.height }, TESTCASE_FRONT );	
-		appState.insertInto( navigator = NavigationPanel { canvas: testcaseCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind scene.height - ( /*inspectors.height +*/ navigator.height ) }, TESTCASE_FRONT );
+		appState.insertInto( navigator = NavigationPanel { canvas: testcaseCanvas, width: 240, height: 195, layoutX: bind scene.width - ( navigator.width + 20 ), layoutY: bind inspectors.topBar.layoutY + inspectors.topBar.translateY - navigator.height }, TESTCASE_FRONT );
 		testcaseToolbar.addItem( NoteToolbarItem {} );
 		appState.insertInto( testcaseToolbar, TESTCASE_FRONT );
 		
