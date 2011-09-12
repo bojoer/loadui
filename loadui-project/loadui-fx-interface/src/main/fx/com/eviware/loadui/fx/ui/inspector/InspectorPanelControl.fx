@@ -176,6 +176,7 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 						width: bind rn.width
 						nodeVPos: VPos.TOP
 						padding: Insets { top:10 right:0 bottom: 0 left: 0 }
+						blocksMouse: true
 					}
 					topBar = TopBar {
 						width: bind rn.width
