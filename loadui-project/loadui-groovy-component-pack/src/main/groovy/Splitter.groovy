@@ -37,7 +37,7 @@ resetValues = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
 totalReset = 0
 
 for( i in 0..outgoingTerminalList.size() - 1 ) {
-	countDisplays[i] = new DelayedFormattedString( '%d', 500, value { counters["output_$i"].get() - resetValues[i] } )
+	countDisplays.put( i, new DelayedFormattedString( '%d', 500, value { counters["output_$i"].get() - resetValues[i] } ) )?.release()
 }
 
 createProperty( 'type', String, "Round-Robin" )
@@ -45,7 +45,8 @@ createProperty( 'numOutputs', Integer, 1 ) { outputCount ->
 	while( outgoingTerminalList.size() < outputCount ) {
 		createOutgoing()
 		def i = outgoingTerminalList.size() - 1
-		countDisplays[i] = new DelayedFormattedString( '%d', 500, value { counters["output_$i"].get() - resetValues[i] } )
+		
+		countDisplays.put(i, new DelayedFormattedString( '%d', 500, value { counters["output_$i"].get() - resetValues[i] } ) )?.release()
 	}
 	while( outgoingTerminalList.size() > outputCount ) {
 		def i = outgoingTerminalList.size() - 1
@@ -77,7 +78,13 @@ onAction( "RESET" ) {
 	totalReset = 0
 }
 
+<<<<<<< .mine
+onRelease = {
+	 ReleasableUtils.releaseAll( totalDisplay, compactDisplay, countDisplays.values() )
+	 }
+=======
 onRelease = { ReleasableUtils.releaseAll( totalDisplay, compactDisplay, countDisplays.values ) }
+>>>>>>> .r6888
 
 refreshLayout = {
 	layout ( layout:'gap 10 5' ) {
