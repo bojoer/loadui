@@ -61,8 +61,17 @@ public class ChartLineSegment implements LineSegment.Removable
 	public Statistic<?> getStatistic()
 	{
 		if( statistic == null )
-			statistic = chartView.getChart().getStatisticHolder().getStatisticVariable( variableName )
-					.getStatistic( statisticName, source );
+		{
+			try
+			{
+				statistic = chartView.getChart().getStatisticHolder().getStatisticVariable( variableName )
+						.getStatistic( statisticName, source );
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+		}
 
 		return statistic;
 	}

@@ -34,6 +34,7 @@ import com.eviware.loadui.fx.ui.WaitingScreen;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
 import com.eviware.loadui.fx.widgets.canvas.Selectable;
+import com.eviware.loadui.fx.util.TestExecutionUtils;
 import java.lang.IllegalArgumentException;
 import java.lang.NullPointerException;
 import java.util.HashMap;
@@ -222,6 +223,7 @@ public class AppState extends ApplicationState {
 	override function displayWorkspace():Void {
 		def active = getActiveCanvas();
 		if( active != null ) {
+			TestExecutionUtils.abortAllExecutions();
 			def project = active.getProject();
 			def workspace = project.getWorkspace();
 			for( pRef in workspace.getProjectRefs() ) {

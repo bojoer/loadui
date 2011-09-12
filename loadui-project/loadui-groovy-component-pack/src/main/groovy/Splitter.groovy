@@ -77,7 +77,7 @@ onAction( "RESET" ) {
 	totalReset = 0
 }
 
-onRelease = { ReleasableUtils.releaseAll( totalDisplay, compactDisplay, countDisplay.values ) }
+onRelease = { ReleasableUtils.releaseAll( totalDisplay, compactDisplay, countDisplays.values ) }
 
 refreshLayout = {
 	layout ( layout:'gap 10 5' ) {

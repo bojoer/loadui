@@ -15,8 +15,6 @@
  */
 package com.eviware.loadui.util;
 
-import java.util.Collection;
-
 import com.eviware.loadui.api.traits.Releasable;
 import com.google.common.collect.ImmutableSet;
 
@@ -48,9 +46,9 @@ public class ReleasableUtils
 	{
 		for( Object object : objects )
 		{
-			if( object instanceof Collection )
+			if( object instanceof Iterable )
 			{
-				for( Object child : ImmutableSet.copyOf( ( Collection<?> )object ) )
+				for( Object child : ImmutableSet.copyOf( ( Iterable<?> )object ) )
 					release( child );
 			}
 			release( object );

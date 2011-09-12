@@ -109,6 +109,9 @@ public function currentExecution():TestExecution {
 	return if( sizeof executions > 0 ) executions[0] else null;
 }
 
+public function abortAllExecutions():Void {
+	for( execution in testRunner.getExecutionQueue() ) execution.abort();
+}
 
 public class TestExecutionUtils {
 }
