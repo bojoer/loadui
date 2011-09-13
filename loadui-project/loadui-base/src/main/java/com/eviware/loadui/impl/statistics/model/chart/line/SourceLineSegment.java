@@ -29,8 +29,10 @@ public class SourceLineSegment implements LineSegment
 	public Statistic<?> getStatistic()
 	{
 		if( statistic == null )
+		{
 			statistic = parent.getChart().getStatisticHolder().getStatisticVariable( parent.getVariableName() )
 					.getStatistic( parent.getStatisticName(), source );
+		}
 
 		return statistic;
 	}

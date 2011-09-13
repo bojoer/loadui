@@ -28,6 +28,7 @@ import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.charting.line.StrokeStyle;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.statistics.DataPoint;
+import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
@@ -64,17 +65,21 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 
 	public void poll()
 	{
-		DataPoint<?> dataPoint = segment.getStatistic().getLatestPoint( level );
-		if( dataPoint != null )
+		final Statistic<?> statistic = segment.getStatistic();
+		if( statistic != null )
 		{
-			long timestamp = dataPoint.getTimestamp();
-			if( timestamp != latestTime && timestamp >= 0 )
+			DataPoint<?> dataPoint = statistic.getLatestPoint( level );
+			if( dataPoint != null )
 			{
-				latestTime = timestamp;
-				final double doubleValue = dataPoint.getValue().doubleValue();
-				if( xRangeMin <= timestamp && timestamp <= xRangeMax && !Double.isNaN( doubleValue ) )
+				long timestamp = dataPoint.getTimestamp();
+				if( timestamp != latestTime && timestamp >= 0 )
 				{
-					addPoint( timestamp, scalar * doubleValue, true );
+					latestTime = timestamp;
+					final double doubleValue = dataPoint.getValue().doubleValue();
+					if( xRangeMin <= timestamp && timestamp <= xRangeMax && !Double.isNaN( doubleValue ) )
+					{
+						addPoint( timestamp, scalar * doubleValue, true );
+					}
 				}
 			}
 		}
@@ -83,7 +88,11 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 	@Override
 	protected void redraw()
 	{
-		doRedraw( segment.getStatistic(), xRangeMin, xRangeMax, level );
+		final Statistic<?> statistic = segment.getStatistic();
+		if( statistic != null )
+		{
+			doRedraw( statistic, xRangeMin, xRangeMax, level );
+		}
 	}
 
 	private void loadStyles()

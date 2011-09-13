@@ -110,7 +110,7 @@ public function currentExecution():TestExecution {
 }
 
 public function abortAllExecutions():Void {
-	for( execution in testRunner.getExecutionQueue() ) execution.abort();
+	for( execution in testRunner.getExecutionQueue() ) execution.abort().get();
 }
 
 public class TestExecutionUtils {
