@@ -26,194 +26,88 @@
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.util.layout.DelayedFormattedString
+import java.util.concurrent.TimeUnit
 
+def FUNCTIONS = [
+	'Saw-tooth': { amp, progress -> amp * progress -amp/2  },
+	'Sine-wave': { amp, progress -> amp/2 * Math.sin( 2*Math.PI * progress) },
+	'Square': { amp, progress -> progress < 0.5  ? -amp/2 : amp/2 }
+]
+
+def UNITS = [
+	'Sec': TimeUnit.SECONDS,
+	'Min': TimeUnit.MINUTES,
+	'Hour': TimeUnit.HOURS
+]
 
 //Properties
 createProperty( 'rate', Long, 10 )
-createProperty( 'unit', String, 'Seconds' )
+createProperty( 'unit', String, 'Sec' )
 createProperty( 'shape', String, 'Saw-tooth' )
 createProperty( 'amplitude', Long, 5 )
 createProperty( 'period', Long, 60 )
 
-currentRate = 0
-currentDelay = 0
-timeEllapsed = 0
-maxRate = rate.value + (amplitude.value/2)
-minRate = (rate.value - (amplitude.value/2) < 0)?0:rate.value - (amplitude.value/2)
-msPerUnit = 1000
+currentRate = rate.value
+startTime = System.currentTimeMillis()
 
-rateDisplay = new DelayedFormattedString( '%d / %s', 500, currentRate.longValue(), unit.value )
-
-timer = new Timer(true)
-scheduled = false
-
-future = null
-
-//Saw tooth parameters
-gradient = 0D
-
-onRelease = {  rateDisplay.release() }
-
-reset = {
-	currentDelay = 0
-	timeEllapsed = 0
-	
-	if (shape.value == "Saw-tooth") {
-		currentRate = minRate
-		//Some sanity checks
-		if (minRate.longValue() != 0) {
-			if (msPerUnit/minRate > period.value * 1000) {
-				gradient = 0
-				currentRate = maxRate
-			}
-		} 
-		
-		if (currentRate != maxRate) {
-			gradient = (double)((double)amplitude.value/ (period.value * 1000D))
-			currentRate = minRate
-			while (currentRate.longValue() == 0) {
-				timeEllapsed++
-				currentRate = minRate + timeEllapsed * gradient
-			}
-		}
+calculateRate = {
+	def per = period.value * 1000
+	def progress = ( ( System.currentTimeMillis() - startTime ) % per ) / per
+	def newRate = Math.round( rate.value + FUNCTIONS[shape.value]( amplitude.value, progress ) )
+	if( currentRate != newRate ) {
+		currentRate = newRate
+		schedule()
 	}
-	
-	if (shape.value == "Sine-wave" ) {
-		currentRate = rate.value
-	}
-	
-	if (shape.value == "Square" ) {
-		currentRate = maxRate
-	}
-	
-	scheduled = false
 }
 
-start = {
-	reset();
-	schedule();
+future = null
+pollFuture = null
+initialize = {
+	startTime = System.currentTimeMillis()
+	pollFuture?.cancel( true )
+	pollFuture = scheduleAtFixedRate( calculateRate, 0, 250, TimeUnit.MILLISECONDS )
+	schedule()
 }
 
 schedule = {
-	if (stateProperty.value && running && !scheduled) {
-		timeEllapsed += currentDelay
-		
-		if (shape.value == "Saw-tooth") {
-			if (gradient > 0) {
-				if (timeEllapsed >= period.value * 1000) {
-					timeEllapsed = 0
-					currentRate = minRate
-				} else {
-					currentRate = minRate + timeEllapsed * gradient
-				}
-			}
-		}
-		
-		if (shape.value == "Sine-wave" ) {
-			currentRate = amplitude.value * Math.sin((double)(timeEllapsed  * Math.PI)/((double)period.value * 1000D)) + rate.value
-		}
-		
-		if (shape.value == "Square" ) {
-			if (timeEllapsed >= period.value * 500) {
-				timeEllapsed = 0
-				if (currentRate == maxRate) 
-					currentRate = minRate
-				else
-					currentRate = maxRate
-			}
-		}
-		
-		if (shape.value == "Square" && currentRate == 0) {
-			currentDelay = period * 500
-			future = timer.runAfter(currentDelay) { schedule() } //In this case we are not firing any events for a while	
-		} else {
-			if (currentRate.longValue() > 0) 
-				currentDelay = msPerUnit/currentRate
-			if (currentDelay.longValue() == 0)
-				currentDelay = 1 // This is to avoid the cases where the delay is low to the point where the events would fire to quickly for us to deal with
-			
-			
-			future = timer.runAfter(currentDelay.intValue()) {
-				rateDisplay.setArgs( currentRate.longValue(), unit.value )
-				trigger()
-				scheduled = false
-				schedule()
-			}
-			scheduled = true
-		}
+	future?.cancel( true )
+	if( stateProperty.value && currentRate > 0 ) {	
+		def triggerDelay = UNITS[unit.value].toMicros(1) / currentRate
+		future = scheduleAtFixedRate( { trigger() }, triggerDelay, triggerDelay, TimeUnit.MICROSECONDS )
 	}
 }
 
-addEventListener( PropertyEvent ) { event ->
-	if ( event.event == PropertyEvent.Event.VALUE ) {
-		
-		if( event.property == unit ) {
-			if ( unit.value == "Sec" )
-				msPerUnit = 1000
-			if ( unit.value == "Min" )
-				msPerUnit = 60000
-			if ( unit.value == "Hour" )
-				msPerUnit = 3600000
-		}
-		
-		maxRate = rate.value + (amplitude.value/2)
-		minRate = (rate.value - (amplitude.value/2) < 0)?0:rate.value - (amplitude.value/2)
-		currentRate = 0
-		
-		rateDisplay.setArgs( currentRate.longValue(), unit.value )
-		if (event.property == stateProperty && !stateProperty.value)
-			future?.cancel()
-		if (stateProperty.value)
-			future?.cancel()
-		start()
-	}
-}
+rateDisplay = new DelayedFormattedString( '%d / %s', 500, value { currentRate }, unit )
 
-onAction("START") { schedule() }
-onAction("STOP") { future?.cancel() }
-onAction("RESET") { reset() }
+onRelease = { rateDisplay.release() }
 
-//Layout
+onAction("START") { initialize() }
+onAction("STOP") { future?.cancel( true ) ; pollFuture?.cancel( true ) }
+onAction("RESET") { startTime = System.currentTimeMillis() }
+
 layout  { 
-	property( property:rate, label:'Rate', min:0 ) 
-	separator( vertical:true )
-	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
-	separator( vertical:true )
-	
-	node(widget: 'selectorWidget', label:'Variance type', showLabels:false, labels:['Saw-tooth', 'Sine-wave', 'Square'], 
-			images:['variance2_shape.png', 'variance1_shape.png', 'variance3_shape.png'], default: shape.value, selected: shape)
-	
-	separator( vertical:true )
-	property( property:amplitude, label:'Amplitude', min: 0 )
-	separator( vertical:true )
-	property( property:period, label:'Period\n(seconds)', min: 1 )
-	separator( vertical:true )
-	box ( layout:"wrap, ins 0" ) {
-		box( widget:'display' ) {
-			node( label:'Rate', fString:rateDisplay, constraints:"w 60!" )
+	property( property: rate, label:'Base Rate', min: 0 ) 
+	property( property: unit, label:'Unit', options: UNITS.keySet() )
+	separator( vertical: true )
+	node( widget: 'selectorWidget', label: 'Variance type', showLabels: false, labels: FUNCTIONS.keySet(), 
+			images: ['variance2_shape.png', 'variance1_shape.png', 'variance3_shape.png'], default: shape.value, selected: shape )
+	separator( vertical: true )
+	property( property: amplitude, label:'Amplitude', min: 0 )
+	separator( vertical: true )
+	property( property: period, label:'Period\n(seconds)', min: 1 )
+	separator( vertical: true )
+	box ( layout: "wrap, ins 0" ) {
+		box( widget: 'display' ) {
+			node( label: 'Rate', fString:rateDisplay, constraints: "w 60!" )
 		}
-		action( label:"Restart", action: { start() }, constraints:"align right" )
+		action( label: "Restart", action: { startTime = System.currentTimeMillis() }, constraints: "align right" )
 	}
 }
 
-//Compact Layout
 compactLayout  {
 	box( widget:'display' ) {
 		node( label:'Rate', fString:rateDisplay )
 	}
 }
 
-reset();
-if (running)
-	start();
-
-//Settings
-//settings( label: "Settings", layout: 'wrap 2' ) {
-//	box(layout:"growx, wrap 1") {
-//		property( property:rate, label:'Rate', min:0 ) 
-//		property( property:shape, label:'Shape', options:['Saw-tooth', 'Sine-wave', 'Square'] )
-//		property( property:amplitude, label:'Amplitude', min: 0 )
-//		property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
-//		property( property:period, label:'Period (seconds)', min: 1 )
-//	}
-//} 
+if( running ) initialize()

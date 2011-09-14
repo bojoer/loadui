@@ -35,7 +35,9 @@ import javafx.scene.image.Image;
 import javafx.util.Sequences;
 import javafx.geometry.BoundingBox;
 
+import java.lang.Iterable;
 import java.util.ArrayList;
+import com.google.common.collect.Lists;
 import com.eviware.loadui.fx.ui.layout.widgets.SelectorWidgetSkin;
 import javafx.scene.text.Font;
 
@@ -70,11 +72,11 @@ public class SelectorWidget extends VBox {
         }
         
         if ( component.has("labels") ) {
-            labels = (component.get("labels") as ArrayList);
+            labels = Lists.newArrayList( component.get("labels") as Iterable );
         }
         
         if ( component.has("images") ) {
-            images = (component.get("images") as ArrayList);
+            images = Lists.newArrayList( component.get("images") as Iterable );
         }
         
         if ( component.has("showLabels") ) {
