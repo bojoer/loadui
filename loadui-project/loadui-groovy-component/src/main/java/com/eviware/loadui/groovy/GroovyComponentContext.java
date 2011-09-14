@@ -133,6 +133,7 @@ public class GroovyComponentContext implements Releasable
 	void reset()
 	{
 		actionEventHandler.actionHandlers.clear();
+		context.clearSettingsTabs();
 	}
 
 	public <T extends EventObject> EventHandler<T> addEventListener( EventFirer target, Class<T> type,

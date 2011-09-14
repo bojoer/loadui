@@ -17,17 +17,23 @@ package com.eviware.loadui.util.groovy;
 
 import groovy.lang.Closure;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.eviware.loadui.api.layout.ActionLayoutComponent;
 import com.eviware.loadui.api.layout.LayoutContainer;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.layout.ActionLayoutComponentImpl;
 import com.eviware.loadui.impl.layout.LabelLayoutComponentImpl;
 import com.eviware.loadui.impl.layout.LayoutComponentImpl;
 import com.eviware.loadui.impl.layout.LayoutContainerImpl;
 import com.eviware.loadui.impl.layout.PropertyLayoutComponentImpl;
 import com.eviware.loadui.impl.layout.SeparatorLayoutComponentImpl;
+import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.layout.DelayedFormattedString;
+import com.eviware.loadui.util.layout.FormattedString;
+import com.google.common.collect.Maps;
 
 /**
  * Provides a Groovy DSL for creating a LayoutContainer structure.
@@ -187,9 +193,35 @@ public class LayoutBuilder
 	public void node( Map<String, ?> args )
 	{
 		if( args.containsKey( "property" ) )
+		{
 			current.add( new PropertyLayoutComponentImpl( args ) );
+		}
+		else if( args.containsKey( "content" ) && !args.containsKey( "fString" ) )
+		{
+			HashMap<String, Object> newArgs = Maps.newHashMap( args );
+			Object content = newArgs.get( "content" );
+			FormattedString fString = content instanceof Closure ? new DelayedFormattedString( "%s", ( Closure )content )
+					: new FormattedString( String.valueOf( content ) );
+			newArgs.put( "fString", fString );
+			current.add( new FormattedStringLayoutComponent( newArgs ) );
+		}
 		else
+		{
 			current.add( new LayoutComponentImpl( args ) );
+		}
 	}
 
+	private static class FormattedStringLayoutComponent extends LayoutComponentImpl implements Releasable
+	{
+		public FormattedStringLayoutComponent( Map<String, ?> args )
+		{
+			super( args );
+		}
+
+		@Override
+		public void release()
+		{
+			ReleasableUtils.releaseAll( get( "fString" ) );
+		}
+	}
 }

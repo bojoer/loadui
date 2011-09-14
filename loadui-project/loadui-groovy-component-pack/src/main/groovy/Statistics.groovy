@@ -46,7 +46,6 @@ import com.eviware.loadui.api.terminal.TerminalMessage
 import com.eviware.loadui.api.layout.OptionsProvider
 import com.eviware.loadui.impl.layout.OptionsProviderImpl
 
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.api.events.BaseEvent
@@ -57,15 +56,12 @@ import com.eviware.loadui.util.statistics.ValueStatistics
 import com.eviware.loadui.api.ui.table.LTableModel
 import com.eviware.loadui.api.summary.MutableSection
 
-import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.api.chart.ChartSerie
 import com.eviware.loadui.api.chart.Point
 
 AGGREGATE = "Aggregate"
 AGENT_DATA_TIMESTAMP = "AgentDataTimestamp"
 AGENT_DATA_TTL = 5000
-
-executor = Executors.newSingleThreadScheduledExecutor()
 
 createOutput( 'output', 'Statistic data', 'Outputs the generated statistic data as text. Useful to connect e.g. to an Ouput or Assertion component.' )
 statisticsInput = createInput( 'statistics', 'Runner Statistics', "Connect to a Runner's Statistics Terminal to get general statistics from the Runner." ) {
@@ -97,17 +93,6 @@ createProperty( 'enableDiscarded', Boolean, true )
 createProperty( 'enableFailed', Boolean, true )
 createProperty( 'currentSourceID', String, "none" )
 createProperty( 'addtoSummary', Boolean, false )
-
-avgDisplay = new DelayedFormattedString( '%.2f', 500, 0f )
-minDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
-maxDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
-stdDevDisplay = new DelayedFormattedString( '%.2f', 500, 0f )
-tpsDisplay = new DelayedFormattedString( '%.2f', 500, 0f )
-bpsDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
-avgTpsDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
-avgBpsDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
-percentileDisplay = new DelayedFormattedString( '%.2f', 500, 0f )
-avgRespSizeDisplay = new DelayedFormattedString( '%.0f', 500, 0f )
 
 createProperty( 'selectedAgent', String, AGGREGATE )
 
@@ -171,6 +156,17 @@ agentStatistics = null
 future = null
 boolean connected = true
 
+avgDisplay = 0
+minDisplay = 0
+maxDisplay = 0
+stdDevDisplay = 0
+tpsDisplay = 0
+bpsDisplay = 0
+avgTpsDisplay = 0
+avgBpsDisplay = 0
+percentileDisplay = 0
+avgRespSizeDisplay = 0
+
 analyze = { message ->
 	try {
 		long timestamp = System.currentTimeMillis()
@@ -212,20 +208,6 @@ onMessage = { o, i, m ->
 			agentStatistics = new HashMap(m)
 		} 
 	}
-}
-
-onRelease = { 
-	executor.shutdownNow()
-	avgDisplay.release()
-	minDisplay.release()
-	maxDisplay.release()
-	stdDevDisplay.release()
-	tpsDisplay.release()
-	bpsDisplay.release()
-	avgTpsDisplay.release()
-	avgBpsDisplay.release()
-	percentileDisplay.release()
-	avgRespSizeDisplay.release()
 }
 
 onConnect = { outgoing, incoming ->
@@ -355,16 +337,16 @@ updateChart = { currentTime ->
 		}
 		
 		if (inputTerminal.connections.size() > 0) {
-			avgDisplay.setArgs((float)data['Avg']  * timeScaleFactor)
-			minDisplay.setArgs((float)data['Min']  * timeScaleFactor)
-			maxDisplay.setArgs((float)data['Max'] * timeScaleFactor)
-			stdDevDisplay.setArgs((float)data['Std-Dev'] * timeScaleFactor)
-			tpsDisplay.setArgs((float)data['Tps'])
-			bpsDisplay.setArgs((float)data['Bps'] * bytesScaleFactor)
-			avgTpsDisplay.setArgs((float)data['Avg-Tps'])
-			avgBpsDisplay.setArgs((float)data['Avg-Bps'] * bytesScaleFactor)
-			percentileDisplay.setArgs((float)data['Percentile'])
-			avgRespSizeDisplay.setArgs((float)data['AvgResponseSize']  * bytesScaleFactor)
+			avgDisplay = data['Avg'] * timeScaleFactor
+			minDisplay = data['Min']  * timeScaleFactor
+			maxDisplay = data['Max'] * timeScaleFactor
+			stdDevDisplay = data['Std-Dev'] * timeScaleFactor
+			tpsDisplay = data['Tps']
+			bpsDisplay = data['Bps'] * bytesScaleFactor
+			avgTpsDisplay = data['Avg-Tps']
+			avgBpsDisplay = data['Avg-Bps'] * bytesScaleFactor
+			percentileDisplay = data['Percentile']
+			avgRespSizeDisplay = data['AvgResponseSize']  * bytesScaleFactor
 		}
 	} catch( e ) {
 		e.printStackTrace()
@@ -374,7 +356,7 @@ updateChart = { currentTime ->
 
 schedule = {
 	future?.cancel( true )
-	future = executor.scheduleAtFixedRate( calculate, rate.value, rate.value, TimeUnit.MILLISECONDS )
+	future = scheduleAtFixedRate( calculate, rate.value, rate.value, TimeUnit.MILLISECONDS )
 }
 
 addEventListener(PropertyEvent) { event ->
@@ -472,16 +454,16 @@ resetComponent = {
 	sourceIDs = ["none"]
 	currentSourceID.value = "none"
 	availableSourceIDs.options = sourceIDs 
-	avgDisplay.setArgs(0f)
-	minDisplay.setArgs(0f)
-	maxDisplay.setArgs(0f)
-	stdDevDisplay.setArgs(0f)
-	tpsDisplay.setArgs(0f)
-	bpsDisplay.setArgs(0f)
-	avgTpsDisplay.setArgs(0f)
-	avgBpsDisplay.setArgs(0f)
-	percentileDisplay.setArgs(0f)
-	avgRespSizeDisplay.setArgs(0f)
+	avgDisplay = 0
+	minDisplay = 0
+	maxDisplay = 0
+	stdDevDisplay = 0
+	tpsDisplay = 0
+	bpsDisplay = 0
+	avgTpsDisplay = 0
+	avgBpsDisplay = 0
+	percentileDisplay = 0
+	avgRespSizeDisplay = 0
 }
 
 resetBuffers = {
@@ -531,16 +513,16 @@ layout(layout:'fillx, wrap 2') {
 
 compactLayout {
 	box( widget:'display', layout:'align left, wrap 5' ) {
-		node( label:'Average ', fString:avgDisplay, constraints:'w 60!' )
-		node( label:'Minimum ', fString:minDisplay, constraints:'w 60!' )
-		node( label:'Maximum ', fString:maxDisplay, constraints:'w 60!' )
-		node( label:'Std Dev ', fString:stdDevDisplay, constraints:'w 60!' )
-		node( label:'TPS     ', fString:tpsDisplay, constraints:'w 60!' )
-		node( label:'BPS     ', fString:bpsDisplay, constraints:'w 60!' )
-		node( label:'Avg TPS ', fString:avgTpsDisplay, constraints:'w 60!' )
-		node( label:'Avg BPS ', fString:avgBpsDisplay, constraints:'w 60!' )
-		node( label:'Perc    ', fString:percentileDisplay, constraints:'w 60!' )
-		node( label:'Avg Size', fString:avgRespSizeDisplay, constraints:'w 60!' )
+		node( label:'Average ', content: { sprintf( "%.2f", avgDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Minimum ', content: { sprintf( "%.0f", minDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Maximum ', content: { sprintf( "%.0f", maxDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Std Dev ', content: { sprintf( "%.2f", stdDevDisplay as float ) }, constraints:'w 60!' )
+		node( label:'TPS     ', content: { sprintf( "%.2f", tpsDisplay as float ) }, constraints:'w 60!' )
+		node( label:'BPS     ', content: { sprintf( "%.0f", bpsDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Avg TPS ', content: { sprintf( "%.0f", avgTpsDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Avg BPS ', content: { sprintf( "%.0f", avgBpsDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Perc    ', content: { sprintf( "%.2f", percentileDisplay as float ) }, constraints:'w 60!' )
+		node( label:'Avg Size', content: { sprintf( "%.0f", avgRespSizeDisplay as float ) }, constraints:'w 60!' )
 	}
 }
 

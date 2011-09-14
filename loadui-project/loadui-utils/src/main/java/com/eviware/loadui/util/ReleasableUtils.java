@@ -46,10 +46,10 @@ public class ReleasableUtils
 	{
 		for( Object object : objects )
 		{
-			if( object instanceof Iterable )
+			if( object instanceof Iterable && !( object instanceof Releasable ) )
 			{
 				for( Object child : ImmutableSet.copyOf( ( Iterable<?> )object ) )
-					release( child );
+					releaseAll( child );
 			}
 			release( object );
 		}

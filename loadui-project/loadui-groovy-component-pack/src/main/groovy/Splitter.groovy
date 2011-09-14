@@ -23,7 +23,6 @@
  * @nonBlocking true
  */
 
-import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.util.ReleasableUtils
 
 //Here to support Splitters created in loadUI 1.0, remove in the future:
@@ -37,7 +36,7 @@ resetValues = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
 totalReset = 0
 
 for( i in 0..outgoingTerminalList.size() - 1 ) {
-	countDisplays.put( i, new DelayedFormattedString( '%d', 500, value { counters["output_$i"].get() - resetValues[i] } ) )?.release()
+	countDisplays[i] = { counters["output_$i"].get() - resetValues[i] }
 }
 
 createProperty( 'type', String, "Round-Robin" )
@@ -46,7 +45,7 @@ createProperty( 'numOutputs', Integer, 1 ) { outputCount ->
 		createOutgoing()
 		def i = outgoingTerminalList.size() - 1
 		
-		countDisplays.put(i, new DelayedFormattedString( '%d', 500, value { counters["output_$i"].get() - resetValues[i] } ) )?.release()
+		countDisplays[i] = { counters["output_$i"].get() - resetValues[i] }
 	}
 	while( outgoingTerminalList.size() > outputCount ) {
 		def i = outgoingTerminalList.size() - 1
@@ -58,11 +57,6 @@ createProperty( 'numOutputs', Integer, 1 ) { outputCount ->
 
 random = new Random()
 lastOutput = -1
-
-totalDisplay = new DelayedFormattedString( '%d', 500, value { total.get() - totalReset } )
-compactDisplay = new DelayedFormattedString( '%s', 500, value {
-	(0..outgoingTerminalList.size() - 1).collect( { counters["output_$it"].get() - resetValues[it] } ).join( " " )
-} )
 
 onMessage = { incoming, outgoing, message ->
 	if( type.value == "Round-Robin" ) lastOutput = (lastOutput + 1) % numOutputs.value
@@ -78,10 +72,6 @@ onAction( "RESET" ) {
 	totalReset = 0
 }
 
-onRelease = {
-	 ReleasableUtils.releaseAll( totalDisplay, compactDisplay, countDisplays.values() )
-	 }
-
 refreshLayout = {
 	layout ( layout:'gap 10 5' ) {
 		node( widget: 'selectorWidget', label: "Type", labels: [ "Round-Robin", "Random" ], default: type.value, selected: type )
@@ -90,7 +80,7 @@ refreshLayout = {
 		separator( vertical: true )
 		box( layout: 'wrap, ins 0' ) {
 			box( widget: 'display',  constraints: 'w 100!' ) {
-				node( label: 'Count', fString: totalDisplay, constraints: 'wrap' )
+				node( label: 'Count', content: { total.get() - totalReset }, constraints: 'wrap' )
 			}
 			action( label:'Clear', action: {
 				for( i in 0..9 ) resetValues[i] = counters["output_$i"].get()
@@ -103,7 +93,7 @@ refreshLayout = {
 			for( i in 0..numOutputs.value - 1 ) {
 				if( i != 0 ) separator( vertical: true )
 				box( widget: 'display', layout: 'ins -5, center', constraints: "w 32!, h 24!, gap "+gap+" "+gap ) {
-					node( fString: countDisplays[i], constraints: 'pad -6 -4' )
+					node( content: countDisplays[i], constraints: 'pad -6 -4' )
 				}
 			}
 		}
@@ -112,7 +102,7 @@ refreshLayout = {
 
 compactLayout {
 	box( widget: 'display', layout: 'wrap, fillx', constraints: 'growx' ) {
-		node( label: 'Count', fString: totalDisplay )
-		node( label: 'Distribution', fString: compactDisplay )
+		node( label: 'Count', content: { total.get() - totalReset } )
+		node( label: 'Distribution', content: { (0..outgoingTerminalList.size() - 1).collect( { counters["output_$it"].get() - resetValues[it] } ).join( " " ) } )
 	}
 }

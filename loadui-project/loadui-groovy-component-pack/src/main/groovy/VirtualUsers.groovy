@@ -26,7 +26,6 @@
 
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.api.events.ActionEvent
-import com.eviware.loadui.util.layout.DelayedFormattedString
 
 //Properties
 createProperty( 'numUsers', Long, 20 )
@@ -37,14 +36,10 @@ baseRate = numUsers.value/interval.value
 
 defaultDelay = 1000/baseRate
 
-display = new DelayedFormattedString( '%d / Sec', 200, baseRate.longValue() )
-
 timer = new Timer(true)
 random = new Random()
 
 future = null
-
-onRelease = {  display.release() }
 
 schedule = {
 	if (defaultDelay > 0 && stateProperty.value) {
@@ -70,7 +65,6 @@ addEventListener( PropertyEvent ) { event ->
 			defaultDelay = 1000/baseRate
 		else
 			defaultDelay = 0
-		display.setArgs( baseRate.longValue() )
 		schedule()
 	}
 }
@@ -91,14 +85,14 @@ layout  {
 	property( property:isRandomised, label:'Random' )
 	separator( vertical:true )
 	box( widget:'display' ) {
-		node( label:'Rate', fString:display , constraints:"w 60!")
+		node( label:'Rate', content: { "${baseRate.longValue()} / Sec" } , constraints:"w 60!")
 	}
 }
 
 //CompactLayout
 compactLayout  {
 	box( widget:'display' ) {
-		node( label:'Rate', fString:display )
+		node( label:'Rate', content: { "${baseRate.longValue()} / Sec" } )
 	}
 }
 

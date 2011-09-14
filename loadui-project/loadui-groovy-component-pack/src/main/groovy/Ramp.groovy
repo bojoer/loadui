@@ -24,7 +24,6 @@
  */
 
 import com.eviware.loadui.api.events.PropertyEvent
-import com.eviware.loadui.util.layout.DelayedFormattedString
 
 //Properties
 createProperty( 'start', Long, 0 )
@@ -42,11 +41,8 @@ targetReached = false
 
 timer = new Timer(true)
 
-display = new DelayedFormattedString( '%d / %s %s', 500, currentRate.longValue(), unit.value, direction )
 scheduled = false
 future = null
-
-onRelease = {  display.release() }
 
 reset = {
 	currentDelay = 0
@@ -73,7 +69,6 @@ reset = {
 		targetReached = true
 		currentRate = end.value()
 	}
-	display.setArgs( currentRate.longValue(), unit.value, direction )
 	scheduled = false
 }
 
@@ -105,7 +100,6 @@ schedule = {
 		
 		
 		future = timer.runAfter(currentDelay.intValue()) {
-			display.setArgs( currentRate.longValue(), unit.value, direction )
 			trigger()
 			scheduled = false
 			schedule()
@@ -135,8 +129,6 @@ addEventListener( PropertyEvent ) { event ->
 		if (start.value > end.value)
 			direction = "down"
 		
-		display.setArgs( currentRate.longValue(), unit.value, direction )
-		
 		if (start.value == end.value)
 			direction = "none"
 		begin()
@@ -164,7 +156,7 @@ layout  {
 	separator( vertical:true )
 	box ( layout:"wrap, ins 0" ) {
 		box( widget:'display' ) {
-			node( label:'Rate', fString:display, constraints:"w 60!" )
+			node( label:'Rate', content: { "${currentRate.longValue()} / $unit.value $direction" }, constraints:"w 60!" )
 		}
 		action( label:"Restart", action: { reset(); begin(); }, constraints:"align right" )
 	}
@@ -173,7 +165,7 @@ layout  {
 //Compact Layout
 compactLayout  {
 	box( widget:'display' ) {
-		node( label:'Rate', fString:display )
+		node( label:'Rate', content: { "${currentRate.longValue()} / $unit.value $direction" } )
 	}
 }
 

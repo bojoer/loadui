@@ -25,7 +25,6 @@
 
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.api.events.ActionEvent
-import com.eviware.loadui.util.layout.DelayedFormattedString
 import java.util.concurrent.TimeUnit
 
 def FUNCTIONS = [
@@ -77,10 +76,6 @@ schedule = {
 	}
 }
 
-rateDisplay = new DelayedFormattedString( '%d / %s', 500, value { currentRate }, unit )
-
-onRelease = { rateDisplay.release() }
-
 onAction("START") { initialize() }
 onAction("STOP") { future?.cancel( true ) ; pollFuture?.cancel( true ) }
 onAction("RESET") { startTime = System.currentTimeMillis() }
@@ -98,7 +93,7 @@ layout  {
 	separator( vertical: true )
 	box ( layout: "wrap, ins 0" ) {
 		box( widget: 'display' ) {
-			node( label: 'Rate', fString:rateDisplay, constraints: "w 60!" )
+			node( label: 'Rate', content: { "$currentRate / $unit.value" }, constraints: "w 60!" )
 		}
 		action( label: "Restart", action: { startTime = System.currentTimeMillis() }, constraints: "align right" )
 	}
@@ -106,7 +101,7 @@ layout  {
 
 compactLayout  {
 	box( widget:'display' ) {
-		node( label:'Rate', fString:rateDisplay )
+		node( label:'Rate', content: { "$currentRate / $unit.value" } )
 	}
 }
 

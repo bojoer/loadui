@@ -25,7 +25,6 @@
  */
 
 import com.eviware.loadui.api.component.categories.RunnerCategory
-import com.eviware.loadui.util.layout.DelayedFormattedString
 
 import java.util.concurrent.TimeUnit
 
@@ -41,11 +40,10 @@ future = null
 createProperty( 'load', Long, 10 ) { value ->
 	if( !doDelay && count < value ) {
 		trigger()
-		loadDisplay.args = count + 1
+		loadDisplay = count + 1
 	}
 }
 createProperty( 'interval', Long, 0 ) { value ->
-	intervalDisplay.args = value
 	doDelay = stateProperty.value && value > 0
 	schedule()
 }
@@ -58,13 +56,7 @@ onReplace( stateProperty ) { value ->
 
 doDelay = stateProperty.value && interval.value > 0
 
-loadDisplay = new DelayedFormattedString( '%d', 200, 0 )
-intervalDisplay = new DelayedFormattedString( '%d ms', 200, interval.value )
-
-onRelease = {
-	loadDisplay.release()
-	intervalDisplay.release()
-}
+loadDisplay = 0
 
 schedule = {
 	future?.cancel( true )
@@ -81,7 +73,7 @@ onMessage = { outgoing, incoming, message ->
 			currentCount++
 		}
 		
-		loadDisplay.args = currentCount
+		loadDisplay = currentCount
 	}
 }
 
@@ -104,16 +96,16 @@ layout  {
 	property( property:interval, label:'Min. Delay', min:0 ) 
 	separator( vertical:true )
 	box( widget:'display' ) {
-		node( label:'Load', fString:loadDisplay, constraints:"w 60!" )
-		node( label:'Min. Delay', fString:intervalDisplay, constraints:"w 60!" )
+		node( label:'Load', content: { loadDisplay }, constraints:"w 60!" )
+		node( label:'Min. Delay', content: { "$interval.value ms" }, constraints:"w 60!" )
 	}
 }
 
 //Compact Layout
 compactLayout  {
 	box( widget:'display' ) {
-		node( label:'Load', fString:loadDisplay )
-		node( label:'Min. Delay', fString:intervalDisplay )
+		node( label:'Load', content: { loadDisplay } )
+		node( label:'Min. Delay', content: { "$interval.value ms" } )
 	}
 }
 

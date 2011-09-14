@@ -255,10 +255,11 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		if( behavior != null )
 			behavior.onRelease();
 
-		ReleasableUtils.releaseAll( terminalHolderSupport, statisticHolderSupport );
+		ReleasableUtils.releaseAll( terminalHolderSupport, statisticHolderSupport, layout, compactLayout, settingsTabs );
 
 		settingsTabs.clear();
 		layout = null;
+		compactLayout = null;
 
 		super.release();
 
@@ -695,6 +696,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		@Override
 		public void setLayout( LayoutComponent layout )
 		{
+			ReleasableUtils.releaseAll( ComponentItemImpl.this.layout );
 			ComponentItemImpl.this.layout = layout;
 			refreshLayout();
 		}
@@ -708,6 +710,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		@Override
 		public void setCompactLayout( LayoutComponent layout )
 		{
+			ReleasableUtils.releaseAll( ComponentItemImpl.this.compactLayout );
 			ComponentItemImpl.this.compactLayout = layout;
 		}
 
@@ -732,6 +735,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		@Override
 		public void clearSettingsTabs()
 		{
+			ReleasableUtils.releaseAll( ComponentItemImpl.this.settingsTabs );
 			ComponentItemImpl.this.settingsTabs.clear();
 		}
 

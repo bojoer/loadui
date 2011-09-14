@@ -26,7 +26,6 @@
 import com.eviware.loadui.api.events.PropertyEvent
  
 import java.util.concurrent.TimeUnit
-import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.api.model.SceneItem
 
 final GAUSSIAN = 'Gaussian'
@@ -36,8 +35,8 @@ final EXPONENTIAL = 'Exponential'
 random = new Random()
 waitingCount = 0
 
-display = new DelayedFormattedString( '%d ms', 500, 0 )
-waitingDisplay = new DelayedFormattedString( '%d', 500, value { waitingCount } )
+displayNA = false
+displayCount = 0
 
 createOutgoing( 'output' )
 output.label = 'Delayed messages'
@@ -52,15 +51,7 @@ createProperty('randomDelay', Integer, 0)
 
 
 workspace = canvas.project?.workspace
-fixDisplay = {
-	if( canvas instanceof SceneItem && !workspace?.localMode ) {
-		display.format = 'n/a'
-		waitingDisplay.format = 'n/a'
-	} else {
-		display.format = '%d ms'
-		waitingDisplay.format = '%d'
-	}
-} 
+fixDisplay = { displayNA = canvas instanceof SceneItem && !workspace?.localMode }
 
 def workspaceListener = null
 if( workspace != null ) {
@@ -86,13 +77,11 @@ onMessage = { incoming, outgoing, message ->
 	schedule( {
 		send( output, message )
 		waitingCount--
-		display.args = delayTime
+		displayCount = delayTime
 	}, delayTime, TimeUnit.MILLISECONDS )
  }
  
 onRelease = {
-	display.release()
-	waitingDisplay.release()
 	workspace?.removeEventListener( PropertyEvent, workspaceListener )
 }
 
@@ -102,7 +91,7 @@ onAction( "COMPLETE" ) {
 }
 
 onAction( "RESET" ) {
-	display.args = 0
+	displayCount = 0
 	waitingCount = 0
 	cancelTasks()
 }
@@ -115,14 +104,14 @@ layout {
 	property( property: randomDelay, label:'Random\n(%)', min:0, max: 100 )
 	separator( vertical:true )
 	box( widget:'display' ) {
-		node( label:'Delay ', fString:display, constraints:'w 60!' )
-		node( label:'Waiting ', fString:waitingDisplay, constraints:'w 50!' )
+		node( label:'Delay ', content: { displayNA ? 'n/a' : "$displayCount ms" }, constraints:'w 60!' )
+		node( label:'Waiting ', content: { displayNA ? 'n/a' : waitingCount }, constraints:'w 50!' )
 	}
 }
  
 compactLayout {
 	box( widget:'display' ) {
-		node( label:'Delay ', fString:display, constraints:'w 60!' )
-		node( label:'Waiting ', fString:waitingDisplay, constraints:'w 50!' )
+		node( label:'Delay ', content: { displayNA ? 'n/a' : "$displayCount ms" }, constraints:'w 60!' )
+		node( label:'Waiting ', content: { displayNA ? 'n/a' : waitingCount }, constraints:'w 50!' )
 	}
 }

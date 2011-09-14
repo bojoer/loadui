@@ -32,7 +32,6 @@ import java.io.FileWriter
 import java.io.FileOutputStream
 import java.io.FileInputStream
 import com.eviware.loadui.api.events.ActionEvent
-import com.eviware.loadui.util.layout.DelayedFormattedString
 import javax.swing.event.TableModelListener
 import javax.swing.event.TableModelEvent
 import java.text.SimpleDateFormat
@@ -77,9 +76,6 @@ updateProperties = {
 	follow.value = myTableModel.follow
 	enabledInDistMode.value = myTableModel.enabledInDistMode
 }
-
-rowsDisplay = new DelayedFormattedString( '%d', 500, value { myTableModel.rowCount } )
-fileDisplay = new DelayedFormattedString( '%s', 500, value { saveFileName ?: '-' } )
 
 onMessage = { o, i, m ->
 	if( controller && i == remoteTerminal ) {
@@ -130,11 +126,6 @@ output = { message ->
 		// on agent and enabled, so send message to controller
 		send(controllerTerminal, message)
 	}
-}
-
-onRelease = {
-	rowsDisplay.release()
-	fileDisplay.release()
 }
 
 onAction( "START" ) { buildFileName() }
@@ -232,8 +223,8 @@ layout {
 
 compactLayout {
 	box( widget:'display' ) {
-		node( label: 'Rows', fString:rowsDisplay )
-		node( label: 'Output File', fString:fileDisplay )
+		node( label: 'Rows', content: { myTableModel.rowCount } )
+		node( label: 'Output File', content: { saveFileName ?: '-' } )
 	}
 }
 

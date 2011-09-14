@@ -40,7 +40,6 @@ import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledException
 import com.eviware.loadui.impl.component.ActivityStrategies
-import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.util.ReleasableUtils
 
 import java.util.concurrent.TimeUnit
@@ -179,13 +178,6 @@ sampleResetValue = 0
 discardResetValue = 0
 failedResetValue = 0
 
-displayRequests = new DelayedFormattedString( '%d', 500, value { requestCounter.get() - requestResetValue } )
-displayRunning = new DelayedFormattedString( '%d', 500, value { currentlyRunning } )
-displayTotal = new DelayedFormattedString( '%d', 500,  value { sampleCounter.get() - sampleResetValue } )
-displayQueue = new DelayedFormattedString( '%d', 500, value { queueSize } )
-displayDiscarded = new DelayedFormattedString( '%d', 500,  value { discardCounter.get() - discardResetValue } )
-displayFailed = new DelayedFormattedString( '%d', 500,  value { failureCounter.get() - failedResetValue } )
-
 sample = { message, sampleId ->
 	def uri = message['url'] ?: url.value
 	if( uri ) {
@@ -272,10 +264,6 @@ onCancel = {
 	return numberOfRunning
 }
 
-onRelease = {
-	ReleasableUtils.releaseAll( displayRunning, displayTotal, displayQueue, displayDiscarded, displayFailed, displayRequests )
-}
-
 onAction( "RESET" ) {
 	requestResetValue = 0
 	sampleResetValue = 0
@@ -307,12 +295,12 @@ layout {
 	separator(vertical:true)
 	box( layout:'wrap, ins 0' ){
 		box( widget:'display', layout:'wrap 3, align right' ) {
-			node( label:'Requests', fString:displayRequests, constraints:'w 50!' )
-			node( label:'Running', fString:displayRunning, constraints:'w 50!' )
-			node( label:'Completed', fString:displayTotal, constraints:'w 60!' )
-			node( label:'Queued', fString:displayQueue, constraints:'w 50!' )
-			node( label:'Discarded', fString:displayDiscarded, constraints:'w 50!' )
-			node( label:'Failed', fString:displayFailed, constraints:'w 60!' )
+			node( label:'Requests', content: { requestCounter.get() - requestResetValue }, constraints:'w 50!' )
+			node( label:'Running', content: { currentlyRunning }, constraints:'w 50!' )
+			node( label:'Completed', content: { sampleCounter.get() - sampleResetValue }, constraints:'w 60!' )
+			node( label:'Queued', content: { queueSize }, constraints:'w 50!' )
+			node( label:'Discarded', content: { discardCounter.get() - discardResetValue }, constraints:'w 50!' )
+			node( label:'Failed', content: { failureCounter.get() - failedResetValue }, constraints:'w 60!' )
 		}
 		action( label:'Reset', action: {
 			requestResetValue = requestCounter.get()
@@ -327,12 +315,12 @@ layout {
 //Compact Layout
 compactLayout {
 	box( widget:'display', layout:'wrap 3, align right' ) {
-		node( label:'Requests', fString:displayRequests, constraints:'w 50!' )
-		node( label:'Running', fString:displayRunning, constraints:'w 50!' )
-		node( label:'Completed', fString:displayTotal, constraints:'w 60!' )
-		node( label:'Queued', fString:displayQueue, constraints:'w 50!' )
-		node( label:'Discarded', fString:displayDiscarded, constraints:'w 50!' )
-		node( label:'Failed', fString:displayFailed, constraints:'w 60!' )
+		node( label:'Requests', content: { requestCounter.get() - requestResetValue }, constraints:'w 50!' )
+		node( label:'Running', content: { currentlyRunning }, constraints:'w 50!' )
+		node( label:'Completed', content: { sampleCounter.get() - sampleResetValue }, constraints:'w 60!' )
+		node( label:'Queued', content: { queueSize }, constraints:'w 50!' )
+		node( label:'Discarded', content: { discardCounter.get() - discardResetValue }, constraints:'w 50!' )
+		node( label:'Failed', content: { failureCounter.get() - failedResetValue }, constraints:'w 60!' )
 	}
 }
 
@@ -360,14 +348,12 @@ settings( label: "Proxy" ) {
 
 scheduleAtFixedRate( {
 	def message = newMessage()
-	Integer.with {
-		message["Requests"] = parseInt( displayRequests.currentValue )
-		message["Running"] = parseInt( displayRunning.currentValue )
-		message["Discarded"] = parseInt( displayDiscarded.currentValue )
-		message["Failed"] = parseInt( displayFailed.currentValue )
-		message["Queued"] = parseInt( displayQueue.currentValue )
-		message["Completed"] = parseInt( displayTotal.currentValue )
-	}
+	message["Requests"] = requestCounter.get() - requestResetValue as int
+	message["Running"] = currentlyRunning as int
+	message["Discarded"] = discardCounter.get() - discardResetValue as int
+	message["Failed"] = failureCounter.get() - failedResetValue as int
+	message["Queued"] = queueSize as int
+	message["Completed"] = sampleCounter.get() - sampleResetValue as int
 	send( statisticsOutput, message )
 }, 1, 1, TimeUnit.SECONDS )
 

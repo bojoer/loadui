@@ -16,12 +16,18 @@
 package com.eviware.loadui.util.layout;
 
 import java.util.Observable;
+import java.util.concurrent.Callable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.serialization.Value;
 import com.eviware.loadui.api.traits.Releasable;
 
 public class FormattedString extends Observable implements Releasable
 {
+	protected static final Logger log = LoggerFactory.getLogger( FormattedString.class );
+
 	private String format;
 	private Object[] args = new Object[0];
 	private String value;
@@ -51,7 +57,21 @@ public class FormattedString extends Observable implements Releasable
 		{
 			Object arg = args[i];
 			if( arg instanceof Value<?> )
+			{
 				values[i] = ( ( Value<?> )arg ).getValue();
+			}
+			else if( arg instanceof Callable )
+			{
+				try
+				{
+					values[i] = ( ( Callable<?> )arg ).call();
+				}
+				catch( Exception e )
+				{
+					values[i] = null;
+					log.error( "Error evaluating argument[" + i + "] in " + format, e );
+				}
+			}
 			else
 				values[i] = arg;
 		}

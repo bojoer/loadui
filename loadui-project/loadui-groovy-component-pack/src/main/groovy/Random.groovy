@@ -24,8 +24,6 @@
  */
 
 import com.eviware.loadui.api.events.PropertyEvent
-import com.eviware.loadui.util.layout.DelayedFormattedString
-
 import java.util.concurrent.TimeUnit
 
 //Properties
@@ -42,14 +40,8 @@ if ( unit.value == "Hour" )
 defaultDelay = msPerUnit/rate.value
 currentDelay = 0
 
-display = new DelayedFormattedString( '%d / %s', 200, rate.value, unit.value )
-randomDisplay = new DelayedFormattedString( '%d %s', 200, factor.value, "%" )
-
 random = new Random()
-
 timer = new Timer(true)
-
-onRelease = {  display.release() }
 
 enqueue = {
 	if (rate.value > 0 && stateProperty.value) {
@@ -91,8 +83,6 @@ addEventListener( PropertyEvent ) { event ->
 		}
 		if (rate.value > 0)
 			defaultDelay = msPerUnit/rate.value
-		display.setArgs(rate.value, unit.value)
-		randomDisplay.setArgs(factor.value, "%")
 		enqueue()
 	}
 }
@@ -120,16 +110,16 @@ layout {
 	property( property:factor, label:'Random\nFactor', min: 0, max: 100, step: 1 )
 	separator( vertical:true )
 	box( widget:'display', layout:'align center') {
-		node( label:'Current rate', fString:display )
-		node( label:'Random', fString:randomDisplay )
+		node( label:'Current rate', content: { "$rate.value / $unit.value" } )
+		node( label:'Random', content: { "$factor.value %" } )
 	}
 }
 
 //Compact Layout
 compactLayout {
 	box( widget: 'display', layout: 'align center' ) {
-		node( label: 'Current rate', fString: display )
-		node( label: 'Random', fString: randomDisplay )
+		node( label: 'Current rate', content: { "$rate.value / $unit.value" } )
+		node( label: 'Random', content: { "$factor.value %" } )
 	}
 }
 

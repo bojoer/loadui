@@ -23,7 +23,6 @@
  * @help http://loadui.org/Custom-Components/process-runner.html
  */
 
-import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.util.ReleasableUtils
 import com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledException
 
@@ -54,17 +53,6 @@ sampleResetValue = 0
 discardResetValue = 0
 failedResetValue = 0
 runButton = null
-
-displayRequests = new DelayedFormattedString( '%d', 500, value { requestCounter.get() - requestResetValue } )
-displayRunning = new DelayedFormattedString( '%d', 500, value {
-currentlyRunning } )
-displayTotal = new DelayedFormattedString( '%d', 500,  value {
-sampleCounter.get() - sampleResetValue } )
-displayQueue = new DelayedFormattedString( '%d', 500, value { queueSize } )
-displayDiscarded = new DelayedFormattedString( '%d', 500,  value {
-discardCounter.get() - discardResetValue } )
-displayFailed = new DelayedFormattedString( '%d', 500,  value {
-failureCounter.get() - failedResetValue } )
 
 parseCommand = {
 	if( !command.value || command.value == "" )
@@ -114,7 +102,6 @@ onCancel = {
 }
 
 onRelease = {
-	ReleasableUtils.releaseAll( displayRunning, displayTotal, displayQueue, displayDiscarded, displayFailed, displayRequests)
 	shell.resetLoadedClasses()
 }
 
@@ -136,12 +123,12 @@ layout {
 	separator( vertical: true )
 	box( layout: 'wrap, ins 0' ){
 		box( widget: 'display', layout: 'wrap 3, align right', column: '[50|50|60]' ) {
-			 node( label: 'Requests', fString: displayRequests )
-			 node( label: 'Running', fString: displayRunning )
-			 node( label: 'Completed', fString: displayTotal )
-			 node( label: 'Queued', fString: displayQueue )
-			 node( label: 'Discarded', fString: displayDiscarded )
-			 node( label: 'Failed', fString: displayFailed )
+			 node( label: 'Requests', content: { requestCounter.get() - requestResetValue } )
+			 node( label: 'Running', content: { currentlyRunning } )
+			 node( label: 'Completed', content: { sampleCounter.get() - sampleResetValue } )
+			 node( label: 'Queued', content: { queueSize } )
+			 node( label: 'Discarded', content: { discardCounter.get() - discardResetValue } )
+			 node( label: 'Failed', content: { failureCounter.get() - failedResetValue } )
 		}
 		action( label: 'Reset', action: {
 			 requestResetValue = requestCounter.get()
@@ -155,11 +142,11 @@ layout {
 
 compactLayout {
 	box( widget: 'display', layout: 'wrap 3, align right', column: '[50|50|60]' ) {
-		node( label: 'Requests', fString: displayRequests )
-		node( label: 'Running', fString: displayRunning )
-		node( label: 'Completed', fString: displayTotal )
-		node( label: 'Queued', fString: displayQueue )
-		node( label: 'Discarded', fString: displayDiscarded )
-		node( label: 'Failed', fString: displayFailed )
+		node( label: 'Requests', content: { requestCounter.get() - requestResetValue } )
+		node( label: 'Running', content: { currentlyRunning } )
+		node( label: 'Completed', content: { sampleCounter.get() - sampleResetValue } )
+		node( label: 'Queued', content: { queueSize } )
+		node( label: 'Discarded', content: { discardCounter.get() - discardResetValue } )
+		node( label: 'Failed', content: { failureCounter.get() - failedResetValue } )
 	}
 }

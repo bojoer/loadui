@@ -25,7 +25,6 @@
 
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.impl.layout.OptionsProviderImpl
-import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.util.statistics.CounterStatisticSupport
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 
@@ -85,12 +84,6 @@ OptionsProviderImpl provider = new OptionsProviderImpl([])
 
 assertedResetValue = 0
 failedResetValue = 0
-
-assertedDisplay = new DelayedFormattedString( '%d', 500, value { totalCounter.get()-assertedResetValue } )
-failedDisplay = new DelayedFormattedString( '%d', 500, value { assertionFailureCounter.get()-failedResetValue } )
-valueDisplay = new DelayedFormattedString( '%s', 500, value { valueName.value } )
-minDisplay = new DelayedFormattedString( '%d', 500, value { min.value } )
-maxDisplay = new DelayedFormattedString( '%d', 500, value { max.value } )
 
 onConnect = { outgoing, incoming ->
 	if( incoming == inputTerminal ){
@@ -178,7 +171,7 @@ raiseFailure = {message, timestamp, value ->
 }
 
 onRelease = { 
-	ReleasableUtils.releaseAll( counterStatisticSupport, failedDisplay, assertedDisplay )
+	ReleasableUtils.releaseAll( counterStatisticSupport )
 }
 
 resetComponent = {
@@ -234,10 +227,10 @@ def redraw() {
 	//	separator( vertical: true )
 		box(layout:'wrap, ins 0') {
 			box( widget:'display', layout:'wrap 2') {
-				node( label:'Asserted', fString: assertedDisplay, constraints:'w 50!' )
-				node( label:'Failed', fString: failedDisplay, constraints:'w 50!' )
-				node( label:'Min', fString: minDisplay, constraints:'w 50!' )
-				node( label:'Max', fString: maxDisplay, constraints:'w 50!' )
+				node( label:'Asserted', content: { totalCounter.get()-assertedResetValue }, constraints:'w 50!' )
+				node( label:'Failed', content: { assertionFailureCounter.get()-failedResetValue }, constraints:'w 50!' )
+				node( label:'Min', content: { min.value }, constraints:'w 50!' )
+				node( label:'Max', content: { max.value }, constraints:'w 50!' )
 			}
 			action( 
 				label: 'Reset', 
@@ -257,11 +250,11 @@ redraw()
 //Compact Layout
 compactLayout {
 	box( widget:'display' ) {
-		node( label:'Value', fString: valueDisplay, constraints:'w 60!' )
-		node( label:'Min', fString: minDisplay, constraints:'w 60!' )
-		node( label:'Max', fString: maxDisplay, constraints:'w 60!' )
-		node( label:'Asserted', fString: assertedDisplay )
-		node( label:'Failed', fString: failedDisplay )
+		node( label:'Value', content: { valueName.value }, constraints:'w 60!' )
+		node( label:'Min', content: { min.value }, constraints:'w 60!' )
+		node( label:'Max', content: { max.value }, constraints:'w 60!' )
+		node( label:'Asserted', content: { totalCounter.get()-assertedResetValue } )
+		node( label:'Failed', content: { assertionFailureCounter.get()-failedResetValue } )
 	}
 }
 

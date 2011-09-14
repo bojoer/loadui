@@ -35,7 +35,6 @@ import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.util.layout.IntervalModel
 import com.eviware.loadui.util.ScheduledExecutor
 import com.eviware.loadui.util.FormattingUtils
-import com.eviware.loadui.util.layout.DelayedFormattedString
 import com.eviware.loadui.util.ReleasableUtils
 import org.quartz.Scheduler
 import org.quartz.CronTrigger
@@ -48,7 +47,6 @@ import org.quartz.JobDetail
 import java.util.Calendar
 import java.util.Date
 import org.quartz.listeners.JobListenerSupport
-import com.eviware.loadui.util.layout.DelayedFormattedString
 import java.text.SimpleDateFormat
 import com.eviware.loadui.impl.component.ActivityStrategies
 import com.eviware.loadui.util.layout.SchedulerModel
@@ -130,12 +128,6 @@ def maxDuration = 0;
 // create not initialized StdSchedulerFactory (no properties files supplied)
 // this factory always returns the same instance of scheduler (shared between components)
 def scheduler = new StdSchedulerFactory().getScheduler()
-
-
-dayDFString = new DelayedFormattedString( '%s', 1000, day )
-timeDFString = new DelayedFormattedString( '%s', 1000, value{ ssmmhh = time.value.split(" ") -> "${ssmmhh[2]}:${ssmmhh[1]}:${ssmmhh[0]}" } )
-durationDFSString = new DelayedFormattedString( '%s', 1000, value { FormattingUtils.formatTime( duration.value ) } )
-
 
 scheduler.addJobListener(new JobListenerSupport()
 {
@@ -316,10 +308,7 @@ unscheduleEndTrigger = {
 	catch(Exception e){}
 }
 
-onRelease = {
-	scheduler.shutdown()
-	ReleasableUtils.releaseAll( dayDFString, timeDFString, durationDFSString )
-}
+onRelease = { scheduler.shutdown() }
 
 layout {
 	node( widget: 'schedulerWidget', model: schedulerModel, constraints: 'span 5, gaptop 10' )
@@ -333,9 +322,9 @@ layout {
 
 compactLayout {
 	box( widget:'display' ) {
-		node( label:'Day', fString: dayDFString )
-		node( label:'Time', fString: timeDFString )
-		node( label:'Duration', fString: durationDFSString )
+		node( label:'Day', content: { day.value } )
+		node( label:'Time', content: { ssmmhh = time.value.split(" ") -> "${ssmmhh[2]}:${ssmmhh[1]}:${ssmmhh[0]}" } )
+		node( label:'Duration', content: { FormattingUtils.formatTime( duration.value ) } )
 	}
 }
 

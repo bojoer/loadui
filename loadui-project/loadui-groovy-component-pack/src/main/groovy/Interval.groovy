@@ -38,7 +38,6 @@ import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.events.BaseEvent
 import com.eviware.loadui.api.events.PropertyEvent
 import com.eviware.loadui.util.layout.IntervalModel
-import com.eviware.loadui.util.layout.DelayedFormattedString
 
 import java.util.concurrent.TimeUnit
 
@@ -175,8 +174,8 @@ layout {
 
 compactLayout {
 	box( widget:'display' ) {
-		node( label:'Start At', fString:new DelayedFormattedString( '%d %s', 1000, startAt, unit ) )
-		node( label:'Duration', fString:new DelayedFormattedString( '%d %s', 1000, duration, unit ) )
+		node( label:'Start At', content: { "$startAt $unit" } )
+		node( label:'Duration', content: { "$duration $unit" } )
 	}
 }
 

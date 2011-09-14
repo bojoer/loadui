@@ -25,14 +25,12 @@
  */
 
 import com.eviware.loadui.api.events.PropertyEvent
-import com.eviware.loadui.util.layout.DelayedFormattedString
 
 import java.util.concurrent.TimeUnit
 
 //Properties
 createProperty( 'rate', Long, 10 ) { value ->
 	delay = Math.max( 1, (long)(milisecondsPerUnit/value) )
-	display.setArgs( value, unit.value )
 	schedule()
 }
 createProperty( 'unit', String, 'Sec' ) { value ->
@@ -42,7 +40,6 @@ createProperty( 'unit', String, 'Sec' ) { value ->
 		milisecondsPerUnit = 60000000
 	else if ( value == "Hour" )
 		milisecondsPerUnit = 3600000000
-	display.setArgs( rate.value, value )
 	schedule()
 }
 onReplace( stateProperty ) { value ->
@@ -55,8 +52,6 @@ createProperty( 'burstSize', Long, 1 )
 milisecondsPerUnit = 1000000				
 delay = milisecondsPerUnit/rate.value
 
-display = new DelayedFormattedString( '%d / %s', 200, rate.value, unit.value )
-
 triggerBurst = {
 	for( i in 1..burstSize.value )
 	{
@@ -64,9 +59,6 @@ triggerBurst = {
 	}
 }
 
-onRelease = { 
-	display.release()
-}
 future = null
 schedule = {
 	if (stateProperty.value) {
@@ -93,7 +85,6 @@ addEventListener( PropertyEvent ) { event ->
 			delay = milisecondsPerUnit/rate.value
 			if ( delay < 1 )
 				delay = 1
-			display.setArgs( rate.value, unit.value )
 			schedule()
 		}
 	}
@@ -110,14 +101,14 @@ layout {
 	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
 	separator( vertical:true )
 	box( widget:'display' ) {
-		node( label:'Rate', fString:display, constraints:'wmin 75' )
+		node( label:'Rate', content: { "$rate.value / $unit.value" }, constraints:'wmin 75' )
 	}
 }
 
 //Compact Layout
 compactLayout {
 	box( widget:'display' ) {
-		node( label:'Rate', fString:display )
+		node( label:'Rate', content: { "$rate.value / $unit.value" } )
 	}
 }
 
