@@ -78,13 +78,9 @@ onAction( "RESET" ) {
 	totalReset = 0
 }
 
-<<<<<<< .mine
 onRelease = {
 	 ReleasableUtils.releaseAll( totalDisplay, compactDisplay, countDisplays.values() )
 	 }
-=======
-onRelease = { ReleasableUtils.releaseAll( totalDisplay, compactDisplay, countDisplays.values ) }
->>>>>>> .r6888
 
 refreshLayout = {
 	layout ( layout:'gap 10 5' ) {
