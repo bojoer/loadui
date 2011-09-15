@@ -327,8 +327,8 @@ class  FileChooserFileFilter extends javax.swing.filechooser.FileFilter {
 class SegmentComparable extends Comparable {
 	var segment: LineSegment;
 	override function compareTo(other: Object): Integer {
-	    def name = segment.getStatistic().getStatisticVariable().getStatisticHolder().getLabel();
-	    def otherName = (other as SegmentComparable).segment.getStatistic().getStatisticVariable().getStatisticHolder().getLabel();  
+	    def name = segment.getStatisticHolder().getLabel();
+	    def otherName = (other as SegmentComparable).segment.getStatisticHolder().getLabel();  
 	    return name.compareTo(otherName);
 	}
 }

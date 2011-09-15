@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.statistics.Statistic;
+import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
 
@@ -26,12 +27,36 @@ public class SourceLineSegment implements LineSegment
 	}
 
 	@Override
+	public StatisticHolder getStatisticHolder()
+	{
+		return parent.getStatisticHolder();
+	}
+
+	@Override
+	public String getSource()
+	{
+		return source;
+	}
+
+	@Override
+	public String getVariableName()
+	{
+		return parent.getVariableName();
+	}
+
+	@Override
+	public String getStatisticName()
+	{
+		return parent.getStatisticName();
+	}
+
+	@Override
 	public Statistic<?> getStatistic()
 	{
 		if( statistic == null )
 		{
-			statistic = parent.getChart().getStatisticHolder().getStatisticVariable( parent.getVariableName() )
-					.getStatistic( parent.getStatisticName(), source );
+			statistic = getStatisticHolder().getStatisticVariable( parent.getVariableName() ).getStatistic(
+					parent.getStatisticName(), source );
 		}
 
 		return statistic;

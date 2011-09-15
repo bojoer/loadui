@@ -63,7 +63,7 @@ public class StylePanel extends Grid {
 				Label { styleClass: "header-row", text: "Width", layoutInfo: GridLayoutInfo { hspan: 2 } },
 				Label { styleClass: "header-row", text: "Stroke" }
 			] }, for( model in lineSegmentModels ) {
-				def statistic = model.getLineSegment().getStatistic();
+				def lineSegment = model.getLineSegment();
 				def slider = Slider {
 					min: 1
 					max: 9
@@ -99,13 +99,13 @@ public class StylePanel extends Grid {
 							model.setColor( FxUtils.getAwtColor( color ) );
 						}
 					}, Label {
-						text: ChartNamePrettifier.compactDataAndMetricName( statistic.getStatisticVariable().getLabel(), statistic.getName() )
-						layoutInfo: LayoutInfo { width: 70 }
+						text: ChartNamePrettifier.compactDataAndMetricName( lineSegment.getVariableName(), lineSegment.getStatisticName() )
+						layoutInfo: LayoutInfo { minWidth: 70 }
 					}, Label {
-						text: ChartNamePrettifier.nameForSource( statistic.getSource() )
-						layoutInfo: LayoutInfo { width: 60 }
+						text: ChartNamePrettifier.nameForSource( lineSegment.getSource() )
+						layoutInfo: LayoutInfo { minWidth: 60 }
 					}, Label {
-						text: statistic.getStatisticVariable().getStatisticHolder().getLabel()
+						text: lineSegment.getStatisticHolder().getLabel()
 						layoutInfo: LayoutInfo { width: 100, hshrink: Priority.ALWAYS }
 					},
 					Label {

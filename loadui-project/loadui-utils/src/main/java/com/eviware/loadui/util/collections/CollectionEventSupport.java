@@ -208,10 +208,8 @@ public class CollectionEventSupport<V, A> implements Releasable
 
 	/**
 	 * Removes all items from the collection, firing REMOVED events for each of
-	 * them. Optionally releases the items as well.
+	 * them.
 	 * 
-	 * @param releaseItems
-	 *           If true, removed items are released.
 	 */
 	public Set<V> removeAllItems()
 	{

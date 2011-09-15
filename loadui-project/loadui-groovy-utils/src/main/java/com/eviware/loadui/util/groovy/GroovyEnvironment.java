@@ -94,8 +94,10 @@ public class GroovyEnvironment implements Releasable
 				classLoader.loadDependency( parts[0], parts[1], parts[2] );
 		}
 
+		ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
 		try
 		{
+			Thread.currentThread().setContextClassLoader( classLoader );
 			Script groovyScript = shell.parse( script.getBody(), scriptName );
 			binding.setProperty( "log", log );
 			groovyScript.setMetaClass( new ScriptMetaClass( groovyScript.getMetaClass() ) );
@@ -106,6 +108,10 @@ public class GroovyEnvironment implements Releasable
 		catch( Exception e )
 		{
 			log.error( "Compilation of Groovy script failed: ", e );
+		}
+		finally
+		{
+			Thread.currentThread().setContextClassLoader( currentClassloader );
 		}
 	}
 

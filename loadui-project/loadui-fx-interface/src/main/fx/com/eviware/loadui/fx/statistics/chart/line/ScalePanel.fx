@@ -43,6 +43,7 @@ import com.eviware.loadui.fx.ui.form.fields.SelectField;
 
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.model.chart.LineChartView;
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.charting.ChartNamePrettifier;
 
@@ -68,7 +69,7 @@ public class ScalePanel extends Grid {
 				Label { styleClass: "header-row", text: "Statistic", layoutInfo: GridLayoutInfo { hspan: 3 } },
 				Label { styleClass: "header-row", text: "Scale" },
 				Label { styleClass: "header-row", text: "0", layoutInfo: LayoutInfo { width: 60 } },
-				Label { styleClass: "header-row", text: "1.0", hpos: HPos.CENTER, layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
+				Label { styleClass: "header-row", text: "1.0", hpos: HPos.CENTER, layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.SOMETIMES } },
 				Label { styleClass: "header-row", text: "1000000", layoutInfo: LayoutInfo { width: 60 } },
 			] }, for( lineModel in lineSegmentModels ) {
 				SegmentRow { lineModel: lineModel }
@@ -84,11 +85,11 @@ class SegmentRow extends GridRow {
 		lineModel.setScale( scale );
 	}
 	
-	var statistic:Statistic;
+	var lineSegment:LineChartView.LineSegment;
 	
 	public-init var lineModel:LineSegmentModel on replace {
 		scale = lineModel.getScale();
-		statistic = lineModel.getLineSegment().getStatistic();
+		lineSegment = lineModel.getLineSegment();
 	}
 	
 	def slider = Slider {
@@ -131,13 +132,13 @@ class SegmentRow extends GridRow {
 					fill: FxUtils.awtColorToFx( lineModel.getColor() )
 					stroke: null
 				}
-				text: ChartNamePrettifier.compactDataAndMetricName( statistic.getStatisticVariable().getLabel(), statistic.getName() )
-				layoutInfo: LayoutInfo { width: 70 }
+				text: ChartNamePrettifier.compactDataAndMetricName( lineSegment.getVariableName(), lineSegment.getStatisticName() )
+				layoutInfo: LayoutInfo { minWidth: 70 }
 			}, Label {
-				text: ChartNamePrettifier.nameForSource( statistic.getSource() )
-				layoutInfo: LayoutInfo { width: 60 }
+				text: ChartNamePrettifier.nameForSource( lineSegment.getSource() )
+				layoutInfo: LayoutInfo { minWidth: 60 }
 			}, Label {
-				text: statistic.getStatisticVariable().getStatisticHolder().getLabel()
+				text: lineSegment.getVariableName()
 				layoutInfo: LayoutInfo { width: 100, hshrink: Priority.ALWAYS }
 			},
 			selectField,

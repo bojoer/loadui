@@ -64,9 +64,9 @@ public class SegmentButton extends BaseNode, Resizable {
 	}
 	
 	public-init var model:LineSegmentModel on replace {
-		def statistic = model.getLineSegment().getStatistic();
-		def metricName:String = statistic.getName();
-		def dataName:String = statistic.getStatisticVariable().getLabel();
+		def lineSegment = model.getLineSegment();
+		def metricName:String = lineSegment.getStatisticName();
+		def dataName:String = lineSegment.getVariableName();
 		def singleColumnInCompactMode:Boolean = ChartNamePrettifier.compactNameIsAlone( dataName );
 		
 		lineColor = model.getColor();
@@ -75,7 +75,7 @@ public class SegmentButton extends BaseNode, Resizable {
 			spacing: 3
 			content: [
 				Label {
-					text: ChartNamePrettifier.nameForSource( statistic.getSource() )
+					text: ChartNamePrettifier.nameForSource( lineSegment.getSource() )
 					layoutInfo: LayoutInfo { width: 40 }
 					visible: bind not compactSegments
 					managed: bind not compactSegments
@@ -85,7 +85,7 @@ public class SegmentButton extends BaseNode, Resizable {
 					visible: bind not compactSegments
 					managed: bind not compactSegments
 				}, Label {
-					text: bind ModelUtils.getLabelHolder( statistic.getStatisticVariable().getStatisticHolder() ).label
+					text: bind ModelUtils.getLabelHolder( lineSegment.getStatisticHolder() ).label
 					layoutInfo: LayoutInfo { width: 75 }
 					visible: bind not compactSegments
 					managed: bind not compactSegments

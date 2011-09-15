@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import com.eviware.loadui.api.statistics.Statistic;
+import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
@@ -37,16 +38,25 @@ public class ChartLineSegment implements LineSegment.Removable
 		return chartView.getChart();
 	}
 
+	@Override
+	public StatisticHolder getStatisticHolder()
+	{
+		return chartView.getChart().getStatisticHolder();
+	}
+
+	@Override
 	public String getSource()
 	{
 		return source;
 	}
 
+	@Override
 	public String getVariableName()
 	{
 		return variableName;
 	}
 
+	@Override
 	public String getStatisticName()
 	{
 		return statisticName;

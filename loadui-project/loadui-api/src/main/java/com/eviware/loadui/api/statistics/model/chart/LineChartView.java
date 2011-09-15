@@ -20,6 +20,7 @@ import java.util.Collection;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.statistics.Statistic;
+import com.eviware.loadui.api.statistics.StatisticHolder;
 
 /**
  * ChartView which describes a Line chart.
@@ -48,6 +49,34 @@ public interface LineChartView extends ChartView, EventFirer
 	 */
 	public interface LineSegment extends AttributeHolder
 	{
+		/**
+		 * Returns the StatisticHolder of the LineSegment.
+		 * 
+		 * @return
+		 */
+		public StatisticHolder getStatisticHolder();
+
+		/**
+		 * Gets the Source.
+		 * 
+		 * @return
+		 */
+		public String getSource();
+
+		/**
+		 * Gets the name of the StatisticVariable.
+		 * 
+		 * @return
+		 */
+		public String getVariableName();
+
+		/**
+		 * Gets the name of the Statistic.
+		 * 
+		 * @return
+		 */
+		public String getStatisticName();
+
 		/**
 		 * Gets the backing Statistic.
 		 * 
