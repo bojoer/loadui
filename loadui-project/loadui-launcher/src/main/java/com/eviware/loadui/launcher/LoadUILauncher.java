@@ -287,20 +287,19 @@ public class LoadUILauncher
 			}
 		}
 
-		System.setProperty( "loadui.home", System.getProperty( "user.home", "." ) + File.separator + ".loadui" );
-		System.setProperty( "groovy.root", System.getProperty( "loadui.home" ) + File.separator + ".groovy" );
+		setDefaultSystemProperty( "loadui.home", System.getProperty( "user.home", "." ) + File.separator + ".loadui" );
+		setDefaultSystemProperty( "groovy.root", System.getProperty( "loadui.home" ) + File.separator + ".groovy" );
 
-		System.setProperty( "loadui.ssl.keyStore", System.getProperty( "loadui.home" ) + File.separator + "keystore.jks" );
-		System.setProperty( "loadui.ssl.trustStore", System.getProperty( "loadui.home" ) + File.separator
+		setDefaultSystemProperty( "loadui.ssl.keyStore", System.getProperty( "loadui.home" ) + File.separator
 				+ "keystore.jks" );
-		System.setProperty( "loadui.ssl.keyStorePassword", "password" );
-		System.setProperty( "loadui.ssl.trustStorePassword", "password" );
+		setDefaultSystemProperty( "loadui.ssl.trustStore", System.getProperty( "loadui.home" ) + File.separator
+				+ "keystore.jks" );
+		setDefaultSystemProperty( "loadui.ssl.keyStorePassword", "password" );
+		setDefaultSystemProperty( "loadui.ssl.trustStorePassword", "password" );
 
-		if( System.getProperty( "loadui.instance" ) == null )
-			System.setProperty( "loadui.instance", "controller" );
+		setDefaultSystemProperty( "loadui.instance", "controller" );
 
-		if( System.getProperty( "sun.java2d.noddraw" ) == null )
-			System.setProperty( "sun.java2d.noddraw", "true" );
+		setDefaultSystemProperty( "sun.java2d.noddraw", "true" );
 
 		File loaduiHome = new File( System.getProperty( "loadui.home" ) );
 		if( !loaduiHome.isDirectory() )
@@ -346,6 +345,14 @@ public class LoadUILauncher
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+
+	protected void setDefaultSystemProperty( String property, String value )
+	{
+		if( System.getProperty( property ) == null )
+		{
+			System.setProperty( property, value );
 		}
 	}
 
