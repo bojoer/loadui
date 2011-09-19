@@ -36,6 +36,9 @@ count = 0;
 
 future = null
 
+feedbackProviders = [:] as Map
+sampleCount.connections.each{ feedbackProviders.put( it.outputTerminal, 0 ) }
+
 //Properties
 createProperty( 'load', Long, 10 ) { value ->
 	if( !doDelay && count < value ) {
@@ -58,14 +61,20 @@ doDelay = stateProperty.value && interval.value > 0
 
 loadDisplay = 0
 
+latestAction = 'NONE'
+
 schedule = {
 	future?.cancel( true )
 	if( doDelay ) future = scheduleAtFixedRate( { if( count < load.value ) trigger() }, interval.value, interval.value, TimeUnit.MILLISECONDS )
 }
 
 onMessage = { outgoing, incoming, message ->
-	if ( incoming == sampleCount ) {
-		def currentCount = message.get( RunnerCategory.CURRENTLY_RUNNING_MESSAGE_PARAM )
+	if ( incoming == sampleCount && latestAction != 'STOP') {
+	
+		// use the sum of all connected runners' currently running requests
+		feedbackProviders.put( outgoing, message.get( RunnerCategory.CURRENTLY_RUNNING_MESSAGE_PARAM ) )
+
+		def currentCount = feedbackProviders.values().sum()
 		count = currentCount
 		
 		if (currentCount < load.value && !doDelay) {
@@ -78,16 +87,28 @@ onMessage = { outgoing, incoming, message ->
 }
 
 onConnect = { outgoing, incoming ->
+	if( incoming == sampleCount )
+		feedbackProviders.put( outgoing, 0 )
+
 	if (outgoing == triggerTerminal && interval.value == 0)
 		trigger()
 }
 
-onAction( "START" ) {
+onDisconnect = { outgoing, incoming ->
+	if( incoming == sampleCount )
+		feedbackProviders.remove( outgoing )
+}
+
+onAction( 'START' ) {
 	schedule()
+	latestAction = 'START'
 	if( !doDelay && load.value > 0 ) trigger()
 }
 
-onAction( "STOP" ) { future?.cancel( true ) }
+onAction( 'STOP' ) {
+	future?.cancel( true )
+	latestAction = 'STOP'
+}
 
 //Layout
 layout  { 
