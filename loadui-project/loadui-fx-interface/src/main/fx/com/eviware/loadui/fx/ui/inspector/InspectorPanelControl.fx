@@ -122,7 +122,7 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	var inspectorHolder:Stack;
 	var buttonBox:HBox;
 	var node:VBox;
-	var inspectorHeight:Number = 0 on replace {};
+	var inspectorHeight:Number = 0 on replace { println( "inspectorHeight : {inspectorHeight}"); };
 
 	var lastGoodHeight:Number = -1;
 	function getLastGoodHeight():Number {
@@ -139,9 +139,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	
 	postinit {
 		InspectorManager.registerPanel( this );
-		FX.deferAction( function():Void {
-			inspectorHeight = inspectorHolder.layoutY;
-		} );
 	}
 	
 	def doubleClickTimer = Timeline {
@@ -161,9 +158,10 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	 * {@inheritDoc}
 	 */
 	override function create(): Node {
-
+		println("   CREATING");
 		rn = Panel {
 			override var height = bind scene.height on replace {
+				println("   inspectorHeight: {inspectorHeight}");
 				topBar.layoutY = height - inspectorHeight - topBarHeight;
 			}
 			width: bind scene.width
