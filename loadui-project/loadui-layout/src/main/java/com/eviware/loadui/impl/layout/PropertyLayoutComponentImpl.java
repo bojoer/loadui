@@ -28,6 +28,7 @@ public class PropertyLayoutComponentImpl<T> extends LayoutComponentImpl implemen
 	public final static String LABEL = "label";
 	public final static String READ_ONLY = "readOnly";
 	public final static String HINT = "hint";
+	public final static String WIDGET = "widget";
 
 	public PropertyLayoutComponentImpl( Map<String, ?> args )
 	{

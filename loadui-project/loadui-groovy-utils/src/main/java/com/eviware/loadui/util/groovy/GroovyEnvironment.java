@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.util.groovy;
 
+import java.net.URL;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -94,10 +95,11 @@ public class GroovyEnvironment implements Releasable
 				classLoader.loadDependency( parts[0], parts[1], parts[2] );
 		}
 
-		ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		try
 		{
 			Thread.currentThread().setContextClassLoader( classLoader );
+
 			Script groovyScript = shell.parse( script.getBody(), scriptName );
 			binding.setProperty( "log", log );
 			groovyScript.setMetaClass( new ScriptMetaClass( groovyScript.getMetaClass() ) );
@@ -111,7 +113,7 @@ public class GroovyEnvironment implements Releasable
 		}
 		finally
 		{
-			Thread.currentThread().setContextClassLoader( currentClassloader );
+			Thread.currentThread().setContextClassLoader( cl );
 		}
 	}
 
@@ -128,6 +130,15 @@ public class GroovyEnvironment implements Releasable
 	public Logger getLog()
 	{
 		return log;
+	}
+
+	/**
+	 * Adds the specified URL to the classpath for this Groovy environment.
+	 */
+	public void addToClasspath( URL url )
+	{
+		log.debug( "trying to add " + url + " to " + classLoader );
+		classLoader.addURL( url );
 	}
 
 	/**
@@ -235,4 +246,5 @@ public class GroovyEnvironment implements Releasable
 			}
 		}
 	}
+
 }

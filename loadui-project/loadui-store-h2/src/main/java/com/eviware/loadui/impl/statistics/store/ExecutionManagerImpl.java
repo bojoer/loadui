@@ -561,22 +561,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		if( currentExecution != null )
 		{
-			// log.debug(
-			// "Trying to store entry: {} for source: {} at level: {} and trackId: {}",
-			// new Object[] { entry,
-			// source, interpolationLevel, trackId } );
+			log.debug( "Trying to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry,
+					source, interpolationLevel, trackId } );
 
 			// Adjust timestamp:
 			long timestamp = entry.getTimestamp();
-			if( executionState == State.PAUSED )
-			{
-				// quick fix since we are going to remove pause functionality. for
-				// some reason when project finishes execution it goes through PAUSE
-				// state. All timestamps greater than pauseStartedTime are set to
-				// pauseStartedTime which causes primary key exception.
-				// timestamp = Math.min( timestamp, pauseStartedTime );
-			}
-			timestamp -= ( currentExecution.getStartTime() + totalPause );
+			timestamp -= ( currentExecution.getStartTime() ); //+ totalPause );
 
 			latestEntries.put( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ), new AdjustedEntry(
 					entry, timestamp ) );
