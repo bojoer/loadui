@@ -205,6 +205,10 @@ public class LayoutBuilder
 			newArgs.put( "fString", fString );
 			current.add( new FormattedStringLayoutComponent( newArgs ) );
 		}
+		else if( args.containsKey( "action" ) )
+		{
+			current.add( new ActionLayoutComponentImpl( args ) );
+		}
 		else
 		{
 			current.add( new LayoutComponentImpl( args ) );
