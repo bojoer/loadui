@@ -58,7 +58,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 {
 	public static final Logger log = LoggerFactory.getLogger( WorkspaceItemImpl.class );
 
-	private File workspaceFile;
+	private final File workspaceFile;
 	private final ScheduledExecutorService executor;
 	private final LoaduiWorkspaceDocumentConfig doc;
 	private final CollectionEventSupport<ProjectRefImpl, Void> projectList;
@@ -252,7 +252,8 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			ref = new ProjectRefImpl( this, projectRefConfig );
 			ref.setEnabled( enabled );
 			projectList.addItem( ref );
-			fireCollectionEvent( PROJECT_REFS, CollectionEvent.Event.ADDED, ref );
+			log.debug( "public ProjectRef importProject" );
+			//			fireCollectionEvent( PROJECT_REFS, CollectionEvent.Event.ADDED, ref );
 			save();
 			return ref;
 		}
@@ -390,6 +391,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 
 	public void projectLoaded( ProjectItem project )
 	{
+		log.debug( "public void projectLoaded" );
 		fireCollectionEvent( PROJECTS, CollectionEvent.Event.ADDED, project );
 		project.addEventListener( BaseEvent.class, projectListener );
 	}
