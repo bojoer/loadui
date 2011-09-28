@@ -59,9 +59,26 @@ public class LoadUILauncher
 	{
 		System.setSecurityManager( null );
 
+		// Alpha release expiration, TODO: REMOVE THE IF-CONDITION AND THE WHOLE ELSE-BLOCK IN FULL VERSION 
+		//		if( new java.util.GregorianCalendar().before( new java.util.GregorianCalendar( 2011, java.util.Calendar.DECEMBER,
+		//				31 ) ) )
+		//		{
 		LoadUILauncher launcher = new LoadUILauncher( args );
 		launcher.init();
 		launcher.start();
+		//		}
+		//		else
+		//		{
+		//			System.out.println( "*** ALPHA PERIOD OVER. QUITTING... ***" );
+		//			try
+		//			{
+		//				Thread.sleep( 5000 );
+		//			}
+		//			catch( InterruptedException e )
+		//			{
+		//				e.printStackTrace();
+		//			}
+		//		}
 	}
 
 	protected Framework framework;
