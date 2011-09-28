@@ -311,6 +311,7 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 
 	public void fireCollectionEvent( String collection, CollectionEvent.Event event, Object element )
 	{
+		log.debug( this.getClass().getName() + "  fireCollectionEvent  " + event );
 		fireEvent( new CollectionEvent( this, collection, event, element ) );
 	}
 
