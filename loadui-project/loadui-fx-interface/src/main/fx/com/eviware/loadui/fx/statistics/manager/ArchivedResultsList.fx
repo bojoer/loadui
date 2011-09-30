@@ -66,12 +66,14 @@ public class ArchivedResultsList extends BaseNode, Resizable, Droppable {
 	
 	override var accept = function( draggable:Draggable ) {
 		if( draggable instanceof ResultNode )
-			not (draggable as ResultNode).execution.isArchived();
-		false;
+		{
+			return not (draggable as ResultNode).execution.isArchived();
+		}
+		return false;
 	}
 	
 	override var onDrop = function( draggable:Draggable ) {
-		(draggable as ResultNode).execution.archive()
+		(draggable as ResultNode).execution.archive();
 	}
 	
 	override function create():Node {

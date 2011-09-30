@@ -229,6 +229,8 @@ public mixin class Draggable extends BaseMixin {
 				insert myNode into (realParent as Container).content;
 		}
 		
+		println( "{this} dropped on {droppable}" );
+		
 		mouseEvent = e;
 		onRelease();
 		

@@ -82,6 +82,7 @@ public class ProjectList extends BaseNode, Droppable, Resizable, EventHandler {
 			def event = e as CollectionEvent;
 			if( event.getKey().equals( WorkspaceItem.PROJECT_REFS ) ) {
 				if( event.getEvent() == CollectionEvent.Event.ADDED ) {
+					log.debug("Project added!!!!! {e.getSource()}" );
 					runInFxThread( function() { 
 						addProjectRef( event.getElement() as ProjectRef );
 					} );
