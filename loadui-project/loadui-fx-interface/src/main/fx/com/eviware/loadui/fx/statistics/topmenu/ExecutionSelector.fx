@@ -75,6 +75,8 @@ import java.util.EventObject;
  */
 public class ExecutionSelector extends Group {
    
+   var executionIsRunning: Boolean = false;
+   	
    var leftExecution: Execution = bind StatisticsWindow.execution on replace {
       FxUtils.runInFxThread( function():Void { setLabels(); } );
    }
@@ -116,22 +118,22 @@ public class ExecutionSelector extends Group {
    public-read var leftLabel: Label = Label {};
    var rightLabel: Label = Label { styleClass: "menu-button-no-hover", font: Font { size:18 } };
    
-   function setLabels(): Void {
-      if(leftExecution == null or isCurrentExecution(leftExecution))
+	function setLabels(): Void {
+		if(leftExecution == null or (executionIsRunning and isCurrentExecution(leftExecution)))
 		{
 			leftLabel.text = "Current run";
 		}
 		else
 		{
-      	leftLabel.text = leftExecution.getLabel();
-      }
-      if(rightExecution != null){
-      	rightLabel.text = rightExecution.getLabel();
-      }
-      else{
-         rightLabel.text = ""; 
-      }
-   }
+      		leftLabel.text = leftExecution.getLabel();
+      	}
+      	if(rightExecution != null){
+      		rightLabel.text = rightExecution.getLabel();
+      	}
+      	else{
+        	rightLabel.text = ""; 
+		}
+	}
    
    var menu: PopupMenu;
    var openButton:MenuButton;
@@ -241,7 +243,7 @@ public class ExecutionSelector extends Group {
 	}
 	
 	function loadExecutions(archive: Boolean, recently: Boolean): Void {
-	   reset();
+		reset();
 		if(project == null){
 		    // project is null, return. radio buttons are removed in reset() method
 		    return;
@@ -253,7 +255,7 @@ public class ExecutionSelector extends Group {
 			}
 		}
 		
-		if( executionManager.getCurrentExecution() == null ){
+		if( not executionIsRunning ){
 		    //there is no running execution so add radio for it without execution object
 		    addCurrentRunDummyRadio();
 		}
@@ -276,7 +278,7 @@ public class ExecutionSelector extends Group {
 	
 	function addRadioButton(e: Execution){
 		var label:String;
-		if( isCurrentExecution( e ) )
+		if( executionIsRunning and isCurrentExecution( e ) )
 		{
 			label = "Current run";
 		}
@@ -349,16 +351,16 @@ public class ExecutionSelector extends Group {
 	
 	var loadAndClose = function() {
 		if( leftSelected != null ){
-	   	StatisticsWindow.execution = leftExecutions.get(leftSelected) as Execution;
+	   		StatisticsWindow.execution = leftExecutions.get(leftSelected) as Execution;
 		}
 		else{
-	   	StatisticsWindow.execution = null;
+	   		StatisticsWindow.execution = null;
 		}
 		if(rightSelected != null){
-	   	StatisticsWindow.comparedExecution = rightExecutions.get(rightSelected) as Execution;
+	   		StatisticsWindow.comparedExecution = rightExecutions.get(rightSelected) as Execution;
 		}
 		else{
-	   	StatisticsWindow.comparedExecution = null;
+	   		StatisticsWindow.comparedExecution = null;
 		}
 		//menu.hide();
 		openButton.hide();
@@ -622,9 +624,12 @@ class ExecutionComparable extends Comparable {
 }
 
 class ExecutionManagerStateListener extends ExecutionListenerAdapter {
-   override function executionStarted( state: ExecutionManager.State ) {
-		FxUtils.runInFxThread( function():Void { loadExecutions(); } );
-   }
+	override function executionStarted( state: ExecutionManager.State ) {
+		FxUtils.runInFxThread( function():Void { executionIsRunning = true; loadExecutions(); } );
+	}
+	override function executionStopped( state: ExecutionManager.State ) {
+		FxUtils.runInFxThread( function():Void { executionIsRunning = false; loadExecutions(); } );
+	}
 }
 
 class ExecutionManagerListener extends EventHandler {
