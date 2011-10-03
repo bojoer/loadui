@@ -508,7 +508,7 @@ layout(layout:'fillx, wrap 2') {
 	node( widget: 'chartWidget', constraints: "spanx 2, wrap", model: chartModel )
 	property( property: selectedAgent, label: 'Agents', options: availableAgents, widget:'comboBox' )
 	property( property: currentSourceID, label: 'Source ID', options: availableSourceIDs, widget:'comboBox', 
-		contstraints: "w 100!" )
+		constraints: "w 100!" )
 }
 
 compactLayout {
