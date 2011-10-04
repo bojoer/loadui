@@ -417,7 +417,7 @@ Appendix
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction">
                       <void property="programGroupName">
-                        <string>${compiler:sys.fullName}</string>
+                        <string>SmartBear\${compiler:sys.fullName}</string>
                       </void>
                     </object>
                   </java>
