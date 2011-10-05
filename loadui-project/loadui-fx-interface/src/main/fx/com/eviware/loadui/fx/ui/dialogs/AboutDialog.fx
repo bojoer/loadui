@@ -80,7 +80,7 @@ public class AboutDialog {
 						layoutX: 20
 						layoutY: 260
 						textFill: Color.WHITE
-						text: "Build version: {if(version != null) version else '[internal]'}\r\nBuild date: {if(date != null) date else '0000-00-00 00:00'}\r\n\r\nCopyright 2011 eviware software ab\r\neviware and loadUI are trademarks of Eviware Software AB"
+						text: "Build version: {if(version != null) version else '[internal]'}\r\nBuild date: {if(date != null) date else '0000-00-00 00:00'}\r\n\r\nCopyright 2011 SmartBear Software\r\nSmartBear and loadUI are trademarks of SmartBear Software"
 					}, Hyperlink {
 						layoutX: 20
 						layoutY: 340
@@ -95,8 +95,8 @@ public class AboutDialog {
 						action: function():Void { openURL("http://www.eviware.com") }
 					}, ImageView {
 						layoutX: 435
-						layoutY: 350
-						image: Image { url: "{__ROOT__}images/png/logo_eviware_aboutbox.png" }
+						layoutY: 333
+						image: Image { url: "{__ROOT__}images/png/logo_smartbear_aboutbox.png" }
 					}
 				]
 			}

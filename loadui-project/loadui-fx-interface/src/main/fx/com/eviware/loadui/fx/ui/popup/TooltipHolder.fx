@@ -30,6 +30,8 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.text.Font;
+
 
 /**
  * Mixin class for giving BaseNodes a tooltip which is displayed when the user hovers the mouse cursor over the node.
@@ -47,7 +49,7 @@ public mixin class TooltipHolder extends BaseMixin {
 	var myScene:Scene;
 	
 	def label:Label = Label {
-		tooltip: Tooltip { text: bind tooltip }
+		tooltip: Tooltip { text: bind tooltip, font: Font.font("Amble", 10) }
 		managed: false
 	};
 	
