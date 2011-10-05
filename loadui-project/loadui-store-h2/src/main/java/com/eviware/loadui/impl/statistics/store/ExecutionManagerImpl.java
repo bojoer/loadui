@@ -561,8 +561,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		if( currentExecution != null )
 		{
-			log.debug( "Trying to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry,
-					source, interpolationLevel, trackId } );
+			//			log.debug( "Trying to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry,
+			//					source, interpolationLevel, trackId } );
 
 			// Adjust timestamp:
 			long timestamp = entry.getTimestamp();
