@@ -77,6 +77,10 @@
 							<name>CERT_PATH</name>
 							<value>${maven.install4j.cert}</value>
 						</property>
+						<property>
+							<name>CERT_PASS</name>
+							<value>${maven.install4j.cert.pass}</value>
+						</property>
 					</compilerVariables>
 				</configuration>
 			</plugin>
