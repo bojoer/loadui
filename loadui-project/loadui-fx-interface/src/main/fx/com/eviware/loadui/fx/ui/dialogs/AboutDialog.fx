@@ -1,5 +1,5 @@
 /* 
- * Copyright 2011 eviware software ab
+ * Copyright 2011 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
  * versions of the EUPL (the "Licence");
@@ -92,7 +92,7 @@ public class AboutDialog {
 						layoutY: 360
 						style: "-fx-text-fill: #ffffff"
 						text: "www.eviware.com"
-						action: function():Void { openURL("http://www.eviware.com") }
+						action: function():Void { openURL("http://www.smartbear.com") }
 					}, ImageView {
 						layoutX: 435
 						layoutY: 333
