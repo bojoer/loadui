@@ -763,7 +763,7 @@ return f.exists();</condition>
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <win32 name="Windows" id="50" mediaFileName="loadUI-Agent-${compiler:version}" installDir="SmartBear/loadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="windows-x86-1.6.0_25" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <win32 name="Windows" id="50" mediaFileName="loadUI-Agent-${compiler:version}" installDir="SmartBear/loadUI-Agent-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="windows-x86-1.6.0_25" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
       <excludedLaunchers>
         <launcher id="44" />
       </excludedLaunchers>
