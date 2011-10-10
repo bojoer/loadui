@@ -23,10 +23,11 @@
  * @nonBlocking true
  */
 
-import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.impl.layout.OptionsProviderImpl
 import com.eviware.loadui.util.statistics.CounterStatisticSupport
 import org.codehaus.groovy.runtime.typehandling.GroovyCastException
+import com.eviware.loadui.util.ReleasableUtils
 
 //Here to support Assertion components created in loadUI 1.0, remove in the future:
 try { renameProperty( 'value', 'valueName' ) } catch( e ) {}
