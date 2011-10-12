@@ -114,6 +114,8 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 		}
 	}
 	
+	override var visible = false;
+	
 	public-init var defaultInspector: String;
 	
 	def inspectors: Map = new HashMap();
@@ -206,6 +208,8 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 		if( inspector.getName().equals( defaultInspector ) ) {
 			selectInspector( inspector );
 		}
+		
+		visible = true;
 	}
 
 	/**
