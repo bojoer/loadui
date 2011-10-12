@@ -53,7 +53,7 @@ public class FxUtils {} //This class exists only so that the above javafxdoc wil
 public def __ROOT__ = "{__DIR__}".replaceAll("/com/eviware/loadui/fx/$", "/");
 
 /**
- * Simmilar to __ROOT__ above, but uses the supplied __DIR__ as the base, so that is works for other bundles.
+ * Similar to __ROOT__ above, but uses the supplied __DIR__ as the base, so that is works for other bundles.
  */
 public function root( dir:String ):String {
 	dir.split("com/eviware/loadui", 2)[0];
