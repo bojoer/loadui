@@ -36,8 +36,8 @@ count = 0;
 
 future = null
 
-feedbackProviders = [:] as Map
-sampleCount.connections.each{ feedbackProviders.put( it.outputTerminal, 0 ) }
+feedbackProviders = [:]
+sampleCount.connections.each { feedbackProviders[it.outputTerminal] = 0 }
 
 //Properties
 createProperty( 'load', Long, 10 ) { value ->
@@ -66,20 +66,21 @@ latestAction = 'NONE'
 schedule = {
 	future?.cancel( true )
 	if( doDelay ) future = scheduleAtFixedRate( { if( count < load.value ) trigger() }, interval.value, interval.value, TimeUnit.MILLISECONDS )
+	else if( load.value > 0 ) trigger()
 }
 
 onMessage = { outgoing, incoming, message ->
-	if ( incoming == sampleCount && latestAction != 'STOP') {
+	if( incoming == sampleCount && latestAction != 'STOP' ) {
 	
 		// use the sum of all connected runners' currently running requests
-		feedbackProviders.put( outgoing, message.get( RunnerCategory.CURRENTLY_RUNNING_MESSAGE_PARAM ) )
+		feedbackProviders[outgoing] = message[RunnerCategory.CURRENTLY_RUNNING_MESSAGE_PARAM]
 
 		def currentCount = feedbackProviders.values().sum()
 		count = currentCount
 		
-		if (currentCount < load.value && !doDelay) {
+		if( currentCount < load.value && !doDelay ) {
 			trigger()
-			currentCount++
+			currentCount += feedbackProviders.size()
 		}
 		
 		loadDisplay = currentCount
@@ -88,9 +89,9 @@ onMessage = { outgoing, incoming, message ->
 
 onConnect = { outgoing, incoming ->
 	if( incoming == sampleCount )
-		feedbackProviders.put( outgoing, 0 )
+		feedbackProviders[outgoing] = 0
 
-	if (outgoing == triggerTerminal && interval.value == 0)
+	if( outgoing == triggerTerminal && interval.value == 0 )
 		trigger()
 }
 
