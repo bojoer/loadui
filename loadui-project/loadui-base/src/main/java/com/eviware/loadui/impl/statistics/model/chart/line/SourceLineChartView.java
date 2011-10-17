@@ -49,8 +49,6 @@ public class SourceLineChartView extends AbstractLineChartView
 		// SourceLineSegment for any Segment for the main source, unless such a
 		// Segment already exists.
 
-		// TODO: Think this through a bit more, what happens when segments are
-		// added/removed, does this stay in sync?
 		if( segment instanceof ChartLineSegment )
 		{
 			ChartLineSegment chartSegment = ( ChartLineSegment )segment;
@@ -61,7 +59,8 @@ public class SourceLineChartView extends AbstractLineChartView
 				putSegment( segment );
 			}
 			else if( StatisticVariable.MAIN_SOURCE.equals( chartSegment.getSource() )
-					&& getSegment( chartSegment.toString() ) == null )
+					&& getSegment( chartSegment.toString() ) == null
+					&& chartSegment.getStatistic().getStatisticVariable().getSources().contains( source ) )
 			{
 				SourceLineSegment sourceSegment = new SourceLineSegment( chartSegment, source );
 				putSegment( sourceSegment );
