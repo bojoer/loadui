@@ -41,6 +41,7 @@ import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.FxUtils.__ROOT__;
+import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.util.ModelUtils;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
@@ -277,14 +278,14 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 		expandAgents = not expandAgents;
 		if( expandAgents ) {
 			if( expandGroups ) toggleGroupExpand();
-			def sources = new ArrayList( chartGroup.getSources() );
-			Collections.sort( sources );
+			def agentLabels = Sequences.sort( [for( agent in MainWindow.instance.workspace.getAgents() ) agent.getLabel()][a|chartGroup.getSources().contains( a )] ) as String[];
+
 			expandedNode = SortableBox {
 				vertical: true
 				layoutInfo: childrenInfo
 				spacing: 5
-				content: for( source in sources ) {
-					def subChartView = chartGroup.getChartViewForSource( source as String );
+				content: for( source in agentLabels ) {
+					def subChartView = chartGroup.getChartViewForSource( source );
 					if( not "true".equals( subChartView.getAttribute( "saved", "false" ) ) ) {
 						subChartView.setAttribute( "saved", "true" );
 						subChartView.setAttribute( "position", null );
