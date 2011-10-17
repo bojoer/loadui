@@ -221,6 +221,9 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 			if( activeInspector == inspector and sizeof buttons > 0 ) {
 				buttons[0].action();
 			}
+			if( inspectors.isEmpty() ) {
+				visible = false;
+			}
 		}
 	}
 
