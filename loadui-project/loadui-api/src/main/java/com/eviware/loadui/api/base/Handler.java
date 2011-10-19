@@ -13,33 +13,23 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.statistics.model;
-
-import com.eviware.loadui.api.base.OrderedCollection;
-import com.eviware.loadui.api.traits.Releasable;
+package com.eviware.loadui.api.base;
 
 /**
- * Holds a number of StatisticPages, and allows creation, and reordering of
- * these.
+ * Generic interface for handlers/callbacks. No calling semantics about
+ * concurrency, idempotence or anything like that is given, this is up to the
+ * method taking a Handler as an argument.
  * 
  * @author dain.nilsson
+ * 
+ * @param <T>
  */
-public interface StatisticPages extends OrderedCollection<StatisticPage>, Releasable
+public interface Handler<T>
 {
 	/**
-	 * Creates and returns a new StatisticPage with the given title, placing it
-	 * at the end of the existing StatisticPages.
+	 * Handles an Object.
 	 * 
-	 * @param title
-	 * @return
+	 * @param object
 	 */
-	public StatisticPage createPage( String title );
-
-	/**
-	 * Moved a contained StatisticPage to the given index.
-	 * 
-	 * @param page
-	 * @param index
-	 */
-	public void movePage( StatisticPage page, int index );
+	public void handle( T object );
 }

@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.api.statistics.model;
 
-import com.eviware.loadui.api.model.OrderedCollection;
+import com.eviware.loadui.api.base.OrderedCollection;
 import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Releasable;
 

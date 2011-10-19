@@ -13,7 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.model;
+package com.eviware.loadui.api.base;
 
 import java.util.Collection;
 

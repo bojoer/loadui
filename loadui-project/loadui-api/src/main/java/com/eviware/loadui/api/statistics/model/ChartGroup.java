@@ -18,8 +18,8 @@ package com.eviware.loadui.api.statistics.model;
 import java.util.Collection;
 import java.util.Set;
 
+import com.eviware.loadui.api.base.OrderedCollection;
 import com.eviware.loadui.api.model.AttributeHolder;
-import com.eviware.loadui.api.model.OrderedCollection;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.traits.Deletable;
