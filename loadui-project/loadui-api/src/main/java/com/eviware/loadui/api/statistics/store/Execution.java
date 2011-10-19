@@ -39,11 +39,6 @@ public interface Execution extends Labeled.Mutable, EventFirer, AttributeHolder,
 	/**
 	 * BaseEvent key for notifying that this Execution has been deleted.
 	 */
-	public final static String DELETED = Execution.class.getSimpleName() + "@deleted";
-
-	/**
-	 * BaseEvent key for notifying that this Execution has been deleted.
-	 */
 	public final static String ICON = Execution.class.getSimpleName() + "@icon";
 
 	/**

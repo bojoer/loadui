@@ -27,8 +27,6 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Export-Package>com.eviware.loadui.api*</Export-Package>
-						<Import-Package>*;com.eviware.loadui.api.agent;com.eviware.loadui.api.chart;com.eviware.loadui.api.component.categories;com.eviware.loadui.api.discovery;com.eviware.loadui.api.layout;com.eviware.loadui.api.observer;com.eviware.loadui.api.serialization;com.eviware.loadui.api.statistics.model;com.eviware.loadui.api.statistics.model.chart;com.eviware.loadui.api.summary;com.eviware.loadui.api.ui;com.eviware.loadui.api.ui.inspector;com.eviware.loadui.api.ui.table;com.eviware.loadui.api.upload;</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
