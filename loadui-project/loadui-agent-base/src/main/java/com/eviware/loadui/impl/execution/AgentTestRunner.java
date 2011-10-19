@@ -30,7 +30,6 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.execution.AbstractTestRunner;
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.Futures;
 
 /**
  * Listens for remote invocations of test execution phases. When a phase is
@@ -111,7 +110,7 @@ public class AgentTestRunner extends AbstractTestRunner implements Releasable
 					}
 				}, 5, 5, TimeUnit.SECONDS );
 
-				Futures.makeListenable( runPhase( phase, execution ) ).addListener( new Runnable()
+				runPhase( phase, execution ).addListener( new Runnable()
 				{
 					@Override
 					public void run()

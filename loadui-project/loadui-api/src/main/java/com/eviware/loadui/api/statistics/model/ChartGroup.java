@@ -22,6 +22,7 @@ import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.model.OrderedCollection;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
+import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.traits.Releasable;
 
@@ -31,7 +32,7 @@ import com.eviware.loadui.api.traits.Releasable;
  * 
  * @author dain.nilsson
  */
-public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>, Releasable, Labeled.Mutable
+public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>, Deletable, Releasable, Labeled.Mutable
 {
 	// BaseEvent key fired when the type of the ChartGroup changes.
 	public static final String TYPE = ChartGroup.class.getName() + "@type";
@@ -119,11 +120,6 @@ public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>, R
 	 * @param index
 	 */
 	public void moveChart( Chart chart, int index );
-
-	/**
-	 * Deletes the ChartGroup.
-	 */
-	public void delete();
 
 	/**
 	 * Gets a Set of all available sources for the contained Charts.

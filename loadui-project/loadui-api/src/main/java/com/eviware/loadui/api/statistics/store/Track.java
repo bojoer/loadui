@@ -15,13 +15,15 @@
  */
 package com.eviware.loadui.api.statistics.store;
 
+import com.eviware.loadui.api.traits.Deletable;
+
 /**
  * Represents a value set which changes over time, allowing sequential reading
  * and writing.
  * 
  * @author dain.nilsson
  */
-public interface Track
+public interface Track extends Deletable
 {
 	/**
 	 * Gets the Tracks ID, which needs to be unique within the Execution.
@@ -52,7 +54,7 @@ public interface Track
 	 * @return
 	 */
 	public Entry getNextEntry( String source, long timestamp );
-	
+
 	/**
 	 * @see getNextEntry(String, int)
 	 */
@@ -71,15 +73,9 @@ public interface Track
 	 * @return
 	 */
 	public Iterable<Entry> getRange( String source, long startTime, long endTime );
-	
+
 	/**
 	 * @see getRange(String, int, int)
 	 */
 	public Iterable<Entry> getRange( String source, long startTime, long endTime, int interpolationLevel );
-
-	/**
-	 * Deletes the Track from the Execution, removing all data from the
-	 * underlying database.
-	 */
-	public void delete();
 }

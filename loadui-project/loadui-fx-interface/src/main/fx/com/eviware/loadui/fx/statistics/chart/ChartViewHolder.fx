@@ -44,9 +44,8 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.statistics.chart.line.LineChartHolder;
 
-import com.eviware.loadui.api.traits.Releasable;;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
-import com.eviware.loadui.api.statistics.model.chart.DeletableChartView;
 import com.eviware.loadui.util.ReleasableUtils;
 
 import javafx.fxd.FXDNode;
@@ -255,8 +254,8 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	}
 	
 	override function doDelete():Void {
-		if( chartView instanceof DeletableChartView )
-			(chartView as DeletableChartView).delete();
+		if( chartView instanceof com.eviware.loadui.api.traits.Deletable )
+			(chartView as com.eviware.loadui.api.traits.Deletable).delete();
 	}
 	
 	override function create():Node {

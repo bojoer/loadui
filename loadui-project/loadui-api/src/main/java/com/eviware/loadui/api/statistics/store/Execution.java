@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.model.AttributeHolder;
+import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Labeled;
 
 /**
@@ -28,7 +29,7 @@ import com.eviware.loadui.api.traits.Labeled;
  * 
  * @author dain.nilsson
  */
-public interface Execution extends Labeled.Mutable, EventFirer, AttributeHolder
+public interface Execution extends Labeled.Mutable, EventFirer, AttributeHolder, Deletable
 {
 	/**
 	 * BaseEvent key for notifying that this Execution has been archived.
@@ -74,11 +75,6 @@ public interface Execution extends Labeled.Mutable, EventFirer, AttributeHolder
 	 * @return
 	 */
 	public Collection<String> getTrackIds();
-
-	/**
-	 * Deletes the Execution with all contained Track data.
-	 */
-	public void delete();
 
 	/**
 	 * Determines if this execution has been archived or not.

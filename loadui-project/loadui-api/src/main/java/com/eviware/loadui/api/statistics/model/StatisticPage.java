@@ -16,6 +16,7 @@
 package com.eviware.loadui.api.statistics.model;
 
 import com.eviware.loadui.api.model.OrderedCollection;
+import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Releasable;
 
 /**
@@ -24,7 +25,7 @@ import com.eviware.loadui.api.traits.Releasable;
  * 
  * @author dain.nilsson
  */
-public interface StatisticPage extends OrderedCollection<ChartGroup>, Releasable
+public interface StatisticPage extends OrderedCollection<ChartGroup>, Deletable, Releasable
 {
 	// BaseEvent key fired when the title of the StatisticPage changes.
 	public static final String TITLE = StatisticPage.class.getName() + "@title";
@@ -60,9 +61,4 @@ public interface StatisticPage extends OrderedCollection<ChartGroup>, Releasable
 	 * @param index
 	 */
 	public void moveChartGroup( ChartGroup chartGroup, int index );
-
-	/**
-	 * Deletes the StatisticPage.
-	 */
-	public void delete();
 }

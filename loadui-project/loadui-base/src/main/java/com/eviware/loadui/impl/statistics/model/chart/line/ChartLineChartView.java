@@ -29,7 +29,7 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
-import com.eviware.loadui.api.statistics.model.chart.DeletableChartView;
+import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.StringUtils;
 
@@ -41,7 +41,7 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  * @author dain.nilsson
  */
 @SuppressWarnings( value = "DM_STRING_CTOR", justification = "A unique instance of a String is required" )
-public class ChartLineChartView extends AbstractLineChartView implements ConfigurableLineChartView, DeletableChartView
+public class ChartLineChartView extends AbstractLineChartView implements ConfigurableLineChartView, Deletable
 {
 	public static Logger log = LoggerFactory.getLogger( ChartLineChartView.class );
 

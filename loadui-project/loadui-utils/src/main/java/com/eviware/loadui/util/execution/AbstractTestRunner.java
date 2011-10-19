@@ -36,6 +36,9 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * Provides a partial implementation of TestRunner, taking care of managing
@@ -47,7 +50,7 @@ public abstract class AbstractTestRunner implements TestRunner
 {
 	public static final Logger log = LoggerFactory.getLogger( TestRunner.class );
 
-	private final ExecutorService executorService;
+	private final ListeningExecutorService executorService;
 	private final Multimap<Phase, TestExecutionTask> tasks = Multimaps.newSetMultimap(
 			new HashMap<Phase, Collection<TestExecutionTask>>(), new Supplier<Set<TestExecutionTask>>()
 			{
@@ -60,7 +63,7 @@ public abstract class AbstractTestRunner implements TestRunner
 
 	public AbstractTestRunner( ExecutorService executorService )
 	{
-		this.executorService = executorService;
+		this.executorService = MoreExecutors.listeningDecorator( executorService );
 	}
 
 	@Override
@@ -92,7 +95,7 @@ public abstract class AbstractTestRunner implements TestRunner
 	 * @param execution
 	 * @return
 	 */
-	protected Future<Void> runPhase( Phase phase, TestExecution execution )
+	protected ListenableFuture<Void> runPhase( Phase phase, TestExecution execution )
 	{
 		return executorService.submit( new PhaseRunner( phase, execution ), null );
 	}
