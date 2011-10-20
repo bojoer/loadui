@@ -55,9 +55,11 @@ public final class ParsedGroovyScript
 		{
 			for( String line : m.group( 1 ).split( "\r\n|\r|\n" ) )
 			{
-				if( line.startsWith( " *" ) )
-					line = line.substring( 2 );
 				line = line.trim();
+				if( line.startsWith( "*" ) )
+					line = line.substring( 1 );
+				line = line.trim();
+
 				if( line.startsWith( "@" ) )
 				{
 					String[] parts = line.split( "\\s", 2 );
