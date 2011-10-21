@@ -109,6 +109,16 @@ public interface RunnerCategory extends ComponentBehavior
 	public static final String TIME_TAKEN_MESSAGE_PARAM = "TimeTaken";
 
 	/**
+	 * The key used for the response size parameter in the result message.
+	 */
+	public static final String RESPONSE_SIZE_MESSAGE_PARAM = "Bytes";
+
+	/**
+	 * The key used for the response content parameter in the result message.
+	 */
+	public static final String RESPONSE_CONTENT_MESSAGE_PARAM = "Response";
+
+	/**
 	 * The key to be used for the status parameter in the result message.
 	 */
 	public static final String STATUS_MESSAGE_PARAM = "Status";
