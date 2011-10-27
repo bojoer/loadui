@@ -22,22 +22,39 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.api.testevents.TestEvent;
+import com.eviware.loadui.api.testevents.TestEvent.Factory;
+import com.eviware.loadui.api.testevents.TestEventSourceDescriptor;
+import com.eviware.loadui.api.testevents.TestEventTypeDescriptor;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.statistics.db.util.TypeConverter;
+import com.eviware.loadui.impl.statistics.store.testevents.TestEventData;
+import com.eviware.loadui.impl.statistics.store.testevents.TestEventSourceConfig;
+import com.eviware.loadui.impl.statistics.store.testevents.TestEventSourceDescriptorImpl;
 import com.eviware.loadui.util.events.EventSupport;
+import com.eviware.loadui.util.testevents.UnknownTestEvent;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * Execution implementation
@@ -55,6 +72,8 @@ public class ExecutionImpl implements Execution, Releasable
 	public static final String KEY_LENGTH = "LENGTH";
 	public static final String KEY_ICON = "ICON";
 
+	private final Function<TestEventData, TestEvent> createTestEvent;
+
 	/**
 	 * Execution directory
 	 */
@@ -71,6 +90,7 @@ public class ExecutionImpl implements Execution, Releasable
 	private final File propertiesFile;
 
 	private final Object loadingLock = new Object();
+
 	private boolean isLoading = false;
 
 	/**
@@ -89,24 +109,29 @@ public class ExecutionImpl implements Execution, Releasable
 
 	private Image icon;
 
-	public ExecutionImpl( File executionDir, String id, long startTime, ExecutionManagerImpl manager )
+	public ExecutionImpl( File executionDir, String id, long startTime, ExecutionManagerImpl manager,
+			TestEventRegistry testEventRegistry )
 	{
-		this.executionDir = executionDir;
-		this.manager = manager;
-		trackMap = new HashMap<String, Track>();
-
-		propertiesFile = new File( executionDir, "execution.properties" );
-
-		if( propertiesFile.exists() )
-			loadAttributes();
+		this( executionDir, manager, testEventRegistry );
 
 		attributes.put( KEY_ID, id );
 		attributes.put( KEY_START_TIME, String.valueOf( startTime ) );
 		storeAttributes();
 	}
 
-	public ExecutionImpl( File executionDir, ExecutionManagerImpl manager )
+	public ExecutionImpl( File executionDir, ExecutionManagerImpl manager, final TestEventRegistry testEventRegistry )
 	{
+		createTestEvent = new Function<TestEventData, TestEvent>()
+		{
+			@Override
+			public TestEvent apply( TestEventData input )
+			{
+				Factory<?> factory = testEventRegistry.lookupFactory( input.getType() );
+				return factory == null ? new UnknownTestEvent( input.getTimestamp() ) : factory.createTestEvent(
+						input.getTimestamp(), input.getTestEventSourceConfig().getData(), input.getData() );
+			}
+		};
+
 		this.executionDir = executionDir;
 		this.manager = manager;
 		trackMap = new HashMap<String, Track>();
@@ -167,6 +192,47 @@ public class ExecutionImpl implements Execution, Releasable
 	{
 		awaitLoaded();
 		return trackMap.keySet();
+	}
+
+	@Override
+	public Set<TestEventTypeDescriptor> getEventTypes()
+	{
+		return ImmutableSet.<TestEventTypeDescriptor> copyOf( manager.getTestEventTypes( getId() ) );
+	}
+
+	private Iterable<TestEventSourceConfig> getConfigsForSources( TestEventSourceDescriptor... sources )
+	{
+		return Iterables.concat( Iterables.transform(
+				Iterables.filter( Arrays.asList( sources ), TestEventSourceDescriptorImpl.class ),
+				new Function<TestEventSourceDescriptorImpl, Iterable<TestEventSourceConfig>>()
+				{
+					@Override
+					public Iterable<TestEventSourceConfig> apply( TestEventSourceDescriptorImpl input )
+					{
+						return input.getConfigs();
+					}
+				} ) );
+	}
+
+	@Override
+	public int getTestEventCount( TestEventSourceDescriptor... sources )
+	{
+		return manager.getTestEventCount( getId(), getConfigsForSources( sources ) );
+	}
+
+	@Override
+	public Iterable<TestEvent> getTestEventRange( long startTime, long endTime, TestEventSourceDescriptor... sources )
+	{
+		return Iterables
+				.transform( manager.readTestEventRange( getId(), startTime, endTime, getConfigsForSources( sources ) ),
+						createTestEvent );
+	}
+
+	@Override
+	public Iterable<TestEvent> getTestEvents( int index, boolean reversed, TestEventSourceDescriptor... sources )
+	{
+		return Iterables.transform( new TestEventBlockIterable( index, reversed, getConfigsForSources( sources ) ),
+				createTestEvent );
 	}
 
 	@Override
@@ -390,5 +456,60 @@ public class ExecutionImpl implements Execution, Releasable
 	public Collection<String> getAttributes()
 	{
 		return attributes.stringPropertyNames();
+	}
+
+	private class TestEventBlockIterable implements Iterable<TestEventData>
+	{
+		private static final int BLOCK_FETCH_SIZE = 100;
+
+		private final Iterable<TestEventSourceConfig> configs;
+		private final boolean reverse;
+		private final int index;
+
+		public TestEventBlockIterable( int index, boolean reverse, Iterable<TestEventSourceConfig> configs )
+		{
+			this.index = index;
+			this.reverse = reverse;
+			this.configs = configs;
+		}
+
+		@Override
+		public Iterator<TestEventData> iterator()
+		{
+			return Iterators.concat( new Iterator<Iterator<TestEventData>>()
+			{
+				int nextIndex = index;
+
+				@Override
+				public boolean hasNext()
+				{
+					return reverse ? nextIndex >= 0 : nextIndex < manager.getTestEventCount( getId(), configs );
+				}
+
+				@Override
+				public Iterator<TestEventData> next()
+				{
+					int offset = reverse ? Math.max( 0, nextIndex - BLOCK_FETCH_SIZE ) : nextIndex;
+					if( reverse )
+					{
+						nextIndex -= BLOCK_FETCH_SIZE;
+						return Lists.reverse(
+								Lists.newArrayList( manager.readTestEvents( getId(), offset, BLOCK_FETCH_SIZE, configs ) ) )
+								.iterator();
+					}
+					else
+					{
+						nextIndex += BLOCK_FETCH_SIZE;
+						return manager.readTestEvents( getId(), offset, BLOCK_FETCH_SIZE, configs ).iterator();
+					}
+				}
+
+				@Override
+				public void remove()
+				{
+					throw new UnsupportedOperationException();
+				}
+			} );
+		}
 	}
 }

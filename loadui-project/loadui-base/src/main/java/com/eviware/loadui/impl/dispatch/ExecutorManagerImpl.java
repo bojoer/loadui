@@ -30,7 +30,6 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
-import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.collections.ResizableBlockingQueue;
 import com.eviware.loadui.util.dispatch.CustomThreadPoolExecutor;
 
@@ -45,7 +44,7 @@ public final class ExecutorManagerImpl implements ExecutorManager
 	private final CustomThreadPoolExecutor executor;
 	private final ResizableBlockingQueue<Runnable> queue = new ResizableBlockingQueue<Runnable>( DEFAULT_QUEUE_SIZE );
 
-	public ExecutorManagerImpl()
+	public ExecutorManagerImpl( final WorkspaceProvider workspaceProvider )
 	{
 		executor = new CustomThreadPoolExecutor( DEFAULT_POOL_SIZE, queue, new ThreadFactory()
 		{
@@ -90,8 +89,7 @@ public final class ExecutorManagerImpl implements ExecutorManager
 			{
 				if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) )
 				{
-					WorkspaceProvider wp = BeanInjector.getBean( WorkspaceProvider.class );
-					while( !wp.isWorkspaceLoaded() )
+					while( !workspaceProvider.isWorkspaceLoaded() )
 					{
 						try
 						{
@@ -103,7 +101,7 @@ public final class ExecutorManagerImpl implements ExecutorManager
 						}
 					}
 
-					WorkspaceItem workspace = wp.getWorkspace();
+					WorkspaceItem workspace = workspaceProvider.getWorkspace();
 					workspace.addEventListener( PropertyEvent.class, new EventHandler<PropertyEvent>()
 					{
 						@Override

@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 
+import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
 
 public class H2ExecutionManager extends ExecutionManagerImpl
@@ -34,6 +35,11 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	public static final String TYPE_DOUBLE = "DOUBLE";
 	public static final String TYPE_STRING = "VARCHAR(255)";
 	public static final String TYPE_BOOLEAN = "BOOLEAN";
+
+	public H2ExecutionManager( TestEventRegistry testEventRegistry )
+	{
+		super( testEventRegistry );
+	}
 
 	@Override
 	public DataSource createDataSource( String db )

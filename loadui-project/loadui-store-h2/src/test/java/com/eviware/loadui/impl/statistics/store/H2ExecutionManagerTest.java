@@ -15,7 +15,11 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,10 +28,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
+import com.eviware.loadui.util.test.BeanInjectorMocker;
 
 public class H2ExecutionManagerTest
 {
@@ -41,8 +47,9 @@ public class H2ExecutionManagerTest
 	@Before
 	public void initialize()
 	{
+		new BeanInjectorMocker();
 		System.setProperty( LoadUI.LOADUI_HOME, "target" );
-		h2 = new H2ExecutionManager();
+		h2 = new H2ExecutionManager( mock( TestEventRegistry.class ) );
 	}
 
 	@Test

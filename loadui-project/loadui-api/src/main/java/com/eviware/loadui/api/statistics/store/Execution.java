@@ -18,9 +18,13 @@ package com.eviware.loadui.api.statistics.store;
 import java.awt.Image;
 import java.io.File;
 import java.util.Collection;
+import java.util.Set;
 
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.model.AttributeHolder;
+import com.eviware.loadui.api.testevents.TestEvent;
+import com.eviware.loadui.api.testevents.TestEventSourceDescriptor;
+import com.eviware.loadui.api.testevents.TestEventTypeDescriptor;
 import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Labeled;
 
@@ -70,6 +74,50 @@ public interface Execution extends Labeled.Mutable, EventFirer, AttributeHolder,
 	 * @return
 	 */
 	public Collection<String> getTrackIds();
+
+	/**
+	 * Gets the contained TestEventTypeDescriptors.
+	 * 
+	 * @return
+	 */
+	public Set<TestEventTypeDescriptor> getEventTypes();
+
+	/**
+	 * Returns the number of TestEvents stored for the Execution, matching any of
+	 * the given sources (or all, if no sources are given).
+	 * 
+	 * @param sources
+	 * @return
+	 */
+	public int getTestEventCount( TestEventSourceDescriptor... sources );
+
+	/**
+	 * Returns all stored TestEvents between the given interval, of the given
+	 * type.
+	 * 
+	 * @param startTime
+	 * @param endTime
+	 * @param sources
+	 *           The label of TestEventSources of TestEvent to filter on,
+	 *           multiple types gives TestEvents matching any of the types, no
+	 *           sources given will return all TestEvents.
+	 * @return
+	 */
+	public Iterable<TestEvent> getTestEventRange( long startTime, long endTime, TestEventSourceDescriptor... sources );
+
+	/**
+	 * Returns an Iterable of the TestEvents starting with the TestEvent at the
+	 * position indicated by the index parameter (the index is applied after
+	 * filtering). When the reversed boolean is true, the iterator will move
+	 * backwards through the available TestEvents, returning them in
+	 * reverse-chronological order.
+	 * 
+	 * @param index
+	 * @param reversed
+	 * @param sources
+	 * @return
+	 */
+	public Iterable<TestEvent> getTestEvents( int index, boolean reversed, TestEventSourceDescriptor... sources );
 
 	/**
 	 * Determines if this execution has been archived or not.

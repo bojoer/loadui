@@ -15,13 +15,19 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.TestEventRegistry;
+import com.eviware.loadui.util.test.BeanInjectorMocker;
 
 public class ExecutionImplTest
 {
@@ -34,9 +40,10 @@ public class ExecutionImplTest
 	@Before
 	public void initialize()
 	{
+		new BeanInjectorMocker();
 		System.setProperty( LoadUI.LOADUI_HOME, "target" );
 
-		h2 = new H2ExecutionManager();
+		h2 = new H2ExecutionManager( mock( TestEventRegistry.class ) );
 		execution = ( ExecutionImpl )h2.startExecution( EXECUTION_NAME, 10 );
 		// unload and load execution
 		h2.release();

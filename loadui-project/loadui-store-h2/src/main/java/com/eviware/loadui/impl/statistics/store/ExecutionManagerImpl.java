@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
@@ -44,6 +46,7 @@ import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
+import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
 import com.eviware.loadui.impl.statistics.db.DataSourceProvider;
@@ -55,16 +58,27 @@ import com.eviware.loadui.impl.statistics.db.table.model.InterpolationLevelTable
 import com.eviware.loadui.impl.statistics.db.table.model.SourceMetadataTable;
 import com.eviware.loadui.impl.statistics.db.table.model.TrackMetadataTable;
 import com.eviware.loadui.impl.statistics.db.util.FileUtil;
+import com.eviware.loadui.impl.statistics.store.testevents.TestEventData;
+import com.eviware.loadui.impl.statistics.store.testevents.TestEventSourceConfig;
+import com.eviware.loadui.impl.statistics.store.testevents.TestEventTypeDescriptorImpl;
 import com.eviware.loadui.util.FormattingUtils;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.TreeMultimap;
 
 /**
  * Implementation of execution manager. Basically main class for data handling.
@@ -77,11 +91,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 {
 	private static Logger log = LoggerFactory.getLogger( ExecutionManagerImpl.class );
 
-	private static final Map<String, String> columnNames = new MapMaker().weakKeys().makeComputingMap(
-			new Function<String, String>()
+	private static final Cache<String, String> columnNames = CacheBuilder.newBuilder().weakKeys()
+			.build( new CacheLoader<String, String>()
 			{
 				@Override
-				public String apply( String name )
+				public String load( String name )
 				{
 					//Replaces whitespace characters with underscore, removes all non-word characters, and places a C in front of any column name starting with a digit. 
 					return name.replaceAll( "\\s", "_" ).replaceAll( "[^\\w]", "" ).replaceAll( "^(\\d)", "C$0" )
@@ -105,6 +119,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private final EventSupport eventSupport = new EventSupport();
 
+	private final TestEventRegistry testEventRegistry;
+
 	private final Map<String, ExecutionImpl> executionMap = new HashMap<String, ExecutionImpl>();
 
 	private final Map<String, TrackDescriptor> trackDescriptors = new HashMap<String, TrackDescriptor>();
@@ -127,8 +143,36 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private long totalPause = 0;
 
-	public ExecutionManagerImpl()
+	private final Map<String, TestEventTypeDescriptorImpl> eventTypes = Maps.newHashMap();
+
+	//TODO: Remove these once proper database storage is implemented!
+	@Deprecated
+	private final Cache<String, Map<String, TestEventSourceConfig>> sourceConfigMemoryStorage = CacheBuilder
+			.newBuilder().build( new CacheLoader<String, Map<String, TestEventSourceConfig>>()
+			{
+				@Override
+				public Map<String, TestEventSourceConfig> load( String key ) throws Exception
+				{
+					return Maps.newHashMap();
+				}
+			} );
+
+	@Deprecated
+	private final Multimap<String, TestEventData> eventDataMemoryStorage = TreeMultimap.create( Ordering.arbitrary(),
+			new Comparator<TestEventData>()
+			{
+				@Override
+				public int compare( TestEventData o1, TestEventData o2 )
+				{
+					return ( int )( o1.getTimestamp() - o1.getTimestamp() );
+				}
+			} );
+
+	//TODO: End removal
+
+	public ExecutionManagerImpl( TestEventRegistry testEventRegistry )
 	{
+		this.testEventRegistry = testEventRegistry;
 		connectionRegistry = new ConnectionRegistry( this );
 
 		metadata = new DatabaseMetadata();
@@ -244,7 +288,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		tableRegistry.put( dbName, levelMetaTable );
 		tableRegistry.put( dbName, trackMetaTable );
 
-		currentExecution = new ExecutionImpl( executionDir, id, timestamp, this );
+		currentExecution = new ExecutionImpl( executionDir, id, timestamp, this, testEventRegistry );
 		currentExecution.setLabel( label );
 
 		executionMap.put( id, currentExecution );
@@ -258,6 +302,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		currentExecution.setLoaded( true );
 		executionPool.setCurrentExecution( currentExecution );
 
+		eventTypes.clear();
 		totalPause = 0;
 		return currentExecution;
 	}
@@ -320,7 +365,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			ImmutableMap.Builder<String, Class<? extends Number>> builder = ImmutableMap.builder();
 			for( java.util.Map.Entry<String, Class<? extends Number>> entry : td.getValueNames().entrySet() )
 			{
-				builder.put( columnNames.get( entry.getKey() ), entry.getValue() );
+				builder.put( columnNames.getUnchecked( entry.getKey() ), entry.getValue() );
 			}
 
 			DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), interpolationLevel, source ),
@@ -411,7 +456,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		for( File executionDir : executionDirs )
 		{
-			ExecutionImpl execution = new ExecutionImpl( executionDir, this );
+			ExecutionImpl execution = new ExecutionImpl( executionDir, this, testEventRegistry );
 			if( !executionMap.containsKey( execution.getId() ) )
 			{
 				executionMap.put( execution.getId(), execution );
@@ -577,7 +622,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 			for( String name : getTrack( trackId ).getTrackDescriptor().getValueNames().keySet() )
 			{
-				data.put( columnNames.get( name ), entry.getValue( name ) );
+				data.put( columnNames.getUnchecked( name ), entry.getValue( name ) );
 			}
 			try
 			{
@@ -602,6 +647,103 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public Entry getLastEntry( String trackId, String source, int interpolationLevel )
 	{
 		return latestEntries.get( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ) );
+	}
+
+	@Override
+	public void writeTestEvent( String typeLabel, TestEvent.Source<?> source, long timestamp, byte[] testEventData )
+	{
+		if( currentExecution != null )
+		{
+			timestamp -= ( currentExecution.getStartTime() );
+
+			TestEventSourceConfig sourceConfig = getConfigForSource( typeLabel, source );
+
+			//TODO: Put the data into the database and remove the following:
+			eventDataMemoryStorage.put( currentExecution.getId(), new TestEventData( timestamp,
+					sourceConfig.getTypeName(), sourceConfig, testEventData ) );
+		}
+	}
+
+	private TestEventSourceConfig getConfigForSource( String typeLabel, TestEvent.Source<?> source )
+	{
+		final String hash = source.getHash();
+		final Map<String, TestEventSourceConfig> sources = sourceConfigMemoryStorage.getUnchecked( currentExecution
+				.getId() );
+		TestEventSourceConfig sourceConfig = sources.get( sources );
+		if( sourceConfig == null )
+		{
+			sourceConfig = new TestEventSourceConfig( source.getLabel(), source.getType().getName(), source.getData() );
+
+			TestEventTypeDescriptorImpl type = eventTypes.get( source.getType().getName() );
+			if( type == null )
+			{
+				eventTypes.put( source.getType().getName(), type = new TestEventTypeDescriptorImpl( typeLabel ) );
+			}
+			type.getSource( source.getLabel() ).putConfig( hash, sourceConfig );
+
+			// TODO: Replace with real database implementation!
+			sources.put( hash, sourceConfig );
+		}
+
+		return sourceConfig;
+	}
+
+	public Set<TestEventTypeDescriptorImpl> getTestEventTypes( String executionId )
+	{
+		if( currentExecution != null && Objects.equal( currentExecution.getId(), executionId ) )
+		{
+			return ImmutableSet.copyOf( eventTypes.values() );
+		}
+		else
+		{
+			//TODO: Get everything from the DB, instantiate the TestEventTypeDescriptorImpls, with the child TestEventSourceDescriptorImpls.
+			//TODO: Cache the result of this to speed up subsequent invocations.
+			return ImmutableSet.of();
+		}
+	}
+
+	public <T extends TestEvent> Iterable<TestEventData> readTestEvents( String executionId, int offset, int limit,
+			Iterable<TestEventSourceConfig> types )
+	{
+		// TODO: Replace with real database implementation!
+		return Iterables.limit( Iterables.skip( getTestEventDatas( executionId, types ), offset ), limit );
+	}
+
+	public <T extends TestEvent> Iterable<TestEventData> readTestEventRange( String executionId, final long startTime,
+			final long endTime, Iterable<TestEventSourceConfig> types )
+	{
+		// TODO: Replace with real database implementation!
+		return Iterables.filter( getTestEventDatas( executionId, types ), new Predicate<TestEventData>()
+		{
+			@Override
+			public boolean apply( TestEventData input )
+			{
+				return input.getTimestamp() >= startTime && input.getTimestamp() <= endTime;
+			}
+		} );
+	}
+
+	public <T extends TestEvent> int getTestEventCount( String executionId, Iterable<TestEventSourceConfig> sources )
+	{
+		//TODO: Replace below with real implementation!
+		// 1. Get all TestEventSourceConfig IDs where label is one of typeNames.
+		// 2. Get all TestEvents where sourceId is one of the IDs from 1.
+		return Iterables.size( getTestEventDatas( executionId, sources ) );
+	}
+
+	@Deprecated
+	private Iterable<TestEventData> getTestEventDatas( String executionId, Iterable<TestEventSourceConfig> sources )
+	{
+		final Set<TestEventSourceConfig> sourceList = ImmutableSet.copyOf( sources );
+
+		return Iterables.filter( eventDataMemoryStorage.get( executionId ), new Predicate<TestEventData>()
+		{
+			@Override
+			public boolean apply( TestEventData input )
+			{
+				return sourceList.size() == 0 || sourceList.contains( input.getTestEventSourceConfig() );
+			}
+		} );
 	}
 
 	private String buildDataTableName( String trackId, long interpolationLevel, String source )
@@ -658,7 +800,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			for( String name : getTrack( trackId ).getTrackDescriptor().getValueNames().keySet() )
 			{
-				cleanedData.put( name, rawData.remove( columnNames.get( name ) ) );
+				cleanedData.put( name, rawData.remove( columnNames.getUnchecked( name ) ) );
 			}
 			cleanedData.putAll( rawData );
 		}
@@ -692,7 +834,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				HashMap<String, Object> data = Maps.newHashMap();
 				for( String name : descriptorNames )
 				{
-					data.put( name, rawData.remove( columnNames.get( name ) ) );
+					data.put( name, rawData.remove( columnNames.getUnchecked( name ) ) );
 				}
 				data.putAll( rawData );
 

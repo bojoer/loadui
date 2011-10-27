@@ -18,6 +18,7 @@ package com.eviware.loadui.api.statistics.store;
 import java.util.Collection;
 
 import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.testevents.TestEvent;
 
 /**
  * Manages existing Executions, creating new ones, etc.
@@ -143,6 +144,16 @@ public interface ExecutionManager extends EventFirer
 	public Entry getLastEntry( String trackId, String source, int interpolationLevel );
 
 	/**
+	 * Writes the data for a TestEvent to the current Execution.
+	 * 
+	 * @param typeLabel
+	 * @param source
+	 * @param timestamp
+	 * @param testEventData
+	 */
+	public void writeTestEvent( String typeLabel, TestEvent.Source<?> source, long timestamp, byte[] testEventData );
+
+	/**
 	 * Gets a list of the names of all available Executions.
 	 * 
 	 * @return
@@ -167,17 +178,17 @@ public interface ExecutionManager extends EventFirer
 	 * 
 	 * @param el
 	 */
-	void addExecutionListener( ExecutionListener el );
+	public void addExecutionListener( ExecutionListener el );
 
 	/**
 	 * remove all listeners
 	 */
-	void removeAllExecutionListeners();
+	public void removeAllExecutionListeners();
 
 	/**
 	 * removes added execution listener
 	 */
-	void removeExecutionListener( ExecutionListener el );
+	public void removeExecutionListener( ExecutionListener el );
 
 	/**
 	 * ExecutionManager States, based on execution events. state of manager
@@ -186,7 +197,7 @@ public interface ExecutionManager extends EventFirer
 	 * @author robert
 	 * 
 	 */
-	enum State
+	public enum State
 	{
 		STARTED, PAUSED, STOPPED
 	}
@@ -194,5 +205,5 @@ public interface ExecutionManager extends EventFirer
 	/**
 	 * Return current state of ExecutionManager
 	 */
-	State getState();
+	public State getState();
 }

@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.statistics.store;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +28,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
+import com.eviware.loadui.util.test.BeanInjectorMocker;
 import com.google.common.collect.Lists;
 
 public class TrackImplTest
@@ -45,9 +48,10 @@ public class TrackImplTest
 	@Before
 	public void initialize()
 	{
+		new BeanInjectorMocker();
 		System.setProperty( LoadUI.LOADUI_HOME, "target" );
 
-		h2 = new H2ExecutionManager();
+		h2 = new H2ExecutionManager( mock( TestEventRegistry.class ) );
 		h2.startExecution( "trackTestExecution", now );
 
 		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
