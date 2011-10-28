@@ -68,7 +68,9 @@
 	<bean id="broadcastMessageEndpoint"
 		class="com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl" />
 
-	<bean id="workspaceProvider" class="com.eviware.loadui.impl.model.WorkspaceProviderImpl" />
+	<bean id="workspaceProvider" class="com.eviware.loadui.impl.model.WorkspaceProviderImpl">
+		<constructor-arg ref="addonRegistry" />
+	</bean>
 
 	<bean id="componentRegistry" name="behaviorProvider"
 		class="com.eviware.loadui.impl.component.ComponentRegistryImpl" />

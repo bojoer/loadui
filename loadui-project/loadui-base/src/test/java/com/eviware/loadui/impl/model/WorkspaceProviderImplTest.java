@@ -15,6 +15,10 @@
  */
 package com.eviware.loadui.impl.model;
 
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -23,9 +27,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-
+import com.eviware.loadui.api.addon.AddonRegistry;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
@@ -51,7 +53,7 @@ public class WorkspaceProviderImplTest
 		config.addNewLoaduiWorkspace();
 		config.save( tmp );
 
-		WorkspaceProvider provider = new WorkspaceProviderImpl();
+		WorkspaceProvider provider = new WorkspaceProviderImpl( mock( AddonRegistry.class ) );
 
 		WorkspaceItem workspace = provider.loadWorkspace( tmp );
 
