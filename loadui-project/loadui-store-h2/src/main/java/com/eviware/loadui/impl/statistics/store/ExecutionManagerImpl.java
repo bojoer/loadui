@@ -72,13 +72,13 @@ import com.google.common.base.Predicate;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Ordering;
-import com.google.common.collect.TreeMultimap;
 
 /**
  * Implementation of execution manager. Basically main class for data handling.
@@ -158,15 +158,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			} );
 
 	@Deprecated
-	private final Multimap<String, TestEventData> eventDataMemoryStorage = TreeMultimap.create( Ordering.arbitrary(),
-			new Comparator<TestEventData>()
-			{
-				@Override
-				public int compare( TestEventData o1, TestEventData o2 )
-				{
-					return ( int )( o1.getTimestamp() - o1.getTimestamp() );
-				}
-			} );
+	private final Multimap<String, TestEventData> eventDataMemoryStorage = ArrayListMultimap.create();
 
 	//TODO: End removal
 
@@ -669,7 +661,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		final String hash = source.getHash();
 		final Map<String, TestEventSourceConfig> sources = sourceConfigMemoryStorage.getUnchecked( currentExecution
 				.getId() );
-		TestEventSourceConfig sourceConfig = sources.get( sources );
+		TestEventSourceConfig sourceConfig = sources.get( hash );
 		if( sourceConfig == null )
 		{
 			sourceConfig = new TestEventSourceConfig( source.getLabel(), source.getType().getName(), source.getData() );
@@ -736,7 +728,18 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		final Set<TestEventSourceConfig> sourceList = ImmutableSet.copyOf( sources );
 
-		return Iterables.filter( eventDataMemoryStorage.get( executionId ), new Predicate<TestEventData>()
+		List<TestEventData> allDatas = Lists.newArrayList( eventDataMemoryStorage.get( executionId ) );
+		Collections.sort( allDatas, new Comparator<TestEventData>()
+		{
+			@Override
+			public int compare( TestEventData o1, TestEventData o2 )
+			{
+				int diff = ( int )( o1.getTimestamp() - o2.getTimestamp() );
+				return diff == 0 ? System.identityHashCode( o1 ) - System.identityHashCode( o2 ) : diff;
+			}
+		} );
+
+		return Iterables.filter( allDatas, new Predicate<TestEventData>()
 		{
 			@Override
 			public boolean apply( TestEventData input )
