@@ -57,10 +57,12 @@ public class TestExecutionAddon implements Addon
 					break;
 				case START :
 					canvas.triggerAction( CanvasItem.START_ACTION );
+					TestExecutionEvent.logExecutionEvent( TestExecutionEvent.ExecutionAction.STARTED );
 					break;
 				case PRE_STOP :
 					canvas.triggerAction( CanvasItem.STOP_ACTION );
 					canvas.triggerAction( CanvasItem.COMPLETE_ACTION );
+					TestExecutionEvent.logExecutionEvent( TestExecutionEvent.ExecutionAction.COMPLETED );
 					break;
 				}
 			}

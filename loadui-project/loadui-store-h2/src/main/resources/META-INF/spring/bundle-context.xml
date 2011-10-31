@@ -9,4 +9,8 @@
 		<constructor-arg ref="testEventRegistry"/>
 		<property name="workspaceProvider" ref="workspaceProvider" />
 	</bean>
+	
+	<bean id="testEventManager" class="com.eviware.loadui.impl.statistics.store.TestEventManagerImpl">
+		<constructor-arg ref="executionManager" />
+	</bean>
 </beans>

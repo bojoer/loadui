@@ -51,11 +51,12 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.events.EventFuture;
 import com.google.common.collect.ImmutableSet;
 
-public class ProjectExecutionManagerImpl implements ProjectExecutionManager
+public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Releasable
 {
 	private static Logger log = LoggerFactory.getLogger( ProjectExecutionManagerImpl.class );
 
@@ -71,7 +72,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 	private final HashMap<ProjectItem, SummaryListener> summaryListeners = new HashMap<ProjectItem, SummaryListener>();
 	private final HashSet<SummaryAttacher> summaryAttachers = new HashSet<SummaryAttacher>();
 	private final CollectionListener collectionListener = new CollectionListener();
-	private final RunningListener runningListener = new RunningListener();
+	private final RunningListener runningExecutionTask = new RunningListener();
 
 	private State state = State.STOPPED;
 
@@ -116,6 +117,8 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 						return ImmutableSet.of();
 					}
 				} );
+
+		BeanInjector.getBean( TestRunner.class ).registerTask( runningExecutionTask, Phase.PRE_START, Phase.POST_STOP );
 	}
 
 	@Override
@@ -143,6 +146,12 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 	public String getProjectId( Execution execution )
 	{
 		return execution.getId().split( "_" )[0];
+	}
+
+	@Override
+	public void release()
+	{
+		BeanInjector.getBean( TestRunner.class ).unregisterTask( runningExecutionTask, Phase.values() );
 	}
 
 	private class ExecutionAddonImpl implements ExecutionAddon
@@ -179,10 +188,10 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				{
 					ProjectItem addedProject = ( ProjectItem )event.getElement();
 
-					addedProject.addEventListener( BaseEvent.class, runningListener );
+					//addedProject.addEventListener( BaseEvent.class, runningListener );
 					addedProject.addEventListener( CollectionEvent.class, collectionListener );
-					for( SceneItem scene : addedProject.getScenes() )
-						scene.addEventListener( BaseEvent.class, runningListener );
+					//for( SceneItem scene : addedProject.getScenes() )
+					//scene.addEventListener( BaseEvent.class, runningListener );
 
 					SummaryListener summaryListener = new SummaryListener( addedProject );
 					summaryListeners.put( addedProject, summaryListener );
@@ -203,7 +212,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				else if( ProjectItem.SCENES.equals( event.getKey() ) )
 				{
 					SceneItem scene = ( SceneItem )event.getElement();
-					scene.addEventListener( BaseEvent.class, runningListener );
+					//scene.addEventListener( BaseEvent.class, runningListener );
 					scene.addEventListener( BaseEvent.class, summaryListeners.get( event.getSource() ) );
 				}
 			}
@@ -213,7 +222,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				{
 					ProjectItem removedProject = ( ProjectItem )event.getElement();
 
-					removedProject.removeEventListener( BaseEvent.class, runningListener );
+					//removedProject.removeEventListener( BaseEvent.class, runningListener );
 					removedProject.removeEventListener( CollectionEvent.class, collectionListener );
 					removedProject.removeEventListener( BaseEvent.class, summaryListeners.remove( removedProject ) );
 				}
@@ -221,64 +230,58 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager
 				{
 					SceneItem scene = ( SceneItem )event.getElement();
 					scene.removeEventListener( BaseEvent.class, summaryListeners.get( event.getSource() ) );
-					scene.removeEventListener( BaseEvent.class, runningListener );
+					//scene.removeEventListener( BaseEvent.class, runningListener );
 				}
 			}
 		}
 	}
 
-	private class RunningListener implements EventHandler<BaseEvent>
+	private class RunningListener implements /* EventHandler<BaseEvent>, */TestExecutionTask
 	{
 		@Override
-		public void handleEvent( BaseEvent event )
+		public void invoke( TestExecution execution, Phase phase )
 		{
-			if( event.getSource() instanceof CanvasItem && !Boolean.getBoolean( LoadUI.DISABLE_STATISTICS ) )
+			if( Boolean.getBoolean( LoadUI.DISABLE_STATISTICS ) )
+				return;
+
+			CanvasItem canvas = execution.getCanvas();
+			ProjectItem runningProject = canvas.getProject();
+
+			switch( phase )
 			{
-				// log.debug( "GOT EVENT: "+ event.getKey() + " from "
-				// +event.getSource().getClass().getName() );
-
-				CanvasItem canvas = ( CanvasItem )event.getSource();
-				ProjectItem runningProject = canvas.getProject();
-				if( state == State.STOPPED )
-				{
-					if( CanvasItem.START_ACTION.equals( event.getKey() ) )
-						startExecution( canvas, runningProject );
-				}
-				else if( state == State.TESTCASE_STARTED )
-				{
-					if( CanvasItem.START_ACTION.equals( event.getKey() ) && canvas == runningProject )
-					{
-						summaryAttachers.add( new SummaryAttacher( runningProject, executionManager.getCurrentExecution() ) );
-						state = State.PROJECT_STARTED;
-					}
-					else if( CanvasItem.ON_COMPLETE_DONE.equals( event.getKey() ) )
-					{
-						if( canvas == runningProject )
-						{
-							stopExecution( canvas, runningProject );
-						}
-						else
-						{
-							if( !runningProject.isRunning() )
-							{
-								for( SceneItem scene : runningProject.getScenes() )
-									if( scene.isRunning() )
-										return;
-
-								stopExecution( canvas, runningProject );
-							}
-						}
-					}
-				}
-				else if( state == State.PROJECT_STARTED )
-				{
-					if( CanvasItem.ON_COMPLETE_DONE.equals( event.getKey() ) && canvas == runningProject )
-					{
-						stopExecution( canvas, runningProject );
-					}
-				}
+			case PRE_START :
+				startExecution( canvas, runningProject );
+				break;
+			case POST_STOP :
+				stopExecution( canvas, runningProject );
+				break;
 			}
 		}
+
+		/*
+		 * @Override public void handleEvent( BaseEvent event ) { if(
+		 * event.getSource() instanceof CanvasItem && !Boolean.getBoolean(
+		 * LoadUI.DISABLE_STATISTICS ) ) { // log.debug( "GOT EVENT: "+
+		 * event.getKey() + " from " // +event.getSource().getClass().getName() );
+		 * 
+		 * CanvasItem canvas = ( CanvasItem )event.getSource(); ProjectItem
+		 * runningProject = canvas.getProject(); if( state == State.STOPPED ) {
+		 * if( CanvasItem.START_ACTION.equals( event.getKey() ) ) startExecution(
+		 * canvas, runningProject ); } else if( state == State.TESTCASE_STARTED )
+		 * { if( CanvasItem.START_ACTION.equals( event.getKey() ) && canvas ==
+		 * runningProject ) { summaryAttachers.add( new SummaryAttacher(
+		 * runningProject, executionManager.getCurrentExecution() ) ); state =
+		 * State.PROJECT_STARTED; } else if( CanvasItem.ON_COMPLETE_DONE.equals(
+		 * event.getKey() ) ) { if( canvas == runningProject ) { stopExecution(
+		 * canvas, runningProject ); } else { if( !runningProject.isRunning() ) {
+		 * for( SceneItem scene : runningProject.getScenes() ) if(
+		 * scene.isRunning() ) return;
+		 * 
+		 * stopExecution( canvas, runningProject ); } } } } else if( state ==
+		 * State.PROJECT_STARTED ) { if( CanvasItem.ON_COMPLETE_DONE.equals(
+		 * event.getKey() ) && canvas == runningProject ) { stopExecution( canvas,
+		 * runningProject ); } } } }
+		 */
 
 		private void startExecution( CanvasItem canvas, ProjectItem runningProject )
 		{

@@ -15,17 +15,19 @@
  */
 package com.eviware.loadui.impl.execution;
 
+import static org.mockito.Mockito.mock;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.*;
-import static org.mockito.Mockito.*;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.eviware.loadui.api.execution.ExecutionResult;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.model.CanvasItem;
-import com.eviware.loadui.impl.execution.TestRunnerImpl;
+import com.eviware.loadui.util.test.BeanInjectorMocker;
 
 public class TestRunnerImplTest
 {
@@ -35,6 +37,7 @@ public class TestRunnerImplTest
 	@Before
 	public void setup()
 	{
+		new BeanInjectorMocker();
 		testRunner = new TestRunnerImpl( Executors.newCachedThreadPool() );
 		canvasMock = mock( CanvasItem.class );
 	}

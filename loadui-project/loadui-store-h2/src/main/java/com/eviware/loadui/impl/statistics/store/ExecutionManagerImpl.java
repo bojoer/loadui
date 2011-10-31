@@ -653,6 +653,13 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			//TODO: Put the data into the database and remove the following:
 			eventDataMemoryStorage.put( currentExecution.getId(), new TestEventData( timestamp,
 					sourceConfig.getTypeName(), sourceConfig, testEventData ) );
+
+			log.debug( "Wrote TestEvent[{}]: {}", typeLabel, Iterables.getFirst(
+					currentExecution.getTestEvents( currentExecution.getTestEventCount() - 1, false ), null ) );
+		}
+		else
+		{
+			log.debug( "Dropped testEvent {} due to missing execution", typeLabel );
 		}
 	}
 

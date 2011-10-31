@@ -34,4 +34,6 @@
 	<bean id="agentTestExecutionAddonFactory" class="com.eviware.loadui.impl.execution.AgentTestExecutionAddon$Factory" />
 	
 	<bean id="testExecutionAddonFactory" class="com.eviware.loadui.impl.execution.TestExecutionAddon$Factory" />
+	
+	<bean id="testExecutionEventFactory" class="com.eviware.loadui.impl.execution.TestExecutionEvent$Factory" />
 </beans>

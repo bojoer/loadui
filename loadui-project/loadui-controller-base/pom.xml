@@ -54,5 +54,11 @@
 			<artifactId>groovy-all</artifactId>
 			<version>${groovyVersion}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-test-utils</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

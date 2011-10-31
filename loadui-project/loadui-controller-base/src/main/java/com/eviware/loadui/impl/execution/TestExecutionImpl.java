@@ -24,6 +24,13 @@ public class TestExecutionImpl extends AbstractTestExecution
 		return controller.getExecutionFuture();
 	}
 
+	@Override
+	public Future<ExecutionResult> abort()
+	{
+		TestExecutionEvent.logExecutionEvent( TestExecutionEvent.ExecutionAction.ABORTED );
+		return super.abort();
+	}
+
 	void setController( TestController controller )
 	{
 		this.controller = controller;
