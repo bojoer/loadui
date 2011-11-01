@@ -72,7 +72,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 	private final HashMap<ProjectItem, SummaryListener> summaryListeners = new HashMap<ProjectItem, SummaryListener>();
 	private final HashSet<SummaryAttacher> summaryAttachers = new HashSet<SummaryAttacher>();
 	private final CollectionListener collectionListener = new CollectionListener();
-	private final RunningListener runningExecutionTask = new RunningListener();
+	private final RunningExecutionTask runningExecutionTask = new RunningExecutionTask();
 
 	private State state = State.STOPPED;
 
@@ -236,7 +236,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 		}
 	}
 
-	private class RunningListener implements /* EventHandler<BaseEvent>, */TestExecutionTask
+	private class RunningExecutionTask implements TestExecutionTask
 	{
 		@Override
 		public void invoke( TestExecution execution, Phase phase )
@@ -257,31 +257,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 				break;
 			}
 		}
-
-		/*
-		 * @Override public void handleEvent( BaseEvent event ) { if(
-		 * event.getSource() instanceof CanvasItem && !Boolean.getBoolean(
-		 * LoadUI.DISABLE_STATISTICS ) ) { // log.debug( "GOT EVENT: "+
-		 * event.getKey() + " from " // +event.getSource().getClass().getName() );
-		 * 
-		 * CanvasItem canvas = ( CanvasItem )event.getSource(); ProjectItem
-		 * runningProject = canvas.getProject(); if( state == State.STOPPED ) {
-		 * if( CanvasItem.START_ACTION.equals( event.getKey() ) ) startExecution(
-		 * canvas, runningProject ); } else if( state == State.TESTCASE_STARTED )
-		 * { if( CanvasItem.START_ACTION.equals( event.getKey() ) && canvas ==
-		 * runningProject ) { summaryAttachers.add( new SummaryAttacher(
-		 * runningProject, executionManager.getCurrentExecution() ) ); state =
-		 * State.PROJECT_STARTED; } else if( CanvasItem.ON_COMPLETE_DONE.equals(
-		 * event.getKey() ) ) { if( canvas == runningProject ) { stopExecution(
-		 * canvas, runningProject ); } else { if( !runningProject.isRunning() ) {
-		 * for( SceneItem scene : runningProject.getScenes() ) if(
-		 * scene.isRunning() ) return;
-		 * 
-		 * stopExecution( canvas, runningProject ); } } } } else if( state ==
-		 * State.PROJECT_STARTED ) { if( CanvasItem.ON_COMPLETE_DONE.equals(
-		 * event.getKey() ) && canvas == runningProject ) { stopExecution( canvas,
-		 * runningProject ); } } } }
-		 */
 
 		private void startExecution( CanvasItem canvas, ProjectItem runningProject )
 		{
