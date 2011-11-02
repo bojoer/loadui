@@ -15,13 +15,19 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.api.testevents.TestEvent;
+import com.eviware.loadui.api.testevents.TestEvent.Factory;
 import com.eviware.loadui.api.testevents.TestEventManager;
+import com.eviware.loadui.impl.statistics.store.testevents.TestEventEntryImpl;
 import com.eviware.loadui.util.BeanInjector;
+import com.google.common.collect.MapMaker;
 
 public class TestEventManagerImpl implements TestEventManager
 {
@@ -29,6 +35,8 @@ public class TestEventManagerImpl implements TestEventManager
 
 	private final ExecutionManagerImpl manager;
 	private final TestEventRegistry testEventRegistry;
+	private final Set<TestEventObserver> observers = Collections.newSetFromMap( new MapMaker().weakKeys()
+			.<TestEventObserver, Boolean> makeMap() );
 
 	public TestEventManagerImpl( ExecutionManagerImpl manager )
 	{
@@ -45,11 +53,36 @@ public class TestEventManagerImpl implements TestEventManager
 		{
 			manager.writeTestEvent( factory.getLabel(), source, testEvent.getTimestamp(),
 					factory.getDataForTestEvent( testEvent ) );
+
+			TestEvent.Entry entry = new TestEventEntryImpl( testEvent, source.getLabel(), factory.getLabel() );
+			for( TestEventObserver observer : observers )
+			{
+				observer.onTestEvent( entry );
+			}
 		}
 		else
 		{
 			log.warn( "No TestEvent.Factory capable of storing TestEvent: {}, of type: {} has been registered!",
 					testEvent, testEvent.getType() );
 		}
+	}
+
+	@Override
+	public String getLabelForType( Class<? extends TestEvent> type )
+	{
+		Factory<? extends TestEvent> factory = testEventRegistry.lookupFactory( type );
+		return factory == null ? type.getSimpleName() : factory.getLabel();
+	}
+
+	@Override
+	public void registerObserver( TestEventObserver observer )
+	{
+		observers.add( observer );
+	}
+
+	@Override
+	public void unregisterObserver( TestEventObserver observer )
+	{
+		observers.remove( observer );
 	}
 }

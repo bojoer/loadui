@@ -51,6 +51,10 @@
 		<constructor-arg value="Agents" />
 	</bean>
 	
+	<bean id="eventLogInspector" class="com.eviware.loadui.fx.eventlog.EventLogInspector" factory-method="createInstance">
+		<constructor-arg ref="testEventManager" />
+	</bean>
+	
 	<bean id="tableWidget" class="com.eviware.loadui.fx.widgets.factories.TableWidgetFactory" />
 	<bean id="selectorWidget" class="com.eviware.loadui.fx.widgets.factories.SelectorWidgetFactory" />
 	<bean id="chartWidget" class="com.eviware.loadui.fx.widgets.factories.ChartWidgetFactory" />

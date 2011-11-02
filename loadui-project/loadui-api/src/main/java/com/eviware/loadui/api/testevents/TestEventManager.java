@@ -29,4 +29,43 @@ public interface TestEventManager
 	 * @param testEvent
 	 */
 	public <T extends TestEvent> void logTestEvent( TestEvent.Source<T> source, T testEvent );
+
+	/**
+	 * Gets the label for the given TestEvent type.
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public String getLabelForType( Class<? extends TestEvent> type );
+
+	/**
+	 * Registers a TestEventObserver to be notified of each logged TestEvent.
+	 * 
+	 * @param observer
+	 */
+	public void registerObserver( TestEventObserver observer );
+
+	/**
+	 * Unregisters a TestEventObserver from being notified of each logged
+	 * TestEvent.
+	 * 
+	 * @param observer
+	 */
+	public void unregisterObserver( TestEventObserver observer );
+
+	/**
+	 * Callback interface for observing logged TestEvents.
+	 * 
+	 * @author dain.nilsson
+	 */
+	public interface TestEventObserver
+	{
+		/**
+		 * Called each time a new TestEvent is logged, with a TestEvent.Entry
+		 * wrapping the new TestEvent.
+		 * 
+		 * @param eventEntry
+		 */
+		public void onTestEvent( TestEvent.Entry eventEntry );
+	}
 }

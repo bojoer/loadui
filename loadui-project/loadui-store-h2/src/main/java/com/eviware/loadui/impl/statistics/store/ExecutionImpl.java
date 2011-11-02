@@ -46,6 +46,7 @@ import com.eviware.loadui.api.testevents.TestEventTypeDescriptor;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.statistics.db.util.TypeConverter;
 import com.eviware.loadui.impl.statistics.store.testevents.TestEventData;
+import com.eviware.loadui.impl.statistics.store.testevents.TestEventEntryImpl;
 import com.eviware.loadui.impl.statistics.store.testevents.TestEventSourceConfig;
 import com.eviware.loadui.impl.statistics.store.testevents.TestEventSourceDescriptorImpl;
 import com.eviware.loadui.util.events.EventSupport;
@@ -72,7 +73,7 @@ public class ExecutionImpl implements Execution, Releasable
 	public static final String KEY_LENGTH = "LENGTH";
 	public static final String KEY_ICON = "ICON";
 
-	private final Function<TestEventData, TestEvent> createTestEvent;
+	private final Function<TestEventData, TestEvent.Entry> createTestEvent;
 
 	/**
 	 * Execution directory
@@ -121,14 +122,23 @@ public class ExecutionImpl implements Execution, Releasable
 
 	public ExecutionImpl( File executionDir, ExecutionManagerImpl manager, final TestEventRegistry testEventRegistry )
 	{
-		createTestEvent = new Function<TestEventData, TestEvent>()
+		createTestEvent = new Function<TestEventData, TestEvent.Entry>()
 		{
 			@Override
-			public TestEvent apply( TestEventData input )
+			public TestEvent.Entry apply( TestEventData input )
 			{
 				Factory<?> factory = testEventRegistry.lookupFactory( input.getType() );
-				return factory == null ? new UnknownTestEvent( input.getTimestamp() ) : factory.createTestEvent(
-						input.getTimestamp(), input.getTestEventSourceConfig().getData(), input.getData() );
+				if( factory == null )
+				{
+					return new TestEventEntryImpl( new UnknownTestEvent( input.getTimestamp() ), input
+							.getTestEventSourceConfig().getLabel(), "Unknown" );
+				}
+				else
+				{
+					return new TestEventEntryImpl( factory.createTestEvent( input.getTimestamp(), input
+							.getTestEventSourceConfig().getData(), input.getData() ), input.getTestEventSourceConfig()
+							.getLabel(), factory.getLabel() );
+				}
 			}
 		};
 
@@ -221,7 +231,8 @@ public class ExecutionImpl implements Execution, Releasable
 	}
 
 	@Override
-	public Iterable<TestEvent> getTestEventRange( long startTime, long endTime, TestEventSourceDescriptor... sources )
+	public Iterable<TestEvent.Entry> getTestEventRange( long startTime, long endTime,
+			TestEventSourceDescriptor... sources )
 	{
 		return Iterables
 				.transform( manager.readTestEventRange( getId(), startTime, endTime, getConfigsForSources( sources ) ),
@@ -229,7 +240,7 @@ public class ExecutionImpl implements Execution, Releasable
 	}
 
 	@Override
-	public Iterable<TestEvent> getTestEvents( int index, boolean reversed, TestEventSourceDescriptor... sources )
+	public Iterable<TestEvent.Entry> getTestEvents( int index, boolean reversed, TestEventSourceDescriptor... sources )
 	{
 		return Iterables.transform( new TestEventBlockIterable( index, reversed, getConfigsForSources( sources ) ),
 				createTestEvent );

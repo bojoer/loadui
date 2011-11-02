@@ -112,4 +112,21 @@ public interface TestEvent
 		 */
 		public String getHash();
 	}
+
+	/**
+	 * Represents a TestEvent stored in an Execution. Provides some metadata
+	 * about the TestExecution, as well as the TestExecution itself.
+	 * 
+	 * @author dain.nilsson
+	 * 
+	 * @param <T>
+	 */
+	public interface Entry
+	{
+		public TestEvent getTestEvent();
+
+		public String getTypeLabel();
+
+		public String getSourceLabel();
+	}
 }

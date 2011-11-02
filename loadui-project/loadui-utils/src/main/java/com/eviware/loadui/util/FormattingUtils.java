@@ -27,6 +27,12 @@ public class FormattingUtils
 		return String.format( "%02d:%02d:%02d", hours, minutes, seconds );
 	}
 
+	public static String formatTimeMillis( long millis )
+	{
+		long seconds = millis / 1000;
+		return String.format( "%s.%03d", formatTime( seconds ), millis % 1000 );
+	}
+
 	public static String formatFileName( String base )
 	{
 		return base.replaceAll( " ", "_" ).replaceAll( "[^a-zA-Z0-9-_.]", "" );

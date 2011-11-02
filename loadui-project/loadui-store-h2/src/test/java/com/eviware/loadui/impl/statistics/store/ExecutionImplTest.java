@@ -137,12 +137,12 @@ public class ExecutionImplTest
 		assertThat( currentExecution.getTestEventCount(), is( 3 ) );
 
 		List<Long> timestamps = Lists.newArrayList( Iterables.transform( currentExecution.getTestEvents( 0, false ),
-				new Function<TestEvent, Long>()
+				new Function<TestEvent.Entry, Long>()
 				{
 					@Override
-					public Long apply( TestEvent input )
+					public Long apply( TestEvent.Entry input )
 					{
-						return input.getTimestamp();
+						return input.getTestEvent().getTimestamp();
 					}
 				} ) );
 

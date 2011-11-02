@@ -32,6 +32,13 @@
 			<entry key="panelId" value="MainWindowInspector"/>
 		</osgi:service-properties>
 	</osgi:service>
+	
+	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
+		ref="eventLogInspector">
+		<osgi:service-properties>
+			<entry key="panelId" value="StatisticWorkbenchInspector"/>
+		</osgi:service-properties>
+	</osgi:service>
 
 	<osgi:set id="inspectors" interface="com.eviware.loadui.api.ui.inspector.Inspector"
 		cardinality="0..N">
@@ -65,6 +72,8 @@
 	<osgi:reference id="agentDiscovery" interface="com.eviware.loadui.api.discovery.AgentDiscovery" />
 	
 	<osgi:reference id="statisticsManager" interface="com.eviware.loadui.api.statistics.StatisticsManager" />
+	
+	<osgi:reference id="testEventManager" interface="com.eviware.loadui.api.testevents.TestEventManager" cardinality="0..1" />
 	
 	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
 		ref="tableWidget" />
