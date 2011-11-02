@@ -55,4 +55,10 @@ public class DataTable extends TableBase
 	{
 		return false;
 	}
+
+	@Override
+	public synchronized void release()
+	{
+		super.release();
+	}
 }

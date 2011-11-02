@@ -139,10 +139,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private final ResultPathListener resultPathListener = new ResultPathListener();
 
-	private long pauseStartedTime = 0;
-
-	private long totalPause = 0;
-
 	private final Map<String, TestEventTypeDescriptorImpl> eventTypes = Maps.newHashMap();
 
 	//TODO: Remove these once proper database storage is implemented!
@@ -227,7 +223,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		if( executionState == State.PAUSED )
 		{
 			executionState = State.STARTED;
-			totalPause += System.currentTimeMillis() - pauseStartedTime;
 			ecs.fireExecutionStarted( State.PAUSED );
 			log.debug( "State changed: PAUSED -> STARTED" );
 			return currentExecution;
@@ -295,7 +290,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		executionPool.setCurrentExecution( currentExecution );
 
 		eventTypes.clear();
-		totalPause = 0;
 		return currentExecution;
 	}
 
@@ -331,7 +325,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		instance.stopExecution();
 		if( instance.workspace != null )
 		{
-			log.debug( "fff: " + msg );
 			instance.workspace.getProjects().iterator().next().triggerAction( CanvasItem.COMPLETE_ACTION );
 			instance.workspace.fireEvent( new BaseEvent( instance, msg ) );
 		}
@@ -937,7 +930,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		if( executionState == State.STARTED )
 		{
 			executionState = State.PAUSED;
-			pauseStartedTime = System.currentTimeMillis();
 			ecs.fireExecutionPaused( State.STARTED );
 			log.debug( "State changed: START -> PAUSED" );
 		}
