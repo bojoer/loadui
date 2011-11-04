@@ -476,12 +476,14 @@ public class ExecutionImpl implements Execution, Releasable
 		private final Iterable<TestEventSourceConfig> configs;
 		private final boolean reverse;
 		private final int index;
+		private final int size;
 
 		public TestEventBlockIterable( int index, boolean reverse, Iterable<TestEventSourceConfig> configs )
 		{
 			this.index = index;
 			this.reverse = reverse;
 			this.configs = configs;
+			this.size = manager.getTestEventCount( getId(), configs );
 		}
 
 		@Override
@@ -494,22 +496,31 @@ public class ExecutionImpl implements Execution, Releasable
 				@Override
 				public boolean hasNext()
 				{
-					return reverse ? nextIndex >= 0 : nextIndex < manager.getTestEventCount( getId(), configs );
+					return reverse ? nextIndex >= 0 : nextIndex < size;
 				}
 
 				@Override
 				public Iterator<TestEventData> next()
 				{
-					int offset = reverse ? Math.max( 0, nextIndex - BLOCK_FETCH_SIZE ) : nextIndex;
+					//int offset = reverse ? Math.max( 0, nextIndex - BLOCK_FETCH_SIZE ) : nextIndex;
 					if( reverse )
 					{
+						int offset = nextIndex + 1 - BLOCK_FETCH_SIZE;
 						nextIndex -= BLOCK_FETCH_SIZE;
-						return Lists.reverse(
-								Lists.newArrayList( manager.readTestEvents( getId(), offset, BLOCK_FETCH_SIZE, configs ) ) )
+						int limit = BLOCK_FETCH_SIZE;
+						if( offset < 0 )
+						{
+							limit += offset + 1;
+							offset = 0;
+						}
+
+						return Lists
+								.reverse( Lists.newArrayList( manager.readTestEvents( getId(), offset, limit, configs ) ) )
 								.iterator();
 					}
 					else
 					{
+						int offset = nextIndex;
 						nextIndex += BLOCK_FETCH_SIZE;
 						return manager.readTestEvents( getId(), offset, BLOCK_FETCH_SIZE, configs ).iterator();
 					}

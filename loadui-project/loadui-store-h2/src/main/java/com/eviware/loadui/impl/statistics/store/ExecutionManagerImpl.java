@@ -637,7 +637,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public void writeTestEvent( String typeLabel, TestEvent.Source<?> source, long timestamp, byte[] testEventData )
 	{
-		if( currentExecution != null )
+		if( currentExecution != null && executionState == State.STARTED )
 		{
 			timestamp -= ( currentExecution.getStartTime() );
 
@@ -647,8 +647,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			eventDataMemoryStorage.put( currentExecution.getId(), new TestEventData( timestamp,
 					sourceConfig.getTypeName(), sourceConfig, testEventData ) );
 
-			log.debug( "Wrote TestEvent[{}]: {}", typeLabel, Iterables.getFirst(
-					currentExecution.getTestEvents( currentExecution.getTestEventCount() - 1, false ), null ) );
+			log.debug( "Wrote TestEvent[{}] from {}", typeLabel, source );
 		}
 		else
 		{
@@ -658,7 +657,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private TestEventSourceConfig getConfigForSource( String typeLabel, TestEvent.Source<?> source )
 	{
-		final String hash = source.getHash();
+		final String hash = typeLabel + source.getHash();
 		final Map<String, TestEventSourceConfig> sources = sourceConfigMemoryStorage.getUnchecked( currentExecution
 				.getId() );
 		TestEventSourceConfig sourceConfig = sources.get( hash );

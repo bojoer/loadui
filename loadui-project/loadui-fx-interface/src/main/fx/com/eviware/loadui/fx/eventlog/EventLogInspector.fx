@@ -63,12 +63,12 @@ public class EventLogInspector extends Inspector {
 		content: SwingComponent.wrap( scrollPane )
 	}
 	
-	def container = HBox {
+	def container = VBox {
 		content: [
-			//TODO: Filtering goes here!
-			VBox {
+			Label { text: "No filtering applied" },
+			HBox {
 				content: [
-					Label { text: "No filtering applied" },
+					//TODO: Filtering goes here!
 					stack
 				]
 			}
@@ -114,8 +114,13 @@ public class EventLogInspector extends Inspector {
 
 class EventObserver extends TestEventManager.TestEventObserver {
 	override function onTestEvent( eventEntry:TestEvent.Entry ) {
-		FxUtils.runInFxThread( function():Void {
-			model.appendRow( eventEntry );
-		} );
+		if( execution == StatisticsWindow.currentExecution ) {
+			FxUtils.runInFxThread( function():Void {
+				def scrollModel = scrollPane.getVerticalScrollBar().getModel();
+				def bottom = scrollModel.getMaximum() - scrollModel.getExtent() == scrollModel.getValue();
+				model.appendRow( eventEntry );
+				if( bottom ) FX.deferAction( function():Void { scrollModel.setValue( scrollModel.getMaximum() - scrollModel.getExtent() ) } );
+			} );
+		}
 	}
 }

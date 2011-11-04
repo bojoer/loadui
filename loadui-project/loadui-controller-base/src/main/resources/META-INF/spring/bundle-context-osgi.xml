@@ -33,4 +33,6 @@
 	<osgi:service ref="testExecutionAddonFactory" interface="com.eviware.loadui.api.addon.Addon$Factory" />
 	
 	<osgi:service ref="testExecutionEventFactory" interface="com.eviware.loadui.api.testevents.TestEvent$Factory" />
+	
+	<osgi:service ref="demoEventFactory" interface="com.eviware.loadui.api.testevents.TestEvent$Factory" />
 </beans>

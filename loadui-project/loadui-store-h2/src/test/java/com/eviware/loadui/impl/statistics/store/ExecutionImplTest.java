@@ -25,6 +25,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.After;
@@ -153,6 +154,32 @@ public class ExecutionImplTest
 
 		assertThat( Iterables.size( currentExecution.getTestEvents( 0, false ) ), is( 3 ) );
 		assertThat( Iterables.size( currentExecution.getTestEventRange( 68, 68 ) ), is( 1 ) );
+	}
+
+	@Test
+	public void testTraversingBackwards()
+	{
+		MyTestEventFactory factory = new MyTestEventFactory();
+		testEventRegistry.factoryAdded( factory, ImmutableMap.<String, String> of() );
+		MyTestEventSource source = new MyTestEventSource();
+
+		long time = currentExecution.getStartTime();
+		for( int i = 1000; i > 0; i-- )
+		{
+			h2.writeTestEvent( factory.getLabel(), source, time++ , new byte[0] );
+		}
+
+		assertThat( Iterables.size( currentExecution.getTestEvents( 0, false ) ), is( 1000 ) );
+
+		time -= currentExecution.getStartTime();
+		int count = 0;
+
+		Iterator<TestEvent.Entry> iterator = currentExecution.getTestEvents( 999, true ).iterator();
+		while( iterator.hasNext() )
+		{
+			TestEvent.Entry entry = iterator.next();
+			assertThat( "At index: " + count++ , entry.getTestEvent().getTimestamp(), is( --time ) );
+		}
 	}
 
 	@After
