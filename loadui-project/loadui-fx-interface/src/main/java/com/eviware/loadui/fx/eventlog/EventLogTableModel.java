@@ -15,6 +15,7 @@ import com.eviware.loadui.util.FormattingUtils;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 public class EventLogTableModel extends AbstractTableModel
 {
@@ -142,6 +143,10 @@ public class EventLogTableModel extends AbstractTableModel
 			}
 		}
 		catch( ExecutionException e )
+		{
+			return null;
+		}
+		catch( UncheckedExecutionException e )
 		{
 			return null;
 		}
