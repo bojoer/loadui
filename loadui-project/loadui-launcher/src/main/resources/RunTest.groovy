@@ -23,6 +23,8 @@ import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.events.EventHandler
 import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.api.events.CollectionEvent
+import com.eviware.loadui.api.execution.TestRunner
+import com.eviware.loadui.api.execution.TestState
 import com.eviware.loadui.api.messaging.MessageListener
 import com.eviware.loadui.api.messaging.MessageEndpoint
 import com.eviware.loadui.api.model.AgentItem
@@ -243,14 +245,15 @@ log.info """
 
 """
 
-target.triggerAction( CanvasItem.START_ACTION )
+def testRunner = BeanInjector.getBean( TestRunner )
+def testExecution = testRunner.enqueueExecution( target )
 
 def time = target.getCounter( CanvasItem.TIMER_COUNTER )
 def samples = target.getCounter( CanvasItem.SAMPLE_COUNTER )
 def failures = target.getCounter( CanvasItem.FAILURE_COUNTER )
 
 //Monitor
-while( target.summary == null ) {
+while( testExecution.state != TestState.COMPLETED ) {
 	log.info "Time: ${FormattingUtils.formatTime(time.value)} Samples: ${samples.value} Failures: ${failures.value}"
 	sleep 1000
 }

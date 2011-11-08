@@ -26,9 +26,8 @@ import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
-import org.osgi.framework.BundleException;
-import org.osgi.framework.launch.Framework;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -38,6 +37,10 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.felix.framework.FrameworkFactory;
 import org.apache.felix.main.AutoProcessor;
 import org.apache.felix.main.Main;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
+import org.osgi.framework.launch.Framework;
 
 import com.eviware.loadui.launcher.api.OSGiUtils;
 import com.eviware.loadui.launcher.api.SplashController;
@@ -85,6 +88,7 @@ public class LoadUILauncher
 	protected final Properties configProps;
 	protected final String[] argv;
 	private Options options;
+	private boolean nofx = false;
 
 	/**
 	 * Initiates and starts the OSGi runtime.
@@ -197,6 +201,27 @@ public class LoadUILauncher
 		{
 			framework.init();
 			AutoProcessor.process( configProps, framework.getBundleContext() );
+
+			if( nofx )
+			{
+				Pattern fxPattern = Pattern.compile( "^com\\.eviware\\.loadui\\.(\\w+[.-])*fx-interface.*$" );
+				for( Bundle bundle : framework.getBundleContext().getBundles() )
+				{
+					String bundleName = bundle.getSymbolicName();
+					if( bundle.getHeaders().get( Constants.FRAGMENT_HOST ) == null
+							&& ( bundleName == null || !fxPattern.matcher( bundleName ).find() ) )
+					{
+						try
+						{
+							bundle.start();
+						}
+						catch( Exception e )
+						{
+							e.printStackTrace();
+						}
+					}
+				}
+			}
 		}
 		catch( BundleException ex )
 		{
@@ -267,6 +292,12 @@ public class LoadUILauncher
 		{
 			SplashController.openSplash();
 			addJavaFxPackages();
+		}
+		else
+		{
+			//Do not auto-load any loadui JavaFX bundles
+			configProps.setProperty( "felix.auto.deploy.action", "install" );
+			nofx = true;
 		}
 	}
 
