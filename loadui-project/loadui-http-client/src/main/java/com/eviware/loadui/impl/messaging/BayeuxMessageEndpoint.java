@@ -31,7 +31,6 @@ import org.cometd.client.BayeuxClient;
 import org.cometd.client.ext.AckExtension;
 import org.cometd.client.transport.LongPollingTransport;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.util.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +71,7 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 			// we can silence it easier.
 			Field loggerField = BayeuxClient.class.getDeclaredField( "logger" );
 			loggerField.setAccessible( true );
-			loggerField.set( this, Log.getLogger( BayeuxClient.class.getName() ) );
+			loggerField.set( this, LoggerFactory.getLogger( BayeuxClient.class.getName() ) );
 		}
 		catch( SecurityException e )
 		{

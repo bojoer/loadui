@@ -87,7 +87,7 @@ def workspaceCollectionListener = new EventHandler<CollectionEvent>() {
 			projectAdded = true
 	}
 }
-workspace.addEventListener( CollectionEvent.class, workspaceCollectionListener )
+workspace.addEventListener( CollectionEvent, workspaceCollectionListener )
 
 //If custom agents are provided, remove saved ones.
 if( agents != null ) {
@@ -119,7 +119,7 @@ def summaryExportListener = new EventHandler<BaseEvent>() {
 		}
 	}
 }
-project.addEventListener( BaseEvent.class, summaryExportListener )
+project.addEventListener( BaseEvent, summaryExportListener )
 
 //Get the target
 def target = testCase ? project.getSceneByLabel( testCase ) : project
@@ -277,11 +277,11 @@ if( statisticPages != null && project.reportFolder ) {
 	} else {
 		log.info "Retaining Project zoom levels for charts"
 	}
-	def executionManager = BeanInjector.getBean( ExecutionManager.class )
+	def executionManager = BeanInjector.getBean( ExecutionManager )
 	def execution = executionManager.currentExecution
 	def comparedExecution = null
 	if( compare ) {
-		comparedExecution = BeanInjector.getBean( ProjectExecutionManager.class ).getExecutions( project ).find { it.label == compare }
+		comparedExecution = BeanInjector.getBean( ProjectExecutionManager ).getExecutions( project ).find { it.label == compare }
 		if( comparedExecution ) {
 			log.info "Comparing to previous execution: $comparedExecution.label"
 		} else {
@@ -291,9 +291,9 @@ if( statisticPages != null && project.reportFolder ) {
 	def map = LineChartUtils.createImages( pages, execution, comparedExecution )
 	def file = new File( project.reportFolder, FormattingUtils.formatFileName( "${project.label}-statistics-${execution.label}.${project.reportFormat.toLowerCase()}}" ) )
 	if( includeSummary ) {
-		BeanInjector.getBean( ReportingManager.class ).createReport( project.label, execution, pages, map, file, project.reportFormat, execution.summaryReport )
+		BeanInjector.getBean( ReportingManager ).createReport( project.label, execution, pages, map, file, project.reportFormat, execution.summaryReport )
 	} else {
-		BeanInjector.getBean( ReportingManager.class ).createReport( project.label, execution, pages, map, file, project.reportFormat )
+		BeanInjector.getBean( ReportingManager ).createReport( project.label, execution, pages, map, file, project.reportFormat )
 	}
 }
 
@@ -312,10 +312,10 @@ def success = project.getLimit( CanvasItem.FAILURE_COUNTER ) == -1 || project.ge
 log.info "Shutting down..."
 sleep 1000
 
-project.removeEventListener( BaseEvent.class, summaryExportListener )
+project.removeEventListener( BaseEvent, summaryExportListener )
 project.release()
 
-workspace.removeEventListener( CollectionEvent.class, workspaceCollectionListener )
+workspace.removeEventListener( CollectionEvent, workspaceCollectionListener )
 workspace.release()
 
 return success

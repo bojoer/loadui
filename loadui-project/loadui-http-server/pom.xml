@@ -29,7 +29,7 @@
 					<instructions>
 						<Bundle-Activator>com.eviware.loadui.http.HttpServerActivator</Bundle-Activator>
 						<Embed-Dependency>*;scope=provided</Embed-Dependency>
-						<Import-Package>!com.eviware.loadui.http;!org.cometd.*;*</Import-Package>
+						<Import-Package>!com.eviware.loadui.http,!org.cometd.*,!org.codehaus.jackson*,*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
