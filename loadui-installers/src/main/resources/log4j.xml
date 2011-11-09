@@ -56,6 +56,11 @@
 		<appender-ref ref="CONSOLE" />
 	</logger>
 	
+	<logger name="com.eviware.loadui.impl.messaging.BayeuxServiceServerEndpoint">
+		<level value="ERROR" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+	
 	<logger name="org.eclipse.jetty.util.log" additivity="false">
 		<level value="ERROR" />
 		<appender-ref ref="CONSOLE" />
