@@ -28,6 +28,8 @@ public class TableDescriptor
 
 	private List<String> pkSequence = new ArrayList<String>();
 
+	private String autoIncrementPK = null;
+
 	public void addStaticField( String name, Class<? extends Object> type )
 	{
 		staticFields.put( name, type );
@@ -42,19 +44,29 @@ public class TableDescriptor
 	{
 		selectCriteria.add( new String[] { argumentName, field, criteria } );
 	}
-	
+
 	public List<String> getPkSequence()
 	{
 		return pkSequence;
 	}
-	
+
 	public List<String[]> getSelectCriteria()
 	{
 		return selectCriteria;
 	}
-	
+
 	public Map<String, Class<? extends Object>> getStaticFields()
 	{
 		return staticFields;
+	}
+
+	public void setAutoIncrementPK( String autoIncrementPK )
+	{
+		this.autoIncrementPK = autoIncrementPK;
+	}
+
+	public String getAutoIncrementPK()
+	{
+		return autoIncrementPK;
 	}
 }

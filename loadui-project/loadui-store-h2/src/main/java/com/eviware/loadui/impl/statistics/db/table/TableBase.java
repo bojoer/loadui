@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -79,8 +80,6 @@ public abstract class TableBase implements Releasable
 		this.tableRegistry = tableRegistry;
 		this.databaseMetadata = databaseMetadata;
 
-		//		try
-		//		{
 		this.connection = connectionRegistry.getConnection( this, useTableSpecificConnection() );
 
 		addPkIndexScript = createAddPkIndexScript();
@@ -95,11 +94,6 @@ public abstract class TableBase implements Releasable
 		sh = createTableSelectScript();
 		selectStatement = new PreparedStatementHolder( connection.prepareStatement( sh.getStatementSql() ), sh );
 		deleteStatement = connection.prepareStatement( "DELETE FROM " + tableName );
-		//		}
-		//		catch( SQLException e )
-		//		{
-		//			throw new RuntimeException( "Unable to initialize statements for table handling!", e );
-		//		}
 	}
 
 	protected boolean exist()
@@ -201,6 +195,17 @@ public abstract class TableBase implements Releasable
 		b.append( tableName );
 		b.append( " ( " );
 
+		if( descriptor.getAutoIncrementPK() != null )
+		{
+			b.append( descriptor.getAutoIncrementPK() );
+			b.append( " " );
+			b.append( databaseMetadata.getAutoIncrementPKExpression() );
+			if( staticFields.size() > 0 || dynamicFields != null && dynamicFields.size() > 0 )
+			{
+				b.append( ", " );
+			}
+		}
+
 		String key;
 		Iterator<String> keys = staticFields.keySet().iterator();
 		while( keys.hasNext() )
@@ -271,7 +276,7 @@ public abstract class TableBase implements Releasable
 		try
 		{
 			stm.execute( createScript );
-			if( addPkIndexScript != null )
+			if( descriptor.getAutoIncrementPK() == null && addPkIndexScript != null )
 			{
 				stm.execute( addPkIndexScript );
 			}
@@ -297,7 +302,15 @@ public abstract class TableBase implements Releasable
 			row = new HashMap<String, Object>();
 			for( int i = 0; i < rs.getMetaData().getColumnCount(); i++ )
 			{
-				row.put( rs.getMetaData().getColumnName( i + 1 ), rs.getObject( i + 1 ) );
+				int columnType = rs.getMetaData().getColumnType( i + 1 );
+				if( columnType == Types.BLOB || columnType == Types.CLOB )
+				{
+					row.put( rs.getMetaData().getColumnName( i + 1 ), rs.getBytes( i + 1 ) );
+				}
+				else
+				{
+					row.put( rs.getMetaData().getColumnName( i + 1 ), rs.getObject( i + 1 ) );
+				}
 			}
 			result.add( row );
 		}
@@ -314,7 +327,15 @@ public abstract class TableBase implements Releasable
 		{
 			for( int i = 0; i < rs.getMetaData().getColumnCount(); i++ )
 			{
-				row.put( rs.getMetaData().getColumnName( i + 1 ), rs.getObject( i + 1 ) );
+				int columnType = rs.getMetaData().getColumnType( i + 1 );
+				if( columnType == Types.BLOB || columnType == Types.CLOB )
+				{
+					row.put( rs.getMetaData().getColumnName( i + 1 ), rs.getBytes( i + 1 ) );
+				}
+				else
+				{
+					row.put( rs.getMetaData().getColumnName( i + 1 ), rs.getObject( i + 1 ) );
+				}
 			}
 		}
 		JdbcUtil.close( rs );

@@ -22,15 +22,19 @@ import com.google.common.base.Objects;
 
 public final class TestEventSourceConfig implements Labeled
 {
+	private final Long id;
 	private final String label;
 	private final String typeName;
+	private final String hash;
 	private final byte[] data;
 
-	public TestEventSourceConfig( String label, String typeName, byte[] data )
+	public TestEventSourceConfig( String label, String typeName, byte[] data, String hash, Long id )
 	{
 		this.label = label;
 		this.typeName = typeName;
 		this.data = data;
+		this.hash = hash;
+		this.id = id;
 	}
 
 	@Override
@@ -47,6 +51,16 @@ public final class TestEventSourceConfig implements Labeled
 	public byte[] getData()
 	{
 		return data;
+	}
+
+	public String getHash()
+	{
+		return hash;
+	}
+
+	public Long getId()
+	{
+		return id;
 	}
 
 	@Override

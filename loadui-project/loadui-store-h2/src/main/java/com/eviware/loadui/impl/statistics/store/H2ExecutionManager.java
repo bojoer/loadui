@@ -29,12 +29,14 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 {
 	public static final String SQL_CREATE_TABLE_EXPRESSION = "CREATE TABLE";
 	public static final String SQL_ADD_PRIMARY_KEY_INDEX_EXPRESSION = "ALTER TABLE ? ADD CONSTRAINT ?_pk_index PRIMARY KEY(?)";
+	public static final String SQL_AUTOINCREMENT_PRIMARY_KEY_EXPRESSION = " BIGINT AUTO_INCREMENT PRIMARY KEY";
 
 	public static final String TYPE_INTEGER = "INT";
 	public static final String TYPE_BIGINT = "BIGINT";
 	public static final String TYPE_DOUBLE = "DOUBLE";
 	public static final String TYPE_STRING = "VARCHAR(255)";
 	public static final String TYPE_BOOLEAN = "BOOLEAN";
+	public static final String TYPE_BINARY = "BLOB";
 
 	public H2ExecutionManager( TestEventRegistry testEventRegistry )
 	{
@@ -53,7 +55,7 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 								+ db
 								+ ";DB_CLOSE_ON_EXIT=FALSE;DATABASE_EVENT_LISTENER='com.eviware.loadui.impl.statistics.store.H2EventListener';TRACE_LEVEL_FILE=2",
 						"sa", "sa" );
-		cp.setMaxConnections( 5 );
+		cp.setMaxConnections( 8 );
 		return cp;
 	}
 
@@ -75,11 +77,13 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	{
 		metadata.setAddPrimaryKeyIndexExpression( SQL_ADD_PRIMARY_KEY_INDEX_EXPRESSION );
 		metadata.setCreateTableExpression( SQL_CREATE_TABLE_EXPRESSION );
+		metadata.setAutoIncrementPKExpression( SQL_AUTOINCREMENT_PRIMARY_KEY_EXPRESSION );
 
 		metadata.addTypeConversionPair( Integer.class, TYPE_INTEGER );
 		metadata.addTypeConversionPair( Long.class, TYPE_BIGINT );
 		metadata.addTypeConversionPair( Double.class, TYPE_DOUBLE );
 		metadata.addTypeConversionPair( String.class, TYPE_STRING );
 		metadata.addTypeConversionPair( Boolean.class, TYPE_BOOLEAN );
+		metadata.addTypeConversionPair( Byte[].class, TYPE_BINARY );
 	}
 }

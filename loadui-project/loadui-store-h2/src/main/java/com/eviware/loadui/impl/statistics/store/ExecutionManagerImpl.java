@@ -21,9 +21,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,10 +56,14 @@ import com.eviware.loadui.impl.statistics.db.table.TableBase;
 import com.eviware.loadui.impl.statistics.db.table.model.DataTable;
 import com.eviware.loadui.impl.statistics.db.table.model.InterpolationLevelTable;
 import com.eviware.loadui.impl.statistics.db.table.model.SourceMetadataTable;
+import com.eviware.loadui.impl.statistics.db.table.model.TestEventSourceTable;
+import com.eviware.loadui.impl.statistics.db.table.model.TestEventTable;
+import com.eviware.loadui.impl.statistics.db.table.model.TestEventTypeTable;
 import com.eviware.loadui.impl.statistics.db.table.model.TrackMetadataTable;
 import com.eviware.loadui.impl.statistics.db.util.FileUtil;
 import com.eviware.loadui.impl.statistics.store.testevents.TestEventData;
 import com.eviware.loadui.impl.statistics.store.testevents.TestEventSourceConfig;
+import com.eviware.loadui.impl.statistics.store.testevents.TestEventSourceDescriptorImpl;
 import com.eviware.loadui.impl.statistics.store.testevents.TestEventTypeDescriptorImpl;
 import com.eviware.loadui.util.FormattingUtils;
 import com.eviware.loadui.util.ReleasableUtils;
@@ -68,17 +72,13 @@ import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
-import com.google.common.base.Predicate;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 
 /**
  * Implementation of execution manager. Basically main class for data handling.
@@ -140,23 +140,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	private final ResultPathListener resultPathListener = new ResultPathListener();
 
 	private final Map<String, TestEventTypeDescriptorImpl> eventTypes = Maps.newHashMap();
-
-	//TODO: Remove these once proper database storage is implemented!
-	@Deprecated
-	private final Cache<String, Map<String, TestEventSourceConfig>> sourceConfigMemoryStorage = CacheBuilder
-			.newBuilder().build( new CacheLoader<String, Map<String, TestEventSourceConfig>>()
-			{
-				@Override
-				public Map<String, TestEventSourceConfig> load( String key ) throws Exception
-				{
-					return Maps.newHashMap();
-				}
-			} );
-
-	@Deprecated
-	private final Multimap<String, TestEventData> eventDataMemoryStorage = ArrayListMultimap.create();
-
-	//TODO: End removal
 
 	public ExecutionManagerImpl( TestEventRegistry testEventRegistry )
 	{
@@ -239,6 +222,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		SourceMetadataTable sourceMetaTable = null;
 		InterpolationLevelTable levelMetaTable = null;
 		TrackMetadataTable trackMetaTable = null;
+
+		TestEventSourceTable testEventSourceTable = null;
+		TestEventTable testEventTable = null;
+		TestEventTypeTable testEventTypeTable = null;
+
 		String dbName;
 		try
 		{
@@ -258,6 +246,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 			// create track meta table
 			trackMetaTable = new TrackMetadataTable( dbName, connectionRegistry, metadata, tableRegistry );
+
+			//create event log tables
+			testEventTable = new TestEventTable( dbName, connectionRegistry, metadata, tableRegistry );
+			testEventTypeTable = new TestEventTypeTable( dbName, connectionRegistry, metadata, tableRegistry );
+			testEventSourceTable = new TestEventSourceTable( dbName, connectionRegistry, metadata, tableRegistry );
+
 		}
 		catch( SQLException e )
 		{
@@ -274,6 +268,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		tableRegistry.put( dbName, sourceMetaTable );
 		tableRegistry.put( dbName, levelMetaTable );
 		tableRegistry.put( dbName, trackMetaTable );
+		tableRegistry.put( dbName, testEventTable );
+		tableRegistry.put( dbName, testEventTypeTable );
+		tableRegistry.put( dbName, testEventSourceTable );
 
 		currentExecution = new ExecutionImpl( executionDir, id, timestamp, this, testEventRegistry );
 		currentExecution.setLabel( label );
@@ -510,6 +507,18 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 					tableRegistry );
 			createdTableList.add( trackMetaTable );
 
+			// create event log tables
+			TestEventTable testEventTable = new TestEventTable( dbName, connectionRegistry, metadata, tableRegistry );
+			createdTableList.add( testEventTable );
+
+			TestEventTypeTable testEventTypeTable = new TestEventTypeTable( dbName, connectionRegistry, metadata,
+					tableRegistry );
+			createdTableList.add( testEventTypeTable );
+
+			TestEventSourceTable testEventSourceTable = new TestEventSourceTable( dbName, connectionRegistry, metadata,
+					tableRegistry );
+			createdTableList.add( testEventSourceTable );
+
 			// go through all tracks in track meta table and for those that
 			// have track descriptor registered, create data and sources
 			// table instance. If table descriptor do not exist it means that
@@ -641,13 +650,30 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			timestamp -= ( currentExecution.getStartTime() );
 
+			//this will ensure that source exist 
 			TestEventSourceConfig sourceConfig = getConfigForSource( typeLabel, source );
 
-			//TODO: Put the data into the database and remove the following:
-			eventDataMemoryStorage.put( currentExecution.getId(), new TestEventData( timestamp,
-					sourceConfig.getTypeName(), sourceConfig, testEventData ) );
+			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable( currentExecution
+					.getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
+			Long sourceId = eventSourceTable.getIdByHash( sourceConfig.getHash() );
 
-			log.debug( "Wrote TestEvent[{}] from {}", typeLabel, source );
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put( TestEventTable.STATIC_FIELD_TIMESTAMP, timestamp );
+			data.put( TestEventTable.STATIC_FIELD_DATA, testEventData );
+			data.put( TestEventTable.STATIC_FIELD_SOURCEID, sourceId );
+
+			TableBase eventTable = tableRegistry.getTable( currentExecution.getExecutionDir().getName(),
+					TestEventTable.TABLE_NAME );
+			try
+			{
+				eventTable.insert( data );
+				log.debug( "Wrote TestEvent[{}] from {}", typeLabel, source );
+			}
+			catch( Exception e )
+			{
+				log.error( "Unable to write data to the database:", e );
+				log.error( "Unable to store test event with source: {}, timestamp: {}", new Object[] { source, timestamp } );
+			}
 		}
 		else
 		{
@@ -657,26 +683,82 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private TestEventSourceConfig getConfigForSource( String typeLabel, TestEvent.Source<?> source )
 	{
+		TestEventSourceConfig sourceConfig = null;
+
 		final String hash = typeLabel + source.getHash();
-		final Map<String, TestEventSourceConfig> sources = sourceConfigMemoryStorage.getUnchecked( currentExecution
-				.getId() );
-		TestEventSourceConfig sourceConfig = sources.get( hash );
-		if( sourceConfig == null )
+
+		TestEventTypeTable eventTypeTable = ( TestEventTypeTable )tableRegistry.getTable( currentExecution
+				.getExecutionDir().getName(), TestEventTypeTable.TABLE_NAME );
+
+		TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable( currentExecution
+				.getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
+		Map<String, Object> sourceByHash = eventSourceTable.getInMemoryTable().get( hash );
+		if( sourceByHash == null )
 		{
-			sourceConfig = new TestEventSourceConfig( source.getLabel(), source.getType().getName(), source.getData() );
-
-			TestEventTypeDescriptorImpl type = eventTypes.get( source.getType().getName() );
-			if( type == null )
+			try
 			{
-				eventTypes.put( source.getType().getName(), type = new TestEventTypeDescriptorImpl( typeLabel ) );
+				TestEventTypeDescriptorImpl type = eventTypes.get( source.getType().getName() );
+				if( type == null )
+				{
+					eventTypes.put( source.getType().getName(), type = new TestEventTypeDescriptorImpl( typeLabel ) );
+					insertNewType( typeLabel, source.getType().getName() );
+				}
+				type.getSource( source.getLabel() ).putConfig( hash, sourceConfig );
+
+				Long typeId = eventTypeTable.getIdByTypeName( source.getType().getName() );
+
+				Map<String, Object> data = new HashMap<String, Object>();
+				data.put( TestEventSourceTable.STATIC_FIELD_LABEL, source.getLabel() );
+				data.put( TestEventSourceTable.STATIC_FIELD_HASH, hash );
+				data.put( TestEventSourceTable.STATIC_FIELD_DATA, source.getData() );
+				data.put( TestEventSourceTable.STATIC_FIELD_TYPEID, typeId );
+				eventSourceTable.insert( data );
+
+				Long sourceId = eventSourceTable.getIdByHash( hash );
+				sourceConfig = new TestEventSourceConfig( source.getLabel(), source.getType().getName(), source.getData(),
+						hash, sourceId );
+
+				log.debug( "Wrote TestEventSource[{}] of type {}", sourceConfig.getLabel(), sourceConfig.getTypeName() );
 			}
-			type.getSource( source.getLabel() ).putConfig( hash, sourceConfig );
-
-			// TODO: Replace with real database implementation!
-			sources.put( hash, sourceConfig );
+			catch( Exception e )
+			{
+				log.error( "Unable to write data to the database:", e );
+				log.error( "Unable to store test event source: {} of type: {}", new Object[] { source.getLabel(),
+						source.getType().getName() } );
+			}
 		}
+		else
+		{
+			Long typeId = ( Long )sourceByHash.get( TestEventSourceTable.STATIC_FIELD_TYPEID );
+			String typeName = eventTypeTable.getTypeNameById( typeId );
 
+			Long sourceId = ( Long )sourceByHash.get( TestEventSourceTable.STATIC_FIELD_ID );
+			String sourceLabel = ( String )sourceByHash.get( TestEventSourceTable.STATIC_FIELD_LABEL );
+			String sourceHash = ( String )sourceByHash.get( TestEventSourceTable.STATIC_FIELD_HASH );
+			byte[] sourceData = ( byte[] )sourceByHash.get( TestEventSourceTable.STATIC_FIELD_DATA );
+
+			sourceConfig = new TestEventSourceConfig( sourceLabel, typeName, sourceData, sourceHash, sourceId );
+		}
 		return sourceConfig;
+	}
+
+	private void insertNewType( String typeLabel, String typeName )
+	{
+		TestEventTypeTable eventTypeTable = ( TestEventTypeTable )tableRegistry.getTable( currentExecution
+				.getExecutionDir().getName(), TestEventTypeTable.TABLE_NAME );
+		try
+		{
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put( TestEventTypeTable.STATIC_FIELD_LABEL, typeLabel );
+			data.put( TestEventTypeTable.STATIC_FIELD_TYPE, typeName );
+			eventTypeTable.insert( data );
+			log.debug( "Wrote TestEventType[{}]", typeName );
+		}
+		catch( Exception e )
+		{
+			log.error( "Unable to write data to the database:", e );
+			log.error( "Unable to store test event type: {}", new Object[] { typeName } );
+		}
 	}
 
 	public Set<TestEventTypeDescriptorImpl> getTestEventTypes( String executionId )
@@ -687,65 +769,159 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 		else
 		{
-			//TODO: Get everything from the DB, instantiate the TestEventTypeDescriptorImpls, with the child TestEventSourceDescriptorImpls.
-			//TODO: Cache the result of this to speed up subsequent invocations.
-			return ImmutableSet.of();
+			Set<TestEventTypeDescriptorImpl> result = new HashSet<TestEventTypeDescriptorImpl>();
+
+			TestEventTypeTable eventTypeTable = ( TestEventTypeTable )tableRegistry.getTable( getExecution( executionId )
+					.getExecutionDir().getName(), TestEventTypeTable.TABLE_NAME );
+			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable(
+					getExecution( executionId ).getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
+
+			Map<String, Map<String, Object>> typeMap = eventTypeTable.getInMemoryTable();
+			for( java.util.Map.Entry<String, Map<String, Object>> type : typeMap.entrySet() )
+			{
+				String typeName = type.getKey();
+				String typeLabel = ( String )type.getValue().get( TestEventTypeTable.STATIC_FIELD_LABEL );
+				Long typeId = ( Long )type.getValue().get( TestEventTypeTable.STATIC_FIELD_ID );
+
+				TestEventTypeDescriptorImpl typeDescr = new TestEventTypeDescriptorImpl( typeLabel );
+				result.add( typeDescr );
+
+				Map<String, TestEventSourceDescriptorImpl> sourceMap = new HashMap<String, TestEventSourceDescriptorImpl>();
+				List<Map<String, Object>> sourceListResult = eventSourceTable.getByTypeId( typeId );
+				for( Map<String, Object> s : sourceListResult )
+				{
+					String sourceLabel = ( String )s.get( TestEventSourceTable.STATIC_FIELD_LABEL );
+					if( !sourceMap.containsKey( sourceLabel ) )
+					{
+						TestEventSourceDescriptorImpl sourceDescr = new TestEventSourceDescriptorImpl( sourceLabel );
+						sourceMap.put( sourceLabel, sourceDescr );
+						typeDescr.putSource( sourceLabel, sourceDescr );
+					}
+
+					Long sourceId = ( Long )s.get( TestEventSourceTable.STATIC_FIELD_ID );
+					String sourceHash = ( String )s.get( TestEventSourceTable.STATIC_FIELD_HASH );
+					byte[] sourceData = ( byte[] )s.get( TestEventSourceTable.STATIC_FIELD_DATA );
+					sourceMap.get( sourceLabel ).putConfig( sourceHash,
+							new TestEventSourceConfig( sourceLabel, typeName, sourceData, sourceHash, sourceId ) );
+				}
+			}
+
+			return result;
 		}
 	}
 
 	public <T extends TestEvent> Iterable<TestEventData> readTestEvents( String executionId, int offset, int limit,
-			Iterable<TestEventSourceConfig> types )
+			Iterable<TestEventSourceConfig> sources )
 	{
-		// TODO: Replace with real database implementation!
-		return Iterables.limit( Iterables.skip( getTestEventDatas( executionId, types ), offset ), limit );
+		Set<TestEventData> result = new HashSet<TestEventData>();
+		try
+		{
+			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable(
+					getExecution( executionId ).getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
+
+			List<String> hashes = new ArrayList<String>();
+			for( TestEventSourceConfig source : sources )
+			{
+				hashes.add( source.getHash() );
+			}
+			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
+
+			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( getExecution( executionId )
+					.getExecutionDir().getName(), TestEventTable.TABLE_NAME );
+
+			List<Map<String, Object>> eventDataList = eventTable.getByCount( sourceIds, offset, limit );
+			for( Map<String, Object> map : eventDataList )
+			{
+				Long timestamp = ( Long )map.get( TestEventTable.STATIC_FIELD_TIMESTAMP );
+				byte[] data = ( byte[] )map.get( TestEventTable.STATIC_FIELD_DATA );
+
+				Long sourceId = ( Long )map.get( TestEventTable.STATIC_FIELD_SOURCEID );
+				TestEventSourceConfig sourceConfig = findSourceConfig( sourceId, sources );
+				result.add( new TestEventData( timestamp, sourceConfig.getTypeName(), sourceConfig, data ) );
+			}
+
+		}
+		catch( Exception e )
+		{
+			log.error( "Unable to read data from the database.", e );
+		}
+		return result;
+	}
+
+	private TestEventSourceConfig findSourceConfig( Long sourceId, Iterable<TestEventSourceConfig> sources )
+	{
+		for( TestEventSourceConfig sourceConfig : sources )
+		{
+			if( sourceId.equals( sourceConfig.getId() ) )
+			{
+				return sourceConfig;
+			}
+		}
+		return null;
 	}
 
 	public <T extends TestEvent> Iterable<TestEventData> readTestEventRange( String executionId, final long startTime,
-			final long endTime, Iterable<TestEventSourceConfig> types )
+			final long endTime, Iterable<TestEventSourceConfig> sources )
 	{
-		// TODO: Replace with real database implementation!
-		return Iterables.filter( getTestEventDatas( executionId, types ), new Predicate<TestEventData>()
+		Set<TestEventData> result = new HashSet<TestEventData>();
+		try
 		{
-			@Override
-			public boolean apply( TestEventData input )
+			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable(
+					getExecution( executionId ).getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
+
+			List<String> hashes = new ArrayList<String>();
+			for( TestEventSourceConfig source : sources )
 			{
-				return input.getTimestamp() >= startTime && input.getTimestamp() <= endTime;
+				hashes.add( source.getHash() );
 			}
-		} );
+			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
+
+			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( getExecution( executionId )
+					.getExecutionDir().getName(), TestEventTable.TABLE_NAME );
+
+			List<Map<String, Object>> eventDataList = eventTable.getByTimeRange( sourceIds, startTime, endTime );
+			for( Map<String, Object> map : eventDataList )
+			{
+				Long timestamp = ( Long )map.get( TestEventTable.STATIC_FIELD_TIMESTAMP );
+				byte[] data = ( byte[] )map.get( TestEventTable.STATIC_FIELD_DATA );
+
+				Long sourceId = ( Long )map.get( TestEventTable.STATIC_FIELD_SOURCEID );
+				TestEventSourceConfig sourceConfig = findSourceConfig( sourceId, sources );
+				result.add( new TestEventData( timestamp, sourceConfig.getTypeName(), sourceConfig, data ) );
+			}
+
+		}
+		catch( Exception e )
+		{
+			log.error( "Unable to read data to the database:", e );
+		}
+		return result;
 	}
 
 	public <T extends TestEvent> int getTestEventCount( String executionId, Iterable<TestEventSourceConfig> sources )
 	{
-		//TODO: Replace below with real implementation!
-		// 1. Get all TestEventSourceConfig IDs where label is one of typeNames.
-		// 2. Get all TestEvents where sourceId is one of the IDs from 1.
-		return Iterables.size( getTestEventDatas( executionId, sources ) );
-	}
-
-	@Deprecated
-	private Iterable<TestEventData> getTestEventDatas( String executionId, Iterable<TestEventSourceConfig> sources )
-	{
-		final Set<TestEventSourceConfig> sourceList = ImmutableSet.copyOf( sources );
-
-		List<TestEventData> allDatas = Lists.newArrayList( eventDataMemoryStorage.get( executionId ) );
-		Collections.sort( allDatas, new Comparator<TestEventData>()
+		try
 		{
-			@Override
-			public int compare( TestEventData o1, TestEventData o2 )
-			{
-				int diff = ( int )( o1.getTimestamp() - o2.getTimestamp() );
-				return diff == 0 ? System.identityHashCode( o1 ) - System.identityHashCode( o2 ) : diff;
-			}
-		} );
+			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable(
+					getExecution( executionId ).getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
 
-		return Iterables.filter( allDatas, new Predicate<TestEventData>()
-		{
-			@Override
-			public boolean apply( TestEventData input )
+			List<String> hashes = new ArrayList<String>();
+			for( TestEventSourceConfig source : sources )
 			{
-				return sourceList.size() == 0 || sourceList.contains( input.getTestEventSourceConfig() );
+				hashes.add( source.getHash() );
 			}
-		} );
+			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
+
+			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( getExecution( executionId )
+					.getExecutionDir().getName(), TestEventTable.TABLE_NAME );
+
+			return eventTable.getCount( sourceIds );
+		}
+		catch( Exception e )
+		{
+			log.error( "Unable to read data from the database:", e );
+			return 0;
+		}
 	}
 
 	private String buildDataTableName( String trackId, long interpolationLevel, String source )

@@ -36,6 +36,11 @@ public class DatabaseMetadata
 	private String addPrimaryKeyIndexExpression;
 
 	/**
+	 * DDL expression for auto-increment primary key
+	 */
+	private String autoIncrementPKExpression;
+
+	/**
 	 * Map which contains java to database types mapping
 	 */
 	private HashMap<Class<? extends Object>, String> typeConversionMap = new HashMap<Class<? extends Object>, String>();
@@ -76,6 +81,16 @@ public class DatabaseMetadata
 	public String getAddPrimaryKeyIndexExpression()
 	{
 		return addPrimaryKeyIndexExpression;
+	}
+
+	public String getAutoIncrementPKExpression()
+	{
+		return autoIncrementPKExpression;
+	}
+
+	public void setAutoIncrementPKExpression( String autoIncrementPKExpression )
+	{
+		this.autoIncrementPKExpression = autoIncrementPKExpression;
 	}
 
 }
