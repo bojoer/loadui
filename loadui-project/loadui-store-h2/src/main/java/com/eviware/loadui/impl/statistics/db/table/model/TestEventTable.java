@@ -73,12 +73,12 @@ public class TestEventTable extends TableBase
 			throws SQLException
 	{
 		String query = "select * from " + getTableName() + " where " + STATIC_FIELD_SOURCEID + " in ("
-				+ makeInStatement( sources.size() ) + ") order by " + STATIC_FIELD_TIMESTAMP + " offset ? limit ? ";
+				+ makeInStatement( sources.size() ) + ") order by " + STATIC_FIELD_TIMESTAMP + " limit ? offset ? ";
 
 		List<Object> params = new ArrayList<Object>();
 		params.addAll( sources );
-		params.add( offset );
 		params.add( limit );
+		params.add( offset );
 
 		prepareStatement( STATEMENT_GET_BY_OFFSET, query );
 		ResultSet rs = executeQuery( STATEMENT_GET_BY_OFFSET, params.toArray() );
@@ -89,7 +89,7 @@ public class TestEventTable extends TableBase
 			Map<String, Object> rowMap = new HashMap<String, Object>();
 			rowMap.put( STATIC_FIELD_ID, rs.getObject( STATIC_FIELD_ID ) );
 			rowMap.put( STATIC_FIELD_SOURCEID, rs.getObject( STATIC_FIELD_SOURCEID ) );
-			rowMap.put( STATIC_FIELD_DATA, rs.getObject( STATIC_FIELD_DATA ) );
+			rowMap.put( STATIC_FIELD_DATA, rs.getBytes( STATIC_FIELD_DATA ) );
 			rowMap.put( STATIC_FIELD_TIMESTAMP, rs.getObject( STATIC_FIELD_TIMESTAMP ) );
 			result.add( rowMap );
 		}
@@ -116,7 +116,7 @@ public class TestEventTable extends TableBase
 			Map<String, Object> rowMap = new HashMap<String, Object>();
 			rowMap.put( STATIC_FIELD_ID, rs.getObject( STATIC_FIELD_ID ) );
 			rowMap.put( STATIC_FIELD_SOURCEID, rs.getObject( STATIC_FIELD_SOURCEID ) );
-			rowMap.put( STATIC_FIELD_DATA, rs.getObject( STATIC_FIELD_DATA ) );
+			rowMap.put( STATIC_FIELD_DATA, rs.getBytes( STATIC_FIELD_DATA ) );
 			rowMap.put( STATIC_FIELD_TIMESTAMP, rs.getObject( STATIC_FIELD_TIMESTAMP ) );
 			result.add( rowMap );
 		}

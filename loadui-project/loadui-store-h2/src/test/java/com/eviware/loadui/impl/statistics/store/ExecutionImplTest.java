@@ -33,11 +33,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEventTypeDescriptor;
-import com.eviware.loadui.util.test.BeanInjectorMocker;
 import com.eviware.loadui.util.testevents.AbstractTestEvent;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -58,7 +56,8 @@ public class ExecutionImplTest
 	@Before
 	public void initialize()
 	{
-		new BeanInjectorMocker().put( TestEventRegistry.class, testEventRegistry = new TestEventRegistryImpl() );
+		testEventRegistry = new TestEventRegistryImpl();
+		//new BeanInjectorMocker().put( TestEventRegistry.class, testEventRegistry = new TestEventRegistryImpl() );
 		System.setProperty( LoadUI.LOADUI_HOME, "target" );
 
 		h2 = new H2ExecutionManager( testEventRegistry );
@@ -149,6 +148,7 @@ public class ExecutionImplTest
 
 		List<Long> timestampsInOrder = Lists.newArrayList( timestamps );
 		Collections.sort( timestampsInOrder );
+		Collections.sort( timestamps );
 
 		assertThat( timestamps, is( timestampsInOrder ) );
 

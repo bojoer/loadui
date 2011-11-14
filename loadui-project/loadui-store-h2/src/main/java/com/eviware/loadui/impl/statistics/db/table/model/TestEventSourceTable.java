@@ -85,6 +85,21 @@ public class TestEventSourceTable extends TableBase
 	}
 
 	/**
+	 * Returns all source of appropriate ID.
+	 */
+	public synchronized Map<String, Object> getById( Long id )
+	{
+		for( Entry<String, Map<String, Object>> entry : inMemoryTable.entrySet() )
+		{
+			if( id.equals( ( Long )entry.getValue().get( STATIC_FIELD_ID ) ) )
+			{
+				return entry.getValue();
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Returns all sources of appropriate type, specified by type ID.
 	 * 
 	 * @param typeId
@@ -136,10 +151,9 @@ public class TestEventSourceTable extends TableBase
 	public synchronized List<Long> getIdsByHash( List<String> hashes )
 	{
 		List<Long> result = new ArrayList<Long>();
-
 		for( Entry<String, Map<String, Object>> item : inMemoryTable.entrySet() )
 		{
-			if( hashes.contains( ( String )item.getValue().get( STATIC_FIELD_HASH ) ) )
+			if( hashes.size() == 0 || hashes.contains( ( String )item.getValue().get( STATIC_FIELD_HASH ) ) )
 			{
 				result.add( ( Long )item.getValue().get( STATIC_FIELD_ID ) );
 			}

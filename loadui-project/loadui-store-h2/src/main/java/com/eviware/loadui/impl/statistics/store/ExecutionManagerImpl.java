@@ -769,6 +769,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 		else
 		{
+			if( !getExecution( executionId ).isLoaded() )
+			{
+				loadExecution( executionId );
+			}
+
 			Set<TestEventTypeDescriptorImpl> result = new HashSet<TestEventTypeDescriptorImpl>();
 
 			TestEventTypeTable eventTypeTable = ( TestEventTypeTable )tableRegistry.getTable( getExecution( executionId )
@@ -813,6 +818,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public <T extends TestEvent> Iterable<TestEventData> readTestEvents( String executionId, int offset, int limit,
 			Iterable<TestEventSourceConfig> sources )
 	{
+		if( !getExecution( executionId ).isLoaded() )
+		{
+			loadExecution( executionId );
+		}
 		Set<TestEventData> result = new HashSet<TestEventData>();
 		try
 		{
@@ -836,7 +845,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				byte[] data = ( byte[] )map.get( TestEventTable.STATIC_FIELD_DATA );
 
 				Long sourceId = ( Long )map.get( TestEventTable.STATIC_FIELD_SOURCEID );
-				TestEventSourceConfig sourceConfig = findSourceConfig( sourceId, sources );
+
+				TestEventSourceConfig sourceConfig = makeTestEventSourceConfig( executionId, sourceId, eventSourceTable );
 				result.add( new TestEventData( timestamp, sourceConfig.getTypeName(), sourceConfig, data ) );
 			}
 
@@ -848,21 +858,29 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		return result;
 	}
 
-	private TestEventSourceConfig findSourceConfig( Long sourceId, Iterable<TestEventSourceConfig> sources )
+	private TestEventSourceConfig makeTestEventSourceConfig( String executionId, Long sourceId,
+			TestEventSourceTable eventSourceTable )
 	{
-		for( TestEventSourceConfig sourceConfig : sources )
-		{
-			if( sourceId.equals( sourceConfig.getId() ) )
-			{
-				return sourceConfig;
-			}
-		}
-		return null;
+		Map<String, Object> s = eventSourceTable.getById( sourceId );
+		String sourceLabel = ( String )s.get( TestEventSourceTable.STATIC_FIELD_LABEL );
+		String sourceHash = ( String )s.get( TestEventSourceTable.STATIC_FIELD_HASH );
+		byte[] sourceData = ( byte[] )s.get( TestEventSourceTable.STATIC_FIELD_DATA );
+
+		Long typeId = ( Long )s.get( TestEventSourceTable.STATIC_FIELD_TYPEID );
+		TestEventTypeTable eventTypeTable = ( TestEventTypeTable )tableRegistry.getTable( getExecution( executionId )
+				.getExecutionDir().getName(), TestEventTypeTable.TABLE_NAME );
+		String typeName = eventTypeTable.getTypeNameById( typeId );
+
+		return new TestEventSourceConfig( sourceLabel, typeName, sourceData, sourceHash, sourceId );
 	}
 
 	public <T extends TestEvent> Iterable<TestEventData> readTestEventRange( String executionId, final long startTime,
 			final long endTime, Iterable<TestEventSourceConfig> sources )
 	{
+		if( !getExecution( executionId ).isLoaded() )
+		{
+			loadExecution( executionId );
+		}
 		Set<TestEventData> result = new HashSet<TestEventData>();
 		try
 		{
@@ -886,10 +904,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				byte[] data = ( byte[] )map.get( TestEventTable.STATIC_FIELD_DATA );
 
 				Long sourceId = ( Long )map.get( TestEventTable.STATIC_FIELD_SOURCEID );
-				TestEventSourceConfig sourceConfig = findSourceConfig( sourceId, sources );
+				TestEventSourceConfig sourceConfig = makeTestEventSourceConfig( executionId, sourceId, eventSourceTable );
 				result.add( new TestEventData( timestamp, sourceConfig.getTypeName(), sourceConfig, data ) );
 			}
-
 		}
 		catch( Exception e )
 		{
@@ -900,6 +917,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	public <T extends TestEvent> int getTestEventCount( String executionId, Iterable<TestEventSourceConfig> sources )
 	{
+		if( !getExecution( executionId ).isLoaded() )
+		{
+			loadExecution( executionId );
+		}
 		try
 		{
 			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable(
