@@ -100,7 +100,7 @@ public class TestEventSourceTable extends TableBase
 	}
 
 	/**
-	 * Returns all sources of appropriate type, specified by type ID.
+	 * Returns all sources with a given type ID.
 	 * 
 	 * @param typeId
 	 *           Find all sources with this type ID.
@@ -141,12 +141,11 @@ public class TestEventSourceTable extends TableBase
 	}
 
 	/**
-	 * Retrieves IDs of sources specified by their hash values.
+	 * Retrieves IDs of a sources with a given hash values.
 	 * 
 	 * @param hashes
-	 *           List of source hashes
-	 * @return List of source IDs which hash values are in input
-	 *         <code>hashes</code> list.
+	 *           List of hash values
+	 * @return Source IDs
 	 */
 	public synchronized List<Long> getIdsByHash( List<String> hashes )
 	{
@@ -162,11 +161,11 @@ public class TestEventSourceTable extends TableBase
 	}
 
 	/**
-	 * Retrieves source ID by specified hash value.
+	 * Retrieves ID of a source with a given hash.
 	 * 
 	 * @param hash
-	 *           Source hash value
-	 * @return ID of source with hash equal to input argument.
+	 *           Hash value of a source
+	 * @return Source ID
 	 */
 	public synchronized Long getIdByHash( String hash )
 	{

@@ -78,6 +78,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -472,10 +473,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	/**
 	 * Loads an existing execution. Creates all necessary table objects
 	 * (ExecutionMetadatatable, TrackMetadataTable, SequenceTable, DataTable(s)
-	 * SourceTable(s)), creates Execution objects instance, adds it to
-	 * executionsMap, reads tracks from TrackMetadataTable, creates Track object
-	 * instances and them to newly created execution. Tracks and tables are
-	 * created just for existing tracks (registered track descriptors)
+	 * SourceTable(s), TestEventSourceTable, TestEventTypeTable, TestEventTable),
+	 * creates Execution objects instance, adds it to executionsMap, reads tracks
+	 * from TrackMetadataTable, creates Track object instances and them to newly
+	 * created execution. Tracks and tables are created just for existing tracks
+	 * (registered track descriptors)
 	 * 
 	 * @param executionId
 	 *           ID of execution that has to be loaded
@@ -822,17 +824,22 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			loadExecution( executionId );
 		}
-		Set<TestEventData> result = new HashSet<TestEventData>();
+		List<TestEventData> result = new ArrayList<TestEventData>();
 		try
 		{
 			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable(
 					getExecution( executionId ).getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
 
-			List<String> hashes = new ArrayList<String>();
-			for( TestEventSourceConfig source : sources )
-			{
-				hashes.add( source.getHash() );
-			}
+			List<String> hashes = Lists.newArrayList( Iterables.transform( sources,
+					new Function<TestEventSourceConfig, String>()
+					{
+						@Override
+						public String apply( TestEventSourceConfig input )
+						{
+							return input.getHash();
+						}
+					} ) );
+
 			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
 
 			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( getExecution( executionId )
@@ -881,17 +888,22 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			loadExecution( executionId );
 		}
-		Set<TestEventData> result = new HashSet<TestEventData>();
+		List<TestEventData> result = new ArrayList<TestEventData>();
 		try
 		{
 			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable(
 					getExecution( executionId ).getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
 
-			List<String> hashes = new ArrayList<String>();
-			for( TestEventSourceConfig source : sources )
-			{
-				hashes.add( source.getHash() );
-			}
+			List<String> hashes = Lists.newArrayList( Iterables.transform( sources,
+					new Function<TestEventSourceConfig, String>()
+					{
+						@Override
+						public String apply( TestEventSourceConfig input )
+						{
+							return input.getHash();
+						}
+					} ) );
+
 			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
 
 			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( getExecution( executionId )
@@ -926,11 +938,16 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable(
 					getExecution( executionId ).getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
 
-			List<String> hashes = new ArrayList<String>();
-			for( TestEventSourceConfig source : sources )
-			{
-				hashes.add( source.getHash() );
-			}
+			List<String> hashes = Lists.newArrayList( Iterables.transform( sources,
+					new Function<TestEventSourceConfig, String>()
+					{
+						@Override
+						public String apply( TestEventSourceConfig input )
+						{
+							return input.getHash();
+						}
+					} ) );
+
 			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
 
 			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( getExecution( executionId )
