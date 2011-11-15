@@ -60,9 +60,15 @@ public class CounterSynchronizerImpl implements CounterSynchronizer
 		{
 			if( holders.containsKey( counterHolder ) )
 			{
-				holders.remove( counterHolder ).removeMessageListener( aggregateListener );
+				MessageEndpoint endpoint = holders.remove( counterHolder );
+				if( !holders.containsValue( endpoint ) )
+				{
+					endpoint.removeMessageListener( aggregateListener );
+				}
 				if( counterHolder instanceof ModelItem )
+				{
 					( ( ModelItem )counterHolder ).removeEventListener( BaseEvent.class, listener );
+				}
 			}
 		}
 	}
@@ -77,7 +83,6 @@ public class CounterSynchronizerImpl implements CounterSynchronizer
 	public void unsyncAggregator( String ownerId )
 	{
 		aggregators.remove( ownerId );
-
 	}
 
 	private class BaseEventListener implements EventHandler<BaseEvent>
@@ -86,7 +91,9 @@ public class CounterSynchronizerImpl implements CounterSynchronizer
 		public void handleEvent( BaseEvent event )
 		{
 			if( ModelItem.RELEASED.equals( event.getKey() ) )
+			{
 				unsyncCounters( ( CounterHolder )event.getSource() );
+			}
 		}
 	}
 
@@ -99,7 +106,9 @@ public class CounterSynchronizerImpl implements CounterSynchronizer
 			Map<String, String> message = ( Map<String, String> )data;
 			Aggregator aggregator = aggregators.get( message.remove( COUNTER_HOLDER_ID ) );
 			if( aggregator != null )
+			{
 				aggregator.updateChildValues( endpoint, message );
+			}
 		}
 	}
 }
