@@ -37,6 +37,7 @@ import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEventTypeDescriptor;
+import com.eviware.loadui.util.test.BeanInjectorMocker;
 import com.eviware.loadui.util.testevents.AbstractTestEvent;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
