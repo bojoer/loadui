@@ -53,7 +53,7 @@ import com.google.common.collect.Sets;
 
 public class AgentProjectItem implements ProjectItem
 {
-	private HashSet<SceneItem> scenes = Sets.newHashSet();
+	private final HashSet<SceneItem> scenes = Sets.newHashSet();
 	private final MessageEndpoint controller;
 	private final String id;
 
@@ -153,7 +153,7 @@ public class AgentProjectItem implements ProjectItem
 	}
 
 	@Override
-	public void generateSummary( MutableSummary summary )
+	public void generateSummary()
 	{
 		throw new UnsupportedOperationException();
 	}
@@ -520,4 +520,5 @@ public class AgentProjectItem implements ProjectItem
 	{
 		throw new UnsupportedOperationException();
 	}
+
 }

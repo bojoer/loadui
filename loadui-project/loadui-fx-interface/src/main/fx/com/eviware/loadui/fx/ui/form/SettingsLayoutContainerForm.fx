@@ -17,7 +17,10 @@ package com.eviware.loadui.fx.ui.form;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.geometry.VPos;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.LayoutInfo;
+import javafx.scene.layout.Priority;
 import javafx.geometry.VPos;
 
 import com.eviware.loadui.api.layout.*;
@@ -140,9 +143,12 @@ class ActionButton extends HBox, FormField, ActionLayoutComponent.ActionEnabledL
 						}, "Please wait..." );
 					}
 				}
+				layoutInfo: LayoutInfo{ vpos: VPos.TOP }
 				text: bind buttonText;
 			}, Label {
 				text: bind statusText
+				textWrap: true
+				layoutInfo: LayoutInfo{ hfill: true, hgrow: Priority.ALWAYS }
 			}
 		]
 	}

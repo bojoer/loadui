@@ -525,7 +525,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
-	public void generateSummary( MutableSummary summary )
+	public void appendToSummary( MutableSummary summary )
 	{
 		// add a project chapter first
 		MutableChapterImpl projectChapter = ( MutableChapterImpl )summary.addChapter( getLabel() );
@@ -533,8 +533,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		// add and generate TestCase chapters if the TestCase has run at least
 		// once.
 		for( SceneItem scene : scenes )
-			if( ( ( SceneItemImpl )scene ).getEndTime() != null && ( ( SceneItemImpl )scene ).getStartTime() != null )
-				scene.generateSummary( summary );
+		{
+			SceneItemImpl sceneItem = ( SceneItemImpl )scene;
+			if( sceneItem.getEndTime() != null && ( ( SceneItemImpl )scene ).getStartTime() != null )
+				sceneItem.appendToSummary( summary );
+		}
 
 		// fill project chapter
 		projectChapter.addSection( new ProjectDataSummarySection( this ) );
@@ -1027,7 +1030,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					awaitingSummaryTimeout.cancel( true );
 
 				setCompleted( true );
-				doGenerateSummary();
+				generateSummary();
 			}
 		}
 

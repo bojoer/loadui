@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import javax.annotation.Nonnull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,21 +62,13 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 {
 	private static Logger log = LoggerFactory.getLogger( ProjectExecutionManagerImpl.class );
 
-	private enum State
-	{
-		STOPPED, PROJECT_STARTED, TESTCASE_STARTED
-	}
-
 	private final ExecutionManager executionManager;
 	private final WorkspaceProvider workspaceProvider;
 	private final ReportingManager reportingManager;
 	private final HashMap<String, HashSet<Execution>> projectIdToExecutions = new HashMap<String, HashSet<Execution>>();
-	private final HashMap<ProjectItem, SummaryListener> summaryListeners = new HashMap<ProjectItem, SummaryListener>();
-	private final HashSet<SummaryAttacher> summaryAttachers = new HashSet<SummaryAttacher>();
+	private final HashSet<SummaryTask> summaryAttachers = new HashSet<SummaryTask>();
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningExecutionTask runningExecutionTask = new RunningExecutionTask();
-
-	private State state = State.STOPPED;
 
 	ProjectExecutionManagerImpl( final ExecutionManager executionManager, final WorkspaceProvider workspaceProvider,
 			final ReportingManager reportingManager )
@@ -188,14 +182,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 				{
 					ProjectItem addedProject = ( ProjectItem )event.getElement();
 
-					//addedProject.addEventListener( BaseEvent.class, runningListener );
 					addedProject.addEventListener( CollectionEvent.class, collectionListener );
-					//for( SceneItem scene : addedProject.getScenes() )
-					//scene.addEventListener( BaseEvent.class, runningListener );
-
-					SummaryListener summaryListener = new SummaryListener( addedProject );
-					summaryListeners.put( addedProject, summaryListener );
-					addedProject.addEventListener( BaseEvent.class, summaryListener );
 
 					// lazily get project->execution mapping from disk if needed
 					if( !projectIdToExecutions.containsKey( addedProject.getId() ) )
@@ -209,12 +196,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 						projectIdToExecutions.put( addedProject.getId(), executionSet );
 					}
 				}
-				else if( ProjectItem.SCENES.equals( event.getKey() ) )
-				{
-					SceneItem scene = ( SceneItem )event.getElement();
-					//scene.addEventListener( BaseEvent.class, runningListener );
-					scene.addEventListener( BaseEvent.class, summaryListeners.get( event.getSource() ) );
-				}
 			}
 			else
 			{
@@ -222,15 +203,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 				{
 					ProjectItem removedProject = ( ProjectItem )event.getElement();
 
-					//removedProject.removeEventListener( BaseEvent.class, runningListener );
 					removedProject.removeEventListener( CollectionEvent.class, collectionListener );
-					removedProject.removeEventListener( BaseEvent.class, summaryListeners.remove( removedProject ) );
-				}
-				else if( ProjectItem.SCENES.equals( event.getKey() ) )
-				{
-					SceneItem scene = ( SceneItem )event.getElement();
-					scene.removeEventListener( BaseEvent.class, summaryListeners.get( event.getSource() ) );
-					//scene.removeEventListener( BaseEvent.class, runningListener );
 				}
 			}
 		}
@@ -278,16 +251,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 				return;
 			}
 
-			if( canvas == runningProject )
-			{
-				summaryAttachers.add( new SummaryAttacher( runningProject, executionManager.getCurrentExecution() ) );
-
-				state = State.PROJECT_STARTED;
-			}
-			else
-			{
-				state = State.TESTCASE_STARTED;
-			}
+			summaryAttachers.add( new SummaryTask( runningProject, executionManager.getCurrentExecution() ) );
 
 			// add project->execution mapping to cache
 			if( projectIdToExecutions.containsKey( runningProject.getId() ) )
@@ -324,107 +288,67 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 				recentProjectsExecutionMap.remove( oldestExecution );
 				projectIdToExecutions.put( runningProject.getId(), recentProjectsExecutionMap );
 			}
-			state = State.STOPPED;
 		}
 	}
 
-	private class SummaryAttacher implements TestExecutionTask
+	private class SummaryTask implements TestExecutionTask
 	{
 		private final ProjectItem project;
 		private final Execution execution;
-		private final EventFuture<BaseEvent> summaryWaiterFuture;
 
-		public SummaryAttacher( ProjectItem project, Execution execution )
+		public SummaryTask( ProjectItem project, Execution execution )
 		{
 			this.project = project;
 			this.execution = execution;
-			summaryWaiterFuture = EventFuture.forKey( project, CanvasItem.SUMMARY );
 			BeanInjector.getBean( TestRunner.class ).registerTask( this, Phase.POST_STOP );
 		}
 
 		@Override
-		public void invoke( TestExecution testExecution, Phase phase )
+		public void invoke( final @Nonnull TestExecution testExecution, final Phase phase )
 		{
-			if( testExecution.getCanvas() == project )
+			CanvasItem canvas = testExecution.getCanvas();
+
+			canvas.generateSummary();
+			Summary summary = canvas.getSummary();
+
+			long totalRequests = canvas.getCounter( CanvasItem.SAMPLE_COUNTER ).get();
+			long totalFailures = canvas.getCounter( CanvasItem.FAILURE_COUNTER ).get();
+
+			execution.setAttribute( "totalRequests", String.valueOf( totalRequests ) );
+			execution.setAttribute( "totalFailures", String.valueOf( totalFailures ) );
+
+			execution.setAttribute( "startTime", String.valueOf( summary.getStartTime().getTime() ) );
+			execution.setAttribute( "endTime", String.valueOf( summary.getEndTime().getTime() ) );
+
+			reportingManager.createReport( summary, execution.getSummaryReport(), "JASPER_PRINT" );
+
+			if( project.isSaveReport() )
 			{
-				try
-				{
-					summaryWaiterFuture.get();
-
-					long totalRequests = project.getCounter( ProjectItem.SAMPLE_COUNTER ).get();
-					long totalFailures = project.getCounter( ProjectItem.FAILURE_COUNTER ).get();
-
-					execution.setAttribute( "totalRequests", String.valueOf( totalRequests ) );
-					execution.setAttribute( "totalFailures", String.valueOf( totalFailures ) );
-
-					Summary summary = project.getSummary();
-					execution.setAttribute( "startTime", String.valueOf( summary.getStartTime().getTime() ) );
-					execution.setAttribute( "endTime", String.valueOf( summary.getEndTime().getTime() ) );
-
-					reportingManager.createReport( summary, execution.getSummaryReport(), "JASPER_PRINT" );
-					project.fireEvent( new BaseEvent( project, ProjectItem.SUMMARY_EXPORTED ) );
-				}
-				catch( InterruptedException e )
-				{
-					log.error( "Failed waiting for summary!", e );
-				}
-				catch( ExecutionException e )
-				{
-					log.error( "Failed waiting for summary!", e );
-				}
-
-				BeanInjector.getBean( TestRunner.class ).unregisterTask( this, Phase.POST_STOP );
-				summaryAttachers.remove( this );
+				saveSummaryAsFile( canvas, summary );
 			}
+
+			BeanInjector.getBean( TestRunner.class ).unregisterTask( this, Phase.POST_STOP );
+		}
+
+		private void saveSummaryAsFile( CanvasItem canvas, Summary summary )
+		{
+			log.debug( "SUMMARY EXPORTED SENT FROM SummaryListener.handleEvent" );
+
+			String label = null;
+			if( canvas instanceof ProjectItem )
+			{
+				label = project.getLabel();
+				log.debug( "project.getSummary(): {}", summary );
+			}
+			else
+			{
+				SceneItem scene = ( SceneItem )canvas;
+				label = project.getLabel() + "-" + scene.getLabel();
+				log.debug( "scene.getSummary(): {}", summary );
+			}
+			SummaryExportUtils.saveSummary( ( MutableSummary )summary, project.getReportFolder(),
+					project.getReportFormat(), label );
 		}
 	}
 
-	private static class SummaryListener implements EventHandler<BaseEvent>
-	{
-		// once summary event was fired,source is added to this set to prevent
-		// generating summary more than once (in case summary event was received
-		// more than once from the same source e.g. when user stops the project by
-		// clicking STOP button)
-		private final HashSet<EventFirer> sources = new HashSet<EventFirer>();
-
-		private final ProjectItem project;
-
-		public SummaryListener( ProjectItem project )
-		{
-			this.project = project;
-		}
-
-		@Override
-		public void handleEvent( BaseEvent event )
-		{
-			if( CanvasItem.SUMMARY.equals( event.getKey() ) )
-			{
-				if( project.isSaveReport() && !sources.contains( event.getSource() ) )
-				{
-					Summary summary = null;
-					String label = null;
-					if( event.getSource() instanceof ProjectItem )
-					{
-						summary = project.getSummary();
-						label = project.getLabel();
-					}
-					else
-					{
-						SceneItem scene = ( SceneItem )event.getSource();
-						summary = scene.getSummary();
-						label = project.getLabel() + "-" + scene.getLabel();
-					}
-					SummaryExportUtils.saveSummary( ( MutableSummary )summary, project.getReportFolder(),
-							project.getReportFormat(), label );
-
-					project.fireEvent( new BaseEvent( project, ProjectItem.SUMMARY_EXPORTED ) );
-				}
-				sources.add( event.getSource() );
-			}
-			else if( CanvasItem.COMPLETE_ACTION.equals( event.getKey() ) )
-			{
-				sources.remove( event.getSource() );
-			}
-		}
-	}
 }

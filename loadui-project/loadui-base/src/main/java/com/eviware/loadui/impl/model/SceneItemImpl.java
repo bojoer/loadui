@@ -324,7 +324,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 						// test case so it finishes before project)
 						if( !getProject().isRunning() && isFollowProject() || !isFollowProject() )
 						{
-							doGenerateSummary();
+							//							generateSummary();
 						}
 					}
 				}
@@ -427,7 +427,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	}
 
 	@Override
-	public void generateSummary( MutableSummary summary )
+	public void appendToSummary( MutableSummary summary )
 	{
 		MutableChapterImpl chap = ( MutableChapterImpl )summary.addChapter( getLabel() );
 		chap.addSection( new TestCaseDataSummarySection( this ) );

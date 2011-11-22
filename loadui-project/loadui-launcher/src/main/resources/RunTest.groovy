@@ -114,6 +114,7 @@ def project = projectRef.project
 def summaryExported = 0
 def summaryExportListener = new EventHandler<BaseEvent>() {
 	public void handleEvent( BaseEvent event ) {
+		println ("got event: " + event)
 		if( ProjectItem.SUMMARY_EXPORTED.equals( event.getKey() ) ) {
 			summaryExported++
 		}
@@ -259,9 +260,10 @@ while( testExecution.state != TestState.COMPLETED ) {
 }
 
 //Wait for reports to be generated and saved (SUMMARY_EXPORTED is fired once when the summary is saved to the execution, then once again once the summary has been exported, but only if it should be exported).
-while( summaryExported < ( project.saveReport ? 2 : 1 ) ) {
-	sleep 1000
-}
+//while( summaryExported < ( project.saveReport ? 2 : 1 ) ) {
+//	sleep 1000
+//	log.info 'Waiting for summary generation to complete...'
+//}
 
 //Save Statistics report
 if( statisticPages != null && project.reportFolder ) {

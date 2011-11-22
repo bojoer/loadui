@@ -111,8 +111,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	// here keep all not loaded components and connections, remove them at the
 	// end of init
-	private ArrayList<ComponentItemConfig> badComponents = new ArrayList<ComponentItemConfig>();
-	private ArrayList<ConnectionConfig> badConnections = new ArrayList<ConnectionConfig>();
+	private final ArrayList<ComponentItemConfig> badComponents = new ArrayList<ComponentItemConfig>();
+	private final ArrayList<ConnectionConfig> badConnections = new ArrayList<ConnectionConfig>();
 
 	private final StatisticHolderSupport statisticHolderSupport;
 	private final CounterStatisticSupport counterStatisticSupport;
@@ -499,12 +499,21 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	abstract void onComplete( EventFirer source );
 
-	protected void doGenerateSummary()
+	/**
+	 * Called on a CanvasItem to append its summary chapters to a common summary
+	 * object.
+	 * 
+	 * @param summary
+	 */
+	abstract void appendToSummary( MutableSummary summary );
+
+	@Override
+	public void generateSummary()
 	{
 		log.debug( "Generating summary for: {}", CanvasItemImpl.this );
 		endTime = new Date();
 		MutableSummary summary = new MutableSummaryImpl( getStartTime(), getEndTime() );
-		generateSummary( summary );
+		appendToSummary( summary );
 		CanvasItemImpl.this.summary = summary;
 		fireBaseEvent( SUMMARY );
 		triggerAction( READY_ACTION );

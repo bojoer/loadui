@@ -162,9 +162,8 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	/**
 	 * Called on a CanvasItem to generate a summary of the last completed run.
 	 * 
-	 * @param summary
 	 */
-	public void generateSummary( MutableSummary summary );
+	public void generateSummary();
 
 	/**
 	 * Gets the latest Summary. If no Summary is available, this will return
