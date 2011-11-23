@@ -1,3 +1,18 @@
+/*
+ * Copyright 2011 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl5
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.launcher.util;
 
 import java.io.File;
@@ -15,10 +30,27 @@ import aQute.lib.osgi.Jar;
 import aQute.lib.osgi.Processor;
 import aQute.lib.osgi.Verifier;
 
+/**
+ * BND utility class. Provides functionality for wrapping jars into OSGi
+ * bundles.
+ * 
+ * @author predrag.vucetic
+ * 
+ */
 public class BndUtils
 {
 	//public static final Logger log = LoggerFactory.getLogger( BNDUtils.class );
 
+	/**
+	 * Takes all jar and ZIP files from folder specified by sourceDir parameter,
+	 * makes OSGi from them and save them into folder specified by destDir
+	 * parameter.
+	 * 
+	 * @param sourceDir
+	 *           Folder to look for java libraries (jar and ZIP).
+	 * @param destDir
+	 *           Folder where to save created bundles.
+	 */
 	public static void wrapAll( File sourceDir, File destDir )
 	{
 		if( !sourceDir.exists() || !sourceDir.isDirectory() )
@@ -67,11 +99,36 @@ public class BndUtils
 		}
 	}
 
+	/**
+	 * Makes OSGi bundle from <code>input</code> file and saves it as
+	 * <code>output</code> file.
+	 * 
+	 * @param input
+	 *           Java library to create bundle from.
+	 * @param output
+	 *           Created bundle file.
+	 * @return true on success, false otherwise.
+	 */
 	public static boolean wrap( File input, File output )
 	{
 		return wrap( input, output, null, null, null, true );
 	}
 
+	/**
+	 * Makes OSGi bundle from <code>input</code> file and saves it as
+	 * <code>output</code> file.
+	 * 
+	 * @param input
+	 *           Java library to create bundle from.
+	 * @param output
+	 *           Created bundle file.
+	 * @param properties
+	 *           New bundle properties file.
+	 * @param classpath
+	 * @param additional
+	 * @param pedantic
+	 * @return true on success, false otherwise.
+	 */
 	public static boolean wrap( File input, File output, File properties, File classpath[],
 			Map<String, String> additional, boolean pedantic )
 	{
