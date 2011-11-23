@@ -122,6 +122,12 @@
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-launcher</artifactId>
 			<version>${project.parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
