@@ -44,6 +44,7 @@ import org.osgi.framework.launch.Framework;
 
 import com.eviware.loadui.launcher.api.OSGiUtils;
 import com.eviware.loadui.launcher.api.SplashController;
+import com.eviware.loadui.launcher.util.BndUtils;
 
 /**
  * Starts an embedded OSGi Runtime (Felix) with all the required JavaFX packages
@@ -196,7 +197,13 @@ public class LoadUILauncher
 			exitInError();
 		}
 
+		//make bundles from external libraries
+		File source = new File( "." + File.separator + "ext" );
+		File dest = new File( "." + File.separator + "bundle" );
+		BndUtils.wrapAll( source, dest );
+
 		framework = new FrameworkFactory().newFramework( configProps );
+
 		try
 		{
 			framework.init();
