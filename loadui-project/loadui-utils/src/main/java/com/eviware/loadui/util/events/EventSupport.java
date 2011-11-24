@@ -63,7 +63,7 @@ public class EventSupport implements EventFirer, Releasable
 	}
 
 	@Override
-	public <T extends EventObject> void addEventListener( final Class<T> type, final EventHandler<T> listener )
+	public <T extends EventObject> void addEventListener( final Class<T> type, final EventHandler<? super T> listener )
 	{
 		if( listener == null )
 			throw new NullPointerException( "Cannot add null EventHandler!" );
@@ -80,7 +80,7 @@ public class EventSupport implements EventFirer, Releasable
 	}
 
 	@Override
-	public <T extends EventObject> void removeEventListener( final Class<T> type, final EventHandler<T> listener )
+	public <T extends EventObject> void removeEventListener( final Class<T> type, final EventHandler<? super T> listener )
 	{
 		if( !eventQueue.offer( new Runnable()
 		{
@@ -174,17 +174,17 @@ public class EventSupport implements EventFirer, Releasable
 	private static class ListenerEntry<T extends EventObject>
 	{
 		private final Class<T> type;
-		private final EventHandler<T> listener;
-		private final WeakReference<EventHandler<T>> weakListener;
+		private final EventHandler<?> listener;
+		private final WeakReference<EventHandler<?>> weakListener;
 
-		private ListenerEntry( Class<T> type, EventHandler<T> listener )
+		private ListenerEntry( Class<T> type, EventHandler<? super T> listener )
 		{
 			this.type = type;
 
 			if( listener instanceof WeakEventHandler )
 			{
 				this.listener = null;
-				this.weakListener = new WeakReference<EventHandler<T>>( listener );
+				this.weakListener = new WeakReference<EventHandler<?>>( listener );
 			}
 			else
 			{

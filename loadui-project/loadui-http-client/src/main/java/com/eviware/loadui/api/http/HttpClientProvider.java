@@ -15,12 +15,13 @@
  */
 package com.eviware.loadui.api.http;
 
-import org.eclipse.jetty.client.HttpClient;
+//import org.eclipse.jetty.client.HttpClient;
 
+@Deprecated
 public interface HttpClientProvider
 {
-	public HttpClient getHttpClient();
+	public/* HttpClient */Object getHttpClient();
 
-	public HttpClient getHttpsClient();
+	public/* HttpClient */Object getHttpsClient();
 
 }

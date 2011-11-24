@@ -46,13 +46,12 @@ import java.lang.Thread;
 import java.lang.Throwable;
 
 import com.eviware.loadui.util.BeanInjector;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpExchange;
-import org.eclipse.jetty.io.Buffer;
+//import org.eclipse.jetty.client.HttpClient;
+//import org.eclipse.jetty.client.HttpExchange;
+//import org.eclipse.jetty.io.Buffer;
 import java.lang.Exception;
-import org.eclipse.jetty.http.HttpSchemes;
-import com.eviware.loadui.api.http.HttpClientProvider;
-import com.eviware.loadui.fx.http.HttpClientHolder;
+//import org.eclipse.jetty.http.HttpSchemes;
+//import com.eviware.loadui.fx.http.HttpClientHolder;
 
 public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.CreateNewAgentDialog" );
 
@@ -126,7 +125,9 @@ public class CreateNewAgentDialog {
 							return;
 						}
 						
-						validateAgent(); 
+						workspace.createAgent(agentUrl.value as String, agentName.value as String);
+						dialog.close();
+						//validateAgent(); 
 					}
 				}
 	
@@ -257,6 +258,7 @@ public class CreateNewAgentDialog {
 	
 	var agentValid: Boolean = false;
 	
+	/*
 	function validateAgent(): Void {
 		try{
 			agentValid = false;
@@ -297,7 +299,7 @@ public class CreateNewAgentDialog {
 			confirmDialog.show();
 		}
 	}
-	
+	*/
 	function validateName( name:String ):Boolean {
 		if(name == null or name.length() == 0){
 			return false;
@@ -325,7 +327,7 @@ public class CreateNewAgentDialog {
 
 }
 
-public class DataExchange extends HttpExchange {
+/*public class DataExchange extends HttpExchange {
 
 	override function onResponseHeader(name: Buffer, value: Buffer): Void {
 		if(name.toString('utf8').equals("Server")){
@@ -348,4 +350,4 @@ public class DataExchange extends HttpExchange {
 	
 	override function onExpire(){
 	}
-}
+}*/

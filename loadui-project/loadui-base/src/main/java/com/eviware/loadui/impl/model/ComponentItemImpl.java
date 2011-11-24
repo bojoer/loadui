@@ -16,7 +16,6 @@
 package com.eviware.loadui.impl.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
@@ -48,11 +47,11 @@ import com.eviware.loadui.api.events.TerminalMessageEvent;
 import com.eviware.loadui.api.events.TerminalSignatureEvent;
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.SettingsLayoutContainer;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.Assignment;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
@@ -384,7 +383,9 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	public void sendAgentMessage( AgentItem agent, TerminalMessage message )
 	{
 		if( agent.isReady() )
+		{
 			doHandleTerminalEvent( remoteTerminal, new TerminalMessageEvent( getAgentTerminal( agent ), message ) );
+		}
 	}
 
 	private AgentTerminal getAgentTerminal( AgentItem agent )
@@ -562,13 +563,13 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 					}
 					else
 					{
-						List<Object> data = Arrays.asList( getId(), message.serialize() );
+						Object[] data = new Object[] { getId(), message.serialize() };
 						( ( SceneItem )canvas ).broadcastMessage( ComponentContext.COMPONENT_CONTEXT_CHANNEL, data );
 					}
 				}
 				else if( terminal instanceof AgentTerminal )
 				{
-					List<Object> data = Arrays.asList( getId(), message.serialize() );
+					Object[] data = new Object[] { getId(), message.serialize() };
 					( ( AgentTerminal )terminal ).agent.sendMessage( ComponentContext.COMPONENT_CONTEXT_CHANNEL, data );
 				}
 			}
@@ -650,14 +651,14 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		}
 
 		@Override
-		public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+		public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<? super T> listener )
 		{
 			ComponentItemImpl.this.addEventListener( type, listener );
 			handlerRegistrations.add( new EventHandlerRegistration<T>( listener, type ) );
 		}
 
 		@Override
-		public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+		public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
 		{
 			ComponentItemImpl.this.removeEventListener( type, listener );
 			handlerRegistrations.remove( new EventHandlerRegistration<T>( listener, type ) );
@@ -939,7 +940,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		}
 
 		@Override
-		public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+		public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<? super T> listener )
 		{
 			throw new UnsupportedOperationException();
 		}
@@ -951,7 +952,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		}
 
 		@Override
-		public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+		public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
 		{
 			throw new UnsupportedOperationException();
 		}

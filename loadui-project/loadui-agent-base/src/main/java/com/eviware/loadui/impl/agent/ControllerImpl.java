@@ -45,9 +45,9 @@ import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.SceneCommunication;
 import com.eviware.loadui.api.messaging.ServerEndpoint;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ModelItem;
-import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.property.PropertySynchronizer;
 import com.eviware.loadui.api.terminal.DualTerminal;
@@ -58,6 +58,7 @@ import com.eviware.loadui.api.terminal.TerminalProxy;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.dispatch.CustomThreadPoolExecutor;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
@@ -128,6 +129,14 @@ public class ControllerImpl
 								}
 							} ) )
 					{
+						for( SceneItem scene : entry.getValue().getScenes() )
+						{
+							SceneAgent sceneAgent = sceneAgents.get( scene.getId() );
+							if( sceneAgent != null )
+							{
+								sceneAgent.addCommand( Collections.singletonList( ( String )null ) );
+							}
+						}
 						ReleasableUtils.release( entry.getValue() );
 						projects.remove( entry.getKey() );
 					}
@@ -154,20 +163,26 @@ public class ControllerImpl
 
 		scheduledExecutorService.scheduleAtFixedRate( new Runnable()
 		{
+			int lastUtilization = -1;
+
 			@Override
 			public void run()
 			{
 				if( executorService instanceof CustomThreadPoolExecutor )
 				{
 					int utilization = ( ( CustomThreadPoolExecutor )executorService ).getUtilization();
-					for( MessageEndpoint endpoint : clients )
-						endpoint.sendMessage( AgentItem.AGENT_CHANNEL,
-								Collections.singletonMap( AgentItem.SET_UTILIZATION, utilization ) );
+					if( lastUtilization != utilization )
+					{
+						for( MessageEndpoint endpoint : clients )
+						{
+							endpoint.sendMessage( AgentItem.AGENT_CHANNEL,
+									Collections.singletonMap( AgentItem.SET_UTILIZATION, utilization ) );
+						}
+						lastUtilization = utilization;
+					}
 				}
 			}
 		}, 1, 1, TimeUnit.SECONDS );
-
-		log.info( "Agent started and listening on cometd!" );
 	}
 
 	private class AgentListener implements MessageListener, ConnectionListener
@@ -250,19 +265,24 @@ public class ControllerImpl
 		}
 
 		@Override
-		public void handleConnectionChange( MessageEndpoint endpoint, boolean connected )
+		public void handleConnectionChange( final MessageEndpoint endpoint, boolean connected )
 		{
 			if( !connected )
 			{
-				List<SceneAgent> stop = new ArrayList<SceneAgent>();
-				synchronized( sceneAgents )
+				Iterable<SceneAgent> agents = Iterables.filter( ImmutableList.copyOf( sceneAgents.values() ),
+						new Predicate<SceneAgent>()
+						{
+							@Override
+							public boolean apply( SceneAgent input )
+							{
+								return input.getEndpoint() == endpoint;
+							}
+						} );
+
+				for( SceneAgent sceneAgent : agents )
 				{
-					for( SceneAgent sceneAgent : sceneAgents.values() )
-						if( endpoint == sceneAgent.getEndpoint() )
-							stop.add( sceneAgent );
+					sceneAgent.addCommand( Collections.<String> singletonList( null ) );
 				}
-				for( SceneAgent sceneAgent : stop )
-					sceneAgent.addCommand( Collections.singletonList( ( String )null ) );
 			}
 		}
 	}
@@ -367,7 +387,7 @@ public class ControllerImpl
 					{
 						log.info( "Stopping scene: {}", scene.getLabel() );
 						project.removeScene( scene );
-						scene.release();
+						ReleasableUtils.release( scene );
 						synchronized( sceneAgents )
 						{
 							sceneAgents.remove( sceneId );
@@ -378,7 +398,7 @@ public class ControllerImpl
 					{
 						log.debug( "SceneItem out of sync with controller, restarting..." );
 						project.removeScene( scene );
-						scene.release();
+						ReleasableUtils.release( scene );
 						synchronized( sceneAgents )
 						{
 							sceneAgents.remove( sceneId );

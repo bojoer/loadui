@@ -348,7 +348,7 @@ public class LoadUILauncher
 		setDefaultSystemProperty( "loadui.ssl.keyStore", System.getProperty( "loadui.home" ) + File.separator
 				+ "keystore.jks" );
 		setDefaultSystemProperty( "loadui.ssl.trustStore", System.getProperty( "loadui.home" ) + File.separator
-				+ "keystore.jks" );
+				+ "certificate.pem" );
 		setDefaultSystemProperty( "loadui.ssl.keyStorePassword", "password" );
 		setDefaultSystemProperty( "loadui.ssl.trustStorePassword", "password" );
 
@@ -369,6 +369,47 @@ public class LoadUILauncher
 			try
 			{
 				fos = new FileOutputStream( keystore );
+				byte buf[] = new byte[1024];
+				int len;
+				while( ( len = is.read( buf ) ) > 0 )
+					fos.write( buf, 0, len );
+
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				try
+				{
+					if( is != null )
+						is.close();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+				try
+				{
+					if( fos != null )
+						fos.close();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+
+		File truststore = new File( System.getProperty( "loadui.ssl.trustStore" ) );
+		if( !truststore.exists() )
+		{
+			InputStream is = getClass().getResourceAsStream( "/certificate.pem" );
+			FileOutputStream fos = null;
+			try
+			{
+				fos = new FileOutputStream( truststore );
 				byte buf[] = new byte[1024];
 				int len;
 				while( ( len = is.read( buf ) ) > 0 )

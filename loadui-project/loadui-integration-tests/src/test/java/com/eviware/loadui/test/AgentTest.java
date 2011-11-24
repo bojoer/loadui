@@ -15,16 +15,20 @@
  */
 package com.eviware.loadui.test;
 
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
+
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.HeadMethod;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
 
 import com.eviware.loadui.LoadUI;
-
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
 
 /**
  * Integration tests for testing the loadUI agent through its API.
@@ -61,7 +65,12 @@ public class AgentTest
 					anyOf( is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );
 	}
 
-	@Test
+	/*
+	 * The status page has been removed due to the move to raw sockets instead of
+	 * HTTP based traffic for agent communication.
+	 */
+	//@Test
+	@Deprecated
 	public void shouldHaveAgentStatusPage() throws Exception
 	{
 		HttpClient client = new HttpClient();

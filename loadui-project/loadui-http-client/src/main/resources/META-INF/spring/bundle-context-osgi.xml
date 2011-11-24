@@ -6,5 +6,5 @@
 	
 	<osgi:service interface="com.eviware.loadui.api.http.HttpClientProvider" ref="httpClientProvider" />
 	
-	<osgi:service interface="com.eviware.loadui.api.messaging.MessageEndpointProvider" ref="messageEndpointProvider" />
+	<!-- <osgi:service interface="com.eviware.loadui.api.messaging.MessageEndpointProvider" ref="messageEndpointProvider" /> -->
 </beans>

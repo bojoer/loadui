@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2011 SmartBear Software
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -13,34 +13,18 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.fx.http;
+package com.eviware.loadui.api.assertion;
 
-import com.eviware.loadui.api.http.HttpClientProvider;
-import org.eclipse.jetty.client.HttpClient;
+import com.eviware.loadui.api.addon.Addon;
+import com.eviware.loadui.api.addressable.Addressable;
+import com.eviware.loadui.api.base.OrderedCollection;
+import com.eviware.loadui.api.serialization.ListenableValue;
+import com.eviware.loadui.api.serialization.Resolver;
 
-public-read var instance: HttpClientHolder;
+public interface AssertionAddon extends Addon
+{
+	public OrderedCollection<AssertionItem> getAssertions();
 
-public class HttpClientHolder {
-
-	var provider: HttpClientProvider;
-	public function setProvider(provider: HttpClientProvider): Void { 
-		this.provider = provider; 
-	}
-	
-	public function getHttpsClient(): HttpClient {
-		provider.getHttpsClient(); 
-	}
-	
-	public function getHttpClient(): HttpClient {
-		provider.getHttpClient(); 
-	}
-
-	function initialize(): Void {
-		instance = this;
-	}
-	
-	function destroy(): Void {
-		instance = this;
-	}
-
+	public <T, A extends AssertionItem.MutableConstraint & AssertionItem.MutableTolerance> A createAssertion(
+			Addressable owner, Resolver<ListenableValue<? extends T>> listenableValueResolver );
 }

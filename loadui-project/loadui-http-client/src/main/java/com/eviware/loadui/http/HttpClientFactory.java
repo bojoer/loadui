@@ -30,8 +30,8 @@ public class HttpClientFactory
 		httpClient.setKeyStoreLocation( System.getProperty( LoadUI.KEY_STORE ) );
 		httpClient.setKeyStorePassword( System.getProperty( LoadUI.KEY_STORE_PASSWORD ) );
 
-		httpClient.setTrustStoreLocation( System.getProperty( LoadUI.TRUST_STORE ) );
-		httpClient.setTrustStorePassword( System.getProperty( LoadUI.TRUST_STORE_PASSWORD ) );
+		httpClient.setTrustStoreLocation( System.getProperty( LoadUI.KEY_STORE ) );
+		httpClient.setTrustStorePassword( System.getProperty( LoadUI.KEY_STORE_PASSWORD ) );
 
 		try
 		{

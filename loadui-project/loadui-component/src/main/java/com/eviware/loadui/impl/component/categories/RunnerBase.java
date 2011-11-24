@@ -68,6 +68,8 @@ import com.google.common.collect.ImmutableMap;
  */
 public abstract class RunnerBase extends BaseCategory implements RunnerCategory, EventHandler<BaseEvent>
 {
+	public static final String REMOTE_DATA = "remoteData";
+
 	private final static int NUM_TOP_BOTTOM_SAMPLES = 5;
 
 	private final ScheduledExecutorService scheduler;
@@ -537,8 +539,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		if( input == triggerTerminal )
 			enqueue( message );
-		else if( message.containsKey( "remoteData" ) && isAssigned( output.getId() ) )
-			remoteValues.put( output.getId(), ( String )message.get( "remoteData" ) );
+		else if( message.containsKey( REMOTE_DATA ) && isAssigned( output.getId() ) )
+			remoteValues.put( output.getId(), ( String )message.get( REMOTE_DATA ) );
 	}
 
 	private boolean isAssigned( String id )
@@ -798,7 +800,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		@Override
 		public void run()
 		{
-			message.put( "remoteData", currentlyRunning.get() + ";" + queued.get() );
+			message.put( REMOTE_DATA, currentlyRunning.get() + ";" + queued.get() );
 			context.send( controllerTerminal, message );
 		}
 	}

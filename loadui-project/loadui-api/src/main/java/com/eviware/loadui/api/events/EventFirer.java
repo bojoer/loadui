@@ -35,7 +35,7 @@ public interface EventFirer
 	 * @param listener
 	 *           The EventHandler to invoke.
 	 */
-	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener );
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<? super T> listener );
 
 	/**
 	 * Removes a listener from the EventFirer.
@@ -47,7 +47,7 @@ public interface EventFirer
 	 * @param listener
 	 *           The listener to remove.
 	 */
-	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener );
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener );
 
 	/**
 	 * Clears the listeners added to the EventFirer.

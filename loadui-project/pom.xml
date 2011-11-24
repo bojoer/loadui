@@ -42,6 +42,8 @@
 		<module>loadui-test-utils</module>
 		<module>loadui-groovy-component-pack</module>
 		<module>loadui-groovy-utils</module>
+		<module>loadui-socket-client</module>
+		<module>loadui-socket-server</module>
 	</modules>
 	<repositories>
 		<repository>

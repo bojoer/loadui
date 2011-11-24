@@ -313,13 +313,13 @@ public class ExecutionImpl implements Execution, Releasable
 	}
 
 	@Override
-	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
 		eventSupport.addEventListener( type, listener );
 	}
 
 	@Override
-	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
 		eventSupport.removeEventListener( type, listener );
 	}

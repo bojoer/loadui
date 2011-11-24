@@ -51,7 +51,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-http-client</artifactId>
+			<artifactId>loadui-socket-client</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

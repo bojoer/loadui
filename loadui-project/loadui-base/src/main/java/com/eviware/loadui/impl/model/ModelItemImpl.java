@@ -29,9 +29,9 @@ import com.eviware.loadui.api.addon.Addon;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.addressable.AddressableRegistry.DuplicateAddressException;
 import com.eviware.loadui.api.events.ActionEvent;
-import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.property.Property;
@@ -272,14 +272,14 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 	}
 
 	@Override
-	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
 		if( !released )
 			eventSupport.addEventListener( type, listener );
 	}
 
 	@Override
-	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
 		eventSupport.removeEventListener( type, listener );
 	}

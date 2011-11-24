@@ -43,20 +43,20 @@ import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.component.categories.AnalysisCategory;
 import com.eviware.loadui.api.component.categories.FlowCategory;
+import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import com.eviware.loadui.api.component.categories.MiscCategory;
 import com.eviware.loadui.api.component.categories.OutputCategory;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.component.categories.SchedulerCategory;
-import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.groovy.categories.GroovyAnalysis;
 import com.eviware.loadui.groovy.categories.GroovyFlow;
+import com.eviware.loadui.groovy.categories.GroovyGenerator;
 import com.eviware.loadui.groovy.categories.GroovyMisc;
 import com.eviware.loadui.groovy.categories.GroovyOutput;
 import com.eviware.loadui.groovy.categories.GroovyRunner;
 import com.eviware.loadui.groovy.categories.GroovyScheduler;
-import com.eviware.loadui.groovy.categories.GroovyGenerator;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.eviware.loadui.util.groovy.ClassLoaderRegistry;
@@ -161,7 +161,8 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 							// ID matches, update the component.
 							context.setAttribute( GroovyBehaviorSupport.DIGEST_ATTRIBUTE, d.getDigest() );
 							context.setAttribute( GroovyBehaviorSupport.CLASS_LOADER_ATTRIBUTE, d.getClassLoaderId() );
-							context.createProperty( GroovyBehaviorSupport.SCRIPT_PROPERTY, String.class ).setValue( d.getScript() );
+							context.createProperty( GroovyBehaviorSupport.SCRIPT_PROPERTY, String.class ).setValue(
+									d.getScript() );
 						}
 						break;
 					}
@@ -173,7 +174,8 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 							context.setAttribute( GroovyBehaviorSupport.DIGEST_ATTRIBUTE, d.getDigest() );
 							context.setAttribute( GroovyBehaviorSupport.ID_ATTRIBUTE, d.getId() );
 							context.setAttribute( GroovyBehaviorSupport.CLASS_LOADER_ATTRIBUTE, d.getClassLoaderId() );
-							context.createProperty( GroovyBehaviorSupport.SCRIPT_PROPERTY, String.class ).setValue( d.getScript() );
+							context.createProperty( GroovyBehaviorSupport.SCRIPT_PROPERTY, String.class ).setValue(
+									d.getScript() );
 						}
 						break;
 					}
@@ -227,13 +229,13 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 	}
 
 	@Override
-	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
 		eventSupport.addEventListener( type, listener );
 	}
 
 	@Override
-	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
 		eventSupport.removeEventListener( type, listener );
 	}

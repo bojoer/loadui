@@ -17,6 +17,7 @@ package com.eviware.loadui.util.statistics;
 
 import java.util.Collections;
 
+import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.statistics.DataPoint;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -24,11 +25,14 @@ import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.util.serialization.ListenableValueSupport;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 public class StatisticImpl<T extends Number> implements Statistic<T>
 {
+	private final ListenableValueSupport<T> listenableValueSupport = new ListenableValueSupport<T>();
+	private final EntryListener entryListener = new EntryListener();
 	private final ExecutionManager manager;
 	private final Class<T> type;
 	private final String trackId;
@@ -126,5 +130,39 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	{
 		Entry lastEntry = manager.getLastEntry( trackId, source );
 		return lastEntry == null ? -1 : lastEntry.getTimestamp();
+	}
+
+	@Override
+	public void addListener( ListenableValue.ValueListener<? super T> listener )
+	{
+		listenableValueSupport.addListener( listener );
+		manager.addEntryListener( trackId, source, 0, entryListener );
+	}
+
+	@Override
+	public void removeListener( ListenableValue.ValueListener<? super T> listener )
+	{
+		listenableValueSupport.removeListener( listener );
+		if( listenableValueSupport.getListenerCount() == 0 )
+		{
+			manager.removeEntryListener( trackId, source, 0, entryListener );
+		}
+	}
+
+	private class EntryListener implements ValueListener<Entry>
+	{
+		@Override
+		@SuppressWarnings( "unchecked" )
+		public void update( Entry value )
+		{
+			if( listenableValueSupport.getListenerCount() > 0 )
+			{
+				listenableValueSupport.update( ( T )value.getValue( name ) );
+			}
+			else
+			{
+				manager.removeEntryListener( trackId, source, 0, this );
+			}
+		}
 	}
 }

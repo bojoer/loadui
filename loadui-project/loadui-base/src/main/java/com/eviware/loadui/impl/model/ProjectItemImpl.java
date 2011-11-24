@@ -18,7 +18,6 @@ package com.eviware.loadui.impl.model;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -487,7 +486,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		for( String arg : args )
 			message.add( arg );
 
-		broadcastMessage( scene, SceneCommunication.CHANNEL, message );
+		broadcastMessage( scene, SceneCommunication.CHANNEL, message.toArray() );
 	}
 
 	private AssignmentImpl getAssignment( SceneItem scene, AgentItem agent )
@@ -887,10 +886,9 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					assignment.setLoaded( true );
 
 				if( scene.isRunning() && !workspace.isLocalMode() )
-					endpoint
-							.sendMessage( SceneCommunication.CHANNEL, Arrays.asList( scene.getId(),
-									Long.toString( scene.getVersion() ), SceneCommunication.ACTION_EVENT, START_ACTION,
-									scene.getId() ) );
+					endpoint.sendMessage( SceneCommunication.CHANNEL,
+							new Object[] { scene.getId(), Long.toString( scene.getVersion() ),
+									SceneCommunication.ACTION_EVENT, START_ACTION, scene.getId() } );
 			}
 		}
 	}

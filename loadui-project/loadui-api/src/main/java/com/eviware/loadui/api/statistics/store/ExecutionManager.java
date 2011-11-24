@@ -18,6 +18,7 @@ package com.eviware.loadui.api.statistics.store;
 import java.util.Collection;
 
 import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.testevents.TestEvent;
 
 /**
@@ -142,6 +143,28 @@ public interface ExecutionManager extends EventFirer
 	 * @see Entry(String, String)
 	 */
 	public Entry getLastEntry( String trackId, String source, int interpolationLevel );
+
+	/**
+	 * Adds a ValueListener for new Entries that satisfy the given constraints.
+	 * 
+	 * @param trackId
+	 * @param source
+	 * @param interpolationLevel
+	 * @param listener
+	 */
+	public void addEntryListener( String trackId, String source, int interpolationLevel,
+			ListenableValue.ValueListener<? super Entry> listener );
+
+	/**
+	 * Removes a previously added ValueListener
+	 * 
+	 * @param trackId
+	 * @param source
+	 * @param interpolationLevel
+	 * @param listener
+	 */
+	public void removeEntryListener( String trackId, String source, int interpolationLevel,
+			ListenableValue.ValueListener<? super Entry> listener );
 
 	/**
 	 * Writes the data for a TestEvent to the current Execution.

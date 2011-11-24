@@ -5,11 +5,11 @@
 		
 	<!--<bean id="httpClient" class="org.eclipse.jetty.client.HttpClient" init-method="start" destroy-method="stop" />
 	-->
-	<bean id="httpClient" class="com.eviware.loadui.http.HttpClientFactory" factory-method="createHttpsClient" destroy-method="stop" />
+	<!-- <bean id="httpClient" class="com.eviware.loadui.http.HttpClientFactory" factory-method="createHttpsClient" destroy-method="stop" /> -->
 	
-	<bean id="messageEndpointProvider" class="com.eviware.loadui.impl.messaging.BayeuxMessageEndpointProvider">
+	<!-- <bean id="messageEndpointProvider" class="com.eviware.loadui.impl.messaging.BayeuxMessageEndpointProvider">
 		<constructor-arg ref="httpClient" />
-	</bean>
+	</bean> -->
 	
 	<bean id="validatorHttpsClient" class="com.eviware.loadui.http.HttpClientFactory" factory-method="createHttpsClient" destroy-method="stop" />
 	<bean id="validatorHttpClient" class="com.eviware.loadui.http.HttpClientFactory" factory-method="createHttpClient" destroy-method="stop" />

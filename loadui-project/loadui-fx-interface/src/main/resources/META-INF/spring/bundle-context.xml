@@ -20,9 +20,9 @@
 		<property name="agentDiscovery" ref="agentDiscovery" />
 	</bean>
 
-	<bean id="httpClientHolder" class="com.eviware.loadui.fx.http.HttpClientHolder" init-method="initialize" destroy-method="destroy">
+	<!-- <bean id="httpClientHolder" class="com.eviware.loadui.fx.http.HttpClientHolder" init-method="initialize" destroy-method="destroy">
 		<property name="provider" ref="httpClientProvider" />
-	</bean>
+	</bean> -->
 	
 	<bean id="inspectorPanel" factory-bean="mainWindow" factory-method="getInspectorPanel" />
 	

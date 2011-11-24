@@ -66,7 +66,7 @@ public class AddressableRegistryImpl implements AddressableRegistry
 	}
 
 	@Override
-	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
 		eventSupport.addEventListener( type, listener );
 	}
@@ -84,7 +84,7 @@ public class AddressableRegistryImpl implements AddressableRegistry
 	}
 
 	@Override
-	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
 		eventSupport.removeEventListener( type, listener );
 	}

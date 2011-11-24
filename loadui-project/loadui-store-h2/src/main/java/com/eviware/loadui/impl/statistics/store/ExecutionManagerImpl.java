@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
+import com.eviware.loadui.api.serialization.ListenableValue.ValueListener;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
@@ -72,6 +74,7 @@ import com.eviware.loadui.util.statistics.ExecutionListenerAdapter;
 import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -80,6 +83,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 
 /**
  * Implementation of execution manager. Basically main class for data handling.
@@ -115,6 +121,17 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	 * Current execution
 	 */
 	private ExecutionImpl currentExecution;
+
+	private final Multimap<String, ValueListener<? super Entry>> listeners = Multimaps.newSetMultimap(
+			new HashMap<String, Collection<ValueListener<? super Entry>>>(),
+			new Supplier<Set<ValueListener<? super Entry>>>()
+			{
+				@Override
+				public Set<ValueListener<? super Entry>> get()
+				{
+					return Sets.newSetFromMap( new WeakHashMap<ValueListener<? super Entry>, Boolean>() );
+				}
+			} );
 
 	private final ExecutionChangeSupport ecs = new ExecutionChangeSupport();
 
@@ -609,8 +626,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			long timestamp = entry.getTimestamp();
 			timestamp -= ( currentExecution.getStartTime() ); //+ totalPause );
 
-			latestEntries.put( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ), new AdjustedEntry(
-					entry, timestamp ) );
+			AdjustedEntry adjustedEntry = new AdjustedEntry( entry, timestamp );
+			String key = trackId + ":" + source + ":" + String.valueOf( interpolationLevel );
+			latestEntries.put( key, adjustedEntry );
 
 			currentExecution.updateLength( timestamp );
 			Map<String, Object> data = new HashMap<String, Object>();
@@ -629,6 +647,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				log.error( "Unable to write data to the database:", e );
 				log.error( "Unable to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry,
 						source, interpolationLevel, trackId } );
+			}
+
+			for( ValueListener<? super Entry> listener : ImmutableSet.copyOf( listeners.get( key ) ) )
+			{
+				listener.update( adjustedEntry );
 			}
 		}
 	}
@@ -1188,13 +1211,13 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	}
 
 	@Override
-	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<T> listener )
+	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
 		eventSupport.addEventListener( type, listener );
 	}
 
 	@Override
-	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<T> listener )
+	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
 		eventSupport.removeEventListener( type, listener );
 	}
@@ -1233,6 +1256,20 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				.getStringValue() );
 		baseDirectoryURI = convertToURI( baseDirectory );
 		workspace.addEventListener( PropertyEvent.class, resultPathListener );
+	}
+
+	@Override
+	public void addEntryListener( String trackId, String source, int interpolationLevel,
+			ValueListener<? super Entry> listener )
+	{
+		listeners.put( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ), listener );
+	}
+
+	@Override
+	public void removeEntryListener( String trackId, String source, int interpolationLevel,
+			ValueListener<? super Entry> listener )
+	{
+		listeners.remove( trackId + ":" + source + ":" + String.valueOf( interpolationLevel ), listener );
 	}
 
 	private static class AdjustedEntry implements Entry

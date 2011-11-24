@@ -17,7 +17,6 @@ package com.eviware.loadui.impl.model;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -381,8 +380,8 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 				{
 					// test cases is deployed to one or more agents so send message
 					// to all agents to cancel
-					broadcastMessage( SceneCommunication.CHANNEL,
-							Arrays.asList( getId(), Long.toString( getVersion() ), SceneCommunication.CANCEL_COMPONENTS ) );
+					broadcastMessage( SceneCommunication.CHANNEL, new Object[] { getId(), Long.toString( getVersion() ),
+							SceneCommunication.CANCEL_COMPONENTS } );
 				}
 				else
 				{

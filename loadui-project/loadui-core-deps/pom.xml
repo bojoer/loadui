@@ -61,24 +61,9 @@
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.emory.mathcs.backport</groupId>
-			<artifactId>com.springsource.edu.emory.mathcs.backport</artifactId>
-			<version>3.1.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.log4j</groupId>
 			<artifactId>com.springsource.org.apache.log4j</artifactId>
 			<version>1.2.16</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.jms</groupId>
-			<artifactId>com.springsource.javax.jms</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.transaction</groupId>
-			<artifactId>com.springsource.javax.transaction</artifactId>
-			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>

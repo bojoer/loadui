@@ -297,6 +297,7 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	public void release()
 	{
 		super.release();
+		endpointSupport.getSource().close();
 		ReleasableUtils.release( endpointSupport );
 
 		timeSynchronizerFuture.cancel( true );

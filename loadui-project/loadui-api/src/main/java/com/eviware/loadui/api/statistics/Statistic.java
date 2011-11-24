@@ -17,7 +17,7 @@ package com.eviware.loadui.api.statistics;
 
 import javax.annotation.Nonnull;
 
-import com.eviware.loadui.api.serialization.Value;
+import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.statistics.store.Execution;
 
 /**
@@ -26,7 +26,7 @@ import com.eviware.loadui.api.statistics.store.Execution;
  * 
  * @author dain.nilsson
  */
-public interface Statistic<T extends Number> extends Value<T>
+public interface Statistic<T extends Number> extends ListenableValue<T>
 {
 	/**
 	 * Gets the name of this Statistic. Names should be unique per

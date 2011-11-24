@@ -37,5 +37,5 @@
 	
 	<bean id="testExecutionEventFactory" class="com.eviware.loadui.impl.execution.TestExecutionEvent$Factory" />
 	
-	<bean id="demoEventFactory" class="com.eviware.loadui.impl.eventlog.DemoEvent$Factory" />
+	<!-- <bean id="demoEventFactory" class="com.eviware.loadui.impl.eventlog.DemoEvent$Factory" /> -->
 </beans>

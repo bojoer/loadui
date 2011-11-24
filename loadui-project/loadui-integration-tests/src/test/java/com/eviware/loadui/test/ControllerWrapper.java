@@ -54,6 +54,7 @@ public class ControllerWrapper
 		launcher = new OSGiLauncher( new String[] { "-nolock", "-nofx" } );
 		Properties config = launcher.getConfig();
 		config.setProperty( "felix.cache.rootdir", baseDir.getAbsolutePath() );
+
 		File bundleDir = new File( baseDir, "bundle" );
 		Utilities.copyDirectory( new File( "../loadui-controller-deps/target/bundle" ), bundleDir );
 
@@ -85,12 +86,16 @@ public class ControllerWrapper
 								.replaceAll( "/", "." ) );
 					}
 				}
-				StringBuilder apiPackages = new StringBuilder();
+
+				//Add the required packages that should be in the OSGi config file.
+				StringBuilder apiPackages = new StringBuilder(
+						"com.sun.crypto.provider,com.sun.net.ssl,com.sun.net.ssl.internal.ssl,org.w3c.dom.traversal,javax.transaction.xa;version=1.1.0" );
 				String version = LoadUI.VERSION.substring( 0, LoadUI.VERSION.indexOf( "-" ) );
 				for( String pkg : packages )
 					apiPackages.append( ", " ).append( pkg ).append( "; version=\"" ).append( version ).append( '"' );
 
-				config.put( "org.osgi.framework.system.packages.extra", apiPackages.toString().substring( 1 ) );
+				config.put( "org.osgi.framework.system.packages.extra", apiPackages.toString() );
+
 				api.close();
 
 				if( !bundle.delete() )
