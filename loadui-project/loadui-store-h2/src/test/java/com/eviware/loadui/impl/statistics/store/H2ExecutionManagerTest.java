@@ -15,13 +15,16 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -31,9 +34,16 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.api.testevents.TestEvent;
+import com.eviware.loadui.api.testevents.TestEvent.Source;
+import com.eviware.loadui.impl.statistics.store.testevents.TestEventData;
+import com.eviware.loadui.impl.statistics.store.testevents.TestEventSourceConfig;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 import com.eviware.loadui.util.test.BeanInjectorMocker;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 public class H2ExecutionManagerTest
 {
@@ -179,6 +189,63 @@ public class H2ExecutionManagerTest
 	}
 
 	@Test
+	public void testWriteTestEvent()
+	{
+		Execution e = h2.startExecution( "test event sample execution", System.currentTimeMillis() );
+
+		StringBuffer sb = new StringBuffer();
+		for( int i = 0; i < 10000; i++ )
+			sb.append( "large-amount-of-data-" );
+		byte[] data = sb.toString().getBytes();
+
+		@SuppressWarnings( "unchecked" )
+		Source<TestEvent> source1 = mock( TestEvent.Source.class );
+		when( source1.getLabel() ).thenReturn( "sample-source-label-1" );
+		when( source1.getHash() ).thenReturn( "-sample-source-hash-1" );
+		when( source1.getData() ).thenReturn( data );
+		when( source1.getType() ).thenReturn( TestEvent.class );
+
+		@SuppressWarnings( "unchecked" )
+		Source<TestEvent> source2 = mock( TestEvent.Source.class );
+		when( source2.getLabel() ).thenReturn( "sample-source-label-2" );
+		when( source2.getHash() ).thenReturn( "-sample-source-hash-2" );
+		when( source2.getData() ).thenReturn( data );
+		when( source2.getType() ).thenReturn( TestEvent.class );
+
+		for( int i = 0; i < 20; i++ )
+		{
+			h2.writeTestEvent( "test-event-type-label", source1, System.currentTimeMillis(), data );
+			h2.writeTestEvent( "test-event-type-label", source2, System.currentTimeMillis(), data );
+		}
+
+		assertTrue( h2.getTestEventTypes( e.getId() ).size() == 1 );
+		assertTrue( h2.getTestEventCount( e.getId(), new ArrayList<TestEventSourceConfig>() ) == 40 );
+
+		Iterable<TestEventData> result = h2.readTestEvents( e.getId(), 0, 19, new ArrayList<TestEventSourceConfig>() );
+		List<TestEventData> source2List = Lists.newArrayList( Iterables.filter( result, new Predicate<TestEventData>()
+		{
+			@Override
+			public boolean apply( TestEventData t )
+			{
+				return t.getTestEventSourceConfig().getLabel().equals( "sample-source-label-2" );
+			}
+		} ) );
+		assertTrue( source2List.size() == 9 );
+
+		List<TestEventData> source1List = Lists.newArrayList( Iterables.filter( result, new Predicate<TestEventData>()
+		{
+			@Override
+			public boolean apply( TestEventData t )
+			{
+				return t.getTestEventSourceConfig().getLabel().equals( "sample-source-label-1" );
+			}
+		} ) );
+		assertTrue( source1List.size() == 10 );
+
+		h2.delete( e.getId() );
+	}
+
+	@Test
 	public void testRelease()
 	{
 		h2.startExecution( "test1", 10 );
@@ -205,4 +272,5 @@ public class H2ExecutionManagerTest
 
 		h2.delete( "test1" );
 	}
+
 }

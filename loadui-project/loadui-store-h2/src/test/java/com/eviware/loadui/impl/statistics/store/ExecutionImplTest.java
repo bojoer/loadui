@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -22,11 +23,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
@@ -36,6 +39,7 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
+import com.eviware.loadui.api.testevents.TestEvent.Source;
 import com.eviware.loadui.api.testevents.TestEventTypeDescriptor;
 import com.eviware.loadui.util.test.BeanInjectorMocker;
 import com.eviware.loadui.util.testevents.AbstractTestEvent;
@@ -180,6 +184,107 @@ public class ExecutionImplTest
 			TestEvent.Entry entry = iterator.next();
 			assertThat( "At index: " + count++ , entry.getTestEvent().getTimestamp(), is( --time ) );
 		}
+	}
+
+	@Test
+	public void testGetEventTypes()
+	{
+		@SuppressWarnings( "unchecked" )
+		Source<TestEvent> source = mock( TestEvent.Source.class );
+		when( source.getLabel() ).thenReturn( "sample-source-label-1" );
+		when( source.getHash() ).thenReturn( "-sample-source-hash-1" );
+		when( source.getData() ).thenReturn( "source-data".getBytes() );
+		when( source.getType() ).thenReturn( TestEvent.class );
+
+		for( int i = 0; i < 20; i++ )
+		{
+			h2.writeTestEvent( "test-event-type-label", source, System.currentTimeMillis(), "event-data".getBytes() );
+		}
+
+		Set<TestEventTypeDescriptor> types = currentExecution.getEventTypes();
+		assertTrue( types.size() == 1 );
+		for( TestEventTypeDescriptor t : types )
+		{
+			assertTrue( t.getTestEventSources().size() == 1 );
+		}
+
+		List<String> typeNames = Lists.newArrayList( Iterables.transform( types,
+				new Function<TestEventTypeDescriptor, String>()
+				{
+					@Override
+					public String apply( TestEventTypeDescriptor type )
+					{
+						return type.getLabel();
+					}
+				} ) );
+		assertTrue( typeNames.contains( "test-event-type-label" ) );
+	}
+
+	@Test
+	public void testGetTestEventCount()
+	{
+		@SuppressWarnings( "unchecked" )
+		Source<TestEvent> source = mock( TestEvent.Source.class );
+		when( source.getLabel() ).thenReturn( "sample-source-label-1" );
+		when( source.getHash() ).thenReturn( "-sample-source-hash-1" );
+		when( source.getData() ).thenReturn( "source-data".getBytes() );
+		when( source.getType() ).thenReturn( TestEvent.class );
+
+		for( int i = 0; i < 98; i++ )
+		{
+			h2.writeTestEvent( "test-event-type-label", source, System.currentTimeMillis(), "event-data".getBytes() );
+		}
+
+		assertThat( currentExecution.getTestEventCount(), is( 98 ) );
+
+		for( int i = 0; i < 198; i++ )
+		{
+			h2.writeTestEvent( "test-event-type-label", source, System.currentTimeMillis(), "event-data".getBytes() );
+		}
+		assertThat( currentExecution.getTestEventCount(), is( 198 + 98 ) );
+	}
+
+	@Test
+	public void testGetTestEventRange()
+	{
+		@SuppressWarnings( "unchecked" )
+		Source<TestEvent> source = mock( TestEvent.Source.class );
+		when( source.getLabel() ).thenReturn( "sample-source-label-1" );
+		when( source.getHash() ).thenReturn( "-sample-source-hash-1" );
+		when( source.getData() ).thenReturn( "source-data".getBytes() );
+		when( source.getType() ).thenReturn( TestEvent.class );
+
+		long start = currentExecution.getStartTime();
+		for( int i = 0; i < 100; i++ )
+		{
+			h2.writeTestEvent( "test-event-type-label", source, start + i * 1000, "event-data".getBytes() );
+		}
+
+		assertThat( Iterables.size( currentExecution.getTestEventRange( 0, 99 * 1000 ) ), is( 100 ) );
+		assertThat( Iterables.size( currentExecution.getTestEventRange( 0, 49 * 1000 ) ), is( 50 ) );
+		assertThat( Iterables.size( currentExecution.getTestEventRange( 0, 49 * 1000 - 1 ) ), is( 49 ) );
+		assertThat( Iterables.size( currentExecution.getTestEventRange( 1, 49 * 1000 ) ), is( 49 ) );
+		assertThat( Iterables.size( currentExecution.getTestEventRange( 1, 49 * 1000 - 1 ) ), is( 48 ) );
+	}
+
+	@Test
+	public void testGetTestEvents()
+	{
+		@SuppressWarnings( "unchecked" )
+		Source<TestEvent> source = mock( TestEvent.Source.class );
+		when( source.getLabel() ).thenReturn( "sample-source-label-1" );
+		when( source.getHash() ).thenReturn( "-sample-source-hash-1" );
+		when( source.getData() ).thenReturn( "source-data".getBytes() );
+		when( source.getType() ).thenReturn( TestEvent.class );
+
+		long start = System.currentTimeMillis();
+		for( int i = 0; i < 100; i++ )
+		{
+			h2.writeTestEvent( "test-event-type-label", source, start + i * 1000, "event-data".getBytes() );
+		}
+
+		assertThat( Iterables.size( currentExecution.getTestEvents( 0, false ) ), is( 100 ) );
+		assertThat( Iterables.size( currentExecution.getTestEvents( 99, true ) ), is( 100 ) );
 	}
 
 	@After
