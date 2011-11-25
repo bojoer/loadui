@@ -15,6 +15,7 @@
         <jar href="lib/commons-cli.jar"/>
         <jar href="lib/jna.jar"/>
         <jar href="lib/platform.jar"/>
+        <jar href="lib/bndlib.jar"/>
     </resources>
 	<security>
 		<all-permissions/>
