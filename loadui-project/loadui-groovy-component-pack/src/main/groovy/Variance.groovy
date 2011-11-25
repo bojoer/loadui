@@ -23,8 +23,6 @@
  * @nonBlocking true
  */
 
-import com.eviware.loadui.api.events.PropertyEvent
-import com.eviware.loadui.api.events.ActionEvent
 import java.util.concurrent.TimeUnit
 
 def FUNCTIONS = [
@@ -54,8 +52,11 @@ calculateRate = {
 	def progress = ( ( System.currentTimeMillis() - startTime ) % per ) / per
 	def newRate = Math.round( rate.value + FUNCTIONS[shape.value]( amplitude.value, progress ) )
 	if( currentRate != newRate ) {
+		try {
+		def timePassed = ( future && !future.cancelled ) ? UNITS[unit.value].toMicros(1) / currentRate - future.getDelay( TimeUnit.MICROSECONDS ) : 0
 		currentRate = newRate
-		schedule()
+		schedule( timePassed )
+		} catch( e ) { e.printStackTrace() }
 	}
 }
 
@@ -65,14 +66,15 @@ initialize = {
 	startTime = System.currentTimeMillis()
 	pollFuture?.cancel( true )
 	pollFuture = scheduleAtFixedRate( calculateRate, 0, 250, TimeUnit.MILLISECONDS )
-	schedule()
+	schedule( 0 )
 }
 
-schedule = {
+schedule = { timePassed ->
 	future?.cancel( true )
 	if( stateProperty.value && currentRate > 0 ) {	
 		def triggerDelay = UNITS[unit.value].toMicros(1) / currentRate
-		future = scheduleAtFixedRate( { trigger() }, triggerDelay, triggerDelay, TimeUnit.MICROSECONDS )
+		def initialDelay = Math.max( 0.0, triggerDelay - timePassed )
+		future = scheduleAtFixedRate( { trigger() }, initialDelay, triggerDelay, TimeUnit.MICROSECONDS )
 	}
 }
 
