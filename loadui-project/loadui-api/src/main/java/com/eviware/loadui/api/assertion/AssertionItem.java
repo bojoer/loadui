@@ -24,7 +24,7 @@ import com.eviware.loadui.api.serialization.ListenableValue;
  * 
  * @author dain.nilsson
  */
-public interface AssertionItem extends AddonItem
+public interface AssertionItem<T> extends AddonItem
 {
 	/**
 	 * Returns the Addressable to which the asserted value belongs.
@@ -38,14 +38,14 @@ public interface AssertionItem extends AddonItem
 	 * 
 	 * @return
 	 */
-	public ListenableValue<?> getValue();
+	public ListenableValue<T> getValue();
 
 	/**
 	 * Returns the Constraint used for asserting the value.
 	 * 
 	 * @return
 	 */
-	public Constraint<?> getConstraint();
+	public Constraint<? super T> getConstraint();
 
 	/**
 	 * Returns the tolerance period in which to accept the specified number of
@@ -68,7 +68,7 @@ public interface AssertionItem extends AddonItem
 	 * 
 	 * @author dain.nilsson
 	 */
-	public interface Mutable extends AssertionItem
+	public interface Mutable<T> extends AssertionItem<T>
 	{
 		/**
 		 * Sets the tolerance of the AssertionItem.
@@ -83,6 +83,6 @@ public interface AssertionItem extends AddonItem
 		 * 
 		 * @param constraint
 		 */
-		public void setConstraint( Constraint<?> constraint );
+		public void setConstraint( Constraint<? super T> constraint );
 	}
 }

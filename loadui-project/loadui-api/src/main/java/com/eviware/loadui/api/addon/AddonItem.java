@@ -42,7 +42,8 @@ public interface AddonItem extends BaseItem
 	public interface Support extends Addressable, AttributeHolder
 	{
 		/**
-		 * Initializes the AddonItem.Support object.
+		 * Initializes the AddonItem.Support object, and returns the object
+		 * itself.
 		 */
 		public void init( @Nonnull AddonItem owner );
 

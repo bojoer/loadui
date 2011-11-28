@@ -34,7 +34,7 @@ public class ToleranceSupport
 
 	public boolean occur( long timestamp )
 	{
-		if( period == 0 || allowedOccurrences == 0 )
+		if( allowedOccurrences == 0 )
 		{
 			return true;
 		}
@@ -42,6 +42,12 @@ public class ToleranceSupport
 		occurrences.add( timestamp );
 		if( occurrences.size() >= allowedOccurrences )
 		{
+			if( period == 0 )
+			{
+				occurrences.clear();
+				return true;
+			}
+
 			long expiry = timestamp - period;
 			while( !occurrences.isEmpty() && occurrences.getFirst() < expiry )
 			{

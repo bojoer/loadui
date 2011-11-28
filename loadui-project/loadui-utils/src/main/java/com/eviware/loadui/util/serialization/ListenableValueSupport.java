@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import com.eviware.loadui.api.serialization.ListenableValue;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 
 public class ListenableValueSupport<T>
@@ -27,11 +28,18 @@ public class ListenableValueSupport<T>
 	private final Set<ListenableValue.ValueListener<? super T>> listeners = Collections
 			.newSetFromMap( new WeakHashMap<ListenableValue.ValueListener<? super T>, Boolean>() );
 
+	private T lastValue = null;
+
 	public void update( T newValue )
 	{
-		for( ListenableValue.ValueListener<? super T> listener : ImmutableSet.copyOf( listeners ) )
+		if( !Objects.equal( lastValue, newValue ) )
 		{
-			listener.update( newValue );
+			lastValue = newValue;
+
+			for( ListenableValue.ValueListener<? super T> listener : ImmutableSet.copyOf( listeners ) )
+			{
+				listener.update( newValue );
+			}
 		}
 	}
 

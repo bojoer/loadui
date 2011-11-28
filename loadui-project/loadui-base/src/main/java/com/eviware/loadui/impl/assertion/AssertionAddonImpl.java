@@ -8,6 +8,9 @@ import com.eviware.loadui.api.addon.AddonItem;
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.assertion.AssertionAddon;
 import com.eviware.loadui.api.assertion.AssertionItem;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.serialization.Resolver;
@@ -19,21 +22,23 @@ import com.google.common.collect.ImmutableSet;
 public class AssertionAddonImpl implements AssertionAddon, Releasable
 {
 	private final Addon.Context context;
-	private final CollectionEventSupport<AssertionItemImpl, Void> assertionItems;
+	private final CollectionEventSupport<AssertionItemImpl<?>, Void> assertionItems;
 
 	public AssertionAddonImpl( Addon.Context context )
 	{
 		this.context = context;
-		assertionItems = new CollectionEventSupport<AssertionItemImpl, Void>( context.getOwner(), ASSERTION_ITEMS );
+		assertionItems = new CollectionEventSupport<AssertionItemImpl<?>, Void>( context.getOwner(), ASSERTION_ITEMS );
 
 		for( AddonItem.Support addonItem : context.getAddonItemSupports() )
 		{
-			assertionItems.addItem( new AssertionItemImpl( this, addonItem ) );
+			@SuppressWarnings( "rawtypes" )
+			AssertionItemImpl assertionItem = new AssertionItemImpl( this, addonItem );
+			assertionItems.addItem( assertionItem );
 		}
 	}
 
 	@Override
-	public Collection<AssertionItemImpl> getAssertions()
+	public Collection<AssertionItemImpl<?>> getAssertions()
 	{
 		return assertionItems.getItems();
 	}
@@ -41,7 +46,8 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 	@Override
 	public AssertionItem.Mutable createAssertion( Addressable owner, Resolver<ListenableValue<?>> listenableValueResolver )
 	{
-		AssertionItemImpl assertionItem = new AssertionItemImpl( this, context.createAddonItemSupport(), owner,
+		@SuppressWarnings( { "rawtypes", "unchecked" } )
+		AssertionItemImpl<?> assertionItem = new AssertionItemImpl( this, context.createAddonItemSupport(), owner,
 				listenableValueResolver );
 		assertionItems.addItem( assertionItem );
 
@@ -54,9 +60,25 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 		ReleasableUtils.releaseAll( assertionItems );
 	}
 
-	void removeAssertion( AssertionItemImpl assertionItem )
+	void removeAssertion( AssertionItemImpl<?> assertionItem )
 	{
 		assertionItems.removeItem( assertionItem );
+	}
+
+	private class AssertionExecutionTask implements TestExecutionTask
+	{
+		@Override
+		public void invoke( TestExecution execution, Phase phase )
+		{
+			switch( phase )
+			{
+			case PRE_START :
+				for( AssertionItemImpl<?> assertionItem : assertionItems.getItems() )
+				{
+					assertionItem.start();
+				}
+			}
+		}
 	}
 
 	public final static class Factory implements Addon.Factory<AssertionAddon>
