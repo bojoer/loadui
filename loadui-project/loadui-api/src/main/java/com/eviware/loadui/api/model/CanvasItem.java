@@ -20,7 +20,6 @@ import java.util.Collection;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.statistics.StatisticHolder;
-import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
@@ -90,7 +89,7 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	 * 
 	 * @return A Collection of all the contained Components.
 	 */
-	public Collection<ComponentItem> getComponents();
+	public Collection<? extends ComponentItem> getComponents();
 
 	/**
 	 * Convenience method for finding a child ComponentItem with the given label.
@@ -106,7 +105,7 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	 * 
 	 * @return A Collection of the Connections in this CanvasItem.
 	 */
-	public Collection<Connection> getConnections();
+	public Collection<? extends Connection> getConnections();
 
 	/**
 	 * Connects an OutputTerminal to an InputTerminal, creating a new Connection.

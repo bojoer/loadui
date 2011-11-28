@@ -99,7 +99,7 @@ public interface ComponentItem extends CanvasObjectItem, CounterHolder, Statisti
 	 * 
 	 * @return A Collection of the SettingsLayoutContainers to display.
 	 */
-	public Collection<SettingsLayoutContainer> getSettingsTabs();
+	public Collection<? extends SettingsLayoutContainer> getSettingsTabs();
 
 	/**
 	 * Checks to see if the ComponentItem is in an invalid state and won't

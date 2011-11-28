@@ -18,7 +18,6 @@ package com.eviware.loadui.impl.summary.sections;
 import javax.swing.table.TableModel;
 
 import com.eviware.loadui.api.model.CanvasItem;
-import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.ProjectItemImpl;
 import com.eviware.loadui.impl.model.SceneItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
@@ -49,11 +48,10 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 	public TableModel getTestcaseDataTable()
 	{
 		TestCaseDataTableModel model = new TestCaseDataTableModel();
-		for( SceneItem testcase : project.getScenes() )
+		for( SceneItemImpl testcase : project.getScenes() )
 		{
-			SceneItemImpl sceneItemImpl = ( SceneItemImpl )testcase;
-			if( sceneItemImpl.getStartTime() != null && sceneItemImpl.getEndTime() != null )
-				model.add( new TestCaseDataTableModel.TestCaseDataModel( sceneItemImpl ) );
+			if( testcase.getStartTime() != null && testcase.getEndTime() != null )
+				model.add( new TestCaseDataTableModel.TestCaseDataModel( testcase ) );
 		}
 		return model;
 	}

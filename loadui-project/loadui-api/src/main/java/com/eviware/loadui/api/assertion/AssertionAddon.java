@@ -15,16 +15,18 @@
  */
 package com.eviware.loadui.api.assertion;
 
+import java.util.Collection;
+
 import com.eviware.loadui.api.addon.Addon;
 import com.eviware.loadui.api.addressable.Addressable;
-import com.eviware.loadui.api.base.OrderedCollection;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.serialization.Resolver;
 
 public interface AssertionAddon extends Addon
 {
-	public OrderedCollection<AssertionItem> getAssertions();
+	public static final String ASSERTION_ITEMS = AssertionAddon.class.getName() + "assertions";
 
-	public <T, A extends AssertionItem.MutableConstraint & AssertionItem.MutableTolerance> A createAssertion(
-			Addressable owner, Resolver<ListenableValue<? extends T>> listenableValueResolver );
+	public Collection<? extends AssertionItem> getAssertions();
+
+	public AssertionItem.Mutable createAssertion( Addressable owner, Resolver<ListenableValue<?>> listenableValueResolver );
 }

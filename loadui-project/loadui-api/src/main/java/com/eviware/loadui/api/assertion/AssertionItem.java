@@ -61,25 +61,28 @@ public interface AssertionItem extends AddonItem
 	 * 
 	 * @return
 	 */
-	public int getToleranceOccurrenceCount();
+	public int getToleranceAllowedOccurrences();
 
 	/**
-	 * AssertionItem with a settable tolerance.
+	 * Mutable version of AssertionItem.
 	 * 
 	 * @author dain.nilsson
 	 */
-	public interface MutableTolerance extends AssertionItem
+	public interface Mutable extends AssertionItem
 	{
-		public void setTolerance( int period, int occurrenceCount );
-	}
+		/**
+		 * Sets the tolerance of the AssertionItem.
+		 * 
+		 * @param period
+		 * @param allowedOccurrences
+		 */
+		public void setTolerance( int period, int allowedOccurrences );
 
-	/**
-	 * AssertionItem with a settable Constraint.
-	 * 
-	 * @author dain.nilsson
-	 */
-	public interface MutableConstraint extends AssertionItem
-	{
+		/**
+		 * Sets the Constraint of the AssertionItem.
+		 * 
+		 * @param constraint
+		 */
 		public void setConstraint( Constraint<?> constraint );
 	}
 }

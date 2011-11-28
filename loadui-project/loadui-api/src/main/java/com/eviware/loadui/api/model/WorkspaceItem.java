@@ -45,7 +45,7 @@ public interface WorkspaceItem extends ModelItem
 	public final static String LOADUI_CAJO_PORT_PROPERTY = WorkspaceItem.class.getSimpleName() + ".loadUICajoPort";
 	public final static String AUTO_GARBAGE_COLLECTION_INTERVAL = WorkspaceItem.class.getSimpleName()
 			+ ".garbageCollectionInterval";
-	
+
 	public final static String STATISTIC_RESULTS_PATH = WorkspaceItem.class.getSimpleName() + ".statisticResultsPath";
 
 	/**
@@ -72,7 +72,7 @@ public interface WorkspaceItem extends ModelItem
 	 * 
 	 * @return A Collection of the loaded ProjectItems.
 	 */
-	public Collection<ProjectItem> getProjects();
+	public Collection<? extends ProjectItem> getProjects();
 
 	/**
 	 * Gets all the referenced projects, as ProjectRefs. This will get both
@@ -80,7 +80,7 @@ public interface WorkspaceItem extends ModelItem
 	 * 
 	 * @return A Collection of all the ProjectRefs in the WorkspaceItem.
 	 */
-	public Collection<ProjectRef> getProjectRefs();
+	public Collection<? extends ProjectRef> getProjectRefs();
 
 	/**
 	 * Creates a new project in the workspace using the given non-existing File.
@@ -129,7 +129,7 @@ public interface WorkspaceItem extends ModelItem
 	 * 
 	 * @return A Collection of contained AgentItems.
 	 */
-	public Collection<AgentItem> getAgents();
+	public Collection<? extends AgentItem> getAgents();
 
 	/**
 	 * Creates a new AgentItem in the workspace.
@@ -172,8 +172,8 @@ public interface WorkspaceItem extends ModelItem
 	 * Sets the localMode property value.
 	 * 
 	 * When in local mode, any SceneItems on the controller will act as if they
-	 * were deployed on a local AgentItem. TerminalMessages and ActionEvents
-	 * will not be propagated to any remote Agents when in this state.
+	 * were deployed on a local AgentItem. TerminalMessages and ActionEvents will
+	 * not be propagated to any remote Agents when in this state.
 	 * 
 	 * @param localMode
 	 */

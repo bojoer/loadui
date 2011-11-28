@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 
+import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.counter.CounterSynchronizer;
 import com.eviware.loadui.api.events.ActionEvent;
@@ -99,6 +100,7 @@ import com.eviware.loadui.util.events.EventFuture;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implements ProjectItem
@@ -118,7 +120,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final PropertySynchronizer propertySynchronizer;
 	private final CounterSynchronizer counterSynchronizer;
 	private final TerminalProxy proxy;
-	private final Set<SceneItem> scenes = new HashSet<SceneItem>();
+	private final Set<SceneItemImpl> scenes = new HashSet<SceneItemImpl>();
 	private final StatisticPagesImpl statisticPages;
 	private final Property<Boolean> saveReport;
 	private final Property<String> reportFolder;
@@ -224,7 +226,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				ImmutableMap.<String, String> of( AgentItem.ASSIGN, scene.getId(), AgentItem.PROJECT_ID, getId() ) );
 	}
 
-	private boolean attachScene( SceneItem scene )
+	private boolean attachScene( SceneItemImpl scene )
 	{
 		if( scenes.add( scene ) )
 		{
@@ -276,9 +278,9 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
-	public Collection<SceneItem> getScenes()
+	public Collection<SceneItemImpl> getScenes()
 	{
-		return Collections.unmodifiableSet( scenes );
+		return ImmutableSet.copyOf( scenes );
 	}
 
 	@Override
@@ -370,7 +372,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void delete()
 	{
-		for( SceneItem scene : new ArrayList<SceneItem>( getScenes() ) )
+		for( SceneItem scene : getScenes() )
 			scene.delete();
 
 		release();
@@ -531,11 +533,10 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 		// add and generate TestCase chapters if the TestCase has run at least
 		// once.
-		for( SceneItem scene : scenes )
+		for( SceneItemImpl scene : scenes )
 		{
-			SceneItemImpl sceneItem = ( SceneItemImpl )scene;
-			if( sceneItem.getEndTime() != null && ( ( SceneItemImpl )scene ).getStartTime() != null )
-				sceneItem.appendToSummary( summary );
+			if( scene.getEndTime() != null && scene.getStartTime() != null )
+				scene.appendToSummary( summary );
 		}
 
 		// fill project chapter
@@ -869,7 +870,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			else if( message.containsKey( AgentItem.SCENE_ID ) )
 			{
 				Map<Object, Object> map = ( Map<Object, Object> )data;
-				SceneItem scene = ( SceneItem )addressableRegistry.lookup( ( String )map.remove( AgentItem.SCENE_ID ) );
+				Addressable scene = addressableRegistry.lookup( ( String )map.remove( AgentItem.SCENE_ID ) );
 				if( scene instanceof SceneItemImpl )
 				{
 					synchronized( scene )
@@ -899,12 +900,13 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
 			Object[] args = ( Object[] )data;
-			ComponentItemImpl target = ( ComponentItemImpl )addressableRegistry.lookup( ( String )args[0] );
-			if( target != null )
+			Addressable target = addressableRegistry.lookup( ( String )args[0] );
+			if( target != null && target instanceof ComponentItemImpl )
 			{
-				TerminalMessage message = target.getContext().newMessage();
+				ComponentItemImpl component = ( ComponentItemImpl )target;
+				TerminalMessage message = component.getContext().newMessage();
 				message.load( args[1] );
-				target.sendAgentMessage( ( AgentItem )endpoint, message );
+				component.sendAgentMessage( ( AgentItem )endpoint, message );
 			}
 		}
 	}
@@ -1009,11 +1011,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			a.set( 0 );
 			// increase counter for all non completed linked test cases. if count
 			// is zero call doGenerateSummary()
-			for( SceneItem scene : getScenes() )
+			for( SceneItemImpl scene : getScenes() )
 			{
 				synchronized( scene )
 				{
-					if( ( ( SceneItemImpl )scene ).getStartTime() != null && !scene.isCompleted() )
+					if( scene.getStartTime() != null && !scene.isCompleted() )
 					{
 						// add this as a listener to a test case
 						scene.addEventListener( BaseEvent.class, this );
@@ -1060,13 +1062,13 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					public void run()
 					{
 						log.error( "Failed to get statistics from all expected Agents within timeout period!" );
-						for( SceneItem scene : getScenes() )
+						for( SceneItemImpl scene : getScenes() )
 						{
 							synchronized( scene )
 							{
 								if( !scene.isCompleted() )
 								{
-									( ( SceneItemImpl )scene ).setCompleted( true );
+									scene.setCompleted( true );
 								}
 							}
 						}

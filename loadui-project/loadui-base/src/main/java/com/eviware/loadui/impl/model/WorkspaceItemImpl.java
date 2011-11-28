@@ -30,25 +30,25 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.discovery.AgentDiscovery.AgentReference;
-import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
-import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.config.AgentItemConfig;
 import com.eviware.loadui.config.LoaduiProjectDocumentConfig;
 import com.eviware.loadui.config.LoaduiWorkspaceDocumentConfig;
 import com.eviware.loadui.config.ProjectReferenceConfig;
-import com.eviware.loadui.config.AgentItemConfig;
 import com.eviware.loadui.config.WorkspaceItemConfig;
+import com.eviware.loadui.impl.XmlBeansUtils;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.collections.CollectionEventSupport;
-import com.eviware.loadui.impl.XmlBeansUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
@@ -62,7 +62,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	private final ScheduledExecutorService executor;
 	private final LoaduiWorkspaceDocumentConfig doc;
 	private final CollectionEventSupport<ProjectRefImpl, Void> projectList;
-	private final CollectionEventSupport<AgentItem, Void> agentList;
+	private final CollectionEventSupport<AgentItemImpl, Void> agentList;
 	private final ProjectListener projectListener = new ProjectListener();
 	private final AgentListener agentListener = new AgentListener();
 	private final Property<Boolean> localMode;
@@ -316,7 +316,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	}
 
 	@Override
-	public Collection<AgentItem> getAgents()
+	public Collection<AgentItemImpl> getAgents()
 	{
 		return agentList.getItems();
 	}
@@ -367,10 +367,9 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	@Override
 	public void removeAgent( final AgentItem agent )
 	{
-		if( agent == null )
-			throw new IllegalArgumentException( "Agent is null" );
+		Preconditions.checkNotNull( agent, "Agent is null" );
 
-		if( !agentList.removeItem( agent, new Runnable()
+		if( agent instanceof AgentItemImpl && !agentList.removeItem( ( AgentItemImpl )agent, new Runnable()
 		{
 			@Override
 			public void run()

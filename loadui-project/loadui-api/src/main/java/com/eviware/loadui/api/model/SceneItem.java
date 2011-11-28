@@ -61,7 +61,7 @@ public interface SceneItem extends CanvasItem, CanvasObjectItem
 	 * 
 	 * @return
 	 */
-	public Collection<OutputTerminal> getExportedTerminals();
+	public Collection<? extends OutputTerminal> getExportedTerminals();
 
 	/**
 	 * Gets the version number of the SceneItem. Any time a change is made to the

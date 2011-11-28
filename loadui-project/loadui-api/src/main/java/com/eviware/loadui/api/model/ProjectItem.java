@@ -62,7 +62,7 @@ public interface ProjectItem extends CanvasItem
 	 * 
 	 * @return A Collection of contained SceneItems.
 	 */
-	public Collection<SceneItem> getScenes();
+	public Collection<? extends SceneItem> getScenes();
 
 	/**
 	 * Convenience method for finding a child SceneItem with the given label.
@@ -89,7 +89,7 @@ public interface ProjectItem extends CanvasItem
 	 *           The SceneItem.
 	 * @return A Collection of AgentItems.
 	 */
-	public Collection<AgentItem> getAgentsAssignedTo( SceneItem scene );
+	public Collection<? extends AgentItem> getAgentsAssignedTo( SceneItem scene );
 
 	/**
 	 * Checks to see if a given SceneItem is loaded on a particular AgentItem.
@@ -120,14 +120,14 @@ public interface ProjectItem extends CanvasItem
 	 *           The AgentItem.
 	 * @return A Collection of SceneItems.
 	 */
-	public Collection<SceneItem> getScenesAssignedTo( AgentItem agent );
+	public Collection<? extends SceneItem> getScenesAssignedTo( AgentItem agent );
 
 	/**
 	 * Gets all the scene-agent assignments.
 	 * 
 	 * @return A Collection of Assigments.
 	 */
-	public Collection<Assignment> getAssignments();
+	public Collection<? extends Assignment> getAssignments();
 
 	/**
 	 * Assigns a given agent to a given scene.

@@ -74,6 +74,7 @@ import com.eviware.loadui.impl.terminal.TerminalHolderSupport;
 import com.eviware.loadui.impl.terminal.TerminalMessageImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.google.common.collect.ImmutableSet;
 
 public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implements ComponentItem
 {
@@ -299,7 +300,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	@Override
 	public Collection<SettingsLayoutContainer> getSettingsTabs()
 	{
-		return Collections.unmodifiableSet( settingsTabs );
+		return ImmutableSet.copyOf( settingsTabs );
 	}
 
 	@Override
