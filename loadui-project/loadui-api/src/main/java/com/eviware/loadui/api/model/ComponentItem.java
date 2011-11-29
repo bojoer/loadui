@@ -17,6 +17,8 @@ package com.eviware.loadui.api.model;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.counter.CounterHolder;
@@ -99,6 +101,7 @@ public interface ComponentItem extends CanvasObjectItem, CounterHolder, Statisti
 	 * 
 	 * @return A Collection of the SettingsLayoutContainers to display.
 	 */
+	@Nonnull
 	public Collection<? extends SettingsLayoutContainer> getSettingsTabs();
 
 	/**

@@ -17,6 +17,8 @@ package com.eviware.loadui.api.model;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.statistics.StatisticHolder;
@@ -89,6 +91,7 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	 * 
 	 * @return A Collection of all the contained Components.
 	 */
+	@Nonnull
 	public Collection<? extends ComponentItem> getComponents();
 
 	/**
@@ -105,6 +108,7 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	 * 
 	 * @return A Collection of the Connections in this CanvasItem.
 	 */
+	@Nonnull
 	public Collection<? extends Connection> getConnections();
 
 	/**

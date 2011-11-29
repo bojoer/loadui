@@ -17,6 +17,8 @@ package com.eviware.loadui.api.model;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.property.Property;
 
@@ -42,6 +44,7 @@ public interface PropertyHolder extends EventFirer
 	 * 
 	 * @return A Collection of all the Properties.
 	 */
+	@Nonnull
 	public Collection<Property<?>> getProperties();
 
 	/**

@@ -18,13 +18,14 @@ package com.eviware.loadui.api.assertion;
 import com.eviware.loadui.api.addon.AddonItem;
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.serialization.ListenableValue;
+import com.eviware.loadui.api.traits.Labeled;
 
 /**
  * An assertion of a ListenableValue belonging to an Addressable.
  * 
  * @author dain.nilsson
  */
-public interface AssertionItem<T> extends AddonItem
+public interface AssertionItem<T> extends AddonItem, Labeled
 {
 	/**
 	 * Returns the Addressable to which the asserted value belongs.
@@ -68,7 +69,7 @@ public interface AssertionItem<T> extends AddonItem
 	 * 
 	 * @author dain.nilsson
 	 */
-	public interface Mutable<T> extends AssertionItem<T>
+	public interface Mutable<T> extends AssertionItem<T>, Labeled.Mutable
 	{
 		/**
 		 * Sets the tolerance of the AssertionItem.

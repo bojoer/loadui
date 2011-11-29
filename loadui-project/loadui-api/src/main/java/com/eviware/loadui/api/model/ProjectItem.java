@@ -18,6 +18,8 @@ package com.eviware.loadui.api.model;
 import java.io.File;
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.statistics.model.StatisticPages;
 
 /**
@@ -62,6 +64,7 @@ public interface ProjectItem extends CanvasItem
 	 * 
 	 * @return A Collection of contained SceneItems.
 	 */
+	@Nonnull
 	public Collection<? extends SceneItem> getScenes();
 
 	/**
@@ -89,6 +92,7 @@ public interface ProjectItem extends CanvasItem
 	 *           The SceneItem.
 	 * @return A Collection of AgentItems.
 	 */
+	@Nonnull
 	public Collection<? extends AgentItem> getAgentsAssignedTo( SceneItem scene );
 
 	/**
@@ -120,6 +124,7 @@ public interface ProjectItem extends CanvasItem
 	 *           The AgentItem.
 	 * @return A Collection of SceneItems.
 	 */
+	@Nonnull
 	public Collection<? extends SceneItem> getScenesAssignedTo( AgentItem agent );
 
 	/**
@@ -127,6 +132,7 @@ public interface ProjectItem extends CanvasItem
 	 * 
 	 * @return A Collection of Assigments.
 	 */
+	@Nonnull
 	public Collection<? extends Assignment> getAssignments();
 
 	/**

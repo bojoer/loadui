@@ -17,6 +17,8 @@ package com.eviware.loadui.api.model;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 public interface AttributeHolder
 {
 	/**
@@ -57,5 +59,6 @@ public interface AttributeHolder
 	 * 
 	 * @return a Collection<String> of all the attribute keys.
 	 */
+	@Nonnull
 	public Collection<String> getAttributes();
 }

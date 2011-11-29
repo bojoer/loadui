@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.discovery.AgentDiscovery.AgentReference;
 
 /**
@@ -72,6 +74,7 @@ public interface WorkspaceItem extends ModelItem
 	 * 
 	 * @return A Collection of the loaded ProjectItems.
 	 */
+	@Nonnull
 	public Collection<? extends ProjectItem> getProjects();
 
 	/**
@@ -80,6 +83,7 @@ public interface WorkspaceItem extends ModelItem
 	 * 
 	 * @return A Collection of all the ProjectRefs in the WorkspaceItem.
 	 */
+	@Nonnull
 	public Collection<? extends ProjectRef> getProjectRefs();
 
 	/**
@@ -129,6 +133,7 @@ public interface WorkspaceItem extends ModelItem
 	 * 
 	 * @return A Collection of contained AgentItems.
 	 */
+	@Nonnull
 	public Collection<? extends AgentItem> getAgents();
 
 	/**

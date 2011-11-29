@@ -17,6 +17,8 @@ package com.eviware.loadui.api.model;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 
@@ -61,6 +63,7 @@ public interface SceneItem extends CanvasItem, CanvasObjectItem
 	 * 
 	 * @return
 	 */
+	@Nonnull
 	public Collection<? extends OutputTerminal> getExportedTerminals();
 
 	/**
@@ -101,5 +104,10 @@ public interface SceneItem extends CanvasItem, CanvasObjectItem
 	 */
 	public void broadcastMessage( String channel, Object data );
 
-	InputTerminal getStateTerminal();
+	/**
+	 * Gets the InputTerminal controlling the SceneItems on/off state.
+	 * 
+	 * @return
+	 */
+	public InputTerminal getStateTerminal();
 }
