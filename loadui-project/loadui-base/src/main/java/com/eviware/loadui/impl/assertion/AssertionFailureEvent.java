@@ -27,7 +27,7 @@ public class AssertionFailureEvent extends AbstractTestEvent
 {
 	private final AssertionItem<?> assertionItem;
 
-	private final String assertionLabel;
+	private final String valueLabel;
 	private final String constraintString;
 	private final String valueString;
 
@@ -37,13 +37,13 @@ public class AssertionFailureEvent extends AbstractTestEvent
 				.valueOf( value ) );
 	}
 
-	public AssertionFailureEvent( long timestamp, AssertionItem<?> assertionItem, String assertionLabel,
+	public AssertionFailureEvent( long timestamp, AssertionItem<?> assertionItem, String valueLabel,
 			String constraintString, String valueString )
 	{
 		super( timestamp );
 
 		this.assertionItem = assertionItem;
-		this.assertionLabel = assertionLabel;
+		this.valueLabel = valueLabel;
 		this.constraintString = constraintString;
 		this.valueString = valueString;
 	}
@@ -56,8 +56,7 @@ public class AssertionFailureEvent extends AbstractTestEvent
 	@Override
 	public String toString()
 	{
-		return String.format( "(%s) Asserted value: %s did not meet constraint: %s", assertionLabel, valueString,
-				constraintString );
+		return String.format( "%s: %s did not meet constraint: %s", valueLabel, valueString, constraintString );
 	}
 
 	public static final class Factory extends AbstractTestEvent.Factory<AssertionFailureEvent>

@@ -34,6 +34,7 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.SceneItem;
+import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -43,6 +44,7 @@ import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.CacheMap;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.eviware.loadui.util.serialization.ListenableValueSupport;
 import com.eviware.loadui.util.statistics.StatisticImpl;
 
 /**
@@ -50,7 +52,7 @@ import com.eviware.loadui.util.statistics.StatisticImpl;
  * 
  * @author dain.nilsson
  */
-public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasable
+public class StatisticVariableImpl implements StatisticVariable.Mutable, ListenableValue<Number>, Releasable
 {
 	private final Logger log = LoggerFactory.getLogger( StatisticVariableImpl.class );
 
@@ -63,6 +65,7 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	private final Set<String> statisticNames = new HashSet<String>();
 	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<String, StatisticImpl<?>>();
 	private final ActionListener actionListener = new ActionListener();
+	private final ListenableValueSupport<Number> listenableValueSupport = new ListenableValueSupport<Number>();
 
 	private String description;
 
@@ -170,6 +173,8 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 		{
 			writer.update( timestamp, value );
 		}
+
+		listenableValueSupport.update( value );
 	}
 
 	@Override
@@ -208,6 +213,36 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 
 	}
 
+	@Override
+	public void setDescription( String description )
+	{
+		this.description = description;
+	}
+
+	@Override
+	public Class<Number> getType()
+	{
+		return Number.class;
+	}
+
+	@Override
+	public Number getValue()
+	{
+		return listenableValueSupport.getLastValue();
+	}
+
+	@Override
+	public void addListener( ListenableValue.ValueListener<? super Number> listener )
+	{
+		listenableValueSupport.addListener( listener );
+	}
+
+	@Override
+	public void removeListener( ValueListener<? super Number> listener )
+	{
+		listenableValueSupport.removeListener( listener );
+	}
+
 	private class ActionListener implements WeakEventHandler<ActionEvent>
 	{
 		@Override
@@ -219,11 +254,5 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 					writer.reset();
 			}
 		}
-	}
-
-	@Override
-	public void setDescription( String description )
-	{
-		this.description = description;
 	}
 }

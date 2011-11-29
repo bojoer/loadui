@@ -57,4 +57,9 @@ public class ListenableValueSupport<T>
 	{
 		return listeners.size();
 	}
+
+	public T getLastValue()
+	{
+		return lastValue;
+	}
 }

@@ -32,6 +32,7 @@ import com.eviware.loadui.api.serialization.ListenableValue.ValueListener;
 import com.eviware.loadui.api.serialization.Resolver;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEventManager;
+import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.assertion.ToleranceSupport;
@@ -259,7 +260,10 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	{
 		try
 		{
-			return SerializationUtils.serialize( new String[] { getId(), getLabel(), String.valueOf( constraint ) } );
+			String valueLabel = listenableValue instanceof Labeled ? ( ( Labeled )listenableValue ).getLabel() : String
+					.valueOf( listenableValue );
+
+			return SerializationUtils.serialize( new String[] { getId(), valueLabel, String.valueOf( constraint ) } );
 		}
 		catch( IOException e )
 		{
@@ -279,17 +283,10 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 				long timestamp = System.currentTimeMillis();
 				if( toleranceSupport.occur( timestamp ) )
 				{
-					//TODO: Raise failure
 					AssertionFailureEvent testEvent = new AssertionFailureEvent( timestamp, AssertionItemImpl.this,
 							String.valueOf( value ) );
 
-					log.debug( "logging: {}, with sourcedata: {} and hash: {}", new Object[] { testEvent, getData(),
-							getHash() } );
-
 					manager.logTestEvent( AssertionItemImpl.this, testEvent );
-
-					log.error( "({}) Asserted value: {} did not meet Constraint: {}", new Object[] { listenableValue, value,
-							constraint } );
 				}
 			}
 		}
