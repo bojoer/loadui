@@ -30,13 +30,17 @@ import com.eviware.loadui.api.assertion.Constraint;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.serialization.ListenableValue.ValueListener;
 import com.eviware.loadui.api.serialization.Resolver;
+import com.eviware.loadui.api.testevents.TestEvent;
+import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.assertion.ToleranceSupport;
 import com.eviware.loadui.util.serialization.SerializationUtils;
+import com.eviware.loadui.util.testevents.TestEventSourceSupport;
 import com.google.common.base.Objects;
 
-public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Releasable
+public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent.Source<AssertionFailureEvent>,
+		Releasable
 {
 	protected static final Logger log = LoggerFactory.getLogger( AssertionItemImpl.class );
 
@@ -48,10 +52,11 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Releasabl
 
 	private final ToleranceSupport toleranceSupport = new ToleranceSupport();
 	private final ValueAsserter valueAsserter = new ValueAsserter();
+	private final TestEventSourceSupport sourceSupport;
 	private final AssertionAddonImpl addon;
 	private final AddonItem.Support addonSupport;
 	private final Addressable parent;
-	private final ListenableValue<T> value;
+	private final ListenableValue<T> listenableValue;
 
 	private Constraint<? super T> constraint;
 
@@ -72,7 +77,9 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Releasabl
 		{
 			log.error( "Unable to serialize value resolver!", e );
 		}
-		value = valueResolver.getValue();
+		listenableValue = valueResolver.getValue();
+
+		sourceSupport = new TestEventSourceSupport( getLabel(), createData() );
 	}
 
 	//Load existing AssertionItem
@@ -105,7 +112,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Releasabl
 		{
 			log.error( "Unable to deserialize ValueResolver!", e );
 		}
-		value = tmpValue;
+		listenableValue = tmpValue;
 
 		try
 		{
@@ -122,17 +129,19 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Releasabl
 		{
 			log.error( "Unable to deserialize Constraint!", e );
 		}
+
+		sourceSupport = new TestEventSourceSupport( getLabel(), createData() );
 	}
 
 	public void start()
 	{
 		toleranceSupport.clear();
-		value.addListener( valueAsserter );
+		listenableValue.addListener( valueAsserter );
 	}
 
 	public void stop()
 	{
-		value.removeListener( valueAsserter );
+		listenableValue.removeListener( valueAsserter );
 	}
 
 	@Override
@@ -142,9 +151,22 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Releasabl
 	}
 
 	@Override
+	public String getLabel()
+	{
+		return addonSupport.getAttribute( LABEL, "Assertion" );
+	}
+
+	@Override
+	public void setLabel( String label )
+	{
+		addonSupport.setAttribute( LABEL, label );
+		sourceSupport.setLabel( label );
+	}
+
+	@Override
 	public ListenableValue<T> getValue()
 	{
-		return value;
+		return listenableValue;
 	}
 
 	@Override
@@ -168,6 +190,8 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Releasabl
 			{
 				log.error( "Unable to serialize Constraint!", e );
 			}
+
+			//TODO: Update data
 		}
 	}
 
@@ -189,6 +213,8 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Releasabl
 		addonSupport.setAttribute( TOLERANCE_PERIOD, String.valueOf( period ) );
 		addonSupport.setAttribute( TOLERANCE_ALLOWED_OCCURRENCES, String.valueOf( allowedOccurrences ) );
 		toleranceSupport.setTolerance( period, allowedOccurrences );
+
+		//TODO: Update data
 	}
 
 	@Override
@@ -211,8 +237,35 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Releasabl
 		stop();
 	}
 
+	@Override
+	public Class<AssertionFailureEvent> getType()
+	{
+		return AssertionFailureEvent.class;
+	}
+
+	@Override
+	public byte[] getData()
+	{
+		return sourceSupport.getData();
+	}
+
+	@Override
+	public String getHash()
+	{
+		return sourceSupport.getHash();
+	}
+
+	private byte[] createData()
+	{
+		//TODO: Needed from source data: assertionItem address, assertion label, constraint string.
+
+		return getId().getBytes();
+	}
+
 	private class ValueAsserter implements ValueListener<T>
 	{
+		private final TestEventManager manager = BeanInjector.getBean( TestEventManager.class );
+
 		@Override
 		public void update( T value )
 		{
@@ -222,7 +275,11 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Releasabl
 				if( toleranceSupport.occur( timestamp ) )
 				{
 					//TODO: Raise failure
-					log.error( "Asserted value: {} did not meet Constraint: {}", value, constraint );
+					manager.logTestEvent( AssertionItemImpl.this, new AssertionFailureEvent( timestamp,
+							AssertionItemImpl.this, String.valueOf( value ) ) );
+
+					log.error( "({}) Asserted value: {} did not meet Constraint: {}", new Object[] { listenableValue, value,
+							constraint } );
 				}
 			}
 		}
