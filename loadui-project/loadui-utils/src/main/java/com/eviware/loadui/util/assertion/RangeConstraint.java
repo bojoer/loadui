@@ -42,6 +42,6 @@ public class RangeConstraint implements Constraint<Number>
 	@Override
 	public String toString()
 	{
-		return String.format( "RangeConstraint(%.02f - %.02f)", min, max );
+		return String.format( "range %.02f - %.02f", min, max );
 	}
 }

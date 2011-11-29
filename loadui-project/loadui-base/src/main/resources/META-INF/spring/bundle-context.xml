@@ -93,6 +93,8 @@
 		class="com.eviware.loadui.impl.statistics.VariableStatisticsWriter$Factory" />
 		
 	<bean id="assertionAddonFactory" class="com.eviware.loadui.impl.assertion.AssertionAddonImpl$Factory" />
+	
+	<bean id="assertionFailureEventFactory" class="com.eviware.loadui.impl.assertion.AssertionFailureEvent$Factory" />
 
 	<bean class="com.eviware.loadui.impl.LoggingUncaughtExceptionHandler"
 		factory-method="setForAllThreads" />

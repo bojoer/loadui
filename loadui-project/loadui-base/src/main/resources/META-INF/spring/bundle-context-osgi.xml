@@ -46,6 +46,8 @@
 	
 	<osgi:service ref="assertionAddonFactory" interface="com.eviware.loadui.api.addon.Addon$Factory" />
 	
+	<osgi:service ref="assertionFailureEventFactory" interface="com.eviware.loadui.api.testevents.TestEvent$Factory" />
+	
 	<osgi:set id="addonFactories" interface="com.eviware.loadui.api.addon.Addon$Factory"
 		cardinality="0..N">
 		<osgi:listener bind-method="factoryAdded" unbind-method="factoryRemoved" ref="addonRegistry" />

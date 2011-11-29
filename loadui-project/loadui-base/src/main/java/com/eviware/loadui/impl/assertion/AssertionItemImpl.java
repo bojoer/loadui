@@ -191,7 +191,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 				log.error( "Unable to serialize Constraint!", e );
 			}
 
-			//TODO: Update data
+			sourceSupport.setData( createData() );
 		}
 	}
 
@@ -214,7 +214,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		addonSupport.setAttribute( TOLERANCE_ALLOWED_OCCURRENCES, String.valueOf( allowedOccurrences ) );
 		toleranceSupport.setTolerance( period, allowedOccurrences );
 
-		//TODO: Update data
+		sourceSupport.setData( createData() );
 	}
 
 	@Override
@@ -257,9 +257,14 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 
 	private byte[] createData()
 	{
-		//TODO: Needed from source data: assertionItem address, assertion label, constraint string.
-
-		return getId().getBytes();
+		try
+		{
+			return SerializationUtils.serialize( new String[] { getId(), getLabel(), String.valueOf( constraint ) } );
+		}
+		catch( IOException e )
+		{
+			return new byte[0];
+		}
 	}
 
 	private class ValueAsserter implements ValueListener<T>
@@ -275,8 +280,13 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 				if( toleranceSupport.occur( timestamp ) )
 				{
 					//TODO: Raise failure
-					manager.logTestEvent( AssertionItemImpl.this, new AssertionFailureEvent( timestamp,
-							AssertionItemImpl.this, String.valueOf( value ) ) );
+					AssertionFailureEvent testEvent = new AssertionFailureEvent( timestamp, AssertionItemImpl.this,
+							String.valueOf( value ) );
+
+					log.debug( "logging: {}, with sourcedata: {} and hash: {}", new Object[] { testEvent, getData(),
+							getHash() } );
+
+					manager.logTestEvent( AssertionItemImpl.this, testEvent );
 
 					log.error( "({}) Asserted value: {} did not meet Constraint: {}", new Object[] { listenableValue, value,
 							constraint } );

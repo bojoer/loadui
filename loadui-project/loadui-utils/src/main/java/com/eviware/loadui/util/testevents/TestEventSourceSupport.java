@@ -29,12 +29,12 @@ import com.google.common.base.Objects;
 public class TestEventSourceSupport
 {
 	private String label;
-	private byte[] data;
+	private byte[] data = new byte[0];
 	private String hash;
 
 	public TestEventSourceSupport( String label, byte[] data )
 	{
-		setLabel( label );
+		this.label = label;
 		setData( data );
 	}
 
@@ -55,7 +55,7 @@ public class TestEventSourceSupport
 	public byte[] getData()
 	{
 		byte[] dataCopy = new byte[data.length];
-		System.arraycopy( dataCopy, 0, dataCopy, 0, data.length );
+		System.arraycopy( data, 0, dataCopy, 0, data.length );
 
 		return dataCopy;
 	}

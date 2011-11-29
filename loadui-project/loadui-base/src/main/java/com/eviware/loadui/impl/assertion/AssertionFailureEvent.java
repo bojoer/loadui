@@ -17,7 +17,9 @@ package com.eviware.loadui.impl.assertion;
 
 import java.io.IOException;
 
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.assertion.AssertionItem;
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.serialization.SerializationUtils;
 import com.eviware.loadui.util.testevents.AbstractTestEvent;
 
@@ -31,24 +33,18 @@ public class AssertionFailureEvent extends AbstractTestEvent
 
 	public AssertionFailureEvent( long timestamp, AssertionItem<?> assertionItem, Object value )
 	{
-		super( timestamp );
-
-		this.assertionItem = assertionItem;
-
-		assertionLabel = assertionItem.getLabel();
-		constraintString = String.valueOf( assertionItem.getConstraint() );
-		valueString = String.valueOf( value );
+		this( timestamp, assertionItem, assertionItem.getLabel(), String.valueOf( assertionItem.getConstraint() ), String
+				.valueOf( value ) );
 	}
 
-	public AssertionFailureEvent( long timestamp, byte[] sourceData, String valueString )
+	public AssertionFailureEvent( long timestamp, AssertionItem<?> assertionItem, String assertionLabel,
+			String constraintString, String valueString )
 	{
 		super( timestamp );
 
-		//TODO: Needed from source data: assertionItem address, assertion label, constraint string.
-		assertionItem = null;
-		assertionLabel = null;
-		constraintString = null;
-
+		this.assertionItem = assertionItem;
+		this.assertionLabel = assertionLabel;
+		this.constraintString = constraintString;
 		this.valueString = valueString;
 	}
 
@@ -60,7 +56,7 @@ public class AssertionFailureEvent extends AbstractTestEvent
 	@Override
 	public String toString()
 	{
-		return String.format( "(%s) Asserted value: %s did not meet Constraint: %s", assertionLabel, valueString,
+		return String.format( "(%s) Asserted value: %s did not meet constraint: %s", assertionLabel, valueString,
 				constraintString );
 	}
 
@@ -74,19 +70,30 @@ public class AssertionFailureEvent extends AbstractTestEvent
 		@Override
 		public AssertionFailureEvent createTestEvent( long timestamp, byte[] sourceData, byte[] entryData )
 		{
+			AssertionItem<?> assertionItem = null;
+			String assertionLabel = null;
+			String constraintString = null;
+			String valueString = null;
+
 			try
 			{
-				return new AssertionFailureEvent( timestamp, sourceData,
-						( String )SerializationUtils.deserialize( entryData ) );
+				String[] parts = ( String[] )SerializationUtils.deserialize( sourceData );
+				assertionItem = ( AssertionItem<?> )BeanInjector.getBean( AddressableRegistry.class ).lookup( parts[0] );
+				assertionLabel = parts[1];
+				constraintString = parts[2];
+
+				valueString = ( String )SerializationUtils.deserialize( entryData );
 			}
 			catch( ClassNotFoundException e )
 			{
-				return new AssertionFailureEvent( timestamp, sourceData, e.getMessage() );
+				e.printStackTrace();
 			}
 			catch( IOException e )
 			{
-				return new AssertionFailureEvent( timestamp, sourceData, e.getMessage() );
+				e.printStackTrace();
 			}
+
+			return new AssertionFailureEvent( timestamp, assertionItem, assertionLabel, constraintString, valueString );
 		}
 
 		@Override
