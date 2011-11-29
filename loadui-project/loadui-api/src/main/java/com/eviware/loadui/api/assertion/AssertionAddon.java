@@ -28,5 +28,6 @@ public interface AssertionAddon extends Addon
 
 	public Collection<? extends AssertionItem> getAssertions();
 
-	public AssertionItem.Mutable createAssertion( Addressable owner, Resolver<ListenableValue<?>> listenableValueResolver );
+	public <T> AssertionItem.Mutable<T> createAssertion( Addressable owner,
+			Resolver<ListenableValue<T>> listenableValueResolver );
 }

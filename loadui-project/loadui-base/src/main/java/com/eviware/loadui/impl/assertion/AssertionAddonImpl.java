@@ -1,3 +1,18 @@
+/*
+ * Copyright 2011 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl5
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
 package com.eviware.loadui.impl.assertion;
 
 import java.util.Collection;
@@ -11,16 +26,19 @@ import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
+import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.serialization.Resolver;
 import com.eviware.loadui.api.traits.Releasable;
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.collections.CollectionEventSupport;
 import com.google.common.collect.ImmutableSet;
 
 public class AssertionAddonImpl implements AssertionAddon, Releasable
 {
+	private final AssertionExecutionTask assertionTask = new AssertionExecutionTask();
 	private final Addon.Context context;
 	private final CollectionEventSupport<AssertionItemImpl<?>, Void> assertionItems;
 
@@ -35,6 +53,8 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 			AssertionItemImpl assertionItem = new AssertionItemImpl( this, addonItem );
 			assertionItems.addItem( assertionItem );
 		}
+
+		BeanInjector.getBean( TestRunner.class ).registerTask( assertionTask, Phase.PRE_START, Phase.POST_STOP );
 	}
 
 	@Override
@@ -44,12 +64,16 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 	}
 
 	@Override
-	public AssertionItem.Mutable createAssertion( Addressable owner, Resolver<ListenableValue<?>> listenableValueResolver )
+	public <T> AssertionItem.Mutable<T> createAssertion( Addressable owner,
+			Resolver<ListenableValue<T>> listenableValueResolver )
 	{
-		@SuppressWarnings( { "rawtypes", "unchecked" } )
-		AssertionItemImpl<?> assertionItem = new AssertionItemImpl( this, context.createAddonItemSupport(), owner,
+		AssertionItemImpl<T> assertionItem = new AssertionItemImpl<T>( this, context.createAddonItemSupport(), owner,
 				listenableValueResolver );
 		assertionItems.addItem( assertionItem );
+		if( assertionTask.running )
+		{
+			assertionItem.start();
+		}
 
 		return assertionItem;
 	}
@@ -57,6 +81,7 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 	@Override
 	public void release()
 	{
+		BeanInjector.getBean( TestRunner.class ).unregisterTask( assertionTask, Phase.values() );
 		ReleasableUtils.releaseAll( assertionItems );
 	}
 
@@ -67,16 +92,27 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 
 	private class AssertionExecutionTask implements TestExecutionTask
 	{
+		private boolean running = false;
+
 		@Override
 		public void invoke( TestExecution execution, Phase phase )
 		{
 			switch( phase )
 			{
 			case PRE_START :
+				running = true;
 				for( AssertionItemImpl<?> assertionItem : assertionItems.getItems() )
 				{
 					assertionItem.start();
 				}
+				break;
+			case POST_STOP :
+				running = false;
+				for( AssertionItemImpl<?> assertionItem : assertionItems.getItems() )
+				{
+					assertionItem.stop();
+				}
+				break;
 			}
 		}
 	}
