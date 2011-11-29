@@ -18,6 +18,7 @@ package com.eviware.loadui.util.assertion;
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.assertion.Constraint;
+import com.google.common.base.Preconditions;
 
 public class RangeConstraint implements Constraint<Number>
 {
@@ -30,6 +31,8 @@ public class RangeConstraint implements Constraint<Number>
 	{
 		this.min = min.doubleValue();
 		this.max = max.doubleValue();
+
+		Preconditions.checkArgument( this.min <= this.max, "min must be less than or equal to max!" );
 	}
 
 	@Override
