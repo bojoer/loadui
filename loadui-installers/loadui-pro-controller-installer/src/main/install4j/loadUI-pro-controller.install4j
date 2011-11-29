@@ -1063,7 +1063,7 @@ return f.exists();</condition>
     </applications>
   </installerGui>
   <mediaSets>
-    <unixInstaller name="Unix Installer" id="25" mediaFileName="loadUI-Pro-${compiler:version}" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-x86-1.6.0_25_ws_client_only" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Unix Installer" id="25" mediaFileName="loadUI-Pro-${compiler:version}" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-x86-1.7.0_01_client_only" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="24" />
         <launcher id="225" />
@@ -1082,7 +1082,7 @@ return f.exists();</condition>
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <win32 name="Windows" id="26" mediaFileName="loadUI-Pro-${compiler:version}" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="windows-x86-1.7.0_01" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <win32 name="Windows" id="26" mediaFileName="loadUI-Pro-${compiler:version}" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="windows-x86-1.7.0_01_ws" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
       <excludedLaunchers>
         <launcher id="23" />
       </excludedLaunchers>
