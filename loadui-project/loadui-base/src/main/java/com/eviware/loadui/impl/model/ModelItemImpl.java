@@ -36,6 +36,7 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.property.PropertyMap;
+import com.eviware.loadui.api.traits.Initializable;
 import com.eviware.loadui.config.ModelItemConfig;
 import com.eviware.loadui.impl.addon.AddonHolderSupportImpl;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
@@ -46,7 +47,7 @@ import com.eviware.loadui.util.events.EventSupport;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
-public abstract class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
+public abstract class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem, Initializable
 {
 	public static final Logger log = LoggerFactory.getLogger( ModelItemImpl.class );
 
@@ -87,7 +88,7 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 		description = createProperty( DESCRIPTION_PROPERTY, String.class, "" );
 	}
 
-	@OverridingMethodsMustInvokeSuper
+	@Override
 	public void init()
 	{
 		if( initialized )
@@ -110,9 +111,12 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 				e1.printStackTrace();
 			}
 		}
+	}
 
+	@Override
+	public void postInit()
+	{
 		addonSupport.init();
-
 		initialized = true;
 	}
 

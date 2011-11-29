@@ -27,7 +27,7 @@ import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.execution.TestRunner;
-import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.serialization.Resolver;
 import com.eviware.loadui.api.traits.Releasable;
@@ -40,17 +40,19 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 {
 	private final AssertionExecutionTask assertionTask = new AssertionExecutionTask();
 	private final Addon.Context context;
+	private final CanvasItem canvas;
 	private final CollectionEventSupport<AssertionItemImpl<?>, Void> assertionItems;
 
-	public AssertionAddonImpl( Addon.Context context )
+	public AssertionAddonImpl( Addon.Context context, CanvasItem canvas )
 	{
 		this.context = context;
+		this.canvas = canvas;
 		assertionItems = new CollectionEventSupport<AssertionItemImpl<?>, Void>( context.getOwner(), ASSERTION_ITEMS );
 
 		for( AddonItem.Support addonItem : context.getAddonItemSupports() )
 		{
 			@SuppressWarnings( "rawtypes" )
-			AssertionItemImpl assertionItem = new AssertionItemImpl( this, addonItem );
+			AssertionItemImpl assertionItem = new AssertionItemImpl( canvas, this, addonItem );
 			assertionItems.addItem( assertionItem );
 		}
 
@@ -67,8 +69,8 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 	public <T> AssertionItem.Mutable<T> createAssertion( Addressable owner,
 			Resolver<ListenableValue<T>> listenableValueResolver )
 	{
-		AssertionItemImpl<T> assertionItem = new AssertionItemImpl<T>( this, context.createAddonItemSupport(), owner,
-				listenableValueResolver );
+		AssertionItemImpl<T> assertionItem = new AssertionItemImpl<T>( canvas, this, context.createAddonItemSupport(),
+				owner, listenableValueResolver );
 		assertionItems.addItem( assertionItem );
 		if( assertionTask.running )
 		{
@@ -119,7 +121,7 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 
 	public final static class Factory implements Addon.Factory<AssertionAddon>
 	{
-		private final static Set<Class<?>> eagerTypes = ImmutableSet.<Class<?>> of( ProjectItem.class );
+		private final static Set<Class<?>> eagerTypes = ImmutableSet.<Class<?>> of( CanvasItem.class );
 
 		@Override
 		public Class<AssertionAddon> getType()
@@ -130,7 +132,11 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 		@Override
 		public AssertionAddon create( Context context )
 		{
-			return new AssertionAddonImpl( context );
+			if( context.getOwner() instanceof CanvasItem )
+			{
+				return new AssertionAddonImpl( context, ( CanvasItem )context.getOwner() );
+			}
+			throw new IllegalArgumentException( "AssertionAddon is only applicable for CanvasItems!" );
 		}
 
 		@Override

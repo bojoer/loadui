@@ -47,6 +47,7 @@ import com.eviware.loadui.config.ProjectReferenceConfig;
 import com.eviware.loadui.config.WorkspaceItemConfig;
 import com.eviware.loadui.impl.XmlBeansUtils;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.InitializableUtils;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.collections.CollectionEventSupport;
 import com.google.common.base.Preconditions;
@@ -72,12 +73,9 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 
 	public static WorkspaceItemImpl loadWorkspace( File workspaceFile ) throws XmlException, IOException
 	{
-		WorkspaceItemImpl workspace = new WorkspaceItemImpl( workspaceFile,
+		return InitializableUtils.initialize( new WorkspaceItemImpl( workspaceFile,
 				workspaceFile.exists() ? LoaduiWorkspaceDocumentConfig.Factory.parse( workspaceFile )
-						: LoaduiWorkspaceDocumentConfig.Factory.newInstance() );
-		workspace.init();
-
-		return workspace;
+						: LoaduiWorkspaceDocumentConfig.Factory.newInstance() ) );
 	}
 
 	private WorkspaceItemImpl( File workspaceFile, LoaduiWorkspaceDocumentConfig doc )
@@ -113,8 +111,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 
 		for( AgentItemConfig agentConfig : getConfig().getAgentArray() )
 		{
-			AgentItemImpl agent = new AgentItemImpl( this, agentConfig );
-			agent.init();
+			AgentItemImpl agent = InitializableUtils.initialize( new AgentItemImpl( this, agentConfig ) );
 			agent.addEventListener( BaseEvent.class, agentListener );
 			agentList.addItem( agent );
 		}
@@ -276,8 +273,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		AgentItemConfig agentConfig = getConfig().addNewAgent();
 		agentConfig.setUrl( url );
 		agentConfig.setLabel( label );
-		AgentItemImpl agent = new AgentItemImpl( this, agentConfig );
-		agent.init();
+		AgentItemImpl agent = InitializableUtils.initialize( new AgentItemImpl( this, agentConfig ) );
 		agent.addEventListener( BaseEvent.class, agentListener );
 		agentList.addItem( agent );
 		save();
@@ -291,8 +287,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		agentConfig.setUrl( ref.getUrl() );
 		agentConfig.setId( ref.getId() );
 		agentConfig.setLabel( label );
-		AgentItemImpl agent = new AgentItemImpl( this, agentConfig );
-		agent.init();
+		AgentItemImpl agent = InitializableUtils.initialize( new AgentItemImpl( this, agentConfig ) );
 		agent.addEventListener( BaseEvent.class, agentListener );
 		agentList.addItem( agent );
 		save();

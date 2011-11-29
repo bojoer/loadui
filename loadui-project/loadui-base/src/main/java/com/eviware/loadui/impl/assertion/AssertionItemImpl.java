@@ -27,6 +27,7 @@ import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.api.assertion.Constraint;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.serialization.ListenableValue.ValueListener;
 import com.eviware.loadui.api.serialization.Resolver;
@@ -54,6 +55,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	private final ToleranceSupport toleranceSupport = new ToleranceSupport();
 	private final ValueAsserter valueAsserter = new ValueAsserter();
 	private final TestEventSourceSupport sourceSupport;
+	private final CanvasItem canvas;
 	private final AssertionAddonImpl addon;
 	private final AddonItem.Support addonSupport;
 	private final Addressable parent;
@@ -62,9 +64,11 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	private Constraint<? super T> constraint;
 
 	//Create new AssertionItem
-	public AssertionItemImpl( @Nonnull AssertionAddonImpl addon, @Nonnull AddonItem.Support addonSupport,
-			@Nonnull Addressable parent, @Nonnull Resolver<ListenableValue<T>> valueResolver )
+	public AssertionItemImpl( @Nonnull CanvasItem canvas, @Nonnull AssertionAddonImpl addon,
+			@Nonnull AddonItem.Support addonSupport, @Nonnull Addressable parent,
+			@Nonnull Resolver<ListenableValue<T>> valueResolver )
 	{
+		this.canvas = canvas;
 		this.addon = addon;
 		this.addonSupport = addonSupport;
 		addonSupport.init( this );
@@ -84,8 +88,10 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	}
 
 	//Load existing AssertionItem
-	public AssertionItemImpl( @Nonnull AssertionAddonImpl addon, @Nonnull AddonItem.Support addonSupport )
+	public AssertionItemImpl( @Nonnull CanvasItem canvas, @Nonnull AssertionAddonImpl addon,
+			@Nonnull AddonItem.Support addonSupport )
 	{
+		this.canvas = canvas;
 		this.addon = addon;
 		this.addonSupport = addonSupport;
 		addonSupport.init( this );
@@ -287,6 +293,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 							String.valueOf( value ) );
 
 					manager.logTestEvent( AssertionItemImpl.this, testEvent );
+					canvas.getCounter( CanvasItem.FAILURE_COUNTER ).increment();
 				}
 			}
 		}
