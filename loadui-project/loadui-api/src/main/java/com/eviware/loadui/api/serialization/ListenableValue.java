@@ -49,6 +49,11 @@ public interface ListenableValue<T> extends Value<T>
 	 */
 	public interface ValueListener<T>
 	{
+		/**
+		 * Notify the ValueListener that the value has changed.
+		 * 
+		 * @param value
+		 */
 		public void update( T value );
 	}
 }

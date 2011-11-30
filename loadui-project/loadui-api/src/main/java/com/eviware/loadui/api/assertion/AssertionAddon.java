@@ -22,12 +22,34 @@ import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.serialization.Resolver;
 
+/**
+ * Addon providing AssertionItems attached to the parent AddonHolder.
+ * 
+ * @author dain.nilsson
+ */
 public interface AssertionAddon extends Addon
 {
+	/**
+	 * CollectionEvent key used for watching the AddonHolder for added/removed
+	 * AssertionItems.
+	 */
 	public static final String ASSERTION_ITEMS = AssertionAddon.class.getName() + "assertions";
 
-	public Collection<? extends AssertionItem> getAssertions();
+	/**
+	 * Returns the contained AssertionItems.
+	 * 
+	 * @return
+	 */
+	public Collection<? extends AssertionItem<?>> getAssertions();
 
+	/**
+	 * Creates a new AssertionItem, asserting the ListenableValue referenced by
+	 * the given Reference, belonging to the given owner.
+	 * 
+	 * @param owner
+	 * @param listenableValueResolver
+	 * @return
+	 */
 	public <T> AssertionItem.Mutable<T> createAssertion( Addressable owner,
 			Resolver<ListenableValue<T>> listenableValueResolver );
 }

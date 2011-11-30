@@ -23,6 +23,13 @@ import com.eviware.loadui.api.serialization.ListenableValue;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * Support class for implementing the ListenableValue interface. Calls to
+ * update() will only notify the listeners when the value changes. Weak
+ * References are used for listeners.
+ * 
+ * @author dain.nilsson
+ */
 public class ListenableValueSupport<T>
 {
 	private final Set<ListenableValue.ValueListener<? super T>> listeners = Collections
