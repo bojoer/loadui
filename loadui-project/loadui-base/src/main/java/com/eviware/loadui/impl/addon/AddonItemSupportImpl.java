@@ -97,6 +97,11 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 		}
 	}
 
+	public AddonItemConfig getConfig()
+	{
+		return config;
+	}
+
 	@Override
 	public String getId()
 	{

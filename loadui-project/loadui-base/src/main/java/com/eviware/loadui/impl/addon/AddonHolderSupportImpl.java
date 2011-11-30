@@ -21,7 +21,6 @@ import java.util.HashMap;
 import com.eviware.loadui.api.addon.Addon;
 import com.eviware.loadui.api.addon.AddonHolder;
 import com.eviware.loadui.api.addon.AddonItem;
-import com.eviware.loadui.api.addon.AddonItem.Support;
 import com.eviware.loadui.api.addon.AddonRegistry;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.config.AddonListConfig;
@@ -124,9 +123,21 @@ public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 		}
 
 		@Override
-		public Support createAddonItemSupport()
+		public AddonItem.Support createAddonItemSupport()
 		{
 			return addonItemHolderSupport.createAddonItemSupport( type );
+		}
+
+		@Override
+		public String exportAddonItemSupport( AddonItem.Support support )
+		{
+			return addonItemHolderSupport.exportAddonItemSupport( support );
+		}
+
+		@Override
+		public AddonItem.Support importAddonItemSupport( String exportedAddonItemSupport )
+		{
+			return addonItemHolderSupport.importAddonItemSupport( exportedAddonItemSupport );
 		}
 	}
 }

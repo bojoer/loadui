@@ -20,19 +20,27 @@ import java.util.HashSet;
 
 import javax.annotation.Nonnull;
 
+import org.apache.xmlbeans.XmlException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.addon.AddonItem;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.config.AddonItemConfig;
 import com.eviware.loadui.config.AddonListConfig;
+import com.eviware.loadui.config.LoaduiAddonItemDocumentConfig;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 public class AddonItemHolderSupport implements Releasable
 {
+	private static final Logger log = LoggerFactory.getLogger( AddonItemHolderSupport.class );
+
 	private final AddonListConfig listConfig;
-	private final HashMultimap<String, AddonItem.Support> addonItems = HashMultimap.create();
+	private final HashMultimap<String, AddonItemSupportImpl> addonItems = HashMultimap.create();
 	private final HashSet<String> loadedTypes = Sets.newHashSet();
 
 	public AddonItemHolderSupport( AddonListConfig listConfig )
@@ -70,12 +78,44 @@ public class AddonItemHolderSupport implements Releasable
 	{
 		loadType( type );
 
-		return ImmutableSet.copyOf( addonItems.get( type ) );
+		return ImmutableSet.<AddonItem.Support> copyOf( addonItems.get( type ) );
 	}
 
 	public void removeAddonItem( @Nonnull AddonItem.Support child )
 	{
 		addonItems.get( child.getType() ).remove( child );
+	}
+
+	public String exportAddonItemSupport( AddonItem.Support support )
+	{
+		Preconditions.checkArgument( addonItems.containsEntry( support.getType(), support ),
+				"AddonItem.Support does not belong to this AddonItemHolder!" );
+
+		LoaduiAddonItemDocumentConfig doc = LoaduiAddonItemDocumentConfig.Factory.newInstance();
+		doc.addNewLoaduiAddonItem().set( ( ( AddonItemSupportImpl )support ).getConfig() );
+
+		return doc.xmlText();
+	}
+
+	public AddonItem.Support importAddonItemSupport( String exportedAddonItemSupport )
+	{
+		try
+		{
+			LoaduiAddonItemDocumentConfig doc = LoaduiAddonItemDocumentConfig.Factory.parse( exportedAddonItemSupport );
+
+			final AddonItemConfig addonConfig = listConfig.addNewAddon();
+			addonConfig.set( doc.getLoaduiAddonItem() );
+
+			final AddonItemSupportImpl addonItem = new AddonItemSupportImpl( this, addonConfig, listConfig );
+			addonItems.put( addonConfig.getType(), addonItem );
+
+			return addonItem;
+		}
+		catch( XmlException e )
+		{
+			log.error( "Unable to parse AddonItemSupport!", e );
+			return null;
+		}
 	}
 
 	@Override

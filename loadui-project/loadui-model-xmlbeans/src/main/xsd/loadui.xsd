@@ -214,4 +214,6 @@
     		<element name="addon" type="lui:AddonItem" maxOccurs="unbounded" minOccurs="0"></element>
     	</sequence>
     </complexType>
+
+    <element name="loadui-addon-item" type="lui:AddonItem"></element>
 </schema>

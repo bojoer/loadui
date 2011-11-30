@@ -59,6 +59,26 @@ public interface Addon
 		 */
 		@Nonnull
 		public Collection<AddonItem.Support> getAddonItemSupports();
+
+		/**
+		 * Exports the given AddonItem.Support (which must belong to the Context)
+		 * to a String, which can later be imported into another Addon of the same
+		 * type.
+		 * 
+		 * @param support
+		 * @return
+		 */
+		@Nonnull
+		public String exportAddonItemSupport( AddonItem.Support support );
+
+		/**
+		 * Imports a previously exported AddonItem.Support.
+		 * 
+		 * @param exportedAddonItemSupport
+		 * @return
+		 */
+		@Nonnull
+		public AddonItem.Support importAddonItemSupport( String exportedAddonItemSupport );
 	}
 
 	/**
