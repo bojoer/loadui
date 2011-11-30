@@ -23,6 +23,11 @@ import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.serialization.SerializationUtils;
 import com.eviware.loadui.util.testevents.AbstractTestEvent;
 
+/**
+ * TestEvent for a failed assertion.
+ * 
+ * @author dain.nilsson
+ */
 public class AssertionFailureEvent extends AbstractTestEvent
 {
 	private final AssertionItem<?> assertionItem;
