@@ -422,7 +422,7 @@ public class ExecutionImpl implements Execution, Releasable
 		}
 	}
 
-	private void storeAttributes()
+	private synchronized void storeAttributes()
 	{
 		FileOutputStream fos = null;
 		try
