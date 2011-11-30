@@ -19,6 +19,12 @@ import java.util.LinkedList;
 
 import com.google.common.collect.Lists;
 
+/**
+ * Support for adding tolerance to some occurrence, in the form of
+ * "allow x occurrences within y seconds".
+ * 
+ * @author dain.nilsson
+ */
 public class ToleranceSupport
 {
 	private final LinkedList<Long> occurrences = Lists.newLinkedList();
@@ -26,6 +32,13 @@ public class ToleranceSupport
 	private int period;
 	private int allowedOccurrences;
 
+	/**
+	 * Sets the tolerance to allow allowedOccurrences occurrences within period
+	 * seconds without triggering.
+	 * 
+	 * @param period
+	 * @param allowedOccurrences
+	 */
 	public void setTolerance( int period, int allowedOccurrences )
 	{
 		this.period = period;
@@ -42,11 +55,21 @@ public class ToleranceSupport
 		return allowedOccurrences;
 	}
 
+	/**
+	 * Clears the buffered occurrences, resetting the state.
+	 */
 	public void clear()
 	{
 		occurrences.clear();
 	}
 
+	/**
+	 * Signal an occurrence at the given time, returns false if this is within
+	 * the tolerated parameters, true if not.
+	 * 
+	 * @param timestamp
+	 * @return
+	 */
 	public boolean occur( long timestamp )
 	{
 		if( allowedOccurrences == 0 )
@@ -55,7 +78,7 @@ public class ToleranceSupport
 		}
 
 		occurrences.add( timestamp );
-		if( occurrences.size() >= allowedOccurrences )
+		if( occurrences.size() > allowedOccurrences )
 		{
 			if( period == 0 )
 			{
@@ -69,7 +92,7 @@ public class ToleranceSupport
 				occurrences.removeFirst();
 			}
 
-			if( occurrences.size() >= allowedOccurrences )
+			if( occurrences.size() > allowedOccurrences )
 			{
 				occurrences.clear();
 				return true;
