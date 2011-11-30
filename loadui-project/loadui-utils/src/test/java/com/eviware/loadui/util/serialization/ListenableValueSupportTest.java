@@ -16,6 +16,7 @@
 package com.eviware.loadui.util.serialization;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -89,6 +90,20 @@ public class ListenableValueSupportTest
 		System.gc();
 		Thread.sleep( 50 );
 
+		listenableValueSupport.update( 0 );
+
 		assertThat( listenableValueSupport.getListenerCount(), is( 0 ) );
+	}
+
+	@Test
+	public void shouldRetainLatestValue()
+	{
+		assertThat( listenableValueSupport.getLastValue(), nullValue() );
+
+		listenableValueSupport.update( 15.7 );
+		assertThat( ( Double )listenableValueSupport.getLastValue(), is( 15.7 ) );
+
+		listenableValueSupport.update( 0.345 );
+		assertThat( ( Double )listenableValueSupport.getLastValue(), is( 0.345 ) );
 	}
 }
