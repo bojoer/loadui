@@ -36,15 +36,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEvent.Source;
+import com.eviware.loadui.api.testevents.TestEventRegistry;
 import com.eviware.loadui.api.testevents.TestEventTypeDescriptor;
 import com.eviware.loadui.util.test.BeanInjectorMocker;
 import com.eviware.loadui.util.testevents.AbstractTestEvent;
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -57,12 +56,12 @@ public class ExecutionImplTest
 	H2ExecutionManager h2;
 	ExecutionImpl execution;
 	ExecutionImpl currentExecution;
-	TestEventRegistryImpl testEventRegistry;
+	TestEventRegistry testEventRegistry;
 
 	@Before
 	public void initialize()
 	{
-		new BeanInjectorMocker().put( TestEventRegistry.class, testEventRegistry = new TestEventRegistryImpl() );
+		new BeanInjectorMocker().put( TestEventRegistry.class, testEventRegistry = mock( TestEventRegistry.class ) );
 		System.setProperty( LoadUI.LOADUI_HOME, "target" );
 
 		h2 = new H2ExecutionManager( testEventRegistry );
@@ -130,7 +129,7 @@ public class ExecutionImplTest
 		assertThat( h2.getCurrentExecution(), sameInstance( ( Execution )currentExecution ) );
 
 		MyTestEventFactory factory = new MyTestEventFactory();
-		testEventRegistry.factoryAdded( factory, ImmutableMap.<String, String> of() );
+		when( testEventRegistry.lookupFactory( factory.getType() ) ).thenReturn( factory );
 		MyTestEventSource source = new MyTestEventSource();
 
 		h2.writeTestEvent( factory.getLabel(), source, currentExecution.getStartTime() + 37, new byte[0] );
@@ -164,7 +163,7 @@ public class ExecutionImplTest
 	public void testTraversingBackwards()
 	{
 		MyTestEventFactory factory = new MyTestEventFactory();
-		testEventRegistry.factoryAdded( factory, ImmutableMap.<String, String> of() );
+		when( testEventRegistry.lookupFactory( factory.getType() ) ).thenReturn( factory );
 		MyTestEventSource source = new MyTestEventSource();
 
 		long time = currentExecution.getStartTime();

@@ -92,6 +92,8 @@
 	<bean id="variableStatisticsWriter"
 		class="com.eviware.loadui.impl.statistics.VariableStatisticsWriter$Factory" />
 		
+	<bean id="testEventRegistry" class="com.eviware.loadui.impl.testevents.TestEventRegistryImpl" />
+		
 	<bean id="assertionAddonFactory" class="com.eviware.loadui.impl.assertion.AssertionAddonImpl$Factory" />
 	
 	<bean id="assertionFailureEventFactory" class="com.eviware.loadui.impl.assertion.AssertionFailureEvent$Factory" />

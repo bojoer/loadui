@@ -5,12 +5,8 @@
                       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.0.xsd">
 	
 	<osgi:service interface="com.eviware.loadui.api.statistics.store.ExecutionManager" ref="executionManager" />
-	<osgi:service interface="com.eviware.loadui.api.TestEventRegistry" ref="testEventRegistry" />
 	<osgi:service interface="com.eviware.loadui.api.testevents.TestEventManager" ref="testEventManager" />
 	
 	<osgi:reference interface="com.eviware.loadui.api.model.WorkspaceProvider" id="workspaceProvider" />
-	
-	<osgi:list id="testEventFactories" interface="com.eviware.loadui.api.testevents.TestEvent$Factory" cardinality="0..N">
-		<osgi:listener ref="testEventRegistry" bind-method="factoryAdded" unbind-method="factoryRemoved" />
-	</osgi:list>
+	<osgi:reference interface="com.eviware.loadui.api.testevents.TestEventRegistry" id="testEventRegistry" />
 </beans>

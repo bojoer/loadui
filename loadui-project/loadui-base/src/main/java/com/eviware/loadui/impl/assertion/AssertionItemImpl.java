@@ -22,7 +22,6 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addon.AddonItem;
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
@@ -54,8 +53,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	private static final String TOLERANCE_PERIOD = "tolerancePeriod";
 
 	private final ToleranceSupport toleranceSupport = new ToleranceSupport();
-	private final ValueAsserter valueAsserter = LoadUI.isController() ? new ControllerValueAsserter()
-			: new AgentValueAsserter();
+	private final ValueAsserter valueAsserter = new ValueAsserter();
 	private final TestEventSourceSupport sourceSupport;
 	private final CanvasItem canvas;
 	private final AssertionAddonImpl addon;
@@ -279,8 +277,10 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		}
 	}
 
-	private abstract class ValueAsserter implements ValueListener<T>
+	private class ValueAsserter implements ValueListener<T>
 	{
+		private final TestEventManager manager = BeanInjector.getBean( TestEventManager.class );
+
 		@Override
 		public void update( T value )
 		{
@@ -292,33 +292,10 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 					AssertionFailureEvent testEvent = new AssertionFailureEvent( timestamp, AssertionItemImpl.this,
 							String.valueOf( value ) );
 
-					logEvent( testEvent );
+					manager.logTestEvent( AssertionItemImpl.this, testEvent );
 					canvas.getCounter( CanvasItem.FAILURE_COUNTER ).increment();
 				}
 			}
-		}
-
-		abstract void logEvent( AssertionFailureEvent event );
-	}
-
-	private class ControllerValueAsserter extends ValueAsserter
-	{
-		private final TestEventManager manager = BeanInjector.getBean( TestEventManager.class );
-
-		@Override
-		void logEvent( AssertionFailureEvent event )
-		{
-			manager.logTestEvent( AssertionItemImpl.this, event );
-		}
-	}
-
-	private class AgentValueAsserter extends ValueAsserter
-	{
-		@Override
-		void logEvent( AssertionFailureEvent event )
-		{
-			//TODO: Implement sending to controller!
-			log.debug( "SENDING: {}", event );
 		}
 	}
 }

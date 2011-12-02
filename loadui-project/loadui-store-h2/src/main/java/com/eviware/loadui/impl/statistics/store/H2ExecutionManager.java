@@ -22,7 +22,7 @@ import javax.sql.DataSource;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 
-import com.eviware.loadui.api.TestEventRegistry;
+import com.eviware.loadui.api.testevents.TestEventRegistry;
 import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
 
 public class H2ExecutionManager extends ExecutionManagerImpl

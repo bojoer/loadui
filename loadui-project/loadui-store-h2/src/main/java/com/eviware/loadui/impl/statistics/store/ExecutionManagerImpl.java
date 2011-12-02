@@ -33,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
@@ -49,6 +48,7 @@ import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.eviware.loadui.api.testevents.TestEvent;
+import com.eviware.loadui.api.testevents.TestEventRegistry;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.statistics.db.ConnectionRegistry;
 import com.eviware.loadui.impl.statistics.db.DataSourceProvider;

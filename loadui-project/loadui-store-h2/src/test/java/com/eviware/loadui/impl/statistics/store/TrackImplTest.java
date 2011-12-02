@@ -28,9 +28,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.api.testevents.TestEventRegistry;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 import com.eviware.loadui.util.statistics.store.TrackDescriptorImpl;
 import com.eviware.loadui.util.test.BeanInjectorMocker;

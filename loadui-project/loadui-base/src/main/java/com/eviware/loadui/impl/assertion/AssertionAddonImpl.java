@@ -148,6 +148,11 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 		ReleasableUtils.releaseAll( assertionItems );
 	}
 
+	String getChannel()
+	{
+		return channel;
+	}
+
 	void removeAssertion( AssertionItemImpl<?> assertionItem )
 	{
 		assertionItems.removeItem( assertionItem );

@@ -31,11 +31,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.TestEventRegistry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEvent.Source;
+import com.eviware.loadui.api.testevents.TestEventRegistry;
 import com.eviware.loadui.impl.statistics.store.testevents.TestEventData;
 import com.eviware.loadui.impl.statistics.store.testevents.TestEventSourceConfig;
 import com.eviware.loadui.util.statistics.store.EntryImpl;

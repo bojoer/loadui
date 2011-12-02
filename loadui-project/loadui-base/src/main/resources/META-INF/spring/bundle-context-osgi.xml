@@ -44,6 +44,12 @@
 			unbind-method="unregisterStatisticsWriterFactory" ref="statisticsManager" />
 	</osgi:set>
 	
+	<osgi:service interface="com.eviware.loadui.api.testevents.TestEventRegistry" ref="testEventRegistry" />
+	
+	<osgi:list id="testEventFactories" interface="com.eviware.loadui.api.testevents.TestEvent$Factory" cardinality="0..N">
+		<osgi:listener ref="testEventRegistry" bind-method="factoryAdded" unbind-method="factoryRemoved" />
+	</osgi:list>
+	
 	<osgi:service ref="assertionAddonFactory" interface="com.eviware.loadui.api.addon.Addon$Factory" />
 	
 	<osgi:service ref="assertionFailureEventFactory" interface="com.eviware.loadui.api.testevents.TestEvent$Factory" />

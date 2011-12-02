@@ -8,6 +8,8 @@
 	
 	<osgi:service interface="com.eviware.loadui.api.execution.TestRunner" ref="testRunner" />
 	
+	<osgi:service interface="com.eviware.loadui.api.testevents.TestEventManager" ref="testEventManager" />
+	
 	<osgi:reference interface="com.eviware.loadui.api.messaging.BroadcastMessageEndpoint" id="broadcastMessageEndpoint" />
 
 	<osgi:reference interface="com.eviware.loadui.api.dispatch.ExecutorManager"
@@ -33,7 +35,11 @@
 
 	<osgi:reference interface="com.eviware.loadui.api.terminal.TerminalProxy"
 		id="terminalProxy" />
-
+		
+	
+	<osgi:reference
+		interface="com.eviware.loadui.api.testevents.TestEventRegistry" id="testEventRegistry" />
+		
 	<!--<osgi:reference
 		interface="com.eviware.loadui.api.statistics.store.ExecutionManager"
 		id="executionManager" />-->

@@ -38,4 +38,8 @@
 
 	<bean class="com.eviware.loadui.impl.discovery.DiscoveryResponder"
 		destroy-method="release" />
+		
+	<bean id="testEventManager" class="com.eviware.loadui.impl.testevents.TestEventManagerImpl">
+		<constructor-arg ref="testEventRegistry" />
+	</bean>
 </beans>
