@@ -47,4 +47,9 @@ public class LoadUI
 	public static final String TRUST_STORE = "loadui.ssl.trustStore";
 	public static final String KEY_STORE_PASSWORD = "loadui.ssl.keyStorePassword";
 	public static final String TRUST_STORE_PASSWORD = "loadui.ssl.trustStorePassword";
+
+	public static boolean isController()
+	{
+		return CONTROLLER.equals( System.getProperty( INSTANCE ) );
+	}
 }

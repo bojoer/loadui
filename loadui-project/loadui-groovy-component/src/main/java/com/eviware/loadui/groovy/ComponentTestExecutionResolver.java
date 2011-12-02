@@ -45,7 +45,7 @@ public class ComponentTestExecutionResolver extends TestExecutionResolver
 			@Override
 			public void invoke( TestExecution execution, Phase phase )
 			{
-				if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) )
+				if( LoadUI.isController() )
 				{
 					CanvasItem myCanvas = context.getCanvas();
 					if( !myCanvas.getProject().getWorkspace().isLocalMode() || !execution.contains( myCanvas ) )

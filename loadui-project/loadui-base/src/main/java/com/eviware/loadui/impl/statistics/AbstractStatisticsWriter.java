@@ -65,7 +65,7 @@ public abstract class AbstractStatisticsWriter implements StatisticsWriter
 				.getMinimumWriteDelay();
 
 		// TODO
-		if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) )
+		if( LoadUI.isController() )
 			manager.getExecutionManager().registerTrackDescriptor( descriptor );
 
 		aggregator = BeanInjector.getBean( StatisticsAggregator.class );

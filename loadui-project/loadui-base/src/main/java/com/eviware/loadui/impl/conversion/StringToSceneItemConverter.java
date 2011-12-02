@@ -21,6 +21,7 @@ import org.springframework.core.convert.converter.Converter;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.config.LoaduiSceneDocumentConfig;
 import com.eviware.loadui.impl.model.SceneItemImpl;
+import com.eviware.loadui.util.InitializableUtils;
 
 public class StringToSceneItemConverter implements Converter<String, SceneItem>
 {
@@ -30,10 +31,8 @@ public class StringToSceneItemConverter implements Converter<String, SceneItem>
 		try
 		{
 			LoaduiSceneDocumentConfig doc = LoaduiSceneDocumentConfig.Factory.parse( source );
-			SceneItemImpl scene = new SceneItemImpl( null, doc.getLoaduiScene() );
-			scene.init();
 
-			return scene;
+			return InitializableUtils.initialize( new SceneItemImpl( null, doc.getLoaduiScene() ) );
 		}
 		catch( XmlException e )
 		{

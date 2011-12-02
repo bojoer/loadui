@@ -89,9 +89,8 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	public SceneItemImpl( ProjectItem project, SceneItemConfig config )
 	{
-		super( config,
-				LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? new RemoteAggregatedCounterSupport(
-						BeanInjector.getBean( CounterSynchronizer.class ) ) : new CounterSupport() );
+		super( config, LoadUI.isController() ? new RemoteAggregatedCounterSupport(
+				BeanInjector.getBean( CounterSynchronizer.class ) ) : new CounterSupport() );
 		this.project = project;
 		version = getConfig().getVersion().longValue();
 
@@ -121,11 +120,9 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			exportList.addItem( ( OutputTerminal )addressableRegistry.lookup( exportId ) );
 		}
 
-		workspaceListener = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? new WorkspaceListener()
-				: null;
+		workspaceListener = LoadUI.isController() ? new WorkspaceListener() : null;
 
-		projectListener = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? new ProjectListener()
-				: null;
+		projectListener = LoadUI.isController() ? new ProjectListener() : null;
 	}
 
 	@Override
@@ -292,7 +289,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	public void broadcastMessage( String channel, Object data )
 	{
-		if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) )
+		if( LoadUI.isController() )
 			getProject().broadcastMessage( this, channel, data );
 		else if( messageEndpoint != null )
 			messageEndpoint.sendMessage( channel, data );
@@ -330,7 +327,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			} );
 		}
 
-		if( LoadUI.AGENT.equals( System.getProperty( LoadUI.INSTANCE ) ) )
+		if( !LoadUI.isController() )
 		{
 			// on agent, application is running in distributed mode, so send
 			// data to the controller
@@ -362,7 +359,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	public void cancelComponents()
 	{
-		if( LoadUI.AGENT.equals( System.getProperty( LoadUI.INSTANCE ) ) )
+		if( !LoadUI.isController() )
 		{
 			// on agent. cancel components of this test case on current agent
 			super.cancelComponents();
@@ -459,8 +456,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 		if( running )
 		{
-			wasLocalModeWhenStarted = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? project
-					.getWorkspace().isLocalMode() : true;
+			wasLocalModeWhenStarted = LoadUI.isController() ? project.getWorkspace().isLocalMode() : true;
 		}
 
 		fireBaseEvent( ACTIVITY );

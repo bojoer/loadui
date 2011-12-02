@@ -40,14 +40,14 @@ import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.CollectionEvent.Event;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
-import com.eviware.loadui.api.events.CollectionEvent.Event;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.Assignment;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.statistics.StatisticVariable;
@@ -210,7 +210,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		if( canvasItem instanceof SceneItem )
 		{
 			updateTask = scheduler.scheduleAtFixedRate( new UpdateRemoteTask(), 1, 1, TimeUnit.SECONDS );
-			if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) )
+			if( LoadUI.isController() )
 				canvasItem.getProject().addEventListener( CollectionEvent.class,
 						assignmentListener = new AssignmentListener() );
 			else

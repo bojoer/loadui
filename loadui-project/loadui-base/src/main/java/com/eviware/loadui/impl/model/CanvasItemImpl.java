@@ -681,8 +681,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 					reset();
 				}
 			}
-			else if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) && event instanceof CounterEvent
-					&& isRunning() )
+			else if( LoadUI.isController() && event instanceof CounterEvent && isRunning() )
 			{
 				CounterEvent cEvent = ( CounterEvent )event;
 				long limit = getLimit( cEvent.getKey() );

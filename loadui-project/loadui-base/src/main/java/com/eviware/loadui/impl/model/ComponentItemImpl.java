@@ -114,14 +114,12 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		executor = BeanInjector.getBean( ExecutorService.class );
 		conversionService = BeanInjector.getBean( ConversionService.class );
 
-		counterSupport = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) ? new RemoteAggregatedCounterSupport(
+		counterSupport = LoadUI.isController() ? new RemoteAggregatedCounterSupport(
 				BeanInjector.getBean( CounterSynchronizer.class ) ) : new CounterSupport();
 
-		workspaceListener = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) )
-				&& canvas instanceof SceneItem ? new WorkspaceListener() : null;
+		workspaceListener = LoadUI.isController() && canvas instanceof SceneItem ? new WorkspaceListener() : null;
 
-		projectListener = LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) )
-				&& canvas instanceof SceneItem ? new ProjectListener() : null;
+		projectListener = LoadUI.isController() && canvas instanceof SceneItem ? new ProjectListener() : null;
 
 		terminalHolderSupport = new TerminalHolderSupport( this );
 		statisticHolderSupport = new StatisticHolderSupport( this );
@@ -847,7 +845,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		@Override
 		public boolean isController()
 		{
-			return LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) );
+			return LoadUI.isController();
 		}
 
 		@Override

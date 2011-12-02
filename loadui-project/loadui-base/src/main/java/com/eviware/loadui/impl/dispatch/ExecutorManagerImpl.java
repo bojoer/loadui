@@ -87,7 +87,7 @@ public final class ExecutorManagerImpl implements ExecutorManager
 			@Override
 			public void run()
 			{
-				if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) ) )
+				if( LoadUI.isController() )
 				{
 					while( !workspaceProvider.isWorkspaceLoaded() )
 					{

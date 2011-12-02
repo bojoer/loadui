@@ -16,47 +16,98 @@
 package com.eviware.loadui.impl.assertion;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addon.Addon;
 import com.eviware.loadui.api.addon.AddonItem;
 import com.eviware.loadui.api.addressable.Addressable;
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.assertion.AssertionAddon;
 import com.eviware.loadui.api.assertion.AssertionItem;
+import com.eviware.loadui.api.events.CollectionEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.execution.TestRunner;
+import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
+import com.eviware.loadui.api.messaging.MessageEndpoint;
+import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.serialization.Resolver;
+import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.collections.CollectionEventSupport;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 public class AssertionAddonImpl implements AssertionAddon, Releasable
 {
+	private static final String BASE_CHANNEL = "/" + AssertionAddonImpl.class.getName();
+
+	private static final Logger log = LoggerFactory.getLogger( AssertionAddonImpl.class );
+
+	private final String channel;
+	private final AssertionItemDistributor controllerListener;
+	private final AssertionItemAgentListener agentListener;
 	private final AssertionExecutionTask assertionTask = new AssertionExecutionTask();
 	private final Addon.Context context;
 	private final CanvasItem canvas;
-	private final CollectionEventSupport<AssertionItemImpl<?>, Void> assertionItems;
+	private final CollectionEventSupport<AssertionItemImpl<?>, AddonItem.Support> assertionItems;
+	private final boolean isController;
 
 	public AssertionAddonImpl( Addon.Context context, CanvasItem canvas )
 	{
+		log.debug( "I live! Host: {}", canvas );
 		this.context = context;
 		this.canvas = canvas;
-		assertionItems = new CollectionEventSupport<AssertionItemImpl<?>, Void>( context.getOwner(), ASSERTION_ITEMS );
+		assertionItems = new CollectionEventSupport<AssertionItemImpl<?>, AddonItem.Support>( context.getOwner(),
+				ASSERTION_ITEMS );
 
-		for( AddonItem.Support addonItem : context.getAddonItemSupports() )
+		for( AddonItem.Support addonItemSupport : context.getAddonItemSupports() )
 		{
 			@SuppressWarnings( "rawtypes" )
-			AssertionItemImpl assertionItem = new AssertionItemImpl( canvas, this, addonItem );
-			assertionItems.addItem( assertionItem );
+			AssertionItemImpl assertionItem = new AssertionItemImpl( canvas, this, addonItemSupport );
+			assertionItems.addItemWith( assertionItem, addonItemSupport );
 		}
 
 		BeanInjector.getBean( TestRunner.class ).registerTask( assertionTask, Phase.PRE_START, Phase.POST_STOP );
+
+		channel = BASE_CHANNEL + "/" + canvas.getId();
+		isController = LoadUI.isController();
+
+		if( canvas instanceof SceneItem )
+		{
+			log.debug( "My host is a SceneItem!" );
+			if( isController )
+			{
+				log.debug( "I'm a controller!" );
+				agentListener = null;
+				canvas.addEventListener( CollectionEvent.class, controllerListener = new AssertionItemDistributor() );
+			}
+			else
+			{
+				log.debug( "I'm an agent!" );
+				controllerListener = null;
+				BeanInjector.getBean( BroadcastMessageEndpoint.class ).addMessageListener( channel,
+						agentListener = new AssertionItemAgentListener() );
+			}
+		}
+		else
+		{
+			agentListener = null;
+			controllerListener = null;
+		}
 	}
 
 	@Override
@@ -69,9 +120,10 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 	public <T> AssertionItem.Mutable<T> createAssertion( Addressable owner,
 			Resolver<ListenableValue<T>> listenableValueResolver )
 	{
-		AssertionItemImpl<T> assertionItem = new AssertionItemImpl<T>( canvas, this, context.createAddonItemSupport(),
-				owner, listenableValueResolver );
-		assertionItems.addItem( assertionItem );
+		AddonItem.Support addonItemSupport = context.createAddonItemSupport();
+		AssertionItemImpl<T> assertionItem = new AssertionItemImpl<T>( canvas, this, addonItemSupport, owner,
+				listenableValueResolver );
+		assertionItems.addItemWith( assertionItem, addonItemSupport );
 		if( assertionTask.running )
 		{
 			assertionItem.start();
@@ -83,6 +135,15 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 	@Override
 	public void release()
 	{
+		if( controllerListener != null )
+		{
+			canvas.removeEventListener( CollectionEvent.class, controllerListener );
+		}
+		else if( agentListener != null )
+		{
+			BeanInjector.getBean( BroadcastMessageEndpoint.class ).removeMessageListener( agentListener );
+		}
+
 		BeanInjector.getBean( TestRunner.class ).unregisterTask( assertionTask, Phase.values() );
 		ReleasableUtils.releaseAll( assertionItems );
 	}
@@ -90,6 +151,14 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 	void removeAssertion( AssertionItemImpl<?> assertionItem )
 	{
 		assertionItems.removeItem( assertionItem );
+	}
+
+	void logFailure( AssertionItemImpl<?> source, AssertionFailureEvent event )
+	{
+		if( isController )
+		{
+			BeanInjector.getBean( TestEventManager.class ).logTestEvent( source, event );
+		}
 	}
 
 	private class AssertionExecutionTask implements TestExecutionTask
@@ -115,6 +184,71 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 					assertionItem.stop();
 				}
 				break;
+			}
+		}
+	}
+
+	private class AssertionItemDistributor implements EventHandler<CollectionEvent>
+	{
+		@Override
+		public void handleEvent( CollectionEvent event )
+		{
+			if( ASSERTION_ITEMS.equals( event.getKey() ) )
+			{
+				AssertionItemImpl<?> assertionItem = ( AssertionItemImpl<?> )event.getElement();
+				switch( event.getEvent() )
+				{
+				case ADDED :
+					String exportedAssertionItem = context.exportAddonItemSupport( assertionItems
+							.getAttachment( assertionItem ) );
+					send( Collections.singletonMap( assertionItem.getId(), exportedAssertionItem ) );
+					break;
+				case REMOVED :
+					send( Collections.singletonMap( assertionItem.getId(), null ) );
+					break;
+				}
+			}
+		}
+
+		private void send( Object data )
+		{
+			log.debug( "Sending: {}", data );
+			canvas.getProject().broadcastMessage( ( SceneItem )canvas, channel, data );
+		}
+	}
+
+	private class AssertionItemAgentListener implements MessageListener
+	{
+		@Override
+		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
+		{
+			log.debug( "GOT ASSERTION MESSAGE!!!" );
+
+			@SuppressWarnings( "unchecked" )
+			Map<String, String> map = ( Map<String, String> )data;
+
+			String id = Iterables.getFirst( map.keySet(), null );
+			AddressableRegistry registry = BeanInjector.getBean( AddressableRegistry.class );
+			AssertionItem<?> oldAssertionItem = ( AssertionItem<?> )registry.lookup( id );
+			if( oldAssertionItem != null )
+			{
+				log.debug( "REMOVING OLD ASSERTION: {}", oldAssertionItem );
+				oldAssertionItem.delete();
+			}
+
+			String assertionItemData = map.get( id );
+			if( assertionItemData != null )
+			{
+				log.debug( "ADDING NEW ASSERTION: {}", assertionItemData );
+				AddonItem.Support addonItemSupport = context.importAddonItemSupport( assertionItemData );
+				@SuppressWarnings( "rawtypes" )
+				AssertionItemImpl assertionItem = new AssertionItemImpl( canvas, AssertionAddonImpl.this, addonItemSupport );
+				assertionItems.addItemWith( assertionItem, addonItemSupport );
+				if( assertionTask.running )
+				{
+					assertionItem.start();
+				}
+				log.debug( "ADDED NEW ASSERTION: {}", assertionItem );
 			}
 		}
 	}

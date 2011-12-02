@@ -121,8 +121,7 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Listena
 		// TODO: Share this information per SceneItem instead of recomputing it
 		// each time.
 		StatisticHolder statisticHolder = getStatisticHolder();
-		if( LoadUI.CONTROLLER.equals( System.getProperty( LoadUI.INSTANCE ) )
-				&& statisticHolder instanceof CanvasObjectItem )
+		if( LoadUI.isController() && statisticHolder instanceof CanvasObjectItem )
 		{
 			CanvasItem canvas = ( statisticHolder instanceof SceneItem ) ? ( SceneItem )statisticHolder
 					: ( ( CanvasObjectItem )statisticHolder ).getCanvas();
