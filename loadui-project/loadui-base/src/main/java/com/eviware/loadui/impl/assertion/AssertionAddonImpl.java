@@ -55,7 +55,7 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 {
 	private static final String BASE_CHANNEL = "/" + AssertionAddonImpl.class.getName();
 
-	private static final Logger log = LoggerFactory.getLogger( AssertionAddonImpl.class );
+	protected static final Logger log = LoggerFactory.getLogger( AssertionAddonImpl.class );
 
 	private final String channel;
 	private final AssertionItemDistributor controllerListener;
@@ -68,7 +68,6 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 
 	public AssertionAddonImpl( Addon.Context context, CanvasItem canvas )
 	{
-		log.debug( "I live! Host: {}", canvas );
 		this.context = context;
 		this.canvas = canvas;
 		assertionItems = new CollectionEventSupport<AssertionItemImpl<?>, AddonItem.Support>( context.getOwner(),
@@ -88,20 +87,16 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 
 		if( canvas instanceof SceneItem )
 		{
-			log.debug( "My host is a SceneItem!" );
 			if( isController )
 			{
-				log.debug( "I'm a controller!" );
 				agentListener = null;
 				canvas.addEventListener( CollectionEvent.class, controllerListener = new AssertionItemDistributor() );
 			}
 			else
 			{
-				log.debug( "I'm an agent!" );
 				controllerListener = null;
 				BeanInjector.getBean( BroadcastMessageEndpoint.class ).addMessageListener( channel,
 						agentListener = new AssertionItemAgentListener() );
-				log.debug( "Listening on channel: {}", channel );
 			}
 		}
 		else
@@ -218,7 +213,6 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 
 		private void send( Object data )
 		{
-			log.debug( "Sending: {}", data );
 			canvas.getProject().broadcastMessage( ( SceneItem )canvas, channel, data );
 		}
 	}
@@ -228,8 +222,6 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 		@Override
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
-			log.debug( "GOT ASSERTION MESSAGE!!!" );
-
 			@SuppressWarnings( "unchecked" )
 			Map<String, String> map = ( Map<String, String> )data;
 
@@ -238,14 +230,12 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 			AssertionItem<?> oldAssertionItem = ( AssertionItem<?> )registry.lookup( id );
 			if( oldAssertionItem != null )
 			{
-				log.debug( "REMOVING OLD ASSERTION: {}", oldAssertionItem );
 				oldAssertionItem.delete();
 			}
 
 			String assertionItemData = map.get( id );
 			if( assertionItemData != null )
 			{
-				log.debug( "ADDING NEW ASSERTION: {}", assertionItemData );
 				AddonItem.Support addonItemSupport = context.importAddonItemSupport( assertionItemData );
 				@SuppressWarnings( "rawtypes" )
 				AssertionItemImpl assertionItem = new AssertionItemImpl( canvas, AssertionAddonImpl.this, addonItemSupport );
@@ -254,7 +244,6 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 				{
 					assertionItem.start();
 				}
-				log.debug( "ADDED NEW ASSERTION: {}", assertionItem );
 			}
 		}
 	}
