@@ -25,11 +25,13 @@ import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.testevents.TestEvent;
+import com.eviware.loadui.api.testevents.TestEvent.Factory;
 import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.api.testevents.TestEventRegistry;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.statistics.store.testevents.TestEventEntryImpl;
 import com.eviware.loadui.util.testevents.AbstractTestEventManager;
+import com.eviware.loadui.util.testevents.UnknownTestEvent;
 
 public class TestEventManagerImpl extends AbstractTestEventManager implements Releasable
 {
@@ -101,6 +103,22 @@ public class TestEventManagerImpl extends AbstractTestEventManager implements Re
 			byte[] eventData = ( byte[] )args.get( 3 );
 
 			manager.writeTestEvent( label, source, timestamp, eventData );
+
+			Factory<?> factory = testEventRegistry.lookupFactory( label );
+			TestEventEntryImpl entry = null;
+			if( factory == null )
+			{
+				entry = new TestEventEntryImpl( new UnknownTestEvent( timestamp ), source.getLabel(), "Unknown" );
+			}
+			else
+			{
+				entry = new TestEventEntryImpl( factory.createTestEvent( timestamp, source.getData(), eventData ),
+						source.getLabel(), factory.getLabel() );
+			}
+			for( TestEventObserver observer : observers )
+			{
+				observer.onTestEvent( entry );
+			}
 		}
 	}
 }
