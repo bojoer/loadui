@@ -129,13 +129,19 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	public void init()
 	{
 		super.init();
-		addEventListener( BaseEvent.class, new SelfListener() );
 		if( project != null )
 		{
 			project.addEventListener( ActionEvent.class, projectListener );
 			project.getWorkspace().addEventListener( PropertyEvent.class, workspaceListener );
 			propagate = project.getWorkspace().isLocalMode();
 		}
+	}
+
+	@Override
+	public void postInit()
+	{
+		super.postInit();
+		addEventListener( BaseEvent.class, new SelfListener() );
 	}
 
 	@Override

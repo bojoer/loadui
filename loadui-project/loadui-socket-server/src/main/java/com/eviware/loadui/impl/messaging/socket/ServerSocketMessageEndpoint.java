@@ -45,7 +45,7 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint
 	private final LinkedBlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
 	private final Set<ConnectionListener> connectionListeners = Collections
 			.synchronizedSet( new HashSet<ConnectionListener>() );
-	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport( this );
+	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport();
 	private final SocketServerEndpoint socketServerEndpoint;
 	private final SSLSocket socket;
 
@@ -139,8 +139,8 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint
 
 				while( ( channel = ois.readUTF() ) != null && ( data = ois.readObject() ) != null )
 				{
-					log.debug( "Got message: {}: {}", channel, data );
-					routingSupport.fireMessage( channel, data );
+					//log.debug( "Got message: {}: {}", channel, data );
+					routingSupport.fireMessage( channel, ServerSocketMessageEndpoint.this, data );
 				}
 			}
 			catch( ClassNotFoundException e )

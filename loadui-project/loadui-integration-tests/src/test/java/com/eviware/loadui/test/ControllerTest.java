@@ -15,13 +15,18 @@
  */
 package com.eviware.loadui.test;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -61,8 +66,13 @@ public class ControllerTest
 	{
 		Bundle[] bundles = controller.getBundleContext().getBundles();
 		for( Bundle bundle : bundles )
+		{
 			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(),
 					anyOf( is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );
+			System.out.println( "Bundle: " + bundle );
+		}
+
+		System.out.println( "BUNDLES: " + bundles.length );
 	}
 
 	@Test

@@ -17,13 +17,11 @@ package com.eviware.loadui.util.messaging;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.ConnectionListener;
@@ -32,8 +30,10 @@ import com.eviware.loadui.api.messaging.MessageListener;
 
 public class BroadcastMessageEndpointImpl implements BroadcastMessageEndpoint
 {
+	protected static final Logger log = LoggerFactory.getLogger( BroadcastMessageEndpointImpl.class );
+
 	private final Set<MessageEndpoint> endpoints = new HashSet<MessageEndpoint>();
-	private final Map<Pattern, MessageListener> listeners = new HashMap<Pattern, MessageListener>();
+	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport();
 	private final Listener myListener = new Listener();
 
 	@Override
@@ -59,43 +59,22 @@ public class BroadcastMessageEndpointImpl implements BroadcastMessageEndpoint
 	@Override
 	public void addMessageListener( String channel, MessageListener listener )
 	{
-		if( !listeners.containsValue( listener ) )
-		{
-			if( channel.endsWith( "/*" ) )
-				channel = Pattern.quote( channel.substring( 0, channel.length() - 1 ) ) + ".*";
-			else if( channel.endsWith( "/**" ) )
-				channel = Pattern.quote( channel.substring( 0, channel.length() - 1 ) ) + "[^/]*";
-			else
-				channel = Pattern.quote( channel );
-
-			synchronized( listeners )
-			{
-				listeners.put( Pattern.compile( channel ), listener );
-			}
-		}
+		routingSupport.addMessageListener( channel, listener );
 	}
 
 	@Override
 	public void removeMessageListener( MessageListener listener )
 	{
-		Iterator<Entry<Pattern, MessageListener>> it = listeners.entrySet().iterator();
-		while( it.hasNext() )
-		{
-			Entry<Pattern, MessageListener> entry = it.next();
-
-			if( entry.getValue().equals( listener ) )
-			{
-				it.remove();
-				break;
-			}
-		}
+		routingSupport.removeMessageListener( listener );
 	}
 
 	@Override
 	public void sendMessage( String channel, Object data )
 	{
 		for( MessageEndpoint endpoint : endpoints )
+		{
 			endpoint.sendMessage( channel, data );
+		}
 	}
 
 	private class Listener implements MessageListener
@@ -103,11 +82,7 @@ public class BroadcastMessageEndpointImpl implements BroadcastMessageEndpoint
 		@Override
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
-			Set<Map.Entry<Pattern, MessageListener>> entrySet = new HashSet<Map.Entry<Pattern, MessageListener>>(
-					listeners.entrySet() );
-			for( Map.Entry<Pattern, MessageListener> entry : entrySet )
-				if( entry.getKey().matcher( channel ).matches() )
-					entry.getValue().handleMessage( channel, endpoint, data );
+			routingSupport.fireMessage( channel, endpoint, data );
 		}
 	}
 

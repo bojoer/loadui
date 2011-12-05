@@ -3,13 +3,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 	
-	<bean id="executionManager" class="com.eviware.loadui.impl.statistics.store.H2ExecutionManager" destroy-method="release" >
+	<bean id="executionManager" class="com.eviware.loadui.impl.statistics.store.H2ExecutionManager" destroy-method="release">
 		<constructor-arg ref="testEventRegistry"/>
 		<property name="workspaceProvider" ref="workspaceProvider" />
 	</bean>
 	
-	<bean id="testEventManager" class="com.eviware.loadui.impl.statistics.store.TestEventManagerImpl">
+	<bean id="testEventManager" class="com.eviware.loadui.impl.statistics.store.TestEventManagerImpl" destroy-method="release">
 		<constructor-arg ref="testEventRegistry" />
 		<constructor-arg ref="executionManager" />
+		<constructor-arg ref="broadcastMessageEndpoint" />
+		<constructor-arg ref="addressableRegistry" />
 	</bean>
 </beans>

@@ -101,6 +101,7 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 				controllerListener = null;
 				BeanInjector.getBean( BroadcastMessageEndpoint.class ).addMessageListener( channel,
 						agentListener = new AssertionItemAgentListener() );
+				log.debug( "Listening on channel: {}", channel );
 			}
 		}
 		else

@@ -112,7 +112,7 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 
 	private class MessageEndpointImpl implements MessageEndpoint, RemoveListener
 	{
-		private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport( this );
+		private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport();
 		private final Set<ConnectionListener> connectionListeners = new HashSet<ConnectionListener>();
 		private final HashMap<Long, Message> buffer = Maps.newHashMap();
 		private final ServerSession session;
@@ -201,7 +201,7 @@ public class BayeuxServiceServerEndpoint extends AbstractService implements Serv
 		private void doFire( String channel, Object data )
 		{
 			if( channel.startsWith( CHANNEL ) )
-				routingSupport.fireMessage( channel.substring( CHANNEL.length() ), data );
+				routingSupport.fireMessage( channel.substring( CHANNEL.length() ), this, data );
 		}
 
 		@Override

@@ -3,10 +3,20 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-1.0.xsd">
-	
-	<osgi:service interface="com.eviware.loadui.api.statistics.store.ExecutionManager" ref="executionManager" />
-	<osgi:service interface="com.eviware.loadui.api.testevents.TestEventManager" ref="testEventManager" />
-	
-	<osgi:reference interface="com.eviware.loadui.api.model.WorkspaceProvider" id="workspaceProvider" />
-	<osgi:reference interface="com.eviware.loadui.api.testevents.TestEventRegistry" id="testEventRegistry" />
+
+	<osgi:service
+		interface="com.eviware.loadui.api.statistics.store.ExecutionManager"
+		ref="executionManager" />
+	<osgi:service interface="com.eviware.loadui.api.testevents.TestEventManager"
+		ref="testEventManager" />
+
+	<osgi:reference
+		interface="com.eviware.loadui.api.addressable.AddressableRegistry" id="addressableRegistry" />
+	<osgi:reference
+		interface="com.eviware.loadui.api.messaging.BroadcastMessageEndpoint"
+		id="broadcastMessageEndpoint" />
+	<osgi:reference interface="com.eviware.loadui.api.model.WorkspaceProvider"
+		id="workspaceProvider" />
+	<osgi:reference interface="com.eviware.loadui.api.testevents.TestEventRegistry"
+		id="testEventRegistry" />
 </beans>

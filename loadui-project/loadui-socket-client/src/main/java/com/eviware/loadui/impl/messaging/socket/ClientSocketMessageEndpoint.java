@@ -56,7 +56,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 	public static final Logger log = LoggerFactory.getLogger( ClientSocketMessageEndpoint.class );
 	private static final Message CLOSE_MESSAGE = new Message( null, null );
 
-	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport( this );
+	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport();
 	private final HashSet<ConnectionListener> listeners = Sets.newHashSet();
 	private final LinkedBlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
 	private final SSLClient sslClient;
@@ -150,12 +150,12 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 						{
 							log.warn( "Cannot connect to server with different version number than the client: {} != {}",
 									LoadUI.AGENT_VERSION, data );
-							routingSupport.fireMessage( ERROR_CHANNEL,
+							routingSupport.fireMessage( ERROR_CHANNEL, ClientSocketMessageEndpoint.this,
 									new VersionMismatchException( data == null ? "0" : data.toString() ) );
 						}
 					}
-					log.debug( "Got message: {}: {}", channel, data );
-					routingSupport.fireMessage( channel, data );
+					//log.debug( "Got message: {}: {}", channel, data );
+					routingSupport.fireMessage( channel, ClientSocketMessageEndpoint.this, data );
 				}
 			}
 			catch( ClassNotFoundException e )

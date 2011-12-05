@@ -25,7 +25,7 @@ import com.eviware.loadui.util.messaging.ChannelRoutingSupport;
 
 public class BayeuxServiceMessagingEndpoint implements MessageEndpoint
 {
-	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport( this );
+	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport();
 	private final BayeuxServiceServerEndpoint provider;
 	private final Set<ConnectionListener> connectionListeners = new HashSet<ConnectionListener>();
 	private boolean open = true;
@@ -57,7 +57,7 @@ public class BayeuxServiceMessagingEndpoint implements MessageEndpoint
 	{
 		if( open )
 		{
-			routingSupport.fireMessage( channel, data );
+			routingSupport.fireMessage( channel, this, data );
 		}
 	}
 

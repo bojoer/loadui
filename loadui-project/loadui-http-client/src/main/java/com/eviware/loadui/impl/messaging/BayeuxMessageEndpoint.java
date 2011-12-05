@@ -48,7 +48,7 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 
 	private final ScheduledExecutorService scheduledExecutor;
 	private final ExecutorService executorService;
-	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport( this );
+	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport();
 	private final Set<ConnectionListener> connectionListeners = new HashSet<ConnectionListener>();
 	private final Runnable stateChecker = new StateChecker();
 	private ScheduledFuture<?> stateCheckerFuture;
@@ -109,7 +109,8 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 					{
 						String channel = message.getChannel();
 						if( channel.startsWith( BASE_CHANNEL ) && message.getData() != null )
-							routingSupport.fireMessage( channel.substring( BASE_CHANNEL.length() ), message.getData() );
+							routingSupport.fireMessage( channel.substring( BASE_CHANNEL.length() ),
+									BayeuxMessageEndpoint.this, message.getData() );
 					}
 				} );
 				stateCheckerFuture = scheduledExecutor.scheduleAtFixedRate( stateChecker, 1, 1, TimeUnit.SECONDS );
@@ -153,11 +154,11 @@ public class BayeuxMessageEndpoint extends BayeuxClient implements MessageEndpoi
 				{
 					log.warn( "Cannot connect to server with different version number than the client: {} != {}",
 							LoadUI.AGENT_VERSION, message.getData() );
-					routingSupport.fireMessage( ERROR_CHANNEL, new VersionMismatchException( message.getData() == null ? "0"
-							: message.getData().toString() ) );
+					routingSupport.fireMessage( ERROR_CHANNEL, BayeuxMessageEndpoint.this, new VersionMismatchException(
+							message.getData() == null ? "0" : message.getData().toString() ) );
 				}
 			}
-			routingSupport.fireMessage( message.getChannel(), message.getData() );
+			routingSupport.fireMessage( message.getChannel(), BayeuxMessageEndpoint.this, message.getData() );
 		}
 	}
 

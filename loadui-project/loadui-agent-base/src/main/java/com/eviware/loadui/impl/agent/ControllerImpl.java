@@ -396,7 +396,8 @@ public class ControllerImpl
 					}
 					else if( scene.getVersion() > Long.parseLong( args.get( 1 ) ) )
 					{
-						log.debug( "SceneItem out of sync with controller, restarting..." );
+						log.debug( "SceneItem out of sync with controller ({} > {}), restarting...", scene.getVersion(),
+								args.get( 1 ) );
 						project.removeScene( scene );
 						ReleasableUtils.release( scene );
 						synchronized( sceneAgents )

@@ -15,26 +15,42 @@
  */
 package com.eviware.loadui.impl.statistics.store;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.api.addressable.AddressableRegistry;
+import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
+import com.eviware.loadui.api.messaging.MessageEndpoint;
+import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.testevents.TestEvent;
+import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.api.testevents.TestEventRegistry;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.statistics.store.testevents.TestEventEntryImpl;
-import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.testevents.AbstractTestEventManager;
 
-public class TestEventManagerImpl extends AbstractTestEventManager
+public class TestEventManagerImpl extends AbstractTestEventManager implements Releasable
 {
+	private static final String CHANNEL = "/" + TestEventManager.class.getSimpleName();
+
 	public static final Logger log = LoggerFactory.getLogger( TestEventManagerImpl.class );
 
 	private final ExecutionManagerImpl manager;
+	private final MessageEndpoint endpoint;
+	private final AddressableRegistry addressableRegistry;
+	private final EventReceiver eventReceiver = new EventReceiver();
 
-	public TestEventManagerImpl( TestEventRegistry testEventRegistry, ExecutionManagerImpl manager )
+	public TestEventManagerImpl( TestEventRegistry testEventRegistry, ExecutionManagerImpl manager,
+			BroadcastMessageEndpoint endpoint, AddressableRegistry addressableRegistry )
 	{
 		super( testEventRegistry );
 		this.manager = manager;
-		testEventRegistry = BeanInjector.getBean( TestEventRegistry.class );
+		this.endpoint = endpoint;
+		this.addressableRegistry = addressableRegistry;
+
+		endpoint.addMessageListener( CHANNEL, eventReceiver );
 	}
 
 	@Override
@@ -57,6 +73,34 @@ public class TestEventManagerImpl extends AbstractTestEventManager
 		{
 			log.warn( "No TestEvent.Factory capable of storing TestEvent: {}, of type: {} has been registered!",
 					testEvent, testEvent.getType() );
+		}
+	}
+
+	@Override
+	public void release()
+	{
+		endpoint.removeMessageListener( eventReceiver );
+	}
+
+	private class EventReceiver implements MessageListener
+	{
+		@Override
+		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
+		{
+			@SuppressWarnings( "unchecked" )
+			List<Object> args = ( List<Object> )data;
+
+			String label = ( String )args.get( 0 );
+			TestEvent.Source<?> source = ( TestEvent.Source<?> )addressableRegistry.lookup( ( String )args.get( 1 ) );
+			if( source == null )
+			{
+				log.debug( "No object found with ID: {}", args.get( 1 ) );
+				return;
+			}
+			long timestamp = ( Long )args.get( 2 );
+			byte[] eventData = ( byte[] )args.get( 3 );
+
+			manager.writeTestEvent( label, source, timestamp, eventData );
 		}
 	}
 }

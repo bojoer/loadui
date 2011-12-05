@@ -15,68 +15,77 @@
  */
 package com.eviware.loadui.util.messaging;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 
 public class ChannelRoutingSupport
 {
-	private final Map<Pattern, MessageListener> listeners = new HashMap<Pattern, MessageListener>();
-	private final MessageEndpoint endpoint;
+	protected static final Logger log = LoggerFactory.getLogger( ChannelRoutingSupport.class );
 
-	public ChannelRoutingSupport( MessageEndpoint endpoint )
-	{
-		this.endpoint = endpoint;
-	}
+	private final Multimap<Pattern, MessageListener> listeners = Multimaps.newSetMultimap(
+			new HashMap<Pattern, Collection<MessageListener>>(), new Supplier<Set<MessageListener>>()
+			{
+				@Override
+				public Set<MessageListener> get()
+				{
+					return Sets.newHashSet();
+				}
+			} );
 
 	public void addMessageListener( String channel, MessageListener listener )
 	{
+		log.debug( "Adding listener: {} for channel: {}", listener, channel );
 		if( !listeners.containsValue( listener ) )
 		{
-			if( channel.endsWith( "/*" ) )
-				channel = Pattern.quote( channel.substring( 0, channel.length() - 1 ) ) + ".*";
-			else if( channel.endsWith( "/**" ) )
-				channel = Pattern.quote( channel.substring( 0, channel.length() - 2 ) ) + "[^/]*";
+			if( channel.endsWith( "/**" ) )
+				channel = Pattern.quote( channel.substring( 0, channel.length() - 2 ) ) + ".*";
+			else if( channel.endsWith( "/*" ) )
+				channel = Pattern.quote( channel.substring( 0, channel.length() - 1 ) ) + "[^/]*";
 			else
 				channel = Pattern.quote( channel );
 
-			listeners.put( Pattern.compile( channel ), listener );
+			synchronized( listeners )
+			{
+				//log.debug( "Pattern is: {}", Pattern.compile( channel ) );
+				listeners.put( Pattern.compile( channel ), listener );
+			}
 		}
 	}
 
 	public void removeMessageListener( MessageListener listener )
 	{
-		for( Entry<Pattern, MessageListener> entry : listeners.entrySet() )
+		for( Pattern pattern : ImmutableSet.copyOf( listeners.keySet() ) )
 		{
-			if( entry.getValue() == listener )
-			{
-				listeners.remove( entry.getKey() );
-				return;
-			}
+			listeners.remove( pattern, listener );
 		}
 	}
 
-	public void fireMessage( String channel, Object data )
+	public void fireMessage( String channel, MessageEndpoint endpoint, Object data )
 	{
-		List<Map.Entry<Pattern, MessageListener>> entries = new ArrayList<Map.Entry<Pattern, MessageListener>>(
-				listeners.entrySet() );
-		for( Map.Entry<Pattern, MessageListener> entry : entries )
+		//log.debug( "Handling broadcast to: {}", channel );
+		for( Map.Entry<Pattern, Collection<MessageListener>> entry : ImmutableSet.copyOf( listeners.asMap().entrySet() ) )
 		{
 			if( entry.getKey().matcher( channel ).matches() )
 			{
-				try
+				//log.debug( "MATCH: {}", entry.getKey() );
+				for( MessageListener listener : ImmutableSet.copyOf( entry.getValue() ) )
 				{
-					entry.getValue().handleMessage( channel, endpoint, data );
-				}
-				catch( Exception e )
-				{
-					e.printStackTrace();
+					//log.debug( "Handler: {} handling...", listener );
+					listener.handleMessage( channel, endpoint, data );
 				}
 			}
 		}

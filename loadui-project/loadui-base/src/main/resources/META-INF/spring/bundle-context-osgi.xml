@@ -10,6 +10,8 @@
 	
 	<osgi:service interface="com.eviware.loadui.api.messaging.BroadcastMessageEndpoint" ref="broadcastMessageEndpoint" />
 	
+	<osgi:service interface="com.eviware.loadui.api.addon.AddonRegistry" ref="addonRegistry" />
+	
 	<osgi:service interface="com.eviware.loadui.api.upload.FormUploader" ref="formUploader" />
 	
 	<osgi:service interface="com.eviware.loadui.api.model.WorkspaceProvider" ref="workspaceProvider" />
@@ -31,8 +33,6 @@
 	<osgi:service interface="com.eviware.loadui.api.dispatch.ExecutorManager" ref="executorManager" />
 	
 	<osgi:service interface="com.eviware.loadui.api.statistics.StatisticsManager" ref="statisticsManager" />
-	
-	<osgi:service interface="com.eviware.loadui.api.addon.AddonRegistry" ref="addonRegistry" />
 	
 	<osgi:service interface="com.eviware.loadui.api.counter.CounterSynchronizer" ref="counterSynchronizer" />
 	

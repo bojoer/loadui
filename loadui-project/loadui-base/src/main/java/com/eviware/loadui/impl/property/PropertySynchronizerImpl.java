@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import org.slf4j.Logger;
@@ -30,15 +29,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
-import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.events.PropertyEvent.Event;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.property.PropertySynchronizer;
-import com.eviware.loadui.api.events.PropertyEvent.Event;
 import com.eviware.loadui.util.StringUtils;
 
 public class PropertySynchronizerImpl implements PropertySynchronizer
@@ -122,7 +121,7 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 	private String getSignature( Map<String, String> map )
 	{
 		List<String> entries = new ArrayList<String>();
-		for( Entry<String, String> entry : map.entrySet() )
+		for( Map.Entry<String, String> entry : map.entrySet() )
 			entries.add( "[" + entry.getKey() + ":" + entry.getValue() + "]" );
 		Collections.sort( entries );
 		StringBuilder s = new StringBuilder();
