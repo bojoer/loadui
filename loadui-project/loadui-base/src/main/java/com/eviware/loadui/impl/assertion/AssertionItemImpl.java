@@ -284,7 +284,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		@Override
 		public void update( T value )
 		{
-			if( !constraint.validate( value ) )
+			if( constraint != null && !constraint.validate( value ) )
 			{
 				long timestamp = System.currentTimeMillis();
 				if( toleranceSupport.occur( timestamp ) )
