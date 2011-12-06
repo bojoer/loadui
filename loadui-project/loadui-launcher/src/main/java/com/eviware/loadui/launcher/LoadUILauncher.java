@@ -71,7 +71,7 @@ public class LoadUILauncher
 		launcher.init();
 		launcher.start();
 
-		new Thread( new LoaderWatchdog( launcher.framework ) ).start();
+		new Thread( new LoaderWatchdog( launcher.framework, 10000 ) ).start();
 		//		}
 		//		else
 		//		{
