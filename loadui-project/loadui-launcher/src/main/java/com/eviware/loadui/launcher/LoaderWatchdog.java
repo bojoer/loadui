@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.launcher;
 
+import java.io.PrintStream;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
@@ -23,11 +25,13 @@ public class LoaderWatchdog implements Runnable
 {
 	private final Framework framework;
 	private final long timeout;
+	private final PrintStream ps;
 
-	public LoaderWatchdog( Framework framework, long timeout )
+	public LoaderWatchdog( Framework framework, long timeout, PrintStream ps )
 	{
 		this.framework = framework;
 		this.timeout = timeout;
+		this.ps = ps;
 	}
 
 	@Override
@@ -51,8 +55,8 @@ public class LoaderWatchdog implements Runnable
 			case Bundle.RESOLVED :
 				break;
 			default :
-				System.err.printf( "Bundle: %s state: %s", bundle.getSymbolicName(), bundle.getState() );
-				System.err.printf( "Headers: %s", bundle.getHeaders() );
+				ps.printf( "Bundle: %s state: %s", bundle.getSymbolicName(), bundle.getState() );
+				ps.printf( "Headers: %s", bundle.getHeaders() );
 
 				try
 				{
@@ -60,18 +64,19 @@ public class LoaderWatchdog implements Runnable
 				}
 				catch( BundleException e )
 				{
-					e.printStackTrace();
+					e.printStackTrace( ps );
 				}
 
 				try
 				{
 					Thread.sleep( 5000 );
 				}
-				catch( InterruptedException e1 )
+				catch( InterruptedException e )
 				{
-					e1.printStackTrace();
+					e.printStackTrace( ps );
 				}
 
+				ps.println( "Exiting..." );
 				System.exit( -1 );
 				break;
 			}

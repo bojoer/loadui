@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
@@ -84,7 +85,21 @@ public class LoadUILauncher
 		//			}
 		//		}
 
-		new Thread( new LoaderWatchdog( launcher.framework, 10000 ), "loadUI Launcher Watchdog" ).start();
+		try
+		{
+			File output = new File( System.getProperty( "loadui.home" ) + File.separator + "loadui_watchdog.log" );
+			output.createNewFile();
+			new Thread( new LoaderWatchdog( launcher.framework, 10000, new PrintStream( output ) ),
+					"loadUI Launcher Watchdog" ).start();
+		}
+		catch( FileNotFoundException e )
+		{
+			e.printStackTrace();
+		}
+		catch( IOException e )
+		{
+			e.printStackTrace();
+		}
 	}
 
 	protected Framework framework;
