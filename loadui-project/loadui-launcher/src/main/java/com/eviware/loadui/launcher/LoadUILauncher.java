@@ -21,12 +21,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
@@ -60,6 +60,8 @@ public class LoadUILauncher
 	protected static final String HELP_OPTION = "h";
 	protected static final String IGNORE_CURRENTLY_RUNNING_OPTION = "nolock";
 
+	protected final static Logger log = Logger.getLogger( LauncherWatchdog.class.getName() );
+
 	public static void main( String[] args )
 	{
 		System.setSecurityManager( null );
@@ -85,21 +87,7 @@ public class LoadUILauncher
 		//			}
 		//		}
 
-		try
-		{
-			File output = new File( System.getProperty( "loadui.home" ) + File.separator + "loadui_watchdog.log" );
-			output.createNewFile();
-			new Thread( new LauncherWatchdog( launcher.framework, 10000, new PrintStream( output ) ),
-					"loadUI Launcher Watchdog" ).start();
-		}
-		catch( FileNotFoundException e )
-		{
-			e.printStackTrace();
-		}
-		catch( IOException e )
-		{
-			e.printStackTrace();
-		}
+		new Thread( new LauncherWatchdog( launcher.framework, 10000 ), "loadUI Launcher Watchdog" ).start();
 	}
 
 	protected Framework framework;
@@ -314,6 +302,7 @@ public class LoadUILauncher
 		}
 		if( !cmd.hasOption( NOFX_OPTION ) )
 		{
+			System.out.println( "Opening splash..." );
 			SplashController.openSplash();
 			addJavaFxPackages();
 		}

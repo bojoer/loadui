@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.launcher;
 
-import java.io.PrintStream;
 import java.util.logging.Logger;
 
 import org.osgi.framework.Bundle;
@@ -28,13 +27,11 @@ public class LauncherWatchdog implements Runnable
 
 	private final Framework framework;
 	private final long timeout;
-	private final PrintStream ps;
 
-	public LauncherWatchdog( Framework framework, long timeout, PrintStream ps )
+	public LauncherWatchdog( Framework framework, long timeout )
 	{
 		this.framework = framework;
 		this.timeout = timeout;
-		this.ps = ps;
 	}
 
 	@Override
@@ -56,15 +53,13 @@ public class LauncherWatchdog implements Runnable
 			switch( bundle.getState() )
 			{
 			case Bundle.ACTIVE :
-				break;
 			case Bundle.RESOLVED :
+				log.info( String.format( "Bundle %s has OK state: %s", bundle.getSymbolicName(), bundle.getState() ) );
 				break;
 			default :
-				log.severe( String.format( "Bundle: %s state: %s", bundle.getSymbolicName(), bundle.getState() ) );
-				ps.printf( "Bundle: %s state: %s", bundle.getSymbolicName(), bundle.getState() );
+				log.severe( String.format( "Bundle: %s failed state: %s", bundle.getSymbolicName(), bundle.getState() ) );
 
 				log.severe( String.format( "Headers: %s", bundle.getHeaders() ) );
-				ps.printf( "Headers: %s", bundle.getHeaders() );
 
 				try
 				{
@@ -72,7 +67,7 @@ public class LauncherWatchdog implements Runnable
 				}
 				catch( BundleException e )
 				{
-					e.printStackTrace( ps );
+					e.printStackTrace();
 				}
 
 				try
@@ -81,12 +76,8 @@ public class LauncherWatchdog implements Runnable
 				}
 				catch( InterruptedException e )
 				{
-					e.printStackTrace( ps );
+					e.printStackTrace();
 				}
-
-				ps.println( "Exiting..." );
-				ps.flush();
-				ps.close();
 
 				System.exit( -1 );
 				break;
