@@ -21,13 +21,13 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 
-public class LoaderWatchdog implements Runnable
+public class LauncherWatchdog implements Runnable
 {
 	private final Framework framework;
 	private final long timeout;
 	private final PrintStream ps;
 
-	public LoaderWatchdog( Framework framework, long timeout, PrintStream ps )
+	public LauncherWatchdog( Framework framework, long timeout, PrintStream ps )
 	{
 		this.framework = framework;
 		this.timeout = timeout;
@@ -77,6 +77,9 @@ public class LoaderWatchdog implements Runnable
 				}
 
 				ps.println( "Exiting..." );
+				ps.flush();
+				ps.close();
+
 				System.exit( -1 );
 				break;
 			}

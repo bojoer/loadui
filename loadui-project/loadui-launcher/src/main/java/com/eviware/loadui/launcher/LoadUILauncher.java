@@ -89,7 +89,7 @@ public class LoadUILauncher
 		{
 			File output = new File( System.getProperty( "loadui.home" ) + File.separator + "loadui_watchdog.log" );
 			output.createNewFile();
-			new Thread( new LoaderWatchdog( launcher.framework, 10000, new PrintStream( output ) ),
+			new Thread( new LauncherWatchdog( launcher.framework, 10000, new PrintStream( output ) ),
 					"loadUI Launcher Watchdog" ).start();
 		}
 		catch( FileNotFoundException e )
