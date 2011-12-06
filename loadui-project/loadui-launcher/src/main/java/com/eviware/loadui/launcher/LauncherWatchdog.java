@@ -40,6 +40,8 @@ public class LauncherWatchdog implements Runnable
 	@Override
 	public void run()
 	{
+		log.severe( "Watchdog initialized!" );
+
 		try
 		{
 			Thread.sleep( timeout );
@@ -90,5 +92,7 @@ public class LauncherWatchdog implements Runnable
 				break;
 			}
 		}
+
+		log.severe( "Watchdog stopping!" );
 	}
 }
