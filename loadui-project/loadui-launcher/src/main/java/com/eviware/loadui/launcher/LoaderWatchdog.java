@@ -62,6 +62,17 @@ public class LoaderWatchdog implements Runnable
 				{
 					e.printStackTrace();
 				}
+
+				try
+				{
+					Thread.sleep( 5000 );
+				}
+				catch( InterruptedException e1 )
+				{
+					e1.printStackTrace();
+				}
+
+				System.exit( -1 );
 				break;
 			}
 		}
