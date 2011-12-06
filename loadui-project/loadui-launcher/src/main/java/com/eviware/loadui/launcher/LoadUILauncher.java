@@ -70,6 +70,8 @@ public class LoadUILauncher
 		LoadUILauncher launcher = new LoadUILauncher( args );
 		launcher.init();
 		launcher.start();
+
+		new Thread( new LoaderWatchdog( launcher.framework ) ).start();
 		//		}
 		//		else
 		//		{
