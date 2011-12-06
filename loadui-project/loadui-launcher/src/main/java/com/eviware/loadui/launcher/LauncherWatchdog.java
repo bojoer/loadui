@@ -16,6 +16,7 @@
 package com.eviware.loadui.launcher;
 
 import java.io.PrintStream;
+import java.util.logging.Logger;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
@@ -23,6 +24,8 @@ import org.osgi.framework.launch.Framework;
 
 public class LauncherWatchdog implements Runnable
 {
+	private final static Logger log = Logger.getLogger( LauncherWatchdog.class.getName() );
+
 	private final Framework framework;
 	private final long timeout;
 	private final PrintStream ps;
@@ -55,7 +58,10 @@ public class LauncherWatchdog implements Runnable
 			case Bundle.RESOLVED :
 				break;
 			default :
+				log.severe( String.format( "Bundle: %s state: %s", bundle.getSymbolicName(), bundle.getState() ) );
 				ps.printf( "Bundle: %s state: %s", bundle.getSymbolicName(), bundle.getState() );
+
+				log.severe( String.format( "Headers: %s", bundle.getHeaders() ) );
 				ps.printf( "Headers: %s", bundle.getHeaders() );
 
 				try
