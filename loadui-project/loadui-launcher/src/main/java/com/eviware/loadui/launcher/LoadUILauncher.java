@@ -87,7 +87,7 @@ public class LoadUILauncher
 		//			}
 		//		}
 
-		new Thread( new LauncherWatchdog( launcher.framework, 10000 ), "loadUI Launcher Watchdog" ).start();
+		new Thread( new LauncherWatchdog( launcher.framework, 20000 ), "loadUI Launcher Watchdog" ).start();
 	}
 
 	protected Framework framework;
