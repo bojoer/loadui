@@ -18,6 +18,9 @@ package com.eviware.loadui.launcher.api;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.Window;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -44,9 +47,38 @@ public class SplashController
 					//Don't know why, but WindowUtils.setWindowTransparent makes the window invisible when running in Java 7.
 					if( System.getProperty( "java.version" ).startsWith( "1.7" ) )
 					{
-						WindowUtils.setWindowAlpha( window, ( float )0.9 );
-						WindowUtils.setWindowMask( window,
-								new ImageIcon( SplashController.class.getResource( "/loadui-splash-mask.png" ) ) );
+						try
+						{
+							Class<?> awtUtilitiesClass = Class.forName( "com.sun.awt.AWTUtilities" );
+
+							Method mSetWindowOpaque = awtUtilitiesClass.getMethod( "setWindowOpaque", Window.class,
+									boolean.class );
+							mSetWindowOpaque.invoke( null, window, false );
+						}
+						catch( NoSuchMethodException ex )
+						{
+							ex.printStackTrace();
+						}
+						catch( SecurityException ex )
+						{
+							ex.printStackTrace();
+						}
+						catch( ClassNotFoundException ex )
+						{
+							ex.printStackTrace();
+						}
+						catch( IllegalAccessException ex )
+						{
+							ex.printStackTrace();
+						}
+						catch( IllegalArgumentException ex )
+						{
+							ex.printStackTrace();
+						}
+						catch( InvocationTargetException ex )
+						{
+							ex.printStackTrace();
+						}
 					}
 					else
 					{
