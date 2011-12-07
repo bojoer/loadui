@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.launch.Framework;
 
 public class LauncherWatchdog implements Runnable
@@ -54,7 +55,16 @@ public class LauncherWatchdog implements Runnable
 			{
 			case Bundle.ACTIVE :
 			case Bundle.RESOLVED :
-				log.info( String.format( "Bundle %s has OK state: %s", bundle.getSymbolicName(), bundle.getState() ) );
+				log.info( String.format( "Bundle %s has OK state: %s, using these services:", bundle.getSymbolicName(),
+						bundle.getState() ) );
+				for( ServiceReference<?> service : bundle.getServicesInUse() )
+				{
+					log.info( service.toString() );
+					for( String key : service.getPropertyKeys() )
+					{
+						log.info( key + "=" + service.getProperty( key ) );
+					}
+				}
 				break;
 			default :
 				log.severe( String.format( "Bundle: %s failed state: %s", bundle.getSymbolicName(), bundle.getState() ) );
