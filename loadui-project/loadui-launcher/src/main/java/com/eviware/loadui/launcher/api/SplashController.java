@@ -58,11 +58,6 @@ public class SplashController
 					- ( labelSize.height / 2 ) );
 
 			window.setVisible( true );
-
-			JWindow window2 = new JWindow();
-			window2.getContentPane().add( new JLabel( image ) );
-			window2.pack();
-			window2.setVisible( true );
 		}
 	}
 
