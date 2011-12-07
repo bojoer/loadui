@@ -11,6 +11,8 @@
 
 	<bean id="scheduledExecutorService" class="com.eviware.loadui.util.ScheduledExecutor"
 		factory-method="getInstance" />
+		
+	<bean id="testEventRegistry" class="com.eviware.loadui.impl.testevents.TestEventRegistryImpl" />
 
 	<bean id="formUploader" class="com.eviware.loadui.impl.upload.FormUploaderImpl" />
 
@@ -91,8 +93,6 @@
 		class="com.eviware.loadui.impl.statistics.CounterStatisticsWriter$Factory" />
 	<bean id="variableStatisticsWriter"
 		class="com.eviware.loadui.impl.statistics.VariableStatisticsWriter$Factory" />
-		
-	<bean id="testEventRegistry" class="com.eviware.loadui.impl.testevents.TestEventRegistryImpl" />
 		
 	<bean id="assertionAddonFactory" class="com.eviware.loadui.impl.assertion.AssertionAddonImpl$Factory" />
 	

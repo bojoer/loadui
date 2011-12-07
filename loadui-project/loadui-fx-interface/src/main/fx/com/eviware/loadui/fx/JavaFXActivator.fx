@@ -39,7 +39,7 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.fx.ui.dialogs.*;
 
 
-//public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.JavaFXActivator" );
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.JavaFXActivator" );
 
 public-read var scene:Scene;
 public-read var wc:WindowControllerImpl;
@@ -68,7 +68,6 @@ public class JavaFXActivator extends BundleActivator {
 	 */
 	override function start( bc: BundleContext ) {
 		runInFxThread( function():Void {
-			
 			try {
 				def jidedata = new Properties();
 				jidedata.load( com.eviware.loadui.fx.Dummy.class.getResourceAsStream("/properties/jide.properties") );
@@ -84,7 +83,7 @@ public class JavaFXActivator extends BundleActivator {
 			def lpx = new UnitValue( 10, UnitValue.LPX, null );
 			PlatformDefaults.setPanelInsets( lpy, lpx, lpy, lpx );
 
-			//log.debug("JavaFX Bundle started!");
+			log.debug("JavaFX Bundle started!");
 	
 			//def stylesheets = "file:style.css";
 			
@@ -126,16 +125,13 @@ public class JavaFXActivator extends BundleActivator {
 					}
 				}
 			}
+			
+			log.debug( "JavaFX Stage created!" );
 		});
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Prints a message to stdout.
-	 */
 	override function stop( bc: BundleContext ) {
-		//log.debug("JavaFX Bundle stopped!");
+		log.debug("JavaFX Bundle stopped!");
 	}
 }
 

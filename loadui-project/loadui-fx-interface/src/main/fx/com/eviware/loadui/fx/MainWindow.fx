@@ -135,7 +135,8 @@ public class MainWindow {
 	* configuration set through the setters). It sets up the main window.
 	*/
 	function initialize():Void {
-	
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "MainWindow initializing: {this}" );
+		log.debug( "MainWindow initializing..." );
 		//change classloader of JavaFX thread to this thread's (Spring's) classloader
 		//FxUtils.setJavaFXThreadClassLoader(Thread.currentThread().getContextClassLoader());
 		
@@ -236,7 +237,9 @@ public class MainWindow {
 		appState.insertInto( ProjectMenu { width: bind scene.width, project: bind projectCanvas.canvasItem as ProjectItem }, PROJECT_FRONT );
 		appState.insertInto( TestCaseMenu { width: bind scene.width, testCase: bind testcaseCanvas.canvasItem as SceneItem }, TESTCASE_FRONT );
 		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "Deferring MainWindow action..." );
 		FX.deferAction( function():Void {
+			java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "Showing MainWindow.." );
 			scene.fill = Color.web("#333333");
 			scene.stage.visible = true;
 			appState.transitionTo( WORKSPACE_FRONT, AppState.FADE_WIPE );
@@ -250,6 +253,8 @@ public class MainWindow {
 					y: scene.height/4
 				}.show();
 			}
+			
+			java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "MainWindow shown!" );
 		} );
 			
 		workspace.addEventListener( BaseEvent.class, new ExecutionAlertListener() );
