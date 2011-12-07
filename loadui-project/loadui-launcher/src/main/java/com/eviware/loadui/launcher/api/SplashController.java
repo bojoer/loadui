@@ -45,44 +45,39 @@ public class SplashController
 				if( WindowUtils.isWindowAlphaSupported() )
 				{
 					//Don't know why, but WindowUtils.setWindowTransparent makes the window invisible when running in Java 7.
-					if( System.getProperty( "java.version" ).startsWith( "1.7" ) )
-					{
-						try
-						{
-							Class<?> awtUtilitiesClass = Class.forName( "com.sun.awt.AWTUtilities" );
+					//WindowUtils.setWindowTransparent( window, true );
 
-							Method mSetWindowOpaque = awtUtilitiesClass.getMethod( "setWindowOpaque", Window.class,
-									boolean.class );
-							mSetWindowOpaque.invoke( null, window, false );
-						}
-						catch( NoSuchMethodException ex )
-						{
-							ex.printStackTrace();
-						}
-						catch( SecurityException ex )
-						{
-							ex.printStackTrace();
-						}
-						catch( ClassNotFoundException ex )
-						{
-							ex.printStackTrace();
-						}
-						catch( IllegalAccessException ex )
-						{
-							ex.printStackTrace();
-						}
-						catch( IllegalArgumentException ex )
-						{
-							ex.printStackTrace();
-						}
-						catch( InvocationTargetException ex )
-						{
-							ex.printStackTrace();
-						}
-					}
-					else
+					try
 					{
-						WindowUtils.setWindowTransparent( window, true );
+						Class<?> awtUtilitiesClass = Class.forName( "com.sun.awt.AWTUtilities" );
+
+						Method mSetWindowOpaque = awtUtilitiesClass
+								.getMethod( "setWindowOpaque", Window.class, boolean.class );
+						mSetWindowOpaque.invoke( null, window, false );
+					}
+					catch( NoSuchMethodException ex )
+					{
+						ex.printStackTrace();
+					}
+					catch( SecurityException ex )
+					{
+						ex.printStackTrace();
+					}
+					catch( ClassNotFoundException ex )
+					{
+						ex.printStackTrace();
+					}
+					catch( IllegalAccessException ex )
+					{
+						ex.printStackTrace();
+					}
+					catch( IllegalArgumentException ex )
+					{
+						ex.printStackTrace();
+					}
+					catch( InvocationTargetException ex )
+					{
+						ex.printStackTrace();
 					}
 
 					image = new ImageIcon( SplashController.class.getResource( "/loadui-splash.png" ) );
