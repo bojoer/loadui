@@ -39,8 +39,27 @@ public class SplashController
 			ImageIcon image;
 			try
 			{
-				WindowUtils.setWindowTransparent( window, true );
-				image = new ImageIcon( SplashController.class.getResource( "/loadui-splash.png" ) );
+				if( WindowUtils.isWindowAlphaSupported() )
+				{
+					//Don't know why, but WindowUtils.setWindowTransparent makes the window invisible when running in Java 7.
+					if( System.getProperty( "java.version" ).startsWith( "1.7" ) )
+					{
+						WindowUtils.setWindowAlpha( window, ( float )0.9 );
+						WindowUtils.setWindowMask( window,
+								new ImageIcon( SplashController.class.getResource( "/loadui-splash-mask.png" ) ) );
+					}
+					else
+					{
+						WindowUtils.setWindowTransparent( window, true );
+					}
+
+					image = new ImageIcon( SplashController.class.getResource( "/loadui-splash.png" ) );
+				}
+				else
+				{
+					System.out.println( "Unable to create transparent window, using non-transparent splash!" );
+					image = new ImageIcon( SplashController.class.getResource( "/loadui-splash-no-transparency.png" ) );
+				}
 			}
 			catch( Throwable e )
 			{
