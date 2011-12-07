@@ -63,6 +63,8 @@ public class SplashController
 
 	public static void closeSplash()
 	{
+		java.util.logging.Logger.getLogger( SplashController.class.getName() ).info( "Closing splash..." );
+
 		if( window != null )
 		{
 			window.dispose();
