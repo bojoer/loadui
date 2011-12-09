@@ -56,6 +56,7 @@
 	</bean>
 	
 	<bean id="assertionInspector" class="com.eviware.loadui.fx.assertions.AssertionInspector" factory-method="createInstance">
+		<constructor-arg ref="statisticsManager" />
 	</bean>
 	
 	<bean id="tableWidget" class="com.eviware.loadui.fx.widgets.factories.TableWidgetFactory" />

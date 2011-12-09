@@ -36,16 +36,23 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.FxUtils.*;
 
-import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.statistics.StatisticsManager;
 
 import com.sun.javafx.scene.layout.Region;
 
-public function createInstance():AssertionInspector {
-	AssertionInspector {}
+public function createInstance( statisticsManager:StatisticsManager ):AssertionInspector {
+	AssertionInspector { statisticsManager: statisticsManager }
 }
 
 public class AssertionInspector extends Inspector {
-	def panel = AssertionInspectorNode {}
+	
+	public-init var statisticsManager:StatisticsManager;
+	
+	var panel:AssertionInspectorNode;
+	
+	postinit {
+		panel = AssertionInspectorNode {}
+	}
 
 	override function onShow(): Void {
 	}
@@ -66,21 +73,21 @@ public class AssertionInspector extends Inspector {
 	}
 }
 
-public class AssertionInspectorNode extends Stack {
+class AssertionInspectorNode extends Stack {
 	override var layoutInfo = LayoutInfo { vfill: true, hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.ALWAYS, minHeight: 278, maxHeight: 500 }
 	override var padding = Insets { right: 5, bottom: 5 }
 	
-//	def toolbar = MonitorToolbar {
-//		id: "MonitorToolbar",
-//		descriptorRegistry: descriptorRegistry,
-//		layoutInfo: LayoutInfo { vfill: true, hfill: false, hshrink: Priority.NEVER, margin: Insets { left: -69 }, hpos: HPos.LEFT, vpos: VPos.TOP }
-//	};
-//	
-//	def servers = ServerList {
+	def toolbar = AssertionToolbar {
+		id: "AssertionToolbar",
+		statisticsManager: statisticsManager,
+		layoutInfo: LayoutInfo { vfill: true, hfill: false, hshrink: Priority.NEVER, margin: Insets { left: -45 }, hpos: HPos.LEFT, vpos: VPos.TOP }
+	};
+	
+//	def assertions = AssertionList {
 //		layoutInfo: LayoutInfo { vfill: true, hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.ALWAYS, margin: bind if( toolbar.hidden ) Insets { left: 45 } else Insets { left: toolbar.width + 20 } }
 //	} 
-//	
-//	init {
-//		content = [ servers, toolbar ]
-//	}
+	
+	init {
+		content = [ /* assertions, */ toolbar ]
+	}
 }
