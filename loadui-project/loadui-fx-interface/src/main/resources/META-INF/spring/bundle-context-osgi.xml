@@ -34,6 +34,13 @@
 	</osgi:service>
 	
 	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
+		ref="assertionInspector">
+		<osgi:service-properties>
+			<entry key="panelId" value="MainWindowInspector"/>
+		</osgi:service-properties>
+	</osgi:service>
+	
+	<osgi:service interface="com.eviware.loadui.api.ui.inspector.Inspector"
 		ref="eventLogInspector">
 		<osgi:service-properties>
 			<entry key="panelId" value="StatisticWorkbenchInspector"/>

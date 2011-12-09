@@ -55,6 +55,9 @@
 		<constructor-arg ref="testEventManager" />
 	</bean>
 	
+	<bean id="assertionInspector" class="com.eviware.loadui.fx.assertions.AssertionInspector" factory-method="createInstance">
+	</bean>
+	
 	<bean id="tableWidget" class="com.eviware.loadui.fx.widgets.factories.TableWidgetFactory" />
 	<bean id="selectorWidget" class="com.eviware.loadui.fx.widgets.factories.SelectorWidgetFactory" />
 	<bean id="chartWidget" class="com.eviware.loadui.fx.widgets.factories.ChartWidgetFactory" />
