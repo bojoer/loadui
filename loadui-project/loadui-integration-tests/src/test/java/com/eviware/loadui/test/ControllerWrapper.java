@@ -89,7 +89,7 @@ public class ControllerWrapper
 
 				//Add the required packages that should be in the OSGi config file.
 				StringBuilder apiPackages = new StringBuilder(
-						"com.sun.crypto.provider,com.sun.net.ssl,com.sun.net.ssl.internal.ssl,org.w3c.dom.traversal,javax.transaction.xa;version=1.1.0" );
+						"com.sun.crypto.provider,com.sun.net.ssl,com.sun.net.ssl.internal.ssl,org.w3c.dom.traversal,javax.transaction.xa;version=1.1.0,sun.io" );
 				String version = LoadUI.VERSION.substring( 0, LoadUI.VERSION.indexOf( "-" ) );
 				for( String pkg : packages )
 					apiPackages.append( ", " ).append( pkg ).append( "; version=\"" ).append( version ).append( '"' );
