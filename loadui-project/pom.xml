@@ -44,6 +44,7 @@
 		<module>loadui-groovy-utils</module>
 		<module>loadui-socket-client</module>
 		<module>loadui-socket-server</module>
+		<module>loadui-cssbox-browser</module>
 	</modules>
 	<repositories>
 		<repository>
