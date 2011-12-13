@@ -46,6 +46,7 @@ import com.eviware.loadui.fx.widgets.toolbar.TestCaseToolbarItem;
 import com.eviware.loadui.fx.wizards.GettingStartedWizard;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.widgets.TutorialList;
+import com.eviware.loadui.fx.util.BrowserControl;
 
 import java.lang.Object;
 import java.lang.Thread;
@@ -54,6 +55,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.text.Text;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.Stack;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -180,9 +182,28 @@ public class MainWindow {
 		insert inspectors into appState.globalLayer.content;
 		log.debug( "Done initializing InspectorPanel: \{\}", inspectors );
 		
-		appState.insertInto( projectList = ProjectList { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 529, 315 ), height: 222 } }, WORKSPACE_FRONT );
-		appState.insertInto( AgentList { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 529, 315 ), height: 260 } }, WORKSPACE_FRONT );
-		appState.insertInto( TutorialList { workspace: workspace, layoutX: 137, layoutY: 622, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 529, 315 ), height: 212 } }, WORKSPACE_FRONT );
+		
+		if( java.lang.System.getProperty( "browser" ) != null ) {
+			appState.insertInto( projectList = ProjectList { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: 315, height: 222 } }, WORKSPACE_FRONT );
+			appState.insertInto( AgentList { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
+			
+			appState.insertInto( BrowserControl {
+				url: "http://www.soapui.org/Appindex/soapui-pro-starterpage-home.html",
+				layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 502, 315 ), height: 507 }
+			}, WORKSPACE_FRONT );
+		} else {
+			appState.insertInto( projectList = ProjectList { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 529, 315 ), height: 222 } }, WORKSPACE_FRONT );
+			appState.insertInto( AgentList { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 529, 315 ), height: 260 } }, WORKSPACE_FRONT );
+			appState.insertInto( TutorialList { workspace: workspace, layoutX: 137, layoutY: 622, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 529, 315 ), height: 212 } }, WORKSPACE_FRONT );
+			
+			def feed:FeedDisplay = FeedDisplay {
+				layoutX: bind scene.width - 356
+				layoutY: 90
+				//width: 300
+				height: bind scene.height - 135
+			}
+			appState.insertInto( feed, WORKSPACE_FRONT );			
+		}
 		
 		//Toolbar
 
@@ -194,16 +215,8 @@ public class MainWindow {
 		
 		toolbar.addItem( ProjectToolbarItem { workspace: workspace } );
 		toolbar.addItem( AgentToolbarItem {} );
-		
-		def feed:FeedDisplay = FeedDisplay {
-			layoutX: bind scene.width - 356
-			layoutY: 90
-			//width: 300
-			height: bind scene.height - 135
-		}
 
 		appState.insertInto( toolbar, WORKSPACE_FRONT );
-		appState.insertInto( feed, WORKSPACE_FRONT );
 		
 		//Set up the Project view
 		appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/grid.png" }, clip: Rectangle{ width: bind scene.width, height: bind scene.height } }, PROJECT_FRONT );
