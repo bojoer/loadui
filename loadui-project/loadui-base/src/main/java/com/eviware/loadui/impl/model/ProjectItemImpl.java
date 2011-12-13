@@ -211,9 +211,13 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				}
 			}
 		}
+	}
 
+	@Override
+	public void postInit()
+	{
+		super.postInit();
 		statisticPages.init();
-		// statisticHolderSupport.init();
 	}
 
 	private void sendAssignMessage( AgentItem agent, SceneItem scene )
