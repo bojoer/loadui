@@ -74,7 +74,7 @@ public class AssertionInspector extends Inspector {
 }
 
 class AssertionInspectorNode extends Stack {
-	override var layoutInfo = LayoutInfo { vfill: true, hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.ALWAYS, minHeight: 278, maxHeight: 500 }
+	override var layoutInfo = LayoutInfo { vfill: true, hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.ALWAYS, minHeight: 265, maxHeight: 500 }
 	override var padding = Insets { right: 5, bottom: 5 }
 	
 	def toolbar = AssertionToolbar {
@@ -83,11 +83,11 @@ class AssertionInspectorNode extends Stack {
 		layoutInfo: LayoutInfo { vfill: true, hfill: false, hshrink: Priority.NEVER, margin: Insets { left: -45 }, hpos: HPos.LEFT, vpos: VPos.TOP }
 	};
 	
-//	def assertions = AssertionList {
-//		layoutInfo: LayoutInfo { vfill: true, hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.ALWAYS, margin: bind if( toolbar.hidden ) Insets { left: 45 } else Insets { left: toolbar.width + 20 } }
-//	} 
+	def assertions = AssertionList {
+		layoutInfo: LayoutInfo { vfill: true, hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.ALWAYS, margin: bind if( toolbar.hidden ) Insets { left: 40 } else Insets { left: toolbar.width + 15 } }
+	}
 	
 	init {
-		content = [ /* assertions, */ toolbar ]
+		content = [ assertions, toolbar ]
 	}
 }
