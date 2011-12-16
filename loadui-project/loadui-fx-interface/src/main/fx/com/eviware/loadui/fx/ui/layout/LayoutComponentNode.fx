@@ -33,6 +33,8 @@ import com.eviware.loadui.util.layout.FormattedString;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+
+import javax.swing.JComponent;
 /**
  * 
  */
@@ -48,6 +50,11 @@ public function buildLayoutComponentNode( layoutComponent:LayoutComponent ):Layo
 				text: layoutComponent.get("label") as String
 				formattedString: layoutComponent.get("fString") as FormattedString
 			}
+		}
+	} else if( layoutComponent.has("component") ) {
+		println("Creating SwingLayoutComponentNode");
+		SwingLayoutComponentNode {
+			component: layoutComponent.get("component") as JComponent
 		}
 	} else if( layoutComponent instanceof LayoutContainer ) {
 		LayoutContainerNode { layoutComponent: layoutComponent }
