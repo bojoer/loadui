@@ -1331,3 +1331,13 @@
 .balloon-text {
 	-fx-font-size: 11pt;
 }
+
+.assertion-box {
+	-fx-background-color: #979797, #242424;
+	-fx-background-insets: 0, 1;
+	-fx-background-radius: 6;
+}
+
+.assertion-box *.label {
+	-fx-text-fill: #817e7e;
+}
