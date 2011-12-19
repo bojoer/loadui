@@ -17,37 +17,54 @@ package com.eviware.loadui.fx.util;
 
 import javafx.scene.Cursor;
 import javafx.scene.layout.Stack;
+import javafx.scene.control.ScrollView;
 import javafx.ext.swing.SwingComponent;
+import javafx.util.Math;
 
 import java.awt.Dimension;
 
-import com.eviware.loadui.util.browser.BrowserComponent;
-import com.eviware.loadui.util.browser.Browser.CursorListener;
+import com.eviware.loadui.util.browser.JSBrowserComponent;
+import java.beans.PropertyChangeListener;
 
-public class BrowserControl extends Stack {
-	var browser:BrowserComponent;
+public class BrowserControl extends ScrollView {
+	override var fitToWidth = true;
+	//override var fitToHeight = true;
+	
+	var browser:JSBrowserComponent;
+	var stack:Stack;
 	
 	public var url:String on replace {
 		browser.setUrl( url );
-	} 
-	
-	override var width on replace {
-		browser.setPreferredSize( new Dimension( width, height ) );
 	}
 	
 	override var height on replace {
-		browser.setPreferredSize( new Dimension( width, height ) );
+		stack.height = Math.max( stack.height, height );
 	}
 	
 	postinit {
-		browser = new BrowserComponent( url );
-		content = SwingComponent.wrap( browser );
-		browser.addCursorListener( Listener {} );
+		browser = new JSBrowserComponent( url );
+		browser.addPropertyChangeListener( Listener {} );
+		
+		node = stack = Stack {
+			override var width on replace {
+				browser.setPreferredSize( new Dimension( width, height ) );
+			}
+			
+			override var height on replace {
+				browser.setPreferredSize( new Dimension( width, height ) );
+			}
+			
+			content: SwingComponent.wrap( browser )
+		}
 	}
 }
 
-class Listener extends CursorListener {
-	override function handleCursorChanged( newCursor ) {
-		cursor = if( newCursor.getType() == java.awt.Cursor.HAND_CURSOR ) Cursor.HAND else null;
+class Listener extends PropertyChangeListener {
+	override function propertyChange( event ) {
+		if( JSBrowserComponent.CURSOR.equals( event.getPropertyName() ) ) {
+			cursor = if( (event.getNewValue() as java.awt.Cursor).getType() == java.awt.Cursor.HAND_CURSOR ) Cursor.HAND else null;
+		} else if( JSBrowserComponent.PAGE_HEIGHT.equals( event.getPropertyName() ) ) {
+			stack.height = event.getNewValue() as Number;
+		}
 	}
 }

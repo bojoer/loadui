@@ -15,18 +15,14 @@
  */
 package com.eviware.loadui.util.browser;
 
-import java.awt.Cursor;
+import java.beans.PropertyChangeListener;
 
 public interface Browser
 {
-	public void addCursorListener( CursorListener listener );
+	public static final String CURSOR = "CURSOR";
+	public static final String PAGE_HEIGHT = "PAGE_HEIGHT";
 
-	public void removeCursorListener( CursorListener listener );
+	public void addPropertyChangeListener( PropertyChangeListener listener );
 
-	public Cursor getCursor();
-
-	public interface CursorListener
-	{
-		public void handleCursorChanged( Cursor cursor );
-	}
+	public void removePropertyChangeListener( PropertyChangeListener listener );
 }

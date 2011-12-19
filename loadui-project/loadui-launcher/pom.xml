@@ -104,7 +104,7 @@
 		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.main</artifactId>
-			<version>4.0.1</version>
+			<version>4.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
@@ -115,19 +115,16 @@
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
 			<version>3.2.7</version>
-			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>platform</artifactId>
 			<version>3.2.7</version>
-			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>biz.aQute</groupId>
 			<artifactId>bndlib</artifactId>
 			<version>1.50.0</version>
-			<type>jar</type>
 		</dependency>
 	</dependencies>
 </project>

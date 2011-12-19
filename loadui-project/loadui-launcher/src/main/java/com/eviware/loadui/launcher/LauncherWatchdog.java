@@ -75,7 +75,10 @@ public class LauncherWatchdog implements Runnable
 					e.printStackTrace();
 				}
 
-				System.exit( -1 );
+				if( System.getProperty( "noclose" ) == null )
+				{
+					System.exit( -1 );
+				}
 				break;
 			}
 		}
