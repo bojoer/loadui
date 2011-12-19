@@ -39,9 +39,9 @@ import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.WebWindowEvent;
 import com.gargoylesoftware.htmlunit.WebWindowListener;
 
-public class JSBrowserComponent extends JPanel implements Browser
+public class BrowserComponent extends JPanel implements Browser
 {
-	protected static final Logger log = LoggerFactory.getLogger( JSBrowserComponent.class );
+	protected static final Logger log = LoggerFactory.getLogger( BrowserComponent.class );
 
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport( this );
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -52,7 +52,7 @@ public class JSBrowserComponent extends JPanel implements Browser
 	private Element root;
 	private double pageHeight = 0;
 
-	public JSBrowserComponent( String urlString ) throws FailingHttpStatusCodeException, MalformedURLException,
+	public BrowserComponent( String urlString ) throws FailingHttpStatusCodeException, MalformedURLException,
 			IOException
 	{
 		super( new BorderLayout() );

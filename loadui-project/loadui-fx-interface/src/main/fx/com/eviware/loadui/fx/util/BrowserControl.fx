@@ -23,14 +23,14 @@ import javafx.util.Math;
 
 import java.awt.Dimension;
 
-import com.eviware.loadui.util.browser.JSBrowserComponent;
+import com.eviware.loadui.util.browser.BrowserComponent;
 import java.beans.PropertyChangeListener;
 
 public class BrowserControl extends ScrollView {
 	override var fitToWidth = true;
 	//override var fitToHeight = true;
 	
-	var browser:JSBrowserComponent;
+	var browser:BrowserComponent;
 	var stack:Stack;
 	
 	public var url:String on replace {
@@ -42,7 +42,7 @@ public class BrowserControl extends ScrollView {
 	}
 	
 	postinit {
-		browser = new JSBrowserComponent( url );
+		browser = new BrowserComponent( url );
 		browser.addPropertyChangeListener( Listener {} );
 		
 		node = stack = Stack {
@@ -61,9 +61,9 @@ public class BrowserControl extends ScrollView {
 
 class Listener extends PropertyChangeListener {
 	override function propertyChange( event ) {
-		if( JSBrowserComponent.CURSOR.equals( event.getPropertyName() ) ) {
+		if( BrowserComponent.CURSOR.equals( event.getPropertyName() ) ) {
 			cursor = if( (event.getNewValue() as java.awt.Cursor).getType() == java.awt.Cursor.HAND_CURSOR ) Cursor.HAND else null;
-		} else if( JSBrowserComponent.PAGE_HEIGHT.equals( event.getPropertyName() ) ) {
+		} else if( BrowserComponent.PAGE_HEIGHT.equals( event.getPropertyName() ) ) {
 			stack.height = event.getNewValue() as Number;
 		}
 	}
