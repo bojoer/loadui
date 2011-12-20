@@ -453,8 +453,6 @@ public class BrowserComponent extends JPanel implements Browser
 		@Override
 		public void nodeDeleted( DomChangeEvent event )
 		{
-			log.debug( "NODE DELETED: {}, parsing: {}", event.getChangedNode(), page.isBeingParsed() );
-
 			if( event.getChangedNode().isDisplayed() )
 			{
 				parsePageContent();
@@ -464,7 +462,6 @@ public class BrowserComponent extends JPanel implements Browser
 		@Override
 		public void nodeAdded( DomChangeEvent event )
 		{
-			log.debug( "NODE ADDED: {}, parsing: {}", event.getChangedNode(), page.isBeingParsed() );
 			if( event.getChangedNode().isDisplayed() )
 			{
 				parsePageContent();
