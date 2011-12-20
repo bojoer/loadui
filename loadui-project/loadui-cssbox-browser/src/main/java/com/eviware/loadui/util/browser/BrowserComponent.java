@@ -38,6 +38,11 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.WebWindowEvent;
 import com.gargoylesoftware.htmlunit.WebWindowListener;
+import com.gargoylesoftware.htmlunit.html.DomChangeEvent;
+import com.gargoylesoftware.htmlunit.html.DomChangeListener;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.google.common.collect.Iterables;
 
 public class BrowserComponent extends JPanel implements Browser
 {
@@ -46,10 +51,12 @@ public class BrowserComponent extends JPanel implements Browser
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport( this );
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	private final WebClient client = new WebClient();
+	private HtmlPage page;
 
 	private URL url;
 	private DOMAnalyzer da;
 	private Element root;
+	private double desiredHeight = 100;
 	private double pageHeight = 0;
 
 	public BrowserComponent( String urlString ) throws FailingHttpStatusCodeException, MalformedURLException,
@@ -58,30 +65,33 @@ public class BrowserComponent extends JPanel implements Browser
 		super( new BorderLayout() );
 
 		client.addWebWindowListener( new MyWebWindowListener() );
+
 		setUrl( urlString );
 
 		addComponentListener( new PanelSizeListener() );
 		addMouseMotionListener( new MouseMovedListener() );
 		addMouseListener( new ClickListener() );
+
+		log.debug( "JavaScript engine: " + client.getJavaScriptEngine() );
 	}
 
-	private static String findLink( Node node )
+	private static Node findLink( Node node )
 	{
 		while( node != null && !"a".equals( node.getNodeName() ) )
 		{
 			node = node.getParentNode();
 		}
 
-		if( node != null )
-		{
-			Node namedItem = node.getAttributes().getNamedItem( "href" );
-			if( namedItem != null )
-			{
-				return namedItem.getNodeValue();
-			}
-		}
+		//		if( node != null )
+		//		{
+		//			Node namedItem = node.getAttributes().getNamedItem( "href" );
+		//			if( namedItem != null )
+		//			{
+		//				return namedItem.getNodeValue();
+		//			}
+		//		}
 
-		return null;
+		return node;
 	}
 
 	private static Box locateBox( Box box, int x, int y )
@@ -121,6 +131,59 @@ public class BrowserComponent extends JPanel implements Browser
 		return found;
 	}
 
+	private HtmlElement lookupElementForNode( Node node )
+	{
+		while( !( node instanceof Element ) )
+		{
+			if( node == null )
+			{
+				//log.debug( "No element found!" );
+				return null;
+			}
+			node = node.getParentNode();
+		}
+
+		if( root == node )
+		{
+			//log.debug( "Node is root: {}, returning...", root );
+			return page.getDocumentElement();
+		}
+		else
+		{
+			//log.debug( "Node is child." );
+			Node sibling = node.getPreviousSibling();
+			int position = 0;
+			while( sibling != null )
+			{
+				//log.debug( "Previous sibling: {}", sibling );
+				if( sibling instanceof Element )
+				{
+					position++ ;
+				}
+				sibling = sibling.getPreviousSibling();
+			}
+
+			HtmlElement parent = lookupElementForNode( node.getParentNode() );
+			//			log.debug( "Parents children: {}, get with position: {}",
+			//					Iterables.transform( parent.getChildElements(), new Function<HtmlElement, String>()
+			//					{
+			//						@Override
+			//						public String apply( HtmlElement input )
+			//						{
+			//							return input.getNodeName();
+			//						}
+			//					} ), position );
+
+			if( parent == null )
+			{
+				return null;
+			}
+
+			log.debug( "Returning: {}", Iterables.get( parent.getChildElements(), position ) );
+			return Iterables.get( parent.getChildElements(), position );
+		}
+	}
+
 	public void setUrl( final String urlString )
 	{
 		executor.execute( new Runnable()
@@ -130,7 +193,7 @@ public class BrowserComponent extends JPanel implements Browser
 			{
 				try
 				{
-					client.getPage( urlString );
+					page = client.getPage( urlString );
 				}
 				catch( FailingHttpStatusCodeException e )
 				{
@@ -147,6 +210,20 @@ public class BrowserComponent extends JPanel implements Browser
 			}
 		} );
 
+	}
+
+	public double getDesiredHeight()
+	{
+		return desiredHeight;
+	}
+
+	public void setDesiredHeight( double desiredHeight )
+	{
+		this.desiredHeight = desiredHeight;
+		if( desiredHeight > pageHeight )
+		{
+			renderPage();
+		}
 	}
 
 	@Override
@@ -166,30 +243,63 @@ public class BrowserComponent extends JPanel implements Browser
 		return pageHeight;
 	}
 
+	private void parsePageContent()
+	{
+		WebResponse response = page.getWebResponse();
+		url = response.getRequestSettings().getUrl();
+
+		//Parse the input document
+		try
+		{
+			Document doc = new DOMSource( response.getContentAsStream() ).parse();
+
+			//Create the CSS analyzer
+			da = new DOMAnalyzer( doc, url );
+			da.attributesToStyles(); //convert the HTML presentation attributes to inline styles
+			da.addStyleSheet( null, CSSNorm.stdStyleSheet() ); //use the standard style sheet
+			da.addStyleSheet( null, CSSNorm.userStyleSheet() ); //use the additional style sheet
+			da.getStyleSheets(); //load the author style sheets
+
+			//Display the result
+			root = da.getRoot();
+
+			renderPage();
+		}
+		catch( SAXException e )
+		{
+			log.debug( "Error parsing page content", e );
+		}
+		catch( IOException e )
+		{
+			log.debug( "Error parsing page content", e );
+		}
+	}
+
 	private void renderPage()
 	{
 		if( root != null )
 		{
-			SwingUtilities.invokeLater( new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					removeAll();
-					Dimension size = getSize();
-					//Compensate for 2px border added around HTML content.
-					size.setSize( size.getWidth() - 4, size.getHeight() - 4 );
+			Dimension size = getSize();
+			//Compensate for 2px border added around HTML content.
+			size.setSize( size.getWidth() - 4, desiredHeight - 4 );
 
-					if( size.getHeight() > 0 && size.getWidth() > 0 )
+			if( size.getHeight() > 0 && size.getWidth() > 0 )
+			{
+				final BrowserCanvas canvas = new BrowserCanvas( root, da, size, url );
+				SwingUtilities.invokeLater( new Runnable()
+				{
+					@Override
+					public void run()
 					{
-						BrowserCanvas canvas = new BrowserCanvas( root, da, size, url );
+						removeAll();
+
 						add( canvas, BorderLayout.CENTER );
 						double oldHeight = pageHeight;
 						pageHeight = canvas.getPreferredSize().getHeight();
 						propertyChangeSupport.firePropertyChange( PAGE_HEIGHT, oldHeight, pageHeight );
 					}
-				}
-			} );
+				} );
+			}
 		}
 	}
 
@@ -230,26 +340,25 @@ public class BrowserComponent extends JPanel implements Browser
 				Box box = locateBox( canvas.getViewport(), e.getX(), e.getY() );
 				Node node = box.getNode();
 
-				String href = findLink( node );
-				if( href != null )
+				final HtmlElement element = lookupElementForNode( findLink( node ) );
+				if( element != null )
 				{
-					try
+					executor.execute( new Runnable()
 					{
-						URL newUrl = new URL( url, href );
-						client.getPage( newUrl );
-					}
-					catch( FailingHttpStatusCodeException e1 )
-					{
-						log.error( "Failed to get page at: " + href, e1 );
-					}
-					catch( MalformedURLException e1 )
-					{
-						log.error( "Failed to get page at: " + href, e1 );
-					}
-					catch( IOException e1 )
-					{
-						log.error( "Failed to get page at: " + href, e1 );
-					}
+						@Override
+						public void run()
+						{
+							try
+							{
+								log.debug( "Clicking on: {}", element );
+								element.click();
+							}
+							catch( IOException e1 )
+							{
+								log.error( "Failed clicking on: " + element, e1 );
+							}
+						}
+					} );
 				}
 			}
 		}
@@ -302,8 +411,10 @@ public class BrowserComponent extends JPanel implements Browser
 		}
 	}
 
-	private class MyWebWindowListener implements WebWindowListener
+	private final class MyWebWindowListener implements WebWindowListener
 	{
+		private DomListener domListener = new DomListener();
+
 		@Override
 		public void webWindowOpened( WebWindowEvent event )
 		{
@@ -313,40 +424,43 @@ public class BrowserComponent extends JPanel implements Browser
 		@Override
 		public void webWindowContentChanged( WebWindowEvent event )
 		{
-			WebResponse response = event.getWebWindow().getEnclosedPage().getWebResponse();
-			url = response.getRequestSettings().getUrl();
-
-			//Parse the input document
-			try
+			if( page != null )
 			{
-				Document doc = new DOMSource( response.getContentAsStream() ).parse();
-
-				//Create the CSS analyzer
-				da = new DOMAnalyzer( doc, url );
-				da.attributesToStyles(); //convert the HTML presentation attributes to inline styles
-				da.addStyleSheet( null, CSSNorm.stdStyleSheet() ); //use the standard style sheet
-				da.addStyleSheet( null, CSSNorm.userStyleSheet() ); //use the additional style sheet
-				da.getStyleSheets(); //load the author style sheets
-
-				//Display the result
-				root = da.getRoot();
-
-				renderPage();
+				page.removeDomChangeListener( domListener );
 			}
-			catch( SAXException e )
-			{
-				e.printStackTrace();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
+			page = ( HtmlPage )event.getWebWindow().getEnclosedPage();
+			page.addDomChangeListener( domListener );
+
+			parsePageContent();
 		}
 
 		@Override
 		public void webWindowClosed( WebWindowEvent event )
 		{
 			log.debug( "webWindowClosed: {}", event );
+		}
+	}
+
+	private final class DomListener implements DomChangeListener
+	{
+		@Override
+		public void nodeDeleted( DomChangeEvent event )
+		{
+			log.debug( "NODE DELETED: {}", event.getChangedNode() );
+			if( event.getChangedNode().isDisplayed() )
+			{
+				parsePageContent();
+			}
+		}
+
+		@Override
+		public void nodeAdded( DomChangeEvent event )
+		{
+			log.debug( "NODE ADDED: {}", event.getChangedNode() );
+			if( event.getChangedNode().isDisplayed() )
+			{
+				parsePageContent();
+			}
 		}
 	}
 

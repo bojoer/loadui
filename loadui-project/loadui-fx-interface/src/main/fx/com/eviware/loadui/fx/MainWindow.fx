@@ -188,7 +188,8 @@ public class MainWindow {
 			appState.insertInto( AgentList { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
 			
 			appState.insertInto( BrowserControl {
-				url: "http://www.soapui.org/Appindex/soapui-pro-starterpage-home.html",
+				//url: "http://www.soapui.org/Appindex/soapui-pro-starterpage-home.html",
+				url: java.lang.System.getProperty( "url", "http://soapui.org/appindex/soapui-courtesy-starterpage-home.html" ),
 				layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 502, 315 ), height: 507 }
 			}, WORKSPACE_FRONT );
 		} else {
@@ -202,7 +203,7 @@ public class MainWindow {
 				//width: 300
 				height: bind scene.height - 135
 			}
-			appState.insertInto( feed, WORKSPACE_FRONT );			
+			appState.insertInto( feed, WORKSPACE_FRONT );
 		}
 		
 		//Toolbar

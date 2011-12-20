@@ -38,6 +38,11 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-utils</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>cssbox</groupId>
 			<artifactId>cssbox</artifactId>
 			<version>3.4</version>

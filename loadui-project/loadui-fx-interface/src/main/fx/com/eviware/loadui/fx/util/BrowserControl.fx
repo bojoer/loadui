@@ -39,6 +39,7 @@ public class BrowserControl extends ScrollView {
 	
 	override var height on replace {
 		stack.height = Math.max( stack.height, height );
+		browser.setDesiredHeight( height );
 	}
 	
 	postinit {
