@@ -2,6 +2,7 @@ package com.eviware.loadui.util.browser;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
@@ -13,6 +14,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,14 +36,18 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.TopLevelWindow;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequestSettings;
 import com.gargoylesoftware.htmlunit.WebResponse;
+import com.gargoylesoftware.htmlunit.WebWindow;
 import com.gargoylesoftware.htmlunit.WebWindowEvent;
 import com.gargoylesoftware.htmlunit.WebWindowListener;
 import com.gargoylesoftware.htmlunit.html.DomChangeEvent;
 import com.gargoylesoftware.htmlunit.html.DomChangeListener;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 
 public class BrowserComponent extends JPanel implements Browser
@@ -51,6 +57,7 @@ public class BrowserComponent extends JPanel implements Browser
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport( this );
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	private final WebClient client = new WebClient();
+	private final WebWindow window;
 	private HtmlPage page;
 
 	private URL url;
@@ -65,14 +72,13 @@ public class BrowserComponent extends JPanel implements Browser
 		super( new BorderLayout() );
 
 		client.addWebWindowListener( new MyWebWindowListener() );
+		window = client.getCurrentWindow();
 
 		setUrl( urlString );
 
 		addComponentListener( new PanelSizeListener() );
 		addMouseMotionListener( new MouseMovedListener() );
 		addMouseListener( new ClickListener() );
-
-		log.debug( "JavaScript engine: " + client.getJavaScriptEngine() );
 	}
 
 	private static Node findLink( Node node )
@@ -81,15 +87,6 @@ public class BrowserComponent extends JPanel implements Browser
 		{
 			node = node.getParentNode();
 		}
-
-		//		if( node != null )
-		//		{
-		//			Node namedItem = node.getAttributes().getNamedItem( "href" );
-		//			if( namedItem != null )
-		//			{
-		//				return namedItem.getNodeValue();
-		//			}
-		//		}
 
 		return node;
 	}
@@ -150,12 +147,10 @@ public class BrowserComponent extends JPanel implements Browser
 		}
 		else
 		{
-			//log.debug( "Node is child." );
 			Node sibling = node.getPreviousSibling();
 			int position = 0;
 			while( sibling != null )
 			{
-				//log.debug( "Previous sibling: {}", sibling );
 				if( sibling instanceof Element )
 				{
 					position++ ;
@@ -164,22 +159,12 @@ public class BrowserComponent extends JPanel implements Browser
 			}
 
 			HtmlElement parent = lookupElementForNode( node.getParentNode() );
-			//			log.debug( "Parents children: {}, get with position: {}",
-			//					Iterables.transform( parent.getChildElements(), new Function<HtmlElement, String>()
-			//					{
-			//						@Override
-			//						public String apply( HtmlElement input )
-			//						{
-			//							return input.getNodeName();
-			//						}
-			//					} ), position );
 
 			if( parent == null )
 			{
 				return null;
 			}
 
-			log.debug( "Returning: {}", Iterables.get( parent.getChildElements(), position ) );
 			return Iterables.get( parent.getChildElements(), position );
 		}
 	}
@@ -193,7 +178,7 @@ public class BrowserComponent extends JPanel implements Browser
 			{
 				try
 				{
-					page = client.getPage( urlString );
+					page = client.getPage( window, new WebRequestSettings( new URL( urlString ) ) );
 				}
 				catch( FailingHttpStatusCodeException e )
 				{
@@ -267,11 +252,11 @@ public class BrowserComponent extends JPanel implements Browser
 		}
 		catch( SAXException e )
 		{
-			log.debug( "Error parsing page content", e );
+			log.error( "Error parsing page content", e );
 		}
 		catch( IOException e )
 		{
-			log.debug( "Error parsing page content", e );
+			log.error( "Error parsing page content", e );
 		}
 	}
 
@@ -340,7 +325,7 @@ public class BrowserComponent extends JPanel implements Browser
 				Box box = locateBox( canvas.getViewport(), e.getX(), e.getY() );
 				Node node = box.getNode();
 
-				final HtmlElement element = lookupElementForNode( findLink( node ) );
+				final HtmlElement element = lookupElementForNode( Objects.firstNonNull( findLink( node ), node ) );
 				if( element != null )
 				{
 					executor.execute( new Runnable()
@@ -418,26 +403,48 @@ public class BrowserComponent extends JPanel implements Browser
 		@Override
 		public void webWindowOpened( WebWindowEvent event )
 		{
-			log.debug( "webWindowOpened: {}", event );
 		}
 
 		@Override
 		public void webWindowContentChanged( WebWindowEvent event )
 		{
-			if( page != null )
+			if( event.getWebWindow().getTopWindow() == window )
 			{
-				page.removeDomChangeListener( domListener );
-			}
-			page = ( HtmlPage )event.getWebWindow().getEnclosedPage();
-			page.addDomChangeListener( domListener );
+				if( page != null )
+				{
+					page.removeDomChangeListener( domListener );
+				}
+				page = ( HtmlPage )window.getEnclosedPage();
+				page.addDomChangeListener( domListener );
 
-			parsePageContent();
+				parsePageContent();
+			}
+			else
+			{
+				( ( TopLevelWindow )event.getWebWindow().getTopWindow() ).close();
+			}
 		}
 
 		@Override
 		public void webWindowClosed( WebWindowEvent event )
 		{
-			log.debug( "webWindowClosed: {}", event );
+			WebWindow closed = event.getWebWindow();
+			if( closed instanceof TopLevelWindow && event.getWebWindow() != window )
+			{
+				try
+				{
+					Desktop.getDesktop().browse(
+							closed.getEnclosedPage().getWebResponse().getRequestSettings().getUrl().toURI() );
+				}
+				catch( IOException e )
+				{
+					log.error( "Unable to open url", e );
+				}
+				catch( URISyntaxException e )
+				{
+					log.error( "Unable to open url", e );
+				}
+			}
 		}
 	}
 
@@ -446,7 +453,8 @@ public class BrowserComponent extends JPanel implements Browser
 		@Override
 		public void nodeDeleted( DomChangeEvent event )
 		{
-			log.debug( "NODE DELETED: {}", event.getChangedNode() );
+			log.debug( "NODE DELETED: {}, parsing: {}", event.getChangedNode(), page.isBeingParsed() );
+
 			if( event.getChangedNode().isDisplayed() )
 			{
 				parsePageContent();
@@ -456,7 +464,7 @@ public class BrowserComponent extends JPanel implements Browser
 		@Override
 		public void nodeAdded( DomChangeEvent event )
 		{
-			log.debug( "NODE ADDED: {}", event.getChangedNode() );
+			log.debug( "NODE ADDED: {}, parsing: {}", event.getChangedNode(), page.isBeingParsed() );
 			if( event.getChangedNode().isDisplayed() )
 			{
 				parsePageContent();
