@@ -131,6 +131,7 @@ public class MainWindow {
 	public-read var testcaseCanvas:Canvas;
 	public-read def canvas:Canvas = bind if(AppState.byScene( scene ).state == TESTCASE_FRONT ) testcaseCanvas else projectCanvas;
 	public-read var navigator:NavigationPanel;
+	public-read def assertionHolder = com.eviware.loadui.fx.assertions.AssertionCollection { project: bind projectCanvas.canvasItem as ProjectItem };
 	
 	/**
 	* Called once the bean is fully initialized (all the properties defined in the Spring

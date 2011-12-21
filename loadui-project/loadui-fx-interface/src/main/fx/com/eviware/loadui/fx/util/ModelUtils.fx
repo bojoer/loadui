@@ -17,6 +17,7 @@
 package com.eviware.loadui.fx.util;
 
 import com.eviware.loadui.api.traits.Labeled;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
@@ -70,10 +71,10 @@ public class CollectionHolder extends WeakEventHandler {
 	
 	public-init var owner:EventFirer on replace oldOwner {
 		if( oldOwner != null ) {
-			oldOwner.removeEventListener( CollectionEvent.class, this );
+			oldOwner.removeEventListener( BaseEvent.class, this );
 		}
 		if( owner != null ) {
-			owner.addEventListener( CollectionEvent.class, this );
+			owner.addEventListener( BaseEvent.class, this );
 		}
 	}
 	
@@ -89,18 +90,27 @@ public class CollectionHolder extends WeakEventHandler {
 	}
 	
 	override function handleEvent( e ):Void {
-		def event = e as CollectionEvent;
-		if( event.getKey().equals( key ) ) {
-			if( event.getEvent() == CollectionEvent.Event.ADDED ) {
-				FxUtils.runInFxThread( function():Void {
-					insert event.getElement() into items;
-					onAdd( event.getElement() );
-				} );
-			} else if( event.getEvent() == CollectionEvent.Event.REMOVED ) {
-				FxUtils.runInFxThread( function():Void {
-					delete event.getElement() from items;
-					onRemove( event.getElement() );
-				} );
+		if( Releasable.RELEASED.equals( (e as BaseEvent).getKey() ) ) {
+			owner = null;
+			for( item in items ) onRemove( item );
+			items = [];
+			return;
+		}
+		
+		if( e instanceof CollectionEvent ) {
+			def event = e as CollectionEvent;
+			if( event.getKey().equals( key ) ) {
+				if( event.getEvent() == CollectionEvent.Event.ADDED ) {
+					FxUtils.runInFxThread( function():Void {
+						insert event.getElement() into items;
+						onAdd( event.getElement() );
+					} );
+				} else if( event.getEvent() == CollectionEvent.Event.REMOVED ) {
+					FxUtils.runInFxThread( function():Void {
+						delete event.getElement() from items;
+						onRemove( event.getElement() );
+					} );
+				}
 			}
 		}
 	}
