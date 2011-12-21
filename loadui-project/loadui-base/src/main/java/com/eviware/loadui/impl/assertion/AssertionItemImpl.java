@@ -16,6 +16,7 @@
 package com.eviware.loadui.impl.assertion;
 
 import java.io.IOException;
+import java.util.EventObject;
 
 import javax.annotation.Nonnull;
 
@@ -27,6 +28,9 @@ import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.api.assertion.Constraint;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.EventFirer;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.serialization.ListenableValue.ValueListener;
@@ -37,12 +41,13 @@ import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.assertion.ToleranceSupport;
+import com.eviware.loadui.util.events.EventSupport;
 import com.eviware.loadui.util.serialization.SerializationUtils;
 import com.eviware.loadui.util.testevents.TestEventSourceSupport;
 import com.google.common.base.Objects;
 
 public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent.Source<AssertionFailureEvent>,
-		Releasable
+		EventFirer, Releasable
 {
 	protected static final Logger log = LoggerFactory.getLogger( AssertionItemImpl.class );
 
@@ -52,6 +57,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	private static final String TOLERANCE_ALLOWED_OCCURRENCES = "toleranceAllowedOccurrences";
 	private static final String TOLERANCE_PERIOD = "tolerancePeriod";
 
+	private final EventSupport eventSupport = new EventSupport();
 	private final ToleranceSupport toleranceSupport = new ToleranceSupport();
 	private final ValueAsserter valueAsserter = new ValueAsserter();
 	private final TestEventSourceSupport sourceSupport;
@@ -166,8 +172,12 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	@Override
 	public void setLabel( String label )
 	{
-		addonSupport.setAttribute( LABEL, label );
-		sourceSupport.setLabel( label );
+		if( !Objects.equal( getLabel(), label ) )
+		{
+			addonSupport.setAttribute( LABEL, label );
+			sourceSupport.setLabel( label );
+			fireEvent( new BaseEvent( this, LABEL ) );
+		}
 	}
 
 	@Override
@@ -236,12 +246,38 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		release();
 		addon.removeAssertion( this );
 		addonSupport.delete();
+		fireEvent( new BaseEvent( this, DELETED ) );
 	}
 
 	@Override
 	public void release()
 	{
+		fireEvent( new BaseEvent( this, RELEASED ) );
 		stop();
+	}
+
+	@Override
+	public <T2 extends EventObject> void addEventListener( Class<T2> type, EventHandler<? super T2> listener )
+	{
+		eventSupport.addEventListener( type, listener );
+	}
+
+	@Override
+	public <T2 extends EventObject> void removeEventListener( Class<T2> type, EventHandler<? super T2> listener )
+	{
+		eventSupport.removeEventListener( type, listener );
+	}
+
+	@Override
+	public void clearEventListeners()
+	{
+		eventSupport.clearEventListeners();
+	}
+
+	@Override
+	public void fireEvent( EventObject event )
+	{
+		eventSupport.fireEvent( event );
 	}
 
 	@Override

@@ -37,13 +37,11 @@ public class AssertionCollection {
 			key: ProjectItem.SCENES
 			items: project.getScenes()
 			onAdd: function( e ):Void {
-				println( "TestCase: {e} added!" );
 				def newCollection = getAssertionCollection( e as CanvasItem );
 				insert newCollection into assertionItemCollections;
 				insert newCollection.items as AssertionItem[] into assertionItems;
 			}
 			onRemove: function( e ):Void {
-				println( "TestCase: {e} removed!" );
 				rebuildAssertionList();
 			}
 		}

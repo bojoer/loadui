@@ -35,6 +35,7 @@ import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.MainWindow;
 
 import com.eviware.loadui.api.statistics.StatisticsManager;
 
@@ -84,6 +85,7 @@ class AssertionInspectorNode extends Stack {
 	};
 	
 	def assertions = AssertionList {
+		items: bind MainWindow.instance.assertionHolder.assertionItems
 		layoutInfo: LayoutInfo { vfill: true, hfill: true, hgrow: Priority.ALWAYS, vgrow: Priority.ALWAYS, margin: bind if( toolbar.hidden ) Insets { left: 40 } else Insets { left: toolbar.width + 15 } }
 	}
 	
