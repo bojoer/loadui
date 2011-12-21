@@ -1338,6 +1338,14 @@
 	-fx-background-radius: 6;
 }
 
-.assertion-box *.label {
+.assertion-box *.label, .assertion-box *.title, .assertion-box *.count {
 	-fx-text-fill: #817e7e;
+}
+
+.assertion-box *.title {
+	-fx-font-weight: bold;
+}
+
+.assertion-box *.count {
+	-fx-font-size: 22pt;
 }
