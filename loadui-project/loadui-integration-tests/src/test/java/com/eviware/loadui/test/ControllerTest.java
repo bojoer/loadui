@@ -65,6 +65,7 @@ public class ControllerTest
 	public void shouldHaveNoFailedBundles()
 	{
 		Bundle[] bundles = controller.getBundleContext().getBundles();
+
 		for( Bundle bundle : bundles )
 		{
 			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(),
