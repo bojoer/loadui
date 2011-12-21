@@ -53,8 +53,11 @@ public function buildLayoutComponentNode( layoutComponent:LayoutComponent ):Layo
 		}
 	} else if( layoutComponent.has("component") ) {
 		println("Creating SwingLayoutComponentNode");
+		def swingComponent = layoutComponent.get("component") as JComponent;
 		SwingLayoutComponentNode {
-			component: layoutComponent.get("component") as JComponent
+			component: swingComponent
+			fixedHeight: if( layoutComponent.has("componentHeight") ) layoutComponent.get("componentHeight") as Number else -1
+			fixedWidth: if( layoutComponent.has("componentWidth") ) layoutComponent.get("componentWidth") as Number else -1
 		}
 	} else if( layoutComponent instanceof LayoutContainer ) {
 		LayoutContainerNode { layoutComponent: layoutComponent }
