@@ -45,6 +45,7 @@ import com.gargoylesoftware.htmlunit.WebWindowEvent;
 import com.gargoylesoftware.htmlunit.WebWindowListener;
 import com.gargoylesoftware.htmlunit.html.DomChangeEvent;
 import com.gargoylesoftware.htmlunit.html.DomChangeListener;
+import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.common.base.Objects;
@@ -453,7 +454,8 @@ public class BrowserComponent extends JPanel implements Browser
 		@Override
 		public void nodeDeleted( DomChangeEvent event )
 		{
-			if( event.getChangedNode().isDisplayed() )
+			DomNode node = event.getChangedNode();
+			if( node != null && node.isDisplayed() )
 			{
 				parsePageContent();
 			}
@@ -462,7 +464,8 @@ public class BrowserComponent extends JPanel implements Browser
 		@Override
 		public void nodeAdded( DomChangeEvent event )
 		{
-			if( event.getChangedNode().isDisplayed() )
+			DomNode node = event.getChangedNode();
+			if( node != null && node.isDisplayed() )
 			{
 				parsePageContent();
 			}
