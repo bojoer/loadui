@@ -22,6 +22,7 @@ import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.EventObject;
 
@@ -34,6 +35,7 @@ import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.StringUtils;
+import com.eviware.loadui.fx.MainWindow;
 
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
@@ -50,6 +52,12 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
     var componentRegistry: ComponentRegistry;
     
     var statHolderMap: Map = new HashMap();
+    var assertionItemMap: Map = new HashMap();
+    
+    var assertionItems = bind MainWindow.instance.assertionHolder.assertionItems on replace {
+    	dropOldAssertionItems();
+    	addNewAssertionItems();
+    }
     
     init {
         manager = BeanInjector.getBean(StatisticsManager.class);
@@ -153,4 +161,33 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
    		addItem(item);
 	}
 	
+	function addNewAssertionItems(){
+	   	for( item in assertionItems ){
+	   	    if (not assertionItemMap.containsKey(item)){
+				def ati = AssertionToolbarItem {
+					assertionItem: item
+					category: "ASSERTIONS"
+				};
+				addItem(ati);
+				assertionItemMap.put(item, ati);
+	   	    }
+	   	}
+	}
+	
+	function dropOldAssertionItems(){
+	    var assertionItemList = new ArrayList();
+	    for( item in assertionItems ){
+	        assertionItemList.add(item);
+	    }
+	    
+	   	for( item in assertionItemMap.keySet().toArray() ){
+	   		if(not assertionItemList.contains(item)){
+				def ati: AssertionToolbarItem = assertionItemMap.get(item) as AssertionToolbarItem;
+				if(ati != null){
+					removeItem(ati);
+				}
+				assertionItemMap.remove(item);
+			}
+	   	}
+	}
 }

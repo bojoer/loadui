@@ -1333,9 +1333,9 @@
 }
 
 .assertion-box {
-	-fx-background-color: #979797, #242424;
-	-fx-background-insets: 0, 1;
-	-fx-background-radius: 6;
+	-fx-background-color: #979797, #2d2d2d, #242424, #242424;
+	-fx-background-insets: 0, 1, 1 170 1 1, 1 170 1 7;
+	-fx-background-radius: 6, 6, 6, 0;
 }
 
 .assertion-box *.label, .assertion-box *.title, .assertion-box *.count {
@@ -1348,4 +1348,12 @@
 
 .assertion-box *.count {
 	-fx-font-size: 22pt;
+}
+
+.assertion-box *.separator {
+	-fx-background-color: linear (0%,0%) to (0%,100%) stops (0%, rgba(119,119,119,1)) (25%, rgba(119,119,119,1)) (100%, rgba(119,119,119,0));
+}
+
+.assertion-box *.arrow {
+	-fx-fill: #777777;
 }
