@@ -36,7 +36,7 @@ import java.lang.Iterable;
 import java.lang.Runnable;
 
 public class SelectWidget extends FormFieldWidget, SelectSupport {	
-	var selectField:SelectField;
+	public var selectField:SelectField;
 	
 	override var plc on replace {
 		setPlc( plc );

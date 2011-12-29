@@ -50,12 +50,12 @@ reset = {
 	targetReached = false
 	if ( period.value > 0 ) {
 		//Some sanity checks
-		if (start.value != 0) {
-			if (msPerUnit/start.value > period.value * 1000) {
-				targetReached = true
-				currentRate = end.value
-			}
-		} 
+//		if (start.value != 0) {
+//			if (msPerUnit/start.value > period.value * 1000) {
+//				targetReached = true
+//				currentRate = end.value
+//			}
+//		} 
 		
 		if (!targetReached) {
 			gradient = (end.value - start.value)/ (period.value * 1000)
@@ -82,23 +82,31 @@ begin = {
 schedule = {
 	if (stateProperty.value && running && !scheduled) {
 		if (!targetReached) {
+			println( "intro" )
 			if (currentDelay > 0) {
 				timeEllapsed = timeEllapsed + currentDelay
 				currentRate = start.value + timeEllapsed * gradient
+				println( "case1" )
 			}
 			
 			if (timeEllapsed/1000 >= period.value) {
 				targetReached = true
 				currentRate = end.value
 				direction = "none"
+				println( "case2" )
 			}
-			if (currentRate.longValue() > 0) 
+			if (currentRate.longValue() > 0) { 
 				currentDelay = msPerUnit/(currentRate.longValue()) 
-			else 
+				println( "case3" )
+			}
+			else { 
 				currentDelay = 1 //Handling edge cases
+				println( "case4" )
+			}
 		} 
 		
-		
+		println( "currentDelay: $currentDelay" )
+					
 		future = timer.runAfter(currentDelay.intValue()) {
 			trigger()
 			scheduled = false

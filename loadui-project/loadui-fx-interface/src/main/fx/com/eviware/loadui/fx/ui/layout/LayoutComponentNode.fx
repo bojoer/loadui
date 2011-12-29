@@ -27,6 +27,8 @@ import javafx.scene.layout.Resizable;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.osgi.WidgetRegistry;
 import com.eviware.loadui.fx.ui.layout.widgets.FormattedStringLabel;
+import com.eviware.loadui.api.layout.PropertyLayoutComponent;
+import com.eviware.loadui.fx.ui.layout.widgets.SoapUIProjectSelector;
 
 import com.eviware.loadui.api.layout.*;
 import com.eviware.loadui.util.layout.FormattedString;
@@ -40,8 +42,8 @@ import javax.swing.JComponent;
  */
 public function buildLayoutComponentNode( layoutComponent:LayoutComponent ):LayoutComponentNode {
 	if( layoutComponent.has("widget") ) {
-		def widget = WidgetRegistry.instance.buildWidget( layoutComponent );
 		
+		def widget = WidgetRegistry.instance.buildWidget( layoutComponent );
 		if( widget instanceof LayoutComponentNode ) widget as LayoutComponentNode
 		else WidgetLayoutComponentNode { widget: widget }
 	} else if( layoutComponent.has("fString") ) {
@@ -52,12 +54,17 @@ public function buildLayoutComponentNode( layoutComponent:LayoutComponent ):Layo
 			}
 		}
 	} else if( layoutComponent.has("component") ) {
-		println("Creating SwingLayoutComponentNode");
 		def swingComponent = layoutComponent.get("component") as JComponent;
 		SwingLayoutComponentNode {
 			component: swingComponent
 			fixedHeight: if( layoutComponent.has("componentHeight") ) layoutComponent.get("componentHeight") as Number else -1
 			fixedWidth: if( layoutComponent.has("componentWidth") ) layoutComponent.get("componentWidth") as Number else -1
+		}
+	} else if( layoutComponent.has("soapUIProject") ) {
+		SoapUIProjectSelector {
+			project: layoutComponent.get("soapUIProject") as PropertyLayoutComponent
+			testSuite: layoutComponent.get("testSuite") as PropertyLayoutComponent
+			testCase: layoutComponent.get("testCase") as PropertyLayoutComponent
 		}
 	} else if( layoutComponent instanceof LayoutContainer ) {
 		LayoutContainerNode { layoutComponent: layoutComponent }
