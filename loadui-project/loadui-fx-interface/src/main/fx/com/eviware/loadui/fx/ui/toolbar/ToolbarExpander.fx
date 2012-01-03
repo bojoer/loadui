@@ -163,6 +163,10 @@ public class ToolbarExpander extends CustomNode, Pagination {
 			if( not contains( sceneToLocal( Point2D { x: e.sceneX, y: e.sceneY } ) ) )
 				group = null;
 		}
+		onMouseReleased: function( e:MouseEvent ) { // Close toolbarexpander when component has been dropped.
+			if( not contains( sceneToLocal( Point2D { x: e.sceneX, y: e.sceneY } ) ) )
+				group = null;
+		}
 	}
 	
 	def slideWipe = SlideWipe {
