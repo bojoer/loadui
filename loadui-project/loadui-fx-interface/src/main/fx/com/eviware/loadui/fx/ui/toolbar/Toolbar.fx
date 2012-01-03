@@ -235,16 +235,6 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 	}
 	def expandedGroup = ToolbarExpander { expandedHolder: expandedHolder, showLabels: showLabels, width: bind width, groupHeight: groupHeight, topMargin: groupTopMargin, groupLeftMargin: groupLeftMargin };
 	
-	def modalLayer = Rectangle {
-		width: bind scene.width
-		height: bind scene.height
-		fill: Color.TRANSPARENT
-		onMousePressed: function( e:MouseEvent ) {
-			if( not expandedGroup.contains( expandedGroup.sceneToLocal( Point2D { x: e.sceneX, y: e.sceneY } ) ) )
-				expandedGroup.group = null;
-		}
-	}
-
 	def glow = Glow { level: .5 };
 	
 	override function create(): Node {
