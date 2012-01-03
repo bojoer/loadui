@@ -19,6 +19,7 @@ import com.sun.javafx.scene.layout.Region;
 import com.javafx.preview.control.PopupMenu;
 
 import javafx.scene.text.Text;
+import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.dialogs.*;
@@ -31,6 +32,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.LayoutInfo;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 import com.javafx.preview.control.CustomMenuItem;
 import com.javafx.preview.control.MenuButton;
@@ -42,6 +45,7 @@ import java.io.File;
 
 import javafx.scene.control.Button;
 import javafx.geometry.HPos;
+import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 
 import javafx.scene.input.MouseEvent;
@@ -49,7 +53,6 @@ import javafx.scene.input.MouseEvent;
 public class SoapUIProjectSelector extends LayoutComponentNode, EventHandler {
 
 	var menuButton:MenuButton;
-	var item:PopupMenu;
 	var projectLabel:Label;
 	var testSuiteLabel:Label;
 	var testCaseLabel:Label;
@@ -62,49 +65,57 @@ public class SoapUIProjectSelector extends LayoutComponentNode, EventHandler {
 	var hbox:HBox;
 	
 	var button:Button;
-	var projectSelectionDialog:ProjectSelectionDialog = ProjectSelectionDialog{};
+//	var projectSelectionDialog:ProjectSelectionDialog = ProjectSelectionDialog{};
 	
 	postinit {
 		updateLabels();
 		testCase.getProperty().getOwner().addEventListener( PropertyEvent.class, this );
 	}
 	
-//	init {
-//		item = PopupMenu {
-//			styleClass: "execution-selector-menu-item"
-//			layoutInfo: LayoutInfo { height: 160, width: 325 }
-//			
-//
-//			items: VBox {
-//				snapToPixel: true
-//
-////				onMouseExited: function(e:MouseEvent):Void {
-////					if( e.x > boundsInLocal.maxX or e.x < boundsInLocal.minX or e.y < boundsInLocal.minY or e.y > boundsInLocal.maxY )
-////						item.hide()
-////					else
-////						println("DO_NOT_EXIT!!!");
-////				}
-//
-//				content: [
-//					FormFieldWidget {
-//						plc: project
-//						field: FileInputField {
-//							label: project.getLabel()
-//							value: project.getProperty().getValue()
-//							selectMode : FileInputField.FILES_ONLY
-//						}
-//					}
-//					testSuiteSelector = SelectWidget {
-//						plc: testSuite
-//					}
-//					testCaseSelector = SelectWidget {
-//						plc: testCase
-//					}
-////					Region{ managed:false, width: 325, height: 160, style:"-fx-background-color: #ff0000;" }
-//				]
-//			} 
-//		};
-//	}
+	def modalLayer:Rectangle = Rectangle {
+		width: bind scene.width
+		height: bind scene.height
+		fill: Color.TRANSPARENT
+		onMousePressed: function( e:MouseEvent ) {
+			if( not item.contains( item.sceneToLocal( Point2D { x: e.sceneX, y: e.sceneY } ) ) )
+			{
+				delete modalLayer from AppState.byScene( scene ).overlay.content;
+				println("delete layer");
+				item.visible = false;
+				menuButton.hide();
+			}
+		}
+	}
+	
+	public def item:CustomMenuItem = CustomMenuItem {
+			styleClass: "execution-selector-menu-item"
+			layoutInfo: LayoutInfo { height: 160, width: 325 }
+			
+
+			node: VBox {
+				snapToPixel: true
+
+				content: [
+					FormFieldWidget {
+						plc: project
+						field: FileInputField {
+							label: project.getLabel()
+							value: project.getProperty().getValue()
+							selectMode : FileInputField.FILES_ONLY
+						}
+					}
+					testSuiteSelector = SelectWidget {
+						plc: testSuite
+						disable: project.getProperty().getValue() == null
+					}
+					testCaseSelector = SelectWidget {
+						plc: testCase
+						disable: project.getProperty().getValue() == null
+					}
+//					Region{ managed:false, width: 325, height: 160, style:"-fx-background-color: #ff0000;" }
+				]
+			} 
+		};
 
 	init {
 		hbox = HBox {
@@ -112,19 +123,24 @@ public class SoapUIProjectSelector extends LayoutComponentNode, EventHandler {
 			content: [
 				VBox {
 					content: [
-//						menuButton = MenuButton {
-//							styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
-//							text: "soapUI Project"
-//							items: 
-//								item
-//							layoutInfo: LayoutInfo{ height: 18 }
-//						}
+						menuButton = MenuButton {
+							styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
+							text: "soapUI Project"
+							items: 
+								item
+							layoutInfo: LayoutInfo{ height: 18 }
+							onMousePressed: function(e:MouseEvent):Void {
+								println("insert layer");
+								insert modalLayer into AppState.byScene( scene ).overlay.content;
+								item.visible = true;
+							}
+						}
 
-button = Button {                text: "Select project"
-                action: function() {
-                    projectSelectionDialog.show();
-                }
-            }
+//button = Button {                text: "Select project"
+//                action: function() {
+//                    projectSelectionDialog.show();
+//                }
+//            }
 						projectLabel = Label { text: "", layoutInfo: LayoutInfo{ height: 18 } }
 					]	
 				}
@@ -183,54 +199,54 @@ button = Button {                text: "Select project"
 
 
 
-public class ProjectSelectionDialog {
-	
-	public-init var wc:WindowController;
-    
-    var dialog:Dialog;
-    
-    function show()
-    {
-    	wc.bringToFront();
-    	dialog.show();
-    }
-    
-    function generateDialog()
-    {
-    	  dialog = null;
-    	  
-    	  dialog = Dialog {
-        		showPostInit: false
-            title: "Select soapUI Project"
-            content: [
-            	FormFieldWidget {
-						plc: project
-						width: 250
-						field: FileInputField {
-							label: project.getLabel()
-							value: project.getProperty().getValue()
-							selectMode : FileInputField.FILES_ONLY
-						}
-					}
-					testSuiteSelector = SelectWidget {
-						plc: testSuite
-						disable: project.getProperty().getValue() == null
-					}
-					testCaseSelector = SelectWidget {
-						plc: testCase
-						disable: project.getProperty().getValue() == null
-					}
-            ]
-            noOk: true
-            noCancel: true
-//            onOk: function() {
-//					dialog.close();
-//            }
-        }
-    }
-    
-    init {
-		generateDialog()
-    }
-};
+//public class ProjectSelectionDialog {
+//	
+//	public-init var wc:WindowController;
+//    
+//    var dialog:Dialog;
+//    
+//    function show()
+//    {
+//    	wc.bringToFront();
+//    	dialog.show();
+//    }
+//    
+//    function generateDialog()
+//    {
+//    	  dialog = null;
+//    	  
+//    	  dialog = Dialog {
+//        		showPostInit: false
+//            title: "Select soapUI Project"
+//            content: [
+//            	FormFieldWidget {
+//						plc: project
+//						width: 250
+//						field: FileInputField {
+//							label: project.getLabel()
+//							value: project.getProperty().getValue()
+//							selectMode : FileInputField.FILES_ONLY
+//						}
+//					}
+//					testSuiteSelector = SelectWidget {
+//						plc: testSuite
+//						disable: project.getProperty().getValue() == null
+//					}
+//					testCaseSelector = SelectWidget {
+//						plc: testCase
+//						disable: project.getProperty().getValue() == null
+//					}
+//            ]
+//            noOk: true
+//            noCancel: true
+////            onOk: function() {
+////					dialog.close();
+////            }
+//        }
+//    }
+//    
+//    init {
+//		generateDialog()
+//    }
+//};
 
