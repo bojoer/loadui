@@ -15,6 +15,8 @@ import javafx.scene.control.Label;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.geometry.HPos;
+import javafx.scene.control.ScrollView;
+import javafx.scene.control.ScrollBarPolicy;
 
 import javafx.scene.input.MouseEvent;
 
@@ -41,6 +43,10 @@ import com.javafx.preview.control.Menu;
 import com.javafx.preview.control.PopupMenu;
 
 import com.eviware.loadui.api.traits.Labeled;
+import com.eviware.loadui.api.statistics.StatisticHolder;
+import com.eviware.loadui.fx.ui.dnd.DroppableNode;
+import com.eviware.loadui.fx.ui.dnd.Draggable;
+import com.eviware.loadui.fx.assertions.StatisticHolderAssertionToolbarItem;
 
 import java.util.HashMap;
 
@@ -48,16 +54,19 @@ public class AssertionList extends Stack {
 	
 	def observer = AssertionObserver{}
 	
+	def menu: CustomPopupMenu = CustomPopupMenu{}
+	
 	var manager: TestEventManager = bind BeanInjector.getBean( TestEventManager.class ) on replace oldValue {
 	    if(oldValue != null){
 	        oldValue.unregisterObserver(observer);
 	    }
 		manager.registerObserver(observer);
 	}
-		
+
 	def vbox = VBox {
 		spacing: 11
 		layoutInfo: LayoutInfo { vfill: false, vpos: VPos.TOP }
+		padding: Insets { left: 0, top: 0, right: 17, bottom: 0 }
 	}
 	
 	def placeholder = Stack {
@@ -69,8 +78,27 @@ public class AssertionList extends Stack {
 		]
 	}
 	
+	def scrollView: ScrollView = ScrollView {
+		hbarPolicy: ScrollBarPolicy.NEVER
+		vbarPolicy: ScrollBarPolicy.ALWAYS
+		fitToWidth: true
+		node: vbox
+	}
+
+	def droppable = DroppableNode {
+		contentNode: Region { style: "-fx-background-color: transparent;", layoutInfo: LayoutInfo { width: bind scrollView.layoutBounds.width, height: bind scrollView.layoutBounds.height } }
+		accept: function( d:Draggable ) {
+			d.node instanceof StatisticHolderAssertionToolbarItem
+		}
+		onDrop: function( d:Draggable ) {
+			if ( d.node instanceof StatisticHolderAssertionToolbarItem ) {
+				AddAssertionDialog { statisticHolder: (d.node as StatisticHolderAssertionToolbarItem).statisticHolder };
+			}
+		}
+	}
+	
 	init {
-		content = vbox;
+		content = [scrollView, droppable];
 	}
 	
 	public var assertionBoxMap = new HashMap();
@@ -86,6 +114,7 @@ public class AssertionList extends Stack {
 				aBox;
 			}
 		}
+		insert menu into vbox.content;
 	}
 }
 
@@ -96,21 +125,6 @@ class AssertionBox extends Stack {
 	
 	public function increment() {
 	    value++;
-	}
-	
-	var menu: PopupMenu = PopupMenu {
-	    onShowing: function() {}
-	    onShown: function() {}
-	    items: [
-			MenuItem {
-				text: ##[RENAME]"Rename"
-				action: function() { RenameModelItemDialog { labeled: assertionItem as Labeled.Mutable } }
-			},
-			MenuItem {
-	            text: ##[DELETE]"Delete"
-	            action: function() { DeleteModelItemDialog { modelItem: assertionItem } }
-			}
-        ]
 	}
 	
 	var menuButton: Group = Group {
@@ -125,12 +139,13 @@ class AssertionBox extends Stack {
 	    	    ]
 	    	}
 	    ]
-	    onMouseClicked: function( e:MouseEvent ):Void { menu.show(menuButton, HPos.CENTER, VPos.BOTTOM, 0, 0); }
+	    onMouseClicked: function( e:MouseEvent ):Void { menu.showFor(menuButton, assertionItem); }
 	}
 	
-	public-init var assertionItem:AssertionItem on replace oldValue {
+	public-init var assertionItem: AssertionItem on replace oldValue {
 		content = [
-			Region { styleClass: "assertion-box" },
+			menu,
+			Region { styleClass: "background" },
 			HBox {
 				spacing: 4
 				padding: Insets { left: 15, top: 7, right: 12, bottom: 8 }
@@ -171,9 +186,9 @@ class AssertionBox extends Stack {
 						]
 					}
 				] 
-			},
-			menu
-		]
+			}
+		];
+		layout();
 	}
 	
 	function breadcrumb(): String {
@@ -203,4 +218,27 @@ class AssertionObserver extends TestEventObserver {
 			});
     	}
     }
+}
+
+class CustomPopupMenu extends PopupMenu {
+
+	public var assertionItem: AssertionItem;
+	
+	init{
+	    items = [
+	    	MenuItem {
+    			text: ##[RENAME]"Rename"
+    			action: function() { RenameModelItemDialog { labeled: assertionItem as Labeled.Mutable } }
+    		},
+    		MenuItem {
+                text: ##[DELETE]"Delete"
+                action: function() { DeleteModelItemDialog { modelItem: assertionItem } }
+    		}
+        ]	    
+	}
+	
+	public function showFor(menuButton: Group, assertionItem: AssertionItem){
+	    this.assertionItem = assertionItem;
+	    show(menuButton, HPos.CENTER, VPos.BOTTOM, 0, 0);
+	}
 }

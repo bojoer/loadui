@@ -23,6 +23,8 @@ import javafx.scene.control.ScrollBarPolicy;
 public class TreeSelectorLevel extends ScrollView {
 	public-init var selector:CascadingTreeSelector;
 
+	public var showLabel = true;
+
 	def vbox:VBox = VBox {
 		spacing: 18
 	}
@@ -37,7 +39,7 @@ public class TreeSelectorLevel extends ScrollView {
 	}
 	
 	package function addChildrenFor( target:Object ):Void {
-		insert TreeLevelNode { level: this, target: target } into vbox.content;
+		insert TreeLevelNode { level: this, target: target, showLabel: bind showLabel } into vbox.content;
 	}
 	
 	package function removeChildrenFor( target:Object ):Void {

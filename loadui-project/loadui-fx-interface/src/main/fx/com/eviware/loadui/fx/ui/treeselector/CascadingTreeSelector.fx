@@ -36,6 +36,9 @@ import javax.swing.tree.TreeModel;
  * @author dain.nilsson
  */
 public class CascadingTreeSelector extends Stack {
+    
+    public var showLabel = true;
+    
 	public-init var allowMultiple = false;
 	def bgHbox = HBox {
 		nodeHPos: HPos.RIGHT
@@ -57,7 +60,7 @@ public class CascadingTreeSelector extends Stack {
 	}
 	
 	public-init var treeModel:TreeModel on replace {
-		def rootLevel = TreeSelectorLevel { selector: this, layoutInfo: LayoutInfo { width: bind width / columnCount, hfill: false, hgrow: Priority.NEVER } };
+		def rootLevel = TreeSelectorLevel { selector: this, layoutInfo: LayoutInfo { width: bind width / columnCount, hfill: false, hgrow: Priority.NEVER }, showLabel: bind showLabel };
 		hbox.content = rootLevel;
 		rootLevel.addChildrenFor( treeModel.getRoot() );
 	}
@@ -67,7 +70,7 @@ public class CascadingTreeSelector extends Stack {
 		if( sizeof hbox.content > (index+1) ) {
 			hbox.content[index+1] as TreeSelectorLevel
 		} else {
-			def nextLevel = TreeSelectorLevel { selector: this, layoutInfo: LayoutInfo { width: bind width / columnCount, hfill: false, hgrow: Priority.NEVER } };
+			def nextLevel = TreeSelectorLevel { selector: this, layoutInfo: LayoutInfo { width: bind width / columnCount, hfill: false, hgrow: Priority.NEVER }, showLabel: bind showLabel };
 			insert nextLevel into hbox.content;
 			nextLevel
 		}
