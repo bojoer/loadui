@@ -256,7 +256,7 @@
 	-fx-shadow-highlight-color: rgba(0,0,0,0.5);
 }
 
-.tree-selector-level *.scroll-bar {
+.add-segment-panel *.tree-selector-level *.scroll-bar {
 	-fx-outer-border: #1a1a1a;
 	-fx-inner-border: linear (0%,0%) to (100%,0%) stops (0.0, #343334) (1.0, #414043);
 	-fx-body-color: linear (0%,0%) to (100%,0%) stops (0.0, #58595b) (1.0, #464649);
@@ -1125,16 +1125,16 @@
 	-fx-border-color: #3a3a3a;
 }
 
-.tree-selector-level {
+.add-segment-panel *.tree-selector-level {
 	-fx-text-background-color: #9c9c9c;
 }
 
-.cascading-tree-selector-cell {
+.add-segment-panel *.cascading-tree-selector-cell {
 	-fx-background-color: linear (0%,0%) to (100%,0%) stops (0%, rgba(0,0,0,0.3))  (100%, rgba(0,0,0,0));
 	-fx-background-radius: 4 0 0 4;
 }
 
-.cascading-tree-selector *.title {
+.add-segment-panel *.cascading-tree-selector *.title {
 	-fx-text-fill: #9c9c9c;
 	-fx-font-weight: bold;
 }
@@ -1333,6 +1333,12 @@
 }
 
 .assertion-box {
+	-fx-background-color: #979797, #242424;
+	-fx-background-insets: 1;
+	-fx-background-radius: 6;
+}
+
+.assertion-box *.background {
 	-fx-background-color: #979797, #2d2d2d, #242424, #242424;
 	-fx-background-insets: 0, 1, 1 170 1 1, 1 170 1 7;
 	-fx-background-radius: 6, 6, 6, 0;
@@ -1357,3 +1363,28 @@
 .assertion-box *.arrow {
 	-fx-fill: #777777;
 }
+
+.add-assertion-dialog *.tree-selector-level {
+	-fx-text-background-color: #363636;
+}
+
+.add-assertion-dialog *.cascading-tree-selector-cell {
+	-fx-background-color: transparent;
+	-fx-background-radius: 0 0 0 0;
+}
+
+.add-assertion-dialog *.cascading-tree-selector *.title {
+	-fx-text-fill: #9c9c9c;
+	-fx-font-weight: bold;
+}
+
+.add-assertion-dialog *.tree-selector-level *.scroll-bar {
+	-fx-outer-border: #848484;
+	-fx-inner-border: linear (0%,0%) to (100%,0%) stops (0.0, #b7b7b7) (0.3, #dcdcdc) (1.0, #dcdcdc);
+	-fx-body-color: linear (0%,0%) to (100%,0%) stops (0.0, #b7b7b7) (0.5, #c8c8c8) (1.0, #b7b7b7);
+	-fx-shadow-highlight-color: rgba(200,200,200,0.5);
+}
+
+
+
+
