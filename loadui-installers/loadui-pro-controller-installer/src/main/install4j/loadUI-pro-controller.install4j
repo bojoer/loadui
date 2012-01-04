@@ -794,6 +794,16 @@ catch(Exception e){
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
+                      <void property="environmentVariables">
+                        <void method="put">
+                          <string>PATH</string>
+                          <string />
+                        </void>
+                        <void method="put">
+                          <string>CLASSPATH</string>
+                          <string />
+                        </void>
+                      </void>
                       <void property="executable">
                         <object class="java.io.File">
                           <string>loadUItest.bat</string>
