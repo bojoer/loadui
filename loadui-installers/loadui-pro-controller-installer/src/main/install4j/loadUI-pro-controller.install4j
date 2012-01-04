@@ -799,9 +799,6 @@ catch(Exception e){
                           <string>loadUItest.bat</string>
                         </object>
                       </void>
-                      <void property="includeParentEnvironmentVariables">
-                        <boolean>false</boolean>
-                      </void>
                       <void property="keepConsoleWindow">
                         <boolean>true</boolean>
                       </void>
