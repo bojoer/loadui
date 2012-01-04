@@ -790,7 +790,7 @@ catch(Exception e){
                 </serializedBean>
                 <condition>context.getBooleanVariable("executeLauncherAction") &amp;&amp; (!context.isUnattended())</condition>
               </action>
-              <action name="" id="1145" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+              <action name="" id="1145" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="3" errorMessage="Error">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
@@ -798,6 +798,12 @@ catch(Exception e){
                         <object class="java.io.File">
                           <string>loadUI-${compiler:version}.exe</string>
                         </object>
+                      </void>
+                      <void property="keepConsoleWindow">
+                        <boolean>true</boolean>
+                      </void>
+                      <void property="showWindowsConsole">
+                        <boolean>true</boolean>
                       </void>
                       <void property="workingDirectory">
                         <object class="java.io.File">
@@ -807,7 +813,7 @@ catch(Exception e){
                     </object>
                   </java>
                 </serializedBean>
-                <condition>context.getBooleanVariable("executeLauncherAction") &amp;&amp; (!context.isUnattended())</condition>
+                <condition />
               </action>
             </actions>
             <formComponents>
