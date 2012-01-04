@@ -796,7 +796,7 @@ catch(Exception e){
                     <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
                       <void property="executable">
                         <object class="java.io.File">
-                          <string>loadUI-Pro-${compiler:version}.exe</string>
+                          <string>loadUItest.bat</string>
                         </object>
                       </void>
                       <void property="includeParentEnvironmentVariables">
