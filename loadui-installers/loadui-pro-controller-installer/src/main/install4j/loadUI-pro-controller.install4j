@@ -806,7 +806,7 @@ catch(Exception e){
                       </void>
                       <void property="executable">
                         <object class="java.io.File">
-                          <string>loadUI-Pro-${compiler:version}.exe</string>
+                          <string>loadUI.bat</string>
                         </object>
                       </void>
                       <void property="keepConsoleWindow">
