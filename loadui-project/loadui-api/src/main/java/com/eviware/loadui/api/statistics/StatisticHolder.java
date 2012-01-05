@@ -19,9 +19,8 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.events.EventFirer;
-import com.eviware.loadui.api.traits.Labeled;
+import com.eviware.loadui.api.statistics.model.Chart;
 
 /**
  * A Holder of Statistics. Fires CollectionEvents for contained
@@ -29,7 +28,7 @@ import com.eviware.loadui.api.traits.Labeled;
  * 
  * @author dain.nilsson
  */
-public interface StatisticHolder extends EventFirer, Addressable, Labeled
+public interface StatisticHolder extends EventFirer, Chart.Owner
 {
 	/**
 	 * Collection of StatisticVariables.

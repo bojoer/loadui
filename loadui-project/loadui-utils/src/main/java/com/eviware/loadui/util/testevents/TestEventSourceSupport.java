@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.util.testevents;
 
+import java.util.Arrays;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -62,7 +64,7 @@ public class TestEventSourceSupport
 
 	public void setData( byte[] newData )
 	{
-		if( !Objects.equal( data, newData ) )
+		if( !Arrays.equals( data, newData ) )
 		{
 			data = new byte[newData.length];
 			System.arraycopy( newData, 0, data, 0, newData.length );

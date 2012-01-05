@@ -31,8 +31,9 @@ import com.eviware.loadui.api.charting.line.ZoomLevel;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.WeakEventHandler;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.ReleasableUtils;
@@ -121,7 +122,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 
 		chartView.addEventListener( EventObject.class, chartViewListener );
 
-		for( LineSegment segment : chartView.getSegments() )
+		for( Segment segment : chartView.getSegments() )
 			addedSegment( segment );
 	}
 
@@ -261,7 +262,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 		}
 	}
 
-	private void addedSegment( final LineSegment segment )
+	private void addedSegment( final Segment segment )
 	{
 		if( !lines.containsKey( segment ) )
 		{
@@ -272,24 +273,28 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 					@Override
 					public void run()
 					{
-						LineSegmentChartModel lineModel = new LineSegmentChartModel( chartView, segment );
-						lineModel.setLevel( zoomLevel == ZoomLevel.ALL ? ZoomLevel.forSpan( getMaxTime() / 1000 ).getLevel()
-								: zoomLevel.getLevel() );
-						lines.put( segment, lineModel );
-						if( mainExecution != null )
-							lineModel.setExecution( mainExecution );
-						long position = getPosition();
-						lineModel.setXRange( position - PADDING, position + timeSpan + PADDING );
-						addModel( lineModel, lineModel.getChartStyle() );
-						if( comparedExecution != null )
+						if( segment instanceof LineSegment )
 						{
-							ComparedLineSegmentChartModel comparedModel = new ComparedLineSegmentChartModel( lineModel );
-							comparedModel.setExecution( comparedExecution );
-							comparedLines.put( lineModel, comparedModel );
-							addModel( comparedModel, comparedModel.getChartStyle() );
+							LineSegment lineSegment = ( LineSegment )segment;
+							LineSegmentChartModel lineModel = new LineSegmentChartModel( chartView, lineSegment );
+							lineModel.setLevel( zoomLevel == ZoomLevel.ALL ? ZoomLevel.forSpan( getMaxTime() / 1000 )
+									.getLevel() : zoomLevel.getLevel() );
+							lines.put( lineSegment, lineModel );
+							if( mainExecution != null )
+								lineModel.setExecution( mainExecution );
+							long position = getPosition();
+							lineModel.setXRange( position - PADDING, position + timeSpan + PADDING );
+							addModel( lineModel, lineModel.getChartStyle() );
+							if( comparedExecution != null )
+							{
+								ComparedLineSegmentChartModel comparedModel = new ComparedLineSegmentChartModel( lineModel );
+								comparedModel.setExecution( comparedExecution );
+								comparedLines.put( lineModel, comparedModel );
+								addModel( comparedModel, comparedModel.getChartStyle() );
+							}
+							fireEvent( new CollectionEvent( LineChartImpl.this, LINE_SEGMENT_MODELS,
+									CollectionEvent.Event.ADDED, lineModel ) );
 						}
-						fireEvent( new CollectionEvent( LineChartImpl.this, LINE_SEGMENT_MODELS, CollectionEvent.Event.ADDED,
-								lineModel ) );
 					}
 				} );
 			}
@@ -304,7 +309,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 		}
 	}
 
-	private void removedSegment( LineSegment segment )
+	private void removedSegment( Segment segment )
 	{
 		final LineSegmentChartModel model = lines.remove( segment );
 		if( model != null )
@@ -505,9 +510,9 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 						public void run()
 						{
 							if( CollectionEvent.Event.ADDED == event.getEvent() )
-								addedSegment( ( LineSegment )event.getElement() );
+								addedSegment( ( Segment )event.getElement() );
 							else
-								removedSegment( ( LineSegment )event.getElement() );
+								removedSegment( ( Segment )event.getElement() );
 						}
 					} );
 				}

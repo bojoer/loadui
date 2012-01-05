@@ -43,7 +43,7 @@ import com.eviware.loadui.fx.ui.form.fields.SelectField;
 
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.charting.ChartNamePrettifier;
 
@@ -85,7 +85,7 @@ class SegmentRow extends GridRow {
 		lineModel.setScale( scale );
 	}
 	
-	var lineSegment:LineChartView.LineSegment;
+	var lineSegment:LineSegment;
 	
 	public-init var lineModel:LineSegmentModel on replace {
 		scale = lineModel.getScale();

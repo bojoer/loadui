@@ -37,6 +37,7 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.component.ComponentRegistry;
+import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.util.BeanInjector;
 
 /**
@@ -211,6 +212,7 @@ public def defaultImage = Image { url: "{__ROOT__}images/png/default-component-i
 public def agentImage = Image { url: "{__ROOT__}images/png/agent-icon.png" };
 public def projectImage = Image { url: "{__ROOT__}images/png/project-icon.png" };
 public def testCaseImage = Image { url: "{__ROOT__}images/png/testcase-icon.png" };
+public def assertionImage = Image { url: "{__ROOT__}images/png/assertion_icon_toolbar.png" };
 
 public var imageResolvers:(function(object:Object):Image)[] = function(object):Image {
 	if( object instanceof AgentItem ) {
@@ -221,6 +223,8 @@ public var imageResolvers:(function(object:Object):Image)[] = function(object):I
 		testCaseImage
 	} else if( object instanceof ComponentItem ) {
 		Image { url: BeanInjector.getBean(ComponentRegistry.class).findDescriptor((object as ComponentItem).getType()).getIcon().toString() }
+	} else if( object instanceof AssertionItem ) {
+		assertionImage
 	} else {
 		null
 	}

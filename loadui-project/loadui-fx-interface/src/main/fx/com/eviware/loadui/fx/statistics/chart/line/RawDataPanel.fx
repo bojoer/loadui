@@ -34,8 +34,8 @@ import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.FxUtils.*;
 
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import java.beans.PropertyChangeEvent;
 
 import com.eviware.loadui.util.BeanInjector;

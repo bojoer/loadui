@@ -119,14 +119,14 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
 		   // there is more than one variable in a holder, so add it to toolbar if it wasn't already added
 			if(sh instanceof ComponentItem){
 	      	def cti: StatisticHolderToolbarItem = StatisticHolderToolbarItem {
-					statisticHolder: sh
+					owner: sh
 					category: "COMPONENTS"
 				}
 				addItem(cti);
 	      	statHolderMap.put(sh, cti);
 			} else if( sh instanceof CanvasItem ) {
 	      	def cti: StatisticHolderToolbarItem = StatisticHolderToolbarItem {
-					statisticHolder: sh
+					owner: sh
 					category: "GLOBAL"
 				}
 				addItem(cti);
@@ -147,7 +147,7 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
 	/** Adds chart toolbar items to the toolbar */
 	function addChartItems(){
 	   def item: ChartToolbarItem = ChartToolbarItem {
-			type: com.eviware.loadui.api.statistics.model.chart.LineChartView.class.getName()
+			type: com.eviware.loadui.api.statistics.model.chart.line.LineChartView.class.getName()
 			label: "Line Chart"
 			tooltip: "Create new line chart"
 			//icon: 
@@ -165,7 +165,7 @@ public class StatisticsToolbar extends Toolbar, EventHandler {
 	   	for( item in assertionItems ){
 	   	    if (not assertionItemMap.containsKey(item)){
 				def ati = AssertionToolbarItem {
-					assertionItem: item
+					owner: item
 					category: "ASSERTIONS"
 				};
 				addItem(ati);

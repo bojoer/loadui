@@ -24,8 +24,11 @@ import javafx.geometry.VPos;
 import com.eviware.loadui.fx.statistics.chart.PanelFactory;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
-import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
+
+import com.google.common.collect.Iterables;
 
 public class LineChartPanels {
 }
@@ -43,7 +46,7 @@ public function getGroupPanels( chartGroup:ChartGroup ):Object[] {
 			build: function() {
 				def chartView = chartGroup.getChartView() as LineChartView;
 				def lineChart = LineChartHolder.getLineChart( chartView );
-				def lineModels = for( segment in chartView.getSegments() ) lineChart.getLineSegmentModel( segment );
+				def lineModels = for( segment in Iterables.filter( chartView.getSegments(), LineSegment.class ) ) lineChart.getLineSegmentModel( segment );
 				ScalePanel { lineSegmentModels: lineModels }
 			}
 		}, PanelFactory {
@@ -51,14 +54,14 @@ public function getGroupPanels( chartGroup:ChartGroup ):Object[] {
 			build: function() {
 				def chartView = chartGroup.getChartView() as LineChartView;
 				def lineChart = LineChartHolder.getLineChart( chartView );
-				def lineModels = for( segment in chartView.getSegments() ) lineChart.getLineSegmentModel( segment );
+				def lineModels = for( segment in Iterables.filter( chartView.getSegments(), LineSegment.class ) ) lineChart.getLineSegmentModel( segment );
 				StylePanel { lineSegmentModels: lineModels }
 			}
 		}, Separator {
 			vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER
 		}, PanelFactory {
 			title: "Raw data"
-			build: function() { RawDataPanel { segments: (chartGroup.getChartView() as LineChartView).getSegments()[s|true] } }
+			build: function() { RawDataPanel { segments: Iterables.filter( (chartGroup.getChartView() as LineChartView).getSegments(), LineSegment.class )[s|true] } }
 		}, Separator {
 			vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER
 		}, FollowCheckBox {
@@ -84,21 +87,21 @@ public function getChartPanels( chartView:LineChartView ):Object[] {
 			title: "Scale"
 			build: function() {
 				def lineChart = LineChartHolder.getLineChart( chartView );
-				def lineModels = for( segment in chartView.getSegments() ) lineChart.getLineSegmentModel( segment );
+				def lineModels = for( segment in Iterables.filter( chartView.getSegments(), LineSegment.class ) ) lineChart.getLineSegmentModel( segment );
 				ScalePanel { lineSegmentModels: lineModels }
 			}
 		}, PanelFactory {
 			title: "Style"
 			build: function() {
 				def lineChart = LineChartHolder.getLineChart( chartView );
-				def lineModels = for( segment in chartView.getSegments() ) lineChart.getLineSegmentModel( segment );
+				def lineModels = for( segment in Iterables.filter( chartView.getSegments(), LineSegment.class ) ) lineChart.getLineSegmentModel( segment );
 				StylePanel { lineSegmentModels: lineModels }
 			}
 		}, Separator {
 			vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos: HPos.CENTER
 		}, PanelFactory {
 			title: "Raw data"
-			build: function() { RawDataPanel { segments: chartView.getSegments()[s|true] } }
+			build: function() { RawDataPanel { segments: Iterables.filter( chartView.getSegments(), LineSegment.class )[s|true] } }
 		}, Separator {
 			vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos: HPos.CENTER
 		}, FollowCheckBox {

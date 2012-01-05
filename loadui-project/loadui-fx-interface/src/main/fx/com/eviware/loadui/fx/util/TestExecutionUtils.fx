@@ -29,9 +29,10 @@ import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 
-import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.lang.Runnable;
+import java.lang.Thread;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.CheckBox;
@@ -152,7 +153,12 @@ class StoppingDialogTask extends TestExecutionTask, Runnable {
 				} );
 				mainAppState.block();
 				
-				Futures.makeListenable( execution.complete() ).addListener( this, MoreExecutors.sameThreadExecutor() );
+				def future = execution.complete();
+				if( future instanceof ListenableFuture ) {
+					(future as ListenableFuture).addListener( this, MoreExecutors.sameThreadExecutor() );
+				} else {
+					new Thread( this ).start();
+				}
 			} );
 		}
 	}

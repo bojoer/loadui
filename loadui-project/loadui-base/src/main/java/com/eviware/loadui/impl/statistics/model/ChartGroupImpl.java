@@ -30,6 +30,7 @@ import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.model.Chart;
+import com.eviware.loadui.api.statistics.model.Chart.Owner;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.ChartViewProvider;
@@ -190,10 +191,10 @@ public class ChartGroupImpl implements ChartGroup
 	}
 
 	@Override
-	public Chart createChart( StatisticHolder statisticHolder )
+	public Chart createChart( Owner statisticHolder )
 	{
 		for( Chart chart : getChildren() )
-			if( chart.getStatisticHolder() == statisticHolder )
+			if( chart.getOwner() == statisticHolder )
 				return chart;
 
 		ChartConfig chartConfig = config.addNewChart();

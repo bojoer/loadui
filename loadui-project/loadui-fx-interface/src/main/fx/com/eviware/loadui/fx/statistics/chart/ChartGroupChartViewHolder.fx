@@ -160,7 +160,7 @@ public class ChartGroupChartViewHolder extends ChartViewHolder, WeakEventHandler
 		}
 		else if( count == 1 )
 		{
-			subLabel.text = ModelUtils.getLabelHolder( chartGroup.getChildren().iterator().next().getStatisticHolder() ).label;
+			subLabel.text = ModelUtils.getLabelHolder( chartGroup.getChildren().iterator().next().getOwner() ).label;
 		}
 		else
 		{

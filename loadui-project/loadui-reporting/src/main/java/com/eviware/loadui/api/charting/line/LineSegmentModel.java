@@ -18,7 +18,7 @@ package com.eviware.loadui.api.charting.line;
 
 import java.awt.Color;
 
-import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 
 /**
  * A line in a LineChart, which can be styled.

@@ -51,7 +51,7 @@ import com.eviware.loadui.fx.ui.dnd.SortableBox;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.AnalysisToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
-import com.eviware.loadui.fx.statistics.toolbar.items.StatisticHolderToolbarItem;
+import com.eviware.loadui.fx.statistics.toolbar.items.ChartOwnerToolbarItem;
 import com.eviware.loadui.fx.widgets.canvas.Selectable;
 
 import com.eviware.loadui.api.traits.Releasable;;
@@ -72,7 +72,7 @@ import java.util.EventObject;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 
 def EXPAND_ATTRIBUTE = "expand";
 def GROUP = "group";
@@ -206,8 +206,8 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 	override var onDrop = function( draggable:Draggable ):Void {
 		if( draggable instanceof ChartToolbarItem ) {
 			chartGroup.setType( (draggable as ChartToolbarItem).type );
-		} else if( draggable instanceof StatisticHolderToolbarItem ) {
-			def sh = (draggable as StatisticHolderToolbarItem).statisticHolder;
+		} else if( draggable instanceof ChartOwnerToolbarItem ) {
+			def sh = (draggable as ChartOwnerToolbarItem).owner;
 			ChartDefaults.createSubChart( chartGroup, sh );
 		} else if( draggable instanceof AnalysisToolbarItem ) {
 			chartGroup.setTemplateScript( (draggable as AnalysisToolbarItem).templateScript );
@@ -258,9 +258,9 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 					ChartViewHolder {
 						chartModel: chart
 						chartView: subChartView
-						label: bind ModelUtils.getLabelHolder( chart.getStatisticHolder() ).label;
+						label: bind ModelUtils.getLabelHolder( chart.getOwner() ).label;
 						layoutInfo: chartViewInfo
-						graphic: ImageView { image: FxUtils.getImageFor( chart.getStatisticHolder() ) }
+						graphic: ImageView { image: FxUtils.getImageFor( chart.getOwner() ) }
 					}
 				}
 				onMoved: function( chart, fromIndex, toIndex ):Void {
@@ -312,7 +312,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 		var offset = 0;
 		graphic.content = Sequences.reverse( for( chart in chartGroup.getChildren() ) {
 			offset += 5;
-			ImageView { image: FxUtils.getImageFor( chart.getStatisticHolder() ), layoutX: offset, layoutY: offset }
+			ImageView { image: FxUtils.getImageFor( chart.getOwner() ), layoutX: offset, layoutY: offset }
 		} ) as Node[];
 	}
 }
@@ -365,7 +365,7 @@ class StatisticsManagerListener extends EventHandler {
 					FxUtils.runInFxThread( function(): Void {
 					   def sh: StatisticHolder = event.getElement() as StatisticHolder;
 					   for(chart in chartGroup.getChildren()){
-					      if(chart.getStatisticHolder() == sh){
+					      if(chart.getOwner() == sh){
 					         chart.delete();
 					         break;
 					      }

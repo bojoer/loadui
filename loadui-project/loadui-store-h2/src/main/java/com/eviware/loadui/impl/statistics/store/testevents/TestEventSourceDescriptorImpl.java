@@ -19,23 +19,34 @@ import java.util.Map;
 import java.util.Set;
 
 import com.eviware.loadui.api.testevents.TestEventSourceDescriptor;
+import com.eviware.loadui.api.testevents.TestEventTypeDescriptor;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 public class TestEventSourceDescriptorImpl implements TestEventSourceDescriptor
 {
+	private final TestEventTypeDescriptorImpl type;
 	private final String label;
 	private final Map<String, TestEventSourceConfig> configs = Maps.newHashMap();
 
-	public TestEventSourceDescriptorImpl( String label )
+	public TestEventSourceDescriptorImpl( TestEventTypeDescriptorImpl type, String label )
 	{
+		this.type = type;
 		this.label = label;
+
+		type.putSource( this );
 	}
 
 	@Override
 	public String getLabel()
 	{
 		return label;
+	}
+
+	@Override
+	public TestEventTypeDescriptor getType()
+	{
+		return type;
 	}
 
 	public Set<TestEventSourceConfig> getConfigs()

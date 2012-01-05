@@ -19,4 +19,5 @@ import com.eviware.loadui.api.traits.Labeled;
 
 public interface TestEventSourceDescriptor extends Labeled
 {
+	public TestEventTypeDescriptor getType();
 }

@@ -15,24 +15,15 @@
  */
 package com.eviware.loadui.fx.statistics.toolbar.items;
 
-import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
+import javafx.scene.image.Image;
+
 import com.eviware.loadui.fx.FxUtils.*;
 
-import com.eviware.loadui.api.events.BaseEvent;
-import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.assertion.AssertionItem;
-import com.eviware.loadui.fx.FxUtils;
-import com.eviware.loadui.fx.util.ModelUtils;
 
-public class AssertionToolbarItem extends StatisticsToolbarItem {
-	
-	override var label = bind ModelUtils.getLabelHolder( assertionItem ).label;
+def assertionIcon = Image { url: "{__ROOT__}images/png/assertion_icon_toolbar.png" };
+
+public class AssertionToolbarItem extends ChartOwnerToolbarItem {
+	override var icon = assertionIcon;
 	override var tooltip = bind "Adds {label} to a chart";
-	
-	public var assertionItem: AssertionItem on replace oldValue {
-		if( not FX.isInitialized( icon ) ) {
-			icon = FxUtils.getImageFor( assertionItem );
-		}
-	}
-	
 }

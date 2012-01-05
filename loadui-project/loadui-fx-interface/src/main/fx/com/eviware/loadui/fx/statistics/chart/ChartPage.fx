@@ -49,7 +49,7 @@ import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.AnalysisToolbarItem;
 import com.eviware.loadui.fx.statistics.toolbar.items.ChartToolbarItem;
-import com.eviware.loadui.fx.statistics.toolbar.items.StatisticHolderToolbarItem;
+import com.eviware.loadui.fx.statistics.toolbar.items.ChartOwnerToolbarItem;
 import com.eviware.loadui.fx.widgets.canvas.Selectable;
 
 import com.eviware.loadui.api.traits.Releasable;;
@@ -58,7 +58,7 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
@@ -71,7 +71,7 @@ import com.eviware.loadui.util.BeanInjector;
 import java.util.EventObject;
 import java.io.File;
 
-import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 
 /**
  * A Page displaying ChartGroupHolders, which allows adding, removing, and reordering of its children.
@@ -298,10 +298,10 @@ class DropBase extends BaseNode, Resizable, Droppable {
 				
 		if( draggable instanceof ChartToolbarItem ) {
 			ChartDefaults.createChartGroup( statisticPage, (draggable as ChartToolbarItem).type, null );
-		} else if( draggable instanceof StatisticHolderToolbarItem ) {
+		} else if( draggable instanceof ChartOwnerToolbarItem ) {
 			def number = countChildrenStartingWithName("Chart") + 1;
 			def name = "Chart {number}";
-			def sh = (draggable as StatisticHolderToolbarItem).statisticHolder;
+			def sh = (draggable as ChartOwnerToolbarItem).owner;
 			ChartDefaults.createSubChart( ChartDefaults.createChartGroup( statisticPage, null, name ), sh );
 		} else if( draggable instanceof AnalysisToolbarItem ) {
 			var label = (draggable as ToolbarItemNode).label;

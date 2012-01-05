@@ -24,7 +24,7 @@ import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 
-import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 
 public class DeletableSegmentButton extends SegmentButton, Draggable, Deletable {
 	override var revert = false;

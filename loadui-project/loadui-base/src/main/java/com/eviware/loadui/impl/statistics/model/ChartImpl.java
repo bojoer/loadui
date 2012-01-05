@@ -23,7 +23,6 @@ import java.util.Set;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.BaseEvent;
-import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.Chart;
@@ -40,7 +39,7 @@ public class ChartImpl implements Chart
 	private ChartConfig config;
 	private AttributeHolderSupport attributeHolderSupport;
 	private final EventSupport eventSupport = new EventSupport();
-	private final StatisticHolder statisticHolder;
+	private final Owner owner;
 
 	public ChartImpl( ChartGroupImpl parent, ChartConfig config )
 	{
@@ -49,12 +48,10 @@ public class ChartImpl implements Chart
 		if( !config.isSetStatisticHolder() )
 			throw new IllegalArgumentException( "No StatisticHolder defined in Chart config!" );
 
-		statisticHolder = ( StatisticHolder )BeanInjector.getBean( AddressableRegistry.class ).lookup(
-				config.getStatisticHolder() );
+		owner = ( Owner )BeanInjector.getBean( AddressableRegistry.class ).lookup( config.getStatisticHolder() );
 
-		if( statisticHolder == null )
+		if( owner == null )
 			throw new IllegalArgumentException( "StatisticHolder for Chart doesn't exist!" );
-		statisticHolder.addEventListener( CollectionEvent.class, new StatisticHolderListener() );
 
 		if( config.getAttributes() == null )
 			config.addNewAttributes();
@@ -68,9 +65,9 @@ public class ChartImpl implements Chart
 	}
 
 	@Override
-	public StatisticHolder getStatisticHolder()
+	public Owner getOwner()
 	{
-		return statisticHolder;
+		return owner;
 	}
 
 	@Override
@@ -146,19 +143,12 @@ public class ChartImpl implements Chart
 	Set<String> getSources()
 	{
 		Set<String> sources = new HashSet<String>();
-		for( String name : statisticHolder.getStatisticVariableNames() )
-			sources.addAll( statisticHolder.getStatisticVariable( name ).getSources() );
+		if( owner instanceof StatisticHolder )
+		{
+			for( String name : ( ( StatisticHolder )owner ).getStatisticVariableNames() )
+				sources.addAll( ( ( StatisticHolder )owner ).getStatisticVariable( name ).getSources() );
+		}
 
 		return sources;
-	}
-
-	private class StatisticHolderListener implements EventHandler<CollectionEvent>
-	{
-		@Override
-		public void handleEvent( CollectionEvent event )
-		{
-			if( CollectionEvent.Event.REMOVED == event.getEvent() && event.getElement() == statisticHolder )
-				delete();
-		}
 	}
 }

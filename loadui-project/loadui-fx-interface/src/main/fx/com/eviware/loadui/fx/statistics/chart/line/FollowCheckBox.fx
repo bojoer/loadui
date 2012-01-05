@@ -19,7 +19,7 @@ import javafx.scene.control.CheckBox;
 import com.eviware.loadui.fx.FxUtils;
 
 import com.eviware.loadui.api.events.WeakEventHandler;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.charting.line.LineChart;
 
 import java.beans.PropertyChangeEvent;

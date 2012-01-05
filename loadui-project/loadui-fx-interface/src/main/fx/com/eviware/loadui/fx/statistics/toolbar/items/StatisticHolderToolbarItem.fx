@@ -18,35 +18,15 @@ package com.eviware.loadui.fx.statistics.toolbar.items;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbarItem;
 import com.eviware.loadui.fx.FxUtils.*;
 
-import com.eviware.loadui.api.events.BaseEvent;
-import com.eviware.loadui.api.events.WeakEventHandler;
+
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.fx.FxUtils;
 
-public class StatisticHolderToolbarItem extends StatisticsToolbarItem {
-	def labelListener = new LabelListener();
-	
-   public var statisticHolder:StatisticHolder on replace oldValue {
-   	if( oldValue != null )
-   		oldValue.removeEventListener( BaseEvent.class, labelListener );
-   	statisticHolder.addEventListener( BaseEvent.class, labelListener );
-      label = statisticHolder.getLabel();
+public class StatisticHolderToolbarItem extends ChartOwnerToolbarItem {
+   override var owner on replace oldValue {
       tooltip = "Adds {label} to a chart";
       if( not FX.isInitialized( icon ) ) {
-      	icon = FxUtils.getImageFor( statisticHolder );
+      	icon = FxUtils.getImageFor( owner );
       }
    }
-}
-
-class LabelListener extends WeakEventHandler {
-	override function handleEvent(e):Void {
-		def event:BaseEvent = e as BaseEvent;
-		if( event.getKey().equals( StatisticHolder.LABEL ) )
-		{
-			FxUtils.runInFxThread( function():Void {
-				label = statisticHolder.getLabel();
-				tooltip = "Adds {label} to a chart";
-			} );
-		}
-	} 
 }

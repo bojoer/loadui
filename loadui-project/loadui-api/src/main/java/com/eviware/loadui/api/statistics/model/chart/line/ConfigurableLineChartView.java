@@ -13,9 +13,10 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.statistics.model.chart;
+package com.eviware.loadui.api.statistics.model.chart.line;
 
 import java.util.Set;
+
 
 /**
  * Configurable version of LineChartView, which allows adding and removing
@@ -59,4 +60,13 @@ public interface ConfigurableLineChartView extends LineChartView
 	 * @return
 	 */
 	public LineSegment.Removable addSegment( String variableName, String statisticName, String source );
+
+	/**
+	 * Adds a TestEventSegment for the given TestEventSourceDescriptor.
+	 * 
+	 * @param typeLabel
+	 * @param sourceLabel TODO
+	 * @return
+	 */
+	public TestEventSegment.Removable addSegment( String typeLabel, String sourceLabel );
 }

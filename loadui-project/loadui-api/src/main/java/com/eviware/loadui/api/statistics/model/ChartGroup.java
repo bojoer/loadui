@@ -20,7 +20,6 @@ import java.util.Set;
 
 import com.eviware.loadui.api.base.OrderedCollection;
 import com.eviware.loadui.api.model.AttributeHolder;
-import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Labeled;
@@ -108,10 +107,10 @@ public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>, D
 	 * Creates and returns a new Chart for the given StatisticHolder, placing it
 	 * at the end of the existing Charts.
 	 * 
-	 * @param statisticHolder
+	 * @param owner
 	 * @return
 	 */
-	public Chart createChart( StatisticHolder statisticHolder );
+	public Chart createChart( Chart.Owner owner );
 
 	/**
 	 * Moved a contained Chart to the given index.

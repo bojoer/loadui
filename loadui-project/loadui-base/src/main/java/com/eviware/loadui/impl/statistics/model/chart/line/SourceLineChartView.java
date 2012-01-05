@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.statistics.model.chart.line;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
@@ -38,12 +39,12 @@ public class SourceLineChartView extends AbstractLineChartView
 
 		this.source = source;
 
-		for( LineSegment segment : provider.getSegments() )
+		for( Segment segment : provider.getSegments() )
 			segmentAdded( segment );
 	}
 
 	@Override
-	protected void segmentAdded( LineSegment segment )
+	protected void segmentAdded( Segment segment )
 	{
 		// This adds any Segment for this source, and adds a
 		// SourceLineSegment for any Segment for the main source, unless such a
@@ -69,12 +70,12 @@ public class SourceLineChartView extends AbstractLineChartView
 	}
 
 	@Override
-	protected void segmentRemoved( LineSegment segment )
+	protected void segmentRemoved( Segment segment )
 	{
 		if( segment instanceof ChartLineSegment )
 		{
 			ChartLineSegment chartSegment = ( ChartLineSegment )segment;
-			LineSegment existingSegment = getSegment( chartSegment.toString() );
+			Segment existingSegment = getSegment( chartSegment.toString() );
 			if( existingSegment != null )
 				deleteSegment( getSegment( chartSegment.toString() ) );
 		}
@@ -84,7 +85,7 @@ public class SourceLineChartView extends AbstractLineChartView
 	public String getAttribute( String key, String defaultValue )
 	{
 		String value = super.getAttribute( key, NULL );
-		return value.equals( NULL ) ? getChartGroup().getChartView().getAttribute( key, defaultValue ) : value;
+		return value == NULL ? getChartGroup().getChartView().getAttribute( key, defaultValue ) : value;
 	}
 
 	@Override

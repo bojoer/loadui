@@ -22,7 +22,7 @@ import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.ChartViewProvider;
 import com.eviware.loadui.api.statistics.model.chart.ChartViewProviderFactory;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.impl.statistics.model.chart.line.LineChartViewProvider;
 
 public class ChartViewProviderFactoryImpl implements ChartViewProviderFactory
@@ -31,14 +31,17 @@ public class ChartViewProviderFactoryImpl implements ChartViewProviderFactory
 
 	public ChartViewProviderFactoryImpl()
 	{
-		factories.put( LineChartView.class.getName(), new ProviderFactory<LineChartView>()
+		ProviderFactory<LineChartView> lineChartProviderFactory = new ProviderFactory<LineChartView>()
 		{
 			@Override
 			public ChartViewProvider<LineChartView> create( ChartGroup chartGroup )
 			{
 				return new LineChartViewProvider( chartGroup );
 			}
-		} );
+		};
+		factories.put( LineChartView.class.getName(), lineChartProviderFactory );
+		//For legacy reasons, to support older projects.
+		factories.put( "com.eviware.loadui.api.statistics.model.chart.LineChartView", lineChartProviderFactory );
 	}
 
 	@Override

@@ -16,7 +16,6 @@
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +24,11 @@ import java.util.Map.Entry;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.AttributeHolder;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.impl.statistics.model.chart.AbstractChartView;
 import com.eviware.loadui.util.events.EventSupport;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Abstract base class for LineChartView implementations.
@@ -37,7 +38,7 @@ import com.eviware.loadui.util.events.EventSupport;
 public abstract class AbstractLineChartView extends AbstractChartView implements LineChartView
 {
 	private final EventSupport eventSupport = new EventSupport();
-	private final Map<String, LineSegment> segments = new HashMap<String, LineSegment>();
+	private final Map<String, Segment> segments = new HashMap<String, Segment>();
 
 	public AbstractLineChartView( LineChartViewProvider provider, AttributeHolder attributeDelegate, String prefix )
 	{
@@ -47,11 +48,11 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 	}
 
 	/**
-	 * Adds the given LineSegment and fires a CollectionEvent about it.
+	 * Adds the given Segment and fires a CollectionEvent about it.
 	 * 
 	 * @param segment
 	 */
-	protected void putSegment( LineSegment segment )
+	protected void putSegment( Segment segment )
 	{
 		segments.put( segment.toString(), segment );
 		fireEvent( new CollectionEvent( this, SEGMENTS, CollectionEvent.Event.ADDED, segment ) );
@@ -63,7 +64,7 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 	 * @param segmentKey
 	 * @return
 	 */
-	protected LineSegment getSegment( String segmentKey )
+	protected Segment getSegment( String segmentKey )
 	{
 		return segments.get( segmentKey );
 	}
@@ -75,9 +76,9 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 	 * @param segment
 	 * @return
 	 */
-	protected boolean deleteSegment( LineSegment segment )
+	protected boolean deleteSegment( Segment segment )
 	{
-		for( Entry<String, LineSegment> entry : segments.entrySet() )
+		for( Entry<String, Segment> entry : segments.entrySet() )
 		{
 			if( entry.getValue().equals( segment ) )
 			{
@@ -92,14 +93,14 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 		return false;
 	}
 
-	protected abstract void segmentAdded( LineSegment segment );
+	protected abstract void segmentAdded( Segment segment );
 
-	protected abstract void segmentRemoved( LineSegment segment );
+	protected abstract void segmentRemoved( Segment segment );
 
 	@Override
-	public Collection<LineSegment> getSegments()
+	public Collection<Segment> getSegments()
 	{
-		return Collections.unmodifiableCollection( segments.values() );
+		return ImmutableList.copyOf( segments.values() );
 	}
 
 	@Override
@@ -133,7 +134,7 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 		{
 			if( LineChartViewProvider.LINE_SEGMENTS.equals( event.getKey() ) )
 			{
-				LineSegment segment = ( LineSegment )event.getElement();
+				Segment segment = ( Segment )event.getElement();
 				if( CollectionEvent.Event.ADDED == event.getEvent() )
 					segmentAdded( segment );
 				else

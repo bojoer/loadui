@@ -19,20 +19,23 @@ import javafx.util.Math;
 
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
+import com.eviware.loadui.api.assertion.AssertionItem;
+import com.eviware.loadui.api.testevents.TestEvent;
+import com.eviware.loadui.api.testevents.TestEventRegistry;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.Chart;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
-import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.charting.line.ZoomLevel;
 import com.eviware.loadui.api.charting.line.LineChart;
 import com.eviware.loadui.util.StringUtils;
-
+import com.eviware.loadui.util.BeanInjector;
 
 def defaultChartGroupLabel = "Chart";
 
@@ -64,10 +67,10 @@ public function createChartGroup( parent:StatisticPage, type:String, label:Strin
 	chartGroup
 }
 
-public function createSubChart( parent:ChartGroup, sh:StatisticHolder ):Chart {
-	def chart = parent.createChart( sh );
-	if( sh instanceof ComponentItem ) {
-		def component:ComponentItem = sh as ComponentItem;
+public function createSubChart( parent:ChartGroup, owner:Chart.Owner ):Chart {
+	def chart = parent.createChart( owner );
+	if( owner instanceof ComponentItem ) {
+		def component:ComponentItem = owner as ComponentItem;
 		
 		if( component.getType().equals( "Assertion" ) ) {	
 			def variable = component.getStatisticVariable( "Assertion Failures" );
@@ -82,12 +85,18 @@ public function createSubChart( parent:ChartGroup, sh:StatisticHolder ):Chart {
 				(chartView as ConfigurableLineChartView).addSegment( "Time Taken", "AVERAGE", StatisticVariable.MAIN_SOURCE );
 			}
 		}
-	} else if( sh instanceof CanvasItem ) {
-		def variable = sh.getStatisticVariable( "Requests" );
+	} else if( owner instanceof CanvasItem ) {
+		def variable = (owner as CanvasItem).getStatisticVariable( "Requests" );
 		if( variable != null and variable.getStatisticNames().contains( "PER_SECOND" ) ) {
 			def chartView = parent.getChartViewForChart( chart );
 			(chartView as ConfigurableLineChartView).addSegment( "Requests", "PER_SECOND", StatisticVariable.MAIN_SOURCE );
 		}
+	} else if( owner instanceof AssertionItem ) {
+		println( "CREATE SUBCHART FOR: {owner}" );
+		def assertionItem = (owner as AssertionItem);
+		def typeLabel = BeanInjector.getBean( TestEventRegistry.class ).lookupFactory( (assertionItem as TestEvent.Source).getType() ).getLabel();
+		def chartView = parent.getChartViewForChart( chart );
+		(chartView as ConfigurableLineChartView).addSegment( typeLabel, assertionItem.getLabel() );
 	}
 	
 	chart

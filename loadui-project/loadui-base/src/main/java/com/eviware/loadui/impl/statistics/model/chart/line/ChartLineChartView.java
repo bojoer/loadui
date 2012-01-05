@@ -16,7 +16,6 @@
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,12 +25,18 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.Chart;
-import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
+import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.StringUtils;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
@@ -64,36 +69,48 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 		for( String segmentString : StringUtils.deserialize( getAttribute( SEGMENTS_ATTRIBUTE, "" ) ) )
 		{
 			List<String> parts = StringUtils.deserialize( segmentString );
-			ChartLineSegment segment = new ChartLineSegment( this, parts.get( 1 ), parts.get( 2 ), parts.get( 3 ) );
+			Segment segment = null;
+			if( "TEST_EVENT".equals( parts.get( 0 ) ) )
+			{
+				segment = new ChartTestEventSegment( this, parts.get( 1 ), parts.get( 2 ) );
+			}
+			else
+			{
+				segment = new ChartLineSegment( this, parts.get( 1 ), parts.get( 2 ), parts.get( 3 ) );
+			}
 			putSegment( segment );
 			provider.fireSegmentAdded( segment );
 		}
 		chart.addEventListener( BaseEvent.class, new ReleaseListener() );
-		chart.getStatisticHolder().addEventListener( CollectionEvent.class, statisticVariableListener );
+		if( chart.getOwner() instanceof StatisticHolder )
+		{
+			( ( StatisticHolder )chart.getOwner() ).addEventListener( CollectionEvent.class, statisticVariableListener );
+		}
 	}
 
 	@Override
 	public Set<String> getVariableNames()
 	{
-		return chart.getStatisticHolder().getStatisticVariableNames();
+		return chart.getOwner() instanceof StatisticHolder ? ( ( StatisticHolder )chart.getOwner() )
+				.getStatisticVariableNames() : ImmutableSet.<String> of();
 	}
 
 	@Override
 	public Set<String> getStatisticNames( String variableName )
 	{
-		return chart.getStatisticHolder().getStatisticVariable( variableName ).getStatisticNames();
+		return chart.getOwner() instanceof StatisticHolder ? ( ( StatisticHolder )chart.getOwner() )
+				.getStatisticVariable( variableName ).getStatisticNames() : ImmutableSet.<String> of();
 	}
 
 	@Override
 	public Set<String> getSources( String variableName )
 	{
-		return chart.getStatisticHolder().getStatisticVariable( variableName ).getSources();
+		return chart.getOwner() instanceof StatisticHolder ? ( ( StatisticHolder )chart.getOwner() )
+				.getStatisticVariable( variableName ).getSources() : ImmutableSet.<String> of();
 	}
 
-	@Override
-	public LineSegment.Removable addSegment( String variableName, String statisticName, String source )
+	private Segment addOrGetExistingSegment( Segment segment )
 	{
-		ChartLineSegment segment = new ChartLineSegment( this, variableName, statisticName, source );
 		String segmentId = segment.toString();
 
 		if( getSegment( segmentId ) == null )
@@ -103,10 +120,24 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 			provider.fireSegmentAdded( segment );
 		}
 
-		return ( ChartLineSegment )getSegment( segmentId );
+		return getSegment( segmentId );
 	}
 
-	public void removeSegment( LineSegment segment )
+	@Override
+	public LineSegment.Removable addSegment( String variableName, String statisticName, String source )
+	{
+		return ( LineSegment.Removable )addOrGetExistingSegment( new ChartLineSegment( this, variableName, statisticName,
+				source ) );
+	}
+
+	@Override
+	public TestEventSegment.Removable addSegment( String typeLabel, String sourceLabel )
+	{
+		return ( TestEventSegment.Removable )addOrGetExistingSegment( new ChartTestEventSegment( this, typeLabel,
+				sourceLabel ) );
+	}
+
+	public void removeSegment( Segment segment )
 	{
 		if( deleteSegment( segment ) )
 		{
@@ -120,19 +151,19 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 		if( !released )
 		{
 			List<String> segmentsStrings = new ArrayList<String>();
-			for( LineSegment lineSegment : getSegments() )
+			for( Segment lineSegment : getSegments() )
 				segmentsStrings.add( lineSegment.toString() );
 			setAttribute( SEGMENTS_ATTRIBUTE, StringUtils.serialize( segmentsStrings ) );
 		}
 	}
 
 	@Override
-	protected void segmentAdded( LineSegment segment )
+	protected void segmentAdded( Segment segment )
 	{
 	}
 
 	@Override
-	protected void segmentRemoved( LineSegment segment )
+	protected void segmentRemoved( Segment segment )
 	{
 	}
 
@@ -145,13 +176,13 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	@Override
 	public String toString()
 	{
-		return chart.getStatisticHolder().getLabel();
+		return chart.getOwner().getLabel();
 	}
 
 	@Override
 	public String getLabel()
 	{
-		return chart.getStatisticHolder().getLabel();
+		return chart.getOwner().getLabel();
 	}
 
 	@Override
@@ -175,8 +206,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 			{
 				StatisticVariable removedElement = ( StatisticVariable )event.getElement();
 
-				Set<LineSegment> lineSegments = new HashSet<LineSegment>( provider.getSegments() );
-				for( LineSegment lineSegment : lineSegments )
+				for( LineSegment lineSegment : Iterables.filter( provider.getSegments(), LineSegment.class ) )
 					if( lineSegment.getStatistic().getStatisticVariable().equals( removedElement ) )
 						removeSegment( lineSegment );
 			}
@@ -191,9 +221,15 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 			if( Releasable.RELEASED.equals( event.getKey() ) )
 			{
 				released = true;
-				for( LineSegment segment : new ArrayList<LineSegment>( getSegments() ) )
+				for( Segment segment : getSegments() )
+				{
 					removeSegment( segment );
-				chart.getStatisticHolder().removeEventListener( CollectionEvent.class, statisticVariableListener );
+				}
+				if( chart.getOwner() instanceof StatisticHolder )
+				{
+					( ( StatisticHolder )chart.getOwner() ).removeEventListener( CollectionEvent.class,
+							statisticVariableListener );
+				}
 			}
 		}
 	}

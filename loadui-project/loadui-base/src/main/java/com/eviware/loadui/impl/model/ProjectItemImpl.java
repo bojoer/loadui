@@ -129,11 +129,16 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final Property<Long> numberOfAutosaves;
 	private final File projectFile;
 
+	private static LoaduiProjectDocumentConfig preProcessProjectFile( LoaduiProjectDocumentConfig config )
+	{
+		return config;
+	}
+
 	public static ProjectItemImpl loadProject( WorkspaceItem workspace, File projectFile ) throws XmlException,
 			IOException
 	{
 		return InitializableUtils.initialize( new ProjectItemImpl( workspace, projectFile,
-				projectFile.exists() ? LoaduiProjectDocumentConfig.Factory.parse( projectFile )
+				projectFile.exists() ? preProcessProjectFile( LoaduiProjectDocumentConfig.Factory.parse( projectFile ) )
 						: LoaduiProjectDocumentConfig.Factory.newInstance() ) );
 	}
 

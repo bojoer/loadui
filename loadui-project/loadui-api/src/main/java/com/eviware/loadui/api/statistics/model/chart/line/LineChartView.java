@@ -13,39 +13,29 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.statistics.model;
+package com.eviware.loadui.api.statistics.model.chart.line;
 
-import com.eviware.loadui.api.addressable.Addressable;
+import java.util.Collection;
+
 import com.eviware.loadui.api.events.EventFirer;
-import com.eviware.loadui.api.model.AttributeHolder;
-import com.eviware.loadui.api.traits.Deletable;
-import com.eviware.loadui.api.traits.Labeled;
-import com.eviware.loadui.api.traits.Releasable;
+import com.eviware.loadui.api.statistics.model.chart.ChartView;
 
 /**
- * A Chart of a specific type, displaying data from a specific source of a
- * StatisticHolder.
+ * ChartView which describes a Line chart.
  * 
  * @author dain.nilsson
  */
-public interface Chart extends AttributeHolder, EventFirer, Releasable, Deletable
+public interface LineChartView extends ChartView, EventFirer
 {
 	/**
-	 * Gets the Owner for which the Chart displays data.
-	 * 
-	 * @return
+	 * CollectionEvent fired when a segment is added or removed.
 	 */
-	public Owner getOwner();
+	public final static String SEGMENTS = LineChartView.class.getName() + "@segments";
 
 	/**
-	 * Gets the parent ChartGroup.
+	 * Gets the contained Segments.
 	 * 
 	 * @return
 	 */
-	public ChartGroup getChartGroup();
-
-	public interface Owner extends Addressable, Labeled
-	{
-
-	}
+	public Collection<? extends Segment> getSegments();
 }

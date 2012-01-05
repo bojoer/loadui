@@ -16,6 +16,7 @@
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 
 /**
  * LineChartView for a ChartGroup.
@@ -29,20 +30,21 @@ public class ChartGroupLineChartView extends AbstractLineChartView
 	public ChartGroupLineChartView( LineChartViewProvider provider, ChartGroup chartGroup )
 	{
 		super( provider, chartGroup, CHART_GROUP_PREFIX );
+
 		this.chartGroup = chartGroup;
 	}
 
 	@Override
-	protected void segmentAdded( LineSegment segment )
+	protected void segmentAdded( Segment segment )
 	{
-		if( segment instanceof ChartLineSegment )
+		if( segment instanceof AbstractChartSegment )
 			putSegment( segment );
 	}
 
 	@Override
-	protected void segmentRemoved( LineSegment segment )
+	protected void segmentRemoved( Segment segment )
 	{
-		if( segment instanceof ChartLineSegment )
+		if( segment instanceof AbstractChartSegment )
 			deleteSegment( segment );
 	}
 

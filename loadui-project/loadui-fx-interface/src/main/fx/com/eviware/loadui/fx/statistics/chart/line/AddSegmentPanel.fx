@@ -31,7 +31,7 @@ import com.eviware.loadui.fx.statistics.chart.SegmentTreeModel;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.events.BaseEvent;
-import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 
 import java.lang.Runnable;
 import java.util.Arrays;

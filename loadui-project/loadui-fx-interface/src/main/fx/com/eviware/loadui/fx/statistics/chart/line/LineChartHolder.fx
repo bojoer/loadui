@@ -42,9 +42,9 @@ import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 import com.eviware.loadui.fx.statistics.chart.BaseChart;
 
-import com.eviware.loadui.api.traits.Releasable;;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+import com.eviware.loadui.api.traits.Releasable;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.charting.line.LineChart;
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.charting.line.ZoomLevel;
@@ -55,6 +55,8 @@ import com.eviware.loadui.util.ReleasableUtils;
 
 import java.util.WeakHashMap;
 import java.beans.PropertyChangeEvent;
+
+import com.google.common.collect.Iterables;
 
 def lineChartCache = new WeakHashMap();
 
@@ -246,7 +248,7 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 	}
 	
 	override function create():Node {
-		for( segment in chartView.getSegments() )
+		for( segment in Iterables.filter( chartView.getSegments(), LineSegment.class ) )
 			addSegment( chart.getLineSegmentModel( segment ) );
 		
 		initialized = true;

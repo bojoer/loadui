@@ -25,8 +25,8 @@ import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.impl.statistics.model.chart.AbstractChartViewProvider;
 import com.eviware.loadui.util.events.EventSupport;
 
@@ -40,7 +40,7 @@ public class LineChartViewProvider extends AbstractChartViewProvider<LineChartVi
 	public static final String LINE_SEGMENTS = LineChartViewProvider.class.getName() + "@lineSegments";
 
 	private final EventSupport eventSupport = new EventSupport();
-	private final Set<LineSegment> segments = new HashSet<LineSegment>();
+	private final Set<Segment> segments = new HashSet<Segment>();
 
 	public LineChartViewProvider( ChartGroup chartGroup )
 	{
@@ -91,19 +91,19 @@ public class LineChartViewProvider extends AbstractChartViewProvider<LineChartVi
 		eventSupport.fireEvent( event );
 	}
 
-	void fireSegmentAdded( LineSegment segment )
+	void fireSegmentAdded( Segment segment )
 	{
 		segments.add( segment );
 		fireEvent( new CollectionEvent( this, LINE_SEGMENTS, CollectionEvent.Event.ADDED, segment ) );
 	}
 
-	void fireSegmentRemoved( LineSegment segment )
+	void fireSegmentRemoved( Segment segment )
 	{
 		segments.remove( segment );
 		fireEvent( new CollectionEvent( this, LINE_SEGMENTS, CollectionEvent.Event.REMOVED, segment ) );
 	}
 
-	Set<LineSegment> getSegments()
+	Set<Segment> getSegments()
 	{
 		return Collections.unmodifiableSet( segments );
 	}

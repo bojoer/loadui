@@ -20,8 +20,9 @@ import java.util.LinkedHashSet;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.google.common.collect.Iterables;
 
 public class LineChartStyles
@@ -68,7 +69,7 @@ public class LineChartStyles
 			colors.add( color );
 
 		for( ChartView chartView : chartGroup.getChartViewsForCharts() )
-			for( LineSegment s : ( ( LineChartView )chartView ).getSegments() )
+			for( Segment s : ( ( LineChartView )chartView ).getSegments() )
 				if( s != segment )
 					colors.remove( s.getAttribute( LineSegmentChartModel.COLOR, "" ) );
 

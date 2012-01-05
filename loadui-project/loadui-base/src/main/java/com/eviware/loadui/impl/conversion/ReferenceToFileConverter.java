@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -49,7 +49,6 @@ import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.PropertyHolder;
 import com.eviware.loadui.impl.property.Reference;
 import com.google.common.io.Closeables;
-import com.google.common.io.Files;
 
 public class ReferenceToFileConverter implements Converter<Reference, File>, EventHandler<CollectionEvent>
 {
@@ -237,7 +236,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 									else
 									{
 										log.error( "File transfered with MD5 hash: {}, should be {}. Retrying...", md5Hex, hash );
-										Files.deleteRecursively( file );
+										file.delete();
 										endpoint.sendMessage( FileToReferenceConverter.CHANNEL, hash );
 									}
 								}

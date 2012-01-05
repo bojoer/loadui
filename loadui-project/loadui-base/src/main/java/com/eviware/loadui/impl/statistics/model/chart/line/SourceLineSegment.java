@@ -22,7 +22,7 @@ import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 
 public class SourceLineSegment implements LineSegment
 {

@@ -31,7 +31,7 @@ import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.util.ModelUtils;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.charting.ChartNamePrettifier;
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.events.WeakEventHandler;

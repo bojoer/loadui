@@ -15,18 +15,19 @@
  */
 package com.eviware.loadui.util.groovy;
 
+import groovy.lang.GroovyShell;
+
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.traits.Releasable;
-import com.google.common.collect.MapEvictionListener;
-import com.google.common.collect.MapMaker;
-
-import groovy.lang.GroovyShell;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * Manages GroovyComponentClassLoaders by id. Creates ClassLoaders on demand,
@@ -38,39 +39,40 @@ public class ClassLoaderRegistry implements Releasable
 {
 	public static final Logger log = LoggerFactory.getLogger( ClassLoaderRegistry.class );
 
-	private final ConcurrentMap<String, GroovyEnvironmentClassLoader> classLoaders = new MapMaker().weakValues()
-			.evictionListener( new MapEvictionListener<String, GroovyEnvironmentClassLoader>()
+	private final LoadingCache<String, GroovyEnvironmentClassLoader> classLoaders = CacheBuilder.newBuilder()
+			.weakValues().build( new CacheLoader<String, GroovyEnvironmentClassLoader>()
 			{
 				@Override
-				public void onEviction( String key, GroovyEnvironmentClassLoader value )
+				public GroovyEnvironmentClassLoader load( String key ) throws Exception
 				{
-					log.debug( "GroovyClassLoader evicted: {}", key );
+					return AccessController.doPrivileged( new PrivilegedAction<GroovyEnvironmentClassLoader>()
+					{
+						@Override
+						public GroovyEnvironmentClassLoader run()
+						{
+							return new GroovyEnvironmentClassLoader( GroovyShell.class.getClassLoader() );
+						}
+					} );
 				}
-			} ).makeMap();
+			} );
 
 	public synchronized GroovyEnvironmentClassLoader useClassLoader( String id, Object user )
 	{
-		GroovyEnvironmentClassLoader classLoader = classLoaders.get( id );
-		if( classLoader == null )
+		try
 		{
-			classLoader = AccessController.doPrivileged( new PrivilegedAction<GroovyEnvironmentClassLoader>()
-			{
-				@Override
-				public GroovyEnvironmentClassLoader run()
-				{
-					return new GroovyEnvironmentClassLoader( GroovyShell.class.getClassLoader() );
-				}
-			} );
-			classLoaders.put( id, classLoader );
-			log.debug( "GroovyClassLoader created: {}", id );
+			return classLoaders.get( id );
+		}
+		catch( ExecutionException e )
+		{
+			log.error( "Unable to get GroovyEnvironmentClassLoader", e );
 		}
 
-		return classLoader;
+		return null;
 	}
 
 	@Override
 	public synchronized void release()
 	{
-		classLoaders.clear();
+		classLoaders.invalidateAll();
 	}
 }

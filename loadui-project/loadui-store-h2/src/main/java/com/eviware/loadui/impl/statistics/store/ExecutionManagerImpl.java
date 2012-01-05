@@ -823,9 +823,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 					String sourceLabel = ( String )s.get( TestEventSourceTable.STATIC_FIELD_LABEL );
 					if( !sourceMap.containsKey( sourceLabel ) )
 					{
-						TestEventSourceDescriptorImpl sourceDescr = new TestEventSourceDescriptorImpl( sourceLabel );
+						TestEventSourceDescriptorImpl sourceDescr = new TestEventSourceDescriptorImpl( typeDescr, sourceLabel );
 						sourceMap.put( sourceLabel, sourceDescr );
-						typeDescr.putSource( sourceLabel, sourceDescr );
 					}
 
 					Long sourceId = ( Long )s.get( TestEventSourceTable.STATIC_FIELD_ID );

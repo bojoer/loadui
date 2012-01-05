@@ -22,6 +22,7 @@ import com.eviware.loadui.fx.statistics.chart.line.LineChartPanels;
 
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.*;
+import com.eviware.loadui.api.statistics.model.chart.line.*;
 
 /**
  * Creates a Node for a specific ChartView
@@ -35,7 +36,7 @@ public function createChart( chartView:ChartView, holder:ChartViewHolder ):BaseC
 }
 
 public function getGroupPanels( chartGroup:ChartGroup ):Object[] {
-	if( chartGroup.getType() == LineChartView.class.getName() ) {
+	if( chartGroup.getType().equals( LineChartView.class.getName() ) or chartGroup.getType().equals( "com.eviware.loadui.api.statistics.model.chart.LineChartView" ) ) {
 		LineChartPanels.getGroupPanels( chartGroup )
 	} else {
 		[]

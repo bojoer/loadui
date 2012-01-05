@@ -20,13 +20,14 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
 
-import com.eviware.loadui.api.charting.ChartNamePrettifier;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
-import com.eviware.loadui.api.statistics.model.chart.LineChartView.LineSegment;
-
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
+
+import com.eviware.loadui.api.charting.ChartNamePrettifier;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.google.common.collect.Iterators;
 
 public class ChartLegendDataSource extends JRAbstractBeanDataSource
 {
@@ -39,13 +40,13 @@ public class ChartLegendDataSource extends JRAbstractBeanDataSource
 		super( true );
 
 		this.chartView = chartView;
-		iterator = chartView.getSegments().iterator();
+		iterator = Iterators.filter( chartView.getSegments().iterator(), LineSegment.class );
 	}
 
 	@Override
 	public void moveFirst() throws JRException
 	{
-		iterator = chartView.getSegments().iterator();
+		iterator = Iterators.filter( chartView.getSegments().iterator(), LineSegment.class );
 	}
 
 	@Override

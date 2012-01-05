@@ -17,7 +17,7 @@ package com.eviware.loadui.fx.statistics.chart.line;
 
 import javafx.scene.control.Button;
 
-import com.eviware.loadui.api.statistics.model.chart.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.charting.line.LineChart;
 
 import java.util.ArrayList;

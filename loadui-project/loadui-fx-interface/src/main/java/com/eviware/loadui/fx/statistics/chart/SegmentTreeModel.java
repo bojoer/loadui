@@ -27,7 +27,7 @@ import javax.swing.tree.TreeNode;
 
 import com.eviware.loadui.api.charting.ChartNamePrettifier;
 import com.eviware.loadui.api.statistics.StatisticVariable;
-import com.eviware.loadui.api.statistics.model.chart.ConfigurableLineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 import com.eviware.loadui.fx.tree.BaseTreeNode;
 
 public class SegmentTreeModel extends DefaultTreeModel

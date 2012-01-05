@@ -45,19 +45,13 @@ public class TestEventTypeDescriptorImpl implements TestEventTypeDescriptor
 		return ImmutableSet.<TestEventSourceDescriptor> copyOf( sources.values() );
 	}
 
-	public void putSource( String label, TestEventSourceDescriptorImpl source )
-	{
-		sources.put( label, source );
-	}
-
 	public TestEventSourceDescriptorImpl getSource( String label )
 	{
-		TestEventSourceDescriptorImpl source = sources.get( label );
-		if( source == null )
-		{
-			sources.put( label, source = new TestEventSourceDescriptorImpl( label ) );
-		}
+		return sources.containsKey( label ) ? sources.get( label ) : new TestEventSourceDescriptorImpl( this, label );
+	}
 
-		return source;
+	void putSource( TestEventSourceDescriptorImpl source )
+	{
+		sources.put( source.getLabel(), source );
 	}
 }

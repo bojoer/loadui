@@ -33,6 +33,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.MoreExecutors;
 
 public class TestRunnerImpl extends AbstractTestRunner implements Releasable
 {
@@ -45,7 +46,7 @@ public class TestRunnerImpl extends AbstractTestRunner implements Releasable
 		}
 	};
 
-	private final ExecutorService testExecutor = Executors.newSingleThreadExecutor();
+	private final ExecutorService testExecutor = MoreExecutors.listeningDecorator( Executors.newSingleThreadExecutor() );
 	private final LinkedList<TestController> executionQueue = Lists.newLinkedList();
 
 	public TestRunnerImpl( ExecutorService executor )
