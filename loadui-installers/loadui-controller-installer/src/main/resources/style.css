@@ -1385,6 +1385,11 @@
 	-fx-shadow-highlight-color: rgba(200,200,200,0.5);
 }
 
+.add-assertion-dialog *.title {
+	-fx-font-weight: bold;
+}
 
-
+.add-assertion-dialog *.line {
+    -fx-stroke: #848484;
+}
 

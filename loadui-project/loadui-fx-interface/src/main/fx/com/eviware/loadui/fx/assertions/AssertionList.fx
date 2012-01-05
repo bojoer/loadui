@@ -17,6 +17,8 @@ import javafx.geometry.VPos;
 import javafx.geometry.HPos;
 import javafx.scene.control.ScrollView;
 import javafx.scene.control.ScrollBarPolicy;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import javafx.scene.input.MouseEvent;
 
@@ -48,7 +50,11 @@ import com.eviware.loadui.fx.ui.dnd.DroppableNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.assertions.StatisticHolderAssertionToolbarItem;
 
+import com.eviware.loadui.fx.FxUtils.*;
+
 import java.util.HashMap;
+
+def assertionIcon = Image { url: "{__ROOT__}images/png/assertion_icon_neutral.png" };
 
 public class AssertionList extends Stack {
 	
@@ -160,7 +166,7 @@ class AssertionBox extends Stack {
 							    padding: Insets { left: 0, top: 0, right: 0, bottom: 0 }
 							    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
 							    content: [
-							    	Region { style: "-fx-background-color: red;", layoutInfo: LayoutInfo { width: 19, height: 12, hfill: false, vfill: false } },
+							    	ImageView { image: assertionIcon }
 									Label { styleClass: "title", text: bind ModelUtils.getLabelHolder( assertionItem ).label }
 									Region { styleClass: "separator", layoutInfo: LayoutInfo { width: 1, height: 14, hfill: false, vfill: false } },
 									menuButton
