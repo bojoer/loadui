@@ -4,6 +4,7 @@
 package com.eviware.loadui.fx.assertions;
 
 import javafx.scene.Group;
+import javafx.scene.shape.Polyline;
 import javafx.scene.layout.Stack;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -19,6 +20,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.util.Math;
+import javafx.scene.shape.Line;
 
 import com.javafx.preview.layout.Grid;
 import com.javafx.preview.layout.GridRow;
@@ -166,16 +168,22 @@ public class AddAssertionDialog {
 	}
 				
 	postinit {
+	    
+	    var grid: Grid;
+	    var hbox: HBox;
+	    var treeSelector: CascadingTreeSelector;
+	    var titleRegion: Region;
+	    
 		def dialog: Dialog = Dialog {
 			scene: AppState.byName("MAIN").scene
 			title: "MAKE ASSERTION"
 			content: [
 				VBox {
 				    spacing: 15
+				    styleClass: "add-assertion-dialog"
 				    content: [
 						HBox{
 						    nodeVPos: VPos.CENTER
-						    vpos: VPos.CENTER
 				    	    spacing: 6
 				    	    layoutInfo: LayoutInfo { vfill: false, vgrow: Priority.NEVER }
 				    	    content: [
@@ -183,55 +191,139 @@ public class AddAssertionDialog {
 				    	    	assertionNameTextBox
 				    	    ]
 				    	}
-				    	HBox {
-    					    layoutInfo: LayoutInfo { width: 1000, height: 220 }
-    					    layoutY: 30
-    					    styleClass: "add-assertion-dialog"
-    					    content: [
-    					    	CascadingTreeSelector {
-    					    	    //showLabel: false
-    	    						columnCount: 3
-    	    						treeModel: new AssertionTreeModel( statisticHolder )
-    	    						allowMultiple: false
-    	    						onSelect: function(obj):Void { selected = obj as AssertionTreeSelectedItemHolder; }
-    	    						onDeselect: function(obj):Void { selected = null; }
-    	    					}
-    	    					VBox {
-    	    					    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
-    	    					    padding: Insets { left: 12, top: 12, right: 12, bottom: 12 }
-    	    					    spacing: 9
-    	    					    content: [
-    	    					    	Label { text: "Constraint" }
-    	    					    	Grid {
-    	    					    	    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
-    	    					    	    hgap: 20
-    	    					    		rows: [
-    	    					    	         GridRow { cells: [Label { text: "Min" }, Label { text: "Max" }] }
-    	    					    	         GridRow { cells: [minTextBox, maxTextBox] }
-    	    					    		]
-    	    					    	}
-    	    					    	Label { text: "Tolerance" }
-    	    					    	HBox{
-    	    					    	    spacing: 6
-    	    					    	    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
-    	    					    	    content: [
-    	    					    	    	Label { text: "Allow the constraint to be violated" },
-    	    					    	    	timesTextBox,
-    	    					    	    	Label { text: "times," }
-    	    					    	    ]
-    	    					    	}
-    	    					    	HBox{
-    	    					    	    spacing: 6
-    	    					    	    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
-    	    					    	    content: [
-    	    					    	    	Label { text: "within" },
-    	    					    	    	withinTextBox,
-    	    					    	    	Label { text: "seconds." }
-    	    					    	    ]
-    	    					    	}   
-    	    					    ]
-    	    					}
-    					    ]
+				    	Group {
+				    	   content: [ 
+				    			Group{
+				    				content: [
+				    					titleRegion = Region { styleClass: "title-region", layoutInfo: LayoutInfo { width: bind hbox.layoutBounds.width, height: 24, hfill: false, vfill: false } }
+				    					Region { 
+				    						styleClass: "border"
+				    						layoutX: 0
+				    						layoutY: bind titleRegion.layoutBounds.height - 1
+				    						layoutInfo: LayoutInfo { 
+				    							width: bind hbox.layoutBounds.width, 
+				    							height: bind hbox.layoutBounds.height - titleRegion.layoutBounds.height + hbox.layoutY, 
+				    							hfill: false, 
+				    							vfill: false 
+				    						} 
+				    					}
+				    					Line { 
+				    						styleClass: "line"
+				    						startY: bind titleRegion.layoutBounds.height
+				    						endY: bind hbox.layoutBounds.height - 2 + hbox.layoutY
+				    						startX: bind treeSelector.layoutBounds.width / 3
+				    						endX: bind treeSelector.layoutBounds.width / 3 
+				    					}
+				    					Polyline {
+				    					    layoutX: bind treeSelector.layoutBounds.width / 3 - 10
+				    					    layoutY: bind titleRegion.layoutBounds.height / 2
+    							    	    styleClass: "arrow"
+    							    	    points: [
+    							    	         0.0, -2.0,
+     							    	         2.0, 0.0,
+     							    	         0.0, 2.0
+    							    	    ]
+    							    	}	
+				    					Line { 
+				    						styleClass: "line"
+				    						startY: bind titleRegion.layoutBounds.height
+				    						endY: bind hbox.layoutBounds.height - 2 + hbox.layoutY
+				    						startX: bind  2 * treeSelector.layoutBounds.width / 3 
+				    						endX: bind  2 * treeSelector.layoutBounds.width / 3  
+				    					}
+				    					Polyline {
+				    					    layoutX: bind 2 * treeSelector.layoutBounds.width / 3 - 10
+				    					    layoutY: bind titleRegion.layoutBounds.height / 2
+    							    	    styleClass: "arrow"
+    							    	    points: [
+    							    	         0.0, -2.0,
+	 							    	         2.0, 0.0,
+	 							    	         0.0, 2.0
+    							    	    ]
+    							    	}	
+				    					Line { 
+				    						styleClass: "line"
+				    						startY: bind titleRegion.layoutBounds.height
+				    						endY: bind hbox.layoutBounds.height - 2 + hbox.layoutY
+				    						startX: bind  treeSelector.layoutBounds.width 
+				    						endX: bind  treeSelector.layoutBounds.width  
+				    					}
+				    					Polyline {
+				    					    layoutX: bind treeSelector.layoutBounds.width - 10
+				    					    layoutY: bind titleRegion.layoutBounds.height / 2
+    							    	    styleClass: "arrow"
+    							    	    points: [
+    							    	         0.0, -2.0,
+    							    	         2.0, 0.0,
+    							    	         0.0, 2.0
+    							    	    ]
+    							    	}
+    							    	Label { 
+    							    	    styleClass: "title"
+   							    	        layoutX: bind treeSelector.layoutBounds.width + 12
+   				    					    layoutY: 6
+    							    		text: "Values" 
+    							    	}				
+				    				]
+				    			}
+						    	hbox = HBox {
+		    					    layoutInfo: LayoutInfo { width: 1000, height: 220 }
+		    					    layoutY: 6
+		    					    content: [
+		    					    	treeSelector = CascadingTreeSelector {
+		    	    						columnCount: 3
+		    	    						treeModel: new AssertionTreeModel( statisticHolder )
+		    	    						allowMultiple: false
+		    	    						onSelect: function(obj):Void { selected = obj as AssertionTreeSelectedItemHolder; }
+		    	    						onDeselect: function(obj):Void { selected = null; }
+		    	    					}
+		    	    					VBox {
+		    	    					    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER, vfill: false, vgrow: Priority.NEVER }
+		    	    					    padding: Insets { left: 12, top: 12, right: 12, bottom: 12 }
+		    	    					    spacing: 3
+		    	    					    content: [
+		    	    					    	Region { style: "-fx-background-color: transparent;", layoutInfo: LayoutInfo { width: 1, height: 18 } }
+		    	    					    	Label { text: "Constraint", styleClass: "bold-text"}
+		    	    					    	grid = Grid {
+		    	    					    	    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
+		    	    					    	    hgap: 20
+		    	    					    		rows: [
+		    	    					    	         GridRow { cells: [Label { text: "Min" }, Label { text: "Max" }] }
+		    	    					    	         GridRow { cells: [minTextBox, maxTextBox] }
+		    	    					    		]
+		    	    					    	}
+		    	    					    	Region { style: "-fx-background-color: transparent;", layoutInfo: LayoutInfo { width: 1, height: 10 } }
+		    	    					    	Line {
+													styleClass: "line"
+						    						endX: bind grid.layoutBounds.width
+						    					}
+		    	    					    	Region { style: "-fx-background-color: transparent;", layoutInfo: LayoutInfo { width: 1, height: 10 } }				    					
+		    	    					    	Label { text: "Tolerance", styleClass: "bold-text" }
+		    	    					    	HBox{
+		    	    					    	    nodeVPos: VPos.CENTER
+		    	    					    	    spacing: 6
+		    	    					    	    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
+		    	    					    	    content: [
+		    	    					    	    	Label { text: "Allow the constraint to be violated" },
+		    	    					    	    	timesTextBox,
+		    	    					    	    	Label { text: "times," }
+		    	    					    	    ]
+		    	    					    	}
+		    	    					    	HBox{
+		    	    					    	    nodeVPos: VPos.CENTER
+		    	    					    	    spacing: 6
+		    	    					    	    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
+		    	    					    	    content: [
+		    	    					    	    	Label { text: "within" },
+		    	    					    	    	withinTextBox,
+		    	    					    	    	Label { text: "seconds." }
+		    	    					    	    ]
+		    	    					    	}   
+		    	    					    ]
+		    	    					}
+		    					    ]
+						    	}
+				    		]
 				    	}
 				    ]
 				}

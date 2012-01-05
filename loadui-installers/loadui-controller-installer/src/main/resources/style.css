@@ -1373,9 +1373,10 @@
 	-fx-background-radius: 0 0 0 0;
 }
 
-.add-assertion-dialog *.cascading-tree-selector *.title {
-	-fx-text-fill: #9c9c9c;
-	-fx-font-weight: bold;
+.add-assertion-dialog *.title {
+	-fx-text-fill: #363636;
+	-fx-font-weight: plain;
+	-fx-font-size: 11pt;
 }
 
 .add-assertion-dialog *.tree-selector-level *.scroll-bar {
@@ -1385,7 +1386,7 @@
 	-fx-shadow-highlight-color: rgba(200,200,200,0.5);
 }
 
-.add-assertion-dialog *.title {
+.add-assertion-dialog *.bold-text {
 	-fx-font-weight: bold;
 }
 
@@ -1393,4 +1394,24 @@
     -fx-stroke: #848484;
 }
 
+.add-assertion-dialog *.border {
+	-fx-background-color: #848484, #bbbbbb, #cdcdcd, #dddddd;
+    -fx-background-insets: 0, 1, 2, 3;
+    -fx-background-radius: 0 0 0 0;
+}
+
+.add-assertion-dialog *.title-region {
+	-fx-background-color: #848484, linear (0%,0%) to (0%,100%) stops (0.0, #c9c9c9) (1.0, #a4a4a4);
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 4 4 0 0;
+}
+
+.add-assertion-dialog *.arrow {
+	-fx-stroke: #525252;
+}
+
+.add-assertion-dialog *.value-node:selected {
+	-fx-background-color: transparent;
+	-fx-border-color: transparent;
+}
 
