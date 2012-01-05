@@ -778,7 +778,7 @@ catch(Exception e){
             <preActivation />
             <postActivation />
             <actions>
-              <action name="" id="1099" beanClass="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction" enabled="false" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+              <action name="" id="1099" beanClass="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction">
@@ -789,41 +789,6 @@ catch(Exception e){
                   </java>
                 </serializedBean>
                 <condition>context.getBooleanVariable("executeLauncherAction") &amp;&amp; (!context.isUnattended())</condition>
-              </action>
-              <action name="" id="1145" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="3" errorMessage="Error">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
-                      <void property="environmentVariables">
-                        <void method="put">
-                          <string>PATH</string>
-                          <string />
-                        </void>
-                        <void method="put">
-                          <string>CLASSPATH</string>
-                          <string />
-                        </void>
-                      </void>
-                      <void property="executable">
-                        <object class="java.io.File">
-                          <string>loadUI.bat</string>
-                        </object>
-                      </void>
-                      <void property="keepConsoleWindow">
-                        <boolean>true</boolean>
-                      </void>
-                      <void property="showWindowsConsole">
-                        <boolean>true</boolean>
-                      </void>
-                      <void property="workingDirectory">
-                        <object class="java.io.File">
-                          <string>.</string>
-                        </object>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition />
               </action>
             </actions>
             <formComponents>
@@ -1098,7 +1063,7 @@ return f.exists();</condition>
     </applications>
   </installerGui>
   <mediaSets>
-    <unixInstaller name="Unix Installer" id="25" mediaFileName="loadUI-Pro-${compiler:version}" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-x86-1.7.0_01_client_only_ws" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Unix Installer" id="25" mediaFileName="loadUI-Pro-${compiler:version}" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-x86-1.7.0_01_client_only" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="24" />
         <launcher id="225" />
