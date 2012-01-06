@@ -1386,6 +1386,20 @@
 	-fx-shadow-highlight-color: rgba(200,200,200,0.5);
 }
 
+.add-assertion-dialog *.tree-selector-level *.scroll-bar:vertical *.increment-arrow {
+    -fx-padding: 7 12 0 0;
+    -fx-background-color: #525252;
+    -fx-background-insets: 0;
+    -fx-shape: "M -6 0 L 0 5 6 0 5 -1 0 3 -5 -1 z"
+}
+
+.add-assertion-dialog *.tree-selector-level *.scroll-bar:vertical *.decrement-arrow {
+    -fx-padding: 7 12 0 0;
+    -fx-background-color: #525252;
+    -fx-background-insets: 0;
+    -fx-shape: "M -6 0 L 0 -5 6 0 5 1 0 -3 -5 1 z";
+}
+
 .add-assertion-dialog *.bold-text {
 	-fx-font-weight: bold;
 }
@@ -1397,7 +1411,7 @@
 .add-assertion-dialog *.border {
 	-fx-background-color: #848484, #bbbbbb, #cdcdcd, #dddddd;
     -fx-background-insets: 0, 1, 2, 3;
-    -fx-background-radius: 0 0 0 0;
+    -fx-background-radius: 0;
 }
 
 .add-assertion-dialog *.title-region {
@@ -1414,4 +1428,5 @@
 	-fx-background-color: transparent;
 	-fx-border-color: transparent;
 }
+
 

@@ -19,11 +19,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.control.ScrollView;
 import javafx.scene.control.ScrollBarPolicy;
+import javafx.scene.control.Label;
 
 public class TreeSelectorLevel extends ScrollView {
 	public-init var selector:CascadingTreeSelector;
 
-	public var showLabel = true;
+	public-init var externalLabel: Label;
 
 	def vbox:VBox = VBox {
 		spacing: 18
@@ -39,7 +40,10 @@ public class TreeSelectorLevel extends ScrollView {
 	}
 	
 	package function addChildrenFor( target:Object ):Void {
-		insert TreeLevelNode { level: this, target: target, showLabel: bind showLabel } into vbox.content;
+		insert TreeLevelNode { level: this, target: target } into vbox.content;
+		if(externalLabel != null){ 
+		    externalLabel.text = "{target}";
+		}
 	}
 	
 	package function removeChildrenFor( target:Object ):Void {
@@ -53,6 +57,9 @@ public class TreeSelectorLevel extends ScrollView {
 				}
 				break;
 			}
+		}
+		if(externalLabel != null){ 
+			externalLabel.text = "";
 		}
 	}
 }

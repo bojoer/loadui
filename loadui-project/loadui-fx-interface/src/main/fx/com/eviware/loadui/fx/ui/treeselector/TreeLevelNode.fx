@@ -26,12 +26,10 @@ import com.eviware.loadui.fx.tree.BaseTreeNode;
 public class TreeLevelNode extends VBox {
 	public-init var level:TreeSelectorLevel;
 	
-	public var showLabel = true;
-	
 	public-init var target:Object on replace {
 		var valueNode: ValueNode = null;
 		content = [];
-		if(showLabel){ 
+		if(level.externalLabel == null){ 
 			insert Label { text: "{target}", layoutInfo: LayoutInfo { margin: Insets { bottom: 10 } }, styleClass: "title" } into content;
 		}
 		for( childIndex in [0..level.selector.treeModel.getChildCount( target ) - 1] ) {
@@ -47,7 +45,7 @@ public class TreeLevelNode extends VBox {
 		}
 	}
 	
-	override var layoutInfo = LayoutInfo { margin: Insets { right: 18, left: 18 } };
+	override var layoutInfo = bind level.selector.treeLevelNodeLayoutInfo;
 	override var spacing = 6;
 	
 	package function deselectAll():Void {

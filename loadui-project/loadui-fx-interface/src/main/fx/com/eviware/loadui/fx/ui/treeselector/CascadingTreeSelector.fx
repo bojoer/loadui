@@ -25,6 +25,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.CheckBox;
 import javafx.geometry.HPos;
 import javafx.util.Sequences;
+import javafx.geometry.Insets;
 
 import com.sun.javafx.scene.layout.Region;
 
@@ -37,7 +38,9 @@ import javax.swing.tree.TreeModel;
  */
 public class CascadingTreeSelector extends Stack {
     
-    public var showLabel = true;
+    public-init var externalLabels: Label[] = null;
+    
+    public-init var treeLevelNodeLayoutInfo: LayoutInfo = LayoutInfo { margin: Insets { right: 18, left: 18 } };
     
 	public-init var allowMultiple = false;
 	def bgHbox = HBox {
@@ -60,7 +63,7 @@ public class CascadingTreeSelector extends Stack {
 	}
 	
 	public-init var treeModel:TreeModel on replace {
-		def rootLevel = TreeSelectorLevel { selector: this, layoutInfo: LayoutInfo { width: bind width / columnCount, hfill: false, hgrow: Priority.NEVER }, showLabel: bind showLabel };
+		def rootLevel = TreeSelectorLevel { selector: this, layoutInfo: LayoutInfo { width: bind width / columnCount, hfill: false, hgrow: Priority.NEVER }, externalLabel: getExternalLabel(0) };
 		hbox.content = rootLevel;
 		rootLevel.addChildrenFor( treeModel.getRoot() );
 	}
@@ -70,7 +73,7 @@ public class CascadingTreeSelector extends Stack {
 		if( sizeof hbox.content > (index+1) ) {
 			hbox.content[index+1] as TreeSelectorLevel
 		} else {
-			def nextLevel = TreeSelectorLevel { selector: this, layoutInfo: LayoutInfo { width: bind width / columnCount, hfill: false, hgrow: Priority.NEVER }, showLabel: bind showLabel };
+			def nextLevel = TreeSelectorLevel { selector: this, layoutInfo: LayoutInfo { width: bind width / columnCount, hfill: false, hgrow: Priority.NEVER }, externalLabel: getExternalLabel(index + 1) };
 			insert nextLevel into hbox.content;
 			nextLevel
 		}
@@ -81,5 +84,14 @@ public class CascadingTreeSelector extends Stack {
 		if( index > 0 ) {
 			hbox.content = hbox.content[0..index-1];
 		}
+	}
+	
+	function getExternalLabel(level: Integer): Label {
+	    if(externalLabels != null and sizeof externalLabels > level){
+	        return externalLabels[level];
+	    } 
+	    else{
+	        return null;
+	    }
 	}
 }

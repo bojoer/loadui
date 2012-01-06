@@ -55,11 +55,13 @@ import com.eviware.loadui.api.serialization.Resolver;
 import java.lang.Runnable;
 
 public class AddAssertionDialog {
-	
+
+	var statisticHolderLabel: Label;
+	var statisticVariableLabel: Label;
+	var statisticLabel: Label;
+		
 	public-init var statisticHolder: StatisticHolder;
-	
-	public var onOk: function(): Void;
-	
+
 	var selected: AssertionTreeSelectedItemHolder;
 	
 	var warningMessage: String = "";
@@ -166,7 +168,7 @@ public class AddAssertionDialog {
         assertion.setTolerance(within,times);
         assertion.setLabel(assertionNameTextBox.text);
 	}
-				
+	
 	postinit {
 	    
 	    var grid: Grid;
@@ -202,7 +204,7 @@ public class AddAssertionDialog {
 				    						layoutY: bind titleRegion.layoutBounds.height - 1
 				    						layoutInfo: LayoutInfo { 
 				    							width: bind hbox.layoutBounds.width, 
-				    							height: bind hbox.layoutBounds.height - titleRegion.layoutBounds.height + hbox.layoutY, 
+				    							height: bind hbox.layoutBounds.height + 4, 
 				    							hfill: false, 
 				    							vfill: false 
 				    						} 
@@ -210,7 +212,7 @@ public class AddAssertionDialog {
 				    					Line { 
 				    						styleClass: "line"
 				    						startY: bind titleRegion.layoutBounds.height
-				    						endY: bind hbox.layoutBounds.height - 2 + hbox.layoutY
+				    						endY: bind hbox.layoutBounds.height + hbox.layoutY
 				    						startX: bind treeSelector.layoutBounds.width / 3
 				    						endX: bind treeSelector.layoutBounds.width / 3 
 				    					}
@@ -227,7 +229,7 @@ public class AddAssertionDialog {
 				    					Line { 
 				    						styleClass: "line"
 				    						startY: bind titleRegion.layoutBounds.height
-				    						endY: bind hbox.layoutBounds.height - 2 + hbox.layoutY
+				    						endY: bind hbox.layoutBounds.height + hbox.layoutY
 				    						startX: bind  2 * treeSelector.layoutBounds.width / 3 
 				    						endX: bind  2 * treeSelector.layoutBounds.width / 3  
 				    					}
@@ -244,7 +246,7 @@ public class AddAssertionDialog {
 				    					Line { 
 				    						styleClass: "line"
 				    						startY: bind titleRegion.layoutBounds.height
-				    						endY: bind hbox.layoutBounds.height - 2 + hbox.layoutY
+				    						endY: bind hbox.layoutBounds.height + hbox.layoutY
 				    						startX: bind  treeSelector.layoutBounds.width 
 				    						endX: bind  treeSelector.layoutBounds.width  
 				    					}
@@ -258,6 +260,21 @@ public class AddAssertionDialog {
     							    	         0.0, 2.0
     							    	    ]
     							    	}
+    							    	statisticHolderLabel = Label { 
+    							    	    styleClass: "title"
+   							    	        layoutX: 12
+   				    					    layoutY: 6
+    							    	}	
+    							    	statisticVariableLabel = Label { 
+    							    	    styleClass: "title"
+   							    	        layoutX: bind treeSelector.layoutBounds.width / 3 + 12
+   				    					    layoutY: 6
+    							    	}	
+    							    	statisticLabel = Label { 
+    							    	    styleClass: "title"
+   							    	        layoutX: bind 2 * treeSelector.layoutBounds.width / 3 + 12
+   				    					    layoutY: 6
+    							    	}	    							    	
     							    	Label { 
     							    	    styleClass: "title"
    							    	        layoutX: bind treeSelector.layoutBounds.width + 12
@@ -267,10 +284,12 @@ public class AddAssertionDialog {
 				    				]
 				    			}
 						    	hbox = HBox {
-		    					    layoutInfo: LayoutInfo { width: 1000, height: 220 }
-		    					    layoutY: 6
+		    					    layoutInfo: LayoutInfo { width: 1000, height: 220 } 
+		    					    layoutY: bind titleRegion.layoutBounds.height + 1  
 		    					    content: [
 		    					    	treeSelector = CascadingTreeSelector {
+		    					    	    externalLabels: [statisticHolderLabel, statisticVariableLabel, statisticLabel]
+		    					    	    treeLevelNodeLayoutInfo: LayoutInfo { margin: Insets { left: 4, top: 10, bottom: 10, right: 0 } };
 		    	    						columnCount: 3
 		    	    						treeModel: new AssertionTreeModel( statisticHolder )
 		    	    						allowMultiple: false
@@ -281,8 +300,8 @@ public class AddAssertionDialog {
 		    	    					    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER, vfill: false, vgrow: Priority.NEVER }
 		    	    					    padding: Insets { left: 12, top: 12, right: 12, bottom: 12 }
 		    	    					    spacing: 3
+		    	    					    vpos: VPos.TOP
 		    	    					    content: [
-		    	    					    	Region { style: "-fx-background-color: transparent;", layoutInfo: LayoutInfo { width: 1, height: 18 } }
 		    	    					    	Label { text: "Constraint", styleClass: "bold-text"}
 		    	    					    	grid = Grid {
 		    	    					    	    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
@@ -333,7 +352,6 @@ public class AddAssertionDialog {
 				if(validate()){
 				    dialog.close();
 					createAssertion();
-					onOk();
 				}
 			}
 		}
