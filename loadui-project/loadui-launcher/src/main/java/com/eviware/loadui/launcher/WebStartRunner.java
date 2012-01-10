@@ -35,6 +35,8 @@ public class WebStartRunner
 			out.println( "TEsTing" );
 			out.println( System.getProperty( "java.home" ) );
 			out.println( "END" );
+			out.close();
+			f.close();
 		}
 		catch( IOException e1 )
 		{
