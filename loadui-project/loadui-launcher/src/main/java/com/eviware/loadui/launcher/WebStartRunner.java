@@ -16,10 +16,7 @@
 package com.eviware.loadui.launcher;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.logging.Logger;
 
 public class WebStartRunner
 {
@@ -28,32 +25,8 @@ public class WebStartRunner
 	 */
 	public static void main( String[] args )
 	{
-		try
-		{
-			FileWriter f = new FileWriter( "c:/users/henrik/desktop/debug.txt" );
-			PrintWriter out = new PrintWriter( f );
-			out.println( "TEsTing" );
-			out.println( System.getProperty( "java.home" ) );
-			out.println( "END" );
-			out.close();
-			f.close();
-		}
-		catch( IOException e1 )
-		{
-			try
-			{
-				FileWriter f = new FileWriter( "c:/users/henrik/desktop/debug2.txt" );
-			}
-			catch( IOException e )
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			e1.printStackTrace();
-		}
-
-		File javaws = new File( System.getProperty( "java.home" ) + "/bin/", System.getProperty( "os.name" ).contains(
-				"Windows" ) ? "javaws.exe" : "javaws" );
+		File javaws = new File( System.getProperty( "os.name" ).contains( "Windows" ) ? "jre/bin/javaws.exe"
+				: "jre/bin/javaws" );
 		String command = javaws.exists() ? javaws.getAbsolutePath() : "javaws";
 
 		try
