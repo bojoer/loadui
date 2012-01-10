@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="4.2.6" transformSequenceNumber="2">
+<install4j version="4.2.8" transformSequenceNumber="2">
   <directoryPresets config="${compiler:builddir}" />
   <application name="loadUI Agent ${compiler:version}" distributionSourceDir="" applicationId="1318-1385-4617-6779" mediaDir="" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" missingFilesStrategy="warn" shortName="loadUI-Agent" publisher="SmartBear Software" publisherWeb="http://www.smartbear.com" version="${compiler:version}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
@@ -30,7 +30,7 @@
   </files>
   <launchers>
     <launcher name="loadUI-Agent-${compiler:version}" id="562" external="false" excludeFromMenu="false" menuName="" icnsFile="${compiler:resourcedir}/loadUI_icon_mac.icns" pngIcon16File="${compiler:resourcedir}/loadui-logo-icon-16.png" pngIcon32File="${compiler:resourcedir}/loadui-logo-icon-32.png" macServiceDependencies="" swtApp="false" fileset="">
-      <executable name="loadUI-Agent-${compiler:version}" type="1" iconSet="true" iconFile="${compiler:resourcedir}/loadUI_icon_win.ico" executableDir="" redirectStderr="false" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="2" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false">
+      <executable name="loadUI-Agent-${compiler:version}" type="1" iconSet="true" iconFile="${compiler:resourcedir}/loadUI_icon_win.ico" executableDir="" redirectStderr="false" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="2" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
       <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="" java6SplashScreen="false">
@@ -522,7 +522,7 @@ Appendix
             <preActivation />
             <postActivation />
             <actions>
-              <action name="" id="623" beanClass="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+              <action name="" id="623" beanClass="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction" enabled="false" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction">
@@ -536,7 +536,7 @@ Appendix
               </action>
             </actions>
             <formComponents>
-              <formComponent name="Execute launcher" id="624" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+              <formComponent name="Execute launcher" id="624" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="false" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">

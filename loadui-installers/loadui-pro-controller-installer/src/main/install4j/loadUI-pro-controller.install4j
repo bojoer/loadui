@@ -34,7 +34,7 @@
   </files>
   <launchers>
     <launcher name="loadUI Pro" id="1014" external="false" excludeFromMenu="false" menuName="" icnsFile="${compiler:resourcedir}/loadUI_icon_mac.icns" pngIcon16File="${compiler:resourcedir}/loadui-logo-icon-16.png" pngIcon32File="${compiler:resourcedir}/loadui-logo-icon-32.png" macServiceDependencies="" swtApp="false" fileset="">
-      <executable name="loadUI-Pro-${compiler:version}" type="1" iconSet="true" iconFile="${compiler:resourcedir}/loadUI_icon_win.ico" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="${installer:sys.preferredJre}" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false">
+      <executable name="loadUI-Pro-${compiler:version}" type="1" iconSet="true" iconFile="${compiler:resourcedir}/loadUI_icon_win.ico" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
       <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="" java6SplashScreen="false">
@@ -778,7 +778,7 @@ catch(Exception e){
             <preActivation />
             <postActivation />
             <actions>
-              <action name="" id="1099" beanClass="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+              <action name="" id="1099" beanClass="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction" enabled="false" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.finish.ExecuteLauncherAction">
@@ -808,7 +808,7 @@ catch(Exception e){
                 <initScript />
                 <visibiltyScript />
               </formComponent>
-              <formComponent name="Execute launcher" id="1100" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+              <formComponent name="Execute launcher" id="1100" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="false" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
