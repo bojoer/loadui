@@ -24,7 +24,6 @@ public class StatisticsGroupOrder extends GroupOrder {
 		"GLOBAL",
 		"COMPONENTS",
 		"GRAPHS",
-		"ANALYSES"
+		"TEMPLATES"
 	]
 }
-

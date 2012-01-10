@@ -37,6 +37,6 @@ public class AnalysisToolbarItem extends StatisticsToolbarItem {
 	
 	override var icon = iconImage;
 	
-	override var category = "ANALYSES";
+	override var category = "TEMPLATES";
 	
 }
