@@ -38,7 +38,15 @@ public class WebStartRunner
 		}
 		catch( IOException e1 )
 		{
-			// TODO Auto-generated catch block
+			try
+			{
+				FileWriter f = new FileWriter( "c:/users/henrik/desktop/debug2.txt" );
+			}
+			catch( IOException e )
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			e1.printStackTrace();
 		}
 
