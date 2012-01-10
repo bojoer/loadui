@@ -25,8 +25,8 @@ public class WebStartRunner
 	 */
 	public static void main( String[] args )
 	{
-		File javaws = new File( System.getProperty( "os.name" ).contains( "Windows" ) ? "jre/bin/javaws.exe"
-				: "jre/bin/javaws" );
+		File javaws = new File( System.getProperty( "java.home" ),
+				System.getProperty( "os.name" ).contains( "Windows" ) ? "javaws.exe" : "javaws" );
 		String command = javaws.exists() ? javaws.getAbsolutePath() : "javaws";
 
 		try
