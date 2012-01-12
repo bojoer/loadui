@@ -29,6 +29,8 @@ import com.eviware.loadui.api.charting.ChartNamePrettifier;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
 import com.eviware.loadui.fx.tree.BaseTreeNode;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 public class SegmentTreeModel extends DefaultTreeModel
 {
@@ -61,8 +63,18 @@ public class SegmentTreeModel extends DefaultTreeModel
 		protected List<TreeNode> getChildren()
 		{
 			List<TreeNode> children = new ArrayList<TreeNode>();
-			for( ConfigurableLineChartView chartView : chartViews )
+			for( ConfigurableLineChartView chartView : Iterables.filter( chartViews,
+					new Predicate<ConfigurableLineChartView>()
+					{
+						@Override
+						public boolean apply( ConfigurableLineChartView input )
+						{
+							return !input.getVariableNames().isEmpty();
+						}
+					} ) )
+			{
 				children.add( new ChartViewTreeNode( this, chartView ) );
+			}
 
 			Collections.sort( children, nameComparator );
 			return children;

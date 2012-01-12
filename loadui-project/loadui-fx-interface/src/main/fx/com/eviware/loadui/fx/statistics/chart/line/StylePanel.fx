@@ -38,6 +38,7 @@ import com.eviware.loadui.fx.ui.form.fields.SelectField;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.charting.line.SegmentModel;
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.charting.line.StrokeStyle;
@@ -113,6 +114,21 @@ public class StylePanel extends Grid {
 								layoutInfo: LayoutInfo { minWidth: 60 }
 							}, Label {
 								text: lineSegment.getStatisticHolder().getLabel()
+								layoutInfo: LayoutInfo { width: 100, hshrink: Priority.ALWAYS }
+							}
+						]
+					} else if( segment instanceof TestEventSegment ) {
+						def eventSegment = segment as TestEventSegment;
+						
+						[
+							Label {
+								text: eventSegment.getSourceLabel()
+								layoutInfo: LayoutInfo { minWidth: 70 }
+							}, Label {
+								text: eventSegment.getTypeLabel()
+								layoutInfo: LayoutInfo { minWidth: 60 }
+							}, Label {
+								text: "TestEvent"
 								layoutInfo: LayoutInfo { width: 100, hshrink: Priority.ALWAYS }
 							}
 						]

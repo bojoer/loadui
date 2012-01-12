@@ -33,6 +33,7 @@ import com.eviware.loadui.fx.util.ModelUtils;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.charting.ChartNamePrettifier;
 import com.eviware.loadui.api.charting.line.SegmentModel;
 import com.eviware.loadui.api.events.WeakEventHandler;
@@ -71,7 +72,7 @@ public class SegmentButton extends BaseNode, Resizable {
 		button.graphic = HBox {
 			nodeVPos: VPos.CENTER
 			spacing: 3
-			content: if( segment instanceof LineSegment ) createLabelContent( segment as LineSegment ) else Label { text: "TestEvent" }
+			content: if( segment instanceof LineSegment ) createLabelContent( segment as LineSegment ) else createLabelContent( segment as TestEventSegment )
 		}
 	}
 	
@@ -129,6 +130,36 @@ public class SegmentButton extends BaseNode, Resizable {
 				layoutInfo: LayoutInfo { width: bind if(compactSegments) 18 else 55 }
 				visible: bind not (compactSegments and singleColumnInCompactMode)
 				managed: bind not (compactSegments and singleColumnInCompactMode)
+			}
+		]
+	}
+	
+	function createLabelContent( eventSegment:TestEventSegment ): Node[] {
+		
+		[
+			Label {
+				text: "TestEvent"
+				layoutInfo: LayoutInfo { width: 75 }
+				visible: bind not compactSegments
+				managed: bind not compactSegments
+			}, Polyline {
+				points: [ 0, 0, 3, 3, 0, 6 ]
+				stroke: javafx.scene.paint.Color.rgb( 0x78, 0x78, 0x78 )
+				visible: bind not compactSegments
+				managed: bind not compactSegments
+			}, Label {
+				text: eventSegment.getTypeLabel()
+				layoutInfo: LayoutInfo { width: 100 }
+				visible: bind not compactSegments
+				managed: bind not compactSegments
+			}, Polyline {
+				points: [ 0, 0, 3, 3, 0, 6 ]
+				stroke: javafx.scene.paint.Color.rgb( 0x78, 0x78, 0x78 )
+				visible: bind not compactSegments
+				managed: bind not compactSegments
+			}, Label {
+				text: eventSegment.getSourceLabel()
+				layoutInfo: LayoutInfo { width: bind if(compactSegments) 66 else 80 }
 			}
 		]
 	}
