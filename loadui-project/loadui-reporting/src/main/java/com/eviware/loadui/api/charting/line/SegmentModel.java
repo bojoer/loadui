@@ -13,19 +13,29 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-package com.eviware.loadui.api.statistics.model.chart.line;
+package com.eviware.loadui.api.charting.line;
 
-import com.eviware.loadui.api.statistics.store.Execution;
+import java.awt.Color;
 
-public interface TestEventSegment extends Segment
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
+
+public interface SegmentModel
 {
-	public String getTypeLabel();
+	public static final String COLOR = "color";
+	public static final String STROKE = "stroke";
+	public static final String WIDTH = "width";
 
-	public String getSourceLabel();
+	public Segment getSegment();
 
-	public Iterable<Long> getPointsInRange( Execution execution, long startTime, long endTime );
+	public Color getColor();
 
-	public interface Removable extends TestEventSegment, Segment.Removable
-	{
-	}
+	public void setColor( Color color );
+
+	public StrokeStyle getStrokeStyle();
+
+	public void setStrokeStyle( StrokeStyle strokeStyle );
+
+	public int getStrokeWidth();
+
+	public void setStrokeWidth( int strokeWidth );
 }

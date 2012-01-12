@@ -24,13 +24,13 @@ import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 
-import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 
 public class DeletableSegmentButton extends SegmentButton, Draggable, Deletable {
 	override var revert = false;
 	override var confirmDelete = false;
 	
-	public-init var segment: LineSegment.Removable;
+	public-init var segment: Segment.Removable;
 	
 	def contextMenu:PopupMenu = PopupMenu {
 		items: [

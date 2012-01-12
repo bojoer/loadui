@@ -23,6 +23,7 @@ import javafx.geometry.VPos;
 
 import com.eviware.loadui.fx.statistics.chart.PanelFactory;
 
+import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
@@ -46,7 +47,7 @@ public function getGroupPanels( chartGroup:ChartGroup ):Object[] {
 			build: function() {
 				def chartView = chartGroup.getChartView() as LineChartView;
 				def lineChart = LineChartHolder.getLineChart( chartView );
-				def lineModels = for( segment in Iterables.filter( chartView.getSegments(), LineSegment.class ) ) lineChart.getLineSegmentModel( segment );
+				def lineModels = for( segment in Iterables.filter( chartView.getSegments(), LineSegment.class ) ) lineChart.getSegmentModel( segment ) as LineSegmentModel;
 				ScalePanel { lineSegmentModels: lineModels }
 			}
 		}, PanelFactory {
@@ -54,8 +55,8 @@ public function getGroupPanels( chartGroup:ChartGroup ):Object[] {
 			build: function() {
 				def chartView = chartGroup.getChartView() as LineChartView;
 				def lineChart = LineChartHolder.getLineChart( chartView );
-				def lineModels = for( segment in Iterables.filter( chartView.getSegments(), LineSegment.class ) ) lineChart.getLineSegmentModel( segment );
-				StylePanel { lineSegmentModels: lineModels }
+				def segmentModels = for( segment in chartView.getSegments() ) lineChart.getSegmentModel( segment );
+				StylePanel { segmentModels: segmentModels }
 			}
 		}, Separator {
 			vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos:HPos.CENTER
@@ -87,15 +88,15 @@ public function getChartPanels( chartView:LineChartView ):Object[] {
 			title: "Scale"
 			build: function() {
 				def lineChart = LineChartHolder.getLineChart( chartView );
-				def lineModels = for( segment in Iterables.filter( chartView.getSegments(), LineSegment.class ) ) lineChart.getLineSegmentModel( segment );
+				def lineModels = for( segment in Iterables.filter( chartView.getSegments(), LineSegment.class ) ) lineChart.getSegmentModel( segment ) as LineSegmentModel;
 				ScalePanel { lineSegmentModels: lineModels }
 			}
 		}, PanelFactory {
 			title: "Style"
 			build: function() {
 				def lineChart = LineChartHolder.getLineChart( chartView );
-				def lineModels = for( segment in Iterables.filter( chartView.getSegments(), LineSegment.class ) ) lineChart.getLineSegmentModel( segment );
-				StylePanel { lineSegmentModels: lineModels }
+				def segmentModels = for( segment in chartView.getSegments() ) lineChart.getSegmentModel( segment );
+				StylePanel { segmentModels: segmentModels }
 			}
 		}, Separator {
 			vertical: true, layoutInfo: LayoutInfo { height: 12 }, hpos: HPos.CENTER

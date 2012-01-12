@@ -22,6 +22,7 @@ import java.beans.PropertyChangeEvent;
 import javax.swing.SwingUtilities;
 
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
+import com.eviware.loadui.api.charting.line.SegmentModel;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.traits.Releasable;
 import com.jidesoft.chart.model.ChartModelListener;
@@ -43,7 +44,7 @@ public class ComparedLineSegmentChartModel extends AbstractLineSegmentModel impl
 
 	public ComparedLineSegmentChartModel( LineSegmentChartModel baseModel )
 	{
-		super( "Compared " + baseModel.getName(), new ChartStyle( baseModel.getChartStyle() ) );
+		super( baseModel.getSegment(), "Compared " + baseModel.getName(), new ChartStyle( baseModel.getChartStyle() ) );
 
 		this.baseModel = baseModel;
 		chartStyle.setLineColor( ColorFactory.transitionColor( chartStyle.getLineColor(), Color.BLACK, 0.5 ) );
@@ -54,7 +55,7 @@ public class ComparedLineSegmentChartModel extends AbstractLineSegmentModel impl
 	@Override
 	protected void redraw()
 	{
-		doRedraw( baseModel.getLineSegment().getStatistic(), baseModel.getXRangeMin(), baseModel.getXRangeMax(),
+		doRedraw( baseModel.getSegment().getStatistic(), baseModel.getXRangeMin(), baseModel.getXRangeMax(),
 				baseModel.getLevel() );
 	}
 
@@ -69,14 +70,14 @@ public class ComparedLineSegmentChartModel extends AbstractLineSegmentModel impl
 		@Override
 		public void handleEvent( final PropertyChangeEvent event )
 		{
-			if( event.getSource() == baseModel.getLineSegment() )
+			if( event.getSource() == baseModel.getSegment() )
 			{
 				SwingUtilities.invokeLater( new Runnable()
 				{
 					@Override
 					public void run()
 					{
-						if( LineSegmentModel.COLOR.equals( event.getPropertyName() ) )
+						if( SegmentModel.COLOR.equals( event.getPropertyName() ) )
 						{
 							Color color = ColorFactory.transitionColor( ( Color )event.getNewValue(), Color.BLACK, 0.5 );
 							chartStyle.setLineColor( color );

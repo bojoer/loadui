@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.charting.line.LineChart;
-import com.eviware.loadui.api.charting.line.LineSegmentModel;
+import com.eviware.loadui.api.charting.line.SegmentModel;
 import com.eviware.loadui.api.charting.line.ZoomLevel;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
@@ -34,11 +34,14 @@ import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
+import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.charting.LineChartUtils;
 import com.eviware.loadui.util.events.EventSupport;
+import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.axis.Axis;
 import com.jidesoft.chart.axis.DefaultNumericTickCalculator;
@@ -54,9 +57,9 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	private final LineChartView chartView;
 
 	private final EventSupport eventSupport = new EventSupport();
-	//TODO: This class should also hold a HashMap of test events
-	private final HashMap<LineSegment, LineSegmentChartModel> lines = new HashMap<LineSegment, LineSegmentChartModel>();
-	private final HashMap<LineSegmentChartModel, ComparedLineSegmentChartModel> comparedLines = new HashMap<LineSegmentChartModel, ComparedLineSegmentChartModel>();
+	private final HashMap<LineSegment, LineSegmentChartModel> lines = Maps.newHashMap();
+	private final HashMap<LineSegmentChartModel, ComparedLineSegmentChartModel> comparedLines = Maps.newHashMap();
+	private final HashMap<TestEventSegment, TestEventSegmentModel> testEventSegments = Maps.newHashMap();
 	private final TotalTimeTickCalculator timeCalculator = new TotalTimeTickCalculator();
 	private final ChartViewListener chartViewListener = new ChartViewListener();
 	private final LongRange xRange;
@@ -198,6 +201,9 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 			mainExecution = execution;
 			for( LineSegmentChartModel lineModel : lines.values() )
 				lineModel.setExecution( execution );
+			for( TestEventSegmentModel eventModel : testEventSegments.values() )
+				eventModel.setExecution( execution );
+
 			updateXRange();
 			refresh( false );
 		}
@@ -233,7 +239,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 						}
 						else if( cExecution == null )
 						{
-							for( LineSegmentModel lineModel : new ArrayList<LineSegmentChartModel>( comparedLines.keySet() ) )
+							for( SegmentModel lineModel : new ArrayList<LineSegmentChartModel>( comparedLines.keySet() ) )
 							{
 								ComparedLineSegmentChartModel comparedModel = comparedLines.remove( lineModel );
 								removeModel( comparedModel );
@@ -296,6 +302,19 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 							fireEvent( new CollectionEvent( LineChartImpl.this, LINE_SEGMENT_MODELS,
 									CollectionEvent.Event.ADDED, lineModel ) );
 						}
+						else if( segment instanceof TestEventSegment )
+						{
+							TestEventSegment testEventSegment = ( TestEventSegment )segment;
+							TestEventSegmentModel eventModel = new TestEventSegmentModel( LineChartImpl.this, chartView,
+									testEventSegment );
+							testEventSegments.put( testEventSegment, eventModel );
+							if( mainExecution != null )
+								eventModel.setExecution( mainExecution );
+							long position = getPosition();
+							eventModel.setXRange( position - PADDING, position + timeSpan + PADDING );
+							fireEvent( new CollectionEvent( LineChartImpl.this, LINE_SEGMENT_MODELS,
+									CollectionEvent.Event.ADDED, eventModel ) );
+						}
 					}
 				} );
 			}
@@ -341,6 +360,32 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 				log.error( "Error removing LineSegment", e );
 			}
 		}
+
+		final TestEventSegmentModel segmentModel = testEventSegments.remove( segment );
+		if( segmentModel != null )
+		{
+			try
+			{
+				LineChartUtils.invokeInSwingAndWait( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						ReleasableUtils.releaseAll( segmentModel );
+						fireEvent( new CollectionEvent( LineChartImpl.this, LINE_SEGMENT_MODELS,
+								CollectionEvent.Event.REMOVED, segmentModel ) );
+					}
+				} );
+			}
+			catch( InterruptedException e )
+			{
+				log.error( "Error removing LineSegment", e );
+			}
+			catch( InvocationTargetException e )
+			{
+				log.error( "Error removing LineSegment", e );
+			}
+		}
 	}
 
 	private void updateXRange()
@@ -352,6 +397,9 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 		long xMax = position + timeSpan + PADDING;
 		for( LineSegmentChartModel lineModel : lines.values() )
 			lineModel.setXRange( xMin, xMax );
+
+		for( TestEventSegmentModel eventModel : testEventSegments.values() )
+			eventModel.setXRange( xMin, xMax );
 	}
 
 	@Override
@@ -451,17 +499,18 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	}
 
 	@Override
-	public LineSegmentModel getLineSegmentModel( LineSegment segment )
+	public SegmentModel getSegmentModel( Segment segment )
 	{
-		return lines.get( segment );
+		return Objects.firstNonNull( lines.get( segment ), testEventSegments.get( segment ) );
 	}
 
 	@Override
 	public void release()
 	{
 		chartView.removeEventListener( EventObject.class, chartViewListener );
-		ReleasableUtils.releaseAll( lines.values(), eventSupport );
+		ReleasableUtils.releaseAll( lines.values(), testEventSegments.values(), eventSupport );
 		lines.clear();
+		testEventSegments.clear();
 	}
 
 	@Override

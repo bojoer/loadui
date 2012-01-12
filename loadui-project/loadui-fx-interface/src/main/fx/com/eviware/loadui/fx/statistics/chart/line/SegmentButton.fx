@@ -32,8 +32,9 @@ import com.eviware.loadui.fx.util.ModelUtils;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.charting.ChartNamePrettifier;
-import com.eviware.loadui.api.charting.line.LineSegmentModel;
+import com.eviware.loadui.api.charting.line.SegmentModel;
 import com.eviware.loadui.api.events.WeakEventHandler;
 
 import java.awt.Color;
@@ -63,52 +64,14 @@ public class SegmentButton extends BaseNode, Resizable {
 		button.style = "-fx-inner-border: {FxUtils.colorToWebString(lineColor)};";
 	}
 	
-	public-init var model:LineSegmentModel on replace {
-		def lineSegment = model.getLineSegment();
-		def metricName:String = lineSegment.getStatisticName();
-		def dataName:String = lineSegment.getVariableName();
-		def singleColumnInCompactMode:Boolean = ChartNamePrettifier.compactNameIsAlone( dataName );
+	public-init var model:SegmentModel on replace {
+		def segment = model.getSegment();
 		
 		lineColor = model.getColor();
 		button.graphic = HBox {
 			nodeVPos: VPos.CENTER
 			spacing: 3
-			content: [
-				Label {
-					text: ChartNamePrettifier.nameForSource( lineSegment.getSource() )
-					layoutInfo: LayoutInfo { width: 40 }
-					visible: bind not compactSegments
-					managed: bind not compactSegments
-				}, Polyline {
-					points: [ 0, 0, 3, 3, 0, 6 ]
-					stroke: javafx.scene.paint.Color.rgb( 0x78, 0x78, 0x78 )
-					visible: bind not compactSegments
-					managed: bind not compactSegments
-				}, Label {
-					text: bind ModelUtils.getLabelHolder( lineSegment.getStatisticHolder() ).label
-					layoutInfo: LayoutInfo { width: 75 }
-					visible: bind not compactSegments
-					managed: bind not compactSegments
-				}, Polyline {
-					points: [ 0, 0, 3, 3, 0, 6 ]
-					stroke: javafx.scene.paint.Color.rgb( 0x78, 0x78, 0x78 )
-					visible: bind not compactSegments
-					managed: bind not compactSegments
-				}, Label {
-					text: bind if(compactSegments) ChartNamePrettifier.compactDataName( dataName, metricName ) else ChartNamePrettifier.nameForStatistic( dataName )
-					layoutInfo: LayoutInfo { width: bind if(not compactSegments) 75 else if (singleColumnInCompactMode) 66 else 37 }
-				}, Polyline {
-					points: [ 0, 0, 3, 3, 0, 6 ]
-					stroke: javafx.scene.paint.Color.rgb( 0x78, 0x78, 0x78 )
-					visible: bind not (compactSegments and singleColumnInCompactMode)
-					managed: bind not (compactSegments and singleColumnInCompactMode)
-				}, Label {
-					text: bind if(compactSegments) ChartNamePrettifier.compactMetricName( metricName ) else ChartNamePrettifier.nameForStatistic( metricName )
-					layoutInfo: LayoutInfo { width: bind if(compactSegments) 18 else 55 }
-					visible: bind not (compactSegments and singleColumnInCompactMode)
-					managed: bind not (compactSegments and singleColumnInCompactMode)
-				}
-			]
+			content: if( segment instanceof LineSegment ) createLabelContent( segment as LineSegment ) else Label { text: "TestEvent" }
 		}
 	}
 	
@@ -126,14 +89,57 @@ public class SegmentButton extends BaseNode, Resizable {
 	
 	override function doLayout():Void {
 	}
+	
+	function createLabelContent( lineSegment:LineSegment ): Node[] {
+		def metricName:String = lineSegment.getStatisticName();
+		def dataName:String = lineSegment.getVariableName();
+		def singleColumnInCompactMode:Boolean = ChartNamePrettifier.compactNameIsAlone( dataName );
+		
+		[
+			Label {
+				text: ChartNamePrettifier.nameForSource( lineSegment.getSource() )
+				layoutInfo: LayoutInfo { width: 40 }
+				visible: bind not compactSegments
+				managed: bind not compactSegments
+			}, Polyline {
+				points: [ 0, 0, 3, 3, 0, 6 ]
+				stroke: javafx.scene.paint.Color.rgb( 0x78, 0x78, 0x78 )
+				visible: bind not compactSegments
+				managed: bind not compactSegments
+			}, Label {
+				text: bind ModelUtils.getLabelHolder( lineSegment.getStatisticHolder() ).label
+				layoutInfo: LayoutInfo { width: 75 }
+				visible: bind not compactSegments
+				managed: bind not compactSegments
+			}, Polyline {
+				points: [ 0, 0, 3, 3, 0, 6 ]
+				stroke: javafx.scene.paint.Color.rgb( 0x78, 0x78, 0x78 )
+				visible: bind not compactSegments
+				managed: bind not compactSegments
+			}, Label {
+				text: bind if(compactSegments) ChartNamePrettifier.compactDataName( dataName, metricName ) else ChartNamePrettifier.nameForStatistic( dataName )
+				layoutInfo: LayoutInfo { width: bind if(not compactSegments) 75 else if (singleColumnInCompactMode) 66 else 37 }
+			}, Polyline {
+				points: [ 0, 0, 3, 3, 0, 6 ]
+				stroke: javafx.scene.paint.Color.rgb( 0x78, 0x78, 0x78 )
+				visible: bind not (compactSegments and singleColumnInCompactMode)
+				managed: bind not (compactSegments and singleColumnInCompactMode)
+			}, Label {
+				text: bind if(compactSegments) ChartNamePrettifier.compactMetricName( metricName ) else ChartNamePrettifier.nameForStatistic( metricName )
+				layoutInfo: LayoutInfo { width: bind if(compactSegments) 18 else 55 }
+				visible: bind not (compactSegments and singleColumnInCompactMode)
+				managed: bind not (compactSegments and singleColumnInCompactMode)
+			}
+		]
+	}
 }
 
 class SegmentListener extends WeakEventHandler {
 	override function handleEvent( e ):Void {
 		
 		def event = e as PropertyChangeEvent;
-		if( model.getLineSegment() == event.getSource() ) {
-			if( LineSegmentModel.COLOR.equals( event.getPropertyName() ) ) {
+		if( model.getSegment() == event.getSource() ) {
+			if( SegmentModel.COLOR.equals( event.getPropertyName() ) ) {
 				FxUtils.runInFxThread( function():Void { lineColor = event.getNewValue() as Color; } );
 			}
 		}

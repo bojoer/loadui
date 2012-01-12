@@ -45,8 +45,9 @@ import com.eviware.loadui.fx.statistics.chart.BaseChart;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.api.charting.line.LineChart;
-import com.eviware.loadui.api.charting.line.LineSegmentModel;
+import com.eviware.loadui.api.charting.line.SegmentModel;
 import com.eviware.loadui.api.charting.line.ZoomLevel;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
@@ -248,8 +249,7 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 	}
 	
 	override function create():Node {
-		for( segment in Iterables.filter( chartView.getSegments(), LineSegment.class ) )
-			addSegment( chart.getLineSegmentModel( segment ) );
+		for( segment in chartView.getSegments() ) addSegment( chart.getSegmentModel( segment ) );
 		
 		initialized = true;
 		
@@ -268,12 +268,12 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 		chart = null;
 	}
 	
-	function addSegment( lineModel:LineSegmentModel ):Void {
-		def segment = lineModel.getLineSegment();
-		insert if( segment instanceof LineSegment.Removable ) {
+	function addSegment( lineModel:SegmentModel ):Void {
+		def segment = lineModel.getSegment();
+		insert if( segment instanceof Segment.Removable ) {
 			DraggableFrame {
 				draggable: DeletableSegmentButton {
-					segment: segment as LineSegment.Removable
+					segment: segment as Segment.Removable
 					compactSegments: bind compactSegments
 					chartView: chartView
 					model: lineModel
@@ -289,15 +289,15 @@ public class LineChartHolder extends BaseNode, Resizable, BaseChart, Releasable 
 		} into segmentButtons.content;
 	}
 	
-	function removeSegment( lineModel:LineSegmentModel ):Void {
-		def segment = lineModel.getLineSegment();
+	function removeSegment( lineModel:SegmentModel ):Void {
+		def segment = lineModel.getSegment();
 		for( frame in segmentButtons.content[b | b instanceof DraggableFrame] ) {
 			def button = (frame as DraggableFrame).draggable as DeletableSegmentButton;
-			if( button.model.getLineSegment() == segment )
+			if( button.model.getSegment() == segment )
 				delete frame from segmentButtons.content;
 		}
 		for( button in segmentButtons.content[b | b instanceof SegmentButton] ) {
-			if( (button as SegmentButton).model.getLineSegment() == segment )
+			if( (button as SegmentButton).model.getSegment() == segment )
 				delete button from segmentButtons.content;
 		}
 	}
@@ -307,7 +307,7 @@ class SegmentListener extends WeakEventHandler {
 	override function handleEvent( e ):Void {
 		def event = e as CollectionEvent;
 		if( LineChart.LINE_SEGMENT_MODELS.equals( event.getKey() ) ) {
-			def segment = event.getElement() as LineSegmentModel;
+			def segment = event.getElement() as SegmentModel;
 			if( CollectionEvent.Event.ADDED == event.getEvent() ) {
 				FxUtils.runInFxThread( function():Void { addSegment( segment ); } );
 			} else {

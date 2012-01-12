@@ -13,10 +13,7 @@
  * express or implied. See the Licence for the specific language governing permissions and limitations
  * under the Licence.
  */
-
 package com.eviware.loadui.api.charting.line;
-
-import java.awt.Color;
 
 import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 
@@ -25,28 +22,14 @@ import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
  * 
  * @author dain.nilsson
  */
-public interface LineSegmentModel
+public interface LineSegmentModel extends SegmentModel
 {
 	public static final String SCALE = "scale";
-	public static final String COLOR = "color";
-	public static final String STROKE = "stroke";
-	public static final String WIDTH = "width";
 
-	public LineSegment getLineSegment();
+	@Override
+	public LineSegment getSegment();
 
 	public int getScale();
 
 	public void setScale( int scale );
-
-	public Color getColor();
-
-	public void setColor( Color color );
-
-	public StrokeStyle getStrokeStyle();
-
-	public void setStrokeStyle( StrokeStyle strokeStyle );
-
-	public int getStrokeWidth();
-
-	public void setStrokeWidth( int strokeWidth );
 }

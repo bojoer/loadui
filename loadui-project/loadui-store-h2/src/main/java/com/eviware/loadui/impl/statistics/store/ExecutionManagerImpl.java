@@ -728,7 +728,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 					eventTypes.put( source.getType().getName(), type = new TestEventTypeDescriptorImpl( typeLabel ) );
 					insertNewType( typeLabel, source.getType().getName() );
 				}
-				type.getSource( source.getLabel() ).putConfig( hash, sourceConfig );
 
 				Long typeId = eventTypeTable.getIdByTypeName( source.getType().getName() );
 
@@ -742,6 +741,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				Long sourceId = eventSourceTable.getIdByHash( hash );
 				sourceConfig = new TestEventSourceConfig( source.getLabel(), source.getType().getName(), source.getData(),
 						hash, sourceId );
+				type.getSource( source.getLabel() ).putConfig( hash, sourceConfig );
 
 				log.debug( "Wrote TestEventSource[{}] of type {}", sourceConfig.getLabel(), sourceConfig.getTypeName() );
 			}

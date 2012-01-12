@@ -21,7 +21,6 @@ import java.util.LinkedHashSet;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
-import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.google.common.collect.Iterables;
 
@@ -62,7 +61,7 @@ public class LineChartStyles
 		chart.setHorizontalGridLinesVisible( false );
 	}
 
-	public static String getLineColor( ChartGroup chartGroup, LineSegment segment )
+	public static String getLineColor( ChartGroup chartGroup, Segment segment )
 	{
 		LinkedHashSet<String> colors = new LinkedHashSet<String>();
 		for( String color : lineColors )

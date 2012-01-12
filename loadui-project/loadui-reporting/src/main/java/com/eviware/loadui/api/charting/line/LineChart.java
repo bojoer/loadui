@@ -17,7 +17,7 @@ package com.eviware.loadui.api.charting.line;
 
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
-import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.api.statistics.store.Execution;
 
 /**
@@ -128,12 +128,12 @@ public interface LineChart extends EventFirer
 	public void setFollow( boolean follow );
 
 	/**
-	 * Gets the LineSegmentModel for a LineSegment.
+	 * Gets the SegmentModel for a Segment.
 	 * 
 	 * @param segment
 	 * @return
 	 */
-	public LineSegmentModel getLineSegmentModel( LineSegment segment );
+	public SegmentModel getSegmentModel( Segment segment );
 
 	/**
 	 * Since chart data is fetched asynchronously in a background thread, this

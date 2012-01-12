@@ -37,6 +37,8 @@ import com.eviware.loadui.fx.control.ColorPicker;
 import com.eviware.loadui.fx.ui.form.fields.SelectField;
 
 import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
+import com.eviware.loadui.api.charting.line.SegmentModel;
 import com.eviware.loadui.api.charting.line.LineSegmentModel;
 import com.eviware.loadui.api.charting.line.StrokeStyle;
 import com.eviware.loadui.api.charting.ChartNamePrettifier;
@@ -47,7 +49,7 @@ import com.eviware.loadui.api.charting.ChartNamePrettifier;
  * @author dain.nilsson
  */
 public class StylePanel extends Grid {
-	public-init var lineSegmentModels:LineSegmentModel[];
+	public-init var segmentModels:SegmentModel[];
 	
 	override var styleClass = "style-panel";
 	override var padding = Insets { top: 10, right: 10, bottom: 10, left: 10 };
@@ -62,8 +64,8 @@ public class StylePanel extends Grid {
 				Label { styleClass: "header-row", text: "Statistic", layoutInfo: GridLayoutInfo { hspan: 3 } },
 				Label { styleClass: "header-row", text: "Width", layoutInfo: GridLayoutInfo { hspan: 2 } },
 				Label { styleClass: "header-row", text: "Stroke" }
-			] }, for( model in lineSegmentModels ) {
-				def lineSegment = model.getLineSegment();
+			] }, for( model in segmentModels ) {
+				def segment = model.getSegment();
 				def slider = Slider {
 					min: 1
 					max: 9
@@ -98,15 +100,35 @@ public class StylePanel extends Grid {
 							lineColor = color;
 							model.setColor( FxUtils.getAwtColor( color ) );
 						}
-					}, Label {
-						text: ChartNamePrettifier.compactDataAndMetricName( lineSegment.getVariableName(), lineSegment.getStatisticName() )
-						layoutInfo: LayoutInfo { minWidth: 70 }
-					}, Label {
-						text: ChartNamePrettifier.nameForSource( lineSegment.getSource() )
-						layoutInfo: LayoutInfo { minWidth: 60 }
-					}, Label {
-						text: lineSegment.getStatisticHolder().getLabel()
-						layoutInfo: LayoutInfo { width: 100, hshrink: Priority.ALWAYS }
+					},
+					if( segment instanceof LineSegment ) {
+						def lineSegment = segment as LineSegment;
+						
+						[
+							Label {
+								text: ChartNamePrettifier.compactDataAndMetricName( lineSegment.getVariableName(), lineSegment.getStatisticName() )
+								layoutInfo: LayoutInfo { minWidth: 70 }
+							}, Label {
+								text: ChartNamePrettifier.nameForSource( lineSegment.getSource() )
+								layoutInfo: LayoutInfo { minWidth: 60 }
+							}, Label {
+								text: lineSegment.getStatisticHolder().getLabel()
+								layoutInfo: LayoutInfo { width: 100, hshrink: Priority.ALWAYS }
+							}
+						]
+					} else {
+						[
+							Label {
+								text: "Not"
+								layoutInfo: LayoutInfo { minWidth: 70 }
+							}, Label {
+								text: "a"
+								layoutInfo: LayoutInfo { minWidth: 60 }
+							}, Label {
+								text: "LineSegment"
+								layoutInfo: LayoutInfo { minWidth: 100 }
+							}
+						]
 					},
 					Label {
 						text: bind "{width as Integer}px"

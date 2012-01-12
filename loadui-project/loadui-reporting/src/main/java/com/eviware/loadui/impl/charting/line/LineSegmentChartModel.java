@@ -40,7 +40,6 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 	public static final Logger log = LoggerFactory.getLogger( LineSegmentChartModel.class );
 
 	private final ChartGroup chartGroup;
-	private final LineSegment segment;
 	private final StyleEventListener listener = new StyleEventListener();
 
 	private long latestTime = 0;
@@ -54,8 +53,7 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 
 	public LineSegmentChartModel( LineChartView chartView, LineSegment segment )
 	{
-		super( Integer.toString( System.identityHashCode( segment ) ), new ChartStyle() );
-		this.segment = segment;
+		super( segment, Integer.toString( System.identityHashCode( segment ) ), new ChartStyle() );
 
 		chartGroup = chartView.getChartGroup();
 		chartGroup.addEventListener( PropertyChangeEvent.class, listener );
@@ -65,7 +63,7 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 
 	public void poll()
 	{
-		final Statistic<?> statistic = segment.getStatistic();
+		final Statistic<?> statistic = getSegment().getStatistic();
 		if( statistic != null )
 		{
 			DataPoint<?> dataPoint = statistic.getLatestPoint( level );
@@ -88,7 +86,7 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 	@Override
 	protected void redraw()
 	{
-		final Statistic<?> statistic = segment.getStatistic();
+		final Statistic<?> statistic = getSegment().getStatistic();
 		if( statistic != null )
 		{
 			doRedraw( statistic, xRangeMin, xRangeMax, level );
@@ -110,7 +108,7 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 		String colorStr = segment.getAttribute( COLOR, null );
 		if( colorStr == null )
 		{
-			colorStr = LineChartStyles.getLineColor( chartGroup, segment );
+			colorStr = LineChartStyles.getLineColor( chartGroup, getSegment() );
 			segment.setAttribute( COLOR, colorStr );
 		}
 		setColor( Color.decode( colorStr ), false );
@@ -144,9 +142,9 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 	}
 
 	@Override
-	public LineSegment getLineSegment()
+	public LineSegment getSegment()
 	{
-		return segment;
+		return ( LineSegment )segment;
 	}
 
 	public ChartGroup getChartGroup()

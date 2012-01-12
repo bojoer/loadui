@@ -65,7 +65,7 @@ public class EventLogInspector extends Inspector {
 	
 	def container = VBox {
 		content: [
-			Label { text: "No filtering applied" },
+			//Label { text: "No filtering applied" },
 			HBox {
 				content: [
 					//TODO: Filtering goes here!

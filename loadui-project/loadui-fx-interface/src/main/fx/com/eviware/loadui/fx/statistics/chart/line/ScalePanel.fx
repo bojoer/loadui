@@ -89,7 +89,7 @@ class SegmentRow extends GridRow {
 	
 	public-init var lineModel:LineSegmentModel on replace {
 		scale = lineModel.getScale();
-		lineSegment = lineModel.getLineSegment();
+		lineSegment = lineModel.getSegment();
 	}
 	
 	def slider = Slider {
