@@ -18,7 +18,6 @@ package com.eviware.loadui.impl.charting.line;
 
 import java.beans.PropertyChangeEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashMap;
 
@@ -41,6 +40,7 @@ import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.charting.LineChartUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.axis.Axis;
@@ -60,6 +60,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	private final HashMap<LineSegment, LineSegmentChartModel> lines = Maps.newHashMap();
 	private final HashMap<LineSegmentChartModel, ComparedLineSegmentChartModel> comparedLines = Maps.newHashMap();
 	private final HashMap<TestEventSegment, TestEventSegmentModel> testEventSegments = Maps.newHashMap();
+	private final HashMap<TestEventSegmentModel, ComparedTestEventSegmentModel> comparedTestEvents = Maps.newHashMap();
 	private final TotalTimeTickCalculator timeCalculator = new TotalTimeTickCalculator();
 	private final ChartViewListener chartViewListener = new ChartViewListener();
 	private final LongRange xRange;
@@ -236,19 +237,38 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 								comparedLines.put( lineModel, comparedModel );
 								addModel( comparedModel, comparedModel.getChartStyle() );
 							}
+							for( TestEventSegmentModel eventModel : testEventSegments.values() )
+							{
+								ComparedTestEventSegmentModel comparedModel = new ComparedTestEventSegmentModel(
+										LineChartImpl.this, eventModel );
+								comparedModel.clearPoints();
+								comparedModel.setExecution( cExecution );
+								comparedTestEvents.put( eventModel, comparedModel );
+							}
 						}
 						else if( cExecution == null )
 						{
-							for( SegmentModel lineModel : new ArrayList<LineSegmentChartModel>( comparedLines.keySet() ) )
+							for( SegmentModel lineModel : ImmutableList.copyOf( comparedLines.keySet() ) )
 							{
 								ComparedLineSegmentChartModel comparedModel = comparedLines.remove( lineModel );
 								removeModel( comparedModel );
 								ReleasableUtils.release( comparedModel );
 							}
+							for( SegmentModel lineModel : ImmutableList.copyOf( comparedTestEvents.keySet() ) )
+							{
+								ComparedTestEventSegmentModel comparedModel = comparedTestEvents.remove( lineModel );
+								ReleasableUtils.release( comparedModel );
+							}
 						}
 						else
 						{
-							for( ComparedLineSegmentChartModel comparedModel : comparedLines.values() )
+							for( ComparedLineSegmentChartModel comparedModel : ImmutableList.copyOf( comparedLines.values() ) )
+							{
+								comparedModel.clearPoints();
+								comparedModel.setExecution( cExecution );
+							}
+							for( ComparedTestEventSegmentModel comparedModel : ImmutableList.copyOf( comparedTestEvents
+									.values() ) )
 							{
 								comparedModel.clearPoints();
 								comparedModel.setExecution( cExecution );
@@ -312,6 +332,13 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 								eventModel.setExecution( mainExecution );
 							long position = getPosition();
 							eventModel.setXRange( position - PADDING, position + timeSpan + PADDING );
+							if( comparedExecution != null )
+							{
+								ComparedTestEventSegmentModel comparedModel = new ComparedTestEventSegmentModel(
+										LineChartImpl.this, eventModel );
+								comparedModel.setExecution( comparedExecution );
+								comparedTestEvents.put( eventModel, comparedModel );
+							}
 							fireEvent( new CollectionEvent( LineChartImpl.this, LINE_SEGMENT_MODELS,
 									CollectionEvent.Event.ADDED, eventModel ) );
 						}

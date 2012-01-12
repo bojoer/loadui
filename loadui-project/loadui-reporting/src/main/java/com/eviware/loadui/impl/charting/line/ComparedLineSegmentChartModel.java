@@ -63,6 +63,7 @@ public class ComparedLineSegmentChartModel extends AbstractLineSegmentModel impl
 	public void release()
 	{
 		baseModel.removeChartModelListener( listener );
+		baseModel.getChartGroup().removeEventListener( PropertyChangeEvent.class, chartGroupListener );
 	}
 
 	private class ChartGroupListener implements WeakEventHandler<PropertyChangeEvent>

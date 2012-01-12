@@ -34,11 +34,7 @@ import com.jidesoft.chart.style.ChartStyle;
 public class TestEventSegmentModel extends AbstractSegmentModel implements SegmentModel, Releasable
 {
 	private static final TestEventListener testEventListener = new TestEventListener();
-
-	private final LineChartImpl chart;
-	private final ChartGroup chartGroup;
-	private final HashSet<LineMarker> lineMarkers = Sets.newHashSet();
-	private final Function<Long, DataPoint<?>> longToDataPoint = new Function<Long, DataPoint<?>>()
+	public static final Function<Long, DataPoint<?>> longToDataPoint = new Function<Long, DataPoint<?>>()
 	{
 		@Override
 		public DataPoint<?> apply( Long input )
@@ -46,6 +42,10 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 			return new DataPointImpl<Number>( input, 0 );
 		}
 	};
+
+	private final LineChartImpl chart;
+	private final ChartGroup chartGroup;
+	private final HashSet<LineMarker> lineMarkers = Sets.newHashSet();
 
 	private Color color = Color.decode( LineChartStyles.lineColors[0] );
 	private StrokeStyle strokeStyle;
@@ -66,6 +66,7 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 	@Override
 	protected void redraw()
 	{
+		fireModelChanged();
 		appendRead( new Callable<Iterable<DataPoint<?>>>()
 		{
 			@Override
@@ -81,6 +82,11 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 	public TestEventSegment getSegment()
 	{
 		return ( TestEventSegment )super.getSegment();
+	}
+
+	public ChartGroup getChartGroup()
+	{
+		return chartGroup;
 	}
 
 	public long getXRangeMin()
@@ -279,7 +285,6 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 				if( Objects.equal( segment.getTypeLabel(), eventEntry.getTypeLabel() )
 						&& Objects.equal( segment.getSourceLabel(), eventEntry.getSourceLabel() ) )
 				{
-					log.debug( "Notifying model: {} of event: {}", model, eventEntry.getTestEvent() );
 					SwingUtilities.invokeLater( new Runnable()
 					{
 						@Override
