@@ -76,7 +76,7 @@ public class TestEventSourceTable extends TableBase
 	@Override
 	protected boolean useTableSpecificConnection()
 	{
-		return true;
+		return false;
 	}
 
 	public Map<String, Map<String, Object>> getInMemoryTable()
