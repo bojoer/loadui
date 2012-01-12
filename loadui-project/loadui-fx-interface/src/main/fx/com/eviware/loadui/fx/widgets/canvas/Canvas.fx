@@ -68,6 +68,7 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
+import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
@@ -155,12 +156,12 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		}
 	}
 	
-	public function showOutputBalloons( hoveredCanvasObjectNode:CanvasObjectNode )
+	public function showOutputBalloons( hoveredCanvasObjectNode:CanvasObjectNode, terminalToAccept:Terminal )
 	{
 		for( c:CanvasObjectNode in components )
 		{
 			if( c != hoveredCanvasObjectNode )
-				c.showOutputBalloons( null );
+				c.showOutputBalloons( null, terminalToAccept );
 		}
 	}
 	
@@ -522,6 +523,10 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	 */
 	public function lookupCanvasNode( id:String ):CanvasObjectNode {
 		componentLayer.lookup( id ) as CanvasObjectNode;
+	}
+	
+	public function lookupConnectionNode( connection:Connection ):ConnectionNode {
+		connectionLayer.lookup( getConnectionId( connection ) ) as ConnectionNode;
 	}
 	
 	function addComponent( component:ComponentItem ):Void {

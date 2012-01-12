@@ -36,6 +36,11 @@ public interface OutputCategory extends ComponentBehavior
 	public static final String INPUT_TERMINAL = "inputTerminal";
 
 	/**
+	 * The label of the InputTerminal which is returned by getInputTerminal().
+	 */
+	public static final String OUTPUT_TERMINAL = "outputTerminal";
+
+	/**
 	 * The InputTerminal which is used to to direct TerminalMessages into the
 	 * Output Component.
 	 * 

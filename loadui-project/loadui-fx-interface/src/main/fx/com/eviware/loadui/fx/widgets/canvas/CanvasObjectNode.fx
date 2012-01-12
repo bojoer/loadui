@@ -337,7 +337,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 				def stack:Stack = n as Stack;
 				def b:Balloon = stack.content[0] as Balloon;
 				b.fading.stop();
-				b.opacity =	if( b.terminalNode == hoveredTerminal or hoveredTerminal == null ) 1.0	else 0.5;
+				b.opacity =	if( b.terminalNode == hoveredTerminal or hoveredTerminal == null) 1.0 else 0.5;
 			}
 			
 			def sceneBounds = localToParent( layoutBounds );
@@ -374,7 +374,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 		}
 	}
 	
-	public function showOutputBalloons( hoveredTerminal:TerminalNode ):Void {
+	public function showOutputBalloons( hoveredTerminal:TerminalNode, terminalToAccept:Terminal ):Void {
 		if( not lowerBaloonsShowing and not compact )
 		{
 			lowerBalloonsFading.stop();
@@ -384,7 +384,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 				def stack:Stack = n as Stack;
 				def b:Balloon = stack.content[0] as Balloon;
 				b.fading.stop();
-				b.opacity =	if( b.terminalNode == hoveredTerminal or hoveredTerminal == null ) 1.0	else 0.5;
+				b.opacity =	if( b.terminalNode == hoveredTerminal or (hoveredTerminal == null and b.terminalNode.acceptsTerminal( terminalToAccept ) ) ) 1.0 else 0.5;
 			}
 			
 			def sceneBounds = localToParent( layoutBounds );
@@ -416,7 +416,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 						},
 						KeyFrame{ time: 50ms, action: function() {
 								if( hoveredTerminal == null or hoveredTerminal.hover )
-									showOutputBalloons( hoveredTerminal );
+									showOutputBalloons( hoveredTerminal, terminalToAccept );
 							}
 						}
 					]

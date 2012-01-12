@@ -54,6 +54,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	private final LineChartView chartView;
 
 	private final EventSupport eventSupport = new EventSupport();
+	//TODO: This class should also hold a HashMap of test events
 	private final HashMap<LineSegment, LineSegmentChartModel> lines = new HashMap<LineSegment, LineSegmentChartModel>();
 	private final HashMap<LineSegmentChartModel, ComparedLineSegmentChartModel> comparedLines = new HashMap<LineSegmentChartModel, ComparedLineSegmentChartModel>();
 	private final TotalTimeTickCalculator timeCalculator = new TotalTimeTickCalculator();

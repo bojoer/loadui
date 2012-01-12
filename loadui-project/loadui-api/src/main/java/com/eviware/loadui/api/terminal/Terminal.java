@@ -29,4 +29,5 @@ public interface Terminal extends EventFirer, Addressable, Labeled.Mutable, Desc
 	public TerminalHolder getTerminalHolder();
 
 	public Collection<Connection> getConnections();
+
 }

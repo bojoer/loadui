@@ -146,7 +146,7 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 					if( terminal instanceof InputTerminal ) {
 						canvasObjectNode.showInputBalloons( this );
 					} else {
-						canvasObjectNode.showOutputBalloons( this );
+						canvasObjectNode.showOutputBalloons( this, null );
 					}
 				}
 			}
@@ -198,7 +198,7 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 				}, Circle {
 					radius: 30
 					fill: bind if( draggingTerminal != null ) {
-						if( ( not flip and inputAccept ) or ( flip and outputAccept ) ) {
+						if( (( not flip and inputAccept ) or ( flip and outputAccept )) and acceptsTerminal(draggingTerminal) ) {
 							if( (terminal.getTerminalHolder() != draggingTerminal.getTerminalHolder()) and
 									((terminal instanceof InputTerminal and draggingTerminal instanceof OutputTerminal 
 									and (terminal as InputTerminal).likes( draggingTerminal as OutputTerminal )) or
@@ -232,15 +232,22 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 	}
 	
 	override var accept = function( d:Draggable ):Boolean {
+		
 		if( d instanceof TerminalDraggable ) {
 			def other = (d as TerminalDraggable).currentTerminal;
-			
-			return ( ( terminal instanceof InputTerminal and other instanceof OutputTerminal )
-				or ( terminal instanceof OutputTerminal and other instanceof InputTerminal ) );
+			return acceptsTerminal( other );
 		}
-		
-		false
+		return false;
 	}
+	
+	public function acceptsTerminal( other:Terminal ):Boolean
+	{
+		if ( terminal instanceof OutputTerminal and terminal.getConnections().size() > 0 )
+			return false;
+				
+		return ( ( terminal instanceof InputTerminal and other instanceof OutputTerminal )
+			or ( terminal instanceof OutputTerminal and other instanceof InputTerminal ) );
+	} 
 
 	override var onDrop = function( d:Draggable ):Void {
 		def other = (d as TerminalDraggable).currentTerminal;
@@ -257,7 +264,7 @@ public class TerminalNode extends BaseNode, Resizable, Droppable {
 	override function getPrefWidth( height:Number ) { 30 }
 }
 
-class TerminalDraggable extends BaseNode, Draggable {
+public class TerminalDraggable extends BaseNode, Draggable {
 	public-init var tNode:TerminalNode;
 	
 	override function create() {
@@ -290,33 +297,56 @@ class TerminalDraggable extends BaseNode, Draggable {
 		var balloonsHasBeenShown:Boolean = false;
 		
 		// Special behaviour when moving an existing wire to a new terminal (wire has to be selected first).
-		if( sizeof Selectable.selects == 1 and Selectable.selects[0] instanceof ConnectionNode ) {
+		var grabbedWireWasSelected = false;
+		def someWireWasSelected = sizeof Selectable.selects == 1 and Selectable.selects[0] instanceof ConnectionNode;
+		if (someWireWasSelected) {
 			def conn = Selectable.selects[0] as ConnectionNode;
-			if( terminal == conn.connection.getInputTerminal() or terminal == conn.connection.getOutputTerminal() ) {
-				def other = if( terminal instanceof InputTerminal ) conn.connection.getOutputTerminal()
+			if( terminal == conn.connection.getInputTerminal() or terminal == conn.connection.getOutputTerminal() )
+				grabbedWireWasSelected = true;
+		}
+		
+		def grabbedIsOccupiedOutputTerminal = terminal instanceof OutputTerminal and terminal.getConnections().size() > 0;
+		
+		if( grabbedWireWasSelected or grabbedIsOccupiedOutputTerminal )
+		{
+			
+			
+			var other:Terminal;
+			
+			if( grabbedWireWasSelected )
+			{
+				def conn = Selectable.selects[0] as ConnectionNode;
+				other = if( terminal instanceof InputTerminal ) conn.connection.getOutputTerminal()
 					else conn.connection.getInputTerminal();
-				
-				var canvasNode: CanvasObjectNode = canvas.lookupCanvasNode(other.getTerminalHolder().getId());
-				startNode = canvasNode.lookupTerminalNode( other.getId() );
-				currentTerminal = (startNode as TerminalNode).terminal;
+			
 				prev = conn;
-				prev.visible = false;
-				
-				if( terminal instanceof InputTerminal )
-				{
-					//canvasObjectNode.hideAllInputBalloonsButThis( tNode );
-					canvas.showInputBalloons( canvasObjectNode );
-					inputAccept = true;
-				}
-				else
-				{
-					//canvasObjectNode.hideAllOutputBalloonsButThis( tNode );
-					canvas.showOutputBalloons( canvasObjectNode );
-					outputAccept = true;
-				}
-				balloonsHasBeenShown = true
-				
+			} else if( grabbedIsOccupiedOutputTerminal )	{
+				def conn = tNode.terminal.getConnections().iterator().next();
+				other = conn.getInputTerminal();
+				prev = canvas.lookupConnectionNode( conn );
+				println("prev: {prev}");
 			}
+			
+			prev.visible = false;
+			
+			var canvasNode: CanvasObjectNode = canvas.lookupCanvasNode(other.getTerminalHolder().getId());
+			startNode = canvasNode.lookupTerminalNode( other.getId() );
+			currentTerminal = (startNode as TerminalNode).terminal;
+			
+			if( terminal instanceof InputTerminal )
+			{
+				//canvasObjectNode.hideAllInputBalloonsButThis( tNode );
+				canvas.showInputBalloons( canvasObjectNode );
+				inputAccept = true;
+			}
+			else
+			{
+				//canvasObjectNode.hideAllOutputBalloonsButThis( tNode );
+				canvas.showOutputBalloons( canvasObjectNode, other );
+				outputAccept = true;
+			}
+			balloonsHasBeenShown = true
+			
 		} else {
 			Selectable.selectNone();
 		}
@@ -326,7 +356,7 @@ class TerminalDraggable extends BaseNode, Draggable {
 			if( terminal instanceof InputTerminal )
 			{
 				canvasObjectNode.hideAllInputBalloonsButThis( tNode );
-				canvas.showOutputBalloons( canvasObjectNode );
+				canvas.showOutputBalloons( canvasObjectNode, terminal );
 				outputAccept = true;
 			}
 			else

@@ -39,6 +39,7 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 	private static final int BLINK_TIME = 1000;
 
 	private final InputTerminal inputTerminal;
+	private final OutputTerminal outputTerminal;
 
 	private final ScheduledExecutorService executor;
 	private final Runnable activityRunnable;
@@ -58,6 +59,8 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 
 		inputTerminal = context.createInput( INPUT_TERMINAL, "Data to output",
 				"Messages sent here will be outputted by this component." );
+		outputTerminal = context.createOutput( OUTPUT_TERMINAL, "Passed through messages",
+				"All incoming messages will be outputted here." );
 
 		context.setActivityStrategy( ActivityStrategies.ON );
 		activityRunnable = new Runnable()
@@ -113,6 +116,7 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 			}
 
 			output( message );
+			getContext().send( outputTerminal, message );
 		}
 	}
 
