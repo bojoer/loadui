@@ -39,29 +39,29 @@ def completedCount = 0
 onAction( "RESET" ) { completedCount = 0 }
 
 onMessage = { incoming, outgoing, message ->
-    def count = (message[loopCounter] ?: 0) + 1
-    if( count > iterations.value ) {
-        message.remove( loopCounter )
-        send( exit, message )
-        completedCount++
-    } else {
-        message[loopCounter] = count
-        send( loop, message )
-    }
+	def count = (message[loopCounter] ?: 0) + 1
+	if( count > iterations.value ) {
+		message.remove( loopCounter )
+		send( exit, message )
+		completedCount++
+	} else {
+		message[loopCounter] = count
+		send( loop, message )
+	}
 }
 
 layout {
-    property( property: iterations, label: 'Loop Count', min: 0 )
-    separator( vertical:true )
-    box( widget: 'display', layout: 'wrap 1' ) {
-        node( label: 'Loop Count', content: { iterations.value }, constraints: 'wmin 70' )
-        node( label: 'Completed', content: { completedCount }, constraints: 'wmin 70' )
-    }
+	property( property: iterations, label: 'Loop Count', min: 0 )
+	separator( vertical:true )
+	box( widget: 'display', layout: 'wrap 1' ) {
+		node( label: 'Loop Count', content: { iterations.value }, constraints: 'wmin 70' )
+		node( label: 'Completed', content: { completedCount }, constraints: 'wmin 70' )
+	}
 }
 
 compactLayout {
-    box( widget: 'display', layout: 'wrap 2' ) {
-        node( label: 'Loops', content: { iterations.value }, constraints: 'wmin 40' )
-        node( label: 'Compl.', content: { completedCount }, constraints: 'wmin 40' )
-    }
+	box( widget: 'display', layout: 'wrap 2' ) {
+		node( label: 'Loops', content: { iterations.value }, constraints: 'wmin 40' )
+		node( label: 'Compl.', content: { completedCount }, constraints: 'wmin 40' )
+	}
 }

@@ -23,7 +23,6 @@
  * @help http://loadui.org/Custom-Components/groovyrunner.html
  */
 
-import com.eviware.loadui.util.ReleasableUtils
 import com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledException
 
 import java.util.HashSet
