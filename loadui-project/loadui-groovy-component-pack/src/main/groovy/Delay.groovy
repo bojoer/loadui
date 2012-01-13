@@ -36,7 +36,7 @@ random = new Random()
 waitingCount = 0
 
 displayNA = false
-displayCount = 0
+long displayCount = 0
 
 createOutgoing( 'output' )
 output.label = 'Delayed messages'

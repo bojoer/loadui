@@ -188,6 +188,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		{
 			SceneItem scene = ( SceneItem )addressableRegistry.lookup( conf.getSceneRef() );
 			AgentItem agent = ( AgentItem )addressableRegistry.lookup( conf.getAgentRef() );
+			if( scene == null )
+			{
+				break;
+			}
+
 			if( agent == null && conf.isSetAgentAddress() )
 			{
 				for( AgentItem r : workspace.getAgents() )
