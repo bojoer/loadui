@@ -23,8 +23,6 @@
  * @nonBlocking true
  */
 
-import com.eviware.loadui.util.ReleasableUtils
-
 //Here to support Splitters created in loadUI 1.0, remove in the future:
 try { renameProperty( 'outputs', 'numOutputs' ) } catch( e ) {}
 
@@ -32,26 +30,134 @@ incomingTerminal.description = 'Recieved messages will be outputted in different
 
 total = counters['total_output']
 countDisplays = [:]
+terminalProbabilities = [:]
+latestChanged = [:]
+isCompensatingProbabilities = false
 resetValues = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
 totalReset = 0
+changesDueToPropagation = [:]
 
-for( i in 0..outgoingTerminalList.size() - 1 ) {
+for( i=0; i < outgoingTerminalList.size(); i++ ) {
 	countDisplays[i] = { counters["output_$i"].get() - resetValues[i] }
+	println("creating prop probability" + i)
+	initialValue = outgoingTerminalList.size() > 1 ? 0 : 100
+	println ("initialValue: $initialValue")
+	terminalProbabilities[i] = createProperty( 'probability' + i, Integer, initialValue ) { newVal, oldVal ->
+		if( oldVal != null && !wasChangedDueToPropagation( i ) )
+		{
+			println("trigger changed property 1!")
+			for(c in changesDueToPropagation)
+				println(c)
+			
+			compensateProbabilities( i, newVal - oldVal )
+		}
+	}
+	latestChanged[i] = 0
 }
 
-createProperty( 'type', String, "Round-Robin" )
+def wasChangedDueToPropagation( propertyIndex ) {
+	if ( changesDueToPropagation.containsKey( propertyIndex ) )
+		return changesDueToPropagation.get( propertyIndex ) + 300 >  System.currentTimeMillis() 
+	return false
+}
+
+def compensateProbabilities( changedProperty, diff ) {
+	println( "size: " + terminalProbabilities.size() )
+	
+	if( isCompensatingProbabilities )
+		return
+	
+	isCompensatingProbabilities = true
+	latestChanged[changedProperty] = System.currentTimeMillis()
+	
+	println( changedProperty )
+	println( diff )
+	
+	while( diff > 0 )
+	{
+		indexToChange = latestChanged.find{ it.value == latestChanged.findAll{ terminalProbabilities[it.key].value != 0  }.collect{ it.value }.min() }.key
+		
+		for(l in latestChanged)
+			println(l)
+		for(t in terminalProbabilities)
+			println(t)
+			
+		println( "indextoChange: "+indexToChange )
+		
+		propertyToChange = terminalProbabilities[indexToChange]
+		
+		changeSize = Math.min( propertyToChange.value, diff )
+		
+		if( changeSize == 0 )
+			break
+		
+		propertyToChange.value -= changeSize
+		changesDueToPropagation[indexToChange] = System.currentTimeMillis()
+		diff -= changeSize
+		
+		println("Reduced property $indexToChange with $changeSize -- Remaining diff is $diff")
+	}
+	
+	while( diff < 0 )
+	{
+		indexToChange = latestChanged.find{ it.value == latestChanged.findAll{ terminalProbabilities[it.key].value != 100  }.collect{ it.value }.min() }.key
+		
+		for(l in latestChanged)
+			println(l)
+		
+		println( indexToChange )
+		
+		propertyToChange = terminalProbabilities[indexToChange]
+		
+		changeSize = Math.min( 100 - propertyToChange.value, Math.abs(diff) )
+		
+		if( changeSize == 0 )
+			break
+		
+		propertyToChange.value += changeSize
+		changesDueToPropagation[indexToChange] = System.currentTimeMillis()
+		diff += changeSize
+		
+		println("Increased property $indexToChange with $changeSize -- Remaining diff is $diff")
+	}
+	
+	println("done!")
+	
+	isCompensatingProbabilities = false
+}
+
+createProperty( 'type', String, "Round-Robin" ) {
+	refreshLayout()
+}
 createProperty( 'numOutputs', Integer, 1 ) { outputCount ->
 	while( outgoingTerminalList.size() < outputCount ) {
 		createOutgoing()
 		def i = outgoingTerminalList.size() - 1
 		
 		countDisplays[i] = { counters["output_$i"].get() - resetValues[i] }
+		
+		initialValue = outgoingTerminalList.size() > 1 ? 0 : 100
+		println( outgoingTerminalList.size() )
+		println ("initialValue: $initialValue")
+		println("creating propaaa probability" + i)
+		terminalProbabilities[i] = createProperty( 'probability' + i, Integer, initialValue ) { newVal, oldVal ->
+			if( oldVal != null && !wasChangedDueToPropagation( i ) )
+			{
+				println("trigger changed property 2!")
+				compensateProbabilities( i, newVal - oldVal )
+			}
+		}
+		latestChanged[i] = 0
 	}
 	while( outgoingTerminalList.size() > outputCount ) {
 		def i = outgoingTerminalList.size() - 1
 		deleteOutgoing()
 		countDisplays.remove( i )?.release()
+		compensateProbabilities( i, terminalProbabilities[i].value * -1 )
+		latestChanged.remove( i )
+		deleteProperty( terminalProbabilities.remove( i )?.key )
 	}
+	
 	refreshLayout()
 }
 
@@ -92,8 +198,14 @@ refreshLayout = {
 			def gap = (int)((249/numOutputs.value)-19)
 			for( i in 0..numOutputs.value - 1 ) {
 				if( i != 0 ) separator( vertical: true )
-				box( widget: 'display', layout: 'ins -5, center', constraints: "w 32!, h 24!, gap "+gap+" "+gap ) {
-					node( content: countDisplays[i], constraints: 'pad -6 -4' )
+				
+				if( type.value == "Random" ) {
+					property( property:terminalProbabilities[i], label:'%', min: 0, max: 100, step: 1, layout: 'ins -15, center', constraints: "w 32!, gap "+gap+" "+gap )
+				}
+				else {
+					box( widget: 'display', layout: 'ins -5, center', constraints: "w 32!, h 24!, gap "+gap+" "+gap ) {
+						node( content: countDisplays[i], constraints: 'pad -6 -4' )
+					}
 				}
 			}
 		}
