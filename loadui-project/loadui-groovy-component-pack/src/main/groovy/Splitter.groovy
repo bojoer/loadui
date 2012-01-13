@@ -32,7 +32,7 @@ total = counters['total_output']
 countDisplays = [:]
 terminalProbabilities = [:]
 latestChanged = [:]
-isCompensatingProbabilities = false
+//isCompensatingProbabilities = false
 resetValues = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
 totalReset = 0
 changesDueToPropagation = [:]
@@ -64,9 +64,10 @@ def wasChangedDueToPropagation( propertyIndex ) {
 def compensateProbabilities( changedProperty, diff ) {
 	println( "size: " + terminalProbabilities.size() )
 	
-	if( isCompensatingProbabilities )
-		return
-	
+//	if( isCompensatingProbabilities )
+//		return
+//		
+		
 	isCompensatingProbabilities = true
 	latestChanged[changedProperty] = System.currentTimeMillis()
 	
@@ -123,7 +124,7 @@ def compensateProbabilities( changedProperty, diff ) {
 	
 	println("done!")
 	
-	isCompensatingProbabilities = false
+//	isCompensatingProbabilities = false
 }
 
 createProperty( 'type', String, "Round-Robin" ) {
