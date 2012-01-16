@@ -139,7 +139,7 @@ public class SegmentButton extends BaseNode, Resizable {
 		[
 			Label {
 				text: "TestEvent"
-				layoutInfo: LayoutInfo { width: 75 }
+				layoutInfo: LayoutInfo { width: 65 }
 				visible: bind not compactSegments
 				managed: bind not compactSegments
 			}, Polyline {
@@ -159,7 +159,7 @@ public class SegmentButton extends BaseNode, Resizable {
 				managed: bind not compactSegments
 			}, Label {
 				text: eventSegment.getSourceLabel()
-				layoutInfo: LayoutInfo { width: bind if(compactSegments) 66 else 80 }
+				layoutInfo: LayoutInfo { width: bind if(compactSegments) 66 else 92 }
 			}
 		]
 	}
