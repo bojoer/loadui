@@ -21,6 +21,7 @@
  * @help http://www.loadui.org/Analysis/assertion-component.html
  * @category analysis
  * @nonBlocking true
+ * @deprecated
  */
 
 import com.eviware.loadui.api.model.CanvasItem

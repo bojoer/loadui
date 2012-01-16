@@ -33,6 +33,30 @@ public class ComponentDescriptor implements Labeled, Describable
 	private final String description;
 	private final URI icon;
 	private final String helpUrl;
+	private final boolean deprecated;
+
+	/**
+	 * Constructs a new ComponentDescriptor using the given values.
+	 * 
+	 * @param type
+	 * @param category
+	 * @param label
+	 * @param description
+	 * @param icon
+	 * @param helpUrl
+	 * @param deprecated
+	 */
+	public ComponentDescriptor( String type, String category, String label, String description, URI icon,
+			String helpUrl, boolean deprecated )
+	{
+		this.type = type;
+		this.category = category;
+		this.label = label;
+		this.description = description;
+		this.icon = icon;
+		this.helpUrl = helpUrl;
+		this.deprecated = deprecated;
+	}
 
 	/**
 	 * Constructs a new ComponentDescriptor using the given values.
@@ -51,12 +75,7 @@ public class ComponentDescriptor implements Labeled, Describable
 	 */
 	public ComponentDescriptor( String type, String category, String label, String description, URI icon, String helpUrl )
 	{
-		this.type = type;
-		this.category = category;
-		this.label = label;
-		this.description = description;
-		this.icon = icon;
-		this.helpUrl = helpUrl;
+		this( type, category, label, description, icon, helpUrl, false );
 	}
 
 	/**
@@ -76,12 +95,7 @@ public class ComponentDescriptor implements Labeled, Describable
 	 */
 	public ComponentDescriptor( String type, String category, String label, String description, URI icon )
 	{
-		this.type = type;
-		this.category = category;
-		this.label = label;
-		this.description = description;
-		this.icon = icon;
-		this.helpUrl = null;
+		this( type, category, label, description, icon, null, false );
 	}
 
 	public String getType()
@@ -112,5 +126,10 @@ public class ComponentDescriptor implements Labeled, Describable
 	public String getHelpUrl()
 	{
 		return helpUrl;
+	}
+
+	public boolean isDeprecated()
+	{
+		return deprecated;
 	}
 }

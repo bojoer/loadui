@@ -21,6 +21,7 @@
  * @help http://www.loadui.org/Analysis/statistics.html
  * @category analysis
  * @nonBlocking true
+ * @deprecated
  */
 
 import java.util.Calendar

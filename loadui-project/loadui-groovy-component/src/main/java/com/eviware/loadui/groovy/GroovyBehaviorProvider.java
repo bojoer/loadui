@@ -302,7 +302,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 			return new ScriptDescriptor( headers.getHeader( "id", baseName ), headers.getHeader( "classloader",
 					headers.getHeader( "id", baseName ) ), script, headers.getHeader( "category", MiscCategory.CATEGORY ),
 					headers.getHeader( "name", baseName ), headers.getDescription(), icon.exists() ? icon : null, digest,
-					headers.getHeader( "help", null ) );
+					headers.getHeader( "help", null ), headers.getHeader( "deprecated", "false" ) );
 		}
 
 		private static String getFileContent( File file )
@@ -338,9 +338,10 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 		}
 
 		private ScriptDescriptor( String id, String classLoaderId, File script, String category, String label,
-				String description, File icon, String digest, String helpUrl )
+				String description, File icon, String digest, String helpUrl, String deprecated )
 		{
-			super( TYPE, category, label, description, icon == null ? null : icon.toURI(), helpUrl );
+			super( TYPE, category, label, description, icon == null ? null : icon.toURI(), helpUrl, !"false"
+					.equals( deprecated ) );
 			this.classLoaderId = classLoaderId;
 			this.id = id;
 			this.script = script;

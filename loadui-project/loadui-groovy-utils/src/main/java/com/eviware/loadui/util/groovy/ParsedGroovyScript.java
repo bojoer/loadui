@@ -63,7 +63,7 @@ public final class ParsedGroovyScript
 				if( line.startsWith( "@" ) )
 				{
 					String[] parts = line.split( "\\s", 2 );
-					mapBuilder.put( parts[0].substring( 1 ), parts[1].trim() );
+					mapBuilder.put( parts[0].substring( 1 ), parts.length > 1 ? parts[1].trim() : "true" );
 				}
 				else
 					descriptionBuilder.append( line ).append( CRLF );

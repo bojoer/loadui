@@ -91,6 +91,8 @@ public class ComponentManager extends ComponentRegistry.DescriptorListener {
 	
 	override function descriptorAdded( descriptor:ComponentDescriptor ):Void {
 		log.debug( "Added ComponentDescriptor: \{\}", descriptor.getLabel() );
+		if( descriptor.isDeprecated() ) return;
+		
 		FxUtils.runInFxThread( function():Void {
 			def toolbarItem = ComponentToolbarItem { descriptor: descriptor };
 			def tctoolbarItem = ComponentToolbarItem { descriptor: descriptor };
@@ -103,6 +105,8 @@ public class ComponentManager extends ComponentRegistry.DescriptorListener {
 	
 	override function descriptorRemoved( descriptor:ComponentDescriptor ):Void {
 		log.debug( "Removed ComponentDescriptor: \{\}", descriptor );
+		if( descriptor.isDeprecated() ) return;
+		
 		FxUtils.runInFxThread( function():Void {
 			def toolbarItem = items.remove( descriptor ) as ToolbarItemNode;
 			def tcToolbarItem = testcaseItems.remove ( descriptor ) as ToolbarItemNode;
