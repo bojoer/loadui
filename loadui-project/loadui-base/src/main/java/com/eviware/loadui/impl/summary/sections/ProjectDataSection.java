@@ -31,7 +31,7 @@ public class ProjectDataSection extends MutableSectionImpl implements DataSectio
 		super( "Project Data" );
 		project = projectItemImpl;
 
-		addValue( "Number of TestCases", getNumberOfTestCases() );
+		addValue( "Number of Scenarios", getNumberOfTestCases() );
 		addValue( "Number of components", getNumberOfComponents() );
 		// addValue( "Number of connections", getNumberOfConnections() );
 		addValue( "Number of project components", String.valueOf( project.getComponents().size() ) );

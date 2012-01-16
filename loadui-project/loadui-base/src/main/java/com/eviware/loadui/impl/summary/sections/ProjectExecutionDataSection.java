@@ -42,7 +42,7 @@ public class ProjectExecutionDataSection extends MutableSectionImpl implements E
 		addValue( "Total number of assertions", getTotalNumberOfAssertions() );
 		addValue( "Total number of failed assertions", getTotalNumberOfFailedAssertions() );
 
-		addTable( "TestCase Data", getTestcaseDataTable() );
+		addTable( "Scenario Data", getTestcaseDataTable() );
 	}
 
 	public TableModel getTestcaseDataTable()

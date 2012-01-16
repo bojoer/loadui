@@ -36,7 +36,9 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	protected static final String FILE_OPTION = "f";
 	protected static final String AGENT_OPTION = "a";
 	protected static final String LIMITS_OPTION = "L";
+	@Deprecated
 	protected static final String TESTCASE_OPTION = "t";
+	protected static final String VU_SCENARIO_OPTION = "v";
 	protected static final String PROJECT_OPTION = "p";
 	protected static final String WORKSPACE_OPTION = "w";
 	protected static final String REPORT_DIR_OPTION = "r";
@@ -76,13 +78,15 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 		options.addOption( PROJECT_OPTION, "project", true, "Sets the Project file to run" );
 		options.addOption( TESTCASE_OPTION, "testcase", true,
 				"Sets which TestCase to run (leave blank to run the entire Project)" );
+		options.addOption( TESTCASE_OPTION, "scenario", true,
+				"Sets which Scenario to run (leave blank to run the entire Project)" );
 		options.addOption( LIMITS_OPTION, "limits", true,
 				"Sets the limits (<SECONDS>:<REQUESTS>:<FAILURES>) for the execution (e.g. -L 60:0:200 )" );
 		options.addOption( OptionBuilder
 				.withLongOpt( "agents" )
 				.withDescription(
 						"Sets the agents to use for the test ( usage -" + AGENT_OPTION
-								+ " <ip>[:<port>][=<testCase>[,<testCase>] ...] )" ).hasArgs().create( AGENT_OPTION ) );
+								+ " <ip>[:<port>][=<scenario>[,<scenario>] ...] )" ).hasArgs().create( AGENT_OPTION ) );
 		options.addOption( FILE_OPTION, "file", true, "Executes the specified Groovy script file" );
 		options.addOption( LOCAL_OPTION, "local", false, "Executes TestCases in local mode" );
 		options.addOption( REPORT_DIR_OPTION, "reports", true, "Generates reports and saves them in specified folder" );
@@ -125,6 +129,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 			attributes.put( "projectFile",
 					cmd.hasOption( PROJECT_OPTION ) ? new File( cmd.getOptionValue( PROJECT_OPTION ) ) : null );
 			attributes.put( "testCase", cmd.getOptionValue( TESTCASE_OPTION ) );
+			attributes.put( "testCase", cmd.getOptionValue( VU_SCENARIO_OPTION ) );
 			attributes.put( "limits", cmd.hasOption( LIMITS_OPTION ) ? cmd.getOptionValue( LIMITS_OPTION ).split( ":" )
 					: null );
 			attributes.put( "localMode", cmd.hasOption( LOCAL_OPTION ) );

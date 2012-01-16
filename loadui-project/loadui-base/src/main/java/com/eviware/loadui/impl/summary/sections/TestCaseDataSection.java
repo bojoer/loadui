@@ -27,7 +27,7 @@ public class TestCaseDataSection extends MutableSectionImpl implements DataSecti
 
 	public TestCaseDataSection( SceneItem sceneItem )
 	{
-		super( "TestCase Data" );
+		super( "Scenario Data" );
 		testcase = sceneItem;
 		addValue( "Number of components", getNumberOfComponents() );
 		addValue( "Number of connections", getNumberOfConnections() );

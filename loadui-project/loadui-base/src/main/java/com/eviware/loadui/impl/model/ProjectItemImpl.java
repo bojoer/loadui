@@ -540,7 +540,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		// add a project chapter first
 		MutableChapterImpl projectChapter = ( MutableChapterImpl )summary.addChapter( getLabel() );
 
-		// add and generate TestCase chapters if the TestCase has run at least
+		// add and generate Scenario chapters if the Scenario has run at least
 		// once.
 		for( SceneItemImpl scene : scenes )
 		{
@@ -859,7 +859,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				SceneItem scene = ( SceneItem )addressableRegistry.lookup( message.get( AgentItem.DEFINE_SCENE ) );
 				if( scene != null )
 				{
-					log.debug( "Agent {} has requested a TestCase: {}, sending...", endpoint,
+					log.debug( "Agent {} has requested a Scenario: {}, sending...", endpoint,
 							message.get( AgentItem.DEFINE_SCENE ) );
 					AssignmentImpl assignment = getAssignment( scene, ( AgentItem )endpoint );
 					if( assignment != null )
@@ -871,7 +871,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				}
 				else
 				{
-					log.warn( "An Agent {} has requested a nonexistant TestCase: {}", endpoint,
+					log.warn( "An Agent {} has requested a nonexistant Scenario: {}", endpoint,
 							message.get( AgentItem.DEFINE_SCENE ) );
 				}
 			}
@@ -1119,15 +1119,15 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				}
 				catch( InterruptedException e )
 				{
-					log.error( "Error while waiting for TestCases to become ready on Agents", e );
+					log.error( "Error while waiting for Scenarios to become ready on Agents", e );
 				}
 				catch( ExecutionException e )
 				{
-					log.error( "Error while waiting for TestCases to become ready on Agents", e );
+					log.error( "Error while waiting for Scenario to become ready on Agents", e );
 				}
 				catch( TimeoutException e )
 				{
-					log.error( "Timed out waiting for TestCases to become ready on Agents", e );
+					log.error( "Timed out waiting for Scenarios to become ready on Agents", e );
 				}
 			}
 		}
