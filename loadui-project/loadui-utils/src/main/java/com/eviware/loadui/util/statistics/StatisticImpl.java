@@ -149,6 +149,12 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 		}
 	}
 
+	@Override
+	public String toString()
+	{
+		return String.format( "%s(%s)", name, source );
+	}
+
 	private class EntryListener implements ValueListener<Entry>
 	{
 		@Override

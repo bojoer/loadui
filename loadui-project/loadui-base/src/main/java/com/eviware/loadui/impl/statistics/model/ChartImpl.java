@@ -23,10 +23,13 @@ import java.util.Set;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
+import com.eviware.loadui.api.traits.Deletable;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.config.ChartConfig;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
 import com.eviware.loadui.util.BeanInjector;
@@ -39,6 +42,7 @@ public class ChartImpl implements Chart
 	private ChartConfig config;
 	private AttributeHolderSupport attributeHolderSupport;
 	private final EventSupport eventSupport = new EventSupport();
+	private final ReleaseListener releaseListener;
 	private final Owner owner;
 
 	public ChartImpl( ChartGroupImpl parent, ChartConfig config )
@@ -51,11 +55,20 @@ public class ChartImpl implements Chart
 		owner = ( Owner )BeanInjector.getBean( AddressableRegistry.class ).lookup( config.getStatisticHolder() );
 
 		if( owner == null )
-			throw new IllegalArgumentException( "StatisticHolder for Chart doesn't exist!" );
+			throw new IllegalArgumentException( "Chart.Owner for Chart doesn't exist!" );
 
 		if( config.getAttributes() == null )
 			config.addNewAttributes();
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
+
+		if( owner instanceof EventFirer )
+		{
+			( ( EventFirer )owner ).addEventListener( BaseEvent.class, releaseListener = new ReleaseListener() );
+		}
+		else
+		{
+			releaseListener = null;
+		}
 	}
 
 	@Override
@@ -82,6 +95,11 @@ public class ChartImpl implements Chart
 	@Override
 	public void release()
 	{
+		if( releaseListener != null )
+		{
+			( ( EventFirer )owner ).removeEventListener( BaseEvent.class, releaseListener );
+		}
+
 		fireEvent( new BaseEvent( this, RELEASED ) );
 		ReleasableUtils.releaseAll( eventSupport, attributeHolderSupport );
 	}
@@ -150,5 +168,21 @@ public class ChartImpl implements Chart
 		}
 
 		return sources;
+	}
+
+	private class ReleaseListener implements EventHandler<BaseEvent>
+	{
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( Deletable.DELETED.equals( event.getKey() ) )
+			{
+				delete();
+			}
+			else if( Releasable.RELEASED.equals( event.getKey() ) )
+			{
+				ReleasableUtils.release( ChartImpl.this );
+			}
+		}
 	}
 }
