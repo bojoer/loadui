@@ -232,10 +232,10 @@ class CustomPopupMenu extends PopupMenu {
 	
 	init{
 	    items = [
-	    	MenuItem {
+	    	/*MenuItem {
     			text: ##[RENAME]"Rename"
     			action: function() { RenameModelItemDialog { labeled: assertionItem as Labeled.Mutable } }
-    		},
+    		},*/
     		MenuItem {
                 text: ##[DELETE]"Delete"
                 action: function() { DeleteModelItemDialog { modelItem: assertionItem } }
