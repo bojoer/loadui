@@ -175,7 +175,7 @@ public class AssertionTreeModel extends DefaultTreeModel
 		public String getStatisticName()
 		{
 			StatisticTreeNode statisticNode = ( StatisticTreeNode )getParent();
-			return statisticNode.toString();
+			return statisticNode.statisticName;
 		}
 
 		@Override
@@ -189,7 +189,7 @@ public class AssertionTreeModel extends DefaultTreeModel
 		@Override
 		public String getSourceName()
 		{
-			return toString();
+			return sourceName;
 		}
 	}
 
