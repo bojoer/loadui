@@ -95,10 +95,14 @@ public class Knob extends NumericWidgetBase {
 	var startX:Number;
 	var startY:Number;
 	var startValue:Number;
-	var dragging = false;
 	
 	var labelNode:Label;
 	override function create() {
+		if( plc.has("enabled") )
+		{
+			disable = not (plc.get("enabled") as Boolean);
+		}
+		
 		def group = Group {
 			autoSizeChildren: false
 			content: [
