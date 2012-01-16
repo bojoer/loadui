@@ -39,12 +39,21 @@ public class ComponentDescriptor implements Labeled, Describable
 	 * Constructs a new ComponentDescriptor using the given values.
 	 * 
 	 * @param type
+	 *           The type of the Component.
 	 * @param category
+	 *           The Category of the ComponentDescriptor.
 	 * @param label
+	 *           The label for the ComponentDescriptor.
 	 * @param description
+	 *           A description of the Component.
 	 * @param icon
+	 *           A File containing an icon image to display for the
+	 *           ComponentDescriptor.
 	 * @param helpUrl
+	 *           URL to a web site explaining the usage of the Component.
 	 * @param deprecated
+	 *           Indicator that the Component should not be used, other than for
+	 *           legacy reasons.
 	 */
 	public ComponentDescriptor( String type, String category, String label, String description, URI icon,
 			String helpUrl, boolean deprecated )
