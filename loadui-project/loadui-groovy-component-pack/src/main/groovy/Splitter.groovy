@@ -32,7 +32,6 @@ total = counters['total_output']
 countDisplays = [:]
 terminalProbabilities = [:]
 latestChanged = [:]
-//isCompensatingProbabilities = false
 resetValues = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
 totalReset = 0
 changesDueToPropagation = [:]
@@ -61,13 +60,22 @@ def wasChangedDueToPropagation( propertyIndex ) {
 	return false
 }
 
+def randomizeTerminal()
+{
+	 r = random.nextInt( 100 )
+	 s = 0
+	 for(entry in terminalProbabilities) {
+		  p = entry.value.value
+		  if( s <= r && s+p > r )
+				return entry.key
+		  s += p
+	 }
+	 return randomizeTerminal() //in case no terminal matched because of rounding errors, we try it again
+}
+
 def compensateProbabilities( changedProperty, diff ) {
 	println( "size: " + terminalProbabilities.size() )
 	
-//	if( isCompensatingProbabilities )
-//		return
-//		
-		
 	isCompensatingProbabilities = true
 	latestChanged[changedProperty] = System.currentTimeMillis()
 	
@@ -121,10 +129,7 @@ def compensateProbabilities( changedProperty, diff ) {
 		
 		println("Increased property $indexToChange with $changeSize -- Remaining diff is $diff")
 	}
-	
 	println("done!")
-	
-//	isCompensatingProbabilities = false
 }
 
 createProperty( 'type', String, "Round-Robin" ) {
@@ -167,7 +172,7 @@ lastOutput = -1
 
 onMessage = { incoming, outgoing, message ->
 	if( type.value == "Round-Robin" ) lastOutput = (lastOutput + 1) % numOutputs.value
-	else lastOutput = random.nextInt( numOutputs.value )
+	else lastOutput = randomizeTerminal() //random.nextInt( numOutputs.value )
 	send( outgoingTerminalList[lastOutput], message )
 	counters["output_$lastOutput"].increment()
 	total.increment()
