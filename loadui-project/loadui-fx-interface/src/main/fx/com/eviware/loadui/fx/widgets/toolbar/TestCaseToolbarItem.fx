@@ -34,11 +34,11 @@ import com.eviware.loadui.fx.MainWindow;
 public class TestCaseToolbarItem extends ToolbarItemNode {
 	override var icon = testCaseImage;
 	
-	override var tooltip = "Creates a new TestCase in the Project";
+	override var tooltip = "Creates a new VU Scenario in the Project";
 	
-	override var label = "TestCase";
+	override var label = "VU Scenario";
 	
-	override var category = "TestCases";
+	override var category = "Scenarios";
 	
 	override def onMouseClicked = function (me:MouseEvent) {
 		if( me.button == MouseButton.PRIMARY and me.clickCount == 2) {

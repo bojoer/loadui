@@ -47,7 +47,7 @@ public class GroupOrder extends Comparator {
 		AnalysisCategory.CATEGORY.toUpperCase(),
 		RunnerCategory.CATEGORY.toUpperCase(),
 		GeneratorCategory.CATEGORY.toUpperCase(),
-		"TESTCASES"
+		"SCENARIOS"
 	];
 
 	public override function compare(o1, o2) {

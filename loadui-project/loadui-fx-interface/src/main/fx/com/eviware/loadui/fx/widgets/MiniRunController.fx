@@ -177,7 +177,7 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
 					}
 					
 					if (not valid) {
-					    var type = if (canvas instanceof ProjectItem) "Project" else "TestCase";
+					    var type = if (canvas instanceof ProjectItem) "Project" else "VU Scenario";
 					    var checkbox:CheckBox;
 					    var dlg:Dialog = Dialog {
 					        title: "Start {type}";

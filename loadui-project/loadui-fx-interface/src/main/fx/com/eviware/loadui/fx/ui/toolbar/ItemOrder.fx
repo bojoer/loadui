@@ -85,7 +85,7 @@ public class ItemOrder extends Comparator {
 	def loadGeneratorOrder:String[] = [ "FIXED RATE", "VARIANCE", "RANDOM", "RAMP", "VIRTUAL USERS", "FIXED LOAD" ];
 	def analysisOrder:String[] = [ "ASSERTION", "STATISTICS" ];
 	def flowOrder:String[] = [ "SPLITTER", "DELAY" ];
-	def runnerOrder:String[] = [ "WEB PAGE RUNNER", "SOAPUI RUNNER", "SCRIPT RUNNER", "PROCESS RUNNER" ];
+	def runnerOrder:String[] = [ "SOAPUI RUNNER", "WEB PAGE RUNNER", "SCRIPT RUNNER", "PROCESS RUNNER" ];
 	    	
 	public override function compare(o1, o2) {
 		 def t1:ToolbarItemNode = o1 as ToolbarItemNode;

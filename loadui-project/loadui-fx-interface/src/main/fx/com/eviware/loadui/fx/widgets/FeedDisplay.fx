@@ -130,7 +130,8 @@ public class FeedDisplay extends BaseNode, Resizable {
 			}
 	
 	override function create() {
-		feedTask.start();
+		if( java.lang.System.getProperty("noFeed") == null )
+			feedTask.start();
 		var sc:ScrollView;
 		var lb: Label;
 		Group {

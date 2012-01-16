@@ -109,10 +109,10 @@ public class ProjectCanvas extends Canvas {
 	}
 	
 	public function createTestCase():SceneItem {
-		var name = "TestCase";
+		var name = "Virtual User Scenario";
 		var i=0;
 		while( sizeof projectItem.getScenes()[c|c.getLabel() == name] > 0 )
-			name = "TestCase ({++i})";
+			name = "Virtual User Scenario ({++i})";
 			
 		if ( projectItem.getAttribute( ProjectSettingsDialog.IGNORE_UNASSIGNED_TESTCASES, "false" ) == "false" and not MainWindow.instance.workspace.isLocalMode()) {
 			var checkbox:CheckBox;

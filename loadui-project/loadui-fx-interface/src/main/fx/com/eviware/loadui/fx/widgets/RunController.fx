@@ -206,7 +206,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 					}
 					
 					if (not valid) {
-						var type = if (canvas instanceof ProjectItem) "Project" else "TestCase";
+						var type = if (canvas instanceof ProjectItem) "Project" else "Scenario";
 						var checkbox:CheckBox;
 						var dlg:Dialog = Dialog {
 							title: "Start {type}";

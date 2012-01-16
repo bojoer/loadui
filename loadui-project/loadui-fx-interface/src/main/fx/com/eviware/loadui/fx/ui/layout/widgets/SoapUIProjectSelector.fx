@@ -153,7 +153,7 @@ public class SoapUIProjectSelector extends LayoutComponentNode, EventHandler {
 				VBox {
 					content: [
 						Label { text: "soapUI TestCase", layoutInfo: LayoutInfo{ height: 18 } }
-						testCaseLabel = Label { text: "", layoutInfo: LayoutInfo{ height: 18 }, textOverrun: javafx.scene.control.OverrunStyle.ELLIPSES }
+						testCaseLabel = Label { text: "", layoutInfo: LayoutInfo{ height: 18, width: 10 }, textOverrun: javafx.scene.control.OverrunStyle.ELLIPSES }
 					]	
 				}
 			]
@@ -196,57 +196,3 @@ public class SoapUIProjectSelector extends LayoutComponentNode, EventHandler {
 		testCaseLabel.text = testCase.getProperty().getValue() as String;
 	}
 };
-
-
-
-//public class ProjectSelectionDialog {
-//	
-//	public-init var wc:WindowController;
-//    
-//    var dialog:Dialog;
-//    
-//    function show()
-//    {
-//    	wc.bringToFront();
-//    	dialog.show();
-//    }
-//    
-//    function generateDialog()
-//    {
-//    	  dialog = null;
-//    	  
-//    	  dialog = Dialog {
-//        		showPostInit: false
-//            title: "Select soapUI Project"
-//            content: [
-//            	FormFieldWidget {
-//						plc: project
-//						width: 250
-//						field: FileInputField {
-//							label: project.getLabel()
-//							value: project.getProperty().getValue()
-//							selectMode : FileInputField.FILES_ONLY
-//						}
-//					}
-//					testSuiteSelector = SelectWidget {
-//						plc: testSuite
-//						disable: project.getProperty().getValue() == null
-//					}
-//					testCaseSelector = SelectWidget {
-//						plc: testCase
-//						disable: project.getProperty().getValue() == null
-//					}
-//            ]
-//            noOk: true
-//            noCancel: true
-////            onOk: function() {
-////					dialog.close();
-////            }
-//        }
-//    }
-//    
-//    init {
-//		generateDialog()
-//    }
-//};
-
