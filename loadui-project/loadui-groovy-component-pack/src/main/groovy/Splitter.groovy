@@ -194,19 +194,20 @@ refreshLayout = {
 			box( widget: 'display',  constraints: 'w 100!' ) {
 				node( label: 'Count', content: { total.get() - totalReset }, constraints: 'wrap' )
 			}
-			action( label:'Clear', action: {
-				for( i in 0..9 ) resetValues[i] = counters["output_$i"].get()
-				totalReset = total.get()
-			}, constraints:'right' )
+//			action( label:'Clear', action: {
+//				for( i in 0..9 ) resetValues[i] = counters["output_$i"].get()
+//				totalReset = total.get()
+//			}, constraints:'right' )
 		}
 		separator( vertical: false )
 		box( layout: 'ins 0, center', constraints: 'span 5, w 498!' ) {
 			def gap = (int)((249/numOutputs.value)-19)
+			def moreThanOneTerminal = numOutputs.value > 1;
 			for( i in 0..numOutputs.value - 1 ) {
 				if( i != 0 ) separator( vertical: true )
 				
 				if( type.value == "Random" ) {
-					property( property:terminalProbabilities[i], label:'%', min: 0, max: 100, step: 1, layout: 'ins -15, center', constraints: "w 32!, gap "+gap+" "+gap )
+					property( property:terminalProbabilities[i], label:'%', min: 0, max: 100, step: 1, enabled:moreThanOneTerminal, layout: 'ins -15, center', constraints: "w 32!, gap "+gap+" "+gap )
 				}
 				else {
 					box( widget: 'display', layout: 'ins -5, center', constraints: "w 32!, h 24!, gap "+gap+" "+gap ) {
