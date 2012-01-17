@@ -31,6 +31,7 @@ import com.eviware.loadui.api.assertion.Constraint;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.serialization.ListenableValue.ValueListener;
@@ -60,6 +61,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	private final EventSupport eventSupport = new EventSupport();
 	private final ToleranceSupport toleranceSupport = new ToleranceSupport();
 	private final ValueAsserter valueAsserter = new ValueAsserter();
+	private final LabelListener labelListener = new LabelListener();
 	private final TestEventSourceSupport sourceSupport;
 	private final CanvasItem canvas;
 	private final AssertionAddonImpl addon;
@@ -68,29 +70,34 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	private final ListenableValue<T> listenableValue;
 
 	private Constraint<? super T> constraint;
+	private String description;
 
 	//Create new AssertionItem
 	public AssertionItemImpl( @Nonnull CanvasItem canvas, @Nonnull AssertionAddonImpl addon,
 			@Nonnull AddonItem.Support addonSupport, @Nonnull Addressable parent,
-			@Nonnull Resolver<ListenableValue<T>> valueResolver )
+			@Nonnull Resolver<? extends ListenableValue<T>> listenableValueResolver )
 	{
 		this.canvas = canvas;
 		this.addon = addon;
 		this.addonSupport = addonSupport;
 		addonSupport.init( this );
 
-		this.parent = parent;
+		this.parent = attachLabelListener( parent );
+		addonSupport.setAttribute( PARENT_ID, parent.getId() );
+
 		try
 		{
-			addonSupport.setAttribute( VALUE_REFERENCE, SerializationUtils.serializeBase64( valueResolver ) );
+			addonSupport.setAttribute( VALUE_REFERENCE, SerializationUtils.serializeBase64( listenableValueResolver ) );
 		}
 		catch( IOException e )
 		{
 			log.error( "Unable to serialize value resolver!", e );
 		}
-		listenableValue = valueResolver.getValue();
+		listenableValue = attachLabelListener( listenableValueResolver.getValue() );
 
 		sourceSupport = new TestEventSourceSupport( getLabel(), createData() );
+
+		updateDescription();
 	}
 
 	//Load existing AssertionItem
@@ -102,7 +109,8 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		this.addonSupport = addonSupport;
 		addonSupport.init( this );
 
-		parent = BeanInjector.getBean( AddressableRegistry.class ).lookup( addonSupport.getAttribute( PARENT_ID, "" ) );
+		parent = attachLabelListener( BeanInjector.getBean( AddressableRegistry.class ).lookup(
+				addonSupport.getAttribute( PARENT_ID, "" ) ) );
 
 		int tolerancePeriod = Integer.parseInt( addonSupport.getAttribute( TOLERANCE_PERIOD, "0" ) );
 		int toleranceAllowedOccurrences = Integer.parseInt( addonSupport
@@ -113,7 +121,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		try
 		{
 			@SuppressWarnings( "unchecked" )
-			Resolver<ListenableValue<T>> valueResolver = ( Resolver<ListenableValue<T>> )SerializationUtils
+			Resolver<? extends ListenableValue<T>> valueResolver = ( Resolver<? extends ListenableValue<T>> )SerializationUtils
 					.deserialize( addonSupport.getAttribute( VALUE_REFERENCE, null ) );
 			tmpValue = valueResolver.getValue();
 		}
@@ -125,7 +133,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		{
 			log.error( "Unable to deserialize ValueResolver!", e );
 		}
-		listenableValue = tmpValue;
+		listenableValue = attachLabelListener( tmpValue );
 
 		try
 		{
@@ -144,6 +152,17 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		}
 
 		sourceSupport = new TestEventSourceSupport( getLabel(), createData() );
+		updateDescription();
+	}
+
+	private <Type> Type attachLabelListener( final Type object )
+	{
+		if( object instanceof Labeled && object instanceof EventFirer )
+		{
+			( ( EventFirer )object ).addEventListener( BaseEvent.class, labelListener );
+		}
+
+		return object;
 	}
 
 	public void start()
@@ -298,6 +317,30 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		return sourceSupport.getHash();
 	}
 
+	private String labelOrToString( Object object )
+	{
+		return object instanceof Labeled ? ( ( Labeled )object ).getLabel() : String.valueOf( object );
+	}
+
+	private void updateDescription()
+	{
+
+		String newDescription = String.format( "%s > %s : %s : Tolerate %d times within %d seconds",
+				labelOrToString( getParent() ), labelOrToString( getValue() ), getConstraint(),
+				getToleranceAllowedOccurrences(), getTolerancePeriod() );
+		if( !newDescription.equals( description ) )
+		{
+			description = newDescription;
+			fireEvent( new BaseEvent( this, DESCRIPTION ) );
+		}
+	}
+
+	@Override
+	public String getDescription()
+	{
+		return description;
+	}
+
 	private byte[] createData()
 	{
 		try
@@ -331,6 +374,18 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 					manager.logTestEvent( AssertionItemImpl.this, testEvent );
 					canvas.getCounter( CanvasItem.FAILURE_COUNTER ).increment();
 				}
+			}
+		}
+	}
+
+	private class LabelListener implements WeakEventHandler<BaseEvent>
+	{
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( Objects.equal( Labeled.LABEL, event.getKey() ) )
+			{
+				updateDescription();
 			}
 		}
 	}

@@ -139,7 +139,7 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 	}
 
 	@Override
-	public void registerAddonHolder( final AddonHolder addonHolder )
+	public synchronized void registerAddonHolder( final AddonHolder addonHolder )
 	{
 		registeredHolders.add( addonHolder );
 		final Predicate<Class<?>> typeMatcher = new Predicate<Class<?>>()

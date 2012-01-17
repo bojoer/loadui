@@ -114,7 +114,7 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 
 	@Override
 	public <T> AssertionItem.Mutable<T> createAssertion( Addressable owner,
-			Resolver<ListenableValue<T>> listenableValueResolver )
+			Resolver<? extends ListenableValue<T>> listenableValueResolver )
 	{
 		AddonItem.Support addonItemSupport = context.createAddonItemSupport();
 		AssertionItemImpl<T> assertionItem = new AssertionItemImpl<T>( canvas, this, addonItemSupport, owner,

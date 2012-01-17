@@ -25,6 +25,7 @@ import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
+import com.eviware.loadui.util.StringUtils;
 import com.eviware.loadui.util.serialization.ListenableValueSupport;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -39,6 +40,7 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	private final StatisticVariable variable;
 	private final String name;
 	private final String source;
+	private final String toString;
 
 	public StatisticImpl( ExecutionManager manager, String trackId, StatisticVariable variable, String name,
 			String source, Class<T> type )
@@ -49,6 +51,9 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 		this.variable = variable;
 		this.name = name;
 		this.source = source;
+
+		toString = String.format( "%s > %s%s", StringUtils.capitalize( getStatisticVariable().getLabel() ),
+				StringUtils.capitalize( name ), StatisticVariable.MAIN_SOURCE.equals( source ) ? "" : "(" + source + ")" );
 	}
 
 	@Override
@@ -152,7 +157,7 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	@Override
 	public String toString()
 	{
-		return String.format( "%s(%s)", name, source );
+		return toString;
 	}
 
 	private class EntryListener implements ValueListener<Entry>

@@ -19,6 +19,7 @@ import com.eviware.loadui.api.addon.AddonItem;
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.statistics.model.Chart;
+import com.eviware.loadui.api.traits.Describable;
 import com.eviware.loadui.api.traits.Labeled;
 
 /**
@@ -26,7 +27,7 @@ import com.eviware.loadui.api.traits.Labeled;
  * 
  * @author dain.nilsson
  */
-public interface AssertionItem<T> extends AddonItem, Chart.Owner, Labeled
+public interface AssertionItem<T> extends AddonItem, Chart.Owner, Labeled, Describable
 {
 	/**
 	 * Returns the Addressable to which the asserted value belongs.

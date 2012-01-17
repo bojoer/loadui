@@ -17,6 +17,7 @@
 package com.eviware.loadui.fx.util;
 
 import com.eviware.loadui.api.traits.Labeled;
+import com.eviware.loadui.api.traits.Describable;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.WeakEventHandler;
@@ -40,6 +41,7 @@ public function getCollectionHolder( eventFirer:EventFirer, key:String ):Collect
 
 public class LabelHolder extends WeakEventHandler {
 	public-read var label:String = "null";
+	public-read var description:String = "null";
 	
 	public var labeled:Labeled on replace oldLabeled {
 		if( oldLabeled != null and oldLabeled instanceof EventFirer )
@@ -49,8 +51,10 @@ public class LabelHolder extends WeakEventHandler {
 			if( labeled instanceof EventFirer )
 				(labeled as EventFirer).addEventListener( BaseEvent.class, this );
 			label = labeled.getLabel();
+			if( labeled instanceof Describable ) description = (labeled as Describable).getDescription();
 		} else {
 			label = "null";
+			description = "null";
 		}
 	}
 	
@@ -59,6 +63,10 @@ public class LabelHolder extends WeakEventHandler {
 		if( baseEvent.getKey().equals( Labeled.LABEL ) ) {
 			FxUtils.runInFxThread( function():Void {
 				label = labeled.getLabel();
+			} );
+		} else if( baseEvent.getKey().equals( Describable.DESCRIPTION ) ) {
+			FxUtils.runInFxThread( function():Void {
+				description = (labeled as Describable).getDescription();
 			} );
 		}
 	}

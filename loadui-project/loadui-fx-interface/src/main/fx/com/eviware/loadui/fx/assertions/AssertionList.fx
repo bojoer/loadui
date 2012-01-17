@@ -149,6 +149,7 @@ class AssertionBox extends Stack {
 	}
 	
 	public-init var assertionItem: AssertionItem on replace oldValue {
+		def labelHolder = ModelUtils.getLabelHolder( assertionItem );
 		content = [
 			menu,
 			Region { styleClass: "background" },
@@ -167,7 +168,7 @@ class AssertionBox extends Stack {
 							    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
 							    content: [
 							    	ImageView { image: assertionIcon }
-									Label { styleClass: "title", text: bind ModelUtils.getLabelHolder( assertionItem ).label }
+									Label { styleClass: "title", text: bind labelHolder.label }
 									Region { styleClass: "separator", layoutInfo: LayoutInfo { width: 1, height: 14, hfill: false, vfill: false } },
 									menuButton
 							    ]
@@ -179,7 +180,7 @@ class AssertionBox extends Stack {
 							    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
 							    content: [
 							    	Region { style: "-fx-background-color: transparent;", layoutInfo: LayoutInfo { width: 19, height: 12, hfill: false, vfill: false } },
-							    	Label { text: breadcrumb() }
+							    	Label { text: bind labelHolder.description }
 							    ]
 							}
 						]

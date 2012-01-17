@@ -51,5 +51,5 @@ public interface AssertionAddon extends Addon
 	 * @return
 	 */
 	public <T> AssertionItem.Mutable<T> createAssertion( Addressable owner,
-			Resolver<ListenableValue<T>> listenableValueResolver );
+			Resolver<? extends ListenableValue<T>> listenableValueResolver );
 }
