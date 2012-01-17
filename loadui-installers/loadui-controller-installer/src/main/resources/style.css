@@ -573,6 +573,12 @@
 	-fx-font: 12pt "Amble Cn";
 }
 
+.browser-frame {
+	-fx-background-color: rgba(0,0,0,0.1), rgba(0,0,0,0.2), #505050, #303030;
+	-fx-background-radius: 18, 15, 10, 10;
+	-fx-background-insets: -3 -3 -6 -3, -1 -1 -4 -1, -1 1 1 1, 0;
+}
+
 .feed-scroll-view {
     -fx-padding: 0 0 0 0;
     -fx-background-color: rgba(0, 0, 0, 0);
