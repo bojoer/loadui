@@ -362,26 +362,33 @@
 	-fx-padding: 3.5;
 }
 
-.page-list {
+.page-list, .carousel {
 	-fx-background-color: linear (0%,0%) to (0%,100%) stops (0%, #262626) (50%, #636363) (100%, #272727), linear (0%,0%) to (0%,100%) stops (0%, #262626) (70%, #343434) (100%, #272727);
 	-fx-background-insets: 0, 0 2;
 	-fx-background-radius: 8;
 	-fx-text-fill: #737373;
 }
 
-.page-list  *.separator:horizontal *.line {
+.carousel *.separator:horizontal *.line {
     -fx-background-color: #525252;
     -fx-border-color: null;
     -fx-border-style: null;
     -fx-padding: 1;
 }
 
-.page-list *.page-label {
+.page-list  *.separator:horizontal *.line{
+    -fx-background-color: #525252;
+    -fx-border-color: null;
+    -fx-border-style: null;
+    -fx-padding: 1;
+}
+
+.page-list *.page-label, .carousel *.page-label {
 	-fx-font-size: 14;
 	-fx-padding: 0 5 0 0;
 }
 
-.page-list *.item-label {
+.page-list *.item-label, .carousel *.item-label {
 	-fx-font-size: 14;
 	-fx-text-fill: #aeaeae;
 }
