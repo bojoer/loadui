@@ -46,7 +46,7 @@ import com.eviware.loadui.fx.widgets.toolbar.TestCaseToolbarItem;
 import com.eviware.loadui.fx.wizards.GettingStartedWizard;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.widgets.TutorialList;
-import com.eviware.loadui.fx.util.BrowserControl;
+import com.eviware.loadui.fx.ui.BrowserFrame;
 
 import java.lang.Object;
 import java.lang.Thread;
@@ -188,10 +188,9 @@ public class MainWindow {
 			appState.insertInto( projectList = ProjectList { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: 315, height: 222 } }, WORKSPACE_FRONT );
 			appState.insertInto( AgentList { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
 			
-			appState.insertInto( BrowserControl {
-				//url: "http://www.soapui.org/Appindex/soapui-pro-starterpage-home.html",
+			appState.insertInto( BrowserFrame {
 				url: java.lang.System.getProperty( "url", "http://soapui.org/appindex/soapui-courtesy-starterpage-home.html" ),
-				layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 502, 315 ), height: 507 }
+				layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 502, 315 ), height: bind Math.max( scene.height - 150, 507 ) }
 			}, WORKSPACE_FRONT );
 		} else {
 			appState.insertInto( projectList = ProjectList { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 529, 315 ), height: 222 } }, WORKSPACE_FRONT );
