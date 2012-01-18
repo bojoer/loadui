@@ -55,7 +55,7 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 								+ db
 								+ ";DB_CLOSE_ON_EXIT=FALSE;DATABASE_EVENT_LISTENER='com.eviware.loadui.impl.statistics.store.H2EventListener';TRACE_LEVEL_FILE=2",
 						"sa", "sa" );
-		cp.setMaxConnections( 8 );
+		cp.setMaxConnections( 25 );
 		return cp;
 	}
 
