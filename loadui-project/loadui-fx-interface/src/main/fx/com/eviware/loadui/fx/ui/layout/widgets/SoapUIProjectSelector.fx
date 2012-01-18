@@ -80,7 +80,6 @@ public class SoapUIProjectSelector extends LayoutComponentNode, EventHandler {
 			if( not item.contains( item.sceneToLocal( Point2D { x: e.sceneX, y: e.sceneY } ) ) )
 			{
 				delete modalLayer from AppState.byScene( scene ).overlay.content;
-				println("delete layer");
 				item.visible = false;
 				menuButton.hide();
 			}
@@ -130,7 +129,6 @@ public class SoapUIProjectSelector extends LayoutComponentNode, EventHandler {
 								item
 							layoutInfo: LayoutInfo{ height: 18 }
 							onMousePressed: function(e:MouseEvent):Void {
-								println("insert layer");
 								insert modalLayer into AppState.byScene( scene ).overlay.content;
 								item.visible = true;
 							}
