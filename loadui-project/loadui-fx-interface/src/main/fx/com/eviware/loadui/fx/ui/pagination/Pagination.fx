@@ -79,6 +79,14 @@ public mixin class Pagination {
 	 */
 	public-read var numPages:Integer = 1;
 	
+	public function nextPage():Void {
+		if( page < (numPages-1) ) page++;
+	}
+	
+	public function previousPage():Void {
+		if( page > 0 ) page--;
+	}
+	
 	/**
 	 * The content displayed in the current page.
 	 */

@@ -185,19 +185,10 @@ public class MainWindow {
 		
 		
 		if( java.lang.System.getProperty( "browser" ) != null ) {
-			appState.insertInto( projectList = ProjectList { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: 315, height: 222 } }, WORKSPACE_FRONT );
+			//appState.insertInto( projectList = ProjectList { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: 315, height: 222 } }, WORKSPACE_FRONT );
+			appState.insertInto( com.eviware.loadui.fx.widgets.ProjectCarousel { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: 315, height: 222 } }, WORKSPACE_FRONT );
 			//appState.insertInto( AgentList { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
 			appState.insertInto( com.eviware.loadui.fx.widgets.AgentCarousel { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
-			/*appState.insertInto( com.eviware.loadui.fx.ui.carousel.Carousel {
-				layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 }
-				items: for( x in [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] ) [
-					Rectangle { width: 150, height: 108, fill: Color.BLACK }
-					Rectangle { width: 150, height: 108, fill: Color.RED }
-					Rectangle { width: 150, height: 108, fill: Color.GREEN }
-					Rectangle { width: 150, height: 108, fill: Color.BLUE }
-					Rectangle { width: 150, height: 108, fill: Color.WHITE }
-				]
-			}, WORKSPACE_FRONT );*/
 			
 			appState.insertInto( BrowserFrame {
 				url: java.lang.System.getProperty( "url", "http://soapui.org/appindex/soapui-courtesy-starterpage-home.html" ),

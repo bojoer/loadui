@@ -27,6 +27,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
+import javafx.scene.input.MouseButton;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.geometry.HPos;
@@ -64,9 +65,12 @@ public class Carousel extends VBox {
 		}
 	}
 	
-	function select( node:Node ):Void {
-		if( sizeof items > 0 and node != null ) {
-			itemDisplay.page = Sequences.indexByIdentity( items, node );
+	public function select( node:Node ):Void {
+		if( sizeof items == 0 or node == null ) return;
+		
+		def index = Sequences.indexByIdentity( items, node );
+		if( index != -1 ) {
+			itemDisplay.page = index;
 			selectField.value = node;
 		}
 	}
@@ -90,14 +94,14 @@ public class Carousel extends VBox {
 						scaleY: 0.5
 						layoutInfo: LayoutInfo { vpos: VPos.CENTER }
 						disable: bind itemDisplay.page <= 0
-						action: function():Void { if( itemDisplay.page > 0 ) itemDisplay.page-- }
+						action: function():Void { itemDisplay.previousPage() }
 					}, itemDisplay, Button {
 						styleClass: "right-button"
 						scaleX: 0.5
 						scaleY: 0.5
 						layoutInfo: LayoutInfo { vpos: VPos.CENTER }
 						disable: bind itemDisplay.page >= (itemDisplay.numPages-1)
-						action: function():Void { if( itemDisplay.page < (itemDisplay.numPages-1) ) itemDisplay.page++ }
+						action: function():Void { itemDisplay.nextPage() }
 					}
 				]
 			}, Separator {}, VBox {
@@ -117,8 +121,25 @@ class ItemDisplay extends Container, Pagination {
 	override var itemsPerPage = 3;
 	override var fluid = true;
 	
+	def clickBlocker = Rectangle {
+		fill: Color.TRANSPARENT
+		blocksMouse: true
+		width: bind width
+		height: bind height
+		onMouseWheelMoved: function( e ) {
+			if( e.wheelRotation > 0 ) nextPage() else if( e.wheelRotation < 0 ) previousPage();
+		}
+		onMouseClicked: function( e ) {
+			if( e.button == MouseButton.PRIMARY ) {
+				if( not displayed[1].contains( displayed[1].sceneToLocal( e.sceneX, e.sceneY ) ) ) {
+					if( e.x < width/2 ) previousPage() else nextPage();
+				}
+			}
+		}
+	}
+	
 	def displayed = bind displayedItems on replace {
-		content = [ displayed[0], displayed[2], displayed[1] ];
+		content = [ displayed[0], displayed[2], clickBlocker, displayed[1] ];
 		select( displayed[1] );
 		doLayout();
 	}
@@ -129,24 +150,24 @@ class ItemDisplay extends Container, Pagination {
 	
 	override function doLayout() {
 		//Middle
-		positionNode( content[2], 0, 0, width, height, HPos.CENTER , VPos.CENTER );
-		content[2].scaleX = 1;
-		content[2].scaleY = 1;
-		content[2].opacity = 1;
+		positionNode( displayed[1], 0, 0, width, height, HPos.CENTER , VPos.CENTER );
+		displayed[1].scaleX = 1;
+		displayed[1].scaleY = 1;
+		displayed[1].opacity = 1;
 		
-		def bottomLine = content[2].layoutY + content[2].layoutBounds.height;
+		def bottomLine = displayed[1].layoutY + displayed[1].layoutBounds.height;
 		
 		//Left
-		positionNode( content[0], 0, 0, width, bottomLine, HPos.LEFT , VPos.BOTTOM );
-		content[0].scaleX = 0.8;
-		content[0].scaleY = 0.8;
-		content[0].opacity = 0.6;
+		positionNode( displayed[0], 0, 0, width, bottomLine, HPos.LEFT , VPos.BOTTOM );
+		displayed[0].scaleX = 0.8;
+		displayed[0].scaleY = 0.8;
+		displayed[0].opacity = 0.6;
 		
 		//Right
-		positionNode( content[1], 0, 0, width, bottomLine, HPos.RIGHT , VPos.BOTTOM );
-		content[1].scaleX = 0.8;
-		content[1].scaleY = 0.8;
-		content[1].opacity = 0.6;
+		positionNode( displayed[2], 0, 0, width, bottomLine, HPos.RIGHT , VPos.BOTTOM );
+		displayed[2].scaleX = 0.8;
+		displayed[2].scaleY = 0.8;
+		displayed[2].opacity = 0.6;
 	}
 	
 	postinit { doLayout() }
