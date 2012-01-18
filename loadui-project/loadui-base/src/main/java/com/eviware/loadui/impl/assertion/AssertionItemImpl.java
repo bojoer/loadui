@@ -228,6 +228,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 			}
 
 			sourceSupport.setData( createData() );
+			updateDescription();
 		}
 	}
 
