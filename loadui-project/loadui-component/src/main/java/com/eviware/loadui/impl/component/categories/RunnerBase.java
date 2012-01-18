@@ -296,9 +296,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			getContext().setBusy( false );
 
 		// Update StatisticsWriters
-		timeTakenVariable.update( startTime, timeTaken );
-		responseSizeVariable.update( startTime, size );
-		throughputVariable.update( startTime, size );
+		timeTakenVariable.update( startTime + timeTaken, timeTaken );
+		responseSizeVariable.update( startTime + timeTaken, size );
+		throughputVariable.update( startTime + timeTaken, size );
 	}
 
 	private synchronized void addTopBottomSample( long time, long timeTaken, long size )
