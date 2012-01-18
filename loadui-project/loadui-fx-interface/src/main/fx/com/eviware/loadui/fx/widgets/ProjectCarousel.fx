@@ -28,7 +28,6 @@ import com.javafx.preview.control.PopupMenu;
 
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.carousel.Carousel;
-import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.dnd.DraggableFrame;
 import com.eviware.loadui.fx.ui.dnd.DroppableNode;
 import com.eviware.loadui.fx.widgets.toolbar.ProjectToolbarItem;
@@ -111,27 +110,6 @@ public class ProjectCarousel extends DroppableNode, Resizable, EventHandler {
 		
 		for( project in workspace.getProjectRefs() )
 			addProjectRef( project );
-	}
-	
-	public function checkExistingProjects() {
-		for( ref in workspace.getProjectRefs() ) {
-			if ( not ref.getProjectFile().exists() ) {
-				var dialog:Dialog = Dialog {
-					x: 300
-					y: 300
-					title: "Error loading project: {ref.getLabel()}"
-					content: Label { text: "Project file does not exists, do you want to be removed from workspace?"}
-					okText: "Ok"
-					onOk: function() {
-						workspace.removeProject( ref );
-						dialog.close();
-					}
-					onCancel: function() {
-						dialog.close()
-					}
-				}
-			}
-		}
 	}
 	
 	function addProjectRef( ref:ProjectRef ):Void {

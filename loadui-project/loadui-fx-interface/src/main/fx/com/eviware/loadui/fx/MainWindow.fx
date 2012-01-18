@@ -33,9 +33,12 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.ui.toolbar.GroupOrder;
 import com.eviware.loadui.fx.ui.toolbar.ItemOrder;
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.widgets.AgentList;
 import com.eviware.loadui.fx.widgets.FeedDisplay;
 import com.eviware.loadui.fx.widgets.ProjectList;
+import com.eviware.loadui.fx.widgets.AgentCarousel;
+import com.eviware.loadui.fx.widgets.ProjectCarousel;
 import com.eviware.loadui.fx.widgets.canvas.Canvas;
 import com.eviware.loadui.fx.widgets.canvas.NavigationPanel;
 import com.eviware.loadui.fx.widgets.canvas.ProjectCanvas;
@@ -57,6 +60,7 @@ import javafx.scene.text.Text;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Stack;
 import javafx.scene.layout.LayoutInfo;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -185,10 +189,8 @@ public class MainWindow {
 		
 		
 		if( java.lang.System.getProperty( "browser" ) != null ) {
-			//appState.insertInto( projectList = ProjectList { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: 315, height: 222 } }, WORKSPACE_FRONT );
-			appState.insertInto( com.eviware.loadui.fx.widgets.ProjectCarousel { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: 315, height: 222 } }, WORKSPACE_FRONT );
-			//appState.insertInto( AgentList { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
-			appState.insertInto( com.eviware.loadui.fx.widgets.AgentCarousel { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
+			appState.insertInto( ProjectCarousel { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: 315, height: 222 } }, WORKSPACE_FRONT );
+			appState.insertInto( AgentCarousel { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
 			
 			appState.insertInto( BrowserFrame {
 				url: java.lang.System.getProperty( "url", "http://soapui.org/appindex/soapui-courtesy-starterpage-home.html" ),
@@ -261,7 +263,23 @@ public class MainWindow {
 			appState.transitionTo( WORKSPACE_FRONT, AppState.FADE_WIPE );
 			AppState.put( scene, appState, "MAIN" );
 			SplashController.closeSplash();
-			projectList.checkExistingProjects();
+
+			for( ref in workspace.getProjectRefs() ) {
+				if( not ref.getProjectFile().exists() ) {
+					var dialog:Dialog = Dialog {
+						title: "Error loading project: {ref.getLabel()}"
+						content: Label { text: "Project file does not exists, do you want to be removed from workspace?"}
+						okText: "Ok"
+						onOk: function() {
+							workspace.removeProject( ref );
+							dialog.close();
+						}
+						onCancel: function() {
+							dialog.close()
+						}
+					}
+				}
+			}
 		
 			if( workspace.getAttribute( GettingStartedWizard.SHOW_GETTING_STARTED, "true" ) == "true" ) {
 				GettingStartedWizard {
