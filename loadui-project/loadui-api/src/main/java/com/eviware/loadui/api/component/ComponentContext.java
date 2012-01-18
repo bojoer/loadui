@@ -341,6 +341,20 @@ public interface ComponentContext extends Labeled.Mutable, MutableTerminalHolder
 			String... writerTypes );
 
 	/**
+	 * Same as addStatisticVariable, but the StatisticVariable created will also
+	 * implement ListenableValue, so that it can be directly used in Assertions.
+	 * 
+	 * @see addStatisticVariable
+	 * 
+	 * @param statisticVariableName
+	 * @param description
+	 * @param writerTypes
+	 * @return
+	 */
+	public StatisticVariable.Mutable addListenableStatisticVariable( String statisticVariableName, String description,
+			String... writerTypes );
+
+	/**
 	 * Removes a StatisticVariable from the Component.
 	 * 
 	 * @param statisticVariableName

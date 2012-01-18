@@ -97,13 +97,15 @@ public class StatisticHolderSupport implements Releasable
 	 * @param statisticVariableName
 	 * @return
 	 */
-	public StatisticVariable.Mutable addStatisticVariable( String statisticVariableName, String description )
+	public StatisticVariable.Mutable addStatisticVariable( String statisticVariableName, String description,
+			boolean listenable )
 	{
 		if( variables.containsKey( statisticVariableName ) )
 			return variables.get( statisticVariableName );
 
-		StatisticVariableImpl variable = new StatisticVariableImpl( manager.getExecutionManager(), owner,
-				statisticVariableName, addressableRegistry, description );
+		StatisticVariableImpl variable = listenable ? new ListenableStatisticVariableImpl( manager.getExecutionManager(),
+				owner, statisticVariableName, addressableRegistry, description ) : new StatisticVariableImpl(
+				manager.getExecutionManager(), owner, statisticVariableName, addressableRegistry, description );
 		variables.put( statisticVariableName, variable );
 		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTIC_VARIABLES, CollectionEvent.Event.ADDED,
 				variable ) );
@@ -111,9 +113,14 @@ public class StatisticHolderSupport implements Releasable
 		return variable;
 	}
 
+	public StatisticVariable.Mutable addStatisticVariable( String statisticVariableName, String description )
+	{
+		return addStatisticVariable( statisticVariableName, description, false );
+	}
+
 	public StatisticVariable.Mutable addStatisticVariable( String statisticVariableName )
 	{
-		return addStatisticVariable( statisticVariableName, "NO DESCRIPTION" );
+		return addStatisticVariable( statisticVariableName, "NO DESCRIPTION", false );
 	}
 
 	/**

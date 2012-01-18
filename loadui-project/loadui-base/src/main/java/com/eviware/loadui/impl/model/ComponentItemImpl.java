@@ -897,8 +897,21 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		public StatisticVariable.Mutable addStatisticVariable( String statisticVariableName, String description,
 				String... writerTypes )
 		{
+			return addStatisticVariable( statisticVariableName, description, false, writerTypes );
+		}
+
+		@Override
+		public StatisticVariable.Mutable addListenableStatisticVariable( String statisticVariableName,
+				String description, String... writerTypes )
+		{
+			return addStatisticVariable( statisticVariableName, description, true, writerTypes );
+		}
+
+		private StatisticVariable.Mutable addStatisticVariable( String statisticVariableName, String description,
+				boolean listenable, String... writerTypes )
+		{
 			StatisticVariable.Mutable variable = statisticHolderSupport.addStatisticVariable( statisticVariableName,
-					description );
+					description, listenable );
 			for( String writerType : writerTypes )
 				statisticHolderSupport.addStatisticsWriter( writerType, variable );
 
