@@ -43,7 +43,7 @@ public class Carousel extends VBox {
 	override var fillWidth = true;
 	override var padding = Insets { top: 10, right: 10, bottom: 10, left: 10 };
 	
-	def itemDisplay = ItemDisplay {}
+	def itemDisplay = ItemDisplay { parentNode: this }
 	
 	def selectField = SelectField {
 		override var value on replace { select( value as Node ) }
@@ -121,6 +121,8 @@ class ItemDisplay extends Container, Pagination {
 	override var itemsPerPage = 3;
 	override var fluid = true;
 	
+	public-init var parentNode:Node;
+	
 	def clickBlocker = Rectangle {
 		fill: Color.TRANSPARENT
 		blocksMouse: true
@@ -135,7 +137,14 @@ class ItemDisplay extends Container, Pagination {
 					if( e.x < width/2 ) previousPage() else nextPage();
 				}
 			}
+			parentNode.onMouseClicked( e );
 		}
+		onMouseEntered: function( e ) { parentNode.onMouseEntered( e ) }
+		onMouseExited: function( e ) { parentNode.onMouseExited( e ) }
+		onMouseMoved: function( e ) { parentNode.onMouseMoved( e ) }
+		onMousePressed: function( e ) { parentNode.onMousePressed( e ) }
+		onMouseReleased: function( e ) { parentNode.onMouseReleased( e ) }
+		onMouseDragged: function( e ) { parentNode.onMouseDragged( e ) }
 	}
 	
 	def displayed = bind displayedItems on replace {

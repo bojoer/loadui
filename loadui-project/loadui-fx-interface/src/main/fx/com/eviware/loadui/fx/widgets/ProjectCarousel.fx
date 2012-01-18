@@ -81,6 +81,8 @@ public class ProjectCarousel extends DroppableNode, Resizable, EventHandler {
 				popup.show( this, e.screenX, e.screenY );
 			}
 		}
+		onMouseEntered: function( e ) { this.onMouseEntered( e ) }
+		onMouseExited: function( e ) { this.onMouseExited( e ) }
 	}
 	
 	def stack = Stack { content: [ carousel, popup ], width: bind width, height: bind height }

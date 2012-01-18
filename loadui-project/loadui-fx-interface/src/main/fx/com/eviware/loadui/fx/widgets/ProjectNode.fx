@@ -72,6 +72,9 @@ def projectGrid = Image { url:"{__ROOT__}images/project-grid.png" };
 public class ProjectNode extends BaseNode, Draggable, EventHandler {
 	
 	var label:String;
+	function setLabel( newLabel:String ) {
+		label = if( newLabel.equals("") ) "[No name]" else newLabel;
+	}
 	
 	/**
 	 * True if the ProjectRef is enabled, false if not.
@@ -84,7 +87,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 	public-init var projectRef:ProjectRef on replace {
 		projectRef.addEventListener( BaseEvent.class, this );
 		enabled = projectRef.isEnabled();
-		label = projectRef.getLabel() ;
+		setLabel( projectRef.getLabel() );
 	}
 	
 	def modelItem = bind lazy projectRef.getProject();
@@ -96,7 +99,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 			throw new RuntimeException( "projectRef must not be null!" );
 		
 		enabled = projectRef.isEnabled();
-		label = projectRef.getLabel();
+		setLabel( projectRef.getLabel() );
 		
 		addMouseHandler( MOUSE_CLICKED, function( e:MouseEvent ) {
 			if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
@@ -265,7 +268,7 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 				runInFxThread( function():Void { 
 					enabled = true;
 					projectRef.getProject().addEventListener( BaseEvent.class, this ); 
-					label = projectRef.getLabel();
+					setLabel( projectRef.getLabel() );
 				});
 			} else if( event.getKey().equals( ProjectRef.UNLOADED ) ) {
 				runInFxThread( function():Void { 
@@ -274,13 +277,13 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 					refreshMiniature();
 				});
 			} else if( event.getKey().equals( ProjectRef.LABEL ) ) {
-				runInFxThread( function():Void { label = projectRef.getLabel() } );
+				runInFxThread( function():Void { setLabel( projectRef.getLabel() ) } );
 			}
 		}
 		else if(event.getSource() == projectRef.getProject()){
 			if(event.getKey().equals(ModelItem.LABEL)) {
 				runInFxThread( function():Void { 
-					label = projectRef.getProject().getLabel();
+					label = setLabel( projectRef.getProject().getLabel() );
 				} );
 			} 
 		}
