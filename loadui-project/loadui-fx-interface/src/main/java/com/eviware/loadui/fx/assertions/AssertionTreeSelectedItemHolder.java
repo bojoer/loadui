@@ -15,11 +15,13 @@
  */
 package com.eviware.loadui.fx.assertions;
 
+import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.serialization.Resolver;
+
 public interface AssertionTreeSelectedItemHolder
 {
-	public String getSourceName();
+	@SuppressWarnings( "rawtypes" )
+	public Resolver getResolver();
 
-	public String getStatisticName();
-
-	public String getStatisticVariableName();
+	public CanvasItem getAssertionCanvas();
 }

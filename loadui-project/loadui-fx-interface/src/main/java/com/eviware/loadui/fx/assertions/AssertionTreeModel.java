@@ -25,15 +25,34 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 
 import com.eviware.loadui.api.charting.ChartNamePrettifier;
+import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.fx.tree.BaseTreeNode;
+import com.eviware.loadui.util.serialization.StatisticResolver;
+import com.eviware.loadui.util.serialization.StatisticVariableResolver;
 
 public class AssertionTreeModel extends DefaultTreeModel
 {
 	private static final long serialVersionUID = -8572876294099664714L;
 
 	private static final ToStringComparator nameComparator = new ToStringComparator();
+
+	private static CanvasItem locateCanvasFor( StatisticHolder statisticHolder )
+	{
+		if( statisticHolder instanceof CanvasItem )
+		{
+			return ( CanvasItem )statisticHolder;
+		}
+		else if( statisticHolder instanceof ComponentItem )
+		{
+			return ( ( ComponentItem )statisticHolder ).getCanvas();
+		}
+
+		return null;
+	}
 
 	public AssertionTreeModel( StatisticHolder statisticHolder )
 	{
@@ -56,7 +75,7 @@ public class AssertionTreeModel extends DefaultTreeModel
 		{
 			List<TreeNode> children = new ArrayList<TreeNode>();
 			for( String variableName : statisticHolder.getStatisticVariableNames() )
-				children.add( new StatisticVariableTreeNode( this, variableName ) );
+				children.add( new StatisticVariableTreeNode( this, statisticHolder.getStatisticVariable( variableName ) ) );
 
 			Collections.sort( children, nameComparator );
 			return children;
@@ -71,31 +90,36 @@ public class AssertionTreeModel extends DefaultTreeModel
 
 	private static class StatisticVariableTreeNode extends BaseTreeNode
 	{
-		private final String variableName;
+		private final StatisticVariable statisticVariable;
 
-		public StatisticVariableTreeNode( StatisticHolderTreeNode parent, String variableName )
+		public StatisticVariableTreeNode( StatisticHolderTreeNode parent, StatisticVariable statisticVariable )
 		{
 			super( parent );
 
-			this.variableName = variableName;
+			this.statisticVariable = statisticVariable;
 		}
 
 		@Override
 		protected List<TreeNode> getChildren()
 		{
 			List<TreeNode> children = new ArrayList<TreeNode>();
-			for( String statisticName : ( ( StatisticHolderTreeNode )getParent() ).statisticHolder.getStatisticVariable(
-					variableName ).getStatisticNames() )
+			for( String statisticName : statisticVariable.getStatisticNames() )
 				children.add( new StatisticTreeNode( this, statisticName ) );
 
 			Collections.sort( children, nameComparator );
+
+			if( statisticVariable instanceof ListenableValue<?> )
+			{
+				children.add( new ListenableStatisticVariableTreeNode( this, statisticVariable ) );
+			}
+
 			return children;
 		}
 
 		@Override
 		public String toString()
 		{
-			return variableName;
+			return statisticVariable.getLabel();
 		}
 	}
 
@@ -115,8 +139,7 @@ public class AssertionTreeModel extends DefaultTreeModel
 		{
 			ArrayList<TreeNode> children = new ArrayList<TreeNode>();
 			ArrayList<String> sources = new ArrayList<String>(
-					( ( StatisticHolderTreeNode )( getParent().getParent() ) ).statisticHolder.getStatisticVariable(
-							( ( StatisticVariableTreeNode )getParent() ).variableName ).getSources() );
+					( ( StatisticVariableTreeNode )getParent() ).statisticVariable.getSources() );
 			Collections.sort( sources, nameComparator );
 			if( sources.contains( StatisticVariable.MAIN_SOURCE ) )
 			{
@@ -172,24 +195,64 @@ public class AssertionTreeModel extends DefaultTreeModel
 		}
 
 		@Override
-		public String getStatisticName()
+		public StatisticResolver getResolver()
 		{
 			StatisticTreeNode statisticNode = ( StatisticTreeNode )getParent();
-			return statisticNode.statisticName;
+			return new StatisticResolver(
+					( ( StatisticVariableTreeNode )statisticNode.getParent() ).statisticVariable.getStatistic(
+							statisticNode.statisticName, sourceName ) );
 		}
 
 		@Override
-		public String getStatisticVariableName()
+		public CanvasItem getAssertionCanvas()
 		{
-			StatisticTreeNode statisticNode = ( StatisticTreeNode )getParent();
-			StatisticVariableTreeNode variableNode = ( StatisticVariableTreeNode )statisticNode.getParent();
-			return variableNode.variableName;
+			StatisticHolder statisticHolder = ( ( StatisticVariableTreeNode )getParent().getParent() ).statisticVariable
+					.getStatisticHolder();
+			return locateCanvasFor( statisticHolder );
+		}
+	}
+
+	private static class ListenableStatisticVariableTreeNode extends BaseTreeNode implements
+			AssertionTreeSelectedItemHolder
+	{
+		private final StatisticVariable statisticVariable;
+
+		public ListenableStatisticVariableTreeNode( StatisticVariableTreeNode parent, StatisticVariable statisticVariable )
+		{
+			super( parent );
+
+			this.statisticVariable = statisticVariable;
 		}
 
 		@Override
-		public String getSourceName()
+		protected List<TreeNode> getChildren()
 		{
-			return sourceName;
+			return Collections.emptyList();
+		}
+
+		@Override
+		public boolean isLeaf()
+		{
+			return true;
+		}
+
+		@Override
+		public StatisticVariableResolver getResolver()
+		{
+			return new StatisticVariableResolver( statisticVariable );
+		}
+
+		@Override
+		public CanvasItem getAssertionCanvas()
+		{
+			StatisticHolder statisticHolder = statisticVariable.getStatisticHolder();
+			return locateCanvasFor( statisticHolder );
+		}
+
+		@Override
+		public String toString()
+		{
+			return "Real-time value";
 		}
 	}
 

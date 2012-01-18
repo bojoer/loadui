@@ -164,17 +164,15 @@ public class AddAssertionDialog {
 	}
 	
 	function createAssertion(): Void {
-		def canvas = MainWindow.instance.canvas.canvasItem; 
-		def assertionAddon = canvas.getAddon( AssertionAddon.class );
-		def sVariable = statisticHolder.getStatisticVariable( selected.getStatisticVariableName() );
-		println( "Adding statistic: {selected.getStatisticName()}, {selected.getSourceName()}" );
-		def statistic = sVariable.getStatistic( selected.getStatisticName(), selected.getSourceName() );
-		def resolver: Resolver = new StatisticResolver( statistic );
+		//TODO: Not correct!
+		def canvas = selected.getAssertionCanvas();
+		def assertionAddon = if( canvas != null ) canvas.getAddon( AssertionAddon.class ) else MainWindow.instance.canvas.canvasItem.getAddon( AssertionAddon.class );
 		
+		def resolver = selected.getResolver();
 		def assertion = assertionAddon.createAssertion( statisticHolder as Addressable, resolver );
-		assertion.setConstraint(new RangeConstraint( min, max ));
-		assertion.setTolerance(within,times);
-		assertion.setLabel(assertionNameTextBox.text);
+		assertion.setConstraint( new RangeConstraint( min, max ) );
+		assertion.setTolerance( within, times );
+		assertion.setLabel( assertionNameTextBox.text );
 	}
 	
 	postinit {
