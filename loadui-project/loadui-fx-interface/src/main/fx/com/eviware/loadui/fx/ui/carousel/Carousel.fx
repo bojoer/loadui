@@ -82,7 +82,7 @@ public class Carousel extends VBox {
 					if( e.wheelRotation > 0 and itemDisplay.page < (itemDisplay.numPages-1) ) itemDisplay.page++ else if( e.wheelRotation < 0 and itemDisplay.page > 0 ) itemDisplay.page--;
 				}
 			}, HBox {
-				layoutInfo: LayoutInfo { vfill: true, vgrow: Priority.ALWAYS }
+				layoutInfo: LayoutInfo { vfill: true, vgrow: Priority.ALWAYS, hfill: true, hgrow: Priority.ALWAYS }
 				content: [
 					Button {
 						styleClass: "left-button"
@@ -121,6 +121,10 @@ class ItemDisplay extends Container, Pagination {
 		content = [ displayed[0], displayed[2], displayed[1] ];
 		select( displayed[1] );
 		doLayout();
+	}
+	
+	override function getPrefWidth( height ) {
+		2 * super.getPrefWidth( height )
 	}
 	
 	override function doLayout() {
