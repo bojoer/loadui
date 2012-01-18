@@ -34,9 +34,6 @@ import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.ui.toolbar.GroupOrder;
 import com.eviware.loadui.fx.ui.toolbar.ItemOrder;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
-import com.eviware.loadui.fx.widgets.AgentList;
-import com.eviware.loadui.fx.widgets.FeedDisplay;
-import com.eviware.loadui.fx.widgets.ProjectList;
 import com.eviware.loadui.fx.widgets.AgentCarousel;
 import com.eviware.loadui.fx.widgets.ProjectCarousel;
 import com.eviware.loadui.fx.widgets.canvas.Canvas;
@@ -102,8 +99,6 @@ public class MainWindow {
 	
 	var inspectors:InspectorPanelControl;
 	public function getInspectorPanel() { inspectors }
-	
-	var projectList:ProjectList;
 	
 	var toolbar:Toolbar;
 	public function getToolbar() { toolbar }
@@ -188,27 +183,13 @@ public class MainWindow {
 		log.debug( "Done initializing InspectorPanel: \{\}", inspectors );
 		
 		
-		if( java.lang.System.getProperty( "browser" ) != null ) {
-			appState.insertInto( ProjectCarousel { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: 315, height: 222 } }, WORKSPACE_FRONT );
-			appState.insertInto( AgentCarousel { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
-			
-			appState.insertInto( BrowserFrame {
-				url: java.lang.System.getProperty( "url", "http://soapui.org/appindex/soapui-courtesy-starterpage-home.html" ),
-				layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 502, 315 ), height: bind Math.max( scene.height - 150, 507 ) }
-			}, WORKSPACE_FRONT );
-		} else {
-			appState.insertInto( projectList = ProjectList { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 529, 315 ), height: 222 } }, WORKSPACE_FRONT );
-			appState.insertInto( AgentList { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 529, 315 ), height: 260 } }, WORKSPACE_FRONT );
-			appState.insertInto( TutorialList { workspace: workspace, layoutX: 137, layoutY: 622, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 529, 315 ), height: 212 } }, WORKSPACE_FRONT );
-			
-			def feed:FeedDisplay = FeedDisplay {
-				layoutX: bind scene.width - 356
-				layoutY: 90
-				//width: 300
-				height: bind scene.height - 135
-			}
-			appState.insertInto( feed, WORKSPACE_FRONT );
-		}
+		appState.insertInto( ProjectCarousel { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: 315, height: 222 } }, WORKSPACE_FRONT );
+		appState.insertInto( AgentCarousel { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
+		
+		appState.insertInto( BrowserFrame {
+			url: java.lang.System.getProperty( "url", "http://soapui.org/appindex/soapui-courtesy-starterpage-home.html" ),
+			layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 502, 315 ), height: bind Math.max( scene.height - 150, 507 ) }
+		}, WORKSPACE_FRONT );
 		
 		//Toolbar
 

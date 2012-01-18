@@ -110,8 +110,17 @@ public class ProjectCarousel extends DroppableNode, Resizable, EventHandler {
 		
 		workspace.addEventListener( CollectionEvent.class, this );
 		
-		for( project in workspace.getProjectRefs() )
-			addProjectRef( project );
+		def lastOpenProjectPath = workspace.getAttribute( "lastOpenProject", "" );
+		var selectedProject:ProjectRef;
+		for( project in workspace.getProjectRefs() ) {
+			if( project.getProjectFile().getAbsolutePath().equals( lastOpenProjectPath ) ) {
+				selectedProject = project;
+			} else {
+				addProjectRef( project );
+			}
+		}
+		
+		if( selectedProject != null ) addProjectRef( selectedProject ) else if( sizeof carousel.items > 0 ) carousel.select(carousel.items[0]);
 	}
 	
 	function addProjectRef( ref:ProjectRef ):Void {

@@ -66,6 +66,8 @@ public class ProjectCanvas extends Canvas {
 				removeConnection( connection );
 				addConnection( connection );
 			}
+			
+			projectItem.getWorkspace().setAttribute( "lastOpenProject", projectItem.getProjectFile().getAbsolutePath() );
 		}
 	}
 	

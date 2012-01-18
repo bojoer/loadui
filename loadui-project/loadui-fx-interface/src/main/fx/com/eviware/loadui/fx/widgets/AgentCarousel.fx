@@ -80,6 +80,8 @@ public class AgentCarousel extends DroppableNode, Resizable, EventHandler {
 				popup.show( this, e.screenX, e.screenY );
 			}
 		}
+		onMouseEntered: function( e ) { this.onMouseEntered( e ) }
+		onMouseExited: function( e ) { this.onMouseExited( e ) }
 	}
 	
 	def stack = Stack { content: [ carousel, popup ], width: bind width, height: bind height }
@@ -109,6 +111,8 @@ public class AgentCarousel extends DroppableNode, Resizable, EventHandler {
 		
 		for( agent in workspace.getAgents() )
 			addAgent( agent );
+			
+		if( sizeof carousel.items > 0 ) carousel.select( carousel.items[0] );
 	}
 	
 	function addAgent( agent:AgentItem ):Void {
