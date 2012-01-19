@@ -58,7 +58,8 @@ public class TestEventManagerImpl extends AbstractTestEventManager implements Re
 	@Override
 	public <T extends TestEvent> void logTestEvent( TestEvent.Source<T> source, T testEvent )
 	{
-		TestEvent.Factory<T> factory = testEventRegistry.lookupFactory( testEvent.<T> getType() );
+		@SuppressWarnings( "unchecked" )
+		TestEvent.Factory<T> factory = testEventRegistry.lookupFactory( ( Class<T> )testEvent.getType() );
 
 		if( factory != null )
 		{

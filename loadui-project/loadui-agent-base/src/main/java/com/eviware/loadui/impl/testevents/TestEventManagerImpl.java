@@ -46,7 +46,8 @@ public class TestEventManagerImpl extends AbstractTestEventManager
 	{
 		if( source instanceof Addressable )
 		{
-			TestEvent.Factory<T> factory = testEventRegistry.lookupFactory( testEvent.<T> getType() );
+			@SuppressWarnings( "unchecked" )
+			TestEvent.Factory<T> factory = testEventRegistry.lookupFactory( ( Class<T> )testEvent.getType() );
 
 			if( factory != null )
 			{

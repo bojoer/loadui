@@ -74,7 +74,7 @@ public function startCanvas( canvas:CanvasItem ):TestExecution {
 				cancelText: "No"
 				onOk: function() {
 					if( checkbox.selected ) canvas.getProject().setAttribute( WARN_STOPPING_TEST, "false" );
-					for( execution in queuedExecutions ) execution.abort();
+					for( execution in queuedExecutions ) execution.abort( "Aborting queued execution" );
 					currentExecution.complete();
 					testRunner.enqueueExecution( canvas );
 					dialog.close();
@@ -82,7 +82,7 @@ public function startCanvas( canvas:CanvasItem ):TestExecution {
 			}
 			return null;
 		} else {
-			for( execution in queuedExecutions ) execution.abort();
+			for( execution in queuedExecutions ) execution.abort( "Aborting queued execution" );
 			currentExecution.complete();
 			return testRunner.enqueueExecution( canvas );
 		}
@@ -111,7 +111,7 @@ public function currentExecution():TestExecution {
 }
 
 public function abortAllExecutions():Void {
-	for( execution in testRunner.getExecutionQueue() ) execution.abort().get();
+	for( execution in testRunner.getExecutionQueue() ) execution.abort( "Aborting all executions" ).get();
 }
 
 public class TestExecutionUtils {
@@ -125,7 +125,7 @@ class StartingDialogTask extends TestExecutionTask {
 				def mainAppState = AppState.byName("MAIN");
 				mainAppState.setBlockedText( "Initializing {canvas.getLabel()}." );
 				mainAppState.setCancelHandler( function():Void {
-					execution.abort();
+					execution.abort( "User manually aborted during startup" );
 				} );
 				mainAppState.block();
 			} );

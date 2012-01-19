@@ -15,9 +15,12 @@
  */
 package com.eviware.loadui.util.test;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.HashMap;
 import java.util.Map;
-import static org.mockito.Mockito.*;
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -78,6 +81,7 @@ public class BeanInjectorMocker
 	{
 		final BundleContext contextMock = mock( BundleContext.class );
 		BeanInjector.setBundleContext( contextMock );
+		BeanInjector.INSTANCE.clearCache();
 
 		when( contextMock.getServiceReference( anyString() ) ).thenAnswer( new Answer<ServiceReference>()
 		{

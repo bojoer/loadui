@@ -15,24 +15,28 @@
  */
 package com.eviware.loadui.util.groovy.resolvers;
 
-import java.util.HashMap;
-
 import groovy.lang.Closure;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
+
+import java.util.HashMap;
 
 import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.execution.TestRunner;
+import com.eviware.loadui.api.testevents.MessageLevel;
+import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.groovy.GroovyResolver;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 /**
  * Provides a Groovy DSL for assigning TestExecutionTasks to be run as part of
- * the TestExecution.
+ * the TestExecution. Also allows the creation of MessageTestEvents using the
+ * "notify" and "warn" methods.
  * 
  * @author dain.nilsson
  */
@@ -44,7 +48,15 @@ public class TestExecutionResolver implements GroovyResolver.Properties, GroovyR
 	@Override
 	public Object invokeMethod( String methodName, Object... args ) throws MissingMethodException
 	{
-		if( "duringPhase".equals( methodName ) )
+		if( "notify".equals( methodName ) )
+		{
+			logTestEventMessage( MessageLevel.NOTIFICATION, args );
+		}
+		else if( "warn".equals( methodName ) )
+		{
+			logTestEventMessage( MessageLevel.WARNING, args );
+		}
+		else if( "duringPhase".equals( methodName ) )
 		{
 			if( args.length >= 2 && args[args.length - 1] instanceof Closure )
 			{
@@ -73,11 +85,13 @@ public class TestExecutionResolver implements GroovyResolver.Properties, GroovyR
 					}
 				}
 			}
-
-			return null;
+		}
+		else
+		{
+			throw new MissingMethodException( methodName, TestExecutionResolver.class, args );
 		}
 
-		throw new MissingMethodException( methodName, TestExecutionResolver.class, args );
+		return null;
 	}
 
 	@Override
@@ -101,6 +115,21 @@ public class TestExecutionResolver implements GroovyResolver.Properties, GroovyR
 			testRunner.unregisterTask( task, Phase.values() );
 			task.phaseTasks.clear();
 			task = null;
+		}
+	}
+
+	private void logTestEventMessage( MessageLevel level, Object[] args )
+	{
+		if( args.length == 2 )
+		{
+			Preconditions.checkArgument( args[1] instanceof Number, "%s must be numeric!", args[1] );
+
+			BeanInjector.getBean( TestEventManager.class ).logMessage( level, String.valueOf( args[0] ),
+					( ( Number )args[1] ).longValue() );
+		}
+		else
+		{
+			BeanInjector.getBean( TestEventManager.class ).logMessage( level, String.valueOf( args[0] ) );
 		}
 	}
 

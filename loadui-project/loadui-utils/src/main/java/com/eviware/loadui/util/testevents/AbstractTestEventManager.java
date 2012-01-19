@@ -18,6 +18,7 @@ package com.eviware.loadui.util.testevents;
 import java.util.Collections;
 import java.util.Set;
 
+import com.eviware.loadui.api.testevents.MessageLevel;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEvent.Factory;
 import com.eviware.loadui.api.testevents.TestEventManager;
@@ -54,4 +55,17 @@ public abstract class AbstractTestEventManager implements TestEventManager
 		observers.remove( observer );
 	}
 
+	@Override
+	public void logMessage( MessageLevel level, String message )
+	{
+		MessageTestEvent messageEvent = new MessageTestEvent( System.currentTimeMillis(), level, message );
+		logTestEvent( MessageSeveritySource.getSource( level ), messageEvent );
+	}
+
+	@Override
+	public void logMessage( MessageLevel level, String message, long timestamp )
+	{
+		MessageTestEvent messageEvent = new MessageTestEvent( timestamp, level, message );
+		logTestEvent( MessageSeveritySource.getSource( level ), messageEvent );
+	}
 }

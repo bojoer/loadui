@@ -20,7 +20,10 @@ import java.util.concurrent.Future;
 import com.eviware.loadui.api.execution.ExecutionResult;
 import com.eviware.loadui.api.execution.TestState;
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.testevents.MessageLevel;
+import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.impl.execution.TestRunnerImpl.TestController;
+import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.execution.AbstractTestExecution;
 
 public class TestExecutionImpl extends AbstractTestExecution
@@ -40,10 +43,11 @@ public class TestExecutionImpl extends AbstractTestExecution
 	}
 
 	@Override
-	public Future<ExecutionResult> abort()
+	public Future<ExecutionResult> abort( String reason )
 	{
-		TestExecutionEvent.logExecutionEvent( TestExecutionEvent.ExecutionAction.ABORTED );
-		return super.abort();
+		//TestExecutionEvent.logExecutionEvent( TestExecutionEvent.ExecutionAction.ABORTED );
+		BeanInjector.getBean( TestEventManager.class ).logMessage( MessageLevel.WARNING, "Test aborted: " + reason );
+		return super.abort( reason );
 	}
 
 	void setController( TestController controller )

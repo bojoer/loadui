@@ -15,13 +15,18 @@
  */
 package com.eviware.loadui.util.test;
 
+import static com.eviware.loadui.util.test.CustomMatchers.mockObject;
+import static com.eviware.loadui.util.test.CustomMatchers.notMockObject;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.junit.Assert.assertThat;
+
 import java.util.Collections;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static com.eviware.loadui.util.test.CustomMatchers.*;
+import org.junit.Test;
 
 import com.eviware.loadui.util.BeanInjector;
 
@@ -46,7 +51,6 @@ public class BeanInjectorMockerTest
 	}
 
 	@Test
-	@SuppressWarnings( "unchecked" )
 	public void shouldReturnMocks()
 	{
 		new BeanInjectorMocker();
@@ -63,7 +67,6 @@ public class BeanInjectorMockerTest
 	}
 
 	@Test
-	@SuppressWarnings( "unchecked" )
 	public void shouldReturnMappedBeanAddedInConstructor()
 	{
 		final TestInterface testBean = new TestInterface()
@@ -83,7 +86,6 @@ public class BeanInjectorMockerTest
 	}
 
 	@Test
-	@SuppressWarnings( "unchecked" )
 	public void shouldReturnMappedBeanAddedByPut()
 	{
 		final TestInterface testBean = new TestInterface()

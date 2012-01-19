@@ -31,6 +31,28 @@ public interface TestEventManager
 	public <T extends TestEvent> void logTestEvent( TestEvent.Source<T> source, T testEvent );
 
 	/**
+	 * Logs a message to the TestEventLog, using the current system time as the
+	 * timestamp.
+	 * 
+	 * @see logMessage( MessageLevel level, String message )
+	 * @param level
+	 * @param message
+	 */
+	public void logMessage( MessageLevel level, String message );
+
+	/**
+	 * Logs a message to the TestEvent log.
+	 * 
+	 * @param level
+	 *           The severity level of the message
+	 * @param message
+	 *           The text content of the message
+	 * @param timestamp
+	 *           The system clock time of the message
+	 */
+	public void logMessage( MessageLevel level, String message, long timestamp );
+
+	/**
 	 * Gets the label for the given TestEvent type.
 	 * 
 	 * @param type

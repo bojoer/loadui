@@ -15,36 +15,45 @@
  */
 package com.eviware.loadui.util;
 
+import java.util.concurrent.ExecutionException;
+
 import javax.annotation.Nonnull;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.springframework.osgi.context.BundleContextAware;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 public enum BeanInjector
 {
 	INSTANCE;
 
-	@Nonnull
-	public static <T> T getBean( @Nonnull Class<T> cls )
-	{
-		if( INSTANCE.context == null )
-		{
-			synchronized( INSTANCE.waiter )
+	private final LoadingCache<Class<?>, Object> beanCache = CacheBuilder.newBuilder().weakValues()
+			.build( new CacheLoader<Class<?>, Object>()
 			{
-				try
+				@Override
+				public Object load( Class<?> key ) throws Exception
 				{
-					INSTANCE.waiter.wait( 5000 );
+					return INSTANCE.doGetBean( key );
 				}
-				catch( InterruptedException e )
-				{
-				}
-				if( INSTANCE.context == null )
-					throw new RuntimeException( "BundleContext is missing, has BeanInjector been configured?" );
-			}
-		}
+			} );
 
-		return INSTANCE.doGetBean( cls );
+	@Nonnull
+	public static <T> T getBean( @Nonnull final Class<T> cls )
+	{
+		try
+		{
+			return cls.cast( INSTANCE.beanCache.get( cls ) );
+		}
+		catch( ExecutionException e )
+		{
+			throw new RuntimeException( e );
+		}
 	}
 
 	public static void setBundleContext( BundleContext arg0 )
@@ -52,6 +61,26 @@ public enum BeanInjector
 		synchronized( INSTANCE.waiter )
 		{
 			INSTANCE.context = arg0;
+			arg0.addServiceListener( new ServiceListener()
+			{
+				@Override
+				public void serviceChanged( ServiceEvent event )
+				{
+					String[] objectClasses = ( String[] )event.getServiceReference().getProperty( "objectClass" );
+					try
+					{
+						for( String objectClass : objectClasses )
+						{
+							Class<?> key = Class.forName( objectClass );
+							INSTANCE.beanCache.invalidate( key );
+						}
+					}
+					catch( ClassNotFoundException e )
+					{
+						// Ignore
+					}
+				}
+			} );
 			INSTANCE.waiter.notifyAll();
 		}
 	}
@@ -61,6 +90,22 @@ public enum BeanInjector
 
 	private <T> T doGetBean( @Nonnull Class<T> cls )
 	{
+		if( context == null )
+		{
+			synchronized( waiter )
+			{
+				try
+				{
+					waiter.wait( 5000 );
+				}
+				catch( InterruptedException e )
+				{
+				}
+				if( context == null )
+					throw new RuntimeException( "BundleContext is missing, has BeanInjector been configured?" );
+			}
+		}
+
 		ServiceReference ref = context.getServiceReference( cls.getName() );
 		if( ref != null )
 		{
@@ -79,5 +124,10 @@ public enum BeanInjector
 		{
 			BeanInjector.setBundleContext( arg0 );
 		}
+	}
+
+	public void clearCache()
+	{
+		beanCache.invalidateAll();
 	}
 }

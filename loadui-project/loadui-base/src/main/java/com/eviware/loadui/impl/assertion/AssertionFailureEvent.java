@@ -68,7 +68,7 @@ public class AssertionFailureEvent extends AbstractTestEvent
 	{
 		public Factory()
 		{
-			super( AssertionFailureEvent.class );
+			super( AssertionFailureEvent.class, "AssertionFailure" );
 		}
 
 		@Override

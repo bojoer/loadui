@@ -31,6 +31,8 @@ import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.api.testevents.MessageLevel;
+import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.events.EventFuture;
@@ -72,12 +74,14 @@ public class TestExecutionAddon implements Addon
 					break;
 				case START :
 					canvas.triggerAction( CanvasItem.START_ACTION );
-					TestExecutionEvent.logExecutionEvent( TestExecutionEvent.ExecutionAction.STARTED );
+					BeanInjector.getBean( TestEventManager.class ).logMessage( MessageLevel.NOTIFICATION, "Test started" );
+					//TestExecutionEvent.logExecutionEvent( TestExecutionEvent.ExecutionAction.STARTED );
 					break;
 				case PRE_STOP :
 					canvas.triggerAction( CanvasItem.STOP_ACTION );
 					canvas.triggerAction( CanvasItem.COMPLETE_ACTION );
-					TestExecutionEvent.logExecutionEvent( TestExecutionEvent.ExecutionAction.COMPLETED );
+					BeanInjector.getBean( TestEventManager.class ).logMessage( MessageLevel.NOTIFICATION, "Test completed" );
+					//TestExecutionEvent.logExecutionEvent( TestExecutionEvent.ExecutionAction.COMPLETED );
 					break;
 				}
 			}

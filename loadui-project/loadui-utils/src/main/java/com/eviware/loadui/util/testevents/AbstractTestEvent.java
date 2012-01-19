@@ -38,10 +38,9 @@ public abstract class AbstractTestEvent implements TestEvent
 	}
 
 	@Override
-	@SuppressWarnings( "unchecked" )
-	public <T extends TestEvent> Class<T> getType()
+	public Class<? extends TestEvent> getType()
 	{
-		return ( Class<T> )getClass();
+		return getClass();
 	}
 
 	public static abstract class Factory<T extends TestEvent> implements TestEvent.Factory<T>

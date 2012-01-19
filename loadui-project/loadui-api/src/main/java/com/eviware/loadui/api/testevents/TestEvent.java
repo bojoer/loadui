@@ -38,7 +38,7 @@ public interface TestEvent
 	 * 
 	 * @return
 	 */
-	public <T extends TestEvent> Class<T> getType();
+	public Class<? extends TestEvent> getType();
 
 	/**
 	 * A factory responsible for instantiating a TestEvent from its serialized

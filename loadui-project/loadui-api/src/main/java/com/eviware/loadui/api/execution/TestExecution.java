@@ -66,9 +66,11 @@ public interface TestExecution
 	 * Same as complete(), but also sets the aborting flag to true, indicating
 	 * that queued requests and requests in progress should be discarded.
 	 * 
+	 * @param reason
+	 *           The reason for aborting the TestExecution.
 	 * @return
 	 */
-	public Future<ExecutionResult> abort();
+	public Future<ExecutionResult> abort( String reason );
 
 	/**
 	 * If set to true, the test was aborted (or currently in the process of
@@ -77,4 +79,12 @@ public interface TestExecution
 	 * @return
 	 */
 	public boolean isAborted();
+
+	/**
+	 * Returns a message describing the reason for aborting. This method is only
+	 * applicable if the TestExecution was aborted, for obvious reasons.
+	 * 
+	 * @return
+	 */
+	public String getAbortedReason();
 }

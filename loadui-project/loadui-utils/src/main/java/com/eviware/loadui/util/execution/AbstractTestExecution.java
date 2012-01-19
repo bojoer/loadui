@@ -35,6 +35,7 @@ public abstract class AbstractTestExecution implements TestExecution
 
 	protected TestState state = TestState.ENQUEUED;
 	private boolean aborted = false;
+	private String abortReason = "";
 
 	public AbstractTestExecution( CanvasItem canvas )
 	{
@@ -61,9 +62,11 @@ public abstract class AbstractTestExecution implements TestExecution
 	}
 
 	@Override
-	public Future<ExecutionResult> abort()
+	public Future<ExecutionResult> abort( String reason )
 	{
+		abortReason = reason;
 		aborted = true;
+
 		return complete();
 	}
 
@@ -71,5 +74,11 @@ public abstract class AbstractTestExecution implements TestExecution
 	public boolean isAborted()
 	{
 		return aborted;
+	}
+
+	@Override
+	public String getAbortedReason()
+	{
+		return abortReason;
 	}
 }
