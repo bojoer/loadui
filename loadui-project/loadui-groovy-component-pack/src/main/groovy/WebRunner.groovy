@@ -59,8 +59,6 @@ import java.util.concurrent.TimeUnit
 
 scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
 
-createOutput( 'statisticsOutput', 'Statistics', 'Connect to a Statistics component to feed it with the displayed values.' )
-
 //SSL support, trust all certificates and hostnames.
 class NaiveTrustManager implements X509TrustManager {
 	void checkClientTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
@@ -345,25 +343,3 @@ settings( label: "Proxy" ) {
 	property( property: proxyUsername, label: 'Proxy Username' )
 	property( property: proxyPassword, widget: 'password', label: 'Proxy Password' )
 }
-
-scheduleAtFixedRate( {
-	def message = newMessage()
-	message["Requests"] = requestCounter.get() - requestResetValue as int
-	message["Running"] = currentlyRunning as int
-	message["Discarded"] = discardCounter.get() - discardResetValue as int
-	message["Failed"] = failureCounter.get() - failedResetValue as int
-	message["Queued"] = queueSize as int
-	message["Completed"] = sampleCounter.get() - sampleResetValue as int
-	send( statisticsOutput, message )
-}, 1, 1, TimeUnit.SECONDS )
-
-def statisticsSignature = [
-	"Requests" : Integer.class,
-	"Running" : Integer.class,
-	"Discarded" : Integer.class,
-	"Failed" : Integer.class,
-	"Queued" : Integer.class,
-	"Completed" : Integer.class
-]
-
-setSignature( statisticsOutput, statisticsSignature )
