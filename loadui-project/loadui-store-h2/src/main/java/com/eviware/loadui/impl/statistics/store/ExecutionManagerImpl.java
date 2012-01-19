@@ -314,6 +314,21 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		return currentExecution;
 	}
 
+	public Track getTrack( String executionId, String trackId )
+	{
+		ExecutionImpl execution = getExecution( executionId );
+		if( !execution.isLoaded() )
+		{
+			loadExecution( executionId );
+		}
+		Track track = execution.getTrack( trackId );
+		if( track == null )
+		{
+			throw new IllegalArgumentException( "No track found for specified trackId!" );
+		}
+		return track;
+	}
+
 	@Override
 	public Track getTrack( String trackId )
 	{
@@ -1062,7 +1077,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_LTE, endTime );
 
-		final Set<String> descriptorNames = getTrack( trackId ).getTrackDescriptor().getValueNames().keySet();
+		final Set<String> descriptorNames = getTrack( executionId, trackId ).getTrackDescriptor().getValueNames()
+				.keySet();
 
 		return Iterables.transform( dtd.select( data ), new Function<Map<String, Object>, Map<String, Object>>()
 		{
