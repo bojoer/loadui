@@ -33,6 +33,11 @@ public interface GeneratorCategory extends OnOffCategory
 	public static final String CATEGORY = "Generators";
 
 	/**
+	 * The label of the category.
+	 */
+	public static final String CATEGORY_LABEL = "VU Generators";
+
+	/**
 	 * The color of the category.
 	 */
 	public static final String COLOR = "#ec420b";

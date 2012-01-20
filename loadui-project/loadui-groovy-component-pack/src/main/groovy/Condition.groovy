@@ -15,7 +15,7 @@
 // 
 
 /**
- * Checks for errors and increases global assertion count
+ * Routes messages based on whether a condition is true or false.
  * 
  * @id com.eviware.Condition
  * @help http://www.loadui.org/Flow/condition-component.html

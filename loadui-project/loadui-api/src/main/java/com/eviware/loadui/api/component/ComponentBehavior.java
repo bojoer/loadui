@@ -92,9 +92,9 @@ public interface ComponentBehavior
 	public String getColor();
 
 	/**
-	 * Gets the name of the category.
+	 * Gets the id of the category.
 	 * 
-	 * @return The name of the category.
+	 * @return The id of the category.
 	 */
 	public String getCategory();
 

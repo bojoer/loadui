@@ -117,11 +117,13 @@ public class ComponentDescriptor implements Labeled, Describable
 		return category;
 	}
 
+	@Override
 	public String getLabel()
 	{
 		return label;
 	}
 
+	@Override
 	public String getDescription()
 	{
 		return description;

@@ -49,6 +49,7 @@ public interface WorkspaceItem extends ModelItem
 			+ ".garbageCollectionInterval";
 
 	public final static String STATISTIC_RESULTS_PATH = WorkspaceItem.class.getSimpleName() + ".statisticResultsPath";
+	public final static String IGNORED_VERSION_UPDATE = WorkspaceItem.class.getName() + ".ignoredVersionUpdate";
 
 	/**
 	 * Gets the version of loadUI which was used to create the workspace.
