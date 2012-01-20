@@ -38,7 +38,7 @@ public class TestCaseToolbarItem extends ToolbarItemNode {
 	
 	override var label = "VU Scenario";
 	
-	override var category = "Scenarios";
+	override var category = "VU Scenarios";
 	
 	override def onMouseClicked = function (me:MouseEvent) {
 		if( me.button == MouseButton.PRIMARY and me.clickCount == 2) {

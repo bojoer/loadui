@@ -153,12 +153,12 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 	public var groupHeight = 110;
 	
 	/** The width of the toolbar */
-	public var preferredWidth = 90; //100
+	public var preferredWidth = 96; //100
 	
 	/** The upper margin of each item group */
 	public var groupTopMargin = 10;
 	
-	public var groupLeftMargin = 10;
+	public var groupLeftMargin = 8;
 	
 	public override var width = 112;
 	

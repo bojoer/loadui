@@ -24,6 +24,7 @@ package com.eviware.loadui.fx.widgets.toolbar;
 import com.eviware.loadui.fx.ui.toolbar.ToolbarItemNode;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.api.component.ComponentDescriptor;
+import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import javafx.scene.image.Image;
 
 import javafx.scene.input.MouseEvent;
@@ -43,6 +44,8 @@ public class ComponentToolbarItem extends ToolbarItemNode {
 		tooltip = descriptor.getDescription();
 		label = descriptor.getLabel();
 		category = descriptor.getCategory();
+		if( "generators".equalsIgnoreCase( category ) )
+			category = GeneratorCategory.CATEGORY_LABEL;
 	}
 	
 	override def onMouseClicked = function (me:MouseEvent) {

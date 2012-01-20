@@ -82,16 +82,16 @@ public def GROUP_HEIGHT = 126;
 
 public class ItemOrder extends Comparator {
 	
-	def loadGeneratorOrder:String[] = [ "FIXED RATE", "VARIANCE", "RANDOM", "RAMP", "VIRTUAL USERS", "FIXED LOAD" ];
+	def loadGeneratorOrder:String[] = [ "FIXED RATE", "VARIANCE", "RANDOM", "RAMP", "USAGE", "FIXED LOAD" ];
 	def analysisOrder:String[] = [ "ASSERTION", "STATISTICS" ];
-	def flowOrder:String[] = [ "SPLITTER", "DELAY" ];
+	def flowOrder:String[] = [ "SPLITTER", "DELAY", "CONDITION", "LOOP" ];
 	def runnerOrder:String[] = [ "SOAPUI RUNNER", "WEB PAGE RUNNER", "SCRIPT RUNNER", "PROCESS RUNNER" ];
 	    	
 	public override function compare(o1, o2) {
 		 def t1:ToolbarItemNode = o1 as ToolbarItemNode;
 		 def t2:ToolbarItemNode = o2 as ToolbarItemNode;
 		 
-		 if (t1.category.equalsIgnoreCase("Generators") and t2.category.equalsIgnoreCase("Generators")) {
+		 if (t1.category.equalsIgnoreCase("VU Generators") and t2.category.equalsIgnoreCase("VU Generators")) {
 			var index1 = Sequences.indexOf(loadGeneratorOrder, t1.label.toUpperCase());
 		 	var index2 = Sequences.indexOf(loadGeneratorOrder, t2.label.toUpperCase());
 		     

@@ -39,15 +39,14 @@ public class GroupOrder extends Comparator {
 	protected var groupOrder:String[] = [
 		"AGENTS",
 		"PROJECTS",
-		
 		MiscCategory.CATEGORY.toUpperCase(),
+		AnalysisCategory.CATEGORY.toUpperCase(),
 		OutputCategory.CATEGORY.toUpperCase(),
 		SchedulerCategory.CATEGORY.toUpperCase(),
 		FlowCategory.CATEGORY.toUpperCase(),
-		AnalysisCategory.CATEGORY.toUpperCase(),
 		RunnerCategory.CATEGORY.toUpperCase(),
-		GeneratorCategory.CATEGORY.toUpperCase(),
-		"SCENARIOS"
+		GeneratorCategory.CATEGORY_LABEL.toUpperCase(),
+		"VU SCENARIOS"
 	];
 
 	public override function compare(o1, o2) {

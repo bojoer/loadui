@@ -23,6 +23,7 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
+import com.eviware.loadui.fx.ui.dialogs.NewVersionDialog;
 import com.eviware.loadui.fx.ui.inspector.InspectorPanelControl;
 import com.eviware.loadui.fx.ui.menu.MainWindowButton;
 import com.eviware.loadui.fx.ui.menu.ProjectMenu;
@@ -33,7 +34,6 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.ui.toolbar.GroupOrder;
 import com.eviware.loadui.fx.ui.toolbar.ItemOrder;
-import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.widgets.AgentCarousel;
 import com.eviware.loadui.fx.widgets.ProjectCarousel;
 import com.eviware.loadui.fx.widgets.canvas.Canvas;
@@ -273,6 +273,8 @@ public class MainWindow {
 		} );
 			
 		workspace.addEventListener( BaseEvent.class, new ExecutionAlertListener() );
+		
+		NewVersionDialog {};
 	}
 	
 	/**

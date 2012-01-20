@@ -84,7 +84,7 @@ public class CloneTestCaseDialog {
 				AppState.byName("MAIN").setActiveCanvas( testCase );
 			}, 
 			null, 
-			"Initializing TestCase." 
+			"Initializing Scenario." 
 		);
 	}
 	
@@ -92,7 +92,7 @@ public class CloneTestCaseDialog {
 		var form:Form;
 		var label = canvasObject.getLabel();
 		name = TextField { label: "Name of clone", value: "copy-of-{label}", action:ok };
-		open = CheckBoxField { label: "Open the new TestCase?", value: true };
+		open = CheckBoxField { label: "Open the new Scenario?", value: true };
 		distribute = CheckBoxField { label: "Distibute to same agents?", value: true };
 		
 		dialog = Dialog {

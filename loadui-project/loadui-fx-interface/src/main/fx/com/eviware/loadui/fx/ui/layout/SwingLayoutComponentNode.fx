@@ -22,12 +22,10 @@ public class SwingLayoutComponentNode extends LayoutComponentNode {
 	
 	def stack:Stack = Stack {
 		override var width on replace {
-			println("New width: {width}");
 			component.setPreferredSize( new Dimension( getWidth(), getHeight() ) ); 
 		}
 		
 		override var height on replace {
-			println("New height: {height}");
 			component.setPreferredSize( new Dimension( getWidth(), getHeight() ) );
 		}
 		content: SwingComponent.wrap( component ) 

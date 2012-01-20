@@ -87,10 +87,10 @@ public class CreateNewTestCaseDialog {
 	    }
 	    
 		dialog = Dialog {
-			title: "New TestCase for: {project.getLabel()}"
+			title: "New Scenario for: {project.getLabel()}"
 			content: [
 				form = Form {
-					formContent: TextField { id: "newTC", label: "TestCase Name", action: ok }
+					formContent: TextField { id: "newTC", label: "Scenario Name", action: ok }
 				}
 			]
 			okText: "Ok"
