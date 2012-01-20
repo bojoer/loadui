@@ -84,15 +84,6 @@ def green = RadialGradient {
 	]
 }
 
-/*def like = RadialGradient {
-	centerX: 0.5
-	centerY: 0.5
-	stops: [
-		Stop { offset: 0, color: Color.rgb( 0x0, 0xff, 0x0 ) },
-		Stop { offset: 0.5, color: Color.rgb( 0x0, 0xff, 0x0, 0 ) }
-	]
-}*/
-
 def like = RadialGradient {
 		centerX: 0.5
 		centerY: 0.5
@@ -309,8 +300,6 @@ public class TerminalDraggable extends BaseNode, Draggable {
 		
 		if( grabbedWireWasSelected or grabbedIsOccupiedOutputTerminal )
 		{
-			
-			
 			var other:Terminal;
 			
 			if( grabbedWireWasSelected )
@@ -324,7 +313,6 @@ public class TerminalDraggable extends BaseNode, Draggable {
 				def conn = tNode.terminal.getConnections().iterator().next();
 				other = conn.getInputTerminal();
 				prev = canvas.lookupConnectionNode( conn );
-				println("prev: {prev}");
 			}
 			
 			prev.visible = false;
@@ -335,13 +323,11 @@ public class TerminalDraggable extends BaseNode, Draggable {
 			
 			if( terminal instanceof InputTerminal )
 			{
-				//canvasObjectNode.hideAllInputBalloonsButThis( tNode );
 				canvas.showInputBalloons( canvasObjectNode );
 				inputAccept = true;
 			}
 			else
 			{
-				//canvasObjectNode.hideAllOutputBalloonsButThis( tNode );
 				canvas.showOutputBalloons( canvasObjectNode, other );
 				outputAccept = true;
 			}
@@ -403,13 +389,11 @@ public class TerminalDraggable extends BaseNode, Draggable {
 		
 		if( terminal instanceof InputTerminal )
 		{
-			//canvasObjectNode.hideInputBalloons();
 			canvas.hideInputBalloons();
 			canvas.hideOutputBalloons();
 		}
 		else
 		{
-			//canvasObjectNode.hideOutputBalloons();
 			canvas.hideInputBalloons();
 			canvas.hideOutputBalloons();
 		}
