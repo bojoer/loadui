@@ -23,6 +23,7 @@ package com.eviware.loadui.fx.dialogs;
 
 import javafx.scene.layout.LayoutInfo;
 
+import com.eviware.loadui.fx.statistics.chart.ChartDefaults;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.form.Form;
 import com.eviware.loadui.fx.ui.form.FormField;
@@ -46,7 +47,7 @@ import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.component.categories.AnalysisCategory;
-
+import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 
@@ -81,8 +82,8 @@ public class CreateNewWebProjectDialog {
 				 var fixedRateItem:ComponentItem = project.createComponent( "Fixed Rate", manager.findDescriptor("Fixed Rate") ); 
 				 fixedRateItem.setAttribute( "gui.layoutX", "50" );
 				 fixedRateItem.setAttribute( "gui.layoutY", "0" );
-				var fixedRateContext:ComponentContext = fixedRateItem.getContext();
-				fixedRateContext.getProperty("rate").setValue(numRequests.text);
+				 var fixedRateContext:ComponentContext = fixedRateItem.getContext();
+				 fixedRateContext.getProperty("rate").setValue(numRequests.text);
 				 
 				 var triggerTerminal:OutputTerminal;
 				 for (terminal in fixedRateItem.getTerminals()) {
@@ -102,26 +103,10 @@ public class CreateNewWebProjectDialog {
 				 }
 				 project.connect(triggerTerminal, controllerTerminal);
 				 
-				 if (addStatisticsDiagram.selected) {
-				 	var statisticsItem:ComponentItem = project.createComponent( "Statistics", manager.findDescriptor("Statistics") );
-				 	statisticsItem.setAttribute( "gui.layoutX", "50" );
-				 	statisticsItem.setAttribute( "gui.layoutY", "500" );
-				 	var outputTerminal:OutputTerminal;
-				 	for (terminal in webItem.getTerminals()) {
-				 		if (terminal.getName().equals(RunnerCategory.RESULT_TERMINAL)) {
-				 			outputTerminal = terminal as OutputTerminal;
-				 			break;
-				 		}
-				 	}
-				 	
-				 	var statisticsTerminal:InputTerminal;
-				 	for (terminal in statisticsItem.getTerminals()) {
-				 		if (terminal.getName().equals(AnalysisCategory.INPUT_TERMINAL)) {
-				 			statisticsTerminal = terminal as InputTerminal;
-				 			break;
-				 		}
-				 	}
-				 	project.connect(outputTerminal, statisticsTerminal);
+				 if ( addStatisticsDiagram.selected ) {
+				 	def page = project.getStatisticPages().getChildAt( 0 );
+					def chartGroup = ChartDefaults.createChartGroup( page, null, null ); 
+				 	ChartDefaults.createSubChart( chartGroup, webItem );
 				 }
 				 dialog.close();
 				if (autoStart.selected) {
@@ -137,7 +122,7 @@ public class CreateNewWebProjectDialog {
 			formContent: [
 				url = TextField { label: "Url", action: ok },
 				numRequests = LongInputField { label: "Number of Requests per second", action: ok },
-				addStatisticsDiagram = CheckBoxField { label: "Add Statistics Component", value: false },
+				addStatisticsDiagram = CheckBoxField { label: "Create chart", value: false },
 				autoStart = CheckBoxField { label: "Start when created?", value: false }
 			]
 		};
