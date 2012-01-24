@@ -18,6 +18,8 @@ package com.eviware.loadui.api.statistics.model;
 import java.util.Collection;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.eviware.loadui.api.base.OrderedCollection;
 import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
@@ -101,7 +103,7 @@ public interface ChartGroup extends AttributeHolder, OrderedCollection<Chart>, D
 	/**
 	 * Sets the template script of the ChartGroup.
 	 */
-	public void setTemplateScript( String templateScript );
+	public void setTemplateScript( @Nullable String templateScript );
 
 	/**
 	 * Creates and returns a new Chart for the given StatisticHolder, placing it

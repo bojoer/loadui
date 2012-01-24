@@ -147,14 +147,17 @@ public class ChartGroupImpl implements ChartGroup
 
 	private void refreshScript()
 	{
-		if( template != null )
-			template.release();
+		ReleasableUtils.release( template );
 
 		if( !StringUtils.isNullOrEmpty( getTemplateScript() ) )
 		{
 			template = new StatisticTemplateGroovyScript( getTemplateScript() );
 			for( StatisticHolder holder : statisticsManager.getStatisticHolders() )
 				template.filter( holder, this );
+		}
+		else
+		{
+			template = null;
 		}
 	}
 
