@@ -143,7 +143,7 @@ class ItemDisplay extends Container, Pagination {
 		}
 		onMouseClicked: function( e ) {
 			if( e.button == MouseButton.PRIMARY ) {
-				if( not displayed[1].contains( displayed[1].sceneToLocal( e.sceneX, e.sceneY ) ) ) {
+				if( not displayed[2].contains( displayed[2].sceneToLocal( e.sceneX, e.sceneY ) ) ) {
 					if( e.x < width/2 ) previousPage() else nextPage();
 				}
 			}
@@ -181,50 +181,31 @@ class ItemDisplay extends Container, Pagination {
 		positionNode( displayed[2], 0, 0, width, height, HPos.CENTER , VPos.CENTER );
 		displayed[2].scaleX = 1;
 		displayed[2].scaleY = 1;
-		//displayed[2].opacity = 1;
 		displayed[2].effect = null;
-		
-		def bottomLine = displayed[2].layoutY + displayed[2].layoutBounds.height;
-		
-		//Leftmost
-		positionNode( displayed[0], -displayed[0].layoutBounds.width/5, 0, width, bottomLine, HPos.LEFT , VPos.BOTTOM );
-		displayed[0].scaleX = 0.5;
-		displayed[0].scaleY = 0.5;
-		//displayed[0].opacity = 0.25;
-		displayed[0].effect = darkenMore;
-		
-		//Left
-		positionNode( displayed[1], 0, 0, width, bottomLine, HPos.LEFT , VPos.BOTTOM );
-		displayed[1].scaleX = 0.8;
-		displayed[1].scaleY = 0.8;
-		//displayed[1].opacity = 0.6;
-		displayed[1].effect = darken;
-		
-		//Right
-		positionNode( displayed[3], 0, 0, width, bottomLine, HPos.RIGHT , VPos.BOTTOM );
-		displayed[3].scaleX = 0.8;
-		displayed[3].scaleY = 0.8;
-		//displayed[3].opacity = 0.6;
-		displayed[3].effect = darken;
-		
-		//Rightmost
-		positionNode( displayed[4], displayed[4].layoutBounds.width/5, 0, width, bottomLine, HPos.RIGHT , VPos.BOTTOM );
-		displayed[4].scaleX = 0.5;
-		displayed[4].scaleY = 0.5;
-		//displayed[4].opacity = 0.25;
-		displayed[4].effect = darkenMore;
 		
 		//Leftmost
 		placeNode( displayed[0], 0 );
+		displayed[0].scaleX = 0.5;
+		displayed[0].scaleY = 0.5;
+		displayed[0].effect = darkenMore;
 		
 		//Left
 		placeNode( displayed[1], 0.5 - widthStep );
+		displayed[1].scaleX = 0.8;
+		displayed[1].scaleY = 0.8;
+		displayed[1].effect = darken;
 		
 		//Right
 		placeNode( displayed[3], 0.5 + widthStep );
+		displayed[3].scaleX = 0.8;
+		displayed[3].scaleY = 0.8;
+		displayed[3].effect = darken;
 		
 		//Rightmost
 		placeNode( displayed[4], 1 );
+		displayed[4].scaleX = 0.5;
+		displayed[4].scaleY = 0.5;
+		displayed[4].effect = darkenMore;
 	}
 	
 	postinit { doLayout() }
