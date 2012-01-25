@@ -234,8 +234,6 @@ public class MainWindow {
 		insert MainWindowButton { layoutX: 10, layoutY: 7, wc:wc } into appState.globalLayer.content;
 		insert SoapUIButton { layoutX: 2, layoutY: 2 } into appState.globalLayer.content;
 		
-		insert javafx.scene.control.Button { text: "HI!", action: function() { com.eviware.loadui.util.BeanInjector.getBean( com.eviware.loadui.api.testevents.TestEventManager.class ).logMessage( com.eviware.loadui.api.testevents.MessageLevel.WARNING, "Hello world!" ); } } into appState.globalLayer.content;
-		
 		appState.insertInto( NotificationArea {
 			id: "notification{WORKSPACE_FRONT}"
 			layoutInfo: LayoutInfo { width: bind scene.width }
