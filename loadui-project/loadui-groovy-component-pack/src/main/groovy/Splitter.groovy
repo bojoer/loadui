@@ -203,7 +203,7 @@ refreshLayout = {
 		box( layout: 'ins 0, center', constraints: 'span 5, w 498!' ) {
 			def gap = (int)((249/numOutputs.value)-19)
 			def moreThanOneTerminal = numOutputs.value > 1;
-			for( i in 0..numOutputs.value - 1 ) {
+			for( i=0; i < outgoingTerminalList.size(); i++ ) {
 				if( i != 0 ) separator( vertical: true )
 				
 				if( type.value == "Random" ) {

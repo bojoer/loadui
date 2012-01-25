@@ -100,6 +100,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		createProperty( LOADUI_CAJO_PORT_PROPERTY, Integer.class, 1199 );
 		createProperty( STATISTIC_RESULTS_PATH, File.class,
 				new File( System.getProperty( LoadUI.LOADUI_HOME ), "results" ) );
+		createProperty( IGNORED_VERSION_UPDATE, String.class, "" );
 		garbageCollectionInterval = createProperty( AUTO_GARBAGE_COLLECTION_INTERVAL, Long.class, 60 ); // using
 		// seconds
 	}
