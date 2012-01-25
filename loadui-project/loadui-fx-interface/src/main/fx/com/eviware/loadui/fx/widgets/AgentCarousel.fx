@@ -70,6 +70,7 @@ public class AgentCarousel extends DroppableNode, Resizable, EventHandler {
 	def carousel = Carousel {
 		label: "Agents"
 		layoutInfo: LayoutInfo { vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS }
+		widthFactor: 0.8
 		onMousePressed: function( e ) {
 			if( e.popupTrigger ) {
 				popup.show( this, e.screenX, e.screenY );

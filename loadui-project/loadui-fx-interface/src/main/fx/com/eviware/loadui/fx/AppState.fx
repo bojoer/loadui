@@ -71,6 +71,8 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.AppState" 
 def appStates = new HashMap();
 def appStatesByName = new HashMap();
 
+public-read var activeState:AppState; 
+
 public function put( scene:Scene, appState:AppState, name:String ):Void {
 	appStates.put( scene, appState );
 	appStatesByName.put( name, appState );
@@ -127,6 +129,8 @@ public class AppState extends ApplicationState {
 			scene.content = layers;
 		}
 	}
+	
+	public-read def containsFocus = bind scene.stage.containsFocus on replace { if( containsFocus ) activeState = this }
 	
 	def blocked = WaitingScreen {
 		width: bind scene.width

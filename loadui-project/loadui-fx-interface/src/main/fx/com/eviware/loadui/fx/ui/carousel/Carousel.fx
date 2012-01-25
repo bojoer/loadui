@@ -22,6 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Container;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
@@ -32,11 +33,15 @@ import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.geometry.HPos;
 import javafx.util.Sequences;
+import javafx.util.Math;
 
 import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.ui.pagination.Pagination;
 import com.eviware.loadui.fx.ui.form.fields.SelectField;
+
+def darken = ColorAdjust { brightness: - 0.4 };
+def darkenMore = ColorAdjust { brightness: - 0.6 };
 
 public class Carousel extends VBox {
 	override var styleClass = "carousel";
@@ -50,12 +55,17 @@ public class Carousel extends VBox {
 		layoutInfo: LayoutInfo { hfill: true }
 	}
 	
+	public var widthFactor:Number = 0.6;
+	public var widthStep:Number = 0.25;
+	
 	public var label:String = "Agents";
 	
 	public var items:Node[] on replace {
 		itemDisplay.items = [
 			Rectangle { width: 1, height: 1, fill: Color.rgb(0,0,0,0.001) },
+			Rectangle { width: 1, height: 1, fill: Color.rgb(0,0,0,0.001) },
 			items,
+			Rectangle { width: 1, height: 1, fill: Color.rgb(0,0,0,0.001) },
 			Rectangle { width: 1, height: 1, fill: Color.rgb(0,0,0,0.001) }
 		];
 		selectField.options = items;
@@ -118,7 +128,7 @@ public class Carousel extends VBox {
 }
 
 class ItemDisplay extends Container, Pagination {
-	override var itemsPerPage = 3;
+	override var itemsPerPage = 5;
 	override var fluid = true;
 	
 	public-init var parentNode:Node;
@@ -148,8 +158,8 @@ class ItemDisplay extends Container, Pagination {
 	}
 	
 	def displayed = bind displayedItems on replace {
-		content = [ displayed[0], displayed[2], clickBlocker, displayed[1] ];
-		select( displayed[1] );
+		content = [ displayed[0], displayed[4], displayed[1], displayed[3], clickBlocker, displayed[2] ];
+		select( displayed[2] );
 		doLayout();
 	}
 	
@@ -157,26 +167,64 @@ class ItemDisplay extends Container, Pagination {
 		2 * super.getPrefWidth( height )
 	}
 	
+	function placeNode( node:Node, pos:Number ):Void {
+		def usableWidth = width * widthFactor;
+		def posX = ( 1 + Math.cos( Math.PI * ( 1-pos ) ) ) * usableWidth/2;
+		def x = (width-usableWidth)/2 + posX - node.layoutBounds.width/2;
+		def y = (height - node.layoutBounds.height)/2;
+		
+		positionNode( node, x, y );
+	}
+	
 	override function doLayout() {
 		//Middle
-		positionNode( displayed[1], 0, 0, width, height, HPos.CENTER , VPos.CENTER );
-		displayed[1].scaleX = 1;
-		displayed[1].scaleY = 1;
-		displayed[1].opacity = 1;
+		positionNode( displayed[2], 0, 0, width, height, HPos.CENTER , VPos.CENTER );
+		displayed[2].scaleX = 1;
+		displayed[2].scaleY = 1;
+		//displayed[2].opacity = 1;
+		displayed[2].effect = null;
 		
-		def bottomLine = displayed[1].layoutY + displayed[1].layoutBounds.height;
+		def bottomLine = displayed[2].layoutY + displayed[2].layoutBounds.height;
+		
+		//Leftmost
+		positionNode( displayed[0], -displayed[0].layoutBounds.width/5, 0, width, bottomLine, HPos.LEFT , VPos.BOTTOM );
+		displayed[0].scaleX = 0.5;
+		displayed[0].scaleY = 0.5;
+		//displayed[0].opacity = 0.25;
+		displayed[0].effect = darkenMore;
 		
 		//Left
-		positionNode( displayed[0], 0, 0, width, bottomLine, HPos.LEFT , VPos.BOTTOM );
-		displayed[0].scaleX = 0.8;
-		displayed[0].scaleY = 0.8;
-		displayed[0].opacity = 0.6;
+		positionNode( displayed[1], 0, 0, width, bottomLine, HPos.LEFT , VPos.BOTTOM );
+		displayed[1].scaleX = 0.8;
+		displayed[1].scaleY = 0.8;
+		//displayed[1].opacity = 0.6;
+		displayed[1].effect = darken;
 		
 		//Right
-		positionNode( displayed[2], 0, 0, width, bottomLine, HPos.RIGHT , VPos.BOTTOM );
-		displayed[2].scaleX = 0.8;
-		displayed[2].scaleY = 0.8;
-		displayed[2].opacity = 0.6;
+		positionNode( displayed[3], 0, 0, width, bottomLine, HPos.RIGHT , VPos.BOTTOM );
+		displayed[3].scaleX = 0.8;
+		displayed[3].scaleY = 0.8;
+		//displayed[3].opacity = 0.6;
+		displayed[3].effect = darken;
+		
+		//Rightmost
+		positionNode( displayed[4], displayed[4].layoutBounds.width/5, 0, width, bottomLine, HPos.RIGHT , VPos.BOTTOM );
+		displayed[4].scaleX = 0.5;
+		displayed[4].scaleY = 0.5;
+		//displayed[4].opacity = 0.25;
+		displayed[4].effect = darkenMore;
+		
+		//Leftmost
+		placeNode( displayed[0], 0 );
+		
+		//Left
+		placeNode( displayed[1], 0.5 - widthStep );
+		
+		//Right
+		placeNode( displayed[3], 0.5 + widthStep );
+		
+		//Rightmost
+		placeNode( displayed[4], 1 );
 	}
 	
 	postinit { doLayout() }

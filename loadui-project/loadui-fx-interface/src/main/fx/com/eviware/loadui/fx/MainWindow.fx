@@ -23,7 +23,6 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
-import com.eviware.loadui.fx.ui.dialogs.NewVersionDialog;
 import com.eviware.loadui.fx.ui.inspector.InspectorPanelControl;
 import com.eviware.loadui.fx.ui.menu.MainWindowButton;
 import com.eviware.loadui.fx.ui.menu.ProjectMenu;
@@ -34,6 +33,8 @@ import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.toolbar.Toolbar;
 import com.eviware.loadui.fx.ui.toolbar.GroupOrder;
 import com.eviware.loadui.fx.ui.toolbar.ItemOrder;
+import com.eviware.loadui.fx.ui.notification.NotificationArea;
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.widgets.AgentCarousel;
 import com.eviware.loadui.fx.widgets.ProjectCarousel;
 import com.eviware.loadui.fx.widgets.canvas.Canvas;
@@ -47,7 +48,6 @@ import com.eviware.loadui.fx.wizards.GettingStartedWizard;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.widgets.TutorialList;
 import com.eviware.loadui.fx.ui.BrowserFrame;
-import com.eviware.loadui.util.NewVersionChecker;
 
 import java.lang.Object;
 import java.lang.Thread;
@@ -233,6 +233,25 @@ public class MainWindow {
 		
 		insert MainWindowButton { layoutX: 10, layoutY: 7, wc:wc } into appState.globalLayer.content;
 		insert SoapUIButton { layoutX: 2, layoutY: 2 } into appState.globalLayer.content;
+		
+		appState.insertInto( NotificationArea {
+			id: "notification{WORKSPACE_FRONT}"
+			layoutInfo: LayoutInfo { width: bind scene.width }
+			layoutY: 50
+		}, WORKSPACE_FRONT );
+		
+		appState.insertInto( NotificationArea {
+			id: "notification{PROJECT_FRONT}"
+			layoutInfo: LayoutInfo { width: bind scene.width }
+			layoutY: 73
+		}, PROJECT_FRONT );
+		
+		appState.insertInto( NotificationArea {
+			id: "notification{TESTCASE_FRONT}"
+			layoutInfo: LayoutInfo { width: bind scene.width }
+			layoutY: 93
+		}, TESTCASE_FRONT );
+		
 		appState.insertInto( WorkspaceMenu { width: bind scene.width, workspace: workspace }, WORKSPACE_FRONT );
 		appState.insertInto( ProjectMenu { width: bind scene.width, project: bind projectCanvas.canvasItem as ProjectItem }, PROJECT_FRONT );
 		appState.insertInto( TestCaseMenu { width: bind scene.width, testCase: bind testcaseCanvas.canvasItem as SceneItem }, TESTCASE_FRONT );
@@ -274,10 +293,6 @@ public class MainWindow {
 		} );
 			
 		workspace.addEventListener( BaseEvent.class, new ExecutionAlertListener() );
-		
-		def newVersion = NewVersionChecker.checkForNewVersion( workspace );
-		if( newVersion != null )
-			NewVersionDialog { newVersion: newVersion };
 	}
 	
 	/**

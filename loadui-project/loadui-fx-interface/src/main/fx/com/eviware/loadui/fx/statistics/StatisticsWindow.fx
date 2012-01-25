@@ -61,6 +61,7 @@ import com.eviware.loadui.fx.statistics.manager.RecentResultsList;
 import com.eviware.loadui.fx.statistics.manager.ArchivedResultsList;
 import com.eviware.loadui.fx.ui.inspector.InspectorPanelControl;
 import com.eviware.loadui.fx.ui.menu.StatisticsWindowButton;
+import com.eviware.loadui.fx.ui.notification.NotificationArea;
 
 import java.lang.Math;
 
@@ -133,14 +134,26 @@ public class StatisticsWindow {
 			
 			insert StatisticsWindowButton { layoutX: 10, layoutY: 2 } into appState.globalLayer.content;
 			
-			appState.insertInto ( ManageMenu { width: bind scene.width }, STATISTICS_MANAGE );
-			
 			appState.insertInto ( RecentResultsList { layoutX: 50, layoutY: 100, layoutInfo: LayoutInfo { height: 222, width: bind Math.max( 487, scene.width - 100 ) } }, STATISTICS_MANAGE );
 			appState.insertInto ( ArchivedResultsList { layoutX: 50, layoutY: 347, layoutInfo: LayoutInfo { height: 222, width: bind Math.max( 487, scene.width - 100 ) } }, STATISTICS_MANAGE );
 			
-			appState.insertInto( topMenu, STATISTICS_VIEW );
+			appState.insertInto( NotificationArea {
+				id: "notification{STATISTICS_MANAGE}"
+				layoutInfo: LayoutInfo { width: bind scene.width }
+				layoutY: 50
+			}, STATISTICS_MANAGE );
+			
+			appState.insertInto ( ManageMenu { width: bind scene.width }, STATISTICS_MANAGE );
+			
 			appState.insertInto( stack, STATISTICS_VIEW );
 			appState.insertInto( toolbar, STATISTICS_VIEW );
+			
+			/*appState.insertInto( NotificationArea {
+				id: "notification{STATISTICS_VIEW}"
+				layoutInfo: LayoutInfo { width: bind scene.width }
+				layoutY: 80
+			}, STATISTICS_VIEW );*/
+			appState.insertInto( topMenu, STATISTICS_VIEW );
 			
 			appState.transitionTo( project.getAttribute( VIEW_ATTRIBUTE, STATISTICS_MANAGE ), AppState.FADE_WIPE );
 			AppState.put( scene, appState, "STATISTICS" );

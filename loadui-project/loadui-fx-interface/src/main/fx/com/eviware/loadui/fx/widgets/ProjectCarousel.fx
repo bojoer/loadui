@@ -71,6 +71,7 @@ public class ProjectCarousel extends DroppableNode, Resizable, EventHandler {
 	def carousel = Carousel {
 		label: "Project"
 		layoutInfo: LayoutInfo { vfill: true, hfill: true, vgrow: Priority.ALWAYS, hgrow: Priority.ALWAYS }
+		widthStep: 0.2
 		onMousePressed: function( e ) {
 			if( e.popupTrigger ) {
 				popup.show( this, e.screenX, e.screenY );
