@@ -33,6 +33,7 @@ public class NotificationPanel extends VBox {
 	
 	public var dateText = "Tue Nov 01 13:46:00";
 	public var text = "Monitor failed aspectum videm treitor gorealte doire lolcat";
+	public var messageCount = 0;
 	
 	public var action:function():Void;
 	
@@ -44,7 +45,12 @@ public class NotificationPanel extends VBox {
 					VBox {
 						padding: Insets { top: 10, right: 10, bottom: 10, left: 10 }
 						content: [
-							Label { text: bind dateText },
+							HBox {
+								content: [
+									Label { text: bind dateText, layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
+									Label { text: bind "{messageCount - 1} more", visible: bind messageCount > 1 },
+								]
+							}
 							Label { text: bind text, textWrap: true }
 						]
 					}
@@ -55,7 +61,7 @@ public class NotificationPanel extends VBox {
 					HBox {
 						padding: Insets { top: 6, right: 10, bottom: 6, left: 10 }
 						content: [
-							Label { text: "Event Log >" },
+							Button { text: "Event Log >", blocksMouse: false },
 							Label { layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
 							Button { graphic: Region { styleClass: "up-arrow" }, blocksMouse: false, action: bind action }
 						]

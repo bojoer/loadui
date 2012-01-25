@@ -16,8 +16,19 @@ import javafx.animation.transition.TranslateTransition;
 import javafx.animation.transition.FadeTransition;
 
 import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.FxUtils;
+
+import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.api.testevents.TestEventManager;
+import com.eviware.loadui.api.testevents.MessageLevel;
+import com.eviware.loadui.util.testevents.MessageTestEvent;
 
 import java.util.HashMap;
+import java.util.Date;
+import java.util.Locale;
+import java.text.SimpleDateFormat;
+
+def dateFormat = new SimpleDateFormat( "EEE MMM dd HH:mm:ss", Locale.ENGLISH );
 
 def HIDDEN = 0;
 def SLIDE_IN = 1;
@@ -26,8 +37,29 @@ def SLIDE_OUT = 3;
 def FADE_OUT = 4;
 def PRE_FADE_OUT = 5;
 
+class MessageListener extends TestEventManager.TestEventObserver {
+	override function onTestEvent( entry ) {
+		def testEvent = entry.getTestEvent();
+		if( testEvent instanceof MessageTestEvent ) {
+			def messageEvent = testEvent as MessageTestEvent;
+			def level = messageEvent.getLevel();
+			if( level == MessageLevel.WARNING or level == MessageLevel.ERROR ) {
+				FxUtils.runInFxThread( function() {
+					NotificationArea.notify( messageEvent.getMessage(), new Date() );
+				} );
+			}
+		}
+	}
+}
+
+def messageListener = new MessageListener();
+def messageManager = BeanInjector.getBean( TestEventManager.class ) on replace {
+	messageManager.registerObserver( messageListener );
+}
+
 var state = HIDDEN on replace oldState {
 	if( state == HIDDEN ) {
+		panel.messageCount = 0;
 		panel.opacity = 0;
 		panel.translateY = 0;
 	} else if( state == SLIDE_IN ) {
@@ -68,7 +100,6 @@ def panel:NotificationPanel = NotificationPanel {
 	layoutInfo: LayoutInfo { width: 220, hfill: false }
 	opacity: 0
 	action: function() { state = SLIDE_OUT }
-	onMouseClicked: function( e ) { if( state == HIDDEN ) show(); }
 	onMouseMoved: function( e ) {
 		if( state == FADE_OUT ) {
 			fadeTransition.stop();
@@ -128,13 +159,22 @@ def delayTransition:PauseTransition = PauseTransition {
 	action: function() { state = FADE_OUT }
 }
 
-public function notify( message:String ):Void {
+public function notify( message:String, time:Date ):Void {
+	panel.dateText = dateFormat.format( time );
 	panel.text = message;
-	show();
-}
+	panel.messageCount++;
 
-public function show():Void {
-	if( state == HIDDEN ) state = SLIDE_IN;
+	if( state == HIDDEN ) {	
+		state = SLIDE_IN;
+	} else if( state == SLIDE_OUT ) {
+		slideUpTransition.stop();
+		state = SLIDE_IN;
+	} else if( state == FADE_OUT ) {
+		fadeTransition.stop();
+		state = SLIDE_IN;
+	} else if( state == PRE_FADE_OUT ) {
+		delayTransition.playFromStart();
+	}
 }
 
 public class NotificationArea extends Stack {
