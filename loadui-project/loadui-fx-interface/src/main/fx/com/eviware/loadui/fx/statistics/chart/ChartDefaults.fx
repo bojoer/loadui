@@ -72,31 +72,37 @@ public function createSubChart( parent:ChartGroup, owner:Chart.Owner ):Chart {
 	if( owner instanceof ComponentItem ) {
 		def component:ComponentItem = owner as ComponentItem;
 		
-		if( component.getType().equals( "Assertion" ) ) {	
-			def variable = component.getStatisticVariable( "Assertion Failures" );
-			if( variable != null and variable.getStatisticNames().contains( "TOTAL" ) ) {
-				def chartView = parent.getChartViewForChart( chart );
-				(chartView as ConfigurableLineChartView).addSegment( "Assertion Failures", "TOTAL", StatisticVariable.MAIN_SOURCE );
-			}
-		} else {
-			def variable = component.getStatisticVariable( "Time Taken" );
-			if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
-				def chartView = parent.getChartViewForChart( chart );
-				(chartView as ConfigurableLineChartView).addSegment( "Time Taken", "AVERAGE", StatisticVariable.MAIN_SOURCE );
-			}
+//		if( component.getType().equals( "Assertion" ) ) {	
+//			def variable = component.getStatisticVariable( "Assertion Failures" );
+//			if( variable != null and variable.getStatisticNames().contains( "TOTAL" ) ) {
+//				def chartView = parent.getChartViewForChart( chart );
+//				(chartView as ConfigurableLineChartView).addSegment( "Assertion Failures", "TOTAL", StatisticVariable.MAIN_SOURCE );
+//			}
+//		} else {
+		var variable = component.getStatisticVariable( "Time Taken" );
+		if( variable != null and variable.getStatisticNames().contains( "AVERAGE" ) ) {
+			def chartView = parent.getChartViewForChart( chart );
+			(chartView as ConfigurableLineChartView).addSegment( "Time Taken", "AVERAGE", StatisticVariable.MAIN_SOURCE );
 		}
+		variable = component.getStatisticVariable( "Throughput" );
+		if( variable != null and variable.getStatisticNames().contains( "TPS" ) ) {
+			def chartView = parent.getChartViewForChart( chart );
+			(chartView as ConfigurableLineChartView).addSegment( "Throughput", "TPS", StatisticVariable.MAIN_SOURCE );
+		}
+//		}
 	} else if( owner instanceof CanvasItem ) {
 		def variable = (owner as CanvasItem).getStatisticVariable( "Requests" );
 		if( variable != null and variable.getStatisticNames().contains( "PER_SECOND" ) ) {
 			def chartView = parent.getChartViewForChart( chart );
 			(chartView as ConfigurableLineChartView).addSegment( "Requests", "PER_SECOND", StatisticVariable.MAIN_SOURCE );
 		}
-	} else if( owner instanceof AssertionItem ) {
-		def assertionItem = (owner as AssertionItem);
-		def typeLabel = BeanInjector.getBean( TestEventRegistry.class ).lookupFactory( (assertionItem as TestEvent.Source).getType() ).getLabel();
-		def chartView = parent.getChartViewForChart( chart );
-		(chartView as ConfigurableLineChartView).addSegment( typeLabel, assertionItem.getLabel() );
 	}
+//	else if( owner instanceof AssertionItem ) {
+//		def assertionItem = (owner as AssertionItem);
+//		def typeLabel = BeanInjector.getBean( TestEventRegistry.class ).lookupFactory( (assertionItem as TestEvent.Source).getType() ).getLabel();
+//		def chartView = parent.getChartViewForChart( chart );
+//		(chartView as ConfigurableLineChartView).addSegment( typeLabel, assertionItem.getLabel() );
+//	}
 	
 	chart
 }

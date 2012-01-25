@@ -122,7 +122,7 @@ public class CreateNewWebProjectDialog {
 			formContent: [
 				url = TextField { label: "Url", action: ok },
 				numRequests = LongInputField { label: "Number of Requests per second", action: ok },
-				addStatisticsDiagram = CheckBoxField { label: "Create chart", value: false },
+				addStatisticsDiagram = CheckBoxField { label: "Create chart in Statistic Workbench", value: true },
 				autoStart = CheckBoxField { label: "Start when created?", value: false }
 			]
 		};

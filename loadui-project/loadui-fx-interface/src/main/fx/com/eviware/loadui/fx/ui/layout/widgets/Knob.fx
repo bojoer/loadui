@@ -100,7 +100,9 @@ public class Knob extends NumericWidgetBase {
 	override function create() {
 		if( plc.has("enabled") )
 		{
-			disable = not (plc.get("enabled") as Boolean);
+			def isEnabled = plc.get("enabled") as Boolean;
+			disable = not isEnabled;
+			opacity = if(isEnabled) 1.0 else 0.4;
 		}
 		
 		def group = Group {

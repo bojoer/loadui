@@ -97,6 +97,7 @@ public class TestCaseNode extends CanvasObjectNode {
 				content: bind [
 					ImageView { 
 						image: testCaseGrid
+						blocksMouse: true
 						onMouseClicked: function( e:MouseEvent ) {
 							if( e.button == MouseButton.PRIMARY and e.clickCount == 2 ) {
 							    open();

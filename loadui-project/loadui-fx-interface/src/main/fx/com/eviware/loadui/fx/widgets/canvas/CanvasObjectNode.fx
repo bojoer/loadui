@@ -301,8 +301,8 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 			}
 			
 			onMouseClicked: function (e:MouseEvent) {
-			    if (compact and e.clickCount == 2)
-			    	compact = false;
+			    if (e.clickCount == 2)
+			    	compact = not compact;
 			}
 		}
 	}
@@ -337,7 +337,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 				def stack:Stack = n as Stack;
 				def b:Balloon = stack.content[0] as Balloon;
 				b.fading.stop();
-				b.opacity =	if( b.terminalNode == hoveredTerminal or hoveredTerminal == null) 1.0 else 0.5;
+				b.opacity =	if( b.terminalNode == hoveredTerminal or hoveredTerminal == null ) 1.0 else 0.5;
 			}
 			
 			def sceneBounds = localToParent( layoutBounds );
@@ -384,7 +384,7 @@ public class CanvasObjectNode extends BaseNode, Movable, Selectable, ModelItemHo
 				def stack:Stack = n as Stack;
 				def b:Balloon = stack.content[0] as Balloon;
 				b.fading.stop();
-				b.opacity =	if( b.terminalNode == hoveredTerminal or (hoveredTerminal == null and b.terminalNode.acceptsTerminal( terminalToAccept ) ) ) 1.0 else 0.5;
+				b.opacity =	if( b.terminalNode == hoveredTerminal or ( hoveredTerminal == null and b.terminalNode.acceptsTerminal( terminalToAccept ) ) ) 1.0 else 0.5;
 			}
 			
 			def sceneBounds = localToParent( layoutBounds );

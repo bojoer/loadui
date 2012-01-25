@@ -47,6 +47,7 @@ import com.eviware.loadui.fx.wizards.GettingStartedWizard;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.widgets.TutorialList;
 import com.eviware.loadui.fx.ui.BrowserFrame;
+import com.eviware.loadui.util.NewVersionChecker;
 
 import java.lang.Object;
 import java.lang.Thread;
@@ -274,7 +275,9 @@ public class MainWindow {
 			
 		workspace.addEventListener( BaseEvent.class, new ExecutionAlertListener() );
 		
-		NewVersionDialog {};
+		def newVersion = NewVersionChecker.checkForNewVersion( workspace );
+		if( newVersion != null )
+			NewVersionDialog { newVersion: newVersion };
 	}
 	
 	/**

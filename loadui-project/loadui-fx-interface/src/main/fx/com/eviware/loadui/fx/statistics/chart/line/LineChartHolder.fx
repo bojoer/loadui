@@ -44,7 +44,6 @@ import com.eviware.loadui.fx.statistics.chart.BaseChart;
 
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
-import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 import com.eviware.loadui.api.charting.line.LineChart;
 import com.eviware.loadui.api.charting.line.SegmentModel;

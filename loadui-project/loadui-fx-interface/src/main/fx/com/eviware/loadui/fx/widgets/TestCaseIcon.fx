@@ -29,6 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.scene.control.Label;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.HBox;
 import javafx.geometry.VPos;
@@ -195,6 +196,7 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, WeakEven
 					vpos: VPos.CENTER
 					textWrap: false
 					font: Font.font("Amble",9)
+					textOverrun: OverrunStyle.CENTER_ELLIPSES
 				},
 				contextMenu
 			]

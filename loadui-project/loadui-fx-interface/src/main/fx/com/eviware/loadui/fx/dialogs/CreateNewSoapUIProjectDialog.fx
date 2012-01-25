@@ -124,7 +124,7 @@ public class CreateNewSoapUIProjectDialog {
 			layoutInfo: LayoutInfo { width: 250 }
 			formContent: [
 				numRequests = LongInputField { label: "Number of Requests per second", action: ok },
-				addStatisticsDiagram = CheckBoxField { label: "Add Statistics Component", value: false },
+				addStatisticsDiagram = CheckBoxField { label: "Create chart in Statistic Workbench", value: true },
 				autoStart = CheckBoxField { label: "Start when created?", value: false }
 			]
 		};
