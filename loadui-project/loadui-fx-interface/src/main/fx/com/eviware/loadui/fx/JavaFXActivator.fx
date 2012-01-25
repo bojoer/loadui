@@ -99,9 +99,13 @@ public class JavaFXActivator extends BundleActivator {
 				title: "loadUI {LoadUI.VERSION}"
 				visible: false
 				icons: icons
+				width: 1280.0
+				height: 768.0
 				scene: scene = Scene {
-					width: 1085.0
-					height: 720.0
+					width: 1200.0
+					height: 700.0
+					//width: 1085.0
+					//height: 720.0
 					stylesheets: bind stylesheets
 					//stylesheets: "{__ROOT__}themes/default/style.css";//bind stylesheets
 				}
