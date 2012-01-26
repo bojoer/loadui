@@ -18,7 +18,8 @@ package com.eviware.loadui.api.serialization;
 import javax.annotation.Nonnull;
 
 /**
- * A value which can be observed for changes.
+ * A value which can be observed for updates. Note that a ListenableValue may be
+ * updated while retaining the same value as the previous update.
  * 
  * @author dain.nilsson
  * 
@@ -27,21 +28,21 @@ import javax.annotation.Nonnull;
 public interface ListenableValue<T> extends Value<T>
 {
 	/**
-	 * Adds a ValueListener to be notified of any changes to the value.
+	 * Adds a ValueListener to be notified of any update to the value.
 	 * 
 	 * @param listener
 	 */
 	public void addListener( @Nonnull ValueListener<? super T> listener );
 
 	/**
-	 * Removes a ValueListener from being notified of value changes.
+	 * Removes a ValueListener from being notified of value updates.
 	 * 
 	 * @param listener
 	 */
 	public void removeListener( @Nonnull ValueListener<? super T> listener );
 
 	/**
-	 * A Listener interface for listening to changes to a ListenableValue.
+	 * A Listener interface for listening to updates to a ListenableValue.
 	 * 
 	 * @author dain.nilsson
 	 * 
@@ -50,7 +51,7 @@ public interface ListenableValue<T> extends Value<T>
 	public interface ValueListener<T>
 	{
 		/**
-		 * Notify the ValueListener that the value has changed.
+		 * Notify the ValueListener that the value has been updated.
 		 * 
 		 * @param value
 		 */

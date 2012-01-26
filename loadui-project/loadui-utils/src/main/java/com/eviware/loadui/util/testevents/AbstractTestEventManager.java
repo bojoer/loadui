@@ -56,16 +56,15 @@ public abstract class AbstractTestEventManager implements TestEventManager
 	}
 
 	@Override
-	public void logMessage( MessageLevel level, String message )
-	{
-		MessageTestEvent messageEvent = new MessageTestEvent( System.currentTimeMillis(), level, message );
-		logTestEvent( MessageSeveritySource.getSource( level ), messageEvent );
-	}
-
-	@Override
 	public void logMessage( MessageLevel level, String message, long timestamp )
 	{
 		MessageTestEvent messageEvent = new MessageTestEvent( timestamp, level, message );
 		logTestEvent( MessageSeveritySource.getSource( level ), messageEvent );
+	}
+
+	@Override
+	public void logMessage( MessageLevel level, String message )
+	{
+		logMessage( level, message, System.currentTimeMillis() );
 	}
 }

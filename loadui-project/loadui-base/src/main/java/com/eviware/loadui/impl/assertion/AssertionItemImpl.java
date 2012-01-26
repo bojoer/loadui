@@ -384,7 +384,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	private class FailureGrouper implements Runnable
 	{
 		private static final int GROUPING_PERIOD = 1000;
-		private static final int GROUPING_COUNT = 10;
+		private static final int GROUPING_COUNT = 4;
 
 		private final ScheduledExecutorService executor = BeanInjector.getBean( ScheduledExecutorService.class );
 		private final TestEventManager manager = BeanInjector.getBean( TestEventManager.class );
@@ -408,8 +408,8 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		{
 			if( entries.size() >= GROUPING_COUNT )
 			{
-				manager.logTestEvent( AssertionItemImpl.this, new AssertionFailureEvent.Group(
-						entries.getFirst().timestamp, AssertionItemImpl.this, entries.size() ) );
+				manager.logTestEvent( AssertionItemImpl.this, new AssertionFailureEvent.Group( entries.getFirst().timestamp
+						+ GROUPING_PERIOD / 2, AssertionItemImpl.this, entries.size() ) );
 				entries.clear();
 			}
 			else
