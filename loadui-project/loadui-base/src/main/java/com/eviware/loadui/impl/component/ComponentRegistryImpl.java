@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +55,7 @@ public class ComponentRegistryImpl implements ComponentRegistry
 					"Cannot register ComponentDescriptor with null provider, or null descriptor!" );
 		descriptors.put( descriptor, provider );
 		types.put( descriptor.getType(), provider );
-		log.info( "Registered Component Descriptor: {}", descriptor.getLabel() );
+		log.debug( "Registered Component Descriptor: {}", descriptor.getLabel() );
 		fireDescriptorAdded( descriptor );
 	}
 

@@ -61,7 +61,7 @@ public class NotificationPanel extends VBox {
 					HBox {
 						padding: Insets { top: 6, right: 10, bottom: 6, left: 10 }
 						content: [
-							Button { text: "Event Log »", blocksMouse: false },
+							Button { text: "System Log »", blocksMouse: false },
 							Label { layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
 							Button { graphic: Region { styleClass: "up-arrow" }, blocksMouse: false, action: bind action }
 						]

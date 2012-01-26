@@ -390,10 +390,13 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		private final TestEventManager manager = BeanInjector.getBean( TestEventManager.class );
 		private final LinkedList<Entry> entries = Lists.newLinkedList();
 
+		private long deadline = 0;
+
 		public void append( T value, long timestamp )
 		{
 			if( entries.isEmpty() )
 			{
+				deadline = timestamp + GROUPING_PERIOD;
 				executor.schedule( this, GROUPING_PERIOD, TimeUnit.MILLISECONDS );
 			}
 
@@ -403,12 +406,10 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		@Override
 		public void run()
 		{
-			long deadline = System.currentTimeMillis() - GROUPING_PERIOD;
-
 			if( entries.size() >= GROUPING_COUNT )
 			{
-				manager.logTestEvent( AssertionItemImpl.this, new AssertionFailureEvent( entries.getFirst().timestamp,
-						AssertionItemImpl.this, "<" + entries.size() + " values>" ) );
+				manager.logTestEvent( AssertionItemImpl.this, new AssertionFailureEvent.Group(
+						entries.getFirst().timestamp, AssertionItemImpl.this, entries.size() ) );
 				entries.clear();
 			}
 			else
@@ -422,8 +423,9 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 
 				if( !entries.isEmpty() )
 				{
-					executor.schedule( this, GROUPING_PERIOD - ( entries.getFirst().timestamp - deadline ),
-							TimeUnit.MILLISECONDS );
+					long timeUntilNext = entries.getFirst().timestamp - deadline;
+					deadline = entries.getFirst().timestamp + GROUPING_PERIOD;
+					executor.schedule( this, GROUPING_PERIOD + timeUntilNext, TimeUnit.MILLISECONDS );
 				}
 			}
 		}

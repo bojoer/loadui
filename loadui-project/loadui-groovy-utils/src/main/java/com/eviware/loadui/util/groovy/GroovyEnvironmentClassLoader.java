@@ -15,6 +15,9 @@
  */
 package com.eviware.loadui.util.groovy;
 
+import groovy.grape.Grape;
+import groovy.lang.GroovyClassLoader;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -26,9 +29,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import groovy.grape.Grape;
-import groovy.lang.GroovyClassLoader;
 
 /**
  * A GroovyClassLoader which can load dependencies dynamically from a Maven
@@ -61,7 +61,7 @@ public class GroovyEnvironmentClassLoader extends GroovyClassLoader
 		String dependency = Joiner.on( ':' ).join( group, module );
 		if( loadedDeps.add( dependency ) )
 		{
-			log.info( "Loading dependency: {}", dependency );
+			log.debug( "Loading dependency: {}", dependency );
 
 			HashMap<String, Object> args = Maps.newHashMap();
 			args.put( "group", group );

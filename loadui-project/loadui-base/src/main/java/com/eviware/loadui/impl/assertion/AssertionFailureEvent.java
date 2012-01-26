@@ -42,10 +42,10 @@ public class AssertionFailureEvent extends AbstractTestEvent
 				.valueOf( value ) );
 	}
 
-	public AssertionFailureEvent( long timestamp, AssertionItem<?> assertionItem, String valueLabel,
+	protected AssertionFailureEvent( long timestamp, AssertionItem<?> assertionItem, String valueLabel,
 			String constraintString, String valueString )
 	{
-		super( timestamp );
+		super( AssertionFailureEvent.class, timestamp );
 
 		this.assertionItem = assertionItem;
 		this.valueLabel = valueLabel;
@@ -64,6 +64,30 @@ public class AssertionFailureEvent extends AbstractTestEvent
 		return String.format( "%s: %s did not meet constraint: %s", valueLabel, valueString, constraintString );
 	}
 
+	public static class Group extends AssertionFailureEvent
+	{
+		private final int occurances;
+
+		public Group( long timestamp, AssertionItem<?> assertionItem, int occurances )
+		{
+			this( timestamp, assertionItem, assertionItem.getLabel(), String.valueOf( assertionItem.getConstraint() ),
+					occurances );
+		}
+
+		protected Group( long timestamp, AssertionItem<?> assertionItem, String valueLabel, String constraintString,
+				int occurances )
+		{
+			super( timestamp, assertionItem, valueLabel, constraintString, String.valueOf( "<" + occurances + " values>" ) );
+
+			this.occurances = occurances;
+		}
+
+		public int getOccurances()
+		{
+			return occurances;
+		}
+	}
+
 	public static final class Factory extends AbstractTestEvent.Factory<AssertionFailureEvent>
 	{
 		public Factory()
@@ -77,7 +101,7 @@ public class AssertionFailureEvent extends AbstractTestEvent
 			AssertionItem<?> assertionItem = null;
 			String assertionLabel = null;
 			String constraintString = null;
-			String valueString = null;
+			Object value = null;
 
 			try
 			{
@@ -86,7 +110,7 @@ public class AssertionFailureEvent extends AbstractTestEvent
 				assertionLabel = parts[1];
 				constraintString = parts[2];
 
-				valueString = ( String )SerializationUtils.deserialize( entryData );
+				value = SerializationUtils.deserialize( entryData );
 			}
 			catch( ClassNotFoundException e )
 			{
@@ -97,7 +121,11 @@ public class AssertionFailureEvent extends AbstractTestEvent
 				e.printStackTrace();
 			}
 
-			return new AssertionFailureEvent( timestamp, assertionItem, assertionLabel, constraintString, valueString );
+			if( value instanceof Integer )
+			{
+				return new Group( timestamp, assertionItem, assertionLabel, constraintString, ( Integer )value );
+			}
+			return new AssertionFailureEvent( timestamp, assertionItem, assertionLabel, constraintString, ( String )value );
 		}
 
 		@Override
@@ -105,6 +133,10 @@ public class AssertionFailureEvent extends AbstractTestEvent
 		{
 			try
 			{
+				if( testEvent instanceof Group )
+				{
+					return SerializationUtils.serialize( ( ( Group )testEvent ).occurances );
+				}
 				return SerializationUtils.serialize( testEvent.valueString );
 			}
 			catch( IOException e )

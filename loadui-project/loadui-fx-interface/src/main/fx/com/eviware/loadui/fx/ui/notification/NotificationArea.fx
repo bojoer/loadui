@@ -28,6 +28,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.text.SimpleDateFormat;
 
+import org.slf4j.LoggerFactory;
+
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.ui.NotificationArea" );
 def dateFormat = new SimpleDateFormat( "EEE MMM dd HH:mm:ss", Locale.ENGLISH );
 
 def HIDDEN = 0;
@@ -48,6 +51,13 @@ class MessageListener extends TestEventManager.TestEventObserver {
 					NotificationArea.notify( messageEvent.getMessage(), new Date() );
 				} );
 			}
+			
+			if( level == MessageLevel.NOTIFICATION )
+				log.info( messageEvent.getMessage() )
+			else if( level == MessageLevel.WARNING )
+				log.warn( messageEvent.getMessage() )
+			else if( level == MessageLevel.ERROR )
+				log.error( messageEvent.getMessage() );
 		}
 	}
 }

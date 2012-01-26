@@ -141,7 +141,7 @@ public class LReportTemplate
 	{
 		if( isChanged() )
 		{
-			log.info( "Updating report template [" + reportName + "]" );
+			log.debug( "Updating report template [" + reportName + "]" );
 			xml = readTemplateFile();
 		}
 	}

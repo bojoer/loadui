@@ -28,6 +28,7 @@ import com.eviware.loadui.api.ui.inspector.Inspector;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
 
 import java.lang.StringBuilder;
 import java.lang.Throwable;
@@ -59,6 +60,7 @@ public class LogInspector extends AppenderSkeleton, Inspector {
 	def panel = ListView {};
 	
 	postinit {
+		setThreshold( Level.toLevel( java.lang.System.getProperty( "loadui.log.level", "INFO" ) ) );
 		Logger.getLogger( packages ).addAppender( this );
 	}
 	

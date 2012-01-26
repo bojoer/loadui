@@ -36,7 +36,7 @@ public class TrafficTester
 					long delta = now - lastOutput;
 					if( delta >= 1000 )
 					{
-						log.info( "At message: {}, {} roundtrips per second...", count, ( double )( count - lastCount )
+						log.debug( "At message: {}, {} roundtrips per second...", count, ( double )( count - lastCount )
 								/ ( ( double )delta / 1000 ) );
 						lastOutput = now;
 						lastCount = count;

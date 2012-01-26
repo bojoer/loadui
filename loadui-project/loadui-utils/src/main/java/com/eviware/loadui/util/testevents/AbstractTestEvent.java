@@ -24,10 +24,18 @@ import com.eviware.loadui.api.testevents.TestEvent;
  */
 public abstract class AbstractTestEvent implements TestEvent
 {
+	private final Class<? extends TestEvent> type;
 	private final long timestamp;
+
+	public AbstractTestEvent( Class<? extends TestEvent> type, long timestamp )
+	{
+		this.type = type;
+		this.timestamp = timestamp;
+	}
 
 	public AbstractTestEvent( long timestamp )
 	{
+		type = getClass();
 		this.timestamp = timestamp;
 	}
 
@@ -40,7 +48,7 @@ public abstract class AbstractTestEvent implements TestEvent
 	@Override
 	public Class<? extends TestEvent> getType()
 	{
-		return getClass();
+		return type;
 	}
 
 	public static abstract class Factory<T extends TestEvent> implements TestEvent.Factory<T>

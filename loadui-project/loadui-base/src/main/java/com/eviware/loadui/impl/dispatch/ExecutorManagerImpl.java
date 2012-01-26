@@ -141,7 +141,7 @@ public final class ExecutorManagerImpl implements ExecutorManager
 	{
 		int newSize = size < MIN_POOL_SIZE ? MIN_POOL_SIZE : size;
 		executor.setMaxPoolSize( newSize );
-		log.info( "Global Threadpool max size set to {}", newSize );
+		log.debug( "Global Threadpool max size set to {}", newSize );
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public final class ExecutorManagerImpl implements ExecutorManager
 	@Override
 	public void setMaxQueueSize( int size )
 	{
-		log.info( "Global Threadpool queue max size set to {}", size );
+		log.debug( "Global Threadpool queue max size set to {}", size );
 		queue.setCapacity( size );
 	}
 

@@ -30,7 +30,7 @@ public class SoapUIStarter
 	{
 		if( CajoClient.getInstance().testConnection() )
 		{
-			logger.info( "Cajo online!Test passed!" );
+			logger.debug( "Cajo online!Test passed!" );
 			try
 			{
 				// try to give it a focus
@@ -38,12 +38,12 @@ public class SoapUIStarter
 			}
 			catch( Exception e )
 			{
-				logger.info( "SoapUI is running but can't move it to the front." );
+				logger.warn( "SoapUI is running but can't move it to the front." );
 			}
 			return;
 		}
 
-		logger.info( "Cajo offline!Test not passed!" );
+		logger.warn( "Cajo offline!Test not passed!" );
 		// String extension = isWindows() ? ".bat" : ".sh";
 		// if( extension.equals( ".sh" ) )
 		// {

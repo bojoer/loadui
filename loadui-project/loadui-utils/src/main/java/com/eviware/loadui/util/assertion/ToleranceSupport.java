@@ -32,9 +32,18 @@ public class ToleranceSupport
 	private int period;
 	private int allowedOccurrences;
 
+	public ToleranceSupport()
+	{
+	}
+
+	public ToleranceSupport( int period, int allowedOccurances )
+	{
+		setTolerance( period, allowedOccurances );
+	}
+
 	/**
 	 * Sets the tolerance to allow allowedOccurrences occurrences within period
-	 * seconds without triggering.
+	 * milliseconds without triggering.
 	 * 
 	 * @param period
 	 * @param allowedOccurrences

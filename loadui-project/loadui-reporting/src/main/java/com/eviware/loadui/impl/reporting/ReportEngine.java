@@ -221,7 +221,7 @@ public class ReportEngine
 
 	private JasperReport compileReport( LReportTemplate report )
 	{
-		log.info( "compile report" );
+		log.debug( "compile report" );
 		JasperReport jr = null;
 		try
 		{

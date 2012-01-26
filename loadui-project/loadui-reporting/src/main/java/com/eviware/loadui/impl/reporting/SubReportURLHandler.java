@@ -51,7 +51,7 @@ public class SubReportURLHandler extends URLStreamHandler
 	{
 		// log.debug( "Getting subreport for url [" + url + "]" );
 		String subreportFileName = url.getPath();
-		log.info( "Looking for subreport : " + subreportFileName );
+		log.debug( "Looking for subreport : " + subreportFileName );
 		LReportTemplate subreport = reportEngine.getReport( subreportFileName );
 
 		// get xml compile it and pass connection to it..

@@ -33,6 +33,7 @@ public class RangeConstraint implements Constraint<Number>
 
 	private final double min;
 	private final double max;
+	private transient final String stringRepr;
 
 	public RangeConstraint( @Nonnull Number min, @Nonnull Number max )
 	{
@@ -40,6 +41,9 @@ public class RangeConstraint implements Constraint<Number>
 		this.max = max.doubleValue();
 
 		Preconditions.checkArgument( this.min <= this.max, "min must be less than or equal to max!" );
+
+		stringRepr = min == max ? String.format( "Equals %.02f", this.min ) : String.format( "Range %.02f - %.02f",
+				this.min, this.max );
 	}
 
 	@Override
@@ -76,6 +80,6 @@ public class RangeConstraint implements Constraint<Number>
 	@Override
 	public String toString()
 	{
-		return String.format( "Range %.02f - %.02f", min, max );
+		return stringRepr;
 	}
 }

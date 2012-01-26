@@ -134,7 +134,7 @@ public class AddAssertionDialog {
 			min = Integer.valueOf(minTextBox.text);
 			max = Integer.valueOf(maxTextBox.text);
 			times = Integer.valueOf(timesTextBox.text);
-			within = Integer.valueOf(withinTextBox.text);
+			within = Integer.valueOf(withinTextBox.text) * 1000;
 			
 			if(min < 0){
 				warningMessage = "Min value should be greater than or equal to zero.";
