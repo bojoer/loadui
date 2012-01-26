@@ -17,6 +17,9 @@ package com.eviware.loadui.impl.assertion;
 
 import java.io.IOException;
 import java.util.EventObject;
+import java.util.LinkedList;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
 
@@ -46,6 +49,7 @@ import com.eviware.loadui.util.events.EventSupport;
 import com.eviware.loadui.util.serialization.SerializationUtils;
 import com.eviware.loadui.util.testevents.TestEventSourceSupport;
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent.Source<AssertionFailureEvent>,
 		EventFirer, Releasable
@@ -59,7 +63,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	private static final String TOLERANCE_PERIOD = "tolerancePeriod";
 
 	private final EventSupport eventSupport = new EventSupport();
-	private final ToleranceSupport toleranceSupport = new ToleranceSupport();
+	private final ToleranceSupport conditionTolerance = new ToleranceSupport();
 	private final ValueAsserter valueAsserter = new ValueAsserter();
 	private final LabelListener labelListener = new LabelListener();
 	private final TestEventSourceSupport sourceSupport;
@@ -115,7 +119,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		int tolerancePeriod = Integer.parseInt( addonSupport.getAttribute( TOLERANCE_PERIOD, "0" ) );
 		int toleranceAllowedOccurrences = Integer.parseInt( addonSupport
 				.getAttribute( TOLERANCE_ALLOWED_OCCURRENCES, "0" ) );
-		toleranceSupport.setTolerance( tolerancePeriod, toleranceAllowedOccurrences );
+		conditionTolerance.setTolerance( tolerancePeriod, toleranceAllowedOccurrences );
 
 		ListenableValue<T> tmpValue = null;
 		try
@@ -167,7 +171,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 
 	public void start()
 	{
-		toleranceSupport.clear();
+		conditionTolerance.clear();
 		listenableValue.addListener( valueAsserter );
 	}
 
@@ -235,13 +239,13 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	@Override
 	public int getTolerancePeriod()
 	{
-		return toleranceSupport.getPeriod();
+		return conditionTolerance.getPeriod();
 	}
 
 	@Override
 	public int getToleranceAllowedOccurrences()
 	{
-		return toleranceSupport.getAllowedOccurrences();
+		return conditionTolerance.getAllowedOccurrences();
 	}
 
 	@Override
@@ -249,7 +253,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	{
 		addonSupport.setAttribute( TOLERANCE_PERIOD, String.valueOf( period ) );
 		addonSupport.setAttribute( TOLERANCE_ALLOWED_OCCURRENCES, String.valueOf( allowedOccurrences ) );
-		toleranceSupport.setTolerance( period, allowedOccurrences );
+		conditionTolerance.setTolerance( period, allowedOccurrences );
 
 		sourceSupport.setData( createData() );
 	}
@@ -359,7 +363,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 
 	private class ValueAsserter implements ValueListener<T>
 	{
-		private final TestEventManager manager = BeanInjector.getBean( TestEventManager.class );
+		private final FailureGrouper failureGrouper = new FailureGrouper();
 
 		@Override
 		public void update( T value )
@@ -367,14 +371,72 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 			if( constraint != null && !constraint.validate( value ) )
 			{
 				long timestamp = System.currentTimeMillis();
-				if( toleranceSupport.occur( timestamp ) )
-				{
-					AssertionFailureEvent testEvent = new AssertionFailureEvent( timestamp, AssertionItemImpl.this,
-							String.valueOf( value ) );
 
-					manager.logTestEvent( AssertionItemImpl.this, testEvent );
+				if( conditionTolerance.occur( timestamp ) )
+				{
+					failureGrouper.append( value, timestamp );
 					canvas.getCounter( CanvasItem.FAILURE_COUNTER ).increment();
 				}
+			}
+		}
+	}
+
+	private class FailureGrouper implements Runnable
+	{
+		private static final int GROUPING_PERIOD = 1000;
+		private static final int GROUPING_COUNT = 10;
+
+		private final ScheduledExecutorService executor = BeanInjector.getBean( ScheduledExecutorService.class );
+		private final TestEventManager manager = BeanInjector.getBean( TestEventManager.class );
+		private final LinkedList<Entry> entries = Lists.newLinkedList();
+
+		public void append( T value, long timestamp )
+		{
+			if( entries.isEmpty() )
+			{
+				executor.schedule( this, GROUPING_PERIOD, TimeUnit.MILLISECONDS );
+			}
+
+			entries.add( new Entry( value, timestamp ) );
+		}
+
+		@Override
+		public void run()
+		{
+			long deadline = System.currentTimeMillis() - GROUPING_PERIOD;
+
+			if( entries.size() >= GROUPING_COUNT )
+			{
+				manager.logTestEvent( AssertionItemImpl.this, new AssertionFailureEvent( entries.getFirst().timestamp,
+						AssertionItemImpl.this, "<" + entries.size() + " values>" ) );
+				entries.clear();
+			}
+			else
+			{
+				while( entries.getFirst().timestamp < deadline )
+				{
+					Entry entry = entries.removeFirst();
+					manager.logTestEvent( AssertionItemImpl.this, new AssertionFailureEvent( entry.timestamp,
+							AssertionItemImpl.this, String.valueOf( entry.value ) ) );
+				}
+
+				if( !entries.isEmpty() )
+				{
+					executor.schedule( this, GROUPING_PERIOD - ( entries.getFirst().timestamp - deadline ),
+							TimeUnit.MILLISECONDS );
+				}
+			}
+		}
+
+		private class Entry
+		{
+			private final T value;
+			private final long timestamp;
+
+			private Entry( T value, long timestamp )
+			{
+				this.value = value;
+				this.timestamp = timestamp;
 			}
 		}
 	}
