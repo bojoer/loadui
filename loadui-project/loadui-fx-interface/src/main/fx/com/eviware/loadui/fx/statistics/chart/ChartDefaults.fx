@@ -97,12 +97,12 @@ public function createSubChart( parent:ChartGroup, owner:Chart.Owner ):Chart {
 			(chartView as ConfigurableLineChartView).addSegment( "Requests", "PER_SECOND", StatisticVariable.MAIN_SOURCE );
 		}
 	}
-//	else if( owner instanceof AssertionItem ) {
-//		def assertionItem = (owner as AssertionItem);
-//		def typeLabel = BeanInjector.getBean( TestEventRegistry.class ).lookupFactory( (assertionItem as TestEvent.Source).getType() ).getLabel();
-//		def chartView = parent.getChartViewForChart( chart );
-//		(chartView as ConfigurableLineChartView).addSegment( typeLabel, assertionItem.getLabel() );
-//	}
+	else if( owner instanceof AssertionItem ) {
+		def assertionItem = (owner as AssertionItem);
+		def typeLabel = BeanInjector.getBean( TestEventRegistry.class ).lookupFactory( (assertionItem as TestEvent.Source).getType() ).getLabel();
+		def chartView = parent.getChartViewForChart( chart );
+		(chartView as ConfigurableLineChartView).addSegment( typeLabel, assertionItem.getLabel() );
+	}
 	
 	chart
 }
