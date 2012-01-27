@@ -86,11 +86,11 @@ public class StylePanel extends Grid {
 					value: model.getStrokeStyle()
 					layoutInfo: LayoutInfo { width: 90 }
 					onValueChanged: function( value ):Void {
-						model.setStrokeStyle( value as StrokeStyle );
+						if( model instanceof SegmentModel.MutableStrokeStyle ) ( model as SegmentModel.MutableStrokeStyle ).setStrokeStyle( value as StrokeStyle );
 					}
 				}
 				def width:Number = bind slider.value on replace {
-					model.setStrokeWidth( width );
+					if( model instanceof SegmentModel.MutableStrokeWidth ) ( model as SegmentModel.MutableStrokeWidth ).setStrokeWidth( width );
 					slider.value = width as Integer;
 				}
 				var lineColor:Color = FxUtils.awtColorToFx( model.getColor() );
@@ -152,7 +152,7 @@ public class StylePanel extends Grid {
 						graphicHPos: HPos.RIGHT
 						layoutInfo: LayoutInfo { hshrink: Priority.NEVER, width: 45 }
 					},
-					slider,
+					if( model instanceof SegmentModel.MutableStrokeWidth ) slider else Label {},
 					selector
 				] }
 			}

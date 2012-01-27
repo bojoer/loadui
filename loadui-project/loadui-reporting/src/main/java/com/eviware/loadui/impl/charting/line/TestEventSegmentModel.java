@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 
 import javax.swing.SwingUtilities;
 
+import com.eviware.loadui.api.annotations.Strong;
 import com.eviware.loadui.api.charting.line.SegmentModel;
 import com.eviware.loadui.api.charting.line.StrokeStyle;
 import com.eviware.loadui.api.statistics.DataPoint;
@@ -19,6 +20,7 @@ import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.api.testevents.TestEventManager.TestEventObserver;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.annotations.AnnotationUtils;
 import com.eviware.loadui.util.charting.LineChartUtils;
 import com.eviware.loadui.util.statistics.DataPointImpl;
 import com.google.common.base.Function;
@@ -26,20 +28,23 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.jidesoft.chart.Chart;
 import com.jidesoft.chart.LineMarker;
 import com.jidesoft.chart.Orientation;
 import com.jidesoft.chart.model.DefaultChartModel;
 import com.jidesoft.chart.style.ChartStyle;
 
-public class TestEventSegmentModel extends AbstractSegmentModel implements SegmentModel, Releasable
+public class TestEventSegmentModel extends AbstractSegmentModel implements SegmentModel.MutableStrokeStyle, Releasable
 {
 	private static final TestEventListener testEventListener = new TestEventListener();
-	public static final Function<Long, DataPoint<?>> longToDataPoint = new Function<Long, DataPoint<?>>()
+	public static final Function<TestEvent, DataPoint<?>> longToDataPoint = new Function<TestEvent, DataPoint<?>>()
 	{
 		@Override
-		public DataPoint<?> apply( Long input )
+		public DataPoint<?> apply( TestEvent input )
 		{
-			return new DataPointImpl<Number>( input, 0 );
+			//Smuggle the style in the y field:
+			int strong = AnnotationUtils.hasAnnotation( input, Strong.class ) ? 1 : 0;
+			return new DataPointImpl<Number>( input.getTimestamp(), strong );
 		}
 	};
 
@@ -49,7 +54,6 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 
 	private Color color = Color.decode( LineChartStyles.lineColors[0] );
 	private StrokeStyle strokeStyle;
-	private int strokeWidth = 1;
 	private long xRangeMin = 0;
 	private long xRangeMax = 0;
 
@@ -73,7 +77,7 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 			public Iterable<DataPoint<?>> call() throws Exception
 			{
 				return execution == null ? ImmutableList.<DataPoint<?>> of() : Iterables.transform( getSegment()
-						.getPointsInRange( execution, xRangeMin, xRangeMax ), longToDataPoint );
+						.getTestEventsInRange( execution, xRangeMin, xRangeMax ), longToDataPoint );
 			}
 		}, 1 );
 	}
@@ -112,8 +116,19 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 	@Override
 	public DefaultChartModel addPoint( double x, double y, boolean update )
 	{
-		LineMarker line = new LineMarker( chart, Orientation.vertical, x, getColor() );
-		line.setStroke( chartStyle.getLineStroke() );
+		LineMarker line;
+
+		if( y > 0 )
+		{
+			line = new ThickLineMarker( chart, Orientation.vertical, x, getColor() );
+			line.setStroke( strokeStyle.getStroke( 3 ) );
+		}
+		else
+		{
+			line = new LineMarker( chart, Orientation.vertical, x, getColor() );
+			line.setStroke( strokeStyle.getStroke( 1 ) );
+		}
+
 		chart.addDrawable( line );
 		if( update )
 		{
@@ -201,20 +216,7 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 	@Override
 	public int getStrokeWidth()
 	{
-		return strokeWidth;
-	}
-
-	@Override
-	public void setStrokeWidth( int strokeWidth )
-	{
-		if( this.strokeWidth != strokeWidth )
-		{
-			int oldStrokeWidth = this.strokeWidth;
-			this.strokeWidth = strokeWidth;
-			segment.setAttribute( WIDTH, String.valueOf( strokeWidth ) );
-			chartGroup.fireEvent( new PropertyChangeEvent( segment, WIDTH, oldStrokeWidth, strokeWidth ) );
-			updateStroke();
-		}
+		return 1;
 	}
 
 	@Override
@@ -237,15 +239,6 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 
 		try
 		{
-			strokeWidth = Integer.parseInt( segment.getAttribute( WIDTH, "1" ) );
-		}
-		catch( NumberFormatException e )
-		{
-			strokeWidth = 1;
-		}
-
-		try
-		{
 			strokeStyle = StrokeStyle.valueOf( segment.getAttribute( STROKE, StrokeStyle.SOLID.name() ) );
 		}
 		catch( IllegalArgumentException e )
@@ -258,12 +251,14 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 
 	private void updateStroke()
 	{
-		BasicStroke stroke = strokeStyle.getStroke( strokeWidth );
-		chartStyle.setLineStroke( stroke );
+		BasicStroke thinStroke = strokeStyle.getStroke( 1 );
+		BasicStroke thickStroke = strokeStyle.getStroke( 3 );
+
+		chartStyle.setLineStroke( thinStroke );
 
 		for( LineMarker line : ImmutableList.copyOf( lineMarkers ) )
 		{
-			line.setStroke( stroke );
+			line.setStroke( AnnotationUtils.hasAnnotation( line, Strong.class ) ? thickStroke : thinStroke );
 		}
 	}
 
@@ -308,6 +303,15 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 		private synchronized void removeModel( TestEventSegmentModel model )
 		{
 			models.remove( model );
+		}
+	}
+
+	@Strong
+	private static class ThickLineMarker extends LineMarker
+	{
+		public ThickLineMarker( Chart chart, Orientation orientation, double x, Color color )
+		{
+			super( chart, orientation, x, color );
 		}
 	}
 }

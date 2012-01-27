@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.statistics.model.chart.line;
 
 import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEvent.Entry;
 import com.eviware.loadui.api.testevents.TestEventSourceDescriptor;
 import com.eviware.loadui.api.testevents.TestEventTypeDescriptor;
@@ -30,12 +31,12 @@ public class ChartTestEventSegment extends AbstractChartSegment implements TestE
 {
 	private static final TestEventSourceDescriptor[] EMPTY_DESCRIPTOR_ARRAY = new TestEventSourceDescriptor[0];
 
-	private final Function<Entry, Long> getValues = new Function<Entry, Long>()
+	private final Function<Entry, TestEvent> getValues = new Function<Entry, TestEvent>()
 	{
 		@Override
-		public Long apply( Entry input )
+		public TestEvent apply( Entry input )
 		{
-			return input.getTestEvent().getTimestamp();
+			return input.getTestEvent();
 		}
 	};
 
@@ -81,7 +82,7 @@ public class ChartTestEventSegment extends AbstractChartSegment implements TestE
 	}
 
 	@Override
-	public Iterable<Long> getPointsInRange( Execution execution, long startTime, long endTime )
+	public Iterable<TestEvent> getTestEventsInRange( Execution execution, long startTime, long endTime )
 	{
 		return Iterables.transform( execution.getTestEventRange( startTime, endTime, getDescriptors( execution ) ),
 				getValues );

@@ -22,7 +22,7 @@ import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
  * 
  * @author dain.nilsson
  */
-public interface LineSegmentModel extends SegmentModel
+public interface LineSegmentModel extends SegmentModel.MutableStrokeWidth, SegmentModel.MutableStrokeStyle
 {
 	public static final String SCALE = "scale";
 

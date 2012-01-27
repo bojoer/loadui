@@ -33,9 +33,15 @@ public interface SegmentModel
 
 	public StrokeStyle getStrokeStyle();
 
-	public void setStrokeStyle( StrokeStyle strokeStyle );
-
 	public int getStrokeWidth();
 
-	public void setStrokeWidth( int strokeWidth );
+	public interface MutableStrokeWidth extends SegmentModel
+	{
+		public void setStrokeWidth( int strokeWidth );
+	}
+
+	public interface MutableStrokeStyle extends SegmentModel
+	{
+		public void setStrokeStyle( StrokeStyle strokeStyle );
+	}
 }

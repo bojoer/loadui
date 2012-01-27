@@ -18,6 +18,7 @@ package com.eviware.loadui.impl.assertion;
 import java.io.IOException;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
+import com.eviware.loadui.api.annotations.Strong;
 import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.serialization.SerializationUtils;
@@ -64,6 +65,7 @@ public class AssertionFailureEvent extends AbstractTestEvent
 		return String.format( "%s: %s did not meet constraint: %s", valueLabel, valueString, constraintString );
 	}
 
+	@Strong
 	public static class Group extends AssertionFailureEvent
 	{
 		private final int occurances;

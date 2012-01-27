@@ -16,6 +16,7 @@
 package com.eviware.loadui.api.statistics.model.chart.line;
 
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.testevents.TestEvent;
 
 public interface TestEventSegment extends Segment
 {
@@ -23,7 +24,7 @@ public interface TestEventSegment extends Segment
 
 	public String getSourceLabel();
 
-	public Iterable<Long> getPointsInRange( Execution execution, long startTime, long endTime );
+	public Iterable<TestEvent> getTestEventsInRange( Execution execution, long startTime, long endTime );
 
 	public interface Removable extends TestEventSegment, Segment.Removable
 	{

@@ -82,7 +82,7 @@ public class ComparedTestEventSegmentModel extends AbstractSegmentModel implemen
 			public Iterable<DataPoint<?>> call() throws Exception
 			{
 				return execution == null ? ImmutableList.<DataPoint<?>> of() : Iterables.transform( getSegment()
-						.getPointsInRange( execution, baseModel.getXRangeMin(), baseModel.getXRangeMax() ),
+						.getTestEventsInRange( execution, baseModel.getXRangeMin(), baseModel.getXRangeMax() ),
 						TestEventSegmentModel.longToDataPoint );
 			}
 		}, 1 );
