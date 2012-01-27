@@ -214,8 +214,8 @@ public class H2ExecutionManagerTest
 
 		for( int i = 0; i < 20; i++ )
 		{
-			h2.writeTestEvent( "test-event-type-label", source1, System.currentTimeMillis(), data );
-			h2.writeTestEvent( "test-event-type-label", source2, System.currentTimeMillis(), data );
+			h2.writeTestEvent( "test-event-type-label", source1, System.currentTimeMillis(), data, 0 );
+			h2.writeTestEvent( "test-event-type-label", source2, System.currentTimeMillis(), data, 0 );
 		}
 
 		assertTrue( h2.getTestEventTypes( e.getId() ).size() == 1 );

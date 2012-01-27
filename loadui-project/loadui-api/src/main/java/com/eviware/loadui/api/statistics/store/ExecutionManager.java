@@ -173,8 +173,10 @@ public interface ExecutionManager extends EventFirer
 	 * @param source
 	 * @param timestamp
 	 * @param testEventData
+	 * @param interpolationLevel
 	 */
-	public void writeTestEvent( String typeLabel, TestEvent.Source<?> source, long timestamp, byte[] testEventData );
+	public void writeTestEvent( String typeLabel, TestEvent.Source<?> source, long timestamp, byte[] testEventData,
+			int interpolationLevel );
 
 	/**
 	 * Gets a list of the names of all available Executions.

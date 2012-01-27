@@ -64,7 +64,9 @@ public class TestEventManagerImpl extends AbstractTestEventManager implements Re
 		if( factory != null )
 		{
 			manager.writeTestEvent( factory.getLabel(), source, testEvent.getTimestamp(),
-					factory.getDataForTestEvent( testEvent ) );
+					factory.getDataForTestEvent( testEvent ), 0 );
+
+			//TODO: Aggregate into interpolation levels.
 
 			TestEvent.Entry entry = new TestEventEntryImpl( testEvent, source.getLabel(), factory.getLabel() );
 			for( TestEventObserver observer : observers )
@@ -103,7 +105,7 @@ public class TestEventManagerImpl extends AbstractTestEventManager implements Re
 			long timestamp = ( Long )args.get( 2 );
 			byte[] eventData = ( byte[] )args.get( 3 );
 
-			manager.writeTestEvent( label, source, timestamp, eventData );
+			manager.writeTestEvent( label, source, timestamp, eventData, 0 );
 
 			Factory<?> factory = testEventRegistry.lookupFactory( label );
 			TestEventEntryImpl entry = null;

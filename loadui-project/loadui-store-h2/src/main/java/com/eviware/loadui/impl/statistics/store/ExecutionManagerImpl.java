@@ -684,8 +684,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	}
 
 	@Override
-	public void writeTestEvent( String typeLabel, TestEvent.Source<?> source, long timestamp, byte[] testEventData )
+	public void writeTestEvent( String typeLabel, TestEvent.Source<?> source, long timestamp, byte[] testEventData,
+			int interpolationLevel )
 	{
+		//TODO: Add interpolationLevel.
+
 		if( currentExecution != null && executionState == State.STARTED )
 		{
 			timestamp -= ( currentExecution.getStartTime() );
@@ -919,8 +922,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	}
 
 	public <T extends TestEvent> Iterable<TestEventData> readTestEventRange( String executionId, final long startTime,
-			final long endTime, Iterable<TestEventSourceConfig> sources )
+			final long endTime, int interpolationLevel, Iterable<TestEventSourceConfig> sources )
 	{
+		//TODO: Get data using interpolation level!
+
 		if( !getExecution( executionId ).isLoaded() )
 		{
 			loadExecution( executionId );

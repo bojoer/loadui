@@ -39,6 +39,7 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.testevents.TestEvent;
+import com.eviware.loadui.api.testevents.TestEvent.Entry;
 import com.eviware.loadui.api.testevents.TestEvent.Factory;
 import com.eviware.loadui.api.testevents.TestEventRegistry;
 import com.eviware.loadui.api.testevents.TestEventSourceDescriptor;
@@ -74,6 +75,7 @@ public class ExecutionImpl implements Execution, Releasable
 	public static final String KEY_ICON = "ICON";
 
 	private final Function<TestEventData, TestEvent.Entry> createTestEvent;
+	private final Function<TestEventData, TestEvent.Entry> createInterpolatedTestEvent;
 
 	/**
 	 * Execution directory
@@ -138,6 +140,26 @@ public class ExecutionImpl implements Execution, Releasable
 					return new TestEventEntryImpl( factory.createTestEvent( input.getTimestamp(), input
 							.getTestEventSourceConfig().getData(), input.getData() ), input.getTestEventSourceConfig()
 							.getLabel(), factory.getLabel() );
+				}
+			}
+		};
+
+		createInterpolatedTestEvent = new Function<TestEventData, TestEvent.Entry>()
+		{
+			@Override
+			public Entry apply( TestEventData input )
+			{
+				Factory<?> factory = testEventRegistry.lookupFactory( input.getType() );
+				if( factory == null )
+				{
+					return new TestEventEntryImpl( InterpolatedTestEvent.createEvent( UnknownTestEvent.class,
+							input.getTimestamp(), input.getData() ), input.getTestEventSourceConfig().getLabel(), "Unknown" );
+				}
+				else
+				{
+					return new TestEventEntryImpl( InterpolatedTestEvent.createEvent( UnknownTestEvent.class,
+							input.getTimestamp(), input.getData() ), input.getTestEventSourceConfig().getLabel(),
+							factory.getLabel() );
 				}
 			}
 		};
@@ -234,9 +256,15 @@ public class ExecutionImpl implements Execution, Releasable
 	public Iterable<TestEvent.Entry> getTestEventRange( long startTime, long endTime,
 			TestEventSourceDescriptor... sources )
 	{
-		return Iterables
-				.transform( manager.readTestEventRange( getId(), startTime, endTime, getConfigsForSources( sources ) ),
-						createTestEvent );
+		return getTestEventRange( startTime, endTime, 0, sources );
+	}
+
+	@Override
+	public Iterable<Entry> getTestEventRange( long startTime, long endTime, int interpolationLevel,
+			TestEventSourceDescriptor... sources )
+	{
+		return Iterables.transform( manager.readTestEventRange( getId(), startTime, endTime, interpolationLevel,
+				getConfigsForSources( sources ) ), interpolationLevel > 0 ? createInterpolatedTestEvent : createTestEvent );
 	}
 
 	@Override

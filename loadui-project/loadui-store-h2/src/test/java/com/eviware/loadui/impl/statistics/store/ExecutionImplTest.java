@@ -132,9 +132,9 @@ public class ExecutionImplTest
 		when( testEventRegistry.lookupFactory( factory.getType() ) ).thenReturn( factory );
 		MyTestEventSource source = new MyTestEventSource();
 
-		h2.writeTestEvent( factory.getLabel(), source, currentExecution.getStartTime() + 37, new byte[0] );
-		h2.writeTestEvent( factory.getLabel(), source, currentExecution.getStartTime() + 137, new byte[0] );
-		h2.writeTestEvent( factory.getLabel(), source, currentExecution.getStartTime() + 68, new byte[0] );
+		h2.writeTestEvent( factory.getLabel(), source, currentExecution.getStartTime() + 37, new byte[0], 0 );
+		h2.writeTestEvent( factory.getLabel(), source, currentExecution.getStartTime() + 137, new byte[0], 0 );
+		h2.writeTestEvent( factory.getLabel(), source, currentExecution.getStartTime() + 68, new byte[0], 0 );
 
 		assertThat( Iterables.getOnlyElement( currentExecution.getEventTypes() ).getLabel(), is( factory.getLabel() ) );
 
@@ -169,7 +169,7 @@ public class ExecutionImplTest
 		long time = currentExecution.getStartTime();
 		for( int i = 1000; i > 0; i-- )
 		{
-			h2.writeTestEvent( factory.getLabel(), source, time++ , new byte[0] );
+			h2.writeTestEvent( factory.getLabel(), source, time++ , new byte[0], 0 );
 		}
 
 		assertThat( Iterables.size( currentExecution.getTestEvents( 0, false ) ), is( 1000 ) );
@@ -197,7 +197,7 @@ public class ExecutionImplTest
 
 		for( int i = 0; i < 20; i++ )
 		{
-			h2.writeTestEvent( "test-event-type-label", source, System.currentTimeMillis(), "event-data".getBytes() );
+			h2.writeTestEvent( "test-event-type-label", source, System.currentTimeMillis(), "event-data".getBytes(), 0 );
 		}
 
 		Set<TestEventTypeDescriptor> types = currentExecution.getEventTypes();
@@ -231,14 +231,14 @@ public class ExecutionImplTest
 
 		for( int i = 0; i < 98; i++ )
 		{
-			h2.writeTestEvent( "test-event-type-label", source, System.currentTimeMillis(), "event-data".getBytes() );
+			h2.writeTestEvent( "test-event-type-label", source, System.currentTimeMillis(), "event-data".getBytes(), 0 );
 		}
 
 		assertThat( currentExecution.getTestEventCount(), is( 98 ) );
 
 		for( int i = 0; i < 198; i++ )
 		{
-			h2.writeTestEvent( "test-event-type-label", source, System.currentTimeMillis(), "event-data".getBytes() );
+			h2.writeTestEvent( "test-event-type-label", source, System.currentTimeMillis(), "event-data".getBytes(), 0 );
 		}
 		assertThat( currentExecution.getTestEventCount(), is( 198 + 98 ) );
 	}
@@ -256,7 +256,7 @@ public class ExecutionImplTest
 		long start = currentExecution.getStartTime();
 		for( int i = 0; i < 100; i++ )
 		{
-			h2.writeTestEvent( "test-event-type-label", source, start + i * 1000, "event-data".getBytes() );
+			h2.writeTestEvent( "test-event-type-label", source, start + i * 1000, "event-data".getBytes(), 0 );
 		}
 
 		assertThat( Iterables.size( currentExecution.getTestEventRange( 0, 99 * 1000 ) ), is( 100 ) );
@@ -279,7 +279,7 @@ public class ExecutionImplTest
 		long start = System.currentTimeMillis();
 		for( int i = 0; i < 100; i++ )
 		{
-			h2.writeTestEvent( "test-event-type-label", source, start + i * 1000, "event-data".getBytes() );
+			h2.writeTestEvent( "test-event-type-label", source, start + i * 1000, "event-data".getBytes(), 0 );
 		}
 
 		assertThat( Iterables.size( currentExecution.getTestEvents( 0, false ) ), is( 100 ) );

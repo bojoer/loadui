@@ -107,6 +107,19 @@ public interface Execution extends Labeled.Mutable, EventFirer, AttributeHolder,
 			TestEventSourceDescriptor... sources );
 
 	/**
+	 * Returns all stored TestEvents between the given interval, of the given
+	 * type and interpolation level.
+	 * 
+	 * @param startTime
+	 * @param endTime
+	 * @param interpolationLevel
+	 * @param sources
+	 * @return
+	 */
+	public Iterable<TestEvent.Entry> getTestEventRange( long startTime, long endTime, int interpolationLevel,
+			TestEventSourceDescriptor... sources );
+
+	/**
 	 * Returns an Iterable of the TestEvents starting with the TestEvent at the
 	 * position indicated by the index parameter (the index is applied after
 	 * filtering). When the reversed boolean is true, the iterator will move
