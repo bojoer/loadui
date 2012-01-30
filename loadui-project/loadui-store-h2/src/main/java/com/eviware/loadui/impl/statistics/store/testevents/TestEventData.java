@@ -32,14 +32,16 @@ public final class TestEventData
 	private final String type;
 	private final TestEventSourceConfig sourceConfig;
 	private final byte[] data;
+	private final int interpolationLevel;
 
 	public TestEventData( long timestamp, @Nonnull String type, @Nonnull TestEventSourceConfig sourceConfig,
-			@Nonnull byte[] data )
+			@Nonnull byte[] data, int interpolationLevel )
 	{
 		this.timestamp = timestamp;
 		this.type = type;
 		this.sourceConfig = sourceConfig;
 		this.data = data;
+		this.interpolationLevel = interpolationLevel;
 	}
 
 	public long getTimestamp()
@@ -63,5 +65,10 @@ public final class TestEventData
 	public byte[] getData()
 	{
 		return data;
+	}
+
+	public int getInterpolationLevel()
+	{
+		return interpolationLevel;
 	}
 }

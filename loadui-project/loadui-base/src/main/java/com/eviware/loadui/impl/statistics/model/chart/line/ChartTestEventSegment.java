@@ -82,9 +82,11 @@ public class ChartTestEventSegment extends AbstractChartSegment implements TestE
 	}
 
 	@Override
-	public Iterable<TestEvent> getTestEventsInRange( Execution execution, long startTime, long endTime )
+	public Iterable<TestEvent> getTestEventsInRange( Execution execution, long startTime, long endTime,
+			int interpolationLevel )
 	{
-		return Iterables.transform( execution.getTestEventRange( startTime, endTime, getDescriptors( execution ) ),
+		return Iterables.transform(
+				execution.getTestEventRange( startTime, endTime, interpolationLevel, getDescriptors( execution ) ),
 				getValues );
 	}
 

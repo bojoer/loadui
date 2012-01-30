@@ -22,12 +22,14 @@ public class TestEventEntryImpl implements TestEvent.Entry
 	private final TestEvent testEvent;
 	private final String sourceLabel;
 	private final String typeLabel;
+	private final int interpolationLevel;
 
-	public TestEventEntryImpl( TestEvent testEvent, String sourceLabel, String typeLabel )
+	public TestEventEntryImpl( TestEvent testEvent, String sourceLabel, String typeLabel, int interpolationLevel )
 	{
 		this.testEvent = testEvent;
 		this.sourceLabel = sourceLabel;
 		this.typeLabel = typeLabel;
+		this.interpolationLevel = interpolationLevel;
 	}
 
 	@Override
@@ -48,4 +50,9 @@ public class TestEventEntryImpl implements TestEvent.Entry
 		return sourceLabel;
 	}
 
+	@Override
+	public int getInterpolationLevel()
+	{
+		return interpolationLevel;
+	}
 }

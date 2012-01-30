@@ -151,6 +151,12 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 					lineModel.setLevel( level );
 					lineModel.setXRange( -PADDING, timeSpan + PADDING );
 				}
+
+				for( TestEventSegmentModel eventModel : testEventSegments.values() )
+				{
+					eventModel.setLevel( level );
+					eventModel.setXRange( -PADDING, timeSpan + PADDING );
+				}
 			}
 		}
 		else if( follow )
@@ -300,12 +306,13 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 					@Override
 					public void run()
 					{
+						int level = zoomLevel == ZoomLevel.ALL ? ZoomLevel.forSpan( getMaxTime() / 1000 ).getLevel()
+								: zoomLevel.getLevel();
 						if( segment instanceof LineSegment )
 						{
 							LineSegment lineSegment = ( LineSegment )segment;
 							LineSegmentChartModel lineModel = new LineSegmentChartModel( chartView, lineSegment );
-							lineModel.setLevel( zoomLevel == ZoomLevel.ALL ? ZoomLevel.forSpan( getMaxTime() / 1000 )
-									.getLevel() : zoomLevel.getLevel() );
+							lineModel.setLevel( level );
 							lines.put( lineSegment, lineModel );
 							if( mainExecution != null )
 								lineModel.setExecution( mainExecution );
@@ -327,6 +334,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 							TestEventSegment testEventSegment = ( TestEventSegment )segment;
 							TestEventSegmentModel eventModel = new TestEventSegmentModel( LineChartImpl.this, chartView,
 									testEventSegment );
+							eventModel.setLevel( level );
 							testEventSegments.put( testEventSegment, eventModel );
 							if( mainExecution != null )
 								eventModel.setExecution( mainExecution );
@@ -501,6 +509,11 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 			{
 				lineModel.clearPoints();
 				lineModel.setLevel( level );
+			}
+			for( TestEventSegmentModel eventModel : testEventSegments.values() )
+			{
+				eventModel.clearPoints();
+				eventModel.setLevel( level );
 			}
 
 			refresh( false );

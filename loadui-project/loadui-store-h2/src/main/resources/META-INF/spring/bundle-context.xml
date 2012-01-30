@@ -8,10 +8,16 @@
 		<property name="workspaceProvider" ref="workspaceProvider" />
 	</bean>
 	
+	<bean id="testEventInterpolator" class="com.eviware.loadui.impl.statistics.store.TestEventInterpolator" destroy-method="release">
+		<constructor-arg ref="executionManager" />
+		<property name="testRunner" ref="testRunner" />
+	</bean>
+	
 	<bean id="testEventManager" class="com.eviware.loadui.impl.statistics.store.TestEventManagerImpl" destroy-method="release">
 		<constructor-arg ref="testEventRegistry" />
 		<constructor-arg ref="executionManager" />
 		<constructor-arg ref="broadcastMessageEndpoint" />
 		<constructor-arg ref="addressableRegistry" />
+		<constructor-arg ref="testEventInterpolator" />
 	</bean>
 </beans>

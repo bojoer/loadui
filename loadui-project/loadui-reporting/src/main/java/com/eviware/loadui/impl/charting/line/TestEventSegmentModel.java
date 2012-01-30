@@ -56,6 +56,7 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 	private StrokeStyle strokeStyle;
 	private long xRangeMin = 0;
 	private long xRangeMax = 0;
+	private int level = 0;
 
 	public TestEventSegmentModel( LineChartImpl chart, LineChartView chartView, TestEventSegment segment )
 	{
@@ -77,7 +78,7 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 			public Iterable<DataPoint<?>> call() throws Exception
 			{
 				return execution == null ? ImmutableList.<DataPoint<?>> of() : Iterables.transform( getSegment()
-						.getTestEventsInRange( execution, xRangeMin, xRangeMax ), longToDataPoint );
+						.getTestEventsInRange( execution, xRangeMin, xRangeMax, level ), longToDataPoint );
 			}
 		}, 1 );
 	}
@@ -224,6 +225,16 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 	{
 		testEventListener.removeModel( this );
 		clearPoints();
+	}
+
+	public int getLevel()
+	{
+		return level;
+	}
+
+	public void setLevel( int level )
+	{
+		this.level = level;
 	}
 
 	private void loadStyles()

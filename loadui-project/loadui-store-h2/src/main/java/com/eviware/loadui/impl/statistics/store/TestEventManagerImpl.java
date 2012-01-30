@@ -40,17 +40,19 @@ public class TestEventManagerImpl extends AbstractTestEventManager implements Re
 	public static final Logger log = LoggerFactory.getLogger( TestEventManagerImpl.class );
 
 	private final ExecutionManagerImpl manager;
+	private final TestEventInterpolator interpolator;
 	private final MessageEndpoint endpoint;
 	private final AddressableRegistry addressableRegistry;
 	private final EventReceiver eventReceiver = new EventReceiver();
 
 	public TestEventManagerImpl( TestEventRegistry testEventRegistry, ExecutionManagerImpl manager,
-			BroadcastMessageEndpoint endpoint, AddressableRegistry addressableRegistry )
+			BroadcastMessageEndpoint endpoint, AddressableRegistry addressableRegistry, TestEventInterpolator interpolator )
 	{
 		super( testEventRegistry );
 		this.manager = manager;
 		this.endpoint = endpoint;
 		this.addressableRegistry = addressableRegistry;
+		this.interpolator = interpolator;
 
 		endpoint.addMessageListener( CHANNEL, eventReceiver );
 	}
@@ -66,9 +68,9 @@ public class TestEventManagerImpl extends AbstractTestEventManager implements Re
 			manager.writeTestEvent( factory.getLabel(), source, testEvent.getTimestamp(),
 					factory.getDataForTestEvent( testEvent ), 0 );
 
-			//TODO: Aggregate into interpolation levels.
+			interpolator.interpolate( factory.getLabel(), source, testEvent );
 
-			TestEvent.Entry entry = new TestEventEntryImpl( testEvent, source.getLabel(), factory.getLabel() );
+			TestEvent.Entry entry = new TestEventEntryImpl( testEvent, source.getLabel(), factory.getLabel(), 0 );
 			for( TestEventObserver observer : observers )
 			{
 				observer.onTestEvent( entry );
@@ -111,13 +113,15 @@ public class TestEventManagerImpl extends AbstractTestEventManager implements Re
 			TestEventEntryImpl entry = null;
 			if( factory == null )
 			{
-				entry = new TestEventEntryImpl( new UnknownTestEvent( timestamp ), source.getLabel(), "Unknown" );
+				entry = new TestEventEntryImpl( new UnknownTestEvent( timestamp ), source.getLabel(), "Unknown", 0 );
 			}
 			else
 			{
 				entry = new TestEventEntryImpl( factory.createTestEvent( timestamp, source.getData(), eventData ),
-						source.getLabel(), factory.getLabel() );
+						source.getLabel(), factory.getLabel(), 0 );
 			}
+
+			interpolator.interpolate( label, source, entry.getTestEvent() );
 			for( TestEventObserver observer : observers )
 			{
 				observer.onTestEvent( entry );

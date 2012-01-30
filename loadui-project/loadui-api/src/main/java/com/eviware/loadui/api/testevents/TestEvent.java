@@ -128,5 +128,7 @@ public interface TestEvent
 		public String getTypeLabel();
 
 		public String getSourceLabel();
+
+		public int getInterpolationLevel();
 	}
 }

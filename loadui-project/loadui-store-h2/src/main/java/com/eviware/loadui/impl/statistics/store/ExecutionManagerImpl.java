@@ -75,9 +75,9 @@ import com.eviware.loadui.util.statistics.store.ExecutionChangeSupport;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -98,7 +98,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 {
 	private static Logger log = LoggerFactory.getLogger( ExecutionManagerImpl.class );
 
-	private static final Cache<String, String> columnNames = CacheBuilder.newBuilder().weakKeys()
+	private static final LoadingCache<String, String> columnNames = CacheBuilder.newBuilder().weakKeys()
 			.build( new CacheLoader<String, String>()
 			{
 				@Override
@@ -932,7 +932,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				Long sourceId = ( Long )map.get( TestEventTable.STATIC_FIELD_SOURCEID );
 
 				TestEventSourceConfig sourceConfig = makeTestEventSourceConfig( executionId, sourceId, eventSourceTable );
-				result.add( new TestEventData( timestamp, sourceConfig.getTypeName(), sourceConfig, data ) );
+				result.add( new TestEventData( timestamp, sourceConfig.getTypeName(), sourceConfig, data, 0 ) );
 			}
 
 		}
@@ -999,7 +999,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 				Long sourceId = ( Long )map.get( TestEventTable.STATIC_FIELD_SOURCEID );
 				TestEventSourceConfig sourceConfig = makeTestEventSourceConfig( executionId, sourceId, eventSourceTable );
-				result.add( new TestEventData( timestamp, sourceConfig.getTypeName(), sourceConfig, data ) );
+				result.add( new TestEventData( timestamp, sourceConfig.getTypeName(), sourceConfig, data,
+						interpolationLevel ) );
 			}
 		}
 		catch( Exception e )

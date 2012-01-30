@@ -19,4 +19,9 @@
 		id="workspaceProvider" />
 	<osgi:reference interface="com.eviware.loadui.api.testevents.TestEventRegistry"
 		id="testEventRegistry" />
+		
+	<osgi:reference interface="com.eviware.loadui.api.execution.TestRunner"
+		id="testRunner" cardinality="0..1">
+		<osgi:listener ref="testEventInterpolator" />
+	</osgi:reference>
 </beans>

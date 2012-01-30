@@ -24,6 +24,7 @@ import com.eviware.loadui.util.testevents.AbstractTestEvent;
 public class InterpolatedTestEvent extends AbstractTestEvent
 {
 	public static final byte[] notStrong = new byte[0];
+	public static final byte[] strong = new byte[1];
 
 	public InterpolatedTestEvent( Class<? extends TestEvent> type, long timestamp )
 	{
@@ -39,9 +40,19 @@ public class InterpolatedTestEvent extends AbstractTestEvent
 		}
 	}
 
+	public static InterpolatedTestEvent createEvent( Class<? extends TestEvent> type, long timestamp, boolean strong )
+	{
+		return createEvent( type, timestamp, strong ? new byte[1] : notStrong );
+	}
+
 	public static InterpolatedTestEvent createEvent( Class<? extends TestEvent> type, long timestamp, byte[] data )
 	{
 		boolean strong = !Arrays.equals( notStrong, data );
 		return strong ? new Group( type, timestamp ) : new InterpolatedTestEvent( type, timestamp );
+	}
+
+	public static byte[] dataFor( InterpolatedTestEvent event )
+	{
+		return event instanceof Group ? strong : notStrong;
 	}
 }

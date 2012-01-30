@@ -24,7 +24,8 @@ public interface TestEventSegment extends Segment
 
 	public String getSourceLabel();
 
-	public Iterable<TestEvent> getTestEventsInRange( Execution execution, long startTime, long endTime );
+	public Iterable<TestEvent> getTestEventsInRange( Execution execution, long startTime, long endTime,
+			int interpolationLevel );
 
 	public interface Removable extends TestEventSegment, Segment.Removable
 	{
