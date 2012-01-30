@@ -31,7 +31,7 @@ import com.google.common.collect.Maps;
 
 public class TestEventInterpolator implements Releasable, OsgiServiceLifecycleListener
 {
-	private final static long[] aggregateIntervals = { 6000, // 6 seconds
+	static final long[] aggregateIntervals = { 6000, // 6 seconds
 			240000, // 4 minutes
 			7200000, // 2 hours
 			43200000 // 12 hours
