@@ -35,16 +35,16 @@ public class TestEventTable extends TableBase
 	public static final String STATIC_FIELD_SOURCEID = "_SOURCEID";
 	public static final String STATIC_FIELD_DATA = "_DATA";
 
-	public static final String TABLE_NAME = "test_event";
+	public static final String TABLE_NAME_PREFIX = "test_event";
 
 	public static final String STATEMENT_GET_BY_OFFSET = "getByCountStatement";
 	public static final String STATEMENT_GET_BY_TIME_RANGE = "getByTimeRangeStatement";
 	public static final String STATEMENT_COUNT = "getCountStatement";
 
-	public TestEventTable( String dbName, ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata,
-			TableRegistry tableRegistry ) throws SQLException
+	public TestEventTable( String dbName, String name, ConnectionRegistry connectionRegistry,
+			DatabaseMetadata databaseMetadata, TableRegistry tableRegistry ) throws SQLException
 	{
-		super( dbName, TABLE_NAME, null, connectionRegistry, databaseMetadata, tableRegistry );
+		super( dbName, name, null, connectionRegistry, databaseMetadata, tableRegistry );
 	}
 
 	@Override

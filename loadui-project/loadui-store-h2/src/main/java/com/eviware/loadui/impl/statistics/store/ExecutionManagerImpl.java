@@ -242,7 +242,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		TrackMetadataTable trackMetaTable = null;
 
 		TestEventSourceTable testEventSourceTable = null;
-		TestEventTable testEventTable = null;
 		TestEventTypeTable testEventTypeTable = null;
 
 		String dbName;
@@ -266,7 +265,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			trackMetaTable = new TrackMetadataTable( dbName, connectionRegistry, metadata, tableRegistry );
 
 			//create event log tables
-			testEventTable = new TestEventTable( dbName, connectionRegistry, metadata, tableRegistry );
 			testEventTypeTable = new TestEventTypeTable( dbName, connectionRegistry, metadata, tableRegistry );
 			testEventSourceTable = new TestEventSourceTable( dbName, connectionRegistry, metadata, tableRegistry );
 
@@ -286,7 +284,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		tableRegistry.put( dbName, sourceMetaTable );
 		tableRegistry.put( dbName, levelMetaTable );
 		tableRegistry.put( dbName, trackMetaTable );
-		tableRegistry.put( dbName, testEventTable );
 		tableRegistry.put( dbName, testEventTypeTable );
 		tableRegistry.put( dbName, testEventSourceTable );
 
@@ -541,14 +538,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 					tableRegistry );
 			createdTableList.add( trackMetaTable );
 
-			// create event log tables
-			TestEventTable testEventTable = new TestEventTable( dbName, connectionRegistry, metadata, tableRegistry );
-			createdTableList.add( testEventTable );
-
+			// create event type table
 			TestEventTypeTable testEventTypeTable = new TestEventTypeTable( dbName, connectionRegistry, metadata,
 					tableRegistry );
 			createdTableList.add( testEventTypeTable );
 
+			// create event source table
 			TestEventSourceTable testEventSourceTable = new TestEventSourceTable( dbName, connectionRegistry, metadata,
 					tableRegistry );
 			createdTableList.add( testEventSourceTable );
@@ -574,6 +569,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 									td.getValueNames(), connectionRegistry, metadata, tableRegistry );
 							createdTableList.add( dtd );
 						}
+
+						// create event log tables for each level
+						TestEventTable testEventTable = new TestEventTable( dbName, buildTestEventTableName( level ),
+								connectionRegistry, metadata, tableRegistry );
+						createdTableList.add( testEventTable );
 					}
 					tracksToCreate.add( td );
 				}
@@ -687,8 +687,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public void writeTestEvent( String typeLabel, TestEvent.Source<?> source, long timestamp, byte[] testEventData,
 			int interpolationLevel )
 	{
-		//TODO: Add interpolationLevel.
-
 		if( currentExecution != null && executionState == State.STARTED )
 		{
 			timestamp -= ( currentExecution.getStartTime() );
@@ -705,8 +703,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			data.put( TestEventTable.STATIC_FIELD_DATA, testEventData );
 			data.put( TestEventTable.STATIC_FIELD_SOURCEID, sourceId );
 
+			// create test event data table for the given interpolation level if it doesn't exist
+			String dbName = currentExecution.getExecutionDir().getName();
+			createTestEventDataTable( dbName, interpolationLevel );
+
 			TableBase eventTable = tableRegistry.getTable( currentExecution.getExecutionDir().getName(),
-					TestEventTable.TABLE_NAME );
+					buildTestEventTableName( interpolationLevel ) );
 			try
 			{
 				eventTable.insert( data );
@@ -721,6 +723,38 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		else
 		{
 			log.debug( "Dropped testEvent {} due to missing execution", typeLabel );
+		}
+	}
+
+	private synchronized void createTestEventDataTable( String dbName, int interpolationLevel )
+	{
+		String name = buildTestEventTableName( interpolationLevel );
+		if( tableRegistry.getTable( dbName, name ) != null )
+		{
+			return;
+		}
+		try
+		{
+			TestEventTable testEventTable = new TestEventTable( dbName, name, connectionRegistry, metadata, tableRegistry );
+
+			InterpolationLevelTable levels = ( InterpolationLevelTable )tableRegistry.getTable( dbName,
+					InterpolationLevelTable.INTERPOLATION_LEVEL_TABLE_NAME );
+			if( !levels.getInMemoryTable().contains( interpolationLevel ) )
+			{
+				Map<String, Object> data = new HashMap<String, Object>();
+				data.put( InterpolationLevelTable.STATIC_FIELD_INTERPOLATION_LEVEL, interpolationLevel );
+				levels.insert( data );
+			}
+
+			// all SQL operations were successful so add created table into table
+			// registry
+			tableRegistry.put( dbName, testEventTable );
+		}
+		catch( SQLException e )
+		{
+			log.error( "Exception thrown when attempting to create test event data table for interpolation level: {}",
+					interpolationLevel );
+			throw new RuntimeException( "Unable to create test event data table!", e );
 		}
 	}
 
@@ -882,8 +916,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
 
+			// TODO read from zero level here?
 			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( getExecution( executionId )
-					.getExecutionDir().getName(), TestEventTable.TABLE_NAME );
+					.getExecutionDir().getName(), buildTestEventTableName( 0 ) );
 
 			List<Map<String, Object>> eventDataList = eventTable.getByCount( sourceIds, offset, limit );
 			for( Map<String, Object> map : eventDataList )
@@ -924,8 +959,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public <T extends TestEvent> Iterable<TestEventData> readTestEventRange( String executionId, final long startTime,
 			final long endTime, int interpolationLevel, Iterable<TestEventSourceConfig> sources )
 	{
-		//TODO: Get data using interpolation level!
-
 		if( !getExecution( executionId ).isLoaded() )
 		{
 			loadExecution( executionId );
@@ -949,7 +982,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
 
 			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( getExecution( executionId )
-					.getExecutionDir().getName(), TestEventTable.TABLE_NAME );
+					.getExecutionDir().getName(), buildTestEventTableName( interpolationLevel ) );
 
 			List<Map<String, Object>> eventDataList = eventTable.getByTimeRange( sourceIds, startTime, endTime );
 			for( Map<String, Object> map : eventDataList )
@@ -992,8 +1025,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
 
+			// TODO count events in zero level here?
 			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( getExecution( executionId )
-					.getExecutionDir().getName(), TestEventTable.TABLE_NAME );
+					.getExecutionDir().getName(), buildTestEventTableName( 0 ) );
 
 			return eventTable.getCount( sourceIds );
 		}
@@ -1008,6 +1042,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		source = source.replaceAll( "[^A-Za-z0-9]", "" );
 		return trackId + "_" + interpolationLevel + "_" + source;
+	}
+
+	private String buildTestEventTableName( int interpolationLevel )
+	{
+		return TestEventTable.TABLE_NAME_PREFIX + "_" + interpolationLevel;
 	}
 
 	private void write( String trackId, String source, int interpolationLevel, Map<String, Object> data )
