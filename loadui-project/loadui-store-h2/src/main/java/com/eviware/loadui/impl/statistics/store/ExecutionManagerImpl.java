@@ -981,6 +981,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
 
+			// create test event data table for the given interpolation level if it doesn't exist
+			String dbName = currentExecution.getExecutionDir().getName();
+			createTestEventDataTable( dbName, interpolationLevel );
+
 			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( getExecution( executionId )
 					.getExecutionDir().getName(), buildTestEventTableName( interpolationLevel ) );
 
