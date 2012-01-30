@@ -77,7 +77,7 @@ public class TestEventInterpolator implements Releasable, OsgiServiceLifecycleLi
 	public void setTestRunner( TestRunner testRunner )
 	{
 		this.testRunner = testRunner;
-		testRunner.registerTask( task, Phase.PRE_START, Phase.POST_STOP );
+		testRunner.registerTask( task, Phase.PRE_START, Phase.STOP );
 	}
 
 	@Override
@@ -150,8 +150,7 @@ public class TestEventInterpolator implements Releasable, OsgiServiceLifecycleLi
 			case PRE_START :
 				interpolators.clear();
 				break;
-			case POST_STOP :
-				log.debug( "!!!!flushing interpolations" );
+			case STOP :
 				for( InterpolationLevel interpolator : interpolators.values() )
 				{
 					interpolator.flushAll();
