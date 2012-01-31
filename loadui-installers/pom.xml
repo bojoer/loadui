@@ -63,7 +63,7 @@
 						</property>
 						<property>
 							<name>resourcedir</name>
-							<value>../../../../src/main/install4j_resources</value>
+							<value>${project.build.directory}/install4j_resources</value>
 						</property>
 						<property>
 							<name>version</name>

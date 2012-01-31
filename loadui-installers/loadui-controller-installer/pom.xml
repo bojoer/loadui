@@ -34,6 +34,25 @@
 							<outputDirectory>${project.build.directory}/main</outputDirectory>
 						</configuration>
 					</execution>
+					<execution>
+						<id>copy-install4j-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>${project.parent.basedir}/src/main/install4j_resources</directory>
+								</resource>
+								<resource>
+									<directory>src/main/install4j_resources</directory>
+								</resource>
+							</resources>
+							<outputDirectory>${project.build.directory}/install4j_resources</outputDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
