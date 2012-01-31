@@ -707,8 +707,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			String dbName = currentExecution.getExecutionDir().getName();
 			createTestEventDataTable( dbName, interpolationLevel );
 
-			TableBase eventTable = tableRegistry.getTable( currentExecution.getExecutionDir().getName(),
-					buildTestEventTableName( interpolationLevel ) );
+			TableBase eventTable = tableRegistry.getTable( dbName, buildTestEventTableName( interpolationLevel ) );
 			try
 			{
 				eventTable.insert( data );
@@ -917,11 +916,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
 
 			// create test event data table for the given interpolation level if it doesn't exist
-			String dbName = currentExecution.getExecutionDir().getName();
+			String dbName = getExecution( executionId ).getExecutionDir().getName();
 			createTestEventDataTable( dbName, 0 );
 
-			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( getExecution( executionId )
-					.getExecutionDir().getName(), buildTestEventTableName( 0 ) );
+			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( dbName, buildTestEventTableName( 0 ) );
 
 			List<Map<String, Object>> eventDataList = eventTable.getByCount( sourceIds, offset, limit );
 			for( Map<String, Object> map : eventDataList )
@@ -985,11 +983,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
 
 			// create test event data table for the given interpolation level if it doesn't exist
-			String dbName = currentExecution.getExecutionDir().getName();
+			String dbName = getExecution( executionId ).getExecutionDir().getName();
 			createTestEventDataTable( dbName, interpolationLevel );
 
-			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( getExecution( executionId )
-					.getExecutionDir().getName(), buildTestEventTableName( interpolationLevel ) );
+			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( dbName,
+					buildTestEventTableName( interpolationLevel ) );
 
 			List<Map<String, Object>> eventDataList = eventTable.getByTimeRange( sourceIds, startTime, endTime );
 			for( Map<String, Object> map : eventDataList )
@@ -1034,11 +1032,10 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
 
 			// create test event data table for the given interpolation level if it doesn't exist
-			String dbName = currentExecution.getExecutionDir().getName();
+			String dbName = getExecution( executionId ).getExecutionDir().getName();
 			createTestEventDataTable( dbName, 0 );
 
-			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( getExecution( executionId )
-					.getExecutionDir().getName(), buildTestEventTableName( 0 ) );
+			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( dbName, buildTestEventTableName( 0 ) );
 
 			return eventTable.getCount( sourceIds );
 		}
