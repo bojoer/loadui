@@ -29,10 +29,10 @@ public class StatisticsInterpolator
 {
 	public final static Logger log = LoggerFactory.getLogger( StatisticsInterpolator.class );
 
-	private final static long[] aggregateIntervals = { 6000, // 6 seconds
-			240000, // 4 minutes
-			7200000, // 2 hours
-			43200000 // 12 hours
+	private static final long[] aggregateIntervals = { 6000, // 6 seconds
+			10 * 60 * 1000, // 10 minutes
+			2 * 60 * 60 * 1000, // 2 hours
+			12 * 60 * 60 * 1000 // 12 hours
 	};
 
 	private final ExecutionManager executionManager;

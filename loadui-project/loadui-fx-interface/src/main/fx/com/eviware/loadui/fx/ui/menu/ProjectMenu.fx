@@ -39,6 +39,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;
+import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Separator;
@@ -310,19 +311,18 @@ public class ProjectMenu extends HBox {
 									hgrow: Priority.ALWAYS
 									hfill: true 
 								}
+							}, Button {
+								styleClass: "stat-button"
+								text: "Statistics\nWorkbench"
+								textWrap: true
+								graphic: Rectangle { width: 32, height: 30 }
+								//tooltip: Tooltip { text: ##[STAT_MONITOR]"Statistics Workbench" }
+								action: function():Void { statMonitor.show() }
+								disable: Boolean.getBoolean( LoadUI.DISABLE_STATISTICS )
 							}, SeparatorButton {
-								height: bind height;
+								height: bind height
 							}, TrashHole {
-							}, SeparatorButton {
-								height: bind height;
-							}, MenubarButton {
-									shape: "M 1.00,14.40 L 3.83,14.40 3.83,9.02 1.00, 9.02 M 11.85,14.40 L 14.68,14.40 14.68,4.92 11.85, 4.92 M 6.43,14.40 L 9.26,14.40 9.26,1.00 6.43, 1.00 Z"
-									tooltip: Tooltip { text: ##[STAT_MONITOR]"Statistics Workbench" }
-									action: function():Void { 
-										statMonitor.show();
-									 }
-									 disable: Boolean.getBoolean( LoadUI.DISABLE_STATISTICS )
-				         	}, showNotesButton = MenubarToggleButton {
+				         }, showNotesButton = MenubarToggleButton {
 								shape: "M 0,0 L 0,8 5,8 11,12 9,8 13,8 13,0 Z"
 								tooltip: Tooltip { text: ##[TOGGLE_NOTES]"Toggle note visibility" }
 								selected: showNotes
