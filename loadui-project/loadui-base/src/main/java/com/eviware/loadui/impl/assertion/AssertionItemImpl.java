@@ -17,7 +17,7 @@ package com.eviware.loadui.impl.assertion;
 
 import java.io.IOException;
 import java.util.EventObject;
-import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -49,7 +49,6 @@ import com.eviware.loadui.util.events.EventSupport;
 import com.eviware.loadui.util.serialization.SerializationUtils;
 import com.eviware.loadui.util.testevents.TestEventSourceSupport;
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
 
 public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent.Source<AssertionFailureEvent>,
 		EventFirer, Releasable
@@ -388,7 +387,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 
 		private final ScheduledExecutorService executor = BeanInjector.getBean( ScheduledExecutorService.class );
 		private final TestEventManager manager = BeanInjector.getBean( TestEventManager.class );
-		private final LinkedList<Entry> entries = Lists.newLinkedList();
+		private final LinkedBlockingDeque<Entry> entries = new LinkedBlockingDeque<Entry>();
 
 		private long deadline = 0;
 
