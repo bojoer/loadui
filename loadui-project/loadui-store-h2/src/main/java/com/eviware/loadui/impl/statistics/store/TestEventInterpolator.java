@@ -29,12 +29,18 @@ import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.traits.Releasable;
 import com.google.common.collect.Maps;
 
+/**
+ * Aggregates TestEvents for use with different interpolation levels, for data
+ * for large time ranges.
+ * 
+ * @author dain.nilsson
+ */
 public class TestEventInterpolator implements Releasable, OsgiServiceLifecycleListener
 {
 	static final long[] aggregateIntervals = { 6000, // 6 seconds
-			240000, // 4 minutes
-			7200000, // 2 hours
-			43200000 // 12 hours
+			10 * 60 * 1000, // 10 minutes
+			2 * 60 * 60 * 1000, // 2 hours
+			12 * 60 * 60 * 1000 // 12 hours
 	};
 
 	protected static final Logger log = LoggerFactory.getLogger( TestEventInterpolator.class );
@@ -49,6 +55,12 @@ public class TestEventInterpolator implements Releasable, OsgiServiceLifecycleLi
 		this.manager = manager;
 	}
 
+	/*
+	 * bind and unbind are used by OSGi to provide the TestRunner service. It
+	 * cannot be provided as a constructor dependency as this causes a circular
+	 * dependency issue.
+	 */
+
 	@Override
 	public void bind( Object object, @SuppressWarnings( "rawtypes" ) Map properties ) throws Exception
 	{
@@ -61,6 +73,13 @@ public class TestEventInterpolator implements Releasable, OsgiServiceLifecycleLi
 		testRunner = null;
 	}
 
+	/**
+	 * Should be called for each level 0 TestEvent which is being logged.
+	 * 
+	 * @param typeLabel
+	 * @param source
+	 * @param testEvent
+	 */
 	public void interpolate( String typeLabel, TestEvent.Source<?> source, TestEvent testEvent )
 	{
 		InterpolationKey key = new InterpolationKey( testEvent.getType(), source );
@@ -74,10 +93,32 @@ public class TestEventInterpolator implements Releasable, OsgiServiceLifecycleLi
 		interpolator.add( testEvent );
 	}
 
+	/**
+	 * If a TestRunner is available, use it to schedule flushing at the end of a
+	 * Test, as well as clearing at the start of a Test.
+	 * 
+	 * @param testRunner
+	 */
 	public void setTestRunner( TestRunner testRunner )
 	{
 		this.testRunner = testRunner;
-		testRunner.registerTask( task, Phase.PRE_START, Phase.STOP );
+		if( testRunner != null )
+		{
+			testRunner.registerTask( task, Phase.PRE_START, Phase.STOP );
+		}
+	}
+
+	/**
+	 * Flushes the buffers, aggregating and writing buffered data to the storage
+	 * layer.
+	 */
+	public void flush()
+	{
+		for( InterpolationLevel interpolator : interpolators.values() )
+		{
+			interpolator.flushAll();
+		}
+		interpolators.clear();
 	}
 
 	@Override
@@ -90,6 +131,11 @@ public class TestEventInterpolator implements Releasable, OsgiServiceLifecycleLi
 		interpolators.clear();
 	}
 
+	/**
+	 * Used as a map key for any unique TestEvent type and Source.
+	 * 
+	 * @author dain.nilsson
+	 */
 	private static class InterpolationKey
 	{
 		private final Class<? extends TestEvent> type;
@@ -140,6 +186,12 @@ public class TestEventInterpolator implements Releasable, OsgiServiceLifecycleLi
 
 	}
 
+	/**
+	 * TestExecutionTask used to clear the buffer on start and flush buffered
+	 * data on stop.
+	 * 
+	 * @author dain.nilsson
+	 */
 	private class StartStopTask implements TestExecutionTask
 	{
 		@Override
@@ -151,16 +203,18 @@ public class TestEventInterpolator implements Releasable, OsgiServiceLifecycleLi
 				interpolators.clear();
 				break;
 			case STOP :
-				for( InterpolationLevel interpolator : interpolators.values() )
-				{
-					interpolator.flushAll();
-				}
-				interpolators.clear();
+				flush();
 				break;
 			}
 		}
 	}
 
+	/**
+	 * Recursive data structure holding a buffer for a single interpolation
+	 * level, as well as a pointer to the next one.
+	 * 
+	 * @author dain.nilsson
+	 */
 	private class InterpolationLevel
 	{
 		private final int level;
@@ -184,9 +238,13 @@ public class TestEventInterpolator implements Releasable, OsgiServiceLifecycleLi
 
 			lastFlushTime = initialTestEvent.getTimestamp();
 			type = initialTestEvent.getType();
-			add( initialTestEvent );
 		}
 
+		/**
+		 * Adds a TestEvent to this levels buffer, as well as any levels above it.
+		 * 
+		 * @param testEvent
+		 */
 		public void add( TestEvent testEvent )
 		{
 			while( lastFlushTime + aggregateIntervals[level] < testEvent.getTimestamp() )
@@ -204,6 +262,9 @@ public class TestEventInterpolator implements Releasable, OsgiServiceLifecycleLi
 			}
 		}
 
+		/**
+		 * Flushes the buffered data in this level, writing it to storage.
+		 */
 		public void flush()
 		{
 			if( eventCount > 0 )
@@ -218,6 +279,9 @@ public class TestEventInterpolator implements Releasable, OsgiServiceLifecycleLi
 			}
 		}
 
+		/**
+		 * Flushes the buffered data of this level as well as any levels above it.
+		 */
 		public void flushAll()
 		{
 			flush();
