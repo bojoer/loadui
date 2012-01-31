@@ -57,8 +57,8 @@ public def stylesheets = for( f in new File(".").list( new CssFilter() ) ) "file
 public class JavaFXActivator extends BundleActivator {
 
 	def icons = [
-		Image { url:"{__ROOT__}images/png/icon_32x32.png" },
-		Image { url:"{__ROOT__}images/png/icon_16x16.png" }
+		Image { url: new File( "res/icon_32x32.png" ).toURI().toString() },
+		Image { url: new File( "res/icon_16x16.png" ).toURI().toString() },
 	];
 
 	/**

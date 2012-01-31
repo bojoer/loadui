@@ -19,7 +19,9 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.io.File;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -51,18 +53,25 @@ public class SplashController
 					Method mSetWindowOpaque = awtUtilitiesClass.getMethod( "setWindowOpaque", Window.class, boolean.class );
 					mSetWindowOpaque.invoke( null, window, false );
 
-					image = new ImageIcon( SplashController.class.getResource( "/loadui-splash.png" ) );
+					image = new ImageIcon( new File( "res/loadui-splash.png" ).toURI().toURL() );
 				}
 				else
 				{
 					System.out.println( "Unable to create transparent window, using non-transparent splash!" );
-					image = new ImageIcon( SplashController.class.getResource( "/loadui-splash-no-transparency.png" ) );
+					image = new ImageIcon( new File( "res/loadui-splash-no-transparency.png" ).toURI().toURL() );
 				}
 			}
 			catch( Throwable e )
 			{
 				System.out.println( "Unable to create transparent window, using non-transparent splash: " + e.getMessage() );
-				image = new ImageIcon( SplashController.class.getResource( "/loadui-splash-no-transparency.png" ) );
+				try
+				{
+					image = new ImageIcon( new File( "res/loadui-splash-no-transparency.png" ).toURI().toURL() );
+				}
+				catch( MalformedURLException e1 )
+				{
+					image = new ImageIcon();
+				}
 			}
 
 			JLabel label = new JLabel( image );
