@@ -23,6 +23,8 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Stack;
+import javafx.scene.layout.LayoutInfo;
 import javafx.scene.control.Label;
 import javafx.scene.control.Hyperlink;
 import javafx.util.Properties;
@@ -34,6 +36,9 @@ import com.eviware.loadui.LoadUI;
 
 import java.lang.Exception;
 import java.lang.System;
+import java.io.File;
+
+def image = Image { url: new File( "res/about-logo.png" ).toURI().toString() }
 
 public class AboutDialog {
 	var group:Group;
@@ -68,9 +73,11 @@ public class AboutDialog {
 							radius: 35
 							color: Color.rgb( 0, 0, 0 )
 						}
-					}, ImageView {
-						image: Image { url: "{__ROOT__}images/png/icon-clear.png" }
-						layoutX: 70
+					}, Stack {
+						layoutInfo: LayoutInfo { width: 600 }
+						content: ImageView {
+							image: image
+						}
 					}, Label {
 						layoutX: 20
 						layoutY: 235
