@@ -3,9 +3,9 @@
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd ">
-	<id>launcher</id>
+	<id>launcher-prepare</id>
 	<formats>
-		<format>jar</format>
+		<format>dir</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<dependencySets>
@@ -18,10 +18,4 @@
 			<unpack>true</unpack>
 		</dependencySet>
 	</dependencySets>
-	<fileSets>
-		<fileSet>
-			<directory>${project.basedir}/src/launcher/resources</directory>
-			<outputDirectory>/</outputDirectory>
-		</fileSet>
-	</fileSets>
 </assembly>

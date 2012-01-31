@@ -16,13 +16,24 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>launcher</id>
-						<phase>process-resources</phase>
+						<id>launcher-generate</id>
+						<phase>generate-resources</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<descriptor>src/main/assembly/launcher.xml</descriptor>
+							<descriptor>src/main/assembly/launcher-prepare.xml</descriptor>
+							<finalName>launcher-tmp</finalName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>launcher-pack</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptor>src/main/assembly/launcher-pack.xml</descriptor>
 							<finalName>main/lib/loadui-launcher</finalName>
 						</configuration>
 					</execution>
@@ -52,6 +63,22 @@
 								</resource>
 							</resources>
 							<outputDirectory>${project.build.directory}/main</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-launcher-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>src/launcher/resources</directory>
+								</resource>
+							</resources>
+							<outputDirectory>${project.build.directory}/launcher-tmp</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
