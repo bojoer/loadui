@@ -38,6 +38,8 @@ import javafx.scene.control.Tooltip;
 
 public var instance:SoapUIButton;
 
+def buttonImage = Image { url: new File( "res/soapui-logo-button.png" ).toURI().toString() }
+
 public class SoapUIButton extends Group {
 		
 	  var tooltip:Tooltip;
@@ -60,7 +62,7 @@ public class SoapUIButton extends Group {
 	         onMouseExited: function (e:MouseEvent): Void {
 	            tooltip.deactivate();
 	         }
-				image: Image { url: "{__ROOT__}images/png/soapui-logo-small.png" }
+				image: buttonImage
 				opacity: if ( MainWindow.instance.workspace.getProperty(WorkspaceItem.SOAPUI_PATH_PROPERTY).getValue() == null ) 0.5 else 1
 				onMouseReleased: function(e) {
 					def dialog:Dialog = Dialog {
