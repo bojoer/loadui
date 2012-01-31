@@ -64,6 +64,7 @@ import com.eviware.loadui.fx.ui.menu.StatisticsWindowButton;
 import com.eviware.loadui.fx.ui.notification.NotificationArea;
 
 import java.lang.Math;
+import java.io.File;
 
 import org.slf4j.LoggerFactory;
 
@@ -224,8 +225,8 @@ public class StatisticsWindow {
 				stage = Stage {
 					title: "loadUI {LoadUI.VERSION} - Statistics Workbench"
 					icons: [
-						Image { url:"{__ROOT__}images/png/icon_32x32.png" },
-						Image { url:"{__ROOT__}images/png/icon_16x16.png" }
+						Image { url: new File( "res/icon_32x32.png" ).toURI().toString() },
+						Image { url: new File( "res/icon_16x16.png" ).toURI().toString() },
 					]
 					scene: scene = Scene {
 						stylesheets: bind JavaFXActivator.stylesheets

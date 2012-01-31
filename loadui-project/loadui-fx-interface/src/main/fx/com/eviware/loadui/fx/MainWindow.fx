@@ -256,9 +256,6 @@ public class MainWindow {
 		appState.insertInto( ProjectMenu { width: bind scene.width, project: bind projectCanvas.canvasItem as ProjectItem }, PROJECT_FRONT );
 		appState.insertInto( TestCaseMenu { width: bind scene.width, testCase: bind testcaseCanvas.canvasItem as SceneItem }, TESTCASE_FRONT );
 		
-		insert javafx.scene.control.Button { text: "HI!", action: function() { com.eviware.loadui.util.BeanInjector.getBean( com.eviware.loadui.api.testevents.TestEventManager.class ).logMessage( com.eviware.loadui.api.testevents.MessageLevel.WARNING, "Hello world!" ); } } into appState.globalLayer.content;
-		
-		
 		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "Deferring MainWindow action..." );
 		FX.deferAction( function():Void {
 			java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "Showing MainWindow.." );

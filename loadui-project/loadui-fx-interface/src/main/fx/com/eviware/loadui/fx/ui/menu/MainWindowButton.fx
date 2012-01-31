@@ -47,6 +47,10 @@ import com.javafx.preview.control.MenuButton;
 
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
 
+import java.io.File;
+
+def image = Image { url: new File( "res/logo-button.png" ).toURI().toString() }
+
 public class MainWindowButton extends Group {
 	public-init var wc:WindowController;
 	
@@ -91,7 +95,7 @@ public class MainWindowButton extends Group {
 			}, menuButton = MenuButton {
 				styleClass: "loadui-menu-button"
 				graphic: ImageView {
-						image: Image { url: "{__ROOT__}images/png/main-button-no-shadow.png" }
+						image: image
 					}
 				items: [
 					alwaysOnTopCheckBox,
