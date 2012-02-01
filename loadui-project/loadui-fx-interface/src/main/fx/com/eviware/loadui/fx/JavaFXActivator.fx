@@ -27,6 +27,7 @@ import javafx.scene.image.*;
 import javafx.stage.StageStyle;
 import javafx.util.Properties;
 
+import java.lang.System;
 import java.lang.Exception;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -84,6 +85,8 @@ public class JavaFXActivator extends BundleActivator {
 			PlatformDefaults.setPanelInsets( lpy, lpx, lpy, lpx );
 
 			log.debug("JavaFX Bundle started!");
+			
+			def name = System.getProperty(LoadUI.NAME);
 	
 			//def stylesheets = "file:style.css";
 			
@@ -92,11 +95,11 @@ public class JavaFXActivator extends BundleActivator {
 			new javax.swing.JScrollPane();
 			
 			wc = WindowControllerImpl {
-				windowTitleFilter: "loadUI"
+				windowTitleFilter: name
 			};
 			
 			wc.stage = Stage {
-				title: "loadUI {LoadUI.VERSION}"
+				title: "{name} {LoadUI.VERSION}"
 				visible: false
 				icons: icons
 				width: 1280.0

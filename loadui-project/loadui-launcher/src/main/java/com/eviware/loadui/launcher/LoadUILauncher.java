@@ -66,26 +66,9 @@ public class LoadUILauncher
 	{
 		System.setSecurityManager( null );
 
-		// Alpha release expiration, TODO: REMOVE THE IF-CONDITION AND THE WHOLE ELSE-BLOCK IN FULL VERSION 
-		//		if( new java.util.GregorianCalendar().before( new java.util.GregorianCalendar( 2011, java.util.Calendar.DECEMBER,
-		//				31 ) ) )
-		//		{
 		LoadUILauncher launcher = new LoadUILauncher( args );
 		launcher.init();
 		launcher.start();
-		//		}
-		//		else
-		//		{
-		//			System.out.println( "*** ALPHA PERIOD OVER. QUITTING... ***" );
-		//			try
-		//			{
-		//				Thread.sleep( 5000 );
-		//			}
-		//			catch( InterruptedException e )
-		//			{
-		//				e.printStackTrace();
-		//			}
-		//		}
 
 		new Thread( new LauncherWatchdog( launcher.framework, 20000 ), "loadUI Launcher Watchdog" ).start();
 	}
@@ -103,13 +86,18 @@ public class LoadUILauncher
 	{
 		argv = args;
 
-		final InputStream is = getClass().getResourceAsStream( "/properties/buildinfo.txt" );
+		File externalFile = new File( "res/buildinfo.txt" );
+		InputStream is = null;
+
 		try
 		{
+			is = externalFile.exists() ? new FileInputStream( externalFile ) : getClass().getResourceAsStream(
+					"/properties/buildinfo.txt" );
 			Properties buildinfo = new Properties();
 			buildinfo.load( is );
 			System.setProperty( "loadui.build.number", buildinfo.getProperty( "build.number" ) );
 			System.setProperty( "loadui.build.date", buildinfo.getProperty( "build.date" ) );
+			System.setProperty( "loadui.name", buildinfo.getProperty( "loadui.name", "loadUI" ) );
 		}
 		catch( IOException e )
 		{
@@ -119,7 +107,10 @@ public class LoadUILauncher
 		{
 			try
 			{
-				is.close();
+				if( is != null )
+				{
+					is.close();
+				}
 			}
 			catch( IOException e )
 			{
@@ -127,7 +118,8 @@ public class LoadUILauncher
 			}
 		}
 
-		System.out.println( "Launching loadUI Build: " + System.getProperty( "loadui.build.number", "[internal]" ) + " "
+		System.out.println( "Launching " + System.getProperty( "loadui.name" ) + " Build: "
+				+ System.getProperty( "loadui.build.number", "[internal]" ) + " "
 				+ System.getProperty( "loadui.build.date", "" ) );
 		Main.loadSystemProperties();
 		configProps = Main.loadConfigProperties();

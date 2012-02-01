@@ -28,6 +28,7 @@ import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
+import com.eviware.loadui.fx.async.BlockingTask;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -157,7 +158,10 @@ class StoppingDialogTask extends TestExecutionTask, Runnable {
 				if( future instanceof ListenableFuture ) {
 					(future as ListenableFuture).addListener( this, MoreExecutors.sameThreadExecutor() );
 				} else {
-					new Thread( this ).start();
+					def blockingTask = BlockingTask {
+						task: function():Void { this.run() }
+					};
+					blockingTask.start();
 				}
 			} );
 		}

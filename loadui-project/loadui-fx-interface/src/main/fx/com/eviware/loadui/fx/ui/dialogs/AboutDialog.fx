@@ -44,6 +44,7 @@ public class AboutDialog {
 	var group:Group;
 	var modalLayer:Node;
 	postinit {
+		def name = System.getProperty(LoadUI.NAME);
 		def version = System.getProperty(LoadUI.BUILD_NUMBER);
 		def date = System.getProperty(LoadUI.BUILD_DATE);
 	
@@ -82,7 +83,7 @@ public class AboutDialog {
 						layoutX: 20
 						layoutY: 235
 						textFill: Color.web( "#fbed21" )
-						text: "loadUI Version {LoadUI.VERSION}"
+						text: "{name} Version {LoadUI.VERSION}"
 					}, Label {
 						layoutX: 20
 						layoutY: 260
@@ -98,7 +99,7 @@ public class AboutDialog {
 						layoutX: 20
 						layoutY: 360
 						style: "-fx-text-fill: #ffffff"
-						text: "www.eviware.com"
+						text: "www.smartbear.com"
 						action: function():Void { openURL("http://www.smartbear.com") }
 					}, ImageView {
 						layoutX: 435
