@@ -345,7 +345,7 @@ public class TestCaseMenu extends HBox {
 								styleClass: "stat-button"
 								text: "Statistics\nWorkbench"
 								textWrap: true
-								graphic: Rectangle { width: 32, height: 30 }
+								graphic: ImageView { image: Image { url: "{__ROOT__}images/png/bars.png" } }
 								//tooltip: Tooltip { text: ##[STAT_MONITOR]"Statistics Workbench" }
 								action: function():Void { StatisticsWindow.getInstance().show() }
 								disable: Boolean.getBoolean( LoadUI.DISABLE_STATISTICS )
