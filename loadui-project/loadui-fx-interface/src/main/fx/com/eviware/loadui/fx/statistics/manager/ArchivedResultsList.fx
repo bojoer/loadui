@@ -75,9 +75,7 @@ public class ArchivedResultsList extends BaseNode, Resizable, Droppable {
 	}
 	
 	override var onDrop = function( draggable:Draggable ) {
-		println( "OH HAI, I WILL NOW ARCHIVE DIS 4 U" );
 		(draggable as ResultNode).execution.archive();
-		println( "UR WELCOM!" );
 	}
 	
 	override function create():Node {
@@ -95,14 +93,11 @@ public class ArchivedResultsList extends BaseNode, Resizable, Droppable {
 
 class ExecutionListener extends WeakEventHandler {
 	override function handleEvent( e ):Void {
-		println( "Got event!" );
 		def event = e as BaseEvent;
 		def execution = event.getSource() as Execution;
 		FxUtils.runInFxThread( function() {
 			if( Execution.ARCHIVED.equals( event.getKey() ) and pagelist.lookup( execution.getId() ) == null ) {
-				println( "OH HAI, I WILL NOW PUT DIS IN LIST" );
 				insert DraggableFrame { draggable: ResultNode { execution: execution }, id: execution.getId() } before pagelist.items[0];
-				println( "UR WELCOME..." );
 			}
 			else if( Execution.DELETED.equals( event.getKey() ) ) {
 				execution.removeEventListener( BaseEvent.class, executionListener );
@@ -114,17 +109,13 @@ class ExecutionListener extends WeakEventHandler {
 
 class ExecutionsListener extends WeakEventHandler {
 	override function handleEvent( e ):Void {
-		println("   *** 1 ***");
 		def event = e as CollectionEvent;
 		if( ExecutionManager.EXECUTIONS.equals( event.getKey() ) ) {
-			println("   *** 2 ***");
 			def execution = event.getElement() as Execution;
 			if( event.getEvent() == CollectionEvent.Event.ADDED ) {
-				println("   *** 3 ***");
 				def executionsProjectId = projectExecutionManager.getProjectId( execution );
 				def projectId = project.getId();
 				if( project != null and executionsProjectId == projectId ) {
-					println("   *** 4 ***");
 					execution.addEventListener( BaseEvent.class, executionListener );
 					FxUtils.runInFxThread( function() {
 						if( execution.isArchived() and pagelist.lookup( execution.getId() ) == null ) {
