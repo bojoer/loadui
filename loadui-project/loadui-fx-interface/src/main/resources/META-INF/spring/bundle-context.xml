@@ -72,4 +72,8 @@
 	<bean id="schedulerWidget" class="com.eviware.loadui.fx.widgets.factories.SchedulerWidgetFactory" />
 	<bean id="sliderWidget" class="com.eviware.loadui.fx.widgets.factories.SliderWidgetFactory" />
 	<bean id="displayContainerFactory" class="com.eviware.loadui.fx.ui.layout.widgets.factories.DisplayContainerFactory" />
+	
+	
+	<!-- Legacy stuff -->
+	<bean id="singleOutputWireEnforcer" class="com.eviware.loadui.fx.legacy.SingleOutputWireEnforcer" factory-method="createInstance" />
 </beans>

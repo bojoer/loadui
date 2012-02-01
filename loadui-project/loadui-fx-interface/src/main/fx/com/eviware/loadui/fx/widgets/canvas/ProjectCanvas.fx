@@ -50,7 +50,7 @@ import com.eviware.loadui.fx.util.ImageUtil.*;
 
 public class ProjectCanvas extends Canvas {
 
-	var projectItem:ProjectItem;
+	public-read var projectItem:ProjectItem;
 	
 	override var canvasItem on replace oldCanvas {
 		projectItem = canvasItem as ProjectItem; 
