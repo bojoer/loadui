@@ -102,7 +102,10 @@ class ExecutionsListener extends WeakEventHandler {
 		if( ExecutionManager.EXECUTIONS.equals( event.getKey() ) ) {
 			if( event.getEvent() == CollectionEvent.Event.ADDED ) {
 				def execution = event.getElement() as Execution;
-				if( project != null and project.getAddon( ExecutionAddon.class ).getExecutions( true, false ).contains( execution ) ) {
+				
+				def executionsProjectId = projectExecutionManager.getProjectId( execution );
+				def projectId = project.getId();
+				if( project != null and executionsProjectId == projectId and not execution.isArchived() ) {
 					execution.addEventListener( BaseEvent.class, executionListener );
 					FxUtils.runInFxThread( function() {
 						if( execution != StatisticsWindow.currentExecution and pagelist.lookup( execution.getId() ) == null ) {							

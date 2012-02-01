@@ -14,16 +14,12 @@ import javafx.scene.text.Text;
 
 import com.eviware.loadui.fx.FxUtils;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
-import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.dialogs.*;
 import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.ui.WindowController;
 import com.eviware.loadui.fx.statistics.StatisticsWindow;
-import com.eviware.loadui.fx.ui.form.Form;
-import com.eviware.loadui.fx.ui.form.FormField;
-import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.util.NewVersionChecker;
 
 import java.awt.Color;
@@ -37,8 +33,8 @@ public class NewVersionDialog {
 
 	public-init var newVersion:NewVersionChecker.VersionInfo;
 	def component = createReleaseNotesPane();
-	var form:Form;
 	
+	// This is the way that you have to wrap Swing Components in JavaFx to make them auto-resize nicely.
 	def stack:Stack = Stack {
 		override var width on replace {
 			component.setPreferredSize( new Dimension( getWidth(), getHeight() ) ); 
@@ -61,7 +57,6 @@ public class NewVersionDialog {
 	}
 	
    postinit {
-   	
    	def dialog:Dialog = Dialog {
 	         title : "New version notice"
 	         content: [
@@ -80,7 +75,7 @@ public class NewVersionDialog {
 	         cancelText: "Remind Me Later"
 	         onOk: function() {
 					dialog.close();
-					FxUtils.openURL(newVersion.downloadUrl);
+					FxUtils.openURL( newVersion.downloadUrl );
 	         }
 				onCancel: function() {
 					dialog.close();
@@ -94,9 +89,8 @@ public class NewVersionDialog {
 		try {
 			text.setPage( newVersion.releaseNotes );
 			text.setEditable( false );
-//			text.setBorder( BorderFactory.createLineBorder( Color.black ) );
 		} catch( e ) {
-			text.setText( "<tr><td>Sorry! No Release notes currently available.</td></tr>" );
+			text.setText( "Sorry! No Release notes currently available." );
 		}
 		return new JScrollPane( text );
     }
