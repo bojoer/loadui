@@ -10,7 +10,7 @@
 	<packaging>pom</packaging>
 	<name>loadUI Pro Controller Installer</name>
 	<properties>
-		<loadui.name>loadUI PRO</loadui.name>
+		<loadui.name>loadUI Pro</loadui.name>
 	</properties>
 	<build>
 		<plugins>
