@@ -1,0 +1,3 @@
+build.number=${loadui.build.number}
+build.date=${loadui.build.date}
+loadui.name=${loadui.name}

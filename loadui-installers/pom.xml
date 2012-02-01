@@ -10,6 +10,9 @@
 	<properties>
 		<devenv.install4jc>${env.INSTALL4J_HOME}/bin/install4jc.exe</devenv.install4jc>
 		<install4jFileName>loadUI.install4j</install4jFileName>
+		<loadui.build.date>${maven.build.timestamp}</loadui.build.date>
+		<loadui.build.number>INTERNAL</loadui.build.number>
+		<loadui.name>loadUI</loadui.name>
 	</properties>
 	<pluginRepositories>
 		<pluginRepository>

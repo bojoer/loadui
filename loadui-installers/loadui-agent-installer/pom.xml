@@ -30,6 +30,10 @@
 								<resource>
 									<directory>src/main/resources</directory>
 								</resource>
+								<resource>
+									<directory>${project.parent.basedir}/src/main/filtered_resources</directory>
+									<filtering>true</filtering>
+								</resource>
 							</resources>
 							<outputDirectory>${project.build.directory}/main</outputDirectory>
 						</configuration>

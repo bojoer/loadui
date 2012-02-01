@@ -9,6 +9,9 @@
 	<artifactId>loadui-pro-controller-installer</artifactId>
 	<packaging>pom</packaging>
 	<name>loadUI Pro Controller Installer</name>
+	<properties>
+		<loadui.name>loadUI PRO</loadui.name>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -33,6 +36,10 @@
 								</resource>
 								<resource>
 									<directory>src/main/resources</directory>
+								</resource>
+								<resource>
+									<directory>${project.parent.basedir}/src/main/filtered_resources</directory>
+									<filtering>true</filtering>
 								</resource>
 							</resources>
 							<outputDirectory>${project.build.directory}/main</outputDirectory>
