@@ -220,15 +220,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	@Override
 	public Execution startExecution( String id, long timestamp, String label, String fileName )
 	{
-		// unpause if paused otherwise try to create new
-		if( executionState == State.PAUSED )
-		{
-			executionState = State.STARTED;
-			ecs.fireExecutionStarted( State.PAUSED );
-			log.debug( "State changed: PAUSED -> STARTED" );
-			return currentExecution;
-		}
-
 		latestEntries.clear();
 
 		if( executionMap.containsKey( id ) )

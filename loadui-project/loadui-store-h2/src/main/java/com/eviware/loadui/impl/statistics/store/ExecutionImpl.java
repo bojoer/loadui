@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.testevents.TestEvent;
@@ -302,10 +303,17 @@ public class ExecutionImpl implements Execution, Releasable
 	@Override
 	public void archive()
 	{
+		log.debug( "Let's archive this execution..." );
 		if( !isArchived() )
 		{
 			setAttribute( KEY_ARCHIVED, Boolean.TRUE.toString() );
 			fireEvent( new BaseEvent( this, ARCHIVED ) );
+			log.debug( "...done! Fired event!" );
+		}
+
+		for( EventSupport.ListenerEntry<?> l : eventSupport.listeners )
+		{
+			log.debug( "weakListener: {}", l.weakListener.get() );
 		}
 	}
 

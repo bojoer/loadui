@@ -18,11 +18,15 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.util.StringUtils;
 
+/*
+ * Much of this code is copied from com.eviware.soapui.support.SoapUIVersionUpdate.
+ */
+
 public class NewVersionChecker
 {
 	public static final Logger log = LoggerFactory.getLogger( NewVersionChecker.class );
 
-	private static final String LATEST_VERSION_XML_LOCATION = "http://dl.eviware.com/version-update/loadui-version-testFuture.xml";
+	private static final String LATEST_VERSION_XML_LOCATION = "http://dl.eviware.com/version-update/loadui-version.xml";
 
 	private static boolean isVersionDesired( @Nonnull String latestVersion )
 	{
@@ -64,7 +68,7 @@ public class NewVersionChecker
 		return workspace.getProperty( WorkspaceItem.IGNORED_VERSION_UPDATE ).getValue().equals( versionName );
 	}
 
-	public static VersionInfo checkForNewVersion( WorkspaceItem workspace )
+	public static VersionInfo checkForNewVersion( final WorkspaceItem workspace )
 	{
 		String versionName = null;
 		String releaseNotes = null;
@@ -84,13 +88,22 @@ public class NewVersionChecker
 
 			if( fstNode.getNodeType() == Node.ELEMENT_NODE )
 			{
+				final boolean isPro = Boolean.parseBoolean( System.getProperty( "loadui.pro" ) );
+
 				Element fstElmnt = ( Element )fstNode;
 
 				versionName = getElementContent( "version-number", fstElmnt );
-				getElementContent( "release-notes-core", fstElmnt ); //TODO: Add Pro/OS check
-				releaseNotes = getElementContent( "release-notes-pro", fstElmnt );
-				getElementContent( "download-link-core", fstElmnt );
-				downloadUrl = getElementContent( "download-link-pro", fstElmnt );
+
+				if( isPro )
+				{
+					releaseNotes = getElementContent( "release-notes-pro", fstElmnt );
+					downloadUrl = getElementContent( "download-link-pro", fstElmnt );
+				}
+				else
+				{
+					releaseNotes = getElementContent( "release-notes-core", fstElmnt );
+					downloadUrl = getElementContent( "download-link-core", fstElmnt );
+				}
 			}
 		}
 
@@ -107,6 +120,12 @@ public class NewVersionChecker
 			return new VersionInfo( versionName, releaseNotes, downloadUrl, workspace );
 		return null;
 	}
+
+	/*
+	 * A VersionInfo object contains all the info that a user may want to know
+	 * about a version. It also provides a method for skipping/ignore the
+	 * version.
+	 */
 
 	public static class VersionInfo
 	{

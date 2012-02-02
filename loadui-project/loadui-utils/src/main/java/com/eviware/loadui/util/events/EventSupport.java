@@ -34,7 +34,7 @@ public class EventSupport implements EventFirer, Releasable
 {
 	private static final Logger log = LoggerFactory.getLogger( EventSupport.class );
 
-	private final Set<ListenerEntry<?>> listeners = new HashSet<ListenerEntry<?>>();
+	public final Set<ListenerEntry<?>> listeners = new HashSet<ListenerEntry<?>>();
 	private static BlockingQueue<Runnable> eventQueue = new LinkedBlockingQueue<Runnable>();
 	private static Thread eventThread = new Thread( new Runnable()
 	{
@@ -113,6 +113,7 @@ public class EventSupport implements EventFirer, Releasable
 		clearEventListeners();
 	}
 
+	@Override
 	public void fireEvent( final EventObject event )
 	{
 		if( !eventQueue.offer( new Runnable()
@@ -165,17 +166,18 @@ public class EventSupport implements EventFirer, Releasable
 			this.handler = handler;
 		}
 
+		@Override
 		public void run()
 		{
 			handler.handleEvent( event );
 		}
 	}
 
-	private static class ListenerEntry<T extends EventObject>
+	public static class ListenerEntry<T extends EventObject>
 	{
 		private final Class<T> type;
-		private final EventHandler<?> listener;
-		private final WeakReference<EventHandler<?>> weakListener;
+		public final EventHandler<?> listener;
+		public final WeakReference<EventHandler<?>> weakListener;
 
 		private ListenerEntry( Class<T> type, EventHandler<? super T> listener )
 		{
