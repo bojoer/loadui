@@ -23,6 +23,8 @@ import com.sun.javafx.scene.layout.Region;
 
 import com.eviware.loadui.fx.util.BrowserControl;
 
+import java.io.File;
+
 public class BrowserFrame extends Stack {
 	override var styleClass = "browser-frame";
 	
@@ -31,7 +33,7 @@ public class BrowserFrame extends Stack {
 	init {
 		content = [
 			Region { styleClass: "browser-frame" },
-			BrowserControl { url: bind url, layoutInfo: LayoutInfo { margin: Insets { top: 26, right: 26, bottom: 26, left: 26 } } }
+			BrowserControl { url: bind url, failureUrl: new File( "res/loadui-starterpage-offline.html" ).toURI().toString(), layoutInfo: LayoutInfo { margin: Insets { top: 26, right: 26, bottom: 26, left: 26 } } }
 		]
 	}
 }

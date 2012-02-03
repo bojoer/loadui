@@ -165,7 +165,7 @@ public function openURL(url:String) {
 
 class CompareByString extends Comparator {
 	override function compare( a:Object, b:Object ) {
-		a.toString().compareTo( b.toString() )
+		String.valueOf( a.toString() ).compareTo( String.valueOf( b.toString() ) )
 	}
 }
 

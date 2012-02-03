@@ -27,6 +27,8 @@ import javafx.geometry.HPos;
 
 import com.sun.javafx.scene.layout.Region;
 
+import com.eviware.loadui.fx.MainWindow;
+
 public class NotificationPanel extends VBox {
 	override var styleClass = "notification-panel";
 	override var nodeHPos = HPos.CENTER;
@@ -61,7 +63,15 @@ public class NotificationPanel extends VBox {
 					HBox {
 						padding: Insets { top: 6, right: 10, bottom: 6, left: 10 }
 						content: [
-							Button { text: "System Log »", blocksMouse: false },
+							Button {
+								text: "System Log »"
+								blocksMouse: false
+								action: function() {
+									def inspectors = MainWindow.instance.inspectors;
+									inspectors.selectInspector( inspectors.getInspector( "System Log" ) );
+									inspectors.expand();
+								}
+							},
 							Label { layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS } },
 							Button { graphic: Region { styleClass: "up-arrow" }, blocksMouse: false, action: bind action }
 						]

@@ -37,13 +37,19 @@ public class BrowserControl extends ScrollView {
 		browser.setUrl( url );
 	}
 	
+	public var failureUrl:String on replace {
+		browser.setFailureUrl( failureUrl );
+	}
+	
 	override var height on replace {
 		stack.height = Math.max( stack.height, height );
 		browser.setDesiredHeight( height );
 	}
 	
 	postinit {
-		browser = new BrowserComponent( url );
+		browser = new BrowserComponent();
+		if( FX.isInitialized( failureUrl ) ) browser.setFailureUrl( failureUrl );
+		if( FX.isInitialized( url ) ) browser.setUrl( url );
 		browser.addPropertyChangeListener( Listener {} );
 		
 		node = stack = Stack {

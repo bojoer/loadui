@@ -61,21 +61,19 @@ public class BrowserComponent extends JPanel implements Browser
 	private final WebWindow window;
 	private HtmlPage page;
 
+	private URL failureUrl;
 	private URL url;
 	private DOMAnalyzer da;
 	private Element root;
 	private double desiredHeight = 100;
 	private double pageHeight = 0;
 
-	public BrowserComponent( String urlString ) throws FailingHttpStatusCodeException, MalformedURLException,
-			IOException
+	public BrowserComponent() throws FailingHttpStatusCodeException, MalformedURLException, IOException
 	{
 		super( new BorderLayout() );
 
 		client.addWebWindowListener( new MyWebWindowListener() );
 		window = client.getCurrentWindow();
-
-		setUrl( urlString );
 
 		addComponentListener( new PanelSizeListener() );
 		addMouseMotionListener( new MouseMovedListener() );
@@ -170,6 +168,11 @@ public class BrowserComponent extends JPanel implements Browser
 		}
 	}
 
+	public void setFailureUrl( String failureUrlString ) throws MalformedURLException
+	{
+		failureUrl = new URL( failureUrlString );
+	}
+
 	public void setUrl( final String urlString )
 	{
 		executor.execute( new Runnable()
@@ -180,6 +183,7 @@ public class BrowserComponent extends JPanel implements Browser
 				try
 				{
 					page = client.getPage( window, new WebRequestSettings( new URL( urlString ) ) );
+					return;
 				}
 				catch( FailingHttpStatusCodeException e )
 				{
@@ -192,6 +196,22 @@ public class BrowserComponent extends JPanel implements Browser
 				catch( IOException e )
 				{
 					log.error( "Failed to load URL: " + urlString, e );
+				}
+
+				try
+				{
+					if( failureUrl != null )
+					{
+						page = client.getPage( window, new WebRequestSettings( failureUrl ) );
+					}
+				}
+				catch( FailingHttpStatusCodeException e )
+				{
+					log.error( "Failed to load OFFLINE URL: " + failureUrl, e );
+				}
+				catch( IOException e )
+				{
+					log.error( "Failed to load OFFLINE URL: " + failureUrl, e );
 				}
 			}
 		} );

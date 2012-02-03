@@ -10,7 +10,7 @@
 	<properties>
 		<mavenBundlePluginVersion>2.3.6</mavenBundlePluginVersion>
 		<jettyVersion>7.5.4.v20111024</jettyVersion>
-		<groovyVersion>1.8.1</groovyVersion>
+		<groovyVersion>1.8.5</groovyVersion>
 		<cometdVersion>2.4.0.RC1</cometdVersion>
 		<changelog.start.date>2011-06-13</changelog.start.date>
 		<osgiVersion>4.2.0</osgiVersion>

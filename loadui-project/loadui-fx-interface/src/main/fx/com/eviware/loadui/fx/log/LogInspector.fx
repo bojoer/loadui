@@ -99,6 +99,7 @@ public class LogInspector extends AppenderSkeleton, Inspector {
 	}
 	
 	override function onShow() {
+		panel.selectLastRow();
 	}
 	
 	override function onHide() {

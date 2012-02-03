@@ -98,7 +98,7 @@ public class MainWindow {
 	public-read var workspace:WorkspaceItem;
 	public function setWorkspaceProvider( workspaceProvider:WorkspaceProvider ):Void { this.workspaceProvider = workspaceProvider }
 	
-	var inspectors:InspectorPanelControl;
+	public-read var inspectors:InspectorPanelControl;
 	public function getInspectorPanel() { inspectors }
 	
 	var toolbar:Toolbar;
@@ -188,8 +188,8 @@ public class MainWindow {
 		appState.insertInto( AgentCarousel { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
 		
 		appState.insertInto( BrowserFrame {
-			url: java.lang.System.getProperty( "url", "http://soapui.org/appindex/soapui-courtesy-starterpage-home.html" ),
-			layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: bind Math.max( scene.width - 502, 315 ), height: bind Math.max( scene.height - 150, 507 ) }
+			url: java.lang.System.getProperty( "url", "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html" ),
+			layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: 560, height: 507 }
 		}, WORKSPACE_FRONT );
 		
 		//Toolbar

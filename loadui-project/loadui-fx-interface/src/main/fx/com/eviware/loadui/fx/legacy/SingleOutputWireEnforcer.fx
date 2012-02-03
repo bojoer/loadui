@@ -85,7 +85,7 @@ public class SingleOutputWireEnforcer {
 
 class TestExecutionVerifier extends TestExecutionTask {
 	override function invoke( execution, phase ) {
-		if( not validate() ) execution.abort( "Your test contains multiple wires connected to the same output terminal! Please, fix this before running the test." );
+		if( not validate() ) execution.abort( "Your test contains multiple wires connected to the same output terminal! Since loadUI 2.0 this is not allowed. Please, fix this before running the test." );
 	}
 }
 
