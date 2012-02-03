@@ -1,0 +1,22 @@
+body {
+	background: #303030;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 62.5%;
+	margin: 0;
+	padding: 0;
+}
+h1 span {
+	color: gray;
+	font-size: 18px;
+	background: #303030;
+	padding-right: 10px;
+}
+.header {
+	background: url(../images/h1-line.png) repeat-x 0 50%;
+}
+.loadui-starterpage-box {
+	color: #e3e3e3;
+	font-size: 14px;
+	padding: 1px 8px;
+	width: 536px;
+}
