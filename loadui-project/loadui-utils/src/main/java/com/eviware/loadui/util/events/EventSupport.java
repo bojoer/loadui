@@ -34,7 +34,7 @@ public class EventSupport implements EventFirer, Releasable
 {
 	private static final Logger log = LoggerFactory.getLogger( EventSupport.class );
 
-	public final Set<ListenerEntry<?>> listeners = new HashSet<ListenerEntry<?>>();
+	private final Set<ListenerEntry<?>> listeners = new HashSet<ListenerEntry<?>>();
 	private static BlockingQueue<Runnable> eventQueue = new LinkedBlockingQueue<Runnable>();
 	private static Thread eventThread = new Thread( new Runnable()
 	{
