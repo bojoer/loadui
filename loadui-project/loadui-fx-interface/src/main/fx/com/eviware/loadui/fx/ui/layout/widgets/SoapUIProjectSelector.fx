@@ -151,7 +151,7 @@ public class SoapUIProjectSelector extends LayoutComponentNode, EventHandler {
 				VBox {
 					content: [
 						Label { text: "soapUI TestCase", layoutInfo: LayoutInfo{ height: 18 } }
-						testCaseLabel = Label { text: "", layoutInfo: LayoutInfo{ height: 18, width: 190 } }
+						testCaseLabel = Label { text: "", layoutInfo: LayoutInfo{ height: 18, width: 225 } }
 					]	
 				}
 			]
