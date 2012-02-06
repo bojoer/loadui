@@ -41,7 +41,7 @@ public class SingleOutputWireEnforcer {
 	def projectCanvas = bind MainWindow.instance.projectCanvas;
 	def project = bind projectCanvas.projectItem on replace oldProject {
 		if( oldProject != null ) {
-			for( canvasItem in [ project, for( scene in project.getScenes() ) scene ] ) {
+			for( canvasItem in [ oldProject, for( scene in oldProject.getScenes() ) scene ] ) {
 				canvasItem.removeEventListener( CollectionEvent.class, listener );
 			}
 		}

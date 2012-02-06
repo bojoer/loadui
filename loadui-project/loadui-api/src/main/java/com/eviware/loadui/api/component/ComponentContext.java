@@ -17,6 +17,7 @@ package com.eviware.loadui.api.component;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.layout.LayoutComponent;
@@ -24,6 +25,7 @@ import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.PropertyHolder;
+import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.terminal.DualTerminal;
 import com.eviware.loadui.api.terminal.InputTerminal;
@@ -360,6 +362,13 @@ public interface ComponentContext extends Labeled.Mutable, MutableTerminalHolder
 	 * @param statisticVariableName
 	 */
 	public void removeStatisticVariable( String statisticVariableName );
+
+	/**
+	 * Returns a Set of contained Statistics to be displayed by default.
+	 * 
+	 * @return
+	 */
+	public Set<Statistic.Descriptor> getDefaultStatistics();
 
 	/**
 	 * Simple interface defining the like function.

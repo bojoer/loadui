@@ -37,6 +37,7 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.StatisticPages;
 import com.eviware.loadui.api.summary.Summary;
@@ -520,4 +521,9 @@ public class AgentProjectItem implements ProjectItem
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public Set<Statistic.Descriptor> getDefaultStatistics()
+	{
+		return ImmutableSet.of();
+	}
 }

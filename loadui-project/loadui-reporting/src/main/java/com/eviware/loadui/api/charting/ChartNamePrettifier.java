@@ -23,12 +23,12 @@ public class ChartNamePrettifier
 {
 	public static String compactNameFor( Statistic<?> statistic )
 	{
-		return compactDataName( statistic.getName(), "" );
+		return compactDataName( statistic.getLabel(), "" );
 	}
 
 	public static String nameFor( Statistic<?> statistic )
 	{
-		return statistic == null ? null : nameForStatistic( statistic.getName() );
+		return statistic == null ? null : nameForStatistic( statistic.getLabel() );
 	}
 
 	public static String nameForSource( String source )

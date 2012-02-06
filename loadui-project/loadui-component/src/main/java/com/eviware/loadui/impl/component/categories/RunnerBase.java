@@ -58,6 +58,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.statistics.CounterStatisticSupport;
+import com.eviware.loadui.util.statistics.StatisticDescriptorImpl;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -193,6 +194,11 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		counterStatisticSupport.addCounterVariable( RunnerCategory.DISCARDED_SAMPLES_COUNTER, discardedVariable );
 		StatisticVariable.Mutable sentVariable = context.addStatisticVariable( "Sent", "sent requests", "COUNTER" );
 		counterStatisticSupport.addCounterVariable( CanvasItem.REQUEST_COUNTER, sentVariable );
+
+		context.getDefaultStatistics().add(
+				new StatisticDescriptorImpl( timeTakenVariable.getStatistic( "AVERAGE", StatisticVariable.MAIN_SOURCE ) ) );
+		context.getDefaultStatistics().add(
+				new StatisticDescriptorImpl( throughputVariable.getStatistic( "TPS", StatisticVariable.MAIN_SOURCE ) ) );
 
 		concurrentSamplesProperty = context.createProperty( CONCURRENT_SAMPLES_PROPERTY, Long.class, 100 );
 		concurrentSamples = concurrentSamplesProperty.getValue();

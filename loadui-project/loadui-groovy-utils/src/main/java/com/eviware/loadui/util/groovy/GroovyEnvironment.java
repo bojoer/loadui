@@ -15,15 +15,6 @@
  */
 package com.eviware.loadui.util.groovy;
 
-import java.net.URL;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import groovy.grape.Grape;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
@@ -34,6 +25,16 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 
+import java.net.URL;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.eviware.loadui.api.traits.Initializable;
 import com.eviware.loadui.api.traits.Releasable;
 import com.google.common.collect.Maps;
 
@@ -45,7 +46,7 @@ import com.google.common.collect.Maps;
  * 
  * @author dain.nilsson
  */
-public class GroovyEnvironment implements Releasable
+public class GroovyEnvironment implements Initializable, Releasable
 {
 	private final ParsedGroovyScript script;
 	private final String scriptName;
@@ -54,10 +55,11 @@ public class GroovyEnvironment implements Releasable
 	private final GroovyShell shell;
 	private final GroovyResolver.Methods methodResolver;
 	private final GroovyResolver.Properties propertyResolver;
-	private final Binding binding = new Binding();
+	private final Binding binding;
 
 	public GroovyEnvironment( @Nonnull ParsedGroovyScript script, @Nonnull String id, @Nonnull String basePackage,
-			@Nonnull ClassLoaderRegistry classLoaderRegistry, @Nonnull String classLoaderId, GroovyResolver resolver )
+			@Nonnull ClassLoaderRegistry classLoaderRegistry, @Nonnull String classLoaderId, GroovyResolver resolver,
+			Binding binding )
 	{
 		this.script = script;
 		scriptName = "Groovy" + id.replaceAll( "[^a-zA-Z]", "" );
@@ -70,12 +72,15 @@ public class GroovyEnvironment implements Releasable
 				: GroovyResolver.NULL_RESOLVER;
 		propertyResolver = resolver instanceof GroovyResolver.Properties ? ( GroovyResolver.Properties )resolver
 				: GroovyResolver.NULL_RESOLVER;
+
+		this.binding = binding;
 	}
 
 	/**
 	 * Initializes the script, loading any required dependencies and running the
 	 * script.
 	 */
+	@Override
 	public void init()
 	{
 		int repos = 0;
@@ -115,6 +120,11 @@ public class GroovyEnvironment implements Releasable
 		{
 			Thread.currentThread().setContextClassLoader( cl );
 		}
+	}
+
+	@Override
+	public void postInit()
+	{
 	}
 
 	public Binding getBinding()
@@ -246,5 +256,4 @@ public class GroovyEnvironment implements Releasable
 			}
 		}
 	}
-
 }

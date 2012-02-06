@@ -34,7 +34,7 @@ public class StatisticResolver implements Resolver<Statistic>
 
 	public StatisticResolver( Statistic statistic )
 	{
-		statisticName = statistic.getName();
+		statisticName = statistic.getLabel();
 		source = statistic.getSource();
 
 		StatisticVariable variable = statistic.getStatisticVariable();

@@ -18,7 +18,9 @@ package com.eviware.loadui.api.statistics;
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.serialization.ListenableValue;
+import com.eviware.loadui.api.serialization.Resolver;
 import com.eviware.loadui.api.statistics.store.Execution;
+import com.eviware.loadui.api.traits.Labeled;
 
 /**
  * A recording of a value which changes over time, which can be mapped into a
@@ -26,17 +28,8 @@ import com.eviware.loadui.api.statistics.store.Execution;
  * 
  * @author dain.nilsson
  */
-public interface Statistic<T extends Number> extends ListenableValue<T>
+public interface Statistic<T extends Number> extends ListenableValue<T>, Labeled
 {
-	/**
-	 * Gets the name of this Statistic. Names should be unique per
-	 * StatisticHolder.
-	 * 
-	 * @return
-	 */
-	@Nonnull
-	public String getName();
-
 	/**
 	 * Gets the StatisticVariable of this Statistic.
 	 * 
@@ -105,4 +98,20 @@ public interface Statistic<T extends Number> extends ListenableValue<T>
 	 * @return
 	 */
 	public DataPoint<T> getLatestPoint( int interpolationLevel );
+
+	/**
+	 * A Descriptor stored information about a Statistic, and gives a way to
+	 * resolve the Statistic;
+	 * 
+	 * @author dain.nilsson
+	 */
+	@SuppressWarnings( "rawtypes" )
+	public interface Descriptor extends Resolver<Statistic>
+	{
+		public String getStatisticLabel();
+
+		public String getStatisticVariableLabel();
+
+		public String getSource();
+	}
 }

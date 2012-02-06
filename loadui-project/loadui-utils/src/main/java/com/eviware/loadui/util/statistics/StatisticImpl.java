@@ -79,7 +79,7 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	}
 
 	@Override
-	public String getName()
+	public String getLabel()
 	{
 		return name;
 	}

@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,7 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.MutableChapter;
 import com.eviware.loadui.api.terminal.Connection;
@@ -75,6 +77,8 @@ import com.eviware.loadui.impl.terminal.TerminalMessageImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implements ComponentItem
 {
@@ -105,6 +109,8 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 	private ActivityStrategy activityStrategy;
 	private final ActivityListener activityListener = new ActivityListener();
+
+	private final HashSet<Statistic.Descriptor> defaultStatistics = Sets.newHashSet();
 
 	public ComponentItemImpl( CanvasItem canvas, ComponentItemConfig config )
 	{
@@ -397,6 +403,13 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		}
 
 		return agentTerminals.get( agent );
+	}
+
+	@Override
+	public Set<Statistic.Descriptor> getDefaultStatistics()
+	{
+		return ImmutableSet.<Statistic.Descriptor> copyOf( Iterables.filter( defaultStatistics,
+				Statistic.Descriptor.class ) );
 	}
 
 	private class TerminalEventHandler implements Runnable
@@ -922,6 +935,12 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		public void removeStatisticVariable( String statisticVariableName )
 		{
 			statisticHolderSupport.removeStatisticVariable( statisticVariableName );
+		}
+
+		@Override
+		public Set<Statistic.Descriptor> getDefaultStatistics()
+		{
+			return defaultStatistics;
 		}
 	}
 

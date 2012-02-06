@@ -69,9 +69,13 @@ public function createChartGroup( parent:StatisticPage, type:String, label:Strin
 
 public function createSubChart( parent:ChartGroup, owner:Chart.Owner ):Chart {
 	def chart = parent.createChart( owner );
-	if( owner instanceof ComponentItem ) {
-		def component:ComponentItem = owner as ComponentItem;
-		
+	if( owner instanceof StatisticHolder ) {
+		def statisticHolder = owner as StatisticHolder;
+		for( statistic in statisticHolder.getDefaultStatistics() ) {
+			def chartView = parent.getChartViewForChart( chart );
+			(chartView as ConfigurableLineChartView).addSegment( statistic.getStatisticVariableLabel(), statistic.getStatisticLabel(), statistic.getSource() );
+		}
+		/*
 //		if( component.getType().equals( "Assertion" ) ) {	
 //			def variable = component.getStatisticVariable( "Assertion Failures" );
 //			if( variable != null and variable.getStatisticNames().contains( "TOTAL" ) ) {
@@ -96,8 +100,8 @@ public function createSubChart( parent:ChartGroup, owner:Chart.Owner ):Chart {
 			def chartView = parent.getChartViewForChart( chart );
 			(chartView as ConfigurableLineChartView).addSegment( "Requests", "PER_SECOND", StatisticVariable.MAIN_SOURCE );
 		}
-	}
-	else if( owner instanceof AssertionItem ) {
+	*/
+	} else if( owner instanceof AssertionItem ) {
 		def assertionItem = (owner as AssertionItem);
 		def typeLabel = BeanInjector.getBean( TestEventRegistry.class ).lookupFactory( (assertionItem as TestEvent.Source).getType() ).getLabel();
 		def chartView = parent.getChartViewForChart( chart );

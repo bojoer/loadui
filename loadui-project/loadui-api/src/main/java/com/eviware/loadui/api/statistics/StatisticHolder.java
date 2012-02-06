@@ -51,4 +51,13 @@ public interface StatisticHolder extends EventFirer, Chart.Owner
 	 */
 	@Nonnull
 	public Set<String> getStatisticVariableNames();
+
+	/**
+	 * Gets a Set (which can be empty) of default Statistics contained under the
+	 * StatisticHolder to be displayed by default.
+	 * 
+	 * @return
+	 */
+	@Nonnull
+	public Set<? extends Statistic.Descriptor> getDefaultStatistics();
 }

@@ -15,9 +15,13 @@
  */
 package com.eviware.loadui.util;
 
+import java.util.Arrays;
+
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.traits.Initializable;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * Utility class for initializing Initializables.
@@ -45,5 +49,30 @@ public class InitializableUtils
 		}
 
 		return object;
+	}
+
+	/**
+	 * Initializes all given objects which are Initializable, filtering out
+	 * duplicates.
+	 * 
+	 * @param objects
+	 */
+	public static void initializeAll( Iterable<?> objects )
+	{
+		for( Initializable initializable : ImmutableSet.copyOf( Iterables.filter( objects, Initializable.class ) ) )
+		{
+			initialize( initializable );
+		}
+	}
+
+	/**
+	 * Initializes all given objects which are Initializable, filtering out
+	 * duplicates.
+	 * 
+	 * @param objects
+	 */
+	public static void initializeAll( Object... objects )
+	{
+		initializeAll( Arrays.asList( objects ) );
 	}
 }

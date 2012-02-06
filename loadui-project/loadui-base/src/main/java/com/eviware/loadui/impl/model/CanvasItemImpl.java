@@ -52,6 +52,7 @@ import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
@@ -73,7 +74,9 @@ import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.collections.CollectionEventSupport;
 import com.eviware.loadui.util.events.EventFuture;
 import com.eviware.loadui.util.statistics.CounterStatisticSupport;
+import com.eviware.loadui.util.statistics.StatisticDescriptorImpl;
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 
@@ -627,6 +630,13 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	public void setAbortOnFinish( boolean abort )
 	{
 		abortOnFinish.setValue( abort );
+	}
+
+	@Override
+	public Set<Statistic.Descriptor> getDefaultStatistics()
+	{
+		return ImmutableSet.<Statistic.Descriptor> of( new StatisticDescriptorImpl( this, "Requests", "PER_SECOND",
+				StatisticVariable.MAIN_SOURCE ) );
 	}
 
 	private class ComponentListener implements EventHandler<BaseEvent>
