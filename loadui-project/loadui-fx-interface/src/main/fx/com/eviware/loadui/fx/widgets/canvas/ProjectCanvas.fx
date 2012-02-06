@@ -35,6 +35,7 @@ import com.eviware.loadui.api.events.CollectionEvent;
 import java.util.EventObject;
 import java.lang.RuntimeException;
 
+import com.eviware.loadui.fx.widgets.Trashcan;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.ui.dialogs.ProjectSettingsDialog;
 import com.eviware.loadui.fx.MainWindow;
@@ -51,6 +52,8 @@ import com.eviware.loadui.fx.util.ImageUtil.*;
 public class ProjectCanvas extends Canvas {
 
 	public-read var projectItem:ProjectItem;
+	
+	override var trashcan = Trashcan { layoutX: bind offsetX + scene.width - 120, layoutY: bind offsetY + 90 };
 	
 	override var canvasItem on replace oldCanvas {
 		projectItem = canvasItem as ProjectItem; 

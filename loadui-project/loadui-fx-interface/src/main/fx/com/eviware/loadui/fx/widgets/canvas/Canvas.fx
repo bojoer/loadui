@@ -97,7 +97,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	def dummyNodeNotes = Rectangle { fill: Color.rgb(0,0,0,0.0001), width: 1, height: 1 };
 	def dummyNodeBalloons = Rectangle { fill: Color.rgb(0,0,0,0.0001), width: 1, height: 1 };
 	
-	protected var trashcan = Trashcan { layoutX: bind offsetX + scene.width - 120, layoutY: bind offsetY + 90 };
+	protected var trashcan = Trashcan { layoutX: bind offsetX + scene.width - 120, layoutY: bind offsetY + 110 };
 	
 	protected def connectionLayer = Group { content: dummyNodeConnections };
 	protected def componentLayer = Group { content: dummyNodeComponents };
