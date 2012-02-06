@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Nonnull;
 
@@ -34,7 +33,6 @@ import com.eviware.loadui.api.addon.Addon.Context;
 import com.eviware.loadui.api.addon.AddonRegistry;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
@@ -55,7 +53,6 @@ import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
-import com.eviware.loadui.util.events.EventFuture;
 import com.google.common.collect.ImmutableSet;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Releasable

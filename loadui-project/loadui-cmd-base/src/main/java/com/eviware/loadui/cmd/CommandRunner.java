@@ -18,7 +18,6 @@ package com.eviware.loadui.cmd;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
-import groovy.ui.Console;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,7 +26,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import org.codehaus.groovy.control.CompilationFailedException;
-import org.codehaus.groovy.tools.shell.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +75,7 @@ public class CommandRunner
 			this.command = command;
 		}
 
+		@Override
 		public void run()
 		{
 			Binding binding = new Binding();
