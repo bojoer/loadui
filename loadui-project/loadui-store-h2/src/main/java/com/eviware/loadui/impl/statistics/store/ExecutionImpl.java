@@ -303,17 +303,10 @@ public class ExecutionImpl implements Execution, Releasable
 	@Override
 	public void archive()
 	{
-		log.debug( "Let's archive this execution..." );
 		if( !isArchived() )
 		{
 			setAttribute( KEY_ARCHIVED, Boolean.TRUE.toString() );
 			fireEvent( new BaseEvent( this, ARCHIVED ) );
-			log.debug( "...done! Fired event!" );
-		}
-
-		for( EventSupport.ListenerEntry<?> l : eventSupport.listeners )
-		{
-			log.debug( "weakListener: {}", l.weakListener.get() );
 		}
 	}
 
