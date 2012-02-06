@@ -57,7 +57,6 @@ import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.dialogs.*;
 import com.eviware.loadui.fx.dialogs.*;
 import com.eviware.loadui.fx.ui.menu.button.*;
-import com.eviware.loadui.fx.widgets.TrashHole;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.resources.Paints;
 import com.eviware.loadui.fx.ui.resources.MenuArrow;
@@ -351,7 +350,6 @@ public class TestCaseMenu extends HBox {
 								disable: Boolean.getBoolean( LoadUI.DISABLE_STATISTICS )
 							}, SeparatorButton {
 								height: bind height
-							}, TrashHole {
 				         }, showNotesButton = MenubarToggleButton {
 								shape: "M 0,0 L 0,8 5,8 11,12 9,8 13,8 13,0 Z"
 								tooltip: Tooltip { text: ##[TOGGLE_NOTES]"Toggle note visibility" }

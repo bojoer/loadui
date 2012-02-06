@@ -61,10 +61,14 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Ag
  * Node to display in the AgentList representing a AgentItem.
  */
 public class AgentNode extends AgentNodeBase, Draggable {
-	override var opacity = bind if( dragging ) 0.8 else 1;
+	var agentNode:Node;
+	
+	def nodeOpacity = bind if( dragging ) 0.8 else 1 on replace {
+		agentNode.opacity = nodeOpacity;
+	}
 	
 	override function create() {
-		def base = super.create() as DialogPanel;
+		agentNode = super.create();
 		activityNode.layoutInfo = LayoutInfo { margin: Insets { top: 70 } };
 		
 		insert Stack {
@@ -73,8 +77,8 @@ public class AgentNode extends AgentNodeBase, Draggable {
 					image: Image { url: "{__ROOT__}images/png/agent_node_background.png" }
 				}, activityNode
 			]
-		} into (base.body as Container).content;
+		} into ((agentNode as DialogPanel).body as Container).content;
 		
-		base;
+		agentNode
 	}
 }

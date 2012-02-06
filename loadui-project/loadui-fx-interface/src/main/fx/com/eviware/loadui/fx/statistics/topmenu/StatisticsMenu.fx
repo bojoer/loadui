@@ -55,7 +55,6 @@ import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.dialogs.*;
 import com.eviware.loadui.fx.dialogs.*;
 import com.eviware.loadui.fx.ui.menu.button.*;
-import com.eviware.loadui.fx.widgets.TrashHole;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.resources.Paints;
 import com.eviware.loadui.fx.ui.resources.MenuArrow;
@@ -211,10 +210,6 @@ public class StatisticsMenu extends Stack {
 													hgrow: Priority.ALWAYS
 													hfill: true 
 												}
-											}, SeparatorButton {
-													height: bind height
-											}, TrashHole {
-													showTooltip: false
 											}, SeparatorButton {
 													height: bind height
 											}, MenubarButton {

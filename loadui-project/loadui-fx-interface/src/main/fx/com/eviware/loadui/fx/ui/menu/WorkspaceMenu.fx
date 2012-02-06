@@ -42,7 +42,6 @@ import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.dialogs.*;
 import com.eviware.loadui.fx.dialogs.*;
 import com.eviware.loadui.fx.ui.menu.button.*;
-import com.eviware.loadui.fx.widgets.TrashHole;
 import com.eviware.loadui.fx.widgets.DistributionModeSelector;
 import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.ui.resources.Paints;
@@ -200,9 +199,6 @@ public class WorkspaceMenu extends HBox {
                 hgrow: Priority.ALWAYS
                 hfill: true 
             }
-            }, SeparatorButton {
-            height: bind height;
-            }, TrashHole {
             }, SeparatorButton {
             	height: bind height;
 				}, MenubarButton {

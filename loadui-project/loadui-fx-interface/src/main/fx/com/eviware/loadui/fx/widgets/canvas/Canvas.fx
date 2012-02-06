@@ -52,6 +52,7 @@ import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.resources.GageReset;
+import com.eviware.loadui.fx.widgets.Trashcan;
 import com.eviware.loadui.fx.widgets.toolbar.NoteToolbarItem;
 import com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
@@ -96,6 +97,8 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	def dummyNodeNotes = Rectangle { fill: Color.rgb(0,0,0,0.0001), width: 1, height: 1 };
 	def dummyNodeBalloons = Rectangle { fill: Color.rgb(0,0,0,0.0001), width: 1, height: 1 };
 	
+	protected var trashcan = Trashcan { layoutX: bind offsetX + scene.width - 120, layoutY: bind offsetY + 90 };
+	
 	protected def connectionLayer = Group { content: dummyNodeConnections };
 	protected def componentLayer = Group { content: dummyNodeComponents };
 	protected def noteLayer = Group { visible: bind showNotes, content: dummyNodeNotes };
@@ -119,6 +122,11 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			[ connectionLayer, componentLayer, noteLayer, balloonsLayer ]
 		else
 			[ noteLayer, connectionLayer, componentLayer, balloonsLayer ];
+		
+		delete trashcan from (trashcan.parent as Group).content;
+		def layer = if( front ) noteLayer else componentLayer;
+		def position = sizeof layer.content - 1;
+		insert trashcan before layer.content[position];
 	}
 	
 	public var padding:Integer = 200;

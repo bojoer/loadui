@@ -37,6 +37,7 @@ import com.eviware.loadui.fx.ui.notification.NotificationArea;
 import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.widgets.AgentCarousel;
 import com.eviware.loadui.fx.widgets.ProjectCarousel;
+import com.eviware.loadui.fx.widgets.Trashcan;
 import com.eviware.loadui.fx.widgets.canvas.Canvas;
 import com.eviware.loadui.fx.widgets.canvas.NavigationPanel;
 import com.eviware.loadui.fx.widgets.canvas.ProjectCanvas;
@@ -191,6 +192,8 @@ public class MainWindow {
 			url: java.lang.System.getProperty( "url", "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html" ),
 			layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: 560, height: 507 }
 		}, WORKSPACE_FRONT );
+		
+		appState.insertInto( Trashcan { layoutX: bind scene.width - 110, layoutY: 90, layoutInfo: LayoutInfo { width: 100, height: 120 } }, WORKSPACE_FRONT );
 		
 		//Toolbar
 

@@ -55,6 +55,7 @@ import com.eviware.loadui.fx.JavaFXActivator;
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.Overlay;
 import com.eviware.loadui.fx.FxUtils.*;
+import com.eviware.loadui.fx.widgets.Trashcan;
 import com.eviware.loadui.fx.statistics.toolbar.StatisticsToolbar;
 import com.eviware.loadui.fx.statistics.chart.ChartPage;
 import com.eviware.loadui.fx.statistics.manager.RecentResultsList;
@@ -147,6 +148,8 @@ public class StatisticsWindow {
 			
 			appState.insertInto ( ManageMenu { width: bind scene.width }, STATISTICS_MANAGE );
 			
+			appState.insertInto( Trashcan { layoutX: bind scene.width - 110, layoutY: 90, layoutInfo: LayoutInfo { width: 100, height: 120 } }, STATISTICS_MANAGE );
+			
 			appState.insertInto( stack, STATISTICS_VIEW );
 			appState.insertInto( toolbar, STATISTICS_VIEW );
 			
@@ -156,6 +159,8 @@ public class StatisticsWindow {
 				layoutY: 80
 			}, STATISTICS_VIEW );*/
 			appState.insertInto( topMenu, STATISTICS_VIEW );
+			
+			appState.insertInto( Trashcan { layoutX: bind scene.width - 110, layoutY: 90, layoutInfo: LayoutInfo { width: 100, height: 120 } }, STATISTICS_VIEW );
 			
 			appState.transitionTo( project.getAttribute( VIEW_ATTRIBUTE, STATISTICS_MANAGE ), AppState.FADE_WIPE );
 			AppState.put( scene, appState, "STATISTICS" );
