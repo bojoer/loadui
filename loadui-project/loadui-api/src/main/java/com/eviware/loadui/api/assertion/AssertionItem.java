@@ -17,6 +17,7 @@ package com.eviware.loadui.api.assertion;
 
 import com.eviware.loadui.api.addon.AddonItem;
 import com.eviware.loadui.api.addressable.Addressable;
+import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.traits.Describable;
@@ -27,8 +28,10 @@ import com.eviware.loadui.api.traits.Labeled;
  * 
  * @author dain.nilsson
  */
-public interface AssertionItem<T> extends AddonItem, Chart.Owner, Labeled, Describable
+public interface AssertionItem<T> extends AddonItem, Chart.Owner, EventFirer, Labeled, Describable
 {
+	public final static String FAILURE_COUNT = AssertionItem.class.getSimpleName() + ".failureCount";
+
 	/**
 	 * Returns the Addressable to which the asserted value belongs.
 	 * 
@@ -65,6 +68,14 @@ public interface AssertionItem<T> extends AddonItem, Chart.Owner, Labeled, Descr
 	 * @return
 	 */
 	public int getToleranceAllowedOccurrences();
+
+	/**
+	 * Returns the number of times this AssertionItem has failed during the last
+	 * TestExecution.
+	 * 
+	 * @return
+	 */
+	public long getFailureCount();
 
 	/**
 	 * Mutable version of AssertionItem.

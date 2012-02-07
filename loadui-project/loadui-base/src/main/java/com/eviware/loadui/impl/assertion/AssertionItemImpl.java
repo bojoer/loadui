@@ -31,6 +31,8 @@ import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.api.assertion.Constraint;
+import com.eviware.loadui.api.counter.CounterHolder;
+import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
@@ -51,7 +53,7 @@ import com.eviware.loadui.util.testevents.TestEventSourceSupport;
 import com.google.common.base.Objects;
 
 public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent.Source<AssertionFailureEvent>,
-		EventFirer, Releasable
+		Releasable
 {
 	protected static final Logger log = LoggerFactory.getLogger( AssertionItemImpl.class );
 
@@ -65,6 +67,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	private final ToleranceSupport conditionTolerance = new ToleranceSupport();
 	private final ValueAsserter valueAsserter = new ValueAsserter();
 	private final LabelListener labelListener = new LabelListener();
+	private final ResetListener resetListener = new ResetListener();
 	private final TestEventSourceSupport sourceSupport;
 	private final CanvasItem canvas;
 	private final AssertionAddonImpl addon;
@@ -74,6 +77,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 
 	private Constraint<? super T> constraint;
 	private String description;
+	private long failures = 0;
 
 	//Create new AssertionItem
 	public AssertionItemImpl( @Nonnull CanvasItem canvas, @Nonnull AssertionAddonImpl addon,
@@ -99,7 +103,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		listenableValue = attachLabelListener( listenableValueResolver.getValue() );
 
 		sourceSupport = new TestEventSourceSupport( getLabel(), createData() );
-
+		canvas.addEventListener( ActionEvent.class, resetListener );
 		updateDescription();
 	}
 
@@ -155,6 +159,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		}
 
 		sourceSupport = new TestEventSourceSupport( getLabel(), createData() );
+		canvas.addEventListener( ActionEvent.class, resetListener );
 		updateDescription();
 	}
 
@@ -275,6 +280,12 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	@Override
 	public void release()
 	{
+		canvas.removeEventListener( ActionEvent.class, resetListener );
+		if( listenableValue instanceof EventFirer )
+		{
+			( ( EventFirer )listenableValue ).addEventListener( BaseEvent.class, labelListener );
+		}
+
 		fireEvent( new BaseEvent( this, RELEASED ) );
 		stop();
 	}
@@ -301,6 +312,12 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	public void fireEvent( EventObject event )
 	{
 		eventSupport.fireEvent( event );
+	}
+
+	@Override
+	public long getFailureCount()
+	{
+		return failures;
 	}
 
 	@Override
@@ -375,6 +392,8 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 				{
 					failureGrouper.append( value, timestamp );
 					canvas.getCounter( CanvasItem.FAILURE_COUNTER ).increment();
+					failures++ ;
+					fireEvent( new BaseEvent( AssertionItemImpl.this, FAILURE_COUNT ) );
 				}
 			}
 		}
@@ -450,6 +469,19 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 			if( Objects.equal( Labeled.LABEL, event.getKey() ) )
 			{
 				updateDescription();
+			}
+		}
+	}
+
+	private class ResetListener implements WeakEventHandler<ActionEvent>
+	{
+		@Override
+		public void handleEvent( ActionEvent event )
+		{
+			if( Objects.equal( CounterHolder.COUNTER_RESET_ACTION, event.getKey() ) )
+			{
+				failures = 0;
+				fireEvent( new BaseEvent( AssertionItemImpl.this, FAILURE_COUNT ) );
 			}
 		}
 	}

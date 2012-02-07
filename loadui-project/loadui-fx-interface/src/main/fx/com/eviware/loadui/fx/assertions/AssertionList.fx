@@ -32,6 +32,8 @@ import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.api.testevents.TestEventManager.TestEventObserver;
 import com.eviware.loadui.api.testevents.TestEvent.Entry;
+import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.util.BeanInjector;
 
 import com.eviware.loadui.fx.dialogs.RenameModelItemDialog;
@@ -58,16 +60,9 @@ def assertionIcon = Image { url: "{__ROOT__}images/png/assertion_icon_neutral.pn
 
 public class AssertionList extends Stack {
 	
-	def observer = AssertionObserver{}
+	def menu = CustomPopupMenu{}
 	
-	def menu: CustomPopupMenu = CustomPopupMenu{}
-	
-	var manager: TestEventManager = bind BeanInjector.getBean( TestEventManager.class ) on replace oldValue {
-		if( oldValue != null ) {
-			oldValue.unregisterObserver( observer );
-		}
-		manager.registerObserver( observer );
-	}
+	def manager = bind BeanInjector.getBean( TestEventManager.class );
 
 	def vbox = VBox {
 		spacing: 11
@@ -127,7 +122,7 @@ public class AssertionList extends Stack {
 class AssertionBox extends Stack {
 	override var styleClass = "assertion-box";
 	
-	var failures:Integer = 0;
+	def failureListener = FailureListener {};
 	
 	var menuButton: Group = Group {
 		content: [
@@ -146,6 +141,7 @@ class AssertionBox extends Stack {
 	
 	public-init var assertionItem: AssertionItem on replace oldValue {
 		def labelHolder = ModelUtils.getLabelHolder( assertionItem );
+		assertionItem.addEventListener( BaseEvent.class, failureListener );
 		content = [
 			menu,
 			Region { styleClass: "background" },
@@ -185,7 +181,7 @@ class AssertionBox extends Stack {
 						nodeHPos: HPos.RIGHT
 						content: [
 							Label { text: "FAILURES" },
-							Label { styleClass: "count", text: bind "{failures}" },
+							Label { styleClass: "count", text: bind "{failureListener.failures}" },
 						]
 					}
 				] 
@@ -210,15 +206,12 @@ class AssertionBox extends Stack {
 	}
 }
 
-class AssertionObserver extends TestEventObserver {
-	override function onTestEvent( eventEntry: Entry ){
-		if( eventEntry.getTypeLabel().equals( "AssertionFailure" ) ) {
-			FxUtils.runInFxThread( function():Void {
-				def assertionBox: AssertionBox = assertionBoxMap.get( eventEntry.getSourceLabel() ) as AssertionBox; 
-				if( assertionBox != null ) {
-					assertionBox.failures++
-				}
-			});
+class FailureListener extends WeakEventHandler {
+	var failures = 0;
+	override function handleEvent( e ) {
+		def event = e as BaseEvent;
+		if( AssertionItem.FAILURE_COUNT.equals( event.getKey() ) ) {
+			failures = ( event.getSource() as AssertionItem ).getFailureCount();
 		}
 	}
 }
