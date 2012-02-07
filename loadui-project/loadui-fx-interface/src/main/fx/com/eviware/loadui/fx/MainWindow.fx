@@ -190,7 +190,7 @@ public class MainWindow {
 		
 		appState.insertInto( BrowserFrame {
 			url: java.lang.System.getProperty( "url", "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html" ),
-			layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: 634, height: 557 }
+			layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: 634, height: 562 }
 		}, WORKSPACE_FRONT );
 		
 		appState.insertInto( Trashcan { layoutX: bind scene.width - 110, layoutY: 90, layoutInfo: LayoutInfo { width: 100, height: 120 } }, WORKSPACE_FRONT );
