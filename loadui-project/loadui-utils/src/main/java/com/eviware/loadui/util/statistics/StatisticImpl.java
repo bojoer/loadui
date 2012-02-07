@@ -40,7 +40,6 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	private final StatisticVariable variable;
 	private final String name;
 	private final String source;
-	private final String toString;
 
 	public StatisticImpl( ExecutionManager manager, String trackId, StatisticVariable variable, String name,
 			String source, Class<T> type )
@@ -51,9 +50,6 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 		this.variable = variable;
 		this.name = name;
 		this.source = source;
-
-		toString = String.format( "%s > %s%s", StringUtils.capitalize( getStatisticVariable().getLabel() ),
-				StringUtils.capitalize( name ), StatisticVariable.MAIN_SOURCE.equals( source ) ? "" : "(" + source + ")" );
 	}
 
 	@Override
@@ -157,7 +153,8 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 	@Override
 	public String toString()
 	{
-		return toString;
+		return String.format( "%s > %s%s", StringUtils.capitalize( getStatisticVariable().getLabel() ),
+				StringUtils.capitalize( name ), StatisticVariable.MAIN_SOURCE.equals( source ) ? "" : "(" + source + ")" );
 	}
 
 	private class EntryListener implements ValueListener<Entry>

@@ -213,6 +213,12 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 		this.description = description;
 	}
 
+	@Override
+	public String toString()
+	{
+		return getLabel();
+	}
+
 	private class ActionListener implements WeakEventHandler<ActionEvent>
 	{
 		@Override

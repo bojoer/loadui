@@ -189,21 +189,6 @@ class AssertionBox extends Stack {
 		];
 		layout();
 	}
-	
-	function breadcrumb(): String {
-		var parentLabel: String = "";
-		var parent = assertionItem.getParent();
-		if(parent != null){
-			if(parent instanceof Labeled){
-				parentLabel = ( parent as Labeled ).getLabel();
-			}
-		}
-		var variableLabel: String = "";
-		if(assertionItem.getValue() instanceof Labeled) {
-			variableLabel = ( assertionItem.getValue() as Labeled ).getLabel();
-		}
-		"{parentLabel} > {variableLabel} : {assertionItem.getConstraint()} : Tolerance {assertionItem.getToleranceAllowedOccurrences()} times within {assertionItem.getTolerancePeriod()} seconds";
-	}
 }
 
 class FailureListener extends WeakEventHandler {
@@ -217,7 +202,6 @@ class FailureListener extends WeakEventHandler {
 }
 
 class CustomPopupMenu extends PopupMenu {
-
 	public var assertionItem: AssertionItem;
 	
 	init{

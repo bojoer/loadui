@@ -347,7 +347,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	{
 
 		String newDescription = String.format( "%s > %s : %s : Tolerate %d times within %d seconds",
-				labelOrToString( getParent() ), labelOrToString( getValue() ), getConstraint(),
+				labelOrToString( getParent() ), String.valueOf( getValue() ), getConstraint(),
 				getToleranceAllowedOccurrences(), getTolerancePeriod() );
 		if( !newDescription.equals( description ) )
 		{
