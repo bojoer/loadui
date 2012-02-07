@@ -210,8 +210,6 @@ public class StatisticsMenu extends Stack {
 													hgrow: Priority.ALWAYS
 													hfill: true 
 												}
-											}, SeparatorButton {
-													height: bind height
 											}, MenubarButton {
 												shape: "M0,0 L0,12 10,12, 10,0 0,0 M4,13 L4,16 14,16 14,4 11,4 11,13 4,13"
 												action: function() {

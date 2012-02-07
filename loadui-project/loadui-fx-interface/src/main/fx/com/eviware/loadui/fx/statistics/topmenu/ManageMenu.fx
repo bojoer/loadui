@@ -111,8 +111,6 @@ public class ManageMenu extends HBox {
 				hgrow: Priority.ALWAYS
 				hfill: true 
 			}
-		}, SeparatorButton {
-			height: bind height;
 		}, MenubarButton {
 			shape: "M14.00,12.06 L7.50,5.59 C7.74,5.08 7.88,4.53 7.88,3.93 C7.88,1.76 6.12,0.00 3.94,0.00 C3.36,0.00 2.80,0.14 2.31,0.36 L4.83,2.88 L2.89,4.82 L0.36,2.30 C0.13,2.80 -0.00,3.35 -0.00,3.93 C-0.00,6.10 1.76,7.86 3.94,7.86 C4.52,7.86 5.06,7.73 5.55,7.51 L12.06,14.00 Z"
 			layoutInfo: LayoutInfo { width: 24, height: 24 }
