@@ -211,7 +211,7 @@ class FailureListener extends WeakEventHandler {
 	override function handleEvent( e ) {
 		def event = e as BaseEvent;
 		if( AssertionItem.FAILURE_COUNT.equals( event.getKey() ) ) {
-			failures = ( event.getSource() as AssertionItem ).getFailureCount();
+			FxUtils.runInFxThread( function():Void { failures = ( event.getSource() as AssertionItem ).getFailureCount() } );
 		}
 	}
 }
