@@ -138,7 +138,6 @@ public class StatisticHolderSupport implements Releasable
 		ReleasableUtils.release( removedVariable );
 		owner.fireEvent( new CollectionEvent( owner, StatisticHolder.STATISTIC_VARIABLES, CollectionEvent.Event.REMOVED,
 				removedVariable ) );
-		log.debug( "Fired CollectionEvent: removed statistic variable!" );
 	}
 
 	public StatisticVariable getStatisticVariable( String statisticVariableName )

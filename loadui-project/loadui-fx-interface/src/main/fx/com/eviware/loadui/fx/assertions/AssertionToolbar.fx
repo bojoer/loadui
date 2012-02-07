@@ -48,9 +48,7 @@ public class AssertionToolbar extends Toolbar {
 		
 		statisticHolder.addEventListener( CollectionEvent.class, variableListener );
 		statisticHolderMap.put( elem, item );
-		if( statisticHolder.getStatisticVariableNames().size() > 0 ) {
-			handleStatisticHolder( statisticHolder );
-		}
+		handleStatisticHolder( statisticHolder );
 	}
 	
 	def onRemove = function( elem:Object ):Void {
@@ -89,12 +87,7 @@ class VariableListener extends WeakEventHandler {
 		def event = e as CollectionEvent;
 		if( StatisticHolder.STATISTIC_VARIABLES.equals( event.getKey() ) ) {
 		   FxUtils.runInFxThread( function():Void {
-		   	def statisticHolder = event.getSource() as StatisticHolder;
-				if( event.getEvent() == CollectionEvent.Event.ADDED and statisticHolder.getStatisticVariableNames().size() == 1 ) {
-					addItem( statisticHolderMap.get( statisticHolder ) as StatisticHolderAssertionToolbarItem );
-				} else if( event.getEvent() == CollectionEvent.Event.REMOVED and statisticHolder.getStatisticVariableNames().size() == 0 ) {
-					removeItem( statisticHolderMap.get( statisticHolder ) as StatisticHolderAssertionToolbarItem );
-				}
+		   	handleStatisticHolder( event.getSource() as StatisticHolder );
 			});
 		}
 	}

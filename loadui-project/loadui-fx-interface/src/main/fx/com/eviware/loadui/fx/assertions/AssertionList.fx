@@ -199,7 +199,7 @@ class AssertionBox extends Stack {
 			}
 		}
 		var variableLabel: String = "";
-		if(assertionItem.getValue() instanceof Labeled){
+		if(assertionItem.getValue() instanceof Labeled) {
 			variableLabel = ( assertionItem.getValue() as Labeled ).getLabel();
 		}
 		"{parentLabel} > {variableLabel} : {assertionItem.getConstraint()} : Tolerance {assertionItem.getToleranceAllowedOccurrences()} times within {assertionItem.getTolerancePeriod()} seconds";

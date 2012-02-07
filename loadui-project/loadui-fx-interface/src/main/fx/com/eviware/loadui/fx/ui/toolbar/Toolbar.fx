@@ -175,7 +175,9 @@ public class Toolbar extends CustomNode, Resizable, Pagination {
 		
 		def itemGroup = itemGroups.get( group ) as ToolbarItemGroup;
 		
-		itemGroup.items = Sequences.sort( [ itemGroup.items, item ], itemOrder ) as ToolbarItemNode[];
+		if( Sequences.indexByIdentity( itemGroup.items, item ) == -1 ) {
+			itemGroup.items = Sequences.sort( [ itemGroup.items, item ], itemOrder ) as ToolbarItemNode[];
+		}
 	}
 	
 	public function removeItem( item:ToolbarItemNode ) {
