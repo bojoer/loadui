@@ -34,8 +34,9 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.model.AgentItem;
-import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
@@ -420,9 +421,10 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	{
 		if( localMode != isLocalMode() )
 		{
-			triggerAction( CanvasItem.COMPLETE_ACTION );
-			// triggerAction( CounterHolder.COUNTER_RESET_ACTION ); // shouldn't be
-			// needed?
+			for( TestExecution execution : BeanInjector.getBean( TestRunner.class ).getExecutionQueue() )
+			{
+				execution.complete();
+			}
 			this.localMode.setValue( localMode );
 		}
 	}

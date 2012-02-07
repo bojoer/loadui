@@ -236,7 +236,7 @@ public class AgentInspectorNode extends BaseNode, TestCaseIconListener, Resizabl
 		if(e.getSource() == MainWindow.instance.workspace){
 			if( e instanceof PropertyEvent ) {
 				def event = e as PropertyEvent;
-				if( WorkspaceItem.LOCAL_MODE_PROPERTY == event.getProperty().getKey() ) {
+				if( WorkspaceItem.LOCAL_MODE_PROPERTY.equals( event.getProperty().getKey() ) ) {
 					runInFxThread( function():Void {
 						onAgents = not ( event.getProperty().getValue() as Boolean );
 						if( onAgents ) onAgentsButton.selected = true else localButton.selected = true;

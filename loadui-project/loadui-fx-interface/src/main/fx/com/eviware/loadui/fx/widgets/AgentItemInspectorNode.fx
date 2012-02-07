@@ -483,7 +483,7 @@ class WorkspaceListener extends EventHandler {
 		if(e.getSource() == workspace){
 			if( e instanceof PropertyEvent ) {
 				def event = e as PropertyEvent;
-				if( WorkspaceItem.LOCAL_MODE_PROPERTY == event.getProperty().getKey() ) {
+				if( WorkspaceItem.LOCAL_MODE_PROPERTY.equals( event.getProperty().getKey() ) ) {
 					FxUtils.runInFxThread( function():Void {
 						isLocalMode = workspace.isLocalMode();
 					} );

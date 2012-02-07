@@ -63,10 +63,10 @@ public class AssertionList extends Stack {
 	def menu: CustomPopupMenu = CustomPopupMenu{}
 	
 	var manager: TestEventManager = bind BeanInjector.getBean( TestEventManager.class ) on replace oldValue {
-	    if(oldValue != null){
-	        oldValue.unregisterObserver(observer);
-	    }
-		manager.registerObserver(observer);
+		if( oldValue != null ) {
+			oldValue.unregisterObserver( observer );
+		}
+		manager.registerObserver( observer );
 	}
 
 	def vbox = VBox {
@@ -98,24 +98,24 @@ public class AssertionList extends Stack {
 		}
 		onDrop: function( d:Draggable ) {
 			if ( d.node instanceof StatisticHolderAssertionToolbarItem ) {
-				AddAssertionDialog { statisticHolder: (d.node as StatisticHolderAssertionToolbarItem).statisticHolder };
+				AddAssertionDialog { statisticHolder: ( d.node as StatisticHolderAssertionToolbarItem ).statisticHolder };
 			}
 		}
 	}
 	
 	init {
-		content = [scrollView, droppable];
+		content = [ scrollView, droppable ];
 	}
 	
 	public var assertionBoxMap = new HashMap();
 	
 	public var items: AssertionItem[] on replace {
-	    assertionBoxMap.clear();
+		assertionBoxMap.clear();
 		vbox.content = if( sizeof items == 0 ) {
 			placeholder
 		} else {
 			for( item in items ){
-			    def aBox = AssertionBox { assertionItem: item };
+				def aBox = AssertionBox { assertionItem: item };
 				assertionBoxMap.put(item.getLabel(), aBox);
 				aBox;
 			}
@@ -127,25 +127,21 @@ public class AssertionList extends Stack {
 class AssertionBox extends Stack {
 	override var styleClass = "assertion-box";
 	
-	var value: Number = 0;
-	
-	public function increment() {
-	    value++;
-	}
+	var failures:Integer = 0;
 	
 	var menuButton: Group = Group {
-	    content: [
-	    	Region { style: "-fx-background-color: transparent;", layoutInfo: LayoutInfo { width: 9, height: 9, hfill: false, vfill: false } },
-	    	Polygon {
-	    	    styleClass: "arrow"
-	    	    points: [
-	    	         0.0, 3.0,
-	    	         5.0, 3.0,
-	    	         2.5, 6.0
-	    	    ]
-	    	}
-	    ]
-	    onMouseClicked: function( e:MouseEvent ):Void { menu.showFor(menuButton, assertionItem); }
+		content: [
+			Region { style: "-fx-background-color: transparent;", layoutInfo: LayoutInfo { width: 9, height: 9, hfill: false, vfill: false } },
+			Polygon {
+				styleClass: "arrow"
+				points: [
+					0.0, 3.0,
+					5.0, 3.0,
+					2.5, 6.0
+				]
+			}
+		]
+		onMouseClicked: function( e:MouseEvent ):Void { menu.showFor(menuButton, assertionItem); }
 	}
 	
 	public-init var assertionItem: AssertionItem on replace oldValue {
@@ -158,38 +154,38 @@ class AssertionBox extends Stack {
 				padding: Insets { left: 15, top: 7, right: 12, bottom: 8 }
 				content: [
 					VBox {
-					    spacing: 0
+						spacing: 0
 						layoutInfo: LayoutInfo { hfill: true, hgrow: Priority.ALWAYS }
 						content: [
 							HBox {
-							    nodeVPos: VPos.CENTER
-							    spacing: 7
-							    padding: Insets { left: 0, top: 0, right: 0, bottom: 0 }
-							    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
-							    content: [
-							    	ImageView { image: assertionIcon }
+								nodeVPos: VPos.CENTER
+								spacing: 7
+								padding: Insets { left: 0, top: 0, right: 0, bottom: 0 }
+								layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
+								content: [
+									ImageView { image: assertionIcon }
 									Label { styleClass: "title", text: bind labelHolder.label }
 									Region { styleClass: "separator", layoutInfo: LayoutInfo { width: 1, height: 14, hfill: false, vfill: false } },
 									menuButton
-							    ]
+								]
 							}
 							HBox {
-							    nodeVPos: VPos.CENTER
-							    spacing: 7
-							    padding: Insets { left: 0, top: 0, right: 0, bottom: 0 }
-							    layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
-							    content: [
-							    	Region { style: "-fx-background-color: transparent;", layoutInfo: LayoutInfo { width: 19, height: 12, hfill: false, vfill: false } },
-							    	Label { text: bind labelHolder.description }
-							    ]
+								nodeVPos: VPos.CENTER
+								spacing: 7
+								padding: Insets { left: 0, top: 0, right: 0, bottom: 0 }
+								layoutInfo: LayoutInfo { hfill: false, hgrow: Priority.NEVER }
+								content: [
+									Region { style: "-fx-background-color: transparent;", layoutInfo: LayoutInfo { width: 19, height: 12, hfill: false, vfill: false } },
+									Label { text: bind labelHolder.description }
+								]
 							}
 						]
 					}, VBox {
-					    spacing: 0
+						spacing: 0
 						nodeHPos: HPos.RIGHT
 						content: [
 							Label { text: "FAILURES" },
-							Label { styleClass: "count", text: bind String.format("%.0f", value) },
+							Label { styleClass: "count", text: bind "{failures}" },
 						]
 					}
 				] 
@@ -199,32 +195,32 @@ class AssertionBox extends Stack {
 	}
 	
 	function breadcrumb(): String {
-	    var parentLabel: String = "";
-	    var parent = assertionItem.getParent();
-	    if(parent != null){
-	        if(parent instanceof Labeled){
-	            parentLabel = (parent as Labeled).getLabel();
-	        }
-	    }
-	    var variableLabel: String = "";
-	    if(assertionItem.getValue() instanceof Labeled){
-	        variableLabel = (assertionItem.getValue() as Labeled).getLabel();
-	    }
-	    "{parentLabel} > {variableLabel} : {assertionItem.getConstraint()} : Tolerance {assertionItem.getToleranceAllowedOccurrences()} times within {assertionItem.getTolerancePeriod()} seconds";
+		var parentLabel: String = "";
+		var parent = assertionItem.getParent();
+		if(parent != null){
+			if(parent instanceof Labeled){
+				parentLabel = ( parent as Labeled ).getLabel();
+			}
+		}
+		var variableLabel: String = "";
+		if(assertionItem.getValue() instanceof Labeled){
+			variableLabel = ( assertionItem.getValue() as Labeled ).getLabel();
+		}
+		"{parentLabel} > {variableLabel} : {assertionItem.getConstraint()} : Tolerance {assertionItem.getToleranceAllowedOccurrences()} times within {assertionItem.getTolerancePeriod()} seconds";
 	}
 }
 
 class AssertionObserver extends TestEventObserver {
-    override function onTestEvent( eventEntry: Entry ){
-    	if(eventEntry.getTypeLabel().equals("AssertionFailureEvent")){
-	    	FxUtils.runInFxThread( function():Void {
-		    	def assertionBox: AssertionBox = assertionBoxMap.get(eventEntry.getSourceLabel()) as AssertionBox; 
-		    	if(assertionBox != null){
-		    	    assertionBox.increment();
-		    	}
+	override function onTestEvent( eventEntry: Entry ){
+		if( eventEntry.getTypeLabel().equals( "AssertionFailure" ) ) {
+			FxUtils.runInFxThread( function():Void {
+				def assertionBox: AssertionBox = assertionBoxMap.get( eventEntry.getSourceLabel() ) as AssertionBox; 
+				if( assertionBox != null ) {
+					assertionBox.failures++
+				}
 			});
-    	}
-    }
+		}
+	}
 }
 
 class CustomPopupMenu extends PopupMenu {
@@ -232,20 +228,20 @@ class CustomPopupMenu extends PopupMenu {
 	public var assertionItem: AssertionItem;
 	
 	init{
-	    items = [
-	    	/*MenuItem {
-    			text: ##[RENAME]"Rename"
-    			action: function() { RenameModelItemDialog { labeled: assertionItem as Labeled.Mutable } }
-    		},*/
-    		MenuItem {
-                text: ##[DELETE]"Delete"
-                action: function() { DeleteModelItemDialog { modelItem: assertionItem } }
-    		}
-        ]	    
+		items = [
+			/*MenuItem {
+				text: ##[RENAME]"Rename"
+				action: function() { RenameModelItemDialog { labeled: assertionItem as Labeled.Mutable } }
+			},*/
+			MenuItem {
+				text: ##[DELETE]"Delete"
+				action: function() { DeleteModelItemDialog { modelItem: assertionItem } }
+			}
+		]		
 	}
 	
-	public function showFor(menuButton: Group, assertionItem: AssertionItem){
-	    this.assertionItem = assertionItem;
-	    show(menuButton, HPos.CENTER, VPos.BOTTOM, 0, 0);
+	public function showFor( menuButton: Group, assertionItem: AssertionItem ) {
+		this.assertionItem = assertionItem;
+		show( menuButton, HPos.CENTER, VPos.BOTTOM, 0, 0 );
 	}
 }

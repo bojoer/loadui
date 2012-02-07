@@ -190,7 +190,7 @@ public class TableWidget extends VBox, EventHandler, TableModelListener {
 		if(e.getSource() == MainWindow.instance.workspace){
 			if( e instanceof PropertyEvent ) {
 				def event = e as PropertyEvent;
-				if( WorkspaceItem.LOCAL_MODE_PROPERTY == event.getProperty().getKey() ) {
+				if( WorkspaceItem.LOCAL_MODE_PROPERTY.equals( event.getProperty().getKey() ) ) {
 					FxUtils.runInFxThread( function():Void {
 						distributedMode = not workspace.isLocalMode();
 					} );

@@ -31,6 +31,8 @@ import com.eviware.loadui.util.testevents.AbstractTestEvent;
  */
 public class AssertionFailureEvent extends AbstractTestEvent
 {
+	public static final String TYPE = "AssertionFailure";
+
 	private final AssertionItem<?> assertionItem;
 
 	private final String valueLabel;
@@ -94,7 +96,7 @@ public class AssertionFailureEvent extends AbstractTestEvent
 	{
 		public Factory()
 		{
-			super( AssertionFailureEvent.class, "AssertionFailure" );
+			super( AssertionFailureEvent.class, TYPE );
 		}
 
 		@Override

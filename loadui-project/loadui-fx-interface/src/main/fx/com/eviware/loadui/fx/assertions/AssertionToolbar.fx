@@ -11,6 +11,7 @@ import com.eviware.loadui.fx.ui.toolbar.GroupOrder;
 import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.events.CollectionEvent;
 
@@ -27,18 +28,25 @@ public class AssertionToolbar extends Toolbar {
 	
 	def onAdd = function( elem:Object ):Void {
 		def statisticHolder = elem as StatisticHolder;
-		statisticHolder.addEventListener( CollectionEvent.class, variableListener );
 		def item = if( statisticHolder instanceof ComponentItem ) {
       	StatisticHolderAssertionToolbarItem {
 				statisticHolder: statisticHolder
 				category: "COMPONENTS"
 			}
-		} else {
+		} else if( statisticHolder instanceof CanvasItem ) {
       	StatisticHolderAssertionToolbarItem {
 				statisticHolder: statisticHolder
 				category: "GLOBAL"
 			}
+		} else {
+			null
 		}
+		
+		if( item == null ) {
+			return;
+		}
+		
+		statisticHolder.addEventListener( CollectionEvent.class, variableListener );
 		statisticHolderMap.put( elem, item );
 		if( statisticHolder.getStatisticVariableNames().size() > 0 ) {
 			handleStatisticHolder( statisticHolder );
