@@ -219,7 +219,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	}
 	
 	public function generateMiniatures() {
-		canvasItem.setAttribute("miniature", createMiniatures(368, 188, 0.1));
+		canvasItem.setAttribute("miniature", createMiniatures(332, 175, 0.1));
 	}
 	
 	override var height on replace {
