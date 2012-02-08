@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.execution;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -28,6 +29,7 @@ import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.traits.Releasable;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.execution.AbstractTestRunner;
 import com.google.common.collect.Maps;
 
@@ -78,6 +80,26 @@ public class AgentTestRunner extends AbstractTestRunner implements Releasable
 		endpoint.removeMessageListener( phaseListener );
 	}
 
+	void complete( AgentTestExecution execution, Phase phase )
+	{
+		while( phase.ordinal() < Phase.POST_STOP.ordinal() )
+		{
+			phase = Phase.values()[phase.ordinal() + 1];
+			try
+			{
+				runPhase( phase, execution ).get();
+			}
+			catch( InterruptedException e )
+			{
+				log.error( "Interrupted while running phase: " + phase, e );
+			}
+			catch( ExecutionException e )
+			{
+				log.error( "Exception while running phase: " + phase, e );
+			}
+		}
+	}
+
 	private class PhaseMessageListener implements MessageListener
 	{
 		@Override
@@ -91,14 +113,15 @@ public class AgentTestRunner extends AbstractTestRunner implements Releasable
 
 				if( phase == Phase.PRE_START )
 				{
-					executions.put( canvasId, new AgentTestExecution( canvasId ) );
+					executions.put( canvasId, new AgentTestExecution( AgentTestRunner.this, canvasId ) );
 				}
 
 				final AgentTestExecution execution = executions.get( canvasId );
+				execution.setPhase( phase );
 
 				if( phase == Phase.POST_STOP )
 				{
-					executions.remove( canvasId );
+					ReleasableUtils.release( executions.remove( canvasId ) );
 				}
 
 				final Future<?> keepAliveFuture = scheduledExecutorService.scheduleAtFixedRate( new Runnable()

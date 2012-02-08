@@ -895,9 +895,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					assignment.setLoaded( true );
 
 				if( scene.isRunning() && !workspace.isLocalMode() )
+				{
 					endpoint.sendMessage( SceneCommunication.CHANNEL,
 							new Object[] { scene.getId(), Long.toString( scene.getVersion() ),
 									SceneCommunication.ACTION_EVENT, START_ACTION, scene.getId() } );
+				}
 			}
 		}
 	}

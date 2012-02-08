@@ -18,26 +18,62 @@ package com.eviware.loadui.impl.execution;
 import java.util.concurrent.Future;
 
 import com.eviware.loadui.api.addressable.AddressableRegistry;
+import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.execution.ExecutionResult;
+import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.execution.AbstractTestExecution;
+import com.google.common.base.Objects;
 
-public class AgentTestExecution extends AbstractTestExecution
+public class AgentTestExecution extends AbstractTestExecution implements Releasable
 {
 	private static CanvasItem lookupCanvas( String canvasId )
 	{
 		return ( CanvasItem )BeanInjector.getBean( AddressableRegistry.class ).lookup( canvasId );
 	}
 
-	public AgentTestExecution( String canvasId )
+	private final AgentTestRunner runner;
+	private final ReleaseListener releaseListener = new ReleaseListener();
+
+	private Phase phase = Phase.PRE_START;
+
+	public AgentTestExecution( AgentTestRunner runner, String canvasId )
 	{
 		super( lookupCanvas( canvasId ) );
+
+		this.runner = runner;
+		getCanvas().addEventListener( BaseEvent.class, releaseListener );
 	}
 
 	@Override
 	public Future<ExecutionResult> complete()
 	{
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void release()
+	{
+		getCanvas().removeEventListener( BaseEvent.class, releaseListener );
+	}
+
+	void setPhase( Phase phase )
+	{
+		this.phase = phase;
+	}
+
+	private class ReleaseListener implements WeakEventHandler<BaseEvent>
+	{
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( Objects.equal( event.getKey(), RELEASED ) )
+			{
+				runner.complete( AgentTestExecution.this, phase );
+			}
+		}
 	}
 }

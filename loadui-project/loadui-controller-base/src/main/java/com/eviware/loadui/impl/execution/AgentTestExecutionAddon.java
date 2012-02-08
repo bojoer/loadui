@@ -15,13 +15,17 @@
  */
 package com.eviware.loadui.impl.execution;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.addon.Addon;
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestExecutionTask;
@@ -47,9 +51,11 @@ import com.google.common.collect.Sets;
 public class AgentTestExecutionAddon implements Addon, Releasable
 {
 	private static final Logger log = LoggerFactory.getLogger( AgentTestExecutionAddon.class );
+	private static final String CHANNEL = "/agentTestExecutionAddon";
 
 	private final ProjectItem project;
 	private final DistributePhaseTask task = new DistributePhaseTask();
+	private final SceneReloadedListener reloadListener = new SceneReloadedListener();
 
 	private AgentTestExecutionAddon( ProjectItem project )
 	{
@@ -72,6 +78,28 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 			if( project.getWorkspace().isLocalMode() )
 				return;
 
+			if( Phase.PRE_START == phase )
+			{
+				for( SceneItem scene : project.getScenes() )
+				{
+					for( AgentItem agent : project.getAgentsAssignedTo( scene ) )
+					{
+						agent.addMessageListener( AgentItem.AGENT_CHANNEL, reloadListener );
+					}
+				}
+			}
+
+			if( Phase.PRE_STOP == phase )
+			{
+				for( SceneItem scene : project.getScenes() )
+				{
+					for( AgentItem agent : project.getAgentsAssignedTo( scene ) )
+					{
+						agent.removeMessageListener( reloadListener );
+					}
+				}
+			}
+
 			HashSet<AgentItem> agents = Sets.newHashSet();
 			HashSet<MessageAwaiter> waiters = Sets.newHashSet();
 			for( SceneItem scene : project.getScenes() )
@@ -80,7 +108,7 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 				{
 					if( agent.isEnabled() && agents.add( agent ) )
 					{
-						waiters.add( new MessageAwaiter( agent, execution, phase ) );
+						waiters.add( new MessageAwaiter( agent, execution.getCanvas().getId(), phase ) );
 					}
 				}
 			}
@@ -92,9 +120,34 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 		}
 	}
 
+	private class SceneReloadedListener implements MessageListener
+	{
+		@Override
+		public void handleMessage( String channel, final MessageEndpoint endpoint, Object data )
+		{
+			@SuppressWarnings( "unchecked" )
+			Map<String, String> message = ( Map<String, String> )data;
+			final String canvasId = message.get( AgentItem.STARTED );
+			SceneItem scene = ( SceneItem )BeanInjector.getBean( AddressableRegistry.class ).lookup( canvasId );
+			if( scene != null && scene.isRunning() && !scene.getProject().getWorkspace().isLocalMode() )
+			{
+				BeanInjector.getBean( ExecutorService.class ).execute( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						for( Phase phase : Arrays.asList( Phase.PRE_START, Phase.START, Phase.POST_START ) )
+						{
+							new MessageAwaiter( ( AgentItem )endpoint, canvasId, phase ).await();
+						}
+					}
+				} );
+			}
+		}
+	}
+
 	private static class MessageAwaiter implements MessageListener, ConnectionListener
 	{
-		private static final String CHANNEL = "/agentTestExecutionAddon";
 		private static final int TIMEOUT = 10000;
 
 		private final AgentItem agent;
@@ -103,10 +156,10 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 		private boolean done = false;
 		private long deadline;
 
-		private MessageAwaiter( AgentItem agent, TestExecution execution, Phase phase )
+		private MessageAwaiter( AgentItem agent, String canvasId, Phase phase )
 		{
 			this.agent = agent;
-			this.canvasId = execution.getCanvas().getId();
+			this.canvasId = canvasId;
 			this.phase = phase;
 
 			agent.addMessageListener( CHANNEL, this );

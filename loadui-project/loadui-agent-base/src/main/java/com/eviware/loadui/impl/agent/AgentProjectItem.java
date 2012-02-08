@@ -27,6 +27,7 @@ import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.addressable.AddressableRegistry.DuplicateAddressException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.counter.Counter;
+import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.model.AgentItem;
@@ -45,6 +46,7 @@ import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.events.EventSupport;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
@@ -53,6 +55,7 @@ import com.google.common.collect.Sets;
 
 public class AgentProjectItem implements ProjectItem
 {
+	private final EventSupport eventSupport = new EventSupport();
 	private final HashSet<SceneItem> scenes = Sets.newHashSet();
 	private final MessageEndpoint controller;
 	private final String id;
@@ -230,22 +233,25 @@ public class AgentProjectItem implements ProjectItem
 	@Override
 	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
+		eventSupport.addEventListener( type, listener );
 	}
 
 	@Override
 	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
+		eventSupport.removeEventListener( type, listener );
 	}
 
 	@Override
 	public void clearEventListeners()
 	{
+		eventSupport.clearEventListeners();
 	}
 
 	@Override
 	public void fireEvent( EventObject event )
 	{
-		throw new UnsupportedOperationException();
+		eventSupport.fireEvent( event );
 	}
 
 	@Override
@@ -344,6 +350,8 @@ public class AgentProjectItem implements ProjectItem
 	{
 		BeanInjector.getBean( AddressableRegistry.class ).unregister( this );
 		scenes.clear();
+		fireEvent( new BaseEvent( this, RELEASED ) );
+		eventSupport.release();
 	}
 
 	@Override
