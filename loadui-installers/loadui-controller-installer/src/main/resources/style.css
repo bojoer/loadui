@@ -1485,3 +1485,8 @@
 .stat-button:armed {
 	-fx-background-color: linear (0%,0%) to (0%,100%) stops (0.0, #77797b) (1.0, #656768), linear (0%,0%) to (0%,100%) stops (0.0, #8c8d8e) (1.0, #d0d1d2);
 }
+
+.trashcan {
+	-fx-background-color: rgba(39, 39, 39, 0.8);
+	-fx-background-radius: 4;
+}
