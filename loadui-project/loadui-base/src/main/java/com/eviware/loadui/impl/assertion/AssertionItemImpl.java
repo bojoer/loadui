@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.EventObject;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
@@ -26,6 +27,7 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addon.AddonItem;
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
@@ -37,6 +39,13 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
+import com.eviware.loadui.api.execution.TestRunner;
+import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
+import com.eviware.loadui.api.messaging.MessageEndpoint;
+import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.serialization.ListenableValue;
 import com.eviware.loadui.api.serialization.ListenableValue.ValueListener;
@@ -46,6 +55,7 @@ import com.eviware.loadui.api.testevents.TestEventManager;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.FormattingUtils;
 import com.eviware.loadui.util.assertion.ToleranceSupport;
 import com.eviware.loadui.util.events.EventSupport;
 import com.eviware.loadui.util.serialization.SerializationUtils;
@@ -65,9 +75,11 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 
 	private final EventSupport eventSupport = new EventSupport();
 	private final ToleranceSupport conditionTolerance = new ToleranceSupport();
+	private final FailureGrouper failureGrouper = new FailureGrouper();
 	private final ValueAsserter valueAsserter = new ValueAsserter();
 	private final LabelListener labelListener = new LabelListener();
 	private final ResetListener resetListener = new ResetListener();
+	private final String channel;
 	private final TestEventSourceSupport sourceSupport;
 	private final CanvasItem canvas;
 	private final AssertionAddonImpl addon;
@@ -77,6 +89,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 
 	private Constraint<? super T> constraint;
 	private String description;
+	private RemoteFailureListener failureListener;
 	private long failures = 0;
 
 	//Create new AssertionItem
@@ -88,6 +101,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		this.addon = addon;
 		this.addonSupport = addonSupport;
 		addonSupport.init( this );
+		channel = "/" + getId();
 
 		this.parent = attachLabelListener( parent );
 		addonSupport.setAttribute( PARENT_ID, parent.getId() );
@@ -105,6 +119,14 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		sourceSupport = new TestEventSourceSupport( getLabel(), createData() );
 		canvas.addEventListener( ActionEvent.class, resetListener );
 		updateDescription();
+
+		BeanInjector.getBean( TestRunner.class ).registerTask( failureGrouper, Phase.STOP );
+
+		if( LoadUI.isController() )
+		{
+			failureListener = new RemoteFailureListener();
+			BeanInjector.getBean( BroadcastMessageEndpoint.class ).addMessageListener( channel, failureListener );
+		}
 	}
 
 	//Load existing AssertionItem
@@ -115,6 +137,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		this.addon = addon;
 		this.addonSupport = addonSupport;
 		addonSupport.init( this );
+		channel = "/" + getId();
 
 		parent = attachLabelListener( BeanInjector.getBean( AddressableRegistry.class ).lookup(
 				addonSupport.getAttribute( PARENT_ID, "" ) ) );
@@ -148,6 +171,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 			Constraint<? super T> constraint = ( Constraint<? super T> )SerializationUtils.deserialize( addonSupport
 					.getAttribute( CONSTRAINT, null ) );
 			this.constraint = constraint;
+			log.debug( "!!!constraint deserialized: {}, from {}", constraint, addonSupport.getAttribute( CONSTRAINT, null ) );
 		}
 		catch( ClassNotFoundException e )
 		{
@@ -161,6 +185,14 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		sourceSupport = new TestEventSourceSupport( getLabel(), createData() );
 		canvas.addEventListener( ActionEvent.class, resetListener );
 		updateDescription();
+
+		BeanInjector.getBean( TestRunner.class ).registerTask( failureGrouper, Phase.STOP );
+
+		if( LoadUI.isController() )
+		{
+			failureListener = new RemoteFailureListener();
+			BeanInjector.getBean( BroadcastMessageEndpoint.class ).addMessageListener( channel, failureListener );
+		}
 	}
 
 	private <Type> Type attachLabelListener( final Type object )
@@ -286,6 +318,13 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 			( ( EventFirer )listenableValue ).addEventListener( BaseEvent.class, labelListener );
 		}
 
+		if( failureListener != null )
+		{
+			BeanInjector.getBean( BroadcastMessageEndpoint.class ).removeMessageListener( failureListener );
+		}
+
+		BeanInjector.getBean( TestRunner.class ).unregisterTask( failureGrouper, Phase.values() );
+
 		fireEvent( new BaseEvent( this, RELEASED ) );
 		stop();
 	}
@@ -346,9 +385,9 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	private void updateDescription()
 	{
 
-		String newDescription = String.format( "%s > %s : %s : Tolerate %d times within %d seconds",
+		String newDescription = String.format( "%s > %s : %s : Tolerate %d times within %s seconds",
 				labelOrToString( getParent() ), String.valueOf( getValue() ), getConstraint(),
-				getToleranceAllowedOccurrences(), getTolerancePeriod() );
+				getToleranceAllowedOccurrences(), FormattingUtils.formatNumber( getTolerancePeriod() / 1000.0, 2 ) );
 		if( !newDescription.equals( description ) )
 		{
 			description = newDescription;
@@ -379,8 +418,6 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 
 	private class ValueAsserter implements ValueListener<T>
 	{
-		private final FailureGrouper failureGrouper = new FailureGrouper();
-
 		@Override
 		public void update( T value )
 		{
@@ -399,7 +436,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		}
 	}
 
-	private class FailureGrouper implements Runnable
+	private class FailureGrouper implements Runnable, TestExecutionTask
 	{
 		private static final int GROUPING_PERIOD = 1000;
 		private static final int GROUPING_COUNT = 4;
@@ -408,6 +445,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		private final TestEventManager manager = BeanInjector.getBean( TestEventManager.class );
 		private final LinkedBlockingDeque<Entry> entries = new LinkedBlockingDeque<Entry>();
 
+		private ScheduledFuture<?> runFuture;
 		private long deadline = 0;
 
 		public void append( T value, long timestamp )
@@ -415,7 +453,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 			if( entries.isEmpty() )
 			{
 				deadline = timestamp + GROUPING_PERIOD;
-				executor.schedule( this, GROUPING_PERIOD, TimeUnit.MILLISECONDS );
+				runFuture = executor.schedule( this, GROUPING_PERIOD, TimeUnit.MILLISECONDS );
 			}
 
 			entries.add( new Entry( value, timestamp ) );
@@ -424,10 +462,17 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		@Override
 		public void run()
 		{
-			if( entries.size() >= GROUPING_COUNT )
+			int count = entries.size();
+			if( count == 0 )
+			{
+				return;
+			}
+
+			if( count >= GROUPING_COUNT )
 			{
 				manager.logTestEvent( AssertionItemImpl.this, new AssertionFailureEvent.Group( entries.getFirst().timestamp
-						+ GROUPING_PERIOD / 2, AssertionItemImpl.this, entries.size() ) );
+						+ GROUPING_PERIOD / 2, AssertionItemImpl.this, count ) );
+
 				entries.clear();
 			}
 			else
@@ -443,7 +488,26 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 				{
 					long timeUntilNext = entries.getFirst().timestamp - deadline;
 					deadline = entries.getFirst().timestamp + GROUPING_PERIOD;
-					executor.schedule( this, GROUPING_PERIOD + timeUntilNext, TimeUnit.MILLISECONDS );
+					runFuture = executor.schedule( this, GROUPING_PERIOD + timeUntilNext, TimeUnit.MILLISECONDS );
+				}
+			}
+
+			if( !LoadUI.isController() )
+			{
+				log.debug( "Send {} failures!", count );
+				BeanInjector.getBean( BroadcastMessageEndpoint.class ).sendMessage( channel, count );
+			}
+		}
+
+		@Override
+		public void invoke( TestExecution execution, Phase phase )
+		{
+			if( phase == Phase.STOP )
+			{
+				if( runFuture != null && runFuture.cancel( true ) )
+				{
+					deadline += GROUPING_PERIOD;
+					executor.execute( this );
 				}
 			}
 		}
@@ -483,6 +547,16 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 				failures = 0;
 				fireEvent( new BaseEvent( AssertionItemImpl.this, FAILURE_COUNT ) );
 			}
+		}
+	}
+
+	private class RemoteFailureListener implements MessageListener
+	{
+		@Override
+		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
+		{
+			failures += ( ( Number )data ).longValue();
+			fireEvent( new BaseEvent( AssertionItemImpl.this, FAILURE_COUNT ) );
 		}
 	}
 }

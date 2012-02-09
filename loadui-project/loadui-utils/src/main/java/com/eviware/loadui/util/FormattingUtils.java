@@ -15,8 +15,12 @@
  */
 package com.eviware.loadui.util;
 
+import java.text.DecimalFormat;
+
 public class FormattingUtils
 {
+	private final static DecimalFormat decimalFormat = new DecimalFormat();
+
 	public static String formatTime( long seconds )
 	{
 		long hours = seconds / 3600;
@@ -36,5 +40,12 @@ public class FormattingUtils
 	public static String formatFileName( String base )
 	{
 		return base.replaceAll( " ", "_" ).replaceAll( "[^a-zA-Z0-9-_.]", "" );
+	}
+
+	public static String formatNumber( double number, int maxDecimals )
+	{
+		decimalFormat.setMinimumFractionDigits( 0 );
+		decimalFormat.setMaximumFractionDigits( maxDecimals );
+		return decimalFormat.format( number );
 	}
 }

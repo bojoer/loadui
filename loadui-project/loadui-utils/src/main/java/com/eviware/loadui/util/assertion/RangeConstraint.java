@@ -15,9 +15,12 @@
  */
 package com.eviware.loadui.util.assertion;
 
+import java.io.IOException;
+
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.assertion.Constraint;
+import com.eviware.loadui.util.FormattingUtils;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -33,7 +36,7 @@ public class RangeConstraint implements Constraint<Number>
 
 	private final double min;
 	private final double max;
-	private transient final String stringRepr;
+	private transient String stringRepr;
 
 	public RangeConstraint( @Nonnull Number min, @Nonnull Number max )
 	{
@@ -42,8 +45,7 @@ public class RangeConstraint implements Constraint<Number>
 
 		Preconditions.checkArgument( this.min <= this.max, "min must be less than or equal to max!" );
 
-		stringRepr = min == max ? String.format( "Equals %.02f", this.min ) : String.format( "Range %.02f - %.02f",
-				this.min, this.max );
+		buildToString();
 	}
 
 	@Override
@@ -81,5 +83,18 @@ public class RangeConstraint implements Constraint<Number>
 	public String toString()
 	{
 		return stringRepr;
+	}
+
+	private void buildToString()
+	{
+		stringRepr = min == max ? String.format( "Equals %s", FormattingUtils.formatNumber( this.min, 2 ) ) : String
+				.format( "Range %s - %s", FormattingUtils.formatNumber( this.min, 2 ),
+						FormattingUtils.formatNumber( this.max, 2 ) );
+	}
+
+	private void readObject( java.io.ObjectInputStream in ) throws IOException, ClassNotFoundException
+	{
+		in.defaultReadObject();
+		buildToString();
 	}
 }
