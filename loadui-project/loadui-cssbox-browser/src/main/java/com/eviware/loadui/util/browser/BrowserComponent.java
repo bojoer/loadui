@@ -254,7 +254,14 @@ public class BrowserComponent extends JPanel implements Browser
 		this.desiredHeight = desiredHeight;
 		if( desiredHeight > pageHeight )
 		{
-			renderPage();
+			try
+			{
+				renderPage();
+			}
+			catch( RuntimeException e1 )
+			{
+				parsePageContent( 5 );
+			}
 		}
 	}
 
@@ -275,7 +282,7 @@ public class BrowserComponent extends JPanel implements Browser
 		return pageHeight;
 	}
 
-	private void parsePageContent()
+	private void parsePageContent( int tries )
 	{
 		WebResponse response = page.getWebResponse();
 		url = response.getRequestSettings().getUrl();
@@ -305,24 +312,36 @@ public class BrowserComponent extends JPanel implements Browser
 		{
 			log.error( "Error parsing page content", e );
 		}
+		catch( RuntimeException e )
+		{
+			if( tries > 0 )
+			{
+				log.error( "Failed parsing page, tries left: " + tries, e );
+				parsePageContent( tries - 1 );
+			}
+			else
+			{
+				throw e;
+			}
+		}
 	}
 
 	private void renderPage()
 	{
 		if( root != null )
 		{
-			Dimension size = getSize();
+			final Dimension size = getSize();
 			//Compensate for 2px border added around HTML content.
 			size.setSize( size.getWidth() - 4, desiredHeight - 4 );
 
 			if( size.getHeight() > 0 && size.getWidth() > 0 )
 			{
-				final BrowserCanvas canvas = new BrowserCanvas( root, da, size, url );
 				SwingUtilities.invokeLater( new Runnable()
 				{
 					@Override
 					public void run()
 					{
+						BrowserCanvas canvas = new BrowserCanvas( root, da, size, url );
 						removeAll();
 
 						add( canvas, BorderLayout.CENTER );
@@ -464,7 +483,7 @@ public class BrowserComponent extends JPanel implements Browser
 				page = ( HtmlPage )window.getEnclosedPage();
 				page.addDomChangeListener( domListener );
 
-				parsePageContent();
+				parsePageContent( 5 );
 			}
 			else
 			{
@@ -486,7 +505,7 @@ public class BrowserComponent extends JPanel implements Browser
 			DomNode node = event.getChangedNode();
 			if( node != null && node.isDisplayed() )
 			{
-				parsePageContent();
+				parsePageContent( 0 );
 			}
 		}
 
@@ -496,7 +515,7 @@ public class BrowserComponent extends JPanel implements Browser
 			DomNode node = event.getChangedNode();
 			if( node != null && node.isDisplayed() )
 			{
-				parsePageContent();
+				parsePageContent( 0 );
 			}
 		}
 	}
@@ -506,13 +525,27 @@ public class BrowserComponent extends JPanel implements Browser
 		@Override
 		public void componentShown( ComponentEvent e )
 		{
-			renderPage();
+			try
+			{
+				renderPage();
+			}
+			catch( RuntimeException e1 )
+			{
+				parsePageContent( 5 );
+			}
 		}
 
 		@Override
 		public void componentResized( ComponentEvent e )
 		{
-			renderPage();
+			try
+			{
+				renderPage();
+			}
+			catch( RuntimeException e1 )
+			{
+				parsePageContent( 5 );
+			}
 		}
 
 		@Override
