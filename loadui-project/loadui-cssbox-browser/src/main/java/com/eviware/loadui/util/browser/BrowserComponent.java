@@ -35,7 +35,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.gargoylesoftware.htmlunit.DefaultPageCreator;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.TopLevelWindow;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequestSettings;
@@ -71,6 +73,30 @@ public class BrowserComponent extends JPanel implements Browser
 	public BrowserComponent() throws FailingHttpStatusCodeException, MalformedURLException, IOException
 	{
 		super( new BorderLayout() );
+
+		client.setPageCreator( new DefaultPageCreator()
+		{
+			@Override
+			public Page createPage( WebResponse webResponse, WebWindow webWindow ) throws IOException
+			{
+				if( webWindow != window )
+				{
+					try
+					{
+						Desktop.getDesktop().browse( webResponse.getRequestSettings().getUrl().toURI() );
+					}
+					catch( URISyntaxException e )
+					{
+						log.error( "Unable to open external page", e );
+					}
+
+					( ( TopLevelWindow )webWindow.getTopWindow() ).close();
+					return null;
+				}
+
+				return super.createPage( webResponse, webWindow );
+			}
+		} );
 
 		client.addWebWindowListener( new MyWebWindowListener() );
 		window = client.getCurrentWindow();
@@ -449,23 +475,6 @@ public class BrowserComponent extends JPanel implements Browser
 		@Override
 		public void webWindowClosed( WebWindowEvent event )
 		{
-			WebWindow closed = event.getWebWindow();
-			if( closed instanceof TopLevelWindow && event.getWebWindow() != window )
-			{
-				try
-				{
-					Desktop.getDesktop().browse(
-							closed.getEnclosedPage().getWebResponse().getRequestSettings().getUrl().toURI() );
-				}
-				catch( IOException e )
-				{
-					log.error( "Unable to open url", e );
-				}
-				catch( URISyntaxException e )
-				{
-					log.error( "Unable to open url", e );
-				}
-			}
 		}
 	}
 
