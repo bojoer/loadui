@@ -171,7 +171,6 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 			Constraint<? super T> constraint = ( Constraint<? super T> )SerializationUtils.deserialize( addonSupport
 					.getAttribute( CONSTRAINT, null ) );
 			this.constraint = constraint;
-			log.debug( "!!!constraint deserialized: {}, from {}", constraint, addonSupport.getAttribute( CONSTRAINT, null ) );
 		}
 		catch( ClassNotFoundException e )
 		{
@@ -494,7 +493,6 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 
 			if( !LoadUI.isController() )
 			{
-				log.debug( "Send {} failures!", count );
 				BeanInjector.getBean( BroadcastMessageEndpoint.class ).sendMessage( channel, count );
 			}
 		}
