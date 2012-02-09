@@ -291,6 +291,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		conditionTolerance.setTolerance( period, allowedOccurrences );
 
 		sourceSupport.setData( createData() );
+		updateDescription();
 	}
 
 	@Override
