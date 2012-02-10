@@ -55,7 +55,7 @@ def image = Image { url: new File( "res/logo-button.png" ).toURI().toString() }
 public class MainWindowButton extends Group {
 	public-init var wc:WindowController;
 	
-	public var menuButton:MenuButton;
+	var menuButton:MenuButton;
 	
 	public var items:Node[];
 	
