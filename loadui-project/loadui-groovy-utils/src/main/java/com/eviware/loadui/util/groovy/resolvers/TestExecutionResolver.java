@@ -68,14 +68,16 @@ public class TestExecutionResolver implements GroovyResolver.Properties, GroovyR
 				Closure<?> closure = ( Closure<?> )args[args.length - 1];
 				for( int i = 0; i < args.length - 1; i++ )
 				{
-					Phase phase = args[i] instanceof Phase ? ( Phase )args[i] : Phase.valueOf( String.valueOf( args[i] ) );
+					Phase phase = args[i] instanceof Phase ? ( Phase )args[i] : Phase.valueOf( String.valueOf( args[i] )
+							.toUpperCase() );
 					task.phaseTasks.put( phase, closure );
 					testRunner.registerTask( task, phase );
 				}
 			}
 			else if( args.length == 1 )
 			{
-				Phase phase = args[0] instanceof Phase ? ( Phase )args[0] : Phase.valueOf( String.valueOf( args[0] ) );
+				Phase phase = args[0] instanceof Phase ? ( Phase )args[0] : Phase.valueOf( String.valueOf( args[0] )
+						.toUpperCase() );
 				if( task != null && task.phaseTasks.containsKey( phase ) )
 				{
 					task.phaseTasks.remove( phase );
