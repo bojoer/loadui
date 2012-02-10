@@ -133,7 +133,7 @@ public class StatisticsWindow {
 					stack.content = [ layoutRegion, page ]
 				}
 			};
-			appState = AppState {};
+			appState = AppState { windowName: "Statistics Workbench" };
 			
 			insert StatisticsWindowButton { layoutX: 10, layoutY: 2 } into appState.globalLayer.content;
 			
@@ -230,7 +230,7 @@ public class StatisticsWindow {
 			wc.listenForNewWindow();
 			if ( scene == null ) {
 				stage = Stage {
-					title: "{name} {LoadUI.VERSION} - Statistics Workbench"
+					//title: "{name} {LoadUI.VERSION} - Statistics Workbench"
 					icons: [
 						Image { url: new File( "res/icon_32x32.png" ).toURI().toString() },
 						Image { url: new File( "res/icon_16x16.png" ).toURI().toString() },
@@ -248,9 +248,9 @@ public class StatisticsWindow {
 				}
 			} else {
 				stage = Stage {
-					width: 1085
-					height: 720
-					title: "{name} {LoadUI.VERSION} - Statistics Workbench"
+					width: 1280.0
+					height: 768.0
+					//title: "{name} {LoadUI.VERSION} - Statistics Workbench"
 					icons: [
 						Image { url:"{__ROOT__}images/png/icon_32x32.png" },
 						Image { url:"{__ROOT__}images/png/icon_16x16.png" }
@@ -263,6 +263,7 @@ public class StatisticsWindow {
 				}
 			}
 			wc.stage = stage;
+			appState.updateTitleBar();
 		}
 		
 		closed = false;

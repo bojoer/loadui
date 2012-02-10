@@ -21,6 +21,7 @@
 
 package com.eviware.loadui.fx;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.ui.ApplicationState;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ProjectItem;
@@ -35,6 +36,7 @@ import com.eviware.loadui.fx.ui.dialogs.Dialog;
 import com.eviware.loadui.fx.widgets.canvas.TestCaseNode;
 import com.eviware.loadui.fx.widgets.canvas.Selectable;
 import com.eviware.loadui.fx.util.TestExecutionUtils;
+import java.lang.System;
 import java.lang.IllegalArgumentException;
 import java.lang.NullPointerException;
 import java.util.HashMap;
@@ -58,6 +60,7 @@ import org.jfxtras.animation.wipe.Wipe;
 import org.slf4j.LoggerFactory;
 import javafx.util.Math;
 import javafx.util.Sequences;
+import com.google.common.base.Strings;
 
 import com.eviware.loadui.fx.wizards.NewProjectWizard;
 
@@ -85,6 +88,10 @@ public function byScene( scene:Scene ):AppState {
 
 public function byName( name:String ):AppState {
 	return appStatesByName.get( name ) as AppState;
+}
+
+public var titleBarExtra:String on replace {
+	for( appState in appStates.values() ) (appState as AppState).updateTitleBar();
 }
 
 /**
@@ -119,6 +126,20 @@ public class AppState extends ApplicationState {
 	def layers = Group { autoSizeChildren: false };
 	
 	def localNodes:Map = new HashMap();
+	def applicationName = System.getProperty( LoadUI.NAME );
+	
+	public var windowName:String on replace { updateTitleBar() }
+	
+	public function lookup( id:String ):Node {
+		for( layer in [ localLayer, globalLayer ] ) {
+			def node = layer.lookup( id );
+			if( node != null ) {
+				return node;
+			}
+		}
+		
+		return null;
+	}
 
 	/**
 	 * The scene to place the AppState into.
@@ -127,7 +148,12 @@ public class AppState extends ApplicationState {
 		if( scene != null ) {
 			log.debug( "Placing AppState layers into scene." );
 			scene.content = layers;
+			updateTitleBar()
 		}
+	}
+	
+	public function updateTitleBar() {
+		scene.stage.title = "{applicationName} {LoadUI.VERSION}{if(not Strings.isNullOrEmpty(windowName)) ' - {windowName}' else ''}{if(not Strings.isNullOrEmpty(titleBarExtra)) ' ({titleBarExtra})' else ''}";
 	}
 	
 	public-read def containsFocus = bind scene.stage.containsFocus on replace { if( containsFocus ) activeState = this }

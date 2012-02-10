@@ -22,6 +22,7 @@
 
 package com.eviware.loadui.fx.ui.menu;
 
+import javafx.scene.Node;
 import javafx.scene.Group;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Separator;
@@ -55,6 +56,8 @@ public class MainWindowButton extends Group {
 	public-init var wc:WindowController;
 	
 	public var menuButton:MenuButton;
+	
+	public var items:Node[];
 	
 	var alwaysOnTopCheckBox = CheckBox {
 		styleClass: "context-menu-check-box"
@@ -97,42 +100,44 @@ public class MainWindowButton extends Group {
 				graphic: ImageView {
 						image: image
 					}
-				items: [
-					alwaysOnTopCheckBox,
-					Separator{},
-					MenuItem {
-						text: ##[ABOUT]"About"
-						action: function() {
-							new AboutDialog();
-						}
-					},
-					MenuItem {
-						text: ##[SYSTEM_PROPERTIES]"System Properties"
-						action: function() {
-							new SystemPropertiesDialog();
-						}
-					},
-					MenuItem {
-						text: ##[FORUM]"Give Feedback"
-						action: function() {
-							openURL("http://www.eviware.com/forum/viewforum.php?f=9")
-						}
-					},
-					Separator{},
-					MenuItem {
-						text: ##[EXIT]"Exit"
-						action: function() {
-							if( AppState.byName("MAIN").state == MainWindow.TESTCASE_FRONT 
-									or AppState.byName("MAIN").state == MainWindow.PROJECT_FRONT ) {
-								ExitConfirmDialog{wc:wc};
-							} else {
-								ExitConfirmDialogWorkspace{wc:wc};
-							}
-						}
-					}
-				]
+				items: bind items
 			}
-		]
+		];
+		
+		items = [
+			alwaysOnTopCheckBox,
+			Separator{},
+			MenuItem {
+				text: ##[ABOUT]"About"
+				action: function() {
+					new AboutDialog();
+				}
+			},
+			MenuItem {
+				text: ##[SYSTEM_PROPERTIES]"System Properties"
+				action: function() {
+					new SystemPropertiesDialog();
+				}
+			},
+			MenuItem {
+				text: ##[FORUM]"Give Feedback"
+				action: function() {
+					openURL("http://www.eviware.com/forum/viewforum.php?f=9")
+				}
+			},
+			Separator{},
+			MenuItem {
+				text: ##[EXIT]"Exit"
+				action: function() {
+					if( AppState.byName("MAIN").state == MainWindow.TESTCASE_FRONT 
+							or AppState.byName("MAIN").state == MainWindow.PROJECT_FRONT ) {
+						ExitConfirmDialog{wc:wc};
+					} else {
+						ExitConfirmDialogWorkspace{wc:wc};
+					}
+				}
+			}
+		];
 	}
 	
 	postinit {
