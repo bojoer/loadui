@@ -189,7 +189,8 @@ public class MainWindow {
 		appState.insertInto( AgentCarousel { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
 		
 		appState.insertInto( BrowserFrame {
-			url: java.lang.System.getProperty( "url", "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html" ),
+			id: "starterPage",
+			url: java.lang.System.getProperty( "loadui.starterpage.url", "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html" ),
 			layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: 634, height: 562 }
 		}, WORKSPACE_FRONT );
 		
