@@ -141,7 +141,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 			{
 				String channel = null;
 				Object data = null;
-				while( state == State.CONNECTED && ( channel = ( String )ois.readUTF() ) != null
+				while( state == State.CONNECTED && ( channel = ois.readUTF() ) != null
 						&& ( data = ois.readObject() ) != null )
 				{
 					if( "/service/init".equals( channel ) )
@@ -279,6 +279,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 						Message message = null;
 						while( ( message = messageQueue.take() ) != CLOSE_MESSAGE )
 						{
+							log.debug( "Message: {}, {}", message.channel, message.data );
 							oos.writeUTF( message.channel );
 							oos.writeObject( message.data );
 							oos.flush();
