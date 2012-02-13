@@ -50,6 +50,10 @@ import com.eviware.loadui.fx.FxUtils.*;
 import com.eviware.loadui.fx.widgets.TutorialList;
 import com.eviware.loadui.fx.ui.BrowserFrame;
 
+import com.eviware.loadui.fx.ui.dialogs.Dialog;
+import com.eviware.loadui.fx.ui.dialogs.NewVersionDialog;
+import com.eviware.loadui.util.NewVersionChecker;
+
 import java.lang.Object;
 import java.lang.Thread;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -297,6 +301,10 @@ public class MainWindow {
 		} );
 			
 		workspace.addEventListener( BaseEvent.class, new ExecutionAlertListener() );
+		
+		def newVersion = NewVersionChecker.checkForNewVersion( workspace );
+		if( newVersion != null )
+ 			NewVersionDialog { newVersion: newVersion };
 	}
 	
 	/**
