@@ -303,8 +303,11 @@ public class MainWindow {
 		workspace.addEventListener( BaseEvent.class, new ExecutionAlertListener() );
 		
 		def newVersion = NewVersionChecker.checkForNewVersion( workspace );
-		if( newVersion != null )
- 			NewVersionDialog { newVersion: newVersion };
+		if( newVersion != null ) {
+			FX.deferAction( function():Void {
+ 				NewVersionDialog { newVersion: newVersion };
+ 			} );
+ 		}
 	}
 	
 	/**
