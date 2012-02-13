@@ -191,7 +191,6 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint
 			{
 				while( ( message = messageQueue.take() ) != CLOSE_MESSAGE )
 				{
-					log.debug( "Message: {}, {}", message.channel, message.data );
 					oos.writeUTF( message.channel );
 					oos.writeObject( message.data );
 					oos.flush();
