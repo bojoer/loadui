@@ -13,8 +13,6 @@
         <jar href="lib/loadui-launcher.jar" main="true"/>
         <jar href="lib/org.apache.felix.main.jar"/>
         <jar href="lib/commons-cli.jar"/>
-        <jar href="lib/jna.jar"/>
-        <jar href="lib/platform.jar"/>
         <jar href="lib/bndlib.jar"/>
     </resources>
 	<security>
