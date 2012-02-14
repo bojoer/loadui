@@ -24,7 +24,7 @@
  */
  
 import com.eviware.loadui.api.events.PropertyEvent
- 
+import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.TimeUnit
 import com.eviware.loadui.api.model.SceneItem
 
@@ -33,10 +33,10 @@ final UNIFORM = 'Uniform'
 final EXPONENTIAL = 'Exponential'
 
 random = new Random()
-waitingCount = 0
+waitingCount = new AtomicLong()
 
 displayNA = false
-long displayCount = 0
+long waitTime = 0
 
 createOutgoing( 'output' )
 output.label = 'Delayed messages'
@@ -62,9 +62,8 @@ if( workspace != null ) {
 fixDisplay()
  
 onMessage = { incoming, outgoing, message ->
-	waitingCount++
-	
-	long delayTime = delay.value 
+	waitingCount.incrementAndGet()
+	def delayTime = delay.value 
 	if( selected.value == GAUSSIAN ) {
 		delayTime += ( random.nextGaussian() * ( randomDelay.value / 100 ) * delayTime * 0.3)
 	} else if( selected.value == UNIFORM ) {
@@ -73,12 +72,12 @@ onMessage = { incoming, outgoing, message ->
 		delayTime *= -Math.log( 1 - random.nextDouble() )
 	}
 	
-	message.put( 'actualDelay', delayTime )
+	waitTime = delayTime as Long
+	message.put( 'actualDelay', waitTime )
 	schedule( {
 		send( output, message )
-		waitingCount--
-		displayCount = delayTime
-	}, delayTime, TimeUnit.MILLISECONDS )
+		waitingCount.decrementAndGet()
+	}, waitTime, TimeUnit.MILLISECONDS )
  }
  
 onRelease = {
@@ -87,12 +86,12 @@ onRelease = {
 
 onAction( "COMPLETE" ) {
 	cancelTasks()
-	waitingCount = 0
+	waitingCount.set( 0 )
 }
 
 onAction( "RESET" ) {
-	displayCount = 0
-	waitingCount = 0
+	waitTime = 0
+	waitingCount.set( 0 )
 	cancelTasks()
 }
 
@@ -104,14 +103,14 @@ layout {
 	property( property: randomDelay, label:'Random\n(%)', min:0, max: 100 )
 	separator( vertical:true )
 	box( widget:'display' ) {
-		node( label:'Delay ', content: { displayNA ? 'n/a' : "$displayCount ms" }, constraints:'w 60!' )
-		node( label:'Waiting ', content: { displayNA ? 'n/a' : waitingCount }, constraints:'w 50!' )
+		node( label:'Delay ', content: { displayNA ? 'n/a' : "$waitTime ms" }, constraints:'w 60!' )
+		node( label:'Waiting ', content: { displayNA ? 'n/a' : waitingCount.get() }, constraints:'w 50!' )
 	}
 }
  
 compactLayout {
 	box( widget:'display' ) {
-		node( label:'Delay ', content: { displayNA ? 'n/a' : "$displayCount ms" }, constraints:'w 60!' )
-		node( label:'Waiting ', content: { displayNA ? 'n/a' : waitingCount }, constraints:'w 50!' )
+		node( label:'Delay ', content: { displayNA ? 'n/a' : "$waitTime ms" }, constraints:'w 60!' )
+		node( label:'Waiting ', content: { displayNA ? 'n/a' : waitingCount.get() }, constraints:'w 50!' )
 	}
 }
