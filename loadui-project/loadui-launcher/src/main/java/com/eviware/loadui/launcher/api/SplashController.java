@@ -27,8 +27,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JWindow;
 
-import com.sun.jna.platform.WindowUtils;
-
 public class SplashController
 {
 	private static JWindow window;
@@ -43,23 +41,12 @@ public class SplashController
 			ImageIcon image;
 			try
 			{
-				if( WindowUtils.isWindowAlphaSupported() )
-				{
-					//Don't know why, but WindowUtils.setWindowTransparent makes the window invisible when running in Java 7.
-					//WindowUtils.setWindowTransparent( window, true );
+				Class<?> awtUtilitiesClass = Class.forName( "com.sun.awt.AWTUtilities" );
 
-					Class<?> awtUtilitiesClass = Class.forName( "com.sun.awt.AWTUtilities" );
+				Method mSetWindowOpaque = awtUtilitiesClass.getMethod( "setWindowOpaque", Window.class, boolean.class );
+				mSetWindowOpaque.invoke( null, window, false );
 
-					Method mSetWindowOpaque = awtUtilitiesClass.getMethod( "setWindowOpaque", Window.class, boolean.class );
-					mSetWindowOpaque.invoke( null, window, false );
-
-					image = new ImageIcon( new File( "res/loadui-splash.png" ).toURI().toURL() );
-				}
-				else
-				{
-					System.out.println( "Unable to create transparent window, using non-transparent splash!" );
-					image = new ImageIcon( new File( "res/loadui-splash-no-transparency.png" ).toURI().toURL() );
-				}
+				image = new ImageIcon( new File( "res/loadui-splash.png" ).toURI().toURL() );
 			}
 			catch( Throwable e )
 			{
