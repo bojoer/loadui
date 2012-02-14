@@ -129,7 +129,8 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 			attributes.put( "projectFile",
 					cmd.hasOption( PROJECT_OPTION ) ? new File( cmd.getOptionValue( PROJECT_OPTION ) ) : null );
 			attributes.put( "testCase", cmd.getOptionValue( TESTCASE_OPTION ) );
-			attributes.put( "testCase", cmd.getOptionValue( VU_SCENARIO_OPTION ) );
+			if( cmd.getOptionValue( VU_SCENARIO_OPTION ) != null )
+				attributes.put( "testCase", cmd.getOptionValue( VU_SCENARIO_OPTION ) );
 			attributes.put( "limits", cmd.hasOption( LIMITS_OPTION ) ? cmd.getOptionValue( LIMITS_OPTION ).split( ":" )
 					: null );
 			attributes.put( "localMode", cmd.hasOption( LOCAL_OPTION ) );
