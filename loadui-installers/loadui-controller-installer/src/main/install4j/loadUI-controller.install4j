@@ -18,24 +18,15 @@
     </variables>
   </application>
   <files>
-    <filesets>
-      <fileset name="OS X file set" id="1139" />
-    </filesets>
-    <roots>
-      <root id="1140" fileset="1139" location="" />
-    </roots>
+    <filesets />
+    <roots />
     <mountPoints>
-	  <mountPoint id="1141" root="1140" location="" mode="755" />
       <mountPoint id="20" root="" location="" mode="755" />
     </mountPoints>
     <entries>
-	  <dirEntry mountPoint="1141" file="${compiler:builddir}/osx" overwrite="1" shared="false" mode="644" uninstallMode="2" excludeSuffixes="" dirMode="755">
-        <exclude />
-      </dirEntry>
       <dirEntry mountPoint="20" file="${compiler:builddir}" overwrite="5" shared="false" mode="644" uninstallMode="0" excludeSuffixes="" dirMode="755">
         <exclude>
           <entry location="felix-cache" fileType="regular" />
-		  <entry location="osx" fileType="regular" />
         </exclude>
       </dirEntry>
     </entries>
@@ -698,6 +689,56 @@ catch(Exception e){
                 </serializedBean>
                 <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
               </action>
+              <action name="" id="1216" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.MoveFileAction">
+                      <void property="destinationFile">
+                        <object class="java.io.File">
+                          <string>.</string>
+                        </object>
+                      </void>
+                      <void property="overwriteMode">
+                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
+                      </void>
+                      <void property="sourceFile">
+                        <object class="java.io.File">
+                          <string>osx/*</string>
+                        </object>
+                      </void>
+                      <void property="uninstallMode">
+                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>"${compiler:sys.platform}" == "mac"</condition>
+              </action>
+			  <action name="" id="1217" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.MoveFileAction">
+                      <void property="destinationFile">
+                        <object class="java.io.File">
+                          <string>.</string>
+                        </object>
+                      </void>
+                      <void property="overwriteMode">
+                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
+                      </void>
+                      <void property="sourceFile">
+                        <object class="java.io.File">
+                          <string>win/*</string>
+                        </object>
+                      </void>
+                      <void property="uninstallMode">
+                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>"${compiler:sys.platform}" == "windows"</condition>
+              </action>
             </actions>
             <formComponents />
           </screen>
@@ -1091,18 +1132,14 @@ return f.exists();</condition>
         <scriptLines />
       </installerScript>
     </unixInstaller>
-    <win32 name="Windows" id="26" mediaFileName="loadUI-${compiler:version}" installDir="SmartBear/loadUI-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="windows-x86-1.7.0_01_ws" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
-      <excludedLaunchers>
-        <launcher id="23" />
-      </excludedLaunchers>
+    <win32 name="Windows" id="26" mediaFileName="loadUI-${compiler:version}" installDir="SmartBear/loadUI-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="windows-x86-1.7.0_01" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+      <excludedLaunchers />
       <excludedComponents />
-      <excludedBeans>
-        <bean refId="193" />
-        <bean refId="228" />
-        <bean refId="274" />
-      </excludedBeans>
+      <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude />
+      <exclude>
+        <entry location=".i4j_fileset_" fileType="regular" />
+      </exclude>
       <variables />
     </win32>
     <macos name="Mac OS X Single Bundle" id="1087" mediaFileName="loadUI-${compiler:version}" installDir="loadUI ${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" launcherId="1014">
