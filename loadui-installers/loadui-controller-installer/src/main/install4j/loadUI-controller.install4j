@@ -606,7 +606,7 @@ catch(Exception e){
                     </object>
                   </java>
                 </serializedBean>
-                <condition>"${compiler:sys.platform}" == "macos" || "${compiler:sys.platform}" == "linux"</condition>
+                <condition>"${compiler:sys.platform}" == "macos" || "${compiler:sys.platform}" == "unix"</condition>
               </action>
               <action name="" id="670" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
@@ -795,7 +795,7 @@ catch(Exception e){
                     </object>
                   </java>
                 </serializedBean>
-                <condition>"${compiler:sys.platform}" == "linux" &amp;&amp; (!context.isUnattended())</condition>
+                <condition>"${compiler:sys.platform}" == "unix" &amp;&amp; (!context.isUnattended())</condition>
               </action>
             </actions>
             <formComponents />
