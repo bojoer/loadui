@@ -606,7 +606,7 @@ catch(Exception e){
                     </object>
                   </java>
                 </serializedBean>
-                <condition>"${compiler:sys.platform}" == "mac" || "${compiler:sys.platform}" == "linux"</condition>
+                <condition>"${compiler:sys.platform}" == "macos" || "${compiler:sys.platform}" == "unix"</condition>
               </action>
               <action name="" id="670" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
@@ -620,7 +620,7 @@ catch(Exception e){
                     </object>
                   </java>
                 </serializedBean>
-                <condition>"${compiler:sys.platform}" == "mac" || "${compiler:sys.platform}" == "windows"</condition>
+                <condition>"${compiler:sys.platform}" == "macos" || "${compiler:sys.platform}" == "windows"</condition>
               </action>
               <action name="" id="773" beanClass="com.install4j.runtime.beans.actions.text.ReplaceInstallerVariablesAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
@@ -689,6 +689,45 @@ catch(Exception e){
                 </serializedBean>
                 <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
               </action>
+			  <action name="" id="1138" beanClass="com.install4j.runtime.beans.actions.files.CopyFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.CopyFileAction">
+                      <void property="destinationFile">
+                        <object class="java.io.File">
+                          <string>loadUI.jnlp</string>
+                        </object>
+                      </void>
+                      <void property="overwriteMode">
+                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
+                      </void>
+                      <void property="sourceFile">
+                        <object class="java.io.File">
+                          <string>loadUI.jnlp.osx</string>
+                        </object>
+                      </void>
+                      <void property="uninstallMode">
+                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>"${compiler:sys.platform}" == "macos"</condition>
+              </action>
+              <action name="" id="1139" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>loadUI.jnlp.osx</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
             </actions>
             <formComponents />
           </screen>
@@ -739,7 +778,7 @@ catch(Exception e){
                     </object>
                   </java>
                 </serializedBean>
-                <condition>"${compiler:sys.platform}" == "mac" &amp;&amp; (!context.isUnattended())</condition>
+                <condition>"${compiler:sys.platform}" == "macos" &amp;&amp; (!context.isUnattended())</condition>
               </action>
               <action name="" id="608" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
@@ -756,7 +795,7 @@ catch(Exception e){
                     </object>
                   </java>
                 </serializedBean>
-                <condition>"${compiler:sys.platform}" == "linux" &amp;&amp; (!context.isUnattended())</condition>
+                <condition>"${compiler:sys.platform}" == "unix" &amp;&amp; (!context.isUnattended())</condition>
               </action>
             </actions>
             <formComponents />
