@@ -658,28 +658,6 @@ catch(Exception e){
                 </serializedBean>
                 <condition>"${compiler:proxy}" != "" </condition>
               </action>
-			  <action name="" id="774" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.MoveFileAction">
-                      <void property="destinationFile">
-                        <object class="java.io.File">
-                          <string>${installer:sys.userHome}/</string>
-                        </object>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                      </void>
-                      <void property="sourceFile">
-                        <object class="java.io.File">
-                          <string>_win/*</string>
-                        </object>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-				<condition>"${compiler:sys.platform}" == "windows"</condition>
-              </action>
               <action name="" id="772" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
