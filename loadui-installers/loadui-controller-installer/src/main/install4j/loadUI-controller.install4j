@@ -606,7 +606,7 @@ catch(Exception e){
                     </object>
                   </java>
                 </serializedBean>
-                <condition>"${compiler:sys.platform}" == "mac" || "${compiler:sys.platform}" == "linux"</condition>
+                <condition>"${compiler:sys.platform}" == "macos" || "${compiler:sys.platform}" == "linux"</condition>
               </action>
               <action name="" id="670" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
@@ -620,7 +620,7 @@ catch(Exception e){
                     </object>
                   </java>
                 </serializedBean>
-                <condition>"${compiler:sys.platform}" == "mac" || "${compiler:sys.platform}" == "windows"</condition>
+                <condition>"${compiler:sys.platform}" == "macos" || "${compiler:sys.platform}" == "windows"</condition>
               </action>
               <action name="" id="773" beanClass="com.install4j.runtime.beans.actions.text.ReplaceInstallerVariablesAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
@@ -712,7 +712,7 @@ catch(Exception e){
                     </object>
                   </java>
                 </serializedBean>
-                <condition>"${compiler:sys.platform}" == "mac"</condition>
+                <condition>"${compiler:sys.platform}" == "macos"</condition>
               </action>
               <action name="" id="1140" beanClass="com.install4j.runtime.beans.actions.files.CopyFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
@@ -797,7 +797,7 @@ catch(Exception e){
                     </object>
                   </java>
                 </serializedBean>
-                <condition>"${compiler:sys.platform}" == "mac" &amp;&amp; (!context.isUnattended())</condition>
+                <condition>"${compiler:sys.platform}" == "macos" &amp;&amp; (!context.isUnattended())</condition>
               </action>
               <action name="" id="608" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
