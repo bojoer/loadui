@@ -714,25 +714,6 @@ catch(Exception e){
                 </serializedBean>
                 <condition>"${compiler:sys.platform}" == "macos"</condition>
               </action>
-              <action name="" id="1140" beanClass="com.install4j.runtime.beans.actions.files.CopyFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.CopyFileAction">
-                      <void property="destinationFile">
-                        <object class="java.io.File">
-                          <string>${compiler:sys.platform}.txt</string>
-                        </object>
-                      </void>
-                      <void property="sourceFile">
-                        <object class="java.io.File">
-                          <string>loadUI.jnlp.osx</string>
-                        </object>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
               <action name="" id="1139" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
