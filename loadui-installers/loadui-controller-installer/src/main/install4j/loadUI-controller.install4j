@@ -25,18 +25,18 @@
       <root id="1140" fileset="1139" location="" />
     </roots>
     <mountPoints>
+	  <mountPoint id="1141" root="1140" location="" mode="755" />
       <mountPoint id="20" root="" location="" mode="755" />
-      <mountPoint id="1141" root="1140" location="" mode="755" />
     </mountPoints>
     <entries>
+	  <dirEntry mountPoint="1141" file="${compiler:builddir}/osx" overwrite="1" shared="false" mode="644" uninstallMode="2" excludeSuffixes="" dirMode="755">
+        <exclude />
+      </dirEntry>
       <dirEntry mountPoint="20" file="${compiler:builddir}" overwrite="5" shared="false" mode="644" uninstallMode="0" excludeSuffixes="" dirMode="755">
         <exclude>
           <entry location="felix-cache" fileType="regular" />
 		  <entry location="osx" fileType="regular" />
         </exclude>
-      </dirEntry>
-      <dirEntry mountPoint="1141" file="${compiler:builddir}/osx" overwrite="1" shared="false" mode="644" uninstallMode="2" excludeSuffixes="" dirMode="755">
-        <exclude />
       </dirEntry>
     </entries>
     <components />
