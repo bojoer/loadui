@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="4.2.8" transformSequenceNumber="2">
-  <directoryPresets config="${compiler:builddir}" />
+  <directoryPresets config="../../../../../../Users/Dain" />
   <application name="loadUI ${compiler:version}" distributionSourceDir="" applicationId="3648-6792-9261-9102" mediaDir="../../../target" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" keepModificationTimes="false" missingFilesStrategy="warn" shortName="loadUI" publisher="SmartBear Software" publisherWeb="http://www.smartbear.com" version="${compiler:version}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -18,16 +18,25 @@
     </variables>
   </application>
   <files>
-    <filesets />
-    <roots />
+    <filesets>
+      <fileset name="OS X file set" id="1139" />
+    </filesets>
+    <roots>
+      <root id="1140" fileset="1139" location="" />
+    </roots>
     <mountPoints>
       <mountPoint id="20" root="" location="" mode="755" />
+      <mountPoint id="1141" root="1140" location="" mode="755" />
     </mountPoints>
     <entries>
       <dirEntry mountPoint="20" file="${compiler:builddir}" overwrite="5" shared="false" mode="644" uninstallMode="0" excludeSuffixes="" dirMode="755">
         <exclude>
           <entry location="felix-cache" fileType="regular" />
+		  <entry location="osx" fileType="regular" />
         </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="1141" file="${compiler:builddir}/osx" overwrite="1" shared="false" mode="644" uninstallMode="2" excludeSuffixes="" dirMode="755">
+        <exclude />
       </dirEntry>
     </entries>
     <components />
