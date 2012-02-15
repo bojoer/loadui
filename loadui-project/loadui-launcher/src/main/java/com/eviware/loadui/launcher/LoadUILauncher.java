@@ -89,6 +89,25 @@ public class LoadUILauncher
 		File externalFile = new File( "res/buildinfo.txt" );
 		InputStream is = null;
 
+		//Workaround for some versions of Java 6 which have a known SSL issue
+		String versionString = System.getProperty( "java.version", "0.0.0_00" );
+		try
+		{
+			if( versionString.startsWith( "1.6" ) && versionString.contains( "_" ) )
+			{
+				int updateVersion = Integer.parseInt( versionString.split( "_", 2 )[1] );
+				if( updateVersion > 27 )
+				{
+					log.info( "Detected Java version " + versionString + ", disabling CBC Protection." );
+					System.setProperty( "jsse.enableCBCProtection", "false" );
+				}
+			}
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+
 		try
 		{
 			is = externalFile.exists() ? new FileInputStream( externalFile ) : getClass().getResourceAsStream(
