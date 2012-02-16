@@ -298,6 +298,7 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	public void release()
 	{
 		super.release();
+		broadcastEndpoint.deregisterEndpoint( AgentItemImpl.this );
 		endpointSupport.getSource().close();
 		ReleasableUtils.release( endpointSupport );
 

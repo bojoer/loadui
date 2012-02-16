@@ -47,7 +47,6 @@ public class BroadcastMessageEndpointImpl implements BroadcastMessageEndpoint
 	{
 		if( endpoints.remove( endpoint ) )
 		{
-			log.info( "REMOVED FROM BROADCAST: {}", endpoint );
 			endpoint.removeMessageListener( myListener );
 		}
 	}
@@ -57,7 +56,6 @@ public class BroadcastMessageEndpointImpl implements BroadcastMessageEndpoint
 	{
 		if( endpoints.add( endpoint ) )
 		{
-			log.info( "ADDED TO BROADCAST: {}", endpoint );
 			endpoint.addMessageListener( "/**", myListener );
 		}
 	}
