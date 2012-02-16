@@ -15,6 +15,9 @@
  */
 package com.eviware.loadui.impl.statistics.model.chart.line;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.statistics.model.chart.line.TestEventSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
@@ -24,12 +27,15 @@ import com.eviware.loadui.api.testevents.TestEventTypeDescriptor;
 import com.eviware.loadui.util.StringUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class ChartTestEventSegment extends AbstractChartSegment implements TestEventSegment.Removable
 {
 	private static final TestEventSourceDescriptor[] EMPTY_DESCRIPTOR_ARRAY = new TestEventSourceDescriptor[0];
+
+	protected static final Logger log = LoggerFactory.getLogger( ChartTestEventSegment.class );
 
 	private final Function<Entry, TestEvent> getValues = new Function<Entry, TestEvent>()
 	{
@@ -85,9 +91,10 @@ public class ChartTestEventSegment extends AbstractChartSegment implements TestE
 	public Iterable<TestEvent> getTestEventsInRange( Execution execution, long startTime, long endTime,
 			int interpolationLevel )
 	{
-		return Iterables.transform(
-				execution.getTestEventRange( startTime, endTime, interpolationLevel, getDescriptors( execution ) ),
-				getValues );
+		TestEventSourceDescriptor[] descriptors = getDescriptors( execution );
+
+		return descriptors.length == 0 ? ImmutableList.<TestEvent> of() : Iterables.transform(
+				execution.getTestEventRange( startTime, endTime, interpolationLevel, descriptors ), getValues );
 	}
 
 	@Override
@@ -100,7 +107,6 @@ public class ChartTestEventSegment extends AbstractChartSegment implements TestE
 	private TestEventSourceDescriptor[] getDescriptors( Execution execution )
 	{
 		TestEventTypeDescriptor descriptor = Iterables.find( execution.getEventTypes(), typeFilter, null );
-
 		return descriptor == null ? EMPTY_DESCRIPTOR_ARRAY : Lists.newArrayList(
 				Iterables.filter( descriptor.getTestEventSources(), sourceFilter ) ).toArray( EMPTY_DESCRIPTOR_ARRAY );
 	}
