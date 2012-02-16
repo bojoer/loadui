@@ -139,7 +139,7 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint
 
 				while( ( channel = ois.readUTF() ) != null && ( data = ois.readObject() ) != null )
 				{
-					//log.debug( "Got message: {}: {}", channel, data );
+					log.debug( "Got message: {}: {}", channel, data );
 					routingSupport.fireMessage( channel, ServerSocketMessageEndpoint.this, data );
 				}
 			}
