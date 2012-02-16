@@ -209,7 +209,7 @@ public class MainWindow {
 		}
 		
 		toolbar.addItem( ProjectToolbarItem { workspace: workspace } );
-		toolbar.addItem( AgentToolbarItem {} );
+		toolbar.addItem( AgentToolbarItem { workspace: workspace } );
 
 		appState.insertInto( toolbar, WORKSPACE_FRONT );
 		
