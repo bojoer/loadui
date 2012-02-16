@@ -478,10 +478,10 @@ public class BrowserComponent extends JPanel implements Browser
 			{
 				if( page != null )
 				{
-					page.removeDomChangeListener( domListener );
+					//page.removeDomChangeListener( domListener );
 				}
 				page = ( HtmlPage )window.getEnclosedPage();
-				page.addDomChangeListener( domListener );
+				//page.addDomChangeListener( domListener );
 
 				parsePageContent( 5 );
 			}

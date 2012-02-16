@@ -49,6 +49,7 @@ public class StreamingStatisticsAggregator implements StatisticsAggregator
 		data.put( "_TIMESTAMP", entry.getTimestamp() );
 		data.put( "_TRACK_ID", trackId );
 
+		log.info( "Sending statistics entry: {}", data );
 		endpoint.sendMessage( STATISTICS_CHANNEL, data );
 	}
 

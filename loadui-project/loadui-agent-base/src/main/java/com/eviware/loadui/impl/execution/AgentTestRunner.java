@@ -111,7 +111,7 @@ public class AgentTestRunner extends AbstractTestRunner implements Releasable
 				final String canvasId = ( String )strings[0];
 				final Phase phase = Phase.valueOf( ( String )strings[1] );
 
-				if( phase == Phase.PRE_START )
+				if( phase == Phase.PRE_START || !executions.containsKey( canvasId ) )
 				{
 					executions.put( canvasId, new AgentTestExecution( AgentTestRunner.this, canvasId ) );
 				}

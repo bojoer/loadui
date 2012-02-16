@@ -55,6 +55,7 @@ public class TrackStreamReceiver
 			@SuppressWarnings( "unchecked" )
 			public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 			{
+				log.info( "Got Statistics message from: {}, data: {}", endpoint, data );
 				if( endpoint instanceof AgentItem )
 				{
 					Map<String, Object> map = ( Map<String, Object> )data;
@@ -75,6 +76,7 @@ public class TrackStreamReceiver
 						timestamp = currentTimeMillis;
 
 					String trackId = ( String )map.remove( "_TRACK_ID" );
+					log.debug( "trackId: {}, timestamp: {}", trackId, timestamp );
 
 					EntryImpl entry = new EntryImpl( timestamp, ( Map<String, Number> )data );
 					if( execution != null )
