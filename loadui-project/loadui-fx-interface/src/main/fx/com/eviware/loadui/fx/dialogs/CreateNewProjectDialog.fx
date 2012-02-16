@@ -91,7 +91,7 @@ public class CreateNewProjectDialog {
 			formContent: [
 				name = TextField { label: "Project Name", action: ok },
 				file = TextField { label: "Filename", action: ok },
-				open = CheckBoxField { label: "Open the new Project?", value: false }
+				open = CheckBoxField { label: "Open the new Project?", value: true }
 			]
 		};
 		

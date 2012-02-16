@@ -33,7 +33,7 @@ import javafx.scene.input.MouseButton;
 def iconImage = Image { url: "{__ROOT__}images/png/agent-icon.png" };
 
 public class AgentToolbarItem extends ToolbarItemNode {
-    public-init var workspace:WorkspaceItem;
+   public-init var workspace:WorkspaceItem;
 	override var icon = iconImage;
 	
 	override var tooltip = "Creates a new Agent in the Workspace";
