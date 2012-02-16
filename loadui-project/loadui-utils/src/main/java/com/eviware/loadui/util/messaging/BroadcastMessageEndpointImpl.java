@@ -46,14 +46,20 @@ public class BroadcastMessageEndpointImpl implements BroadcastMessageEndpoint
 	public void deregisterEndpoint( MessageEndpoint endpoint )
 	{
 		if( endpoints.remove( endpoint ) )
+		{
+			log.info( "REMOVED FROM BROADCAST: {}", endpoint );
 			endpoint.removeMessageListener( myListener );
+		}
 	}
 
 	@Override
 	public void registerEndpoint( MessageEndpoint endpoint )
 	{
 		if( endpoints.add( endpoint ) )
+		{
+			log.info( "ADDED TO BROADCAST: {}", endpoint );
 			endpoint.addMessageListener( "/**", myListener );
+		}
 	}
 
 	@Override
