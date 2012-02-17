@@ -48,15 +48,25 @@ public mixin class TooltipHolder extends BaseMixin {
 	
 	var myScene:Scene;
 	
-	def label:Label = Label {
+	var tooltipLabel:Label;
+	function getTooltipLabel():Label {
+		if( tooltipLabel == null ) tooltipLabel = Label {
+			tooltip: Tooltip { text: bind tooltip, font: Font.font("Amble", 10) }
+			managed: false
+		};
+		
+		tooltipLabel
+	}
+	
+	/*def label:Label = Label {
 		tooltip: Tooltip { text: bind tooltip, font: Font.font("Amble", 10) }
 		managed: false
-	};
+	};*/
 	
 	public function enableTooltip( enabled:Boolean ) {
 		if ( not enabled ) {
-			label.tooltip.hide();
-			delete label from AppState.byScene( myScene ).overlay.content;
+			getTooltipLabel().tooltip.hide();
+			delete getTooltipLabel() from AppState.byScene( myScene ).overlay.content;
 		}
 		tooltipEnabled = enabled;
 	}
@@ -71,6 +81,7 @@ public mixin class TooltipHolder extends BaseMixin {
 				if( myScene == null )
 					myScene = (this as BaseNode).scene;
 				def bounds = (this as BaseNode).localToScene((this as BaseNode).boundsInLocal);
+				def label = getTooltipLabel();
 				label.layoutX = bounds.minX;
 				label.layoutY = bounds.minY;
 				label.width = bounds.width;
@@ -80,6 +91,7 @@ public mixin class TooltipHolder extends BaseMixin {
 			}
 		} );
 		(this as BaseNode).addMouseHandler( MOUSE_EXITED, function( e:MouseEvent ):Void {
+			def label = getTooltipLabel();
 			if( label.tooltip.activated ) {
 				label.tooltip.deactivate();
 				delete label from AppState.byScene( myScene ).overlay.content;
