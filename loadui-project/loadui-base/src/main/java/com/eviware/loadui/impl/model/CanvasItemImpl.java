@@ -138,21 +138,21 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		statisticHolderSupport = new StatisticHolderSupport( this );
 		counterStatisticSupport = new CounterStatisticSupport( this );
 
-		StatisticVariable.Mutable requestVariable = statisticHolderSupport.addStatisticVariable( "Requests" );
+		StatisticVariable.Mutable requestVariable = statisticHolderSupport.addStatisticVariable( REQUEST_VARIABLE );
 		statisticHolderSupport.addStatisticsWriter( CounterStatisticsWriter.TYPE, requestVariable );
 		counterStatisticSupport.addCounterVariable( REQUEST_COUNTER, requestVariable );
 
-		StatisticVariable.Mutable failuresVariable = statisticHolderSupport.addStatisticVariable( "Failures" );
+		StatisticVariable.Mutable failuresVariable = statisticHolderSupport.addStatisticVariable( FAILURE_VARIABLE );
 		statisticHolderSupport.addStatisticsWriter( CounterStatisticsWriter.TYPE, failuresVariable );
 		counterStatisticSupport.addCounterVariable( FAILURE_COUNTER, failuresVariable );
 
 		StatisticVariable.Mutable assertionFailuresVariable = statisticHolderSupport
-				.addStatisticVariable( "Assertion Failures" );
+				.addStatisticVariable( ASSERTION_FAILURE_VARIABLE );
 		statisticHolderSupport.addStatisticsWriter( CounterStatisticsWriter.TYPE, assertionFailuresVariable );
 		counterStatisticSupport.addCounterVariable( ASSERTION_FAILURE_COUNTER, assertionFailuresVariable );
 
 		StatisticVariable.Mutable requestFailuresVariable = statisticHolderSupport
-				.addStatisticVariable( "Request Failures" );
+				.addStatisticVariable( REQUEST_FAILURE_VARIABLE );
 		statisticHolderSupport.addStatisticsWriter( CounterStatisticsWriter.TYPE, requestFailuresVariable );
 		counterStatisticSupport.addCounterVariable( REQUEST_FAILURE_COUNTER, requestFailuresVariable );
 
@@ -635,7 +635,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	@Override
 	public Set<Statistic.Descriptor> getDefaultStatistics()
 	{
-		return ImmutableSet.<Statistic.Descriptor> of( new StatisticDescriptorImpl( this, "Requests", "PER_SECOND",
+		return ImmutableSet.<Statistic.Descriptor> of( new StatisticDescriptorImpl( this, REQUEST_VARIABLE, "PER_SECOND",
 				StatisticVariable.MAIN_SOURCE ) );
 	}
 

@@ -46,6 +46,10 @@ import com.eviware.loadui.api.events.TerminalConnectionEvent;
 import com.eviware.loadui.api.events.TerminalEvent;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
 import com.eviware.loadui.api.events.TerminalSignatureEvent;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
+import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.layout.LayoutComponent;
 import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.model.AgentItem;
@@ -111,6 +115,8 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private final ActivityListener activityListener = new ActivityListener();
 
 	private final HashSet<Statistic.Descriptor> defaultStatistics = Sets.newHashSet();
+	private final TerminalsEnabledTask terminalsEnabledTask = new TerminalsEnabledTask();
+	private boolean terminalsEnabled = false;
 
 	public ComponentItemImpl( CanvasItem canvas, ComponentItemConfig config )
 	{
@@ -129,6 +135,8 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 		terminalHolderSupport = new TerminalHolderSupport( this );
 		statisticHolderSupport = new StatisticHolderSupport( this );
+
+		BeanInjector.getBean( TestRunner.class ).registerTask( terminalsEnabledTask, Phase.PRE_START, Phase.POST_STOP );
 	}
 
 	@Override
@@ -249,6 +257,8 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	@Override
 	public void release()
 	{
+		BeanInjector.getBean( TestRunner.class ).unregisterTask( terminalsEnabledTask, Phase.values() );
+
 		canvas.removeEventListener( ActionEvent.class, canvasListener );
 		if( workspaceListener != null )
 			getCanvas().getProject().getWorkspace().removeEventListener( PropertyEvent.class, workspaceListener );
@@ -555,9 +565,12 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		@Override
 		public void send( OutputTerminal terminal, TerminalMessage message )
 		{
-			if( isRunning() && terminal instanceof OutputTerminalImpl && terminalHolderSupport.containsTerminal( terminal ) )
+			if( terminal instanceof OutputTerminalImpl && terminalHolderSupport.containsTerminal( terminal ) )
 			{
-				( ( OutputTerminalImpl )terminal ).sendMessage( message );
+				if( terminalsEnabled )
+				{
+					( ( OutputTerminalImpl )terminal ).sendMessage( message );
+				}
 			}
 			else if( terminal == controllerTerminal )
 			{
@@ -1124,6 +1137,23 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 			else if( !type.equals( other.type ) )
 				return false;
 			return true;
+		}
+	}
+
+	private class TerminalsEnabledTask implements TestExecutionTask
+	{
+		@Override
+		public void invoke( TestExecution execution, Phase phase )
+		{
+			switch( phase )
+			{
+			case PRE_START :
+				terminalsEnabled = true;
+				break;
+			case POST_STOP :
+				terminalsEnabled = false;
+				break;
+			}
 		}
 	}
 }

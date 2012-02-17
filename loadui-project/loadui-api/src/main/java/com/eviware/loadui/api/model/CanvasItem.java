@@ -58,6 +58,11 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	public static final String ASSERTION_FAILURE_COUNTER = "Failed Assertions";
 	public static final String FAILURE_COUNTER = "Failures";
 
+	public static final String REQUEST_FAILURE_VARIABLE = "Request Failures";
+	public static final String ASSERTION_FAILURE_VARIABLE = "Assertion Failures";
+	public static final String FAILURE_VARIABLE = "Failures";
+	public static final String REQUEST_VARIABLE = "Requests";
+
 	/**
 	 * Get the ProjectItem which this CanvasItem belongs to. If this CanvasItem
 	 * is a ProjectItem itself, then it will return itself. Note that if this

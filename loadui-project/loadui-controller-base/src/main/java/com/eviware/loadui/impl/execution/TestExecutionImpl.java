@@ -45,7 +45,6 @@ public class TestExecutionImpl extends AbstractTestExecution
 	@Override
 	public Future<ExecutionResult> abort( String reason )
 	{
-		//TestExecutionEvent.logExecutionEvent( TestExecutionEvent.ExecutionAction.ABORTED );
 		BeanInjector.getBean( TestEventManager.class ).logMessage( MessageLevel.WARNING, "Test aborted: " + reason );
 		return super.abort( reason );
 	}

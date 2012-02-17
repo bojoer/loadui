@@ -33,6 +33,7 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.fx.tree.BaseTreeNode;
 import com.eviware.loadui.util.serialization.StatisticResolver;
 import com.eviware.loadui.util.serialization.StatisticVariableResolver;
+import com.google.common.collect.ImmutableList;
 
 public class AssertionTreeModel extends DefaultTreeModel
 {
@@ -61,6 +62,8 @@ public class AssertionTreeModel extends DefaultTreeModel
 
 	private static class StatisticHolderTreeNode extends BaseTreeNode
 	{
+		private static final List<String> blacklistedVariableNames = ImmutableList.of(
+				CanvasItem.ASSERTION_FAILURE_VARIABLE, CanvasItem.FAILURE_VARIABLE );
 		private final StatisticHolder statisticHolder;
 
 		public StatisticHolderTreeNode( TreeNode parent, StatisticHolder statisticHolder )
@@ -75,7 +78,13 @@ public class AssertionTreeModel extends DefaultTreeModel
 		{
 			List<TreeNode> children = new ArrayList<TreeNode>();
 			for( String variableName : statisticHolder.getStatisticVariableNames() )
-				children.add( new StatisticVariableTreeNode( this, statisticHolder.getStatisticVariable( variableName ) ) );
+			{
+				if( !blacklistedVariableNames.contains( variableName ) )
+				{
+					children
+							.add( new StatisticVariableTreeNode( this, statisticHolder.getStatisticVariable( variableName ) ) );
+				}
+			}
 
 			Collections.sort( children, nameComparator );
 			return children;

@@ -121,7 +121,13 @@ validateUrl = {
 	}
 	updateAuth()
 	
-	setInvalid( !url.value || url.value == dummyUrl )
+	try {
+		new URI( url.value )
+		setInvalid( !url.value || url.value == dummyUrl )
+	} catch( e ) {
+		setInvalid( true )
+	}
+	
 	runAction?.enabled = !isInvalid()
 }
 

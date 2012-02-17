@@ -140,8 +140,7 @@ public abstract class GeneratorBase extends OnOffBase implements GeneratorCatego
 			switch( phase )
 			{
 			case POST_START :
-				if( execution.getCanvas() == getContext().getCanvas()
-						|| execution.getCanvas() == getContext().getCanvas().getProject() )
+				if( execution.contains( getContext().getCanvas() ) )
 				{
 					fixActivityStrategy( true );
 				}
