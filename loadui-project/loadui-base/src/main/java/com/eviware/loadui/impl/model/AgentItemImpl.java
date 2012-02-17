@@ -87,7 +87,6 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 			@Override
 			public void handleConnectionChange( MessageEndpoint endpoint, boolean connected )
 			{
-				log.info( "CONNECTION CHANGE!!!!! {}, {}", endpoint, connected );
 				if( connected )
 				{
 					broadcastEndpoint.registerEndpoint( AgentItemImpl.this );

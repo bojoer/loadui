@@ -81,6 +81,7 @@ public enum BeanInjector
 					}
 				}
 			} );
+			INSTANCE.beanCache.put( BundleContext.class, arg0 );
 			INSTANCE.waiter.notifyAll();
 		}
 	}
