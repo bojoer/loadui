@@ -23,24 +23,48 @@ import com.eviware.loadui.util.BeanInjector;
 
 public class BlinkingActivityStrategy extends AbstractActivityStrategy
 {
-	public ScheduledFuture<?> future;
+	private final Runnable toggleRunnable = new Runnable()
+	{
+		@Override
+		public void run()
+		{
+			setActive( !isActive() );
+		}
+	};
+	protected final long blinkLength;
+	private ScheduledFuture<?> future;
+	private boolean blinking = false;
 
-	public BlinkingActivityStrategy( long blinkLength )
+	public BlinkingActivityStrategy( long blinkLength, boolean blinking )
 	{
 		super( false );
 
-		future = BeanInjector.getBean( ScheduledExecutorService.class ).scheduleAtFixedRate( new Runnable()
+		this.blinkLength = blinkLength;
+		setBlinking( blinking );
+	}
+
+	protected void setBlinking( boolean blinking )
+	{
+		if( this.blinking != blinking )
 		{
-			@Override
-			public void run()
+			if( future != null )
 			{
-				setActive( !isActive() );
+				future.cancel( true );
 			}
-		}, blinkLength, blinkLength, TimeUnit.MILLISECONDS );
+			if( blinking )
+			{
+				future = BeanInjector.getBean( ScheduledExecutorService.class ).scheduleAtFixedRate( toggleRunnable,
+						blinkLength, blinkLength, TimeUnit.MILLISECONDS );
+			}
+			this.blinking = blinking;
+		}
 	}
 
 	public void release()
 	{
-		future.cancel( true );
+		if( future != null )
+		{
+			future.cancel( true );
+		}
 	}
 }

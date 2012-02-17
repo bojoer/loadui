@@ -56,6 +56,8 @@ import com.eviware.loadui.api.summary.SampleStatsImpl;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
+import com.eviware.loadui.impl.component.ActivityStrategies;
+import com.eviware.loadui.impl.component.BlinkOnUpdateActivityStrategy;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.statistics.CounterStatisticSupport;
 import com.eviware.loadui.util.statistics.StatisticDescriptorImpl;
@@ -76,6 +78,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final ScheduledExecutorService scheduler;
 	private final ScheduledFuture<?> updateTask;
 	private final AssignmentListener assignmentListener;
+	private final BlinkOnUpdateActivityStrategy activityStrategy = ActivityStrategies.newBlinkOnUpdateStrategy();
 
 	private final InputTerminal triggerTerminal;
 	private final OutputTerminal resultTerminal;
@@ -137,10 +140,12 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	{
 		super( context );
 
-		context.setNonBlocking( true );
-
 		executor = BeanInjector.getBean( ExecutorService.class );
 		scheduler = BeanInjector.getBean( ScheduledExecutorService.class );
+
+		context.setNonBlocking( true );
+
+		context.setActivityStrategy( activityStrategy );
 
 		triggerTerminal = context.createInput( TRIGGER_TERMINAL, "Trigger Input",
 				"Connect to a Generator to recieve trigger signals. Each signal will trigger the component to run once." );
@@ -300,7 +305,10 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		addTopBottomSample( startTime, timeTaken, size );
 
 		if( cRunning == 0 )
+		{
 			getContext().setBusy( false );
+			activityStrategy.setActivity( false );
+		}
 
 		// Update StatisticsWriters
 		timeTakenVariable.update( startTime + timeTaken, timeTaken );
@@ -444,6 +452,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		queued.set( 0 );
 		updateQueued( 0 );
 		getContext().setBusy( false );
+		activityStrategy.setActivity( false );
 
 		int runningRequests = onCancel();
 		discardsCounter.increment( runningRequests );
@@ -463,6 +472,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 	private void enqueue( TerminalMessage message )
 	{
+		activityStrategy.setActivity( true );
+
 		if( queued.get() < queueSize && !released )
 		{
 			queue.offer( message );

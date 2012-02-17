@@ -15,17 +15,19 @@
  */
 package com.eviware.loadui.impl.component.categories;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.GeneratorCategory;
-import com.eviware.loadui.api.events.ActionEvent;
-import com.eviware.loadui.api.events.BaseEvent;
-import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
-import com.eviware.loadui.api.model.CanvasItem;
-import com.eviware.loadui.api.terminal.InputTerminal;
+import com.eviware.loadui.api.events.WeakEventHandler;
+import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestExecution;
+import com.eviware.loadui.api.execution.TestExecutionTask;
+import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.impl.component.ActivityStrategies;
+import com.eviware.loadui.util.BeanInjector;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -36,14 +38,11 @@ import com.google.common.collect.ImmutableMap;
  */
 public abstract class GeneratorBase extends OnOffBase implements GeneratorCategory
 {
-	private final static String ACTIVITY_MESSAGE_PARAM = "Activity";
-
 	private final OutputTerminal triggerTerminal;
 	private final TerminalMessage triggerMessage;
 
-	private final ActivityListener listener = new ActivityListener();
-	private final TerminalMessage ledOnMessage;
-	private final TerminalMessage ledOffMessage;
+	private final StateListener stateListener = new StateListener();
+	private final ActivityTask activityTask = new ActivityTask();
 
 	/**
 	 * Constructs an TriggerBase.
@@ -59,16 +58,15 @@ public abstract class GeneratorBase extends OnOffBase implements GeneratorCatego
 				"Sends a trigger signal that can trigger e.g. a Runner." );
 		triggerMessage = context.newMessage();
 
-		ledOnMessage = context.newMessage();
-		ledOnMessage.put( ACTIVITY_MESSAGE_PARAM, true );
-		ledOffMessage = context.newMessage();
-		ledOffMessage.put( ACTIVITY_MESSAGE_PARAM, false );
-
 		context.setSignature( triggerTerminal,
 				ImmutableMap.<String, Class<?>> of( TRIGGER_TIMESTAMP_MESSAGE_PARAM, Long.class ) );
 
-		context.getComponent().addEventListener( BaseEvent.class, listener );
-		fixActivityStrategy( false );
+		if( LoadUI.isController() )
+		{
+			BeanInjector.getBean( TestRunner.class ).registerTask( activityTask, Phase.POST_START, Phase.POST_STOP );
+			context.addEventListener( PropertyEvent.class, stateListener );
+			fixActivityStrategy( false );
+		}
 	}
 
 	/**
@@ -101,36 +99,56 @@ public abstract class GeneratorBase extends OnOffBase implements GeneratorCatego
 		return COLOR;
 	}
 
-	private void fixActivityStrategy( boolean blinking )
+	private void fixActivityStrategy( boolean forceRunning )
 	{
-		if( !blinking && getContext().isRunning() )
-			blinking = true;
+		boolean blink = forceRunning || getContext().isRunning();
+
 		getContext().setActivityStrategy(
-				getStateProperty().getValue() ? ( blinking ? ActivityStrategies.BLINKING : ActivityStrategies.ON )
+				getStateProperty().getValue() ? ( blink ? ActivityStrategies.BLINKING : ActivityStrategies.ON )
 						: ActivityStrategies.OFF );
 	}
 
 	@Override
-	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
+	public void onRelease()
 	{
-		super.onTerminalMessage( output, input, message );
+		super.onRelease();
 
-		if( input == getContext().getRemoteTerminal() && message.containsKey( ACTIVITY_MESSAGE_PARAM ) )
-			fixActivityStrategy( ( Boolean )message.get( ACTIVITY_MESSAGE_PARAM ) );
+		if( LoadUI.isController() )
+		{
+			getContext().removeEventListener( PropertyEvent.class, stateListener );
+			BeanInjector.getBean( TestRunner.class ).unregisterTask( activityTask, Phase.values() );
+		}
 	}
 
-	private class ActivityListener implements EventHandler<BaseEvent>
+	private class StateListener implements WeakEventHandler<PropertyEvent>
 	{
 		@Override
-		public void handleEvent( BaseEvent event )
+		public void handleEvent( PropertyEvent event )
 		{
-			if( event instanceof PropertyEvent && ( ( PropertyEvent )event ).getProperty() == getStateProperty() )
-				fixActivityStrategy( false );
-			else if( event instanceof ActionEvent
-					&& ( CanvasItem.START_ACTION.equals( event.getKey() ) || CanvasItem.STOP_ACTION.equals( event.getKey() ) ) )
+			if( getStateProperty() == event.getProperty() )
 			{
-				TerminalMessage message = CanvasItem.START_ACTION.equals( event.getKey() ) ? ledOnMessage : ledOffMessage;
-				getContext().send( getContext().getControllerTerminal(), message );
+				fixActivityStrategy( false );
+			}
+		}
+	}
+
+	private class ActivityTask implements TestExecutionTask
+	{
+		@Override
+		public void invoke( TestExecution execution, Phase phase )
+		{
+			switch( phase )
+			{
+			case POST_START :
+				if( execution.getCanvas() == getContext().getCanvas()
+						|| execution.getCanvas() == getContext().getCanvas().getProject() )
+				{
+					fixActivityStrategy( true );
+				}
+				break;
+			case POST_STOP :
+				fixActivityStrategy( false );
+				break;
 			}
 		}
 	}

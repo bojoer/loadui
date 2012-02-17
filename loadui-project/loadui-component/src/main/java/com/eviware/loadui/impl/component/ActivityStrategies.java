@@ -27,5 +27,10 @@ public class ActivityStrategies
 	{
 	};
 
-	public static final ActivityStrategy BLINKING = new BlinkingActivityStrategy( 500 );
+	public static final ActivityStrategy BLINKING = new BlinkingActivityStrategy( 500, true );
+
+	public static BlinkOnUpdateActivityStrategy newBlinkOnUpdateStrategy()
+	{
+		return new BlinkOnUpdateActivityStrategy( 500, 1000 );
+	}
 }

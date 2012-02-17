@@ -27,9 +27,6 @@ import com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledEx
 
 import java.util.HashSet
 import java.util.Collections
-import com.eviware.loadui.impl.component.ActivityStrategies
-
-import java.util.concurrent.TimeUnit
 
 import groovy.lang.GroovyShell
 import groovy.lang.Binding
@@ -41,12 +38,6 @@ createProperty( 'setBinding', Boolean, true )
 scriptContent = createProperty( '_scriptContent', String ) {
 	parseScript()
 }
-
-updateLed = {
-	setActivityStrategy( currentlyRunning > 0 ? ActivityStrategies.BLINKING : ActivityStrategies.ON )
-}
-
-future = scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
 
 runningSamples = Collections.synchronizedSet( new HashSet() )
 shell = new GroovyShell()

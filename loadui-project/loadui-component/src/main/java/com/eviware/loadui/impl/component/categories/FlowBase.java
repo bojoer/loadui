@@ -21,9 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.eviware.loadui.api.component.ComponentContext;
@@ -32,11 +29,9 @@ import com.eviware.loadui.api.counter.Counter;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
-
 import com.eviware.loadui.api.terminal.TerminalMessage;
-
 import com.eviware.loadui.impl.component.ActivityStrategies;
-import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.impl.component.BlinkOnUpdateActivityStrategy;
 
 /**
  * Base class for flow components which defines base behavior which can be
@@ -46,16 +41,11 @@ import com.eviware.loadui.util.BeanInjector;
  */
 public abstract class FlowBase extends BaseCategory implements FlowCategory
 {
-	private static final int BLINK_TIME = 1000;
-
 	private final InputTerminal incomingTerminal;
 	private final List<OutputTerminal> outgoingTerminals = new ArrayList<OutputTerminal>();
 	private Map<String, Class<?>> inputSignature = Collections.emptyMap();
 
-	private final ScheduledExecutorService executor;
-	private final Runnable activityRunnable;
-	private long lastMsg;
-	private ScheduledFuture<?> activityFuture;
+	private final BlinkOnUpdateActivityStrategy activityStrategy = ActivityStrategies.newBlinkOnUpdateStrategy();
 	private final ArrayList<Counter> counters = new ArrayList<Counter>();
 
 	/**
@@ -67,9 +57,8 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 	public FlowBase( ComponentContext context )
 	{
 		super( context );
-		executor = BeanInjector.getBean( ScheduledExecutorService.class );
 
-		context.setActivityStrategy( ActivityStrategies.ON );
+		context.setActivityStrategy( activityStrategy );
 		incomingTerminal = context.createInput( INCOMING_TERMINAL, "Incoming messages" );
 		context.setLikeFunction( incomingTerminal, new ComponentContext.LikeFunction()
 		{
@@ -104,24 +93,6 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 
 		for( int i = 0; i < 10; i++ )
 			counters.add( getContext().getCounter( "out_" + i ) );
-
-		activityRunnable = new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				long now = System.currentTimeMillis();
-				if( lastMsg + BLINK_TIME <= now )
-				{
-					getContext().setActivityStrategy( ActivityStrategies.ON );
-					activityFuture = null;
-				}
-				else
-				{
-					activityFuture = executor.schedule( activityRunnable, lastMsg + BLINK_TIME, TimeUnit.MILLISECONDS );
-				}
-			}
-		};
 	}
 
 	/**
@@ -237,12 +208,7 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 	{
 		if( input == incomingTerminal )
 		{
-			lastMsg = System.currentTimeMillis();
-			if( activityFuture == null )
-			{
-				getContext().setActivityStrategy( ActivityStrategies.BLINKING );
-				activityFuture = executor.schedule( activityRunnable, BLINK_TIME, TimeUnit.MILLISECONDS );
-			}
+			activityStrategy.update();
 		}
 	}
 }

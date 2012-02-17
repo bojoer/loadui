@@ -48,7 +48,6 @@ import java.util.Calendar
 import java.util.Date
 import org.quartz.listeners.JobListenerSupport
 import java.text.SimpleDateFormat
-import com.eviware.loadui.impl.component.ActivityStrategies
 import com.eviware.loadui.util.layout.SchedulerModel
 
 // Each component instace has its own group since they all share
@@ -92,13 +91,11 @@ sendStart = {
 	if(runsHolder > 0 && counter >= runsHolder){
 		unscheduleStartTrigger()
 	}
-	//setActivityStrategy(ActivityStrategies.BLINKING)
 	pauseTotal = 0
 }
 
 sendStop = { 
 	sendEnabled( false ) 
-	//setActivityStrategy(ActivityStrategies.OFF)
 	unscheduleEndTrigger()
 	endTrigger = null
 	pauseTotal = 0
@@ -290,7 +287,6 @@ reset = {
 	startTrigger = null
 	endTrigger = null
 	startSent = false
-	//setActivityStrategy(ActivityStrategies.OFF)
 	schedulerModel.resetRunsCounter()
 }
 

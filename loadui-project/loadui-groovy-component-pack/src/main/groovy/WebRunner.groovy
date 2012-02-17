@@ -57,8 +57,6 @@ import java.util.HashMap
 import java.util.Map
 import java.util.concurrent.TimeUnit
 
-scheduleAtFixedRate( { updateLed() }, 500, 500, TimeUnit.MILLISECONDS )
-
 //SSL support, trust all certificates and hostnames.
 class NaiveTrustManager implements X509TrustManager {
 	void checkClientTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
@@ -125,10 +123,6 @@ validateUrl = {
 	
 	setInvalid( !url.value || url.value == dummyUrl )
 	runAction?.enabled = !isInvalid()
-}
-
-updateLed = {
-	setActivityStrategy( runAction?.enabled ? ( currentlyRunning > 0 ? ActivityStrategies.BLINKING : ActivityStrategies.ON ) : ActivityStrategies.OFF )
 }
 
 updateProxy = {

@@ -20,13 +20,8 @@ import com.eviware.loadui.api.component.categories.OutputCategory;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
-
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
 import com.eviware.loadui.impl.component.ActivityStrategies;
-import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.impl.component.BlinkOnUpdateActivityStrategy;
 
 /**
  * Base class for output components which defines base behavior which can be
@@ -36,15 +31,10 @@ import com.eviware.loadui.util.BeanInjector;
  */
 public abstract class OutputBase extends BaseCategory implements OutputCategory
 {
-	private static final int BLINK_TIME = 1000;
-
 	private final InputTerminal inputTerminal;
 	private final OutputTerminal outputTerminal;
 
-	private final ScheduledExecutorService executor;
-	private final Runnable activityRunnable;
-	private long lastMsg;
-	private volatile ScheduledFuture<?> activityFuture;
+	private final BlinkOnUpdateActivityStrategy activityStrategy = ActivityStrategies.newBlinkOnUpdateStrategy();
 
 	/**
 	 * Constructs an OutputBase.
@@ -55,33 +45,13 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 	public OutputBase( ComponentContext context )
 	{
 		super( context );
-		executor = BeanInjector.getBean( ScheduledExecutorService.class );
 
 		inputTerminal = context.createInput( INPUT_TERMINAL, "Data to output",
 				"Messages sent here will be outputted by this component." );
 		outputTerminal = context.createOutput( OUTPUT_TERMINAL, "Passed through messages",
 				"All incoming messages will be outputted here." );
 
-		context.setActivityStrategy( ActivityStrategies.ON );
-		activityRunnable = new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				long now = System.currentTimeMillis();
-				synchronized( activityRunnable )
-				{
-					if( lastMsg + BLINK_TIME <= now )
-					{
-						getContext().setActivityStrategy( ActivityStrategies.ON );
-						activityFuture = null;
-					}
-					else
-						activityFuture = executor.schedule( activityRunnable, BLINK_TIME - ( now - lastMsg ),
-								TimeUnit.MILLISECONDS );
-				}
-			}
-		};
+		context.setActivityStrategy( activityStrategy );
 	}
 
 	/**
@@ -102,19 +72,7 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 	{
 		if( input == inputTerminal )
 		{
-			lastMsg = System.currentTimeMillis();
-			if( activityFuture == null )
-			{
-				synchronized( activityRunnable )
-				{
-					if( activityFuture == null )
-					{
-						getContext().setActivityStrategy( ActivityStrategies.BLINKING );
-						activityFuture = executor.schedule( activityRunnable, BLINK_TIME, TimeUnit.MILLISECONDS );
-					}
-				}
-			}
-
+			activityStrategy.update();
 			output( message );
 			getContext().send( outputTerminal, message );
 		}

@@ -23,13 +23,13 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.events.ActionEvent;
-import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.summary.MutableChapter;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
-import com.eviware.loadui.api.summary.MutableChapter;
 
 /**
  * Base class for component Categories which defines default implementations of
@@ -116,7 +116,7 @@ public abstract class BaseCategory implements ComponentBehavior
 	{
 	}
 
-	private class CancelActionListener implements EventHandler<ActionEvent>
+	private class CancelActionListener implements WeakEventHandler<ActionEvent>
 	{
 		@Override
 		public void handleEvent( ActionEvent event )
