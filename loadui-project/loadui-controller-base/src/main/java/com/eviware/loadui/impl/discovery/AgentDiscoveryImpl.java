@@ -95,6 +95,10 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 					}
 				}
 			}, "loadUI Agent discovery 2" );
+
+			if( System.getProperty( LoadUI.DISABLE_DISCOVERY ) != null )
+				return;
+
 			listenerThread.start();
 
 			executor.scheduleAtFixedRate( new Runnable()
