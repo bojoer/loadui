@@ -50,18 +50,17 @@ public function getWindowController() { wc };
 
 public def stylesheets = for( f in new File(".").list( new CssFilter() ) ) "file:{f}";
 
+public def icons = [
+	Image { url: new File( "res/icon_32x32.png" ).toURI().toString() },
+	Image { url: new File( "res/icon_16x16.png" ).toURI().toString() },
+];
+
 /**
  * An OSGi Activator in JavaFX. Launches the main window.
  * 
  * @author dain.nilsson
  */
 public class JavaFXActivator extends BundleActivator {
-
-	def icons = [
-		Image { url: new File( "res/icon_32x32.png" ).toURI().toString() },
-		Image { url: new File( "res/icon_16x16.png" ).toURI().toString() },
-	];
-
 	/**
 	 * {@inheritDoc}
 	 * 

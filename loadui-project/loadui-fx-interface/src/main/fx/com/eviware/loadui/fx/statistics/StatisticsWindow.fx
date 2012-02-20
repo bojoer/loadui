@@ -231,10 +231,7 @@ public class StatisticsWindow {
 			if ( scene == null ) {
 				stage = Stage {
 					//title: "{name} {LoadUI.VERSION} - Statistics Workbench"
-					icons: [
-						Image { url: new File( "res/icon_32x32.png" ).toURI().toString() },
-						Image { url: new File( "res/icon_16x16.png" ).toURI().toString() },
-					]
+					icons: JavaFXActivator.icons
 					scene: scene = Scene {
 						stylesheets: bind JavaFXActivator.stylesheets
 						width: 1085
@@ -251,10 +248,7 @@ public class StatisticsWindow {
 					width: 1280.0
 					height: 768.0
 					//title: "{name} {LoadUI.VERSION} - Statistics Workbench"
-					icons: [
-						Image { url:"{__ROOT__}images/png/icon_32x32.png" },
-						Image { url:"{__ROOT__}images/png/icon_16x16.png" }
-					]
+					icons: JavaFXActivator.icons
 					scene: scene
 					onClose: function() {
 						closed = true;
