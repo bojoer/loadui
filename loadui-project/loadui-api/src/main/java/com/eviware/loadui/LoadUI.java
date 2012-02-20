@@ -43,6 +43,7 @@ public class LoadUI
 	public static final String HTTPS_PORT = "loadui.https.port";
 
 	public static final String DISABLE_STATISTICS = "loadui.statistics.disable";
+	public static final String DISABLE_DISCOVERY = "loadui.discovery.disable";
 
 	public static final String KEY_STORE = "loadui.ssl.keyStore";
 	public static final String TRUST_STORE = "loadui.ssl.trustStore";
