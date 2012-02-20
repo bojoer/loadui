@@ -93,6 +93,9 @@ public class JavaFXActivator extends BundleActivator {
 			// Instantiate objects to fix Classloading problems in tablelog. Do not remove.
 			new org.jdesktop.swingx.JXTable();
 			new javax.swing.JScrollPane();
+			new javax.swing.JRadioButton();
+			new javax.swing.JTextField();
+			new javax.swing.JComboBox();
 			
 			wc = WindowControllerImpl {
 				windowTitleFilter: name
