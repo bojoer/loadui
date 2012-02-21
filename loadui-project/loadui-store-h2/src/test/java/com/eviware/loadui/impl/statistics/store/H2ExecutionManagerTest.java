@@ -144,27 +144,7 @@ public class H2ExecutionManagerTest
 	@Test
 	public void testGetTrack()
 	{
-		try
-		{
-			h2.getTrack( "t1" );
-			fail( "Should throw IllegalArgumentException when no execution is started." );
-		}
-		catch( IllegalArgumentException ex )
-		{
-
-		}
-
 		h2.startExecution( "test1", 10 );
-
-		try
-		{
-			h2.getTrack( "t1" );
-			fail( "Should throw IllegalArgumentException when track desriptor does not exist." );
-		}
-		catch( IllegalArgumentException ex )
-		{
-
-		}
 
 		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
 		types.put( COLUMN_1, Long.class );

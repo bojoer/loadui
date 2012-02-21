@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
+import com.eviware.loadui.api.statistics.store.Track;
 
 public class StatisticsInterpolator
 {
@@ -135,14 +136,19 @@ public class StatisticsInterpolator
 			}
 		}
 
+		/**
+		 * @param flushTime
+		 * @return
+		 */
 		private Entry flush( long flushTime )
 		{
 			lastFlush = flushTime;
-			if( entries.isEmpty() )
+
+			Track track = executionManager.getTrack( trackId );
+			if( entries.isEmpty() || track == null )
 				return null;
 
-			Entry entry = executionManager.getTrack( trackId ).getTrackDescriptor().getEntryAggregator()
-					.aggregate( entries, false );
+			Entry entry = track.getTrackDescriptor().getEntryAggregator().aggregate( entries, false );
 			entries.clear();
 
 			return entry;

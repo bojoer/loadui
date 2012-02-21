@@ -28,6 +28,7 @@ import com.eviware.loadui.api.statistics.store.Entry;
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
+import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
@@ -79,7 +80,13 @@ public class AgentDataAggregator implements StatisticsAggregator
 	{
 		for( String trackId : map.keySet() )
 		{
-			EntryAggregator aggregator = executionManager.getTrack( trackId ).getTrackDescriptor().getEntryAggregator();
+			Track track = executionManager.getTrack( trackId );
+			if( track == null )
+			{
+				continue;
+			}
+
+			EntryAggregator aggregator = track.getTrackDescriptor().getEntryAggregator();
 
 			if( aggregator != null )
 			{

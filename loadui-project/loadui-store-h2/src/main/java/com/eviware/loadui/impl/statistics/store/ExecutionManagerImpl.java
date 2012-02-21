@@ -309,12 +309,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			loadExecution( executionId );
 		}
-		Track track = execution.getTrack( trackId );
-		if( track == null )
-		{
-			throw new IllegalArgumentException( "No track found for specified trackId!" );
-		}
-		return track;
+		return execution.getTrack( trackId );
 	}
 
 	@Override
@@ -324,12 +319,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		{
 			throw new IllegalArgumentException( "There is no running execution!" );
 		}
-		Track track = currentExecution.getTrack( trackId );
-		if( track == null )
-		{
-			throw new IllegalArgumentException( "No track found for specified trackId!" );
-		}
-		return track;
+		return currentExecution.getTrack( trackId );
 	}
 
 	static void signalDiskProblem()
@@ -625,8 +615,14 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	{
 		if( currentExecution != null )
 		{
-			//			log.debug( "Trying to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry,
-			//					source, interpolationLevel, trackId } );
+			Track track = getTrack( trackId );
+			if( track == null )
+			{
+				log.debug(
+						"Track is not registrated yet, unable to store entry: {} for source: {} at level: {} and trackId: {}.",
+						new Object[] { entry, source, interpolationLevel, trackId } );
+				return;
+			}
 
 			// Adjust timestamp:
 			long timestamp = entry.getTimestamp();
@@ -640,7 +636,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put( DataTable.STATIC_FIELD_TIMESTAMP, timestamp );
 
-			for( String name : getTrack( trackId ).getTrackDescriptor().getValueNames().keySet() )
+			for( String name : track.getTrackDescriptor().getValueNames().keySet() )
 			{
 				data.put( columnNames.getUnchecked( name ), entry.getValue( name ) );
 			}
@@ -1080,10 +1076,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		TableBase dtd = tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(),
 				buildDataTableName( trackId, interpolationLevel, source ) );
 
+		Track track = getTrack( trackId );
+
 		Map<String, Object> data = new HashMap<String, Object>();
-		if( dtd == null )
+		if( dtd == null || track == null )
 		{
-			// if table does not exist return empty set
+			// if table or track does not exist return empty set
 			return data;
 		}
 
@@ -1094,7 +1092,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		Map<String, Object> rawData = dtd.selectFirst( data );
 		if( !rawData.isEmpty() )
 		{
-			for( String name : getTrack( trackId ).getTrackDescriptor().getValueNames().keySet() )
+			for( String name : track.getTrackDescriptor().getValueNames().keySet() )
 			{
 				cleanedData.put( name, rawData.remove( columnNames.getUnchecked( name ) ) );
 			}
@@ -1110,9 +1108,11 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		TableBase dtd = tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(),
 				buildDataTableName( trackId, interpolationLevel, source ) );
 
-		if( dtd == null )
+		Track track = getTrack( executionId, trackId );
+
+		if( dtd == null || track == null )
 		{
-			// if table does not exist return empty set
+			// if table or track does not exist return empty set
 			return new ArrayList<Map<String, Object>>();
 		}
 
@@ -1120,8 +1120,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_LTE, endTime );
 
-		final Set<String> descriptorNames = getTrack( executionId, trackId ).getTrackDescriptor().getValueNames()
-				.keySet();
+		final Set<String> descriptorNames = track.getTrackDescriptor().getValueNames().keySet();
 
 		return Iterables.transform( dtd.select( data ), new Function<Map<String, Object>, Map<String, Object>>()
 		{
