@@ -109,7 +109,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 					}
 				} );
 
-		BeanInjector.getBean( TestRunner.class ).registerTask( runningExecutionTask, Phase.PRE_START, Phase.POST_STOP );
+		BeanInjector.getBean( TestRunner.class ).registerTask( runningExecutionTask, Phase.START, Phase.POST_STOP );
 	}
 
 	@Override
@@ -219,7 +219,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 
 			switch( phase )
 			{
-			case PRE_START :
+			case START :
 				startExecution( canvas, runningProject );
 				break;
 			case POST_STOP :
