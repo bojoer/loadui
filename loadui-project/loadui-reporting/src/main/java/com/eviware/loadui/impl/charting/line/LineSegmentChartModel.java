@@ -86,10 +86,18 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 	@Override
 	protected void redraw()
 	{
-		final Statistic<?> statistic = getSegment().getStatistic();
-		if( statistic != null )
+		try
 		{
-			doRedraw( statistic, xRangeMin, xRangeMax, level );
+			final Statistic<?> statistic = getSegment().getStatistic();
+			if( statistic != null )
+			{
+				doRedraw( statistic, xRangeMin, xRangeMax, level );
+			}
+		}
+		catch( Exception e )
+		{
+			log.warn( "Failed getting statistic: {}:{}({})", new Object[] { getSegment().getVariableName(),
+					getSegment().getStatisticName(), getSegment().getSource() } );
 		}
 	}
 
