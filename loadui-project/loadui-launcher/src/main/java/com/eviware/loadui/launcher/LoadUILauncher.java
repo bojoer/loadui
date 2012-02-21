@@ -22,8 +22,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.math.BigInteger;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -379,6 +382,57 @@ public class LoadUILauncher
 				throw new RuntimeException( "Unable to create directory: " + loaduiHome.getAbsolutePath() );
 
 		File keystore = new File( System.getProperty( "loadui.ssl.keyStore" ) );
+
+		//Remove the old expired keystore, if it exists
+		if( keystore.exists() )
+		{
+			FileInputStream kis = null;
+			try
+			{
+				MessageDigest digest = MessageDigest.getInstance( "MD5" );
+				kis = new FileInputStream( keystore );
+				byte[] buffer = new byte[8192];
+				int read = 0;
+				while( ( read = kis.read( buffer ) ) > 0 )
+				{
+					digest.update( buffer, 0, read );
+				}
+				String hash = new BigInteger( 1, digest.digest() ).toString( 16 );
+				if( "10801d8ea0f0562aa3ae22dcea258339".equals( hash ) )
+				{
+					kis.close();
+					kis = null;
+					keystore.delete();
+				}
+			}
+			catch( NoSuchAlgorithmException e )
+			{
+				e.printStackTrace();
+			}
+			catch( FileNotFoundException e )
+			{
+				e.printStackTrace();
+			}
+			catch( IOException e )
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				try
+				{
+					if( kis != null )
+					{
+						kis.close();
+					}
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+
 		if( !keystore.exists() )
 		{
 			InputStream is = getClass().getResourceAsStream( "/keystore.jks" );
