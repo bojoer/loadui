@@ -126,6 +126,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	@Override
 	public LineSegment.Removable addSegment( String variableName, String statisticName, String source )
 	{
+		log.debug( "Adding segment: " + variableName + " " + statisticName + " " + source + "!" );
 		return ( LineSegment.Removable )addOrGetExistingSegment( new ChartLineSegment( this, variableName, statisticName,
 				source ) );
 	}
