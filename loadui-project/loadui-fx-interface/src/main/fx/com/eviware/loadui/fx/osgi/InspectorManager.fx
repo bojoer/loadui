@@ -71,6 +71,7 @@ public class InspectorManager {
 	 */
 	
 	public function onBind( inspector:Inspector, properties:Map ):Void {
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "Adding Inspector {inspector} to the InspectorPanel." );
 		log.debug( "Adding Inspector '\{\}' to the InspectorPanel.", inspector );
 		def panelId = properties.get( PANEL_ID );
 		if( panelId != null )
@@ -95,6 +96,7 @@ public class InspectorManager {
 	 * @param properties
 	 */
 	public function onUnbind( inspector:Inspector, properties:Map ):Void {
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "Removing Inspector {inspector} from the InspectorPanel." );
 		log.debug( "Removing Inspector '\{\}' from the InspectorPanel.", inspector );
 		def panelId = properties.get( PANEL_ID );
 		if( panelId != null )
