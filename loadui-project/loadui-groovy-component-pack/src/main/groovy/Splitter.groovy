@@ -38,16 +38,10 @@ changesDueToPropagation = [:]
 
 for( i=0; i < outgoingTerminalList.size(); i++ ) {
 	countDisplays[i] = { counters["output_$i"].get() - resetValues[i] }
-	println("creating prop probability" + i)
 	initialValue = outgoingTerminalList.size() > 1 ? 0 : 100
-	println ("initialValue: $initialValue")
 	terminalProbabilities[i] = createProperty( 'probability' + i, Integer, initialValue ) { newVal, oldVal ->
 		if( oldVal != null && !wasChangedDueToPropagation( i ) )
 		{
-			println("trigger changed property 1!")
-			for(c in changesDueToPropagation)
-				println(c)
-			
 			compensateProbabilities( i, newVal - oldVal )
 		}
 	}
@@ -74,24 +68,12 @@ def randomizeTerminal()
 }
 
 def compensateProbabilities( changedProperty, diff ) {
-	println( "size: " + terminalProbabilities.size() )
-	
 	isCompensatingProbabilities = true
 	latestChanged[changedProperty] = System.currentTimeMillis()
-	
-	println( changedProperty )
-	println( diff )
 	
 	while( diff > 0 )
 	{
 		indexToChange = latestChanged.find{ it.value == latestChanged.findAll{ terminalProbabilities[it.key].value != 0  }.collect{ it.value }.min() }.key
-		
-		for(l in latestChanged)
-			println(l)
-		for(t in terminalProbabilities)
-			println(t)
-			
-		println( "indextoChange: "+indexToChange )
 		
 		propertyToChange = terminalProbabilities[indexToChange]
 		
@@ -103,18 +85,11 @@ def compensateProbabilities( changedProperty, diff ) {
 		propertyToChange.value -= changeSize
 		changesDueToPropagation[indexToChange] = System.currentTimeMillis()
 		diff -= changeSize
-		
-		println("Reduced property $indexToChange with $changeSize -- Remaining diff is $diff")
 	}
 	
 	while( diff < 0 )
 	{
 		indexToChange = latestChanged.find{ it.value == latestChanged.findAll{ terminalProbabilities[it.key].value != 100  }.collect{ it.value }.min() }.key
-		
-		for(l in latestChanged)
-			println(l)
-		
-		println( indexToChange )
 		
 		propertyToChange = terminalProbabilities[indexToChange]
 		
@@ -126,10 +101,7 @@ def compensateProbabilities( changedProperty, diff ) {
 		propertyToChange.value += changeSize
 		changesDueToPropagation[indexToChange] = System.currentTimeMillis()
 		diff += changeSize
-		
-		println("Increased property $indexToChange with $changeSize -- Remaining diff is $diff")
 	}
-	println("done!")
 }
 
 createProperty( 'type', String, "Round-Robin" ) {
@@ -143,13 +115,9 @@ createProperty( 'numOutputs', Integer, 1 ) { outputCount ->
 		countDisplays[i] = { counters["output_$i"].get() - resetValues[i] }
 		
 		initialValue = outgoingTerminalList.size() > 1 ? 0 : 100
-		println( outgoingTerminalList.size() )
-		println ("initialValue: $initialValue")
-		println("creating propaaa probability" + i)
 		terminalProbabilities[i] = createProperty( 'probability' + i, Integer, initialValue ) { newVal, oldVal ->
 			if( oldVal != null && !wasChangedDueToPropagation( i ) )
 			{
-				println("trigger changed property 2!")
 				compensateProbabilities( i, newVal - oldVal )
 			}
 		}
