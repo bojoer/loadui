@@ -102,8 +102,8 @@ public class AboutDialog {
 						text: "www.smartbear.com"
 						action: function():Void { openURL("http://www.smartbear.com") }
 					}, ImageView {
-						layoutX: 435
-						layoutY: 333
+						layoutX: 425
+						layoutY: 344
 						image: Image { url: "{__ROOT__}images/png/logo_smartbear_aboutbox.png" }
 					}
 				]

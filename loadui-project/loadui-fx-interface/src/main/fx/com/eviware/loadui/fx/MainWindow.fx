@@ -315,6 +315,7 @@ public class MainWindow {
 	* has been closed, JavaFX Nodes may already be destroyed.
 	*/
 	public function destroy():Void {
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "SHUTTING DOWN..." );
 		log.info( "Shutting down..." );
 		for( projectRef in workspace.getProjectRefs() )
 			if( projectRef.isEnabled() )
