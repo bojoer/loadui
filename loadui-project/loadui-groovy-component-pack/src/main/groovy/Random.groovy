@@ -120,7 +120,6 @@ redraw = {
 	}
 }
 redraw()
-println( "drawring asfasdf")
 	
 //Compact Layout
 compactLayout {
