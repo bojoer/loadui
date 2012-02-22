@@ -96,6 +96,8 @@ public class JavaFXActivator extends BundleActivator {
 			new javax.swing.JTextField();
 			new javax.swing.JComboBox();
 			new javax.swing.JToolTip();
+			new javax.swing.JOptionPane();
+			new javax.swing.JEditorPane();
 			
 			wc = WindowControllerImpl {
 				windowTitleFilter: name
