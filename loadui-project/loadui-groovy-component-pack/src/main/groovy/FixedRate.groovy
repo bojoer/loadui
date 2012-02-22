@@ -24,24 +24,12 @@
  * @nonBlocking true
  */
 
-import com.eviware.loadui.api.events.PropertyEvent
-
 import java.util.concurrent.TimeUnit
 
 //Properties
-createProperty( 'rate', Long, 10 ) { value ->
-	delay = Math.max( 1, (long)(milisecondsPerUnit/value) )
-	schedule()
-}
-createProperty( 'unit', String, 'Sec' ) { value ->
-	if ( value == "Sec" )
-		milisecondsPerUnit = 1000000
-	else if ( value == "Min" )
-		milisecondsPerUnit = 60000000
-	else if ( value == "Hour" )
-		milisecondsPerUnit = 3600000000
-	schedule()
-}
+createProperty( 'rate', Long, 10 ) { schedule() }
+createProperty( 'unit', String, 'Sec' ) { schedule() }
+
 onReplace( stateProperty ) { value ->
 	if( value ) schedule()
 	else future?.cancel( true )
@@ -49,49 +37,19 @@ onReplace( stateProperty ) { value ->
 
 createProperty( 'burstSize', Long, 1 )
 
-milisecondsPerUnit = 1000000				
-delay = milisecondsPerUnit/rate.value
-
-triggerBurst = {
-	for( i in 1..burstSize.value )
-	{
-		trigger()
-	}
-}
+triggerBurst = { burstSize.value.times { trigger() } }
 
 future = null
 schedule = {
-	if (stateProperty.value) {
-		future?.cancel(true);
-		future = scheduleAtFixedRate( { triggerBurst() }, delay.longValue(), delay.longValue(), TimeUnit.MICROSECONDS )
-	}
-}
-
-addEventListener( PropertyEvent ) { event ->
-	if ( event.event == PropertyEvent.Event.VALUE ) {
-		if( event.property == unit ) {
-			if ( unit.value == "Sec" )
-				milisecondsPerUnit = 1000000
-			if ( unit.value == "Min" )
-				milisecondsPerUnit = 60000000
-			if ( unit.value == "Hour" )
-				milisecondsPerUnit = 3600000000
-		}
-		if (event.property == stateProperty && !stateProperty.value)
-			future?.cancel(true)
-		if (stateProperty.value)
-			future?.cancel(true)
-		if( rate.value != null && rate.value > 0 ) {
-			delay = milisecondsPerUnit/rate.value
-			if ( delay < 1 )
-				delay = 1
-			schedule()
-		}
+	if( stateProperty.value ) {
+		long microsecondsPerUnit = unit.value == 'Sec' ? 1000000 : unit.value == 'Min' ? 60000000 : 3600000000
+		long delay = Math.max( 1, (long)(microsecondsPerUnit / rate.value) )
+		future?.cancel( true )
+		future = scheduleAtFixedRate( triggerBurst, delay, delay, TimeUnit.MICROSECONDS )
 	}
 }
 
 onAction( "START" ) { schedule() }
-
 onAction( "STOP" ) { future?.cancel( true ) }
 
 //Layout
@@ -114,20 +72,7 @@ compactLayout {
 
 //Settings
 settings( label: "General" ) {
-	property( property: burstSize, label:'Burst size' ) 
+	property( property: burstSize, label: 'Burst size' ) 
 }
 
-//Start scheduler
-if ( unit.value == "Sec" )
-	milisecondsPerUnit = 1000000
-if ( unit.value == "Min" )
-	milisecondsPerUnit = 60000000
-if ( unit.value == "Hour" )
-	milisecondsPerUnit = 3600000000
-
-delay = milisecondsPerUnit/rate.value
-
-if (running)
-	schedule();
-
-
+if( running ) schedule()
