@@ -77,7 +77,7 @@ public class LoadUILauncher
 	}
 
 	protected Framework framework;
-	protected final Properties configProps;
+	protected Properties configProps;
 	protected final String[] argv;
 	private Options options;
 	private boolean nofx = false;
@@ -143,23 +143,10 @@ public class LoadUILauncher
 		System.out.println( "Launching " + System.getProperty( "loadui.name" ) + " Build: "
 				+ System.getProperty( "loadui.build.number", "[internal]" ) + " "
 				+ System.getProperty( "loadui.build.date", "" ) );
-		Main.loadSystemProperties();
-		configProps = Main.loadConfigProperties();
-		if( configProps == null )
-		{
-			System.err.println( "There was an error loading the OSGi configuration!" );
-			exitInError();
-		}
-		Main.copySystemProperties( configProps );
 	}
 
 	protected void init()
 	{
-		String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
-		configProps.put( "org.osgi.framework.system.packages.extra",
-				( extra == null || extra.equals( "" ) ) ? "com.eviware.loadui.launcher.api"
-						: "com.eviware.loadui.launcher.api," + extra );
-
 		CommandLineParser parser = new PosixParser();
 		options = createOptions();
 
@@ -169,6 +156,32 @@ public class LoadUILauncher
 
 			if( cmd.hasOption( HELP_OPTION ) )
 				printUsageAndQuit();
+
+			if( cmd.hasOption( SYSTEM_PROPERTY_OPTION ) )
+			{
+				for( String option : cmd.getOptionValues( SYSTEM_PROPERTY_OPTION ) )
+				{
+					int ix = option.indexOf( '=' );
+					if( ix != -1 )
+						System.setProperty( option.substring( 0, ix ), option.substring( ix + 1 ) );
+					else
+						System.setProperty( option, "true" );
+				}
+			}
+
+			Main.loadSystemProperties();
+			configProps = Main.loadConfigProperties();
+			if( configProps == null )
+			{
+				System.err.println( "There was an error loading the OSGi configuration!" );
+				exitInError();
+			}
+			Main.copySystemProperties( configProps );
+
+			String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
+			configProps.put( "org.osgi.framework.system.packages.extra",
+					( extra == null || extra.equals( "" ) ) ? "com.eviware.loadui.launcher.api"
+							: "com.eviware.loadui.launcher.api," + extra );
 
 			if( !cmd.hasOption( IGNORE_CURRENTLY_RUNNING_OPTION ) )
 			{
@@ -303,17 +316,6 @@ public class LoadUILauncher
 
 	protected void processCommandLine( CommandLine cmd )
 	{
-		if( cmd.hasOption( SYSTEM_PROPERTY_OPTION ) )
-		{
-			for( String option : cmd.getOptionValues( SYSTEM_PROPERTY_OPTION ) )
-			{
-				int ix = option.indexOf( '=' );
-				if( ix != -1 )
-					System.setProperty( option.substring( 0, ix ), option.substring( ix + 1 ) );
-				else
-					System.setProperty( option, "true" );
-			}
-		}
 		if( !cmd.hasOption( NOFX_OPTION ) )
 		{
 			System.out.println( "Opening splash..." );
