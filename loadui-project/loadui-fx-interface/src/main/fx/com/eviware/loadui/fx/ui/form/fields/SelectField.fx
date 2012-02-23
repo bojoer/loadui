@@ -72,8 +72,9 @@ public class SelectField extends MenuButton, FormField {
 	
 	override var styleClass = "select-field";
 	
-	override var text = bind labelProvider( value );
+	override var text = bind if(sizeof items > 0) labelProvider( value ) else "";
 	override var graphic = bind graphicProvider( value );
+	override var disable = bind sizeof items == 0;
 	
 	function resetItems():Void {
 		items = for( option in options ) MenuItem {
@@ -82,4 +83,4 @@ public class SelectField extends MenuButton, FormField {
 			action: function() { value = option }
 		}
 	}
-} 
+}
