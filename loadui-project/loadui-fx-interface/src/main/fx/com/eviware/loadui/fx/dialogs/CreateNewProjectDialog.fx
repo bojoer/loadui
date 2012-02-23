@@ -30,6 +30,7 @@ import com.eviware.loadui.fx.ui.form.fields.*;
 import com.eviware.loadui.fx.MainWindow;
 import com.eviware.loadui.fx.AppState;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import java.io.File;
 import java.lang.RuntimeException;
@@ -50,7 +51,7 @@ public class CreateNewProjectDialog {
 	public-init var layoutX:Number;
 	public-init var layoutY:Number;
 	
-	def projectDir = new File("{FX.getProperty('javafx.user.home')}{File.separator}.loadui");
+	def projectDir = new File( java.lang.System.getProperty( LoadUI.LOADUI_HOME ) );
 	
 	var form:Form;
 			var name:TextField;

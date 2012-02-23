@@ -149,7 +149,7 @@ public class MainWindow {
 		//FxUtils.setJavaFXThreadClassLoader(Thread.currentThread().getContextClassLoader());
 		
 		//scene.stylesheets = "{__ROOT__}themes/default/style.css";
-		//scene.stylesheets = "{FX.getProperty('javafx.user.home')}{File.separator}.loadui{File.separator}style.css";
+		//scene.stylesheets = "{java.lang.System.getProperty( LoadUI.LOADUI_HOME ) + File.separator}style.css";
 	
 		instance = this;
 		//def appState = AppState {};

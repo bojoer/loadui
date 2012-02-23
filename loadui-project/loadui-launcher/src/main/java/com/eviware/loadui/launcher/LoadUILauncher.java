@@ -155,8 +155,6 @@ public class LoadUILauncher
 
 	protected void init()
 	{
-		initSystemProperties();
-
 		String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
 		configProps.put( "org.osgi.framework.system.packages.extra",
 				( extra == null || extra.equals( "" ) ) ? "com.eviware.loadui.launcher.api"
@@ -215,6 +213,8 @@ public class LoadUILauncher
 
 			exitInError();
 		}
+
+		initSystemProperties();
 
 		//make bundles from external libraries
 		File source = new File( "." + File.separator + "ext" );
