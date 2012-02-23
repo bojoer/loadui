@@ -39,7 +39,7 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="com.eviware.loadui.launcher.LoadUILauncher" vmParameters="" arguments="&quot;-Dloadui.instance=agent&quot; &quot;-nofx&quot;" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+      <java mainClass="com.eviware.loadui.launcher.LoadUILauncher" vmParameters="" arguments="&quot;-Dloadui.instance=agent&quot; &quot;-Djava.awt.headless=true&quot; &quot;-nofx&quot;" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <scanDirectory location="lib" failOnError="false" />
         </classPath>
