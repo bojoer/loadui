@@ -77,9 +77,11 @@ public class LoadUILauncher
 	}
 
 	protected Framework framework;
-	protected Properties configProps;
+	protected final Properties configProps;
 	protected final String[] argv;
-	private Options options;
+	private final Options options;
+	private final CommandLine cmd;
+
 	private boolean nofx = false;
 
 	/**
@@ -140,83 +142,11 @@ public class LoadUILauncher
 			}
 		}
 
-		System.out.println( "Launching " + System.getProperty( "loadui.name" ) + " Build: "
-				+ System.getProperty( "loadui.build.number", "[internal]" ) + " "
-				+ System.getProperty( "loadui.build.date", "" ) );
-	}
-
-	protected void init()
-	{
-		CommandLineParser parser = new PosixParser();
 		options = createOptions();
-
+		CommandLineParser parser = new PosixParser();
 		try
 		{
-			CommandLine cmd = parser.parse( options, argv );
-
-			if( cmd.hasOption( HELP_OPTION ) )
-				printUsageAndQuit();
-
-			if( cmd.hasOption( SYSTEM_PROPERTY_OPTION ) )
-			{
-				for( String option : cmd.getOptionValues( SYSTEM_PROPERTY_OPTION ) )
-				{
-					int ix = option.indexOf( '=' );
-					if( ix != -1 )
-						System.setProperty( option.substring( 0, ix ), option.substring( ix + 1 ) );
-					else
-						System.setProperty( option, "true" );
-				}
-			}
-
-			Main.loadSystemProperties();
-			configProps = Main.loadConfigProperties();
-			if( configProps == null )
-			{
-				System.err.println( "There was an error loading the OSGi configuration!" );
-				exitInError();
-			}
-			Main.copySystemProperties( configProps );
-
-			String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
-			configProps.put( "org.osgi.framework.system.packages.extra",
-					( extra == null || extra.equals( "" ) ) ? "com.eviware.loadui.launcher.api"
-							: "com.eviware.loadui.launcher.api," + extra );
-
-			if( !cmd.hasOption( IGNORE_CURRENTLY_RUNNING_OPTION ) )
-			{
-				try
-				{
-					File bundleCache = new File( configProps.getProperty( "org.osgi.framework.storage" ) );
-					if( !bundleCache.isDirectory() )
-						if( !bundleCache.mkdirs() )
-							throw new RuntimeException( "Unable to create directory: " + bundleCache.getAbsolutePath() );
-
-					File lockFile = new File( bundleCache, "loadui.lock" );
-					if( !lockFile.exists() )
-						if( !lockFile.createNewFile() )
-							throw new RuntimeException( "Unable to create file: " + lockFile.getAbsolutePath() );
-
-					FileLock lock = new RandomAccessFile( lockFile, "rw" ).getChannel().tryLock();
-					if( lock == null )
-					{
-						System.err.println( "An instance of loadUI is already running!" );
-						exitInError();
-					}
-				}
-				catch( OverlappingFileLockException e )
-				{
-					System.err.println( "An instance of loadUI is already running!" );
-					exitInError();
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-					exitInError();
-				}
-			}
-
-			processCommandLine( cmd );
+			cmd = parser.parse( options, argv );
 		}
 		catch( ParseException e )
 		{
@@ -225,9 +155,80 @@ public class LoadUILauncher
 			formatter.printHelp( "loadUILauncher", options );
 
 			exitInError();
+			throw new RuntimeException();
+		}
+
+		if( cmd.hasOption( SYSTEM_PROPERTY_OPTION ) )
+		{
+			for( String option : cmd.getOptionValues( SYSTEM_PROPERTY_OPTION ) )
+			{
+				int ix = option.indexOf( '=' );
+				if( ix != -1 )
+					System.setProperty( option.substring( 0, ix ), option.substring( ix + 1 ) );
+				else
+					System.setProperty( option, "true" );
+			}
 		}
 
 		initSystemProperties();
+
+		System.out.println( "Launching " + System.getProperty( "loadui.name" ) + " Build: "
+				+ System.getProperty( "loadui.build.number", "[internal]" ) + " "
+				+ System.getProperty( "loadui.build.date", "" ) );
+		Main.loadSystemProperties();
+		configProps = Main.loadConfigProperties();
+		if( configProps == null )
+		{
+			System.err.println( "There was an error loading the OSGi configuration!" );
+			exitInError();
+		}
+		Main.copySystemProperties( configProps );
+	}
+
+	protected void init()
+	{
+		String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
+		configProps.put( "org.osgi.framework.system.packages.extra",
+				( extra == null || extra.equals( "" ) ) ? "com.eviware.loadui.launcher.api"
+						: "com.eviware.loadui.launcher.api," + extra );
+
+		if( cmd.hasOption( HELP_OPTION ) )
+			printUsageAndQuit();
+
+		if( !cmd.hasOption( IGNORE_CURRENTLY_RUNNING_OPTION ) )
+		{
+			try
+			{
+				File bundleCache = new File( configProps.getProperty( "org.osgi.framework.storage" ) );
+				if( !bundleCache.isDirectory() )
+					if( !bundleCache.mkdirs() )
+						throw new RuntimeException( "Unable to create directory: " + bundleCache.getAbsolutePath() );
+
+				File lockFile = new File( bundleCache, "loadui.lock" );
+				if( !lockFile.exists() )
+					if( !lockFile.createNewFile() )
+						throw new RuntimeException( "Unable to create file: " + lockFile.getAbsolutePath() );
+
+				FileLock lock = new RandomAccessFile( lockFile, "rw" ).getChannel().tryLock();
+				if( lock == null )
+				{
+					System.err.println( "An instance of loadUI is already running!" );
+					exitInError();
+				}
+			}
+			catch( OverlappingFileLockException e )
+			{
+				System.err.println( "An instance of loadUI is already running!" );
+				exitInError();
+			}
+			catch( IOException e )
+			{
+				e.printStackTrace();
+				exitInError();
+			}
+		}
+
+		processCommandLine( cmd );
 
 		//make bundles from external libraries
 		File source = new File( "." + File.separator + "ext" );
