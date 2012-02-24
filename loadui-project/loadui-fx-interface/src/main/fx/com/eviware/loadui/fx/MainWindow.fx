@@ -155,16 +155,6 @@ public class MainWindow {
 		try {
 		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "MainWindow initializing: {this}" );
 		log.debug( "MainWindow initializing..." );
-		//change classloader of JavaFX thread to this thread's (Spring's) classloader
-		//FxUtils.setJavaFXThreadClassLoader(Thread.currentThread().getContextClassLoader());
-		
-		//scene.stylesheets = "{__ROOT__}themes/default/style.css";
-		//scene.stylesheets = "{java.lang.System.getProperty( LoadUI.LOADUI_HOME ) + File.separator}style.css";
-	
-		instance = this;
-		//def appState = AppState {};
-		
-		//Set the layer to place items being dragged into.
 		
 		//Load workspace
 		workspace = if( workspaceProvider.isWorkspaceLoaded() ) {
@@ -172,6 +162,8 @@ public class MainWindow {
 		} else { //TODO: Use a global configuration file to select workspace.
 			workspaceProvider.loadDefaultWorkspace();
 		}
+		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!1");
 		
 		//if workspace file does not exists it must be after clean install, so add a sample project
 		if( not workspace.getWorkspaceFile().exists() ) {
@@ -188,6 +180,8 @@ public class MainWindow {
 			}
 		}
 		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!2");
+		
 		//InspectorPanel
 		log.debug( "Initializing InspectorPanel" );
 		inspectors = InspectorPanelControl {
@@ -195,18 +189,26 @@ public class MainWindow {
 			defaultInspector: "Agents"
 		}
 		//inspectors.collapse();
+		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!3");
+		
 		insert inspectors into appState.globalLayer.content;
 		log.debug( "Done initializing InspectorPanel: \{\}", inspectors );
 		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!4");
 		
 		appState.insertInto( ProjectCarousel { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: 315, height: 222 } }, WORKSPACE_FRONT );
 		appState.insertInto( AgentCarousel { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
+		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!5");
 		
 		appState.insertInto( BrowserFrame {
 			id: "starterPage",
 			url: java.lang.System.getProperty( "loadui.starterpage.url", "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html" ),
 			layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: 634, height: 562 }
 		}, WORKSPACE_FRONT );
+		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!6");
 		
 		appState.insertInto( Trashcan { layoutX: bind scene.width - 110, layoutY: 90, layoutInfo: LayoutInfo { width: 100, height: 120 } }, WORKSPACE_FRONT );
 		
@@ -218,8 +220,12 @@ public class MainWindow {
 			height: bind scene.height - 100
 		}
 		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!7");
+		
 		toolbar.addItem( ProjectToolbarItem { workspace: workspace } );
 		toolbar.addItem( AgentToolbarItem { workspace: workspace } );
+
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!8");
 
 		appState.insertInto( toolbar, WORKSPACE_FRONT );
 		
@@ -233,11 +239,15 @@ public class MainWindow {
 		//};
 
 
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!9");
+
 		projectToolbar.addItem( TestCaseToolbarItem {} );
 		projectToolbar.addItem( NoteToolbarItem {} );
 						
 		appState.insertInto( projectToolbar, PROJECT_FRONT );
 				
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!10");
+		
 		//Set up the back Project view
 	//	appState.insertInto( ImageView { image: Image { url: "{__ROOT__}images/team.jpg"
 	//													width: 800
@@ -249,8 +259,12 @@ public class MainWindow {
 		testcaseToolbar.addItem( NoteToolbarItem {} );
 		appState.insertInto( testcaseToolbar, TESTCASE_FRONT );
 		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!11");
+		
 		insert MainWindowButton { id: "mainWindowButton", layoutX: 10, layoutY: 7, wc:wc } into appState.globalLayer.content;
 		insert SoapUIButton { layoutX: 2, layoutY: 2 } into appState.globalLayer.content;
+		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!12");
 		
 		appState.insertInto( NotificationArea {
 			id: "notification{WORKSPACE_FRONT}"
@@ -270,9 +284,13 @@ public class MainWindow {
 			layoutY: 93
 		}, TESTCASE_FRONT );
 		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!13");
+		
 		appState.insertInto( WorkspaceMenu { width: bind scene.width, workspace: workspace }, WORKSPACE_FRONT );
 		appState.insertInto( ProjectMenu { width: bind scene.width, project: bind projectCanvas.canvasItem as ProjectItem }, PROJECT_FRONT );
 		appState.insertInto( TestCaseMenu { width: bind scene.width, testCase: bind testcaseCanvas.canvasItem as SceneItem }, TESTCASE_FRONT );
+		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!14");
 		
 		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "Deferring MainWindow action..." );
 		FX.deferAction( function():Void {
@@ -309,8 +327,12 @@ public class MainWindow {
 			
 			java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "MainWindow shown!" );
 		} );
+		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!15");
 			
 		workspace.addEventListener( BaseEvent.class, new ExecutionAlertListener() );
+		
+		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!16");
 		
 		def newVersion = NewVersionChecker.checkForNewVersion( workspace );
 		if( newVersion != null ) {
@@ -318,6 +340,8 @@ public class MainWindow {
  				NewVersionDialog { newVersion: newVersion };
  			} );
  		}
+ 		
+ 		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe("!!!17");
  		
  		} catch( e ) {
  			java.lang.System.err.println( "EXCEPTION IN INITIALIZATION OF MAINWINDOW:" );
