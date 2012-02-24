@@ -157,7 +157,6 @@ public class SliderSelectWidget extends BaseNode, Widget, TooltipHolder, SelectS
 		 * robert
 		 */
 		switchHandle.selectedIndex = initSelected;//if(sizeof options == 0) 0 else index mod sizeof options;
-	//	println("!!!strange thing {switchHandle.selectedIndex} {initSelected}");
 	}
 	
 	def selectedIndex = bind switchHandle.selectedIndex on replace {

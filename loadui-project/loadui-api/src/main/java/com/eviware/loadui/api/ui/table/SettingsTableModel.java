@@ -145,10 +145,6 @@ public class SettingsTableModel extends KeyValueTableModel
 		@Override
 		public String toString()
 		{
-			if( name == null )
-				System.out.println();
-			if( value == null )
-				System.out.println();
 			return name == null ? "name null" : name + " " + ( value == null ? "null" : value.toString() );
 		}
 	}

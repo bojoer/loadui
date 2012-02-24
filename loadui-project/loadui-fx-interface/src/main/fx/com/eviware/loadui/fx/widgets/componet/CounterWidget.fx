@@ -152,14 +152,10 @@ public class CounterWidget extends Panel, Observer {
         var next:Integer = xStep;
         for (node in getManaged(content)[p| p.visible == true ]) {
             if ( node instanceof Stack ) {
-                //       println(" counter ");
-                //       println("next {next} -- xStep {xStep} --- {node.boundsInParent.width}");
                 positionNode(node, next, 0);
                 next = (next + xStep + node.boundsInParent.width) as Integer;
             }
             else {
-                //       println(" separator " );
-                //		println("next {next} -- xStep {xStep}");
                 positionNode(node, next, 0);
                 next = next + 1 + xStep;
             }

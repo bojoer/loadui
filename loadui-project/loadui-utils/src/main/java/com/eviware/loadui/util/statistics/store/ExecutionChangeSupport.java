@@ -38,8 +38,6 @@ public class ExecutionChangeSupport
 
 	public void fireExecutionStarted( ExecutionManager.State oldState )
 	{
-		System.out.println(" ExecutionChangeSupport:fireExecutionStarted()" );
-		
 		for( ExecutionListener el : new ArrayList<ExecutionListener>( listeners ) )
 			el.executionStarted( oldState );
 	}

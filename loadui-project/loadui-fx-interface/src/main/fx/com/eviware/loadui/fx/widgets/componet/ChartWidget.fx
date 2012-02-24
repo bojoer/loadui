@@ -73,8 +73,6 @@ import javax.swing.JButton;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import java.lang.Throwable;
-
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
 import javafx.ext.swing.SwingComponent;
@@ -96,6 +94,9 @@ import javafx.animation.Timeline;
 import javafx.lang.Duration;
 
 import java.lang.System;
+import org.slf4j.LoggerFactory;
+
+def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widget.componet.ChartWidget" );
 
 /**
  * @author predrag
@@ -433,11 +434,8 @@ public class ChartWidget extends VBox, ChartListener {
 		   	legendNode = SwingComponent.wrap(legendPanel);
 		   	autoAxis();
 			}
-			catch(t: Throwable){
-				println("------------");
-				println(t.getMessage());
-				t.printStackTrace();			
-				println("------------");
+			catch( e ) {
+				log.error( "Error enabling serie", e );
 			}
 		} );
     }

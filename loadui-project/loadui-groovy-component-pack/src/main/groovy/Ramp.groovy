@@ -82,31 +82,24 @@ begin = {
 schedule = {
 	if (stateProperty.value && running && !scheduled) {
 		if (!targetReached) {
-			println( "intro" )
 			if (currentDelay > 0) {
 				timeEllapsed = timeEllapsed + currentDelay
 				currentRate = start.value + timeEllapsed * gradient
-				println( "case1" )
 			}
 			
 			if (timeEllapsed/1000 >= period.value) {
 				targetReached = true
 				currentRate = end.value
 				direction = "none"
-				println( "case2" )
 			}
 			if (currentRate.longValue() > 0) { 
 				currentDelay = msPerUnit/(currentRate.longValue()) 
-				println( "case3" )
 			}
 			else { 
 				currentDelay = 1 //Handling edge cases
-				println( "case4" )
 			}
 		} 
 		
-		println( "currentDelay: $currentDelay" )
-					
 		future = timer.runAfter(currentDelay.intValue()) {
 			trigger()
 			scheduled = false

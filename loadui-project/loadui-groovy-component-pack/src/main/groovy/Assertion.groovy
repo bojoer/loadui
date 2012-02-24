@@ -148,11 +148,11 @@ analyze = { message ->
 		
 		totalCounter.increment()
 	}
-	catch(GroovyCastException e){
+	catch( GroovyCastException e ) {
 		log.debug("The Assertion component expects integers in Input Data, but it got something else.")
 	}
-	catch(Exception e){
-		ex(e, "Assertion -> analyze")
+	catch( Exception e ) {
+		log.error("Assertion -> analyze", e )
 	}
 }
 
@@ -184,25 +184,6 @@ resetComponent = {
 
 onAction( "RESET" ) { ->
 	resetComponent()
-}
-
-ex = {t, m ->
-	println("-------------------------------")
-	println("exception in ${m} method in groovy")
-	println("type: ${t}")
-	println("message: ${t.getMessage()}")
-	println("stacktrace:")
-	int tCnt = 0
-	for(item in t.getStackTrace()){
-		if(tCnt == 0){
-			println("${item}")
-		}
-		else{
-			println("\t${item}")
-		}
-		tCnt++
-	}
-	println("-------------------------------")
 }
 
 def options() {

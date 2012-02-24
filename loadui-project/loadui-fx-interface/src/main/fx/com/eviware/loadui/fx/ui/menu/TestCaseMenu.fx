@@ -359,15 +359,11 @@ public class TestCaseMenu extends HBox {
 								tooltip: Tooltip { text: ##[SUMMARY]"Summary Report" }
 								action: function() {
 									if( testCase.getSummary() != null ) {
-										println("Viewing TestCase summary");
 										def summary = SummaryReport{ select: testCase.getLabel(), summary: testCase.getSummary() }
 										summary.show();
 									} else if( testCase.getProject().getSummary() != null ) {
-										println("Viewing Project summary");
 										def summary = SummaryReport{ select: testCase.getProject().getLabel(), summary: testCase.getProject().getSummary() };
 										summary.show();
-									} else {
-										println("No summary available");
 									}
 								}
 								disable: bind not summaryEnabled
