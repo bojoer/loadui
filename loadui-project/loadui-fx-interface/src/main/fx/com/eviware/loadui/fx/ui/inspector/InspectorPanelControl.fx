@@ -102,8 +102,6 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 	public function insertInspector():Void {
 		if( activeInspector != null )
 		{
-			java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "Showing inspector: {activeInspector}" );
-			java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "Inspector name: {activeInspector.getName()}" );
 			activeInspector.onShow();
 			inspectorHolder.content = Region { managed: false, width: bind inspectorHolder.width, height: bind inspectorHolder.height, style:"-fx-background-color: #6f6f6f;" };
 			
