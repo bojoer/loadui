@@ -80,7 +80,7 @@
 	
 	<osgi:reference id="statisticsManager" interface="com.eviware.loadui.api.statistics.StatisticsManager" />
 	
-	<osgi:reference id="testEventManager" interface="com.eviware.loadui.api.testevents.TestEventManager" cardinality="0..1" />
+	<osgi:reference id="testEventManager" interface="com.eviware.loadui.api.testevents.TestEventManager" />
 	
 	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
 		ref="tableWidget" />
