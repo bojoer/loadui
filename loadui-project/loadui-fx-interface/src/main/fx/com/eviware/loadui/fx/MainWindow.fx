@@ -82,6 +82,18 @@ public def PROJECT_FRONT = "project.front";
 public def PROJECT_BACK = "project.back";
 public def TESTCASE_FRONT = "testcase.front";
 
+public function createInstance( scene:Scene, windowController:WindowControllerImpl, workspaceProvider:WorkspaceProvider ):MainWindow {
+	try {
+		throw new java.lang.RuntimeException( "INITIALIZING MAINWINDOW" );
+	} catch( e ) {
+		e.printStackTrace();
+	}
+	instance = MainWindow { scene: scene , wc: windowController, workspaceProvider: workspaceProvider };
+	instance.initialize();
+	
+	return instance;
+}
+
 /**
  * Sets up the main window of loadUI. Initialized from Spring and may have dependencies
  * on several objects, both JavaFX based and other. For the Spring handled dependencies,
@@ -90,18 +102,15 @@ public def TESTCASE_FRONT = "testcase.front";
  * @author dain.nilsson
  */
 public class MainWindow {
-	var scene:Scene;
-	public function setScene( scene:Scene ):Void { this.scene = scene }
+	public-init var scene:Scene;
 	
 	def appState = AppState {};
 	public function getApplicationState() { appState }
 	
-	public var wc:WindowControllerImpl;
-	public function setWindowController( wc:WindowControllerImpl ):Void { this.wc = wc }
+	public-init var wc:WindowControllerImpl;
 	
-	var workspaceProvider:WorkspaceProvider;
+	public-init var workspaceProvider:WorkspaceProvider;
 	public-read var workspace:WorkspaceItem;
-	public function setWorkspaceProvider( workspaceProvider:WorkspaceProvider ):Void { this.workspaceProvider = workspaceProvider }
 	
 	public-read var inspectors:InspectorPanelControl;
 	public function getInspectorPanel() { inspectors }
@@ -143,11 +152,6 @@ public class MainWindow {
 	* configuration set through the setters). It sets up the main window.
 	*/
 	function initialize():Void {
-		try {
-			throw new java.lang.RuntimeException( "INITIALIZING MAINWINDOW" );
-		} catch( e ) {
-			e.printStackTrace();
-		}
 		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "MainWindow initializing: {this}" );
 		log.debug( "MainWindow initializing..." );
 		//change classloader of JavaFX thread to this thread's (Spring's) classloader

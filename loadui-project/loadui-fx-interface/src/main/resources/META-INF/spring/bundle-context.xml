@@ -10,10 +10,10 @@
 	<bean id="windowController" class="com.eviware.loadui.fx.JavaFXActivator"
 		factory-method="getWindowController" />
 		
-	<bean id="mainWindow" class="com.eviware.loadui.fx.MainWindow" init-method="initialize" destroy-method="destroy">
-		<property name="scene" ref="scene" />
-		<property name="windowController" ref="windowController" />
-		<property name="workspaceProvider" ref="workspaceProvider" />
+	<bean id="mainWindow" class="com.eviware.loadui.fx.MainWindow" factory-method="createInstance" destroy-method="destroy">
+		<constructor-arg ref="scene" />
+		<constructor-arg ref="windowController" />
+		<constructor-arg ref="workspaceProvider" />
 	</bean>
 	
 	<bean id="agentDiscoverer" class="com.eviware.loadui.fx.agents.discovery.AgentDiscoverer" init-method="initialize" destroy-method="destroy">
