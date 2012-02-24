@@ -42,8 +42,12 @@ import org.apache.felix.framework.FrameworkFactory;
 import org.apache.felix.main.AutoProcessor;
 import org.apache.felix.main.Main;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.BundleListener;
 import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
 import org.osgi.framework.launch.Framework;
 
 import com.eviware.loadui.launcher.api.OSGiUtils;
@@ -240,6 +244,73 @@ public class LoadUILauncher
 		try
 		{
 			framework.init();
+
+			framework.getBundleContext().addBundleListener( new BundleListener()
+			{
+				@Override
+				public void bundleChanged( BundleEvent arg0 )
+				{
+					switch( arg0.getType() )
+					{
+					case BundleEvent.INSTALLED :
+						System.err.println( "INSTALLED:" );
+						break;
+					case BundleEvent.STARTING :
+						System.err.println( "STARTING:" );
+						break;
+					case BundleEvent.STARTED :
+						System.err.println( "STARTED:" );
+						break;
+					case BundleEvent.STOPPING :
+						System.err.println( "STOPPING:" );
+						break;
+					case BundleEvent.STOPPED :
+						System.err.println( "STOPPED:" );
+						break;
+					case BundleEvent.UPDATED :
+						System.err.println( "UPDATED:" );
+						break;
+					case BundleEvent.UNINSTALLED :
+						System.err.println( "UNINSTALLED:" );
+						break;
+					case BundleEvent.RESOLVED :
+						System.err.println( "RESOLVED:" );
+						break;
+					case BundleEvent.UNRESOLVED :
+						System.err.println( "UNRESOLVED:" );
+						break;
+					}
+					System.err.println( String.format( "Bundle Changed: %s(%s), %s", arg0.getBundle().getSymbolicName(),
+							arg0.getBundle().getBundleId(), arg0.getType() ) );
+				}
+			} );
+
+			framework.getBundleContext().addServiceListener( new ServiceListener()
+			{
+				@Override
+				public void serviceChanged( ServiceEvent arg0 )
+				{
+					switch( arg0.getType() )
+					{
+					case ServiceEvent.REGISTERED :
+						System.err.println( "REGISTERED:" );
+						break;
+					case ServiceEvent.UNREGISTERING :
+						System.err.println( "UNREGISTERING:" );
+						break;
+					case ServiceEvent.MODIFIED :
+						System.err.println( "MODIFIED:" );
+						break;
+					case ServiceEvent.MODIFIED_ENDMATCH :
+						System.err.println( "MODIFIED_ENDMATCH:" );
+						break;
+					}
+					System.err.println( String.format( "Service Changed: %s in bundle %s, %s", framework.getBundleContext()
+							.getService( arg0.getServiceReference() ), arg0.getServiceReference().getBundle()
+							.getSymbolicName(), arg0.getType() ) );
+				}
+			} );
+
 			AutoProcessor.process( configProps, framework.getBundleContext() );
 
 			if( nofx )
