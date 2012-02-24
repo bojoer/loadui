@@ -98,6 +98,11 @@ public class InspectorManager {
 	public function onUnbind( inspector:Inspector, properties:Map ):Void {
 		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "Removing Inspector {inspector} from the InspectorPanel." );
 		log.debug( "Removing Inspector '\{\}' from the InspectorPanel.", inspector );
+		try {
+			throw new java.lang.RuntimeException( "REMOVING INSPECTOR" );
+		} catch( e ) {
+			e.printStackTrace();
+		}
 		def panelId = properties.get( PANEL_ID );
 		if( panelId != null )
 		{
