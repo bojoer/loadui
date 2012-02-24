@@ -10,8 +10,6 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -57,7 +55,6 @@ public class BrowserComponent extends JPanel implements Browser
 {
 	protected static final Logger log = LoggerFactory.getLogger( BrowserComponent.class );
 
-	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport( this );
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	private final WebClient client = new WebClient();
 	private final WebWindow window;
@@ -265,18 +262,6 @@ public class BrowserComponent extends JPanel implements Browser
 		}
 	}
 
-	@Override
-	public void addPropertyChangeListener( PropertyChangeListener listener )
-	{
-		propertyChangeSupport.addPropertyChangeListener( listener );
-	}
-
-	@Override
-	public void removePropertyChangeListener( PropertyChangeListener listener )
-	{
-		propertyChangeSupport.removePropertyChangeListener( listener );
-	}
-
 	public double getPageHeight()
 	{
 		return pageHeight;
@@ -347,7 +332,7 @@ public class BrowserComponent extends JPanel implements Browser
 						add( canvas, BorderLayout.CENTER );
 						double oldHeight = pageHeight;
 						pageHeight = canvas.getPreferredSize().getHeight();
-						propertyChangeSupport.firePropertyChange( PAGE_HEIGHT, oldHeight, pageHeight );
+						firePropertyChange( PAGE_HEIGHT, oldHeight, pageHeight );
 					}
 				} );
 			}
@@ -440,7 +425,7 @@ public class BrowserComponent extends JPanel implements Browser
 						hover = true;
 						Cursor oldCursor = getCursor();
 						setCursor( Cursor.getPredefinedCursor( Cursor.HAND_CURSOR ) );
-						propertyChangeSupport.firePropertyChange( CURSOR, oldCursor, getCursor() );
+						firePropertyChange( CURSOR, oldCursor, getCursor() );
 					}
 				}
 				else
@@ -450,7 +435,7 @@ public class BrowserComponent extends JPanel implements Browser
 						hover = false;
 						Cursor oldCursor = getCursor();
 						setCursor( Cursor.getDefaultCursor() );
-						propertyChangeSupport.firePropertyChange( CURSOR, oldCursor, getCursor() );
+						firePropertyChange( CURSOR, oldCursor, getCursor() );
 					}
 				}
 			}
