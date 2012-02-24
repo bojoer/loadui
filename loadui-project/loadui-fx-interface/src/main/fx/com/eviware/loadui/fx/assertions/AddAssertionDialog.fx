@@ -184,7 +184,7 @@ public class AddAssertionDialog {
 		
 		def dialog: Dialog = Dialog {
 			scene: AppState.byName("MAIN").scene
-			title: "MAKE ASSERTION"
+			title: "CREATE ASSERTION"
 			content: [
 				VBox {
 					spacing: 15
