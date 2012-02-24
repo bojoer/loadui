@@ -152,6 +152,7 @@ public class MainWindow {
 	* configuration set through the setters). It sets up the main window.
 	*/
 	function initialize():Void {
+		try {
 		java.util.logging.Logger.getLogger( "com.eviware.loadui.fx.MainWindow" ).severe( "MainWindow initializing: {this}" );
 		log.debug( "MainWindow initializing..." );
 		//change classloader of JavaFX thread to this thread's (Spring's) classloader
@@ -316,6 +317,11 @@ public class MainWindow {
 			FX.deferAction( function():Void {
  				NewVersionDialog { newVersion: newVersion };
  			} );
+ 		}
+ 		
+ 		} catch( e ) {
+ 			java.lang.System.err.println( "EXCEPTION IN INITIALIZATION OF MAINWINDOW:" );
+ 			e.printStackTrace();
  		}
 	}
 	
