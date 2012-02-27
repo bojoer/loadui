@@ -26,7 +26,6 @@ import org.apache.xmlbeans.XmlTokenSource;
 
 public class XmlBeansUtils
 {
-	@edu.umd.cs.findbugs.annotations.SuppressWarnings( value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "Failing to delete these files should be ignored." )
 	public static void saveToFile( XmlTokenSource source, File target ) throws IOException
 	{
 		File backup = File.createTempFile( "loadui-temp-", ".bak", target.getParentFile() );

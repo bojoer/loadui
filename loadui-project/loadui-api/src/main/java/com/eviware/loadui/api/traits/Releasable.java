@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.api.traits;
 
-import edu.umd.cs.findbugs.annotations.OverrideMustInvoke;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 /**
  * An object which needs to be released when no longer needed, in order to
@@ -37,6 +37,6 @@ public interface Releasable
 	 * is doing. After calling this, other methods on the Releasable may no
 	 * longer work as intended.
 	 */
-	@OverrideMustInvoke
+	@OverridingMethodsMustInvokeSuper
 	public void release();
 }

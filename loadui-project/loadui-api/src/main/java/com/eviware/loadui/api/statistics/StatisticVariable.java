@@ -17,10 +17,10 @@ package com.eviware.loadui.api.statistics;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.traits.Describable;
 import com.eviware.loadui.api.traits.Labeled;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * A Statistical Variable containing several Statistics, for several instances.
@@ -95,5 +95,5 @@ public interface StatisticVariable extends Labeled, Describable.Mutable
 	 * @param statisticName
 	 * @return
 	 */
-	public String getDescriptionForStatistic( @NonNull String statisticName );
+	public String getDescriptionForStatistic( @Nonnull String statisticName );
 }

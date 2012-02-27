@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.api.traits;
 
-import edu.umd.cs.findbugs.annotations.OverrideMustInvoke;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 public interface Initializable
 {
@@ -31,7 +31,7 @@ public interface Initializable
 	 * objects which need to be initialized. Child objects should be initialized
 	 * fully here, calling both init() and postInit().
 	 */
-	@OverrideMustInvoke
+	@OverridingMethodsMustInvokeSuper
 	public void init();
 
 	/**
@@ -39,6 +39,6 @@ public interface Initializable
 	 * fully), to do any last initialization before the Initializable can be
 	 * considered fully initialized.
 	 */
-	@OverrideMustInvoke
+	@OverridingMethodsMustInvokeSuper
 	public void postInit();
 }

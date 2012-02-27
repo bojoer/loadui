@@ -19,14 +19,11 @@ import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-
 /**
  * LineChartView for a Source.
  * 
  * @author dain.nilsson
  */
-@SuppressWarnings( value = "DM_STRING_CTOR", justification = "A unique instance of a String is required" )
 public class SourceLineChartView extends AbstractLineChartView
 {
 	private static final String NULL = new String( "null" );

@@ -32,11 +32,12 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
+import com.eviware.loadui.api.traits.Initializable;
 import com.eviware.loadui.util.messaging.ChannelRoutingSupport;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Closeables;
 
-public class ServerSocketMessageEndpoint implements MessageEndpoint
+public class ServerSocketMessageEndpoint implements MessageEndpoint, Initializable
 {
 	public static final Logger log = LoggerFactory.getLogger( ServerSocketMessageEndpoint.class );
 
@@ -53,9 +54,25 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint
 	{
 		this.socketServerEndpoint = socketServerEndpoint;
 		this.socket = socket;
+	}
 
+	@Override
+	public void init()
+	{
 		new Thread( new MessageReceiver( socket ) ).start();
-		new Thread( new MessageSender( new ObjectOutputStream( socket.getOutputStream() ) ) ).start();
+		try
+		{
+			new Thread( new MessageSender( new ObjectOutputStream( socket.getOutputStream() ) ) ).start();
+		}
+		catch( IOException e )
+		{
+			log.error( "Error starting MessageSender", e );
+		}
+	}
+
+	@Override
+	public void postInit()
+	{
 	}
 
 	@Override

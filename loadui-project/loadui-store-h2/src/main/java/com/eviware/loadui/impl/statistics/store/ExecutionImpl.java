@@ -189,7 +189,7 @@ public class ExecutionImpl implements Execution, Releasable
 
 	private void awaitLoaded()
 	{
-		if( !isLoaded() )
+		while( !isLoaded() )
 		{
 			synchronized( loadingLock )
 			{

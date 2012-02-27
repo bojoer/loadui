@@ -39,6 +39,7 @@ import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.ServerEndpoint;
 import com.eviware.loadui.api.traits.Releasable;
+import com.eviware.loadui.util.InitializableUtils;
 import com.google.common.collect.ImmutableSet;
 
 public class SocketServerEndpoint implements ServerEndpoint, Releasable
@@ -132,7 +133,8 @@ public class SocketServerEndpoint implements ServerEndpoint, Releasable
 				{
 					SSLSocket socket = ( SSLSocket )serverSocket.accept();
 
-					MessageEndpoint endpoint = new ServerSocketMessageEndpoint( SocketServerEndpoint.this, socket );
+					MessageEndpoint endpoint = InitializableUtils.initialize( new ServerSocketMessageEndpoint(
+							SocketServerEndpoint.this, socket ) );
 
 					//TODO: Remove
 					endpoint.addMessageListener( "/test", new MessageListener()
@@ -144,7 +146,7 @@ public class SocketServerEndpoint implements ServerEndpoint, Releasable
 						}
 					} );
 
-					SSLSession session = ( ( SSLSocket )socket ).getSession();
+					SSLSession session = socket.getSession();
 					Certificate[] cchain2 = session.getLocalCertificates();
 					for( int i = 0; i < cchain2.length; i++ )
 					{

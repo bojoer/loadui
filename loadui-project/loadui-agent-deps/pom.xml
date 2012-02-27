@@ -22,6 +22,8 @@
 						</goals>
 						<configuration>
 							<includeScope>compile</includeScope>
+							<!-- includeScope doesn't seem to work -->
+							<excludeGroupIds>com.google.code.findbugs</excludeGroupIds>
 							<excludeTypes>pom</excludeTypes>
 							<outputDirectory>${basedir}/target/bundle</outputDirectory>
 						</configuration>

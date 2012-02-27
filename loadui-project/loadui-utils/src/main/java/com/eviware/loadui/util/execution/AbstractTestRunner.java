@@ -40,6 +40,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Provides a partial implementation of TestRunner, taking care of managing
  * TestExecutionTasks.
@@ -95,6 +97,7 @@ public abstract class AbstractTestRunner implements TestRunner
 	 * @param execution
 	 * @return
 	 */
+	@SuppressFBWarnings( justification = "ExecutorService.submit CAN take a null result.", value = "NP_NONNULL_PARAM_VIOLATION" )
 	protected ListenableFuture<Void> runPhase( Phase phase, TestExecution execution )
 	{
 		return executorService.submit( new PhaseRunner( phase, execution ), null );

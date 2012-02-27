@@ -54,8 +54,6 @@ import com.eviware.loadui.util.collections.CollectionEventSupport;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-
 public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implements WorkspaceItem
 {
 	public static final Logger log = LoggerFactory.getLogger( WorkspaceItemImpl.class );
@@ -163,7 +161,6 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			gcTask = executor.scheduleWithFixedDelay( new Runnable()
 			{
 				@Override
-				@SuppressWarnings( value = "DM_GC", justification = "Explicit GC calls are needed due to a memory issue with Jetty." )
 				public void run()
 				{
 					long old = Runtime.getRuntime().freeMemory();

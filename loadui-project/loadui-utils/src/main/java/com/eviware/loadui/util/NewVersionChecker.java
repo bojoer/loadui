@@ -16,7 +16,6 @@ import org.w3c.dom.NodeList;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.WorkspaceItem;
-import com.eviware.loadui.util.StringUtils;
 
 /*
  * Much of this code is copied from com.eviware.soapui.support.SoapUIVersionUpdate.
@@ -116,7 +115,8 @@ public class NewVersionChecker
 		log.debug( "Latest version is: {}", versionName );
 		log.debug( "Current version is: {}", LoadUI.VERSION );
 
-		if( isVersionDesired( versionName ) && !shouldThisVersionBeSkipped( versionName, workspace ) )
+		if( versionName != null && isVersionDesired( versionName )
+				&& !shouldThisVersionBeSkipped( versionName, workspace ) )
 			return new VersionInfo( versionName, releaseNotes, downloadUrl, workspace );
 		return null;
 	}

@@ -38,14 +38,11 @@ import com.eviware.loadui.util.StringUtils;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-
 /**
  * ConfigurableLineChartView for a Chart.
  * 
  * @author dain.nilsson
  */
-@SuppressWarnings( value = "DM_STRING_CTOR", justification = "A unique instance of a String is required" )
 public class ChartLineChartView extends AbstractLineChartView implements ConfigurableLineChartView, Deletable
 {
 	public static Logger log = LoggerFactory.getLogger( ChartLineChartView.class );

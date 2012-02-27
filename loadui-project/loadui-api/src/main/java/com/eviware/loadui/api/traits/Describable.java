@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.api.traits;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import javax.annotation.Nonnull;
 
 /**
  * An object which has human-readable text description.
@@ -48,6 +48,6 @@ public interface Describable
 		 * 
 		 * @param description
 		 */
-		public void setDescription( @NonNull String description );
+		public void setDescription( @Nonnull String description );
 	}
 }

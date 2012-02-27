@@ -111,7 +111,10 @@ public abstract class TableBase implements Releasable
 		}
 		finally
 		{
-			JdbcUtil.close( stm );
+			if( stm != null )
+			{
+				JdbcUtil.close( stm );
+			}
 		}
 	}
 
