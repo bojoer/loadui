@@ -81,16 +81,16 @@ public class ControllerTest
 	{
 		BundleContext context = controller.getBundleContext();
 
-		ServiceReference ref = null;
+		ServiceReference<WorkspaceProvider> ref = null;
 		for( int tries = 100; ref == null && tries > 0; tries-- )
 		{
-			ref = context.getServiceReference( WorkspaceProvider.class.getName() );
+			ref = context.getServiceReference( WorkspaceProvider.class );
 			Thread.sleep( 100 );
 		}
-		Object service = context.getService( ref );
+		WorkspaceProvider service = context.getService( ref );
 		assertThat( service, notNullValue() );
 
-		setWorkspaceProvider( ( WorkspaceProvider )service );
+		setWorkspaceProvider( service );
 		assertThat( workspaceProvider, notNullValue() );
 	}
 

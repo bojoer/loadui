@@ -14,6 +14,7 @@
 		<cometdVersion>2.4.0.RC1</cometdVersion>
 		<changelog.start.date>2011-06-13</changelog.start.date>
 		<osgiVersion>4.2.0</osgiVersion>
+		<osgiCompendiumVersion>4.2.0</osgiCompendiumVersion>
 		<springVersion>3.1.1.RELEASE</springVersion>
 	</properties>
 	<modules>
