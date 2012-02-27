@@ -137,6 +137,8 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		statisticHolderSupport = new StatisticHolderSupport( this );
 
 		BeanInjector.getBean( TestRunner.class ).registerTask( terminalsEnabledTask, Phase.PRE_START, Phase.POST_STOP );
+
+		terminalsEnabled = canvas.isRunning();
 	}
 
 	@Override

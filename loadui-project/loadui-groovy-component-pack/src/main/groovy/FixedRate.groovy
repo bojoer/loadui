@@ -37,7 +37,11 @@ onReplace( stateProperty ) { value ->
 
 createProperty( 'burstSize', Long, 1 )
 
-triggerBurst = { burstSize.value.times { trigger() } }
+triggerBurst = { 
+	burstSize.value.times {
+		trigger() 
+	} 
+}
 
 future = null
 schedule = {
