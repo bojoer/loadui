@@ -54,8 +54,10 @@ public class Trashcan extends Stack {
 	def slowIn = SequentialTransition {
 		node: this
 		content: [
-			PauseTransition { duration: 200ms }, fadeIn
+			PauseTransition { duration: 200ms },
+			fadeIn
 		]
+		action: function() { opacity = 1 }
 	}
 	
 	def fadeOut = FadeTransition {
