@@ -143,7 +143,8 @@ public class WorkspaceMenu extends HBox {
 	                  	AppState.byName("MAIN").blockingTask(
 	                  		function():Void {
 			                     try {
-			                         workspace.importProject( source, false );
+			                         def projectRef = workspace.importProject( source, true );
+			                         projectRef.setAttribute( "miniature", projectRef.getProject().getAttribute( "miniature", "" ) );
 			                         success = true;
 			                     } catch(e:Throwable) {
 			                     	log.error( "Failed importing project: {source}", e );

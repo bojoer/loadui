@@ -241,15 +241,14 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 
 		ProjectReferenceConfig projectRefConfig = getConfig().addNewProject();
 		projectRefConfig.setProjectFile( projectFile.getAbsolutePath() );
-		projectRefConfig.setEnabled( true );
 		ProjectRefImpl ref;
 		try
 		{
 			ref = new ProjectRefImpl( this, projectRefConfig );
-			ref.setEnabled( enabled );
+			ref.setEnabled( true );
 			projectList.addItem( ref );
+			ref.setEnabled( enabled );
 			log.debug( "public ProjectRef importProject" );
-			//			fireCollectionEvent( PROJECT_REFS, CollectionEvent.Event.ADDED, ref );
 			save();
 			return ref;
 		}
