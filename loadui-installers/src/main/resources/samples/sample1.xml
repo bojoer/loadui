@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:loadui-project label="Sample Project 1" id="d937694f-ede5-4f6c-a224-8c23ca4e433c" xmlns:con="http://eviware.com/loadui/config"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="CanvasItem.abortOnFinish" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="ModelItem.saveReport" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="ModelItem.reportFolder" type="java.lang.String"/><con:property propagates="true" key="ModelItem.reportFormat" type="java.lang.String"/><con:property propagates="true" key="ProjectItem.statisticNumberOfAutosaves" type="java.lang.Long">5</con:property></con:properties><con:attributes><con:property key="miniature">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
+AAAASUVORK5CYII=
+</con:property><con:property key="gui.note.0">202;382;239;164;1. The project setup consists of a Fixed Rate Generator (red component) sending trigger messages to a Web Page Runner (green component).
+
+Run the test by clicking the circular play button in the menubar above. You will see that the Web Page Runner starts to send requests by looking at the numbers in its black display.</con:property><con:property key="gui.note.1">772;383;214;131;2. Now that the test is running, let's watch some statistics!
+
+Click on the colorful icon in the right-most part of the menubar to open the Statistic Workbench (it will open in a new window).</con:property><con:property key="gui.note.2">772;581;217;152;3. In the new window that opened, double-click the CURRENT RUN icon to see live statistics from your load test.
+
+In this sample project, a chart displaying the number of sent requests per second has already been created.</con:property><con:property key="gui.note.3">412;200;479;73;This is a very simple load test for you to play around with. It targets a local built-in server.
+
+To learn loadUI, we recommend the videos at http://www.loadui.org/videos</con:property><con:property key="gui.note.4">1025;384;210;199;4. Now, switch back to loadUI's main window and change the Rate knob on the Fixed Rate Generator to 10/sec. Do this by pressing down your mouse button on the knob and dragging the cursor up.
+
+Notice how the line in the Statistics Workbench changes to 10 instantly. This means that the Web Page Runner is now requesting the web page 10 times per second.</con:property><con:property key="gui.note.5">834;916;240;79;This is the local built in server. It is just here for demo purposes. In real load testing you would want to use a "real" server.</con:property><con:property key="gui.statistics.view">statistics.view</con:property></con:attributes><con:addons/><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Fixed Rate" id="0a09befa-b9fa-48a9-b73a-87abf0fd1b71" category="generators"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="_script" type="java.lang.String">// 
+// Copyright 2011 SmartBear Software
+// 
+// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the Licence.
+// You may obtain a copy of the Licence at:
+// 
+// http://ec.europa.eu/idabc/eupl5
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the Licence for the specific language governing permissions and limitations
+// under the Licence.
+// 
+
+/**
+ * Sends an empty message periodically, at a set rate
+ * 
+ * @id com.eviware.FixedRate
+ * @help http://www.loadui.org/Generators/fixed-rate-component.html
+ * @name Fixed Rate
+ * @category generators
+ * @nonBlocking true
+ */
+
+import com.eviware.loadui.api.events.PropertyEvent
+
+import java.util.concurrent.TimeUnit
+
+//Properties
+createProperty( 'rate', Long, 10 ) { value ->
+	delay = Math.max( 1, (long)(milisecondsPerUnit/value) )
+	schedule()
+}
+createProperty( 'unit', String, 'Sec' ) { value ->
+	if ( value == "Sec" )
+		milisecondsPerUnit = 1000000
+	else if ( value == "Min" )
+		milisecondsPerUnit = 60000000
+	else if ( value == "Hour" )
+		milisecondsPerUnit = 3600000000
+	schedule()
+}
+onReplace( stateProperty ) { value ->
+	if( value ) schedule()
+	else future?.cancel( true )
+}
+
+createProperty( 'burstSize', Long, 1 )
+
+milisecondsPerUnit = 1000000				
+delay = milisecondsPerUnit/rate.value
+
+triggerBurst = {
+	for( i in 1..burstSize.value )
+	{
+		trigger()
+	}
+}
+
+future = null
+schedule = {
+	if (stateProperty.value) {
+		future?.cancel(true);
+		future = scheduleAtFixedRate( { triggerBurst() }, delay.longValue(), delay.longValue(), TimeUnit.MICROSECONDS )
+	}
+}
+
+addEventListener( PropertyEvent ) { event ->
+	if ( event.event == PropertyEvent.Event.VALUE ) {
+		if( event.property == unit ) {
+			if ( unit.value == "Sec" )
+				milisecondsPerUnit = 1000000
+			if ( unit.value == "Min" )
+				milisecondsPerUnit = 60000000
+			if ( unit.value == "Hour" )
+				milisecondsPerUnit = 3600000000
+		}
+		if (event.property == stateProperty &amp;&amp; !stateProperty.value)
+			future?.cancel(true)
+		if (stateProperty.value)
+			future?.cancel(true)
+		if( rate.value != null &amp;&amp; rate.value > 0 ) {
+			delay = milisecondsPerUnit/rate.value
+			if ( delay &lt; 1 )
+				delay = 1
+			schedule()
+		}
+	}
+}
+
+onAction( "START" ) { schedule() }
+
+onAction( "STOP" ) { future?.cancel( true ) }
+
+//Layout
+layout { 
+	property( property:rate, label:'Rate', min:1 ) 
+	separator( vertical:true )
+	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
+	separator( vertical:true )
+	box( widget:'display' ) {
+		node( label:'Rate', content: { "$rate.value / $unit.value" }, constraints:'wmin 75' )
+	}
+}
+
+//Compact Layout
+compactLayout {
+	box( widget:'display' ) {
+		node( label:'Rate', content: { "$rate.value / $unit.value" } )
+	}
+}
+
+//Settings
+settings( label: "General" ) {
+	property( property: burstSize, label:'Burst size' ) 
+}
+
+//Start scheduler
+if ( unit.value == "Sec" )
+	milisecondsPerUnit = 1000000
+if ( unit.value == "Min" )
+	milisecondsPerUnit = 60000000
+if ( unit.value == "Hour" )
+	milisecondsPerUnit = 3600000000
+
+delay = milisecondsPerUnit/rate.value
+
+if (running)
+	schedule();
+
+
+</con:property><con:property propagates="true" key="stateProperty" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="rate" type="java.lang.Long">4</con:property><con:property propagates="true" key="unit" type="java.lang.String">Sec</con:property><con:property propagates="true" key="burstSize" type="java.lang.Long">1</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Fixed Rate</con:property><con:property key="_digest">17ec2491ac65e3eb7ecfb8fcbfecadc5</con:property><con:property key="_id">com.eviware.FixedRate</con:property><con:property key="_classLoader">com.eviware.FixedRate</con:property><con:property key="gui.layoutX">484</con:property><con:property key="gui.layoutY">382</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Web Page Runner" id="bf85d98f-4892-417e-988a-e4da4350db0a" category="runners"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="_script" type="java.lang.String"><![CDATA[// 
+// Copyright 2011 SmartBear Software
+// 
+// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the Licence.
+// You may obtain a copy of the Licence at:
+// 
+// http://ec.europa.eu/idabc/eupl5
+// 
+// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the Licence for the specific language governing permissions and limitations
+// under the Licence.
+// 
+
+/**
+ * Sends an HTTP request
+ * 
+ * @id com.eviware.WebRunner
+ * @help http://www.loadui.org/Runners/web-page-runner-component.html
+ * @name Web Page Runner
+ * @category runners
+ * @dependency org.apache.httpcomponents:httpcore:4.1
+ * @dependency org.apache.httpcomponents:httpclient:4.1.1
+ */
+
+import org.apache.http.* 
+import org.apache.http.client.*
+import org.apache.http.auth.*
+import org.apache.http.conn.params.*
+import org.apache.http.conn.scheme.*
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.conn.ClientConnectionManager
+import org.apache.http.util.EntityUtils
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
+import com.eviware.loadui.api.events.ActionEvent
+import com.eviware.loadui.api.events.PropertyEvent
+import com.eviware.loadui.api.model.CanvasItem
+import com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledException
+import com.eviware.loadui.impl.component.ActivityStrategies
+import com.eviware.loadui.util.ReleasableUtils
+
+import java.util.concurrent.TimeUnit
+
+import org.apache.http.conn.scheme.Scheme
+import org.apache.http.conn.ssl.SSLSocketFactory
+import javax.net.ssl.SSLContext
+import javax.net.ssl.KeyManager
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
+import java.security.cert.X509Certificate
+import java.security.cert.CertificateException
+import java.security.SecureRandom
+import java.util.HashMap
+import java.util.Map
+import java.util.concurrent.TimeUnit
+
+//SSL support, trust all certificates and hostnames.
+class NaiveTrustManager implements X509TrustManager {
+	void checkClientTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
+	void checkServerTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
+	X509Certificate[] getAcceptedIssuers () { null }
+}
+def sslContext = SSLContext.getInstance("SSL")
+TrustManager[] tms = [ new NaiveTrustManager() ]
+sslContext.init( new KeyManager[0], tms, new SecureRandom() )
+def sslSocketFactory = new SSLSocketFactory( sslContext )
+sslSocketFactory.hostnameVerifier = SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER
+
+def sr = new SchemeRegistry()
+sr.register( new Scheme( "http", PlainSocketFactory.socketFactory, 80 ) )
+sr.register( new Scheme( "https", sslSocketFactory, 443 ) )
+
+def cm = new ThreadSafeClientConnManager( sr )
+cm.maxTotal = 50000
+cm.defaultMaxPerRoute = 50000
+
+
+//Properties
+createProperty( 'url', String ) { ->
+	validateUrl()
+}
+createProperty( 'outputBody', Boolean, false )
+
+createProperty( 'readResponse', Boolean, false )
+createProperty( 'errorCodeList', String )
+
+createProperty( 'proxyHost', String )
+createProperty( 'proxyPort', Long )
+createProperty( 'proxyUsername', String )
+proxyPassword = createProperty( '_proxyPassword', String )
+authUsername = createProperty( '_authUsername', String )
+authPassword = createProperty( '_authPassword', String )
+
+http = new DefaultHttpClient( cm )
+
+inlineUrlAuthUsername = null
+inlineUrlAuthPassword = null
+			
+def runningSamples = ([] as Set).asSynchronized()
+runAction = null
+
+def dummyUrl = "http://GoSpamYourself.com"
+
+validateUrl = {
+	if( url.value && !( url.value.toLowerCase().startsWith( "http://" ) || url.value.toLowerCase().startsWith( "https://" ) ) ) {
+		url.value = "http://" + url.value
+	}
+	
+	if( url.value =~ /https?:\/\/(www\.)?(eviware\.com|(soapui|loadui)\.org)(\/.*)?/ ) url.value = dummyUrl
+	
+	// extract possible username and password from username:password@domain syntax
+	matcher = url.value?.replace( "http://", "" ) =~ /([^:]+):([^@]+)@(.+)/
+	if ( matcher ) {
+		inlineUrlAuthUsername = matcher[0][1]
+		inlineUrlAuthPassword = matcher[0][2]
+	} else {
+		inlineUrlAuthUsername = inlineUrlAuthPassword = null
+	}
+	updateAuth()
+	
+	try {
+		new URI( url.value )
+		setInvalid( !url.value || url.value == dummyUrl )
+	} catch( e ) {
+		setInvalid( true )
+	}
+	
+	runAction?.enabled = !isInvalid()
+}
+
+updateProxy = {
+	if( proxyHost.value?.trim() && proxyPort.value ) {
+		HttpHost hcProxyHost = new HttpHost( proxyHost.value, (int)proxyPort.value, "http" )
+		http.params.setParameter( ConnRoutePNames.DEFAULT_PROXY, hcProxyHost )
+		
+		if( proxyUsername.value?.trim() && proxyPassword.value ) {
+			http.credentialsProvider.setCredentials(
+				new AuthScope( proxyHost.value, (int)proxyPort.value ), 
+				new UsernamePasswordCredentials( proxyUsername.value, proxyPassword.value )
+			)
+		} else {
+			http.credentialsProvider.clear()
+		}
+	} else {
+		http.params.setParameter( ConnRoutePNames.DEFAULT_PROXY, null )
+	}
+}
+
+updateAuth = {
+	def username = null
+	def password = null
+	if( inlineUrlAuthUsername && inlineUrlAuthPassword ) {
+		username = inlineUrlAuthUsername
+		password = inlineUrlAuthPassword
+	} else if( authUsername.value?.trim() && authPassword.value?.trim() ) {
+		username = authUsername.value
+		password = authPassword.value
+	}
+	
+	if( username && password ) {
+		http.credentialsProvider.setCredentials(
+			new AuthScope( AuthScope.ANY ), 
+			new UsernamePasswordCredentials( username, password )
+		)
+	}
+}
+
+validateUrl()
+updateProxy()
+
+requestResetValue = 0
+sampleResetValue = 0
+discardResetValue = 0
+failedResetValue = 0
+
+sample = { message, sampleId ->
+	def uri = message['url'] ?: url.value
+	if( uri ) {
+		def get = new HttpGet( uri )
+		message['ID'] = uri
+		
+		runningSamples.add( get )
+		try {
+			def response = http.execute( get )
+			message['Status'] = true
+			message['URI'] = uri
+			message['HttpStatus'] = response.statusLine.statusCode
+			
+			if( errorCodeList.value ) {
+				def assertionCodes = errorCodeList.value.split(',')
+				
+				for( code in assertionCodes ) {
+					if( code.trim() == response.statusLine.statusCode.toString() ) {
+						failedRequestCounter.increment()
+						failureCounter.increment()
+						break
+					}
+				}
+			}
+			
+			if( response.entity != null )	{
+				int contentLength = response.entity.contentLength
+				message['Bytes'] = contentLength
+				
+				if( outputBody.value )
+					message['Response'] = EntityUtils.toString( response.entity )
+				
+				if( contentLength < 0 ) {
+					if( outputBody.value )
+						message['Bytes'] = message['Response'].length()
+					else
+						message['Bytes'] = EntityUtils.toString( response.entity ).length()
+				}
+				
+				response.entity.consumeContent()
+				
+				if( !runningSamples.remove( get ) ) {
+					throw new SampleCancelledException()
+				}
+				
+				return message
+			}
+		} catch( e ) {
+			if( e instanceof SampleCancelledException )
+				throw e
+			
+			if( e instanceof IOException )
+				log.warn( "IOException in {}: {}", label, e.message )
+			else
+				log.error( "Exception in $label:", e )
+			
+			get.abort()
+			
+			if ( !runningSamples.remove( get ) ) {
+				throw new SampleCancelledException()
+			}
+			
+			message['Status'] = false
+			failedRequestCounter.increment()
+			failureCounter.increment()
+			
+			return message
+		}
+	} else {
+		throw new SampleCancelledException()
+	}
+
+}
+
+onCancel = {
+	def numberOfRunning = 0
+	synchronized( runningSamples ) {
+		def methods = runningSamples.toArray()
+		numberOfRunning = methods.size()
+		runningSamples.clear()
+		methods.each { if( !it.aborted ) it.abort() }
+	}
+	
+	return numberOfRunning
+}
+
+onAction( "RESET" ) {
+	requestResetValue = 0
+	sampleResetValue = 0
+	discardResetValue = 0
+	failedResetValue = 0
+}
+
+addEventListener( PropertyEvent ) { event ->
+	if ( event.event == PropertyEvent.Event.VALUE ) {
+		if( event.property in [ proxyHost, proxyPort, proxyUsername, proxyPassword, authUsername, authPassword ] ) {
+			http.credentialsProvider.clear()
+			updateProxy()
+			updateAuth()
+		}
+	}
+}
+
+//Layout
+layout {
+	box( layout:'wrap 2, ins 0' ) {
+		property( property:url, label:'Web Page Address', constraints: 'w 300!, spanx 2', style: '-fx-font-size: 17pt' )
+		action( label:'Open in Browser', constraints:'spanx 2', action: {
+			if( url.value != null && url.value.startsWith( "http" ) )
+				java.awt.Desktop.desktop.browse( new java.net.URI( url.value ) )
+		} )
+		runAction = action( label:'Run Once', action: { triggerAction( 'SAMPLE' ) } )
+		action( label:'Abort Running Pages', action: { triggerAction( 'CANCEL' ) } )
+	}
+	separator(vertical:true)
+	box( layout:'wrap, ins 0' ){
+		box( widget:'display', layout:'wrap 3, align right' ) {
+			node( label:'Requests', content: { requestCounter.get() - requestResetValue }, constraints:'w 50!' )
+			node( label:'Running', content: { currentlyRunning }, constraints:'w 50!' )
+			node( label:'Completed', content: { sampleCounter.get() - sampleResetValue }, constraints:'w 60!' )
+			node( label:'Queued', content: { queueSize }, constraints:'w 50!' )
+			node( label:'Discarded', content: { discardCounter.get() - discardResetValue }, constraints:'w 50!' )
+			node( label:'Failed', content: { failureCounter.get() - failedResetValue }, constraints:'w 60!' )
+		}
+		action( label:'Reset', action: {
+			requestResetValue = requestCounter.get()
+			sampleResetValue = sampleCounter.get()
+			discardResetValue = discardCounter.get()
+			failedResetValue = failureCounter.get()
+			triggerAction('CANCEL')
+		}, constraints:'align right' )
+	}
+}
+
+//Compact Layout
+compactLayout {
+	box( widget:'display', layout:'wrap 3, align right' ) {
+		node( label:'Requests', content: { requestCounter.get() - requestResetValue }, constraints:'w 50!' )
+		node( label:'Running', content: { currentlyRunning }, constraints:'w 50!' )
+		node( label:'Completed', content: { sampleCounter.get() - sampleResetValue }, constraints:'w 60!' )
+		node( label:'Queued', content: { queueSize }, constraints:'w 50!' )
+		node( label:'Discarded', content: { discardCounter.get() - discardResetValue }, constraints:'w 50!' )
+		node( label:'Failed', content: { failureCounter.get() - failedResetValue }, constraints:'w 60!' )
+	}
+}
+
+settings( label: "Basic" ) {
+	property( property: outputBody, label: 'Output Response Body' )
+	//property( property: propagateSession, label: 'Propagate Session' )
+	property( property: readResponse, label: 'Read Response' )
+	property( property: concurrentSamples, label: 'Max Concurrent Requests' )
+	property( property: maxQueueSize, label: 'Max Queue' )
+	property( property: errorCodeList, label: 'Error Codes that Count as Failures', constraints:'w 200!')
+	property( property: countDiscarded, label: 'Count Discarded Requests as Failed' )
+}
+
+settings( label: "Authentication" ) {
+	property( property: authUsername, label: 'Username' )
+	property( property: authPassword, widget: 'password', label: 'Password' )
+}
+
+settings( label: "Proxy" ) {
+	property( property: proxyHost, label: 'Proxy Host' )
+	property( property: proxyPort, label: 'Proxy Port' )
+	property( property: proxyUsername, label: 'Proxy Username' )
+	property( property: proxyPassword, widget: 'password', label: 'Proxy Password' )
+}
+]]></con:property><con:property propagates="true" key="concurrentSamples" type="java.lang.Long">100</con:property><con:property propagates="true" key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property propagates="true" key="countDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="url" type="java.lang.String">http://localhost:19397/mockServer</con:property><con:property propagates="true" key="outputBody" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="readResponse" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="errorCodeList" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="proxyHost" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="proxyPort" xsi:nil="true" type="java.lang.Long" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="proxyUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="_proxyPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="_authUsername" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="_authPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Web Page Runner</con:property><con:property key="_digest">49e3b98e0b389c51dec908050eedd377</con:property><con:property key="_id">com.eviware.WebRunner</con:property><con:property key="_classLoader">com.eviware.WebRunner</con:property><con:property key="gui.layoutX">200</con:property><con:property key="gui.layoutY">614</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="Mock Server" id="99b4ef17-7f52-4d5f-9e1b-3b88d166c50e"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="stateProperty" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="projectFile" type="java.io.File">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="settingsFile" type="java.io.File">C:\Users\Henrik\soapui-settings.xml</con:property><con:property propagates="true" key="projectRelativePath" type="java.lang.String">soapUIsample.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="mockService" type="java.lang.String">MockService</con:property><con:property propagates="true" key="path" type="java.lang.String">/mockServer</con:property><con:property propagates="true" key="port" type="java.lang.String">19397</con:property><con:property propagates="true" key="addRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="addResponse" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1112</con:property><con:property key="gui.layoutY">909</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:connection outputTerminalId="0a09befa-b9fa-48a9-b73a-87abf0fd1b71/triggerTerminal" inputTerminalId="bf85d98f-4892-417e-988a-e4da4350db0a/triggerTerminal"/><con:statistics><con:page title="General"><con:chartGroup type="com.eviware.loadui.api.statistics.model.chart.line.LineChartView" title="Chart 1"><con:chart statisticHolder="bf85d98f-4892-417e-988a-e4da4350db0a"><con:attributes><con:property key="_CHART_segments">64:36:bf85d98f-4892-417e-988a-e4da4350db0a4:Sent10:PER_SECOND4:main</con:property><con:property key="_CHART__SEGMENT_36:bf85d98f-4892-417e-988a-e4da4350db0a4:Sent10:PER_SECOND4:main_color">#FF2100</con:property></con:attributes></con:chart><con:attributes><con:property key="_CHARTGROUP_zoomLevel">SECONDS</con:property><con:property key="_CHARTGROUP_timeSpan">6666</con:property><con:property key="_CHARTGROUP_height">229.0</con:property><con:property key="_CHARTGROUP_position">5537</con:property></con:attributes></con:chartGroup></con:page></con:statistics></con:loadui-project>
