@@ -240,7 +240,9 @@ return new com.eviware.soapui.impl.wsdl.mock.WsdlMockResult( mockRequest )</con:
 
 	//busyness = context.threadsUsingResources.addAndGet(1)
 
-	Thread.sleep( (Math.random()*6 +  80 ) as Long )
+	busyness = context.threadsUsingResources.get()
+	Thread.sleep( ( (Math.random()*6 +  80)  * (1 + busyness/50) ) as Long )
+
 	//Thread.sleep( searchBusyness * 10 as Long )
 	//Thread.sleep( 100 as long )
 	
@@ -299,7 +301,9 @@ log.info( sessionid )
 
 	//busyness = context.threadsUsingResources.addAndGet(1)
 
-	Thread.sleep( (Math.random()*5 +  35 as Long ) )
+	busyness = context.threadsUsingResources.get()
+	Thread.sleep( ( (Math.random()*2 +  35)  * (1 + busyness/50) ) as Long )
+
 	//Thread.sleep( searchBusyness * 10 as Long )
 	//Thread.sleep( 100 as long )
 	
@@ -335,7 +339,10 @@ def holder = groovyUtils.getXmlHolder( mockRequest.requestContent )
 def sessionid = holder.getNodeValue( "//sessionid" )
 
 //context.simulateDelay( 240, true )
-Thread.sleep( (Math.random()*18 +  120 ) as Long )
+
+busyness = context.threadsUsingResources.get()
+Thread.sleep( ( (Math.random()*18 +  120)  * (1 + busyness/50) ) as Long )
+
 
 // check
 if( !context.hasProperty( sessionid ))
@@ -532,7 +539,8 @@ def holder = groovyUtils.getXmlHolder( mockRequest.requestContent )
 
 def sessionid = holder.getNodeValue( "//sessionid" )
 
-Thread.sleep( (Math.random()*70 +  160 ) as Long )
+busyness = context.threadsUsingResources.get()
+Thread.sleep( ((Math.random()*70 +  160 ) * (1 + busyness/50) ) as Long )
 
 // check
 if( !context.hasProperty( sessionid ))
@@ -693,4 +701,7 @@ context.simulateDelay = { delay, isSearch ->
 		context.threadsUsingSearch.decrementAndGet()
 	
 	context.threadsUsingResources.decrementAndGet()
-} */</con:startScript><con:properties/><con:onRequestScript>Thread.sleep( (Math.random()*8 +  30 ) as Long )</con:onRequestScript></con:mockService><con:requirements/><con:properties/><con:wssContainer/><con:databaseConnectionContainer/><con:reporting><con:xmlTemplates/><con:parameters/></con:reporting><con:sensitiveInformation/></con:soapui-project>
+} */</con:startScript><con:properties/><con:onRequestScript>context.threadsUsingResources.incrementAndGet()</con:onRequestScript><con:afterRequestScript>context.threadsUsingResources.decrementAndGet()</con:afterRequestScript></con:mockService><con:mockService port="19396" path="/mockServer" host="mock" name="Simple MockService" bindToHostOnly="false" docroot=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockService@require-soap-action">false</con:setting></con:settings><con:startScript>context.threadsUsingResources = new java.util.concurrent.atomic.AtomicInteger(0)</con:startScript><con:properties/><con:onRequestScript>context.threadsUsingResources.incrementAndGet()
+busyness = context.threadsUsingResources.get()
+Thread.sleep( ((Math.random()*15 +  20 ) * (1 + busyness/3) ) as Long )
+context.threadsUsingResources.decrementAndGet()</con:onRequestScript></con:mockService><con:requirements/><con:properties/><con:wssContainer/><con:databaseConnectionContainer/><con:reporting><con:xmlTemplates/><con:parameters/></con:reporting><con:sensitiveInformation/></con:soapui-project>
