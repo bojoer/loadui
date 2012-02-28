@@ -17,6 +17,7 @@
 			</includes>
 			<excludes>
 				<exclude>*:pom</exclude>
+				<exclude>com.google.code.findbugs</exclude>
 			</excludes>
 			<useTransitiveDependencies>true</useTransitiveDependencies>
 			<useTransitiveFiltering>true</useTransitiveFiltering>

@@ -18,6 +18,7 @@
 			<excludes>
 				<exclude>*:pom</exclude>
 				<exclude>javafx</exclude>
+				<exclude>com.google.code.findbugs</exclude>
 			</excludes>
 			<useTransitiveDependencies>true</useTransitiveDependencies>
 			<useTransitiveFiltering>true</useTransitiveFiltering>
