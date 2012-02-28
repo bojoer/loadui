@@ -1,146 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:loadui-project label="Sample Project 4" id="f1085d14-4b25-479e-a511-4c34971dd2fe" xmlns:con="http://eviware.com/loadui/config"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="CanvasItem.abortOnFinish" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="ModelItem.saveReport" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="ModelItem.reportFolder" type="java.lang.String"/><con:property propagates="true" key="ModelItem.reportFormat" type="java.lang.String"/><con:property propagates="true" key="ProjectItem.statisticNumberOfAutosaves" type="java.lang.Long">5</con:property></con:properties><con:attributes><con:property key="miniature">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
-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
-</con:property><con:property key="gui.note.0">335;200;429;97;This is an example of a complex scenario, simulating realistic user behavior. Don't miss the preconfigured charts in the Statistics Workbench!
+<con:loadui-project label="Sample Project 4" id="f1085d14-4b25-479e-a511-4c34971dd2fe" xmlns:con="http://eviware.com/loadui/config"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="CanvasItem.abortOnFinish" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="ModelItem.saveReport" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="ModelItem.reportFolder" type="java.lang.String"/><con:property propagates="true" key="ModelItem.reportFormat" type="java.lang.String"/><con:property propagates="true" key="ProjectItem.statisticNumberOfAutosaves" type="java.lang.Long">5</con:property></con:properties><con:attributes><con:property key="miniature">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
+</con:property><con:property key="gui.note.0">335;203;429;97;This is an example of a complex scenario, simulating realistic user behavior. Don't miss the preconfigured charts in the Statistics Workbench!
 
-There's a video explaining this sample project at http://loadui.org/sample3</con:property><con:property key="gui.note.1">200;577;198;82;This is the local built in server. It is just here for demo purposes. In real load testing you would want to use a "real" server.</con:property><con:property key="gui.statistics.view">statistics.manage</con:property></con:attributes><con:addons/><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="Mock Server" id="399422fc-da33-47ee-8cce-e59b134058b0"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="stateProperty" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Henrik\Desktop\Sample Project\soapUIsample</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="settingsFile" type="java.io.File">C:\Users\Henrik\soapui-settings.xml</con:property><con:property propagates="true" key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">..\Desktop\Sample Project\soapUIsample</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="mockService" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Mock Service</con:property><con:property propagates="true" key="path" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/</con:property><con:property propagates="true" key="port" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">8081</con:property><con:property propagates="true" key="addRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="addResponse" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">459</con:property><con:property key="gui.layoutY">537</con:property><con:property key="gui.compact">false</con:property></con:attributes><con:addons/></con:component><con:scene label="Registered customers" id="354aa3a4-e22e-405d-bd8d-cb16d47d5c58" version="78"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="CanvasItem.abortOnFinish" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="SceneItem.followProject" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="gui.layoutX">807</con:property><con:property key="gui.layoutY">200</con:property><con:property key="miniature">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
-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
+Make sure to run the whole project (not only the VU Scenario) so that the Mock Server below also starts.</con:property><con:property key="gui.note.1">492;673;215;84;This is the local built in server. It is just here for demo purposes. In real load testing you would want to use a "real" server.</con:property><con:property key="gui.statistics.view">statistics.view</con:property></con:attributes><con:addons/><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="Mock Server" id="399422fc-da33-47ee-8cce-e59b134058b0"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="stateProperty" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-installers\src\main\resources\samples\soapUIsample.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="settingsFile" type="java.io.File">C:\Users\Henrik\soapui-settings.xml</con:property><con:property propagates="true" key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">soapUIsample.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="mockService" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">MockService</con:property><con:property propagates="true" key="path" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/mockServer</con:property><con:property propagates="true" key="port" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">19397</con:property><con:property propagates="true" key="addRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="addResponse" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">761</con:property><con:property key="gui.layoutY">626</con:property><con:property key="gui.compact">false</con:property></con:attributes><con:addons/></con:component><con:scene label="Registered customers" id="354aa3a4-e22e-405d-bd8d-cb16d47d5c58" version="78"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="CanvasItem.abortOnFinish" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="SceneItem.followProject" type="java.lang.Boolean">true</con:property></con:properties><con:attributes><con:property key="gui.layoutX">808</con:property><con:property key="gui.layoutY">200</con:property><con:property key="miniature">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
+YII=
 </con:property><con:property key="gui.note.0">925;257;365;130;1. Users arrive randomly, with a mean of 2 per second and immediately Login.
 
-The Login procedure is defined in a soapUI Project. It fetches sample users from a DataSource and Logins with a SOAP request. Finally, it persists the session-ID so that it can be used later on (e.g. for purchasing items).</con:property><con:property key="gui.note.1">570;695;156;88;2. Users then proceed to either Search (40% probability) or Logout (60% probability).</con:property><con:property key="gui.compact">false</con:property><con:property key="gui.note.2">598;1203;140;88;3. After searching for products, users may purchase them (30% probability).</con:property></con:attributes><con:addons/><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="Login" id="ff804401-3374-43c6-94ed-93d35d4e2a46"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="concurrentSamples" type="java.lang.Long">100</con:property><con:property propagates="true" key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property propagates="true" key="countDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="false" key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Henrik\soapUI-Tutorials\sample-soapui-project.xml</con:property><con:property propagates="true" key="_projectFileworkingCopy" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Henrik\soapUI-Tutorials\sample-soapui-project.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="settingsFile" type="java.io.File">C:\Users\Henrik\soapui-settings.xml</con:property><con:property propagates="false" key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">..\soapUI-Tutorials\sample-soapui-project.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Sample Simple TestSuite</con:property><con:property propagates="true" key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Simple Login and Logout w. Properties Steps</con:property><con:property propagates="true" key="raiseError" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="outputTestCaseProperties" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property propagates="true" key="_testCasePropertiesTableModel" type="java.lang.String"/><con:property propagates="true" key="closeConnectionsAfterRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="disabledTestSteps" type="java.lang.String"/><con:property propagates="true" key="disableSoapuiAssertions" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="_valueToOverride_sessionId" type="java.lang.String" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="_valueToOverride_userName" type="java.lang.String"/><con:property propagates="true" key="_valueToOverride_password" type="java.lang.String" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">383</con:property><con:property key="gui.layoutY">254</con:property><con:property key="gui.compact">false</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Random" id="baef5255-217e-420c-a3c1-f117b535a7a6" category="generators"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="_script" type="java.lang.String">// 
+The Login procedure is defined in a soapUI Project. It fetches sample users from a DataSource and Logins with a SOAP request. Finally, it persists the session-ID so that it can be used later on (e.g. for purchasing items).</con:property><con:property key="gui.note.1">570;695;156;88;2. Users then proceed to either Search (40% probability) or Logout (60% probability).</con:property><con:property key="gui.compact">false</con:property><con:property key="gui.note.2">598;1203;140;88;3. After searching for products, users may purchase them (30% probability).</con:property></con:attributes><con:addons/><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="Login" id="ff804401-3374-43c6-94ed-93d35d4e2a46"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="concurrentSamples" type="java.lang.Long">100</con:property><con:property propagates="true" key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property propagates="true" key="countDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="false" key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="_projectFileworkingCopy" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="settingsFile" type="java.io.File">C:\Users\Henrik\soapui-settings.xml</con:property><con:property propagates="false" key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">..\..\..\..\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Sample</con:property><con:property propagates="true" key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Login</con:property><con:property propagates="true" key="raiseError" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="outputTestCaseProperties" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property propagates="true" key="_testCasePropertiesTableModel" type="java.lang.String">sessionId=8065059191550509</con:property><con:property propagates="true" key="closeConnectionsAfterRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="disabledTestSteps" type="java.lang.String"/><con:property propagates="true" key="disableSoapuiAssertions" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="_valueToOverride_sessionId" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">8065059191550509</con:property><con:property propagates="true" key="_valueToOverride_userName" type="java.lang.String"/><con:property propagates="true" key="_valueToOverride_password" type="java.lang.String" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">383</con:property><con:property key="gui.layoutY">254</con:property><con:property key="gui.compact">false</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Random" id="baef5255-217e-420c-a3c1-f117b535a7a6" category="generators"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="_script" type="java.lang.String">// 
 // Copyright 2011 SmartBear Software
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
@@ -624,7 +621,21 @@ compactLayout {
 		node( label:'Delay ', content: { displayNA ? 'n/a' : "$waitTime ms" }, constraints:'w 60!' )
 		node( label:'Waiting ', content: { displayNA ? 'n/a' : waitingCount.get() }, constraints:'w 50!' )
 	}
-}</con:property><con:property propagates="true" key="delay" type="java.lang.Long">8000</con:property><con:property propagates="true" key="selected" type="java.lang.String">Gaussian</con:property><con:property propagates="true" key="randomDelay" type="java.lang.Integer">50</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Delay</con:property><con:property key="_digest">59a00e54134bd5915c32ab9f59041101</con:property><con:property key="_id">com.eviware.Delay</con:property><con:property key="_classLoader">com.eviware.Delay</con:property><con:property key="gui.layoutX">921</con:property><con:property key="gui.layoutY">466</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="Logout" id="ca41cdda-7cb2-40c7-9af8-6290fbf50dca"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="concurrentSamples" type="java.lang.Long">100</con:property><con:property propagates="true" key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property propagates="true" key="countDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="false" key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Henrik\soapUI-Tutorials\sample-soapui-project.xml</con:property><con:property propagates="true" key="_projectFileworkingCopy" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Henrik\soapUI-Tutorials\sample-soapui-project.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="settingsFile" type="java.io.File">C:\Users\Henrik\soapui-settings.xml</con:property><con:property propagates="false" key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">..\soapUI-Tutorials\sample-soapui-project.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Sample Simple TestSuite</con:property><con:property propagates="true" key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Simple Login and Logout w. Properties Steps</con:property><con:property propagates="true" key="raiseError" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="outputTestCaseProperties" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property propagates="true" key="_testCasePropertiesTableModel" type="java.lang.String"/><con:property propagates="true" key="closeConnectionsAfterRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="disabledTestSteps" type="java.lang.String"/><con:property propagates="true" key="disableSoapuiAssertions" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="_valueToOverride_sessionid" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">1060</con:property><con:property key="gui.layoutY">931</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="Search" id="8992e9a8-ddf0-40fb-bc9a-552331914df6"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="concurrentSamples" type="java.lang.Long">100</con:property><con:property propagates="true" key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property propagates="true" key="countDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="false" key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Henrik\soapUI-Tutorials\sample-soapui-project.xml</con:property><con:property propagates="true" key="_projectFileworkingCopy" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Henrik\soapUI-Tutorials\sample-soapui-project.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="settingsFile" type="java.io.File">C:\Users\Henrik\soapui-settings.xml</con:property><con:property propagates="false" key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">..\soapUI-Tutorials\sample-soapui-project.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Sample Simple TestSuite</con:property><con:property propagates="true" key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Simple Login and Logout w. Properties Steps</con:property><con:property propagates="true" key="raiseError" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="outputTestCaseProperties" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property propagates="true" key="_testCasePropertiesTableModel" type="java.lang.String"/><con:property propagates="true" key="closeConnectionsAfterRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="disabledTestSteps" type="java.lang.String"/><con:property propagates="true" key="disableSoapuiAssertions" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="_valueToOverride_sessionId" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">837</con:property><con:property key="gui.layoutY">930</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="Purchase" id="4ac12507-0682-4b64-a66c-d0e414295726"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="concurrentSamples" type="java.lang.Long">100</con:property><con:property propagates="true" key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property propagates="true" key="countDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="false" key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Henrik\soapUI-Tutorials\sample-soapui-project.xml</con:property><con:property propagates="true" key="_projectFileworkingCopy" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">C:\Users\Henrik\soapUI-Tutorials\sample-soapui-project.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="settingsFile" type="java.io.File">C:\Users\Henrik\soapui-settings.xml</con:property><con:property propagates="false" key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">..\soapUI-Tutorials\sample-soapui-project.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Sample Simple TestSuite</con:property><con:property propagates="true" key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Simple Login and Logout w. Properties Steps</con:property><con:property propagates="true" key="raiseError" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="outputTestCaseProperties" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property propagates="true" key="_testCasePropertiesTableModel" type="java.lang.String"/><con:property propagates="true" key="closeConnectionsAfterRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="disabledTestSteps" type="java.lang.String"/><con:property propagates="true" key="disableSoapuiAssertions" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="_valueToOverride_sessionId" type="java.lang.String"/></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">1156</con:property><con:property key="gui.layoutY">1329</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Delay (1)" id="5f830135-39a0-4b5e-9950-a9fc04d83455" category="flow"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="_script" type="java.lang.String">// 
+}</con:property><con:property propagates="true" key="delay" type="java.lang.Long">8000</con:property><con:property propagates="true" key="selected" type="java.lang.String">Gaussian</con:property><con:property propagates="true" key="randomDelay" type="java.lang.Integer">50</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Delay</con:property><con:property key="_digest">59a00e54134bd5915c32ab9f59041101</con:property><con:property key="_id">com.eviware.Delay</con:property><con:property key="_classLoader">com.eviware.Delay</con:property><con:property key="gui.layoutX">921</con:property><con:property key="gui.layoutY">466</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="Logout" id="ca41cdda-7cb2-40c7-9af8-6290fbf50dca"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="concurrentSamples" type="java.lang.Long">100</con:property><con:property propagates="true" key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property propagates="true" key="countDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="false" key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="_projectFileworkingCopy" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="settingsFile" type="java.io.File">C:\Users\Henrik\soapui-settings.xml</con:property><con:property propagates="false" key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">..\..\..\..\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Sample</con:property><con:property propagates="true" key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Logout</con:property><con:property propagates="true" key="raiseError" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="outputTestCaseProperties" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property propagates="true" key="_testCasePropertiesTableModel" type="java.lang.String"><![CDATA[sessionId=34792095165317605|response=<fdsap/envelope/">
+    <soapenv:Body>
+       <soapenv:Fault>
+          <faultcode>Client</faultcode>
+          <faultstring>Invalid Session Id</faultstring>
+       </soapenv:Fault>
+    </soapenv:Body>
+ </soapenv:Envelope>]]></con:property><con:property propagates="true" key="closeConnectionsAfterRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="disabledTestSteps" type="java.lang.String"/><con:property propagates="true" key="disableSoapuiAssertions" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="_valueToOverride_sessionid" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="_valueToOverride_sessionId" type="java.lang.String">34792095165317605</con:property><con:property propagates="true" key="_valueToOverride_response" type="java.lang.String"><![CDATA[<fdsap/envelope/">
+    <soapenv:Body>
+       <soapenv:Fault>
+          <faultcode>Client</faultcode>
+          <faultstring>Invalid Session Id</faultstring>
+       </soapenv:Fault>
+    </soapenv:Body>
+ </soapenv:Envelope>]]></con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">1060</con:property><con:property key="gui.layoutY">931</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="Search" id="8992e9a8-ddf0-40fb-bc9a-552331914df6"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="concurrentSamples" type="java.lang.Long">100</con:property><con:property propagates="true" key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property propagates="true" key="countDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="false" key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="_projectFileworkingCopy" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="settingsFile" type="java.io.File">C:\Users\Henrik\soapui-settings.xml</con:property><con:property propagates="false" key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">..\..\..\..\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Sample</con:property><con:property propagates="true" key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Search</con:property><con:property propagates="true" key="raiseError" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="outputTestCaseProperties" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property propagates="true" key="_testCasePropertiesTableModel" type="java.lang.String">sessionId=29509397658650494</con:property><con:property propagates="true" key="closeConnectionsAfterRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="disabledTestSteps" type="java.lang.String"/><con:property propagates="true" key="disableSoapuiAssertions" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="_valueToOverride_sessionId" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">29509397658650494</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">837</con:property><con:property key="gui.layoutY">930</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="Purchase" id="4ac12507-0682-4b64-a66c-d0e414295726"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="concurrentSamples" type="java.lang.Long">100</con:property><con:property propagates="true" key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property propagates="true" key="countDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="false" key="projectFile" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="_projectFileworkingCopy" type="java.io.File" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="settingsFile" type="java.io.File">C:\Users\Henrik\soapui-settings.xml</con:property><con:property propagates="false" key="projectRelativePath" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">..\..\..\..\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="testSuite" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Sample</con:property><con:property propagates="true" key="testCase" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Login</con:property><con:property propagates="true" key="raiseError" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="outputTestCaseProperties" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property propagates="true" key="_testCasePropertiesTableModel" type="java.lang.String">sessionId=8065059191550509</con:property><con:property propagates="true" key="closeConnectionsAfterRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="disabledTestSteps" type="java.lang.String"/><con:property propagates="true" key="disableSoapuiAssertions" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="_valueToOverride_sessionId" type="java.lang.String">8065059191550509</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">1156</con:property><con:property key="gui.layoutY">1329</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Delay (1)" id="5f830135-39a0-4b5e-9950-a9fc04d83455" category="flow"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="_script" type="java.lang.String">// 
 // Copyright 2011 SmartBear Software
 // 
 // Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
