@@ -42,22 +42,22 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.dialogs.Cl
 
 public class CloneProjectDialog {
 	/**
-	 * The ProjectRef to clone.
-	 *
-	 * @author predrag
-	 */
+	* The ProjectRef to clone.
+	*
+	* @author predrag
+	*/
 	public-init var projectRef:ProjectRef;
 	var dialog:Dialog;
 	
 	var form:Form;
 	function ok():Void {
-					var clone: ProjectRef = cloneProject(projectRef);
-					if(form.getField('open').value as Boolean){
-						clone.setEnabled(true);
-						AppState.byName("MAIN").setActiveCanvas( clone.getProject() );
-					}
-					dialog.close();
-				}
+		var clone: ProjectRef = cloneProject(projectRef);
+		if(form.getField('open').value as Boolean){
+			clone.setEnabled(true);
+			AppState.byName("MAIN").setActiveCanvas( clone.getProject() );
+		}
+		dialog.close();
+	}
 	
 	postinit {
 		if( not FX.isInitialized( projectRef ) )
@@ -87,12 +87,12 @@ public class CloneProjectDialog {
 		var name: String = f.getName();
 		var path: String = f.getAbsolutePath();
 		path = path.replaceAll(name, "");
-    			
-    	var c: Integer = 1;
-    	var cloneFile: File;
-    	while((cloneFile = new File("{path}copy-{c}-of-{name}")).exists()){
-    		c++;
-    	}
+				
+		var c: Integer = 1;
+		var cloneFile: File;
+		while((cloneFile = new File("{path}copy-{c}-of-{name}")).exists()){
+			c++;
+		}
 	
 		form.getField('name').value = "Copy {c} of {pRef.getLabel()}";
 		form.getField('file').value = cloneFile;
@@ -101,27 +101,27 @@ public class CloneProjectDialog {
 	
 	function cloneProject(pRef: ProjectRef): ProjectRef {
 		var f: File = pRef.getProjectFile();
-    	var cloneFile: File = form.getField('file').value as File;
-    	
-    	var input: FileReader = new FileReader(f);
-        var out: FileWriter = new FileWriter(cloneFile);
-        
-        var sb: StringBuffer = new StringBuffer();
-        
-        var line: Integer;
-        while ((line = input.read()) != -1) {
-        	sb.append(Character.toChars(line)); 
-        }
-        input.close();
-        
-        var content: String = sb.toString();
-        content = content.replaceFirst("label=\"{pRef.getLabel()}\"", "label=\"{form.getField('name').value}\"");
+		var cloneFile: File = form.getField('file').value as File;
+		
+		var input: FileReader = new FileReader(f);
+		var out: FileWriter = new FileWriter(cloneFile);
+		
+		var sb: StringBuffer = new StringBuffer();
+		
+		var line: Integer;
+		while ((line = input.read()) != -1) {
+			sb.append(Character.toChars(line)); 
+		}
+		input.close();
+		
+		var content: String = sb.toString();
+		content = content.replaceFirst("label=\"{pRef.getLabel()}\"", "label=\"{form.getField('name').value}\"");
 		
 		var bw: BufferedWriter = new BufferedWriter(out);
 		bw.write(content, 0, content.length());
 		
 		bw.close();
-        out.close();
+		out.close();
 				
 		var clone: ProjectRef = MainWindow.instance.workspace.importProject(cloneFile, true);
 		clone.setEnabled(false);
@@ -129,5 +129,5 @@ public class CloneProjectDialog {
 		clone.setAttribute("miniature", pRef.getAttribute("miniature", ""));
 		
 		return clone;
-    }
+	}
 }
