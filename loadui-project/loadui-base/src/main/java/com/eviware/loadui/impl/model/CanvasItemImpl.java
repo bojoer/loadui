@@ -102,7 +102,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	protected Date startTime = null;
 	protected Date endTime = null;
 	private boolean hasStarted = false;
-	protected String lastSavedHash;
+	private String lastSavedHash;
 
 	private boolean loadingErrors = false;
 
@@ -580,6 +580,11 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	public Date getEndTime()
 	{
 		return endTime;
+	}
+
+	protected void markClean()
+	{
+		lastSavedHash = DigestUtils.md5Hex( getConfig().xmlText() );
 	}
 
 	@Override

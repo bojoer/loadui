@@ -10,10 +10,6 @@
 	<packaging>bundle</packaging>
 	<name>loadUI JavaFX Interface</name>
 	<description>loadUI Graphical User Interface implemented in JavaFX</description>
-	<properties>
-		<maven.build.timestamp.format>yyyy/MM/dd HH\:mm</maven.build.timestamp.format>
-		<loadui.build.date>${maven.build.timestamp}</loadui.build.date>
-	</properties>
 	<build>
 		<filters>
 			<filter>src/main/filters/default.properties</filter>

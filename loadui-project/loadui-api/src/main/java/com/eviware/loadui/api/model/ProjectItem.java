@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.eviware.loadui.api.statistics.model.StatisticPages;
 
@@ -57,6 +58,7 @@ public interface ProjectItem extends CanvasItem
 	 * 
 	 * @return The parent WorkspaceItem.
 	 */
+	@Nonnull
 	public WorkspaceItem getWorkspace();
 
 	/**
@@ -74,7 +76,8 @@ public interface ProjectItem extends CanvasItem
 	 * @param label
 	 * @return
 	 */
-	public SceneItem getSceneByLabel( String label );
+	@Nullable
+	public SceneItem getSceneByLabel( @Nonnull String label );
 
 	/**
 	 * Creates a new scene in the project.
@@ -83,7 +86,8 @@ public interface ProjectItem extends CanvasItem
 	 *           The name to give the new SceneItem.
 	 * @return The newly created SceneItem.
 	 */
-	public SceneItem createScene( String label );
+	@Nonnull
+	public SceneItem createScene( @Nonnull String label );
 
 	/**
 	 * Gets all the agents which are currently assigned to a given scene.
@@ -102,7 +106,7 @@ public interface ProjectItem extends CanvasItem
 	 * @param agent
 	 * @return
 	 */
-	public boolean isSceneLoaded( SceneItem scene, AgentItem agent );
+	public boolean isSceneLoaded( @Nonnull SceneItem scene, @Nonnull AgentItem agent );
 
 	/**
 	 * Broadcasts a message to all AgentItems currently assigned to the given
@@ -115,7 +119,7 @@ public interface ProjectItem extends CanvasItem
 	 * @param data
 	 *           The data to send.
 	 */
-	public void broadcastMessage( SceneItem scene, String channel, Object data );
+	public void broadcastMessage( @Nonnull SceneItem scene, @Nonnull String channel, Object data );
 
 	/**
 	 * Gets all the scenes to which a given agent is assigned to.
@@ -125,7 +129,7 @@ public interface ProjectItem extends CanvasItem
 	 * @return A Collection of SceneItems.
 	 */
 	@Nonnull
-	public Collection<? extends SceneItem> getScenesAssignedTo( AgentItem agent );
+	public Collection<? extends SceneItem> getScenesAssignedTo( @Nonnull AgentItem agent );
 
 	/**
 	 * Gets all the scene-agent assignments.
@@ -143,7 +147,7 @@ public interface ProjectItem extends CanvasItem
 	 * @param agent
 	 *           The AgentItem to assign to the SceneItem.
 	 */
-	public void assignScene( SceneItem scene, AgentItem agent );
+	public void assignScene( @Nonnull SceneItem scene, @Nonnull AgentItem agent );
 
 	/**
 	 * Unassigns a previously assigned agent to a scene.
@@ -153,7 +157,7 @@ public interface ProjectItem extends CanvasItem
 	 * @param agent
 	 *           The AgentItem to unassign.
 	 */
-	public void unassignScene( SceneItem scene, AgentItem agent );
+	public void unassignScene( @Nonnull SceneItem scene, @Nonnull AgentItem agent );
 
 	/**
 	 * Checks if summaries are saved at the end of each run
@@ -176,7 +180,7 @@ public interface ProjectItem extends CanvasItem
 	 * @param dest
 	 *           file where to save project
 	 */
-	public void saveAs( File dest );
+	public void saveAs( @Nonnull File dest );
 
 	/**
 	 * The folder for saving summaries

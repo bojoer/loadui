@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
@@ -341,7 +340,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					throw new RuntimeException( "Unable to create project file: " + projectFile.getAbsolutePath() );
 
 			XmlBeansUtils.saveToFile( doc, projectFile );
-			lastSavedHash = DigestUtils.md5Hex( getConfig().xmlText() );
+			markClean();
 		}
 		catch( IOException e )
 		{
@@ -390,6 +389,16 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			throw new RuntimeException( "Unable to delete project file: " + projectFile.getAbsolutePath() );
 
 		super.delete();
+	}
+
+	@Override
+	protected void markClean()
+	{
+		super.markClean();
+		for( SceneItemImpl scene : scenes )
+		{
+			scene.markClean();
+		}
 	}
 
 	@Override

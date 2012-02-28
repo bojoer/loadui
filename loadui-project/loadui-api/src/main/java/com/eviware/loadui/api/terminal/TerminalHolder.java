@@ -17,6 +17,9 @@ package com.eviware.loadui.api.terminal;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.TerminalEvent;
@@ -31,6 +34,7 @@ public interface TerminalHolder extends EventFirer, Addressable
 	 * 
 	 * @return A Collection of Terminals.
 	 */
+	@Nonnull
 	public Collection<Terminal> getTerminals();
 
 	/**
@@ -40,6 +44,7 @@ public interface TerminalHolder extends EventFirer, Addressable
 	 *           The name of the desired Terminal.
 	 * @return The Terminal with the given name, or null.
 	 */
+	@Nullable
 	public Terminal getTerminalByName( String name );
 
 	/**
@@ -50,12 +55,13 @@ public interface TerminalHolder extends EventFirer, Addressable
 	 * @param event
 	 *           The TerminalEvent to react to.
 	 */
-	public void handleTerminalEvent( InputTerminal input, TerminalEvent event );
+	public void handleTerminalEvent( @Nonnull InputTerminal input, @Nonnull TerminalEvent event );
 
 	/**
 	 * Get the canvas which holds this CanvasObjectItem.
 	 * 
 	 * @return The parent CanvasItem.
 	 */
+	@Nonnull
 	public CanvasItem getCanvas();
 }

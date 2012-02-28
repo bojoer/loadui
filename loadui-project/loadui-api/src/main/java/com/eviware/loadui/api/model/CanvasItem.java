@@ -18,6 +18,7 @@ package com.eviware.loadui.api.model;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.counter.CounterHolder;
@@ -71,6 +72,7 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	 * 
 	 * @return The ProjectItem which this CanvasItem belongs to.
 	 */
+	@Nonnull
 	public ProjectItem getProject();
 
 	/**
@@ -89,7 +91,8 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	 *           The ComponentDescriptor to create a component from.
 	 * @return The newly created ComponentItem.
 	 */
-	public ComponentItem createComponent( String label, ComponentDescriptor descriptor );
+	@Nonnull
+	public ComponentItem createComponent( @Nonnull String label, @Nonnull ComponentDescriptor descriptor );
 
 	/**
 	 * Get the child components.
@@ -106,7 +109,8 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	 * @param label
 	 * @return
 	 */
-	public ComponentItem getComponentByLabel( String label );
+	@Nullable
+	public ComponentItem getComponentByLabel( @Nonnull String label );
 
 	/**
 	 * Gets the connections in this canvas.
@@ -125,7 +129,8 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	 *           The InputTerminal to connect to.
 	 * @return The newly created Connection.
 	 */
-	public Connection connect( OutputTerminal output, InputTerminal input );
+	@Nonnull
+	public Connection connect( @Nonnull OutputTerminal output, @Nonnull InputTerminal input );
 
 	/**
 	 * Gets the current running state of the CanvasItem.
@@ -156,7 +161,7 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	 * @param counterName
 	 * @param counterValue
 	 */
-	public void setLimit( String counterName, long counterValue );
+	public void setLimit( @Nonnull String counterName, long counterValue );
 
 	/**
 	 * Get the currently set limit for the given Counter, or -1 if no limit has
@@ -165,7 +170,7 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	 * @param counterName
 	 * @return
 	 */
-	public long getLimit( String counterName );
+	public long getLimit( @Nonnull String counterName );
 
 	/**
 	 * Called on a CanvasItem to generate a summary of the last completed run.
@@ -179,6 +184,7 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	 * 
 	 * @return
 	 */
+	@Nullable
 	public Summary getSummary();
 
 	/**
@@ -190,7 +196,8 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	 * 
 	 * @return The new copy of the given object.
 	 */
-	public CanvasObjectItem duplicate( CanvasObjectItem obj );
+	@Nonnull
+	public CanvasObjectItem duplicate( @Nonnull CanvasObjectItem obj );
 
 	/**
 	 * Used for checking if there were any errors when loading the component.

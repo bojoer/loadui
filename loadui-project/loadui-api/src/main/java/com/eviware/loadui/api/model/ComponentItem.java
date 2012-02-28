@@ -57,6 +57,7 @@ public interface ComponentItem extends CanvasObjectItem, CounterHolder, Statisti
 	 * 
 	 * @return
 	 */
+	@Nonnull
 	public String getType();
 
 	/**
@@ -71,6 +72,7 @@ public interface ComponentItem extends CanvasObjectItem, CounterHolder, Statisti
 	 * 
 	 * @return The ComponentContext for the component.
 	 */
+	@Nonnull
 	public ComponentContext getContext();
 
 	/**
@@ -142,5 +144,5 @@ public interface ComponentItem extends CanvasObjectItem, CounterHolder, Statisti
 	 * 
 	 * @param summary
 	 */
-	public void generateSummary( MutableChapter summary );
+	public void generateSummary( @Nonnull MutableChapter summary );
 }

@@ -57,6 +57,7 @@ import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.api.terminal.TerminalProxy;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.dispatch.CustomThreadPoolExecutor;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -378,6 +379,8 @@ public class ControllerImpl
 			endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.STARTED, sceneId ) );
 			log.info( "Started scene: {}", scene.getLabel() );
 
+			String command = null;
+
 			while( true )
 			{
 				try
@@ -394,70 +397,80 @@ public class ControllerImpl
 						}
 						return;
 					}
-					else if( scene.getVersion() > Long.parseLong( args.get( 1 ) ) )
-					{
-						log.debug( "SceneItem out of sync with controller ({} > {}), restarting...", scene.getVersion(),
-								args.get( 1 ) );
-						project.removeScene( scene );
-						ReleasableUtils.release( scene );
-						synchronized( sceneAgents )
-						{
-							sceneAgents.remove( sceneId );
-						}
-						executorService.execute( new SceneAgent( sceneId, endpoint, project ) );
-						return;
-					}
-					else if( SceneCommunication.LABEL.equals( args.get( 2 ) ) )
+
+					Preconditions.checkArgument( scene.getVersion() == Long.parseLong( args.get( 1 ) ),
+							"TestCase version out of sync!" );
+
+					command = args.get( 2 );
+					if( SceneCommunication.LABEL.equals( command ) )
 					{
 						scene.setLabel( args.get( 3 ) );
 					}
-					else if( SceneCommunication.ADD_COMPONENT.equals( args.get( 2 ) ) )
+					else if( SceneCommunication.ADD_COMPONENT.equals( command ) )
 					{
-						ComponentItem component = conversionService.convert( args.get( 3 ), ComponentItem.class );
+						ComponentItem component = Preconditions.checkNotNull(
+								conversionService.convert( args.get( 3 ), ComponentItem.class ), "Component not found!" );
 						propertySynchronizer.syncProperties( component, endpoint );
 						counterSynchronizer.syncCounters( component, endpoint );
 					}
-					else if( SceneCommunication.REMOVE_COMPONENT.equals( args.get( 2 ) ) )
+					else if( SceneCommunication.REMOVE_COMPONENT.equals( command ) )
 					{
-						ComponentItem component = ( ComponentItem )addressableRegistry.lookup( args.get( 3 ) );
+						ComponentItem component = Preconditions.checkNotNull(
+								( ComponentItem )addressableRegistry.lookup( args.get( 3 ) ), "Component not found!" );
 						component.delete();
 					}
-					else if( SceneCommunication.CONNECT.equals( args.get( 2 ) ) )
+					else if( SceneCommunication.CONNECT.equals( command ) )
 					{
-						OutputTerminal output = ( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) );
-						InputTerminal input = ( InputTerminal )addressableRegistry.lookup( args.get( 4 ) );
+						OutputTerminal output = Preconditions.checkNotNull(
+								( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) ), "OutputTerminal not found!" );
+						InputTerminal input = Preconditions.checkNotNull(
+								( InputTerminal )addressableRegistry.lookup( args.get( 4 ) ), "InputTerminal not found!" );
 						scene.connect( output, input );
 					}
-					else if( SceneCommunication.DISCONNECT.equals( args.get( 2 ) ) )
+					else if( SceneCommunication.DISCONNECT.equals( command ) )
 					{
-						OutputTerminal output = ( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) );
-						InputTerminal input = ( InputTerminal )addressableRegistry.lookup( args.get( 4 ) );
+						OutputTerminal output = Preconditions.checkNotNull(
+								( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) ), "OutputTerminal not found!" );
+						InputTerminal input = Preconditions.checkNotNull(
+								( InputTerminal )addressableRegistry.lookup( args.get( 4 ) ), "InputTerminal not found!" );
 						scene.connect( output, input ).disconnect();
 					}
-					else if( SceneCommunication.EXPORT.equals( args.get( 2 ) ) )
+					else if( SceneCommunication.EXPORT.equals( command ) )
 					{
-						OutputTerminal terminal = ( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) );
+						OutputTerminal terminal = Preconditions.checkNotNull(
+								( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) ), "OutputTerminal not found!" );
 						scene.exportTerminal( terminal );
 						terminalProxy.export( terminal );
 					}
-					else if( SceneCommunication.UNEXPORT.equals( args.get( 2 ) ) )
+					else if( SceneCommunication.UNEXPORT.equals( command ) )
 					{
-						OutputTerminal terminal = ( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) );
+						OutputTerminal terminal = Preconditions.checkNotNull(
+								( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) ), "OutputTerminal not found!" );
 						scene.unexportTerminal( terminal );
 						terminalProxy.unexport( terminal );
 					}
-					else if( SceneCommunication.ACTION_EVENT.equals( args.get( 2 ) ) )
+					else if( SceneCommunication.ACTION_EVENT.equals( command ) )
 					{
-						( ( ModelItem )addressableRegistry.lookup( args.get( 4 ) ) ).triggerAction( args.get( 3 ) );
+						Preconditions.checkNotNull( ( ModelItem )addressableRegistry.lookup( args.get( 4 ) ),
+								"ModelItem not found!" ).triggerAction( args.get( 3 ) );
 					}
-					else if( SceneCommunication.CANCEL_COMPONENTS.equals( args.get( 2 ) ) )
+					else if( SceneCommunication.CANCEL_COMPONENTS.equals( command ) )
 					{
 						scene.cancelComponents();
 					}
 				}
-				catch( InterruptedException e )
+				catch( Exception e )
 				{
-					e.printStackTrace();
+					log.error( "Error in VU Scenario " + scene.getLabel() + ", when running command: " + command
+							+ ". Restarting...", e );
+					project.removeScene( scene );
+					ReleasableUtils.release( scene );
+					synchronized( sceneAgents )
+					{
+						sceneAgents.remove( sceneId );
+					}
+					executorService.execute( new SceneAgent( sceneId, endpoint, project ) );
+					return;
 				}
 			}
 		}

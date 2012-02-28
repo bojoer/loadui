@@ -15,6 +15,9 @@
  */
 package com.eviware.loadui.api.model;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.eviware.loadui.api.addon.AddonHolder;
 import com.eviware.loadui.api.traits.Describable;
 import com.eviware.loadui.api.traits.Labeled;
@@ -37,6 +40,7 @@ public interface ModelItem extends BaseItem, AddonHolder, AttributeHolder, Prope
 	 * 
 	 * @return The full URL of a help page for the ModelItem.
 	 */
+	@Nullable
 	public String getHelpUrl();
 
 	/**
@@ -48,5 +52,5 @@ public interface ModelItem extends BaseItem, AddonHolder, AttributeHolder, Prope
 	 * @param actionName
 	 *           The name of the action to trigger.
 	 */
-	public void triggerAction( String actionName );
+	public void triggerAction( @Nonnull String actionName );
 }
