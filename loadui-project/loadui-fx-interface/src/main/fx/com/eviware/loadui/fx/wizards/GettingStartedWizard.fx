@@ -110,7 +110,8 @@ public class GettingStartedWizard {
   					                     openURL("http://loadui.org/Getting-Started-with-loadUI/your-first-load-test.html")
   					                 }
 					             },
-					             Button {
+					             //TODO: Replace with "Import included sample projects"
+					             /*Button {
 					                 text: "Open the included sample project"
 					                 action: function() {
 					                 		def samplesDir = new File("samples");
@@ -139,7 +140,7 @@ public class GettingStartedWizard {
  				                     		} 
 					                     }
 					                 }
-					             },
+					             },*/
 					             Label {
  					                 text: "             " 
  					             },
