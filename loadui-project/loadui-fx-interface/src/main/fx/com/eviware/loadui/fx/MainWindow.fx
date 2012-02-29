@@ -83,8 +83,12 @@ public def PROJECT_BACK = "project.back";
 public def TESTCASE_FRONT = "testcase.front";
 
 public function createInstance( scene:Scene, windowController:WindowControllerImpl, workspaceProvider:WorkspaceProvider ):MainWindow {
-	instance = MainWindow { scene: scene , wc: windowController, workspaceProvider: workspaceProvider };
-	instance.initialize();
+	try {
+		instance = MainWindow { scene: scene , wc: windowController, workspaceProvider: workspaceProvider };
+		instance.initialize();
+	} catch( e ) {
+		e.printStackTrace();
+	}
 	
 	return instance;
 }

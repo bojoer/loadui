@@ -55,121 +55,105 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.wizards.Ge
 public def SHOW_GETTING_STARTED = "gui.getting_started_wizard";
 
 public class GettingStartedWizard {
-    
-    	public var title:String = "WELCOME TO LOADUI";
-    	public var x:Number = 100;
-    	public var y:Number = 100;
-    	var workspace: WorkspaceItem = MainWindow.instance.workspace;
-    	var dialogRef: Dialog;
-    	var stackLayoutInfo:LayoutInfo;
-    	var cb:CheckBox = CheckBox {
-             selected: workspace.getAttribute( SHOW_GETTING_STARTED, "true" ) != "true"
-             text: "Don't show this dialog again"
-         };
-    	
-    	var tmpX = bind cb.selected on replace {
-    		workspace.setAttribute( SHOW_GETTING_STARTED, "{not cb.selected}" );
-    	}
-    	
-    	public function show() {
-    
-    		dialogRef = Dialog {
-    		 x: x
-    		 y: y
-             title: title
-             noOk: true
-             noCancel: true
-             content: [
-                 Label{
-                     font: Font.font("Ariel", FontWeight.BOLD, 11 )
- 				   	 text: "Get started with one of the following options          "
- 				 },
-                 Stack {
-	 				 layoutInfo: LayoutInfo { margin: Insets { left: 10, top: 15, right: 10, bottom: 10 } }
-	 				 padding: Insets { left: 18, top: 20, right: 68, bottom: 8 }
-	 				 content: [
-		             	 DialogBorder {
-		 	 			     layoutInfo: LayoutInfo { vfill: true hfill: true, margin: Insets { left: -30, top: -20, right: -80, bottom: -42 } }
-		 	 			 }, 
-		 	 			 VBox {
-		 	 			    spacing: 12
-		 	 			 	content: [    
-					             Label{
-					                 font: Font.font("Ariel", FontWeight.BOLD, 11 )
-					             	 text: "Get Started"
-					             },
-					             Button {
- 					                 text: "View a demo movie"
- 					                 action: function () {
- 					                     openURL("http://www.loadui.org/loadUI-Demo-Movies.html")
- 					                 }
- 					             },
-					             Button {
-					                 text: "Read the Getting Started Tutorial"
-					                 action: function () {
-  					                     openURL("http://loadui.org/Getting-Started-with-loadUI/your-first-load-test.html")
-  					                 }
-					             },
-					             //TODO: Replace with "Import included sample projects"
-					             /*Button {
-					                 text: "Open the included sample project"
-					                 action: function() {
-					                 		def samplesDir = new File("samples");
-					                     def sampleFile = new File(samplesDir,"getting-started-project.xml");
-					                     dialogRef.close();
-					                     if( sampleFile.exists() ) {
-						                 		AppState.byName("MAIN").blockingTask(
-						                 			function():Void {
-						                 				def projectRef:ProjectRef = workspace.importProject(sampleFile, true);
-															//projectRef.setEnabled(true);
-															AppState.byName("MAIN").setActiveCanvas( projectRef.getProject() );
-						                 			}, null, "Loading Project."
-						                 		);
-					                     } else {
-					                        def dialog:Dialog = Dialog {
- 				                     			title: "Warning"
- 				                     			content: [
- 				                     				Label {
- 				                     					text: "Project file is missing"
- 				                     				}
- 				                     			]
- 				                     			okText: "OK"
- 				                     			onOk: function() {
- 				                     			   dialog.close()
- 				                     			}
- 				                     		} 
-					                     }
-					                 }
-					             },*/
-					             Label {
- 					                 text: "             " 
- 					             },
-					             Label {
-					                 font: Font.font("Ariel", FontWeight.BOLD, 11 )
-					                 text: "New Project" 
-					             },
-					             Button {
-					                 text: "Create a new loadUI Project"
-					                 action: function() {
-					                     dialogRef.close();
-					                     com.eviware.loadui.fx.dialogs.CreateNewProjectDialog { 
-                     	                      workspace: workspace
-                     	                  }
-					                 }
-					             },
-					             Label {
-  					                 text: "             "
-  					                 font: Font.font("Ariel", 2 )
-  					             },
-					             cb
-			             	]
-		 	 			 }
-	             ]
-                 }
-             ]
-    		}
-    		
-    	}
+	public var title:String = "WELCOME TO LOADUI";
+	public var x:Number = 100;
+	public var y:Number = 100;
+	var workspace: WorkspaceItem = MainWindow.instance.workspace;
+	var dialogRef: Dialog;
+	var stackLayoutInfo:LayoutInfo;
+	var cb:CheckBox = CheckBox {
+		selected: not workspace.getAttribute( SHOW_GETTING_STARTED, "true" ).equals( "true" )
+		text: "Don't show this dialog again"
+	};
+	
+	var tmpX = bind cb.selected on replace {
+		workspace.setAttribute( SHOW_GETTING_STARTED, "{not cb.selected}" );
+	}
+	
+	public function show() {
+		dialogRef = Dialog {
+			x: x
+			y: y
+			title: title
+			noOk: true
+			noCancel: true
+			content: [
+				Label {
+					font: Font.font("Ariel", FontWeight.BOLD, 11 )
+					text: "Get started with one of the following options		"
+				},
+				Stack {
+					layoutInfo: LayoutInfo { margin: Insets { left: 10, top: 15, right: 10, bottom: 10 } }
+					padding: Insets { left: 18, top: 20, right: 68, bottom: 8 }
+					content: [
+						DialogBorder {
+							layoutInfo: LayoutInfo { vfill: true hfill: true, margin: Insets { left: -30, top: -20, right: -80, bottom: -42 } }
+						}, 
+						VBox {
+							spacing: 12
+							content: [	
+								Label {
+									font: Font.font("Ariel", FontWeight.BOLD, 11 )
+									text: "Get Started"
+								},
+								Button {
+									text: "View a demo movie"
+									action: function () {
+										openURL("http://www.loadui.org/loadUI-Demo-Movies.html")
+									}
+								},
+								Button {
+									text: "Read the Getting Started Tutorial"
+									action: function () {
+										openURL("http://loadui.org/Getting-Started-with-loadUI/your-first-load-test.html")
+									}
+								},
+								//TODO: Replace with "Import included sample projects"
+								Button {
+									text: "Import included sample projects"
+									action: function() {
+										dialogRef.close();
+										def samplesDir = new File("samples");
+										for( filename in [ "sample1.xml", "sample4.xml" ] ) {
+											def sampleFile = new File( samplesDir, filename );
+											AppState.byName("MAIN").blockingTask(
+												function():Void {
+													def projectRef = workspace.importProject( sampleFile, true );
+			                         		projectRef.setAttribute( "miniature", projectRef.getProject().getAttribute( "miniature", "" ) );
+													projectRef.setEnabled( false );
+												}, null, "Loading Project: {filename}"
+											);
+										}
+									}
+								},
+								Label {
+									text: "			" 
+								},
+								Label {
+									font: Font.font("Ariel", FontWeight.BOLD, 11 )
+									text: "New Project" 
+								},
+								Button {
+									text: "Create a new loadUI Project"
+									action: function() {
+										dialogRef.close();
+										com.eviware.loadui.fx.dialogs.CreateNewProjectDialog { 
+											workspace: workspace
+										}
+									}
+								},
+								Label {
+									text: "			"
+									font: Font.font("Ariel", 2 )
+								},
+								cb
+							]
+						}
+					]
+				}
+			]
+		}
+	}
 }
 
 class DialogBorder extends Resizable, CustomNode {
@@ -190,4 +174,3 @@ class DialogBorder extends Resizable, CustomNode {
 	override function getPrefHeight( width:Number ) { -1 }
 	override function getPrefWidth( height:Number ) { -1 }
 }
-

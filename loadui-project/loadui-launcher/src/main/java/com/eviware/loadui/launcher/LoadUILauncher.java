@@ -92,7 +92,6 @@ public class LoadUILauncher
 		argv = args;
 
 		File externalFile = new File( "res/buildinfo.txt" );
-		InputStream is = null;
 
 		//Workaround for some versions of Java 6 which have a known SSL issue
 		String versionString = System.getProperty( "java.version", "0.0.0_00" );
@@ -113,33 +112,42 @@ public class LoadUILauncher
 			e.printStackTrace();
 		}
 
-		try
+		if( externalFile.exists() )
 		{
-			is = externalFile.exists() ? new FileInputStream( externalFile ) : getClass().getResourceAsStream(
-					"/properties/buildinfo.txt" );
-			Properties buildinfo = new Properties();
-			buildinfo.load( is );
-			System.setProperty( "loadui.build.number", buildinfo.getProperty( "build.number" ) );
-			System.setProperty( "loadui.build.date", buildinfo.getProperty( "build.date" ) );
-			System.setProperty( "loadui.name", buildinfo.getProperty( "loadui.name", "loadUI" ) );
-		}
-		catch( IOException e )
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
+			InputStream is = null;
 			try
 			{
-				if( is != null )
-				{
-					is.close();
-				}
+				is = new FileInputStream( externalFile );
+				Properties buildinfo = new Properties();
+				buildinfo.load( is );
+				System.setProperty( "loadui.build.number", buildinfo.getProperty( "build.number" ) );
+				System.setProperty( "loadui.build.date", buildinfo.getProperty( "build.date" ) );
+				System.setProperty( "loadui.name", buildinfo.getProperty( "loadui.name", "loadUI" ) );
 			}
 			catch( IOException e )
 			{
 				e.printStackTrace();
 			}
+			finally
+			{
+				try
+				{
+					if( is != null )
+					{
+						is.close();
+					}
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+		else
+		{
+			System.setProperty( "loadui.build.number", "unknown" );
+			System.setProperty( "loadui.build.date", "unknown" );
+			System.setProperty( "loadui.name", "loadUI" );
 		}
 
 		options = createOptions();
