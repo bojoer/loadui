@@ -232,6 +232,8 @@ public class StatisticsWindow {
 				stage = Stage {
 					//title: "{name} {LoadUI.VERSION} - Statistics Workbench"
 					icons: JavaFXActivator.icons
+					width: 1280.0
+					height: 768.0
 					scene: scene = Scene {
 						stylesheets: bind JavaFXActivator.stylesheets
 						width: 1085
