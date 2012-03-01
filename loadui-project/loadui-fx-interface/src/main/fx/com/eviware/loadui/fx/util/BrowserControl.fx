@@ -48,6 +48,7 @@ public class BrowserControl extends ScrollView {
 	
 	postinit {
 		browser = new BrowserComponent();
+		browser.setBackground( java.awt.Color.decode( "0x303030" ) );
 		if( FX.isInitialized( failureUrl ) ) browser.setFailureUrl( failureUrl );
 		if( FX.isInitialized( url ) ) browser.setUrl( url );
 		browser.addPropertyChangeListener( Listener {} );
