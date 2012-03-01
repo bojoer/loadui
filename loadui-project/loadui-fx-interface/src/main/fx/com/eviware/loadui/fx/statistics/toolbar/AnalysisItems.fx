@@ -136,27 +136,27 @@ public def REQUEST_ERRORS = AnalysisToolbarItem {
 	)
 }
 
-public def ASSERTION_FAILURES = AnalysisToolbarItem {
-	label: "Assertion Failures"
-	icon: Image { url: "{__ROOT__}images/png/assertion-failures.png" }
-	templateScript: StringUtils.multiline(
-		"import com.eviware.loadui.api.model.ProjectItem",
-		"",
-		"def variable = statisticHolder.getStatisticVariable('Assertion Failures')",
-		"if( variable?.statisticNames?.contains( 'PER_SECOND' ) ) \{",
-		"    chartGroup.type = 'com.eviware.loadui.api.statistics.model.chart.line.LineChartView'",
-		"    def chart = chartGroup.createChart( statisticHolder )",
-		"    def chartView = chartGroup.getChartViewForChart( chart )",
-		"    chartView.addSegment( 'Assertion Failures', 'PER_SECOND', 'main' )",
-		"\}",
-		"if( statisticHolder instanceof ProjectItem ) \{",
-		"    chartGroup.type = 'com.eviware.loadui.api.statistics.model.chart.line.LineChartView'",
-		"    def chart = chartGroup.createChart( statisticHolder )",
-		"    def chartView = chartGroup.getChartViewForChart( chart )",
-		"    chartView.addSegment( 'Requests', 'PER_SECOND', 'main' )",
-		"\}",
-	)
-}
+//public def ASSERTION_FAILURES = AnalysisToolbarItem {
+//	label: "Assertion Failures"
+//	icon: Image { url: "{__ROOT__}images/png/assertion-failures.png" }
+//	templateScript: StringUtils.multiline(
+//		"import com.eviware.loadui.api.model.ProjectItem",
+//		"",
+//		"def variable = statisticHolder.getStatisticVariable('Assertion Failures')",
+//		"if( variable?.statisticNames?.contains( 'PER_SECOND' ) ) \{",
+//		"    chartGroup.type = 'com.eviware.loadui.api.statistics.model.chart.line.LineChartView'",
+//		"    def chart = chartGroup.createChart( statisticHolder )",
+//		"    def chartView = chartGroup.getChartViewForChart( chart )",
+//		"    chartView.addSegment( 'Assertion Failures', 'PER_SECOND', 'main' )",
+//		"\}",
+//		"if( statisticHolder instanceof ProjectItem ) \{",
+//		"    chartGroup.type = 'com.eviware.loadui.api.statistics.model.chart.line.LineChartView'",
+//		"    def chart = chartGroup.createChart( statisticHolder )",
+//		"    def chartView = chartGroup.getChartViewForChart( chart )",
+//		"    chartView.addSegment( 'Requests', 'PER_SECOND', 'main' )",
+//		"\}",
+//	)
+//}
 
 public def RUNNING_REQUESTS = AnalysisToolbarItem {
 	label: "Running Requests"
@@ -175,5 +175,5 @@ public def RUNNING_REQUESTS = AnalysisToolbarItem {
 }
 
 public def ALL = [
-	RESPONSE_TIMES, REQUEST_THROUGHPUT, REQUEST_PERCENTILE, BYTES_THROUGHPUT, REQUEST_ERRORS, ASSERTION_FAILURES, RUNNING_REQUESTS
+	RESPONSE_TIMES, REQUEST_THROUGHPUT, REQUEST_PERCENTILE, BYTES_THROUGHPUT, REQUEST_ERRORS, RUNNING_REQUESTS
 ];
