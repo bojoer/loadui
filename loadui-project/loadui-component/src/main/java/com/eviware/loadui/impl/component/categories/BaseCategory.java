@@ -192,6 +192,12 @@ public abstract class BaseCategory implements ComponentBehavior
 		return false;
 	}
 
+	public synchronized void removeTotal( String name )
+	{
+		totalCallables.remove( name );
+		totalValues.remove( name );
+	}
+
 	public synchronized Value<Number> createTotal( String name, Callable<Number> value )
 	{
 		totalCallables.put( name, value );
