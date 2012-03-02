@@ -15,12 +15,12 @@
  */
 package com.eviware.loadui.util.groovy.resolvers;
 
+import groovy.lang.MissingMethodException;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import groovy.lang.MissingMethodException;
 
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.groovy.GroovyResolver;
@@ -87,7 +87,7 @@ public class ScheduledExecutionResolver implements GroovyResolver.Methods, Relea
 		return null;
 	}
 
-	private synchronized ScheduledExecutorService getExecutor()
+	protected synchronized ScheduledExecutorService getExecutor()
 	{
 		if( executor == null )
 		{

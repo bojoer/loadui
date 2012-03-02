@@ -61,8 +61,11 @@ createProperty( 'min', Long, 0 ) { value ->
 	if(max.value < value ) max.value = value
 }
 
-trueCount = 0
-falseCount = 0
+def trueCount = 0
+def falseCount = 0
+
+total( 'trueTotal' ) { trueCount }
+total( 'falseTotal' ) { falseCount }
 
 parseScript = {
 	if( condition.value ) {
@@ -103,25 +106,27 @@ onSignature = { outgoing, signature ->
 	redraw()
 }
 
-onMessage = { incoming, outgoing, message ->
-	def result = false
-	if( advancedMode.value ) {
-		try {
-			script.binding = new Binding( new HashMap( message ) )
-			result = script.run() as Boolean
-		} catch( e ) {
-			log.error( "Unable to parse condition: $condition.value", e )
-			setInvalid( true )
+onMessage = { outgoing, incoming, message ->
+	if( incoming == incomingTerminal ) {
+		def result = false
+		if( advancedMode.value ) {
+			try {
+				script.binding = new Binding( new HashMap( message ) )
+				result = script.run() as Boolean
+			} catch( e ) {
+				log.error( "Unable to parse condition: $condition.value", e )
+				setInvalid( true )
+			}
+		} else {
+			result = assertValue( message[valueName.value] )
 		}
-	} else {
-		result = assertValue( message[valueName.value] )
-	}
-	if( result ) {
-		trueCount++
-		send( trueOutput, message )
-	} else {
-		falseCount++
-		send( falseOutput, message )
+		if( result ) {
+			trueCount++
+			send( trueOutput, message )
+		} else {
+			falseCount++
+			send( falseOutput, message )
+		}
 	}
 }
 
@@ -156,8 +161,8 @@ redraw = {
 			}
 			separator( vertical: true )
 			box( widget:'display', layout:'wrap 2', column: '40' ) {
-				node( label:'True', content: { trueCount } )
-				node( label:'False', content: { falseCount } )
+				node( label:'True', content: trueTotal )
+				node( label:'False', content: falseTotal )
 				node( label:'Condition', content: { invalid ? 'Invalid' : 'OK' }, constraints: 'span 2' )
 			}
 		} else {
@@ -170,8 +175,8 @@ redraw = {
 			property( property: max, label: 'Max', min: 0 )
 			separator( vertical: true )
 			box( widget:'display', layout:'wrap 2', column: '40' ) {
-				node( label:'True', content: { trueCount } )
-				node( label:'False', content: { falseCount } )
+				node( label:'True', content: trueTotal )
+				node( label:'False', content: falseTotal )
 				node( label:'Min', content: { min.value } )
 				node( label:'Max', content: { max.value } )
 			}
@@ -181,8 +186,8 @@ redraw = {
 
 compactLayout {
 	box( widget:'display', layout:'wrap 2', column: '40' ) {
-		node( label:'True', content: { trueCount } )
-		node( label:'False', content: { falseCount } )
+		node( label:'True', content: trueTotal )
+		node( label:'False', content: falseTotal )
 	}
 }
 

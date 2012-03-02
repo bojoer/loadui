@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.groovy;
 
+import groovy.lang.Closure;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
@@ -22,9 +24,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import org.slf4j.Logger;
 
-import groovy.lang.Closure;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.ComponentContext.Scope;
 import com.eviware.loadui.api.counter.Counter;
@@ -35,6 +37,7 @@ import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.serialization.Value;
 import com.eviware.loadui.api.traits.Releasable;
+import com.eviware.loadui.impl.component.categories.BaseCategory;
 import com.eviware.loadui.impl.layout.LayoutContainerImpl;
 import com.eviware.loadui.impl.layout.SettingsLayoutContainerImpl;
 import com.eviware.loadui.util.groovy.LayoutBuilder;
@@ -44,11 +47,13 @@ public class GroovyComponentContext implements Releasable
 	private final ActionEventHandler actionEventHandler = new ActionEventHandler();
 	private final CounterHelper counterHelper = new CounterHelper();
 
+	private final BaseCategory behavior;
 	private final ComponentContext context;
 	private final Logger log;
 
-	public GroovyComponentContext( ComponentContext context, Logger log )
+	public GroovyComponentContext( BaseCategory behavior, ComponentContext context, Logger log )
 	{
+		this.behavior = behavior;
 		this.context = context;
 		this.log = log;
 

@@ -117,7 +117,7 @@ scheduleAtFixedRate(
 
 // standard message handler that counts finished requests (for TPS calculation) and
 // checks for queued messages
-onMessage = { incoming, outgoing, message ->
+onMessage = { outgoing, incoming, message ->
 
 	if( message["TimeTaken"] != null )
 	{

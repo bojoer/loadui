@@ -138,12 +138,14 @@ createProperty( 'numOutputs', Integer, 1 ) { outputCount ->
 random = new Random()
 lastOutput = -1
 
-onMessage = { incoming, outgoing, message ->
-	if( type.value == "Round-Robin" ) lastOutput = (lastOutput + 1) % numOutputs.value
-	else lastOutput = randomizeTerminal() //random.nextInt( numOutputs.value )
-	send( outgoingTerminalList[lastOutput], message )
-	counters["output_$lastOutput"].increment()
-	total.increment()
+onMessage = { outgoing, incoming, message ->
+	if( incoming == incomingTerminal ) {
+		if( type.value == "Round-Robin" ) lastOutput = (lastOutput + 1) % numOutputs.value
+		else lastOutput = randomizeTerminal() //random.nextInt( numOutputs.value )
+		send( outgoingTerminalList[lastOutput], message )
+		counters["output_$lastOutput"].increment()
+		total.increment()
+	}
 }
 
 onAction( "RESET" ) {

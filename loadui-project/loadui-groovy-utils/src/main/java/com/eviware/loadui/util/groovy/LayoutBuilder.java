@@ -19,10 +19,12 @@ import groovy.lang.Closure;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import com.eviware.loadui.api.layout.ActionLayoutComponent;
 import com.eviware.loadui.api.layout.LayoutContainer;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.api.serialization.Value;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.layout.ActionLayoutComponentImpl;
 import com.eviware.loadui.impl.layout.LabelLayoutComponentImpl;
@@ -200,8 +202,9 @@ public class LayoutBuilder
 		{
 			HashMap<String, Object> newArgs = Maps.newHashMap( args );
 			Object content = newArgs.get( "content" );
-			FormattedString fString = content instanceof Closure ? new DelayedFormattedString( "%s", ( Closure )content )
-					: new FormattedString( String.valueOf( content ) );
+			FormattedString fString = content instanceof Callable<?> ? new DelayedFormattedString( "%s",
+					( Callable<?> )content ) : content instanceof Value<?> ? new DelayedFormattedString( "%s",
+					( Value<?> )content ) : new FormattedString( String.valueOf( content ) );
 			newArgs.put( "fString", fString );
 			current.add( new FormattedStringLayoutComponent( newArgs ) );
 		}

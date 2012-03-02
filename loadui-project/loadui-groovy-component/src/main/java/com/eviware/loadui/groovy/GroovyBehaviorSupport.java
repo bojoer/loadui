@@ -25,7 +25,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
@@ -37,6 +36,7 @@ import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.groovy.GroovyBehaviorProvider.ScriptDescriptor;
+import com.eviware.loadui.impl.component.categories.BaseCategory;
 import com.eviware.loadui.util.InitializableUtils;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.groovy.ClassLoaderRegistry;
@@ -63,7 +63,7 @@ public class GroovyBehaviorSupport implements Releasable
 	private final String id;
 	private final String classLoaderId;
 	private final Logger log;
-	private final ComponentBehavior behavior;
+	private final BaseCategory behavior;
 	private final ComponentContext context;
 	private final GroovyComponentContext groovyContext;
 	private final ClassLoaderRegistry clr;
@@ -75,14 +75,14 @@ public class GroovyBehaviorSupport implements Releasable
 	private GroovyEnvironment groovyEnv;
 	private GroovyResolver resolver;
 
-	public GroovyBehaviorSupport( GroovyBehaviorProvider behaviorProvider, ComponentBehavior behavior,
+	public GroovyBehaviorSupport( GroovyBehaviorProvider behaviorProvider, BaseCategory behavior,
 			ComponentContext context )
 	{
 		id = context.getAttribute( ID_ATTRIBUTE, context.getAttribute( ComponentItem.TYPE, context.getLabel() ) );
 		log = LoggerFactory.getLogger( "com.eviware.loadui.groovy.component." + id );
 		this.behavior = behavior;
 		this.context = context;
-		groovyContext = new GroovyComponentContext( context, log );
+		groovyContext = new GroovyComponentContext( behavior, context, log );
 		clr = behaviorProvider.getClassLoaderRegistry();
 
 		classLoaderId = context.getAttribute( GroovyBehaviorSupport.CLASS_LOADER_ATTRIBUTE, id );
@@ -123,10 +123,10 @@ public class GroovyBehaviorSupport implements Releasable
 			PropertyHolderResolver propertyHolderResolver = new PropertyHolderResolver( context, log );
 
 			resolver = new DelegatingResolver( noRelease( new JavaBeanGroovyResolver( groovyContext ) ),
-					noRelease( new JavaBeanGroovyResolver( behavior ) ), new ComponentTestExecutionResolver( context ),
-					propertyHolderResolver, new TerminalHolderResolver( context, log ), new StatisticHolderResolver(
-							context.getComponent() ), new ScheduledExecutionResolver(), noRelease( new JavaBeanGroovyResolver(
-							context ) ) );
+					noRelease( new JavaBeanGroovyResolver( behavior ) ), new TotalResolver( behavior ),
+					new ComponentTestExecutionResolver( context ), propertyHolderResolver, new TerminalHolderResolver(
+							context, log ), new StatisticHolderResolver( context.getComponent() ),
+					new ScheduledExecutionResolver(), noRelease( new JavaBeanGroovyResolver( context ) ) );
 
 			Binding binding = new Binding();
 			groovyEnv = InitializableUtils.initialize( new GroovyEnvironment( headers, id,

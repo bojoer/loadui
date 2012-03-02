@@ -206,6 +206,8 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 	@Override
 	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
 	{
+		super.onTerminalMessage( output, input, message );
+
 		if( input == incomingTerminal )
 		{
 			activityStrategy.update();

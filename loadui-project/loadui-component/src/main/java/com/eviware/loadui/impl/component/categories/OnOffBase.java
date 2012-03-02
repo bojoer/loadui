@@ -60,6 +60,8 @@ public abstract class OnOffBase extends BaseCategory implements OnOffCategory
 	@Override
 	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
 	{
+		super.onTerminalMessage( output, input, message );
+
 		if( input == stateTerminal && message.containsKey( ENABLED_MESSAGE_PARAM ) )
 		{
 			stateProperty.setValue( message.get( ENABLED_MESSAGE_PARAM ) );

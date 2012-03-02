@@ -70,6 +70,8 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 	@Override
 	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
 	{
+		super.onTerminalMessage( output, input, message );
+
 		if( input == inputTerminal )
 		{
 			activityStrategy.update();

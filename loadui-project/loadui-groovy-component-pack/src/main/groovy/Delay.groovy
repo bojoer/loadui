@@ -32,10 +32,10 @@ final GAUSSIAN = 'Gaussian'
 final UNIFORM = 'Uniform'
 final EXPONENTIAL = 'Exponential'
 
-random = new Random()
-waitingCount = new AtomicLong()
+def random = new Random()
+def waitingCount = new AtomicLong()
 
-displayNA = false
+def displayNA = false
 long waitTime = 0
 
 createOutgoing( 'output' )
@@ -49,6 +49,7 @@ createProperty('delay', Long, 0)
 createProperty('selected', String, UNIFORM)
 createProperty('randomDelay', Integer, 0)
 
+total( 'waitingTotal' ) { waitingCount.get() }
 
 workspace = canvas.project?.workspace
 fixDisplay = { displayNA = canvas instanceof SceneItem && !workspace?.localMode }
@@ -61,24 +62,26 @@ if( workspace != null ) {
 }
 fixDisplay()
  
-onMessage = { incoming, outgoing, message ->
-	waitingCount.incrementAndGet()
-	def delayTime = delay.value 
-	if( selected.value == GAUSSIAN ) {
-		delayTime += ( random.nextGaussian() * ( randomDelay.value / 100 ) * delayTime * 0.3)
-	} else if( selected.value == UNIFORM ) {
-		delayTime += 2*( random.nextDouble() - 0.5 ) * delayTime * ( randomDelay.value / 100 )
-	} else if( selected.value == EXPONENTIAL ) {
-		delayTime *= -Math.log( 1 - random.nextDouble() )
+onMessage = { outgoing, incoming, message ->
+	if( incoming == incomingTerminal ) {
+		waitingCount.incrementAndGet()
+		def delayTime = delay.value 
+		if( selected.value == GAUSSIAN ) {
+			delayTime += ( random.nextGaussian() * ( randomDelay.value / 100 ) * delayTime * 0.3)
+		} else if( selected.value == UNIFORM ) {
+			delayTime += 2*( random.nextDouble() - 0.5 ) * delayTime * ( randomDelay.value / 100 )
+		} else if( selected.value == EXPONENTIAL ) {
+			delayTime *= -Math.log( 1 - random.nextDouble() )
+		}
+		
+		waitTime = delayTime as Long
+		message.put( 'actualDelay', waitTime )
+		schedule( {
+			send( output, message )
+			waitingCount.decrementAndGet()
+		}, waitTime, TimeUnit.MILLISECONDS )
 	}
-	
-	waitTime = delayTime as Long
-	message.put( 'actualDelay', waitTime )
-	schedule( {
-		send( output, message )
-		waitingCount.decrementAndGet()
-	}, waitTime, TimeUnit.MILLISECONDS )
- }
+}
  
 onRelease = {
 	workspace?.removeEventListener( PropertyEvent, workspaceListener )
@@ -104,13 +107,13 @@ layout {
 	separator( vertical:true )
 	box( widget:'display' ) {
 		node( label:'Delay ', content: { displayNA ? 'n/a' : "$waitTime ms" }, constraints:'w 60!' )
-		node( label:'Waiting ', content: { displayNA ? 'n/a' : waitingCount.get() }, constraints:'w 50!' )
+		node( label:'Waiting ', content: waitingTotal, constraints:'w 50!' )
 	}
 }
  
 compactLayout {
 	box( widget:'display' ) {
 		node( label:'Delay ', content: { displayNA ? 'n/a' : "$waitTime ms" }, constraints:'w 60!' )
-		node( label:'Waiting ', content: { displayNA ? 'n/a' : waitingCount.get() }, constraints:'w 50!' )
+		node( label:'Waiting ', content: waitingTotal, constraints:'w 50!' )
 	}
 }

@@ -23,15 +23,14 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
@@ -39,17 +38,13 @@ import com.eviware.loadui.api.counter.Counter;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.BaseEvent;
-import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.api.events.CollectionEvent.Event;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.AgentItem;
-import com.eviware.loadui.api.model.Assignment;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ModelItem;
-import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.property.Property;
+import com.eviware.loadui.api.serialization.Value;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.summary.SampleStats;
 import com.eviware.loadui.api.summary.SampleStatsImpl;
@@ -76,8 +71,6 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final static int NUM_TOP_BOTTOM_SAMPLES = 5;
 
 	private final ScheduledExecutorService scheduler;
-	private final ScheduledFuture<?> updateTask;
-	private final AssignmentListener assignmentListener;
 	private final BlinkOnUpdateActivityStrategy activityStrategy = ActivityStrategies.newBlinkOnUpdateStrategy();
 
 	private final InputTerminal triggerTerminal;
@@ -119,9 +112,6 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private boolean hasCurrentlyRunning = false;
 	private boolean released = false;
 
-	private final Map<String, String> remoteValues = new HashMap<String, String>();
-	private final OutputTerminal controllerTerminal;
-
 	private final StatisticVariable.Mutable timeTakenVariable;
 	private final StatisticVariable.Mutable responseSizeVariable;
 	private final StatisticVariable.Mutable throughputVariable;
@@ -129,6 +119,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final StatisticVariable.Mutable queuedVariable;
 
 	private final CounterStatisticSupport counterStatisticSupport;
+
+	private final Value<Number> currentlyRunningTotal;
+	private final Value<Number> queueSizeTotal;
 
 	/**
 	 * Constructs an RunnerBase.
@@ -216,23 +209,23 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		// init statistics
 		resetStatistics();
 
-		controllerTerminal = context.getControllerTerminal();
+		currentlyRunningTotal = createTotal( "currentlyRunning", new Callable<Number>()
+		{
+			@Override
+			public Number call() throws Exception
+			{
+				return currentlyRunning.get();
+			}
+		} );
 
-		CanvasItem canvasItem = context.getCanvas();
-		if( canvasItem instanceof SceneItem )
+		queueSizeTotal = createTotal( "queueSize", new Callable<Number>()
 		{
-			updateTask = scheduler.scheduleAtFixedRate( new UpdateRemoteTask(), 1, 1, TimeUnit.SECONDS );
-			if( LoadUI.isController() )
-				canvasItem.getProject().addEventListener( CollectionEvent.class,
-						assignmentListener = new AssignmentListener() );
-			else
-				assignmentListener = null;
-		}
-		else
-		{
-			updateTask = null;
-			assignmentListener = null;
-		}
+			@Override
+			public Number call() throws Exception
+			{
+				return queued.get();
+			}
+		} );
 
 		counterStatisticSupport.init();
 	}
@@ -384,13 +377,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 	final public int getCurrentlyRunning()
 	{
-		int runningSize = currentlyRunning.get();
-		for( String value : remoteValues.values() )
-		{
-			String[] parts = value.split( ";" );
-			runningSize += Integer.parseInt( parts[0] );
-		}
-		return runningSize;
+		return currentlyRunningTotal.getValue().intValue();
 	}
 
 	@Override
@@ -544,6 +531,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	@Override
 	public void onTerminalConnect( OutputTerminal output, InputTerminal input )
 	{
+		super.onTerminalConnect( output, input );
+
 		if( output == currentlyRunningTerminal )
 		{
 			updateCurrentlyRunning( currentlyRunning.get() );
@@ -554,6 +543,8 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	@Override
 	public void onTerminalDisconnect( OutputTerminal output, InputTerminal input )
 	{
+		super.onTerminalDisconnect( output, input );
+
 		if( output == currentlyRunningTerminal )
 		{
 			hasCurrentlyRunning = output.getConnections().size() > 0;
@@ -563,27 +554,10 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	@Override
 	public void onTerminalMessage( OutputTerminal output, InputTerminal input, final TerminalMessage message )
 	{
+		super.onTerminalMessage( output, input, message );
+
 		if( input == triggerTerminal )
 			enqueue( message );
-		else if( message.containsKey( REMOTE_DATA ) && isAssigned( output.getId() ) )
-			remoteValues.put( output.getId(), ( String )message.get( REMOTE_DATA ) );
-	}
-
-	private boolean isAssigned( String id )
-	{
-		try
-		{
-			String agentId = id.split( "/" )[1];
-			CanvasItem canvasItem = getContext().getCanvas();
-			for( AgentItem agent : canvasItem.getProject().getAgentsAssignedTo( ( SceneItem )canvasItem ) )
-				if( agent.getId().equals( agentId ) )
-					return true;
-		}
-		catch( Exception e )
-		{
-		}
-
-		return false;
 	}
 
 	@Override
@@ -624,10 +598,6 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		{
 			released = true;
 			queue.clear();
-			if( updateTask != null )
-				updateTask.cancel( true );
-			if( assignmentListener != null )
-				getContext().getCanvas().getProject().removeEventListener( CollectionEvent.class, assignmentListener );
 			getContext().getComponent().removeEventListener( BaseEvent.class, this );
 		}
 	}
@@ -751,8 +721,6 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		sumTotalTimeTaken = 0;
 		sumTotalSquare = 0;
 
-		remoteValues.clear();
-
 		topStats.clear();
 		bottomStats.clear();
 	}
@@ -765,13 +733,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	@Override
 	final public long getQueueSize()
 	{
-		long queueSize = queued.get();
-		for( String value : remoteValues.values() )
-		{
-			String[] parts = value.split( ";" );
-			queueSize += Long.parseLong( parts[1] );
-		}
-		return queueSize;
+		return queueSizeTotal.getValue().longValue();
 	}
 
 	private class Worker implements Runnable
@@ -809,38 +771,6 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 				}
 			}
 			workerCount.decrementAndGet();
-		}
-	}
-
-	private class UpdateRemoteTask implements Runnable
-	{
-		private final ComponentContext context;
-		private final TerminalMessage message;
-
-		public UpdateRemoteTask()
-		{
-			context = getContext();
-			message = context.newMessage();
-		}
-
-		@Override
-		public void run()
-		{
-			message.put( REMOTE_DATA, currentlyRunning.get() + ";" + queued.get() );
-			context.send( controllerTerminal, message );
-		}
-	}
-
-	private class AssignmentListener implements EventHandler<CollectionEvent>
-	{
-		@Override
-		public void handleEvent( CollectionEvent event )
-		{
-			if( ProjectItem.ASSIGNMENTS.equals( event.getKey() ) && event.getEvent() == Event.REMOVED )
-			{
-				Assignment assignment = ( Assignment )event.getElement();
-				remoteValues.remove( getContext().getId() + "/" + assignment.getAgent().getId() );
-			}
 		}
 	}
 

@@ -76,6 +76,8 @@ public abstract class AnalysisBase extends BaseCategory implements AnalysisCateg
 	@Override
 	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
 	{
+		super.onTerminalMessage( output, input, message );
+
 		if( input == inputTerminal )
 		{
 			activityStrategy.update();

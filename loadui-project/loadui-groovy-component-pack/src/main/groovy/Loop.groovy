@@ -35,18 +35,21 @@ exit.description = 'Once a VU has passed the loop the set number of times, it wi
 
 def loopCounter = 'LoopCount_'+id
 def completedCount = 0
+total( 'completedTotal' ) { completedCount }
 
 onAction( "RESET" ) { completedCount = 0 }
 
-onMessage = { incoming, outgoing, message ->
-	def count = (message[loopCounter] ?: 0) + 1
-	if( count > iterations.value ) {
-		message.remove( loopCounter )
-		send( exit, message )
-		completedCount++
-	} else {
-		message[loopCounter] = count
-		send( loop, message )
+onMessage = { outgoing, incoming, message ->
+	if( incoming == incomingTerminal ) {
+		def count = (message[loopCounter] ?: 0) + 1
+		if( count > iterations.value ) {
+			message.remove( loopCounter )
+			send( exit, message )
+			completedCount++
+		} else {
+			message[loopCounter] = count
+			send( loop, message )
+		}
 	}
 }
 
@@ -55,13 +58,13 @@ layout {
 	separator( vertical:true )
 	box( widget: 'display', layout: 'wrap 1' ) {
 		node( label: 'Loop Count', content: { iterations.value }, constraints: 'wmin 70' )
-		node( label: 'Completed', content: { completedCount }, constraints: 'wmin 70' )
+		node( label: 'Completed', content: completedTotal, constraints: 'wmin 70' )
 	}
 }
 
 compactLayout {
 	box( widget: 'display', layout: 'wrap 2' ) {
 		node( label: 'Loops', content: { iterations.value }, constraints: 'wmin 40' )
-		node( label: 'Compl.', content: { completedCount }, constraints: 'wmin 40' )
+		node( label: 'Compl.', content: completedTotal, constraints: 'wmin 40' )
 	}
 }
