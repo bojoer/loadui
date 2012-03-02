@@ -211,7 +211,7 @@ public class ProjectMenu extends HBox {
 								font: projectMenuOpenedFont
 								items: [
 									MenuItem {
-				                    text: "New TestCase"
+				                    text: "New Scenario"
 				                    action: function() { 
 				                    	if ( MainWindow.instance.projectCanvas.canvasItem instanceof ProjectItem ) {
 				                            CreateNewTestCaseDialog { project: MainWindow.instance.projectCanvas.canvasItem as ProjectItem };

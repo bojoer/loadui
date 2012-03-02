@@ -140,7 +140,7 @@ public class TestCaseMenu extends HBox {
 	}
 	
 	def newTestcaseMenuItem = MenuItem {
-		text: "New TestCase..."
+		text: "New Scenario..."
 		action: function(): Void {
 			CreateNewTestCaseDialog { 
 				project: testCase.getProject(), 
@@ -154,7 +154,7 @@ public class TestCaseMenu extends HBox {
 	def sceneComparator = SceneComparator{}
 					
 	def switchTestcaseSubmenu: Menu = Menu {
-		text: "Switch TestCase"
+		text: "Switch Scenario"
 		onShowing: function() {
 			var scenes = new java.util.ArrayList();
 			var sceneCollection = testCase.getProject().getScenes();
