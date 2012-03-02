@@ -78,7 +78,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 		options.addOption( PROJECT_OPTION, "project", true, "Sets the Project file to run" );
 		options.addOption( TESTCASE_OPTION, "testcase", true,
 				"Sets which TestCase to run (leave blank to run the entire Project)" );
-		options.addOption( TESTCASE_OPTION, "scenario", true,
+		options.addOption( VU_SCENARIO_OPTION, "scenario", true,
 				"Sets which Scenario to run (leave blank to run the entire Project)" );
 		options.addOption( LIMITS_OPTION, "limits", true,
 				"Sets the limits (<SECONDS>:<REQUESTS>:<FAILURES>) for the execution (e.g. -L 60:0:200 )" );
