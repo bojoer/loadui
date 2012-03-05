@@ -421,18 +421,22 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		@Override
 		public void update( T value )
 		{
-			if( constraint != null && !constraint.validate( value ) )
+			if( constraint != null )
 			{
-				long timestamp = System.currentTimeMillis();
-
-				if( conditionTolerance.occur( timestamp ) )
+				if( !constraint.validate( value ) )
 				{
-					failureGrouper.append( value, timestamp );
-					canvas.getCounter( CanvasItem.FAILURE_COUNTER ).increment();
-					canvas.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).increment();
-					failures++ ;
-					fireEvent( new BaseEvent( AssertionItemImpl.this, FAILURE_COUNT ) );
+					long timestamp = System.currentTimeMillis();
+
+					if( conditionTolerance.occur( timestamp ) )
+					{
+						failureGrouper.append( value, timestamp );
+						canvas.getCounter( CanvasItem.FAILURE_COUNTER ).increment();
+						canvas.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).increment();
+						failures++ ;
+						fireEvent( new BaseEvent( AssertionItemImpl.this, FAILURE_COUNT ) );
+					}
 				}
+				canvas.getCounter( CanvasItem.ASSERTION_COUNTER ).increment();
 			}
 		}
 	}
