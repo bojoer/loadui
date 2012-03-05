@@ -252,7 +252,8 @@ public class LoadUILauncher
 
 			if( nofx )
 			{
-				Pattern fxPattern = Pattern.compile( "^com\\.eviware\\.loadui\\.(\\w+[.-])*fx-interface.*$" );
+				Pattern fxPattern = Pattern
+						.compile( "^com\\.eviware\\.loadui\\.(\\w+[.-])*((fx-interface)|(cssbox-browser)).*$" );
 				for( Bundle bundle : framework.getBundleContext().getBundles() )
 				{
 					String bundleName = bundle.getSymbolicName();

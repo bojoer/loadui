@@ -73,6 +73,11 @@ public class ControllerWrapper
 				if( !bundle.delete() )
 					throw new IOException( "Unable to delete file: " + bundle );
 			}
+			else if( bundle.getName().startsWith( "loadui-cssbox-browser" ) )
+			{
+				if( !bundle.delete() )
+					throw new IOException( "Unable to delete file: " + bundle );
+			}
 			else if( bundle.getName().startsWith( "loadui-api" ) )
 			{
 				ZipFile api = new ZipFile( bundle );
