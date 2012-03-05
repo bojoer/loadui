@@ -61,8 +61,8 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecutionTask;
-import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.api.events.ActionEvent;
+import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.util.BeanInjector;
@@ -110,7 +110,6 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	public var inactiveShapeFill:Paint = Color.web("#68696C");
 
 	
-	public var testcase:Boolean = bind (canvas instanceof SceneItem);
 	public var small = false;
 	public var testcaseLinked:Boolean = true;
 	public var showResetButton:Boolean = true;
@@ -118,7 +117,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	
 	public var items:Node[] on replace {
 		hbox.content = for( i in [0..<sizeof items] ) [
-			if(i>0) Rectangle { width: 3, height: 25, fill: bind separatorFill } else null,
+			if(i>0) Rectangle { width: 3, height: 25, fill: bind separatorFill, visible: bind items[i].visible, managed: bind items[i].managed } else null,
 			items[i]
 		];
 	}
@@ -128,6 +127,8 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	
 	def linkButton:Group = Group {
 		layoutY: -10
+		visible: bind canvas instanceof SceneItem
+		managed: bind canvas instanceof SceneItem
 		content: [
 			FXDNode {
 				layoutX: 3
@@ -137,7 +138,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 				}
 				onMouseReleased: function( e:MouseEvent ) {
 					(canvas as SceneItem).setFollowProject(testcaseLinked);
-				} 
+				}
 			},
 			Label {
 				layoutY: 10
@@ -149,8 +150,15 @@ public class RunController extends BaseNode, Resizable, TimerController {
 		]
 	}
 	
-	override var canvas on replace {
-		if(testcase) testcaseLinked = (canvas as SceneItem).isFollowProject();
+	var followListener:FollowListener;
+	
+	override var canvas on replace oldCanvas {
+		if( followListener != null ) oldCanvas.removeEventListener( PropertyEvent.class, followListener );
+		if( canvas instanceof SceneItem ) {
+			if( followListener == null ) followListener = new FollowListener();
+			canvas.addEventListener( PropertyEvent.class, followListener );
+			testcaseLinked = (canvas as SceneItem).isFollowProject();
+		}
 	}
 	
 	def hbox = HBox {
@@ -254,7 +262,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 				graphic: ExecutionGraphic { layoutInfo: LayoutInfo { height: 33, width: 33 }, running: bind (playButton.armed or playButton.selected) }
 				tooltip:Tooltip { text:"Play/Stop" }
 			},
-			if (testcase) linkButton else null,
+			linkButton,
 			Limiter {
 				small: small
 				text: "Time"
@@ -351,6 +359,17 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	
 	override function getPrefWidth( height:Float ) { hbox.getPrefWidth( height ) + 30 }
 	override function getPrefHeight( width:Float ) { 38 }
+}
+
+class FollowListener extends WeakEventHandler {
+	override function handleEvent( e ) {
+		def event = e as PropertyEvent;
+		if( SceneItem.FOLLOW_PROJECT_PROPERTY.equals( event.getKey() ) ) {
+			FxUtils.runInFxThread( function():Void {
+				testcaseLinked = (canvas as SceneItem).isFollowProject();
+			} );
+		}
+	}
 }
 
 class RunningTask extends TestExecutionTask {

@@ -41,6 +41,8 @@ import com.eviware.loadui.fx.dialogs.RenameModelItemDialog;
 import com.eviware.loadui.fx.dialogs.DeleteModelItemDialog;
 
 import com.eviware.loadui.api.model.SceneItem;
+import com.eviware.loadui.api.events.PropertyEvent;
+import com.eviware.loadui.api.events.WeakEventHandler;
 
 public function create( testCase:SceneItem, canvas:Canvas ):TestCaseNode {
 	TestCaseNode { testCase: testCase, canvas: canvas, id: testCase.getId() }
@@ -88,7 +90,7 @@ public class TestCaseNode extends CanvasObjectNode {
 			  	showLimitButton: false
 			  	showResetButton: false
 		      testcaseLinked: testCase.isFollowProject();
-		      canvas: testCase
+		      canvas: bind testCase
 		      small: true
 			}, Stack {
 				visible: bind not compact

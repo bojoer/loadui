@@ -333,7 +333,6 @@ public class TestCaseMenu extends HBox {
 									}
 								]
 							}, RunController {
-								testcase: true
 								canvas: bind testCase
 							}, Label {
 								layoutInfo: LayoutInfo {
