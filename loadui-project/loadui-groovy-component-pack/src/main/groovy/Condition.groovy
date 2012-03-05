@@ -18,7 +18,7 @@
  * Routes messages based on whether a condition is true or false.
  * 
  * @id com.eviware.Condition
- * @help http://www.loadui.org/Flow/condition-component.html
+ * @help http://www.loadui.org/Flow-Control/condition-component.html
  * @category flow
  * @nonBlocking true
  */
