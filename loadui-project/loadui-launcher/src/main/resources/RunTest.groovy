@@ -90,7 +90,7 @@ def workspaceCollectionListener = new EventHandler<CollectionEvent>() {
 workspace.addEventListener( CollectionEvent, workspaceCollectionListener )
 
 //If custom agents are provided, remove saved ones.
-if( agents != null ) {
+if( agents ) {
 	for( agent in new ArrayList( workspace.agents ) )
 		agent.delete()
 	importAgents.value = false
@@ -114,8 +114,7 @@ def project = projectRef.project
 def summaryExported = 0
 def summaryExportListener = new EventHandler<BaseEvent>() {
 	public void handleEvent( BaseEvent event ) {
-		println ("got event: " + event)
-		if( ProjectItem.SUMMARY_EXPORTED.equals( event.getKey() ) ) {
+		if( ProjectItem.SUMMARY_EXPORTED == event.key ) {
 			summaryExported++
 		}
 	}
@@ -152,7 +151,7 @@ if( abort?.toLowerCase()?.startsWith( "t" ) ) {
 }
 
 //Assign Agents
-if( agents != null ) {
+if( agents ) {
 	for( agentUrl in agents.keySet() ) {
 		def tcs = agents[agentUrl]
 		def agent = workspace.createAgent( agentUrl, agentUrl )
