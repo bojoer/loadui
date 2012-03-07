@@ -103,7 +103,7 @@ public class ManageMenu extends HBox {
 					},
 					MenuItem {
 						text: "Settings"
-						action: function() {  }
+						action: function() { new StatisticsManageWrenchDialog().show() }
 					}
 				]
 			}, Label {
