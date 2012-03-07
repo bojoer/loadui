@@ -11,15 +11,13 @@
  */
 package com.eviware.loadui.util.soapui;
 
+import gnu.cajo.invoke.Remote;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
-import com.eviware.loadui.api.property.Property;
-import com.eviware.loadui.util.StringUtils;
-
-import gnu.cajo.invoke.Remote;
 
 public class CajoClient
 {
@@ -28,7 +26,6 @@ public class CajoClient
 	private String server = "localhost";
 	private String port = "1198";
 	private String itemName = "soapuiIntegration";
-	private String pathToSoapUIBat;
 	private WorkspaceProvider workspaceProviderRegistry;
 
 	private static CajoClient instance;
@@ -37,10 +34,9 @@ public class CajoClient
 	{
 		if( instance == null )
 		{
-			return instance = new CajoClient();
+			instance = new CajoClient();
 		}
-		else
-			return instance;
+		return instance;
 	}
 
 	private CajoClient()
@@ -139,16 +135,14 @@ public class CajoClient
 
 	public String getPathToSoapUIBat()
 	{
-		return pathToSoapUIBat;
+		return workspaceProviderRegistry.getWorkspace().getProperty( WorkspaceItem.SOAPUI_PATH_PROPERTY )
+				.getStringValue();
 	}
 
 	public void setPathToSoapUIBat( String pathToSoapUIBat )
 	{
-		this.pathToSoapUIBat = pathToSoapUIBat;
-		Property<?> pathProperty = workspaceProviderRegistry.getWorkspace().getProperty(
-				WorkspaceItem.SOAPUI_PATH_PROPERTY );
-		if( pathProperty.getValue() == null )
-			pathProperty.setValue( pathToSoapUIBat );
+		workspaceProviderRegistry.getWorkspace().getProperty( WorkspaceItem.SOAPUI_PATH_PROPERTY )
+				.setValue( pathToSoapUIBat );
 	}
 
 	public void setWorkspaceProviderRegistry( WorkspaceProvider workspaceProviderRegistry )
@@ -158,8 +152,8 @@ public class CajoClient
 
 	public void startSoapUI()
 	{
-		String path = StringUtils.isNullOrEmpty( pathToSoapUIBat ) ? workspaceProviderRegistry.getWorkspace()
-				.getProperty( WorkspaceItem.SOAPUI_PATH_PROPERTY ).getStringValue() : pathToSoapUIBat;
-		SoapUIStarter.start( path );
+		String soapUIPath = workspaceProviderRegistry.getWorkspace().getProperty( WorkspaceItem.SOAPUI_PATH_PROPERTY )
+				.getStringValue();
+		SoapUIStarter.start( soapUIPath );
 	}
 }
