@@ -1190,7 +1190,7 @@ return f.exists();</condition>
       </exclude>
       <variables />
     </macos>
-	    <unixInstaller name="Unix 64-bit Installer" id="1239" mediaFileName="loadUI-${compiler:version}_64bit" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-amd64-1.7.0_linux_7_03_x64" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+	    <unixInstaller name="Unix 64-bit Installer" id="1239" mediaFileName="loadUI-${compiler:version}_64bit" installDir="SmartBear/loadUI-${compiler:version}" overridePrincipalLanguage="false" requires64bit="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-amd64-1.7.0_linux_7_03_x64" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="24" />
         <launcher id="225" />
