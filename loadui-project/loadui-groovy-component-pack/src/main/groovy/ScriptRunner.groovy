@@ -20,7 +20,7 @@
  * @name Script Runner
  * @category runners
  * @id com.eviware.ScriptRunner
- * @help http://loadui.org/Custom-Components/groovyrunner.html
+ * @help http://loadui.org/Custom-Components/script-runner.html
  */
 
 import com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledException

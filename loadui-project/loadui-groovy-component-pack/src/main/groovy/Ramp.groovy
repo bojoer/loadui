@@ -62,7 +62,8 @@ reset = {
 			currentRate = start.value
 			while (currentRate.longValue() == 0) {
 				timeEllapsed++
-				currentRate = start.value + timeEllapsed * gradient
+				currentRate = start.val
+				ue + timeEllapsed * gradient
 			}
 		}
 	} else {
@@ -148,8 +149,8 @@ onAction( "COMPLETE" ) { reset() }
 
 //Layout
 layout  { 
-	property( property:start, label:'Start', min:0 ) 
-	property( property:end, label:'End', min:0 ) 
+	property( property:start, label:'Start', min:0 )
+	property( property:end, label:'End', min:0 )
 	separator( vertical:true )
 	property( property:unit, label:'Unit', options:['Sec','Min','Hour'] )
 	separator( vertical:true )

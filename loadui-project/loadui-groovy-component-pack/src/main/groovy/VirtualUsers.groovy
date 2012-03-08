@@ -18,7 +18,7 @@
  * Simulates the behaviour of a set of users on the system
  * 
  * @id com.eviware.VirtualUsers
- * @help http://www.loadui.org/Generators/usage-components.html
+ * @help http://loadui.org/Generators/virtual-users-components.html
  * @name Usage
  * @category generators
  * @nonBlocking true
