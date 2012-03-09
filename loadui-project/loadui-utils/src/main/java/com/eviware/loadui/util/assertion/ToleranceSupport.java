@@ -48,7 +48,7 @@ public class ToleranceSupport
 	 * @param period
 	 * @param allowedOccurrences
 	 */
-	public void setTolerance( int period, int allowedOccurrences )
+	public synchronized void setTolerance( int period, int allowedOccurrences )
 	{
 		this.period = period;
 		this.allowedOccurrences = allowedOccurrences;
@@ -67,7 +67,7 @@ public class ToleranceSupport
 	/**
 	 * Clears the buffered occurrences, resetting the state.
 	 */
-	public void clear()
+	public synchronized void clear()
 	{
 		occurrences.clear();
 	}
@@ -79,7 +79,7 @@ public class ToleranceSupport
 	 * @param timestamp
 	 * @return
 	 */
-	public boolean occur( long timestamp )
+	public synchronized boolean occur( long timestamp )
 	{
 		if( allowedOccurrences == 0 )
 		{

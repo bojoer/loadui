@@ -433,7 +433,6 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 						canvas.getCounter( CanvasItem.FAILURE_COUNTER ).increment();
 						canvas.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).increment();
 						failures++ ;
-						fireEvent( new BaseEvent( AssertionItemImpl.this, FAILURE_COUNT ) );
 					}
 				}
 				canvas.getCounter( CanvasItem.ASSERTION_COUNTER ).increment();
@@ -496,6 +495,8 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 					runFuture = executor.schedule( this, GROUPING_PERIOD + timeUntilNext, TimeUnit.MILLISECONDS );
 				}
 			}
+
+			fireEvent( new BaseEvent( AssertionItemImpl.this, FAILURE_COUNT ) );
 
 			if( !LoadUI.isController() )
 			{

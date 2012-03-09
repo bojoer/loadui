@@ -36,7 +36,7 @@ import java.lang.NumberFormatException;
  */
 public abstract class NumericWidgetBase extends BaseNode, Widget, TooltipHolder {
 	public var stepping:Number = if( plc.has("step") ) plc.get("step") as Number else 1.0;
-	public var span:Number = if( plc.has("span") ) plc.get("span") as Number else 100.0;
+	public var span:Number = if( plc.has("span") ) plc.get("span") as Number else 100.0 * stepping;
 	public var min:Number = if( plc.has("min") ) plc.get("min") as Number else Long.MIN_VALUE; //Not working with Number.MIN_VALUE for some reason
 	public var max:Number = if( plc.has("max") ) plc.get("max") as Number else Number.MAX_VALUE;
 	public var nullable = if( plc.has("nullable") ) plc.get("nullable") as Boolean else false;
