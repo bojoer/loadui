@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://eviware.com/loadui/config" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:lui="http://eviware.com/loadui/config">
+
+	<complexType name="ComponentItem">
+		<complexContent>
+			<extension base="lui:ModelItem">
+				<attribute name="type" type="string" use="required"></attribute>
+				<attribute name="category" type="string"></attribute>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<complexType name="AddonHolderItem" abstract="true">
+		<sequence>
+			<element name="properties" type="lui:PropertyList"
+				maxOccurs="1" minOccurs="1">
+			</element>
+			<element name="attributes" type="lui:PropertyList"
+				maxOccurs="1" minOccurs="1">
+			</element>
+			<element name="addons" type="lui:AddonList" maxOccurs="1"
+				minOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="id" type="string"></attribute>
+	</complexType>
+
+	<complexType name="ModelItem" abstract="true">
+		<complexContent>
+			<extension base="lui:AddonHolderItem">
+				<attribute name="label" type="string"></attribute>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="SceneItem">
+		<complexContent>
+			<extension base="lui:CanvasItem">
+				<sequence>
+					<element name="exportedTerminal" type="string" maxOccurs="unbounded" minOccurs="0"></element>
+				</sequence>
+				<attribute name="version" type="positiveInteger"
+					default="1">
+				</attribute>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="AgentItem">
+		<complexContent>
+			<extension base="lui:ModelItem">
+				<attribute name="url" type="string"></attribute>
+				<attribute name="enabled" type="boolean" use="optional"
+					default="true">
+				</attribute>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<element name="loadui-workspace" type="lui:WorkspaceItem"></element>
+
+	<complexType name="WorkspaceItem">
+		<complexContent>
+			<extension base="lui:ModelItem">
+				<sequence>
+					<element name="agent" type="lui:AgentItem"
+						maxOccurs="unbounded" minOccurs="0">
+					</element>
+					<element name="project" type="lui:ProjectReference" maxOccurs="unbounded" minOccurs="0"></element>
+				</sequence>
+				<attribute name="loadui-version" type="string"></attribute>
+			</extension>
+		</complexContent>
+	</complexType>
+
+    <element name="loadui-component" type="lui:ComponentItem"></element>
+
+    <complexType name="Property">
+    	<simpleContent>
+    		<extension base="string">
+    			<attribute name="type" type="string" default="string"
+    				use="optional">
+    			</attribute>
+    			<attribute name="key" type="string" use="required"></attribute>
+    			<attribute name="propagates" type="boolean" default="true" use="optional"></attribute>
+    		</extension>
+    	</simpleContent>
+    </complexType>
+
+    <complexType name="PropertyList">
+    	<sequence>
+    		<element name="property" type="lui:Property" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Connection">
+    	<attribute name="outputTerminalId" type="string" use="required"></attribute>
+    	<attribute name="inputTerminalId" type="string" use="required"></attribute>
+    </complexType>
+
+    <complexType name="RoutedConnection">
+    	<complexContent>
+    		<extension base="lui:Connection">
+    			<sequence>
+    				<element name="script" type="string"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="ProjectItem">
+    	<complexContent>
+    		<extension base="lui:CanvasItem">
+    			<sequence>
+    				<element name="scene" type="lui:SceneItem"
+    					maxOccurs="unbounded" minOccurs="0">
+    				</element>
+    				<element name="routedConnection"
+    					type="lui:RoutedConnection" maxOccurs="unbounded"
+    					minOccurs="0">
+    				</element>
+    				<element name="sceneAssignment"
+    					type="lui:SceneAssignment" maxOccurs="unbounded"
+    					minOccurs="0">
+    				</element>
+    				<element name="statistics" type="lui:Statistics"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="CanvasItem" abstract="true">
+    	<complexContent>
+    		<extension base="lui:ModelItem">
+    			<sequence>
+    				<element name="component" type="lui:ComponentItem"
+    					maxOccurs="unbounded" minOccurs="0">
+    				</element>
+    				<element name="connection" type="lui:Connection" maxOccurs="unbounded" minOccurs="0"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <element name="loadui-project" type="lui:ProjectItem"></element>
+
+    <complexType name="ProjectReference">
+    	<sequence>
+    		<element name="attributes" type="lui:PropertyList"
+    			maxOccurs="1" minOccurs="1">
+    		</element>
+    	</sequence>
+    	<attribute name="label" type="string" use="required"></attribute>
+    	<attribute name="project-file" type="string" use="required"></attribute>
+    	<attribute name="enabled" type="boolean" default="true"
+    		use="optional">
+    	</attribute>
+    	<attribute name="project-id" type="string"></attribute>
+    </complexType>
+
+    <complexType name="SceneAssignment">
+    	<attribute name="sceneRef" type="string" use="required"></attribute>
+    	<attribute name="agentRef" type="string" use="required"></attribute>
+    	<attribute name="agentLabel" type="string"></attribute>
+    	<attribute name="agentAddress" type="string"></attribute>
+    </complexType>
+
+    <element name="loadui-scene" type="lui:SceneItem"></element>
+
+    <complexType name="StatisticsPage">
+    	<sequence>
+    		<element name="chartGroup" type="lui:ChartGroup" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    	<attribute name="title" type="string"></attribute>
+    </complexType>
+    
+    <complexType name="ChartGroup">
+    	<sequence>
+    		<element name="templateScript" type="string"></element>
+    		<element name="chart" type="lui:Chart" maxOccurs="unbounded"
+    			minOccurs="0">
+    		</element>
+    		<element name="attributes" type="lui:PropertyList"
+    			maxOccurs="1" minOccurs="1">
+    		</element>
+    	</sequence>
+    	<attribute name="title" type="string"></attribute>
+    	<attribute name="type" type="string" default="LINE"></attribute>
+    </complexType>
+
+    <complexType name="Chart">
+    	<sequence>
+    		<element name="attributes" type="lui:PropertyList" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    	<attribute name="statisticHolder" type="string"></attribute>
+    </complexType>
+
+    <complexType name="Statistics">
+    	<sequence>
+    		<element name="page" type="lui:StatisticsPage" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="AddonItem">
+    	<complexContent>
+    		<extension base="lui:AddonHolderItem">
+    			<attribute name="type" type="string" use="required"></attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="AddonList">
+    	<sequence>
+    		<element name="addon" type="lui:AddonItem" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <element name="loadui-addon-item" type="lui:AddonItem"></element>
+</schema>

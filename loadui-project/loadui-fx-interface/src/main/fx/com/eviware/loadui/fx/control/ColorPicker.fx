@@ -1,0 +1,108 @@
+/* 
+ * Copyright 2011 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl5
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
+package com.eviware.loadui.fx.control;
+
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.LayoutInfo;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextBox;
+import javafx.geometry.VPos;
+
+import com.javafx.preview.control.MenuButton;
+import com.javafx.preview.control.CustomMenuItem;
+
+import com.eviware.loadui.fx.FxUtils;
+
+def COLORS = [
+	Color.web("#FF2100"),
+	Color.web("#FF7B00"),
+	Color.web("#00B700"),
+	Color.web("#00B2D2"),
+	Color.web("#7826B5"),
+	Color.web("#D7268E"),
+	Color.web("#FFA400"),
+	Color.web("#9BCD00"),
+	Color.web("#002AB6"),
+	Color.web("#007AC3"),
+	Color.web("#FFFB00"),
+	Color.web("#FFFFFF")
+];
+
+/**
+ * A control for picking a color.
+ *
+ * @author dain.nilsson
+ */
+public class ColorPicker extends MenuButton {
+	public var color:Color = Color.RED on replace {
+		textbox.text = FxUtils.colorToWebString( color ).substring( 1 );
+		onReplace( color );
+	}
+	
+	public var onReplace: function( color:Color ):Void;
+	
+	override var styleClass = "color-picker";
+	
+	override var graphic = Rectangle {
+		width: 6, height: 10, fill: bind color
+	}
+	
+	def textbox = TextBox {
+		columns: 6
+		selectOnFocus: true
+		text: FxUtils.colorToWebString( color ).substring( 1 )
+		layoutInfo: LayoutInfo { width: 50, hfill: false }
+	}
+	
+	def textboxText = bind textbox.text on replace {
+		try {
+			color = Color.web( "#{textboxText}" );
+		} catch( e ) {
+		}
+	}
+	
+	init {
+		items = CustomMenuItem {
+			styleClass: "color-picker-menu-item"
+			hideOnClick: false
+			node: VBox {
+				snapToPixel: true
+				spacing: 10
+				content: [
+					HBox {
+						spacing: 5
+						nodeVPos: VPos.CENTER
+						content: [
+							Rectangle { width: 36, height: 18, fill: bind color },
+							Label { text: "Pick a color    Hex #"},
+							textbox
+						]
+					}, HBox {
+						spacing: 1
+						content: for( c in COLORS ) Rectangle { width: 15, height: 15, fill: c, onMouseClicked: function( event ):Void {
+							color = c;
+						} }
+					}
+				]
+			} 
+		};
+		
+		(items[0] as CustomMenuItem).parentPopup.styleClass = "color-picker-menu";
+	}
+}

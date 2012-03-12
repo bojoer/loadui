@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<bean id="controllerTest" class="com.eviware.loadui.controller.ControllerTest" init-method="init">
+		<constructor-arg ref="workspaceProvider" />
+		<constructor-arg ref="componentRegistry" />
+	</bean>
+	
+	<bean id="testRunner" class="com.eviware.loadui.impl.execution.TestRunnerImpl">
+		<constructor-arg ref="executorService" />
+	</bean>
+	
+	<bean id="agentDiscovery" class="com.eviware.loadui.impl.discovery.AgentDiscoveryImpl" destroy-method="release" />
+	
+	<bean id="trackStreamReceiver" class="com.eviware.loadui.impl.statistics.TrackStreamReceiver">
+		<constructor-arg ref="statisticsAggregator" />
+		<constructor-arg ref="broadcastMessageEndpoint" />
+		<constructor-arg ref="executionManager" />
+	</bean>
+	
+	<bean id="statisticsAggregator" class="com.eviware.loadui.impl.statistics.AgentDataAggregator">
+		<constructor-arg ref="executionManager" />
+	</bean>
+	
+	<bean id="projectExecutionManager"
+		class="com.eviware.loadui.impl.statistics.ProjectExecutionManagerImpl">
+		<constructor-arg ref="executionManager" />
+		<constructor-arg ref="workspaceProvider" />
+		<constructor-arg ref="reportingManager" />
+	</bean>
+	
+	<bean id="agentTestExecutionAddonFactory" class="com.eviware.loadui.impl.execution.AgentTestExecutionAddon$Factory" />
+	
+	<bean id="testExecutionAddonFactory" class="com.eviware.loadui.impl.execution.TestExecutionAddon$Factory" />
+	
+	<!-- <bean id="demoEventFactory" class="com.eviware.loadui.impl.eventlog.DemoEvent$Factory" /> -->
+</beans>

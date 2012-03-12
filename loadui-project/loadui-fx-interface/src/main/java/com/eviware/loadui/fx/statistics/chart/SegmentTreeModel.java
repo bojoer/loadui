@@ -1,0 +1,242 @@
+/*
+ * Copyright 2011 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl5
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
+package com.eviware.loadui.fx.statistics.chart;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+
+import com.eviware.loadui.api.charting.ChartNamePrettifier;
+import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.model.chart.line.ConfigurableLineChartView;
+import com.eviware.loadui.fx.tree.BaseTreeNode;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+
+public class SegmentTreeModel extends DefaultTreeModel
+{
+	private static final long serialVersionUID = -8572876294099664714L;
+
+	private static final ToStringComparator nameComparator = new ToStringComparator();
+
+	public SegmentTreeModel( Collection<ConfigurableLineChartView> lineChartViews )
+	{
+		super( new ChartGroupTreeNode( null, lineChartViews ) );
+	}
+
+	public SegmentTreeModel( ConfigurableLineChartView lineChartView )
+	{
+		super( new ChartViewTreeNode( null, lineChartView ) );
+	}
+
+	private static class ChartGroupTreeNode extends BaseTreeNode
+	{
+		private final Collection<ConfigurableLineChartView> chartViews;
+
+		public ChartGroupTreeNode( TreeNode parent, Collection<ConfigurableLineChartView> chartViews )
+		{
+			super( parent );
+
+			this.chartViews = chartViews;
+		}
+
+		@Override
+		protected List<TreeNode> getChildren()
+		{
+			List<TreeNode> children = new ArrayList<TreeNode>();
+			for( ConfigurableLineChartView chartView : Iterables.filter( chartViews,
+					new Predicate<ConfigurableLineChartView>()
+					{
+						@Override
+						public boolean apply( ConfigurableLineChartView input )
+						{
+							return !input.getVariableNames().isEmpty();
+						}
+					} ) )
+			{
+				children.add( new ChartViewTreeNode( this, chartView ) );
+			}
+
+			Collections.sort( children, nameComparator );
+			return children;
+		}
+
+		@Override
+		public String toString()
+		{
+			return "Components";
+		}
+	}
+
+	private static class ChartViewTreeNode extends BaseTreeNode
+	{
+		private final ConfigurableLineChartView lineChartView;
+
+		public ChartViewTreeNode( TreeNode parent, ConfigurableLineChartView lineChartView )
+		{
+			super( parent );
+
+			this.lineChartView = lineChartView;
+		}
+
+		@Override
+		protected List<TreeNode> getChildren()
+		{
+			List<TreeNode> children = new ArrayList<TreeNode>();
+			for( String variableName : lineChartView.getVariableNames() )
+				children.add( new StatisticVariableTreeNode( this, variableName ) );
+
+			Collections.sort( children, nameComparator );
+			return children;
+		}
+
+		@Override
+		public String toString()
+		{
+			return lineChartView.toString();
+		}
+	}
+
+	private static class StatisticVariableTreeNode extends BaseTreeNode
+	{
+		private final String variableName;
+
+		public StatisticVariableTreeNode( ChartViewTreeNode parent, String variableName )
+		{
+			super( parent );
+
+			this.variableName = variableName;
+		}
+
+		@Override
+		protected List<TreeNode> getChildren()
+		{
+			List<TreeNode> children = new ArrayList<TreeNode>();
+			for( String statisticName : ( ( ChartViewTreeNode )getParent() ).lineChartView
+					.getStatisticNames( variableName ) )
+				children.add( new StatisticTreeNode( this, statisticName ) );
+
+			Collections.sort( children, nameComparator );
+			return children;
+		}
+
+		@Override
+		public String toString()
+		{
+			return variableName;
+		}
+	}
+
+	private static class StatisticTreeNode extends BaseTreeNode
+	{
+		private final String statisticName;
+
+		public StatisticTreeNode( StatisticVariableTreeNode parent, String statisticName )
+		{
+			super( parent );
+
+			this.statisticName = statisticName;
+		}
+
+		@Override
+		protected List<TreeNode> getChildren()
+		{
+			ArrayList<TreeNode> children = new ArrayList<TreeNode>();
+			ArrayList<String> sources = new ArrayList<String>(
+					( ( ChartViewTreeNode )( getParent().getParent() ) ).lineChartView
+							.getSources( ( ( StatisticVariableTreeNode )getParent() ).variableName ) );
+			Collections.sort( sources, nameComparator );
+			if( sources.contains( StatisticVariable.MAIN_SOURCE ) )
+			{
+				sources.remove( StatisticVariable.MAIN_SOURCE );
+				sources.add( 0, StatisticVariable.MAIN_SOURCE );
+			}
+
+			for( String sourceName : sources )
+				children.add( new SourceTreeNode( this, sourceName ) );
+			return children;
+		}
+
+		@Override
+		public String toString()
+		{
+			return ChartNamePrettifier.nameForStatistic( statisticName );
+		}
+	}
+
+	private static class SourceTreeNode extends BaseTreeNode implements Runnable
+	{
+		private final String sourceName;
+
+		public SourceTreeNode( StatisticTreeNode parent, String sourceName )
+		{
+			super( parent );
+
+			this.sourceName = sourceName;
+		}
+
+		@Override
+		protected List<TreeNode> getChildren()
+		{
+			return Collections.emptyList();
+		}
+
+		@Override
+		public boolean isLeaf()
+		{
+			return true;
+		}
+
+		@Override
+		public void run()
+		{
+			StatisticTreeNode statisticNode = ( StatisticTreeNode )getParent();
+			StatisticVariableTreeNode variableNode = ( StatisticVariableTreeNode )statisticNode.getParent();
+			ChartViewTreeNode chartNode = ( ChartViewTreeNode )variableNode.getParent();
+
+			chartNode.lineChartView.addSegment( variableNode.variableName, statisticNode.statisticName, sourceName );
+		}
+
+		@Override
+		public String toString()
+		{
+			return ChartNamePrettifier.nameForSource( sourceName );
+		}
+
+		@Override
+		public boolean isSelectedByDefault()
+		{
+			return StatisticVariable.MAIN_SOURCE.equals( sourceName );
+		}
+	}
+
+	private static class ToStringComparator implements Comparator<Object>, Serializable
+	{
+		private static final long serialVersionUID = -7210020437989839986L;
+
+		@Override
+		public int compare( Object o1, Object o2 )
+		{
+			return String.valueOf( o1 ).compareTo( String.valueOf( o2 ) );
+		}
+	}
+}

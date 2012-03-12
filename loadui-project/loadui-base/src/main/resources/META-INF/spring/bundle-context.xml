@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- <bean id="beanInjectorContextSetter" class="com.eviware.loadui.util.BeanInjector$ContextSetter" 
+		/> -->
+
+	<bean id="addressableRegistry"
+		class="com.eviware.loadui.impl.addressable.AddressableRegistryImpl" />
+
+	<bean id="scheduledExecutorService" class="com.eviware.loadui.util.ScheduledExecutor"
+		factory-method="getInstance" />
+		
+	<bean id="testEventRegistry" class="com.eviware.loadui.impl.testevents.TestEventRegistryImpl" />
+
+	<bean id="formUploader" class="com.eviware.loadui.impl.upload.FormUploaderImpl" />
+
+	<bean id="executorManager" class="com.eviware.loadui.impl.dispatch.ExecutorManagerImpl"
+		destroy-method="shutdown">
+		<constructor-arg ref="workspaceProvider" />
+	</bean>
+
+	<bean id="executorService" factory-bean="executorManager"
+		factory-method="getExecutor" />
+
+	<bean id="propertySynchronizer"
+		class="com.eviware.loadui.impl.property.PropertySynchronizerImpl">
+		<constructor-arg ref="addressableRegistry" />
+		<constructor-arg ref="executorService" />
+		<constructor-arg ref="conversionService" />
+	</bean>
+
+	<bean id="counterSynchronizer" class="com.eviware.loadui.impl.counter.CounterSynchronizerImpl" />
+
+	<bean id="terminalProxy" class="com.eviware.loadui.impl.terminal.TerminalProxyImpl">
+		<constructor-arg ref="conversionService" />
+		<constructor-arg ref="addressableRegistry" />
+		<constructor-arg ref="broadcastMessageEndpoint" />
+	</bean>
+
+	<bean id="conversionService"
+		class="org.springframework.context.support.ConversionServiceFactoryBean">
+		<property name="converters">
+			<list>
+				<bean
+					class="com.eviware.loadui.impl.conversion.SceneItemImplToStringConverter" />
+				<bean
+					class="com.eviware.loadui.impl.conversion.StringToSceneItemConverter" />
+				<bean
+					class="com.eviware.loadui.impl.conversion.ComponentItemImplToStringConverter" />
+				<bean
+					class="com.eviware.loadui.impl.conversion.StringToComponentItemConverter">
+					<constructor-arg ref="addressableRegistry" />
+				</bean>
+				<bean class="com.eviware.loadui.impl.conversion.FileToReferenceConverter">
+					<constructor-arg ref="broadcastMessageEndpoint" />
+					<constructor-arg ref="executorService" />
+				</bean>
+				<bean class="com.eviware.loadui.impl.conversion.ReferenceToFileConverter">
+					<constructor-arg ref="addressableRegistry" />
+					<constructor-arg ref="scheduledExecutorService" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="addonRegistry" class="com.eviware.loadui.impl.addon.AddonRegistryImpl" />
+
+	<bean id="broadcastMessageEndpoint"
+		class="com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl" />
+
+	<bean id="workspaceProvider" class="com.eviware.loadui.impl.model.WorkspaceProviderImpl">
+		<constructor-arg ref="addonRegistry" />
+	</bean>
+
+	<bean id="componentRegistry" name="behaviorProvider"
+		class="com.eviware.loadui.impl.component.ComponentRegistryImpl" />
+
+	<bean id="chartViewProviderFactory"
+		class="com.eviware.loadui.impl.statistics.model.ChartViewProviderFactoryImpl" />
+
+	<bean id="statisticsManager"
+		class="com.eviware.loadui.impl.statistics.StatisticsManagerImpl">
+		<constructor-arg ref="executionManager" />
+	</bean>
+
+	<bean id="sampleStatisticsWriter"
+		class="com.eviware.loadui.impl.statistics.SampleStatisticsWriter$Factory" />
+	<bean id="throughputStatisticsWriter"
+		class="com.eviware.loadui.impl.statistics.ThroughputStatisticsWriter$Factory" />
+	<bean id="counterStatisticsWriter"
+		class="com.eviware.loadui.impl.statistics.CounterStatisticsWriter$Factory" />
+	<bean id="variableStatisticsWriter"
+		class="com.eviware.loadui.impl.statistics.VariableStatisticsWriter$Factory" />
+		
+	<bean id="assertionAddonFactory" class="com.eviware.loadui.impl.assertion.AssertionAddonImpl$Factory" />
+	
+	<bean id="assertionFailureEventFactory" class="com.eviware.loadui.impl.assertion.AssertionFailureEvent$Factory" />
+
+	<bean class="com.eviware.loadui.impl.LoggingUncaughtExceptionHandler"
+		factory-method="setForAllThreads" />
+</beans>
