@@ -427,7 +427,7 @@ public class AgentInspectorNode extends BaseNode, TestCaseIconListener, Resizabl
 					layoutX: leftPanelContentOffset
 					layoutY: 27
 					fill: Color.web("#212121")
-					content: "Test case distribution"
+					content: "Scenario distribution:"
 					font: Font.font("Amble", 10)
 				}
 				localButton = ToggleButton {
