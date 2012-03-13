@@ -126,7 +126,7 @@ class StartingDialogTask extends TestExecutionTask {
 				def mainAppState = AppState.byName("MAIN");
 				mainAppState.setBlockedText( "Initializing {canvas.getLabel()}." );
 				mainAppState.setCancelHandler( function():Void {
-					execution.abort( "User manually aborted during startup" );
+					execution.abort( "Test aborted during startup by user. Please wait for the startup phase to complete..." );
 				} );
 				mainAppState.block();
 			} );
