@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -238,11 +239,6 @@ public class LoadUILauncher
 
 		processCommandLine( cmd );
 
-		//make bundles from external libraries
-		File source = new File( "." + File.separator + "ext" );
-		File dest = new File( "." + File.separator + "bundle" );
-		BndUtils.wrapAll( source, dest );
-
 		framework = new FrameworkFactory().newFramework( configProps );
 
 		try
@@ -268,6 +264,31 @@ public class LoadUILauncher
 						{
 							e.printStackTrace();
 						}
+					}
+				}
+			}
+
+			File source = new File( "." + File.separator + "ext" );
+			if( source.isDirectory() )
+			{
+				for( File ext : source.listFiles( new FilenameFilter()
+				{
+					@Override
+					public boolean accept( File dir, String name )
+					{
+						return name.toLowerCase().endsWith( ".jar" );
+					}
+				} ) )
+				{
+					try
+					{
+						File tmpFile = File.createTempFile( ext.getName(), ".jar" );
+						BndUtils.wrap( ext, tmpFile );
+						framework.getBundleContext().installBundle( tmpFile.toURI().toString() ).start();
+					}
+					catch( Exception e )
+					{
+						e.printStackTrace();
 					}
 				}
 			}
