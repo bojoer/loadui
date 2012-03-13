@@ -63,23 +63,30 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 
 	public void poll()
 	{
-		final Statistic<?> statistic = getSegment().getStatistic();
-		if( statistic != null )
+		try
 		{
-			DataPoint<?> dataPoint = statistic.getLatestPoint( level );
-			if( dataPoint != null )
+			final Statistic<?> statistic = getSegment().getStatistic();
+			if( statistic != null )
 			{
-				long timestamp = dataPoint.getTimestamp();
-				if( timestamp != latestTime && timestamp >= 0 )
+				DataPoint<?> dataPoint = statistic.getLatestPoint( level );
+				if( dataPoint != null )
 				{
-					latestTime = timestamp;
-					final double doubleValue = dataPoint.getValue().doubleValue();
-					if( xRangeMin <= timestamp && timestamp <= xRangeMax && !Double.isNaN( doubleValue ) )
+					long timestamp = dataPoint.getTimestamp();
+					if( timestamp != latestTime && timestamp >= 0 )
 					{
-						addPoint( timestamp, scalar * doubleValue, true );
+						latestTime = timestamp;
+						final double doubleValue = dataPoint.getValue().doubleValue();
+						if( xRangeMin <= timestamp && timestamp <= xRangeMax && !Double.isNaN( doubleValue ) )
+						{
+							addPoint( timestamp, scalar * doubleValue, true );
+						}
 					}
 				}
 			}
+		}
+		catch( Exception e )
+		{
+			//Ignore
 		}
 	}
 

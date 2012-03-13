@@ -282,7 +282,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		currentExecution.setLabel( label );
 
 		executionMap.put( id, currentExecution );
-		fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
 
 		executionState = State.STARTED;
 
@@ -457,10 +456,15 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			}
 		}
 
-		ArrayList<Execution> executions = new ArrayList<Execution>();
-		executions.addAll( executionMap.values() );
-
-		return executions;
+		if( currentExecution != null && executionState != State.STOPPED )
+		{
+			return Sets.difference( ImmutableSet.<Execution> copyOf( executionMap.values() ),
+					ImmutableSet.of( currentExecution ) );
+		}
+		else
+		{
+			return ImmutableSet.<Execution> copyOf( executionMap.values() );
+		}
 	}
 
 	@Override
@@ -1239,6 +1243,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			currentExecution.flushLength();
 			latestEntries.clear();
 			ecs.fireExecutionStopped( oldState );
+			fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, currentExecution ) );
 			log.debug( "State changed: " + oldState.name() + " -> STOPPED " );
 		}
 	}
