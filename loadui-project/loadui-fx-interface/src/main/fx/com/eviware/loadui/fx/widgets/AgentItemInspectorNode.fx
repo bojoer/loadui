@@ -286,7 +286,7 @@ public class AgentItemInspectorNode extends AgentNodeBase, Droppable, TestCaseIc
 							url: "{__ROOT__}images/component_help_icon.fxz"
 						}
 						action: function() {
-							openURL( if(ghostAgent) "http://www.loadui.org/interface/project-view.html" else modelItem.getHelpUrl() );
+							openURL( if(ghostAgent) "http://www.loadui.org/interface/project-view.html#1-6-agent-inspector" else modelItem.getHelpUrl() );
 						}
 					}
 				]

@@ -115,6 +115,8 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	public var showResetButton:Boolean = true;
 	public var showLimitButton:Boolean = true;
 	
+	var running = false;
+	
 	public var items:Node[] on replace {
 		hbox.content = for( i in [0..<sizeof items] ) [
 			if(i>0) Rectangle { width: 3, height: 25, fill: bind separatorFill, visible: bind items[i].visible, managed: bind items[i].managed } else null,
@@ -259,7 +261,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 				layoutInfo: LayoutInfo { height: 33, width: 33, margin: Insets { top: -2, bottom: 2 } }
 				styleClass: "execution-button"
 				selected: false
-				graphic: ExecutionGraphic { layoutInfo: LayoutInfo { height: 33, width: 33 }, running: bind (playButton.armed or playButton.selected) }
+				graphic: ExecutionGraphic { layoutInfo: LayoutInfo { height: 33, width: 33 }, running: bind running }
 				tooltip:Tooltip { text:"Play/Stop" }
 			},
 			linkButton,
@@ -378,10 +380,12 @@ class RunningTask extends TestExecutionTask {
 			if( phase == Phase.START ) {
 				FxUtils.runInFxThread( function():Void {
 					playButton.selected = canvas.isRunning();
+					running = true;
 				} );
 			} else if( phase == Phase.STOP ) {
 				FxUtils.runInFxThread( function():Void {
 					playButton.selected = false;
+					running = false;
 				} );
 			}
 		}
