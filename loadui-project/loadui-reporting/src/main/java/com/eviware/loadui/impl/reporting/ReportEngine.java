@@ -285,7 +285,7 @@ public class ReportEngine
 		jp1.setPageHeight( jp2.getPageHeight() );
 		jp1.setPageWidth( jp2.getPageWidth() );
 		jp1.setOrientation( jp2.getOrientationValue() );
-		jp1.setDefaultFont( jp2.getDefaultFont() );
+		jp1.setDefaultStyle( jp2.getDefaultStyle() );
 		return jp1;
 	}
 
