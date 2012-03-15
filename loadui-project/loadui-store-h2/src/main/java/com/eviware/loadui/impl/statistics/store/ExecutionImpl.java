@@ -92,10 +92,6 @@ public class ExecutionImpl implements Execution, Releasable
 	private final Properties attributes = new Properties();
 	private final File propertiesFile;
 
-	private final Object loadingLock = new Object();
-
-	private boolean isLoading = false;
-
 	/**
 	 * Map that holds references to all tracks that belongs to this execution
 	 */
@@ -187,43 +183,17 @@ public class ExecutionImpl implements Execution, Releasable
 		return Long.parseLong( getAttribute( KEY_START_TIME, "0" ) );
 	}
 
-	private void awaitLoaded()
-	{
-		while( !isLoaded() )
-		{
-			synchronized( loadingLock )
-			{
-				if( isLoading )
-				{
-					try
-					{
-						loadingLock.wait();
-					}
-					catch( InterruptedException e )
-					{
-						e.printStackTrace();
-					}
-				}
-				else
-				{
-					isLoading = true;
-					manager.loadExecution( getId() );
-				}
-			}
-		}
-	}
-
 	@Override
 	public Track getTrack( String trackId )
 	{
-		awaitLoaded();
+		manager.loadExecution( getId() );
 		return trackMap.get( trackId );
 	}
 
 	@Override
 	public Collection<String> getTrackIds()
 	{
-		awaitLoaded();
+		manager.loadExecution( getId() );
 		return trackMap.keySet();
 	}
 
@@ -379,15 +349,7 @@ public class ExecutionImpl implements Execution, Releasable
 
 	public void setLoaded( boolean loaded )
 	{
-		synchronized( loadingLock )
-		{
-			this.loaded = loaded;
-			if( isLoading )
-			{
-				isLoading = false;
-				loadingLock.notifyAll();
-			}
-		}
+		this.loaded = loaded;
 	}
 
 	public boolean isLoaded()

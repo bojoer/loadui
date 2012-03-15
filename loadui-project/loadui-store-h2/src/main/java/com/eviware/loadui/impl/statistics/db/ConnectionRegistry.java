@@ -129,7 +129,6 @@ public class ConnectionRegistry implements Releasable
 
 	private Connection getOrCreateConnection( String dbName, String key ) throws SQLException
 	{
-		
 		DataSource dataSource = getDataSource( dbName );
 		if( !connectionMap.containsKey( key ) )
 		{

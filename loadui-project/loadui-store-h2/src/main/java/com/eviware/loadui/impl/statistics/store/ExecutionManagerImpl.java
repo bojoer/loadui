@@ -303,12 +303,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	public Track getTrack( String executionId, String trackId )
 	{
-		ExecutionImpl execution = getExecution( executionId );
-		if( !execution.isLoaded() )
-		{
-			loadExecution( executionId );
-		}
-		return execution.getTrack( trackId );
+		loadExecution( executionId );
+		return getExecution( executionId ).getTrack( trackId );
 	}
 
 	@Override
@@ -451,6 +447,17 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			ExecutionImpl execution = new ExecutionImpl( executionDir, this, testEventRegistry );
 			if( !executionMap.containsKey( execution.getId() ) )
 			{
+				// try to initialize data source for execution. this will create several connections
+				// in the connection pool to speed up execution loading later.
+				try
+				{
+					connectionRegistry.getDataSource( executionDir.getName() );
+				}
+				catch( SQLException e )
+				{
+					// data source initialization failed, do nothing
+				}
+
 				executionMap.put( execution.getId(), execution );
 				fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, execution ) );
 			}
@@ -480,7 +487,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 		else
 		{
-			throw new IllegalArgumentException( "Execution with the specified id does not exist!" );
+			log.error( "Execution {} does not exist!", new Object[] { executionId } );
+			throw new IllegalArgumentException( "Execution with the specified ID does not exist!" );
 		}
 	}
 
@@ -499,94 +507,108 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	 */
 	public Execution loadExecution( String executionId )
 	{
-		ExecutionImpl execution = executionMap.get( executionId );
-		String dbName = execution.getExecutionDir().getName();
-		// keep everything in temporary lists, until all SQL operations
-		// are finished successfully and then create objects and add
-		// tables to table registry
-		List<TrackDescriptor> tracksToCreate = new ArrayList<TrackDescriptor>();
-		List<TableBase> createdTableList = new ArrayList<TableBase>();
-		try
+		ExecutionImpl execution = getExecution( executionId );
+		synchronized( execution )
 		{
-			// create source meta table
-			SourceMetadataTable sourceMetaTable = new SourceMetadataTable( dbName, connectionRegistry, metadata,
-					tableRegistry );
-			createdTableList.add( sourceMetaTable );
-
-			// create level table
-			InterpolationLevelTable levelTable = new InterpolationLevelTable( dbName, connectionRegistry, metadata,
-					tableRegistry );
-			createdTableList.add( levelTable );
-
-			// create track meta data table
-			TrackMetadataTable trackMetaTable = new TrackMetadataTable( dbName, connectionRegistry, metadata,
-					tableRegistry );
-			createdTableList.add( trackMetaTable );
-
-			// create event type table
-			TestEventTypeTable testEventTypeTable = new TestEventTypeTable( dbName, connectionRegistry, metadata,
-					tableRegistry );
-			createdTableList.add( testEventTypeTable );
-
-			// create event source table
-			TestEventSourceTable testEventSourceTable = new TestEventSourceTable( dbName, connectionRegistry, metadata,
-					tableRegistry );
-			createdTableList.add( testEventSourceTable );
-
-			// go through all tracks in track meta table and for those that
-			// have track descriptor registered, create data and sources
-			// table instance. If table descriptor do not exist it means that
-			// corresponding component has been deleted, so its data won't be
-			// shown anyway.
-			List<String> trackList = trackMetaTable.listAllTracks();
-			for( int i = 0; i < trackList.size(); i++ )
+			if( !execution.isLoaded() )
 			{
-				String trackId = trackList.get( i );
-				TrackDescriptor td = trackDescriptors.get( trackId );
-				if( td != null )
+				String dbName = execution.getExecutionDir().getName();
+				// keep everything in temporary lists, until all SQL operations
+				// are finished successfully and then create objects and add
+				// tables to table registry
+				List<TrackDescriptor> tracksToCreate = new ArrayList<TrackDescriptor>();
+				List<TableBase> createdTableList = new ArrayList<TableBase>();
+				try
 				{
-					// create data tables
-					for( Integer level : levelTable.getLevels() )
-					{
-						for( String source : sourceMetaTable.getSourceNames() )
-						{
-							DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), level, source ),
-									td.getValueNames(), connectionRegistry, metadata, tableRegistry );
-							createdTableList.add( dtd );
-						}
+					// create source meta table
+					SourceMetadataTable sourceMetaTable = new SourceMetadataTable( dbName, connectionRegistry, metadata,
+							tableRegistry );
+					createdTableList.add( sourceMetaTable );
 
-						// create event log tables for each level
-						TestEventTable testEventTable = new TestEventTable( dbName, buildTestEventTableName( level ),
-								connectionRegistry, metadata, tableRegistry );
-						createdTableList.add( testEventTable );
+					// create level table
+					InterpolationLevelTable levelTable = new InterpolationLevelTable( dbName, connectionRegistry, metadata,
+							tableRegistry );
+					createdTableList.add( levelTable );
+
+					// create track meta data table
+					TrackMetadataTable trackMetaTable = new TrackMetadataTable( dbName, connectionRegistry, metadata,
+							tableRegistry );
+					createdTableList.add( trackMetaTable );
+
+					// create event type table
+					TestEventTypeTable testEventTypeTable = new TestEventTypeTable( dbName, connectionRegistry, metadata,
+							tableRegistry );
+					createdTableList.add( testEventTypeTable );
+
+					// create event source table
+					TestEventSourceTable testEventSourceTable = new TestEventSourceTable( dbName, connectionRegistry,
+							metadata, tableRegistry );
+					createdTableList.add( testEventSourceTable );
+
+					// go through all tracks in track meta table and for those that
+					// have track descriptor registered, create data and sources
+					// table instance. If table descriptor do not exist it means that
+					// corresponding component has been deleted, so its data won't be
+					// shown anyway.
+					List<String> trackList = trackMetaTable.listAllTracks();
+					for( int i = 0; i < trackList.size(); i++ )
+					{
+						String trackId = trackList.get( i );
+						TrackDescriptor td = trackDescriptors.get( trackId );
+						if( td != null )
+						{
+							ImmutableMap.Builder<String, Class<? extends Number>> builder = ImmutableMap.builder();
+							for( java.util.Map.Entry<String, Class<? extends Number>> entry : td.getValueNames().entrySet() )
+							{
+								builder.put( columnNames.getUnchecked( entry.getKey() ), entry.getValue() );
+							}
+							ImmutableMap<String, Class<? extends Number>> columnNameMap = builder.build();
+
+							// create data tables
+							for( Integer level : levelTable.getLevels() )
+							{
+								for( String source : sourceMetaTable.getSourceNames() )
+								{
+									DataTable dtd = new DataTable( dbName, buildDataTableName( td.getId(), level, source ),
+											columnNameMap, connectionRegistry, metadata, tableRegistry );
+									createdTableList.add( dtd );
+								}
+
+								// create event log tables for each level
+								TestEventTable testEventTable = new TestEventTable( dbName, buildTestEventTableName( level ),
+										connectionRegistry, metadata, tableRegistry );
+								createdTableList.add( testEventTable );
+							}
+							tracksToCreate.add( td );
+						}
 					}
-					tracksToCreate.add( td );
+
+					// add created tables into table registry
+					tableRegistry.putAll( dbName, createdTableList );
+
+					// create tracks and add them to execution
+					for( int i = 0; i < tracksToCreate.size(); i++ )
+					{
+						Track track = new TrackImpl( execution, tracksToCreate.get( i ), this );
+						execution.addTrack( track );
+					}
+
+					execution.setLoaded( true );
+					executionPool.put( execution );
+
+				}
+				catch( SQLException e )
+				{
+					throw new RuntimeException( "Execution " + executionId + " is corrupted and can't be loaded", e );
+				}
+				finally
+				{
+					createdTableList.clear();
+					tracksToCreate.clear();
 				}
 			}
-
-			// add created tables into table registry
-			tableRegistry.putAll( dbName, createdTableList );
-
-			// create tracks and add them to execution
-			for( int i = 0; i < tracksToCreate.size(); i++ )
-			{
-				Track track = new TrackImpl( execution, tracksToCreate.get( i ), this );
-				execution.addTrack( track );
-			}
-
-			execution.setLoaded( true );
-			executionPool.put( execution );
-			return execution;
 		}
-		catch( SQLException e )
-		{
-			throw new RuntimeException( "Execution " + executionId + " is corrupted and can't be loaded", e );
-		}
-		finally
-		{
-			createdTableList.clear();
-			tracksToCreate.clear();
-		}
+		return execution;
 	}
 
 	@Override
@@ -836,10 +858,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 		else
 		{
-			if( !getExecution( executionId ).isLoaded() )
-			{
-				loadExecution( executionId );
-			}
+			loadExecution( executionId );
 
 			Set<TestEventTypeDescriptorImpl> result = new HashSet<TestEventTypeDescriptorImpl>();
 
@@ -884,10 +903,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public <T extends TestEvent> Iterable<TestEventData> readTestEvents( String executionId, int offset, int limit,
 			Iterable<TestEventSourceConfig> sources )
 	{
-		if( !getExecution( executionId ).isLoaded() )
-		{
-			loadExecution( executionId );
-		}
+		loadExecution( executionId );
 		List<TestEventData> result = new ArrayList<TestEventData>();
 		try
 		{
@@ -951,10 +967,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public <T extends TestEvent> Iterable<TestEventData> readTestEventRange( String executionId, final long startTime,
 			final long endTime, int interpolationLevel, Iterable<TestEventSourceConfig> sources )
 	{
-		if( !getExecution( executionId ).isLoaded() )
-		{
-			loadExecution( executionId );
-		}
+		loadExecution( executionId );
 		List<TestEventData> result = new ArrayList<TestEventData>();
 		try
 		{
@@ -1001,10 +1014,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	public <T extends TestEvent> int getTestEventCount( String executionId, Iterable<TestEventSourceConfig> sources )
 	{
-		if( !getExecution( executionId ).isLoaded() )
-		{
-			loadExecution( executionId );
-		}
+		loadExecution( executionId );
 		try
 		{
 			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable(

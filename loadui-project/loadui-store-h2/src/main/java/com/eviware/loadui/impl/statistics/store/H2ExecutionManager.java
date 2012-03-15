@@ -46,7 +46,7 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	@Override
 	public DataSource createDataSource( String db )
 	{
-		JdbcConnectionPool cp = JdbcConnectionPool
+		JdbcConnectionPool pool = JdbcConnectionPool
 				.create(
 						"jdbc:h2:"
 								+ baseDirectoryURI
@@ -55,8 +55,11 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 								+ db
 								+ ";DB_CLOSE_ON_EXIT=FALSE;DATABASE_EVENT_LISTENER='com.eviware.loadui.impl.statistics.store.H2EventListener';TRACE_LEVEL_FILE=2",
 						"sa", "sa" );
-		cp.setMaxConnections( 25 );
-		return cp;
+		pool.setMaxConnections( 25 );
+
+		new Thread( new ConnectionPoolInitializer( pool ) ).start();
+
+		return pool;
 	}
 
 	@Override
@@ -85,5 +88,30 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 		metadata.addTypeConversionPair( String.class, TYPE_STRING );
 		metadata.addTypeConversionPair( Boolean.class, TYPE_BOOLEAN );
 		metadata.addTypeConversionPair( Byte[].class, TYPE_BINARY );
+	}
+
+	private class ConnectionPoolInitializer implements Runnable
+	{
+
+		private JdbcConnectionPool pool;
+
+		public ConnectionPoolInitializer( JdbcConnectionPool pool )
+		{
+			this.pool = pool;
+		}
+
+		@Override
+		public void run()
+		{
+			try
+			{
+				pool.getConnection();
+			}
+			catch( SQLException e )
+			{
+				e.printStackTrace();
+			}
+		}
+
 	}
 }
