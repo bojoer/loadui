@@ -293,6 +293,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		}
 		catch( ComponentCreationException e )
 		{
+			//TODO: This is NOT ok! The CanvasItem interface states that his method should NOT return null, yet here it does. Rather change the signature to throw an exception if creation fails.
 			log.error( "Unable to load component: " + component, e );
 			component.release();
 			component = null;
