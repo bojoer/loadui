@@ -261,14 +261,16 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		if( scenes.remove( scene ) )
 		{
 			log.debug( "Detaching {}", scene );
+			scene.removeEventListener( BaseEvent.class, sceneListener );
+
 			( ( AggregatedCounterSupport )counterSupport ).removeChild( scene );
+
 			for( AgentItem agent : getAgentsAssignedTo( scene ) )
 			{
 				log.debug( "Telling {} to stop scene {}", agent, scene );
 				agent.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.UNASSIGN, scene.getId() ) );
 			}
 
-			scene.removeEventListener( BaseEvent.class, sceneListener );
 			sceneEndpoints.remove( scene );
 			fireCollectionEvent( SCENES, CollectionEvent.Event.REMOVED, scene );
 		}
@@ -747,6 +749,10 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			else if( event.getSource() instanceof SceneItem )
 			{
 				SceneItem scene = ( SceneItem )event.getSource();
+				if( !scenes.contains( scene ) )
+				{
+					return;
+				}
 				if( DELETED.equals( event.getKey() ) )
 				{
 					for( int i = 0; i < getConfig().sizeOfSceneArray(); i++ )

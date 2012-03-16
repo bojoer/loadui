@@ -418,6 +418,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	@Override
 	public void release()
 	{
+		fireBaseEvent( RELEASED );
+
 		testRunner.unregisterTask( executionTask, Phase.values() );
 		ReleasableUtils.releaseAll( componentList, connectionList );
 		summary = null;

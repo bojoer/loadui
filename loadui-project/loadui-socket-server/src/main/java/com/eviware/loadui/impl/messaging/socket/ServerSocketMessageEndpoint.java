@@ -41,7 +41,7 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint, Initializab
 {
 	public static final Logger log = LoggerFactory.getLogger( ServerSocketMessageEndpoint.class );
 
-	private static final Message CLOSE_MESSAGE = new Message( null, null );
+	private static final Message CLOSE_MESSAGE = new Message( "/service/close", null );
 
 	private final LinkedBlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
 	private final Set<ConnectionListener> connectionListeners = Collections
@@ -157,6 +157,10 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint, Initializab
 				while( ( channel = ois.readUTF() ) != null && ( data = ois.readObject() ) != null )
 				{
 					//log.debug( "Got message: {}: {}", channel, data );
+					if( CLOSE_MESSAGE.channel.equals( channel ) )
+					{
+						break;
+					}
 					routingSupport.fireMessage( channel, ServerSocketMessageEndpoint.this, data );
 				}
 			}
@@ -206,12 +210,14 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint, Initializab
 			Message message = null;
 			try
 			{
-				while( ( message = messageQueue.take() ) != CLOSE_MESSAGE )
+				do
 				{
+					message = messageQueue.take();
 					oos.writeUTF( message.channel );
 					oos.writeObject( message.data );
 					oos.flush();
 				}
+				while( message != CLOSE_MESSAGE );
 			}
 			catch( InterruptedException e )
 			{

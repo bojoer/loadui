@@ -16,6 +16,7 @@
 package com.eviware.loadui.impl.statistics;
 
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,7 +54,11 @@ import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Releasable
 {
@@ -62,7 +67,15 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 	private final ExecutionManager executionManager;
 	private final WorkspaceProvider workspaceProvider;
 	private final ReportingManager reportingManager;
-	private final HashMap<String, HashSet<Execution>> projectIdToExecutions = new HashMap<String, HashSet<Execution>>();
+	private final SetMultimap<String, Execution> projectIdToExecutions = Multimaps.newSetMultimap(
+			new HashMap<String, Collection<Execution>>(), new Supplier<Set<Execution>>()
+			{
+				@Override
+				public HashSet<Execution> get()
+				{
+					return Sets.newHashSet();
+				}
+			} );
 	private final HashSet<SummaryTask> summaryAttachers = new HashSet<SummaryTask>();
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningExecutionTask runningExecutionTask = new RunningExecutionTask();
@@ -173,34 +186,24 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 		@Override
 		public void handleEvent( CollectionEvent event )
 		{
-			if( CollectionEvent.Event.ADDED == event.getEvent() )
+			if( WorkspaceItem.PROJECTS.equals( event.getKey() ) )
 			{
-				if( WorkspaceItem.PROJECTS.equals( event.getKey() ) )
+				ProjectItem project = ( ProjectItem )event.getElement();
+				String projectId = project.getId();
+				if( CollectionEvent.Event.ADDED == event.getEvent() )
 				{
-					ProjectItem addedProject = ( ProjectItem )event.getElement();
-
-					addedProject.addEventListener( CollectionEvent.class, collectionListener );
-
 					// lazily get project->execution mapping from disk if needed
-					if( !projectIdToExecutions.containsKey( addedProject.getId() ) )
+					for( Execution e : executionManager.getExecutions() )
 					{
-						HashSet<Execution> executionSet = new HashSet<Execution>();
-						for( Execution e : executionManager.getExecutions() )
+						if( getProjectId( e ).equals( projectId ) )
 						{
-							if( getProjectId( e ).equals( addedProject.getId() ) )
-								executionSet.add( e );
+							projectIdToExecutions.put( projectId, e );
 						}
-						projectIdToExecutions.put( addedProject.getId(), executionSet );
 					}
 				}
-			}
-			else
-			{
-				if( WorkspaceItem.PROJECTS.equals( event.getKey() ) )
+				else
 				{
-					ProjectItem removedProject = ( ProjectItem )event.getElement();
-
-					removedProject.removeEventListener( CollectionEvent.class, collectionListener );
+					projectIdToExecutions.removeAll( projectId );
 				}
 			}
 		}
@@ -250,17 +253,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 
 			summaryAttachers.add( new SummaryTask( runningProject, executionManager.getCurrentExecution() ) );
 
-			// add project->execution mapping to cache
-			if( projectIdToExecutions.containsKey( runningProject.getId() ) )
-			{
-				projectIdToExecutions.get( runningProject.getId() ).add( newExecution );
-			}
-			else
-			{
-				HashSet<Execution> executionSet = new HashSet<Execution>();
-				executionSet.add( newExecution );
-				projectIdToExecutions.put( runningProject.getId(), executionSet );
-			}
+			projectIdToExecutions.put( runningProject.getId(), newExecution );
 		}
 
 		private void stopExecution( CanvasItem canvas, ProjectItem runningProject )
@@ -280,10 +273,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 				oldestExecution.delete();
 				executions.remove( oldestExecution );
 
-				// also remove from projectIdToExecutions
-				HashSet<Execution> recentProjectsExecutionMap = projectIdToExecutions.get( runningProject.getId() );
-				recentProjectsExecutionMap.remove( oldestExecution );
-				projectIdToExecutions.put( runningProject.getId(), recentProjectsExecutionMap );
+				projectIdToExecutions.remove( runningProject.getId(), oldestExecution );
 			}
 		}
 	}

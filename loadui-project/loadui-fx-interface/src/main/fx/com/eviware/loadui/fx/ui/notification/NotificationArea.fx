@@ -160,7 +160,7 @@ def fadeTransition:SequentialTransition = SequentialTransition {
 			duration: 1s
 		}
 	]
-	action: function() { state = HIDDEN }
+	action: function() { state = HIDDEN; slideUpTransition.playFromStart() }
 }
 
 def delayTransition:PauseTransition = PauseTransition {

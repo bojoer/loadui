@@ -399,7 +399,7 @@ public class ControllerImpl
 					}
 
 					Preconditions.checkArgument( scene.getVersion() == Long.parseLong( args.get( 1 ) ),
-							"TestCase version out of sync!" );
+							"TestCase version out of sync! Mine: %s, theirs: %s", scene.getVersion(), args.get( 1 ) );
 
 					command = args.get( 2 );
 					if( SceneCommunication.LABEL.equals( command ) )

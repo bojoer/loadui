@@ -54,7 +54,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 	}
 
 	public static final Logger log = LoggerFactory.getLogger( ClientSocketMessageEndpoint.class );
-	private static final Message CLOSE_MESSAGE = new Message( null, null );
+	private static final Message CLOSE_MESSAGE = new Message( "/service/close", null );
 
 	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport();
 	private final HashSet<ConnectionListener> listeners = Sets.newHashSet();
@@ -115,7 +115,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 	@Override
 	public synchronized void close()
 	{
-		if( state == State.CONNECTED )
+		if( state == State.CONNECTED || state == State.CONNECTING )
 		{
 			messageQueue.add( CLOSE_MESSAGE );
 		}
@@ -154,6 +154,13 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 									new VersionMismatchException( data == null ? "0" : data.toString() ) );
 						}
 					}
+					else if( CLOSE_MESSAGE.channel.equals( channel ) )
+					{
+						synchronized( ClientSocketMessageEndpoint.this )
+						{
+							state = State.CLOSED;
+						}
+					}
 					//log.debug( "Got message: {}: {}", channel, data );
 					routingSupport.fireMessage( channel, ClientSocketMessageEndpoint.this, data );
 				}
@@ -164,7 +171,9 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 			}
 			catch( IOException e )
 			{
-				log.error( "Connection closed:", e );
+				if( state != State.CLOSED )
+					log.error( "Connection closed:", e );
+
 				synchronized( ClientSocketMessageEndpoint.this )
 				{
 					if( state == State.CONNECTED )
@@ -249,14 +258,17 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 					}
 					catch( IOException e )
 					{
-						log.error( "Error connecting socket:", e );
-						try
+						if( state != State.CLOSED )
 						{
-							log.debug( "Sleeping for 5s before retrying..." );
-							Thread.sleep( 5000 );
-						}
-						catch( InterruptedException e1 )
-						{
+							log.error( "Error connecting socket:", e );
+							try
+							{
+								log.debug( "Sleeping for 5s before retrying..." );
+								Thread.sleep( 5000 );
+							}
+							catch( InterruptedException e1 )
+							{
+							}
 						}
 					}
 					catch( InterruptedException e )
@@ -277,11 +289,17 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 						oos = new ObjectOutputStream( socket.getOutputStream() );
 
 						Message message = null;
-						while( ( message = messageQueue.take() ) != CLOSE_MESSAGE )
+						do
 						{
+							message = messageQueue.take();
 							oos.writeUTF( message.channel );
 							oos.writeObject( message.data );
 							oos.flush();
+						}
+						while( message != CLOSE_MESSAGE );
+						synchronized( ClientSocketMessageEndpoint.this )
+						{
+							state = State.CLOSED;
 						}
 					}
 				}

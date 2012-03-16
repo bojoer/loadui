@@ -35,10 +35,12 @@ import com.eviware.loadui.util.BeanInjector
 import com.eviware.loadui.util.FormattingUtils
 import com.eviware.loadui.util.charting.LineChartUtils
 
+def log = log //Needed for agentMessageListener to be able to reference log.
+
 def agentMessageListener = new MessageListener() {
 	def agents = [] as Set
 	
-	public void put( AgentItem agent, SceneItem scene ) {
+	public void putAt( AgentItem agent, SceneItem scene ) {
 		agents.add("${agent.id}:${scene.id}")
 		agent.addMessageListener( AgentItem.AGENT_CHANNEL, this )
 	}
@@ -50,7 +52,7 @@ def agentMessageListener = new MessageListener() {
 		}
 	}
 	
-	public boolean allTestCasesReady() {
+	public boolean isTestCasesReady() {
 		return agents.size() == 0
 	}
 }
@@ -89,10 +91,13 @@ def workspaceCollectionListener = new EventHandler<CollectionEvent>() {
 }
 workspace.addEventListener( CollectionEvent, workspaceCollectionListener )
 
-//If custom agents are provided, remove saved ones.
-if( agents ) {
-	for( agent in new ArrayList( workspace.agents ) )
+//If custom agents are provided, or in local mode, remove saved agents.
+if( agents || workspace.localMode ) {
+	log.info "Removing existing agents"
+	for( agent in new ArrayList( workspace.agents ) ) {
+		log.info "Removing: $agent, ${System.identityHashCode(agent)}"
 		agent.delete()
+	}
 	importAgents.value = false
 } else {
 	importAgents.value = true
@@ -157,7 +162,7 @@ if( agents ) {
 		def agent = workspace.createAgent( agentUrl, agentUrl )
 		if( tcs == null ) {
 			for( tc in project.scenes ) {
-				agentMessageListener.put( agent, tc )
+				agentMessageListener[agent] = tc
 				project.assignScene( tc, agent )
 			}
 		} else {
@@ -168,7 +173,7 @@ if( agents ) {
 					workspace?.release()
 					return
 				}
-				agentMessageListener.put( agent, tc )
+				agentMessageListener[agent] = tc
 				project.assignScene( tc, agent )
 			}
 		}
@@ -209,10 +214,10 @@ if( !workspace.localMode ) {
 }
 
 // wait until all test cases on all agents are ready
-if( !agentMessageListener.allTestCasesReady() ) { 
-	log.info "Awaiting TestCase initialization..."
+if( !agentMessageListener.testCasesReady ) { 
+	log.info "Awaiting remote TestCase initialization..."
 	def timeout = System.currentTimeMillis() + 60000
-	while( !agentMessageListener.allTestCasesReady() ) {
+	while( !agentMessageListener.testCasesReady ) {
 		if( System.currentTimeMillis() >= timeout ) {
 			log.error "Some TestCases not initialized during timeout period. Program will exit"
 			workspace?.release()
@@ -231,7 +236,7 @@ if( !agentMessageListener.allTestCasesReady() ) {
 // assigned to the project and START event is not handled
 // at all.  
 while( !projectAdded ) {
-	sleep 1000
+	sleep 100
 }
 
 //Run the test
@@ -244,6 +249,10 @@ log.info """
 ------------------------------------
 
 """
+
+for( a in workspace.agents ) {
+	log.info "Agent: $a, ${System.identityHashCode(a)}"
+}
 
 def testRunner = BeanInjector.getBean( TestRunner )
 def testExecution = testRunner.enqueueExecution( target )

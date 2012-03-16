@@ -43,7 +43,7 @@ public final class SceneCommunication
 	public final static String ADD_COMPONENT = "addComponent";
 
 	/**
-	 * Command for removing a component.
+	 * Command for removing (deleting) a component.
 	 */
 	public final static String REMOVE_COMPONENT = "removeComponent";
 
@@ -76,7 +76,7 @@ public final class SceneCommunication
 	 * Command for gathering Agent statistics for a completed SceneItem.
 	 */
 	public final static String COLLECT_STATISTICS = "collectStatistics";
-	
+
 	/**
 	 * Command for canceling components.
 	 */
