@@ -57,8 +57,6 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 						"sa", "sa" );
 		pool.setMaxConnections( 25 );
 
-		new Thread( new ConnectionPoolInitializer( pool ) ).start();
-
 		return pool;
 	}
 
@@ -90,28 +88,4 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 		metadata.addTypeConversionPair( Byte[].class, TYPE_BINARY );
 	}
 
-	private class ConnectionPoolInitializer implements Runnable
-	{
-
-		private JdbcConnectionPool pool;
-
-		public ConnectionPoolInitializer( JdbcConnectionPool pool )
-		{
-			this.pool = pool;
-		}
-
-		@Override
-		public void run()
-		{
-			try
-			{
-				pool.getConnection();
-			}
-			catch( SQLException e )
-			{
-				e.printStackTrace();
-			}
-		}
-
-	}
 }

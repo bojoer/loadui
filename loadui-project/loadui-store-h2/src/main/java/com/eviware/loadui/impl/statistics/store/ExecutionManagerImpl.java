@@ -447,17 +447,6 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 			ExecutionImpl execution = new ExecutionImpl( executionDir, this, testEventRegistry );
 			if( !executionMap.containsKey( execution.getId() ) )
 			{
-				// try to initialize data source for execution. this will create several connections
-				// in the connection pool to speed up execution loading later.
-				try
-				{
-					connectionRegistry.getDataSource( executionDir.getName() );
-				}
-				catch( SQLException e )
-				{
-					// data source initialization failed, do nothing
-				}
-
 				executionMap.put( execution.getId(), execution );
 				fireEvent( new CollectionEvent( this, EXECUTIONS, CollectionEvent.Event.ADDED, execution ) );
 			}
