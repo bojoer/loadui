@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,32 +35,46 @@ public class EventSupport implements EventFirer, Releasable
 {
 	private static final Logger log = LoggerFactory.getLogger( EventSupport.class );
 
-	private final Set<ListenerEntry<?>> listeners = new HashSet<ListenerEntry<?>>();
-	private static BlockingQueue<Runnable> eventQueue = new LinkedBlockingQueue<Runnable>();
-	private static Thread eventThread = new Thread( new Runnable()
-	{
-		@Override
-		public void run()
-		{
-			while( true )
-			{
-				try
-				{
-					eventQueue.take().run();
-				}
-				catch( Exception e )
-				{
-					e.printStackTrace();
-				}
-			}
+	private final WeakReference<Object> ownerRef;
 
-		}
-	}, "loadUI Event Thread" );
+	private final Set<ListenerEntry<?>> listeners = new HashSet<ListenerEntry<?>>();
+	private static final BlockingQueue<Runnable> eventQueue = new LinkedBlockingQueue<Runnable>();
+	private static final Thread eventThread;
 
 	static
 	{
+		eventThread = new Thread( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				while( true )
+				{
+					try
+					{
+						final Runnable action = eventQueue.poll( 1, TimeUnit.SECONDS );
+						if( action != null )
+						{
+							action.run();
+						}
+					}
+					catch( Exception e )
+					{
+						e.printStackTrace();
+					}
+				}
+				//listeners.clear();
+			}
+		}, "[" + /* object.getClass().getSimpleName() + */"] Event Thread" );
+
 		eventThread.setDaemon( true );
 		eventThread.start();
+	}
+
+	public EventSupport( Object object )
+	{
+		ownerRef = new WeakReference<Object>( object );
+
 	}
 
 	@Override
@@ -110,6 +125,7 @@ public class EventSupport implements EventFirer, Releasable
 	@Override
 	public void release()
 	{
+		ownerRef.clear();
 		clearEventListeners();
 	}
 

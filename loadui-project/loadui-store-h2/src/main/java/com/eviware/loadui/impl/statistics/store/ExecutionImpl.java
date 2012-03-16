@@ -50,6 +50,7 @@ import com.eviware.loadui.impl.statistics.store.testevents.TestEventData;
 import com.eviware.loadui.impl.statistics.store.testevents.TestEventEntryImpl;
 import com.eviware.loadui.impl.statistics.store.testevents.TestEventSourceConfig;
 import com.eviware.loadui.impl.statistics.store.testevents.TestEventSourceDescriptorImpl;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.eviware.loadui.util.testevents.UnknownTestEvent;
 import com.google.common.base.Function;
@@ -87,7 +88,7 @@ public class ExecutionImpl implements Execution, Releasable
 	 */
 	private final ExecutionManagerImpl manager;
 
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 
 	private final Properties attributes = new Properties();
 	private final File propertiesFile;
@@ -345,6 +346,7 @@ public class ExecutionImpl implements Execution, Releasable
 	public void release()
 	{
 		manager.release( getId() );
+		ReleasableUtils.release( eventSupport );
 	}
 
 	public void setLoaded( boolean loaded )

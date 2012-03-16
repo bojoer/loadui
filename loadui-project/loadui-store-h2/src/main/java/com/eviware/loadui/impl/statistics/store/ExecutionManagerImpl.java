@@ -135,7 +135,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 	private final ExecutionChangeSupport ecs = new ExecutionChangeSupport();
 
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 
 	private final TestEventRegistry testEventRegistry;
 

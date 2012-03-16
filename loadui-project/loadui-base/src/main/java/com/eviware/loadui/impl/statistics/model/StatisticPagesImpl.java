@@ -32,7 +32,7 @@ import com.eviware.loadui.util.events.EventSupport;
 public class StatisticPagesImpl implements StatisticPages
 {
 	private final StatisticsConfig config;
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private final OrderedCollectionSupport<StatisticPage> collectionSupport;
 
 	public StatisticPagesImpl( StatisticsConfig config )

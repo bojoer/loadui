@@ -168,6 +168,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	@Override
 	public void delete()
 	{
+		release();
 		chart.delete();
 	}
 

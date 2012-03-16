@@ -20,25 +20,22 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.CollectionEvent.Event;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalHolder;
 import com.eviware.loadui.api.traits.Releasable;
-import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 
 public class TerminalHolderSupport implements Releasable
 {
 	private final TerminalHolder owner;
 	private final Map<String, Terminal> terminals = new LinkedHashMap<String, Terminal>();
-	private final AddressableRegistry addressableRegistry;
 
 	public TerminalHolderSupport( TerminalHolder owner )
 	{
 		this.owner = owner;
-		addressableRegistry = BeanInjector.getBean( AddressableRegistry.class );
 	}
 
 	public InputTerminalImpl createInput( String name, String label, String description )
@@ -86,7 +83,7 @@ public class TerminalHolderSupport implements Releasable
 					connection.disconnect();
 
 			owner.fireEvent( new CollectionEvent( owner, TerminalHolder.TERMINALS, Event.REMOVED, terminal ) );
-			addressableRegistry.unregister( terminal );
+			ReleasableUtils.release( terminal );
 		}
 	}
 
@@ -108,8 +105,7 @@ public class TerminalHolderSupport implements Releasable
 	@Override
 	public void release()
 	{
-		for( Terminal terminal : terminals.values() )
-			addressableRegistry.unregister( terminal );
+		ReleasableUtils.releaseAll( terminals.values() );
 		terminals.clear();
 	}
 }

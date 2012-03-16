@@ -19,9 +19,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
 
-public class BlinkingActivityStrategy extends AbstractActivityStrategy
+public class BlinkingActivityStrategy extends AbstractActivityStrategy implements Releasable
 {
 	private final Runnable toggleRunnable = new Runnable()
 	{
@@ -60,8 +61,11 @@ public class BlinkingActivityStrategy extends AbstractActivityStrategy
 		}
 	}
 
+	@Override
 	public void release()
 	{
+		super.release();
+
 		if( future != null )
 		{
 			future.cancel( true );

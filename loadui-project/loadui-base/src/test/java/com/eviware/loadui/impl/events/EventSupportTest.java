@@ -15,19 +15,27 @@
  */
 package com.eviware.loadui.impl.events;
 
-import org.junit.*;
-import org.mockito.InOrder;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.EventObject;
 
-import com.eviware.loadui.api.events.EventHandler;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InOrder;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
 import com.eviware.loadui.api.events.BaseEvent;
+import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.util.events.EventSupport;
 
@@ -43,12 +51,18 @@ public class EventSupportTest
 	@SuppressWarnings( "unchecked" )
 	public void setup()
 	{
-		support = new EventSupport();
+		support = new EventSupport( this );
 		mockListener = mock( EventHandler.class );
 
 		sameType = mock( BaseEvent.class );
 		subType = mock( PropertyEvent.class );
 		superType = mock( EventObject.class );
+	}
+
+	@After
+	public void teardown()
+	{
+		support.release();
 	}
 
 	@Test

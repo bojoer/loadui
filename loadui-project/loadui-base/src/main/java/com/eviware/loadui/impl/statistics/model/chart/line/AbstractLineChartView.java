@@ -26,7 +26,9 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.AttributeHolder;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.statistics.model.chart.AbstractChartView;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.google.common.collect.ImmutableList;
 
@@ -35,9 +37,9 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author dain.nilsson
  */
-public abstract class AbstractLineChartView extends AbstractChartView implements LineChartView
+public abstract class AbstractLineChartView extends AbstractChartView implements LineChartView, Releasable
 {
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private final Map<String, Segment> segments = new HashMap<String, Segment>();
 
 	public AbstractLineChartView( LineChartViewProvider provider, AttributeHolder attributeDelegate, String prefix )
@@ -125,6 +127,12 @@ public abstract class AbstractLineChartView extends AbstractChartView implements
 	public void fireEvent( EventObject event )
 	{
 		eventSupport.fireEvent( event );
+	}
+
+	@Override
+	public void release()
+	{
+		ReleasableUtils.release( eventSupport );
 	}
 
 	private class ProviderListener implements EventHandler<CollectionEvent>

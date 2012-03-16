@@ -35,6 +35,8 @@ import com.eviware.loadui.api.statistics.StatisticsManager;
 import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
+import com.eviware.loadui.api.traits.Releasable;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 
 /**
@@ -44,12 +46,12 @@ import com.eviware.loadui.util.events.EventSupport;
  * 
  * @author dain.nilsson
  */
-public class StatisticsManagerImpl implements StatisticsManager
+public class StatisticsManagerImpl implements StatisticsManager, Releasable
 {
 	public static final Logger log = LoggerFactory.getLogger( StatisticsManagerImpl.class );
 
 	private final ExecutionManager executionManager;
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private Set<StatisticHolder> holders = new HashSet<StatisticHolder>();
 	private Map<String, StatisticsWriterFactory> factories = new HashMap<String, StatisticsWriterFactory>();
 
@@ -82,6 +84,12 @@ public class StatisticsManagerImpl implements StatisticsManager
 	public void fireEvent( EventObject event )
 	{
 		eventSupport.fireEvent( event );
+	}
+
+	@Override
+	public void release()
+	{
+		ReleasableUtils.release( eventSupport );
 	}
 
 	@Override

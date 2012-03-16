@@ -29,13 +29,15 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
+import com.eviware.loadui.api.traits.Releasable;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 
-public class WorkspaceProviderImpl implements WorkspaceProvider
+public class WorkspaceProviderImpl implements WorkspaceProvider, Releasable
 {
 	public static final Logger log = LoggerFactory.getLogger( WorkspaceProviderImpl.class );
 
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private WorkspaceItem workspace;
 
 	public WorkspaceProviderImpl( AddonRegistry addonRegistry )
@@ -103,5 +105,11 @@ public class WorkspaceProviderImpl implements WorkspaceProvider
 	public void fireEvent( EventObject event )
 	{
 		eventSupport.fireEvent( event );
+	}
+
+	@Override
+	public void release()
+	{
+		ReleasableUtils.release( eventSupport );
 	}
 }

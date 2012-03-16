@@ -26,15 +26,17 @@ import com.eviware.loadui.api.addressable.Addressable;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.CollectionEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.CacheMap;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 
-public class AddressableRegistryImpl implements AddressableRegistry
+public class AddressableRegistryImpl implements AddressableRegistry, Releasable
 {
 	public static final Logger log = LoggerFactory.getLogger( AddressableRegistryImpl.class );
 
 	private final Map<String, Addressable> lookupTable = new CacheMap<String, Addressable>();
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 
 	@Override
 	public String generateId()
@@ -87,5 +89,11 @@ public class AddressableRegistryImpl implements AddressableRegistry
 	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
 		eventSupport.removeEventListener( type, listener );
+	}
+
+	@Override
+	public void release()
+	{
+		ReleasableUtils.release( eventSupport );
 	}
 }

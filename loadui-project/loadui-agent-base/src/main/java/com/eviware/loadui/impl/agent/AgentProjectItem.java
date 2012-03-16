@@ -46,6 +46,7 @@ import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
@@ -55,7 +56,7 @@ import com.google.common.collect.Sets;
 
 public class AgentProjectItem implements ProjectItem
 {
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private final HashSet<SceneItem> scenes = Sets.newHashSet();
 	private final MessageEndpoint controller;
 	private final String id;
@@ -351,7 +352,7 @@ public class AgentProjectItem implements ProjectItem
 		BeanInjector.getBean( AddressableRegistry.class ).unregister( this );
 		scenes.clear();
 		fireEvent( new BaseEvent( this, RELEASED ) );
-		eventSupport.release();
+		ReleasableUtils.release( eventSupport );
 	}
 
 	@Override

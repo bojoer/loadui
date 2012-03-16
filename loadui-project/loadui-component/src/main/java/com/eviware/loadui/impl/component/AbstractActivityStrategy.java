@@ -20,11 +20,13 @@ import java.util.EventObject;
 import com.eviware.loadui.api.component.ActivityStrategy;
 import com.eviware.loadui.api.events.ActivityEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.traits.Releasable;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 
-public abstract class AbstractActivityStrategy implements ActivityStrategy
+public abstract class AbstractActivityStrategy implements ActivityStrategy, Releasable
 {
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private boolean active = false;
 
 	protected AbstractActivityStrategy( boolean active )
@@ -69,5 +71,11 @@ public abstract class AbstractActivityStrategy implements ActivityStrategy
 	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
 		eventSupport.removeEventListener( type, listener );
+	}
+
+	@Override
+	public void release()
+	{
+		ReleasableUtils.release( eventSupport );
 	}
 }

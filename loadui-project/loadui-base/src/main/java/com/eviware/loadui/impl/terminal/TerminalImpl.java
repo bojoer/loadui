@@ -23,14 +23,16 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalHolder;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-public abstract class TerminalImpl implements Terminal
+public abstract class TerminalImpl implements Terminal, Releasable
 {
-	private final EventSupport eventsupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private final TerminalHolder owner;
 	private final String name;
 	private String label;
@@ -102,25 +104,32 @@ public abstract class TerminalImpl implements Terminal
 	@Override
 	public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
-		eventsupport.addEventListener( type, listener );
+		eventSupport.addEventListener( type, listener );
 	}
 
 	@Override
 	public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
 	{
-		eventsupport.removeEventListener( type, listener );
+		eventSupport.removeEventListener( type, listener );
 	}
 
 	@Override
 	public void fireEvent( EventObject event )
 	{
-		eventsupport.fireEvent( event );
+		eventSupport.fireEvent( event );
 	}
 
 	@Override
 	public void clearEventListeners()
 	{
-		eventsupport.clearEventListeners();
+		eventSupport.clearEventListeners();
+	}
+
+	@Override
+	public void release()
+	{
+		BeanInjector.getBean( AddressableRegistry.class ).unregister( this );
+		ReleasableUtils.release( eventSupport );
 	}
 
 	@Override

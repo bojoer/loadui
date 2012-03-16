@@ -44,7 +44,7 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	private final AddonItemHolderSupport addonItemHolderSupport;
 	private final AddressableRegistry addressableRegistry;
 
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private final AttributeHolderSupport attributeSupport;
 
 	private String id;
@@ -194,7 +194,6 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	public void release()
 	{
 		addressableRegistry.unregister( owner );
-		eventSupport.clearEventListeners();
-		ReleasableUtils.releaseAll( addonHolderSupport, addonItemHolderSupport );
+		ReleasableUtils.releaseAll( eventSupport, addonHolderSupport, addonItemHolderSupport );
 	}
 }

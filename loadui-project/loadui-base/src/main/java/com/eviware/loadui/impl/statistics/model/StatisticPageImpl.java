@@ -34,7 +34,7 @@ public class StatisticPageImpl implements StatisticPage
 	private final StatisticPagesImpl parent;
 	private StatisticsPageConfig config;
 	private final OrderedCollectionSupport<ChartGroup> collectionSupport;
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 
 	public StatisticPageImpl( StatisticPagesImpl parent, StatisticsPageConfig config )
 	{

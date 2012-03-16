@@ -41,7 +41,7 @@ public class ChartImpl implements Chart
 	private final ChartGroupImpl parent;
 	private ChartConfig config;
 	private AttributeHolderSupport attributeHolderSupport;
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	@SuppressWarnings( "unused" )
 	private final DeleteListener releaseListener;
 	private final Owner owner;

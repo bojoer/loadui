@@ -56,6 +56,7 @@ import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.FormattingUtils;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.assertion.ToleranceSupport;
 import com.eviware.loadui.util.events.EventSupport;
 import com.eviware.loadui.util.serialization.SerializationUtils;
@@ -73,7 +74,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	private static final String TOLERANCE_ALLOWED_OCCURRENCES = "toleranceAllowedOccurrences";
 	private static final String TOLERANCE_PERIOD = "tolerancePeriod";
 
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private final ToleranceSupport conditionTolerance = new ToleranceSupport();
 	private final FailureGrouper failureGrouper = new FailureGrouper();
 	private final ValueAsserter valueAsserter = new ValueAsserter();
@@ -327,6 +328,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 
 		fireEvent( new BaseEvent( this, RELEASED ) );
 		stop();
+		ReleasableUtils.release( eventSupport );
 	}
 
 	@Override

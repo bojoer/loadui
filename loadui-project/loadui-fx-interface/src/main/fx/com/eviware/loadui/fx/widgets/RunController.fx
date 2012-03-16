@@ -89,8 +89,6 @@ public class RunController extends BaseNode, Resizable, TimerController {
 
 	override var styleClass = "run-controller";
 	
-	var stopped = true;
-
 	public var innerShadowColor:Color = Color.web("#777777");
 	public var backgroundFill:Paint = Color.web("#8B8C8F");
 	public var separatorFill:Paint = LinearGradient {
@@ -245,7 +243,6 @@ public class RunController extends BaseNode, Resizable, TimerController {
 				}
 			} else {
 				TestExecutionUtils.stopCanvas( canvas );
-				stopped = true;
 			}
 		}
 	}
@@ -379,7 +376,7 @@ class RunningTask extends TestExecutionTask {
 		if( execution.getCanvas() == canvas ) {
 			if( phase == Phase.START ) {
 				FxUtils.runInFxThread( function():Void {
-					playButton.selected = canvas.isRunning();
+					playButton.selected = not execution.isAborted();
 					running = true;
 				} );
 			} else if( phase == Phase.STOP ) {

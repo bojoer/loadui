@@ -56,7 +56,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 
 	private final LineChartView chartView;
 
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private final HashMap<LineSegment, LineSegmentChartModel> lines = Maps.newHashMap();
 	private final HashMap<LineSegmentChartModel, ComparedLineSegmentChartModel> comparedLines = Maps.newHashMap();
 	private final HashMap<TestEventSegment, TestEventSegmentModel> testEventSegments = Maps.newHashMap();

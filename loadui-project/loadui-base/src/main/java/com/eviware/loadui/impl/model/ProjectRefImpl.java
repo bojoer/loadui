@@ -40,7 +40,7 @@ public class ProjectRefImpl implements ProjectRef, Releasable
 
 	private final WorkspaceItemImpl workspace;
 	private final ProjectReferenceConfig config;
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private final AttributeHolderSupport attributeHolderSupport;
 	private File projectFile;
 	private ProjectItem project;
@@ -228,6 +228,6 @@ public class ProjectRefImpl implements ProjectRef, Releasable
 	@Override
 	public void release()
 	{
-		ReleasableUtils.release( project );
+		ReleasableUtils.releaseAll( project, eventSupport );
 	}
 }

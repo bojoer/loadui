@@ -54,7 +54,7 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 	public static final String helpUrl = "http://www.loadui.org";
 
 	private final Config config;
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private final AttributeHolderSupport attributeHolderSupport;
 	private final PropertyMap properties;
 	private String id;
@@ -179,8 +179,7 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 			fireBaseEvent( RELEASED );
 			released = true;
 			addressableRegistry.unregister( this );
-			eventSupport.clearEventListeners();
-			ReleasableUtils.releaseAll( addonSupport, attributeHolderSupport );
+			ReleasableUtils.releaseAll( eventSupport, addonSupport, attributeHolderSupport );
 		}
 	}
 

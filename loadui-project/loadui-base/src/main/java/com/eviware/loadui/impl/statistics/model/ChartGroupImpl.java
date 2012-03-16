@@ -52,7 +52,7 @@ public class ChartGroupImpl implements ChartGroup
 	private final StatisticsManager statisticsManager;
 	private final StatisticPageImpl parent;
 	private final OrderedCollectionSupport<Chart> collectionSupport;
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private final ChartViewProviderFactory providerFactory;
 	private final TemplateListener listener = new TemplateListener();
 
@@ -330,9 +330,8 @@ public class ChartGroupImpl implements ChartGroup
 	public void release()
 	{
 		statisticsManager.removeEventListener( BaseEvent.class, listener );
-		ReleasableUtils.releaseAll( template, provider, attributeHolderSupport, collectionSupport );
 		fireEvent( new BaseEvent( this, RELEASED ) );
-		eventSupport.clearEventListeners();
+		ReleasableUtils.releaseAll( template, provider, attributeHolderSupport, collectionSupport, eventSupport );
 	}
 
 	private class TemplateListener implements EventHandler<BaseEvent>

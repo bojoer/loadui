@@ -27,7 +27,9 @@ import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.statistics.model.chart.AbstractChartViewProvider;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 
 /**
@@ -35,11 +37,11 @@ import com.eviware.loadui.util.events.EventSupport;
  * 
  * @author dain.nilsson
  */
-public class LineChartViewProvider extends AbstractChartViewProvider<LineChartView> implements EventFirer
+public class LineChartViewProvider extends AbstractChartViewProvider<LineChartView> implements EventFirer, Releasable
 {
 	public static final String LINE_SEGMENTS = LineChartViewProvider.class.getName() + "@lineSegments";
 
-	private final EventSupport eventSupport = new EventSupport();
+	private final EventSupport eventSupport = new EventSupport( this );
 	private final Set<Segment> segments = new HashSet<Segment>();
 
 	public LineChartViewProvider( ChartGroup chartGroup )
@@ -89,6 +91,12 @@ public class LineChartViewProvider extends AbstractChartViewProvider<LineChartVi
 	public void fireEvent( EventObject event )
 	{
 		eventSupport.fireEvent( event );
+	}
+
+	@Override
+	public void release()
+	{
+		ReleasableUtils.release( eventSupport );
 	}
 
 	void fireSegmentAdded( Segment segment )
