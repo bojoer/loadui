@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.component.BehaviorProvider.ComponentCreationException;
+import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.counter.Counter;
@@ -269,6 +269,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	@Override
 	public ComponentItem createComponent( String label, ComponentDescriptor descriptor )
+			throws ComponentCreationException
 	{
 		if( label == null )
 			throw new IllegalArgumentException( "label is null!" );
@@ -293,10 +294,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		}
 		catch( ComponentCreationException e )
 		{
-			//TODO: This is NOT ok! The CanvasItem interface states that his method should NOT return null, yet here it does. Rather change the signature to throw an exception if creation fails.
-			log.error( "Unable to load component: " + component, e );
-			component.release();
-			component = null;
+			component.delete();
+			throw e;
 		}
 
 		return component;

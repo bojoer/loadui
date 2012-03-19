@@ -16,15 +16,11 @@
 package com.eviware.loadui.impl.messaging.socket;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 
 import org.apache.commons.ssl.KeyMaterial;
@@ -36,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
-import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.ServerEndpoint;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.InitializableUtils;
@@ -132,32 +127,7 @@ public class SocketServerEndpoint implements ServerEndpoint, Releasable
 				try
 				{
 					SSLSocket socket = ( SSLSocket )serverSocket.accept();
-
-					MessageEndpoint endpoint = InitializableUtils.initialize( new ServerSocketMessageEndpoint(
-							SocketServerEndpoint.this, socket ) );
-
-					//TODO: Remove
-					endpoint.addMessageListener( "/test", new MessageListener()
-					{
-						@Override
-						public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
-						{
-							endpoint.sendMessage( channel, data );
-						}
-					} );
-
-					SSLSession session = socket.getSession();
-					Certificate[] cchain2 = session.getLocalCertificates();
-					for( int i = 0; i < cchain2.length; i++ )
-					{
-						log.debug( "{}", ( ( X509Certificate )cchain2[i] ).getSubjectDN() );
-					}
-					log.debug( "Peer host is {}", session.getPeerHost() );
-					log.debug( "Cipher is {}", session.getCipherSuite() );
-					log.debug( "Protocol is {}", session.getProtocol() );
-					log.debug( "ID is {}", new BigInteger( session.getId() ) );
-					log.debug( "Session created in {}", session.getCreationTime() );
-					log.debug( "Session accessed in {}", session.getLastAccessedTime() );
+					InitializableUtils.initialize( new ServerSocketMessageEndpoint( SocketServerEndpoint.this, socket ) );
 				}
 				catch( IOException e )
 				{

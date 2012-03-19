@@ -19,17 +19,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.math.BigInteger;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 import java.util.HashSet;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 import javax.net.ssl.HandshakeCompletedEvent;
 import javax.net.ssl.HandshakeCompletedListener;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 
 import org.apache.commons.ssl.SSLClient;
@@ -50,7 +45,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 {
 	private enum State
 	{
-		CLOSED, CONNECTING, CONNECTED, DISCONNECTED
+		CLOSING, CLOSED, CONNECTING, CONNECTED, DISCONNECTED
 	}
 
 	public static final Logger log = LoggerFactory.getLogger( ClientSocketMessageEndpoint.class );
@@ -64,6 +59,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 	private final int port;
 
 	private State state = State.CLOSED;
+	private Thread connectionThread = null;
 
 	public ClientSocketMessageEndpoint( SSLClient sslClient, String host, int port )
 	{
@@ -108,16 +104,25 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 		if( state == State.CLOSED )
 		{
 			state = State.CONNECTING;
-			new Thread( new MessageSender() ).start();
+			connectionThread = new Thread( new MessageSender() );
+			connectionThread.start();
 		}
 	}
 
 	@Override
 	public synchronized void close()
 	{
-		if( state == State.CONNECTED || state == State.CONNECTING )
+		if( state == State.CONNECTED )
 		{
 			messageQueue.add( CLOSE_MESSAGE );
+		}
+		else if( state == State.CONNECTING )
+		{
+			state = State.CLOSING;
+			if( connectionThread != null )
+			{
+				connectionThread.interrupt();
+			}
 		}
 		else
 		{
@@ -215,29 +220,13 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 							{
 								log.debug( "Handshake completed! {}", event );
 
-								SSLSession session = ( socket ).getSession();
-								try
-								{
-									Certificate[] cchain = session.getPeerCertificates();
-									log.debug( "The Certificates used by peer" );
-									for( int i = 0; i < cchain.length; i++ )
-									{
-										log.debug( "{}", ( ( X509Certificate )cchain[i] ).getSubjectDN() );
-									}
-								}
-								catch( SSLPeerUnverifiedException e )
-								{
-									log.error( "Peer unverified!", e );
-								}
-								log.debug( "Peer host is {}", session.getPeerHost() );
-								log.debug( "Cipher is {}", session.getCipherSuite() );
-								log.debug( "Protocol is {}", session.getProtocol() );
-								log.debug( "ID is {}", new BigInteger( session.getId() ) );
-								log.debug( "Session created in {}", session.getCreationTime() );
-								log.debug( "Session accessed in {}", session.getLastAccessedTime() );
-
 								synchronized( ClientSocketMessageEndpoint.this )
 								{
+									if( state == State.CLOSING )
+									{
+										messageQueue.add( CLOSE_MESSAGE );
+									}
+
 									state = State.CONNECTED;
 								}
 								handshakeCompleted.release();
@@ -260,7 +249,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 					{
 						if( state != State.CLOSED )
 						{
-							log.error( "Error connecting socket:", e );
+							log.error( "Error connecting socket: {}", e.getMessage() );
 							try
 							{
 								log.debug( "Sleeping for 5s before retrying..." );
@@ -273,6 +262,15 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 					}
 					catch( InterruptedException e )
 					{
+					}
+				}
+
+				synchronized( ClientSocketMessageEndpoint.this )
+				{
+					connectionThread = null;
+					if( state == State.CLOSING )
+					{
+						state = State.CLOSED;
 					}
 				}
 

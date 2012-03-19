@@ -242,9 +242,13 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		if( d.node instanceof ComponentToolbarItem ) {
 			log.debug( "Component dropped at: (\{\}, \{\})", x, y );
 			AppState.byName("MAIN").blockingTask( function():Void {
-				def component = createComponent( (d.node as ComponentToolbarItem).descriptor );
-				component.setAttribute( "gui.layoutX", "{offsetX + x as Integer}" );
-				component.setAttribute( "gui.layoutY", "{offsetY + y as Integer}" );
+				try {
+					def component = createComponent( (d.node as ComponentToolbarItem).descriptor );
+					component.setAttribute( "gui.layoutX", "{offsetX + x as Integer}" );
+					component.setAttribute( "gui.layoutY", "{offsetY + y as Integer}" );
+				} catch( e ) {
+					log.error( "Unable to create Component", e );
+				}
 			}, null, "Creating component...\nDownloading dependencies..." );
 		} else if( d.node instanceof NoteToolbarItem ) {
 			createNote( offsetX + x, offsetY + y );

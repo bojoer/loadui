@@ -70,45 +70,53 @@ public class CreateNewWebProjectDialog {
 			var autoStart:CheckBoxField;
 			
 			function ok():Void  {
-				 var project:ProjectItem = AppState.byName("MAIN").getActiveCanvas() as ProjectItem;	
-				 var manager:ComponentRegistry = BeanInjector.getBean(ComponentRegistry.class);
-				 
-				 var webItem:ComponentItem = project.createComponent( "Web Page Runner", manager.findDescriptor("Web Page Runner") );
-				 webItem.setAttribute( "gui.layoutX", "0" );
-				 webItem.setAttribute( "gui.layoutY", "200" );
-				 var webContext:ComponentContext = webItem.getContext();
-				 webContext.getProperty("url").setValue(url.text);
+				var project:ProjectItem = AppState.byName("MAIN").getActiveCanvas() as ProjectItem;	
+				var manager:ComponentRegistry = BeanInjector.getBean(ComponentRegistry.class);
+				
+				var controllerTerminal:InputTerminal;
+				try {
+					def webItem:ComponentItem = project.createComponent( "Web Page Runner", manager.findDescriptor("Web Page Runner") );
+					webItem.setAttribute( "gui.layoutX", "0" );
+					webItem.setAttribute( "gui.layoutY", "200" );
+					webItem.getProperty( "url" ).setValue( url.text );
+					
+					for (terminal in webItem.getTerminals()) {
+						if (terminal.getName().equals(RunnerCategory.TRIGGER_TERMINAL)) {
+							controllerTerminal = terminal as InputTerminal;
+							break;
+						}
+					}
+					
+					if ( addStatisticsDiagram.selected ) {
+						def page = project.getStatisticPages().getChildAt( 0 );
+						def chartGroup = ChartDefaults.createChartGroup( page, null, null ); 
+						ChartDefaults.createSubChart( chartGroup, webItem );
+					}
+				} catch( e ) {
+					log.error( "Unable to create Web Page Runner component", e );
+				}
 			
-				 var fixedRateItem:ComponentItem = project.createComponent( "Fixed Rate", manager.findDescriptor("Fixed Rate") ); 
-				 fixedRateItem.setAttribute( "gui.layoutX", "50" );
-				 fixedRateItem.setAttribute( "gui.layoutY", "0" );
-				 var fixedRateContext:ComponentContext = fixedRateItem.getContext();
-				 fixedRateContext.getProperty("rate").setValue(numRequests.text);
-				 
-				 var triggerTerminal:OutputTerminal;
-				 for (terminal in fixedRateItem.getTerminals()) {
-				     if(terminal.getName().equals(GeneratorCategory.TRIGGER_TERMINAL)) {
-				     	triggerTerminal = terminal as OutputTerminal;
-				     	break;
-				     }
-				     
-				 }
-				 
-				 var controllerTerminal:InputTerminal;
-				 for (terminal in webItem.getTerminals()) {
-				 	if (terminal.getName().equals(RunnerCategory.TRIGGER_TERMINAL)) {
-				 		controllerTerminal = terminal as InputTerminal;
-				 		break;
-				 	}
-				 }
-				 project.connect(triggerTerminal, controllerTerminal);
-				 
-				 if ( addStatisticsDiagram.selected ) {
-				 	def page = project.getStatisticPages().getChildAt( 0 );
-					def chartGroup = ChartDefaults.createChartGroup( page, null, null ); 
-				 	ChartDefaults.createSubChart( chartGroup, webItem );
-				 }
-				 dialog.close();
+				var triggerTerminal:OutputTerminal;
+				try {
+					def fixedRateItem:ComponentItem = project.createComponent( "Fixed Rate", manager.findDescriptor("Fixed Rate") ); 
+					fixedRateItem.setAttribute( "gui.layoutX", "50" );
+					fixedRateItem.setAttribute( "gui.layoutY", "0" );
+					fixedRateItem.getProperty( "rate" ).setValue( numRequests.text );
+					
+					for (terminal in fixedRateItem.getTerminals()) {
+						if(terminal.getName().equals(GeneratorCategory.TRIGGER_TERMINAL)) {
+							triggerTerminal = terminal as OutputTerminal;
+							break;
+						}
+					}
+				} catch( e ) {
+					log.error( "Unable to create Web Page Runner component", e );
+				}
+				
+				if( triggerTerminal != null and controllerTerminal != null )
+					project.connect(triggerTerminal, controllerTerminal);
+				
+				dialog.close();
 				if (autoStart.selected) {
 					TestExecutionUtils.startCanvas( project );
 				}
@@ -127,7 +135,7 @@ public class CreateNewWebProjectDialog {
 			]
 		};
 		
-		dialog = if( FX.isInitialized( layoutX ) and FX.isInitialized( layoutY ) )
+		dialog = if( FX.isInitialized( layoutX ) and FX.isInitialized( layoutY ) ) {
 			Dialog {
 				title: "New Web Project"
 				x:layoutX
@@ -136,15 +144,13 @@ public class CreateNewWebProjectDialog {
 				okText: "Create"
 				onOk: ok
 			} 
-		else
+		} else {
 			Dialog {
 				title: "New Web Project"
 				content: form
 				okText: "Create"
 				onOk: ok
-			};
-		
+			}
+		}
 	}	
-	
-
 }

@@ -37,9 +37,8 @@ def defaultImage = Image { url: "{__ROOT__}images/png/default-component-icon.png
 
 public class ComponentToolbarItem extends ToolbarItemNode {
 	public var descriptor:ComponentDescriptor on replace {
-		icon = if( descriptor.getIcon() != null )
-			Image { url: descriptor.getIcon().toString() }
-			else defaultImage;
+		icon = if( descriptor.getIcon() != null ) Image { url: descriptor.getIcon().toString() }
+		else defaultImage;
 		
 		tooltip = descriptor.getDescription();
 		label = descriptor.getLabel();
@@ -49,14 +48,14 @@ public class ComponentToolbarItem extends ToolbarItemNode {
 	}
 	
 	override def onMouseClicked = function (me:MouseEvent) {
-				  if( me.button == MouseButton.PRIMARY and me.clickCount == 2) {
-				     var canvas:CanvasItem = AppState.byName("MAIN").getActiveCanvas();
-				     var name = "{descriptor.getLabel()}";
-				     var i=0;
-				     while( sizeof canvas.getComponents()[c|c.getLabel() == name] > 0 )
-				     		name = "{descriptor.getLabel()} ({++i})";
-				     		
-				     canvas.createComponent( name, descriptor );
-				  }  
-			}
+		if( me.button == MouseButton.PRIMARY and me.clickCount == 2) {
+			var canvas:CanvasItem = AppState.byName("MAIN").getActiveCanvas();
+			var name = "{descriptor.getLabel()}";
+			var i=0;
+			while( sizeof canvas.getComponents()[c|c.getLabel() == name] > 0 )
+				name = "{descriptor.getLabel()} ({++i})";
+					
+			canvas.createComponent( name, descriptor );
+		}  
+	}
 }

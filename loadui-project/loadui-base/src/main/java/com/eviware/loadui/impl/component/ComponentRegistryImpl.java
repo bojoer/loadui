@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.component.BehaviorProvider;
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentContext;
+import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.component.ComponentRegistry;
 
@@ -59,6 +60,7 @@ public class ComponentRegistryImpl implements ComponentRegistry
 		fireDescriptorAdded( descriptor );
 	}
 
+	@Override
 	public void registerType( String type, BehaviorProvider provider )
 	{
 		if( provider == null || type == null )
@@ -131,7 +133,7 @@ public class ComponentRegistryImpl implements ComponentRegistry
 	{
 		if( descriptors.containsKey( descriptor ) )
 			return descriptors.get( descriptor ).createBehavior( descriptor, context );
-		throw new RuntimeException( "No Provider exists for the given ComponentDescriptor!" );
+		throw new ComponentCreationException( "No Provider exists for the given ComponentDescriptor!" );
 	}
 
 	@Override
@@ -140,7 +142,7 @@ public class ComponentRegistryImpl implements ComponentRegistry
 	{
 		if( types.containsKey( componentType ) )
 			return types.get( componentType ).loadBehavior( componentType, context );
-		throw new RuntimeException( "No Provider exists for the type '" + componentType + "'!" );
+		throw new ComponentCreationException( "No Provider exists for the type '" + componentType + "'!" );
 	}
 
 	private void fireDescriptorAdded( ComponentDescriptor descriptor )

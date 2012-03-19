@@ -20,6 +20,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.statistics.StatisticHolder;
@@ -90,9 +91,11 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	 * @param descriptor
 	 *           The ComponentDescriptor to create a component from.
 	 * @return The newly created ComponentItem.
+	 * @throws ComponentCreationException
 	 */
 	@Nonnull
-	public ComponentItem createComponent( @Nonnull String label, @Nonnull ComponentDescriptor descriptor );
+	public ComponentItem createComponent( @Nonnull String label, @Nonnull ComponentDescriptor descriptor )
+			throws ComponentCreationException;
 
 	/**
 	 * Get the child components.

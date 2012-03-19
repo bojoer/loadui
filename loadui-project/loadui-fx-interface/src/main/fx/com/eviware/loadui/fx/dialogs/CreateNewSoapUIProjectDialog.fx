@@ -76,41 +76,51 @@ public class CreateNewSoapUIProjectDialog {
 	//	var soapuiProject:WsdlProject;
 			
 	function ok():Void  {
-		var project:ProjectItem = AppState.byName("MAIN").getActiveCanvas() as ProjectItem;	
+		var project:ProjectItem = AppState.byName("MAIN").getActiveCanvas() as ProjectItem;
 		var manager:ComponentRegistry = BeanInjector.getBean(ComponentRegistry.class);
-						 
-		var soapuiItem:ComponentItem = project.createComponent( "soapui Runner", manager.findDescriptor("soapUI Runner") );
-		soapuiItem.setAttribute( "gui.layoutX", "0" );
-		soapuiItem.setAttribute( "gui.layoutY", "200" );
 		
-		var fixedRateItem:ComponentItem = project.createComponent( "Fixed Rate", manager.findDescriptor("Fixed Rate") ); 
-		fixedRateItem.setAttribute( "gui.layoutX", "50" );
-		fixedRateItem.setAttribute( "gui.layoutY", "0" );
-		var fixedRateContext:ComponentContext = fixedRateItem.getContext();
-		fixedRateContext.getProperty("rate").setValue(numRequests.text);
-		 
-		var triggerTerminal:OutputTerminal;
-		for (terminal in fixedRateItem.getTerminals()) {
-			if (terminal.getName().equals( GeneratorCategory.TRIGGER_TERMINAL )) {
-				triggerTerminal = terminal as OutputTerminal;
-				break;
-			}
-		}
-		 
 		var controllerTerminal:InputTerminal;
-		for (terminal in soapuiItem.getTerminals()) {
-			if (terminal.getName().equals(RunnerCategory.TRIGGER_TERMINAL)) {
-		 		controllerTerminal = terminal as InputTerminal;
-		 		break;
-		 	}
+		try {
+			def soapuiItem:ComponentItem = project.createComponent( "soapui Runner", manager.findDescriptor("soapUI Runner") );
+			soapuiItem.setAttribute( "gui.layoutX", "0" );
+			soapuiItem.setAttribute( "gui.layoutY", "200" );
+			
+			for (terminal in soapuiItem.getTerminals()) {
+				if (terminal.getName().equals(RunnerCategory.TRIGGER_TERMINAL)) {
+					controllerTerminal = terminal as InputTerminal;
+					break;
+				}
+			}
+			
+			if ( addStatisticsDiagram.selected ) {
+				def page = project.getStatisticPages().getChildAt( 0 );
+				def chartGroup = ChartDefaults.createChartGroup( page, null, null ); 
+				ChartDefaults.createSubChart( chartGroup, soapuiItem );
+			}
+		} catch( e ) {
+			log.error( "Unable to create soapUI Runner component", e );
 		}
-		project.connect(triggerTerminal, controllerTerminal);
-		 
-		if ( addStatisticsDiagram.selected ) {
-			def page = project.getStatisticPages().getChildAt( 0 );
-			def chartGroup = ChartDefaults.createChartGroup( page, null, null ); 
-			ChartDefaults.createSubChart( chartGroup, soapuiItem );
+		
+		var triggerTerminal:OutputTerminal;
+		try {
+			def fixedRateItem:ComponentItem = project.createComponent( "Fixed Rate", manager.findDescriptor("Fixed Rate") ); 
+			fixedRateItem.setAttribute( "gui.layoutX", "50" );
+			fixedRateItem.setAttribute( "gui.layoutY", "0" );
+			fixedRateItem.getProperty("rate").setValue( numRequests.text );
+			
+			for( terminal in fixedRateItem.getTerminals() ) {
+				if( terminal.getName().equals( GeneratorCategory.TRIGGER_TERMINAL ) ) {
+					triggerTerminal = terminal as OutputTerminal;
+					break;
+				}
+			}
+		} catch( e ) {
+			log.error( "Unable to create Fixed Rate Generator component", e );
 		}
+		
+		if( triggerTerminal != null and controllerTerminal != null )
+			project.connect(triggerTerminal, controllerTerminal);
+		
 		dialog.close();
 		if (autoStart.selected) {
 			TestExecutionUtils.startCanvas( project );
