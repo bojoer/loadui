@@ -146,6 +146,7 @@ public class WorkspaceMenu extends HBox {
 			                         def projectRef = workspace.importProject( source, true );
 			                         projectRef.setAttribute( "miniature", projectRef.getProject().getAttribute( "miniature", "" ) );
 			                         success = true;
+			                         workspace.save();
 			                     } catch(e:Throwable) {
 			                     	log.error( "Failed importing project: {source}", e );
 			                     }

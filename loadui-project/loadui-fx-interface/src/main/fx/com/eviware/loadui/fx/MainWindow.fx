@@ -262,6 +262,7 @@ public class MainWindow {
 						okText: "Ok"
 						onOk: function() {
 							workspace.removeProject( ref );
+							workspace.save();
 							dialog.close();
 						}
 						onCancel: function() {

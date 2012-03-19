@@ -129,6 +129,7 @@ public class CreateNewAgentDialog {
 						dialog.close();
 						//validateAgent(); 
 					}
+					workspace.save();
 				}
 	
 	postinit {
@@ -207,6 +208,7 @@ public class CreateNewAgentDialog {
 		onOk: function(){
 			log.debug( "Creating new Agent: '\{\}'  with URL: '\{\}'", agentName.value, agentUrl.value );
 			workspace.createAgent(agentUrl.value as String, agentName.value as String);
+			workspace.save();
 			confirmDialog.close();
 			dialog.close();
 		}

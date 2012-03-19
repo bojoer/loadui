@@ -169,7 +169,9 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 	    			    			]
 	    			    			okText: "Ok"
 	    			    			onOk: function() {
-	    			    				MainWindow.instance.workspace.removeProject( projectRef );
+	    			    				def workspace = MainWindow.instance.workspace;
+	    			    				workspace.removeProject( projectRef );
+	    			    				workspace.save();
 	    			    				dialog.close();
 	    			    			}
 	    			    			onCancel: function() {
@@ -201,7 +203,9 @@ public class ProjectNode extends BaseNode, Draggable, EventHandler {
 	            	    			    			]
 	            	    			    			okText: "Ok"
 	            	    			    			onOk: function() {
-	            	    			    				MainWindow.instance.workspace.removeProject( projectRef );
+	            	    			    				def workspace = MainWindow.instance.workspace;
+	            	    			    				workspace.removeProject( projectRef );
+	            	    			    				workspace.save();
 	            	    			    				dialog.close();
 	            	    			    			}
 	            	    			    			onCancel: function() {

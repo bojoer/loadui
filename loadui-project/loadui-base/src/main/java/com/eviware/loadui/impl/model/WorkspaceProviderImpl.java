@@ -78,9 +78,15 @@ public class WorkspaceProviderImpl implements WorkspaceProvider, Releasable
 	}
 
 	@Override
+	public File getDefaultWorkspaceFile()
+	{
+		return new File( System.getProperty( LoadUI.LOADUI_HOME ), "workspace.xml" );
+	}
+
+	@Override
 	public WorkspaceItem loadDefaultWorkspace()
 	{
-		return loadWorkspace( new File( System.getProperty( LoadUI.LOADUI_HOME ), "workspace.xml" ) );
+		return loadWorkspace( getDefaultWorkspaceFile() );
 	}
 
 	@Override

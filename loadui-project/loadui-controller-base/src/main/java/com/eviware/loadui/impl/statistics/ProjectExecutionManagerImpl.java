@@ -16,10 +16,8 @@
 package com.eviware.loadui.impl.statistics;
 
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,11 +52,9 @@ import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
-import com.google.common.base.Supplier;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
 
 public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Releasable
 {
@@ -67,15 +63,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 	private final ExecutionManager executionManager;
 	private final WorkspaceProvider workspaceProvider;
 	private final ReportingManager reportingManager;
-	private final SetMultimap<String, Execution> projectIdToExecutions = Multimaps.newSetMultimap(
-			new HashMap<String, Collection<Execution>>(), new Supplier<Set<Execution>>()
-			{
-				@Override
-				public HashSet<Execution> get()
-				{
-					return Sets.newHashSet();
-				}
-			} );
+	private final SetMultimap<String, Execution> projectIdToExecutions = HashMultimap.create();
 	private final HashSet<SummaryTask> summaryAttachers = new HashSet<SummaryTask>();
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningExecutionTask runningExecutionTask = new RunningExecutionTask();

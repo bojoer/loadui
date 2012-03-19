@@ -122,11 +122,14 @@ public class CloneProjectDialog {
 		
 		bw.close();
 		out.close();
-				
-		var clone: ProjectRef = MainWindow.instance.workspace.importProject(cloneFile, true);
-		clone.setEnabled(false);
 		
+		def workspace = MainWindow.instance.workspace;
+				
+		var clone: ProjectRef = workspace.importProject(cloneFile, true);
+		clone.setEnabled(false);
 		clone.setAttribute("miniature", pRef.getAttribute("miniature", ""));
+		
+		workspace.save();
 		
 		return clone;
 	}

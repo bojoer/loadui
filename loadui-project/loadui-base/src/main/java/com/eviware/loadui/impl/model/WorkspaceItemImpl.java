@@ -249,7 +249,6 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 			projectList.addItem( ref );
 			ref.setEnabled( enabled );
 			log.debug( "public ProjectRef importProject" );
-			save();
 			return ref;
 		}
 		catch( IOException e )
@@ -274,7 +273,6 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		AgentItemImpl agent = InitializableUtils.initialize( new AgentItemImpl( this, agentConfig ) );
 		agent.addEventListener( BaseEvent.class, agentListener );
 		agentList.addItem( agent );
-		save();
 		return agent;
 	}
 
@@ -288,7 +286,6 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		AgentItemImpl agent = InitializableUtils.initialize( new AgentItemImpl( this, agentConfig ) );
 		agent.addEventListener( BaseEvent.class, agentListener );
 		agentList.addItem( agent );
-		save();
 		return agent;
 	}
 
@@ -329,7 +326,6 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 							if( getConfig().getProjectArray( i ) == ( ( ProjectRefImpl )projectRef ).getConfig() )
 							{
 								getConfig().removeProject( i );
-								save();
 								return;
 							}
 						}
@@ -372,7 +368,6 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 					if( getConfig().getAgentArray( i ) == ( ( AgentItemImpl )agent ).getConfig() )
 					{
 						getConfig().removeAgent( i );
-						save();
 						return;
 					}
 				}

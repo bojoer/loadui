@@ -16,9 +16,7 @@
 package com.eviware.loadui.util.messaging;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -26,25 +24,17 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
-import com.google.common.base.Supplier;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
 
 public class ChannelRoutingSupport
 {
 	protected static final Logger log = LoggerFactory.getLogger( ChannelRoutingSupport.class );
 
-	private final Multimap<Pattern, MessageListener> listeners = Multimaps.newSetMultimap(
-			new HashMap<Pattern, Collection<MessageListener>>(), new Supplier<Set<MessageListener>>()
-			{
-				@Override
-				public Set<MessageListener> get()
-				{
-					return Sets.newHashSet();
-				}
-			} );
+	private final Multimap<Pattern, MessageListener> listeners = Multimaps.synchronizedSetMultimap( HashMultimap
+			.<Pattern, MessageListener> create() );
 
 	public void addMessageListener( String channel, MessageListener listener )
 	{
@@ -58,11 +48,8 @@ public class ChannelRoutingSupport
 			else
 				channel = Pattern.quote( channel );
 
-			synchronized( listeners )
-			{
-				//log.debug( "Pattern is: {}", Pattern.compile( channel ) );
-				listeners.put( Pattern.compile( channel ), listener );
-			}
+			//log.debug( "Pattern is: {}", Pattern.compile( channel ) );
+			listeners.put( Pattern.compile( channel ), listener );
 		}
 	}
 

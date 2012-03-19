@@ -121,6 +121,7 @@ public class GettingStartedWizard {
 													def projectRef = workspace.importProject( sampleFile, true );
 			                         		projectRef.setAttribute( "miniature", projectRef.getProject().getAttribute( "miniature", "" ) );
 													projectRef.setEnabled( false );
+													workspace.save();
 												}, null, "Loading Project: {filename}"
 											);
 										}

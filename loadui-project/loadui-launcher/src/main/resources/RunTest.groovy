@@ -15,13 +15,11 @@
 //
 
 import com.eviware.loadui.api.events.BaseEvent
-import com.eviware.loadui.api.events.EventFirer
 import com.eviware.loadui.api.model.ProjectItem
 import com.eviware.loadui.api.model.SceneItem
 import com.eviware.loadui.api.model.WorkspaceItem
 import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.api.events.EventHandler
-import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.api.events.CollectionEvent
 import com.eviware.loadui.api.execution.TestRunner
 import com.eviware.loadui.api.execution.TestState
@@ -34,6 +32,7 @@ import com.eviware.loadui.api.reporting.ReportingManager
 import com.eviware.loadui.util.BeanInjector
 import com.eviware.loadui.util.FormattingUtils
 import com.eviware.loadui.util.charting.LineChartUtils
+import com.google.common.io.Files
 
 def log = log //Needed for agentMessageListener to be able to reference log.
 
@@ -69,14 +68,15 @@ log.info """
 
 """
 
-//Load the proper workspace
-if( workspaceFile != null ) {
-	workspace?.release()
-	log.info "Loading Workspace file: {}", workspaceFile.absolutePath
-	workspace = workspaceProvider.loadWorkspace( workspaceFile )
-} else if( workspace == null ) {
-	log.info "Loading default Workspace"
-	workspace = workspaceProvider.loadDefaultWorkspace()
+//Load the proper workspace, use a copy of the file so that not changes are saved.
+if( !workspace ) {
+	def tmpWorkspace = File.createTempFile( "workspace", "xml" )
+	def sourceFile = workspaceFile ?: workspaceProvider.defaultWorkspaceFile
+	if( sourceFile.exists() ) {
+		log.info "Loading Workspace file: {}", sourceFile.absolutePath
+		Files.copy( sourceFile, tmpWorkspace )
+	}
+	workspace = workspaceProvider.loadWorkspace( tmpWorkspace )
 }
 
 def importAgents = workspace.getProperty( WorkspaceItem.IMPORT_MISSING_AGENTS_PROPERTY )

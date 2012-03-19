@@ -43,11 +43,17 @@ public interface WorkspaceProvider extends EventFirer
 	public WorkspaceItem loadWorkspace( File workspaceFile );
 
 	/**
-	 * Loads the default workspace from file.
+	 * Loads a workspace from the file returned by loadDefaultWorkspace(). The
+	 * same as calling loadWorkspace( getDefaultWorkspaceFile() ).
 	 * 
 	 * @return
 	 */
 	public WorkspaceItem loadDefaultWorkspace();
+
+	/**
+	 * @return
+	 */
+	public File getDefaultWorkspaceFile();
 
 	/**
 	 * Gets the current workspace, if one has been loaded.
