@@ -21,14 +21,14 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRField;
+import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
+
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.statistics.model.StatisticPage;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.util.FormattingUtils;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRField;
-import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
 
 public class ExecutionDataSource extends JRAbstractBeanDataSource
 {
@@ -51,9 +51,8 @@ public class ExecutionDataSource extends JRAbstractBeanDataSource
 		this.execution = execution;
 		this.pages = pages;
 		this.charts = charts;
-		startTime = Long.parseLong( execution.getAttribute( "startTime", String.valueOf( execution.getStartTime() ) ) );
-		endTime = Long.parseLong( execution.getAttribute( "endTime",
-				String.valueOf( execution.getStartTime() + execution.getLength() ) ) );
+		startTime = execution.getStartTime();
+		endTime = startTime + execution.getLength();
 		iterator = pages.iterator();
 	}
 

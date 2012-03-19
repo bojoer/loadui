@@ -304,9 +304,6 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 			execution.setAttribute( "totalRequests", String.valueOf( totalRequests ) );
 			execution.setAttribute( "totalFailures", String.valueOf( totalFailures ) );
 
-			execution.setAttribute( "startTime", String.valueOf( summary.getStartTime().getTime() ) );
-			execution.setAttribute( "endTime", String.valueOf( summary.getEndTime().getTime() ) );
-
 			reportingManager.createReport( summary, execution.getSummaryReport(), "JASPER_PRINT" );
 
 			if( project.isSaveReport() )
