@@ -21,7 +21,7 @@
  * @help http://www.loadui.org/Output/table-log-component.html
  * @name Table Log
  * @category output
- * @dependency net.sf.opencsv:opencsv:2.0
+ * @dependency net.sf.opencsv:opencsv:2.3
  * @nonBlocking true
  */
 
@@ -69,7 +69,7 @@ myTableModel.addTableModelListener(new TableModelListener() {
 String saveFileName = null
 
 writer = null
-def formater = new SimpleDateFormat("HH:mm:ss:SSS")
+def formater = new SimpleDateFormat( "HH:mm:ss:SSS" )
 myTableModel.maxRow = maxRows.value
 
 updateProperties = {
@@ -86,45 +86,45 @@ onMessage = { o, i, m ->
 }
 
 output = { message ->
-	if(controller){
-		message.keySet().each { k -> myTableModel.addColumn k }
+	def writeLog = saveFile.value && saveFileName
+	if( controller || writeLog ) {
+		message.keySet().each { k -> myTableModel.addColumn( k ) }
 		lastMsgDate = new Date();
 		
-		if ( formatTimestamps.value ){
+		if ( formatTimestamps.value ) {
 			message.each() { key, value ->
-				if ( key.toLowerCase().contains("timestamp") ) 
-					try
-					{
-						message.put(key, formater.format(new Date(value)) )
-					} catch ( IllegalArgumentException e )
-					{
-						log.info("Failed to format Timestamp in a column whose name hinted about it containing a Timestamp")
+				if ( key.toLowerCase().contains("timestamp") ) {
+					try {
+						message[key] = formater.format( new Date( value ) )
+					} catch ( IllegalArgumentException e ) {
+						log.info( "Failed to format Timestamp in a column whose name hinted about it containing a Timestamp" )
 					}
+				}
 			}
 		}
 
-		result = myTableModel.addRow(message)
-		if( result && saveFile.value && saveFileName != null) {
-			if( writer == null ){
-				writer = new CSVWriter(new FileWriter(saveFileName, appendSaveFile.value), (char) ',');
+		result = myTableModel.addRow( message )
+		if( writeLog && result ) {
+			if( writer == null ) {
+				writer = new CSVWriter( new FileWriter( saveFileName, appendSaveFile.value ), (char) ',' );
 			}
 			try {
 				String[] header = myTableModel.header
-				if(addHeaders.value && !Arrays.equals(latestHeader, header)){
-					writer.writeNext(header)
+				if( addHeaders.value && !Arrays.equals( latestHeader, header ) ) {
+					writer.writeNext( header )
 					latestHeader = header
 				}
 				String[] entries = myTableModel.lastRow
-				writer.writeNext(entries)
-				writer.flush()
-			} catch (Exception e) {
-				e.printStackTrace()
+				writer.writeNext( entries )
+			} catch ( Exception e ) {
+				log.error( "Error writing to log file", e )
 			}
 		}
 	}
-	else if( myTableModel.enabledInDistMode ){
+	
+	if( ! controller && myTableModel.enabledInDistMode ) {
 		// on agent and enabled, so send message to controller
-		send(controllerTerminal, message)
+		send( controllerTerminal, message )
 	}
 }
 
@@ -140,6 +140,10 @@ onAction( "RESET" ) {
 	buildFileName()
 }
 
+onRelease = {
+	writer?.close()
+}
+
 buildFileName = {
 	if( !saveFile.value ) {
 		writer?.close()
@@ -150,79 +154,78 @@ buildFileName = {
 		return
 	}
 	def filePath = "${getBaseLogDir()}${File.separator}${logFilePath.value}"
-	if( !validateLogFilePath(filePath) ){
+	if( !validateLogFilePath( filePath ) ) {
 		filePath = "${getBaseLogDir()}${File.separator}logs${File.separator}table-log${File.separator}${getDefaultLogFileName()}"
-		log.warn("Log file path wasn't specified properly. Try default path: [$filePath]")
-		if( !validateLogFilePath(filePath) ){
+		log.warn( "Log file path wasn't specified properly. Try default path: [$filePath]" )
+		if( !validateLogFilePath( filePath ) ) {
 			log.error("Path: [$filePath] can't be used either. Table log component name contains invalid characters. Log file won't be saved.")
 			saveFileName = null
 			return
 		}
 	}
-	if( !appendSaveFile.value ){
-		def f = new File(filePath)
+	if( !appendSaveFile.value ) {
+		def f = new File( filePath )
 		filePath = "${f.parent}${File.separator}${addTimestampToFileName( f.name )}"
 	}
-	new File(filePath).parentFile.mkdirs()
+	new File( filePath ).parentFile.mkdirs()
 	saveFileName = filePath
 }
 
 getBaseLogDir = {
 	def dir = System.getProperty("loadui.home")
-	if(dir == null || dir.trim().length() == 0){
+	if(dir == null || dir.trim().length() == 0) {
 		dir = "."
 	}
-	return dir			
+	return dir
 }
 				
 getDefaultLogFileName = {
-	return getLabel().replaceAll(" ","")
+	return getLabel().replaceAll( " ","" )
 }
 				
 validateLogFilePath = { filePath ->
 	try {
 		// the only good way to check if file path 
 		// is correct is to try read and writing
-		File temp = new File(filePath)
+		def temp = new File( filePath )
 		temp.parentFile.mkdirs()
-		if(!temp.exists()){
-			FileOutputStream fos = new FileOutputStream(temp)
-			fos.write([0])
+		if( !temp.exists() ) {
+			def fos = new FileOutputStream( temp )
+			fos.write( [0] )
 			fos.close()
 			temp.delete()
-		}
-		else{
-			FileInputStream fis = new FileInputStream(temp)
+		} else {
+			def fis = new FileInputStream( temp )
 			fis.read()
 			fis.close()
 		}
 		return true
 	}
-	catch(Exception e){
+	catch( Exception e ) {
 		return false
 	}	
 }
 
-addTimestampToFileName  = {name ->
+addTimestampToFileName = { name ->
 	def ext = ""
-	def ind = name.lastIndexOf(".")
+	def ind = name.lastIndexOf( "." )
 	if( ind > -1 ){
-		ext = name.substring(ind, name.length())
-		name = name.substring(0, ind)
+		ext = name.substring( ind, name.length() )
+		name = name.substring( 0, ind )
 	}
 	def timestamp = new Date().time
-	if(name.length() > 0){
+	if( name.length() > 0 ) {
 		name = "${name}-"
 	}
 	return "$name$timestamp$ext"
 }
 
 layout { 
-	node( widget:'tableWidget', model:myTableModel ) 
+	node( widget: 'tableWidget', model: myTableModel ) 
 }
 
 compactLayout {
-	box( widget:'display' ) {
+	box( widget: 'display' ) {
 		node( label: 'Rows', content: { myTableModel.rowCount } )
 		node( label: 'Output File', content: { saveFileName ?: '-' } )
 	}
@@ -250,8 +253,8 @@ settings(label:'Logging') {
 }
 
 generateSummary = { chapter ->
-	if (summaryRows.value > 0) {
-   		MutableSection sect = chapter.addSection(getLabel())
-   		sect.addTable(getLabel(), myTableModel.getLastRows(summaryRows.value))
-   	}
+	if( summaryRows.value > 0 ) {
+   	MutableSection sect = chapter.addSection( getLabel() )
+   	sect.addTable( getLabel(), myTableModel.getLastRows( summaryRows.value ) )
+   }
 }
