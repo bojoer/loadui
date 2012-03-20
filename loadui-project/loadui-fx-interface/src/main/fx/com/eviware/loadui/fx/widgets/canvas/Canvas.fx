@@ -29,6 +29,7 @@ import javafx.scene.Group;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.Resizable;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -84,6 +85,8 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Ca
 
 public var showNotes = true;
 
+def GRID_SIZE = 36;
+
 /**
  * The work area of a CanvasItem. Displays contained ComponentItems and listens for changes.
  * 
@@ -107,6 +110,11 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	public var wireIsBeingDragged:Boolean = false;
 	
 	public def testcaseItem = modelItem as SceneItem;
+	
+	def grid = ImageView {
+		image: Image { url: "{__ROOT__}images/grid.png" }
+		clip: Rectangle { width: bind width + GRID_SIZE, height: bind height + GRID_SIZE }
+	}
 	
 	protected def layers = Group {
 		content: [ noteLayer, connectionLayer, componentLayer, balloonsLayer ]
@@ -136,12 +144,14 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 		//noteLayer.layoutX = -offsetX;
 		layers.layoutX = -offsetX;
 		connectionLayer.layoutX = offsetX;
+		grid.layoutX = -(offsetX mod GRID_SIZE);
 	}
 	public var offsetY:Integer = 0 on replace {
 		//componentLayer.layoutY = -offsetY;
 		//noteLayer.layoutY = -offsetY;
 		layers.layoutY = -offsetY;
 		connectionLayer.layoutY = offsetY;
+		grid.layoutY = -(offsetY mod GRID_SIZE);
 	}
 	
 	public-read var areaWidth:Integer = 0;
@@ -397,6 +407,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 	override function create() {
 		Group {
 			content: [
+				grid,
 				SVGPath {
 					content: GageReset.SHAPE
 					layoutX: 28
@@ -506,13 +517,16 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 			maxY = Math.max( maxY, obj.layoutY + obj.layoutBounds.height as Integer );
 		}
 		
-		def shiftX = if( padding - minX < 0 )
+		var shiftX = if( padding - minX < 0 )
 			Math.min( Math.max( padding - minX, (width as Integer) - ( maxX + padding ) ), 0 )
 		else padding - minX;
 		
-		def shiftY = if( padding - minY < 0 )
+		var shiftY = if( padding - minY < 0 )
 			Math.min( Math.max( padding - minY, (height as Integer) - ( maxY + padding ) ), 0 )
 		else padding - minY;
+		
+		shiftX = (shiftX/GRID_SIZE as Integer) * GRID_SIZE;
+		shiftY = (shiftY/GRID_SIZE as Integer) * GRID_SIZE;
 		
 		for( obj in objects ) {
 			obj.layoutX += shiftX;

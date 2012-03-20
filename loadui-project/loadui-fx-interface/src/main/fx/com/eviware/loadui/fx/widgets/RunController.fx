@@ -151,6 +151,11 @@ public class RunController extends BaseNode, Resizable, TimerController {
 		]
 	}
 	
+	def runningTask = new RunningTask();
+	def testRunner = BeanInjector.getBean( TestRunner.class ) on replace {
+		testRunner.registerTask( runningTask, Phase.START, Phase.STOP );
+	}
+	
 	var followListener:FollowListener;
 	
 	override var canvas on replace oldCanvas {
@@ -161,6 +166,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 			testcaseLinked = (canvas as SceneItem).isFollowProject();
 		}
 		def queue = testRunner.getExecutionQueue();
+		running = false;
 		if( not queue.isEmpty() ) {
 			def execution = queue.get( 0 );
 			def state = execution.getState();
@@ -254,19 +260,6 @@ public class RunController extends BaseNode, Resizable, TimerController {
 				TestExecutionUtils.stopCanvas( canvas );
 			}
 		}
-	}
-	
-	def runningTask = new RunningTask();
-	def testRunner = BeanInjector.getBean( TestRunner.class ) on replace {
-		testRunner.registerTask( runningTask, Phase.START, Phase.STOP );
-		def queue = testRunner.getExecutionQueue();
-		if( not queue.isEmpty() ) {
-			def execution = queue.get( 0 );
-			def state = execution.getState();
-			if( execution.contains( canvas ) and ( state == TestState.STARTING or state == TestState.RUNNING ) ) {
-				running = true;
-			}
-		} 
 	}
 	
 	init {
