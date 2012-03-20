@@ -60,6 +60,7 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.execution.TestRunner;
 import com.eviware.loadui.api.execution.Phase;
+import com.eviware.loadui.api.execution.TestState;
 import com.eviware.loadui.api.execution.TestExecutionTask;
 import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
@@ -159,6 +160,14 @@ public class RunController extends BaseNode, Resizable, TimerController {
 			canvas.addEventListener( PropertyEvent.class, followListener );
 			testcaseLinked = (canvas as SceneItem).isFollowProject();
 		}
+		def queue = testRunner.getExecutionQueue();
+		if( not queue.isEmpty() ) {
+			def execution = queue.get( 0 );
+			def state = execution.getState();
+			if( execution.contains( canvas ) and ( state == TestState.STARTING or state == TestState.RUNNING ) ) {
+				running = true;
+			}
+		} 
 	}
 	
 	def hbox = HBox {
@@ -250,6 +259,14 @@ public class RunController extends BaseNode, Resizable, TimerController {
 	def runningTask = new RunningTask();
 	def testRunner = BeanInjector.getBean( TestRunner.class ) on replace {
 		testRunner.registerTask( runningTask, Phase.START, Phase.STOP );
+		def queue = testRunner.getExecutionQueue();
+		if( not queue.isEmpty() ) {
+			def execution = queue.get( 0 );
+			def state = execution.getState();
+			if( execution.contains( canvas ) and ( state == TestState.STARTING or state == TestState.RUNNING ) ) {
+				running = true;
+			}
+		} 
 	}
 	
 	init {
@@ -373,7 +390,7 @@ class FollowListener extends WeakEventHandler {
 
 class RunningTask extends TestExecutionTask {
 	override function invoke( execution, phase ):Void {
-		if( execution.getCanvas() == canvas ) {
+		if( execution.contains( canvas ) ) {
 			if( phase == Phase.START ) {
 				FxUtils.runInFxThread( function():Void {
 					playButton.selected = not execution.isAborted();
