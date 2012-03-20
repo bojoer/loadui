@@ -468,41 +468,48 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		@Override
 		public void run()
 		{
-			int count = entries.size();
-			if( count == 0 )
+			try
 			{
-				return;
-			}
-
-			if( count >= GROUPING_COUNT )
-			{
-				manager.logTestEvent( AssertionItemImpl.this, new AssertionFailureEvent.Group( entries.getFirst().timestamp
-						+ GROUPING_PERIOD / 2, AssertionItemImpl.this, count ) );
-
-				entries.clear();
-			}
-			else
-			{
-				while( entries.getFirst().timestamp < deadline )
+				int count = entries.size();
+				if( count == 0 )
 				{
-					Entry entry = entries.removeFirst();
-					manager.logTestEvent( AssertionItemImpl.this, new AssertionFailureEvent( entry.timestamp,
-							AssertionItemImpl.this, String.valueOf( entry.value ) ) );
+					return;
 				}
 
-				if( !entries.isEmpty() )
+				if( count >= GROUPING_COUNT )
 				{
-					long timeUntilNext = entries.getFirst().timestamp - deadline;
-					deadline = entries.getFirst().timestamp + GROUPING_PERIOD;
-					runFuture = executor.schedule( this, GROUPING_PERIOD + timeUntilNext, TimeUnit.MILLISECONDS );
+					manager.logTestEvent( AssertionItemImpl.this, new AssertionFailureEvent.Group(
+							entries.getFirst().timestamp + GROUPING_PERIOD / 2, AssertionItemImpl.this, count ) );
+
+					entries.clear();
+				}
+				else
+				{
+					while( !entries.isEmpty() && entries.getFirst().timestamp < deadline )
+					{
+						Entry entry = entries.removeFirst();
+						manager.logTestEvent( AssertionItemImpl.this, new AssertionFailureEvent( entry.timestamp,
+								AssertionItemImpl.this, String.valueOf( entry.value ) ) );
+					}
+
+					if( !entries.isEmpty() )
+					{
+						long timeUntilNext = entries.getFirst().timestamp - deadline;
+						deadline = entries.getFirst().timestamp + GROUPING_PERIOD;
+						runFuture = executor.schedule( this, GROUPING_PERIOD + timeUntilNext, TimeUnit.MILLISECONDS );
+					}
+				}
+
+				fireEvent( new BaseEvent( AssertionItemImpl.this, FAILURE_COUNT ) );
+
+				if( !LoadUI.isController() )
+				{
+					BeanInjector.getBean( BroadcastMessageEndpoint.class ).sendMessage( channel, count );
 				}
 			}
-
-			fireEvent( new BaseEvent( AssertionItemImpl.this, FAILURE_COUNT ) );
-
-			if( !LoadUI.isController() )
+			catch( Exception e )
 			{
-				BeanInjector.getBean( BroadcastMessageEndpoint.class ).sendMessage( channel, count );
+				log.error( "Exception in scheduled task", e );
 			}
 		}
 
