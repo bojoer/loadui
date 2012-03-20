@@ -120,6 +120,16 @@ public class Trashcan extends Stack {
 			shown = false;
 			if( slowIn.running ) {
 				slowIn.stop();
+				fadeIn.stop();
+				def time = fadeIn.duration - fadeIn.time;
+				if( fadeOut.duration == time ) {
+					fadeOut.playFromStart();
+				} else {
+					fadeOut.time = time;
+					fadeOut.play();	
+				}
+			} else if( fadeIn.running ) {
+				fadeIn.stop();
 				fadeOut.time = fadeIn.duration - fadeIn.time;
 				fadeOut.play();
 			} else {
