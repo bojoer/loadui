@@ -15,47 +15,48 @@
  */
 package com.eviware.loadui.impl.counter;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Sets;
 
 public class AggregatedCounterSupport extends CounterSupport
 {
-	private final Map<String, Long> cachedValues = new HashMap<String, Long>();
-	private final Set<CounterHolder> children = new HashSet<CounterHolder>();
+	private final LoadingCache<String, Long> valueCache = CacheBuilder.newBuilder().build(
+			new CacheLoader<String, Long>()
+			{
+				@Override
+				public Long load( String key ) throws Exception
+				{
+					long valueSum = AggregatedCounterSupport.super.getCounterValue( key );
+					synchronized( AggregatedCounterSupport.this )
+					{
+						for( CounterHolder child : children )
+							valueSum += child.getCounter( key ).get();
+					}
+
+					return valueSum;
+				}
+			} );
+	private final Set<CounterHolder> children = Sets.newHashSet();
 	private final CounterListener listener = new CounterListener();
 
 	@Override
 	protected long getCounterValue( String name )
 	{
-		synchronized( cachedValues )
-		{
-			cachedValues.remove( name );
-			if( !cachedValues.containsKey( name ) )
-			{
-				long current = super.getCounterValue( name );
-				for( CounterHolder child : children )
-					current += child.getCounter( name ).get();
-				cachedValues.put( name, current );
-			}
-			return cachedValues.get( name );
-		}
+		return valueCache.getUnchecked( name );
 	}
 
 	@Override
 	protected long incrementCounterValue( String name, long value )
 	{
 		super.incrementCounterValue( name, value );
-		synchronized( cachedValues )
-		{
-			if( cachedValues.containsKey( name ) )
-				cachedValues.put( name, cachedValues.get( name ) + 1 );
-		}
+		valueCache.invalidate( name );
 
 		return getCounterValue( name );
 	}
@@ -64,33 +65,24 @@ public class AggregatedCounterSupport extends CounterSupport
 	public void resetCounters()
 	{
 		super.resetCounters();
-		synchronized( cachedValues )
+		valueCache.invalidateAll();
+	}
+
+	public synchronized void addChild( CounterHolder holder )
+	{
+		if( children.add( holder ) )
 		{
-			cachedValues.clear();
+			holder.addEventListener( CounterEvent.class, listener );
+			valueCache.invalidateAll();
 		}
 	}
 
-	public void addChild( CounterHolder holder )
+	public synchronized void removeChild( CounterHolder holder )
 	{
-		synchronized( cachedValues )
+		if( children.remove( holder ) )
 		{
-			if( children.add( holder ) )
-			{
-				holder.addEventListener( CounterEvent.class, listener );
-				cachedValues.clear();
-			}
-		}
-	}
-
-	public void removeChild( CounterHolder holder )
-	{
-		synchronized( cachedValues )
-		{
-			if( children.remove( holder ) )
-			{
-				holder.removeEventListener( CounterEvent.class, listener );
-				cachedValues.clear();
-			}
+			holder.removeEventListener( CounterEvent.class, listener );
+			valueCache.invalidateAll();
 		}
 	}
 
@@ -100,13 +92,8 @@ public class AggregatedCounterSupport extends CounterSupport
 		public void handleEvent( CounterEvent event )
 		{
 			String name = event.getKey();
-			synchronized( cachedValues )
-			{
-				long incCount = event.getValue();
-				if( cachedValues.containsKey( name ) )
-					cachedValues.put( name, cachedValues.get( name ) + incCount );
-				owner.fireEvent( new CounterEvent( ( CounterHolder )owner, name, incCount ) );
-			}
+			valueCache.invalidate( name );
+			owner.fireEvent( new CounterEvent( ( CounterHolder )owner, name, event.getValue() ) );
 		}
 	}
 }

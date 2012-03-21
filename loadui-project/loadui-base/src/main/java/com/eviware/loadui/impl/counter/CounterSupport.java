@@ -16,9 +16,6 @@
 package com.eviware.loadui.impl.counter;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.eviware.loadui.api.counter.Counter;
@@ -27,11 +24,23 @@ import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.impl.model.ModelItemImpl;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableSet;
 
 public class CounterSupport
 {
 	protected ModelItemImpl<?> owner;
-	private final Map<String, AtomicLong> counters = new HashMap<String, AtomicLong>();
+	private final LoadingCache<String, AtomicLong> counters = CacheBuilder.newBuilder().build(
+			new CacheLoader<String, AtomicLong>()
+			{
+				@Override
+				public AtomicLong load( String key ) throws Exception
+				{
+					return new AtomicLong();
+				}
+			} );
 
 	public void init( ModelItemImpl<?> owner )
 	{
@@ -50,34 +59,23 @@ public class CounterSupport
 
 	public Collection<String> getCounterNames()
 	{
-		return Collections.unmodifiableSet( counters.keySet() );
+		return ImmutableSet.copyOf( counters.asMap().keySet() );
 	}
 
 	public void resetCounters()
 	{
-		synchronized( counters )
-		{
-			counters.clear();
-		}
+		counters.invalidateAll();
 	}
 
 	protected long getCounterValue( String name )
 	{
-		return counters.containsKey( name ) ? counters.get( name ).get() : 0;
+		AtomicLong atomicLong = counters.getIfPresent( name );
+		return atomicLong != null ? atomicLong.get() : 0;
 	}
 
 	protected long incrementCounterValue( String name, long value )
 	{
-		if( !counters.containsKey( name ) )
-		{
-			synchronized( counters )
-			{
-				if( !counters.containsKey( name ) )
-					counters.put( name, new AtomicLong() );
-			}
-		}
-
-		counters.get( name ).addAndGet( value );
+		counters.getUnchecked( name ).addAndGet( value );
 
 		long current = getCounterValue( name );
 		owner.fireEvent( new CounterEvent( ( CounterHolder )owner, name, 1 ) );
@@ -98,7 +96,7 @@ public class CounterSupport
 		{
 			return getCounterValue( name );
 		}
-		
+
 		@Override
 		public void increment()
 		{

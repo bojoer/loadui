@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +30,7 @@ import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.model.ModelItem;
+import com.google.common.collect.ImmutableMap;
 
 public class AgentCounterSynchronizer implements CounterSynchronizer
 {
@@ -52,10 +52,10 @@ public class AgentCounterSynchronizer implements CounterSynchronizer
 				Map<CounterHolder, HolderData> holdersCopy;
 				synchronized( holders )
 				{
-					holdersCopy = new HashMap<CounterHolder, HolderData>( holders );
+					holdersCopy = ImmutableMap.copyOf( holders );
 				}
 
-				for( Entry<CounterHolder, HolderData> entry : holdersCopy.entrySet() )
+				for( Map.Entry<CounterHolder, HolderData> entry : holdersCopy.entrySet() )
 				{
 					CounterHolder holder = entry.getKey();
 					Map<String, String> changedData = new HashMap<String, String>();
