@@ -75,9 +75,16 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 
 		for( AddonItem.Support addonItemSupport : context.getAddonItemSupports() )
 		{
-			@SuppressWarnings( "rawtypes" )
-			AssertionItemImpl assertionItem = new AssertionItemImpl( canvas, this, addonItemSupport );
-			assertionItems.addItemWith( assertionItem, addonItemSupport );
+			try
+			{
+				@SuppressWarnings( "rawtypes" )
+				AssertionItemImpl assertionItem = new AssertionItemImpl( canvas, this, addonItemSupport );
+				assertionItems.addItemWith( assertionItem, addonItemSupport );
+			}
+			catch( Exception e )
+			{
+				log.error( "Failed adding AssertionItem", e );
+			}
 		}
 
 		BeanInjector.getBean( TestRunner.class ).registerTask( assertionTask, Phase.PRE_START, Phase.POST_STOP );

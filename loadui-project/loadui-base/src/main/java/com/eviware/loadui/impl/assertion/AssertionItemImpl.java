@@ -52,6 +52,7 @@ import com.eviware.loadui.api.serialization.ListenableValue.ValueListener;
 import com.eviware.loadui.api.serialization.Resolver;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEventManager;
+import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
@@ -78,7 +79,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 	private final ToleranceSupport conditionTolerance = new ToleranceSupport();
 	private final FailureGrouper failureGrouper = new FailureGrouper();
 	private final ValueAsserter valueAsserter = new ValueAsserter();
-	private final LabelListener labelListener = new LabelListener();
+	private final DependencyListener dependencyListener = new DependencyListener();
 	private final ResetListener resetListener = new ResetListener();
 	private final String channel;
 	private final TestEventSourceSupport sourceSupport;
@@ -197,9 +198,9 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 
 	private <Type> Type attachLabelListener( final Type object )
 	{
-		if( object instanceof Labeled && object instanceof EventFirer )
+		if( object instanceof EventFirer )
 		{
-			( ( EventFirer )object ).addEventListener( BaseEvent.class, labelListener );
+			( ( EventFirer )object ).addEventListener( BaseEvent.class, dependencyListener );
 		}
 
 		return object;
@@ -316,7 +317,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		canvas.removeEventListener( ActionEvent.class, resetListener );
 		if( listenableValue instanceof EventFirer )
 		{
-			( ( EventFirer )listenableValue ).addEventListener( BaseEvent.class, labelListener );
+			( ( EventFirer )listenableValue ).addEventListener( BaseEvent.class, dependencyListener );
 		}
 
 		if( failureListener != null )
@@ -539,7 +540,7 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 		}
 	}
 
-	private class LabelListener implements WeakEventHandler<BaseEvent>
+	private class DependencyListener implements WeakEventHandler<BaseEvent>
 	{
 		@Override
 		public void handleEvent( BaseEvent event )
@@ -547,6 +548,10 @@ public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent
 			if( Objects.equal( Labeled.LABEL, event.getKey() ) )
 			{
 				updateDescription();
+			}
+			else if( Objects.equal( Deletable.DELETED, event.getKey() ) )
+			{
+				delete();
 			}
 		}
 	}
