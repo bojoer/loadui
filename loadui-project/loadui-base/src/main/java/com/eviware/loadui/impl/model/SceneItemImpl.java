@@ -477,7 +477,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	public String getHelpUrl()
 	{
-		return "http://www.loadui.org/Working-with-loadUI/agents-and-testcases.html";
+		return "http://www.loadui.org/Working-with-loadUI/scenarios.html";
 	}
 
 	private Collection<AgentItem> getActiveAgents()

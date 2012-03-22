@@ -179,6 +179,12 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	}
 
 	@Override
+	public String getHelpUrl()
+	{
+		return "http://www.loadui.org/Distribution/distribution-getting-started.html";
+	}
+
+	@Override
 	public WorkspaceItem getWorkspace()
 	{
 		return workspace;

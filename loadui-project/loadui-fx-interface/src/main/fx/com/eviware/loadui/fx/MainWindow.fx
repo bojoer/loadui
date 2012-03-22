@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.fx;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.launcher.api.SplashController;
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
@@ -175,9 +176,10 @@ public class MainWindow {
 		appState.insertInto( ProjectCarousel { workspace: workspace, layoutX: 137, layoutY: 90, layoutInfo: LayoutInfo { width: 315, height: 222 } }, WORKSPACE_FRONT );
 		appState.insertInto( AgentCarousel { workspace: workspace, layoutX: 137, layoutY: 337, layoutInfo: LayoutInfo { width: 315, height: 260 } }, WORKSPACE_FRONT );
 		
+		def versionInfo = LoadUI.VERSION;
 		appState.insertInto( BrowserFrame {
 			id: "starterPage",
-			url: java.lang.System.getProperty( "loadui.starterpage.url", "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html" ),
+			url: java.lang.System.getProperty( "loadui.starterpage.url", "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html?version={versionInfo}" ),
 			layoutX: 477, layoutY: 90, layoutInfo: LayoutInfo { width: 634, height: 562 }
 		}, WORKSPACE_FRONT );
 		
