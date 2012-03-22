@@ -205,7 +205,11 @@ public class InspectorPanelControl extends InspectorPanel, CustomNode {
 		}
 		insert btn before buttons[i];
 		
-		if( inspector.getName().equals( defaultInspector ) ) {
+		if( inspector.getName().equals( defaultInspector ) or sizeof inspectors == 1 ) {
+		    // always set first added inspector as the default one. 
+		    // in case default inspector is not specified or 
+		    // it doesn't exist, first added inspector will 
+		    // be default inspector. 
 			selectInspector( inspector );
 		}
 		
