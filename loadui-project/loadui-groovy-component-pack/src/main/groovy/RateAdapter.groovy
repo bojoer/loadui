@@ -70,12 +70,12 @@ def targets = new OptionsProviderImpl()
 def requestCnt = 0
 
 // formatted strings for displaying counters
-def displayRate = new DelayedFormattedString( '%d', 500, value { currentRate } )
-def displayTPS = new DelayedFormattedString( '%.2f', 500, value { currentAvgTps } )
-def displayLastTPS = new DelayedFormattedString( '%.2f', 500, value { lastAvgTps } )
-def displayRollingAvg = new DelayedFormattedString( '%.2f', 500, value { rollingAvg } )
-def displayStdDev = new DelayedFormattedString( '%.2f', 500, value { stdDev } )
-def displayStdDevPercent = new DelayedFormattedString( '%.2f', 500, value { stdDevPercent } )
+def displayRate = new DelayedFormattedString( '%d', value { currentRate } )
+def displayTPS = new DelayedFormattedString( '%.2f', value { currentAvgTps } )
+def displayLastTPS = new DelayedFormattedString( '%.2f', value { lastAvgTps } )
+def displayRollingAvg = new DelayedFormattedString( '%.2f', value { rollingAvg } )
+def displayStdDev = new DelayedFormattedString( '%.2f', value { stdDev } )
+def displayStdDevPercent = new DelayedFormattedString( '%.2f', value { stdDevPercent } )
 
 // method for updating the list of target components
 def updateTargets =
