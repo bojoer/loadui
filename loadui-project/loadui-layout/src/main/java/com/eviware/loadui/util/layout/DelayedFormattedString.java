@@ -23,21 +23,30 @@ import com.eviware.loadui.util.ScheduledExecutor;
 public class DelayedFormattedString extends FormattedString
 {
 	private UpdateTask updateTask = new UpdateTask();
-
 	private ScheduledFuture<?> future;
+	private int delay = 500;
 
 	public DelayedFormattedString( String pattern, Object... args )
 	{
-		this( pattern, 1000, args );
-	}
-
-	public DelayedFormattedString( String pattern, int delay, Object... args )
-	{
 		super( pattern, args );
-
 		update();
 
 		future = ScheduledExecutor.instance.scheduleAtFixedRate( updateTask, delay, delay, TimeUnit.MILLISECONDS );
+	}
+
+	public int getDelay()
+	{
+		return delay;
+	}
+
+	public void setDelay( int delay )
+	{
+		if( delay != this.delay )
+		{
+			this.delay = delay;
+			future.cancel( true );
+			future = ScheduledExecutor.instance.scheduleAtFixedRate( updateTask, delay, delay, TimeUnit.MILLISECONDS );
+		}
 	}
 
 	@Override
