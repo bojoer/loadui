@@ -51,8 +51,9 @@ public class TestEventManagerImpl extends AbstractTestEventManager
 
 			if( factory != null )
 			{
-				sendEvent( source, Arrays.asList( factory.getLabel(), ( ( Addressable )source ).getId(),
-						testEvent.getTimestamp(), factory.getDataForTestEvent( testEvent ) ) );
+				sendEvent( source,
+						Arrays.asList( factory.getType().getName(), factory.getLabel(), ( ( Addressable )source ).getId(),
+								testEvent.getTimestamp(), factory.getDataForTestEvent( testEvent ) ) );
 			}
 			else
 			{
