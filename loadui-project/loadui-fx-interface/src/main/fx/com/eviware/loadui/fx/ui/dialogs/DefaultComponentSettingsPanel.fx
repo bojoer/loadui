@@ -95,7 +95,6 @@ public class DefaultComponentSettingsPanel {
                 if ( field != null ) {
                     var pp = propertyBuffer.get(p) as PropertyProxy;
                     field.value = pp.getValue();
-                    update();
                 }
             }
         } 
