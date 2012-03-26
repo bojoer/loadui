@@ -126,7 +126,7 @@ public class TestCaseNode extends CanvasObjectNode {
 	function open() {
 			AppState.byName("MAIN").blockingTask( function():Void {
 			AppState.byName("MAIN").setActiveCanvas( testCase );
-		}, null, "Initializing TestCase." );
+		}, null, "Initializing Scenario." );
 	}
 	
 	override var menuItems: Node[] = [

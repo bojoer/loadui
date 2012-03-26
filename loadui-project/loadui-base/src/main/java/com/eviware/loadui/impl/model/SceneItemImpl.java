@@ -53,6 +53,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.config.SceneItemConfig;
+import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
 import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.counter.RemoteAggregatedCounterSupport;
 import com.eviware.loadui.impl.summary.MutableChapterImpl;
@@ -90,7 +91,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	public SceneItemImpl( ProjectItem project, SceneItemConfig config )
 	{
 		super( config, LoadUI.isController() ? new RemoteAggregatedCounterSupport(
-				BeanInjector.getBean( CounterSynchronizer.class ) ) : new CounterSupport() );
+				BeanInjector.getBean( CounterSynchronizer.class ) ) : new AggregatedCounterSupport() );
 		this.project = project;
 		version = getConfig().getVersion().longValue();
 
