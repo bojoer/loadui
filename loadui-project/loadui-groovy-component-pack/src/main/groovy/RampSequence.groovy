@@ -18,13 +18,15 @@ createProperty( 'peakRateUnit', String, 'sec' ) { calculateAcceleration(); redra
 future = null
 cancellingFuture = null
 startTime = 0
+triggersSent = 0
 calculateAcceleration()
 
 onAction( 'START' ) {
 	calculateAcceleration()
 	startTime = currentTime()
 	hasPeaked = false
-	scheduleNext()
+	scheduleNext( startTime )
+	triggersSent = 0
 }
 
 onAction( 'STOP' ) {
@@ -33,11 +35,15 @@ onAction( 'STOP' ) {
 	startTime = null
 }
 
-scheduleNext = {
+scheduleNext = { wakeTime ->
 	def t0 = getT0()
+	
+//	println( "Too late with: " + wakeTime - getT0() )
+//	println( "Missed triggers: " + a*(t0**2 - wakeTime**2)/2 )
 	
 	if( t0 >= rampLength.value && !hasPeaked ) {
 		hasPeaked = true
+		triggersSent = 0
 		def delay = 1000000/peakRate.value
 		if( peakRateUnit.value == 'min' )
 			delay = 1000000/(peakRate.value/60)
@@ -48,13 +54,25 @@ scheduleNext = {
 			scheduleNext( rampLength.value )
 		}, peakLength.value, TimeUnit.SECONDS )
 	} else if( t0 >= 0 ) {
-		t1 = Math.sqrt( 2/a + t0**2 )
+		def triggersThatShouldHaveBeenSent = 0
+		if( hasPeaked ) {
+			triggersThatShouldHaveBeenSent = Math.floor( a*t0**2/2 - a*rampLength.value**2/2 )
+		}
+		else
+			triggersThatShouldHaveBeenSent = Math.floor( a*t0**2/2 )
 		
+		while( triggersSent < triggersThatShouldHaveBeenSent ) {
+			trigger()
+			triggersSent++
+		}
+	
+		t1 = Math.sqrt( 2/a + t0**2 )
 		future?.cancel( true )
 		def diff = Math.abs( t1 - getT0() )
 		if( !Double.isNaN( diff ) ) {
 			future = schedule( {
 					trigger()
+					triggersSent++
 					scheduleNext( t1 )
 				}, ( diff*1000000) as long, TimeUnit.MICROSECONDS )
 		}
