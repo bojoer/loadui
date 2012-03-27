@@ -108,13 +108,12 @@ public class GettingStartedWizard {
 										openURL("http://loadui.org/Getting-Started-with-loadUI/your-first-load-test.html")
 									}
 								},
-								//TODO: Replace with "Import included sample projects"
 								Button {
 									text: "Import included sample projects"
 									action: function() {
 										dialogRef.close();
 										def samplesDir = new File("samples");
-										for( filename in [ "sample1.xml", "sample4.xml" ] ) {
+										for( filename in [ "sample1.xml", "sample2.xml", "sample3.xml" ] ) {
 											def sampleFile = new File( samplesDir, filename );
 											AppState.byName("MAIN").blockingTask(
 												function():Void {
