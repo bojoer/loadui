@@ -16,6 +16,7 @@ createProperty( 'peakLength', Long, 10 )
 createProperty( 'peakRateUnit', String, 'sec' ) { calculateAcceleration(); redraw() }
 
 future = null
+cancellingFuture = null
 startTime = 0
 calculateAcceleration()
 
@@ -38,6 +39,8 @@ scheduleNext = {
 	if( t0 >= rampLength.value && !hasPeaked ) {
 		hasPeaked = true
 		def delay = 1000000/peakRate.value
+		if( peakRateUnit.value == 'min' )
+			delay = 1000000/(peakRate.value/60)
 		future = scheduleAtFixedRate( { trigger() }, delay, delay, TimeUnit.MICROSECONDS )
 		cancellingFuture = schedule( {
 			future?.cancel( true )
@@ -49,10 +52,12 @@ scheduleNext = {
 		
 		future?.cancel( true )
 		def diff = Math.abs( t1 - getT0() )
-		future = schedule( {
-				trigger()
-				scheduleNext( t1 )
-			}, ( diff*1000000) as long, TimeUnit.MICROSECONDS )
+		if( !Double.isNaN( diff ) ) {
+			future = schedule( {
+					trigger()
+					scheduleNext( t1 )
+				}, ( diff*1000000) as long, TimeUnit.MICROSECONDS )
+		}
 	}
 }
 
@@ -67,7 +72,6 @@ def getT0() {
 }
 
 def redraw() {
-	def rate = peakRateUnit.value == 'sec' ? a*getT0() : a*getT0()*60
 	layout {
 		property( property:rampLength, label:'Ramp Duration\n(sec)', min:1 )
 		property( property:peakLength, label:'Peak Duration\n(sec)', min:0 )
@@ -76,11 +80,17 @@ def redraw() {
 		property( property:peakRateUnit, label:'Unit', options:['sec','min'] )
 		separator( vertical:true )
 		box( widget:'display' ) {
-			node( label:'Rate', content: { if( getT0() > 0 ) String.format( '%7.1f', rate ) else 0 }, constraints:'w 45!' )
+			node( label:'Rate', content: { if( getT0() > 0 ) String.format( '%7.1f', peakRateUnit.value == 'sec' ? a*getT0() : a*getT0()*60 ) else 0 }, constraints:'w 45!' )
 		}
 	}
 }
 redraw()
+
+compactLayout {
+	box( widget:'display' ) {
+		node( label:'Rate', content: { if( getT0() > 0 ) String.format( '%7.1f', peakRateUnit.value == 'sec' ? a*getT0() : a*getT0()*60 ) else 0 }, constraints:'w 45!' )
+	}
+}
 
 def currentTime() {
 	System.currentTimeMillis() / 1000
