@@ -82,7 +82,7 @@ public def GROUP_HEIGHT = 126;
 
 public class ItemOrder extends Comparator {
 	
-	def loadGeneratorOrder:String[] = [ "FIXED RATE", "VARIANCE", "RANDOM", "RAMP", "USAGE", "FIXED LOAD" ];
+	def loadGeneratorOrder:String[] = [ "FIXED RATE", "VARIANCE", "RANDOM", "RAMP SEQUENCE", "RAMP", "USAGE", "FIXED LOAD" ];
 	def analysisOrder:String[] = [ "ASSERTION", "STATISTICS" ];
 	def flowOrder:String[] = [ "SPLITTER", "DELAY", "CONDITION", "LOOP" ];
 	def runnerOrder:String[] = [ "SOAPUI RUNNER", "WEB PAGE RUNNER", "SCRIPT RUNNER", "PROCESS RUNNER" ];
