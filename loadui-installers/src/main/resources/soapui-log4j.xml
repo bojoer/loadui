@@ -25,7 +25,7 @@
 
    <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
      <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
-     <param name="File" value="${loadui.home}/logs/soapui.log"/>
+     <param name="File" value="soapui.log"/>
      <param name="Threshold" value="INFO"/>
      <param name="Append" value="false"/>
      <param name="MaxFileSize" value="5000KB"/>
@@ -37,7 +37,7 @@
    
    <appender name="ERRORFILE" class="org.apache.log4j.RollingFileAppender">
      <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
-     <param name="File" value="${loadui.home}/logs/soapui-errors.log"/>
+     <param name="File" value="soapui-errors.log"/>
      <param name="Threshold" value="INFO"/>
      <param name="Append" value="true"/>
      <param name="MaxFileSize" value="5000KB"/>
@@ -59,6 +59,12 @@
      <level value="DEBUG" />
      <appender-ref ref="SOAPUI"/>
 	 <appender-ref ref="CONSOLE"/>
+   </logger>
+   
+   <logger name="com.eviware.soapui.impl.wsdl.support.http">
+     <level value="WARN" />
+     <appender-ref ref="SOAPUI"/>
+     <appender-ref ref="CONSOLE"/>
    </logger>
    
    <logger name="soapui.errorlog">
