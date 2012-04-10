@@ -41,7 +41,7 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 {
 	public static final Logger log = LoggerFactory.getLogger( AddonRegistryImpl.class );
 
-	private final HashMap<String, ServiceRegistration> registrations = Maps.newHashMap();
+	private final HashMap<String, ServiceRegistration<?>> registrations = Maps.newHashMap();
 	private final HashMap<String, Addon.Factory<?>> factories = Maps.newHashMap();
 	private final Multimap<Class<?>, Addon.Factory<?>> eagerAddons = HashMultimap.create();
 	private final Set<AddonHolder> registeredHolders = Collections
@@ -61,14 +61,13 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 		Hashtable<String, String> properties = new Hashtable<String, String>();
 		properties.put( "type", type.getName() );
 
-		registrations.put( type.getName(),
-				bundleContext.registerService( Addon.Factory.class.getName(), factory, properties ) );
+		registrations.put( type.getName(), bundleContext.registerService( Addon.Factory.class, factory, properties ) );
 	}
 
 	@Override
 	public synchronized <T extends Addon> void unregisterFactory( Class<T> type, Addon.Factory<T> factory )
 	{
-		ServiceRegistration registration = registrations.get( type.getName() );
+		ServiceRegistration<?> registration = registrations.get( type.getName() );
 		if( registration != null )
 			registration.unregister();
 	}

@@ -23,18 +23,14 @@
  * @help http://loadui.org/Custom-Components/process-runner.html
  */
 
-import com.eviware.loadui.util.ReleasableUtils
 import com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledException
 
 import java.util.HashSet
 import java.util.Collections
 
-import groovy.lang.GroovyShell
-import groovy.lang.Binding
-
 //Properties
-createProperty( 'command', String, "") {
-	parseCommand()
+createProperty( 'command', String, '' ) {
+	runButton?.enabled = it
 }
 
 runningSamples = Collections.synchronizedSet( new HashSet() )
@@ -44,13 +40,6 @@ sampleResetValue = 0
 discardResetValue = 0
 failedResetValue = 0
 runButton = null
-
-parseCommand = {
-	if( !command.value || command.value == "" )
-		runButton?.enabled = false
-	else
-		runButton?.enabled = true
-}
 
 sample = { message, sampleId ->
 	try
@@ -72,6 +61,8 @@ sample = { message, sampleId ->
 	}
 	catch( e )
 	{
+		if( e instanceof InterruptedException )
+			throw new SampleCancelledException()
 		// add error properties
 		message["ExitValue"] = -1
 		message["Errout"] = e.message
@@ -90,10 +81,6 @@ onCancel = {
 		runningSamples.clear()
 		threads.each { it.interrupt() }
 	}
-}
-
-onRelease = {
-	shell.resetLoadedClasses()
 }
 
 onAction( "RESET" ) { 

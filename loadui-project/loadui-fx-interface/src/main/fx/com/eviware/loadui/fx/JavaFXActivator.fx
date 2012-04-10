@@ -101,6 +101,7 @@ public class JavaFXActivator extends BundleActivator {
 			new javax.swing.JEditorPane();
 			new javax.swing.JProgressBar();
 			new javax.swing.JFileChooser();
+			new javax.swing.JToggleButton();
 			
 			wc = WindowControllerImpl {
 				windowTitleFilter: name

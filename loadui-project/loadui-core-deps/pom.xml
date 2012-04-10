@@ -24,16 +24,6 @@
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.shell.tui</artifactId>
 			<version>1.4.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.felix</groupId>
-					<artifactId>org.osgi.core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.felix</groupId>
-					<artifactId>org.osgi.compendium</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

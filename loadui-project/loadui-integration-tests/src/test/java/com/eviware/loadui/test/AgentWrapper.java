@@ -16,6 +16,7 @@
 package com.eviware.loadui.test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.osgi.framework.BundleContext;
@@ -32,7 +33,7 @@ public class AgentWrapper
 	private final OSGiLauncher launcher;
 	private final BundleContext context;
 
-	public AgentWrapper() throws BundleException
+	public AgentWrapper() throws BundleException, IOException
 	{
 		if( baseDir.exists() )
 			Utilities.deleteRecursive( baseDir );
@@ -45,7 +46,12 @@ public class AgentWrapper
 		launcher = new OSGiLauncher( new String[] { "-nolock", "-nofx" } );
 		Properties config = launcher.getConfig();
 		config.setProperty( "felix.cache.rootdir", baseDir.getAbsolutePath() );
-		config.setProperty( "felix.auto.deploy.dir", new File( "../loadui-agent-deps/target/bundle" ).getAbsolutePath() );
+		//config.setProperty( "felix.auto.deploy.dir", new File( "../loadui-agent-deps/target/bundle" ).getAbsolutePath() );
+
+		File bundleDir = new File( baseDir, "bundle" );
+		Utilities.copyDirectory( new File( "../loadui-agent-deps/target/bundle" ), bundleDir );
+		Utilities.copyDirectory( new File( "target/bundle" ), bundleDir );
+
 		//Add the required packages that should be in the OSGi config file.
 		config.setProperty(
 				"org.osgi.framework.system.packages.extra",

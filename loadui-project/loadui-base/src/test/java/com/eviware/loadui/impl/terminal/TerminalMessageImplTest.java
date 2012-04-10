@@ -15,12 +15,17 @@
  */
 package com.eviware.loadui.impl.terminal;
 
-import org.junit.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+
+import java.util.Date;
+
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.ConversionServiceFactory;
-
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 
 import com.eviware.loadui.api.terminal.TerminalMessage;
 
@@ -73,6 +78,7 @@ public class TerminalMessageImplTest
 		message.put( "a", "Hello" );
 		message.put( "b", 42 );
 		message.put( "c", 13.37 );
+		message.put( "d", new Date() );
 
 		Object serialized = message.serialize();
 
@@ -83,6 +89,7 @@ public class TerminalMessageImplTest
 		assertThat( message.get( "a" ), instanceOf( String.class ) );
 		assertThat( message.get( "b" ), instanceOf( Integer.class ) );
 		assertThat( message.get( "c" ), instanceOf( Double.class ) );
+		assertThat( message.get( "d" ), instanceOf( Date.class ) );
 
 		assertThat( ( String )message.get( "a" ), is( "Hello" ) );
 		assertThat( ( Integer )message.get( "b" ), is( 42 ) );

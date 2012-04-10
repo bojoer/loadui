@@ -72,14 +72,14 @@ public class BndUtils
 		for( File source : sources )
 		{
 			File dest = new File( destDir, ".__" + source.getName() );
-			if( wrap( source, dest ) )
-			{
-				//log.debug( "Added bundle for external library: " + source.getAbsolutePath() );
-			}
-			else
-			{
-				//log.debug( "Unable to create bundle for external library: " + source.getAbsolutePath() );
-			}
+			//			if( wrap( source, dest ) )
+			//			{
+			//				log.debug( "Added bundle for external library: " + source.getAbsolutePath() );
+			//			}
+			//			else
+			//			{
+			//				log.debug( "Unable to create bundle for external library: " + source.getAbsolutePath() );
+			//			}
 			createdBundles.add( dest.getAbsolutePath() );
 		}
 
@@ -170,11 +170,11 @@ public class BndUtils
 					{
 						base = m.group( 1 );
 					}
-					else
-					{
-						//log.warn( "Error creating bundle for: " + input.getAbsolutePath()
-						//		+ ". Can not calculate name of output bundle, rename jar or use -properties" );
-					}
+					//					else
+					//					{
+					//						log.warn( "Error creating bundle for: " + input.getAbsolutePath()
+					//								+ ". Can not calculate name of output bundle, rename jar or use -properties" );
+					//					}
 					analyzer.setProperty( Analyzer.BUNDLE_SYMBOLICNAME, base );
 				}
 

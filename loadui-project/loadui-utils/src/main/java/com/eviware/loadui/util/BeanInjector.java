@@ -108,12 +108,12 @@ public enum BeanInjector
 			}
 		}
 
-		ServiceReference ref = context.getServiceReference( cls.getName() );
+		ServiceReference<T> ref = context.getServiceReference( cls );
 		if( ref != null )
 		{
-			Object service = context.getService( ref );
+			T service = context.getService( ref );
 			if( service != null )
-				return cls.cast( service );
+				return service;
 		}
 
 		throw new IllegalArgumentException( "No Bean found for class: " + cls );

@@ -27,6 +27,7 @@ import org.springframework.core.convert.ConversionService;
 import com.eviware.loadui.api.serialization.MutableValue;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.impl.serialization.MutableValueImpl;
+import com.eviware.loadui.util.serialization.SerializationUtils;
 
 public class TerminalMessageImpl implements TerminalMessage
 {
@@ -94,16 +95,17 @@ public class TerminalMessageImpl implements TerminalMessage
 		Map<String, String[]> serialized = new HashMap<String, String[]>();
 		for( Entry<String, MutableValue<?>> entry : values.entrySet() )
 		{
-			MutableValue<?> value = entry.getValue();
+			MutableValue<?> valueHolder = entry.getValue();
+			Object value = valueHolder.getValue();
 			String[] parts;
 			try
 			{
-				parts = new String[] { conversionService.convert( value.getValue(), String.class ),
-						value.getType().getName() };
+				parts = new String[] { String.valueOf( value ), valueHolder.getType().getName(),
+						SerializationUtils.serializeBase64( value ) };
 			}
 			catch( Exception e )
 			{
-				parts = new String[] { String.valueOf( value.getValue() ), String.class.getName() };
+				parts = new String[] { String.valueOf( value ) };
 			}
 
 			serialized.put( entry.getKey(), parts );
@@ -119,21 +121,30 @@ public class TerminalMessageImpl implements TerminalMessage
 		if( !( serialized instanceof Map<?, ?> ) )
 			throw new IllegalArgumentException( "" );
 
-		Map<String, Object[]> data = ( Map<String, Object[]> )serialized;
-		for( Entry<String, Object[]> entry : data.entrySet() )
+		Map<String, String[]> data = ( Map<String, String[]> )serialized;
+		for( Entry<String, String[]> entry : data.entrySet() )
 		{
-			Object[] args = entry.getValue();
-			try
+			String[] args = entry.getValue();
+			MutableValue<?> value;
+			if( args.length == 3 )
 			{
-				Class<?> type = Class.forName( ( String )args[1] );
-				synchronized( values )
+				try
 				{
-					values.put( entry.getKey(), new MutableValueImpl( type, args[0], conversionService ) );
+					Class<?> type = Class.forName( args[1] );
+					value = new MutableValueImpl( type, SerializationUtils.deserialize( args[2] ), conversionService );
+				}
+				catch( Exception e )
+				{
+					value = new MutableValueImpl<String>( String.class, args[0], conversionService );
 				}
 			}
-			catch( ClassNotFoundException e )
+			else
 			{
-				throw new RuntimeException( e );
+				value = new MutableValueImpl<String>( String.class, args[0], conversionService );
+			}
+			synchronized( values )
+			{
+				values.put( entry.getKey(), value );
 			}
 		}
 	}

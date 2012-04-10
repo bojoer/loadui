@@ -15,7 +15,7 @@
  */
 package com.eviware.loadui.util.test;
 
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -77,18 +77,20 @@ public class BeanInjectorMocker
 		return this;
 	}
 
+	@SuppressWarnings( "unchecked" )
 	private void init()
 	{
 		final BundleContext contextMock = mock( BundleContext.class );
 		BeanInjector.setBundleContext( contextMock );
 		BeanInjector.INSTANCE.clearCache();
 
-		when( contextMock.getServiceReference( anyString() ) ).thenAnswer( new Answer<ServiceReference>()
+		when( contextMock.getServiceReference( any( Class.class ) ) ).thenAnswer( new Answer<ServiceReference<Object>>()
 		{
-			public ServiceReference answer( InvocationOnMock invocation ) throws Throwable
+			@Override
+			public ServiceReference<Object> answer( InvocationOnMock invocation ) throws Throwable
 			{
-				ServiceReference referenceMock = mock( ServiceReference.class );
-				Object value = getBean( ( String )invocation.getArguments()[0] );
+				ServiceReference<Object> referenceMock = mock( ServiceReference.class );
+				Object value = getBean( ( Class<?> )invocation.getArguments()[0] );
 				when( contextMock.getService( referenceMock ) ).thenReturn( value );
 
 				return referenceMock;
@@ -96,28 +98,10 @@ public class BeanInjectorMocker
 		} );
 	}
 
-	private Object getBean( String className )
+	private Object getBean( Class<?> cls )
 	{
-		Class<?> cls = null;
-		for( Class<?> c : mapping.keySet() )
+		if( !mapping.containsKey( cls ) )
 		{
-			if( className.equals( c.getName() ) )
-			{
-				cls = c;
-				break;
-			}
-		}
-
-		if( cls == null )
-		{
-			try
-			{
-				cls = Class.forName( className );
-			}
-			catch( ClassNotFoundException e )
-			{
-				return null;
-			}
 			mapping.put( cls, mock( cls ) );
 		}
 

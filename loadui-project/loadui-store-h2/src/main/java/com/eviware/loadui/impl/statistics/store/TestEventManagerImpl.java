@@ -97,26 +97,29 @@ public class TestEventManagerImpl extends AbstractTestEventManager implements Re
 			@SuppressWarnings( "unchecked" )
 			List<Object> args = ( List<Object> )data;
 
-			String label = ( String )args.get( 0 );
-			TestEvent.Source<?> source = ( TestEvent.Source<?> )addressableRegistry.lookup( ( String )args.get( 1 ) );
+			String type = ( String )args.get( 0 );
+			String label = ( String )args.get( 1 );
+			TestEvent.Source<?> source = ( TestEvent.Source<?> )addressableRegistry.lookup( ( String )args.get( 2 ) );
 			if( source == null )
 			{
-				log.debug( "No object found with ID: {}", args.get( 1 ) );
+				log.debug( "No object found with ID: {}", args.get( 2 ) );
 				return;
 			}
-			long timestamp = ( Long )args.get( 2 );
-			byte[] eventData = ( byte[] )args.get( 3 );
+			long timestamp = ( Long )args.get( 3 );
+			byte[] eventData = ( byte[] )args.get( 4 );
 
 			manager.writeTestEvent( label, source, timestamp, eventData, 0 );
 
-			Factory<?> factory = testEventRegistry.lookupFactory( label );
+			Factory<?> factory = testEventRegistry.lookupFactory( type );
 			TestEventEntryImpl entry = null;
 			if( factory == null )
 			{
+				log.debug( "No factory found!" );
 				entry = new TestEventEntryImpl( new UnknownTestEvent( timestamp ), source.getLabel(), "Unknown", 0 );
 			}
 			else
 			{
+				log.debug( "Factory found: {}", factory );
 				entry = new TestEventEntryImpl( factory.createTestEvent( timestamp, source.getData(), eventData ),
 						source.getLabel(), factory.getLabel(), 0 );
 			}
