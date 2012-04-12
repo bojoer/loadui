@@ -48,7 +48,7 @@ public class SplashController
 
 				image = new ImageIcon( new File( "res/loadui-splash.png" ).toURI().toURL() );
 			}
-			catch( Throwable e )
+			catch( Exception e )
 			{
 				System.out.println( "Unable to create transparent window, using non-transparent splash: " + e.getMessage() );
 				try

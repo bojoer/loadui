@@ -308,7 +308,7 @@ public class ReportEngine
 			{
 				jp = createReport( dataSource, report );
 			}
-			catch( Throwable e )
+			catch( Exception e )
 			{
 				e.printStackTrace();
 				jp = null;

@@ -18,6 +18,8 @@ package com.eviware.loadui.impl.charting.line;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.SwingUtilities;
 
@@ -144,7 +146,7 @@ public abstract class AbstractSegmentModel extends DefaultChartModel
 
 	private static class QueueWaiter implements Runnable
 	{
-		private boolean done = false;
+		private final CountDownLatch doneLatch = new CountDownLatch( 1 );
 
 		public QueueWaiter()
 		{
@@ -154,11 +156,7 @@ public abstract class AbstractSegmentModel extends DefaultChartModel
 		@Override
 		public void run()
 		{
-			synchronized( this )
-			{
-				done = true;
-				notifyAll();
-			}
+			doneLatch.countDown();
 		}
 
 		public void awaitDone()
@@ -169,23 +167,17 @@ public abstract class AbstractSegmentModel extends DefaultChartModel
 				return;
 			}
 
-			synchronized( this )
+			try
 			{
-				if( !done )
+				if( !doneLatch.await( 5, TimeUnit.SECONDS ) )
 				{
-					try
-					{
-						wait( 5000 );
-					}
-					catch( InterruptedException e )
-					{
-						e.printStackTrace();
-					}
+					log.error( "Failed waiting for LineChart to complete drawing." );
 				}
 			}
-			if( !done )
+			catch( InterruptedException e )
 			{
-				log.error( "Failed waiting for LineChart to complete drawing." );
+				e.printStackTrace();
+				Thread.currentThread().interrupt();
 			}
 		}
 	}

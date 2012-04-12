@@ -173,7 +173,7 @@ public class EventFuture<T extends EventObject> implements Future<T>
 
 		private void cancel()
 		{
-			synchronized( listener )
+			synchronized( this )
 			{
 				done = true;
 				eventFirer.removeEventListener( eventType, this );

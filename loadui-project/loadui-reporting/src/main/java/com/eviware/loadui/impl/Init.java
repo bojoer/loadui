@@ -46,7 +46,7 @@ public class Init
 			log.debug( "Initializing JIDE for {}", company );
 			Lm.verifyLicense( company, jidedata.getProperty( "product" ), jidedata.getProperty( "license" ) );
 		}
-		catch( Throwable e )
+		catch( Exception e )
 		{
 			log.error( "Failed to initialize JIDE:", e );
 		}

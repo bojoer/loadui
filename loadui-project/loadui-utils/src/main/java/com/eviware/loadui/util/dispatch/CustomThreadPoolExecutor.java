@@ -51,6 +51,7 @@ public final class CustomThreadPoolExecutor extends AbstractExecutorService
 
 	private final static Runnable EXIT_RUNNER = new Runnable()
 	{
+		@Override
 		public void run()
 		{
 			throw new RuntimeException();
@@ -154,7 +155,7 @@ public final class CustomThreadPoolExecutor extends AbstractExecutorService
 
 		// This may fail. If so, we ignore it...
 		if( !workQueue.offer( command ) )
-			;
+			log.debug( "Queue is full; Dropping command." );
 
 		// If we have no idle Workers, and are allowed to create a new one, do so.
 		if( nSleeping.get() == 0 && nWorkers.get() < maxPoolSize )

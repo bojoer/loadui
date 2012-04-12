@@ -305,34 +305,34 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	protected void onComplete( EventFirer source )
 	{
-		if( LoadUI.CONTROLLER.equals( System.getProperty( "loadui.instance" ) ) && source.equals( this ) )
-		{
-			// on controller when source is this test case (for both local and
-			// distributed mode)...add ON_COMPLETE_DONE event listener to this test
-			// case to listen when it is completed
-
-			addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
-			{
-				@Override
-				public void handleEvent( BaseEvent event )
-				{
-					if( event.getKey().equals( ON_COMPLETE_DONE ) )
-					{
-						removeEventListener( BaseEvent.class, this );
-						// if test case is linked and project is not running then do
-						// generate summary. if project is running it will generate
-						// summary instead. if test case is not linked generate
-						// summary for it. (the scenario when project is running and
-						// the source is test case can occur when limit is set to a
-						// test case so it finishes before project)
-						if( !getProject().isRunning() && isFollowProject() || !isFollowProject() )
-						{
-							//							generateSummary();
-						}
-					}
-				}
-			} );
-		}
+		//		if( LoadUI.CONTROLLER.equals( System.getProperty( "loadui.instance" ) ) && source.equals( this ) )
+		//		{
+		//			// on controller when source is this test case (for both local and
+		//			// distributed mode)...add ON_COMPLETE_DONE event listener to this test
+		//			// case to listen when it is completed
+		//
+		//			addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
+		//			{
+		//				@Override
+		//				public void handleEvent( BaseEvent event )
+		//				{
+		//					if( event.getKey().equals( ON_COMPLETE_DONE ) )
+		//					{
+		//						removeEventListener( BaseEvent.class, this );
+		//						// if test case is linked and project is not running then do
+		//						// generate summary. if project is running it will generate
+		//						// summary instead. if test case is not linked generate
+		//						// summary for it. (the scenario when project is running and
+		//						// the source is test case can occur when limit is set to a
+		//						// test case so it finishes before project)
+		//						if( !getProject().isRunning() && isFollowProject() || !isFollowProject() )
+		//						{
+		//							//							generateSummary();
+		//						}
+		//					}
+		//				}
+		//			} );
+		//		}
 
 		if( !LoadUI.isController() )
 		{

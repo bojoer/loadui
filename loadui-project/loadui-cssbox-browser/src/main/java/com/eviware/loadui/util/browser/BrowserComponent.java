@@ -449,7 +449,7 @@ public class BrowserComponent extends JPanel implements Browser
 
 	private final class MyWebWindowListener implements WebWindowListener
 	{
-		private DomListener domListener = new DomListener();
+		private final DomListener domListener = new DomListener();
 
 		@Override
 		public void webWindowOpened( WebWindowEvent event )
@@ -461,10 +461,10 @@ public class BrowserComponent extends JPanel implements Browser
 		{
 			if( event.getWebWindow().getTopWindow() == window )
 			{
-				if( page != null )
-				{
-					//page.removeDomChangeListener( domListener );
-				}
+				//				if( page != null )
+				//				{
+				//					page.removeDomChangeListener( domListener );
+				//				}
 				page = ( HtmlPage )window.getEnclosedPage();
 				//page.addDomChangeListener( domListener );
 

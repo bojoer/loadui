@@ -17,12 +17,13 @@
 /**
  * Sends an HTTP request
  * 
- * @id com.eviware.WebRunner
+ * @id com.eviware.HtmlRunner
  * @help http://www.loadui.org/Runners/web-page-runner-component.html
- * @name Web Page Runner
+ * @name HTML Runner
  * @category runners
  * @dependency org.apache.httpcomponents:httpcore:4.1
  * @dependency org.apache.httpcomponents:httpclient:4.1.1
+ * @dependency net.sourceforge.htmlunit:htmlunit:2.9
  */
 
 import org.apache.http.* 
@@ -58,13 +59,16 @@ import java.util.HashMap
 import java.util.Map
 import java.util.concurrent.TimeUnit
 
+import com.gargoylesoftware.htmlunit.WebClient
+import com.gargoylesoftware.htmlunit.WebRequestSettings
+
 //SSL support, trust all certificates and hostnames.
 class NaiveTrustManager implements X509TrustManager {
 	void checkClientTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
 	void checkServerTrusted ( X509Certificate[] cert, String authType ) throws CertificateException {}
 	X509Certificate[] getAcceptedIssuers () { null }
 }
-def sslContext = SSLContext.getInstance("SSL")
+def sslContext = SSLContext.getInstance( 'SSL' )
 TrustManager[] tms = [ new NaiveTrustManager() ]
 sslContext.init( new KeyManager[0], tms, new SecureRandom() )
 def sslSocketFactory = new SSLSocketFactory( sslContext )
@@ -88,10 +92,6 @@ createProperty( 'outputBody', Boolean, false )
 createProperty( 'readResponse', Boolean, false )
 createProperty( 'errorCodeList', String )
 
-createProperty( 'proxyHost', String )
-createProperty( 'proxyPort', Long )
-createProperty( 'proxyUsername', String )
-proxyPassword = createProperty( '_proxyPassword', String )
 authUsername = createProperty( '_authUsername', String )
 authPassword = createProperty( '_authPassword', String )
 
@@ -99,8 +99,9 @@ http = new DefaultHttpClient( cm )
 
 inlineUrlAuthUsername = null
 inlineUrlAuthPassword = null
+credentialsProvider = new BasicCredentialsProvider()
 			
-def runningSamples = ([] as Set).asSynchronized()
+def runningSamples = ( [] as Set ).asSynchronized()
 runAction = null
 
 def dummyUrl = "http://GoSpamYourself.com"
@@ -132,24 +133,6 @@ validateUrl = {
 	runAction?.enabled = !isInvalid()
 }
 
-updateProxy = {
-	if( proxyHost.value?.trim() && proxyPort.value ) {
-		HttpHost hcProxyHost = new HttpHost( proxyHost.value, (int)proxyPort.value, "http" )
-		http.params.setParameter( ConnRoutePNames.DEFAULT_PROXY, hcProxyHost )
-		
-		if( proxyUsername.value?.trim() && proxyPassword.value ) {
-			http.credentialsProvider.setCredentials(
-				new AuthScope( proxyHost.value, (int)proxyPort.value ), 
-				new UsernamePasswordCredentials( proxyUsername.value, proxyPassword.value )
-			)
-		} else {
-			http.credentialsProvider.clear()
-		}
-	} else {
-		http.params.setParameter( ConnRoutePNames.DEFAULT_PROXY, null )
-	}
-}
-
 updateAuth = {
 	def username = null
 	def password = null
@@ -162,7 +145,7 @@ updateAuth = {
 	}
 	
 	if( username && password ) {
-		http.credentialsProvider.setCredentials(
+		credentialsProvider.setCredentials(
 			new AuthScope( AuthScope.ANY ), 
 			new UsernamePasswordCredentials( username, password )
 		)
@@ -170,25 +153,62 @@ updateAuth = {
 }
 
 validateUrl()
-updateProxy()
 
 requestResetValue = 0
 sampleResetValue = 0
 discardResetValue = 0
 failedResetValue = 0
 
+
+acceptTypes = new HashMap<String, String>()
+acceptTypes.put("html", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+acceptTypes.put("img", "image/png,image/*;q=0.8,*/*;q=0.5")
+acceptTypes.put("script", "*/*")
+acceptTypes.put("style", "text/css,*/*;q=0.1")
+
+def downloadCssAndImages(page) {
+        def xPathExpression = "//*[name() = 'img' or name() = 'link' and @type = 'text/css']"
+        def resultList = page.getByXPath(xPathExpression)
+        resultList.each {
+            try {
+                println( "next is $it" )
+
+                def path = it.getAttribute( 'src' ).equals( '' ) ? it.getAttribute( 'href' ) : it.getAttribute( 'src' )
+                if ( path != null && !path.equals( '' ) ) {
+    
+                    def url = page.getFullyQualifiedUrl(path)
+                    def wrs = new WebRequestSettings(url)
+                    wrs.setAdditionalHeader( 'Referer', page.webResponse.requestSettings.url.toString() )
+    
+                    client.addRequestHeader( 'Accept', acceptTypes[ it.tagName.toLowerCase() ] )
+                    client.getPage(wrs)
+                    println( "downloading $wrs" )
+                }
+            } catch (e) { println "!!! $e" }
+        }
+
+
+client.removeRequestHeader( 'Accept' )
+}
+
 sample = { message, sampleId ->
+
 	def uri = message['url'] ?: url.value
 	if( uri ) {
-		def get = new HttpGet( uri )
+		//def get = new HttpGet( uri )
 		message['ID'] = uri
 		
-		runningSamples.add( get )
+		client = new WebClient()
+		runningSamples.add( client )
 		try {
-			def response = http.execute( get )
+			//client.setCredentialsProvider( credentialsProvider )
+			def page = client.getPage( uri )
+			downloadCssAndImages( page )
+		
+			//def response = http.execute( get )
 			message['Status'] = true
 			message['URI'] = uri
-			message['HttpStatus'] = response.statusLine.statusCode
+			/* message['HttpStatus'] = response.statusLine.statusCode
 			
 			if( errorCodeList.value ) {
 				def assertionCodes = errorCodeList.value.split(',')
@@ -200,9 +220,10 @@ sample = { message, sampleId ->
 						break
 					}
 				}
-			}
+			}*/
 			
-			if( response.entity != null )	{
+			if( true /* response.entity != null */ )	{
+				/*
 				int contentLength = response.entity.contentLength
 				message['Bytes'] = contentLength
 				
@@ -216,9 +237,9 @@ sample = { message, sampleId ->
 						message['Bytes'] = EntityUtils.toString( response.entity ).length()
 				}
 				
-				response.entity.consumeContent()
+				response.entity.consumeContent() */
 				
-				if( !runningSamples.remove( get ) ) {
+				if( !runningSamples.remove( client ) ) {
 					throw new SampleCancelledException()
 				}
 				
@@ -233,9 +254,7 @@ sample = { message, sampleId ->
 			else
 				log.error( "Exception in $label:", e )
 			
-			get.abort()
-			
-			if ( !runningSamples.remove( get ) ) {
+			if ( !runningSamples.remove( client ) ) {
 				throw new SampleCancelledException()
 			}
 			
@@ -251,6 +270,7 @@ sample = { message, sampleId ->
 
 }
 
+/*
 onCancel = {
 	def numberOfRunning = 0
 	synchronized( runningSamples ) {
@@ -261,9 +281,9 @@ onCancel = {
 	}
 	
 	return numberOfRunning
-}
+}*/
 
-onAction( "RESET" ) {
+onAction( 'RESET' ) {
 	requestResetValue = 0
 	sampleResetValue = 0
 	discardResetValue = 0
@@ -272,9 +292,8 @@ onAction( "RESET" ) {
 
 addEventListener( PropertyEvent ) { event ->
 	if ( event.event == PropertyEvent.Event.VALUE ) {
-		if( event.property in [ proxyHost, proxyPort, proxyUsername, proxyPassword, authUsername, authPassword ] ) {
-			http.credentialsProvider.clear()
-			updateProxy()
+		if( event.property in [ authUsername, authPassword ] ) {
+			credentialsProvider.clear()
 			updateAuth()
 		}
 	}
@@ -306,7 +325,7 @@ layout {
 			sampleResetValue = sampleCounter.get()
 			discardResetValue = discardCounter.get()
 			failedResetValue = failureCounter.get()
-			triggerAction('CANCEL')
+			triggerAction( 'CANCEL' )
 		}, constraints:'align right' )
 	}
 }
@@ -323,7 +342,7 @@ compactLayout {
 	}
 }
 
-settings( label: "Basic" ) {
+settings( label: 'Basic' ) {
 	property( property: outputBody, label: 'Output Response Body' )
 	//property( property: propagateSession, label: 'Propagate Session' )
 	property( property: readResponse, label: 'Read Response' )
@@ -333,14 +352,7 @@ settings( label: "Basic" ) {
 	property( property: countDiscarded, label: 'Count Discarded Requests as Failed' )
 }
 
-settings( label: "Authentication" ) {
+settings( label: 'Authentication' ) {
 	property( property: authUsername, label: 'Username' )
 	property( property: authPassword, widget: 'password', label: 'Password' )
-}
-
-settings( label: "Proxy" ) {
-	property( property: proxyHost, label: 'Proxy Host' )
-	property( property: proxyPort, label: 'Proxy Port' )
-	property( property: proxyUsername, label: 'Proxy Username' )
-	property( property: proxyPassword, widget: 'password', label: 'Proxy Password' )
 }
