@@ -30,7 +30,7 @@ public class CajoClient
 
 	private static CajoClient instance;
 
-	public static CajoClient getInstance()
+	public synchronized static CajoClient getInstance()
 	{
 		if( instance == null )
 		{

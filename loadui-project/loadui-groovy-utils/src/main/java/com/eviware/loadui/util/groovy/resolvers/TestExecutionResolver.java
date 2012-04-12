@@ -103,7 +103,7 @@ public class TestExecutionResolver implements GroovyResolver.Properties, GroovyR
 		{
 			return Phase.valueOf( propertyName );
 		}
-		catch( Throwable e )
+		catch( Exception e )
 		{
 			throw new MissingPropertyException( propertyName, TestExecutionResolver.class );
 		}

@@ -162,6 +162,8 @@ public class TerminalProxyImpl implements TerminalProxy
 				content.load( message.get( CONTENT ) );
 				terminalEvent = new TerminalMessageEvent( output, content );
 				break;
+			default :
+				throw new IllegalArgumentException();
 			}
 			input.getTerminalHolder().handleTerminalEvent( input, terminalEvent );
 		}
