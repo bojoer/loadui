@@ -46,7 +46,7 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 	private Map<String, Class<?>> inputSignature = Collections.emptyMap();
 
 	private final BlinkOnUpdateActivityStrategy activityStrategy = ActivityStrategies.newBlinkOnUpdateStrategy();
-	private final ArrayList<Counter> counters = new ArrayList<Counter>();
+	private final List<Counter> counters = new ArrayList<Counter>();
 
 	/**
 	 * Constructs a FlowBase.
@@ -122,7 +122,7 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 		return createOutgoing( OUTGOING_TERMINAL + " " + ( outgoingTerminals.size() + 1 ) );
 	}
 
-	final public ArrayList<Counter> getCounters()
+	final public List<Counter> getCounters()
 	{
 		return counters;
 	}
