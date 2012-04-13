@@ -21,7 +21,6 @@
 		<module>loadui-http-server</module>
 		<module>loadui-agent-deps</module>
 		<module>loadui-core-deps</module>
-		<module>loadui-bundle-updater</module>
 		<module>loadui-api</module>
 		<module>loadui-model-xmlbeans</module>
 		<module>loadui-base</module>
@@ -31,7 +30,6 @@
 		<module>loadui-utils</module>
 		<module>loadui-http-client</module>
 		<module>loadui-groovy-component</module>
-		<module>loadui-upload-server</module>
 		<module>loadui-layout</module>
 		<module>loadui-fx-interface</module>
 		<module>loadui-launcher</module>
