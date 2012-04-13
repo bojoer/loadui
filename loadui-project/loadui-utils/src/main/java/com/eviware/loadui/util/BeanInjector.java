@@ -15,7 +15,9 @@
  */
 package com.eviware.loadui.util;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
 
@@ -58,54 +60,48 @@ public enum BeanInjector
 
 	public static void setBundleContext( BundleContext arg0 )
 	{
-		synchronized( INSTANCE.waiter )
+		INSTANCE.context = arg0;
+		arg0.addServiceListener( new ServiceListener()
 		{
-			INSTANCE.context = arg0;
-			arg0.addServiceListener( new ServiceListener()
+			@Override
+			public void serviceChanged( ServiceEvent event )
 			{
-				@Override
-				public void serviceChanged( ServiceEvent event )
+				String[] objectClasses = ( String[] )event.getServiceReference().getProperty( "objectClass" );
+				try
 				{
-					String[] objectClasses = ( String[] )event.getServiceReference().getProperty( "objectClass" );
-					try
+					for( String objectClass : objectClasses )
 					{
-						for( String objectClass : objectClasses )
-						{
-							Class<?> key = Class.forName( objectClass );
-							INSTANCE.beanCache.invalidate( key );
-						}
-					}
-					catch( ClassNotFoundException e )
-					{
-						// Ignore
+						Class<?> key = Class.forName( objectClass );
+						INSTANCE.beanCache.invalidate( key );
 					}
 				}
-			} );
-			INSTANCE.clearCache();
-			INSTANCE.beanCache.put( BundleContext.class, arg0 );
-			INSTANCE.waiter.notifyAll();
-		}
+				catch( ClassNotFoundException e )
+				{
+					// Ignore
+				}
+			}
+		} );
+		INSTANCE.clearCache();
+		INSTANCE.beanCache.put( BundleContext.class, arg0 );
+		INSTANCE.waiterLatch.countDown();
 	}
 
-	private final Object waiter = new Object();
-	private BundleContext context;
+	private final CountDownLatch waiterLatch = new CountDownLatch( 1 );
+
+	private volatile BundleContext context;
 
 	private <T> T doGetBean( @Nonnull Class<T> cls )
 	{
-		if( context == null )
+		try
 		{
-			synchronized( waiter )
+			if( !waiterLatch.await( 5, TimeUnit.SECONDS ) )
 			{
-				try
-				{
-					waiter.wait( 5000 );
-				}
-				catch( InterruptedException e )
-				{
-				}
-				if( context == null )
-					throw new RuntimeException( "BundleContext is missing, has BeanInjector been configured?" );
+				throw new RuntimeException( "BundleContext is missing, has BeanInjector been configured?" );
 			}
+		}
+		catch( InterruptedException e )
+		{
+			Thread.currentThread().interrupt();
 		}
 
 		ServiceReference<T> ref = context.getServiceReference( cls );
