@@ -156,7 +156,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 							log.warn( "Cannot connect to server with different version number than the client: {} != {}",
 									LoadUI.AGENT_VERSION, data );
 							routingSupport.fireMessage( ERROR_CHANNEL, ClientSocketMessageEndpoint.this,
-									new VersionMismatchException( data == null ? "0" : data.toString() ) );
+									new VersionMismatchException( data.toString() ) );
 						}
 					}
 					else if( CLOSE_MESSAGE.channel.equals( channel ) )
