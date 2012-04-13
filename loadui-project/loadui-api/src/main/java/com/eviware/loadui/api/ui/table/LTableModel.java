@@ -16,6 +16,7 @@
 package com.eviware.loadui.api.ui.table;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
@@ -30,8 +31,8 @@ public class LTableModel extends AbstractTableModel
 
 	private static Logger log = LoggerFactory.getLogger( "com.eviware.loadui.api.ui.table.LTableModel" );
 
-	private ArrayList<String> header = new ArrayList<String>();
-	private ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
+	private final List<String> header = new ArrayList<String>();
+	private final List<List<String>> data = new ArrayList<List<String>>();
 
 	private int maxRow;
 	private boolean follow;
@@ -50,8 +51,8 @@ public class LTableModel extends AbstractTableModel
 		this.follow = follow;
 		this.enabledInDistMode = enabledInDistMode;
 	}
-	
-	public ArrayList getHeader()
+
+	public List getHeader()
 	{
 		return header;
 	}
@@ -102,7 +103,7 @@ public class LTableModel extends AbstractTableModel
 		{
 			header.add( columnName );
 			// add a column for each row
-			for( ArrayList<String> row : data )
+			for( List<String> row : data )
 			{
 				row.add( "" );
 			}
@@ -110,7 +111,7 @@ public class LTableModel extends AbstractTableModel
 		}
 	}
 
-	public boolean addRow( ArrayList<String> row )
+	public boolean addRow( List<String> row )
 	{
 		if( maxRow > 0 )
 		{
@@ -142,7 +143,7 @@ public class LTableModel extends AbstractTableModel
 				}
 			}
 
-			ArrayList<String> newRow = new ArrayList<String>();
+			List<String> newRow = new ArrayList<String>();
 			for( int cnt = 0; cnt < header.size(); cnt++ )
 				newRow.add( "" );
 			for( String key : row.keySet() )
@@ -175,12 +176,12 @@ public class LTableModel extends AbstractTableModel
 		}
 	}
 
-	public ArrayList getLastRow()
+	public List getLastRow()
 	{
 		return data.get( data.size() - 1 );
 	}
 
-	public ArrayList getRowAt( int rowIndex )
+	public List getRowAt( int rowIndex )
 	{
 		if( data.size() > rowIndex )
 			return data.get( rowIndex );
@@ -222,7 +223,7 @@ public class LTableModel extends AbstractTableModel
 		this.enabledInDistMode = enabledInDistMode;
 		fireTableDataChanged();
 	}
-	
+
 	public LTableModel getLastRows( long numRows )
 	{
 		if( numRows >= data.size() )

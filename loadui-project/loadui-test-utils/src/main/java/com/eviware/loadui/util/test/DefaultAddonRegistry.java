@@ -15,8 +15,8 @@
  */
 package com.eviware.loadui.util.test;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import com.eviware.loadui.api.addon.Addon;
 import com.eviware.loadui.api.addon.AddonHolder;
@@ -33,8 +33,8 @@ import com.google.common.collect.Sets;
  */
 public class DefaultAddonRegistry implements AddonRegistry
 {
-	private final HashMap<Class<? extends Addon>, Addon.Factory<? extends Addon>> factories = Maps.newHashMap();
-	private final HashSet<AddonHolder> registeredHolders = Sets.newHashSet();
+	private final Map<Class<? extends Addon>, Addon.Factory<? extends Addon>> factories = Maps.newHashMap();
+	private final Set<AddonHolder> registeredHolders = Sets.newHashSet();
 
 	@Override
 	public synchronized <T extends Addon> void registerFactory( Class<T> type, Addon.Factory<T> factory )

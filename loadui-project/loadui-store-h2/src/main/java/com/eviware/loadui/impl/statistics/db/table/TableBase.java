@@ -354,8 +354,18 @@ public abstract class TableBase implements Releasable
 	public synchronized void drop() throws SQLException
 	{
 		Statement stm = connection.createStatement();
-		stm.execute( "drop table " + tableName );
-		stm.close();
+		try
+		{
+			stm.execute( "drop table " + tableName );
+		}
+		catch( SQLException e )
+		{
+			throw e;
+		}
+		finally
+		{
+			stm.close();
+		}
 	}
 
 	@Override

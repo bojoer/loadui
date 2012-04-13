@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.swing.SwingUtilities;
@@ -50,7 +51,7 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 
 	private final LineChartImpl chart;
 	private final ChartGroup chartGroup;
-	private final HashSet<LineMarker> lineMarkers = Sets.newHashSet();
+	private final Set<LineMarker> lineMarkers = Sets.newHashSet();
 
 	private Color color = Color.decode( LineChartStyles.lineColors[0] );
 	private StrokeStyle strokeStyle;
@@ -275,7 +276,7 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 
 	private static class TestEventListener implements TestEventObserver
 	{
-		private final HashSet<TestEventSegmentModel> models = Sets.newHashSet();
+		private final Set<TestEventSegmentModel> models = Sets.newHashSet();
 
 		public TestEventListener()
 		{

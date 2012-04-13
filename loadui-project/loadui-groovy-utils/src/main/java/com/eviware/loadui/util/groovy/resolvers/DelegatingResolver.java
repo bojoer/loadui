@@ -20,6 +20,8 @@ import groovy.lang.MissingPropertyException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.ReleasableUtils;
@@ -49,9 +51,9 @@ public class DelegatingResolver implements GroovyResolver.Methods, GroovyResolve
 		return resolver instanceof Releasable ? new NonReleasingResolver( resolver ) : resolver;
 	}
 
-	private final ArrayList<GroovyResolver.Properties> propertyDelegates = Lists.newArrayList();
-	private final ArrayList<GroovyResolver.Methods> methodDelegates = Lists.newArrayList();
-	private final HashSet<GroovyResolver> releasables = Sets.newHashSet();
+	private final List<GroovyResolver.Properties> propertyDelegates = Lists.newArrayList();
+	private final List<GroovyResolver.Methods> methodDelegates = Lists.newArrayList();
+	private final Set<GroovyResolver> releasables = Sets.newHashSet();
 
 	public DelegatingResolver( GroovyResolver... delegates )
 	{
