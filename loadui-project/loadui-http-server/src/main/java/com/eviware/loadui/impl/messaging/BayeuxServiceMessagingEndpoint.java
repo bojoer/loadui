@@ -26,14 +26,8 @@ import com.eviware.loadui.util.messaging.ChannelRoutingSupport;
 public class BayeuxServiceMessagingEndpoint implements MessageEndpoint
 {
 	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport();
-	private final BayeuxServiceServerEndpoint provider;
 	private final Set<ConnectionListener> connectionListeners = new HashSet<ConnectionListener>();
 	private boolean open = true;
-
-	public BayeuxServiceMessagingEndpoint( BayeuxServiceServerEndpoint provider )
-	{
-		this.provider = provider;
-	}
 
 	@Override
 	public void addMessageListener( String channel, MessageListener listener )
