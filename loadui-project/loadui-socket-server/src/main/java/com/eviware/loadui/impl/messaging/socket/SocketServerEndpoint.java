@@ -37,7 +37,7 @@ import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.InitializableUtils;
 import com.google.common.collect.ImmutableSet;
 
-public class SocketServerEndpoint implements ServerEndpoint, Releasable
+final public class SocketServerEndpoint implements ServerEndpoint, Releasable
 {
 	public static final Logger log = LoggerFactory.getLogger( SocketServerEndpoint.class );
 

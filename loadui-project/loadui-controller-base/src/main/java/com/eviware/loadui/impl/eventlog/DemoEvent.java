@@ -29,7 +29,8 @@ public class DemoEvent extends AbstractTestEvent
 		return data;
 	}
 
-	public static class Factory extends AbstractTestEvent.Factory<DemoEvent> implements TestEvent.Source<DemoEvent>
+	final public static class Factory extends AbstractTestEvent.Factory<DemoEvent> implements
+			TestEvent.Source<DemoEvent>
 	{
 		public Factory()
 		{
