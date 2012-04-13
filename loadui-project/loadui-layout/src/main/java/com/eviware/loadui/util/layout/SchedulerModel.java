@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
+import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -57,7 +58,7 @@ public class SchedulerModel extends Observable
 		return seconds;
 	}
 
-	public void setSeconds( TreeSet<Integer> seconds )
+	public void setSeconds( Set<Integer> seconds )
 	{
 		this.seconds.clear();
 		Iterator<Integer> i = seconds.iterator();
@@ -77,7 +78,7 @@ public class SchedulerModel extends Observable
 		return minutes;
 	}
 
-	public void setMinutes( TreeSet<Integer> minutes )
+	public void setMinutes( Set<Integer> minutes )
 	{
 		this.minutes.clear();
 		Iterator<Integer> i = minutes.iterator();
@@ -97,7 +98,7 @@ public class SchedulerModel extends Observable
 		return hours;
 	}
 
-	public void setHours( TreeSet<Integer> hours )
+	public void setHours( Set<Integer> hours )
 	{
 		this.hours.clear();
 		Iterator<Integer> i = hours.iterator();
@@ -130,7 +131,7 @@ public class SchedulerModel extends Observable
 		return d;
 	}
 
-	public void setDays( TreeSet<Integer> daysInWeek )
+	public void setDays( Set<Integer> daysInWeek )
 	{
 		days.clear();
 		Iterator<Integer> dayIterator = daysInWeek.iterator();
