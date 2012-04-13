@@ -88,7 +88,7 @@ public enum BeanInjector
 
 	private final CountDownLatch waiterLatch = new CountDownLatch( 1 );
 
-	private volatile BundleContext context;
+	private BundleContext context;
 
 	private <T> T doGetBean( @Nonnull Class<T> cls )
 	{

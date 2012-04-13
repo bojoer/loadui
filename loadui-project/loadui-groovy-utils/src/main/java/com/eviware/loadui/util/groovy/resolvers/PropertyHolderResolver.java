@@ -158,22 +158,22 @@ public class PropertyHolderResolver implements GroovyResolver.Methods, GroovyRes
 		{
 			if( PropertyEvent.Event.VALUE == event.getEvent() )
 			{
-				Closure<?> handler = replaceHandlers.get( event.getProperty() );
-				if( handler != null )
+				Closure<?> replaceHandler = replaceHandlers.get( event.getProperty() );
+				if( replaceHandler != null )
 				{
 					try
 					{
-						switch( handler.getMaximumNumberOfParameters() )
+						switch( replaceHandler.getMaximumNumberOfParameters() )
 						{
 						case 0 :
-							handler.call();
+							replaceHandler.call();
 							break;
 						case 1 :
-							handler.call( event.getProperty().getValue() );
+							replaceHandler.call( event.getProperty().getValue() );
 							break;
 						case 2 :
 						default :
-							handler.call( event.getProperty().getValue(), event.getPreviousValue() );
+							replaceHandler.call( event.getProperty().getValue(), event.getPreviousValue() );
 						}
 					}
 					catch( Exception e )

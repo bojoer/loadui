@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.testevents;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ public class TestEventRegistryImpl implements TestEventRegistry
 {
 	public static final Logger log = LoggerFactory.getLogger( TestEventRegistryImpl.class );
 
-	private final HashMap<String, TestEvent.Factory<?>> eventFactories = Maps.newHashMap();
+	private final Map<String, TestEvent.Factory<?>> eventFactories = Maps.newHashMap();
 
 	public synchronized void factoryAdded( TestEvent.Factory<?> factory, Map<String, String> properties )
 	{

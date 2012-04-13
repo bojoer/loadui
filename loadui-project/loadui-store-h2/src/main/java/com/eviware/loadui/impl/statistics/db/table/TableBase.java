@@ -96,7 +96,7 @@ public abstract class TableBase implements Releasable
 		deleteStatement = connection.prepareStatement( "DELETE FROM " + tableName );
 	}
 
-	protected boolean exist()
+	final protected boolean exist()
 	{
 		Statement stm = null;
 		try
@@ -142,7 +142,7 @@ public abstract class TableBase implements Releasable
 		return sh;
 	}
 
-	protected StatementHolder createTableInsertScript()
+	final protected StatementHolder createTableInsertScript()
 	{
 		StatementHolder sh = new StatementHolder();
 		String key;
@@ -185,7 +185,7 @@ public abstract class TableBase implements Releasable
 		return sh;
 	}
 
-	protected String createTableCreateScript()
+	final protected String createTableCreateScript()
 	{
 		HashMap<Class<? extends Object>, String> typeConversionMap = databaseMetadata.getTypeConversionMap();
 
@@ -246,7 +246,7 @@ public abstract class TableBase implements Releasable
 		return b.toString();
 	}
 
-	protected String createAddPkIndexScript()
+	final protected String createAddPkIndexScript()
 	{
 		List<String> pkSequence = descriptor.getPkSequence();
 		if( pkSequence.size() == 0 )
@@ -458,7 +458,7 @@ public abstract class TableBase implements Releasable
 		connection.commit();
 	}
 
-	protected String buildTableName( String name )
+	final protected String buildTableName( String name )
 	{
 		return TABLE_NAME_PREFIX + name;
 	}

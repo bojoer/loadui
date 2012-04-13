@@ -81,10 +81,10 @@ public class LTableModel extends AbstractTableModel
 			else
 				return "";
 		}
-		catch( Throwable t )
+		catch( Exception e )
 		{
-			// t.printStackTrace();
-			log.error( t.getMessage() );
+			// e.printStackTrace();
+			log.error( e.getMessage() );
 			return null;
 		}
 	}

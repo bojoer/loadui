@@ -19,6 +19,7 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.eviware.loadui.api.statistics.model.Chart;
@@ -33,9 +34,9 @@ import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
 public class ChartGroupDataSource extends JRAbstractBeanDataSource
 {
 	private final Map<Object, Image> charts;
-	private final ArrayList<ChartView> chartViews = new ArrayList<ChartView>();
+	private final List<ChartView> chartViews = new ArrayList<ChartView>();
+	private ChartView currentChartView;
 	private Iterator<ChartView> chartViewIterator;
-	private ChartView chartView;
 
 	public ChartGroupDataSource( ChartGroup chartGroup, Map<Object, Image> charts )
 	{
@@ -74,11 +75,11 @@ public class ChartGroupDataSource extends JRAbstractBeanDataSource
 	{
 		String fieldName = field.getName();
 		if( fieldName.equals( "chartName" ) )
-			return chartView.getLabel();
+			return currentChartView.getLabel();
 		else if( fieldName.equals( "chart" ) )
-			return charts.get( chartView );
+			return charts.get( currentChartView );
 		else if( fieldName.equals( "legend" ) )
-			return new ChartLegendDataSource( ( LineChartView )chartView );
+			return new ChartLegendDataSource( ( LineChartView )currentChartView );
 		return null;
 	}
 
@@ -87,9 +88,9 @@ public class ChartGroupDataSource extends JRAbstractBeanDataSource
 	{
 		while( chartViewIterator.hasNext() )
 		{
-			chartView = chartViewIterator.next();
+			currentChartView = chartViewIterator.next();
 			// If there is no chart stored for this ChartView, skip it.
-			if( charts.containsKey( chartView ) )
+			if( charts.containsKey( currentChartView ) )
 				return true;
 		}
 		return false;

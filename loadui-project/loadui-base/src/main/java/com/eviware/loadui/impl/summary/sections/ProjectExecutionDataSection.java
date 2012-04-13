@@ -24,7 +24,7 @@ import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseDataTableModel;
 import com.eviware.loadui.util.summary.CalendarUtils;
 
-public class ProjectExecutionDataSection extends MutableSectionImpl implements ExecutionDataSection
+final public class ProjectExecutionDataSection extends MutableSectionImpl implements ExecutionDataSection
 {
 
 	ProjectItemImpl project;

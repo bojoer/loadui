@@ -1,11 +1,13 @@
 package com.eviware.loadui.util;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 
 import javax.annotation.Nonnull;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.WorkspaceItem;
@@ -106,7 +109,17 @@ public class NewVersionChecker
 			}
 		}
 
-		catch( Exception e )
+		catch( IOException e )
+		{
+			log.debug( "Error while checking for new version: ", e );
+			return null;
+		}
+		catch( SAXException e )
+		{
+			log.debug( "Error while checking for new version: ", e );
+			return null;
+		}
+		catch( ParserConfigurationException e )
 		{
 			log.debug( "Error while checking for new version: ", e );
 			return null;

@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.agent;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -361,9 +362,25 @@ public class ControllerImpl
 			{
 				scene.getClass().getMethod( "setMessageEndpoint", MessageEndpoint.class ).invoke( scene, endpoint );
 			}
-			catch( Exception e )
+			catch( IllegalArgumentException e )
 			{
-				e.printStackTrace();
+				log.error( "Could not invoke setMessageEndpoint", e );
+			}
+			catch( SecurityException e )
+			{
+				log.error( "Could not invoke setMessageEndpoint", e );
+			}
+			catch( IllegalAccessException e )
+			{
+				log.error( "Could not invoke setMessageEndpoint", e );
+			}
+			catch( InvocationTargetException e )
+			{
+				log.error( "Could not invoke setMessageEndpoint", e );
+			}
+			catch( NoSuchMethodException e )
+			{
+				log.error( "Could not invoke setMessageEndpoint", e );
 			}
 
 			project.addScene( scene );

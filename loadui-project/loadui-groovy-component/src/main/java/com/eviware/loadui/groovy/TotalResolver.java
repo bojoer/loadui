@@ -4,7 +4,7 @@ import groovy.lang.Closure;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import com.eviware.loadui.api.serialization.Value;
 import com.eviware.loadui.impl.component.categories.BaseCategory;
@@ -14,7 +14,7 @@ import com.google.common.collect.Maps;
 
 public class TotalResolver implements GroovyResolver.Methods, GroovyResolver.Properties
 {
-	private final HashMap<String, Value<Number>> totals = Maps.newHashMap();
+	private final Map<String, Value<Number>> totals = Maps.newHashMap();
 	private final BaseCategory behavior;
 
 	public TotalResolver( BaseCategory behavior )

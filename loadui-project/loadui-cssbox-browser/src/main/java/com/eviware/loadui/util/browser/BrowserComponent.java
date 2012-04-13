@@ -53,6 +53,8 @@ import com.google.common.collect.Iterables;
 
 public class BrowserComponent extends JPanel implements Browser
 {
+	private static final long serialVersionUID = -2243990100698952202L;
+
 	protected static final Logger log = LoggerFactory.getLogger( BrowserComponent.class );
 
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -73,6 +75,8 @@ public class BrowserComponent extends JPanel implements Browser
 
 		client.setPageCreator( new DefaultPageCreator()
 		{
+			private static final long serialVersionUID = 5511790383365804218L;
+
 			@Override
 			public Page createPage( WebResponse webResponse, WebWindow webWindow ) throws IOException
 			{
@@ -484,6 +488,8 @@ public class BrowserComponent extends JPanel implements Browser
 
 	private final class DomListener implements DomChangeListener
 	{
+		private static final long serialVersionUID = -6659513390279449745L;
+
 		@Override
 		public void nodeDeleted( DomChangeEvent event )
 		{

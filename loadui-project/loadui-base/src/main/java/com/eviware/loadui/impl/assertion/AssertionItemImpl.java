@@ -64,7 +64,7 @@ import com.eviware.loadui.util.serialization.SerializationUtils;
 import com.eviware.loadui.util.testevents.TestEventSourceSupport;
 import com.google.common.base.Objects;
 
-public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent.Source<AssertionFailureEvent>,
+final public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent.Source<AssertionFailureEvent>,
 		Releasable
 {
 	protected static final Logger log = LoggerFactory.getLogger( AssertionItemImpl.class );

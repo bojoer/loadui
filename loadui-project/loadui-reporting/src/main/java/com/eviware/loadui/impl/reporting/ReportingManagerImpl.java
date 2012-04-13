@@ -37,12 +37,13 @@ public class ReportingManagerImpl implements ReportingManager
 {
 	private final ReportEngine reportEngine = new ReportEngine();
 
+	@Override
 	public void createReport( Summary summary )
 	{
 		try
 		{
-			reportEngine.generateJasperReport( new SummaryDataSource( summary ),
-					"SummaryReport", summary.getChapters().keySet().iterator().next() );
+			reportEngine.generateJasperReport( new SummaryDataSource( summary ), "SummaryReport", summary.getChapters()
+					.keySet().iterator().next() );
 		}
 		catch( JRException e )
 		{
@@ -51,42 +52,42 @@ public class ReportingManagerImpl implements ReportingManager
 		}
 	}
 
+	@Override
 	public void createReport( Summary summary, File file, String format )
 	{
 		try
 		{
-			reportEngine.generateJasperReport( new SummaryDataSource( summary ),
-					"SummaryReport", file, format );
+			reportEngine.generateJasperReport( new SummaryDataSource( summary ), "SummaryReport", file, format );
 		}
 		catch( JRException e )
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	@Override
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
 			Map<Object, Image> charts )
 	{
 		try
 		{
-			reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ), "ResultsReport",
-					execution.getLabel() );
+			reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ),
+					"ResultsReport", execution.getLabel() );
 		}
 		catch( JRException e )
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	@Override
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
 			Map<Object, Image> charts, File file, String format )
 	{
 		try
 		{
-			reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ), "ResultsReport", file,
-					format );
+			reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ),
+					"ResultsReport", file, format );
 		}
 		catch( JRException e )
 		{
@@ -95,6 +96,7 @@ public class ReportingManagerImpl implements ReportingManager
 		}
 	}
 
+	@Override
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
 			Map<Object, Image> charts, File jpFileToPrepend )
 	{
@@ -106,16 +108,16 @@ public class ReportingManagerImpl implements ReportingManager
 	{
 		try
 		{
-			reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ), "ResultsReport",
-					execution.getLabel(), jpToPrepend );
+			reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ),
+					"ResultsReport", execution.getLabel(), jpToPrepend );
 		}
 		catch( JRException e )
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	@Override
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
 			Map<Object, Image> charts, File file, String format, File jpFileToPrepend )
 	{
@@ -127,12 +129,11 @@ public class ReportingManagerImpl implements ReportingManager
 	{
 		try
 		{
-			reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ), "ResultsReport", file,
-					format, jpToPrepend );
+			reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ),
+					"ResultsReport", file, format, jpToPrepend );
 		}
 		catch( JRException e )
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -146,7 +147,11 @@ public class ReportingManagerImpl implements ReportingManager
 			Object o = ois.readObject();
 			return ( JasperPrint )o;
 		}
-		catch( Exception e )
+		catch( IOException e )
+		{
+			return null;
+		}
+		catch( ClassNotFoundException e )
 		{
 			return null;
 		}

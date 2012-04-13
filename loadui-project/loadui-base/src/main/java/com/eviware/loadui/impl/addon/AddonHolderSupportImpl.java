@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.addon;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.eviware.loadui.api.addon.Addon;
 import com.eviware.loadui.api.addon.AddonHolder;
@@ -36,7 +37,7 @@ import com.google.common.collect.Maps;
  */
 public class AddonHolderSupportImpl implements AddonHolder.Support, Releasable
 {
-	private final HashMap<Class<? extends Addon>, Addon> addons = Maps.newHashMap();
+	private final Map<Class<? extends Addon>, Addon> addons = Maps.newHashMap();
 	private final AddonHolder owner;
 	private final AddonItemHolderSupport addonItemHolderSupport;
 	private final AddonRegistry addonRegistry = BeanInjector.getBean( AddonRegistry.class );
