@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
@@ -146,7 +147,7 @@ public class LTable extends JXTable
 	 * @param arraylist
 	 * @return
 	 */
-	private String[] convertToStringArray( ArrayList<?> arraylist )
+	private String[] convertToStringArray( List<?> arraylist )
 	{
 		String[] result = new String[arraylist.size()];
 		for( int cnt = 0; cnt < arraylist.size(); cnt++ )
