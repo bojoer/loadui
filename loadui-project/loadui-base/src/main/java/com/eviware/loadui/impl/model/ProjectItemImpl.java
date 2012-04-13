@@ -434,11 +434,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public Collection<SceneItem> getScenesAssignedTo( AgentItem agent )
 	{
-		Set<SceneItem> scenes = new HashSet<SceneItem>();
+		Set<SceneItem> scenesOnAgent = new HashSet<SceneItem>();
 		for( Assignment assignment : assignments )
 			if( agent.equals( assignment.getAgent() ) )
-				scenes.add( assignment.getScene() );
-		return scenes;
+				scenesOnAgent.add( assignment.getScene() );
+		return scenesOnAgent;
 	}
 
 	@Override

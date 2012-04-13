@@ -48,7 +48,7 @@ public class StatisticHolderSupport implements Releasable
 	private final StatisticsManager manager;
 	private final StatisticHolder owner;
 	private final AddressableRegistry addressableRegistry;
-	private final HashMap<String, StatisticVariableImpl> variables = new HashMap<String, StatisticVariableImpl>();
+	private final Map<String, StatisticVariableImpl> variables = new HashMap<String, StatisticVariableImpl>();
 
 	public StatisticHolderSupport( StatisticHolder owner )
 	{

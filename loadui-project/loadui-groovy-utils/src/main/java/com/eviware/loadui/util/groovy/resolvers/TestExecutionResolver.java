@@ -140,7 +140,7 @@ public class TestExecutionResolver implements GroovyResolver.Properties, GroovyR
 		return new ClosureTestExecutionTask();
 	}
 
-	protected class ClosureTestExecutionTask implements TestExecutionTask
+	protected static class ClosureTestExecutionTask implements TestExecutionTask
 	{
 		private final HashMap<Phase, Closure<?>> phaseTasks = Maps.newHashMap();
 

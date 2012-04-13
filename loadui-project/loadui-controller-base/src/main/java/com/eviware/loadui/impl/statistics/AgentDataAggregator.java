@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class AgentDataAggregator implements StatisticsAggregator
 
 	private final static int BUFFER_SIZE = 5;
 
-	private final TreeMap<Long, SetMultimap<String, Entry>> times = Maps.newTreeMap();
+	private final NavigableMap<Long, SetMultimap<String, Entry>> times = Maps.newTreeMap();
 	private final ExecutionManager executionManager;
 	private final StatisticsInterpolator statisticsInterpolator;
 

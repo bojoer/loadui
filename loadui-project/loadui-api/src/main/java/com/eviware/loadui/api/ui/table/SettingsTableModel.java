@@ -17,6 +17,7 @@ package com.eviware.loadui.api.ui.table;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 import com.eviware.loadui.api.property.Property;
@@ -26,7 +27,7 @@ public class SettingsTableModel extends KeyValueTableModel
 
 	private static final long serialVersionUID = 3644028575932424988L;
 
-	private final ArrayList<PropertyProxy> data = new ArrayList<PropertyProxy>();
+	private final List<PropertyProxy> data = new ArrayList<PropertyProxy>();
 
 	public SettingsTableModelObserver observer = new SettingsTableModelObserver( this );
 

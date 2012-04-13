@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.summary.sections.tablemodels;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -29,7 +30,7 @@ public class TestCaseDataTableModel extends AbstractTableModel
 	private static final long serialVersionUID = -99646701272738332L;
 
 	String columnNames[] = { "Test Case", "exec time", "requests", "assertions", "failed assertions" };
-	ArrayList<TestCaseDataModel> data = new ArrayList<TestCaseDataModel>();
+	List<TestCaseDataModel> data = new ArrayList<TestCaseDataModel>();
 
 	public void add( TestCaseDataModel row )
 	{

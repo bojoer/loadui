@@ -144,8 +144,8 @@ public class ReportEngine
 				default :
 					// TXT
 					jrExporter = new JRTextExporter();
-					jrExporter.setParameter( JRTextExporterParameter.CHARACTER_WIDTH, new Float( 10 ) );
-					jrExporter.setParameter( JRTextExporterParameter.CHARACTER_HEIGHT, new Float( 10 ) );
+					jrExporter.setParameter( JRTextExporterParameter.CHARACTER_WIDTH, 10.0f );
+					jrExporter.setParameter( JRTextExporterParameter.CHARACTER_HEIGHT, 10.0f );
 					break;
 				}
 				jrExporter.setParameter( JRExporterParameter.OUTPUT_FILE_NAME, outfile.getAbsolutePath() );

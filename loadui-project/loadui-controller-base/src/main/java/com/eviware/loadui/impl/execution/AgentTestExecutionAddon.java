@@ -120,7 +120,7 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 		}
 	}
 
-	private class SceneReloadedListener implements MessageListener
+	private static class SceneReloadedListener implements MessageListener
 	{
 		@Override
 		public void handleMessage( String channel, final MessageEndpoint endpoint, Object data )

@@ -81,7 +81,7 @@ public class EventSupport implements EventFirer, Releasable
 	public <T extends EventObject> void addEventListener( final Class<T> type, final EventHandler<? super T> listener )
 	{
 		if( listener == null )
-			throw new NullPointerException( "Cannot add null EventHandler!" );
+			throw new IllegalArgumentException( "Cannot add null EventHandler!" );
 
 		if( !eventQueue.offer( new Runnable()
 		{

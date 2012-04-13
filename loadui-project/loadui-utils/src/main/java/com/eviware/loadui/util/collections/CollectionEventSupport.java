@@ -17,6 +17,7 @@ package com.eviware.loadui.util.collections;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -57,7 +58,7 @@ public class CollectionEventSupport<V, A> implements Releasable
 
 	private final static Object DUMMY = new Object();
 
-	private final HashMap<V, Object> values = Maps.newHashMap();
+	private final Map<V, Object> values = Maps.newHashMap();
 
 	private final EventFirer owner;
 	private final String collectionKey;

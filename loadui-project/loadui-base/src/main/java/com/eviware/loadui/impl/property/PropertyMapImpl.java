@@ -31,12 +31,13 @@ import com.eviware.loadui.api.property.PropertyMap;
 import com.eviware.loadui.config.PropertyConfig;
 import com.eviware.loadui.config.PropertyListConfig;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 public class PropertyMapImpl implements PropertyMap
 {
 	public static final Logger log = LoggerFactory.getLogger( PropertyMapImpl.class );
-	private final HashMap<String, Property<?>> map = new HashMap<String, Property<?>>();
-	private final HashMultimap<String, PropertyConfig> notLoadedProperties = HashMultimap.create();
+	private final Map<String, Property<?>> map = new HashMap<String, Property<?>>();
+	private final Multimap<String, PropertyConfig> notLoadedProperties = HashMultimap.create();
 
 	private final PropertyHolder owner;
 	private final PropertyListConfig config;

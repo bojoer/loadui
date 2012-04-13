@@ -52,7 +52,7 @@ public class BlinkOnUpdateActivityStrategy extends BlinkingActivityStrategy
 	{
 		super( blinkLength, false );
 
-		this.blinkTime = blinkLength;
+		this.blinkTime = blinkTime;
 		setActive( onWhenIdle );
 	}
 

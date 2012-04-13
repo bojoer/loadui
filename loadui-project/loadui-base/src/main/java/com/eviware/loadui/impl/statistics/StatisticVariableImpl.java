@@ -157,7 +157,7 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 								if( statisticName.equals( entry.getKey() ) )
 									return new StatisticImpl( manager, descriptor.getId(), StatisticVariableImpl.this,
 											statisticName, source, entry.getValue() );
-						throw new NullPointerException();
+						throw new IllegalArgumentException();
 					}
 				} );
 	}

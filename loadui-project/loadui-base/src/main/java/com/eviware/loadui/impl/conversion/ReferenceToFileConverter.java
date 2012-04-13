@@ -63,7 +63,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 	private final Map<String, File> files = new HashMap<String, File>();
 	private final FileReceiver listener = new FileReceiver();
 
-	private final HashSet<String> filesInProgress = new HashSet<String>();
+	private final Set<String> filesInProgress = new HashSet<String>();
 
 	public ReferenceToFileConverter( AddressableRegistry addressableRegistry, ScheduledExecutorService executorService )
 	{
@@ -292,7 +292,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 		// max storage size in MB
 		public static final int MAX_STORAGE_SIZE = 100;
 
-		private Comparator<File> compareByLastUsed = new Comparator<File>()
+		private final Comparator<File> compareByLastUsed = new Comparator<File>()
 		{
 			@Override
 			public int compare( File o1, File o2 )

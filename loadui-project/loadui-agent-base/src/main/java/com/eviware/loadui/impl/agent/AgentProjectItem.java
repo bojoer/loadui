@@ -57,7 +57,7 @@ import com.google.common.collect.Sets;
 public class AgentProjectItem implements ProjectItem
 {
 	private final EventSupport eventSupport = new EventSupport( this );
-	private final HashSet<SceneItem> scenes = Sets.newHashSet();
+	private final Set<SceneItem> scenes = Sets.newHashSet();
 	private final MessageEndpoint controller;
 	private final String id;
 

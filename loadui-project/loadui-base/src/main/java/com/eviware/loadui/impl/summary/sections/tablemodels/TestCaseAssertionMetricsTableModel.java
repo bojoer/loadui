@@ -16,6 +16,7 @@
 package com.eviware.loadui.impl.summary.sections.tablemodels;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -25,8 +26,9 @@ import com.eviware.loadui.api.model.ComponentItem;
 public class TestCaseAssertionMetricsTableModel extends AbstractTableModel
 {
 
+	private static final long serialVersionUID = 3898314022671805678L;
 	String[] columnNames = { "name", "cnt", "passed", "failed", "failure ratio" };
-	ArrayList<AssertionMetricsModel> data = new ArrayList<AssertionMetricsModel>();
+	List<AssertionMetricsModel> data = new ArrayList<AssertionMetricsModel>();
 
 	@Override
 	public String getColumnName( int column )

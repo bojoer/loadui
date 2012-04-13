@@ -24,6 +24,7 @@ import javax.swing.table.AbstractTableModel;
 public class TestCaseSamplerStatisticsTable extends AbstractTableModel
 {
 
+	private static final long serialVersionUID = 7903409215023804173L;
 	String[] columnNames = { "name", "cnt", "min", "max", "avg", "std-dev", "min/avg", "max/avg", "err", "ratio" };
 	ArrayList<TestCaseSamplerStatisticsModel> data = new ArrayList<TestCaseSamplerStatisticsModel>();
 

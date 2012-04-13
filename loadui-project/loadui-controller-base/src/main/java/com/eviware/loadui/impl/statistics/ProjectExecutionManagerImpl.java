@@ -64,7 +64,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 	private final WorkspaceProvider workspaceProvider;
 	private final ReportingManager reportingManager;
 	private final SetMultimap<String, Execution> projectIdToExecutions = HashMultimap.create();
-	private final HashSet<SummaryTask> summaryAttachers = new HashSet<SummaryTask>();
+	private final Set<SummaryTask> summaryAttachers = new HashSet<SummaryTask>();
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningExecutionTask runningExecutionTask = new RunningExecutionTask();
 
@@ -211,15 +211,15 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 			switch( phase )
 			{
 			case START :
-				startExecution( canvas, runningProject );
+				startExecution( runningProject );
 				break;
 			case POST_STOP :
-				stopExecution( canvas, runningProject );
+				stopExecution( runningProject );
 				break;
 			}
 		}
 
-		private void startExecution( CanvasItem canvas, ProjectItem runningProject )
+		private void startExecution( ProjectItem runningProject )
 		{
 			// start new execution
 			long timestamp = System.currentTimeMillis();
@@ -244,7 +244,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 			projectIdToExecutions.put( runningProject.getId(), newExecution );
 		}
 
-		private void stopExecution( CanvasItem canvas, ProjectItem runningProject )
+		private void stopExecution( ProjectItem runningProject )
 		{
 			executionManager.stopExecution();
 
