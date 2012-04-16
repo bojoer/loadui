@@ -17,7 +17,6 @@ package com.eviware.loadui.impl.statistics.db.table.model;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,6 +26,7 @@ import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
 import com.eviware.loadui.impl.statistics.db.TableRegistry;
 import com.eviware.loadui.impl.statistics.db.table.TableBase;
 import com.eviware.loadui.impl.statistics.db.table.TableDescriptor;
+import com.google.common.collect.Maps;
 
 public class TestEventSourceTable extends TableBase
 {
@@ -38,7 +38,7 @@ public class TestEventSourceTable extends TableBase
 
 	public static final String TABLE_NAME = "test_event_source";
 
-	private Map<String, Map<String, Object>> inMemoryTable = new HashMap<String, Map<String, Object>>();
+	private Map<String, Map<String, Object>> inMemoryTable = Maps.newHashMap();
 
 	public TestEventSourceTable( String dbName, ConnectionRegistry connectionRegistry,
 			DatabaseMetadata databaseMetadata, TableRegistry tableRegistry ) throws SQLException
@@ -79,9 +79,9 @@ public class TestEventSourceTable extends TableBase
 		return true;
 	}
 
-	public Map<String, Map<String, Object>> getInMemoryTable()
+	public synchronized Map<String, Object> getFromInMemoryTable( String key )
 	{
-		return inMemoryTable;
+		return inMemoryTable.get( key );
 	}
 
 	/**

@@ -770,7 +770,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 		TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable( currentExecution
 				.getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
-		Map<String, Object> sourceByHash = eventSourceTable.getInMemoryTable().get( hash );
+		Map<String, Object> sourceByHash = eventSourceTable.getFromInMemoryTable( hash );
 		if( sourceByHash == null )
 		{
 			try

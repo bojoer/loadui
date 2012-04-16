@@ -269,6 +269,8 @@ public class ReportEngine
 	public LReportTemplate getReport( String name )
 	{
 		LReportTemplate result = reports.get( name );
+		if( result == null )
+			return null;
 		result.update();
 		return result;
 	}
