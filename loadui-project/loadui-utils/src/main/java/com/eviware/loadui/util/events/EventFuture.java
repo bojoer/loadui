@@ -40,7 +40,7 @@ public class EventFuture<T extends EventObject> implements Future<T>
 {
 	private final PredicateListener listener;
 	private final CountDownLatch eventLatch = new CountDownLatch( 1 );
-	private T matchedEvent = null;
+	private volatile T matchedEvent = null;
 
 	/**
 	 * Creates an EventFuture for the given EventFirer, matching events of the
