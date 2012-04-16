@@ -16,6 +16,7 @@
 package com.eviware.loadui.util.events;
 
 import java.util.EventObject;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -38,8 +39,8 @@ import com.google.common.base.Predicate;
 public class EventFuture<T extends EventObject> implements Future<T>
 {
 	private final PredicateListener listener;
+	private final CountDownLatch eventLatch = new CountDownLatch( 1 );
 	private T matchedEvent = null;
-	private boolean done = false;
 
 	/**
 	 * Creates an EventFuture for the given EventFirer, matching events of the
@@ -92,7 +93,7 @@ public class EventFuture<T extends EventObject> implements Future<T>
 	@Override
 	public boolean cancel( boolean mayInterruptIfRunning )
 	{
-		if( done || !mayInterruptIfRunning )
+		if( isDone() || !mayInterruptIfRunning )
 			return false;
 
 		listener.cancel();
@@ -102,25 +103,19 @@ public class EventFuture<T extends EventObject> implements Future<T>
 	@Override
 	public boolean isCancelled()
 	{
-		return done && matchedEvent == null;
+		return isDone() && matchedEvent == null;
 	}
 
 	@Override
 	public boolean isDone()
 	{
-		return done;
+		return eventLatch.getCount() == 0;
 	}
 
 	@Override
 	public T get() throws InterruptedException, ExecutionException
 	{
-		synchronized( listener )
-		{
-			while( matchedEvent == null )
-			{
-				listener.wait();
-			}
-		}
+		eventLatch.await();
 
 		return matchedEvent;
 	}
@@ -128,16 +123,10 @@ public class EventFuture<T extends EventObject> implements Future<T>
 	@Override
 	public T get( long timeout, TimeUnit unit ) throws InterruptedException, ExecutionException, TimeoutException
 	{
-		synchronized( listener )
+		if( !eventLatch.await( timeout, unit ) )
 		{
-			if( matchedEvent == null )
-			{
-				listener.wait( unit.toMillis( timeout ) );
-			}
-		}
-
-		if( matchedEvent == null )
 			throw new TimeoutException();
+		}
 
 		return matchedEvent;
 	}
@@ -163,22 +152,15 @@ public class EventFuture<T extends EventObject> implements Future<T>
 			if( predicate.apply( event ) )
 			{
 				eventFirer.removeEventListener( eventType, this );
-				synchronized( this )
-				{
-					matchedEvent = event;
-					notifyAll();
-				}
+				matchedEvent = event;
+				eventLatch.countDown();
 			}
 		}
 
 		private void cancel()
 		{
-			synchronized( this )
-			{
-				done = true;
-				eventFirer.removeEventListener( eventType, this );
-				notifyAll();
-			}
+			eventFirer.removeEventListener( eventType, this );
+			eventLatch.countDown();
 		}
 	}
 }
