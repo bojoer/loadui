@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.OverridingMethodsMustInvokeSuper;
+import javax.annotation.concurrent.GuardedBy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,7 @@ public abstract class BaseCategory implements ComponentBehavior
 	private final HashMap<String, Callable<Number>> totalCallables = Maps.newHashMap();
 	private final HashMap<String, Map<String, Number>> totalValues = Maps.newHashMap();
 
+	@GuardedBy( "this" )
 	private ScheduledExecutorService executor = null;
 
 	/**
@@ -108,7 +110,7 @@ public abstract class BaseCategory implements ComponentBehavior
 	}
 
 	@Override
-	public void onRelease()
+	public synchronized void onRelease()
 	{
 		context.removeEventListener( ActionEvent.class, listener );
 		totalCallables.clear();

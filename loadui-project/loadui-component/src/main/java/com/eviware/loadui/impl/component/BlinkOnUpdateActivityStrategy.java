@@ -46,7 +46,7 @@ public class BlinkOnUpdateActivityStrategy extends BlinkingActivityStrategy
 
 	private long lastUpdate = 0;
 	private ScheduledFuture<?> future = null;
-	private boolean onWhenIdle = true;
+	private final boolean onWhenIdle = true;
 
 	public BlinkOnUpdateActivityStrategy( long blinkLength, long blinkTime )
 	{
@@ -86,7 +86,7 @@ public class BlinkOnUpdateActivityStrategy extends BlinkingActivityStrategy
 	}
 
 	@Override
-	public void release()
+	public synchronized void release()
 	{
 		super.release();
 		if( future != null )
@@ -94,19 +94,5 @@ public class BlinkOnUpdateActivityStrategy extends BlinkingActivityStrategy
 			future.cancel( true );
 		}
 		setActive( false );
-	}
-
-	public boolean isOnWhenIdle()
-	{
-		return onWhenIdle;
-	}
-
-	public void setOnWhenIdle( boolean onWhenIdle )
-	{
-		this.onWhenIdle = onWhenIdle;
-		if( future == null )
-		{
-			setActive( onWhenIdle );
-		}
 	}
 }

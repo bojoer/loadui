@@ -91,7 +91,7 @@ public class TestEventSourceTable extends TableBase
 	{
 		for( Entry<String, Map<String, Object>> entry : inMemoryTable.entrySet() )
 		{
-			if( id.equals( ( Long )entry.getValue().get( STATIC_FIELD_ID ) ) )
+			if( id.equals( entry.getValue().get( STATIC_FIELD_ID ) ) )
 			{
 				return entry.getValue();
 			}
@@ -111,7 +111,7 @@ public class TestEventSourceTable extends TableBase
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		for( Entry<String, Map<String, Object>> entry : inMemoryTable.entrySet() )
 		{
-			if( typeId.equals( ( Long )entry.getValue().get( STATIC_FIELD_TYPEID ) ) )
+			if( typeId.equals( entry.getValue().get( STATIC_FIELD_TYPEID ) ) )
 			{
 				result.add( entry.getValue() );
 			}
@@ -152,7 +152,7 @@ public class TestEventSourceTable extends TableBase
 		List<Long> result = new ArrayList<Long>();
 		for( Entry<String, Map<String, Object>> item : inMemoryTable.entrySet() )
 		{
-			if( hashes.size() == 0 || hashes.contains( ( String )item.getValue().get( STATIC_FIELD_HASH ) ) )
+			if( hashes.size() == 0 || hashes.contains( item.getValue().get( STATIC_FIELD_HASH ) ) )
 			{
 				result.add( ( Long )item.getValue().get( STATIC_FIELD_ID ) );
 			}

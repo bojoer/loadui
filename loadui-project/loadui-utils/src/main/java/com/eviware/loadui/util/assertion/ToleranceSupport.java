@@ -54,12 +54,12 @@ public class ToleranceSupport
 		this.allowedOccurrences = allowedOccurrences;
 	}
 
-	public int getPeriod()
+	public synchronized int getPeriod()
 	{
 		return period;
 	}
 
-	public int getAllowedOccurrences()
+	public synchronized int getAllowedOccurrences()
 	{
 		return allowedOccurrences;
 	}

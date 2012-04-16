@@ -16,6 +16,7 @@
 package com.eviware.loadui.impl.statistics.db.table.model;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +34,10 @@ public class InterpolationLevelTable extends TableBase
 
 	public static final String INTERPOLATION_LEVEL_TABLE_NAME = "level_metadata";
 
-	private Set<Integer> inMemoryTable = new HashSet<Integer>();
+	private Set<Integer> inMemoryTable = Collections.synchronizedSet( new HashSet<Integer>() );
 
-	public InterpolationLevelTable( String dbName, ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata,
-			TableRegistry tableRegistry ) throws SQLException
+	public InterpolationLevelTable( String dbName, ConnectionRegistry connectionRegistry,
+			DatabaseMetadata databaseMetadata, TableRegistry tableRegistry ) throws SQLException
 	{
 		super( dbName, INTERPOLATION_LEVEL_TABLE_NAME, null, connectionRegistry, databaseMetadata, tableRegistry );
 
@@ -55,14 +56,14 @@ public class InterpolationLevelTable extends TableBase
 	}
 
 	@Override
-	public synchronized void insert( Map<String, ? extends Object> data ) throws SQLException
+	public void insert( Map<String, ? extends Object> data ) throws SQLException
 	{
 		super.insert( data );
 		inMemoryTable.add( ( Integer )data.get( STATIC_FIELD_INTERPOLATION_LEVEL ) );
 	}
 
 	@Override
-	public synchronized void release()
+	public void release()
 	{
 		super.release();
 		inMemoryTable.clear();
@@ -86,7 +87,7 @@ public class InterpolationLevelTable extends TableBase
 	{
 		return inMemoryTable.toArray( new Integer[0] );
 	}
-	
+
 	public Set<Integer> getInMemoryTable()
 	{
 		return inMemoryTable;
