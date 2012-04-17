@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.ComponentCreationException;
@@ -27,6 +28,12 @@ import com.google.common.collect.ImmutableMap;
 public class ConditionTest
 {
 	private ComponentItem component;
+
+	@BeforeClass
+	public static void classSetup()
+	{
+		ComponentTestUtils.initialize( "src/main/groovy" );
+	}
 
 	@Before
 	public void setup() throws ComponentCreationException

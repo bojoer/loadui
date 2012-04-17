@@ -59,6 +59,7 @@ public class ComponentTestUtils
 	private static final ConcurrentMap<ComponentDescriptor, BehaviorProvider> descriptors = Maps.newConcurrentMap();
 	private static final Set<ConnectionImpl> connections = Collections.synchronizedSet( new HashSet<ConnectionImpl>() );
 
+	private static final ComponentRegistry registry = mock( ComponentRegistry.class );
 	private static final ComponentItem dummyComponent = mock( ComponentItem.class );
 	private static final OutputTerminal outputDummy = mock( OutputTerminal.class );
 	private static final InputTerminal inputDummy = mock( InputTerminal.class );
@@ -67,10 +68,6 @@ public class ComponentTestUtils
 	{
 		System.setProperty( LoadUI.INSTANCE, LoadUI.CONTROLLER );
 		System.setProperty( "groovy.root", "target" + File.separator + ".groovy" );
-
-		File scriptDir = new File( "src/main/groovy" );
-
-		ComponentRegistry registry = mock( ComponentRegistry.class );
 
 		doAnswer( new Answer<Void>()
 		{
@@ -89,10 +86,14 @@ public class ComponentTestUtils
 			}
 		} ).when( registry ).registerDescriptor( any( ComponentDescriptor.class ), any( BehaviorProvider.class ) );
 
-		new GroovyBehaviorProvider( registry, Executors.newSingleThreadScheduledExecutor(), scriptDir );
-
 		when( outputDummy.getTerminalHolder() ).thenReturn( dummyComponent );
 		when( inputDummy.getTerminalHolder() ).thenReturn( dummyComponent );
+	}
+
+	public static void initialize( String pathToComponentScripts )
+	{
+		new GroovyBehaviorProvider( registry, Executors.newSingleThreadScheduledExecutor(), new File(
+				pathToComponentScripts ) );
 	}
 
 	public static BeanInjectorMocker getDefaultBeanInjectorMocker()
