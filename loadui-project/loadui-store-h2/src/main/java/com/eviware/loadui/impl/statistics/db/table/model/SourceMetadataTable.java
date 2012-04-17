@@ -83,15 +83,14 @@ public class SourceMetadataTable extends TableBase
 		return true;
 	}
 
-	public String[] getSourceNames()
+	public synchronized String[] getSourceNames()
 	{
 		return inMemoryTable.toArray( new String[0] );
 	}
 
-	
-	public Set<String> getInMemoryTable()
+	public synchronized boolean doesInMemoryTableContain( String sourceName )
 	{
-		return inMemoryTable;
+		return inMemoryTable.contains( sourceName );
 	}
 
 }

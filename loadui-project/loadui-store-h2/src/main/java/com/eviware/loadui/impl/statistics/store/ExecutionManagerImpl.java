@@ -361,7 +361,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 			SourceMetadataTable sources = ( SourceMetadataTable )tableRegistry.getTable( dbName,
 					SourceMetadataTable.SOURCE_TABLE_NAME );
-			if( !sources.getInMemoryTable().contains( source ) )
+			if( !sources.doesInMemoryTableContain( source ) )
 			{
 				Map<String, Object> data = new HashMap<String, Object>();
 				data.put( SourceMetadataTable.STATIC_FIELD_SOURCE_NAME, source );
