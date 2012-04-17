@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.FlowCategory;
-import com.eviware.loadui.api.counter.Counter;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
@@ -46,7 +45,6 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 	private Map<String, Class<?>> inputSignature = Collections.emptyMap();
 
 	private final BlinkOnUpdateActivityStrategy activityStrategy = ActivityStrategies.newBlinkOnUpdateStrategy();
-	private final List<Counter> counters = new ArrayList<Counter>();
 
 	/**
 	 * Constructs a FlowBase.
@@ -90,9 +88,6 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 				return false;
 			}
 		} );
-
-		for( int i = 0; i < 10; i++ )
-			counters.add( getContext().getCounter( "out_" + i ) );
 	}
 
 	/**
@@ -120,11 +115,6 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 	final public OutputTerminal createOutgoing()
 	{
 		return createOutgoing( OUTGOING_TERMINAL + " " + ( outgoingTerminals.size() + 1 ) );
-	}
-
-	final public List<Counter> getCounters()
-	{
-		return counters;
 	}
 
 	/**

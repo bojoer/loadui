@@ -12,8 +12,6 @@
 	
 	<osgi:service interface="com.eviware.loadui.api.addon.AddonRegistry" ref="addonRegistry" />
 	
-	<osgi:service interface="com.eviware.loadui.api.upload.FormUploader" ref="formUploader" />
-	
 	<osgi:service interface="com.eviware.loadui.api.model.WorkspaceProvider" ref="workspaceProvider" />
 	
 	<osgi:service interface="com.eviware.loadui.api.component.ComponentRegistry" ref="componentRegistry" />

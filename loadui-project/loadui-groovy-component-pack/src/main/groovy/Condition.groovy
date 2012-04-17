@@ -114,8 +114,7 @@ onMessage = { outgoing, incoming, message ->
 				script.binding = new Binding( new HashMap( message ) )
 				result = script.run() as Boolean
 			} catch( e ) {
-				log.error( "Unable to parse condition: $condition.value", e )
-				setInvalid( true )
+				log.warn( "Failed running condition: $condition.value, $e.message" )
 			}
 		} else {
 			result = assertValue( message[valueName.value] )

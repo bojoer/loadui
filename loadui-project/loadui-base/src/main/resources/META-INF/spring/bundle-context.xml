@@ -14,8 +14,6 @@
 		
 	<bean id="testEventRegistry" class="com.eviware.loadui.impl.testevents.TestEventRegistryImpl" />
 
-	<bean id="formUploader" class="com.eviware.loadui.impl.upload.FormUploaderImpl" />
-
 	<bean id="executorManager" class="com.eviware.loadui.impl.dispatch.ExecutorManagerImpl"
 		destroy-method="shutdown">
 		<constructor-arg ref="workspaceProvider" />
