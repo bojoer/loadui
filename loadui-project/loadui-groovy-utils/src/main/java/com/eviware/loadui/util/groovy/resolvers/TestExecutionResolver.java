@@ -20,6 +20,7 @@ import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.eviware.loadui.api.execution.Phase;
 import com.eviware.loadui.api.execution.TestExecution;
@@ -142,7 +143,7 @@ public class TestExecutionResolver implements GroovyResolver.Properties, GroovyR
 
 	protected static class ClosureTestExecutionTask implements TestExecutionTask
 	{
-		private final HashMap<Phase, Closure<?>> phaseTasks = Maps.newHashMap();
+		private final Map<Phase, Closure<?>> phaseTasks = Maps.newHashMap();
 
 		@Override
 		public void invoke( TestExecution execution, Phase phase )

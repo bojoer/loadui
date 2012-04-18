@@ -64,8 +64,8 @@ public abstract class BaseCategory implements ComponentBehavior
 	private final ComponentContext context;
 	private final ActionListener listener = new ActionListener();
 	private final AssignmentListener assignmentListener;
-	private final HashMap<String, Callable<Number>> totalCallables = Maps.newHashMap();
-	private final HashMap<String, Map<String, Number>> totalValues = Maps.newHashMap();
+	private final Map<String, Callable<Number>> totalCallables = Maps.newHashMap();
+	private final Map<String, Map<String, Number>> totalValues = Maps.newHashMap();
 
 	@GuardedBy( "this" )
 	private ScheduledExecutorService executor = null;

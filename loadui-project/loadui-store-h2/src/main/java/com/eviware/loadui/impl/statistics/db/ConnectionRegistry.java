@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -30,11 +31,11 @@ import com.eviware.loadui.impl.statistics.db.util.JdbcUtil;
 
 public class ConnectionRegistry implements Releasable
 {
-	private DataSourceProvider dsProvider;
+	private final DataSourceProvider dsProvider;
 
-	private HashMap<String, DataSource> dataSourceMap = new HashMap<String, DataSource>();
+	private final Map<String, DataSource> dataSourceMap = new HashMap<String, DataSource>();
 
-	private HashMap<String, Connection> connectionMap = new HashMap<String, Connection>();
+	private final Map<String, Connection> connectionMap = new HashMap<String, Connection>();
 
 	public ConnectionRegistry( DataSourceProvider dsProvider )
 	{

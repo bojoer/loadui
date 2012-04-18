@@ -22,6 +22,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ public class GroovyEnvironmentClassLoader extends GroovyClassLoader
 {
 	public static final Logger log = LoggerFactory.getLogger( GroovyEnvironmentClassLoader.class );
 
-	private final HashSet<Object> loadedDeps = Sets.newHashSet();
+	private final Set<Object> loadedDeps = Sets.newHashSet();
 
 	public GroovyEnvironmentClassLoader( ClassLoader classLoader )
 	{

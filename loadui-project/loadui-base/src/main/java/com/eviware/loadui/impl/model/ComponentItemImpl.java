@@ -114,7 +114,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private ActivityStrategy activityStrategy;
 	private final ActivityListener activityListener = new ActivityListener();
 
-	private final HashSet<Statistic.Descriptor> defaultStatistics = Sets.newHashSet();
+	private final Set<Statistic.Descriptor> defaultStatistics = Sets.newHashSet();
 	private final TerminalsEnabledTask terminalsEnabledTask = new TerminalsEnabledTask();
 	private boolean terminalsEnabled = false;
 
