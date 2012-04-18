@@ -344,7 +344,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 					},
 					Separator {},
 					MenuItem {
-						text: "New TestCase..."
+						text: "New Scenario..."
 						action: function():Void {
 							CreateNewTestCaseDialog { project: project, onOk: function( testCase: SceneItem ):Void {
 								CloneCanvasObjectsDialog { target: testCase, objects: components };
