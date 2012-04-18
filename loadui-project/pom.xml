@@ -18,7 +18,6 @@
 		<springVersion>3.1.1.RELEASE</springVersion>
 	</properties>
 	<modules>
-		<module>loadui-http-server</module>
 		<module>loadui-agent-deps</module>
 		<module>loadui-core-deps</module>
 		<module>loadui-api</module>
@@ -28,7 +27,6 @@
 		<module>loadui-controller-base</module>
 		<module>loadui-controller-deps</module>
 		<module>loadui-utils</module>
-		<module>loadui-http-client</module>
 		<module>loadui-groovy-component</module>
 		<module>loadui-layout</module>
 		<module>loadui-fx-interface</module>
