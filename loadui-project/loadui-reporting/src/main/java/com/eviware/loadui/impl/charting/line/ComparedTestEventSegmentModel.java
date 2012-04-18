@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.swing.SwingUtilities;
@@ -28,7 +29,7 @@ import com.jidesoft.chart.util.ColorFactory;
 public class ComparedTestEventSegmentModel extends AbstractSegmentModel implements Releasable
 {
 	private final ChartGroupListener chartGroupListener = new ChartGroupListener();
-	private final HashSet<LineMarker> lineMarkers = Sets.newHashSet();
+	private final Set<LineMarker> lineMarkers = Sets.newHashSet();
 	private final TestEventSegmentModel baseModel;
 	private final LineChartImpl chart;
 	private final ChartModelListener listener = new ChartModelListener()

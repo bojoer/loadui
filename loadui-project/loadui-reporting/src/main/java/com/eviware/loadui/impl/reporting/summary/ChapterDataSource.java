@@ -75,8 +75,7 @@ public class ChapterDataSource extends JRAbstractBeanDataSource
 		cnt++ ;
 		if( cnt == 1 )
 			return false;
-		else
-			return true;
+		return true;
 	}
 
 }

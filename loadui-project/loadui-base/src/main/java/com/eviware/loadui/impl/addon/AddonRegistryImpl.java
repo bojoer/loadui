@@ -41,8 +41,8 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 {
 	public static final Logger log = LoggerFactory.getLogger( AddonRegistryImpl.class );
 
-	private final HashMap<String, ServiceRegistration<?>> registrations = Maps.newHashMap();
-	private final HashMap<String, Addon.Factory<?>> factories = Maps.newHashMap();
+	private final Map<String, ServiceRegistration<?>> registrations = Maps.newHashMap();
+	private final Map<String, Addon.Factory<?>> factories = Maps.newHashMap();
 	private final Multimap<Class<?>, Addon.Factory<?>> eagerAddons = HashMultimap.create();
 	private final Set<AddonHolder> registeredHolders = Collections
 			.newSetFromMap( new WeakHashMap<AddonHolder, Boolean>() );

@@ -62,7 +62,7 @@ public class NewVersionChecker
 		NodeList elmntElmntLst = rootElement.getElementsByTagName( tagName );
 		Element elmnt = ( Element )elmntElmntLst.item( 0 );
 		NodeList nodes = elmnt.getChildNodes();
-		return nodes.item( 0 ).getNodeValue().toString();
+		return nodes.item( 0 ).getNodeValue();
 	}
 
 	private static boolean shouldThisVersionBeSkipped( String versionName, WorkspaceItem workspace )

@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.execution;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -46,7 +47,7 @@ public class AgentTestRunner extends AbstractTestRunner implements Releasable
 	private static final String CHANNEL = "/agentTestExecutionAddon";
 
 	private final PhaseMessageListener phaseListener = new PhaseMessageListener();
-	private final HashMap<String, AgentTestExecution> executions = Maps.newHashMap();
+	private final Map<String, AgentTestExecution> executions = Maps.newHashMap();
 	private final MessageEndpoint endpoint;
 	private final ExecutorService executorService;
 	private final ScheduledExecutorService scheduledExecutorService;

@@ -67,7 +67,7 @@ import com.google.common.base.Objects;
 final public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, TestEvent.Source<AssertionFailureEvent>,
 		Releasable
 {
-	protected static final Logger log = LoggerFactory.getLogger( AssertionItemImpl.class );
+	private static final Logger log = LoggerFactory.getLogger( AssertionItemImpl.class );
 
 	private static final String PARENT_ID = "parentId";
 	private static final String VALUE_REFERENCE = "valueReference";

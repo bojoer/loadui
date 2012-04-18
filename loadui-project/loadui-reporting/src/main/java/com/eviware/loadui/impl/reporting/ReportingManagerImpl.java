@@ -144,8 +144,7 @@ public class ReportingManagerImpl implements ReportingManager
 		try
 		{
 			ois = new ObjectInputStream( new FileInputStream( file ) );
-			Object o = ois.readObject();
-			return ( JasperPrint )o;
+			return ( JasperPrint )ois.readObject();
 		}
 		catch( IOException e )
 		{

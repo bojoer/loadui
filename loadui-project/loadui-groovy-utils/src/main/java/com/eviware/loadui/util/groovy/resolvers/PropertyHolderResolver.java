@@ -22,6 +22,7 @@ import groovy.lang.MissingPropertyException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -151,7 +152,7 @@ public class PropertyHolderResolver implements GroovyResolver.Methods, GroovyRes
 
 	private class PropertyEventHandler implements WeakEventHandler<PropertyEvent>
 	{
-		private final HashMap<Property<?>, Closure<?>> replaceHandlers = new HashMap<Property<?>, Closure<?>>();
+		private final Map<Property<?>, Closure<?>> replaceHandlers = new HashMap<Property<?>, Closure<?>>();
 
 		@Override
 		public void handleEvent( PropertyEvent event )

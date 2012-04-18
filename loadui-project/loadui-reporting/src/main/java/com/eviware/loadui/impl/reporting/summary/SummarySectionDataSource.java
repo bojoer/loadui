@@ -24,7 +24,7 @@ import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
 public class SummarySectionDataSource extends JRAbstractBeanDataSource
 {
 
-	private Section section;
+	private final Section section;
 	private int cnt = -1;
 
 	public SummarySectionDataSource( Section section )
@@ -60,8 +60,7 @@ public class SummarySectionDataSource extends JRAbstractBeanDataSource
 		cnt++ ;
 		if( cnt == 1 )
 			return false;
-		else
-			return true;
+		return true;
 	}
 
 }

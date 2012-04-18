@@ -408,7 +408,7 @@ public class ClientHttpRequest extends Observable
 			for( Iterator<Map.Entry<String, Object>> i = parameters.entrySet().iterator(); i.hasNext(); )
 			{
 				Map.Entry<String, Object> entry = i.next();
-				setParameter( entry.getKey().toString(), entry.getValue() );
+				setParameter( entry.getKey(), entry.getValue() );
 			}
 		}
 	}

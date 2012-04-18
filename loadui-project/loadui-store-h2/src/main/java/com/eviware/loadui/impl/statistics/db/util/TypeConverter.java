@@ -35,8 +35,7 @@ public class TypeConverter
 	{
 		if( imagebytes != null && ( imagebytes.length > 0 ) )
 		{
-			BufferedImage im = ImageIO.read( new ByteArrayInputStream( imagebytes ) );
-			return im;
+			return ImageIO.read( new ByteArrayInputStream( imagebytes ) );
 		}
 		return null;
 	}

@@ -23,9 +23,9 @@ public abstract class KeyValueTableModel extends AbstractTableModel
 {
 
 	private static final long serialVersionUID = 6138113207187331068L;
-	
+
 	protected String[] header = { "Key", "Value" };
-	
+
 	public KeyValueTableModelObserver observer = new KeyValueTableModelObserver( this );
 
 	@Override
@@ -45,8 +45,7 @@ public abstract class KeyValueTableModel extends AbstractTableModel
 	{
 		if( columnIndex == 1 )
 			return true;
-		else
-			return false;
+		return false;
 	}
 
 	public static class KeyValueTableModelObserver extends Observable

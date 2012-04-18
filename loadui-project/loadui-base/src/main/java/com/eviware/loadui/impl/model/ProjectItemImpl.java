@@ -540,12 +540,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
-	protected void reset()
-	{
-		super.reset();
-	}
-
-	@Override
 	public void appendToSummary( MutableSummary summary )
 	{
 		// add a project chapter first
@@ -926,7 +920,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		{
 			Object[] args = ( Object[] )data;
 			Addressable target = addressableRegistry.lookup( ( String )args[0] );
-			if( target != null && target instanceof ComponentItemImpl )
+			if( target instanceof ComponentItemImpl )
 			{
 				ComponentItemImpl component = ( ComponentItemImpl )target;
 				TerminalMessage message = component.getContext().newMessage();
