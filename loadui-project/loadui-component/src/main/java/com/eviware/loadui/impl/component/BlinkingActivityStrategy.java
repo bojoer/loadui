@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.BeanInjector;
 
-public class BlinkingActivityStrategy extends AbstractActivityStrategy implements Releasable
+public class BlinkingActivityStrategy extends AbstractActivityStrategy
 {
 	private final Runnable toggleRunnable = new Runnable()
 	{

@@ -36,8 +36,9 @@ import org.slf4j.LoggerFactory;
 
 public class SubReportURLHandler extends URLStreamHandler
 {
-	public static Logger log = LoggerFactory.getLogger( SubReportURLHandler.class );
-	private static Map<String, byte[]> reportCache = Collections.synchronizedMap( new WeakHashMap<String, byte[]>() );
+	public static final Logger log = LoggerFactory.getLogger( SubReportURLHandler.class );
+	private static final Map<String, byte[]> reportCache = Collections
+			.synchronizedMap( new WeakHashMap<String, byte[]>() );
 
 	private final ReportEngine reportEngine;
 
@@ -80,7 +81,7 @@ public class SubReportURLHandler extends URLStreamHandler
 
 	private static class SubreportConnection extends URLConnection
 	{
-		private ByteArrayInputStream in;
+		private final ByteArrayInputStream in;
 
 		protected SubreportConnection( URL url, byte[] compiledReport )
 		{

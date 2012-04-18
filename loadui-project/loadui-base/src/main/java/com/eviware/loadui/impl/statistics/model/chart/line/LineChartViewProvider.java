@@ -37,7 +37,7 @@ import com.eviware.loadui.util.events.EventSupport;
  * 
  * @author dain.nilsson
  */
-public class LineChartViewProvider extends AbstractChartViewProvider<LineChartView> implements EventFirer, Releasable
+public class LineChartViewProvider extends AbstractChartViewProvider<LineChartView> implements EventFirer
 {
 	public static final String LINE_SEGMENTS = LineChartViewProvider.class.getName() + "@lineSegments";
 

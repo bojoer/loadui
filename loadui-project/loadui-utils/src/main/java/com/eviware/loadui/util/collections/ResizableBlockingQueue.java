@@ -26,7 +26,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * 
  * @param <E>
  */
-public class ResizableBlockingQueue<E> extends LinkedBlockingQueue<E> implements BlockingQueue<E>
+public class ResizableBlockingQueue<E> extends LinkedBlockingQueue<E>
 {
 	private static final long serialVersionUID = 2987868556309474041L;
 

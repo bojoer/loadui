@@ -17,6 +17,8 @@ package com.eviware.loadui.impl.statistics;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +40,7 @@ public class StatisticsInterpolator
 
 	private final ExecutionManager executionManager;
 
-	private final HashMap<String, AggregateLevel> aggregateLevels = new HashMap<String, AggregateLevel>();
+	private final Map<String, AggregateLevel> aggregateLevels = new HashMap<String, AggregateLevel>();
 
 	public StatisticsInterpolator( ExecutionManager executionManager )
 	{
@@ -95,7 +97,7 @@ public class StatisticsInterpolator
 		private final int level;
 		private final AggregateLevel child;
 		private long lastFlush;
-		private final HashSet<Entry> entries = new HashSet<Entry>();
+		private final Set<Entry> entries = new HashSet<Entry>();
 
 		private AggregateLevel( String source, String trackId, int level, long currentTime )
 		{

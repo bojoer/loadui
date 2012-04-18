@@ -45,7 +45,7 @@ import com.google.common.collect.Iterables;
  */
 public class ChartLineChartView extends AbstractLineChartView implements ConfigurableLineChartView, Deletable
 {
-	public static Logger log = LoggerFactory.getLogger( ChartLineChartView.class );
+	public static final Logger log = LoggerFactory.getLogger( ChartLineChartView.class );
 
 	private static final String NULL = new String( "null" );
 

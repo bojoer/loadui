@@ -43,7 +43,7 @@ import com.eviware.loadui.util.ReleasableUtils;
  */
 public class StatisticHolderSupport implements Releasable
 {
-	public static Logger log = LoggerFactory.getLogger( StatisticHolderSupport.class );
+	public static final Logger log = LoggerFactory.getLogger( StatisticHolderSupport.class );
 
 	private final StatisticsManager manager;
 	private final StatisticHolder owner;
