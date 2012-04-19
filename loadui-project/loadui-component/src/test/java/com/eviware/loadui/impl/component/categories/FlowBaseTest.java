@@ -36,7 +36,6 @@ public class FlowBaseTest
 		{
 		};
 		component.setBehavior( flowBase );
-		component.getContext().setNonBlocking( true );
 	}
 
 	@Test
@@ -98,6 +97,9 @@ public class FlowBaseTest
 
 		InputTerminal input = flowBase.getIncomingTerminal();
 		OutputTerminal output1 = flowBase.createOutgoing();
+
+		//Ensure that the handler handling the connection gets invoked in the event thread.
+		component.getContext().setNonBlocking( true );
 
 		Connection connection = otherOutput.connectTo( input );
 
