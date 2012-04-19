@@ -94,6 +94,22 @@ public class ComponentTestUtils
 		TerminalMessageImpl terminalMessage = new TerminalMessageImpl( BeanInjector.getBean( ConversionService.class ) );
 		terminalMessage.putAll( message );
 		component.handleTerminalEvent( terminal, new TerminalMessageEvent( outputDummy, terminalMessage ) );
+		try
+		{
+			TestUtils.awaitEvents( component );
+		}
+		catch( InterruptedException e )
+		{
+			e.printStackTrace();
+		}
+		catch( ExecutionException e )
+		{
+			e.printStackTrace();
+		}
+		catch( TimeoutException e )
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public static BlockingQueue<TerminalMessage> getMessagesFrom( OutputTerminal terminal )

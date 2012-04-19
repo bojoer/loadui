@@ -17,6 +17,7 @@ package com.eviware.loadui.api.component.categories;
 
 import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.terminal.InputTerminal;
+import com.eviware.loadui.api.terminal.OutputTerminal;
 
 public interface OutputCategory extends ComponentBehavior
 {
@@ -36,7 +37,7 @@ public interface OutputCategory extends ComponentBehavior
 	public static final String INPUT_TERMINAL = "inputTerminal";
 
 	/**
-	 * The label of the InputTerminal which is returned by getInputTerminal().
+	 * The label of the OutputTerminal which is returned by getOutputTerminal().
 	 */
 	public static final String OUTPUT_TERMINAL = "outputTerminal";
 
@@ -47,4 +48,12 @@ public interface OutputCategory extends ComponentBehavior
 	 * @return
 	 */
 	public InputTerminal getInputTerminal();
+
+	/**
+	 * The OutputTerminal which is used to pass through incoming
+	 * TerminalMessages.
+	 * 
+	 * @return
+	 */
+	public OutputTerminal getOutputTerminal();
 }

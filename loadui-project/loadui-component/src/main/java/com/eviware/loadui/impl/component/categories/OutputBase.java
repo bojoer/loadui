@@ -68,6 +68,12 @@ public abstract class OutputBase extends BaseCategory implements OutputCategory
 	}
 
 	@Override
+	final public OutputTerminal getOutputTerminal()
+	{
+		return outputTerminal;
+	}
+
+	@Override
 	public void onTerminalMessage( OutputTerminal output, InputTerminal input, TerminalMessage message )
 	{
 		super.onTerminalMessage( output, input, message );
