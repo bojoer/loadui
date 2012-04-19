@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -59,7 +58,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 	private final String host;
 	private final int port;
 
-	private State state = State.CLOSED;
+	private volatile State state = State.CLOSED;
 	private Thread connectionThread = null;
 
 	public ClientSocketMessageEndpoint( SSLClient sslClient, String host, int port )

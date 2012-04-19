@@ -2,6 +2,7 @@ package com.eviware.loadui.impl.component.categories;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -36,6 +37,28 @@ public class FlowBaseTest
 		};
 		component.setBehavior( flowBase );
 		component.getContext().setNonBlocking( true );
+	}
+
+	@Test
+	public void shouldCreateOutgoingTerminals()
+	{
+		assertThat( flowBase.getOutgoingTerminalList().isEmpty(), is( true ) );
+
+		OutputTerminal output1 = flowBase.createOutgoing();
+		OutputTerminal output2 = flowBase.createOutgoing();
+		OutputTerminal output3 = flowBase.createOutgoing();
+
+		assertThat( flowBase.getOutgoingTerminalList().size(), is( 3 ) );
+
+		assertThat( flowBase.deleteOutgoing(), sameInstance( output3 ) );
+
+		OutputTerminal output3b = flowBase.createOutgoing();
+
+		assertThat( flowBase.deleteOutgoing(), sameInstance( output3b ) );
+		assertThat( flowBase.deleteOutgoing(), sameInstance( output2 ) );
+		assertThat( flowBase.deleteOutgoing(), sameInstance( output1 ) );
+
+		assertThat( flowBase.getOutgoingTerminalList().isEmpty(), is( true ) );
 	}
 
 	@Test
