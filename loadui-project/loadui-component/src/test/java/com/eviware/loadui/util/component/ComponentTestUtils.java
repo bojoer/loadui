@@ -27,6 +27,7 @@ import com.eviware.loadui.api.events.TerminalConnectionEvent;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
@@ -63,7 +64,9 @@ public class ComponentTestUtils
 	@SuppressWarnings( "rawtypes" )
 	public static ComponentItemImpl createComponentItem()
 	{
+		WorkspaceItem workspace = mock( WorkspaceItem.class );
 		ProjectItem project = mock( ProjectItem.class );
+		when( project.getWorkspace() ).thenReturn( workspace );
 		when( project.getProject() ).thenReturn( project );
 		when( project.isRunning() ).thenReturn( true );
 		when( project.connect( any( OutputTerminal.class ), any( InputTerminal.class ) ) ).thenAnswer(
