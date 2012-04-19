@@ -299,7 +299,14 @@ public abstract class BaseCategory implements ComponentBehavior
 
 			try
 			{
-				Number value = totalCallables.get( key ).call();
+				Callable<Number> callable = totalCallables.get( key );
+				if( callable == null )
+				{
+					//Total has been removed.
+					return 0;
+				}
+
+				Number value = callable.call();
 				doubleSum = value.doubleValue();
 				useDouble = value instanceof Double || value instanceof Float;
 				if( !useDouble )
