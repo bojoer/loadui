@@ -16,6 +16,7 @@
 package com.eviware.loadui.util.statistics.store;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
@@ -23,7 +24,7 @@ import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 
 public class ExecutionChangeSupport
 {
-	private ArrayList<ExecutionListener> listeners = new ArrayList<ExecutionListener>();
+	private final List<ExecutionListener> listeners = new ArrayList<ExecutionListener>();
 
 	public void addExecutionListener( ExecutionListener el )
 	{

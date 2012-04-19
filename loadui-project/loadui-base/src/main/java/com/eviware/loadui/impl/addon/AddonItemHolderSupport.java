@@ -17,6 +17,7 @@ package com.eviware.loadui.impl.addon;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -33,6 +34,7 @@ import com.eviware.loadui.util.ReleasableUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 public class AddonItemHolderSupport implements Releasable
@@ -40,8 +42,8 @@ public class AddonItemHolderSupport implements Releasable
 	private static final Logger log = LoggerFactory.getLogger( AddonItemHolderSupport.class );
 
 	private final AddonListConfig listConfig;
-	private final HashMultimap<String, AddonItemSupportImpl> addonItems = HashMultimap.create();
-	private final HashSet<String> loadedTypes = Sets.newHashSet();
+	private final Multimap<String, AddonItemSupportImpl> addonItems = HashMultimap.create();
+	private final Set<String> loadedTypes = Sets.newHashSet();
 
 	public AddonItemHolderSupport( AddonListConfig listConfig )
 	{

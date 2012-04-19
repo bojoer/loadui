@@ -273,7 +273,7 @@ public class GroovyComponentContext implements Releasable
 
 	private class ActionEventHandler implements WeakEventHandler<ActionEvent>
 	{
-		private final HashMap<String, Closure<?>> actionHandlers = new HashMap<String, Closure<?>>();
+		private final Map<String, Closure<?>> actionHandlers = new HashMap<String, Closure<?>>();
 
 		@Override
 		public void handleEvent( ActionEvent event )

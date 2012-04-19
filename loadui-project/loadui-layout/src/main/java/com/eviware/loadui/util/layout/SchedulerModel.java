@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
 import java.util.TreeSet;
@@ -229,7 +230,7 @@ public class SchedulerModel extends Observable
 		return hours.size() * minutes.size() * seconds.size();
 	}
 
-	public HashMap<Integer, List<ExecutionTime>> getExecutionTimeMap()
+	public Map<Integer, List<ExecutionTime>> getExecutionTimeMap()
 	{
 		List<ExecutionTime> prevList = new ArrayList<ExecutionTime>();
 		List<ExecutionTime> nextList = new ArrayList<ExecutionTime>();

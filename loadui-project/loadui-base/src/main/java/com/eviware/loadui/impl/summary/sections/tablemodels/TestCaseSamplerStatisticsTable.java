@@ -73,8 +73,8 @@ public class TestCaseSamplerStatisticsTable extends AbstractTableModel
 	public static class TestCaseSamplerStatisticsModel
 	{
 
-		String name;
-		HashMap<String, String> stats;
+		final String name;
+		final Map<String, String> stats;
 
 		public TestCaseSamplerStatisticsModel( String label, Map<String, String> stats )
 		{

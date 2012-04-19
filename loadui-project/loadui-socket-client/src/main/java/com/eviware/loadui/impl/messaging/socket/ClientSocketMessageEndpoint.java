@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 
@@ -52,7 +53,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 	private static final Message CLOSE_MESSAGE = new Message( "/service/close", null );
 
 	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport();
-	private final HashSet<ConnectionListener> listeners = Sets.newHashSet();
+	private final Set<ConnectionListener> listeners = Sets.newHashSet();
 	private final LinkedBlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
 	private final SSLClient sslClient;
 	private final String host;

@@ -25,6 +25,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import net.sf.jasperreports.engine.JRAbstractExporter;
@@ -63,7 +64,7 @@ public class ReportEngine
 
 	private static final File reportDirectory = new File( "reports" );
 
-	private final TreeMap<String, LReportTemplate> reports = new TreeMap<String, LReportTemplate>();
+	private final Map<String, LReportTemplate> reports = new TreeMap<String, LReportTemplate>();
 
 	private final ReportProtocolFactory protocolFactory;
 
