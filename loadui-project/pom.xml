@@ -42,7 +42,6 @@
 		<module>loadui-socket-client</module>
 		<module>loadui-socket-server</module>
 		<module>loadui-cssbox-browser</module>
-		<module>loadui-component-test-utils</module>
 	</modules>
 	<repositories>
 		<repository>

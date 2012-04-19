@@ -57,7 +57,7 @@ import com.eviware.loadui.launcher.util.BndUtils;
  * 
  * @author dain.nilsson
  */
-final public class LoadUILauncher
+public class LoadUILauncher
 {
 	protected static final String NOFX_OPTION = "nofx";
 	protected static final String SYSTEM_PROPERTY_OPTION = "D";

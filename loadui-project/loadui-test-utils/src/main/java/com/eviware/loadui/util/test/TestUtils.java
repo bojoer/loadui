@@ -30,8 +30,27 @@ public class TestUtils
 	public static void awaitEvents( EventFirer eventFirer ) throws InterruptedException, ExecutionException,
 			TimeoutException
 	{
-		EventFuture<BaseEvent> eventFuture = EventFuture.forKey( eventFirer, AWAIT_EVENTS );
-		eventFirer.fireEvent( new BaseEvent( eventFirer, AWAIT_EVENTS ) );
-		eventFuture.get( 5, TimeUnit.SECONDS );
+		awaitEvents( eventFirer, 1 );
+	}
+
+	/**
+	 * Like AwaitEvents, but runs multiple times to ensure waiting for events
+	 * triggered by other event handlers.
+	 * 
+	 * @param eventFirer
+	 * @param times
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws TimeoutException
+	 */
+	public static void awaitEvents( EventFirer eventFirer, int times ) throws InterruptedException, ExecutionException,
+			TimeoutException
+	{
+		for( int i = 0; i < times; i++ )
+		{
+			EventFuture<BaseEvent> eventFuture = EventFuture.forKey( eventFirer, AWAIT_EVENTS );
+			eventFirer.fireEvent( new BaseEvent( eventFirer, AWAIT_EVENTS ) );
+			eventFuture.get( 5, TimeUnit.SECONDS );
+		}
 	}
 }

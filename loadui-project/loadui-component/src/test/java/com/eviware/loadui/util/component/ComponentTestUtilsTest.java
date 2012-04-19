@@ -1,22 +1,19 @@
-package com.eviware.loadui.util.test;
+package com.eviware.loadui.util.component;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.springframework.core.convert.support.DefaultConversionService;
 
-import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.events.TerminalEvent;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -26,6 +23,7 @@ import com.eviware.loadui.api.terminal.TerminalHolder;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.impl.terminal.OutputTerminalImpl;
 import com.eviware.loadui.impl.terminal.TerminalMessageImpl;
+import com.eviware.loadui.util.test.BeanInjectorMocker;
 import com.google.common.collect.ImmutableMap;
 
 public class ComponentTestUtilsTest
@@ -37,19 +35,11 @@ public class ComponentTestUtilsTest
 	}
 
 	@Test
-	public void shouldCreateComponent() throws ComponentCreationException, IOException
+	public void shouldCreateComponentItem()
 	{
-		File scriptDir = new File( "target", "scripts" );
-		scriptDir.mkdirs();
-
-		File scriptFile = new File( scriptDir, "Test.groovy" );
-		scriptFile.createNewFile();
-
-		ComponentTestUtils.initialize( scriptDir.getPath() );
 		ComponentTestUtils.getDefaultBeanInjectorMocker();
-		ComponentItem component = ComponentTestUtils.createComponent( "Test" );
-
-		assertThat( component.getBehavior().getClass().getSimpleName(), startsWith( "Groovy" ) );
+		ComponentItem component = ComponentTestUtils.createComponentItem();
+		assertNotNull( component.getContext() );
 	}
 
 	@Test

@@ -27,7 +27,6 @@ import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.Segment;
-import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.impl.statistics.model.chart.AbstractChartViewProvider;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
@@ -96,6 +95,7 @@ public class LineChartViewProvider extends AbstractChartViewProvider<LineChartVi
 	@Override
 	public void release()
 	{
+		super.release();
 		ReleasableUtils.release( eventSupport );
 	}
 

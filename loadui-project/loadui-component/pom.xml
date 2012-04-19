@@ -32,23 +32,53 @@
 					</instructions>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-api</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-layout</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-utils</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-base</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-model-xmlbeans</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-test-utils</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

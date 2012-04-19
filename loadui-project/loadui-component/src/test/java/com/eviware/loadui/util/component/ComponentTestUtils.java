@@ -1,18 +1,15 @@
-package com.eviware.loadui.util.test;
+package com.eviware.loadui.util.component;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,13 +22,8 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.component.BehaviorProvider;
-import com.eviware.loadui.api.component.ComponentCreationException;
-import com.eviware.loadui.api.component.ComponentDescriptor;
-import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.TerminalConnectionEvent;
-import com.eviware.loadui.api.events.TerminalEvent;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
@@ -40,60 +32,26 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.config.ComponentItemConfig;
-import com.eviware.loadui.groovy.GroovyBehaviorProvider;
 import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.impl.terminal.ConnectionBase;
 import com.eviware.loadui.impl.terminal.OutputTerminalImpl;
 import com.eviware.loadui.impl.terminal.TerminalMessageImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.InitializableUtils;
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
+import com.eviware.loadui.util.test.BeanInjectorMocker;
+import com.eviware.loadui.util.test.TestUtils;
 
 public class ComponentTestUtils
 {
-	private static final Object lock = new Object();
-	private static final ConcurrentMap<ComponentDescriptor, BehaviorProvider> descriptors = Maps.newConcurrentMap();
-	private static final Set<ConnectionImpl> connections = Collections.synchronizedSet( new HashSet<ConnectionImpl>() );
-
-	private static final ComponentRegistry registry = mock( ComponentRegistry.class );
 	private static final ComponentItem dummyComponent = mock( ComponentItem.class );
 	private static final OutputTerminal outputDummy = mock( OutputTerminal.class );
-	private static final InputTerminal inputDummy = mock( InputTerminal.class );
+	private static final Set<ConnectionImpl> connections = Collections.synchronizedSet( new HashSet<ConnectionImpl>() );
 
 	static
 	{
 		System.setProperty( LoadUI.INSTANCE, LoadUI.CONTROLLER );
-		System.setProperty( "groovy.root", "target" + File.separator + ".groovy" );
-
-		doAnswer( new Answer<Void>()
-		{
-			@Override
-			public Void answer( InvocationOnMock invocation ) throws Throwable
-			{
-				ComponentDescriptor descriptor = ( ComponentDescriptor )invocation.getArguments()[0];
-				BehaviorProvider provider = ( BehaviorProvider )invocation.getArguments()[1];
-				synchronized( lock )
-				{
-					descriptors.put( descriptor, provider );
-					lock.notifyAll();
-				}
-
-				return null;
-			}
-		} ).when( registry ).registerDescriptor( any( ComponentDescriptor.class ), any( BehaviorProvider.class ) );
 
 		when( outputDummy.getTerminalHolder() ).thenReturn( dummyComponent );
-		when( inputDummy.getTerminalHolder() ).thenReturn( dummyComponent );
-	}
-
-	public static void initialize( String pathToComponentScripts )
-	{
-		new GroovyBehaviorProvider( registry, Executors.newSingleThreadScheduledExecutor(), new File(
-				pathToComponentScripts ) );
 	}
 
 	public static BeanInjectorMocker getDefaultBeanInjectorMocker()
@@ -103,38 +61,8 @@ public class ComponentTestUtils
 	}
 
 	@SuppressWarnings( "rawtypes" )
-	public static ComponentItem createComponent( final String componentName ) throws ComponentCreationException
+	public static ComponentItemImpl createComponentItem()
 	{
-		Optional<ComponentDescriptor> descriptorOptional = null;
-		Predicate<ComponentDescriptor> predicate = new Predicate<ComponentDescriptor>()
-		{
-			@Override
-			public boolean apply( ComponentDescriptor input )
-			{
-				return Objects.equal( componentName, input.getLabel() );
-			}
-		};
-
-		long deadline = System.currentTimeMillis() + 5000;
-		synchronized( lock )
-		{
-			while( !( descriptorOptional = Iterables.tryFind( descriptors.keySet(), predicate ) ).isPresent()
-					&& System.currentTimeMillis() < deadline )
-			{
-				try
-				{
-					lock.wait( deadline - System.currentTimeMillis() );
-				}
-				catch( InterruptedException e )
-				{
-					e.printStackTrace();
-					Thread.currentThread().interrupt();
-				}
-			}
-		}
-
-		ComponentDescriptor descriptor = descriptorOptional.get();
-
 		ProjectItem project = mock( ProjectItem.class );
 		when( project.getProject() ).thenReturn( project );
 		when( project.isRunning() ).thenReturn( true );
@@ -154,9 +82,6 @@ public class ComponentTestUtils
 
 		ComponentItemImpl component = InitializableUtils.initialize( new ComponentItemImpl( project,
 				ComponentItemConfig.Factory.newInstance() ) );
-		component.setAttribute( ComponentItem.TYPE, descriptor.getLabel() );
-		component.setBehavior( descriptors.get( descriptor ).createBehavior( descriptor, component.getContext() ) );
-
 		return component;
 	}
 
@@ -176,6 +101,34 @@ public class ComponentTestUtils
 		return queue;
 	}
 
+	private static Connection connect( OutputTerminal output, InputTerminal input )
+	{
+		ConnectionImpl connection = new ConnectionImpl( output, input );
+		connections.add( connection );
+
+		if( output instanceof OutputTerminalImpl )
+		{
+			try
+			{
+				TestUtils.awaitEvents( output );
+			}
+			catch( InterruptedException e )
+			{
+				e.printStackTrace();
+			}
+			catch( ExecutionException e )
+			{
+				e.printStackTrace();
+			}
+			catch( TimeoutException e )
+			{
+				e.printStackTrace();
+			}
+		}
+
+		return connection;
+	}
+
 	private static class MessageListener implements EventHandler<TerminalMessageEvent>
 	{
 		private final BlockingQueue<TerminalMessage> queue;
@@ -192,38 +145,18 @@ public class ComponentTestUtils
 		}
 	}
 
-	private static Connection connect( OutputTerminal output, InputTerminal input )
-	{
-		ConnectionImpl connection = new ConnectionImpl( output, input );
-		connections.add( connection );
-		try
-		{
-			TestUtils.awaitEvents( output );
-		}
-		catch( InterruptedException e )
-		{
-			e.printStackTrace();
-		}
-		catch( ExecutionException e )
-		{
-			e.printStackTrace();
-		}
-		catch( TimeoutException e )
-		{
-			e.printStackTrace();
-		}
-		return connection;
-	}
-
-	public static class ConnectionImpl extends ConnectionBase implements EventHandler<TerminalEvent>
+	private static class ConnectionImpl extends ConnectionBase implements EventHandler<TerminalConnectionEvent>
 	{
 		private ConnectionImpl( OutputTerminal output, InputTerminal input )
 		{
 			super( output, input );
 
 			if( output instanceof OutputTerminalImpl )
+			{
+				output.addEventListener( TerminalConnectionEvent.class, this );
 				( ( OutputTerminalImpl )output ).fireEvent( new TerminalConnectionEvent( this, output, input,
 						TerminalConnectionEvent.Event.CONNECT ) );
+			}
 		}
 
 		@Override
@@ -231,30 +164,35 @@ public class ComponentTestUtils
 		{
 			connections.remove( this );
 			if( getOutputTerminal() instanceof OutputTerminalImpl )
+			{
 				( ( OutputTerminalImpl )getOutputTerminal() ).fireEvent( new TerminalConnectionEvent( this,
 						getOutputTerminal(), getInputTerminal(), TerminalConnectionEvent.Event.DISCONNECT ) );
-			try
-			{
-				TestUtils.awaitEvents( getOutputTerminal() );
-			}
-			catch( InterruptedException e )
-			{
-				e.printStackTrace();
-			}
-			catch( ExecutionException e )
-			{
-				e.printStackTrace();
-			}
-			catch( TimeoutException e )
-			{
-				e.printStackTrace();
+				try
+				{
+					TestUtils.awaitEvents( getOutputTerminal() );
+				}
+				catch( InterruptedException e )
+				{
+					e.printStackTrace();
+				}
+				catch( ExecutionException e )
+				{
+					e.printStackTrace();
+				}
+				catch( TimeoutException e )
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 
 		@Override
-		public void handleEvent( TerminalEvent event )
+		public void handleEvent( TerminalConnectionEvent event )
 		{
-			getInputTerminal().getTerminalHolder().handleTerminalEvent( getInputTerminal(), event );
+			if( getInputTerminal().getTerminalHolder() != null )
+			{
+				getInputTerminal().getTerminalHolder().handleTerminalEvent( getInputTerminal(), event );
+			}
 		}
 	}
 }
