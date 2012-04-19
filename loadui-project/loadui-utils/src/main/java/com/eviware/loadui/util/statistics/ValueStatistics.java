@@ -28,7 +28,7 @@ public class ValueStatistics
 {
 	private final List<DataPoint> dataPoints = new ArrayList<DataPoint>();
 	private long period;
-	private int snapshotLength = 1000;
+	private final int snapshotLength = 1000;
 
 	public ValueStatistics( long period )
 	{
@@ -129,16 +129,16 @@ public class ValueStatistics
 
 		return new ImmutableMap.Builder<String, Number>() //
 				.put( "Max", max ) //
-				.put( "Min", min == Long.MAX_VALUE ? 0 : min ) //
+				.put( "Min", min == Long.MAX_VALUE ? 0L : min ) //
 				.put( "Avg", avg ) //
 				.put( "Sum", sum ) //
 				.put( "Std-Dev", stdDev ) //
 				.put( "Tps", tps ) //
-				.put( "Avg-Tps", duration > 0 ? 1000 * count / duration : 0 ) //
+				.put( "Avg-Tps", duration > 0L ? 1000 * count / duration : 0 ) //
 				.put( "Vps", vps ) //
-				.put( "Avg-Vps", duration > 0 ? 1000 * sum / duration : 0 ) //
+				.put( "Avg-Vps", duration > 0L ? 1000 * sum / duration : 0 ) //
 				.put( "Percentile", percentile ) //
-				.put( "AvgResponseSize", 1000 * sum / ( dataPoints.size() == 0 ? 1 : dataPoints.size() ) ) //
+				.put( "AvgResponseSize", 1000L * sum / ( dataPoints.size() == 0 ? 1 : dataPoints.size() ) ) //
 				.build();
 	}
 
