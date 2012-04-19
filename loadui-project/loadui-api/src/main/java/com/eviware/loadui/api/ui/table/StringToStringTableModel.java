@@ -16,8 +16,7 @@
 package com.eviware.loadui.api.ui.table;
 
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.List;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -29,7 +28,7 @@ public class StringToStringTableModel extends KeyValueTableModel
 
 	private static final long serialVersionUID = -6107162368567835864L;
 
-	private ArrayList<StringProperty> data = new ArrayList<StringProperty>();
+	private final List<StringProperty> data = new ArrayList<StringProperty>();
 
 	private Property<String> property;
 
@@ -147,7 +146,7 @@ public class StringToStringTableModel extends KeyValueTableModel
 		}
 	}
 
-	public ArrayList<StringProperty> getData()
+	public List<StringProperty> getData()
 	{
 		return data;
 	}
@@ -204,7 +203,7 @@ public class StringToStringTableModel extends KeyValueTableModel
 
 	public static class StringProperty
 	{
-		private String name;
+		private final String name;
 		private String value;
 
 		public StringProperty( String name, String value )
