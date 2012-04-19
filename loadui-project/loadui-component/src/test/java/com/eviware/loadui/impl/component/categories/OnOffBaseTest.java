@@ -57,6 +57,7 @@ public class OnOffBaseTest
 	@Test
 	public void shouldChangeStateWhenTriggeredByMessage()
 	{
+		component.getContext().setNonBlocking( true );
 		Property<Boolean> stateProperty = onOffBase.getStateProperty();
 		assertThat( stateProperty.getValue(), is( true ) );
 
