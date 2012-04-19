@@ -22,6 +22,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.TerminalConnectionEvent;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
@@ -33,6 +34,7 @@ import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.config.ComponentItemConfig;
+import com.eviware.loadui.impl.addressable.AddressableRegistryImpl;
 import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.impl.terminal.ConnectionBase;
 import com.eviware.loadui.impl.terminal.OutputTerminalImpl;
@@ -57,8 +59,9 @@ public class ComponentTestUtils
 
 	public static BeanInjectorMocker getDefaultBeanInjectorMocker()
 	{
-		return new BeanInjectorMocker().put( ConversionService.class, new DefaultConversionService() ).put(
-				ExecutorService.class, Executors.newCachedThreadPool() );
+		return new BeanInjectorMocker().put( ConversionService.class, new DefaultConversionService() )
+				.put( ExecutorService.class, Executors.newCachedThreadPool() )
+				.put( AddressableRegistry.class, new AddressableRegistryImpl() );
 	}
 
 	@SuppressWarnings( "rawtypes" )
