@@ -27,8 +27,8 @@ import com.google.common.collect.Iterables;
 public class LineChartStyles
 {
 
-	public static final String[] lineColors = new String[] { "#FF2100", "#FF7B00", "#00B700", "#00B2D2", "#7826B5",
-			"#D7268E", "#FFA400", "#9BCD00", "#002AB6", "#007AC3", "#FFFB00", "#FFFFFF" };
+	static final String[] lineColors = new String[] { "#FF2100", "#FF7B00", "#00B700", "#00B2D2", "#7826B5", "#D7268E",
+			"#FFA400", "#9BCD00", "#002AB6", "#007AC3", "#FFFB00", "#FFFFFF" };
 
 	public static final Color CHART_BACKGROUND_COLOR = new Color( 0x1a, 0x1a, 0x1a, 0 );
 	public static final Color CHART_FOREGROUND_COLOR = new Color( 0xcd, 0xcd, 0xcd );

@@ -24,7 +24,7 @@ import com.eviware.loadui.util.testevents.AbstractTestEvent;
 public class InterpolatedTestEvent extends AbstractTestEvent
 {
 	public static final byte[] notStrong = new byte[0];
-	public static final byte[] strong = new byte[1];
+	static final byte[] strong = new byte[1];
 
 	public InterpolatedTestEvent( Class<? extends TestEvent> type, long timestamp )
 	{

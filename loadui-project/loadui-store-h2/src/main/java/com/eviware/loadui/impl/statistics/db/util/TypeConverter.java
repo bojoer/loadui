@@ -54,8 +54,7 @@ public class TypeConverter
 			{
 				throw new IllegalStateException( e.toString() );
 			}
-			byte[] b = baos.toByteArray();
-			return b;
+			return baos.toByteArray();
 		}
 		return new byte[0];
 	}
