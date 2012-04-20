@@ -10,14 +10,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.ComponentCreationException;
-import com.eviware.loadui.api.component.categories.GeneratorCategory;
+import com.eviware.loadui.api.component.categories.OutputCategory;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
 import com.google.common.base.Joiner;
 
-public class FixedLoadTest
+public class TableLogTest
 {
 	private ComponentItem component;
 
@@ -31,21 +31,18 @@ public class FixedLoadTest
 	public void setup() throws ComponentCreationException
 	{
 		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = GroovyComponentTestUtils.createComponent( "Fixed Load" );
+		component = GroovyComponentTestUtils.createComponent( "Table Log" );
 	}
 
 	@Test
 	public void shouldHaveCorrectTerminals()
 	{
-		assertThat( component.getTerminals().size(), is( 3 ) );
+		assertThat( component.getTerminals().size(), is( 2 ) );
 
-		InputTerminal incoming = ( InputTerminal )component.getTerminalByName( GeneratorCategory.STATE_TERMINAL );
-		assertThat( incoming.getLabel(), is( "Component activation" ) );
+		InputTerminal incoming = ( InputTerminal )component.getTerminalByName( OutputCategory.INPUT_TERMINAL );
+		assertThat( incoming.getLabel(), is( "Data to output" ) );
 
-		InputTerminal feedback = ( InputTerminal )component.getTerminalByName( "Sample Count" );
-		assertThat( feedback.getLabel(), is( "Currently running feedback" ) );
-
-		OutputTerminal trigger = ( OutputTerminal )component.getTerminalByName( GeneratorCategory.TRIGGER_TERMINAL );
-		assertThat( trigger.getLabel(), is( "Trigger Signal" ) );
+		OutputTerminal output = ( OutputTerminal )component.getTerminalByName( OutputCategory.OUTPUT_TERMINAL );
+		assertThat( output.getLabel(), is( "Passed through messages" ) );
 	}
 }

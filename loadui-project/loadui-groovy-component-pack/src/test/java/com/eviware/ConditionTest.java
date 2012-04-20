@@ -3,6 +3,7 @@ package com.eviware;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -18,6 +19,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
 import com.eviware.loadui.util.test.TestUtils;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 
 public class ConditionTest
@@ -27,7 +29,7 @@ public class ConditionTest
 	@BeforeClass
 	public static void classSetup()
 	{
-		GroovyComponentTestUtils.initialize( "src/main/groovy" );
+		GroovyComponentTestUtils.initialize( Joiner.on( File.separator ).join( "src", "main", "groovy" ) );
 	}
 
 	@Before

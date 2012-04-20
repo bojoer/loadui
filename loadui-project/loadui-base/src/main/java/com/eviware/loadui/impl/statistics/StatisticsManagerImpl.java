@@ -146,7 +146,7 @@ public class StatisticsManagerImpl implements StatisticsManager, Releasable
 		if( factory != null )
 			return factory.createStatisticsWriter( this, variable, config );
 
-		return null;
+		throw new IllegalArgumentException( "No StatisticsWriter factory of type: " + type + " available!" );
 	}
 
 	private class StatisticHolderListener implements EventHandler<BaseEvent>

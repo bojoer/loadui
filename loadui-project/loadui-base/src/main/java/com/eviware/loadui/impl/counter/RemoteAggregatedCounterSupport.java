@@ -27,7 +27,6 @@ import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.model.ModelItem;
-import com.eviware.loadui.impl.model.ModelItemImpl;
 
 public class RemoteAggregatedCounterSupport extends AggregatedCounterSupport implements Aggregator
 {
@@ -41,7 +40,7 @@ public class RemoteAggregatedCounterSupport extends AggregatedCounterSupport imp
 	}
 
 	@Override
-	public void init( ModelItemImpl<?> modelItem )
+	public void init( ModelItem modelItem )
 	{
 		super.init( modelItem );
 

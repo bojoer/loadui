@@ -3,6 +3,8 @@ package com.eviware;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,7 +15,9 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
+import com.google.common.base.Joiner;
 
+@Deprecated
 public class AssertionTest
 {
 	private ComponentItem component;
@@ -21,7 +25,7 @@ public class AssertionTest
 	@BeforeClass
 	public static void classSetup()
 	{
-		GroovyComponentTestUtils.initialize( "src/main/groovy" );
+		GroovyComponentTestUtils.initialize( Joiner.on( File.separator ).join( "src", "main", "groovy" ) );
 	}
 
 	@Before

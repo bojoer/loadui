@@ -61,6 +61,12 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 
 	public static ComponentItem createComponent( final String componentName ) throws ComponentCreationException
 	{
+		return createComponent( componentName, ComponentTestUtils.createComponentItem() );
+	}
+
+	public static ComponentItem createComponent( final String componentName, ComponentItemImpl component )
+			throws ComponentCreationException
+	{
 		Optional<ComponentDescriptor> descriptorOptional = null;
 		Predicate<ComponentDescriptor> predicate = new Predicate<ComponentDescriptor>()
 		{
@@ -91,7 +97,6 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 
 		ComponentDescriptor descriptor = descriptorOptional.get();
 
-		ComponentItemImpl component = ComponentTestUtils.createComponentItem();
 		component.setAttribute( ComponentItem.TYPE, descriptor.getLabel() );
 		component.setBehavior( descriptors.get( descriptor ).createBehavior( descriptor, component.getContext() ) );
 

@@ -1,6 +1,7 @@
 package com.eviware.loadui.util.component;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,6 +24,7 @@ import org.springframework.core.convert.support.DefaultConversionService;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
+import com.eviware.loadui.api.counter.Counter;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.TerminalConnectionEvent;
 import com.eviware.loadui.api.events.TerminalMessageEvent;
@@ -35,6 +37,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.config.ComponentItemConfig;
 import com.eviware.loadui.impl.addressable.AddressableRegistryImpl;
+import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.impl.terminal.ConnectionBase;
 import com.eviware.loadui.impl.terminal.OutputTerminalImpl;
@@ -72,6 +75,16 @@ public class ComponentTestUtils
 		when( project.getWorkspace() ).thenReturn( workspace );
 		when( project.getProject() ).thenReturn( project );
 		when( project.isRunning() ).thenReturn( true );
+		final CounterSupport counterSupport = new CounterSupport();
+		counterSupport.init( project );
+		when( project.getCounter( anyString() ) ).thenAnswer( new Answer<Counter>()
+		{
+			@Override
+			public Counter answer( InvocationOnMock invocation ) throws Throwable
+			{
+				return counterSupport.getCounter( ( String )invocation.getArguments()[0] );
+			}
+		} );
 		when( project.connect( any( OutputTerminal.class ), any( InputTerminal.class ) ) ).thenAnswer(
 				new Answer<Connection>()
 				{

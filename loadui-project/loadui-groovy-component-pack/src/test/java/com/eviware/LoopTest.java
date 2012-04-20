@@ -10,14 +10,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.ComponentCreationException;
-import com.eviware.loadui.api.component.categories.GeneratorCategory;
+import com.eviware.loadui.api.component.categories.FlowCategory;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
 import com.google.common.base.Joiner;
 
-public class FixedLoadTest
+public class LoopTest
 {
 	private ComponentItem component;
 
@@ -31,7 +31,7 @@ public class FixedLoadTest
 	public void setup() throws ComponentCreationException
 	{
 		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = GroovyComponentTestUtils.createComponent( "Fixed Load" );
+		component = GroovyComponentTestUtils.createComponent( "Loop" );
 	}
 
 	@Test
@@ -39,13 +39,13 @@ public class FixedLoadTest
 	{
 		assertThat( component.getTerminals().size(), is( 3 ) );
 
-		InputTerminal incoming = ( InputTerminal )component.getTerminalByName( GeneratorCategory.STATE_TERMINAL );
-		assertThat( incoming.getLabel(), is( "Component activation" ) );
+		InputTerminal incoming = ( InputTerminal )component.getTerminalByName( FlowCategory.INCOMING_TERMINAL );
+		assertThat( incoming.getLabel(), is( "Incoming messages" ) );
 
-		InputTerminal feedback = ( InputTerminal )component.getTerminalByName( "Sample Count" );
-		assertThat( feedback.getLabel(), is( "Currently running feedback" ) );
+		OutputTerminal loop = ( OutputTerminal )component.getTerminalByName( "loop" );
+		assertThat( loop.getLabel(), is( "Continue loop" ) );
 
-		OutputTerminal trigger = ( OutputTerminal )component.getTerminalByName( GeneratorCategory.TRIGGER_TERMINAL );
-		assertThat( trigger.getLabel(), is( "Trigger Signal" ) );
+		OutputTerminal exit = ( OutputTerminal )component.getTerminalByName( "exit" );
+		assertThat( exit.getLabel(), is( "Exit loop" ) );
 	}
 }

@@ -21,6 +21,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import javax.annotation.Nonnull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +92,7 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 		return parent;
 	}
 
-	public void addStatisticsWriter( StatisticsWriter writer )
+	public void addStatisticsWriter( @Nonnull StatisticsWriter writer )
 	{
 		if( writers.add( writer ) )
 		{

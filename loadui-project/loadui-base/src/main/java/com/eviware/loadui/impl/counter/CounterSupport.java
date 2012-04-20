@@ -23,7 +23,7 @@ import com.eviware.loadui.api.counter.CounterHolder;
 import com.eviware.loadui.api.events.ActionEvent;
 import com.eviware.loadui.api.events.CounterEvent;
 import com.eviware.loadui.api.events.EventHandler;
-import com.eviware.loadui.impl.model.ModelItemImpl;
+import com.eviware.loadui.api.model.ModelItem;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableSet;
 
 public class CounterSupport
 {
-	protected ModelItemImpl<?> owner;
+	protected ModelItem owner;
 	private final LoadingCache<String, AtomicLong> counters = CacheBuilder.newBuilder().build(
 			new CacheLoader<String, AtomicLong>()
 			{
@@ -42,7 +42,7 @@ public class CounterSupport
 				}
 			} );
 
-	public void init( ModelItemImpl<?> owner )
+	public void init( ModelItem owner )
 	{
 		if( !( owner instanceof CounterHolder ) )
 			throw new IllegalArgumentException(
