@@ -98,6 +98,7 @@ import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.collections.CollectionFuture;
 import com.eviware.loadui.util.events.EventFuture;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -862,25 +863,28 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		@SuppressWarnings( "unchecked" )
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
+			Preconditions.checkArgument( endpoint instanceof AgentItem, "Endpoint: %s is not an AgentItem", endpoint );
+			AgentItem agent = ( AgentItem )endpoint;
+
 			Map<String, String> message = ( Map<String, String> )data;
 			if( message.containsKey( AgentItem.DEFINE_SCENE ) )
 			{
 				SceneItem scene = ( SceneItem )addressableRegistry.lookup( message.get( AgentItem.DEFINE_SCENE ) );
 				if( scene != null )
 				{
-					log.debug( "Agent {} has requested a Scenario: {}, sending...", endpoint,
+					log.debug( "Agent {} has requested a Scenario: {}, sending...", agent,
 							message.get( AgentItem.DEFINE_SCENE ) );
-					AssignmentImpl assignment = getAssignment( scene, ( AgentItem )endpoint );
+					AssignmentImpl assignment = getAssignment( scene, agent );
 					if( assignment != null )
 						assignment.setLoaded( false );
-					endpoint.sendMessage(
+					agent.sendMessage(
 							channel,
 							ImmutableMap.of( AgentItem.SCENE_ID, scene.getId(), AgentItem.SCENE_DEFINITION,
 									conversionService.convert( scene, String.class ) ) );
 				}
 				else
 				{
-					log.warn( "An Agent {} has requested a nonexistant Scenario: {}", endpoint,
+					log.warn( "An Agent {} has requested a nonexistant Scenario: {}", agent,
 							message.get( AgentItem.DEFINE_SCENE ) );
 				}
 			}
@@ -892,20 +896,20 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				{
 					synchronized( scene )
 					{
-						( ( SceneItemImpl )scene ).handleStatisticsData( ( AgentItem )endpoint, map );
+						( ( SceneItemImpl )scene ).handleStatisticsData( agent, map );
 					}
 				}
 			}
 			else if( message.containsKey( AgentItem.STARTED ) )
 			{
 				SceneItem scene = ( SceneItem )addressableRegistry.lookup( message.get( AgentItem.STARTED ) );
-				AssignmentImpl assignment = getAssignment( scene, ( AgentItem )endpoint );
+				AssignmentImpl assignment = getAssignment( scene, agent );
 				if( assignment != null )
 					assignment.setLoaded( true );
 
 				if( scene.isRunning() && !workspace.isLocalMode() )
 				{
-					endpoint.sendMessage( SceneCommunication.CHANNEL,
+					agent.sendMessage( SceneCommunication.CHANNEL,
 							new Object[] { scene.getId(), Long.toString( scene.getVersion() ),
 									SceneCommunication.ACTION_EVENT, START_ACTION, scene.getId() } );
 				}
