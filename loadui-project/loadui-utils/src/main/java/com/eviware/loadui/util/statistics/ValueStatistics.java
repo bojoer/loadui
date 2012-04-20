@@ -134,9 +134,9 @@ public class ValueStatistics
 				.put( "Sum", sum ) //
 				.put( "Std-Dev", stdDev ) //
 				.put( "Tps", tps ) //
-				.put( "Avg-Tps", duration > 0L ? 1000 * count / duration : 0 ) //
+				.put( "Avg-Tps", duration > 0L ? 1000L * count / duration : 0 ) //
 				.put( "Vps", vps ) //
-				.put( "Avg-Vps", duration > 0L ? 1000 * sum / duration : 0 ) //
+				.put( "Avg-Vps", duration > 0L ? 1000L * sum / duration : 0 ) //
 				.put( "Percentile", percentile ) //
 				.put( "AvgResponseSize", 1000L * sum / ( dataPoints.size() == 0 ? 1 : dataPoints.size() ) ) //
 				.build();

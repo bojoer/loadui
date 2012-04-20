@@ -192,7 +192,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 			min = 0;
 			max = 100;
 		}
-		else if( min == max )
+		else if( Math.abs( max - min ) < 1D )
 		{
 			min -= 2.5;
 			max += 2.5;
