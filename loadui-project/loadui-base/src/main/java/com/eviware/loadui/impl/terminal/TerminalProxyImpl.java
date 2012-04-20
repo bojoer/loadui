@@ -37,6 +37,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.api.terminal.TerminalProxy;
+import com.google.common.base.Preconditions;
 
 public class TerminalProxyImpl implements TerminalProxy
 {
@@ -172,6 +173,9 @@ public class TerminalProxyImpl implements TerminalProxy
 		@SuppressWarnings( "unchecked" )
 		public void handleMessage( String channel, final MessageEndpoint endpoint, Object data )
 		{
+			Preconditions.checkArgument( endpoint instanceof AgentItem );
+			AgentItem agent = ( AgentItem )endpoint;
+
 			final Map<String, String> message = ( Map<String, String> )data;
 			Terminal value = ( Terminal )addressableRegistry.lookup( message.get( OUTPUT ) );
 			// TODO: lookup if null.
@@ -187,7 +191,7 @@ public class TerminalProxyImpl implements TerminalProxy
 				OutputTerminalImpl source = ( OutputTerminalImpl )target;
 				TerminalMessage content = new TerminalMessageImpl( conversionService );
 				content.load( message.get( CONTENT ) );
-				source.fireEvent( new TerminalRemoteMessageEvent( source, content, ( AgentItem )endpoint ) );
+				source.fireEvent( new TerminalRemoteMessageEvent( source, content, agent ) );
 			}
 		}
 	}
