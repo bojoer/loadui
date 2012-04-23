@@ -26,6 +26,7 @@ import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
 import com.eviware.loadui.impl.statistics.db.TableRegistry;
 import com.eviware.loadui.impl.statistics.db.table.TableBase;
 import com.eviware.loadui.impl.statistics.db.table.TableDescriptor;
+import com.google.common.collect.ImmutableMap;
 
 public class TestEventTypeTable extends TableBase
 {
@@ -74,16 +75,16 @@ public class TestEventTypeTable extends TableBase
 		return true;
 	}
 
-	public Map<String, Map<String, Object>> getInMemoryTable()
+	public synchronized Map<String, Map<String, Object>> getInMemoryTable()
 	{
-		return inMemoryTable;
+		return ImmutableMap.copyOf( inMemoryTable );
 	}
 
 	public synchronized String getTypeNameById( Long id )
 	{
 		for( Entry<String, Map<String, Object>> e : inMemoryTable.entrySet() )
 		{
-			if( id.equals( ( Long )e.getValue().get( STATIC_FIELD_ID ) ) )
+			if( id.equals( e.getValue().get( STATIC_FIELD_ID ) ) )
 			{
 				return e.getKey();
 			}
