@@ -18,11 +18,13 @@ package com.eviware.loadui.impl.component;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.eviware.loadui.util.BeanInjector;
 
 public class BlinkOnUpdateActivityStrategy extends BlinkingActivityStrategy
 {
+	private final AtomicReference<ScheduledFuture<?>> futureRef = new AtomicReference<ScheduledFuture<?>>();
 	private final long blinkTime;
 	private final Runnable blinkTimeout = new Runnable()
 	{
@@ -30,6 +32,7 @@ public class BlinkOnUpdateActivityStrategy extends BlinkingActivityStrategy
 		public void run()
 		{
 			long timeLeft = lastUpdate + blinkTime - System.currentTimeMillis();
+			ScheduledFuture<?> future;
 			if( timeLeft > 0 )
 			{
 				future = BeanInjector.getBean( ScheduledExecutorService.class ).schedule( this, timeLeft,
@@ -41,12 +44,12 @@ public class BlinkOnUpdateActivityStrategy extends BlinkingActivityStrategy
 				setActive( onWhenIdle );
 				future = null;
 			}
+			futureRef.set( future );
 		}
 	};
 
 	private long lastUpdate = 0;
-	private ScheduledFuture<?> future = null;
-	private final boolean onWhenIdle = true;
+	private boolean onWhenIdle = true;
 
 	public BlinkOnUpdateActivityStrategy( long blinkLength, long blinkTime )
 	{
@@ -56,23 +59,49 @@ public class BlinkOnUpdateActivityStrategy extends BlinkingActivityStrategy
 		setActive( onWhenIdle );
 	}
 
-	public synchronized void update()
+	private boolean cancelFuture()
 	{
-		lastUpdate = System.currentTimeMillis();
-		if( future == null )
-		{
-			setBlinking( true );
-			future = BeanInjector.getBean( ScheduledExecutorService.class ).schedule( blinkTimeout, blinkTime,
-					TimeUnit.MILLISECONDS );
-		}
-	}
-
-	public synchronized void setActivity( boolean active )
-	{
+		ScheduledFuture<?> future = futureRef.getAndSet( null );
 		if( future != null )
 		{
 			future.cancel( true );
+			return true;
 		}
+
+		return false;
+	}
+
+	private boolean createFuture()
+	{
+		while( futureRef.get() == null )
+		{
+			ScheduledFuture<?> future = BeanInjector.getBean( ScheduledExecutorService.class ).schedule( blinkTimeout,
+					blinkTime, TimeUnit.MILLISECONDS );
+			if( !futureRef.compareAndSet( null, future ) )
+			{
+				return true;
+			}
+			else
+			{
+				future.cancel( true );
+			}
+		}
+
+		return false;
+	}
+
+	public void update()
+	{
+		lastUpdate = System.currentTimeMillis();
+		if( createFuture() )
+		{
+			setBlinking( true );
+		}
+	}
+
+	public void setActivity( boolean active )
+	{
+		cancelFuture();
 
 		if( active )
 		{
@@ -80,19 +109,29 @@ public class BlinkOnUpdateActivityStrategy extends BlinkingActivityStrategy
 		}
 		else
 		{
-			future = BeanInjector.getBean( ScheduledExecutorService.class ).schedule( blinkTimeout, blinkTime,
-					TimeUnit.MILLISECONDS );
+			createFuture();
 		}
 	}
 
 	@Override
-	public synchronized void release()
+	public void release()
 	{
 		super.release();
-		if( future != null )
-		{
-			future.cancel( true );
-		}
+		cancelFuture();
 		setActive( false );
+	}
+
+	public boolean isOnWhenIdle()
+	{
+		return onWhenIdle;
+	}
+
+	public void setOnWhenIdle( boolean onWhenIdle )
+	{
+		this.onWhenIdle = onWhenIdle;
+		if( futureRef.get() == null )
+		{
+			setActive( onWhenIdle );
+		}
 	}
 }

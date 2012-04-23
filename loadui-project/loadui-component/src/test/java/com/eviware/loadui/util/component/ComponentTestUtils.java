@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeoutException;
 
 import org.mockito.invocation.InvocationOnMock;
@@ -64,6 +65,7 @@ public class ComponentTestUtils
 	{
 		return new BeanInjectorMocker().put( ConversionService.class, new DefaultConversionService() )
 				.put( ExecutorService.class, Executors.newCachedThreadPool() )
+				.put( ScheduledExecutorService.class, Executors.newSingleThreadScheduledExecutor() )
 				.put( AddressableRegistry.class, new AddressableRegistryImpl() );
 	}
 
