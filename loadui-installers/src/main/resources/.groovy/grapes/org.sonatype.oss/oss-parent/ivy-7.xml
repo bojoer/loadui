@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ivy-module version="1.0" xmlns:m="http://ant.apache.org/ivy/maven">
-	<info organisation="net.sf.opencsv"
-		module="opencsv"
-		revision="2.0"
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+	<info organisation="org.sonatype.oss"
+		module="oss-parent"
+		revision="7"
 		status="release"
-		publication="20090825012111"
+		publication="20110307134248"
 	>
-		<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt" />
-		<description homepage="http://opencsv.sf.net">
-		A simple library for CVS reading and writing in Java
+		<description homepage="http://nexus.sonatype.org/oss-repository-hosting.html">
+		Sonatype helps open source projects to set up Maven repositories on https://oss.sonatype.org/
 		</description>
-		<m:maven.plugins>null__maven-compiler-plugin__null|org.apache.maven.plugins__maven-surefire-plugin__null|org.apache.maven.plugins__maven-source-plugin__null|org.apache.maven.plugins__maven-javadoc-plugin__null|null__maven-assembly-plugin__null|org.apache.maven.plugins__maven-gpg-plugin__null|org.apache.maven.plugins__maven-enforcer-plugin__1.0-beta-1</m:maven.plugins>
+		<m:properties__project.build.sourceEncoding>UTF-8</m:properties__project.build.sourceEncoding>
+		<m:properties__sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</m:properties__sonatypeOssDistMgmtSnapshotsUrl>
+		<m:maven.plugins>org.apache.maven.plugins__maven-enforcer-plugin__1.0</m:maven.plugins>
 	</info>
 	<configurations>
 		<conf name="default" visibility="public" description="runtime dependencies and master artifact can be used with this conf" extends="runtime,master"/>
@@ -25,11 +26,5 @@
 		<conf name="optional" visibility="public" description="contains all optional dependencies"/>
 	</configurations>
 	<publications>
-		<artifact name="opencsv" type="jar" ext="jar" conf="master"/>
-		<artifact name="opencsv" type="source" ext="jar" conf="sources" m:classifier="sources"/>
-		<artifact name="opencsv" type="javadoc" ext="jar" conf="javadoc" m:classifier="javadoc"/>
 	</publications>
-	<dependencies>
-		<dependency org="junit" name="junit" rev="4.7" force="true" conf="test->runtime(*),master(*)"/>
-	</dependencies>
 </ivy-module>
