@@ -505,18 +505,19 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 			{
 				result = sample( message, startTime );
 			}
-			catch( Exception e )
+			catch( SampleCancelledException e )
 			{
 				updateCurrentlyRunning( currentlyRunning.decrementAndGet() );
-				if( !( e instanceof SampleCancelledException ) )
-				{
-					log.error( "Exception when calling 'sample'", e );
+				return;
+			}
+			catch( RuntimeException e )
+			{
+				updateCurrentlyRunning( currentlyRunning.decrementAndGet() );
+				log.error( "Exception when calling 'sample'", e );
 
-					sampleCounter.increment();
-					failedRequestCounter.increment();
-					failureCounter.increment();
-				}
-
+				sampleCounter.increment();
+				failedRequestCounter.increment();
+				failureCounter.increment();
 				return;
 			}
 			if( result != null )
