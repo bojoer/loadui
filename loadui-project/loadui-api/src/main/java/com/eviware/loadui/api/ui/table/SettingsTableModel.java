@@ -88,6 +88,10 @@ public class SettingsTableModel extends KeyValueTableModel
 	@Override
 	public int hashCode()
 	{
+		// TODO: Remove this method. --Henrik
+		if( 1 != 2 )
+			throw new RuntimeException( "Remove this if we ever gets here. This was added to check if this hash" );
+
 		int hashCode = 0;
 		for( PropertyProxy v : data )
 		{
