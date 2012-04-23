@@ -463,7 +463,7 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 		if( queued.get() < queueSize && !released )
 		{
-			queue.offer( message );
+			queue.add( message );
 			updateQueued( queued.incrementAndGet() );
 		}
 		else
