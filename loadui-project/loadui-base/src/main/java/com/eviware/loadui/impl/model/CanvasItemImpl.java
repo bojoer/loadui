@@ -183,6 +183,23 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 			}
 		}
 
+		createComponents();
+		createConnections();
+		removeBadComponents();
+		removeBadConnections();
+
+		addEventListener( BaseEvent.class, new ActionListener() );
+
+		testRunner.registerTask( executionTask, Phase.START, Phase.PRE_STOP, Phase.STOP );
+
+		// timer.scheduleAtFixedRate( timerTask, 1000, 1000 );
+
+		statisticHolderSupport.init();
+		counterStatisticSupport.init();
+	}
+
+	private void createComponents()
+	{
 		for( ComponentItemConfig componentConfig : getConfig().getComponentArray() )
 		{
 			try
@@ -195,7 +212,10 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 				loadingErrors = true;
 			}
 		}
+	}
 
+	private void createConnections()
+	{
 		for( ConnectionConfig connectionConfig : getConfig().getConnectionArray() )
 		{
 			try
@@ -211,23 +231,10 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 						+ " and " + connectionConfig.getOutputTerminalId(), e );
 			}
 		}
+	}
 
-		// now remove bad connections and components
-
-		for( ComponentItemConfig badComponent : badComponents )
-		{
-			int cnt = 0;
-			boolean found = false;
-			for( ; cnt < getConfig().getComponentArray().length; cnt++ )
-				if( getConfig().getComponentArray()[cnt].equals( badComponent ) )
-				{
-					found = true;
-					break;
-				}
-			if( found )
-				getConfig().removeComponent( cnt );
-		}
-
+	private void removeBadConnections()
+	{
 		for( ConnectionConfig badConnection : badConnections )
 		{
 			int cnt = 0;
@@ -241,15 +248,23 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 			if( found )
 				getConfig().removeConnection( cnt );
 		}
+	}
 
-		addEventListener( BaseEvent.class, new ActionListener() );
-
-		testRunner.registerTask( executionTask, Phase.START, Phase.PRE_STOP, Phase.STOP );
-
-		// timer.scheduleAtFixedRate( timerTask, 1000, 1000 );
-
-		statisticHolderSupport.init();
-		counterStatisticSupport.init();
+	private void removeBadComponents()
+	{
+		for( ComponentItemConfig badComponent : badComponents )
+		{
+			int cnt = 0;
+			boolean found = false;
+			for( ; cnt < getConfig().getComponentArray().length; cnt++ )
+				if( getConfig().getComponentArray()[cnt].equals( badComponent ) )
+				{
+					found = true;
+					break;
+				}
+			if( found )
+				getConfig().removeComponent( cnt );
+		}
 	}
 
 	@Override
