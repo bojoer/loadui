@@ -169,14 +169,7 @@ public class LoadUILauncher
 
 		if( cmd.hasOption( SYSTEM_PROPERTY_OPTION ) )
 		{
-			for( String option : cmd.getOptionValues( SYSTEM_PROPERTY_OPTION ) )
-			{
-				int ix = option.indexOf( '=' );
-				if( ix != -1 )
-					System.setProperty( option.substring( 0, ix ), option.substring( ix + 1 ) );
-				else
-					System.setProperty( option, "true" );
-			}
+			parseSystemProperties();
 		}
 
 		initSystemProperties();
@@ -194,6 +187,18 @@ public class LoadUILauncher
 		Main.copySystemProperties( configProps );
 	}
 
+	private void parseSystemProperties()
+	{
+		for( String option : cmd.getOptionValues( SYSTEM_PROPERTY_OPTION ) )
+		{
+			int ix = option.indexOf( '=' );
+			if( ix != -1 )
+				System.setProperty( option.substring( 0, ix ), option.substring( ix + 1 ) );
+			else
+				System.setProperty( option, "true" );
+		}
+	}
+
 	protected void init()
 	{
 		String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
@@ -206,35 +211,7 @@ public class LoadUILauncher
 
 		if( !cmd.hasOption( IGNORE_CURRENTLY_RUNNING_OPTION ) )
 		{
-			try
-			{
-				File bundleCache = new File( configProps.getProperty( "org.osgi.framework.storage" ) );
-				if( !bundleCache.isDirectory() )
-					if( !bundleCache.mkdirs() )
-						throw new RuntimeException( "Unable to create directory: " + bundleCache.getAbsolutePath() );
-
-				File lockFile = new File( bundleCache, "loadui.lock" );
-				if( !lockFile.exists() )
-					if( !lockFile.createNewFile() )
-						throw new RuntimeException( "Unable to create file: " + lockFile.getAbsolutePath() );
-
-				FileLock lock = new RandomAccessFile( lockFile, "rw" ).getChannel().tryLock();
-				if( lock == null )
-				{
-					System.err.println( "An instance of loadUI is already running!" );
-					exitInError();
-				}
-			}
-			catch( OverlappingFileLockException e )
-			{
-				System.err.println( "An instance of loadUI is already running!" );
-				exitInError();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-				exitInError();
-			}
+			ensureNoOtherInstance();
 		}
 
 		processCommandLine( cmd );
@@ -248,54 +225,97 @@ public class LoadUILauncher
 
 			if( nofx )
 			{
-				Pattern fxPattern = Pattern
-						.compile( "^com\\.eviware\\.loadui\\.(\\w+[.-])*((fx-interface)|(cssbox-browser)).*$" );
-				for( Bundle bundle : framework.getBundleContext().getBundles() )
-				{
-					String bundleName = bundle.getSymbolicName();
-					if( bundle.getHeaders().get( Constants.FRAGMENT_HOST ) == null
-							&& ( bundleName == null || !fxPattern.matcher( bundleName ).find() ) )
-					{
-						try
-						{
-							bundle.start();
-						}
-						catch( Exception e )
-						{
-							e.printStackTrace();
-						}
-					}
-				}
+				startAllNonFxBundles();
 			}
 
-			File source = new File( "." + File.separator + "ext" );
-			if( source.isDirectory() )
-			{
-				for( File ext : source.listFiles( new FilenameFilter()
-				{
-					@Override
-					public boolean accept( File dir, String name )
-					{
-						return name.toLowerCase().endsWith( ".jar" );
-					}
-				} ) )
-				{
-					try
-					{
-						File tmpFile = File.createTempFile( ext.getName(), ".jar" );
-						BndUtils.wrap( ext, tmpFile );
-						framework.getBundleContext().installBundle( tmpFile.toURI().toString() ).start();
-					}
-					catch( Exception e )
-					{
-						e.printStackTrace();
-					}
-				}
-			}
+			loadExternalJarsAsBundles();
 		}
 		catch( BundleException ex )
 		{
 			ex.printStackTrace();
+		}
+	}
+
+	private void startAllNonFxBundles()
+	{
+		Pattern fxPattern = Pattern
+				.compile( "^com\\.eviware\\.loadui\\.(\\w+[.-])*((fx-interface)|(cssbox-browser)).*$" );
+		for( Bundle bundle : framework.getBundleContext().getBundles() )
+		{
+			String bundleName = bundle.getSymbolicName();
+			if( bundle.getHeaders().get( Constants.FRAGMENT_HOST ) == null
+					&& ( bundleName == null || !fxPattern.matcher( bundleName ).find() ) )
+			{
+				try
+				{
+					bundle.start();
+				}
+				catch( Exception e )
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private void loadExternalJarsAsBundles()
+	{
+		File source = new File( "." + File.separator + "ext" );
+		if( source.isDirectory() )
+		{
+			for( File ext : source.listFiles( new FilenameFilter()
+			{
+				@Override
+				public boolean accept( File dir, String name )
+				{
+					return name.toLowerCase().endsWith( ".jar" );
+				}
+			} ) )
+			{
+				try
+				{
+					File tmpFile = File.createTempFile( ext.getName(), ".jar" );
+					BndUtils.wrap( ext, tmpFile );
+					framework.getBundleContext().installBundle( tmpFile.toURI().toString() ).start();
+				}
+				catch( Exception e )
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private void ensureNoOtherInstance()
+	{
+		try
+		{
+			File bundleCache = new File( configProps.getProperty( "org.osgi.framework.storage" ) );
+			if( !bundleCache.isDirectory() )
+				if( !bundleCache.mkdirs() )
+					throw new RuntimeException( "Unable to create directory: " + bundleCache.getAbsolutePath() );
+
+			File lockFile = new File( bundleCache, "loadui.lock" );
+			if( !lockFile.exists() )
+				if( !lockFile.createNewFile() )
+					throw new RuntimeException( "Unable to create file: " + lockFile.getAbsolutePath() );
+
+			FileLock lock = new RandomAccessFile( lockFile, "rw" ).getChannel().tryLock();
+			if( lock == null )
+			{
+				System.err.println( "An instance of loadUI is already running!" );
+				exitInError();
+			}
+		}
+		catch( OverlappingFileLockException e )
+		{
+			System.err.println( "An instance of loadUI is already running!" );
+			exitInError();
+		}
+		catch( IOException e )
+		{
+			e.printStackTrace();
+			exitInError();
 		}
 	}
 
