@@ -9,7 +9,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
@@ -22,6 +21,7 @@ import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticVariable.Mutable;
 import com.eviware.loadui.api.terminal.InputTerminal;
+import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.util.component.ComponentTestUtils;
@@ -29,7 +29,6 @@ import com.google.common.collect.ImmutableMap;
 
 public class RunnerBaseTest
 {
-	private BlockingQueue<TerminalMessage> sampleMessages = new LinkedBlockingQueue<TerminalMessage>();
 	private RunnerBase runnerBase;
 	private ComponentItemImpl component;
 
@@ -62,7 +61,6 @@ public class RunnerBaseTest
 			protected TerminalMessage sample( TerminalMessage triggerMessage, Object sampleId )
 					throws SampleCancelledException
 			{
-				sampleMessages.add( triggerMessage );
 				return triggerMessage;
 			}
 
@@ -82,11 +80,13 @@ public class RunnerBaseTest
 	public void shouldSampleOnIncomingMessage() throws InterruptedException
 	{
 		InputTerminal triggerTerminal = runnerBase.getTriggerTerminal();
+		OutputTerminal resultsTermianl = runnerBase.getResultTerminal();
 
+		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTermianl );
 		ComponentTestUtils.sendMessage( triggerTerminal,
 				ImmutableMap.<String, Object> of( GeneratorCategory.TRIGGER_TIMESTAMP_MESSAGE_PARAM, 0 ) );
 
-		TerminalMessage message = sampleMessages.poll( 5, TimeUnit.SECONDS );
+		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
 		assertThat( message.get( GeneratorCategory.TRIGGER_TIMESTAMP_MESSAGE_PARAM ), is( ( Object )0 ) );
 		assertThat( message.size(), is( 3 ) );
 	}
