@@ -18,7 +18,6 @@ package com.eviware.loadui.api.ui.table;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 
 import com.eviware.loadui.api.property.Property;
 
@@ -91,23 +90,23 @@ public class SettingsTableModel extends KeyValueTableModel
 	{
 		private final String name;
 		private Object value;
-		private final Class pClass;
+		private final Class<?> pClass;
 
-		public PropertyProxy( Property p )
+		public PropertyProxy( Property<?> p )
 		{
 			this.name = p.getKey();
 			this.value = p.getValue();
 			this.pClass = p.getType();
 		}
 
-		public PropertyProxy( String name, Object value, Class type )
+		public PropertyProxy( String name, Object value, Class<?> type )
 		{
 			this.name = name;
 			this.value = value;
 			this.pClass = type;
 		}
 
-		public Class getType()
+		public Class<?> getType()
 		{
 			return pClass;
 		}

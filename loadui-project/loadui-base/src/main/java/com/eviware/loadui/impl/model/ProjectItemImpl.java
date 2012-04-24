@@ -922,6 +922,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		@Override
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
+			Preconditions.checkArgument( endpoint instanceof AgentItem, "Endpoint: %s is not an AgentItem", endpoint );
+			AgentItem agent = ( AgentItem )endpoint;
 			Object[] args = ( Object[] )data;
 			Addressable target = addressableRegistry.lookup( ( String )args[0] );
 			if( target instanceof ComponentItemImpl )
@@ -929,7 +931,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 				ComponentItemImpl component = ( ComponentItemImpl )target;
 				TerminalMessage message = component.getContext().newMessage();
 				message.load( args[1] );
-				component.sendAgentMessage( ( AgentItem )endpoint, message );
+				component.sendAgentMessage( agent, message );
 			}
 		}
 	}
