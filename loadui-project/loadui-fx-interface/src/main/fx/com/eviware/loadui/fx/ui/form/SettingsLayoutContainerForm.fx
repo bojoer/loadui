@@ -24,7 +24,6 @@ import javafx.scene.layout.Priority;
 import javafx.geometry.VPos;
 
 import com.eviware.loadui.api.layout.*;
-import com.eviware.loadui.api.ui.table.StringToStringTableModel;
 
 import com.eviware.loadui.fx.AppState;
 import com.eviware.loadui.fx.ui.form.fields.*;

@@ -39,7 +39,6 @@ public class LoadUI
 
 	public static final String LOADUI_HOME = "loadui.home";
 
-	public static final String HTTP_PORT = "loadui.http.port";
 	public static final String HTTPS_PORT = "loadui.https.port";
 
 	public static final String DISABLE_STATISTICS = "loadui.statistics.disable";

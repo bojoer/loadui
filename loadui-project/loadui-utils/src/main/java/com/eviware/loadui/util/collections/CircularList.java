@@ -28,6 +28,7 @@ import java.util.RandomAccess;
  * 
  * @author dain.nilsson
  */
+//This class is never used --Henrik
 public class CircularList<E> extends AbstractList<E> implements RandomAccess, Cloneable
 {
 	private int size;

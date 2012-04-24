@@ -18,6 +18,8 @@ package com.eviware.loadui.api.chart;
 /**
  * Empty implementation of <code>ChartListener</code> interface.
  * 
+ * Only used by Statistics.groovy
+ * 
  * @author predrag.vucetic
  * 
  */

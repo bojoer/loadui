@@ -27,23 +27,6 @@ import java.util.Map;
 public class MapUtils
 {
 	/**
-	 * DEPRECATED! Use Google Guava instead! Starts building a new Map.
-	 * 
-	 * @param <K>
-	 * @param <V>
-	 * @param keyType
-	 *           The type to use for keys.
-	 * @param valueType
-	 *           The type to use for values.
-	 * @return A new instance of MapBuilder, containing an empty Map<T1, T2>.
-	 */
-	@Deprecated
-	public static <K, V> MapBuilder<K, V> build( Class<K> keyType, Class<V> valueType )
-	{
-		return new MapBuilder<K, V>();
-	}
-
-	/**
 	 * Gets a value from the map, or if the value does not exist, a default
 	 * value.
 	 * 
@@ -70,49 +53,4 @@ public class MapUtils
 		return defaultValue;
 	}
 
-	@Deprecated
-	public static class MapBuilder<K, V>
-	{
-
-		private final Map<K, V> map;
-
-		private MapBuilder()
-		{
-			map = new HashMap<K, V>();
-		}
-
-		/**
-		 * Adds a key-value pair to the Map.
-		 * 
-		 * @param key
-		 * @param value
-		 * @return The MapBuilder.
-		 */
-		public MapBuilder<K, V> put( K key, V value )
-		{
-			map.put( key, value );
-
-			return this;
-		}
-
-		/**
-		 * Returns the built Map.
-		 * 
-		 * @return The built Map.
-		 */
-		public Map<K, V> get()
-		{
-			return map;
-		}
-
-		/**
-		 * Returns an immutable view of the Map.
-		 * 
-		 * @return The build Map, immutable.
-		 */
-		public Map<K, V> getImmutable()
-		{
-			return Collections.unmodifiableMap( map );
-		}
-	}
 }

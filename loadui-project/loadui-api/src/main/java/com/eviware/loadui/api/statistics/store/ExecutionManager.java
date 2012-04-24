@@ -72,13 +72,6 @@ public interface ExecutionManager extends EventFirer
 	public Execution startExecution( String executionId, long startTime );
 
 	/**
-	 * Pauses current execution.
-	 * 
-	 * @return
-	 */
-	public void pauseExecution();
-
-	/**
 	 * Stops current execution.
 	 * 
 	 * @return

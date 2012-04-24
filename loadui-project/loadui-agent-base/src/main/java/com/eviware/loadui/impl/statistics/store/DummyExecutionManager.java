@@ -63,12 +63,6 @@ public class DummyExecutionManager implements ExecutionManager
 	}
 
 	@Override
-	public void pauseExecution()
-	{
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public void stopExecution()
 	{
 		throw new UnsupportedOperationException();

@@ -45,7 +45,6 @@ public class AgentTest
 		int port = Utilities.getAvailablePort();
 		int sslPort = Utilities.getAvailablePort();
 		System.out.println( "Starting Agent on ports " + port + " and " + sslPort );
-		System.setProperty( LoadUI.HTTP_PORT, Integer.toString( port ) );
 		System.setProperty( LoadUI.HTTPS_PORT, Integer.toString( sslPort ) );
 		agent = new AgentWrapper();
 	}
