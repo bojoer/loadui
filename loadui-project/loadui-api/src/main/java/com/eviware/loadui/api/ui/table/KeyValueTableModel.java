@@ -15,8 +15,6 @@
  */
 package com.eviware.loadui.api.ui.table;
 
-import java.util.Observable;
-
 import javax.swing.table.AbstractTableModel;
 
 public abstract class KeyValueTableModel extends AbstractTableModel
@@ -25,8 +23,6 @@ public abstract class KeyValueTableModel extends AbstractTableModel
 	private static final long serialVersionUID = 6138113207187331068L;
 
 	protected String[] header = { "Key", "Value" };
-
-	public KeyValueTableModelObserver observer = new KeyValueTableModelObserver( this );
 
 	@Override
 	public String getColumnName( int column )
@@ -48,20 +44,4 @@ public abstract class KeyValueTableModel extends AbstractTableModel
 		return false;
 	}
 
-	public static class KeyValueTableModelObserver extends Observable
-	{
-
-		public KeyValueTableModel model;
-
-		public KeyValueTableModelObserver( KeyValueTableModel model )
-		{
-			this.model = model;
-		}
-
-		public void startNotification()
-		{
-			setChanged();
-			notifyObservers();
-		}
-	}
 }

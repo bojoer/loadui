@@ -37,13 +37,10 @@ import org.jdesktop.swingx.JXTable;
 import java.awt.Dimension;
 import java.util.HashMap;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.TableColumn;
+import javax.swing.event.TableModelListener;
 
 import org.jdesktop.swingx.table.TableColumnExt;
 
@@ -51,19 +48,20 @@ public function build( id:String, label:String, value:Object ) {
     SettingsTableField { id:id, label:label, value:value }
 }
 
-public class SettingsTableField extends CustomNode, FormField, Observer{
+public class SettingsTableField extends CustomNode, FormField {
     
+    public-init var onTableUpdate:function():Void;
     public-init var data:HashMap;
     def model = new SettingsTableModel();
+    def onUpdateListener = new OnUpdateListener();
     
-    var xx:SettingsTableModel.SettingsTableModelObserver on replace {
-        model.observer.addObserver(this);
-    }
-    public var dataHashCode = model.hashCode();
+//    public var dataHashCode = model.hashCode();
     
     var pane:JScrollPane;
     
     override public function create():Node {
+    	model.addTableModelListener( onUpdateListener );
+    	
     	for( propertyProxy in data.values()[p | not ((p as PropertyProxy).getName() as String).startsWith("_")] ){ 
            	model.addRow(propertyProxy as PropertyProxy);
         }
@@ -114,14 +112,12 @@ public class SettingsTableField extends CustomNode, FormField, Observer{
     override public function getPrefWidth(height) {
     	Math.max( pane.getPreferredSize().getWidth(), 400 )
     }
-    
-    override function update(observable: Observable, arg: Object) {
-         FX.deferAction(
-             function(): Void {
-                 dataHashCode = model.hashCode();
-             }
-         );
-    }
-         
 }
 
+
+class OnUpdateListener extends TableModelListener {
+	override function tableChanged(e)
+	{
+		onTableUpdate();
+	}
+}

@@ -291,6 +291,7 @@ public class ControllerImpl
 
 	private class SceneAgent implements Runnable
 	{
+		private static final String COULD_NOT_INVOKE_SET_MESSAGE_ENDPOINT = "Could not invoke setMessageEndpoint";
 		private final AgentProjectItem project;
 		private final String sceneId;
 		private final MessageEndpoint endpoint;
@@ -364,23 +365,23 @@ public class ControllerImpl
 			}
 			catch( IllegalArgumentException e )
 			{
-				log.error( "Could not invoke setMessageEndpoint", e );
+				log.error( COULD_NOT_INVOKE_SET_MESSAGE_ENDPOINT, e );
 			}
 			catch( SecurityException e )
 			{
-				log.error( "Could not invoke setMessageEndpoint", e );
+				log.error( COULD_NOT_INVOKE_SET_MESSAGE_ENDPOINT, e );
 			}
 			catch( IllegalAccessException e )
 			{
-				log.error( "Could not invoke setMessageEndpoint", e );
+				log.error( COULD_NOT_INVOKE_SET_MESSAGE_ENDPOINT, e );
 			}
 			catch( InvocationTargetException e )
 			{
-				log.error( "Could not invoke setMessageEndpoint", e );
+				log.error( COULD_NOT_INVOKE_SET_MESSAGE_ENDPOINT, e );
 			}
 			catch( NoSuchMethodException e )
 			{
-				log.error( "Could not invoke setMessageEndpoint", e );
+				log.error( COULD_NOT_INVOKE_SET_MESSAGE_ENDPOINT, e );
 			}
 
 			project.addScene( scene );

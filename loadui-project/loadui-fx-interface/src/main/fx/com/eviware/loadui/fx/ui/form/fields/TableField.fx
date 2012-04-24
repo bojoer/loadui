@@ -66,7 +66,7 @@ public function build(id: String, label: String, value: Object) {
  *
  * @author predrag.vucetic
  */
-public class TableField extends CustomNode, FormField, Observer {
+public class TableField extends CustomNode, FormField {
 
     public var model: TableModel;
     
@@ -79,7 +79,7 @@ public class TableField extends CustomNode, FormField, Observer {
 		table.setModel(model);
 	}
 	
-    public var dataHashCode = model.hashCode();
+//    var dataHashCode = model.hashCode();
     
     var table: JXTable;
     var node: Node;
@@ -145,11 +145,11 @@ public class TableField extends CustomNode, FormField, Observer {
         width;
     }
     
-    override function update(observable: Observable, arg: Object) {
-         FX.deferAction(
-             function(): Void {
-                 dataHashCode = model.hashCode();
-             }
-         );
-     }
+//    override function update(observable: Observable, arg: Object) {
+//         FX.deferAction(
+//             function(): Void {
+//                 dataHashCode = model.hashCode();
+//             }
+//         );
+//     }
 }

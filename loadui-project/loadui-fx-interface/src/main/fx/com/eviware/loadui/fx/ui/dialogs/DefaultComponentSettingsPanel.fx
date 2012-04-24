@@ -83,9 +83,9 @@ public class DefaultComponentSettingsPanel {
 		text: "Modal Dialog !"
 	};
 							
-	var tmp = bind settings.dataHashCode on replace {
-        update();  
-    }
+//	var tmp = bind settings.dataHashCode on replace {
+//        update();  
+//    }
     
     function update():Void {
         for( p in propertyBuffer.keySet() ) {
@@ -127,6 +127,7 @@ public class DefaultComponentSettingsPanel {
 			formContent: settings = SettingsTableField {
 				id: "settings"
 				data: propertyBuffer
+				onTableUpdate: update
 			}
 			onCommit: function():Void {
 				for( property in component.getProperties()) {

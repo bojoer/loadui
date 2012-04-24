@@ -383,37 +383,7 @@ public class LoadUILauncher
 
 	protected void initSystemProperties()
 	{
-		Properties systemProperties = new Properties();
-		FileInputStream fis = null;
-		try
-		{
-			fis = new FileInputStream( "conf" + File.separator + "system.properties" );
-			systemProperties.load( fis );
-			for( Entry<Object, Object> entry : systemProperties.entrySet() )
-				System.setProperty( ( String )entry.getKey(), ( String )entry.getValue() );
-		}
-		catch( FileNotFoundException e )
-		{
-			// Ignore
-		}
-		catch( IOException e )
-		{
-			// Ignore
-		}
-		finally
-		{
-			if( fis != null )
-			{
-				try
-				{
-					fis.close();
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-			}
-		}
+		loadPropertiesFile();
 
 		setDefaultSystemProperty( "loadui.home", System.getProperty( "user.home", "." ) + File.separator + ".loadui" );
 		setDefaultSystemProperty( "groovy.root", System.getProperty( "loadui.home" ) + File.separator + ".groovy" );
@@ -488,77 +458,122 @@ public class LoadUILauncher
 
 		if( !keystore.exists() )
 		{
-			InputStream is = getClass().getResourceAsStream( "/keystore.jks" );
-			FileOutputStream fos = null;
-			try
-			{
-				fos = new FileOutputStream( keystore );
-				byte buf[] = new byte[1024];
-				int len;
-				while( ( len = is.read( buf ) ) > 0 )
-					fos.write( buf, 0, len );
-
-			}
-			catch( Exception e )
-			{
-				e.printStackTrace();
-			}
-			finally
-			{
-				try
-				{
-					if( is != null )
-						is.close();
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-				try
-				{
-					if( fos != null )
-						fos.close();
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-			}
+			createKeyStore( keystore );
 		}
 
 		File truststore = new File( System.getProperty( "loadui.ssl.trustStore" ) );
 		if( !truststore.exists() )
 		{
-			InputStream is = getClass().getResourceAsStream( "/certificate.pem" );
-			FileOutputStream fos = null;
+			createTrustStore( truststore );
+		}
+	}
+
+	private void createKeyStore( File keystore )
+	{
+		InputStream is = getClass().getResourceAsStream( "/keystore.jks" );
+		FileOutputStream fos = null;
+		try
+		{
+			fos = new FileOutputStream( keystore );
+			byte buf[] = new byte[1024];
+			int len;
+			while( ( len = is.read( buf ) ) > 0 )
+				fos.write( buf, 0, len );
+
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
 			try
 			{
-				fos = new FileOutputStream( truststore );
-				byte buf[] = new byte[1024];
-				int len;
-				while( ( len = is.read( buf ) ) > 0 )
-					fos.write( buf, 0, len );
-
+				if( is != null )
+					is.close();
 			}
-			catch( Exception e )
+			catch( IOException e )
 			{
 				e.printStackTrace();
 			}
-			finally
+			try
+			{
+				if( fos != null )
+					fos.close();
+			}
+			catch( IOException e )
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void createTrustStore( File truststore )
+	{
+		InputStream is = getClass().getResourceAsStream( "/certificate.pem" );
+		FileOutputStream fos = null;
+		try
+		{
+			fos = new FileOutputStream( truststore );
+			byte buf[] = new byte[1024];
+			int len;
+			while( ( len = is.read( buf ) ) > 0 )
+				fos.write( buf, 0, len );
+
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if( is != null )
+					is.close();
+			}
+			catch( IOException e )
+			{
+				e.printStackTrace();
+			}
+			try
+			{
+				if( fos != null )
+					fos.close();
+			}
+			catch( IOException e )
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void loadPropertiesFile()
+	{
+		Properties systemProperties = new Properties();
+		FileInputStream fis = null;
+		try
+		{
+			fis = new FileInputStream( "conf" + File.separator + "system.properties" );
+			systemProperties.load( fis );
+			for( Entry<Object, Object> entry : systemProperties.entrySet() )
+				System.setProperty( ( String )entry.getKey(), ( String )entry.getValue() );
+		}
+		catch( FileNotFoundException e )
+		{
+			// Ignore
+		}
+		catch( IOException e )
+		{
+			// Ignore
+		}
+		finally
+		{
+			if( fis != null )
 			{
 				try
 				{
-					if( is != null )
-						is.close();
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-				try
-				{
-					if( fos != null )
-						fos.close();
+					fis.close();
 				}
 				catch( IOException e )
 				{

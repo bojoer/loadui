@@ -83,24 +83,8 @@ public class StringToStringTableModel extends KeyValueTableModel
 	{
 		StringProperty p = data.get( rowIndex );
 		p.setValue( ( String )aValue );
-		hashCode();
+		//		hashCode();
 		fireTableDataChanged();
-		observer.startNotification();
-	}
-
-	@Override
-	public int hashCode()
-	{
-		// TODO: Remove this method. --Henrik
-		if( 1 != 2 )
-			throw new RuntimeException( "Remove this if we ever gets here. This was added to check if this hash" );
-
-		int hashCode = 0;
-		for( StringProperty v : data )
-		{
-			hashCode += v.getValue() == null ? 0 : v.getValue().hashCode();
-		}
-		return hashCode;
 	}
 
 	public void update( StringToStringTableModel model )
@@ -110,29 +94,25 @@ public class StringToStringTableModel extends KeyValueTableModel
 			StringProperty p = data.get( i );
 			p.setValue( ( String )model.getValueAt( i, 1 ) );
 		}
-		hashCode();
+		//		hashCode();
 		fireTableDataChanged();
-		observer.startNotification();
 	}
 
 	public void clear()
 	{
 		data.clear();
-		hashCode();
 		fireTableDataChanged();
 	}
 
 	public void addRow( StringProperty p )
 	{
 		data.add( p );
-		hashCode();
 		fireTableRowsInserted( data.size() - 1, data.size() - 1 );
 	}
 
 	public void addRow( String name, String value )
 	{
 		data.add( new StringProperty( name, value ) );
-		hashCode();
 		fireTableRowsInserted( data.size() - 1, data.size() - 1 );
 	}
 
@@ -143,7 +123,6 @@ public class StringToStringTableModel extends KeyValueTableModel
 			if( data.get( i ).getName().equals( name ) )
 			{
 				data.remove( i );
-				hashCode();
 				fireTableDataChanged();
 				return;
 			}

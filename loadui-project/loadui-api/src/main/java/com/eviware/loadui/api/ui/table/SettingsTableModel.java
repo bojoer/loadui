@@ -29,8 +29,6 @@ public class SettingsTableModel extends KeyValueTableModel
 
 	private final List<PropertyProxy> data = new ArrayList<PropertyProxy>();
 
-	public SettingsTableModelObserver observer = new SettingsTableModelObserver( this );
-
 	public SettingsTableModel()
 	{
 		header = new String[] { "Property Name", "Property Value" };
@@ -80,30 +78,12 @@ public class SettingsTableModel extends KeyValueTableModel
 		{
 			p.setValue( aValue );
 		}
-		hashCode();
 		fireTableDataChanged();
-		observer.startNotification();
-	}
-
-	@Override
-	public int hashCode()
-	{
-		// TODO: Remove this method. --Henrik
-		if( 1 != 2 )
-			throw new RuntimeException( "Remove this if we ever gets here. This was added to check if this hash" );
-
-		int hashCode = 0;
-		for( PropertyProxy v : data )
-		{
-			hashCode += v.getValue() == null ? 0 : v.getValue().hashCode();
-		}
-		return hashCode;
 	}
 
 	public void addRow( PropertyProxy p )
 	{
 		data.add( p );
-		hashCode();
 		fireTableDataChanged();
 	}
 
@@ -154,20 +134,4 @@ public class SettingsTableModel extends KeyValueTableModel
 		}
 	}
 
-	public static class SettingsTableModelObserver extends Observable
-	{
-
-		public SettingsTableModel model;
-
-		public SettingsTableModelObserver( SettingsTableModel model )
-		{
-			this.model = model;
-		}
-
-		public void startNotification()
-		{
-			setChanged();
-			notifyObservers();
-		}
-	}
 }
