@@ -59,7 +59,6 @@ public class WorkspaceWrenchDialog  {
 					workspace.getProperty(WorkspaceItem.MAX_THREADS_PROPERTY).setValue(formT3.getField('maxThreads').value as Long);
 					workspace.getProperty(WorkspaceItem.MAX_THREAD_QUEUE_PROPERTY).setValue(formT3.getField('maxQueue').value as Long);
 					workspace.setDescription(formT1.getField('description').value as String); 
-					workspace.getProperty(WorkspaceItem.AUTO_GARBAGE_COLLECTION_INTERVAL).setValue(formT3.getField('gcInterval').value as Long);
 	
 					if( workspace.getProperty(WorkspaceItem.SOAPUI_PATH_PROPERTY).getValue != null)
 						SoapUIButton.instance.image.opacity = 1;
@@ -76,7 +75,6 @@ public class WorkspaceWrenchDialog  {
 		var loadUICajoPort: Long = workspace.getProperty(WorkspaceItem.LOADUI_CAJO_PORT_PROPERTY).getValue() as Long;
 		var maxThreads: Long = workspace.getProperty(WorkspaceItem.MAX_THREADS_PROPERTY).getValue() as Long;
 		var maxQueue: Long = workspace.getProperty(WorkspaceItem.MAX_THREAD_QUEUE_PROPERTY).getValue() as Long;
-		var gcInterval: Long = workspace.getProperty(WorkspaceItem.AUTO_GARBAGE_COLLECTION_INTERVAL).getValue() as Long;
 		
 		dialogRef = TabDialog {
          title: title
@@ -115,7 +113,6 @@ public class WorkspaceWrenchDialog  {
 						formContent: [
 							LongInputField { id: "maxThreads", label: "Max internal threads", description: "Max internal threads", value: maxThreads },
 							LongInputField { id: "maxQueue", label: "Max internal thread queue size", description: "Max internal thread queue size", value: maxQueue },
-						   LongInputField { id: "gcInterval", label: "Schedule garbage collection interval", description: "Time interval after which garbage collection will be done.", value: gcInterval }
 						]
 					}
 				}

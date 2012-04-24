@@ -45,8 +45,6 @@ public interface WorkspaceItem extends ModelItem
 	public final static String SOAPUI_SYNC_PROPERTY = WorkspaceItem.class.getSimpleName() + ".soapUISync";
 	public final static String SOAPUI_CAJO_PORT_PROPERTY = WorkspaceItem.class.getSimpleName() + ".soapUICajoPort";
 	public final static String LOADUI_CAJO_PORT_PROPERTY = WorkspaceItem.class.getSimpleName() + ".loadUICajoPort";
-	public final static String AUTO_GARBAGE_COLLECTION_INTERVAL = WorkspaceItem.class.getSimpleName()
-			+ ".garbageCollectionInterval";
 
 	public final static String STATISTIC_RESULTS_PATH = WorkspaceItem.class.getSimpleName() + ".statisticResultsPath";
 	public final static String IGNORED_VERSION_UPDATE = WorkspaceItem.class.getSimpleName() + ".ignoredVersionUpdate";

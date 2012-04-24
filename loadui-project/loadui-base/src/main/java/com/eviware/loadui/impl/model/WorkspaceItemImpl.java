@@ -20,9 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
@@ -59,16 +56,12 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	public static final Logger log = LoggerFactory.getLogger( WorkspaceItemImpl.class );
 
 	private final File workspaceFile;
-	private final ScheduledExecutorService executor;
 	private final LoaduiWorkspaceDocumentConfig doc;
 	private final CollectionEventSupport<ProjectRefImpl, Void> projectList;
 	private final CollectionEventSupport<AgentItemImpl, Void> agentList;
 	private final ProjectListener projectListener = new ProjectListener();
 	private final AgentListener agentListener = new AgentListener();
 	private final Property<Boolean> localMode;
-	private final Property<Long> garbageCollectionInterval;
-
-	private ScheduledFuture<?> gcTask = null;
 
 	public static WorkspaceItemImpl loadWorkspace( File workspaceFile ) throws XmlException, IOException
 	{
@@ -80,8 +73,6 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	private WorkspaceItemImpl( File workspaceFile, LoaduiWorkspaceDocumentConfig doc )
 	{
 		super( doc.getLoaduiWorkspace() == null ? doc.addNewLoaduiWorkspace() : doc.getLoaduiWorkspace() );
-
-		executor = BeanInjector.getBean( ScheduledExecutorService.class );
 
 		projectList = CollectionEventSupport.of( this, PROJECT_REFS );
 		agentList = CollectionEventSupport.of( this, AGENTS );
@@ -100,8 +91,6 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		createProperty( STATISTIC_RESULTS_PATH, File.class,
 				new File( System.getProperty( LoadUI.LOADUI_HOME ), "results" ) );
 		createProperty( IGNORED_VERSION_UPDATE, String.class, "" );
-		garbageCollectionInterval = createProperty( AUTO_GARBAGE_COLLECTION_INTERVAL, Long.class, 60 ); // using
-		// seconds
 	}
 
 	@Override
@@ -129,48 +118,6 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 		}
 
 		log.info( "Workspace '{}' loaded successfully", this );
-
-		runGCTimer();
-
-		addEventListener( PropertyEvent.class, new EventHandler<PropertyEvent>()
-		{
-			@Override
-			public void handleEvent( PropertyEvent event )
-			{
-				if( AUTO_GARBAGE_COLLECTION_INTERVAL.equals( event.getKey() ) )
-				{
-					if( gcTask != null )
-					{
-						gcTask.cancel( true );
-						gcTask = null;
-					}
-					runGCTimer();
-				}
-			}
-		} );
-	}
-
-	// run internal GCT
-	private void runGCTimer()
-	{
-		Long interval = garbageCollectionInterval.getValue();
-
-		if( interval != null && interval > 0 )
-		{
-			log.debug( "Scheduling a garbage collection, for " + interval + " seconds." );
-			gcTask = executor.scheduleWithFixedDelay( new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					long old = Runtime.getRuntime().freeMemory();
-					System.gc();
-					long free = Runtime.getRuntime().freeMemory();
-					log.debug( "Ran Garbage Collection, Free Memory changed from " + old + " to " + free
-							+ ", total memory = " + Runtime.getRuntime().totalMemory() );
-				}
-			}, interval, interval, TimeUnit.SECONDS );
-		}
 	}
 
 	@Override
