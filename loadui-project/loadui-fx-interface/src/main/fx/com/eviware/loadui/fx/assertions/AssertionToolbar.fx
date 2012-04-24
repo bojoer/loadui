@@ -53,7 +53,7 @@ public class AssertionToolbar extends Toolbar {
 	
 	def onRemove = function( elem:Object ):Void {
 		(elem as StatisticHolder).removeEventListener( CollectionEvent.class, variableListener );
-		removeItem( statisticHolderMap.get( elem ) as StatisticHolderAssertionToolbarItem );
+		removeItem( statisticHolderMap.remove( elem ) as StatisticHolderAssertionToolbarItem );
 	}
 	
 	function handleStatisticHolder( statisticHolder:StatisticHolder ) {

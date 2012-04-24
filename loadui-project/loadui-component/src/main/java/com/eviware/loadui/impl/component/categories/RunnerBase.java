@@ -54,6 +54,7 @@ import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.impl.component.ActivityStrategies;
 import com.eviware.loadui.impl.component.BlinkOnUpdateActivityStrategy;
 import com.eviware.loadui.util.BeanInjector;
+import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.statistics.CounterStatisticSupport;
 import com.eviware.loadui.util.statistics.StatisticDescriptorImpl;
 import com.google.common.collect.ImmutableMap;
@@ -559,6 +560,13 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 
 		if( input == triggerTerminal )
 			enqueue( message );
+	}
+
+	@Override
+	public synchronized void onRelease()
+	{
+		super.onRelease();
+		ReleasableUtils.release( activityStrategy );
 	}
 
 	@Override

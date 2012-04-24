@@ -260,6 +260,8 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	{
 		BeanInjector.getBean( TestRunner.class ).unregisterTask( terminalsEnabledTask, Phase.values() );
 
+		context.clearEventListeners();
+
 		canvas.removeEventListener( ActionEvent.class, canvasListener );
 		if( workspaceListener != null )
 			getCanvas().getProject().getWorkspace().removeEventListener( PropertyEvent.class, workspaceListener );
@@ -940,11 +942,9 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		{
 			StatisticVariable.Mutable variable = statisticHolderSupport.addStatisticVariable( statisticVariableName,
 					description, listenable );
-			log.debug( "Added statistic variable with name: " + statisticVariableName );
 			for( String writerType : writerTypes )
 			{
 				statisticHolderSupport.addStatisticsWriter( writerType, variable );
-				log.debug( "Added statistic writer of type: " + writerType );
 			}
 			return variable;
 		}

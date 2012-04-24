@@ -31,6 +31,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.impl.component.ActivityStrategies;
 import com.eviware.loadui.impl.component.BlinkOnUpdateActivityStrategy;
+import com.eviware.loadui.util.ReleasableUtils;
 
 /**
  * Base class for flow components which defines base behavior which can be
@@ -201,5 +202,12 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 		{
 			activityStrategy.update();
 		}
+	}
+
+	@Override
+	public synchronized void onRelease()
+	{
+		super.onRelease();
+		ReleasableUtils.release( activityStrategy );
 	}
 }

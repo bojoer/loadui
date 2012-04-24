@@ -23,6 +23,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.impl.component.ActivityStrategies;
 import com.eviware.loadui.impl.component.BlinkOnUpdateActivityStrategy;
+import com.eviware.loadui.util.ReleasableUtils;
 
 /**
  * Base class for analysis components which defines base behavior which can be
@@ -83,6 +84,13 @@ public abstract class AnalysisBase extends BaseCategory implements AnalysisCateg
 			activityStrategy.update();
 			analyze( message );
 		}
+	}
+
+	@Override
+	public synchronized void onRelease()
+	{
+		super.onRelease();
+		ReleasableUtils.release( activityStrategy );
 	}
 
 	@Override

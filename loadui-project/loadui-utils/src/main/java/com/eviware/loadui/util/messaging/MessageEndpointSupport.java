@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.util.messaging;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -62,7 +63,7 @@ public class MessageEndpointSupport implements Releasable
 
 	public void removeMessageListener( MessageListener listener )
 	{
-		source.removeMessageListener( messageProxies.get( listener ) );
+		source.removeMessageListener( messageProxies.remove( listener ) );
 		errorListeners.remove( listener );
 	}
 
@@ -75,7 +76,7 @@ public class MessageEndpointSupport implements Releasable
 
 	public void removeConnectionListener( ConnectionListener listener )
 	{
-		source.removeConnectionListener( connectionProxies.get( listener ) );
+		source.removeConnectionListener( connectionProxies.remove( listener ) );
 	}
 
 	public void sendMessage( String channel, Object data )
@@ -107,33 +108,41 @@ public class MessageEndpointSupport implements Releasable
 
 	private class MessageListenerProxy implements MessageListener
 	{
-		private final MessageListener listener;
+		private final WeakReference<MessageListener> listenerRef;
 
 		public MessageListenerProxy( MessageListener listener )
 		{
-			this.listener = listener;
+			listenerRef = new WeakReference<MessageListener>( listener );
 		}
 
 		@Override
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
-			listener.handleMessage( channel, target, data );
+			final MessageListener listener = listenerRef.get();
+			if( listener != null )
+			{
+				listener.handleMessage( channel, target, data );
+			}
 		}
 	}
 
 	private class ConnectionListenerProxy implements ConnectionListener
 	{
-		private final ConnectionListener listener;
+		private final WeakReference<ConnectionListener> listenerRef;
 
 		public ConnectionListenerProxy( ConnectionListener listener )
 		{
-			this.listener = listener;
+			listenerRef = new WeakReference<ConnectionListener>( listener );
 		}
 
 		@Override
 		public void handleConnectionChange( MessageEndpoint endpoint, boolean connected )
 		{
-			listener.handleConnectionChange( target, connected );
+			final ConnectionListener listener = listenerRef.get();
+			if( listener != null )
+			{
+				listener.handleConnectionChange( target, connected );
+			}
 		}
 	}
 }
