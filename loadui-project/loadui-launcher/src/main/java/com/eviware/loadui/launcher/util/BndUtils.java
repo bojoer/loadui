@@ -137,123 +137,121 @@ public class BndUtils
 			//log.error( "Error creating bundle. No such file: " + input.getAbsolutePath() );
 			return false;
 		}
-		else
-		{
-			Analyzer analyzer = new Analyzer();
-			try
-			{
-				analyzer.setPedantic( pedantic );
-				analyzer.setJar( input );
-				Jar dot = analyzer.getJar();
 
+		Analyzer analyzer = new Analyzer();
+		try
+		{
+			analyzer.setPedantic( pedantic );
+			analyzer.setJar( input );
+			Jar dot = analyzer.getJar();
+
+			if( properties != null )
+			{
+				analyzer.setProperties( properties );
+			}
+			if( additional != null )
+			{
+				analyzer.putAll( additional, false );
+			}
+
+			if( analyzer.getProperty( Analyzer.IMPORT_PACKAGE ) == null )
+			{
+				analyzer.setProperty( Analyzer.IMPORT_PACKAGE, "*;resolution:=optional" );
+			}
+
+			if( analyzer.getProperty( Analyzer.BUNDLE_SYMBOLICNAME ) == null )
+			{
+				Pattern p = Pattern.compile( "(" + Verifier.SYMBOLICNAME.pattern() + ")(-[0-9])?.*\\.jar" );
+				String base = input.getName();
+				Matcher m = p.matcher( base );
+				base = "Untitled";
+				if( m.matches() )
+				{
+					base = m.group( 1 );
+				}
+				//					else
+				//					{
+				//						log.warn( "Error creating bundle for: " + input.getAbsolutePath()
+				//								+ ". Can not calculate name of output bundle, rename jar or use -properties" );
+				//					}
+				analyzer.setProperty( Analyzer.BUNDLE_SYMBOLICNAME, base );
+			}
+
+			if( analyzer.getProperty( Analyzer.EXPORT_PACKAGE ) == null )
+			{
+				String export = analyzer.calculateExportsFromContents( dot );
+				analyzer.setProperty( Analyzer.EXPORT_PACKAGE, export );
+			}
+
+			if( classpath != null )
+			{
+				analyzer.setClasspath( classpath );
+			}
+
+			analyzer.mergeManifest( dot.getManifest() );
+
+			String version = analyzer.getProperty( Analyzer.BUNDLE_VERSION );
+			if( version != null )
+			{
+				version = Builder.cleanupVersion( version );
+				analyzer.setProperty( Analyzer.BUNDLE_VERSION, version );
+			}
+
+			if( output == null )
+			{
 				if( properties != null )
 				{
-					analyzer.setProperties( properties );
-				}
-				if( additional != null )
-				{
-					analyzer.putAll( additional, false );
-				}
-
-				if( analyzer.getProperty( Analyzer.IMPORT_PACKAGE ) == null )
-				{
-					analyzer.setProperty( Analyzer.IMPORT_PACKAGE, "*;resolution:=optional" );
-				}
-
-				if( analyzer.getProperty( Analyzer.BUNDLE_SYMBOLICNAME ) == null )
-				{
-					Pattern p = Pattern.compile( "(" + Verifier.SYMBOLICNAME.pattern() + ")(-[0-9])?.*\\.jar" );
-					String base = input.getName();
-					Matcher m = p.matcher( base );
-					base = "Untitled";
-					if( m.matches() )
-					{
-						base = m.group( 1 );
-					}
-					//					else
-					//					{
-					//						log.warn( "Error creating bundle for: " + input.getAbsolutePath()
-					//								+ ". Can not calculate name of output bundle, rename jar or use -properties" );
-					//					}
-					analyzer.setProperty( Analyzer.BUNDLE_SYMBOLICNAME, base );
-				}
-
-				if( analyzer.getProperty( Analyzer.EXPORT_PACKAGE ) == null )
-				{
-					String export = analyzer.calculateExportsFromContents( dot );
-					analyzer.setProperty( Analyzer.EXPORT_PACKAGE, export );
-				}
-
-				if( classpath != null )
-				{
-					analyzer.setClasspath( classpath );
-				}
-
-				analyzer.mergeManifest( dot.getManifest() );
-
-				String version = analyzer.getProperty( Analyzer.BUNDLE_VERSION );
-				if( version != null )
-				{
-					version = Builder.cleanupVersion( version );
-					analyzer.setProperty( Analyzer.BUNDLE_VERSION, version );
-				}
-
-				if( output == null )
-				{
-					if( properties != null )
-					{
-						output = properties.getAbsoluteFile().getParentFile();
-					}
-					else
-					{
-						output = input.getAbsoluteFile().getParentFile();
-					}
-				}
-
-				String path = input.getName();
-				if( path.endsWith( Processor.DEFAULT_JAR_EXTENSION ) )
-				{
-					path = path.substring( 0, path.length() - Processor.DEFAULT_JAR_EXTENSION.length() )
-							+ Processor.DEFAULT_BAR_EXTENSION;
+					output = properties.getAbsoluteFile().getParentFile();
 				}
 				else
 				{
-					path = input.getName() + Processor.DEFAULT_BAR_EXTENSION;
+					output = input.getAbsoluteFile().getParentFile();
 				}
-
-				if( output.isDirectory() )
-				{
-					output = new File( output, path );
-				}
-
-				analyzer.calcManifest();
-				Jar jar = analyzer.getJar();
-				File f = File.createTempFile( "tmpbnd", ".jar" );
-				f.deleteOnExit();
-				try
-				{
-					jar.write( f );
-					jar.close();
-					if( !f.renameTo( output ) )
-					{
-						IO.copy( f, output );
-					}
-				}
-				finally
-				{
-					f.delete();
-				}
-				return true;
 			}
-			catch( Exception e )
+
+			String path = input.getName();
+			if( path.endsWith( Processor.DEFAULT_JAR_EXTENSION ) )
 			{
-				//log.error( "Error creating bundle. No such file: " + input.getAbsolutePath() );
-				return false;
+				path = path.substring( 0, path.length() - Processor.DEFAULT_JAR_EXTENSION.length() )
+						+ Processor.DEFAULT_BAR_EXTENSION;
+			}
+			else
+			{
+				path = input.getName() + Processor.DEFAULT_BAR_EXTENSION;
+			}
+
+			if( output.isDirectory() )
+			{
+				output = new File( output, path );
+			}
+
+			analyzer.calcManifest();
+			Jar jar = analyzer.getJar();
+			File f = File.createTempFile( "tmpbnd", ".jar" );
+			f.deleteOnExit();
+			try
+			{
+				jar.write( f );
+				jar.close();
+				if( !f.renameTo( output ) )
+				{
+					IO.copy( f, output );
+				}
 			}
 			finally
 			{
-				analyzer.close();
+				f.delete();
 			}
+			return true;
+		}
+		catch( Exception e )
+		{
+			//log.error( "Error creating bundle. No such file: " + input.getAbsolutePath() );
+			return false;
+		}
+		finally
+		{
+			analyzer.close();
 		}
 	}
 }

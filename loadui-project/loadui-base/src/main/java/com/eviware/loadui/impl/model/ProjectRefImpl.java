@@ -42,7 +42,7 @@ public class ProjectRefImpl implements ProjectRef, Releasable
 	private final ProjectReferenceConfig config;
 	private final EventSupport eventSupport = new EventSupport( this );
 	private final AttributeHolderSupport attributeHolderSupport;
-	private File projectFile;
+	private final File projectFile;
 	private ProjectItem project;
 	// With the current UI, we do not wish to autoload projects at startup, so do
 	// not save the enabled state as true, ever.
@@ -82,7 +82,7 @@ public class ProjectRefImpl implements ProjectRef, Releasable
 		return config.getLabel();
 	}
 
-	private void setLabel( String label )
+	private final void setLabel( String label )
 	{
 		if( label != null && ( getLabel() == null || !getLabel().equals( label ) ) )
 		{
@@ -104,7 +104,7 @@ public class ProjectRefImpl implements ProjectRef, Releasable
 	}
 
 	@Override
-	public boolean isEnabled()
+	public final boolean isEnabled()
 	{
 		return enabled; // config.getEnabled();
 	}

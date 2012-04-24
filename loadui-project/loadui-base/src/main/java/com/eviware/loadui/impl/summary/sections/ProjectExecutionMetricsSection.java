@@ -46,7 +46,7 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl implement
 	}
 
 	@Override
-	public TableModel getAssertionsMetrics()
+	public final TableModel getAssertionsMetrics()
 	{
 		TestCaseAssertionMetricsTableModel table = new TestCaseAssertionMetricsTableModel();
 		for( SceneItem testcase : project.getScenes() )
@@ -62,7 +62,7 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl implement
 	}
 
 	@Override
-	public String getFailedAssertions()
+	public final String getFailedAssertions()
 	{
 		long failed = project.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get();
 		long total = project.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
@@ -72,7 +72,7 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl implement
 	}
 
 	@Override
-	public String getFailedRequests()
+	public final String getFailedRequests()
 	{
 		long failed = project.getCounter( CanvasItem.REQUEST_FAILURE_COUNTER ).get();
 		long total = project.getCounter( CanvasItem.REQUEST_COUNTER ).get();
@@ -82,7 +82,7 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl implement
 	}
 
 	@Override
-	public TableModel getRunnersMetrics()
+	public final TableModel getRunnersMetrics()
 	{
 		TestCaseSamplerStatisticsTable table = new TestCaseSamplerStatisticsTable();
 		for( SceneItem tc : project.getScenes() )

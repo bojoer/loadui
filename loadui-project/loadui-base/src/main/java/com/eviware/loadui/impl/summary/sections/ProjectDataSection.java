@@ -42,13 +42,13 @@ public class ProjectDataSection extends MutableSectionImpl implements DataSectio
 		addValue( "Failure Limit", getFailureLimit() );
 	}
 
-	public String getNumberOfTestCases()
+	public final String getNumberOfTestCases()
 	{
 		return String.valueOf( project.getScenes().size() );
 	}
 
 	@Override
-	public String getFailureLimit()
+	public final String getFailureLimit()
 	{
 		if( project.getLimit( CanvasItem.FAILURE_COUNTER ) > -1 )
 			return String.valueOf( project.getLimit( CanvasItem.FAILURE_COUNTER ) );
@@ -57,7 +57,7 @@ public class ProjectDataSection extends MutableSectionImpl implements DataSectio
 	}
 
 	@Override
-	public String getLimit()
+	public final String getLimit()
 	{
 		if( project.getLimit( CanvasItem.TIMER_COUNTER ) > -1 )
 			return CalendarUtils.formatInterval( project.getLimit( CanvasItem.TIMER_COUNTER ) * 1000 );
@@ -66,7 +66,7 @@ public class ProjectDataSection extends MutableSectionImpl implements DataSectio
 	}
 
 	@Override
-	public String getNumberOfComponents()
+	public final String getNumberOfComponents()
 	{
 		int total = project.getComponents().size();
 		for( SceneItem scene : project.getScenes() )
@@ -75,7 +75,7 @@ public class ProjectDataSection extends MutableSectionImpl implements DataSectio
 	}
 
 	@Override
-	public String getNumberOfConnections()
+	public final String getNumberOfConnections()
 	{
 		int total = project.getConnections().size();
 		for( SceneItem scene : project.getScenes() )
@@ -84,7 +84,7 @@ public class ProjectDataSection extends MutableSectionImpl implements DataSectio
 	}
 
 	@Override
-	public String getSampleLimit()
+	public final String getSampleLimit()
 	{
 		if( project.getLimit( CanvasItem.SAMPLE_COUNTER ) > -1 )
 			return String.valueOf( project.getLimit( CanvasItem.SAMPLE_COUNTER ) );

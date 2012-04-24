@@ -45,7 +45,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 * getExecutionTime()
 	 */
 	@Override
-	public String getExecutionTime()
+	public final String getExecutionTime()
 	{
 		return CalendarUtils.formatInterval( testcase.getStartTime(), testcase.getEndTime() );
 	}
@@ -58,7 +58,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 * ()
 	 */
 	@Override
-	public String getStartTime()
+	public final String getStartTime()
 	{
 		if( testcase.getStartTime() == null )
 			return "N/A";
@@ -73,7 +73,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 * ()
 	 */
 	@Override
-	public String getEndTime()
+	public final String getEndTime()
 	{
 		if( testcase.getEndTime() == null )
 			return "N/A";
@@ -87,12 +87,12 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 * getTotalNumberOfSamples()
 	 */
 	@Override
-	public String getTotalNumberOfRequests()
+	public final String getTotalNumberOfRequests()
 	{
 		return String.valueOf( testcase.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );
 	}
 
-	public String getTotalNumberOfFailedRequests()
+	public final String getTotalNumberOfFailedRequests()
 	{
 		return String.valueOf( testcase.getCounter( CanvasItem.REQUEST_FAILURE_COUNTER ).get() );
 	}
@@ -104,7 +104,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 * getTotalNumberOfAssertions()
 	 */
 	@Override
-	public String getTotalNumberOfAssertions()
+	public final String getTotalNumberOfAssertions()
 	{
 		return String.valueOf( testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get() );
 	}
@@ -116,7 +116,7 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 	 * getTotalNumberOfFailedAssertions()
 	 */
 	@Override
-	public String getTotalNumberOfFailedAssertions()
+	public final String getTotalNumberOfFailedAssertions()
 	{
 		return String.valueOf( testcase.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get() );
 	}

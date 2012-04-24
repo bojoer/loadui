@@ -238,8 +238,7 @@ public class LoadUILauncher
 
 	private void startAllNonFxBundles()
 	{
-		Pattern fxPattern = Pattern
-				.compile( "^com\\.eviware\\.loadui\\.(\\w+[.-])*((fx-interface)|(cssbox-browser)).*$" );
+		Pattern fxPattern = Pattern.compile( "^com\\.eviware\\.loadui\\.(\\w+[.-])*((fx-interface)|(cssbox-browser)).*$" );
 		for( Bundle bundle : framework.getBundleContext().getBundles() )
 		{
 			String bundleName = bundle.getSymbolicName();
@@ -425,7 +424,8 @@ public class LoadUILauncher
 				{
 					kis.close();
 					kis = null;
-					keystore.delete();
+					if( !keystore.delete() )
+						System.err.println( "Could not delete old keystore: " + keystore.getAbsolutePath() );
 				}
 			}
 			catch( NoSuchAlgorithmException e )

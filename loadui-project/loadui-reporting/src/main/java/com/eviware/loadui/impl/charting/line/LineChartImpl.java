@@ -440,7 +440,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	}
 
 	@Override
-	public long getMaxTime()
+	public final long getMaxTime()
 	{
 		long mainLength = mainExecution == null ? 0 : mainExecution.getLength();
 		long comparedLength = comparedExecution == null ? 0 : comparedExecution.getLength();
@@ -472,7 +472,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	}
 
 	@Override
-	public final long getPosition()
+	public long getPosition()
 	{
 		return Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
 	}

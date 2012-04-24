@@ -50,7 +50,7 @@ public class FormattedString extends Observable implements Releasable
 		this.args = args;
 	}
 
-	public void update()
+	public final void update()
 	{
 		Object[] values = new Object[args.length];
 		for( int i = args.length - 1; i >= 0; i-- )

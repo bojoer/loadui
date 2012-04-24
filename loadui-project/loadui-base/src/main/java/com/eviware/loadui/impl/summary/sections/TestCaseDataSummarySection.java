@@ -36,13 +36,13 @@ public class TestCaseDataSummarySection extends MutableSectionImpl implements Da
 	}
 
 	@Override
-	public String getNumberOfFailures()
+	public final String getNumberOfFailures()
 	{
 		return String.valueOf( testcase.getCounter( CanvasItem.FAILURE_COUNTER ).get() );
 	}
 
 	@Override
-	public String getStatus()
+	public final String getStatus()
 	{
 		if( testcase.getLimit( CanvasItem.FAILURE_COUNTER ) == -1
 				|| testcase.getCounter( CanvasItem.FAILURE_COUNTER ).get() < testcase.getLimit( CanvasItem.FAILURE_COUNTER ) )
@@ -54,13 +54,13 @@ public class TestCaseDataSummarySection extends MutableSectionImpl implements Da
 	}
 
 	@Override
-	public String getTime()
+	public final String getTime()
 	{
 		return CalendarUtils.formatInterval( testcase.getStartTime(), testcase.getEndTime() );
 	}
 
 	@Override
-	public String getNumberOfSamples()
+	public final String getNumberOfSamples()
 	{
 		return String.valueOf( testcase.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );
 	}

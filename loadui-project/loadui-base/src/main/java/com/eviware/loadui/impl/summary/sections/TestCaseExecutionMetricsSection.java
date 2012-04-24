@@ -48,7 +48,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 	 * getFailedAssertions()
 	 */
 	@Override
-	public String getFailedAssertions()
+	public final String getFailedAssertions()
 	{
 		long failed = testcase.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get();
 		long total = testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
@@ -57,7 +57,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 	}
 
 	@Override
-	public String getFailedRequests()
+	public final String getFailedRequests()
 	{
 		long failed = testcase.getCounter( CanvasItem.REQUEST_FAILURE_COUNTER ).get();
 		long total = testcase.getCounter( CanvasItem.REQUEST_COUNTER ).get();
@@ -72,7 +72,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 	 * getAssertionsMetrics(com.eviware.loadui.api.model.SceneItem)
 	 */
 	@Override
-	public TableModel getAssertionsMetrics()
+	public final TableModel getAssertionsMetrics()
 	{
 		TestCaseAssertionMetricsTableModel table = new TestCaseAssertionMetricsTableModel();
 		for( ComponentItem component : testcase.getComponents() )
@@ -90,7 +90,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 	 * getRunnersMetrics(com.eviware.loadui.api.model.SceneItem)
 	 */
 	@Override
-	public TableModel getRunnersMetrics()
+	public final TableModel getRunnersMetrics()
 	{
 		TestCaseSamplerStatisticsTable table = new TestCaseSamplerStatisticsTable();
 		for( ComponentItem component : testcase.getComponents() )
