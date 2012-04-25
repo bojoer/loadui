@@ -380,7 +380,7 @@ public class LoadUILauncher
 		}
 	}
 
-	protected void initSystemProperties()
+	protected final void initSystemProperties()
 	{
 		loadPropertiesFile();
 

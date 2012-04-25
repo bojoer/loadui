@@ -62,7 +62,7 @@ public class TestEventSourceSupport
 		return dataCopy;
 	}
 
-	public void setData( byte[] newData )
+	public final void setData( byte[] newData )
 	{
 		if( !Arrays.equals( data, newData ) )
 		{

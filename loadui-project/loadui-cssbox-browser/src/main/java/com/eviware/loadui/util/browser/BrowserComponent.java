@@ -453,8 +453,6 @@ public class BrowserComponent extends JPanel implements Browser
 
 	private final class MyWebWindowListener implements WebWindowListener
 	{
-		private final DomListener domListener = new DomListener();
-
 		@Override
 		public void webWindowOpened( WebWindowEvent event )
 		{

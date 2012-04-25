@@ -103,7 +103,7 @@ public class PropertyMapImpl implements PropertyMap
 	}
 
 	@Override
-	public Property<?> put( String key, Property<?> value )
+	public final Property<?> put( String key, Property<?> value )
 	{
 		return map.put( key, value );
 	}

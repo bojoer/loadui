@@ -197,6 +197,42 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 
 	private class MessageSender implements Runnable
 	{
+		private final class MyHandshakeCompletedListener implements HandshakeCompletedListener
+		{
+			private final Semaphore handshakeCompleted;
+
+			private MyHandshakeCompletedListener( Semaphore handshakeCompleted )
+			{
+				this.handshakeCompleted = handshakeCompleted;
+			}
+
+			@Override
+			public void handshakeCompleted( HandshakeCompletedEvent event )
+			{
+				log.debug( "Handshake completed! {}", event );
+
+				synchronized( ClientSocketMessageEndpoint.this )
+				{
+					if( state == State.CLOSING )
+					{
+						messageQueue.add( CLOSE_MESSAGE );
+					}
+
+					state = State.CONNECTED;
+				}
+				handshakeCompleted.release();
+
+				try
+				{
+					new Thread( new MessageReceiver( socket.getInputStream() ) ).start();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+
 		private SSLSocket socket;
 
 		@Override
@@ -213,34 +249,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 						log.debug( "Attempting connection..." );
 						socket = ( SSLSocket )sslClient.createSocket( host, port );
 
-						socket.addHandshakeCompletedListener( new HandshakeCompletedListener()
-						{
-							@Override
-							public void handshakeCompleted( HandshakeCompletedEvent event )
-							{
-								log.debug( "Handshake completed! {}", event );
-
-								synchronized( ClientSocketMessageEndpoint.this )
-								{
-									if( state == State.CLOSING )
-									{
-										messageQueue.add( CLOSE_MESSAGE );
-									}
-
-									state = State.CONNECTED;
-								}
-								handshakeCompleted.release();
-
-								try
-								{
-									new Thread( new MessageReceiver( socket.getInputStream() ) ).start();
-								}
-								catch( IOException e )
-								{
-									e.printStackTrace();
-								}
-							}
-						} );
+						socket.addHandshakeCompletedListener( new MyHandshakeCompletedListener( handshakeCompleted ) );
 
 						socket.startHandshake();
 						handshakeCompleted.acquire();

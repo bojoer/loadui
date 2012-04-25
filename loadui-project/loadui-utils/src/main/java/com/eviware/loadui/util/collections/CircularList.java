@@ -185,19 +185,12 @@ public class CircularList<E> extends AbstractList<E> implements RandomAccess, Cl
 	}
 
 	@Override
-	public Object clone()
+	public Object clone() throws CloneNotSupportedException
 	{
-		try
-		{
-			@SuppressWarnings( "unchecked" )
-			CircularList<E> clone = ( CircularList<E> )super.clone();
-			clone.elementData = Arrays.copyOf( elementData, size );
-			return clone;
-		}
-		catch( CloneNotSupportedException e )
-		{
-			throw new InternalError();
-		}
+		@SuppressWarnings( "unchecked" )
+		CircularList<E> clone = ( CircularList<E> )super.clone();
+		clone.elementData = Arrays.copyOf( elementData, size );
+		return clone;
 	}
 
 	private void resetPosition()

@@ -84,145 +84,156 @@ public class SummaryExportUtils
 	@SuppressWarnings( "rawtypes" )
 	private static void saveSummaryAsXML( final MutableSummary summary, final File out )
 	{
-		SwingWorker worker = new SwingWorker()
+		SwingWorker worker = new XmlExporter( summary, out );
+		worker.execute();
+	}
+
+	private static final class XmlExporter extends SwingWorker
+	{
+		private final MutableSummary summary;
+		private final File out;
+
+		private XmlExporter( MutableSummary summary, File out )
 		{
-			@Override
-			protected Object doInBackground() throws Exception
+			this.summary = summary;
+			this.out = out;
+		}
+
+		@Override
+		protected Object doInBackground() throws Exception
+		{
+			try
 			{
-				try
+				XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+				// Create an XML stream writer
+				XMLStreamWriter xmlw = xmlof.createXMLStreamWriter( new BufferedWriter( new FileWriter( out ) ) );
+				xmlw.writeStartDocument();
+				xmlw.writeCharacters( "\n" );
+				xmlw.writeStartElement( "summary" );
+				xmlw.writeCharacters( "\n" );
+				for( String chapKey : summary.getChapters().keySet() )
 				{
-					XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-					// Create an XML stream writer
-					XMLStreamWriter xmlw = xmlof.createXMLStreamWriter( new BufferedWriter( new FileWriter( out ) ) );
-					xmlw.writeStartDocument();
+					Chapter chapter = summary.getChapters().get( chapKey );
+					xmlw.writeCharacters( "\t" );
+					xmlw.writeStartElement( "chapter" );
+					xmlw.writeAttribute( "title", chapter.getTitle() );
+					xmlw.writeAttribute( "date", chapter.getDate().toString() );
 					xmlw.writeCharacters( "\n" );
-					xmlw.writeStartElement( "summary" );
+					xmlw.writeCharacters( "\t\t" );
+					xmlw.writeStartElement( "description" );
+					xmlw.writeCharacters( chapter.getDescription() );
+					xmlw.writeEndElement();
 					xmlw.writeCharacters( "\n" );
-					for( String chapKey : summary.getChapters().keySet() )
+					for( String valKey : chapter.getValues().keySet() )
 					{
-						Chapter chapter = summary.getChapters().get( chapKey );
-						xmlw.writeCharacters( "\t" );
-						xmlw.writeStartElement( "chapter" );
-						xmlw.writeAttribute( "title", chapter.getTitle() );
-						xmlw.writeAttribute( "date", chapter.getDate().toString() );
-						xmlw.writeCharacters( "\n" );
 						xmlw.writeCharacters( "\t\t" );
-						xmlw.writeStartElement( "description" );
-						xmlw.writeCharacters( chapter.getDescription() );
+						xmlw.writeStartElement( valKey.replace( " ", "_" ).replace( "(%)", "" ).toLowerCase() );
+						xmlw.writeCharacters( chapter.getValues().get( valKey ) );
+						xmlw.writeCharacters( "\t\t" );
 						xmlw.writeEndElement();
 						xmlw.writeCharacters( "\n" );
-						for( String valKey : chapter.getValues().keySet() )
+						/*
+						 * xmlw.writeCharacters( "\n" ); xmlw.writeStartElement(
+						 * "value-value" ); xmlw.writeCharacters(
+						 * chapter.getValues().get( valKey ) );
+						 * xmlw.writeEndElement(); // value-value
+						 * xmlw.writeCharacters( "\n" ); xmlw.writeEndElement(); //
+						 * value
+						 */
+					}
+					for( Section section : chapter.getSections() )
+					{
+						xmlw.writeCharacters( "\t\t" );
+						xmlw.writeStartElement( "section" );
+						xmlw.writeAttribute( "title", section.getTitle() );
+						xmlw.writeCharacters( "\n" );
+						for( String valKey : section.getValues().keySet() )
 						{
-							xmlw.writeCharacters( "\t\t" );
+							xmlw.writeCharacters( "\t\t\t" );
 							xmlw.writeStartElement( valKey.replace( " ", "_" ).replace( "(%)", "" ).toLowerCase() );
-							xmlw.writeCharacters( chapter.getValues().get( valKey ) );
-							xmlw.writeCharacters( "\t\t" );
-							xmlw.writeEndElement();
+							xmlw.writeCharacters( section.getValues().get( valKey ) );
+							xmlw.writeEndElement(); // value-name
 							xmlw.writeCharacters( "\n" );
-							/*
-							 * xmlw.writeCharacters( "\n" ); xmlw.writeStartElement(
-							 * "value-value" ); xmlw.writeCharacters(
-							 * chapter.getValues().get( valKey ) );
-							 * xmlw.writeEndElement(); // value-value
-							 * xmlw.writeCharacters( "\n" ); xmlw.writeEndElement(); //
-							 * value
-							 */
 						}
-						for( Section section : chapter.getSections() )
+						for( String tablekey : section.getTables().keySet() )
 						{
-							xmlw.writeCharacters( "\t\t" );
-							xmlw.writeStartElement( "section" );
-							xmlw.writeAttribute( "title", section.getTitle() );
+							xmlw.writeCharacters( "\t\t\t" );
+							xmlw.writeStartElement( tablekey.replace( " ", "_" ).toLowerCase() );
+							// xmlw.writeAttribute( "name", tablekey );
+							TableModel table = section.getTables().get( tablekey );
 							xmlw.writeCharacters( "\n" );
-							for( String valKey : section.getValues().keySet() )
+							// xmlw.writeStartElement( "columns" );
+							// xmlw.writeAttribute( "size", String.valueOf(
+							// table.getColumnCount() ) );
+							// xmlw.writeCharacters( "\n" );
+							// StringBuffer columns = new StringBuffer();
+							// String columns = new String [table.getColumnCount()]
+							// for( int i = 0; i < table.getColumnCount(); i++ ) {
+							// columns.append( table.getColumnName( i ) ).append(
+							// "," );
+							// columns.deleteCharAt( columns.length() - 1 );
+							// xmlw.writeCharacters( columns.toString() );
+							// xmlw.writeEndElement();// columns
+							// xmlw.writeCharacters( "\n" );
+							//
+							// xmlw.writeStartElement( "rows" );
+							// xmlw.writeAttribute( "size", String.valueOf(
+							// table.getRowCount() ) );
+							// xmlw.writeCharacters( "\n" );
+							for( int j = 0; j < table.getRowCount(); j++ )
 							{
 								xmlw.writeCharacters( "\t\t\t" );
-								xmlw.writeStartElement( valKey.replace( " ", "_" ).replace( "(%)", "" ).toLowerCase() );
-								xmlw.writeCharacters( section.getValues().get( valKey ) );
-								xmlw.writeEndElement(); // value-name
+								xmlw.writeStartElement( "row" );
 								xmlw.writeCharacters( "\n" );
-							}
-							for( String tablekey : section.getTables().keySet() )
-							{
-								xmlw.writeCharacters( "\t\t\t" );
-								xmlw.writeStartElement( tablekey.replace( " ", "_" ).toLowerCase() );
-								// xmlw.writeAttribute( "name", tablekey );
-								TableModel table = section.getTables().get( tablekey );
-								xmlw.writeCharacters( "\n" );
-								// xmlw.writeStartElement( "columns" );
-								// xmlw.writeAttribute( "size", String.valueOf(
-								// table.getColumnCount() ) );
-								// xmlw.writeCharacters( "\n" );
-								// StringBuffer columns = new StringBuffer();
-								// String columns = new String [table.getColumnCount()]
-								// for( int i = 0; i < table.getColumnCount(); i++ ) {
-								// columns.append( table.getColumnName( i ) ).append(
-								// "," );
-								// columns.deleteCharAt( columns.length() - 1 );
-								// xmlw.writeCharacters( columns.toString() );
-								// xmlw.writeEndElement();// columns
-								// xmlw.writeCharacters( "\n" );
-								//
-								// xmlw.writeStartElement( "rows" );
-								// xmlw.writeAttribute( "size", String.valueOf(
-								// table.getRowCount() ) );
-								// xmlw.writeCharacters( "\n" );
-								for( int j = 0; j < table.getRowCount(); j++ )
+								for( int i = 0; i < table.getColumnCount(); i++ )
 								{
-									xmlw.writeCharacters( "\t\t\t" );
-									xmlw.writeStartElement( "row" );
-									xmlw.writeCharacters( "\n" );
-									for( int i = 0; i < table.getColumnCount(); i++ )
-									{
-										xmlw.writeCharacters( "\t\t\t\t" );
-										xmlw.writeStartElement( table.getColumnName( i ).replace( " ", "_" ).replace( "/", "_" )
-												.toLowerCase() );
-										if( table.getValueAt( j, i ) != null )
-											xmlw.writeCharacters( table.getValueAt( j, i ).toString() );
-										xmlw.writeEndElement();
-										xmlw.writeCharacters( "\n" );
-									}
-									xmlw.writeCharacters( "\t\t\t" );
-									xmlw.writeEndElement();// row
+									xmlw.writeCharacters( "\t\t\t\t" );
+									xmlw.writeStartElement( table.getColumnName( i ).replace( " ", "_" ).replace( "/", "_" )
+											.toLowerCase() );
+									if( table.getValueAt( j, i ) != null )
+										xmlw.writeCharacters( table.getValueAt( j, i ).toString() );
+									xmlw.writeEndElement();
 									xmlw.writeCharacters( "\n" );
 								}
 								xmlw.writeCharacters( "\t\t\t" );
-								xmlw.writeEndElement(); // table
+								xmlw.writeEndElement();// row
 								xmlw.writeCharacters( "\n" );
 							}
-							xmlw.writeCharacters( "\t\t" );
-							xmlw.writeEndElement();// section
+							xmlw.writeCharacters( "\t\t\t" );
+							xmlw.writeEndElement(); // table
 							xmlw.writeCharacters( "\n" );
 						}
-						xmlw.writeCharacters( "\t" );
-						xmlw.writeEndElement(); // chapter
+						xmlw.writeCharacters( "\t\t" );
+						xmlw.writeEndElement();// section
 						xmlw.writeCharacters( "\n" );
 					}
-					xmlw.writeEndElement(); //
+					xmlw.writeCharacters( "\t" );
+					xmlw.writeEndElement(); // chapter
 					xmlw.writeCharacters( "\n" );
-					xmlw.writeEndDocument();
-					xmlw.flush();
-					xmlw.close();
 				}
-				catch( XMLStreamException e )
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch( FileNotFoundException e )
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch( IOException e )
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return null;
+				xmlw.writeEndElement(); //
+				xmlw.writeCharacters( "\n" );
+				xmlw.writeEndDocument();
+				xmlw.flush();
+				xmlw.close();
 			}
-		};
-		worker.execute();
+			catch( XMLStreamException e )
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch( FileNotFoundException e )
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch( IOException e )
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
 	}
 
 }

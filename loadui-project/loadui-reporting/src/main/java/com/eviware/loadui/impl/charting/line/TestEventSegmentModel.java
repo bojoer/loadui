@@ -85,7 +85,7 @@ public class TestEventSegmentModel extends AbstractSegmentModel implements Segme
 	}
 
 	@Override
-	public TestEventSegment getSegment()
+	public final TestEventSegment getSegment()
 	{
 		return ( TestEventSegment )super.getSegment();
 	}

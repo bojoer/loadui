@@ -445,15 +445,15 @@ public class ExecutionImpl implements Execution, Releasable
 	}
 
 	@Override
-	public String getAttribute( String key, String defaultValue )
-	{
-		return attributes.getProperty( key, defaultValue );
-	}
-
-	@Override
 	public void removeAttribute( String key )
 	{
 		attributes.remove( key );
+	}
+
+	@Override
+	public final String getAttribute( String key, String defaultValue )
+	{
+		return attributes.getProperty( key, defaultValue );
 	}
 
 	@Override

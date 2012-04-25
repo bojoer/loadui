@@ -232,44 +232,44 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 	}
 
 	@Override
-	public Collection<Property<?>> getProperties()
+	public final Collection<Property<?>> getProperties()
 	{
 		return ImmutableList.copyOf( properties.values() );
 	}
 
 	@Override
-	public Property<?> getProperty( String propertyName )
+	public final Property<?> getProperty( String propertyName )
 	{
 		return properties.get( propertyName );
 	}
 
 	@Override
-	public <T> Property<T> createProperty( String propertyName, Class<T> propertyType )
+	public final <T> Property<T> createProperty( String propertyName, Class<T> propertyType )
 	{
 		return properties.createProperty( propertyName, propertyType );
 	}
 
 	@Override
-	public <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue )
+	public final <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue )
 	{
 		return properties.createProperty( propertyName, propertyType, initialValue );
 	}
 
 	@Override
-	public <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue,
+	public final <T> Property<T> createProperty( String propertyName, Class<T> propertyType, Object initialValue,
 			boolean propagates )
 	{
 		return properties.createProperty( propertyName, propertyType, initialValue, propagates );
 	}
 
 	@Override
-	public void renameProperty( String oldName, String newName )
+	public final void renameProperty( String oldName, String newName )
 	{
 		properties.renameProperty( oldName, newName );
 	}
 
 	@Override
-	public void deleteProperty( String propertyName )
+	public final void deleteProperty( String propertyName )
 	{
 		properties.remove( propertyName );
 	}

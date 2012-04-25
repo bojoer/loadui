@@ -135,7 +135,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	}
 
 	@Override
-	public void refresh( boolean shouldPoll )
+	public final void refresh( boolean shouldPoll )
 	{
 		if( zoomLevel == ZoomLevel.ALL )
 		{
@@ -473,7 +473,7 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	}
 
 	@Override
-	public long getPosition()
+	public final long getPosition()
 	{
 		return Math.max( 0, Math.min( getMaxTime() - timeSpan, position ) );
 	}

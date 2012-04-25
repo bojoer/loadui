@@ -254,7 +254,7 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	}
 
 	@Override
-	public void addMessageListener( String channel, MessageListener listener )
+	public final void addMessageListener( String channel, MessageListener listener )
 	{
 		endpointSupport.addMessageListener( channel, listener );
 	}

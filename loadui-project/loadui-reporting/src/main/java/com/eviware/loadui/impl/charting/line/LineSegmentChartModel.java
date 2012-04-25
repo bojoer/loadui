@@ -157,7 +157,7 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 	}
 
 	@Override
-	public LineSegment getSegment()
+	public final LineSegment getSegment()
 	{
 		return ( LineSegment )segment;
 	}

@@ -47,7 +47,6 @@ public class GroovyComponentContext implements Releasable
 	private final ActionEventHandler actionEventHandler = new ActionEventHandler();
 	private final CounterHelper counterHelper = new CounterHelper();
 
-	private final BaseCategory behavior;
 	private final ComponentContext context;
 	private final Logger log;
 

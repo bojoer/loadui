@@ -1242,7 +1242,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	}
 
 	@Override
-	public void addExecutionListener( ExecutionListener el )
+	public final void addExecutionListener( ExecutionListener el )
 	{
 		ecs.addExecutionListener( el );
 	}
