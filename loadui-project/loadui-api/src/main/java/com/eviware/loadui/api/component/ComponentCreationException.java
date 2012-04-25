@@ -32,4 +32,10 @@ public class ComponentCreationException extends Exception
 	{
 		return componentType;
 	}
+
+	@Override
+	public String getMessage()
+	{
+		return "[Component: " + componentType + "]" + super.getMessage();
+	}
 }

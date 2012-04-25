@@ -227,7 +227,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 		}
 		catch( RuntimeException e )
 		{
-			throw new ComponentCreationException( "Error instantiating Component: " + context.getLabel(), e );
+			throw new ComponentCreationException( context.getLabel(), "Error instantiating Component", e );
 		}
 	}
 

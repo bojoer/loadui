@@ -32,8 +32,13 @@ import javafx.scene.input.MouseButton;
 
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.fx.AppState;
+import com.eviware.loadui.fx.ui.notification.NotificationArea;
+
+import org.slf4j.LoggerFactory;
 
 def defaultImage = Image { url: "{__ROOT__}images/png/default-component-icon.png" };
+
+public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem" );
 
 public class ComponentToolbarItem extends ToolbarItemNode {
 	public var descriptor:ComponentDescriptor on replace {
@@ -55,7 +60,12 @@ public class ComponentToolbarItem extends ToolbarItemNode {
 			while( sizeof canvas.getComponents()[c|c.getLabel() == name] > 0 )
 				name = "{descriptor.getLabel()} ({++i})";
 					
-			canvas.createComponent( name, descriptor );
+			try {
+				canvas.createComponent( name, descriptor );
+			} catch( error ) {
+				log.error( "Unable to create Component", error );
+				NotificationArea.notify( error.getMessage() );
+			}
 		}  
 	}
 }

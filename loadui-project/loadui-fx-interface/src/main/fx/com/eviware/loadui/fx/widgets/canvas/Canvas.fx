@@ -53,6 +53,7 @@ import com.eviware.loadui.fx.ui.node.Deletable;
 import com.eviware.loadui.fx.ui.dnd.Droppable;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.resources.GageReset;
+import com.eviware.loadui.fx.ui.notification.NotificationArea;
 import com.eviware.loadui.fx.widgets.Trashcan;
 import com.eviware.loadui.fx.widgets.toolbar.NoteToolbarItem;
 import com.eviware.loadui.fx.widgets.toolbar.ComponentToolbarItem;
@@ -256,8 +257,9 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 					def component = createComponent( (d.node as ComponentToolbarItem).descriptor );
 					component.setAttribute( "gui.layoutX", "{offsetX + x as Integer}" );
 					component.setAttribute( "gui.layoutY", "{offsetY + y as Integer}" );
-				} catch( e ) {
-					log.error( "Unable to create Component", e );
+				} catch( error ) {
+					log.error( "Unable to create Component", error );
+					NotificationArea.notify( error.getMessage() );
 				}
 			}, null, "Creating component...\nDownloading dependencies..." );
 		} else if( d.node instanceof NoteToolbarItem ) {

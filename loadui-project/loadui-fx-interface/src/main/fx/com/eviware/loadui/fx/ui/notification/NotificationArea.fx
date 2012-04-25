@@ -169,6 +169,10 @@ def delayTransition:PauseTransition = PauseTransition {
 	action: function() { state = FADE_OUT }
 }
 
+public function notify( message:String ):Void {
+	notify( message, new Date() );
+}
+
 public function notify( message:String, time:Date ):Void {
 	panel.dateText = dateFormat.format( time );
 	panel.text = message;

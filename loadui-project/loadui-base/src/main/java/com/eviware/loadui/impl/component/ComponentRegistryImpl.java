@@ -133,7 +133,8 @@ public class ComponentRegistryImpl implements ComponentRegistry
 	{
 		if( descriptors.containsKey( descriptor ) )
 			return descriptors.get( descriptor ).createBehavior( descriptor, context );
-		throw new ComponentCreationException( "No Provider exists for the given ComponentDescriptor!" );
+		throw new ComponentCreationException( descriptor.getLabel(),
+				"No Provider exists for the given ComponentDescriptor!" );
 	}
 
 	@Override
@@ -142,7 +143,7 @@ public class ComponentRegistryImpl implements ComponentRegistry
 	{
 		if( types.containsKey( componentType ) )
 			return types.get( componentType ).loadBehavior( componentType, context );
-		throw new ComponentCreationException( "No Provider exists for the type '" + componentType + "'!" );
+		throw new ComponentCreationException( componentType, "No Provider exists for the given type!" );
 	}
 
 	private void fireDescriptorAdded( ComponentDescriptor descriptor )
