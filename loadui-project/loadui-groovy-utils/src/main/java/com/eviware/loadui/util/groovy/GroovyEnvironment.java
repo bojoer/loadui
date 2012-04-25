@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,7 +113,7 @@ public class GroovyEnvironment implements Initializable, Releasable
 			groovyScript.setBinding( binding );
 			groovyScript.run();
 		}
-		catch( Exception e )
+		catch( CompilationFailedException e )
 		{
 			log.error( "Compilation of Groovy script failed: ", e );
 		}

@@ -17,6 +17,7 @@ package com.eviware.loadui.groovy;
 
 import static com.eviware.loadui.util.groovy.resolvers.DelegatingResolver.noRelease;
 import groovy.lang.Binding;
+import groovy.lang.GroovyRuntimeException;
 import groovy.lang.MissingPropertyException;
 
 import java.beans.PropertyChangeEvent;
@@ -117,44 +118,37 @@ public class GroovyBehaviorSupport implements Releasable
 		ReleasableUtils.releaseAll( groovyEnv, resolver );
 		groovyContext.reset();
 
+		ParsedGroovyScript headers = new ParsedGroovyScript( scriptText );
+		PropertyHolderResolver propertyHolderResolver = new PropertyHolderResolver( context, log );
+
+		resolver = new DelegatingResolver( noRelease( new JavaBeanGroovyResolver( groovyContext ) ),
+				noRelease( new JavaBeanGroovyResolver( behavior ) ), new TotalResolver( behavior ),
+				new ComponentTestExecutionResolver( context ), propertyHolderResolver, new TerminalHolderResolver( context,
+						log ), new StatisticHolderResolver( context.getComponent() ), new ScheduledExecutionResolver(),
+				noRelease( new JavaBeanGroovyResolver( context ) ) );
+
+		Binding binding = new Binding();
+		groovyEnv = InitializableUtils.initialize( new GroovyEnvironment( headers, id,
+				"com.eviware.loadui.groovy.component", clr, classLoaderId, resolver, binding ) );
+
+		propertyHolderResolver.invokeReplaceHandlers();
 		try
 		{
-			ParsedGroovyScript headers = new ParsedGroovyScript( scriptText );
-			PropertyHolderResolver propertyHolderResolver = new PropertyHolderResolver( context, log );
-
-			resolver = new DelegatingResolver( noRelease( new JavaBeanGroovyResolver( groovyContext ) ),
-					noRelease( new JavaBeanGroovyResolver( behavior ) ), new TotalResolver( behavior ),
-					new ComponentTestExecutionResolver( context ), propertyHolderResolver, new TerminalHolderResolver(
-							context, log ), new StatisticHolderResolver( context.getComponent() ),
-					new ScheduledExecutionResolver(), noRelease( new JavaBeanGroovyResolver( context ) ) );
-
-			Binding binding = new Binding();
-			groovyEnv = InitializableUtils.initialize( new GroovyEnvironment( headers, id,
-					"com.eviware.loadui.groovy.component", clr, classLoaderId, resolver, binding ) );
-
-			propertyHolderResolver.invokeReplaceHandlers();
-			try
+			Object defaultStatistics = binding.getVariable( "defaultStatistics" );
+			if( defaultStatistics instanceof Iterable )
 			{
-				Object defaultStatistics = binding.getVariable( "defaultStatistics" );
-				if( defaultStatistics instanceof Iterable )
+				Set<Statistic.Descriptor> realDefaultStatistics = context.getDefaultStatistics();
+				realDefaultStatistics.clear();
+				for( Statistic.Descriptor statistic : Iterables.filter( ( Iterable<?> )defaultStatistics,
+						Statistic.Descriptor.class ) )
 				{
-					Set<Statistic.Descriptor> realDefaultStatistics = context.getDefaultStatistics();
-					realDefaultStatistics.clear();
-					for( Statistic.Descriptor statistic : Iterables.filter( ( Iterable<?> )defaultStatistics,
-							Statistic.Descriptor.class ) )
-					{
-						realDefaultStatistics.add( statistic );
-					}
+					realDefaultStatistics.add( statistic );
 				}
 			}
-			catch( MissingPropertyException e )
-			{
-				//Ignore
-			}
 		}
-		catch( Exception e )
+		catch( MissingPropertyException e )
 		{
-			log.error( "Compilation of Groovy script failed: ", e );
+			//Ignore
 		}
 	}
 
@@ -173,7 +167,16 @@ public class GroovyBehaviorSupport implements Releasable
 			{
 				PropertyEvent pEvent = ( PropertyEvent )event;
 				if( PropertyEvent.Event.VALUE == pEvent.getEvent() && pEvent.getProperty() == scriptProperty )
-					updateScript( scriptProperty.getValue() );
+				{
+					try
+					{
+						updateScript( scriptProperty.getValue() );
+					}
+					catch( GroovyRuntimeException e )
+					{
+						log.error( "Error running Groovy script: ", e );
+					}
+				}
 			}
 			else if( event instanceof ActionEvent )
 			{

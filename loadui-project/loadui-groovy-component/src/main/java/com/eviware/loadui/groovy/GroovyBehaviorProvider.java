@@ -188,38 +188,46 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 	}
 
 	private ComponentBehavior instantiateBehavior( ComponentContext context, String category )
+			throws ComponentCreationException
 	{
-		if( GeneratorCategory.CATEGORY.equalsIgnoreCase( category ) || "generator".equalsIgnoreCase( category ) )
+		try
 		{
-			return new GroovyGenerator( this, context );
+			if( GeneratorCategory.CATEGORY.equalsIgnoreCase( category ) || "generator".equalsIgnoreCase( category ) )
+			{
+				return new GroovyGenerator( this, context );
+			}
+			else if( RunnerCategory.CATEGORY.equalsIgnoreCase( category ) || "runner".equalsIgnoreCase( category ) )
+			{
+				return new GroovyRunner( this, context );
+			}
+			else if( FlowCategory.CATEGORY.equalsIgnoreCase( category ) )
+			{
+				return new GroovyFlow( this, context );
+			}
+			else if( AnalysisCategory.CATEGORY.equalsIgnoreCase( category ) )
+			{
+				return new GroovyAnalysis( this, context );
+			}
+			else if( OutputCategory.CATEGORY.equalsIgnoreCase( category ) )
+			{
+				return new GroovyOutput( this, context );
+			}
+			else if( SchedulerCategory.CATEGORY.equalsIgnoreCase( category ) || "scheduler".equalsIgnoreCase( category ) )
+			{
+				return new GroovyScheduler( this, context );
+			}
+			else if( MiscCategory.CATEGORY.equalsIgnoreCase( category ) )
+			{
+				return new GroovyMisc( this, context );
+			}
+			else
+			{
+				return new GroovyMisc( this, context );
+			}
 		}
-		else if( RunnerCategory.CATEGORY.equalsIgnoreCase( category ) || "runner".equalsIgnoreCase( category ) )
+		catch( RuntimeException e )
 		{
-			return new GroovyRunner( this, context );
-		}
-		else if( FlowCategory.CATEGORY.equalsIgnoreCase( category ) )
-		{
-			return new GroovyFlow( this, context );
-		}
-		else if( AnalysisCategory.CATEGORY.equalsIgnoreCase( category ) )
-		{
-			return new GroovyAnalysis( this, context );
-		}
-		else if( OutputCategory.CATEGORY.equalsIgnoreCase( category ) )
-		{
-			return new GroovyOutput( this, context );
-		}
-		else if( SchedulerCategory.CATEGORY.equalsIgnoreCase( category ) || "scheduler".equalsIgnoreCase( category ) )
-		{
-			return new GroovyScheduler( this, context );
-		}
-		else if( MiscCategory.CATEGORY.equalsIgnoreCase( category ) )
-		{
-			return new GroovyMisc( this, context );
-		}
-		else
-		{
-			return new GroovyMisc( this, context );
+			throw new ComponentCreationException( "Error instantiating Component: " + context.getLabel(), e );
 		}
 	}
 

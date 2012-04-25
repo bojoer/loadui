@@ -5,6 +5,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 
@@ -12,13 +13,16 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.eviware.loadui.api.component.BehaviorProvider;
+import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.groovy.GroovyBehaviorProvider;
+import com.eviware.loadui.groovy.GroovyBehaviorSupport;
 import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.util.component.ComponentTestUtils;
+import com.eviware.loadui.util.groovy.GroovyEnvironment;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -101,5 +105,38 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 		component.setBehavior( descriptors.get( descriptor ).createBehavior( descriptor, component.getContext() ) );
 
 		return component;
+	}
+
+	public static GroovyEnvironment getEnvironment( ComponentItem component )
+	{
+		try
+		{
+			final Class<? extends ComponentBehavior> cls = component.getBehavior().getClass();
+			Field field = cls.getDeclaredField( "scriptSupport" );
+			field.setAccessible( true );
+			GroovyBehaviorSupport support = ( GroovyBehaviorSupport )field.get( component.getBehavior() );
+			return support.getEnvironment();
+		}
+		catch( NoSuchFieldException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch( SecurityException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch( IllegalArgumentException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch( IllegalAccessException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		throw new IllegalArgumentException();
 	}
 }
