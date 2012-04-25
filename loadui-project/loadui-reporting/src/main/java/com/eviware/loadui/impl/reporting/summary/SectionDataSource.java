@@ -28,9 +28,7 @@ import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
 
 public class SectionDataSource extends JRAbstractBeanDataSource
 {
-
-	Logger logger = LoggerFactory.getLogger( SectionDataSource.class );
-	private List<Section> section;
+	private final List<Section> section;
 	private int cnt = -1;
 
 	public SectionDataSource( List<Section> list )

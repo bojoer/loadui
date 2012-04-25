@@ -63,27 +63,4 @@ public class AgentTest
 			assertThat( bundle.getSymbolicName() + " is not Active or Resolved", bundle.getState(),
 					anyOf( is( Bundle.ACTIVE ), is( Bundle.RESOLVED ) ) );
 	}
-
-	/*
-	 * The status page has been removed due to the move to raw sockets instead of
-	 * HTTP based traffic for agent communication.
-	 */
-	//@Test
-	@Deprecated
-	public void shouldHaveAgentStatusPage() throws Exception
-	{
-		HttpClient client = new HttpClient();
-		HeadMethod method = new HeadMethod( "http://127.0.0.1:" + System.getProperty( "loadui.http.port" ) + "/" );
-		client.executeMethod( method );
-
-		Header serverHeader = method.getResponseHeader( "Server" );
-		Header dateHeader = method.getResponseHeader( "Date" );
-
-		assertThat( serverHeader, notNullValue() );
-		assertThat( dateHeader, notNullValue() );
-
-		String[] parts = serverHeader.getValue().split( ";" );
-		assertThat( parts.length, is( 2 ) );
-		assertThat( parts[0], is( "LoadUI Agent" ) );
-	}
 }

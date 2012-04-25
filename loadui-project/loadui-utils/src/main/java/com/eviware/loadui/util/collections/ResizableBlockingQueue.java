@@ -16,7 +16,6 @@
 
 package com.eviware.loadui.util.collections;
 
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**

@@ -95,8 +95,6 @@
 	<osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
 		ref="displayContainerFactory" />
     <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
-        ref="counterWidget" />
-    <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
         ref="sliderWidget" />
     <osgi:service interface="com.eviware.loadui.api.layout.WidgetFactory"
         ref="intervalWidget" />

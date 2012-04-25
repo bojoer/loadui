@@ -26,13 +26,10 @@ import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
 
 public class ValuesDataSource extends JRAbstractBeanDataSource
 {
-
-	Logger logger = LoggerFactory.getLogger( ValuesDataSource.class );
-
-	private Map<String, String> map;
+	private final Map<String, String> map;
 	private int cnt = -1;
-	private String[] keys;
-	private String[] values;
+	private final String[] keys;
+	private final String[] values;
 
 	public ValuesDataSource( Map<String, String> map )
 	{
