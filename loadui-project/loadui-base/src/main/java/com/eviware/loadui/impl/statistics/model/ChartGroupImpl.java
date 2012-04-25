@@ -93,7 +93,7 @@ public class ChartGroupImpl implements ChartGroup
 	}
 
 	@Override
-	public String getType()
+	public final String getType()
 	{
 		return config.getType();
 	}
@@ -129,7 +129,7 @@ public class ChartGroupImpl implements ChartGroup
 	}
 
 	@Override
-	public String getTemplateScript()
+	public final String getTemplateScript()
 	{
 		return config.getTemplateScript() == null ? "" : config.getTemplateScript();
 	}

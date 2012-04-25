@@ -43,7 +43,7 @@ public class BlinkingActivityStrategy extends AbstractActivityStrategy
 		setBlinking( blinking );
 	}
 
-	protected void setBlinking( boolean blinking )
+	protected final void setBlinking( boolean blinking )
 	{
 		if( this.blinking != blinking )
 		{

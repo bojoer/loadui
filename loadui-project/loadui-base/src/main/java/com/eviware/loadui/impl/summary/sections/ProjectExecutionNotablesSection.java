@@ -35,12 +35,12 @@ public class ProjectExecutionNotablesSection extends MutableSectionImpl implemen
 	{
 		super( "Execution Notables" );
 		project = projectItemImpl;
-		addTable( "Top 5 Requests", get5MostExtremeSamples(true) );
-		addTable( "Bottom 5 Requests", get5MostExtremeSamples(false) );
+		addTable( "Top 5 Requests", get5MostExtremeSamples( true ) );
+		addTable( "Bottom 5 Requests", get5MostExtremeSamples( false ) );
 	}
 
 	@Override
-	public synchronized TableModel get5MostExtremeSamples(boolean getTopSamples)
+	public synchronized final TableModel get5MostExtremeSamples( boolean getTopSamples )
 	{
 		TestCaseTopSamplesTable table = new TestCaseTopSamplesTable();
 
@@ -48,8 +48,9 @@ public class ProjectExecutionNotablesSection extends MutableSectionImpl implemen
 			for( ComponentItem component : tc.getComponents() )
 				if( component.getBehavior() instanceof RunnerCategory )
 				{
-					RunnerCategory runnerCat = ( RunnerCategory) component.getBehavior();
-					List<SampleStats> sampleStatsList = getTopSamples ? runnerCat.getTopSamples() : runnerCat.getBottomSamples();
+					RunnerCategory runnerCat = ( RunnerCategory )component.getBehavior();
+					List<SampleStats> sampleStatsList = getTopSamples ? runnerCat.getTopSamples() : runnerCat
+							.getBottomSamples();
 					for( SampleStats stat : sampleStatsList )
 						table.add( component.getLabel(), stat, getTopSamples );
 				}
@@ -57,8 +58,9 @@ public class ProjectExecutionNotablesSection extends MutableSectionImpl implemen
 		for( ComponentItem component : project.getComponents() )
 			if( component.getBehavior() instanceof RunnerCategory )
 			{
-				RunnerCategory runnerCat = ( RunnerCategory) component.getBehavior();
-				List<SampleStats> sampleStatsList = getTopSamples ? runnerCat.getTopSamples() : runnerCat.getBottomSamples();
+				RunnerCategory runnerCat = ( RunnerCategory )component.getBehavior();
+				List<SampleStats> sampleStatsList = getTopSamples ? runnerCat.getTopSamples() : runnerCat
+						.getBottomSamples();
 				for( SampleStats stat : sampleStatsList )
 					table.add( component.getLabel(), stat, getTopSamples );
 			}

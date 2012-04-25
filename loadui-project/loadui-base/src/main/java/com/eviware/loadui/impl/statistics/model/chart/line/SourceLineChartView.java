@@ -41,7 +41,7 @@ public class SourceLineChartView extends AbstractLineChartView
 	}
 
 	@Override
-	protected void segmentAdded( Segment segment )
+	protected final void segmentAdded( Segment segment )
 	{
 		// This adds any Segment for this source, and adds a
 		// SourceLineSegment for any Segment for the main source, unless such a

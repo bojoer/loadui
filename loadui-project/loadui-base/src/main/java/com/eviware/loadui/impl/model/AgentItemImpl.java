@@ -276,13 +276,13 @@ public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements Age
 	}
 
 	@Override
-	public void addConnectionListener( ConnectionListener listener )
+	public final void addConnectionListener( ConnectionListener listener )
 	{
 		endpointSupport.addConnectionListener( listener );
 	}
 
 	@Override
-	final public void open()
+	public final void open()
 	{
 		endpointSupport.open();
 	}

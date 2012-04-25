@@ -39,7 +39,7 @@ public class TestCaseExecutionNotablesSection extends MutableSectionImpl impleme
 	}
 
 	@Override
-	public synchronized TableModel get5MostExtremeSamples( boolean getTopSamples )
+	public synchronized final TableModel get5MostExtremeSamples( boolean getTopSamples )
 	{
 		TestCaseTopSamplesTable table = new TestCaseTopSamplesTable();
 

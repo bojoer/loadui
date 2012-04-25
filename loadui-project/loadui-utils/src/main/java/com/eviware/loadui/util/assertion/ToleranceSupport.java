@@ -48,7 +48,7 @@ public class ToleranceSupport
 	 * @param period
 	 * @param allowedOccurrences
 	 */
-	public synchronized void setTolerance( int period, int allowedOccurrences )
+	public synchronized final void setTolerance( int period, int allowedOccurrences )
 	{
 		this.period = period;
 		this.allowedOccurrences = allowedOccurrences;

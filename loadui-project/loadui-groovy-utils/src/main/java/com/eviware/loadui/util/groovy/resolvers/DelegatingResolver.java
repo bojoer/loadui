@@ -61,7 +61,7 @@ public class DelegatingResolver implements GroovyResolver.Methods, GroovyResolve
 			addResolver( resolver );
 	}
 
-	public void addResolver( GroovyResolver resolver )
+	public final void addResolver( GroovyResolver resolver )
 	{
 		if( resolver instanceof Releasable )
 		{
