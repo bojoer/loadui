@@ -15,23 +15,22 @@
  */
 package com.eviware.loadui.impl.terminal;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.eviware.loadui.api.events.TerminalEvent;
 import com.eviware.loadui.api.events.TerminalRemoteMessageEvent;
-import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.RoutedConnection;
 import com.eviware.loadui.api.terminal.TerminalProxy;
 import com.eviware.loadui.config.RoutedConnectionConfig;
+import com.google.common.collect.ConcurrentHashMultiset;
+import com.google.common.collect.Multiset;
 
 public class RoutedConnectionImpl extends ConnectionImpl implements RoutedConnection
 {
-	private final static Map<OutputTerminal, Integer> exportedTerminalCounts = new HashMap<OutputTerminal, Integer>();
+	private final static Multiset<OutputTerminal> exportedTerminals = ConcurrentHashMultiset.create();
 
 	private final RoutedConnectionConfig config;
 	private final TerminalProxy proxy;
@@ -61,16 +60,13 @@ public class RoutedConnectionImpl extends ConnectionImpl implements RoutedConnec
 		CanvasItem canvas = output.getTerminalHolder().getCanvas();
 		if( canvas instanceof SceneItem )
 		{
-			synchronized( exportedTerminalCounts )
+			synchronized( exportedTerminals )
 			{
-				if( !exportedTerminalCounts.containsKey( output ) )
-					exportedTerminalCounts.put( output, 0 );
-
-				int refs = exportedTerminalCounts.get( output );
-				if( refs == 0 )
+				if( exportedTerminals.count( output ) == 0 )
+				{
 					( ( SceneItem )canvas ).exportTerminal( output );
-
-				exportedTerminalCounts.put( output, refs + 1 );
+				}
+				exportedTerminals.add( output );
 			}
 		}
 	}
@@ -84,10 +80,13 @@ public class RoutedConnectionImpl extends ConnectionImpl implements RoutedConnec
 		CanvasItem canvas = output.getTerminalHolder().getCanvas();
 		if( canvas instanceof SceneItem )
 		{
-			synchronized( exportedTerminalCounts )
+			synchronized( exportedTerminals )
 			{
-				if( exportedTerminalCounts.put( output, exportedTerminalCounts.get( output ) - 1 ) == 1 )
+				exportedTerminals.remove( output );
+				if( exportedTerminals.count( output ) == 0 )
+				{
 					( ( SceneItem )canvas ).unexportTerminal( output );
+				}
 			}
 		}
 	}
