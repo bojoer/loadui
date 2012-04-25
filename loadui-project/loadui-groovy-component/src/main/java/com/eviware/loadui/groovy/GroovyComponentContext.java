@@ -50,9 +50,8 @@ public class GroovyComponentContext implements Releasable
 	private final ComponentContext context;
 	private final Logger log;
 
-	public GroovyComponentContext( BaseCategory behavior, ComponentContext context, Logger log )
+	public GroovyComponentContext( ComponentContext context, Logger log )
 	{
-		this.behavior = behavior;
 		this.context = context;
 		this.log = log;
 
