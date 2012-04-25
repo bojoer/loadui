@@ -83,7 +83,7 @@ public class GroovyBehaviorSupport implements Releasable
 		log = LoggerFactory.getLogger( "com.eviware.loadui.groovy.component." + id );
 		this.behavior = behavior;
 		this.context = context;
-		groovyContext = new GroovyComponentContext( behavior, context, log );
+		groovyContext = new GroovyComponentContext( context, log );
 		clr = behaviorProvider.getClassLoaderRegistry();
 
 		classLoaderId = context.getAttribute( GroovyBehaviorSupport.CLASS_LOADER_ATTRIBUTE, id );
