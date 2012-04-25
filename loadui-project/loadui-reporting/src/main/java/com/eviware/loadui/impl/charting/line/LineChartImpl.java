@@ -19,6 +19,7 @@ package com.eviware.loadui.impl.charting.line;
 import java.beans.PropertyChangeEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.EventObject;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -59,10 +60,10 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 	private final LineChartView chartView;
 
 	private final EventSupport eventSupport = new EventSupport( this );
-	private final Map<LineSegment, LineSegmentChartModel> lines = Maps.newHashMap();
-	private final Map<LineSegmentChartModel, ComparedLineSegmentChartModel> comparedLines = Maps.newHashMap();
-	private final Map<TestEventSegment, TestEventSegmentModel> testEventSegments = Maps.newHashMap();
-	private final Map<TestEventSegmentModel, ComparedTestEventSegmentModel> comparedTestEvents = Maps.newHashMap();
+	private final HashMap<LineSegment, LineSegmentChartModel> lines = Maps.newHashMap();
+	private final HashMap<LineSegmentChartModel, ComparedLineSegmentChartModel> comparedLines = Maps.newHashMap();
+	private final HashMap<TestEventSegment, TestEventSegmentModel> testEventSegments = Maps.newHashMap();
+	private final HashMap<TestEventSegmentModel, ComparedTestEventSegmentModel> comparedTestEvents = Maps.newHashMap();
 	private final TotalTimeTickCalculator timeCalculator = new TotalTimeTickCalculator();
 	private final ChartViewListener chartViewListener = new ChartViewListener();
 	private final LongRange xRange;
