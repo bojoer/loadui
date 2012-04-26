@@ -197,8 +197,7 @@ public class ComponentTestUtils
 			if( output instanceof OutputTerminalImpl )
 			{
 				output.addEventListener( TerminalConnectionEvent.class, this );
-				( ( OutputTerminalImpl )output ).fireEvent( new TerminalConnectionEvent( this, output, input,
-						TerminalConnectionEvent.Event.CONNECT ) );
+				output.fireEvent( new TerminalConnectionEvent( this, output, input, TerminalConnectionEvent.Event.CONNECT ) );
 			}
 		}
 
@@ -208,8 +207,9 @@ public class ComponentTestUtils
 			connections.remove( this );
 			if( getOutputTerminal() instanceof OutputTerminalImpl )
 			{
-				( ( OutputTerminalImpl )getOutputTerminal() ).fireEvent( new TerminalConnectionEvent( this,
-						getOutputTerminal(), getInputTerminal(), TerminalConnectionEvent.Event.DISCONNECT ) );
+				getOutputTerminal().fireEvent(
+						new TerminalConnectionEvent( this, getOutputTerminal(), getInputTerminal(),
+								TerminalConnectionEvent.Event.DISCONNECT ) );
 				try
 				{
 					TestUtils.awaitEvents( getOutputTerminal() );

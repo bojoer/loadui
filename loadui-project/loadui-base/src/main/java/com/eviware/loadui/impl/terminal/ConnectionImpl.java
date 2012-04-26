@@ -77,8 +77,7 @@ public class ConnectionImpl extends ConnectionBase
 	{
 		OutputTerminal output = getOutputTerminal();
 		if( output instanceof OutputTerminalImpl )
-			( ( OutputTerminalImpl )output ).fireEvent( new TerminalConnectionEvent( this, output, getInputTerminal(),
-					event ) );
+			output.fireEvent( new TerminalConnectionEvent( this, output, getInputTerminal(), event ) );
 	}
 
 	protected void handleTerminalEvent( TerminalEvent event )

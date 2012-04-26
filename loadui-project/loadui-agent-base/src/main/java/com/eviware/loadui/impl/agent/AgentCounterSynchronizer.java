@@ -92,7 +92,7 @@ public class AgentCounterSynchronizer implements CounterSynchronizer
 			{
 				holders.put( counterHolder, new HolderData( endpoint ) );
 				if( counterHolder instanceof ModelItem )
-					( ( ModelItem )counterHolder ).addEventListener( BaseEvent.class, listener );
+					counterHolder.addEventListener( BaseEvent.class, listener );
 			}
 		}
 	}
@@ -105,7 +105,7 @@ public class AgentCounterSynchronizer implements CounterSynchronizer
 			if( holders.remove( counterHolder ) != null )
 			{
 				if( counterHolder instanceof ModelItem )
-					( ( ModelItem )counterHolder ).removeEventListener( BaseEvent.class, listener );
+					counterHolder.removeEventListener( BaseEvent.class, listener );
 			}
 		}
 	}

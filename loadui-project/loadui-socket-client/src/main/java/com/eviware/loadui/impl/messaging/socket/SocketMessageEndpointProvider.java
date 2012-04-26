@@ -46,8 +46,7 @@ public class SocketMessageEndpointProvider implements MessageEndpointProvider
 
 	private final SSLClient client;
 
-	public SocketMessageEndpointProvider() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException,
-			CertificateException, IOException, GeneralSecurityException
+	public SocketMessageEndpointProvider() throws IOException, GeneralSecurityException
 	{
 		client = new SSLClient();
 

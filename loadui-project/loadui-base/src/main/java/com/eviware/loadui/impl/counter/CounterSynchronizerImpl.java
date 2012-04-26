@@ -47,7 +47,7 @@ public class CounterSynchronizerImpl implements CounterSynchronizer
 			{
 				holders.put( counterHolder, endpoint );
 				if( counterHolder instanceof ModelItem )
-					( ( ModelItem )counterHolder ).addEventListener( BaseEvent.class, listener );
+					counterHolder.addEventListener( BaseEvent.class, listener );
 				endpoint.addMessageListener( CHANNEL, aggregateListener );
 			}
 		}
@@ -67,7 +67,7 @@ public class CounterSynchronizerImpl implements CounterSynchronizer
 				}
 				if( counterHolder instanceof ModelItem )
 				{
-					( ( ModelItem )counterHolder ).removeEventListener( BaseEvent.class, listener );
+					counterHolder.removeEventListener( BaseEvent.class, listener );
 				}
 			}
 		}

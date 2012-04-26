@@ -82,7 +82,7 @@ public class ProjectRefImpl implements ProjectRef, Releasable
 		return config.getLabel();
 	}
 
-	private final void setLabel( String label )
+	private void setLabel( String label )
 	{
 		if( label != null && ( getLabel() == null || !getLabel().equals( label ) ) )
 		{

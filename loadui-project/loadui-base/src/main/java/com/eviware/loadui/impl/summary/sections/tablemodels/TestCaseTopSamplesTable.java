@@ -32,7 +32,7 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 	private static final long serialVersionUID = 6713052691535987646L;
 
 	String[] columnNames = { "name", "ms", "time", "size" };
-	public List<TestCaseSampleModel> data = new ArrayList<TestCaseSampleModel>();
+	private final List<TestCaseSampleModel> data = new ArrayList<TestCaseSampleModel>();
 	TestCaseSampleModelComparator bottomUpComparator = new TestCaseSampleModelComparator();
 	Comparator<TestCaseSampleModel> topDownComparator = Collections.reverseOrder( new TestCaseSampleModelComparator() );
 
