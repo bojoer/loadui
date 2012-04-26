@@ -25,8 +25,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 /**
  * A SceneItem is a CanvasItem, so it holds loadUI components. A SceneItem can
  * be assigned to one or several AgentItems, allowing it to run on a remote
- * loadUI agent. ComponentItems in the parent Project may be connected to
- * ComponentItems in the SceneItem through a RoutedConnection.
+ * loadUI agent.
  * 
  * @author dain.nilsson
  */

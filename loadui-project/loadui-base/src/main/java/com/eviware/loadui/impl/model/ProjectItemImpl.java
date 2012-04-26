@@ -70,7 +70,6 @@ import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
-import com.eviware.loadui.api.terminal.RoutedConnection;
 import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.api.terminal.TerminalProxy;
@@ -78,7 +77,6 @@ import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.config.ComponentItemConfig;
 import com.eviware.loadui.config.LoaduiProjectDocumentConfig;
 import com.eviware.loadui.config.ProjectItemConfig;
-import com.eviware.loadui.config.RoutedConnectionConfig;
 import com.eviware.loadui.config.SceneAssignmentConfig;
 import com.eviware.loadui.config.SceneItemConfig;
 import com.eviware.loadui.impl.XmlBeansUtils;
@@ -91,7 +89,6 @@ import com.eviware.loadui.impl.summary.sections.ProjectExecutionDataSection;
 import com.eviware.loadui.impl.summary.sections.ProjectExecutionMetricsSection;
 import com.eviware.loadui.impl.summary.sections.ProjectExecutionNotablesSection;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
-import com.eviware.loadui.impl.terminal.RoutedConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.InitializableUtils;
 import com.eviware.loadui.util.ReleasableUtils;
@@ -175,9 +172,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		}
 
 		super.init();
-
-		for( RoutedConnectionConfig conf : getConfig().getRoutedConnectionArray() )
-			connectionList.addItem( new RoutedConnectionImpl( proxy, conf ) );
 
 		workspace.addEventListener( BaseEvent.class, workspaceListener );
 
@@ -320,9 +314,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	protected Connection createConnection( OutputTerminal output, InputTerminal input )
 	{
-		return ( output.getTerminalHolder().getCanvas() == input.getTerminalHolder().getCanvas() ) ? new ConnectionImpl(
-				getConfig().addNewConnection(), output, input ) : new RoutedConnectionImpl( proxy, getConfig()
-				.addNewRoutedConnection(), output, input );
+		return new ConnectionImpl( getConfig().addNewConnection(), output, input );
 	}
 
 	@Override
@@ -473,32 +465,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			}
 			fireCollectionEvent( ASSIGNMENTS, Event.REMOVED, assignment );
 		}
-	}
-
-	@Override
-	protected void disconnect( final Connection connection )
-	{
-		if( connection instanceof RoutedConnection )
-		{
-			connectionList.removeItem( connection, new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					for( int i = getConfig().sizeOfRoutedConnectionArray() - 1; i >= 0; i-- )
-					{
-						RoutedConnectionConfig connConfig = getConfig().getRoutedConnectionArray( i );
-						if( connection.getOutputTerminal().getId().equals( connConfig.getOutputTerminalId() )
-								&& connection.getInputTerminal().getId().equals( connConfig.getInputTerminalId() ) )
-						{
-							getConfig().removeRoutedConnection( i );
-						}
-					}
-				}
-			} );
-		}
-		else
-			super.disconnect( connection );
 	}
 
 	private void sendSceneCommand( SceneItem scene, String... args )

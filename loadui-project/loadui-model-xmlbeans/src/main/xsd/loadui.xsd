@@ -98,26 +98,12 @@
     	<attribute name="inputTerminalId" type="string" use="required"></attribute>
     </complexType>
 
-    <complexType name="RoutedConnection">
-    	<complexContent>
-    		<extension base="lui:Connection">
-    			<sequence>
-    				<element name="script" type="string"></element>
-    			</sequence>
-    		</extension>
-    	</complexContent>
-    </complexType>
-
     <complexType name="ProjectItem">
     	<complexContent>
     		<extension base="lui:CanvasItem">
     			<sequence>
     				<element name="scene" type="lui:SceneItem"
     					maxOccurs="unbounded" minOccurs="0">
-    				</element>
-    				<element name="routedConnection"
-    					type="lui:RoutedConnection" maxOccurs="unbounded"
-    					minOccurs="0">
     				</element>
     				<element name="sceneAssignment"
     					type="lui:SceneAssignment" maxOccurs="unbounded"
