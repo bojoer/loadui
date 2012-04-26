@@ -78,6 +78,7 @@ import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -707,7 +708,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 			// create test event data table for the given interpolation level if it doesn't exist
 			String dbName = currentExecution.getExecutionDir().getName();
-			createTestEventDataTable( dbName, interpolationLevel );
+			getOrCreateTestEventDataTable( currentExecution, interpolationLevel );
 
 			TableBase eventTable = tableRegistry.getTable( dbName, buildTestEventTableName( interpolationLevel ) );
 			try
@@ -727,36 +728,38 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		}
 	}
 
-	private synchronized void createTestEventDataTable( String dbName, int interpolationLevel )
+	private synchronized TestEventTable getOrCreateTestEventDataTable( ExecutionImpl execution, int interpolationLevel )
 	{
+		String dbName = execution.getExecutionDir().getName();
 		String name = buildTestEventTableName( interpolationLevel );
-		if( tableRegistry.getTable( dbName, name ) != null )
+		if( tableRegistry.getTable( dbName, name ) == null )
 		{
-			return;
-		}
-		try
-		{
-			TestEventTable testEventTable = new TestEventTable( dbName, name, connectionRegistry, metadata, tableRegistry );
-
-			InterpolationLevelTable levels = ( InterpolationLevelTable )tableRegistry.getTable( dbName,
-					InterpolationLevelTable.INTERPOLATION_LEVEL_TABLE_NAME );
-			if( !levels.getInMemoryTable().contains( interpolationLevel ) )
+			try
 			{
-				Map<String, Object> data = new HashMap<String, Object>();
-				data.put( InterpolationLevelTable.STATIC_FIELD_INTERPOLATION_LEVEL, interpolationLevel );
-				levels.insert( data );
-			}
+				TestEventTable testEventTable = new TestEventTable( dbName, name, connectionRegistry, metadata,
+						tableRegistry );
 
-			// all SQL operations were successful so add created table into table
-			// registry
-			tableRegistry.put( dbName, testEventTable );
+				InterpolationLevelTable levels = ( InterpolationLevelTable )tableRegistry.getTable( dbName,
+						InterpolationLevelTable.INTERPOLATION_LEVEL_TABLE_NAME );
+				if( !levels.getInMemoryTable().contains( interpolationLevel ) )
+				{
+					Map<String, Object> data = new HashMap<String, Object>();
+					data.put( InterpolationLevelTable.STATIC_FIELD_INTERPOLATION_LEVEL, interpolationLevel );
+					levels.insert( data );
+				}
+
+				// all SQL operations were successful so add created table into table
+				// registry
+				tableRegistry.put( dbName, testEventTable );
+			}
+			catch( SQLException e )
+			{
+				log.error( "Exception thrown when attempting to create test event data table for interpolation level: {}",
+						interpolationLevel );
+				throw new RuntimeException( "Unable to create test event data table!", e );
+			}
 		}
-		catch( SQLException e )
-		{
-			log.error( "Exception thrown when attempting to create test event data table for interpolation level: {}",
-					interpolationLevel );
-			throw new RuntimeException( "Unable to create test event data table!", e );
-		}
+		return ( TestEventTable )tableRegistry.getTable( dbName, buildTestEventTableName( 0 ) );
 	}
 
 	private TestEventSourceConfig getConfigForSource( String typeLabel, TestEvent.Source<?> source )
@@ -853,8 +856,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 			TestEventTypeTable eventTypeTable = ( TestEventTypeTable )tableRegistry.getTable( getExecution( executionId )
 					.getExecutionDir().getName(), TestEventTypeTable.TABLE_NAME );
-			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable(
-					getExecution( executionId ).getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
+			TestEventSourceTable eventSourceTable = getTestEventSourceTable( executionId );
 
 			Map<String, Map<String, Object>> typeMap = eventTypeTable.getInMemoryTable();
 			for( java.util.Map.Entry<String, Map<String, Object>> type : typeMap.entrySet() )
@@ -892,33 +894,79 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 	public <T extends TestEvent> Iterable<TestEventData> readTestEvents( String executionId, int offset, int limit,
 			Iterable<TestEventSourceConfig> sources )
 	{
-		loadExecution( executionId );
-		List<TestEventData> result = new ArrayList<TestEventData>();
 		try
 		{
-			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable(
-					getExecution( executionId ).getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
-
-			List<String> hashes = Lists.newArrayList( Iterables.transform( sources,
-					new Function<TestEventSourceConfig, String>()
-					{
-						@Override
-						public String apply( TestEventSourceConfig input )
-						{
-							return input.getHash();
-						}
-					} ) );
-
-			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
-
-			// create test event data table for the given interpolation level if it doesn't exist
-			String dbName = getExecution( executionId ).getExecutionDir().getName();
-			createTestEventDataTable( dbName, 0 );
-
-			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( dbName, buildTestEventTableName( 0 ) );
-
+			loadExecution( executionId );
+			TestEventSourceTable eventSourceTable = getTestEventSourceTable( executionId );
+			List<Long> sourceIds = getSourceIds( sources, eventSourceTable );
+			TestEventTable eventTable = getOrCreateTestEventDataTable( getExecution( executionId ), 0 );
 			List<Map<String, Object>> eventDataList = eventTable.getByCount( sourceIds, offset, limit );
-			for( Map<String, Object> map : eventDataList )
+
+			return parseTestEventDbResults( executionId, eventSourceTable, eventDataList, 0 );
+		}
+		catch( RuntimeException e )
+		{
+			log.error( "Unable to read data from the database.", e );
+		}
+		catch( SQLException e )
+		{
+			log.error( "Unable to read data from the database.", e );
+		}
+		return ImmutableList.of();
+	}
+
+	public <T extends TestEvent> Iterable<TestEventData> readTestEventRange( String executionId, final long startTime,
+			final long endTime, int interpolationLevel, Iterable<TestEventSourceConfig> sources )
+	{
+		try
+		{
+			loadExecution( executionId );
+			TestEventSourceTable eventSourceTable = getTestEventSourceTable( executionId );
+			List<Long> sourceIds = getSourceIds( sources, eventSourceTable );
+			TestEventTable eventTable = getOrCreateTestEventDataTable( getExecution( executionId ), interpolationLevel );
+			List<Map<String, Object>> eventDataList = eventTable.getByTimeRange( sourceIds, startTime, endTime );
+
+			return parseTestEventDbResults( executionId, eventSourceTable, eventDataList, interpolationLevel );
+		}
+		catch( RuntimeException e )
+		{
+			log.error( "Unable to read data from the database.", e );
+		}
+		catch( SQLException e )
+		{
+			log.error( "Unable to read data from the database.", e );
+		}
+		return ImmutableList.of();
+	}
+
+	private TestEventSourceTable getTestEventSourceTable( String executionId )
+	{
+		return ( TestEventSourceTable )tableRegistry.getTable( getExecution( executionId ).getExecutionDir().getName(),
+				TestEventSourceTable.TABLE_NAME );
+	}
+
+	private List<Long> getSourceIds( Iterable<TestEventSourceConfig> sources, TestEventSourceTable eventSourceTable )
+	{
+		List<String> hashes = Lists.newArrayList( Iterables.transform( sources,
+				new Function<TestEventSourceConfig, String>()
+				{
+					@Override
+					public String apply( TestEventSourceConfig input )
+					{
+						return input.getHash();
+					}
+				} ) );
+		return eventSourceTable.getIdsByHash( hashes );
+	}
+
+	private Iterable<TestEventData> parseTestEventDbResults( final String executionId,
+			final TestEventSourceTable eventSourceTable, List<Map<String, Object>> eventDataList,
+			final int interpolationLevel )
+	{
+		return Iterables.transform( eventDataList, new Function<Map<String, Object>, TestEventData>()
+		{
+			@Override
+			public TestEventData apply( Map<String, Object> map )
 			{
 				Long timestamp = ( Long )map.get( TestEventTable.STATIC_FIELD_TIMESTAMP );
 				byte[] data = ( byte[] )map.get( TestEventTable.STATIC_FIELD_DATA );
@@ -926,15 +974,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 				Long sourceId = ( Long )map.get( TestEventTable.STATIC_FIELD_SOURCEID );
 
 				TestEventSourceConfig sourceConfig = makeTestEventSourceConfig( executionId, sourceId, eventSourceTable );
-				result.add( new TestEventData( timestamp, sourceConfig.getTypeName(), sourceConfig, data, 0 ) );
+				return new TestEventData( timestamp, sourceConfig.getTypeName(), sourceConfig, data, interpolationLevel );
 			}
-
-		}
-		catch( Exception e )
-		{
-			log.error( "Unable to read data from the database.", e );
-		}
-		return result;
+		} );
 	}
 
 	private TestEventSourceConfig makeTestEventSourceConfig( String executionId, Long sourceId,
@@ -953,61 +995,12 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 		return new TestEventSourceConfig( sourceLabel, typeName, sourceData, sourceHash, sourceId );
 	}
 
-	public <T extends TestEvent> Iterable<TestEventData> readTestEventRange( String executionId, final long startTime,
-			final long endTime, int interpolationLevel, Iterable<TestEventSourceConfig> sources )
-	{
-		loadExecution( executionId );
-		List<TestEventData> result = new ArrayList<TestEventData>();
-		try
-		{
-			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable(
-					getExecution( executionId ).getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
-
-			List<String> hashes = Lists.newArrayList( Iterables.transform( sources,
-					new Function<TestEventSourceConfig, String>()
-					{
-						@Override
-						public String apply( TestEventSourceConfig input )
-						{
-							return input.getHash();
-						}
-					} ) );
-
-			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
-
-			// create test event data table for the given interpolation level if it doesn't exist
-			String dbName = getExecution( executionId ).getExecutionDir().getName();
-			createTestEventDataTable( dbName, interpolationLevel );
-
-			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( dbName,
-					buildTestEventTableName( interpolationLevel ) );
-
-			List<Map<String, Object>> eventDataList = eventTable.getByTimeRange( sourceIds, startTime, endTime );
-			for( Map<String, Object> map : eventDataList )
-			{
-				Long timestamp = ( Long )map.get( TestEventTable.STATIC_FIELD_TIMESTAMP );
-				byte[] data = ( byte[] )map.get( TestEventTable.STATIC_FIELD_DATA );
-
-				Long sourceId = ( Long )map.get( TestEventTable.STATIC_FIELD_SOURCEID );
-				TestEventSourceConfig sourceConfig = makeTestEventSourceConfig( executionId, sourceId, eventSourceTable );
-				result.add( new TestEventData( timestamp, sourceConfig.getTypeName(), sourceConfig, data,
-						interpolationLevel ) );
-			}
-		}
-		catch( Exception e )
-		{
-			log.error( "Unable to read data to the database:", e );
-		}
-		return result;
-	}
-
 	public <T extends TestEvent> int getTestEventCount( String executionId, Iterable<TestEventSourceConfig> sources )
 	{
 		loadExecution( executionId );
 		try
 		{
-			TestEventSourceTable eventSourceTable = ( TestEventSourceTable )tableRegistry.getTable(
-					getExecution( executionId ).getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
+			TestEventSourceTable eventSourceTable = getTestEventSourceTable( executionId );
 
 			List<String> hashes = Lists.newArrayList( Iterables.transform( sources,
 					new Function<TestEventSourceConfig, String>()
@@ -1021,11 +1014,7 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 
 			List<Long> sourceIds = eventSourceTable.getIdsByHash( hashes );
 
-			// create test event data table for the given interpolation level if it doesn't exist
-			String dbName = getExecution( executionId ).getExecutionDir().getName();
-			createTestEventDataTable( dbName, 0 );
-
-			TestEventTable eventTable = ( TestEventTable )tableRegistry.getTable( dbName, buildTestEventTableName( 0 ) );
+			TestEventTable eventTable = getOrCreateTestEventDataTable( getExecution( executionId ), 0 );
 
 			return eventTable.getCount( sourceIds );
 		}

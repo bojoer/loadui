@@ -28,6 +28,7 @@ import com.eviware.loadui.config.RoutedConnectionConfig;
 import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.common.collect.Multiset;
 
+@Deprecated
 public class RoutedConnectionImpl extends ConnectionImpl implements RoutedConnection
 {
 	private final static Multiset<OutputTerminal> exportedTerminals = ConcurrentHashMultiset.create();

@@ -15,6 +15,7 @@
  */
 package com.eviware.loadui.api.terminal;
 
+@Deprecated
 public interface RoutedConnection extends Connection
 {
 	public String getScript();
