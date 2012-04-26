@@ -37,7 +37,6 @@ import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.layout.SettingsLayoutContainer;
 import com.eviware.loadui.api.serialization.Value;
 import com.eviware.loadui.api.traits.Releasable;
-import com.eviware.loadui.impl.component.categories.BaseCategory;
 import com.eviware.loadui.impl.layout.LayoutContainerImpl;
 import com.eviware.loadui.impl.layout.SettingsLayoutContainerImpl;
 import com.eviware.loadui.util.groovy.LayoutBuilder;

@@ -16,7 +16,6 @@
 package com.eviware.loadui.impl.statistics;
 
 import java.util.NavigableMap;
-import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

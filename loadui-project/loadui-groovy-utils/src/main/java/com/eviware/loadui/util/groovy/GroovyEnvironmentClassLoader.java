@@ -21,7 +21,6 @@ import groovy.lang.GroovyClassLoader;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;

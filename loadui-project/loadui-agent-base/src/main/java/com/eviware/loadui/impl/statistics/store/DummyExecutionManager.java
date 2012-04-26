@@ -12,7 +12,6 @@ import com.eviware.loadui.api.statistics.store.ExecutionListener;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
 import com.eviware.loadui.api.statistics.store.Track;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
-import com.eviware.loadui.api.statistics.store.ExecutionManager.State;
 import com.eviware.loadui.api.testevents.TestEvent.Source;
 
 public class DummyExecutionManager implements ExecutionManager

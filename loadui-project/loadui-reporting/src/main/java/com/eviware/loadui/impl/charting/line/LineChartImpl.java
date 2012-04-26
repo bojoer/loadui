@@ -20,7 +20,6 @@ import java.beans.PropertyChangeEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.EventObject;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

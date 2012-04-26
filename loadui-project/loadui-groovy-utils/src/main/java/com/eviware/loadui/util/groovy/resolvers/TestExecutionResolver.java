@@ -19,7 +19,6 @@ import groovy.lang.Closure;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.eviware.loadui.api.execution.Phase;

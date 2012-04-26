@@ -17,12 +17,8 @@ package com.eviware.loadui.test;
 
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.HeadMethod;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

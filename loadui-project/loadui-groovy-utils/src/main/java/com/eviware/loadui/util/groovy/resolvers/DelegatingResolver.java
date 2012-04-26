@@ -18,8 +18,6 @@ package com.eviware.loadui.util.groovy.resolvers;
 import groovy.lang.MissingMethodException;
 import groovy.lang.MissingPropertyException;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 

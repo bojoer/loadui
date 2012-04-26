@@ -16,7 +16,6 @@
 package com.eviware.loadui.impl.addon;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;

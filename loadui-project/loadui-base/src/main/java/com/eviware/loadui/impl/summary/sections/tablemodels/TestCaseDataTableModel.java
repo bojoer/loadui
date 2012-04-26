@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.summary.sections.tablemodels;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 

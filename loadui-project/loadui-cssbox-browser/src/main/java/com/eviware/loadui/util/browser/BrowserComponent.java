@@ -43,9 +43,6 @@ import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.WebWindow;
 import com.gargoylesoftware.htmlunit.WebWindowEvent;
 import com.gargoylesoftware.htmlunit.WebWindowListener;
-import com.gargoylesoftware.htmlunit.html.DomChangeEvent;
-import com.gargoylesoftware.htmlunit.html.DomChangeListener;
-import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.common.base.Objects;
@@ -481,31 +478,6 @@ public class BrowserComponent extends JPanel implements Browser
 		@Override
 		public void webWindowClosed( WebWindowEvent event )
 		{
-		}
-	}
-
-	private final class DomListener implements DomChangeListener
-	{
-		private static final long serialVersionUID = -6659513390279449745L;
-
-		@Override
-		public void nodeDeleted( DomChangeEvent event )
-		{
-			DomNode node = event.getChangedNode();
-			if( node != null && node.isDisplayed() )
-			{
-				parsePageContent( 0 );
-			}
-		}
-
-		@Override
-		public void nodeAdded( DomChangeEvent event )
-		{
-			DomNode node = event.getChangedNode();
-			if( node != null && node.isDisplayed() )
-			{
-				parsePageContent( 0 );
-			}
 		}
 	}
 

@@ -54,7 +54,6 @@ import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.config.SceneItemConfig;
 import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
-import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.counter.RemoteAggregatedCounterSupport;
 import com.eviware.loadui.impl.summary.MutableChapterImpl;
 import com.eviware.loadui.impl.summary.sections.TestCaseDataSection;

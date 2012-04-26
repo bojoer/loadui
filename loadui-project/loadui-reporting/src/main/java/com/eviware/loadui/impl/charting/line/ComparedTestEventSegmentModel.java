@@ -3,7 +3,6 @@ package com.eviware.loadui.impl.charting.line;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 

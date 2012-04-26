@@ -112,6 +112,12 @@ public class ComponentTestUtils
 		TerminalMessageImpl terminalMessage = new TerminalMessageImpl( BeanInjector.getBean( ConversionService.class ) );
 		terminalMessage.putAll( message );
 		component.handleTerminalEvent( terminal, new TerminalMessageEvent( outputDummy, terminalMessage ) );
+
+		if( component.getClass().getSimpleName().contains( "Mockito" ) )
+		{
+			return;
+		}
+
 		try
 		{
 			TestUtils.awaitEvents( component );

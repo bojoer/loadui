@@ -17,15 +17,17 @@ package com.eviware.loadui.impl.reporting.summary;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ValuesDataSource extends JRAbstractBeanDataSource
 {
+	protected static final Logger log = LoggerFactory.getLogger( ValuesDataSource.class );
+
 	private final Map<String, String> map;
 	private int cnt = -1;
 	private final String[] keys;

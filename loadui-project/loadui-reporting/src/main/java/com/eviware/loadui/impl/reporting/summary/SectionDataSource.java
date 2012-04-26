@@ -17,17 +17,19 @@ package com.eviware.loadui.impl.reporting.summary;
 
 import java.util.List;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRField;
+import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.summary.Section;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRField;
-import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
-
 public class SectionDataSource extends JRAbstractBeanDataSource
 {
+	protected static final Logger log = LoggerFactory.getLogger( SectionDataSource.class );
+
 	private final List<Section> section;
 	private int cnt = -1;
 

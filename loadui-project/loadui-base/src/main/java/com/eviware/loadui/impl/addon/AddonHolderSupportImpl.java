@@ -16,7 +16,6 @@
 package com.eviware.loadui.impl.addon;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.eviware.loadui.api.addon.Addon;

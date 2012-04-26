@@ -19,7 +19,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.eviware.loadui.api.addon.Addon;
