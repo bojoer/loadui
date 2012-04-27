@@ -185,7 +185,7 @@ public class CircularList<E> extends AbstractList<E> implements RandomAccess, Cl
 	}
 
 	@Override
-	public Object clone()
+	public Object clone() throws CloneNotSupportedException
 	{
 		try
 		{

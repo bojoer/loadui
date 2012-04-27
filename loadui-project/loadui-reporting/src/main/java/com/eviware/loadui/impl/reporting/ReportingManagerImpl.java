@@ -106,15 +106,8 @@ public class ReportingManagerImpl implements ReportingManager
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
 			Map<Object, Image> charts, JasperPrint jpToPrepend )
 	{
-		try
-		{
-			reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ),
-					"ResultsReport", execution.getLabel(), jpToPrepend );
-		}
-		catch( JRException e )
-		{
-			e.printStackTrace();
-		}
+		reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ), "ResultsReport",
+				execution.getLabel(), jpToPrepend );
 	}
 
 	@Override
