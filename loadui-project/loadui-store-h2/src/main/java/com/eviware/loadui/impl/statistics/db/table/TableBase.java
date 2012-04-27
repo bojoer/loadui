@@ -284,10 +284,6 @@ public abstract class TableBase implements Releasable
 				stm.execute( addPkIndexScript );
 			}
 		}
-		catch( SQLException e )
-		{
-			throw e;
-		}
 		finally
 		{
 			JdbcUtil.close( stm );
@@ -357,10 +353,6 @@ public abstract class TableBase implements Releasable
 		try
 		{
 			stm.execute( "drop table " + tableName );
-		}
-		catch( SQLException e )
-		{
-			throw e;
 		}
 		finally
 		{

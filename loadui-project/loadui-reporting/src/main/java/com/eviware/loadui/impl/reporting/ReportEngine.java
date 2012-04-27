@@ -172,7 +172,7 @@ public class ReportEngine
 	}
 
 	public void generateJasperReport( JRDataSource dataSource, String selectedReportName, String title,
-			JasperPrint prepend ) throws JRException
+			JasperPrint prepend )
 	{
 		LReportTemplate selectedReport = getReport( selectedReportName );
 		// // fill report with data
@@ -250,7 +250,7 @@ public class ReportEngine
 	// loads all jasper reports from reports dir
 	private void loadReports()
 	{
-		File[] reports = reportDirectory.listFiles( new FilenameFilter()
+		File[] loadedReports = reportDirectory.listFiles( new FilenameFilter()
 		{
 			@Override
 			public boolean accept( File dir, String name )
@@ -258,12 +258,12 @@ public class ReportEngine
 				return name.endsWith( "jrxml" );
 			}
 		} );
-		if( reports == null )
-			reports = new File[0];
-		for( File reportTemplate : reports )
+		if( loadedReports == null )
+			loadedReports = new File[0];
+		for( File reportTemplate : loadedReports )
 		{
-			this.reports.put( reportTemplate.getName().replace( ".jrxml", "" ),
-					new LReportTemplate( reportTemplate.getName(), reportTemplate ) );
+			reports.put( reportTemplate.getName().replace( ".jrxml", "" ), new LReportTemplate( reportTemplate.getName(),
+					reportTemplate ) );
 		}
 	}
 

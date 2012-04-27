@@ -47,8 +47,8 @@ public class InterpolatedTestEvent extends AbstractTestEvent
 
 	public static InterpolatedTestEvent createEvent( Class<? extends TestEvent> type, long timestamp, byte[] data )
 	{
-		boolean strong = !Arrays.equals( notStrong, data );
-		return strong ? new Group( type, timestamp ) : new InterpolatedTestEvent( type, timestamp );
+		boolean isStrong = !Arrays.equals( notStrong, data );
+		return isStrong ? new Group( type, timestamp ) : new InterpolatedTestEvent( type, timestamp );
 	}
 
 	public static byte[] dataFor( InterpolatedTestEvent event )

@@ -43,7 +43,6 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 	private final static Logger log = LoggerFactory.getLogger( AgentDiscoveryImpl.class );
 
 	private final DatagramSocket socket;
-	private final DatagramPacket packet;
 	private final Thread listenerThread;
 	private final Set<AgentReference> agents = Collections.synchronizedSet( new HashSet<AgentReference>() );
 
@@ -62,7 +61,8 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 
 		try
 		{
-			packet = new DatagramPacket( buf, buf.length, InetAddress.getByName( "255.255.255.255" ), BROADCAST_PORT );
+			final DatagramPacket sendPacket = new DatagramPacket( buf, buf.length, InetAddress.getByName( "255.255.255.255" ),
+					BROADCAST_PORT );
 			socket = new DatagramSocket();
 			socket.setBroadcast( true );
 
@@ -72,17 +72,17 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 				public void run()
 				{
 					byte[] buf;
-					DatagramPacket packet;
+					DatagramPacket receivePacket;
 					try
 					{
 						while( !socket.isClosed() )
 						{
 							buf = new byte[1024];
-							packet = new DatagramPacket( buf, buf.length );
-							socket.receive( packet );
+							receivePacket = new DatagramPacket( buf, buf.length );
+							socket.receive( receivePacket );
 
-							String received = new String( packet.getData(), 0, packet.getLength() ).replaceAll( "127.0.0.1",
-									packet.getAddress().getHostAddress() );
+							String received = new String( receivePacket.getData(), 0, receivePacket.getLength() ).replaceAll( "127.0.0.1",
+									receivePacket.getAddress().getHostAddress() );
 							String[] parts = received.split( " " );
 							if( parts.length == 4 && LoadUI.AGENT.equals( parts[0] ) )
 								if( agents.add( new AgentRefImpl( parts[1], parts[2], parts[3] ) ) )
@@ -108,7 +108,7 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 				{
 					try
 					{
-						socket.send( packet );
+						socket.send( sendPacket );
 					}
 					catch( IOException e )
 					{

@@ -33,7 +33,7 @@ public class AgentWrapper
 	private final OSGiLauncher launcher;
 	private final BundleContext context;
 
-	public AgentWrapper() throws BundleException, IOException
+	public AgentWrapper() throws IOException
 	{
 		if( baseDir.exists() )
 			Utilities.deleteRecursive( baseDir );
@@ -67,10 +67,6 @@ public class AgentWrapper
 		try
 		{
 			launcher.stop();
-		}
-		catch( BundleException e )
-		{
-			throw e;
 		}
 		finally
 		{

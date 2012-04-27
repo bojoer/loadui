@@ -170,9 +170,9 @@ final public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Tes
 		try
 		{
 			@SuppressWarnings( "unchecked" )
-			Constraint<? super T> constraint = ( Constraint<? super T> )SerializationUtils.deserialize( addonSupport
+			Constraint<? super T> newConstraint = ( Constraint<? super T> )SerializationUtils.deserialize( addonSupport
 					.getAttribute( CONSTRAINT, null ) );
-			this.constraint = constraint;
+			this.constraint = newConstraint;
 		}
 		catch( ClassNotFoundException e )
 		{

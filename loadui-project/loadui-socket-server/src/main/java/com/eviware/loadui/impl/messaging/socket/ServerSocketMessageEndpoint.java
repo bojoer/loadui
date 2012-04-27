@@ -50,7 +50,7 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint, Initializab
 	private final SocketServerEndpoint socketServerEndpoint;
 	private final SSLSocket socket;
 
-	public ServerSocketMessageEndpoint( SocketServerEndpoint socketServerEndpoint, SSLSocket socket ) throws IOException
+	public ServerSocketMessageEndpoint( SocketServerEndpoint socketServerEndpoint, SSLSocket socket )
 	{
 		this.socketServerEndpoint = socketServerEndpoint;
 		this.socket = socket;

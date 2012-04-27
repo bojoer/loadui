@@ -531,9 +531,9 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	{
 		log.debug( "Generating summary for: {}", CanvasItemImpl.this );
 		endTime = new Date();
-		MutableSummary summary = new MutableSummaryImpl( getStartTime(), getEndTime() );
-		appendToSummary( summary );
-		CanvasItemImpl.this.summary = summary;
+		MutableSummary generatedSummary = new MutableSummaryImpl( getStartTime(), getEndTime() );
+		appendToSummary( generatedSummary );
+		summary = generatedSummary;
 		fireBaseEvent( SUMMARY );
 		triggerAction( READY_ACTION );
 	}

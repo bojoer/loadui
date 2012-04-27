@@ -49,7 +49,7 @@ public class ConnectionRegistry implements Releasable
 	 * @return Data source for a specified database
 	 * @throws SQLException
 	 */
-	public DataSource getDataSource( String dbName ) throws SQLException
+	public DataSource getDataSource( String dbName )
 	{
 		if( !dataSourceMap.containsKey( dbName ) )
 		{

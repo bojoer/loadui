@@ -110,15 +110,15 @@ public class LineSegmentChartModel extends AbstractLineSegmentModel implements L
 
 	private void loadStyles()
 	{
-		int scale = 0;
+		int newScale = 0;
 		try
 		{
-			scale = Integer.parseInt( segment.getAttribute( SCALE, "0" ) );
+			newScale = Integer.parseInt( segment.getAttribute( SCALE, "0" ) );
 		}
 		catch( NumberFormatException e )
 		{
 		}
-		setScale( scale, false );
+		setScale( newScale, false );
 
 		String colorStr = segment.getAttribute( COLOR, null );
 		if( colorStr == null )

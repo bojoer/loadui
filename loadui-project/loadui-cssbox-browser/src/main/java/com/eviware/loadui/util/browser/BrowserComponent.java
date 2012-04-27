@@ -66,7 +66,7 @@ public class BrowserComponent extends JPanel implements Browser
 	private double desiredHeight = 100;
 	private double pageHeight = 0;
 
-	public BrowserComponent() throws FailingHttpStatusCodeException, IOException
+	public BrowserComponent() throws FailingHttpStatusCodeException
 	{
 		super( new BorderLayout() );
 

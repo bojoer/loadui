@@ -124,10 +124,6 @@ public class ControllerWrapper
 		{
 			launcher.stop();
 		}
-		catch( BundleException e )
-		{
-			throw e;
-		}
 		finally
 		{
 			Utilities.deleteRecursive( baseDir );
