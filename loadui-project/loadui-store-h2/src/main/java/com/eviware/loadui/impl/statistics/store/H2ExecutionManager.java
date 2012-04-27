@@ -18,14 +18,12 @@ package com.eviware.loadui.impl.statistics.store;
 import java.io.File;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
 import org.h2.jdbcx.JdbcConnectionPool;
 
 import com.eviware.loadui.api.testevents.TestEventRegistry;
 import com.eviware.loadui.impl.statistics.db.DatabaseMetadata;
 
-public class H2ExecutionManager extends ExecutionManagerImpl
+public class H2ExecutionManager extends ExecutionManagerImpl<JdbcConnectionPool>
 {
 	public static final String SQL_CREATE_TABLE_EXPRESSION = "CREATE TABLE";
 	public static final String SQL_ADD_PRIMARY_KEY_INDEX_EXPRESSION = "ALTER TABLE ? ADD CONSTRAINT ?_pk_index PRIMARY KEY(?)";
@@ -44,7 +42,7 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	}
 
 	@Override
-	public DataSource createDataSource( String db )
+	public JdbcConnectionPool createDataSource( String db )
 	{
 		JdbcConnectionPool pool = JdbcConnectionPool
 				.create(
@@ -61,11 +59,11 @@ public class H2ExecutionManager extends ExecutionManagerImpl
 	}
 
 	@Override
-	public void releaseDataSource( DataSource dataSource )
+	public void releaseDataSource( JdbcConnectionPool dataSource )
 	{
 		try
 		{
-			( ( JdbcConnectionPool )dataSource ).dispose();
+			dataSource.dispose();
 		}
 		catch( SQLException e )
 		{

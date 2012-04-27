@@ -202,7 +202,8 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 						{
 							try
 							{
-								file.createNewFile();
+								if( !file.createNewFile() )
+									log.debug( "Failed creating file: " + file.getAbsolutePath() );
 								writers.put( hash, new FileOutputStream( file ) );
 							}
 							catch( FileNotFoundException e )
@@ -237,6 +238,10 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 									{
 										log.error( "File transfered with MD5 hash: {}, should be {}. Retrying...", md5Hex, hash );
 										file.delete();
+
+										if( !file.delete() )
+											log.error( "Failed to delete file: " + file.getAbsolutePath() );
+
 										endpoint.sendMessage( FileToReferenceConverter.CHANNEL, hash );
 									}
 								}

@@ -23,6 +23,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import aQute.lib.io.IO;
 import aQute.lib.osgi.Analyzer;
 import aQute.lib.osgi.Builder;
@@ -39,7 +42,7 @@ import aQute.lib.osgi.Verifier;
  */
 public class BndUtils
 {
-	//public static final Logger log = LoggerFactory.getLogger( BNDUtils.class );
+	protected static final Logger log = LoggerFactory.getLogger( BndUtils.class );
 
 	/**
 	 * Takes all jar and ZIP files from folder specified by sourceDir parameter,
@@ -95,7 +98,8 @@ public class BndUtils
 		} );
 		for( File file : filesToRemove )
 		{
-			file.delete();
+			if( !file.delete() )
+				log.error( "Failed deleting file: " + file.getAbsolutePath() );
 		}
 	}
 
@@ -240,7 +244,8 @@ public class BndUtils
 			}
 			finally
 			{
-				f.delete();
+				if( !f.delete() )
+					log.error( "Failed deleting file: " + f.getAbsolutePath() );
 			}
 			return true;
 		}

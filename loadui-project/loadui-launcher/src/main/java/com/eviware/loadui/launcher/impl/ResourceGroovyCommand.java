@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
 
-public class ResourceGroovyCommand extends AbstractGroovyCommand
+public final class ResourceGroovyCommand extends AbstractGroovyCommand
 {
 	private final String scriptName;
 

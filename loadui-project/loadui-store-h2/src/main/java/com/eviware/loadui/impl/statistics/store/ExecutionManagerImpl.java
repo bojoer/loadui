@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +97,8 @@ import com.google.common.collect.Sets;
  * @author predrag.vucetic
  * 
  */
-public abstract class ExecutionManagerImpl implements ExecutionManager, DataSourceProvider, Releasable
+public abstract class ExecutionManagerImpl<Type extends DataSource> implements ExecutionManager,
+		DataSourceProvider<Type>, Releasable
 {
 	private static Logger log = LoggerFactory.getLogger( ExecutionManagerImpl.class );
 

@@ -24,7 +24,7 @@ import javax.sql.DataSource;
  * @author predrag.vucetic
  * 
  */
-public interface DataSourceProvider
+public interface DataSourceProvider<Type extends DataSource>
 {
 	/**
 	 * Creates data source for the specified database
@@ -33,7 +33,7 @@ public interface DataSourceProvider
 	 *           Name of the database for which data source needs to be created
 	 * @return Created data source
 	 */
-	public DataSource createDataSource( String dbName );
+	public Type createDataSource( String dbName );
 
 	/**
 	 * Releases data source
@@ -41,5 +41,5 @@ public interface DataSourceProvider
 	 * @param dataSource
 	 *           data source to release
 	 */
-	public void releaseDataSource( DataSource dataSource );
+	public void releaseDataSource( Type dataSource );
 }

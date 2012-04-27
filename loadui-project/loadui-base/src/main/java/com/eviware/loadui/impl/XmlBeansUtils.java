@@ -23,13 +23,18 @@ import java.util.List;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlTokenSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XmlBeansUtils
 {
+	protected static Logger log = LoggerFactory.getLogger( XmlBeansUtils.class );
+
 	public static void saveToFile( XmlTokenSource source, File target ) throws IOException
 	{
 		File backup = File.createTempFile( "loadui-temp-", ".bak", target.getParentFile() );
-		backup.delete();
+		if( !backup.delete() )
+			log.error( "Failed to delete file: " + backup.getAbsolutePath() );
 
 		File temp = File.createTempFile( "loadui-temp-", ".xml", target.getParentFile() );
 		source.save( temp );
@@ -40,11 +45,13 @@ public class XmlBeansUtils
 		}
 		if( !temp.renameTo( target ) )
 		{
-			backup.delete();
+			if( !backup.delete() )
+				log.error( "Failed to delete file: " + backup.getAbsolutePath() );
 			throw new IOException( "Error saving file: " + target + "! Unable to write to file!" );
 		}
 
-		backup.delete();
+		if( !backup.delete() )
+			log.error( "Failed to delete file: " + backup.getAbsolutePath() );
 	}
 
 	@SuppressWarnings( "unchecked" )
