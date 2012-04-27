@@ -44,9 +44,9 @@ public class InterpolationLevelTable extends TableBase
 		try
 		{
 			List<Map<String, Object>> result = select( null );
-			for( int i = 0; i < result.size(); i++ )
+			for( Map<String, Object> dbRow : result )
 			{
-				inMemoryTable.add( ( Integer )result.get( i ).get( STATIC_FIELD_INTERPOLATION_LEVEL ) );
+				inMemoryTable.add( ( Integer )dbRow.get( STATIC_FIELD_INTERPOLATION_LEVEL ) );
 			}
 		}
 		catch( SQLException e )

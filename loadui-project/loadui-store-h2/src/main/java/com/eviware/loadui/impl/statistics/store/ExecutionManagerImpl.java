@@ -541,9 +541,8 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 					// corresponding component has been deleted, so its data won't be
 					// shown anyway.
 					List<String> trackList = trackMetaTable.listAllTracks();
-					for( int i = 0; i < trackList.size(); i++ )
+					for( String trackId : trackList )
 					{
-						String trackId = trackList.get( i );
 						TrackDescriptor td = trackDescriptors.get( trackId );
 						if( td != null )
 						{
@@ -577,9 +576,9 @@ public abstract class ExecutionManagerImpl implements ExecutionManager, DataSour
 					tableRegistry.putAll( dbName, createdTableList );
 
 					// create tracks and add them to execution
-					for( int i = 0; i < tracksToCreate.size(); i++ )
+					for( TrackDescriptor t : tracksToCreate )
 					{
-						Track track = new TrackImpl( execution, tracksToCreate.get( i ), this );
+						Track track = new TrackImpl( execution, t, this );
 						execution.addTrack( track );
 					}
 

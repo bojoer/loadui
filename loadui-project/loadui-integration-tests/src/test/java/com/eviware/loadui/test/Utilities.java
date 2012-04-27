@@ -48,13 +48,11 @@ public class Utilities
 	{
 		if( sourceLocation.isDirectory() )
 		{
-			if( !targetLocation.exists() )
-				if( !targetLocation.mkdir() )
-					throw new IOException( "Unable to create directory: " + targetLocation );
+			if( !targetLocation.exists() && !targetLocation.mkdir() )
+				throw new IOException( "Unable to create directory: " + targetLocation );
 
-			String[] children = sourceLocation.list();
-			for( int i = 0; i < children.length; i++ )
-				copyDirectory( new File( sourceLocation, children[i] ), new File( targetLocation, children[i] ) );
+			for( String child : sourceLocation.list() )
+				copyDirectory( new File( sourceLocation, child ), new File( targetLocation, child ) );
 		}
 		else
 		{

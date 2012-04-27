@@ -26,7 +26,7 @@ import com.eviware.loadui.impl.statistics.db.table.TableBase;
 
 public class TableRegistry implements Releasable
 {
-	private Map<String, TableBase> tableMap = new HashMap<String, TableBase>();
+	private final Map<String, TableBase> tableMap = new HashMap<String, TableBase>();
 
 	public void putAll( String dbName, List<TableBase> tableList )
 	{
@@ -69,10 +69,9 @@ public class TableRegistry implements Releasable
 	 */
 	public void release( String dbName )
 	{
-		List<TableBase> tableList = getAllTables( dbName );
-		for( int i = 0; i < tableList.size(); i++ )
+		for( TableBase tb : getAllTables( dbName ) )
 		{
-			release( dbName, tableList.get( i ).getExternalName() );
+			release( dbName, tb.getExternalName() );
 		}
 	}
 

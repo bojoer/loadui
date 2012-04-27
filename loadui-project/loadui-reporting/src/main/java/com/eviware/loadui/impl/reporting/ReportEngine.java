@@ -71,7 +71,6 @@ public class ReportEngine
 	public ReportEngine()
 	{
 		loadReports();
-
 		protocolFactory = new ReportProtocolFactory( this );
 	}
 
@@ -279,10 +278,8 @@ public class ReportEngine
 	@SuppressWarnings( "unchecked" )
 	public JasperPrint mergeJprints( JasperPrint jp1, JasperPrint jp2 )
 	{
-		List<JRPrintPage> jPages2 = jp2.getPages();
-		for( Iterator<JRPrintPage> iter = jPages2.iterator(); iter.hasNext(); )
+		for( JRPrintPage jPage : ( List<JRPrintPage> )jp2.getPages() )
 		{
-			JRPrintPage jPage = iter.next();
 			jp1.addPage( jPage );
 		}
 		jp1.setPageHeight( jp2.getPageHeight() );

@@ -209,32 +209,32 @@ public class ChartModel
 
 	private void firePointAddedToModel( ChartSerie cs, Point p )
 	{
-		for( Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext(); )
-			iterator.next().pointAddedToModel( cs, p );
+		for( ChartListener c : chartListenerList )
+			c.pointAddedToModel( cs, p );
 	}
 
 	private void fireSerieCleared( ChartSerie cs )
 	{
-		for( Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext(); )
-			iterator.next().serieCleared( cs );
+		for( ChartListener c : chartListenerList )
+			c.serieCleared( cs );
 	}
 
 	private void fireChartCleared()
 	{
-		for( Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext(); )
-			iterator.next().chartCleared();
+		for( ChartListener c : chartListenerList )
+			c.chartCleared();
 	}
 
 	private void fireSerieEnabled( ChartSerie cs )
 	{
-		for( Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext(); )
-			iterator.next().serieEnabled( cs );
+		for( ChartListener c : chartListenerList )
+			c.serieEnabled( cs );
 	}
 
 	private void fireTestStateChanged( boolean running )
 	{
-		for( Iterator<ChartListener> iterator = chartListenerList.iterator(); iterator.hasNext(); )
-			iterator.next().testStateChanged( running );
+		for( ChartListener c : chartListenerList )
+			c.testStateChanged( running );
 	}
 
 	public int getLegendColumns()

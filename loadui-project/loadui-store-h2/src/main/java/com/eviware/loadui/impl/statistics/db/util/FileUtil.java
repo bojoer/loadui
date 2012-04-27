@@ -22,19 +22,17 @@ public class FileUtil
 	public static boolean deleteDirectory( File directory )
 	{
 		boolean result = true;
-		File[] files = directory.listFiles();
-		for( int i = 0; i < files.length; i++ )
+		for( File f : directory.listFiles() )
 		{
-			if( files[i].isDirectory() )
+			if( f.isDirectory() )
 			{
-				result = result && deleteDirectory( files[i] );
+				result = result && deleteDirectory( f );
 			}
 			else
 			{
-				result = result && files[i].delete();
+				result = result && f.delete();
 			}
 		}
-		result = result && directory.delete();
-		return result;
+		return result && directory.delete();
 	}
 }

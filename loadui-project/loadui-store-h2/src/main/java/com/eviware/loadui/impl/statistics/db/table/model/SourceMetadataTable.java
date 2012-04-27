@@ -42,10 +42,9 @@ public class SourceMetadataTable extends TableBase
 
 		try
 		{
-			List<Map<String, Object>> result = select( null );
-			for( int i = 0; i < result.size(); i++ )
+			for( Map<String, Object> dbRow : select( null ) )
 			{
-				inMemoryTable.add( ( String )result.get( i ).get( STATIC_FIELD_SOURCE_NAME ) );
+				inMemoryTable.add( ( String )dbRow.get( STATIC_FIELD_SOURCE_NAME ) );
 			}
 		}
 		catch( SQLException e )

@@ -422,8 +422,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	@Override
 	public Set<Statistic.Descriptor> getDefaultStatistics()
 	{
-		return ImmutableSet.<Statistic.Descriptor> copyOf( Iterables.filter( defaultStatistics,
-				Statistic.Descriptor.class ) );
+		return ImmutableSet.copyOf( Iterables.filter( defaultStatistics, Statistic.Descriptor.class ) );
 	}
 
 	private class TerminalEventHandler implements Runnable

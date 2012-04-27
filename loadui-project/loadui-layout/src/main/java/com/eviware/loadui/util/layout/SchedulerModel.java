@@ -278,12 +278,10 @@ public class SchedulerModel extends Observable
 		{
 			result.put( i, new ArrayList<ExecutionTime>() );
 		}
-		for( int i = 0; i < nextList.size(); i++ )
+		for( ExecutionTime et : nextList )
 		{
-			int day = nextList.get( i ).getDay();
-			result.get( day ).add( nextList.get( i ) );
+			result.get( et.getDay() ).add( et );
 		}
 		return result;
 	}
-
 }

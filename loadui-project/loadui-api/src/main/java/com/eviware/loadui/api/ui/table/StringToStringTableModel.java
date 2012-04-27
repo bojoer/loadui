@@ -159,10 +159,9 @@ public class StringToStringTableModel extends KeyValueTableModel
 		{
 			return;
 		}
-		String[] pairs = property.getValue().split( "\\|" );
-		for( int i = 0; i < pairs.length; i++ )
+		for( String pair : property.getValue().split( "\\|" ) )
 		{
-			String[] p = pairs[i].split( "=" );
+			String[] p = pair.split( "=" );
 			if( p.length == 2 )
 			{
 				data.add( new StringProperty( unescape( p[0] ), unescape( p[1] ) ) );

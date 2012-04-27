@@ -74,10 +74,10 @@ public class ConnectionRegistry implements Releasable
 				connectionsToClose.add( key );
 			}
 		}
-		for( int i = 0; i < connectionsToClose.size(); i++ )
+		for( String c : connectionsToClose )
 		{
 			// remove connection from connection map and close it
-			JdbcUtil.close( connectionMap.remove( connectionsToClose.get( i ) ) );
+			JdbcUtil.close( connectionMap.remove( c ) );
 		}
 
 		// release database data source

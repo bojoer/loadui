@@ -23,8 +23,8 @@ public class SoapUIStarter
 	public static final long START_TIMEOUT = 20000;
 
 	private static Logger logger = LoggerFactory.getLogger( SoapUIStarter.class );
-	private static boolean isWindows = System.getProperty( "os.name" ).indexOf( "Windows" ) >= 0;
-	private static boolean isOSX = System.getProperty( "os.name" ).indexOf( "Mac OS X" ) >= 0;
+	private static boolean isWindows = System.getProperty( "os.name" ).contains( "Windows" );
+	private static boolean isOSX = System.getProperty( "os.name" ).contains( "Mac OS X" );
 
 	public static void start( String soapUIbatPath )
 	{

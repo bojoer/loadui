@@ -102,10 +102,9 @@ public class TestEventTypeTable extends TableBase
 		try
 		{
 			inMemoryTable.clear();
-			List<Map<String, Object>> result = select( null );
-			for( int i = 0; i < result.size(); i++ )
+			for( Map<String, Object> dbRow : select( null ) )
 			{
-				inMemoryTable.put( ( String )result.get( i ).get( STATIC_FIELD_TYPE ), result.get( i ) );
+				inMemoryTable.put( ( String )dbRow.get( STATIC_FIELD_TYPE ), dbRow );
 			}
 		}
 		catch( SQLException e )
