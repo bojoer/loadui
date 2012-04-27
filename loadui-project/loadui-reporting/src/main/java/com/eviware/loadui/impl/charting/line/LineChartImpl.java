@@ -139,8 +139,8 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 		if( zoomLevel == ZoomLevel.ALL )
 		{
 			long maxTime = getMaxTime();
-			long position = getPosition();
-			if( timeSpan != maxTime || position != 0 )
+			long pos = getPosition();
+			if( timeSpan != maxTime || pos != 0 )
 			{
 				position = 0;
 				timeSpan = getMaxTime();
