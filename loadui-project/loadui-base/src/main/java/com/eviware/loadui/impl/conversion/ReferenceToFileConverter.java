@@ -237,7 +237,6 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 									else
 									{
 										log.error( "File transfered with MD5 hash: {}, should be {}. Retrying...", md5Hex, hash );
-										file.delete();
 
 										if( !file.delete() )
 											log.error( "Failed to delete file: " + file.getAbsolutePath() );
