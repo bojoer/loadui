@@ -100,9 +100,9 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 				position = 0;
 			}
 		}
-		long position = getPosition();
+		long pos = getPosition();
 
-		xRange = new LongRange( position, position + timeSpan );
+		xRange = new LongRange( pos, pos + timeSpan );
 		NumericAxis xAxis = new NumericAxis( xRange );
 		xAxis.setTickCalculator( timeCalculator );
 		setXAxis( xAxis );
@@ -318,8 +318,8 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 							lines.put( lineSegment, lineModel );
 							if( mainExecution != null )
 								lineModel.setExecution( mainExecution );
-							long position = getPosition();
-							lineModel.setXRange( position - PADDING, position + timeSpan + PADDING );
+							long pos = getPosition();
+							lineModel.setXRange( pos - PADDING, pos + timeSpan + PADDING );
 							addModel( lineModel, lineModel.getChartStyle() );
 							if( comparedExecution != null )
 							{
@@ -340,8 +340,8 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 							testEventSegments.put( testEventSegment, eventModel );
 							if( mainExecution != null )
 								eventModel.setExecution( mainExecution );
-							long position = getPosition();
-							eventModel.setXRange( position - PADDING, position + timeSpan + PADDING );
+							long pos = getPosition();
+							eventModel.setXRange( pos - PADDING, pos + timeSpan + PADDING );
 							if( comparedExecution != null )
 							{
 								ComparedTestEventSegmentModel comparedModel = new ComparedTestEventSegmentModel(
@@ -427,11 +427,11 @@ public class LineChartImpl extends Chart implements LineChart, Releasable
 
 	private void updateXRange()
 	{
-		long position = getPosition();
-		xRange.setMin( position );
-		xRange.setMax( position + timeSpan );
-		long xMin = position - PADDING;
-		long xMax = position + timeSpan + PADDING;
+		long pos = getPosition();
+		xRange.setMin( pos );
+		xRange.setMax( pos + timeSpan );
+		long xMin = pos - PADDING;
+		long xMax = pos + timeSpan + PADDING;
 		for( LineSegmentChartModel lineModel : lines.values() )
 			lineModel.setXRange( xMin, xMax );
 
