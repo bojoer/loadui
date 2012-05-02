@@ -143,7 +143,7 @@ public class ChartImpl implements Chart
 	}
 
 	@Override
-	public void fireEvent( EventObject event )
+	public final void fireEvent( EventObject event )
 	{
 		eventSupport.fireEvent( event );
 	}

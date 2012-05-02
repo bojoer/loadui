@@ -38,7 +38,7 @@ import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.messaging.MessageEndpointSupport;
 import com.google.common.collect.ImmutableMap;
 
-public class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements AgentItem
+public final class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements AgentItem
 {
 	private final WorkspaceItem workspace;
 	private final MessageEndpointProvider provider;

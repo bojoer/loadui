@@ -34,7 +34,7 @@ import com.eviware.loadui.impl.property.AttributeHolderSupport;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.events.EventSupport;
 
-public class ProjectRefImpl implements ProjectRef, Releasable
+public final class ProjectRefImpl implements ProjectRef, Releasable
 {
 	public static final Logger log = LoggerFactory.getLogger( ProjectRefImpl.class );
 

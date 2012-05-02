@@ -35,7 +35,7 @@ import com.eviware.loadui.api.statistics.model.chart.line.LineSegment;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.jidesoft.chart.style.ChartStyle;
 
-public class LineSegmentChartModel extends AbstractLineSegmentModel implements LineSegmentModel
+public final class LineSegmentChartModel extends AbstractLineSegmentModel implements LineSegmentModel
 {
 	public static final Logger log = LoggerFactory.getLogger( LineSegmentChartModel.class );
 

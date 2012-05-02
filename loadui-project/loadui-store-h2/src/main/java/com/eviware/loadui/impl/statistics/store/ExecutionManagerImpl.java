@@ -114,7 +114,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 				}
 			} );
 
-	private static ExecutionManagerImpl instance;
+	private static ExecutionManagerImpl<? extends DataSource> instance;
 
 	private WorkspaceItem workspace = null;
 
@@ -204,7 +204,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 		setInstance( this );
 	}
 
-	private static void setInstance( ExecutionManagerImpl instance )
+	private static void setInstance( ExecutionManagerImpl<? extends DataSource> instance )
 	{
 		ExecutionManagerImpl.instance = instance;
 	}
@@ -425,7 +425,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 	}
 
 	@Override
-	public Collection<Execution> getExecutions()
+	public final Collection<Execution> getExecutions()
 	{
 		File baseDir = new File( getDBBaseDir() );
 		if( !baseDir.exists() )
@@ -468,7 +468,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 	}
 
 	@Override
-	public ExecutionImpl getExecution( String executionId )
+	public final ExecutionImpl getExecution( String executionId )
 	{
 		// If not loaded, force a re-read of the executions directory.
 		if( !executionMap.containsKey( executionId ) )
@@ -498,7 +498,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 	 *           ID of execution that has to be loaded
 	 * @return Loaded execution
 	 */
-	public Execution loadExecution( String executionId )
+	public final Execution loadExecution( String executionId )
 	{
 		ExecutionImpl execution = getExecution( executionId );
 		synchronized( execution )

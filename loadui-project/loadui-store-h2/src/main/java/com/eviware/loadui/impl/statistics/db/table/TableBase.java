@@ -118,7 +118,7 @@ public abstract class TableBase implements Releasable
 		}
 	}
 
-	protected StatementHolder createTableSelectScript()
+	protected final StatementHolder createTableSelectScript()
 	{
 		List<String[]> selectCriteria = descriptor.getSelectCriteria();
 		StatementHolder sh = new StatementHolder();
