@@ -48,7 +48,7 @@ import com.jidesoft.chart.axis.DefaultNumericTickCalculator;
 import com.jidesoft.chart.axis.NumericAxis;
 import com.jidesoft.chart.model.ChartModel;
 
-public class LineChartImpl extends Chart implements LineChart, Releasable
+final public class LineChartImpl extends Chart implements LineChart, Releasable
 {
 	private static final long serialVersionUID = 3338444055712838741L;
 

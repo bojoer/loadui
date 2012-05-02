@@ -40,7 +40,8 @@ public class XmlBeansUtils
 		source.save( temp );
 		if( !target.renameTo( backup ) )
 		{
-			temp.delete();
+			if( !temp.delete() )
+				log.error( "Failed to delete file: " + temp.getAbsolutePath() );
 			throw new IOException( "Error saving file: " + target + "! Unable to create backup!" );
 		}
 		if( !temp.renameTo( target ) )

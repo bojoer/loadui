@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author dain.nilsson
  */
+
 public class EntryImpl implements Entry
 {
 	private final long timestamp;
