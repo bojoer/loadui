@@ -32,6 +32,7 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.summary.Summary;
 import com.eviware.loadui.impl.reporting.statistics.ExecutionDataSource;
 import com.eviware.loadui.impl.reporting.summary.SummaryDataSource;
+import com.google.common.io.Closeables;
 
 public class ReportingManagerImpl implements ReportingManager
 {
@@ -149,17 +150,7 @@ public class ReportingManagerImpl implements ReportingManager
 		}
 		finally
 		{
-			if( ois != null )
-			{
-				try
-				{
-					ois.close();
-				}
-				catch( IOException e )
-				{
-					// ignore
-				}
-			}
+			Closeables.closeQuietly( ois );
 		}
 	}
 }

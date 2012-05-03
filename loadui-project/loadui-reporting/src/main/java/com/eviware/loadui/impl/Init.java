@@ -22,6 +22,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.Closeables;
 import com.jidesoft.utils.Lm;
 
 /**
@@ -52,17 +53,7 @@ public class Init
 		}
 		finally
 		{
-			if( licenseStream != null )
-			{
-				try
-				{
-					licenseStream.close();
-				}
-				catch( IOException e )
-				{
-					log.error( "Failed to initialize JIDE:", e );
-				}
-			}
+			Closeables.closeQuietly( licenseStream );
 		}
 	}
 }

@@ -32,6 +32,7 @@ import org.jdesktop.swingx.JXTable;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.eviware.loadui.api.ui.table.LTableModel;
+import com.google.common.io.Closeables;
 
 public class LTable extends JXTable
 {
@@ -120,23 +121,14 @@ public class LTable extends JXTable
 				writer.writeNext( convertToStringArray( model.getRowAt( cnt ) ) );
 			writer.flush();
 		}
-		catch( Exception e )
+		catch( IOException e )
 		{
 			e.printStackTrace();
 			result = false;
 		}
 		finally
 		{
-			if( writer != null )
-				try
-				{
-					writer.close();
-				}
-				catch( IOException e )
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			Closeables.closeQuietly( writer );
 		}
 		return result;
 	}

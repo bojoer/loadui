@@ -24,6 +24,8 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.Closeables;
+
 public class LReportTemplate
 {
 	private String path;
@@ -31,7 +33,7 @@ public class LReportTemplate
 	private String xml = null;
 	private String description;
 
-	private Logger log = LoggerFactory.getLogger( LReportTemplate.class );
+	private final Logger log = LoggerFactory.getLogger( LReportTemplate.class );
 	private long lastModified;
 
 	public LReportTemplate( LReportTemplate report )
@@ -99,15 +101,7 @@ public class LReportTemplate
 		}
 		finally
 		{
-			if( reader != null )
-				try
-				{
-					reader.close();
-				}
-				catch( IOException e )
-				{
-					log.error( "Error reading report template file " + path, e );
-				}
+			Closeables.closeQuietly( reader );
 		}
 		return result.toString();
 	}

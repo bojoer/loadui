@@ -58,6 +58,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.google.common.io.Closeables;
 
 /**
  * Execution implementation
@@ -404,14 +405,7 @@ public class ExecutionImpl implements Execution, Releasable
 		}
 		finally
 		{
-			try
-			{
-				if( fis != null )
-					fis.close();
-			}
-			catch( IOException e )
-			{
-			}
+			Closeables.closeQuietly( fis );
 		}
 	}
 

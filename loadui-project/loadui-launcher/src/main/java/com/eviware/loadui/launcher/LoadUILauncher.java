@@ -50,6 +50,7 @@ import org.osgi.framework.launch.Framework;
 import com.eviware.loadui.launcher.api.OSGiUtils;
 import com.eviware.loadui.launcher.api.SplashController;
 import com.eviware.loadui.launcher.util.BndUtils;
+import com.google.common.io.Closeables;
 
 /**
  * Starts an embedded OSGi Runtime (Felix) with all the required JavaFX packages
@@ -131,17 +132,7 @@ public class LoadUILauncher
 			}
 			finally
 			{
-				try
-				{
-					if( is != null )
-					{
-						is.close();
-					}
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
+				Closeables.closeQuietly( is );
 			}
 		}
 		else
@@ -442,17 +433,7 @@ public class LoadUILauncher
 			}
 			finally
 			{
-				try
-				{
-					if( kis != null )
-					{
-						kis.close();
-					}
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
+				Closeables.closeQuietly( kis );
 			}
 		}
 
@@ -487,24 +468,8 @@ public class LoadUILauncher
 		}
 		finally
 		{
-			try
-			{
-				if( is != null )
-					is.close();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
-			try
-			{
-				if( fos != null )
-					fos.close();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
+			Closeables.closeQuietly( is );
+			Closeables.closeQuietly( fos );
 		}
 	}
 
@@ -527,24 +492,8 @@ public class LoadUILauncher
 		}
 		finally
 		{
-			try
-			{
-				if( is != null )
-					is.close();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
-			try
-			{
-				if( fos != null )
-					fos.close();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
+			Closeables.closeQuietly( is );
+			Closeables.closeQuietly( fos );
 		}
 	}
 
@@ -569,17 +518,7 @@ public class LoadUILauncher
 		}
 		finally
 		{
-			if( fis != null )
-			{
-				try
-				{
-					fis.close();
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-			}
+			Closeables.closeQuietly( fis );
 		}
 	}
 
@@ -624,14 +563,7 @@ public class LoadUILauncher
 			}
 			finally
 			{
-				try
-				{
-					is.close();
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
+				Closeables.closeQuietly( is );
 			}
 		}
 	}

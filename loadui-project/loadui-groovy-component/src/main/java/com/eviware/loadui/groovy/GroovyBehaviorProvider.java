@@ -296,15 +296,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 			}
 			finally
 			{
-				try
-				{
-					if( fis != null )
-						fis.close();
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
+				Closeables.closeQuietly( fis );
 			}
 
 			return new ScriptDescriptor( headers.getHeader( "id", baseName ), headers.getHeader( "classloader",
