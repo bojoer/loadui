@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class XmlBeansUtils
 {
-	protected static Logger log = LoggerFactory.getLogger( XmlBeansUtils.class );
+	protected static final Logger log = LoggerFactory.getLogger( XmlBeansUtils.class );
 
 	public static void saveToFile( XmlTokenSource source, File target ) throws IOException
 	{
