@@ -72,8 +72,6 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	private final static String INCREMENT_VERSION = "incrementVersion";
 
 	private final ProjectItem project;
-	//private final Set<OutputTerminal> exports = new HashSet<OutputTerminal>();
-	private final CollectionEventSupport<OutputTerminal, Void> exportList;
 	private final ProjectListener projectListener;
 	private final WorkspaceListener workspaceListener;
 	private final TerminalHolderSupport terminalHolderSupport;
@@ -96,8 +94,6 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 		followProject = createProperty( FOLLOW_PROJECT_PROPERTY, Boolean.class, true );
 
-		AddressableRegistry addressableRegistry = BeanInjector.getBean( AddressableRegistry.class );
-
 		terminalHolderSupport = new TerminalHolderSupport( this );
 
 		final InputTerminalImpl stateTerminalImpl = terminalHolderSupport.createInput( OnOffCategory.STATE_TERMINAL,
@@ -112,13 +108,6 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		} );
 
 		stateTerminal = stateTerminalImpl;
-
-		exportList = CollectionEventSupport.of( this, EXPORTS );
-
-		for( String exportId : getConfig().getExportedTerminalArray() )
-		{
-			exportList.addItem( ( OutputTerminal )addressableRegistry.lookup( exportId ) );
-		}
 
 		workspaceListener = LoadUI.isController() ? new WorkspaceListener() : null;
 
@@ -148,45 +137,6 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	public ProjectItem getProject()
 	{
 		return project;
-	}
-
-	@Override
-	public void exportTerminal( final OutputTerminal terminal )
-	{
-		exportList.addItem( terminal, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				getConfig().addExportedTerminal( terminal.getId() );
-			}
-		} );
-	}
-
-	@Override
-	public void unexportTerminal( final OutputTerminal terminal )
-	{
-		exportList.removeItem( terminal, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				for( int i = 0; i < getConfig().sizeOfExportedTerminalArray(); i++ )
-				{
-					if( terminal.getId().equals( getConfig().getExportedTerminalArray( i ) ) )
-					{
-						getConfig().removeExportedTerminal( i );
-						break;
-					}
-				}
-			}
-		} );
-	}
-
-	@Override
-	public Collection<OutputTerminal> getExportedTerminals()
-	{
-		return exportList.getItems();
 	}
 
 	@Override
@@ -502,8 +452,6 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			else if( event instanceof ActionEvent && event.getSource() == SceneItemImpl.this && !propagate )
 				fireEvent( new RemoteActionEvent( SceneItemImpl.this, ( ActionEvent )event ) );
 			else if( LABEL.equals( event.getKey() ) )
-				fireBaseEvent( INCREMENT_VERSION );
-			else if( EXPORTS.equals( event.getKey() ) )
 				fireBaseEvent( INCREMENT_VERSION );
 			else if( INCREMENT_VERSION.equals( event.getKey() ) )
 				incrVersion();

@@ -31,39 +31,11 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
  */
 public interface SceneItem extends CanvasItem, CanvasObjectItem
 {
-	public static final String EXPORTS = SceneItem.class.getName() + "@exports";
-
 	/**
 	 * A Property<Boolean> used to store the state of followProject, used in
 	 * isFollowProject and setFollowProject.
 	 */
 	public static final String FOLLOW_PROJECT_PROPERTY = SceneItem.class.getSimpleName() + ".followProject";
-
-	/**
-	 * Exports an OutputTerminal, so that any TerminalEvents fired for it are
-	 * transmitted over the network.
-	 * 
-	 * @param terminal
-	 *           The OutputTerminal to export.
-	 */
-	public void exportTerminal( OutputTerminal terminal );
-
-	/**
-	 * Unexports a previously exported OutputTerminal so that its TerminalEvents
-	 * are no longer propagated over the network.
-	 * 
-	 * @param terminal
-	 *           The OutputTerminal to stop exporting.
-	 */
-	public void unexportTerminal( OutputTerminal terminal );
-
-	/**
-	 * Gets all the OutputTerminals that are currently being exported.
-	 * 
-	 * @return
-	 */
-	@Nonnull
-	public Collection<? extends OutputTerminal> getExportedTerminals();
 
 	/**
 	 * Gets the version number of the SceneItem. Any time a change is made to the

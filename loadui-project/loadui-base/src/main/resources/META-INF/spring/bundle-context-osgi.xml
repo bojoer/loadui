@@ -22,8 +22,6 @@
 	
 	<osgi:service interface="com.eviware.loadui.api.property.PropertySynchronizer" ref="propertySynchronizer" />
 	
-	<osgi:service interface="com.eviware.loadui.api.terminal.TerminalProxy" ref="terminalProxy" />
-	
 	<osgi:service interface="org.springframework.core.convert.ConversionService" ref="conversionService" />
 	
 	<osgi:service interface="java.util.concurrent.ExecutorService" ref="executorService" />

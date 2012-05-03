@@ -58,16 +58,6 @@ public final class SceneCommunication
 	public final static String DISCONNECT = "disconnect";
 
 	/**
-	 * Command for exporting a Terminals events.
-	 */
-	public final static String EXPORT = "export";
-
-	/**
-	 * Command for unexporting a Terminals events.
-	 */
-	public final static String UNEXPORT = "unexport";
-
-	/**
 	 * Command for firing an ActionEvent on the remote SceneItem.
 	 */
 	public final static String ACTION_EVENT = "actionEvent";

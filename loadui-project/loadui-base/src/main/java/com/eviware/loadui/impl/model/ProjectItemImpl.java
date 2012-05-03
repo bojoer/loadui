@@ -70,9 +70,7 @@ import com.eviware.loadui.api.summary.MutableSummary;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
-import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
-import com.eviware.loadui.api.terminal.TerminalProxy;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.config.ComponentItemConfig;
 import com.eviware.loadui.config.LoaduiProjectDocumentConfig;
@@ -117,7 +115,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	private final ConversionService conversionService;
 	private final PropertySynchronizer propertySynchronizer;
 	private final CounterSynchronizer counterSynchronizer;
-	private final TerminalProxy proxy;
 	private final Set<SceneItemImpl> scenes = new HashSet<SceneItemImpl>();
 	private final StatisticPagesImpl statisticPages;
 	private final Property<Boolean> saveReport;
@@ -152,13 +149,8 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		reportFolder = createProperty( REPORT_FOLDER_PROPERTY, String.class, "" );
 		reportFormat = createProperty( REPORT_FORMAT_PROPERTY, String.class, "" );
 		numberOfAutosaves = createProperty( STATISTIC_NUMBER_OF_AUTOSAVES, Long.class, 5L );
-		proxy = BeanInjector.getBean( TerminalProxy.class );
 		statisticPages = new StatisticPagesImpl( getConfig().getStatistics() == null ? getConfig().addNewStatistics()
 				: getConfig().getStatistics() );
-
-		// statisticHolderSupport = new StatisticHolderSupport( this );
-		// counterStatisticSupport = new CounterStatisticSupport( this,
-		// statisticHolderSupport );
 
 		BeanInjector.getBean( TestRunner.class ).registerTask( agentAwaiter, Phase.PRE_START );
 	}
@@ -741,12 +733,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 								: SceneCommunication.DISCONNECT;
 						sendSceneCommand( scene, command, connection.getOutputTerminal().getId(), connection
 								.getInputTerminal().getId() );
-					}
-					else if( SceneItem.EXPORTS.equals( cEvent.getKey() ) )
-					{
-						String command = cEvent.getEvent() == CollectionEvent.Event.ADDED ? SceneCommunication.EXPORT
-								: SceneCommunication.UNEXPORT;
-						sendSceneCommand( scene, command, ( ( Terminal )cEvent.getElement() ).getId() );
 					}
 					else if( COMPONENTS.equals( cEvent.getKey() ) )
 					{

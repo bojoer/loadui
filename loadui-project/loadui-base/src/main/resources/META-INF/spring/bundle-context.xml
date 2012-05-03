@@ -31,12 +31,6 @@
 
 	<bean id="counterSynchronizer" class="com.eviware.loadui.impl.counter.CounterSynchronizerImpl" />
 
-	<bean id="terminalProxy" class="com.eviware.loadui.impl.terminal.TerminalProxyImpl">
-		<constructor-arg ref="conversionService" />
-		<constructor-arg ref="addressableRegistry" />
-		<constructor-arg ref="broadcastMessageEndpoint" />
-	</bean>
-
 	<bean id="conversionService"
 		class="org.springframework.context.support.ConversionServiceFactoryBean">
 		<property name="converters">

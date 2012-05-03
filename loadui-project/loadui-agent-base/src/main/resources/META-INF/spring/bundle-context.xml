@@ -26,7 +26,6 @@
 		<constructor-arg ref="executorManager" />
 		<constructor-arg ref="conversionService" />
 		<constructor-arg ref="serverEndpoint" />
-		<constructor-arg ref="terminalProxy" />
 		<constructor-arg ref="addressableRegistry" />
 		<constructor-arg ref="propertySynchronizer" />
 		<constructor-arg ref="counterSynchronizer" />

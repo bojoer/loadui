@@ -55,7 +55,6 @@ import com.eviware.loadui.api.terminal.DualTerminal;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
-import com.eviware.loadui.api.terminal.TerminalProxy;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.dispatch.CustomThreadPoolExecutor;
 import com.google.common.base.Preconditions;
@@ -73,7 +72,6 @@ public class ControllerImpl
 	private final ExecutorService executorService;
 	private final ExecutorManager executorManager;
 	private final ConversionService conversionService;
-	private final TerminalProxy terminalProxy;
 	private final AddressableRegistry addressableRegistry;
 	private final PropertySynchronizer propertySynchronizer;
 	private final CounterSynchronizer counterSynchronizer;
@@ -84,14 +82,13 @@ public class ControllerImpl
 	private final Set<MessageEndpoint> clients = new HashSet<MessageEndpoint>();
 
 	public ControllerImpl( ScheduledExecutorService scheduledExecutorService, ExecutorManager executorManager,
-			ConversionService conversionService, ServerEndpoint serverEndpoint, TerminalProxy terminalProxy,
-			AddressableRegistry addressableRegistry, PropertySynchronizer propertySynchronizer,
-			CounterSynchronizer counterSynchronizer, BroadcastMessageEndpoint broadcastEndpoint )
+			ConversionService conversionService, ServerEndpoint serverEndpoint, AddressableRegistry addressableRegistry,
+			PropertySynchronizer propertySynchronizer, CounterSynchronizer counterSynchronizer,
+			BroadcastMessageEndpoint broadcastEndpoint )
 	{
 		this.executorManager = executorManager;
 		this.executorService = executorManager.getExecutor();
 		this.conversionService = conversionService;
-		this.terminalProxy = terminalProxy;
 		this.addressableRegistry = addressableRegistry;
 		this.propertySynchronizer = propertySynchronizer;
 		this.counterSynchronizer = counterSynchronizer;
@@ -232,11 +229,11 @@ public class ControllerImpl
 						SceneItem scene = ( SceneItem )addressableRegistry.lookup( sceneId );
 						if( scene != null )
 						{
-							log.warn( "Attempted to load an already existing TestCase! Force releasing old TestCase..." );
+							log.warn( "Attempted to load an already existing Scenario! Force releasing old Scenario..." );
 							ReleasableUtils.release( scene );
 							addressableRegistry.unregister( scene );
 						}
-						log.info( "Loading SceneItem {}", sceneId );
+						log.debug( "Loading SceneItem {}", sceneId );
 						executorService.execute( new SceneAgent( sceneId, endpoint, projects.get( projectId ) ) );
 					}
 				}
@@ -251,7 +248,7 @@ public class ControllerImpl
 			}
 			else if( message.containsKey( AgentItem.SCENE_DEFINITION ) )
 			{
-				log.debug( "Got TestCase Definition for: {}", message.get( AgentItem.SCENE_ID ) );
+				log.debug( "Got Scenario definition for: {}", message.get( AgentItem.SCENE_ID ) );
 				SceneAgent sceneAgent = sceneAgents.get( message.get( AgentItem.SCENE_ID ) );
 				if( sceneAgent != null )
 				{
@@ -262,7 +259,7 @@ public class ControllerImpl
 					}
 				}
 				else
-					log.warn( "No SceneAgent for TestCase: {}", message.get( AgentItem.SCENE_ID ) );
+					log.warn( "No SceneAgent for Scenario: {}", message.get( AgentItem.SCENE_ID ) );
 			}
 		}
 
@@ -347,7 +344,7 @@ public class ControllerImpl
 
 				if( sceneDef == null )
 				{
-					log.error( "Unable to get TestCase definition: {} from endpoint: {}", sceneId, endpoint );
+					log.error( "Unable to get Scenario definition: {} from endpoint: {}", sceneId, endpoint );
 					synchronized( sceneAgents )
 					{
 						sceneAgents.remove( sceneId );
@@ -417,7 +414,7 @@ public class ControllerImpl
 					}
 
 					Preconditions.checkArgument( scene.getVersion() == Long.parseLong( args.get( 1 ) ),
-							"TestCase version out of sync! Mine: %s, theirs: %s", scene.getVersion(), args.get( 1 ) );
+							"Scenario version out of sync! Mine: %s, theirs: %s", scene.getVersion(), args.get( 1 ) );
 
 					command = args.get( 2 );
 					if( SceneCommunication.LABEL.equals( command ) )
@@ -452,20 +449,6 @@ public class ControllerImpl
 						InputTerminal input = Preconditions.checkNotNull(
 								( InputTerminal )addressableRegistry.lookup( args.get( 4 ) ), "InputTerminal not found!" );
 						scene.connect( output, input ).disconnect();
-					}
-					else if( SceneCommunication.EXPORT.equals( command ) )
-					{
-						OutputTerminal terminal = Preconditions.checkNotNull(
-								( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) ), "OutputTerminal not found!" );
-						scene.exportTerminal( terminal );
-						terminalProxy.export( terminal );
-					}
-					else if( SceneCommunication.UNEXPORT.equals( command ) )
-					{
-						OutputTerminal terminal = Preconditions.checkNotNull(
-								( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) ), "OutputTerminal not found!" );
-						scene.unexportTerminal( terminal );
-						terminalProxy.unexport( terminal );
 					}
 					else if( SceneCommunication.ACTION_EVENT.equals( command ) )
 					{

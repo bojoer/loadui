@@ -35,10 +35,6 @@
 	<osgi:reference
 		interface="com.eviware.loadui.api.addressable.AddressableRegistry" id="addressableRegistry" />
 
-	<osgi:reference interface="com.eviware.loadui.api.terminal.TerminalProxy"
-		id="terminalProxy" />
-		
-	
 	<osgi:reference
 		interface="com.eviware.loadui.api.testevents.TestEventRegistry" id="testEventRegistry" />
 </beans>
