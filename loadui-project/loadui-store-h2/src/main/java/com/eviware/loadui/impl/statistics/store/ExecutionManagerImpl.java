@@ -1205,7 +1205,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 	protected abstract void initializeDatabaseMetadata( DatabaseMetadata metadata );
 
 	@Override
-	public String getDBBaseDir()
+	public final String getDBBaseDir()
 	{
 		return baseDirectory.getAbsolutePath();
 	}

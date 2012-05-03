@@ -165,26 +165,12 @@ public class BndUtils
 
 			if( analyzer.getProperty( Analyzer.BUNDLE_SYMBOLICNAME ) == null )
 			{
-				Pattern p = Pattern.compile( "(" + Verifier.SYMBOLICNAME.pattern() + ")(-[0-9])?.*\\.jar" );
-				String base = input.getName();
-				Matcher m = p.matcher( base );
-				base = "Untitled";
-				if( m.matches() )
-				{
-					base = m.group( 1 );
-				}
-				//					else
-				//					{
-				//						log.warn( "Error creating bundle for: " + input.getAbsolutePath()
-				//								+ ". Can not calculate name of output bundle, rename jar or use -properties" );
-				//					}
-				analyzer.setProperty( Analyzer.BUNDLE_SYMBOLICNAME, base );
+				analyzer.setProperty( Analyzer.BUNDLE_SYMBOLICNAME, generateSymbolicName( input ) );
 			}
 
 			if( analyzer.getProperty( Analyzer.EXPORT_PACKAGE ) == null )
 			{
-				String export = analyzer.calculateExportsFromContents( dot );
-				analyzer.setProperty( Analyzer.EXPORT_PACKAGE, export );
+				analyzer.setProperty( Analyzer.EXPORT_PACKAGE, analyzer.calculateExportsFromContents( dot ) );
 			}
 
 			if( classpath != null )
@@ -194,40 +180,9 @@ public class BndUtils
 
 			analyzer.mergeManifest( dot.getManifest() );
 
-			String version = analyzer.getProperty( Analyzer.BUNDLE_VERSION );
-			if( version != null )
-			{
-				version = Builder.cleanupVersion( version );
-				analyzer.setProperty( Analyzer.BUNDLE_VERSION, version );
-			}
+			cleanUpVersionString( analyzer );
 
-			if( output == null )
-			{
-				if( properties != null )
-				{
-					output = properties.getAbsoluteFile().getParentFile();
-				}
-				else
-				{
-					output = input.getAbsoluteFile().getParentFile();
-				}
-			}
-
-			String path = input.getName();
-			if( path.endsWith( Processor.DEFAULT_JAR_EXTENSION ) )
-			{
-				path = path.substring( 0, path.length() - Processor.DEFAULT_JAR_EXTENSION.length() )
-						+ Processor.DEFAULT_BAR_EXTENSION;
-			}
-			else
-			{
-				path = input.getName() + Processor.DEFAULT_BAR_EXTENSION;
-			}
-
-			if( output.isDirectory() )
-			{
-				output = new File( output, path );
-			}
+			output = setOutputPath( input, output, properties );
 
 			analyzer.calcManifest();
 			Jar jar = analyzer.getJar();
@@ -258,5 +213,64 @@ public class BndUtils
 		{
 			analyzer.close();
 		}
+	}
+
+	private static File setOutputPath( File input, File output, File properties )
+	{
+		if( output == null )
+		{
+			if( properties != null )
+			{
+				output = properties.getAbsoluteFile().getParentFile();
+			}
+			else
+			{
+				output = input.getAbsoluteFile().getParentFile();
+			}
+		}
+
+		if( output.isDirectory() )
+		{
+			output = new File( output, generatePath( input ) );
+		}
+		return output;
+	}
+
+	private static String generateSymbolicName( File input )
+	{
+		Pattern p = Pattern.compile( "(" + Verifier.SYMBOLICNAME.pattern() + ")(-[0-9])?.*\\.jar" );
+		String base = input.getName();
+		Matcher m = p.matcher( base );
+		base = "Untitled";
+		if( m.matches() )
+		{
+			base = m.group( 1 );
+		}
+		return base;
+	}
+
+	private static void cleanUpVersionString( Analyzer analyzer )
+	{
+		String version = analyzer.getProperty( Analyzer.BUNDLE_VERSION );
+		if( version != null )
+		{
+			version = Builder.cleanupVersion( version );
+			analyzer.setProperty( Analyzer.BUNDLE_VERSION, version );
+		}
+	}
+
+	private static String generatePath( File input )
+	{
+		String path = input.getName();
+		if( path.endsWith( Processor.DEFAULT_JAR_EXTENSION ) )
+		{
+			path = path.substring( 0, path.length() - Processor.DEFAULT_JAR_EXTENSION.length() )
+					+ Processor.DEFAULT_BAR_EXTENSION;
+		}
+		else
+		{
+			path = input.getName() + Processor.DEFAULT_BAR_EXTENSION;
+		}
+		return path;
 	}
 }
