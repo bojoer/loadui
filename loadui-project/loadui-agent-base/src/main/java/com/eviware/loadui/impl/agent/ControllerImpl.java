@@ -133,7 +133,7 @@ public class ControllerImpl
 							SceneAgent sceneAgent = sceneAgents.get( scene.getId() );
 							if( sceneAgent != null )
 							{
-								sceneAgent.addCommand( Collections.singletonList( ( String )null ) );
+								sceneAgent.addCommand( Collections.<String> singletonList( null ) );
 							}
 						}
 						ReleasableUtils.release( entry.getValue() );
@@ -243,7 +243,7 @@ public class ControllerImpl
 				SceneAgent sceneAgent = sceneAgents.get( message.get( AgentItem.UNASSIGN ) );
 				if( sceneAgent != null )
 				{
-					sceneAgent.addCommand( Collections.singletonList( ( String )null ) );
+					sceneAgent.addCommand( Collections.<String> singletonList( null ) );
 				}
 			}
 			else if( message.containsKey( AgentItem.SCENE_DEFINITION ) )
@@ -288,6 +288,9 @@ public class ControllerImpl
 
 	private class SceneAgent implements Runnable
 	{
+		private static final String INPUT_TERMINAL_NOT_FOUND = "InputTerminal not found!";
+		private static final String OUTPUT_TERMINAL_NOT_FOUND = "OutputTerminal not found!";
+		private static final String COMPONENT_NOT_FOUND = "Component not found!";
 		private static final String COULD_NOT_INVOKE_SET_MESSAGE_ENDPOINT = "Could not invoke setMessageEndpoint";
 		private final AgentProjectItem project;
 		private final String sceneId;
@@ -325,22 +328,9 @@ public class ControllerImpl
 		public void run()
 		{
 			// Load SceneItem
-			int tries = 0;
 			synchronized( this )
 			{
-				while( sceneDef == null && tries < 5 )
-				{
-					log.debug( "REQUESTING DEFINITION: {} from: {}", sceneId, endpoint );
-					endpoint.sendMessage( AgentItem.AGENT_CHANNEL,
-							Collections.singletonMap( AgentItem.DEFINE_SCENE, sceneId ) );
-					try
-					{
-						wait( ( long )Math.pow( 2, tries++ ) * 1000 );
-					}
-					catch( InterruptedException e )
-					{
-					}
-				}
+				requestSceneDefinition();
 
 				if( sceneDef == null )
 				{
@@ -360,23 +350,11 @@ public class ControllerImpl
 			{
 				scene.getClass().getMethod( "setMessageEndpoint", MessageEndpoint.class ).invoke( scene, endpoint );
 			}
-			catch( IllegalArgumentException e )
+			catch( RuntimeException e )
 			{
-				log.error( COULD_NOT_INVOKE_SET_MESSAGE_ENDPOINT, e );
+				throw e;
 			}
-			catch( SecurityException e )
-			{
-				log.error( COULD_NOT_INVOKE_SET_MESSAGE_ENDPOINT, e );
-			}
-			catch( IllegalAccessException e )
-			{
-				log.error( COULD_NOT_INVOKE_SET_MESSAGE_ENDPOINT, e );
-			}
-			catch( InvocationTargetException e )
-			{
-				log.error( COULD_NOT_INVOKE_SET_MESSAGE_ENDPOINT, e );
-			}
-			catch( NoSuchMethodException e )
+			catch( Exception e )
 			{
 				log.error( COULD_NOT_INVOKE_SET_MESSAGE_ENDPOINT, e );
 			}
@@ -394,8 +372,7 @@ public class ControllerImpl
 			endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.STARTED, sceneId ) );
 			log.info( "Started scene: {}", scene.getLabel() );
 
-			String command = null;
-
+			String currentlyParsedCommand = null;
 			while( true )
 			{
 				try
@@ -403,7 +380,7 @@ public class ControllerImpl
 					List<String> args = commands.take();
 					if( args.get( 0 ) == null )
 					{
-						log.info( "Stopping scene: {}", scene.getLabel() );
+						log.info( "Stopping scenario: {}", scene.getLabel() );
 						project.removeScene( scene );
 						ReleasableUtils.release( scene );
 						synchronized( sceneAgents )
@@ -416,54 +393,13 @@ public class ControllerImpl
 					Preconditions.checkArgument( scene.getVersion() == Long.parseLong( args.get( 1 ) ),
 							"Scenario version out of sync! Mine: %s, theirs: %s", scene.getVersion(), args.get( 1 ) );
 
-					command = args.get( 2 );
-					if( SceneCommunication.LABEL.equals( command ) )
-					{
-						scene.setLabel( args.get( 3 ) );
-					}
-					else if( SceneCommunication.ADD_COMPONENT.equals( command ) )
-					{
-						ComponentItem component = Preconditions.checkNotNull(
-								conversionService.convert( args.get( 3 ), ComponentItem.class ), "Component not found!" );
-						propertySynchronizer.syncProperties( component, endpoint );
-						counterSynchronizer.syncCounters( component, endpoint );
-					}
-					else if( SceneCommunication.REMOVE_COMPONENT.equals( command ) )
-					{
-						ComponentItem component = Preconditions.checkNotNull(
-								( ComponentItem )addressableRegistry.lookup( args.get( 3 ) ), "Component not found!" );
-						component.delete();
-					}
-					else if( SceneCommunication.CONNECT.equals( command ) )
-					{
-						OutputTerminal output = Preconditions.checkNotNull(
-								( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) ), "OutputTerminal not found!" );
-						InputTerminal input = Preconditions.checkNotNull(
-								( InputTerminal )addressableRegistry.lookup( args.get( 4 ) ), "InputTerminal not found!" );
-						scene.connect( output, input );
-					}
-					else if( SceneCommunication.DISCONNECT.equals( command ) )
-					{
-						OutputTerminal output = Preconditions.checkNotNull(
-								( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) ), "OutputTerminal not found!" );
-						InputTerminal input = Preconditions.checkNotNull(
-								( InputTerminal )addressableRegistry.lookup( args.get( 4 ) ), "InputTerminal not found!" );
-						scene.connect( output, input ).disconnect();
-					}
-					else if( SceneCommunication.ACTION_EVENT.equals( command ) )
-					{
-						Preconditions.checkNotNull( ( ModelItem )addressableRegistry.lookup( args.get( 4 ) ),
-								"ModelItem not found!" ).triggerAction( args.get( 3 ) );
-					}
-					else if( SceneCommunication.CANCEL_COMPONENTS.equals( command ) )
-					{
-						scene.cancelComponents();
-					}
+					currentlyParsedCommand = args.get( 2 );
+					parseCommand( args );
 				}
 				catch( Exception e )
 				{
-					log.error( "Error in VU Scenario " + scene.getLabel() + ", when running command: " + command
-							+ ". Restarting...", e );
+					log.error( "Error in VU Scenario " + scene.getLabel() + ", when running command: "
+							+ currentlyParsedCommand + ". Restarting...", e );
 					project.removeScene( scene );
 					ReleasableUtils.release( scene );
 					synchronized( sceneAgents )
@@ -472,6 +408,70 @@ public class ControllerImpl
 					}
 					executorService.execute( new SceneAgent( sceneId, endpoint, project ) );
 					return;
+				}
+			}
+		}
+
+		private void parseCommand( List<String> args )
+		{
+			String command = args.get( 2 );
+			if( SceneCommunication.LABEL.equals( command ) )
+			{
+				scene.setLabel( args.get( 3 ) );
+			}
+			else if( SceneCommunication.ADD_COMPONENT.equals( command ) )
+			{
+				ComponentItem component = Preconditions.checkNotNull(
+						conversionService.convert( args.get( 3 ), ComponentItem.class ), COMPONENT_NOT_FOUND );
+				propertySynchronizer.syncProperties( component, endpoint );
+				counterSynchronizer.syncCounters( component, endpoint );
+			}
+			else if( SceneCommunication.REMOVE_COMPONENT.equals( command ) )
+			{
+				ComponentItem component = Preconditions.checkNotNull(
+						( ComponentItem )addressableRegistry.lookup( args.get( 3 ) ), COMPONENT_NOT_FOUND );
+				component.delete();
+			}
+			else if( SceneCommunication.CONNECT.equals( command ) )
+			{
+				OutputTerminal output = Preconditions.checkNotNull(
+						( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) ), OUTPUT_TERMINAL_NOT_FOUND );
+				InputTerminal input = Preconditions.checkNotNull(
+						( InputTerminal )addressableRegistry.lookup( args.get( 4 ) ), INPUT_TERMINAL_NOT_FOUND );
+				scene.connect( output, input );
+			}
+			else if( SceneCommunication.DISCONNECT.equals( command ) )
+			{
+				OutputTerminal output = Preconditions.checkNotNull(
+						( OutputTerminal )addressableRegistry.lookup( args.get( 3 ) ), OUTPUT_TERMINAL_NOT_FOUND );
+				InputTerminal input = Preconditions.checkNotNull(
+						( InputTerminal )addressableRegistry.lookup( args.get( 4 ) ), INPUT_TERMINAL_NOT_FOUND );
+				scene.connect( output, input ).disconnect();
+			}
+			else if( SceneCommunication.ACTION_EVENT.equals( command ) )
+			{
+				Preconditions.checkNotNull( ( ModelItem )addressableRegistry.lookup( args.get( 4 ) ),
+						"ModelItem not found!" ).triggerAction( args.get( 3 ) );
+			}
+			else if( SceneCommunication.CANCEL_COMPONENTS.equals( command ) )
+			{
+				scene.cancelComponents();
+			}
+		}
+
+		private void requestSceneDefinition()
+		{
+			int tries = 0;
+			while( sceneDef == null && tries < 5 )
+			{
+				log.debug( "REQUESTING DEFINITION: {} from: {}", sceneId, endpoint );
+				endpoint.sendMessage( AgentItem.AGENT_CHANNEL, Collections.singletonMap( AgentItem.DEFINE_SCENE, sceneId ) );
+				try
+				{
+					wait( ( long )Math.pow( 2, tries++ ) * 1000 );
+				}
+				catch( InterruptedException e )
+				{
 				}
 			}
 		}
