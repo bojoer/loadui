@@ -21,8 +21,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
 
-import com.google.common.io.Closeables;
-
 public class FileGroovyCommand extends AbstractGroovyCommand
 {
 	private final File scriptFile;
@@ -53,7 +51,17 @@ public class FileGroovyCommand extends AbstractGroovyCommand
 		}
 		finally
 		{
-			Closables.closeQuietly( br );
+			if( br != null )
+			{
+				try
+				{
+					br.close();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 }
