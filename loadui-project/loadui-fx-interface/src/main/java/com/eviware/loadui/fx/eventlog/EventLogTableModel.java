@@ -27,9 +27,9 @@ import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.testevents.TestEvent;
 import com.eviware.loadui.api.testevents.TestEvent.Entry;
 import com.eviware.loadui.util.FormattingUtils;
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
 public class EventLogTableModel extends AbstractTableModel
@@ -43,7 +43,7 @@ public class EventLogTableModel extends AbstractTableModel
 
 	private static final long serialVersionUID = -4240376247009167267L;
 
-	private final Cache<Integer, TestEvent.Entry> entryCache = CacheBuilder.newBuilder().maximumSize( 128 )
+	private final LoadingCache<Integer, TestEvent.Entry> entryCache = CacheBuilder.newBuilder().maximumSize( 128 )
 			.build( new CacheLoader<Integer, TestEvent.Entry>()
 			{
 				private Iterator<TestEvent.Entry> iterator;
