@@ -17,6 +17,8 @@ package com.eviware.loadui.api.component;
 
 import java.net.URI;
 
+import net.jcip.annotations.Immutable;
+
 import com.eviware.loadui.api.traits.Describable;
 import com.eviware.loadui.api.traits.Labeled;
 
@@ -25,6 +27,8 @@ import com.eviware.loadui.api.traits.Labeled;
  * 
  * @author dain.nilsson
  */
+
+@Immutable
 public class ComponentDescriptor implements Labeled, Describable
 {
 	private final String type;

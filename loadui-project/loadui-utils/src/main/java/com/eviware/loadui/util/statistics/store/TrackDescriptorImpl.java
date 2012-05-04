@@ -17,6 +17,8 @@ package com.eviware.loadui.util.statistics.store;
 
 import java.util.Map;
 
+import net.jcip.annotations.Immutable;
+
 import com.eviware.loadui.api.statistics.EntryAggregator;
 import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 import com.google.common.base.Objects;
@@ -28,6 +30,8 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author dain.nilsson
  */
+
+@Immutable
 public class TrackDescriptorImpl implements TrackDescriptor
 {
 	private final String id;

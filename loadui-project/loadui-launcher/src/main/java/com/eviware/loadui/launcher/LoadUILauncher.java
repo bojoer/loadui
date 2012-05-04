@@ -59,6 +59,11 @@ import com.eviware.loadui.launcher.util.BndUtils;
  */
 public class LoadUILauncher
 {
+	private static final String LOADUI_HOME = "loadui.home";
+	private static final String LOADUI_NAME = "loadui.name";
+	private static final String LOADUI_BUILD_DATE = "loadui.build.date";
+	private static final String LOADUI_BUILD_NUMBER = "loadui.build.number";
+	private static final String ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA = "org.osgi.framework.system.packages.extra";
 	protected static final String NOFX_OPTION = "nofx";
 	protected static final String SYSTEM_PROPERTY_OPTION = "D";
 	protected static final String HELP_OPTION = "h";
@@ -121,9 +126,9 @@ public class LoadUILauncher
 				is = new FileInputStream( externalFile );
 				Properties buildinfo = new Properties();
 				buildinfo.load( is );
-				System.setProperty( "loadui.build.number", buildinfo.getProperty( "build.number" ) );
-				System.setProperty( "loadui.build.date", buildinfo.getProperty( "build.date" ) );
-				System.setProperty( "loadui.name", buildinfo.getProperty( "loadui.name", "loadUI" ) );
+				System.setProperty( LOADUI_BUILD_NUMBER, buildinfo.getProperty( "build.number" ) );
+				System.setProperty( LOADUI_BUILD_DATE, buildinfo.getProperty( "build.date" ) );
+				System.setProperty( LOADUI_NAME, buildinfo.getProperty( LOADUI_NAME, "loadUI" ) );
 			}
 			catch( IOException e )
 			{
@@ -146,9 +151,9 @@ public class LoadUILauncher
 		}
 		else
 		{
-			System.setProperty( "loadui.build.number", "unknown" );
-			System.setProperty( "loadui.build.date", "unknown" );
-			System.setProperty( "loadui.name", "loadUI" );
+			System.setProperty( LOADUI_BUILD_NUMBER, "unknown" );
+			System.setProperty( LOADUI_BUILD_DATE, "unknown" );
+			System.setProperty( LOADUI_NAME, "loadUI" );
 		}
 
 		options = createOptions();
@@ -174,9 +179,9 @@ public class LoadUILauncher
 
 		initSystemProperties();
 
-		System.out.println( "Launching " + System.getProperty( "loadui.name" ) + " Build: "
-				+ System.getProperty( "loadui.build.number", "[internal]" ) + " "
-				+ System.getProperty( "loadui.build.date", "" ) );
+		System.out.println( "Launching " + System.getProperty( LOADUI_NAME ) + " Build: "
+				+ System.getProperty( LOADUI_BUILD_NUMBER, "[internal]" ) + " "
+				+ System.getProperty( LOADUI_BUILD_DATE, "" ) );
 		Main.loadSystemProperties();
 		configProps = Main.loadConfigProperties();
 		if( configProps == null )
@@ -201,8 +206,8 @@ public class LoadUILauncher
 
 	protected void init()
 	{
-		String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
-		configProps.put( "org.osgi.framework.system.packages.extra",
+		String extra = configProps.getProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, "" );
+		configProps.put( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA,
 				( extra == null || extra.equals( "" ) ) ? "com.eviware.loadui.launcher.api"
 						: "com.eviware.loadui.launcher.api," + extra );
 
@@ -384,12 +389,12 @@ public class LoadUILauncher
 	{
 		loadPropertiesFile();
 
-		setDefaultSystemProperty( "loadui.home", System.getProperty( "user.home", "." ) + File.separator + ".loadui" );
-		setDefaultSystemProperty( "groovy.root", System.getProperty( "loadui.home" ) + File.separator + ".groovy" );
+		setDefaultSystemProperty( LOADUI_HOME, System.getProperty( "user.home", "." ) + File.separator + ".loadui" );
+		setDefaultSystemProperty( "groovy.root", System.getProperty( LOADUI_HOME ) + File.separator + ".groovy" );
 
-		setDefaultSystemProperty( "loadui.ssl.keyStore", System.getProperty( "loadui.home" ) + File.separator
+		setDefaultSystemProperty( "loadui.ssl.keyStore", System.getProperty( LOADUI_HOME ) + File.separator
 				+ "keystore.jks" );
-		setDefaultSystemProperty( "loadui.ssl.trustStore", System.getProperty( "loadui.home" ) + File.separator
+		setDefaultSystemProperty( "loadui.ssl.trustStore", System.getProperty( LOADUI_HOME ) + File.separator
 				+ "certificate.pem" );
 		setDefaultSystemProperty( "loadui.ssl.keyStorePassword", "password" );
 		setDefaultSystemProperty( "loadui.ssl.trustStorePassword", "password" );
@@ -398,7 +403,7 @@ public class LoadUILauncher
 
 		setDefaultSystemProperty( "sun.java2d.noddraw", "true" );
 
-		File loaduiHome = new File( System.getProperty( "loadui.home" ) );
+		File loaduiHome = new File( System.getProperty( LOADUI_HOME ) );
 		if( !loaduiHome.isDirectory() )
 			if( !loaduiHome.mkdirs() )
 				throw new RuntimeException( "Unable to create directory: " + loaduiHome.getAbsolutePath() );
@@ -612,11 +617,11 @@ public class LoadUILauncher
 				for( int n; ( n = is.read( b ) ) != -1; )
 					out.append( new String( b, 0, n ) );
 
-				String extra = configProps.getProperty( "org.osgi.framework.system.packages.extra", "" );
+				String extra = configProps.getProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, "" );
 				if( !extra.isEmpty() )
 					out.append( "," ).append( extra );
 
-				configProps.setProperty( "org.osgi.framework.system.packages.extra", out.toString() );
+				configProps.setProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, out.toString() );
 			}
 			catch( IOException e )
 			{

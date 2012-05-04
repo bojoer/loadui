@@ -50,6 +50,8 @@ import com.jidesoft.chart.model.ChartModel;
 
 final public class LineChartImpl extends Chart implements LineChart, Releasable
 {
+	private static final String ERROR_REMOVING_LINE_SEGMENT = "Error removing LineSegment";
+
 	private static final long serialVersionUID = 3338444055712838741L;
 
 	public static final Logger log = LoggerFactory.getLogger( LineChartImpl.class );
@@ -390,11 +392,11 @@ final public class LineChartImpl extends Chart implements LineChart, Releasable
 			}
 			catch( InterruptedException e )
 			{
-				log.error( "Error removing LineSegment", e );
+				log.error( ERROR_REMOVING_LINE_SEGMENT, e );
 			}
 			catch( InvocationTargetException e )
 			{
-				log.error( "Error removing LineSegment", e );
+				log.error( ERROR_REMOVING_LINE_SEGMENT, e );
 			}
 		}
 
@@ -416,11 +418,11 @@ final public class LineChartImpl extends Chart implements LineChart, Releasable
 			}
 			catch( InterruptedException e )
 			{
-				log.error( "Error removing LineSegment", e );
+				log.error( ERROR_REMOVING_LINE_SEGMENT, e );
 			}
 			catch( InvocationTargetException e )
 			{
-				log.error( "Error removing LineSegment", e );
+				log.error( ERROR_REMOVING_LINE_SEGMENT, e );
 			}
 		}
 	}

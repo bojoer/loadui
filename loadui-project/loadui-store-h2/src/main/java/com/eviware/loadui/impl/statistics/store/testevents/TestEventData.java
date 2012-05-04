@@ -16,7 +16,8 @@
 package com.eviware.loadui.impl.statistics.store.testevents;
 
 import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
+
+import net.jcip.annotations.Immutable;
 
 /**
  * Immutable data structure holding the values of a TestEvent. Technically the

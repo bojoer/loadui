@@ -18,6 +18,8 @@ package com.eviware.loadui.util.statistics.store;
 import java.util.Map;
 import java.util.Set;
 
+import net.jcip.annotations.Immutable;
+
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
@@ -29,6 +31,7 @@ import com.google.common.collect.ImmutableMap;
  * @author dain.nilsson
  */
 
+@Immutable
 public class EntryImpl implements Entry
 {
 	private final long timestamp;

@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -36,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.discovery.AgentDiscovery;
+import com.google.common.collect.Sets;
 
 public final class AgentDiscoveryImpl implements AgentDiscovery
 {
@@ -44,7 +44,7 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 
 	private final DatagramSocket socket;
 	private final Thread listenerThread;
-	private final Set<AgentReference> agents = new CopyOnWriteArraySet<AgentReference>();
+	private final Set<AgentReference> agents = Sets.newCopyOnWriteArraySet();
 
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor( new ThreadFactory()
 	{

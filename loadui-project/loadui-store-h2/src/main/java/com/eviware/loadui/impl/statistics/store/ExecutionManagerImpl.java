@@ -100,6 +100,10 @@ import com.google.common.collect.Sets;
 public abstract class ExecutionManagerImpl<Type extends DataSource> implements ExecutionManager,
 		DataSourceProvider<Type>, Releasable
 {
+	private static final String UNABLE_TO_WRITE_DATA_TO_THE_DATABASE = "Unable to write data to the database:";
+
+	private static final String UNABLE_TO_READ_DATA_FROM_THE_DATABASE = "Unable to read data from the database.";
+
 	private static Logger log = LoggerFactory.getLogger( ExecutionManagerImpl.class );
 
 	private static final LoadingCache<String, String> columnNames = CacheBuilder.newBuilder().weakKeys()
@@ -664,7 +668,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			}
 			catch( SQLException e )
 			{
-				log.error( "Unable to write data to the database:", e );
+				log.error( UNABLE_TO_WRITE_DATA_TO_THE_DATABASE, e );
 				log.error( "Unable to store entry: {} for source: {} at level: {} and trackId: {}", new Object[] { entry,
 						source, interpolationLevel, trackId } );
 			}
@@ -720,7 +724,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			}
 			catch( Exception e )
 			{
-				log.error( "Unable to write data to the database:", e );
+				log.error( UNABLE_TO_WRITE_DATA_TO_THE_DATABASE, e );
 				log.error( "Unable to store test event with source: {}, timestamp: {}", new Object[] { source, timestamp } );
 			}
 		}
@@ -805,7 +809,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			}
 			catch( Exception e )
 			{
-				log.error( "Unable to write data to the database:", e );
+				log.error( UNABLE_TO_WRITE_DATA_TO_THE_DATABASE, e );
 				log.error( "Unable to store test event source: {} of type: {}", new Object[] { source.getLabel(),
 						source.getType().getName() } );
 			}
@@ -839,7 +843,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 		}
 		catch( Exception e )
 		{
-			log.error( "Unable to write data to the database:", e );
+			log.error( UNABLE_TO_WRITE_DATA_TO_THE_DATABASE, e );
 			log.error( "Unable to store test event type: {}", new Object[] { typeName } );
 		}
 	}
@@ -908,11 +912,11 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 		}
 		catch( RuntimeException e )
 		{
-			log.error( "Unable to read data from the database.", e );
+			log.error( UNABLE_TO_READ_DATA_FROM_THE_DATABASE, e );
 		}
 		catch( SQLException e )
 		{
-			log.error( "Unable to read data from the database.", e );
+			log.error( UNABLE_TO_READ_DATA_FROM_THE_DATABASE, e );
 		}
 		return ImmutableList.of();
 	}
@@ -932,11 +936,11 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 		}
 		catch( RuntimeException e )
 		{
-			log.error( "Unable to read data from the database.", e );
+			log.error( UNABLE_TO_READ_DATA_FROM_THE_DATABASE, e );
 		}
 		catch( SQLException e )
 		{
-			log.error( "Unable to read data from the database.", e );
+			log.error( UNABLE_TO_READ_DATA_FROM_THE_DATABASE, e );
 		}
 		return ImmutableList.of();
 	}
