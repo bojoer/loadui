@@ -27,6 +27,9 @@ import javax.net.ssl.HandshakeCompletedEvent;
 import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.SSLSocket;
 
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
+
 import org.apache.commons.ssl.SSLClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.io.Closeables;
 
+@ThreadSafe
 public class ClientSocketMessageEndpoint implements MessageEndpoint
 {
 	private enum State
@@ -59,6 +63,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 	private final int port;
 
 	private volatile State state = State.CLOSED;
+	@GuardedBy( "this" )
 	private Thread connectionThread = null;
 
 	public ClientSocketMessageEndpoint( SSLClient sslClient, String host, int port )
@@ -96,6 +101,11 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 	public void removeConnectionListener( ConnectionListener listener )
 	{
 		listeners.remove( listener );
+	}
+
+	private synchronized void nullifyConnectionThread()
+	{
+		connectionThread = null;
 	}
 
 	@Override
@@ -161,10 +171,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 					}
 					else if( CLOSE_MESSAGE.channel.equals( channel ) )
 					{
-						synchronized( ClientSocketMessageEndpoint.this )
-						{
-							state = State.CLOSED;
-						}
+						state = State.CLOSED;
 					}
 					//log.debug( "Got message: {}: {}", channel, data );
 					routingSupport.fireMessage( channel, ClientSocketMessageEndpoint.this, data );
@@ -179,13 +186,10 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 				if( state != State.CLOSED )
 					log.error( "Connection closed:", e );
 
-				synchronized( ClientSocketMessageEndpoint.this )
+				if( state == State.CONNECTED )
 				{
-					if( state == State.CONNECTED )
-					{
-						state = State.DISCONNECTED;
-						messageQueue.add( CLOSE_MESSAGE );
-					}
+					state = State.DISCONNECTED;
+					messageQueue.add( CLOSE_MESSAGE );
 				}
 			}
 			finally
@@ -211,15 +215,11 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 			{
 				log.debug( "Handshake completed! {}", event );
 
-				synchronized( ClientSocketMessageEndpoint.this )
+				if( state == State.CLOSING )
 				{
-					if( state == State.CLOSING )
-					{
-						messageQueue.add( CLOSE_MESSAGE );
-					}
-
-					state = State.CONNECTED;
+					messageQueue.add( CLOSE_MESSAGE );
 				}
+				state = State.CONNECTED;
 				handshakeCompleted.release();
 
 				try
@@ -274,13 +274,10 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 					}
 				}
 
-				synchronized( ClientSocketMessageEndpoint.this )
+				nullifyConnectionThread();
+				if( state == State.CLOSING )
 				{
-					connectionThread = null;
-					if( state == State.CLOSING )
-					{
-						state = State.CLOSED;
-					}
+					state = State.CLOSED;
 				}
 
 				ObjectOutputStream oos = null;
@@ -304,10 +301,7 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 							oos.flush();
 						}
 						while( message != CLOSE_MESSAGE );
-						synchronized( ClientSocketMessageEndpoint.this )
-						{
-							state = State.CLOSED;
-						}
+						state = State.CLOSED;
 					}
 				}
 				catch( IOException e )
@@ -326,17 +320,14 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 						listener.handleConnectionChange( ClientSocketMessageEndpoint.this, false );
 					}
 					Closeables.closeQuietly( oos );
-					synchronized( ClientSocketMessageEndpoint.this )
+					switch( state )
 					{
-						switch( state )
-						{
-						case CONNECTED :
-							state = State.CLOSED;
-							break;
-						case DISCONNECTED :
-							state = State.CONNECTING;
-							break;
-						}
+					case CONNECTED :
+						state = State.CLOSED;
+						break;
+					case DISCONNECTED :
+						state = State.CONNECTING;
+						break;
 					}
 				}
 			}
