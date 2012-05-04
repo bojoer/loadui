@@ -52,11 +52,7 @@ public class TestCaseSamplerStatisticsTable extends AbstractTableModel
 	{
 		if( columnIndex == 0 )
 			return data.get( rowIndex ).getName();
-		else if( columnIndex == 9 )
-		{
-
-		}
-		else
+		else if( columnIndex != 9 )
 		{
 			String v = data.get( rowIndex ).getStat( columnNames[columnIndex] );
 			if( v.equals( "-1" ) )
