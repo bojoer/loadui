@@ -22,9 +22,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -34,11 +31,35 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 public class SubReportURLHandler extends URLStreamHandler
 {
 	public static final Logger log = LoggerFactory.getLogger( SubReportURLHandler.class );
-	private static final Map<String, byte[]> reportCache = Collections
-			.synchronizedMap( new WeakHashMap<String, byte[]>() );
+
+	private static LoadingCache<String, byte[]> reportCache = CacheBuilder.newBuilder().weakValues().maximumSize( 1000 )
+			.build( new CacheLoader<String, byte[]>()
+			{
+				@Override
+				public byte[] load( String xml )
+				{
+					ByteArrayInputStream inputStream = new ByteArrayInputStream( xml.getBytes() );
+					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+					try
+					{
+						JasperDesign design = JRXmlLoader.load( inputStream );
+						JasperCompileManager.compileReportToStream( design, outputStream );
+					}
+					catch( JRException e )
+					{
+						e.printStackTrace();
+					}
+					return outputStream.toByteArray();
+				}
+
+			} );
 
 	private final ReportEngine reportEngine;
 
@@ -50,7 +71,6 @@ public class SubReportURLHandler extends URLStreamHandler
 	@Override
 	public URLConnection openConnection( URL url ) throws IOException
 	{
-		// log.debug( "Getting subreport for url [" + url + "]" );
 		String subreportFileName = url.getPath();
 		log.debug( "Looking for subreport : " + subreportFileName );
 		LReportTemplate subreport = reportEngine.getReport( subreportFileName );
@@ -58,25 +78,7 @@ public class SubReportURLHandler extends URLStreamHandler
 		// get xml compile it and pass connection to it..
 		String xml = subreport.getData();
 
-		// cached?
-		if( !reportCache.containsKey( xml ) )
-		{
-			ByteArrayInputStream inputStream = new ByteArrayInputStream( xml.getBytes() );
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			try
-			{
-				JasperDesign design = JRXmlLoader.load( inputStream );
-				JasperCompileManager.compileReportToStream( design, outputStream );
-			}
-			catch( JRException e )
-			{
-				e.printStackTrace();
-			}
-
-			reportCache.put( xml, outputStream.toByteArray() );
-		}
-
-		return new SubreportConnection( url, reportCache.get( xml ) );
+		return new SubreportConnection( url, reportCache.getUnchecked( xml ) );
 	}
 
 	private static class SubreportConnection extends URLConnection
