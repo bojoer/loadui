@@ -23,9 +23,9 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -44,7 +44,7 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 
 	private final DatagramSocket socket;
 	private final Thread listenerThread;
-	private final Set<AgentReference> agents = Collections.synchronizedSet( new HashSet<AgentReference>() );
+	private final Set<AgentReference> agents = new CopyOnWriteArraySet<AgentReference>();
 
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor( new ThreadFactory()
 	{
@@ -61,8 +61,8 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 
 		try
 		{
-			final DatagramPacket sendPacket = new DatagramPacket( buf, buf.length, InetAddress.getByName( "255.255.255.255" ),
-					BROADCAST_PORT );
+			final DatagramPacket sendPacket = new DatagramPacket( buf, buf.length,
+					InetAddress.getByName( "255.255.255.255" ), BROADCAST_PORT );
 			socket = new DatagramSocket();
 			socket.setBroadcast( true );
 
@@ -81,8 +81,8 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 							receivePacket = new DatagramPacket( buf, buf.length );
 							socket.receive( receivePacket );
 
-							String received = new String( receivePacket.getData(), 0, receivePacket.getLength() ).replaceAll( "127.0.0.1",
-									receivePacket.getAddress().getHostAddress() );
+							String received = new String( receivePacket.getData(), 0, receivePacket.getLength() ).replaceAll(
+									"127.0.0.1", receivePacket.getAddress().getHostAddress() );
 							String[] parts = received.split( " " );
 							if( parts.length == 4 && LoadUI.AGENT.equals( parts[0] ) )
 								if( agents.add( new AgentRefImpl( parts[1], parts[2], parts[3] ) ) )
