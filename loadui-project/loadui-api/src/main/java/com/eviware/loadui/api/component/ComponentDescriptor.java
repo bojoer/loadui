@@ -17,7 +17,7 @@ package com.eviware.loadui.api.component;
 
 import java.net.URI;
 
-import net.jcip.annotations.Immutable;
+import javax.annotation.concurrent.Immutable;
 
 import com.eviware.loadui.api.traits.Describable;
 import com.eviware.loadui.api.traits.Labeled;

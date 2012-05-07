@@ -14,8 +14,6 @@
 	
 	<osgi:reference interface="com.eviware.loadui.api.component.ComponentRegistry" id="componentRegistry" />
 	
-	<osgi:reference interface="com.eviware.loadui.api.terminal.TerminalProxy" id="terminalProxy" />
-	
 	<osgi:reference interface="com.eviware.loadui.api.statistics.store.ExecutionManager" id="executionManager" />
 	
 	<osgi:reference interface="com.eviware.loadui.api.reporting.ReportingManager" id="reportingManager" />

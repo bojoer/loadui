@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.util.messaging;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -56,6 +55,7 @@ public class MessageEndpointSupport implements Releasable
 	{
 		if( !messageProxies.containsKey( listener ) )
 			messageProxies.put( listener, new MessageListenerProxy( listener ) );
+
 		source.addMessageListener( channel, messageProxies.get( listener ) );
 		if( MessageEndpoint.ERROR_CHANNEL.equals( channel ) )
 			errorListeners.add( listener );
@@ -108,41 +108,33 @@ public class MessageEndpointSupport implements Releasable
 
 	private class MessageListenerProxy implements MessageListener
 	{
-		private final WeakReference<MessageListener> listenerRef;
+		private final MessageListener listener;
 
 		public MessageListenerProxy( MessageListener listener )
 		{
-			listenerRef = new WeakReference<MessageListener>( listener );
+			this.listener = listener;
 		}
 
 		@Override
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
-			final MessageListener listener = listenerRef.get();
-			if( listener != null )
-			{
-				listener.handleMessage( channel, target, data );
-			}
+			listener.handleMessage( channel, target, data );
 		}
 	}
 
 	private class ConnectionListenerProxy implements ConnectionListener
 	{
-		private final WeakReference<ConnectionListener> listenerRef;
+		private final ConnectionListener listener;
 
 		public ConnectionListenerProxy( ConnectionListener listener )
 		{
-			listenerRef = new WeakReference<ConnectionListener>( listener );
+			this.listener = listener;
 		}
 
 		@Override
 		public void handleConnectionChange( MessageEndpoint endpoint, boolean connected )
 		{
-			final ConnectionListener listener = listenerRef.get();
-			if( listener != null )
-			{
-				listener.handleConnectionChange( target, connected );
-			}
+			listener.handleConnectionChange( target, connected );
 		}
 	}
 }

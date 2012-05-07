@@ -106,6 +106,7 @@ public final class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implemen
 			@SuppressWarnings( "unchecked" )
 			public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 			{
+				log.debug( "Handling message: {}/{}", channel, data );
 				Map<String, Object> map = ( Map<String, Object> )data;
 				if( map.containsKey( TIME_CHECK ) )
 				{
