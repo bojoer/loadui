@@ -20,14 +20,14 @@ public class LoadUI
 	/**
 	 * The main version number of loadUI.
 	 */
-	public static final String VERSION = "2.0.0";
+	public static final String VERSION = "2.0.1";
 
 	/**
 	 * Internal version number used to determine controller/agent compatibility.
 	 * Compatibility is only ensured when this version string is the same for
 	 * both agent and controller.
 	 */
-	public static final String AGENT_VERSION = "11";
+	public static final String AGENT_VERSION = "12";
 
 	public static final String INSTANCE = "loadui.instance";
 	public static final String CONTROLLER = "controller";

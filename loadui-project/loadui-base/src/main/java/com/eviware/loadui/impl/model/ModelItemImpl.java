@@ -190,8 +190,8 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 		log.debug( "Deleting {}", this );
 		if( !released )
 		{
-			fireBaseEvent( RELEASED );
 			fireBaseEvent( DELETED );
+			fireBaseEvent( RELEASED );
 			released = true;
 			release();
 			addressableRegistry.unregister( this );

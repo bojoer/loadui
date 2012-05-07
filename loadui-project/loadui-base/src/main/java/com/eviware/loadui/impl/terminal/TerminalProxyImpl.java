@@ -67,6 +67,7 @@ public class TerminalProxyImpl implements TerminalProxy
 		endpoint.addMessageListener( CHANNEL, new Listener() );
 	}
 
+	@Override
 	public void sendTerminalEvent( TerminalEvent event, MessageEndpoint endpoint, Addressable target )
 	{
 		Map<String, Object> message;

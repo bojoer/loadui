@@ -62,8 +62,7 @@ reset = {
 			currentRate = start.value
 			while (currentRate.longValue() == 0) {
 				timeEllapsed++
-				currentRate = start.val
-				ue + timeEllapsed * gradient
+				currentRate = start.value + timeEllapsed * gradient
 			}
 		}
 	} else {
