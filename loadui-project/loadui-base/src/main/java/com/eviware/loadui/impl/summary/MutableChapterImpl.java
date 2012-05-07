@@ -29,10 +29,10 @@ public class MutableChapterImpl implements MutableChapter
 {
 
 	private String title;
-	private LinkedHashMap<String, String> values = new LinkedHashMap<String, String>();
+	private final LinkedHashMap<String, String> values = new LinkedHashMap<String, String>();
 	private Date date;
 	private String decription;
-	private LinkedHashMap<String, MutableSection> sections = new LinkedHashMap<String, MutableSection>();
+	private final LinkedHashMap<String, MutableSection> sections = new LinkedHashMap<String, MutableSection>();
 
 	public MutableChapterImpl( String title )
 	{
@@ -44,7 +44,7 @@ public class MutableChapterImpl implements MutableChapter
 	public MutableSection addSection( String name )
 	{
 		MutableSection section = new MutableSectionImpl( name );
-		sections.put(name, section);
+		sections.put( name, section );
 		return section;
 	}
 
@@ -72,6 +72,7 @@ public class MutableChapterImpl implements MutableChapter
 		this.title = title;
 	}
 
+	@Override
 	public String getTitle()
 	{
 		return title;
@@ -80,13 +81,13 @@ public class MutableChapterImpl implements MutableChapter
 	@Override
 	public MutableSection getSection( String name )
 	{
-		return sections.get(name);
+		return sections.get( name );
 	}
 
 	@Override
 	public Date getDate()
 	{
-		return date;
+		return new Date( date.getTime() );
 	}
 
 	@Override
@@ -98,7 +99,7 @@ public class MutableChapterImpl implements MutableChapter
 	@Override
 	public List<Section> getSections()
 	{
-		return new ArrayList<Section>(sections.values());
+		return new ArrayList<Section>( sections.values() );
 	}
 
 	@Override
@@ -106,9 +107,10 @@ public class MutableChapterImpl implements MutableChapter
 	{
 		return values;
 	}
-	
-	public MutableSectionImpl addSection( MutableSectionImpl section ) {
-		sections.put(section.getTitle(), section);
+
+	public MutableSectionImpl addSection( MutableSectionImpl section )
+	{
+		sections.put( section.getTitle(), section );
 		return section;
 	}
 }

@@ -17,23 +17,24 @@ package com.eviware.loadui.impl.summary;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.eviware.loadui.api.summary.Chapter;
 import com.eviware.loadui.api.summary.MutableChapter;
 import com.eviware.loadui.api.summary.MutableSummary;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 public class MutableSummaryImpl implements MutableSummary
 {
-	private final HashMap<String, Chapter> chapters = new LinkedHashMap<String, Chapter>();
+	private final HashMap<String, MutableChapter> chapters = Maps.newLinkedHashMap();
 	private final Date startTime;
 	private final Date endTime;
 
 	public MutableSummaryImpl( Date startTime, Date endTime )
 	{
-		this.startTime = startTime;
-		this.endTime = endTime;
+		this.startTime = new Date( startTime.getTime() );
+		this.endTime = new Date( endTime.getTime() );
 	}
 
 	@Override
@@ -47,24 +48,24 @@ public class MutableSummaryImpl implements MutableSummary
 	@Override
 	public MutableChapter getChapter( String title )
 	{
-		return ( MutableChapter )chapters.get( title );
+		return chapters.get( title );
 	}
 
 	@Override
 	public Map<String, Chapter> getChapters()
 	{
-		return chapters;
+		return ImmutableMap.<String, Chapter> copyOf( chapters );
 	}
 
 	@Override
 	public Date getStartTime()
 	{
-		return startTime;
+		return new Date( startTime.getTime() );
 	}
 
 	@Override
 	public Date getEndTime()
 	{
-		return endTime;
+		return new Date( endTime.getTime() );
 	}
 }

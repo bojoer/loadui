@@ -591,12 +591,12 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	public Date getStartTime()
 	{
-		return startTime;
+		return new Date( startTime.getTime() );
 	}
 
 	public Date getEndTime()
 	{
-		return endTime;
+		return new Date( endTime.getTime() );
 	}
 
 	protected void markClean()
