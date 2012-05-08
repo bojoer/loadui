@@ -88,7 +88,6 @@ import com.eviware.loadui.impl.summary.sections.ProjectExecutionMetricsSection;
 import com.eviware.loadui.impl.summary.sections.ProjectExecutionNotablesSection;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
-import com.eviware.loadui.util.InitializableUtils;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.collections.CollectionFuture;
 import com.eviware.loadui.util.events.EventFuture;
@@ -131,9 +130,13 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	public static ProjectItemImpl loadProject( WorkspaceItem workspace, File projectFile ) throws XmlException,
 			IOException
 	{
-		return InitializableUtils.initialize( new ProjectItemImpl( workspace, projectFile,
+		ProjectItemImpl object = new ProjectItemImpl( workspace, projectFile,
 				projectFile.exists() ? preProcessProjectFile( LoaduiProjectDocumentConfig.Factory.parse( projectFile ) )
-						: LoaduiProjectDocumentConfig.Factory.newInstance() ) );
+						: LoaduiProjectDocumentConfig.Factory.newInstance() );
+		object.init();
+		object.postInit();
+
+		return object;
 	}
 
 	private ProjectItemImpl( WorkspaceItem workspace, File projectFile, LoaduiProjectDocumentConfig doc )
@@ -156,11 +159,11 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
-	public void init()
+	protected void init()
 	{
 		for( SceneItemConfig conf : getConfig().getSceneArray() )
 		{
-			attachScene( InitializableUtils.initialize( new SceneItemImpl( this, conf ) ) );
+			attachScene( SceneItemImpl.newInstance( this, conf ) );
 		}
 
 		super.init();
@@ -210,7 +213,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
-	public void postInit()
+	protected void postInit()
 	{
 		super.postInit();
 		statisticPages.init();
@@ -297,7 +300,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		SceneItemConfig sceneConfig = getConfig().addNewScene();
 		sceneConfig.setLabel( label );
 
-		SceneItemImpl scene = InitializableUtils.initialize( new SceneItemImpl( this, sceneConfig ) );
+		SceneItemImpl scene = SceneItemImpl.newInstance( this, sceneConfig );
 		if( attachScene( scene ) )
 			fireCollectionEvent( SCENES, CollectionEvent.Event.ADDED, scene );
 		return scene;
@@ -553,7 +556,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			throw new RuntimeException( e );
 		}
 
-		SceneItemImpl scene = InitializableUtils.initialize( new SceneItemImpl( this, config ) );
+		SceneItemImpl scene = SceneItemImpl.newInstance( this, config );
 		if( attachScene( scene ) )
 			fireCollectionEvent( SCENES, CollectionEvent.Event.ADDED, scene );
 

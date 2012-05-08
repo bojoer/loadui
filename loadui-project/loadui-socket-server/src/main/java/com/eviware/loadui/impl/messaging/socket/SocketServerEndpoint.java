@@ -16,8 +16,6 @@
 package com.eviware.loadui.impl.messaging.socket;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.net.ssl.SSLServerSocket;
@@ -34,17 +32,15 @@ import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.ServerEndpoint;
 import com.eviware.loadui.api.traits.Releasable;
-import com.eviware.loadui.util.InitializableUtils;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 final public class SocketServerEndpoint implements ServerEndpoint, Releasable
 {
 	public static final Logger log = LoggerFactory.getLogger( SocketServerEndpoint.class );
 
-	private final Set<ServerSocketMessageEndpoint> sessions = Collections
-			.synchronizedSet( new HashSet<ServerSocketMessageEndpoint>() );
-	private final Set<ConnectionListener> connectionListeners = Collections
-			.synchronizedSet( new HashSet<ConnectionListener>() );
+	private final Set<ServerSocketMessageEndpoint> sessions = Sets.newCopyOnWriteArraySet();
+	private final Set<ConnectionListener> connectionListeners = Sets.newCopyOnWriteArraySet();
 	private final SSLServerSocket serverSocket;
 
 	public SocketServerEndpoint() throws Exception
@@ -97,6 +93,11 @@ final public class SocketServerEndpoint implements ServerEndpoint, Releasable
 		{
 			e.printStackTrace();
 		}
+
+		for( ServerSocketMessageEndpoint endpoint : sessions )
+		{
+			endpoint.close();
+		}
 	}
 
 	void addSession( ServerSocketMessageEndpoint endpoint )
@@ -127,7 +128,7 @@ final public class SocketServerEndpoint implements ServerEndpoint, Releasable
 				try
 				{
 					SSLSocket socket = ( SSLSocket )serverSocket.accept();
-					InitializableUtils.initialize( new ServerSocketMessageEndpoint( SocketServerEndpoint.this, socket ) );
+					ServerSocketMessageEndpoint.newInstance( SocketServerEndpoint.this, socket );
 				}
 				catch( IOException e )
 				{

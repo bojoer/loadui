@@ -44,7 +44,6 @@ import com.eviware.loadui.impl.terminal.ConnectionBase;
 import com.eviware.loadui.impl.terminal.OutputTerminalImpl;
 import com.eviware.loadui.impl.terminal.TerminalMessageImpl;
 import com.eviware.loadui.util.BeanInjector;
-import com.eviware.loadui.util.InitializableUtils;
 import com.eviware.loadui.util.test.BeanInjectorMocker;
 import com.eviware.loadui.util.test.TestUtils;
 
@@ -101,8 +100,7 @@ public class ComponentTestUtils
 				} );
 		when( ( Collection )project.getConnections() ).thenReturn( connections );
 
-		ComponentItemImpl component = InitializableUtils.initialize( new ComponentItemImpl( project,
-				ComponentItemConfig.Factory.newInstance() ) );
+		ComponentItemImpl component = ComponentItemImpl.newInstance( project, ComponentItemConfig.Factory.newInstance() );
 		return component;
 	}
 

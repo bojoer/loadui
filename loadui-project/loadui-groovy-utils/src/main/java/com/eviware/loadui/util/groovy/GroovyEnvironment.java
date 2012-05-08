@@ -35,7 +35,6 @@ import org.codehaus.groovy.control.CompilationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.traits.Initializable;
 import com.eviware.loadui.api.traits.Releasable;
 import com.google.common.collect.Maps;
 
@@ -47,8 +46,19 @@ import com.google.common.collect.Maps;
  * 
  * @author dain.nilsson
  */
-public class GroovyEnvironment implements Initializable, Releasable
+public class GroovyEnvironment implements Releasable
 {
+	public static GroovyEnvironment newInstance( @Nonnull ParsedGroovyScript script, @Nonnull String id,
+			@Nonnull String basePackage, @Nonnull ClassLoaderRegistry classLoaderRegistry, @Nonnull String classLoaderId,
+			GroovyResolver resolver, Binding binding )
+	{
+		GroovyEnvironment object = new GroovyEnvironment( script, id, basePackage, classLoaderRegistry, classLoaderId,
+				resolver, binding );
+		object.init();
+
+		return object;
+	}
+
 	private final ParsedGroovyScript script;
 	private final String scriptName;
 	private final Logger log;
@@ -58,7 +68,7 @@ public class GroovyEnvironment implements Initializable, Releasable
 	private final GroovyResolver.Properties propertyResolver;
 	private final Binding binding;
 
-	public GroovyEnvironment( @Nonnull ParsedGroovyScript script, @Nonnull String id, @Nonnull String basePackage,
+	private GroovyEnvironment( @Nonnull ParsedGroovyScript script, @Nonnull String id, @Nonnull String basePackage,
 			@Nonnull ClassLoaderRegistry classLoaderRegistry, @Nonnull String classLoaderId, GroovyResolver resolver,
 			Binding binding )
 	{
@@ -81,8 +91,7 @@ public class GroovyEnvironment implements Initializable, Releasable
 	 * Initializes the script, loading any required dependencies and running the
 	 * script.
 	 */
-	@Override
-	public void init()
+	private void init()
 	{
 		int repos = 0;
 		for( String repo : script.getHeaders( "m2repo" ) )
@@ -121,11 +130,6 @@ public class GroovyEnvironment implements Initializable, Releasable
 		{
 			Thread.currentThread().setContextClassLoader( cl );
 		}
-	}
-
-	@Override
-	public void postInit()
-	{
 	}
 
 	public Binding getBinding()

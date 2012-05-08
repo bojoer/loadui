@@ -69,7 +69,6 @@ import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.summary.MutableSummaryImpl;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
-import com.eviware.loadui.util.InitializableUtils;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.collections.CollectionEventSupport;
 import com.eviware.loadui.util.events.EventFuture;
@@ -160,7 +159,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	}
 
 	@Override
-	public void init()
+	protected void init()
 	{
 		super.init();
 
@@ -294,7 +293,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		ComponentItemConfig config = getConfig().addNewComponent();
 		config.setType( descriptor.getType() );
 		config.setLabel( label );
-		ComponentItemImpl component = InitializableUtils.initialize( new ComponentItemImpl( this, config ) );
+		ComponentItemImpl component = ComponentItemImpl.newInstance( this, config );
 		component.setAttribute( ComponentItem.TYPE, descriptor.getLabel() );
 		if( descriptor.getHelpUrl() != null )
 			component.getContext().setHelpUrl( descriptor.getHelpUrl() );
@@ -320,7 +319,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private ComponentItemImpl loadComponent( ComponentItemConfig config ) throws ComponentCreationException
 	{
-		final ComponentItemImpl component = InitializableUtils.initialize( new ComponentItemImpl( this, config ) );
+		final ComponentItemImpl component = ComponentItemImpl.newInstance( this, config );
 		try
 		{
 			component.setBehavior( componentRegistry.loadBehavior( config.getType(), component.getContext() ) );

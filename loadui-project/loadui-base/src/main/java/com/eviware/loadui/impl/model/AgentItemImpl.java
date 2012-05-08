@@ -40,6 +40,15 @@ import com.google.common.collect.ImmutableMap;
 
 public final class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements AgentItem
 {
+	public static AgentItemImpl newInstance( WorkspaceItem workspace, AgentItemConfig config )
+	{
+		AgentItemImpl object = new AgentItemImpl( workspace, config );
+		object.init();
+		object.postInit();
+
+		return object;
+	}
+
 	private final WorkspaceItem workspace;
 	private final MessageEndpointProvider provider;
 	private final BroadcastMessageEndpoint broadcastEndpoint;
@@ -51,7 +60,7 @@ public final class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implemen
 	private long timeDiff = 0;
 	private long fastestTimeCheck = Long.MAX_VALUE;
 
-	public AgentItemImpl( WorkspaceItem workspace, AgentItemConfig config )
+	private AgentItemImpl( WorkspaceItem workspace, AgentItemConfig config )
 	{
 		super( config );
 		this.workspace = workspace;

@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.addressable.AddressableRegistry;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.OnOffCategory;
 import com.eviware.loadui.api.component.categories.SchedulerCategory;
@@ -66,10 +65,18 @@ import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.impl.terminal.InputTerminalImpl;
 import com.eviware.loadui.impl.terminal.TerminalHolderSupport;
 import com.eviware.loadui.util.BeanInjector;
-import com.eviware.loadui.util.collections.CollectionEventSupport;
 
 public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements SceneItem
 {
+	public static SceneItemImpl newInstance( ProjectItem project, SceneItemConfig config )
+	{
+		SceneItemImpl object = new SceneItemImpl( project, config );
+		object.init();
+		object.postInit();
+
+		return object;
+	}
+
 	private final static String INCREMENT_VERSION = "incrementVersion";
 
 	private final ProjectItem project;
@@ -86,7 +93,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	private final Property<Boolean> followProject;
 
-	public SceneItemImpl( ProjectItem project, SceneItemConfig config )
+	private SceneItemImpl( ProjectItem project, SceneItemConfig config )
 	{
 		super( config, LoadUI.isController() ? new RemoteAggregatedCounterSupport(
 				BeanInjector.getBean( CounterSynchronizer.class ) ) : new AggregatedCounterSupport() );
@@ -116,7 +123,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	}
 
 	@Override
-	public void init()
+	protected void init()
 	{
 		super.init();
 		if( project != null )
@@ -128,7 +135,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	}
 
 	@Override
-	public void postInit()
+	protected void postInit()
 	{
 		super.postInit();
 		addEventListener( BaseEvent.class, new SelfListener() );

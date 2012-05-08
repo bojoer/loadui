@@ -18,8 +18,6 @@ package com.eviware.loadui.impl.messaging.socket;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -32,32 +30,37 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageListener;
-import com.eviware.loadui.api.traits.Initializable;
 import com.eviware.loadui.util.messaging.ChannelRoutingSupport;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.common.io.Closeables;
 
-public class ServerSocketMessageEndpoint implements MessageEndpoint, Initializable
+public class ServerSocketMessageEndpoint implements MessageEndpoint
 {
+	public static ServerSocketMessageEndpoint newInstance( SocketServerEndpoint socketServerEndpoint, SSLSocket socket )
+	{
+		ServerSocketMessageEndpoint object = new ServerSocketMessageEndpoint( socketServerEndpoint, socket );
+		object.init();
+
+		return object;
+	}
+
 	public static final Logger log = LoggerFactory.getLogger( ServerSocketMessageEndpoint.class );
 
 	private static final Message CLOSE_MESSAGE = new Message( "/service/close", null );
 
 	private final LinkedBlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
-	private final Set<ConnectionListener> connectionListeners = Collections
-			.synchronizedSet( new HashSet<ConnectionListener>() );
+	private final Set<ConnectionListener> connectionListeners = Sets.newCopyOnWriteArraySet();
 	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport();
 	private final SocketServerEndpoint socketServerEndpoint;
 	private final SSLSocket socket;
 
-	public ServerSocketMessageEndpoint( SocketServerEndpoint socketServerEndpoint, SSLSocket socket )
+	private ServerSocketMessageEndpoint( SocketServerEndpoint socketServerEndpoint, SSLSocket socket )
 	{
 		this.socketServerEndpoint = socketServerEndpoint;
 		this.socket = socket;
 	}
 
-	@Override
-	public void init()
+	private void init()
 	{
 		new Thread( new MessageReceiver( socket ) ).start();
 		try
@@ -68,11 +71,6 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint, Initializab
 		{
 			log.error( "Error starting MessageSender", e );
 		}
-	}
-
-	@Override
-	public void postInit()
-	{
 	}
 
 	@Override
@@ -174,7 +172,7 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint, Initializab
 			}
 			finally
 			{
-				for( ConnectionListener listener : ImmutableSet.copyOf( connectionListeners ) )
+				for( ConnectionListener listener : connectionListeners )
 				{
 					listener.handleConnectionChange( ServerSocketMessageEndpoint.this, false );
 				}

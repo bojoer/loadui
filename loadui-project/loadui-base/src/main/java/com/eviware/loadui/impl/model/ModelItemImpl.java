@@ -36,7 +36,6 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.property.PropertyMap;
-import com.eviware.loadui.api.traits.Initializable;
 import com.eviware.loadui.config.ModelItemConfig;
 import com.eviware.loadui.impl.addon.AddonHolderSupportImpl;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
@@ -47,7 +46,7 @@ import com.eviware.loadui.util.events.EventSupport;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
-public abstract class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem, Initializable
+public abstract class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 {
 	public static final Logger log = LoggerFactory.getLogger( ModelItemImpl.class );
 
@@ -65,7 +64,7 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 	protected final AddressableRegistry addressableRegistry;
 	private final AddonHolderSupportImpl addonSupport;
 
-	public ModelItemImpl( @Nonnull Config config )
+	ModelItemImpl( @Nonnull Config config )
 	{
 		this.config = config;
 
@@ -88,8 +87,8 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 		description = createProperty( DESCRIPTION_PROPERTY, String.class, "" );
 	}
 
-	@Override
-	public void init()
+	@OverridingMethodsMustInvokeSuper
+	protected void init()
 	{
 		if( initialized )
 			throw new RuntimeException( "init() called on already initialized object: " + this );
@@ -113,8 +112,8 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 		}
 	}
 
-	@Override
-	public void postInit()
+	@OverridingMethodsMustInvokeSuper
+	protected void postInit()
 	{
 		addonSupport.init();
 		initialized = true;

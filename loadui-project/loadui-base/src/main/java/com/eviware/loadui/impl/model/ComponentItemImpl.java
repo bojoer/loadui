@@ -85,6 +85,15 @@ import com.google.common.collect.Sets;
 
 public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implements ComponentItem
 {
+	public static ComponentItemImpl newInstance( CanvasItem canvas, ComponentItemConfig config )
+	{
+		ComponentItemImpl object = new ComponentItemImpl( canvas, config );
+		object.init();
+		object.postInit();
+
+		return object;
+	}
+
 	private final ExecutorService executor;
 	private final ConversionService conversionService;
 	private final CanvasItem canvas;
@@ -117,7 +126,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private final TerminalsEnabledTask terminalsEnabledTask = new TerminalsEnabledTask();
 	private boolean terminalsEnabled = false;
 
-	public ComponentItemImpl( CanvasItem canvas, ComponentItemConfig config )
+	private ComponentItemImpl( CanvasItem canvas, ComponentItemConfig config )
 	{
 		super( config );
 		this.canvas = canvas;
@@ -141,7 +150,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	}
 
 	@Override
-	public void init()
+	protected void init()
 	{
 		counterSupport.init( this );
 		super.init();

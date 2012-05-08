@@ -38,7 +38,6 @@ import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.groovy.GroovyBehaviorProvider.ScriptDescriptor;
 import com.eviware.loadui.impl.component.categories.BaseCategory;
-import com.eviware.loadui.util.InitializableUtils;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.eviware.loadui.util.groovy.ClassLoaderRegistry;
 import com.eviware.loadui.util.groovy.GroovyEnvironment;
@@ -128,8 +127,8 @@ public class GroovyBehaviorSupport implements Releasable
 				noRelease( new JavaBeanGroovyResolver( context ) ) );
 
 		Binding binding = new Binding();
-		groovyEnv = InitializableUtils.initialize( new GroovyEnvironment( headers, id,
-				"com.eviware.loadui.groovy.component", clr, classLoaderId, resolver, binding ) );
+		groovyEnv = GroovyEnvironment.newInstance( headers, id, "com.eviware.loadui.groovy.component", clr,
+				classLoaderId, resolver, binding );
 
 		propertyHolderResolver.invokeReplaceHandlers();
 		try
