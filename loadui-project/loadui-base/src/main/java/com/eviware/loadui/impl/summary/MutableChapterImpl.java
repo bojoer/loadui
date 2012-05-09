@@ -57,7 +57,7 @@ public class MutableChapterImpl implements MutableChapter
 	@Override
 	public void setDate( Date date )
 	{
-		this.date = date;
+		this.date = new Date( date.getTime() );
 	}
 
 	@Override
