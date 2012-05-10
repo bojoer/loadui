@@ -10,6 +10,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -102,6 +103,18 @@ public class BrowserComponent extends JPanel implements Browser
 		addComponentListener( new PanelSizeListener() );
 		addMouseMotionListener( new MouseMovedListener() );
 		addMouseListener( new ClickListener() );
+	}
+
+	@Override
+	public void addPropertyChangeListener( PropertyChangeListener listener )
+	{
+		super.addPropertyChangeListener( listener );
+	}
+
+	@Override
+	public void removePropertyChangeListener( PropertyChangeListener listener )
+	{
+		super.removePropertyChangeListener( listener );
 	}
 
 	private static Node findLink( Node node )
