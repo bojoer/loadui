@@ -25,6 +25,15 @@ import com.eviware.loadui.api.property.Property;
 
 public class StringToStringTableModel extends KeyValueTableModel
 {
+	private static String unescape( String string )
+	{
+		return string == null ? "" : string.replaceAll( "&#124;", "|" ).replaceAll( "&#061;", "=" );
+	}
+
+	private static String escape( String string )
+	{
+		return string == null ? "" : string.replaceAll( "\\|", "&#124;" ).replaceAll( "=", "&#061;" );
+	}
 
 	private static final long serialVersionUID = -6107162368567835864L;
 
@@ -171,16 +180,6 @@ public class StringToStringTableModel extends KeyValueTableModel
 				data.add( new StringProperty( unescape( p[0] ), "" ) );
 			}
 		}
-	}
-
-	private String unescape( String string )
-	{
-		return string == null ? "" : string.replaceAll( "&#124;", "|" ).replaceAll( "&#061;", "=" );
-	}
-
-	private String escape( String string )
-	{
-		return string == null ? "" : string.replaceAll( "\\|", "&#124;" ).replaceAll( "=", "&#061;" );
 	}
 
 	public static class StringProperty

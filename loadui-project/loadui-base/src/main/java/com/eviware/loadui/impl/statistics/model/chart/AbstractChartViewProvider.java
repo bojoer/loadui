@@ -44,27 +44,26 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 	private final Map<Chart, ChartViewType> chartChartViews = new HashMap<Chart, ChartViewType>();
 	private final Map<String, ChartViewType> sourceChartViews = new HashMap<String, ChartViewType>();
 	private final ChartGroupListener listener = new ChartGroupListener();
-	protected final ChartGroup chartGroup;
+	protected final ChartGroup chartGroupOwner;
 	private ChartViewType groupChartView;
 
 	public AbstractChartViewProvider( ChartGroup chartGroup )
 	{
-		this.chartGroup = chartGroup;
-
-		chartGroup.addEventListener( CollectionEvent.class, listener );
+		chartGroupOwner = chartGroup;
+		chartGroupOwner.addEventListener( CollectionEvent.class, listener );
 	}
 
 	protected void init()
 	{
-		groupChartView = buildChartViewForGroup( chartGroup );
+		groupChartView = buildChartViewForGroup( chartGroupOwner );
 
 		synchronized( chartChartViews )
 		{
-			for( Chart chart : chartGroup.getChildren() )
+			for( Chart chart : chartGroupOwner.getChildren() )
 				chartChartViews.put( chart, buildChartViewForChart( chart ) );
 		}
 
-		for( String source : chartGroup.getSources() )
+		for( String source : chartGroupOwner.getSources() )
 			sourceChartViews.put( source, buildChartViewForSource( source ) );
 	}
 
@@ -95,7 +94,7 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 	@Override
 	public ChartGroup getChartGroup()
 	{
-		return chartGroup;
+		return chartGroupOwner;
 	}
 
 	@Override
@@ -110,7 +109,7 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 		synchronized( chartChartViews )
 		{
 			ChartViewType chartView = chartChartViews.get( chart );
-			if( chartView == null && chartGroup.getChildren().contains( chart ) )
+			if( chartView == null && chartGroupOwner.getChildren().contains( chart ) )
 			{
 				chartView = buildChartViewForChart( chart );
 				chartChartViews.put( chart, chartView );
@@ -125,7 +124,7 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 		synchronized( sourceChartViews )
 		{
 			ChartViewType chartView = sourceChartViews.get( source );
-			if( chartView == null && chartGroup.getSources().contains( source ) )
+			if( chartView == null && chartGroupOwner.getSources().contains( source ) )
 			{
 				chartView = buildChartViewForSource( source );
 				sourceChartViews.put( source, chartView );
@@ -149,7 +148,7 @@ public abstract class AbstractChartViewProvider<ChartViewType extends ChartView>
 	@Override
 	public void release()
 	{
-		chartGroup.removeEventListener( CollectionEvent.class, listener );
+		chartGroupOwner.removeEventListener( CollectionEvent.class, listener );
 
 		ReleasableUtils.releaseAll( chartChartViews.values(), sourceChartViews.values(), groupChartView );
 

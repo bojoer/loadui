@@ -57,11 +57,10 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 
 	public AgentDiscoveryImpl()
 	{
-		byte[] buf = "DISCOVER".getBytes();
-
 		try
 		{
-			final DatagramPacket sendPacket = new DatagramPacket( buf, buf.length,
+			byte[] discoverBytes = "DISCOVER".getBytes();
+			final DatagramPacket sendPacket = new DatagramPacket( discoverBytes, discoverBytes.length,
 					InetAddress.getByName( "255.255.255.255" ), BROADCAST_PORT );
 			socket = new DatagramSocket();
 			socket.setBroadcast( true );
@@ -71,14 +70,12 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 				@Override
 				public void run()
 				{
-					byte[] buf;
-					DatagramPacket receivePacket;
 					try
 					{
+						byte[] buf = new byte[1024];
 						while( !socket.isClosed() )
 						{
-							buf = new byte[1024];
-							receivePacket = new DatagramPacket( buf, buf.length );
+							DatagramPacket receivePacket = new DatagramPacket( buf, buf.length );
 							socket.receive( receivePacket );
 
 							String received = new String( receivePacket.getData(), 0, receivePacket.getLength() ).replaceAll(

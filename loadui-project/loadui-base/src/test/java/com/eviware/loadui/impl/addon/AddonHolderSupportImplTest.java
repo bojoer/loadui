@@ -127,8 +127,8 @@ public class AddonHolderSupportImplTest
 
 		final SecondMockAddon secondAddonMock = mock( SecondMockAddon.class );
 
-		Addon.Factory<SecondMockAddon> factoryMock = mock( Addon.Factory.class );
-		when( factoryMock.create( ( Context )anyObject() ) ).thenAnswer( new Answer<SecondMockAddon>()
+		Addon.Factory<SecondMockAddon> secondFactoryMock = mock( Addon.Factory.class );
+		when( secondFactoryMock.create( ( Context )anyObject() ) ).thenAnswer( new Answer<SecondMockAddon>()
 		{
 			@Override
 			public SecondMockAddon answer( InvocationOnMock invocation ) throws Throwable
@@ -138,7 +138,7 @@ public class AddonHolderSupportImplTest
 			}
 		} );
 
-		addonRegistry.registerFactory( SecondMockAddon.class, factoryMock );
+		addonRegistry.registerFactory( SecondMockAddon.class, secondFactoryMock );
 
 		addonHolderSupport.getAddon( SecondMockAddon.class );
 

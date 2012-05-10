@@ -82,6 +82,41 @@ public class LoadUILauncher
 		new Thread( new LauncherWatchdog( launcher.framework, 20000 ), "loadUI Launcher Watchdog" ).start();
 	}
 
+	private static void loadPropertiesFile()
+	{
+		Properties systemProperties = new Properties();
+		FileInputStream fis = null;
+		try
+		{
+			fis = new FileInputStream( "conf" + File.separator + "system.properties" );
+			systemProperties.load( fis );
+			for( Entry<Object, Object> entry : systemProperties.entrySet() )
+				System.setProperty( ( String )entry.getKey(), ( String )entry.getValue() );
+		}
+		catch( FileNotFoundException e )
+		{
+			// Ignore
+		}
+		catch( IOException e )
+		{
+			// Ignore
+		}
+		finally
+		{
+			if( fis != null )
+			{
+				try
+				{
+					fis.close();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	protected Framework framework;
 	protected final Properties configProps;
 	protected final String[] argv;
@@ -369,9 +404,9 @@ public class LoadUILauncher
 		return newOptions;
 	}
 
-	protected void processCommandLine( CommandLine cmd )
+	protected void processCommandLine( CommandLine cmdLine )
 	{
-		if( !cmd.hasOption( NOFX_OPTION ) )
+		if( !cmdLine.hasOption( NOFX_OPTION ) )
 		{
 			System.out.println( "Opening splash..." );
 			SplashController.openSplash();
@@ -549,41 +584,6 @@ public class LoadUILauncher
 			catch( IOException e )
 			{
 				e.printStackTrace();
-			}
-		}
-	}
-
-	private void loadPropertiesFile()
-	{
-		Properties systemProperties = new Properties();
-		FileInputStream fis = null;
-		try
-		{
-			fis = new FileInputStream( "conf" + File.separator + "system.properties" );
-			systemProperties.load( fis );
-			for( Entry<Object, Object> entry : systemProperties.entrySet() )
-				System.setProperty( ( String )entry.getKey(), ( String )entry.getValue() );
-		}
-		catch( FileNotFoundException e )
-		{
-			// Ignore
-		}
-		catch( IOException e )
-		{
-			// Ignore
-		}
-		finally
-		{
-			if( fis != null )
-			{
-				try
-				{
-					fis.close();
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
 			}
 		}
 	}

@@ -7,7 +7,7 @@
 		<constructor-arg value="script-components" />
 	</bean>
 	
-	<bean id="groovyBehaviorProvider" class="com.eviware.loadui.groovy.GroovyBehaviorProvider" destroy-method="destroy">
+	<bean id="groovyBehaviorProvider" class="com.eviware.loadui.groovy.GroovyBehaviorProvider" destroy-method="release">
 		<constructor-arg ref="componentRegistry" />
 		<constructor-arg ref="scheduledExecutorService" />
 		<constructor-arg ref="scriptDir" />

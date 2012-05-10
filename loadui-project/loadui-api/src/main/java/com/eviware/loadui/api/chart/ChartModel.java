@@ -16,7 +16,6 @@
 package com.eviware.loadui.api.chart;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class ChartModel
@@ -75,7 +74,7 @@ public class ChartModel
 	public void addPoint( int serieIndex, double x, double y )
 	{
 		Point p = new Point( x, y );
-		if( series != null && serieIndex >= 0 && serieIndex < series.size() && series.get( serieIndex ).isEnabled() )
+		if( serieIndex >= 0 && serieIndex < series.size() && series.get( serieIndex ).isEnabled() )
 			firePointAddedToModel( series.get( serieIndex ), p );
 	}
 
@@ -86,7 +85,7 @@ public class ChartModel
 			if( s.getName().equals( serieName ) )
 			{
 				fireSerieCleared( s );
-				break;
+				return;
 			}
 		}
 	}
@@ -107,7 +106,7 @@ public class ChartModel
 			{
 				serie.setEnabled( enable );
 				fireSerieEnabled( serie );
-				break;
+				return;
 			}
 		}
 	}
@@ -185,7 +184,7 @@ public class ChartModel
 			if( series.get( i ).getName().equals( serieName ) )
 				return i;
 
-		return 0; // Shouldn't this be -1?
+		return -1;
 	}
 
 	public ChartSerie getSerie( String serieName )

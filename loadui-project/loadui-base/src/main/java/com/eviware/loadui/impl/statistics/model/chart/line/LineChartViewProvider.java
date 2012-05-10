@@ -65,7 +65,7 @@ public class LineChartViewProvider extends AbstractChartViewProvider<LineChartVi
 	@Override
 	protected LineChartView buildChartViewForSource( String source )
 	{
-		return new SourceLineChartView( this, chartGroup, source );
+		return new SourceLineChartView( this, chartGroupOwner, source );
 	}
 
 	@Override

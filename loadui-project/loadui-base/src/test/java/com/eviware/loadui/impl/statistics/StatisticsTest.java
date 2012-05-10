@@ -15,19 +15,20 @@
  */
 package com.eviware.loadui.impl.statistics;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import java.util.EventObject;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.eviware.loadui.api.statistics.StatisticHolder;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.util.test.BeanInjectorMocker;
-
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
 
 public class StatisticsTest
 {
@@ -37,7 +38,7 @@ public class StatisticsTest
 	@Before
 	public void setup()
 	{
-		new BeanInjectorMocker();
+		BeanInjectorMocker.newInstance();
 
 		holderMock = mock( StatisticHolder.class );
 		holderSupport = new StatisticHolderSupport( holderMock );

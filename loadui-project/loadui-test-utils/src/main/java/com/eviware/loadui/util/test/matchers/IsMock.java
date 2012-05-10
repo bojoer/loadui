@@ -34,6 +34,7 @@ import org.mockito.exceptions.misusing.NotAMockException;
  */
 public class IsMock<T> extends BaseMatcher<T>
 {
+	@Override
 	public boolean matches( Object item )
 	{
 		assertThat( item, notNullValue() );
@@ -50,6 +51,7 @@ public class IsMock<T> extends BaseMatcher<T>
 		return true;
 	}
 
+	@Override
 	public void describeTo( Description description )
 	{
 		description.appendText( "is a mock" );

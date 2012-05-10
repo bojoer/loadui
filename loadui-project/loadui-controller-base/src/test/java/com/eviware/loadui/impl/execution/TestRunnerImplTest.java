@@ -37,7 +37,7 @@ public class TestRunnerImplTest
 	@Before
 	public void setup()
 	{
-		new BeanInjectorMocker();
+		BeanInjectorMocker.newInstance();
 		testRunner = new TestRunnerImpl( Executors.newCachedThreadPool() );
 		canvasMock = mock( CanvasItem.class );
 	}

@@ -227,7 +227,7 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 	private class AssertionItemAgentListener implements MessageListener
 	{
 		@Override
-		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
+		public void handleMessage( String chan, MessageEndpoint endpoint, Object data )
 		{
 			@SuppressWarnings( "unchecked" )
 			Map<String, String> map = ( Map<String, String> )data;

@@ -30,7 +30,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -100,7 +99,7 @@ import com.google.common.collect.Lists;
 
 public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implements ProjectItem
 {
-	public static final Logger log = LoggerFactory.getLogger( ProjectItemImpl.class );
+	protected static final Logger log = LoggerFactory.getLogger( ProjectItemImpl.class );
 
 	private final WorkspaceItem workspace;
 	private final LoaduiProjectDocumentConfig doc;
@@ -498,21 +497,21 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		// do by listening for ON_COMPLETE_DONE event which is fired after
 		// 'onComplete' method was called in local mode and after controller
 		// received test case data in distributed mode.
-		new SceneCompleteAwaiter();
+		new SceneCompleteAwaiter().start();
 	}
 
 	@Override
-	public void appendToSummary( MutableSummary summary )
+	public void appendToSummary( MutableSummary mutableSummary )
 	{
 		// add a project chapter first
-		MutableChapterImpl projectChapter = ( MutableChapterImpl )summary.addChapter( getLabel() );
+		MutableChapterImpl projectChapter = ( MutableChapterImpl )mutableSummary.addChapter( getLabel() );
 
 		// add and generate Scenario chapters if the Scenario has run at least
 		// once.
 		for( SceneItemImpl scene : scenes )
 		{
 			if( scene.getEndTime() != null && scene.getStartTime() != null )
-				scene.appendToSummary( summary );
+				scene.appendToSummary( mutableSummary );
 		}
 
 		// fill project chapter
@@ -960,9 +959,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	 */
 	private class SceneCompleteAwaiter implements EventHandler<BaseEvent>
 	{
-		// Counts how many test cases didn't send ON_COMPLETE_DONE event.
-		private final AtomicInteger a = new AtomicInteger( 0 );
-
 		// timeout scheduler. this is used when all test cases have property
 		// abortOnFinish set to true, so since they should return immediately,
 		// they will be discarded if they do not return in timeout period. if
@@ -970,7 +966,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		// not known and there is no timeout.
 		private ScheduledFuture<?> awaitingSummaryTimeout;
 
-		public SceneCompleteAwaiter()
+		private void start()
 		{
 			startTimeoutScheduler();
 			tryComplete();
@@ -988,23 +984,19 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 		private void tryComplete()
 		{
-			a.set( 0 );
-			// increase counter for all non completed linked test cases. if count
-			// is zero call doGenerateSummary()
+			boolean allScenesCompleted = true;
 			for( SceneItemImpl scene : getScenes() )
 			{
 				synchronized( scene )
 				{
 					if( scene.getStartTime() != null && !scene.isCompleted() )
 					{
-						// add this as a listener to a test case
 						scene.addEventListener( BaseEvent.class, this );
-						// increment counter
-						a.incrementAndGet();
+						allScenesCompleted = false;
 					}
 				}
 			}
-			if( a.get() == 0 )
+			if( allScenesCompleted )
 			{
 				if( awaitingSummaryTimeout != null )
 					awaitingSummaryTimeout.cancel( true );

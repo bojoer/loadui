@@ -24,7 +24,7 @@ public class GroovyComponentTestUtilsTest
 		assertThat( component.getBehavior().getClass().getSimpleName(), startsWith( "Groovy" ) );
 	}
 
-	private ComponentItem createSimpleScriptComponent() throws IOException, ComponentCreationException
+	private static ComponentItem createSimpleScriptComponent() throws IOException, ComponentCreationException
 	{
 		File scriptDir = new File( "target", "scripts" );
 		scriptDir.mkdirs();

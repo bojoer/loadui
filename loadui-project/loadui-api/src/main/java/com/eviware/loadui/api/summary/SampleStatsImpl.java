@@ -15,54 +15,48 @@
  */
 package com.eviware.loadui.api.summary;
 
-public class SampleStatsImpl implements SampleStats {
+public class SampleStatsImpl implements SampleStats
+{
 
 	long timeTaken;
 	long time;
 	long size;
 
-	public SampleStatsImpl() {
+	public SampleStatsImpl()
+	{
 		this.time = -1;
 		this.size = -1;
 		this.timeTaken = -1;
 	}
 
-	public SampleStatsImpl(long time, long size, long timeTaken) {
+	public SampleStatsImpl( long time, long size, long timeTaken )
+	{
 		this.timeTaken = timeTaken;
 		this.time = time;
 		this.size = size;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.eviware.loadui.api.component.categories.SampleStatsInf#getTimeTaken()
-	 */
-	public long getTimeTaken() {
+	@Override
+	public long getTimeTaken()
+	{
 		return timeTaken;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.eviware.loadui.api.component.categories.SampleStatsInf#getTime()
-	 */
-	public long getTime() {
+	@Override
+	public long getTime()
+	{
 		return time;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.eviware.loadui.api.component.categories.SampleStatsInf#getSize()
-	 */
-	public long getSize() {
+	@Override
+	public long getSize()
+	{
 		return size;
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return time + " - " + timeTaken + " - " + size;
 	}
 

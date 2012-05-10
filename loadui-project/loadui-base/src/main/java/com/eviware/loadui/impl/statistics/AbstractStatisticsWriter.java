@@ -36,7 +36,8 @@ import com.google.common.collect.ImmutableMap;
 
 public abstract class AbstractStatisticsWriter implements StatisticsWriter
 {
-	public final static Logger log = LoggerFactory.getLogger( AbstractStatisticsWriter.class );
+	@SuppressWarnings( "unused" )
+	private final static Logger log = LoggerFactory.getLogger( AbstractStatisticsWriter.class );
 
 	public static final String DELAY = "delay";
 	public static final String NAMES = "names";

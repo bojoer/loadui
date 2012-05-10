@@ -15,13 +15,16 @@
  */
 package com.eviware.loadui.impl.serialization;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-import static org.hamcrest.CoreMatchers.*;
-import org.junit.*;
+
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.ConversionServiceFactory;
+import org.springframework.core.convert.support.DefaultConversionService;
 
 public class ConversionServiceTest
 {
@@ -30,7 +33,7 @@ public class ConversionServiceTest
 	@Before
 	public void setup()
 	{
-		conversionService = ConversionServiceFactory.createDefaultConversionService();
+		conversionService = new DefaultConversionService();
 	}
 
 	@Test

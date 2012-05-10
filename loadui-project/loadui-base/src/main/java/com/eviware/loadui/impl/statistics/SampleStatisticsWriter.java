@@ -20,6 +20,9 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.api.statistics.EntryAggregator;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
@@ -27,9 +30,6 @@ import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.google.common.collect.Iterables;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * StatisticsWriter for calculating the average of given values.
@@ -40,7 +40,8 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 {
 	public static final String TYPE = "SAMPLE";
 
-	public static final Logger log = LoggerFactory.getLogger( SampleStatisticsWriter.class );
+	@SuppressWarnings( "unused" )
+	private static final Logger log = LoggerFactory.getLogger( SampleStatisticsWriter.class );
 
 	public enum Stats
 	{

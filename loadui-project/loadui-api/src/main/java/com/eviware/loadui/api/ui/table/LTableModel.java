@@ -21,8 +21,8 @@ import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LTableModel extends AbstractTableModel
 {
@@ -52,7 +52,7 @@ public class LTableModel extends AbstractTableModel
 		this.enabledInDistMode = enabledInDistMode;
 	}
 
-	public List getHeader()
+	public List<String> getHeader()
 	{
 		return header;
 	}
@@ -176,12 +176,12 @@ public class LTableModel extends AbstractTableModel
 		}
 	}
 
-	public List getLastRow()
+	public List<String> getLastRow()
 	{
 		return data.get( data.size() - 1 );
 	}
 
-	public List getRowAt( int rowIndex )
+	public List<String> getRowAt( int rowIndex )
 	{
 		if( data.size() > rowIndex )
 			return data.get( rowIndex );

@@ -110,7 +110,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private LayoutComponent compactLayout;
 	private final Set<SettingsLayoutContainer> settingsTabs = new LinkedHashSet<SettingsLayoutContainer>();
 	private boolean nonBlocking = false;
-	private String helpUrl = "http://www.loadui.org";
+	private String customHelpUrl = BASE_HELP_URL;
 	private boolean invalid = false;
 	private boolean busy = false;
 
@@ -309,7 +309,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	@Override
 	public String getHelpUrl()
 	{
-		return helpUrl;
+		return customHelpUrl;
 	}
 
 	@Override
@@ -761,7 +761,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		@Override
 		public void setHelpUrl( String helpUrl )
 		{
-			ComponentItemImpl.this.helpUrl = helpUrl;
+			ComponentItemImpl.this.customHelpUrl = helpUrl;
 		}
 
 		@Override

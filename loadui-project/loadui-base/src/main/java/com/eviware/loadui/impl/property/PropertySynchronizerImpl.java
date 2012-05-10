@@ -54,6 +54,19 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 	private final static String PROPERTY_TYPE = "propertyType";
 	private final static String ARGUMENT = "argument";
 
+	private static String generateSignature( Map<String, String> map )
+	{
+		List<String> entries = new ArrayList<String>();
+		for( Map.Entry<String, String> entry : map.entrySet() )
+			entries.add( "[" + entry.getKey() + ":" + entry.getValue() + "]" );
+		Collections.sort( entries );
+		StringBuilder s = new StringBuilder();
+		for( String entry : entries )
+			s.append( entry );
+
+		return s.toString();
+	}
+
 	private final Set<String> handled = new HashSet<String>();
 	private final Map<ModelItem, MessageEndpoint> endpoints = new HashMap<ModelItem, MessageEndpoint>();
 	private final Listener messageListener = new Listener();
@@ -118,19 +131,6 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 		return message;
 	}
 
-	private String getSignature( Map<String, String> map )
-	{
-		List<String> entries = new ArrayList<String>();
-		for( Map.Entry<String, String> entry : map.entrySet() )
-			entries.add( "[" + entry.getKey() + ":" + entry.getValue() + "]" );
-		Collections.sort( entries );
-		StringBuilder s = new StringBuilder();
-		for( String entry : entries )
-			s.append( entry );
-
-		return s.toString();
-	}
-
 	private class PropertyEventHandler implements EventHandler<BaseEvent>
 	{
 		@Override
@@ -147,7 +147,7 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 					if( pEvent.getProperty().isPropagated() )
 					{
 						Map<String, String> message = createMessage( pEvent );
-						if( !handled.remove( getSignature( message ) ) )
+						if( !handled.remove( generateSignature( message ) ) )
 						{
 							endpoints.get( item ).sendMessage( CHANNEL, message );
 						}
@@ -181,7 +181,7 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 				return;
 			}
 
-			handled.add( getSignature( message ) );
+			handled.add( generateSignature( message ) );
 			ModelItem item = ( ModelItem )addressableRegistry.lookup( message.get( MODELITEM ) );
 			Event event = conversionService.convert( message.get( EVENT ), Event.class );
 			if( item == null )

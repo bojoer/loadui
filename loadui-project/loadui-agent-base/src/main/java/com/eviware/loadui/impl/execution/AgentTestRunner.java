@@ -47,7 +47,7 @@ public class AgentTestRunner extends AbstractTestRunner implements Releasable
 
 	private final PhaseMessageListener phaseListener = new PhaseMessageListener();
 	private final Map<String, AgentTestExecution> executions = Maps.newHashMap();
-	private final MessageEndpoint endpoint;
+	private final MessageEndpoint controllerEndpoint;
 	private final ExecutorService executorService;
 	private final ScheduledExecutorService scheduledExecutorService;
 
@@ -55,7 +55,7 @@ public class AgentTestRunner extends AbstractTestRunner implements Releasable
 			ScheduledExecutorService scheduledExecutorService )
 	{
 		super( executorService );
-		this.endpoint = endpoint;
+		this.controllerEndpoint = endpoint;
 		this.executorService = executorService;
 		this.scheduledExecutorService = scheduledExecutorService;
 
@@ -77,7 +77,7 @@ public class AgentTestRunner extends AbstractTestRunner implements Releasable
 	@Override
 	public void release()
 	{
-		endpoint.removeMessageListener( phaseListener );
+		controllerEndpoint.removeMessageListener( phaseListener );
 	}
 
 	void complete( AgentTestExecution execution, Phase phase )

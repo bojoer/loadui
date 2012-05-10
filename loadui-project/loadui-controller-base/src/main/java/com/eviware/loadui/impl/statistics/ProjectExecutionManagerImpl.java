@@ -65,6 +65,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 	private final ReportingManager reportingManager;
 	private final SetMultimap<String, Execution> projectIdToExecutions = HashMultimap.create();
 	private final Set<SummaryTask> summaryAttachers = new HashSet<SummaryTask>();
+	private final WorkspaceProviderListener workspaceProviderListener = new WorkspaceProviderListener();
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningExecutionTask runningExecutionTask = new RunningExecutionTask();
 
@@ -75,15 +76,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 		this.workspaceProvider = workspaceProvider;
 		this.reportingManager = reportingManager;
 
-		workspaceProvider.addEventListener( BaseEvent.class, new EventHandler<BaseEvent>()
-		{
-			@Override
-			public void handleEvent( BaseEvent event )
-			{
-				if( WorkspaceProvider.WORKSPACE_LOADED.equals( event.getKey() ) )
-					workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
-			}
-		} );
+		workspaceProvider.addEventListener( BaseEvent.class, workspaceProviderListener );
 
 		if( workspaceProvider.isWorkspaceLoaded() )
 			workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
@@ -143,7 +136,22 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 	@Override
 	public void release()
 	{
+		workspaceProvider.removeEventListener( BaseEvent.class, workspaceProviderListener );
+		if( workspaceProvider.isWorkspaceLoaded() )
+		{
+			workspaceProvider.getWorkspace().removeEventListener( CollectionEvent.class, collectionListener );
+		}
 		BeanInjector.getBean( TestRunner.class ).unregisterTask( runningExecutionTask, Phase.values() );
+	}
+
+	private final class WorkspaceProviderListener implements EventHandler<BaseEvent>
+	{
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( WorkspaceProvider.WORKSPACE_LOADED.equals( event.getKey() ) )
+				workspaceProvider.getWorkspace().addEventListener( CollectionEvent.class, collectionListener );
+		}
 	}
 
 	private class ExecutionAddonImpl implements ExecutionAddon

@@ -30,6 +30,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.ComponentCreationException;
@@ -82,6 +84,8 @@ import com.google.common.util.concurrent.Futures;
 public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends ModelItemImpl<Config> implements
 		CanvasItem
 {
+	private static final Logger log = LoggerFactory.getLogger( CanvasItemImpl.class );
+
 	private static final String LIMITS_ATTRIBUTE = "limits";
 
 	protected final CounterSupport counterSupport;
@@ -523,7 +527,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 	 * 
 	 * @param summary
 	 */
-	abstract void appendToSummary( MutableSummary summary );
+	abstract void appendToSummary( MutableSummary mutableummary );
 
 	@Override
 	public void generateSummary()
@@ -735,19 +739,19 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private class TimeUpdateTask implements Runnable
 	{
-		private final long startTime;
+		private final long creationTime;
 		private final long initialTime;
 
 		public TimeUpdateTask()
 		{
-			startTime = System.currentTimeMillis();
+			creationTime = System.currentTimeMillis();
 			initialTime = time;
 		}
 
 		@Override
 		public void run()
 		{
-			final long timePassed = ( System.currentTimeMillis() - startTime );
+			final long timePassed = ( System.currentTimeMillis() - creationTime );
 			setTime( initialTime + timePassed );
 		}
 	}

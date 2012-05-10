@@ -54,7 +54,7 @@ public class ChartGroupImpl implements ChartGroup
 	private final OrderedCollectionSupport<Chart> collectionSupport;
 	private final EventSupport eventSupport = new EventSupport( this );
 	private final ChartViewProviderFactory providerFactory;
-	private final TemplateListener listener = new TemplateListener();
+	private final TemplateListener templateListener = new TemplateListener();
 
 	private ChartGroupConfig config;
 	private AttributeHolderSupport attributeHolderSupport;
@@ -73,7 +73,7 @@ public class ChartGroupImpl implements ChartGroup
 
 		providerFactory = BeanInjector.getBean( ChartViewProviderFactory.class );
 		statisticsManager = BeanInjector.getBean( StatisticsManager.class );
-		statisticsManager.addEventListener( BaseEvent.class, listener );
+		statisticsManager.addEventListener( BaseEvent.class, templateListener );
 
 		provider = providerFactory.buildProvider( getType(), this );
 
@@ -329,7 +329,7 @@ public class ChartGroupImpl implements ChartGroup
 	@Override
 	public void release()
 	{
-		statisticsManager.removeEventListener( BaseEvent.class, listener );
+		statisticsManager.removeEventListener( BaseEvent.class, templateListener );
 		fireEvent( new BaseEvent( this, RELEASED ) );
 		ReleasableUtils.releaseAll( template, provider, attributeHolderSupport, collectionSupport, eventSupport );
 	}

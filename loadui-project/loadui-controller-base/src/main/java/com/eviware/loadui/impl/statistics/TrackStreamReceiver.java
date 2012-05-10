@@ -27,6 +27,7 @@ import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.store.Execution;
 import com.eviware.loadui.api.statistics.store.ExecutionManager;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.statistics.store.EntryImpl;
 
 /**
@@ -34,53 +35,62 @@ import com.eviware.loadui.util.statistics.store.EntryImpl;
  * 
  * @author dain.nilsson
  */
-public class TrackStreamReceiver
+public class TrackStreamReceiver implements Releasable
 {
-	public final static Logger log = LoggerFactory.getLogger( TrackStreamReceiver.class );
+	private final static Logger log = LoggerFactory.getLogger( TrackStreamReceiver.class );
 
-	private final MessageEndpoint endpoint;
+	private final AgentMessageListener listener = new AgentMessageListener();
+	private final MessageEndpoint broadcastEndpoint;
 	private final AgentDataAggregator aggregator;
 	private final ExecutionManager executionManager;
 
 	public TrackStreamReceiver( BroadcastMessageEndpoint endpoint, AgentDataAggregator aggregator,
 			ExecutionManager executionManager )
 	{
-		this.endpoint = endpoint;
 		this.aggregator = aggregator;
 		this.executionManager = executionManager;
+		broadcastEndpoint = endpoint;
 
-		this.endpoint.addMessageListener( "/" + Statistic.class.getName(), new MessageListener()
+		broadcastEndpoint.addMessageListener( "/" + Statistic.class.getName(), listener );
+	}
+
+	@Override
+	public void release()
+	{
+		broadcastEndpoint.removeMessageListener( listener );
+	}
+
+	private final class AgentMessageListener implements MessageListener
+	{
+		@Override
+		@SuppressWarnings( "unchecked" )
+		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
-			@Override
-			@SuppressWarnings( "unchecked" )
-			public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
+			if( endpoint instanceof AgentItem )
 			{
-				if( endpoint instanceof AgentItem )
+				Map<String, Object> map = ( Map<String, Object> )data;
+				AgentItem agent = ( AgentItem )endpoint;
+				Execution execution = TrackStreamReceiver.this.executionManager.getCurrentExecution();
+
+				long currentTimeMillis = System.currentTimeMillis();
+
+				long timestamp = ( ( Number )map.remove( "_TIMESTAMP" ) ).longValue() + agent.getTimeDifference();
+				if( timestamp > currentTimeMillis + 1000 )
 				{
-					Map<String, Object> map = ( Map<String, Object> )data;
-					AgentItem agent = ( AgentItem )endpoint;
-					Execution execution = TrackStreamReceiver.this.executionManager.getCurrentExecution();
-
-					long currentTimeMillis = System.currentTimeMillis();
-
-					long timestamp = ( ( Number )map.remove( "_TIMESTAMP" ) ).longValue() + agent.getTimeDifference();
-					if( timestamp > currentTimeMillis + 1000 )
-					{
-						log.warn( "Got Entry {}s in the future from {}, dropping.", ( timestamp - currentTimeMillis ) / 1000,
-								agent );
-						agent.resetTimeDifference();
-						return;
-					}
-					if( timestamp > currentTimeMillis )
-						timestamp = currentTimeMillis;
-
-					String trackId = ( String )map.remove( "_TRACK_ID" );
-
-					EntryImpl entry = new EntryImpl( timestamp, ( Map<String, Number> )data );
-					if( execution != null )
-						TrackStreamReceiver.this.aggregator.update( entry, trackId, agent );
+					log.warn( "Got Entry {}s in the future from {}, dropping.", ( timestamp - currentTimeMillis ) / 1000,
+							agent );
+					agent.resetTimeDifference();
+					return;
 				}
+				if( timestamp > currentTimeMillis )
+					timestamp = currentTimeMillis;
+
+				String trackId = ( String )map.remove( "_TRACK_ID" );
+
+				EntryImpl entry = new EntryImpl( timestamp, ( Map<String, Number> )data );
+				if( execution != null )
+					TrackStreamReceiver.this.aggregator.update( entry, trackId, agent );
 			}
-		} );
+		}
 	}
 }

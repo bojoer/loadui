@@ -51,6 +51,7 @@ import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.component.categories.SchedulerCategory;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.groovy.categories.GroovyAnalysis;
 import com.eviware.loadui.groovy.categories.GroovyFlow;
 import com.eviware.loadui.groovy.categories.GroovyGenerator;
@@ -66,7 +67,7 @@ import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 
-public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
+public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer, Releasable
 {
 	public static final String TYPE = "com.eviware.loadui.groovy.GroovyComponent";
 
@@ -230,7 +231,8 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer
 		}
 	}
 
-	public void destroy()
+	@Override
+	public void release()
 	{
 		future.cancel( true );
 		ReleasableUtils.releaseAll( eventSupport, clr );

@@ -15,12 +15,9 @@
  */
 package com.eviware.loadui.api.model;
 
-import java.util.Collection;
-
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.terminal.InputTerminal;
-import com.eviware.loadui.api.terminal.OutputTerminal;
 
 /**
  * A SceneItem is a CanvasItem, so it holds loadUI components. A SceneItem can
@@ -73,12 +70,13 @@ public interface SceneItem extends CanvasItem, CanvasObjectItem
 	 * @param data
 	 *           The data to send.
 	 */
-	public void broadcastMessage( String channel, Object data );
+	public void broadcastMessage( @Nonnull String channel, Object data );
 
 	/**
 	 * Gets the InputTerminal controlling the SceneItems on/off state.
 	 * 
 	 * @return
 	 */
+	@Nonnull
 	public InputTerminal getStateTerminal();
 }

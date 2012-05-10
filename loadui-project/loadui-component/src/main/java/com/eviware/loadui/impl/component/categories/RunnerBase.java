@@ -371,9 +371,9 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 		}
 	}
 
-	private void updateQueued( int queued )
+	private void updateQueued( int currentlyQueued )
 	{
-		queuedVariable.update( System.currentTimeMillis(), queued );
+		queuedVariable.update( System.currentTimeMillis(), currentlyQueued );
 	}
 
 	final public int getCurrentlyRunning()

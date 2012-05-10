@@ -39,6 +39,11 @@ public class BeanInjectorMocker
 {
 	private final Map<Class<?>, Object> mapping;
 
+	public static BeanInjectorMocker newInstance()
+	{
+		return new BeanInjectorMocker();
+	}
+
 	/**
 	 * Creates a default BeanInjectorMocker, which will return a mock for each
 	 * call to getBean(), unless a custom instance has been provided in the

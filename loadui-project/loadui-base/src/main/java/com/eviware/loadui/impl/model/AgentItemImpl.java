@@ -23,6 +23,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.messaging.BroadcastMessageEndpoint;
 import com.eviware.loadui.api.messaging.ConnectionListener;
@@ -40,6 +43,8 @@ import com.google.common.collect.ImmutableMap;
 
 public final class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implements AgentItem
 {
+	private static final Logger log = LoggerFactory.getLogger( AgentItemImpl.class );
+
 	public static AgentItemImpl newInstance( WorkspaceItem workspace, AgentItemConfig config )
 	{
 		AgentItemImpl object = new AgentItemImpl( workspace, config );
@@ -94,9 +99,9 @@ public final class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implemen
 		addConnectionListener( new ConnectionListener()
 		{
 			@Override
-			public void handleConnectionChange( MessageEndpoint endpoint, boolean connected )
+			public void handleConnectionChange( MessageEndpoint endpoint, boolean isConnected )
 			{
-				if( connected )
+				if( isConnected )
 				{
 					broadcastEndpoint.registerEndpoint( AgentItemImpl.this );
 				}

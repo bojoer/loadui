@@ -42,6 +42,21 @@ import com.google.common.collect.Maps;
  */
 public class TestExecutionResolver implements GroovyResolver.Properties, GroovyResolver.Methods, Releasable
 {
+	private static void logTestEventMessage( MessageLevel level, Object[] args )
+	{
+		if( args.length == 2 )
+		{
+			Preconditions.checkArgument( args[1] instanceof Number, "%s must be numeric!", args[1] );
+
+			BeanInjector.getBean( TestEventManager.class ).logMessage( level, String.valueOf( args[0] ),
+					( ( Number )args[1] ).longValue() );
+		}
+		else
+		{
+			BeanInjector.getBean( TestEventManager.class ).logMessage( level, String.valueOf( args[0] ) );
+		}
+	}
+
 	private final TestRunner testRunner = BeanInjector.getBean( TestRunner.class );
 	private ClosureTestExecutionTask task;
 
@@ -117,21 +132,6 @@ public class TestExecutionResolver implements GroovyResolver.Properties, GroovyR
 			testRunner.unregisterTask( task, Phase.values() );
 			task.phaseTasks.clear();
 			task = null;
-		}
-	}
-
-	private void logTestEventMessage( MessageLevel level, Object[] args )
-	{
-		if( args.length == 2 )
-		{
-			Preconditions.checkArgument( args[1] instanceof Number, "%s must be numeric!", args[1] );
-
-			BeanInjector.getBean( TestEventManager.class ).logMessage( level, String.valueOf( args[0] ),
-					( ( Number )args[1] ).longValue() );
-		}
-		else
-		{
-			BeanInjector.getBean( TestEventManager.class ).logMessage( level, String.valueOf( args[0] ) );
 		}
 	}
 

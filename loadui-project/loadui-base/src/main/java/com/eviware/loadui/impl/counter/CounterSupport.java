@@ -42,13 +42,13 @@ public class CounterSupport
 				}
 			} );
 
-	public void init( ModelItem owner )
+	public void init( ModelItem newOwner )
 	{
-		if( !( owner instanceof CounterHolder ) )
+		if( !( newOwner instanceof CounterHolder ) )
 			throw new IllegalArgumentException(
-					"CounterSupport requires a ModelItemImpl which implements the CounterHolder interface, got " + owner );
+					"CounterSupport requires a ModelItemImpl which implements the CounterHolder interface, got " + newOwner );
 
-		this.owner = owner;
+		owner = newOwner;
 		owner.addEventListener( ActionEvent.class, new ActionListener() );
 	}
 

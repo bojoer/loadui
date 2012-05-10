@@ -40,6 +40,11 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 {
 	public static final Logger log = LoggerFactory.getLogger( AddonRegistryImpl.class );
 
+	private static void loadAddon( AddonHolder addonHolder, Addon.Factory<?> factory )
+	{
+		addonHolder.getAddon( factory.getType() );
+	}
+
 	private final Map<String, ServiceRegistration<?>> registrations = Maps.newHashMap();
 	private final Map<String, Addon.Factory<?>> factories = Maps.newHashMap();
 	private final Multimap<Class<?>, Addon.Factory<?>> eagerAddons = HashMultimap.create();
@@ -98,14 +103,14 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 		Iterable<AddonHolder> matchingHolders = Iterables.filter( registeredHolders, new Predicate<AddonHolder>()
 		{
 			@Override
-			public boolean apply( AddonHolder input )
+			public boolean apply( final AddonHolder addonHolder )
 			{
 				return Iterables.all( factory.getEagerTypes(), new Predicate<Class<?>>()
 				{
 					@Override
-					public boolean apply( Class<?> input )
+					public boolean apply( Class<?> cls )
 					{
-						return input.isInstance( input );
+						return cls.isInstance( addonHolder );
 					}
 				} );
 			}
@@ -159,10 +164,5 @@ public class AddonRegistryImpl implements AddonRegistry, BundleContextAware
 	public void unregisterAddonHolder( AddonHolder addonHolder )
 	{
 		registeredHolders.remove( addonHolder );
-	}
-
-	private void loadAddon( AddonHolder addonHolder, Addon.Factory<?> factory )
-	{
-		addonHolder.getAddon( factory.getType() );
 	}
 }

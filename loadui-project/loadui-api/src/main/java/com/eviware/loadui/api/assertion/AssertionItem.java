@@ -28,7 +28,7 @@ import com.eviware.loadui.api.traits.Labeled;
  * 
  * @author dain.nilsson
  */
-public interface AssertionItem<T> extends AddonItem, Chart.Owner, EventFirer, Labeled, Describable
+public interface AssertionItem<T> extends AddonItem, Chart.Owner, EventFirer, Describable
 {
 	public final static String FAILURE_COUNT = AssertionItem.class.getSimpleName() + ".failureCount";
 

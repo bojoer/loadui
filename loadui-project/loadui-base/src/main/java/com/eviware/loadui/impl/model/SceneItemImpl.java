@@ -23,6 +23,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.OnOffCategory;
@@ -68,6 +71,8 @@ import com.eviware.loadui.util.BeanInjector;
 
 public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements SceneItem
 {
+	private static final Logger log = LoggerFactory.getLogger( CanvasItemImpl.class );
+
 	public static SceneItemImpl newInstance( ProjectItem project, SceneItemConfig config )
 	{
 		SceneItemImpl object = new SceneItemImpl( project, config );
@@ -387,9 +392,9 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	}
 
 	@Override
-	public void appendToSummary( MutableSummary summary )
+	public void appendToSummary( MutableSummary mutableSummary )
 	{
-		MutableChapterImpl chap = ( MutableChapterImpl )summary.addChapter( getLabel() );
+		MutableChapterImpl chap = ( MutableChapterImpl )mutableSummary.addChapter( getLabel() );
 		chap.addSection( new TestCaseDataSummarySection( this ) );
 		chap.addSection( new TestCaseExecutionDataSection( this ) );
 		chap.addSection( new TestCaseExecutionMetricsSection( this ) );

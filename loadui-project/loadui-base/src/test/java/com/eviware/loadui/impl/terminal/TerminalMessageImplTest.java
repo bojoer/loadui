@@ -25,7 +25,7 @@ import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.ConversionServiceFactory;
+import org.springframework.core.convert.support.DefaultConversionService;
 
 import com.eviware.loadui.api.terminal.TerminalMessage;
 
@@ -37,7 +37,7 @@ public class TerminalMessageImplTest
 	@Before
 	public void setup()
 	{
-		conversionService = ConversionServiceFactory.createDefaultConversionService();
+		conversionService = new DefaultConversionService();
 
 		message = new TerminalMessageImpl( conversionService );
 	}

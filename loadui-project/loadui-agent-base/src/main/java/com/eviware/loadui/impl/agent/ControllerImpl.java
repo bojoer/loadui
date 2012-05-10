@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.agent;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

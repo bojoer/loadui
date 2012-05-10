@@ -73,9 +73,9 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	}
 
 	@Override
-	public void init( AddonItem owner )
+	public void init( AddonItem newOwner )
 	{
-		this.owner = owner;
+		owner = newOwner;
 
 		try
 		{
@@ -109,11 +109,11 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	}
 
 	@Override
-	public PropertyMap getPropertyMap( PropertyHolder owner )
+	public PropertyMap getPropertyMap( PropertyHolder propertyHolder )
 	{
 		if( propertyMap == null )
 		{
-			propertyMap = new PropertyMapImpl( owner, BeanInjector.getBean( ConversionService.class ),
+			propertyMap = new PropertyMapImpl( propertyHolder, BeanInjector.getBean( ConversionService.class ),
 					config.getProperties() == null ? config.addNewProperties() : config.getProperties() );
 		}
 
@@ -121,11 +121,11 @@ public class AddonItemSupportImpl implements AddonItem.Support, Releasable
 	}
 
 	@Override
-	public Support getAddonHolderSupport( AddonHolder owner )
+	public Support getAddonHolderSupport( AddonHolder addonHolder )
 	{
 		if( addonHolderSupport == null )
 		{
-			addonHolderSupport = new AddonHolderSupportImpl( owner, config.getAddons() == null ? config.addNewAddons()
+			addonHolderSupport = new AddonHolderSupportImpl( addonHolder, config.getAddons() == null ? config.addNewAddons()
 					: config.getAddons() );
 
 			addonHolderSupport.init();

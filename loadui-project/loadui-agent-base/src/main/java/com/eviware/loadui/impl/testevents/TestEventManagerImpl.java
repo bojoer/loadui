@@ -36,6 +36,25 @@ public class TestEventManagerImpl extends AbstractTestEventManager
 
 	private static final String CHANNEL = "/" + TestEventManager.class.getSimpleName();
 
+	private static void sendEvent( TestEvent.Source<?> source, Object data )
+	{
+		Object target = source;
+
+		if( target instanceof ComponentItem )
+		{
+			target = ( ( ComponentItem )target ).getCanvas();
+		}
+
+		if( target instanceof SceneItem )
+		{
+			( ( SceneItem )target ).broadcastMessage( CHANNEL, data );
+		}
+		else
+		{
+			BeanInjector.getBean( BroadcastMessageEndpoint.class ).sendMessage( CHANNEL, data );
+		}
+	}
+
 	public TestEventManagerImpl( TestEventRegistry testEventRegistry )
 	{
 		super( testEventRegistry );
@@ -60,25 +79,6 @@ public class TestEventManagerImpl extends AbstractTestEventManager
 				log.warn( "No TestEvent.Factory capable of storing TestEvent: {}, of type: {} has been registered!",
 						testEvent, testEvent.getType() );
 			}
-		}
-	}
-
-	private void sendEvent( TestEvent.Source<?> source, Object data )
-	{
-		Object target = source;
-
-		if( target instanceof ComponentItem )
-		{
-			target = ( ( ComponentItem )target ).getCanvas();
-		}
-
-		if( target instanceof SceneItem )
-		{
-			( ( SceneItem )target ).broadcastMessage( CHANNEL, data );
-		}
-		else
-		{
-			BeanInjector.getBean( BroadcastMessageEndpoint.class ).sendMessage( CHANNEL, data );
 		}
 	}
 

@@ -8,8 +8,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -87,7 +85,7 @@ public class FlowBaseTest
 	}
 
 	@Test
-	public void shouldPropagateSignature() throws InterruptedException, ExecutionException, TimeoutException
+	public void shouldPropagateSignature()
 	{
 		Map<String, Class<? extends Object>> signature = ImmutableMap.of( "A", Object.class, "B", String.class );
 

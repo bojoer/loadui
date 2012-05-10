@@ -24,7 +24,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.EventObject;
 
 import org.junit.After;
@@ -66,7 +65,7 @@ public class EventSupportTest
 	}
 
 	@Test
-	public void shouldHandleSameTypes() throws InterruptedException, InvocationTargetException
+	public void shouldHandleSameTypes() throws InterruptedException
 	{
 		support.addEventListener( BaseEvent.class, mockListener );
 

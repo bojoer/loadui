@@ -48,9 +48,9 @@ import com.google.common.collect.ImmutableList;
 
 public abstract class ModelItemImpl<Config extends ModelItemConfig> implements ModelItem
 {
-	public static final Logger log = LoggerFactory.getLogger( ModelItemImpl.class );
+	private static final Logger log = LoggerFactory.getLogger( ModelItemImpl.class );
 
-	public static final String helpUrl = "http://www.loadui.org";
+	public static final String BASE_HELP_URL = "http://www.loadui.org";
 
 	private final Config config;
 	private final EventSupport eventSupport = new EventSupport( this );
@@ -352,7 +352,7 @@ public abstract class ModelItemImpl<Config extends ModelItemConfig> implements M
 	@Override
 	public String getHelpUrl()
 	{
-		return helpUrl;
+		return BASE_HELP_URL;
 	}
 
 	@Override

@@ -57,6 +57,7 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 		} ).when( registry ).registerDescriptor( any( ComponentDescriptor.class ), any( BehaviorProvider.class ) );
 	}
 
+	@SuppressWarnings( "unused" )
 	public static void initialize( String pathToComponentScripts )
 	{
 		new GroovyBehaviorProvider( registry, Executors.newSingleThreadScheduledExecutor(), new File(

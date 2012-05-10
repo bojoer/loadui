@@ -75,6 +75,11 @@ final public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Tes
 	private static final String TOLERANCE_ALLOWED_OCCURRENCES = "toleranceAllowedOccurrences";
 	private static final String TOLERANCE_PERIOD = "tolerancePeriod";
 
+	private static String labelOrToString( Object object )
+	{
+		return object instanceof Labeled ? ( ( Labeled )object ).getLabel() : String.valueOf( object );
+	}
+
 	private final EventSupport eventSupport = new EventSupport( this );
 	private final ToleranceSupport conditionTolerance = new ToleranceSupport();
 	private final FailureGrouper failureGrouper = new FailureGrouper();
@@ -380,11 +385,6 @@ final public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Tes
 		return sourceSupport.getHash();
 	}
 
-	private String labelOrToString( Object object )
-	{
-		return object instanceof Labeled ? ( ( Labeled )object ).getLabel() : String.valueOf( object );
-	}
-
 	private void updateDescription()
 	{
 
@@ -572,7 +572,7 @@ final public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Tes
 	private class RemoteFailureListener implements MessageListener
 	{
 		@Override
-		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
+		public void handleMessage( String chan, MessageEndpoint endpoint, Object data )
 		{
 			failures += ( ( Number )data ).longValue();
 			fireEvent( new BaseEvent( AssertionItemImpl.this, FAILURE_COUNT ) );

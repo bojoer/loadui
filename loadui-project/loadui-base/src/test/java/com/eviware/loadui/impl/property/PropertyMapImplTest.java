@@ -15,17 +15,21 @@
  */
 package com.eviware.loadui.impl.property;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.xmlbeans.XmlException;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.ConversionServiceFactory;
-
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
+import org.springframework.core.convert.support.DefaultConversionService;
 
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.config.ModelItemConfig;
@@ -48,7 +52,7 @@ public class PropertyMapImplTest
 		ModelItemConfig mic = mock( ModelItemConfig.class );
 		when( ( ModelItemConfig )owner.getConfig() ).thenReturn( mic );
 		when( mic.getProperties() ).thenReturn( config );
-		conversionService = ConversionServiceFactory.createDefaultConversionService();
+		conversionService = new DefaultConversionService();
 		map = new PropertyMapImpl( owner, conversionService, owner.getConfig().getProperties() );
 	}
 
