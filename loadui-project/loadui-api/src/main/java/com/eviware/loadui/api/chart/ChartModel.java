@@ -81,11 +81,11 @@ public class ChartModel
 
 	public void clearSerie( String serieName )
 	{
-		for( int i = 0; i < series.size(); i++ )
+		for( ChartSerie s : series )
 		{
-			if( series.get( i ).getName().equals( serieName ) )
+			if( s.getName().equals( serieName ) )
 			{
-				fireSerieCleared( series.get( i ) );
+				fireSerieCleared( s );
 				break;
 			}
 		}

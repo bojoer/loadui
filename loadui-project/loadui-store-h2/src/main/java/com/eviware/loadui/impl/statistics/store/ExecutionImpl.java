@@ -393,7 +393,7 @@ public class ExecutionImpl implements Execution, Releasable
 			fis = new FileInputStream( propertiesFile );
 			attributes.load( fis );
 			length = Long.parseLong( attributes.getProperty( KEY_LENGTH, "0" ) );
-			icon = ( BufferedImage )TypeConverter.stringToObject( getAttribute( KEY_ICON, null ), BufferedImage.class );
+			icon = ( Image )TypeConverter.stringToObject( getAttribute( KEY_ICON, null ), BufferedImage.class );
 		}
 		catch( FileNotFoundException e )
 		{
