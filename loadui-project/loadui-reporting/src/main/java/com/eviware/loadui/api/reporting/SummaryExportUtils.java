@@ -88,7 +88,7 @@ public class SummaryExportUtils
 		worker.execute();
 	}
 
-	private static final class XmlExporter extends SwingWorker
+	private static final class XmlExporter extends SwingWorker<Void, Void>
 	{
 		private final MutableSummary summary;
 		private final File out;
@@ -100,7 +100,7 @@ public class SummaryExportUtils
 		}
 
 		@Override
-		protected Object doInBackground() throws Exception
+		protected Void doInBackground() throws Exception
 		{
 			try
 			{

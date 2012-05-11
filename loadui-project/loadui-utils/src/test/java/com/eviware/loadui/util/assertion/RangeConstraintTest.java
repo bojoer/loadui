@@ -16,6 +16,7 @@
 package com.eviware.loadui.util.assertion;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -63,6 +64,8 @@ public class RangeConstraintTest
 	@Test( expected = IllegalArgumentException.class )
 	public void shouldBeValidRange()
 	{
-		new RangeConstraint( 5, 4 );
+		RangeConstraint constraint = new RangeConstraint( 5, 4 );
+
+		assertNotNull( constraint );
 	}
 }

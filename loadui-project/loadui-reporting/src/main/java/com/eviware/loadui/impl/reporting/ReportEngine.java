@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -63,6 +62,25 @@ public class ReportEngine
 	private static final Logger log = LoggerFactory.getLogger( ReportEngine.class );
 
 	private static final File reportDirectory = new File( "reports" );
+
+	private static JasperReport compileReport( LReportTemplate report )
+	{
+		log.debug( "compile report" );
+		JasperReport jr = null;
+		try
+		{
+			ByteArrayInputStream in = new ByteArrayInputStream( report.getData().getBytes() );
+			JasperDesign design = JRXmlLoader.load( in );
+
+			jr = JasperCompileManager.compileReport( design );
+		}
+		catch( JRException e )
+		{
+			e.printStackTrace();
+		}
+		log.debug( "Compiling report done." );
+		return jr;
+	}
 
 	private final Map<String, LReportTemplate> reports = new TreeMap<String, LReportTemplate>();
 
@@ -165,7 +183,6 @@ public class ReportEngine
 	}
 
 	public void generateJasperReport( JRDataSource dataSource, String selectedReportName, String title )
-			throws JRException
 	{
 		generateJasperReport( dataSource, selectedReportName, title, null );
 	}
@@ -207,7 +224,7 @@ public class ReportEngine
 	private JasperPrint createReport( JRDataSource dataSource, LReportTemplate selectedReport ) throws JRException
 	{
 		log.debug( "Creating report!" );
-		updateReport( selectedReport );
+		selectedReport.update();
 
 		LReportTemplate report = new LReportTemplate( selectedReport );
 
@@ -217,33 +234,6 @@ public class ReportEngine
 		map.put( JRParameter.REPORT_URL_HANDLER_FACTORY, protocolFactory );
 
 		return JasperFillManager.fillReport( jr, map, dataSource );
-	}
-
-	private JasperReport compileReport( LReportTemplate report )
-	{
-		log.debug( "compile report" );
-		JasperReport jr = null;
-		try
-		{
-			ByteArrayInputStream in = new ByteArrayInputStream( report.getData().getBytes() );
-			JasperDesign design = JRXmlLoader.load( in );
-
-			jr = JasperCompileManager.compileReport( design );
-		}
-		catch( JRException e )
-		{
-			e.printStackTrace();
-		}
-		log.debug( "Compiling report done." );
-		return jr;
-	}
-
-	/*
-	 * check if report template is changed and if it is reload it.
-	 */
-	private void updateReport( LReportTemplate report )
-	{
-		report.update();
 	}
 
 	// loads all jasper reports from reports dir

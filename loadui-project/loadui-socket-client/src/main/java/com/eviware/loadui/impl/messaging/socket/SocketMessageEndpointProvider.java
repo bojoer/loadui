@@ -27,10 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.LoadUI;
-import com.eviware.loadui.api.messaging.ConnectionListener;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.messaging.MessageEndpointProvider;
-import com.eviware.loadui.api.messaging.MessageListener;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
@@ -54,42 +52,6 @@ public class SocketMessageEndpointProvider implements MessageEndpointProvider
 
 		client.setKeyMaterial( new KeyMaterial( System.getProperty( LoadUI.KEY_STORE ), System.getProperty(
 				LoadUI.KEY_STORE_PASSWORD ).toCharArray() ) );
-	}
-
-	public void test()
-	{
-		MessageEndpoint endpoint = createEndpoint( "127.0.0.1:8443" );
-
-		endpoint.addMessageListener( "/test", new MessageListener()
-		{
-			int count = 0;
-
-			@Override
-			public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
-			{
-				int value = ( Integer )data;
-				if( count == value )
-				{
-					if( count % 1000 == 0 )
-						log.debug( "Count at: {}", count );
-					endpoint.sendMessage( "/test", ++count );
-				}
-				else
-				{
-					log.error( "Got {}, expecting {}!", value, count );
-				}
-			}
-		} );
-		endpoint.addConnectionListener( new ConnectionListener()
-		{
-			@Override
-			public void handleConnectionChange( MessageEndpoint endpoint, boolean connected )
-			{
-				if( connected )
-					endpoint.sendMessage( "/test", 0 );
-			}
-		} );
-		endpoint.open();
 	}
 
 	@Override

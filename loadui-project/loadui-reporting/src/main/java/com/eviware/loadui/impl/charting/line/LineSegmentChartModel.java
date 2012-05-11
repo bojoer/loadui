@@ -37,7 +37,7 @@ import com.jidesoft.chart.style.ChartStyle;
 
 public final class LineSegmentChartModel extends AbstractLineSegmentModel implements LineSegmentModel
 {
-	public static final Logger log = LoggerFactory.getLogger( LineSegmentChartModel.class );
+	private static final Logger log = LoggerFactory.getLogger( LineSegmentChartModel.class );
 
 	private final ChartGroup chartGroup;
 	private final StyleEventListener listener = new StyleEventListener();

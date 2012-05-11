@@ -138,7 +138,7 @@ public class LTable extends JXTable
 	 * @param arraylist
 	 * @return
 	 */
-	private String[] convertToStringArray( List<?> arraylist )
+	private static String[] convertToStringArray( List<?> arraylist )
 	{
 		String[] result = new String[arraylist.size()];
 		for( int cnt = 0; cnt < arraylist.size(); cnt++ )

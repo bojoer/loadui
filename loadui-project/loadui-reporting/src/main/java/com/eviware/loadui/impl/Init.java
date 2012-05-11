@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 

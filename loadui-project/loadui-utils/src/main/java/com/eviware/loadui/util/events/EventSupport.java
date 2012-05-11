@@ -165,7 +165,7 @@ public class EventSupport implements EventFirer, Releasable
 	}
 
 	@SuppressWarnings( "unchecked" )
-	private <E extends EventObject> void queueEvent( EventObject event, EventHandler<?> handler, Class<E> type )
+	private static <E extends EventObject> void queueEvent( EventObject event, EventHandler<?> handler, Class<E> type )
 	{
 		if( !eventQueue.offer( new PendingEvent<E>( ( E )event, ( EventHandler<E> )handler ) ) )
 			log.error( "Event queue full! Unable to queue event: {}", event );

@@ -36,7 +36,7 @@ import com.jidesoft.chart.style.ChartStyle;
 
 public abstract class AbstractSegmentModel extends DefaultChartModel
 {
-	protected static final Logger log = LoggerFactory.getLogger( AbstractSegmentModel.class );
+	private static final Logger log = LoggerFactory.getLogger( AbstractSegmentModel.class );
 	private static final DataFetcher dataFetcher = new DataFetcher();
 
 	static

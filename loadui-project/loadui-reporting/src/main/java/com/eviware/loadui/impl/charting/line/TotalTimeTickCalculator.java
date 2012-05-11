@@ -31,39 +31,7 @@ import com.jidesoft.range.Range;
  */
 public class TotalTimeTickCalculator implements TickCalculator<Long>
 {
-	private ZoomLevel level = ZoomLevel.SECONDS;
-
-	public void setLevel( ZoomLevel level )
-	{
-		this.level = level;
-	}
-
-	public ZoomLevel getLevel()
-	{
-		return level;
-	}
-
-	@Override
-	public Tick[] calculateTicks( Range<Long> range )
-	{
-		long firstTick = range.lower() / 1000;
-		long end = range.upper() / 1000;
-		long span = end - firstTick;
-		final ZoomLevel ticksLevel = level == ZoomLevel.ALL ? ZoomLevel.forSpan( span ) : level;
-
-		final long interval = ticksLevel.getInterval();
-		if( interval < 1 )
-			throw new RuntimeException( "Interval must be positive! Interval = " + interval );
-		firstTick -= ( firstTick % interval );
-
-		ArrayList<Tick> ticks = new ArrayList<Tick>();
-		for( long i = firstTick; i <= end; i += interval )
-			ticks.add( makeTick( i, ticksLevel ) );
-
-		return ticks.toArray( new Tick[ticks.size()] );
-	}
-
-	private Tick makeTick( long time, ZoomLevel level )
+	private static Tick makeTick( long time, ZoomLevel level )
 	{
 		if( ZoomLevel.ALL != level && time % level.getMajorTickInterval() != 0 )
 			return new Tick( time * 1000 );
@@ -71,7 +39,7 @@ public class TotalTimeTickCalculator implements TickCalculator<Long>
 			return new Tick( time * 1000, formatTime( time, level ) );
 	}
 
-	private String formatTime( long time, ZoomLevel level )
+	private static String formatTime( long time, ZoomLevel level )
 	{
 		StringBuilder stringBuilder = new StringBuilder();
 		if( time < 0 )
@@ -134,6 +102,38 @@ public class TotalTimeTickCalculator implements TickCalculator<Long>
 
 		stringBuilder.append( String.format( "%02d", seconds ) );
 		return stringBuilder.toString();
+	}
+
+	private ZoomLevel level = ZoomLevel.SECONDS;
+
+	public void setLevel( ZoomLevel level )
+	{
+		this.level = level;
+	}
+
+	public ZoomLevel getLevel()
+	{
+		return level;
+	}
+
+	@Override
+	public Tick[] calculateTicks( Range<Long> range )
+	{
+		long firstTick = range.lower() / 1000;
+		long end = range.upper() / 1000;
+		long span = end - firstTick;
+		final ZoomLevel ticksLevel = level == ZoomLevel.ALL ? ZoomLevel.forSpan( span ) : level;
+
+		final long interval = ticksLevel.getInterval();
+		if( interval < 1 )
+			throw new RuntimeException( "Interval must be positive! Interval = " + interval );
+		firstTick -= ( firstTick % interval );
+
+		ArrayList<Tick> ticks = new ArrayList<Tick>();
+		for( long i = firstTick; i <= end; i += interval )
+			ticks.add( makeTick( i, ticksLevel ) );
+
+		return ticks.toArray( new Tick[ticks.size()] );
 	}
 
 	@Override

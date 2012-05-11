@@ -40,19 +40,33 @@ public class ReportingManagerImpl implements ReportingManager
 	private static final String RESULTS_REPORT = "ResultsReport";
 	private final ReportEngine reportEngine = new ReportEngine();
 
+	private static JasperPrint getJpFromFile( File file )
+	{
+		ObjectInputStream ois = null;
+		try
+		{
+			ois = new ObjectInputStream( new FileInputStream( file ) );
+			return ( JasperPrint )ois.readObject();
+		}
+		catch( IOException e )
+		{
+			return null;
+		}
+		catch( ClassNotFoundException e )
+		{
+			return null;
+		}
+		finally
+		{
+			Closeables.closeQuietly( ois );
+		}
+	}
+
 	@Override
 	public void createReport( Summary summary )
 	{
-		try
-		{
-			reportEngine.generateJasperReport( new SummaryDataSource( summary ), SUMMARY_REPORT, summary.getChapters()
-					.keySet().iterator().next() );
-		}
-		catch( JRException e )
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		reportEngine.generateJasperReport( new SummaryDataSource( summary ), SUMMARY_REPORT, summary.getChapters()
+				.keySet().iterator().next() );
 	}
 
 	@Override
@@ -72,15 +86,8 @@ public class ReportingManagerImpl implements ReportingManager
 	public void createReport( String label, Execution execution, Collection<StatisticPage> pages,
 			Map<Object, Image> charts )
 	{
-		try
-		{
-			reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ), RESULTS_REPORT,
-					execution.getLabel() );
-		}
-		catch( JRException e )
-		{
-			e.printStackTrace();
-		}
+		reportEngine.generateJasperReport( new ExecutionDataSource( label, execution, pages, charts ), RESULTS_REPORT,
+				execution.getLabel() );
 	}
 
 	@Override
@@ -130,28 +137,6 @@ public class ReportingManagerImpl implements ReportingManager
 		catch( JRException e )
 		{
 			e.printStackTrace();
-		}
-	}
-
-	private JasperPrint getJpFromFile( File file )
-	{
-		ObjectInputStream ois = null;
-		try
-		{
-			ois = new ObjectInputStream( new FileInputStream( file ) );
-			return ( JasperPrint )ois.readObject();
-		}
-		catch( IOException e )
-		{
-			return null;
-		}
-		catch( ClassNotFoundException e )
-		{
-			return null;
-		}
-		finally
-		{
-			Closeables.closeQuietly( ois );
 		}
 	}
 }

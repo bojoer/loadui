@@ -62,7 +62,8 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint
 
 	private void init()
 	{
-		new Thread( new MessageReceiver( socket ) ).start();
+		new Thread( new MessageReceiver() ).start();
+
 		try
 		{
 			new Thread( new MessageSender( new ObjectOutputStream( socket.getOutputStream() ) ) ).start();
@@ -118,13 +119,6 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint
 
 	private class MessageReceiver implements Runnable
 	{
-		private final SSLSocket socket;
-
-		public MessageReceiver( SSLSocket socket )
-		{
-			this.socket = socket;
-		}
-
 		@Override
 		public void run()
 		{

@@ -53,7 +53,7 @@ public class BeanInjectorMockerTest
 	@Test
 	public void shouldReturnMocks()
 	{
-		new BeanInjectorMocker();
+		BeanInjectorMocker.newInstance();
 
 		TestInterface beanOne = BeanInjector.getBean( TestInterface.class );
 		TestInterface beanTwo = BeanInjector.getBean( TestInterface.class );
@@ -67,6 +67,7 @@ public class BeanInjectorMockerTest
 	}
 
 	@Test
+	@SuppressWarnings( "unused" )
 	public void shouldReturnMappedBeanAddedInConstructor()
 	{
 		final TestInterface testBean = new TestInterface()
@@ -92,7 +93,7 @@ public class BeanInjectorMockerTest
 		{
 		};
 
-		new BeanInjectorMocker().put( TestInterface.class, testBean );
+		BeanInjectorMocker.newInstance().put( TestInterface.class, testBean );
 
 		TestInterface beanOne = BeanInjector.getBean( TestInterface.class );
 		TestInterface beanTwo = BeanInjector.getBean( TestInterface.class );
@@ -111,7 +112,7 @@ public class BeanInjectorMockerTest
 		{
 		};
 
-		new BeanInjectorMocker().put( TestInterfaceSubclass.class, testSubclassBean );
+		BeanInjectorMocker.newInstance().put( TestInterfaceSubclass.class, testSubclassBean );
 
 		TestInterface bean = BeanInjector.getBean( TestInterface.class );
 		TestInterfaceSubclass subclassBean = BeanInjector.getBean( TestInterfaceSubclass.class );

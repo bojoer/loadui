@@ -49,9 +49,9 @@ public class SettingsLayoutContainerImpl extends LayoutContainerImpl implements 
 		return ( String )properties.get( LABEL );
 	}
 
+	@Override
 	public Map<String, ?> getProperties()
 	{
 		return properties;
 	}
-
 }

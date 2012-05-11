@@ -4,8 +4,4 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 		
 	<bean id="messageEndpointProvider" class="com.eviware.loadui.impl.messaging.socket.SocketMessageEndpointProvider" />
-	
-	<bean id="trafficTester" class="com.eviware.loadui.impl.messaging.socket.demo.TrafficTester">
-		<constructor-arg ref="messageEndpointProvider" />
-	</bean>
 </beans>

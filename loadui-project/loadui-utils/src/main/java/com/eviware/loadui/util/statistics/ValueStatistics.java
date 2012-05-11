@@ -20,9 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.math.stat.descriptive.rank.Percentile;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 
 public class ValueStatistics
 {
@@ -114,7 +115,7 @@ public class ValueStatistics
 					break;
 			}
 
-			long timeDelta = timestamp - point.timestamp;
+			long timeDelta = timestamp - Preconditions.checkNotNull( point ).timestamp;
 
 			timeDelta = timeDelta == 0 ? 1000 : timeDelta;
 
