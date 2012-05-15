@@ -49,9 +49,10 @@ import com.eviware.loadui.fx.ui.ConnectingAnimation;
 import com.eviware.loadui.fx.ui.node.BaseNode;
 import com.eviware.loadui.fx.ui.dnd.Draggable;
 import com.eviware.loadui.fx.ui.resources.TitlebarPanel;
+import com.eviware.loadui.fx.util.ModelUtils;
+import com.eviware.loadui.fx.util.ModelUtils.LabelHolder;
 import com.eviware.loadui.api.model.SceneItem;
 
-import com.eviware.loadui.api.model.ModelItem;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.BaseEvent;
@@ -76,12 +77,15 @@ public-read def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widgets.Te
 /**
  * Node to display in the AgentList representing a AgentItem.
  */
-public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, WeakEventHandler {
+public class TestCaseIcon extends BaseNode, Draggable, WeakEventHandler {
 
 	// container node instance. Use containerNode.agent to retrieve reference to corresponding AgentItem.
 	public var containerNode: AgentItemInspectorNode on replace {
 		loaded = containerNode.agent == null or project.isSceneLoaded( sceneItem, containerNode.agent );
 	}
+	
+	public def label = bind labelHolder.label;
+	var labelHolder:LabelHolder;
 	
 	var project:ProjectItem;
 	public var sceneItem: SceneItem on replace oldScene {
@@ -91,7 +95,7 @@ public class TestCaseIcon extends BaseNode, Draggable, ModelItemHolder, WeakEven
 		project = sceneItem.getProject();
 		loaded = containerNode.agent == null or project.isSceneLoaded( sceneItem, containerNode.agent );
 		project.addEventListener(BaseEvent.class, this);
-		modelItem = sceneItem;
+		labelHolder = ModelUtils.getLabelHolder( sceneItem );
 	};
 	
 	public var isPlaceholder: Boolean = false;
