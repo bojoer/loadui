@@ -48,6 +48,7 @@ public class ComparedLineSegmentChartModel extends AbstractLineSegmentModel impl
 
 		this.baseModel = baseModel;
 		chartStyle.setLineColor( ColorFactory.transitionColor( chartStyle.getLineColor(), Color.BLACK, 0.5 ) );
+		scalar = Math.pow( 10, baseModel.getScale() );
 		baseModel.getChartGroup().addEventListener( PropertyChangeEvent.class, chartGroupListener );
 		baseModel.addChartModelListener( listener );
 	}
