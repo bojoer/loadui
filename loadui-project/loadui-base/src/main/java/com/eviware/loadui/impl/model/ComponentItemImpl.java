@@ -81,6 +81,7 @@ import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implements ComponentItem
@@ -108,7 +109,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private ComponentBehavior behavior;
 	private LayoutComponent layout;
 	private LayoutComponent compactLayout;
-	private final Set<SettingsLayoutContainer> settingsTabs = new LinkedHashSet<SettingsLayoutContainer>();
+	private final Set<SettingsLayoutContainer> settingsTabs = Sets.newLinkedHashSet();
 	private boolean nonBlocking = false;
 	private String customHelpUrl = BASE_HELP_URL;
 	private boolean invalid = false;
@@ -117,12 +118,12 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private boolean propagate = true;
 	private final DualTerminal remoteTerminal = new RemoteTerminal();
 	private final DualTerminal controllerTerminal = new ControllerTerminal();
-	private final Map<AgentItem, AgentTerminal> agentTerminals = new HashMap<AgentItem, AgentTerminal>();
+	private final Map<AgentItem, AgentTerminal> agentTerminals = Maps.newHashMap();
 
 	private ActivityStrategy activityStrategy;
 	private final ActivityListener activityListener = new ActivityListener();
 
-	private final Set<Statistic.Descriptor> defaultStatistics = Sets.newHashSet();
+	private final Set<Statistic.Descriptor> defaultStatistics = Sets.newLinkedHashSet();
 	private final TerminalsEnabledTask terminalsEnabledTask = new TerminalsEnabledTask();
 	private boolean terminalsEnabled = false;
 
@@ -138,7 +139,6 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 				BeanInjector.getBean( CounterSynchronizer.class ) ) : new CounterSupport();
 
 		workspaceListener = LoadUI.isController() && canvas instanceof SceneItem ? new WorkspaceListener() : null;
-
 		projectListener = LoadUI.isController() && canvas instanceof SceneItem ? new ProjectListener() : null;
 
 		terminalHolderSupport = new TerminalHolderSupport( this );

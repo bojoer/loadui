@@ -40,6 +40,7 @@ import com.eviware.loadui.impl.charting.line.LineChartStyles;
 import com.eviware.loadui.impl.charting.line.LongRange;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
+import com.google.common.collect.Maps;
 import com.jidesoft.chart.model.ChartModel;
 import com.jidesoft.chart.style.ChartStyle;
 import com.jidesoft.chart.util.ChartUtils;
@@ -51,7 +52,7 @@ public class LineChartUtils
 	public static Map<ChartView, Image> createImages( Collection<StatisticPage> pages, Execution mainExecution,
 			Execution comparedExecution )
 	{
-		HashMap<ChartView, Image> images = new HashMap<ChartView, Image>();
+		HashMap<ChartView, Image> images = Maps.newHashMap();
 		for( StatisticPage page : pages )
 			for( ChartGroup chartGroup : page.getChildren() )
 				images.putAll( createImages( chartGroup, mainExecution, comparedExecution ) );
