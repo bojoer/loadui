@@ -90,7 +90,7 @@ def childrenInfo = LayoutInfo { hfill: true, hgrow: Priority.ALWAYS, margin: Ins
 public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable, Droppable, Selectable {
 	override var styleClass = "chart-group-holder";
 	
-	var title:String = "ChartGroupHolder";
+	public-read var title:String = "ChartGroupHolder";
 	var chartGroupHolder = this;
 	
 	def statisticsManagerListener = new StatisticsManagerListener();
@@ -125,7 +125,7 @@ public class ChartGroupHolder extends BaseNode, Resizable, Releasable, Deletable
 			chartGroupHolder: chartGroupHolder
 			chartGroup: chartGroup
 			typeLabel: "Component"
-			label: bind title
+			label: bind ModelUtils.getLabelHolder( chartGroup.getChildren().iterator().next().getOwner() ).label
 			layoutInfo: chartViewInfo
 			graphic: graphic
 		};

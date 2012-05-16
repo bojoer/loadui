@@ -186,7 +186,7 @@ public class ChartGroupChartViewHolder extends ChartViewHolder, WeakEventHandler
 		insert menuButton = MenuButton {
 			styleClass: bind if( menuButton.showing ) "menu-button-showing" else "menu-button"
 			style: "-fx-text-fill: #bababa;"
-			text: bind label.toUpperCase()
+			text: bind chartGroupHolder.title.toUpperCase()
 			items: contextMenuItems();
 		} after vbox.content[0];
 		
