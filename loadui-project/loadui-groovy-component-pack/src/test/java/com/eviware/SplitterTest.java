@@ -15,6 +15,7 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
+import com.eviware.loadui.util.test.TestUtils;
 import com.google.common.base.Joiner;
 
 public class SplitterTest
@@ -46,5 +47,57 @@ public class SplitterTest
 
 		OutputTerminal loop = ( OutputTerminal )component.getTerminalByName( FlowCategory.OUTGOING_TERMINAL + " 1" );
 		assertThat( loop.getLabel(), is( "Output Terminal 1" ) );
+	}
+
+	@Test
+	public void probabilitiesShouldSumUpCorrectly() throws Exception
+	{
+		// 2 outputs: Change one, sum is 100%.
+		component.getProperty( "numOutputs" ).setValue( 2 );
+		component.getProperty( "probability0" ).setValue( 60 );
+		TestUtils.awaitEvents( component );
+		assertThat( ( Integer )component.getProperty( "probability1" ).getValue(), is( 40 ) );
+
+		// 3 outputs: New output has probability 0 .
+		component.getProperty( "numOutputs" ).setValue( 3 );
+		TestUtils.awaitEvents( component );
+		assertThat( ( Integer )component.getProperty( "probability2" ).getValue(), is( 0 ) );
+
+		// 3 outputs: Increasing one should decrease the others, starting with the least recently changed non-zero output.
+		component.getProperty( "probability2" ).setValue( 50 );
+		TestUtils.awaitEvents( component );
+		assertThat( ( Integer )component.getProperty( "probability0" ).getValue(), is( 50 ) );
+		assertThat( ( Integer )component.getProperty( "probability1" ).getValue(), is( 0 ) );
+
+		// 2 outputs: Sum is 100%.
+		component.getProperty( "numOutputs" ).setValue( 2 );
+		TestUtils.awaitEvents( component );
+		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 50 ) );
+
+		// 10 outputs: All new are 0 and all old stays the same.
+		component.getProperty( "numOutputs" ).setValue( 10 );
+		TestUtils.awaitEvents( component );
+		assertThat( getProbabilityForOutput( 0 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 1 ), is( 50 ) );
+		assertThat( getProbabilityForOutput( 2 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 3 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 4 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 5 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 6 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 7 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 8 ), is( 0 ) );
+		assertThat( getProbabilityForOutput( 9 ), is( 0 ) );
+
+		// 1 output: It is 100%.
+		component.getProperty( "numOutputs" ).setValue( 1 );
+		TestUtils.awaitEvents( component );
+		assertThat( getProbabilityForOutput( 0 ), is( 100 ) );
+	}
+
+	private int getProbabilityForOutput( int outputNumber )
+	{
+		assert ( ( Integer )component.getProperty( "numOutputs" ).getValue() ) < outputNumber;
+		return ( Integer )component.getProperty( "probability" + outputNumber ).getValue();
 	}
 }
