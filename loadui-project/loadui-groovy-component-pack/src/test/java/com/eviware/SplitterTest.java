@@ -98,7 +98,7 @@ public class SplitterTest
 
 	private int getProbabilityForOutput( int outputNumber )
 	{
-		assertThat( ( Integer )component.getProperty( "numOutputs" ).getValue(), Matchers.lessThan( outputNumber ) );
+		assertThat( ( Integer )component.getProperty( "numOutputs" ).getValue(), Matchers.greaterThan( outputNumber ) );
 		return ( Integer )component.getProperty( "probability" + outputNumber ).getValue();
 	}
 }
