@@ -9,16 +9,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.categories.SchedulerCategory;
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.api.terminal.OutputTerminal;
-import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.util.component.ComponentTestUtils;
 import com.google.common.collect.ImmutableMap;
 
 public class OnOffBaseTest
 {
 	private OnOffBase onOffBase;
-	private ComponentItemImpl component;
+	private ComponentItem component;
 
 	@Before
 	public void setup()
@@ -39,7 +39,7 @@ public class OnOffBaseTest
 				return null;
 			}
 		};
-		component.setBehavior( onOffBase );
+		ComponentTestUtils.setComponentBehavior( component, onOffBase );
 	}
 
 	@Test

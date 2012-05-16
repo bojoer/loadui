@@ -39,29 +39,40 @@ public class EventSupport implements EventFirer, Releasable
 
 	private final Set<ListenerEntry<?>> listeners = new HashSet<ListenerEntry<?>>();
 	private static final BlockingQueue<Runnable> eventQueue = new LinkedBlockingQueue<Runnable>();
-	private static final Thread eventThread;
 
 	static
 	{
-		eventThread = new Thread( new Runnable()
+		spawnEventThread();
+	}
+
+	private static void spawnEventThread()
+	{
+		Thread eventThread = new Thread( new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				while( true )
+				try
 				{
-					try
+					while( true )
 					{
-						final Runnable action = eventQueue.poll( 1, TimeUnit.SECONDS );
-						if( action != null )
+						try
 						{
-							action.run();
+							final Runnable action = eventQueue.poll( 1, TimeUnit.SECONDS );
+							if( action != null )
+							{
+								action.run();
+							}
+						}
+						catch( Exception e )
+						{
+							e.printStackTrace();
 						}
 					}
-					catch( Exception e )
-					{
-						e.printStackTrace();
-					}
+				}
+				finally
+				{
+					spawnEventThread();
 				}
 				//listeners.clear();
 			}

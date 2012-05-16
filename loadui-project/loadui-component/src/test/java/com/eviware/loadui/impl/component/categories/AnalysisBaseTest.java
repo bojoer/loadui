@@ -10,9 +10,9 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
-import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.util.component.ComponentTestUtils;
 import com.google.common.collect.ImmutableMap;
 
@@ -20,7 +20,7 @@ public class AnalysisBaseTest
 {
 	private BlockingQueue<TerminalMessage> analyzedMessages = new LinkedBlockingQueue<TerminalMessage>();
 	private AnalysisBase analysisBase;
-	private ComponentItemImpl component;
+	private ComponentItem component;
 
 	@Before
 	public void setup()
@@ -35,7 +35,7 @@ public class AnalysisBaseTest
 				analyzedMessages.add( message );
 			}
 		};
-		component.setBehavior( analysisBase );
+		ComponentTestUtils.setComponentBehavior( component, analysisBase );
 	}
 
 	@Test

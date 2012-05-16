@@ -20,7 +20,6 @@ import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.groovy.GroovyBehaviorProvider;
 import com.eviware.loadui.groovy.GroovyBehaviorSupport;
-import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.util.component.ComponentTestUtils;
 import com.eviware.loadui.util.groovy.GroovyEnvironment;
 import com.google.common.base.Objects;
@@ -69,7 +68,7 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 		return createComponent( componentName, ComponentTestUtils.createComponentItem() );
 	}
 
-	public static ComponentItem createComponent( final String componentName, ComponentItemImpl component )
+	public static ComponentItem createComponent( final String componentName, ComponentItem component )
 			throws ComponentCreationException
 	{
 		Optional<ComponentDescriptor> descriptorOptional = null;
@@ -103,7 +102,8 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 		ComponentDescriptor descriptor = descriptorOptional.get();
 
 		component.setAttribute( ComponentItem.TYPE, descriptor.getLabel() );
-		component.setBehavior( descriptors.get( descriptor ).createBehavior( descriptor, component.getContext() ) );
+		ComponentTestUtils.setComponentBehavior( component,
+				descriptors.get( descriptor ).createBehavior( descriptor, component.getContext() ) );
 
 		return component;
 	}

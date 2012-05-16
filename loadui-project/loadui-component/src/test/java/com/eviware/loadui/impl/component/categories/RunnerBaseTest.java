@@ -17,20 +17,20 @@ import org.mockito.Matchers;
 
 import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.categories.GeneratorCategory;
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.statistics.Statistic;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticVariable.Mutable;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
-import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.util.component.ComponentTestUtils;
 import com.google.common.collect.ImmutableMap;
 
 public class RunnerBaseTest
 {
 	private RunnerBase runnerBase;
-	private ComponentItemImpl component;
+	private ComponentItem component;
 
 	@Before
 	@SuppressWarnings( "unchecked" )
@@ -39,7 +39,7 @@ public class RunnerBaseTest
 		ComponentTestUtils.getDefaultBeanInjectorMocker();
 
 		component = ComponentTestUtils.createComponentItem();
-		ComponentItemImpl componentSpy = spy( component );
+		ComponentItem componentSpy = spy( component );
 		ComponentContext contextSpy = spy( component.getContext() );
 		doReturn( contextSpy ).when( componentSpy ).getContext();
 		doReturn( componentSpy ).when( contextSpy ).getComponent();
@@ -71,7 +71,7 @@ public class RunnerBaseTest
 			}
 
 		};
-		component.setBehavior( runnerBase );
+		ComponentTestUtils.setComponentBehavior( component, runnerBase );
 		contextSpy.setNonBlocking( true );
 		component = componentSpy;
 	}

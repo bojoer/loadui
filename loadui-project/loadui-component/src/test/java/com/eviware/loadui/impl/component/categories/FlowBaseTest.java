@@ -13,17 +13,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.ComponentContext;
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
-import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.util.component.ComponentTestUtils;
 import com.google.common.collect.ImmutableMap;
 
 public class FlowBaseTest
 {
 	private FlowBase flowBase;
-	private ComponentItemImpl component;
+	private ComponentItem component;
 
 	@Before
 	public void setup()
@@ -33,7 +33,7 @@ public class FlowBaseTest
 		flowBase = new FlowBase( component.getContext() )
 		{
 		};
-		component.setBehavior( flowBase );
+		ComponentTestUtils.setComponentBehavior( component, flowBase );
 	}
 
 	@Test

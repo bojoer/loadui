@@ -18,16 +18,16 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.serialization.Value;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.TerminalMessage;
-import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.util.component.ComponentTestUtils;
 
 public class BaseCategoryTest
 {
-	private ComponentItemImpl component;
+	private ComponentItem component;
 	private BaseCategory baseCategory;
 
 	@Before
@@ -49,7 +49,7 @@ public class BaseCategoryTest
 				return null;
 			}
 		};
-		component.setBehavior( baseCategory );
+		ComponentTestUtils.setComponentBehavior( component, baseCategory );
 	}
 
 	@Test
@@ -77,7 +77,7 @@ public class BaseCategoryTest
 		when( callable.call() ).thenReturn( 7 );
 
 		BaseCategory baseCategorySpy = spy( baseCategory );
-		component.setBehavior( baseCategorySpy );
+		ComponentTestUtils.setComponentBehavior( component, baseCategorySpy );
 
 		final CountDownLatch messageAwaiter = new CountDownLatch( 1 );
 

@@ -25,7 +25,6 @@ import com.eviware.loadui.api.statistics.StatisticVariable.Mutable;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
-import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.util.component.ComponentTestUtils;
 import com.google.common.base.Joiner;
 
@@ -45,7 +44,7 @@ public class ProcessRunnerTest
 	{
 		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
 
-		ComponentItemImpl componentSpy = spy( ComponentTestUtils.createComponentItem() );
+		ComponentItem componentSpy = spy( ComponentTestUtils.createComponentItem() );
 		ComponentContext contextSpy = spy( componentSpy.getContext() );
 		doReturn( contextSpy ).when( componentSpy ).getContext();
 

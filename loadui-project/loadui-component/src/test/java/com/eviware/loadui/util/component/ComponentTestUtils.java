@@ -25,6 +25,7 @@ import org.springframework.core.convert.support.DefaultConversionService;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.addressable.AddressableRegistry;
+import com.eviware.loadui.api.component.ComponentBehavior;
 import com.eviware.loadui.api.counter.Counter;
 import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.TerminalConnectionEvent;
@@ -69,7 +70,7 @@ public class ComponentTestUtils
 	}
 
 	@SuppressWarnings( "rawtypes" )
-	public static ComponentItemImpl createComponentItem()
+	public static ComponentItem createComponentItem()
 	{
 		WorkspaceItem workspace = mock( WorkspaceItem.class );
 		ProjectItem project = mock( ProjectItem.class );
@@ -102,6 +103,12 @@ public class ComponentTestUtils
 
 		ComponentItemImpl component = ComponentItemImpl.newInstance( project, ComponentItemConfig.Factory.newInstance() );
 		return component;
+	}
+
+	public static void setComponentBehavior( ComponentItem component, ComponentBehavior behavior )
+	{
+		assert component instanceof ComponentItemImpl;
+		( ( ComponentItemImpl )component ).setBehavior( behavior );
 	}
 
 	public static void sendMessage( InputTerminal terminal, Map<String, ?> message )

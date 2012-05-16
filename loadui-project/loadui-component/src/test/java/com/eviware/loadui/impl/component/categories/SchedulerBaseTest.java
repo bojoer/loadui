@@ -12,15 +12,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.categories.OnOffCategory;
+import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.TerminalMessage;
-import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.util.component.ComponentTestUtils;
 import com.eviware.loadui.util.test.TestUtils;
 
 public class SchedulerBaseTest
 {
 	private SchedulerBase schedulerBase;
-	private ComponentItemImpl component;
+	private ComponentItem component;
 
 	@Before
 	public void setup()
@@ -30,7 +30,7 @@ public class SchedulerBaseTest
 		schedulerBase = new SchedulerBase( component.getContext() )
 		{
 		};
-		component.setBehavior( schedulerBase );
+		ComponentTestUtils.setComponentBehavior( component, schedulerBase );
 	}
 
 	@Test
