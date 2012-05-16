@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.File;
 
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -97,7 +98,7 @@ public class SplitterTest
 
 	private int getProbabilityForOutput( int outputNumber )
 	{
-		assert ( ( Integer )component.getProperty( "numOutputs" ).getValue() ) < outputNumber;
+		assertThat( ( Integer )component.getProperty( "numOutputs" ).getValue(), Matchers.lessThan( outputNumber ) );
 		return ( Integer )component.getProperty( "probability" + outputNumber ).getValue();
 	}
 }
