@@ -74,7 +74,6 @@ public class ChartViewHolder extends BaseNode, Resizable, Releasable, Deletable 
 	public var subLabel:Label;
 	
 	public var label:String = "ChartView label" on replace oldValue {
-		println("   ChartViewHolder LABELED CHANGED to {label}");
 		subLabel.text = label;
 	};
 	
