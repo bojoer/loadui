@@ -18,19 +18,22 @@ package com.eviware.loadui.api.chart;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CustomTimeRange extends CustomAbstractRange {
+@Deprecated
+public class CustomTimeRange extends CustomAbstractRange
+{
 
 	//axis visible range in milliseconds
 	private long period;
-	
+
 	//axis refresh rate in milliseconds
 	private long rate;
-	
+
 	private long low;
 
 	private long high;
 
-	public CustomTimeRange(long period, long rate) {
+	public CustomTimeRange( long period, long rate )
+	{
 		super();
 		long now = System.currentTimeMillis();
 		this.low = now;
@@ -38,8 +41,9 @@ public class CustomTimeRange extends CustomAbstractRange {
 		this.period = period;
 		this.rate = rate;
 	}
-	
-	public CustomTimeRange(long low, long high, long period, long rate) {
+
+	public CustomTimeRange( long low, long high, long period, long rate )
+	{
 		super();
 		this.low = low;
 		this.high = high;
@@ -47,7 +51,8 @@ public class CustomTimeRange extends CustomAbstractRange {
 		this.rate = rate;
 	}
 
-	public CustomTimeRange(Date low, Date high, long period, long rate) {
+	public CustomTimeRange( Date low, Date high, long period, long rate )
+	{
 		super();
 		this.low = low.getTime();
 		this.high = high.getTime();
@@ -55,7 +60,8 @@ public class CustomTimeRange extends CustomAbstractRange {
 		this.rate = rate;
 	}
 
-	public CustomTimeRange(Calendar low, Calendar high, long period, long rate) {
+	public CustomTimeRange( Calendar low, Calendar high, long period, long rate )
+	{
 		super();
 		this.low = low.getTimeInMillis();
 		this.high = high.getTimeInMillis();
@@ -63,35 +69,43 @@ public class CustomTimeRange extends CustomAbstractRange {
 		this.rate = rate;
 	}
 
-	public long getLow() {
+	public long getLow()
+	{
 		return low;
 	}
 
-	public long getHigh() {
+	public long getHigh()
+	{
 		return high;
 	}
 
-	public long getPeriod() {
+	public long getPeriod()
+	{
 		return period;
 	}
 
-	public void setPeriod(long period) {
+	public void setPeriod( long period )
+	{
 		this.period = period;
 	}
 
-	public void setLow(long low) {
+	public void setLow( long low )
+	{
 		this.low = low;
 	}
 
-	public void setHigh(long high) {
+	public void setHigh( long high )
+	{
 		this.high = high;
 	}
 
-	public long getRate() {
+	public long getRate()
+	{
 		return rate;
 	}
 
-	public void setRate(long rate) {
+	public void setRate( long rate )
+	{
 		this.rate = rate;
 	}
 }

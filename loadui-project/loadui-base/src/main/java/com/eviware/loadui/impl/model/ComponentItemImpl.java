@@ -17,10 +17,7 @@ package com.eviware.loadui.impl.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EventObject;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,11 +64,13 @@ import com.eviware.loadui.api.terminal.DualTerminal;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.api.terminal.Terminal;
-import com.eviware.loadui.api.terminal.TerminalHolder;
 import com.eviware.loadui.api.terminal.TerminalMessage;
 import com.eviware.loadui.config.ComponentItemConfig;
 import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.counter.RemoteAggregatedCounterSupport;
+import com.eviware.loadui.impl.model.DummyTerminal.AgentTerminal;
+import com.eviware.loadui.impl.model.DummyTerminal.RemoteTerminal;
+import com.eviware.loadui.impl.model.DummyTerminal.ControllerTerminal;
 import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.terminal.InputTerminalImpl;
 import com.eviware.loadui.impl.terminal.OutputTerminalImpl;
@@ -116,8 +115,8 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	private boolean busy = false;
 
 	private boolean propagate = true;
-	private final DualTerminal remoteTerminal = new RemoteTerminal();
-	private final DualTerminal controllerTerminal = new ControllerTerminal();
+	private final DualTerminal remoteTerminal;
+	private final DualTerminal controllerTerminal;
 	private final Map<AgentItem, AgentTerminal> agentTerminals = Maps.newHashMap();
 
 	private ActivityStrategy activityStrategy;
@@ -131,6 +130,9 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	{
 		super( config );
 		this.canvas = canvas;
+
+		remoteTerminal = new RemoteTerminal( this );
+		controllerTerminal = new ControllerTerminal( this );
 
 		executor = BeanInjector.getBean( ExecutorService.class );
 		conversionService = BeanInjector.getBean( ConversionService.class );
@@ -420,7 +422,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 	{
 		if( !agentTerminals.containsKey( agent ) )
 		{
-			AgentTerminal agentTerminal = new AgentTerminal( agent );
+			AgentTerminal agentTerminal = new AgentTerminal( this, agent );
 			agentTerminals.put( agent, agentTerminal );
 			fireCollectionEvent( ComponentContext.AGENT_TERMINALS, Event.ADDED, agentTerminal );
 		}
@@ -504,7 +506,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 					AgentTerminal agentTerminal;
 					if( CollectionEvent.Event.ADDED == event.getEvent() && !agentTerminals.containsKey( agent ) )
 					{
-						agentTerminal = new AgentTerminal( agent );
+						agentTerminal = new AgentTerminal( ComponentItemImpl.this, agent );
 						agentTerminals.put( agent, agentTerminal );
 						fireCollectionEvent( ComponentContext.AGENT_TERMINALS, event.getEvent(), agentTerminal );
 					}
@@ -607,7 +609,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 				else if( terminal instanceof AgentTerminal )
 				{
 					Object[] data = new Object[] { getId(), message.serialize() };
-					( ( AgentTerminal )terminal ).agent.sendMessage( ComponentContext.COMPONENT_CONTEXT_CHANNEL, data );
+					( ( AgentTerminal )terminal ).getAgent().sendMessage( ComponentContext.COMPONENT_CONTEXT_CHANNEL, data );
 				}
 			}
 		}
@@ -967,133 +969,6 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		public Set<Statistic.Descriptor> getDefaultStatistics()
 		{
 			return defaultStatistics;
-		}
-	}
-
-	private abstract class DummyTerminal implements DualTerminal
-	{
-		@Override
-		public Connection connectTo( InputTerminal input )
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public Map<String, Class<?>> getMessageSignature()
-		{
-			return Collections.emptyMap();
-		}
-
-		@Override
-		public Collection<Connection> getConnections()
-		{
-			return Collections.emptyList();
-		}
-
-		@Override
-		public TerminalHolder getTerminalHolder()
-		{
-			return ComponentItemImpl.this;
-		}
-
-		@Override
-		public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<? super T> listener )
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void fireEvent( EventObject event )
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void clearEventListeners()
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public String getId()
-		{
-			return ComponentItemImpl.this.getId() + "/" + getName();
-		}
-
-		@Override
-		public String getLabel()
-		{
-			return getName();
-		}
-
-		@Override
-		public String getDescription()
-		{
-			return "A special Terminal which can be used to send messages to remote instances of the ComponentItem itself.";
-		}
-
-		@Override
-		public void setDescription( String description )
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void setLabel( String label )
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public boolean likes( OutputTerminal outputTerminal )
-		{
-			return false;
-		}
-	}
-
-	private class RemoteTerminal extends DummyTerminal
-	{
-		@Override
-		public String getName()
-		{
-			return ComponentContext.REMOTE_TERMINAL;
-		}
-	}
-
-	private class AgentTerminal extends DummyTerminal
-	{
-		private final AgentItem agent;
-
-		public AgentTerminal( AgentItem agent )
-		{
-			this.agent = agent;
-		}
-
-		@Override
-		public String getName()
-		{
-			return agent.getLabel();
-		}
-
-		@Override
-		public String getId()
-		{
-			return ComponentItemImpl.this.getId() + "/" + agent.getId();
-		}
-	}
-
-	private class ControllerTerminal extends DummyTerminal
-	{
-		@Override
-		public String getName()
-		{
-			return ComponentContext.CONTROLLER_TERMINAL;
 		}
 	}
 

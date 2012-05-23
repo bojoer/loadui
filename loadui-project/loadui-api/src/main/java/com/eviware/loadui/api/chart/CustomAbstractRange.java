@@ -15,26 +15,32 @@
  */
 package com.eviware.loadui.api.chart;
 
-public class CustomAbstractRange {
+@Deprecated
+public class CustomAbstractRange
+{
 
 	private String title = "";
-	
+
 	private boolean visible = false;
 
-	public String getTitle() {
+	public String getTitle()
+	{
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public void setTitle( String title )
+	{
 		this.title = title;
 	}
 
-	public boolean isVisible() {
+	public boolean isVisible()
+	{
 		return visible;
 	}
 
-	public void setVisible(boolean visible) {
+	public void setVisible( boolean visible )
+	{
 		this.visible = visible;
 	}
-	
+
 }

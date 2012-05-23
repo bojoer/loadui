@@ -17,6 +17,7 @@ package com.eviware.loadui.api.chart;
 
 import javax.annotation.concurrent.Immutable;
 
+@Deprecated
 @Immutable
 public class Point
 {

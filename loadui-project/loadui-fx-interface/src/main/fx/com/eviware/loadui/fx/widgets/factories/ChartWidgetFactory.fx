@@ -25,6 +25,7 @@ import com.eviware.loadui.api.chart.ChartModel;
 /**
  * @author predrag
  */
+// @Deprecated
 public class ChartWidgetFactory extends WidgetFactory {
     
 	def PROPERTY_MODEL:String = "model";

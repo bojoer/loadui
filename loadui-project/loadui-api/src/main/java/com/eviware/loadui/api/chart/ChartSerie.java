@@ -15,53 +15,64 @@
  */
 package com.eviware.loadui.api.chart;
 
-public class ChartSerie {
-	
+@Deprecated
+public class ChartSerie
+{
+
 	private int index;
-	
+
 	private String name;
-	
+
 	private boolean enabled = true;
-	
+
 	private boolean defaultAxis = true;
 
-	public ChartSerie(String name, boolean enabled) {
+	public ChartSerie( String name, boolean enabled )
+	{
 		this.name = name;
 		this.enabled = enabled;
 	}
-	
-	public ChartSerie(String name, boolean enabled, boolean defaultAxis) {
+
+	public ChartSerie( String name, boolean enabled, boolean defaultAxis )
+	{
 		this.name = name;
 		this.enabled = enabled;
 		this.defaultAxis = defaultAxis;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName( String name )
+	{
 		this.name = name;
 	}
 
-	public boolean isEnabled() {
+	public boolean isEnabled()
+	{
 		return enabled;
 	}
 
-	public void setEnabled(boolean enabled) {
+	public void setEnabled( boolean enabled )
+	{
 		this.enabled = enabled;
 	}
 
-	public int getIndex() {
+	public int getIndex()
+	{
 		return index;
 	}
 
-	public void setIndex(int index) {
+	public void setIndex( int index )
+	{
 		this.index = index;
 	}
-	
-	public boolean isDefaultAxis() {
+
+	public boolean isDefaultAxis()
+	{
 		return defaultAxis;
 	}
-	
+
 }

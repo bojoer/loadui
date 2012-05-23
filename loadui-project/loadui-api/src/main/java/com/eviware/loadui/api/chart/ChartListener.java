@@ -15,23 +15,27 @@
  */
 package com.eviware.loadui.api.chart;
 
-public interface ChartListener {
+@Deprecated
+public interface ChartListener
+{
 
 	/**
 	 * Fires when new point has been added to a specific serie of a chart.
 	 * 
-	 * @param cs Chart serie to which the point has been added to.
-	 * @param p Point that has been added to chart serie.
+	 * @param cs
+	 *           Chart serie to which the point has been added to.
+	 * @param p
+	 *           Point that has been added to chart serie.
 	 */
-	public void pointAddedToModel(ChartSerie cs, Point p);
+	public void pointAddedToModel( ChartSerie cs, Point p );
 
 	/**
 	 * Fires when chart serie has been cleared
 	 * 
 	 * @param cs
-	 *            Chart serie that has been cleared
+	 *           Chart serie that has been cleared
 	 */
-	public void serieCleared(ChartSerie cs);
+	public void serieCleared( ChartSerie cs );
 
 	/**
 	 * Fires after all chart series have been cleared
@@ -43,16 +47,16 @@ public interface ChartListener {
 	 * enabled or disabled use <code>cs.isEnabled()</code> method.
 	 * 
 	 * @param cs
-	 *            Chart serie that has been enabled or disabled
+	 *           Chart serie that has been enabled or disabled
 	 */
-	public void serieEnabled(ChartSerie cs);
-	
+	public void serieEnabled( ChartSerie cs );
+
 	/**
 	 * Fires when test starts or stops.
 	 * 
 	 * @param running
-	 *            true if test is running, false otherwise.
+	 *           true if test is running, false otherwise.
 	 */
-	public void testStateChanged(boolean running);
+	public void testStateChanged( boolean running );
 
 }

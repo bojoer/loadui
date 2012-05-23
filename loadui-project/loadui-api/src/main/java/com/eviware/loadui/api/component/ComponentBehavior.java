@@ -104,12 +104,14 @@ public interface ComponentBehavior
 	 * 
 	 * @return Statistics data to be sent to the Controller.
 	 */
+	@Deprecated
 	public Object collectStatisticsData();
 
 	/**
 	 * Handle remotely collected statistics data gathered for Agents on the
 	 * controller.
 	 */
+	@Deprecated
 	public void handleStatisticsData( Map<AgentItem, Object> statisticsData );
 
 	/**

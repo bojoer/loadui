@@ -15,54 +15,64 @@
  */
 package com.eviware.loadui.api.chart;
 
-public class CustomNumericRange extends CustomAbstractRange {
+@Deprecated
+public class CustomNumericRange extends CustomAbstractRange
+{
 
 	private double extraSpace;
-	
+
 	private double low;
-	
+
 	private double high;
-	
+
 	private double scale = 1.0;
 
-	public CustomNumericRange(double low, double high, double extraSpace) {
+	public CustomNumericRange( double low, double high, double extraSpace )
+	{
 		super();
 		this.low = low;
 		this.high = high;
 		this.extraSpace = extraSpace;
 	}
 
-	public double getLow() {
+	public double getLow()
+	{
 		return low;
 	}
 
-	public double getHigh() {
+	public double getHigh()
+	{
 		return high;
 	}
 
-	public double getExtraSpace() {
+	public double getExtraSpace()
+	{
 		return extraSpace;
 	}
 
-	public void setExtraSpace(double extraSpace) {
+	public void setExtraSpace( double extraSpace )
+	{
 		this.extraSpace = extraSpace;
 	}
 
-	public void setLow(double low) {
+	public void setLow( double low )
+	{
 		this.low = low;
 	}
 
-	public void setHigh(double high) {
+	public void setHigh( double high )
+	{
 		this.high = high;
 	}
 
-	public double getScale() {
+	public double getScale()
+	{
 		return scale;
 	}
 
-	public void setScale(double scale) {
+	public void setScale( double scale )
+	{
 		this.scale = scale;
 	}
-	
-}
 
+}

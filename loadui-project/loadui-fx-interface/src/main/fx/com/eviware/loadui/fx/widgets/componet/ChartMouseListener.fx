@@ -45,7 +45,8 @@ import java.awt.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
-   
+
+//@Deprecated   
 public class ChartMouseListener extends MouseMotionListener {
 	
 	public-init var chartModel: ChartModel;

@@ -23,6 +23,8 @@ package com.eviware.loadui.api.chart;
  * @author predrag.vucetic
  * 
  */
+
+@Deprecated
 public class ChartAdapter implements ChartListener
 {
 

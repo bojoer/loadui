@@ -18,6 +18,7 @@ package com.eviware.loadui.api.chart;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class ChartModel
 {
 

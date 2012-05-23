@@ -17,7 +17,8 @@ package com.eviware.loadui.api.chart;
 
 import java.awt.event.MouseAdapter;
 
-public class ChartMouseListener extends MouseAdapter {
+@Deprecated
+public class ChartMouseListener extends MouseAdapter
+{
 
-	
 }

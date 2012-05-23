@@ -101,6 +101,8 @@ def log = LoggerFactory.getLogger( "com.eviware.loadui.fx.widget.componet.ChartW
 /**
  * @author predrag
  */
+
+// @Deprecated
 public class ChartWidget extends VBox, ChartListener {
     
     public-init var chartModel: ChartModel on replace oldModel {
