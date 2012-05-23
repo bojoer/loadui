@@ -12,6 +12,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 
@@ -31,6 +32,8 @@ public class RunnerBaseTest
 {
 	private RunnerBase runnerBase;
 	private ComponentItem component;
+	private InputTerminal triggerTerminal;
+	private OutputTerminal resultsTerminal;
 
 	@Before
 	@SuppressWarnings( "unchecked" )
@@ -74,20 +77,23 @@ public class RunnerBaseTest
 		ComponentTestUtils.setComponentBehavior( component, runnerBase );
 		contextSpy.setNonBlocking( true );
 		component = componentSpy;
+
+		triggerTerminal = runnerBase.getTriggerTerminal();
+		resultsTerminal = runnerBase.getResultTerminal();
 	}
 
 	@Test
 	public void shouldSampleOnIncomingMessage() throws InterruptedException
 	{
-		InputTerminal triggerTerminal = runnerBase.getTriggerTerminal();
-		OutputTerminal resultsTermianl = runnerBase.getResultTerminal();
-
-		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTermianl );
+		BlockingQueue<TerminalMessage> results = ComponentTestUtils.getMessagesFrom( resultsTerminal );
 		ComponentTestUtils.sendMessage( triggerTerminal,
 				ImmutableMap.<String, Object> of( GeneratorCategory.TRIGGER_TIMESTAMP_MESSAGE_PARAM, 0 ) );
 
 		TerminalMessage message = results.poll( 5, TimeUnit.SECONDS );
 		assertThat( message.get( GeneratorCategory.TRIGGER_TIMESTAMP_MESSAGE_PARAM ), is( ( Object )0 ) );
 		assertThat( message.size(), is( 3 ) );
+		assertThat( runnerBase.getRequestCounter().getValue(), is( 1L ) );
+		assertThat( runnerBase.getSampleCounter().getValue(), is( 1L ) );
+		assertThat( runnerBase.getFailureCounter().getValue(), is( 0L ) );
 	}
 }
