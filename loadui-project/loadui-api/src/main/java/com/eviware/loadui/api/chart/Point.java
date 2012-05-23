@@ -15,24 +15,29 @@
  */
 package com.eviware.loadui.api.chart;
 
-public class Point {
+import javax.annotation.concurrent.Immutable;
 
-	private double x;
-	
-	private double y;
+@Immutable
+public class Point
+{
 
-	public Point(double x, double y) {
+	private final double x;
+	private final double y;
+
+	public Point( double x, double y )
+	{
 		this.x = x;
 		this.y = y;
 	}
 
-	public double getX() {
+	public double getX()
+	{
 		return x;
 	}
 
-	public double getY() {
+	public double getY()
+	{
 		return y;
 	}
-	
-	
+
 }
