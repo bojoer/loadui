@@ -85,7 +85,6 @@ createProperty( 'url', String ) { ->
 }
 createProperty( 'outputBody', Boolean, false )
 
-createProperty( 'readResponse', Boolean, false )
 createProperty( 'errorCodeList', String )
 
 createProperty( 'proxyHost', String )
@@ -326,7 +325,6 @@ compactLayout {
 settings( label: "Basic" ) {
 	property( property: outputBody, label: 'Output Response Body' )
 	//property( property: propagateSession, label: 'Propagate Session' )
-	property( property: readResponse, label: 'Read Response' )
 	property( property: concurrentSamples, label: 'Max Concurrent Requests' )
 	property( property: maxQueueSize, label: 'Max Queue' )
 	property( property: errorCodeList, label: 'Error Codes that Count as Failures', constraints:'w 200!')

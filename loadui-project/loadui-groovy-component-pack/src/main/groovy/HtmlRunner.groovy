@@ -1,24 +1,7 @@
-// 
-// Copyright 2011 SmartBear Software
-// 
-// Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
-// versions of the EUPL (the "Licence");
-// You may not use this work except in compliance with the Licence.
-// You may obtain a copy of the Licence at:
-// 
-// http://ec.europa.eu/idabc/eupl5
-// 
-// Unless required by applicable law or agreed to in writing, software distributed under the Licence is
-// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
-// express or implied. See the Licence for the specific language governing permissions and limitations
-// under the Licence.
-// 
-
 /**
- * Sends an HTTP request
+ * Fetches a web page.
  * 
  * @id com.eviware.HtmlRunner
- * @help http://www.loadui.org/Runners/web-page-runner-component.html
  * @name HTML Runner
  * @category runners
  * @dependency org.apache.httpcomponents:httpcore:4.1
@@ -31,20 +14,9 @@ import org.apache.http.client.*
 import org.apache.http.auth.*
 import org.apache.http.conn.params.*
 import org.apache.http.conn.scheme.*
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.conn.ClientConnectionManager
-import org.apache.http.util.EntityUtils
-import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.impl.client.BasicCredentialsProvider
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
-import com.eviware.loadui.api.events.ActionEvent
 import com.eviware.loadui.api.events.PropertyEvent
-import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.impl.component.categories.RunnerBase.SampleCancelledException
-import com.eviware.loadui.impl.component.ActivityStrategies
-import com.eviware.loadui.util.ReleasableUtils
-
-import java.util.concurrent.TimeUnit
 
 import org.apache.http.conn.scheme.Scheme
 import org.apache.http.conn.ssl.SSLSocketFactory
@@ -56,7 +28,6 @@ import java.security.cert.X509Certificate
 import java.security.cert.CertificateException
 import java.security.SecureRandom
 import java.util.HashMap
-import java.util.Map
 import java.util.concurrent.TimeUnit
 
 import com.gargoylesoftware.htmlunit.WebClient
@@ -78,24 +49,17 @@ def sr = new SchemeRegistry()
 sr.register( new Scheme( "http", PlainSocketFactory.socketFactory, 80 ) )
 sr.register( new Scheme( "https", sslSocketFactory, 443 ) )
 
-def cm = new ThreadSafeClientConnManager( sr )
-cm.maxTotal = 50000
-cm.defaultMaxPerRoute = 50000
-
-
 //Properties
 createProperty( 'url', String ) { ->
 	validateUrl()
 }
 createProperty( 'outputBody', Boolean, false )
-
-createProperty( 'readResponse', Boolean, false )
+createProperty( 'downloadResources', Boolean, true )
+createProperty( 'runJavaScript', Boolean, true )
 createProperty( 'errorCodeList', String )
 
 authUsername = createProperty( '_authUsername', String )
 authPassword = createProperty( '_authPassword', String )
-
-http = new DefaultHttpClient( cm )
 
 inlineUrlAuthUsername = null
 inlineUrlAuthPassword = null
@@ -166,78 +130,69 @@ acceptTypes.put("img", "image/png,image/*;q=0.8,*/*;q=0.5")
 acceptTypes.put("script", "*/*")
 acceptTypes.put("style", "text/css,*/*;q=0.1")
 
-def downloadCssAndImages(page) {
-        def xPathExpression = "//*[name() = 'img' or name() = 'link' and @type = 'text/css']"
-        def resultList = page.getByXPath(xPathExpression)
-        resultList.each {
-            try {
-                println( "next is $it" )
+def downloadCssAndImages( page ) {
+	def bytesDownloaded = 0
+	def xPathExpression = "//*[name() = 'img' or name() = 'link' and @type = 'text/css']"
+	def resultList = page.getByXPath(xPathExpression)
+	resultList.each {
+		try {
+			println( "next is $it" )
 
-                def path = it.getAttribute( 'src' ).equals( '' ) ? it.getAttribute( 'href' ) : it.getAttribute( 'src' )
-                if ( path != null && !path.equals( '' ) ) {
-    
-                    def url = page.getFullyQualifiedUrl(path)
-                    def wrs = new WebRequestSettings(url)
-                    wrs.setAdditionalHeader( 'Referer', page.webResponse.requestSettings.url.toString() )
-    
-                    client.addRequestHeader( 'Accept', acceptTypes[ it.tagName.toLowerCase() ] )
-                    client.getPage(wrs)
-                    println( "downloading $wrs" )
-                }
-            } catch (e) { println "!!! $e" }
-        }
+			def path = it.getAttribute( 'src' ).equals( '' ) ? it.getAttribute( 'href' ) : it.getAttribute( 'src' )
+			if ( path != null && !path.equals( '' ) ) {
 
+				def url = page.getFullyQualifiedUrl(path)
+				def wrs = new WebRequestSettings(url)
+				wrs.setAdditionalHeader( 'Referer', page.webResponse.requestSettings.url.toString() )
 
-client.removeRequestHeader( 'Accept' )
+				client.addRequestHeader( 'Accept', acceptTypes[ it.tagName.toLowerCase() ] )
+				bytesDownloaded += client.getPage( wrs ).webResponse.contentAsString.length()
+				println( "downloading $wrs" )
+			}
+		} catch ( e ) { println "!!! $e" }
+	}
+
+	client.removeRequestHeader( 'Accept' )
+	return bytesDownloaded
 }
 
 sample = { message, sampleId ->
 
 	def uri = message['url'] ?: url.value
 	if( uri ) {
-		//def get = new HttpGet( uri )
 		message['ID'] = uri
 		
 		client = new WebClient()
+		client.setJavaScriptEnabled( runJavaScript.value )
 		runningSamples.add( client )
 		try {
 			//client.setCredentialsProvider( credentialsProvider )
 			def page = client.getPage( uri )
-			downloadCssAndImages( page )
+			
+			def bytesDownloaded = 0
+			if( downloadResources.value )
+				bytesDownloaded = downloadCssAndImages( page )
 		
 			//def response = http.execute( get )
 			message['Status'] = true
 			message['URI'] = uri
-			/* message['HttpStatus'] = response.statusLine.statusCode
+			def statusCode = page.webResponse.statusCode
+			message['HttpStatus'] = statusCode
 			
 			if( errorCodeList.value ) {
-				def assertionCodes = errorCodeList.value.split(',')
-				
-				for( code in assertionCodes ) {
-					if( code.trim() == response.statusLine.statusCode.toString() ) {
-						failedRequestCounter.increment()
-						failureCounter.increment()
-						break
-					}
+				def assertionCodes = errorCodeList.value.split(',')*.trim()
+				if( assertionCodes.contains( statusCode.toString() ) )
+				{
+					failedRequestCounter.increment()
+					failureCounter.increment()
 				}
-			}*/
+			}
 			
 			if( true /* response.entity != null */ )	{
-				/*
-				int contentLength = response.entity.contentLength
-				message['Bytes'] = contentLength
+				message['Bytes'] = page.webResponse.contentAsString.length() + bytesDownloaded
 				
 				if( outputBody.value )
-					message['Response'] = EntityUtils.toString( response.entity )
-				
-				if( contentLength < 0 ) {
-					if( outputBody.value )
-						message['Bytes'] = message['Response'].length()
-					else
-						message['Bytes'] = EntityUtils.toString( response.entity ).length()
-				}
-				
-				response.entity.consumeContent() */
+					message['Response'] = page.webResponse.contentAsString()
 				
 				if( !runningSamples.remove( client ) ) {
 					throw new SampleCancelledException()
@@ -302,11 +257,13 @@ addEventListener( PropertyEvent ) { event ->
 //Layout
 layout {
 	box( layout:'wrap 2, ins 0' ) {
-		property( property:url, label:'Web Page Address', constraints: 'w 300!, spanx 2', style: '-fx-font-size: 17pt' )
-		action( label:'Open in Browser', constraints:'spanx 2', action: {
-			if( url.value != null && url.value.startsWith( "http" ) )
-				java.awt.Desktop.desktop.browse( new java.net.URI( url.value ) )
-		} )
+		property( property:url, label:'Web Page Address', constraints: 'w 270!, spanx 2' )
+		
+		separator()
+		
+		property( property:runJavaScript, label:'Enable JavaScript', constraints: 'w 110!, spanx 1' )
+		property( property:downloadResources, label:'Download images and CSS', constraints: 'w 150!, spanx 1' )
+		
 		runAction = action( label:'Run Once', action: { triggerAction( 'SAMPLE' ) } )
 		action( label:'Abort Running Pages', action: { triggerAction( 'CANCEL' ) } )
 	}
@@ -344,8 +301,6 @@ compactLayout {
 
 settings( label: 'Basic' ) {
 	property( property: outputBody, label: 'Output Response Body' )
-	//property( property: propagateSession, label: 'Propagate Session' )
-	property( property: readResponse, label: 'Read Response' )
 	property( property: concurrentSamples, label: 'Max Concurrent Requests' )
 	property( property: maxQueueSize, label: 'Max Queue' )
 	property( property: errorCodeList, label: 'Error Codes that Count as Failures', constraints:'w 200!')
