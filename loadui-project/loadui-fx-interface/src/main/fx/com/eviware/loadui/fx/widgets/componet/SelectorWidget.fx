@@ -85,10 +85,11 @@ public class SelectorWidget extends VBox {
         
         if ( component.has("selected") ) {
             selected = (component.get("selected") as Property).getValue() as String;
+            default = selected;
         }
         
-        if ( component.has("default") ) {
-            default = component.get("default") as String;
+        if ( selected  == null and component.has("default") ) {
+        		default = component.get("default") as String
         }
         	
           spacing = 4;
