@@ -21,6 +21,7 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.groovy.GroovyBehaviorProvider;
 import com.eviware.loadui.groovy.GroovyBehaviorSupport;
 import com.eviware.loadui.util.component.ComponentTestUtils;
+import com.eviware.loadui.util.groovy.ClassLoaderRegistry;
 import com.eviware.loadui.util.groovy.GroovyEnvironment;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -56,11 +57,10 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 		} ).when( registry ).registerDescriptor( any( ComponentDescriptor.class ), any( BehaviorProvider.class ) );
 	}
 
-	@SuppressWarnings( "unused" )
 	public static void initialize( String pathToComponentScripts )
 	{
 		new GroovyBehaviorProvider( registry, Executors.newSingleThreadScheduledExecutor(), new File(
-				pathToComponentScripts ) );
+				pathToComponentScripts ), new ClassLoaderRegistry() );
 	}
 
 	public static ComponentItem createComponent( final String componentName ) throws ComponentCreationException
