@@ -21,8 +21,10 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.concurrent.ExecutionException;
 
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.osgi.context.BundleContextAware;
 
 import com.eviware.loadui.api.traits.Releasable;
 import com.google.common.cache.CacheBuilder;
@@ -35,9 +37,10 @@ import com.google.common.cache.LoadingCache;
  * 
  * @author dain.nilsson
  */
-public class ClassLoaderRegistry implements Releasable
+public class ClassLoaderRegistry implements Releasable, BundleContextAware
 {
 	public static final Logger log = LoggerFactory.getLogger( ClassLoaderRegistry.class );
+	private ClassLoader bundleClassLoader = GroovyShell.class.getClassLoader();
 
 	private final LoadingCache<String, GroovyEnvironmentClassLoader> classLoaders = CacheBuilder.newBuilder()
 			.weakValues().build( new CacheLoader<String, GroovyEnvironmentClassLoader>()
@@ -47,14 +50,56 @@ public class ClassLoaderRegistry implements Releasable
 				{
 					return AccessController.doPrivileged( new PrivilegedAction<GroovyEnvironmentClassLoader>()
 					{
+
 						@Override
 						public GroovyEnvironmentClassLoader run()
 						{
-							return new GroovyEnvironmentClassLoader( GroovyShell.class.getClassLoader() );
+							return new GroovyEnvironmentClassLoader( bundleClassLoader );
 						}
 					} );
 				}
 			} );
+
+	@Override
+	public void setBundleContext( BundleContext bundleContext )
+	{
+		bundleClassLoader = Thread.currentThread().getContextClassLoader();
+		log.debug( "!!!!! thread contextClassLoader: {}", Thread.currentThread().getContextClassLoader() );
+		log.debug( "!!!!! GroovyShell.class.getClassLoader: {}", GroovyShell.class.getClassLoader() );
+		try
+		{
+			Class<?> cls = bundleContext.getBundle().loadClass( "org.codehaus.groovy.runtime.GeneratedClosure" );
+			log.debug( "Loaded class from bundle: {}", cls );
+		}
+		catch( ClassNotFoundException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try
+		{
+			Class<?> cls = bundleClassLoader.loadClass( "org.codehaus.groovy.runtime.GeneratedClosure" );
+			log.debug( "Loaded class from classloader: {}", cls );
+		}
+		catch( ClassNotFoundException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try
+		{
+			Class<?> cls = Class.forName( "org.codehaus.groovy.runtime.GeneratedClosure" );
+			log.debug( "Loaded class from class.forName: {}", cls );
+		}
+		catch( ClassNotFoundException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		log.debug( "Parent classloader: {}", bundleClassLoader.getParent() );
+	}
 
 	public synchronized GroovyEnvironmentClassLoader useClassLoader( String id, Object user )
 	{
@@ -75,4 +120,5 @@ public class ClassLoaderRegistry implements Releasable
 	{
 		classLoaders.invalidateAll();
 	}
+
 }

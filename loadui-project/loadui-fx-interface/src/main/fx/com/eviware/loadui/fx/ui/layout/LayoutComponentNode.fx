@@ -55,6 +55,7 @@ public function buildLayoutComponentNode( layoutComponent:LayoutComponent ):Layo
 		}
 	} else if( layoutComponent.has("component") ) {
 		def swingComponent = layoutComponent.get("component") as JComponent;
+//		println("swingComponent: {swingComponent} model: {(swingComponent as javax.swing.JScrollPane).getModel()}");
 		SwingLayoutComponentNode {
 			component: swingComponent
 			fixedHeight: if( layoutComponent.has("componentHeight") ) layoutComponent.get("componentHeight") as Number else -1

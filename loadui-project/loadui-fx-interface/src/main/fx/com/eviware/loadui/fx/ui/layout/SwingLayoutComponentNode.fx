@@ -28,7 +28,7 @@ public class SwingLayoutComponentNode extends LayoutComponentNode {
 		override var height on replace {
 			component.setPreferredSize( new Dimension( getWidth(), getHeight() ) );
 		}
-		content: SwingComponent.wrap( component ) 
+		content: SwingComponent.wrap( component )
 	}
 	
 	init {

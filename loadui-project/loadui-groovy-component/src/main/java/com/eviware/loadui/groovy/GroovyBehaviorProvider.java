@@ -78,15 +78,17 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer, Rel
 	private final Map<File, ScriptDescriptor> scripts = new HashMap<File, ScriptDescriptor>();
 	private final ScheduledFuture<?> future;
 	private final EventSupport eventSupport = new EventSupport( this );
-	private final ClassLoaderRegistry clr = new ClassLoaderRegistry();
+	private final ClassLoaderRegistry clr;
 
 	private final ComponentDescriptor emptyDescriptor = new ComponentDescriptor( TYPE, "misc", "EmptyScriptComponent",
 			"", null );
 
-	public GroovyBehaviorProvider( ComponentRegistry registry, ScheduledExecutorService scheduler, File scriptDir )
+	public GroovyBehaviorProvider( ComponentRegistry registry, ScheduledExecutorService scheduler, File scriptDir,
+			ClassLoaderRegistry clr )
 	{
 		this.scriptDir = scriptDir;
 		this.registry = registry;
+		this.clr = clr;
 
 		File groovyRoot = new File( System.getProperty( "groovy.root" ) );
 		if( !groovyRoot.isDirectory() )

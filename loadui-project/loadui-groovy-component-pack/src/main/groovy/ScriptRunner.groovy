@@ -106,7 +106,7 @@ sample = { message, sampleId ->
 		if( e instanceof InterruptedException )
 			 throw new SampleCancelledException()
 		message['Status'] = false
-		message['Result'] = e.message
+		message['Result'] = e.toString()
 		//failedRequestCounter.increment()
 		failureCounter.increment()
 	} finally {

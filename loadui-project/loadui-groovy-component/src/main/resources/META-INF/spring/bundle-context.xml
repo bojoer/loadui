@@ -2,14 +2,18 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
-	
+
 	<bean id="scriptDir" class="java.io.File">
 		<constructor-arg value="script-components" />
 	</bean>
-	
-	<bean id="groovyBehaviorProvider" class="com.eviware.loadui.groovy.GroovyBehaviorProvider" destroy-method="release">
+
+	<bean id="classLoaderRegistry" class="com.eviware.loadui.util.groovy.ClassLoaderRegistry" />
+
+	<bean id="groovyBehaviorProvider" class="com.eviware.loadui.groovy.GroovyBehaviorProvider"
+		destroy-method="release">
 		<constructor-arg ref="componentRegistry" />
 		<constructor-arg ref="scheduledExecutorService" />
 		<constructor-arg ref="scriptDir" />
+		<constructor-arg ref="classLoaderRegistry" />
 	</bean>
 </beans>

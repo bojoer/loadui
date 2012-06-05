@@ -58,6 +58,8 @@ public class GroovyEnvironmentClassLoader extends GroovyClassLoader
 	 */
 	public synchronized void loadDependency( String group, String module, String version )
 	{
+		//bundleContext.getBundle().loadClass( name );
+
 		String dependency = Joiner.on( ':' ).join( group, module );
 		if( loadedDeps.add( dependency ) )
 		{
