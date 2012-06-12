@@ -18,8 +18,8 @@ package com.eviware.loadui.impl.statistics.db;
 import javax.sql.DataSource;
 
 /**
- * Implement this interface to provide creation and disposal handling of data
- * sources. The implementation if this interface is database specific.
+ * Implement this interface to provide creation and disposal of data sources.
+ * The implementation of this interface is database specific.
  * 
  * @author predrag.vucetic
  * 
