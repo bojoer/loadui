@@ -1,4 +1,4 @@
-package com.eviware;
+package com.eviware.loadui.groovy.components;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;

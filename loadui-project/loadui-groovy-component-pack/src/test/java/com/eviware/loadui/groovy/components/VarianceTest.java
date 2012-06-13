@@ -1,4 +1,4 @@
-package com.eviware;
+package com.eviware.loadui.groovy.components;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -10,15 +10,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.ComponentCreationException;
-import com.eviware.loadui.api.component.categories.AnalysisCategory;
+import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
 import com.google.common.base.Joiner;
 
-@Deprecated
-public class StatisticsTest
+public class VarianceTest
 {
 	private ComponentItem component;
 
@@ -32,21 +31,18 @@ public class StatisticsTest
 	public void setup() throws ComponentCreationException
 	{
 		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = GroovyComponentTestUtils.createComponent( "Statistics" );
+		component = GroovyComponentTestUtils.createComponent( "Variance" );
 	}
 
 	@Test
 	public void shouldHaveCorrectTerminals()
 	{
-		assertThat( component.getTerminals().size(), is( 3 ) );
+		assertThat( component.getTerminals().size(), is( 2 ) );
 
-		InputTerminal input = ( InputTerminal )component.getTerminalByName( AnalysisCategory.INPUT_TERMINAL );
-		assertThat( input.getLabel(), is( "Input values" ) );
+		InputTerminal incoming = ( InputTerminal )component.getTerminalByName( GeneratorCategory.STATE_TERMINAL );
+		assertThat( incoming.getLabel(), is( "Component activation" ) );
 
-		InputTerminal statistics = ( InputTerminal )component.getTerminalByName( "statistics" );
-		assertThat( statistics.getLabel(), is( "Runner Statistics" ) );
-
-		OutputTerminal outputTerminal = ( OutputTerminal )component.getTerminalByName( "output" );
-		assertThat( outputTerminal.getLabel(), is( "Statistic data" ) );
+		OutputTerminal trigger = ( OutputTerminal )component.getTerminalByName( GeneratorCategory.TRIGGER_TERMINAL );
+		assertThat( trigger.getLabel(), is( "Trigger Signal" ) );
 	}
 }

@@ -1,4 +1,4 @@
-package com.eviware;
+package com.eviware.loadui.groovy.components;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -28,7 +28,7 @@ import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
 import com.eviware.loadui.util.component.ComponentTestUtils;
 import com.google.common.base.Joiner;
 
-public class ProcessRunnerTest
+public class ScriptRunnerTest
 {
 	private ComponentItem component;
 
@@ -58,7 +58,7 @@ public class ProcessRunnerTest
 				Matchers.<String> anyVararg() );
 		doReturn( mockVariable ).when( contextSpy ).addListenableStatisticVariable( anyString(), anyString(),
 				Matchers.<String> anyVararg() );
-		component = GroovyComponentTestUtils.createComponent( "Process Runner", componentSpy );
+		component = GroovyComponentTestUtils.createComponent( "Script Runner", componentSpy );
 	}
 
 	@Test

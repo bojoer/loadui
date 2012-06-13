@@ -1,4 +1,4 @@
-package com.eviware;
+package com.eviware.loadui.groovy.components;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -10,14 +10,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.eviware.loadui.api.component.ComponentCreationException;
-import com.eviware.loadui.api.component.categories.OutputCategory;
+import com.eviware.loadui.api.component.categories.GeneratorCategory;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
 import com.google.common.base.Joiner;
 
-public class TableLogTest
+public class VirtualUsersTest
 {
 	private ComponentItem component;
 
@@ -31,7 +31,7 @@ public class TableLogTest
 	public void setup() throws ComponentCreationException
 	{
 		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = GroovyComponentTestUtils.createComponent( "Table Log" );
+		component = GroovyComponentTestUtils.createComponent( "Usage" );
 	}
 
 	@Test
@@ -39,10 +39,10 @@ public class TableLogTest
 	{
 		assertThat( component.getTerminals().size(), is( 2 ) );
 
-		InputTerminal incoming = ( InputTerminal )component.getTerminalByName( OutputCategory.INPUT_TERMINAL );
-		assertThat( incoming.getLabel(), is( "Data to output" ) );
+		InputTerminal incoming = ( InputTerminal )component.getTerminalByName( GeneratorCategory.STATE_TERMINAL );
+		assertThat( incoming.getLabel(), is( "Component activation" ) );
 
-		OutputTerminal output = ( OutputTerminal )component.getTerminalByName( OutputCategory.OUTPUT_TERMINAL );
-		assertThat( output.getLabel(), is( "Passed through messages" ) );
+		OutputTerminal trigger = ( OutputTerminal )component.getTerminalByName( GeneratorCategory.TRIGGER_TERMINAL );
+		assertThat( trigger.getLabel(), is( "Trigger Signal" ) );
 	}
 }

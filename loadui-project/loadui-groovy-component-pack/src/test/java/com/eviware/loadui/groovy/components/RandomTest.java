@@ -1,4 +1,4 @@
-package com.eviware;
+package com.eviware.loadui.groovy.components;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -17,7 +17,7 @@ import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.groovy.util.GroovyComponentTestUtils;
 import com.google.common.base.Joiner;
 
-public class RampSequenceTest
+public class RandomTest
 {
 	private ComponentItem component;
 
@@ -31,7 +31,7 @@ public class RampSequenceTest
 	public void setup() throws ComponentCreationException
 	{
 		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
-		component = GroovyComponentTestUtils.createComponent( "Ramp Sequence" );
+		component = GroovyComponentTestUtils.createComponent( "Random" );
 	}
 
 	@Test
