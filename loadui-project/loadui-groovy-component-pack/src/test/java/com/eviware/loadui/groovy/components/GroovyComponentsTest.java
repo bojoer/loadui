@@ -20,7 +20,8 @@ public class GroovyComponentsTest
 {
 	private static final Joiner pathJoiner = Joiner.on( File.separator );
 	private static final File scriptDirectory = new File( pathJoiner.join( "src", "main", "groovy" ) );
-	private static final File testDirectory = new File( pathJoiner.join( "src", "test", "java", "com", "eviware" ) );
+	private static final File testDirectory = new File( pathJoiner.join( "src", "test", "java", "com", "eviware",
+			"loadui", "groovy", "components" ) );
 
 	@Test
 	public void shouldHaveUnitTestsForEachComponent()
