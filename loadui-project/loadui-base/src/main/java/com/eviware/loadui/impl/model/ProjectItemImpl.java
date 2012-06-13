@@ -518,6 +518,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		projectChapter.addSection( new ProjectDataSummarySection( this ) );
 		projectChapter.addSection( new ProjectExecutionDataSection( this ) );
 		projectChapter.addSection( new ProjectExecutionMetricsSection( this ) );
+		//		projectChapter.addSection( null );
 		projectChapter.addSection( new ProjectExecutionNotablesSection( this ) );
 		projectChapter.addSection( new ProjectDataSection( this ) );
 		projectChapter.setDescription( getDescription() );

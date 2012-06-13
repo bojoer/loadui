@@ -21,6 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import com.eviware.loadui.api.summary.MutableChapter;
 import com.eviware.loadui.api.summary.MutableSection;
 import com.eviware.loadui.api.summary.Section;
@@ -108,9 +110,8 @@ public class MutableChapterImpl implements MutableChapter
 		return values;
 	}
 
-	public MutableSectionImpl addSection( MutableSectionImpl section )
+	public void addSection( @Nonnull MutableSectionImpl section )
 	{
 		sections.put( section.getTitle(), section );
-		return section;
 	}
 }

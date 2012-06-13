@@ -28,9 +28,8 @@ import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseAssertionMetricsTableModel;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseSamplerStatisticsTable;
 
-public class ProjectExecutionMetricsSection extends MutableSectionImpl implements ExecutionMetricsSection
+public class ProjectExecutionMetricsSection extends MutableSectionImpl
 {
-
 	ProjectItemImpl project;
 
 	public ProjectExecutionMetricsSection( ProjectItemImpl projectItemImpl )
@@ -45,8 +44,7 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl implement
 		addTable( "Assertions", getAssertionsMetrics() );
 	}
 
-	@Override
-	public final TableModel getAssertionsMetrics()
+	private final TableModel getAssertionsMetrics()
 	{
 		TestCaseAssertionMetricsTableModel table = new TestCaseAssertionMetricsTableModel();
 		for( SceneItem testcase : project.getScenes() )
@@ -61,8 +59,7 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl implement
 		return table;
 	}
 
-	@Override
-	public final String getFailedAssertions()
+	private final String getFailedAssertions()
 	{
 		long failed = project.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get();
 		long total = project.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
@@ -71,8 +68,7 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl implement
 		return perc + "%";
 	}
 
-	@Override
-	public final String getFailedRequests()
+	private final String getFailedRequests()
 	{
 		long failed = project.getCounter( CanvasItem.REQUEST_FAILURE_COUNTER ).get();
 		long total = project.getCounter( CanvasItem.REQUEST_COUNTER ).get();
@@ -81,8 +77,7 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl implement
 		return perc + "%";
 	}
 
-	@Override
-	public final TableModel getRunnersMetrics()
+	private final TableModel getRunnersMetrics()
 	{
 		TestCaseSamplerStatisticsTable table = new TestCaseSamplerStatisticsTable();
 		for( SceneItem tc : project.getScenes() )

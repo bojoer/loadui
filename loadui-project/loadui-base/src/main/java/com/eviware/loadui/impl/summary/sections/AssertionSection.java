@@ -15,17 +15,20 @@
  */
 package com.eviware.loadui.impl.summary.sections;
 
-import javax.swing.table.TableModel;
+import com.eviware.loadui.impl.model.ProjectItemImpl;
+import com.eviware.loadui.impl.summary.MutableSectionImpl;
 
-public interface ExecutionMetricsSection
+public class AssertionSection extends MutableSectionImpl
 {
+	ProjectItemImpl project;
 
-	public abstract String getFailedAssertions();
+	public AssertionSection( ProjectItemImpl projectItemImpl )
+	{
+		super( "Assertions" );
 
-	public abstract String getFailedRequests();
+		project = projectItemImpl;
 
-	public abstract TableModel getAssertionsMetrics();
-
-	public abstract TableModel getRunnersMetrics();
-
+		addValue( "Assertion 1 failures", "1" );
+		addValue( "Assertion 2 failures", "2" );
+	}
 }

@@ -27,7 +27,7 @@ import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseAssertionMetricsTableModel;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseSamplerStatisticsTable;
 
-public class TestCaseExecutionMetricsSection extends MutableSectionImpl implements ExecutionMetricsSection
+public class TestCaseExecutionMetricsSection extends MutableSectionImpl
 {
 	SceneItem testcase;
 
@@ -41,14 +41,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 		addTable( "Assertions", getAssertionsMetrics() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionMetricsSection#
-	 * getFailedAssertions()
-	 */
-	@Override
-	public final String getFailedAssertions()
+	private final String getFailedAssertions()
 	{
 		long failed = testcase.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get();
 		long total = testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
@@ -56,8 +49,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 		return perc + "%";
 	}
 
-	@Override
-	public final String getFailedRequests()
+	private final String getFailedRequests()
 	{
 		long failed = testcase.getCounter( CanvasItem.REQUEST_FAILURE_COUNTER ).get();
 		long total = testcase.getCounter( CanvasItem.REQUEST_COUNTER ).get();
@@ -65,14 +57,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 		return perc + "%";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionMetricsSection#
-	 * getAssertionsMetrics(com.eviware.loadui.api.model.SceneItem)
-	 */
-	@Override
-	public final TableModel getAssertionsMetrics()
+	private final TableModel getAssertionsMetrics()
 	{
 		TestCaseAssertionMetricsTableModel table = new TestCaseAssertionMetricsTableModel();
 		for( ComponentItem component : testcase.getComponents() )
@@ -83,14 +68,7 @@ public class TestCaseExecutionMetricsSection extends MutableSectionImpl implemen
 		return table;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionMetricsSection#
-	 * getRunnersMetrics(com.eviware.loadui.api.model.SceneItem)
-	 */
-	@Override
-	public final TableModel getRunnersMetrics()
+	private final TableModel getRunnersMetrics()
 	{
 		TestCaseSamplerStatisticsTable table = new TestCaseSamplerStatisticsTable();
 		for( ComponentItem component : testcase.getComponents() )
