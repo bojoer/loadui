@@ -42,8 +42,6 @@ import aQute.lib.osgi.Verifier;
  */
 public class BndUtils
 {
-	protected static final Logger log = LoggerFactory.getLogger( BndUtils.class );
-
 	/**
 	 * Takes all jar and ZIP files from folder specified by sourceDir parameter,
 	 * makes OSGi from them and save them into folder specified by destDir
@@ -99,7 +97,7 @@ public class BndUtils
 		for( File file : filesToRemove )
 		{
 			if( !file.delete() )
-				log.error( "Failed deleting file: " + file.getAbsolutePath() );
+				System.out.println( "Failed deleting file: " + file.getAbsolutePath() );
 		}
 	}
 
@@ -200,7 +198,7 @@ public class BndUtils
 			finally
 			{
 				if( !f.delete() )
-					log.error( "Failed deleting file: " + f.getAbsolutePath() );
+					System.out.println( "Failed deleting file: " + f.getAbsolutePath() );
 			}
 			return true;
 		}

@@ -37,7 +37,7 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 
 	static
 	{
-		System.setProperty( "groovy.root", "target" + File.separator + ".groovy" );
+		System.setProperty( "groovy.root", new File( "target", ".groovy" ).getAbsolutePath() );
 
 		doAnswer( new Answer<Void>()
 		{
