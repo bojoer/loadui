@@ -19,7 +19,9 @@ import javax.swing.table.TableModel;
 
 public interface MutableSection extends Section
 {
-	public void addValue( String name, String value );
+	void addValue( String name, String value );
 
-	public void addTable( String name, TableModel model );
+	void addValue( String name, long value );
+
+	void addTable( String name, TableModel model );
 }

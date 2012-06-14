@@ -41,12 +41,12 @@ public class SingleOutputWireEnforcer {
 	def projectCanvas = bind MainWindow.instance.projectCanvas;
 	def project = bind projectCanvas.projectItem on replace oldProject {
 		if( oldProject != null ) {
-			for( canvasItem in [ oldProject, for( scene in oldProject.getScenes() ) scene ] ) {
+			for( canvasItem in [ oldProject, for( scene in oldProject.getChildren() ) scene ] ) {
 				canvasItem.removeEventListener( CollectionEvent.class, listener );
 			}
 		}
 		if( project != null ) {
-			for( canvasItem in [ project, for( scene in project.getScenes() ) scene ] ) {
+			for( canvasItem in [ project, for( scene in project.getChildren() ) scene ] ) {
 				canvasItem.addEventListener( CollectionEvent.class, listener );
 			}
 			FX.deferAction( function():Void { validate() } );
@@ -61,7 +61,7 @@ public class SingleOutputWireEnforcer {
 		var valid = true;
 		
 		if( project != null ) {
-			for( canvasItem in [ project, for( scene in project.getScenes() ) scene ] ) {
+			for( canvasItem in [ project, for( scene in project.getChildren() ) scene ] ) {
 				for( component in canvasItem.getComponents() ) {
 					for( outputTerminal in component.getTerminals()[x|x instanceof OutputTerminal] ) {
 						def invalid = outputTerminal.getConnections().size() > 1;

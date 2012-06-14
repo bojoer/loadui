@@ -35,7 +35,7 @@ public class AssertionCollection {
 		testCaseCollection = CollectionHolder {
 			owner: project
 			key: ProjectItem.SCENES
-			items: project.getScenes()
+			items: project.getChildren()
 			onAdd: function( e ):Void {
 				def newCollection = getAssertionCollection( e as CanvasItem );
 				insert newCollection into assertionItemCollections;

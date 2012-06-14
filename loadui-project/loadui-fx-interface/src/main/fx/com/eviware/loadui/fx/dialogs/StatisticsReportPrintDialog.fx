@@ -115,12 +115,7 @@ class ProjectEventHandler extends EventHandler {
 	override function handleEvent( e: EventObject ) {
 		if(e instanceof BaseEvent){
 			def event = e as BaseEvent;
-			if( ProjectItem.SUMMARY_EXPORTED.equals( event.getKey() ) ) {
-				FxUtils.runInFxThread( function():Void {
-					prependSummaryCb.disable = not StatisticsWindow.execution.getSummaryReport().exists();
-				});
-			}
-			else if( ProjectItem.START_ACTION.equals( event.getKey() ) ) {
+			if( ProjectItem.START_ACTION.equals( event.getKey() ) ) {
 				FxUtils.runInFxThread( function():Void {
 					prependSummaryCb.disable = true;
 				});

@@ -27,7 +27,7 @@ import com.eviware.loadui.impl.model.ProjectItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseTopSamplesTable;
 
-public class ProjectExecutionNotablesSection extends MutableSectionImpl implements ExecutionNotablesSection
+public class ProjectExecutionNotablesSection extends MutableSectionImpl
 {
 	ProjectItemImpl project;
 
@@ -39,12 +39,11 @@ public class ProjectExecutionNotablesSection extends MutableSectionImpl implemen
 		addTable( "Bottom 5 Requests", get5MostExtremeSamples( false ) );
 	}
 
-	@Override
 	public synchronized final TableModel get5MostExtremeSamples( boolean getTopSamples )
 	{
 		TestCaseTopSamplesTable table = new TestCaseTopSamplesTable();
 
-		for( SceneItem tc : project.getScenes() )
+		for( SceneItem tc : project.getChildren() )
 			for( ComponentItem component : tc.getComponents() )
 				if( component.getBehavior() instanceof RunnerCategory )
 				{

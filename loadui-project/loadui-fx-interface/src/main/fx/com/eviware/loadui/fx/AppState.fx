@@ -229,7 +229,7 @@ public class AppState extends ApplicationState {
 				}
 				var project:ProjectItem = canvas as ProjectItem;
 				
-				if (MainWindow.instance.workspace.getAttribute( NewProjectWizard.SHOW_PROJECT_WIZARD, "true" ) == "true" and project.getScenes().size() == 0 and project.getComponents().size() == 0 and project.getAttributes()[s|s.startsWith( "gui.note." )].size() == 0) {
+				if (MainWindow.instance.workspace.getAttribute( NewProjectWizard.SHOW_PROJECT_WIZARD, "true" ) == "true" and project.getChildren().size() == 0 and project.getComponents().size() == 0 and project.getAttributes()[s|s.startsWith( "gui.note." )].size() == 0) {
 					var newWizard:NewProjectWizard = NewProjectWizard{workspace: (canvas as ProjectItem).getWorkspace()};
 					newWizard.show();
 					

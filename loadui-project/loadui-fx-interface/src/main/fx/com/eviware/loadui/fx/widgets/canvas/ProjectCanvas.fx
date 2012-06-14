@@ -61,7 +61,7 @@ public class ProjectCanvas extends Canvas {
 			throw new RuntimeException( "ProjectCanvas can only take a ProjectItem!" ) ;
 		
 		if (canvasItem != null) {
-			for(testcase in projectItem.getScenes()) {
+			for(testcase in projectItem.getChildren()) {
 				addTestCase( testcase );
 			}
 			
@@ -116,7 +116,7 @@ public class ProjectCanvas extends Canvas {
 	public function createTestCase():SceneItem {
 		var name = "Virtual User Scenario";
 		var i=0;
-		while( sizeof projectItem.getScenes()[c|c.getLabel() == name] > 0 )
+		while( sizeof projectItem.getChildren()[c|c.getLabel() == name] > 0 )
 			name = "Virtual User Scenario ({++i})";
 			
 		if ( projectItem.getAttribute( ProjectSettingsDialog.IGNORE_UNASSIGNED_TESTCASES, "false" ) == "false" and not MainWindow.instance.workspace.isLocalMode()) {

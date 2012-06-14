@@ -116,15 +116,15 @@ log.info "Loading Project: {}", projectFile.absolutePath
 projectRef.enabled = true
 def project = projectRef.project
 
-def summaryExported = 0
-def summaryExportListener = new EventHandler<BaseEvent>() {
-	public void handleEvent( BaseEvent event ) {
-		if( ProjectItem.SUMMARY_EXPORTED == event.key ) {
-			summaryExported++
-		}
-	}
-}
-project.addEventListener( BaseEvent, summaryExportListener )
+//def summaryExported = 0
+//def summaryExportListener = new EventHandler<BaseEvent>() {
+//	public void handleEvent( BaseEvent event ) {
+//		if( ProjectItem.SUMMARY_EXPORTED == event.key ) {
+//			summaryExported++
+//		}
+//	}
+//}
+//project.addEventListener( BaseEvent, summaryExportListener )
 
 //Get the target
 def target = testCase ? project.getSceneByLabel( testCase ) : project

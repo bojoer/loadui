@@ -47,24 +47,10 @@ public class MutableSectionImpl implements MutableSection
 		values.put( name, value );
 	}
 
-	public void clearValues()
+	@Override
+	public final void addValue( String name, long value )
 	{
-		values.clear();
-	}
-
-	public void clearTables()
-	{
-		tables.clear();
-	}
-
-	public String getValue( String name )
-	{
-		return values.get( name );
-	}
-
-	public TableModel getTableModel( String name )
-	{
-		return tables.get( name );
+		addValue( name, Long.toString( value ) );
 	}
 
 	public Set<String> getValueNames()

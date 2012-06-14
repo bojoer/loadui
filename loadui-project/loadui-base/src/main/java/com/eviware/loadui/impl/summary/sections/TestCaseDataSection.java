@@ -20,9 +20,8 @@ import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.util.summary.CalendarUtils;
 
-public class TestCaseDataSection extends MutableSectionImpl implements DataSection
+public class TestCaseDataSection extends MutableSectionImpl
 {
-
 	SceneItem testcase;
 
 	public TestCaseDataSection( SceneItem sceneItem )
@@ -36,74 +35,36 @@ public class TestCaseDataSection extends MutableSectionImpl implements DataSecti
 		addValue( "Assertion Limit", getFailureLimit() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.eviware.loadui.impl.summary.sections.DataSection#getNumberOfComponents
-	 * ()
-	 */
-	@Override
 	public final String getNumberOfComponents()
 	{
 		return String.valueOf( testcase.getComponents().size() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.eviware.loadui.impl.summary.sections.DataSection#getNumberOfConnections
-	 * ()
-	 */
-	@Override
 	public final String getNumberOfConnections()
 	{
 		return String.valueOf( testcase.getConnections().size() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.eviware.loadui.impl.summary.sections.DataSection#getLimit()
-	 */
-	@Override
 	public final String getLimit()
 	{
 		if( testcase.getLimit( CanvasItem.TIMER_COUNTER ) > -1 )
 		{
 			return CalendarUtils.formatInterval( testcase.getLimit( CanvasItem.TIMER_COUNTER ) * 1000 );
 		}
-		else
-			return "N/A";
+		return "N/A";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.eviware.loadui.impl.summary.sections.DataSection#getSampleLimit()
-	 */
-	@Override
 	public final String getSampleLimit()
 	{
 		if( testcase.getLimit( CanvasItem.SAMPLE_COUNTER ) > -1 )
 			return String.valueOf( testcase.getLimit( CanvasItem.SAMPLE_COUNTER ) );
-		else
-			return "N/A";
+		return "N/A";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.eviware.loadui.impl.summary.sections.DataSection#getAssertionLimit()
-	 */
-	@Override
 	public final String getFailureLimit()
 	{
 		if( testcase.getLimit( CanvasItem.FAILURE_COUNTER ) > -1 )
 			return String.valueOf( testcase.getLimit( CanvasItem.FAILURE_COUNTER ) );
-		else
-			return "N/A";
+		return "N/A";
 	}
 }

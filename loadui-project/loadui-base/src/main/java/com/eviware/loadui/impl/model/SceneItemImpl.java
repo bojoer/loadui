@@ -59,6 +59,7 @@ import com.eviware.loadui.config.SceneItemConfig;
 import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
 import com.eviware.loadui.impl.counter.RemoteAggregatedCounterSupport;
 import com.eviware.loadui.impl.summary.MutableChapterImpl;
+import com.eviware.loadui.impl.summary.sections.AssertionSection;
 import com.eviware.loadui.impl.summary.sections.TestCaseDataSection;
 import com.eviware.loadui.impl.summary.sections.TestCaseDataSummarySection;
 import com.eviware.loadui.impl.summary.sections.TestCaseExecutionDataSection;
@@ -68,6 +69,7 @@ import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.impl.terminal.InputTerminalImpl;
 import com.eviware.loadui.impl.terminal.TerminalHolderSupport;
 import com.eviware.loadui.util.BeanInjector;
+import com.google.common.collect.ImmutableList;
 
 public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements SceneItem
 {
@@ -153,6 +155,12 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	}
 
 	@Override
+	public Collection<SceneItem> getChildren()
+	{
+		return ImmutableList.of();
+	}
+
+	@Override
 	protected Connection createConnection( OutputTerminal output, InputTerminal input )
 	{
 		return new ConnectionImpl( getConfig().addNewConnection(), output, input );
@@ -164,7 +172,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		return version;
 	}
 
-	private void incrVersion()
+	private void incrementVersion()
 	{
 		getConfig().setVersion( BigInteger.valueOf( ++version ) );
 	}
@@ -398,6 +406,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		chap.addSection( new TestCaseDataSummarySection( this ) );
 		chap.addSection( new TestCaseExecutionDataSection( this ) );
 		chap.addSection( new TestCaseExecutionMetricsSection( this ) );
+		chap.addSection( new AssertionSection( this ) );
 		chap.addSection( new TestCaseExecutionNotablesSection( this ) );
 		chap.addSection( new TestCaseDataSection( this ) );
 		chap.setDescription( getDescription() );
@@ -467,7 +476,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			else if( LABEL.equals( event.getKey() ) )
 				fireBaseEvent( INCREMENT_VERSION );
 			else if( INCREMENT_VERSION.equals( event.getKey() ) )
-				incrVersion();
+				incrementVersion();
 		}
 	}
 

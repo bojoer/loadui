@@ -166,9 +166,8 @@ public class MiniRunController extends BaseNode, Resizable, TimerController {
 				if( canvas.getProject().getAttribute( ProjectSettingsDialog.IGNORE_INVALID_CANVAS, "false" ) == "false" ) {
 					var valid:Boolean = checkForTriggerAndRunner(canvas);
 				
-					if (not valid and canvas instanceof ProjectItem) {
-					    var project:ProjectItem = canvas as ProjectItem;
-					    for (testcase in project.getScenes()) {
+					if (not valid) {
+					    for (testcase in canvas.getChildren()) {
 					        if (checkForTriggerAndRunner(testcase)) {
 					            valid = true;
 					            break;

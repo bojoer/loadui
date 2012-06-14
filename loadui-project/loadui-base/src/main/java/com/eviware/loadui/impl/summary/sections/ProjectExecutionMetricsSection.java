@@ -25,7 +25,7 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.model.ProjectItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
-import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseAssertionMetricsTableModel;
+import com.eviware.loadui.impl.summary.sections.tablemodels.AssertionMetricsTableModel;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseSamplerStatisticsTable;
 
 public class ProjectExecutionMetricsSection extends MutableSectionImpl
@@ -41,22 +41,6 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl
 		addValue( "Assertion Failure Ratio", getFailedAssertions() );
 		addValue( "Request Failure Ratio", getFailedRequests() );
 		addTable( "Runners", getRunnersMetrics() );
-		addTable( "Assertions", getAssertionsMetrics() );
-	}
-
-	private final TableModel getAssertionsMetrics()
-	{
-		TestCaseAssertionMetricsTableModel table = new TestCaseAssertionMetricsTableModel();
-		for( SceneItem testcase : project.getScenes() )
-			for( ComponentItem component : testcase.getComponents() )
-				if( component.getType().equals( "Assertion" ) )
-					table.add( new TestCaseAssertionMetricsTableModel.AssertionMetricsModel( component ) );
-		for( ComponentItem component : project.getComponents() )
-		{
-			if( component.getType().equals( "Assertion" ) )
-				table.add( new TestCaseAssertionMetricsTableModel.AssertionMetricsModel( component ) );
-		}
-		return table;
 	}
 
 	private final String getFailedAssertions()
@@ -80,7 +64,7 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl
 	private final TableModel getRunnersMetrics()
 	{
 		TestCaseSamplerStatisticsTable table = new TestCaseSamplerStatisticsTable();
-		for( SceneItem tc : project.getScenes() )
+		for( SceneItem tc : project.getChildren() )
 			for( ComponentItem component : tc.getComponents() )
 				if( component.getBehavior() instanceof RunnerCategory )
 				{

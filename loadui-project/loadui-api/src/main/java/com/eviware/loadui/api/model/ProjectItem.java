@@ -32,7 +32,6 @@ public interface ProjectItem extends CanvasItem
 {
 	public static final String SCENES = ProjectItem.class.getName() + "@scenes";
 	public static final String ASSIGNMENTS = ProjectItem.class.getName() + "@assignments";
-	public static final String SUMMARY_EXPORTED = ProjectItem.class.getName() + "@summaryExported";
 	public static final String SCENE_LOADED = ProjectItem.class.getName() + "@sceneLoaded";
 
 	public static final String SAVE_REPORT_PROPERTY = ModelItem.class.getSimpleName() + ".saveReport";
@@ -60,14 +59,6 @@ public interface ProjectItem extends CanvasItem
 	 */
 	@Nonnull
 	public WorkspaceItem getWorkspace();
-
-	/**
-	 * Gets all contained scenes.
-	 * 
-	 * @return A Collection of contained SceneItems.
-	 */
-	@Nonnull
-	public Collection<? extends SceneItem> getScenes();
 
 	/**
 	 * Convenience method for finding a child SceneItem with the given label.

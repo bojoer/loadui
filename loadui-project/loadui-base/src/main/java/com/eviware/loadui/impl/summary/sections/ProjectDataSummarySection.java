@@ -20,7 +20,7 @@ import com.eviware.loadui.impl.model.ProjectItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.util.summary.CalendarUtils;
 
-public class ProjectDataSummarySection extends MutableSectionImpl implements DataSummarySection
+public class ProjectDataSummarySection extends MutableSectionImpl
 {
 	private final ProjectItemImpl project;
 
@@ -36,13 +36,11 @@ public class ProjectDataSummarySection extends MutableSectionImpl implements Dat
 		addValue( "status", getStatus() );
 	}
 
-	@Override
 	public final String getNumberOfFailures()
 	{
 		return String.valueOf( project.getCounter( CanvasItem.FAILURE_COUNTER ).get() );
 	}
 
-	@Override
 	public final String getStatus()
 	{
 		if( project.getLimit( CanvasItem.FAILURE_COUNTER ) == -1
@@ -50,17 +48,14 @@ public class ProjectDataSummarySection extends MutableSectionImpl implements Dat
 		{
 			return "Passed";
 		}
-		else
-			return "Failed";
+		return "Failed";
 	}
 
-	@Override
 	public final String getTime()
 	{
 		return CalendarUtils.formatInterval( project.getStartTime(), project.getEndTime() );
 	}
 
-	@Override
 	public final String getNumberOfSamples()
 	{
 		return String.valueOf( project.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );

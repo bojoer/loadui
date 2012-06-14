@@ -53,8 +53,7 @@ public class TestCaseTopSamplesTable extends AbstractTableModel
 	{
 		if( data.size() > 5 )
 			return 5;
-		else
-			return data.size();
+		return data.size();
 	}
 
 	@Override

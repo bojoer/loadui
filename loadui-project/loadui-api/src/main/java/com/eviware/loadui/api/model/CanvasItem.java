@@ -77,6 +77,12 @@ public interface CanvasItem extends ModelItem, CounterHolder, StatisticHolder
 	public ProjectItem getProject();
 
 	/**
+	 * Get the sub CanvasItems that this CanvasItem contains, if any.
+	 */
+	@Nonnull
+	public Collection<? extends SceneItem> getChildren();
+
+	/**
 	 * Check whether the item has been changes since the last save.
 	 * 
 	 * @return True if it has been changed

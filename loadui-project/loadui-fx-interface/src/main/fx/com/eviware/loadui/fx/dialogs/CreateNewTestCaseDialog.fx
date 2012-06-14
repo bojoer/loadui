@@ -105,7 +105,7 @@ public class CreateNewTestCaseDialog {
 	
 	function validateUniqueness(): Boolean {
 	    def newName: String = form.getValue("newTC") as String;
-		for(item in project.getScenes())	{
+		for( item in project.getChildren() )	{
 		    if( item.getLabel().compareToIgnoreCase(newName) == 0 ){
 		        return false;
 		    }

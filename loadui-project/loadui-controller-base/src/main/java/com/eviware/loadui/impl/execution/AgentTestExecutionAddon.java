@@ -80,7 +80,7 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 
 			if( Phase.PRE_START == phase )
 			{
-				for( SceneItem scene : project.getScenes() )
+				for( SceneItem scene : project.getChildren() )
 				{
 					for( AgentItem agent : project.getAgentsAssignedTo( scene ) )
 					{
@@ -91,7 +91,7 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 
 			if( Phase.PRE_STOP == phase )
 			{
-				for( SceneItem scene : project.getScenes() )
+				for( SceneItem scene : project.getChildren() )
 				{
 					for( AgentItem agent : project.getAgentsAssignedTo( scene ) )
 					{
@@ -102,7 +102,7 @@ public class AgentTestExecutionAddon implements Addon, Releasable
 
 			HashSet<AgentItem> agents = Sets.newHashSet();
 			HashSet<MessageAwaiter> waiters = Sets.newHashSet();
-			for( SceneItem scene : project.getScenes() )
+			for( SceneItem scene : project.getChildren() )
 			{
 				for( AgentItem agent : project.getAgentsAssignedTo( scene ) )
 				{

@@ -127,7 +127,7 @@ public class ControllerImpl
 								}
 							} ) )
 					{
-						for( SceneItem scene : entry.getValue().getScenes() )
+						for( SceneItem scene : entry.getValue().getChildren() )
 						{
 							SceneAgent sceneAgent = sceneAgents.get( scene.getId() );
 							if( sceneAgent != null )

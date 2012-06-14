@@ -57,8 +57,7 @@ public abstract class AbstractTestExecution implements TestExecution
 	@Override
 	public boolean contains( CanvasItem canvasItem )
 	{
-		return canvas == canvasItem
-				|| ( canvas instanceof ProjectItem && ( ( ProjectItem )canvas ).getScenes().contains( canvasItem ) );
+		return canvas == canvasItem || canvas.getChildren().contains( canvasItem );
 	}
 
 	@Override

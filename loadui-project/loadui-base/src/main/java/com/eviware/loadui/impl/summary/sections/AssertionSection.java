@@ -15,20 +15,37 @@
  */
 package com.eviware.loadui.impl.summary.sections;
 
-import com.eviware.loadui.impl.model.ProjectItemImpl;
+import java.util.Collection;
+
+import com.eviware.loadui.api.assertion.AssertionAddon;
+import com.eviware.loadui.api.assertion.AssertionItem;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
+import com.eviware.loadui.impl.summary.sections.tablemodels.AssertionMetricsTableModel;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 public class AssertionSection extends MutableSectionImpl
 {
-	ProjectItemImpl project;
-
-	public AssertionSection( ProjectItemImpl projectItemImpl )
+	private final Function<CanvasItem, Iterable<? extends AssertionItem<?>>> getAssertions = new Function<CanvasItem, Iterable<? extends AssertionItem<?>>>()
 	{
-		super( "Assertions" );
+		@Override
+		public Collection<? extends AssertionItem<?>> apply( CanvasItem child )
+		{
+			return child.getAddon( AssertionAddon.class ).getAssertions();
+		}
+	};
 
-		project = projectItemImpl;
+	public AssertionSection( CanvasItem canvas )
+	{
+		super( "Assertion" );
 
-		addValue( "Assertion 1 failures", "1" );
-		addValue( "Assertion 2 failures", "2" );
+		Iterable<AssertionItem<?>> childAssertions = Iterables.concat( Iterables.transform( canvas.getChildren(),
+				getAssertions ) );
+
+		Iterable<AssertionItem<?>> allAssertions = Iterables.concat( childAssertions,
+				canvas.getAddon( AssertionAddon.class ).getAssertions() );
+
+		addTable( "Assertions", new AssertionMetricsTableModel( allAssertions ) );
 	}
 }

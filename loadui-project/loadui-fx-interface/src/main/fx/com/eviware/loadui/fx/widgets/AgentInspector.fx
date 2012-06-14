@@ -541,8 +541,8 @@ public class AgentInspectorNode extends BaseNode, TestCaseIconListener, Resizabl
 		clearTestCases();
 		var projectItem: ProjectItem = MainWindow.instance.projectCanvas.canvasItem as ProjectItem;
 		if(projectItem != null){
-			var scenesCount = projectItem.getScenes().size();
-			for(s in projectItem.getScenes()){
+			var scenesCount = projectItem.getChildren().size();
+			for(s in projectItem.getChildren()){
 				var tc: TestCaseIcon = TestCaseIcon {
 						stateListeners: [this]
 						sceneItem: s as SceneItem

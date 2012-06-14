@@ -57,6 +57,7 @@ import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.SceneCommunication;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.Assignment;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
@@ -80,6 +81,7 @@ import com.eviware.loadui.impl.XmlBeansUtils;
 import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
 import com.eviware.loadui.impl.statistics.model.StatisticPagesImpl;
 import com.eviware.loadui.impl.summary.MutableChapterImpl;
+import com.eviware.loadui.impl.summary.sections.AssertionSection;
 import com.eviware.loadui.impl.summary.sections.ProjectDataSection;
 import com.eviware.loadui.impl.summary.sections.ProjectDataSummarySection;
 import com.eviware.loadui.impl.summary.sections.ProjectExecutionDataSection;
@@ -93,9 +95,12 @@ import com.eviware.loadui.util.events.EventFuture;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implements ProjectItem
 {
@@ -278,12 +283,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	}
 
 	@Override
-	public Collection<SceneItemImpl> getScenes()
-	{
-		return ImmutableSet.copyOf( scenes );
-	}
-
-	@Override
 	public SceneItem getSceneByLabel( String label )
 	{
 		for( SceneItem scene : scenes )
@@ -361,7 +360,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	{
 		BeanInjector.getBean( TestRunner.class ).unregisterTask( agentAwaiter, Phase.PRE_START );
 		getWorkspace().removeEventListener( BaseEvent.class, workspaceListener );
-		ReleasableUtils.releaseAll( agentListener, statisticPages, getScenes() );
+		ReleasableUtils.releaseAll( agentListener, statisticPages, getChildren() );
 
 		super.release();
 	}
@@ -369,7 +368,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void delete()
 	{
-		for( SceneItem scene : getScenes() )
+		for( SceneItem scene : getChildren() )
 			scene.delete();
 
 		release();
@@ -518,13 +517,19 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		projectChapter.addSection( new ProjectDataSummarySection( this ) );
 		projectChapter.addSection( new ProjectExecutionDataSection( this ) );
 		projectChapter.addSection( new ProjectExecutionMetricsSection( this ) );
-		//		projectChapter.addSection( null );
+		projectChapter.addSection( new AssertionSection( this ) );
 		projectChapter.addSection( new ProjectExecutionNotablesSection( this ) );
 		projectChapter.addSection( new ProjectDataSection( this ) );
 		projectChapter.setDescription( getDescription() );
 
 		for( ComponentItem component : getComponents() )
 			component.generateSummary( projectChapter );
+	}
+
+	@Override
+	public Collection<? extends SceneItemImpl> getChildren()
+	{
+		return ImmutableSet.copyOf( scenes );
 	}
 
 	@Override
@@ -629,7 +634,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	{
 		// when property changes on project set new value to all test cases
 		super.setAbortOnFinish( abort );
-		for( SceneItem s : getScenes() )
+		for( SceneItem s : getChildren() )
 		{
 			s.setAbortOnFinish( abort );
 		}
@@ -929,7 +934,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public boolean isLoadingError()
 	{
-		for( SceneItem scene : getScenes() )
+		for( SceneItem scene : getChildren() )
 		{
 			if( scene.isLoadingError() )
 				return true;
@@ -940,7 +945,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public void cancelScenes( boolean linkedOnly )
 	{
-		for( SceneItem s : getScenes() )
+		for( SceneItem s : getChildren() )
 		{
 			if( !linkedOnly || s.isFollowProject() )
 			{
@@ -966,6 +971,15 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		// there is a test case with this property set to false, respond time is
 		// not known and there is no timeout.
 		private ScheduledFuture<?> awaitingSummaryTimeout;
+		private final Predicate<SceneItem> notAbortOnFinish = new Predicate<SceneItem>()
+		{
+			@Override
+			public boolean apply( SceneItem scene )
+			{
+				return scene.isFollowProject() && !scene.isAbortOnFinish();
+			}
+
+		};
 
 		private void start()
 		{
@@ -986,7 +1000,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		private void tryComplete()
 		{
 			boolean allScenesCompleted = true;
-			for( SceneItemImpl scene : getScenes() )
+			for( SceneItemImpl scene : scenes )
 			{
 				synchronized( scene )
 				{
@@ -1016,38 +1030,27 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		// abortOnFinish = false?
 		private void startTimeoutScheduler()
 		{
-			// if at least one of the waiting scenes has abort property set to
-			// false don't start the timeout scheduler.
-			boolean abort = true;
-			for( SceneItem scene : getScenes() )
+			if( Iterables.any( getChildren(), notAbortOnFinish ) )
+				return;
+
+			awaitingSummaryTimeout = scheduler.schedule( new Runnable()
 			{
-				if( scene.isFollowProject() && !scene.isAbortOnFinish() )
+				@Override
+				public void run()
 				{
-					abort = false;
-					break;
-				}
-			}
-			if( abort )
-			{
-				awaitingSummaryTimeout = scheduler.schedule( new Runnable()
-				{
-					@Override
-					public void run()
+					log.error( "Failed to get statistics from all expected Agents within timeout period!" );
+					for( SceneItemImpl scene : scenes )
 					{
-						log.error( "Failed to get statistics from all expected Agents within timeout period!" );
-						for( SceneItemImpl scene : getScenes() )
+						synchronized( scene )
 						{
-							synchronized( scene )
+							if( !scene.isCompleted() )
 							{
-								if( !scene.isCompleted() )
-								{
-									scene.setCompleted( true );
-								}
+								scene.setCompleted( true );
 							}
 						}
 					}
-				}, 15, TimeUnit.SECONDS );
-			}
+				}
+			}, 15, TimeUnit.SECONDS );
 		}
 	}
 
@@ -1059,7 +1062,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			if( execution.getCanvas() == ProjectItemImpl.this && !getWorkspace().isLocalMode() )
 			{
 				ArrayList<EventFuture<BaseEvent>> awaitingScenes = Lists.newArrayList();
-				for( final SceneItem scene : getScenes() )
+				for( final SceneItem scene : getChildren() )
 				{
 					for( final AgentItem agent : getAgentsAssignedTo( scene ) )
 					{

@@ -24,7 +24,7 @@ import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseDataTableModel;
 import com.eviware.loadui.util.summary.CalendarUtils;
 
-final public class ProjectExecutionDataSection extends MutableSectionImpl implements ExecutionDataSection
+final public class ProjectExecutionDataSection extends MutableSectionImpl
 {
 
 	ProjectItemImpl project;
@@ -48,7 +48,7 @@ final public class ProjectExecutionDataSection extends MutableSectionImpl implem
 	public TableModel getTestcaseDataTable()
 	{
 		TestCaseDataTableModel model = new TestCaseDataTableModel();
-		for( SceneItemImpl testcase : project.getScenes() )
+		for( SceneItemImpl testcase : project.getChildren() )
 		{
 			if( testcase.getStartTime() != null && testcase.getEndTime() != null )
 				model.add( new TestCaseDataTableModel.TestCaseDataModel( testcase ) );
@@ -56,37 +56,31 @@ final public class ProjectExecutionDataSection extends MutableSectionImpl implem
 		return model;
 	}
 
-	@Override
 	public String getEndTime()
 	{
 		return CalendarUtils.formatAbsoluteTime( project.getEndTime() );
 	}
 
-	@Override
 	public String getExecutionTime()
 	{
 		return CalendarUtils.formatInterval( project.getStartTime(), project.getEndTime() );
 	}
 
-	@Override
 	public String getStartTime()
 	{
 		return CalendarUtils.formatAbsoluteTime( project.getStartTime() );
 	}
 
-	@Override
 	public String getTotalNumberOfAssertions()
 	{
 		return String.valueOf( project.getCounter( CanvasItem.ASSERTION_COUNTER ).get() );
 	}
 
-	@Override
 	public String getTotalNumberOfFailedAssertions()
 	{
 		return String.valueOf( project.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get() );
 	}
 
-	@Override
 	public String getTotalNumberOfRequests()
 	{
 		return String.valueOf( project.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );

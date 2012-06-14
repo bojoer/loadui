@@ -112,11 +112,9 @@ public class CloneTestCaseDialog {
 				return false;
 		}
 		
-		if( canvas instanceof ProjectItem ) {
-			for( tc in (canvas as ProjectItem).getScenes() ) {
-				if( tc.getLabel() == label )
-					return false;
-			}
+		for( c in canvas.getChildren() ) {
+			if( c.getLabel() == label )
+				return false;
 		}
 		
 		return true;

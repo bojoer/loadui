@@ -31,6 +31,7 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.messaging.MessageEndpoint;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.Assignment;
+import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
@@ -87,6 +88,12 @@ public class AgentProjectItem implements ProjectItem
 	public ProjectItem getProject()
 	{
 		return this;
+	}
+
+	@Override
+	public Collection<? extends SceneItem> getChildren()
+	{
+		return ImmutableSet.copyOf( scenes );
 	}
 
 	@Override
@@ -394,12 +401,6 @@ public class AgentProjectItem implements ProjectItem
 	public WorkspaceItem getWorkspace()
 	{
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Collection<SceneItem> getScenes()
-	{
-		return ImmutableSet.copyOf( scenes );
 	}
 
 	@Override

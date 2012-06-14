@@ -337,7 +337,7 @@ public class Canvas extends BaseNode, Droppable, ModelItemHolder, Resizable, Eve
 							CloneCanvasObjectsDialog { target: project, objects: components };
 						}
 					}, Separator {} ] else null,
-					for( tc in project.getScenes()[t|t != canvasItem] ) MenuItem {
+					for( tc in project.getChildren()[t|t != canvasItem] ) MenuItem {
 						text: tc.getLabel()
 						action: function():Void {
 							CloneCanvasObjectsDialog { target: tc, objects: components };

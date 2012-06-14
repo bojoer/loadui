@@ -20,7 +20,7 @@ import com.eviware.loadui.impl.model.SceneItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.util.summary.CalendarUtils;
 
-public class TestCaseExecutionDataSection extends MutableSectionImpl implements ExecutionDataSection
+public class TestCaseExecutionDataSection extends MutableSectionImpl
 {
 
 	SceneItemImpl testcase;
@@ -38,26 +38,11 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 		addValue( "Total number of failed assertions", getTotalNumberOfFailedAssertions() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionDataSection#
-	 * getExecutionTime()
-	 */
-	@Override
 	public final String getExecutionTime()
 	{
 		return CalendarUtils.formatInterval( testcase.getStartTime(), testcase.getEndTime() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.eviware.loadui.impl.summary.sections.ExecutionDataSection#getStartTime
-	 * ()
-	 */
-	@Override
 	public final String getStartTime()
 	{
 		if( testcase.getStartTime() == null )
@@ -65,14 +50,6 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 		return CalendarUtils.formatAbsoluteTime( testcase.getStartTime() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.eviware.loadui.impl.summary.sections.ExecutionDataSection#getEndTime
-	 * ()
-	 */
-	@Override
 	public final String getEndTime()
 	{
 		if( testcase.getEndTime() == null )
@@ -80,13 +57,6 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 		return CalendarUtils.formatAbsoluteTime( testcase.getEndTime() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionDataSection#
-	 * getTotalNumberOfSamples()
-	 */
-	@Override
 	public final String getTotalNumberOfRequests()
 	{
 		return String.valueOf( testcase.getCounter( CanvasItem.SAMPLE_COUNTER ).get() );
@@ -97,25 +67,11 @@ public class TestCaseExecutionDataSection extends MutableSectionImpl implements 
 		return String.valueOf( testcase.getCounter( CanvasItem.REQUEST_FAILURE_COUNTER ).get() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionDataSection#
-	 * getTotalNumberOfAssertions()
-	 */
-	@Override
 	public final String getTotalNumberOfAssertions()
 	{
 		return String.valueOf( testcase.getCounter( CanvasItem.ASSERTION_COUNTER ).get() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seecom.eviware.loadui.impl.summary.sections.ExecutionDataSection#
-	 * getTotalNumberOfFailedAssertions()
-	 */
-	@Override
 	public final String getTotalNumberOfFailedAssertions()
 	{
 		return String.valueOf( testcase.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get() );

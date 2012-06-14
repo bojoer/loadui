@@ -21,7 +21,7 @@ import com.eviware.loadui.impl.model.ProjectItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.util.summary.CalendarUtils;
 
-public class ProjectDataSection extends MutableSectionImpl implements DataSection
+public class ProjectDataSection extends MutableSectionImpl
 {
 
 	ProjectItemImpl project;
@@ -44,52 +44,44 @@ public class ProjectDataSection extends MutableSectionImpl implements DataSectio
 
 	public final String getNumberOfTestCases()
 	{
-		return String.valueOf( project.getScenes().size() );
+		return String.valueOf( project.getChildren().size() );
 	}
 
-	@Override
 	public final String getFailureLimit()
 	{
 		if( project.getLimit( CanvasItem.FAILURE_COUNTER ) > -1 )
 			return String.valueOf( project.getLimit( CanvasItem.FAILURE_COUNTER ) );
-		else
-			return "N/A";
+		return "N/A";
 	}
 
-	@Override
 	public final String getLimit()
 	{
 		if( project.getLimit( CanvasItem.TIMER_COUNTER ) > -1 )
 			return CalendarUtils.formatInterval( project.getLimit( CanvasItem.TIMER_COUNTER ) * 1000 );
-		else
-			return "N/A";
+		return "N/A";
 	}
 
-	@Override
 	public final String getNumberOfComponents()
 	{
 		int total = project.getComponents().size();
-		for( SceneItem scene : project.getScenes() )
+		for( SceneItem scene : project.getChildren() )
 			total += scene.getComponents().size();
 		return String.valueOf( total );
 	}
 
-	@Override
 	public final String getNumberOfConnections()
 	{
 		int total = project.getConnections().size();
-		for( SceneItem scene : project.getScenes() )
+		for( SceneItem scene : project.getChildren() )
 			total += scene.getConnections().size();
 		return String.valueOf( total );
 	}
 
-	@Override
 	public final String getSampleLimit()
 	{
 		if( project.getLimit( CanvasItem.SAMPLE_COUNTER ) > -1 )
 			return String.valueOf( project.getLimit( CanvasItem.SAMPLE_COUNTER ) );
-		else
-			return "N/A";
+		return "N/A";
 	}
 
 }

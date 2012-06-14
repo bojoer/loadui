@@ -136,8 +136,6 @@ def downloadCssAndImages( page ) {
 	def resultList = page.getByXPath(xPathExpression)
 	resultList.each {
 		try {
-			println( "next is $it" )
-
 			def path = it.getAttribute( 'src' ).equals( '' ) ? it.getAttribute( 'href' ) : it.getAttribute( 'src' )
 			if ( path != null && !path.equals( '' ) ) {
 
@@ -147,9 +145,8 @@ def downloadCssAndImages( page ) {
 
 				client.addRequestHeader( 'Accept', acceptTypes[ it.tagName.toLowerCase() ] )
 				bytesDownloaded += client.getPage( wrs ).webResponse.contentAsString.length()
-				println( "downloading $wrs" )
 			}
-		} catch ( e ) { println "!!! $e" }
+		} catch ( e ) { log.warn("Error getting resource: $e") }
 	}
 
 	client.removeRequestHeader( 'Accept' )
