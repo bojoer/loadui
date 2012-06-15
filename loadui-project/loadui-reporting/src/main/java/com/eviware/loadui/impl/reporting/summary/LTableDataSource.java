@@ -28,7 +28,7 @@ import com.google.common.collect.Lists;
 public class LTableDataSource extends JRTableModelDataSource
 {
 
-	private TableModel model = null;
+	private final TableModel model;
 
 	public LTableDataSource( TableModel model )
 	{
@@ -48,13 +48,17 @@ public class LTableDataSource extends JRTableModelDataSource
 			}
 			return result;
 		}
-		System.out.println( "! jrField.getName(): " + jrField.getName() );
+		System.out.println( "!! jrField.getName(): " + jrField.getName() );
 		if( jrField.getName().startsWith( "COLUMN_" ) )
 		{
 			int index = Integer.parseInt( jrField.getName().substring( 7 ) );
-			System.out.println( "!! index: " + index + " model.getColumnCount(): " + model.getColumnCount() );
+			System.out.println( "!!! index: " + index + " model.getColumnCount(): " + model.getColumnCount() );
 			if( index < model.getColumnCount() )
+			{
+				System.out.println( "!!! model.getColumnName( index ): " + model.getColumnName( index ) );
+				System.out.println( "!!! super.getFieldValue( jrField ): " + super.getFieldValue( jrField ) );
 				return super.getFieldValue( jrField );
+			}
 		}
 		return null;
 	}
