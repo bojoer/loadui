@@ -16,6 +16,7 @@
 package com.eviware.loadui.impl.reporting.summary;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.table.TableModel;
 
@@ -38,6 +39,7 @@ public class TablesDataSource extends JRAbstractBeanDataSource
 	public TablesDataSource( Map<String, TableModel> map )
 	{
 		super( true );
+
 		this.map = map;
 		this.keys = map.keySet().toArray( new String[0] );
 		this.tables = map.values().toArray( new TableModel[0] );

@@ -28,7 +28,7 @@ import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseTopSamplesTa
 
 public class TestCaseExecutionNotablesSection extends MutableSectionImpl
 {
-	SceneItem testcase;
+	private final SceneItem testcase;
 
 	public TestCaseExecutionNotablesSection( SceneItem sceneItem )
 	{
@@ -38,7 +38,7 @@ public class TestCaseExecutionNotablesSection extends MutableSectionImpl
 		addTable( "Bottom 5 Requests", get5MostExtremeSamples( false ) );
 	}
 
-	public synchronized final TableModel get5MostExtremeSamples( boolean getTopSamples )
+	private TableModel get5MostExtremeSamples( boolean getTopSamples )
 	{
 		TestCaseTopSamplesTable table = new TestCaseTopSamplesTable();
 
@@ -51,7 +51,6 @@ public class TestCaseExecutionNotablesSection extends MutableSectionImpl
 				for( SampleStats stat : sampleStatsList )
 					table.add( component.getLabel(), stat, getTopSamples );
 			}
-
 		table.finalizeOrdering( getTopSamples );
 		return table;
 	}

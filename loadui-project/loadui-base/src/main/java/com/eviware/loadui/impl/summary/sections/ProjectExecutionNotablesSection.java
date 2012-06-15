@@ -29,7 +29,7 @@ import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseTopSamplesTa
 
 public class ProjectExecutionNotablesSection extends MutableSectionImpl
 {
-	ProjectItemImpl project;
+	private final ProjectItemImpl project;
 
 	public ProjectExecutionNotablesSection( ProjectItemImpl projectItemImpl )
 	{
@@ -39,7 +39,7 @@ public class ProjectExecutionNotablesSection extends MutableSectionImpl
 		addTable( "Bottom 5 Requests", get5MostExtremeSamples( false ) );
 	}
 
-	public synchronized final TableModel get5MostExtremeSamples( boolean getTopSamples )
+	private TableModel get5MostExtremeSamples( boolean getTopSamples )
 	{
 		TestCaseTopSamplesTable table = new TestCaseTopSamplesTable();
 

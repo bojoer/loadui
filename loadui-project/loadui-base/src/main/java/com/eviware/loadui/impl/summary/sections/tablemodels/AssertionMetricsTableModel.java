@@ -15,7 +15,6 @@
  */
 package com.eviware.loadui.impl.summary.sections.tablemodels;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

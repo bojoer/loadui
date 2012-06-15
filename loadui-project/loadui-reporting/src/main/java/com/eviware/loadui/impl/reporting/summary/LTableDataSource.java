@@ -15,13 +15,15 @@
  */
 package com.eviware.loadui.impl.reporting.summary;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.table.TableModel;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+
+import com.google.common.collect.Lists;
 
 public class LTableDataSource extends JRTableModelDataSource
 {
@@ -39,16 +41,18 @@ public class LTableDataSource extends JRTableModelDataSource
 	{
 		if( jrField.getName().equals( "columns" ) )
 		{
-			ArrayList<String> result = new ArrayList<String>();
+			List<String> result = Lists.newArrayList();
 			for( int i = 0; i < model.getColumnCount(); i++ )
 			{
 				result.add( model.getColumnName( i ) );
 			}
 			return result;
 		}
+		System.out.println( "! jrField.getName(): " + jrField.getName() );
 		if( jrField.getName().startsWith( "COLUMN_" ) )
 		{
 			int index = Integer.parseInt( jrField.getName().substring( 7 ) );
+			System.out.println( "!! index: " + index + " model.getColumnCount(): " + model.getColumnCount() );
 			if( index < model.getColumnCount() )
 				return super.getFieldValue( jrField );
 		}

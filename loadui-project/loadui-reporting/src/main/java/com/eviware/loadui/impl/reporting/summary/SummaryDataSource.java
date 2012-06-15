@@ -17,21 +17,21 @@ package com.eviware.loadui.impl.reporting.summary;
 
 import java.util.Iterator;
 
-import com.eviware.loadui.api.summary.Summary;
-
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
 
+import com.eviware.loadui.api.summary.Summary;
+
 public class SummaryDataSource extends JRAbstractBeanDataSource
 {
-
-	private Summary summary;
+	private final Summary summary;
 	private Iterator<String> iterator;
 
 	public SummaryDataSource( Summary summary )
 	{
 		super( true );
+
 		this.summary = summary;
 		iterator = summary.getChapters().keySet().iterator();
 	}

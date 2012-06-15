@@ -35,33 +35,31 @@ public class TestCaseDataSection extends MutableSectionImpl
 		addValue( "Assertion Limit", getFailureLimit() );
 	}
 
-	public final String getNumberOfComponents()
+	private String getNumberOfComponents()
 	{
 		return String.valueOf( testcase.getComponents().size() );
 	}
 
-	public final String getNumberOfConnections()
+	private String getNumberOfConnections()
 	{
 		return String.valueOf( testcase.getConnections().size() );
 	}
 
-	public final String getLimit()
+	private String getLimit()
 	{
 		if( testcase.getLimit( CanvasItem.TIMER_COUNTER ) > -1 )
-		{
 			return CalendarUtils.formatInterval( testcase.getLimit( CanvasItem.TIMER_COUNTER ) * 1000 );
-		}
 		return "N/A";
 	}
 
-	public final String getSampleLimit()
+	private String getSampleLimit()
 	{
 		if( testcase.getLimit( CanvasItem.SAMPLE_COUNTER ) > -1 )
 			return String.valueOf( testcase.getLimit( CanvasItem.SAMPLE_COUNTER ) );
 		return "N/A";
 	}
 
-	public final String getFailureLimit()
+	private String getFailureLimit()
 	{
 		if( testcase.getLimit( CanvasItem.FAILURE_COUNTER ) > -1 )
 			return String.valueOf( testcase.getLimit( CanvasItem.FAILURE_COUNTER ) );

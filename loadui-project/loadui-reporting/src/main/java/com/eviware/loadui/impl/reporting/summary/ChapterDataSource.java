@@ -45,7 +45,6 @@ public class ChapterDataSource extends JRAbstractBeanDataSource
 	public void moveFirst() throws JRException
 	{
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -72,10 +71,6 @@ public class ChapterDataSource extends JRAbstractBeanDataSource
 	@Override
 	public boolean next() throws JRException
 	{
-		cnt++ ;
-		if( cnt == 1 )
-			return false;
-		return true;
+		return ++cnt != 1;
 	}
-
 }

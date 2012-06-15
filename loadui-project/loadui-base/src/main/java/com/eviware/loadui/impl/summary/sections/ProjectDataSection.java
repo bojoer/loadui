@@ -33,35 +33,32 @@ public class ProjectDataSection extends MutableSectionImpl
 
 		addValue( "Number of Scenarios", getNumberOfTestCases() );
 		addValue( "Number of components", getNumberOfComponents() );
-		// addValue( "Number of connections", getNumberOfConnections() );
 		addValue( "Number of project components", String.valueOf( project.getComponents().size() ) );
-		// addValue( "Number of project connections", String.valueOf(
-		// project.getConnections().size() ) );
 		addValue( "Time Limit", getLimit() );
 		addValue( "Request Limit", getSampleLimit() );
 		addValue( "Failure Limit", getFailureLimit() );
 	}
 
-	public final String getNumberOfTestCases()
+	private String getNumberOfTestCases()
 	{
 		return String.valueOf( project.getChildren().size() );
 	}
 
-	public final String getFailureLimit()
+	private String getFailureLimit()
 	{
 		if( project.getLimit( CanvasItem.FAILURE_COUNTER ) > -1 )
 			return String.valueOf( project.getLimit( CanvasItem.FAILURE_COUNTER ) );
 		return "N/A";
 	}
 
-	public final String getLimit()
+	private String getLimit()
 	{
 		if( project.getLimit( CanvasItem.TIMER_COUNTER ) > -1 )
 			return CalendarUtils.formatInterval( project.getLimit( CanvasItem.TIMER_COUNTER ) * 1000 );
 		return "N/A";
 	}
 
-	public final String getNumberOfComponents()
+	private String getNumberOfComponents()
 	{
 		int total = project.getComponents().size();
 		for( SceneItem scene : project.getChildren() )
@@ -69,15 +66,7 @@ public class ProjectDataSection extends MutableSectionImpl
 		return String.valueOf( total );
 	}
 
-	public final String getNumberOfConnections()
-	{
-		int total = project.getConnections().size();
-		for( SceneItem scene : project.getChildren() )
-			total += scene.getConnections().size();
-		return String.valueOf( total );
-	}
-
-	public final String getSampleLimit()
+	private String getSampleLimit()
 	{
 		if( project.getLimit( CanvasItem.SAMPLE_COUNTER ) > -1 )
 			return String.valueOf( project.getLimit( CanvasItem.SAMPLE_COUNTER ) );
