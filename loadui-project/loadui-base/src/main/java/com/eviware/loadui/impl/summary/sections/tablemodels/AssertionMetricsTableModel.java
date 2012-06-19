@@ -26,7 +26,7 @@ import com.google.common.collect.Lists;
 public class AssertionMetricsTableModel extends AbstractTableModel
 {
 	private static final long serialVersionUID = -6015108629273771461L;
-	private static final String[] columnNames = { "name", "constraint", "failures" };
+	private static final String[] columnNames = { "name", "constraint", "failures", "" };
 	private final List<? extends AssertionItem<?>> assertions;
 
 	public AssertionMetricsTableModel( Iterable<? extends AssertionItem<?>> assertions )
@@ -37,12 +37,14 @@ public class AssertionMetricsTableModel extends AbstractTableModel
 	@Override
 	public String getColumnName( int column )
 	{
+		System.out.println( "    getColumnName(" + column + ") = " + columnNames[column] );
 		return columnNames[column];
 	}
 
 	@Override
 	public int getColumnCount()
 	{
+		System.out.println( "    getColumnCount = " + columnNames.length );
 		return columnNames.length;
 	}
 
@@ -62,9 +64,9 @@ public class AssertionMetricsTableModel extends AbstractTableModel
 		case 1 :
 			return assertions.get( row ).getConstraint().toString();
 		case 2 :
-			return assertions.get( row ).getFailureCount();
+			return Long.toString( assertions.get( row ).getFailureCount() );
 		default :
-			throw new RuntimeException( "Table column out of bounds." );
+			return ""; //throw new RuntimeException( "Table column out of bounds." );
 		}
 	}
 }

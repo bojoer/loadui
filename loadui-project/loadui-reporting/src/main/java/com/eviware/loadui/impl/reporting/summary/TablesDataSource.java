@@ -43,7 +43,6 @@ public class TablesDataSource extends JRAbstractBeanDataSource
 		this.map = map;
 		this.keys = map.keySet().toArray( new String[0] );
 		this.tables = map.values().toArray( new TableModel[0] );
-
 	}
 
 	@Override
@@ -58,7 +57,9 @@ public class TablesDataSource extends JRAbstractBeanDataSource
 		if( field.getName().equals( "title" ) )
 			return keys[cnt];
 		if( field.getName().equals( "table" ) )
+		{
 			return new LTableDataSource( tables[cnt] );
+		}
 		if( field.getName().equals( "column_count" ) )
 			return Integer.valueOf( tables[cnt].getColumnCount() );
 		if( field.getName().equals( "print_tables" ) )

@@ -57,7 +57,6 @@ import com.eviware.loadui.api.messaging.MessageListener;
 import com.eviware.loadui.api.messaging.SceneCommunication;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.Assignment;
-import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
@@ -87,6 +86,7 @@ import com.eviware.loadui.impl.summary.sections.ProjectDataSummarySection;
 import com.eviware.loadui.impl.summary.sections.ProjectExecutionDataSection;
 import com.eviware.loadui.impl.summary.sections.ProjectExecutionMetricsSection;
 import com.eviware.loadui.impl.summary.sections.ProjectExecutionNotablesSection;
+import com.eviware.loadui.impl.summary.sections.ProjectExecutionNotablesSection2;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
@@ -95,12 +95,10 @@ import com.eviware.loadui.util.events.EventFuture;
 import com.eviware.loadui.util.messaging.BroadcastMessageEndpointImpl;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implements ProjectItem
 {

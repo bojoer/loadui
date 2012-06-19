@@ -20,6 +20,7 @@ import java.util.Collection;
 import com.eviware.loadui.api.assertion.AssertionAddon;
 import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.impl.model.ProjectItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
 import com.eviware.loadui.impl.summary.sections.tablemodels.AssertionMetricsTableModel;
 import com.google.common.base.Function;
@@ -47,5 +48,7 @@ public class AssertionSection extends MutableSectionImpl
 				canvas.getAddon( AssertionAddon.class ).getAssertions() );
 
 		addTable( "Assertions", new AssertionMetricsTableModel( allAssertions ) );
+		//		addTable( "AssertionSection",
+		//				new ProjectExecutionNotablesSection2( ( ( ProjectItemImpl )canvas ) ).get5MostExtremeSamples( true ) );
 	}
 }

@@ -406,7 +406,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		chap.addSection( new TestCaseDataSummarySection( this ) );
 		chap.addSection( new TestCaseExecutionDataSection( this ) );
 		chap.addSection( new TestCaseExecutionMetricsSection( this ) );
-		chap.addSection( new AssertionSection( this ) );
+		//		chap.addSection( new AssertionSection( this ) );
 		chap.addSection( new TestCaseExecutionNotablesSection( this ) );
 		chap.addSection( new TestCaseDataSection( this ) );
 		chap.setDescription( getDescription() );
