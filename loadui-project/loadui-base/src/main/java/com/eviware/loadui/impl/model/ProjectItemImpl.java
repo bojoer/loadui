@@ -86,7 +86,6 @@ import com.eviware.loadui.impl.summary.sections.ProjectDataSummarySection;
 import com.eviware.loadui.impl.summary.sections.ProjectExecutionDataSection;
 import com.eviware.loadui.impl.summary.sections.ProjectExecutionMetricsSection;
 import com.eviware.loadui.impl.summary.sections.ProjectExecutionNotablesSection;
-import com.eviware.loadui.impl.summary.sections.ProjectExecutionNotablesSection2;
 import com.eviware.loadui.impl.terminal.ConnectionImpl;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.ReleasableUtils;
@@ -99,6 +98,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implements ProjectItem
 {
@@ -106,17 +107,17 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 	private final WorkspaceItem workspace;
 	private final LoaduiProjectDocumentConfig doc;
-	private final Set<Assignment> assignments = new HashSet<Assignment>();
+	private final Set<Assignment> assignments = Sets.newHashSet();
 	private final AgentListener agentListener = new AgentListener();
 	private final SceneListener sceneListener = new SceneListener();
 	private final WorkspaceListener workspaceListener = new WorkspaceListener();
 	private final SceneComponentListener sceneComponentListener = new SceneComponentListener();
-	private final Map<SceneItem, BroadcastMessageEndpoint> sceneEndpoints = new HashMap<SceneItem, BroadcastMessageEndpoint>();
+	private final Map<SceneItem, BroadcastMessageEndpoint> sceneEndpoints = Maps.newHashMap();
 	private final AgentReadyAwaiterTask agentAwaiter = new AgentReadyAwaiterTask();
 	private final ConversionService conversionService;
 	private final PropertySynchronizer propertySynchronizer;
 	private final CounterSynchronizer counterSynchronizer;
-	private final Set<SceneItemImpl> scenes = new HashSet<SceneItemImpl>();
+	private final Set<SceneItemImpl> scenes = Sets.newHashSet();
 	private final StatisticPagesImpl statisticPages;
 	private final Property<Boolean> saveReport;
 	private final Property<String> reportFolder;
