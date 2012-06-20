@@ -267,7 +267,7 @@ public class RunController extends BaseNode, Resizable, TimerController {
 				layoutInfo: LayoutInfo { height: 33, width: 33, margin: Insets { top: -2, bottom: 2 } }
 				styleClass: "execution-button"
 				selected: false
-				graphic: ExecutionGraphic { layoutInfo: LayoutInfo { height: 33, width: 33 }, running: bind running }
+				graphic: ExecutionGraphic { layoutInfo: LayoutInfo { height: 33, width: 33 }, running: bind playButton.selected }
 				tooltip:Tooltip { text:"Play/Stop" }
 			},
 			linkButton,
