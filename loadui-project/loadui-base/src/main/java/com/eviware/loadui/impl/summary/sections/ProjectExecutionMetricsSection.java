@@ -15,34 +15,53 @@
  */
 package com.eviware.loadui.impl.summary.sections;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.swing.table.TableModel;
 
+import com.eviware.loadui.api.assertion.AssertionAddon;
+import com.eviware.loadui.api.assertion.AssertionItem;
 import com.eviware.loadui.api.component.categories.RunnerCategory;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
-import com.eviware.loadui.impl.model.ProjectItemImpl;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
+import com.eviware.loadui.impl.summary.sections.tablemodels.AssertionMetricsTableModel;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseSamplerStatisticsTable;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 public class ProjectExecutionMetricsSection extends MutableSectionImpl
 {
-	ProjectItemImpl project;
+	private final Function<CanvasItem, Iterable<? extends AssertionItem<?>>> getAssertions = new Function<CanvasItem, Iterable<? extends AssertionItem<?>>>()
+	{
+		@Override
+		public Collection<? extends AssertionItem<?>> apply( CanvasItem child )
+		{
+			return child.getAddon( AssertionAddon.class ).getAssertions();
+		}
+	};
 
-	public ProjectExecutionMetricsSection( ProjectItemImpl projectItemImpl )
+	public ProjectExecutionMetricsSection( ProjectItem project )
 	{
 		super( "Execution Metrics" );
 
-		project = projectItemImpl;
+		addValue( "Assertion Failure Ratio", getFailedAssertions( project ) );
+		addValue( "Request Failure Ratio", getFailedRequests( project ) );
+		addTable( "Runners", getRunnersMetrics( project ) );
 
-		addValue( "Assertion Failure Ratio", getFailedAssertions() );
-		addValue( "Request Failure Ratio", getFailedRequests() );
-		addTable( "Runners", getRunnersMetrics() );
+		Iterable<AssertionItem<?>> childAssertions = Iterables.concat( Iterables.transform( project.getChildren(),
+				getAssertions ) );
+
+		Iterable<AssertionItem<?>> allAssertions = Iterables.concat( childAssertions,
+				project.getAddon( AssertionAddon.class ).getAssertions() );
+
+		addTable( "Assertions", new AssertionMetricsTableModel( allAssertions ) );
 	}
 
-	private final String getFailedAssertions()
+	private static String getFailedAssertions( ProjectItem project )
 	{
 		long failed = project.getCounter( CanvasItem.ASSERTION_FAILURE_COUNTER ).get();
 		long total = project.getCounter( CanvasItem.ASSERTION_COUNTER ).get();
@@ -51,7 +70,7 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl
 		return perc + "%";
 	}
 
-	private final String getFailedRequests()
+	private static String getFailedRequests( ProjectItem project )
 	{
 		long failed = project.getCounter( CanvasItem.REQUEST_FAILURE_COUNTER ).get();
 		long total = project.getCounter( CanvasItem.REQUEST_COUNTER ).get();
@@ -60,7 +79,7 @@ public class ProjectExecutionMetricsSection extends MutableSectionImpl
 		return perc + "%";
 	}
 
-	private final TableModel getRunnersMetrics()
+	private static TableModel getRunnersMetrics( ProjectItem project )
 	{
 		TestCaseSamplerStatisticsTable table = new TestCaseSamplerStatisticsTable();
 		for( SceneItem tc : project.getChildren() )

@@ -80,7 +80,6 @@ import com.eviware.loadui.impl.XmlBeansUtils;
 import com.eviware.loadui.impl.counter.AggregatedCounterSupport;
 import com.eviware.loadui.impl.statistics.model.StatisticPagesImpl;
 import com.eviware.loadui.impl.summary.MutableChapterImpl;
-import com.eviware.loadui.impl.summary.sections.AssertionSection;
 import com.eviware.loadui.impl.summary.sections.ProjectDataSection;
 import com.eviware.loadui.impl.summary.sections.ProjectDataSummarySection;
 import com.eviware.loadui.impl.summary.sections.ProjectExecutionDataSection;
@@ -516,7 +515,6 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		projectChapter.addSection( new ProjectDataSummarySection( this ) );
 		projectChapter.addSection( new ProjectExecutionDataSection( this ) );
 		projectChapter.addSection( new ProjectExecutionMetricsSection( this ) );
-		projectChapter.addSection( new AssertionSection( this ) );
 		projectChapter.addSection( new ProjectExecutionNotablesSection( this ) );
 		projectChapter.addSection( new ProjectDataSection( this ) );
 		projectChapter.setDescription( getDescription() );
