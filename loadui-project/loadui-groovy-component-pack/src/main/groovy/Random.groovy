@@ -107,7 +107,7 @@ redraw = {
 		separator( vertical:true )
 		
 		node(widget: 'selectorWidget', label:'Distribution', labels:['Uniform','Exponential','Gaussian'], 
-				images:['linear_shape.png', 'poisson_shape.png', 'gauss_shape.png'], default: type.value, selected: type)
+				images:['linear_shape.png', 'poisson_shape.png', 'gauss_shape.png'], selected: type)
 		
 		separator( vertical:true )
 		def isNotExponential = (type.value != 'Exponential')
