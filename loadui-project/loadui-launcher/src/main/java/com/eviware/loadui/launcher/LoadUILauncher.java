@@ -131,6 +131,11 @@ public class LoadUILauncher
 	public LoadUILauncher( String[] args )
 	{
 		argv = args;
+		
+		//Fix for Protection!
+		String username = System.getProperty( "user.name" );
+		System.setProperty( "user.name.original", username );
+		System.setProperty( "user.name", username.toLowerCase() );
 
 		File externalFile = new File( "res/buildinfo.txt" );
 
