@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nonnull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +101,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	private final Property<Boolean> followProject;
 
-	private SceneItemImpl( ProjectItem project, SceneItemConfig config )
+	private SceneItemImpl( @Nonnull ProjectItem project, SceneItemConfig config )
 	{
 		super( config, LoadUI.isController() ? new RemoteAggregatedCounterSupport(
 				BeanInjector.getBean( CounterSynchronizer.class ) ) : new AggregatedCounterSupport() );

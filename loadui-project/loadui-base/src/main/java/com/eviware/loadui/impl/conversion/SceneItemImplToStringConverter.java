@@ -19,6 +19,7 @@ import org.springframework.core.convert.converter.Converter;
 
 import com.eviware.loadui.config.LoaduiSceneDocumentConfig;
 import com.eviware.loadui.impl.model.SceneItemImpl;
+import com.eviware.loadui.util.StringUtils;
 
 public class SceneItemImplToStringConverter implements Converter<SceneItemImpl, String>
 {
@@ -27,6 +28,7 @@ public class SceneItemImplToStringConverter implements Converter<SceneItemImpl, 
 	{
 		LoaduiSceneDocumentConfig doc = LoaduiSceneDocumentConfig.Factory.newInstance();
 		doc.addNewLoaduiScene().set( source.getConfig() );
-		return doc.xmlText();
+
+		return StringUtils.serialize( doc.xmlText(), source.getProject().getId() );
 	}
 }
