@@ -32,7 +32,7 @@ import com.google.common.collect.Iterables;
 
 public class StatisticImpl<T extends Number> implements Statistic<T>
 {
-	private final ListenableValueSupport<T> listenableValueSupport = new ListenableValueSupport<T>();
+	private final ListenableValueSupport<T> listenableValueSupport = new ListenableValueSupport<>();
 	private final EntryListener entryListener = new EntryListener();
 	private final ExecutionManager manager;
 	private final Class<T> type;
@@ -109,7 +109,7 @@ public class StatisticImpl<T extends Number> implements Statistic<T>
 					@SuppressWarnings( "unchecked" )
 					public DataPoint<T> apply( Entry entry )
 					{
-						return new DataPointImpl<T>( entry.getTimestamp(), ( T )entry.getValue( name ) );
+						return new DataPointImpl<>( entry.getTimestamp(), ( T )entry.getValue( name ) );
 					}
 				} );
 	}

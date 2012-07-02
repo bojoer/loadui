@@ -136,7 +136,7 @@ public class LayoutBuilder
 	@Deprecated
 	public <T> void property( Property<T> property, String label, String constraints, boolean readOnly, String hint )
 	{
-		current.add( new PropertyLayoutComponentImpl<T>( property, label, constraints, readOnly, hint ) );
+		current.add( new PropertyLayoutComponentImpl<>( property, label, constraints, readOnly, hint ) );
 	}
 
 	public <T> void property( Map<String, ?> args )

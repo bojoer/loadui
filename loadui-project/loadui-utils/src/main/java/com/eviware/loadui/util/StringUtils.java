@@ -173,7 +173,7 @@ public class StringUtils
 	 */
 	public static List<String> deserialize( String serialized )
 	{
-		List<String> strings = new ArrayList<String>();
+		List<String> strings = new ArrayList<>();
 		String remaining = serialized;
 		String[] parts = remaining.split( ":", 2 );
 		while( parts.length == 2 )

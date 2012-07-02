@@ -18,10 +18,12 @@ package com.eviware.loadui.util;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Nonnull;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
@@ -30,6 +32,10 @@ import org.springframework.osgi.context.BundleContextAware;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.AbstractFuture;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 public enum BeanInjector
 {
@@ -50,11 +56,25 @@ public enum BeanInjector
 	{
 		try
 		{
-			return cls.cast( INSTANCE.beanCache.get( cls ) );
+			return getBeanFuture( cls ).get( 5, TimeUnit.SECONDS );
 		}
-		catch( ExecutionException e )
+		catch( ExecutionException | InterruptedException | TimeoutException e )
 		{
 			throw new RuntimeException( e );
+		}
+	}
+
+	@Nonnull
+	public static <T> ListenableFuture<T> getBeanFuture( @Nonnull final Class<T> cls )
+	{
+		Object cachedObject = INSTANCE.beanCache.getIfPresent( cls );
+		if( cachedObject != null )
+		{
+			return Futures.immediateFuture( cls.cast( cachedObject ) );
+		}
+		else
+		{
+			return new BeanFuture<>( cls );
 		}
 	}
 
@@ -104,10 +124,11 @@ public enum BeanInjector
 			Thread.currentThread().interrupt();
 		}
 
-		ServiceReference<T> ref = context.getServiceReference( cls );
+		//TODO: We can't use generics here until the OSGi jars stop using compilation flags that are not compatible with Java7.
+		ServiceReference/* <T> */ref = context.getServiceReference( cls.getName() );
 		if( ref != null )
 		{
-			T service = context.getService( ref );
+			T service = ( T )context.getService( ref );
 			if( service != null )
 				return service;
 		}
@@ -127,5 +148,75 @@ public enum BeanInjector
 	public void clearCache()
 	{
 		beanCache.invalidateAll();
+	}
+
+	private static class BeanFuture<T> extends AbstractFuture<T>
+	{
+		private final ServiceListener serviceListener = new ServiceListener()
+		{
+			@Override
+			public void serviceChanged( ServiceEvent event )
+			{
+				if( event.getType() == ServiceEvent.REGISTERED )
+				{
+					//TODO: We can't use generics here until the OSGi jars stop using compilation flags that are not compatible with Java7.
+					ServiceReference/* <T> */serviceReference = event.getServiceReference();
+					set( ( T )INSTANCE.context.getService( serviceReference ) );
+				}
+			}
+		};
+
+		private BeanFuture( Class<T> serviceType )
+		{
+			try
+			{
+				if( !INSTANCE.waiterLatch.await( 5, TimeUnit.SECONDS ) )
+				{
+					throw new RuntimeException( "BundleContext is missing, has BeanInjector been configured?" );
+				}
+
+				try
+				{
+					INSTANCE.context.addServiceListener( serviceListener, "(objectclass=" + serviceType.getName() + ")" );
+				}
+				catch( InvalidSyntaxException e )
+				{
+					e.printStackTrace();
+				}
+
+				Object cachedObject = INSTANCE.beanCache.get( serviceType );
+				if( cachedObject != null )
+				{
+					set( serviceType.cast( cachedObject ) );
+				}
+			}
+			catch( InterruptedException e )
+			{
+				Thread.currentThread().interrupt();
+			}
+			catch( ExecutionException e )
+			{
+				//Ignore
+			}
+			catch( UncheckedExecutionException e )
+			{
+				//Ignore
+			}
+		}
+
+		@Override
+		protected boolean set( T value )
+		{
+			INSTANCE.context.removeServiceListener( serviceListener );
+			return super.set( value );
+		}
+
+		@Override
+		public boolean cancel( boolean mayInterruptIfRunning )
+		{
+			INSTANCE.context.removeServiceListener( serviceListener );
+
+			return super.cancel( mayInterruptIfRunning );
+		}
 	}
 }

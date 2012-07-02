@@ -33,10 +33,9 @@ public final class ResourceGroovyCommand extends AbstractGroovyCommand
 	@Override
 	public String getScript()
 	{
-		BufferedReader br = new BufferedReader( new InputStreamReader( getClass().getResourceAsStream( scriptName ) ) );
 		StringBuilder s = new StringBuilder();
 		String line = null;
-		try
+		try (BufferedReader br = new BufferedReader( new InputStreamReader( getClass().getResourceAsStream( scriptName ) ) ))
 		{
 			while( ( line = br.readLine() ) != null )
 				s.append( line ).append( "\n" );
@@ -44,17 +43,6 @@ public final class ResourceGroovyCommand extends AbstractGroovyCommand
 		catch( IOException e )
 		{
 			throw new RuntimeException( e );
-		}
-		finally
-		{
-			try
-			{
-				br.close();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
 		}
 
 		return s.toString();

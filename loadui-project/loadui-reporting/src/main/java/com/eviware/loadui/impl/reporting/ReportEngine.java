@@ -82,7 +82,7 @@ public class ReportEngine
 		return jr;
 	}
 
-	private final Map<String, LReportTemplate> reports = new TreeMap<String, LReportTemplate>();
+	private final Map<String, LReportTemplate> reports = new TreeMap<>();
 
 	private final ReportProtocolFactory protocolFactory;
 
@@ -122,19 +122,10 @@ public class ReportEngine
 				switch( rf )
 				{
 				case JASPER_PRINT :
-					try
+					try (ObjectOutput oo = new ObjectOutputStream( new FileOutputStream( outfile ) ))
 					{
-						ObjectOutput oo;
-						oo = new ObjectOutputStream( new FileOutputStream( outfile ) );
-						try
-						{
 							oo.writeObject( jp );
 						}
-						finally
-						{
-							oo.close();
-						}
-					}
 					catch( IOException e )
 					{
 						// TODO Auto-generated catch block
@@ -230,7 +221,7 @@ public class ReportEngine
 
 		JasperReport jr = compileReport( report );
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> map = new HashMap<>();
 		map.put( JRParameter.REPORT_URL_HANDLER_FACTORY, protocolFactory );
 
 		return JasperFillManager.fillReport( jr, map, dataSource );

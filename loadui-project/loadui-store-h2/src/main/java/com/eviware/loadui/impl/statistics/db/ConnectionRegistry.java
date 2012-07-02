@@ -33,9 +33,9 @@ public class ConnectionRegistry implements Releasable
 {
 	private final DataSourceProvider dsProvider;
 
-	private final Map<String, DataSource> dataSourceMap = new HashMap<String, DataSource>();
+	private final Map<String, DataSource> dataSourceMap = new HashMap<>();
 
-	private final Map<String, Connection> connectionMap = new HashMap<String, Connection>();
+	private final Map<String, Connection> connectionMap = new HashMap<>();
 
 	public ConnectionRegistry( DataSourceProvider dsProvider )
 	{
@@ -64,7 +64,7 @@ public class ConnectionRegistry implements Releasable
 	public void release( String dbName )
 	{
 		// release all connections to the database
-		ArrayList<String> connectionsToClose = new ArrayList<String>();
+		ArrayList<String> connectionsToClose = new ArrayList<>();
 		Iterator<String> keys = connectionMap.keySet().iterator();
 		while( keys.hasNext() )
 		{

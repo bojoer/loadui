@@ -63,7 +63,7 @@ public class LineChartStyles
 
 	public static String getLineColor( ChartGroup chartGroup, Segment segment )
 	{
-		LinkedHashSet<String> colors = new LinkedHashSet<String>();
+		LinkedHashSet<String> colors = new LinkedHashSet<>();
 		for( String color : lineColors )
 			colors.add( color );
 

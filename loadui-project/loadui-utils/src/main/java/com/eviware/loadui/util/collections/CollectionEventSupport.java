@@ -52,7 +52,7 @@ public class CollectionEventSupport<V, A> implements Releasable
 	 */
 	public static <X, Y> CollectionEventSupport<X, Y> of( @Nonnull EventFirer owner, @Nonnull String collectionKey )
 	{
-		return new CollectionEventSupport<X, Y>( owner, collectionKey );
+		return new CollectionEventSupport<>( owner, collectionKey );
 	}
 
 	private final static Object DUMMY = new Object();

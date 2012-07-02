@@ -132,7 +132,7 @@ public final class CustomThreadPoolExecutor extends AbstractExecutorService
 	public List<Runnable> shutdownNow()
 	{
 		shutdown();
-		List<Runnable> remaining = new ArrayList<Runnable>();
+		List<Runnable> remaining = new ArrayList<>();
 		workQueue.drainTo( remaining );
 
 		for( int i = nWorkers.get(); i >= 0; i-- )

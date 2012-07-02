@@ -64,7 +64,7 @@ public class PropertyHolderResolver implements GroovyResolver.Methods, GroovyRes
 	 */
 	public void invokeReplaceHandlers()
 	{
-		for( Property<?> property : new HashSet<Property<?>>( handler.replaceHandlers.keySet() ) )
+		for( Property<?> property : new HashSet<>( handler.replaceHandlers.keySet() ) )
 			handler.handleEvent( new PropertyEvent( property.getOwner(), property, PropertyEvent.Event.VALUE, null ) );
 	}
 
@@ -152,7 +152,7 @@ public class PropertyHolderResolver implements GroovyResolver.Methods, GroovyRes
 
 	private class PropertyEventHandler implements WeakEventHandler<PropertyEvent>
 	{
-		private final Map<Property<?>, Closure<?>> replaceHandlers = new HashMap<Property<?>, Closure<?>>();
+		private final Map<Property<?>, Closure<?>> replaceHandlers = new HashMap<>();
 
 		@Override
 		public void handleEvent( PropertyEvent event )

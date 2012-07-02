@@ -165,7 +165,7 @@ public class ExecutionImpl implements Execution, Releasable
 
 		this.executionDir = executionDir;
 		this.manager = manager;
-		trackMap = new HashMap<String, Track>();
+		trackMap = new HashMap<>();
 
 		propertiesFile = new File( executionDir, "execution.properties" );
 
@@ -411,32 +411,15 @@ public class ExecutionImpl implements Execution, Releasable
 
 	private synchronized void storeAttributes()
 	{
-		FileOutputStream fos = null;
-		try
+		try (FileOutputStream fos = new FileOutputStream( propertiesFile ))
 		{
-			fos = new FileOutputStream( propertiesFile );
 			attributes.store( fos, "" );
-		}
-		catch( FileNotFoundException e )
-		{
-			log.error( "Could not store execution properties file!", e );
 		}
 		catch( IOException e )
 		{
 			log.error( "Could not store execution properties file!", e );
 		}
-		finally
-		{
-			try
-			{
-				if( fos != null )
-					fos.close();
 			}
-			catch( IOException e )
-			{
-			}
-		}
-	}
 
 	@Override
 	public void removeAttribute( String key )

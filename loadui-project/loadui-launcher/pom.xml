@@ -13,22 +13,17 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.1</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.3.1</version>
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.eviware.loadui.launcher.LoadUILauncher</mainClass>
+							<mainClass>com.javafx.main.Main</mainClass>
 						</manifest>
+						<manifestEntries>
+							<JavaFX-Version>2.1</JavaFX-Version>
+							<JavaFX-Application-Class>com.eviware.loadui.launcher.LoadUIFXLauncher</JavaFX-Application-Class>
+						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
@@ -45,7 +40,7 @@
 						<configuration>
 							<includeScope>compile</includeScope>
 							<excludeTransitive>true</excludeTransitive>
-							<excludeGroupIds>com.google.code.findbugs,org.slf4j</excludeGroupIds>
+							<excludeGroupIds>com.oracle,com.google.code.findbugs,org.slf4j</excludeGroupIds>
 							<outputDirectory>${basedir}/target/lib</outputDirectory>
 						</configuration>
 					</execution>
@@ -98,6 +93,13 @@
 			<groupId>biz.aQute</groupId>
 			<artifactId>bndlib</artifactId>
 			<version>1.50.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>javafx-runtime</artifactId>
+			<version>2.1</version>
+			<systemPath>C:\Program Files\Oracle\JavaFX 2.1 SDK\rt\lib\jfxrt.jar</systemPath>
+			<scope>system</scope>
 		</dependency>
 	</dependencies>
 </project>

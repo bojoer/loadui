@@ -34,10 +34,8 @@ public class FileGroovyCommand extends AbstractGroovyCommand
 	@Override
 	public String getScript()
 	{
-		BufferedReader br = null;
-		try
+		try (BufferedReader br = new BufferedReader( new FileReader( scriptFile ) ))
 		{
-			br = new BufferedReader( new FileReader( scriptFile ) );
 			StringBuilder s = new StringBuilder();
 			String line = null;
 			while( ( line = br.readLine() ) != null )
@@ -49,19 +47,5 @@ public class FileGroovyCommand extends AbstractGroovyCommand
 		{
 			throw new RuntimeException( e );
 		}
-		finally
-		{
-			if( br != null )
-			{
-				try
-				{
-					br.close();
 				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-	}
 }

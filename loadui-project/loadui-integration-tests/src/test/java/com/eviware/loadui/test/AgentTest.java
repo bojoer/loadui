@@ -22,15 +22,18 @@ import static org.junit.Assert.assertThat;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.osgi.framework.Bundle;
 
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.test.categories.IntegrationTest;
 
 /**
  * Integration tests for testing the loadUI agent through its API.
  * 
  * @author dain.nilsson
  */
+@Category( IntegrationTest.class )
 public class AgentTest
 {
 	private static AgentWrapper agent;
@@ -38,8 +41,8 @@ public class AgentTest
 	@BeforeClass
 	public static void startAgent() throws Exception
 	{
-		int port = Utilities.getAvailablePort();
-		int sslPort = Utilities.getAvailablePort();
+		int port = IntegrationTestUtils.getAvailablePort();
+		int sslPort = IntegrationTestUtils.getAvailablePort();
 		System.out.println( "Starting Agent on ports " + port + " and " + sslPort );
 		System.setProperty( LoadUI.HTTPS_PORT, Integer.toString( sslPort ) );
 		agent = new AgentWrapper();

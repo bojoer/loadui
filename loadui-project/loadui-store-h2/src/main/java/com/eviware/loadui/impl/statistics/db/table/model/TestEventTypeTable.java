@@ -17,7 +17,6 @@ package com.eviware.loadui.impl.statistics.db.table.model;
 
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -36,7 +35,7 @@ public class TestEventTypeTable extends TableBase
 
 	public static final String TABLE_NAME = "test_event_type";
 
-	private Map<String, Map<String, Object>> inMemoryTable = new HashMap<String, Map<String, Object>>();
+	private Map<String, Map<String, Object>> inMemoryTable = new HashMap<>();
 
 	public TestEventTypeTable( String dbName, ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata,
 			TableRegistry tableRegistry ) throws SQLException

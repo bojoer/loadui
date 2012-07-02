@@ -20,8 +20,8 @@ import static org.hamcrest.CoreMatchers.not;
 import org.hamcrest.Matcher;
 
 import com.eviware.loadui.api.events.CollectionEvent;
-import com.eviware.loadui.util.test.matchers.IsMock;
 import com.eviware.loadui.util.test.matchers.CollectionEventMatcher;
+import com.eviware.loadui.util.test.matchers.IsMock;
 
 /**
  * Class for static methods for creating custom Matchers.
@@ -37,7 +37,7 @@ public class CustomMatchers
 	 */
 	public static <T> Matcher<T> mockObject()
 	{
-		return new IsMock<T>();
+		return new IsMock<>();
 	}
 
 	/**

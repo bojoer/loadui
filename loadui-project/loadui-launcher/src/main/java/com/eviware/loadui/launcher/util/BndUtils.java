@@ -23,9 +23,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import aQute.lib.io.IO;
 import aQute.lib.osgi.Analyzer;
 import aQute.lib.osgi.Builder;
@@ -69,7 +66,7 @@ public class BndUtils
 			}
 		} );
 
-		final Set<String> createdBundles = new HashSet<String>();
+		final Set<String> createdBundles = new HashSet<>();
 		for( File source : sources )
 		{
 			File dest = new File( destDir, ".__" + source.getName() );
@@ -140,8 +137,7 @@ public class BndUtils
 			return false;
 		}
 
-		Analyzer analyzer = new Analyzer();
-		try
+		try (Analyzer analyzer = new Analyzer(); Jar jar = analyzer.getJar())
 		{
 			analyzer.setPedantic( pedantic );
 			analyzer.setJar( input );
@@ -183,7 +179,6 @@ public class BndUtils
 			output = setOutputPath( input, output, properties );
 
 			analyzer.calcManifest();
-			Jar jar = analyzer.getJar();
 			File f = File.createTempFile( "tmpbnd", ".jar" );
 			f.deleteOnExit();
 			try
@@ -207,11 +202,7 @@ public class BndUtils
 			//log.error( "Error creating bundle. No such file: " + input.getAbsolutePath() );
 			return false;
 		}
-		finally
-		{
-			analyzer.close();
 		}
-	}
 
 	private static File setOutputPath( File input, File output, File properties )
 	{

@@ -26,8 +26,8 @@ import com.eviware.loadui.api.layout.OptionsProvider;
 
 public class OptionsProviderImpl<T> implements OptionsProvider<T>
 {
-	private final Set<OptionsListener> listeners = new HashSet<OptionsListener>();
-	private final Map<Runnable, RunnableOptionsListener> runnableListeners = new HashMap<Runnable, RunnableOptionsListener>();
+	private final Set<OptionsListener> listeners = new HashSet<>();
+	private final Map<Runnable, RunnableOptionsListener> runnableListeners = new HashMap<>();
 	private Iterable<T> options;
 	private String nullString = "-";
 

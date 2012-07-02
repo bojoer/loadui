@@ -75,7 +75,7 @@ public class TestEventTable extends TableBase
 		String query = "select * from " + getTableName() + " where " + STATIC_FIELD_SOURCEID + " in ("
 				+ makeInStatement( sources.size() ) + ") order by " + STATIC_FIELD_TIMESTAMP + " limit ? offset ? ";
 
-		List<Object> params = new ArrayList<Object>();
+		List<Object> params = new ArrayList<>();
 		params.addAll( sources );
 		params.add( limit );
 		params.add( offset );
@@ -83,10 +83,10 @@ public class TestEventTable extends TableBase
 		prepareStatement( STATEMENT_GET_BY_OFFSET, query );
 		ResultSet rs = executeQuery( STATEMENT_GET_BY_OFFSET, params.toArray() );
 
-		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> result = new ArrayList<>();
 		while( rs.next() )
 		{
-			Map<String, Object> rowMap = new HashMap<String, Object>();
+			Map<String, Object> rowMap = new HashMap<>();
 			rowMap.put( STATIC_FIELD_ID, rs.getObject( STATIC_FIELD_ID ) );
 			rowMap.put( STATIC_FIELD_SOURCEID, rs.getObject( STATIC_FIELD_SOURCEID ) );
 			rowMap.put( STATIC_FIELD_DATA, rs.getBytes( STATIC_FIELD_DATA ) );
@@ -99,7 +99,7 @@ public class TestEventTable extends TableBase
 	public synchronized List<Map<String, Object>> getByTimeRange( List<Long> sources, long start, long end )
 			throws SQLException
 	{
-		List<Object> params = new ArrayList<Object>();
+		List<Object> params = new ArrayList<>();
 		String query = "select * from " + getTableName() + " where " + STATIC_FIELD_SOURCEID + " in ("
 				+ makeInStatement( sources.size() ) + ") and " + STATIC_FIELD_TIMESTAMP + " >= ? and "
 				+ STATIC_FIELD_TIMESTAMP + " <= ? order by " + STATIC_FIELD_TIMESTAMP;
@@ -110,10 +110,10 @@ public class TestEventTable extends TableBase
 
 		ResultSet rs = executeQuery( STATEMENT_GET_BY_TIME_RANGE, params.toArray() );
 
-		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> result = new ArrayList<>();
 		while( rs.next() )
 		{
-			Map<String, Object> rowMap = new HashMap<String, Object>();
+			Map<String, Object> rowMap = new HashMap<>();
 			rowMap.put( STATIC_FIELD_ID, rs.getObject( STATIC_FIELD_ID ) );
 			rowMap.put( STATIC_FIELD_SOURCEID, rs.getObject( STATIC_FIELD_SOURCEID ) );
 			rowMap.put( STATIC_FIELD_DATA, rs.getBytes( STATIC_FIELD_DATA ) );

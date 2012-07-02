@@ -120,7 +120,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 	{
 		super.processCommandLine( cmd );
 
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 
 		if( cmd.hasOption( PROJECT_OPTION ) )
 		{
@@ -137,7 +137,7 @@ public class LoadUICommandLineLauncher extends LoadUILauncher
 			Map<String, String[]> agents = null;
 			if( cmd.hasOption( AGENT_OPTION ) )
 			{
-				agents = new HashMap<String, String[]>();
+				agents = new HashMap<>();
 				for( String option : cmd.getOptionValues( AGENT_OPTION ) )
 				{
 					int ix = option.indexOf( "=" );

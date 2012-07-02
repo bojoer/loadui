@@ -108,7 +108,7 @@ public class TestEventSourceTable extends TableBase
 	 */
 	public synchronized List<Map<String, Object>> getByTypeId( Long typeId )
 	{
-		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> result = new ArrayList<>();
 		for( Entry<String, Map<String, Object>> entry : inMemoryTable.entrySet() )
 		{
 			if( typeId.equals( entry.getValue().get( STATIC_FIELD_TYPEID ) ) )
@@ -149,7 +149,7 @@ public class TestEventSourceTable extends TableBase
 	 */
 	public synchronized List<Long> getIdsByHash( List<String> hashes )
 	{
-		List<Long> result = new ArrayList<Long>();
+		List<Long> result = new ArrayList<>();
 		for( Entry<String, Map<String, Object>> item : inMemoryTable.entrySet() )
 		{
 			if( hashes.size() == 0 || hashes.contains( item.getValue().get( STATIC_FIELD_HASH ) ) )

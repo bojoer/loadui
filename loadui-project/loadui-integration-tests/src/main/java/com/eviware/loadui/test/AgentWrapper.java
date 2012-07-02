@@ -36,7 +36,7 @@ public class AgentWrapper
 	public AgentWrapper() throws IOException
 	{
 		if( baseDir.exists() )
-			Utilities.deleteRecursive( baseDir );
+			IntegrationTestUtils.deleteRecursive( baseDir );
 
 		if( !baseDir.mkdir() )
 			throw new RuntimeException( "Could not create test directory!" );
@@ -49,8 +49,8 @@ public class AgentWrapper
 		//config.setProperty( "felix.auto.deploy.dir", new File( "../loadui-agent-deps/target/bundle" ).getAbsolutePath() );
 
 		File bundleDir = new File( baseDir, "bundle" );
-		Utilities.copyDirectory( new File( "../loadui-agent-deps/target/bundle" ), bundleDir );
-		Utilities.copyDirectory( new File( "target/bundle" ), bundleDir );
+		IntegrationTestUtils.copyDirectory( new File( "../loadui-agent-deps/target/bundle" ), bundleDir );
+		IntegrationTestUtils.copyDirectory( new File( "target/bundle" ), bundleDir );
 
 		//Add the required packages that should be in the OSGi config file.
 		config.setProperty(
@@ -70,7 +70,7 @@ public class AgentWrapper
 		}
 		finally
 		{
-			Utilities.deleteRecursive( baseDir );
+			IntegrationTestUtils.deleteRecursive( baseDir );
 		}
 	}
 

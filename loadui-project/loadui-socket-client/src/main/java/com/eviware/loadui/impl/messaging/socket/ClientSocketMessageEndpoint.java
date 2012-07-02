@@ -246,33 +246,17 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 		{
 			while( targetState == TargetState.OPEN )
 			{
-				SSLSocket socket = null;
-
-				try
+				try (SSLSocket socket = connect())
 				{
-					socket = connect();
-
 					if( state == State.CONNECTED )
 					{
 						sendMessages( socket );
 					}
 				}
-				finally
-				{
-					//TODO: If/When we move to Java 7, use closeQuietly instead of the try-catch.
-					//Closeables.closeQuietly( socket );
-					try
-					{
-						if( socket != null )
-						{
-							socket.close();
-						}
-					}
 					catch( IOException e )
 					{
-						//Ignore
+					e.printStackTrace();
 					}
-				}
 
 				log.debug( "MessageEndpoint disconnected!" );
 				for( ConnectionListener listener : listeners )

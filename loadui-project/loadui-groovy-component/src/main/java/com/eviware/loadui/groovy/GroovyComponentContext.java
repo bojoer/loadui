@@ -252,7 +252,7 @@ public class GroovyComponentContext implements Releasable
 		@Override
 		public Set<String> keySet()
 		{
-			return new HashSet<String>( context.getCounterNames() );
+			return new HashSet<>( context.getCounterNames() );
 		}
 
 		@Override
@@ -270,7 +270,7 @@ public class GroovyComponentContext implements Releasable
 
 	private class ActionEventHandler implements WeakEventHandler<ActionEvent>
 	{
-		private final Map<String, Closure<?>> actionHandlers = new HashMap<String, Closure<?>>();
+		private final Map<String, Closure<?>> actionHandlers = new HashMap<>();
 
 		@Override
 		public void handleEvent( ActionEvent event )

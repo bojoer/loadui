@@ -37,7 +37,7 @@ public class TrackMetadataTable extends TableBase
 	public static final String STATIC_FIELD_TRACK_NAME = "__TRACK_ID";
 
 	public static final String STATEMENT_LIST_TRACK_NAMES = "listTrackNamesStatement";
-	
+
 	public TrackMetadataTable( String dbName, ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata,
 			TableRegistry tableRegistry ) throws SQLException
 	{
@@ -49,7 +49,7 @@ public class TrackMetadataTable extends TableBase
 	@Override
 	public synchronized void insert( Map<String, ? extends Object> data ) throws SQLException
 	{
-		Map<String, Object> queryData = new HashMap<String, Object>();
+		Map<String, Object> queryData = new HashMap<>();
 		queryData.put( SELECT_ARG_TRACKNAME_EQ, data.get( STATIC_FIELD_TRACK_NAME ) );
 		if( select( queryData ).size() == 0 )
 		{
@@ -73,8 +73,8 @@ public class TrackMetadataTable extends TableBase
 
 	public synchronized List<String> listAllTracks() throws SQLException
 	{
-		List<String> resultList = new ArrayList<String>();
-		ResultSet result = executeQuery(STATEMENT_LIST_TRACK_NAMES, null );
+		List<String> resultList = new ArrayList<>();
+		ResultSet result = executeQuery( STATEMENT_LIST_TRACK_NAMES, null );
 		while( result.next() )
 		{
 			resultList.add( result.getString( STATIC_FIELD_TRACK_NAME ) );

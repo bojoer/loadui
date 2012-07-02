@@ -9,19 +9,6 @@
 	<artifactId>loadui-test-utils</artifactId>
 	<name>loadUI Test Utils</name>
 	<description>Utility classes for writing unit tests for loadUI.</description>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 	<dependencies>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>

@@ -27,18 +27,21 @@ import java.io.IOException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
+import com.eviware.loadui.test.categories.IntegrationTest;
 
 /**
  * Integration tests for testing the loadUI controller through its API.
  * 
  * @author dain.nilsson
  */
+@Category( IntegrationTest.class )
 public class ControllerTest
 {
 	private static ControllerWrapper controller;
@@ -81,13 +84,14 @@ public class ControllerTest
 	{
 		BundleContext context = controller.getBundleContext();
 
-		ServiceReference<WorkspaceProvider> ref = null;
+		//TODO: We can't use generics here until the OSGi jars stop using compilation flags that are not compatible with Java7.
+		ServiceReference/* <WorkspaceProvider> */ref = null;
 		for( int tries = 100; ref == null && tries > 0; tries-- )
 		{
-			ref = context.getServiceReference( WorkspaceProvider.class );
+			ref = context.getServiceReference( WorkspaceProvider.class.getName() );
 			Thread.sleep( 100 );
 		}
-		WorkspaceProvider service = context.getService( ref );
+		WorkspaceProvider service = ( WorkspaceProvider )context.getService( ref );
 		assertThat( service, notNullValue() );
 
 		setWorkspaceProvider( service );

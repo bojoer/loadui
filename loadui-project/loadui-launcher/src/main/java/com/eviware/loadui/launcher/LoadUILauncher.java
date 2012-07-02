@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.nio.channels.FileLock;
@@ -59,11 +60,12 @@ import com.eviware.loadui.launcher.util.BndUtils;
  */
 public class LoadUILauncher
 {
-	private static final String LOADUI_HOME = "loadui.home";
-	private static final String LOADUI_NAME = "loadui.name";
-	private static final String LOADUI_BUILD_DATE = "loadui.build.date";
-	private static final String LOADUI_BUILD_NUMBER = "loadui.build.number";
-	private static final String ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA = "org.osgi.framework.system.packages.extra";
+	protected static final String LOADUI_HOME = "loadui.home";
+	protected static final String LOADUI_NAME = "loadui.name";
+	protected static final String LOADUI_BUILD_DATE = "loadui.build.date";
+	protected static final String LOADUI_BUILD_NUMBER = "loadui.build.number";
+
+	protected static final String ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA = "org.osgi.framework.system.packages.extra";
 	protected static final String NOFX_OPTION = "nofx";
 	protected static final String SYSTEM_PROPERTY_OPTION = "D";
 	protected static final String HELP_OPTION = "h";
@@ -85,37 +87,17 @@ public class LoadUILauncher
 	private static void loadPropertiesFile()
 	{
 		Properties systemProperties = new Properties();
-		FileInputStream fis = null;
-		try
+		try (FileInputStream fis = new FileInputStream( "conf" + File.separator + "system.properties" ))
 		{
-			fis = new FileInputStream( "conf" + File.separator + "system.properties" );
 			systemProperties.load( fis );
 			for( Entry<Object, Object> entry : systemProperties.entrySet() )
 				System.setProperty( ( String )entry.getKey(), ( String )entry.getValue() );
-		}
-		catch( FileNotFoundException e )
-		{
-			// Ignore
 		}
 		catch( IOException e )
 		{
 			// Ignore
 		}
-		finally
-		{
-			if( fis != null )
-			{
-				try
-				{
-					fis.close();
 				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-	}
 
 	protected Framework framework;
 	protected final Properties configProps;
@@ -131,7 +113,7 @@ public class LoadUILauncher
 	public LoadUILauncher( String[] args )
 	{
 		argv = args;
-		
+
 		//Fix for Protection!
 		String username = System.getProperty( "user.name" );
 		System.setProperty( "user.name.original", username );
@@ -160,10 +142,8 @@ public class LoadUILauncher
 
 		if( externalFile.exists() )
 		{
-			InputStream is = null;
-			try
+			try (InputStream is = new FileInputStream( externalFile ))
 			{
-				is = new FileInputStream( externalFile );
 				Properties buildinfo = new Properties();
 				buildinfo.load( is );
 				System.setProperty( LOADUI_BUILD_NUMBER, buildinfo.getProperty( "build.number" ) );
@@ -174,21 +154,7 @@ public class LoadUILauncher
 			{
 				e.printStackTrace();
 			}
-			finally
-			{
-				try
-				{
-					if( is != null )
-					{
-						is.close();
 					}
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-			}
-		}
 		else
 		{
 			System.setProperty( LOADUI_BUILD_NUMBER, "unknown" );
@@ -218,6 +184,45 @@ public class LoadUILauncher
 		}
 
 		initSystemProperties();
+
+		String sysOutFilePath = System.getProperty( "system.out.file" );
+		if( sysOutFilePath != null )
+		{
+			File sysOutFile = new File( sysOutFilePath );
+			if( !sysOutFile.exists() )
+			{
+				try
+				{
+					sysOutFile.createNewFile();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+			}
+
+			try
+			{
+				System.err.println( "Writing stdout and stderr to file:" + sysOutFile.getAbsolutePath() );
+
+				final PrintStream outStream = new PrintStream( sysOutFile );
+				System.setOut( outStream );
+				System.setErr( outStream );
+
+				Runtime.getRuntime().addShutdownHook( new Thread( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						outStream.close();
+					}
+				} ) );
+			}
+			catch( FileNotFoundException e )
+			{
+				throw new RuntimeException( e );
+			}
+		}
 
 		System.out.println( "Launching " + System.getProperty( LOADUI_NAME ) + " Build: "
 				+ System.getProperty( LOADUI_BUILD_NUMBER, "[internal]" ) + " "
@@ -344,12 +349,15 @@ public class LoadUILauncher
 				if( !lockFile.createNewFile() )
 					throw new RuntimeException( "Unable to create file: " + lockFile.getAbsolutePath() );
 
-			FileLock lock = new RandomAccessFile( lockFile, "rw" ).getChannel().tryLock();
+			try (RandomAccessFile randomAccessFile = new RandomAccessFile( lockFile, "rw" ))
+			{
+				FileLock lock = randomAccessFile.getChannel().tryLock();
 			if( lock == null )
 			{
 				System.err.println( "An instance of loadUI is already running!" );
 				exitInError();
 			}
+		}
 		}
 		catch( OverlappingFileLockException e )
 		{
@@ -363,7 +371,7 @@ public class LoadUILauncher
 		}
 	}
 
-	protected final void exitInError()
+	protected final static void exitInError()
 	{
 		try
 		{
@@ -453,11 +461,9 @@ public class LoadUILauncher
 		//Remove the old expired keystore, if it exists
 		if( keystore.exists() )
 		{
-			FileInputStream kis = null;
-			try
+			try (FileInputStream kis = new FileInputStream( keystore ))
 			{
 				MessageDigest digest = MessageDigest.getInstance( "MD5" );
-				kis = new FileInputStream( keystore );
 				byte[] buffer = new byte[8192];
 				int read = 0;
 				while( ( read = kis.read( buffer ) ) > 0 )
@@ -467,39 +473,15 @@ public class LoadUILauncher
 				String hash = new BigInteger( 1, digest.digest() ).toString( 16 );
 				if( "10801d8ea0f0562aa3ae22dcea258339".equals( hash ) )
 				{
-					kis.close();
-					kis = null;
 					if( !keystore.delete() )
 						System.err.println( "Could not delete old keystore: " + keystore.getAbsolutePath() );
 				}
 			}
-			catch( NoSuchAlgorithmException e )
+			catch( NoSuchAlgorithmException | IOException e )
 			{
 				e.printStackTrace();
 			}
-			catch( FileNotFoundException e )
-			{
-				e.printStackTrace();
 			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
-			finally
-			{
-				try
-				{
-					if( kis != null )
-					{
-						kis.close();
-					}
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-			}
-		}
 
 		if( !keystore.exists() )
 		{
@@ -515,11 +497,9 @@ public class LoadUILauncher
 
 	private void createKeyStore( File keystore )
 	{
-		InputStream is = getClass().getResourceAsStream( "/keystore.jks" );
-		FileOutputStream fos = null;
-		try
+		try (FileOutputStream fos = new FileOutputStream( keystore );
+				InputStream is = getClass().getResourceAsStream( "/keystore.jks" ))
 		{
-			fos = new FileOutputStream( keystore );
 			byte buf[] = new byte[1024];
 			int len;
 			while( ( len = is.read( buf ) ) > 0 )
@@ -530,36 +510,13 @@ public class LoadUILauncher
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			try
-			{
-				if( is != null )
-					is.close();
 			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
-			try
-			{
-				if( fos != null )
-					fos.close();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
-		}
-	}
 
 	private void createTrustStore( File truststore )
 	{
-		InputStream is = getClass().getResourceAsStream( "/certificate.pem" );
-		FileOutputStream fos = null;
-		try
+		try (FileOutputStream fos = new FileOutputStream( truststore );
+				InputStream is = getClass().getResourceAsStream( "/certificate.pem" ))
 		{
-			fos = new FileOutputStream( truststore );
 			byte buf[] = new byte[1024];
 			int len;
 			while( ( len = is.read( buf ) ) > 0 )
@@ -570,28 +527,7 @@ public class LoadUILauncher
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			try
-			{
-				if( is != null )
-					is.close();
 			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
-			try
-			{
-				if( fos != null )
-					fos.close();
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
-		}
-	}
 
 	protected void setDefaultSystemProperty( String property, String value )
 	{
@@ -612,11 +548,10 @@ public class LoadUILauncher
 			return;
 		}
 
-		InputStream is = getClass().getResourceAsStream( "/packages-extra.txt" );
+		try (InputStream is = getClass().getResourceAsStream( "/packages-extra.txt" ))
+		{
 		if( is != null )
 		{
-			try
-			{
 				StringBuilder out = new StringBuilder();
 				byte[] b = new byte[4096];
 				for( int n; ( n = is.read( b ) ) != -1; )
@@ -628,21 +563,10 @@ public class LoadUILauncher
 
 				configProps.setProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, out.toString() );
 			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
 			}
-			finally
-			{
-				try
-				{
-					is.close();
-				}
 				catch( IOException e )
 				{
 					e.printStackTrace();
 				}
 			}
-		}
-	}
 }

@@ -116,7 +116,7 @@ public class H2ExecutionManagerTest
 		h2.startExecution( "test1", 10 );
 
 		// add descriptor
-		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
+		Map<String, Class<? extends Number>> types = new HashMap<>();
 		types.put( COLUMN_1, Long.class );
 		types.put( COLUMN_2, Long.class );
 		types.put( COLUMN_3, Integer.class );
@@ -146,13 +146,13 @@ public class H2ExecutionManagerTest
 	{
 		h2.startExecution( "test1", 10 );
 
-		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
+		Map<String, Class<? extends Number>> types = new HashMap<>();
 		types.put( COLUMN_1, Long.class );
 		types.put( COLUMN_2, Long.class );
 		types.put( COLUMN_3, Integer.class );
 		types.put( COLUMN_4, Double.class );
 
-		Map<String, Number> values = new HashMap<String, Number>();
+		Map<String, Number> values = new HashMap<>();
 		values.put( COLUMN_1, 1 );
 		values.put( COLUMN_2, 2 );
 		values.put( COLUMN_3, 3 );
@@ -230,13 +230,13 @@ public class H2ExecutionManagerTest
 	{
 		h2.startExecution( "test1", 10 );
 
-		Map<String, Class<? extends Number>> types = new HashMap<String, Class<? extends Number>>();
+		Map<String, Class<? extends Number>> types = new HashMap<>();
 		types.put( COLUMN_1, Long.class );
 		types.put( COLUMN_2, Long.class );
 		types.put( COLUMN_3, Integer.class );
 		types.put( COLUMN_4, Double.class );
 
-		Map<String, Number> values = new HashMap<String, Number>();
+		Map<String, Number> values = new HashMap<>();
 		values.put( COLUMN_1, 1 );
 		values.put( COLUMN_2, 2 );
 		values.put( COLUMN_3, 3 );

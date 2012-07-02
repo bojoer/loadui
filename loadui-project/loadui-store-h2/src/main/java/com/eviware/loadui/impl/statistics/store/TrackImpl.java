@@ -83,7 +83,7 @@ public class TrackImpl implements Track
 			if( result.size() > 0 )
 			{
 				int tstamp = ( ( Long )result.get( DataTable.STATIC_FIELD_TIMESTAMP ) ).intValue();
-				Map<String, Number> values = new HashMap<String, Number>();
+				Map<String, Number> values = new HashMap<>();
 				Iterator<java.util.Map.Entry<String, Object>> entries = result.entrySet().iterator();
 				while( entries.hasNext() )
 				{

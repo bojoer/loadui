@@ -75,7 +75,7 @@ public class GroovyBehaviorProvider implements BehaviorProvider, EventFirer, Rel
 
 	private final File scriptDir;
 	private final ComponentRegistry registry;
-	private final Map<File, ScriptDescriptor> scripts = new HashMap<File, ScriptDescriptor>();
+	private final Map<File, ScriptDescriptor> scripts = new HashMap<>();
 	private final ScheduledFuture<?> future;
 	private final EventSupport eventSupport = new EventSupport( this );
 	private final ClassLoaderRegistry clr;

@@ -29,11 +29,11 @@ import java.util.Set;
 public class SchedulerModel extends Observable
 {
 
-	private List<Day> days = new ArrayList<Day>();
+	private List<Day> days = new ArrayList<>();
 
-	private final List<Integer> seconds = new ArrayList<Integer>();
-	private final List<Integer> minutes = new ArrayList<Integer>();
-	private final List<Integer> hours = new ArrayList<Integer>();
+	private final List<Integer> seconds = new ArrayList<>();
+	private final List<Integer> minutes = new ArrayList<>();
+	private final List<Integer> hours = new ArrayList<>();
 
 	private long duration = 0;
 	private long maxDuration = 0;
@@ -231,8 +231,8 @@ public class SchedulerModel extends Observable
 
 	public Map<Integer, List<ExecutionTime>> getExecutionTimeMap()
 	{
-		List<ExecutionTime> prevList = new ArrayList<ExecutionTime>();
-		List<ExecutionTime> nextList = new ArrayList<ExecutionTime>();
+		List<ExecutionTime> prevList = new ArrayList<>();
+		List<ExecutionTime> nextList = new ArrayList<>();
 
 		int current = new ExecutionTime().getTime();
 		//move 10 seconds in future to be sure 
@@ -273,7 +273,7 @@ public class SchedulerModel extends Observable
 			nextList.remove( nextList.size() - 1 );
 		}
 
-		HashMap<Integer, List<ExecutionTime>> result = new HashMap<Integer, List<ExecutionTime>>();
+		HashMap<Integer, List<ExecutionTime>> result = new HashMap<>();
 		for( int i = 1; i < 8; i++ )
 		{
 			result.put( i, new ArrayList<ExecutionTime>() );

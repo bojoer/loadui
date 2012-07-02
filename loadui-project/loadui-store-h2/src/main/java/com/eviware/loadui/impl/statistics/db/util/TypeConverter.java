@@ -61,12 +61,10 @@ public class TypeConverter
 
 	public static Object base64ToObject( String s )
 	{
-		try
+		byte[] data = Base64.decodeBase64( s );
+		try (ObjectInputStream ois = new ObjectInputStream( new ByteArrayInputStream( data ) ))
 		{
-			byte[] data = Base64.decodeBase64( s );
-			ObjectInputStream ois = new ObjectInputStream( new ByteArrayInputStream( data ) );
 			Object o = ois.readObject();
-			ois.close();
 			return o;
 		}
 		catch( IOException e )
@@ -81,12 +79,10 @@ public class TypeConverter
 
 	public static String objectToBase64( Serializable o )
 	{
-		try
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream( baos ))
 		{
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream( baos );
 			oos.writeObject( o );
-			oos.close();
 			return new String( Base64.encodeBase64( baos.toByteArray() ) );
 		}
 		catch( IOException e )

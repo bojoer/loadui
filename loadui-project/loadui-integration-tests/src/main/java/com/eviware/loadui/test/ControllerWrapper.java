@@ -40,24 +40,28 @@ import com.eviware.loadui.LoadUI;
 public class ControllerWrapper
 {
 	private final File baseDir = new File( "target/controllerTest" );
+	private final File homeDir = new File( baseDir, ".loadui" );
 	private final OSGiLauncher launcher;
 	private final BundleContext context;
 
 	public ControllerWrapper() throws Exception
 	{
-		if( baseDir.exists() && !Utilities.deleteRecursive( baseDir ) )
+		if( baseDir.exists() && !IntegrationTestUtils.deleteRecursive( baseDir ) )
 			throw new RuntimeException( "Test directory already exists and cannot be deleted!" );
 
 		if( !baseDir.mkdir() )
 			throw new RuntimeException( "Could not create test directory!" );
+		if( !homeDir.mkdir() )
+			throw new RuntimeException( "Could not create home directory!" );
+		System.setProperty( LoadUI.LOADUI_HOME, homeDir.getAbsolutePath() );
 
 		launcher = new OSGiLauncher( new String[] { "-nolock", "-nofx" } );
 		Properties config = launcher.getConfig();
 		config.setProperty( "felix.cache.rootdir", baseDir.getAbsolutePath() );
 
 		File bundleDir = new File( baseDir, "bundle" );
-		Utilities.copyDirectory( new File( "../loadui-controller-deps/target/bundle" ), bundleDir );
-		Utilities.copyDirectory( new File( "target/bundle" ), bundleDir );
+		IntegrationTestUtils.copyDirectory( new File( "../loadui-controller-deps/target/bundle" ), bundleDir );
+		IntegrationTestUtils.copyDirectory( new File( "target/bundle" ), bundleDir );
 
 		// osgi = new OSGiWrapper();
 		// Properties config = osgi.getConfig();
@@ -69,20 +73,16 @@ public class ControllerWrapper
 		// Remove bundles depending on JavaFX and the API bundle.
 		for( File bundle : bundleDir.listFiles() )
 		{
-			if( bundle.getName().startsWith( "loadui-fx-" ) )
-			{
-				if( !bundle.delete() )
-					throw new IOException( "Unable to delete file: " + bundle );
-			}
-			else if( bundle.getName().startsWith( "loadui-cssbox-browser" ) )
+			if( bundle.getName().startsWith( "loadui-fx" ) )
 			{
 				if( !bundle.delete() )
 					throw new IOException( "Unable to delete file: " + bundle );
 			}
 			else if( bundle.getName().startsWith( "loadui-api" ) )
 			{
-				ZipFile api = new ZipFile( bundle );
-				Set<String> packages = new TreeSet<String>();
+				try (ZipFile api = new ZipFile( bundle ))
+				{
+					Set<String> packages = new TreeSet<>();
 				for( Enumeration<? extends ZipEntry> e = api.entries(); e.hasMoreElements(); )
 				{
 					ZipEntry entry = e.nextElement();
@@ -103,8 +103,7 @@ public class ControllerWrapper
 					apiPackages.append( ", " ).append( pkg ).append( "; version=\"" ).append( version ).append( '"' );
 
 				config.put( "org.osgi.framework.system.packages.extra", apiPackages.toString() );
-
-				api.close();
+				}
 
 				if( !bundle.delete() )
 					throw new IOException( "Unable to delete file: " + bundle );
@@ -126,7 +125,7 @@ public class ControllerWrapper
 		}
 		finally
 		{
-			Utilities.deleteRecursive( baseDir );
+			IntegrationTestUtils.deleteRecursive( baseDir );
 		}
 	}
 

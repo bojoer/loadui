@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.util.groovy.GroovyResolver;
 import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 /**
  * Adds Groovy methods for scheduling tasks with a
@@ -91,7 +92,8 @@ public class ScheduledExecutionResolver implements GroovyResolver.Methods, Relea
 	{
 		if( executor == null )
 		{
-			executor = Executors.newSingleThreadScheduledExecutor();
+			executor = Executors.newSingleThreadScheduledExecutor( new ThreadFactoryBuilder().setDaemon( true )
+					.setNameFormat( "ScheduledExecutionResolver Thread-%d" ).build() );
 		}
 
 		return executor;

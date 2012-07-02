@@ -15,6 +15,29 @@
 				<directory>${project.basedir}/src/main/groovy</directory>
 			</resource>
 		</resources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>generate-test-resources</phase>
+						<configuration>
+							<tasks>
+								<copy todir="${basedir}/target/.groovy">
+									<fileset
+										dir="${basedir}/../../loadui-installers/src/main/resources/.groovy"
+										includes="**/*" />
+								</copy>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 	<dependencies>
 		<dependency>

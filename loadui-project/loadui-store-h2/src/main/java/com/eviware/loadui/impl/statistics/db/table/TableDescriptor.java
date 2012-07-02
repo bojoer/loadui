@@ -22,11 +22,11 @@ import java.util.Map;
 
 public class TableDescriptor
 {
-	private List<String[]> selectCriteria = new ArrayList<String[]>();
+	private List<String[]> selectCriteria = new ArrayList<>();
 
-	private Map<String, Class<? extends Object>> staticFields = new HashMap<String, Class<? extends Object>>();
+	private Map<String, Class<? extends Object>> staticFields = new HashMap<>();
 
-	private List<String> pkSequence = new ArrayList<String>();
+	private List<String> pkSequence = new ArrayList<>();
 
 	private String autoIncrementPK = null;
 

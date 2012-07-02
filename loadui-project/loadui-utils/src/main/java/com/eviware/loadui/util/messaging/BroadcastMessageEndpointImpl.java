@@ -32,7 +32,7 @@ public class BroadcastMessageEndpointImpl implements BroadcastMessageEndpoint
 {
 	protected static final Logger log = LoggerFactory.getLogger( BroadcastMessageEndpointImpl.class );
 
-	private final Set<MessageEndpoint> endpoints = new HashSet<MessageEndpoint>();
+	private final Set<MessageEndpoint> endpoints = new HashSet<>();
 	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport();
 	private final Listener myListener = new Listener();
 

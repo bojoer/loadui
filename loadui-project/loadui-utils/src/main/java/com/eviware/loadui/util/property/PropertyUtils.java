@@ -34,7 +34,7 @@ public class PropertyUtils
 
 	public static Collection<Property<?>> getVisible( Collection<Property<?>> properties, boolean visible )
 	{
-		ArrayList<Property<?>> visibles = new ArrayList<Property<?>>();
+		ArrayList<Property<?>> visibles = new ArrayList<>();
 		for( Property<?> property : properties )
 			if( isVisible( property ) == visible )
 				visibles.add( property );

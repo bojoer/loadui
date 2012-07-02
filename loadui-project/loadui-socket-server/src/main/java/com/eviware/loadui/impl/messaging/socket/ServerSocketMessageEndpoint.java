@@ -48,7 +48,7 @@ public class ServerSocketMessageEndpoint implements MessageEndpoint
 
 	private static final Message CLOSE_MESSAGE = new Message( "/service/close", null );
 
-	private final LinkedBlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
+	private final LinkedBlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
 	private final Set<ConnectionListener> connectionListeners = Sets.newCopyOnWriteArraySet();
 	private final ChannelRoutingSupport routingSupport = new ChannelRoutingSupport();
 	private final SocketServerEndpoint socketServerEndpoint;

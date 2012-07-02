@@ -17,7 +17,6 @@ package com.eviware.loadui.impl.statistics.db.table.model;
 
 import java.sql.SQLException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +32,7 @@ public class SourceMetadataTable extends TableBase
 
 	public static final String SOURCE_TABLE_NAME = "source_metadata";
 
-	private Set<String> inMemoryTable = new HashSet<String>();
+	private Set<String> inMemoryTable = new HashSet<>();
 
 	public SourceMetadataTable( String dbName, ConnectionRegistry connectionRegistry, DatabaseMetadata databaseMetadata,
 			TableRegistry tableRegistry ) throws SQLException

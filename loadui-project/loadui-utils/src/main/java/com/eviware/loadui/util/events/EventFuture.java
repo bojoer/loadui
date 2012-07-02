@@ -54,7 +54,7 @@ public class EventFuture<T extends EventObject> implements Future<T>
 	public static <V extends BaseEvent> EventFuture<V> forKey( EventFirer eventFirer, Class<V> eventType,
 			final String key )
 	{
-		return new EventFuture<V>( eventFirer, eventType, new Predicate<V>()
+		return new EventFuture<>( eventFirer, eventType, new Predicate<V>()
 		{
 			@Override
 			public boolean apply( V input )

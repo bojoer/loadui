@@ -24,7 +24,7 @@ import com.eviware.loadui.api.statistics.store.TrackDescriptor;
 
 public class ExecutionChangeSupport
 {
-	private final List<ExecutionListener> listeners = new ArrayList<ExecutionListener>();
+	private final List<ExecutionListener> listeners = new ArrayList<>();
 
 	public void addExecutionListener( ExecutionListener el )
 	{
@@ -33,31 +33,31 @@ public class ExecutionChangeSupport
 
 	public void fireExecutionPaused( ExecutionManager.State oldState )
 	{
-		for( ExecutionListener el : new ArrayList<ExecutionListener>( listeners ) )
+		for( ExecutionListener el : new ArrayList<>( listeners ) )
 			el.executionPaused( oldState );
 	}
 
 	public void fireExecutionStarted( ExecutionManager.State oldState )
 	{
-		for( ExecutionListener el : new ArrayList<ExecutionListener>( listeners ) )
+		for( ExecutionListener el : new ArrayList<>( listeners ) )
 			el.executionStarted( oldState );
 	}
 
 	public void fireExecutionStopped( ExecutionManager.State oldState )
 	{
-		for( ExecutionListener el : new ArrayList<ExecutionListener>( listeners ) )
+		for( ExecutionListener el : new ArrayList<>( listeners ) )
 			el.executionStopped( oldState );
 	}
 
 	public void fireTrackRegistered( TrackDescriptor trackDescriptor )
 	{
-		for( ExecutionListener el : new ArrayList<ExecutionListener>( listeners ) )
+		for( ExecutionListener el : new ArrayList<>( listeners ) )
 			el.trackRegistered( trackDescriptor );
 	}
 
 	public void fireTrackUnregistered( TrackDescriptor trackDescriptor )
 	{
-		for( ExecutionListener el : new ArrayList<ExecutionListener>( listeners ) )
+		for( ExecutionListener el : new ArrayList<>( listeners ) )
 			el.trackUnregistered( trackDescriptor );
 	}
 

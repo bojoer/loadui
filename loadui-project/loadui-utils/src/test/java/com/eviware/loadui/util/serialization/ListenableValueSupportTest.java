@@ -37,7 +37,7 @@ public class ListenableValueSupportTest
 	@Before
 	public void setup()
 	{
-		listenableValueSupport = new ListenableValueSupport<Number>();
+		listenableValueSupport = new ListenableValueSupport<>();
 	}
 
 	@Test

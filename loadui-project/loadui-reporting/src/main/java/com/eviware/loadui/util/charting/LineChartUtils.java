@@ -63,7 +63,7 @@ public class LineChartUtils
 	public static Map<ChartView, Image> createImages( ChartGroup chartGroup, Execution mainExecution,
 			Execution comparedExecution )
 	{
-		HashMap<ChartView, Image> images = new HashMap<ChartView, Image>();
+		HashMap<ChartView, Image> images = new HashMap<>();
 
 		ChartView groupChartView = chartGroup.getChartView();
 		images.put( groupChartView, generateChartImage( groupChartView, mainExecution, comparedExecution ) );

@@ -30,9 +30,9 @@ public class MessageEndpointSupport implements Releasable
 {
 	private final MessageEndpoint target;
 	private final MessageEndpoint source;
-	private final Map<MessageListener, MessageListenerProxy> messageProxies = new WeakHashMap<MessageListener, MessageListenerProxy>();
-	private final Map<ConnectionListener, ConnectionListenerProxy> connectionProxies = new WeakHashMap<ConnectionListener, ConnectionListenerProxy>();
-	private final Set<MessageListener> errorListeners = new HashSet<MessageListener>();
+	private final Map<MessageListener, MessageListenerProxy> messageProxies = new WeakHashMap<>();
+	private final Map<ConnectionListener, ConnectionListenerProxy> connectionProxies = new WeakHashMap<>();
+	private final Set<MessageListener> errorListeners = new HashSet<>();
 
 	public MessageEndpointSupport( MessageEndpoint wrapper, MessageEndpoint source )
 	{
@@ -47,7 +47,7 @@ public class MessageEndpointSupport implements Releasable
 
 	public void fireError( Throwable error )
 	{
-		for( MessageListener listener : new ArrayList<MessageListener>( errorListeners ) )
+		for( MessageListener listener : new ArrayList<>( errorListeners ) )
 			listener.handleMessage( MessageEndpoint.ERROR_CHANNEL, target, error );
 	}
 

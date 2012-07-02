@@ -27,7 +27,7 @@ import com.google.common.collect.ImmutableMap;
 
 public class ValueStatistics
 {
-	private final List<DataPoint> dataPoints = new ArrayList<DataPoint>();
+	private final List<DataPoint> dataPoints = new ArrayList<>();
 	private long period;
 	private final int snapshotLength = 1000;
 

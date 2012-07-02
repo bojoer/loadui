@@ -37,8 +37,8 @@ public class EventSupport implements EventFirer, Releasable
 
 	private final WeakReference<Object> ownerRef;
 
-	private final Set<ListenerEntry<?>> listeners = new HashSet<ListenerEntry<?>>();
-	private static final BlockingQueue<Runnable> eventQueue = new LinkedBlockingQueue<Runnable>();
+	private final Set<ListenerEntry<?>> listeners = new HashSet<>();
+	private static final BlockingQueue<Runnable> eventQueue = new LinkedBlockingQueue<>();
 
 	static
 	{
@@ -84,7 +84,7 @@ public class EventSupport implements EventFirer, Releasable
 
 	public EventSupport( Object object )
 	{
-		ownerRef = new WeakReference<Object>( object );
+		ownerRef = new WeakReference<>( object );
 
 	}
 
@@ -99,7 +99,7 @@ public class EventSupport implements EventFirer, Releasable
 			@Override
 			public void run()
 			{
-				listeners.add( new ListenerEntry<T>( type, listener ) );
+				listeners.add( new ListenerEntry<>( type, listener ) );
 			}
 		} ) )
 			log.error( "Event queue full! Unable to add event listener: {}", listener );
@@ -113,7 +113,7 @@ public class EventSupport implements EventFirer, Releasable
 			@Override
 			public void run()
 			{
-				listeners.remove( new ListenerEntry<T>( type, listener ) );
+				listeners.remove( new ListenerEntry<>( type, listener ) );
 			}
 		} ) )
 			log.error( "Event queue full! Unable to remove event listener: {}", listener );
@@ -148,7 +148,7 @@ public class EventSupport implements EventFirer, Releasable
 			@Override
 			public void run()
 			{
-				for( ListenerEntry<?> listenerEntry : new HashSet<ListenerEntry<?>>( listeners ) )
+				for( ListenerEntry<?> listenerEntry : new HashSet<>( listeners ) )
 				{
 					if( listenerEntry.type.isInstance( event ) )
 					{
@@ -178,7 +178,7 @@ public class EventSupport implements EventFirer, Releasable
 	@SuppressWarnings( "unchecked" )
 	private static <E extends EventObject> void queueEvent( EventObject event, EventHandler<?> handler, Class<E> type )
 	{
-		if( !eventQueue.offer( new PendingEvent<E>( ( E )event, ( EventHandler<E> )handler ) ) )
+		if( !eventQueue.offer( new PendingEvent<>( ( E )event, ( EventHandler<E> )handler ) ) )
 			log.error( "Event queue full! Unable to queue event: {}", event );
 	}
 

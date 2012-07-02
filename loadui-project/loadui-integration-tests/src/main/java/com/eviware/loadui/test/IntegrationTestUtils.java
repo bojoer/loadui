@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
-import java.net.SocketException;
 
 import com.google.common.io.Closeables;
 
@@ -31,7 +30,7 @@ import com.google.common.io.Closeables;
  * 
  * @author dain.nilsson
  */
-public class Utilities
+public class IntegrationTestUtils
 {
 	public static boolean deleteRecursive( File target )
 	{
@@ -79,38 +78,26 @@ public class Utilities
 
 	public static int getAvailablePort()
 	{
-		ServerSocket ss = null;
-		try
+
+		try (ServerSocket ss = new ServerSocket( 0 ))
 		{
-			ss = new ServerSocket( 0 );
 			ss.setReuseAddress( true );
 			return ss.getLocalPort();
-		}
-		catch( SocketException e )
-		{
 		}
 		catch( IOException e )
 		{
 		}
 		finally
 		{
-			if( ss != null )
-			{
 				try
 				{
-					ss.close();
 					Thread.sleep( 1000 );
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
 				}
 				catch( InterruptedException e )
 				{
 					e.printStackTrace();
 				}
 			}
-		}
 
 		return -1;
 	}
@@ -125,30 +112,15 @@ public class Utilities
 
 	public static boolean isPortAvailable( int port )
 	{
-		ServerSocket ss = null;
-		try
+		try (ServerSocket ss = new ServerSocket( port ))
 		{
-			ss = new ServerSocket( port );
 			ss.setReuseAddress( true );
 			return true;
 		}
 		catch( IOException e )
 		{
 		}
-		finally
-		{
-			if( ss != null )
-			{
-				try
-				{
-					ss.close();
-				}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-			}
-		}
+
 		return false;
 	}
 }

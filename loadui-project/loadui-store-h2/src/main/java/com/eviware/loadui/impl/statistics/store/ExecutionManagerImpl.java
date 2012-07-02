@@ -147,11 +147,11 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 
 	private final TestEventRegistry testEventRegistry;
 
-	private final Map<String, ExecutionImpl> executionMap = new HashMap<String, ExecutionImpl>();
+	private final Map<String, ExecutionImpl> executionMap = new HashMap<>();
 
-	private final Map<String, TrackDescriptor> trackDescriptors = new HashMap<String, TrackDescriptor>();
+	private final Map<String, TrackDescriptor> trackDescriptors = new HashMap<>();
 
-	private final Map<String, Entry> latestEntries = new HashMap<String, Entry>();
+	private final Map<String, Entry> latestEntries = new HashMap<>();
 
 	private final TableRegistry tableRegistry = new TableRegistry();
 
@@ -371,7 +371,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 					SourceMetadataTable.SOURCE_TABLE_NAME );
 			if( !sources.doesInMemoryTableContain( source ) )
 			{
-				Map<String, Object> data = new HashMap<String, Object>();
+				Map<String, Object> data = new HashMap<>();
 				data.put( SourceMetadataTable.STATIC_FIELD_SOURCE_NAME, source );
 				sources.insert( data );
 			}
@@ -380,7 +380,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 					InterpolationLevelTable.INTERPOLATION_LEVEL_TABLE_NAME );
 			if( !levels.getInMemoryTable().contains( interpolationLevel ) )
 			{
-				Map<String, Object> data = new HashMap<String, Object>();
+				Map<String, Object> data = new HashMap<>();
 				data.put( InterpolationLevelTable.STATIC_FIELD_INTERPOLATION_LEVEL, interpolationLevel );
 				levels.insert( data );
 			}
@@ -414,7 +414,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			String dbName = currentExecution.getExecutionDir().getName();
 
 			// insert into meta-table
-			Map<String, Object> data = new HashMap<String, Object>();
+			Map<String, Object> data = new HashMap<>();
 			data.put( TrackMetadataTable.STATIC_FIELD_TRACK_NAME, td.getId() );
 			TableBase trackMetadataTable = tableRegistry.getTable( dbName, TrackMetadataTable.TABLE_NAME );
 			trackMetadataTable.insert( data );
@@ -513,8 +513,8 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 				// keep everything in temporary lists, until all SQL operations
 				// are finished successfully and then create objects and add
 				// tables to table registry
-				List<TrackDescriptor> tracksToCreate = new ArrayList<TrackDescriptor>();
-				List<TableBase> createdTableList = new ArrayList<TableBase>();
+				List<TrackDescriptor> tracksToCreate = new ArrayList<>();
+				List<TableBase> createdTableList = new ArrayList<>();
 				try
 				{
 					// create source meta table
@@ -655,7 +655,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 			latestEntries.put( key, adjustedEntry );
 
 			currentExecution.updateLength( timestamp );
-			Map<String, Object> data = new HashMap<String, Object>();
+			Map<String, Object> data = new HashMap<>();
 			data.put( DataTable.STATIC_FIELD_TIMESTAMP, timestamp );
 
 			for( String name : track.getTrackDescriptor().getValueNames().keySet() )
@@ -707,7 +707,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 					.getExecutionDir().getName(), TestEventSourceTable.TABLE_NAME );
 			Long sourceId = eventSourceTable.getIdByHash( sourceConfig.getHash() );
 
-			Map<String, Object> data = new HashMap<String, Object>();
+			Map<String, Object> data = new HashMap<>();
 			data.put( TestEventTable.STATIC_FIELD_TIMESTAMP, timestamp );
 			data.put( TestEventTable.STATIC_FIELD_DATA, testEventData );
 			data.put( TestEventTable.STATIC_FIELD_SOURCEID, sourceId );
@@ -749,7 +749,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 						InterpolationLevelTable.INTERPOLATION_LEVEL_TABLE_NAME );
 				if( !levels.getInMemoryTable().contains( interpolationLevel ) )
 				{
-					Map<String, Object> data = new HashMap<String, Object>();
+					Map<String, Object> data = new HashMap<>();
 					data.put( InterpolationLevelTable.STATIC_FIELD_INTERPOLATION_LEVEL, interpolationLevel );
 					levels.insert( data );
 				}
@@ -793,7 +793,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 
 				Long typeId = eventTypeTable.getIdByTypeName( source.getType().getName() );
 
-				Map<String, Object> data = new HashMap<String, Object>();
+				Map<String, Object> data = new HashMap<>();
 				data.put( TestEventSourceTable.STATIC_FIELD_LABEL, source.getLabel() );
 				data.put( TestEventSourceTable.STATIC_FIELD_HASH, hash );
 				data.put( TestEventSourceTable.STATIC_FIELD_DATA, source.getData() );
@@ -835,7 +835,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 				.getExecutionDir().getName(), TestEventTypeTable.TABLE_NAME );
 		try
 		{
-			Map<String, Object> data = new HashMap<String, Object>();
+			Map<String, Object> data = new HashMap<>();
 			data.put( TestEventTypeTable.STATIC_FIELD_LABEL, typeLabel );
 			data.put( TestEventTypeTable.STATIC_FIELD_TYPE, typeName );
 			eventTypeTable.insert( data );
@@ -858,7 +858,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 		{
 			loadExecution( executionId );
 
-			Set<TestEventTypeDescriptorImpl> result = new HashSet<TestEventTypeDescriptorImpl>();
+			Set<TestEventTypeDescriptorImpl> result = new HashSet<>();
 
 			TestEventTypeTable eventTypeTable = ( TestEventTypeTable )tableRegistry.getTable( getExecution( executionId )
 					.getExecutionDir().getName(), TestEventTypeTable.TABLE_NAME );
@@ -874,7 +874,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 				TestEventTypeDescriptorImpl typeDescr = new TestEventTypeDescriptorImpl( typeLabel );
 				result.add( typeDescr );
 
-				Map<String, TestEventSourceDescriptorImpl> sourceMap = new HashMap<String, TestEventSourceDescriptorImpl>();
+				Map<String, TestEventSourceDescriptorImpl> sourceMap = new HashMap<>();
 				List<Map<String, Object>> sourceListResult = eventSourceTable.getByTypeId( typeId );
 				for( Map<String, Object> s : sourceListResult )
 				{
@@ -1076,7 +1076,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 
 		Track track = getTrack( trackId );
 
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<>();
 		if( dtd == null || track == null )
 		{
 			// if table or track does not exist return empty set
@@ -1111,10 +1111,10 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 		if( dtd == null || track == null )
 		{
 			// if table or track does not exist return empty set
-			return new ArrayList<Map<String, Object>>();
+			return new ArrayList<>();
 		}
 
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<>();
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_GTE, startTime );
 		data.put( DataTable.SELECT_ARG_TIMESTAMP_LTE, endTime );
 
@@ -1379,7 +1379,7 @@ public abstract class ExecutionManagerImpl<Type extends DataSource> implements E
 	{
 		private static final int maxSize = 10;
 
-		private final ArrayList<ExecutionImpl> list = new ArrayList<ExecutionImpl>();
+		private final ArrayList<ExecutionImpl> list = new ArrayList<>();
 
 		private ExecutionImpl currentExecution;
 

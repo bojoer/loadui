@@ -22,19 +22,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRField;
+import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
+
 import com.eviware.loadui.api.statistics.model.Chart;
 import com.eviware.loadui.api.statistics.model.ChartGroup;
 import com.eviware.loadui.api.statistics.model.chart.ChartView;
 import com.eviware.loadui.api.statistics.model.chart.line.LineChartView;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRField;
-import net.sf.jasperreports.engine.data.JRAbstractBeanDataSource;
-
 public class ChartGroupDataSource extends JRAbstractBeanDataSource
 {
 	private final Map<Object, Image> charts;
-	private final List<ChartView> chartViews = new ArrayList<ChartView>();
+	private final List<ChartView> chartViews = new ArrayList<>();
 	private ChartView currentChartView;
 	private Iterator<ChartView> chartViewIterator;
 
@@ -51,7 +51,7 @@ public class ChartGroupDataSource extends JRAbstractBeanDataSource
 			if( charts.containsKey( chartView ) )
 				chartViews.add( chartView );
 		}
-		ArrayList<String> sources = new ArrayList<String>();
+		ArrayList<String> sources = new ArrayList<>();
 		sources.addAll( chartGroup.getSources() );
 		Collections.sort( sources );
 		for( String source : sources )

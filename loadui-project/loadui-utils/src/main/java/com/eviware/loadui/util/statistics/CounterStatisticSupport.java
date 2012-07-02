@@ -27,7 +27,7 @@ import com.eviware.loadui.api.traits.Releasable;
 public class CounterStatisticSupport implements EventHandler<CounterEvent>, Releasable
 {
 	private CounterHolder counterHolder;
-	private final Map<String, StatisticVariable.Mutable> counters = new HashMap<String, StatisticVariable.Mutable>();
+	private final Map<String, StatisticVariable.Mutable> counters = new HashMap<>();
 
 	public CounterStatisticSupport( CounterHolder counterHolder )
 	{

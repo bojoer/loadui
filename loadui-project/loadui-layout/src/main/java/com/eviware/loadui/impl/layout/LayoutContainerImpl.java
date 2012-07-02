@@ -35,7 +35,7 @@ public class LayoutContainerImpl extends LayoutComponentImpl implements LayoutCo
 	public final static String ROW_CONSTRAINTS = "row";
 
 	private boolean frozen;
-	private List<LayoutComponent> components = new ArrayList<LayoutComponent>();
+	private List<LayoutComponent> components = new ArrayList<>();
 
 	public LayoutContainerImpl( Map<String, ?> args )
 	{

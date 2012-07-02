@@ -23,7 +23,7 @@ public class StatementHolder
 
 	private String statementSql;
 
-	private List<String> argumentNameList = new ArrayList<String>();
+	private List<String> argumentNameList = new ArrayList<>();
 
 	public void addArgument( String name )
 	{

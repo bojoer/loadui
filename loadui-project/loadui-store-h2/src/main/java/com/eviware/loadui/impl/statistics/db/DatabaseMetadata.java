@@ -43,7 +43,7 @@ public class DatabaseMetadata
 	/**
 	 * Map which contains java to database types mapping
 	 */
-	private HashMap<Class<? extends Object>, String> typeConversionMap = new HashMap<Class<? extends Object>, String>();
+	private HashMap<Class<? extends Object>, String> typeConversionMap = new HashMap<>();
 
 	/**
 	 * Adds java to database type conversion pair

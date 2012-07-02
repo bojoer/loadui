@@ -1,5 +1,6 @@
 package com.eviware.loadui.util.test;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -51,6 +52,24 @@ public class TestUtils
 			EventFuture<BaseEvent> eventFuture = EventFuture.forKey( eventFirer, AWAIT_EVENTS );
 			eventFirer.fireEvent( new BaseEvent( eventFirer, AWAIT_EVENTS ) );
 			eventFuture.get( 5, TimeUnit.SECONDS );
+		}
+	}
+
+	public static void awaitCondition( Callable<Boolean> condition ) throws Exception
+	{
+		awaitCondition( condition, 5 );
+	}
+
+	public static void awaitCondition( Callable<Boolean> condition, int timeoutInSeconds ) throws Exception
+	{
+		long timeout = System.currentTimeMillis() + timeoutInSeconds * 1000;
+		while( !condition.call() )
+		{
+			Thread.sleep( 10 );
+			if( System.currentTimeMillis() > timeout )
+			{
+				throw new TimeoutException();
+			}
 		}
 	}
 }

@@ -129,7 +129,7 @@ public class TotalTimeTickCalculator implements TickCalculator<Long>
 			throw new RuntimeException( "Interval must be positive! Interval = " + interval );
 		firstTick -= ( firstTick % interval );
 
-		ArrayList<Tick> ticks = new ArrayList<Tick>();
+		ArrayList<Tick> ticks = new ArrayList<>();
 		for( long i = firstTick; i <= end; i += interval )
 			ticks.add( makeTick( i, ticksLevel ) );
 
