@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Scene?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.geometry.Insets?>
+
+<Scene xmlns:fx="http://javafx.com/fxml" fill="transparent">
+	<StackPane>
+		<ImageView>
+			<image>
+				<Image url="@loadui-splash.png" />
+			</image>
+		</ImageView>
+		<HBox spacing="4" alignment="top_right">
+			<padding>
+				<Insets top="223" right="62" />
+			</padding>
+			<Label style="-fx-text-fill: #00eb26; -fx-font-weight: bold;"
+				text="loadUI" />
+			<Label style="-fx-text-fill: #00eb26;" text="Version 2.5" />
+		</HBox>
+	</StackPane>
+</Scene>

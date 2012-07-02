@@ -5,7 +5,7 @@ set LOADUI_HOME=%~dp0
 cd /d %~dp0 
 echo %CD%
 
-set JAVA=jre/bin/javaws.exe
+set JAVA=jre/bin/java.exe
 
 :SET_CLASSPATH
 
@@ -21,4 +21,4 @@ rem set JAVA_OPTS=-Xms128m -Xmx768m -XX:MaxPermSize=128m
 
 rem ********* run loadUI Agent ***********
 
-"%JAVA%" loadUI.jnlp
+"%JAVA%" %JAVA_OPTS% -cp "%CLASSPATH%" com.javafx.main.Main %*

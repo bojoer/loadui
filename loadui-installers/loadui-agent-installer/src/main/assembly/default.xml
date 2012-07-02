@@ -30,6 +30,7 @@
 			</includes>
 			<excludes>
 				<exclude>org.apache.felix:org.apache.felix.framework</exclude>
+				<exclude>com.oracle:javafx-runtime</exclude>
 			</excludes>
 			<outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
 			<useTransitiveDependencies>true</useTransitiveDependencies>
