@@ -23,7 +23,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<outputJar>target/loadui-model-xmlbeans-${project.version}.jar</outputJar>
+					<!-- <outputJar>target/loadui-model-xmlbeans-${project.version}.jar</outputJar> -->
 				</configuration>
 			</plugin>
 		</plugins>
