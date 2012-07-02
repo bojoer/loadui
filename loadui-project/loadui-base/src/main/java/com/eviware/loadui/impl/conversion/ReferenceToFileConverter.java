@@ -58,12 +58,12 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 
 	private final File storage = new File( System.getProperty( LoadUI.LOADUI_HOME ) + File.separator + "fileStorage" );
 	private final FilePropertyListener filePropertyListener = new FilePropertyListener();
-	private final Set<File> filesInUse = new HashSet<File>();
+	private final Set<File> filesInUse = new HashSet<>();
 
-	private final Map<String, File> files = new HashMap<String, File>();
+	private final Map<String, File> files = new HashMap<>();
 	private final FileReceiver listener = new FileReceiver();
 
-	private final Set<String> filesInProgress = new HashSet<String>();
+	private final Set<String> filesInProgress = new HashSet<>();
 
 	public ReferenceToFileConverter( AddressableRegistry addressableRegistry, ScheduledExecutorService executorService )
 	{
@@ -308,7 +308,7 @@ public class ReferenceToFileConverter implements Converter<Reference, File>, Eve
 		@Override
 		public void run()
 		{
-			List<File> unused = new ArrayList<File>();
+			List<File> unused = new ArrayList<>();
 			for( File file : storage.listFiles() )
 				if( !filesInUse.contains( file ) )
 					unused.add( file );

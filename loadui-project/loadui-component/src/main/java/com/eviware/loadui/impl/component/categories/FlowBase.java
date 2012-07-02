@@ -42,7 +42,7 @@ import com.eviware.loadui.util.ReleasableUtils;
 public abstract class FlowBase extends BaseCategory implements FlowCategory
 {
 	private final InputTerminal incomingTerminal;
-	private final List<OutputTerminal> outgoingTerminals = new ArrayList<OutputTerminal>();
+	private final List<OutputTerminal> outgoingTerminals = new ArrayList<>();
 	private Map<String, Class<?>> inputSignature = Collections.emptyMap();
 
 	private final BlinkOnUpdateActivityStrategy activityStrategy = ActivityStrategies.newBlinkOnUpdateStrategy();
@@ -183,8 +183,8 @@ public abstract class FlowBase extends BaseCategory implements FlowCategory
 
 	protected void updateSignature()
 	{
-		Map<String, Class<?>> newSig = new HashMap<String, Class<?>>();
-		for( Connection connection : new ArrayList<Connection>( incomingTerminal.getConnections() ) )
+		Map<String, Class<?>> newSig = new HashMap<>();
+		for( Connection connection : new ArrayList<>( incomingTerminal.getConnections() ) )
 			for( Entry<String, Class<?>> entry : connection.getOutputTerminal().getMessageSignature().entrySet() )
 				newSig.put( entry.getKey(), entry.getValue() );
 		inputSignature = newSig;

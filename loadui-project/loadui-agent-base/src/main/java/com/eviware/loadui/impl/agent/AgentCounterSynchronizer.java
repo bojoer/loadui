@@ -40,7 +40,7 @@ public class AgentCounterSynchronizer implements CounterSynchronizer
 
 	private final Timer timer = new Timer( "AgentCounterSynchronizer", true );
 	private final BaseEventListener listener = new BaseEventListener();
-	private final Map<CounterHolder, HolderData> holders = new HashMap<CounterHolder, HolderData>();
+	private final Map<CounterHolder, HolderData> holders = new HashMap<>();
 
 	public AgentCounterSynchronizer()
 	{
@@ -58,7 +58,7 @@ public class AgentCounterSynchronizer implements CounterSynchronizer
 				for( Map.Entry<CounterHolder, HolderData> entry : holdersCopy.entrySet() )
 				{
 					CounterHolder holder = entry.getKey();
-					Map<String, String> changedData = new HashMap<String, String>();
+					Map<String, String> changedData = new HashMap<>();
 					Map<String, Long> counterData = entry.getValue().counterData;
 					for( String counterName : holder.getCounterNames() )
 					{
@@ -137,7 +137,7 @@ public class AgentCounterSynchronizer implements CounterSynchronizer
 	private static class HolderData
 	{
 		MessageEndpoint endpoint;
-		Map<String, Long> counterData = new HashMap<String, Long>();
+		Map<String, Long> counterData = new HashMap<>();
 
 		public HolderData( MessageEndpoint endpoint )
 		{

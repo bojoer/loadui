@@ -42,7 +42,7 @@ public class StreamingStatisticsAggregator implements StatisticsAggregator
 	@Override
 	public void addEntry( String trackId, Entry entry )
 	{
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<>();
 		for( String key : entry.getNames() )
 			data.put( key, entry.getValue( key ) );
 		data.put( "_CURRENT_TIME", System.currentTimeMillis() );

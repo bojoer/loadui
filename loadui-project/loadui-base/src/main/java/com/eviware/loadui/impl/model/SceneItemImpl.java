@@ -92,7 +92,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	private final WorkspaceListener workspaceListener;
 	private final TerminalHolderSupport terminalHolderSupport;
 	private final InputTerminal stateTerminal;
-	private final Map<AgentItem, Map<Object, Object>> remoteStatistics = new ConcurrentHashMap<AgentItem, Map<Object, Object>>();
+	private final Map<AgentItem, Map<Object, Object>> remoteStatistics = new ConcurrentHashMap<>();
 	private long version;
 	private boolean propagate = true;
 	private boolean wasLocalModeWhenStarted = true;
@@ -194,7 +194,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 	@Override
 	public void delete()
 	{
-		for( ComponentItem component : new ArrayList<ComponentItem>( getComponents() ) )
+		for( ComponentItem component : new ArrayList<>( getComponents() ) )
 		{
 			component.delete();
 		}
@@ -310,7 +310,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 			// on agent, application is running in distributed mode, so send
 			// data to the controller
 
-			Map<String, Object> data = new HashMap<String, Object>();
+			Map<String, Object> data = new HashMap<>();
 			data.put( AgentItem.SCENE_ID, getId() );
 
 			for( ComponentItem component : getComponents() )
@@ -391,7 +391,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 		for( ComponentItem component : getComponents() )
 		{
 			String cId = component.getId();
-			Map<AgentItem, Object> cData = new HashMap<AgentItem, Object>();
+			Map<AgentItem, Object> cData = new HashMap<>();
 			for( Entry<AgentItem, Map<Object, Object>> e : remoteStatistics.entrySet() )
 				cData.put( e.getKey(), e.getValue().get( cId ) );
 			component.getBehavior().handleStatisticsData( cData );
@@ -454,7 +454,7 @@ public class SceneItemImpl extends CanvasItemImpl<SceneItemConfig> implements Sc
 
 	private Collection<AgentItem> getActiveAgents()
 	{
-		ArrayList<AgentItem> agents = new ArrayList<AgentItem>();
+		ArrayList<AgentItem> agents = new ArrayList<>();
 		for( AgentItem agent : getProject().getAgentsAssignedTo( this ) )
 			if( agent.isReady() )
 				agents.add( agent );

@@ -109,7 +109,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private boolean loadingErrors = false;
 
-	protected final Map<String, Long> limits = new HashMap<String, Long>();
+	protected final Map<String, Long> limits = new HashMap<>();
 
 	private boolean running = false;
 	private boolean completed = false;
@@ -118,8 +118,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	// here keep all not loaded components and connections, remove them at the
 	// end of init
-	private final ArrayList<ComponentItemConfig> badComponents = new ArrayList<ComponentItemConfig>();
-	private final ArrayList<ConnectionConfig> badConnections = new ArrayList<ConnectionConfig>();
+	private final ArrayList<ComponentItemConfig> badComponents = new ArrayList<>();
+	private final ArrayList<ConnectionConfig> badConnections = new ArrayList<>();
 
 	private final StatisticHolderSupport statisticHolderSupport;
 	private final CounterStatisticSupport counterStatisticSupport;

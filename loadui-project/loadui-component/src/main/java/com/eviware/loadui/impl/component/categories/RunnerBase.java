@@ -99,10 +99,10 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	private final AtomicInteger workerCount = new AtomicInteger();
 	private final AtomicInteger queued = new AtomicInteger();
 
-	private final LinkedBlockingQueue<TerminalMessage> queue = new LinkedBlockingQueue<TerminalMessage>();
+	private final LinkedBlockingQueue<TerminalMessage> queue = new LinkedBlockingQueue<>();
 
-	private final LinkedList<SampleStats> topStats = new LinkedList<SampleStats>();
-	private final LinkedList<SampleStats> bottomStats = new LinkedList<SampleStats>();
+	private final LinkedList<SampleStats> topStats = new LinkedList<>();
+	private final LinkedList<SampleStats> bottomStats = new LinkedList<>();
 	// needed to calc stat
 	private long maxTime;
 	private long minTime;
@@ -614,13 +614,13 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	@Override
 	public Object collectStatisticsData()
 	{
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<>();
 		data.put( "min", minTime );
 		data.put( "max", maxTime );
 		data.put( "avg", avgTime );
 		data.put( "sumTotalSquare", sumTotalSquare );
 
-		Set<SampleStats> stats = new HashSet<SampleStats>();
+		Set<SampleStats> stats = new HashSet<>();
 		stats.addAll( getTopSamples() );
 		stats.addAll( getBottomSamples() );
 		if( !stats.isEmpty() )
@@ -663,19 +663,19 @@ public abstract class RunnerBase extends BaseCategory implements RunnerCategory,
 	@Override
 	public List<SampleStats> getTopSamples()
 	{
-		return new ArrayList<SampleStats>( topStats );
+		return new ArrayList<>( topStats );
 	}
 
 	@Override
 	public List<SampleStats> getBottomSamples()
 	{
-		return new ArrayList<SampleStats>( bottomStats );
+		return new ArrayList<>( bottomStats );
 	}
 
 	@Override
 	public Map<String, String> getStatistics()
 	{
-		Map<String, String> statistics = new HashMap<String, String>();
+		Map<String, String> statistics = new HashMap<>();
 
 		long requestCount = requestCounter.get();
 		long failureCount = failedRequestCounter.get();

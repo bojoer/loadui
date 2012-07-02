@@ -132,7 +132,7 @@ public class ThroughputStatisticsWriterTest
 		Entry entry = aggregator.aggregate( Collections.<Entry> emptySet(), false );
 		assertNull( entry );
 
-		HashSet<Entry> entries = new HashSet<Entry>();
+		HashSet<Entry> entries = new HashSet<>();
 		entries.add( e1 );
 		entry = aggregator.aggregate( entries, false );
 

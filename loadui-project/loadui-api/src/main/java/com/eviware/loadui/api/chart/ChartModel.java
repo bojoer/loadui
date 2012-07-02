@@ -40,9 +40,9 @@ public class ChartModel
 
 	private int height = 100;
 
-	private final List<ChartListener> chartListenerList = new ArrayList<ChartListener>();
+	private final List<ChartListener> chartListenerList = new ArrayList<>();
 
-	private final List<ChartSerie> series = new ArrayList<ChartSerie>();
+	private final List<ChartSerie> series = new ArrayList<>();
 
 	private int legendColumns = -1;
 

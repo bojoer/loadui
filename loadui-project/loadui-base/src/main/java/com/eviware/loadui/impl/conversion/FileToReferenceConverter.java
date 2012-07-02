@@ -46,8 +46,8 @@ public class FileToReferenceConverter implements Converter<File, Reference>
 	// LoadUI.LOADUI_HOME )
 	// + File.separator + "fileStorage" );
 	private final ExecutorService executionService;
-	private final Map<String, FileStruct> cache = new HashMap<String, FileStruct>();
-	private final Map<String, File> lookupTable = new HashMap<String, File>();
+	private final Map<String, FileStruct> cache = new HashMap<>();
+	private final Map<String, File> lookupTable = new HashMap<>();
 
 	public FileToReferenceConverter( BroadcastMessageEndpoint endpoint, ExecutorService executionService )
 	{

@@ -15,9 +15,12 @@
  */
 package com.eviware.loadui.impl.statistics;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -252,6 +255,6 @@ public class SampleStatisticsWriterTest
 		// .put( Stats.MAX.name(), 12 ).build() );
 
 		return writer.getTrackDescriptor().getEntryAggregator()
-				.aggregate( new HashSet<Entry>( Arrays.asList( e1, e2, e3 ) ), false );
+				.aggregate( new HashSet<>( Arrays.asList( e1, e2, e3 ) ), false );
 	}
 }

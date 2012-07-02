@@ -24,7 +24,7 @@ import com.eviware.loadui.util.BeanInjector;
 
 public class BlinkOnUpdateActivityStrategy extends BlinkingActivityStrategy
 {
-	private final AtomicReference<ScheduledFuture<?>> futureRef = new AtomicReference<ScheduledFuture<?>>();
+	private final AtomicReference<ScheduledFuture<?>> futureRef = new AtomicReference<>();
 	private final long blinkTime;
 	private final Runnable blinkTimeout = new Runnable()
 	{

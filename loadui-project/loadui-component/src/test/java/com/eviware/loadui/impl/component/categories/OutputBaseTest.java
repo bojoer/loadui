@@ -18,7 +18,7 @@ import com.google.common.collect.ImmutableMap;
 
 public class OutputBaseTest
 {
-	private BlockingQueue<TerminalMessage> outputtedMessages = new LinkedBlockingQueue<TerminalMessage>();
+	private BlockingQueue<TerminalMessage> outputtedMessages = new LinkedBlockingQueue<>();
 	private OutputBase outputBase;
 	private ComponentItem component;
 

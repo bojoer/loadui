@@ -30,8 +30,8 @@ import com.eviware.loadui.api.model.ModelItem;
 
 public class RemoteAggregatedCounterSupport extends AggregatedCounterSupport implements Aggregator
 {
-	private final Map<MessageEndpoint, Map<String, Long>> remoteValues = new HashMap<MessageEndpoint, Map<String, Long>>();
-	private final Map<String, Long> summedValues = new HashMap<String, Long>();
+	private final Map<MessageEndpoint, Map<String, Long>> remoteValues = new HashMap<>();
+	private final Map<String, Long> summedValues = new HashMap<>();
 	private final CounterSynchronizer counterSynchronizer;
 
 	public RemoteAggregatedCounterSupport( CounterSynchronizer counterSynchronizer )

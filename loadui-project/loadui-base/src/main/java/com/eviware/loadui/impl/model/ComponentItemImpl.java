@@ -69,8 +69,8 @@ import com.eviware.loadui.config.ComponentItemConfig;
 import com.eviware.loadui.impl.counter.CounterSupport;
 import com.eviware.loadui.impl.counter.RemoteAggregatedCounterSupport;
 import com.eviware.loadui.impl.model.DummyTerminal.AgentTerminal;
-import com.eviware.loadui.impl.model.DummyTerminal.RemoteTerminal;
 import com.eviware.loadui.impl.model.DummyTerminal.ControllerTerminal;
+import com.eviware.loadui.impl.model.DummyTerminal.RemoteTerminal;
 import com.eviware.loadui.impl.statistics.StatisticHolderSupport;
 import com.eviware.loadui.impl.terminal.InputTerminalImpl;
 import com.eviware.loadui.impl.terminal.OutputTerminalImpl;
@@ -531,7 +531,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 
 	private class Context implements ComponentContext
 	{
-		private final List<EventHandlerRegistration<?>> handlerRegistrations = new ArrayList<EventHandlerRegistration<?>>();
+		private final List<EventHandlerRegistration<?>> handlerRegistrations = new ArrayList<>();
 
 		@Override
 		public InputTerminal createInput( String name, String label, String description )
@@ -693,14 +693,14 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		public <T extends EventObject> void addEventListener( Class<T> type, EventHandler<? super T> listener )
 		{
 			ComponentItemImpl.this.addEventListener( type, listener );
-			handlerRegistrations.add( new EventHandlerRegistration<T>( listener, type ) );
+			handlerRegistrations.add( new EventHandlerRegistration<>( listener, type ) );
 		}
 
 		@Override
 		public <T extends EventObject> void removeEventListener( Class<T> type, EventHandler<? super T> listener )
 		{
 			ComponentItemImpl.this.removeEventListener( type, listener );
-			handlerRegistrations.remove( new EventHandlerRegistration<T>( listener, type ) );
+			handlerRegistrations.remove( new EventHandlerRegistration<>( listener, type ) );
 		}
 
 		@Override
@@ -874,7 +874,7 @@ public class ComponentItemImpl extends ModelItemImpl<ComponentItemConfig> implem
 		@Override
 		public Collection<DualTerminal> getAgentTerminals()
 		{
-			List<DualTerminal> terminals = new ArrayList<DualTerminal>();
+			List<DualTerminal> terminals = new ArrayList<>();
 			if( isController() && getCanvas() instanceof SceneItem )
 				for( AgentItem agent : getCanvas().getProject().getAgentsAssignedTo( ( SceneItem )getCanvas() ) )
 					terminals.add( getAgentTerminal( agent ) );

@@ -143,7 +143,7 @@ public class ComponentTestUtils
 
 	public static BlockingQueue<TerminalMessage> getMessagesFrom( OutputTerminal terminal )
 	{
-		LinkedBlockingQueue<TerminalMessage> queue = new LinkedBlockingQueue<TerminalMessage>();
+		LinkedBlockingQueue<TerminalMessage> queue = new LinkedBlockingQueue<>();
 		terminal.addEventListener( TerminalMessageEvent.class, new MessageListener( queue ) );
 
 		return queue;

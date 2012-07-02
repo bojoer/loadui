@@ -41,7 +41,7 @@ public class StatisticPageImpl implements StatisticPage
 		this.parent = parent;
 		this.config = config;
 
-		collectionSupport = new OrderedCollectionSupport<ChartGroup>( this );
+		collectionSupport = new OrderedCollectionSupport<>( this );
 
 		for( ChartGroupConfig chartGroupConfig : config.getChartGroupArray() )
 			collectionSupport.addChild( new ChartGroupImpl( this, chartGroupConfig ) );

@@ -26,8 +26,8 @@ import com.eviware.loadui.api.summary.MutableSection;
 public class MutableSectionImpl implements MutableSection
 {
 
-	private final LinkedHashMap<String, TableModel> tables = new LinkedHashMap<String, TableModel>();
-	private final LinkedHashMap<String, String> values = new LinkedHashMap<String, String>();
+	private final LinkedHashMap<String, TableModel> tables = new LinkedHashMap<>();
+	private final LinkedHashMap<String, String> values = new LinkedHashMap<>();
 	private final String title;
 
 	public MutableSectionImpl( String title )

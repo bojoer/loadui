@@ -58,7 +58,7 @@ public class XmlBeansUtils
 	@SuppressWarnings( "unchecked" )
 	public static <T extends XmlObject> T[] moveArrayElement( T[] array, int from, int to )
 	{
-		List<T> list = new ArrayList<T>( array.length );
+		List<T> list = new ArrayList<>( array.length );
 		for( int i = 0; i < array.length; i++ )
 			if( i != from )
 				list.add( array[i]/* .copy() */);

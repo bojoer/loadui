@@ -15,6 +15,8 @@
  */
 package com.eviware.loadui.api.traits;
 
+import java.util.Comparator;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -51,4 +53,13 @@ public interface Labeled
 		 */
 		public void setLabel( @Nonnull String label );
 	}
+
+	public static final Comparator<Labeled> COMPARE_BY_LABEL = new Comparator<Labeled>()
+	{
+		@Override
+		public int compare( Labeled o1, Labeled o2 )
+		{
+			return o1.getLabel().compareTo( o2.getLabel() );
+		}
+	};
 }

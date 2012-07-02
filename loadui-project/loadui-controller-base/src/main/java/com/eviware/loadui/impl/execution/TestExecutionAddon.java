@@ -121,7 +121,7 @@ public class TestExecutionAddon implements Addon
 				{
 					if( phase == Phase.PRE_STOP )
 					{
-						readyFuture = new EventFuture<BaseEvent>( canvas, BaseEvent.class, isReadyAction );
+						readyFuture = new EventFuture<>( canvas, BaseEvent.class, isReadyAction );
 					}
 					else if( phase == Phase.POST_STOP )
 					{

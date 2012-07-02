@@ -40,7 +40,7 @@ import com.google.common.collect.ImmutableList;
 public abstract class AbstractLineChartView extends AbstractChartView implements LineChartView, Releasable
 {
 	private final EventSupport eventSupport = new EventSupport( this );
-	private final Map<String, Segment> segments = new HashMap<String, Segment>();
+	private final Map<String, Segment> segments = new HashMap<>();
 
 	public AbstractLineChartView( LineChartViewProvider provider, AttributeHolder attributeDelegate, String prefix )
 	{

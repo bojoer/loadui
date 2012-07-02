@@ -158,7 +158,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	{
 		try
 		{
-			if( projectFile.createNewFile() )
+			if( projectFile.isFile() || projectFile.createNewFile() )
 			{
 				LoaduiProjectDocumentConfig projectConfig = LoaduiProjectDocumentConfig.Factory.newInstance();
 				projectConfig.addNewLoaduiProject().setLabel( label );
@@ -242,7 +242,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	@Override
 	public Collection<ProjectItem> getProjects()
 	{
-		Collection<ProjectItem> list = new ArrayList<ProjectItem>();
+		Collection<ProjectItem> list = new ArrayList<>();
 		for( ProjectRef ref : projectList.getItems() )
 			if( ref.isEnabled() )
 				list.add( ref.getProject() );

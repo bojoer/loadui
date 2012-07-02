@@ -8,7 +8,7 @@ import com.eviware.loadui.util.serialization.ListenableValueSupport;
 
 public class ListenableStatisticVariableImpl extends StatisticVariableImpl implements ListenableValue<Number>
 {
-	private final ListenableValueSupport<Number> listenableValueSupport = new ListenableValueSupport<Number>();
+	private final ListenableValueSupport<Number> listenableValueSupport = new ListenableValueSupport<>();
 
 	public ListenableStatisticVariableImpl( ExecutionManager executionManager, StatisticHolder parent, String name,
 			AddressableRegistry addressableRegistry, String description )

@@ -39,7 +39,7 @@ public class StatisticPagesImpl implements StatisticPages
 	{
 		this.config = config;
 
-		collectionSupport = new OrderedCollectionSupport<StatisticPage>( this );
+		collectionSupport = new OrderedCollectionSupport<>( this );
 	}
 
 	public void init()

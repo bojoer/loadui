@@ -34,7 +34,7 @@ public class AttributeHolderSupport implements AttributeHolder, Releasable
 {
 	public static final Logger log = LoggerFactory.getLogger( AttributeHolderSupport.class );
 
-	private final Map<String, String> attributes = new HashMap<String, String>();
+	private final Map<String, String> attributes = new HashMap<>();
 	private final PropertyListConfig config;
 	private boolean released = false;
 

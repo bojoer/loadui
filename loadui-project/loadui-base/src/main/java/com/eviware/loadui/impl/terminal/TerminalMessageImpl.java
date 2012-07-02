@@ -31,7 +31,7 @@ import com.eviware.loadui.util.serialization.SerializationUtils;
 
 public class TerminalMessageImpl implements TerminalMessage
 {
-	private final Map<String, MutableValue<?>> values = new HashMap<String, MutableValue<?>>();
+	private final Map<String, MutableValue<?>> values = new HashMap<>();
 	private final ConversionService conversionService;
 
 	public TerminalMessageImpl( ConversionService conversionService )
@@ -85,14 +85,14 @@ public class TerminalMessageImpl implements TerminalMessage
 	{
 		synchronized( values )
 		{
-			values.put( key, new MutableValueImpl<T>( type, value, conversionService ) );
+			values.put( key, new MutableValueImpl<>( type, value, conversionService ) );
 		}
 	}
 
 	@Override
 	public Object serialize()
 	{
-		Map<String, String[]> serialized = new HashMap<String, String[]>();
+		Map<String, String[]> serialized = new HashMap<>();
 		for( Entry<String, MutableValue<?>> entry : values.entrySet() )
 		{
 			MutableValue<?> valueHolder = entry.getValue();
@@ -135,12 +135,12 @@ public class TerminalMessageImpl implements TerminalMessage
 				}
 				catch( Exception e )
 				{
-					value = new MutableValueImpl<String>( String.class, args[0], conversionService );
+					value = new MutableValueImpl<>( String.class, args[0], conversionService );
 				}
 			}
 			else
 			{
-				value = new MutableValueImpl<String>( String.class, args[0], conversionService );
+				value = new MutableValueImpl<>( String.class, args[0], conversionService );
 			}
 			synchronized( values )
 			{
@@ -152,7 +152,7 @@ public class TerminalMessageImpl implements TerminalMessage
 	@Override
 	public Set<Entry<String, Object>> entrySet()
 	{
-		Set<Entry<String, Object>> entrySet = new HashSet<Entry<String, Object>>();
+		Set<Entry<String, Object>> entrySet = new HashSet<>();
 		for( String key : keySet() )
 			entrySet.add( new InternalEntry( key ) );
 
@@ -220,7 +220,7 @@ public class TerminalMessageImpl implements TerminalMessage
 	@Override
 	public Collection<Object> values()
 	{
-		Collection<Object> objects = new ArrayList<Object>();
+		Collection<Object> objects = new ArrayList<>();
 		for( MutableValue<?> value : values.values() )
 			objects.add( value.getValue() );
 

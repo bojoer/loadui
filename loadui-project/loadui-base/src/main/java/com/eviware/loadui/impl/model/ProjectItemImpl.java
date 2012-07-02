@@ -408,7 +408,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public Collection<AgentItem> getAgentsAssignedTo( SceneItem scene )
 	{
-		Set<AgentItem> agents = new HashSet<AgentItem>();
+		Set<AgentItem> agents = new HashSet<>();
 		for( Assignment assignment : assignments )
 			if( scene.equals( assignment.getScene() ) )
 				agents.add( assignment.getAgent() );
@@ -418,7 +418,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	public Collection<SceneItem> getScenesAssignedTo( AgentItem agent )
 	{
-		Set<SceneItem> scenesOnAgent = new HashSet<SceneItem>();
+		Set<SceneItem> scenesOnAgent = new HashSet<>();
 		for( Assignment assignment : assignments )
 			if( agent.equals( assignment.getAgent() ) )
 				scenesOnAgent.add( assignment.getScene() );
@@ -460,7 +460,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 	private void sendSceneCommand( SceneItem scene, String... args )
 	{
-		List<String> message = new ArrayList<String>();
+		List<String> message = new ArrayList<>();
 		message.add( scene.getId() );
 		message.add( Long.toString( scene.getVersion() ) );
 		for( String arg : args )
@@ -542,7 +542,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 		config.set( ( ( SceneItemImpl )obj ).getConfig() );
 		config.setLabel( "Copy of " + config.getLabel() );
-		Map<String, String> addresses = new HashMap<String, String>();
+		Map<String, String> addresses = new HashMap<>();
 		addresses.put( config.getId(), addressableRegistry.generateId() );
 		for( ComponentItemConfig component : config.getComponentArray() )
 			addresses.put( component.getId(), addressableRegistry.generateId() );
@@ -761,7 +761,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 	private class AgentListener implements EventHandler<BaseEvent>, MessageListener, Releasable
 	{
-		private final Set<AgentItem> agents = new HashSet<AgentItem>();
+		private final Set<AgentItem> agents = new HashSet<>();
 		private final AgentContextListener subListener = new AgentContextListener();
 
 		public void attach( AgentItem agent )
@@ -1065,7 +1065,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 					{
 						if( agent.isEnabled() && !isSceneLoaded( scene, agent ) )
 						{
-							awaitingScenes.add( new EventFuture<BaseEvent>( ProjectItemImpl.this, BaseEvent.class,
+							awaitingScenes.add( new EventFuture<>( ProjectItemImpl.this, BaseEvent.class,
 									new Predicate<BaseEvent>()
 									{
 										@Override
@@ -1080,7 +1080,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 
 				try
 				{
-					new CollectionFuture<BaseEvent>( awaitingScenes ).get( 10, TimeUnit.SECONDS );
+					new CollectionFuture<>( awaitingScenes ).get( 10, TimeUnit.SECONDS );
 				}
 				catch( InterruptedException e )
 				{

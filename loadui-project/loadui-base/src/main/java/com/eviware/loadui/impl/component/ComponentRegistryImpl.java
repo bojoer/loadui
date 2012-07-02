@@ -19,13 +19,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.osgi.context.BundleContextAware;
 
 import com.eviware.loadui.api.component.BehaviorProvider;
 import com.eviware.loadui.api.component.ComponentBehavior;
@@ -33,14 +37,15 @@ import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.component.ComponentRegistry;
+import com.google.common.collect.Maps;
 
-public class ComponentRegistryImpl implements ComponentRegistry
+public class ComponentRegistryImpl implements ComponentRegistry, BundleContextAware
 {
 	public static final Logger log = LoggerFactory.getLogger( ComponentRegistryImpl.class );
 
-	private final Map<ComponentDescriptor, BehaviorProvider> descriptors = new HashMap<ComponentDescriptor, BehaviorProvider>();
-	private final Map<String, BehaviorProvider> types = new HashMap<String, BehaviorProvider>();
-	private final Set<DescriptorListener> listeners = new HashSet<DescriptorListener>();
+	private final Map<ComponentDescriptor, BehaviorProvider> descriptors = new HashMap<>();
+	private final Map<String, BehaviorProvider> types = new HashMap<>();
+	private final Set<DescriptorListener> listeners = new HashSet<>();
 
 	@Override
 	public Collection<ComponentDescriptor> getDescriptors()
@@ -168,5 +173,45 @@ public class ComponentRegistryImpl implements ComponentRegistry
 	public void removeDescriptorListener( DescriptorListener listener )
 	{
 		listeners.remove( listener );
+	}
+
+	@Override
+	public void setBundleContext( BundleContext bundleContext )
+	{
+		OSGiDescriptorListener exporter = new OSGiDescriptorListener( bundleContext );
+		addDescriptorListener( exporter );
+	}
+
+	private class OSGiDescriptorListener implements DescriptorListener
+	{
+		//TODO: We can't use generics here until the OSGi jars stop using compilation flags that are not compatible with Java7.
+		private final Map<ComponentDescriptor, ServiceRegistration/*
+																					 * <
+																					 * ComponentDescriptor
+																					 * >
+																					 */> registrations = Maps.newHashMap();
+		private final BundleContext context;
+
+		private OSGiDescriptorListener( BundleContext context )
+		{
+			this.context = context;
+		}
+
+		@Override
+		public void descriptorAdded( ComponentDescriptor descriptor )
+		{
+			registrations.put( descriptor,
+					context.registerService( ComponentDescriptor.class, descriptor, new Hashtable<String, String>() ) );
+		}
+
+		@Override
+		public void descriptorRemoved( ComponentDescriptor descriptor )
+		{
+			ServiceRegistration/* <ComponentDescriptor> */registration = registrations.remove( descriptor );
+			if( registration != null )
+			{
+				registration.unregister();
+			}
+		}
 	}
 }

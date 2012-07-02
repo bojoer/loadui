@@ -56,7 +56,7 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 
 	private static String generateSignature( Map<String, String> map )
 	{
-		List<String> entries = new ArrayList<String>();
+		List<String> entries = new ArrayList<>();
 		for( Map.Entry<String, String> entry : map.entrySet() )
 			entries.add( "[" + entry.getKey() + ":" + entry.getValue() + "]" );
 		Collections.sort( entries );
@@ -67,8 +67,8 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 		return s.toString();
 	}
 
-	private final Set<String> handled = new HashSet<String>();
-	private final Map<ModelItem, MessageEndpoint> endpoints = new HashMap<ModelItem, MessageEndpoint>();
+	private final Set<String> handled = new HashSet<>();
+	private final Map<ModelItem, MessageEndpoint> endpoints = new HashMap<>();
 	private final Listener messageListener = new Listener();
 	private final PropertyEventHandler eventHandler = new PropertyEventHandler();
 	private final AddressableRegistry addressableRegistry;
@@ -107,7 +107,7 @@ public class PropertySynchronizerImpl implements PropertySynchronizer
 
 	private Map<String, String> createMessage( PropertyEvent event )
 	{
-		Map<String, String> message = new HashMap<String, String>();
+		Map<String, String> message = new HashMap<>();
 		message.put( MODELITEM, ( ( ModelItem )event.getSource() ).getId() );
 		message.put( EVENT, event.getEvent().toString() );
 		Property<?> property = event.getProperty();

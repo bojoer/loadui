@@ -35,8 +35,8 @@ public class CounterSynchronizerImpl implements CounterSynchronizer
 
 	private final BaseEventListener listener = new BaseEventListener();
 	private final AggregateListener aggregateListener = new AggregateListener();
-	private final Map<CounterHolder, MessageEndpoint> holders = new HashMap<CounterHolder, MessageEndpoint>();
-	private final Map<String, Aggregator> aggregators = new HashMap<String, Aggregator>();
+	private final Map<CounterHolder, MessageEndpoint> holders = new HashMap<>();
+	private final Map<String, Aggregator> aggregators = new HashMap<>();
 
 	@Override
 	public void syncCounters( CounterHolder counterHolder, MessageEndpoint endpoint )

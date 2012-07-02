@@ -64,7 +64,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 	private final WorkspaceProvider workspaceProvider;
 	private final ReportingManager reportingManager;
 	private final SetMultimap<String, Execution> projectIdToExecutions = HashMultimap.create();
-	private final Set<SummaryTask> summaryAttachers = new HashSet<SummaryTask>();
+	private final Set<SummaryTask> summaryAttachers = new HashSet<>();
 	private final WorkspaceProviderListener workspaceProviderListener = new WorkspaceProviderListener();
 	private final CollectionListener collectionListener = new CollectionListener();
 	private final RunningExecutionTask runningExecutionTask = new RunningExecutionTask();
@@ -116,7 +116,7 @@ public class ProjectExecutionManagerImpl implements ProjectExecutionManager, Rel
 	@Override
 	public Set<Execution> getExecutions( ProjectItem project, boolean includeRecent, boolean includeArchived )
 	{
-		HashSet<Execution> results = new HashSet<Execution>();
+		HashSet<Execution> results = new HashSet<>();
 		for( Execution e : getExecutions( project ) )
 		{
 			if( ( includeRecent && !e.isArchived() ) || ( includeArchived && e.isArchived() ) )

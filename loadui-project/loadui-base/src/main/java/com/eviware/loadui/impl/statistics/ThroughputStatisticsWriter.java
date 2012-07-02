@@ -165,7 +165,7 @@ public class ThroughputStatisticsWriter extends AbstractStatisticsWriter
 		public ThroughputStatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager,
 				StatisticVariable variable, Map<String, Object> config )
 		{
-			Map<String, Class<? extends Number>> trackStructure = new TreeMap<String, Class<? extends Number>>();
+			Map<String, Class<? extends Number>> trackStructure = new TreeMap<>();
 
 			// init statistics
 

@@ -41,8 +41,8 @@ import com.eviware.loadui.util.ReleasableUtils;
 public abstract class AbstractChartViewProvider<ChartViewType extends ChartView> implements
 		ChartViewProvider<ChartViewType>, Releasable
 {
-	private final Map<Chart, ChartViewType> chartChartViews = new HashMap<Chart, ChartViewType>();
-	private final Map<String, ChartViewType> sourceChartViews = new HashMap<String, ChartViewType>();
+	private final Map<Chart, ChartViewType> chartChartViews = new HashMap<>();
+	private final Map<String, ChartViewType> sourceChartViews = new HashMap<>();
 	private final ChartGroupListener listener = new ChartGroupListener();
 	protected final ChartGroup chartGroupOwner;
 	private ChartViewType groupChartView;

@@ -450,7 +450,7 @@ final public class AssertionItemImpl<T> implements AssertionItem.Mutable<T>, Tes
 
 		private final ScheduledExecutorService executor = BeanInjector.getBean( ScheduledExecutorService.class );
 		private final TestEventManager manager = BeanInjector.getBean( TestEventManager.class );
-		private final LinkedBlockingDeque<Entry> entries = new LinkedBlockingDeque<Entry>();
+		private final LinkedBlockingDeque<Entry> entries = new LinkedBlockingDeque<>();
 
 		private ScheduledFuture<?> runFuture;
 		private long deadline = 0;

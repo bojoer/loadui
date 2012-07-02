@@ -57,7 +57,7 @@ public class DelegatingAttributeHolderSupport
 
 	public Collection<String> getAttributes()
 	{
-		List<String> attributes = new ArrayList<String>();
+		List<String> attributes = new ArrayList<>();
 		for( String attribute : delegate.getAttributes() )
 			if( attribute.startsWith( prefix ) )
 				attributes.add( attribute.substring( prefixLength ) );

@@ -42,7 +42,7 @@ public final class ExecutorManagerImpl implements ExecutorManager
 	public final static Logger log = LoggerFactory.getLogger( ExecutorManagerImpl.class );
 
 	private final CustomThreadPoolExecutor executor;
-	private final ResizableBlockingQueue<Runnable> queue = new ResizableBlockingQueue<Runnable>( DEFAULT_QUEUE_SIZE );
+	private final ResizableBlockingQueue<Runnable> queue = new ResizableBlockingQueue<>( DEFAULT_QUEUE_SIZE );
 
 	public ExecutorManagerImpl( final WorkspaceProvider workspaceProvider )
 	{

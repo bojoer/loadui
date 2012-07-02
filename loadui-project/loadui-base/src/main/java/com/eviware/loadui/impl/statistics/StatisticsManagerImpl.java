@@ -52,8 +52,8 @@ public class StatisticsManagerImpl implements StatisticsManager, Releasable
 
 	private final ExecutionManager executionManager;
 	private final EventSupport eventSupport = new EventSupport( this );
-	private Set<StatisticHolder> holders = new HashSet<StatisticHolder>();
-	private Map<String, StatisticsWriterFactory> factories = new HashMap<String, StatisticsWriterFactory>();
+	private Set<StatisticHolder> holders = new HashSet<>();
+	private Map<String, StatisticsWriterFactory> factories = new HashMap<>();
 
 	private final StatisticHolderListener statisticHolderListener = new StatisticHolderListener();
 

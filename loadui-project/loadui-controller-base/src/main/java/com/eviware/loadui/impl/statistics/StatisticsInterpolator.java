@@ -40,7 +40,7 @@ public class StatisticsInterpolator
 
 	private final ExecutionManager executionManager;
 
-	private final Map<String, AggregateLevel> aggregateLevels = new HashMap<String, AggregateLevel>();
+	private final Map<String, AggregateLevel> aggregateLevels = new HashMap<>();
 
 	public StatisticsInterpolator( ExecutionManager executionManager )
 	{
@@ -97,7 +97,7 @@ public class StatisticsInterpolator
 		private final int level;
 		private final AggregateLevel child;
 		private long lastFlush;
-		private final Set<Entry> entries = new HashSet<Entry>();
+		private final Set<Entry> entries = new HashSet<>();
 
 		private AggregateLevel( String source, String trackId, int level, long currentTime )
 		{

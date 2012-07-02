@@ -41,7 +41,7 @@ public class LineChartViewProvider extends AbstractChartViewProvider<LineChartVi
 	public static final String LINE_SEGMENTS = LineChartViewProvider.class.getName() + "@lineSegments";
 
 	private final EventSupport eventSupport = new EventSupport( this );
-	private final Set<Segment> segments = new HashSet<Segment>();
+	private final Set<Segment> segments = new HashSet<>();
 
 	public LineChartViewProvider( ChartGroup chartGroup )
 	{

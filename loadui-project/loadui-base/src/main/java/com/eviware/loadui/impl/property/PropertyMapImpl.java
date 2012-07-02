@@ -36,7 +36,7 @@ import com.google.common.collect.Multimap;
 public class PropertyMapImpl implements PropertyMap
 {
 	public static final Logger log = LoggerFactory.getLogger( PropertyMapImpl.class );
-	private final Map<String, Property<?>> map = new HashMap<String, Property<?>>();
+	private final Map<String, Property<?>> map = new HashMap<>();
 	private final Multimap<String, PropertyConfig> notLoadedProperties = HashMultimap.create();
 
 	private final PropertyHolder owner;
@@ -65,7 +65,7 @@ public class PropertyMapImpl implements PropertyMap
 
 	private <T> PropertyImpl<T> loadProperty( PropertyConfig pc, Class<T> type )
 	{
-		return new PropertyImpl<T>( owner, pc, type, conversionService );
+		return new PropertyImpl<>( owner, pc, type, conversionService );
 	}
 
 	private void firePropertyEvent( Property<?> property, PropertyEvent.Event event, Object argument )

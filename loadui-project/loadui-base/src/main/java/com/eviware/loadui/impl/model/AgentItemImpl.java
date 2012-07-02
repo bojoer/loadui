@@ -72,6 +72,7 @@ public final class AgentItemImpl extends ModelItemImpl<AgentItemConfig> implemen
 		broadcastEndpoint = BeanInjector.getBean( BroadcastMessageEndpoint.class );
 		provider = BeanInjector.getBean( MessageEndpointProvider.class );
 		executorService = BeanInjector.getBean( ScheduledExecutorService.class );
+
 		createProperty( MAX_THREADS_PROPERTY, Long.class, 1000 );
 		setupClient();
 

@@ -71,14 +71,14 @@ public class OutputTerminalImpl extends TerminalImpl implements OutputTerminal
 	@Override
 	public Collection<Connection> getConnections()
 	{
-		Set<Connection> connections = new HashSet<Connection>();
+		Set<Connection> connections = new HashSet<>();
 		CanvasItem canvas = getTerminalHolder().getCanvas();
-		for( Connection connection : new ArrayList<Connection>( canvas.getConnections() ) )
+		for( Connection connection : new ArrayList<>( canvas.getConnections() ) )
 			if( connection.getOutputTerminal() == this )
 				connections.add( connection );
 
 		if( canvas instanceof SceneItem && canvas.getProject() != null )
-			for( Connection connection : new ArrayList<Connection>( canvas.getProject().getConnections() ) )
+			for( Connection connection : new ArrayList<>( canvas.getProject().getConnections() ) )
 				if( connection.getOutputTerminal() == this )
 					connections.add( connection );
 

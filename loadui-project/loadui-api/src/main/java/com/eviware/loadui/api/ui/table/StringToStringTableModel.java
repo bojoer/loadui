@@ -37,7 +37,7 @@ public class StringToStringTableModel extends KeyValueTableModel
 
 	private static final long serialVersionUID = -6107162368567835864L;
 
-	private final List<StringProperty> data = new ArrayList<StringProperty>();
+	private final List<StringProperty> data = new ArrayList<>();
 
 	private Property<String> property;
 

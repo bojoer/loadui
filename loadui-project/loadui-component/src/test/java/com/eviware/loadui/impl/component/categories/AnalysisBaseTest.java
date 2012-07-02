@@ -18,7 +18,7 @@ import com.google.common.collect.ImmutableMap;
 
 public class AnalysisBaseTest
 {
-	private BlockingQueue<TerminalMessage> analyzedMessages = new LinkedBlockingQueue<TerminalMessage>();
+	private BlockingQueue<TerminalMessage> analyzedMessages = new LinkedBlockingQueue<>();
 	private AnalysisBase analysisBase;
 	private ComponentItem component;
 

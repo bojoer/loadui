@@ -31,8 +31,8 @@ public class LTableModel extends AbstractTableModel
 
 	private static Logger log = LoggerFactory.getLogger( "com.eviware.loadui.api.ui.table.LTableModel" );
 
-	private final List<String> header = new ArrayList<String>();
-	private final List<List<String>> data = new ArrayList<List<String>>();
+	private final List<String> header = new ArrayList<>();
+	private final List<List<String>> data = new ArrayList<>();
 
 	private int maxRow;
 	private boolean follow;
@@ -143,7 +143,7 @@ public class LTableModel extends AbstractTableModel
 				}
 			}
 
-			List<String> newRow = new ArrayList<String>();
+			List<String> newRow = new ArrayList<>();
 			for( int cnt = 0; cnt < header.size(); cnt++ )
 				newRow.add( "" );
 			for( String key : row.keySet() )

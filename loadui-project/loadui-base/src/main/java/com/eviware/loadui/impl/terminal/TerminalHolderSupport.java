@@ -31,7 +31,7 @@ import com.eviware.loadui.util.ReleasableUtils;
 public class TerminalHolderSupport implements Releasable
 {
 	private final TerminalHolder owner;
-	private final Map<String, Terminal> terminals = new LinkedHashMap<String, Terminal>();
+	private final Map<String, Terminal> terminals = new LinkedHashMap<>();
 
 	public TerminalHolderSupport( TerminalHolder owner )
 	{

@@ -28,7 +28,7 @@ import com.eviware.loadui.util.ReleasableUtils;
 
 public class OrderedCollectionSupport<ChildType> implements Releasable
 {
-	private final List<ChildType> children = new ArrayList<ChildType>();
+	private final List<ChildType> children = new ArrayList<>();
 	private final OrderedCollection<ChildType> owner;
 
 	public OrderedCollectionSupport( OrderedCollection<ChildType> owner )

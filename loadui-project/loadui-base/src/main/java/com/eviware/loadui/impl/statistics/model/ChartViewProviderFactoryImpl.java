@@ -27,7 +27,7 @@ import com.eviware.loadui.impl.statistics.model.chart.line.LineChartViewProvider
 
 public class ChartViewProviderFactoryImpl implements ChartViewProviderFactory
 {
-	private final Map<String, ProviderFactory<?>> factories = new HashMap<String, ChartViewProviderFactoryImpl.ProviderFactory<?>>();
+	private final Map<String, ProviderFactory<?>> factories = new HashMap<>();
 
 	public ChartViewProviderFactoryImpl()
 	{

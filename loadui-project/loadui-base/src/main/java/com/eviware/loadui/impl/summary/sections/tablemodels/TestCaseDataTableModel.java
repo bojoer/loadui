@@ -29,7 +29,7 @@ public class TestCaseDataTableModel extends AbstractTableModel
 	private static final long serialVersionUID = -99646701272738332L;
 
 	String columnNames[] = { "Test Case", "exec time", "requests", "assertions", "failed assertions" };
-	List<TestCaseDataModel> data = new ArrayList<TestCaseDataModel>();
+	List<TestCaseDataModel> data = new ArrayList<>();
 
 	public void add( TestCaseDataModel row )
 	{

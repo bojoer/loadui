@@ -136,7 +136,7 @@ public class CounterStatisticsWriter extends AbstractStatisticsWriter
 
 	public static class Factory implements StatisticsWriterFactory
 	{
-		private final Map<String, Class<? extends Number>> trackStructure = new TreeMap<String, Class<? extends Number>>();
+		private final Map<String, Class<? extends Number>> trackStructure = new TreeMap<>();
 
 		public Factory()
 		{

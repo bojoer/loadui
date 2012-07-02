@@ -35,7 +35,7 @@ public class AddressableRegistryImpl implements AddressableRegistry, Releasable
 {
 	public static final Logger log = LoggerFactory.getLogger( AddressableRegistryImpl.class );
 
-	private final Map<String, Addressable> lookupTable = new CacheMap<String, Addressable>();
+	private final Map<String, Addressable> lookupTable = new CacheMap<>();
 	private final EventSupport eventSupport = new EventSupport( this );
 
 	@Override

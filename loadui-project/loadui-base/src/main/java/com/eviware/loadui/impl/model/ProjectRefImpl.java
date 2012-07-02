@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.traits.Releasable;
@@ -40,6 +41,7 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 
 	private final WorkspaceItemImpl workspace;
 	private final ProjectReferenceConfig config;
+	private final ReleaseListener listener = new ReleaseListener();
 	private final EventSupport eventSupport = new EventSupport( this );
 	private final AttributeHolderSupport attributeHolderSupport;
 	private final File projectFile;
@@ -119,6 +121,7 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 			project = ProjectItemImpl.loadProject( workspace, projectFile );
 			setLabel( project.getLabel() );
 			config.setProjectId( project.getId() );
+			project.addEventListener( BaseEvent.class, listener );
 			fireEvent( new BaseEvent( this, LOADED ) );
 			workspace.projectLoaded( project );
 		}
@@ -229,5 +232,24 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 	public void release()
 	{
 		ReleasableUtils.releaseAll( project, eventSupport );
+	}
+
+	private class ReleaseListener implements WeakEventHandler<BaseEvent>
+	{
+		@Override
+		public void handleEvent( BaseEvent event )
+		{
+			if( Releasable.RELEASED.equals( event.getKey() ) )
+			{
+				try
+				{
+					setEnabled( false );
+				}
+				catch( IOException e )
+				{
+					//Ignore already logged exception.
+				}
+			}
+		}
 	}
 }

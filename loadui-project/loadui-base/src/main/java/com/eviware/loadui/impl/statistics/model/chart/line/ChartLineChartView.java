@@ -148,7 +148,7 @@ public class ChartLineChartView extends AbstractLineChartView implements Configu
 	{
 		if( !released )
 		{
-			List<String> segmentsStrings = new ArrayList<String>();
+			List<String> segmentsStrings = new ArrayList<>();
 			for( Segment lineSegment : getSegments() )
 				segmentsStrings.add( lineSegment.toString() );
 			setAttribute( SEGMENTS_ATTRIBUTE, StringUtils.serialize( segmentsStrings ) );

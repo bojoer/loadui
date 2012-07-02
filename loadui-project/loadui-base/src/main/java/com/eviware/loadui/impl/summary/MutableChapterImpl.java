@@ -31,10 +31,10 @@ public class MutableChapterImpl implements MutableChapter
 {
 
 	private String title;
-	private final LinkedHashMap<String, String> values = new LinkedHashMap<String, String>();
+	private final LinkedHashMap<String, String> values = new LinkedHashMap<>();
 	private Date date;
 	private String decription;
-	private final LinkedHashMap<String, MutableSection> sections = new LinkedHashMap<String, MutableSection>();
+	private final LinkedHashMap<String, MutableSection> sections = new LinkedHashMap<>();
 
 	public MutableChapterImpl( String title )
 	{

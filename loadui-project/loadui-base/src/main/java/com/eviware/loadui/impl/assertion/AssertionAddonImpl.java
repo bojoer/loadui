@@ -70,8 +70,7 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 	{
 		this.context = context;
 		this.canvas = canvas;
-		assertionItems = new CollectionEventSupport<AssertionItemImpl<?>, AddonItem.Support>( context.getOwner(),
-				ASSERTION_ITEMS );
+		assertionItems = new CollectionEventSupport<>( context.getOwner(), ASSERTION_ITEMS );
 
 		for( AddonItem.Support addonItemSupport : context.getAddonItemSupports() )
 		{
@@ -124,7 +123,7 @@ public class AssertionAddonImpl implements AssertionAddon, Releasable
 			Resolver<? extends ListenableValue<T>> listenableValueResolver )
 	{
 		AddonItem.Support addonItemSupport = context.createAddonItemSupport();
-		AssertionItemImpl<T> assertionItem = new AssertionItemImpl<T>( canvas, this, addonItemSupport, owner,
+		AssertionItemImpl<T> assertionItem = new AssertionItemImpl<>( canvas, this, addonItemSupport, owner,
 				listenableValueResolver );
 		assertionItems.addItemWith( assertionItem, addonItemSupport );
 		if( assertionTask.running )

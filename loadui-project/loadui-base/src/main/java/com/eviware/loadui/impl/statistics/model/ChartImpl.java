@@ -87,7 +87,7 @@ public class ChartImpl implements Chart
 	@Override
 	public void delete()
 	{
-		for( String attr : new ArrayList<String>( getAttributes() ) )
+		for( String attr : new ArrayList<>( getAttributes() ) )
 			removeAttribute( attr );
 		release();
 		parent.removeChild( this );
@@ -156,7 +156,7 @@ public class ChartImpl implements Chart
 
 	Set<String> getSources()
 	{
-		Set<String> sources = new HashSet<String>();
+		Set<String> sources = new HashSet<>();
 		if( owner instanceof StatisticHolder )
 		{
 			for( String name : ( ( StatisticHolder )owner ).getStatisticVariableNames() )

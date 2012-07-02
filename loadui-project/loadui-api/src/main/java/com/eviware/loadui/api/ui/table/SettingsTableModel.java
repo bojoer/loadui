@@ -26,7 +26,7 @@ public class SettingsTableModel extends KeyValueTableModel
 
 	private static final long serialVersionUID = 3644028575932424988L;
 
-	private final List<PropertyProxy> data = new ArrayList<PropertyProxy>();
+	private final List<PropertyProxy> data = new ArrayList<>();
 
 	public SettingsTableModel()
 	{

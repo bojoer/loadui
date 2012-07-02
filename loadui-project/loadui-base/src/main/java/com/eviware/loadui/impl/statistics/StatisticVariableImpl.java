@@ -60,10 +60,10 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	private final AddressableRegistry addressableRegistry;
 	private final String name;
 	private final StatisticHolder parent;
-	private final Set<StatisticsWriter> writers = new HashSet<StatisticsWriter>();
-	private final Set<TrackDescriptor> descriptors = new HashSet<TrackDescriptor>();
-	private final Set<String> statisticNames = new HashSet<String>();
-	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<String, StatisticImpl<?>>();
+	private final Set<StatisticsWriter> writers = new HashSet<>();
+	private final Set<TrackDescriptor> descriptors = new HashSet<>();
+	private final Set<String> statisticNames = new HashSet<>();
+	private final CacheMap<String, StatisticImpl<?>> statisticCache = new CacheMap<>();
 	private final ActionListener actionListener = new ActionListener();
 
 	private String description;
@@ -113,7 +113,7 @@ public class StatisticVariableImpl implements StatisticVariable.Mutable, Releasa
 	@Override
 	public Set<String> getSources()
 	{
-		Set<String> sources = new HashSet<String>();
+		Set<String> sources = new HashSet<>();
 		sources.add( MAIN_SOURCE );
 
 		// Add labels of assigned agents.

@@ -66,7 +66,7 @@ public class ChartGroupImpl implements ChartGroup
 		this.parent = parent;
 		this.config = config;
 
-		collectionSupport = new OrderedCollectionSupport<Chart>( this );
+		collectionSupport = new OrderedCollectionSupport<>( this );
 		if( config.getAttributes() == null )
 			config.addNewAttributes();
 		attributeHolderSupport = new AttributeHolderSupport( config.getAttributes() );
@@ -220,7 +220,7 @@ public class ChartGroupImpl implements ChartGroup
 	@Override
 	public Set<String> getSources()
 	{
-		Set<String> sources = new HashSet<String>();
+		Set<String> sources = new HashSet<>();
 		for( Chart chart : getChildren() )
 			sources.addAll( ( ( ChartImpl )chart ).getSources() );
 

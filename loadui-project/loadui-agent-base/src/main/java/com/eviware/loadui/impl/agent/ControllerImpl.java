@@ -77,8 +77,8 @@ public class ControllerImpl
 	private final BroadcastMessageEndpoint broadcastEndpoint;
 
 	private final Map<String, SceneAgent> sceneAgents = Collections.synchronizedMap( new HashMap<String, SceneAgent>() );
-	private final Map<String, AgentProjectItem> projects = new HashMap<String, AgentProjectItem>();
-	private final Set<MessageEndpoint> clients = new HashSet<MessageEndpoint>();
+	private final Map<String, AgentProjectItem> projects = new HashMap<>();
+	private final Set<MessageEndpoint> clients = new HashSet<>();
 
 	public ControllerImpl( ScheduledExecutorService scheduledExecutorService, ExecutorManager executorManager,
 			ConversionService conversionService, ServerEndpoint serverEndpoint, AddressableRegistry addressableRegistry,
@@ -294,7 +294,7 @@ public class ControllerImpl
 		private final AgentProjectItem project;
 		private final String sceneId;
 		private final MessageEndpoint endpoint;
-		private final BlockingQueue<List<String>> commands = new LinkedBlockingQueue<List<String>>();
+		private final BlockingQueue<List<String>> commands = new LinkedBlockingQueue<>();
 		private String sceneDef;
 		private SceneItem scene;
 
@@ -481,7 +481,7 @@ public class ControllerImpl
 		@Override
 		public void handleMessage( String channel, MessageEndpoint endpoint, Object data )
 		{
-			final List<String> args = new ArrayList<String>();
+			final List<String> args = new ArrayList<>();
 			for( Object arg : ( Object[] )data )
 				args.add( ( String )arg );
 

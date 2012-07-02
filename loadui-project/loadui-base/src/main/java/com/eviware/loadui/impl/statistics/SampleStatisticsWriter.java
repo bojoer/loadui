@@ -66,7 +66,7 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 	double sum = 0.0;
 	long count = 0L;
 
-	private final PriorityQueue<Double> sortedValues = new PriorityQueue<Double>();
+	private final PriorityQueue<Double> sortedValues = new PriorityQueue<>();
 
 	public SampleStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable,
 			Map<String, Class<? extends Number>> trackStructure, Map<String, Object> config )
@@ -285,7 +285,7 @@ public class SampleStatisticsWriter extends AbstractStatisticsWriter
 		public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable,
 				Map<String, Object> config )
 		{
-			Map<String, Class<? extends Number>> trackStructure = new TreeMap<String, Class<? extends Number>>();
+			Map<String, Class<? extends Number>> trackStructure = new TreeMap<>();
 
 			// init statistics
 			trackStructure.put( Stats.AVERAGE.name(), Double.class );
