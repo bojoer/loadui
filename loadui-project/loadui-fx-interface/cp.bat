@@ -1,1 +1,0 @@
-copy target\*.jar ..\loadui-installer\target\controller\bundle\

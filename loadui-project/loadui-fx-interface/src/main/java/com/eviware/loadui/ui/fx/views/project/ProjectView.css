@@ -1,0 +1,18 @@
+.project-view {
+}
+
+.tab-header-area {
+	-fx-padding: 0 0 0 100;
+}
+
+.tab-header-background {
+	-fx-background-color: transparent;
+}
+
+.headers-region {
+	/*-fx-background-color: yellow;*/
+}
+
+.title {
+	-fx-font-size: 20px;
+}

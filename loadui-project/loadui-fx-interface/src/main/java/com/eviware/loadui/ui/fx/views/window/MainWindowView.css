@@ -1,0 +1,13 @@
+.inspector-bar {
+	-fx-background-color: gray;
+	-fx-padding: 10;
+}
+
+.tab-header-area {
+	-fx-alignment: baseline-right;
+	-fx-padding: 0 0 0 100;
+}
+
+.title {
+	-fx-font-size: 20px;
+}
