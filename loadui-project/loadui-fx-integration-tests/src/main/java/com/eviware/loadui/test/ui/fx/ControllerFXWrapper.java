@@ -1,0 +1,97 @@
+/*
+ * Copyright 2011 SmartBear Software
+ * 
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the European Commission - subsequent
+ * versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * http://ec.europa.eu/idabc/eupl5
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is
+ * distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the Licence for the specific language governing permissions and limitations
+ * under the Licence.
+ */
+package com.eviware.loadui.test.ui.fx;
+
+import java.io.File;
+import java.util.concurrent.Future;
+
+import javafx.stage.Stage;
+
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+
+import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.test.IntegrationTestUtils;
+
+/**
+ * An embedded headless loadUI Controller which can be used for testing. All
+ * packages in the loadui-api bundle are exported into the runtime so that they
+ * can be used in tests. The loadui-fx-interface bundle is removed due to its
+ * dependency on JavaFX.
+ * 
+ * @author dain.nilsson
+ */
+public class ControllerFXWrapper
+{
+	private final File baseDir = new File( "target/controllerTest" );
+	private final File homeDir = new File( baseDir, ".loadui" );
+	private final OSGiFXLauncher launcher;
+	private final BundleContext context;
+
+	public ControllerFXWrapper() throws Exception
+	{
+		if( baseDir.exists() && !IntegrationTestUtils.deleteRecursive( baseDir ) )
+			throw new RuntimeException( "Test directory already exists and cannot be deleted!" );
+
+		if( !baseDir.mkdir() )
+			throw new RuntimeException( "Could not create test directory!" );
+
+		if( !homeDir.mkdir() )
+			throw new RuntimeException( "Could not create home directory!" );
+		System.setProperty( LoadUI.LOADUI_HOME, homeDir.getAbsolutePath() );
+
+		new Thread( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				OSGiFXLauncher.main( baseDir, new String[] { "-nolock" } );
+			}
+		} ).start();
+
+		int tries = 100;
+		while( OSGiFXLauncher.getInstance() == null && tries-- > 0 )
+		{
+			Thread.sleep( 100 );
+		}
+
+		launcher = OSGiFXLauncher.getInstance();
+
+		context = launcher.getBundleContext();
+	}
+
+	public Future<Stage> getStageFuture()
+	{
+		return OSGiFXLauncher.getStageFuture();
+	}
+
+	public void stop() throws BundleException
+	{
+		try
+		{
+			launcher.stop();
+		}
+		finally
+		{
+			IntegrationTestUtils.deleteRecursive( baseDir );
+		}
+	}
+
+	public BundleContext getBundleContext()
+	{
+		return context;
+	}
+}
