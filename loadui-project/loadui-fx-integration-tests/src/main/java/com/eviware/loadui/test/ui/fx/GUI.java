@@ -14,17 +14,27 @@ public class GUI
 {
 	public static FXRobot getRobot()
 	{
-		return Holder.instance.robot;
+		return getInstance().robot;
 	}
 
 	public static Stage getStage()
 	{
-		return Holder.instance.stage;
+		return getInstance().stage;
 	}
 
 	public static ControllerFXWrapper getController()
 	{
-		return Holder.instance.controller;
+		return getInstance().controller;
+	}
+
+	private static Holder getInstance()
+	{
+		if( Holder.instance.error != null )
+		{
+			throw new RuntimeException( Holder.instance.error );
+		}
+
+		return Holder.instance;
 	}
 
 	private static class Holder
@@ -32,37 +42,50 @@ public class GUI
 		private final ControllerFXWrapper controller;
 		private final Stage stage;
 		private final FXRobot robot;
+		private final Exception error;
 
 		private static final Holder instance = new Holder();
 
 		private Holder()
 		{
+			ControllerFXWrapper localController = null;
+			Stage localStage = null;
+			FXRobot localRobot = null;
+			Exception localError = null;
+
 			try
 			{
-				controller = new ControllerFXWrapper();
+				localController = new ControllerFXWrapper();
 
-				stage = controller.getStageFuture().get( 10, TimeUnit.SECONDS );
+				localStage = localController.getStageFuture().get( 10, TimeUnit.SECONDS );
+				final Stage finalStage = localStage;
 
 				TestUtils.awaitCondition( new Callable<Boolean>()
 				{
 					@Override
 					public Boolean call() throws Exception
 					{
-						return stage.getScene() != null;
+						return finalStage.getScene() != null;
 					}
 				}, 20 );
 
-				BeanInjector.setBundleContext( controller.getBundleContext() );
+				BeanInjector.setBundleContext( localController.getBundleContext() );
 
 				Thread.sleep( 1000 );
 
-				FXTestUtils.bringToFront( stage );
-				robot = new FXRobot();
+				FXTestUtils.bringToFront( localStage );
+				localRobot = new FXRobot();
 			}
 			catch( Exception e )
 			{
-				throw new RuntimeException( e );
+				localError = e;
+				e.printStackTrace();
 			}
+
+			controller = localController;
+			stage = localStage;
+			robot = localRobot;
+			error = localError;
 		}
 	}
 }
