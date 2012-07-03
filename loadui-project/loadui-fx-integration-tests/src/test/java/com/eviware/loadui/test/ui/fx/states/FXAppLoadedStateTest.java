@@ -11,18 +11,17 @@ import org.osgi.framework.Bundle;
 
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
-import com.eviware.loadui.test.TestState;
 import com.eviware.loadui.test.categories.IntegrationTest;
 import com.eviware.loadui.test.ui.fx.GUI;
 import com.eviware.loadui.util.BeanInjector;
 
 @Category( IntegrationTest.class )
-public class RootStateTest
+public class FXAppLoadedStateTest
 {
 	@BeforeClass
 	public static void enterState() throws Exception
 	{
-		TestState.ROOT.enter();
+		FXAppLoadedState.STATE.enter();
 	}
 
 	@Test

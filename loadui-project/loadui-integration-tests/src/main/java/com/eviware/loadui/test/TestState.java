@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 /**
@@ -26,7 +27,7 @@ public abstract class TestState
 	/**
 	 * The initial root state, which forms the root of the TestState tree.
 	 */
-	public static final TestState ROOT = new TestState( "Root", null )
+	public static final TestState ROOT = new TestState()
 	{
 		@Override
 		protected void enterFromParent()
@@ -46,10 +47,16 @@ public abstract class TestState
 	private final String name;
 	private final TestState parent;
 
-	public TestState( String name, TestState parent )
+	private TestState()
 	{
-		this.name = name;
-		this.parent = parent;
+		name = "Root";
+		parent = null;
+	}
+
+	protected TestState( String name, TestState parent )
+	{
+		this.name = Preconditions.checkNotNull( name );
+		this.parent = Preconditions.checkNotNull( parent );
 	}
 
 	public final String getName()
