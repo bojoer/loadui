@@ -16,6 +16,7 @@
 package com.eviware.loadui.test.ui.fx;
 
 import java.io.File;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 import javafx.stage.Stage;
@@ -25,6 +26,7 @@ import org.osgi.framework.BundleException;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.test.IntegrationTestUtils;
+import com.eviware.loadui.util.test.TestUtils;
 
 /**
  * An embedded headless loadUI Controller which can be used for testing. All
@@ -62,11 +64,14 @@ public class ControllerFXWrapper
 			}
 		} ).start();
 
-		int tries = 100;
-		while( OSGiFXLauncher.getInstance() == null && tries-- > 0 )
+		TestUtils.awaitCondition( new Callable<Boolean>()
 		{
-			Thread.sleep( 100 );
-		}
+			@Override
+			public Boolean call() throws Exception
+			{
+				return OSGiFXLauncher.getInstance() != null;
+			}
+		}, 30 );
 
 		launcher = OSGiFXLauncher.getInstance();
 
