@@ -83,26 +83,26 @@ public class ControllerWrapper
 				try (ZipFile api = new ZipFile( bundle ))
 				{
 					Set<String> packages = new TreeSet<>();
-				for( Enumeration<? extends ZipEntry> e = api.entries(); e.hasMoreElements(); )
-				{
-					ZipEntry entry = e.nextElement();
-					if( entry.getName().endsWith( ".class" ) )
+					for( Enumeration<? extends ZipEntry> e = api.entries(); e.hasMoreElements(); )
 					{
-						packages.add( entry.getName().substring( 0, entry.getName().lastIndexOf( "/" ) )
-								.replaceAll( "/", "." ) );
+						ZipEntry entry = e.nextElement();
+						if( entry.getName().endsWith( ".class" ) )
+						{
+							packages.add( entry.getName().substring( 0, entry.getName().lastIndexOf( "/" ) )
+									.replaceAll( "/", "." ) );
+						}
 					}
-				}
 
-				//Add the required packages that should be in the OSGi config file.
-				StringBuilder apiPackages = new StringBuilder(
-						"com.sun.crypto.provider,com.sun.net.ssl,com.sun.net.ssl.internal.ssl,org.w3c.dom.traversal,javax.transaction.xa;version=1.1.0,sun.io,org.antlr.runtime,org.antlr.runtime.tree" );
+					//Add the required packages that should be in the OSGi config file.
+					StringBuilder apiPackages = new StringBuilder(
+							"com.sun.crypto.provider,com.sun.net.ssl,com.sun.net.ssl.internal.ssl,org.w3c.dom.traversal,javax.transaction.xa;version=1.1.0,sun.io,org.antlr.runtime,org.antlr.runtime.tree" );
 
-				int dashIndex = LoadUI.VERSION.indexOf( "-" );
-				String version = dashIndex < 0 ? LoadUI.VERSION : LoadUI.VERSION.substring( 0, dashIndex );
-				for( String pkg : packages )
-					apiPackages.append( ", " ).append( pkg ).append( "; version=\"" ).append( version ).append( '"' );
+					int dashIndex = LoadUI.VERSION.indexOf( "-" );
+					String version = dashIndex < 0 ? LoadUI.VERSION : LoadUI.VERSION.substring( 0, dashIndex );
+					for( String pkg : packages )
+						apiPackages.append( ", " ).append( pkg ).append( "; version=\"" ).append( version ).append( '"' );
 
-				config.put( "org.osgi.framework.system.packages.extra", apiPackages.toString() );
+					config.put( "org.osgi.framework.system.packages.extra", apiPackages.toString() );
 				}
 
 				if( !bundle.delete() )

@@ -67,7 +67,7 @@ public abstract class TestState
 	 * 
 	 * @throws Exception
 	 */
-	public final void enter() throws Exception
+	public final void enter()
 	{
 		transitionTo( this );
 	}
@@ -82,14 +82,21 @@ public abstract class TestState
 
 	protected abstract void exitToParent() throws Exception;
 
-	private static void transitionTo( TestState newState ) throws Exception
+	private static void transitionTo( TestState newState )
 	{
 		while( currentState != newState )
 		{
 			if( !getParents( newState ).contains( currentState ) )
 			{
 				log.info( "Exiting state: {}", getBreadcrumbs( currentState ) );
-				currentState.exitToParent();
+				try
+				{
+					currentState.exitToParent();
+				}
+				catch( Exception e )
+				{
+					throw new RuntimeException( e );
+				}
 				currentState = currentState.getParent();
 			}
 			else
@@ -100,7 +107,14 @@ public abstract class TestState
 					next = next.getParent();
 				}
 				log.info( "Entering state: {}", getBreadcrumbs( next ) );
-				next.enterFromParent();
+				try
+				{
+					next.enterFromParent();
+				}
+				catch( Exception e )
+				{
+					throw new RuntimeException( e );
+				}
 				currentState = next;
 			}
 		}
