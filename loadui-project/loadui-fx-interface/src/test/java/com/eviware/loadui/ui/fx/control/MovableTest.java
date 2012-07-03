@@ -27,7 +27,9 @@ import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
-import com.eviware.loadui.ui.fx.util.test.FXRobot;
+import com.eviware.loadui.ui.fx.util.test.ControllerApi;
+import com.eviware.loadui.ui.fx.util.test.ControllerApi.MouseMotion;
+import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.google.common.util.concurrent.SettableFuture;
 
@@ -37,7 +39,7 @@ public class MovableTest
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
 	private static Movable movable;
 	private static Stage stage;
-	private static FXRobot robot;
+	private static ControllerApi controller;
 
 	public static class MovableTestApp extends Application
 	{
@@ -65,16 +67,19 @@ public class MovableTest
 	@BeforeClass
 	public static void createWindow() throws Throwable
 	{
-		robot = new FXRobot();
+		controller = ControllerApi.wrap( new FXScreenController() );
 		FXTestUtils.launchApp( MovableTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
 		FXTestUtils.bringToFront( stage );
 	}
 
 	@After
-	public void restore()
+	public void restorePosition()
 	{
-		robot.drag( movable.getNode() ).to( 10, 10 );
+		final Node node = movable.getNode();
+		node.setLayoutX( 0 );
+		node.setLayoutY( 0 );
+		FXTestUtils.awaitEvents();
 	}
 
 	@Test
@@ -84,7 +89,7 @@ public class MovableTest
 
 		assertThat( movable.isDragging(), is( false ) );
 
-		FXRobot.MouseMotion dragging = robot.drag( movableNode ).via( 100, 50 );
+		MouseMotion dragging = controller.drag( movableNode ).by( 100, 50 );
 
 		assertThat( movable.isDragging(), is( true ) );
 
@@ -92,8 +97,8 @@ public class MovableTest
 
 		assertThat( movable.isDragging(), is( false ) );
 
-		assertEquals( 100.0 - movableNode.getBoundsInLocal().getWidth() / 2, movableNode.getLayoutX(), 1.0 );
-		assertEquals( 50.0 - movableNode.getBoundsInLocal().getHeight() / 2, movableNode.getLayoutY(), 1.0 );
+		assertEquals( 100.0, movableNode.getLayoutX(), 1.0 );
+		assertEquals( 50.0, movableNode.getLayoutY(), 1.0 );
 	}
 
 	@Test
@@ -114,7 +119,7 @@ public class MovableTest
 
 		assertThat( movable.isAcceptable(), is( false ) );
 
-		FXRobot.MouseMotion dragging = robot.drag( movableNode ).via( dropzone );
+		MouseMotion dragging = controller.drag( movableNode ).via( dropzone );
 
 		assertTrue( movable.isAcceptable() );
 
@@ -150,7 +155,7 @@ public class MovableTest
 			}
 		} );
 
-		robot.drag( movableNode ).to( dropzone );
+		controller.drag( movableNode ).to( dropzone );
 
 		droppedLatch.await( 2, TimeUnit.SECONDS );
 	}

@@ -1,5 +1,7 @@
 package com.eviware.loadui.test.ui.fx.states;
 
+import static com.eviware.loadui.ui.fx.util.test.ControllerApi.find;
+
 import java.util.concurrent.Callable;
 
 import javafx.scene.Node;
@@ -8,7 +10,6 @@ import javafx.scene.input.MouseButton;
 
 import com.eviware.loadui.test.TestState;
 import com.eviware.loadui.test.ui.fx.GUI;
-import com.eviware.loadui.ui.fx.util.test.FXRobot;
 import com.eviware.loadui.util.test.TestUtils;
 import com.google.common.collect.Iterables;
 
@@ -22,15 +23,11 @@ public class ProjectCreatedState extends TestState
 	}
 
 	@Override
+	@SuppressWarnings( "unchecked" )
 	protected void enterFromParent() throws Exception
 	{
-		FXRobot robot = GUI.getRobot();
-		@SuppressWarnings( "unchecked" )
-		final ListView<Node> projectList = ( ListView<Node> )GUI.getStage().getScene().lookup( "#projectRefNodeList" );
-
-		robot.click( projectList, MouseButton.SECONDARY );
-		robot.mouseMoveBy( 15, 10 );
-		robot.click();
+		final ListView<Node> projectList = ( ListView<Node> )find( "#projectRefNodeList" );
+		GUI.getController().click( projectList, MouseButton.SECONDARY ).moveBy( 15, 10 ).click();
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{
@@ -43,18 +40,13 @@ public class ProjectCreatedState extends TestState
 	}
 
 	@Override
+	@SuppressWarnings( "unchecked" )
 	protected void exitToParent() throws Exception
 	{
-		FXRobot robot = GUI.getRobot();
-
-		@SuppressWarnings( "unchecked" )
-		final ListView<Node> projectList = ( ListView<Node> )GUI.getStage().getScene().lookup( "#projectRefNodeList" );
-
-		System.out.println( "ProjectList items: " + projectList.getItems() );
-
+		final ListView<Node> projectList = ( ListView<Node> )find( "#projectRefNodeList" );
 		Node projectRef = Iterables.getOnlyElement( projectList.getItems() );
 
-		robot.click( projectRef.lookup( ".button" ) );
+		GUI.getController().click( find( ".button", projectRef ) );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{

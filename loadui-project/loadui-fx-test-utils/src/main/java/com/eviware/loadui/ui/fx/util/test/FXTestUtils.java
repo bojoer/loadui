@@ -95,7 +95,14 @@ public class FXTestUtils
 		}
 		catch( ExecutionException e )
 		{
-			throw ( Exception )e.getCause();
+			if( e.getCause() instanceof Exception )
+			{
+				throw ( Exception )e.getCause();
+			}
+			else
+			{
+				throw e;
+			}
 		}
 	}
 

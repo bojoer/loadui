@@ -1,12 +1,14 @@
 package com.eviware.loadui.test.ui.fx.states;
 
+import static com.eviware.loadui.ui.fx.util.test.ControllerApi.find;
+import static com.eviware.loadui.ui.fx.util.test.ControllerApi.offset;
+
 import java.util.concurrent.Callable;
 
 import javafx.scene.Node;
 
 import com.eviware.loadui.test.TestState;
 import com.eviware.loadui.test.ui.fx.GUI;
-import com.eviware.loadui.ui.fx.util.test.FXRobot;
 import com.eviware.loadui.util.test.TestUtils;
 
 public class ProjectLoadedState extends TestState
@@ -21,18 +23,16 @@ public class ProjectLoadedState extends TestState
 	@Override
 	protected void enterFromParent() throws Exception
 	{
-		FXRobot robot = GUI.getRobot();
+		Node projectRefNode = find( ".project-ref-node" );
 
-		Node projectRefNode = GUI.getStage().getScene().lookup( ".project-ref-node" );
-		robot.move( projectRefNode ).by( -50, 25 );
-		robot.click();
+		GUI.getController().click( offset( projectRefNode, 45, 75 ) );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{
 			@Override
 			public Boolean call() throws Exception
 			{
-				return GUI.getStage().getScene().lookup( ".project-view" ) != null;
+				return find( ".project-view" ) != null;
 			}
 		} );
 	}
@@ -40,17 +40,15 @@ public class ProjectLoadedState extends TestState
 	@Override
 	protected void exitToParent() throws Exception
 	{
-		FXRobot robot = GUI.getRobot();
-
-		Node closeButton = GUI.getStage().getScene().lookup( "#closeProjectButton" );
-		robot.click( closeButton );
+		Node closeButton = find( "#closeProjectButton" );
+		GUI.getController().click( closeButton );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{
 			@Override
 			public Boolean call() throws Exception
 			{
-				return GUI.getStage().getScene().lookup( ".workspace-view" ) != null;
+				return find( ".workspace-view" ) != null;
 			}
 		} );
 	}

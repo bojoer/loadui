@@ -30,6 +30,7 @@ import javafx.util.Duration;
 import com.eviware.loadui.util.test.TestUtils;
 import com.google.common.collect.ImmutableMap;
 
+@Deprecated
 public class FXRobot
 {
 	private static final Map<MouseButton, Integer> BUTTONS = ImmutableMap.of( MouseButton.PRIMARY,
@@ -312,7 +313,7 @@ public class FXRobot
 			stage.toFront();
 
 			return scenePoint;
-	}
+		}
 		else
 		{
 			return new Point2D( window.getX() + scene.getX() + scenePoint.getX(), window.getY() + scene.getY()

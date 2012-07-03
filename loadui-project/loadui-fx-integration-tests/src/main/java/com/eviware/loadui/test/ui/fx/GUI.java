@@ -5,14 +5,17 @@ import java.util.concurrent.TimeUnit;
 
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.util.test.FXRobot;
+import org.osgi.framework.BundleContext;
+
+import com.eviware.loadui.ui.fx.util.test.ControllerApi;
+import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.test.TestUtils;
 
 public class GUI
 {
-	public static FXRobot getRobot()
+	public static ControllerApi getController()
 	{
 		return getInstance().robot;
 	}
@@ -22,9 +25,9 @@ public class GUI
 		return getInstance().stage;
 	}
 
-	public static ControllerFXWrapper getController()
+	public static BundleContext getBundleContext()
 	{
-		return getInstance().controller;
+		return getInstance().controller.getBundleContext();
 	}
 
 	private static Holder getInstance()
@@ -41,7 +44,7 @@ public class GUI
 	{
 		private final ControllerFXWrapper controller;
 		private final Stage stage;
-		private final FXRobot robot;
+		private final ControllerApi robot;
 		private final Exception error;
 
 		private static final Holder instance = new Holder();
@@ -50,7 +53,7 @@ public class GUI
 		{
 			ControllerFXWrapper localController = null;
 			Stage localStage = null;
-			FXRobot localRobot = null;
+			ControllerApi localRobot = null;
 			Exception localError = null;
 
 			try
@@ -74,7 +77,8 @@ public class GUI
 				Thread.sleep( 1000 );
 
 				FXTestUtils.bringToFront( localStage );
-				localRobot = new FXRobot();
+				localRobot = ControllerApi.wrap( new FXScreenController() );
+				ControllerApi.use( localStage );
 			}
 			catch( Exception e )
 			{

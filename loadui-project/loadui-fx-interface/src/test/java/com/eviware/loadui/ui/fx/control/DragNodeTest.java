@@ -23,7 +23,9 @@ import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
-import com.eviware.loadui.ui.fx.util.test.FXRobot;
+import com.eviware.loadui.ui.fx.util.test.ControllerApi;
+import com.eviware.loadui.ui.fx.util.test.ControllerApi.MouseMotion;
+import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.google.common.util.concurrent.SettableFuture;
 
@@ -33,7 +35,7 @@ public class DragNodeTest
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
 	private static DragNode dragNode;
 	private static Stage stage;
-	private static FXRobot robot;
+	private static ControllerApi controller;
 
 	public static class DragNodeTestApp extends Application
 	{
@@ -64,7 +66,7 @@ public class DragNodeTest
 	@BeforeClass
 	public static void createWindow() throws Throwable
 	{
-		robot = new FXRobot();
+		controller = ControllerApi.wrap( new FXScreenController() );
 		FXTestUtils.launchApp( DragNodeTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
 		FXTestUtils.bringToFront( stage );
@@ -75,7 +77,7 @@ public class DragNodeTest
 	{
 		assertFalse( dragNode.isDragging() );
 
-		FXRobot.MouseMotion dragging = robot.drag( dragNode.getDragSource() ).by( 200, 50 );
+		MouseMotion dragging = controller.drag( dragNode.getDragSource() ).by( 200, 50 );
 
 		assertTrue( dragNode.isDragging() );
 
@@ -110,7 +112,7 @@ public class DragNodeTest
 
 		assertFalse( dragNode.isAcceptable() );
 
-		FXRobot.MouseMotion dragging = robot.drag( dragNode.getDragSource() ).via( dropArea );
+		MouseMotion dragging = controller.drag( dragNode.getDragSource() ).via( dropArea );
 
 		assertTrue( dragNode.isAcceptable() );
 

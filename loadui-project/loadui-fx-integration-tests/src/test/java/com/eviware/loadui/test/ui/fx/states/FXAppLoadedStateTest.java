@@ -27,7 +27,7 @@ public class FXAppLoadedStateTest
 	@Test
 	public void shouldHaveNoFailedBundles()
 	{
-		Bundle[] bundles = GUI.getController().getBundleContext().getBundles();
+		Bundle[] bundles = GUI.getBundleContext().getBundles();
 
 		for( Bundle bundle : bundles )
 		{

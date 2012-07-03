@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.control;
 
+import static com.eviware.loadui.ui.fx.util.test.ControllerApi.find;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertNotNull;
@@ -22,7 +23,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
-import com.eviware.loadui.ui.fx.util.test.FXRobot;
+import com.eviware.loadui.ui.fx.util.test.ControllerApi;
+import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.SettableFuture;
@@ -64,7 +66,7 @@ public class DetachableTabTest
 
 	@Test
 	public void shouldDetachAndReattachWhenClosingDetachedStage() throws Throwable
-		{
+	{
 		final TabPane tabpane = ( TabPane )stage.getScene().lookup( "#tabpane" );
 		assertNotNull( tabpane );
 		final Button detachButton = ( Button )tabpane.lookup( ".button" );
@@ -82,7 +84,7 @@ public class DetachableTabTest
 			public void run()
 			{
 				tab.setDetached( true );
-				}
+			}
 		}, 2 );
 
 		FXTestUtils.invokeAndWait( new Runnable()
@@ -108,10 +110,8 @@ public class DetachableTabTest
 	@Test
 	public void shouldDetachAndReattachWhenButtonPressed() throws Throwable
 	{
-		final TabPane tabpane = ( TabPane )stage.getScene().lookup( "#tabpane" );
-		assertNotNull( tabpane );
-		final Button detachButton = ( Button )tabpane.lookup( ".button" );
-		assertNotNull( detachButton );
+		final TabPane tabpane = ( TabPane )find( "#tabpane", stage );
+		Object detachButton = find( ".button", tabpane );
 
 		final DetachableTab tab = Iterables.getOnlyElement( Iterables.filter( tabpane.getTabs(), DetachableTab.class ) );
 		assertNotNull( tab );
@@ -119,9 +119,7 @@ public class DetachableTabTest
 		assertThat( ( Stage )tab.getDetachableContent().getScene().getWindow(), is( stage ) );
 		assertThat( tab.getContent(), is( tab.getDetachableContent() ) );
 
-		FXRobot robot = new FXRobot();
-
-		robot.click( detachButton );
+		ControllerApi controller = ControllerApi.wrap( new FXScreenController() ).click( detachButton );
 
 		FXTestUtils.invokeAndWait( new Runnable()
 		{
@@ -136,7 +134,7 @@ public class DetachableTabTest
 			}
 		}, 2 );
 
-		robot.click( detachButton );
+		controller.click( detachButton );
 
 		assertThat( ( Stage )tab.getDetachableContent().getScene().getWindow(), is( stage ) );
 		assertThat( tab.isDetached(), is( false ) );

@@ -15,7 +15,7 @@ public class FXAppLoadedState extends TestState
 	@Override
 	protected void enterFromParent() throws Exception
 	{
-		GUI.getController();
+		GUI.getBundleContext();
 	}
 
 	@Override
