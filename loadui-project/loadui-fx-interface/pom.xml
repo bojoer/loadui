@@ -11,9 +11,6 @@
 	<packaging>bundle</packaging>
 	<name>loadUI JavaFX 2 Interface</name>
 	<description>loadUI Graphical User Interface implemented in JavaFX 2</description>
-	<properties>
-		<JAVAFX_HOME>C:/Program Files/Oracle/JavaFX 2.1 SDK</JAVAFX_HOME>
-	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -53,7 +50,7 @@
 						<configuration>
 							<target xmlns:fx="javafx:com.sun.javafx.tools.ant">
 								<taskdef resource="com/sun/javafx/tools/ant/antlib.xml"
-									uri="javafx:com.sun.javafx.tools.ant" classpath="${JAVAFX_HOME}/lib/ant-javafx.jar" />
+									uri="javafx:com.sun.javafx.tools.ant" classpath="${env.JAVAFX2_HOME}/lib/ant-javafx.jar" />
 
 								<fx:csstobin outdir="${basedir}/target/classes">
 									<fileset dir="src/main/java" includes="**/*.css" />
@@ -89,7 +86,7 @@
 			<groupId>com.oracle</groupId>
 			<artifactId>javafx-runtime</artifactId>
 			<version>2.1</version>
-			<systemPath>${JAVAFX_HOME}/rt/lib/jfxrt.jar</systemPath>
+			<systemPath>${env.JAVAFX2_HOME}/rt/lib/jfxrt.jar</systemPath>
 			<scope>system</scope>
 		</dependency>
 		<!-- <dependency> <groupId>scenic-view</groupId> <artifactId>scenic-view</artifactId> 

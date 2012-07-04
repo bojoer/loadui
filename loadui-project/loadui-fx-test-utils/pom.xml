@@ -11,9 +11,6 @@
 	<packaging>jar</packaging>
 	<name>loadUI JavaFX Test Utils</name>
 	<description>loadUI test utils for JavaFX 2</description>
-	<properties>
-		<JAVAFX_HOME>C:/Program Files/Oracle/JavaFX 2.1 SDK</JAVAFX_HOME>
-	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -37,7 +34,7 @@
 			<groupId>com.oracle</groupId>
 			<artifactId>javafx-runtime</artifactId>
 			<version>2.1</version>
-			<systemPath>${JAVAFX_HOME}/rt/lib/jfxrt.jar</systemPath>
+			<systemPath>${env.JAVAFX2_HOME}/rt/lib/jfxrt.jar</systemPath>
 			<scope>system</scope>
 		</dependency>
 		<!-- <dependency> <groupId>scenic-view</groupId> <artifactId>scenic-view</artifactId> 
