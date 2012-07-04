@@ -150,7 +150,7 @@ public class SoapUISamplerComponent extends RunnerBase
 	private static final Splitter.MapSplitter mapSplitter = Splitter.on( ',' ).omitEmptyStrings()
 			.withKeyValueSeparator( "=" );
 
-	private static final ThreadLocal<StringToObjectMap> runContexts = new ThreadLocal<StringToObjectMap>();
+	private static final ThreadLocal<StringToObjectMap> runContexts = new ThreadLocal<>();
 
 	// Properties
 
@@ -193,8 +193,8 @@ public class SoapUISamplerComponent extends RunnerBase
 
 	private final ScheduledExecutorService executor;
 	private final File loaduiProjectFolder;
-	private final Map<String, StatisticVariable.Mutable> timeTakenVariableMap = new HashMap<String, StatisticVariable.Mutable>();
-	private final Map<String, StatisticVariable.Mutable> responseSizeVariableMap = new HashMap<String, StatisticVariable.Mutable>();
+	private final Map<String, StatisticVariable.Mutable> timeTakenVariableMap = new HashMap<>();
+	private final Map<String, StatisticVariable.Mutable> responseSizeVariableMap = new HashMap<>();
 
 	private final ConcurrentMap<String, String> testSteps_isDisabled_Map = Maps.newConcurrentMap();
 

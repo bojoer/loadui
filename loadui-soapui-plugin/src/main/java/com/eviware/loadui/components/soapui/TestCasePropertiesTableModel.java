@@ -100,7 +100,7 @@ public class TestCasePropertiesTableModel extends StringToStringTableModel
 	private void removeAllPropertiesExcept( List<TestProperty> soapUiTestCaseProperties )
 	{
 		int rowCount = getRowCount();
-		List<String> obsoleteProperties = new LinkedList<String>();
+		List<String> obsoleteProperties = new LinkedList<>();
 
 		for( int i = 0; i < rowCount; i++ )
 		{

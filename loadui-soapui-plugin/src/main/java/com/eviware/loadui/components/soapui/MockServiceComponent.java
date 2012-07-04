@@ -99,7 +99,7 @@ public class MockServiceComponent extends OnOffBase implements MiscCategory, Moc
 	private final Counter responseCounter;
 	private final Counter requestCounter;
 
-	private final OptionsProviderImpl<String> mockServiceOptions = new OptionsProviderImpl<String>();
+	private final OptionsProviderImpl<String> mockServiceOptions = new OptionsProviderImpl<>();
 
 	private boolean reloadingProject;
 	private OutputTerminal messageTerminal;
@@ -126,7 +126,7 @@ public class MockServiceComponent extends OnOffBase implements MiscCategory, Moc
 
 		context.setHelpUrl( "http://www.loadui.org/Misc/soapui-mockservice-component.html" );
 		messageTerminal = context.createOutput( "messages", "Messages", "Outputs data about each received request." );
-		Map<String, Class<?>> resultSignature = new HashMap<String, Class<?>>();
+		Map<String, Class<?>> resultSignature = new HashMap<>();
 		resultSignature.put( "Timestamp", Long.class );
 		resultSignature.put( "Request", String.class );
 		resultSignature.put( "Request Size", Long.class );
@@ -203,14 +203,14 @@ public class MockServiceComponent extends OnOffBase implements MiscCategory, Moc
 				.build() ) );
 
 		LayoutContainer connect = new LayoutContainerImpl( "wrap 2, ins 0", "", "align top", "" );
-		pathField = new PropertyLayoutComponentImpl<String>( ImmutableMap.<String, Object> builder() //
+		pathField = new PropertyLayoutComponentImpl<>( ImmutableMap.<String, Object> builder() //
 				.put( PropertyLayoutComponentImpl.PROPERTY, path ) //
 				.put( PropertyLayoutComponentImpl.LABEL, "path" ) //
 				.put( PropertyLayoutComponentImpl.CONSTRAINTS, "w 200!, spanx 1" ) //
 				.build() );
 		leftBox.add( pathField );
 
-		portField = new PropertyLayoutComponentImpl<String>( ImmutableMap.<String, Object> builder() //
+		portField = new PropertyLayoutComponentImpl<>( ImmutableMap.<String, Object> builder() //
 				.put( PropertyLayoutComponentImpl.PROPERTY, port ) //
 				.put( PropertyLayoutComponentImpl.LABEL, "port" ) //
 				.put( PropertyLayoutComponentImpl.CONSTRAINTS, "w 100!, spanx 1" ) //

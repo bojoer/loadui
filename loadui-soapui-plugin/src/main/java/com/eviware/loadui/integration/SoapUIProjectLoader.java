@@ -42,11 +42,11 @@ public class SoapUIProjectLoader
 {
 	private static volatile SoapUIProjectLoader instance;
 
-	private final HashMap<WsdlProject, String> projectFiles = new HashMap<WsdlProject, String>();
-	private final HashMap<String, WsdlProject> loadedProjects = new HashMap<String, WsdlProject>();;
-	private final HashMap<ProjectSettings, Long> timestamps = new HashMap<ProjectSettings, Long>();
-	private final HashMap<WsdlProject, Integer> counters = new HashMap<WsdlProject, Integer>();
-	private final Set<ProjectUpdateListener> listeners = new HashSet<ProjectUpdateListener>();
+	private final HashMap<WsdlProject, String> projectFiles = new HashMap<>();
+	private final HashMap<String, WsdlProject> loadedProjects = new HashMap<>();;
+	private final HashMap<ProjectSettings, Long> timestamps = new HashMap<>();
+	private final HashMap<WsdlProject, Integer> counters = new HashMap<>();
+	private final Set<ProjectUpdateListener> listeners = new HashSet<>();
 	private static final Logger log = LoggerFactory.getLogger( SoapUIProjectLoader.class );
 
 	public static SoapUIProjectLoader getInstance()

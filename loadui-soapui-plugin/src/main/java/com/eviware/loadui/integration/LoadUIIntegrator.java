@@ -135,7 +135,7 @@ public class LoadUIIntegrator
 		ComponentContext compContext = createRunner( context, SOAPUI_RUNNER_BASE_NAME );
 		createAndConnectComponents( context, compContext );
 
-		HashMap<String, String> soapuiRunnerProperties = new HashMap<String, String>();
+		HashMap<String, String> soapuiRunnerProperties = new HashMap<>();
 		soapuiRunnerProperties.put( SOAPUI_RUNNER_LABEL, compContext.getLabel() );
 		CanvasItem canvas = compContext.getCanvas();
 		if( canvas instanceof ProjectItem )
@@ -155,7 +155,7 @@ public class LoadUIIntegrator
 	public HashMap<String, String> createMockServiceRunner( HashMap<String, Object> context ) throws IOException
 	{
 		ComponentContext compContext = createRunner( context, MOCK_RUNNER_BASE_NAME );
-		HashMap<String, String> componentProperties = new HashMap<String, String>();
+		HashMap<String, String> componentProperties = new HashMap<>();
 		componentProperties.put( MOCKSERVICE_RUNNER_LABEL, compContext.getLabel() );
 		CanvasItem canvas = compContext.getCanvas();
 		if( canvas instanceof ProjectItem )
@@ -186,7 +186,7 @@ public class LoadUIIntegrator
 	private ComponentContext createRunner( HashMap<String, Object> context, String baseComponentName )
 			throws IOException
 	{
-		HashMap<String, String> soapuiRunnerProperties = new HashMap<String, String>();
+		HashMap<String, String> soapuiRunnerProperties = new HashMap<>();
 		String componentLabel = "";
 		String loadUIProjectName = ( String )context.get( LOADUI_PROJECT_NAME );
 		String loadUITestCaseName = ( String )context.get( LOADUI_TEST_CASE_NAME );
@@ -340,7 +340,7 @@ public class LoadUIIntegrator
 					STATISTICS_LABEL, STATISTICS_CREATE_NEW );
 		}
 
-		List<ComponentItem> assertionsList = new ArrayList<ComponentItem>();
+		List<ComponentItem> assertionsList = new ArrayList<>();
 		for( String assertion : getAssertionTypeKeys( context ) )
 		{
 			String i = assertion.substring( ASSERTION_TYPE.length() );
@@ -461,7 +461,7 @@ public class LoadUIIntegrator
 
 	private List<String> getAssertionTypeKeys( HashMap<String, Object> context )
 	{
-		List<String> assertions = new ArrayList<String>();
+		List<String> assertions = new ArrayList<>();
 		for( String key : context.keySet() )
 		{
 			if( key.contains( ASSERTION_TYPE ) )

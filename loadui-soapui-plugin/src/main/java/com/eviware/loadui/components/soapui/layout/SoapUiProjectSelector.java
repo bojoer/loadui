@@ -27,8 +27,8 @@ public class SoapUiProjectSelector
 	private final Property<String> testSuite;
 	private final Property<String> testCase;
 
-	private final OptionsProviderImpl<String> testSuiteOptions = new OptionsProviderImpl<String>();
-	private final OptionsProviderImpl<String> testCaseOptions = new OptionsProviderImpl<String>();
+	private final OptionsProviderImpl<String> testSuiteOptions = new OptionsProviderImpl<>();
+	private final OptionsProviderImpl<String> testCaseOptions = new OptionsProviderImpl<>();
 
 	public static SoapUiProjectSelector newInstance( SoapUISamplerComponent component, ComponentContext context,
 			SoapUITestCaseRunner testCaseRunner )
@@ -47,31 +47,31 @@ public class SoapUiProjectSelector
 
 	public LayoutComponentImpl buildLayout()
 	{
-		PropertyLayoutComponentImpl<File> projectFileLayoutComponent = new PropertyLayoutComponentImpl<File>(
-				ImmutableMap.<String, Object> builder() //
-						.put( PropertyLayoutComponentImpl.PROPERTY, projectFile ) //
-						.put( PropertyLayoutComponentImpl.LABEL, "soapUI Project" ) //
-						.put( PropertyLayoutComponentImpl.CONSTRAINTS, "w 300!, spanx 2" ) //
-						.put( "mode", "both" ) //
-						.build() );
+		PropertyLayoutComponentImpl<File> projectFileLayoutComponent = new PropertyLayoutComponentImpl<>( ImmutableMap
+				.<String, Object> builder() //
+				.put( PropertyLayoutComponentImpl.PROPERTY, projectFile ) //
+				.put( PropertyLayoutComponentImpl.LABEL, "soapUI Project" ) //
+				.put( PropertyLayoutComponentImpl.CONSTRAINTS, "w 300!, spanx 2" ) //
+				.put( "mode", "both" ) //
+				.build() );
 
-		PropertyLayoutComponentImpl<String> testSuiteLayoutComponent = new PropertyLayoutComponentImpl<String>(
-				ImmutableMap.<String, Object> builder() //
-						.put( PropertyLayoutComponentImpl.PROPERTY, testSuite ) //
-						.put( PropertyLayoutComponentImpl.LABEL, "TestSuite" ) //
-						.put( PropertyLayoutComponentImpl.CONSTRAINTS, "w 300!, spanx 2" ) //
-						.put( "widget", "comboBox" ) //
-						.put( OptionsProvider.OPTIONS, testSuiteOptions ) //
-						.build() );
+		PropertyLayoutComponentImpl<String> testSuiteLayoutComponent = new PropertyLayoutComponentImpl<>( ImmutableMap
+				.<String, Object> builder() //
+				.put( PropertyLayoutComponentImpl.PROPERTY, testSuite ) //
+				.put( PropertyLayoutComponentImpl.LABEL, "TestSuite" ) //
+				.put( PropertyLayoutComponentImpl.CONSTRAINTS, "w 300!, spanx 2" ) //
+				.put( "widget", "comboBox" ) //
+				.put( OptionsProvider.OPTIONS, testSuiteOptions ) //
+				.build() );
 
-		PropertyLayoutComponentImpl<String> testCaseLayoutComponent = new PropertyLayoutComponentImpl<String>(
-				ImmutableMap.<String, Object> builder() //
-						.put( PropertyLayoutComponentImpl.PROPERTY, testCase ) //
-						.put( PropertyLayoutComponentImpl.LABEL, "soapUI TestCase" ) //
-						.put( PropertyLayoutComponentImpl.CONSTRAINTS, "w 300!, spanx 2" ) //
-						.put( "widget", "comboBox" ) //
-						.put( OptionsProvider.OPTIONS, testCaseOptions ) //
-						.build() );
+		PropertyLayoutComponentImpl<String> testCaseLayoutComponent = new PropertyLayoutComponentImpl<>( ImmutableMap
+				.<String, Object> builder() //
+				.put( PropertyLayoutComponentImpl.PROPERTY, testCase ) //
+				.put( PropertyLayoutComponentImpl.LABEL, "soapUI TestCase" ) //
+				.put( PropertyLayoutComponentImpl.CONSTRAINTS, "w 300!, spanx 2" ) //
+				.put( "widget", "comboBox" ) //
+				.put( OptionsProvider.OPTIONS, testCaseOptions ) //
+				.build() );
 
 		return new LayoutComponentImpl( ImmutableMap.<String, Object> builder()
 				.put( "soapUIProject", projectFileLayoutComponent ).put( "testSuite", testSuiteLayoutComponent )

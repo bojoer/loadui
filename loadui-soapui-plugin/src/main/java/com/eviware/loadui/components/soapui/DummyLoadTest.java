@@ -29,7 +29,7 @@ class DummyLoadTest implements LoadTest
 		this.soapUISamplerComponent = soapUISamplerComponent;
 	}
 
-	private final Set<LoadTestRunListener> loadTestRunListeners = new HashSet<LoadTestRunListener>();
+	private final Set<LoadTestRunListener> loadTestRunListeners = new HashSet<>();
 	private LoadTestRunListener[] loadTestRunListenersArray;
 
 	@Override
