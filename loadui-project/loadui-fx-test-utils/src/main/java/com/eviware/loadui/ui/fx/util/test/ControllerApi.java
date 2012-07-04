@@ -2,6 +2,7 @@ package com.eviware.loadui.ui.fx.util.test;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javafx.geometry.BoundingBox;
@@ -16,6 +17,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 public class ControllerApi
@@ -68,13 +70,14 @@ public class ControllerApi
 		return findAll( selector, lastSeenWindow );
 	}
 
-	public static Node find( String selector, Object parent )
+	@SuppressWarnings( "unchecked" )
+	public static <T extends Node> T find( String selector, Object parent )
 	{
-		return Preconditions.checkNotNull( Iterables.getFirst( findAll( selector, parent ), null ),
+		return Preconditions.checkNotNull( ( T )Iterables.getFirst( findAll( selector, parent ), null ),
 				"Query [%s] select [%s] resulted in no nodes found!", parent, selector );
 	}
 
-	public static Node find( String selector )
+	public static <T extends Node> T find( String selector )
 	{
 		return find( selector, lastSeenWindow );
 	}
@@ -170,6 +173,70 @@ public class ControllerApi
 			}
 		}
 		return this;
+	}
+
+	public ControllerApi type( Object target, String text )
+	{
+		click( target );
+		return type( text );
+	}
+
+	public ControllerApi type( String text )
+	{
+		for( int i = 0; i < text.length(); i++ )
+		{
+			type( text.charAt( i ) );
+			try
+			{
+				Thread.sleep( 25 );
+			}
+			catch( InterruptedException e )
+			{
+			}
+		}
+
+		return this;
+	}
+
+	private static final Map<Character, KeyCode> KEY_CODES = ImmutableMap.<Character, KeyCode> builder()
+			.put( ',', KeyCode.COMMA ).put( ';', KeyCode.SEMICOLON ).put( '.', KeyCode.PERIOD ).put( ':', KeyCode.COLON )
+			.put( '_', KeyCode.UNDERSCORE ).put( '!', KeyCode.EXCLAMATION_MARK ).put( '"', KeyCode.QUOTEDBL )
+			.put( '#', KeyCode.POUND ).put( '&', KeyCode.AMPERSAND ).put( '/', KeyCode.SLASH )
+			.put( '(', KeyCode.LEFT_PARENTHESIS ).put( ')', KeyCode.RIGHT_PARENTHESIS ).put( '=', KeyCode.EQUALS ).build();
+
+	private static KeyCode findKeyCode( char character )
+	{
+		if( KEY_CODES.containsKey( character ) )
+		{
+			return KEY_CODES.get( character );
+		}
+
+		KeyCode keyCode = KeyCode.getKeyCode( String.valueOf( Character.toUpperCase( character ) ) );
+		if( keyCode != null )
+		{
+			return keyCode;
+		}
+
+		for( KeyCode code : KeyCode.values() )
+		{
+			if( ( char )code.impl_getCode() == character )
+			{
+				return code;
+			}
+		}
+
+		throw new IllegalArgumentException( "No KeyCode found for character: " + character );
+	}
+
+	public ControllerApi type( char character )
+	{
+		KeyCode[] modifiers = Character.isUpperCase( character ) ? new KeyCode[] { KeyCode.SHIFT } : new KeyCode[0];
+
+		KeyCode keyCode = findKeyCode( character );
+
+		press( modifiers );
+		type( keyCode );
+		return release( modifiers );
 	}
 
 	public ControllerApi type( KeyCode... keys )
@@ -271,6 +338,10 @@ public class ControllerApi
 		else if( target instanceof Bounds )
 		{
 			return pointForBounds( ( Bounds )target );
+		}
+		else if( target instanceof String )
+		{
+			return pointFor( find( ( String )target ) );
 		}
 		else if( target instanceof Node )
 		{

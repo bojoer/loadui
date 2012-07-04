@@ -110,7 +110,7 @@ public class DetachableTabTest
 	@Test
 	public void shouldDetachAndReattachWhenButtonPressed() throws Throwable
 	{
-		final TabPane tabpane = ( TabPane )find( "#tabpane", stage );
+		final TabPane tabpane = find( "#tabpane", stage );
 		Object detachButton = find( ".button", tabpane );
 
 		final DetachableTab tab = Iterables.getOnlyElement( Iterables.filter( tabpane.getTabs(), DetachableTab.class ) );

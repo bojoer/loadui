@@ -123,14 +123,14 @@ public class FXScreenController implements ScreenController
 	@Override
 	public void press( KeyCode key )
 	{
-		// TODO Auto-generated method stub
-
+		robot.keyPress( key.impl_getCode() );
+		FXTestUtils.awaitEvents();
 	}
 
 	@Override
 	public void release( KeyCode key )
 	{
-		// TODO Auto-generated method stub
-
+		robot.keyRelease( key.impl_getCode() );
+		FXTestUtils.awaitEvents();
 	}
 }

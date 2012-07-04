@@ -14,6 +14,24 @@
 	<properties>
 		<JAVAFX_HOME>C:/Program Files/Oracle/JavaFX 2.1 SDK</JAVAFX_HOME>
 	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludedGroups>com.eviware.loadui.test.categories.GUITest</excludedGroups>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<forkMode>always</forkMode>
+					<groups>com.eviware.loadui.test.categories.GUITest</groups>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>com.oracle</groupId>

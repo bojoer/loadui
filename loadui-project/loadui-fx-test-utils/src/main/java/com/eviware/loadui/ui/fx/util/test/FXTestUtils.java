@@ -22,6 +22,8 @@ public class FXTestUtils
 			{
 				stage.setIconified( true );
 				stage.setIconified( false );
+				stage.toBack();
+				stage.toFront();
 			}
 		}, 1 );
 		Thread.sleep( 250 );

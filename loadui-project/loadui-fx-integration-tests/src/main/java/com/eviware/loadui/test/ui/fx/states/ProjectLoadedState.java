@@ -5,8 +5,6 @@ import static com.eviware.loadui.ui.fx.util.test.ControllerApi.offset;
 
 import java.util.concurrent.Callable;
 
-import javafx.scene.Node;
-
 import com.eviware.loadui.test.TestState;
 import com.eviware.loadui.test.ui.fx.GUI;
 import com.eviware.loadui.util.test.TestUtils;
@@ -23,9 +21,7 @@ public class ProjectLoadedState extends TestState
 	@Override
 	protected void enterFromParent() throws Exception
 	{
-		Node projectRefNode = find( ".project-ref-node" );
-
-		GUI.getController().click( offset( projectRefNode, 45, 75 ) );
+		GUI.getController().click( offset( ".project-ref-node", 45, 75 ) );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{
@@ -40,8 +36,7 @@ public class ProjectLoadedState extends TestState
 	@Override
 	protected void exitToParent() throws Exception
 	{
-		Node closeButton = find( "#closeProjectButton" );
-		GUI.getController().click( closeButton );
+		GUI.getController().click( "#closeProjectButton" );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{

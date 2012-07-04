@@ -23,10 +23,9 @@ public class ProjectCreatedState extends TestState
 	}
 
 	@Override
-	@SuppressWarnings( "unchecked" )
 	protected void enterFromParent() throws Exception
 	{
-		final ListView<Node> projectList = ( ListView<Node> )find( "#projectRefNodeList" );
+		final ListView<Node> projectList = find( "#projectRefNodeList" );
 		GUI.getController().click( projectList, MouseButton.SECONDARY ).moveBy( 15, 10 ).click();
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
@@ -40,10 +39,9 @@ public class ProjectCreatedState extends TestState
 	}
 
 	@Override
-	@SuppressWarnings( "unchecked" )
 	protected void exitToParent() throws Exception
 	{
-		final ListView<Node> projectList = ( ListView<Node> )find( "#projectRefNodeList" );
+		final ListView<Node> projectList = find( "#projectRefNodeList" );
 		Node projectRef = Iterables.getOnlyElement( projectList.getItems() );
 
 		GUI.getController().click( find( ".button", projectRef ) );
