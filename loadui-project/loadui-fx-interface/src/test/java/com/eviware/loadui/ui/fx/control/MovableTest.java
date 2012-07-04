@@ -70,6 +70,7 @@ public class MovableTest
 		controller = ControllerApi.wrap( new FXScreenController() );
 		FXTestUtils.launchApp( MovableTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
+		ControllerApi.use( stage );
 		FXTestUtils.bringToFront( stage );
 	}
 

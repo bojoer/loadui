@@ -61,15 +61,16 @@ public class DetachableTabTest
 	{
 		FXTestUtils.launchApp( DetachableTabTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
+		ControllerApi.use( stage );
 		FXTestUtils.bringToFront( stage );
 	}
 
 	@Test
 	public void shouldDetachAndReattachWhenClosingDetachedStage() throws Throwable
 	{
-		final TabPane tabpane = ( TabPane )stage.getScene().lookup( "#tabpane" );
+		final TabPane tabpane = find( "#tabpane" );
 		assertNotNull( tabpane );
-		final Button detachButton = ( Button )tabpane.lookup( ".button" );
+		final Button detachButton = find( ".button", tabpane );
 		assertNotNull( detachButton );
 
 		final DetachableTab tab = Iterables.getOnlyElement( Iterables.filter( tabpane.getTabs(), DetachableTab.class ) );
@@ -110,8 +111,8 @@ public class DetachableTabTest
 	@Test
 	public void shouldDetachAndReattachWhenButtonPressed() throws Throwable
 	{
-		final TabPane tabpane = find( "#tabpane", stage );
-		Object detachButton = find( ".button", tabpane );
+		final TabPane tabpane = find( "#tabpane" );
+		Button detachButton = find( ".button", tabpane );
 
 		final DetachableTab tab = Iterables.getOnlyElement( Iterables.filter( tabpane.getTabs(), DetachableTab.class ) );
 		assertNotNull( tab );
