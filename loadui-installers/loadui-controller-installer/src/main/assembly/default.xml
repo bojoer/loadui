@@ -13,12 +13,10 @@
 			<outputDirectory>bundle</outputDirectory>
 			<includes>
 				<include>com.eviware.loadui:loadui-controller-deps</include>
-				<include>com.eviware.soapui:loadui-soapui-plugin</include>
-				<include>com.eviware.loadui:loadui-fx2-interface</include>
+				<include>com.eviware.loadui:loadui-soapui-plugin</include>
 			</includes>
 			<excludes>
 				<exclude>*:pom</exclude>
-				<exclude>javafx</exclude>
 				<exclude>com.google.code.findbugs</exclude>
 			</excludes>
 			<useTransitiveDependencies>true</useTransitiveDependencies>

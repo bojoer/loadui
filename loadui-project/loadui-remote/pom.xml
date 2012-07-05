@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-api</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>

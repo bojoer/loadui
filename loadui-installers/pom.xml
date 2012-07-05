@@ -25,8 +25,7 @@
 	<modules>
 		<module>loadui-controller-installer</module>
 		<module>loadui-agent-installer</module>
-		<!-- Disabled until loadUI pro has been ported to JavaFX -->
-		<!-- <module>loadui-pro-controller-installer</module> -->
+		<module>loadui-pro-controller-installer</module>
 	</modules>
 	<build>
 		<plugins>
