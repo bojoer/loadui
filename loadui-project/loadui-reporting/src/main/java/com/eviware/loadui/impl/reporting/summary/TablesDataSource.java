@@ -16,8 +16,6 @@
 package com.eviware.loadui.impl.reporting.summary;
 
 import java.util.Map;
-import java.util.Map.Entry;
-
 import javax.swing.table.TableModel;
 
 import net.sf.jasperreports.engine.JRException;

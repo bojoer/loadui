@@ -49,7 +49,7 @@ public class PropertyMapImpl implements PropertyMap
 		this.config = config;
 		this.conversionService = conversionService;
 
-		for( PropertyConfig pc : config.getPropertyArray() )
+		for( PropertyConfig pc : config.getPropertyList() )
 		{
 			try
 			{
@@ -79,7 +79,7 @@ public class PropertyMapImpl implements PropertyMap
 		if( containsKey( key ) && !containsKey( newKey ) )
 		{
 			put( newKey, remove( key ) );
-			for( PropertyConfig p : config.getPropertyArray() )
+			for( PropertyConfig p : config.getPropertyList() )
 			{
 				if( p.getKey().equals( key ) )
 				{
@@ -90,16 +90,20 @@ public class PropertyMapImpl implements PropertyMap
 			}
 		}
 		else
+		{
 			throw new RuntimeException( "Cannot rename property '" + key + "': "
 					+ ( !containsKey( key ) ? "Property does not exist!" : "Another property already has that name!" ) );
+		}
 	}
 
 	@Override
 	public void clear()
 	{
 		map.clear();
-		for( int i = config.getPropertyArray().length - 1; i >= 0; i-- )
+		for( int i = config.sizeOfPropertyArray() - 1; i >= 0; i-- )
+		{
 			config.removeProperty( i );
+		}
 	}
 
 	@Override
@@ -112,7 +116,9 @@ public class PropertyMapImpl implements PropertyMap
 	public void putAll( Map<? extends String, ? extends Property<?>> m )
 	{
 		for( Entry<? extends String, ? extends Property<?>> entry : m.entrySet() )
+		{
 			put( entry.getKey(), entry.getValue() );
+		}
 	}
 
 	@Override
@@ -120,7 +126,9 @@ public class PropertyMapImpl implements PropertyMap
 	{
 		Property<?> property = map.remove( key );
 		if( property != null )
+		{
 			firePropertyEvent( property, PropertyEvent.Event.DELETED, property.getValue() );
+		}
 		return property;
 	}
 

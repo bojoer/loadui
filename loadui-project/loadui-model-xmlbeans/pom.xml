@@ -9,6 +9,7 @@
 	<artifactId>loadui-model-xmlbeans</artifactId>
 	<name>loadUI Model XmlBeans</name>
 	<build>
+		<sourceDirectory>${project.build.directory}/generated-sources/xmlbeans</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

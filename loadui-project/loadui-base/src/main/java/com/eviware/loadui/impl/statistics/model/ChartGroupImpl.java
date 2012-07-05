@@ -77,7 +77,7 @@ public class ChartGroupImpl implements ChartGroup
 
 		provider = providerFactory.buildProvider( getType(), this );
 
-		for( ChartConfig chartConfig : config.getChartArray() )
+		for( ChartConfig chartConfig : config.getChartList() )
 		{
 			try
 			{
@@ -210,7 +210,8 @@ public class ChartGroupImpl implements ChartGroup
 	@Override
 	public void moveChart( Chart chart, int index )
 	{
-		ChartConfig[] chartArray = XmlBeansUtils.moveArrayElement( config.getChartArray(), indexOf( chart ), index );
+		ChartConfig[] chartArray = XmlBeansUtils.moveArrayElement(
+				config.getChartList().toArray( new ChartConfig[config.sizeOfChartArray()] ), indexOf( chart ), index );
 		config.setChartArray( chartArray );
 		collectionSupport.moveChild( chart, index );
 		for( int i = 0; i < chartArray.length; i++ )

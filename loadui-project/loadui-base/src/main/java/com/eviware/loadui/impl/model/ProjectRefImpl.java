@@ -41,7 +41,7 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 
 	private final WorkspaceItemImpl workspace;
 	private final ProjectReferenceConfig config;
-	private final ReleaseListener listener = new ReleaseListener();
+	private final ReleaseListener releaseListener = new ReleaseListener();
 	private final EventSupport eventSupport = new EventSupport( this );
 	private final AttributeHolderSupport attributeHolderSupport;
 	private final File projectFile;
@@ -121,7 +121,7 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 			project = ProjectItemImpl.loadProject( workspace, projectFile );
 			setLabel( project.getLabel() );
 			config.setProjectId( project.getId() );
-			project.addEventListener( BaseEvent.class, listener );
+			project.addEventListener( BaseEvent.class, releaseListener );
 			fireEvent( new BaseEvent( this, LOADED ) );
 			workspace.projectLoaded( project );
 		}

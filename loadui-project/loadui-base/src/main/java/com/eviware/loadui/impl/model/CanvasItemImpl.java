@@ -203,7 +203,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private void createComponents()
 	{
-		for( ComponentItemConfig componentConfig : getConfig().getComponentArray() )
+		for( ComponentItemConfig componentConfig : getConfig().getComponentList() )
 		{
 			try
 			{
@@ -219,7 +219,7 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 
 	private void createConnections()
 	{
-		for( ConnectionConfig connectionConfig : getConfig().getConnectionArray() )
+		for( ConnectionConfig connectionConfig : getConfig().getConnectionList() )
 		{
 			try
 			{
@@ -242,8 +242,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		{
 			int cnt = 0;
 			boolean found = false;
-			for( ; cnt < getConfig().getConnectionArray().length; cnt++ )
-				if( getConfig().getConnectionArray()[cnt].equals( badConnection ) )
+			for( ; cnt < getConfig().getConnectionList().size(); cnt++ )
+				if( getConfig().getConnectionArray( cnt ).equals( badConnection ) )
 				{
 					found = true;
 					break;
@@ -259,8 +259,8 @@ public abstract class CanvasItemImpl<Config extends CanvasItemConfig> extends Mo
 		{
 			int cnt = 0;
 			boolean found = false;
-			for( ; cnt < getConfig().getComponentArray().length; cnt++ )
-				if( getConfig().getComponentArray()[cnt].equals( badComponent ) )
+			for( ; cnt < getConfig().getComponentList().size(); cnt++ )
+				if( getConfig().getComponentArray( cnt ).equals( badComponent ) )
 				{
 					found = true;
 					break;

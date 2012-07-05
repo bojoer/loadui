@@ -44,8 +44,10 @@ public class StatisticPagesImpl implements StatisticPages
 
 	public void init()
 	{
-		for( StatisticsPageConfig statisticPageConfig : config.getPageArray() )
+		for( StatisticsPageConfig statisticPageConfig : config.getPageList() )
+		{
 			collectionSupport.addChild( new StatisticPageImpl( this, statisticPageConfig ) );
+		}
 	}
 
 	@Override
@@ -89,7 +91,8 @@ public class StatisticPagesImpl implements StatisticPages
 	@Override
 	public void movePage( StatisticPage page, int index )
 	{
-		StatisticsPageConfig[] pageArray = XmlBeansUtils.moveArrayElement( config.getPageArray(), indexOf( page ), index );
+		StatisticsPageConfig[] pageArray = XmlBeansUtils.moveArrayElement(
+				config.getPageList().toArray( new StatisticsPageConfig[config.sizeOfPageArray()] ), indexOf( page ), index );
 		config.setPageArray( pageArray );
 		collectionSupport.moveChild( page, index );
 		for( int i = 0; i < pageArray.length; i++ )

@@ -24,7 +24,6 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.impl.summary.MutableSectionImpl;
-import com.eviware.loadui.impl.summary.sections.tablemodels.AssertionMetricsTableModel;
 import com.eviware.loadui.impl.summary.sections.tablemodels.TestCaseSamplerStatisticsTable;
 
 public class TestCaseExecutionMetricsSection extends MutableSectionImpl

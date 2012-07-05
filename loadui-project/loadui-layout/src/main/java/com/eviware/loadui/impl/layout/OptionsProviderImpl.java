@@ -41,6 +41,7 @@ public class OptionsProviderImpl<T> implements OptionsProvider<T>
 		options = iterable;
 	}
 
+	@SafeVarargs
 	public OptionsProviderImpl( T... options )
 	{
 		this.options = Arrays.asList( options );
@@ -69,11 +70,14 @@ public class OptionsProviderImpl<T> implements OptionsProvider<T>
 		listeners.add( listener );
 	}
 
-	public void setOptions( T... options )
+	@SafeVarargs
+	public final void setOptions( T... options )
 	{
 		this.options = Arrays.asList( options );
 		for( OptionsListener listener : listeners )
+		{
 			listener.onOptionsChange( this );
+		}
 	}
 
 	@Override

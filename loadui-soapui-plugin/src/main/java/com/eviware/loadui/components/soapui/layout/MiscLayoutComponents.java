@@ -5,7 +5,6 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.impl.layout.ActionLayoutComponentImpl;
 import com.eviware.loadui.util.StringUtils;
 import com.eviware.loadui.util.soapui.CajoClient;

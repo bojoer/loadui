@@ -28,6 +28,7 @@ public class GroovyComponentsTest
 	{
 		Predicate<File> testExists = new Predicate<File>()
 		{
+			@Override
 			public boolean apply( File input )
 			{
 				String baseName = input.getName().substring( 0, input.getName().length() - 7 );
@@ -37,6 +38,7 @@ public class GroovyComponentsTest
 
 		Set<File> scriptFiles = ImmutableSet.copyOf( scriptDirectory.listFiles( new FilenameFilter()
 		{
+			@Override
 			public boolean accept( File dir, String name )
 			{
 				return name.endsWith( ".groovy" );

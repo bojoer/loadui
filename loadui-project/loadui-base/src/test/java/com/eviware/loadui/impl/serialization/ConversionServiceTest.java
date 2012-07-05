@@ -68,7 +68,6 @@ public class ConversionServiceTest
 		assertEquals( "47.11", conversionService.convert( new Double( 47.11 ), String.class ) );
 	}
 
-	@SuppressWarnings( "unchecked" )
 	@Test
 	public void shouldConvertBothWays()
 	{
@@ -76,7 +75,6 @@ public class ConversionServiceTest
 			assertEquals( obj, conversionService.convert( conversionService.convert( obj, String.class ), obj.getClass() ) );
 	}
 
-	@SuppressWarnings( "unchecked" )
 	@Test
 	public void shouldConvertNumbers()
 	{

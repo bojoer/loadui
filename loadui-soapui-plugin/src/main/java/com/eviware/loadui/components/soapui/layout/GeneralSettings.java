@@ -13,7 +13,6 @@ import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.layout.OptionsProvider;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.components.soapui.SoapUIComponentActivator;
-import com.eviware.loadui.components.soapui.SoapUISamplerComponent;
 import com.eviware.loadui.components.soapui.SoapUISamplerComponent.SoapUITestCaseRunner;
 import com.eviware.loadui.impl.layout.PropertyLayoutComponentImpl;
 import com.eviware.loadui.impl.layout.SettingsLayoutContainerImpl;

@@ -43,8 +43,10 @@ public class StatisticPageImpl implements StatisticPage
 
 		collectionSupport = new OrderedCollectionSupport<>( this );
 
-		for( ChartGroupConfig chartGroupConfig : config.getChartGroupArray() )
+		for( ChartGroupConfig chartGroupConfig : config.getChartGroupList() )
+		{
 			collectionSupport.addChild( new ChartGroupImpl( this, chartGroupConfig ) );
+		}
 	}
 
 	@Override
@@ -74,7 +76,8 @@ public class StatisticPageImpl implements StatisticPage
 	@Override
 	public void moveChartGroup( ChartGroup chartGroup, int index )
 	{
-		ChartGroupConfig[] chartGroupArray = XmlBeansUtils.moveArrayElement( config.getChartGroupArray(),
+		ChartGroupConfig[] chartGroupArray = XmlBeansUtils.moveArrayElement(
+				config.getChartGroupList().toArray( new ChartGroupConfig[config.sizeOfChartGroupArray()] ),
 				indexOf( chartGroup ), index );
 		config.setChartGroupArray( chartGroupArray );
 		collectionSupport.moveChild( chartGroup, index );

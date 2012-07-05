@@ -21,7 +21,6 @@ import com.eviware.loadui.api.execution.ExecutionResult;
 import com.eviware.loadui.api.execution.TestExecution;
 import com.eviware.loadui.api.execution.TestState;
 import com.eviware.loadui.api.model.CanvasItem;
-import com.eviware.loadui.api.model.ProjectItem;
 
 /**
  * Implements most of TestExecution, leaving it up to subclasses to handle

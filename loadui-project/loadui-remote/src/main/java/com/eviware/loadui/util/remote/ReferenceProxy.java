@@ -94,21 +94,4 @@ public class ReferenceProxy
 
 		return interfaces;
 	}
-
-	private static Class<?> classFor( ReferenceWrapper wrapper )
-	{
-		for( String className : wrapper.getImplementedClasses() )
-		{
-			try
-			{
-				return Class.forName( className );
-			}
-			catch( ClassNotFoundException e )
-			{
-				//Ignore
-			}
-		}
-
-		return Object.class;
-	}
 }

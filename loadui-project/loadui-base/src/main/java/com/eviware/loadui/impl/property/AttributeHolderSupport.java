@@ -42,7 +42,7 @@ public class AttributeHolderSupport implements AttributeHolder, Releasable
 	{
 		this.config = config;
 
-		for( PropertyConfig attr : config.getPropertyArray() )
+		for( PropertyConfig attr : config.getPropertyList() )
 			attributes.put( attr.getKey(), attr.getStringValue() );
 	}
 

@@ -163,7 +163,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 	@Override
 	protected void init()
 	{
-		for( SceneItemConfig conf : getConfig().getSceneArray() )
+		for( SceneItemConfig conf : getConfig().getSceneList() )
 		{
 			attachScene( SceneItemImpl.newInstance( this, conf ) );
 		}
@@ -175,7 +175,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		for( AgentItem agent : workspace.getAgents() )
 			agentListener.attach( agent );
 
-		for( SceneAssignmentConfig conf : getConfig().getSceneAssignmentArray() )
+		for( SceneAssignmentConfig conf : getConfig().getSceneAssignmentList() )
 		{
 			SceneItem scene = ( SceneItem )addressableRegistry.lookup( conf.getSceneRef() );
 			AgentItem agent = ( AgentItem )addressableRegistry.lookup( conf.getAgentRef() );
@@ -447,7 +447,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 			int size = getConfig().sizeOfSceneAssignmentArray();
 			for( int i = 0; i < size; i++ )
 			{
-				SceneAssignmentConfig conf = getConfig().getSceneAssignmentArray()[i];
+				SceneAssignmentConfig conf = getConfig().getSceneAssignmentArray( i );
 				if( scene.getId().equals( conf.getSceneRef() ) && agent.getId().equals( conf.getAgentRef() ) )
 				{
 					getConfig().removeSceneAssignment( i );
@@ -544,7 +544,7 @@ public class ProjectItemImpl extends CanvasItemImpl<ProjectItemConfig> implement
 		config.setLabel( "Copy of " + config.getLabel() );
 		Map<String, String> addresses = new HashMap<>();
 		addresses.put( config.getId(), addressableRegistry.generateId() );
-		for( ComponentItemConfig component : config.getComponentArray() )
+		for( ComponentItemConfig component : config.getComponentList() )
 			addresses.put( component.getId(), addressableRegistry.generateId() );
 		String data = config.xmlText();
 		for( Entry<String, String> e : addresses.entrySet() )

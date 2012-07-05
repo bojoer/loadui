@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -13,8 +12,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

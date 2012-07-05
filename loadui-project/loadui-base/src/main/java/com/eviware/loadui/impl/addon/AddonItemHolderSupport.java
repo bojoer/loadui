@@ -65,7 +65,7 @@ public class AddonItemHolderSupport implements Releasable
 	{
 		if( loadedTypes.add( type ) )
 		{
-			for( AddonItemConfig config : listConfig.getAddonArray() )
+			for( AddonItemConfig config : listConfig.getAddonList() )
 			{
 				if( type.equals( config.getType() ) )
 				{
