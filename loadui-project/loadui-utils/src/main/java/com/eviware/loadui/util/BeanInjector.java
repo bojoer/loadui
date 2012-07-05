@@ -170,7 +170,7 @@ public enum BeanInjector
 		{
 			try
 			{
-				if( !INSTANCE.waiterLatch.await( 5, TimeUnit.SECONDS ) )
+				if( !INSTANCE.waiterLatch.await( 30, TimeUnit.SECONDS ) )
 				{
 					throw new RuntimeException( "BundleContext is missing, has BeanInjector been configured?" );
 				}
