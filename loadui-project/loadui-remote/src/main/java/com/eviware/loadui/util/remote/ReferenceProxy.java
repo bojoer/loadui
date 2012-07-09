@@ -10,13 +10,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyFactory;
 
 public class ReferenceProxy
 {
-	@SuppressWarnings( "rawtypes" )
 	public static Object createProxy( final ReferenceWrapper wrapper )
 	{
 		List<Class<?>> interfaces = classList( wrapper.getImplementedInterfaces() );
@@ -26,14 +24,16 @@ public class ReferenceProxy
 		{
 			if( !Modifier.isFinal( cls.getModifiers() ) && implementsAll( cls, interfaces ) )
 			{
-				return Mockito.mock( cls, new Answer()
+				ProxyFactory factory = new ProxyFactory();
+				factory.setSuperclass( cls );
+				factory.setInterfaces( interfaces.toArray( new Class[interfaces.size()] ) );
+
+				MethodHandler handler = new MethodHandler()
 				{
 					@Override
-					public Object answer( InvocationOnMock invocation ) throws Throwable
+					public Object invoke( Object self, Method thisMethod, Method proceed, Object[] args ) throws Throwable
 					{
-						final Method method = invocation.getMethod();
-						Object result = wrapper.invoke( method.getDeclaringClass(), method.getName(),
-								invocation.getArguments() );
+						Object result = wrapper.invoke( thisMethod.getDeclaringClass(), thisMethod.getName(), args );
 						if( result instanceof ReferenceWrapper )
 						{
 							return createProxy( ( ReferenceWrapper )result );
@@ -41,7 +41,16 @@ public class ReferenceProxy
 
 						return result;
 					}
-				} );
+				};
+
+				try
+				{
+					return factory.create( new Class[0], new Object[0], handler );
+				}
+				catch( ReflectiveOperationException e )
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 

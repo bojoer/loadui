@@ -2,6 +2,7 @@ package com.eviware.loadui.util.remote;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -56,7 +57,7 @@ public class ReferenceWrapperImpl implements ReferenceWrapper
 					{
 						return null;
 					}
-					else if( !method.getReturnType().isInterface() )
+					else if( Modifier.isFinal( method.getReturnType().getModifiers() ) )
 					{
 						return retVal;
 					}
@@ -81,15 +82,7 @@ public class ReferenceWrapperImpl implements ReferenceWrapper
 						return new ReferenceWrapperImpl( retVal, new ArrayList<>( classes ), new ArrayList<>( interfaces ) );
 					}
 				}
-				catch( IllegalAccessException e )
-				{
-					last = e;
-				}
-				catch( IllegalArgumentException e )
-				{
-					last = e;
-				}
-				catch( InvocationTargetException e )
+				catch( IllegalAccessException | IllegalArgumentException | InvocationTargetException e )
 				{
 					last = e;
 				}
