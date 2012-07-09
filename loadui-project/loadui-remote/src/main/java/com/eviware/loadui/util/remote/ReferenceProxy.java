@@ -1,5 +1,7 @@
 package com.eviware.loadui.util.remote;
 
+import gnu.cajo.invoke.Remote;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -15,6 +17,26 @@ import javassist.util.proxy.ProxyFactory;
 
 public class ReferenceProxy
 {
+	public static Object getItem( String url )
+	{
+		ReferenceWrapper wrapper;
+		try
+		{
+			Object target = Remote.getItem( url );
+			wrapper = ( ReferenceWrapper )Remote.invoke( target, "getSelf", null );
+		}
+		catch( RuntimeException e )
+		{
+			throw e;
+		}
+		catch( Exception e )
+		{
+			throw new RuntimeException( e );
+		}
+
+		return createProxy( wrapper );
+	}
+
 	public static Object createProxy( final ReferenceWrapper wrapper )
 	{
 		List<Class<?>> interfaces = classList( wrapper.getImplementedInterfaces() );
