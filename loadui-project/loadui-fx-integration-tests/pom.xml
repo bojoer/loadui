@@ -64,15 +64,10 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-remote</artifactId>
-			<version>${project.parent.version}</version>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>${groovyVersion}</version>
 		</dependency>
-	<!-- 	<dependency>
-			<groupId>com.eviware.loadui</groupId>
-			<artifactId>loadui-fx-interface</artifactId>
-			<version>${project.version}</version>
-		</dependency> -->
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-fx-test-utils</artifactId>
