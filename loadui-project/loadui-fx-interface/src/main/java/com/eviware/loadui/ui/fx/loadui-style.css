@@ -32,3 +32,18 @@
 .tool-box #expanderButton:disabled {
 	visibility: hidden;
 }
+
+.item-holder {
+	-fx-padding: 5;
+	-fx-spacing: 5;
+}
+
+.item-holder > .vbox {
+	-fx-spacing: 5;
+}
+
+.tool-box-expander .item-holder {
+	-fx-background-color: black, lightgrey;
+	-fx-background-radius: 0 2 2 0;
+	-fx-background-insets: -3 0, -2 1;
+}

@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import javafx.application.Application;
 import javafx.scene.SceneBuilder;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
 
@@ -27,7 +28,7 @@ public class ToolBoxTest
 		@Override
 		public void start( Stage primaryStage ) throws Exception
 		{
-			ToolBox toolbox = new ToolBox();
+			ToolBox<Rectangle> toolbox = new ToolBox<>();
 			toolbox.getItems().setAll( RectangleBuilder.create().width( 50 ).height( 75 ).fill( Color.GREEN ).build(),
 					RectangleBuilder.create().width( 75 ).height( 50 ).fill( Color.YELLOW ).build() );
 
@@ -52,7 +53,7 @@ public class ToolBoxTest
 	@Test
 	public void shouldMove() throws Exception
 	{
-		controller.click( ".toolbox" );
+		controller.click( ".tool-box" );
 
 		Thread.sleep( 5000 );
 	}
