@@ -28,7 +28,7 @@ public class ToolBoxTest
 		@Override
 		public void start( Stage primaryStage ) throws Exception
 		{
-			ToolBox<Rectangle> toolbox = new ToolBox<>();
+			ToolBox2<Rectangle> toolbox = new ToolBox2<>();
 			toolbox.getItems().setAll( RectangleBuilder.create().width( 50 ).height( 75 ).fill( Color.GREEN ).build(),
 					RectangleBuilder.create().width( 75 ).height( 50 ).fill( Color.YELLOW ).build() );
 

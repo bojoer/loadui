@@ -56,12 +56,12 @@ public class WorkspaceView extends Region
 				workspace.getProjectRefs() );
 
 		getChildren().add( FXMLUtils.load( WorkspaceView.class, new Callable<Object>()
-	{
-	@Override
+		{
+			@Override
 			public Object call() throws Exception
-	{
-		return new Controller();
-	}
+			{
+				return new Controller();
+			}
 		} ) );
 	}
 
@@ -86,12 +86,12 @@ public class WorkspaceView extends Region
 
 			Bindings.bindContent( projectRefNodeList.getItems(), ObservableLists.fx( ObservableLists.transform(
 					projectRefList, new Function<ProjectRef, ProjectRefNode>()
-			{
-				@Override
+					{
+						@Override
 						public ProjectRefNode apply( ProjectRef projectRef )
-				{
+						{
 							return new ProjectRefNode( projectRef );
-				}
+						}
 					} ) ) );
 
 			webView.getEngine().load( "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html" );
@@ -112,7 +112,7 @@ public class WorkspaceView extends Region
 										workspace.createProject(
 												File.createTempFile( "loadui-project", ".xml",
 														new File( System.getProperty( LoadUI.LOADUI_HOME ) ) ), "New Project", false );
-			}
+									}
 									catch( IOException e )
 									{
 										throw new RuntimeException( e );
@@ -129,20 +129,20 @@ public class WorkspaceView extends Region
 		}
 
 		public void openDialog()
-			{
+		{
 			System.out.println( "Opening dialog" );
 			final Stage dialog = StageBuilder.create().resizable( false ).title( "Dialog" )
 					.icons( BeanInjector.getBean( Stage.class ).getIcons() ).build();
 
 			dialog.setScene( SceneBuilder
 					.create()
-									.root(
-											VBoxBuilder
-													.create()
-													.spacing( 25 )
+					.root(
+							VBoxBuilder
+									.create()
+									.spacing( 25 )
 									.padding( new Insets( 20, 75, 20, 75 ) )
 									.alignment( Pos.CENTER )
-													.children( LabelBuilder.create().text( "A dialog window" ).build(),
+									.children( LabelBuilder.create().text( "A dialog window" ).build(),
 											ButtonBuilder.create().onAction( new EventHandler<ActionEvent>()
 											{
 												@Override
@@ -162,12 +162,12 @@ public class WorkspaceView extends Region
 			final Effect effect = root.getEffect();
 			root.setEffect( GaussianBlurBuilder.create().radius( 8 ).build() );
 			dialog.setOnHidden( new EventHandler<WindowEvent>()
-	{
-		@Override
+			{
+				@Override
 				public void handle( WindowEvent arg0 )
-		{
+				{
 					root.setEffect( effect );
-			}
+				}
 			} );
 			dialog.show();
 
@@ -176,6 +176,6 @@ public class WorkspaceView extends Region
 
 			System.out.println( "width: " + dialog.getWidth() + " height: " + dialog.getHeight() );
 			System.out.println( "x: " + dialog.getX() + " y: " + dialog.getY() );
-			}
-			}
+		}
+	}
 }

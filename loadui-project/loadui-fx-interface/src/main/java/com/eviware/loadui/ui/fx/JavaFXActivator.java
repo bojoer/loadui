@@ -2,6 +2,7 @@ package com.eviware.loadui.ui.fx;
 
 import java.util.concurrent.ExecutionException;
 
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import org.osgi.framework.BundleActivator;
@@ -17,6 +18,19 @@ public class JavaFXActivator implements BundleActivator
 	public void start( final BundleContext context ) throws Exception
 	{
 		System.out.println( "JavaFX2 bundle started!" );
+
+		final ClassLoader bundleClassLoader = JavaFXActivator.class.getClassLoader();
+
+		Platform.runLater( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				//This is needed for custom controls to be able to load their skins from this bundle.
+				//With multiple bundles this could be problematic, and should be replaced by some classloader that delegates to multiple bundles.
+				Thread.currentThread().setContextClassLoader( bundleClassLoader );
+			}
+		} );
 
 		new Thread( new Runnable()
 		{

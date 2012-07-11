@@ -40,7 +40,6 @@ public class TestWindow
 				stage.setHeight( 700 );
 				//stage.setScene( SceneBuilder.create().root( new WorkspaceView( workspace ) ).build() );
 				final URL resource = TestWindow.class.getResource( "/com/eviware/loadui/ui/fx/loadui-style.bss" );
-				System.out.println( "!!!!!!!!!!!!RESOURCE: " + resource );
 				stage.setScene( SceneBuilder.create().stylesheets( resource.toString() )
 						.root( new MainWindowView( workspaceProvider ) ).build() );
 				stage.setTitle( System.getProperty( LoadUI.NAME, "loadUI" ) + " " + LoadUI.VERSION );

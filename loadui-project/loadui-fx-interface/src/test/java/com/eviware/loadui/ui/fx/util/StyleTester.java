@@ -33,16 +33,18 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		ToolBox toolBox = new ToolBox();
+		ToolBox<Rectangle> toolBox = new ToolBox<>( "Toolbox" );
 		final Rectangle rectangle1 = RectangleBuilder.create().width( 65 ).height( 75 ).fill( Color.RED ).build();
 		final Rectangle rectangle2 = RectangleBuilder.create().width( 45 ).height( 50 ).fill( Color.BLUE ).build();
 		final Rectangle rectangle3 = RectangleBuilder.create().width( 60 ).height( 60 ).fill( Color.GREEN ).build();
+		final Rectangle rectangle4 = RectangleBuilder.create().width( 60 ).height( 60 ).fill( Color.GREEN ).build();
 
 		ToolBox.setCategory( rectangle1, "Category 1" );
-		ToolBox.setCategory( rectangle2, "Category 1" );
-		ToolBox.setCategory( rectangle3, "Category 2" );
+		ToolBox.setCategory( rectangle2, "Category 2" );
+		ToolBox.setCategory( rectangle3, "Category 3" );
+		ToolBox.setCategory( rectangle4, "Category 2" );
 
-		toolBox.getItems().setAll( rectangle1, rectangle2, rectangle3 );
+		toolBox.getItems().setAll( rectangle1, rectangle2, rectangle3, rectangle4 );
 
 		return toolBox;
 	}

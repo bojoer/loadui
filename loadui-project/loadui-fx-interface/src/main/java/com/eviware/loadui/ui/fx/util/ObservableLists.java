@@ -327,12 +327,12 @@ public class ObservableLists
 
 			this.cache = CacheBuilder.newBuilder().build( new CacheLoader<F, T>()
 			{
-					@Override
-					public T load( F key ) throws Exception
-					{
-						return function.apply( key );
-					}
-				} );
+				@Override
+				public T load( F key ) throws Exception
+				{
+					return function.apply( key );
+				}
+			} );
 
 			this.function = new Function<F, T>()
 			{
@@ -376,8 +376,8 @@ public class ObservableLists
 			originalList.addListener( this );
 			if( Platform.isFxApplicationThread() )
 			{
-			list.addAll( originalList );
-		}
+				list.addAll( originalList );
+			}
 			else
 			{
 				Platform.runLater( new Runnable()
