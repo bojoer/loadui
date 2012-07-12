@@ -78,6 +78,11 @@ public class CajoServer implements Runnable
 		CajoClient.getInstance().testConnection();
 	}
 
+	public void stop()
+	{
+		Remote.shutdown();
+	}
+
 	public String getServer()
 	{
 		return server;

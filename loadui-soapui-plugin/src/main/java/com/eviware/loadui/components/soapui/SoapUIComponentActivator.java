@@ -52,6 +52,7 @@ public final class SoapUIComponentActivator implements BundleActivator
 	private BundleContext bundleContext;
 	private LoadUIIntegrator loadUIIntegrator;
 	private SoapUIBehaviorProvider provider;
+	private CajoServer cajoServer;
 
 	private static final Logger log = LoggerFactory.getLogger( SoapUIComponentActivator.class );
 
@@ -134,7 +135,7 @@ public final class SoapUIComponentActivator implements BundleActivator
 					loadUIIntegrator.setWorkspaceProvider( workspaceProviderRegistry );
 					loadUIIntegrator.setComponentDescriptor( componentDescriptor );
 					loadUIIntegrator.setMockServiceDescriptor( mockServiceDescriptor );
-					CajoServer cajoServer = CajoServer.getInstance();
+					cajoServer = CajoServer.getInstance();
 					cajoServer.setLoadUILuncher( loadUIIntegrator );
 					Thread cajoThread = new Thread( cajoServer, "CajoServer" );
 					cajoThread.setDaemon( true );
@@ -184,6 +185,8 @@ public final class SoapUIComponentActivator implements BundleActivator
 	{
 		if( provider != null )
 			provider.destroy();
+		if( cajoServer != null )
+			cajoServer.stop();
 	}
 
 	public SoapUIBehaviorProvider getProvider()
