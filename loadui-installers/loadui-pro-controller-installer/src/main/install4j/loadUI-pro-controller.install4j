@@ -43,9 +43,10 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="com.eviware.loadui.launcher.WebStartRunner" vmParameters="" arguments="-Xms128m -Xmx768m -XX:MaxPermSize=128m -Dsun.java2d.noddraw=true" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+      <java mainClass="com.javafx.main.Main" vmParameters="-Xms128m -Xmx768m -XX:MaxPermSize=128m" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <archive location="lib/loadui-launcher.jar" failOnError="true" />
+          <scanDirectory location="lib" failOnError="false" />
+          <archive location="jre/lib/jfxrt.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -363,91 +364,6 @@ Should you have any questions concerning this EULA, or if you desire to contact 
             <actions />
             <formComponents />
           </screen>
-          <screen name="" id="766" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.FormScreen" />
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents>
-              <formComponent name="" id="769" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent">
-                      <void property="labelText">
-                        <string>This is where you can enter the proxy settings that Java WebStart will use when starting loadUI Pro. Leave them blank if you do not use a proxy to reach the internet.</string>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <initScript />
-                <visibiltyScript />
-              </formComponent>
-              <formComponent name="" id="767" beanClass="com.install4j.runtime.beans.formcomponents.TextfieldComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.formcomponents.TextfieldComponent">
-                      <void property="columns">
-                        <int>30</int>
-                      </void>
-                      <void property="labelText">
-                        <string>Proxy:</string>
-                      </void>
-                      <void property="variableName">
-                        <string>${compiler:proxy}</string>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <initScript />
-                <visibiltyScript />
-              </formComponent>
-              <formComponent name="" id="953" beanClass="com.install4j.runtime.beans.formcomponents.TextfieldComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.formcomponents.TextfieldComponent">
-                      <void property="inputVerifier">
-                        <object class="com.install4j.api.beans.ScriptProperty">
-                          <void property="value">
-                            <string>try{
-    if(text == null || text.trim().length() == 0){
-        return true;
-    }
-    int i = Integer.parseInt(text);
-    if(i &gt;= 0 &amp;&amp; i &lt; 65536){
-        return true;
-    }
-    else{
-        Util.showErrorMessage("Port must be an integer between 0 and 65535!");
-        return false;
-    }
-}
-catch(Exception e){
-    Util.showErrorMessage("Port must be an integer between 0 and 65535!");
-    return false;
-}</string>
-                          </void>
-                        </object>
-                      </void>
-                      <void property="labelText">
-                        <string>Port:</string>
-                      </void>
-                      <void property="variableName">
-                        <string>${compiler:port}</string>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <initScript />
-                <visibiltyScript />
-              </formComponent>
-            </formComponents>
-          </screen>
           <screen name="" id="7" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="true" backButton="2" finishScreen="false">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
@@ -498,26 +414,6 @@ catch(Exception e){
                       </void>
                       <void property="itemName">
                         <string>${compiler:sys.fullName}</string>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
-              <action name="" id="306" beanClass="com.install4j.runtime.beans.actions.text.ModifyTextFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.text.ModifyTextFileAction">
-                      <void property="file">
-                        <object class="java.io.File">
-                          <string>loadUI.jnlp</string>
-                        </object>
-                      </void>
-                      <void property="replaceValue">
-                        <string>${installer:sys.installationDir}</string>
-                      </void>
-                      <void property="searchValue">
-                        <string>{{installdir}}</string>
                       </void>
                     </object>
                   </java>
@@ -590,23 +486,6 @@ catch(Exception e){
                 </serializedBean>
                 <condition />
               </action>
-              <action name="" id="1184" beanClass="com.install4j.runtime.beans.actions.files.SetModeAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.SetModeAction">
-                      <void property="file">
-                        <object class="java.io.File">
-                          <string>updateJavaFx.sh</string>
-                        </object>
-                      </void>
-                      <void property="mode">
-                        <string>+x</string>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
               <action name="" id="669" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
@@ -635,63 +514,13 @@ catch(Exception e){
                 </serializedBean>
                 <condition>"${compiler:sys.platform}" == "macos" || "${compiler:sys.platform}" == "windows"</condition>
               </action>
-              <action name="" id="773" beanClass="com.install4j.runtime.beans.actions.text.ReplaceInstallerVariablesAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.text.ReplaceInstallerVariablesAction">
-                      <void property="file">
-                        <object class="java.io.File">
-                          <string>javaws.cfg</string>
-                        </object>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
-              <action name="" id="771" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.MoveFileAction">
-                      <void property="destinationFile">
-                        <object class="java.io.File">
-                          <string>${installer:sys.userHome}/javaws.cfg</string>
-                        </object>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="NEVER" />
-                      </void>
-                      <void property="sourceFile">
-                        <object class="java.io.File">
-                          <string>javaws.cfg</string>
-                        </object>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition>"${compiler:proxy}" != "" </condition>
-              </action>
-              <action name="" id="772" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
-                      <void property="file">
-                        <object class="java.io.File">
-                          <string>javaws.cfg</string>
-                        </object>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
               <action name="" id="1089" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
                       <void property="file">
                         <object class="java.io.File">
-                          <string>loadUI-${compiler:version}</string>
+                          <string>loadUI-Pro-${compiler:version}</string>
                         </object>
                       </void>
                       <void property="name">
@@ -701,114 +530,6 @@ catch(Exception e){
                   </java>
                 </serializedBean>
                 <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
-              </action>
-              <action name="" id="1138" beanClass="com.install4j.runtime.beans.actions.files.CopyFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.CopyFileAction">
-                      <void property="destinationFile">
-                        <object class="java.io.File">
-                          <string>loadUI.jnlp</string>
-                        </object>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                      </void>
-                      <void property="sourceFile">
-                        <object class="java.io.File">
-                          <string>loadUI.jnlp.osx</string>
-                        </object>
-                      </void>
-                      <void property="uninstallMode">
-                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition>"${compiler:sys.platform}" == "macos"</condition>
-              </action>
-              <action name="" id="1139" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
-                      <void property="file">
-                        <object class="java.io.File">
-                          <string>loadUI.jnlp.osx</string>
-                        </object>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
-            </actions>
-            <formComponents />
-          </screen>
-          <screen name="" id="605" beanClass="com.install4j.runtime.beans.screens.CustomizableInfoScreen" enabled="true" commentSet="false" comment="" rollbackBarrier="false" backButton="2" finishScreen="false">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.CustomizableInfoScreen">
-                  <void property="displayedText">
-                    <string>The installer will now install JavaFX, and continue when the JavaFX installation has been completed.</string>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions>
-              <action name="" id="606" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
-                      <void property="executable">
-                        <object class="java.io.File">
-                          <string>updateJavaFx.bat</string>
-                        </object>
-                      </void>
-                      <void property="wait">
-                        <boolean>true</boolean>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition>"${compiler:sys.platform}" == "windows" &amp;&amp; (!context.isUnattended())</condition>
-              </action>
-              <action name="" id="607" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
-                      <void property="executable">
-                        <object class="java.io.File">
-                          <string>updateJavaFx.command</string>
-                        </object>
-                      </void>
-                      <void property="wait">
-                        <boolean>true</boolean>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition>"${compiler:sys.platform}" == "macos" &amp;&amp; (!context.isUnattended())</condition>
-              </action>
-              <action name="" id="608" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
-                      <void property="executable">
-                        <object class="java.io.File">
-                          <string>updateJavaFx.sh</string>
-                        </object>
-                      </void>
-                      <void property="wait">
-                        <boolean>true</boolean>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition>"${compiler:sys.platform}" == "unix" &amp;&amp; (!context.isUnattended())</condition>
               </action>
             </actions>
             <formComponents />
@@ -1058,23 +779,6 @@ return f.exists();</condition>
                 </serializedBean>
                 <condition />
               </action>
-              <action name="" id="642" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
-                      <void property="file">
-                        <object class="java.io.File">
-                          <string>loadUI.jnlp</string>
-                        </object>
-                      </void>
-                      <void property="recurse">
-                        <boolean>true</boolean>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
             </actions>
             <formComponents />
           </screen>
@@ -1115,26 +819,7 @@ return f.exists();</condition>
     </applications>
   </installerGui>
   <mediaSets>
-    <unixInstaller name="Unix Installer" id="25" mediaFileName="loadUI-Pro-${compiler:version}" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-x86-1.7.0_01_client_only_ws" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
-      <excludedLaunchers>
-        <launcher id="24" />
-        <launcher id="225" />
-      </excludedLaunchers>
-      <excludedComponents />
-      <excludedBeans>
-        <bean refId="228" />
-        <bean refId="271" />
-      </excludedBeans>
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location="loadUI.bat" fileType="regular" />
-      </exclude>
-      <variables />
-      <installerScript mode="1" file="">
-        <scriptLines />
-      </installerScript>
-    </unixInstaller>
-    <win32 name="Windows" id="26" mediaFileName="loadUI-Pro-${compiler:version}" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="windows-x86-1.7.0_01_ws" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <win32 name="Windows Installer" id="26" mediaFileName="loadUI-Pro-${compiler:version}" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
       <excludedLaunchers>
         <launcher id="23" />
       </excludedLaunchers>
@@ -1148,20 +833,15 @@ return f.exists();</condition>
       <exclude />
       <variables />
     </win32>
-    <macos name="Mac OS X Single Bundle" id="1087" mediaFileName="loadUI-Pro-${compiler:version}" installDir="loadUI Pro ${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" launcherId="1014">
+    <win32 name="Windows 64-bit Installer" id="1293" mediaFileName="loadUI-Pro-${compiler:version}-64bit" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="true" jreBitType="64" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="windows-amd64-1.7.0_04_fx-2.1" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+      <excludedLaunchers />
       <excludedComponents />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location="loadUI-cmd-sysjvm.bat" fileType="regular" />
-        <entry location="loadUI-cmd.bat" fileType="regular" />
-        <entry location="loadUI-cmd.sh" fileType="regular" />
-        <entry location="loadUIprofile.bat" fileType="regular" />
-        <entry location="loadUItest.bat" fileType="regular" />
-      </exclude>
+      <exclude />
       <variables />
-    </macos>
-    <unixInstaller name="Unix 64-bit Installer" id="1239" mediaFileName="loadUI-Pro-${compiler:version}_64bit" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="linux-amd64-1.7.0_linux_7_03_x64" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+    </win32>
+    <unixInstaller name="Unix Installer" id="25" mediaFileName="loadUI-Pro-${compiler:version}" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="24" />
         <launcher id="225" />
@@ -1180,6 +860,38 @@ return f.exists();</condition>
         <scriptLines />
       </installerScript>
     </unixInstaller>
+    <unixInstaller name="Unix 64-bit Installer" id="1239" mediaFileName="loadUI-Pro-${compiler:version}_64bit" installDir="SmartBear/loadUI-Pro-${compiler:version}" overridePrincipalLanguage="false" requires64bit="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="">
+      <excludedLaunchers>
+        <launcher id="24" />
+        <launcher id="225" />
+      </excludedLaunchers>
+      <excludedComponents />
+      <excludedBeans>
+        <bean refId="228" />
+        <bean refId="271" />
+      </excludedBeans>
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location="loadUI.bat" fileType="regular" />
+      </exclude>
+      <variables />
+      <installerScript mode="1" file="">
+        <scriptLines />
+      </installerScript>
+    </unixInstaller>
+    <macos name="Mac OS X Single Bundle" id="1087" mediaFileName="loadUI-Pro-${compiler:version}" installDir="loadUI Pro ${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" launcherId="1014">
+      <excludedComponents />
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location="loadUI-cmd-sysjvm.bat" fileType="regular" />
+        <entry location="loadUI-cmd.bat" fileType="regular" />
+        <entry location="loadUI-cmd.sh" fileType="regular" />
+        <entry location="loadUIprofile.bat" fileType="regular" />
+        <entry location="loadUItest.bat" fileType="regular" />
+      </exclude>
+      <variables />
+    </macos>
   </mediaSets>
   <buildIds buildAll="false">
     <mediaSet refId="25" />

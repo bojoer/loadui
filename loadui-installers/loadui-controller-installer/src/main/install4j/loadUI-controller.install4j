@@ -41,9 +41,10 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="com.javafx.main.Main" vmParameters="-Xms128m -Xmx768m -XX:MaxPermSize=128m" arguments="" allowVMPassthroughParameters="false" preferredVM="" bundleRuntime="true">
+      <java mainClass="com.javafx.main.Main" vmParameters="-Xms128m -Xmx768m -XX:MaxPermSize=128m" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <scanDirectory location="lib" failOnError="true" />
+          <archive location="jre/lib/jfxrt.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -859,7 +860,7 @@ return f.exists();</condition>
       <exclude />
       <variables />
     </win32>
-    <win32 name="Windows 64-bit Installer" id="1284" mediaFileName="loadUI-${compiler:version}-64bit" installDir="SmartBear/loadUI-${compiler:version}" overridePrincipalLanguage="false" requires64bit="true" jreBitType="64" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <win32 name="Windows 64-bit Installer" id="1284" mediaFileName="loadUI-${compiler:version}-64bit" installDir="SmartBear/loadUI-${compiler:version}" overridePrincipalLanguage="false" requires64bit="true" jreBitType="64" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="windows-amd64-1.7.0_04_fx-2.1" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
       <excludedLaunchers>
         <launcher id="23" />
       </excludedLaunchers>
