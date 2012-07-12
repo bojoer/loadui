@@ -38,6 +38,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.WindowEvent;
 
 import com.eviware.loadui.ui.fx.control.ToolBox;
@@ -154,7 +155,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 		mainRegion = new ToolBoxRegion( pager.getShownItems() );
 		expander = new ToolBoxExpander();
 
-		getChildren().setAll( mainRegion );
+		getChildren().setAll( VBoxBuilder.create().children( mainRegion ).build() );
 	}
 
 	@Override
@@ -260,6 +261,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 
 			expanderButton = ButtonBuilder.create().build();
 			expanderButton.getStyleClass().add( "expander-button" );
+			expanderButton.disableProperty().bind( Bindings.size( categoryItems ).lessThan( 2 ) );
 
 			expanderButton.setOnAction( new EventHandler<ActionEvent>()
 			{
@@ -315,7 +317,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 		public ItemHolder( String category )
 		{
 			getStyleClass().setAll( "item-holder" );
-			HBox hbox = HBoxBuilder.create().build();
+			HBox hbox = HBoxBuilder.create().styleClass( "items" ).build();
 			Bindings.bindContent( hbox.getChildren(), items );
 			getChildren().setAll( new Label( category ), hbox );
 		}

@@ -12,10 +12,11 @@
 	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.ToolBoxSkin";
 }
  
-.tool-box {
+.tool-box-region {
 	-fx-background-color: black, #4f4f4f, #565656;
 	-fx-background-insets: 0, 1, 2;
 	-fx-background-radius: 0 3 3 0;
+	-fx-padding: 0 0 15 0;
 }
 
 .tool-box .title {
@@ -42,8 +43,8 @@
 	-fx-spacing: 5;
 }
 
-.item-holder > .vbox {
-	-fx-spacing: 5;
+.item-holder > .items {
+	-fx-spacing: 15;
 }
 
 .tool-box-expander .item-holder {
