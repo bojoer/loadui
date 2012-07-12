@@ -17,6 +17,8 @@ public class ComponentDescriptorView extends VBox
 	public ComponentDescriptorView( ComponentDescriptor descriptor )
 	{
 		this.descriptor = descriptor;
+		setMaxHeight( 80 );
+		setMinHeight( 80 );
 
 		Label label = LabelBuilder.create().wrapText( true ).build();
 		label.textProperty().bind( Properties.forLabel( descriptor ) );

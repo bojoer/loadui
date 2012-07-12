@@ -10,8 +10,8 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -141,6 +141,8 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 			}
 		} );
 
+		expander = new ToolBoxExpander();
+
 		for( E item : toolBox.getItems() )
 		{
 			String categoryName = ToolBox.getCategory( item );
@@ -153,7 +155,6 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 		}
 
 		mainRegion = new ToolBoxRegion( pager.getShownItems() );
-		expander = new ToolBoxExpander();
 
 		getChildren().setAll( VBoxBuilder.create().children( mainRegion ).build() );
 	}
@@ -185,26 +186,63 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 		}
 	}
 
+	private class ToolBoxTitle extends StackPane
+	{
+		private ToolBoxTitle()
+		{
+			getStyleClass().setAll( "title" );
+
+			Labeled labeled = getSkinnable();
+
+			Label label = new Label();
+			label.textProperty().bind( labeled.textProperty() );
+			label.graphicProperty().bind( labeled.graphicProperty() );
+
+			//			label.alignmentProperty().bind( labeled.alignmentProperty() );
+			//			label.contentDisplayProperty().bind( labeled.contentDisplayProperty() );
+			//			label.fontProperty().bind( labeled.fontProperty() );
+			//			label.graphicTextGapProperty().bind( labeled.graphicTextGapProperty() );
+			//			label.textFillProperty().bind( labeled.textFillProperty() );
+			//			label.textOverrunProperty().bind( labeled.textOverrunProperty() );
+			//			label.underlineProperty().bind( labeled.underlineProperty() );
+			//			label.wrapTextProperty().bind( labeled.wrapTextProperty() );
+
+			getChildren().setAll( label );
+		}
+	}
+
 	private class ToolBoxRegion extends VBox
 	{
-		private final Label label = new Label();
+		private final ToolBoxTitle title = new ToolBoxTitle();
+		private final Button upButton = new Button();
+		private final Button downButton = new Button();
 
 		private ToolBoxRegion( final ObservableList<ToolBoxCategory> items )
 		{
 			getStyleClass().setAll( "tool-box-region" );
-			Labeled labeled = getSkinnable();
+			upButton.getStyleClass().addAll( "nav", "up" );
+			downButton.getStyleClass().addAll( "nav", "down" );
 
-			label.alignmentProperty().bind( labeled.alignmentProperty() );
-			label.contentDisplayProperty().bind( labeled.contentDisplayProperty() );
-			label.fontProperty().bind( labeled.fontProperty() );
-			label.graphicProperty().bind( labeled.graphicProperty() );
-			label.graphicTextGapProperty().bind( labeled.graphicTextGapProperty() );
-			label.textAlignmentProperty().bind( labeled.textAlignmentProperty() );
-			label.textFillProperty().bind( labeled.textFillProperty() );
-			label.textOverrunProperty().bind( labeled.textOverrunProperty() );
-			label.textProperty().bind( labeled.textProperty() );
-			label.underlineProperty().bind( labeled.underlineProperty() );
-			label.wrapTextProperty().bind( labeled.wrapTextProperty() );
+			upButton.disableProperty().bind( pager.pageProperty().lessThan( 1 ) );
+			upButton.setOnAction( new EventHandler<ActionEvent>()
+			{
+				@Override
+				public void handle( ActionEvent event )
+				{
+					prevPage();
+				}
+			} );
+
+			downButton.disableProperty().bind(
+					pager.pageProperty().greaterThanOrEqualTo( pager.numPagesProperty().subtract( 1 ) ) );
+			downButton.setOnAction( new EventHandler<ActionEvent>()
+			{
+				@Override
+				public void handle( ActionEvent event )
+				{
+					nextPage();
+				}
+			} );
 
 			items.addListener( new InvalidationListener()
 			{
@@ -220,13 +258,16 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 				@Override
 				public void handle( ScrollEvent event )
 				{
-					if( event.getDeltaY() < 0 )
+					if( expander.expandedCategory.get() == null )
 					{
-						pager.setPage( Math.min( pager.getPage() + 1, pager.getNumPages() - 1 ) );
-					}
-					else
-					{
-						pager.setPage( Math.max( pager.getPage() - 1, 0 ) );
+						if( event.getDeltaY() < 0 )
+						{
+							nextPage();
+						}
+						else
+						{
+							prevPage();
+						}
 					}
 				}
 			} );
@@ -236,19 +277,29 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 
 		private void refresh( Iterable<ToolBoxCategory> items )
 		{
-			getChildren().setAll( label, new Separator() );
+			getChildren().setAll( title, upButton, new Separator() );
 			for( ToolBoxCategory category : items )
 			{
 				getChildren().addAll( category, new Separator() );
 			}
+			getChildren().add( downButton );
+		}
+
+		private void nextPage()
+		{
+			pager.setPage( Math.min( pager.getPage() + 1, pager.getNumPages() - 1 ) );
+		}
+
+		private void prevPage()
+		{
+			pager.setPage( Math.max( pager.getPage() - 1, 0 ) );
 		}
 	}
 
 	private class ToolBoxCategory extends BorderPane
 	{
 		private final ObservableList<E> categoryItems = FXCollections.observableArrayList();
-		private final BooleanProperty expanded = new SimpleBooleanProperty( this, "expanded", false );
-		private final ObjectBinding<E> shownElement = Bindings.when( expanded.not() )
+		private final ObjectBinding<E> shownElement = Bindings.when( expander.expandedCategory.isNotEqualTo( this ) )
 				.then( Bindings.valueAt( categoryItems, 0 ) ).otherwise( ( E )null );
 		private final String category;
 		private final Button expanderButton;
@@ -263,25 +314,18 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 			expanderButton.getStyleClass().add( "expander-button" );
 			expanderButton.disableProperty().bind( Bindings.size( categoryItems ).lessThan( 2 ) );
 
+			maxHeightProperty().bind(
+					Bindings.when( expander.expandedCategory.isEqualTo( this ) ).then( heightProperty() )
+							.otherwise( USE_COMPUTED_SIZE ) );
+			minHeightProperty().bind(
+					Bindings.when( expander.expandedCategory.isEqualTo( this ) ).then( heightProperty() )
+							.otherwise( USE_COMPUTED_SIZE ) );
+
 			expanderButton.setOnAction( new EventHandler<ActionEvent>()
 			{
 				@Override
 				public void handle( ActionEvent event )
 				{
-					expanded.set( true );
-					setPrefHeight( getHeight() );
-					setMinHeight( getHeight() );
-					expander.setOnHidden( new EventHandler<WindowEvent>()
-					{
-						@Override
-						public void handle( WindowEvent windowEvent )
-						{
-							expanded.set( false );
-							setPrefHeight( USE_COMPUTED_SIZE );
-							setMinHeight( USE_COMPUTED_SIZE );
-						}
-					} );
-
 					expander.show( ToolBoxCategory.this );
 				}
 			} );
@@ -325,15 +369,29 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 
 	private class ToolBoxExpander extends PopupControl
 	{
+		private final ObjectProperty<ToolBoxCategory> expandedCategory = new SimpleObjectProperty<>( this,
+				"expandedCategory" );
+
 		private ToolBoxExpander()
 		{
 			getStyleClass().setAll( "tool-box-expander" );
 			setAutoFix( false );
 			setAutoHide( true );
+
+			setOnHidden( new EventHandler<WindowEvent>()
+			{
+				@Override
+				public void handle( WindowEvent event )
+				{
+					expandedCategory.set( null );
+				}
+			} );
 		}
 
 		public void show( ToolBoxCategory category )
 		{
+			expandedCategory.set( category );
+
 			ItemHolder itemHolder = new ItemHolder( category.category );
 			itemHolder.setMinWidth( ToolBoxSkin.this.getWidth() );
 			itemHolder.setMinHeight( category.itemHolder.getHeight() );

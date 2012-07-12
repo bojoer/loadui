@@ -67,7 +67,7 @@ public class CanvasView extends StackPane
 		{
 			ComponentDescriptorView view = new ComponentDescriptorView( input );
 			ToolBox.setCategory( view, input.getCategory() );
-			
+
 			return view;
 		}
 	};
@@ -87,7 +87,7 @@ public class CanvasView extends StackPane
 		bindContentUnordered( componentLayer.getChildren(), components );
 
 		ToolBox<ComponentDescriptorView> descriptors = new ToolBox<>( "Components" );
-		descriptors.setMaxWidth( 90 );
+		descriptors.setMaxWidth( 100 );
 		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
 		StackPane.setMargin( descriptors, new Insets( 10, 0, 10, 0 ) );
 

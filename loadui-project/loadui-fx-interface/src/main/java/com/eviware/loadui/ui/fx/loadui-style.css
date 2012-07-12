@@ -17,11 +17,24 @@
 	-fx-background-insets: 0, 1, 2;
 	-fx-background-radius: 0 3 3 0;
 	-fx-padding: 0 0 15 0;
+	-fx-alignment: center;
+}
+
+.tool-box .nav {
+	-fx-padding: 3 25;
 }
 
 .tool-box .title {
-	-fx-padding: 4;
-	-fx-font-size: 11px;
+	-fx-padding: 2;
+	-fx-font-size: 12;
+	-fx-alignment: baseline-left;
+	-fx-background-color: #4f4f4f;
+	-fx-background-insets: 1;
+	-fx-background-radius: 0 3 0 0;
+}
+
+.tool-box .category {
+	-fx-padding: 0 5 0 0;
 }
 
 .tool-box .separator .line {
