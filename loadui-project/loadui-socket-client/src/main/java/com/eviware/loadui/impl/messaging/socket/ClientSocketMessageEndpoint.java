@@ -253,10 +253,10 @@ public class ClientSocketMessageEndpoint implements MessageEndpoint
 						sendMessages( socket );
 					}
 				}
-					catch( IOException e )
-					{
+				catch( IOException e )
+				{
 					e.printStackTrace();
-					}
+				}
 
 				log.debug( "MessageEndpoint disconnected!" );
 				for( ConnectionListener listener : listeners )

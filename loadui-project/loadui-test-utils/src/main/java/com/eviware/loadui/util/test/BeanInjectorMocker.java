@@ -114,7 +114,7 @@ public class BeanInjectorMocker
 				when( contextMock.getService( referenceMock ) ).thenReturn( value );
 
 				return referenceMock;
-	}
+			}
 		} );
 	}
 

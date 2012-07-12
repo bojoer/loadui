@@ -42,7 +42,7 @@ public class FXMLUtils
 					if( !cls.isInstance( controller ) )
 					{
 						controller = originalFactory.call( cls );
-			}
+					}
 				}
 				catch( Exception e )
 				{

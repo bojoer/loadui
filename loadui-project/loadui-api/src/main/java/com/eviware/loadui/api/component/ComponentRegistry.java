@@ -62,7 +62,7 @@ public interface ComponentRegistry extends BehaviorProvider
 	 *           The ComponentDescriptor to unregister.
 	 */
 	public void unregisterDescriptor( ComponentDescriptor descriptor );
-	
+
 	/**
 	 * Finds a descriptor.
 	 * 

@@ -1,6 +1,5 @@
 package com.eviware.loadui.ui.fx.api.input;
 
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 

@@ -4,22 +4,29 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
-	<osgi:service interface="com.eviware.loadui.api.statistics.StatisticsAggregator" ref="statisticsAggregator" />
-	
-	<osgi:service interface="com.eviware.loadui.api.execution.TestRunner" ref="testRunner" />
-	
-	<osgi:service interface="com.eviware.loadui.api.testevents.TestEventManager" ref="testEventManager" />
-	
-	<osgi:service interface="com.eviware.loadui.api.statistics.store.ExecutionManager" ref="executionManager" />
-	
-	<osgi:reference interface="com.eviware.loadui.api.messaging.BroadcastMessageEndpoint" id="broadcastMessageEndpoint" />
+	<osgi:service interface="com.eviware.loadui.api.statistics.StatisticsAggregator"
+		ref="statisticsAggregator" />
+
+	<osgi:service interface="com.eviware.loadui.api.execution.TestRunner"
+		ref="testRunner" />
+
+	<osgi:service interface="com.eviware.loadui.api.testevents.TestEventManager"
+		ref="testEventManager" />
+
+	<osgi:service
+		interface="com.eviware.loadui.api.statistics.store.ExecutionManager"
+		ref="executionManager" />
+
+	<osgi:reference
+		interface="com.eviware.loadui.api.messaging.BroadcastMessageEndpoint"
+		id="broadcastMessageEndpoint" />
 
 	<osgi:reference interface="com.eviware.loadui.api.dispatch.ExecutorManager"
 		id="executorManager" />
 
 	<osgi:reference interface="java.util.concurrent.ScheduledExecutorService"
 		id="scheduledExecutorService" />
-		
+
 	<osgi:reference interface="java.util.concurrent.ExecutorService"
 		id="executorService" />
 
@@ -35,6 +42,6 @@
 	<osgi:reference
 		interface="com.eviware.loadui.api.addressable.AddressableRegistry" id="addressableRegistry" />
 
-	<osgi:reference
-		interface="com.eviware.loadui.api.testevents.TestEventRegistry" id="testEventRegistry" />
+	<osgi:reference interface="com.eviware.loadui.api.testevents.TestEventRegistry"
+		id="testEventRegistry" />
 </beans>

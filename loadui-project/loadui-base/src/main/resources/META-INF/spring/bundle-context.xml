@@ -11,8 +11,9 @@
 
 	<bean id="scheduledExecutorService" class="com.eviware.loadui.util.ScheduledExecutor"
 		factory-method="getInstance" />
-		
-	<bean id="testEventRegistry" class="com.eviware.loadui.impl.testevents.TestEventRegistryImpl" />
+
+	<bean id="testEventRegistry"
+		class="com.eviware.loadui.impl.testevents.TestEventRegistryImpl" />
 
 	<bean id="executorManager" class="com.eviware.loadui.impl.dispatch.ExecutorManagerImpl"
 		destroy-method="shutdown">
@@ -56,7 +57,7 @@
 			</list>
 		</property>
 	</bean>
-	
+
 	<bean id="addonRegistry" class="com.eviware.loadui.impl.addon.AddonRegistryImpl" />
 
 	<bean id="broadcastMessageEndpoint"
@@ -85,10 +86,12 @@
 		class="com.eviware.loadui.impl.statistics.CounterStatisticsWriter$Factory" />
 	<bean id="variableStatisticsWriter"
 		class="com.eviware.loadui.impl.statistics.VariableStatisticsWriter$Factory" />
-		
-	<bean id="assertionAddonFactory" class="com.eviware.loadui.impl.assertion.AssertionAddonImpl$Factory" />
-	
-	<bean id="assertionFailureEventFactory" class="com.eviware.loadui.impl.assertion.AssertionFailureEvent$Factory" />
+
+	<bean id="assertionAddonFactory"
+		class="com.eviware.loadui.impl.assertion.AssertionAddonImpl$Factory" />
+
+	<bean id="assertionFailureEventFactory"
+		class="com.eviware.loadui.impl.assertion.AssertionFailureEvent$Factory" />
 
 	<bean class="com.eviware.loadui.impl.LoggingUncaughtExceptionHandler"
 		factory-method="setForAllThreads" />

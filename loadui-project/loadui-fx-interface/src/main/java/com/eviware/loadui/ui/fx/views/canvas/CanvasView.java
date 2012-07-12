@@ -36,44 +36,44 @@ public class CanvasView extends StackPane
 {
 	private static final Function<ComponentItem, ComponentView> COMPONENT_TO_VIEW = new Function<ComponentItem, ComponentView>()
 	{
-			@Override
+		@Override
 		public ComponentView apply( final ComponentItem input )
-			{
+		{
 			final ComponentView componentView = new ComponentView( input );
-						componentView.setLayoutX( Integer.parseInt( input.getAttribute( "gui.layoutX", "0" ) ) );
-						componentView.setLayoutY( Integer.parseInt( input.getAttribute( "gui.layoutY", "0" ) ) );
+			componentView.setLayoutX( Integer.parseInt( input.getAttribute( "gui.layoutX", "0" ) ) );
+			componentView.setLayoutY( Integer.parseInt( input.getAttribute( "gui.layoutY", "0" ) ) );
 			Movable movable = Movable.install( componentView, componentView.lookup( "#label" ) );
 			movable.draggingProperty().addListener( new ChangeListener<Boolean>()
-		{
-			@Override
-				public void changed( ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue )
 			{
-					if( !newValue )
+				@Override
+				public void changed( ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue )
 				{
+					if( !newValue )
+					{
 						input.setAttribute( "gui.layoutX", String.valueOf( ( int )componentView.getLayoutX() ) );
 						input.setAttribute( "gui.layoutY", String.valueOf( ( int )componentView.getLayoutY() ) );
-				}
+					}
 				}
 			} );
 
 			return componentView;
-			}
+		}
 	};
 
 	private static final Function<ComponentDescriptor, ComponentDescriptorView> DESCRIPTOR_TO_VIEW = new Function<ComponentDescriptor, ComponentDescriptorView>()
+	{
+		@Override
+		public ComponentDescriptorView apply( ComponentDescriptor input )
 		{
-			@Override
-							public ComponentDescriptorView apply( ComponentDescriptor input )
-			{
-								return new ComponentDescriptorView( input );
-			}
+			return new ComponentDescriptorView( input );
+		}
 	};
 
 	private final CanvasItem canvas;
 	private final ObservableList<ComponentView> components;
 
 	public CanvasView( CanvasItem canvas )
-		{
+	{
 		this.canvas = canvas;
 
 		components = transform(
@@ -117,10 +117,10 @@ public class CanvasView extends StackPane
 					final ComponentDescriptor descriptor = ( ComponentDescriptor )event.getData();
 
 					final Task<ComponentItem> createComponent = new Task<ComponentItem>()
-		{
-			@Override
+					{
+						@Override
 						protected ComponentItem call() throws Exception
-			{
+						{
 							updateMessage( "Creating component: " + descriptor.getLabel() );
 
 							ComponentItem component = CanvasView.this.canvas.createComponent( descriptor.getLabel(),
@@ -130,22 +130,22 @@ public class CanvasView extends StackPane
 							component.setAttribute( "gui.layoutY", String.valueOf( ( int )position.getY() ) );
 
 							return component;
-				}
+						}
 					};
 
 					createComponent.setOnFailed( new EventHandler<WorkerStateEvent>()
-				{
+					{
 						@Override
 						public void handle( WorkerStateEvent stateEvent )
-				{
+						{
 							createComponent.getException().printStackTrace();
-				}
+						}
 					} );
 
 					fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, createComponent ) );
 
 					event.consume();
-			}
+				}
 			}
 		} );
 

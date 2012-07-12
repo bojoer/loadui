@@ -34,9 +34,9 @@ public class CalendarUtils
 
 	public static String formatAbsoluteTime( long time )
 	{
-		return formatAbsoluteTime( new Date(time) );
+		return formatAbsoluteTime( new Date( time ) );
 	}
-	
+
 	public static String formatAbsoluteTime( Date date )
 	{
 		if( date != null )

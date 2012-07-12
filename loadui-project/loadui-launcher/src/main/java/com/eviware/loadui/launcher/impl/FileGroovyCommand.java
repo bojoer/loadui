@@ -47,5 +47,5 @@ public class FileGroovyCommand extends AbstractGroovyCommand
 		{
 			throw new RuntimeException( e );
 		}
-				}
+	}
 }

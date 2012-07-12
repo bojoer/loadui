@@ -39,25 +39,25 @@ public class LoadUIFXLauncher extends LoadUILauncher
 	{
 		try (InputStream is = getClass().getResourceAsStream( "/packages-extra.txt" ))
 		{
-		if( is != null )
-		{
-		StringBuilder out = new StringBuilder();
+			if( is != null )
+			{
+				StringBuilder out = new StringBuilder();
 				byte[] b = new byte[4096];
 				for( int n; ( n = is.read( b ) ) != -1; )
 					out.append( new String( b, 0, n ) );
 
-		String extra = configProps.getProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, "" );
-		if( !extra.isEmpty() )
-			out.append( "," ).append( extra );
+				String extra = configProps.getProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, "" );
+				if( !extra.isEmpty() )
+					out.append( "," ).append( extra );
 
-		configProps.setProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, out.toString() );
+				configProps.setProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, out.toString() );
+			}
+		}
+		catch( IOException e )
+		{
+			e.printStackTrace();
+		}
 	}
-			}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-			}
 
 	public static class FXApplication extends Application
 	{

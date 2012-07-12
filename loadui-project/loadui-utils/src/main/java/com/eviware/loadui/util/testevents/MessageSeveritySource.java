@@ -21,7 +21,8 @@ import com.eviware.loadui.util.StringUtils;
 
 enum MessageSeveritySource implements TestEvent.Source<MessageTestEvent>
 {
-	NOTIFICATION_SOURCE( MessageLevel.NOTIFICATION ), WARNING_SOURCE( MessageLevel.WARNING ), ERROR_SOURCE( MessageLevel.ERROR );
+	NOTIFICATION_SOURCE( MessageLevel.NOTIFICATION ), WARNING_SOURCE( MessageLevel.WARNING ), ERROR_SOURCE(
+			MessageLevel.ERROR );
 
 	static MessageSeveritySource getSource( MessageLevel level )
 	{

@@ -36,12 +36,12 @@ public class ProjectRefNode extends Region
 						.spacing( 5 )
 						.children(
 								ButtonBuilder.create().text( "X" ).onAction( new EventHandler<ActionEvent>()
-						{
-							@Override
-							public void handle( ActionEvent arg0 )
-							{
-								projectRef.delete( false );
-							}
+								{
+									@Override
+									public void handle( ActionEvent arg0 )
+									{
+										projectRef.delete( false );
+									}
 								} ).build(),
 								projectRefLabel,
 								RectangleBuilder.create().width( 100 ).height( 75 ).fill( Color.PINK )
@@ -51,7 +51,7 @@ public class ProjectRefNode extends Region
 											public void handle( MouseEvent event )
 											{
 												fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, projectRef ) );
-	}
+											}
 										} ).build() ).build() );
 	}
 }

@@ -353,7 +353,7 @@ public abstract class TableBase implements Releasable
 		{
 			stm.execute( "drop table " + tableName );
 		}
-		}
+	}
 
 	@Override
 	public synchronized void release()

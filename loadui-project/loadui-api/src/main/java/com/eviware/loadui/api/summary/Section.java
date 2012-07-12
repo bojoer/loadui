@@ -22,7 +22,7 @@ import javax.swing.table.TableModel;
 public interface Section
 {
 	public String getTitle();
-	
+
 	public Map<String, String> getValues();
 
 	public Map<String, TableModel> getTables();

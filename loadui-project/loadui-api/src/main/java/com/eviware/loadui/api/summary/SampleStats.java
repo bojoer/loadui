@@ -15,7 +15,8 @@
  */
 package com.eviware.loadui.api.summary;
 
-public interface SampleStats {
+public interface SampleStats
+{
 
 	public abstract long getTimeTaken();
 

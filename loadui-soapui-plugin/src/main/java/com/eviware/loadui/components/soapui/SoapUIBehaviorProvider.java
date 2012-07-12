@@ -36,7 +36,7 @@ public class SoapUIBehaviorProvider implements BehaviorProvider
 	{
 		if( SoapUISamplerComponent.TYPE.equals( componentType ) )
 			return new SoapUISamplerComponent( context );
-		
+
 		if( MockServiceComponent.TYPE.equals( componentType ) )
 			return new MockServiceComponent( context );
 

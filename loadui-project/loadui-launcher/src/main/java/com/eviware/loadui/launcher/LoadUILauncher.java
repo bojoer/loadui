@@ -97,7 +97,7 @@ public class LoadUILauncher
 		{
 			// Ignore
 		}
-				}
+	}
 
 	protected Framework framework;
 	protected final Properties configProps;
@@ -154,7 +154,7 @@ public class LoadUILauncher
 			{
 				e.printStackTrace();
 			}
-					}
+		}
 		else
 		{
 			System.setProperty( LOADUI_BUILD_NUMBER, "unknown" );
@@ -352,12 +352,12 @@ public class LoadUILauncher
 			try (RandomAccessFile randomAccessFile = new RandomAccessFile( lockFile, "rw" ))
 			{
 				FileLock lock = randomAccessFile.getChannel().tryLock();
-			if( lock == null )
-			{
-				System.err.println( "An instance of loadUI is already running!" );
-				exitInError();
+				if( lock == null )
+				{
+					System.err.println( "An instance of loadUI is already running!" );
+					exitInError();
+				}
 			}
-		}
 		}
 		catch( OverlappingFileLockException e )
 		{
@@ -481,7 +481,7 @@ public class LoadUILauncher
 			{
 				e.printStackTrace();
 			}
-			}
+		}
 
 		if( !keystore.exists() )
 		{
@@ -510,7 +510,7 @@ public class LoadUILauncher
 		{
 			e.printStackTrace();
 		}
-			}
+	}
 
 	private void createTrustStore( File truststore )
 	{
@@ -527,7 +527,7 @@ public class LoadUILauncher
 		{
 			e.printStackTrace();
 		}
-			}
+	}
 
 	protected void setDefaultSystemProperty( String property, String value )
 	{
@@ -550,8 +550,8 @@ public class LoadUILauncher
 
 		try (InputStream is = getClass().getResourceAsStream( "/packages-extra.txt" ))
 		{
-		if( is != null )
-		{
+			if( is != null )
+			{
 				StringBuilder out = new StringBuilder();
 				byte[] b = new byte[4096];
 				for( int n; ( n = is.read( b ) ) != -1; )
@@ -563,10 +563,10 @@ public class LoadUILauncher
 
 				configProps.setProperty( ORG_OSGI_FRAMEWORK_SYSTEM_PACKAGES_EXTRA, out.toString() );
 			}
-			}
-				catch( IOException e )
-				{
-					e.printStackTrace();
-				}
-			}
+		}
+		catch( IOException e )
+		{
+			e.printStackTrace();
+		}
+	}
 }

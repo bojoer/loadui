@@ -48,17 +48,17 @@ public class StatisticsView extends StackPane
 				{
 					if( event.getEventType() == IntentEvent.INTENT_OPEN )
 					{
-					final AnalysisView analysisView = new AnalysisView( project, executionList );
+						final AnalysisView analysisView = new AnalysisView( project, executionList );
 						analysisView.setCurrentExecution( ( Execution )event.getArg() );
-					getChildren().setAll( analysisView );
+						getChildren().setAll( analysisView );
 						event.consume();
-				}
+					}
 					else if( event.getEventType() == IntentEvent.INTENT_CLOSE )
-				{
-					getChildren().setAll( new ResultView( executionList ) );
+					{
+						getChildren().setAll( new ResultView( executionList ) );
 						event.consume();
+					}
 				}
-			}
 			}
 		} );
 

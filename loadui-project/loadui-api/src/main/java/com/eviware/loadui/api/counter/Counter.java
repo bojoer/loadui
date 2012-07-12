@@ -22,6 +22,6 @@ public interface Counter extends Value<Long>
 	public long get();
 
 	public void increment();
-	
+
 	public void increment( long value );
 }

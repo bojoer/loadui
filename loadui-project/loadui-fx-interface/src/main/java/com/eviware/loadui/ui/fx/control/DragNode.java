@@ -125,8 +125,8 @@ public class DragNode extends PopupControl implements Draggable
 		if( isAcceptable() != acceptable )
 		{
 			acceptablePropertyImpl().set( acceptable );
-			}
-			}
+		}
+	}
 
 	@Override
 	public ReadOnlyBooleanProperty acceptableProperty()
@@ -286,51 +286,51 @@ public class DragNode extends PopupControl implements Draggable
 					Node currentNode = NodeUtils.findFrontNodeAtCoordinate( scene.getRoot(), new Point2D( event.getSceneX(),
 							event.getSceneY() ) );
 					if( dragNode.currentlyHovered != currentNode )
-		{
+					{
 						dragNode.setAcceptable( false );
 						if( dragNode.currentlyHovered != null )
-			{
+						{
 							dragNode.currentlyHovered.fireEvent( new DraggableEvent( null, dragNode.getNode(),
 									dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_EXITED, dragNode.getData(), event
 											.getSceneX(), event.getSceneY() ) );
 						}
 						if( currentNode != null )
-				{
+						{
 							currentNode.fireEvent( new DraggableEvent( new Runnable()
-					{
+							{
 								@Override
 								public void run()
-					{
+								{
 									dragNode.setAcceptable( true );
-					}
+								}
 							}, dragNode.getNode(), currentNode, DraggableEvent.DRAGGABLE_ENTERED, dragNode.getData(), event
 									.getSceneX(), event.getSceneY() ) );
-				}
+						}
 
 						dragNode.currentlyHovered = currentNode;
-			}
+					}
 				}
 			}
 		};
 
 		private final EventHandler<MouseEvent> RELEASED_HANDLER = new EventHandler<MouseEvent>()
 		{
-				@Override
+			@Override
 			public void handle( MouseEvent event )
-				{
+			{
 				Node source = ( Node )event.getSource();
 				final DragNode dragNode = ( DragNode )source.getProperties().get( DRAG_NODE_PROP_KEY );
 				if( dragNode != null )
-			{
-					if( dragNode.currentlyHovered != null )
 				{
+					if( dragNode.currentlyHovered != null )
+					{
 						dragNode.currentlyHovered.fireEvent( new DraggableEvent( null, dragNode.getNode(),
 								dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_EXITED, dragNode.getData(), event
 										.getSceneX(), event.getSceneY() ) );
 
-					if( dragNode.isAcceptable() )
-					{
-						dragNode.currentlyHovered.fireEvent( new DraggableEvent( null, dragNode.getNode(),
+						if( dragNode.isAcceptable() )
+						{
+							dragNode.currentlyHovered.fireEvent( new DraggableEvent( null, dragNode.getNode(),
 									dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_DROPPED, dragNode.getData(), event
 											.getSceneX(), event.getSceneY() ) );
 						}
@@ -340,7 +340,7 @@ public class DragNode extends PopupControl implements Draggable
 					dragNode.revert();
 					dragNode.setAcceptable( false );
 					dragNode.setDragging( false );
-		}
+				}
 			}
 		};
 

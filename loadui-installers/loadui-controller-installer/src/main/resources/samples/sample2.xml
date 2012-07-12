@@ -1,157 +1,357 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:loadui-project label="Sample Project 2" id="fca3a619-9128-4ff1-9f2d-bc535fd79d39" xmlns:con="http://eviware.com/loadui/config"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="CanvasItem.abortOnFinish" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="ModelItem.saveReport" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="ModelItem.reportFolder" type="java.lang.String"/><con:property propagates="true" key="ModelItem.reportFormat" type="java.lang.String"/><con:property propagates="true" key="ProjectItem.statisticNumberOfAutosaves" type="java.lang.Long">5</con:property></con:properties><con:attributes><con:property key="miniature">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
-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
-kVGPAAAAAABJRU5ErkJggg==
-</con:property><con:property key="limits">Time=60;</con:property><con:property key="gui.note.0">372;204;419;43;This sample project shows more advanced Generator and Runner components.</con:property><con:property key="gui.note.1">630;344;212;117;1. The Ramp Sequence Generator will ramp up (and then down) the number of Virtual Users automatically.
+<con:loadui-project label="Sample Project 2"
+	id="fca3a619-9128-4ff1-9f2d-bc535fd79d39" xmlns:con="http://eviware.com/loadui/config">
+	<con:properties>
+		<con:property propagates="true" key="ModelItem.description"
+			type="java.lang.String" />
+		<con:property propagates="true" key="CanvasItem.abortOnFinish"
+			type="java.lang.Boolean">false</con:property>
+		<con:property propagates="true" key="ModelItem.saveReport"
+			type="java.lang.Boolean">false</con:property>
+		<con:property propagates="true" key="ModelItem.reportFolder"
+			type="java.lang.String" />
+		<con:property propagates="true" key="ModelItem.reportFormat"
+			type="java.lang.String" />
+		<con:property propagates="true"
+			key="ProjectItem.statisticNumberOfAutosaves" type="java.lang.Long">5</con:property>
+	</con:properties>
+	<con:attributes>
+		<con:property key="miniature">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
+			kVGPAAAAAABJRU5ErkJggg==
+		</con:property>
+		<con:property key="limits">Time=60;</con:property>
+		<con:property key="gui.note.0">372;204;419;43;This sample project
+			shows more advanced Generator and Runner components.</con:property>
+		<con:property key="gui.note.1">630;344;212;117;1. The Ramp Sequence
+			Generator will ramp up (and then down) the number of Virtual Users
+			automatically. Hover the mouse cursor over the knobs to see their
+			values.</con:property>
+		<con:property key="gui.note.2">754;559;195;83;2. The soapUI Runner is
+			all the power of soapUI in a loadUI component. It can run any soapUI
+			TestCase.</con:property>
+		<con:property key="gui.note.3">1334;535;135;118;This component
+			simulates a real server. In a real load test, you would of course not
+			need this.</con:property>
+		<con:property key="gui.statistics.view">statistics.view</con:property>
+		<con:property key="gui.note.4">225;899;497;98;3. Let's hit the play
+			button and see what happens in the Statistics Workbench. The test is
+			set to stop after one minute.
 
-Hover the mouse cursor over the knobs to see their values.</con:property><con:property key="gui.note.2">754;559;195;83;2. The soapUI Runner is all the power of soapUI in a loadUI component. It can run any soapUI TestCase.</con:property><con:property key="gui.note.3">1334;535;135;118;This component simulates a real server. In a real load test, you would of course not need this.</con:property><con:property key="gui.statistics.view">statistics.view</con:property><con:property key="gui.note.4">225;899;497;98;3. Let's hit the play button and see what happens in the Statistics Workbench. The test is set to stop after one minute.
+			If you're feeling confident, try adding an assertion (in the Assertions
+			panel below) before running the test.</con:property>
+	</con:attributes>
+	<con:addons />
+	<con:component
+		type="com.eviware.loadui.components.soapui.SoapUISamplerComponent"
+		label="soapUI Runner" id="95145def-254b-49cf-93c8-8b64faddea23">
+		<con:properties>
+			<con:property propagates="true" key="ModelItem.description"
+				type="java.lang.String" />
+			<con:property propagates="true" key="concurrentSamples"
+				type="java.lang.Long">100</con:property>
+			<con:property propagates="true" key="maxQueueSize" type="java.lang.Long">1000</con:property>
+			<con:property propagates="true" key="countDiscarded"
+				type="java.lang.Boolean">false</con:property>
+			<con:property propagates="false" key="projectFile" type="java.io.File">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property>
+			<con:property propagates="true" key="_projectFileworkingCopy"
+				type="java.io.File">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property>
+			<con:property propagates="true" key="_projectPassword"
+				xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" />
+			<con:property propagates="false" key="projectRelativePath"
+				type="java.lang.String">soapUIsample.xml</con:property>
+			<con:property propagates="true" key="useProjectRelativePath"
+				type="java.lang.Boolean">true</con:property>
+			<con:property propagates="true" key="testSuite" type="java.lang.String">Simple
+				Sample</con:property>
+			<con:property propagates="true" key="testCase" type="java.lang.String">Simple
+				Request</con:property>
+			<con:property propagates="true" key="raiseError" type="java.lang.Boolean">true</con:property>
+			<con:property propagates="true" key="outputTestCaseProperties"
+				type="java.lang.Boolean">true</con:property>
+			<con:property propagates="true" key="OutputLevel" type="java.lang.String">TestCase
+				only</con:property>
+			<con:property propagates="true" key="_testCasePropertiesTableModel"
+				type="java.lang.String" />
+			<con:property propagates="true" key="closeConnectionsAfterRequest"
+				type="java.lang.Boolean">false</con:property>
+			<con:property propagates="true" key="disabledTestSteps"
+				type="java.lang.String" />
+			<con:property propagates="true" key="disableSoapuiAssertions"
+				type="java.lang.Boolean">false</con:property>
+			<con:property propagates="true" key="_valueToOverride_sessionId"
+				type="java.lang.String">6960235571185172</con:property>
+			<con:property propagates="true" key="_valueToOverride_foo"
+				type="java.lang.String">bar</con:property>
+		</con:properties>
+		<con:attributes>
+			<con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property>
+			<con:property key="gui.layoutX">218</con:property>
+			<con:property key="gui.layoutY">558</con:property>
+		</con:attributes>
+		<con:addons />
+	</con:component>
+	<con:component
+		type="com.eviware.loadui.components.soapui.MockServiceComponent"
+		label="Mock Server" id="509367f2-a46f-43a1-a119-f53c89facdd5">
+		<con:properties>
+			<con:property propagates="true" key="ModelItem.description"
+				type="java.lang.String" />
+			<con:property propagates="true" key="stateProperty"
+				type="java.lang.Boolean">true</con:property>
+			<con:property propagates="true" key="projectFile" type="java.io.File">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property>
+			<con:property propagates="true" key="_projectPassword"
+				xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" />
+			<con:property propagates="true" key="projectRelativePath"
+				type="java.lang.String">soapUIsample.xml</con:property>
+			<con:property propagates="true" key="useProjectRelativePath"
+				type="java.lang.Boolean">true</con:property>
+			<con:property propagates="true" key="mockService" type="java.lang.String">MockService</con:property>
+			<con:property propagates="true" key="path" type="java.lang.String">/mockServer</con:property>
+			<con:property propagates="true" key="port" type="java.lang.String">19397</con:property>
+			<con:property propagates="true" key="addRequest" type="java.lang.Boolean">false</con:property>
+			<con:property propagates="true" key="addResponse" type="java.lang.Boolean">false</con:property>
+		</con:properties>
+		<con:attributes>
+			<con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property>
+			<con:property key="gui.layoutX">1186</con:property>
+			<con:property key="gui.layoutY">547</con:property>
+			<con:property key="gui.compact">true</con:property>
+		</con:attributes>
+		<con:addons />
+	</con:component>
+	<con:component type="com.eviware.loadui.groovy.GroovyComponent"
+		label="Ramp Sequence" id="4c574e08-9ed2-4807-9f42-4d2078257a3f"
+		category="generators">
+		<con:properties>
+			<con:property propagates="true" key="ModelItem.description"
+				type="java.lang.String" />
+			<con:property propagates="true" key="_script" type="java.lang.String">/**
+				* Ramps up, holds steady and then ramps down.
+				*
+				* @id com.eviware.MultiRamp
+				* @name Ramp Sequence
+				* @category generators
+				* @help http://loadui.org/Generators/ramp-sequence.html
+				* @nonBlocking true
+				*/
 
-If you're feeling confident, try adding an assertion (in the Assertions panel below) before running the test.</con:property></con:attributes><con:addons/><con:component type="com.eviware.loadui.components.soapui.SoapUISamplerComponent" label="soapUI Runner" id="95145def-254b-49cf-93c8-8b64faddea23"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="concurrentSamples" type="java.lang.Long">100</con:property><con:property propagates="true" key="maxQueueSize" type="java.lang.Long">1000</con:property><con:property propagates="true" key="countDiscarded" type="java.lang.Boolean">false</con:property><con:property propagates="false" key="projectFile" type="java.io.File">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="_projectFileworkingCopy" type="java.io.File">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="false" key="projectRelativePath" type="java.lang.String">soapUIsample.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="testSuite" type="java.lang.String">Simple Sample</con:property><con:property propagates="true" key="testCase" type="java.lang.String">Simple Request</con:property><con:property propagates="true" key="raiseError" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="outputTestCaseProperties" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="OutputLevel" type="java.lang.String">TestCase only</con:property><con:property propagates="true" key="_testCasePropertiesTableModel" type="java.lang.String"/><con:property propagates="true" key="closeConnectionsAfterRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="disabledTestSteps" type="java.lang.String"/><con:property propagates="true" key="disableSoapuiAssertions" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="_valueToOverride_sessionId" type="java.lang.String">6960235571185172</con:property><con:property propagates="true" key="_valueToOverride_foo" type="java.lang.String">bar</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI Runner</con:property><con:property key="gui.layoutX">218</con:property><con:property key="gui.layoutY">558</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.components.soapui.MockServiceComponent" label="Mock Server" id="509367f2-a46f-43a1-a119-f53c89facdd5"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="stateProperty" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="projectFile" type="java.io.File">D:\workspace\loadui-installers\loadui-pro-controller-installer\target\main\samples\soapUIsample.xml</con:property><con:property propagates="true" key="_projectPassword" xsi:nil="true" type="java.lang.String" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:property propagates="true" key="projectRelativePath" type="java.lang.String">soapUIsample.xml</con:property><con:property propagates="true" key="useProjectRelativePath" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="mockService" type="java.lang.String">MockService</con:property><con:property propagates="true" key="path" type="java.lang.String">/mockServer</con:property><con:property propagates="true" key="port" type="java.lang.String">19397</con:property><con:property propagates="true" key="addRequest" type="java.lang.Boolean">false</con:property><con:property propagates="true" key="addResponse" type="java.lang.Boolean">false</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">soapUI MockService</con:property><con:property key="gui.layoutX">1186</con:property><con:property key="gui.layoutY">547</con:property><con:property key="gui.compact">true</con:property></con:attributes><con:addons/></con:component><con:component type="com.eviware.loadui.groovy.GroovyComponent" label="Ramp Sequence" id="4c574e08-9ed2-4807-9f42-4d2078257a3f" category="generators"><con:properties><con:property propagates="true" key="ModelItem.description" type="java.lang.String"/><con:property propagates="true" key="_script" type="java.lang.String">/**
- * Ramps up, holds steady and then ramps down.
- *
- * @id com.eviware.MultiRamp
- * @name Ramp Sequence
- * @category generators
- * @help http://loadui.org/Generators/ramp-sequence.html
- * @nonBlocking true
- */
+				import java.util.concurrent.TimeUnit
 
-import java.util.concurrent.TimeUnit
+				createProperty( 'rampLength', Long, 10 ) { calculateAcceleration() }
+				createProperty( 'peakRate', Long, 10 ) { calculateAcceleration() }
+				createProperty( 'peakLength', Long, 10 )
+				createProperty( 'peakRateUnit', String, 'sec' ) { calculateAcceleration(); redraw()
+				}
 
-createProperty( 'rampLength', Long, 10 ) { calculateAcceleration() }
-createProperty( 'peakRate', Long, 10 ) { calculateAcceleration() }
-createProperty( 'peakLength', Long, 10 )
-createProperty( 'peakRateUnit', String, 'sec' ) { calculateAcceleration(); redraw() }
+				future = null
+				cancellingFuture = null
+				startTime = 0
+				calculateAcceleration()
 
-future = null
-cancellingFuture = null
-startTime = 0
-calculateAcceleration()
+				onAction( 'START' ) {
+				calculateAcceleration()
+				startTime = currentTime()
+				hasPeaked = false
+				scheduleNext()
+				}
 
-onAction( 'START' ) {
-	calculateAcceleration()
-	startTime = currentTime()
-	hasPeaked = false
-	scheduleNext()
-}
+				onAction( 'STOP' ) {
+				future?.cancel( true )
+				cancellingFuture?.cancel( true )
+				startTime = null
+				}
 
-onAction( 'STOP' ) {
-	future?.cancel( true )
-	cancellingFuture?.cancel( true )
-	startTime = null
-}
+				scheduleNext = {
+				def t0 = getT0()
 
-scheduleNext = {
-	def t0 = getT0()
-	
-	if( t0 >= rampLength.value &amp;&amp; !hasPeaked ) {
-		hasPeaked = true
-		def delay = 1000000/peakRate.value
-		if( peakRateUnit.value == 'min' )
-			delay = 1000000/(peakRate.value/60)
-		future = scheduleAtFixedRate( { trigger() }, delay, delay, TimeUnit.MICROSECONDS )
-		cancellingFuture = schedule( {
-			future?.cancel( true )
-			a = a*-1
-			scheduleNext( rampLength.value )
-		}, peakLength.value, TimeUnit.SECONDS )
-	} else if( t0 >= 0 ) {
-		t1 = Math.sqrt( 2/a + t0**2 )
-		
-		future?.cancel( true )
-		def diff = Math.abs( t1 - getT0() )
-		if( !Double.isNaN( diff ) ) {
-			future = schedule( {
-					trigger()
-					scheduleNext( t1 )
+				if( t0 >= rampLength.value &amp;&amp; !hasPeaked ) {
+				hasPeaked = true
+				def delay = 1000000/peakRate.value
+				if( peakRateUnit.value == 'min' )
+				delay = 1000000/(peakRate.value/60)
+				future = scheduleAtFixedRate( { trigger() }, delay, delay,
+				TimeUnit.MICROSECONDS )
+				cancellingFuture = schedule( {
+				future?.cancel( true )
+				a = a*-1
+				scheduleNext( rampLength.value )
+				}, peakLength.value, TimeUnit.SECONDS )
+				} else if( t0 >= 0 ) {
+				t1 = Math.sqrt( 2/a + t0**2 )
+
+				future?.cancel( true )
+				def diff = Math.abs( t1 - getT0() )
+				if( !Double.isNaN( diff ) ) {
+				future = schedule( {
+				trigger()
+				scheduleNext( t1 )
 				}, ( diff*1000000) as long, TimeUnit.MICROSECONDS )
-		}
-	}
-}
+				}
+				}
+				}
 
-def getT0() {
-	if( !startTime ) return 0
-	relativeTime = currentTime() - startTime
-	if( relativeTime >= rampLength.value + peakLength.value )
-		return startTime + rampLength.value*2 + peakLength.value - currentTime()
-	if( relativeTime >= rampLength.value )
-		return rampLength.value
-	return relativeTime
-}
+				def getT0() {
+				if( !startTime ) return 0
+				relativeTime = currentTime() - startTime
+				if( relativeTime >= rampLength.value + peakLength.value )
+				return startTime + rampLength.value*2 + peakLength.value - currentTime()
+				if( relativeTime >= rampLength.value )
+				return rampLength.value
+				return relativeTime
+				}
 
-def redraw() {
-	layout {
-		property( property:rampLength, label:'Ramp Duration\n(sec)', min:1 )
-		property( property:peakLength, label:'Peak Duration\n(sec)', min:0 )
-		separator( vertical:true )
-		property( property:peakRate, label:'Peak Rate\n(VU/' + peakRateUnit.value + ')', min:1 )
-		property( property:peakRateUnit, label:'Unit', options:['sec','min'] )
-		separator( vertical:true )
-		box( widget:'display' ) {
-			node( label:'Rate', content: { if( getT0() > 0 ) String.format( '%7.1f', peakRateUnit.value == 'sec' ? a*getT0() : a*getT0()*60 ) else 0 }, constraints:'w 45!' )
-		}
-	}
-}
-redraw()
+				def redraw() {
+				layout {
+				property( property:rampLength, label:'Ramp Duration\n(sec)', min:1 )
+				property( property:peakLength, label:'Peak Duration\n(sec)', min:0 )
+				separator( vertical:true )
+				property( property:peakRate, label:'Peak Rate\n(VU/' + peakRateUnit.value +
+				')', min:1 )
+				property( property:peakRateUnit, label:'Unit', options:['sec','min'] )
+				separator( vertical:true )
+				box( widget:'display' ) {
+				node( label:'Rate', content: { if( getT0() > 0 ) String.format( '%7.1f',
+				peakRateUnit.value == 'sec' ? a*getT0() : a*getT0()*60 ) else 0 },
+				constraints:'w 45!' )
+				}
+				}
+				}
+				redraw()
 
-compactLayout {
-	box( widget:'display' ) {
-		node( label:'Rate', content: { if( getT0() > 0 ) String.format( '%7.1f', peakRateUnit.value == 'sec' ? a*getT0() : a*getT0()*60 ) else 0 }, constraints:'w 45!' )
-	}
-}
+				compactLayout {
+				box( widget:'display' ) {
+				node( label:'Rate', content: { if( getT0() > 0 ) String.format( '%7.1f',
+				peakRateUnit.value == 'sec' ? a*getT0() : a*getT0()*60 ) else 0 },
+				constraints:'w 45!' )
+				}
+				}
 
-def currentTime() {
-	System.currentTimeMillis() / 1000
-}
+				def currentTime() {
+				System.currentTimeMillis() / 1000
+				}
 
-def calculateAcceleration() {
-	if( peakRateUnit.value == 'sec' )
-		a = peakRate.value / rampLength.value
-	else
-		a = (peakRate.value/60) / rampLength.value
-}
-</con:property><con:property propagates="true" key="stateProperty" type="java.lang.Boolean">true</con:property><con:property propagates="true" key="rampLength" type="java.lang.Long">20</con:property><con:property propagates="true" key="peakRate" type="java.lang.Long">20</con:property><con:property propagates="true" key="peakLength" type="java.lang.Long">20</con:property><con:property propagates="true" key="peakRateUnit" type="java.lang.String">sec</con:property></con:properties><con:attributes><con:property key="com.eviware.loadui.api.model.ComponentItem@type">Ramp Sequence</con:property><con:property key="_digest">075993c57e77051ef17b88cc13003df9</con:property><con:property key="_id">com.eviware.MultiRamp</con:property><con:property key="_classLoader">com.eviware.MultiRamp</con:property><con:property key="gui.layoutX">219</con:property><con:property key="gui.layoutY">341</con:property><con:property key="gui.compact">false</con:property></con:attributes><con:addons/></con:component><con:connection outputTerminalId="4c574e08-9ed2-4807-9f42-4d2078257a3f/triggerTerminal" inputTerminalId="95145def-254b-49cf-93c8-8b64faddea23/triggerTerminal"/><con:statistics><con:page title="General"><con:chartGroup type="com.eviware.loadui.api.statistics.model.chart.line.LineChartView" title="Transactions Per Second"><con:chart statisticHolder="95145def-254b-49cf-93c8-8b64faddea23"><con:attributes><con:property key="_CHART_segments">63:36:95145def-254b-49cf-93c8-8b64faddea2310:Throughput3:TPS4:main</con:property><con:property key="_CHART__SEGMENT_36:95145def-254b-49cf-93c8-8b64faddea2310:Throughput3:TPS4:main_color">#00B2D2</con:property><con:property key="_CHART_saved">true</con:property><con:property key="_CHART_zoomLevel">SECONDS</con:property><con:property key="_CHART_timeSpan">66916</con:property><con:property key="_CHART_height">169.0</con:property><con:property key="_CHART__SEGMENT_36:95145def-254b-49cf-93c8-8b64faddea2310:Throughput3:TPS4:main_width">1</con:property><con:property key="_CHART_position">0</con:property></con:attributes></con:chart><con:attributes><con:property key="_CHARTGROUP_zoomLevel">SECONDS</con:property><con:property key="_CHARTGROUP_timeSpan">68250</con:property><con:property key="_CHARTGROUP_height">163.0</con:property><con:property key="expand">none</con:property><con:property key="_CHARTGROUP_position">54998</con:property></con:attributes></con:chartGroup><con:chartGroup type="com.eviware.loadui.api.statistics.model.chart.line.LineChartView" title="Time Taken"><con:chart statisticHolder="95145def-254b-49cf-93c8-8b64faddea23"><con:attributes><con:property key="_CHART_segments">67:36:95145def-254b-49cf-93c8-8b64faddea2310:Time Taken7:AVERAGE4:main</con:property><con:property key="_CHART__SEGMENT_36:95145def-254b-49cf-93c8-8b64faddea2310:Time Taken7:AVERAGE4:main_color">#9BCD00</con:property><con:property key="_CHART_saved">true</con:property><con:property key="_CHART_zoomLevel">SECONDS</con:property><con:property key="_CHART_timeSpan">6666</con:property><con:property key="_CHART_position">58332</con:property><con:property key="_CHART_height">163.0</con:property></con:attributes></con:chart><con:attributes><con:property key="_CHARTGROUP_zoomLevel">SECONDS</con:property><con:property key="_CHARTGROUP_timeSpan">68166</con:property><con:property key="_CHARTGROUP_position">0</con:property><con:property key="expand">none</con:property></con:attributes></con:chartGroup></con:page></con:statistics></con:loadui-project>
+				def calculateAcceleration() {
+				if( peakRateUnit.value == 'sec' )
+				a = peakRate.value / rampLength.value
+				else
+				a = (peakRate.value/60) / rampLength.value
+				}
+			</con:property>
+			<con:property propagates="true" key="stateProperty"
+				type="java.lang.Boolean">true</con:property>
+			<con:property propagates="true" key="rampLength" type="java.lang.Long">20</con:property>
+			<con:property propagates="true" key="peakRate" type="java.lang.Long">20</con:property>
+			<con:property propagates="true" key="peakLength" type="java.lang.Long">20</con:property>
+			<con:property propagates="true" key="peakRateUnit" type="java.lang.String">sec</con:property>
+		</con:properties>
+		<con:attributes>
+			<con:property key="com.eviware.loadui.api.model.ComponentItem@type">Ramp Sequence</con:property>
+			<con:property key="_digest">075993c57e77051ef17b88cc13003df9</con:property>
+			<con:property key="_id">com.eviware.MultiRamp</con:property>
+			<con:property key="_classLoader">com.eviware.MultiRamp</con:property>
+			<con:property key="gui.layoutX">219</con:property>
+			<con:property key="gui.layoutY">341</con:property>
+			<con:property key="gui.compact">false</con:property>
+		</con:attributes>
+		<con:addons />
+	</con:component>
+	<con:connection outputTerminalId="4c574e08-9ed2-4807-9f42-4d2078257a3f/triggerTerminal"
+		inputTerminalId="95145def-254b-49cf-93c8-8b64faddea23/triggerTerminal" />
+	<con:statistics>
+		<con:page title="General">
+			<con:chartGroup
+				type="com.eviware.loadui.api.statistics.model.chart.line.LineChartView"
+				title="Transactions Per Second">
+				<con:chart statisticHolder="95145def-254b-49cf-93c8-8b64faddea23">
+					<con:attributes>
+						<con:property key="_CHART_segments">63:36:95145def-254b-49cf-93c8-8b64faddea2310:Throughput3:TPS4:main</con:property>
+						<con:property
+							key="_CHART__SEGMENT_36:95145def-254b-49cf-93c8-8b64faddea2310:Throughput3:TPS4:main_color">#00B2D2</con:property>
+						<con:property key="_CHART_saved">true</con:property>
+						<con:property key="_CHART_zoomLevel">SECONDS</con:property>
+						<con:property key="_CHART_timeSpan">66916</con:property>
+						<con:property key="_CHART_height">169.0</con:property>
+						<con:property
+							key="_CHART__SEGMENT_36:95145def-254b-49cf-93c8-8b64faddea2310:Throughput3:TPS4:main_width">1</con:property>
+						<con:property key="_CHART_position">0</con:property>
+					</con:attributes>
+				</con:chart>
+				<con:attributes>
+					<con:property key="_CHARTGROUP_zoomLevel">SECONDS</con:property>
+					<con:property key="_CHARTGROUP_timeSpan">68250</con:property>
+					<con:property key="_CHARTGROUP_height">163.0</con:property>
+					<con:property key="expand">none</con:property>
+					<con:property key="_CHARTGROUP_position">54998</con:property>
+				</con:attributes>
+			</con:chartGroup>
+			<con:chartGroup
+				type="com.eviware.loadui.api.statistics.model.chart.line.LineChartView"
+				title="Time Taken">
+				<con:chart statisticHolder="95145def-254b-49cf-93c8-8b64faddea23">
+					<con:attributes>
+						<con:property key="_CHART_segments">67:36:95145def-254b-49cf-93c8-8b64faddea2310:Time
+							Taken7:AVERAGE4:main</con:property>
+						<con:property
+							key="_CHART__SEGMENT_36:95145def-254b-49cf-93c8-8b64faddea2310:Time Taken7:AVERAGE4:main_color">#9BCD00</con:property>
+						<con:property key="_CHART_saved">true</con:property>
+						<con:property key="_CHART_zoomLevel">SECONDS</con:property>
+						<con:property key="_CHART_timeSpan">6666</con:property>
+						<con:property key="_CHART_position">58332</con:property>
+						<con:property key="_CHART_height">163.0</con:property>
+					</con:attributes>
+				</con:chart>
+				<con:attributes>
+					<con:property key="_CHARTGROUP_zoomLevel">SECONDS</con:property>
+					<con:property key="_CHARTGROUP_timeSpan">68166</con:property>
+					<con:property key="_CHARTGROUP_position">0</con:property>
+					<con:property key="expand">none</con:property>
+				</con:attributes>
+			</con:chartGroup>
+		</con:page>
+	</con:statistics>
+</con:loadui-project>

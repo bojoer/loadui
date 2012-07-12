@@ -89,15 +89,15 @@ public class IntegrationTestUtils
 		}
 		finally
 		{
-				try
-				{
-					Thread.sleep( 1000 );
-				}
-				catch( InterruptedException e )
-				{
-					e.printStackTrace();
-				}
+			try
+			{
+				Thread.sleep( 1000 );
 			}
+			catch( InterruptedException e )
+			{
+				e.printStackTrace();
+			}
+		}
 
 		return -1;
 	}

@@ -4,18 +4,18 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="counterSynchronizer" class="com.eviware.loadui.impl.agent.AgentCounterSynchronizer" />
-	
-	<!--<bean id="trackStreamer" class="com.eviware.loadui.impl.statistics.TrackStreamer"
-		destroy-method="release">
-		<constructor-arg ref="scheduledExecutorService" />
-		<constructor-arg ref="executionManager" />
-	</bean>-->
-	
-	<bean id="statisticsAggregator" class="com.eviware.loadui.impl.statistics.StreamingStatisticsAggregator">
+
+	<!--<bean id="trackStreamer" class="com.eviware.loadui.impl.statistics.TrackStreamer" 
+		destroy-method="release"> <constructor-arg ref="scheduledExecutorService" 
+		/> <constructor-arg ref="executionManager" /> </bean> -->
+
+	<bean id="statisticsAggregator"
+		class="com.eviware.loadui.impl.statistics.StreamingStatisticsAggregator">
 		<constructor-arg ref="broadcastMessageEndpoint" />
 	</bean>
-	
-	<bean id="testRunner" class="com.eviware.loadui.impl.execution.AgentTestRunner" destroy-method="release">
+
+	<bean id="testRunner" class="com.eviware.loadui.impl.execution.AgentTestRunner"
+		destroy-method="release">
 		<constructor-arg ref="broadcastMessageEndpoint" />
 		<constructor-arg ref="executorService" />
 		<constructor-arg ref="scheduledExecutorService" />
@@ -37,10 +37,11 @@
 
 	<bean class="com.eviware.loadui.impl.discovery.DiscoveryResponder"
 		destroy-method="release" />
-		
+
 	<bean id="testEventManager" class="com.eviware.loadui.impl.testevents.TestEventManagerImpl">
 		<constructor-arg ref="testEventRegistry" />
 	</bean>
-	
-	<bean id="executionManager" class="com.eviware.loadui.impl.statistics.store.DummyExecutionManager" />
+
+	<bean id="executionManager"
+		class="com.eviware.loadui.impl.statistics.store.DummyExecutionManager" />
 </beans>

@@ -124,8 +124,8 @@ public class ReportEngine
 				case JASPER_PRINT :
 					try (ObjectOutput oo = new ObjectOutputStream( new FileOutputStream( outfile ) ))
 					{
-							oo.writeObject( jp );
-						}
+						oo.writeObject( jp );
+					}
 					catch( IOException e )
 					{
 						// TODO Auto-generated catch block

@@ -17,7 +17,6 @@ package com.eviware.loadui.api.statistics.model.chart.line;
 
 import java.util.Set;
 
-
 /**
  * Configurable version of LineChartView, which allows adding and removing
  * LineSegments.
@@ -65,7 +64,8 @@ public interface ConfigurableLineChartView extends LineChartView
 	 * Adds a TestEventSegment for the given TestEventSourceDescriptor.
 	 * 
 	 * @param typeLabel
-	 * @param sourceLabel TODO
+	 * @param sourceLabel
+	 *           TODO
 	 * @return
 	 */
 	public TestEventSegment.Removable addSegment( String typeLabel, String sourceLabel );

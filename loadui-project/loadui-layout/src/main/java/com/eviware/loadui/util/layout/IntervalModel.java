@@ -27,7 +27,7 @@ import java.util.Observable;
 public class IntervalModel extends Observable
 {
 	public static final long INFINITE = 20000000000L;
-	
+
 	private long start = 0;
 	private long stop = 0;
 	private long end = 0;
@@ -99,8 +99,9 @@ public class IntervalModel extends Observable
 		startPosition = position;
 		setChanged();
 	}
-	
-	public boolean isInfinite(){
+
+	public boolean isInfinite()
+	{
 		return stop == INFINITE;
 	}
 }

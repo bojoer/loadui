@@ -202,7 +202,7 @@ public class BndUtils
 			//log.error( "Error creating bundle. No such file: " + input.getAbsolutePath() );
 			return false;
 		}
-		}
+	}
 
 	private static File setOutputPath( File input, File output, File properties )
 	{

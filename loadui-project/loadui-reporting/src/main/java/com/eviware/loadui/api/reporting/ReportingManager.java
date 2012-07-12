@@ -77,9 +77,9 @@ public interface ReportingManager
 			Map<Object, Image> charts, File file, String format );
 
 	/**
-	 * Creates a Statistics Report (and prepends another report to it) using the given
-	 * label, for the given StatisticPages. The report is based in the Execution
-	 * data and the given charts. The report is shown to the user.
+	 * Creates a Statistics Report (and prepends another report to it) using the
+	 * given label, for the given StatisticPages. The report is based in the
+	 * Execution data and the given charts. The report is shown to the user.
 	 * 
 	 * @param label
 	 * @param execution
@@ -91,10 +91,10 @@ public interface ReportingManager
 			Map<Object, Image> charts, File jpFileToPrepend );
 
 	/**
-	 * Creates a Statistics Report (and prepends another report to it) using the given
-	 * label, for the given StatisticPages. The report is based in the Execution
-	 * data and the given charts. The report is saved to the given file using the
-	 * format specified.
+	 * Creates a Statistics Report (and prepends another report to it) using the
+	 * given label, for the given StatisticPages. The report is based in the
+	 * Execution data and the given charts. The report is saved to the given file
+	 * using the format specified.
 	 * 
 	 * @param label
 	 * @param execution

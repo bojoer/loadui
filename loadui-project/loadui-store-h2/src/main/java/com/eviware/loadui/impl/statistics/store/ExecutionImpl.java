@@ -419,7 +419,7 @@ public class ExecutionImpl implements Execution, Releasable
 		{
 			log.error( "Could not store execution properties file!", e );
 		}
-			}
+	}
 
 	@Override
 	public void removeAttribute( String key )

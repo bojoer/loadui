@@ -86,9 +86,9 @@ public class MainWindowView extends StackPane
 								protected Void call() throws Exception
 								{
 									updateMessage( "Loading project: " + projectRef.getLabel() );
-							try
-							{
-								projectRef.setEnabled( true );
+									try
+									{
+										projectRef.setEnabled( true );
 										final ProjectItem project = projectRef.getProject();
 										Platform.runLater( new Runnable()
 										{
@@ -96,25 +96,25 @@ public class MainWindowView extends StackPane
 											public void run()
 											{
 												container.getChildren().setAll( new ProjectView( project ) );
-							}
+											}
 										} );
 									}
 									catch( Exception e )
-							{
+									{
 										// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+										e.printStackTrace();
+									}
 
 									return null;
-						}
+								}
 							};
 
 							fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, openProject ) );
 
 							//new Thread( openProject ).start();
-					}
+						}
 						else
-					{
+						{
 							System.out.println( "Unhandled intent: " + event );
 							return;
 						}
@@ -124,15 +124,15 @@ public class MainWindowView extends StackPane
 						if( event.getArg() instanceof ProjectItem )
 						{
 							ProjectItem project = ( ProjectItem )event.getArg();
-						project.release();
-						//TODO: Need to have the ProjectRef close the project.
-						container.getChildren().setAll( new WorkspaceView( workspaceProvider.getWorkspace() ) );
-					}
-					else
-					{
+							project.release();
+							//TODO: Need to have the ProjectRef close the project.
+							container.getChildren().setAll( new WorkspaceView( workspaceProvider.getWorkspace() ) );
+						}
+						else
+						{
 							System.out.println( "Unhandled intent: " + event );
-						return;
-					}
+							return;
+						}
 					}
 					else
 					{

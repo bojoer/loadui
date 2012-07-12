@@ -85,7 +85,7 @@ public class AnalysisView extends StackPane
 						.getChartView();
 
 				chartContainer.getChildren().setAll( new LineChartViewNode( currentExecutionProperty, chartView ) );
-		}
+			}
 			catch( Exception e )
 			{
 				e.printStackTrace();
