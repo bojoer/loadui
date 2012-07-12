@@ -1,0 +1,54 @@
+/**
+ *
+ * Global loadUI styles. Overrides the main caspian styles.
+ *
+ */
+
+/**
+ * Toolbox styles
+ */
+ 
+.tool-box {
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.ToolBoxSkin";
+}
+ 
+.tool-box-region {
+	-fx-background-color: black, #4f4f4f, #565656;
+	-fx-background-insets: 0, 1, 2;
+	-fx-background-radius: 0 3 3 0;
+	-fx-padding: 0 0 15 0;
+}
+
+.tool-box .title {
+	-fx-padding: 4;
+	-fx-font-size: 11px;
+}
+
+.tool-box .separator .line {
+	-fx-border-style: null;
+	-fx-border-color: transparent;
+}
+
+.tool-box .separator {
+	-fx-padding: 1;
+	-fx-background-color: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 50%, rgba(255,255,255,0.5) 51%, rgba(255,255,255,0) 100%);
+}
+
+.tool-box .expander-button:disabled {
+	visibility: hidden;
+}
+
+.item-holder {
+	-fx-padding: 5;
+	-fx-spacing: 5;
+}
+
+.item-holder > .items {
+	-fx-spacing: 15;
+}
+
+.tool-box-expander .item-holder {
+	-fx-background-color: black, lightgrey;
+	-fx-background-radius: 0 2 2 0;
+	-fx-background-insets: -3 0, -2 1;
+}

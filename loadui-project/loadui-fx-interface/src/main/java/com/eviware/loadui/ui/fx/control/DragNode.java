@@ -23,6 +23,9 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.PopupControl;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.PopupWindow;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
 import com.eviware.loadui.ui.fx.api.input.Draggable;
@@ -190,6 +193,7 @@ public class DragNode extends PopupControl implements Draggable
 	private Node dragSource;
 	private Node currentlyHovered;
 	private Point2D startPoint = new Point2D( 0, 0 );
+	private Point2D lastPoint = new Point2D( 0, 0 );
 
 	public DragNode( Node node )
 	{
@@ -282,9 +286,32 @@ public class DragNode extends PopupControl implements Draggable
 					dragNode.setX( event.getScreenX() - dragNode.getWidth() / 2 );
 					dragNode.setY( event.getScreenY() - dragNode.getHeight() / 2 );
 
-					Scene scene = dragNode.getDragSource().getScene();
-					Node currentNode = NodeUtils.findFrontNodeAtCoordinate( scene.getRoot(), new Point2D( event.getSceneX(),
-							event.getSceneY() ) );
+					Window window = dragNode.getDragSource().getScene().getWindow();
+					Point2D scenePoint = new Point2D( event.getSceneX(), event.getSceneY() );
+					Node currentNode = null;
+					while( currentNode == null && window != null )
+					{
+						Scene scene = window.getScene();
+						scenePoint = new Point2D( event.getScreenX() - window.getX() - scene.getX(), event.getScreenY()
+								- window.getY() - scene.getY() );
+						currentNode = NodeUtils.findFrontNodeAtCoordinate( scene.getRoot(), scenePoint );
+
+						if( window instanceof PopupWindow )
+						{
+							window = ( ( PopupWindow )window ).getOwnerWindow();
+						}
+						else if( window instanceof Stage )
+						{
+							window = ( ( Stage )window ).getOwner();
+						}
+						else
+						{
+							window = null;
+						}
+					}
+
+					dragNode.lastPoint = scenePoint;
+
 					if( dragNode.currentlyHovered != currentNode )
 					{
 						dragNode.setAcceptable( false );
@@ -303,8 +330,8 @@ public class DragNode extends PopupControl implements Draggable
 								{
 									dragNode.setAcceptable( true );
 								}
-							}, dragNode.getNode(), currentNode, DraggableEvent.DRAGGABLE_ENTERED, dragNode.getData(), event
-									.getSceneX(), event.getSceneY() ) );
+							}, dragNode.getNode(), currentNode, DraggableEvent.DRAGGABLE_ENTERED, dragNode.getData(),
+									scenePoint.getX(), scenePoint.getY() ) );
 						}
 
 						dragNode.currentlyHovered = currentNode;
@@ -331,8 +358,8 @@ public class DragNode extends PopupControl implements Draggable
 						if( dragNode.isAcceptable() )
 						{
 							dragNode.currentlyHovered.fireEvent( new DraggableEvent( null, dragNode.getNode(),
-									dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_DROPPED, dragNode.getData(), event
-											.getSceneX(), event.getSceneY() ) );
+									dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_DROPPED, dragNode.getData(),
+									dragNode.lastPoint.getX(), dragNode.lastPoint.getY() ) );
 						}
 					}
 

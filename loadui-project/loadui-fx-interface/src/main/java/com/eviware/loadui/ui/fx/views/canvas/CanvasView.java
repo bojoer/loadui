@@ -16,7 +16,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
 import javafx.scene.layout.Pane;
@@ -30,6 +29,7 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Movable;
+import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.google.common.base.Function;
 
 public class CanvasView extends StackPane
@@ -65,7 +65,10 @@ public class CanvasView extends StackPane
 		@Override
 		public ComponentDescriptorView apply( ComponentDescriptor input )
 		{
-			return new ComponentDescriptorView( input );
+			ComponentDescriptorView view = new ComponentDescriptorView( input );
+			ToolBox.setCategory( view, input.getCategory() );
+			
+			return view;
 		}
 	};
 
@@ -83,7 +86,7 @@ public class CanvasView extends StackPane
 		final Group componentLayer = new Group();
 		bindContentUnordered( componentLayer.getChildren(), components );
 
-		ListView<ComponentDescriptorView> descriptors = new ListView<>();
+		ToolBox<ComponentDescriptorView> descriptors = new ToolBox<>( "Components" );
 		descriptors.setMaxWidth( 90 );
 		StackPane.setAlignment( descriptors, Pos.CENTER_LEFT );
 		StackPane.setMargin( descriptors, new Insets( 10, 0, 10, 0 ) );

@@ -64,8 +64,6 @@ public class ClassLoaderRegistry implements Releasable, BundleContextAware
 	public void setBundleContext( BundleContext bundleContext )
 	{
 		bundleClassLoader = Thread.currentThread().getContextClassLoader();
-		log.debug( "!!!!! thread contextClassLoader: {}", Thread.currentThread().getContextClassLoader() );
-		log.debug( "!!!!! GroovyShell.class.getClassLoader: {}", GroovyShell.class.getClassLoader() );
 		try
 		{
 			Class<?> cls = bundleContext.getBundle().loadClass( "org.codehaus.groovy.runtime.GeneratedClosure" );
