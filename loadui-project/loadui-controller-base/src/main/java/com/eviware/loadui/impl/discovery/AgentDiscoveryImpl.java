@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -36,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.discovery.AgentDiscovery;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 public final class AgentDiscoveryImpl implements AgentDiscovery
 {
@@ -46,14 +46,9 @@ public final class AgentDiscoveryImpl implements AgentDiscovery
 	private final Thread listenerThread;
 	private final Set<AgentReference> agents = Sets.newCopyOnWriteArraySet();
 
-	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor( new ThreadFactory()
-	{
-		@Override
-		public Thread newThread( Runnable r )
-		{
-			return new Thread( r, "loadUI Agent discovery" );
-		}
-	} );
+	private final ScheduledExecutorService executor = Executors
+			.newSingleThreadScheduledExecutor( new ThreadFactoryBuilder().setNameFormat( "loadUI Agent discovery" )
+					.setDaemon( true ).build() );
 
 	public AgentDiscoveryImpl()
 	{

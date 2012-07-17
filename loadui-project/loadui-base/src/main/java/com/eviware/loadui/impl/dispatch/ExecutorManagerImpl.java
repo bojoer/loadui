@@ -54,6 +54,7 @@ public final class ExecutorManagerImpl implements ExecutorManager
 			public Thread newThread( Runnable r )
 			{
 				final Thread thread = new Thread( r, "executor-thread-" + threadCount.getAndIncrement() );
+				thread.setDaemon( true );
 				try
 				{
 					if( EventQueue.isDispatchThread() )
