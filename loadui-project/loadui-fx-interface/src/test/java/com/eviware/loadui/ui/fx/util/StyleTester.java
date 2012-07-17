@@ -13,6 +13,8 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.Label;
+import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
@@ -21,7 +23,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
 
@@ -33,11 +34,15 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		ToolBox<Rectangle> toolBox = new ToolBox<>( "Toolbox" );
-		final Rectangle rectangle1 = RectangleBuilder.create().width( 65 ).height( 75 ).fill( Color.RED ).build();
-		final Rectangle rectangle2 = RectangleBuilder.create().width( 45 ).height( 50 ).fill( Color.BLUE ).build();
-		final Rectangle rectangle3 = RectangleBuilder.create().width( 60 ).height( 60 ).fill( Color.GREEN ).build();
-		final Rectangle rectangle4 = RectangleBuilder.create().width( 60 ).height( 60 ).fill( Color.GREEN ).build();
+		ToolBox<Label> toolBox = new ToolBox<>( "Toolbox" );
+		final Label rectangle1 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Rectangle" )
+				.graphic( RectangleBuilder.create().width( 45 ).height( 50 ).fill( Color.RED ).build() ).build();
+		final Label rectangle2 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Another Rectangle" )
+				.graphic( RectangleBuilder.create().width( 45 ).height( 50 ).fill( Color.BLUE ).build() ).build();
+		final Label rectangle3 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Rectangle" )
+				.graphic( RectangleBuilder.create().width( 60 ).height( 60 ).fill( Color.GREEN ).build() ).build();
+		final Label rectangle4 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Rectangle" )
+				.graphic( RectangleBuilder.create().width( 60 ).height( 60 ).fill( Color.GREEN ).build() ).build();
 
 		ToolBox.setCategory( rectangle1, "Category 1" );
 		ToolBox.setCategory( rectangle2, "Category 2" );

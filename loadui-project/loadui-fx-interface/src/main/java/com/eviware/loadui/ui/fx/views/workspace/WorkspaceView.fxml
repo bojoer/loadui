@@ -15,6 +15,8 @@
 <?import javafx.scene.web.WebView?>
 <?import java.net.URL?>
 <?import com.eviware.loadui.ui.fx.control.ToolBox?>
+<?import com.eviware.loadui.ui.fx.views.workspace.NewProjectIcon?>
+<?import com.eviware.loadui.ui.fx.views.workspace.NewAgentIcon?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml" styleClass="workspace-view"
 	fx:controller="com.eviware.loadui.ui.fx.views.workspace.WorkspaceView$Controller">
@@ -33,9 +35,8 @@
 		</ToolBar>
 		<HBox spacing="15" snapToPixel="true">
 			<ToolBox>
-				<Region style="-fx-background-color: green; -fx-padding: 20;" />
-				<Region style="-fx-background-color: red; -fx-padding: 20;" />
-				<Region style="-fx-background-color: blue; -fx-padding: 20;" />
+				<NewProjectIcon ToolBox.category="Projects" />
+				<NewAgentIcon ToolBox.category="Agents" />
 			</ToolBox>
 			<ListView fx:id="projectRefNodeList" />
 			<WebView fx:id="webView" prefWidth="634" prefHeight="562" />
