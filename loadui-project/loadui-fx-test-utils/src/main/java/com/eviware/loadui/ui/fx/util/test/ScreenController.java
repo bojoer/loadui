@@ -10,6 +10,8 @@ public interface ScreenController
 
 	public void move( double x, double y );
 
+	public void scroll( int amount );
+
 	public void press( MouseButton button );
 
 	public void release( MouseButton button );

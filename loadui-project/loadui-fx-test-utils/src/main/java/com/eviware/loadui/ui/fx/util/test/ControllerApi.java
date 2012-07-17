@@ -29,13 +29,15 @@ public class ControllerApi
 
 	private static Window lastSeenWindow = null;
 
-	public static Window use( Window window )
+	public static <T extends Window> T use( T window )
 	{
 		if( window instanceof Stage )
 		{
 			( ( Stage )window ).toFront();
 		}
-		return lastSeenWindow = window;
+		lastSeenWindow = window;
+
+		return window;
 	}
 
 	public static Object offset( Object target, double offsetX, double offsetY )
@@ -55,7 +57,7 @@ public class ControllerApi
 		{
 			Scene scene = ( Scene )parent;
 			use( scene.getWindow() );
-			return Collections.singleton( scene.lookup( selector ) );
+			return findAll( selector, scene.getRoot() );
 		}
 		else if( parent instanceof Window )
 		{
@@ -89,6 +91,12 @@ public class ControllerApi
 	public ControllerApi( ScreenController controller )
 	{
 		this.controller = controller;
+	}
+
+	public ControllerApi using( Window window )
+	{
+		use( window );
+		return this;
 	}
 
 	public ControllerApi click( MouseButton... buttons )
@@ -172,6 +180,12 @@ public class ControllerApi
 				}
 			}
 		}
+		return this;
+	}
+
+	public ControllerApi scroll( int amount )
+	{
+		controller.scroll( amount );
 		return this;
 	}
 

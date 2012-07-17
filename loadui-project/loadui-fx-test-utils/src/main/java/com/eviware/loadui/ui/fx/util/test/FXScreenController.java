@@ -133,4 +133,11 @@ public class FXScreenController implements ScreenController
 		robot.keyRelease( key.impl_getCode() );
 		FXTestUtils.awaitEvents();
 	}
+
+	@Override
+	public void scroll( int amount )
+	{
+		robot.mouseWheel( amount );
+		FXTestUtils.awaitEvents();
+	}
 }
