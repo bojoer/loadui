@@ -1,7 +1,5 @@
 package com.eviware.loadui.fx;
 
-import java.net.URL;
-
 import javafx.application.Platform;
 import javafx.scene.SceneBuilder;
 import javafx.stage.Stage;
@@ -39,8 +37,7 @@ public class TestWindow
 				stage.setWidth( 1280 );
 				stage.setHeight( 700 );
 				//stage.setScene( SceneBuilder.create().root( new WorkspaceView( workspace ) ).build() );
-				final URL resource = TestWindow.class.getResource( "/com/eviware/loadui/ui/fx/loadui-style.bss" );
-				stage.setScene( SceneBuilder.create().stylesheets( resource.toString() )
+				stage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
 						.root( new MainWindowView( workspaceProvider ) ).build() );
 				stage.setTitle( System.getProperty( LoadUI.NAME, "loadUI" ) + " " + LoadUI.VERSION );
 				stage.show();

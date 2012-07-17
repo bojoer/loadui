@@ -55,6 +55,10 @@
 								<fx:csstobin outdir="${basedir}/target/classes">
 									<fileset dir="src/main/java" includes="**/*.css" />
 								</fx:csstobin>
+								
+								<fx:csstobin outdir="${basedir}/target/classes">
+									<fileset dir="src/main/resources" includes="**/*.css" />
+								</fx:csstobin>
 							</target>
 						</configuration>
 						<goals>
@@ -67,6 +71,9 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>**/*.css</exclude>
+				</excludes>
 			</resource>
 			<resource>
 				<directory>src/main/java</directory>
