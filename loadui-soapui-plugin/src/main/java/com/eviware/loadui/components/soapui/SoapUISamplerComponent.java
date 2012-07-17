@@ -107,6 +107,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 public class SoapUISamplerComponent extends RunnerBase
 {
@@ -360,7 +361,8 @@ public class SoapUISamplerComponent extends RunnerBase
 		context.addSettingsTab( settingsTestCaseTab );
 		context.setLayout( layout );
 
-		executor = Executors.newSingleThreadScheduledExecutor();
+		executor = Executors.newSingleThreadScheduledExecutor( new ThreadFactoryBuilder().setDaemon( true )
+				.setNameFormat( "soapUI-runner-%d" ).build() );
 		executor.scheduleAtFixedRate( ledUpdater, 500, 500, TimeUnit.MILLISECONDS );
 		executor.scheduleAtFixedRate( new Runnable()
 		{
