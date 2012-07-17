@@ -8,10 +8,11 @@ import javafx.beans.property.ObjectPropertyBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.Labeled;
+import javafx.scene.control.Control;
+import javafx.scene.control.Label;
 
 @DefaultProperty( "items" )
-public class ToolBox<E extends Node> extends Labeled
+public class ToolBox<E extends Node> extends Control
 {
 	private static final String DEFAULT_STYLE_CLASS = "tool-box";
 	private static final String TOOL_BOX_PROPERTY = "tool-box";
@@ -47,6 +48,7 @@ public class ToolBox<E extends Node> extends Labeled
 		return String.valueOf( category == null ? node : category );
 	}
 
+	private final Label label;
 	private final ObservableList<E> items = FXCollections.observableArrayList();
 	private final ObjectProperty<Comparator<String>> categoryComparator = new ObjectPropertyBase<Comparator<String>>()
 	{
@@ -65,24 +67,30 @@ public class ToolBox<E extends Node> extends Labeled
 
 	public ToolBox()
 	{
+		this.label = new Label();
 		initialize();
 	}
 
 	public ToolBox( String label )
 	{
-		super( label );
+		this.label = new Label( label );
 		initialize();
 	}
 
 	public ToolBox( String label, Node graphic )
 	{
-		super( label, graphic );
+		this.label = new Label( label, graphic );
 		initialize();
 	}
 
 	public void initialize()
 	{
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
+	}
+
+	public Label getLabel()
+	{
+		return label;
 	}
 
 	public ObservableList<E> getItems()

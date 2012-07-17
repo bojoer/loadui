@@ -28,11 +28,12 @@ public class ToolBoxTest
 		@Override
 		public void start( Stage primaryStage ) throws Exception
 		{
-			ToolBox2<Rectangle> toolbox = new ToolBox2<>();
+			ToolBox<Rectangle> toolbox = new ToolBox<>();
 			toolbox.getItems().setAll( RectangleBuilder.create().width( 50 ).height( 75 ).fill( Color.GREEN ).build(),
 					RectangleBuilder.create().width( 75 ).height( 50 ).fill( Color.YELLOW ).build() );
 
-			primaryStage.setScene( SceneBuilder.create().width( 300 ).height( 200 ).root( toolbox ).build() );
+			primaryStage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
+					.width( 300 ).height( 200 ).root( toolbox ).build() );
 
 			primaryStage.show();
 
@@ -51,10 +52,9 @@ public class ToolBoxTest
 	}
 
 	@Test
-	public void shouldMove() throws Exception
+	public void shouldTest() throws Exception
 	{
+		//TODO: Real test here.
 		controller.click( ".tool-box" );
-
-		Thread.sleep( 5000 );
 	}
 }

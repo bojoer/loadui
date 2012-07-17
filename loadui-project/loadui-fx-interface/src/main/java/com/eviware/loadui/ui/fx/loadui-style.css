@@ -21,7 +21,7 @@
 }
 
 .tool-box .nav {
-	-fx-padding: 3 25;
+	-fx-padding: 3 25 3 25;
 }
 
 .tool-box .title {
@@ -63,5 +63,5 @@
 .tool-box-expander .item-holder {
 	-fx-background-color: black, lightgrey;
 	-fx-background-radius: 0 2 2 0;
-	-fx-background-insets: -3 0, -2 1;
+	-fx-background-insets: -3 0 -3 0, -2 1 -2 1;
 }

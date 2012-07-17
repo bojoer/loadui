@@ -29,7 +29,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
 import javafx.scene.control.PopupControl;
 import javafx.scene.control.Separator;
 import javafx.scene.input.ScrollEvent;
@@ -191,23 +190,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 		private ToolBoxTitle()
 		{
 			getStyleClass().setAll( "title" );
-
-			Labeled labeled = getSkinnable();
-
-			Label label = new Label();
-			label.textProperty().bind( labeled.textProperty() );
-			label.graphicProperty().bind( labeled.graphicProperty() );
-
-			//			label.alignmentProperty().bind( labeled.alignmentProperty() );
-			//			label.contentDisplayProperty().bind( labeled.contentDisplayProperty() );
-			//			label.fontProperty().bind( labeled.fontProperty() );
-			//			label.graphicTextGapProperty().bind( labeled.graphicTextGapProperty() );
-			//			label.textFillProperty().bind( labeled.textFillProperty() );
-			//			label.textOverrunProperty().bind( labeled.textOverrunProperty() );
-			//			label.underlineProperty().bind( labeled.underlineProperty() );
-			//			label.wrapTextProperty().bind( labeled.wrapTextProperty() );
-
-			getChildren().setAll( label );
+			getChildren().setAll( getSkinnable().getLabel() );
 		}
 	}
 
