@@ -3,7 +3,9 @@ package com.eviware.loadui.ui.fx.control;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
@@ -20,20 +22,8 @@ public class Carousel<E extends Node> extends Control
 	private final ObservableList<E> items = FXCollections.observableArrayList();
 	private final Label label;
 
-	private final ObjectProperty<StringConverter<E>> converterProperty = new ObjectPropertyBase<StringConverter<E>>()
-	{
-		@Override
-		public Object getBean()
-		{
-			return Carousel.this;
-		}
-
-		@Override
-		public String getName()
-		{
-			return "converter";
-		}
-	};
+	private final ObjectProperty<StringConverter<E>> converterProperty = new SimpleObjectProperty<StringConverter<E>>(
+			this, "converter" );
 
 	private final ObjectProperty<E> selectedProperty = new ObjectPropertyBase<E>()
 	{
@@ -71,6 +61,33 @@ public class Carousel<E extends Node> extends Control
 	private void initialize()
 	{
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
+
+		items.addListener( new ListChangeListener<E>()
+		{
+			@Override
+			public void onChanged( Change<? extends E> change )
+			{
+				if( items.isEmpty() )
+				{
+					setSelected( null );
+				}
+				else if( getSelected() == null )
+				{
+					setSelected( items.get( 0 ) );
+				}
+				else
+				{
+					while( change.next() )
+					{
+						if( change.getRemoved().contains( selectedProperty ) )
+						{
+							setSelected( items.get( change.getFrom() ) );
+							return;
+						}
+					}
+				}
+			}
+		} );
 	}
 
 	public ObjectProperty<StringConverter<E>> converterProperty()

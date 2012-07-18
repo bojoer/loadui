@@ -35,14 +35,14 @@ public class StyleTester extends Application
 	private Node createTestNode()
 	{
 		Carousel<Label> carousel = new Carousel<>( "Carousel" );
-		final Label rectangle1 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 45 ).height( 50 ).fill( Color.RED ).build() ).build();
-		final Label rectangle2 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Another Rectangle" )
-				.graphic( RectangleBuilder.create().width( 45 ).height( 50 ).fill( Color.BLUE ).build() ).build();
-		final Label rectangle3 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 60 ).height( 60 ).fill( Color.GREEN ).build() ).build();
-		final Label rectangle4 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 60 ).height( 60 ).fill( Color.GREEN ).build() ).build();
+		final Label rectangle1 = LabelBuilder.create().id( "red" ).styleClass( "icon" ).text( "Rectangle" )
+				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.RED ).build() ).build();
+		final Label rectangle2 = LabelBuilder.create().id( "blue" ).styleClass( "icon" ).text( "Rectangle" )
+				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.BLUE ).build() ).build();
+		final Label rectangle3 = LabelBuilder.create().id( "green" ).styleClass( "icon" ).text( "Rectangle" )
+				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.GREEN ).build() ).build();
+		final Label rectangle4 = LabelBuilder.create().id( "yellow" ).styleClass( "icon" ).text( "Rectangle" )
+				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.YELLOW ).build() ).build();
 
 		carousel.getItems().setAll( rectangle1, rectangle2, rectangle3, rectangle4 );
 
@@ -58,6 +58,7 @@ public class StyleTester extends Application
 		final TextArea styleArea = TextAreaBuilder.create().build();
 
 		final File styleSheet = File.createTempFile( "style", ".css" );
+
 		styleArea.textProperty().addListener( new ChangeListener<String>()
 		{
 			@Override
@@ -73,7 +74,11 @@ public class StyleTester extends Application
 						{
 							try
 							{
-								styleArea.getScene().getStylesheets().setAll( styleSheet.toURI().toURL().toExternalForm() );
+								styleArea
+										.getScene()
+										.getStylesheets()
+										.setAll( "/com/eviware/loadui/ui/fx/loadui-style.css",
+												styleSheet.toURI().toURL().toExternalForm() );
 								System.out.println( "Updated style!" );
 							}
 							catch( MalformedURLException e )
