@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ObjectPropertyBase;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -57,20 +57,8 @@ public class ToolBox<E extends Node> extends Control
 
 	private final Label label;
 	private final ObservableList<E> items = FXCollections.observableArrayList();
-	private final ObjectProperty<Comparator<String>> categoryComparator = new ObjectPropertyBase<Comparator<String>>()
-	{
-		@Override
-		public Object getBean()
-		{
-			return ToolBox.this;
-		}
-
-		@Override
-		public String getName()
-		{
-			return "categoryComparator";
-		}
-	};
+	private final ObjectProperty<Comparator<String>> categoryComparator = new SimpleObjectProperty<>( this,
+			"categoryComparator" );
 	private final ObservableMap<String, Comparator<? super E>> itemComparators = FXCollections.observableHashMap();
 
 	public ToolBox()
