@@ -26,7 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.control.ToolBox;
+import com.eviware.loadui.ui.fx.control.Carousel;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -34,7 +34,7 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		ToolBox<Label> toolBox = new ToolBox<>( "Toolbox" );
+		Carousel<Label> carousel = new Carousel<>( "Carousel" );
 		final Label rectangle1 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Rectangle" )
 				.graphic( RectangleBuilder.create().width( 45 ).height( 50 ).fill( Color.RED ).build() ).build();
 		final Label rectangle2 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Another Rectangle" )
@@ -44,14 +44,9 @@ public class StyleTester extends Application
 		final Label rectangle4 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Rectangle" )
 				.graphic( RectangleBuilder.create().width( 60 ).height( 60 ).fill( Color.GREEN ).build() ).build();
 
-		ToolBox.setCategory( rectangle1, "Category 1" );
-		ToolBox.setCategory( rectangle2, "Category 2" );
-		ToolBox.setCategory( rectangle3, "Category 3" );
-		ToolBox.setCategory( rectangle4, "Category 2" );
+		carousel.getItems().setAll( rectangle1, rectangle2, rectangle3, rectangle4 );
 
-		toolBox.getItems().setAll( rectangle1, rectangle2, rectangle3, rectangle4 );
-
-		return toolBox;
+		return carousel;
 	}
 
 	@Override
