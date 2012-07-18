@@ -62,7 +62,7 @@ public class ToolBox<E extends Node> extends Control
 		@Override
 		public Object getBean()
 		{
-			return this;
+			return ToolBox.this;
 		}
 
 		@Override
