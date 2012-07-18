@@ -55,7 +55,7 @@ public class StyleTester extends Application
 	}
 
 	@Override
-	public void start( Stage primaryStage ) throws Exception
+	public void start( final Stage primaryStage ) throws Exception
 	{
 		final StackPane panel = new StackPane();
 		panel.getChildren().setAll( createTestNode() );

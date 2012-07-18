@@ -36,6 +36,7 @@ import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
 import com.google.common.util.concurrent.SettableFuture;
 
 @Category( GUITest.class )
@@ -56,6 +57,9 @@ public class ToolBoxTest
 			toolbox.getItems().setAll( buildRect( Color.RED ), buildRect( Color.RED ), buildRect( Color.BLUE ),
 					buildRect( Color.GREEN ), buildRect( Color.RED ), buildRect( Color.YELLOW ), buildRect( Color.BLUE ),
 					buildRect( Color.ORANGE ) );
+
+			toolbox.setCategoryComparator( Ordering.explicit( Color.RED.toString(), Color.BLUE.toString(),
+					Color.GREEN.toString(), Color.YELLOW.toString(), Color.ORANGE.toString() ) );
 
 			primaryStage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
 					.width( 100 ).height( 350 ).root( toolbox ).build() );

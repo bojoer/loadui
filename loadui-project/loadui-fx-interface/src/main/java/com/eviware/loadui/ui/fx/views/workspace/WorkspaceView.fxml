@@ -14,6 +14,8 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.web.WebView?>
 <?import java.net.URL?>
+<?import java.lang.String?>
+<?import com.eviware.loadui.ui.fx.util.ExplicitOrdering?>
 <?import com.eviware.loadui.ui.fx.control.ToolBox?>
 <?import com.eviware.loadui.ui.fx.views.workspace.NewProjectIcon?>
 <?import com.eviware.loadui.ui.fx.views.workspace.NewAgentIcon?>
@@ -35,6 +37,12 @@
 		</ToolBar>
 		<HBox spacing="15" snapToPixel="true">
 			<ToolBox>
+				<categoryComparator>
+					<ExplicitOrdering>
+						<String fx:value="Projects"/>
+						<String fx:value="Agents"/>
+					</ExplicitOrdering>
+				</categoryComparator>
 				<NewProjectIcon ToolBox.category="Projects" />
 				<NewAgentIcon ToolBox.category="Agents" />
 			</ToolBox>

@@ -6,10 +6,15 @@ import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Ordering;
 
 @DefaultProperty( "items" )
 public class ToolBox<E extends Node> extends Control
@@ -28,11 +33,13 @@ public class ToolBox<E extends Node> extends Control
 	 */
 	public static void setCategory( Node node, String category )
 	{
-		node.getProperties().put( CATEGORY_PROPERTY, category );
-		Object toolBox = node.getProperties().get( TOOL_BOX_PROPERTY );
-		if( toolBox instanceof ToolBox )
+		Object oldCategory = node.getProperties().put( CATEGORY_PROPERTY, category );
+		@SuppressWarnings( "unchecked" )
+		ToolBox<Node> toolBox = ( ToolBox<Node> )node.getProperties().get( TOOL_BOX_PROPERTY );
+		if( !Objects.equal( category, oldCategory ) && toolBox != null )
 		{
-			//( ( ToolBox<?> )toolBox ).refreshItems();
+			toolBox.getItems().remove( node );
+			toolBox.getItems().add( node );
 		}
 	}
 
@@ -64,6 +71,7 @@ public class ToolBox<E extends Node> extends Control
 			return "categoryComparator";
 		}
 	};
+	private final ObservableMap<String, Comparator<? super E>> itemComparators = FXCollections.observableHashMap();
 
 	public ToolBox()
 	{
@@ -86,6 +94,28 @@ public class ToolBox<E extends Node> extends Control
 	public void initialize()
 	{
 		getStyleClass().setAll( DEFAULT_STYLE_CLASS );
+
+		itemComparators.put( null, Ordering.usingToString() );
+
+		items.addListener( new ListChangeListener<E>()
+		{
+			@Override
+			public void onChanged( ListChangeListener.Change<? extends E> change )
+			{
+				while( change.next() )
+				{
+					for( E node : change.getRemoved() )
+					{
+						node.getProperties().remove( TOOL_BOX_PROPERTY );
+					}
+
+					for( E node : change.getAddedSubList() )
+					{
+						node.getProperties().put( TOOL_BOX_PROPERTY, this );
+					}
+				}
+			}
+		} );
 	}
 
 	public Label getLabel()
@@ -108,8 +138,37 @@ public class ToolBox<E extends Node> extends Control
 		this.categoryComparator.set( categoryComparator );
 	}
 
+	public ObservableMap<String, Comparator<? super E>> getComparators()
+	{
+		return itemComparators;
+	}
+
 	public Comparator<String> getCategoryComparator()
 	{
 		return categoryComparator.get();
+	}
+
+	public void setComparator( Comparator<? super E> comparator )
+	{
+		setComparator( null, comparator );
+	}
+
+	public void setComparator( String category, Comparator<? super E> comparator )
+	{
+		itemComparators.put( category, comparator );
+	}
+
+	public Comparator<? super E> getComparator()
+	{
+		return itemComparators.get( null );
+	}
+
+	public Comparator<? super E> getComparator( String category )
+	{
+		if( itemComparators.containsKey( category ) )
+		{
+			return itemComparators.get( category );
+		}
+		return getComparator();
 	}
 }

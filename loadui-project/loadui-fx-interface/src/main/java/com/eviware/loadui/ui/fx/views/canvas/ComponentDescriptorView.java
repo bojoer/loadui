@@ -29,4 +29,10 @@ public class ComponentDescriptorView extends Label
 
 		setGraphic( icon );
 	}
+
+	@Override
+	public String toString()
+	{
+		return descriptor.getLabel();
+	}
 }

@@ -1,6 +1,7 @@
 package com.eviware.loadui.ui.fx.views.canvas;
 
 import static com.eviware.loadui.ui.fx.util.ObservableLists.bindContentUnordered;
+import static com.eviware.loadui.ui.fx.util.ObservableLists.filter;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofServices;
@@ -23,6 +24,8 @@ import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 
+import javax.annotation.Nullable;
+
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -31,6 +34,7 @@ import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Movable;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 public class CanvasView extends StackPane
 {
@@ -66,9 +70,19 @@ public class CanvasView extends StackPane
 		public ComponentDescriptorView apply( ComponentDescriptor input )
 		{
 			ComponentDescriptorView view = new ComponentDescriptorView( input );
-			ToolBox.setCategory( view, input.getCategory() );
+			String category = input.getCategory();
+			ToolBox.setCategory( view, category.substring( 0, 1 ).toUpperCase() + category.substring( 1 ).toLowerCase() );
 
 			return view;
+		}
+	};
+
+	private static final Predicate<ComponentDescriptor> NOT_DEPRECATED = new Predicate<ComponentDescriptor>()
+	{
+		@Override
+		public boolean apply( @Nullable ComponentDescriptor input )
+		{
+			return !input.isDeprecated();
 		}
 	};
 
@@ -92,7 +106,7 @@ public class CanvasView extends StackPane
 		StackPane.setMargin( descriptors, new Insets( 10, 0, 10, 0 ) );
 
 		Bindings.bindContent( descriptors.getItems(),
-				fx( transform( ofServices( ComponentDescriptor.class ), DESCRIPTOR_TO_VIEW ) ) );
+				fx( transform( filter( ofServices( ComponentDescriptor.class ), NOT_DEPRECATED ), DESCRIPTOR_TO_VIEW ) ) );
 
 		Slider posSlider = SliderBuilder.create().min( -1000 ).max( 1000 ).value( 0 ).maxWidth( 100 ).build();
 		StackPane.setAlignment( posSlider, Pos.BOTTOM_CENTER );

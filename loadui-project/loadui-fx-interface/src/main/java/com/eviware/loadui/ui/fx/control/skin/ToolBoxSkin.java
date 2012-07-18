@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.control.skin;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,6 +44,7 @@ import javafx.stage.WindowEvent;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.control.behavior.ToolBoxBehavior;
 import com.eviware.loadui.ui.fx.util.Pager;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.sun.javafx.scene.control.skin.SkinBase;
 
@@ -55,7 +57,15 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 		@Override
 		public int compare( ToolBoxCategory o1, ToolBoxCategory o2 )
 		{
-			return getSkinnable().getCategoryComparator().compare( o1.category, o2.category );
+			Comparator<String> comparator = getSkinnable().getCategoryComparator();
+			if( comparator == null )
+			{
+				return Ordering.natural().compare( o1.category, o2.category );
+			}
+			else
+			{
+				return comparator.compare( o1.category, o2.category );
+			}
 		}
 	};
 
@@ -63,7 +73,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 	private final ToolBoxRegion mainRegion;
 	private final ToolBoxExpander expander;
 
-	public ToolBoxSkin( ToolBox<E> toolBox )
+	public ToolBoxSkin( final ToolBox<E> toolBox )
 	{
 		super( toolBox, new ToolBoxBehavior<>( toolBox ) );
 
@@ -77,14 +87,16 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 			public void onChanged( MapChangeListener.Change<? extends String, ? extends ToolBoxCategory> change )
 			{
 				sizes.clear();
+				List<ToolBoxCategory> items = pager.getItems();
 				if( change.wasRemoved() )
 				{
-					pager.getItems().remove( change.getValueRemoved() );
+					items.remove( change.getValueRemoved() );
 				}
 				if( change.wasAdded() )
 				{
-					//TODO: Sort using toolBox.categoryComparator
-					pager.getItems().add( change.getValueAdded() );
+					ToolBoxCategory value = change.getValueAdded();
+					int index = -Collections.binarySearch( items, value, categoryComparator ) - 1;
+					items.add( index, value );
 				}
 			}
 		} );
@@ -97,6 +109,30 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 			{
 				sizes.clear();
 				FXCollections.sort( pager.getItems(), categoryComparator );
+			}
+		} );
+
+		toolBox.getComparators().addListener( new MapChangeListener<String, Comparator<? super E>>()
+		{
+			@Override
+			public void onChanged( MapChangeListener.Change<? extends String, ? extends Comparator<? super E>> change )
+			{
+				String categoryName = change.getKey();
+				if( categoryName == null )
+				{
+					for( ToolBoxCategory category : categories.values() )
+					{
+						FXCollections.sort( category.categoryItems, toolBox.getComparator( category.category ) );
+					}
+				}
+				else
+				{
+					ToolBoxCategory category = categories.get( categoryName );
+					if( category != null )
+					{
+						FXCollections.sort( category.categoryItems, toolBox.getComparator( categoryName ) );
+					}
+				}
 			}
 		} );
 
@@ -125,7 +161,9 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 						{
 							categories.put( categoryName, category = new ToolBoxCategory( categoryName ) );
 						}
-						category.categoryItems.add( added );
+						int index = -Collections.binarySearch( category.categoryItems, added,
+								toolBox.getComparator( categoryName ) ) - 1;
+						category.categoryItems.add( index, added );
 						possiblyEmpty.remove( category );
 					}
 				}
@@ -153,9 +191,42 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 			category.categoryItems.add( item );
 		}
 
+		for( ToolBoxCategory category : categories.values() )
+		{
+			FXCollections.sort( category.categoryItems, toolBox.getComparator( category.category ) );
+		}
+
 		mainRegion = new ToolBoxRegion( pager.getShownItems() );
 
+		getBehavior().setOnScrollPageUp( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				prevPage();
+			}
+		} );
+
+		getBehavior().setOnScrollPageDown( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				nextPage();
+			}
+		} );
+
 		getChildren().setAll( VBoxBuilder.create().children( mainRegion ).build() );
+	}
+
+	private void nextPage()
+	{
+		pager.setPage( Math.min( pager.getPage() + 1, pager.getNumPages() - 1 ) );
+	}
+
+	private void prevPage()
+	{
+		pager.setPage( Math.max( pager.getPage() - 1, 0 ) );
 	}
 
 	@Override
@@ -266,16 +337,6 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 				getChildren().addAll( category, new Separator() );
 			}
 			getChildren().add( downButton );
-		}
-
-		private void nextPage()
-		{
-			pager.setPage( Math.min( pager.getPage() + 1, pager.getNumPages() - 1 ) );
-		}
-
-		private void prevPage()
-		{
-			pager.setPage( Math.max( pager.getPage() - 1, 0 ) );
 		}
 	}
 
