@@ -3,6 +3,8 @@ package com.eviware.loadui.ui.fx.control.skin;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -12,6 +14,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -19,6 +24,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.shape.RectangleBuilder;
@@ -34,11 +40,11 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 {
 	private final Carousel<E> carousel;
 	private final Pager<Node> pager;
-	private final IntegerProperty depth = new SimpleIntegerProperty( this, "depth", 1 );
+	private final IntegerProperty depth = new SimpleIntegerProperty( this, "depth", 2 );
 
 	private static Node createPlaceholder()
 	{
-		return RectangleBuilder.create().width( 10 ).height( 10 ).build();
+		return RectangleBuilder.create().build();
 	}
 
 	public CarouselSkin( final Carousel<E> carousel )
@@ -168,12 +174,79 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		}
 	}
 
-	private class CarouselDisplay extends HBox
+	private class CarouselDisplay extends Pane
 	{
 		private CarouselDisplay()
 		{
 			getStyleClass().add( "item-display" );
-			Bindings.bindContent( getChildren(), pager.getShownItems() );
+
+			pager.getShownItems().addListener( new InvalidationListener()
+			{
+				@Override
+				public void invalidated( Observable arg0 )
+				{
+					updateChildren();
+				}
+			} );
+
+			updateChildren();
+		}
+
+		@Override
+		protected void layoutChildren()
+		{
+			//TODO: Improve this and add effects.
+			List<Node> managed = getManagedChildren();
+
+			double width = getWidth();
+			double height = getHeight();
+			double top = getInsets().getTop();
+			double right = getInsets().getRight();
+			double left = getInsets().getLeft();
+			double bottom = getInsets().getBottom();
+			double step = ( width - left - right ) / managed.size();
+
+			HPos hpos = HPos.CENTER;
+			left -= step;
+			right -= step;
+			for( int i = 0; i < managed.size(); i++ )
+			{
+				if( i % 2 == 0 )
+				{
+					if( i == managed.size() - 1 )
+					{
+						hpos = HPos.CENTER;
+					}
+					else
+					{
+						left += step;
+						hpos = HPos.LEFT;
+					}
+				}
+				else
+				{
+					right += step;
+					hpos = HPos.RIGHT;
+				}
+
+				Node child = managed.get( i );
+				layoutInArea( child, left, top, width - left - right, height - top - bottom, height / 2, Insets.EMPTY,
+						false, false, hpos, VPos.CENTER );
+			}
+		}
+
+		private void updateChildren()
+		{
+			List<Node> items = pager.getShownItems();
+			List<Node> displayOrder = new ArrayList<>();
+			for( int i = 0; i < items.size() / 2; i++ )
+			{
+				displayOrder.add( items.get( i ) );
+				displayOrder.add( items.get( items.size() - ( i + 1 ) ) );
+			}
+			displayOrder.add( items.get( items.size() / 2 ) );
+
+			getChildren().setAll( displayOrder );
 		}
 	}
 }
