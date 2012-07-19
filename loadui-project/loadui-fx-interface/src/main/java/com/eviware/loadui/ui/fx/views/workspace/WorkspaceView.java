@@ -122,8 +122,18 @@ public class WorkspaceView extends Region
 
 		public void openDialog()
 		{
-			System.out.println( "Opening dialog" );
 			final Dialog dialog = new Dialog( getScene() );
+
+			dialog.getChildren().setAll( LabelBuilder.create().text( "A dialog window" ).build(),
+					ButtonBuilder.create().onAction( new EventHandler<ActionEvent>()
+					{
+						@Override
+						public void handle( ActionEvent arg0 )
+						{
+							dialog.close();
+						}
+					} ).text( "Ok" ).build() );
+
 			dialog.show();
 		}
 	}

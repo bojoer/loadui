@@ -1,15 +1,15 @@
 package com.eviware.loadui.ui.fx.control;
 
-import javafx.event.ActionEvent;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.LabelBuilder;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.GaussianBlurBuilder;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -22,27 +22,16 @@ import javax.annotation.Nonnull;
 public class Dialog extends Stage
 {
 	final Scene parentScene;
+	final Pane rootPane;
 
 	public Dialog( @Nonnull final Scene parentScene )
 	{
 		this.parentScene = parentScene;
 
-		Parent rootParent = VBoxBuilder
-				.create()
-				.spacing( 25 )
-				.padding( new Insets( 20, 75, 20, 75 ) )
-				.alignment( Pos.CENTER )
-				.children( LabelBuilder.create().text( "A dialog window" ).build(),
-						ButtonBuilder.create().onAction( new EventHandler<ActionEvent>()
-						{
-							@Override
-							public void handle( ActionEvent arg0 )
-							{
-								close();
-							}
-						} ).text( "Ok" ).build() ).build();
+		rootPane = VBoxBuilder.create().spacing( 25 ).padding( new Insets( 20, 75, 20, 75 ) ).alignment( Pos.CENTER )
+				.build();
 
-		setScene( new Scene( rootParent ) );
+		setScene( new Scene( rootPane ) );
 
 		setResizable( false );
 		initStyle( StageStyle.UTILITY );
@@ -63,7 +52,11 @@ public class Dialog extends Stage
 				setY( y - getHeight() / 2 );
 			}
 		} );
+	}
 
+	public ObservableList<Node> getChildren()
+	{
+		return rootPane.getChildren();
 	}
 
 	private void blurParentWindow()
