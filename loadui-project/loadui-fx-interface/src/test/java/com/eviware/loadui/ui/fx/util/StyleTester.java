@@ -26,7 +26,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
 
+import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
+import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.control.ToolBox;
+import com.eviware.loadui.ui.fx.views.workspace.CreateNewProjectDialog;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -63,6 +66,9 @@ public class StyleTester extends Application
 		final TextArea styleArea = TextAreaBuilder.create().build();
 
 		final File styleSheet = File.createTempFile( "style", ".css" );
+
+		System.out.println( styleSheet.toURI().toURL().toExternalForm() );
+
 		styleArea.textProperty().addListener( new ChangeListener<String>()
 		{
 			@Override
@@ -78,8 +84,11 @@ public class StyleTester extends Application
 						{
 							try
 							{
-								styleArea.getScene().getStylesheets().setAll( styleSheet.toURI().toURL().toExternalForm() );
-								System.out.println( "Updated style!" );
+								styleArea
+										.getScene()
+										.getStylesheets()
+										.setAll( "file:/src/main/resources/com/eviware/loadui/ui/fx/loadui-style.css",
+												styleSheet.toURI().toURL().toExternalForm() );
 							}
 							catch( MalformedURLException e )
 							{
@@ -94,6 +103,8 @@ public class StyleTester extends Application
 				}
 			}
 		} );
+
+		System.out.println( new File( "." ).getAbsolutePath() );
 
 		VBox.setVgrow( styleArea, Priority.ALWAYS );
 
@@ -120,7 +131,17 @@ public class StyleTester extends Application
 																	}
 																} ).build() ).build() ).build() ).build() );
 
+		primaryStage
+				.getScene()
+				.getStylesheets()
+				.setAll(
+						new File( "src/main/resources/com/eviware/loadui/ui/fx/loadui-style.css" ).toURI().toURL()
+								.toExternalForm() );
+
 		primaryStage.show();
+
+		final Dialog dialog = new CreateNewProjectDialog( primaryStage.getScene() );
+		dialog.show();
 	}
 
 	public static void main( String[] args )

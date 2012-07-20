@@ -1,9 +1,8 @@
 package com.eviware.loadui.ui.fx.control;
 
+import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -28,11 +27,13 @@ public class Dialog extends Stage
 	{
 		this.parentScene = parentScene;
 
-		rootPane = VBoxBuilder.create().spacing( 6 ).padding( new Insets( 10, 24, 20, 24 ) ).minWidth( 300 ).build();
+		rootPane = VBoxBuilder.create().styleClass( "dialog" ).minWidth( 300 ).build();
 
-		setScene( new Scene( rootPane ) );
+		Scene scene = new Scene( rootPane );
+		Bindings.bindContent( scene.getStylesheets(), parentScene.getStylesheets() );
+		setScene( scene );
 
-		//		setResizable( false );
+		setResizable( false );
 		initStyle( StageStyle.UTILITY );
 		initModality( Modality.APPLICATION_MODAL );
 

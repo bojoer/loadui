@@ -74,3 +74,12 @@
 	-fx-background-radius: 0 2 2 0;
 	-fx-background-insets: -3 0 -3 0, -2 1 -2 1;
 }
+
+/**
+ * Dialog styles
+ */
+ 
+ .dialog {
+	-fx-spacing: 6;
+	-fx-padding: 10 24 20 24;
+ }
