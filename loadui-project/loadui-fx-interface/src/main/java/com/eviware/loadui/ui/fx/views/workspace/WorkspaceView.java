@@ -116,18 +116,7 @@ public class WorkspaceView extends Region
 
 		public void openDialog()
 		{
-			final Dialog dialog = new ConfirmationDialog( getScene(), "Save", "Do you really want to?", "It is dangerous." );
-
-			//			dialog.getChildren().setAll( LabelBuilder.create().text( "A dialog window" ).build(),
-			//					ButtonBuilder.create().onAction( new EventHandler<ActionEvent>()
-			//					{
-			//						@Override
-			//						public void handle( ActionEvent arg0 )
-			//						{
-			//							dialog.close();
-			//						}
-			//					} ).text( "Ok" ).build() );
-
+			final Dialog dialog = new CreateNewProjectDialog( getScene() );
 			dialog.show();
 		}
 	}
