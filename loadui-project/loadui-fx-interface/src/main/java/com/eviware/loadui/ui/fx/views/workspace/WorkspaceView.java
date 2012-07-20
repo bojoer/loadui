@@ -12,24 +12,18 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.ContextMenuBuilder;
-import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.web.WebView;
-import javafx.stage.Window;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
 import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
@@ -122,17 +116,17 @@ public class WorkspaceView extends Region
 
 		public void openDialog()
 		{
-			final Dialog dialog = new Dialog( getScene() );
+			final Dialog dialog = new ConfirmationDialog( getScene(), "Save", "Do you really want to?", "It is dangerous." );
 
-			dialog.getChildren().setAll( LabelBuilder.create().text( "A dialog window" ).build(),
-					ButtonBuilder.create().onAction( new EventHandler<ActionEvent>()
-					{
-						@Override
-						public void handle( ActionEvent arg0 )
-						{
-							dialog.close();
-						}
-					} ).text( "Ok" ).build() );
+			//			dialog.getChildren().setAll( LabelBuilder.create().text( "A dialog window" ).build(),
+			//					ButtonBuilder.create().onAction( new EventHandler<ActionEvent>()
+			//					{
+			//						@Override
+			//						public void handle( ActionEvent arg0 )
+			//						{
+			//							dialog.close();
+			//						}
+			//					} ).text( "Ok" ).build() );
 
 			dialog.show();
 		}

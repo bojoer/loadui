@@ -21,19 +21,18 @@ import javax.annotation.Nonnull;
 
 public class Dialog extends Stage
 {
-	final Scene parentScene;
-	final Pane rootPane;
+	private final Scene parentScene;
+	private final Pane rootPane;
 
 	public Dialog( @Nonnull final Scene parentScene )
 	{
 		this.parentScene = parentScene;
 
-		rootPane = VBoxBuilder.create().spacing( 25 ).padding( new Insets( 20, 75, 20, 75 ) ).alignment( Pos.CENTER )
-				.build();
+		rootPane = VBoxBuilder.create().spacing( 6 ).padding( new Insets( 10, 24, 20, 24 ) ).minWidth( 300 ).build();
 
 		setScene( new Scene( rootPane ) );
 
-		setResizable( false );
+		//		setResizable( false );
 		initStyle( StageStyle.UTILITY );
 		initModality( Modality.APPLICATION_MODAL );
 
@@ -42,6 +41,10 @@ public class Dialog extends Stage
 		Window parentWindow = parentScene.getWindow();
 		final double x = parentWindow.getX() + parentWindow.getWidth() / 2;
 		final double y = parentWindow.getY() + parentWindow.getHeight() / 2;
+
+		// Set a good estimated position before the dialog is shown to avoid flickering.
+		setY( y - getScene().getRoot().prefHeight( -1 ) / 2 );
+		setX( x - getScene().getRoot().prefWidth( -1 ) / 2 );
 
 		addEventHandler( WindowEvent.WINDOW_SHOWN, new EventHandler<WindowEvent>()
 		{
@@ -54,7 +57,7 @@ public class Dialog extends Stage
 		} );
 	}
 
-	public ObservableList<Node> getChildren()
+	public ObservableList<Node> getItems()
 	{
 		return rootPane.getChildren();
 	}
