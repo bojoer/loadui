@@ -104,3 +104,12 @@
 	-fx-spacing: 10;
 	-fx-alignment: center;
 }
+
+/**
+ * Dialog styles
+ */
+ 
+.dialog {
+	-fx-spacing: 6;
+	-fx-padding: 10 24 20 24;
+}

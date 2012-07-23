@@ -120,7 +120,17 @@ public class StyleTester extends Application
 																	}
 																} ).build() ).build() ).build() ).build() );
 
+		primaryStage
+				.getScene()
+				.getStylesheets()
+				.setAll(
+						new File( "src/main/resources/com/eviware/loadui/ui/fx/loadui-style.css" ).toURI().toURL()
+								.toExternalForm() );
+
 		primaryStage.show();
+
+		//		final Dialog dialog = new CreateNewProjectDialog( primaryStage.getScene() );
+		//		dialog.show();
 	}
 
 	public static void main( String[] args )
