@@ -3,10 +3,17 @@ package com.eviware.loadui.ui.fx.control.skin;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.animation.Animation.Status;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.animation.TimelineBuilder;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,12 +32,14 @@ import javafx.scene.control.Separator;
 import javafx.scene.effect.ColorAdjustBuilder;
 import javafx.scene.effect.Reflection;
 import javafx.scene.effect.ReflectionBuilder;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.shape.RectangleBuilder;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 import com.eviware.loadui.ui.fx.control.Carousel;
@@ -119,7 +128,7 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 
 		getChildren().setAll(
 				VBoxBuilder.create().styleClass( "vbox" )
-						.children( new VisualScroller(), new Separator(), carousel.getLabel(), comboBox ).build() );
+						.children( new CarouselDisplay(), new Separator(), carousel.getLabel(), comboBox ).build() );
 	}
 
 	private void selectPrevious()
@@ -140,21 +149,23 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		}
 	}
 
-	private class VisualScroller extends HBox
+	private class CarouselDisplay extends HBox
 	{
 		private final Button prevButton = new Button();
 		private final Button nextButton = new Button();
 
-		private VisualScroller()
+		private CarouselDisplay()
 		{
 			getStyleClass().add( "carousel-display" );
+
+			final ItemDisplay display = new ItemDisplay();
 
 			prevButton.setOnAction( new EventHandler<ActionEvent>()
 			{
 				@Override
 				public void handle( ActionEvent arg0 )
 				{
-					selectPrevious();
+					display.animatePrevious();
 				}
 			} );
 			prevButton.disableProperty().bind( pager.pageProperty().isEqualTo( 0 ) );
@@ -162,25 +173,68 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 			nextButton.setOnAction( new EventHandler<ActionEvent>()
 			{
 				@Override
-				public void handle( ActionEvent arg0 )
+				public void handle( ActionEvent event )
 				{
-					selectNext();
+					display.animateNext();
 				}
 			} );
-			nextButton.disableProperty().bind( pager.pageProperty().greaterThanOrEqualTo( pager.numPagesProperty() ) );
+			nextButton.disableProperty().bind(
+					pager.pageProperty().greaterThanOrEqualTo( pager.numPagesProperty().subtract( 1 ) ) );
 
-			CarouselDisplay display = new CarouselDisplay();
 			HBox.setHgrow( display, Priority.ALWAYS );
 
 			getChildren().setAll( prevButton, display, nextButton );
 		}
 	}
 
-	private class CarouselDisplay extends Pane
+	private class ItemDisplay extends Pane
 	{
 		private final Reflection reflection = ReflectionBuilder.create().build();
+		private final DoubleProperty rotationStep = new SimpleDoubleProperty( this, "rotationStep" );
+		private final Timeline animateNextTimeline = TimelineBuilder
+				.create()
+				.onFinished( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent arg0 )
+					{
+						animate();
+					}
+				} )
+				.keyFrames( new KeyFrame( new Duration( 150 ), new KeyValue( rotationStep, -0.5 ) ),
+						new KeyFrame( new Duration( 150 ), new EventHandler<ActionEvent>()
+						{
+							@Override
+							public void handle( ActionEvent event )
+							{
+								selectNext();
+							}
+						}, new KeyValue( rotationStep, 0.5 ) ),
+						new KeyFrame( new Duration( 300 ), new KeyValue( rotationStep, 0 ) ) ).build();
 
-		private CarouselDisplay()
+		private final Timeline animatePrevTimeline = TimelineBuilder
+				.create()
+				.onFinished( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent arg0 )
+					{
+						animate();
+					}
+				} )
+				.keyFrames( new KeyFrame( new Duration( 150 ), new KeyValue( rotationStep, 0.5 ) ),
+						new KeyFrame( new Duration( 150 ), new EventHandler<ActionEvent>()
+						{
+							@Override
+							public void handle( ActionEvent event )
+							{
+								selectPrevious();
+							}
+						}, new KeyValue( rotationStep, -0.5 ) ),
+						new KeyFrame( new Duration( 300 ), new KeyValue( rotationStep, 0 ) ) ).build();
+		private int animationQueue = 0;
+
+		private ItemDisplay()
 		{
 			getStyleClass().add( "item-display" );
 
@@ -190,6 +244,31 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 				public void invalidated( Observable arg0 )
 				{
 					updateChildren();
+				}
+			} );
+
+			rotationStep.addListener( new InvalidationListener()
+			{
+				@Override
+				public void invalidated( Observable arg0 )
+				{
+					requestLayout();
+				}
+			} );
+
+			setOnScroll( new EventHandler<ScrollEvent>()
+			{
+				@Override
+				public void handle( ScrollEvent event )
+				{
+					if( event.getDeltaY() < 0 )
+					{
+						animateNext();
+					}
+					else
+					{
+						animatePrevious();
+					}
 				}
 			} );
 
@@ -214,13 +293,75 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 
 			for( int i = 0; i < managed.size(); i++ )
 			{
-				double z = Math.sin( i * radianStep ) / 2 + 0.5;
-				double areaX = left + ( 1 - Math.cos( i * radianStep ) ) * span;
+				double radians = ( rotationStep.get() + i ) * radianStep;
+
+				double z = Math.sin( radians ) / 2 + 0.5;
+				double areaX = left + ( 1 - Math.cos( radians ) ) * span;
 				Node child = managed.get( i );
 				child.setScaleX( z );
 				child.setScaleY( z );
 				child.setEffect( ColorAdjustBuilder.create().brightness( z - 1 ).input( reflection ).build() );
 				layoutInArea( child, areaX, top, childWidth, height, height / 2, HPos.CENTER, VPos.CENTER );
+			}
+		}
+
+		private void animateNext()
+		{
+			if( animationQueue < 0 )
+			{
+				animationQueue = 1;
+				animateNextTimeline.setRate( animatePrevTimeline.getRate() * 1.25 );
+			}
+			else
+			{
+				animationQueue++ ;
+				animateNextTimeline.setRate( animateNextTimeline.getRate() * 1.25 );
+			}
+			animate();
+		}
+
+		private void animatePrevious()
+		{
+			if( animationQueue > 0 )
+			{
+				animationQueue = -1;
+				animatePrevTimeline.setRate( animateNextTimeline.getRate() * 1.25 );
+			}
+			else
+			{
+				animationQueue-- ;
+				animatePrevTimeline.setRate( animatePrevTimeline.getRate() * 1.25 );
+			}
+			animate();
+		}
+
+		private void resetAnimation()
+		{
+			animateNextTimeline.setRate( 1 );
+			animatePrevTimeline.setRate( 1 );
+			animationQueue = 0;
+		}
+
+		private void animate()
+		{
+			if( animatePrevTimeline.getStatus() == Status.RUNNING || animateNextTimeline.getStatus() == Status.RUNNING )
+			{
+				return;
+			}
+
+			if( animationQueue > 0 && pager.getPage() < pager.getNumPages() - 1 )
+			{
+				animateNextTimeline.setRate( animationQueue-- );
+				animateNextTimeline.playFromStart();
+			}
+			else if( animationQueue < 0 && pager.getPage() > 0 )
+			{
+				animatePrevTimeline.setRate( -animationQueue++ );
+				animatePrevTimeline.playFromStart();
+			}
+			else
+			{
+				resetAnimation();
 			}
 		}
 
