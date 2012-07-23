@@ -21,6 +21,7 @@ import javafx.scene.web.WebView;
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
+import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Carousel;
 import com.eviware.loadui.ui.fx.control.Dialog;
@@ -80,6 +81,23 @@ public class WorkspaceView extends Region
 					} ) ) );
 
 			webView.getEngine().load( "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html" );
+
+			projectRefNodeCarousel.addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
+			{
+				@Override
+				public void handle( DraggableEvent event )
+				{
+					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED
+							&& event.getData() instanceof NewProjectIcon )
+					{
+						event.accept();
+					}
+					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+					{
+						new CreateNewProjectDialog( getScene() ).show();
+					}
+				}
+			} );
 
 			projectRefNodeCarousel.setContextMenu( ContextMenuBuilder.create()
 					.items( MenuItemBuilder.create().text( "Create Project" ).onAction( new EventHandler<ActionEvent>()

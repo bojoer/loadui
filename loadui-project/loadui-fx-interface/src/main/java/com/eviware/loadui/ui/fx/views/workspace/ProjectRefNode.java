@@ -2,22 +2,22 @@ package com.eviware.loadui.ui.fx.views.workspace;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.Label;
-import javafx.scene.control.LabelBuilder;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuButtonBuilder;
+import javafx.scene.control.MenuItemBuilder;
+import javafx.scene.control.TooltipBuilder;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBoxBuilder;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.RectangleBuilder;
+import javafx.scene.layout.RegionBuilder;
+import javafx.scene.layout.VBox;
 
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.Properties;
 
-public class ProjectRefNode extends Region
+public class ProjectRefNode extends VBox
 {
 	private final ProjectRef projectRef;
 
@@ -25,37 +25,63 @@ public class ProjectRefNode extends Region
 	{
 		this.projectRef = projectRef;
 		getStyleClass().setAll( "project-ref-node" );
-		setStyle( "-fx-background-color: black, darkgrey; -fx-background-insets: 0, 2; -fx-background-radius: 5;" );
+		setStyle( "-fx-background-color: black, darkgrey; -fx-background-insets: 0, 2; -fx-background-radius: 5; -fx-padding: 5; -fx-spacing: 5;" );
 
-		Label projectRefLabel = LabelBuilder.create().build();
-		projectRefLabel.textProperty().bind( Properties.forLabel( projectRef ) );
+		MenuButton menuButton = MenuButtonBuilder.create()
+				.tooltip( TooltipBuilder.create().text( projectRef.getProjectFile().getAbsolutePath() ).build() )
+				.items( MenuItemBuilder.create().text( "Open" ).onAction( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent event )
+					{
+						openProject();
+					}
+				} ).build(), MenuItemBuilder.create().text( "Clone" ).onAction( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent event )
+					{
+						//TODO: Open Clone project dialog.
+					}
+				} ).build(), MenuItemBuilder.create().text( "Delete" ).onAction( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent event )
+					{
+						//TODO: Open Delete dialog?
+						projectRef.delete( false );
+					}
+				} ).build() ).build();
+		menuButton.textProperty().bind( Properties.forLabel( projectRef ) );
 
-		getChildren().add(
-				VBoxBuilder
-						.create()
-						.padding( new Insets( 5 ) )
-						.spacing( 5 )
-						.children(
-								ButtonBuilder.create().text( "X" ).onAction( new EventHandler<ActionEvent>()
-								{
-									@Override
-									public void handle( ActionEvent arg0 )
-									{
-										projectRef.delete( false );
-									}
-								} ).build(),
-								projectRefLabel,
-								RectangleBuilder.create().width( 100 ).height( 75 ).fill( Color.PINK )
-										.onMouseClicked( new EventHandler<MouseEvent>()
-										{
-											@Override
-											public void handle( MouseEvent event )
-											{
-												if( event.getButton() == MouseButton.PRIMARY )
-												{
-													fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, projectRef ) );
-												}
-											}
-										} ).build() ).build() );
+		setPrefWidth( 130 );
+		setMaxHeight( 90 );
+
+		Region region = RegionBuilder.create().style( "-fx-background-color: pink;" )
+				.onMouseClicked( new EventHandler<MouseEvent>()
+				{
+					@Override
+					public void handle( MouseEvent event )
+					{
+						if( event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 )
+						{
+							openProject();
+						}
+					}
+				} ).build();
+		VBox.setVgrow( region, Priority.ALWAYS );
+
+		getChildren().setAll( menuButton, region );
+	}
+
+	public void openProject()
+	{
+		fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, projectRef ) );
+	}
+
+	@Override
+	public String toString()
+	{
+		return projectRef.getLabel();
 	}
 }
