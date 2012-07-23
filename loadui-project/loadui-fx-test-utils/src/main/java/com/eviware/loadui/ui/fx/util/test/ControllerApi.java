@@ -93,6 +93,19 @@ public class ControllerApi
 		this.controller = controller;
 	}
 
+	public ControllerApi sleep( long ms )
+	{
+		try
+		{
+			Thread.sleep( ms );
+		}
+		catch( InterruptedException e )
+		{
+			throw new RuntimeException( e );
+		}
+		return this;
+	}
+
 	public ControllerApi using( Window window )
 	{
 		use( window );

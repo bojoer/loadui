@@ -69,22 +69,14 @@ public class Pager<T>
 		this.page.set( page );
 	}
 
-	private final ObservableList<T> items = FXCollections.observableArrayList();
+	private final ObservableList<T> items;
 
 	public ObservableList<T> getItems()
 	{
 		return items;
 	}
 
-	private final ReadOnlyIntegerWrapper numPages = new ReadOnlyIntegerWrapper( this, "numPages" )
-	{
-		{
-			//TODO: When fluentMode is off, this is wrong due to integer rounding down.
-			bind( Bindings.when( fluentMode )
-					.then( Bindings.max( Bindings.size( items ).subtract( itemsPerPage ), 0 ).add( 1 ) )
-					.otherwise( Bindings.size( items ).divide( itemsPerPage ) ) );
-		}
-	};
+	private final ReadOnlyIntegerWrapper numPages;
 
 	public int getNumPages()
 	{
@@ -120,8 +112,10 @@ public class Pager<T>
 		return FXCollections.unmodifiableObservableList( shownItems );
 	}
 
-	public Pager()
+	public Pager( ObservableList<T> providedList )
 	{
+		items = providedList;
+
 		InvalidationListener shownItemsListener = new InvalidationListener()
 		{
 			@Override
@@ -132,14 +126,34 @@ public class Pager<T>
 			}
 		};
 
+		numPages = new ReadOnlyIntegerWrapper( this, "numPages" )
+		{
+			{
+				//TODO: When fluentMode is off, this is wrong due to integer rounding down.
+				bind( Bindings.when( fluentMode )
+						.then( Bindings.max( Bindings.size( items ).subtract( itemsPerPage ), 0 ).add( 1 ) )
+						.otherwise( Bindings.size( items ).divide( itemsPerPage ) ) );
+			}
+		};
+
 		items.addListener( shownItemsListener );
 		offset.addListener( shownItemsListener );
 		itemsPerPage.addListener( shownItemsListener );
 	}
 
+	public Pager( ObservableList<T> providedList, int itemsPerPage )
+	{
+		this( providedList );
+		setItemsPerPage( itemsPerPage );
+	}
+
 	public Pager( int itemsPerPage )
 	{
-		this();
-		setItemsPerPage( itemsPerPage );
+		this( FXCollections.<T> observableArrayList(), itemsPerPage );
+	}
+
+	public Pager()
+	{
+		this( FXCollections.<T> observableArrayList() );
 	}
 }

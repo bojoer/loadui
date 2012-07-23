@@ -22,8 +22,7 @@ public class Carousel<E extends Node> extends Control
 	private final ObservableList<E> items = FXCollections.observableArrayList();
 	private final Label label;
 
-	private final ObjectProperty<StringConverter<E>> converterProperty = new SimpleObjectProperty<StringConverter<E>>(
-			this, "converter" );
+	private final ObjectProperty<StringConverter<E>> converterProperty = new SimpleObjectProperty<>( this, "converter" );
 
 	private final ObjectProperty<E> selectedProperty = new ObjectPropertyBase<E>()
 	{
@@ -117,8 +116,8 @@ public class Carousel<E extends Node> extends Control
 
 	public void setSelected( E selected )
 	{
-		Preconditions.checkArgument( items.contains( selected ), "%s does not contain the given object: %s",
-				Carousel.class.getSimpleName(), selected );
+		Preconditions.checkArgument( selected == null || items.contains( selected ),
+				"%s does not contain the given object: %s", Carousel.class.getSimpleName(), selected );
 
 		selectedProperty.set( selected );
 	}

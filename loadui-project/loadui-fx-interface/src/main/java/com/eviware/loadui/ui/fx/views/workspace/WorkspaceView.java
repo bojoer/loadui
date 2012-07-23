@@ -13,7 +13,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ContextMenuBuilder;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.layout.Region;
@@ -23,7 +22,7 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
-import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
+import com.eviware.loadui.ui.fx.control.Carousel;
 import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
@@ -60,7 +59,7 @@ public class WorkspaceView extends Region
 		private MenuButton workspaceButton;
 
 		@FXML
-		private ListView<ProjectRefNode> projectRefNodeList;
+		private Carousel<ProjectRefNode> projectRefNodeCarousel;
 
 		@FXML
 		private WebView webView;
@@ -70,7 +69,7 @@ public class WorkspaceView extends Region
 		{
 			workspaceButton.textProperty().bind( Bindings.format( "Workspace: %s", Properties.forLabel( workspace ) ) );
 
-			Bindings.bindContent( projectRefNodeList.getItems(), ObservableLists.fx( ObservableLists.transform(
+			Bindings.bindContent( projectRefNodeCarousel.getItems(), ObservableLists.fx( ObservableLists.transform(
 					projectRefList, new Function<ProjectRef, ProjectRefNode>()
 					{
 						@Override
@@ -82,7 +81,7 @@ public class WorkspaceView extends Region
 
 			webView.getEngine().load( "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html" );
 
-			projectRefNodeList.setContextMenu( ContextMenuBuilder.create()
+			projectRefNodeCarousel.setContextMenu( ContextMenuBuilder.create()
 					.items( MenuItemBuilder.create().text( "Create Project" ).onAction( new EventHandler<ActionEvent>()
 					{
 						@Override

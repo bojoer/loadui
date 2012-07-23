@@ -17,6 +17,7 @@
 <?import java.lang.String?>
 <?import com.eviware.loadui.ui.fx.util.ExplicitOrdering?>
 <?import com.eviware.loadui.ui.fx.control.ToolBox?>
+<?import com.eviware.loadui.ui.fx.control.Carousel?>
 <?import com.eviware.loadui.ui.fx.views.workspace.NewProjectIcon?>
 <?import com.eviware.loadui.ui.fx.views.workspace.NewAgentIcon?>
 
@@ -46,7 +47,7 @@
 				<NewProjectIcon ToolBox.category="Projects" />
 				<NewAgentIcon ToolBox.category="Agents" />
 			</ToolBox>
-			<ListView fx:id="projectRefNodeList" />
+			<Carousel fx:id="projectRefNodeCarousel" prefWidth="300" maxHeight="240" />
 			<WebView fx:id="webView" prefWidth="634" prefHeight="562" />
 		</HBox>
 	</VBox>

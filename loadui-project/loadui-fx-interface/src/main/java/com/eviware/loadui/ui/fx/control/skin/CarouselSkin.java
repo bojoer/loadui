@@ -10,18 +10,16 @@ import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -40,6 +38,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.shape.RectangleBuilder;
 import javafx.util.Callback;
@@ -54,12 +54,12 @@ import com.sun.javafx.scene.control.skin.SkinBase;
 public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, BehaviorBase<Carousel<E>>>
 {
 	private final Carousel<E> carousel;
-	private final Pager<Node> pager;
+	private final Pager<Node> pager = new Pager<>();
 	private final IntegerProperty depth = new SimpleIntegerProperty( this, "depth", 2 );
 
 	private static Node createPlaceholder()
 	{
-		return RectangleBuilder.create().build();
+		return RectangleBuilder.create().id( "placeholder" ).build();
 	}
 
 	public CarouselSkin( final Carousel<E> carousel )
@@ -67,45 +67,41 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		super( carousel, new BehaviorBase<>( carousel ) );
 
 		this.carousel = carousel;
-		pager = new Pager<>();
+
 		pager.setFluentMode( true );
-		final ObservableList<Node> blankNodesLeft = FXCollections.observableArrayList();
-		final ObservableList<Node> blankNodesRight = FXCollections.observableArrayList();
-		depth.addListener( new ChangeListener<Number>()
+		pager.itemsPerPageProperty().bind( depth.multiply( 2 ).add( 1 ) );
+
+		InvalidationListener updatePagerItems = new InvalidationListener()
 		{
 			@Override
-			public void changed( ObservableValue<? extends Number> arg0, Number oldValue, Number newValue )
+			public void invalidated( Observable arg0 )
 			{
-				List<Node> newBlankNodesLeft = new ArrayList<>();
-				List<Node> newBlankNodesRight = new ArrayList<>();
-				for( int i = newValue.intValue(); i > 0; i-- )
+				List<Node> nodes = new ArrayList<>();
+				for( int i = depth.get(); i > 0; i-- )
 				{
-					newBlankNodesLeft.add( createPlaceholder() );
-					newBlankNodesRight.add( createPlaceholder() );
+					nodes.add( createPlaceholder() );
 				}
-				blankNodesLeft.setAll( newBlankNodesLeft );
-				blankNodesRight.setAll( newBlankNodesRight );
+				nodes.addAll( carousel.getItems() );
+				for( int i = depth.get(); i > 0; i-- )
+				{
+					nodes.add( createPlaceholder() );
+				}
+
+				pager.getItems().setAll( nodes );
 			}
-		} );
+		};
 
-		for( int i = depth.get(); i > 0; i-- )
-		{
-			blankNodesLeft.add( createPlaceholder() );
-			blankNodesRight.add( createPlaceholder() );
-		}
-
-		@SuppressWarnings( "unchecked" )
-		ObservableList<Node> pagerItems = FXCollections.concat( blankNodesLeft,
-				( ObservableList<Node> )carousel.getItems(), blankNodesRight );
-		Bindings.bindContent( pager.getItems(), pagerItems );
-		pager.itemsPerPageProperty().bind( depth.multiply( 2 ).add( 1 ) );
+		carousel.getItems().addListener( updatePagerItems );
+		depth.addListener( updatePagerItems );
+		updatePagerItems.invalidated( null );
 
 		carousel.selectedProperty().addListener( new ChangeListener<E>()
 		{
 			@Override
 			public void changed( ObservableValue<? extends E> arg0, E oldValue, E newValue )
 			{
-				pager.setPage( carousel.getItems().indexOf( newValue ) );
+				int index = carousel.getItems().indexOf( newValue );
+				pager.setPage( Math.max( index, 0 ) );
 			}
 		} );
 
@@ -127,12 +123,16 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 				};
 			}
 		} );
-		comboBox.prefWidthProperty().bind( widthProperty() );
 		comboBox.valueProperty().bindBidirectional( carousel.selectedProperty() );
 
-		getChildren().setAll(
-				VBoxBuilder.create().styleClass( "vbox" )
-						.children( new CarouselDisplay(), new Separator(), carousel.getLabel(), comboBox ).build() );
+		CarouselDisplay carouselDisplay = new CarouselDisplay();
+		VBox.setVgrow( carouselDisplay, Priority.SOMETIMES );
+		VBox vbox = VBoxBuilder.create().styleClass( "vbox" )
+				.children( carouselDisplay, new Separator(), carousel.getLabel(), comboBox ).build();
+
+		comboBox.prefWidthProperty().bind( vbox.widthProperty() );
+
+		getChildren().setAll( vbox );
 	}
 
 	private void selectPrevious()
@@ -153,7 +153,7 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		}
 	}
 
-	private class CarouselDisplay extends HBox
+	private class CarouselDisplay extends StackPane
 	{
 		private final Button prevButton = ButtonBuilder.create().styleClass( "nav", "left" ).build();
 		private final Button nextButton = ButtonBuilder.create().styleClass( "nav", "right" ).build();
@@ -187,7 +187,9 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 
 			HBox.setHgrow( display, Priority.ALWAYS );
 
-			getChildren().setAll( prevButton, display, nextButton );
+			setAlignment( prevButton, Pos.CENTER_LEFT );
+			setAlignment( nextButton, Pos.CENTER_RIGHT );
+			getChildren().setAll( display, prevButton, nextButton );
 		}
 	}
 
@@ -331,6 +333,15 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 			layoutInArea( mouseBlocker, left, top, width, height, height / 2, HPos.CENTER, VPos.CENTER );
 		}
 
+		@Override
+		protected double computePrefWidth( double height )
+		{
+			double prefWidth = getInsets().getLeft() + 3 * getMaxPrefWidth( pager.getShownItems(), height )
+					+ getInsets().getRight();
+
+			return prefWidth;
+		}
+
 		private void animateNext()
 		{
 			if( animationQueue < 0 )
@@ -396,7 +407,7 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 			double maxWidth = -1;
 			for( Node child : managed )
 			{
-				maxWidth = Math.max( maxWidth, child.minWidth( height ) );
+				maxWidth = Math.max( maxWidth, child.prefWidth( height ) );
 			}
 
 			return maxWidth;
@@ -412,7 +423,10 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 				displayOrder.add( items.get( items.size() - ( i + 1 ) ) );
 			}
 			displayOrder.add( mouseBlocker );
-			displayOrder.add( items.get( items.size() / 2 ) );
+			if( items.size() > depth.get() * 2 )
+			{
+				displayOrder.add( items.get( items.size() / 2 ) );
+			}
 
 			getChildren().setAll( displayOrder );
 		}

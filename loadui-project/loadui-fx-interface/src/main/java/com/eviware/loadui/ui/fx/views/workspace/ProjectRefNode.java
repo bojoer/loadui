@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBoxBuilder;
@@ -50,7 +51,10 @@ public class ProjectRefNode extends Region
 											@Override
 											public void handle( MouseEvent event )
 											{
-												fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, projectRef ) );
+												if( event.getButton() == MouseButton.PRIMARY )
+												{
+													fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, projectRef ) );
+												}
 											}
 										} ).build() ).build() );
 	}
