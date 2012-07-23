@@ -25,6 +25,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -151,8 +152,8 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 
 	private class CarouselDisplay extends HBox
 	{
-		private final Button prevButton = new Button();
-		private final Button nextButton = new Button();
+		private final Button prevButton = ButtonBuilder.create().styleClass( "nav", "left" ).build();
+		private final Button nextButton = ButtonBuilder.create().styleClass( "nav", "right" ).build();
 
 		private CarouselDisplay()
 		{
