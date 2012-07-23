@@ -43,8 +43,17 @@ public class StyleTester extends Application
 				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.GREEN ).build() ).build();
 		final Label rectangle4 = LabelBuilder.create().id( "yellow" ).styleClass( "icon" ).text( "Rectangle" )
 				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.YELLOW ).build() ).build();
+		final Label rectangle5 = LabelBuilder.create().id( "yellow" ).styleClass( "icon" ).text( "Rectangle" )
+				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.RED ).build() ).build();
+		final Label rectangle6 = LabelBuilder.create().id( "yellow" ).styleClass( "icon" ).text( "Rectangle" )
+				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.RED ).build() ).build();
+		final Label rectangle7 = LabelBuilder.create().id( "yellow" ).styleClass( "icon" ).text( "Rectangle" )
+				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.RED ).build() ).build();
+		final Label rectangle8 = LabelBuilder.create().id( "yellow" ).styleClass( "icon" ).text( "Rectangle" )
+				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.RED ).build() ).build();
 
-		carousel.getItems().setAll( rectangle1, rectangle2, rectangle3, rectangle4 );
+		carousel.getItems().setAll( rectangle1, rectangle5, rectangle6, rectangle7, rectangle8, rectangle2, rectangle3,
+				rectangle4 );
 
 		return carousel;
 	}

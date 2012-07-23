@@ -15,7 +15,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -23,6 +22,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
+import javafx.scene.effect.ColorAdjustBuilder;
+import javafx.scene.effect.Reflection;
+import javafx.scene.effect.ReflectionBuilder;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -176,6 +178,8 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 
 	private class CarouselDisplay extends Pane
 	{
+		private final Reflection reflection = ReflectionBuilder.create().build();
+
 		private CarouselDisplay()
 		{
 			getStyleClass().add( "item-display" );
@@ -195,44 +199,40 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		@Override
 		protected void layoutChildren()
 		{
-			//TODO: Improve this and add effects.
-			List<Node> managed = getManagedChildren();
+			List<Node> managed = pager.getShownItems();
 
-			double width = getWidth();
-			double height = getHeight();
 			double top = getInsets().getTop();
 			double right = getInsets().getRight();
 			double left = getInsets().getLeft();
 			double bottom = getInsets().getBottom();
-			double step = ( width - left - right ) / managed.size();
+			double width = getWidth() - left - right;
+			double height = getHeight() - top - bottom;
+			double childWidth = getMaxPrefWidth( managed, height );
 
-			HPos hpos = HPos.CENTER;
-			left -= step;
-			right -= step;
+			double span = ( width - childWidth ) / 2;
+			double radianStep = Math.PI / ( managed.size() - 1 );
+
 			for( int i = 0; i < managed.size(); i++ )
 			{
-				if( i % 2 == 0 )
-				{
-					if( i == managed.size() - 1 )
-					{
-						hpos = HPos.CENTER;
-					}
-					else
-					{
-						left += step;
-						hpos = HPos.LEFT;
-					}
-				}
-				else
-				{
-					right += step;
-					hpos = HPos.RIGHT;
-				}
-
+				double z = Math.sin( i * radianStep ) / 2 + 0.5;
+				double areaX = left + ( 1 - Math.cos( i * radianStep ) ) * span;
 				Node child = managed.get( i );
-				layoutInArea( child, left, top, width - left - right, height - top - bottom, height / 2, Insets.EMPTY,
-						false, false, hpos, VPos.CENTER );
+				child.setScaleX( z );
+				child.setScaleY( z );
+				child.setEffect( ColorAdjustBuilder.create().brightness( z - 1 ).input( reflection ).build() );
+				layoutInArea( child, areaX, top, childWidth, height, height / 2, HPos.CENTER, VPos.CENTER );
 			}
+		}
+
+		private double getMaxPrefWidth( List<Node> managed, double height )
+		{
+			double maxWidth = -1;
+			for( Node child : managed )
+			{
+				maxWidth = Math.max( maxWidth, child.minWidth( height ) );
+			}
+
+			return maxWidth;
 		}
 
 		private void updateChildren()
