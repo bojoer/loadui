@@ -33,10 +33,13 @@ import javafx.scene.control.Separator;
 import javafx.scene.effect.ColorAdjustBuilder;
 import javafx.scene.effect.Reflection;
 import javafx.scene.effect.ReflectionBuilder;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.shape.RectangleBuilder;
 import javafx.util.Callback;
@@ -191,6 +194,7 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 	private class ItemDisplay extends Pane
 	{
 		private final Reflection reflection = ReflectionBuilder.create().build();
+		private final Region mouseBlocker = new Region();
 		private final DoubleProperty rotationStep = new SimpleDoubleProperty( this, "rotationStep" );
 		private final Timeline animateNextTimeline = TimelineBuilder
 				.create()
@@ -273,6 +277,25 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 				}
 			} );
 
+			mouseBlocker.setMouseTransparent( false );
+			mouseBlocker.setOnMouseClicked( new EventHandler<MouseEvent>()
+			{
+				@Override
+				public void handle( MouseEvent event )
+				{
+					if( event.getButton() == MouseButton.PRIMARY )
+					{
+						if( event.getX() < mouseBlocker.getWidth() / 2 )
+						{
+							animatePrevious();
+						}
+						else
+						{
+							animateNext();
+						}
+					}
+				}
+			} );
 			updateChildren();
 		}
 
@@ -304,6 +327,8 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 				child.setEffect( ColorAdjustBuilder.create().brightness( z - 1 ).input( reflection ).build() );
 				layoutInArea( child, areaX, top, childWidth, height, height / 2, HPos.CENTER, VPos.CENTER );
 			}
+
+			layoutInArea( mouseBlocker, left, top, width, height, height / 2, HPos.CENTER, VPos.CENTER );
 		}
 
 		private void animateNext()
@@ -386,6 +411,7 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 				displayOrder.add( items.get( i ) );
 				displayOrder.add( items.get( items.size() - ( i + 1 ) ) );
 			}
+			displayOrder.add( mouseBlocker );
 			displayOrder.add( items.get( items.size() / 2 ) );
 
 			getChildren().setAll( displayOrder );
