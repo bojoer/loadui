@@ -14,8 +14,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -95,17 +93,22 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		depth.addListener( updatePagerItems );
 		updatePagerItems.invalidated( null );
 
-		carousel.selectedProperty().addListener( new ChangeListener<E>()
+		InvalidationListener updatePage = new InvalidationListener()
 		{
 			@Override
-			public void changed( ObservableValue<? extends E> arg0, E oldValue, E newValue )
+			public void invalidated( Observable arg0 )
 			{
-				int index = carousel.getItems().indexOf( newValue );
+				int index = carousel.getItems().indexOf( carousel.getSelected() );
 				pager.setPage( Math.max( index, 0 ) );
 			}
-		} );
+		};
+
+		carousel.selectedProperty().addListener( updatePage );
+		carousel.getItems().addListener( updatePage );
+		updatePage.invalidated( null );
 
 		ComboBox<E> comboBox = new ComboBox<>( carousel.getItems() );
+		comboBox.setMaxWidth( Double.MAX_VALUE );
 		comboBox.setCellFactory( new Callback<ListView<E>, ListCell<E>>()
 		{
 			@Override
@@ -129,8 +132,6 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		VBox.setVgrow( carouselDisplay, Priority.SOMETIMES );
 		VBox vbox = VBoxBuilder.create().styleClass( "vbox" )
 				.children( carouselDisplay, new Separator(), carousel.getLabel(), comboBox ).build();
-
-		comboBox.prefWidthProperty().bind( vbox.widthProperty() );
 
 		getChildren().setAll( vbox );
 	}

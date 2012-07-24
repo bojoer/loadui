@@ -25,7 +25,7 @@ public class ProjectCreatedState extends TestState
 	@Override
 	protected void enterFromParent() throws Exception
 	{
-		final ListView<Node> projectList = find( "#projectRefNodeList" );
+		final ListView<Node> projectList = find( "#projectRefCarousel" );
 		GUI.getController().click( projectList, MouseButton.SECONDARY ).moveBy( 15, 10 ).click();
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
@@ -41,7 +41,7 @@ public class ProjectCreatedState extends TestState
 	@Override
 	protected void exitToParent() throws Exception
 	{
-		final ListView<Node> projectList = find( "#projectRefNodeList" );
+		final ListView<Node> projectList = find( "#projectRefCarousel" );
 		Node projectRef = Iterables.getOnlyElement( projectList.getItems() );
 
 		GUI.getController().click( find( ".button", projectRef ) );

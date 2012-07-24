@@ -70,18 +70,22 @@ public class Carousel<E extends Node> extends Control
 				{
 					setSelected( null );
 				}
-				else if( getSelected() == null )
-				{
-					setSelected( items.get( 0 ) );
-				}
 				else
 				{
-					while( change.next() )
+					E selected = getSelected();
+					if( selected == null )
 					{
-						if( change.getRemoved().contains( selectedProperty ) )
+						setSelected( items.get( 0 ) );
+					}
+					else
+					{
+						while( change.next() )
 						{
-							setSelected( items.get( change.getFrom() ) );
-							return;
+							if( change.getRemoved().contains( selected ) )
+							{
+								setSelected( items.get( change.getFrom() ) );
+								return;
+							}
 						}
 					}
 				}

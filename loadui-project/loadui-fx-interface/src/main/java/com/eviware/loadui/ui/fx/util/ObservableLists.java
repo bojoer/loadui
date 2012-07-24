@@ -1,5 +1,7 @@
 package com.eviware.loadui.ui.fx.util;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -198,10 +200,42 @@ public class ObservableLists
 	 * @param list2
 	 */
 	@SuppressWarnings( "unchecked" )
-	public static <E> void bindContentUnordered( List<? super E> list1, ObservableList<E> list2 )
+	public static <E> void bindContentUnordered( List<E> list1, ObservableList<? extends E> list2 )
 	{
-		( ( ObservableList<E> )list1 ).setAll( list2 );
+		if( list1 instanceof ObservableList )
+		{
+			( ( ObservableList<E> )list1 ).setAll( list2 );
+		}
+		else
+		{
+			list1.clear();
+			list1.addAll( list2 );
+		}
+
 		list2.addListener( ( ListChangeListener<? super E> )contentListeners.getUnchecked( list1 ) );
+	}
+
+	public static <E> void bindSorted( final List<E> list1, ObservableList<? extends E> list2,
+			final Comparator<? super E> comparator )
+	{
+		bindContentUnordered( list1, list2 );
+		InvalidationListener invalidationListener = new InvalidationListener()
+		{
+			@Override
+			public void invalidated( Observable arg0 )
+			{
+				if( list1 instanceof ObservableList )
+				{
+					FXCollections.sort( ( ObservableList<E> )list1, comparator );
+				}
+				else
+				{
+					Collections.sort( list1, comparator );
+				}
+			}
+		};
+		list2.addListener( invalidationListener );
+		invalidationListener.invalidated( list2 );
 	}
 
 	@SuppressWarnings( "unchecked" )

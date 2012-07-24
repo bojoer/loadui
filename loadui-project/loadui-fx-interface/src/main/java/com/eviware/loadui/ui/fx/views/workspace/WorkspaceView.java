@@ -12,13 +12,17 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.ContextMenuBuilder;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItemBuilder;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
 
+import javax.annotation.Nullable;
+
 import com.eviware.loadui.LoadUI;
+import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
@@ -28,20 +32,40 @@ import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Properties;
+import com.eviware.loadui.ui.fx.views.agent.AgentView;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 
-public class WorkspaceView extends Region
+public class WorkspaceView extends StackPane
 {
 	private final WorkspaceItem workspace;
 	private final ObservableList<ProjectRef> projectRefList;
+	private final ObservableList<AgentItem> agentList;
 
-	public WorkspaceView( WorkspaceItem workspace )
+	public WorkspaceView( final WorkspaceItem workspace )
 	{
 		this.workspace = workspace;
-		projectRefList = ObservableLists.ofCollection( workspace, WorkspaceItem.PROJECT_REFS, ProjectRef.class,
-				workspace.getProjectRefs() );
+		projectRefList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.PROJECT_REFS,
+				ProjectRef.class, workspace.getProjectRefs() ) );
+		agentList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.AGENTS, AgentItem.class,
+				workspace.getAgents() ) );
 
-		getChildren().add( FXMLUtils.load( WorkspaceView.class, new Callable<Object>()
+		addEventFilter( IntentEvent.INTENT_OPEN, new EventHandler<IntentEvent<? extends Object>>()
+		{
+			@Override
+			public void handle( IntentEvent<? extends Object> event )
+			{
+				if( event.getArg() instanceof ProjectRef )
+				{
+					workspace.setAttribute( "lastOpenProject", ( ( ProjectRef )event.getArg() ).getProjectFile()
+							.getAbsolutePath() );
+				}
+			}
+		} );
+
+		getChildren().setAll( FXMLUtils.load( WorkspaceView.class, new Callable<Object>()
 		{
 			@Override
 			public Object call() throws Exception
@@ -53,14 +77,14 @@ public class WorkspaceView extends Region
 
 	public final class Controller implements Initializable
 	{
-		//		@FXML
-		//		private Label workspaceLabel;
-
 		@FXML
 		private MenuButton workspaceButton;
 
 		@FXML
-		private Carousel<ProjectRefNode> projectRefNodeCarousel;
+		private Carousel<ProjectRefView> projectRefCarousel;
+
+		@FXML
+		private Carousel<Node> agentCarousel;
 
 		@FXML
 		private WebView webView;
@@ -70,19 +94,78 @@ public class WorkspaceView extends Region
 		{
 			workspaceButton.textProperty().bind( Bindings.format( "Workspace: %s", Properties.forLabel( workspace ) ) );
 
-			Bindings.bindContent( projectRefNodeCarousel.getItems(), ObservableLists.fx( ObservableLists.transform(
-					projectRefList, new Function<ProjectRef, ProjectRefNode>()
-					{
-						@Override
-						public ProjectRefNode apply( ProjectRef projectRef )
-						{
-							return new ProjectRefNode( projectRef );
-						}
-					} ) ) );
+			initProjectRefCarousel();
+			initAgentCarousel();
 
 			webView.getEngine().load( "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html" );
+		}
 
-			projectRefNodeCarousel.addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
+		private void initAgentCarousel()
+		{
+			ObservableLists.bindSorted( agentCarousel.getItems(),
+					ObservableLists.transform( agentList, new Function<AgentItem, AgentView>()
+					{
+						@Override
+						public AgentView apply( AgentItem agent )
+						{
+							return new AgentView( agent );
+						}
+					} ), Ordering.usingToString() );
+
+			agentCarousel.setSelected( Iterables.getFirst( agentCarousel.getItems(), null ) );
+
+			agentCarousel.addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
+			{
+				@Override
+				public void handle( DraggableEvent event )
+				{
+					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED && event.getData() instanceof NewAgentIcon )
+					{
+						event.accept();
+					}
+					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+					{
+						//TODO: Use Agent dialog!
+						new CreateNewProjectDialog( getScene() ).show();
+					}
+				}
+			} );
+
+			agentCarousel.setContextMenu( ContextMenuBuilder.create()
+					.items( MenuItemBuilder.create().text( "Add Agent" ).onAction( new EventHandler<ActionEvent>()
+					{
+						@Override
+						public void handle( ActionEvent arg0 )
+						{
+							//TODO: Use Agent dialog!
+							new CreateNewProjectDialog( getScene() ).show();
+						}
+					} ).build() ).build() );
+		}
+
+		private void initProjectRefCarousel()
+		{
+			ObservableLists.bindSorted( projectRefCarousel.getItems(),
+					ObservableLists.transform( projectRefList, new Function<ProjectRef, ProjectRefView>()
+					{
+						@Override
+						public ProjectRefView apply( ProjectRef projectRef )
+						{
+							return new ProjectRefView( projectRef );
+						}
+					} ), Ordering.usingToString() );
+
+			final String lastProject = workspace.getAttribute( "lastOpenProject", "" );
+			projectRefCarousel.setSelected( Iterables.find( projectRefCarousel.getItems(), new Predicate<ProjectRefView>()
+			{
+				@Override
+				public boolean apply( @Nullable ProjectRefView view )
+				{
+					return lastProject.equals( view.getProjectRef().getProjectFile().getAbsolutePath() );
+				}
+			}, Iterables.getFirst( projectRefCarousel.getItems(), null ) ) );
+
+			projectRefCarousel.addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
 			{
 				@Override
 				public void handle( DraggableEvent event )
@@ -99,7 +182,7 @@ public class WorkspaceView extends Region
 				}
 			} );
 
-			projectRefNodeCarousel.setContextMenu( ContextMenuBuilder.create()
+			projectRefCarousel.setContextMenu( ContextMenuBuilder.create()
 					.items( MenuItemBuilder.create().text( "Create Project" ).onAction( new EventHandler<ActionEvent>()
 					{
 						@Override

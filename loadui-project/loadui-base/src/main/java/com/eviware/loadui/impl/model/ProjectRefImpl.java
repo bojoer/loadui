@@ -46,9 +46,11 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 	private final AttributeHolderSupport attributeHolderSupport;
 	private final File projectFile;
 	private ProjectItem project;
+	private String label;
 	// With the current UI, we do not wish to autoload projects at startup, so do
 	// not save the enabled state as true, ever.
 	private boolean enabled = false;
+	private boolean released = false;
 
 	public ProjectRefImpl( WorkspaceItemImpl workspace, ProjectReferenceConfig config ) throws IOException
 	{
@@ -79,15 +81,21 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 	@Override
 	public String getLabel()
 	{
-		if( project != null )
-			config.setLabel( project.getLabel() );
-		return config.getLabel();
+		if( !released )
+		{
+			if( project != null )
+				config.setLabel( project.getLabel() );
+			label = config.getLabel();
+		}
+
+		return label;
 	}
 
 	private void setLabel( String label )
 	{
 		if( label != null && ( getLabel() == null || !getLabel().equals( label ) ) )
 		{
+			this.label = label;
 			config.setLabel( label );
 			eventSupport.fireEvent( new BaseEvent( this, LABEL ) );
 		}
@@ -231,6 +239,7 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 	@Override
 	public void release()
 	{
+		released = true;
 		ReleasableUtils.releaseAll( project, eventSupport );
 	}
 

@@ -47,7 +47,10 @@
 				<NewProjectIcon ToolBox.category="Projects" />
 				<NewAgentIcon ToolBox.category="Agents" />
 			</ToolBox>
-			<Carousel fx:id="projectRefNodeCarousel" prefWidth="300" maxHeight="220" />
+			<VBox spacing="15">
+				<Carousel fx:id="projectRefCarousel" prefWidth="300" prefHeight="220" />
+				<Carousel fx:id="agentCarousel" prefWidth="300" prefHeight="220" />
+			</VBox>
 			<WebView fx:id="webView" prefWidth="634" prefHeight="562" />
 		</HBox>
 	</VBox>

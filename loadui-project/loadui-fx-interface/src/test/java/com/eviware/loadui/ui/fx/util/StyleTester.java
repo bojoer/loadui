@@ -1,5 +1,8 @@
 package com.eviware.loadui.ui.fx.util;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -13,8 +16,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.Label;
-import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
@@ -22,11 +23,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.control.Carousel;
+import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.ui.fx.views.agent.AgentView;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -34,28 +34,11 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		Carousel<Label> carousel = new Carousel<>( "Carousel" );
-		final Label rectangle1 = LabelBuilder.create().id( "red" ).styleClass( "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.RED ).build() ).build();
-		final Label rectangle2 = LabelBuilder.create().id( "blue" ).styleClass( "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.BLUE ).build() ).build();
-		final Label rectangle3 = LabelBuilder.create().id( "green" ).styleClass( "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.GREEN ).build() ).build();
-		final Label rectangle4 = LabelBuilder.create().id( "yellow" ).styleClass( "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.YELLOW ).build() ).build();
-		final Label rectangle5 = LabelBuilder.create().id( "yellow" ).styleClass( "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.RED ).build() ).build();
-		final Label rectangle6 = LabelBuilder.create().id( "yellow" ).styleClass( "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.RED ).build() ).build();
-		final Label rectangle7 = LabelBuilder.create().id( "yellow" ).styleClass( "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.RED ).build() ).build();
-		final Label rectangle8 = LabelBuilder.create().id( "yellow" ).styleClass( "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 60 ).height( 50 ).fill( Color.RED ).build() ).build();
+		AgentItem agent = mock( AgentItem.class );
+		when( agent.getLabel() ).thenReturn( "Agent Label" );
+		when( agent.getUrl() ).thenReturn( "https://127.0.0.1:8443/" );
 
-		carousel.getItems().setAll( rectangle1, rectangle5, rectangle6, rectangle7, rectangle8, rectangle2, rectangle3,
-				rectangle4 );
-
-		return carousel;
+		return new AgentView( agent );
 	}
 
 	@Override

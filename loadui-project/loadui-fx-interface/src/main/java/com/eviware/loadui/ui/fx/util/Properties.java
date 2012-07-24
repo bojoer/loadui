@@ -4,17 +4,34 @@ import java.lang.ref.WeakReference;
 
 import javafx.application.Platform;
 import javafx.beans.Observable;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyLongProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
+import javafx.beans.property.adapter.JavaBeanDoublePropertyBuilder;
+import javafx.beans.property.adapter.JavaBeanLongPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
+import javafx.beans.property.adapter.ReadOnlyJavaBeanBooleanPropertyBuilder;
+import javafx.beans.property.adapter.ReadOnlyJavaBeanDoublePropertyBuilder;
+import javafx.beans.property.adapter.ReadOnlyJavaBeanLongPropertyBuilder;
 import javafx.beans.property.adapter.ReadOnlyJavaBeanProperty;
 import javafx.beans.property.adapter.ReadOnlyJavaBeanStringPropertyBuilder;
-import javafx.beans.value.ObservableStringValue;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.eviware.loadui.api.events.BaseEvent;
 import com.eviware.loadui.api.events.EventFirer;
 import com.eviware.loadui.api.events.EventHandler;
+import com.eviware.loadui.api.events.PropertyEvent;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.traits.Describable;
 import com.eviware.loadui.api.traits.Labeled;
@@ -32,72 +49,285 @@ public class Properties
 	private static final Cache<Object, EventHandler<?>> listeners = CacheBuilder.newBuilder().weakKeys().build();
 
 	/**
-	 * Creates an ObservableStringValue for a Labeled. If the Labeled is mutable,
-	 * the returned value will also implement Property<String>.
+	 * Creates an ReadOnlyStringProperty for a Labeled. If the Labeled is
+	 * mutable, the returned value will also implement StringProperty.
 	 * 
 	 * @param labeled
 	 * @return
 	 */
-	public static ObservableStringValue forLabel( @Nonnull Labeled labeled )
+	public static ReadOnlyStringProperty forLabel( @Nonnull Labeled labeled )
 	{
-		return forBaseEvent( labeled, "label", Labeled.LABEL, labeled instanceof Labeled.Mutable );
+		if( labeled instanceof EventFirer )
+		{
+			EventFirer eventFirer = ( EventFirer )labeled;
+			return labeled instanceof Labeled.Mutable ? stringProperty( eventFirer, "label", Labeled.LABEL )
+					: readOnlyStringProperty( eventFirer, "label", Labeled.LABEL );
+		}
+		else
+		{
+			try
+			{
+				return labeled instanceof Labeled.Mutable ? JavaBeanStringPropertyBuilder.create().bean( labeled )
+						.name( "label" ).build() : ReadOnlyJavaBeanStringPropertyBuilder.create().bean( labeled )
+						.name( "label" ).build();
+			}
+			catch( NoSuchMethodException e )
+			{
+				throw new IllegalArgumentException( e );
+			}
+		}
 	}
 
 	/**
-	 * Creates an ObservableStringValue for a Describable. If the Describable is
-	 * mutable, the returned value will also implement Property<String>.
+	 * Creates an ReadOnlyStringProperty for a Describable. If the Describable is
+	 * mutable, the returned value will also implement StringProperty.
 	 * 
 	 * @param describable
 	 * @return
 	 */
-	public static ObservableStringValue forDescription( @Nonnull Describable describable )
+	public static ReadOnlyStringProperty forDescription( @Nonnull Describable describable )
 	{
-		return forBaseEvent( describable, "description", Describable.DESCRIPTION,
-				describable instanceof Describable.Mutable );
+		if( describable instanceof EventFirer )
+		{
+			EventFirer eventFirer = ( EventFirer )describable;
+			return describable instanceof Describable.Mutable ? stringProperty( eventFirer, "description",
+					Describable.DESCRIPTION ) : readOnlyStringProperty( eventFirer, "description", Describable.DESCRIPTION );
+		}
+		else
+		{
+			try
+			{
+				return describable instanceof Describable.Mutable ? JavaBeanStringPropertyBuilder.create()
+						.bean( describable ).name( "description" ).build() : ReadOnlyJavaBeanStringPropertyBuilder.create()
+						.bean( describable ).name( "description" ).build();
+			}
+			catch( NoSuchMethodException e )
+			{
+				throw new IllegalArgumentException( e );
+			}
+		}
 	}
 
 	/**
-	 * Creates an ObservableStringValue for an Object. If the mutable parameter
-	 * is true, the returned value will also implement Property<String>.
+	 * Converts a loadUI Property into a JavaFX 2 Property, with two-way
+	 * listeners.
 	 * 
-	 * @param bean
-	 *           The Java Bean to create the value for.
-	 * @param name
-	 *           The name of the property, should correspond to a getter and, if
-	 *           mutable, a setter method available on bean.
-	 * @param eventKey
-	 *           An optional BaseEvent key, which, when fired from the bean
-	 *           (which needs to implement EventFirer), will update the value.
-	 * @param mutable
-	 *           If the value can be set, or not.
+	 * @param loadUIProperty
 	 * @return
 	 */
-	public static ObservableStringValue forBaseEvent( @Nonnull Object bean, @Nonnull String name,
-			@Nullable String eventKey, boolean mutable )
+	public static <T> Property<T> convert( final com.eviware.loadui.api.property.Property<T> loadUIProperty )
+	{
+		final SimpleObjectProperty<T> property = new SimpleObjectProperty<>( loadUIProperty.getOwner(),
+				loadUIProperty.getKey(), loadUIProperty.getValue() );
+		loadUIProperty.getOwner().addEventListener( PropertyEvent.class, new EventHandler<PropertyEvent>()
+		{
+			@Override
+			public void handleEvent( PropertyEvent event )
+			{
+				if( event.getProperty() == loadUIProperty )
+				{
+					Platform.runLater( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							property.set( loadUIProperty.getValue() );
+						}
+					} );
+				}
+			}
+		} );
+
+		property.addListener( new ChangeListener<T>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends T> arg0, T oldValue, T newValue )
+			{
+				loadUIProperty.setValue( newValue );
+			}
+		} );
+
+		return property;
+	}
+
+	/**
+	 * Returns a StringProperty for a standard Java getter/setter pair for an
+	 * EventFirer, firing a BaseEvent for the given key whenever the value is
+	 * changed.
+	 * 
+	 * @param bean
+	 * @param name
+	 * @param eventKey
+	 * @return
+	 */
+	public static StringProperty stringProperty( @Nonnull EventFirer bean, @Nonnull String name, @Nonnull String eventKey )
 	{
 		try
 		{
-			ObservableStringValue stringProperty;
+			return withListener( JavaBeanStringPropertyBuilder.create().bean( bean ).name( name ).build(), bean, eventKey );
+		}
+		catch( NoSuchMethodException e )
+		{
+			throw new IllegalArgumentException( e );
+		}
+	}
 
-			if( mutable )
-			{
-				stringProperty = JavaBeanStringPropertyBuilder.create().bean( bean ).name( "label" ).build();
-			}
-			else
-			{
-				stringProperty = ReadOnlyJavaBeanStringPropertyBuilder.create().bean( bean ).name( "label" ).build();
-			}
+	/**
+	 * Read-only version of stringProperty.
+	 * 
+	 * @see stringProperty
+	 * 
+	 * @param bean
+	 * @param name
+	 * @param eventKey
+	 * @return
+	 */
+	public static ReadOnlyStringProperty readOnlyStringProperty( @Nonnull EventFirer bean, @Nonnull String name,
+			@Nonnull String eventKey )
+	{
+		try
+		{
+			return withListener( ReadOnlyJavaBeanStringPropertyBuilder.create().bean( bean ).name( name ).build(), bean,
+					eventKey );
+		}
+		catch( NoSuchMethodException e )
+		{
+			throw new IllegalArgumentException( e );
+		}
+	}
 
-			if( eventKey != null && bean instanceof EventFirer )
-			{
-				@SuppressWarnings( "unchecked" )
-				EventHandler<BaseEvent> eventListener = new BaseEventListener(
-						( ReadOnlyJavaBeanProperty<String> )stringProperty, eventKey );
-				( ( EventFirer )bean ).addEventListener( BaseEvent.class, eventListener );
-				listeners.put( stringProperty, eventListener );
-			}
+	/**
+	 * Returns a BooleanProperty for a standard Java getter/setter pair for an
+	 * EventFirer, firing a BaseEvent for the given key whenever the value is
+	 * changed.
+	 * 
+	 * @param bean
+	 * @param name
+	 * @param eventKey
+	 * @return
+	 */
+	public static BooleanProperty booleanProperty( @Nonnull EventFirer bean, @Nonnull String name,
+			@Nonnull String eventKey )
+	{
+		try
+		{
+			return withListener( JavaBeanBooleanPropertyBuilder.create().bean( bean ).name( name ).build(), bean, eventKey );
+		}
+		catch( NoSuchMethodException e )
+		{
+			throw new IllegalArgumentException( e );
+		}
+	}
 
-			return stringProperty;
+	/**
+	 * Read-only version of booleanProperty.
+	 * 
+	 * @see booleanProperty
+	 * 
+	 * @param bean
+	 * @param name
+	 * @param eventKey
+	 * @return
+	 */
+	public static ReadOnlyBooleanProperty readOnlyBooleanProperty( @Nonnull EventFirer bean, @Nonnull String name,
+			@Nonnull String eventKey )
+	{
+		try
+		{
+			return withListener( ReadOnlyJavaBeanBooleanPropertyBuilder.create().bean( bean ).name( name ).build(), bean,
+					eventKey );
+		}
+		catch( NoSuchMethodException e )
+		{
+			throw new IllegalArgumentException( e );
+		}
+	}
+
+	/**
+	 * Returns a LongProperty for a standard Java getter/setter pair for an
+	 * EventFirer, firing a BaseEvent for the given key whenever the value is
+	 * changed.
+	 * 
+	 * @param bean
+	 * @param name
+	 * @param eventKey
+	 * @return
+	 */
+	public static LongProperty longProperty( @Nonnull EventFirer bean, @Nonnull String name, @Nonnull String eventKey )
+	{
+		try
+		{
+			return withListener( JavaBeanLongPropertyBuilder.create().bean( bean ).name( name ).build(), bean, eventKey );
+		}
+		catch( NoSuchMethodException e )
+		{
+			throw new IllegalArgumentException( e );
+		}
+	}
+
+	/**
+	 * Read-only version of longProperty.
+	 * 
+	 * @see booleanProperty
+	 * 
+	 * @param bean
+	 * @param name
+	 * @param eventKey
+	 * @return
+	 */
+	public static ReadOnlyLongProperty readOnlyLongProperty( @Nonnull EventFirer bean, @Nonnull String name,
+			@Nonnull String eventKey )
+	{
+		try
+		{
+			return withListener( ReadOnlyJavaBeanLongPropertyBuilder.create().bean( bean ).name( name ).build(), bean,
+					eventKey );
+		}
+		catch( NoSuchMethodException e )
+		{
+			throw new IllegalArgumentException( e );
+		}
+	}
+
+	/**
+	 * Returns a DoubleProperty for a standard Java getter/setter pair for an
+	 * EventFirer, firing a BaseEvent for the given key whenever the value is
+	 * changed.
+	 * 
+	 * @param bean
+	 * @param name
+	 * @param eventKey
+	 * @return
+	 */
+	public static DoubleProperty doubleProperty( @Nonnull EventFirer bean, @Nonnull String name, @Nonnull String eventKey )
+	{
+		try
+		{
+			return withListener( JavaBeanDoublePropertyBuilder.create().bean( bean ).name( name ).build(), bean, eventKey );
+		}
+		catch( NoSuchMethodException e )
+		{
+			throw new IllegalArgumentException( e );
+		}
+	}
+
+	/**
+	 * Read-only version of doubleProperty.
+	 * 
+	 * @see booleanProperty
+	 * 
+	 * @param bean
+	 * @param name
+	 * @param eventKey
+	 * @return
+	 */
+	public static ReadOnlyDoubleProperty readOnlyDoubleProperty( @Nonnull EventFirer bean, @Nonnull String name,
+			@Nonnull String eventKey )
+	{
+		try
+		{
+			return withListener( ReadOnlyJavaBeanDoublePropertyBuilder.create().bean( bean ).name( name ).build(), bean,
+					eventKey );
 		}
 		catch( NoSuchMethodException e )
 		{
@@ -144,14 +374,23 @@ public class Properties
 
 	}
 
+	private static <T extends ReadOnlyJavaBeanProperty<?>> T withListener( T property, EventFirer bean, String eventKey )
+	{
+		EventHandler<BaseEvent> eventListener = new BaseEventListener( property, eventKey );
+		bean.addEventListener( BaseEvent.class, eventListener );
+		listeners.put( property, eventListener );
+
+		return property;
+	}
+
 	private static final class BaseEventListener implements WeakEventHandler<BaseEvent>
 	{
 		private final String eventKey;
-		private final WeakReference<ReadOnlyJavaBeanProperty<String>> ref;
+		private final WeakReference<ReadOnlyJavaBeanProperty<?>> ref;
 
-		private BaseEventListener( ReadOnlyJavaBeanProperty<String> property, String eventKey )
+		private BaseEventListener( ReadOnlyJavaBeanProperty<?> property, String eventKey )
 		{
-			ref = new WeakReference<>( property );
+			ref = new WeakReference<ReadOnlyJavaBeanProperty<?>>( property );
 			this.eventKey = eventKey;
 		}
 
@@ -160,7 +399,7 @@ public class Properties
 		{
 			if( eventKey.equals( event.getKey() ) )
 			{
-				final ReadOnlyJavaBeanProperty<String> property = ref.get();
+				final ReadOnlyJavaBeanProperty<?> property = ref.get();
 				if( property != null )
 				{
 					Platform.runLater( new Runnable()

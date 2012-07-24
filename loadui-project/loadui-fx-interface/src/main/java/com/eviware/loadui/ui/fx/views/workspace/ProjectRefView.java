@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.views.workspace;
 
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.MenuButton;
@@ -17,15 +18,18 @@ import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.Properties;
 
-public class ProjectRefNode extends VBox
+public class ProjectRefView extends VBox
 {
 	private final ProjectRef projectRef;
+	private final ReadOnlyStringProperty labelProperty;
 
-	public ProjectRefNode( final ProjectRef projectRef )
+	public ProjectRefView( final ProjectRef projectRef )
 	{
 		this.projectRef = projectRef;
 		getStyleClass().setAll( "project-ref-node" );
 		setStyle( "-fx-background-color: black, darkgrey; -fx-background-insets: 0, 2; -fx-background-radius: 5; -fx-padding: 5; -fx-spacing: 5;" );
+
+		labelProperty = Properties.forLabel( projectRef );
 
 		MenuButton menuButton = MenuButtonBuilder.create()
 				.tooltip( TooltipBuilder.create().text( projectRef.getProjectFile().getAbsolutePath() ).build() )
@@ -52,10 +56,11 @@ public class ProjectRefNode extends VBox
 						projectRef.delete( false );
 					}
 				} ).build() ).build();
-		menuButton.textProperty().bind( Properties.forLabel( projectRef ) );
+		menuButton.textProperty().bind( labelProperty );
 
 		setPrefWidth( 130 );
 		setMaxHeight( 90 );
+		setMinHeight( 90 );
 
 		Region region = RegionBuilder.create().style( "-fx-background-color: pink;" )
 				.onMouseClicked( new EventHandler<MouseEvent>()
@@ -74,6 +79,11 @@ public class ProjectRefNode extends VBox
 		getChildren().setAll( menuButton, region );
 	}
 
+	public ProjectRef getProjectRef()
+	{
+		return projectRef;
+	}
+
 	public void openProject()
 	{
 		fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, projectRef ) );
@@ -82,6 +92,6 @@ public class ProjectRefNode extends VBox
 	@Override
 	public String toString()
 	{
-		return projectRef.getLabel();
+		return labelProperty.get();
 	}
 }
