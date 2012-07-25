@@ -1,6 +1,6 @@
 package com.eviware.loadui.test.ui.fx.states;
 
-import static com.eviware.loadui.ui.fx.util.test.ControllerApi.find;
+import static com.eviware.loadui.ui.fx.util.test.ControllerApi.findAll;
 
 import java.util.concurrent.Callable;
 
@@ -29,15 +29,7 @@ public class ProjectLoadedState extends TestState
 			@Override
 			public Boolean call() throws Exception
 			{
-				try
-				{
-					find( ".project-view" );
-					return true;
-				}
-				catch( NullPointerException e )
-				{
-					return false;
-				}
+				return !findAll( ".project-view" ).isEmpty();
 			}
 		} );
 	}
@@ -52,15 +44,7 @@ public class ProjectLoadedState extends TestState
 			@Override
 			public Boolean call() throws Exception
 			{
-				try
-				{
-					find( ".workspace-view" );
-					return true;
-				}
-				catch( NullPointerException e )
-				{
-					return false;
-				}
+				return !findAll( ".workspace-view" ).isEmpty();
 			}
 		} );
 	}
