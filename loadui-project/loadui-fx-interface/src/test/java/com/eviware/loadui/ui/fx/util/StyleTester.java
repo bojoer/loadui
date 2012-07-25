@@ -1,8 +1,5 @@
 package com.eviware.loadui.ui.fx.util;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -16,6 +13,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
@@ -25,8 +23,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.api.model.AgentItem;
-import com.eviware.loadui.ui.fx.views.agent.AgentView;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -34,11 +30,7 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		AgentItem agent = mock( AgentItem.class );
-		when( agent.getLabel() ).thenReturn( "Agent Label" );
-		when( agent.getUrl() ).thenReturn( "https://127.0.0.1:8443/" );
-
-		return new AgentView( agent );
+		return new MenuButton();
 	}
 
 	@Override

@@ -27,7 +27,8 @@
 		<URL value="@WorkspaceView.css" />
 	</stylesheets>
 	<VBox alignment="top_left" spacing="10" snapToPixel="true">
-		<ToolBar>
+		<ToolBar minHeight="60" >
+			<Label minWidth="60" />
 			<MenuButton fx:id="workspaceButton">
 				<items>
 					<MenuItem onAction="#exit" text="Exit" />

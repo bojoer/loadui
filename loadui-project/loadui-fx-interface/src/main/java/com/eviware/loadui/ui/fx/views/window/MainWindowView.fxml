@@ -2,21 +2,30 @@
 
 <?import com.eviware.loadui.ui.fx.control.DetachableTab?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import java.net.URL?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"
+<StackPane xmlns:fx="http://javafx.com/fxml"
 	fx:controller="com.eviware.loadui.ui.fx.views.window.MainWindowView$Controller">
 	<stylesheets>
 		<URL value="@MainWindowView.css" />
 	</stylesheets>
-	<StackPane fx:id="container" VBox.vgrow="always" />
-	<Region styleClass="inspector-bar" />
-</VBox>
+	<StackPane fx:id="container" />
+	<Region styleClass="inspector-bar" StackPane.alignment="bottom_center" maxHeight="15" />
+	<MenuButton fx:id="mainButton" styleClass="main-button" StackPane.alignment="top_left">
+		<items>
+			<MenuItem text="Always on top" />
+			<SeparatorMenuItem />
+			<MenuItem text="Settings" />
+			<MenuItem text="System Properties" />
+			<MenuItem text="Give Feedback" />
+			<MenuItem text="About" />
+		</items>
+	</MenuButton>
+</StackPane>

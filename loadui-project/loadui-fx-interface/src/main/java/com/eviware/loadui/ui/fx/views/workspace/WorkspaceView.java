@@ -58,6 +58,7 @@ public class WorkspaceView extends StackPane
 			@Override
 			public void handle( IntentEvent<? extends Object> event )
 			{
+				//TODO: Open Clone Project dialog.
 				if( event.getEventType() == IntentEvent.INTENT_CLONE && event.getArg() instanceof ProjectRef )
 				{
 					final ProjectRef projectRef = ( ProjectRef )event.getArg();

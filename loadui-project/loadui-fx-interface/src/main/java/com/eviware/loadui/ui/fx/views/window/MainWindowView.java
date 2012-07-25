@@ -11,6 +11,8 @@ import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.MenuButton;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
 import com.eviware.loadui.api.events.BaseEvent;
@@ -57,11 +59,16 @@ public class MainWindowView extends StackPane
 	public class Controller implements Initializable
 	{
 		@FXML
+		private MenuButton mainButton;
+
+		@FXML
 		private StackPane container;
 
 		@Override
 		public void initialize( URL arg0, ResourceBundle arg1 )
 		{
+			mainButton.setGraphic( new ImageView( "res/logo-button.png" ) );
+
 			addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
 			{
 				@Override
