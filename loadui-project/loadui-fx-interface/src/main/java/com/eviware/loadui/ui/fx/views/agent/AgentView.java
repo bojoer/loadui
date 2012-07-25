@@ -4,8 +4,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -37,15 +35,6 @@ public class AgentView extends StackPane
 		urlProperty = Properties.stringProperty( agent, "url", AgentItem.URL );
 		enabledProperty = Properties.booleanProperty( agent, "enabled", AgentItem.ENABLED );
 		readyProperty = Properties.readOnlyBooleanProperty( agent, "ready", AgentItem.READY );
-
-		enabledProperty.addListener( new InvalidationListener()
-		{
-			@Override
-			public void invalidated( Observable arg0 )
-			{
-				System.out.println( "INVALIDATED!!! p: " + enabledProperty.get() + ", a:" + agent.isEnabled() );
-			}
-		} );
 
 		getChildren().setAll( FXMLUtils.load( AgentView.class, new Callable<Object>()
 		{
