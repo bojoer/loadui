@@ -21,22 +21,23 @@ import javafx.scene.web.WebView;
 
 import javax.annotation.Nullable;
 
-import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Carousel;
-import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.agent.AgentView;
+import com.eviware.loadui.ui.fx.views.projectref.ProjectRefView;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
+import com.google.common.io.Files;
 
 public class WorkspaceView extends StackPane
 {
@@ -52,12 +53,67 @@ public class WorkspaceView extends StackPane
 		agentList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.AGENTS, AgentItem.class,
 				workspace.getAgents() ) );
 
-		addEventFilter( IntentEvent.INTENT_OPEN, new EventHandler<IntentEvent<? extends Object>>()
+		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
 		{
 			@Override
 			public void handle( IntentEvent<? extends Object> event )
 			{
-				if( event.getArg() instanceof ProjectRef )
+				if( event.getEventType() == IntentEvent.INTENT_CLONE && event.getArg() instanceof ProjectRef )
+				{
+					final ProjectRef projectRef = ( ProjectRef )event.getArg();
+
+					fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							File projectFile = projectRef.getProjectFile();
+							File cloneFile = null;
+							int count = 1;
+							while( ( cloneFile = new File( projectFile.getParentFile(), String.format( "copy-%d-of-%s", count,
+									projectFile.getName() ) ) ).exists() )
+							{
+								count++ ;
+							}
+
+							try
+							{
+								Files.copy( projectFile, cloneFile );
+								ProjectRef cloneRef = workspace.importProject( cloneFile, true );
+
+								ProjectItem cloneProject = cloneRef.getProject();
+								cloneProject.setLabel( String.format( "Copy %d of %s", count, projectRef.getLabel() ) );
+								cloneProject.save();
+								cloneRef.setEnabled( false );
+
+								//TODO: Remote if miniatures aren't generated in the same way.
+								cloneRef.setAttribute( "miniature", projectRef.getAttribute( "miniature", "" ) );
+
+								workspace.save();
+							}
+							catch( IOException e )
+							{
+								e.printStackTrace();
+							}
+						}
+					} ) );
+
+					event.consume();
+				}
+				else if( event.getEventType() == IntentEvent.INTENT_CREATE )
+				{
+					if( event.getArg() == ProjectItem.class )
+					{
+						new CreateNewProjectDialog( workspace, WorkspaceView.this ).show();
+						event.consume();
+					}
+					else if( event.getArg() == AgentItem.class )
+					{
+						//TODO: Open dialog.
+						event.consume();
+					}
+				}
+				else if( event.getEventType() == IntentEvent.INTENT_OPEN && event.getArg() instanceof ProjectRef )
 				{
 					workspace.setAttribute( "lastOpenProject", ( ( ProjectRef )event.getArg() ).getProjectFile()
 							.getAbsolutePath() );
@@ -125,8 +181,7 @@ public class WorkspaceView extends StackPane
 					}
 					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
 					{
-						//TODO: Use Agent dialog!
-						new CreateNewProjectDialog( getScene() ).show();
+						fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
 					}
 				}
 			} );
@@ -137,8 +192,7 @@ public class WorkspaceView extends StackPane
 						@Override
 						public void handle( ActionEvent arg0 )
 						{
-							//TODO: Use Agent dialog!
-							new CreateNewProjectDialog( getScene() ).show();
+							fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
 						}
 					} ).build() ).build() );
 		}
@@ -177,7 +231,7 @@ public class WorkspaceView extends StackPane
 					}
 					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
 					{
-						new CreateNewProjectDialog( getScene() ).show();
+						fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, ProjectItem.class ) );
 					}
 				}
 			} );
@@ -188,23 +242,7 @@ public class WorkspaceView extends StackPane
 						@Override
 						public void handle( ActionEvent arg0 )
 						{
-							fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new Runnable()
-							{
-								@Override
-								public void run()
-								{
-									try
-									{
-										workspace.createProject(
-												File.createTempFile( "loadui-project", ".xml",
-														new File( System.getProperty( LoadUI.LOADUI_HOME ) ) ), "New Project", false );
-									}
-									catch( IOException e )
-									{
-										throw new RuntimeException( e );
-									}
-								}
-							} ) );
+							fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, ProjectItem.class ) );
 						}
 					} ).build() ).build() );
 		}
@@ -212,12 +250,6 @@ public class WorkspaceView extends StackPane
 		public void exit()
 		{
 			getScene().getWindow().hide();
-		}
-
-		public void openDialog()
-		{
-			final Dialog dialog = new CreateNewProjectDialog( getScene() );
-			dialog.show();
 		}
 	}
 }

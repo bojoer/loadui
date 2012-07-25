@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -216,7 +217,7 @@ public class ObservableLists
 	}
 
 	public static <E> void bindSorted( final List<E> list1, ObservableList<? extends E> list2,
-			final Comparator<? super E> comparator )
+			final Comparator<? super E> comparator, ObservableValue<?>... observables )
 	{
 		bindContentUnordered( list1, list2 );
 		InvalidationListener invalidationListener = new InvalidationListener()
@@ -235,6 +236,10 @@ public class ObservableLists
 			}
 		};
 		list2.addListener( invalidationListener );
+		for( ObservableValue<?> observable : observables )
+		{
+			observable.addListener( invalidationListener );
+		}
 		invalidationListener.invalidated( list2 );
 	}
 

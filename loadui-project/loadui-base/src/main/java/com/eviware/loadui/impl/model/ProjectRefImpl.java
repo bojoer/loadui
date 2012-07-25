@@ -29,6 +29,7 @@ import com.eviware.loadui.api.events.EventHandler;
 import com.eviware.loadui.api.events.WeakEventHandler;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
+import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.api.traits.Releasable;
 import com.eviware.loadui.config.ProjectReferenceConfig;
 import com.eviware.loadui.impl.property.AttributeHolderSupport;
@@ -41,11 +42,11 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 
 	private final WorkspaceItemImpl workspace;
 	private final ProjectReferenceConfig config;
-	private final ReleaseListener releaseListener = new ReleaseListener();
+	private final ProjectListener projectListener = new ProjectListener();
 	private final EventSupport eventSupport = new EventSupport( this );
 	private final AttributeHolderSupport attributeHolderSupport;
 	private final File projectFile;
-	private ProjectItem project;
+	private volatile ProjectItem project;
 	private String label;
 	// With the current UI, we do not wish to autoload projects at startup, so do
 	// not save the enabled state as true, ever.
@@ -129,7 +130,7 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 			project = ProjectItemImpl.loadProject( workspace, projectFile );
 			setLabel( project.getLabel() );
 			config.setProjectId( project.getId() );
-			project.addEventListener( BaseEvent.class, releaseListener );
+			project.addEventListener( BaseEvent.class, projectListener );
 			fireEvent( new BaseEvent( this, LOADED ) );
 			workspace.projectLoaded( project );
 		}
@@ -150,6 +151,8 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 					loadProject();
 				else
 				{
+					//Do this since there may be an updated label that hasn't yet propagated.
+					setLabel( project.getLabel() );
 					project.release();
 					project = null;
 					eventSupport.fireEvent( new BaseEvent( this, UNLOADED ) );
@@ -243,7 +246,7 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 		ReleasableUtils.releaseAll( project, eventSupport );
 	}
 
-	private class ReleaseListener implements WeakEventHandler<BaseEvent>
+	private class ProjectListener implements WeakEventHandler<BaseEvent>
 	{
 		@Override
 		public void handleEvent( BaseEvent event )
@@ -257,6 +260,13 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 				catch( IOException e )
 				{
 					//Ignore already logged exception.
+				}
+			}
+			else if( Labeled.LABEL.equals( event.getKey() ) )
+			{
+				if( project != null )
+				{
+					setLabel( project.getLabel() );
 				}
 			}
 		}

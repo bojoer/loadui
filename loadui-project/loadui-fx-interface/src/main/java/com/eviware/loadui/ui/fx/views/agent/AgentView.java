@@ -95,10 +95,5 @@ public class AgentView extends StackPane
 			//TODO: Show dialog?
 			agent.delete();
 		}
-
-		public void toggle()
-		{
-			enabledProperty.set( enabledProperty.get() );
-		}
 	}
 }

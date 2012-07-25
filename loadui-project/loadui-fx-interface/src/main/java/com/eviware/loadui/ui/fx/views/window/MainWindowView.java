@@ -19,7 +19,6 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
-import com.eviware.loadui.ui.fx.api.intent.BlockingTask;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.project.ProjectView;
@@ -53,8 +52,6 @@ public class MainWindowView extends StackPane
 				return new Controller();
 			}
 		} ) );
-
-		BlockingTask.install( this );
 	}
 
 	public class Controller implements Initializable

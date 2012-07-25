@@ -20,17 +20,18 @@ import javax.annotation.Nonnull;
 
 public class Dialog extends Stage
 {
-	private final Scene parentScene;
+	private final Node owner;
 	private final Pane rootPane;
 
-	public Dialog( @Nonnull final Scene parentScene )
+	public Dialog( @Nonnull final Node owner )
 	{
-		this.parentScene = parentScene;
+		this.owner = owner;
+		final Scene ownerScene = owner.getScene();
 
 		rootPane = VBoxBuilder.create().styleClass( "dialog" ).minWidth( 300 ).build();
 
 		Scene scene = new Scene( rootPane );
-		Bindings.bindContent( scene.getStylesheets(), parentScene.getStylesheets() );
+		Bindings.bindContent( scene.getStylesheets(), ownerScene.getStylesheets() );
 		setScene( scene );
 
 		setResizable( false );
@@ -39,7 +40,7 @@ public class Dialog extends Stage
 
 		blurParentWindow();
 
-		Window parentWindow = parentScene.getWindow();
+		Window parentWindow = ownerScene.getWindow();
 		final double x = parentWindow.getX() + parentWindow.getWidth() / 2;
 		final double y = parentWindow.getY() + parentWindow.getHeight() / 2;
 
@@ -65,7 +66,7 @@ public class Dialog extends Stage
 
 	private void blurParentWindow()
 	{
-		final Parent root = parentScene.getRoot();
+		final Parent root = owner.getScene().getRoot();
 		final Effect effect = root.getEffect();
 		root.setEffect( GaussianBlurBuilder.create().radius( 8 ).build() );
 		setOnHidden( new EventHandler<WindowEvent>()

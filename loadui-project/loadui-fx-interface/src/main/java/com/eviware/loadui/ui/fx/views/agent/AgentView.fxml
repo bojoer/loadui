@@ -17,7 +17,6 @@
 		<ToggleButton fx:id="onOffSwitch" />
 		<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" >
 			<items>
-				<MenuItem onAction="#toggle" text="Toggle Enabled" />
 				<MenuItem onAction="#delete" text="Delete" />
 			</items>
 		</MenuButton>

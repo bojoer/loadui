@@ -7,12 +7,10 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.LabelBuilder;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Pane;
@@ -30,10 +28,9 @@ public class ConfirmationDialog extends Dialog
 	private final Button cancelButton;
 	private final Pane itemPane = VBoxBuilder.create().spacing( 6 ).build();
 
-	public ConfirmationDialog( @Nonnull final Scene parentScene, @Nonnull String header,
-			@Nonnull String actionButtonLabel )
+	public ConfirmationDialog( @Nonnull final Node owner, @Nonnull String header, @Nonnull String actionButtonLabel )
 	{
-		super( parentScene );
+		super( owner );
 
 		final Label headerLabel = LabelBuilder.create().font( Font.font( null, FontWeight.BOLD, 14 ) ).text( header )
 				.build();

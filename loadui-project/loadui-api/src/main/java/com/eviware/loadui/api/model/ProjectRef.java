@@ -31,7 +31,6 @@ public interface ProjectRef extends EventFirer, AttributeHolder, Labeled
 {
 	public static final String LOADED = ProjectRef.class.getName() + "@loaded";
 	public static final String UNLOADED = ProjectRef.class.getName() + "@unloaded";
-	public static final String LABEL = ProjectRef.class.getName() + "@label";
 
 	/**
 	 * Returns the id of the ProjectItem to which this ProjectRef points.

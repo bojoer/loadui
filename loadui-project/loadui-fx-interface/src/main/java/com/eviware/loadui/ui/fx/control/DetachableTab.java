@@ -104,7 +104,8 @@ public class DetachableTab extends Tab
 							setDetached( false );
 						}
 					} );
-					BlockingTask.install( scene.getRoot() );
+					//TODO: Forward all IntentEvents to the parent scene?
+					BlockingTask.install( scene );
 					detachedStage.show();
 				}
 				else

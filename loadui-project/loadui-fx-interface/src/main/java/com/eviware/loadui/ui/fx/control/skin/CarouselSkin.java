@@ -337,10 +337,25 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		@Override
 		protected double computePrefWidth( double height )
 		{
-			double prefWidth = getInsets().getLeft() + 3 * getMaxPrefWidth( pager.getShownItems(), height )
-					+ getInsets().getRight();
+			return getInsets().getLeft() + 3 * getMaxPrefWidth( carousel.getItems(), height ) + getInsets().getRight();
+		}
 
-			return prefWidth;
+		@Override
+		protected double computePrefHeight( double width )
+		{
+			return computeMinHeight( width );
+		}
+
+		@Override
+		protected double computeMinHeight( double width )
+		{
+			return getInsets().getTop() + getMaxPrefHeight( carousel.getItems(), width ) + getInsets().getBottom();
+		}
+
+		@Override
+		protected double computeMinWidth( double height )
+		{
+			return getInsets().getLeft() + getMaxPrefWidth( carousel.getItems(), height ) + getInsets().getRight();
 		}
 
 		private void animateNext()
@@ -403,7 +418,7 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 			}
 		}
 
-		private double getMaxPrefWidth( List<Node> managed, double height )
+		private double getMaxPrefWidth( List<? extends Node> managed, double height )
 		{
 			double maxWidth = -1;
 			for( Node child : managed )
@@ -412,6 +427,17 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 			}
 
 			return maxWidth;
+		}
+
+		private double getMaxPrefHeight( List<? extends Node> managed, double width )
+		{
+			double maxHeight = -1;
+			for( Node child : managed )
+			{
+				maxHeight = Math.max( maxHeight, child.prefHeight( width ) );
+			}
+
+			return maxHeight;
 		}
 
 		private void updateChildren()

@@ -21,7 +21,7 @@ public class ProjectCreatedState extends TestState
 	protected void enterFromParent() throws Exception
 	{
 		File projectFile = File.createTempFile( "project", ".xml", new File( System.getProperty( LoadUI.LOADUI_HOME ) ) );
-		project = WorkspaceLoadedState.STATE.getWorkspace().createProject( projectFile, "Project", true );
+		project = WorkspaceLoadedState.STATE.getWorkspace().createProject( projectFile, "Project", true ).getProject();
 	}
 
 	@Override

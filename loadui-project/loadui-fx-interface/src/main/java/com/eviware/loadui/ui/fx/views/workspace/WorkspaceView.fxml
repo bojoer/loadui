@@ -26,15 +26,13 @@
 	<stylesheets>
 		<URL value="@WorkspaceView.css" />
 	</stylesheets>
-	<VBox alignment="center" spacing="10" snapToPixel="true">
+	<VBox alignment="top_left" spacing="10" snapToPixel="true">
 		<ToolBar>
 			<MenuButton fx:id="workspaceButton">
 				<items>
 					<MenuItem onAction="#exit" text="Exit" />
 				</items>
 			</MenuButton>
-			<!-- <Label fx:id="workspaceLabel" styleClass="title" text="Hello from XML!" StackPane.alignment="baseline_left" /> -->
-			<Button onAction="#openDialog" text="?" />
 		</ToolBar>
 		<HBox spacing="15" snapToPixel="true">
 			<ToolBox>
@@ -44,12 +42,12 @@
 						<String fx:value="Agents"/>
 					</ExplicitOrdering>
 				</categoryComparator>
-				<NewProjectIcon ToolBox.category="Projects" />
-				<NewAgentIcon ToolBox.category="Agents" />
+				<NewProjectIcon id="newProjectIcon" ToolBox.category="Projects" />
+				<NewAgentIcon id="newAgentIcon" ToolBox.category="Agents" />
 			</ToolBox>
 			<VBox spacing="15">
-				<Carousel fx:id="projectRefCarousel" prefWidth="300" prefHeight="220" />
-				<Carousel fx:id="agentCarousel" prefWidth="300" prefHeight="220" />
+				<Carousel fx:id="projectRefCarousel" prefWidth="320" prefHeight="220" />
+				<Carousel fx:id="agentCarousel" prefWidth="320" prefHeight="220" />
 			</VBox>
 			<WebView fx:id="webView" prefWidth="634" prefHeight="562" />
 		</HBox>

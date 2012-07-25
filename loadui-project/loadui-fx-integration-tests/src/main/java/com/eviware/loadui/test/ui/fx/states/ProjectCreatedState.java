@@ -5,13 +5,11 @@ import static com.eviware.loadui.ui.fx.util.test.ControllerApi.find;
 import java.util.concurrent.Callable;
 
 import javafx.scene.Node;
-import javafx.scene.control.ListView;
-import javafx.scene.input.MouseButton;
+import javafx.scene.input.KeyCode;
 
 import com.eviware.loadui.test.TestState;
 import com.eviware.loadui.test.ui.fx.GUI;
 import com.eviware.loadui.util.test.TestUtils;
-import com.google.common.collect.Iterables;
 
 public class ProjectCreatedState extends TestState
 {
@@ -25,15 +23,18 @@ public class ProjectCreatedState extends TestState
 	@Override
 	protected void enterFromParent() throws Exception
 	{
-		final ListView<Node> projectList = find( "#projectRefCarousel" );
-		GUI.getController().click( projectList, MouseButton.SECONDARY ).moveBy( 15, 10 ).click();
+		final Node projectCarousel = find( "#projectRefCarousel" );
+		GUI.getController().drag( "#newProjectIcon" ).to( projectCarousel ).type( "Project 1" ).type( KeyCode.TAB )
+				.type( "project-1.xml" ).type( KeyCode.TAB ).type( KeyCode.SPACE ).type( KeyCode.TAB ).type( KeyCode.ENTER );
+
+		//GUI.getController().click( projectCarousel, MouseButton.SECONDARY ).moveBy( 15, 10 ).click();
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{
 			@Override
 			public Boolean call() throws Exception
 			{
-				return projectList.getItems().size() == 1;
+				return projectCarousel.lookup( ".project-ref-view" ) != null;
 			}
 		} );
 	}
@@ -41,17 +42,16 @@ public class ProjectCreatedState extends TestState
 	@Override
 	protected void exitToParent() throws Exception
 	{
-		final ListView<Node> projectList = find( "#projectRefCarousel" );
-		Node projectRef = Iterables.getOnlyElement( projectList.getItems() );
-
-		GUI.getController().click( find( ".button", projectRef ) );
+		final Node projectCarousel = find( "#projectRefCarousel" );
+		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).type( KeyCode.DOWN )
+				.type( KeyCode.DOWN ).type( KeyCode.DOWN ).type( KeyCode.ENTER );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{
 			@Override
 			public Boolean call() throws Exception
 			{
-				return projectList.getItems().size() == 0;
+				return projectCarousel.lookup( ".project-ref-view" ) == null;
 			}
 		} );
 	}
