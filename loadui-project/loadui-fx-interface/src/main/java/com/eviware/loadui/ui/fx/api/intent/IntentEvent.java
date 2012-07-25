@@ -20,7 +20,7 @@ public class IntentEvent<T> extends Event
 	public static final EventType<IntentEvent<? extends Object>> INTENT_DELETE = new EventType<>( ANY, "INTENT_DELETE" );
 
 	public static final EventType<IntentEvent<? extends Runnable>> INTENT_RUN_BLOCKING = new EventType<>( ANY,
-			"INTENT_CLOSE" );
+			"INTENT_RUN_BLOCKING" );
 
 	private final T arg;
 
