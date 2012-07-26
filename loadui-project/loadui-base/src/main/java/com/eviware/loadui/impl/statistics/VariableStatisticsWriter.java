@@ -22,7 +22,6 @@ import java.util.Set;
 import com.eviware.loadui.api.statistics.EntryAggregator;
 import com.eviware.loadui.api.statistics.StatisticVariable;
 import com.eviware.loadui.api.statistics.StatisticsManager;
-import com.eviware.loadui.api.statistics.StatisticsWriter;
 import com.eviware.loadui.api.statistics.StatisticsWriterFactory;
 import com.eviware.loadui.api.statistics.store.Entry;
 import com.google.common.collect.Iterables;
@@ -90,7 +89,9 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 	@Override
 	public synchronized Entry output()
 	{
+		sum += ( lastTimeFlushed + delay - lastUpdate ) * lastValue;
 		double value = sum / delay;
+
 		lastTimeFlushed += delay;
 		sum = 0;
 		if( lastUpdate < lastTimeFlushed )
@@ -150,8 +151,8 @@ public class VariableStatisticsWriter extends AbstractStatisticsWriter
 		}
 
 		@Override
-		public StatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager, StatisticVariable variable,
-				Map<String, Object> config )
+		public VariableStatisticsWriter createStatisticsWriter( StatisticsManager statisticsManager,
+				StatisticVariable variable, Map<String, Object> config )
 		{
 			return new VariableStatisticsWriter( statisticsManager, variable,
 					Collections.<String, Class<? extends Number>> singletonMap( Stats.VALUE.name(), Double.class ), config );
