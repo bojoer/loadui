@@ -1,5 +1,8 @@
 package com.eviware.loadui.ui.fx.util;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -13,8 +16,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.Label;
-import javafx.scene.control.LabelBuilder;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
@@ -22,14 +23,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
 
-import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
-import com.eviware.loadui.ui.fx.control.Dialog;
-import com.eviware.loadui.ui.fx.control.ToolBox;
-import com.eviware.loadui.ui.fx.views.workspace.CreateNewProjectDialog;
+import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.ui.fx.views.agent.AgentView;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -37,24 +34,11 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		ToolBox<Label> toolBox = new ToolBox<>( "Toolbox" );
-		final Label rectangle1 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 45 ).height( 50 ).fill( Color.RED ).build() ).build();
-		final Label rectangle2 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Another Rectangle" )
-				.graphic( RectangleBuilder.create().width( 45 ).height( 50 ).fill( Color.BLUE ).build() ).build();
-		final Label rectangle3 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 60 ).height( 60 ).fill( Color.GREEN ).build() ).build();
-		final Label rectangle4 = LabelBuilder.create().styleClass( "label", "icon" ).text( "Rectangle" )
-				.graphic( RectangleBuilder.create().width( 60 ).height( 60 ).fill( Color.GREEN ).build() ).build();
+		AgentItem agent = mock( AgentItem.class );
+		when( agent.getLabel() ).thenReturn( "Agent Label" );
+		when( agent.getUrl() ).thenReturn( "https://127.0.0.1:8443/" );
 
-		ToolBox.setCategory( rectangle1, "Category 1" );
-		ToolBox.setCategory( rectangle2, "Category 2" );
-		ToolBox.setCategory( rectangle3, "Category 3" );
-		ToolBox.setCategory( rectangle4, "Category 2" );
-
-		toolBox.getItems().setAll( rectangle1, rectangle2, rectangle3, rectangle4 );
-
-		return toolBox;
+		return new AgentView( agent );
 	}
 
 	@Override
@@ -66,8 +50,6 @@ public class StyleTester extends Application
 		final TextArea styleArea = TextAreaBuilder.create().build();
 
 		final File styleSheet = File.createTempFile( "style", ".css" );
-
-		System.out.println( styleSheet.toURI().toURL().toExternalForm() );
 
 		styleArea.textProperty().addListener( new ChangeListener<String>()
 		{
@@ -87,8 +69,9 @@ public class StyleTester extends Application
 								styleArea
 										.getScene()
 										.getStylesheets()
-										.setAll( "file:/src/main/resources/com/eviware/loadui/ui/fx/loadui-style.css",
+										.setAll( "/com/eviware/loadui/ui/fx/loadui-style.css",
 												styleSheet.toURI().toURL().toExternalForm() );
+								System.out.println( "Updated style!" );
 							}
 							catch( MalformedURLException e )
 							{
@@ -103,8 +86,6 @@ public class StyleTester extends Application
 				}
 			}
 		} );
-
-		System.out.println( new File( "." ).getAbsolutePath() );
 
 		VBox.setVgrow( styleArea, Priority.ALWAYS );
 
@@ -140,8 +121,8 @@ public class StyleTester extends Application
 
 		primaryStage.show();
 
-		final Dialog dialog = new CreateNewProjectDialog( primaryStage.getScene() );
-		dialog.show();
+		//		final Dialog dialog = new CreateNewProjectDialog( primaryStage.getScene() );
+		//		dialog.show();
 	}
 
 	public static void main( String[] args )

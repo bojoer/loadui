@@ -1,9 +1,10 @@
 package com.eviware.loadui.test.ui.fx.states;
 
-import static com.eviware.loadui.ui.fx.util.test.ControllerApi.find;
-import static com.eviware.loadui.ui.fx.util.test.ControllerApi.offset;
+import static com.eviware.loadui.ui.fx.util.test.ControllerApi.findAll;
 
 import java.util.concurrent.Callable;
+
+import javafx.scene.input.KeyCode;
 
 import com.eviware.loadui.test.TestState;
 import com.eviware.loadui.test.ui.fx.GUI;
@@ -21,14 +22,14 @@ public class ProjectLoadedState extends TestState
 	@Override
 	protected void enterFromParent() throws Exception
 	{
-		GUI.getController().click( offset( ".project-ref-node", 45, 75 ) );
+		GUI.getController().click( ".project-ref-view #menuButton" ).press( KeyCode.DOWN ).press( KeyCode.ENTER );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{
 			@Override
 			public Boolean call() throws Exception
 			{
-				return find( ".project-view" ) != null;
+				return !findAll( ".project-view" ).isEmpty();
 			}
 		} );
 	}
@@ -43,7 +44,7 @@ public class ProjectLoadedState extends TestState
 			@Override
 			public Boolean call() throws Exception
 			{
-				return find( ".workspace-view" ) != null;
+				return !findAll( ".workspace-view" ).isEmpty();
 			}
 		} );
 	}

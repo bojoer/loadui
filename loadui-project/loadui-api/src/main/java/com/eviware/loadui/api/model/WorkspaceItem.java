@@ -94,9 +94,9 @@ public interface WorkspaceItem extends ModelItem
 	 *           The name to give the new project.
 	 * @param enabled
 	 *           The initial state of the ProjectItem.
-	 * @return The newly created ProjectItem.
+	 * @return The added ProjectRef pointing to the newly created ProjectItem.
 	 */
-	public ProjectItem createProject( File projectFile, String label, boolean enabled );
+	public ProjectRef createProject( File projectFile, String label, boolean enabled );
 
 	/**
 	 * Imports an existing project into the workspace.

@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.api.intent;
 import javafx.event.Event;
 import javafx.event.EventType;
 
+@SuppressWarnings( "serial" )
 public class IntentEvent<T> extends Event
 {
 	@SuppressWarnings( "hiding" )
@@ -11,6 +12,12 @@ public class IntentEvent<T> extends Event
 	public static final EventType<IntentEvent<? extends Object>> INTENT_OPEN = new EventType<>( ANY, "INTENT_OPEN" );
 
 	public static final EventType<IntentEvent<? extends Object>> INTENT_CLOSE = new EventType<>( ANY, "INTENT_CLOSE" );
+
+	public static final EventType<IntentEvent<? extends Object>> INTENT_CREATE = new EventType<>( ANY, "INTENT_CREATE" );
+
+	public static final EventType<IntentEvent<? extends Object>> INTENT_CLONE = new EventType<>( ANY, "INTENT_CLONE" );
+
+	public static final EventType<IntentEvent<? extends Object>> INTENT_DELETE = new EventType<>( ANY, "INTENT_DELETE" );
 
 	public static final EventType<IntentEvent<? extends Runnable>> INTENT_RUN_BLOCKING = new EventType<>( ANY,
 			"INTENT_CLOSE" );

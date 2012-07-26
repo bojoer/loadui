@@ -154,7 +154,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 	}
 
 	@Override
-	public ProjectItem createProject( File projectFile, String label, boolean enabled )
+	public ProjectRef createProject( File projectFile, String label, boolean enabled )
 	{
 		try
 		{
@@ -163,7 +163,7 @@ public class WorkspaceItemImpl extends ModelItemImpl<WorkspaceItemConfig> implem
 				LoaduiProjectDocumentConfig projectConfig = LoaduiProjectDocumentConfig.Factory.newInstance();
 				projectConfig.addNewLoaduiProject().setLabel( label );
 				projectConfig.save( projectFile );
-				return importProject( projectFile, enabled ).getProject();
+				return importProject( projectFile, enabled );
 			}
 			else
 				throw new IllegalArgumentException( "File already exists: " + projectFile );

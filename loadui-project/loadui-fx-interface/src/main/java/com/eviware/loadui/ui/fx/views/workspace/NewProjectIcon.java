@@ -8,7 +8,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.RectangleBuilder;
 
-import com.eviware.loadui.ui.fx.control.Dialog;
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DragNode;
 
 public class NewProjectIcon extends Label
@@ -27,8 +28,7 @@ public class NewProjectIcon extends Label
 			{
 				if( event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 )
 				{
-					final Dialog dialog = new CreateNewProjectDialog( getScene() );
-					dialog.show();
+					fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, ProjectItem.class ) );
 				}
 			}
 		} );

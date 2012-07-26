@@ -9,7 +9,8 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.SceneBuilder;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.GaussianBlur;
@@ -31,41 +32,43 @@ public class BlockingTask
 {
 	private static final BlockingTaskBehavior BEHAVIOR = new BlockingTaskBehavior();
 
-	public static void install( Node node )
+	public static void install( Scene scene )
 	{
-		BEHAVIOR.install( node );
+		BEHAVIOR.install( scene );
 	}
 
-	public static void uninstall( Node node )
+	public static void uninstall( Scene scene )
 	{
-		BEHAVIOR.uninstall( node );
+		BEHAVIOR.uninstall( scene );
 	}
 
 	private static class BlockingTaskBehavior
 	{
-		private final LoadingCache<Node, EventHandler<IntentEvent<? extends Runnable>>> handlers = CacheBuilder
-				.newBuilder().weakKeys().build( new CacheLoader<Node, EventHandler<IntentEvent<? extends Runnable>>>()
+		private final LoadingCache<Scene, EventHandler<IntentEvent<? extends Runnable>>> handlers = CacheBuilder
+				.newBuilder().weakKeys().build( new CacheLoader<Scene, EventHandler<IntentEvent<? extends Runnable>>>()
 				{
 					@Override
-					public EventHandler<IntentEvent<? extends Runnable>> load( final Node key ) throws Exception
+					public EventHandler<IntentEvent<? extends Runnable>> load( final Scene scene ) throws Exception
 					{
 						return new EventHandler<IntentEvent<? extends Runnable>>()
 						{
 							@Override
 							public void handle( IntentEvent<? extends Runnable> event )
 							{
+								final Parent root = scene.getRoot();
+
 								Runnable runnable = event.getArg();
 
 								final Stage dialog = StageBuilder.create().style( StageStyle.UNDECORATED )
 										.scene( SceneBuilder.create().root( new TaskProgressIndicator( runnable ) ).build() )
 										.build();
 								dialog.initModality( Modality.APPLICATION_MODAL );
-								final Effect oldEffect = key.getEffect();
+								final Effect oldEffect = root.getEffect();
 								GaussianBlur blur = GaussianBlurBuilder.create().radius( 0 ).build();
-								key.setEffect( blur );
+								root.setEffect( blur );
 								new Timeline( new KeyFrame( new Duration( 500 ), new KeyValue( blur.radiusProperty(), 10,
 										Interpolator.EASE_IN ) ) ).playFromStart();
-								final Window window = key.getScene().getWindow();
+								final Window window = scene.getWindow();
 								dialog.initOwner( window );
 								dialog.show();
 								dialog.setX( window.getX() + ( window.getWidth() - dialog.getWidth() ) / 2 );
@@ -83,7 +86,7 @@ public class BlockingTask
 											public void run()
 											{
 												dialog.hide();
-												key.setEffect( oldEffect );
+												root.setEffect( oldEffect );
 											}
 										} );
 									}
@@ -103,12 +106,12 @@ public class BlockingTask
 					.setNameFormat( "BlockingTask runner" ).build() );
 		}
 
-		private void install( Node node )
+		private void install( Scene node )
 		{
 			node.addEventHandler( IntentEvent.INTENT_RUN_BLOCKING, handlers.getUnchecked( node ) );
 		}
 
-		private void uninstall( Node node )
+		private void uninstall( Scene node )
 		{
 			node.removeEventHandler( IntentEvent.INTENT_RUN_BLOCKING, handlers.getIfPresent( node ) );
 		}

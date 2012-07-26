@@ -4,11 +4,11 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.BooleanPropertyBase;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.IntegerPropertyBase;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -16,20 +16,7 @@ import com.google.common.base.Preconditions;
 
 public class Pager<T>
 {
-	private final IntegerProperty itemsPerPage = new IntegerPropertyBase( 1 )
-	{
-		@Override
-		public String getName()
-		{
-			return "itemsPerPage";
-		}
-
-		@Override
-		public Object getBean()
-		{
-			return Pager.this;
-		}
-	};
+	private final IntegerProperty itemsPerPage = new SimpleIntegerProperty( this, "itemsPerPage", 1 );
 
 	public IntegerProperty itemsPerPageProperty()
 	{
@@ -47,20 +34,7 @@ public class Pager<T>
 		this.itemsPerPage.set( itemsPerPage );
 	}
 
-	private final BooleanProperty fluentMode = new BooleanPropertyBase( false )
-	{
-		@Override
-		public String getName()
-		{
-			return "fluentMode";
-		}
-
-		@Override
-		public Object getBean()
-		{
-			return Pager.this;
-		}
-	};
+	private final BooleanProperty fluentMode = new SimpleBooleanProperty( this, "fluentMode", false );
 
 	public BooleanProperty fluentModeProperty()
 	{
@@ -77,20 +51,7 @@ public class Pager<T>
 		this.fluentMode.set( fluentMode );
 	}
 
-	private final IntegerProperty page = new IntegerPropertyBase( 0 )
-	{
-		@Override
-		public String getName()
-		{
-			return "page";
-		}
-
-		@Override
-		public Object getBean()
-		{
-			return Pager.this;
-		}
-	};
+	private final IntegerProperty page = new SimpleIntegerProperty( this, "page", 0 );
 
 	public IntegerProperty pageProperty()
 	{
@@ -108,34 +69,14 @@ public class Pager<T>
 		this.page.set( page );
 	}
 
-	private final ObservableList<T> items = FXCollections.observableArrayList();
+	private final ObservableList<T> items;
 
 	public ObservableList<T> getItems()
 	{
 		return items;
 	}
 
-	private final ReadOnlyIntegerWrapper numPages = new ReadOnlyIntegerWrapper()
-	{
-		{
-			//TODO: When fluentMode is off, this is wrong due to integer rounding down.
-			bind( Bindings.when( fluentMode )
-					.then( Bindings.max( Bindings.size( items ).subtract( itemsPerPage ), 0 ).add( 1 ) )
-					.otherwise( Bindings.size( items ).divide( itemsPerPage ) ) );
-		}
-
-		@Override
-		public String getName()
-		{
-			return "numPages";
-		}
-
-		@Override
-		public Object getBean()
-		{
-			return Pager.this;
-		}
-	};
+	private final ReadOnlyIntegerWrapper numPages;
 
 	public int getNumPages()
 	{
@@ -147,22 +88,10 @@ public class Pager<T>
 		return numPages.getReadOnlyProperty();
 	}
 
-	private final ReadOnlyIntegerWrapper offset = new ReadOnlyIntegerWrapper()
+	private final ReadOnlyIntegerWrapper offset = new ReadOnlyIntegerWrapper( this, "offset" )
 	{
 		{
 			bind( Bindings.when( fluentMode ).then( page ).otherwise( page.multiply( itemsPerPage ) ) );
-		}
-
-		@Override
-		public String getName()
-		{
-			return "offset";
-		}
-
-		@Override
-		public Object getBean()
-		{
-			return Pager.this;
 		}
 	};
 
@@ -183,8 +112,10 @@ public class Pager<T>
 		return FXCollections.unmodifiableObservableList( shownItems );
 	}
 
-	public Pager()
+	public Pager( ObservableList<T> providedList )
 	{
+		items = providedList;
+
 		InvalidationListener shownItemsListener = new InvalidationListener()
 		{
 			@Override
@@ -195,14 +126,34 @@ public class Pager<T>
 			}
 		};
 
+		numPages = new ReadOnlyIntegerWrapper( this, "numPages" )
+		{
+			{
+				//TODO: When fluentMode is off, this is wrong due to integer rounding down.
+				bind( Bindings.when( fluentMode )
+						.then( Bindings.max( Bindings.size( items ).subtract( itemsPerPage ), 0 ).add( 1 ) )
+						.otherwise( Bindings.size( items ).divide( itemsPerPage ) ) );
+			}
+		};
+
 		items.addListener( shownItemsListener );
 		offset.addListener( shownItemsListener );
 		itemsPerPage.addListener( shownItemsListener );
 	}
 
+	public Pager( ObservableList<T> providedList, int itemsPerPage )
+	{
+		this( providedList );
+		setItemsPerPage( itemsPerPage );
+	}
+
 	public Pager( int itemsPerPage )
 	{
-		this();
-		setItemsPerPage( itemsPerPage );
+		this( FXCollections.<T> observableArrayList(), itemsPerPage );
+	}
+
+	public Pager()
+	{
+		this( FXCollections.<T> observableArrayList() );
 	}
 }

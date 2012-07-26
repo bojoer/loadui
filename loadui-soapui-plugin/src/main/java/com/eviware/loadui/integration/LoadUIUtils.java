@@ -368,7 +368,7 @@ public class LoadUIUtils
 
 		File newProjectFile = tweakProjectFilename( loadUIProjectName, filename, fileDir );
 		logger.debug( "project file name = " + newProjectFile.getAbsolutePath() );
-		return workspaceProvider.getWorkspace().createProject( newProjectFile, loadUIProjectName, true );
+		return workspaceProvider.getWorkspace().createProject( newProjectFile, loadUIProjectName, true ).getProject();
 	}
 
 	private static File tweakProjectFilename( String loadUIProjectName, String filename, File fileDir )

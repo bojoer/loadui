@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
+import com.eviware.loadui.ui.fx.api.intent.BlockingTask;
 import com.eviware.loadui.ui.fx.views.window.MainWindowView;
 
 public class TestWindow
@@ -41,6 +42,8 @@ public class TestWindow
 						.root( new MainWindowView( workspaceProvider ) ).build() );
 				stage.setTitle( System.getProperty( LoadUI.NAME, "loadUI" ) + " " + LoadUI.VERSION );
 				stage.show();
+
+				BlockingTask.install( stage.getScene() );
 
 				//				if( System.getProperty( "scenicView" ) != null )
 				//				{

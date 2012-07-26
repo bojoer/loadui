@@ -76,10 +76,40 @@
 }
 
 /**
+ * Carousel styles
+ */
+ 
+.carousel {
+	-fx-skin: "com.eviware.loadui.ui.fx.control.skin.CarouselSkin";
+	-fx-background-color: darkgray;
+	-fx-background-radius: 8;
+	-fx-padding: 10;
+}
+
+.carousel .separator .line {
+	-fx-border-style: null;
+	-fx-border-color: transparent;
+}
+
+.carousel .separator {
+	-fx-padding: 0;
+	-fx-background-color: lightgray;
+}
+
+.carousel > .vbox {
+	-fx-spacing: 10;
+}
+
+.carousel .carousel-display {
+	-fx-spacing: 10;
+	-fx-alignment: center;
+}
+
+/**
  * Dialog styles
  */
  
- .dialog {
+.dialog {
 	-fx-spacing: 6;
 	-fx-padding: 10 24 20 24;
- }
+}

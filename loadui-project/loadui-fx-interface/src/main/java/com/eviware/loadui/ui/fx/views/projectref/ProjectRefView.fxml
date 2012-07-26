@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import java.net.URL?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" styleClass="project-ref-view"
+	fx:controller="com.eviware.loadui.ui.fx.views.projectref.ProjectRefView$Controller">
+	<stylesheets>
+		<URL value="@ProjectRefView.css" />
+	</stylesheets>
+	<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" >
+		<items>
+			<MenuItem fx:id="open" text="Open" onAction="#open" />
+			<MenuItem fx:id="clone" text="Clone" onAction="#cloneProject" />
+			<MenuItem fx:id="delete" text="Delete" onAction="#delete" />
+		</items>
+	</MenuButton>
+	<Region prefWidth="60" prefHeight="80" style="-fx-background-color: red;" onMouseClicked="#regionClickHandler" />
+</VBox>
