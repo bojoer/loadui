@@ -211,3 +211,5 @@ compactLayout {
 redraw()
 
 counterStatisticSupport.init()
+
+defaultStatistics << statistic( 'True percentage', 'Total' )
