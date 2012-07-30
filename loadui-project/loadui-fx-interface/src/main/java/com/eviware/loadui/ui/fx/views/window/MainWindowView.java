@@ -23,6 +23,7 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.views.about.AboutDialog;
 import com.eviware.loadui.ui.fx.views.project.ProjectView;
 import com.eviware.loadui.ui.fx.views.workspace.WorkspaceView;
 
@@ -155,6 +156,32 @@ public class MainWindowView extends StackPane
 			//					return new WorkspaceView( workspaceProperty.getValue() );
 			//				}
 			//			}, workspaceProperty ) );
+		}
+
+		public void alwaysOnTop()
+		{
+			System.out.println( "Always On Top!" );
+		}
+
+		public void settings()
+		{
+			System.out.println( "Settings!" );
+		}
+
+		public void systemProperties()
+		{
+			System.out.println( "System Properties!" );
+		}
+
+		public void feedback()
+		{
+			System.out.println( "Feedback!" );
+		}
+
+		public void about()
+		{
+			System.out.println( "About!" );
+			new AboutDialog( mainButton ).show( getScene().getWindow() );
 		}
 	}
 

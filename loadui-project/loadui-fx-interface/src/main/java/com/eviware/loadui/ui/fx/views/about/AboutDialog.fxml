@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import java.net.URL?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml" styleClass="about"
+	prefWidth="600" prefHeight="320"
+	fx:controller="com.eviware.loadui.ui.fx.views.about.AboutDialog$Controller">
+	<stylesheets>
+		<URL value="@AboutDialog.css" />
+	</stylesheets>
+	<ImageView fx:id="logo" StackPane.alignment="top_center" />
+	<ImageView fx:id="smartbear" StackPane.alignment="bottom_right" />
+	<VBox alignment="bottom_left">
+		<Label text="loadUI Version 2.5.0" styleClass="title" />
+		<Separator />
+		<Label text="Build version: dist-13" />
+		<Label text="Build date: 2012-07-30 16:51" />
+		<Separator />
+		<Label text="Copyright 2012 SmartBear Software" />
+		<Label text="SmartBear and loadUI are trademarks of SmartBear Software" />
+		<Separator />
+		<Hyperlink text="www.loadui.org" onAction="#loaduiSite" />
+		<Hyperlink text="www.smartbear.com" onAction="#smartbearSite" />
+	</VBox>
+</StackPane>

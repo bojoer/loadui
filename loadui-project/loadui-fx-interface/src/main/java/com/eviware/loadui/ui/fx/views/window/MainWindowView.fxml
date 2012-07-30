@@ -20,12 +20,12 @@
 	<Region styleClass="inspector-bar" StackPane.alignment="bottom_center" maxHeight="15" />
 	<MenuButton fx:id="mainButton" styleClass="main-button" StackPane.alignment="top_left">
 		<items>
-			<MenuItem text="Always on top" />
+			<MenuItem text="Always on top" onAction="#alwaysOnTop" />
 			<SeparatorMenuItem />
-			<MenuItem text="Settings" />
-			<MenuItem text="System Properties" />
-			<MenuItem text="Give Feedback" />
-			<MenuItem text="About" />
+			<MenuItem text="Settings" onAction="#settings" />
+			<MenuItem text="System Properties" onAction="#systemProperties" />
+			<MenuItem text="Give Feedback" onAction="#feedback" />
+			<MenuItem text="About" onAction="#about" />
 		</items>
 	</MenuButton>
 </StackPane>

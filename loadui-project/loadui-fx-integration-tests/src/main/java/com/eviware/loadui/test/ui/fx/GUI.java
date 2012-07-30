@@ -70,7 +70,7 @@ public class GUI
 					{
 						return finalStage.getScene() != null;
 					}
-				}, 20 );
+				}, 60 );
 
 				BeanInjector.setBundleContext( localController.getBundleContext() );
 

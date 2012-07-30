@@ -1,43 +1,45 @@
-package com.eviware.loadui.ui.fx.control;
+package com.eviware.loadui.ui.fx.views.about;
 
-import javafx.beans.binding.Bindings;
-import javafx.collections.ObservableList;
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.PopupControl;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.GaussianBlurBuilder;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBoxBuilder;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
-import javax.annotation.Nonnull;
+import com.eviware.loadui.ui.fx.util.FXMLUtils;
 
-public class Dialog extends Stage
+public class AboutDialog extends PopupControl
 {
 	private final Node owner;
-	private final Pane rootPane;
 
-	public Dialog( @Nonnull final Node owner )
+	public AboutDialog( Node owner )
 	{
 		this.owner = owner;
-		final Scene ownerScene = owner.getScene();
 
-		rootPane = VBoxBuilder.create().styleClass( "dialog" ).minWidth( 300 ).build();
+		setAutoHide( true );
 
-		Scene scene = new Scene( rootPane );
-		Bindings.bindContent( scene.getStylesheets(), ownerScene.getStylesheets() );
-		setScene( scene );
+		bridge.getChildren().setAll( FXMLUtils.load( AboutDialog.class, new Callable<Controller>()
+		{
+			@Override
+			public Controller call() throws Exception
+			{
+				return new Controller();
+			}
+		} ) );
 
-		setResizable( false );
-		initStyle( StageStyle.UTILITY );
-		initModality( Modality.APPLICATION_MODAL );
-
+		Scene ownerScene = owner.getScene();
 		Window parentWindow = ownerScene.getWindow();
 		final double x = parentWindow.getX() + parentWindow.getWidth() / 2;
 		final double y = parentWindow.getY() + parentWindow.getHeight() / 2;
@@ -59,11 +61,6 @@ public class Dialog extends Stage
 		} );
 	}
 
-	public ObservableList<Node> getItems()
-	{
-		return rootPane.getChildren();
-	}
-
 	private void blurParentWindow()
 	{
 		final Parent root = owner.getScene().getRoot();
@@ -77,5 +74,31 @@ public class Dialog extends Stage
 				root.setEffect( effect );
 			}
 		} );
+	}
+
+	public class Controller implements Initializable
+	{
+		@FXML
+		private ImageView logo;
+
+		@FXML
+		private ImageView smartbear;
+
+		@Override
+		public void initialize( URL arg0, ResourceBundle arg1 )
+		{
+			logo.setImage( new Image( "res/about-logo.png" ) );
+			logo.setTranslateY( -80 );
+		}
+
+		public void loaduiSite()
+		{
+			System.out.println( "www.loadui.org" );
+		}
+
+		public void smartbearSite()
+		{
+			System.out.println( "www.smartbear.com" );
+		}
 	}
 }

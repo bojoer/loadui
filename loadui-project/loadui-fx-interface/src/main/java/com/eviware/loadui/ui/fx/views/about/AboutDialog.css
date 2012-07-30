@@ -1,0 +1,26 @@
+.about {
+ 	-fx-padding: 10 24 20 24;
+ 	-fx-background-radius: 20;
+ 	-fx-background-color: rgba(0,0,0,0.65);
+ 	-fx-effect: dropshadow( gaussian , black , 35 , 0 , 10 , 10 );
+}
+
+.label, .hyperlink {
+ 	-fx-text-fill: white;
+}
+
+.hyperlink, .hyperlink:focused {
+	-fx-border-width: 0;
+}
+
+.title {
+	-fx-text-fill: #fbed21;
+}
+
+.separator {
+	-fx-padding: 4;
+}
+
+.separator .line {
+	-fx-border-width: 0;
+}
