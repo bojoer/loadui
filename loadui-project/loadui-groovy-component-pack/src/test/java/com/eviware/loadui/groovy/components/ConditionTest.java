@@ -29,13 +29,13 @@ public class ConditionTest
 	@BeforeClass
 	public static void classSetup()
 	{
+		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
 		GroovyComponentTestUtils.initialize( Joiner.on( File.separator ).join( "src", "main", "groovy" ) );
 	}
 
 	@Before
 	public void setup() throws ComponentCreationException
 	{
-		GroovyComponentTestUtils.getDefaultBeanInjectorMocker();
 		component = GroovyComponentTestUtils.createComponent( "Condition" );
 	}
 

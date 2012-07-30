@@ -107,8 +107,10 @@ public class ComponentTestUtils
 
 	public static void setComponentBehavior( ComponentItem component, ComponentBehavior behavior )
 	{
-		assert component instanceof ComponentItemImpl;
-		( ( ComponentItemImpl )component ).setBehavior( behavior );
+		if( component instanceof ComponentItemImpl )
+		{
+			( ( ComponentItemImpl )component ).setBehavior( behavior );
+		}
 	}
 
 	public static void sendMessage( InputTerminal terminal, Map<String, ?> message )
