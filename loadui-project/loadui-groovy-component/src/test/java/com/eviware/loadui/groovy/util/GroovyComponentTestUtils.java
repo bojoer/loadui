@@ -1,25 +1,35 @@
 package com.eviware.loadui.groovy.util;
 
+import static org.mockito.AdditionalAnswers.delegatesTo;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 
+import org.mockito.Matchers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.eviware.loadui.api.component.BehaviorProvider;
 import com.eviware.loadui.api.component.ComponentBehavior;
+import com.eviware.loadui.api.component.ComponentContext;
 import com.eviware.loadui.api.component.ComponentCreationException;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.component.ComponentRegistry;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.statistics.Statistic;
+import com.eviware.loadui.api.statistics.StatisticVariable;
+import com.eviware.loadui.api.statistics.StatisticVariable.Mutable;
 import com.eviware.loadui.groovy.GroovyBehaviorProvider;
 import com.eviware.loadui.groovy.GroovyBehaviorSupport;
+import com.eviware.loadui.impl.model.ComponentItemImpl;
 import com.eviware.loadui.util.component.ComponentTestUtils;
 import com.eviware.loadui.util.groovy.ClassLoaderRegistry;
 import com.eviware.loadui.util.groovy.GroovyEnvironment;
@@ -63,9 +73,33 @@ public class GroovyComponentTestUtils extends ComponentTestUtils
 				pathToComponentScripts ), new ClassLoaderRegistry() );
 	}
 
+	@SuppressWarnings( "unchecked" )
 	public static ComponentItem createComponent( final String componentName ) throws ComponentCreationException
 	{
-		return createComponent( componentName, ComponentTestUtils.createComponentItem() );
+		ComponentItem component = ComponentTestUtils.createComponentItem();
+		ComponentItem componentSpy = mock( ComponentItem.class, delegatesTo( component ) );
+		ComponentContext contextSpy = mock( ComponentContext.class, delegatesTo( componentSpy.getContext() ) );
+		doReturn( contextSpy ).when( componentSpy ).getContext();
+		doReturn( componentSpy ).when( contextSpy ).getComponent();
+
+		final Mutable mockVariable = mock( StatisticVariable.Mutable.class );
+		when( mockVariable.getStatisticHolder() ).thenReturn( componentSpy );
+		@SuppressWarnings( "rawtypes" )
+		final Statistic statisticMock = mock( Statistic.class );
+		when( statisticMock.getStatisticVariable() ).thenReturn( mockVariable );
+		when( mockVariable.getStatistic( anyString(), anyString() ) ).thenReturn( statisticMock );
+		doReturn( mockVariable ).when( contextSpy ).addStatisticVariable( anyString(), anyString(),
+				Matchers.<String> anyVararg() );
+		doReturn( mockVariable ).when( contextSpy ).addListenableStatisticVariable( anyString(), anyString(),
+				Matchers.<String> anyVararg() );
+
+		ComponentItem componentItemImplSpy = mock( ComponentItemImpl.class, delegatesTo( component ) );
+		doReturn( contextSpy ).when( componentItemImplSpy ).getContext();
+
+		createComponent( componentName, componentItemImplSpy );
+		contextSpy.setNonBlocking( true );
+
+		return componentSpy;
 	}
 
 	public static ComponentItem createComponent( final String componentName, ComponentItem component )
