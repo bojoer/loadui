@@ -23,7 +23,9 @@
  * @nonBlocking true
  */
 
+import com.eviware.loadui.api.model.CanvasItem
 import com.eviware.loadui.impl.layout.OptionsProviderImpl
+import com.eviware.loadui.util.statistics.CounterStatisticSupport
 import groovy.lang.GroovyShell
 import groovy.lang.Binding
 
@@ -39,6 +41,7 @@ incomingTerminal.description = 'VUs to test condition on'
 
 shell = null
 script = null
+
 
 //Properties
 createProperty( 'advancedMode', Boolean, false ) {
@@ -60,6 +63,16 @@ createProperty( 'max', Long, 1000 )
 createProperty( 'min', Long, 0 ) { value ->
 	if(max.value < value ) max.value = value
 }
+
+def trueCounter = getCounter( 'trueCounter' )
+def falseCounter = getCounter( 'falseCounter' )
+def trueCounterVariable = addStatisticVariable( "True occurences", '', "COUNTER" )
+def falseCounterVariable = addStatisticVariable( "False occurences", '', "COUNTER" )
+def percentTrue = addStatisticVariable( "True percentage", '', "VARIABLE" )
+
+def counterStatisticSupport = new CounterStatisticSupport( getContext() )
+counterStatisticSupport.addCounterVariable( "trueCounter", trueCounterVariable );
+counterStatisticSupport.addCounterVariable( "falseCounter", falseCounterVariable );
 
 def trueCount = 0
 def falseCount = 0
@@ -121,11 +134,16 @@ onMessage = { outgoing, incoming, message ->
 		}
 		if( result ) {
 			trueCount++
+			trueCounter.increment()
 			send( trueOutput, message )
 		} else {
 			falseCount++
+			falseCounter.increment()
 			send( falseOutput, message )
 		}
+		def val = 100 * trueCounter.value / (trueCounter.value + falseCounter.value) as long
+		percentTrue.update( System.currentTimeMillis(), val )
+		log.debug("Updated with value = $val")
 	}
 }
 
@@ -191,3 +209,7 @@ compactLayout {
 }
 
 redraw()
+
+counterStatisticSupport.init()
+
+defaultStatistics << statistic( 'True percentage', 'Total' )
