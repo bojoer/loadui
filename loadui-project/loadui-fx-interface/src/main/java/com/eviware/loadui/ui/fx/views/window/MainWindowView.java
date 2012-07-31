@@ -30,6 +30,7 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.about.AboutDialog;
 import com.eviware.loadui.ui.fx.views.project.ProjectView;
 import com.eviware.loadui.ui.fx.views.workspace.SystemPropertiesDialog;
+import com.eviware.loadui.ui.fx.views.workspace.GlobalPreferencesDialog;
 import com.eviware.loadui.ui.fx.views.workspace.WorkspaceView;
 
 public class MainWindowView extends StackPane
@@ -175,7 +176,7 @@ public class MainWindowView extends StackPane
 
 		public void settings()
 		{
-			System.out.println( "Settings!" );
+			new GlobalPreferencesDialog( mainButton, workspaceProperty.getValue() ).show();
 		}
 
 		public void systemProperties()
