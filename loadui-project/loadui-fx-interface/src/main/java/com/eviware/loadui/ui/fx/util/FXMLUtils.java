@@ -3,6 +3,8 @@ package com.eviware.loadui.ui.fx.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javafx.fxml.FXMLLoader;
@@ -24,8 +26,16 @@ public class FXMLUtils
 
 	public static Node load( Class<?> type, final Callable<? extends Object> createController )
 	{
+		return load( type, createController, Collections.<String, Object> emptyMap() );
+	}
+
+	public static Node load( Class<?> type, final Callable<? extends Object> createController,
+			Map<String, ? extends Object> mapping )
+	{
 		FXMLLoader loader = new FXMLLoader();
 		loader.setClassLoader( classLoader );
+
+		loader.getNamespace().putAll( mapping );
 
 		URL fxmlURL = type.getResource( type.getSimpleName() + ".fxml" );
 		loader.setLocation( fxmlURL );

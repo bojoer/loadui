@@ -1,5 +1,9 @@
 package com.eviware.loadui.ui.fx.views.about;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
@@ -10,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.PopupControl;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.GaussianBlurBuilder;
@@ -18,7 +23,9 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.google.common.collect.ImmutableMap;
 
 public class AboutDialog extends PopupControl
 {
@@ -30,14 +37,18 @@ public class AboutDialog extends PopupControl
 
 		setAutoHide( true );
 
-		bridge.getChildren().setAll( FXMLUtils.load( AboutDialog.class, new Callable<Controller>()
-		{
-			@Override
-			public Controller call() throws Exception
-			{
-				return new Controller();
-			}
-		} ) );
+		bridge.getChildren()
+				.setAll(
+						FXMLUtils.load( AboutDialog.class, new Callable<Controller>()
+						{
+							@Override
+							public Controller call() throws Exception
+							{
+								return new Controller();
+							}
+						}, ImmutableMap.of( "name", System.getProperty( LoadUI.NAME ), "version", LoadUI.VERSION,
+								"buildDate", System.getProperty( LoadUI.BUILD_DATE ), "buildVersion",
+								System.getProperty( LoadUI.BUILD_NUMBER ) ) ) );
 
 		Scene ownerScene = owner.getScene();
 		Window parentWindow = ownerScene.getWindow();
@@ -82,23 +93,47 @@ public class AboutDialog extends PopupControl
 		private ImageView logo;
 
 		@FXML
-		private ImageView smartbear;
+		private Label title;
+
+		@FXML
+		private Label buildVersion;
+
+		@FXML
+		private Label buildDate;
 
 		@Override
 		public void initialize( URL arg0, ResourceBundle arg1 )
 		{
 			logo.setImage( new Image( "res/about-logo.png" ) );
-			logo.setTranslateY( -80 );
+
+			title.setText( String.format( "%s Version %s", System.getProperty( LoadUI.NAME, "loadUI" ), LoadUI.VERSION ) );
+			buildVersion.setText( String.format( "Build version: %s",
+					System.getProperty( LoadUI.BUILD_NUMBER, "[internal]" ) ) );
+			buildDate.setText( String.format( "Build version: %s", System.getProperty( LoadUI.BUILD_DATE, "unknown" ) ) );
 		}
 
 		public void loaduiSite()
 		{
-			System.out.println( "www.loadui.org" );
+			try
+			{
+				Desktop.getDesktop().browse( new URI( "http://www.loadui.org" ) );
+			}
+			catch( IOException | URISyntaxException e )
+			{
+				e.printStackTrace();
+			}
 		}
 
 		public void smartbearSite()
 		{
-			System.out.println( "www.smartbear.com" );
+			try
+			{
+				Desktop.getDesktop().browse( new URI( "http://www.smartbear.com" ) );
+			}
+			catch( IOException | URISyntaxException e )
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 }

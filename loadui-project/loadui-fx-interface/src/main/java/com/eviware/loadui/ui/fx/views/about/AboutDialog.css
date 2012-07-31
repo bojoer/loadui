@@ -1,5 +1,5 @@
 .about {
- 	-fx-padding: 10 24 20 24;
+ 	-fx-padding: -70 20 20 20;
  	-fx-background-radius: 20;
  	-fx-background-color: rgba(0,0,0,0.65);
  	-fx-effect: dropshadow( gaussian , black , 35 , 0 , 10 , 10 );

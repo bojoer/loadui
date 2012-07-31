@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
@@ -16,12 +17,14 @@
 		<URL value="@AboutDialog.css" />
 	</stylesheets>
 	<ImageView fx:id="logo" StackPane.alignment="top_center" />
-	<ImageView fx:id="smartbear" StackPane.alignment="bottom_right" />
+	<ImageView StackPane.alignment="bottom_right">
+		 <Image url="@smartbear.png"/>
+	</ImageView>
 	<VBox alignment="bottom_left">
-		<Label text="loadUI Version 2.5.0" styleClass="title" />
+		<Label fx:id="title" text="loadUI" styleClass="title" />
 		<Separator />
-		<Label text="Build version: dist-13" />
-		<Label text="Build date: 2012-07-30 16:51" />
+		<Label fx:id="buildVersion" text="Build version: [internal]" />
+		<Label fx:id="buildDate" text="Build date: unknown" />
 		<Separator />
 		<Label text="Copyright 2012 SmartBear Software" />
 		<Label text="SmartBear and loadUI are trademarks of SmartBear Software" />
