@@ -9,7 +9,6 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.eviware.loadui.api.model.WorkspaceProvider;
-import com.eviware.loadui.fx.TestWindow;
 import com.eviware.loadui.util.BeanInjector;
 
 public class JavaFXActivator implements BundleActivator
@@ -39,7 +38,7 @@ public class JavaFXActivator implements BundleActivator
 			{
 				try
 				{
-					new TestWindow( BeanInjector.getBeanFuture( Stage.class ).get(), BeanInjector.getBeanFuture(
+					new MainWindow( BeanInjector.getBeanFuture( Stage.class ).get(), BeanInjector.getBeanFuture(
 							WorkspaceProvider.class ).get() ).show();
 				}
 				catch( InterruptedException e )
