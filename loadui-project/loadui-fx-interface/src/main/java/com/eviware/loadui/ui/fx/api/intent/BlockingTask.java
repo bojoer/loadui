@@ -12,7 +12,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneBuilder;
-import javafx.scene.effect.Effect;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.GaussianBlurBuilder;
 import javafx.stage.Modality;
@@ -44,6 +43,8 @@ public class BlockingTask
 
 	private static class BlockingTaskBehavior
 	{
+		private GaussianBlur blur = GaussianBlurBuilder.create().radius( 0 ).build();
+
 		private final LoadingCache<Scene, EventHandler<IntentEvent<? extends Runnable>>> handlers = CacheBuilder
 				.newBuilder().weakKeys().build( new CacheLoader<Scene, EventHandler<IntentEvent<? extends Runnable>>>()
 				{
@@ -52,6 +53,7 @@ public class BlockingTask
 					{
 						return new EventHandler<IntentEvent<? extends Runnable>>()
 						{
+
 							@Override
 							public void handle( IntentEvent<? extends Runnable> event )
 							{
@@ -63,8 +65,6 @@ public class BlockingTask
 										.scene( SceneBuilder.create().root( new TaskProgressIndicator( runnable ) ).build() )
 										.build();
 								dialog.initModality( Modality.APPLICATION_MODAL );
-								final Effect oldEffect = root.getEffect();
-								GaussianBlur blur = GaussianBlurBuilder.create().radius( 0 ).build();
 								root.setEffect( blur );
 								new Timeline( new KeyFrame( new Duration( 500 ), new KeyValue( blur.radiusProperty(), 10,
 										Interpolator.EASE_IN ) ) ).playFromStart();
@@ -86,7 +86,10 @@ public class BlockingTask
 											public void run()
 											{
 												dialog.hide();
-												root.setEffect( oldEffect );
+												if( root.getEffect() == blur )
+												{
+													root.setEffect( null );
+												}
 											}
 										} );
 									}

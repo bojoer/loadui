@@ -6,7 +6,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.effect.Effect;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.GaussianBlurBuilder;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBoxBuilder;
@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 
 public class Dialog extends Stage
 {
+	private static final GaussianBlur BLUR = GaussianBlurBuilder.create().radius( 8 ).build();
 	private final Node owner;
 	private final Pane rootPane;
 
@@ -67,14 +68,16 @@ public class Dialog extends Stage
 	private void blurParentWindow()
 	{
 		final Parent root = owner.getScene().getRoot();
-		final Effect effect = root.getEffect();
-		root.setEffect( GaussianBlurBuilder.create().radius( 8 ).build() );
-		setOnHidden( new EventHandler<WindowEvent>()
+		root.setEffect( BLUR );
+		addEventHandler( WindowEvent.WINDOW_HIDING, new EventHandler<WindowEvent>()
 		{
 			@Override
 			public void handle( WindowEvent arg0 )
 			{
-				root.setEffect( effect );
+				if( root.getEffect() == BLUR )
+				{
+					root.setEffect( null );
+				}
 			}
 		} );
 	}

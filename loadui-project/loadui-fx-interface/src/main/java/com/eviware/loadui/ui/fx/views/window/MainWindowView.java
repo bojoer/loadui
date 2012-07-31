@@ -1,5 +1,9 @@
 package com.eviware.loadui.ui.fx.views.window;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
@@ -25,6 +29,7 @@ import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.about.AboutDialog;
 import com.eviware.loadui.ui.fx.views.project.ProjectView;
+import com.eviware.loadui.ui.fx.views.workspace.SystemPropertiesDialog;
 import com.eviware.loadui.ui.fx.views.workspace.WorkspaceView;
 
 public class MainWindowView extends StackPane
@@ -139,6 +144,11 @@ public class MainWindowView extends StackPane
 							return;
 						}
 					}
+					else if( event.getEventType() == IntentEvent.INTENT_RUN_BLOCKING )
+					{
+						//Handled by BlockingTask.
+						return;
+					}
 					else
 					{
 						System.out.println( "Unhandled intent: " + event );
@@ -170,17 +180,39 @@ public class MainWindowView extends StackPane
 
 		public void systemProperties()
 		{
-			System.out.println( "System Properties!" );
+			fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					SystemPropertiesDialog.initialize();
+
+					Platform.runLater( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							new SystemPropertiesDialog( mainButton ).show();
+						}
+					} );
+				}
+			} ) );
 		}
 
 		public void feedback()
 		{
-			System.out.println( "Feedback!" );
+			try
+			{
+				Desktop.getDesktop().browse( new URI( "http://www.eviware.com/forum/viewforum.php?f=9" ) );
+			}
+			catch( IOException | URISyntaxException e )
+			{
+				e.printStackTrace();
+			}
 		}
 
 		public void about()
 		{
-			System.out.println( "About!" );
 			new AboutDialog( mainButton ).show( getScene().getWindow() );
 		}
 	}
