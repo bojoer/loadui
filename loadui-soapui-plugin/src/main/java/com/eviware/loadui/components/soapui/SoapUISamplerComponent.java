@@ -140,6 +140,8 @@ public class SoapUISamplerComponent extends RunnerBase
 	public static final String PROJECT_FILE_WORKING_COPY = "_projectFileworkingCopy";
 	public static final String PROJECT_RELATIVE_PATH = "projectRelativePath";
 
+	public static final String SOAPUI_CONTEXT_PARAM = "soapui_context";
+	
 	public static final String PROPERTIES = SoapUISamplerComponent.class.getSimpleName() + "_properties";
 	private static final String DISABLED_TESTSTEPS = "disabledTestSteps";
 	public static final String TYPE = SoapUISamplerComponent.class.getName();
@@ -591,7 +593,7 @@ public class SoapUISamplerComponent extends RunnerBase
 			runContexts.remove();
 			if( soapUIContext != null )
 			{
-				triggerMessage.put( "soapui_context", soapUIContext );
+				triggerMessage.put( SOAPUI_CONTEXT_PARAM, soapUIContext );
 			}
 
 			triggerMessage.put( STATUS_MESSAGE_PARAM, testCaseRunner.getStatus() == TestRunner.Status.FINISHED );
@@ -656,8 +658,11 @@ public class SoapUISamplerComponent extends RunnerBase
 
 				message.put( RunnerCategory.SAMPLE_ID, result.getTestStep().getName() );
 				message.put( STATUS_MESSAGE_PARAM, result.getStatus() == TestStepStatus.OK );
+				message.put( "TestStepStatus", result.getStatus() );
 				message.put( TIME_TAKEN_MESSAGE_PARAM, result.getTimeTaken() );
 				message.put( TIMESTAMP_MESSAGE_PARAM, result.getTimeStamp() );
+				message.put( RESPONSE_SIZE_MESSAGE_PARAM, result.getSize() );
+				message.put( SOAPUI_CONTEXT_PARAM, new StringToObjectMap( runContext.getProperties() ) );
 
 				getContext().send( getResultTerminal(), message );
 			}
@@ -718,8 +723,8 @@ public class SoapUISamplerComponent extends RunnerBase
 				testCase.addTestRunListener( testStepNotifier );
 
 				//Use existing context if available
-				StringToObjectMap soapUIContext = triggerMessage.get( "soapui_context" ) instanceof StringToObjectMap ? ( StringToObjectMap )triggerMessage
-						.get( "soapui_context" ) : new StringToObjectMap();
+				StringToObjectMap soapUIContext = triggerMessage.get( SOAPUI_CONTEXT_PARAM ) instanceof StringToObjectMap ? ( StringToObjectMap )triggerMessage
+						.get( SOAPUI_CONTEXT_PARAM ) : new StringToObjectMap();
 				testCaseRunner = new WsdlTestCaseRunner( testCase, soapUIContext );
 
 				testCaseRunner.getRunContext().setProperty( TestCaseRunContext.THREAD_INDEX, getCurrentlyRunning() - 1 );
