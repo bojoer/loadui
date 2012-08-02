@@ -374,7 +374,7 @@ public class LoadUIIntegrator
 		// after creation is done connect all components to each other as
 		// specified
 		OutputTerminal statisticsOutputTerminal = null;
-		if( context.get( STATISTICS_TYPE ) != null )
+		if( statisticsComponentItem != null )
 		{
 			InputTerminal statisticsInputTerminal = ( InputTerminal )LoadUIUtils.findTerminalByName(
 					statisticsComponentItem.getTerminals(), AnalysisCategory.INPUT_TERMINAL );
@@ -427,7 +427,7 @@ public class LoadUIIntegrator
 		// LoadUIUtils.savesBackProperties( context, DELAY_PROPERTIES,
 		// delayComponentContext );
 		// }
-		if( context.get( TRIGGER_TYPE ) != null )
+		if( triggerComponentItem != null )
 		{
 			OutputTerminal triggerOutputTerminal = ( OutputTerminal )LoadUIUtils.findTerminalByName(
 					triggerComponentItem.getTerminals(), GeneratorCategory.TRIGGER_TERMINAL );
