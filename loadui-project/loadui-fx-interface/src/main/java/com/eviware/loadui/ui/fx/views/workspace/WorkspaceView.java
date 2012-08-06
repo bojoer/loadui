@@ -6,13 +6,17 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.ContextMenuBuilder;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItemBuilder;
@@ -21,6 +25,8 @@ import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.FileChooserBuilder;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 
 import javax.annotation.Nullable;
 
@@ -164,6 +170,51 @@ public class WorkspaceView extends StackPane
 			initAgentCarousel();
 
 			webView.getEngine().load( "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html" );
+
+			initGettingStartedWizard();
+		}
+
+		private void initGettingStartedWizard()
+		{
+			if( workspace.getAttribute( GettingStartedDialog.SHOW_GETTING_STARTED, "true" ).equals( "true" ) )
+			{
+				sceneProperty().addListener( new ChangeListener<Scene>()
+				{
+					@Override
+					public void changed( ObservableValue<? extends Scene> sceneProperty, Scene oldScene, Scene newScene )
+					{
+						if( newScene != null )
+						{
+							sceneProperty.removeListener( this );
+							newScene.windowProperty().addListener( new ChangeListener<Window>()
+							{
+								@Override
+								public void changed( ObservableValue<? extends Window> windowProperty, Window oldWindow,
+										final Window newWindow )
+								{
+									windowProperty.removeListener( this );
+									newWindow.addEventHandler( WindowEvent.WINDOW_SHOWN, new EventHandler<WindowEvent>()
+									{
+										@Override
+										public void handle( WindowEvent event )
+										{
+											newWindow.removeEventHandler( WindowEvent.WINDOW_SHOWN, this );
+											Platform.runLater( new Runnable()
+											{
+												@Override
+												public void run()
+												{
+													gettingStarted();
+												}
+											} );
+										}
+									} );
+								}
+							} );
+						}
+					}
+				} );
+			}
 		}
 
 		private void initAgentCarousel()

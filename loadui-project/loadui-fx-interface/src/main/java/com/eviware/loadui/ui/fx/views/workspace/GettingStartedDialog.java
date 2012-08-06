@@ -29,7 +29,7 @@ public class GettingStartedDialog extends ButtonDialog
 	@SuppressWarnings( "unused" )
 	private static final Logger log = LoggerFactory.getLogger( GettingStartedDialog.class );
 
-	private static final String SHOW_GETTING_STARTED = "gui.getting_started_wizard";
+	public static final String SHOW_GETTING_STARTED = "gui.getting_started_wizard";
 
 	public GettingStartedDialog( final WorkspaceItem workspace, Node owner )
 	{
@@ -101,9 +101,8 @@ public class GettingStartedDialog extends ButtonDialog
 												File sampleDirectory = new File( "samples" );
 												for( String filename : Arrays.asList( "sample1.xml", "sample2.xml", "sample3.xml" ) )
 												{
-													final File sampleFile = new File( sampleDirectory, filename );
 													fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING,
-															new ImportProjectTask( workspace, sampleFile ) ) );
+															new ImportProjectTask( workspace, new File( sampleDirectory, filename ) ) ) );
 												}
 											}
 										} ).build(),
