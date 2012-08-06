@@ -126,3 +126,8 @@
 	-fx-spacing: 6;
 	-fx-padding: 10 24 20 24;
 }
+
+.frame {
+	-fx-spacing: 12;
+	-fx-padding: 24;
+}

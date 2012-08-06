@@ -18,6 +18,8 @@ import javafx.stage.WindowEvent;
 
 import javax.annotation.Nonnull;
 
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+
 public class Dialog extends Stage
 {
 	private static final GaussianBlur BLUR = GaussianBlurBuilder.create().radius( 8 ).build();
@@ -46,6 +48,16 @@ public class Dialog extends Stage
 		// Set a good estimated position before the dialog is shown to avoid flickering.
 		setY( y - getScene().getRoot().prefHeight( -1 ) / 2 );
 		setX( x - getScene().getRoot().prefWidth( -1 ) / 2 );
+
+		//Forward unhandled IntentEvents to the parent window.
+		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<?>>()
+		{
+			@Override
+			public void handle( IntentEvent<?> event )
+			{
+				owner.fireEvent( event );
+			}
+		} );
 
 		addEventHandler( WindowEvent.WINDOW_SHOWN, new EventHandler<WindowEvent>()
 		{

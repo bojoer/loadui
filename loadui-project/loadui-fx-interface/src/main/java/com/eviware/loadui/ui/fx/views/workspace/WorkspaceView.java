@@ -18,9 +18,13 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.FileChooserBuilder;
 
 import javax.annotation.Nullable;
 
+import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
@@ -41,6 +45,10 @@ import com.google.common.io.Files;
 
 public class WorkspaceView extends StackPane
 {
+	private static final String LATEST_DIRECTORY = "gui.latestDirectory";
+	private static final ExtensionFilter XML_EXTENSION_FILTER = new FileChooser.ExtensionFilter( "loadUI project file",
+			"*.xml" );
+
 	private final WorkspaceItem workspace;
 	private final ObservableList<ProjectRef> projectRefList;
 	private final ObservableList<AgentItem> agentList;
@@ -134,6 +142,7 @@ public class WorkspaceView extends StackPane
 
 	public final class Controller implements Initializable
 	{
+
 		@FXML
 		private MenuButton workspaceButton;
 
@@ -246,6 +255,26 @@ public class WorkspaceView extends StackPane
 							fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, ProjectItem.class ) );
 						}
 					} ).build() ).build() );
+		}
+
+		public void importProject()
+		{
+			FileChooser fileChooser = FileChooserBuilder
+					.create()
+					.initialDirectory(
+							new File( workspace.getAttribute( LATEST_DIRECTORY, System.getProperty( LoadUI.LOADUI_HOME ) ) ) )
+					.extensionFilters( XML_EXTENSION_FILTER ).build();
+			File file = fileChooser.showOpenDialog( getScene().getWindow() );
+			if( file != null )
+			{
+				workspace.setAttribute( LATEST_DIRECTORY, file.getParentFile().getAbsolutePath() );
+				fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new ImportProjectTask( workspace, file ) ) );
+			}
+		}
+
+		public void gettingStarted()
+		{
+			new GettingStartedDialog( workspace, WorkspaceView.this ).show();
 		}
 
 		public void exit()
