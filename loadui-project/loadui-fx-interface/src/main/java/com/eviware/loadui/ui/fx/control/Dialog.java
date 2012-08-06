@@ -68,17 +68,20 @@ public class Dialog extends Stage
 	private void blurParentWindow()
 	{
 		final Parent root = owner.getScene().getRoot();
-		root.setEffect( BLUR );
-		addEventHandler( WindowEvent.WINDOW_HIDING, new EventHandler<WindowEvent>()
+		if( root.getEffect() == null )
 		{
-			@Override
-			public void handle( WindowEvent arg0 )
+			root.setEffect( BLUR );
+			addEventHandler( WindowEvent.WINDOW_HIDING, new EventHandler<WindowEvent>()
 			{
-				if( root.getEffect() == BLUR )
+				@Override
+				public void handle( WindowEvent arg0 )
 				{
-					root.setEffect( null );
+					if( root.getEffect() == BLUR )
+					{
+						root.setEffect( null );
+					}
 				}
-			}
-		} );
+			} );
+		}
 	}
 }

@@ -59,4 +59,20 @@ public class ConfirmationDialog extends ButtonDialog
 	{
 		confirmButton.onActionProperty().set( value );
 	}
+
+	//TODO: Not sure if we should add this or not...
+	//	public BooleanProperty confirmDisableProperty()
+	//	{
+	//		return confirmButton.disableProperty();
+	//	}
+	//
+	//	public boolean isConfirmDisable()
+	//	{
+	//		return confirmButton.isDisable();
+	//	}
+	//
+	//	public void setConfirmDisable( boolean disable )
+	//	{
+	//		confirmButton.setDisable( disable );
+	//	}
 }

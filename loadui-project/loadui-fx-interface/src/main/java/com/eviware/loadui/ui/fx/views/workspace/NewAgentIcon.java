@@ -8,6 +8,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.RectangleBuilder;
 
+import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.DragNode;
 
 public class NewAgentIcon extends Label
@@ -26,8 +28,7 @@ public class NewAgentIcon extends Label
 			{
 				if( event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 )
 				{
-					//TODO: Open NewAgentDialog.
-					System.out.println( "Create Agent" );
+					fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
 				}
 			}
 		} );

@@ -110,7 +110,7 @@ public class WorkspaceView extends StackPane
 					}
 					else if( event.getArg() == AgentItem.class )
 					{
-						//TODO: Open dialog.
+						new CreateNewAgentDialog( workspace, WorkspaceView.this ).show();
 						event.consume();
 					}
 				}

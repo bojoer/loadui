@@ -83,7 +83,7 @@ public class Carousel<E extends Node> extends Control
 						{
 							if( change.getRemoved().contains( selected ) )
 							{
-								setSelected( items.get( change.getFrom() ) );
+								setSelected( items.get( change.getFrom() - 1 ) );
 								return;
 							}
 						}
