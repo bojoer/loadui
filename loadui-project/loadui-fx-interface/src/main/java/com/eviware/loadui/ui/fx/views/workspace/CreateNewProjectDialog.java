@@ -42,7 +42,7 @@ public class CreateNewProjectDialog extends ConfirmationDialog
 
 				if( openNewProject.isSelected() )
 				{
-					owner.fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, projectRef ) );
+					fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, projectRef ) );
 				}
 			}
 		} );

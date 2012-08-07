@@ -1,7 +1,6 @@
 package com.eviware.loadui.ui.fx.views.workspace;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
@@ -47,7 +46,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
-import com.google.common.io.Files;
 
 public class WorkspaceView extends StackPane
 {
@@ -76,43 +74,7 @@ public class WorkspaceView extends StackPane
 				if( event.getEventType() == IntentEvent.INTENT_CLONE && event.getArg() instanceof ProjectRef )
 				{
 					final ProjectRef projectRef = ( ProjectRef )event.getArg();
-
-					fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							File projectFile = projectRef.getProjectFile();
-							File cloneFile = null;
-							int count = 1;
-							while( ( cloneFile = new File( projectFile.getParentFile(), String.format( "copy-%d-of-%s", count,
-									projectFile.getName() ) ) ).exists() )
-							{
-								count++ ;
-							}
-
-							try
-							{
-								Files.copy( projectFile, cloneFile );
-								ProjectRef cloneRef = workspace.importProject( cloneFile, true );
-
-								ProjectItem cloneProject = cloneRef.getProject();
-								cloneProject.setLabel( String.format( "Copy %d of %s", count, projectRef.getLabel() ) );
-								cloneProject.save();
-								cloneRef.setEnabled( false );
-
-								//TODO: Remote if miniatures aren't generated in the same way.
-								cloneRef.setAttribute( "miniature", projectRef.getAttribute( "miniature", "" ) );
-
-								workspace.save();
-							}
-							catch( IOException e )
-							{
-								e.printStackTrace();
-							}
-						}
-					} ) );
-
+					new CloneProjectDialog( workspace, projectRef, WorkspaceView.this ).show();
 					event.consume();
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CREATE )
