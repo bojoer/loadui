@@ -22,7 +22,8 @@ public abstract class TestState
 {
 	private static final Joiner BREADCRUMB_JOINER = Joiner.on( " > " );
 
-	private static final Logger log = LoggerFactory.getLogger( TestState.class );
+	private static final Logger staticLog = LoggerFactory.getLogger( TestState.class );
+	protected final Logger log;
 
 	/**
 	 * The initial root state, which forms the root of the TestState tree.
@@ -49,12 +50,14 @@ public abstract class TestState
 
 	private TestState()
 	{
+		log = LoggerFactory.getLogger( getClass() );
 		name = "Root";
 		parent = null;
 	}
 
 	protected TestState( String name, TestState parent )
 	{
+		log = LoggerFactory.getLogger( getClass() );
 		this.name = Preconditions.checkNotNull( name );
 		this.parent = Preconditions.checkNotNull( parent );
 	}
@@ -95,7 +98,7 @@ public abstract class TestState
 		{
 			if( !getParents( newState ).contains( currentState ) )
 			{
-				log.info( "Exiting state: {}", getBreadcrumbs( currentState ) );
+				staticLog.info( "Exiting state: {}", getBreadcrumbs( currentState ) );
 				try
 				{
 					currentState.exitToParent();
@@ -113,7 +116,7 @@ public abstract class TestState
 				{
 					next = next.getParent();
 				}
-				log.info( "Entering state: {}", getBreadcrumbs( next ) );
+				staticLog.info( "Entering state: {}", getBreadcrumbs( next ) );
 				try
 				{
 					next.enterFromParent();

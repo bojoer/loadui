@@ -23,7 +23,7 @@ public class ButtonDialog extends Dialog
 
 	public ButtonDialog( @Nonnull final Node owner, @Nonnull String header )
 	{
-		super( owner );
+		super( owner, header );
 
 		//TODO: Replace with CSS.
 		Label headerLabel = LabelBuilder.create().font( Font.font( null, FontWeight.BOLD, 14 ) ).text( header ).build();

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -17,8 +18,10 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.sun.javafx.robot.impl.FXRobotHelper;
 
 public class ControllerApi
 {
@@ -33,7 +36,8 @@ public class ControllerApi
 	{
 		if( window instanceof Stage )
 		{
-			( ( Stage )window ).toFront();
+			Stage stage = ( Stage )window;
+			stage.toFront();
 		}
 		lastSeenWindow = window;
 
@@ -45,9 +49,36 @@ public class ControllerApi
 		return new OffsetTarget( target, offsetX, offsetY );
 	}
 
+	public static ObservableList<Stage> getStages()
+	{
+		return FXRobotHelper.getStages();
+	}
+
+	public static Stage getStageByIndex( int index )
+	{
+		return FXRobotHelper.getStages().get( index );
+	}
+
+	public static Stage findStageByTitle( final String titleRegex )
+	{
+		return Iterables.find( getStages(), new Predicate<Stage>()
+		{
+			@Override
+			public boolean apply( Stage input )
+			{
+				return input.getTitle().matches( titleRegex );
+			}
+		} );
+	}
+
 	public static Set<Node> findAll( String selector, Object parent )
 	{
-		if( parent instanceof Node )
+		if( parent instanceof String )
+		{
+			final String titleRegex = ( String )parent;
+			return findAll( selector, use( findStageByTitle( titleRegex ) ).getScene() );
+		}
+		else if( parent instanceof Node )
 		{
 			Node node = ( Node )parent;
 			use( node.getScene().getWindow() );

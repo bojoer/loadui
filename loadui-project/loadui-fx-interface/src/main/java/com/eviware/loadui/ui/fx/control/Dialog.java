@@ -26,7 +26,7 @@ public class Dialog extends Stage
 	private final Node owner;
 	private final Pane rootPane;
 
-	public Dialog( @Nonnull final Node owner )
+	public Dialog( @Nonnull final Node owner, @Nonnull String title )
 	{
 		this.owner = owner;
 		final Scene ownerScene = owner.getScene();
@@ -40,6 +40,7 @@ public class Dialog extends Stage
 		setResizable( false );
 		initStyle( StageStyle.UTILITY );
 		initModality( Modality.APPLICATION_MODAL );
+		setTitle( title );
 
 		Window parentWindow = ownerScene.getWindow();
 		final double x = parentWindow.getX() + parentWindow.getWidth() / 2;

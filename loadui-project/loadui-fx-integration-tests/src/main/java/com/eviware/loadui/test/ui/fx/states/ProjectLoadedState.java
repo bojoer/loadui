@@ -22,6 +22,7 @@ public class ProjectLoadedState extends TestState
 	@Override
 	protected void enterFromParent() throws Exception
 	{
+		log.debug( "Opening project." );
 		GUI.getController().click( ".project-ref-view #menuButton" ).press( KeyCode.DOWN ).press( KeyCode.ENTER );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
@@ -37,6 +38,7 @@ public class ProjectLoadedState extends TestState
 	@Override
 	protected void exitToParent() throws Exception
 	{
+		log.debug( "Closing project." );
 		GUI.getController().click( "#closeProjectButton" );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
