@@ -76,47 +76,41 @@ public class CreateNewAgentDialog extends ConfirmationDialog
 
 			if( !Iterables.isEmpty( newAgents ) )
 			{
+				Iterable<Node> agentCheckBoxes = Iterables.transform( newAgents, new Function<AgentReference, Node>()
+				{
+					@Override
+					public Node apply( final AgentReference agentReference )
+					{
+						final CheckBox checkBox = CheckBoxBuilder.create()
+								.text( String.format( "%s (%s)", agentReference.getDefaultLabel(), agentReference.getUrl() ) )
+								.build();
+						checkBox.setOnAction( new EventHandler<ActionEvent>()
+						{
+							@Override
+							public void handle( ActionEvent event )
+							{
+								if( checkBox.isSelected() )
+								{
+									selectedAgentRefs.add( agentReference );
+								}
+								else
+								{
+									selectedAgentRefs.remove( agentReference );
+								}
+							}
+						} );
+
+						return checkBox;
+					}
+				} );
+
 				getItems().addAll(
 						new Label( "Agents detected in your network" ),
 						ScrollPaneBuilder
 								.create()
 								.content(
-										VBoxBuilder
-												.create()
-												.spacing( 6 )
-												.padding( new Insets( 2 ) )
-												.children(
-														Lists.newArrayList( Iterables.transform( newAgents,
-																new Function<AgentReference, Node>()
-																{
-																	@Override
-																	public Node apply( final AgentReference agentReference )
-																	{
-																		final CheckBox checkBox = CheckBoxBuilder
-																				.create()
-																				.text(
-																						String.format( "%s (%s)",
-																								agentReference.getDefaultLabel(),
-																								agentReference.getUrl() ) ).build();
-																		checkBox.setOnAction( new EventHandler<ActionEvent>()
-																		{
-																			@Override
-																			public void handle( ActionEvent event )
-																			{
-																				if( checkBox.isSelected() )
-																				{
-																					selectedAgentRefs.add( agentReference );
-																				}
-																				else
-																				{
-																					selectedAgentRefs.remove( agentReference );
-																				}
-																			}
-																		} );
-
-																		return checkBox;
-																	}
-																} ) ) ).build() ).build() );
+										VBoxBuilder.create().spacing( 6 ).padding( new Insets( 2 ) )
+												.children( Lists.newArrayList( agentCheckBoxes ) ).build() ).build() );
 			}
 		}
 		catch( InterruptedException | ExecutionException | TimeoutException e )
