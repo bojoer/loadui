@@ -35,6 +35,7 @@ import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.util.concurrent.SettableFuture;
@@ -58,6 +59,7 @@ public class ToolBoxTest
 					buildRect( Color.GREEN ), buildRect( Color.RED ), buildRect( Color.YELLOW ), buildRect( Color.BLUE ),
 					buildRect( Color.ORANGE ) );
 
+			toolbox.setComparator( Ordering.explicit( Lists.newArrayList( rectangles.values() ) ) );
 			toolbox.setCategoryComparator( Ordering.explicit( Color.RED.toString(), Color.BLUE.toString(),
 					Color.GREEN.toString(), Color.YELLOW.toString(), Color.ORANGE.toString() ) );
 
@@ -135,7 +137,6 @@ public class ToolBoxTest
 			}
 		}, new Runnable()
 		{
-
 			@Override
 			public void run()
 			{
@@ -156,7 +157,6 @@ public class ToolBoxTest
 			}
 		}, new Runnable()
 		{
-
 			@Override
 			public void run()
 			{
