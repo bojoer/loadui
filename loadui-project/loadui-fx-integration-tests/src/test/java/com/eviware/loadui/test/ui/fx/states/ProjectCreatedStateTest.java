@@ -17,16 +17,21 @@ package com.eviware.loadui.test.ui.fx.states;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import javafx.scene.input.KeyCode;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.test.categories.IntegrationTest;
+import com.eviware.loadui.test.ui.fx.GUI;
 import com.eviware.loadui.util.BeanInjector;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * Integration tests for testing the loadUI controller through its API.
@@ -53,5 +58,43 @@ public class ProjectCreatedStateTest
 	{
 		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
 		assertThat( workspace.getProjectRefs().size(), is( 1 ) );
+	}
+
+	@Test
+	public void shouldRenameProject()
+	{
+		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).type( KeyCode.DOWN )
+				.type( KeyCode.DOWN ).type( KeyCode.ENTER ).type( "Renamed Project" ).type( KeyCode.ENTER );
+
+		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
+		Iterables.find( workspace.getProjectRefs(), new Predicate<ProjectRef>()
+		{
+			@Override
+			public boolean apply( ProjectRef input )
+			{
+				return input.getLabel().equals( "Renamed Project" );
+			}
+		} );
+	}
+
+	@Test
+	public void shouldCloneProject()
+	{
+		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).type( KeyCode.DOWN )
+				.type( KeyCode.DOWN ).type( KeyCode.DOWN ).type( KeyCode.ENTER ).type( "Copy" ).type( KeyCode.TAB )
+				.type( KeyCode.TAB ).type( KeyCode.TAB ).type( KeyCode.SPACE ).type( KeyCode.TAB ).type( KeyCode.ENTER );
+
+		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
+		assertThat( workspace.getProjectRefs().size(), is( 2 ) );
+		ProjectRef clonedRef = Iterables.find( workspace.getProjectRefs(), new Predicate<ProjectRef>()
+		{
+			@Override
+			public boolean apply( ProjectRef input )
+			{
+				return input.getLabel().equals( "Copy" );
+			}
+		} );
+
+		clonedRef.delete( true );
 	}
 }

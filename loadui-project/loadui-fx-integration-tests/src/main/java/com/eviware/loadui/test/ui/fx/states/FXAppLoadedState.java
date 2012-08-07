@@ -30,6 +30,8 @@ public class FXAppLoadedState extends TestState
 				dialog.close();
 			}
 		}, 1 );
+
+		GUI.getController().click( "#mainButton" ).click( "#mainButton" ).sleep( 500 );
 	}
 
 	@Override

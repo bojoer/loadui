@@ -25,7 +25,7 @@ public class FXTestUtils
 				stage.toBack();
 				stage.toFront();
 			}
-		}, 1 );
+		}, 5 );
 		Thread.sleep( 250 );
 	}
 

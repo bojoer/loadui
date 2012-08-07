@@ -117,7 +117,7 @@ public class CloneProjectDialog extends ConfirmationDialog
 
 			if( openNewProject.isSelected() )
 			{
-				fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, cloneRef ) );
+				CloneProjectDialog.this.fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, cloneRef ) );
 			}
 			else
 			{
