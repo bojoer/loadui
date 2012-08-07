@@ -8,7 +8,6 @@ import java.util.concurrent.Callable;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -217,7 +216,7 @@ public class ObservableLists
 	}
 
 	public static <E> void bindSorted( final List<E> list1, ObservableList<? extends E> list2,
-			final Comparator<? super E> comparator, ObservableValue<?>... observables )
+			final Comparator<? super E> comparator, Observable... observables )
 	{
 		bindContentUnordered( list1, list2 );
 		InvalidationListener invalidationListener = new InvalidationListener()
@@ -225,18 +224,25 @@ public class ObservableLists
 			@Override
 			public void invalidated( Observable arg0 )
 			{
-				if( list1 instanceof ObservableList )
+				Platform.runLater( new Runnable()
 				{
-					FXCollections.sort( ( ObservableList<E> )list1, comparator );
-				}
-				else
-				{
-					Collections.sort( list1, comparator );
-				}
+					@Override
+					public void run()
+					{
+						if( list1 instanceof ObservableList )
+						{
+							FXCollections.sort( ( ObservableList<E> )list1, comparator );
+						}
+						else
+						{
+							Collections.sort( list1, comparator );
+						}
+					}
+				} );
 			}
 		};
 		list2.addListener( invalidationListener );
-		for( ObservableValue<?> observable : observables )
+		for( Observable observable : observables )
 		{
 			observable.addListener( invalidationListener );
 		}

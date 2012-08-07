@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -222,15 +223,19 @@ public class WorkspaceView extends StackPane
 
 		private void initProjectRefCarousel()
 		{
+			final SimpleStringProperty binding = new SimpleStringProperty();
+
 			ObservableLists.bindSorted( projectRefCarousel.getItems(),
 					ObservableLists.transform( projectRefList, new Function<ProjectRef, ProjectRefView>()
 					{
 						@Override
 						public ProjectRefView apply( ProjectRef projectRef )
 						{
+							//TODO: Hey, I just stubbed you, and this is crazy. It might be needed, re-enable, maybe.
+							//binding.bind( Properties.forLabel( projectRef ) );
 							return new ProjectRefView( projectRef );
 						}
-					} ), Ordering.usingToString() );
+					} ), Ordering.usingToString(), binding );
 
 			final String lastProject = workspace.getAttribute( "lastOpenProject", "" );
 			projectRefCarousel.setSelected( Iterables.find( projectRefCarousel.getItems(), new Predicate<ProjectRefView>()
