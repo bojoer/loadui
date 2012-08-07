@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.control;
 
+import javafx.application.Platform;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
@@ -64,15 +65,27 @@ public class Carousel<E extends Node> extends Control
 		items.addListener( new ListChangeListener<E>()
 		{
 			@Override
-			public void onChanged( Change<? extends E> change )
+			public void onChanged( ListChangeListener.Change<? extends E> change )
 			{
-				if( items.isEmpty() )
+				final E selected = getSelected();
+				if( items.contains( selected ) )
+				{
+					Platform.runLater( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							setSelected( null );
+							setSelected( selected );
+						}
+					} );
+				}
+				else if( items.isEmpty() )
 				{
 					setSelected( null );
 				}
 				else
 				{
-					E selected = getSelected();
 					if( selected == null )
 					{
 						setSelected( items.get( 0 ) );

@@ -3,6 +3,8 @@ package com.eviware.loadui.ui.fx.api.intent;
 import javafx.event.Event;
 import javafx.event.EventType;
 
+import com.eviware.loadui.api.traits.Labeled;
+
 @SuppressWarnings( "serial" )
 public class IntentEvent<T> extends Event
 {
@@ -14,6 +16,9 @@ public class IntentEvent<T> extends Event
 	public static final EventType<IntentEvent<? extends Object>> INTENT_CLOSE = new EventType<>( ANY, "INTENT_CLOSE" );
 
 	public static final EventType<IntentEvent<? extends Object>> INTENT_CREATE = new EventType<>( ANY, "INTENT_CREATE" );
+
+	public static final EventType<IntentEvent<? extends Labeled.Mutable>> INTENT_RENAME = new EventType<>( ANY,
+			"INTENT_RENAME" );
 
 	public static final EventType<IntentEvent<? extends Object>> INTENT_CLONE = new EventType<>( ANY, "INTENT_CLONE" );
 

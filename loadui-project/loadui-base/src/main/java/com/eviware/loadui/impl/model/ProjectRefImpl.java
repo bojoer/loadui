@@ -92,7 +92,40 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 		return label;
 	}
 
-	private void setLabel( String label )
+	@Override
+	public void setLabel( String label )
+	{
+		boolean disable = !isEnabled();
+		if( disable )
+		{
+			try
+			{
+				setEnabled( true );
+			}
+			catch( IOException e )
+			{
+				//Ignore, already logged.
+			}
+		}
+
+		getProject().setLabel( label );
+		eventSupport.fireEvent( new BaseEvent( this, LABEL ) );
+
+		if( disable )
+		{
+			try
+			{
+				getProject().save();
+				setEnabled( false );
+			}
+			catch( IOException e )
+			{
+				//Ignore, already logged.
+			}
+		}
+	}
+
+	private void doSetLabel( String label )
 	{
 		if( label != null && ( getLabel() == null || !getLabel().equals( label ) ) )
 		{
@@ -128,7 +161,7 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 		try
 		{
 			project = ProjectItemImpl.loadProject( workspace, projectFile );
-			setLabel( project.getLabel() );
+			doSetLabel( project.getLabel() );
 			config.setProjectId( project.getId() );
 			project.addEventListener( BaseEvent.class, projectListener );
 			fireEvent( new BaseEvent( this, LOADED ) );
@@ -152,7 +185,7 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 				else
 				{
 					//Do this since there may be an updated label that hasn't yet propagated.
-					setLabel( project.getLabel() );
+					doSetLabel( project.getLabel() );
 					project.release();
 					project = null;
 					eventSupport.fireEvent( new BaseEvent( this, UNLOADED ) );
@@ -266,7 +299,7 @@ public final class ProjectRefImpl implements ProjectRef, Releasable
 			{
 				if( project != null )
 				{
-					setLabel( project.getLabel() );
+					doSetLabel( project.getLabel() );
 				}
 			}
 		}

@@ -6,8 +6,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
 import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -40,6 +40,7 @@ import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Carousel;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
+import com.eviware.loadui.ui.fx.util.Observables;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.views.agent.AgentView;
 import com.eviware.loadui.ui.fx.views.projectref.ProjectRefView;
@@ -71,7 +72,6 @@ public class WorkspaceView extends StackPane
 			@Override
 			public void handle( IntentEvent<? extends Object> event )
 			{
-				//TODO: Open Clone Project dialog.
 				if( event.getEventType() == IntentEvent.INTENT_CLONE && event.getArg() instanceof ProjectRef )
 				{
 					final ProjectRef projectRef = ( ProjectRef )event.getArg();
@@ -223,7 +223,7 @@ public class WorkspaceView extends StackPane
 
 		private void initProjectRefCarousel()
 		{
-			final SimpleStringProperty binding = new SimpleStringProperty();
+			final Observables.Group group = Observables.group();
 
 			ObservableLists.bindSorted( projectRefCarousel.getItems(),
 					ObservableLists.transform( projectRefList, new Function<ProjectRef, ProjectRefView>()
@@ -231,11 +231,19 @@ public class WorkspaceView extends StackPane
 						@Override
 						public ProjectRefView apply( ProjectRef projectRef )
 						{
-							//TODO: Hey, I just stubbed you, and this is crazy. It might be needed, re-enable, maybe.
-							//binding.bind( Properties.forLabel( projectRef ) );
 							return new ProjectRefView( projectRef );
 						}
-					} ), Ordering.usingToString(), binding );
+					} ), Ordering.usingToString(), group );
+
+			Bindings.bindContent( group.getObservables(),
+					ObservableLists.transform( projectRefCarousel.getItems(), new Function<ProjectRefView, Observable>()
+					{
+						@Override
+						public Observable apply( ProjectRefView projectRefView )
+						{
+							return projectRefView.labelProperty();
+						}
+					} ) );
 
 			final String lastProject = workspace.getAttribute( "lastOpenProject", "" );
 			projectRefCarousel.setSelected( Iterables.find( projectRefCarousel.getItems(), new Predicate<ProjectRefView>()

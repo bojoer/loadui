@@ -25,13 +25,16 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
+import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.about.AboutDialog;
 import com.eviware.loadui.ui.fx.views.project.ProjectView;
-import com.eviware.loadui.ui.fx.views.workspace.SystemPropertiesDialog;
+import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
 import com.eviware.loadui.ui.fx.views.workspace.GlobalPreferencesDialog;
+import com.eviware.loadui.ui.fx.views.workspace.SystemPropertiesDialog;
 import com.eviware.loadui.ui.fx.views.workspace.WorkspaceView;
+import com.google.common.base.Preconditions;
 
 public class MainWindowView extends StackPane
 {
@@ -144,6 +147,12 @@ public class MainWindowView extends StackPane
 							System.out.println( "Unhandled intent: " + event );
 							return;
 						}
+					}
+					else if( event.getEventType() == IntentEvent.INTENT_RENAME )
+					{
+						final Object arg = event.getArg();
+						Preconditions.checkArgument( arg instanceof Labeled.Mutable );
+						new RenameDialog( ( Labeled.Mutable )arg, MainWindowView.this ).show();
 					}
 					else if( event.getEventType() == IntentEvent.INTENT_RUN_BLOCKING )
 					{

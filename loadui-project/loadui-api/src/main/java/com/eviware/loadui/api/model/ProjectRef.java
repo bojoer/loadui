@@ -27,7 +27,7 @@ import com.eviware.loadui.api.traits.Labeled;
  * 
  * @author dain.nilsson
  */
-public interface ProjectRef extends EventFirer, AttributeHolder, Labeled
+public interface ProjectRef extends EventFirer, AttributeHolder, Labeled.Mutable
 {
 	public static final String LOADED = ProjectRef.class.getName() + "@loaded";
 	public static final String UNLOADED = ProjectRef.class.getName() + "@unloaded";

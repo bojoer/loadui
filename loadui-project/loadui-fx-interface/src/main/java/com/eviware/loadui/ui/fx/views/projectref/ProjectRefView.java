@@ -16,11 +16,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 import com.eviware.loadui.api.model.ProjectRef;
+import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 
-public class ProjectRefView extends StackPane
+public class ProjectRefView extends StackPane implements Labeled
 {
 	private final ProjectRef projectRef;
 	private final ReadOnlyStringProperty labelProperty;
@@ -41,6 +42,17 @@ public class ProjectRefView extends StackPane
 				return new Controller();
 			}
 		} ) );
+	}
+
+	public ReadOnlyStringProperty labelProperty()
+	{
+		return labelProperty;
+	}
+
+	@Override
+	public String getLabel()
+	{
+		return labelProperty.get();
 	}
 
 	public ProjectRef getProjectRef()
@@ -81,6 +93,11 @@ public class ProjectRefView extends StackPane
 		public void open()
 		{
 			fireEvent( IntentEvent.create( IntentEvent.INTENT_OPEN, projectRef ) );
+		}
+
+		public void rename()
+		{
+			fireEvent( IntentEvent.create( IntentEvent.INTENT_RENAME, projectRef ) );
 		}
 
 		public void cloneProject()
