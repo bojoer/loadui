@@ -61,7 +61,7 @@ public class DetachableTabTest
 	{
 		FXTestUtils.launchApp( DetachableTabTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
-		ControllerApi.use( stage );
+		ControllerApi.targetWindow( stage );
 		FXTestUtils.bringToFront( stage );
 	}
 

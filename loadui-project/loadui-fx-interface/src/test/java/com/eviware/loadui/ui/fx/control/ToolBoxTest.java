@@ -1,7 +1,7 @@
 package com.eviware.loadui.ui.fx.control;
 
 import static com.eviware.loadui.ui.fx.util.test.ControllerApi.find;
-import static com.eviware.loadui.ui.fx.util.test.ControllerApi.use;
+import static com.eviware.loadui.ui.fx.util.test.ControllerApi.targetWindow;
 import static com.eviware.loadui.ui.fx.util.test.ControllerApi.wrap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -95,7 +95,7 @@ public class ToolBoxTest
 	{
 		controller = wrap( new FXScreenController() );
 		FXTestUtils.launchApp( ToolboxTestApp.class );
-		stage = use( stageFuture.get( 5, TimeUnit.SECONDS ) );
+		stage = targetWindow( stageFuture.get( 5, TimeUnit.SECONDS ) );
 		FXTestUtils.bringToFront( stage );
 	}
 
@@ -103,7 +103,7 @@ public class ToolBoxTest
 	public void setup()
 	{
 		clicked.clear();
-		use( stage );
+		targetWindow( stage );
 		Button prevButton = find( ".nav.up" );
 		controller.click( prevButton ).click( prevButton ).click( prevButton );
 	}
@@ -121,7 +121,7 @@ public class ToolBoxTest
 		PopupControl expander = ( PopupControl )rectangle2.getScene().getWindow();
 		assertThat( expander.isShowing(), is( true ) );
 
-		controller.using( stage ).click( ".tool-box .title" );
+		controller.target( stage ).click( ".tool-box .title" );
 		assertThat( expander.isShowing(), is( false ) );
 	}
 
@@ -133,14 +133,14 @@ public class ToolBoxTest
 			@Override
 			public void run()
 			{
-				controller.click( find( ".nav.up" ) );
+				controller.click( ".nav.up" );
 			}
 		}, new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				controller.click( find( ".nav.down" ) );
+				controller.click( ".nav.down" );
 			}
 		} );
 	}

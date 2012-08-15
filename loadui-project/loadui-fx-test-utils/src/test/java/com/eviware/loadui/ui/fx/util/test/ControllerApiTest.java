@@ -57,7 +57,7 @@ public class ControllerApiTest
 		FXTestUtils.launchApp( ControllerApiTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
 		FXTestUtils.bringToFront( stage );
-		ControllerApi.use( stage );
+		ControllerApi.targetWindow( stage );
 	}
 
 	@Test

@@ -45,9 +45,9 @@ public class ProjectCreatedState extends TestState
 	protected void exitToParent() throws Exception
 	{
 		log.debug( "Deleting project." );
-		final Node projectCarousel = find( "#projectRefCarousel" );
 		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).type( KeyCode.DOWN )
 				.type( KeyCode.DOWN ).type( KeyCode.DOWN ).type( KeyCode.DOWN ).type( KeyCode.ENTER );
+		final Node projectCarousel = find( "#projectRefCarousel" );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()
 		{

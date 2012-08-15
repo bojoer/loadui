@@ -69,7 +69,7 @@ public class DragNodeTest
 		controller = ControllerApi.wrap( new FXScreenController() );
 		FXTestUtils.launchApp( DragNodeTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
-		ControllerApi.use( stage );
+		ControllerApi.targetWindow( stage );
 		FXTestUtils.bringToFront( stage );
 	}
 

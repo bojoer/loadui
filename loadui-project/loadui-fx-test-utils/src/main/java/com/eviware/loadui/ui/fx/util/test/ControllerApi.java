@@ -2,10 +2,10 @@ package com.eviware.loadui.ui.fx.util.test;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -19,9 +19,10 @@ import javafx.stage.Window;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.sun.javafx.robot.impl.FXRobotHelper;
+import com.google.common.collect.Lists;
 
 public class ControllerApi
 {
@@ -32,7 +33,7 @@ public class ControllerApi
 
 	private static Window lastSeenWindow = null;
 
-	public static <T extends Window> T use( T window )
+	public static <T extends Window> T targetWindow( T window )
 	{
 		if( window instanceof Stage )
 		{
@@ -49,19 +50,19 @@ public class ControllerApi
 		return new OffsetTarget( target, offsetX, offsetY );
 	}
 
-	public static ObservableList<Stage> getStages()
+	public static List<Window> getWindows()
 	{
-		return FXRobotHelper.getStages();
+		return Lists.reverse( Lists.newArrayList( Window.impl_getWindows() ) );
 	}
 
-	public static Stage getStageByIndex( int index )
+	public static Window getWindowByIndex( int index )
 	{
-		return FXRobotHelper.getStages().get( index );
+		return getWindows().get( index );
 	}
 
 	public static Stage findStageByTitle( final String titleRegex )
 	{
-		return Iterables.find( getStages(), new Predicate<Stage>()
+		return Iterables.find( Iterables.filter( getWindows(), Stage.class ), new Predicate<Stage>()
 		{
 			@Override
 			public boolean apply( Stage input )
@@ -76,23 +77,23 @@ public class ControllerApi
 		if( parent instanceof String )
 		{
 			final String titleRegex = ( String )parent;
-			return findAll( selector, use( findStageByTitle( titleRegex ) ).getScene() );
+			return findAll( selector, targetWindow( findStageByTitle( titleRegex ) ).getScene() );
 		}
 		else if( parent instanceof Node )
 		{
 			Node node = ( Node )parent;
-			use( node.getScene().getWindow() );
+			targetWindow( node.getScene().getWindow() );
 			return node.lookupAll( selector );
 		}
 		else if( parent instanceof Scene )
 		{
 			Scene scene = ( Scene )parent;
-			use( scene.getWindow() );
+			targetWindow( scene.getWindow() );
 			return findAll( selector, scene.getRoot() );
 		}
 		else if( parent instanceof Window )
 		{
-			return findAll( selector, use( ( Window )parent ).getScene() );
+			return findAll( selector, targetWindow( ( Window )parent ).getScene() );
 		}
 
 		return Collections.emptySet();
@@ -137,9 +138,29 @@ public class ControllerApi
 		return this;
 	}
 
-	public ControllerApi using( Window window )
+	public ControllerApi target( Object window )
 	{
-		use( window );
+		if( window instanceof Window )
+		{
+			targetWindow( ( Window )window );
+		}
+		else if( window instanceof String )
+		{
+			targetWindow( findStageByTitle( ( String )window ) );
+		}
+		else if( window instanceof Number )
+		{
+			targetWindow( getWindowByIndex( ( ( Number )window ).intValue() ) );
+		}
+		else if( window instanceof Class<?> )
+		{
+			targetWindow( Iterables.find( getWindows(), Predicates.instanceOf( ( Class<?> )window ) ) );
+		}
+		else
+		{
+			Preconditions.checkArgument( false, "Unable to identify Window based on the given argument: %s", window );
+		}
+
 		return this;
 	}
 
@@ -382,7 +403,7 @@ public class ControllerApi
 
 	private static Bounds sceneBoundsToScreenBounds( Bounds sceneBounds, Scene scene )
 	{
-		Window window = use( scene.getWindow() );
+		Window window = targetWindow( scene.getWindow() );
 		return new BoundingBox( window.getX() + scene.getX() + sceneBounds.getMinX(), window.getY() + scene.getY()
 				+ sceneBounds.getMinY(), sceneBounds.getWidth(), sceneBounds.getHeight() );
 	}
@@ -414,7 +435,7 @@ public class ControllerApi
 		}
 		else if( target instanceof Window )
 		{
-			Window window = use( ( Window )target );
+			Window window = targetWindow( ( Window )target );
 			return pointFor( new BoundingBox( window.getX(), window.getY(), window.getWidth(), window.getHeight() ) );
 		}
 		else if( target instanceof OffsetTarget )
@@ -479,6 +500,19 @@ public class ControllerApi
 		public MouseMotion by( double x, double y )
 		{
 			moveBy( x, y );
+			return this;
+		}
+
+		public MouseMotion sleep( long ms )
+		{
+			try
+			{
+				Thread.sleep( ms );
+			}
+			catch( InterruptedException e )
+			{
+				throw new RuntimeException( e );
+			}
 			return this;
 		}
 

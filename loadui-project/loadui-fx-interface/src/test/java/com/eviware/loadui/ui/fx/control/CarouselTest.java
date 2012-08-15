@@ -1,7 +1,7 @@
 package com.eviware.loadui.ui.fx.control;
 
 import static com.eviware.loadui.ui.fx.util.test.ControllerApi.find;
-import static com.eviware.loadui.ui.fx.util.test.ControllerApi.use;
+import static com.eviware.loadui.ui.fx.util.test.ControllerApi.targetWindow;
 import static com.eviware.loadui.ui.fx.util.test.ControllerApi.wrap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -72,7 +72,7 @@ public class CarouselTest
 	{
 		controller = wrap( new FXScreenController() );
 		FXTestUtils.launchApp( CarouselTestApp.class );
-		stage = use( stageFuture.get( 5, TimeUnit.SECONDS ) );
+		stage = targetWindow( stageFuture.get( 5, TimeUnit.SECONDS ) );
 		FXTestUtils.bringToFront( stage );
 	}
 

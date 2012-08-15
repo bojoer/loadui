@@ -17,7 +17,10 @@ package com.eviware.loadui.test.ui.fx.states;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.input.KeyCode;
+import javafx.stage.PopupWindow;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -63,8 +66,8 @@ public class ProjectCreatedStateTest
 	@Test
 	public void shouldRenameProject()
 	{
-		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).type( KeyCode.DOWN )
-				.type( KeyCode.DOWN ).type( KeyCode.ENTER ).type( "Renamed Project" ).type( KeyCode.ENTER );
+		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).target( PopupWindow.class )
+				.click( "#rename" ).type( "Renamed Project" ).type( KeyCode.ENTER );
 
 		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
 		Iterables.find( workspace.getProjectRefs(), new Predicate<ProjectRef>()
@@ -80,9 +83,9 @@ public class ProjectCreatedStateTest
 	@Test
 	public void shouldCloneProject()
 	{
-		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).type( KeyCode.DOWN )
-				.type( KeyCode.DOWN ).type( KeyCode.DOWN ).type( KeyCode.ENTER ).type( "Copy" ).type( KeyCode.TAB )
-				.type( KeyCode.TAB ).type( KeyCode.TAB ).type( KeyCode.SPACE ).type( KeyCode.TAB ).type( KeyCode.ENTER );
+		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).target( PopupWindow.class )
+				.click( "#clone" ).type( "Copy" ).type( KeyCode.TAB ).type( KeyCode.TAB ).type( KeyCode.TAB )
+				.type( KeyCode.SPACE ).type( KeyCode.TAB ).type( KeyCode.ENTER );
 
 		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
 		assertThat( workspace.getProjectRefs().size(), is( 2 ) );
@@ -96,5 +99,24 @@ public class ProjectCreatedStateTest
 		} );
 
 		clonedRef.delete( true );
+	}
+
+	public void traverse( Node node, int indent )
+	{
+		StringBuilder indentation = new StringBuilder();
+		for( int i = 0; i < indent; i++ )
+		{
+			indentation.append( "  " );
+		}
+		System.out.println( indentation + "Node id: " + node.getId() + ", class: " + node.getClass().getSimpleName()
+				+ " StyleClass: " + node.getStyleClass() );
+		if( node instanceof Parent )
+		{
+			System.out.println( indentation + "Children:" );
+			for( Node child : ( ( Parent )node ).getChildrenUnmodifiable() )
+			{
+				traverse( child, indent + 1 );
+			}
+		}
 	}
 }

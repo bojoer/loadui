@@ -17,7 +17,7 @@ public class GUI
 {
 	public static ControllerApi getController()
 	{
-		return getInstance().robot;
+		return getInstance().robot.target( getStage() );
 	}
 
 	public static Stage getStage()
@@ -78,7 +78,7 @@ public class GUI
 
 				FXTestUtils.bringToFront( localStage );
 				localRobot = ControllerApi.wrap( new FXScreenController() );
-				ControllerApi.use( localStage );
+				ControllerApi.targetWindow( localStage );
 			}
 			catch( Exception e )
 			{
