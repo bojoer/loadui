@@ -15,10 +15,10 @@
 	</stylesheets>
 	<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" >
 		<items>
-			<MenuItem fx:id="open" text="Open" onAction="#open" />
-			<MenuItem fx:id="rename" text="Rename" onAction="#rename" />
-			<MenuItem fx:id="clone" text="Clone" onAction="#cloneProject" />
-			<MenuItem fx:id="delete" text="Delete" onAction="#delete" />
+			<MenuItem fx:id="open" id="open" text="Open" onAction="#open" />
+			<MenuItem fx:id="rename" id="rename" text="Rename" onAction="#rename" />
+			<MenuItem fx:id="clone" id="clone" text="Clone" onAction="#cloneProject" />
+			<MenuItem fx:id="delete" id="delete" text="Delete" onAction="#delete" />
 		</items>
 	</MenuButton>
 	<Region prefWidth="60" prefHeight="80" style="-fx-background-color: red;" onMouseClicked="#regionClickHandler" />
