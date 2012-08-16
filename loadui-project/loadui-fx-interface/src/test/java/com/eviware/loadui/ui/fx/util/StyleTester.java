@@ -26,7 +26,10 @@ import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 
 import com.eviware.loadui.api.model.AgentItem;
+import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
+import com.eviware.loadui.ui.fx.control.Dialog;
 import com.eviware.loadui.ui.fx.views.agent.AgentView;
+import com.eviware.loadui.ui.fx.views.workspace.CreateNewProjectDialog;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -121,7 +124,7 @@ public class StyleTester extends Application
 
 		primaryStage.show();
 
-		//		final Dialog dialog = new CreateNewProjectDialog( primaryStage.getScene() );
+		//		final Dialog dialog = new ConfirmationDialog( panel, "sdad", "2d" );
 		//		dialog.show();
 	}
 
