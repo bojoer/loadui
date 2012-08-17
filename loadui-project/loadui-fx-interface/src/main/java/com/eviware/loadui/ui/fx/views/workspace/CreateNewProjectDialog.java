@@ -33,10 +33,12 @@ public class CreateNewProjectDialog extends ConfirmationDialog
 	{
 		super( owner, "Create new project", "Create" );
 
+		int projectNumber = getNextProjectNumber();
+
 		Label projectName = new Label( "Project name" );
-		final TextField projectNameField = new TextField();
+		final TextField projectNameField = new TextField("Project " + projectNumber);
 		Label fileName = new Label( "File name" );
-		final TextField fileNameField = new TextField();
+		final TextField fileNameField = new TextField("project-" + projectNumber + ".xml");
 		HBox.setHgrow( fileNameField, Priority.ALWAYS );
 		Button browseButton = ButtonBuilder.create().text( "Browse..." ).onAction( new EventHandler<ActionEvent>()
 		{
@@ -75,5 +77,20 @@ public class CreateNewProjectDialog extends ConfirmationDialog
 				}
 			}
 		} );
+	}
+	
+		private static int getNextProjectNumber()
+	{
+		int projectNumber = 1;
+		while( !isValidFileName( "project-" + projectNumber + ".xml" ) )
+		{
+			projectNumber++ ;
+		}
+		return projectNumber;
+	}
+
+	private static boolean isValidFileName( String fileName )
+	{
+		return !new File( System.getProperty( "user.home" ) + "/.loadui", fileName ).exists();
 	}
 }
