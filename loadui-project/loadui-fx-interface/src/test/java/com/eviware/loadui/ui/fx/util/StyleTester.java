@@ -113,7 +113,7 @@ public class StyleTester extends Application
 
 		primaryStage.show();
 
-		//		final Dialog dialog = new CreateNewProjectDialog( primaryStage.getScene() );
+		//		final Dialog dialog = new ConfirmationDialog( panel, "sdad", "2d" );
 		//		dialog.show();
 	}
 
