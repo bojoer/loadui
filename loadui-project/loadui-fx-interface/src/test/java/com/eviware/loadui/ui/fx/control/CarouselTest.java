@@ -87,6 +87,7 @@ public class CarouselTest
 				carousel.setSelected( rectangles.get( 0 ) );
 			}
 		}, 5 );
+		FXTestUtils.printGraph( carousel );
 	}
 
 	@Test

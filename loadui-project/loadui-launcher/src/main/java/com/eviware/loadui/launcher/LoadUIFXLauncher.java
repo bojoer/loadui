@@ -77,14 +77,24 @@ public class LoadUIFXLauncher extends LoadUILauncher
 						.root( LabelBuilder.create().text( System.getProperty( LOADUI_NAME, "loadUI" ) ).build() ).build();
 			}
 
-			final Stage splash = StageBuilder.create().style( StageStyle.TRANSPARENT ).scene( splashScene )
-					.icons( new Image( "res/icon_64x64.png" ), new Image( "res/icon_32x32.png" ) ).build();
+			Image[] icons = new Image[0];
+			try
+			{
+				icons = new Image[] { new Image( "res/icon_64x64.png" ), new Image( "res/icon_32x32.png" ) };
+			}
+			catch( Exception e )
+			{
+				//e.printStackTrace();
+			}
+
+			final Stage splash = StageBuilder.create().style( StageStyle.TRANSPARENT ).scene( splashScene ).icons( icons )
+					.build();
 			splash.initModality( Modality.APPLICATION_MODAL );
 			splash.centerOnScreen();
 			splash.show();
 			splash.toFront();
 
-			stage.getIcons().addAll( new Image( "res/icon_64x64.png" ), new Image( "res/icon_32x32.png" ) );
+			stage.getIcons().addAll( icons );
 			stage.setOnShown( new EventHandler<WindowEvent>()
 			{
 				@Override

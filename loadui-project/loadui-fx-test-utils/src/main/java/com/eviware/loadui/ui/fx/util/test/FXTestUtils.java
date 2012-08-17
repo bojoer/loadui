@@ -7,6 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.stage.Stage;
 
 import com.google.common.util.concurrent.SettableFuture;
@@ -145,5 +147,23 @@ public class FXTestUtils
 				Application.launch( appClass, args );
 			}
 		} ).start();
+	}
+
+	public static void printGraph( Node root )
+	{
+		printGraph( root, "" );
+	}
+
+	private static void printGraph( Node root, String indent )
+	{
+		System.out.println( indent + root );
+		if( root instanceof Parent )
+		{
+			indent += "  ";
+			for( Node child : ( ( Parent )root ).getChildrenUnmodifiable() )
+			{
+				printGraph( child, indent );
+			}
+		}
 	}
 }

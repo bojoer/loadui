@@ -107,9 +107,9 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 		carousel.getItems().addListener( updatePage );
 		updatePage.invalidated( null );
 
-		ComboBox<E> comboBox = new ComboBox<>( carousel.getItems() );
+		ComboBox<E> comboBox = new ComboBox<>();
 		comboBox.setMaxWidth( Double.MAX_VALUE );
-		comboBox.setCellFactory( new Callback<ListView<E>, ListCell<E>>()
+		Callback<ListView<E>, ListCell<E>> cellFactory = new Callback<ListView<E>, ListCell<E>>()
 		{
 			@Override
 			public ListCell<E> call( ListView<E> listView )
@@ -125,7 +125,10 @@ public class CarouselSkin<E extends Node> extends SkinBase<Carousel<E>, Behavior
 					}
 				};
 			}
-		} );
+		};
+		comboBox.setButtonCell( cellFactory.call( null ) );
+		comboBox.setCellFactory( cellFactory );
+		comboBox.setItems( carousel.getItems() );
 		comboBox.valueProperty().bindBidirectional( carousel.selectedProperty() );
 
 		CarouselDisplay carouselDisplay = new CarouselDisplay();

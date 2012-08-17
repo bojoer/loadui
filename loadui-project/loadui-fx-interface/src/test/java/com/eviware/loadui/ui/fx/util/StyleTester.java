@@ -13,7 +13,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.ButtonBuilder;
-import javafx.scene.control.MenuButton;
 import javafx.scene.control.SplitPaneBuilder;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextAreaBuilder;
@@ -21,8 +20,11 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import com.eviware.loadui.ui.fx.control.Carousel;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -30,7 +32,10 @@ public class StyleTester extends Application
 {
 	private Node createTestNode()
 	{
-		return new MenuButton();
+		Carousel<Rectangle> carousel = new Carousel<>( "Hello world" );
+		carousel.getItems().setAll( new Rectangle( 50, 50, Color.RED ), new Rectangle( 50, 50, Color.BLUE ),
+				new Rectangle( 50, 50, Color.YELLOW ) );
+		return carousel;
 	}
 
 	@Override

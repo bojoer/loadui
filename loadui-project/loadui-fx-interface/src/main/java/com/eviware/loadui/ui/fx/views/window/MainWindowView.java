@@ -77,7 +77,14 @@ public class MainWindowView extends StackPane
 		@Override
 		public void initialize( URL arg0, ResourceBundle arg1 )
 		{
-			mainButton.setGraphic( new ImageView( "res/logo-button.png" ) );
+			try
+			{
+				mainButton.setGraphic( new ImageView( "res/logo-button.png" ) );
+			}
+			catch( Exception e1 )
+			{
+				//e1.printStackTrace();
+			}
 
 			addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
 			{
