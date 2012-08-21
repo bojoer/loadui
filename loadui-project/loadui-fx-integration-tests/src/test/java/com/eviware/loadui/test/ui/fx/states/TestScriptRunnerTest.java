@@ -3,12 +3,15 @@ package com.eviware.loadui.test.ui.fx.states;
 import java.io.File;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+import com.eviware.loadui.test.categories.IntegrationTest;
 import com.eviware.loadui.test.ui.fx.TestScriptRunner;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
 
+@Category( IntegrationTest.class )
 public class TestScriptRunnerTest
 {
 	@Test
