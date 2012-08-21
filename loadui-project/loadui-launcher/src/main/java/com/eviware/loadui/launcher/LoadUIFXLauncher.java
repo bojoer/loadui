@@ -80,7 +80,8 @@ public class LoadUIFXLauncher extends LoadUILauncher
 			Image[] icons = new Image[0];
 			try
 			{
-				icons = new Image[] { new Image( "res/icon_64x64.png" ), new Image( "res/icon_32x32.png" ) };
+				icons = new Image[] { new Image( new File( "res/icon_64x64.png" ).toURI().toURL().toString() ),
+						new Image( new File( "res/icon_32x32.png" ).toURI().toURL().toString() ) };
 			}
 			catch( Exception e )
 			{
