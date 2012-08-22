@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -23,6 +24,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class ControllerApi
 {
@@ -101,7 +103,32 @@ public class ControllerApi
 
 	public static Set<Node> findAll( String selector )
 	{
-		return findAll( selector, lastSeenWindow );
+		Set<Node> results = Sets.newLinkedHashSet();
+		results.addAll( findAll( selector, lastSeenWindow ) );
+		for( Window descendant : Iterables.filter( getWindows(), new Predicate<Window>()
+		{
+			@Override
+			public boolean apply( Window input )
+			{
+				Window parent = null;
+				if( input instanceof Stage )
+				{
+					parent = ( ( Stage )input ).getOwner();
+				}
+				else if( input instanceof PopupWindow )
+				{
+					parent = ( ( PopupWindow )input ).getOwnerWindow();
+				}
+
+				return parent == lastSeenWindow || parent != null && apply( parent );
+			}
+		} ) )
+		{
+			System.out.println( "descendant: " + descendant );
+			results.addAll( findAll( selector, descendant ) );
+		}
+
+		return results;
 	}
 
 	@SuppressWarnings( "unchecked" )
@@ -111,9 +138,11 @@ public class ControllerApi
 				"Query [%s] select [%s] resulted in no nodes found!", parent, selector );
 	}
 
+	@SuppressWarnings( "unchecked" )
 	public static <T extends Node> T find( String selector )
 	{
-		return find( selector, lastSeenWindow );
+		return Preconditions.checkNotNull( ( T )Iterables.getFirst( findAll( selector ), null ),
+				"Query [%s] resulted in no nodes found!", selector );
 	}
 
 	private final ScreenController controller;

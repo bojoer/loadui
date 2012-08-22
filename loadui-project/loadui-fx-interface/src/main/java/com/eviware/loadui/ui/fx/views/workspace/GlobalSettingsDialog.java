@@ -20,16 +20,16 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
 
-public class GlobalPreferencesDialog extends ConfirmationDialog
+public class GlobalSettingsDialog extends ConfirmationDialog
 {
-	private static final Logger log = LoggerFactory.getLogger( GlobalPreferencesDialog.class );
+	private static final Logger log = LoggerFactory.getLogger( GlobalSettingsDialog.class );
 
 	private final List<Runnable> saveActions = new ArrayList<>();
 	private final WorkspaceItem workspace;
 
-	public GlobalPreferencesDialog( Node owner, WorkspaceItem workspace )
+	public GlobalSettingsDialog( Node owner, WorkspaceItem workspace )
 	{
-		super( owner, "Preferences", "OK" );
+		super( owner, "Settings", "OK" );
 
 		this.workspace = workspace;
 

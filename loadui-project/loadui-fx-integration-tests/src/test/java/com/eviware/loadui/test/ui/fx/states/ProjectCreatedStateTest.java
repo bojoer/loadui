@@ -20,7 +20,6 @@ import static org.junit.Assert.assertThat;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.input.KeyCode;
-import javafx.stage.PopupWindow;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -66,8 +65,8 @@ public class ProjectCreatedStateTest
 	@Test
 	public void shouldRenameProject()
 	{
-		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).target( PopupWindow.class )
-				.click( "#rename" ).type( "Renamed Project" ).type( KeyCode.ENTER );
+		GUI.getController().click( "#projectRefCarousel .project-ref-view #menuButton" ).click( "#rename" )
+				.type( "Renamed Project" ).type( KeyCode.ENTER );
 
 		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
 		Iterables.find( workspace.getProjectRefs(), new Predicate<ProjectRef>()
@@ -83,9 +82,9 @@ public class ProjectCreatedStateTest
 	@Test
 	public void shouldCloneProject()
 	{
-		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).target( PopupWindow.class )
-				.click( "#clone" ).type( "Copy" ).type( KeyCode.TAB ).type( KeyCode.TAB ).type( KeyCode.TAB )
-				.type( KeyCode.SPACE ).type( KeyCode.TAB ).type( KeyCode.ENTER );
+		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#clone" ).type( "Copy" )
+				.type( KeyCode.TAB ).type( KeyCode.TAB ).type( KeyCode.TAB ).type( KeyCode.SPACE ).type( KeyCode.TAB )
+				.type( KeyCode.ENTER );
 
 		WorkspaceItem workspace = BeanInjector.getBean( WorkspaceProvider.class ).getWorkspace();
 		assertThat( workspace.getProjectRefs().size(), is( 2 ) );
