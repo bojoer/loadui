@@ -43,8 +43,8 @@
       </splashScreen>
       <java mainClass="com.javafx.main.Main" vmParameters="-Xms128m -Xmx768m -XX:MaxPermSize=128m" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
+          <directory location="." failOnError="false" />
           <scanDirectory location="lib" failOnError="true" />
-          <archive location="jre/lib/jfxrt.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -846,7 +846,7 @@ return f.exists();</condition>
     </applications>
   </installerGui>
   <mediaSets>
-    <win32 name="Windows Installer" id="26" mediaFileName="loadUI-${compiler:version}" installDir="SmartBear/loadUI-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <win32 name="Windows Installer" id="26" mediaFileName="loadUI-${compiler:version}" installDir="SmartBear/loadUI-${compiler:version}" overridePrincipalLanguage="false" requires64bit="false" jreBitType="32" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="windows-x86-1.7.0_06" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
       <excludedLaunchers>
         <launcher id="23" />
       </excludedLaunchers>
@@ -860,7 +860,7 @@ return f.exists();</condition>
       <exclude />
       <variables />
     </win32>
-    <win32 name="Windows 64-bit Installer" id="1284" mediaFileName="loadUI-${compiler:version}-64bit" installDir="SmartBear/loadUI-${compiler:version}" overridePrincipalLanguage="false" requires64bit="true" jreBitType="64" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="windows-amd64-1.7.0_04_fx-2.1" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
+    <win32 name="Windows 64-bit Installer" id="1284" mediaFileName="loadUI-${compiler:version}-64bit" installDir="SmartBear/loadUI-${compiler:version}" overridePrincipalLanguage="false" requires64bit="true" jreBitType="64" runPostProcessor="true" postProcessor="${compiler:SIGNTOOL_PATH} sign /v /f ${compiler:CERT_PATH} /p ${compiler:CERT_PASS} $EXECUTABLE" failOnPostProcessorError="false" includedJRE="windows-amd64-1.7.0_06" manualJREEntry="false" bundleType="1" jreURL="" jreFtpURL="" jreShared="false" directDownload="false" customInstallBaseDir="" createUninstallIcon="true" contentFilesType="1" downloadURL="" runAsAdmin="false">
       <excludedLaunchers>
         <launcher id="23" />
       </excludedLaunchers>
