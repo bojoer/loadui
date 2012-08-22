@@ -1,6 +1,8 @@
 package com.eviware.loadui.ui.fx.views.workspace;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
@@ -30,6 +32,9 @@ import javafx.stage.WindowEvent;
 
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.AgentItem;
 import com.eviware.loadui.api.model.ProjectItem;
@@ -48,9 +53,11 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
+import com.google.common.io.Files;
 
 public class WorkspaceView extends StackPane
 {
+	private static final Logger LOG = LoggerFactory.getLogger(WorkspaceView.class);
 	private static final String LATEST_DIRECTORY = "gui.latestDirectory";
 	private static final ExtensionFilter XML_EXTENSION_FILTER = new FileChooser.ExtensionFilter( "loadUI project file",
 			"*.xml" );
@@ -104,13 +111,14 @@ public class WorkspaceView extends StackPane
 			@Override
 			public Object call() throws Exception
 			{
-				return new Controller();
+				return new Controller("res/application.properties");
 			}
 		} ) );
 	}
 
 	public final class Controller implements Initializable
 	{
+		private final String propFile;
 
 		@FXML
 		private MenuButton workspaceButton;
@@ -124,6 +132,10 @@ public class WorkspaceView extends StackPane
 		@FXML
 		private WebView webView;
 
+		public Controller(String propFile) {
+			this.propFile = propFile;
+		}
+
 		@Override
 		public void initialize( URL arg0, ResourceBundle arg1 )
 		{
@@ -132,7 +144,15 @@ public class WorkspaceView extends StackPane
 			initProjectRefCarousel();
 			initAgentCarousel();
 
-			webView.getEngine().load( "http://www.loadui.org/loadUI-starter-pages/loadui-starter-page-os.html" );
+			java.util.Properties props = new java.util.Properties();
+
+			try (InputStream propsStream = Files.newInputStreamSupplier(new File(propFile)).getInput()){
+				props.load(propsStream);
+			} catch (IOException e) {
+				LOG.warn("Unable to load resource file 'application.properties!'", e);
+			}
+
+			webView.getEngine().load( props.getProperty("starter.page.url") );
 
 			initGettingStartedWizard();
 		}
