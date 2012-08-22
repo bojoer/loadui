@@ -18,14 +18,12 @@
 	</stylesheets>
 	<StackPane fx:id="container" />
 	<Region styleClass="inspector-bar" StackPane.alignment="bottom_center" maxHeight="15" />
-	<MenuButton fx:id="mainButton" styleClass="main-button" StackPane.alignment="top_left">
+	<MenuButton id="mainButton" fx:id="mainButton" styleClass="main-button" StackPane.alignment="top_left">
 		<items>
-			<MenuItem text="Always on top" onAction="#alwaysOnTop" />
-			<SeparatorMenuItem />
-			<MenuItem text="Settings" onAction="#settings" />
-			<MenuItem text="System Properties" onAction="#systemProperties" />
-			<MenuItem text="Give Feedback" onAction="#feedback" />
-			<MenuItem text="About" onAction="#about" />
+			<MenuItem id="settings" text="Settings" onAction="#settings" />
+			<MenuItem id="systemProperties" text="System Properties" onAction="#systemProperties" />
+			<MenuItem id="feedback" text="Give Feedback" onAction="#feedback" />
+			<MenuItem id="about" text="About" onAction="#about" />
 		</items>
 	</MenuButton>
 </StackPane>

@@ -39,7 +39,7 @@ public class FXTestUtils
 	{
 		try
 		{
-			for( int i = 0; i < 10; i++ )
+			for( int i = 0; i < 50; i++ )
 			{
 				final Semaphore sem = new Semaphore( 0 );
 				Platform.runLater( new Runnable()

@@ -31,7 +31,7 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.about.AboutDialog;
 import com.eviware.loadui.ui.fx.views.project.ProjectView;
 import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
-import com.eviware.loadui.ui.fx.views.workspace.GlobalPreferencesDialog;
+import com.eviware.loadui.ui.fx.views.workspace.GlobalSettingsDialog;
 import com.eviware.loadui.ui.fx.views.workspace.SystemPropertiesDialog;
 import com.eviware.loadui.ui.fx.views.workspace.WorkspaceView;
 import com.google.common.base.Preconditions;
@@ -185,14 +185,9 @@ public class MainWindowView extends StackPane
 			//			}, workspaceProperty ) );
 		}
 
-		public void alwaysOnTop()
-		{
-			System.out.println( "Always On Top!" );
-		}
-
 		public void settings()
 		{
-			new GlobalPreferencesDialog( mainButton, workspaceProperty.getValue() ).show();
+			new GlobalSettingsDialog( mainButton, workspaceProperty.getValue() ).show();
 		}
 
 		public void systemProperties()
