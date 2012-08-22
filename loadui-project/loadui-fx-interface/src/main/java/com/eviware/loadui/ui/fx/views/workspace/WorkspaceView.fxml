@@ -21,6 +21,8 @@
 <?import com.eviware.loadui.ui.fx.control.Carousel?>
 <?import com.eviware.loadui.ui.fx.views.workspace.NewProjectIcon?>
 <?import com.eviware.loadui.ui.fx.views.workspace.NewAgentIcon?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml" styleClass="workspace-view"
 	fx:controller="com.eviware.loadui.ui.fx.views.workspace.WorkspaceView$Controller">
@@ -28,9 +30,9 @@
 		<URL value="@WorkspaceView.css" />
 	</stylesheets>
 	<VBox alignment="top_left" spacing="10" snapToPixel="true">
-		<ToolBar minHeight="60" >
+		<ToolBar minHeight="60" id="topToolBar">
 			<Label minWidth="60" />
-			<MenuButton fx:id="workspaceButton">
+			<MenuButton fx:id="workspaceButton" id="workspaceButton">
 				<items>
 					<MenuItem onAction="#importProject" text="Import project" />
 					<SeparatorMenuItem />
@@ -39,6 +41,11 @@
 					<MenuItem onAction="#exit" text="Exit" />
 				</items>
 			</MenuButton>
+			<BorderPane HBox.hgrow="ALWAYS">
+				<right>
+					<Button id="helpButton" text="?" BorderPane.alignment="CENTER_RIGHT" onAction="#openHelpPage" />
+				</right>
+			</BorderPane>
 		</ToolBar>
 		<HBox spacing="15" snapToPixel="true">
 			<ToolBox>
