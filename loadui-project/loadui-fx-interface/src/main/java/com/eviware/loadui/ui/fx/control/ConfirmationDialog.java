@@ -21,23 +21,23 @@ public class ConfirmationDialog extends ButtonDialog
 	{
 		super( owner, header );
 
-		confirmButton = ButtonBuilder.create().alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
+		confirmButton = ButtonBuilder.create().text( actionButtonLabel ).id( "default" ).defaultButton( true ).alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle( ActionEvent event )
 			{
 				close();
 			}
-		} ).text( actionButtonLabel ).defaultButton( true ).build();
+		} ).build();
 
-		cancelButton = ButtonBuilder.create().alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
+		cancelButton = ButtonBuilder.create().text( "Cancel" ).id( "cancel" ).cancelButton( true ).alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle( ActionEvent event )
 			{
 				close();
 			}
-		} ).text( "Cancel" ).cancelButton( true ).build();
+		} ).build();
 
 		if( PlatformUtil.isMac() )
 			getButtons().setAll( cancelButton, confirmButton );
