@@ -5,9 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
 
 import javafx.application.Platform;
 import javafx.beans.Observable;
@@ -18,7 +15,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenuBuilder;
@@ -64,10 +60,24 @@ public class WorkspaceView extends StackPane
 	private static final String LATEST_DIRECTORY = "gui.latestDirectory";
 	private static final ExtensionFilter XML_EXTENSION_FILTER = new FileChooser.ExtensionFilter( "loadUI project file",
 			"*.xml" );
+	private static final String HELPER_PAGE_URL = "http://www.loadui.org";
+	private static final String PROP_FILE = "res/application.properties";
 
 	private final WorkspaceItem workspace;
 	private final ObservableList<ProjectRef> projectRefList;
 	private final ObservableList<AgentItem> agentList;
+
+	@FXML
+	private MenuButton workspaceButton;
+
+	@FXML
+	private Carousel<ProjectRefView> projectRefCarousel;
+
+	@FXML
+	private Carousel<Node> agentCarousel;
+
+	@FXML
+	private WebView webView;
 
 	public WorkspaceView( final WorkspaceItem workspace )
 	{
@@ -109,273 +119,237 @@ public class WorkspaceView extends StackPane
 			}
 		} );
 
-		getChildren().setAll( FXMLUtils.load( WorkspaceView.class, new Callable<Object>()
+		FXMLUtils.loadNew( this, this );
+
+		workspaceButton.textProperty().bind( Bindings.format( "Workspace: %s", Properties.forLabel( workspace ) ) );
+
+		initProjectRefCarousel();
+		initAgentCarousel();
+
+		java.util.Properties props = new java.util.Properties();
+
+		try (InputStream propsStream = Files.newInputStreamSupplier( new File( PROP_FILE ) ).getInput())
 		{
-			@Override
-			public Object call() throws Exception
-			{
-				return new Controller( "res/application.properties" );
-			}
-		} ) );
+			props.load( propsStream );
+		}
+		catch( IOException e )
+		{
+			LOG.warn( "Unable to load resource file 'application.properties!'", e );
+		}
+
+		webView.getEngine().load( props.getProperty( "starter.page.url" ) );
+
+		initGettingStartedWizard();
 	}
 
-	public final class Controller implements Initializable
+	private void initGettingStartedWizard()
 	{
-		private static final String HELPER_PAGE_URL = "http://www.loadui.org";
-
-		private final String propFile;
-
-		@FXML
-		private MenuButton workspaceButton;
-
-		@FXML
-		private Carousel<ProjectRefView> projectRefCarousel;
-
-		@FXML
-		private Carousel<Node> agentCarousel;
-
-		@FXML
-		private WebView webView;
-
-		public Controller( String propFile )
+		if( workspace.getAttribute( GettingStartedDialog.SHOW_GETTING_STARTED, "true" ).equals( "true" ) )
 		{
-			this.propFile = propFile;
-		}
-
-		@Override
-		public void initialize( URL arg0, ResourceBundle arg1 )
-		{
-			workspaceButton.textProperty().bind( Bindings.format( "Workspace: %s", Properties.forLabel( workspace ) ) );
-
-			initProjectRefCarousel();
-			initAgentCarousel();
-
-			java.util.Properties props = new java.util.Properties();
-
-			try (InputStream propsStream = Files.newInputStreamSupplier( new File( propFile ) ).getInput())
-			{
-				props.load( propsStream );
-			}
-			catch( IOException e )
-			{
-				LOG.warn( "Unable to load resource file 'application.properties!'", e );
-			}
-
-			webView.getEngine().load( props.getProperty( "starter.page.url" ) );
-
-			initGettingStartedWizard();
-		}
-
-		private void initGettingStartedWizard()
-		{
-			if( workspace.getAttribute( GettingStartedDialog.SHOW_GETTING_STARTED, "true" ).equals( "true" ) )
-			{
-				sceneProperty().addListener( new ChangeListener<Scene>()
-				{
-					@Override
-					public void changed( ObservableValue<? extends Scene> sceneProperty, Scene oldScene, Scene newScene )
-					{
-						if( newScene != null )
-						{
-							sceneProperty.removeListener( this );
-							newScene.windowProperty().addListener( new ChangeListener<Window>()
-							{
-								@Override
-								public void changed( ObservableValue<? extends Window> windowProperty, Window oldWindow,
-										final Window newWindow )
-								{
-									windowProperty.removeListener( this );
-									newWindow.addEventHandler( WindowEvent.WINDOW_SHOWN, new EventHandler<WindowEvent>()
-									{
-										@Override
-										public void handle( WindowEvent event )
-										{
-											newWindow.removeEventHandler( WindowEvent.WINDOW_SHOWN, this );
-											Platform.runLater( new Runnable()
-											{
-												@Override
-												public void run()
-												{
-													gettingStarted();
-												}
-											} );
-										}
-									} );
-								}
-							} );
-						}
-					}
-				} );
-			}
-		}
-
-		private void initAgentCarousel()
-		{
-			ObservableLists.bindSorted( agentCarousel.getItems(),
-					ObservableLists.transform( agentList, new Function<AgentItem, AgentView>()
-					{
-						@Override
-						public AgentView apply( AgentItem agent )
-						{
-							return new AgentView( agent );
-						}
-					} ), Ordering.usingToString() );
-
-			agentCarousel.setSelected( Iterables.getFirst( agentCarousel.getItems(), null ) );
-
-			agentCarousel.addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
+			sceneProperty().addListener( new ChangeListener<Scene>()
 			{
 				@Override
-				public void handle( DraggableEvent event )
+				public void changed( ObservableValue<? extends Scene> sceneProperty, Scene oldScene, Scene newScene )
 				{
-					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED && event.getData() instanceof NewAgentIcon )
+					if( newScene != null )
 					{
-						event.accept();
+						sceneProperty.removeListener( this );
+						newScene.windowProperty().addListener( new ChangeListener<Window>()
+						{
+							@Override
+							public void changed( ObservableValue<? extends Window> windowProperty, Window oldWindow,
+									final Window newWindow )
+							{
+								windowProperty.removeListener( this );
+								newWindow.addEventHandler( WindowEvent.WINDOW_SHOWN, new EventHandler<WindowEvent>()
+								{
+									@Override
+									public void handle( WindowEvent event )
+									{
+										newWindow.removeEventHandler( WindowEvent.WINDOW_SHOWN, this );
+										Platform.runLater( new Runnable()
+										{
+											@Override
+											public void run()
+											{
+												gettingStarted();
+											}
+										} );
+									}
+								} );
+							}
+						} );
 					}
-					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+				}
+			} );
+		}
+	}
+
+	private void initAgentCarousel()
+	{
+		ObservableLists.bindSorted( agentCarousel.getItems(),
+				ObservableLists.transform( agentList, new Function<AgentItem, AgentView>()
+				{
+					@Override
+					public AgentView apply( AgentItem agent )
+					{
+						return new AgentView( agent );
+					}
+				} ), Ordering.usingToString() );
+
+		agentCarousel.setSelected( Iterables.getFirst( agentCarousel.getItems(), null ) );
+
+		agentCarousel.addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
+		{
+			@Override
+			public void handle( DraggableEvent event )
+			{
+				if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED && event.getData() instanceof NewAgentIcon )
+				{
+					event.accept();
+				}
+				else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+				{
+					fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
+				}
+			}
+		} );
+
+		agentCarousel.setContextMenu( ContextMenuBuilder.create()
+				.items( MenuItemBuilder.create().text( "Add Agent" ).onAction( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent arg0 )
 					{
 						fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
 					}
-				}
-			} );
+				} ).build() ).build() );
+	}
 
-			agentCarousel.setContextMenu( ContextMenuBuilder.create()
-					.items( MenuItemBuilder.create().text( "Add Agent" ).onAction( new EventHandler<ActionEvent>()
-					{
-						@Override
-						public void handle( ActionEvent arg0 )
-						{
-							fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, AgentItem.class ) );
-						}
-					} ).build() ).build() );
-		}
+	private void initProjectRefCarousel()
+	{
+		final Observables.Group group = Observables.group();
 
-		private void initProjectRefCarousel()
-		{
-			final Observables.Group group = Observables.group();
-
-			ObservableLists.bindSorted( projectRefCarousel.getItems(),
-					ObservableLists.transform( projectRefList, new Function<ProjectRef, ProjectRefView>()
-					{
-						@Override
-						public ProjectRefView apply( ProjectRef projectRef )
-						{
-							return new ProjectRefView( projectRef );
-						}
-					} ), Ordering.usingToString(), group );
-
-			Bindings.bindContent( group.getObservables(),
-					ObservableLists.transform( projectRefCarousel.getItems(), new Function<ProjectRefView, Observable>()
-					{
-						@Override
-						public Observable apply( ProjectRefView projectRefView )
-						{
-							return projectRefView.labelProperty();
-						}
-					} ) );
-
-			final String lastProject = workspace.getAttribute( "lastOpenProject", "" );
-			projectRefCarousel.setSelected( Iterables.find( projectRefCarousel.getItems(), new Predicate<ProjectRefView>()
-			{
-				@Override
-				public boolean apply( @Nullable ProjectRefView view )
+		ObservableLists.bindSorted( projectRefCarousel.getItems(),
+				ObservableLists.transform( projectRefList, new Function<ProjectRef, ProjectRefView>()
 				{
-					return lastProject.equals( view.getProjectRef().getProjectFile().getAbsolutePath() );
-				}
-			}, Iterables.getFirst( projectRefCarousel.getItems(), null ) ) );
-
-			projectRefCarousel.addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
-			{
-				@Override
-				public void handle( DraggableEvent event )
-				{
-					if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED
-							&& event.getData() instanceof NewProjectIcon )
+					@Override
+					public ProjectRefView apply( ProjectRef projectRef )
 					{
-						event.accept();
+						return new ProjectRefView( projectRef );
 					}
-					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+				} ), Ordering.usingToString(), group );
+
+		Bindings.bindContent( group.getObservables(),
+				ObservableLists.transform( projectRefCarousel.getItems(), new Function<ProjectRefView, Observable>()
+				{
+					@Override
+					public Observable apply( ProjectRefView projectRefView )
+					{
+						return projectRefView.labelProperty();
+					}
+				} ) );
+
+		final String lastProject = workspace.getAttribute( "lastOpenProject", "" );
+		projectRefCarousel.setSelected( Iterables.find( projectRefCarousel.getItems(), new Predicate<ProjectRefView>()
+		{
+			@Override
+			public boolean apply( @Nullable ProjectRefView view )
+			{
+				return lastProject.equals( view.getProjectRef().getProjectFile().getAbsolutePath() );
+			}
+		}, Iterables.getFirst( projectRefCarousel.getItems(), null ) ) );
+
+		projectRefCarousel.addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
+		{
+			@Override
+			public void handle( DraggableEvent event )
+			{
+				if( event.getEventType() == DraggableEvent.DRAGGABLE_ENTERED && event.getData() instanceof NewProjectIcon )
+				{
+					event.accept();
+				}
+				else if( event.getEventType() == DraggableEvent.DRAGGABLE_DROPPED )
+				{
+					fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, ProjectItem.class ) );
+				}
+			}
+		} );
+
+		projectRefCarousel.setContextMenu( ContextMenuBuilder.create()
+				.items( MenuItemBuilder.create().text( "Create Project" ).onAction( new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle( ActionEvent arg0 )
 					{
 						fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, ProjectItem.class ) );
 					}
-				}
-			} );
+				} ).build() ).build() );
+	}
 
-			projectRefCarousel.setContextMenu( ContextMenuBuilder.create()
-					.items( MenuItemBuilder.create().text( "Create Project" ).onAction( new EventHandler<ActionEvent>()
-					{
-						@Override
-						public void handle( ActionEvent arg0 )
-						{
-							fireEvent( IntentEvent.create( IntentEvent.INTENT_CREATE, ProjectItem.class ) );
-						}
-					} ).build() ).build() );
-		}
-
-		public void importProject()
+	public void importProject()
+	{
+		FileChooser fileChooser = FileChooserBuilder
+				.create()
+				.initialDirectory(
+						new File( workspace.getAttribute( LATEST_DIRECTORY, System.getProperty( LoadUI.LOADUI_HOME ) ) ) )
+				.extensionFilters( XML_EXTENSION_FILTER ).build();
+		File file = fileChooser.showOpenDialog( getScene().getWindow() );
+		if( file != null )
 		{
-			FileChooser fileChooser = FileChooserBuilder
-					.create()
-					.initialDirectory(
-							new File( workspace.getAttribute( LATEST_DIRECTORY, System.getProperty( LoadUI.LOADUI_HOME ) ) ) )
-					.extensionFilters( XML_EXTENSION_FILTER ).build();
-			File file = fileChooser.showOpenDialog( getScene().getWindow() );
-			if( file != null )
-			{
-				workspace.setAttribute( LATEST_DIRECTORY, file.getParentFile().getAbsolutePath() );
-				fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new ImportProjectTask( workspace, file ) ) );
-			}
+			workspace.setAttribute( LATEST_DIRECTORY, file.getParentFile().getAbsolutePath() );
+			fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new ImportProjectTask( workspace, file ) ) );
 		}
+	}
 
-		public void openHelpPage()
+	public void openHelpPage()
+	{
+		if( !PlatformUtil.isMac() )
 		{
-			if( !PlatformUtil.isMac() )
-			{
-				try
-				{
-					Desktop.getDesktop().browse( new java.net.URI( HELPER_PAGE_URL ) );
-				}
-				catch( IOException | URISyntaxException e )
-				{
-					LOG.error( "Unable to launch browser with helper page in external browser!", e );
-				}
-				return;
-			}
-
 			try
 			{
-				Thread t = new Thread( new Runnable()
-				{
-
-					@Override
-					public void run()
-					{
-						try
-						{
-							Runtime.getRuntime().exec( "open " + HELPER_PAGE_URL );
-						}
-						catch( IOException e )
-						{
-							LOG.error( "Unable to fork native browser with helper page in external browser!", e );
-						}
-					}
-				} );
-				t.start();
+				Desktop.getDesktop().browse( new java.net.URI( HELPER_PAGE_URL ) );
 			}
-			catch( Exception e )
+			catch( IOException | URISyntaxException e )
 			{
-				LOG.error( "unable to display help page!", e );
+				LOG.error( "Unable to launch browser with helper page in external browser!", e );
 			}
+			return;
 		}
 
-		public void gettingStarted()
+		try
 		{
-			new GettingStartedDialog( workspace, WorkspaceView.this ).show();
-		}
+			Thread t = new Thread( new Runnable()
+			{
 
-		public void exit()
-		{
-			getScene().getWindow().hide();
+				@Override
+				public void run()
+				{
+					try
+					{
+						Runtime.getRuntime().exec( "open " + HELPER_PAGE_URL );
+					}
+					catch( IOException e )
+					{
+						LOG.error( "Unable to fork native browser with helper page in external browser!", e );
+					}
+				}
+			} );
+			t.start();
 		}
+		catch( Exception e )
+		{
+			LOG.error( "unable to display help page!", e );
+		}
+	}
+
+	public void gettingStarted()
+	{
+		new GettingStartedDialog( workspace, WorkspaceView.this ).show();
+	}
+
+	public void exit()
+	{
+		getScene().getWindow().hide();
 	}
 }

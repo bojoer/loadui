@@ -1,81 +1,41 @@
 package com.eviware.loadui.ui.fx.util;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.control.LabelBuilder;
-import javafx.util.Callback;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.io.Closeables;
 
 public class FXMLUtils
 {
-	private static final Logger log = LoggerFactory.getLogger( FXMLUtils.class );
-
 	private static ClassLoader classLoader = FXMLUtils.class.getClassLoader();
 
-	public static Node load( Class<?> type, final Callable<? extends Object> createController )
+	public static void loadNew( Node root, Object controller )
 	{
-		return load( type, createController, Collections.<String, Object> emptyMap() );
+		loadNew( root, controller, Collections.<String, Object> emptyMap() );
 	}
 
-	public static Node load( Class<?> type, final Callable<? extends Object> createController,
-			Map<String, ? extends Object> mapping )
+	public static void loadNew( Node root, Object controller, Map<String, ? extends Object> mapping )
 	{
-		FXMLLoader loader = new FXMLLoader();
+		FXMLLoader loader = new FXMLLoader( root.getClass().getResource( root.getClass().getSimpleName() + ".fxml" ) );
 		loader.setClassLoader( classLoader );
+		loader.setRoot( root );
+		loader.setController( controller );
 
-		loader.getNamespace().putAll( mapping );
-
-		URL fxmlURL = type.getResource( type.getSimpleName() + ".fxml" );
-		loader.setLocation( fxmlURL );
-		final Callback<Class<?>, Object> originalFactory = loader.getControllerFactory();
-		loader.setControllerFactory( new Callback<Class<?>, Object>()
+		if( mapping != null )
 		{
-			@Override
-			public Object call( Class<?> cls )
-			{
-				Object controller;
-				try
-				{
-					controller = createController.call();
-					if( !cls.isInstance( controller ) )
-					{
-						controller = originalFactory.call( cls );
-					}
-				}
-				catch( Exception e )
-				{
-					controller = originalFactory.call( cls );
-				}
-				return controller;
-			}
-		} );
+			loader.getNamespace().putAll( mapping );
+		}
 
-		InputStream fxmlStream = null;
 		try
 		{
-			fxmlStream = fxmlURL.openStream();
-			return ( Parent )loader.load( fxmlStream );
+			loader.load();
 		}
-		catch( IOException e )
+		catch( IOException exception )
 		{
-			log.error( "Unable to load Node for Class: " + type, e );
-			return LabelBuilder.create().text( e.getMessage() ).build();
-		}
-		finally
-		{
-			Closeables.closeQuietly( fxmlStream );
+			throw new RuntimeException( "Unable to load fxml view: " + root.getClass().getSimpleName() + ".fxml",
+					exception );
 		}
 	}
 }

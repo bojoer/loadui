@@ -11,8 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import java.net.URL?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml"
-	fx:controller="com.eviware.loadui.ui.fx.views.window.MainWindowView$Controller">
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
 	<stylesheets>
 		<URL value="@MainWindowView.css" />
 	</stylesheets>
@@ -26,4 +25,4 @@
 			<MenuItem id="about" text="About" onAction="#about" />
 		</items>
 	</MenuButton>
-</StackPane>
+</fx:root>

@@ -4,13 +4,10 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -29,6 +26,18 @@ import com.google.common.collect.ImmutableMap;
 
 public class AboutDialog extends PopupControl
 {
+	@FXML
+	private ImageView logo;
+
+	@FXML
+	private Label title;
+
+	@FXML
+	private Label buildVersion;
+
+	@FXML
+	private Label buildDate;
+
 	private final Node owner;
 
 	public AboutDialog( Node owner )
@@ -37,18 +46,23 @@ public class AboutDialog extends PopupControl
 
 		setAutoHide( true );
 
-		bridge.getChildren()
-				.setAll(
-						FXMLUtils.load( AboutDialog.class, new Callable<Controller>()
-						{
-							@Override
-							public Controller call() throws Exception
-							{
-								return new Controller();
-							}
-						}, ImmutableMap.of( "name", System.getProperty( LoadUI.NAME ), "version", LoadUI.VERSION,
-								"buildDate", System.getProperty( LoadUI.BUILD_DATE ), "buildVersion",
-								System.getProperty( LoadUI.BUILD_NUMBER ) ) ) );
+		//bridge.getChildren().setAll( this );
+
+		FXMLLoader loader = new FXMLLoader( AboutDialog.class.getResource( AboutDialog.class.getSimpleName() + ".fxml" ) );
+		loader.setClassLoader( FXMLUtils.class.getClassLoader() );
+		loader.getNamespace().putAll(
+				ImmutableMap.of( "name", System.getProperty( LoadUI.NAME ), "version", LoadUI.VERSION, "buildDate",
+						System.getProperty( LoadUI.BUILD_DATE ), "buildVersion", System.getProperty( LoadUI.BUILD_NUMBER ) ) );
+		loader.setController( this );
+
+		try
+		{
+			bridge.getChildren().setAll( ( Parent )loader.load() );
+		}
+		catch( IOException exception )
+		{
+			throw new RuntimeException( exception );
+		}
 
 		Scene ownerScene = owner.getScene();
 		Window parentWindow = ownerScene.getWindow();
@@ -70,6 +84,13 @@ public class AboutDialog extends PopupControl
 				setY( y - getHeight() / 2 );
 			}
 		} );
+
+		logo.setImage( new Image( "res/about-logo.png" ) );
+
+		title.setText( String.format( "%s Version %s", System.getProperty( LoadUI.NAME, "loadUI" ), LoadUI.VERSION ) );
+		buildVersion
+				.setText( String.format( "Build version: %s", System.getProperty( LoadUI.BUILD_NUMBER, "[internal]" ) ) );
+		buildDate.setText( String.format( "Build version: %s", System.getProperty( LoadUI.BUILD_DATE, "unknown" ) ) );
 	}
 
 	private void blurParentWindow()
@@ -87,53 +108,28 @@ public class AboutDialog extends PopupControl
 		} );
 	}
 
-	public class Controller implements Initializable
+	public void loaduiSite()
 	{
-		@FXML
-		private ImageView logo;
-
-		@FXML
-		private Label title;
-
-		@FXML
-		private Label buildVersion;
-
-		@FXML
-		private Label buildDate;
-
-		@Override
-		public void initialize( URL arg0, ResourceBundle arg1 )
+		try
 		{
-			logo.setImage( new Image( "res/about-logo.png" ) );
-
-			title.setText( String.format( "%s Version %s", System.getProperty( LoadUI.NAME, "loadUI" ), LoadUI.VERSION ) );
-			buildVersion.setText( String.format( "Build version: %s",
-					System.getProperty( LoadUI.BUILD_NUMBER, "[internal]" ) ) );
-			buildDate.setText( String.format( "Build version: %s", System.getProperty( LoadUI.BUILD_DATE, "unknown" ) ) );
+			Desktop.getDesktop().browse( new URI( "http://www.loadui.org" ) );
 		}
-
-		public void loaduiSite()
+		catch( IOException | URISyntaxException e )
 		{
-			try
-			{
-				Desktop.getDesktop().browse( new URI( "http://www.loadui.org" ) );
-			}
-			catch( IOException | URISyntaxException e )
-			{
-				e.printStackTrace();
-			}
-		}
-
-		public void smartbearSite()
-		{
-			try
-			{
-				Desktop.getDesktop().browse( new URI( "http://www.smartbear.com" ) );
-			}
-			catch( IOException | URISyntaxException e )
-			{
-				e.printStackTrace();
-			}
+			e.printStackTrace();
 		}
 	}
+
+	public void smartbearSite()
+	{
+		try
+		{
+			Desktop.getDesktop().browse( new URI( "http://www.smartbear.com" ) );
+		}
+		catch( IOException | URISyntaxException e )
+		{
+			e.printStackTrace();
+		}
+	}
+
 }

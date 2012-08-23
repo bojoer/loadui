@@ -12,15 +12,16 @@
 <?import javafx.geometry.Insets?>
 <?import java.net.URL?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" styleClass="result-view"
-	spacing="10" fx:controller="com.eviware.loadui.ui.fx.views.result.ResultView$Controller">
-	<stylesheets>
-		<URL value="@ResultView.css" />
-	</stylesheets>
-	<Label styleClass="title" text="Results" />
-	<ListView fx:id="resultNodeList" orientation="horizontal" maxHeight="180">
-		<VBox.margin>
-			<Insets top="10" right="10" bottom="10" left="10" />
-		</VBox.margin>
-	</ListView>
-</VBox>
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
+	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="result-view" spacing="10">
+		<stylesheets>
+			<URL value="@ResultView.css" />
+		</stylesheets>
+		<Label styleClass="title" text="Results" />
+		<ListView fx:id="resultNodeList" orientation="horizontal" maxHeight="180">
+			<VBox.margin>
+				<Insets top="10" right="10" bottom="10" left="10" />
+			</VBox.margin>
+		</ListView>
+	</VBox>
+</fx:root>

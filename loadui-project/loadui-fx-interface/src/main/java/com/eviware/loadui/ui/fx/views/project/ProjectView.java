@@ -1,11 +1,6 @@
 package com.eviware.loadui.ui.fx.views.project;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
-
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 
@@ -20,49 +15,35 @@ import com.google.common.base.Preconditions;
 
 public class ProjectView extends StackPane
 {
+	@FXML
+	private Label workspaceLabel;
+
+	@FXML
+	private Label projectLabel;
+
+	@FXML
+	private DetachableTab designTab;
+
+	@FXML
+	private DetachableTab resultTab;
+
 	private final ProjectItem project;
 
 	public ProjectView( ProjectItem project )
 	{
 		this.project = Preconditions.checkNotNull( project );
 
-		getChildren().add( FXMLUtils.load( ProjectView.class, new Callable<Object>()
-		{
-			@Override
-			public Object call() throws Exception
-			{
-				return new Controller();
-			}
-		} ) );
+		FXMLUtils.loadNew( this, this );
+
+		workspaceLabel.textProperty().bind( Properties.forLabel( project.getWorkspace() ) );
+		projectLabel.textProperty().bind( Properties.forLabel( project ) );
+
+		designTab.setDetachableContent( new CanvasView( project ) );
+		resultTab.setDetachableContent( new StatisticsView( project ) );
 	}
 
-	public final class Controller implements Initializable
+	public void close()
 	{
-		@FXML
-		private Label workspaceLabel;
-
-		@FXML
-		private Label projectLabel;
-
-		@FXML
-		private DetachableTab designTab;
-
-		@FXML
-		private DetachableTab resultTab;
-
-		@Override
-		public void initialize( URL arg0, ResourceBundle arg1 )
-		{
-			workspaceLabel.textProperty().bind( Properties.forLabel( project.getWorkspace() ) );
-			projectLabel.textProperty().bind( Properties.forLabel( project ) );
-
-			designTab.setDetachableContent( new CanvasView( project ) );
-			resultTab.setDetachableContent( new StatisticsView( project ) );
-		}
-
-		public void close()
-		{
-			fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, project ) );
-		}
+		fireEvent( IntentEvent.create( IntentEvent.INTENT_CLOSE, project ) );
 	}
 }
