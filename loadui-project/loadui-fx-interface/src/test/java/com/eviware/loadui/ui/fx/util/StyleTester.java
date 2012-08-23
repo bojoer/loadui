@@ -25,6 +25,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import com.eviware.loadui.ui.fx.control.Carousel;
+import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
+import com.eviware.loadui.ui.fx.control.Dialog;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -118,8 +120,8 @@ public class StyleTester extends Application
 
 		primaryStage.show();
 
-		//		final Dialog dialog = new ConfirmationDialog( panel, "sdad", "2d" );
-		//		dialog.show();
+				final Dialog dialog = new ConfirmationDialog( panel, "sdad", "2d" );
+				dialog.show();
 	}
 
 	public static void main( String[] args )

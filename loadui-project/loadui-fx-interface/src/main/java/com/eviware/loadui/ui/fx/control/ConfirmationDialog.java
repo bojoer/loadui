@@ -21,7 +21,7 @@ public class ConfirmationDialog extends ButtonDialog
 	{
 		super( owner, header );
 
-		confirmButton = ButtonBuilder.create().text( actionButtonLabel ).defaultButton( true ).alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
+		confirmButton = ButtonBuilder.create().text( actionButtonLabel ).id( "default" ).defaultButton( true ).alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle( ActionEvent event )
@@ -30,7 +30,7 @@ public class ConfirmationDialog extends ButtonDialog
 			}
 		} ).build();
 
-		cancelButton = ButtonBuilder.create().id( "cb" ).text( "Cancel" ).cancelButton( true ).alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
+		cancelButton = ButtonBuilder.create().text( "Cancel" ).id( "cancel" ).cancelButton( true ).alignment( Pos.BOTTOM_RIGHT ).onAction( new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle( ActionEvent event )
