@@ -60,7 +60,7 @@ public class WorkspaceView extends StackPane
 	private static final String LATEST_DIRECTORY = "gui.latestDirectory";
 	private static final ExtensionFilter XML_EXTENSION_FILTER = new FileChooser.ExtensionFilter( "loadUI project file",
 			"*.xml" );
-	private static final String HELPER_PAGE_URL = "http://www.loadui.org";
+	private static final String HELPER_PAGE_URL = "http://www.loadui.org/Working-with-loadUI/workspace-overview.html";
 	private static final String PROP_FILE = "res/application.properties";
 
 	private final WorkspaceItem workspace;
