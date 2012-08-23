@@ -150,6 +150,18 @@ public class CanvasObjectView extends StackPane
 		HBox outputTerminalHBox = HBoxBuilder.create().alignment( Pos.BOTTOM_CENTER ).build();
 		Bindings.bindContent( outputTerminalHBox.getChildren(), outputTerminals );
 
+		addEventHandler( MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				if( event.isPrimaryButtonDown() )
+				{
+					toFront();
+				}
+			}
+		} );
+		
 		getChildren().addAll(
 				VBoxBuilder
 						.create()

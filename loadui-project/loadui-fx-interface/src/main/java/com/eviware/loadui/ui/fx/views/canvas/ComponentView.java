@@ -42,18 +42,6 @@ public class ComponentView extends CanvasObjectView
 
 		StackPane.setAlignment( button, Pos.TOP_RIGHT );
 
-		addEventHandler( MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle( MouseEvent event )
-			{
-				if( event.isPrimaryButtonDown() )
-				{
-					toFront();
-				}
-			}
-		} );
-
 		getChildren().addAll( label, button );
 	}
 

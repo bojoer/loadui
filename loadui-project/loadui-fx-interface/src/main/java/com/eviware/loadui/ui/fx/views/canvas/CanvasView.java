@@ -32,13 +32,14 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Movable;
+import com.eviware.loadui.ui.fx.control.Selectable;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
 public class CanvasView extends StackPane
 {
-	private static final Function<ComponentItem, ComponentView> COMPONENT_TO_VIEW = new Function<ComponentItem, ComponentView>()
+	private final Function<ComponentItem, ComponentView> COMPONENT_TO_VIEW = new Function<ComponentItem, ComponentView>()
 	{
 		@Override
 		public ComponentView apply( final ComponentItem input )
@@ -59,6 +60,7 @@ public class CanvasView extends StackPane
 					}
 				}
 			} );
+			Selectable.install( componentView, CanvasView.this );
 
 			return componentView;
 		}
