@@ -1,27 +1,26 @@
 package com.eviware.loadui.ui.fx.control;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.WeakHashMap;
-
-import javax.annotation.Nonnull;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseEvent;
 
+import javax.annotation.Nonnull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 public class Selectable
 {
 	private static final Logger log = LoggerFactory.getLogger( Selectable.class );
 	private static final SelectionHandler SELECTION_HANDLER = new SelectionHandler();
 	private static final DeselectionHandler DESELECTION_HANDLER = new DeselectionHandler();
-	private static final Set<Node> SELECTED_NODES = Sets.newHashSet(); //Collections.newSetFromMap( new WeakHashMap<Node, Boolean>() );
+	private static final Set<Node> SELECTED_NODES = Collections.newSetFromMap( new WeakHashMap<Node, Boolean>() );
 
 	/**
 	 * Makes the node selectable by clicking anywhere on the node.
