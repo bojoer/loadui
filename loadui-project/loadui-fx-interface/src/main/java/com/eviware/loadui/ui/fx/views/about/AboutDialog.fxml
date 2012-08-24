@@ -11,8 +11,7 @@
 <?import java.net.URL?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml" styleClass="about"
-	prefWidth="600" prefHeight="320"
-	fx:controller="com.eviware.loadui.ui.fx.views.about.AboutDialog$Controller">
+	prefWidth="600" prefHeight="320">
 	<stylesheets>
 		<URL value="@AboutDialog.css" />
 	</stylesheets>

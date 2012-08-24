@@ -8,18 +8,19 @@
 <?import javafx.scene.layout.HBox?>
 <?import java.net.URL?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" styleClass="agent-view"
-	fx:controller="com.eviware.loadui.ui.fx.views.agent.AgentView$Controller">
-	<stylesheets>
-		<URL value="@AgentView.css" />
-	</stylesheets>
-	<HBox spacing="3">
-		<ToggleButton fx:id="onOffSwitch" />
-		<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" >
-			<items>
-				<MenuItem onAction="#delete" text="Delete" />
-			</items>
-		</MenuButton>
-	</HBox>
-	<Region prefWidth="60" prefHeight="80" style="-fx-background-color: blue;" />
-</VBox>
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
+	<VBox xmlns:fx="http://javafx.com/fxml" styleClass="agent-view">
+		<stylesheets>
+			<URL value="@AgentView.css" />
+		</stylesheets>
+		<HBox spacing="3">
+			<ToggleButton fx:id="onOffSwitch" />
+			<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" >
+				<items>
+					<MenuItem onAction="#delete" text="Delete" />
+				</items>
+			</MenuButton>
+		</HBox>
+		<Region prefWidth="60" prefHeight="80" style="-fx-background-color: blue;" />
+	</VBox>
+</fx:root>

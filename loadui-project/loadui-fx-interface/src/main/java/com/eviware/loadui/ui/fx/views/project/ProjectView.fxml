@@ -12,8 +12,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import java.net.URL?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml" styleClass="project-view"
-	fx:controller="com.eviware.loadui.ui.fx.views.project.ProjectView$Controller">
+<fx:root type="javafx.scene.layout.StackPane" styleClass="project-view" xmlns:fx="http://javafx.com/fxml">
 	<stylesheets>
 		<URL value="@ProjectView.css" />
 	</stylesheets>
@@ -30,4 +29,4 @@
 			<Button fx:id="closeProjectButton" text="Close" onAction="#close" StackPane.alignment="top_right" />
 		</StackPane>
 	</VBox>
-</StackPane>
+</fx:root>

@@ -24,8 +24,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml" styleClass="workspace-view"
-	fx:controller="com.eviware.loadui.ui.fx.views.workspace.WorkspaceView$Controller">
+<fx:root type="javafx.scene.layout.StackPane" styleClass="workspace-view" xmlns:fx="http://javafx.com/fxml">
 	<stylesheets>
 		<URL value="@WorkspaceView.css" />
 	</stylesheets>
@@ -65,4 +64,4 @@
 			<WebView fx:id="webView" prefWidth="634" prefHeight="562" />
 		</HBox>
 	</VBox>
-</StackPane>
+</fx:root>
