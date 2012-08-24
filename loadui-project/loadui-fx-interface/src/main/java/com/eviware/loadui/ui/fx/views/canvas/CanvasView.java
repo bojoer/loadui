@@ -60,7 +60,7 @@ public class CanvasView extends StackPane
 					}
 				}
 			} );
-			Selectable.install( componentView, CanvasView.this );
+			Selectable.installSelectable( componentView );
 
 			return componentView;
 		}
@@ -98,6 +98,8 @@ public class CanvasView extends StackPane
 		components = transform(
 				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
 				COMPONENT_TO_VIEW );
+
+		Selectable.installClearSelectionArea( this );
 
 		final Group componentLayer = new Group();
 		bindContentUnordered( componentLayer.getChildren(), components );
