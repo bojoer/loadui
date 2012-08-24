@@ -34,6 +34,7 @@ import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Movable;
 import com.eviware.loadui.ui.fx.control.Selectable;
 import com.eviware.loadui.ui.fx.control.ToolBox;
+import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
@@ -94,6 +95,8 @@ public class CanvasView extends StackPane
 	public CanvasView( CanvasItem canvas )
 	{
 		this.canvas = canvas;
+
+		FXMLUtils.loadNew( this, this );
 
 		components = transform(
 				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
@@ -178,8 +181,9 @@ public class CanvasView extends StackPane
 		componentLayer.layoutXProperty().bind( posSlider.valueProperty().multiply( -1 ) );
 
 		setAlignment( Pos.TOP_LEFT );
-		getChildren().addAll( RegionBuilder.create().style( "-fx-background-color: lightgray;" ).build(),
-				componentWrapper, zoomSlider, posSlider, descriptors );
+
+		getChildren().addAll( RegionBuilder.create().styleClass( "canvas-view" ).build(), componentWrapper, zoomSlider,
+				posSlider, descriptors );
 	}
 
 	public CanvasItem getCanvas()
