@@ -32,8 +32,8 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.Movable;
-import com.eviware.loadui.ui.fx.control.Selectable;
 import com.eviware.loadui.ui.fx.control.ToolBox;
+import com.eviware.loadui.ui.fx.control.selectable.Selectable;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
@@ -99,7 +99,7 @@ public class CanvasView extends StackPane
 				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
 				COMPONENT_TO_VIEW );
 
-		Selectable.installClearSelectionArea( this );
+		Selectable.installSelectionArea( this );
 
 		final Group componentLayer = new Group();
 		bindContentUnordered( componentLayer.getChildren(), components );

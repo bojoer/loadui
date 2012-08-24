@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.control;
+package com.eviware.loadui.ui.fx.control.selectable;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -8,7 +8,10 @@ import java.util.WeakHashMap;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.effect.Glow;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Rectangle;
 
 import javax.annotation.Nonnull;
 
@@ -21,6 +24,7 @@ public class Selectable
 	private static final SelectionHandler SELECTION_HANDLER = new SelectionHandler();
 	private static final DeselectionHandler DESELECTION_HANDLER = new DeselectionHandler();
 	private static final Set<Node> SELECTED_NODES = Collections.newSetFromMap( new WeakHashMap<Node, Boolean>() );
+	private static SelectionRectangle selectionRectangle;
 
 	/**
 	 * Makes the node selectable by clicking anywhere on the node.
@@ -30,12 +34,39 @@ public class Selectable
 	 */
 	public static void installSelectable( @Nonnull Node node )
 	{
-		node.addEventHandler( MouseEvent.MOUSE_PRESSED, SELECTION_HANDLER );
+		node.addEventHandler( MouseEvent.MOUSE_CLICKED, SELECTION_HANDLER );
 	}
 
-	public static void installClearSelectionArea( @Nonnull Node node )
+	public static void installSelectionArea( @Nonnull Node node )
 	{
-		node.addEventHandler( MouseEvent.MOUSE_PRESSED, DESELECTION_HANDLER );
+		installSelectionArea( node, false );
+	}
+
+	public static void installSelectionArea( @Nonnull final Node node, boolean dragToSelect )
+	{
+		node.addEventHandler( MouseEvent.DRAG_DETECTED, new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				selectionRectangle = new SelectionRectangle( node );
+				selectionRectangle.startSelection( event.getScreenX(), event.getScreenY() );
+				log.debug( "Starting at (" + event.getScreenX() + "," + event.getScreenY() + ")" );
+				node.startFullDrag();
+			}
+		} );
+
+		node.addEventHandler( MouseDragEvent.ANY, new EventHandler<MouseDragEvent>()
+		{
+			@Override
+			public void handle( MouseDragEvent event )
+			{
+				log.debug( "Updating to (" + event.getScreenX() + "," + event.getScreenY() + ")" );
+				selectionRectangle.updateSelection( event.getScreenX(), event.getScreenY() );
+			}
+		} );
+
+		//		node.addEventHandler( MouseEvent.MOUSE_CLICKED, DESELECTION_HANDLER );
 	}
 
 	private static void select( Node n )
