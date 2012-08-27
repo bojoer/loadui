@@ -1,17 +1,22 @@
 package com.eviware.loadui.ui.fx.control.selectable;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.WeakHashMap;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.stage.Popup;
 
 import javax.annotation.Nonnull;
 
@@ -37,36 +42,41 @@ public class Selectable
 		node.addEventHandler( MouseEvent.MOUSE_CLICKED, SELECTION_HANDLER );
 	}
 
-	public static void installSelectionArea( @Nonnull Node node )
+	public static void installDragToSelectArea( @Nonnull final Node selectionArea,
+			@Nonnull final Collection<? extends Region> selectables )
 	{
-		installSelectionArea( node, false );
-	}
-
-	public static void installSelectionArea( @Nonnull final Node node, boolean dragToSelect )
-	{
-		node.addEventHandler( MouseEvent.DRAG_DETECTED, new EventHandler<MouseEvent>()
+		selectionArea.addEventHandler( MouseEvent.DRAG_DETECTED, new EventHandler<MouseEvent>()
 		{
 			@Override
 			public void handle( MouseEvent event )
 			{
-				selectionRectangle = new SelectionRectangle( node );
+				selectionRectangle = new SelectionRectangle( selectionArea );
 				selectionRectangle.startSelection( event.getScreenX(), event.getScreenY() );
 				log.debug( "Starting at (" + event.getScreenX() + "," + event.getScreenY() + ")" );
-				node.startFullDrag();
+				selectionArea.startFullDrag();
 			}
 		} );
 
-		node.addEventHandler( MouseDragEvent.ANY, new EventHandler<MouseDragEvent>()
+		selectionArea.addEventHandler( MouseDragEvent.ANY, new EventHandler<MouseDragEvent>()
 		{
 			@Override
 			public void handle( MouseDragEvent event )
 			{
-				log.debug( "Updating to (" + event.getScreenX() + "," + event.getScreenY() + ")" );
-				selectionRectangle.updateSelection( event.getScreenX(), event.getScreenY() );
+				if( event.getEventType() == MouseDragEvent.MOUSE_DRAG_RELEASED )
+				{
+					selectionRectangle.endSelection();
+					selectionRectangle = null;
+				}
+				else
+				{
+					log.debug( "Updating to (" + event.getScreenX() + "," + event.getScreenY() + ")" );
+					if( selectionRectangle != null )
+						selectionRectangle.updateSelection( event.getScreenX(), event.getScreenY(), selectables );
+				}
 			}
 		} );
 
-		//		node.addEventHandler( MouseEvent.MOUSE_CLICKED, DESELECTION_HANDLER );
+		selectionArea.addEventHandler( MouseEvent.MOUSE_CLICKED, DESELECTION_HANDLER );
 	}
 
 	private static void select( Node n )
@@ -126,6 +136,63 @@ public class Selectable
 			log.debug( "Deselecting all selected nodes" );
 			deselectAll();
 			event.consume();
+		}
+	}
+
+	public static class SelectionRectangle extends Popup
+	{
+		private double startX;
+		private double startY;
+		private final Node ownerNode;
+		HBox box = new HBox();
+
+		SelectionRectangle( Node ownerNode )
+		{
+			this.ownerNode = ownerNode;
+			box.setStyle( "-fx-background-color: rgba(140, 140, 210, 0.5);" );
+			getContent().add( box );
+			setAutoFix( false );
+		}
+
+		void startSelection( double startX, double startY )
+		{
+			this.startX = startX;
+			this.startY = startY;
+		}
+
+		void updateSelection( double currentX, double currentY, Collection<? extends Region> selectables )
+		{
+			double width = Math.abs( currentX - startX );
+			double height = Math.abs( currentY - startY );
+			setWidth( width );
+			setHeight( height );
+			box.setPrefSize( width, height );
+
+			show( ownerNode, Math.min( startX, currentX ), Math.min( startY, currentY ) );
+
+			Rectangle2D selectionArea = new Rectangle2D( getX(), getY(), width, height );
+
+			for( Region selectable : selectables )
+			{
+				Scene scene = selectable.getScene();
+				if( scene.getWindow().isFocused() )
+				{
+					Bounds selectableBounds = selectable.localToScene( selectable.getBoundsInLocal() );
+					Rectangle2D selectableRectangle = new Rectangle2D( selectableBounds.getMinX() + scene.getX()
+							+ scene.getWindow().getX(), selectableBounds.getMinY() + scene.getY() + scene.getWindow().getY(),
+							selectable.getWidth(), selectable.getHeight() );
+
+					log.debug( "Does " + selectionArea + " intersect " + selectableRectangle + " ?" );
+
+					if( selectionArea.intersects( selectableRectangle ) )
+						select( selectable );
+				}
+			}
+		}
+
+		void endSelection()
+		{
+			hide();
 		}
 	}
 }

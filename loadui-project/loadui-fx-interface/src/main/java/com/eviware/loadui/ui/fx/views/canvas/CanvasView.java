@@ -99,7 +99,7 @@ public class CanvasView extends StackPane
 				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
 				COMPONENT_TO_VIEW );
 
-		Selectable.installSelectionArea( this );
+		Selectable.installDragToSelectArea( this, components );
 
 		final Group componentLayer = new Group();
 		bindContentUnordered( componentLayer.getChildren(), components );
