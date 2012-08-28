@@ -29,8 +29,8 @@ import com.google.common.collect.ImmutableList;
 public class Selectable
 {
 	private static final Logger log = LoggerFactory.getLogger( Selectable.class );
-	private static final SelectionHandler SELECTION_HANDLER = new SelectionHandler();
-	private static final DeselectionHandler DESELECTION_HANDLER = new DeselectionHandler();
+	private static final ClickToSelectHandler SELECTION_HANDLER = new ClickToSelectHandler();
+	private static final ClickToDeselectHandler DESELECTION_HANDLER = new ClickToDeselectHandler();
 	private static final Set<Node> SELECTED_NODES = Collections.newSetFromMap( new WeakHashMap<Node, Boolean>() );
 	private static ImmutableList<Node> selectedNodesAtSelectionStart = null;
 	private static SelectionRectangle selectionRectangle;
@@ -72,16 +72,14 @@ public class Selectable
 						@Override
 						public void run()
 						{
-							selectionRectangle.endSelection();
+							selectionRectangle.hide();
 							selectionRectangle = null;
 						}
 					} );
 				}
-				else
+				else if( selectionRectangle != null )
 				{
-					log.debug( "Updating to (" + event.getScreenX() + "," + event.getScreenY() + ")" );
-					if( selectionRectangle != null )
-						selectionRectangle.updateSelection( event, selectables );
+					selectionRectangle.updateSelection( event, selectables );
 				}
 			}
 		} );
@@ -90,14 +88,18 @@ public class Selectable
 
 	private static void select( Node n )
 	{
-		log.debug( "Selecting " + n );
 		n.setEffect( new Glow( 0.8 ) );
 		SELECTED_NODES.add( n );
 	}
 
+	private static void selectAll( Collection<Node> nodes )
+	{
+		for( Node n : nodes )
+			select( n );
+	}
+
 	private static void deselectAll()
 	{
-		log.debug( "Deselecting all" );
 		for( Iterator<Node> i = SELECTED_NODES.iterator(); i.hasNext(); )
 		{
 			Node n = i.next();
@@ -108,18 +110,15 @@ public class Selectable
 
 	private static void deselect( Node n )
 	{
-		log.debug( "Deselecting " + n );
 		n.setEffect( null );
 		SELECTED_NODES.remove( n );
 	}
 
-	private static class SelectionHandler implements EventHandler<MouseEvent>
+	private static class ClickToSelectHandler implements EventHandler<MouseEvent>
 	{
 		@Override
 		public void handle( MouseEvent event )
 		{
-			log.debug( "SelectionHandler" );
-
 			Node source = ( Node )event.getSource();
 			if( event.isShiftDown() || event.isControlDown() )
 			{
@@ -137,18 +136,17 @@ public class Selectable
 		}
 	}
 
-	private static class DeselectionHandler implements EventHandler<MouseEvent>
+	private static class ClickToDeselectHandler implements EventHandler<MouseEvent>
 	{
 		@Override
 		public void handle( MouseEvent event )
 		{
-			log.debug( "Deselecting all selected nodes" );
 			deselectAll();
 			event.consume();
 		}
 	}
 
-	public static class SelectionRectangle extends Popup
+	private static class SelectionRectangle extends Popup
 	{
 		private double startX;
 		private double startY;
@@ -182,6 +180,11 @@ public class Selectable
 
 			show( ownerNode, Math.min( startX, e.getScreenX() ), Math.min( startY, e.getScreenY() ) );
 
+			if( e.isShiftDown() || e.isControlDown() )
+				selectAll( selectedNodesAtSelectionStart );
+			else
+				deselectAll();
+
 			Rectangle2D selectionArea = new Rectangle2D( getX(), getY(), width, height );
 
 			for( Region selectable : selectables )
@@ -194,8 +197,6 @@ public class Selectable
 							+ scene.getWindow().getX(), selectableBounds.getMinY() + scene.getY() + scene.getWindow().getY(),
 							selectable.getWidth(), selectable.getHeight() );
 
-					log.debug( "Does " + selectionArea + " intersect " + selectableRectangle + " ?" );
-
 					if( selectionArea.intersects( selectableRectangle ) )
 					{
 						if( ( e.isShiftDown() || e.isControlDown() ) && selectedNodesAtSelectionStart.contains( selectable ) )
@@ -205,11 +206,6 @@ public class Selectable
 					}
 				}
 			}
-		}
-
-		void endSelection()
-		{
-			hide();
 		}
 	}
 }
