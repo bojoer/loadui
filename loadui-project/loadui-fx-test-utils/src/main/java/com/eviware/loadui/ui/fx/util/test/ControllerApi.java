@@ -18,6 +18,7 @@ import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -139,9 +140,21 @@ public class ControllerApi
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public static <T extends Node> T find( String selector )
+	public static <T extends Node> T find( final String selector )
 	{
-		return Preconditions.checkNotNull( ( T )Iterables.getFirst( findAll( selector ), null ),
+		Set<Node> locallyFound = findAll( selector );
+		Iterable<Node> globallyFound = Iterables.concat( Iterables.transform( getWindows(),
+				new Function<Window, Iterable<Node>>()
+				{
+					@Override
+					public Iterable<Node> apply( Window input )
+					{
+						return findAll( selector, input );
+					}
+				} ) );
+
+		return Preconditions.checkNotNull(
+				( T )Iterables.getFirst( locallyFound, Iterables.getFirst( globallyFound, null ) ),
 				"Query [%s] resulted in no nodes found!", selector );
 	}
 
