@@ -1,16 +1,25 @@
 <ivysettings>
-  <settings defaultResolver="downloadGrapes"/>
-  <resolvers>
-    <chain name="downloadGrapes">
-      <filesystem name="cachedGrapes">
-        <ivy pattern="${groovy.root}/grapes/[organisation]/[module]/ivy-[revision].xml"/>
-        <artifact pattern="${groovy.root}/grapes/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
-      </filesystem>
-      <!-- todo add 'endorsed groovy extensions' resolver here -->
-      <ibiblio name="codehaus" root="http://repository.codehaus.org/" m2compatible="true"/>
-      <ibiblio name="ibiblio" m2compatible="true"/>
-	  <ibiblio name="jboss" root="http://repository.jboss.com/maven2/" m2compatible="true"/>
-      <ibiblio name="java.net2" root="http://download.java.net/maven/2/" m2compatible="true"/>
-    </chain>
-  </resolvers>
+	<settings defaultResolver="downloadGrapes" />
+	<resolvers>
+		<chain name="downloadGrapes">
+			<filesystem name="cachedGrapes">
+				<ivy
+					pattern="${groovy.root}/grapes/[organisation]/[module]/ivy-[revision].xml" />
+				<artifact
+					pattern="${groovy.root}/grapes/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]" />
+			</filesystem>
+			<filesystem name="localMaven2" m2compatible="true">
+				<ivy pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision].pom" />
+				<artifact pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision].jar" />
+			</filesystem>
+			<!-- todo add 'endorsed groovy extensions' resolver here -->
+			<ibiblio name="codehaus" root="http://repository.codehaus.org/"
+				m2compatible="true" />
+			<ibiblio name="ibiblio" m2compatible="true" />
+			<ibiblio name="jboss" root="http://repository.jboss.com/maven2/"
+				m2compatible="true" />
+			<ibiblio name="java.net2" root="http://download.java.net/maven/2/"
+				m2compatible="true" />
+		</chain>
+	</resolvers>
 </ivysettings>

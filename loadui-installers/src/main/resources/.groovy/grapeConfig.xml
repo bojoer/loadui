@@ -8,6 +8,10 @@
 				<artifact
 					pattern="${groovy.root}/grapes/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]" />
 			</filesystem>
+			<filesystem name="localMaven2" m2compatible="true">
+				<ivy pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision].pom" />
+				<artifact pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision].jar" />
+			</filesystem>
 			<!-- todo add 'endorsed groovy extensions' resolver here -->
 			<ibiblio name="codehaus" root="http://repository.codehaus.org/"
 				m2compatible="true" />
