@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.control;
+package com.eviware.loadui.ui.fx.api.input;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;

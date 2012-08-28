@@ -263,6 +263,15 @@ public class Movable implements Draggable
 			}
 		};
 
+		private final EventHandler<MouseEvent> DRAG_DETECTED_HANDLER = new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				event.consume();
+			}
+		};
+
 		private Movable install( Node node, Node handle )
 		{
 			Movable movable = new Movable( node, handle );
@@ -272,6 +281,7 @@ public class Movable implements Draggable
 
 			handle.addEventHandler( MouseEvent.MOUSE_PRESSED, PRESSED_HANDLER );
 			handle.addEventHandler( MouseEvent.MOUSE_DRAGGED, DRAGGED_HANDLER );
+			handle.addEventHandler( MouseEvent.DRAG_DETECTED, DRAG_DETECTED_HANDLER );
 			handle.addEventHandler( MouseEvent.MOUSE_RELEASED, RELEASED_HANDLER );
 
 			return movable;
@@ -285,6 +295,7 @@ public class Movable implements Draggable
 				Node handle = movable.getHandle();
 				handle.removeEventHandler( MouseEvent.MOUSE_PRESSED, PRESSED_HANDLER );
 				handle.removeEventHandler( MouseEvent.MOUSE_DRAGGED, DRAGGED_HANDLER );
+				handle.removeEventHandler( MouseEvent.DRAG_DETECTED, DRAG_DETECTED_HANDLER );
 				handle.removeEventHandler( MouseEvent.MOUSE_RELEASED, RELEASED_HANDLER );
 				handle.getProperties().remove( MOVABLE_PROP_KEY );
 			}
