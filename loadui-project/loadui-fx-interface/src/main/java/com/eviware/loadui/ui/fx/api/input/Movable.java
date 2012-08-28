@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.control;
+package com.eviware.loadui.ui.fx.api.input;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -9,8 +9,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import com.eviware.loadui.ui.fx.api.input.Draggable;
-import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.util.NodeUtils;
 
 /**

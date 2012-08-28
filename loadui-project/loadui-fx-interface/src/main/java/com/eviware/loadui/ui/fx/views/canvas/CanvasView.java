@@ -30,10 +30,10 @@ import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
+import com.eviware.loadui.ui.fx.api.input.Movable;
+import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
-import com.eviware.loadui.ui.fx.control.Movable;
 import com.eviware.loadui.ui.fx.control.ToolBox;
-import com.eviware.loadui.ui.fx.control.selectable.Selectable;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 

@@ -27,6 +27,7 @@ import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
+import com.eviware.loadui.ui.fx.api.input.Movable;
 import com.eviware.loadui.ui.fx.util.test.ControllerApi;
 import com.eviware.loadui.ui.fx.util.test.ControllerApi.MouseMotion;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;

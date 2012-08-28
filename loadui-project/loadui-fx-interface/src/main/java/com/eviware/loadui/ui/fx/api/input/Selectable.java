@@ -1,4 +1,4 @@
-package com.eviware.loadui.ui.fx.control.selectable;
+package com.eviware.loadui.ui.fx.api.input;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
@@ -23,12 +24,15 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+
 public class Selectable
 {
 	private static final Logger log = LoggerFactory.getLogger( Selectable.class );
 	private static final SelectionHandler SELECTION_HANDLER = new SelectionHandler();
 	private static final DeselectionHandler DESELECTION_HANDLER = new DeselectionHandler();
 	private static final Set<Node> SELECTED_NODES = Collections.newSetFromMap( new WeakHashMap<Node, Boolean>() );
+	private static ImmutableList<Node> selectedNodesAtSelectionStart = null;
 	private static SelectionRectangle selectionRectangle;
 
 	/**
@@ -51,8 +55,7 @@ public class Selectable
 			public void handle( MouseEvent event )
 			{
 				selectionRectangle = new SelectionRectangle( selectionArea );
-				selectionRectangle.startSelection( event.getScreenX(), event.getScreenY() );
-				log.debug( "Starting at (" + event.getScreenX() + "," + event.getScreenY() + ")" );
+				selectionRectangle.startSelection( event );
 				selectionArea.startFullDrag();
 			}
 		} );
@@ -64,18 +67,24 @@ public class Selectable
 			{
 				if( event.getEventType() == MouseDragEvent.MOUSE_DRAG_RELEASED )
 				{
-					selectionRectangle.endSelection();
-					selectionRectangle = null;
+					Platform.runLater( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							selectionRectangle.endSelection();
+							selectionRectangle = null;
+						}
+					} );
 				}
 				else
 				{
 					log.debug( "Updating to (" + event.getScreenX() + "," + event.getScreenY() + ")" );
 					if( selectionRectangle != null )
-						selectionRectangle.updateSelection( event.getScreenX(), event.getScreenY(), selectables );
+						selectionRectangle.updateSelection( event, selectables );
 				}
 			}
 		} );
-
 		selectionArea.addEventHandler( MouseEvent.MOUSE_CLICKED, DESELECTION_HANDLER );
 	}
 
@@ -154,21 +163,24 @@ public class Selectable
 			setAutoFix( false );
 		}
 
-		void startSelection( double startX, double startY )
+		void startSelection( MouseEvent e )
 		{
-			this.startX = startX;
-			this.startY = startY;
+			selectedNodesAtSelectionStart = ImmutableList.copyOf( SELECTED_NODES );
+			if( !e.isControlDown() && !e.isShiftDown() )
+				deselectAll();
+			this.startX = e.getScreenX();
+			this.startY = e.getScreenY();
 		}
 
-		void updateSelection( double currentX, double currentY, Collection<? extends Region> selectables )
+		void updateSelection( MouseEvent e, Collection<? extends Region> selectables )
 		{
-			double width = Math.abs( currentX - startX );
-			double height = Math.abs( currentY - startY );
+			double width = Math.abs( e.getScreenX() - startX );
+			double height = Math.abs( e.getScreenY() - startY );
 			setWidth( width );
 			setHeight( height );
 			box.setPrefSize( width, height );
 
-			show( ownerNode, Math.min( startX, currentX ), Math.min( startY, currentY ) );
+			show( ownerNode, Math.min( startX, e.getScreenX() ), Math.min( startY, e.getScreenY() ) );
 
 			Rectangle2D selectionArea = new Rectangle2D( getX(), getY(), width, height );
 
@@ -185,7 +197,12 @@ public class Selectable
 					log.debug( "Does " + selectionArea + " intersect " + selectableRectangle + " ?" );
 
 					if( selectionArea.intersects( selectableRectangle ) )
-						select( selectable );
+					{
+						if( ( e.isShiftDown() || e.isControlDown() ) && selectedNodesAtSelectionStart.contains( selectable ) )
+							deselect( selectable );
+						else
+							select( selectable );
+					}
 				}
 			}
 		}
