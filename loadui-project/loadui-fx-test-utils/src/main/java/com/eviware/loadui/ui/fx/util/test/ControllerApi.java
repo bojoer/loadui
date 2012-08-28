@@ -125,7 +125,6 @@ public class ControllerApi
 			}
 		} ) )
 		{
-			System.out.println( "descendant: " + descendant );
 			results.addAll( findAll( selector, descendant ) );
 		}
 
