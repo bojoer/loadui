@@ -14,7 +14,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -38,8 +37,10 @@ public class Selectable
 	private static final Set<Selectable> SELECTED_NODES = Collections
 			.newSetFromMap( new WeakHashMap<Selectable, Boolean>() );
 	private static ImmutableList<Selectable> selectedAtSelectionStart = null;
+	@Nonnull
 	private static SelectionRectangle selectionRectangle = new SelectionRectangle();
 	private static final Collection<Node> selectableNodes = new HashSet<>();
+	private static boolean isDragging;
 
 	/**
 	 * Makes the node selectable by clicking anywhere on the node.
@@ -98,7 +99,6 @@ public class Selectable
 	{
 		SELECTED_NODES.remove( this );
 		setSelected( false );
-		System.out.println( "deselect    " + node );
 	}
 
 	private void setSelected( boolean selected )
@@ -116,33 +116,39 @@ public class Selectable
 			@Override
 			public void handle( MouseEvent event )
 			{
+				isDragging = true;
 				selectionRectangle.setOwner( selectionArea );
 				selectionRectangle.startSelection( event );
-				selectionArea.startFullDrag();
+				//				selectionArea.startFullDrag();
 			}
 		} );
 
-		selectionArea.addEventHandler( MouseDragEvent.ANY, new EventHandler<MouseDragEvent>()
+		selectionArea.addEventHandler( MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>()
 		{
 			@Override
-			public void handle( MouseDragEvent event )
+			public void handle( MouseEvent event )
 			{
-				if( event.getEventType() == MouseDragEvent.MOUSE_DRAG_RELEASED )
-				{
-					Platform.runLater( new Runnable()
-					{
-						@Override
-						public void run()
-						{
-							if( selectionRectangle != null )
-								selectionRectangle.hide();
-						}
-					} );
-				}
-				else if( selectionRectangle != null )
+				if( isDragging )
 				{
 					selectionRectangle.updateSelection( event );
 				}
+			}
+		} );
+
+		selectionArea.addEventHandler( MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				Platform.runLater( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						isDragging = false;
+						selectionRectangle.hide();
+					}
+				} );
 			}
 		} );
 
@@ -199,12 +205,13 @@ public class Selectable
 		@Override
 		public void handle( MouseEvent event )
 		{
-			deselectAll();
-			if( selectionRectangle != null )
+			if( !isDragging )
+			{
+				deselectAll();
 				selectionRectangle.hide();
-			event.consume();
+				event.consume();
+			}
 		}
-
 	}
 
 	private static class SelectionRectangle extends Popup
@@ -245,7 +252,7 @@ public class Selectable
 
 			show( ownerNode, Math.min( startX, e.getScreenX() ), Math.min( startY, e.getScreenY() ) );
 
-			if( e.isShiftDown() || e.isControlDown() )
+			if( e.isShiftDown() )
 				selectAll( selectedAtSelectionStart );
 			else
 				deselectAll();
