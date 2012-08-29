@@ -39,7 +39,7 @@ public class FXTestUtils
 	{
 		try
 		{
-			for( int i = 0; i < 50; i++ )
+			for( int i = 0; i < 5; i++ )
 			{
 				final Semaphore sem = new Semaphore( 0 );
 				Platform.runLater( new Runnable()
@@ -52,6 +52,13 @@ public class FXTestUtils
 				} );
 
 				sem.acquire();
+				try
+				{
+					Thread.sleep( 10 );
+				}
+				catch( InterruptedException e )
+				{
+				}
 			}
 		}
 		catch( Throwable e )

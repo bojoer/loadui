@@ -26,8 +26,7 @@ public class ProjectCreatedState extends TestState
 		final Node projectCarousel = find( "#projectRefCarousel" );
 		log.debug( "Creating new project." );
 		GUI.getController().drag( "#newProjectIcon" ).to( projectCarousel ).type( "Project 1" ).type( KeyCode.TAB )
-				.type( "project-1.xml" ).type( KeyCode.TAB ).type( KeyCode.TAB ).type( KeyCode.SPACE ).type( KeyCode.TAB )
-				.type( KeyCode.ENTER );
+				.type( "project-1.xml" ).click( ".check-box" ).click( "#default" );
 
 		//GUI.getController().click( projectCarousel, MouseButton.SECONDARY ).moveBy( 15, 10 ).click();
 
@@ -45,8 +44,7 @@ public class ProjectCreatedState extends TestState
 	protected void exitToParent() throws Exception
 	{
 		log.debug( "Deleting project." );
-		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).type( KeyCode.DOWN )
-				.type( KeyCode.DOWN ).type( KeyCode.DOWN ).type( KeyCode.DOWN ).type( KeyCode.ENTER );
+		GUI.getController().click( "#projectRefCarousel .project-ref-view .menu-button" ).click( "#delete" );
 		final Node projectCarousel = find( "#projectRefCarousel" );
 
 		TestUtils.awaitCondition( new Callable<Boolean>()

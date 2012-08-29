@@ -8,6 +8,7 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>loadui-fx-integration-tests</artifactId>
+	<packaging>bundle</packaging>
 	<name>loadUI JavaFX Integration Tests</name>
 	<description>loadUI integration tests for the JavaFX GUI</description>
 	<build>
@@ -23,6 +24,21 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<configuration>
 					<groups>com.eviware.loadui.test.categories.IntegrationTest</groups>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${mavenBundlePluginVersion}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-Activator>com.eviware.loadui.test.ui.fx.ScriptRunnerBundleActivator</Bundle-Activator>
+						<Export-Package>com.eviware.loadui.test.ui.fx</Export-Package>
+						<Import-Package>!com.eviware.loadui.launcher,!com.eviware.loadui.test,!org.hamcrest,!org.junit,!org.mockito*,*</Import-Package>
+						<Embed-Dependency>*;scope=provided</Embed-Dependency>
+						<!-- <Import-Package>*;javafx.*</Import-Package> -->
+					</instructions>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -70,8 +86,15 @@
 		</dependency>
 		<dependency>
 			<groupId>com.eviware.loadui</groupId>
+			<artifactId>loadui-test-utils</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.eviware.loadui</groupId>
 			<artifactId>loadui-fx-test-utils</artifactId>
 			<version>${project.parent.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.oracle</groupId>
