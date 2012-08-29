@@ -1,6 +1,7 @@
 package com.eviware.loadui.ui.fx.util;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
@@ -9,7 +10,12 @@ import javafx.scene.Node;
 
 public class FXMLUtils
 {
-	private static ClassLoader classLoader = FXMLUtils.class.getClassLoader();
+	public static ClassLoader classLoader = FXMLUtils.class.getClassLoader();
+
+	public static void loadNew( Node root )
+	{
+		loadNew( root, root );
+	}
 
 	public static void loadNew( Node root, Object controller )
 	{
@@ -18,7 +24,12 @@ public class FXMLUtils
 
 	public static void loadNew( Node root, Object controller, Map<String, ? extends Object> mapping )
 	{
-		FXMLLoader loader = new FXMLLoader( root.getClass().getResource( root.getClass().getSimpleName() + ".fxml" ) );
+		loadNew( root, controller, mapping, root.getClass().getResource( root.getClass().getSimpleName() + ".fxml" ) );
+	}
+
+	public static void loadNew( Node root, Object controller, Map<String, ? extends Object> mapping, URL resourceName )
+	{
+		FXMLLoader loader = new FXMLLoader( resourceName );
 		loader.setClassLoader( classLoader );
 		loader.setRoot( root );
 		loader.setController( controller );

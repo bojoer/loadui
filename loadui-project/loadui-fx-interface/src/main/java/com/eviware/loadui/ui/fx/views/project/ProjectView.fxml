@@ -11,6 +11,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import java.net.URL?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 
 <fx:root type="javafx.scene.layout.StackPane" styleClass="project-view" xmlns:fx="http://javafx.com/fxml">
 	<stylesheets>
@@ -25,8 +27,22 @@
 				<DetachableTab fx:id="designTab" text="Design" />
 				<DetachableTab fx:id="resultTab" text="Results" />
 			</TabPane>
-			<Label fx:id="projectLabel" text="Project" StackPane.alignment="top_left" />
-			<Button fx:id="closeProjectButton" text="Close" onAction="#close" StackPane.alignment="top_right" />
+			<MenuButton fx:id="menuButton" HBox.hgrow="SOMETIMES" maxWidth="200" StackPane.alignment="top_center">
+				<items>
+					<MenuItem fx:id="open" id="open" text="New Scenario" onAction="#newScenario"/>
+					<MenuItem fx:id="newProject" id="newProject" text="New Project Wizard"  onAction="#newProjectWizard"/>
+					<MenuItem fx:id="clone" id="clone" text="Rename" onAction="#renameProject"/>
+					<MenuItem fx:id="save" id="save" text="Save" onAction="#saveProject"/>
+					<MenuItem fx:id="saveCopy" id="saveCopy" text="Save as Copy..." onAction="#cloneProject"/>
+					<MenuItem fx:id="saveAndClose" id="saveAndClose" text="Save and Close" onAction="#saveProjectAndClose"/>
+					<MenuItem fx:id="close" id="close" text="Close" onAction="#closeProject"/>
+				</items>
+			</MenuButton>	
+			<HBox HBox.hgrow="SOMETIMES" maxWidth="200" alignment="top_right" StackPane.alignment="top_right">
+				<Button fx:id="settingsButton" text="Settings" onAction="#openSettings"/>
+				<Button fx:id="openHelpPageButton" text="Help" onAction="#openHelpPage"/>
+				<Button fx:id="closeProjectButton" text="Close" onAction="#closeProject"/>
+			</HBox>
 		</StackPane>
 	</VBox>
 </fx:root>

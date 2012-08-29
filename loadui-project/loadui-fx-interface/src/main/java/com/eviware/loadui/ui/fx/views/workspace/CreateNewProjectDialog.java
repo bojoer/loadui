@@ -14,7 +14,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.FileChooserBuilder;
 
 import com.eviware.loadui.LoadUI;
@@ -22,13 +21,10 @@ import com.eviware.loadui.api.model.ProjectRef;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
+import com.eviware.loadui.ui.fx.util.UIUtils;
 
 public class CreateNewProjectDialog extends ConfirmationDialog
 {
-	private static final String LATEST_DIRECTORY = "gui.latestDirectory";
-	private static final ExtensionFilter XML_EXTENSION_FILTER = new FileChooser.ExtensionFilter( "loadUI project file",
-			"*.xml" );
-
 	public CreateNewProjectDialog( final WorkspaceItem workspace, final Node owner )
 	{
 		super( owner, "Create new project", "Create" );
@@ -36,9 +32,9 @@ public class CreateNewProjectDialog extends ConfirmationDialog
 		int projectNumber = getNextProjectNumber();
 
 		Label projectName = new Label( "Project name" );
-		final TextField projectNameField = new TextField("Project " + projectNumber);
+		final TextField projectNameField = new TextField( "Project " + projectNumber );
 		Label fileName = new Label( "File name" );
-		final TextField fileNameField = new TextField("project-" + projectNumber + ".xml");
+		final TextField fileNameField = new TextField( "project-" + projectNumber + ".xml" );
 		HBox.setHgrow( fileNameField, Priority.ALWAYS );
 		Button browseButton = ButtonBuilder.create().text( "Browse..." ).onAction( new EventHandler<ActionEvent>()
 		{
@@ -48,8 +44,9 @@ public class CreateNewProjectDialog extends ConfirmationDialog
 				FileChooser fileChooser = FileChooserBuilder
 						.create()
 						.initialDirectory(
-								new File( workspace.getAttribute( LATEST_DIRECTORY, System.getProperty( LoadUI.LOADUI_HOME ) ) ) )
-						.extensionFilters( XML_EXTENSION_FILTER ).build();
+								new File( workspace.getAttribute( UIUtils.LATEST_DIRECTORY,
+										System.getProperty( LoadUI.LOADUI_HOME ) ) ) )
+						.extensionFilters( UIUtils.XML_EXTENSION_FILTER ).build();
 				fileNameField.setText( fileChooser.showSaveDialog( getScene().getWindow() ).getPath() );
 			}
 		} ).build();
@@ -68,7 +65,7 @@ public class CreateNewProjectDialog extends ConfirmationDialog
 
 				String path = fileNameField.getText();
 				File projectFile = path.contains( File.separator ) ? new File( path ) : new File( workspace.getAttribute(
-						LATEST_DIRECTORY, System.getProperty( LoadUI.LOADUI_HOME ) ), path );
+						UIUtils.LATEST_DIRECTORY, System.getProperty( LoadUI.LOADUI_HOME ) ), path );
 				ProjectRef projectRef = workspace.createProject( projectFile, projectNameField.getText(), false );
 
 				if( openNewProject.isSelected() )
@@ -78,8 +75,8 @@ public class CreateNewProjectDialog extends ConfirmationDialog
 			}
 		} );
 	}
-	
-		private static int getNextProjectNumber()
+
+	private static int getNextProjectNumber()
 	{
 		int projectNumber = 1;
 		while( !isValidFileName( "project-" + projectNumber + ".xml" ) )

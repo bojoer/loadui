@@ -1,10 +1,8 @@
 package com.eviware.loadui.ui.fx.views.workspace;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 
 import javafx.application.Platform;
 import javafx.beans.Observable;
@@ -45,6 +43,7 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.eviware.loadui.ui.fx.util.Observables;
 import com.eviware.loadui.ui.fx.util.Properties;
+import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.agent.AgentView;
 import com.eviware.loadui.ui.fx.views.projectref.ProjectRefView;
 import com.google.common.base.Function;
@@ -52,7 +51,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.io.Files;
-import com.sun.javafx.PlatformUtil;
 
 public class WorkspaceView extends StackPane
 {
@@ -302,45 +300,10 @@ public class WorkspaceView extends StackPane
 		}
 	}
 
+	@FXML
 	public void openHelpPage()
 	{
-		if( !PlatformUtil.isMac() )
-		{
-			try
-			{
-				Desktop.getDesktop().browse( new java.net.URI( HELPER_PAGE_URL ) );
-			}
-			catch( IOException | URISyntaxException e )
-			{
-				LOG.error( "Unable to launch browser with helper page in external browser!", e );
-			}
-			return;
-		}
-
-		try
-		{
-			Thread t = new Thread( new Runnable()
-			{
-
-				@Override
-				public void run()
-				{
-					try
-					{
-						Runtime.getRuntime().exec( "open " + HELPER_PAGE_URL );
-					}
-					catch( IOException e )
-					{
-						LOG.error( "Unable to fork native browser with helper page in external browser!", e );
-					}
-				}
-			} );
-			t.start();
-		}
-		catch( Exception e )
-		{
-			LOG.error( "unable to display help page!", e );
-		}
+		UIUtils.openURL( HELPER_PAGE_URL );
 	}
 
 	public void gettingStarted()

@@ -129,6 +129,13 @@ public class MainWindowView extends StackPane
 					if( event.getArg() instanceof ProjectItem )
 					{
 						ProjectItem project = ( ProjectItem )event.getArg();
+						if( project.isDirty() )
+						{
+							// Ask if we should save, if yes save otherwise discard
+							//TODO: Implement confirm dialog
+							project.save();
+							System.out.println( "Project saved transparently after close!" );
+						}
 						project.release();
 						//TODO: Need to have the ProjectRef close the project.
 						container.getChildren().setAll(
