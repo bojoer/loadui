@@ -19,9 +19,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.Glow;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import javax.annotation.Nullable;
@@ -39,6 +42,8 @@ import com.google.common.base.Predicate;
 
 public class CanvasView extends StackPane
 {
+	private final Effect selectedEffect = new Glow( 0.5 );
+
 	private final Function<ComponentItem, ComponentView> COMPONENT_TO_VIEW = new Function<ComponentItem, ComponentView>()
 	{
 		@Override
@@ -60,7 +65,9 @@ public class CanvasView extends StackPane
 					}
 				}
 			} );
-			Selectable.installSelectable( componentView );
+			Selectable selectable = Selectable.installSelectable( componentView );
+			componentView.effectProperty().bind(
+					Bindings.when( selectable.selectedProperty() ).then( selectedEffect ).otherwise( ( Effect )null ) );
 
 			return componentView;
 		}
@@ -99,7 +106,7 @@ public class CanvasView extends StackPane
 				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
 				COMPONENT_TO_VIEW );
 
-		Selectable.installDragToSelectArea( this, components );
+		Selectable.installDragToSelectArea( this );
 
 		final Group componentLayer = new Group();
 		bindContentUnordered( componentLayer.getChildren(), components );

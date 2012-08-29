@@ -2,12 +2,24 @@ package com.eviware.loadui.ui.fx.util;
 
 import java.util.List;
 
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 
 public final class NodeUtils
 {
+	public static Rectangle2D localToScreen( Node node, Scene scene )
+	{
+		Bounds selectableBounds = node.localToScene( node.getBoundsInLocal() );
+
+		return new Rectangle2D( selectableBounds.getMinX() + scene.getX() + scene.getWindow().getX(),
+				selectableBounds.getMinY() + scene.getY() + scene.getWindow().getY(), node.getBoundsInLocal().getWidth(),
+				node.getBoundsInLocal().getHeight() );
+	}
+
 	public static Node findFrontNodeAtCoordinate( Node root, Point2D point, Node... ignored )
 	{
 		if( !root.contains( root.sceneToLocal( point ) ) )

@@ -38,30 +38,18 @@ import com.google.common.util.concurrent.SettableFuture;
 public class DialogTest
 {
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
-	private static DragNode dragNode;
 	private static Stage stage;
 	private static ControllerApi controller;
 	private static Dialog dialog;
 	private static Button openDialogButton;
-	private static final Logger log = LoggerFactory.getLogger(DialogTest.class);
+	private static final Logger log = LoggerFactory.getLogger( DialogTest.class );
 
 	public static class DialogTestApp extends Application
 	{
 		@Override
 		public void start( Stage primaryStage ) throws Exception
 		{
-			Rectangle dragRect = RectangleBuilder.create().id( "dragrect" ).width( 25 ).height( 25 ).fill( Color.BLUE )
-					.build();
-
-			dragNode = DragNode.install( dragRect, RectangleBuilder.create().id( "dragnode" ).width( 25 ).height( 25 )
-					.fill( Color.GREEN ).build() );
-
-			Rectangle dropRect = RectangleBuilder.create().id( "droprect" ).width( 50 ).height( 50 ).layoutX( 100 )
-					.layoutY( 100 ).build();
-			dropRect.fillProperty().bind(
-					Bindings.when( dragNode.acceptableProperty() ).then( Color.GREEN ).otherwise( Color.RED ) );
-			
-			openDialogButton = new Button("Open dialog");
+			openDialogButton = new Button( "Open dialog" );
 			openDialogButton.setOnAction( new EventHandler<ActionEvent>()
 			{
 				@Override
@@ -70,14 +58,14 @@ public class DialogTest
 					dialog.show();
 				}
 			} );
-			
+
 			primaryStage.setScene( SceneBuilder.create().width( 800 ).height( 600 )
 					.root( GroupBuilder.create().children( openDialogButton ).build() ).build() );
 
 			dialog = new ConfirmationDialog( openDialogButton, "My dialog", "I got it!" );
-			
+
 			primaryStage.show();
-			
+
 			stageFuture.set( primaryStage );
 		}
 

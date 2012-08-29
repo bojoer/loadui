@@ -2,6 +2,7 @@ package com.eviware.loadui.ui.fx.api.input;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -25,19 +26,21 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.ui.fx.util.ScreenUtils;
+import com.eviware.loadui.ui.fx.util.NodeUtils;
 import com.google.common.collect.ImmutableList;
 
 public class Selectable
 {
+	@SuppressWarnings( "unused" )
 	private static final Logger log = LoggerFactory.getLogger( Selectable.class );
 	private static final String SELECTABLE_PROP_KEY = Selectable.class.getName();
-	private static final ClickToSelectHandler SELECTION_HANDLER = new ClickToSelectHandler();
-	private static final ClickToDeselectHandler DESELECTION_HANDLER = new ClickToDeselectHandler();
+	private static final ClickToSelectHandler CLICK_TO_SELECT_HANDLER = new ClickToSelectHandler();
+	private static final ClickToDeselectHandler CLICK_TO_DESELECT_HANDLER = new ClickToDeselectHandler();
 	private static final Set<Selectable> SELECTED_NODES = Collections
 			.newSetFromMap( new WeakHashMap<Selectable, Boolean>() );
 	private static ImmutableList<Selectable> selectedAtSelectionStart = null;
 	private static SelectionRectangle selectionRectangle;
+	private static final Collection<Node> selectableNodes = new HashSet<>();
 
 	/**
 	 * Makes the node selectable by clicking anywhere on the node.
@@ -48,8 +51,9 @@ public class Selectable
 	public static Selectable installSelectable( @Nonnull Node node )
 	{
 		Selectable selectable = new Selectable( node );
-		node.addEventHandler( MouseEvent.MOUSE_CLICKED, SELECTION_HANDLER );
+		node.addEventHandler( MouseEvent.MOUSE_CLICKED, CLICK_TO_SELECT_HANDLER );
 		node.getProperties().put( SELECTABLE_PROP_KEY, selectable );
+		selectableNodes.add( node );
 		return selectable;
 	}
 
@@ -75,7 +79,7 @@ public class Selectable
 		return node;
 	}
 
-	public ReadOnlyBooleanProperty draggingProperty()
+	public ReadOnlyBooleanProperty selectedProperty()
 	{
 		return selectedPropertyImpl().getReadOnlyProperty();
 	}
@@ -85,18 +89,17 @@ public class Selectable
 		return selectedProperty == null ? false : selectedProperty.get();
 	}
 
-	private void select()
+	public void select()
 	{
-		node.setEffect( new Glow( 0.8 ) );
 		SELECTED_NODES.add( this );
 		setSelected( true );
 	}
 
-	private void deselect()
+	public void deselect()
 	{
-		node.setEffect( null );
 		SELECTED_NODES.remove( this );
 		setSelected( false );
+		System.out.println( "deselect    " + node );
 	}
 
 	private void setSelected( boolean selected )
@@ -107,8 +110,7 @@ public class Selectable
 		}
 	}
 
-	public static void installDragToSelectArea( @Nonnull final Node selectionArea,
-			@Nonnull final Collection<? extends Region> selectables )
+	public static void installDragToSelectArea( @Nonnull final Region selectionArea )
 	{
 		selectionArea.addEventHandler( MouseEvent.DRAG_DETECTED, new EventHandler<MouseEvent>()
 		{
@@ -133,18 +135,19 @@ public class Selectable
 						@Override
 						public void run()
 						{
-							selectionRectangle.hide();
-							selectionRectangle = null;
+							if( selectionRectangle != null )
+								selectionRectangle.hide();
 						}
 					} );
 				}
 				else if( selectionRectangle != null )
 				{
-					selectionRectangle.updateSelection( event, selectables );
+					selectionRectangle.updateSelection( event );
 				}
 			}
 		} );
-		selectionArea.addEventHandler( MouseEvent.MOUSE_CLICKED, DESELECTION_HANDLER );
+
+		selectionArea.addEventHandler( MouseEvent.MOUSE_CLICKED, CLICK_TO_DESELECT_HANDLER );
 	}
 
 	private static void selectAll( Collection<Selectable> selectables )
@@ -158,8 +161,9 @@ public class Selectable
 		for( Iterator<Selectable> i = SELECTED_NODES.iterator(); i.hasNext(); )
 		{
 			Selectable s = i.next();
-			s.getNode().setEffect( null );
+			s.setSelected( false );
 			i.remove();
+			System.out.println( "deselect " + s.getNode() );
 		}
 	}
 
@@ -190,7 +194,6 @@ public class Selectable
 			}
 			event.consume();
 		}
-
 	}
 
 	private static class ClickToDeselectHandler implements EventHandler<MouseEvent>
@@ -198,9 +201,13 @@ public class Selectable
 		@Override
 		public void handle( MouseEvent event )
 		{
+			System.out.println( "deselectAll" );
 			deselectAll();
+			if( selectionRectangle != null )
+				selectionRectangle.hide();
 			event.consume();
 		}
+
 	}
 
 	private static class SelectionRectangle extends Popup
@@ -227,7 +234,7 @@ public class Selectable
 			this.startY = e.getScreenY();
 		}
 
-		void updateSelection( MouseEvent e, Collection<? extends Region> selectables )
+		void updateSelection( MouseEvent e )
 		{
 			double width = Math.abs( e.getScreenX() - startX );
 			double height = Math.abs( e.getScreenY() - startY );
@@ -244,16 +251,16 @@ public class Selectable
 
 			Rectangle2D selectionArea = new Rectangle2D( getX(), getY(), width, height );
 
-			for( Region region : selectables )
+			for( Node node : selectableNodes )
 			{
-				Scene scene = region.getScene();
+				Scene scene = node.getScene();
 				if( scene.getWindow().isFocused() )
 				{
-					Rectangle2D selectableRectangle = ScreenUtils.localToScreen( region, scene );
+					Rectangle2D selectableRectangle = NodeUtils.localToScreen( node, scene );
 
 					if( selectionArea.intersects( selectableRectangle ) )
 					{
-						Selectable selectable = nodeToSelectable( region );
+						Selectable selectable = nodeToSelectable( node );
 						if( ( e.isShiftDown() || e.isControlDown() ) && selectedAtSelectionStart.contains( selectable ) )
 							selectable.deselect();
 						else
