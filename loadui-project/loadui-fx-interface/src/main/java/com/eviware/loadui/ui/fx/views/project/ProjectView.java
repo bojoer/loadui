@@ -5,6 +5,7 @@ import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.layout.StackPane;
 
 import org.slf4j.Logger;
@@ -45,6 +46,9 @@ public class ProjectView extends StackPane
 	@FXML
 	private DetachableTab resultTab;
 
+	@FXML
+	private MenuButton menuButton;
+
 	private final ProjectItem project;
 
 	public ProjectView( ProjectItem projectIn )
@@ -53,10 +57,11 @@ public class ProjectView extends StackPane
 
 		FXMLUtils.load( this );
 
+		menuButton.textProperty().bind( Properties.forLabel( project ) );
 		workspaceLabel.textProperty().bind( Properties.forLabel( project.getWorkspace() ) );
-
 		designTab.setDetachableContent( new CanvasView( project ) );
 		resultTab.setDetachableContent( new StatisticsView( project ) );
+
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
 		{
 			@Override
