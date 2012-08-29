@@ -54,7 +54,7 @@ public class AnalysisView extends StackPane
 		this.project = project;
 		this.executionList = executionList;
 
-		FXMLUtils.loadNew( this, this );
+		FXMLUtils.load( this );
 
 		currentExecutionProperty.addListener( new ChangeListener<Execution>()
 		{

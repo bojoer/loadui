@@ -117,7 +117,7 @@ public class WorkspaceView extends StackPane
 			}
 		} );
 
-		FXMLUtils.loadNew( this, this );
+		FXMLUtils.load( this );
 
 		workspaceButton.textProperty().bind( Bindings.format( "Workspace: %s", Properties.forLabel( workspace ) ) );
 

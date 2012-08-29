@@ -51,7 +51,7 @@ public class ProjectView extends StackPane
 	{
 		this.project = Preconditions.checkNotNull( projectIn );
 
-		FXMLUtils.loadNew( this, this );
+		FXMLUtils.load( this );
 
 		workspaceLabel.textProperty().bind( Properties.forLabel( project.getWorkspace() ) );
 

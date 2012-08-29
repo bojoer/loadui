@@ -12,22 +12,40 @@ public class FXMLUtils
 {
 	public static ClassLoader classLoader = FXMLUtils.class.getClassLoader();
 
-	public static void loadNew( Node root )
+	/**
+	 * Loads an fxml resource using the simple name of root's class and sets root
+	 * as the component tree root and controller.
+	 */
+	public static void load( Node root )
 	{
-		loadNew( root, root );
+		load( root, root );
 	}
 
-	public static void loadNew( Node root, Object controller )
+	/**
+	 * Loads an fxml resource using the simple name of root's class and sets root
+	 * as the component tree root and controller as the controller.
+	 */
+	public static void load( Node root, Object controller )
 	{
-		loadNew( root, controller, Collections.<String, Object> emptyMap() );
+		load( root, controller, Collections.<String, Object> emptyMap() );
 	}
 
-	public static void loadNew( Node root, Object controller, Map<String, ? extends Object> mapping )
+	/**
+	 * Loads an fxml resource using the simple name of root's class and sets root
+	 * as the component tree root and controller as the controller. Uses mapping
+	 * for controlling namespaces.
+	 */
+	public static void load( Node root, Object controller, Map<String, ? extends Object> mapping )
 	{
-		loadNew( root, controller, mapping, root.getClass().getResource( root.getClass().getSimpleName() + ".fxml" ) );
+		load( root, controller, mapping, root.getClass().getResource( root.getClass().getSimpleName() + ".fxml" ) );
 	}
 
-	public static void loadNew( Node root, Object controller, Map<String, ? extends Object> mapping, URL resourceName )
+	/**
+	 * Loads an fxml resource from resourceName and sets root as the component
+	 * tree root and controller as the controller. Uses mapping for controlling
+	 * namespaces.
+	 */
+	public static void load( Node root, Object controller, Map<String, ? extends Object> mapping, URL resourceName )
 	{
 		FXMLLoader loader = new FXMLLoader( resourceName );
 		loader.setClassLoader( classLoader );

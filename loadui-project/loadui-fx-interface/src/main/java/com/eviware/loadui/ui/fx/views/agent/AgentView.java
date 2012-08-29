@@ -32,7 +32,7 @@ public class AgentView extends StackPane
 	{
 		this.agent = agent;
 
-		FXMLUtils.loadNew( this, this );
+		FXMLUtils.load( this );
 
 		labelProperty = ( StringProperty )Properties.forLabel( agent );
 		urlProperty = Properties.stringProperty( agent, "url", AgentItem.URL );

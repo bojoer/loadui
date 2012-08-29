@@ -96,7 +96,7 @@ public class CanvasView extends StackPane
 	{
 		this.canvas = canvas;
 
-		FXMLUtils.loadNew( this, this );
+		FXMLUtils.load( this );
 
 		components = transform(
 				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),

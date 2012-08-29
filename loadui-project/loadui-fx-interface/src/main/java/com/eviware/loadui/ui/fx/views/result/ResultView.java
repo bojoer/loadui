@@ -22,7 +22,7 @@ public class ResultView extends StackPane
 	{
 		this.executionList = executionList;
 
-		FXMLUtils.loadNew( this, this );
+		FXMLUtils.load( this );
 
 		Bindings.bindContent( resultNodeList.getItems(),
 				ObservableLists.fx( ObservableLists.transform( executionList, new Function<Execution, ExecutionNode>()

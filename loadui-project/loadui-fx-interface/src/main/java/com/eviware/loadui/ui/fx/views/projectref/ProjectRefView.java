@@ -32,7 +32,7 @@ public class ProjectRefView extends StackPane implements Labeled
 	{
 		this.projectRef = Preconditions.checkNotNull( projectRef );
 
-		FXMLUtils.loadNew( this, this );
+		FXMLUtils.load( this );
 
 		labelProperty = Properties.forLabel( projectRef );
 
