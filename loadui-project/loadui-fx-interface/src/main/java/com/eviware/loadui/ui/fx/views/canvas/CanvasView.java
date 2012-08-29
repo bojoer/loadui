@@ -6,6 +6,10 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.fx;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofCollection;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.ofServices;
 import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
+
+import java.util.concurrent.Callable;
+
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,15 +17,20 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SliderBuilder;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.StackPaneBuilder;
 import javafx.scene.shape.Rectangle;
 
 import javax.annotation.Nullable;
@@ -40,6 +49,9 @@ import com.google.common.base.Predicate;
 
 public class CanvasView extends StackPane
 {
+	private static final int GRID_SIZE = 36;
+	private static final double PADDING = 100;
+
 	private final Function<ComponentItem, ComponentView> COMPONENT_TO_VIEW = new Function<ComponentItem, ComponentView>()
 	{
 		@Override
@@ -58,10 +70,20 @@ public class CanvasView extends StackPane
 					{
 						input.setAttribute( "gui.layoutX", String.valueOf( ( int )componentView.getLayoutX() ) );
 						input.setAttribute( "gui.layoutY", String.valueOf( ( int )componentView.getLayoutY() ) );
+						updateCanvasBounds();
 					}
 				}
 			} );
 			Selectable.installSelectable( componentView );
+
+			Platform.runLater( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					updateCanvasBounds();
+				}
+			} );
 
 			return componentView;
 		}
@@ -92,6 +114,8 @@ public class CanvasView extends StackPane
 	private final CanvasItem canvas;
 	private final ObservableList<ComponentView> components;
 
+	private final Group componentLayer = new Group();
+
 	public CanvasView( CanvasItem canvas )
 	{
 		this.canvas = canvas;
@@ -104,7 +128,6 @@ public class CanvasView extends StackPane
 
 		Selectable.installClearSelectionArea( this );
 
-		final Group componentLayer = new Group();
 		bindContentUnordered( componentLayer.getChildren(), components );
 
 		ToolBox<ComponentDescriptorView> descriptors = new ToolBox<>( "Components" );
@@ -114,9 +137,6 @@ public class CanvasView extends StackPane
 
 		Bindings.bindContent( descriptors.getItems(),
 				fx( transform( filter( ofServices( ComponentDescriptor.class ), NOT_DEPRECATED ), DESCRIPTOR_TO_VIEW ) ) );
-
-		Slider posSlider = SliderBuilder.create().min( -1000 ).max( 1000 ).value( 0 ).maxWidth( 100 ).build();
-		StackPane.setAlignment( posSlider, Pos.BOTTOM_CENTER );
 
 		Pane componentWrapper = new Pane();
 		Rectangle clipRect = new Rectangle();
@@ -178,12 +198,135 @@ public class CanvasView extends StackPane
 		componentLayer.scaleYProperty().bind( zoomSlider.valueProperty() );
 		StackPane.setAlignment( zoomSlider, Pos.BOTTOM_RIGHT );
 
-		componentLayer.layoutXProperty().bind( posSlider.valueProperty().multiply( -1 ) );
-
 		setAlignment( Pos.TOP_LEFT );
 
-		getChildren().addAll( RegionBuilder.create().styleClass( "canvas-view" ).build(), componentWrapper, zoomSlider,
-				posSlider, descriptors );
+		getChildren().addAll( createGrid(), componentWrapper, zoomSlider, descriptors );
+
+		initScrolling();
+	}
+
+	private Node createGrid()
+	{
+		Region gridRegion = RegionBuilder.create().styleClass( "canvas-view" ).build();
+		gridRegion.translateXProperty().bind( Bindings.createDoubleBinding( new Callable<Double>()
+		{
+			@Override
+			public Double call() throws Exception
+			{
+				return componentLayer.getLayoutX() % GRID_SIZE;
+			}
+		}, componentLayer.layoutXProperty() ) );
+		gridRegion.translateYProperty().bind( Bindings.createDoubleBinding( new Callable<Double>()
+		{
+			@Override
+			public Double call() throws Exception
+			{
+				return componentLayer.getLayoutY() % GRID_SIZE;
+			}
+		}, componentLayer.layoutYProperty() ) );
+
+		return StackPaneBuilder.create().padding( new Insets( -GRID_SIZE ) ).children( gridRegion ).build();
+	}
+
+	double startX = 0;
+	double startY = 0;
+	boolean dragging = false;
+
+	private void initScrolling()
+	{
+		addEventHandler( MouseEvent.DRAG_DETECTED, new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				if( event.isControlDown() )
+				{
+					dragging = true;
+					startX = componentLayer.getLayoutX() - event.getX();
+					startY = componentLayer.getLayoutY() - event.getY();
+				}
+			}
+		} );
+		addEventHandler( MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				if( event.isControlDown() && dragging )
+				{
+					componentLayer.setLayoutX( startX + event.getX() );
+					componentLayer.setLayoutY( startY + event.getY() );
+					updateCanvasBounds();
+				}
+			}
+		} );
+		addEventHandler( MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				dragging = false;
+				updateCanvasBounds();
+			}
+		} );
+	}
+
+	private void updateCanvasBounds()
+	{
+		Bounds bounds = componentLayer.getBoundsInLocal();
+		double minX = -bounds.getMinX() + PADDING;
+		double maxX = getWidth() - bounds.getMaxX() - PADDING;
+		double minY = -bounds.getMinY() + PADDING;
+		double maxY = getHeight() - bounds.getMaxY() - PADDING;
+
+		double layoutX = componentLayer.getLayoutX();
+		double layoutY = componentLayer.getLayoutY();
+
+		if( minX > maxX )
+		{
+			if( layoutX > minX )
+			{
+				componentLayer.setLayoutX( minX );
+			}
+			else if( layoutX < maxX )
+			{
+				componentLayer.setLayoutX( maxX );
+			}
+		}
+		else
+		{
+			if( layoutX < minX )
+			{
+				componentLayer.setLayoutX( minX );
+			}
+			else if( layoutX > maxX )
+			{
+				componentLayer.setLayoutX( maxX );
+			}
+		}
+
+		if( minY > maxY )
+		{
+			if( layoutY > minY )
+			{
+				componentLayer.setLayoutY( minY );
+			}
+			else if( layoutY < maxY )
+			{
+				componentLayer.setLayoutY( maxY );
+			}
+		}
+		else
+		{
+			if( layoutY < minY )
+			{
+				componentLayer.setLayoutY( minY );
+			}
+			else if( layoutY > maxY )
+			{
+				componentLayer.setLayoutY( maxY );
+			}
+		}
 	}
 
 	public CanvasItem getCanvas()
