@@ -33,8 +33,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
 import javafx.scene.shape.Rectangle;
 
-import javax.annotation.Nullable;
-
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
@@ -70,7 +68,7 @@ public class CanvasView extends StackPane
 					{
 						input.setAttribute( "gui.layoutX", String.valueOf( ( int )componentView.getLayoutX() ) );
 						input.setAttribute( "gui.layoutY", String.valueOf( ( int )componentView.getLayoutY() ) );
-						updateCanvasBounds();
+						enforceCanvasBounds();
 					}
 				}
 			} );
@@ -81,7 +79,7 @@ public class CanvasView extends StackPane
 				@Override
 				public void run()
 				{
-					updateCanvasBounds();
+					enforceCanvasBounds();
 				}
 			} );
 
@@ -105,7 +103,7 @@ public class CanvasView extends StackPane
 	private static final Predicate<ComponentDescriptor> NOT_DEPRECATED = new Predicate<ComponentDescriptor>()
 	{
 		@Override
-		public boolean apply( @Nullable ComponentDescriptor input )
+		public boolean apply( ComponentDescriptor input )
 		{
 			return !input.isDeprecated();
 		}
@@ -256,7 +254,7 @@ public class CanvasView extends StackPane
 				{
 					componentLayer.setLayoutX( startX + event.getX() );
 					componentLayer.setLayoutY( startY + event.getY() );
-					updateCanvasBounds();
+					enforceCanvasBounds();
 				}
 			}
 		} );
@@ -266,14 +264,19 @@ public class CanvasView extends StackPane
 			public void handle( MouseEvent event )
 			{
 				dragging = false;
-				updateCanvasBounds();
+				enforceCanvasBounds();
 			}
 		} );
 	}
 
-	private void updateCanvasBounds()
+	private void enforceCanvasBounds()
 	{
 		Bounds bounds = componentLayer.getBoundsInLocal();
+		if( bounds.getWidth() == -1 )
+		{
+			return;
+		}
+
 		double minX = -bounds.getMinX() + PADDING;
 		double maxX = getWidth() - bounds.getMaxX() - PADDING;
 		double minY = -bounds.getMinY() + PADDING;
