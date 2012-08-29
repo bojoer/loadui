@@ -38,7 +38,7 @@ public class Selectable
 	private static final Set<Selectable> SELECTED_NODES = Collections
 			.newSetFromMap( new WeakHashMap<Selectable, Boolean>() );
 	private static ImmutableList<Selectable> selectedAtSelectionStart = null;
-	private static SelectionRectangle selectionRectangle;
+	private static SelectionRectangle selectionRectangle = new SelectionRectangle();
 	private static final Collection<Node> selectableNodes = new HashSet<>();
 
 	/**
@@ -116,7 +116,7 @@ public class Selectable
 			@Override
 			public void handle( MouseEvent event )
 			{
-				selectionRectangle = new SelectionRectangle( selectionArea );
+				selectionRectangle.setOwner( selectionArea );
 				selectionRectangle.startSelection( event );
 				selectionArea.startFullDrag();
 			}
@@ -162,7 +162,6 @@ public class Selectable
 			Selectable s = i.next();
 			s.setSelected( false );
 			i.remove();
-			System.out.println( "deselect " + s.getNode() );
 		}
 	}
 
@@ -179,7 +178,7 @@ public class Selectable
 			Node source = ( Node )event.getSource();
 			Selectable selectable = nodeToSelectable( source );
 
-			if( event.isShiftDown() || event.isControlDown() )
+			if( event.isShiftDown() )
 			{
 				if( SELECTED_NODES.contains( selectable ) )
 					selectable.deselect();
@@ -200,7 +199,6 @@ public class Selectable
 		@Override
 		public void handle( MouseEvent event )
 		{
-			System.out.println( "deselectAll" );
 			deselectAll();
 			if( selectionRectangle != null )
 				selectionRectangle.hide();
@@ -213,21 +211,25 @@ public class Selectable
 	{
 		private double startX;
 		private double startY;
-		private final Node ownerNode;
+		private Node ownerNode;
 		private final HBox box = new HBox();
 
-		SelectionRectangle( Node ownerNode )
+		SelectionRectangle()
 		{
-			this.ownerNode = ownerNode;
 			box.setStyle( "-fx-background-color: rgba(140, 140, 210, 0.5);" );
 			getContent().add( box );
 			setAutoFix( false );
 		}
 
+		public void setOwner( Region selectionArea )
+		{
+			this.ownerNode = selectionArea;
+		}
+
 		void startSelection( MouseEvent e )
 		{
 			selectedAtSelectionStart = ImmutableList.copyOf( SELECTED_NODES );
-			if( !e.isControlDown() && !e.isShiftDown() )
+			if( !e.isShiftDown() )
 				deselectAll();
 			this.startX = e.getScreenX();
 			this.startY = e.getScreenY();
@@ -260,7 +262,7 @@ public class Selectable
 					if( selectionArea.intersects( selectableRectangle ) )
 					{
 						Selectable selectable = nodeToSelectable( node );
-						if( ( e.isShiftDown() || e.isControlDown() ) && selectedAtSelectionStart.contains( selectable ) )
+						if( e.isShiftDown() && selectedAtSelectionStart.contains( selectable ) )
 							selectable.deselect();
 						else
 							selectable.select();
