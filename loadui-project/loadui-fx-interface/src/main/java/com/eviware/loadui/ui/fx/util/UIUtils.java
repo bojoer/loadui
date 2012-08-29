@@ -16,7 +16,7 @@ public class UIUtils
 {
 	public static final Logger LOG = LoggerFactory.getLogger( UIUtils.class );
 
-	public static void openURL( final String url )
+	public static void openInExternalBrowser( final String url )
 	{
 		if( !PlatformUtil.isMac() )
 		{
@@ -59,5 +59,5 @@ public class UIUtils
 
 	public static final String LATEST_DIRECTORY = "gui.latestDirectory";
 	public static final ExtensionFilter XML_EXTENSION_FILTER = new FileChooser.ExtensionFilter( "loadUI project file",
-	"*.xml" );
+			"*.xml" );
 }

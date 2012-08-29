@@ -22,6 +22,7 @@ import javafx.stage.WindowEvent;
 
 import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.google.common.collect.ImmutableMap;
 
 public class AboutDialog extends PopupControl
@@ -110,26 +111,12 @@ public class AboutDialog extends PopupControl
 
 	public void loaduiSite()
 	{
-		try
-		{
-			Desktop.getDesktop().browse( new URI( "http://www.loadui.org" ) );
-		}
-		catch( IOException | URISyntaxException e )
-		{
-			e.printStackTrace();
-		}
+		UIUtils.openInExternalBrowser( "http://www.loadui.org" );
 	}
 
 	public void smartbearSite()
 	{
-		try
-		{
-			Desktop.getDesktop().browse( new URI( "http://www.smartbear.com" ) );
-		}
-		catch( IOException | URISyntaxException e )
-		{
-			e.printStackTrace();
-		}
+		UIUtils.openInExternalBrowser("http://www.smartbear.com" );
 	}
 
 }

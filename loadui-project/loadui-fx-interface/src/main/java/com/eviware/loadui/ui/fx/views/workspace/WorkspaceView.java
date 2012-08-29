@@ -303,7 +303,7 @@ public class WorkspaceView extends StackPane
 	@FXML
 	public void openHelpPage()
 	{
-		UIUtils.openURL( HELPER_PAGE_URL );
+		UIUtils.openInExternalBrowser( HELPER_PAGE_URL );
 	}
 
 	public void gettingStarted()

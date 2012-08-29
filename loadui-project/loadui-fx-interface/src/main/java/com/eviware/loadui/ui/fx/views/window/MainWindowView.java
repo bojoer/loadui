@@ -1,10 +1,5 @@
 package com.eviware.loadui.ui.fx.views.window;
 
-import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
@@ -24,6 +19,7 @@ import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.about.AboutDialog;
 import com.eviware.loadui.ui.fx.views.project.ProjectView;
 import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
@@ -198,14 +194,7 @@ public class MainWindowView extends StackPane
 
 	public void feedback()
 	{
-		try
-		{
-			Desktop.getDesktop().browse( new URI( "http://www.eviware.com/forum/viewforum.php?f=9" ) );
-		}
-		catch( IOException | URISyntaxException e )
-		{
-			e.printStackTrace();
-		}
+		UIUtils.openInExternalBrowser( "http://www.eviware.com/forum/viewforum.php?f=9" );
 	}
 
 	public void about()

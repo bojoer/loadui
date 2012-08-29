@@ -1,10 +1,6 @@
 package com.eviware.loadui.ui.fx.views.workspace;
 
-import java.awt.Desktop;
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import javafx.event.ActionEvent;
@@ -23,6 +19,7 @@ import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.ButtonDialog;
+import com.eviware.loadui.ui.fx.util.UIUtils;
 
 public class GettingStartedDialog extends ButtonDialog
 {
@@ -60,15 +57,7 @@ public class GettingStartedDialog extends ButtonDialog
 									@Override
 									public void handle( ActionEvent event )
 									{
-										try
-										{
-											Desktop.getDesktop().browse(
-													new URI( "http://www.loadui.org/Getting-Started-with-loadUI/videos.html" ) );
-										}
-										catch( IOException | URISyntaxException e )
-										{
-											e.printStackTrace();
-										}
+										UIUtils.openInExternalBrowser( "http://www.loadui.org/Getting-Started-with-loadUI/videos.html" );
 									}
 								} ).build(),
 								ButtonBuilder.create().text( "Read the Getting Started tutorial" )
@@ -77,18 +66,8 @@ public class GettingStartedDialog extends ButtonDialog
 											@Override
 											public void handle( ActionEvent event )
 											{
-												try
-												{
-													Desktop
-															.getDesktop()
-															.browse(
-																	new URI(
-																			"http://loadui.org/Getting-Started-with-loadUI/your-first-load-test.html" ) );
-												}
-												catch( IOException | URISyntaxException e )
-												{
-													e.printStackTrace();
-												}
+												UIUtils
+														.openInExternalBrowser( "http://loadui.org/Getting-Started-with-loadUI/your-first-load-test.html" );
 											}
 										} ).build(),
 								ButtonBuilder.create().text( "Import the included sample projects" )

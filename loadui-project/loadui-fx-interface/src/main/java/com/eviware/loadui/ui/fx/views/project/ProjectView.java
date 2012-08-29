@@ -171,7 +171,7 @@ public class ProjectView extends StackPane
 	public void openHelpPage()
 	{
 		log.info( "Open help page requested" );
-		UIUtils.openURL( HELP_PAGE );
+		UIUtils.openInExternalBrowser( HELP_PAGE );
 	}
 
 	@FXML
