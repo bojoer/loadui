@@ -8,51 +8,52 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import java.net.URL?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ToolBar?>
-<?import javafx.geometry.Insets?>
 
 <fx:root type="javafx.scene.layout.StackPane" styleClass="project-view" xmlns:fx="http://javafx.com/fxml">
 	<stylesheets>
 		<URL value="@ProjectView.css" />
 	</stylesheets>
-	<VBox spacing="10" fillWidth="true">
-		<ToolBar minHeight="60">
-			<MenuButton fx:id="menuButton" maxWidth="200">
+	<StackPane VBox.vgrow="always">
+		<VBox spacing="10" fillWidth="true">
+			<ToolBar minHeight="60" />
+			<StackPane VBox.vgrow="always">
+				<padding>
+					<Insets top="-40" />
+				</padding>
+				<children>
+					<TabPane tabClosingPolicy="unavailable">
+						<DetachableTab fx:id="designTab" text="Design" />
+						<DetachableTab fx:id="resultTab" text="Results" />
+					</TabPane>
+				</children>
+			</StackPane>
+		</VBox>
+		<HBox maxWidth="300" maxHeight="60" alignment="CENTER_LEFT" StackPane.alignment="TOP_LEFT">
+			<MenuButton fx:id="menuButton">
 				<HBox.margin>
-					<Insets left="70"/>
+					<Insets left="80" />
 				</HBox.margin>
 				<items>
-					<MenuItem fx:id="open" id="open" text="New Scenario" onAction="#newScenario"/>
-					<MenuItem fx:id="newProject" id="newProject" text="New Project Wizard"  onAction="#newProjectWizard"/>
-					<MenuItem fx:id="clone" id="clone" text="Rename" onAction="#renameProject"/>
-					<MenuItem fx:id="save" id="save" text="Save" onAction="#saveProject"/>
-					<MenuItem fx:id="saveCopy" id="saveCopy" text="Save as Copy..." onAction="#cloneProject"/>
-					<MenuItem fx:id="saveAndClose" id="saveAndClose" text="Save and Close" onAction="#saveProjectAndClose"/>
-					<MenuItem fx:id="close" id="close" text="Close" onAction="#closeProject"/>
+					<MenuItem fx:id="open" id="open" text="New Scenario" onAction="#newScenario" />
+					<MenuItem fx:id="newProject" id="newProject" text="New Project Wizard" onAction="#newProjectWizard" />
+					<MenuItem fx:id="clone" id="clone" text="Rename" onAction="#renameProject" />
+					<MenuItem fx:id="save" id="save" text="Save" onAction="#saveProject" />
+					<MenuItem fx:id="saveCopy" id="saveCopy" text="Save as Copy..." onAction="#cloneProject" />
+					<MenuItem fx:id="saveAndClose" id="saveAndClose" text="Save and Close" onAction="#saveProjectAndClose" />
+					<MenuItem fx:id="close" id="close" text="Close" onAction="#closeProject" />
 				</items>
-			</MenuButton>	
-			<HBox HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT" style="-fx-background-color:yellow;">
-				<Button fx:id="settingsButton" text="Settings" onAction="#openSettings"/>
-				<Button fx:id="openHelpPageButton" text="Help" onAction="#openHelpPage"/>
-				<Button fx:id="closeProjectButton" text="Close" onAction="#closeProject"/>
-			</HBox>
-		</ToolBar>
-		<StackPane VBox.vgrow="always">
-			<padding>
-					<Insets top="-40"/>
-			</padding>
-			<children>
-				<TabPane tabClosingPolicy="unavailable">
-					<DetachableTab fx:id="designTab" text="Design" />
-					<DetachableTab fx:id="resultTab" text="Results" />
-				</TabPane>
-			</children>
-		</StackPane>
-	</VBox>
+			</MenuButton>
+		</HBox>
+		<HBox maxWidth="200" maxHeight="60" alignment="CENTER_RIGHT" StackPane.alignment="TOP_RIGHT">
+			<Button fx:id="settingsButton" text="Settings" onAction="#openSettings" />
+			<Button fx:id="openHelpPageButton" text="Help" onAction="#openHelpPage" />
+			<Button fx:id="closeProjectButton" text="Close" onAction="#closeProject" />
+		</HBox>
+	</StackPane>
 </fx:root>
