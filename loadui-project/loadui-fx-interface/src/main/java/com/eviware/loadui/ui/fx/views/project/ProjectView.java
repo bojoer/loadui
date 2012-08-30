@@ -52,7 +52,11 @@ public class ProjectView extends StackPane
 		this.project = Preconditions.checkNotNull( projectIn );
 
 		FXMLUtils.load( this );
+	}
 
+	@FXML
+	private void initialize()
+	{
 		menuButton.textProperty().bind( Properties.forLabel( project ) );
 		designTab.setDetachableContent( new CanvasView( project ) );
 		resultTab.setDetachableContent( new StatisticsView( project ) );
@@ -79,7 +83,7 @@ public class ProjectView extends StackPane
 					}
 					else
 					{
-						System.out.println( "Unhandled intent: " + event );
+						log.debug( "Unhandled intent: %s", event );
 						return;
 					}
 				}
@@ -92,7 +96,7 @@ public class ProjectView extends StackPane
 					}
 					else
 					{
-						System.out.println( "Unhandled intent: " + event );
+						log.debug( "Unhandled intent: %s", event );
 						return;
 					}
 				}

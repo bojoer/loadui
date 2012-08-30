@@ -32,13 +32,17 @@ public class AgentView extends StackPane
 	{
 		this.agent = agent;
 
-		FXMLUtils.load( this );
-
 		labelProperty = ( StringProperty )Properties.forLabel( agent );
 		urlProperty = Properties.stringProperty( agent, "url", AgentItem.URL );
 		enabledProperty = Properties.booleanProperty( agent, "enabled", AgentItem.ENABLED );
 		readyProperty = Properties.readOnlyBooleanProperty( agent, "ready", AgentItem.READY );
 
+		FXMLUtils.load( this );
+	}
+
+	@FXML
+	private void initialize()
+	{
 		onOffSwitch.selectedProperty().bindBidirectional( enabledProperty );
 		onOffSwitch.textProperty().bind(
 				Bindings.when( enabledProperty ).then( Bindings.when( readyProperty ).then( "C" ).otherwise( "D" ) )
@@ -52,7 +56,6 @@ public class AgentView extends StackPane
 		Tooltip menuTooltip = new Tooltip();
 		menuTooltip.textProperty().bind( Bindings.format( "%s (%s)", labelProperty, urlProperty ) );
 		menuButton.setTooltip( menuTooltip );
-
 	}
 
 	@Override

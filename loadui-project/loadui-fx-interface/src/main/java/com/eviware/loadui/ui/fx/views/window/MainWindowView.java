@@ -45,7 +45,11 @@ public class MainWindowView extends StackPane
 		this.workspaceProvider = Preconditions.checkNotNull( workspaceProvider );
 
 		FXMLUtils.load( this );
+	}
 
+	@FXML
+	private void initialize()
+	{
 		workspaceProvider.addEventListener( BaseEvent.class, workspaceListener );
 
 		if( workspaceProvider.isWorkspaceLoaded() )

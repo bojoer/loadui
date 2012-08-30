@@ -1,12 +1,10 @@
 package com.eviware.loadui.ui.fx.views.project;
 
 import java.io.File;
-import java.io.IOException;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -67,19 +65,7 @@ public class ProjectSettingsDialog extends ConfirmationDialog
 		pane.setMinHeight( 320 );
 		pane.setMinWidth( 500 );
 
-		FXMLLoader loader = new FXMLLoader( getClass().getResource( getClass().getSimpleName() + ".fxml" ) );
-		loader.setClassLoader( FXMLUtils.classLoader );
-		loader.setRoot( pane );
-		loader.setController( this );
-
-		try
-		{
-			loader.load();
-		}
-		catch( IOException exception )
-		{
-			throw new RuntimeException( "Unable to load fxml view: " + getClass().getSimpleName() + ".fxml", exception );
-		}
+		FXMLUtils.load( pane, this, getClass().getResource( getClass().getSimpleName() + ".fxml" ) );
 
 		getItems().add( pane );
 

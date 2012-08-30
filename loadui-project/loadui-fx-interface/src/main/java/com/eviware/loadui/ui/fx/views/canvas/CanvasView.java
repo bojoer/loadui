@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -122,13 +123,16 @@ public class CanvasView extends StackPane
 	public CanvasView( CanvasItem canvas )
 	{
 		this.canvas = canvas;
-
-		FXMLUtils.load( this );
-
-		components = transform(
+		this.components = transform(
 				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
 				COMPONENT_TO_VIEW );
 
+		FXMLUtils.load( this );
+	}
+
+	@FXML
+	private void initialize()
+	{
 		Selectable.installDragToSelectArea( this );
 
 		bindContentUnordered( componentLayer.getChildren(), components );
