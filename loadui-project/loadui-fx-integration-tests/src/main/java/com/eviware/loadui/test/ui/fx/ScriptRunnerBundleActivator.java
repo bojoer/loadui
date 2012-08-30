@@ -4,8 +4,17 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javafx.stage.Stage;
 
@@ -19,21 +28,20 @@ import com.eviware.loadui.ui.fx.util.test.ControllerApi;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.test.TestUtils;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 public class ScriptRunnerBundleActivator implements BundleActivator
 {
 	public static final String TEST_SCRIPT = "testScript";
+	public static final String TEST_SCRIPT_PORT = "testScriptPort";
 	private static final Logger log = LoggerFactory.getLogger( ScriptRunnerBundleActivator.class );
+	private GroovyShell shell;
+	private static final Pattern CONTENT_LENGTH_PATTERN = Pattern.compile( ".*Content-Length:\\s+(\\d+).*" );
 
 	@Override
 	public void start( BundleContext context ) throws Exception
 	{
-		final String testScript = System.getProperty( TEST_SCRIPT );
-		if( testScript == null )
-		{
-			return;
-		}
-
 		Thread thread = new Thread( new Runnable()
 		{
 			@Override
@@ -41,7 +49,6 @@ public class ScriptRunnerBundleActivator implements BundleActivator
 			{
 				try
 				{
-					Binding binding = new Binding();
 					Stage stage = BeanInjector.getBeanFuture( Stage.class ).get();
 					final WorkspaceProvider workspaceProvider = BeanInjector.getBeanFuture( WorkspaceProvider.class ).get();
 					TestUtils.awaitCondition( new Callable<Boolean>()
@@ -53,23 +60,27 @@ public class ScriptRunnerBundleActivator implements BundleActivator
 						}
 					} );
 
+					Binding binding = new Binding();
+
 					binding.setVariable( "workspace", workspaceProvider.getWorkspace() );
 					binding.setVariable( "stage", stage );
 					binding.setVariable( "controller", ControllerApi.wrap( new FXScreenController() ).target( stage ) );
 
 					Thread.sleep( 3000 );
 
-					GroovyShell shell = new GroovyShell( binding );
+					shell = new GroovyShell( binding );
 
-					log.info( "Running test script: {}", testScript );
+					String testScript = System.getProperty( TEST_SCRIPT );
+					if( testScript != null )
+					{
+						runScriptFile( testScript );
+					}
 
-					Script script = shell.parse( new File( testScript ) );
-					final Object result = script.run();
-					log.info( "Script completed successfully with result: {}", result );
-					BeanInjector.getBean( BundleContext.class ).getBundle( 0 ).stop();
-
-					Thread.sleep( 5000 );
-					System.exit( 0 );
+					String serverPort = System.getProperty( TEST_SCRIPT_PORT );
+					if( serverPort != null )
+					{
+						startServer( Integer.parseInt( serverPort ) );
+					}
 				}
 				catch( Exception e )
 				{
@@ -81,6 +92,112 @@ public class ScriptRunnerBundleActivator implements BundleActivator
 
 		thread.setDaemon( true );
 		thread.start();
+	}
+
+	private void runScriptFile( final String testScript )
+	{
+		try
+		{
+			log.info( "Running test script: {}", testScript );
+
+			StringBuilder scriptBuilder = new StringBuilder();
+			for( String line : Files.readLines( new File( testScript ), Charsets.UTF_8 ) )
+			{
+				scriptBuilder.append( line ).append( "\r\n" );
+			}
+
+			Object result = runScript( scriptBuilder.toString() );
+
+			log.info( "Script completed successfully with result: {}", result );
+			BeanInjector.getBean( BundleContext.class ).getBundle( 0 ).stop();
+
+			Thread.sleep( 5000 );
+			System.exit( 0 );
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+			System.exit( -1 );
+		}
+	}
+
+	private void startServer( final int port )
+	{
+		try (ServerSocket ssocket = new ServerSocket( port ))
+		{
+			System.out.println( "Listening for POST on port: " + port );
+
+			while( true )
+			{
+				try (Socket socket = ssocket.accept())
+				{
+					System.out.println( "Connection!" );
+					BufferedReader reader = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
+					String line = null;
+					int length = -1;
+					while( !( line = reader.readLine() ).equals( "" ) )
+					{
+						Matcher matcher = CONTENT_LENGTH_PATTERN.matcher( line );
+						if( matcher.matches() )
+						{
+							length = Integer.parseInt( matcher.group( 1 ) );
+							System.out.println( "Length is: " + length );
+						}
+					}
+					System.out.println( "Read headers!" );
+
+					char[] bodyChars = new char[length];
+					System.out.println( "Read body: " + reader.read( bodyChars, 0, length ) );
+					String body = new String( bodyChars );
+
+					Object result;
+					try
+					{
+						result = runScript( body );
+						String response = "Script completed successfully with result: " + result;
+						log.info( response );
+
+						try (PrintStream ps = new PrintStream( socket.getOutputStream() ))
+						{
+							ps.println( "HTTP/1.1 200 OK" );
+							ps.println( "Content-Type: text/plain; charset=UTF-8" );
+							ps.println( "Content-Length: " + response.length() );
+							ps.println();
+							ps.println( response );
+						}
+					}
+					catch( RuntimeException | AssertionError e )
+					{
+						log.error( "Script threw exception: ", e );
+						try (PrintStream ps = new PrintStream( socket.getOutputStream() ))
+						{
+							StringWriter sw = new StringWriter();
+							PrintWriter pw = new PrintWriter( sw );
+							pw.println( "Test FAILED, with the error:" );
+							e.printStackTrace( pw );
+							String response = sw.toString();
+
+							ps.println( "HTTP/1.1 500 Internal Server Error" );
+							ps.println( "Content-Type: text/plain; charset=UTF-8" );
+							ps.println( "Content-Length: " + response.length() );
+							ps.println();
+							ps.println( response );
+						}
+					}
+				}
+			}
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+			System.exit( -1 );
+		}
+	}
+
+	private Object runScript( final String testScript ) throws Exception
+	{
+		Script script = shell.parse( testScript );
+		return script.run();
 	}
 
 	@Override
