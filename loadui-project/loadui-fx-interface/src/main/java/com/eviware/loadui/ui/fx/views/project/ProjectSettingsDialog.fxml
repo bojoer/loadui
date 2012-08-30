@@ -21,9 +21,9 @@
 	<stylesheets>
 		<URL value="@ProjectSettingsDialog.css" />
 	</stylesheets>
-	<TabPane minHeight="320" minWidth="500" style="-fx-background-color:yellow;">
+	<TabPane tabClosingPolicy="unavailable" minHeight="320" minWidth="500">
 		<Tab text="Execution">
-			<CheckBox text="Abort ongoing requests on finish" />
+			<CheckBox fx:id="abortOngoingOnFinish" text="Abort ongoing requests on finish" />
 		</Tab>
 		<Tab text="Reports">
 			<VBox spacing="10">
@@ -36,8 +36,7 @@
 		</Tab>
 		<Tab text="Misc">
 			<VBox spacing="10">
-				<CheckBox text="Do not warn when starting a Canvas without both a Generator and a Runner" />
-				<CheckBox text="Do not warn when creating a TestCase in Distributed mode" />
+				<CheckBox fx:id="ignoreInvalidCanvas" text="Do not warn when starting a Canvas without both a Generator and a Runner" />
 			</VBox>
 		</Tab>
 	</TabPane>
