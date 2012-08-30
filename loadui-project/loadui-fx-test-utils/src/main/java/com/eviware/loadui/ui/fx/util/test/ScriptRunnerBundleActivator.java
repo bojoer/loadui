@@ -1,4 +1,4 @@
-package com.eviware.loadui.test.ui.fx;
+package com.eviware.loadui.ui.fx.util.test;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -24,8 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.WorkspaceProvider;
-import com.eviware.loadui.ui.fx.util.test.ControllerApi;
-import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.util.BeanInjector;
 import com.eviware.loadui.util.test.TestUtils;
 import com.google.common.base.Charsets;
@@ -131,7 +129,6 @@ public class ScriptRunnerBundleActivator implements BundleActivator
 			{
 				try (Socket socket = ssocket.accept())
 				{
-					System.out.println( "Connection!" );
 					BufferedReader reader = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
 					String line = null;
 					int length = -1;
@@ -141,26 +138,27 @@ public class ScriptRunnerBundleActivator implements BundleActivator
 						if( matcher.matches() )
 						{
 							length = Integer.parseInt( matcher.group( 1 ) );
-							System.out.println( "Length is: " + length );
 						}
 					}
-					System.out.println( "Read headers!" );
 
 					char[] bodyChars = new char[length];
-					System.out.println( "Read body: " + reader.read( bodyChars, 0, length ) );
+					reader.read( bodyChars, 0, length );
 					String body = new String( bodyChars );
+
+					log.info( "Received script! Running..." );
 
 					Object result;
 					try
 					{
 						result = runScript( body );
-						String response = "Script completed successfully with result: " + result;
+						String response = "Script completed successfully with result:\r\n" + result;
 						log.info( response );
 
 						try (PrintStream ps = new PrintStream( socket.getOutputStream() ))
 						{
 							ps.println( "HTTP/1.1 200 OK" );
 							ps.println( "Content-Type: text/plain; charset=UTF-8" );
+							ps.println( "Connection: close" );
 							ps.println( "Content-Length: " + response.length() );
 							ps.println();
 							ps.println( response );
@@ -179,6 +177,7 @@ public class ScriptRunnerBundleActivator implements BundleActivator
 
 							ps.println( "HTTP/1.1 500 Internal Server Error" );
 							ps.println( "Content-Type: text/plain; charset=UTF-8" );
+							ps.println( "Connection: close" );
 							ps.println( "Content-Length: " + response.length() );
 							ps.println();
 							ps.println( response );
