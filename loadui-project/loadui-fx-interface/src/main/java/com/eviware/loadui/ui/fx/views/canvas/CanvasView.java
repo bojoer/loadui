@@ -28,6 +28,7 @@ import javafx.scene.control.SliderBuilder;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RegionBuilder;
@@ -242,7 +243,7 @@ public class CanvasView extends StackPane
 			@Override
 			public void handle( MouseEvent event )
 			{
-				if( event.isControlDown() )
+				if( event.isShortcutDown() )
 				{
 					dragging = true;
 					startX = componentLayer.getLayoutX() - event.getX();
@@ -255,7 +256,7 @@ public class CanvasView extends StackPane
 			@Override
 			public void handle( MouseEvent event )
 			{
-				if( event.isControlDown() && dragging )
+				if( event.isShortcutDown() && dragging )
 				{
 					componentLayer.setLayoutX( startX + event.getX() );
 					componentLayer.setLayoutY( startY + event.getY() );
@@ -269,6 +270,17 @@ public class CanvasView extends StackPane
 			public void handle( MouseEvent event )
 			{
 				dragging = false;
+				enforceCanvasBounds();
+			}
+		} );
+
+		setOnScroll( new EventHandler<ScrollEvent>()
+		{
+			@Override
+			public void handle( ScrollEvent event )
+			{
+				componentLayer.setLayoutX( componentLayer.getLayoutX() + event.getDeltaX() );
+				componentLayer.setLayoutY( componentLayer.getLayoutY() + event.getDeltaY() );
 				enforceCanvasBounds();
 			}
 		} );
