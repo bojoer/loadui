@@ -180,6 +180,7 @@ public class Movable implements Draggable
 					movable.startPoint = new Point2D( event.getSceneX(), event.getSceneY() );
 					movable.setDragging( true );
 				}
+				event.consume();
 			}
 		};
 
@@ -206,25 +207,21 @@ public class Movable implements Draggable
 						movable.setAcceptable( false );
 						if( movable.currentlyHovered != null )
 						{
-							movable.currentlyHovered.fireEvent( new DraggableEvent( null, node, movable.currentlyHovered,
+							movable.currentlyHovered.fireEvent( new DraggableEvent( node, movable.currentlyHovered,
 									DraggableEvent.DRAGGABLE_EXITED, movable.getData(), event.getSceneX(), event.getSceneY() ) );
 						}
 						if( currentNode != null )
 						{
-							currentNode.fireEvent( new DraggableEvent( new Runnable()
-							{
-								@Override
-								public void run()
-								{
-									movable.setAcceptable( true );
-								}
-							}, node, currentNode, DraggableEvent.DRAGGABLE_ENTERED, movable.getData(), event.getSceneX(),
-									event.getSceneY() ) );
+							currentNode.fireEvent( new DraggableEvent( node, currentNode, DraggableEvent.DRAGGABLE_ENTERED,
+									movable.getData(), event.getSceneX(), event.getSceneY() ) );
 						}
 
 						movable.currentlyHovered = currentNode;
 					}
+					node.fireEvent( new DraggableEvent( node, node, DraggableEvent.DRAGGABLE_DRAGGED, null, event
+							.getSceneX(), event.getSceneY() ) );
 				}
+				event.consume();
 			}
 		};
 
@@ -246,12 +243,12 @@ public class Movable implements Draggable
 					if( movable.currentlyHovered != null )
 					{
 						Point2D point = movable.currentlyHovered.sceneToLocal( event.getSceneX(), event.getSceneY() );
-						movable.currentlyHovered.fireEvent( new DraggableEvent( null, node, movable.currentlyHovered,
+						movable.currentlyHovered.fireEvent( new DraggableEvent( node, movable.currentlyHovered,
 								DraggableEvent.DRAGGABLE_EXITED, movable.getData(), point.getX(), point.getY() ) );
 
 						if( movable.isAcceptable() )
 						{
-							movable.currentlyHovered.fireEvent( new DraggableEvent( null, node, movable.currentlyHovered,
+							movable.currentlyHovered.fireEvent( new DraggableEvent( node, movable.currentlyHovered,
 									DraggableEvent.DRAGGABLE_DROPPED, movable.getData(), point.getX(), point.getY() ) );
 						}
 					}
@@ -289,5 +286,15 @@ public class Movable implements Draggable
 				handle.getProperties().remove( MOVABLE_PROP_KEY );
 			}
 		}
+	}
+
+	public static boolean isMovable( Node node )
+	{
+		return node.getProperties().containsKey( MOVABLE_PROP_KEY );
+	}
+
+	static Movable getMovable( Node node )
+	{
+		return ( Movable )node.getProperties().get( MOVABLE_PROP_KEY );
 	}
 }

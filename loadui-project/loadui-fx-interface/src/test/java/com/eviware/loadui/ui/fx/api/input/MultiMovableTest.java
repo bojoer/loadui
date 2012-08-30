@@ -1,6 +1,7 @@
 package com.eviware.loadui.ui.fx.api.input;
 
 import static com.eviware.loadui.ui.fx.util.test.ControllerApi.offset;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -27,11 +28,12 @@ import com.eviware.loadui.test.categories.GUITest;
 import com.eviware.loadui.ui.fx.util.test.ControllerApi;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
+import com.eviware.loadui.ui.fx.util.test.ControllerApi.MouseMotion;
 import com.google.common.util.concurrent.SettableFuture;
 import com.sun.javafx.PlatformUtil;
 
 @Category( GUITest.class )
-public class SelectableTest
+public class MultiMovableTest
 {
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
 	private static Selectable selectable1;
@@ -47,10 +49,12 @@ public class SelectableTest
 		{
 			Rectangle rect1 = RectangleBuilder.create().id( "rect1" ).width( 25 ).height( 25 ).fill( Color.BLUE ).build();
 			selectable1 = Selectable.installSelectable( rect1 );
+			Movable.install( rect1 );
 
 			Rectangle rect2 = RectangleBuilder.create().id( "rect2" ).width( 50 ).height( 50 ).layoutX( 100 )
 					.layoutY( 100 ).build();
 			selectable2 = Selectable.installSelectable( rect2 );
+			Movable.install( rect2 );
 
 			rect1.fillProperty().bind(
 					Bindings.when( selectable1.selectedProperty() ).then( Color.GREEN ).otherwise( Color.GREY ) );
@@ -63,6 +67,8 @@ public class SelectableTest
 			primaryStage.setScene( SceneBuilder.create().width( 300 ).height( 200 ).root( background ).build() );
 
 			Selectable.installDragToSelectArea( background );
+			MultiMovable.install( background, rect1 );
+			MultiMovable.install( background, rect2 );
 
 			primaryStage.show();
 
@@ -89,83 +95,22 @@ public class SelectableTest
 	}
 
 	@Test
-	public void shouldHandlePrimaryMouseButtonClicks() throws Throwable
-	{
-		final Node rectangle1 = selectable1.getNode();
-		final Node rectangle2 = selectable2.getNode();
-
-		assertThat( selectable1.isSelected(), is( false ) );
-		controller.click( rectangle1 );
-		assertThat( selectable1.isSelected(), is( true ) );
-		controller.click( background );
-		assertThat( selectable1.isSelected(), is( false ) );
-		controller.click( rectangle2 );
-		assertThat( selectable2.isSelected(), is( true ) );
-		controller.click( rectangle1 );
-		assertThat( selectable1.isSelected(), is( true ) );
-		assertThat( selectable2.isSelected(), is( false ) );
-	}
-
-	@Test
-	public void shouldHandleShortcutKey() throws Throwable
-	{
-		final Node rectangle1 = selectable1.getNode();
-		final Node rectangle2 = selectable2.getNode();
-
-		controller.press( KeyCode.SHIFT ).click( rectangle1 ).click( rectangle2 );
-		assertThat( selectable1.isSelected(), is( true ) );
-		assertThat( selectable2.isSelected(), is( true ) );
-		controller.click( rectangle1 ).release( KeyCode.SHIFT );
-
-		assertThat( selectable1.isSelected(), is( false ) );
-		controller.click( rectangle1 );
-		assertThat( selectable1.isSelected(), is( true ) );
-		assertThat( selectable2.isSelected(), is( false ) );
-	}
-
-	@Test
 	public void shouldHandleDragToSelect() throws Throwable
 	{
 		final Node rectangle1 = selectable1.getNode();
 		final Node rectangle2 = selectable2.getNode();
 
-		controller.drag( offset( background, 0, 0 ) ).to( rectangle2 );
+		controller.drag( offset( background, 220, 170 ) ).to( offset( background, 0, 0 ) );
 		assertThat( selectable1.isSelected(), is( true ) );
 		assertThat( selectable2.isSelected(), is( true ) );
-		controller.drag( rectangle1 ).by( 80, 80 ).drop();
-		assertThat( selectable1.isSelected(), is( true ) );
-		assertThat( selectable2.isSelected(), is( false ) );
-		controller.press( KeyCode.SHIFT ).drag( offset( background, 290, 10 ) ).to( offset( background, 0, 190 ) )
-				.release( KeyCode.SHIFT );
+
+		controller.drag( rectangle1 ).by( 100, 20 ).drop().click( background );
 		assertThat( selectable1.isSelected(), is( false ) );
-		assertThat( selectable2.isSelected(), is( true ) );
-		controller.click( background );
 		assertThat( selectable2.isSelected(), is( false ) );
+		assertThat( rectangle1.getLayoutX(), equalTo( 100.0 ) );
+		assertThat( rectangle1.getLayoutY(), equalTo( 20.0 ) );
+		assertThat( rectangle2.getLayoutX(), equalTo( 200.0 ) );
+		assertThat( rectangle2.getLayoutY(), equalTo( 120.0 ) );
 	}
 
-	@Test
-	public void shouldNotDragWhenShortcutKeyIsDown() throws Throwable
-	{
-		final Node rectangle1 = selectable1.getNode();
-		final Node rectangle2 = selectable2.getNode();
-
-		controller.drag( offset( background, 0, 0 ) ).to( rectangle2 );
-		assertThat( selectable1.isSelected(), is( true ) );
-		assertThat( selectable2.isSelected(), is( true ) );
-
-		if( PlatformUtil.isMac() )
-			controller.press( KeyCode.META );
-		else
-			controller.press( KeyCode.CONTROL );
-
-		controller.drag( rectangle1 ).by( 80, 80 ).drop();
-
-		if( PlatformUtil.isMac() )
-			controller.release( KeyCode.META );
-		else
-			controller.release( KeyCode.CONTROL );
-
-		assertThat( selectable1.isSelected(), is( true ) );
-		assertThat( selectable2.isSelected(), is( true ) );
-	}
 }
