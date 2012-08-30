@@ -207,18 +207,25 @@ public class Movable implements Draggable
 						movable.setAcceptable( false );
 						if( movable.currentlyHovered != null )
 						{
-							movable.currentlyHovered.fireEvent( new DraggableEvent( node, movable.currentlyHovered,
+							movable.currentlyHovered.fireEvent( new DraggableEvent( null, node, movable.currentlyHovered,
 									DraggableEvent.DRAGGABLE_EXITED, movable.getData(), event.getSceneX(), event.getSceneY() ) );
 						}
 						if( currentNode != null )
 						{
-							currentNode.fireEvent( new DraggableEvent( node, currentNode, DraggableEvent.DRAGGABLE_ENTERED,
-									movable.getData(), event.getSceneX(), event.getSceneY() ) );
+							currentNode.fireEvent( new DraggableEvent( new Runnable()
+							{
+								@Override
+								public void run()
+								{
+									movable.setAcceptable( true );
+								}
+							}, node, currentNode, DraggableEvent.DRAGGABLE_ENTERED, movable.getData(), event.getSceneX(),
+									event.getSceneY() ) );
 						}
 
 						movable.currentlyHovered = currentNode;
 					}
-					node.fireEvent( new DraggableEvent( node, node, DraggableEvent.DRAGGABLE_DRAGGED, null, event
+					node.fireEvent( new DraggableEvent( null, node, node, DraggableEvent.DRAGGABLE_DRAGGED, null, event
 							.getSceneX(), event.getSceneY() ) );
 				}
 				event.consume();
@@ -243,12 +250,12 @@ public class Movable implements Draggable
 					if( movable.currentlyHovered != null )
 					{
 						Point2D point = movable.currentlyHovered.sceneToLocal( event.getSceneX(), event.getSceneY() );
-						movable.currentlyHovered.fireEvent( new DraggableEvent( node, movable.currentlyHovered,
+						movable.currentlyHovered.fireEvent( new DraggableEvent( null, node, movable.currentlyHovered,
 								DraggableEvent.DRAGGABLE_EXITED, movable.getData(), point.getX(), point.getY() ) );
 
 						if( movable.isAcceptable() )
 						{
-							movable.currentlyHovered.fireEvent( new DraggableEvent( node, movable.currentlyHovered,
+							movable.currentlyHovered.fireEvent( new DraggableEvent( null, node, movable.currentlyHovered,
 									DraggableEvent.DRAGGABLE_DROPPED, movable.getData(), point.getX(), point.getY() ) );
 						}
 					}

@@ -25,7 +25,6 @@ public class DraggableEvent extends InputEvent
 	 * moved outside or dropped.
 	 */
 	public static final EventType<DraggableEvent> DRAGGABLE_EXITED = new EventType<>( ANY, "DRAGGABLE_EXITED" );
-
 	/**
 	 * Called when a Node has been dropped onto a target, where the
 	 * DRAGGABLE_ENTERED event was previously accepted.
@@ -34,14 +33,16 @@ public class DraggableEvent extends InputEvent
 
 	private final double sceneX;
 	private final double sceneY;
+	private final Runnable onAccept;
 	private final Object data;
 	private boolean accepted = false;
 
-	public DraggableEvent( Node source, EventTarget target, EventType<? extends DraggableEvent> eventType, Object data,
-			double x, double y )
+	public DraggableEvent( Runnable onAccept, Node source, EventTarget target,
+			EventType<? extends DraggableEvent> eventType, Object data, double x, double y )
 	{
 		super( source, target, eventType );
 
+		this.onAccept = onAccept;
 		this.data = data;
 		this.sceneX = x;
 		this.sceneY = y;
@@ -78,6 +79,10 @@ public class DraggableEvent extends InputEvent
 		if( getEventType() != DRAGGABLE_ENTERED )
 		{
 			throw new IllegalStateException( "DraggableEvent.accept() can only be called from a DRAGGABLE_ENTERED event" );
+		}
+		if( !accepted && onAccept != null )
+		{
+			onAccept.run();
 		}
 		accepted = true;
 	}

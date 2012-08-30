@@ -317,14 +317,21 @@ public class DragNode extends PopupControl implements Draggable
 						dragNode.setAcceptable( false );
 						if( dragNode.currentlyHovered != null )
 						{
-							dragNode.currentlyHovered.fireEvent( new DraggableEvent( dragNode.getNode(), dragNode.currentlyHovered,
-									DraggableEvent.DRAGGABLE_EXITED, dragNode.getData(), event
+							dragNode.currentlyHovered.fireEvent( new DraggableEvent( null, dragNode.getNode(),
+									dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_EXITED, dragNode.getData(), event
 											.getSceneX(), event.getSceneY() ) );
 						}
 						if( currentNode != null )
 						{
-							currentNode.fireEvent( new DraggableEvent( dragNode.getNode(), currentNode, DraggableEvent.DRAGGABLE_ENTERED, dragNode.getData(), scenePoint.getX(),
-									scenePoint.getY() ) );
+							currentNode.fireEvent( new DraggableEvent( new Runnable()
+							{
+								@Override
+								public void run()
+								{
+									dragNode.setAcceptable( true );
+								}
+							}, dragNode.getNode(), currentNode, DraggableEvent.DRAGGABLE_ENTERED, dragNode.getData(),
+									scenePoint.getX(), scenePoint.getY() ) );
 						}
 
 						dragNode.currentlyHovered = currentNode;
@@ -344,15 +351,15 @@ public class DragNode extends PopupControl implements Draggable
 				{
 					if( dragNode.currentlyHovered != null )
 					{
-						dragNode.currentlyHovered.fireEvent( new DraggableEvent( dragNode.getNode(), dragNode.currentlyHovered,
-								DraggableEvent.DRAGGABLE_EXITED, dragNode.getData(), event
+						dragNode.currentlyHovered.fireEvent( new DraggableEvent( null, dragNode.getNode(),
+								dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_EXITED, dragNode.getData(), event
 										.getSceneX(), event.getSceneY() ) );
 
 						if( dragNode.isAcceptable() )
 						{
-							dragNode.currentlyHovered.fireEvent( new DraggableEvent( dragNode.getNode(), dragNode.currentlyHovered,
-									DraggableEvent.DRAGGABLE_DROPPED, dragNode.getData(), dragNode.lastPoint.getX(),
-									dragNode.lastPoint.getY() ) );
+							dragNode.currentlyHovered.fireEvent( new DraggableEvent( null, dragNode.getNode(),
+									dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_DROPPED, dragNode.getData(),
+									dragNode.lastPoint.getX(), dragNode.lastPoint.getY() ) );
 						}
 					}
 

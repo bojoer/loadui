@@ -11,7 +11,6 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.PaneBuilder;
 import javafx.scene.paint.Color;
@@ -28,9 +27,7 @@ import com.eviware.loadui.test.categories.GUITest;
 import com.eviware.loadui.ui.fx.util.test.ControllerApi;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
-import com.eviware.loadui.ui.fx.util.test.ControllerApi.MouseMotion;
 import com.google.common.util.concurrent.SettableFuture;
-import com.sun.javafx.PlatformUtil;
 
 @Category( GUITest.class )
 public class MultiMovableTest
