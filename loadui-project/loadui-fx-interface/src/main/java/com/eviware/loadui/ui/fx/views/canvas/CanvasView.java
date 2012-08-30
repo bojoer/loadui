@@ -9,6 +9,9 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 
 import java.util.concurrent.Callable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -29,6 +32,7 @@ import javafx.scene.control.SliderBuilder;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RegionBuilder;
@@ -41,6 +45,7 @@ import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.input.Movable;
+import com.eviware.loadui.ui.fx.api.input.MultiMovable;
 import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.ToolBox;
@@ -50,6 +55,7 @@ import com.google.common.base.Predicate;
 
 public class CanvasView extends StackPane
 {
+	protected static final Logger log = LoggerFactory.getLogger( CanvasView.class );
 	private final Effect selectedEffect = new Glow( 0.5 );
 	private static final int GRID_SIZE = 36;
 	private static final double PADDING = 100;
@@ -62,7 +68,8 @@ public class CanvasView extends StackPane
 			final ComponentView componentView = new ComponentView( input );
 			componentView.setLayoutX( Integer.parseInt( input.getAttribute( "gui.layoutX", "0" ) ) );
 			componentView.setLayoutY( Integer.parseInt( input.getAttribute( "gui.layoutY", "0" ) ) );
-			Movable movable = Movable.install( componentView, componentView.lookup( "#label" ) );
+
+			final Movable movable = Movable.install( componentView, componentView.lookup( "#label" ) );
 			movable.draggingProperty().addListener( new ChangeListener<Boolean>()
 			{
 				@Override
@@ -79,6 +86,8 @@ public class CanvasView extends StackPane
 			Selectable selectable = Selectable.installSelectable( componentView );
 			componentView.effectProperty().bind(
 					Bindings.when( selectable.selectedProperty() ).then( selectedEffect ).otherwise( ( Effect )null ) );
+
+			MultiMovable.install( CanvasView.this, componentView );
 
 			Platform.runLater( new Runnable()
 			{
@@ -246,7 +255,7 @@ public class CanvasView extends StackPane
 			@Override
 			public void handle( MouseEvent event )
 			{
-				if( event.isControlDown() )
+				if( event.isShortcutDown() )
 				{
 					dragging = true;
 					startX = componentLayer.getLayoutX() - event.getX();
@@ -259,7 +268,7 @@ public class CanvasView extends StackPane
 			@Override
 			public void handle( MouseEvent event )
 			{
-				if( event.isControlDown() && dragging )
+				if( event.isShortcutDown() && dragging )
 				{
 					componentLayer.setLayoutX( startX + event.getX() );
 					componentLayer.setLayoutY( startY + event.getY() );
@@ -273,6 +282,17 @@ public class CanvasView extends StackPane
 			public void handle( MouseEvent event )
 			{
 				dragging = false;
+				enforceCanvasBounds();
+			}
+		} );
+
+		setOnScroll( new EventHandler<ScrollEvent>()
+		{
+			@Override
+			public void handle( ScrollEvent event )
+			{
+				componentLayer.setLayoutX( componentLayer.getLayoutX() + event.getDeltaX() );
+				componentLayer.setLayoutY( componentLayer.getLayoutY() + event.getDeltaY() );
 				enforceCanvasBounds();
 			}
 		} );
