@@ -243,7 +243,7 @@ public class CanvasView extends StackPane
 			@Override
 			public void handle( MouseEvent event )
 			{
-				if( event.isControlDown() )
+				if( event.isShortcutDown() )
 				{
 					dragging = true;
 					startX = componentLayer.getLayoutX() - event.getX();
@@ -256,7 +256,7 @@ public class CanvasView extends StackPane
 			@Override
 			public void handle( MouseEvent event )
 			{
-				if( event.isControlDown() && dragging )
+				if( event.isShortcutDown() && dragging )
 				{
 					componentLayer.setLayoutX( startX + event.getX() );
 					componentLayer.setLayoutY( startY + event.getY() );
