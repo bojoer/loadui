@@ -80,11 +80,17 @@ public class WorkspaceView extends StackPane
 	public WorkspaceView( final WorkspaceItem workspace )
 	{
 		this.workspace = workspace;
-		projectRefList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.PROJECT_REFS,
+		this.projectRefList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.PROJECT_REFS,
 				ProjectRef.class, workspace.getProjectRefs() ) );
-		agentList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.AGENTS, AgentItem.class,
-				workspace.getAgents() ) );
+		this.agentList = ObservableLists.fx( ObservableLists.ofCollection( workspace, WorkspaceItem.AGENTS,
+				AgentItem.class, workspace.getAgents() ) );
 
+		FXMLUtils.load( this );
+	}
+
+	@FXML
+	private void initialize()
+	{
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
 		{
 			@Override
@@ -116,8 +122,6 @@ public class WorkspaceView extends StackPane
 				}
 			}
 		} );
-
-		FXMLUtils.load( this );
 
 		workspaceButton.textProperty().bind( Bindings.format( "Workspace: %s", Properties.forLabel( workspace ) ) );
 

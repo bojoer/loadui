@@ -23,9 +23,13 @@ public class ResultView extends StackPane
 		this.executionList = executionList;
 
 		FXMLUtils.load( this );
+	}
 
+	@FXML
+	private void initialize()
+	{
 		Bindings.bindContent( resultNodeList.getItems(),
-				ObservableLists.fx( ObservableLists.transform( executionList, new Function<Execution, ExecutionNode>()
+				ObservableLists.fx( ObservableLists.transform( this.executionList, new Function<Execution, ExecutionNode>()
 				{
 					@Override
 					public ExecutionNode apply( Execution projectRef )
@@ -33,7 +37,6 @@ public class ResultView extends StackPane
 						return new ExecutionNode( projectRef );
 					}
 				} ) ) );
-
 	}
 
 }

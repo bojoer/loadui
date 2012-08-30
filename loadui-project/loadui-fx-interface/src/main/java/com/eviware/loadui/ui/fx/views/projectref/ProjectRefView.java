@@ -31,11 +31,14 @@ public class ProjectRefView extends StackPane implements Labeled
 	public ProjectRefView( final ProjectRef projectRef )
 	{
 		this.projectRef = Preconditions.checkNotNull( projectRef );
+		this.labelProperty = Properties.forLabel( projectRef );
 
 		FXMLUtils.load( this );
+	}
 
-		labelProperty = Properties.forLabel( projectRef );
-
+	@FXML
+	private void initialize()
+	{
 		setPrefWidth( 130 );
 		setMaxHeight( 95 );
 
@@ -45,7 +48,6 @@ public class ProjectRefView extends StackPane implements Labeled
 		menuTooltip.textProperty().bind(
 				Bindings.format( "%s (%s)", labelProperty, projectRef.getProjectFile().getAbsolutePath() ) );
 		menuButton.setTooltip( menuTooltip );
-
 	}
 
 	public ReadOnlyStringProperty labelProperty()

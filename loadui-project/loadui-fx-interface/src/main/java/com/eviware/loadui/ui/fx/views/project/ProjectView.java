@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.layout.StackPane;
 
 import org.slf4j.Logger;
@@ -37,13 +37,13 @@ public class ProjectView extends StackPane
 	private static final Logger log = LoggerFactory.getLogger( ProjectView.class );
 
 	@FXML
-	private Label workspaceLabel;
-
-	@FXML
 	private DetachableTab designTab;
 
 	@FXML
 	private DetachableTab resultTab;
+
+	@FXML
+	private MenuButton menuButton;
 
 	private final ProjectItem project;
 
@@ -52,11 +52,15 @@ public class ProjectView extends StackPane
 		this.project = Preconditions.checkNotNull( projectIn );
 
 		FXMLUtils.load( this );
+	}
 
-		workspaceLabel.textProperty().bind( Properties.forLabel( project.getWorkspace() ) );
-
+	@FXML
+	private void initialize()
+	{
+		menuButton.textProperty().bind( Properties.forLabel( project ) );
 		designTab.setDetachableContent( new CanvasView( project ) );
 		resultTab.setDetachableContent( new StatisticsView( project ) );
+
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
 		{
 			@Override
@@ -79,7 +83,7 @@ public class ProjectView extends StackPane
 					}
 					else
 					{
-						System.out.println( "Unhandled intent: " + event );
+						log.debug( "Unhandled intent: %s", event );
 						return;
 					}
 				}
@@ -92,7 +96,7 @@ public class ProjectView extends StackPane
 					}
 					else
 					{
-						System.out.println( "Unhandled intent: " + event );
+						log.debug( "Unhandled intent: %s", event );
 						return;
 					}
 				}

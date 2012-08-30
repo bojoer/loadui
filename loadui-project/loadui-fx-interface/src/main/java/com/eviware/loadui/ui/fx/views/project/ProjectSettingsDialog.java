@@ -1,26 +1,22 @@
 package com.eviware.loadui.ui.fx.views.project;
 
 import java.io.File;
-import java.io.IOException;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooserBuilder;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.DirectoryChooserBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.ProjectItem;
-import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
 import com.eviware.loadui.ui.fx.control.DetachableTab;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
@@ -32,14 +28,22 @@ public class ProjectSettingsDialog extends ConfirmationDialog
 {
 	private static final Logger log = LoggerFactory.getLogger( ProjectSettingsDialog.class );
 
+	public static String IGNORE_INVALID_CANVAS = "gui.ignore_invalid_canvas";
+
 	@FXML
 	private DetachableTab executionTab;
 
 	@FXML
-	private DetachableTab reportsTab;
+	private CheckBox abortOngoingOnFinish;
 
 	@FXML
 	private DetachableTab miscTab;
+
+	@FXML
+	private CheckBox ignoreInvalidCanvas;
+
+	@FXML
+	private DetachableTab reportsTab;
 
 	@FXML
 	private CheckBox enableBrowseForReportFile;
@@ -52,36 +56,36 @@ public class ProjectSettingsDialog extends ConfirmationDialog
 
 	private final ProjectItem project;
 
-	public ProjectSettingsDialog( Node owner, ProjectItem project )
+	public ProjectSettingsDialog( Node owner, ProjectItem projectIn )
 	{
 		super( owner, "Settings", "Ok" );
-		this.project = project;
+		this.project = projectIn;
 
 		Pane pane = new Pane();
 		pane.setMinHeight( 320 );
 		pane.setMinWidth( 500 );
 
-		FXMLLoader loader = new FXMLLoader( getClass().getResource( getClass().getSimpleName() + ".fxml" ) );
-		loader.setClassLoader( FXMLUtils.classLoader );
-		loader.setRoot( pane );
-		loader.setController( this );
-
-		try
-		{
-			loader.load();
-		}
-		catch( IOException exception )
-		{
-			throw new RuntimeException( "Unable to load fxml view: " + getClass().getSimpleName() + ".fxml", exception );
-		}
+		FXMLUtils.load( pane, this, getClass().getResource( getClass().getSimpleName() + ".fxml" ) );
 
 		getItems().add( pane );
+
+		browseForReportFileField.setText( project.getReportFolder() );
+		enableBrowseForReportFile.setSelected( project.isSaveReport() );
+		enableBrowseForReportFile();
+		ignoreInvalidCanvas.setSelected( Boolean.valueOf( project.getAttribute( IGNORE_INVALID_CANVAS, "false" ) ) );
+		abortOngoingOnFinish.setSelected( project.isAbortOnFinish() );
+
+		log.debug( "ignore: " + ignoreInvalidCanvas.isSelected() );
 
 		setOnConfirm( new EventHandler<ActionEvent>()
 		{
 			@Override
 			public void handle( ActionEvent event )
 			{
+				project.setSaveReport( enableBrowseForReportFile.isSelected() );
+				project.setReportFolder( browseForReportFileField.getText() );
+				project.setAbortOnFinish( abortOngoingOnFinish.isSelected() );
+				project.setAttribute( IGNORE_INVALID_CANVAS, String.valueOf( ignoreInvalidCanvas.isSelected() ) );
 				log.info( "CONFIRM!" );
 				close();
 			}
@@ -98,20 +102,18 @@ public class ProjectSettingsDialog extends ConfirmationDialog
 	@FXML
 	public void browseForReportFile()
 	{
-		final Property<?> settingsFileProperty = project.getProperty( ProjectItem.REPORT_FOLDER_PROPERTY );
+		String settingsFile = project.getReportFolder();
 
-		File initialDirectory = new File( Objects.firstNonNull(
-				Strings.emptyToNull( ( String )settingsFileProperty.getValue() ),
-				project.getWorkspace().getAttribute( UIUtils.LATEST_DIRECTORY, System.getProperty( LoadUI.LOADUI_HOME ) ) ) );
+		File initialDirectory = new File( Objects.firstNonNull( Strings.emptyToNull( settingsFile ), project
+				.getWorkspace().getAttribute( UIUtils.LATEST_DIRECTORY, System.getProperty( "user.home" ) ) ) );
 
 		initialDirectory = initialDirectory.isDirectory() ? initialDirectory : initialDirectory.getParentFile();
 
-		log.info( "Browsing for report file in initial directory: '" + initialDirectory + "'" );
+		log.debug( "Browsing for report file in initial directory: '%s'", initialDirectory );
 
-		FileChooser fileChooser = FileChooserBuilder.create().initialDirectory( initialDirectory )
-				.extensionFilters( UIUtils.XML_EXTENSION_FILTER ).build();
-		String path = fileChooser.showSaveDialog( getScene().getWindow() ).getPath();
+		DirectoryChooser directoryChooser = DirectoryChooserBuilder.create().initialDirectory( initialDirectory ).build();
+		String path = directoryChooser.showDialog( getScene().getWindow() ).getPath();
+
 		browseForReportFileField.setText( path );
-		settingsFileProperty.setValue( path );
 	}
 }

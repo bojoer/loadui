@@ -42,6 +42,15 @@ public class FXMLUtils
 
 	/**
 	 * Loads an fxml resource from resourceName and sets root as the component
+	 * tree root and controller as the controller.
+	 */
+	public static void load( Node root, Object controller, URL resourceName )
+	{
+		load( root, controller, Collections.<String, Object> emptyMap(), resourceName );
+	}
+
+	/**
+	 * Loads an fxml resource from resourceName and sets root as the component
 	 * tree root and controller as the controller. Uses mapping for controlling
 	 * namespaces.
 	 */
@@ -52,7 +61,7 @@ public class FXMLUtils
 		loader.setRoot( root );
 		loader.setController( controller );
 
-		if( mapping != null )
+		if( mapping != null && !mapping.isEmpty() )
 		{
 			loader.getNamespace().putAll( mapping );
 		}

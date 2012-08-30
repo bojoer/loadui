@@ -55,7 +55,11 @@ public class AnalysisView extends StackPane
 		this.executionList = executionList;
 
 		FXMLUtils.load( this );
+	}
 
+	@FXML
+	private void initialize()
+	{
 		currentExecutionProperty.addListener( new ChangeListener<Execution>()
 		{
 			@Override
@@ -77,7 +81,6 @@ public class AnalysisView extends StackPane
 		{
 			log.error( "Unable to initialize line chart view for statistics analysis", e );
 		}
-
 	}
 
 	public void close()
