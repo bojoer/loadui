@@ -10,10 +10,10 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 
 import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.terminal.InputTerminal;
@@ -27,7 +27,7 @@ import com.eviware.loadui.ui.fx.views.canvas.terminal.OutputTerminalView;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
-public class CanvasObjectView extends BorderPane
+public class CanvasObjectView extends StackPane
 {
 	private static final Function<InputTerminal, Node> INPUT_TERMINAL_TO_VIEW = new Function<InputTerminal, Node>()
 	{

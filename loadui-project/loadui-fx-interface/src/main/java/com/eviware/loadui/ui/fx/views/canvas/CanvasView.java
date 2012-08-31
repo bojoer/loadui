@@ -69,7 +69,8 @@ public class CanvasView extends StackPane
 			componentView.setLayoutX( Integer.parseInt( input.getAttribute( "gui.layoutX", "0" ) ) );
 			componentView.setLayoutY( Integer.parseInt( input.getAttribute( "gui.layoutY", "0" ) ) );
 
-			final Movable movable = Movable.install( componentView, componentView.lookup( "#topBar" ) );
+			final Node handle = componentView.lookup( "#base" );
+			final Movable movable = Movable.install( componentView, handle );
 			movable.draggingProperty().addListener( new ChangeListener<Boolean>()
 			{
 				@Override

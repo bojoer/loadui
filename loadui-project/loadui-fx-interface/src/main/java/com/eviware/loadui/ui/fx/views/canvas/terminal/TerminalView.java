@@ -1,7 +1,10 @@
 package com.eviware.loadui.ui.fx.views.canvas.terminal;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.CircleBuilder;
@@ -24,12 +27,23 @@ public class TerminalView extends StackPane
 	@FXML
 	protected void initialize()
 	{
-		DragNode dragNode = DragNode.install( this, CircleBuilder.create().radius( 10 ).fill( Color.GREEN ).build() );
+		Node terminalNode = lookup( ".terminal-view" );
+		DragNode dragNode = DragNode.install( terminalNode, CircleBuilder.create().radius( 10 ).fill( Color.GREEN )
+				.build() );
 		dragNode.setData( terminal );
 
 		Tooltip tooltip = new Tooltip();
 		tooltip.textProperty().bind( Properties.forDescription( terminal ) );
-		Tooltip.install( this, tooltip );
+		Tooltip.install( terminalNode, tooltip );
+
+		terminalNode.addEventHandler( MouseEvent.ANY, new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle( MouseEvent event )
+			{
+				event.consume();
+			}
+		} );
 	}
 
 	public Terminal getTerminal()

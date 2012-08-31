@@ -1,22 +1,25 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
 <?import java.net.URL?>
 
-<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml"
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
 	styleClass="canvas-object-view" minWidth="200" minHeight="160">
 	<stylesheets>
 		<URL value="@CanvasObjectView.css" />
 	</stylesheets>
-	<top>
-		<HBox fx:id="inputTerminalPane" />
-	</top>
-	<center>
-		<VBox>
-			<BorderPane id="topBar">
+		<VBox styleClass="canvas-object-base" id="base">
+			<HBox fx:id="inputTerminalPane">
+				<VBox.margin>
+					<Insets top="-14" />
+				</VBox.margin>
+			</HBox>
+			<BorderPane>
 				<left>
 					<Label fx:id="canvasObjectLabel" text="CanvasObject Label" />
 				</left>
@@ -25,9 +28,10 @@
 				</right>
 			</BorderPane>
 			<Region style="-fx-background-color: purple;" VBox.vgrow="ALWAYS" />
+			<HBox fx:id="outputTerminalPane">
+				<VBox.margin>
+					<Insets bottom="-14" />
+				</VBox.margin>
+			</HBox>
 		</VBox>
-	</center>
-	<bottom>
-		<HBox fx:id="outputTerminalPane" />
-	</bottom>
 </fx:root>
