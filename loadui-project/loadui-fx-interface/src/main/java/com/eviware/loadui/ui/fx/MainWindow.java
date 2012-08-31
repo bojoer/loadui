@@ -10,6 +10,7 @@ import com.eviware.loadui.LoadUI;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.ui.fx.api.intent.BlockingTask;
+import com.eviware.loadui.ui.fx.api.intent.DeleteTask;
 import com.eviware.loadui.ui.fx.views.window.MainWindowView;
 
 public class MainWindow
@@ -50,6 +51,7 @@ public class MainWindow
 				stage.setScene( SceneBuilder.create().stylesheets( "/com/eviware/loadui/ui/fx/loadui-style.css" )
 						.root( new MainWindowView( workspaceProvider ) ).build() );
 				BlockingTask.install( stage.getScene() );
+				DeleteTask.install( stage.getScene() );
 
 				stage.show();
 			}

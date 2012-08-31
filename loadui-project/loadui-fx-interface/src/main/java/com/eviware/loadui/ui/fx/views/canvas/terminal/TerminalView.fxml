@@ -1,0 +1,9 @@
+<?import javafx.scene.layout.Region?>
+<?import java.net.URL?>
+
+<fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml">
+	<stylesheets>
+		<URL value="@TerminalView.css" />
+	</stylesheets>
+	<Region styleClass="terminal-view" maxWidth="20" maxHeight="20" />
+</fx:root>

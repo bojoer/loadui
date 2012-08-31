@@ -9,9 +9,6 @@ import static com.eviware.loadui.ui.fx.util.ObservableLists.transform;
 
 import java.util.concurrent.Callable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -39,6 +36,9 @@ import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
 import javafx.scene.shape.Rectangle;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.model.CanvasItem;
@@ -69,7 +69,7 @@ public class CanvasView extends StackPane
 			componentView.setLayoutX( Integer.parseInt( input.getAttribute( "gui.layoutX", "0" ) ) );
 			componentView.setLayoutY( Integer.parseInt( input.getAttribute( "gui.layoutY", "0" ) ) );
 
-			final Movable movable = Movable.install( componentView, componentView.lookup( "#label" ) );
+			final Movable movable = Movable.install( componentView, componentView.lookup( "#topBar" ) );
 			movable.draggingProperty().addListener( new ChangeListener<Boolean>()
 			{
 				@Override

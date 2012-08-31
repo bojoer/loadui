@@ -3,6 +3,7 @@ package com.eviware.loadui.ui.fx.api.intent;
 import javafx.event.Event;
 import javafx.event.EventType;
 
+import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.api.traits.Labeled;
 
 @SuppressWarnings( "serial" )
@@ -22,7 +23,8 @@ public class IntentEvent<T> extends Event
 
 	public static final EventType<IntentEvent<? extends Object>> INTENT_CLONE = new EventType<>( ANY, "INTENT_CLONE" );
 
-	public static final EventType<IntentEvent<? extends Object>> INTENT_DELETE = new EventType<>( ANY, "INTENT_DELETE" );
+	public static final EventType<IntentEvent<? extends Deletable>> INTENT_DELETE = new EventType<>( ANY,
+			"INTENT_DELETE" );
 
 	public static final EventType<IntentEvent<? extends Runnable>> INTENT_RUN_BLOCKING = new EventType<>( ANY,
 			"INTENT_RUN_BLOCKING" );

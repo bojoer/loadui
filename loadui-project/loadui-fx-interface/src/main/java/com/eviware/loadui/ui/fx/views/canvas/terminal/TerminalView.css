@@ -1,0 +1,6 @@
+.terminal-view {
+	-fx-background-color: black, red;
+	-fx-background-insets: 0, 2;
+	-fx-background-radius: 10;
+	-fx-padding: 10;
+}

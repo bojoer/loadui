@@ -1,0 +1,33 @@
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import java.net.URL?>
+
+<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml"
+	styleClass="canvas-object-view" minWidth="200" minHeight="160">
+	<stylesheets>
+		<URL value="@CanvasObjectView.css" />
+	</stylesheets>
+	<top>
+		<HBox fx:id="inputTerminalPane" />
+	</top>
+	<center>
+		<VBox>
+			<BorderPane id="topBar">
+				<left>
+					<Label fx:id="canvasObjectLabel" text="CanvasObject Label" />
+				</left>
+				<right>
+					<Button onAction="#delete">X</Button>
+				</right>
+			</BorderPane>
+			<Region style="-fx-background-color: purple;" VBox.vgrow="ALWAYS" />
+		</VBox>
+	</center>
+	<bottom>
+		<HBox fx:id="outputTerminalPane" />
+	</bottom>
+</fx:root>

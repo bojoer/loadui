@@ -1,0 +1,5 @@
+.canvas-object-view {
+	-fx-background-color: black, grey;
+	-fx-background-insets: 10 0 10 0, 12 2 12 2;
+	-fx-padding: 5;
+}

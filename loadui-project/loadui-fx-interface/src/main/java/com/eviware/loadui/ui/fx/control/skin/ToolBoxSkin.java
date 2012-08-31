@@ -323,6 +323,7 @@ public class ToolBoxSkin<E extends Node> extends SkinBase<ToolBox<E>, ToolBoxBeh
 							prevPage();
 						}
 					}
+					event.consume();
 				}
 			} );
 
