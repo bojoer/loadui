@@ -25,6 +25,7 @@ import org.junit.experimental.categories.Category;
 
 import com.eviware.loadui.test.categories.GUITest;
 import com.eviware.loadui.ui.fx.util.test.ControllerApi;
+import com.eviware.loadui.ui.fx.util.test.ControllerApi.MouseMotion;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.google.common.util.concurrent.SettableFuture;
@@ -86,13 +87,19 @@ public class MultiMovableTest
 	@After
 	public void restorePosition()
 	{
+		final Node rectangle1 = selectable1.getNode();
+		final Node rectangle2 = selectable2.getNode();
 		selectable1.deselect();
 		selectable2.deselect();
+		rectangle1.setLayoutX( 0 );
+		rectangle1.setLayoutY( 0 );
+		rectangle2.setLayoutX( 100 );
+		rectangle2.setLayoutY( 100 );
 		FXTestUtils.awaitEvents();
 	}
 
 	@Test
-	public void shouldHandleDragToSelect() throws Throwable
+	public void movingSelectedNode_should_moveAlongAllOtherSelectedNodes() throws Throwable
 	{
 		final Node rectangle1 = selectable1.getNode();
 		final Node rectangle2 = selectable2.getNode();
@@ -101,11 +108,38 @@ public class MultiMovableTest
 		assertThat( selectable1.isSelected(), is( true ) );
 		assertThat( selectable2.isSelected(), is( true ) );
 
-		controller.drag( rectangle1 ).by( 100, 20 ).drop().click( background );
+		MouseMotion motion = controller.drag( rectangle1 ).by( 100, 20 );
+		assertThat( selectable1.isSelected(), is( true ) );
+		assertThat( selectable2.isSelected(), is( true ) );
+
+		motion.drop().click( background );
 		assertThat( selectable1.isSelected(), is( false ) );
 		assertThat( selectable2.isSelected(), is( false ) );
 		assertThat( rectangle1.getLayoutX(), equalTo( 100.0 ) );
 		assertThat( rectangle1.getLayoutY(), equalTo( 20.0 ) );
+		assertThat( rectangle2.getLayoutX(), equalTo( 200.0 ) );
+		assertThat( rectangle2.getLayoutY(), equalTo( 120.0 ) );
+	}
+
+	@Test
+	public void movingUnselectedNode_shouldNot_moveAlongAllSelectedNodes() throws Throwable
+	{
+		final Node rectangle1 = selectable1.getNode();
+		final Node rectangle2 = selectable2.getNode();
+
+		controller.click( rectangle1 );
+		assertThat( selectable1.isSelected(), is( true ) );
+		assertThat( selectable2.isSelected(), is( false ) );
+
+		MouseMotion motion = controller.drag( rectangle2 ).by( 100, 20 );
+		assertThat( selectable1.isSelected(), is( false ) );
+		assertThat( selectable2.isSelected(), is( true ) );
+
+		motion.drop();
+		assertThat( selectable1.isSelected(), is( false ) );
+		assertThat( selectable2.isSelected(), is( true ) );
+		assertThat( rectangle1.getLayoutX(), equalTo( 0.0 ) );
+		assertThat( rectangle1.getLayoutY(), equalTo( 0.0 ) );
 		assertThat( rectangle2.getLayoutX(), equalTo( 200.0 ) );
 		assertThat( rectangle2.getLayoutY(), equalTo( 120.0 ) );
 	}

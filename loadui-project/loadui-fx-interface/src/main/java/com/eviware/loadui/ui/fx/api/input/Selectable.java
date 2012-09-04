@@ -32,13 +32,15 @@ public class Selectable
 {
 	protected static final Logger log = LoggerFactory.getLogger( Selectable.class );
 	private static final String SELECTABLE_PROP_KEY = Selectable.class.getName();
-	private static final ClickToSelectHandler CLICK_TO_SELECT_HANDLER = new ClickToSelectHandler();
+	private static final PressToSelectHandler PRESS_TO_SELECT_HANDLER = new PressToSelectHandler();
 	private static final ClickToDeselectHandler CLICK_TO_DESELECT_HANDLER = new ClickToDeselectHandler();
-	private static final Set<Selectable> SELECTED_NODES = Collections
+	private static final Set<Selectable> CURRENTLY_SELECTED = Collections
 			.newSetFromMap( new WeakHashMap<Selectable, Boolean>() );
 	@Nonnull
-	private static SelectionRectangle selectionRectangle = new SelectionRectangle();
-	private static final Collection<Node> selectableNodes = new HashSet<>();
+	private static SelectionRectangle SELECTION_RECTANGLE = new SelectionRectangle();
+	private static final Collection<Node> SELECTABLE_NODES = Collections
+			.newSetFromMap( new WeakHashMap<Node, Boolean>() );
+	private static final HideSelectionRectangle HIDE_SELECTION_RECTANGLE = new HideSelectionRectangle();
 	private static boolean isDragging;
 
 	/**
@@ -50,9 +52,10 @@ public class Selectable
 	public static Selectable installSelectable( @Nonnull Node node )
 	{
 		Selectable selectable = new Selectable( node );
-		node.addEventHandler( MouseEvent.MOUSE_CLICKED, CLICK_TO_SELECT_HANDLER );
+		node.addEventHandler( MouseEvent.MOUSE_PRESSED, PRESS_TO_SELECT_HANDLER );
+		node.addEventHandler( MouseEvent.MOUSE_RELEASED, HIDE_SELECTION_RECTANGLE );
 		node.getProperties().put( SELECTABLE_PROP_KEY, selectable );
-		selectableNodes.add( node );
+		SELECTABLE_NODES.add( node );
 		return selectable;
 	}
 
@@ -90,14 +93,14 @@ public class Selectable
 
 	public void select()
 	{
-		SELECTED_NODES.add( this );
+		CURRENTLY_SELECTED.add( this );
 		setSelected( true );
 	}
 
 	public void deselect()
 	{
 		log.debug( "deselect" );
-		SELECTED_NODES.remove( this );
+		CURRENTLY_SELECTED.remove( this );
 		setSelected( false );
 	}
 
@@ -111,7 +114,7 @@ public class Selectable
 
 	public static ImmutableSet<Selectable> getSelected()
 	{
-		return ImmutableSet.copyOf( SELECTED_NODES );
+		return ImmutableSet.copyOf( CURRENTLY_SELECTED );
 	}
 
 	public static void installDragToSelectArea( @Nonnull final Region selectionArea )
@@ -124,8 +127,8 @@ public class Selectable
 				if( !event.isShortcutDown() )
 				{
 					isDragging = true;
-					selectionRectangle.setOwner( selectionArea );
-					selectionRectangle.startSelection( event );
+					SELECTION_RECTANGLE.setOwner( selectionArea );
+					SELECTION_RECTANGLE.startSelection( event );
 				}
 			}
 		} );
@@ -137,29 +140,13 @@ public class Selectable
 			{
 				if( isDragging )
 				{
-					selectionRectangle.updateSelection( event );
+					SELECTION_RECTANGLE.updateSelection( event );
 				}
 			}
 		} );
 
-		selectionArea.addEventHandler( MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle( MouseEvent event )
-			{
-				Platform.runLater( new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						selectionRectangle.hide();
-						isDragging = false;
-					}
-				} );
-			}
-		} );
-
-		selectionArea.addEventHandler( MouseEvent.MOUSE_CLICKED, CLICK_TO_DESELECT_HANDLER );
+		selectionArea.addEventHandler( MouseEvent.MOUSE_RELEASED, HIDE_SELECTION_RECTANGLE );
+		selectionArea.addEventHandler( MouseEvent.MOUSE_RELEASED, CLICK_TO_DESELECT_HANDLER );
 	}
 
 	private static void selectAll( Collection<Selectable> selectables )
@@ -170,8 +157,8 @@ public class Selectable
 
 	private static void deselectAll()
 	{
-		log.debug( "deselectAll" );
-		for( Iterator<Selectable> i = SELECTED_NODES.iterator(); i.hasNext(); )
+		System.out.println( "deselectAll" );
+		for( Iterator<Selectable> i = CURRENTLY_SELECTED.iterator(); i.hasNext(); )
 		{
 			Selectable s = i.next();
 			s.setSelected( false );
@@ -184,7 +171,25 @@ public class Selectable
 		return ( Selectable )source.getProperties().get( SELECTABLE_PROP_KEY );
 	}
 
-	private static class ClickToSelectHandler implements EventHandler<MouseEvent>
+	private static final class HideSelectionRectangle implements EventHandler<MouseEvent>
+	{
+		@Override
+		public void handle( MouseEvent event )
+		{
+			Platform.runLater( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					SELECTION_RECTANGLE.hide();
+					isDragging = false;
+				}
+			} );
+			event.consume();
+		}
+	}
+
+	private static class PressToSelectHandler implements EventHandler<MouseEvent>
 	{
 		@Override
 		public void handle( MouseEvent event )
@@ -194,12 +199,16 @@ public class Selectable
 
 			if( event.isShiftDown() )
 			{
-				if( SELECTED_NODES.contains( selectable ) )
+				if( CURRENTLY_SELECTED.contains( selectable ) )
 					selectable.deselect();
 				else
 					selectable.select();
 			}
-			else if( !isDragging )
+			else if( CURRENTLY_SELECTED.contains( selectable ) && CURRENTLY_SELECTED.size() > 1 )
+			{
+				System.out.println( "Waiting for multidrag..." );
+			}
+			else if( !isDragging && !event.isShortcutDown() )
 			{
 				deselectAll();
 				selectable.select();
@@ -213,12 +222,11 @@ public class Selectable
 		@Override
 		public void handle( MouseEvent event )
 		{
-			log.debug( "ClickToDeselectHandler 1" );
+			System.out.println( "ClickToDeselectHandler 1" );
 			if( !isDragging && !event.isShortcutDown() )
 			{
-				log.debug( "ClickToDeselectHandler 2" );
+				System.out.println( "ClickToDeselectHandler 2" );
 				deselectAll();
-				selectionRectangle.hide();
 				event.consume();
 			}
 		}
@@ -246,7 +254,7 @@ public class Selectable
 
 		void startSelection( MouseEvent e )
 		{
-			selectedAtSelectionStart = ImmutableList.copyOf( SELECTED_NODES );
+			selectedAtSelectionStart = ImmutableList.copyOf( CURRENTLY_SELECTED );
 			//			if( !e.isShiftDown() )
 			//				deselectAll();
 			this.startX = e.getScreenX();
@@ -270,7 +278,7 @@ public class Selectable
 
 			Rectangle2D selectionArea = new Rectangle2D( getX(), getY(), width, height );
 
-			for( Node node : selectableNodes )
+			for( Node node : SELECTABLE_NODES )
 			{
 				Scene scene = node.getScene();
 				if( scene.getWindow().isFocused() )
@@ -288,7 +296,6 @@ public class Selectable
 				}
 			}
 		}
-
 	}
 
 	public static boolean isSelectable( Node node )

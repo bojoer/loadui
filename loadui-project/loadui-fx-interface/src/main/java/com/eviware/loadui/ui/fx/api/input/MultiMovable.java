@@ -31,7 +31,7 @@ public class MultiMovable
 
 		final Movable movable = Movable.getMovable( node );
 
-		selectionArea.addEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, new EventHandler<DraggableEvent>()
+		node.addEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, new EventHandler<DraggableEvent>()
 		{
 			@Override
 			public void handle( DraggableEvent event )
@@ -54,7 +54,7 @@ public class MultiMovable
 			}
 		} );
 
-		selectionArea.addEventHandler( MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>()
+		node.addEventHandler( MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>()
 		{
 			@Override
 			public void handle( MouseEvent event )
