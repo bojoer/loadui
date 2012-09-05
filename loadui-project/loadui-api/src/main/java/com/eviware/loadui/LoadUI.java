@@ -20,7 +20,7 @@ public class LoadUI
 	/**
 	 * The main version number of loadUI.
 	 */
-	public static final String VERSION = "2.1.0-SNAPSHOT";
+	public static final String VERSION = "2.1.1";
 
 	/**
 	 * Internal version number used to determine controller/agent compatibility.
