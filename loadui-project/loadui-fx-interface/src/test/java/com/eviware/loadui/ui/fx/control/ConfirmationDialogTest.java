@@ -3,46 +3,37 @@ package com.eviware.loadui.ui.fx.control;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
-import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.GroupBuilder;
-import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.RectangleBuilder;
 import javafx.stage.Stage;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.test.categories.GUITest;
-import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.util.test.ControllerApi;
-import com.eviware.loadui.ui.fx.util.test.ControllerApi.MouseMotion;
 import com.eviware.loadui.ui.fx.util.test.FXScreenController;
 import com.eviware.loadui.ui.fx.util.test.FXTestUtils;
 import com.google.common.util.concurrent.SettableFuture;
 
 @Category( GUITest.class )
-public class DialogTest
+public class ConfirmationDialogTest
 {
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
 	private static Stage stage;
 	private static ControllerApi controller;
 	private static Dialog dialog;
 	private static Button openDialogButton;
-	private static final Logger log = LoggerFactory.getLogger( DialogTest.class );
+	protected static final Logger log = LoggerFactory.getLogger( ConfirmationDialogTest.class );
 
 	public static class DialogTestApp extends Application
 	{

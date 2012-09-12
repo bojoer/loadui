@@ -93,4 +93,5 @@ public class PropertyImpl<T> extends MutableValueImpl<T> implements Property<T>
 			config.setPropagates( false );
 		}
 	}
+
 }

@@ -29,7 +29,7 @@ public class MutableValueImpl<T> implements MutableValue<T>
 	{
 		this.conversionService = conversionService;
 		this.type = type;
-		this.value = type.isInstance( value ) ? type.cast( value ) : conversionService.convert( value, type );
+		setValue( value );
 	}
 
 	@Override

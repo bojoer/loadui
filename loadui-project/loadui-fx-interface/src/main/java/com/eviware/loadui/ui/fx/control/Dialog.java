@@ -28,8 +28,9 @@ public class Dialog extends Stage
 	private static final GaussianBlur BLUR = GaussianBlurBuilder.create().radius( 8 ).build();
 	private final Node owner;
 	private final Pane rootPane;
-	private static final Logger log = LoggerFactory.getLogger(Dialog.class);
-	private Window parentWindow;
+	private final Window parentWindow;
+
+	protected static final Logger log = LoggerFactory.getLogger( Dialog.class );
 
 	public Dialog( @Nonnull final Node owner, @Nonnull String title )
 	{
@@ -48,11 +49,11 @@ public class Dialog extends Stage
 		setTitle( title );
 
 		parentWindow = ownerScene.getWindow();
-		
+
 		// Set a good estimated position before the dialog is shown to avoid flickering. Might not be needed.
 		//		setX( getCenterXOfParentWindow() - getScene().getRoot().prefWidth( -1 ) / 2 );
 		//		setY( getCenterYOfParentWindow() - getScene().getRoot().prefHeight( -1 ) / 2 );
-		
+
 		//Forward unhandled IntentEvents to the parent window.
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<?>>()
 		{
