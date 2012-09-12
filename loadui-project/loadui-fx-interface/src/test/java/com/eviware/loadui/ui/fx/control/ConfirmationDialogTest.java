@@ -35,7 +35,7 @@ public class ConfirmationDialogTest
 	private static Button openDialogButton;
 	protected static final Logger log = LoggerFactory.getLogger( ConfirmationDialogTest.class );
 
-	public static class DialogTestApp extends Application
+	public static class ConfirmationDialogTestApp extends Application
 	{
 		@Override
 		public void start( Stage primaryStage ) throws Exception
@@ -66,7 +66,7 @@ public class ConfirmationDialogTest
 	public static void createWindow() throws Throwable
 	{
 		controller = ControllerApi.wrap( new FXScreenController() );
-		FXTestUtils.launchApp( DialogTestApp.class );
+		FXTestUtils.launchApp( ConfirmationDialogTestApp.class );
 		stage = stageFuture.get( 5, TimeUnit.SECONDS );
 		ControllerApi.targetWindow( stage );
 		FXTestUtils.bringToFront( stage );
