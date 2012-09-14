@@ -1,6 +1,5 @@
 package com.eviware.loadui.ui.fx.control;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,18 +16,20 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFieldBuilder;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
+
+import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.property.Property;
 
-// FIXME Composition instead?
 public class SettingsDialog extends ConfirmationDialog
 {
+	@Nonnull
 	private final TabPane tabPane = new TabPane();
+	@Nonnull
 	private final List<SettingsTab> tabs;
 	private final EventHandler<ActionEvent> onSaveHandler = new OnSaveHandler();
 
-	public SettingsDialog( Node owner, String title, List<SettingsTab> tabs )
+	public SettingsDialog( @Nonnull Node owner, @Nonnull String title, @Nonnull List<SettingsTab> tabs )
 	{
 		super( owner, title, "Save" );
 		this.tabs = tabs;
@@ -54,7 +55,7 @@ public class SettingsDialog extends ConfirmationDialog
 	{
 		private final SettingsTab tab;
 
-		public static SettingsTabBuilder create( String label )
+		public static SettingsTabBuilder create( @Nonnull String label )
 		{
 			return new SettingsTabBuilder( label );
 		}
@@ -64,18 +65,19 @@ public class SettingsDialog extends ConfirmationDialog
 			tab = new SettingsTab( label );
 		}
 
-		public SettingsTabBuilder stringField( String label, Property<String> property )
+		public SettingsTabBuilder stringField( @Nonnull String label, @Nonnull Property<String> property )
 		{
 			tab.addStringField( label, property );
 			return this;
 		}
 
-		public SettingsTabBuilder booleanField( String label, Property<Boolean> property )
+		public SettingsTabBuilder booleanField( @Nonnull String label, @Nonnull Property<Boolean> property )
 		{
 			tab.addBooleanField( label, property );
 			return this;
 		}
 
+		@Nonnull
 		public SettingsTab build()
 		{
 			return tab;
@@ -84,6 +86,7 @@ public class SettingsDialog extends ConfirmationDialog
 
 	public static class SettingsTab extends Tab
 	{
+		@Nonnull
 		private final Map<Node, Property<?>> fieldToProperty = new HashMap<>();
 		private final VBox vBox = new VBox( 12 );
 
@@ -111,9 +114,7 @@ public class SettingsDialog extends ConfirmationDialog
 
 		private static String toCssId( String label )
 		{
-			String s = label.toLowerCase().replace( " ", "-" );
-			System.out.println( s );
-			return s;
+			return label.toLowerCase().replace( " ", "-" );
 		}
 
 		private void save()
