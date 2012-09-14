@@ -1,7 +1,8 @@
 package com.eviware.loadui.ui.fx.control;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
@@ -10,7 +11,6 @@ import javafx.event.EventHandler;
 import javafx.scene.GroupBuilder;
 import javafx.scene.SceneBuilder;
 import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
@@ -40,8 +40,14 @@ public class SettingsDialogTest
 	private static ControllerApi controller;
 	private static SettingsDialog settingsDialog;
 	private static Button openDialogButton;
-	private static final Property<String> property = new TestingProperty<String>( String.class,
-			SettingsDialogTest.class.getSimpleName() + ".prop1", "Old value" );
+	private static final Property<String> stringProperty = new TestingProperty<>( String.class,
+			SettingsDialogTest.class.getSimpleName() + ".stringProperty", "Old value" );
+	private static final Property<Boolean> booleanProperty = new TestingProperty<>( Boolean.class,
+			SettingsDialogTest.class.getSimpleName() + ".booleanProperty", false );
+	private static final Property<Boolean> otherBooleanProperty = new TestingProperty<>( Boolean.class,
+			SettingsDialogTest.class.getSimpleName() + ".booleanProperty", true );
+	private static SettingsTab otherTab;
+	private static SettingsTab generalTab;
 
 	protected static final Logger log = LoggerFactory.getLogger( SettingsDialogTest.class );
 
@@ -62,10 +68,18 @@ public class SettingsDialogTest
 	}
 
 	@Test
-	public void addTab_oneStringPropertyGiven_propertySavedSucessfully() throws Exception
+	public void changedFieldsInAllTabs_should_updateProperties_onSave() throws Exception
 	{
-		controller.press( KeyCode.TAB ).type( "New value" ).press( KeyCode.ENTER );
-		assertEquals( property.getValue(), "New value" );
+		controller.click( "#my-string" ).press( KeyCode.CONTROL, KeyCode.A ).release( KeyCode.CONTROL, KeyCode.A );
+		Thread.sleep( 100 );
+		controller.type( "New value" ).click( "#my-boolean" );
+		generalTab.getTabPane().getSelectionModel().select( otherTab );
+		Thread.sleep( 100 );
+		controller.click( "#my-other-boolean" ).click( "#default" );
+
+		assertEquals( "New value", stringProperty.getValue() );
+		assertEquals( true, booleanProperty.getValue() );
+		assertEquals( false, otherBooleanProperty.getValue() );
 	}
 
 	public static class SettingsDialogTestApp extends Application
@@ -86,14 +100,17 @@ public class SettingsDialogTest
 			primaryStage.setScene( SceneBuilder.create().width( 800 ).height( 600 )
 					.root( GroupBuilder.create().children( openDialogButton ).build() ).build() );
 
-			SettingsTab generalTab = SettingsTabBuilder.create( "General" ).textField( "Foo", property ).build();
+			generalTab = SettingsTabBuilder.create( "General" ).stringField( "My string", stringProperty )
+					.booleanField( "My boolean", booleanProperty ).build();
 
-			settingsDialog = new SettingsDialog( openDialogButton, "Hej", Lists.newArrayList( generalTab ) );
+			otherTab = SettingsTabBuilder.create( "Other" ).booleanField( "My other boolean", otherBooleanProperty )
+					.build();
+
+			settingsDialog = new SettingsDialog( openDialogButton, "Hej", Lists.newArrayList( generalTab, otherTab ) );
 
 			primaryStage.show();
 
 			stageFuture.set( primaryStage );
 		}
-
 	}
 }

@@ -2,10 +2,12 @@ package com.eviware.loadui.ui.fx.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.convert.ConversionService;
 
 import com.eviware.loadui.api.model.PropertyHolder;
 import com.eviware.loadui.api.property.Property;
 import com.eviware.loadui.ui.fx.control.SettingsDialogTest;
+import com.eviware.loadui.util.BeanInjector;
 
 /**
  * A Property implementation designed for easy use of Properties in unit tests.
@@ -56,8 +58,8 @@ public class TestingProperty<T> implements Property<T>
 	@Override
 	public void setValue( Object value )
 	{
-		this.value = ( T )value.toString();
-		//		this.value = type.isInstance( value ) ? type.cast( value ) : conversionService.convert( value, type );
+		this.value = type.isInstance( value ) ? type.cast( value ) : BeanInjector.getBean( ConversionService.class )
+				.convert( value, type );
 	}
 
 	@Override

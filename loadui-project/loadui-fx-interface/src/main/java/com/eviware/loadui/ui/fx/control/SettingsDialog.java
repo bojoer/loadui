@@ -1,5 +1,6 @@
 package com.eviware.loadui.ui.fx.control;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,11 +9,15 @@ import java.util.Map.Entry;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckBoxBuilder;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.TextFieldBuilder;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
 import com.eviware.loadui.api.property.Property;
 
@@ -59,9 +64,15 @@ public class SettingsDialog extends ConfirmationDialog
 			tab = new SettingsTab( label );
 		}
 
-		public SettingsTabBuilder textField( String label, Property<String> property )
+		public SettingsTabBuilder stringField( String label, Property<String> property )
 		{
-			tab.addTextField( label, property );
+			tab.addStringField( label, property );
+			return this;
+		}
+
+		public SettingsTabBuilder booleanField( String label, Property<Boolean> property )
+		{
+			tab.addBooleanField( label, property );
 			return this;
 		}
 
@@ -74,30 +85,52 @@ public class SettingsDialog extends ConfirmationDialog
 	public static class SettingsTab extends Tab
 	{
 		private final Map<Node, Property<?>> fieldToProperty = new HashMap<>();
-		private final GridPane grid = new GridPane();
+		private final VBox vBox = new VBox( 12 );
 
 		private SettingsTab( String label )
 		{
 			super( label );
 			setClosable( false );
-			setContent( grid );
-			grid.setHgap( 10 );
-			grid.setVgap( 12 );
+			setContent( vBox );
 		}
 
-		private void addTextField( String label, Property<String> property )
+		private void addStringField( String label, Property<String> property )
 		{
-			grid.add( new Label( label + ":" ), 0, 0 );
-			TextField field = new TextField( property.getValue() );
-			grid.add( field, 1, 0 );
+			TextField field = TextFieldBuilder.create().id( toCssId( label ) ).text( property.getValue() ).build();
+			vBox.getChildren().addAll( new Label( label + ":" ), field );
 			fieldToProperty.put( field, property );
+		}
+
+		private void addBooleanField( String label, Property<Boolean> property )
+		{
+			CheckBox field = CheckBoxBuilder.create().id( toCssId( label ) ).text( label ).selected( property.getValue() )
+					.build();
+			vBox.getChildren().add( field );
+			fieldToProperty.put( field, property );
+		}
+
+		private static String toCssId( String label )
+		{
+			String s = label.toLowerCase().replace( " ", "-" );
+			System.out.println( s );
+			return s;
 		}
 
 		private void save()
 		{
 			for( Entry<Node, Property<?>> entry : fieldToProperty.entrySet() )
 			{
-				entry.getValue().setValue( ( ( TextField )entry.getKey() ).getText() );
+				Node field = entry.getKey();
+				if( field instanceof TextField )
+				{
+					TextField textField = ( TextField )field;
+					entry.getValue().setValue( textField.getText() );
+				}
+				if( field instanceof CheckBox )
+				{
+					CheckBox checkBox = ( CheckBox )field;
+					entry.getValue().setValue( checkBox.isSelected() );
+				}
 			}
 		}
 	}
