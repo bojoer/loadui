@@ -180,7 +180,6 @@ public class Movable implements Draggable
 					movable.startPoint = new Point2D( event.getSceneX(), event.getSceneY() );
 					movable.setDragging( true );
 				}
-				event.consume();
 			}
 		};
 

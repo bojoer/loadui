@@ -13,6 +13,10 @@ import javafx.scene.Node;
 import javafx.scene.SceneBuilder;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.PaneBuilder;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.StackPaneBuilder;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.RectangleBuilder;
@@ -36,6 +40,7 @@ public class MultiMovableTest
 	private static final SettableFuture<Stage> stageFuture = SettableFuture.create();
 	private static Selectable selectable1;
 	private static Selectable selectable2;
+	private static Selectable selectable3;
 	private static Stage stage;
 	private static ControllerApi controller;
 	private static Pane background;
@@ -54,19 +59,31 @@ public class MultiMovableTest
 			selectable2 = Selectable.installSelectable( rect2 );
 			Movable.install( rect2 );
 
+			StackPane stack = StackPaneBuilder.create().id( "stack" ).minHeight( 25 ).minWidth( 25 ).layoutY( 180 )
+					.build();
+			Rectangle rect3 = RectangleBuilder.create().width( 25 ).height( 25 ).fill( Color.DARKSLATEBLUE ).build();
+			VBox handle = VBoxBuilder.create().children( rect3 ).build();
+			stack.getChildren().add( handle );
+			selectable3 = Selectable.installSelectable( stack );
+			Movable.install( stack, handle );
+
 			rect1.fillProperty().bind(
 					Bindings.when( selectable1.selectedProperty() ).then( Color.GREEN ).otherwise( Color.GREY ) );
 
 			rect2.fillProperty().bind(
 					Bindings.when( selectable2.selectedProperty() ).then( Color.GREEN ).otherwise( Color.GREY ) );
 
-			background = PaneBuilder.create().children( rect2, rect1 ).build();
+			//			stack.fillProperty().bind(
+			//					Bindings.when( selectable2.selectedProperty() ).then( Color.GREEN ).otherwise( Color.GREY ) );
 
-			primaryStage.setScene( SceneBuilder.create().width( 300 ).height( 200 ).root( background ).build() );
+			background = PaneBuilder.create().children( stack, rect2, rect1 ).build();
+
+			primaryStage.setScene( SceneBuilder.create().width( 300 ).height( 300 ).root( background ).build() );
 
 			Selectable.installDragToSelectArea( background );
 			MultiMovable.install( background, rect1 );
 			MultiMovable.install( background, rect2 );
+			MultiMovable.install( background, stack );
 
 			primaryStage.show();
 
@@ -91,6 +108,7 @@ public class MultiMovableTest
 		final Node rectangle2 = selectable2.getNode();
 		selectable1.deselect();
 		selectable2.deselect();
+		selectable3.deselect();
 		rectangle1.setLayoutX( 0 );
 		rectangle1.setLayoutY( 0 );
 		rectangle2.setLayoutX( 100 );
@@ -142,6 +160,16 @@ public class MultiMovableTest
 		assertThat( rectangle1.getLayoutY(), equalTo( 0.0 ) );
 		assertThat( rectangle2.getLayoutX(), equalTo( 200.0 ) );
 		assertThat( rectangle2.getLayoutY(), equalTo( 120.0 ) );
+	}
+
+	@Test
+	public void clickingOnAMovablesHandle_should_selectThatNode() throws Throwable
+	{
+		final Node stack = selectable3.getNode();
+
+		controller.click( stack );
+		assertThat( selectable3.isSelected(), is( true ) );
+
 	}
 
 }

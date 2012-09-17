@@ -95,6 +95,7 @@ public class Selectable
 	{
 		CURRENTLY_SELECTED.add( this );
 		setSelected( true );
+		log.debug( "Was selected." );
 	}
 
 	public void deselect()
