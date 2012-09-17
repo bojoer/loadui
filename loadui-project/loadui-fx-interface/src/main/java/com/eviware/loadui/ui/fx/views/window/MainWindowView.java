@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
@@ -18,10 +19,12 @@ import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.model.WorkspaceProvider;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.about.AboutDialog;
 import com.eviware.loadui.ui.fx.views.project.ProjectView;
+import com.eviware.loadui.ui.fx.views.project.SaveProjectDialog;
 import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
 import com.eviware.loadui.ui.fx.views.workspace.GlobalSettingsDialog;
 import com.eviware.loadui.ui.fx.views.workspace.SystemPropertiesDialog;
@@ -128,18 +131,18 @@ public class MainWindowView extends StackPane
 				{
 					if( event.getArg() instanceof ProjectItem )
 					{
-						ProjectItem project = ( ProjectItem )event.getArg();
+						final ProjectItem project = ( ProjectItem )event.getArg();
 						if( project.isDirty() )
 						{
-							// Ask if we should save, if yes save otherwise discard
-							//TODO: Implement confirm dialog
-							project.save();
-							System.out.println( "Project saved transparently after close!" );
+							SaveProjectDialog saveDialog = new SaveProjectDialog( MainWindowView.this, project );
+							saveDialog.show();
 						}
-						project.release();
+						else
+						{
+							showWorkspace();
+							project.release();
+						}
 						//TODO: Need to have the ProjectRef close the project.
-						container.getChildren().setAll(
-								new WorkspaceView( MainWindowView.this.workspaceProvider.getWorkspace() ) );
 					}
 					else
 					{
@@ -166,8 +169,13 @@ public class MainWindowView extends StackPane
 				event.consume();
 			}
 		} );
-		container.getChildren().setAll( new WorkspaceView( workspaceProvider.getWorkspace() ) );
+		showWorkspace();
 
+	}
+
+	public void showWorkspace()
+	{
+		container.getChildren().setAll( new WorkspaceView( workspaceProvider.getWorkspace() ) );
 	}
 
 	public void settings()
