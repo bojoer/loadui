@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.model.ProjectItem;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.input.Movable;
 import com.eviware.loadui.ui.fx.api.input.MultiMovable;
@@ -50,6 +52,7 @@ import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.ObservableLists;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
@@ -70,7 +73,6 @@ public class CanvasView extends StackPane
 			componentView.setLayoutY( Integer.parseInt( input.getAttribute( "gui.layoutY", "0" ) ) );
 
 			final Node handle = componentView.lookup( "#base" );
-			log.debug( "handle: " + handle );
 			final Movable movable = Movable.install( componentView, handle );
 			movable.draggingProperty().addListener( new ChangeListener<Boolean>()
 			{
@@ -104,6 +106,49 @@ public class CanvasView extends StackPane
 		}
 	};
 
+	private final Function<SceneItem, ScenarioView> SCENARIO_TO_VIEW = new Function<SceneItem, ScenarioView>()
+	{
+		@Override
+		public ScenarioView apply( final SceneItem input )
+		{
+			final ScenarioView scenarioView = new ScenarioView( input );
+			scenarioView.setLayoutX( Integer.parseInt( input.getAttribute( "gui.layoutX", "0" ) ) );
+			scenarioView.setLayoutY( Integer.parseInt( input.getAttribute( "gui.layoutY", "0" ) ) );
+
+			final Node handle = scenarioView.lookup( "#base" );
+			final Movable movable = Movable.install( scenarioView, handle );
+			movable.draggingProperty().addListener( new ChangeListener<Boolean>()
+			{
+				@Override
+				public void changed( ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue )
+				{
+					if( !newValue )
+					{
+						input.setAttribute( "gui.layoutX", String.valueOf( ( int )scenarioView.getLayoutX() ) );
+						input.setAttribute( "gui.layoutY", String.valueOf( ( int )scenarioView.getLayoutY() ) );
+						enforceCanvasBounds();
+					}
+				}
+			} );
+			Selectable selectable = Selectable.installSelectable( scenarioView );
+			scenarioView.effectProperty().bind(
+					Bindings.when( selectable.selectedProperty() ).then( selectedEffect ).otherwise( ( Effect )null ) );
+
+			MultiMovable.install( CanvasView.this, scenarioView );
+
+			Platform.runLater( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					enforceCanvasBounds();
+				}
+			} );
+
+			return scenarioView;
+		}
+	};
+
 	private static final Function<ComponentDescriptor, ComponentDescriptorView> DESCRIPTOR_TO_VIEW = new Function<ComponentDescriptor, ComponentDescriptorView>()
 	{
 		@Override
@@ -127,16 +172,19 @@ public class CanvasView extends StackPane
 	};
 
 	private final CanvasItem canvas;
-	private final ObservableList<ComponentView> components;
+	private final ObservableList<CanvasObjectView> components;
 
 	private final Group componentLayer = new Group();
 
 	public CanvasView( CanvasItem canvas )
 	{
 		this.canvas = canvas;
-		this.components = transform(
+		ObservableList<ComponentView> components = transform(
 				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
 				COMPONENT_TO_VIEW );
+
+		ObservableList<ScenarioView> scenarios = transform(
+				fx( ofCollection( canvas, ProjectItem.SCENES, SceneItem.class, canvas.getChildren() ) ), SCENARIO_TO_VIEW );
 
 		FXMLUtils.load( this );
 	}
