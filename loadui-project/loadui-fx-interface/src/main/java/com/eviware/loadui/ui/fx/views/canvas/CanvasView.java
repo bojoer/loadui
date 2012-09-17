@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -172,19 +173,20 @@ public class CanvasView extends StackPane
 	};
 
 	private final CanvasItem canvas;
-	private final ObservableList<CanvasObjectView> components;
+	private final ObservableList<ComponentView> components;
+	private final ObservableList<ScenarioView> scenarios;
 
 	private final Group componentLayer = new Group();
 
 	public CanvasView( CanvasItem canvas )
 	{
 		this.canvas = canvas;
-		ObservableList<ComponentView> components = transform(
+		components = transform(
 				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
 				COMPONENT_TO_VIEW );
 
-		ObservableList<ScenarioView> scenarios = transform(
-				fx( ofCollection( canvas, ProjectItem.SCENES, SceneItem.class, canvas.getChildren() ) ), SCENARIO_TO_VIEW );
+		scenarios = transform( fx( ofCollection( canvas, ProjectItem.SCENES, SceneItem.class, canvas.getChildren() ) ),
+				SCENARIO_TO_VIEW );
 
 		FXMLUtils.load( this );
 	}
@@ -194,7 +196,7 @@ public class CanvasView extends StackPane
 	{
 		Selectable.installDragToSelectArea( this );
 
-		bindContentUnordered( componentLayer.getChildren(), components );
+		bindContentUnordered( componentLayer.getChildren(), components, scenarios );
 
 		ToolBox<ComponentDescriptorView> descriptors = new ToolBox<>( "Components" );
 		descriptors.setMaxWidth( 100 );

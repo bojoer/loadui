@@ -200,19 +200,24 @@ public class ObservableLists
 	 * @param list2
 	 */
 	@SuppressWarnings( "unchecked" )
-	public static <E> void bindContentUnordered( List<E> list1, ObservableList<? extends E> list2 )
+	public static <E> void bindContentUnordered( List<E> list1, ObservableList<? extends E>... lists2 )
 	{
 		if( list1 instanceof ObservableList )
 		{
-			( ( ObservableList<E> )list1 ).setAll( list2 );
+			//			( ( ObservableList<E> )list1 ).setAll( list2 );
+			( ( ObservableList<E> )list1 ).clear();
+			for( ObservableList<? extends E> l : lists2 )
+				( ( ObservableList<E> )list1 ).addAll( l );
 		}
 		else
 		{
 			list1.clear();
-			list1.addAll( list2 );
+			for( ObservableList<? extends E> l : lists2 )
+				list1.addAll( l );
 		}
 
-		list2.addListener( ( ListChangeListener<? super E> )contentListeners.getUnchecked( list1 ) );
+		for( ObservableList<? extends E> l : lists2 )
+			l.addListener( ( ListChangeListener<? super E> )contentListeners.getUnchecked( list1 ) );
 	}
 
 	public static <E> void bindSorted( final List<E> list1, ObservableList<? extends E> list2,
