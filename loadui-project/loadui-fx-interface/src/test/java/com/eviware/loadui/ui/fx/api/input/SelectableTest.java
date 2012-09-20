@@ -46,11 +46,14 @@ public class SelectableTest
 		public void start( Stage primaryStage ) throws Exception
 		{
 			Rectangle rect1 = RectangleBuilder.create().id( "rect1" ).width( 25 ).height( 25 ).fill( Color.BLUE ).build();
-			selectable1 = Selectable.installSelectable( rect1 );
 
 			Rectangle rect2 = RectangleBuilder.create().id( "rect2" ).width( 50 ).height( 50 ).layoutX( 100 )
 					.layoutY( 100 ).build();
-			selectable2 = Selectable.installSelectable( rect2 );
+
+			background = PaneBuilder.create().children( rect2, rect1 ).build();
+
+			selectable1 = Selectable.install( background, rect1 );
+			selectable2 = Selectable.install( background, rect2 );
 
 			rect1.fillProperty().bind(
 					Bindings.when( selectable1.selectedProperty() ).then( Color.GREEN ).otherwise( Color.GREY ) );
@@ -58,11 +61,7 @@ public class SelectableTest
 			rect2.fillProperty().bind(
 					Bindings.when( selectable2.selectedProperty() ).then( Color.GREEN ).otherwise( Color.GREY ) );
 
-			background = PaneBuilder.create().children( rect2, rect1 ).build();
-
 			primaryStage.setScene( SceneBuilder.create().width( 300 ).height( 200 ).root( background ).build() );
-
-			Selectable.installDragToSelectArea( background );
 
 			primaryStage.show();
 

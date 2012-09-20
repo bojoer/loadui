@@ -27,6 +27,8 @@ import javafx.stage.Stage;
 import com.eviware.loadui.ui.fx.control.Carousel;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
 import com.eviware.loadui.ui.fx.control.Dialog;
+import com.eviware.loadui.ui.fx.views.canvas.PlaybackPanel;
+import com.eviware.loadui.ui.fx.views.canvas.ScenarioPlaybackPanel;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -37,7 +39,9 @@ public class StyleTester extends Application
 		Carousel<Rectangle> carousel = new Carousel<>( "Hello world" );
 		carousel.getItems().setAll( new Rectangle( 50, 50, Color.RED ), new Rectangle( 50, 50, Color.BLUE ),
 				new Rectangle( 50, 50, Color.YELLOW ) );
-		return carousel;
+		//		return carousel;
+
+		return new ScenarioPlaybackPanel();
 	}
 
 	@Override
@@ -90,7 +94,7 @@ public class StyleTester extends Application
 
 		primaryStage.setScene( SceneBuilder
 				.create()
-				.width( 640 )
+				.width( 1200 )
 				.height( 480 )
 				.root(
 						SplitPaneBuilder
@@ -120,8 +124,8 @@ public class StyleTester extends Application
 
 		primaryStage.show();
 
-				final Dialog dialog = new ConfirmationDialog( panel, "sdad", "2d" );
-				dialog.show();
+		//		final Dialog dialog = new ConfirmationDialog( panel, "sdad", "2d" );
+		//		dialog.show();
 	}
 
 	public static void main( String[] args )

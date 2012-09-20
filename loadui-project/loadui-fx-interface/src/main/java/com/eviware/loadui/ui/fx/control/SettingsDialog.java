@@ -20,6 +20,7 @@ import javafx.scene.layout.VBox;
 import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.property.Property;
+import com.google.common.base.Objects;
 
 public class SettingsDialog extends ConfirmationDialog
 {
@@ -47,7 +48,7 @@ public class SettingsDialog extends ConfirmationDialog
 			{
 				tab.save();
 			}
-
+			close();
 		}
 	}
 
@@ -65,15 +66,15 @@ public class SettingsDialog extends ConfirmationDialog
 			tab = new SettingsTab( label );
 		}
 
-		public SettingsTabBuilder stringField( @Nonnull String label, @Nonnull Property<String> property )
+		@SuppressWarnings( "unchecked" )
+		public SettingsTabBuilder field( @Nonnull String label, @Nonnull Property<?> property )
 		{
-			tab.addStringField( label, property );
-			return this;
-		}
-
-		public SettingsTabBuilder booleanField( @Nonnull String label, @Nonnull Property<Boolean> property )
-		{
-			tab.addBooleanField( label, property );
+			if( property.getType().equals( String.class ) )
+				tab.addStringField( label, ( Property<String> )property );
+			else if( property.getType().equals( Long.class ) )
+				tab.addLongField( label, ( Property<Long> )property );
+			else if( property.getType().equals( Boolean.class ) )
+				tab.addBooleanField( label, ( Property<Boolean> )property );
 			return this;
 		}
 
@@ -87,7 +88,9 @@ public class SettingsDialog extends ConfirmationDialog
 	public static class SettingsTab extends Tab
 	{
 		@Nonnull
-		private final Map<Node, Property<?>> fieldToProperty = new HashMap<>();
+		private final Map<TextField, Property<String>> textFieldToStringProperty = new HashMap<>();
+		private final Map<TextField, Property<Long>> textFieldToLongProperty = new HashMap<>();
+		private final Map<CheckBox, Property<Boolean>> checkBoxToProperty = new HashMap<>();
 		private final VBox vBox = new VBox( 12 );
 
 		private SettingsTab( String label )
@@ -101,7 +104,15 @@ public class SettingsDialog extends ConfirmationDialog
 		{
 			TextField field = TextFieldBuilder.create().id( toCssId( label ) ).text( property.getValue() ).build();
 			vBox.getChildren().addAll( new Label( label + ":" ), field );
-			fieldToProperty.put( field, property );
+			textFieldToStringProperty.put( field, property );
+		}
+
+		private void addLongField( String label, Property<Long> property )
+		{
+			TextField field = TextFieldBuilder.create().id( toCssId( label ) )
+					.text( Objects.firstNonNull( property.getValue(), "" ).toString() ).build();
+			vBox.getChildren().addAll( new Label( label + ":" ), field );
+			textFieldToLongProperty.put( field, property );
 		}
 
 		private void addBooleanField( String label, Property<Boolean> property )
@@ -109,7 +120,7 @@ public class SettingsDialog extends ConfirmationDialog
 			CheckBox field = CheckBoxBuilder.create().id( toCssId( label ) ).text( label ).selected( property.getValue() )
 					.build();
 			vBox.getChildren().add( field );
-			fieldToProperty.put( field, property );
+			checkBoxToProperty.put( field, property );
 		}
 
 		private static String toCssId( String label )
@@ -119,19 +130,23 @@ public class SettingsDialog extends ConfirmationDialog
 
 		private void save()
 		{
-			for( Entry<Node, Property<?>> entry : fieldToProperty.entrySet() )
+			for( Entry<TextField, Property<String>> entry : textFieldToStringProperty.entrySet() )
 			{
-				Node field = entry.getKey();
-				if( field instanceof TextField )
-				{
-					TextField textField = ( TextField )field;
-					entry.getValue().setValue( textField.getText() );
-				}
-				if( field instanceof CheckBox )
-				{
-					CheckBox checkBox = ( CheckBox )field;
-					entry.getValue().setValue( checkBox.isSelected() );
-				}
+				TextField textField = entry.getKey();
+				entry.getValue().setValue( textField.getText() );
+			}
+			for( Entry<TextField, Property<Long>> entry : textFieldToLongProperty.entrySet() )
+			{
+				TextField textField = entry.getKey();
+				Long newValue = null;
+				if( !textField.getText().isEmpty() )
+					newValue = Long.parseLong( textField.getText() );
+				entry.getValue().setValue( newValue );
+			}
+			for( Entry<CheckBox, Property<Boolean>> entry : checkBoxToProperty.entrySet() )
+			{
+				CheckBox checkBox = entry.getKey();
+				entry.getValue().setValue( checkBox.isSelected() );
 			}
 		}
 	}

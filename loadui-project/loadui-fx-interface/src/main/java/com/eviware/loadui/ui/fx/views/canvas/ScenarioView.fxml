@@ -1,3 +1,7 @@
+<?import com.eviware.loadui.ui.fx.views.canvas.ScenarioPlaybackPanel?>
+
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
@@ -9,7 +13,7 @@
 <?import java.net.URL?>
 
 <fx:root type="javafx.scene.layout.StackPane" xmlns:fx="http://javafx.com/fxml"
-	styleClass="canvas-object-view" minWidth="200" minHeight="160">
+	styleClass="canvas-object-view" minWidth="250" minHeight="180">
 	<stylesheets>
 		<URL value="@CanvasObjectView.css" />
 	</stylesheets>
@@ -26,8 +30,18 @@
 				<right>
 					<Button onAction="#delete">X</Button>
 				</right>
+				<bottom>
+					<MenuButton fx:id="menuButton" text="Menu">
+						<items>
+							<MenuItem fx:id="open" id="open" text="Open" onAction="#open" />
+							<MenuItem fx:id="rename" id="rename" text="Rename" onAction="#rename" />
+							<MenuItem fx:id="settings" id="settings" text="Settings" onAction="#settings" />
+						</items>
+					</MenuButton>
+				</bottom>
 			</BorderPane>
-			<Region style="-fx-background-color: purple;" VBox.vgrow="ALWAYS" />
+			<ScenarioPlaybackPanel fx:id="playbackPanel" />
+			<Region style="-fx-background-color: pink;" VBox.vgrow="ALWAYS" />
 			<HBox fx:id="outputTerminalPane">
 				<VBox.margin>
 					<Insets bottom="-14" />

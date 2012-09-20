@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.eviware.loadui.ui.fx.control.DetachableTab?>
+<?import com.eviware.loadui.ui.fx.views.canvas.PlaybackPanel?>
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -34,6 +35,7 @@
 				</children>
 			</StackPane>
 		</VBox>
+		<PlaybackPanel fx:id="playbackPanel" StackPane.alignment="TOP_CENTER" />
 		<HBox maxWidth="300" maxHeight="60" alignment="CENTER_LEFT" StackPane.alignment="TOP_LEFT">
 			<MenuButton fx:id="menuButton">
 				<HBox.margin>

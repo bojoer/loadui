@@ -2,7 +2,6 @@ package com.eviware.loadui.ui.fx.control;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
@@ -44,8 +43,8 @@ public class SettingsDialogTest
 			SettingsDialogTest.class.getSimpleName() + ".stringProperty", "Old value" );
 	private static final Property<Boolean> booleanProperty = new TestingProperty<>( Boolean.class,
 			SettingsDialogTest.class.getSimpleName() + ".booleanProperty", false );
-	private static final Property<Boolean> otherBooleanProperty = new TestingProperty<>( Boolean.class,
-			SettingsDialogTest.class.getSimpleName() + ".booleanProperty", true );
+	private static final Property<Long> longProperty = new TestingProperty<>( Long.class,
+			SettingsDialogTest.class.getSimpleName() + ".longProperty", 123L );
 	private static SettingsTab otherTab;
 	private static SettingsTab generalTab;
 
@@ -75,11 +74,13 @@ public class SettingsDialogTest
 		controller.type( "New value" ).click( "#my-boolean" );
 		generalTab.getTabPane().getSelectionModel().select( otherTab );
 		Thread.sleep( 100 );
-		controller.click( "#my-other-boolean" ).click( "#default" );
+		controller.click( "#my-long" ).press( KeyCode.CONTROL, KeyCode.A ).release( KeyCode.CONTROL, KeyCode.A );
+		Thread.sleep( 100 );
+		controller.type( "4711" ).click( "#default" );
 
 		assertEquals( "New value", stringProperty.getValue() );
 		assertEquals( true, booleanProperty.getValue() );
-		assertEquals( false, otherBooleanProperty.getValue() );
+		assertEquals( new Long( 4711 ), longProperty.getValue() );
 	}
 
 	public static class SettingsDialogTestApp extends Application
@@ -100,11 +101,10 @@ public class SettingsDialogTest
 			primaryStage.setScene( SceneBuilder.create().width( 800 ).height( 600 )
 					.root( GroupBuilder.create().children( openDialogButton ).build() ).build() );
 
-			generalTab = SettingsTabBuilder.create( "General" ).stringField( "My string", stringProperty )
-					.booleanField( "My boolean", booleanProperty ).build();
+			generalTab = SettingsTabBuilder.create( "General" ).field( "My string", stringProperty )
+					.field( "My boolean", booleanProperty ).build();
 
-			otherTab = SettingsTabBuilder.create( "Other" ).booleanField( "My other boolean", otherBooleanProperty )
-					.build();
+			otherTab = SettingsTabBuilder.create( "Other" ).field( "My long", longProperty ).build();
 
 			settingsDialog = new SettingsDialog( openDialogButton, "Hej", Lists.newArrayList( generalTab, otherTab ) );
 

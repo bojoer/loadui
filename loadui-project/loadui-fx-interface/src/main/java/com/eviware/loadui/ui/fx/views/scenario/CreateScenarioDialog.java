@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.ProjectRef;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
 
@@ -43,10 +44,13 @@ public class CreateScenarioDialog extends ConfirmationDialog
 	//TODO: Create the scenario and return a ref...?
 	public class CreateScenarioTask extends Task<Void>
 	{
-
 		@Override
 		protected Void call() throws Exception
 		{
+			SceneItem scenario = projectRef.getProject().createScene( scenarioNameField.getText() );
+			scenario.setAttribute( "gui.layoutX", "200" );
+			scenario.setAttribute( "gui.layoutY", "200" );
+
 			log.debug( "About to create scenario: " + scenarioNameField.getText() );
 			return Void.TYPE.newInstance();
 		}

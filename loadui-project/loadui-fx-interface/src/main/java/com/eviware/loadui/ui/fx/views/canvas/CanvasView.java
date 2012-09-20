@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -42,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.model.CanvasItem;
+import com.eviware.loadui.api.model.CanvasObjectItem;
 import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.SceneItem;
@@ -57,96 +59,14 @@ import com.google.common.base.Predicate;
 
 public class CanvasView extends StackPane
 {
+
 	protected static final Logger log = LoggerFactory.getLogger( CanvasView.class );
 	private final Effect selectedEffect = new Glow( 0.5 );
 	private static final int GRID_SIZE = 36;
 	private static final double PADDING = 100;
-
-	private final Function<ComponentItem, ComponentView> COMPONENT_TO_VIEW = new Function<ComponentItem, ComponentView>()
-	{
-		@Override
-		public ComponentView apply( final ComponentItem input )
-		{
-			final ComponentView componentView = new ComponentView( input );
-			componentView.setLayoutX( Integer.parseInt( input.getAttribute( "gui.layoutX", "0" ) ) );
-			componentView.setLayoutY( Integer.parseInt( input.getAttribute( "gui.layoutY", "0" ) ) );
-
-			final Node handle = componentView.lookup( "#base" );
-			final Movable movable = Movable.install( componentView, handle );
-			movable.draggingProperty().addListener( new ChangeListener<Boolean>()
-			{
-				@Override
-				public void changed( ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue )
-				{
-					if( !newValue )
-					{
-						input.setAttribute( "gui.layoutX", String.valueOf( ( int )componentView.getLayoutX() ) );
-						input.setAttribute( "gui.layoutY", String.valueOf( ( int )componentView.getLayoutY() ) );
-						enforceCanvasBounds();
-					}
-				}
-			} );
-			Selectable selectable = Selectable.installSelectable( componentView );
-			componentView.effectProperty().bind(
-					Bindings.when( selectable.selectedProperty() ).then( selectedEffect ).otherwise( ( Effect )null ) );
-
-			MultiMovable.install( CanvasView.this, componentView );
-
-			Platform.runLater( new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					enforceCanvasBounds();
-				}
-			} );
-
-			return componentView;
-		}
-	};
-
-	private final Function<SceneItem, ScenarioView> SCENARIO_TO_VIEW = new Function<SceneItem, ScenarioView>()
-	{
-		@Override
-		public ScenarioView apply( final SceneItem input )
-		{
-			final ScenarioView scenarioView = new ScenarioView( input );
-			scenarioView.setLayoutX( Integer.parseInt( input.getAttribute( "gui.layoutX", "0" ) ) );
-			scenarioView.setLayoutY( Integer.parseInt( input.getAttribute( "gui.layoutY", "0" ) ) );
-
-			final Node handle = scenarioView.lookup( "#base" );
-			final Movable movable = Movable.install( scenarioView, handle );
-			movable.draggingProperty().addListener( new ChangeListener<Boolean>()
-			{
-				@Override
-				public void changed( ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue )
-				{
-					if( !newValue )
-					{
-						input.setAttribute( "gui.layoutX", String.valueOf( ( int )scenarioView.getLayoutX() ) );
-						input.setAttribute( "gui.layoutY", String.valueOf( ( int )scenarioView.getLayoutY() ) );
-						enforceCanvasBounds();
-					}
-				}
-			} );
-			Selectable selectable = Selectable.installSelectable( scenarioView );
-			scenarioView.effectProperty().bind(
-					Bindings.when( selectable.selectedProperty() ).then( selectedEffect ).otherwise( ( Effect )null ) );
-
-			MultiMovable.install( CanvasView.this, scenarioView );
-
-			Platform.runLater( new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					enforceCanvasBounds();
-				}
-			} );
-
-			return scenarioView;
-		}
-	};
+	private final UninstallCanvasObjectView uninstallCanvasObject = new UninstallCanvasObjectView();
+	private final Function<ComponentItem, ComponentView> COMPONENT_TO_VIEW = new CanvasObjectToView<>();
+	private final Function<SceneItem, ScenarioView> SCENARIO_TO_VIEW = new CanvasObjectToView<>();
 
 	private static final Function<ComponentDescriptor, ComponentDescriptorView> DESCRIPTOR_TO_VIEW = new Function<ComponentDescriptor, ComponentDescriptorView>()
 	{
@@ -186,14 +106,15 @@ public class CanvasView extends StackPane
 		scenarios = transform( fx( ofCollection( canvas, ProjectItem.SCENES, SceneItem.class, canvas.getChildren() ) ),
 				SCENARIO_TO_VIEW );
 
+		components.addListener( uninstallCanvasObject );
+		scenarios.addListener( uninstallCanvasObject );
+
 		FXMLUtils.load( this );
 	}
 
 	@FXML
 	private void initialize()
 	{
-		Selectable.installDragToSelectArea( this );
-
 		bindContentUnordered( componentLayer.getChildren(), components, scenarios );
 
 		ToolBox<ComponentDescriptorView> descriptors = new ToolBox<>( "Components" );
@@ -268,6 +189,7 @@ public class CanvasView extends StackPane
 
 		getChildren().addAll( createGrid(), componentWrapper, zoomSlider, descriptors );
 
+		Selectable.install( this );
 		initScrolling();
 	}
 
@@ -415,4 +337,68 @@ public class CanvasView extends StackPane
 	{
 		return canvas;
 	}
+
+	private final class UninstallCanvasObjectView implements ListChangeListener<CanvasObjectView>
+	{
+		@Override
+		public void onChanged( ListChangeListener.Change<? extends CanvasObjectView> change )
+		{
+			while( change.next() )
+			{
+				if( change.wasRemoved() )
+				{
+					for( CanvasObjectView component : change.getRemoved() )
+					{
+						Movable.uninstall( component );
+						Selectable.uninstall( CanvasView.this, component );
+						MultiMovable.uninstall( CanvasView.this, component );
+					}
+				}
+			}
+		}
+	}
+
+	private final class CanvasObjectToView<F extends CanvasObjectItem, T extends CanvasObjectView> implements
+			Function<F, T>
+	{
+		@SuppressWarnings( "unchecked" )
+		@Override
+		public T apply( final F item )
+		{
+			final T view = CanvasObjectView.newInstanceUnchecked( ( Class<T> )item.getClass(), item );
+			view.setLayoutX( Integer.parseInt( item.getAttribute( "gui.layoutX", "0" ) ) );
+			view.setLayoutY( Integer.parseInt( item.getAttribute( "gui.layoutY", "0" ) ) );
+
+			final Node handle = view.lookup( "#base" );
+			final Movable movable = Movable.install( view, handle );
+			movable.draggingProperty().addListener( new ChangeListener<Boolean>()
+			{
+				@Override
+				public void changed( ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue )
+				{
+					if( !newValue )
+					{
+						item.setAttribute( "gui.layoutX", String.valueOf( ( int )view.getLayoutX() ) );
+						item.setAttribute( "gui.layoutY", String.valueOf( ( int )view.getLayoutY() ) );
+						enforceCanvasBounds();
+					}
+				}
+			} );
+			Selectable selectable = Selectable.install( CanvasView.this, view );
+			view.effectProperty().bind(
+					Bindings.when( selectable.selectedProperty() ).then( selectedEffect ).otherwise( ( Effect )null ) );
+
+			MultiMovable.install( CanvasView.this, view );
+
+			Platform.runLater( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					enforceCanvasBounds();
+				}
+			} );
+			return view;
+		}
+	};
 }

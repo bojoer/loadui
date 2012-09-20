@@ -51,12 +51,10 @@ public class MultiMovableTest
 		public void start( Stage primaryStage ) throws Exception
 		{
 			Rectangle rect1 = RectangleBuilder.create().id( "rect1" ).width( 25 ).height( 25 ).fill( Color.BLUE ).build();
-			selectable1 = Selectable.installSelectable( rect1 );
 			Movable.install( rect1 );
 
 			Rectangle rect2 = RectangleBuilder.create().id( "rect2" ).width( 50 ).height( 50 ).layoutX( 100 )
 					.layoutY( 100 ).build();
-			selectable2 = Selectable.installSelectable( rect2 );
 			Movable.install( rect2 );
 
 			StackPane stack = StackPaneBuilder.create().id( "stack" ).minHeight( 25 ).minWidth( 25 ).layoutY( 180 )
@@ -64,8 +62,13 @@ public class MultiMovableTest
 			Rectangle rect3 = RectangleBuilder.create().width( 25 ).height( 25 ).fill( Color.DARKSLATEBLUE ).build();
 			VBox handle = VBoxBuilder.create().children( rect3 ).build();
 			stack.getChildren().add( handle );
-			selectable3 = Selectable.installSelectable( stack );
 			Movable.install( stack, handle );
+
+			background = PaneBuilder.create().children( stack, rect2, rect1 ).build();
+
+			selectable1 = Selectable.install( background, rect1 );
+			selectable2 = Selectable.install( background, rect2 );
+			selectable3 = Selectable.install( background, stack );
 
 			rect1.fillProperty().bind(
 					Bindings.when( selectable1.selectedProperty() ).then( Color.GREEN ).otherwise( Color.GREY ) );
@@ -73,14 +76,8 @@ public class MultiMovableTest
 			rect2.fillProperty().bind(
 					Bindings.when( selectable2.selectedProperty() ).then( Color.GREEN ).otherwise( Color.GREY ) );
 
-			//			stack.fillProperty().bind(
-			//					Bindings.when( selectable2.selectedProperty() ).then( Color.GREEN ).otherwise( Color.GREY ) );
-
-			background = PaneBuilder.create().children( stack, rect2, rect1 ).build();
-
 			primaryStage.setScene( SceneBuilder.create().width( 300 ).height( 300 ).root( background ).build() );
 
-			Selectable.installDragToSelectArea( background );
 			MultiMovable.install( background, rect1 );
 			MultiMovable.install( background, rect2 );
 			MultiMovable.install( background, stack );

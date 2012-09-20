@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.eviware.loadui.api.model.ProjectItem;
 import com.eviware.loadui.api.model.ProjectRef;
+import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.api.model.WorkspaceItem;
 import com.eviware.loadui.api.traits.Labeled;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
@@ -20,6 +21,8 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
+import com.eviware.loadui.ui.fx.views.canvas.PlaybackPanel;
+import com.eviware.loadui.ui.fx.views.canvas.ScenarioView;
 import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
 import com.eviware.loadui.ui.fx.views.scenario.CreateScenarioDialog;
 import com.eviware.loadui.ui.fx.views.statistics.StatisticsView;
@@ -45,6 +48,9 @@ public class ProjectView extends StackPane
 	@FXML
 	private MenuButton menuButton;
 
+	@FXML
+	private PlaybackPanel playbackPanel;
+
 	private final ProjectItem project;
 
 	public ProjectView( ProjectItem projectIn )
@@ -60,6 +66,7 @@ public class ProjectView extends StackPane
 		menuButton.textProperty().bind( Properties.forLabel( project ) );
 		designTab.setDetachableContent( new CanvasView( project ) );
 		resultTab.setDetachableContent( new StatisticsView( project ) );
+		playbackPanel.setCanvas( project );
 
 		addEventHandler( IntentEvent.ANY, new EventHandler<IntentEvent<? extends Object>>()
 		{
@@ -91,7 +98,6 @@ public class ProjectView extends StackPane
 				{
 					if( event.getArg() instanceof ProjectItem )
 					{
-						ProjectItem project = ( ProjectItem )event.getArg();
 						project.save();
 					}
 					else
@@ -105,6 +111,14 @@ public class ProjectView extends StackPane
 					final Object arg = event.getArg();
 					Preconditions.checkArgument( arg instanceof Labeled.Mutable );
 					new RenameDialog( ( Labeled.Mutable )arg, ProjectView.this ).show();
+					event.consume();
+				}
+				else if( event.getEventType() == IntentEvent.INTENT_OPEN )
+				{
+					final Object arg = event.getArg();
+					Preconditions.checkArgument( arg instanceof SceneItem );
+					SceneItem scenario = ( SceneItem )arg;
+					designTab.setDetachableContent( new CanvasView( scenario ) );
 					event.consume();
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLONE )
@@ -158,9 +172,6 @@ public class ProjectView extends StackPane
 	public void saveProjectAndClose()
 	{
 		log.info( "Saving and closing project requested" );
-		//save
-		// sleep 5000
-		// close
 		fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, new SaveAndCloseTask() ) );
 	}
 
