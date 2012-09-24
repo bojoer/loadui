@@ -43,6 +43,9 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.component.ComponentDescriptor;
 import com.eviware.loadui.api.model.CanvasItem;
 import com.eviware.loadui.api.model.ComponentItem;
+import com.eviware.loadui.api.terminal.Connection;
+import com.eviware.loadui.api.terminal.InputTerminal;
+import com.eviware.loadui.api.terminal.OutputTerminal;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.input.Movable;
 import com.eviware.loadui.ui.fx.api.input.MultiMovable;
@@ -50,8 +53,10 @@ import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.views.canvas.terminal.ConnectionView;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 public class CanvasView extends StackPane
 {
@@ -104,6 +109,36 @@ public class CanvasView extends StackPane
 		}
 	};
 
+	private final Function<Connection, ConnectionView> CONNECTION_TO_VIEW = new Function<Connection, ConnectionView>()
+	{
+		@Override
+		public ConnectionView apply( Connection connection )
+		{
+			final OutputTerminal outputTerminal = connection.getOutputTerminal();
+			ComponentView outputComponentView = Iterables.find( components, new Predicate<ComponentView>()
+			{
+				@Override
+				public boolean apply( ComponentView input )
+				{
+					return input.getCanvasObject().equals( outputTerminal.getTerminalHolder() );
+				}
+			} );
+
+			final InputTerminal inputTerminal = connection.getInputTerminal();
+			ComponentView inputComponentView = Iterables.find( components, new Predicate<ComponentView>()
+			{
+				@Override
+				public boolean apply( ComponentView input )
+				{
+					return input.getCanvasObject().equals( inputTerminal.getTerminalHolder() );
+				}
+			} );
+
+			System.out.println( "Creating ConnectionView for: " + connection );
+			return new ConnectionView( connection, outputComponentView, inputComponentView );
+		}
+	};
+
 	private static final Function<ComponentDescriptor, ComponentDescriptorView> DESCRIPTOR_TO_VIEW = new Function<ComponentDescriptor, ComponentDescriptorView>()
 	{
 		@Override
@@ -128,8 +163,11 @@ public class CanvasView extends StackPane
 
 	private final CanvasItem canvas;
 	private final ObservableList<ComponentView> components;
+	private final ObservableList<ConnectionView> connections;
 
+	private final Group canvasLayer = new Group();
 	private final Group componentLayer = new Group();
+	private final Group connectionLayer = new Group();
 
 	public CanvasView( CanvasItem canvas )
 	{
@@ -137,6 +175,9 @@ public class CanvasView extends StackPane
 		this.components = transform(
 				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
 				COMPONENT_TO_VIEW );
+		this.connections = transform(
+				fx( ofCollection( canvas, CanvasItem.CONNECTIONS, Connection.class, canvas.getConnections() ) ),
+				CONNECTION_TO_VIEW );
 
 		FXMLUtils.load( this );
 	}
@@ -147,6 +188,7 @@ public class CanvasView extends StackPane
 		Selectable.installDragToSelectArea( this );
 
 		bindContentUnordered( componentLayer.getChildren(), components );
+		bindContentUnordered( connectionLayer.getChildren(), connections );
 
 		ToolBox<ComponentDescriptorView> descriptors = new ToolBox<>( "Components" );
 		descriptors.setMaxWidth( 100 );
@@ -161,7 +203,8 @@ public class CanvasView extends StackPane
 		clipRect.widthProperty().bind( componentWrapper.widthProperty() );
 		clipRect.heightProperty().bind( componentWrapper.heightProperty() );
 		componentWrapper.setClip( clipRect );
-		componentWrapper.getChildren().add( componentLayer );
+		canvasLayer.getChildren().addAll( connectionLayer, componentLayer );
+		componentWrapper.getChildren().add( canvasLayer );
 
 		componentWrapper.addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
 		{
@@ -187,7 +230,7 @@ public class CanvasView extends StackPane
 
 							ComponentItem component = CanvasView.this.canvas.createComponent( descriptor.getLabel(),
 									descriptor );
-							Point2D position = componentLayer.sceneToLocal( event.getSceneX(), event.getSceneY() );
+							Point2D position = canvasLayer.sceneToLocal( event.getSceneX(), event.getSceneY() );
 							component.setAttribute( "gui.layoutX", String.valueOf( ( int )position.getX() ) );
 							component.setAttribute( "gui.layoutY", String.valueOf( ( int )position.getY() ) );
 
@@ -212,8 +255,8 @@ public class CanvasView extends StackPane
 		} );
 
 		Slider zoomSlider = SliderBuilder.create().min( 0.1 ).max( 1.0 ).value( 1.0 ).maxWidth( 100 ).build();
-		componentLayer.scaleXProperty().bind( zoomSlider.valueProperty() );
-		componentLayer.scaleYProperty().bind( zoomSlider.valueProperty() );
+		canvasLayer.scaleXProperty().bind( zoomSlider.valueProperty() );
+		canvasLayer.scaleYProperty().bind( zoomSlider.valueProperty() );
 		StackPane.setAlignment( zoomSlider, Pos.BOTTOM_RIGHT );
 
 		setAlignment( Pos.TOP_LEFT );
@@ -231,17 +274,17 @@ public class CanvasView extends StackPane
 			@Override
 			public Double call() throws Exception
 			{
-				return componentLayer.getLayoutX() % GRID_SIZE;
+				return canvasLayer.getLayoutX() % GRID_SIZE;
 			}
-		}, componentLayer.layoutXProperty() ) );
+		}, canvasLayer.layoutXProperty() ) );
 		gridRegion.translateYProperty().bind( Bindings.createDoubleBinding( new Callable<Double>()
 		{
 			@Override
 			public Double call() throws Exception
 			{
-				return componentLayer.getLayoutY() % GRID_SIZE;
+				return canvasLayer.getLayoutY() % GRID_SIZE;
 			}
-		}, componentLayer.layoutYProperty() ) );
+		}, canvasLayer.layoutYProperty() ) );
 
 		return StackPaneBuilder.create().padding( new Insets( -GRID_SIZE ) ).children( gridRegion ).build();
 	}
@@ -260,8 +303,8 @@ public class CanvasView extends StackPane
 				if( event.isShortcutDown() )
 				{
 					dragging = true;
-					startX = componentLayer.getLayoutX() - event.getX();
-					startY = componentLayer.getLayoutY() - event.getY();
+					startX = canvasLayer.getLayoutX() - event.getX();
+					startY = canvasLayer.getLayoutY() - event.getY();
 				}
 			}
 		} );
@@ -272,8 +315,8 @@ public class CanvasView extends StackPane
 			{
 				if( event.isShortcutDown() && dragging )
 				{
-					componentLayer.setLayoutX( startX + event.getX() );
-					componentLayer.setLayoutY( startY + event.getY() );
+					canvasLayer.setLayoutX( startX + event.getX() );
+					canvasLayer.setLayoutY( startY + event.getY() );
 					enforceCanvasBounds();
 				}
 			}
@@ -293,8 +336,8 @@ public class CanvasView extends StackPane
 			@Override
 			public void handle( ScrollEvent event )
 			{
-				componentLayer.setLayoutX( componentLayer.getLayoutX() + event.getDeltaX() );
-				componentLayer.setLayoutY( componentLayer.getLayoutY() + event.getDeltaY() );
+				canvasLayer.setLayoutX( canvasLayer.getLayoutX() + event.getDeltaX() );
+				canvasLayer.setLayoutY( canvasLayer.getLayoutY() + event.getDeltaY() );
 				enforceCanvasBounds();
 			}
 		} );
@@ -302,7 +345,7 @@ public class CanvasView extends StackPane
 
 	private void enforceCanvasBounds()
 	{
-		Bounds bounds = componentLayer.getBoundsInLocal();
+		Bounds bounds = canvasLayer.getBoundsInLocal();
 		if( bounds.getWidth() == -1 )
 		{
 			return;
@@ -313,29 +356,29 @@ public class CanvasView extends StackPane
 		double minY = -bounds.getMinY() + PADDING;
 		double maxY = getHeight() - bounds.getMaxY() - PADDING;
 
-		double layoutX = componentLayer.getLayoutX();
-		double layoutY = componentLayer.getLayoutY();
+		double layoutX = canvasLayer.getLayoutX();
+		double layoutY = canvasLayer.getLayoutY();
 
 		if( minX > maxX )
 		{
 			if( layoutX > minX )
 			{
-				componentLayer.setLayoutX( minX );
+				canvasLayer.setLayoutX( minX );
 			}
 			else if( layoutX < maxX )
 			{
-				componentLayer.setLayoutX( maxX );
+				canvasLayer.setLayoutX( maxX );
 			}
 		}
 		else
 		{
 			if( layoutX < minX )
 			{
-				componentLayer.setLayoutX( minX );
+				canvasLayer.setLayoutX( minX );
 			}
 			else if( layoutX > maxX )
 			{
-				componentLayer.setLayoutX( maxX );
+				canvasLayer.setLayoutX( maxX );
 			}
 		}
 
@@ -343,22 +386,22 @@ public class CanvasView extends StackPane
 		{
 			if( layoutY > minY )
 			{
-				componentLayer.setLayoutY( minY );
+				canvasLayer.setLayoutY( minY );
 			}
 			else if( layoutY < maxY )
 			{
-				componentLayer.setLayoutY( maxY );
+				canvasLayer.setLayoutY( maxY );
 			}
 		}
 		else
 		{
 			if( layoutY < minY )
 			{
-				componentLayer.setLayoutY( minY );
+				canvasLayer.setLayoutY( minY );
 			}
 			else if( layoutY > maxY )
 			{
-				componentLayer.setLayoutY( maxY );
+				canvasLayer.setLayoutY( maxY );
 			}
 		}
 	}

@@ -7,7 +7,6 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -29,10 +28,10 @@ import com.google.common.collect.Iterables;
 
 public class CanvasObjectView extends StackPane
 {
-	private static final Function<InputTerminal, Node> INPUT_TERMINAL_TO_VIEW = new Function<InputTerminal, Node>()
+	private static final Function<InputTerminal, InputTerminalView> INPUT_TERMINAL_TO_VIEW = new Function<InputTerminal, InputTerminalView>()
 	{
 		@Override
-		public Node apply( final InputTerminal terminal )
+		public InputTerminalView apply( final InputTerminal terminal )
 		{
 			InputTerminalView terminalView = new InputTerminalView( terminal );
 			HBox.setHgrow( terminalView, Priority.ALWAYS );
@@ -41,10 +40,10 @@ public class CanvasObjectView extends StackPane
 		}
 	};
 
-	private static final Function<OutputTerminal, Node> OUTPUT_TERMINAL_TO_VIEW = new Function<OutputTerminal, Node>()
+	private static final Function<OutputTerminal, OutputTerminalView> OUTPUT_TERMINAL_TO_VIEW = new Function<OutputTerminal, OutputTerminalView>()
 	{
 		@Override
-		public Node apply( final OutputTerminal terminal )
+		public OutputTerminalView apply( final OutputTerminal terminal )
 		{
 			OutputTerminalView terminalView = new OutputTerminalView( terminal );
 			HBox.setHgrow( terminalView, Priority.ALWAYS );
@@ -54,8 +53,8 @@ public class CanvasObjectView extends StackPane
 	};
 
 	private final CanvasObjectItem canvasObject;
-	private final ObservableList<Node> inputTerminals;
-	private final ObservableList<Node> outputTerminals;
+	private final ObservableList<InputTerminalView> inputTerminals;
+	private final ObservableList<OutputTerminalView> outputTerminals;
 
 	@FXML
 	protected Label canvasObjectLabel;
@@ -125,5 +124,15 @@ public class CanvasObjectView extends StackPane
 	public CanvasObjectItem getCanvasObject()
 	{
 		return canvasObject;
+	}
+
+	public ObservableList<OutputTerminalView> getOutputTerminalViews()
+	{
+		return outputTerminals;
+	}
+
+	public ObservableList<InputTerminalView> getInputTerminalViews()
+	{
+		return inputTerminals;
 	}
 }
