@@ -4,7 +4,9 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.layout.Region;
-import javafx.scene.shape.Line;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.CubicCurve;
+import javafx.scene.shape.CubicCurveBuilder;
 
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
@@ -19,7 +21,8 @@ public class ConnectionView extends Region
 	private final Connection connection;
 	private final OutputTerminalView outputTerminalView;
 	private final InputTerminalView inputTerminalView;
-	private final Line wire = new Line();
+	private final CubicCurve wire = CubicCurveBuilder.create().fill( Color.TRANSPARENT ).stroke( Color.LIGHTGRAY )
+			.strokeWidth( 8 ).build();
 
 	public ConnectionView( Connection connection, CanvasObjectView outputComponentView,
 			CanvasObjectView inputComponentView )
@@ -78,11 +81,20 @@ public class ConnectionView extends Region
 		Bounds startBounds = sceneToLocal( outputTerminalView.localToScene( outputTerminalView.getBoundsInLocal() ) );
 		Bounds endBounds = sceneToLocal( inputTerminalView.localToScene( inputTerminalView.getBoundsInLocal() ) );
 
-		System.out.println( "Draw wire from: " + startBounds + ", to: " + endBounds );
-		wire.setStartX( ( startBounds.getMaxX() + startBounds.getMinX() ) / 2 );
-		wire.setStartY( ( startBounds.getMaxY() + startBounds.getMinY() ) / 2 );
-		wire.setEndX( ( endBounds.getMaxX() + endBounds.getMinX() ) / 2 );
-		wire.setEndY( ( endBounds.getMaxY() + endBounds.getMinY() ) / 2 );
+		double startX = ( startBounds.getMaxX() + startBounds.getMinX() ) / 2;
+		double startY = ( startBounds.getMaxY() + startBounds.getMinY() ) / 2;
+		double endX = ( endBounds.getMaxX() + endBounds.getMinX() ) / 2;
+		double endY = ( endBounds.getMaxY() + endBounds.getMinY() ) / 2;
+		double control = Math.min( Math.sqrt( Math.pow( startX - endX, 2 ) + Math.pow( startY - endY, 2 ) ), 200 );
+
+		wire.setStartX( startX );
+		wire.setStartY( startY );
+		wire.setControlX1( startX );
+		wire.setControlY1( startY + control );
+		wire.setControlX2( endX );
+		wire.setControlY2( endY - control );
+		wire.setEndX( endX );
+		wire.setEndY( endY );
 	}
 
 	public Connection getConnection()
