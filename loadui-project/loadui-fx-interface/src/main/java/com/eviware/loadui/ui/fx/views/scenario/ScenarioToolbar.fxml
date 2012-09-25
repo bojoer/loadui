@@ -16,19 +16,19 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ToolBar?>
 
-<fx:root type="javafx.scene.layout.StackPane" styleClass="scenario-toolbar" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="javafx.scene.layout.StackPane" minHeight="60" maxHeight="60" styleClass="scenario-toolbar" xmlns:fx="http://javafx.com/fxml">
 	<stylesheets>
 		<URL value="@ScenarioToolbar.css" />
 	</stylesheets>
-	<StackPane VBox.vgrow="always" minHeight="90" maxHeight="90" style="-fx-background-color: red;" />
+	<StackPane minHeight="60" maxHeight="60" style="-fx-background-color: red;" />
 	
-	<!-- <StackPane VBox.vgrow="always" minHeight="90" maxHeight="90">
+	<StackPane VBox.vgrow="always" minHeight="60" maxHeight="60">
 		<VBox fillWidth="true">
 			<ToolBar minHeight="60" />
 			<StackPane VBox.vgrow="always" />
 		</VBox>
 		<ScenarioPlaybackPanel fx:id="playbackPanel" StackPane.alignment="TOP_CENTER" />
-		<HBox maxWidth="300" minHeight="90" alignment="CENTER_LEFT" StackPane.alignment="TOP_LEFT">
+		<HBox maxWidth="300" minHeight="60" alignment="CENTER_LEFT" StackPane.alignment="TOP_LEFT">
 			<MenuButton fx:id="menuButton">
 				<HBox.margin>
 					<Insets left="80" />
@@ -39,12 +39,12 @@
 				</items>
 			</MenuButton>
 		</HBox>
-		<HBox maxWidth="200" minHeight="90" alignment="CENTER_RIGHT" StackPane.alignment="TOP_RIGHT">
+		<HBox maxWidth="200" minHeight="60" alignment="CENTER_RIGHT" StackPane.alignment="TOP_RIGHT">
 			<Button fx:id="settingsButton" text="Settings" onAction="#openSettings" />
 			<Button fx:id="openHelpPageButton" text="Help" onAction="#openHelpPage" />
 			<Button fx:id="close" text="Close" onAction="#closeScenario" />
 		</HBox>
 	</StackPane>
-	-->
+	
 	
 </fx:root>

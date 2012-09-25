@@ -4,9 +4,11 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.MenuButton;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.StackPaneBuilder;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 
@@ -123,9 +125,11 @@ public class ProjectView extends StackPane
 					Preconditions.checkArgument( arg instanceof SceneItem );
 					SceneItem scenario = ( SceneItem )arg;
 					ScenarioToolbar toolbar = new ScenarioToolbar( scenario );
+					toolbar.setAlignment( Pos.TOP_CENTER );
+					StackPane.setAlignment( toolbar, Pos.TOP_CENTER );
 					CanvasView canvas = new CanvasView( scenario );
-					designTab.setDetachableContent( VBoxBuilder.create().children( toolbar, canvas ).build() );
-					VBox.setVgrow( canvas, Priority.ALWAYS );
+					StackPane pane = StackPaneBuilder.create().children( canvas, toolbar ).build();
+					designTab.setDetachableContent( pane );
 					event.consume();
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLOSE && event.getArg() instanceof SceneItem )

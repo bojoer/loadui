@@ -1,6 +1,7 @@
 package com.eviware.loadui.ui.fx.views.scenario;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.MenuButton;
 import javafx.scene.layout.StackPane;
 
 import org.slf4j.Logger;
@@ -9,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import com.eviware.loadui.api.model.SceneItem;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
+import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
+import com.eviware.loadui.ui.fx.views.canvas.ScenarioPlaybackPanel;
 import com.eviware.loadui.ui.fx.views.canvas.ScenarioView;
 
 public class ScenarioToolbar extends StackPane
@@ -18,11 +21,11 @@ public class ScenarioToolbar extends StackPane
 
 	private final SceneItem scenario;
 
-	//	@FXML
-	//	private MenuButton menuButton;
-	//
-	//	@FXML
-	//	private ScenarioPlaybackPanel playbackPanel;
+	@FXML
+	private MenuButton menuButton;
+
+	@FXML
+	private ScenarioPlaybackPanel playbackPanel;
 
 	public ScenarioToolbar( SceneItem scenario )
 	{
@@ -33,8 +36,8 @@ public class ScenarioToolbar extends StackPane
 	@FXML
 	private void initialize()
 	{
-		//		menuButton.textProperty().bind( Properties.forLabel( scenario ) );
-		//		playbackPanel.setCanvas( scenario );
+		menuButton.textProperty().bind( Properties.forLabel( scenario ) );
+		playbackPanel.setCanvas( scenario );
 	}
 
 	@FXML
