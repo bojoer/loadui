@@ -29,6 +29,7 @@ public class ConnectionView extends Wire implements Deletable
 	private final Connection connection;
 	private final OutputTerminalView outputTerminalView;
 	private final InputTerminalView inputTerminalView;
+	private final ReadOnlyBooleanProperty selectedProperty;
 
 	public ConnectionView( final Connection connection, final CanvasObjectView outputComponentView,
 			final CanvasObjectView inputComponentView )
@@ -70,7 +71,7 @@ public class ConnectionView extends Wire implements Deletable
 		outputComponentView.addEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, eventHandler );
 		inputComponentView.addEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, eventHandler );
 
-		final ReadOnlyBooleanProperty selectedProperty = Selectable.installSelectable( this ).selectedProperty();
+		selectedProperty = Selectable.installSelectable( this ).selectedProperty();
 		fillProperty().bind( Bindings.when( selectedProperty ).then( Color.BLUE ).otherwise( Color.LIGHTGRAY ) );
 		effectProperty().bind( Bindings.when( selectedProperty ).then( SELECTED_EFFECT ).otherwise( ( Effect )null ) );
 		selectedProperty.addListener( new ChangeListener<Boolean>()
@@ -128,6 +129,26 @@ public class ConnectionView extends Wire implements Deletable
 	public Connection getConnection()
 	{
 		return connection;
+	}
+
+	public OutputTerminalView getOutputTerminalView()
+	{
+		return outputTerminalView;
+	}
+
+	public InputTerminalView getInputTerminalView()
+	{
+		return inputTerminalView;
+	}
+
+	public ReadOnlyBooleanProperty selectedProperty()
+	{
+		return selectedProperty;
+	}
+
+	public boolean isSelected()
+	{
+		return selectedProperty.get();
 	}
 
 	@Override
