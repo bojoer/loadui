@@ -1,4 +1,4 @@
-<?import com.eviware.loadui.ui.fx.views.canvas.ScenarioPlaybackPanel?>
+<?import com.eviware.loadui.ui.fx.views.canvas.MiniScenarioPlaybackPanel?>
 
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
@@ -40,7 +40,7 @@
 					</MenuButton>
 				</bottom>
 			</BorderPane>
-			<ScenarioPlaybackPanel fx:id="playbackPanel" />
+			<MiniScenarioPlaybackPanel fx:id="playbackPanel" />
 			<Region style="-fx-background-color: pink;" VBox.vgrow="ALWAYS" />
 			<HBox fx:id="outputTerminalPane">
 				<VBox.margin>

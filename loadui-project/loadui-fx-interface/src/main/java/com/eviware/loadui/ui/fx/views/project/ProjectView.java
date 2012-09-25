@@ -5,7 +5,10 @@ import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.VBoxBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +24,11 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.util.Properties;
 import com.eviware.loadui.ui.fx.util.UIUtils;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasView;
-import com.eviware.loadui.ui.fx.views.canvas.PlaybackPanel;
-import com.eviware.loadui.ui.fx.views.canvas.ScenarioView;
+import com.eviware.loadui.ui.fx.views.canvas.ProjectPlaybackPanel;
+import com.eviware.loadui.ui.fx.views.canvas.ScenarioPlaybackPanel;
 import com.eviware.loadui.ui.fx.views.rename.RenameDialog;
 import com.eviware.loadui.ui.fx.views.scenario.CreateScenarioDialog;
+import com.eviware.loadui.ui.fx.views.scenario.ScenarioToolbar;
 import com.eviware.loadui.ui.fx.views.statistics.StatisticsView;
 import com.eviware.loadui.ui.fx.views.workspace.CloneProjectDialog;
 import com.eviware.loadui.ui.fx.views.workspace.CreateNewProjectDialog;
@@ -49,7 +53,7 @@ public class ProjectView extends StackPane
 	private MenuButton menuButton;
 
 	@FXML
-	private PlaybackPanel playbackPanel;
+	private ProjectPlaybackPanel playbackPanel;
 
 	private final ProjectItem project;
 
@@ -118,7 +122,15 @@ public class ProjectView extends StackPane
 					final Object arg = event.getArg();
 					Preconditions.checkArgument( arg instanceof SceneItem );
 					SceneItem scenario = ( SceneItem )arg;
-					designTab.setDetachableContent( new CanvasView( scenario ) );
+					ScenarioToolbar toolbar = new ScenarioToolbar( scenario );
+					CanvasView canvas = new CanvasView( scenario );
+					designTab.setDetachableContent( VBoxBuilder.create().children( toolbar, canvas ).build() );
+					VBox.setVgrow( canvas, Priority.ALWAYS );
+					event.consume();
+				}
+				else if( event.getEventType() == IntentEvent.INTENT_CLOSE && event.getArg() instanceof SceneItem )
+				{
+					designTab.setDetachableContent( new CanvasView( project ) );
 					event.consume();
 				}
 				else if( event.getEventType() == IntentEvent.INTENT_CLONE )

@@ -27,8 +27,8 @@ import javafx.stage.Stage;
 import com.eviware.loadui.ui.fx.control.Carousel;
 import com.eviware.loadui.ui.fx.control.ConfirmationDialog;
 import com.eviware.loadui.ui.fx.control.Dialog;
-import com.eviware.loadui.ui.fx.views.canvas.PlaybackPanel;
 import com.eviware.loadui.ui.fx.views.canvas.ScenarioPlaybackPanel;
+import com.eviware.loadui.ui.fx.views.canvas.MiniScenarioPlaybackPanel;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -41,7 +41,7 @@ public class StyleTester extends Application
 				new Rectangle( 50, 50, Color.YELLOW ) );
 		//		return carousel;
 
-		return new ScenarioPlaybackPanel();
+		return new MiniScenarioPlaybackPanel();
 	}
 
 	@Override

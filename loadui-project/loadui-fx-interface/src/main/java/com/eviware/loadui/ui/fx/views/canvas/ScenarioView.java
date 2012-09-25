@@ -8,8 +8,10 @@ import com.eviware.loadui.ui.fx.util.FXMLUtils;
 
 public class ScenarioView extends CanvasObjectView
 {
+	public static final String HELP_PAGE = "http://loadui.org/Working-with-loadUI/scenarios.html";
+
 	@FXML
-	private ScenarioPlaybackPanel playbackPanel;
+	private MiniScenarioPlaybackPanel playbackPanel;
 
 	public ScenarioView( SceneItem scenario )
 	{

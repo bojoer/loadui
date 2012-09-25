@@ -1,59 +1,53 @@
 package com.eviware.loadui.ui.fx.views.canvas;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBuilder;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.Separator;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.HBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
-import javafx.util.Duration;
-
-import javax.annotation.Nonnull;
 
 import com.eviware.loadui.api.counter.CounterHolder;
-import com.eviware.loadui.api.model.CanvasItem;
 
-public class ScenarioPlaybackPanel extends HBox
+public class ScenarioPlaybackPanel extends MiniScenarioPlaybackPanel
 {
-	protected CanvasItem canvas;
-
-	protected final ChangeListener<Boolean> playCanvas = new ChangeListener<Boolean>()
+	private final EventHandler<ActionEvent> resetCounters = new EventHandler<ActionEvent>()
 	{
 		@Override
-		public void changed( ObservableValue<? extends Boolean> observable, Boolean wasSelected, Boolean isSelected )
+		public void handle( ActionEvent e )
 		{
-			if( isSelected )
-			{
-				canvas.triggerAction( CounterHolder.COUNTER_RESET_ACTION );
-				canvas.triggerAction( CanvasItem.START_ACTION );
-			}
-			else
-			{
-				canvas.triggerAction( CanvasItem.STOP_ACTION );
-			}
+			canvas.triggerAction( CounterHolder.COUNTER_RESET_ACTION );
 		}
 	};
 
-	protected final ScenarioCounterDisplay time;
+	public final EventHandler<ActionEvent> openLimitsDialog = new EventHandler<ActionEvent>()
+	{
+		@Override
+		public void handle( ActionEvent e )
+		{
+			LimitsDialog.instanceOf( ScenarioPlaybackPanel.this ).show();
+		}
+	};
 
-	protected final ScenarioCounterDisplay requests;
+	protected final CounterDisplay time;
 
-	protected final ScenarioCounterDisplay failures;
+	protected final CounterDisplay requests;
+
+	protected final CounterDisplay failures;
 
 	public ScenarioPlaybackPanel()
 	{
 		setStyle( "-fx-spacing: 8; -fx-background-color: #8b8c8f; -fx-background-radius: 7;" );
 		setMaxHeight( 28 );
-		setMaxWidth( 245 );
+		setMaxWidth( 550 );
 		setAlignment( Pos.CENTER );
 
 		ToggleButton playButton = new ToggleButton();
@@ -64,32 +58,24 @@ public class ScenarioPlaybackPanel extends HBox
 				Bindings.when( playButton.selectedProperty() ).then( "\u25FC" ).otherwise( "\u25B6" ) );
 		StackPane playStack = StackPaneBuilder.create().children( playSpinner, playButton ).build();
 
-		time = new ScenarioCounterDisplay( "Time" );
-		requests = new ScenarioCounterDisplay( "Requests" );
-		failures = new ScenarioCounterDisplay( "Failures" );
+		ComboBox<ImageView> distibutionMode = new ComboBox<>( FXCollections.observableArrayList(
+				image( "mode-local.png" ), image( "mode-distributed.png" ) ) );
+		distibutionMode.getSelectionModel().selectFirst();
 
-		getChildren().setAll( playStack, separator(), time, separator(), requests, separator(), failures );
+		time = new CounterDisplay( "Time" );
+		requests = new CounterDisplay( "Requests" );
+		failures = new CounterDisplay( "Failures" );
+
+		Button resetButton = ButtonBuilder.create().text( "Reset" ).style( "-fx-font-size: 10px;" )
+				.onAction( resetCounters ).build();
+		Button limitsButton = ButtonBuilder.create().text( "Limits\u2026" ).style( "-fx-font-size: 10px;" )
+				.onAction( openLimitsDialog ).build();
+		getChildren().setAll( playStack, distibutionMode, separator(), time, separator(), requests, separator(),
+				failures, separator(), resetButton, limitsButton );
 	}
 
-	public void setCanvas( @Nonnull final CanvasItem canvas )
+	private ImageView image( String name )
 	{
-		this.canvas = canvas;
-		Timeline updateDisplays = new Timeline( new KeyFrame( Duration.millis( 500 ), new EventHandler<ActionEvent>()
-		{
-			@Override
-			public void handle( ActionEvent event )
-			{
-				time.setValue( canvas.getCounter( CanvasItem.TIMER_COUNTER ).get() );
-				requests.setValue( canvas.getCounter( CanvasItem.REQUEST_COUNTER ).get() );
-				failures.setValue( canvas.getCounter( CanvasItem.FAILURE_COUNTER ).get() );
-			}
-		} ) );
-		updateDisplays.setCycleCount( Timeline.INDEFINITE );
-		updateDisplays.play();
-	}
-
-	protected static Separator separator()
-	{
-		return new Separator( Orientation.VERTICAL );
+		return new ImageView( new Image( getClass().getResourceAsStream( name ) ) );
 	}
 }
