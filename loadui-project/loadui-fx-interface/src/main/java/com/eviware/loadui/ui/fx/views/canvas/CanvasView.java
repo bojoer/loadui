@@ -173,8 +173,6 @@ public class CanvasView extends StackPane
 	private final Group componentLayer = new Group();
 	private final Group connectionLayer = new Group();
 
-	private final Wire wire = new Wire();
-
 	public CanvasView( CanvasItem canvas )
 	{
 		this.canvas = canvas;
@@ -185,8 +183,6 @@ public class CanvasView extends StackPane
 		connections = transform(
 				fx( ofCollection( canvas, CanvasItem.CONNECTIONS, Connection.class, canvas.getConnections() ) ),
 				CONNECTION_TO_VIEW );
-		wire.setFill( Color.LIGHTGRAY );
-		wire.setVisible( false );
 
 		FXMLUtils.load( this );
 	}
@@ -212,7 +208,7 @@ public class CanvasView extends StackPane
 		clipRect.widthProperty().bind( componentWrapper.widthProperty() );
 		clipRect.heightProperty().bind( componentWrapper.heightProperty() );
 		componentWrapper.setClip( clipRect );
-		canvasLayer.getChildren().addAll( wire, connectionLayer, componentLayer );
+		canvasLayer.getChildren().addAll( connectionLayer, componentLayer );
 		componentWrapper.getChildren().add( canvasLayer );
 
 		componentWrapper.addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
@@ -263,89 +259,7 @@ public class CanvasView extends StackPane
 			}
 		} );
 
-		componentLayer.addEventFilter( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
-		{
-			Point2D startPoint = new Point2D( 0, 0 );
-			Terminal originalData = null;
-			ConnectionView connectionView = null;
-
-			@Override
-			public void handle( DraggableEvent event )
-			{
-				if( event.getData() instanceof Terminal )
-				{
-					final Terminal draggedTerminal = ( Terminal )event.getData();
-					DragNode dragNode = ( DragNode )event.getDraggable();
-
-					if( event.getEventType() == DraggableEvent.DRAGGABLE_STARTED )
-					{
-						connectionView = Iterables.find( connections, new Predicate<ConnectionView>()
-						{
-							@Override
-							public boolean apply( ConnectionView input )
-							{
-								//Dragging the OutputTerminal (only connection) of a Connection, OR dragging the InputTerminal of a selected Connection:
-								return draggedTerminal.equals( input.getConnection().getOutputTerminal() )
-										|| draggedTerminal.equals( input.getConnection().getInputTerminal() )
-										&& input.isSelected();
-							}
-						}, null );
-
-						if( connectionView != null )
-						{
-							//Existing Connection
-							//TODO: Undo this after dragging!
-							connectionView.setVisible( false );
-							TerminalView otherTerminalView = draggedTerminal instanceof InputTerminal ? connectionView
-									.getOutputTerminalView() : connectionView.getInputTerminalView();
-
-							Bounds startBounds = canvasLayer.sceneToLocal( otherTerminalView.localToScene( otherTerminalView
-									.getBoundsInLocal() ) );
-
-							startPoint = new Point2D( ( startBounds.getMinX() + startBounds.getMaxX() ) / 2, ( startBounds
-									.getMinY() + startBounds.getMaxY() ) / 2 );
-
-							originalData = draggedTerminal;
-							dragNode.setData( otherTerminalView.getTerminal() );
-						}
-						else
-						{
-							Node source = ( ( DragNode )event.getDraggable() ).getDragSource();
-							Bounds startBounds = canvasLayer.sceneToLocal( source.localToScene( source.getBoundsInLocal() ) );
-
-							startPoint = new Point2D( ( startBounds.getMinX() + startBounds.getMaxX() ) / 2, ( startBounds
-									.getMinY() + startBounds.getMaxY() ) / 2 );
-
-							originalData = null;
-							connectionView = null;
-						}
-
-						Point2D endPoint = canvasLayer.sceneToLocal( event.getSceneX(), event.getSceneY() );
-						wire.updatePosition( startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY() );
-						wire.setReversed( event.getData() instanceof InputTerminal );
-						wire.setVisible( true );
-					}
-					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DRAGGED )
-					{
-						Point2D endPoint = canvasLayer.sceneToLocal( event.getSceneX(), event.getSceneY() );
-						wire.updatePosition( startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY() );
-					}
-					else if( event.getEventType() == DraggableEvent.DRAGGABLE_STOPPED )
-					{
-						//TODO: Check if a Connection was moved, and delete the original connection if so!
-						wire.setVisible( false );
-						if( originalData != null )
-						{
-							dragNode.setData( originalData );
-						}
-						if( connectionView != null )
-						{
-							connectionView.setVisible( true );
-						}
-					}
-				}
-			}
-		} );
+		componentLayer.addEventFilter( DraggableEvent.ANY, new ConnectionDraggingFilter() );
 
 		Slider zoomSlider = SliderBuilder.create().min( 0.1 ).max( 1.0 ).value( 1.0 ).maxWidth( 100 ).build();
 		canvasLayer.scaleXProperty().bind( zoomSlider.valueProperty() );
@@ -502,5 +416,110 @@ public class CanvasView extends StackPane
 	public CanvasItem getCanvas()
 	{
 		return canvas;
+	}
+
+	private class ConnectionDraggingFilter implements EventHandler<DraggableEvent>
+	{
+		private final Wire wire = new Wire();
+		private Point2D startPoint = new Point2D( 0, 0 );
+		private Terminal originalData = null;
+		private ConnectionView connectionView = null;
+
+		public ConnectionDraggingFilter()
+		{
+			wire.setFill( Color.LIGHTGRAY );
+			wire.setVisible( false );
+
+			canvasLayer.getChildren().add( 0, wire );
+		}
+
+		@Override
+		public void handle( DraggableEvent event )
+		{
+			if( event.getData() instanceof Terminal )
+			{
+				final Terminal draggedTerminal = ( Terminal )event.getData();
+				DragNode dragNode = ( DragNode )event.getDraggable();
+
+				if( event.getEventType() == DraggableEvent.DRAGGABLE_STARTED )
+				{
+					connectionView = Iterables.find( connections, new Predicate<ConnectionView>()
+					{
+						@Override
+						public boolean apply( ConnectionView input )
+						{
+							//Dragging the OutputTerminal (only connection) of a Connection, OR dragging the InputTerminal of a selected Connection:
+							return draggedTerminal.equals( input.getConnection().getOutputTerminal() )
+									|| draggedTerminal.equals( input.getConnection().getInputTerminal() ) && input.isSelected();
+						}
+					}, null );
+
+					if( connectionView != null )
+					{
+						connectionView.setVisible( false );
+						TerminalView otherTerminalView = draggedTerminal instanceof InputTerminal ? connectionView
+								.getOutputTerminalView() : connectionView.getInputTerminalView();
+
+						Bounds startBounds = canvasLayer.sceneToLocal( otherTerminalView.localToScene( otherTerminalView
+								.getBoundsInLocal() ) );
+
+						startPoint = new Point2D( ( startBounds.getMinX() + startBounds.getMaxX() ) / 2,
+								( startBounds.getMinY() + startBounds.getMaxY() ) / 2 );
+
+						originalData = draggedTerminal;
+						dragNode.setData( otherTerminalView.getTerminal() );
+					}
+					else
+					{
+						Node source = ( ( DragNode )event.getDraggable() ).getDragSource();
+						Bounds startBounds = canvasLayer.sceneToLocal( source.localToScene( source.getBoundsInLocal() ) );
+
+						startPoint = new Point2D( ( startBounds.getMinX() + startBounds.getMaxX() ) / 2,
+								( startBounds.getMinY() + startBounds.getMaxY() ) / 2 );
+
+						originalData = null;
+						connectionView = null;
+					}
+
+					Point2D endPoint = canvasLayer.sceneToLocal( event.getSceneX(), event.getSceneY() );
+
+					wire.updatePosition( startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY() );
+					wire.setReversed( event.getData() instanceof InputTerminal );
+					wire.setVisible( true );
+				}
+				else if( event.getEventType() == DraggableEvent.DRAGGABLE_DRAGGED )
+				{
+					Point2D endPoint = canvasLayer.sceneToLocal( event.getSceneX(), event.getSceneY() );
+					wire.updatePosition( startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY() );
+				}
+				else if( event.getEventType() == DraggableEvent.DRAGGABLE_STOPPED )
+				{
+					wire.setVisible( false );
+					if( originalData != null )
+					{
+						dragNode.setData( originalData );
+					}
+					if( connectionView != null )
+					{
+						//If dropped on (or near enough) the original TerminalView, do not delete the Connection:
+						Node source = ( ( DragNode )event.getDraggable() ).getDragSource();
+						Bounds startBounds = source.localToScene( source.getBoundsInLocal() );
+						Point2D endPoint = new Point2D( event.getSceneX(), event.getSceneY() );
+						double distance = endPoint.distance( new Point2D(
+								( startBounds.getMinX() + startBounds.getMaxX() ) / 2, ( startBounds.getMinY() + startBounds
+										.getMaxY() ) / 2 ) );
+
+						if( distance > 10 )
+						{
+							connectionView.delete();
+						}
+						else
+						{
+							connectionView.setVisible( true );
+						}
+					}
+				}
+			}
+		}
 	}
 }
