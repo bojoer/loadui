@@ -270,6 +270,8 @@ public class DragNode extends PopupControl implements Draggable
 							- dragNode.getHeight() / 2 );
 					dragNode.show( source, dragNode.startPoint.getX(), dragNode.startPoint.getY() );
 					dragNode.setDragging( true );
+					dragNode.dragSource.fireEvent( new DraggableEvent( null, dragNode.dragSource, dragNode,
+							DraggableEvent.DRAGGABLE_STARTED, dragNode, event.getSceneX(), event.getSceneY() ) );
 				}
 			}
 		};
@@ -318,8 +320,8 @@ public class DragNode extends PopupControl implements Draggable
 						if( dragNode.currentlyHovered != null )
 						{
 							dragNode.currentlyHovered.fireEvent( new DraggableEvent( null, dragNode.getNode(),
-									dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_EXITED, dragNode.getData(), event
-											.getSceneX(), event.getSceneY() ) );
+									dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_EXITED, dragNode, event.getSceneX(),
+									event.getSceneY() ) );
 						}
 						if( currentNode != null )
 						{
@@ -330,12 +332,15 @@ public class DragNode extends PopupControl implements Draggable
 								{
 									dragNode.setAcceptable( true );
 								}
-							}, dragNode.getNode(), currentNode, DraggableEvent.DRAGGABLE_ENTERED, dragNode.getData(),
-									scenePoint.getX(), scenePoint.getY() ) );
+							}, dragNode.getNode(), currentNode, DraggableEvent.DRAGGABLE_ENTERED, dragNode, scenePoint.getX(),
+									scenePoint.getY() ) );
 						}
 
 						dragNode.currentlyHovered = currentNode;
 					}
+
+					dragNode.dragSource.fireEvent( new DraggableEvent( null, dragNode.dragSource, dragNode,
+							DraggableEvent.DRAGGABLE_DRAGGED, dragNode, scenePoint.getX(), scenePoint.getY() ) );
 				}
 			}
 		};
@@ -352,14 +357,14 @@ public class DragNode extends PopupControl implements Draggable
 					if( dragNode.currentlyHovered != null )
 					{
 						dragNode.currentlyHovered.fireEvent( new DraggableEvent( null, dragNode.getNode(),
-								dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_EXITED, dragNode.getData(), event
-										.getSceneX(), event.getSceneY() ) );
+								dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_EXITED, dragNode, event.getSceneX(), event
+										.getSceneY() ) );
 
 						if( dragNode.isAcceptable() )
 						{
 							dragNode.currentlyHovered.fireEvent( new DraggableEvent( null, dragNode.getNode(),
-									dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_DROPPED, dragNode.getData(),
-									dragNode.lastPoint.getX(), dragNode.lastPoint.getY() ) );
+									dragNode.currentlyHovered, DraggableEvent.DRAGGABLE_DROPPED, dragNode, dragNode.lastPoint
+											.getX(), dragNode.lastPoint.getY() ) );
 						}
 					}
 
@@ -367,6 +372,8 @@ public class DragNode extends PopupControl implements Draggable
 					dragNode.revert();
 					dragNode.setAcceptable( false );
 					dragNode.setDragging( false );
+					dragNode.dragSource.fireEvent( new DraggableEvent( null, dragNode.dragSource, dragNode,
+							DraggableEvent.DRAGGABLE_STOPPED, dragNode, event.getSceneX(), event.getSceneY() ) );
 				}
 			}
 		};

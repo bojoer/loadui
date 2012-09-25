@@ -2,39 +2,42 @@ package com.eviware.loadui.ui.fx.views.canvas.terminal;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
-import javafx.scene.Group;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.GlowBuilder;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.CubicCurve;
-import javafx.scene.shape.CubicCurveBuilder;
 
+import com.eviware.loadui.api.events.TerminalConnectionEvent;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
+import com.eviware.loadui.api.traits.Deletable;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.eviware.loadui.ui.fx.views.canvas.CanvasObjectView;
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-public class ConnectionView extends Group
+public class ConnectionView extends Wire implements Deletable
 {
+	private static final Effect SELECTED_EFFECT = GlowBuilder.create().build();
 	private final Connection connection;
 	private final OutputTerminalView outputTerminalView;
 	private final InputTerminalView inputTerminalView;
 
-	private final CubicCurve outline = CubicCurveBuilder.create().fill( null ).stroke( Color.BLACK ).strokeWidth( 8 )
-			.build();
-	private final CubicCurve wire = CubicCurveBuilder.create().fill( null ).strokeWidth( 6 ).build();
-
-	public ConnectionView( Connection connection, CanvasObjectView outputComponentView,
-			CanvasObjectView inputComponentView )
+	public ConnectionView( final Connection connection, final CanvasObjectView outputComponentView,
+			final CanvasObjectView inputComponentView )
 	{
+		super();
+
 		this.connection = connection;
 
 		final OutputTerminal outputTerminal = connection.getOutputTerminal();
-
 		outputTerminalView = Iterables.find( outputComponentView.getOutputTerminalViews(),
 				new Predicate<OutputTerminalView>()
 				{
@@ -46,7 +49,6 @@ public class ConnectionView extends Group
 				} );
 
 		final InputTerminal inputTerminal = connection.getInputTerminal();
-
 		inputTerminalView = Iterables.find( inputComponentView.getInputTerminalViews(),
 				new Predicate<InputTerminalView>()
 				{
@@ -57,7 +59,7 @@ public class ConnectionView extends Group
 					}
 				} );
 
-		EventHandler<DraggableEvent> eventHandler = new EventHandler<DraggableEvent>()
+		final EventHandler<DraggableEvent> eventHandler = new EventHandler<DraggableEvent>()
 		{
 			@Override
 			public void handle( DraggableEvent arg0 )
@@ -68,11 +70,37 @@ public class ConnectionView extends Group
 		outputComponentView.addEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, eventHandler );
 		inputComponentView.addEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, eventHandler );
 
-		wire.strokeProperty().bind(
-				Bindings.when( Selectable.installSelectable( this ).selectedProperty() ).then( Color.BLUE )
-						.otherwise( Color.LIGHTGRAY ) );
+		final ReadOnlyBooleanProperty selectedProperty = Selectable.installSelectable( this ).selectedProperty();
+		fillProperty().bind( Bindings.when( selectedProperty ).then( Color.BLUE ).otherwise( Color.LIGHTGRAY ) );
+		effectProperty().bind( Bindings.when( selectedProperty ).then( SELECTED_EFFECT ).otherwise( ( Effect )null ) );
+		selectedProperty.addListener( new ChangeListener<Boolean>()
+		{
+			@Override
+			public void changed( ObservableValue<? extends Boolean> property, Boolean oldSelected, Boolean selected )
+			{
+				if( selected )
+				{
+					toFront();
+				}
+			}
+		} );
 
-		getChildren().addAll( outline, wire );
+		//Remove listeners when the Connection is disconnected:
+		outputTerminal.addEventListener( TerminalConnectionEvent.class,
+				new com.eviware.loadui.api.events.EventHandler<TerminalConnectionEvent>()
+				{
+					@Override
+					public void handleEvent( TerminalConnectionEvent event )
+					{
+						if( Objects.equal( event.getConnection(), connection )
+								&& event.getEvent() == TerminalConnectionEvent.Event.DISCONNECT )
+						{
+							outputComponentView.removeEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, eventHandler );
+							inputComponentView.removeEventHandler( DraggableEvent.DRAGGABLE_DRAGGED, eventHandler );
+							outputTerminal.removeEventListener( TerminalConnectionEvent.class, this );
+						}
+					}
+				} );
 
 		Platform.runLater( new Runnable()
 		{
@@ -93,29 +121,18 @@ public class ConnectionView extends Group
 		double startY = ( startBounds.getMaxY() + startBounds.getMinY() ) / 2;
 		double endX = ( endBounds.getMaxX() + endBounds.getMinX() ) / 2;
 		double endY = ( endBounds.getMaxY() + endBounds.getMinY() ) / 2;
-		double control = Math.min( Math.sqrt( Math.pow( startX - endX, 2 ) + Math.pow( startY - endY, 2 ) ), 200 );
 
-		outline.setStartX( startX );
-		outline.setStartY( startY );
-		outline.setControlX1( startX );
-		outline.setControlY1( startY + control );
-		outline.setControlX2( endX );
-		outline.setControlY2( endY - control );
-		outline.setEndX( endX );
-		outline.setEndY( endY );
-
-		wire.setStartX( startX );
-		wire.setStartY( startY );
-		wire.setControlX1( startX );
-		wire.setControlY1( startY + control );
-		wire.setControlX2( endX );
-		wire.setControlY2( endY - control );
-		wire.setEndX( endX );
-		wire.setEndY( endY );
+		updatePosition( startX, startY, endX, endY );
 	}
 
 	public Connection getConnection()
 	{
 		return connection;
+	}
+
+	@Override
+	public void delete()
+	{
+		connection.disconnect();
 	}
 }

@@ -35,6 +35,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.RegionBuilder;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.StackPaneBuilder;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import org.slf4j.Logger;
@@ -46,22 +47,25 @@ import com.eviware.loadui.api.model.ComponentItem;
 import com.eviware.loadui.api.terminal.Connection;
 import com.eviware.loadui.api.terminal.InputTerminal;
 import com.eviware.loadui.api.terminal.OutputTerminal;
+import com.eviware.loadui.api.terminal.Terminal;
 import com.eviware.loadui.ui.fx.api.input.DraggableEvent;
 import com.eviware.loadui.ui.fx.api.input.Movable;
 import com.eviware.loadui.ui.fx.api.input.MultiMovable;
 import com.eviware.loadui.ui.fx.api.input.Selectable;
 import com.eviware.loadui.ui.fx.api.intent.IntentEvent;
+import com.eviware.loadui.ui.fx.control.DragNode;
 import com.eviware.loadui.ui.fx.control.ToolBox;
 import com.eviware.loadui.ui.fx.util.FXMLUtils;
 import com.eviware.loadui.ui.fx.views.canvas.terminal.ConnectionView;
+import com.eviware.loadui.ui.fx.views.canvas.terminal.Wire;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 public class CanvasView extends StackPane
 {
-	protected static final Logger log = LoggerFactory.getLogger( CanvasView.class );
-	private final Effect selectedEffect = new Glow( 0.5 );
+	private static final Logger log = LoggerFactory.getLogger( CanvasView.class );
+	private static final Effect selectedEffect = new Glow( 0.5 );
 	private static final int GRID_SIZE = 36;
 	private static final double PADDING = 100;
 
@@ -134,7 +138,6 @@ public class CanvasView extends StackPane
 				}
 			} );
 
-			System.out.println( "Creating ConnectionView for: " + connection );
 			return new ConnectionView( connection, outputComponentView, inputComponentView );
 		}
 	};
@@ -169,15 +172,20 @@ public class CanvasView extends StackPane
 	private final Group componentLayer = new Group();
 	private final Group connectionLayer = new Group();
 
+	private final Wire wire = new Wire();
+
 	public CanvasView( CanvasItem canvas )
 	{
 		this.canvas = canvas;
-		this.components = transform(
+
+		components = transform(
 				fx( ofCollection( canvas, CanvasItem.COMPONENTS, ComponentItem.class, canvas.getComponents() ) ),
 				COMPONENT_TO_VIEW );
-		this.connections = transform(
+		connections = transform(
 				fx( ofCollection( canvas, CanvasItem.CONNECTIONS, Connection.class, canvas.getConnections() ) ),
 				CONNECTION_TO_VIEW );
+		wire.setFill( Color.LIGHTGRAY );
+		wire.setVisible( false );
 
 		FXMLUtils.load( this );
 	}
@@ -203,7 +211,7 @@ public class CanvasView extends StackPane
 		clipRect.widthProperty().bind( componentWrapper.widthProperty() );
 		clipRect.heightProperty().bind( componentWrapper.heightProperty() );
 		componentWrapper.setClip( clipRect );
-		canvasLayer.getChildren().addAll( connectionLayer, componentLayer );
+		canvasLayer.getChildren().addAll( wire, connectionLayer, componentLayer );
 		componentWrapper.getChildren().add( canvasLayer );
 
 		componentWrapper.addEventHandler( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
@@ -250,6 +258,41 @@ public class CanvasView extends StackPane
 					fireEvent( IntentEvent.create( IntentEvent.INTENT_RUN_BLOCKING, createComponent ) );
 
 					event.consume();
+				}
+			}
+		} );
+
+		componentLayer.addEventFilter( DraggableEvent.ANY, new EventHandler<DraggableEvent>()
+		{
+			Point2D startPoint = new Point2D( 0, 0 );
+
+			@Override
+			public void handle( DraggableEvent event )
+			{
+				if( event.getData() instanceof Terminal )
+				{
+					if( event.getEventType() == DraggableEvent.DRAGGABLE_STARTED )
+					{
+						Node source = ( ( DragNode )event.getDraggable() ).getDragSource();
+						Bounds startBounds = canvasLayer.sceneToLocal( source.localToScene( source.getBoundsInLocal() ) );
+
+						startPoint = new Point2D( ( startBounds.getMinX() + startBounds.getMaxX() ) / 2, ( startBounds
+								.getMinY() + startBounds.getMaxY() ) / 2 );
+
+						Point2D endPoint = canvasLayer.sceneToLocal( event.getSceneX(), event.getSceneY() );
+						wire.updatePosition( startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY() );
+						wire.setReversed( event.getData() instanceof InputTerminal );
+						wire.setVisible( true );
+					}
+					else if( event.getEventType() == DraggableEvent.DRAGGABLE_DRAGGED )
+					{
+						Point2D endPoint = canvasLayer.sceneToLocal( event.getSceneX(), event.getSceneY() );
+						wire.updatePosition( startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY() );
+					}
+					else if( event.getEventType() == DraggableEvent.DRAGGABLE_STOPPED )
+					{
+						wire.setVisible( false );
+					}
 				}
 			}
 		} );
