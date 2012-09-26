@@ -224,7 +224,7 @@ public class Movable implements Draggable
 
 						movable.currentlyHovered = currentNode;
 					}
-					node.fireEvent( new DraggableEvent( null, node, node, DraggableEvent.DRAGGABLE_DRAGGED, null, event
+					node.fireEvent( new DraggableEvent( null, node, node, DraggableEvent.DRAGGABLE_DRAGGED, movable, event
 							.getSceneX(), event.getSceneY() ) );
 				}
 				event.consume();
