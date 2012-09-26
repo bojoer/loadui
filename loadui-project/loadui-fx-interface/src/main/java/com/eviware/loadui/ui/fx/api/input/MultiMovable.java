@@ -56,18 +56,19 @@ public class MultiMovable
 		@Override
 		public void handle( DraggableEvent event )
 		{
-			if( movable.isDragging() )
+			Node movedNode = movable.getNode();
+			if( movable.isDragging() && event.getDraggable() == movable )
 			{
-				Node movedNode = movable.getNode();
 				double translateX = movedNode.getTranslateX();
 				double translateY = movedNode.getTranslateY();
 				for( Selectable s : Selectable.getSelected() )
 				{
 					Node selectedNode = s.getNode();
-					if( Movable.isMovable( selectedNode ) )
+					if( Movable.isMovable( selectedNode ) && Movable.getMovable( selectedNode ) != event.getDraggable() )
 					{
 						selectedNode.setTranslateX( translateX );
 						selectedNode.setTranslateY( translateY );
+						selectedNode.fireEvent( event );
 					}
 				}
 			}
